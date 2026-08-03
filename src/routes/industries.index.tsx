@@ -173,7 +173,7 @@ function IndustriesIndex() {
               trigger={
                 <button
                   type="button"
-                  className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
                   Discuss your hiring needs
                 </button>
@@ -193,7 +193,7 @@ function IndustriesIndex() {
       {/* ================================================================
        *  DISCOVERY BAR
        * ================================================================ */}
-      <div className="sticky top-14 z-20 border-b border-[color:var(--brand-navy)]/10 bg-white/95 backdrop-blur-md">
+      <div className="sticky top-14 z-20 border-b border-[color:var(--brand-navy)]/10 bg-[color:var(--taas-surface-card)]/95 backdrop-blur-md">
         <PublicPage className="py-4">
           <form
             role="search"
@@ -219,7 +219,7 @@ function IndustriesIndex() {
                 }}
                 placeholder="Search by industry, role group or challenge"
                 aria-label="Search industries"
-                className="w-full rounded-full border border-[color:var(--brand-navy)]/15 bg-white py-2.5 pl-9 pr-9 text-sm text-[color:var(--brand-navy)] placeholder:text-[color:var(--brand-navy)]/80 focus:border-[color:var(--brand-navy)]/40 focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-focus-ring)]"
+                className="w-full rounded-full border border-[color:var(--brand-navy)]/15 bg-[color:var(--taas-surface-card)] py-2.5 pl-9 pr-9 text-sm text-[color:var(--brand-navy)] placeholder:text-[color:var(--brand-navy)]/80 focus:border-[color:var(--brand-navy)]/40 focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-focus-ring)]"
               />
               {inputQ ? (
                 <button
@@ -308,7 +308,7 @@ function IndustriesIndex() {
                 <button
                   type="button"
                   onClick={reset}
-                  className="rounded-full bg-[color:var(--brand-navy)] px-4 py-2 text-xs font-semibold text-white hover:opacity-90"
+                  className="rounded-full bg-[color:var(--brand-navy)] px-4 py-2 text-xs font-semibold text-[color:var(--brand-on-dark)] hover:opacity-90"
                 >
                   View all industries
                 </button>
@@ -355,7 +355,7 @@ function IndustriesIndex() {
                 <Link
                   to="/how-it-works"
                   hash="scoring"
-                  className="inline-flex min-h-11 items-center justify-center gap-1 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+                  className="inline-flex min-h-11 items-center justify-center gap-1 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] hover:opacity-90"
                 >
                   See the scoring methodology <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
@@ -376,9 +376,9 @@ function IndustriesIndex() {
               ].map((row, i) => (
                 <li
                   key={row.t}
-                  className="flex items-start gap-3 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-4"
+                  className="flex items-start gap-3 rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--taas-surface-card)] p-4"
                 >
-                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[color:var(--brand-navy)] text-[10px] font-semibold text-white">
+                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[color:var(--brand-navy)] text-[10px] font-semibold text-[color:var(--brand-on-dark)]">
                     0{i + 1}
                   </span>
                   <div>
@@ -401,7 +401,7 @@ function IndustriesIndex() {
        * ================================================================ */}
       <PublicSection className="pb-16">
         <PublicPage>
-          <div className="flex flex-col gap-6 rounded-3xl border border-[color:var(--brand-navy)]/10 bg-white p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
+          <div className="flex flex-col gap-6 rounded-3xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--taas-surface-card)] p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
             <div className="max-w-2xl">
               <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--brand-ocean-text)]">
                 Don't see your industry?
@@ -419,7 +419,7 @@ function IndustriesIndex() {
                 trigger={
                   <button
                     type="button"
-                    className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+                    className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-on-dark)] hover:opacity-90"
                   >
                     Discuss your hiring needs
                   </button>
@@ -465,15 +465,15 @@ function FamilyChip({
       onClick={onClick}
       className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold sm:min-h-9 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] ${
         active
-          ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
-          : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-navy)]/40 hover:text-[color:var(--brand-navy)]"
+          ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-[color:var(--brand-on-dark)]"
+          : "border-[color:var(--brand-navy)]/15 bg-[color:var(--taas-surface-card)] text-[color:var(--brand-navy)]/80 hover:border-[color:var(--brand-navy)]/40 hover:text-[color:var(--brand-navy)]"
       }`}
     >
       <span>{label}</span>
       <span
         className={`ml-2 rounded-full px-1.5 py-0.5 text-[10px] ${
           active
-            ? "bg-white/15 text-white"
+            ? "bg-[color:var(--brand-on-dark)]/15 text-[color:var(--brand-on-dark)]"
             : "bg-[color:var(--brand-navy)]/5 text-[color:var(--brand-navy)]/80"
         }`}
       >
@@ -490,7 +490,7 @@ function IndustryCard({ tile }: { tile: Tile }) {
     <Link
       to="/industries/$slug"
       params={{ slug: tile.publicSlug }}
-      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--brand-ocean)]/50 hover:shadow-[0_20px_60px_-30px_rgba(10,20,50,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--taas-surface-card)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--brand-ocean)]/50 hover:shadow-[0_20px_60px_-30px_rgba(10,20,50,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
       aria-label={`${tile.name} — ${tile.familyLabel}`}
     >
       {/* Family-motif band */}
@@ -537,11 +537,11 @@ function IndustryCard({ tile }: { tile: Tile }) {
 
 /* Family palette bands — subdued, editorial. Never a random stock photo. */
 const FAMILY_BAND_BG: Record<IndustryFamily, string> = {
-  "systems-capability": "bg-gradient-to-br from-[color:var(--category-systems-1)] to-[color:var(--category-systems-2)] text-white",
+  "systems-capability": "bg-gradient-to-br from-[color:var(--category-systems-1)] to-[color:var(--category-systems-2)] text-[color:var(--brand-on-dark)]",
   "trust-compliance": "bg-gradient-to-br from-[color:var(--category-trust-1)] to-[color:var(--category-trust-2)] text-[color:var(--category-trust-fg)]",
   "risk-judgment": "bg-gradient-to-br from-[color:var(--category-risk-1)] to-[color:var(--category-risk-2)] text-[color:var(--category-risk-fg)]",
-  "operations-delivery": "bg-gradient-to-br from-[color:var(--category-operations-1)] to-[color:var(--category-operations-2)] text-white",
-  "service-experience": "bg-gradient-to-br from-[color:var(--category-service-1)] to-[color:var(--category-service-2)] text-white",
+  "operations-delivery": "bg-gradient-to-br from-[color:var(--category-operations-1)] to-[color:var(--category-operations-2)] text-[color:var(--brand-on-dark)]",
+  "service-experience": "bg-gradient-to-br from-[color:var(--category-service-1)] to-[color:var(--category-service-2)] text-[color:var(--brand-on-dark)]",
   "expertise-growth": "bg-gradient-to-br from-[color:var(--category-expertise-1)] to-[color:var(--category-expertise-2)] text-[color:var(--category-expertise-fg)]",
 };
 
