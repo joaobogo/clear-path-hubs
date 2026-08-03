@@ -225,12 +225,14 @@ export function isAllowed(category: ConsentCategory): boolean {
 }
 
 /**
- * Trackers treated as strictly necessary for the business and therefore loaded
- * before an affirmative choice, per the launch decision: the Apollo website
- * tracker and RB2B company-level identification. GA4 also loads pre-consent
- * but only in cookieless / consent-denied mode (see `pixels.ts`).
+ * Trackers treated as strictly necessary. Configured by platform staff at
+ * /admin/tracking and stored in `public.tracking_policy`; nothing is essential
+ * by default.
  */
-export const ESSENTIAL_TRACKERS = ["apollo", "rb2b"] as const;
+export function essentialTrackers(): string[] {
+  return getTrackingPolicy().essentialTrackers;
+}
+
 
 
 export function onConsentChange(handler: (d: ConsentDecision | null) => void): () => void {
