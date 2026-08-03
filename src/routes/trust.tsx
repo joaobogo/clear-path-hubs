@@ -423,12 +423,41 @@ function TrustPage() {
               </div>
             ))}
           </div>
+          <div className="mt-6 rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-navy)]/[0.03] p-5">
+            <h4 className="text-sm font-semibold text-[color:var(--brand-navy)]">
+              Hosting and sub-processors
+            </h4>
+            <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
+              Your data sits in a managed Postgres database with private file
+              storage operated by Supabase. The application itself runs on
+              Cloudflare's edge network, which also provides CDN and WAF.
+              Payments run through Stripe, transactional email through Resend,
+              and the AI models used for CV parsing and role-fit scoring are
+              Google Gemini models called through a managed gateway.
+            </p>
+            <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
+              The complete sub-processor register — purpose, jurisdiction and
+              transfer safeguards for each provider — is published in{" "}
+              <a
+                href="/privacy#6-sharing-of-personal-data-sub-processors"
+                className="underline decoration-[color:var(--brand-ocean-text)]/40 underline-offset-2"
+              >
+                section 6 of our Privacy Notice
+              </a>
+              .
+            </p>
+            <p className="mt-2 text-xs text-[color:var(--brand-navy)]/70">
+              This hosting and sub-processor wording is pending review by
+              TaaSFlow's legal counsel.
+            </p>
+          </div>
           <p className="mt-5 text-xs text-[color:var(--brand-navy)]/80">
             This page is maintained by the TaaSFlow team to answer common
             security and privacy questions about the platform. It is not a
             certification. Enterprise buyers can request a full security
             review as part of onboarding.
           </p>
+
         </PublicPage>
       </PublicSection></div>
 
