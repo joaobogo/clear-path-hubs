@@ -1,0 +1,1647 @@
+{
+  "generatedAt": "2026-08-03T18:00:00Z",
+  "target": "http://localhost:8080",
+  "viewports": [
+    390,
+    768,
+    1440
+  ],
+  "routes": [
+    "/",
+    "/platform",
+    "/how-it-works",
+    "/pricing",
+    "/industries",
+    "/jobs",
+    "/about",
+    "/contact",
+    "/pilot",
+    "/intake",
+    "/faq",
+    "/trust",
+    "/privacy",
+    "/terms",
+    "/solutions",
+    "/case-studies",
+    "/enterprise",
+    "/resources",
+    "/blog",
+    "/login",
+    "/talent-network",
+    "/system",
+    "/journey"
+  ],
+  "results": {
+    "/": {
+      "390": {
+        "title": "TaaSFlow | ATS + Recruiting + Outreach, All in One",
+        "description": "Your ATS, recruiting team, and outreach engine in one subscription. Ranked, pre-screened candidates in a live dashboard \u2014 no placement fees.",
+        "canonical": "https://taasflow.com/",
+        "ogTitle": "TaaSFlow | ATS + Recruiting + Outreach, All in One",
+        "robots": null,
+        "h1Count": 1,
+        "h1Text": [
+          "Recruiting software with the recruiters included."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "TaaSFlow | ATS + Recruiting + Outreach, All in One",
+        "description": "Your ATS, recruiting team, and outreach engine in one subscription. Ranked, pre-screened candidates in a live dashboard \u2014 no placement fees.",
+        "canonical": "https://taasflow.com/",
+        "ogTitle": "TaaSFlow | ATS + Recruiting + Outreach, All in One",
+        "robots": null,
+        "h1Count": 1,
+        "h1Text": [
+          "Recruiting software with the recruiters included."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "TaaSFlow | ATS + Recruiting + Outreach, All in One",
+        "description": "Your ATS, recruiting team, and outreach engine in one subscription. Ranked, pre-screened candidates in a live dashboard \u2014 no placement fees.",
+        "canonical": "https://taasflow.com/",
+        "ogTitle": "TaaSFlow | ATS + Recruiting + Outreach, All in One",
+        "robots": null,
+        "h1Count": 1,
+        "h1Text": [
+          "Recruiting software with the recruiters included."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/",
+        "consoleErrors": []
+      }
+    },
+    "/platform": {
+      "390": {
+        "title": "The TaaSFlow Platform \u2014 ATS + recruiting execution, in one system",
+        "description": "Not only an ATS. Not only an agency. Not only AI sourcing. Not only a CRM. TaaSFlow is the hiring operating system: system of record, recruiting execution, evidence-first scoring, live client control, and persistent candidate memory \u2014 in one workspace.",
+        "canonical": "https://taasflow.com/platform",
+        "ogTitle": "The TaaSFlow Platform \u2014 ATS + recruiting execution, in one system",
+        "robots": null,
+        "h1Count": 1,
+        "h1Text": [
+          "ATS + recruiting execution, in one system."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/platform",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "The TaaSFlow Platform \u2014 ATS + recruiting execution, in one system",
+        "description": "Not only an ATS. Not only an agency. Not only AI sourcing. Not only a CRM. TaaSFlow is the hiring operating system: system of record, recruiting execution, evidence-first scoring, live client control, and persistent candidate memory \u2014 in one workspace.",
+        "canonical": "https://taasflow.com/platform",
+        "ogTitle": "The TaaSFlow Platform \u2014 ATS + recruiting execution, in one system",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "ATS + recruiting execution, in one system."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/platform",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "The TaaSFlow Platform \u2014 ATS + recruiting execution, in one system",
+        "description": "Not only an ATS. Not only an agency. Not only AI sourcing. Not only a CRM. TaaSFlow is the hiring operating system: system of record, recruiting execution, evidence-first scoring, live client control, and persistent candidate memory \u2014 in one workspace.",
+        "canonical": "https://taasflow.com/platform",
+        "ogTitle": "The TaaSFlow Platform \u2014 ATS + recruiting execution, in one system",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "ATS + recruiting execution, in one system."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/platform",
+        "consoleErrors": []
+      }
+    },
+    "/how-it-works": {
+      "390": {
+        "title": "How TaaSFlow Works | Subscription Recruiting",
+        "description": "Intake, sourcing, evidence-based scoring, ranked shortlist. See how TaaSFlow delivers candidates through a live dashboard each week.",
+        "canonical": "https://taasflow.com/how-it-works",
+        "ogTitle": "How TaaSFlow Works | Subscription Recruiting",
+        "robots": null,
+        "h1Count": 1,
+        "h1Text": [
+          "The operational anatomy of a TaaSFlow hire."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/how-it-works",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "How TaaSFlow Works | Subscription Recruiting",
+        "description": "Intake, sourcing, evidence-based scoring, ranked shortlist. See how TaaSFlow delivers candidates through a live dashboard each week.",
+        "canonical": "https://taasflow.com/how-it-works",
+        "ogTitle": "How TaaSFlow Works | Subscription Recruiting",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "The operational anatomy of a TaaSFlow hire."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/how-it-works",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "How TaaSFlow Works | Subscription Recruiting",
+        "description": "Intake, sourcing, evidence-based scoring, ranked shortlist. See how TaaSFlow delivers candidates through a live dashboard each week.",
+        "canonical": "https://taasflow.com/how-it-works",
+        "ogTitle": "How TaaSFlow Works | Subscription Recruiting",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "The operational anatomy of a TaaSFlow hire."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/how-it-works",
+        "consoleErrors": []
+      }
+    },
+    "/pricing": {
+      "390": {
+        "title": "Pricing | Subscription Recruiting | TaaSFlow",
+        "description": "Flat-fee subscription recruiting from $399. Ranked, pre-screened shortlists in a live dashboard. No placement fees, no salary percentages.",
+        "canonical": "https://taasflow.com/pricing",
+        "ogTitle": "Pricing | Subscription Recruiting | TaaSFlow",
+        "robots": null,
+        "h1Count": 1,
+        "h1Text": [
+          "Plans that scale with volume"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/pricing",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "Pricing | Subscription Recruiting | TaaSFlow",
+        "description": "Flat-fee subscription recruiting from $399. Ranked, pre-screened shortlists in a live dashboard. No placement fees, no salary percentages.",
+        "canonical": "https://taasflow.com/pricing",
+        "ogTitle": "Pricing | Subscription Recruiting | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Plans that scale with volume"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/pricing",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "Pricing | Subscription Recruiting | TaaSFlow",
+        "description": "Flat-fee subscription recruiting from $399. Ranked, pre-screened shortlists in a live dashboard. No placement fees, no salary percentages.",
+        "canonical": "https://taasflow.com/pricing",
+        "ogTitle": "Pricing | Subscription Recruiting | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Plans that scale with volume"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/pricing",
+        "consoleErrors": []
+      }
+    },
+    "/industries": {
+      "390": {
+        "title": "Industries \u2014 TaaSFlow",
+        "description": "Fifty-seven industries, six page archetypes, one recruiting model. Search or filter to the vertical you hire for.",
+        "canonical": "https://taasflow.com/industries",
+        "ogTitle": "Industries \u2014 TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Hiring intelligence, tuned to the realities of each industry."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/industries",
+        "consoleErrors": [
+          "error: A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` wh"
+        ]
+      },
+      "768": {
+        "title": "Industries \u2014 TaaSFlow",
+        "description": "Fifty-seven industries, six page archetypes, one recruiting model. Search or filter to the vertical you hire for.",
+        "canonical": "https://taasflow.com/industries",
+        "ogTitle": "Industries \u2014 TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Hiring intelligence, tuned to the realities of each industry."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/industries",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "Industries \u2014 TaaSFlow",
+        "description": "Fifty-seven industries, six page archetypes, one recruiting model. Search or filter to the vertical you hire for.",
+        "canonical": "https://taasflow.com/industries",
+        "ogTitle": "Industries \u2014 TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Hiring intelligence, tuned to the realities of each industry."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/industries",
+        "consoleErrors": []
+      }
+    },
+    "/jobs": {
+      "390": {
+        "title": "Open roles \u2014 TaaSFlow job board",
+        "description": "Browse open roles curated by TaaSFlow. Remote, hybrid, and onsite positions across engineering, design, product, and data.",
+        "canonical": "https://taasflow.com/jobs",
+        "ogTitle": "Open roles \u2014 TaaSFlow",
+        "robots": null,
+        "h1Count": 1,
+        "h1Text": [
+          "Open roles"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/jobs",
+        "consoleErrors": [
+          "error: A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` wh"
+        ]
+      },
+      "768": {
+        "title": "Open roles \u2014 TaaSFlow job board",
+        "description": "Browse open roles curated by TaaSFlow. Remote, hybrid, and onsite positions across engineering, design, product, and data.",
+        "canonical": "https://taasflow.com/jobs",
+        "ogTitle": "Open roles \u2014 TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Open roles"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/jobs",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "Open roles \u2014 TaaSFlow job board",
+        "description": "Browse open roles curated by TaaSFlow. Remote, hybrid, and onsite positions across engineering, design, product, and data.",
+        "canonical": "https://taasflow.com/jobs",
+        "ogTitle": "Open roles \u2014 TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Open roles"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/jobs",
+        "consoleErrors": []
+      }
+    },
+    "/about": {
+      "390": {
+        "title": "About TaaSFlow \u2014 a recruiting function delivered as product",
+        "description": "TaaSFlow was founded to make recruiting explainable. Evidence-based scoring, a shared workspace, and a subscription model that aligns incentives with your hires.",
+        "canonical": "https://taasflow.com/about",
+        "ogTitle": "About TaaSFlow \u2014 a recruiting function delivered as product",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "We exist to make recruiting explainable again."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/about",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "About TaaSFlow \u2014 a recruiting function delivered as product",
+        "description": "TaaSFlow was founded to make recruiting explainable. Evidence-based scoring, a shared workspace, and a subscription model that aligns incentives with your hires.",
+        "canonical": "https://taasflow.com/about",
+        "ogTitle": "About TaaSFlow \u2014 a recruiting function delivered as product",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "We exist to make recruiting explainable again."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/about",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "About TaaSFlow \u2014 a recruiting function delivered as product",
+        "description": "TaaSFlow was founded to make recruiting explainable. Evidence-based scoring, a shared workspace, and a subscription model that aligns incentives with your hires.",
+        "canonical": "https://taasflow.com/about",
+        "ogTitle": "About TaaSFlow \u2014 a recruiting function delivered as product",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "We exist to make recruiting explainable again."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/about",
+        "consoleErrors": []
+      }
+    },
+    "/contact": {
+      "390": {
+        "title": "Contact TaaSFlow \u2014 Sales, Support, Candidates, Partnerships",
+        "description": "Pick the path that fits: hire talent, candidate questions, existing client, support, or general inquiry. Each route has its own SLA and the right team on the other end.",
+        "canonical": "https://taasflow.com/contact",
+        "ogTitle": "Contact TaaSFlow \u2014 Sales, Support, Candidates, Partnerships",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Pick your path. We route from there."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 2,
+        "controlsWithoutAccessibleNameSample": [
+          "BUTTON.grid.place-content-center",
+          "BUTTON.grid.place-content-center"
+        ],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/contact",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "Contact TaaSFlow \u2014 Sales, Support, Candidates, Partnerships",
+        "description": "Pick the path that fits: hire talent, candidate questions, existing client, support, or general inquiry. Each route has its own SLA and the right team on the other end.",
+        "canonical": "https://taasflow.com/contact",
+        "ogTitle": "Contact TaaSFlow \u2014 Sales, Support, Candidates, Partnerships",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Pick your path. We route from there."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 2,
+        "controlsWithoutAccessibleNameSample": [
+          "BUTTON.grid.place-content-center",
+          "BUTTON.grid.place-content-center"
+        ],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/contact",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "Contact TaaSFlow \u2014 Sales, Support, Candidates, Partnerships",
+        "description": "Pick the path that fits: hire talent, candidate questions, existing client, support, or general inquiry. Each route has its own SLA and the right team on the other end.",
+        "canonical": "https://taasflow.com/contact",
+        "ogTitle": "Contact TaaSFlow \u2014 Sales, Support, Candidates, Partnerships",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Pick your path. We route from there."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 2,
+        "controlsWithoutAccessibleNameSample": [
+          "BUTTON.grid.place-content-center",
+          "BUTTON.grid.place-content-center"
+        ],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/contact",
+        "consoleErrors": []
+      }
+    },
+    "/pilot": {
+      "390": {
+        "title": "$399 Recruiting Pilot | TaaSFlow",
+        "description": "Validate candidate quality before you subscribe. One role, intake to ranked shortlist, delivered in a live dashboard for $399.",
+        "canonical": "https://taasflow.com/pilot",
+        "ogTitle": "$399 Recruiting Pilot | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Run one role end-to-end for $399."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/pilot",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "$399 Recruiting Pilot | TaaSFlow",
+        "description": "Validate candidate quality before you subscribe. One role, intake to ranked shortlist, delivered in a live dashboard for $399.",
+        "canonical": "https://taasflow.com/pilot",
+        "ogTitle": "$399 Recruiting Pilot | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Run one role end-to-end for $399."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/pilot",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "$399 Recruiting Pilot | TaaSFlow",
+        "description": "Validate candidate quality before you subscribe. One role, intake to ranked shortlist, delivered in a live dashboard for $399.",
+        "canonical": "https://taasflow.com/pilot",
+        "ogTitle": "$399 Recruiting Pilot | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Run one role end-to-end for $399."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/pilot",
+        "consoleErrors": []
+      }
+    },
+    "/intake": {
+      "390": {
+        "title": "Start your hiring pilot \u2014 TaaSFlow",
+        "description": "Tell us about your company, create your account and upload the job description. TaaSFlow builds the role blueprint, scoring rubric and sourcing plan for you.",
+        "canonical": "https://taasflow.com/intake",
+        "ogTitle": "Start your hiring pilot \u2014 TaaSFlow",
+        "robots": null,
+        "h1Count": 1,
+        "h1Text": [
+          "Launch a role in minutes."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 3,
+        "controlsWithoutAccessibleNameSample": [
+          "BUTTON.grid.place-content-center",
+          "BUTTON.grid.place-content-center",
+          "BUTTON.grid.place-content-center"
+        ],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/intake",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "Start your hiring pilot \u2014 TaaSFlow",
+        "description": "Tell us about your company, create your account and upload the job description. TaaSFlow builds the role blueprint, scoring rubric and sourcing plan for you.",
+        "canonical": "https://taasflow.com/intake",
+        "ogTitle": "Start your hiring pilot \u2014 TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Launch a role in minutes."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 3,
+        "controlsWithoutAccessibleNameSample": [
+          "BUTTON.grid.place-content-center",
+          "BUTTON.grid.place-content-center",
+          "BUTTON.grid.place-content-center"
+        ],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/intake",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "Start your hiring pilot \u2014 TaaSFlow",
+        "description": "Tell us about your company, create your account and upload the job description. TaaSFlow builds the role blueprint, scoring rubric and sourcing plan for you.",
+        "canonical": "https://taasflow.com/intake",
+        "ogTitle": "Start your hiring pilot \u2014 TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Launch a role in minutes."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 3,
+        "controlsWithoutAccessibleNameSample": [
+          "BUTTON.grid.place-content-center",
+          "BUTTON.grid.place-content-center",
+          "BUTTON.grid.place-content-center"
+        ],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/intake",
+        "consoleErrors": []
+      }
+    },
+    "/faq": {
+      "390": {
+        "title": "FAQ \u2014 TaaSFlow",
+        "description": "Clear answers on the TaaSFlow model, pricing, candidate delivery, evidence-based scoring, client workspace, enterprise, partnerships, and privacy.",
+        "canonical": "https://taasflow.com/faq",
+        "ogTitle": "FAQ \u2014 TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Straight answers, before you ask."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/faq",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "FAQ \u2014 TaaSFlow",
+        "description": "Clear answers on the TaaSFlow model, pricing, candidate delivery, evidence-based scoring, client workspace, enterprise, partnerships, and privacy.",
+        "canonical": "https://taasflow.com/faq",
+        "ogTitle": "FAQ \u2014 TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Straight answers, before you ask."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/faq",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "FAQ \u2014 TaaSFlow",
+        "description": "Clear answers on the TaaSFlow model, pricing, candidate delivery, evidence-based scoring, client workspace, enterprise, partnerships, and privacy.",
+        "canonical": "https://taasflow.com/faq",
+        "ogTitle": "FAQ \u2014 TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Straight answers, before you ask."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/faq",
+        "consoleErrors": []
+      }
+    },
+    "/trust": {
+      "390": {
+        "title": "Trust \u2014 Pricing, privacy, scoring, and security | TaaSFlow",
+        "description": "The commercial trust pack for TaaSFlow. How pricing works, what you keep, how scoring works, candidate privacy, and where the line runs between TaaSFlow and your team.",
+        "canonical": "https://taasflow.com/trust",
+        "ogTitle": "Trust \u2014 Pricing, privacy, scoring, and security | TaaSFlow",
+        "robots": null,
+        "h1Count": 1,
+        "h1Text": [
+          "Everything a buyer needs, in one place."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/trust",
+        "consoleErrors": [
+          "error: A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` wh"
+        ]
+      },
+      "768": {
+        "title": "Trust \u2014 Pricing, privacy, scoring, and security | TaaSFlow",
+        "description": "The commercial trust pack for TaaSFlow. How pricing works, what you keep, how scoring works, candidate privacy, and where the line runs between TaaSFlow and your team.",
+        "canonical": "https://taasflow.com/trust",
+        "ogTitle": "Trust \u2014 Pricing, privacy, scoring, and security | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Everything a buyer needs, in one place."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/trust",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "Trust \u2014 Pricing, privacy, scoring, and security | TaaSFlow",
+        "description": "The commercial trust pack for TaaSFlow. How pricing works, what you keep, how scoring works, candidate privacy, and where the line runs between TaaSFlow and your team.",
+        "canonical": "https://taasflow.com/trust",
+        "ogTitle": "Trust \u2014 Pricing, privacy, scoring, and security | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Everything a buyer needs, in one place."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/trust",
+        "consoleErrors": []
+      }
+    },
+    "/privacy": {
+      "390": {
+        "title": "Global Recruitment Privacy Notice | TaaSFlow",
+        "description": "How TaaSFlow collects, uses, and protects personal data under GDPR, CCPA/CPRA, UAE PDPL, and other global privacy laws.",
+        "canonical": "https://taasflow.com/privacy",
+        "ogTitle": "Global Recruitment Privacy Notice | TaaSFlow",
+        "robots": null,
+        "h1Count": 1,
+        "h1Text": [
+          "Global Recruitment Privacy Notice"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/privacy",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "Global Recruitment Privacy Notice | TaaSFlow",
+        "description": "How TaaSFlow collects, uses, and protects personal data under GDPR, CCPA/CPRA, UAE PDPL, and other global privacy laws.",
+        "canonical": "https://taasflow.com/privacy",
+        "ogTitle": "Global Recruitment Privacy Notice | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Global Recruitment Privacy Notice"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/privacy",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "Global Recruitment Privacy Notice | TaaSFlow",
+        "description": "How TaaSFlow collects, uses, and protects personal data under GDPR, CCPA/CPRA, UAE PDPL, and other global privacy laws.",
+        "canonical": "https://taasflow.com/privacy",
+        "ogTitle": "Global Recruitment Privacy Notice | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Global Recruitment Privacy Notice"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/privacy",
+        "consoleErrors": []
+      }
+    },
+    "/terms": {
+      "390": {
+        "title": "Terms of Service | TaaSFlow",
+        "description": "Terms of Service for TaaSFlow. Read the terms and conditions governing your use of our subscription-based recruiting platform.",
+        "canonical": "https://taasflow.com/terms",
+        "ogTitle": "Terms of Service | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Terms of Service"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/terms",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "Terms of Service | TaaSFlow",
+        "description": "Terms of Service for TaaSFlow. Read the terms and conditions governing your use of our subscription-based recruiting platform.",
+        "canonical": "https://taasflow.com/terms",
+        "ogTitle": "Terms of Service | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Terms of Service"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/terms",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "Terms of Service | TaaSFlow",
+        "description": "Terms of Service for TaaSFlow. Read the terms and conditions governing your use of our subscription-based recruiting platform.",
+        "canonical": "https://taasflow.com/terms",
+        "ogTitle": "Terms of Service | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Terms of Service"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/terms",
+        "consoleErrors": []
+      }
+    },
+    "/solutions": {
+      "390": {
+        "title": "Solutions \u2014 Subscription recruiting for every hiring need | TaaSFlow",
+        "description": "Pilot a single hire, scale volume hiring, run enterprise programs, or hire globally. One workspace, one flat monthly fee, ranked candidates in 14 days.",
+        "canonical": "https://taasflow.com/solutions",
+        "ogTitle": "Solutions \u2014 Subscription recruiting for every hiring need | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "One workspace. Every hiring model."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/solutions",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "Solutions \u2014 Subscription recruiting for every hiring need | TaaSFlow",
+        "description": "Pilot a single hire, scale volume hiring, run enterprise programs, or hire globally. One workspace, one flat monthly fee, ranked candidates in 14 days.",
+        "canonical": "https://taasflow.com/solutions",
+        "ogTitle": "Solutions \u2014 Subscription recruiting for every hiring need | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "One workspace. Every hiring model."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/solutions",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "Solutions \u2014 Subscription recruiting for every hiring need | TaaSFlow",
+        "description": "Pilot a single hire, scale volume hiring, run enterprise programs, or hire globally. One workspace, one flat monthly fee, ranked candidates in 14 days.",
+        "canonical": "https://taasflow.com/solutions",
+        "ogTitle": "Solutions \u2014 Subscription recruiting for every hiring need | TaaSFlow",
+        "robots": null,
+        "h1Count": 1,
+        "h1Text": [
+          "One workspace. Every hiring model."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/solutions",
+        "consoleErrors": []
+      }
+    },
+    "/case-studies": {
+      "390": {
+        "title": "Case Studies & Hiring Success Stories | TaaSFlow",
+        "description": "Real hiring transformations from TaaSFlow case studies \u2014 how teams cut time-to-hire, lifted quality-of-hire, and scaled without agency fees.",
+        "canonical": "https://taasflow.com/case-studies",
+        "ogTitle": "Case Studies & Hiring Success Stories | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Results, visualized."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/case-studies",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "Case Studies & Hiring Success Stories | TaaSFlow",
+        "description": "Real hiring transformations from TaaSFlow case studies \u2014 how teams cut time-to-hire, lifted quality-of-hire, and scaled without agency fees.",
+        "canonical": "https://taasflow.com/case-studies",
+        "ogTitle": "Case Studies & Hiring Success Stories | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Results, visualized."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/case-studies",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "Case Studies & Hiring Success Stories | TaaSFlow",
+        "description": "Real hiring transformations from TaaSFlow case studies \u2014 how teams cut time-to-hire, lifted quality-of-hire, and scaled without agency fees.",
+        "canonical": "https://taasflow.com/case-studies",
+        "ogTitle": "Case Studies & Hiring Success Stories | TaaSFlow",
+        "robots": null,
+        "h1Count": 1,
+        "h1Text": [
+          "Results, visualized."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/case-studies",
+        "consoleErrors": []
+      }
+    },
+    "/enterprise": {
+      "390": {
+        "title": "Enterprise Recruiting Subscription | TaaSFlow",
+        "description": "Recruiting for teams hiring at scale. Get ranked, pre-screened candidate shortlists through a live dashboard for one flat monthly fee.",
+        "canonical": "https://taasflow.com/enterprise",
+        "ogTitle": "Enterprise Recruiting Subscription | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Your hiring function. Scaled. On one workspace."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/enterprise",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "Enterprise Recruiting Subscription | TaaSFlow",
+        "description": "Recruiting for teams hiring at scale. Get ranked, pre-screened candidate shortlists through a live dashboard for one flat monthly fee.",
+        "canonical": "https://taasflow.com/enterprise",
+        "ogTitle": "Enterprise Recruiting Subscription | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Your hiring function. Scaled. On one workspace."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/enterprise",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "Enterprise Recruiting Subscription | TaaSFlow",
+        "description": "Recruiting for teams hiring at scale. Get ranked, pre-screened candidate shortlists through a live dashboard for one flat monthly fee.",
+        "canonical": "https://taasflow.com/enterprise",
+        "ogTitle": "Enterprise Recruiting Subscription | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Your hiring function. Scaled. On one workspace."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/enterprise",
+        "consoleErrors": []
+      }
+    },
+    "/resources": {
+      "390": {
+        "title": "Recruiting Resources & Hiring Playbooks | TaaSFlow",
+        "description": "Free hiring resources from TaaSFlow: sample deliverables, ROI calculator, subscription recruiting FAQ, and step-by-step guides for talent leaders.",
+        "canonical": "https://taasflow.com/resources",
+        "ogTitle": "Recruiting Resources & Hiring Playbooks | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Guides, insights, and tools"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/resources",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "Recruiting Resources & Hiring Playbooks | TaaSFlow",
+        "description": "Free hiring resources from TaaSFlow: sample deliverables, ROI calculator, subscription recruiting FAQ, and step-by-step guides for talent leaders.",
+        "canonical": "https://taasflow.com/resources",
+        "ogTitle": "Recruiting Resources & Hiring Playbooks | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Guides, insights, and tools"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/resources",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "Recruiting Resources & Hiring Playbooks | TaaSFlow",
+        "description": "Free hiring resources from TaaSFlow: sample deliverables, ROI calculator, subscription recruiting FAQ, and step-by-step guides for talent leaders.",
+        "canonical": "https://taasflow.com/resources",
+        "ogTitle": "Recruiting Resources & Hiring Playbooks | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Guides, insights, and tools"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/resources",
+        "consoleErrors": []
+      }
+    },
+    "/blog": {
+      "390": {
+        "title": "Recruiting Insights & Hiring Strategy | TaaSFlow",
+        "description": "Recruiting strategy, talent intelligence, and hiring operations insights from the TaaSFlow team.",
+        "canonical": "https://taasflow.com/blog",
+        "ogTitle": "Recruiting Insights & Hiring Strategy | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "TaaSFlow Blog"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 24,
+        "controlsWithoutAccessibleNameSample": [
+          "A.block",
+          "A.block",
+          "A.block",
+          "A.block",
+          "A.block"
+        ],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/blog",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "Recruiting Insights & Hiring Strategy | TaaSFlow",
+        "description": "Recruiting strategy, talent intelligence, and hiring operations insights from the TaaSFlow team.",
+        "canonical": "https://taasflow.com/blog",
+        "ogTitle": "Recruiting Insights & Hiring Strategy | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "TaaSFlow Blog"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 24,
+        "controlsWithoutAccessibleNameSample": [
+          "A.block",
+          "A.block",
+          "A.block",
+          "A.block",
+          "A.block"
+        ],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/blog",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "Recruiting Insights & Hiring Strategy | TaaSFlow",
+        "description": "Recruiting strategy, talent intelligence, and hiring operations insights from the TaaSFlow team.",
+        "canonical": "https://taasflow.com/blog",
+        "ogTitle": "Recruiting Insights & Hiring Strategy | TaaSFlow",
+        "robots": null,
+        "h1Count": 1,
+        "h1Text": [
+          "TaaSFlow Blog"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 24,
+        "controlsWithoutAccessibleNameSample": [
+          "A.block",
+          "A.block",
+          "A.block",
+          "A.block",
+          "A.block"
+        ],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/blog",
+        "consoleErrors": []
+      }
+    },
+    "/login": {
+      "390": {
+        "title": "Sign in \u2014 TaaSFlow",
+        "description": "Sign in to your TaaSFlow account.",
+        "canonical": "https://taasflow.com/login",
+        "ogTitle": "Sign in \u2014 TaaSFlow",
+        "robots": "noindex",
+        "h1Count": 2,
+        "h1Text": [
+          "Sign in to TaaSFlow",
+          "Sign in to TaaSFlow"
+        ],
+        "mainCount": 2,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/login",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "Sign in \u2014 TaaSFlow",
+        "description": "Sign in to your TaaSFlow account.",
+        "canonical": "https://taasflow.com/login",
+        "ogTitle": "Sign in \u2014 TaaSFlow",
+        "robots": "noindex",
+        "h1Count": 2,
+        "h1Text": [
+          "Sign in to TaaSFlow",
+          "Sign in to TaaSFlow"
+        ],
+        "mainCount": 2,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/login",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "Sign in \u2014 TaaSFlow",
+        "description": "Sign in to your TaaSFlow account.",
+        "canonical": "https://taasflow.com/login",
+        "ogTitle": "Sign in \u2014 TaaSFlow",
+        "robots": "noindex",
+        "h1Count": 1,
+        "h1Text": [
+          "Sign in to TaaSFlow"
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/login",
+        "consoleErrors": []
+      }
+    },
+    "/talent-network": {
+      "390": {
+        "title": "Join the TaaSFlow Talent Network",
+        "description": "Join the TaaSFlow Talent Network. Browse open roles, join for private matching to future briefs, and stay in control of your visibility and data.",
+        "canonical": "https://taasflow.com/talent-network",
+        "ogTitle": "Join the TaaSFlow Talent Network",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Be considered for the right roles \u2014 on your terms."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/talent-network",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "Join the TaaSFlow Talent Network",
+        "description": "Join the TaaSFlow Talent Network. Browse open roles, join for private matching to future briefs, and stay in control of your visibility and data.",
+        "canonical": "https://taasflow.com/talent-network",
+        "ogTitle": "Join the TaaSFlow Talent Network",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Be considered for the right roles \u2014 on your terms."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/talent-network",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "Join the TaaSFlow Talent Network",
+        "description": "Join the TaaSFlow Talent Network. Browse open roles, join for private matching to future briefs, and stay in control of your visibility and data.",
+        "canonical": "https://taasflow.com/talent-network",
+        "ogTitle": "Join the TaaSFlow Talent Network",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "Be considered for the right roles \u2014 on your terms."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/talent-network",
+        "consoleErrors": []
+      }
+    },
+    "/system": {
+      "390": {
+        "title": "The TaaSFlow System \u2014 Sourcing, research, scoring, workflow, evidence, live workspace",
+        "description": "TaaSFlow is a proprietary recruiting system: multi-channel sourcing, web and database research, structured scoring, workflow automation, an evidence engine, and a live client workspace \u2014 run by expert operators, not by unattended AI.",
+        "canonical": "https://taasflow.com/system",
+        "ogTitle": "The TaaSFlow System \u2014 Sourcing, research, scoring, workflow, evidence, live workspace",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "A proprietary recruiting system, run by expert operators."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/system",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "The TaaSFlow System \u2014 Sourcing, research, scoring, workflow, evidence, live workspace",
+        "description": "TaaSFlow is a proprietary recruiting system: multi-channel sourcing, web and database research, structured scoring, workflow automation, an evidence engine, and a live client workspace \u2014 run by expert operators, not by unattended AI.",
+        "canonical": "https://taasflow.com/system",
+        "ogTitle": "The TaaSFlow System \u2014 Sourcing, research, scoring, workflow, evidence, live workspace",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "A proprietary recruiting system, run by expert operators."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/system",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "The TaaSFlow System \u2014 Sourcing, research, scoring, workflow, evidence, live workspace",
+        "description": "TaaSFlow is a proprietary recruiting system: multi-channel sourcing, web and database research, structured scoring, workflow automation, an evidence engine, and a live client workspace \u2014 run by expert operators, not by unattended AI.",
+        "canonical": "https://taasflow.com/system",
+        "ogTitle": "The TaaSFlow System \u2014 Sourcing, research, scoring, workflow, evidence, live workspace",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "A proprietary recruiting system, run by expert operators."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/system",
+        "consoleErrors": []
+      }
+    },
+    "/journey": {
+      "390": {
+        "title": "Our journey \u2014 how TaaSFlow rebuilt recruiting | TaaSFlow",
+        "description": "The story behind TaaSFlow \u2014 from the operator insight that agencies were the wrong model, to a structured recruiting workspace with ranked, evidence-backed candidates.",
+        "canonical": "https://taasflow.com/journey",
+        "ogTitle": "Our journey \u2014 how TaaSFlow rebuilt recruiting | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "How TaaSFlow became a better recruiting model."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/journey",
+        "consoleErrors": []
+      },
+      "768": {
+        "title": "Our journey \u2014 how TaaSFlow rebuilt recruiting | TaaSFlow",
+        "description": "The story behind TaaSFlow \u2014 from the operator insight that agencies were the wrong model, to a structured recruiting workspace with ranked, evidence-backed candidates.",
+        "canonical": "https://taasflow.com/journey",
+        "ogTitle": "Our journey \u2014 how TaaSFlow rebuilt recruiting | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "How TaaSFlow became a better recruiting model."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/journey",
+        "consoleErrors": []
+      },
+      "1440": {
+        "title": "Our journey \u2014 how TaaSFlow rebuilt recruiting | TaaSFlow",
+        "description": "The story behind TaaSFlow \u2014 from the operator insight that agencies were the wrong model, to a structured recruiting workspace with ranked, evidence-backed candidates.",
+        "canonical": "https://taasflow.com/journey",
+        "ogTitle": "Our journey \u2014 how TaaSFlow rebuilt recruiting | TaaSFlow",
+        "robots": "noindex,follow",
+        "h1Count": 1,
+        "h1Text": [
+          "How TaaSFlow became a better recruiting model."
+        ],
+        "mainCount": 1,
+        "horizontalOverflow": false,
+        "overflowOffenders": [],
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "imagesWithoutAlt": 0,
+        "controlsWithoutAccessibleName": 0,
+        "controlsWithoutAccessibleNameSample": [],
+        "httpStatus": 200,
+        "finalUrl": "http://localhost:8080/journey",
+        "consoleErrors": []
+      }
+    }
+  }
+}
