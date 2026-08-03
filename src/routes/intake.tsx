@@ -742,13 +742,15 @@ function ExpressIntakePage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Field
-              label={signInMode ? "Password" : "Password"}
+              label="Password"
+              htmlFor="account-password"
               error={errors.password}
               required
               hint={signInMode ? "The password for your existing account." : `At least ${MIN_ACCOUNT_PASSWORD} characters.`}
             >
               <div className="relative">
                 <Input
+                  id="account-password"
                   type={showPassword ? "text" : "password"}
                   value={state.password}
                   onChange={(e) => set("password", e.target.value)}
@@ -1149,12 +1151,15 @@ function Field({
   error,
   hint,
   required,
+  htmlFor,
 }: {
   label: string;
   children: React.ReactNode;
   error?: string;
   hint?: string;
   required?: boolean;
+  /** Set when the control is nested inside wrapper markup and carries its own id. */
+  htmlFor?: string;
 }) {
   // Every field gets a generated id so the visible label is programmatically
   // tied to its control — screen readers announce the field name, and clicking
@@ -1165,7 +1170,8 @@ function Field({
   const described = [hint && !error ? hintId : null, error ? errorId : null]
     .filter(Boolean)
     .join(" ");
-  const control = React.isValidElement(children)
+  const labelFor = htmlFor ?? fieldId;
+  const control = !htmlFor && React.isValidElement(children)
     ? React.cloneElement(children as React.ReactElement<Record<string, unknown>>, {
         id: ((children as React.ReactElement<Record<string, unknown>>).props["id"] as
           | string
@@ -1177,7 +1183,7 @@ function Field({
     : children;
   return (
     <div className="space-y-1.5">
-      <Label htmlFor={fieldId} className="text-sm font-medium">
+      <Label htmlFor={labelFor} className="text-sm font-medium">
         {label}
         {required && (
           <span className="ml-1 text-[color:var(--brand-navy)]/70" aria-hidden="true">
@@ -1235,7 +1241,7 @@ function ReviewBlock({
               {label}
             </dt>
             <dd className="text-sm whitespace-pre-wrap">
-              {value?.trim() ? value : <span className="text-[color:var(--brand-navy)]/45">Not provided</span>}
+              {value?.trim() ? value : <span className="text-[color:var(--brand-navy)]/75">Not provided</span>}
             </dd>
           </div>
         ))}
