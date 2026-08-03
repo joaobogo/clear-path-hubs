@@ -43,7 +43,7 @@ export const getBookingState = createServerFn({ method: "POST" })
     let query = supabase
       .from("sales_calls")
       .select("id, scheduled_start, scheduled_end, timezone, status")
-      .eq("status", "booked")
+      .in("status", ["requested", "booked"])
       .gte("scheduled_end", new Date().toISOString())
       .order("scheduled_start", { ascending: true })
       .limit(1);
@@ -107,7 +107,7 @@ export const listPendingPaymentRoles = createServerFn({ method: "POST" })
     const { data: calls } = await supabase
       .from("sales_calls")
       .select("position_id, scheduled_start")
-      .eq("status", "booked")
+      .in("status", ["requested", "booked"])
       .in(
         "position_id",
         positions.map((p) => p.id),
@@ -125,4 +125,92 @@ export const listPendingPaymentRoles = createServerFn({ method: "POST" })
         callStart: callByPosition.get(p.id) ?? null,
       })),
     };
+  });
+
+export type CallRequestResult =
+  | { ok: true; callId: string | null }
+  | { ok: false; message: string };
+
+/**
+ * Single booking path: the client picks a real time in Calendly. This records
+ * the intent first — a `sales_calls` row plus a `marketing_inquiries` lead —
+ * so the lead survives even if the visitor abandons the scheduler.
+ */
+export const requestDiscoveryCall = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { positionId?: string; timezone?: string; notes?: string }) => data)
+  .handler(async ({ data, context }): Promise<CallRequestResult> => {
+    const { supabase, userId } = context;
+
+    let position: { id: string; title: string; organization_id: string; payment_status: string } | null =
+      null;
+    if (data.positionId && isUuid(data.positionId)) {
+      const { data: row } = await supabase
+        .from("positions")
+        .select("id, title, organization_id, payment_status")
+        .eq("id", data.positionId)
+        .maybeSingle();
+      if (row) {
+        position = {
+          id: row.id,
+          title: row.title,
+          organization_id: row.organization_id,
+          payment_status: String(row.payment_status),
+        };
+      }
+    }
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name, email, phone, organization_id")
+      .eq("auth_user_id", userId)
+      .maybeSingle();
+
+    const organizationId = position?.organization_id ?? profile?.organization_id ?? null;
+    if (!organizationId) {
+      return { ok: false, message: "We couldn't find your workspace. Please try again." };
+    }
+
+    const now = new Date();
+    const notes = data.notes?.slice(0, 2000) ?? null;
+    const { data: inserted, error } = await supabase
+      .from("sales_calls")
+      .insert({
+        organization_id: organizationId,
+        position_id: position?.id ?? null,
+        contact_name: profile?.full_name ?? "Client",
+        contact_email: profile?.email ?? "",
+        contact_phone: profile?.phone ?? null,
+        scheduled_start: now.toISOString(),
+        scheduled_end: new Date(now.getTime() + 30 * 60_000).toISOString(),
+        timezone: data.timezone || "UTC",
+        status: "requested",
+        notes,
+        booked_by: userId,
+      })
+      .select("id")
+      .single();
+
+    // Lead backstop — never blocks the scheduler.
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await supabaseAdmin.from("marketing_inquiries").insert({
+        kind: "call",
+        name: profile?.full_name ?? "Client",
+        email: profile?.email ?? "",
+        role_title: position?.title ?? null,
+        message: notes,
+        source_path: "/book-call",
+        details: { position_id: position?.id ?? null, in_app: true },
+      });
+    } catch {
+      // ignore
+    }
+
+    if (position && position.payment_status === "unpaid") {
+      await supabase.from("positions").update({ payment_status: "pending" }).eq("id", position.id);
+    }
+
+    if (error) return { ok: false, message: "We couldn't save your request. Please try again." };
+    return { ok: true, callId: inserted?.id ?? null };
   });
