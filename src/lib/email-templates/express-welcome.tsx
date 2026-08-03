@@ -51,7 +51,7 @@ export const template = {
     contactName: 'Marina',
     companyName: 'Northwind Health',
     roleTitle: 'Clinical Operations Manager',
-    workspaceUrl: 'https://www.taasflow.com/client',
+    workspaceUrl: 'https://taasflow.com/client',
   },
 } satisfies TemplateEntry
 

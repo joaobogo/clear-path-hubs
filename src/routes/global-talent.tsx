@@ -1,3 +1,4 @@
+import { canonicalUrl } from "@/lib/canonical-origin";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   SiteShell,
@@ -8,7 +9,7 @@ import {
 } from "@/components/marketing/site-shell";
 import { EcosystemCrossSell } from "@/components/marketing/ecosystem-cross-sell";
 
-const CANONICAL = "https://taasflow.com/global-talent";
+const CANONICAL = canonicalUrl("/global-talent");
 const TITLE = "Global Talent — remote-first hiring with clear scope | TaaSFlow";
 const DESC =
   "Hire globally with TaaSFlow: remote-first briefs, regional sourcing, and relocation only when the employer commits. Clear scope, no unverified promises.";

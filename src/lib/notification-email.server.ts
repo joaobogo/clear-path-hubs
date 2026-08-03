@@ -93,7 +93,7 @@ async function emailAllowed(
 }
 
 const APP_ORIGIN =
-  process.env.PUBLIC_APP_ORIGIN ?? "https://www.taasflow.com";
+  process.env.PUBLIC_APP_ORIGIN ?? "https://taasflow.com";
 
 export function absoluteLink(path: string | null | undefined): string {
   if (!path) return APP_ORIGIN;

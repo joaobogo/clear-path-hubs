@@ -1,3 +1,4 @@
+import { canonicalUrl } from "@/lib/canonical-origin";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   SiteShell,
@@ -7,7 +8,7 @@ import {
   Breadcrumbs,
 } from "@/components/marketing/site-shell";
 
-const CANONICAL = "https://taasflow.com/talent-marketplace";
+const CANONICAL = canonicalUrl("/talent-marketplace");
 const TITLE = "Talent Marketplace — where briefs meet vetted specialists | TaaSFlow";
 const DESC =
   "The TaaSFlow Talent Marketplace connects live employer briefs with vetted, evidence-scored candidates. Curated, private and role-specific — not a job board.";

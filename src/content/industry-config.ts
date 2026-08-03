@@ -17,6 +17,7 @@
  */
 
 import type { IndustryEntry } from "@/content/industries-v2";
+import { CANONICAL_ORIGIN } from "@/lib/canonical-origin";
 import {
   ARCHETYPE_SPECS,
   FAMILY_LABEL,
@@ -28,7 +29,7 @@ import {
 } from "@/content/industry-archetypes";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 
-const SITE_ORIGIN = "https://www.taasflow.com";
+const SITE_ORIGIN = CANONICAL_ORIGIN;
 
 /** Proof state controls whether we render an explicit product
  * demonstration ("example data") or fall back to a methodology / "what

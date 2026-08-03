@@ -1,3 +1,4 @@
+import { canonicalUrl } from "@/lib/canonical-origin";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   SiteShell,
@@ -7,7 +8,7 @@ import {
   Breadcrumbs,
 } from "@/components/marketing/site-shell";
 
-const CANONICAL = "https://taasflow.com/candidate-success";
+const CANONICAL = canonicalUrl("/candidate-success");
 const TITLE = "Candidate Success — how the TaaSFlow process works | TaaSFlow";
 const DESC =
   "How TaaSFlow supports candidates from application to decision: transparent scoring, structured feedback, and a dashboard that tracks every step.";

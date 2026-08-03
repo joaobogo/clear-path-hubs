@@ -1,10 +1,11 @@
+import { CANONICAL_ORIGIN } from "@/lib/canonical-origin";
 import type { ContentEntry } from "@/lib/marketing/content";
 
 // Canonical production origin. Preview subdomains must not
 // compete with the primary domain in search — its canonical URLs point
 // here, and `<Root>` injects `noindex` at runtime when served from any
 // other host. Single host: bare domain (matches robots.txt + sitemap).
-const CANONICAL_ORIGIN = "https://taasflow.com";
+
 
 export function marketingHead(
   entry: ContentEntry | undefined,
