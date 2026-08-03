@@ -77,6 +77,12 @@ export const Route = createFileRoute("/api/public/contact")({
             message: data.message,
             source: data.source,
             user_agent: userAgent,
+            marketing_consent: data.marketingConsent,
+            consent_status: data.marketingConsent
+              ? "explicit_opt_in_contact_form"
+              : "no_marketing_consent",
+            attribution: data.attribution ?? null,
+            page_context: data.pageContext ?? null,
           });
 
         if (error) {
