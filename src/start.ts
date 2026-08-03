@@ -22,7 +22,24 @@ const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
   }
 });
 
+/**
+ * TF-006: one canonical host. taasflow.com is the canonical origin used by
+ * robots.txt, the sitemap, canonical tags and og:url — so the www host
+ * permanently redirects to it instead of serving a duplicate copy.
+ */
+const canonicalHostMiddleware = createMiddleware().server(async ({ next, request }) => {
+  const url = new URL(request.url);
+  if (url.hostname.toLowerCase() === "www.taasflow.com") {
+    url.hostname = "taasflow.com";
+    return new Response(null, {
+      status: 301,
+      headers: { location: url.toString(), "cache-control": "public, max-age=3600" },
+    });
+  }
+  return next();
+});
+
 export const startInstance = createStart(() => ({
   functionMiddleware: [attachSupabaseAuth],
-  requestMiddleware: [errorMiddleware],
+  requestMiddleware: [canonicalHostMiddleware, errorMiddleware],
 }));
