@@ -1,5 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
+function isUuid(value: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+}
 export type BookingState = {
   position: {
     id: string;
@@ -162,11 +166,20 @@ export const requestDiscoveryCall = createServerFn({ method: "POST" })
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("full_name, email, phone, organization_id")
+      .select("full_name, email, phone")
       .eq("auth_user_id", userId)
       .maybeSingle();
 
-    const organizationId = position?.organization_id ?? profile?.organization_id ?? null;
+    let organizationId = position?.organization_id ?? null;
+    if (!organizationId) {
+      const { data: membership } = await supabase
+        .from("memberships")
+        .select("organization_id")
+        .eq("user_id", userId)
+        .limit(1)
+        .maybeSingle();
+      organizationId = membership?.organization_id ?? null;
+    }
     if (!organizationId) {
       return { ok: false, message: "We couldn't find your workspace. Please try again." };
     }
