@@ -24,6 +24,15 @@
   --brand-sky-dark:    oklch(0.87 0.020 245);
   --brand-ink:         oklch(0.18 0.03 262);
   --brand-paper:       oklch(0.985 0.003 245);
+  /* Warm paper used by industry page intros (was the raw #fbf6ee). */
+  --brand-cream:       #fbf6ee;
+  /* Confirmation teal used by intake progress + success affirmations
+     (previously only present as an inline #0f766e fallback). */
+  --brand-teal:        #0f766e;
+  /* Product-screenshot window chrome dots (decorative, macOS-accurate). */
+  --brand-chrome-close:    #ff5f56;
+  --brand-chrome-minimise: #ffbd2e;
+  --brand-chrome-expand:   #27c93f;
 
   /* Status (dashboard-compatible; mirrors src/styles.css names) */
   --brand-success: oklch(0.62 0.14 155);

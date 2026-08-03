@@ -839,7 +839,7 @@ function SectionChallenges({ ctx }: { ctx: Ctx }) {
   // 5. SERVICE-EXPERIENCE → guest / customer journey ribbon (warm palette)
   if (config.archetype === "service-experience") {
     return (
-      <PublicSection className="bg-gradient-to-b from-[#fbf6ee] to-white py-14">
+      <PublicSection className="bg-gradient-to-b from-[color:var(--brand-cream)] to-[color:var(--brand-paper)] py-14">
         <PublicPage>
           {heading}
           <ol className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">

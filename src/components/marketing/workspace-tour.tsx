@@ -116,9 +116,9 @@ export function WorkspaceTour() {
         {/* Product visual */}
         <div className="relative overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-gradient-to-br from-white to-[color:var(--brand-mist)]/40 shadow-sm">
           <div className="flex items-center gap-1.5 border-b border-[color:var(--brand-navy)]/8 bg-white/60 px-4 py-2.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f56]" />
-            <span className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
-            <span className="h-2.5 w-2.5 rounded-full bg-[#27c93f]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--brand-chrome-close)]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--brand-chrome-minimise)]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--brand-chrome-expand)]" />
             <span className="ml-3 text-xs font-medium text-[color:var(--brand-navy)]/80">
               taasflow.com / workspace / {view.label.toLowerCase()}
             </span>

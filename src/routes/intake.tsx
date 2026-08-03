@@ -605,7 +605,7 @@ function ExpressIntakePage() {
             </>
           ) : savedAt ? (
             <>
-              <Check className="h-3.5 w-3.5 text-[color:var(--brand-teal,#0f766e)]" aria-hidden />
+              <Check className="h-3.5 w-3.5 text-[color:var(--brand-teal)]" aria-hidden />
               Saved {new Date(savedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
               {authed ? " to your account" : " on this device"}
             </>
@@ -710,8 +710,8 @@ function ExpressIntakePage() {
 
         <div id="account-step">
         {authed ? (
-          <section className="flex items-center gap-3 rounded-xl border border-[color:var(--brand-teal,#0f766e)]/30 bg-[color:var(--brand-teal,#0f766e)]/5 p-4">
-            <Check className="h-5 w-5 shrink-0 text-[color:var(--brand-teal,#0f766e)]" aria-hidden />
+          <section className="flex items-center gap-3 rounded-xl border border-[color:var(--brand-teal)]/30 bg-[color:var(--brand-teal)]/5 p-4">
+            <Check className="h-5 w-5 shrink-0 text-[color:var(--brand-teal)]" aria-hidden />
             <p className="text-sm">
               Signed in as <strong>{accountEmail}</strong>. This role will be added to your existing
               organisation, and your answers are saved to your account as you type.
@@ -875,7 +875,7 @@ function ExpressIntakePage() {
                 }}
                 className={`flex min-h-[104px] w-full flex-col items-center justify-center gap-1 rounded-lg border border-dashed bg-white p-4 text-center transition ${
                   dragging
-                    ? "border-[color:var(--brand-teal,#0f766e)] bg-[color:var(--brand-teal,#0f766e)]/5"
+                    ? "border-[color:var(--brand-teal)] bg-[color:var(--brand-teal)]/5"
                     : "border-[color:var(--brand-navy)]/25 hover:border-[color:var(--brand-navy)]/50"
                 }`}
               >
@@ -913,7 +913,7 @@ function ExpressIntakePage() {
               )}
             </div>
             {errors.jobDescriptionText && (
-              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger,#b3261e)]">
+              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
                 {errors.jobDescriptionText}
               </p>
             )}
@@ -1007,7 +1007,7 @@ function ExpressIntakePage() {
             </div>
 
             {errors.pilotAcknowledgement && (
-              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger,#b3261e)]">
+              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
                 {errors.pilotAcknowledgement}
               </p>
             )}
@@ -1045,7 +1045,7 @@ function ExpressIntakePage() {
               </label>
             </div>
             {errors.consent && (
-              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger,#b3261e)]">
+              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
                 {errors.consent}
               </p>
             )}
@@ -1102,7 +1102,7 @@ function ExpressIntakePage() {
             <ul className="grid gap-2 pt-1 text-sm text-[color:var(--brand-navy)]/70 sm:grid-cols-3">
               {["Role live in your workspace", "Blueprint built for you", "Every answer editable"].map((t) => (
                 <li key={t} className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-[color:var(--brand-teal,#0f766e)]" aria-hidden />
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-[color:var(--brand-teal)]" aria-hidden />
                   {t}
                 </li>
               ))}
@@ -1160,7 +1160,7 @@ function Field({
       {children}
       {hint && !error && <p className="text-xs text-[color:var(--brand-navy)]/60">{hint}</p>}
       {error && (
-        <p data-field-error="true" className="text-sm text-[color:var(--brand-danger,#b3261e)]">
+        <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
           {error}
         </p>
       )}
