@@ -10,8 +10,8 @@ import { listAllBlogRows } from "@/lib/marketing/blog-catalog";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 import { BLOG_CATEGORY_BY_SLUG } from "@/lib/marketing/blog-manifest";
 
-/** Canonical production origin. Keep in sync with `src/lib/marketing/head.ts`. */
-export const BASE_URL = "https://taasflow.com";
+/** Canonical production origin — shared with every `rel=canonical` tag. */
+export const BASE_URL = CANONICAL_ORIGIN;
 
 export const SITEMAP_URL = `${BASE_URL}/sitemap.xml`;
 
