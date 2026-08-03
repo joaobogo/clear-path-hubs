@@ -20,6 +20,8 @@ const contactSchema = z.object({
   elapsedMs: z.number().int().min(0).max(3_600_000).optional(),
   // Affirmative marketing consent — only true when the visitor ticked the box.
   marketingConsent: z.boolean().default(false),
+  // Required privacy-notice acknowledgement — the form cannot submit without it.
+  privacyAcknowledged: z.literal(true),
   // Campaign + page attribution, captured for EVERY topic (including support
   // and candidate, which never reach the CRM adapter).
   attribution: z.record(z.string(), z.unknown()).nullable().optional(),
@@ -54,6 +56,18 @@ export const Route = createFileRoute("/api/public/contact")({
         }
         const data = parsed.data;
 
+        // Flatten campaign attribution into queryable columns so every
+        // submission — including support and candidate topics that never reach
+        // the CRM adapter — is reportable without JSON digging.
+        const attr = (data.attribution ?? {}) as Record<string, unknown>;
+        const page = (data.pageContext ?? {}) as Record<string, unknown>;
+        const str = (...keys: Array<unknown>) => {
+          for (const v of keys) {
+            if (typeof v === "string" && v.trim().length > 0) return v.trim().slice(0, 500);
+          }
+          return null;
+        };
+
         // Spam signals — silently accept but do not persist.
         const looksBot =
           (data.website && data.website.length > 0) ||
@@ -83,6 +97,12 @@ export const Route = createFileRoute("/api/public/contact")({
               : "no_marketing_consent",
             attribution: (data.attribution ?? null) as never,
             page_context: (data.pageContext ?? null) as never,
+            privacy_acknowledged: data.privacyAcknowledged,
+            utm_source: str(attr["utm_source"], attr["last_touch_source"], attr["first_touch_source"]),
+            utm_medium: str(attr["utm_medium"], attr["last_touch_medium"], attr["first_touch_medium"]),
+            utm_campaign: str(attr["utm_campaign"], attr["last_touch_campaign"], attr["first_touch_campaign"]),
+            landing_page: str(attr["landing_page"], page["landing_page"]),
+            referrer: str(attr["latest_referrer"], attr["original_referrer"], page["referrer"]),
           });
 
         if (error) {
