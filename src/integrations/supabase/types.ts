@@ -2356,34 +2356,46 @@ export type Database = {
       }
       contact_messages: {
         Row: {
+          attribution: Json | null
           company: string | null
+          consent_status: string | null
           created_at: string
           email: string
           id: string
+          marketing_consent: boolean
           message: string
           name: string
+          page_context: Json | null
           source: string | null
           topic: string
           user_agent: string | null
         }
         Insert: {
+          attribution?: Json | null
           company?: string | null
+          consent_status?: string | null
           created_at?: string
           email: string
           id?: string
+          marketing_consent?: boolean
           message: string
           name: string
+          page_context?: Json | null
           source?: string | null
           topic: string
           user_agent?: string | null
         }
         Update: {
+          attribution?: Json | null
           company?: string | null
+          consent_status?: string | null
           created_at?: string
           email?: string
           id?: string
+          marketing_consent?: boolean
           message?: string
           name?: string
+          page_context?: Json | null
           source?: string | null
           topic?: string
           user_agent?: string | null

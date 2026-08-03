@@ -991,19 +991,20 @@ function ExpressIntakePage() {
               </p>
             </div>
 
-            <label className="flex items-start gap-3">
+            <div className="flex items-start gap-3">
               <Checkbox
+                id="pilot-acknowledgement"
                 checked={state.pilotAcknowledgement}
                 onCheckedChange={(v) => set("pilotAcknowledgement", v === true)}
                 className="mt-0.5"
                 aria-invalid={Boolean(errors.pilotAcknowledgement)}
               />
-              <span className="text-sm leading-relaxed">
+              <label htmlFor="pilot-acknowledgement" className="text-sm leading-relaxed">
                 I understand there is no charge today, and that the ${PRICE_PILOT_USD} one-time 14-day
                 pilot is billed only after my account is created and the role is accepted — once per
                 company, for one role.
-              </span>
-            </label>
+              </label>
+            </div>
 
             {errors.pilotAcknowledgement && (
               <p data-field-error="true" className="text-sm text-[color:var(--brand-danger,#b3261e)]">
@@ -1011,25 +1012,27 @@ function ExpressIntakePage() {
               </p>
             )}
 
-            <label className="flex items-start gap-3">
+            <div className="flex items-start gap-3">
               <Checkbox
+                id="research-consent"
                 checked={state.researchConsent}
                 onCheckedChange={(v) => set("researchConsent", v === true)}
                 className="mt-0.5"
               />
-              <span className="text-sm leading-relaxed">
+              <label htmlFor="research-consent" className="text-sm leading-relaxed">
                 Review my company's public website to fill in company context. You can turn this off —
                 we'll use only the job description.
-              </span>
-            </label>
-            <label className="flex items-start gap-3">
+              </label>
+            </div>
+            <div className="flex items-start gap-3">
               <Checkbox
+                id="terms-consent"
                 checked={state.consent}
                 onCheckedChange={(v) => set("consent", v === true)}
                 className="mt-0.5"
                 aria-invalid={Boolean(errors.consent)}
               />
-              <span className="text-sm leading-relaxed">
+              <label htmlFor="terms-consent" className="text-sm leading-relaxed">
                 I accept the{" "}
                 <a href="/terms" className="underline">
                   terms
@@ -1039,8 +1042,8 @@ function ExpressIntakePage() {
                   privacy policy
                 </a>
                 .
-              </span>
-            </label>
+              </label>
+            </div>
             {errors.consent && (
               <p data-field-error="true" className="text-sm text-[color:var(--brand-danger,#b3261e)]">
                 {errors.consent}

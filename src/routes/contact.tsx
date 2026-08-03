@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
 import { submitToCrm } from "@/lib/crm/submit-form";
+import { getAttribution, getPageContext } from "@/lib/crm/attribution";
+import { Checkbox } from "@/components/ui/checkbox";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import { toast } from "sonner";
 import { marketingHead } from "@/lib/marketing/head";
@@ -290,6 +292,8 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<null | { traceId: string }>(null);
   const [error, setError] = useState<string | null>(null);
+  /** Affirmative marketing consent. Never defaulted to true. */
+  const [marketingConsent, setMarketingConsent] = useState(false);
   const submittedRef = useRef(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -318,6 +322,11 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
       source: "public_contact_form",
       website: String(fd.get("website") ?? ""),
       elapsedMs: Date.now() - mountedAt,
+      marketingConsent,
+      // Attribution is captured here so EVERY topic carries it — support and
+      // candidate enquiries never reach the CRM adapter.
+      attribution: getAttribution() as unknown as Record<string, unknown>,
+      pageContext: getPageContext() as unknown as Record<string, unknown>,
     };
 
     if (payload.name.length < 1 || payload.name.length > 120) {
@@ -373,7 +382,9 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
             Link: urlExtra,
             Message: rawMessage,
           },
-          consentStatus: "submitted_contact_form",
+          consentStatus: marketingConsent
+            ? "explicit_opt_in_contact_form"
+            : "no_marketing_consent",
           honeypot: payload.website,
         }).then((result) => {
           // Conversion fires only on a server-confirmed submission id.
@@ -510,6 +521,19 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
           />
         </div>
       )}
+
+      <div className="flex items-start gap-3">
+        <Checkbox
+          id={`consent-${topic}`}
+          checked={marketingConsent}
+          onCheckedChange={(v) => setMarketingConsent(v === true)}
+          className="mt-0.5"
+        />
+        <label htmlFor={`consent-${topic}`} className="text-sm leading-relaxed">
+          Keep me updated with TaaSFlow hiring insights and product news. Optional — we will
+          reply to your message either way, and you can unsubscribe at any time.
+        </label>
+      </div>
 
       {error && (
         <p role="alert" className="text-sm text-red-600">
