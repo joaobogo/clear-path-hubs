@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { DetailsMap } from "@/lib/integration-health.server";
 
 /**
  * Admin integration health: run read-only probes against Stripe, Attio,
@@ -20,7 +21,7 @@ export type IntegrationCheckRow = {
   error_detail: string | null;
   remediation: string | null;
   latency_ms: number | null;
-  details: Record<string, unknown>;
+  details: DetailsMap;
   created_at: string;
 };
 

@@ -12,6 +12,11 @@ export type IntegrationId = "stripe" | "attio" | "calendly" | "email";
 
 export type CheckStatus = "ok" | "degraded" | "failed" | "not_configured";
 
+export type DetailsMap = Record<
+  string,
+  string | number | boolean | null | string[] | Record<string, number>
+>;
+
 export type CheckResult = {
   integration: IntegrationId;
   status: CheckStatus;
@@ -20,7 +25,7 @@ export type CheckResult = {
   error_detail: string | null;
   remediation: string | null;
   latency_ms: number;
-  details: Record<string, unknown>;
+  details: DetailsMap;
 };
 
 const TIMEOUT_MS = 12_000;
@@ -54,7 +59,7 @@ async function checkStripe(): Promise<CheckResult> {
     error_code: null as string | null,
     error_detail: null as string | null,
     remediation: null as string | null,
-    details: {} as Record<string, unknown>,
+    details: {} as DetailsMap,
   };
 
   const hasLive = Boolean(process.env['STRIPE_LIVE_API_KEY']);
@@ -123,7 +128,7 @@ async function checkAttio(): Promise<CheckResult> {
     error_code: null as string | null,
     error_detail: null as string | null,
     remediation: null as string | null,
-    details: {} as Record<string, unknown>,
+    details: {} as DetailsMap,
   };
 
   if (!process.env['ATTIO_API_KEY']) {
@@ -191,7 +196,7 @@ async function checkCalendly(): Promise<CheckResult> {
     error_code: null as string | null,
     error_detail: null as string | null,
     remediation: null as string | null,
-    details: { booking_url: CALENDLY_BOOKING_URL } as Record<string, unknown>,
+    details: { booking_url: CALENDLY_BOOKING_URL } as DetailsMap,
   };
 
   const lovableKey = process.env['LOVABLE_API_KEY'];
@@ -278,7 +283,7 @@ async function checkEmail(): Promise<CheckResult> {
     error_code: null as string | null,
     error_detail: null as string | null,
     remediation: null as string | null,
-    details: {} as Record<string, unknown>,
+    details: {} as DetailsMap,
   };
 
   const apiKey = process.env['LOVABLE_API_KEY'];
