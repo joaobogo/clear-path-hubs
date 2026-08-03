@@ -140,6 +140,8 @@ const OPT_IN_EXCLUSIONS =
   /^Europe\/(Istanbul|Moscow|Kirov|Volgograd|Saratov|Astrakhan|Samara|Ulyanovsk|Minsk|Kyiv|Kiev|Simferopol)$/;
 
 export function requiresPriorOptIn(): boolean {
+  // Admin override: treat every region as an opt-in region.
+  if (getTrackingPolicy().requirePriorOptInEverywhere) return true;
   try {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone ?? "";
     if (!tz) return true; // fail closed
@@ -149,6 +151,7 @@ export function requiresPriorOptIn(): boolean {
     return true; // fail closed
   }
 }
+
 
 /** Back-compat alias used by the banner. */
 export const isOptInRegion = requiresPriorOptIn;
