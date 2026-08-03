@@ -1,4 +1,6 @@
 import { Link } from "@tanstack/react-router";
+
+import { FGV } from "@/config/ecosystem";
 import type { ReactNode } from "react";
 import { brand } from "@/config/brand";
 import { cn } from "@/lib/utils";
@@ -124,7 +126,11 @@ export function FormShell({
 
       <footer className="border-t border-[color:var(--brand-navy)]/10 bg-white/60 py-4">
         <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-2 px-4 text-xs text-[color:var(--brand-navy)]/80 sm:px-6 lg:px-8">
-          <span>© {new Date().getFullYear()} TaaSFlow</span>
+          {/* Parent identification stays on conversion routes; sibling-brand
+              outbound links do not. */}
+          <span>
+            © {new Date().getFullYear()} TaaSFlow — part of {FGV.name}
+          </span>
           <nav aria-label="Form legal" className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <Link to="/privacy" className="hover:text-[color:var(--brand-navy)]">Privacy</Link>
             <Link to="/terms" className="hover:text-[color:var(--brand-navy)]">Terms</Link>

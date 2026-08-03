@@ -44,7 +44,14 @@ const SOCIAL_ICONS: Record<string, typeof Linkedin> = {
 
 /* ---------------------------------------------------------------- Brand mark */
 
-function BrandMark({ compact = false }: { compact?: boolean }) {
+function BrandMark({
+  compact = false,
+  /** Footer mark is always below the fold — defer it so it never competes with LCP. */
+  lazy = false,
+}: {
+  compact?: boolean;
+  lazy?: boolean;
+}) {
   const height = compact ? 28 : 32;
   // Cropped logo intrinsic aspect ratio is ~4.15:1. Width attribute must reflect
   // that so the browser reserves enough horizontal space for the full wordmark.
@@ -56,6 +63,9 @@ function BrandMark({ compact = false }: { compact?: boolean }) {
         alt="TaaSFlow"
         width={width}
         height={height}
+        loading={lazy ? "lazy" : "eager"}
+        decoding={lazy ? "async" : "sync"}
+        {...(lazy ? {} : { fetchPriority: "high" as const })}
         className={cn(compact ? "h-7" : "h-8", "w-auto max-w-none shrink-0")}
       />
     </Link>
@@ -392,7 +402,7 @@ function Footer() {
       <div className="mx-auto max-w-[1200px] px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-6">
           <div className="lg:col-span-2">
-            <BrandMark />
+            <BrandMark lazy />
             <p className="mt-4 max-w-sm text-sm text-[color:var(--brand-navy)]/80">
               {FOOTER_DESCRIPTION}
             </p>

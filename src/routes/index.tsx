@@ -1329,25 +1329,25 @@ function Home() {
             <div className="flex min-w-0 flex-col justify-center gap-6">
               <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80 backdrop-blur">
                 <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
-                For companies hiring 1–20 roles a year
+                ATS + recruiters + outreach — for companies hiring 1–20 roles a year
               </span>
               <h1
                 id="home-hero-heading"
                 className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
               >
-                Hiring software with the
+                Recruiting software with the
                 <br className="hidden sm:block" />{" "}
                 <span className="text-[color:var(--brand-ocean-text)]">recruiters included.</span>
               </h1>
               <p className="max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
-                You get an ATS you keep. Our recruiters run the search inside
-                it. One flat monthly fee — not an agency, not a tool alone.
+                The software is yours to keep. Our recruiters do the searching
+                inside it. One monthly fee, no percentage of salary.
               </p>
               <ul className="grid gap-2 pt-1 sm:grid-cols-3">
                 {[
-                  { t: "The software", d: "Your ATS: roles, pipeline, candidate records you own." },
-                  { t: "The people", d: "Named recruiters source, screen and rank every week." },
-                  { t: "The outreach", d: "Campaigns and follow-ups run for you, tracked live." },
+                  { t: "Software you keep", d: "Roles, pipeline and candidate records you own." },
+                  { t: "Recruiters we provide", d: "Named people source, screen and rank each week." },
+                  { t: "Outreach we run", d: "Campaigns and follow-ups, tracked in the same place." },
                 ].map((p) => (
                   <li
                     key={p.t}
@@ -1387,11 +1387,11 @@ function Home() {
                   to="/how-it-works"
                   className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  See how the recruiting subscription works
+                  See how it works
                 </Link>
               </div>
               <div className="text-xs text-[color:var(--brand-navy)]/80">
-                Hiring for a candidate seat?{" "}
+                Looking for a job instead?{" "}
                 <Link
                   to="/jobs"
                   className="inline-flex items-center gap-1 font-semibold text-[color:var(--brand-ocean-text)] underline-offset-4 hover:text-[color:var(--brand-navy)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)] rounded"
@@ -1400,7 +1400,8 @@ function Home() {
                 </Link>
               </div>
               <p className="text-xs text-[color:var(--brand-navy)]/80">
-                Use our ATS or keep yours — you own the candidates and the final call.
+                Use our software or keep your own. Either way, you own the
+                candidates and every hiring decision.
               </p>
 
 
