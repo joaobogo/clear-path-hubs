@@ -825,7 +825,9 @@ function ExpressIntakePage() {
           </Field>
 
           <div className="space-y-3">
-            <Label className="text-sm font-medium">Job description</Label>
+            <Label htmlFor="jd-text" className="text-sm font-medium">
+              Job description
+            </Label>
             {jdFile ? (
               <div className="flex items-center justify-between gap-3 rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3">
                 <div className="flex min-w-0 items-center gap-3">
@@ -889,6 +891,7 @@ function ExpressIntakePage() {
             <input
               ref={fileInput}
               type="file"
+              aria-label="Upload the job description file"
               accept={JD_ACCEPT_ATTR}
               className="sr-only"
               onChange={(e) => void onPickFile(e.target.files?.[0] ?? null)}
@@ -896,6 +899,7 @@ function ExpressIntakePage() {
 
             <div className="relative">
               <Textarea
+                id="jd-text"
                 value={state.jobDescriptionText}
                 onChange={(e) => set("jobDescriptionText", e.target.value)}
                 rows={8}
@@ -1151,16 +1155,47 @@ function Field({
   hint?: string;
   required?: boolean;
 }) {
+  // Every field gets a generated id so the visible label is programmatically
+  // tied to its control — screen readers announce the field name, and clicking
+  // the label focuses the input.
+  const fieldId = useId();
+  const errorId = `${fieldId}-error`;
+  const hintId = `${fieldId}-hint`;
+  const described = [hint && !error ? hintId : null, error ? errorId : null]
+    .filter(Boolean)
+    .join(" ");
+  const control = React.isValidElement(children)
+    ? React.cloneElement(children as React.ReactElement<Record<string, unknown>>, {
+        id: ((children as React.ReactElement<Record<string, unknown>>).props["id"] as
+          | string
+          | undefined) ?? fieldId,
+        "aria-describedby": described || undefined,
+        "aria-invalid": error ? true : undefined,
+        "aria-required": required || undefined,
+      })
+    : children;
   return (
     <div className="space-y-1.5">
-      <Label className="text-sm font-medium">
+      <Label htmlFor={fieldId} className="text-sm font-medium">
         {label}
-        {required && <span className="ml-1 text-[color:var(--brand-navy)]/50">*</span>}
+        {required && (
+          <span className="ml-1 text-[color:var(--brand-navy)]/70" aria-hidden="true">
+            *
+          </span>
+        )}
       </Label>
-      {children}
-      {hint && !error && <p className="text-xs text-[color:var(--brand-navy)]/60">{hint}</p>}
+      {control}
+      {hint && !error && (
+        <p id={hintId} className="text-xs text-[color:var(--brand-navy)]/75">
+          {hint}
+        </p>
+      )}
       {error && (
-        <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+        <p
+          id={errorId}
+          data-field-error="true"
+          className="text-sm text-[color:var(--brand-danger)]"
+        >
           {error}
         </p>
       )}
