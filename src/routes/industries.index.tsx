@@ -147,7 +147,7 @@ function IndustriesIndex() {
       "@type": "ListItem",
       position: i + 1,
       name: `${t.name} hiring — TaaSFlow`,
-      url: `https://www.taasflow.com/industries/${t.publicSlug}`,
+      url: `https://taasflow.com/industries/${t.publicSlug}`,
     })),
   };
 

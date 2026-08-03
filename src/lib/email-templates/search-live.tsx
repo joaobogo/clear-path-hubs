@@ -49,7 +49,7 @@ export const template = {
     companyName: 'Northwind Health',
     roleTitle: 'Clinical Operations Manager',
     channels: ['Direct outreach', 'TaaSFlow talent network', 'Job board syndication'],
-    roleUrl: 'https://www.taasflow.com/client/positions',
+    roleUrl: 'https://taasflow.com/client/positions',
   },
 } satisfies TemplateEntry
 

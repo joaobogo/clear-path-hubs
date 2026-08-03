@@ -18,7 +18,7 @@ const CHANNEL_ID =
   process.env.TEAMS_CHANNEL_ID ??
   "19:nIJeqUKA79SIyW6vfYoNvVKUzc1Vv-DAZzuT-erYcl01@thread.tacv2";
 
-const APP_URL = process.env.PUBLIC_APP_URL ?? "https://www.taasflow.com";
+const APP_URL = process.env.PUBLIC_APP_URL ?? "https://taasflow.com";
 
 const esc = (v: unknown) =>
   String(v ?? "")

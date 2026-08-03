@@ -71,7 +71,7 @@ export const template = {
     roleTitle: 'Clinical Operations Manager',
     mustHaves: ['Clinical ops leadership', 'Joint Commission readiness', 'Epic'],
     openQuestions: ['Confirm the salary band', 'Confirm the interview panel'],
-    reviewUrl: 'https://www.taasflow.com/client/positions',
+    reviewUrl: 'https://taasflow.com/client/positions',
   },
 } satisfies TemplateEntry
 

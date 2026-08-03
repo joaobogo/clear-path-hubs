@@ -41,7 +41,7 @@ export const template = {
   previewData: {
     contactName: 'Marina',
     roleTitle: 'Clinical Operations Manager',
-    workspaceUrl: 'https://www.taasflow.com/client/positions',
+    workspaceUrl: 'https://taasflow.com/client/positions',
   },
 } satisfies TemplateEntry
 
