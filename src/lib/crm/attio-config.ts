@@ -58,16 +58,6 @@ export const CRM_FORMS = {
     name: "Employer role launch intake",
     type: "client_intake",
   },
-  "partner-inquiry": {
-    id: "partner-inquiry",
-    name: "Partner inquiry",
-    type: "partnership",
-  },
-  "newsletter-signup": {
-    id: "newsletter-signup",
-    name: "Newsletter signup",
-    type: "newsletter",
-  },
 } as const satisfies Record<string, CrmFormDefinition>;
 
 export type CrmFormId = keyof typeof CRM_FORMS;
