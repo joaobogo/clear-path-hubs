@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import * as React from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -597,7 +598,7 @@ function ExpressIntakePage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-[color:var(--brand-navy)]/60" aria-live="polite">
+        <div className="flex items-center gap-2 text-xs text-[color:var(--brand-navy)]/75" aria-live="polite">
           {savingDraft ? (
             <>
               <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
@@ -605,7 +606,7 @@ function ExpressIntakePage() {
             </>
           ) : savedAt ? (
             <>
-              <Check className="h-3.5 w-3.5 text-[color:var(--brand-teal,#0f766e)]" aria-hidden />
+              <Check className="h-3.5 w-3.5 text-[color:var(--brand-teal)]" aria-hidden />
               Saved {new Date(savedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
               {authed ? " to your account" : " on this device"}
             </>
@@ -710,8 +711,8 @@ function ExpressIntakePage() {
 
         <div id="account-step">
         {authed ? (
-          <section className="flex items-center gap-3 rounded-xl border border-[color:var(--brand-teal,#0f766e)]/30 bg-[color:var(--brand-teal,#0f766e)]/5 p-4">
-            <Check className="h-5 w-5 shrink-0 text-[color:var(--brand-teal,#0f766e)]" aria-hidden />
+          <section className="flex items-center gap-3 rounded-xl border border-[color:var(--brand-teal)]/30 bg-[color:var(--brand-teal)]/5 p-4">
+            <Check className="h-5 w-5 shrink-0 text-[color:var(--brand-teal)]" aria-hidden />
             <p className="text-sm">
               Signed in as <strong>{accountEmail}</strong>. This role will be added to your existing
               organisation, and your answers are saved to your account as you type.
@@ -741,13 +742,15 @@ function ExpressIntakePage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Field
-              label={signInMode ? "Password" : "Password"}
+              label="Password"
+              htmlFor="account-password"
               error={errors.password}
               required
               hint={signInMode ? "The password for your existing account." : `At least ${MIN_ACCOUNT_PASSWORD} characters.`}
             >
               <div className="relative">
                 <Input
+                  id="account-password"
                   type={showPassword ? "text" : "password"}
                   value={state.password}
                   onChange={(e) => set("password", e.target.value)}
@@ -758,7 +761,7 @@ function ExpressIntakePage() {
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute right-1 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-[color:var(--brand-navy)]/60 hover:text-[color:var(--brand-navy)]"
+                  className="absolute right-1 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-[color:var(--brand-navy)]/75 hover:text-[color:var(--brand-navy)]"
                 >
                   {showPassword ? (
                     <EyeOff className="h-4 w-4" aria-hidden />
@@ -825,14 +828,16 @@ function ExpressIntakePage() {
           </Field>
 
           <div className="space-y-3">
-            <Label className="text-sm font-medium">Job description</Label>
+            <Label htmlFor="jd-text" className="text-sm font-medium">
+              Job description
+            </Label>
             {jdFile ? (
               <div className="flex items-center justify-between gap-3 rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3">
                 <div className="flex min-w-0 items-center gap-3">
-                  <FileText className="h-5 w-5 shrink-0 text-[color:var(--brand-navy)]/60" aria-hidden />
+                  <FileText className="h-5 w-5 shrink-0 text-[color:var(--brand-navy)]/75" aria-hidden />
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">{jdFile.filename}</p>
-                    <p className="text-xs text-[color:var(--brand-navy)]/60">
+                    <p className="text-xs text-[color:var(--brand-navy)]/75">
                       {(jdFile.size / 1024).toFixed(0)} KB
                     </p>
                   </div>
@@ -875,13 +880,13 @@ function ExpressIntakePage() {
                 }}
                 className={`flex min-h-[104px] w-full flex-col items-center justify-center gap-1 rounded-lg border border-dashed bg-white p-4 text-center transition ${
                   dragging
-                    ? "border-[color:var(--brand-teal,#0f766e)] bg-[color:var(--brand-teal,#0f766e)]/5"
+                    ? "border-[color:var(--brand-teal)] bg-[color:var(--brand-teal)]/5"
                     : "border-[color:var(--brand-navy)]/25 hover:border-[color:var(--brand-navy)]/50"
                 }`}
               >
-                <Upload className="h-5 w-5 text-[color:var(--brand-navy)]/60" aria-hidden />
+                <Upload className="h-5 w-5 text-[color:var(--brand-navy)]/75" aria-hidden />
                 <span className="text-sm font-medium">Drop the job description here, or browse</span>
-                <span className="text-xs text-[color:var(--brand-navy)]/60">
+                <span className="text-xs text-[color:var(--brand-navy)]/75">
                   {JD_ACCEPT_LABEL}
                 </span>
               </button>
@@ -889,6 +894,7 @@ function ExpressIntakePage() {
             <input
               ref={fileInput}
               type="file"
+              aria-label="Upload the job description file"
               accept={JD_ACCEPT_ATTR}
               className="sr-only"
               onChange={(e) => void onPickFile(e.target.files?.[0] ?? null)}
@@ -896,6 +902,7 @@ function ExpressIntakePage() {
 
             <div className="relative">
               <Textarea
+                id="jd-text"
                 value={state.jobDescriptionText}
                 onChange={(e) => set("jobDescriptionText", e.target.value)}
                 rows={8}
@@ -907,13 +914,13 @@ function ExpressIntakePage() {
                 aria-invalid={Boolean(errors.jobDescriptionText)}
               />
               {!jdFile && (
-                <p className="mt-1 text-xs text-[color:var(--brand-navy)]/60">
+                <p className="mt-1 text-xs text-[color:var(--brand-navy)]/75">
                   {jdChars}/{MIN_JD_TEXT} characters minimum when you don't upload a file.
                 </p>
               )}
             </div>
             {errors.jobDescriptionText && (
-              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger,#b3261e)]">
+              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
                 {errors.jobDescriptionText}
               </p>
             )}
@@ -1007,7 +1014,7 @@ function ExpressIntakePage() {
             </div>
 
             {errors.pilotAcknowledgement && (
-              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger,#b3261e)]">
+              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
                 {errors.pilotAcknowledgement}
               </p>
             )}
@@ -1045,7 +1052,7 @@ function ExpressIntakePage() {
               </label>
             </div>
             {errors.consent && (
-              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger,#b3261e)]">
+              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
                 {errors.consent}
               </p>
             )}
@@ -1102,7 +1109,7 @@ function ExpressIntakePage() {
             <ul className="grid gap-2 pt-1 text-sm text-[color:var(--brand-navy)]/70 sm:grid-cols-3">
               {["Role live in your workspace", "Blueprint built for you", "Every answer editable"].map((t) => (
                 <li key={t} className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-[color:var(--brand-teal,#0f766e)]" aria-hidden />
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-[color:var(--brand-teal)]" aria-hidden />
                   {t}
                 </li>
               ))}
@@ -1144,23 +1151,58 @@ function Field({
   error,
   hint,
   required,
+  htmlFor,
 }: {
   label: string;
   children: React.ReactNode;
   error?: string;
   hint?: string;
   required?: boolean;
+  /** Set when the control is nested inside wrapper markup and carries its own id. */
+  htmlFor?: string;
 }) {
+  // Every field gets a generated id so the visible label is programmatically
+  // tied to its control — screen readers announce the field name, and clicking
+  // the label focuses the input.
+  const fieldId = useId();
+  const errorId = `${fieldId}-error`;
+  const hintId = `${fieldId}-hint`;
+  const described = [hint && !error ? hintId : null, error ? errorId : null]
+    .filter(Boolean)
+    .join(" ");
+  const labelFor = htmlFor ?? fieldId;
+  const control = !htmlFor && React.isValidElement(children)
+    ? React.cloneElement(children as React.ReactElement<Record<string, unknown>>, {
+        id: ((children as React.ReactElement<Record<string, unknown>>).props["id"] as
+          | string
+          | undefined) ?? fieldId,
+        "aria-describedby": described || undefined,
+        "aria-invalid": error ? true : undefined,
+        "aria-required": required || undefined,
+      })
+    : children;
   return (
     <div className="space-y-1.5">
-      <Label className="text-sm font-medium">
+      <Label htmlFor={labelFor} className="text-sm font-medium">
         {label}
-        {required && <span className="ml-1 text-[color:var(--brand-navy)]/50">*</span>}
+        {required && (
+          <span className="ml-1 text-[color:var(--brand-navy)]/70" aria-hidden="true">
+            *
+          </span>
+        )}
       </Label>
-      {children}
-      {hint && !error && <p className="text-xs text-[color:var(--brand-navy)]/60">{hint}</p>}
+      {control}
+      {hint && !error && (
+        <p id={hintId} className="text-xs text-[color:var(--brand-navy)]/75">
+          {hint}
+        </p>
+      )}
       {error && (
-        <p data-field-error="true" className="text-sm text-[color:var(--brand-danger,#b3261e)]">
+        <p
+          id={errorId}
+          data-field-error="true"
+          className="text-sm text-[color:var(--brand-danger)]"
+        >
           {error}
         </p>
       )}
@@ -1195,11 +1237,11 @@ function ReviewBlock({
       <dl className="mt-3 space-y-2">
         {rows.map(([label, value]) => (
           <div key={label} className="grid gap-1 sm:grid-cols-[160px_1fr]">
-            <dt className="text-xs uppercase tracking-wide text-[color:var(--brand-navy)]/55">
+            <dt className="text-xs uppercase tracking-wide text-[color:var(--brand-navy)]/75">
               {label}
             </dt>
             <dd className="text-sm whitespace-pre-wrap">
-              {value?.trim() ? value : <span className="text-[color:var(--brand-navy)]/45">Not provided</span>}
+              {value?.trim() ? value : <span className="text-[color:var(--brand-navy)]/75">Not provided</span>}
             </dd>
           </div>
         ))}

@@ -129,19 +129,19 @@ export function BookACallSection({
           </p>
           <ul className="mt-8 space-y-3 text-sm text-white/85">
             <li className="flex items-start gap-3">
-              <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-[color:var(--brand-ocean-light,#7ec9f0)]" />
+              <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-[color:var(--brand-ocean-light)]" />
               <span>
                 20-minute discovery call — role, must-haves, timeline, budget.
               </span>
             </li>
             <li className="flex items-start gap-3">
-              <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-[color:var(--brand-ocean-light,#7ec9f0)]" />
+              <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-[color:var(--brand-ocean-light)]" />
               <span>
                 Ranked shortlist in 14 days — with evidence quoted from every CV.
               </span>
             </li>
             <li className="flex items-start gap-3">
-              <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-[color:var(--brand-ocean-light,#7ec9f0)]" />
+              <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-[color:var(--brand-ocean-light)]" />
               <span>
                 Flat subscription — no percentage-of-salary fees, ever.
               </span>

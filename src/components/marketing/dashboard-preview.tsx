@@ -326,7 +326,7 @@ function PhoneMock() {
                     "flex flex-col items-center gap-1 text-[9px] font-semibold " +
                     (n.active
                       ? "text-[color:var(--brand-ocean-text)]"
-                      : "text-[color:var(--brand-navy)]/60")
+                      : "text-[color:var(--brand-navy)]/75")
                   }
                 >
                   <Icon className="h-4 w-4" />
