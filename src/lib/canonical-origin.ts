@@ -2,11 +2,11 @@
  * Canonical public origin for TaaSFlow.
  *
  * Everything user-facing (sign-in, share links, canonical URLs, structured
- * data, emails) must point at the real product domain — never at the Lovable
+ * data, emails) must point at the real product domain — never at a
  * preview host. Preview builds stay browsable, but any link that is meant to
  * take a person to "TaaSFlow" leaves the preview and lands on the real domain.
  */
-export const CANONICAL_ORIGIN = "https://www.taasflow.com";
+export const CANONICAL_ORIGIN = "https://taasflow.com";
 
 /** Hosts that ARE the production site (no rewrite needed). */
 const PRODUCTION_HOSTS = new Set([
