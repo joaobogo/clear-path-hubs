@@ -708,7 +708,7 @@ function RecentMessages({ messages }: { messages: Any[] }) {
     <div className="rounded-xl border bg-card p-4 sm:p-5">
       <div className="flex items-center justify-between gap-3">
         <SectionHeader icon={<MessageSquare className="h-4 w-4" />} title="Recent messages" size="sm" />
-        <Link to="/client/messages" className="text-sm font-medium text-primary hover:underline">
+        <Link to="/client/conversations" className="text-sm font-medium text-primary hover:underline">
           View
         </Link>
       </div>

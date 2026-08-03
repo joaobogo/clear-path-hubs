@@ -211,7 +211,7 @@ export function ClientOnboardingModal({
               <div className="font-medium">Need help?</div>
               <p className="text-muted-foreground">
                 Send a message from{" "}
-                <Link to="/client/messages" className="underline">
+                <Link to="/client/conversations" className="underline">
                   Messages
                 </Link>{" "}
                 — your TaaSFlow team replies in the same workspace. You can reopen this

@@ -683,14 +683,14 @@ function PositionDetailPage() {
  </div>
  <div className="mt-3 flex flex-wrap gap-2">
  <Button asChild variant="outline" size="sm">
- <Link to="/client/messages" search={{ position: position.id } as never}>
+ <Link to="/client/conversations" search={{ position: position.id } as never}>
  Open thread
  </Link>
  </Button>
  {canEdit && (
  <Button asChild size="sm">
  <Link
- to="/client/messages"
+ to="/client/conversations"
  search={
  {
  position: position.id,
