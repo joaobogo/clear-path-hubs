@@ -12,7 +12,7 @@ type HeroPictureProps = {
 };
 
 /**
- * Renders an editorial hero as a `<picture>` with AVIF/WebP/JPEG candidates and
+ * Renders an editorial hero as a `<picture className="contents">` with AVIF/WebP/JPEG candidates and
  * layout-accurate `sizes`, so mobile fetches the 640px render instead of the
  * full 1600px original. Falls back to a plain `<img>` when no variants exist.
  */
@@ -45,7 +45,7 @@ export function HeroPicture({
   if (!sources?.avif && !sources?.webp) return img;
 
   return (
-    <picture>
+    <picture className="contents">
       {sources.avif ? <source type="image/avif" srcSet={sources.avif} sizes={sources.sizes} /> : null}
       {sources.webp ? <source type="image/webp" srcSet={sources.webp} sizes={sources.sizes} /> : null}
       {img}
