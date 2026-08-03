@@ -1,10 +1,11 @@
 /**
  * TaaSFlow tracking pixels.
  *
- * CONSENT (TF-014): nothing in this module runs until the visitor has made an
- * affirmative choice. `initializeTrackers()` only boots the categories the
- * stored decision permits, and events raised before consent are dropped
- * rather than queued, so no personal data reaches a third party.
+ * CONSENT: regional gate. Outside the EU/EEA/UK/CH every tracker is permitted
+ * by default and the banner offers withdrawal. Inside those regions only the
+ * strictly necessary set runs before an affirmative choice: GA4 in cookieless
+ * Consent Mode "denied" state, plus the Apollo and RB2B business trackers.
+ * Meta, LinkedIn, Clarity and Hotjar never load before consent.
  *
  * Single source of truth for every third-party tag. All injection happens on
  * the client after hydration. Every function is wrapped so a blocked or
@@ -14,7 +15,7 @@
  * Dormant until their env var is set: Meta, LinkedIn, Clarity, Hotjar.
  */
 
-import { isAllowed, type ConsentCategory } from "./consent";
+import { ESSENTIAL_TRACKERS, isAllowed, type ConsentCategory } from "./consent";
 
 const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || "G-HJ2ECKCNK4";
 const APOLLO_ID = import.meta.env.VITE_APOLLO_APP_ID || "6981f9ca9255870019505836";
@@ -92,6 +93,7 @@ function injectScript(
 function initGA4() {
   if (loaded.has("ga4") || !GA_ID) return;
   loaded.add("ga4");
+  const granted = isAllowed("analytics");
   window.dataLayer = window.dataLayer || [];
   // gtag.js only processes dataLayer entries that are real `arguments`
   // objects — pushing a plain array is silently ignored and nothing is sent.
@@ -100,11 +102,40 @@ function initGA4() {
     window.dataLayer!.push(arguments);
   };
 
+  // Consent Mode v2. Before an affirmative choice GA4 runs cookieless:
+  // no analytics/ad storage, no advertising signals, aggregate traffic only.
+  window.gtag("consent", "default", {
+    analytics_storage: granted ? "granted" : "denied",
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+  });
+
   window.gtag("js", new Date());
   // SPA: page views are dispatched manually on route change.
-  window.gtag("config", GA_ID, { send_page_view: false });
+  window.gtag("config", GA_ID, {
+    send_page_view: false,
+    anonymize_ip: true,
+    ...(granted ? {} : { client_storage: "none" }),
+  });
   injectScript("ga4", { src: `https://www.googletagmanager.com/gtag/js?id=${GA_ID}` });
 }
+
+/** Upgrades GA4 from cookieless to full measurement once analytics is allowed. */
+function syncGA4Consent() {
+  if (!loaded.has("ga4") || !window.gtag) return;
+  const granted = isAllowed("analytics");
+  window.gtag("consent", "update", {
+    analytics_storage: granted ? "granted" : "denied",
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+  });
+  if (granted) {
+    window.gtag("config", GA_ID, { send_page_view: false, anonymize_ip: true });
+  }
+}
+
 
 /* ------------------------------------------------------------- Apollo --- */
 
@@ -226,10 +257,17 @@ export function initializeTrackers() {
   }
 
   for (const key of Object.keys(INITIALISERS) as TrackerKey[]) {
-    if (!isAllowed(TRACKER_CATEGORY[key])) continue;
+    // GA4 always boots: cookieless before consent, full measurement after.
+    // Apollo and RB2B are treated as strictly necessary for the business.
+    const essential = key === "ga4" || (ESSENTIAL_TRACKERS as readonly string[]).includes(key);
+    if (!essential && !isAllowed(TRACKER_CATEGORY[key])) continue;
     safe(INITIALISERS[key]);
   }
+
+  // Reflect the current choice onto an already-loaded GA4 instance.
+  safe(syncGA4Consent);
 }
+
 
 function trackerForUri(uri: string): string {
   if (/google-analytics|googletagmanager/.test(uri)) return "ga4";
@@ -280,9 +318,8 @@ const recent = new Map<string, number>();
 
 export function trackEvent(name: string, params: Record<string, unknown> = {}) {
   if (typeof window === "undefined") return;
-  // No consent, no dispatch. Events are dropped rather than buffered so a
-  // later "reject" can never retroactively leak the visitor's session.
-  if (!isAllowed("analytics") && !isAllowed("marketing")) return;
+  // GA4 accepts events pre-consent because it runs cookieless in that state.
+  // Storage-writing tags below stay behind their own category gate.
   safe(() => {
     const payload = clean(params);
     const key = `${name}|${String(payload.page_path ?? payload.cta ?? "")}`;
@@ -292,9 +329,11 @@ export function trackEvent(name: string, params: Record<string, unknown> = {}) {
     recent.set(key, now);
     if (recent.size > 200) recent.clear();
 
+    // GA4 always receives the event; Consent Mode decides whether it is
+    // cookieless or full. Session-recording tools stay consent-gated.
+    window.gtag?.("event", name, payload);
+    window.dataLayer?.push({ event: name, ...payload });
     if (isAllowed("analytics")) {
-      window.gtag?.("event", name, payload);
-      window.dataLayer?.push({ event: name, ...payload });
       window.clarity?.("event", name);
       window.hj?.("event", name);
     }
