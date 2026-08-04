@@ -56,6 +56,7 @@ import { Route as JobsIndexRouteImport } from './routes/jobs.index'
 import { Route as IndustriesIndexRouteImport } from './routes/industries.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as ShareTokenRouteImport } from './routes/share.$token'
+import { Route as ResourcesSlugRouteImport } from './routes/resources.$slug'
 import { Route as PilotIntakeRouteImport } from './routes/pilot_.intake'
 import { Route as PartnershipsStaffingRouteImport } from './routes/partnerships.staffing'
 import { Route as IntakeConfirmationRouteImport } from './routes/intake_.confirmation'
@@ -419,6 +420,11 @@ const ShareTokenRoute = ShareTokenRouteImport.update({
   id: '/share/$token',
   path: '/share/$token',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ResourcesSlugRoute = ResourcesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ResourcesRoute,
 } as any)
 const PilotIntakeRoute = PilotIntakeRouteImport.update({
   id: '/pilot_/intake',
@@ -1178,7 +1184,7 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/resources': typeof ResourcesRoute
+  '/resources': typeof ResourcesRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/security': typeof SecurityRoute
   '/sitemap': typeof SitemapRoute
@@ -1208,6 +1214,7 @@ export interface FileRoutesByFullPath {
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/partnerships/staffing': typeof PartnershipsStaffingRoute
   '/pilot/intake': typeof PilotIntakeRoute
+  '/resources/$slug': typeof ResourcesSlugRoute
   '/share/$token': typeof ShareTokenRoute
   '/blog/': typeof BlogIndexRoute
   '/industries/': typeof IndustriesIndexRoute
@@ -1355,7 +1362,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/resources': typeof ResourcesRoute
+  '/resources': typeof ResourcesRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/security': typeof SecurityRoute
   '/sitemap': typeof SitemapRoute
@@ -1382,6 +1389,7 @@ export interface FileRoutesByTo {
   '/intake/confirmation': typeof IntakeConfirmationRoute
   '/partnerships/staffing': typeof PartnershipsStaffingRoute
   '/pilot/intake': typeof PilotIntakeRoute
+  '/resources/$slug': typeof ResourcesSlugRoute
   '/share/$token': typeof ShareTokenRoute
   '/blog': typeof BlogIndexRoute
   '/industries': typeof IndustriesIndexRoute
@@ -1524,7 +1532,7 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/resources': typeof ResourcesRoute
+  '/resources': typeof ResourcesRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/security': typeof SecurityRoute
   '/sitemap': typeof SitemapRoute
@@ -1554,6 +1562,7 @@ export interface FileRoutesById {
   '/intake_/confirmation': typeof IntakeConfirmationRoute
   '/partnerships/staffing': typeof PartnershipsStaffingRoute
   '/pilot_/intake': typeof PilotIntakeRoute
+  '/resources/$slug': typeof ResourcesSlugRoute
   '/share/$token': typeof ShareTokenRoute
   '/blog/': typeof BlogIndexRoute
   '/industries/': typeof IndustriesIndexRoute
@@ -1733,6 +1742,7 @@ export interface FileRouteTypes {
     | '/intake/confirmation'
     | '/partnerships/staffing'
     | '/pilot/intake'
+    | '/resources/$slug'
     | '/share/$token'
     | '/blog/'
     | '/industries/'
@@ -1907,6 +1917,7 @@ export interface FileRouteTypes {
     | '/intake/confirmation'
     | '/partnerships/staffing'
     | '/pilot/intake'
+    | '/resources/$slug'
     | '/share/$token'
     | '/blog'
     | '/industries'
@@ -2078,6 +2089,7 @@ export interface FileRouteTypes {
     | '/intake_/confirmation'
     | '/partnerships/staffing'
     | '/pilot_/intake'
+    | '/resources/$slug'
     | '/share/$token'
     | '/blog/'
     | '/industries/'
@@ -2227,7 +2239,7 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
-  ResourcesRoute: typeof ResourcesRoute
+  ResourcesRoute: typeof ResourcesRouteWithChildren
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SecurityRoute: typeof SecurityRoute
   SitemapRoute: typeof SitemapRoute
@@ -2613,6 +2625,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/share/$token'
       preLoaderRoute: typeof ShareTokenRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/resources/$slug': {
+      id: '/resources/$slug'
+      path: '/$slug'
+      fullPath: '/resources/$slug'
+      preLoaderRoute: typeof ResourcesSlugRouteImport
+      parentRoute: typeof ResourcesRoute
     }
     '/pilot_/intake': {
       id: '/pilot_/intake'
@@ -3843,6 +3862,18 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface ResourcesRouteChildren {
+  ResourcesSlugRoute: typeof ResourcesSlugRoute
+}
+
+const ResourcesRouteChildren: ResourcesRouteChildren = {
+  ResourcesSlugRoute: ResourcesSlugRoute,
+}
+
+const ResourcesRouteWithChildren = ResourcesRoute._addFileChildren(
+  ResourcesRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -3874,7 +3905,7 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
-  ResourcesRoute: ResourcesRoute,
+  ResourcesRoute: ResourcesRouteWithChildren,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SecurityRoute: SecurityRoute,
   SitemapRoute: SitemapRoute,
