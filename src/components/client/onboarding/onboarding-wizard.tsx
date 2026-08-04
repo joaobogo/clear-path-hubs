@@ -154,7 +154,9 @@ export function OnboardingWizard({ orgId }: { orgId?: string }) {
         <SequenceProgress
           complete={state.complete}
           remaining={remainingMinutes(state.complete)}
+          active={active}
         />
+
         <StepRail
           steps={ONBOARDING_STEPS}
           active={active}
