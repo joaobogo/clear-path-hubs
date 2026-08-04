@@ -184,7 +184,7 @@ export function AgencyComparator() {
                 </h4>
                 <p className="mt-3 max-w-md text-sm font-light opacity-80 sm:text-base">
                   {isCustom
-                    ? "Volumes above 20 positions run on a scoped quote — no savings figure is invented."
+                    ? "Volumes of 11 or more positions run on a subscription programme with a scoped quote — no savings figure is invented."
                     : savings != null && savings > 0
                       ? `Total projected savings with TaaSFlow${savingsPct != null ? ` — ${savingsPct}% reduction` : ""}.`
                       : "TaaSFlow doesn't beat your inputs here. Adjust volume, fee, or internal hours."}
