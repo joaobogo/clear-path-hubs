@@ -111,12 +111,17 @@ export async function loadOperationalHealth(admin: Admin) {
       .in("status", ["failed", "error", "retrying"])
       .order("created_at", { ascending: false })
       .limit(50),
+    // `processing_jobs` has status/error_code/error_message/started_at — an
+    // earlier version of this query used state/last_error/updated_at, which do
+    // not exist, so stuck jobs never surfaced here. Terminal statuses
+    // (completed, cancelled) are excluded: a cancelled job whose entity was
+    // deleted is finished, not pending.
     admin
       .from("processing_jobs")
-      .select("id, job_type, state, last_error, updated_at, created_at")
-      .in("state", ["failed", "running", "queued"])
-      .lt("updated_at", staleCutoff)
-      .order("updated_at", { ascending: false })
+      .select("id, job_type, status, attempts, error_code, error_message, started_at, created_at")
+      .in("status", ["failed", "running", "queued"])
+      .lt("created_at", staleCutoff)
+      .order("created_at", { ascending: false })
       .limit(50),
     admin
       .from("notification_deliveries")
@@ -147,13 +152,14 @@ export async function loadOperationalHealth(admin: Admin) {
     });
   }
   for (const r of jobsRes.data ?? []) {
+    const seenAt = (r.started_at as string) ?? (r.created_at as string);
     issues.push({
       id: r.id as string,
       kind: "processing",
       label: `Job: ${r.job_type ?? "processing"}`,
-      detail: `Stuck in ${r.state} since ${new Date(r.updated_at as string).toLocaleString()}`,
-      last_error: (r.last_error as string) ?? null,
-      occurred_at: r.updated_at as string,
+      detail: `${r.status} since ${new Date(seenAt).toLocaleString()} — ${r.attempts ?? 0} attempt(s)`,
+      last_error: (r.error_message as string) ?? (r.error_code as string) ?? null,
+      occurred_at: seenAt,
       retryable: true,
     });
   }
@@ -195,7 +201,14 @@ export async function retryHealthIssue(admin: Admin, kind: HealthIssue["kind"], 
   if (kind === "webhook") {
     await admin.from("crm_submission_queue").update({ status: "pending", last_error: null }).eq("id", id);
   } else if (kind === "processing") {
-    await admin.from("processing_jobs").update({ state: "queued", last_error: null, updated_at: new Date().toISOString() }).eq("id", id);
+    // Re-arm for the drain worker: clear the error and the claim so the next
+    // cron pass picks it up immediately.
+    await admin
+      .from("processing_jobs")
+      .update({ status: "queued", error_code: null, error_message: null, started_at: null, completed_at: null })
+      .eq("id", id);
+    const { drainApplicationJobs } = await import("./pipeline-runner.server");
+    void drainApplicationJobs({ limit: 3 }).catch(() => undefined);
   } else if (kind === "email") {
     const { retryDelivery } = await import("./notification-email.server");
     await retryDelivery(admin, id);
