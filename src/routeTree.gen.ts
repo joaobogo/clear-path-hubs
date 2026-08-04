@@ -101,6 +101,7 @@ import { Route as AuthenticatedClientPositionsRouteImport } from './routes/_auth
 import { Route as AuthenticatedClientPortfolioRouteImport } from './routes/_authenticated/client.portfolio'
 import { Route as AuthenticatedClientPlanRouteImport } from './routes/_authenticated/client.plan'
 import { Route as AuthenticatedClientOutreachRouteImport } from './routes/_authenticated/client.outreach'
+import { Route as AuthenticatedClientOnboardingRouteImport } from './routes/_authenticated/client.onboarding'
 import { Route as AuthenticatedClientOffersRouteImport } from './routes/_authenticated/client.offers'
 import { Route as AuthenticatedClientMessagesRouteImport } from './routes/_authenticated/client.messages'
 import { Route as AuthenticatedClientInterviewsRouteImport } from './routes/_authenticated/client.interviews'
@@ -648,6 +649,12 @@ const AuthenticatedClientOutreachRoute =
   AuthenticatedClientOutreachRouteImport.update({
     id: '/outreach',
     path: '/outreach',
+    getParentRoute: () => AuthenticatedClientRoute,
+  } as any)
+const AuthenticatedClientOnboardingRoute =
+  AuthenticatedClientOnboardingRouteImport.update({
+    id: '/onboarding',
+    path: '/onboarding',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
 const AuthenticatedClientOffersRoute =
@@ -1206,6 +1213,7 @@ export interface FileRoutesByFullPath {
   '/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/client/messages': typeof AuthenticatedClientMessagesRoute
   '/client/offers': typeof AuthenticatedClientOffersRoute
+  '/client/onboarding': typeof AuthenticatedClientOnboardingRoute
   '/client/outreach': typeof AuthenticatedClientOutreachRoute
   '/client/plan': typeof AuthenticatedClientPlanRoute
   '/client/portfolio': typeof AuthenticatedClientPortfolioRoute
@@ -1368,6 +1376,7 @@ export interface FileRoutesByTo {
   '/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/client/messages': typeof AuthenticatedClientMessagesRoute
   '/client/offers': typeof AuthenticatedClientOffersRoute
+  '/client/onboarding': typeof AuthenticatedClientOnboardingRoute
   '/client/outreach': typeof AuthenticatedClientOutreachRoute
   '/client/plan': typeof AuthenticatedClientPlanRoute
   '/client/portfolio': typeof AuthenticatedClientPortfolioRoute
@@ -1538,6 +1547,7 @@ export interface FileRoutesById {
   '/_authenticated/client/interviews': typeof AuthenticatedClientInterviewsRoute
   '/_authenticated/client/messages': typeof AuthenticatedClientMessagesRoute
   '/_authenticated/client/offers': typeof AuthenticatedClientOffersRoute
+  '/_authenticated/client/onboarding': typeof AuthenticatedClientOnboardingRoute
   '/_authenticated/client/outreach': typeof AuthenticatedClientOutreachRoute
   '/_authenticated/client/plan': typeof AuthenticatedClientPlanRoute
   '/_authenticated/client/portfolio': typeof AuthenticatedClientPortfolioRoute
@@ -1710,6 +1720,7 @@ export interface FileRouteTypes {
     | '/client/interviews'
     | '/client/messages'
     | '/client/offers'
+    | '/client/onboarding'
     | '/client/outreach'
     | '/client/plan'
     | '/client/portfolio'
@@ -1872,6 +1883,7 @@ export interface FileRouteTypes {
     | '/client/interviews'
     | '/client/messages'
     | '/client/offers'
+    | '/client/onboarding'
     | '/client/outreach'
     | '/client/plan'
     | '/client/portfolio'
@@ -2041,6 +2053,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/interviews'
     | '/_authenticated/client/messages'
     | '/_authenticated/client/offers'
+    | '/_authenticated/client/onboarding'
     | '/_authenticated/client/outreach'
     | '/_authenticated/client/plan'
     | '/_authenticated/client/portfolio'
@@ -2837,6 +2850,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientOutreachRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
+    '/_authenticated/client/onboarding': {
+      id: '/_authenticated/client/onboarding'
+      path: '/onboarding'
+      fullPath: '/client/onboarding'
+      preLoaderRoute: typeof AuthenticatedClientOnboardingRouteImport
+      parentRoute: typeof AuthenticatedClientRoute
+    }
     '/_authenticated/client/offers': {
       id: '/_authenticated/client/offers'
       path: '/offers'
@@ -3579,6 +3599,7 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientInterviewsRoute: typeof AuthenticatedClientInterviewsRoute
   AuthenticatedClientMessagesRoute: typeof AuthenticatedClientMessagesRoute
   AuthenticatedClientOffersRoute: typeof AuthenticatedClientOffersRoute
+  AuthenticatedClientOnboardingRoute: typeof AuthenticatedClientOnboardingRoute
   AuthenticatedClientOutreachRoute: typeof AuthenticatedClientOutreachRoute
   AuthenticatedClientPlanRoute: typeof AuthenticatedClientPlanRoute
   AuthenticatedClientPortfolioRoute: typeof AuthenticatedClientPortfolioRoute
@@ -3610,6 +3631,7 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
   AuthenticatedClientInterviewsRoute: AuthenticatedClientInterviewsRoute,
   AuthenticatedClientMessagesRoute: AuthenticatedClientMessagesRoute,
   AuthenticatedClientOffersRoute: AuthenticatedClientOffersRoute,
+  AuthenticatedClientOnboardingRoute: AuthenticatedClientOnboardingRoute,
   AuthenticatedClientOutreachRoute: AuthenticatedClientOutreachRoute,
   AuthenticatedClientPlanRoute: AuthenticatedClientPlanRoute,
   AuthenticatedClientPortfolioRoute: AuthenticatedClientPortfolioRoute,
