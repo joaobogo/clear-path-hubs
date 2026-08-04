@@ -34,11 +34,14 @@
   --brand-chrome-minimise: #ffbd2e;
   --brand-chrome-expand:   #27c93f;
 
-  /* Status (dashboard-compatible; mirrors src/styles.css names) */
-  --brand-success: oklch(0.62 0.14 155);
-  --brand-warning: oklch(0.75 0.16 75);
-  --brand-danger:  oklch(0.58 0.22 27);
-  --brand-info:    oklch(0.60 0.19 258);
+  /* Status (dashboard-compatible; mirrors src/styles.css names)
+     Lightness is tuned so each hue clears WCAG AA (4.5:1) as text on both
+     white and its own *-soft tint — these tokens are used for status text,
+     not only fills. */
+  --brand-success: oklch(0.50 0.14 155);
+  --brand-warning: oklch(0.55 0.16 75);
+  --brand-danger:  oklch(0.52 0.22 27);
+  --brand-info:    oklch(0.52 0.19 258);
 
   /* Gradients */
   --brand-gradient-hero:   linear-gradient(180deg, oklch(0.985 0.003 245) 0%, oklch(0.965 0.005 245) 100%);
