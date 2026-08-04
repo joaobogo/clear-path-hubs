@@ -12,6 +12,7 @@ import {
   StepRail,
 } from "@/components/marketing/how-it-works-deep";
 import { PageConnections } from "@/components/marketing/page-connections";
+import { PRODUCT_CATEGORY, MODULES } from "@/config/product-language";
 
 const entry = getPage("how-it-works");
 
@@ -62,9 +63,10 @@ function HowItWorksPage() {
             The operational anatomy of a TaaSFlow hire.
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
-            Not a marketing overview — the actual mechanics. Blueprint, sourcing
-            map, evidence review, ranking, workspace delivery, and who owns
-            what. If you're evaluating us seriously, this is the page.
+            Not a marketing overview — the actual mechanics of the{" "}
+            {PRODUCT_CATEGORY}: {MODULES.blueprint}, {MODULES.agents},{" "}
+            {MODULES.evidence}, {MODULES.scoring} and the {MODULES.workspace} —
+            and who owns what. If you're evaluating us seriously, this is the page.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link

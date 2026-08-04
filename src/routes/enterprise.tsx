@@ -57,28 +57,28 @@ const VOLUME_BANDS = [
     band: "2–5 active roles",
     price: PRICE_SUB_BRONZE_DISPLAY,
     cadence: "Weekly ranked delivery",
-    pod: "One agent capacity block",
+    agentCapacity: "One agent capacity block",
     fit: "A single function hiring steadily — usually one hiring manager group.",
   },
   {
     band: "6–15 active roles",
     price: PRICE_SUB_SILVER_DISPLAY,
     cadence: "Weekly delivery per role family",
-    pod: "Agent capacity per role family",
+    agentCapacity: "Agent capacity per role family",
     fit: "Two or three functions hiring in parallel with shared standards.",
   },
   {
     band: "16–40 active roles",
     price: PRICE_SUB_GOLD_DISPLAY,
     cadence: "Twice-weekly delivery on priority roles",
-    pod: "Agent capacity plus a named account lead",
+    agentCapacity: "Agent capacity plus a named account lead",
     fit: "Multi-business-unit hiring with executive reporting.",
   },
   {
     band: "40+ or continuous hiring",
     price: PRICE_SUB_ENTERPRISE_DISPLAY,
     cadence: "Cadence agreed per business unit",
-    pod: "Programme-scale agent capacity",
+    agentCapacity: "Programme-scale agent capacity",
     fit: "Programme hiring where volume shifts by quarter.",
   },
 ];
@@ -280,7 +280,7 @@ function EnterprisePage() {
                   </div>
                   <div className="flex gap-2">
                     <dt className="shrink-0 text-[color:var(--brand-navy)]/70">Coverage:</dt>
-                    <dd className="text-[color:var(--brand-navy)]/85">{b.pod}</dd>
+                    <dd className="text-[color:var(--brand-navy)]/85">{b.agentCapacity}</dd>
                   </div>
                 </dl>
               </li>
@@ -298,7 +298,7 @@ function EnterprisePage() {
                   <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Active roles</th>
                   <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Monthly</th>
                   <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">System operating cadence</th>
-                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Recruiter coverage</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Agent capacity and oversight</th>
                 </tr>
               </thead>
               <tbody>
@@ -310,7 +310,7 @@ function EnterprisePage() {
                     </td>
                     <td className="whitespace-nowrap px-4 py-4 font-semibold text-[color:var(--brand-navy)]">{b.price}</td>
                     <td className="px-4 py-4 text-[color:var(--brand-navy)]/80">{b.cadence}</td>
-                    <td className="px-4 py-4 text-[color:var(--brand-navy)]/80">{b.pod}</td>
+                    <td className="px-4 py-4 text-[color:var(--brand-navy)]/80">{b.agentCapacity}</td>
                   </tr>
                 ))}
               </tbody>

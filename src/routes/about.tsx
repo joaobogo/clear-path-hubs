@@ -49,7 +49,7 @@ const LEADERS = [
 ] as const;
 
 const WHY_NOW =
-  "TaaSFlow started because the recruiting market is stuck between two bad options: an ATS that gives you tooling but no work done, or an agency that does the work but hides how. Both leave hiring teams guessing. We built a third model — a recruiting function delivered through a transparent product, priced like software, run by people who care whether the candidate was actually a good fit.";
+  "TaaSFlow started because the recruiting market is stuck between two bad options: an ATS that gives you tooling but no work done, or an agency that does the work but hides how. Both leave hiring teams guessing. We built a third model — an AI Hiring Intelligence Platform that runs the search end to end, priced like software, with configurable expert oversight on every shortlist.";
 
 const PRINCIPLES = [
   {
@@ -77,7 +77,7 @@ const SERVES = [
   },
   {
     who: "50–5,000-employee businesses",
-    body: "Established teams running multiple parallel searches that need one operating model, not five agency contracts.",
+    body: "Established teams running multiple parallel searches that need one operating model, not five separate vendor contracts.",
   },
   {
     who: "Founders leading a hire personally",

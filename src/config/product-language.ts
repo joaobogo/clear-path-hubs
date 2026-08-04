@@ -77,3 +77,27 @@ export const OVERSIGHT_LANGUAGE = {
   escalation: "Escalation path to a named platform expert inside the workspace",
   governance: "Every override recorded in Governance & Audit",
 } as const;
+
+/**
+ * Terms that must not describe TaaSFlow itself on public marketing surfaces.
+ * Comparative use ("unlike a traditional agency…") stays allowed and honest —
+ * these are banned as self-description only.
+ */
+export const BANNED_PUBLIC_TERMS = [
+  "recruiter delivers",
+  "our recruiters",
+  "pod",
+  "delivery cadence",
+  "sourcing channels",
+  "we source",
+  "agency",
+] as const;
+
+export type BannedPublicTerm = (typeof BANNED_PUBLIC_TERMS)[number];
+
+/** Canonical replacement for a banned term, when one is defined. */
+export function replacementFor(term: string): string | undefined {
+  return LANGUAGE_SUBSTITUTIONS.find(
+    (s) => s.avoid.toLowerCase() === term.toLowerCase(),
+  )?.use;
+}
