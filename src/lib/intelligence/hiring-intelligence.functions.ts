@@ -153,14 +153,12 @@ export const getHiringIntelligence = createServerFn({ method: "POST" })
     )).data as Row[]) ?? [];
 
     // ── Outbound outreach touches (reply-rate comparison) ────────────────
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const outreachTouches = ((await scoped<any>(
-      supabase
-        .from("outreach_touches")
-        .select("id, direction, state, sent_at, replied_at, created_at, is_test_record")
-        .eq("organization_id", data.organization_id)
-        .gte("created_at", priorFromISO),
-    )).data as Row[]) ?? [];
+    // Not position-scoped: outreach_touches carries no position_id column.
+    const outreachTouches = ((await supabase
+      .from("outreach_touches")
+      .select("id, direction, state, sent_at, replied_at, created_at, is_test_record")
+      .eq("organization_id", data.organization_id)
+      .gte("created_at", priorFromISO)).data as Row[]) ?? [];
 
     const records: IntelligenceRecords = {
       positions,
