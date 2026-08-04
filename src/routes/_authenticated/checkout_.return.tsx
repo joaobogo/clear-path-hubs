@@ -58,6 +58,15 @@ function CheckoutReturnPage() {
     },
   });
 
+  // Confirmed payment: don't make them click. Straight into the workspace.
+  useEffect(() => {
+    if (data?.state !== "paid") return;
+    toast.success("Payment confirmed — welcome to TaaSFlow. Your welcome email is on its way.");
+    navigate({ to: "/client", replace: true });
+  }, [data?.state, navigate]);
+
+
+
   return (
     <div className="min-h-screen bg-background">
       <PaymentTestModeBanner />
