@@ -107,7 +107,7 @@ export const PRIMARY_ITEMS: PrimaryItem[] = [
   { kind: "link", to: "/system", label: "Intelligence" },
   { kind: "link", to: "/pricing", label: "Pricing" },
   { kind: "link", to: "/case-studies", label: "Customers" },
-  { kind: "link", to: "/trust", label: "Security" },
+  { kind: "link", to: "/security", label: "Security" },
 ];
 
 
@@ -132,7 +132,7 @@ export const FOOTER_GROUPS: NavGroup[] = [
       { to: "/platform", label: "Platform" },
       { to: "/agents",   label: "Agents" },
       { to: "/system",   label: "Intelligence" },
-      { to: "/trust",    label: "Security" },
+      { to: "/security", label: "Security" },
     ],
   },
   {
@@ -192,6 +192,7 @@ export const FOOTER_GROUPS: NavGroup[] = [
   {
     label: "Legal",
     links: [
+      { to: "/security",    label: "Trust Center" },
       { to: "/privacy",     label: "Privacy" },
       { to: "/terms",       label: "Terms" },
       { to: "/sitemap.xml", label: "Sitemap", external: true },
