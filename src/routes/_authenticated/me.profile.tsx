@@ -45,10 +45,11 @@ function ProfilePage() {
  const p = ctx?.profile as Record<string, unknown> | null | undefined;
  // eslint-disable-next-line @typescript-eslint/no-explicit-any
  const [form, setForm] = useState<any>(null);
+ const [baseline, setBaseline] = useState<string | null>(null);
 
  useEffect(() => {
  if (!p) return;
- setForm({
+ const next = {
  full_name: (p.full_name as string) ?? "",
  phone: (p.phone as string) ?? "",
  location: (p.location as string) ?? "",
@@ -70,8 +71,11 @@ function ProfilePage() {
  ((p.availability as { note?: string } | null)?.note) ?? "",
  comp:
  ((p.compensation_preferences as { note?: string } | null)?.note) ?? "",
- });
+ };
+ setForm(next);
+ setBaseline(JSON.stringify(next));
  }, [p]);
+
 
  const save = useMutation({
  mutationFn: (patch: ProfilePatch) => saveFn({ data: patch }),
