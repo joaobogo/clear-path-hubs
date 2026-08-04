@@ -75,12 +75,12 @@ function ChartBlock({ chart, idPrefix }: { chart: MetricChart; idPrefix: string 
             </span>
             <span className="flex flex-col gap-1">
               <span
-                className={`h-2.5 rounded-full ${TONE_BAR[p.tone ?? "neutral"]}`}
+                className={`motion-bar motion-bar-update h-2.5 rounded-full ${TONE_BAR[p.tone ?? "neutral"]}`}
                 style={{ width: `${Math.max(2, (p.value / max) * 100)}%` }}
               />
               {p.compareValue != null && (
                 <span
-                  className="h-1.5 rounded-full bg-muted-foreground/50"
+                  className="motion-bar motion-bar-update h-1.5 rounded-full bg-muted-foreground/50"
                   style={{ width: `${Math.max(2, (p.compareValue / max) * 100)}%` }}
                 />
               )}

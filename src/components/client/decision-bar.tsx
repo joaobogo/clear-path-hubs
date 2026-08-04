@@ -78,6 +78,13 @@ export function DecisionBar({
   const undo = useServerFn(undoClientDecision);
   const [pending, setPending] = React.useState<null | DecisionActionKey>(null);
   const [dialog, setDialog] = React.useState<DecisionActionKey | null>(null);
+  // A toast can be missed. This confirms in place, then clears itself.
+  const [settled, setSettled] = React.useState<string | null>(null);
+  React.useEffect(() => {
+    if (!settled) return;
+    const t = window.setTimeout(() => setSettled(null), 2400);
+    return () => window.clearTimeout(t);
+  }, [settled]);
 
   const advance = advanceFor(stage);
   const canHold = stage !== "hired" && stage !== "not_moving_forward";
@@ -99,6 +106,7 @@ export function DecisionBar({
     try {
       await act({ data: { orgId, matchId, ...payload } });
       setDialog(null);
+      setSettled(done);
       toast.success(`${done} — ${candidateName}`, {
         description: consequenceFor(payload.action),
         duration: UNDO_TOAST_MS,
@@ -123,6 +131,15 @@ export function DecisionBar({
   return (
     <>
       <div className="flex flex-wrap items-center gap-2">
+        {settled && (
+          <span
+            role="status"
+            className="motion-approved inline-flex items-center gap-1.5 rounded-full taas-bg-success-soft px-2.5 py-1 text-xs font-medium taas-tx-success"
+          >
+            <Check className="h-3.5 w-3.5" aria-hidden="true" />
+            {settled}
+          </span>
+        )}
         {advance && (
           <Button
             size={size}

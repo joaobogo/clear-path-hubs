@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { getClientContext, getClientOverview } from "@/lib/client.functions";
 import { countBlockingTasks } from "@/lib/tasks.functions";
+import { staggerStyle, useArrivals } from "@/lib/motion/use-motion";
 import { listPendingPaymentRoles } from "@/lib/booking.functions";
 import { PaymentGateBanner } from "@/components/client/payment-gate-banner";
 import { useClientOrgSearch } from "@/lib/use-client-org";
@@ -425,6 +426,8 @@ function OverviewPage() {
 
 /** One prioritised queue: role, person, age of the request, one action. */
 function DecisionQueue({ queue, loading }: { queue: QueueItem[]; loading: boolean }) {
+  // Work that appeared since the last read animates in; the rest stays still.
+  const arrivals = useArrivals(useMemo(() => queue.map((q) => q.key), [queue]));
   if (loading) {
     return (
       <section aria-labelledby="queue-heading" className="space-y-3">
@@ -472,9 +475,13 @@ function DecisionQueue({ queue, loading }: { queue: QueueItem[]; loading: boolea
           </span>
         }
       />
-      <ul className="divide-y overflow-hidden rounded-xl border bg-card">
-        {queue.slice(0, 8).map((q) => (
-          <li key={q.key}>
+      <ul className="motion-content-in divide-y overflow-hidden rounded-xl border bg-card">
+        {queue.slice(0, 8).map((q, i) => (
+          <li
+            key={q.key}
+            style={arrivals.has(q.key) ? staggerStyle(i) : undefined}
+            className={arrivals.has(q.key) ? "motion-arrive" : undefined}
+          >
             <Link
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               to={q.to as any}

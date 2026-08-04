@@ -407,7 +407,7 @@ function ApplyPage() {
         <div className="mt-6">
           <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
             <div
-              className="h-full bg-primary transition-all"
+              className="motion-progress h-full bg-primary"
               style={{ width: `${(step / STEP_LABELS.length) * 100}%` }}
             />
           </div>

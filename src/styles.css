@@ -3,6 +3,7 @@
 @import "tw-animate-css";
 @import "./styles/brand-tokens.css";
 @import "./styles/motion.css";
+@import "./styles/product-motion.css";
 @import "./styles/industry-motion.css";
 @import "./styles/density.css";
 @import "./styles/workspace-system.css";

@@ -33,6 +33,8 @@ import {
   Cell,
   LabelList,
 } from "recharts";
+import { usePrefersReducedMotion } from "@/lib/motion/use-motion";
+
 
 export const Route = createFileRoute("/_authenticated/client/analytics")({
   head: () => ({
@@ -108,6 +110,10 @@ function Interpretation({ children }: { children: React.ReactNode }) {
 }
 
 function AnalyticsPage() {
+  // Recharts animates series by default; a reduced-motion reader gets the
+  // finished chart immediately instead.
+  const reducedMotion = usePrefersReducedMotion();
+  const chartAnim = { isAnimationActive: !reducedMotion, animationDuration: 280 } as const;
   const orgId = useClientOrgSearch();
   const [window, setWindow] = useState(90);
   const [positionId, setPositionId] = useState<string>("all");
@@ -243,7 +249,7 @@ function AnalyticsPage() {
                         tickLine={false}
                         axisLine={false}
                       />
-                      <Bar dataKey="count" radius={4}>
+                      <Bar dataKey="count" radius={4} {...chartAnim}>
                         <LabelList dataKey="count" position="right" />
                         {data.dropout.steps.map((s) => (
                           <Cell
@@ -293,6 +299,7 @@ function AnalyticsPage() {
                         name="Promised"
                         fill="hsl(var(--muted-foreground))"
                         radius={4}
+                        {...chartAnim}
                       >
                         <LabelList dataKey="promise_days" position="top" />
                       </Bar>
@@ -301,6 +308,7 @@ function AnalyticsPage() {
                         name="Actual"
                         fill="hsl(var(--primary))"
                         radius={4}
+                        {...chartAnim}
                       >
                         <LabelList
                           dataKey="actual_days"

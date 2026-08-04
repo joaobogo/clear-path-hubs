@@ -110,7 +110,7 @@ export function SequenceProgress({
         aria-valuemax={100}
         aria-label="Setup progress"
       >
-        <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${pct}%` }} />
+        <div className="motion-progress h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
       </div>
     </div>
   );

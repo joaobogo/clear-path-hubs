@@ -58,6 +58,8 @@ import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveNoAgentRunsState } from "@/lib/empty-states/empty-state-catalogue";
 import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
 
+import { staggerStyle, useArrivals, useJustChanged } from "@/lib/motion/use-motion";
+
 export const AGENT_RAIL_QUERY_KEY = ["agent-activity-rail"] as const;
 
 /**
@@ -263,7 +265,10 @@ function ItemActions({
 
       {has("retry") && item.role && (
         <Button size="sm" variant="outline" disabled={busy} onClick={() => retryRun.mutate()}>
-          <RefreshCw className={`h-3.5 w-3.5 ${retryRun.isPending ? "animate-spin" : ""}`} aria-hidden="true" />
+          <RefreshCw
+            className={`h-3.5 w-3.5 ${retryRun.isPending ? "animate-spin motion-reduce:animate-none" : ""}`}
+            aria-hidden="true"
+          />
           Run again
         </Button>
       )}
@@ -289,17 +294,27 @@ function ItemRow({
   orgId,
   canDecide,
   onDone,
+  isNew = false,
+  index = 0,
 }: {
   item: RailItem;
   orgId: string;
   canDecide: boolean;
   onDone: () => void;
+  /** Arrived since the last read of this rail — animates in once. */
+  isNew?: boolean;
+  index?: number;
 }) {
   const StatusIcon = STATUS_ICON[item.status];
   const attention = needsAttention(item);
+  // A status transition is a system event, so it gets a single settling cue.
+  const statusChanged = useJustChanged(item.status);
   return (
     <li
-      className={`px-4 py-3 ${attention ? "bg-primary/[0.04]" : ""}`}
+      style={isNew ? staggerStyle(index) : undefined}
+      className={`px-4 py-3 ${attention ? "bg-primary/[0.04]" : ""} ${
+        isNew ? "motion-arrive" : ""
+      } ${statusChanged ? "motion-state-flash" : ""}`}
       aria-label={`${KIND_LABEL[item.kind]} — ${STATUS_LABEL[item.status]}`}
     >
       <div className="flex items-start gap-3">
@@ -319,7 +334,10 @@ function ItemRow({
               {KIND_LABEL[item.kind]}
             </span>
             <Badge variant="outline" className={`gap-1 ${STATUS_STYLE[item.status]}`}>
-              <StatusIcon className="h-3 w-3" aria-hidden="true" />
+              <StatusIcon
+                className={`h-3 w-3 ${item.status === "in_progress" ? "motion-live-dot" : ""}`}
+                aria-hidden="true"
+              />
               {STATUS_LABEL[item.status]}
             </Badge>
             {item.count > 1 && (
@@ -380,6 +398,13 @@ export function AgentActivityRail({
     () => (query.data ? filterGroups(query.data.groups, filters) : []),
     [query.data, filters],
   );
+
+  // Ids currently on the rail; anything new since the last read animates in.
+  const itemIds = useMemo(
+    () => groups.flatMap((g) => g.items.map((i) => i.id)),
+    [groups],
+  );
+  const arrivals = useArrivals(itemIds);
 
   const header = (
     <div className="flex items-baseline justify-between gap-3 border-b px-4 py-3">
@@ -556,7 +581,7 @@ export function AgentActivityRail({
             </Button>
           </div>
         ) : (
-          <div className="divide-y">
+          <div className="divide-y motion-content-in">
             {groups.map((group) => {
               const open = openGroups[group.key] ?? true;
               return (
@@ -586,10 +611,12 @@ export function AgentActivityRail({
                     </span>
                   </button>
                   {open && (
-                    <ul className="divide-y border-t">
-                      {group.items.map((item) => (
+                    <ul className="motion-expand divide-y border-t">
+                      {group.items.map((item, i) => (
                         <ItemRow
                           key={item.id}
+                          isNew={arrivals.has(item.id)}
+                          index={i}
                           item={item}
                           orgId={organizationId}
                           canDecide={data.permission.can_decide}

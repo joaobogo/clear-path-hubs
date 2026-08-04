@@ -205,7 +205,9 @@ export function EvidenceGraph({
           className="min-w-0 p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-5"
         >
           {active && (
-            <ol className="space-y-3">
+            // Keyed on the node so switching requirement reveals the new chain
+            // rather than silently swapping the text under the pointer.
+            <ol key={active.id} className="motion-expand space-y-3">
               <Step index={1} label="Requirement">
                 <p className="text-sm font-medium">{active.requirement}</p>
                 <p className="mt-1 text-xs text-muted-foreground">
@@ -320,7 +322,7 @@ export function EvidenceGraph({
                 </div>
                 <div className="mt-2 h-1.5 rounded-full bg-muted" aria-hidden="true">
                   <div
-                    className="h-1.5 rounded-full bg-primary"
+                    className="motion-bar motion-bar-update h-1.5 rounded-full bg-primary"
                     style={{
                       width: `${
                         active.pointsAvailable > 0
