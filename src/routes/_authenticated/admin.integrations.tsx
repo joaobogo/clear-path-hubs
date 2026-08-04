@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ProcessState } from "@/components/ds/process-state";
+import { CalendlyWebhookPanel } from "@/components/admin/calendly-webhook-panel";
 import {
   getIntegrationHealth,
   runIntegrationChecks,
