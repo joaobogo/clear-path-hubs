@@ -452,6 +452,39 @@ function ResourcesPage() {
         <CollectionsNav />
 
         <Section
+          id="library"
+          eyebrow="Authority library"
+          title="The twelve guides that answer the hard questions"
+          description="Evergreen, evidence-first, and maintained. Start here if you are choosing a hiring model."
+        >
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {RESOURCE_GUIDES.map((g) => (
+              <Link
+                key={g.slug}
+                to="/resources/$slug"
+                params={{ slug: g.slug }}
+                className="group flex flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 transition-colors hover:border-[color:var(--brand-ocean)]/40"
+              >
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">
+                  {g.category}
+                </span>
+                <span className="mt-2 font-semibold leading-snug group-hover:text-[color:var(--brand-ocean-text)]">
+                  {g.title}
+                </span>
+                <span className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/70">
+                  {g.summary}
+                </span>
+                <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[color:var(--brand-ocean-text)]">
+                  Read the guide · {guideReadMinutes(g)} min
+                  <ArrowRight className="h-4 w-4" aria-hidden />
+                </span>
+              </Link>
+            ))}
+          </div>
+        </Section>
+
+
+        <Section
           id="cost-roi"
           eyebrow="Cost & ROI"
           title="Where hiring costs, quality, and speed collide"
