@@ -96,30 +96,30 @@ export const submitInquiry = createServerFn({ method: "POST" })
 
     // Teams channel ping (non-critical).
     try {
-      const { notifyTeamsSafe } = await import("./teams-notify.server");
-      notifyTeamsSafe({
-        title:
-          data.kind === "call"
-            ? "New call request"
-            : data.kind === "estimate"
-              ? "New estimate request"
-              : data.kind === "briefing"
-                ? "New sector briefing download"
-                : "New website enquiry",
-        subtitle: `${data.name}${data.company ? ` · ${data.company}` : ""} · ${routing.ownerDesk}`,
+      const { processLeadEvent } = await import("./leads/lead-pipeline.server");
+      await processLeadEvent({
+        leadType: "marketing_inquiry",
+        sourceId: row.id,
+        source: data.kind ? `inquiry_${data.kind}` : "website_inquiry",
+        sourcePage: data.source_path ?? null,
+        fullName: data.name,
+        email: data.email,
+        company: data.company ?? null,
+        message: data.message ?? null,
         facts: [
-          { label: "Email", value: data.email },
+          { label: "Enquiry type", value: data.kind ?? "general" },
           { label: "Role", value: data.role_title },
           { label: "Roles to hire", value: data.role_count },
           { label: "Vertical", value: vertical },
-          { label: "Priority", value: `${routing.priority.toUpperCase()} (score ${routing.score})` },
+          { label: "Owner desk", value: routing.ownerDesk },
+          { label: "Lead score", value: routing.score },
           { label: "Reply due", value: routing.firstResponseDueAt },
           { label: "Preferred slot", value: data.preferred_slot },
-          { label: "Message", value: data.message },
-          { label: "Source", value: data.source_path },
         ],
-        linkPath: "/admin/leads",
-        linkLabel: "Open lead queue",
+        recordTable: "marketing_inquiries",
+        recordId: row.id,
+        linkPath: "/admin/pending-leads",
+        priority: routing.priority === "urgent" || routing.priority === "high" ? routing.priority : null,
       });
     } catch {
       // ignore
