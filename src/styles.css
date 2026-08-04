@@ -25,6 +25,11 @@
  */
 
 @theme inline {
+  /* Typography — wires the brand stacks into font-sans / font-display /
+     font-mono utilities. Without this, Tailwind falls back to system-ui. */
+  --font-sans: var(--taas-font-sans);
+  --font-display: var(--taas-font-display);
+  --font-mono: var(--taas-font-mono);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -196,7 +201,16 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--taas-font-sans);
+    font-feature-settings: "cv05" 1, "ss01" 1;
   }
+
+  /* Headings carry the industrial display face; body copy stays IBM Plex Sans. */
+  h1, h2, h3, h4 {
+    font-family: var(--taas-font-display);
+    letter-spacing: -0.02em;
+  }
+
 
   /* Long unbreakable strings (URLs, emails, long compound words) should
    * never push the viewport wider on small screens. */

@@ -33,12 +33,12 @@ export const Route = createFileRoute("/changelog")({
 /* ------------------------------------------------------------------ tokens */
 
 const CATEGORY_TONE: Record<ChangelogCategory, string> = {
-  New: "border-emerald-600/25 bg-emerald-600/[0.08] text-emerald-800",
+  New: "border-success/25 bg-success/[0.08] text-success",
   Improved: "border-[color:var(--brand-navy)]/20 bg-[color:var(--brand-navy)]/[0.06] text-[color:var(--brand-navy)]",
-  Fixed: "border-sky-600/25 bg-sky-600/[0.07] text-sky-800",
-  Security: "border-amber-500/30 bg-amber-500/[0.08] text-amber-800",
-  Integration: "border-violet-500/25 bg-violet-500/[0.07] text-violet-800",
-  Developer: "border-slate-500/25 bg-slate-500/[0.07] text-slate-700",
+  Fixed: "border-info/25 bg-info/[0.07] text-info",
+  Security: "border-warning/35 bg-warning/[0.12] text-warning-foreground",
+  Integration: "border-[color:var(--brand-ocean-text)]/25 bg-[color:var(--brand-ocean-text)]/[0.07] text-[color:var(--brand-ocean-text)]",
+  Developer: "border-border bg-muted text-muted-foreground",
 };
 
 const PREVIEWS: Record<PreviewKind, React.ComponentType<{ className?: string }>> = {
