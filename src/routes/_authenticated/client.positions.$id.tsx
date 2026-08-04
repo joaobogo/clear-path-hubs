@@ -35,6 +35,8 @@ import { RoleMemoryPanel } from "@/components/role-memory-panel";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 
 import { RoleProgressTracker } from "@/components/client/role-progress-tracker";
+import { RoleLifecycleTimeline } from "@/components/client/role-lifecycle-timeline";
+import { getRoleLifecycle } from "@/lib/role-lifecycle/role-lifecycle.functions";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
@@ -113,11 +115,20 @@ function PositionDetailPage() {
  queryFn: () => detailFn({ data: { orgId: orgId!, positionId: id } }),
  enabled: !!orgId,
  });
+ const lifecycleFn = useServerFn(getRoleLifecycle);
+ const lifecycle = useQuery({
+ queryKey: ["role-lifecycle", orgId, id],
+ queryFn: () => lifecycleFn({ data: { orgId: orgId!, positionId: id } }),
+ enabled: !!orgId,
+ });
  useEffect(() => {
- const onRefresh = () => refetch();
+ const onRefresh = () => {
+ void refetch();
+ void lifecycle.refetch();
+ };
  window.addEventListener("client:refresh", onRefresh);
  return () => window.removeEventListener("client:refresh", onRefresh);
- }, [refetch]);
+ }, [refetch, lifecycle]);
 
   const [dragOver, setDragOver] = useState<MatchStage | null>(null);
 
@@ -347,6 +358,16 @@ function PositionDetailPage() {
  {summary.pipeline_line}
  </p>
  )}
+ </section>
+
+ {/* Full system workflow — Intake through Hire, derived from real records */}
+ <section className="rounded-xl border bg-card px-4 py-4">
+ <RoleLifecycleTimeline
+ lifecycle={lifecycle.data}
+ isLoading={lifecycle.isLoading}
+ error={lifecycle.error}
+ onRetry={() => void lifecycle.refetch()}
+ />
  </section>
 
  {/* What we committed to at launch — promise, actual, variance */}
