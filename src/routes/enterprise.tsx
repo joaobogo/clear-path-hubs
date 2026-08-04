@@ -52,30 +52,32 @@ const DECISION_PATH = [
   { href: "#timeline", label: "Implementation" },
 ];
 
+// Subscription programmes start at 11+ active roles (POSITION_BANDS.subscription).
+// Buyers with 1–10 roles purchase the one-off packages instead — see /pricing.
 const VOLUME_BANDS = [
   {
-    band: "2–5 active roles",
+    band: "Bronze — up to 15 positions / month",
     price: PRICE_SUB_BRONZE_DISPLAY,
     cadence: "Weekly ranked delivery",
     agentCapacity: "One agent capacity block",
     fit: "A single function hiring steadily — usually one hiring manager group.",
   },
   {
-    band: "6–15 active roles",
+    band: "Silver — 16–30 positions / month",
     price: PRICE_SUB_SILVER_DISPLAY,
     cadence: "Weekly delivery per role family",
     agentCapacity: "Agent capacity per role family",
     fit: "Two or three functions hiring in parallel with shared standards.",
   },
   {
-    band: "16–40 active roles",
+    band: "Gold — 31–50 positions / month",
     price: PRICE_SUB_GOLD_DISPLAY,
     cadence: "Twice-weekly delivery on priority roles",
     agentCapacity: "Agent capacity plus a named account lead",
     fit: "Multi-business-unit hiring with executive reporting.",
   },
   {
-    band: "40+ or continuous hiring",
+    band: "Enterprise — 50+ or continuous hiring",
     price: PRICE_SUB_ENTERPRISE_DISPLAY,
     cadence: "Cadence agreed per business unit",
     agentCapacity: "Programme-scale agent capacity",
