@@ -1,8 +1,29 @@
 // Public job board — reads via publishable-key client (anon RLS policies).
 import { createServerFn } from "@tanstack/react-start";
+import { getRequestHeader } from "@tanstack/react-start/server";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
+
+/**
+ * QA fixtures are flagged is_test_record and are invisible to the public board.
+ * The E2E harness opts in by setting a `qa_e2e` cookie holding QA_SEED_TOKEN,
+ * so the suite can drive the real listing/apply UI without the fixture ever
+ * being reachable by a real visitor.
+ */
+function testRecordsVisible(): boolean {
+  const expected = process.env.QA_SEED_TOKEN;
+  if (!expected) return false;
+  let cookie = "";
+  try {
+    cookie = getRequestHeader("cookie") ?? "";
+  } catch {
+    return false;
+  }
+  const match = /(?:^|;\s*)qa_e2e=([^;]+)/.exec(cookie);
+  return Boolean(match && decodeURIComponent(match[1]) === expected);
+}
+
 
 function publicClient() {
   const url = process.env.SUPABASE_URL!;
@@ -63,13 +84,16 @@ function toReqStrings(input: unknown): string[] {
 export const listPublicPositions = createServerFn({ method: "GET" }).handler(
   async (): Promise<PublicPositionSummary[]> => {
     const supabase = publicClient();
-    const { data, error } = await supabase
+    let query = supabase
       .from("positions")
       .select(
         "id,title,location,work_model,employment_type,seniority,description,requirements,compensation,published_at,openings,organizations(name)",
       )
       .eq("status", "active")
-      .eq("visibility", "public")
+      .eq("visibility", "public");
+    // QA fixtures never appear on the real board.
+    if (!testRecordsVisible()) query = query.or("is_test_record.is.null,is_test_record.eq.false");
+    const { data, error } = await query
       .order("published_at", { ascending: false, nullsFirst: false })
       .limit(200);
     if (error) throw new Error(error.message);
@@ -130,15 +154,18 @@ export const getPublicPosition = createServerFn({ method: "GET" })
   )
   .handler(async ({ data }) => {
     const supabase = publicClient();
-    const { data: pos, error } = await supabase
+    let detail = supabase
       .from("positions")
       .select(
         "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,intake_context,published_at,openings,status,organizations(name,logo_url)",
       )
       .eq("id", data.id)
       .in("status", ["active", "paused"])
-      .eq("visibility", "public")
-      .maybeSingle();
+      .eq("visibility", "public");
+    if (!testRecordsVisible()) {
+      detail = detail.or("is_test_record.is.null,is_test_record.eq.false");
+    }
+    const { data: pos, error } = await detail.maybeSingle();
     if (error) throw new Error(error.message);
     if (!pos) return null;
 

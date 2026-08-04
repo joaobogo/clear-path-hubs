@@ -181,7 +181,7 @@ async function seedQAData(): Promise<{
   // Create orgs
   const { data: orgRow, error: orgErr } = await sb
     .from("organizations")
-    .insert({ name: QA_ORG_NAME, status: "active", domain: "qa-testco.test" })
+    .insert({ name: QA_ORG_NAME, status: "active", domain: "qa-testco.test", is_test_record: true })
     .select("id")
     .single();
   if (orgErr) throw orgErr;
@@ -189,7 +189,7 @@ async function seedQAData(): Promise<{
 
   const { data: otherOrgRow, error: otherErr } = await sb
     .from("organizations")
-    .insert({ name: QA_OTHER_ORG_NAME, status: "active", domain: "qa-otherco.test" })
+    .insert({ name: QA_OTHER_ORG_NAME, status: "active", domain: "qa-otherco.test", is_test_record: true })
     .select("id")
     .single();
   if (otherErr) throw otherErr;
@@ -208,6 +208,8 @@ async function seedQAData(): Promise<{
     .from("positions")
     .insert({
       organization_id: orgId,
+      // Test fixtures must never surface on the public job board.
+      is_test_record: true,
       title: "QA Backend Engineer",
       department: "Engineering",
       location: "Remote",
@@ -237,11 +239,37 @@ async function seedQAData(): Promise<{
   if (posErr) throw posErr;
   const positionId = posRow.id as string;
 
+  // Screening questions the candidate journey answers through the real UI.
+  await sb.from("screening_questions").insert([
+    {
+      position_id: positionId,
+      question: "How many years of professional Python experience do you have?",
+      answer_type: "number",
+      required: true,
+      display_order: 1,
+    },
+    {
+      position_id: positionId,
+      question: "Are you authorised to work remotely for a company in the EU?",
+      answer_type: "boolean",
+      required: true,
+      display_order: 2,
+    },
+    {
+      position_id: positionId,
+      question: "Anything else we should know? (optional)",
+      answer_type: "long_text",
+      required: false,
+      display_order: 3,
+    },
+  ]);
+
   // Closed position (should not show on public board)
   const { data: closedRow, error: closedErr } = await sb
     .from("positions")
     .insert({
       organization_id: orgId,
+      is_test_record: true,
       title: "QA Closed Role",
       description: "Closed role for negative-test coverage. Should never appear on the public board.",
       requirements: ["N/A"],
@@ -422,6 +450,140 @@ async function cleanupBookingE2E(emailPattern: string): Promise<{ deleted: numbe
   return { deleted: count ?? 0 };
 }
 
+/**
+ * Reads back everything the real candidate apply flow persisted, so the E2E
+ * suite can assert rows instead of trusting the UI. Scoped to a single
+ * @qa.taasflow.test mailbox — it can never touch real candidate data.
+ */
+async function lookupCandidateApplication(email: string) {
+  const sb = await loadAdmin();
+  const emailLower = email.toLowerCase();
+  if (!emailLower.endsWith("@qa.taasflow.test")) {
+    throw new Error("lookup_candidate_application only accepts @qa.taasflow.test mailboxes");
+  }
+  const { data: cp } = await sb
+    .from("candidate_profiles")
+    .select("id,full_name,email,user_id")
+    .eq("email", emailLower)
+    .maybeSingle();
+  if (!cp) {
+    return { candidate_profile: null, applications: [], matches: [], jobs: [], score_runs: [], evidence: 0 };
+  }
+  const { data: apps } = await sb
+    .from("applications")
+    .select("id,position_id,status,source,cv_file_id,created_at")
+    .eq("candidate_profile_id", cp.id)
+    .order("created_at", { ascending: true });
+  const appIds = (apps ?? []).map((a: { id: string }) => a.id);
+  const { data: matches } = appIds.length
+    ? await sb
+        .from("candidate_matches")
+        .select("id,application_id,processing_state,stage,admin_status,client_visibility,total_score,score_band")
+        .in("application_id", appIds)
+    : { data: [] };
+  const { data: jobs } = appIds.length
+    ? await sb
+        .from("processing_jobs")
+        .select("id,entity_id,job_type,status,attempts")
+        .in("entity_id", appIds)
+    : { data: [] };
+  const matchIds = (matches ?? []).map((m: { id: string }) => m.id);
+  const { data: runs } = matchIds.length
+    ? await sb
+        .from("score_runs")
+        .select("id,candidate_match_id,status,total_score,score_band")
+        .in("candidate_match_id", matchIds)
+    : { data: [] };
+  let evidence = 0;
+  if (matchIds.length) {
+    const { count } = await sb
+      .from("candidate_evidence_items")
+      .select("id", { count: "exact", head: true })
+      .in("candidate_match_id", matchIds);
+    evidence = count ?? 0;
+  }
+  return {
+    candidate_profile: cp,
+    applications: apps ?? [],
+    matches: matches ?? [],
+    jobs: jobs ?? [],
+    score_runs: runs ?? [],
+    evidence,
+  };
+}
+
+/** Deletes every candidate artefact the suite created via the real apply UI. */
+async function cleanupCandidateE2E(emailPattern: string): Promise<{ deleted: Record<string, number> }> {
+  const sb = await loadAdmin();
+  const counts: Record<string, number> = {};
+  const safe = emailPattern.includes("@qa.taasflow.test")
+    ? emailPattern
+    : "qa.cand+%@qa.taasflow.test";
+
+  const { data: cps } = await sb
+    .from("candidate_profiles")
+    .select("id,email,user_id")
+    .ilike("email", safe);
+  const cpIds = (cps ?? []).map((c: { id: string }) => c.id);
+  counts.candidate_profiles_found = cpIds.length;
+
+  if (cpIds.length > 0) {
+    const { data: apps } = await sb.from("applications").select("id").in("candidate_profile_id", cpIds);
+    const appIds = (apps ?? []).map((a: { id: string }) => a.id);
+    if (appIds.length > 0) {
+      const { data: ms } = await sb.from("candidate_matches").select("id").in("application_id", appIds);
+      const matchIds = (ms ?? []).map((m: { id: string }) => m.id);
+      if (matchIds.length > 0) {
+        for (const table of [
+          "candidate_evidence_items",
+          "candidate_evidence",
+          "score_decisions",
+          "scoring_debug_events",
+          "candidate_stage_history",
+        ]) {
+          await sb.from(table).delete().in("candidate_match_id", matchIds);
+        }
+        await sb.from("score_runs").delete().in("candidate_match_id", matchIds);
+        const { count } = await sb.from("candidate_matches").delete({ count: "exact" }).in("id", matchIds);
+        counts.matches_deleted = count ?? 0;
+      }
+      await sb.from("processing_jobs").delete().in("entity_id", appIds);
+      await sb.from("application_answers").delete().in("application_id", appIds);
+      const { count: ac } = await sb.from("applications").delete({ count: "exact" }).in("id", appIds);
+      counts.applications_deleted = ac ?? 0;
+    }
+    // CV files + storage objects
+    const { data: files } = await sb
+      .from("files")
+      .select("id,storage_path")
+      .in("candidate_profile_id", cpIds);
+    const paths = (files ?? []).map((f: { storage_path: string }) => f.storage_path).filter(Boolean);
+    if (paths.length > 0) {
+      await sb.storage.from("cvs").remove(paths);
+    }
+    await sb.from("candidate_profiles").update({ current_cv_file_id: null }).in("id", cpIds);
+    const { count: fc } = await sb.from("files").delete({ count: "exact" }).in("candidate_profile_id", cpIds);
+    counts.files_deleted = fc ?? 0;
+    const { count: cc } = await sb
+      .from("candidate_profiles")
+      .delete({ count: "exact" })
+      .in("id", cpIds);
+    counts.candidate_profiles_deleted = cc ?? 0;
+
+    let usersDeleted = 0;
+    for (const cp of cps ?? []) {
+      const uid = (cp as { user_id: string | null }).user_id ?? (await findUserIdByEmail(sb, cp.email));
+      if (uid) {
+        await sb.from("profiles").delete().eq("auth_user_id", uid);
+        const { error } = await sb.auth.admin.deleteUser(uid);
+        if (!error) usersDeleted += 1;
+      }
+    }
+    counts.auth_users_deleted = usersDeleted;
+  }
+  return { deleted: counts };
+}
+
 async function handle(request: Request): Promise<Response> {
   const token = request.headers.get("x-qa-token");
   const expected = process.env.QA_SEED_TOKEN;
@@ -469,6 +631,15 @@ async function handle(request: Request): Promise<Response> {
         return Response.json({ ok: false, error: "company_name required" }, { status: 400 });
       }
       const res = await lookupIntake(body.company_name, body.email);
+      return Response.json({ ok: true, action, ...res });
+    }
+    if (action === "lookup_candidate_application") {
+      if (!body.email) return Response.json({ ok: false, error: "email required" }, { status: 400 });
+      const res = await lookupCandidateApplication(body.email);
+      return Response.json({ ok: true, action, ...res });
+    }
+    if (action === "cleanup_candidate_e2e") {
+      const res = await cleanupCandidateE2E(body.email_pattern ?? "qa.cand+%@qa.taasflow.test");
       return Response.json({ ok: true, action, ...res });
     }
     if (action === "lookup_booking") {

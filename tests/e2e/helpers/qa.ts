@@ -36,7 +36,9 @@ type QaAction =
   | "status"
   | "create_application"
   | "cleanup_intake_e2e"
-  | "lookup_intake";
+  | "lookup_intake"
+  | "lookup_candidate_application"
+  | "cleanup_candidate_e2e";
 
 function token(): string {
   const value = process.env["QA_SEED_TOKEN"];
@@ -74,6 +76,70 @@ export const lookupIntake = (companyName: string) =>
     position: { id: string; title: string; status: string } | null;
     booking_sessions: number;
   }>("lookup_intake", { company_name: companyName });
+
+export const CANDIDATE_EMAIL_PREFIX = "qa.cand+";
+
+export type CandidateArtifacts = {
+  ok: boolean;
+  candidate_profile: { id: string; full_name: string; email: string; user_id: string | null } | null;
+  applications: Array<{ id: string; position_id: string; status: string; cv_file_id: string | null }>;
+  matches: Array<{
+    id: string;
+    application_id: string;
+    processing_state: string;
+    stage: string;
+    admin_status: string;
+    client_visibility: string;
+    total_score: number | null;
+    score_band: string | null;
+  }>;
+  jobs: Array<{ id: string; entity_id: string; job_type: string; status: string; attempts: number }>;
+  score_runs: Array<{ id: string; candidate_match_id: string; status: string; total_score: number | null }>;
+  evidence: number;
+};
+
+/** Reads back the rows the real apply flow persisted for one QA mailbox. */
+export const lookupCandidate = (email: string) =>
+  qaSeed<CandidateArtifacts>("lookup_candidate_application", { email });
+
+/** Removes every candidate artefact this suite created through the real UI. */
+export const cleanupCandidateArtifacts = (
+  emailPattern = `${CANDIDATE_EMAIL_PREFIX}%@${QA_EMAIL_DOMAIN}`,
+) => qaSeed<{ deleted: Record<string, number> }>("cleanup_candidate_e2e", { email_pattern: emailPattern });
+
+/** Unique candidate mailbox per run so reruns never collide. */
+export function uniqueCandidate(): { stamp: string; email: string; fullName: string } {
+  const stamp = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
+  return {
+    stamp,
+    email: `${CANDIDATE_EMAIL_PREFIX}${stamp}@${QA_EMAIL_DOMAIN}`,
+    fullName: `QA Candidate ${stamp}`,
+  };
+}
+
+/**
+ * QA fixture positions are flagged is_test_record and hidden from the public
+ * board. This cookie is the token-guarded opt-in that lets the suite drive the
+ * real listing/apply UI against the fixture.
+ */
+export async function allowTestFixtures(context: {
+  addCookies: (c: Array<Record<string, unknown>>) => Promise<void>;
+}): Promise<void> {
+  await context.addCookies([
+    { name: "qa_e2e", value: token(), url: BASE_URL },
+  ]);
+}
+
+/** Kicks the pipeline worker so the suite does not wait on the 2-minute cron. */
+export async function runPipelineDrain(): Promise<void> {
+  const key = process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
+  if (!key) return;
+  await fetch(`${BASE_URL}/api/public/pipeline/run`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", apikey: key },
+    body: JSON.stringify({ drain: true, limit: 5 }),
+  }).catch(() => undefined);
+}
 
 /** Unique-per-run identity so reruns never collide. */
 export function uniqueProspect(): {
@@ -127,7 +193,8 @@ export async function loginAs(
   email: string,
   password: string = QA_PASSWORD,
 ): Promise<void> {
-  const route = kind === "candidate" ? "/candidate/login" : "/login";
+  // One sign-in surface for every persona, candidates included.
+  const route = "/login";
   await page.goto(route, { waitUntil: "domcontentloaded" });
   await page.locator("#email").fill(email);
   await page.locator("#password").fill(password);
