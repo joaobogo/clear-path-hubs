@@ -23,7 +23,7 @@ import { RESOURCE_GUIDES, guideReadMinutes } from "@/content/resources";
 
 const entry = getPage("resources");
 
-export const Route = createFileRoute("/resources")({
+export const Route = createFileRoute("/resources/")({
   head: () =>
     marketingHead(entry, "/resources", {
       title: "Resources — hiring intelligence guides | TaaSFlow",

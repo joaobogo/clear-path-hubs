@@ -21,7 +21,6 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SitemapRouteImport } from './routes/sitemap'
 import { Route as SecurityRouteImport } from './routes/security'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
-import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
@@ -52,6 +51,7 @@ import { Route as AccessDeniedRouteImport } from './routes/access-denied'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ResourcesIndexRouteImport } from './routes/resources.index'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
 import { Route as IndustriesIndexRouteImport } from './routes/industries.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
@@ -247,11 +247,6 @@ const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   path: '/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ResourcesRoute = ResourcesRouteImport.update({
-  id: '/resources',
-  path: '/resources',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -401,6 +396,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResourcesIndexRoute = ResourcesIndexRouteImport.update({
+  id: '/resources/',
+  path: '/resources/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const JobsIndexRoute = JobsIndexRouteImport.update({
   id: '/jobs/',
   path: '/jobs/',
@@ -422,9 +422,9 @@ const ShareTokenRoute = ShareTokenRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResourcesSlugRoute = ResourcesSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => ResourcesRoute,
+  id: '/resources/$slug',
+  path: '/resources/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const PilotIntakeRoute = PilotIntakeRouteImport.update({
   id: '/pilot_/intake',
@@ -1184,7 +1184,6 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/resources': typeof ResourcesRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/security': typeof SecurityRoute
   '/sitemap': typeof SitemapRoute
@@ -1219,6 +1218,7 @@ export interface FileRoutesByFullPath {
   '/blog/': typeof BlogIndexRoute
   '/industries/': typeof IndustriesIndexRoute
   '/jobs/': typeof JobsIndexRoute
+  '/resources/': typeof ResourcesIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/agent-ops': typeof AuthenticatedAdminAgentOpsRoute
@@ -1362,7 +1362,6 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/resources': typeof ResourcesRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/security': typeof SecurityRoute
   '/sitemap': typeof SitemapRoute
@@ -1394,6 +1393,7 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogIndexRoute
   '/industries': typeof IndustriesIndexRoute
   '/jobs': typeof JobsIndexRoute
+  '/resources': typeof ResourcesIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/agent-ops': typeof AuthenticatedAdminAgentOpsRoute
@@ -1532,7 +1532,6 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/resources': typeof ResourcesRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/security': typeof SecurityRoute
   '/sitemap': typeof SitemapRoute
@@ -1567,6 +1566,7 @@ export interface FileRoutesById {
   '/blog/': typeof BlogIndexRoute
   '/industries/': typeof IndustriesIndexRoute
   '/jobs/': typeof JobsIndexRoute
+  '/resources/': typeof ResourcesIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/agent-ops': typeof AuthenticatedAdminAgentOpsRoute
@@ -1712,7 +1712,6 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/reset-password'
-    | '/resources'
     | '/robots.txt'
     | '/security'
     | '/sitemap'
@@ -1747,6 +1746,7 @@ export interface FileRouteTypes {
     | '/blog/'
     | '/industries/'
     | '/jobs/'
+    | '/resources/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/agent-ops'
@@ -1890,7 +1890,6 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/reset-password'
-    | '/resources'
     | '/robots.txt'
     | '/security'
     | '/sitemap'
@@ -1922,6 +1921,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/industries'
     | '/jobs'
+    | '/resources'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/agent-ops'
@@ -2059,7 +2059,6 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/reset-password'
-    | '/resources'
     | '/robots.txt'
     | '/security'
     | '/sitemap'
@@ -2094,6 +2093,7 @@ export interface FileRouteTypes {
     | '/blog/'
     | '/industries/'
     | '/jobs/'
+    | '/resources/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/admin/agent-ops'
@@ -2239,7 +2239,6 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
-  ResourcesRoute: typeof ResourcesRouteWithChildren
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SecurityRoute: typeof SecurityRoute
   SitemapRoute: typeof SitemapRoute
@@ -2263,10 +2262,12 @@ export interface RootRouteChildren {
   IntakeConfirmationRoute: typeof IntakeConfirmationRoute
   PartnershipsStaffingRoute: typeof PartnershipsStaffingRoute
   PilotIntakeRoute: typeof PilotIntakeRoute
+  ResourcesSlugRoute: typeof ResourcesSlugRoute
   ShareTokenRoute: typeof ShareTokenRoute
   BlogIndexRoute: typeof BlogIndexRoute
   IndustriesIndexRoute: typeof IndustriesIndexRoute
   JobsIndexRoute: typeof JobsIndexRoute
+  ResourcesIndexRoute: typeof ResourcesIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicBlueprintRunRoute: typeof ApiPublicBlueprintRunRoute
@@ -2379,13 +2380,6 @@ declare module '@tanstack/react-router' {
       path: '/robots.txt'
       fullPath: '/robots.txt'
       preLoaderRoute: typeof RobotsDottxtRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/resources': {
-      id: '/resources'
-      path: '/resources'
-      fullPath: '/resources'
-      preLoaderRoute: typeof ResourcesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -2598,6 +2592,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/resources/': {
+      id: '/resources/'
+      path: '/resources'
+      fullPath: '/resources/'
+      preLoaderRoute: typeof ResourcesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/jobs/': {
       id: '/jobs/'
       path: '/jobs'
@@ -2628,10 +2629,10 @@ declare module '@tanstack/react-router' {
     }
     '/resources/$slug': {
       id: '/resources/$slug'
-      path: '/$slug'
+      path: '/resources/$slug'
       fullPath: '/resources/$slug'
       preLoaderRoute: typeof ResourcesSlugRouteImport
-      parentRoute: typeof ResourcesRoute
+      parentRoute: typeof rootRouteImport
     }
     '/pilot_/intake': {
       id: '/pilot_/intake'
@@ -3862,18 +3863,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
-interface ResourcesRouteChildren {
-  ResourcesSlugRoute: typeof ResourcesSlugRoute
-}
-
-const ResourcesRouteChildren: ResourcesRouteChildren = {
-  ResourcesSlugRoute: ResourcesSlugRoute,
-}
-
-const ResourcesRouteWithChildren = ResourcesRoute._addFileChildren(
-  ResourcesRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -3905,7 +3894,6 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
-  ResourcesRoute: ResourcesRouteWithChildren,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SecurityRoute: SecurityRoute,
   SitemapRoute: SitemapRoute,
@@ -3930,10 +3918,12 @@ const rootRouteChildren: RootRouteChildren = {
   IntakeConfirmationRoute: IntakeConfirmationRoute,
   PartnershipsStaffingRoute: PartnershipsStaffingRoute,
   PilotIntakeRoute: PilotIntakeRoute,
+  ResourcesSlugRoute: ResourcesSlugRoute,
   ShareTokenRoute: ShareTokenRoute,
   BlogIndexRoute: BlogIndexRoute,
   IndustriesIndexRoute: IndustriesIndexRoute,
   JobsIndexRoute: JobsIndexRoute,
+  ResourcesIndexRoute: ResourcesIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicBlueprintRunRoute: ApiPublicBlueprintRunRoute,
