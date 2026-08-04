@@ -1,5 +1,6 @@
 import * as React from "react";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
+import { HeroDecisionWorkspace } from "@/components/home/hero-decision-workspace";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Activity,
