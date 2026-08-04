@@ -566,22 +566,30 @@ export const Route = createFileRoute("/api/public/express-intake")({
           console.error("[express-intake] notify failed (non-critical)", err);
         }
 
-        // ---------- Teams ----------
+        // ---------- Unified lead notification (Teams + email + ledger) ----------
         try {
-          const { notifyTeamsSafe } = await import("@/lib/teams-notify.server");
-          notifyTeamsSafe({
-            title: "New express onboarding",
-            subtitle: `${data.companyName.trim()} · ${data.roleTitle.trim()}`,
+          const { processLeadEvent } = await import("@/lib/leads/lead-pipeline.server");
+          await processLeadEvent({
+            leadType: "express_intake",
+            sourceId: intakeId,
+            source: "express_intake",
+            sourcePage: "/intake",
+            fullName: `${data.firstName} ${data.lastName}`.trim(),
+            email: data.workEmail,
+            company: data.companyName.trim(),
             facts: [
-              { label: "Contact", value: `${data.firstName} ${data.lastName}` },
-              { label: "Email", value: data.workEmail },
+              { label: "Role", value: data.roleTitle.trim() },
               { label: "Job description", value: data.jobDescriptionFile ? "uploaded file" : "pasted text" },
+              { label: "Account", value: accountCreated ? "created" : "existing" },
             ],
+            recordTable: "intake_submissions",
+            recordId: intakeId,
+            organizationId,
+            positionId,
             linkPath: `/admin/positions/${positionId}`,
-            linkLabel: "Open role",
           });
         } catch (err) {
-          console.error("[express-intake] teams failed (non-critical)", err);
+          console.error("[express-intake] lead notification failed (non-critical)", err);
         }
 
         // ---------- Confirmation email ----------

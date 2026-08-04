@@ -117,23 +117,27 @@ export const Route = createFileRoute("/api/public/contact")({
           );
         }
 
-        // Teams channel ping (non-critical).
+        // Unified lead notification: Teams + internal email + delivery record.
         try {
-          const { notifyTeamsSafe } = await import("@/lib/teams-notify.server");
-          notifyTeamsSafe({
-            title: "New contact form submission",
-            subtitle: `${data.name}${data.company ? ` · ${data.company}` : ""}`,
-            facts: [
-              { label: "Email", value: data.email },
-              { label: "Topic", value: data.topic },
-              { label: "Message", value: data.message },
-              { label: "Source", value: data.source },
-            ],
-            linkPath: "/admin/inbox",
-            linkLabel: "Open inbox",
+          const { processLeadEvent } = await import("@/lib/leads/lead-pipeline.server");
+          await processLeadEvent({
+            leadType: "contact_message",
+            sourceId: traceId,
+            source: data.source,
+            sourcePage: str(page["path"], page["source_page_url"], attr["landing_page"]),
+            fullName: data.name,
+            email: data.email,
+            company: data.company || null,
+            message: data.message,
+            facts: [{ label: "Topic", value: data.topic }],
+            recordTable: "contact_messages",
+            recordId: traceId,
+            linkPath: "/admin/messages",
+            priority: data.topic === "hire_talent" ? "urgent" : null,
+            attribution: data.attribution ?? null,
           });
-        } catch {
-          // ignore
+        } catch (err) {
+          console.error("[contact] lead notification failed", { traceId, err });
         }
 
         return Response.json({ ok: true, trace_id: traceId });

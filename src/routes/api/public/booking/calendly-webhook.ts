@@ -175,6 +175,35 @@ export const Route = createFileRoute("/api/public/booking/calendly-webhook")({
         const updated = await applyBookingStatus(row.id, update);
         if (updated) await syncBookingStatusToCrm(updated, update);
 
+        // Booked, rescheduled or cancelled meetings are lead-grade facts: notify
+        // Teams + internal email with a traceable delivery record.
+        try {
+          const { processLeadEvent } = await import("@/lib/leads/lead-pipeline.server");
+          await processLeadEvent({
+            leadType: "discovery_call",
+            sourceId: `${row.id}:${update.status}:${event.start_time ?? body.created_at ?? ""}`,
+            source: `calendly_${body.event}`,
+            sourcePage: "/book",
+            fullName: [updated?.first_name, updated?.last_name].filter(Boolean).join(" ") || null,
+            email: updated?.email ?? body.payload.email ?? null,
+            company: updated?.company_name ?? null,
+            facts: [
+              { label: "Meeting status", value: update.status },
+              { label: "Starts", value: event.start_time },
+              { label: "Timezone", value: body.payload.timezone },
+              { label: "Host", value: host?.user_name },
+              { label: "Join link", value: event.location?.join_url },
+            ],
+            recordTable: "booking_sessions",
+            recordId: row.id,
+            linkPath: "/admin/pending-leads",
+            priority: update.status === "cancelled" ? "high" : "urgent",
+            crmStatus: "synced",
+          });
+        } catch (err) {
+          console.error("[calendly] lead notification failed", err);
+        }
+
         return new Response("ok", { status: 200 });
       },
     },

@@ -5136,6 +5136,162 @@ export type Database = {
           },
         ]
       }
+      lead_notifications: {
+        Row: {
+          attempts: number
+          company: string | null
+          created_at: string
+          crm_detail: string | null
+          crm_status: string
+          email: string | null
+          email_at: string | null
+          email_detail: string | null
+          email_recipients: string[]
+          email_status: string
+          full_name: string | null
+          id: string
+          idempotency_key: string
+          last_attempt_at: string | null
+          lead_type: string
+          message: string | null
+          organization_id: string | null
+          owner_email: string | null
+          payload: Json
+          phone: string | null
+          position_id: string | null
+          priority: string
+          record_id: string | null
+          record_table: string | null
+          source: string
+          source_page: string | null
+          teams_at: string | null
+          teams_detail: string | null
+          teams_status: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          company?: string | null
+          created_at?: string
+          crm_detail?: string | null
+          crm_status?: string
+          email?: string | null
+          email_at?: string | null
+          email_detail?: string | null
+          email_recipients?: string[]
+          email_status?: string
+          full_name?: string | null
+          id?: string
+          idempotency_key: string
+          last_attempt_at?: string | null
+          lead_type: string
+          message?: string | null
+          organization_id?: string | null
+          owner_email?: string | null
+          payload?: Json
+          phone?: string | null
+          position_id?: string | null
+          priority?: string
+          record_id?: string | null
+          record_table?: string | null
+          source: string
+          source_page?: string | null
+          teams_at?: string | null
+          teams_detail?: string | null
+          teams_status?: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          company?: string | null
+          created_at?: string
+          crm_detail?: string | null
+          crm_status?: string
+          email?: string | null
+          email_at?: string | null
+          email_detail?: string | null
+          email_recipients?: string[]
+          email_status?: string
+          full_name?: string | null
+          id?: string
+          idempotency_key?: string
+          last_attempt_at?: string | null
+          lead_type?: string
+          message?: string | null
+          organization_id?: string | null
+          owner_email?: string | null
+          payload?: Json
+          phone?: string | null
+          position_id?: string | null
+          priority?: string
+          record_id?: string | null
+          record_table?: string | null
+          source?: string
+          source_page?: string | null
+          teams_at?: string | null
+          teams_detail?: string | null
+          teams_status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_notifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_notifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_notifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "lead_notifications_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "lead_notifications_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_notifications_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "lead_notifications_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_notifications_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       legacy_application_map: {
         Row: {
           checksum: string | null
