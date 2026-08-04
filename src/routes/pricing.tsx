@@ -21,13 +21,23 @@ import { RiskProof } from "@/components/marketing/risk-proof";
 import { ModelComparisonTable } from "@/components/marketing/model-comparison-table";
 import { CaseStudyPreviews } from "@/components/marketing/case-study-previews";
 import { EcosystemCrossSell } from "@/components/marketing/ecosystem-cross-sell";
+import { EntitlementMatrix } from "@/components/marketing/entitlement-matrix";
+import {
+  ONEOFF_ENTITLEMENTS,
+  ONEOFF_PLAN_IDS,
+  ONEOFF_PLAN_LABELS,
+  SUBSCRIPTION_ENTITLEMENTS,
+  SUBSCRIPTION_PLAN_IDS,
+  SUBSCRIPTION_PLAN_LABELS,
+  ENTITLEMENT_POLICY,
+} from "@/config/pricing-entitlements";
 
 export const Route = createFileRoute("/pricing")({
   head: () =>
     marketingHead(undefined, "/pricing", {
-      title: "Pricing | Subscription Recruiting | TaaSFlow",
+      title: "Pricing & Plan Entitlements | TaaSFlow Platform",
       description:
-        `Flat-fee subscription recruiting from ${PRICE_PILOT_DISPLAY}. Ranked, pre-screened shortlists in a live dashboard. No placement fees, no salary percentages.`,
+        `TaaSFlow platform plans from ${PRICE_PILOT_DISPLAY}: active roles under management, agent capacity, Hiring Intelligence, Evidence Graph, governance and support — compared side by side.`,
     }),
   component: PricingPage,
 });
@@ -43,22 +53,23 @@ function PricingPage() {
         <PublicPage>
           <div className="text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
-              Transparent Pricing
+              Plans & Entitlements
             </p>
             <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-              Plans that scale with volume
+              One platform. Entitlements that scale.
             </h1>
             <p className="mt-5 max-w-2xl mx-auto text-lg text-[color:var(--brand-navy)]/80">
-              Every plan is the full {PRODUCT_CATEGORY}. Higher volume = lower
-              cost per role. Annual commitment saves 10%.
+              Every plan is the full {PRODUCT_CATEGORY}. What changes between
+              plans is capacity — active roles, agent runs, intelligence and
+              governance. Annual commitment saves 10%.
             </p>
           </div>
           <ul className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-[color:var(--brand-navy)]/80">
             {[
               "No salary percentage fees",
-              "Ranked candidates in 14 days",
-              "Ethical, criteria-based scoring",
-              "You keep the candidates forever",
+              "Evidence-backed scoring on every candidate",
+              "Expert oversight included in every plan",
+              "Candidate records stay yours",
             ].map((x) => (
               <li key={x} className="flex items-start gap-2">
                 <Check
@@ -111,8 +122,8 @@ function PricingPage() {
           </div>
           <p className="mt-4 text-center text-sm text-[color:var(--brand-navy)]/80">
             {mode === "oneoff"
-              ? "Flat fee, delivered weekly. Best when you know the roles you need to fill right now."
-              : "Continuous monthly hiring at volume — Bronze through Enterprise."}
+              ? "A single flat fee for a fixed set of active roles. Best when you know exactly which roles are open now."
+              : "Continuous capacity, billed monthly — Bronze through Enterprise."}
           </p>
         </PublicPage>
       </PublicSection>
@@ -128,9 +139,9 @@ function PricingPage() {
                 ))}
               </div>
               <p className="mt-6 text-sm text-[color:var(--brand-navy)]/80">
-                Deliveries include the{" "}
+                Each active role returns a ranked, evidence-backed shortlist of the{" "}
                 <span className="font-semibold text-[color:var(--brand-navy)]">top 10</span>{" "}
-                ranked candidates per position each week.
+                candidates, refreshed weekly in your workspace.
               </p>
             </>
           ) : (
@@ -150,6 +161,66 @@ function PricingPage() {
           </div>
         </PublicPage>
       </PublicSection>
+
+      {/* Entitlement comparison — platform capacity per plan */}
+      <PublicSection className="py-10">
+        <PublicPage>
+          <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight sm:text-3xl">
+            What each plan entitles you to
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
+            The platform is the same on every plan. These are the entitlements that
+            differ — capacity, access and governance, not hours of labour.
+          </p>
+          <div className="mt-6">
+            {mode === "oneoff" ? (
+              <EntitlementMatrix
+                rows={ONEOFF_ENTITLEMENTS}
+                planIds={ONEOFF_PLAN_IDS}
+                planLabels={ONEOFF_PLAN_LABELS}
+                caption="Platform entitlements by one-off package plan"
+              />
+            ) : (
+              <EntitlementMatrix
+                rows={SUBSCRIPTION_ENTITLEMENTS}
+                planIds={SUBSCRIPTION_PLAN_IDS}
+                planLabels={SUBSCRIPTION_PLAN_LABELS}
+                caption="Platform entitlements by subscription plan"
+              />
+            )}
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+      {/* Entitlement rules — active roles, limits, billing, upgrades, retention */}
+      <PublicSection className="py-10">
+        <PublicPage>
+          <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight sm:text-3xl">
+            How the entitlements work
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
+            Plain answers to the questions that decide whether a plan fits. Your
+            signed quote or agreement is always the authority on commercial terms.
+          </p>
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            {ENTITLEMENT_POLICY.map((item) => (
+              <div
+                key={item.id}
+                className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 sm:p-6"
+              >
+                <h3 className="text-base font-semibold text-[color:var(--brand-navy)]">
+                  {item.question}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
+                  {item.answer}
+                </p>
+              </div>
+            ))}
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+
 
       {/* Static agency-fee comparison — example math for 1, 3, 10 hires */}
       <PublicSection className="py-10">
@@ -194,10 +265,10 @@ function PricingPage() {
           <div className="grid gap-6 md:grid-cols-2">
             <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8">
               <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight">
-                What every tier includes
+                Included on every plan
               </h2>
               <p className="mt-2 text-sm text-[color:var(--brand-navy)]/80">
-                Baseline capabilities that ship on every engagement.
+                Baseline platform capabilities, regardless of plan size.
               </p>
               <ul className="mt-5 space-y-2.5 text-sm text-[color:var(--brand-navy)]/85">
                 {PRICING_TIERS[0].included.map((x) => (
