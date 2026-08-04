@@ -50,7 +50,7 @@ export const SIBLING_BRANDS: Record<SiblingBrandId, SiblingBrand> = {
   neuronflow: {
     id: "neuronflow",
     name: "NeuronFlow",
-    url: "https://neuronflow.ai",
+    url: "https://neuroflowapp.com",
     owns: "AI agents and workflow automation",
   },
   fgv: {
