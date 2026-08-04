@@ -1,22 +1,36 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { getSlaClock } from "@/lib/admin-workbench.functions";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { TestRecordsToggle } from "@/components/admin/TestRecordsToggle";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+const searchSchema = z.object({
+  show_test: fallback(z.boolean(), false).default(false),
+});
+
 export const Route = createFileRoute("/_authenticated/admin/sla")({
-  loader: ({ context }) =>
-    context.queryClient.ensureQueryData({ queryKey: ["admin-sla-clock"], queryFn: () => getSlaClock() }),
+  validateSearch: zodValidator(searchSchema),
+  loaderDeps: ({ search }) => ({ show_test: search.show_test }),
+  loader: ({ context, deps }) =>
+    context.queryClient.ensureQueryData({
+      queryKey: ["admin-sla-clock", deps.show_test],
+      queryFn: () => getSlaClock({ data: { include_test: deps.show_test } }),
+    }),
   head: () => ({
     meta: [
       { title: "SLA clock · TaaSFlow admin" },
       { name: "description", content: "Roles approaching or past a service commitment, sorted by urgency." },
+      { name: "robots", content: "noindex" },
     ],
   }),
   errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.sla.tsx"),
   component: SlaClockPage,
 });
+
 
 const STATE_LABEL: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   overdue: { label: "Past promise", variant: "destructive" },
