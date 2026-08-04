@@ -175,11 +175,11 @@ function MyApplicationsPage() {
  </div>
  </div>
  </div>
- <div className="flex gap-2">
+ <div className="flex flex-wrap gap-2">
  <Link
  to="/me/applications/$id"
  params={{ id: a.id }}
- className="inline-flex items-center px-3 py-1.5 rounded border text-sm hover:bg-muted"
+ className="inline-flex min-h-11 items-center rounded border px-3.5 text-sm hover:bg-muted"
  >
  Track application
  </Link>
