@@ -37,7 +37,7 @@ async function fillPasswords(page: Page, password: string, confirm = password) {
 }
 
 async function fillRole(page: Page, withJd: boolean) {
-  await page.getByLabel("Job title").first().fill("Clinical Operations Manager");
+  await page.getByLabel("Job title", { exact: true }).fill("Clinical Operations Manager");
   if (withJd) await page.locator("#jd-text").fill(JD_TEXT);
 }
 

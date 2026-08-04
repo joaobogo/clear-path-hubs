@@ -67,7 +67,7 @@ export const cleanupIntakeArtifacts = (prefix = INTAKE_ORG_PREFIX) =>
   qaSeed<{ deleted: Record<string, number> }>("cleanup_intake_e2e", { prefix });
 
 /** Reads back what the real submit actually persisted, for assertions. */
-export const lookupIntake = (companyName: string) =>
+export const lookupIntake = (companyName: string, email?: string) =>
   qaSeed<{
     ok: boolean;
     organization: { id: string; name: string; is_test_record: boolean } | null;
@@ -75,7 +75,7 @@ export const lookupIntake = (companyName: string) =>
     auth_user: { id: string; email: string } | null;
     position: { id: string; title: string; status: string } | null;
     booking_sessions: number;
-  }>("lookup_intake", { company_name: companyName });
+  }>("lookup_intake", { company_name: companyName, email });
 
 export const CANDIDATE_EMAIL_PREFIX = "qa.cand+";
 
