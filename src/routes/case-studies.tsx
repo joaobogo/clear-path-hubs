@@ -25,6 +25,7 @@ import { SiteShell } from "@/components/marketing/site-shell";
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 import { PageConnections } from "@/components/marketing/page-connections";
+import { LifecyclePreview } from "@/components/marketing/product-preview/lifecycle-preview";
 import { CASE_STUDIES, type CaseStudy } from "@/content/case-studies";
 
 const entry = getPage("case-studies");
@@ -474,6 +475,10 @@ function OutcomesGrid() {
           </li>
         ))}
       </ul>
+
+      <div className="mt-10 max-w-2xl">
+        <LifecyclePreview />
+      </div>
     </section>
   );
 }

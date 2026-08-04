@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { marketingHead } from "@/lib/marketing/head";
+import { IntelligencePreview } from "@/components/marketing/product-preview/intelligence-preview";
 import {
   SiteShell,
   PublicPage,
@@ -241,6 +242,28 @@ function SystemPage() {
                 </p>
               </div>
             ))}
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+      <PublicSection className="border-t border-[color:var(--brand-navy)]/8 bg-white py-14">
+        <PublicPage>
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
+              Hiring intelligence
+            </p>
+            <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
+              Metrics that answer a question — or admit they cannot.
+            </h2>
+            <p className="mt-3 text-[color:var(--brand-navy)]/80">
+              The workspace never draws a chart it does not have the data for. Below
+              is the same component, showing a live number, a partial sample and an
+              honest "not enough data" state.
+            </p>
+          </div>
+
+          <div className="mt-10">
+            <IntelligencePreview />
           </div>
         </PublicPage>
       </PublicSection>

@@ -61,7 +61,7 @@ import { ProofSystem } from "@/components/marketing/proof-system";
 import { PageConnections } from "@/components/marketing/page-connections";
 import { FoundersStrip } from "@/components/marketing/founders-strip";
 import { FgvEndorsement } from "@/components/marketing/fgv-endorsement";
-import { DashboardPreview } from "@/components/marketing/dashboard-preview";
+import { DecisionWorkspacePreview } from "@/components/marketing/product-preview/decision-workspace-preview";
 import { RiskProof } from "@/components/marketing/risk-proof";
 
 // Homepage metadata is authored inline (guardrail: legacy JSON entry contains
@@ -1495,13 +1495,13 @@ function Home() {
         <PublicSection>
           <PublicPage>
             <SectionHead
-              eyebrow="The live dashboard"
-              title="Your hiring pipeline, on your phone."
-              lead="Ranked candidates scored 0–100 across Role Fit, Evidence, Logistics and Signal — with Shortlist, Interview, Ask and Reject one tap away."
+              eyebrow="Decision Workspace"
+              title="Decisions, not a pile of CVs."
+              lead="Evidence-first candidate cards, side-by-side comparison, and every decision reversible for five minutes. This is the product interface, running on representative data."
             />
 
             <div className="mt-10">
-              <DashboardPreview />
+              <DecisionWorkspacePreview />
             </div>
           </PublicPage>
         </PublicSection>

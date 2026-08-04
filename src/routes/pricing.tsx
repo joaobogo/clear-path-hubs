@@ -20,6 +20,7 @@ import { AgencyFeeComparison } from "@/components/marketing/agency-fee-compariso
 import { RiskProof } from "@/components/marketing/risk-proof";
 import { ModelComparisonTable } from "@/components/marketing/model-comparison-table";
 import { CaseStudyPreviews } from "@/components/marketing/case-study-previews";
+import { DecisionWorkspacePreview } from "@/components/marketing/product-preview/decision-workspace-preview";
 import { EcosystemCrossSell } from "@/components/marketing/ecosystem-cross-sell";
 import { EntitlementMatrix } from "@/components/marketing/entitlement-matrix";
 import {
@@ -241,6 +242,24 @@ function PricingPage() {
       <PublicSection className="py-10">
         <PublicPage>
           <AgencyComparator />
+        </PublicPage>
+      </PublicSection>
+
+      {/* What the subscription actually gives you */}
+      <PublicSection className="py-10">
+        <PublicPage>
+          <div className="max-w-2xl">
+            <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
+              What you actually get access to.
+            </h2>
+            <p className="mt-3 text-[color:var(--brand-navy)]/80">
+              Every plan opens the same Decision Workspace. Plans differ in seats,
+              concurrent roles and entitlements — not in the product.
+            </p>
+          </div>
+          <div className="mt-8 max-w-3xl">
+            <DecisionWorkspacePreview />
+          </div>
         </PublicPage>
       </PublicSection>
 

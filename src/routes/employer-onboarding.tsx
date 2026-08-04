@@ -6,6 +6,7 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
+import { OnboardingPreview } from "@/components/marketing/product-preview/onboarding-preview";
 
 export const Route = createFileRoute("/employer-onboarding")({
   head: () =>
@@ -146,6 +147,10 @@ function EmployerOnboardingPage() {
             >
               See how it works
             </Link>
+          </div>
+
+          <div className="mt-12 max-w-2xl">
+            <OnboardingPreview />
           </div>
         </PublicPage>
       </PublicSection>
