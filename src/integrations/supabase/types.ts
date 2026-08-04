@@ -13564,6 +13564,16 @@ export type Database = {
         | "client_information_requested"
         | "contact_release_requested"
         | "interview_rescheduled"
+        | "payment_failed"
+        | "integration_failed"
+        | "security_alert"
+        | "agent_run_blocked"
+        | "role_information_missing"
+        | "approval_needed"
+        | "shortlist_ready"
+        | "scoring_completed"
+        | "sync_completed"
+        | "scheduled_run_completed"
       file_status: "uploading" | "ready" | "failed" | "deleted"
       hire_close_reason:
         | "candidate_declined"
@@ -13997,6 +14007,16 @@ export const Constants = {
         "client_information_requested",
         "contact_release_requested",
         "interview_rescheduled",
+        "payment_failed",
+        "integration_failed",
+        "security_alert",
+        "agent_run_blocked",
+        "role_information_missing",
+        "approval_needed",
+        "shortlist_ready",
+        "scoring_completed",
+        "sync_completed",
+        "scheduled_run_completed",
       ],
       file_status: ["uploading", "ready", "failed", "deleted"],
       hire_close_reason: [
