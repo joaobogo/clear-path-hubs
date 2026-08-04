@@ -67,7 +67,7 @@ export const cleanupIntakeArtifacts = (prefix = INTAKE_ORG_PREFIX) =>
   qaSeed<{ deleted: Record<string, number> }>("cleanup_intake_e2e", { prefix });
 
 /** Reads back what the real submit actually persisted, for assertions. */
-export const lookupIntake = (companyName: string) =>
+export const lookupIntake = (companyName: string, email?: string) =>
   qaSeed<{
     ok: boolean;
     organization: { id: string; name: string; is_test_record: boolean } | null;
@@ -75,7 +75,7 @@ export const lookupIntake = (companyName: string) =>
     auth_user: { id: string; email: string } | null;
     position: { id: string; title: string; status: string } | null;
     booking_sessions: number;
-  }>("lookup_intake", { company_name: companyName });
+  }>("lookup_intake", { company_name: companyName, email });
 
 export const CANDIDATE_EMAIL_PREFIX = "qa.cand+";
 
@@ -153,6 +153,31 @@ export function uniqueProspect(): {
     companyName: `${INTAKE_ORG_PREFIX}${stamp}`,
     email: `${INTAKE_EMAIL_PREFIX}${stamp}@${QA_EMAIL_DOMAIN}`,
   };
+}
+
+/**
+ * Waits until React has hydrated an interactive page.
+ *
+ * Server-rendered markup is visible long before its event handlers attach, so
+ * a click fired too early is silently dropped and typed values get replaced by
+ * the client's initial state. We prove interactivity by toggling a control that
+ * only responds once hydrated, then restore it.
+ */
+export async function waitForHydration(page: Page): Promise<void> {
+  const hide = page.getByRole("button", { name: /^hide$/i }).first();
+  const show = page.getByRole("button", { name: /show summary/i }).first();
+  await expect
+    .poll(
+      async () => {
+        if ((await show.count()) > 0) return true;
+        await hide.click({ timeout: 2_000 }).catch(() => undefined);
+        return (await show.count()) > 0;
+      },
+      { timeout: 45_000, intervals: [250, 500, 1_000] },
+    )
+    .toBe(true);
+  await show.click();
+  await expect(hide).toBeVisible();
 }
 
 /** Collects console errors so a test can assert a clean run. */

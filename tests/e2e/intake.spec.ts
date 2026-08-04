@@ -11,6 +11,7 @@ import {
   lookupIntake,
   meaningfulConsoleErrors,
   uniqueProspect,
+  waitForHydration,
 } from "./helpers/qa";
 
 const JD_TEXT =
@@ -36,7 +37,7 @@ async function fillPasswords(page: Page, password: string, confirm = password) {
 }
 
 async function fillRole(page: Page, withJd: boolean) {
-  await page.getByLabel("Job title").first().fill("Clinical Operations Manager");
+  await page.getByLabel("Job title", { exact: true }).fill("Clinical Operations Manager");
   if (withJd) await page.locator("#jd-text").fill(JD_TEXT);
 }
 
@@ -52,6 +53,7 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
 
     await page.goto("/intake", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: /launch a role in minutes/i })).toBeVisible();
+    await waitForHydration(page);
 
     // ── Required-field validation on an empty form ───────────────────────────
     await page.getByRole("button", { name: /start now — pay and publish/i }).click();
@@ -150,6 +152,7 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     // ── Autosave survives a reload (passwords deliberately never persist) ────
     await expect(page.getByText(/^Saved /)).toBeVisible();
     await page.reload({ waitUntil: "domcontentloaded" });
+    await waitForHydration(page);
     await expect(page.getByLabel("Company name")).toHaveValue(companyName);
     await expect(page.getByLabel("Work email")).toHaveValue(email);
     await expect(page.locator("#jd-text")).toHaveValue(JD_TEXT);
@@ -175,6 +178,7 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await page.goto("/intake", { waitUntil: "domcontentloaded" });
     await page.evaluate(() => localStorage.clear());
     await page.reload({ waitUntil: "domcontentloaded" });
+    await waitForHydration(page);
 
     await fillCompany(page, companyName);
     await fillYou(page, email);
@@ -208,6 +212,7 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await page.goto("/intake", { waitUntil: "domcontentloaded" });
     await page.evaluate(() => localStorage.clear());
     await page.reload({ waitUntil: "domcontentloaded" });
+    await waitForHydration(page);
 
     await fillCompany(page, companyName);
     await fillYou(page, email);
