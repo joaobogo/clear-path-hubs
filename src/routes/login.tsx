@@ -108,7 +108,33 @@ function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<"signin" | "forgot" | "confirm">("signin");
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [pickerFor, setPickerFor] = useState<SessionMembership[] | null>(null);
+
+  // Google sign-in. Same managed provider used at sign-up, so anyone who
+  // created their account with Google can get back in the same way.
+  const onGoogle = async () => {
+    setGoogleLoading(true);
+    try {
+      const safe = sanitizeRedirect(redirect);
+      const returnTo = `${window.location.origin}/login${
+        safe ? `?redirect=${encodeURIComponent(safe)}` : ""
+      }`;
+      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: returnTo });
+      if (result.error) {
+        toast.error("Google sign-in didn't complete. Try again or use your email and password.");
+        return;
+      }
+      if (result.redirected) return;
+      // Popup flow: the session is already set — reload so the signed-in
+      // routing effect picks the right destination.
+      window.location.href = returnTo;
+    } catch {
+      toast.error("Google sign-in didn't complete. Try again or use your email and password.");
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
 
   // Already signed in? Route accordingly.
   useEffect(() => {
