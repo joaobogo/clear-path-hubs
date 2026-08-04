@@ -45,7 +45,7 @@ function IntelligencePage() {
   const [positionId, setPositionId] = useState("all");
 
   const { hydrated, isSuppressed, dismiss, snooze, suppressedCount, restore } =
-    useRecommendationDismissals(orgId);
+    useRecommendationDismissals(orgId ?? null);
 
   const runIntelligence = useServerFn(getHiringIntelligence);
   const runPositions = useServerFn(getIntelligencePositions);
