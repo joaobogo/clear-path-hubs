@@ -130,22 +130,28 @@ function ApplyPage() {
   }, [draftKey]);
 
   // Is this applicant already signed in? If so we skip account creation and
-  // prefill the email we already know.
+  // prefill the email we already know. We read the locally stored session
+  // rather than calling getUser(), which hits the network and can leave a
+  // public applicant staring at a half-rendered step 1.
   useEffect(() => {
     let alive = true;
     (async () => {
       const { supabase } = await import("@/integrations/supabase/client");
-      const { data } = await supabase.auth.getUser();
+      const { data } = await supabase.auth.getSession();
       if (!alive) return;
-      setSignedIn(Boolean(data.user));
-      if (data.user?.email) {
-        setForm((f) => (f.email ? f : { ...f, email: data.user!.email as string }));
+      const user = data.session?.user ?? null;
+      setSignedIn(Boolean(user));
+      if (user?.email) {
+        setForm((f) => (f.email ? f : { ...f, email: user.email as string }));
       }
-    })().catch(() => setSignedIn(false));
+    })().catch(() => {
+      if (alive) setSignedIn(false);
+    });
     return () => {
       alive = false;
     };
   }, []);
+
 
   useEffect(() => {
     try {
