@@ -475,6 +475,10 @@ function OutcomesGrid() {
           </li>
         ))}
       </ul>
+
+      <div className="mt-10 max-w-2xl">
+        <LifecyclePreview />
+      </div>
     </section>
   );
 }
