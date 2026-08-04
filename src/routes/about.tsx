@@ -58,11 +58,11 @@ const PRINCIPLES = [
   },
   {
     title: "Transparency by default",
-    body: "The workspace your client sees is the same workspace our recruiters use. Nothing lives in a private inbox.",
+    body: "The workspace your client sees is the same workspace the platform runs on. Nothing lives in a private inbox.",
   },
   {
     title: "You own your pipeline",
-    body: "Every candidate we source stays in your workspace — even between roles. No gatekeeping, no lock-in.",
+    body: "Every candidate the platform surfaces stays in your Talent Graph — even between roles. No gatekeeping, no lock-in.",
   },
   {
     title: "Respect the candidate",

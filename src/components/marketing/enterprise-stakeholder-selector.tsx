@@ -33,7 +33,7 @@ const STAKEHOLDERS: Stakeholder[] = [
       "Consistent scoring rubric across role families",
       "Requisition portfolio at a glance",
       "Cycle-time signals live, not lagged",
-      "Named pod owners per role family",
+      "Named oversight owners per role family",
     ],
     view: "Requisition portfolio · rollups by business unit · stage distribution · decision audit",
     proof: [
@@ -53,7 +53,7 @@ const STAKEHOLDERS: Stakeholder[] = [
       "Ranked shortlist against the requirements you approved",
       "Evidence quotes from each CV",
       "Interview prompts pre-drafted from the rubric",
-      "Direct thread with the recruiter pod",
+      "Direct thread with your platform experts",
     ],
     view: "Role pipeline · candidate detail · evidence per requirement · fit summary · interview prompts",
     proof: [

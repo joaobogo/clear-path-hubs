@@ -184,7 +184,7 @@ export const BUSINESS_RULES_DEFAULTS = {
       priceDisplay: PRICE_ENTERPRISE_DISPLAY,
       cta: "contact_sales",
       deliverables: [
-        "Custom SLAs and dedicated pod",
+        "Custom SLAs and dedicated agent capacity",
         "Multi-business-unit workspace",
         "Executive portfolio dashboard",
         "Full data ownership",
@@ -233,7 +233,7 @@ export const BUSINESS_RULES_DEFAULTS = {
       cta: "book_a_call",
       deliverables: [
         "Up to 20 active roles per month",
-        "Dedicated sourcing pod",
+        "Dedicated sourcing agent capacity",
         "Executive portfolio dashboard",
       ],
     },

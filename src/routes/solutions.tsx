@@ -44,7 +44,7 @@ const SOLUTIONS = [
   {
     icon: Building2,
     title: "Enterprise programs",
-    body: "Multi-department search, structured intake, SSO, audit trail, dedicated pod. Keep your ATS — we integrate.",
+    body: "Multi-department search, structured intake, SSO, Governance & Audit, dedicated agent capacity. Keep your ATS — we integrate.",
     cta: { to: "/enterprise", label: "Enterprise details" },
   },
   {

@@ -57,28 +57,28 @@ const VOLUME_BANDS = [
     band: "2–5 active roles",
     price: PRICE_SUB_BRONZE_DISPLAY,
     cadence: "Weekly ranked delivery",
-    pod: "One recruiter pod",
+    pod: "One agent capacity block",
     fit: "A single function hiring steadily — usually one hiring manager group.",
   },
   {
     band: "6–15 active roles",
     price: PRICE_SUB_SILVER_DISPLAY,
     cadence: "Weekly delivery per role family",
-    pod: "Pod per role family",
+    pod: "Agent capacity per role family",
     fit: "Two or three functions hiring in parallel with shared standards.",
   },
   {
     band: "16–40 active roles",
     price: PRICE_SUB_GOLD_DISPLAY,
     cadence: "Twice-weekly delivery on priority roles",
-    pod: "Pods plus a named account lead",
+    pod: "Agent capacity plus a named account lead",
     fit: "Multi-business-unit hiring with executive reporting.",
   },
   {
     band: "40+ or continuous hiring",
     price: PRICE_SUB_ENTERPRISE_DISPLAY,
     cadence: "Cadence agreed per business unit",
-    pod: "Programme team",
+    pod: "Programme-scale agent capacity",
     fit: "Programme hiring where volume shifts by quarter.",
   },
 ];
@@ -175,7 +175,7 @@ function EnterprisePage() {
           <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             Every open role, every ranked candidate, every piece of evidence —
             in a single account your TA, hiring managers, and executives share.
-            Human recruiters + AI-supported structure. Flat subscription;
+            Agents run the search, with configurable expert oversight. Flat subscription;
             direct handover after shortlist.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -297,7 +297,7 @@ function EnterprisePage() {
                 <tr className="border-b border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/[0.03]">
                   <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Active roles</th>
                   <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Monthly</th>
-                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Delivery cadence</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">System operating cadence</th>
                   <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Recruiter coverage</th>
                 </tr>
               </thead>
@@ -516,7 +516,7 @@ function EnterprisePage() {
             One thread per role. No forwarded emails.
           </h2>
           <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
-            TA, hiring managers, and the TaaSFlow pod work in the same workspace with the
+            TA, hiring managers, and your platform experts work in the same workspace with the
             same context. Decisions and reasons are captured next to the candidate they
             apply to — not lost in email threads.
           </p>
@@ -524,7 +524,7 @@ function EnterprisePage() {
             <Pillar
               icon={<MessagesSquare className="h-5 w-5" aria-hidden />}
               title="In-workspace messaging"
-              body="Direct thread with your recruiter pod, scoped per role. No side channels."
+              body="Direct thread with your platform experts, scoped per role. No side channels."
             />
             <Pillar
               icon={<Users className="h-5 w-5" aria-hidden />}
@@ -547,7 +547,7 @@ function EnterprisePage() {
             Regions served
           </p>
           <h2 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-3xl font-semibold sm:text-4xl">
-            Where we source, and how location is enforced.
+            Where sourcing agents look, and how location is enforced.
           </h2>
           <div className="mt-8 grid gap-6 md:grid-cols-3">
             {REGIONS.map((r) => (
@@ -596,7 +596,7 @@ function EnterprisePage() {
             <Pillar
               icon={<Eye className="h-5 w-5" aria-hidden />}
               title="Named recruiter contact"
-              body="You always know who to talk to. Your recruiter pod is a direct message in the workspace — not a ticket queue."
+              body="You always know who to talk to. Your platform expert is a direct message in the workspace — not a ticket queue."
             />
             <Pillar
               icon={<MessagesSquare className="h-5 w-5" aria-hidden />}

@@ -101,7 +101,7 @@ const PILLARS: readonly Pillar[] = [
       "Shortlist, interview, offer, and hire flow through your workspace — not through a forwarded email.",
     proof: [
       "Kanban pipeline reflecting current state, not a snapshot",
-      "Direct recruiter messages in the same thread",
+      "Configurable expert oversight in the same thread",
       "Approve, reject, or advance with a click and an audit line",
     ],
   },

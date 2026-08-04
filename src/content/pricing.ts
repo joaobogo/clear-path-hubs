@@ -121,7 +121,7 @@ export const PRICING_TIERS: PricingTier[] = [
     bestFor:
       "Continuous hiring across business units, geographies, or 50–5,000-employee operators.",
     rolesIncluded: "Custom scope",
-    turnaround: "Custom delivery cadence",
+    turnaround: "Custom system operating cadence",
     included: [
       "Everything in Hiring Sprint",
       "Dedicated account structure",

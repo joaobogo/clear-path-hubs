@@ -69,9 +69,9 @@ void getPage;
 export const Route = createFileRoute("/")({
   head: () =>
     marketingHead(undefined, "/", {
-      title: "TaaSFlow | ATS + Recruiting + Outreach, All in One",
+      title: "TaaSFlow | AI Hiring Intelligence Platform",
       description:
-        "Your ATS, recruiting team, and outreach engine in one subscription. Ranked, pre-screened candidates in a live dashboard — no placement fees.",
+        "AI Hiring Intelligence Platform. Agents run the search. Evidence backs every score. Ranked candidates in a live Decision Workspace — no placement fees.",
     }),
 
   component: Home,
@@ -88,7 +88,7 @@ const WEEKLY_DELIVERABLES = [
   {
     icon: Eye,
     t: "Evidence per requirement",
-    d: "Recruiter-written notes and CV quotes mapped to every must-have, so decisions are grounded in what the CV actually says.",
+    d: "The Evidence Graph maps CV quotes and reviewer notes to every must-have, so decisions are grounded in what the CV actually says.",
   },
   {
     icon: Activity,
@@ -97,8 +97,8 @@ const WEEKLY_DELIVERABLES = [
   },
   {
     icon: MessageSquare,
-    t: "Direct recruiter contact",
-    d: "Message your recruiter in the workspace. Same thread, same context, no forwarded emails.",
+    t: "Configurable expert oversight",
+    d: "Message a named platform expert in the workspace. Same thread, same context, no forwarded emails.",
   },
 ] as const;
 
@@ -110,7 +110,7 @@ const AUDIENCE_LANES = [
     problem:
       "Limited time, no dedicated sourcing capacity, and hires that can't wait for a full internal team to be built.",
     value:
-      "An on-demand recruiting function that runs beside you — sourcing, evaluating, and delivering ranked candidates without hiring a full internal team.",
+      "A hiring intelligence platform that runs beside you — sourcing agents continuously identify, the Scoring Engine evaluates, and ranked candidates arrive without hiring a full internal team.",
     result: "Interview-ready shortlists on roles you'd otherwise leave open.",
     ctaLabel: "See How It Works",
     ctaTo: "/how-it-works",
@@ -120,9 +120,9 @@ const AUDIENCE_LANES = [
     accent: "sky",
     name: "HR & Talent Acquisition",
     problem:
-      "Recruiters spend too much time sourcing and too little time interviewing, supporting hiring managers, and improving candidate experience.",
+      "TA teams spend too much time sourcing and too little time interviewing, supporting hiring managers, and improving candidate experience.",
     value:
-      "Continuous sourcing and ranked candidate delivery through one visible workspace your TA team owns — so recruiters get their calendar back.",
+      "Sourcing agents run continuously and ranked candidates land in one Decision Workspace your TA team owns — so your team gets its calendar back.",
     result: "Sourcing capacity that scales with demand, evidence in view.",
     ctaLabel: "Explore the Model",
     ctaTo: "/solutions",
@@ -144,9 +144,9 @@ const AUDIENCE_LANES = [
     accent: "sand",
     name: "Staffing & Recruiting Agencies",
     problem:
-      "Client demand exceeds internal sourcing capacity — but hiring recruiters to meet peaks doesn't fit the margin structure.",
+      "Client demand exceeds internal sourcing capacity — but adding headcount to meet peaks doesn't fit the margin structure.",
     value:
-      "A scalable sourcing and candidate-delivery partner behind the agency — you keep the client relationship, we extend the bench.",
+      "Scalable agent capacity behind the agency — you keep the client relationship, the platform extends your bench.",
     result: "More placements fulfilled without expanding headcount.",
     ctaLabel: "Staffing Partnerships",
     ctaTo: "/partnerships/staffing",
@@ -1329,15 +1329,15 @@ function Home() {
             <div className="flex min-w-0 flex-col justify-center gap-6">
               <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80 backdrop-blur">
                 <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
-                Talent as a Service — ATS + recruiters + outreach
+                AI Hiring Intelligence Platform
               </span>
               <h1
                 id="home-hero-heading"
                 className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
               >
-                Your ATS, recruiters and outreach
+                Agents run the search.
                 <br className="hidden sm:block" />{" "}
-                <span className="text-[color:var(--brand-ocean-text)]">in one subscription.</span>
+                <span className="text-[color:var(--brand-ocean-text)]">Evidence backs every score.</span>
               </h1>
               <p className="max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
                 For companies hiring 1 to 100+ roles a month. Flat monthly fee,
@@ -1345,9 +1345,9 @@ function Home() {
               </p>
               <ul className="grid gap-2 pt-1 sm:grid-cols-3">
                 {[
-                  { t: "Software you keep", d: "Roles, pipeline and candidate records you own." },
-                  { t: "Recruiters we provide", d: "Named people source, screen and rank each week." },
-                  { t: "Outreach we run", d: "Campaigns and follow-ups, tracked in the same place." },
+                  { t: "Platform you keep", d: "Roles, pipeline and candidate records you own." },
+                  { t: "Agents we run", d: "Sourcing agents identify, screen and rank continuously." },
+                  { t: "Oversight you configure", d: "Human approval gates and escalation, tracked in the same place." },
                 ].map((p) => (
                   <li
                     key={p.t}

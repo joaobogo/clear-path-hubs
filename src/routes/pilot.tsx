@@ -29,14 +29,14 @@ const TIMELINE = [
     title: "Sourcing and scoring",
     when: "Day 3–10",
     body:
-      "We source across channels, then score every candidate against your rubric. Each score is tied to evidence pulled from the CV, so you can see why a candidate ranks where they do.",
+      "Sourcing agents continuously identify candidates across talent signals, then the Scoring Engine scores every candidate against your rubric. Each score is tied to evidence pulled from the CV, so you can see why a candidate ranks where they do.",
   },
   {
     n: "03",
     title: "Ranked shortlist review",
     when: "Day 10–14",
     body:
-      "Reviewed, evidence-backed candidates are published to your dashboard, ranked. You review, message the recruiting team, and give feedback that shapes the next round.",
+      "Reviewed, evidence-backed candidates are published to your dashboard, ranked. You review, message your platform experts, and give feedback that shapes the next round.",
   },
 ];
 
@@ -46,7 +46,7 @@ const RECEIVE = [
   "A ranked shortlist of pre-screened candidates",
   "Evidence per requirement, tied to CV quotes",
   "Full candidate profiles and CV downloads",
-  "Direct messaging with the recruiting team",
+  "Configurable expert oversight, reachable in the workspace",
 ];
 
 const NOT_INCLUDED = [
@@ -61,12 +61,12 @@ const AFTER = [
   {
     title: "Continue on a subscription",
     body:
-      "Move to a flat monthly fee and keep the same workspace, rubric, and recruiting team. Nothing is rebuilt.",
+      "Move to a flat monthly fee and keep the same workspace, rubric, and expert oversight. Nothing is rebuilt.",
   },
   {
     title: "Stop after the pilot",
     body:
-      "No commitment, no placement fee. You keep every candidate we sourced and the evidence behind each score.",
+      "No commitment, no placement fee. You keep every candidate the platform surfaced and the evidence behind each score.",
   },
 ];
 

@@ -393,7 +393,7 @@ export function IndustryTemplate({ entry }: { entry: IndustryEntry }) {
               },
               {
                 n: "02",
-                title: "We source and score",
+                title: "Agents source and score",
                 body: "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV.",
               },
               {

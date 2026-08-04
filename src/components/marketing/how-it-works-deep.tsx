@@ -173,7 +173,7 @@ export function SourcingEcosystemMap() {
         { label: "Named-target outreach", note: "Precision headhunting by named account", icon: <UserPlus className="h-4 w-4" aria-hidden /> },
         { label: "Talent network", note: "Curated pool from 20,000+ prior placements", icon: <Network className="h-4 w-4" aria-hidden /> },
         { label: "Silver medalists", note: "Rehydrated finalists from previous roles", icon: <Archive className="h-4 w-4" aria-hidden /> },
-        { label: "Executive recruiter bench", note: "20+ senior recruiters across geographies", icon: <Briefcase className="h-4 w-4" aria-hidden /> },
+        { label: "Executive oversight bench", note: "20+ senior hiring experts across geographies", icon: <Briefcase className="h-4 w-4" aria-hidden /> },
       ],
     },
     {
@@ -576,7 +576,7 @@ export function WorkspaceDeliveryDemo() {
         </div>
         <ul className="mt-2 space-y-1.5 text-xs text-[color:var(--brand-navy)]/80">
           <li>
-            <span className="font-semibold">TaaSFlow pod:</span> B-2178 moved to
+            <span className="font-semibold">TaaSFlow platform:</span> B-2178 moved to
             Interview. Rubric coverage attached. Interview prompts drafted.
           </li>
           <li>

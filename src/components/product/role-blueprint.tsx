@@ -240,10 +240,10 @@ export function RoleBlueprint({ position, activity = [], version = "taasflow-blu
           </div>
         </div>
 
-        {/* Sourcing channels planned */}
+        {/* Talent signals planned */}
         <div>
           <SectionLabel>
-            <Radar className="mr-1.5 inline h-3.5 w-3.5" /> Sourcing channels planned
+            <Radar className="mr-1.5 inline h-3.5 w-3.5" /> Talent signals planned
           </SectionLabel>
           <ul className="grid gap-2 sm:grid-cols-2">
             {channels.map((c, i) => (

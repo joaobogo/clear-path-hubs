@@ -280,7 +280,7 @@ function PricingPage() {
 const FAQ: { q: string; a: string }[] = [
   {
     q: "How does subscription recruiting differ from an agency?",
-    a: "An agency charges a percentage of first-year salary once a candidate is placed. TaaSFlow charges a flat monthly fee for the search itself — the recruiters, the sourcing, the evaluation, the workspace. Every candidate we source stays in your workspace whether they get hired or not.",
+    a: "An agency charges a percentage of first-year salary once a candidate is placed. TaaSFlow charges a flat monthly fee for the search itself — the Agent Layer, the sourcing, the evaluation, the Decision Workspace. Every candidate the platform surfaces stays in your workspace whether they get hired or not.",
   },
   {
     q: "Do prices go up if we hire multiple candidates?",
@@ -296,10 +296,10 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Is there a contract minimum?",
-    a: "The Starter and Growth tiers run month-to-month. Scale and Enterprise have quarterly minimums to align the pod's capacity planning with your programme. Exact terms are on your scoped quote.",
+    a: "The Starter and Growth tiers run month-to-month. Scale and Enterprise have quarterly minimums to align agent capacity planning with your programme. Exact terms are on your scoped quote.",
   },
   {
     q: "How does the pilot work?",
-    a: "The Starter tier itself is the pilot: one active role, no long commitment, full workflow. If it fits, keep going or move up. If it doesn't, walk away with every candidate we sourced.",
+    a: "The Starter tier itself is the pilot: one active role, no long commitment, full workflow. If it fits, keep going or move up. If it doesn't, walk away with every candidate the platform surfaced.",
   },
 ];

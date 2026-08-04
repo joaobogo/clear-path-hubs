@@ -20,7 +20,7 @@ export function marketingHead(
     entry?.meta.description ||
     entry?.meta["og:description"] ||
     fallback?.description ||
-    "Your ATS, recruiting team, and outreach engine in one subscription — ranked, pre-screened candidates in a live dashboard.";
+    "AI Hiring Intelligence Platform — agents run the search, evidence backs every score, and ranked candidates land in a live Decision Workspace.";
   const url = `${CANONICAL_ORIGIN}${path}`;
   return {
     meta: [

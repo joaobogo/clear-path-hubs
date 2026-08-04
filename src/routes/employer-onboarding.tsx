@@ -131,7 +131,7 @@ function EmployerOnboardingPage() {
           <p className="mt-6 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             No mystery. From intake to first ranked shortlist, TaaSFlow gives
             you a predictable path and a workspace you and your team share
-            with the recruiting team from day one.
+            with your platform experts from day one.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link

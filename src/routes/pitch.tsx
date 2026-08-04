@@ -77,7 +77,7 @@ const ENGINE_STEPS = [
   {
     n: "02",
     title: "Sourced and scored, live",
-    body: "Recruiters source, the engine scores every applicant against the rubric. Each score cites the CV quote it came from.",
+    body: "Sourcing agents identify, the Scoring Engine scores every applicant against the rubric. Each score cites the CV quote it came from.",
   },
   {
     n: "03",
@@ -92,7 +92,7 @@ const ENGINE_STEPS = [
 ];
 
 const CONTROL = [
-  { label: "Same workspace, same evidence", body: "The screen your team sees is the screen our recruiters use." },
+  { label: "Same workspace, same evidence", body: "The screen your team sees is the screen the platform runs on." },
   { label: "Score the score", body: "Override any candidate rating. The system logs your reasoning next to ours." },
   { label: "Move the pipeline", body: "Drag candidates through stages. Reject with reason. Trigger interview outreach." },
   { label: "Share on your terms", body: "Send a stakeholder link with a 30-day expiry. Revoke anytime." },
