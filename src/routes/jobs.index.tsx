@@ -77,6 +77,21 @@ function labelEmployment(e: string | null) {
   return e.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+/**
+ * Formats the real published date. Returns null when the role has no date on
+ * record so the card omits the line entirely rather than inventing one.
+ */
+function formatPosted(value: string | null): string | null {
+  if (!value) return null;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 type ChipProps = { label: string; onClear: () => void };
 function FilterChip({ label, onClear }: ChipProps) {
   return (
