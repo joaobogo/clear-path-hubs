@@ -11,6 +11,7 @@ import {
 } from "@/components/workspace/route-states";
 import { ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
 import { AGENT_RAIL_QUERY_KEY } from "@/components/client/agent-activity-rail";
+import { SYSTEM_HEALTH_QUERY_KEY } from "@/components/client/system-health-strip";
 
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -323,6 +324,7 @@ function ClientLayout() {
 const CLIENT_REFRESH_KEYS = [
   ACTIVITY_QUERY_KEY,
   AGENT_RAIL_QUERY_KEY,
+  SYSTEM_HEALTH_QUERY_KEY,
   ["client-context"],
   ["client", "kpis"],
   ["client", "positions"],
