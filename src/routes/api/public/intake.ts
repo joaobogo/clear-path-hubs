@@ -529,23 +529,30 @@ export const Route = createFileRoute("/api/public/intake")({
           console.error("[intake] notification failed (non-critical)", { traceId, err });
         }
 
-        // ---------- Teams channel ping (non-critical) ----------
+        // ---------- Unified lead notification (Teams + email + ledger) ----------
         try {
-          const { notifyTeamsSafe } = await import("@/lib/teams-notify.server");
-          notifyTeamsSafe({
-            title: "New employer intake",
-            subtitle: `${data.companyName.trim()} · ${data.roleTitle.trim()}`,
+          const { processLeadEvent } = await import("@/lib/leads/lead-pipeline.server");
+          await processLeadEvent({
+            leadType: "employer_intake",
+            sourceId: intakeId,
+            source: "employer_intake",
+            sourcePage: "/intake",
+            fullName: `${data.firstName} ${data.lastName}`.trim(),
+            email: data.workEmail,
+            company: data.companyName.trim(),
+            phone: (data as { phone?: string | null }).phone ?? null,
             facts: [
-              { label: "Contact", value: `${data.firstName} ${data.lastName}` },
-              { label: "Email", value: data.workEmail },
-              { label: "Reference", value: intakeId },
+              { label: "Role", value: data.roleTitle.trim() },
               { label: "Workspace", value: requisitionPending ? "preparing" : "ready" },
             ],
+            recordTable: "intake_submissions",
+            recordId: intakeId,
+            organizationId,
+            positionId,
             linkPath: organizationId ? `/admin/clients/${organizationId}` : "/admin/clients",
-            linkLabel: "Open client",
           });
         } catch (err) {
-          console.error("[intake] teams notify failed (non-critical)", { traceId, err });
+          console.error("[intake] lead notification failed (non-critical)", { traceId, err });
         }
 
 
