@@ -27,7 +27,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { useConfirmAction } from "@/components/ds";
+import { useConfirmAction, ErrorState } from "@/components/ds";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -1935,11 +1935,19 @@ function ActionRail({
 
 
 function JourneyTab({ matchId }: { matchId: string }) {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["candidate-journey", matchId],
     queryFn: () => getCandidateJourney({ data: { candidateMatchId: matchId } }),
   });
   if (isLoading) return <div className="text-sm text-muted-foreground">Loading timeline…</div>;
+  if (isError)
+    return (
+      <ErrorState
+        title="We couldn't load the journey"
+        description="The timeline didn't come back. Nothing is lost — try again."
+        onRetry={() => void refetch()}
+      />
+    );
   const events = data?.events ?? [];
   return (
     <div className="space-y-4">

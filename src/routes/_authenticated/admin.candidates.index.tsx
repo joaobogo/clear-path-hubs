@@ -35,6 +35,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ArrowRight, ArrowUpDown, X, AlertTriangle, Unlock } from "lucide-react";
+import { ErrorState } from "@/components/ds";
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
@@ -188,7 +189,12 @@ function CandidatesPage() {
     [search],
   );
 
-  const { data, isFetching } = useQuery({
+  const {
+    data,
+    isFetching,
+    isError: searchFailed,
+    refetch: refetchSearch,
+  } = useQuery({
     queryKey: ["candidate-index", filters],
     queryFn: () => searchFn({ data: filters }),
   });
@@ -260,7 +266,11 @@ function CandidatesPage() {
           </p>
         </div>
         <div className="text-sm text-muted-foreground" aria-live="polite">
-          {isFetching ? "Searching…" : `${total} submission${total === 1 ? "" : "s"}`}
+          {searchFailed
+            ? "Couldn't load candidates"
+            : isFetching
+              ? "Searching…"
+              : `${total} submission${total === 1 ? "" : "s"}`}
         </div>
       </header>
 
@@ -626,7 +636,18 @@ function CandidatesPage() {
                 </tr>
               );
             })}
-            {rows.length === 0 && !isFetching && (
+            {rows.length === 0 && !isFetching && searchFailed && (
+              <tr>
+                <td colSpan={11} className="p-4">
+                  <ErrorState
+                    title="We couldn't load candidates"
+                    description="This is on our side, not your filters. Try again."
+                    onRetry={() => void refetchSearch()}
+                  />
+                </td>
+              </tr>
+            )}
+            {rows.length === 0 && !isFetching && !searchFailed && (
               <tr>
                 <td colSpan={11} className="px-3 py-16 text-center text-muted-foreground">
                   No candidates match your filters.
@@ -681,7 +702,16 @@ function CandidatesPage() {
             </Link>
           </li>
         ))}
-        {rows.length === 0 && !isFetching && (
+        {rows.length === 0 && !isFetching && searchFailed && (
+          <li>
+            <ErrorState
+              title="We couldn't load candidates"
+              description="This is on our side, not your filters. Try again."
+              onRetry={() => void refetchSearch()}
+            />
+          </li>
+        )}
+        {rows.length === 0 && !isFetching && !searchFailed && (
           <li className="rounded-lg border border-dashed py-16 text-center text-sm text-muted-foreground">
             No candidates match your filters.
           </li>

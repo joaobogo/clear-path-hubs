@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AlertCircle, ArrowUpRight, Building2, MapPin } from "lucide-react";
+import { ErrorState } from "@/components/ds";
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
@@ -156,7 +157,9 @@ function PositionsPage() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Positions</h1>
           <p className="text-sm text-muted-foreground">
-            {listQuery.isLoading
+            {listQuery.isError
+              ? "Couldn't load positions"
+              : listQuery.isLoading
               ? "Loading positions…"
               : `${total.toLocaleString()} position${total === 1 ? "" : "s"} across all clients`}
             {activeFilters > 0 && (
@@ -285,7 +288,17 @@ function PositionsPage() {
               </tr>
             </thead>
             <tbody>
-              {listQuery.isLoading && rows.length === 0 ? (
+              {listQuery.isError && rows.length === 0 ? (
+                <tr>
+                  <td colSpan={10} className="p-4">
+                    <ErrorState
+                      title="We couldn't load positions"
+                      description="This is on our side. Your filters are still applied — try again."
+                      onRetry={() => void listQuery.refetch()}
+                    />
+                  </td>
+                </tr>
+              ) : listQuery.isLoading && rows.length === 0 ? (
                 <tr>
                   <td colSpan={10} className="px-4 py-10 text-center text-muted-foreground">
                     Loading positions…
@@ -378,7 +391,15 @@ function PositionsPage() {
 
         {/* Mobile cards */}
         <div className="divide-y md:hidden">
-          {listQuery.isLoading && rows.length === 0 ? (
+          {listQuery.isError && rows.length === 0 ? (
+            <div className="p-4">
+              <ErrorState
+                title="We couldn't load positions"
+                description="This is on our side. Try again."
+                onRetry={() => void listQuery.refetch()}
+              />
+            </div>
+          ) : listQuery.isLoading && rows.length === 0 ? (
             <div className="p-6 text-center text-sm text-muted-foreground">Loading…</div>
           ) : rows.length === 0 ? (
             <div className="p-6 text-center text-sm text-muted-foreground">
