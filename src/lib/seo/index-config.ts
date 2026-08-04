@@ -50,6 +50,7 @@ export const STATIC_PATHS = [
   "/blog",
   "/jobs",
   "/platform",
+  "/agents",
   "/system",
   "/trust",
   "/intake",

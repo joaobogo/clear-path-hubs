@@ -42,6 +42,7 @@ import { Route as CandidateSuccessRouteImport } from './routes/candidate-success
 import { Route as CandidateJoinRouteImport } from './routes/candidate-join'
 import { Route as BrandCenterRouteImport } from './routes/brand-center'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AccessDeniedRouteImport } from './routes/access-denied'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -338,6 +339,11 @@ const BrandCenterRoute = BrandCenterRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgentsRoute = AgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccessDeniedRoute = AccessDeniedRouteImport.update({
@@ -1081,6 +1087,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/access-denied': typeof AccessDeniedRoute
+  '/agents': typeof AgentsRoute
   '/auth': typeof AuthRoute
   '/brand-center': typeof BrandCenterRoute
   '/candidate-join': typeof CandidateJoinRoute
@@ -1247,6 +1254,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/access-denied': typeof AccessDeniedRoute
+  '/agents': typeof AgentsRoute
   '/auth': typeof AuthRoute
   '/brand-center': typeof BrandCenterRoute
   '/candidate-join': typeof CandidateJoinRoute
@@ -1405,6 +1413,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/access-denied': typeof AccessDeniedRoute
+  '/agents': typeof AgentsRoute
   '/auth': typeof AuthRoute
   '/brand-center': typeof BrandCenterRoute
   '/candidate-join': typeof CandidateJoinRoute
@@ -1573,6 +1582,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/access-denied'
+    | '/agents'
     | '/auth'
     | '/brand-center'
     | '/candidate-join'
@@ -1739,6 +1749,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/access-denied'
+    | '/agents'
     | '/auth'
     | '/brand-center'
     | '/candidate-join'
@@ -1896,6 +1907,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/about'
     | '/access-denied'
+    | '/agents'
     | '/auth'
     | '/brand-center'
     | '/candidate-join'
@@ -2064,6 +2076,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AccessDeniedRoute: typeof AccessDeniedRoute
+  AgentsRoute: typeof AgentsRoute
   AuthRoute: typeof AuthRoute
   BrandCenterRoute: typeof BrandCenterRoute
   CandidateJoinRoute: typeof CandidateJoinRoute
@@ -2370,6 +2383,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agents': {
+      id: '/agents'
+      path: '/agents'
+      fullPath: '/agents'
+      preLoaderRoute: typeof AgentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/access-denied': {
@@ -3619,6 +3639,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AccessDeniedRoute: AccessDeniedRoute,
+  AgentsRoute: AgentsRoute,
   AuthRoute: AuthRoute,
   BrandCenterRoute: BrandCenterRoute,
   CandidateJoinRoute: CandidateJoinRoute,

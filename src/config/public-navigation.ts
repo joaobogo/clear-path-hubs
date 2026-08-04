@@ -1,4 +1,6 @@
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
+import { MODULE_SECTIONS } from "@/config/product-language";
+
 
 /**
  * TaaSFlow Public Navigation — Single Source of Truth
@@ -10,11 +12,14 @@ import { PRICE_PILOT_USD } from "@/config/pricing-core";
 
 export type NavLink = {
   to: string;
+  /** Section id on the destination page, rendered as `#hash`. */
+  hash?: string;
   label: string;
   description?: string;
   hidden?: boolean;
   external?: boolean;
 };
+
 
 export type NavGroup = {
   label: string;
@@ -83,52 +88,28 @@ export function isCandidateJourneyPath(pathname: string): boolean {
 export const PRIMARY_ITEMS: PrimaryItem[] = [
   {
     kind: "group",
-    label: "How It Works",
+    label: "Platform",
     links: [
-      { to: "/how-it-works",          label: "How It Works",          description: "Intake, sourcing, scoring, delivery — step by step" },
-      { to: "/platform",              label: "Platform",              description: "The live workspace your team opens every day" },
-      { to: "/system",                label: "The System",            description: "How evidence and ranking actually work" },
-      { to: "/solutions",             label: "For Growing Companies", description: "On-demand recruiting for scaling teams" },
-      { to: "/enterprise",            label: "For Enterprise",        description: "Compliance, security, and scale" },
-      { to: "/employer-onboarding",   label: "Employer Onboarding",   description: "Get your first role live" },
-      { to: "/partnerships/staffing", label: "Staffing Partnerships", description: "White-label and referral programs" },
+      { to: "/platform", label: "Platform overview", description: "The whole system, module by module" },
+      ...MODULE_SECTIONS.map((m) => ({
+        to: "/platform",
+        hash: m.anchor,
+        label: m.name,
+        description: m.description,
+      })),
+      { to: "/how-it-works", label: "How It Works", description: "Intake, sourcing, scoring, decision — step by step" },
+      { to: "/solutions", label: "Solutions", description: "How teams deploy the platform as they scale" },
+      { to: "/industries", label: "Industries", description: "Role libraries and rubrics by sector" },
+      { to: "/enterprise", label: "Enterprise", description: "Scale, controls, and procurement requirements" },
     ],
   },
+  { kind: "link", to: "/agents", label: "Agents" },
+  { kind: "link", to: "/system", label: "Intelligence" },
   { kind: "link", to: "/pricing", label: "Pricing" },
-  {
-    kind: "group",
-    label: "Industries",
-    links: [
-      { to: "/industries/technology",             label: "Technology",        description: "Product, engineering, platform" },
-      { to: "/industries/ai-ml",            label: "AI & Machine Learning", description: "Research, applied ML, MLOps, LLM" },
-      { to: "/industries/fintech",          label: "FinTech",           description: "Payments, banking, embedded finance" },
-      { to: "/industries/saas",             label: "SaaS",              description: "Growth, RevOps, customer teams" },
-      { to: "/industries/healthcare",       label: "Healthcare",        description: "Clinical, life sciences, operations" },
-      { to: "/industries/pharmaceuticals",  label: "Pharmaceuticals",   description: "Clinical, regulatory, medical affairs" },
-      { to: "/industries/finance",          label: "Finance",           description: "Capital markets, corporate finance" },
-      { to: "/industries/investment-banking",label: "Investment Banking",description: "M&A, ECM, DCM, coverage" },
-      { to: "/industries/legal",            label: "Legal",             description: "In-house and law firm roles" },
-      { to: "/industries/consulting",       label: "Consulting",        description: "Strategy, transformation, advisory" },
-      { to: "/industries/manufacturing",    label: "Manufacturing",     description: "Precision production and supply chain" },
-      { to: "/industries/renewable-energy", label: "Renewable Energy",  description: "Wind, solar, storage, hydrogen" },
-      { to: "/industries",                  label: "View All 57 Industries", description: "Every sector we support" },
-    ],
-  },
-  { kind: "link", to: "/case-studies", label: "Case Studies" },
-  {
-    kind: "group",
-    label: "Resources",
-    links: [
-      { to: "/resources",      label: "Resources",     description: "Playbooks, guides, and templates" },
-      { to: "/blog",           label: "Blog",          description: "Hiring analysis and market data" },
-      { to: "/knowledge-base", label: "Knowledge Base",description: "How TaaSFlow works, in detail" },
-      { to: "/faq",            label: "FAQ",           description: "Common questions answered" },
-      { to: "/about",          label: "About TaaSFlow",description: "Who we are and why" },
-      { to: "/journey",        label: "Our Journey",   description: "How we got here" },
-      { to: "/contact",        label: "Contact",       description: "Talk to the team" },
-    ],
-  },
+  { kind: "link", to: "/case-studies", label: "Customers" },
+  { kind: "link", to: "/trust", label: "Security" },
 ];
+
 
 /* Legacy exports retained for older imports — derived from PRIMARY_ITEMS. */
 
@@ -144,6 +125,18 @@ export const PRIMARY_NAV: NavLink[] = PRIMARY_ITEMS.filter(
 
 export const FOOTER_GROUPS: NavGroup[] = [
   {
+    // Product column. Status and Changelog are intentionally absent: no such
+    // route exists yet, and this file must never advertise a dead link.
+    label: "Product",
+    links: [
+      { to: "/platform", label: "Platform" },
+      { to: "/agents",   label: "Agents" },
+      { to: "/system",   label: "Intelligence" },
+      { to: "/trust",    label: "Security" },
+    ],
+  },
+  {
+
     label: "For Companies",
     links: [
       { to: "/platform",              label: "Platform" },

@@ -30,7 +30,7 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
-import { PRODUCT_CATEGORY, MODULES } from "@/config/product-language";
+import { PRODUCT_CATEGORY, MODULES, MODULE_SECTIONS } from "@/config/product-language";
 
 export const Route = createFileRoute("/platform")({
   head: () =>
@@ -279,6 +279,38 @@ function PlatformPage() {
           </ol>
         </PublicPage>
       </PublicSection>
+
+      {/* MODULE DIRECTORY — anchor targets for the Platform navigation menu */}
+      <PublicSection className="border-t border-[color:var(--brand-navy)]/8 bg-white">
+        <PublicPage>
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
+              The modules
+            </p>
+            <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
+              Every module, and what it does.
+            </h2>
+          </div>
+
+          <div className="mt-10 grid gap-4 md:grid-cols-2">
+            {MODULE_SECTIONS.map((m) => (
+              <section
+                key={m.anchor}
+                id={m.anchor}
+                className="scroll-mt-24 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-6"
+              >
+                <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
+                  {m.name}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
+                  {m.description}
+                </p>
+              </section>
+            ))}
+          </div>
+        </PublicPage>
+      </PublicSection>
+
 
       {/* POSITIONING MATRIX */}
       <PublicSection className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
