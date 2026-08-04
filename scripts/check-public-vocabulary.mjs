@@ -21,16 +21,21 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 
 const ROOT = process.cwd();
-const REPORT_ONLY = process.argv.includes("--report");
+const ARGS = process.argv.slice(2);
+const REPORT_ONLY = ARGS.includes("--report");
+/** Override the scanned surfaces (used by the unit test's fixtures). */
+const DIR_OVERRIDE = ARGS.filter((a) => !a.startsWith("--"));
 
 /** Surfaces a visitor can read before signing in. */
-const SCAN_DIRS = [
+const DEFAULT_SCAN_DIRS = [
   "src/routes",
   "src/components/home",
   "src/components/marketing",
   "src/components/pricing",
   "src/content/pages",
 ];
+
+const SCAN_DIRS = DIR_OVERRIDE.length > 0 ? DIR_OVERRIDE : DEFAULT_SCAN_DIRS;
 
 const SCAN_EXT = /\.(tsx?|json|md)$/;
 
