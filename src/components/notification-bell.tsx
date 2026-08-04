@@ -21,6 +21,7 @@ import {
 } from "@/lib/notifications/notification-tiers";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { staggerStyle, useArrivals, useJustChanged } from "@/lib/motion/use-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const NOTIFICATIONS_QUERY_KEY = ["notifications", "mine"] as const;
@@ -62,6 +63,9 @@ export function NotificationBell() {
   const items = (data?.items ?? []) as NotificationRecord[];
   const groups = useMemo(() => groupNotifications(items), [items]);
   const unread = data?.unread ?? 0;
+  // The badge marks that something arrived; the list marks which rows are new.
+  const unreadChanged = useJustChanged(unread);
+  const arrivals = useArrivals(useMemo(() => items.map((i) => i.id), [items]));
 
   const counts = useMemo(() => {
     const c: Record<NotificationTier, number> = {
@@ -100,6 +104,8 @@ export function NotificationBell() {
             <span
               aria-hidden="true"
               className={`absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-semibold flex items-center justify-center ${
+                unreadChanged ? "motion-approved" : ""
+              } ${
                 counts.critical > 0
                   ? "bg-destructive text-destructive-foreground"
                   : "bg-primary text-primary-foreground"
@@ -171,11 +177,13 @@ export function NotificationBell() {
                 : "Nothing in this view right now."}
             </div>
           ) : (
-            <ul className="divide-y">
-              {visible.map((group) => (
+            <ul className="divide-y motion-content-in">
+              {visible.map((group, i) => (
                 <NotificationRow
                   key={group.key}
                   group={group}
+                  isNew={group.items.some((n) => arrivals.has(n.id))}
+                  index={i}
                   onRead={(ids) => markMutation.mutate(ids)}
                   onDismiss={(ids) => dismissMutation.mutate(ids)}
                   busy={dismissMutation.isPending}
@@ -219,11 +227,16 @@ function NotificationRow({
   onRead,
   onDismiss,
   busy,
+  isNew = false,
+  index = 0,
 }: {
   group: NotificationGroup;
   onRead: (ids: string[]) => void;
   onDismiss: (ids: string[]) => void;
   busy: boolean;
+  /** Arrived since the last time this list was read. */
+  isNew?: boolean;
+  index?: number;
 }) {
   const { lead, rule, tier, items, unread } = group;
   const meta = TIER_META[tier];
@@ -316,7 +329,12 @@ function NotificationRow({
   const unreadIds = items.filter((i) => !i.read_at).map((i) => i.id);
 
   return (
-    <li className={`border-l-2 ${meta.accentClass} hover:bg-muted/50`}>
+    <li
+      style={isNew ? staggerStyle(index) : undefined}
+      className={`border-l-2 ${meta.accentClass} hover:bg-muted/50 ${
+        isNew ? "motion-arrive" : ""
+      }`}
+    >
       {lead.link_path ? (
         <Link
           to={lead.link_path}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useJustChanged } from "@/lib/motion/use-motion";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -88,6 +89,8 @@ function StageRow({
 }) {
   const [open, setOpen] = useState(false);
   const Icon = STATE_ICON[stage.state];
+  // Only the stage that actually changed state animates — never the whole list.
+  const advanced = useJustChanged(stage.state);
   const started = formatLifecycleDate(stage.startedAt);
   const completed = formatLifecycleDate(stage.completedAt);
   const times =
@@ -105,7 +108,10 @@ function StageRow({
       {!isLast && (
         <span
           aria-hidden="true"
-          className="absolute left-[13px] top-7 bottom-0 w-px bg-border"
+          className={cn(
+            "motion-connector absolute left-[13px] top-7 bottom-0 w-px",
+            stage.state === "completed" ? "bg-primary/40" : "bg-border",
+          )}
         />
       )}
       <span
@@ -113,9 +119,15 @@ function StageRow({
         className={cn(
           "absolute left-0 top-1 grid h-7 w-7 place-items-center rounded-full border",
           STATE_DOT[stage.state],
+          advanced && "motion-stage-advance",
         )}
       >
-        <Icon className={cn("h-3.5 w-3.5", stage.state === "active" && "animate-spin")} />
+        <Icon
+          className={cn(
+            "h-3.5 w-3.5",
+            stage.state === "active" && "animate-spin motion-reduce:animate-none",
+          )}
+        />
       </span>
 
       <button
@@ -167,7 +179,7 @@ function StageRow({
       {open && (
         <div
           id={panelId}
-          className="mb-2 ml-2 mt-1 space-y-3 rounded-lg border border-border/70 bg-muted/30 p-3"
+          className="motion-expand mb-2 ml-2 mt-1 space-y-3 rounded-lg border border-border/70 bg-muted/30 p-3"
         >
           <p className="text-xs leading-snug text-foreground/80">{stage.summary}</p>
           <div className="grid gap-3 sm:grid-cols-2">

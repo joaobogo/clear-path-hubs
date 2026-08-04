@@ -1,0 +1,194 @@
+/*
+ * TaaSFlow product motion — workspace surfaces
+ *
+ * Purpose: motion here exists to explain a change. Every utility below maps to
+ * a specific system event (a status changed, a stage advanced, a panel opened,
+ * a record arrived, a decision completed, data refreshed). If a motion cannot
+ * be traced to an event, it does not belong in this file.
+ *
+ * Rules enforced here:
+ *  - one-shot only, except `motion-live-dot` (reserved for genuinely live work)
+ *  - transform + opacity + colour only; never width/height/top/left on layout
+ *  - 120–320ms; nothing blocks input, nothing delays work
+ *  - no floating, no parallax, no particles, no page-entrance curtains
+ *  - reduced motion is handled globally in motion.css (durations → 1ms) and
+ *    reinforced at the bottom of this file
+ *
+ * Duration + easing tokens come from brand-tokens.css / motion.css.
+ */
+
+/* ---------------------------------------------------------------------- */
+/* Keyframes — one per system event                                       */
+/* ---------------------------------------------------------------------- */
+
+/* A value on screen changed (status, count, score, badge). */
+@keyframes taas-state-flash {
+  0% {
+    background-color: color-mix(in oklab, var(--primary) 16%, transparent);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+/* A record arrived (notification, agent event, new candidate row). */
+@keyframes taas-arrive {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -6px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* A workflow stage advanced — the dot settles into its new state. */
+@keyframes taas-stage-advance {
+  0% {
+    transform: scale(0.86);
+    opacity: 0.5;
+  }
+  60% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* A decision completed — confirmation reads as a settled result, not a party. */
+@keyframes taas-approved {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Loading finished and real content took its place. */
+@keyframes taas-content-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* A bar/series was drawn or redrawn from its own baseline. */
+@keyframes taas-bar-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Reserved: work is actually running right now. */
+@keyframes taas-live-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Utilities                                                              */
+/* ---------------------------------------------------------------------- */
+
+/* Data update / status transition. Apply on a remount key so it fires once. */
+@utility motion-state-flash {
+  animation: taas-state-flash var(--taas-motion-slower) var(--taas-ease-out-soft) both;
+}
+
+/* Arrival. `--motion-i` staggers a short burst; capped at 5 steps upstream. */
+@utility motion-arrive {
+  animation: taas-arrive var(--taas-motion-base) var(--taas-ease-standard) both;
+  animation-delay: calc(var(--motion-i, 0) * 40ms);
+}
+
+/* Workflow stage change — only on the stage whose state actually changed. */
+@utility motion-stage-advance {
+  animation: taas-stage-advance var(--taas-motion-slow) var(--taas-spring-subtle) both;
+}
+
+/* Timeline connector filling as progress passes it. */
+@utility motion-connector {
+  transform-origin: top center;
+  transition: transform var(--taas-motion-slow) var(--taas-ease-emphasized),
+    background-color var(--taas-motion-base) var(--taas-ease-standard);
+}
+
+/* Panel / row expansion (Evidence Graph, workflow stage, disclosure rows). */
+@utility motion-expand {
+  animation: taas-arrive var(--taas-motion-base) var(--taas-ease-emphasized) both;
+}
+
+/* Approval / decision completion. */
+@utility motion-approved {
+  animation: taas-approved var(--taas-motion-base) var(--taas-spring-subtle) both;
+}
+
+/* Loading skeleton → real content. */
+@utility motion-content-in {
+  animation: taas-content-in var(--taas-motion-base) var(--taas-ease-standard) both;
+}
+
+/* Chart / progress bars: grow from the axis, never animate layout width. */
+@utility motion-bar {
+  transform-origin: left center;
+  animation: taas-bar-draw var(--taas-motion-slow) var(--taas-ease-out-soft) both;
+}
+
+/* Bars that change value in place (comparison, live counts). */
+@utility motion-bar-update {
+  transition: width var(--taas-motion-slow) var(--taas-ease-out-soft),
+    background-color var(--taas-motion-base) var(--taas-ease-standard);
+}
+
+/* Progress meters (onboarding, apply flow). */
+@utility motion-progress {
+  transition: width var(--taas-motion-slow) var(--taas-ease-out-soft);
+}
+
+/* The only permitted continuous animation: something is running right now. */
+@utility motion-live-dot {
+  animation: taas-live-dot 2s var(--taas-ease-in-out) infinite;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Reduced motion — belt and braces over the global override              */
+/* ---------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .motion-state-flash,
+  .motion-arrive,
+  .motion-stage-advance,
+  .motion-expand,
+  .motion-approved,
+  .motion-content-in,
+  .motion-bar {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    background-color: transparent;
+  }
+  .motion-live-dot {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+  .motion-connector,
+  .motion-bar-update,
+  .motion-progress {
+    transition: none !important;
+  }
+}

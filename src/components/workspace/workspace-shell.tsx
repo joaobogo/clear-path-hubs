@@ -403,7 +403,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
             aria-hidden
           />
           <aside
-            className="absolute inset-y-0 left-0 flex w-72 flex-col shadow-2xl"
+            className="motion-menu-open absolute inset-y-0 left-0 flex w-72 flex-col shadow-2xl"
             style={{ background: "var(--taas-shell-sidebar-bg)" }}
           >
             <div
