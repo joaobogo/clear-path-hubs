@@ -112,7 +112,7 @@ function MyMessages() {
  : "bg-muted text-foreground"
  }`}
  >
- <div className="whitespace-pre-wrap">{m.body}</div>
+ <div className="whitespace-pre-wrap break-words">{m.body}</div>
  <div
  className={`text-[10px] mt-1 ${
  mine ? "text-primary-foreground/70" : "text-muted-foreground"
@@ -131,19 +131,26 @@ function MyMessages() {
  className="mt-3 flex gap-2 items-end"
  onSubmit={(e) => {
  e.preventDefault();
+ if (send.isPending) return;
  if (body.trim()) send.mutate(body.trim());
  }}
  >
+ <label htmlFor="me-message-body" className="sr-only">
+ Write a message
+ </label>
  <Textarea
+ id="me-message-body"
  value={body}
  onChange={(e) => setBody(e.target.value)}
  rows={2}
  placeholder="Write a message…"
  className="flex-1"
+ disabled={send.isPending}
  />
- <Button type="submit" disabled={!body.trim() || send.isPending}>
- Send
+ <Button type="submit" className="min-h-11" disabled={!body.trim() || send.isPending}>
+ {send.isPending ? "Sending…" : "Send"}
  </Button>
+
  </form>
  </main>
  );
