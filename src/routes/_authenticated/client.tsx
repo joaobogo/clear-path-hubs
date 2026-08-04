@@ -10,6 +10,8 @@ import {
   makeRouteNotFoundComponent,
 } from "@/components/workspace/route-states";
 import { ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
+import { AGENT_RAIL_QUERY_KEY } from "@/components/client/agent-activity-rail";
+
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
@@ -320,13 +322,15 @@ function ClientLayout() {
 
 const CLIENT_REFRESH_KEYS = [
   ACTIVITY_QUERY_KEY,
- ["client-context"],
- ["client", "kpis"],
- ["client", "positions"],
- ["client", "candidates"],
- ["client", "messages"],
- NOTIFICATIONS_QUERY_KEY,
+  AGENT_RAIL_QUERY_KEY,
+  ["client-context"],
+  ["client", "kpis"],
+  ["client", "positions"],
+  ["client", "candidates"],
+  ["client", "messages"],
+  NOTIFICATIONS_QUERY_KEY,
 ] as const;
+
 
 function ClientCoordinator() {
  const [userId, setUserId] = useState<string | null>(null);
