@@ -814,6 +814,14 @@ function ExpressIntakePage() {
               {signInMode ? "I don't have an account yet" : "I already have an account"}
             </button>
           </div>
+          <p className="text-sm text-[color:var(--brand-navy)]/70">
+            Prefer the full login screen?{" "}
+            <a href="/login" className="underline">
+              Sign in first
+            </a>{" "}
+            and come back — your answers stay saved.
+          </p>
+
         </Section>
         )}
         </div>
@@ -1219,6 +1227,9 @@ function ReviewBlock({
   target: string;
   rows: Array<[string, string]>;
 }) {
+  // Anything the client chose to skip is simply left out of the summary —
+  // a list of "Not provided" rows reads like a list of mistakes.
+  const filled = rows.filter(([, value]) => Boolean(value?.trim()));
   return (
     <div className="rounded-lg border border-[color:var(--brand-navy)]/12 p-4">
       <div className="flex items-center justify-between gap-3">
@@ -1234,18 +1245,23 @@ function ReviewBlock({
           Edit
         </button>
       </div>
-      <dl className="mt-3 space-y-2">
-        {rows.map(([label, value]) => (
-          <div key={label} className="grid gap-1 sm:grid-cols-[160px_1fr]">
-            <dt className="text-xs uppercase tracking-wide text-[color:var(--brand-navy)]/75">
-              {label}
-            </dt>
-            <dd className="text-sm whitespace-pre-wrap">
-              {value?.trim() ? value : <span className="text-[color:var(--brand-navy)]/75">Not provided</span>}
-            </dd>
-          </div>
-        ))}
-      </dl>
+      {filled.length === 0 ? (
+        <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75">
+          Nothing filled in yet.
+        </p>
+      ) : (
+        <dl className="mt-3 space-y-2">
+          {filled.map(([label, value]) => (
+            <div key={label} className="grid gap-1 sm:grid-cols-[160px_1fr]">
+              <dt className="text-xs uppercase tracking-wide text-[color:var(--brand-navy)]/75">
+                {label}
+              </dt>
+              <dd className="text-sm whitespace-pre-wrap break-words">{value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
     </div>
   );
 }
+
