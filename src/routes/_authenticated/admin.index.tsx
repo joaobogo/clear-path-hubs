@@ -72,9 +72,11 @@ function toneClass(tone: string) {
 
 function Overview() {
   const qc = useQueryClient();
+  const { show_test } = Route.useSearch();
+  const navigate = Route.useNavigate();
   const { data, isFetching } = useSuspenseQuery({
-    queryKey: ["admin-work-queues"],
-    queryFn: () => getAdminWorkQueues(),
+    queryKey: ["admin-work-queues", show_test],
+    queryFn: () => getAdminWorkQueues({ data: { include_test: show_test } }),
     refetchOnWindowFocus: true,
     staleTime: 30_000,
   });
@@ -92,19 +94,31 @@ function Overview() {
               ? "Nothing is waiting on the platform team right now."
               : `${total} item${total === 1 ? "" : "s"} waiting on you. Every row opens the one action it needs.`}
           </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {show_test
+              ? "Including test and internal organizations."
+              : "Test and internal organizations are hidden."}
+          </p>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 gap-1.5 px-2 text-xs"
-          onClick={() => qc.invalidateQueries({ queryKey: ["admin-work-queues"] })}
-          disabled={isFetching}
-          aria-label="Refresh work queue"
-        >
-          <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} />
-          Refresh
-        </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          <TestRecordsToggle
+            checked={show_test}
+            onChange={(next) => navigate({ search: { show_test: next }, replace: true })}
+          />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 gap-1.5 px-2 text-xs"
+            onClick={() => qc.invalidateQueries({ queryKey: ["admin-work-queues"] })}
+            disabled={isFetching}
+            aria-label="Refresh work queue"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
+        </div>
       </header>
+
 
       {/* Counts strip — each jumps to its queue below. */}
       <nav aria-label="Queue counts" className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
