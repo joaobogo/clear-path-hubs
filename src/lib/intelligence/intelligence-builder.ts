@@ -490,7 +490,7 @@ export function buildIntelligence(
                         key: "must",
                         label: "Must-haves",
                         value: Math.round(mustMed * 100),
-                        tone: (mustMed >= 0.8 ? "good" : mustMed >= 0.5 ? "warn" : "bad") as const,
+                        tone: (mustMed >= 0.8 ? "good" : mustMed >= 0.5 ? "warn" : "bad") as MetricPoint["tone"],
                         note: `Median candidate meets ${pct(mustMed)} of must-haves`,
                       },
                     ]),
