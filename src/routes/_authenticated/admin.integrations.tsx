@@ -6,8 +6,8 @@ import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import {
 import { ProcessState } from "@/components/ds/process-state";
+import {
   getIntegrationHealth,
   runIntegrationChecks,
   type IntegrationId,
