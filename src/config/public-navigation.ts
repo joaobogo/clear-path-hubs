@@ -125,6 +125,18 @@ export const PRIMARY_NAV: NavLink[] = PRIMARY_ITEMS.filter(
 
 export const FOOTER_GROUPS: NavGroup[] = [
   {
+    // Product column. Status and Changelog are intentionally absent: no such
+    // route exists yet, and this file must never advertise a dead link.
+    label: "Product",
+    links: [
+      { to: "/platform", label: "Platform" },
+      { to: "/agents",   label: "Agents" },
+      { to: "/system",   label: "Intelligence" },
+      { to: "/trust",    label: "Security" },
+    ],
+  },
+  {
+
     label: "For Companies",
     links: [
       { to: "/platform",              label: "Platform" },
