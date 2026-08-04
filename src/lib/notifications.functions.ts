@@ -200,14 +200,61 @@ export const listMyNotifications = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("notifications")
-      .select("id, event_type, audience, title, body, link_path, read_at, resolved_at, entity_type, entity_id, created_at, organization_id")
+      .select("id, event_type, audience, title, body, link_path, read_at, resolved_at, entity_type, entity_id, created_at, organization_id, event_id")
       .eq("recipient_user_id", context.userId)
       .is("resolved_at", null)
       .order("created_at", { ascending: false })
       .limit(50);
     if (error) throw error;
-    const unread = (data ?? []).filter((n) => !n.read_at).length;
-    return { items: data ?? [], unread };
+
+    const rows = data ?? [];
+
+    // Actor enrichment. Read through the caller's own client so RLS decides
+    // what they may see; when an event row is not readable we simply fall back
+    // to a system label rather than leaking anything.
+    const eventIds = [...new Set(rows.map((r) => r.event_id).filter((v): v is string => !!v))];
+    const actorByEvent = new Map<string, string | null>();
+    if (eventIds.length > 0) {
+      const { data: events } = await context.supabase
+        .from("notification_events")
+        .select("id, actor_user_id")
+        .in("id", eventIds);
+      const actorIds = [
+        ...new Set(
+          (events ?? [])
+            .map((e) => e.actor_user_id as string | null)
+            .filter((v): v is string => !!v),
+        ),
+      ];
+      const nameById = new Map<string, string | null>();
+      if (actorIds.length > 0) {
+        const { data: profiles } = await context.supabase
+          .from("profiles")
+          .select("auth_user_id, full_name")
+          .in("auth_user_id", actorIds);
+        for (const p of profiles ?? []) {
+          nameById.set(p.auth_user_id as string, (p.full_name as string | null) ?? null);
+        }
+      }
+      for (const e of events ?? []) {
+        const actorId = e.actor_user_id as string | null;
+        actorByEvent.set(
+          e.id as string,
+          actorId
+            ? actorId === context.userId
+              ? "You"
+              : (nameById.get(actorId) ?? "A teammate")
+            : null,
+        );
+      }
+    }
+
+    const items = rows.map((r) => ({
+      ...r,
+      actor_label: r.event_id ? (actorByEvent.get(r.event_id) ?? null) : null,
+    }));
+    const unread = items.filter((n) => !n.read_at).length;
+    return { items, unread };
   });
 
 export const markNotificationsRead = createServerFn({ method: "POST" })
@@ -223,6 +270,39 @@ export const markNotificationsRead = createServerFn({ method: "POST" })
     const { error } = await q;
     if (error) throw error;
     return { ok: true };
+  });
+
+/**
+ * Dismissal is tier-aware and enforced on the server: critical notifications
+ * describe a live problem, so they stay in the inbox until the underlying
+ * situation is fixed. Everything else can be cleared by its recipient.
+ */
+export const dismissNotifications = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((raw) => z.object({ ids: z.array(z.string().uuid()).min(1).max(200) }).parse(raw))
+  .handler(async ({ data, context }) => {
+    const { tierFor } = await import("./notifications/notification-tiers");
+    const { data: rows, error: readErr } = await context.supabase
+      .from("notifications")
+      .select("id, event_type")
+      .eq("recipient_user_id", context.userId)
+      .in("id", data.ids);
+    if (readErr) throw readErr;
+
+    const dismissable = (rows ?? [])
+      .filter((r) => tierFor(r.event_type as string) !== "critical")
+      .map((r) => r.id as string);
+    const blocked = (rows ?? []).length - dismissable.length;
+    if (dismissable.length === 0) return { ok: true, dismissed: 0, blocked };
+
+    const now = new Date().toISOString();
+    const { error } = await context.supabase
+      .from("notifications")
+      .update({ resolved_at: now, read_at: now } as never)
+      .eq("recipient_user_id", context.userId)
+      .in("id", dismissable);
+    if (error) throw error;
+    return { ok: true, dismissed: dismissable.length, blocked };
   });
 
 export const listDeliveryFailures = createServerFn({ method: "GET" })
