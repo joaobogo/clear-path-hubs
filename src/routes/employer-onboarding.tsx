@@ -6,6 +6,7 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
+import { OnboardingPreview } from "@/components/marketing/product-preview/onboarding-preview";
 
 export const Route = createFileRoute("/employer-onboarding")({
   head: () =>

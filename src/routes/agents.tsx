@@ -27,6 +27,7 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
+import { AgentRunsPreview } from "@/components/marketing/product-preview/agent-runs-preview";
 import {
   MODULES,
   MODULE_SECTIONS,
@@ -375,6 +376,27 @@ function AgentsPage() {
               </li>
             ))}
           </ul>
+        </PublicPage>
+      </PublicSection>
+
+      <PublicSection className="bg-white">
+        <PublicPage>
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
+              Agent activity
+            </p>
+            <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
+              Every run is on the record.
+            </h2>
+            <p className="mt-3 text-[color:var(--brand-navy)]/80">
+              This is the activity rail from the workspace: actor, action, time,
+              status and result — including the runs that are waiting on a person.
+            </p>
+          </div>
+
+          <div className="mt-10 max-w-2xl">
+            <AgentRunsPreview />
+          </div>
         </PublicPage>
       </PublicSection>
 
