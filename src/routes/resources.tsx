@@ -24,7 +24,7 @@ const entry = getPage("resources");
 export const Route = createFileRoute("/resources")({
   head: () =>
     marketingHead(entry, "/resources", {
-      title: "Resources — TaaSFlow",
+      title: "Resources — hiring intelligence guides | TaaSFlow",
       description:
         "Hiring guides, industry insights, calculators, case studies and candidate resources — every insight links to its full source.",
     }),

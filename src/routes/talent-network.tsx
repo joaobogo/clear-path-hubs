@@ -21,7 +21,7 @@ export const Route = createFileRoute("/talent-network")({
     marketingHead(undefined, "/talent-network", {
       title: "Join the TaaSFlow Talent Network",
       description:
-        "Join the TaaSFlow Talent Network. Browse open roles, join for private matching to future briefs, and stay in control of your visibility and data.",
+        "Browse open roles, join for private matching to future briefs, and stay in control of your visibility and data. Structured screening, evidence you can see.",
     }),
   component: TalentNetworkPage,
 });

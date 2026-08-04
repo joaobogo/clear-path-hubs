@@ -21,9 +21,9 @@ const PILOT_PRICE_LABEL =
 export const Route = createFileRoute("/solutions")({
   head: () =>
     marketingHead(undefined, "/solutions", {
-      title: "Solutions — Subscription recruiting for every hiring need | TaaSFlow",
+      title: "Solutions — AI Hiring Intelligence for every hiring need",
       description:
-        "Pilot a single hire, scale volume hiring, run enterprise programs, or hire globally. One workspace, one flat monthly fee, ranked candidates in 14 days.",
+        "Pilot a single hire, scale volume hiring, run enterprise programmes or hire globally. One platform, one monthly fee, ranked candidates in 14 days.",
     }),
   component: SolutionsPage,
 });

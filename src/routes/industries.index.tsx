@@ -45,7 +45,7 @@ export const Route = createFileRoute("/industries/")({
     marketingHead(undefined, "/industries", {
       title: "Industries — TaaSFlow",
       description:
-        "Fifty-seven industries, six page archetypes, one recruiting model. Search or filter to the vertical you hire for.",
+        "Fifty-seven industries, six page archetypes, one AI Hiring Intelligence Platform. Search or filter to the vertical you hire for.",
     }),
   component: IndustriesIndex,
 });

@@ -78,12 +78,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               url: "https://taasflow.com",
               logo: "https://taasflow.com/og-image.png",
               description:
-                "Subscription recruiting: ATS, sourcing, evidence-based screening, outreach, and delivery in one live workspace.",
+                "TaaSFlow is an AI Hiring Intelligence Platform: agents run the search, evidence backs every score, and ranked candidates land in a live Decision Workspace.",
               parentOrganization: {
                 "@type": "Organization",
                 name: FGV.name,
                 url: FGV.url,
               },
+            },
+            {
+              "@type": "SoftwareApplication",
+              "@id": "https://taasflow.com/#software",
+              name: "TaaSFlow",
+              applicationCategory: "BusinessApplication",
+              applicationSubCategory: "AI Hiring Intelligence Platform",
+              operatingSystem: "Web",
+              url: "https://taasflow.com/platform",
+              description:
+                "AI Hiring Intelligence Platform — Intake Engine, Blueprint Compiler, Agent Layer, Evidence Graph, Scoring Engine and Decision Workspace in one governed system.",
+              publisher: { "@id": "https://taasflow.com/#organization" },
             },
             {
               "@type": "WebSite",

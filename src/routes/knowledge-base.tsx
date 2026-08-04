@@ -12,7 +12,7 @@ export const Route = createFileRoute("/knowledge-base")({
     marketingHead(entry, "/knowledge-base", {
       title: "Knowledge base — TaaSFlow",
       description:
-        "How-to guides and reference material for TaaSFlow clients and candidates.",
+        "How-to guides and reference material for the TaaSFlow AI Hiring Intelligence Platform — for clients and candidates.",
     }),
   component: KnowledgeBasePage,
 });

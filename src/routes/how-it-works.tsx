@@ -19,9 +19,9 @@ const entry = getPage("how-it-works");
 export const Route = createFileRoute("/how-it-works")({
   head: () =>
     marketingHead(entry, "/how-it-works", {
-      title: "How it works — TaaSFlow",
+      title: "How it works — AI Hiring Intelligence Platform | TaaSFlow",
       description:
-        "The operational explainer: role blueprint, sourcing ecosystem, evidence review, ranking demo, workspace delivery, and a client responsibility matrix.",
+        "The operational explainer: Blueprint Compiler, Agent Layer discovery, Evidence Graph review, Scoring Engine ranking and Decision Workspace delivery.",
     }),
   component: HowItWorksPage,
 });

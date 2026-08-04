@@ -34,9 +34,9 @@ import {
 export const Route = createFileRoute("/enterprise")({
   head: () =>
     marketingHead(undefined, "/enterprise", {
-      title: "Enterprise Recruiting Subscription | TaaSFlow",
+      title: "Enterprise Hiring Intelligence | TaaSFlow",
       description:
-        "Recruiting for teams hiring at scale. Get ranked, pre-screened candidate shortlists through a live dashboard for one flat monthly fee.",
+        "The AI Hiring Intelligence Platform for teams hiring at scale: ranked, evidence-backed shortlists, governance controls and audit trails in one workspace.",
     }),
   component: EnterprisePage,
 });

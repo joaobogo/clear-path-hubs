@@ -11,9 +11,9 @@ import { PageConnections } from "@/components/marketing/page-connections";
 export const Route = createFileRoute("/journey")({
   head: () =>
     marketingHead(undefined, "/journey", {
-      title: "Our journey — how TaaSFlow rebuilt recruiting | TaaSFlow",
+      title: "Our journey — building the AI Hiring Intelligence Platform",
       description:
-        "The story behind TaaSFlow — from the operator insight that agencies were the wrong model, to a structured recruiting workspace with ranked, evidence-backed candidates.",
+        "The story behind TaaSFlow — from the operator insight that agencies were the wrong model, to an AI Hiring Intelligence Platform with ranked, evidence-backed candidates.",
     }),
   component: JourneyPage,
 });
