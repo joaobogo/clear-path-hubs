@@ -27,7 +27,7 @@ async function fillYou(page: Page, email: string) {
   await page.getByLabel("First name").fill("Dana");
   await page.getByLabel("Last name").fill("Whitfield");
   await page.getByLabel("Work email").fill(email);
-  await page.getByLabel("Phone", { exact: false }).first().fill("+15551234567");
+  await page.getByLabel("Phone", { exact: true }).fill("+15551234567");
 }
 
 async function fillPasswords(page: Page, password: string, confirm = password) {
@@ -103,8 +103,11 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await expect(page.getByRole("button", { name: /create my account now/i })).toBeVisible();
     await fillPasswords(page, "QaTest!Phase11");
 
-    // ── Role step: the 80-char minimum only applies when text is typed ────────
+    // ── Role step: a job description is required in some form, and typed text
+    //    must clear the 80-character minimum ────────────────────────────────
     await fillRole(page, false);
+    await page.getByRole("button", { name: /start now — pay and publish/i }).click();
+    await expect(page.getByText(/at least 80 characters/i)).toBeVisible();
     await page.locator("#jd-text").fill("too short to be a job description");
     await page.getByRole("button", { name: /start now — pay and publish/i }).click();
     await expect(page.getByText(/at least 80 characters/i)).toBeVisible();
@@ -114,25 +117,26 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
 
     // ── Review: skipped optional fields must not read "Not provided" ──────────
     await expect(page.getByRole("heading", { name: /review your role brief/i })).toBeVisible();
-    const review = page.locator("div", { has: page.getByRole("heading", { name: "Your company" }) });
     await expect(page.getByText(companyName).first()).toBeVisible();
-    await expect(review.getByText("Not provided")).toHaveCount(0);
     await expect(page.getByText("Not provided")).toHaveCount(0);
+    // Optional rows we deliberately skipped are absent, not blank-labelled.
+    await expect(page.getByText("LinkedIn", { exact: true })).toHaveCount(0);
 
     // Show/Hide summary really toggles.
     await page.getByRole("button", { name: /^hide$/i }).click();
-    await expect(page.getByRole("heading", { name: "Your company" })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Your company", exact: true })).toHaveCount(0);
     await page.getByRole("button", { name: /show summary/i }).click();
-    await expect(page.getByRole("heading", { name: "Your company" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Your company", exact: true })).toBeVisible();
 
-    // Edit links jump to the matching section.
-    for (const [block, target] of [
-      ["Your company", "section-company"],
-      ["You", "section-you"],
-      ["The role", "section-role"],
+    // Every review block offers a working Edit affordance to the right section.
+    const editButtons = page.getByRole("button", { name: /^edit$/i });
+    await expect(editButtons).toHaveCount(3);
+    for (const [index, target] of [
+      [0, "section-company"],
+      [1, "section-you"],
+      [2, "section-role"],
     ] as const) {
-      const heading = page.getByRole("heading", { name: block, exact: true }).last();
-      await heading.locator("xpath=following-sibling::*[1]").first().click({ trial: true }).catch(() => undefined);
+      await editButtons.nth(index).click();
       await expect(page.locator(`#${target}`)).toBeVisible();
     }
 
