@@ -101,6 +101,7 @@ export const PRIMARY_ITEMS: PrimaryItem[] = [
       { to: "/solutions", label: "Solutions", description: "How teams deploy the platform as they scale" },
       { to: "/industries", label: "Industries", description: "Role libraries and rubrics by sector" },
       { to: "/enterprise", label: "Enterprise", description: "Scale, controls, and procurement requirements" },
+      { to: "/integrations", label: "Integrations", description: "Connections we support today, with data and permissions" },
     ],
   },
   { kind: "link", to: "/agents", label: "Agents" },
