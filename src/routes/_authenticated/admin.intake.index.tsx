@@ -1,17 +1,27 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { useState } from "react";
 import { listIntakeInbox } from "@/lib/intake-admin.functions";
+import { TestRecordsToggle } from "@/components/admin/TestRecordsToggle";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { AlertTriangle, ArrowRight, Inbox } from "lucide-react";
 
+const searchSchema = z.object({
+  show_test: fallback(z.boolean(), false).default(false),
+});
+
 export const Route = createFileRoute("/_authenticated/admin/intake/")({
-  loader: ({ context }) =>
+  validateSearch: zodValidator(searchSchema),
+  loaderDeps: ({ search }) => ({ show_test: search.show_test }),
+  loader: ({ context, deps }) =>
     context.queryClient.ensureQueryData({
-      queryKey: ["admin", "intake-inbox", { filter: "pending", q: "" }],
-      queryFn: () => listIntakeInbox({ data: { filter: "pending" } }),
+      queryKey: ["admin", "intake-inbox", { filter: "pending", q: "", show_test: deps.show_test }],
+      queryFn: () =>
+        listIntakeInbox({ data: { filter: "pending", include_test: deps.show_test } }),
     }),
   errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.intake.index.tsx"),
   head: () => ({
@@ -22,6 +32,7 @@ export const Route = createFileRoute("/_authenticated/admin/intake/")({
   }),
   component: IntakeInbox,
 });
+
 
 type Filter = "pending" | "needs_conversion" | "approved" | "rejected" | "all";
 const FILTERS: { key: Filter; label: string }[] = [
