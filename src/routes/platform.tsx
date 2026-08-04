@@ -34,9 +34,9 @@ import { marketingHead } from "@/lib/marketing/head";
 export const Route = createFileRoute("/platform")({
   head: () =>
     marketingHead(undefined, "/platform", {
-      title: "The TaaSFlow Platform — ATS + recruiting execution, in one system",
+      title: "The TaaSFlow Platform — AI Hiring Intelligence, in one system",
       description:
-        "Not only an ATS. Not only an agency. Not only AI sourcing. Not only a CRM. TaaSFlow is the hiring operating system: system of record, recruiting execution, evidence-first scoring, live client control, and persistent candidate memory — in one workspace.",
+        "Not only an ATS. Not only an agency. Not only AI sourcing. Not only a CRM. TaaSFlow is an AI Hiring Intelligence Platform: Intake Engine, Agent Layer, Evidence Graph, Scoring Engine, Decision Workspace, and Talent Graph — in one system.",
     }),
   component: PlatformPage,
 });
@@ -57,7 +57,7 @@ const PILLARS: readonly Pillar[] = [
     id: "system-of-record",
     icon: Database,
     eyebrow: "Pillar 01",
-    title: "System of record",
+    title: "Intake Engine and system of record",
     lead:
       "Every role, candidate, evidence note, decision, and message lives in one workspace — versioned and searchable long after the role closes.",
     proof: [
@@ -70,12 +70,12 @@ const PILLARS: readonly Pillar[] = [
     id: "recruiting-execution",
     icon: Workflow,
     eyebrow: "Pillar 02",
-    title: "Recruiting execution",
+    title: "Agent Layer",
     lead:
-      "Sourcing, screening, ranking, and delivery run against your rubric each week — not batched between status calls.",
+      "Sourcing agents continuously identify, screen and rank against your compiled blueprint — not batched between status calls.",
     proof: [
-      "Recruiter-owned intake and calibration",
-      "Continuous sourcing with weekly refresh",
+      "Blueprint Compiler turns intake into the rubric agents run on",
+      "Continuous sourcing agents with weekly refresh",
       "One thread from brief to offer, in the workspace",
     ],
   },
@@ -83,7 +83,7 @@ const PILLARS: readonly Pillar[] = [
     id: "evidence-first-scoring",
     icon: Ruler,
     eyebrow: "Pillar 03",
-    title: "Evidence-first scoring",
+    title: "Evidence Graph and Scoring Engine",
     lead:
       "Every score cites the CV line or note behind it. Rubric, evidence, and reasoning are visible before the shortlist arrives.",
     proof: [
@@ -96,7 +96,7 @@ const PILLARS: readonly Pillar[] = [
     id: "live-client-control",
     icon: MonitorPlay,
     eyebrow: "Pillar 04",
-    title: "Live client control",
+    title: "Decision Workspace",
     lead:
       "Shortlist, interview, offer, and hire flow through your workspace — not through a forwarded email.",
     proof: [
@@ -109,7 +109,7 @@ const PILLARS: readonly Pillar[] = [
     id: "candidate-memory",
     icon: Brain,
     eyebrow: "Pillar 05",
-    title: "Persistent candidate memory",
+    title: "Talent Graph",
     lead:
       "Silver medalists, prior applicants, and rediscovered talent stay reachable across future roles — not lost when the engagement ends.",
     proof: [

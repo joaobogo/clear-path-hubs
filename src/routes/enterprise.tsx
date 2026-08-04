@@ -101,7 +101,7 @@ const QUALITY_CONTROLS = [
     body: "Change the brief and affected candidates are flagged for re-review rather than left on a stale score.",
   },
   {
-    title: "Consistent rubric across pods",
+    title: "Consistent rubric across every role family",
     body: "The same role family is scored against the same rubric version, whichever recruiter runs the search.",
   },
   {
@@ -155,7 +155,7 @@ const COMPLIANCE_POSTURE = [
 const IMPLEMENTATION = [
   { step: "Week 0", title: "Scoping call", body: "Role families, business units, expected volume, stakeholders and reporting needs." },
   { step: "Week 1", title: "Account design", body: "Business units, hiring teams, permissions and dashboards configured to match your org." },
-  { step: "Week 1–2", title: "Intake and calibration", body: "Criteria and weightings approved per role family. Pods assigned and briefed." },
+  { step: "Week 1–2", title: "Intake and calibration", body: "Criteria and weightings approved per role family. Agent capacity assigned and oversight briefed." },
   { step: "Week 2–3", title: "First ranked shortlists", body: "Delivery begins in the workspace, 7–14 days from an approved brief." },
   { step: "Ongoing", title: "Review cadence", body: "Calibration on the first batches, then a standing review on volume, quality and cycle time." },
 ];
