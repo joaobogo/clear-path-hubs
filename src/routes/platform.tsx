@@ -19,6 +19,8 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { PlatformArchitecture } from "@/components/marketing/platform-architecture";
+import { EvidenceGraph } from "@/components/evidence/evidence-graph";
+import { REPRESENTATIVE_CHAIN } from "@/lib/evidence/evidence-graph";
 import { marketingHead } from "@/lib/marketing/head";
 import {
   PRODUCT_CATEGORY,
@@ -209,6 +211,38 @@ function PlatformPage() {
           </div>
         </PublicPage>
       </PublicSection>
+
+      {/* 2b — EVIDENCE GRAPH */}
+      <PublicSection id="evidence-graph" className="bg-white">
+        <PublicPage>
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
+              Evidence graph
+            </p>
+            <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
+              Every score traces back to a quote.
+            </h2>
+            <p className="mt-3 text-[color:var(--brand-navy)]/80">
+              Requirement, evidence, source, rule, points, decision. Pick a requirement
+              and follow the whole chain. Where evidence is missing, it says so.
+            </p>
+          </div>
+
+          <div className="mt-10">
+            <EvidenceGraph
+              nodes={REPRESENTATIVE_CHAIN.nodes}
+              meta={REPRESENTATIVE_CHAIN.meta}
+              variant="compact"
+              representative
+              idPrefix="public-evidence-graph"
+              title="Evidence graph — a scored candidate"
+              description="Representative data for one senior platform role. In the workspace this is the real record, with reviewer history attached."
+            />
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+
 
       {/* 3 — SYSTEM CONTROLS */}
       <PublicSection className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
