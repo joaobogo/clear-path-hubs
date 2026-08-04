@@ -34,6 +34,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SystemStatusStrip } from "@/components/client/control-room/system-status-strip";
 import { LiveTicker } from "@/components/client/control-room/live-ticker";
 import { IntensityDial } from "@/components/client/control-room/intensity-dial";
+import { SystemHealthStrip } from "@/components/client/system-health-strip";
 import { AgentActivityRail } from "@/components/client/agent-activity-rail";
 
 
