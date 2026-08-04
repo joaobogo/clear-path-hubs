@@ -152,7 +152,14 @@ function AnalyticsPage() {
             Where candidates drop out, how fast we are against our promise, and
             what you spent per hire. Every number comes from your own records.
           </p>
+          <Link
+            to="/client/intelligence"
+            className="mt-2 inline-flex text-sm underline underline-offset-4"
+          >
+            See what these numbers suggest doing next
+          </Link>
         </div>
+
         <div className="flex items-center gap-2">
           <Select
             value={positionId}
