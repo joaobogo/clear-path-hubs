@@ -13,7 +13,10 @@ import { SubscriptionTierCard } from "@/components/marketing/subscription-tier-c
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
 import { PRICING_TIERS, NEVER_CHARGED, PRICING_GUARANTEES } from "@/content/pricing";
 import { SUBSCRIPTION_TIERS } from "@/content/pricing-subscriptions";
-import { PRICE_PILOT_DISPLAY } from "@/config/pricing-core";
+import {
+  PRICE_PILOT_DISPLAY,
+  SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL,
+} from "@/config/pricing-core";
 import { Check, X } from "lucide-react";
 import { PageConnections } from "@/components/marketing/page-connections";
 import { AgencyFeeComparison } from "@/components/marketing/agency-fee-comparison";
@@ -147,11 +150,22 @@ function PricingPage() {
               </p>
             </>
           ) : (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {SUBSCRIPTION_TIERS.map((tier) => (
-                <SubscriptionTierCard key={tier.id} tier={tier} />
-              ))}
-            </div>
+            <>
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {SUBSCRIPTION_TIERS.map((tier) => (
+                  <SubscriptionTierCard key={tier.id} tier={tier} />
+                ))}
+              </div>
+              {/* Annual discount applies to subscription programmes only — never
+                  to the one-off packages above. */}
+              <p className="mt-6 text-sm text-[color:var(--brand-navy)]/80">
+                <span className="font-semibold text-[color:var(--brand-navy)]">
+                  {SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL}
+                </span>{" "}
+                — applied at subscription checkout or on your invoice. Monthly
+                prices are shown above.
+              </p>
+            </>
           )}
           <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[color:var(--brand-navy)]/80">
             {PRICING_GUARANTEES.map((g) => (
