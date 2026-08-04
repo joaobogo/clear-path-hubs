@@ -187,7 +187,6 @@ export const Route = createFileRoute("/api/public/booking/calendly-webhook")({
             fullName: [updated?.first_name, updated?.last_name].filter(Boolean).join(" ") || null,
             email: updated?.email ?? body.payload.email ?? null,
             company: updated?.company_name ?? null,
-            phone: updated?.phone ?? null,
             facts: [
               { label: "Meeting status", value: update.status },
               { label: "Starts", value: event.start_time },

@@ -119,7 +119,7 @@ export const submitInquiry = createServerFn({ method: "POST" })
         recordTable: "marketing_inquiries",
         recordId: inserted?.id ?? null,
         linkPath: "/admin/pending-leads",
-        priority: routing.priority === "urgent" || routing.priority === "high" ? routing.priority : null,
+        priority: routing.priority === "hot" ? "urgent" : routing.priority === "warm" ? "high" : null,
       });
     } catch (err) {
       console.error("[inquiry] lead notification failed", err);
