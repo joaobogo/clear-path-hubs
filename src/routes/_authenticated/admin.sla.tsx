@@ -1,22 +1,36 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { getSlaClock } from "@/lib/admin-workbench.functions";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { TestRecordsToggle } from "@/components/admin/TestRecordsToggle";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+const searchSchema = z.object({
+  show_test: fallback(z.boolean(), false).default(false),
+});
+
 export const Route = createFileRoute("/_authenticated/admin/sla")({
-  loader: ({ context }) =>
-    context.queryClient.ensureQueryData({ queryKey: ["admin-sla-clock"], queryFn: () => getSlaClock() }),
+  validateSearch: zodValidator(searchSchema),
+  loaderDeps: ({ search }) => ({ show_test: search.show_test }),
+  loader: ({ context, deps }) =>
+    context.queryClient.ensureQueryData({
+      queryKey: ["admin-sla-clock", deps.show_test],
+      queryFn: () => getSlaClock({ data: { include_test: deps.show_test } }),
+    }),
   head: () => ({
     meta: [
       { title: "SLA clock · TaaSFlow admin" },
       { name: "description", content: "Roles approaching or past a service commitment, sorted by urgency." },
+      { name: "robots", content: "noindex" },
     ],
   }),
   errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.sla.tsx"),
   component: SlaClockPage,
 });
+
 
 const STATE_LABEL: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   overdue: { label: "Past promise", variant: "destructive" },
@@ -34,19 +48,36 @@ function humanRemaining(hours: number) {
 }
 
 function SlaClockPage() {
-  const { data } = useSuspenseQuery({ queryKey: ["admin-sla-clock"], queryFn: () => getSlaClock() });
+  const { show_test } = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const { data } = useSuspenseQuery({
+    queryKey: ["admin-sla-clock", show_test],
+    queryFn: () => getSlaClock({ data: { include_test: show_test } }),
+  });
   const rows = data.rows;
   const open = rows.filter((r) => r.state !== "met");
   const met = rows.filter((r) => r.state === "met");
 
   return (
     <div className="space-y-6 p-6">
-      <header className="space-y-1">
-        <h1 className="text-2xl font-semibold">SLA clock</h1>
-        <p className="text-sm text-muted-foreground">
-          Every live role with a commitment, sorted by how close it is to the promise we made.
-        </p>
+      <header className="flex flex-wrap items-end justify-between gap-3">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-semibold">SLA clock</h1>
+          <p className="text-sm text-muted-foreground">
+            Every live role with a commitment, sorted by how close it is to the promise we made.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {show_test
+              ? "Including test and internal organizations."
+              : "Test and internal organizations are hidden."}
+          </p>
+        </div>
+        <TestRecordsToggle
+          checked={show_test}
+          onChange={(next) => navigate({ search: { show_test: next }, replace: true })}
+        />
       </header>
+
 
       <div className="grid gap-3 sm:grid-cols-3">
         {(["overdue", "due_soon", "at_risk"] as const).map((state) => (

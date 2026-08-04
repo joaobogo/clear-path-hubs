@@ -1,17 +1,27 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { useState } from "react";
 import { listIntakeInbox } from "@/lib/intake-admin.functions";
+import { TestRecordsToggle } from "@/components/admin/TestRecordsToggle";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { AlertTriangle, ArrowRight, Inbox } from "lucide-react";
 
+const searchSchema = z.object({
+  show_test: fallback(z.boolean(), false).default(false),
+});
+
 export const Route = createFileRoute("/_authenticated/admin/intake/")({
-  loader: ({ context }) =>
+  validateSearch: zodValidator(searchSchema),
+  loaderDeps: ({ search }) => ({ show_test: search.show_test }),
+  loader: ({ context, deps }) =>
     context.queryClient.ensureQueryData({
-      queryKey: ["admin", "intake-inbox", { filter: "pending", q: "" }],
-      queryFn: () => listIntakeInbox({ data: { filter: "pending" } }),
+      queryKey: ["admin", "intake-inbox", { filter: "pending", q: "", show_test: deps.show_test }],
+      queryFn: () =>
+        listIntakeInbox({ data: { filter: "pending", include_test: deps.show_test } }),
     }),
   errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.intake.index.tsx"),
   head: () => ({
@@ -22,6 +32,7 @@ export const Route = createFileRoute("/_authenticated/admin/intake/")({
   }),
   component: IntakeInbox,
 });
+
 
 type Filter = "pending" | "needs_conversion" | "approved" | "rejected" | "all";
 const FILTERS: { key: Filter; label: string }[] = [
@@ -45,11 +56,14 @@ function relTime(iso?: string | null): string {
 }
 
 function IntakeInbox() {
+  const { show_test } = Route.useSearch();
+  const navigate = Route.useNavigate();
   const [filter, setFilter] = useState<Filter>("pending");
   const [q, setQ] = useState("");
   const { data, isFetching } = useSuspenseQuery({
-    queryKey: ["admin", "intake-inbox", { filter, q }],
-    queryFn: () => listIntakeInbox({ data: { filter, q: q || undefined } }),
+    queryKey: ["admin", "intake-inbox", { filter, q, show_test }],
+    queryFn: () =>
+      listIntakeInbox({ data: { filter, q: q || undefined, include_test: show_test } }),
     refetchOnWindowFocus: true,
     staleTime: 15_000,
   });
@@ -62,9 +76,20 @@ function IntakeInbox() {
           <p className="mt-1 text-sm text-muted-foreground">
             Every client brief. Convert to a position, request clarification, or reject.
           </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {show_test
+              ? "Including test and internal organizations."
+              : "Test and internal organizations are hidden."}
+          </p>
         </div>
-        <div className="text-xs text-muted-foreground">
-          {data.total} shown{isFetching ? " · refreshing…" : ""}
+        <div className="flex flex-wrap items-center gap-3">
+          <TestRecordsToggle
+            checked={show_test}
+            onChange={(next) => navigate({ search: { show_test: next }, replace: true })}
+          />
+          <div className="text-xs text-muted-foreground">
+            {data.total} shown{isFetching ? " · refreshing…" : ""}
+          </div>
         </div>
       </header>
 
@@ -89,8 +114,10 @@ function IntakeInbox() {
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search company, role, email…"
           className="h-8 max-w-xs"
+          aria-label="Search intake submissions"
         />
       </div>
+
 
       {data.items.length === 0 ? (
         <div className="rounded-lg border border-dashed bg-card p-10 text-center">

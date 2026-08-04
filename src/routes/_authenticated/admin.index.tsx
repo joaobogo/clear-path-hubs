@@ -1,9 +1,11 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { ActivityFeed } from "@/components/activity/ActivityFeed";
 import { getAdminWorkQueues } from "@/lib/admin-ops.functions";
-import { Badge } from "@/components/ui/badge";
+import { TestRecordsToggle } from "@/components/admin/TestRecordsToggle";
 import { Button } from "@/components/ui/button";
 import {
   CreditCard,
@@ -15,14 +17,21 @@ import {
   ArrowRight,
   RefreshCw,
   CheckCircle2,
+  Inbox,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
+const searchSchema = z.object({
+  show_test: fallback(z.boolean(), false).default(false),
+});
+
 export const Route = createFileRoute("/_authenticated/admin/")({
-  loader: ({ context }) =>
+  validateSearch: zodValidator(searchSchema),
+  loaderDeps: ({ search }) => ({ show_test: search.show_test }),
+  loader: ({ context, deps }) =>
     context.queryClient.ensureQueryData({
-      queryKey: ["admin-work-queues"],
-      queryFn: () => getAdminWorkQueues(),
+      queryKey: ["admin-work-queues", deps.show_test],
+      queryFn: () => getAdminWorkQueues({ data: { include_test: deps.show_test } }),
     }),
   errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.index.tsx"),
   head: () => ({
@@ -35,6 +44,7 @@ export const Route = createFileRoute("/_authenticated/admin/")({
 });
 
 const ICONS: Record<string, ComponentType<{ className?: string }>> = {
+  intakes_aging: Inbox,
   unpaid: CreditCard,
   setup: Briefcase,
   review: ClipboardCheck,
@@ -42,6 +52,7 @@ const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   interviews: CalendarClock,
   blocked: AlertOctagon,
 };
+
 
 function waited(iso: string | null | undefined): string {
   if (!iso) return "—";
@@ -61,9 +72,11 @@ function toneClass(tone: string) {
 
 function Overview() {
   const qc = useQueryClient();
+  const { show_test } = Route.useSearch();
+  const navigate = Route.useNavigate();
   const { data, isFetching } = useSuspenseQuery({
-    queryKey: ["admin-work-queues"],
-    queryFn: () => getAdminWorkQueues(),
+    queryKey: ["admin-work-queues", show_test],
+    queryFn: () => getAdminWorkQueues({ data: { include_test: show_test } }),
     refetchOnWindowFocus: true,
     staleTime: 30_000,
   });
@@ -81,22 +94,34 @@ function Overview() {
               ? "Nothing is waiting on the platform team right now."
               : `${total} item${total === 1 ? "" : "s"} waiting on you. Every row opens the one action it needs.`}
           </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {show_test
+              ? "Including test and internal organizations."
+              : "Test and internal organizations are hidden."}
+          </p>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 gap-1.5 px-2 text-xs"
-          onClick={() => qc.invalidateQueries({ queryKey: ["admin-work-queues"] })}
-          disabled={isFetching}
-          aria-label="Refresh work queue"
-        >
-          <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} />
-          Refresh
-        </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          <TestRecordsToggle
+            checked={show_test}
+            onChange={(next) => navigate({ search: { show_test: next }, replace: true })}
+          />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 gap-1.5 px-2 text-xs"
+            onClick={() => qc.invalidateQueries({ queryKey: ["admin-work-queues"] })}
+            disabled={isFetching}
+            aria-label="Refresh work queue"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
+        </div>
       </header>
 
+
       {/* Counts strip — each jumps to its queue below. */}
-      <nav aria-label="Queue counts" className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+      <nav aria-label="Queue counts" className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-7">
         {queues.map((q) => {
           const Icon = ICONS[q.key] ?? ClipboardCheck;
           return (
@@ -154,7 +179,10 @@ function Overview() {
               {q.items.length === 0 ? (
                 <div className="flex items-center gap-2 px-4 py-8 text-xs text-muted-foreground">
                   <CheckCircle2 className="h-4 w-4 text-success" />
-                  Clear — nothing in this queue.
+                  {q.key === "intakes_aging"
+                    ? "No intakes awaiting action."
+                    : "Clear — nothing in this queue."}
+
                 </div>
               ) : (
                 <ul className="divide-y">

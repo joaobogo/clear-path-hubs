@@ -82,12 +82,15 @@ export const listIntakeInbox = createServerFn({ method: "GET" })
           .default("pending"),
         page: z.number().int().min(1).optional().default(1),
         page_size: z.number().int().min(10).max(100).optional().default(50),
+        include_test: z.boolean().optional().default(false),
       })
       .parse(i ?? {}),
   )
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
+    const { loadTestScope, excludeTestOrgs } = await import("./admin-test-scope.server");
+    const scope = await loadTestScope(s, data.include_test);
     let q = s
       .from("intake_submissions")
       .select(
@@ -95,6 +98,8 @@ export const listIntakeInbox = createServerFn({ method: "GET" })
       )
       .order("created_at", { ascending: false })
       .limit(data.page_size * 4);
+    // Test/internal organizations are hidden unless explicitly requested.
+    q = excludeTestOrgs(q, scope);
 
     if (data.q) {
       q = q.or(
@@ -120,6 +125,7 @@ export const listIntakeInbox = createServerFn({ method: "GET" })
       default:
         break;
     }
+
     const { data: rows } = await q;
     const items = (rows ?? []) as AnyRow[];
     // Duplicate detection: same email or (company_name + role_title) inside

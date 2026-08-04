@@ -18,14 +18,23 @@ export type SlaClockRow = {
 
 const HOUR = 3_600_000;
 
-export async function loadSlaClock(admin: Admin): Promise<{ rows: SlaClockRow[]; generated_at: string }> {
-  const { data: commitments, error } = await admin
-    .from("position_commitments")
-    .select(
-      "position_id, organization_id, first_shortlist_days, shortlist_size, interview_slots_hours, baseline_at, positions:position_id(title, status), organizations:organization_id(name)",
-    )
-    .limit(500);
+export async function loadSlaClock(
+  admin: Admin,
+  opts: { includeTest?: boolean } = {},
+): Promise<{ rows: SlaClockRow[]; generated_at: string }> {
+  const { loadTestScope, excludeTestOrgs } = await import("./admin-test-scope.server");
+  const scope = await loadTestScope(admin, opts.includeTest ?? false);
+  const { data: commitments, error } = await excludeTestOrgs(
+    admin
+      .from("position_commitments")
+      .select(
+        "position_id, organization_id, first_shortlist_days, shortlist_size, interview_slots_hours, baseline_at, positions:position_id(title, status), organizations:organization_id(name)",
+      )
+      .limit(500),
+    scope,
+  );
   if (error) throw error;
+
 
   const activeIds = (commitments ?? [])
     .filter((c: any) => c.positions && c.positions.status !== "closed" && c.positions.status !== "filled")
@@ -101,10 +110,13 @@ export type HealthIssue = {
   retryable: boolean;
 };
 
-export async function loadOperationalHealth(admin: Admin) {
+export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: boolean } = {}) {
   const staleCutoff = new Date(Date.now() - 2 * HOUR).toISOString();
+  const { loadTestScope, excludeTestOrgs } = await import("./admin-test-scope.server");
+  const scope = await loadTestScope(admin, opts.includeTest ?? false);
 
   const [crmRes, jobsRes, deliveriesRes, cvRes] = await Promise.all([
+
     admin
       .from("crm_submission_queue")
       .select("id, status, attempts, last_error, created_at, source_form_id")
@@ -129,14 +141,20 @@ export async function loadOperationalHealth(admin: Admin) {
       .in("status", ["failed", "bounced"])
       .order("updated_at", { ascending: false })
       .limit(50),
-    admin
-      .from("candidate_matches")
-      .select("id, processing_state, processing_updated_at, candidate_profiles:candidate_profile_id(full_name)")
-      .in("processing_state", ["queued", "processing", "failed"])
-      .lt("processing_updated_at", staleCutoff)
-      .order("processing_updated_at", { ascending: false })
-      .limit(50),
+    excludeTestOrgs(
+      admin
+        .from("candidate_matches")
+        .select(
+          "id, processing_state, processing_updated_at, candidate_profiles:candidate_profile_id(full_name)",
+        )
+        .in("processing_state", ["queued", "processing", "failed"])
+        .lt("processing_updated_at", staleCutoff)
+        .order("processing_updated_at", { ascending: false })
+        .limit(50),
+      scope,
+    ),
   ]);
+
 
   const issues: HealthIssue[] = [];
 
