@@ -4,20 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { FormShell } from "@/components/marketing/form-shell";
-
-type OAuthDetails = {
-  client?: { name?: string | null } | null;
-  redirect_url?: string | null;
-  redirect_to?: string | null;
-};
-
-type OAuthApi = {
-  getAuthorizationDetails: (id: string) => Promise<{ data: OAuthDetails | null; error: Error | null }>;
-  approveAuthorization: (id: string) => Promise<{ data: OAuthDetails | null; error: Error | null }>;
-  denyAuthorization: (id: string) => Promise<{ data: OAuthDetails | null; error: Error | null }>;
-};
-
-const oauth = () => (supabase.auth as unknown as { oauth: OAuthApi }).oauth;
+import { oauthApi, type OAuthDetails } from "@/lib/lovable/oauth-consent-api";
 
 export const Route = createFileRoute("/.lovable/oauth/consent")({
   // Browser-only: the Supabase session lives in localStorage.
@@ -35,7 +22,7 @@ export const Route = createFileRoute("/.lovable/oauth/consent")({
   },
   loader: async ({ location }) => {
     const authorizationId = new URLSearchParams(location.search).get("authorization_id")!;
-    const { data, error } = await oauth().getAuthorizationDetails(authorizationId);
+    const { data, error } = await oauthApi().getAuthorizationDetails(authorizationId);
     if (error) throw error;
     const immediate = data?.redirect_url ?? data?.redirect_to;
     if (immediate && !data?.client) throw redirect({ href: immediate });
@@ -66,8 +53,8 @@ function Consent() {
     setBusy(true);
     setError(null);
     const { data, error: err } = approve
-      ? await oauth().approveAuthorization(authorization_id)
-      : await oauth().denyAuthorization(authorization_id);
+      ? await oauthApi().approveAuthorization(authorization_id)
+      : await oauthApi().denyAuthorization(authorization_id);
     if (err) {
       setBusy(false);
       setError(err.message);
