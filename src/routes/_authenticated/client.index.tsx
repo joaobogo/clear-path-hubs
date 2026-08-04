@@ -34,6 +34,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { SystemStatusStrip } from "@/components/client/control-room/system-status-strip";
 import { LiveTicker } from "@/components/client/control-room/live-ticker";
 import { IntensityDial } from "@/components/client/control-room/intensity-dial";
+import { AgentActivityRail } from "@/components/client/agent-activity-rail";
+
 
 export const Route = createFileRoute("/_authenticated/client/")({
   head: () => ({
