@@ -248,3 +248,18 @@ export const requestDiscoveryCall = createServerFn({ method: "POST" })
 
     return { ok: true, callId: inserted?.id ?? null };
   });
+
+/** Called once Calendly confirms the visitor picked a real time. */
+export const confirmDiscoveryCall = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { callId: string }) => {
+    if (!isUuid(data.callId)) throw new Error("Invalid call");
+    return data;
+  })
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("sales_calls")
+      .update({ status: "booked" })
+      .eq("id", data.callId);
+    return { ok: !error };
+  });
