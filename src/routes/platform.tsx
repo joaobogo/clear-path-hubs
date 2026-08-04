@@ -30,7 +30,7 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
-import { PRODUCT_CATEGORY, MODULES } from "@/config/product-language";
+import { PRODUCT_CATEGORY, MODULES, MODULE_SECTIONS } from "@/config/product-language";
 
 export const Route = createFileRoute("/platform")({
   head: () =>
