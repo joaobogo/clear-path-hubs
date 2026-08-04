@@ -21,7 +21,7 @@ import {
   resolveMeetingType,
 } from "@/config/booking";
 import { bookingIntakeSchema, type BookingIntake } from "@/lib/booking/booking-schema";
-import { trackBooking } from "@/lib/booking/booking-events";
+import { BOOKING_EVENTS, trackBooking } from "@/lib/booking/booking-events";
 import { mountCalendlyInline, onCalendlyEvent } from "@/lib/calendly";
 import { confirmBookingScheduled, submitBookingIntake } from "@/lib/booking/booking.functions";
 import { getAttribution, getPageContext } from "@/lib/crm/attribution";
@@ -103,7 +103,7 @@ function BookPage() {
   const embedRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    trackBooking("booking_started", { meetingType, ctaLocation: cta ?? null });
+    trackBooking(BOOKING_EVENTS.pageViewed, { meetingType, ctaLocation: cta ?? null });
   }, [meetingType, cta]);
 
   // Only the scheduler's own confirmation counts as a booking.
@@ -112,7 +112,7 @@ function BookPage() {
       onCalendlyEvent((name, payload) => {
         if (name !== "calendly.event_scheduled") return;
         setStep("done");
-        trackBooking("booking_completed", { meetingType, bookingSessionId: sessionId });
+        trackBooking(BOOKING_EVENTS.completed, { meetingType, bookingSessionId: sessionId });
         if (sessionId) {
           void confirm({
             data: {
@@ -146,7 +146,7 @@ function BookPage() {
     });
     if (!result.ok) {
       setEmbedFailed(true);
-      trackBooking("booking_scheduler_failed", { meetingType, reason: result.reason });
+      trackBooking(BOOKING_EVENTS.failed, { meetingType, reason: result.reason });
     }
   }
 
@@ -181,7 +181,7 @@ function BookPage() {
       });
       setSessionId(result.sessionId);
       setStep("schedule");
-      trackBooking("booking_intake_submitted", {
+      trackBooking(BOOKING_EVENTS.intakeCompleted, {
         meetingType,
         bookingSessionId: result.sessionId,
       });
