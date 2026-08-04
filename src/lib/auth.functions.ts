@@ -699,3 +699,59 @@ export const provisionClientMembershipForSelf = createServerFn({ method: "POST" 
   });
 
 
+// ─────────────────────────────────────────────────────────────
+// Email-verification gate.
+// Google (and any provider) can hand us a session whose email the provider
+// never confirmed. Sign-in must not succeed on an unconfirmed address, so the
+// client calls this immediately after a session appears and signs the user
+// out when it reports `verified: false`.
+//
+// It also settles the profile row for a genuinely verified user: the row is
+// created if missing and left untouched when it already exists, so a
+// suspended or deleted account is never silently reactivated.
+// ─────────────────────────────────────────────────────────────
+export const assertVerifiedSession = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { userId, claims } = context;
+    const c = claims as Record<string, unknown>;
+    const meta = (c.user_metadata as { email_verified?: boolean } | undefined) ?? undefined;
+    const email = (c.email as string | undefined)?.toLowerCase() ?? null;
+    const provider =
+      ((c.app_metadata as { provider?: string } | undefined)?.provider as string | undefined) ??
+      "email";
+    const verified =
+      Boolean(c.email_confirmed_at) ||
+      (c.email_verified as boolean | undefined) === true ||
+      meta?.email_verified === true;
+
+    if (!verified) {
+      return { verified: false as const, provider, active: false as const };
+    }
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("id, status")
+      .eq("auth_user_id", userId)
+      .maybeSingle();
+
+    let status = profile?.status ?? null;
+    if (!profile) {
+      // First verified sign-in: create the profile as active. This grants no
+      // membership, role or tenant access on its own.
+      const { data: created } = await supabaseAdmin
+        .from("profiles")
+        .insert({
+          auth_user_id: userId,
+          email: email ?? `${userId}@unknown.local`,
+          full_name: (c.user_metadata as { full_name?: string } | undefined)?.full_name ?? null,
+          status: "active",
+        })
+        .select("status")
+        .maybeSingle();
+      status = created?.status ?? "active";
+    }
+
+    return { verified: true as const, provider, active: status === "active", status };
+  });
