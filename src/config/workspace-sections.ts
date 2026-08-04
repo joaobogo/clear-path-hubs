@@ -87,6 +87,7 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
     label: "Operations",
     tabs: [
       { to: "/admin/operations", label: "Operations" },
+      { to: "/admin/agent-ops", label: "Agent operations" },
       { to: "/admin/sla", label: "SLA clock" },
       { to: "/admin/wbr", label: "Weekly review" },
       { to: "/admin/health", label: "System health" },

@@ -55,9 +55,16 @@ async function stopAgentWork(supabase: Db, org: string, key: AgentKey) {
 
   const jobTypes = AGENT_JOB_TYPES[key];
   if (jobTypes.length) {
+    // `processing_state` has no `cancelled` member, so stopped work is
+    // recorded as failed with an explicit code rather than an invalid status.
     const { data } = await supabase
       .from("processing_jobs")
-      .update({ status: "cancelled" })
+      .update({
+        status: "failed",
+        error_code: "agent_switched_off",
+        error_message: "Stopped because the agent was switched off for this workspace.",
+        completed_at: new Date().toISOString(),
+      })
       .eq("status", "queued")
       .in("job_type", jobTypes)
       .select("id");
