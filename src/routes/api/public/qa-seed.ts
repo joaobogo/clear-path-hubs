@@ -450,7 +450,9 @@ async function handle(request: Request): Promise<Response> {
     if (action === "seed") {
       const res = await seedQAData();
       return Response.json({ ok: true, action, ...res });
+    }
     if (action === "cleanup_intake_e2e") {
+
       const res = await cleanupIntakeE2E(body.prefix ?? "QA_INTAKE_E2E_");
       return Response.json({ ok: true, action, ...res });
     }
