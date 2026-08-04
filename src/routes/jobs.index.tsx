@@ -48,12 +48,12 @@ export const Route = createFileRoute("/jobs/")({
       {
         name: "description",
         content:
-          "Browse open roles curated by TaaSFlow. Remote, hybrid, and onsite positions across engineering, design, product, and data.",
+          "Browse the roles currently open through TaaSFlow. Every role is scored against an approved rubric — apply in minutes, no account needed.",
       },
       { property: "og:title", content: "Open roles — TaaSFlow" },
       {
         property: "og:description",
-        content: "Curated roles from TaaSFlow clients. Apply in minutes.",
+        content: "Roles currently open through TaaSFlow. Apply in minutes.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://taasflow.com/jobs" },
