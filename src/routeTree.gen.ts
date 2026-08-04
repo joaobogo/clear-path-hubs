@@ -135,6 +135,7 @@ import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminOperationsRouteImport } from './routes/_authenticated/admin.operations'
 import { Route as AuthenticatedAdminNotificationsRouteImport } from './routes/_authenticated/admin.notifications'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
+import { Route as AuthenticatedAdminLeadDeliveryRouteImport } from './routes/_authenticated/admin.lead-delivery'
 import { Route as AuthenticatedAdminIntegrationsRouteImport } from './routes/_authenticated/admin.integrations'
 import { Route as AuthenticatedAdminIntakeRouteImport } from './routes/_authenticated/admin.intake'
 import { Route as AuthenticatedAdminHealthRouteImport } from './routes/_authenticated/admin.health'
@@ -852,6 +853,12 @@ const AuthenticatedAdminMessagesRoute =
     path: '/messages',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminLeadDeliveryRoute =
+  AuthenticatedAdminLeadDeliveryRouteImport.update({
+    id: '/lead-delivery',
+    path: '/lead-delivery',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminIntegrationsRoute =
   AuthenticatedAdminIntegrationsRouteImport.update({
     id: '/integrations',
@@ -1219,6 +1226,7 @@ export interface FileRoutesByFullPath {
   '/admin/health': typeof AuthenticatedAdminHealthRoute
   '/admin/intake': typeof AuthenticatedAdminIntakeRouteWithChildren
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
+  '/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
@@ -1389,6 +1397,7 @@ export interface FileRoutesByTo {
   '/admin/design-system': typeof AuthenticatedAdminDesignSystemRoute
   '/admin/health': typeof AuthenticatedAdminHealthRoute
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
+  '/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
@@ -1563,6 +1572,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/health': typeof AuthenticatedAdminHealthRoute
   '/_authenticated/admin/intake': typeof AuthenticatedAdminIntakeRouteWithChildren
   '/_authenticated/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
+  '/_authenticated/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/_authenticated/admin/operations': typeof AuthenticatedAdminOperationsRoute
@@ -1741,6 +1751,7 @@ export interface FileRouteTypes {
     | '/admin/health'
     | '/admin/intake'
     | '/admin/integrations'
+    | '/admin/lead-delivery'
     | '/admin/messages'
     | '/admin/notifications'
     | '/admin/operations'
@@ -1911,6 +1922,7 @@ export interface FileRouteTypes {
     | '/admin/design-system'
     | '/admin/health'
     | '/admin/integrations'
+    | '/admin/lead-delivery'
     | '/admin/messages'
     | '/admin/notifications'
     | '/admin/operations'
@@ -2084,6 +2096,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/health'
     | '/_authenticated/admin/intake'
     | '/_authenticated/admin/integrations'
+    | '/_authenticated/admin/lead-delivery'
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/notifications'
     | '/_authenticated/admin/operations'
@@ -3154,6 +3167,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMessagesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/lead-delivery': {
+      id: '/_authenticated/admin/lead-delivery'
+      path: '/lead-delivery'
+      fullPath: '/admin/lead-delivery'
+      preLoaderRoute: typeof AuthenticatedAdminLeadDeliveryRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/integrations': {
       id: '/_authenticated/admin/integrations'
       path: '/integrations'
@@ -3585,6 +3605,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminHealthRoute: typeof AuthenticatedAdminHealthRoute
   AuthenticatedAdminIntakeRoute: typeof AuthenticatedAdminIntakeRouteWithChildren
   AuthenticatedAdminIntegrationsRoute: typeof AuthenticatedAdminIntegrationsRoute
+  AuthenticatedAdminLeadDeliveryRoute: typeof AuthenticatedAdminLeadDeliveryRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminNotificationsRoute: typeof AuthenticatedAdminNotificationsRoute
   AuthenticatedAdminOperationsRoute: typeof AuthenticatedAdminOperationsRoute
@@ -3622,6 +3643,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminHealthRoute: AuthenticatedAdminHealthRoute,
   AuthenticatedAdminIntakeRoute: AuthenticatedAdminIntakeRouteWithChildren,
   AuthenticatedAdminIntegrationsRoute: AuthenticatedAdminIntegrationsRoute,
+  AuthenticatedAdminLeadDeliveryRoute: AuthenticatedAdminLeadDeliveryRoute,
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
   AuthenticatedAdminNotificationsRoute: AuthenticatedAdminNotificationsRoute,
   AuthenticatedAdminOperationsRoute: AuthenticatedAdminOperationsRoute,
