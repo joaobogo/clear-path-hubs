@@ -321,3 +321,53 @@ export function announcement(status: ProcessStatus): string {
       return "";
   }
 }
+
+/**
+ * Maps a candidate's stored processing state onto the shared process
+ * vocabulary. Everything here is derived from the record — no timers, no
+ * guessed stages — and describes only supported stages in product language.
+ */
+export function candidateProcessStatus(state: string): ProcessStatus | null {
+  switch (state) {
+    case "queued":
+      return { process: "evidence", phase: "background", stageIndex: 0 };
+    case "parsing":
+      return { process: "evidence", phase: "background", stageIndex: 0 };
+    case "parsed":
+      return { process: "evidence", phase: "background", stageIndex: 1 };
+    case "enriching":
+      return { process: "evidence", phase: "background", stageIndex: 2 };
+    case "ready_to_score":
+      return { process: "scoring", phase: "background", stageIndex: 0 };
+    case "scoring":
+      return { process: "scoring", phase: "background", stageIndex: 1 };
+    case "scored":
+      return { process: "scoring", phase: "done" };
+    case "failed":
+      return {
+        process: "evidence",
+        phase: "failed",
+        errorMessage: "Processing stopped before evidence was recorded.",
+      };
+    case "provider_blocked":
+      return {
+        process: "evidence",
+        phase: "failed",
+        errorMessage: "An upstream service refused the request, so nothing was recorded.",
+      };
+    case "ocr_required":
+      return {
+        process: "file",
+        phase: "failed",
+        errorMessage: "The document could not be read as text and needs OCR before evidence work.",
+      };
+    case "manual_review_required":
+      return {
+        process: "evidence",
+        phase: "failed",
+        errorMessage: "This candidate needs a human check before processing continues.",
+      };
+    default:
+      return null;
+  }
+}
