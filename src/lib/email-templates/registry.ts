@@ -9,6 +9,7 @@ import { template as paymentReceiptTemplate } from './payment-receipt'
 import { template as clientWeeklyDigestTemplate } from './client-weekly-digest'
 import { template as applicationReceivedTemplate } from './application-received'
 import { template as applicationClosedTemplate } from './application-closed'
+import { template as internalLeadAlertTemplate } from './internal-lead-alert'
 
 
 
@@ -40,6 +41,7 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'client-weekly-digest': clientWeeklyDigestTemplate,
   'application-received': applicationReceivedTemplate,
   'application-closed': applicationClosedTemplate,
+  'internal-lead-alert': internalLeadAlertTemplate,
 }
 
 
