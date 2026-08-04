@@ -5,6 +5,7 @@ import {
   resolveFilteredEmptyState,
   resolveNoCandidatesState,
 } from "@/lib/empty-states/empty-state-catalogue";
+import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
@@ -740,9 +741,7 @@ function CandidatesPage() {
             hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0}
             activeFilters={activeFilters}
             onClear={clearFilters}
-            activeRoles={positions.length}
-            inProcessing={overview?.kpis.delivered ? 0 : 0}
-            kpis={overview?.kpis}
+            orgId={orgId}
           />
  ) : search.view === "list" ? (
  <CompactList
@@ -894,18 +893,15 @@ function CandidatesEmptyState({
   hasCandidates,
   activeFilters,
   onClear,
-  activeRoles,
-  inProcessing,
-  kpis,
+  orgId,
 }: {
   hasCandidates: boolean;
   activeFilters: { key: string; label: string }[];
   onClear: () => void;
-  activeRoles: number;
-  inProcessing: number;
-  kpis?: { delivered: number; top: number; shortlisted: number; interviewing: number; offers: number; hires: number };
+  orgId: string | undefined;
 }) {
   const filteredOut = hasCandidates && activeFilters.length > 0;
+  const signals = useEmptyStateSignals(orgId, { enabled: !filteredOut });
   if (filteredOut) {
     return (
       <SurfaceState
@@ -917,12 +913,10 @@ function CandidatesEmptyState({
   return (
     <SurfaceState
       content={resolveNoCandidatesState({
-        activeRoles,
-        // Discovery has started once the platform has delivered anything for
-        // this workspace, or a role is live and past setup.
-        discoveryStarted: activeRoles > 0,
-        inProcessing,
-        runsCompleted: kpis && kpis.delivered === 0 ? 0 : 0,
+        activeRoles: signals?.activeRoles ?? 0,
+        discoveryStarted: signals?.discoveryStarted ?? false,
+        inProcessing: signals?.inProcessing ?? 0,
+        runsCompleted: signals?.runsCompleted ?? 0,
       })}
     />
   );
