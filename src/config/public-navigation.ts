@@ -12,11 +12,14 @@ import { MODULE_SECTIONS } from "@/config/product-language";
 
 export type NavLink = {
   to: string;
+  /** Section id on the destination page, rendered as `#hash`. */
+  hash?: string;
   label: string;
   description?: string;
   hidden?: boolean;
   external?: boolean;
 };
+
 
 export type NavGroup = {
   label: string;
