@@ -24,6 +24,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FormShell } from "@/components/marketing/form-shell";
+import { TransparencyPanel } from "@/components/candidate/transparency-panel";
 
 export const Route = createFileRoute("/jobs/$id/apply")({
   loader: async ({ context, params }) => {
@@ -888,6 +889,15 @@ function ApplyPage() {
                   </li>
                 </ul>
               </div>
+
+              <TransparencyPanel
+                company={pos.organization_name}
+                title="Before you send it"
+                intro="Software helps read your CV; a person reviews your application. Here's the detail."
+                defaultOpen="automation"
+              />
+
+
 
               <div className="space-y-3 rounded-lg border p-4">
                 <label className="flex items-start gap-3 text-sm">

@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getApplicationReceipt } from "@/lib/apply.functions";
 import { Button } from "@/components/ui/button";
+import { TransparencyPanel } from "@/components/candidate/transparency-panel";
+import { CandidateStatePanel } from "@/components/candidate/candidate-state-panel";
+import { SUPPORT_EMAIL } from "@/lib/candidate/candidate-transparency";
 
 export const Route = createFileRoute("/apply/received/$applicationId")({
   loader: async ({ context, params }) => {
@@ -76,11 +79,16 @@ function Received() {
           </div>
         </div>
 
-        <section className="mt-8 rounded-lg border p-6">
+        <div className="mt-8">
+          <CandidateStatePanel state="application_received" />
+        </div>
+
+        <section className="mt-6 rounded-lg border p-6">
           <h2 className="text-lg font-semibold">What happens next</h2>
           <ol className="mt-3 list-decimal pl-5 space-y-2 text-sm text-foreground/90">
-            <li>Our team reviews your CV and screening answers.</li>
-            <li>If there's a fit, we'll reach out by email within a few business days.</li>
+            <li>Our tools read your CV and draft a summary of your experience against the role.</li>
+            <li>A reviewer reads your application and that summary, then decides what to share with the hiring team.</li>
+            <li>We email you when there is news, or a question we need you to answer.</li>
             <li>
               {signedIn
                 ? "Your candidate account is ready — track this application and reuse your profile for future roles."
@@ -88,6 +96,10 @@ function Received() {
             </li>
           </ol>
         </section>
+
+        <div className="mt-6">
+          <TransparencyPanel company={data.organization_name} />
+        </div>
 
         <div className="mt-8 flex flex-wrap gap-3">
           <Button asChild>
@@ -108,7 +120,7 @@ function Received() {
 
 
         <p className="mt-6 text-xs text-muted-foreground">
-          Keep this reference handy — we'll ask for it if you contact us about this application.
+          Keep this reference handy — email {SUPPORT_EMAIL} with it and a person will help.
         </p>
       </FormShell>
   );
