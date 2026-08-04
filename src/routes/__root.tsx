@@ -18,7 +18,7 @@ import { captureFirstTouch } from "@/lib/crm/attribution";
 import { OfflineBanner } from "@/components/offline-banner";
 import { TrackingRouteObserver } from "@/components/analytics/tracking-route-observer";
 import { ConsentBanner } from "@/components/analytics/consent-banner";
-import { CalendlyBadge } from "@/components/marketing/calendly-badge";
+import { BookingCtaRouter } from "@/components/marketing/booking-cta-router";
 
 function NotFoundComponent() {
   return <PublicNotFound />;
@@ -183,7 +183,7 @@ function RootComponent() {
       <Outlet />
       <TrackingRouteObserver />
       <ConsentBanner />
-      <CalendlyBadge />
+      <BookingCtaRouter />
       <OfflineBanner />
       <Toaster />
     </QueryClientProvider>

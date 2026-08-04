@@ -1,48 +1,70 @@
 /**
- * Calendly popup + badge loader.
+ * Calendly embed layer.
  *
- * The widget assets are fetched on demand (first "Book a call" click, or when
- * the badge mounts) so no page pays for them up front. Every call is safe to
- * repeat — the script and stylesheet are only ever added once.
+ * Calendly stays the scheduling infrastructure — it owns availability and the
+ * host's calendar — but the visitor never leaves a TaaSFlow-designed page. This
+ * module only mounts the inline widget and reports what it observes; it never
+ * claims a booking happened.
+ *
+ * Everything here is public scheduling data. No API token, no signing key.
  */
 
-const CALENDLY_URL = "https://calendly.com/christian-brogger-taasflow";
 const WIDGET_SCRIPT_URL = "https://assets.calendly.com/assets/external/widget.js";
 const WIDGET_CSS_URL = "https://assets.calendly.com/assets/external/widget.css";
+/** Past this, we show a controlled error state instead of spinning forever. */
+const LOAD_TIMEOUT_MS = 12_000;
 
-export const CALENDLY_BOOKING_URL = CALENDLY_URL;
+type CalendlyPrefill = {
+  name?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  customAnswers?: Record<string, string>;
+};
 
-type CalendlyPrefill = { name?: string; email?: string };
+type CalendlyUtm = {
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  utmContent?: string;
+  utmTerm?: string;
+  salesforce_uuid?: string;
+};
+
+type InlineOptions = {
+  url: string;
+  parentElement: HTMLElement;
+  prefill?: CalendlyPrefill;
+  utm?: CalendlyUtm;
+};
 
 type CalendlyApi = {
-  initPopupWidget?: (opts: { url: string; prefill?: CalendlyPrefill }) => void;
-  initInlineWidget?: (opts: {
-    url: string;
-    parentElement: HTMLElement;
-    prefill?: CalendlyPrefill;
-  }) => void;
-  initBadgeWidget?: (opts: {
-    url: string;
-    text: string;
-    color: string;
-    textColor: string;
-    branding: boolean;
-  }) => void;
+  initInlineWidget?: (opts: InlineOptions) => void;
 };
 
 function calendly(): CalendlyApi | undefined {
   return (window as unknown as { Calendly?: CalendlyApi }).Calendly;
 }
 
-let scriptLoaded = false;
+let loadPromise: Promise<boolean> | null = null;
 
-function ensureCalendlyLoaded(): Promise<void> {
+/** Loads the widget assets once. Resolves false when they are unavailable. */
+function ensureCalendlyLoaded(): Promise<boolean> {
   if (typeof window === "undefined" || typeof document === "undefined") {
-    return Promise.resolve();
+    return Promise.resolve(false);
   }
-  if (scriptLoaded && calendly()) return Promise.resolve();
+  if (calendly()) return Promise.resolve(true);
+  if (loadPromise) return loadPromise;
 
-  return new Promise((resolve) => {
+  loadPromise = new Promise<boolean>((resolve) => {
+    let settled = false;
+    const finish = (ok: boolean) => {
+      if (settled) return;
+      settled = true;
+      if (!ok) loadPromise = null; // allow an explicit retry
+      resolve(ok);
+    };
+
     if (!document.querySelector(`link[href="${WIDGET_CSS_URL}"]`)) {
       const link = document.createElement("link");
       link.href = WIDGET_CSS_URL;
@@ -50,83 +72,121 @@ function ensureCalendlyLoaded(): Promise<void> {
       document.head.appendChild(link);
     }
 
-    const existing = document.querySelector(`script[src="${WIDGET_SCRIPT_URL}"]`);
+    const timer = window.setTimeout(() => finish(Boolean(calendly())), LOAD_TIMEOUT_MS);
+    const done = (ok: boolean) => {
+      window.clearTimeout(timer);
+      finish(ok && Boolean(calendly()));
+    };
+
+    const existing = document.querySelector<HTMLScriptElement>(
+      `script[src="${WIDGET_SCRIPT_URL}"]`,
+    );
     if (existing) {
-      if (calendly()) {
-        scriptLoaded = true;
-        resolve();
-      } else {
-        existing.addEventListener("load", () => {
-          scriptLoaded = true;
-          resolve();
-        });
-        // Never leave a click hanging if the vendor script is blocked.
-        existing.addEventListener("error", () => resolve());
-      }
+      if (calendly()) return done(true);
+      existing.addEventListener("load", () => done(true));
+      existing.addEventListener("error", () => done(false));
       return;
     }
 
     const script = document.createElement("script");
     script.src = WIDGET_SCRIPT_URL;
     script.async = true;
-    script.onload = () => {
-      scriptLoaded = true;
-      resolve();
-    };
-    script.onerror = () => resolve();
+    script.onload = () => done(true);
+    script.onerror = () => done(false);
     document.head.appendChild(script);
   });
+
+  return loadPromise;
 }
 
 /**
- * Popup scheduler. Returns false when the vendor widget never loaded (blocked
- * by an extension, offline, CSP) so callers can fall back to a real link
- * instead of pretending a booking happened.
+ * Query params that strip the vendor's own chrome so the scheduler reads as
+ * part of the TaaSFlow page rather than a third-party page inside a frame.
  */
-export async function openCalendlyPopup(prefill?: CalendlyPrefill): Promise<boolean> {
-  await ensureCalendlyLoaded();
-  const api = calendly();
-  if (!api?.initPopupWidget) return false;
-  api.initPopupWidget({ url: CALENDLY_URL, prefill });
-  return true;
+export function schedulerUrl(
+  baseUrl: string,
+  opts?: { hideDetails?: boolean; primaryColor?: string; textColor?: string; backgroundColor?: string },
+): string {
+  const url = new URL(baseUrl);
+  url.searchParams.set("hide_landing_page_details", "1");
+  url.searchParams.set("hide_gdpr_banner", "1");
+  if (opts?.hideDetails !== false) url.searchParams.set("hide_event_type_details", "1");
+  if (opts?.primaryColor) url.searchParams.set("primary_color", opts.primaryColor);
+  if (opts?.textColor) url.searchParams.set("text_color", opts.textColor);
+  if (opts?.backgroundColor) url.searchParams.set("background_color", opts.backgroundColor);
+  return url.toString();
 }
 
-/** Inline scheduler — survives navigation-free flows and popup blockers. */
-export async function initCalendlyInline(
-  parentElement: HTMLElement,
-  prefill?: CalendlyPrefill,
-): Promise<boolean> {
-  await ensureCalendlyLoaded();
+export type InlineResult = { ok: true } | { ok: false; reason: "blocked" | "unsupported" };
+
+/**
+ * Mounts the inline scheduler. Survives popup blockers and never navigates the
+ * visitor away. Returns a reason on failure so the caller can offer a retry
+ * plus an honest external fallback.
+ */
+export async function mountCalendlyInline(params: {
+  parentElement: HTMLElement;
+  url: string;
+  prefill?: CalendlyPrefill;
+  utm?: CalendlyUtm;
+  theme?: { primaryColor?: string; textColor?: string; backgroundColor?: string };
+}): Promise<InlineResult> {
+  const loaded = await ensureCalendlyLoaded();
+  if (!loaded) return { ok: false, reason: "blocked" };
   const api = calendly();
-  if (!api?.initInlineWidget) return false;
-  parentElement.innerHTML = "";
-  api.initInlineWidget({ url: CALENDLY_URL, parentElement, prefill });
-  return true;
+  if (!api?.initInlineWidget) return { ok: false, reason: "unsupported" };
+
+  params.parentElement.innerHTML = "";
+  api.initInlineWidget({
+    url: schedulerUrl(params.url, params.theme),
+    parentElement: params.parentElement,
+    prefill: params.prefill,
+    utm: params.utm,
+  });
+  return { ok: true };
+}
+
+/* ------------------------------------------------------------- lifecycle -- */
+
+export type CalendlyWidgetEvent =
+  | "calendly.profile_page_viewed"
+  | "calendly.event_type_viewed"
+  | "calendly.date_and_time_selected"
+  | "calendly.event_scheduled";
+
+export type CalendlyScheduledPayload = {
+  /** Calendly API URIs for the event and invitee, when the embed provides them. */
+  eventUri: string | null;
+  inviteeUri: string | null;
+};
+
+function calendlyOrigin(event: MessageEvent): boolean {
+  return typeof event.origin === "string" && event.origin.endsWith("calendly.com");
 }
 
 /**
- * Fires once the visitor actually confirms a time. Calendly posts this from the
- * embed; without listening for it we can only guess that a call was booked.
+ * Subscribes to the embed's lifecycle messages. `event_scheduled` is the ONLY
+ * trustworthy signal that a meeting exists; nothing upstream should treat form
+ * submission as a booking.
  */
-export function onCalendlyScheduled(handler: () => void): () => void {
+export function onCalendlyEvent(
+  handler: (name: CalendlyWidgetEvent, payload: CalendlyScheduledPayload) => void,
+): () => void {
   if (typeof window === "undefined") return () => undefined;
+
   const listener = (event: MessageEvent) => {
-    const data = event.data as { event?: string } | null;
-    if (typeof data === "object" && data && data.event === "calendly.event_scheduled") {
-      handler();
-    }
+    if (!calendlyOrigin(event)) return;
+    const data = event.data as
+      | { event?: string; payload?: { event?: { uri?: string }; invitee?: { uri?: string } } }
+      | null;
+    const name = data && typeof data === "object" ? data.event : undefined;
+    if (typeof name !== "string" || !name.startsWith("calendly.")) return;
+    handler(name as CalendlyWidgetEvent, {
+      eventUri: data?.payload?.event?.uri ?? null,
+      inviteeUri: data?.payload?.invitee?.uri ?? null,
+    });
   };
+
   window.addEventListener("message", listener);
   return () => window.removeEventListener("message", listener);
-}
-
-export async function initCalendlyBadge() {
-  await ensureCalendlyLoaded();
-  calendly()?.initBadgeWidget?.({
-    url: CALENDLY_URL,
-    text: "Schedule time with me",
-    color: "#0069ff",
-    textColor: "#ffffff",
-    branding: true,
-  });
 }

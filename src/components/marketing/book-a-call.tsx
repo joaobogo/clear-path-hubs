@@ -20,7 +20,7 @@ import { CalendarDays, MessageSquare, Phone, Loader2, Check, Clock, Mail } from 
 import { useServerFn } from "@tanstack/react-start";
 
 import { submitInquiry } from "@/lib/inquiry.functions";
-import { openCalendlyPopup } from "@/lib/calendly";
+import { BOOKING_ROUTE } from "@/config/booking";
 import { submitToCrm } from "@/lib/crm/submit-form";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import {
@@ -253,10 +253,10 @@ function CallForm({
           });
         }
       });
-      // One booking mechanism only: the prospect picks a real slot in our
-      // calendar. Nothing here invents availability.
-      await openCalendlyPopup();
-      toast.success("Brief received — pick a time that suits you.");
+      // One booking mechanism only: the prospect picks a real slot on the
+      // native TaaSFlow scheduler. Nothing here invents availability.
+      toast.success("Brief received — now pick a time that suits you.");
+      window.location.assign(`${BOOKING_ROUTE}?cta=book_a_call_form`);
       formEl.reset();
       onSuccess?.();
     } catch (err) {

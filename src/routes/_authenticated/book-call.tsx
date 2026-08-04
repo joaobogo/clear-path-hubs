@@ -10,12 +10,8 @@ import {
   getBookingState,
   requestDiscoveryCall,
 } from "@/lib/booking.functions";
-import {
-  CALENDLY_BOOKING_URL,
-  initCalendlyInline,
-  onCalendlyScheduled,
-  openCalendlyPopup,
-} from "@/lib/calendly";
+import { DEFAULT_MEETING_TYPE, MEETING_TYPES } from "@/config/booking";
+import { mountCalendlyInline, onCalendlyEvent } from "@/lib/calendly";
 import { submitToCrm } from "@/lib/crm/submit-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -45,6 +41,8 @@ export const Route = createFileRoute("/_authenticated/book-call")({
   }),
   component: BookCallPage,
 });
+
+const CALENDLY_BOOKING_URL = MEETING_TYPES[DEFAULT_MEETING_TYPE].schedulingUrl;
 
 function localTimeZone() {
   try {
@@ -101,7 +99,13 @@ function BookCallPage() {
     navigate({ to: "/client" });
   }, [confirm, navigate, queryClient]);
 
-  useEffect(() => onCalendlyScheduled(() => void handleScheduled()), [handleScheduled]);
+  useEffect(
+    () =>
+      onCalendlyEvent((name) => {
+        if (name === "calendly.event_scheduled") void handleScheduled();
+      }),
+    [handleScheduled],
+  );
 
   const openScheduler = useMutation({
     mutationFn: async () => {
@@ -123,18 +127,17 @@ function BookCallPage() {
         return;
       }
       const host = embedRef.current;
-      const mounted = host ? await initCalendlyInline(host) : false;
-      if (mounted) {
+      const mounted = host
+        ? await mountCalendlyInline({ parentElement: host, url: CALENDLY_BOOKING_URL })
+        : ({ ok: false, reason: "unsupported" } as const);
+      if (mounted.ok) {
         setEmbedState("ready");
         host?.scrollIntoView({ behavior: "smooth", block: "start" });
         return;
       }
-      // Inline blocked — try the popup, and if that fails too, show a real link.
-      const popped = await openCalendlyPopup();
-      setEmbedState(popped ? "idle" : "unavailable");
-      if (!popped) {
-        toast.error("The scheduler couldn't load here. Use the direct booking link below.");
-      }
+      // Inline blocked — never pretend it worked; offer the real link instead.
+      setEmbedState("unavailable");
+      toast.error("The scheduler couldn't load here. Use the direct booking link below.");
     },
     onError: () => toast.error("We couldn't start your booking. Please try again."),
   });

@@ -45,6 +45,7 @@ import { Route as CaseStudiesRouteImport } from './routes/case-studies'
 import { Route as CandidateSuccessRouteImport } from './routes/candidate-success'
 import { Route as CandidateJoinRouteImport } from './routes/candidate-join'
 import { Route as BrandCenterRouteImport } from './routes/brand-center'
+import { Route as BookRouteImport } from './routes/book'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AccessDeniedRouteImport } from './routes/access-denied'
@@ -165,6 +166,7 @@ import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/publi
 import { Route as ApiPublicIntakeStatusIdRouteImport } from './routes/api/public/intake-status.$id'
 import { Route as ApiPublicDigestWeeklyRouteImport } from './routes/api/public/digest/weekly'
 import { Route as ApiPublicCandidateClosureNoticesRouteImport } from './routes/api/public/candidate/closure-notices'
+import { Route as ApiPublicBookingCalendlyWebhookRouteImport } from './routes/api/public/booking/calendly-webhook'
 import { Route as ApiPublicBlueprintStatusIntakeIdRouteImport } from './routes/api/public/blueprint-status.$intakeId'
 import { Route as AuthenticatedTeamsActTokenRouteImport } from './routes/_authenticated/teams.act.$token'
 import { Route as AuthenticatedMeApplicationsIdRouteImport } from './routes/_authenticated/me.applications.$id'
@@ -361,6 +363,11 @@ const CandidateJoinRoute = CandidateJoinRouteImport.update({
 const BrandCenterRoute = BrandCenterRouteImport.update({
   id: '/brand-center',
   path: '/brand-center',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookRoute = BookRouteImport.update({
+  id: '/book',
+  path: '/book',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -1025,6 +1032,12 @@ const ApiPublicCandidateClosureNoticesRoute =
     path: '/api/public/candidate/closure-notices',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicBookingCalendlyWebhookRoute =
+  ApiPublicBookingCalendlyWebhookRouteImport.update({
+    id: '/api/public/booking/calendly-webhook',
+    path: '/api/public/booking/calendly-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicBlueprintStatusIntakeIdRoute =
   ApiPublicBlueprintStatusIntakeIdRouteImport.update({
     id: '/api/public/blueprint-status/$intakeId',
@@ -1134,6 +1147,7 @@ export interface FileRoutesByFullPath {
   '/access-denied': typeof AccessDeniedRoute
   '/agents': typeof AgentsRoute
   '/auth': typeof AuthRoute
+  '/book': typeof BookRoute
   '/brand-center': typeof BrandCenterRoute
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
@@ -1279,6 +1293,7 @@ export interface FileRoutesByFullPath {
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
+  '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
@@ -1308,6 +1323,7 @@ export interface FileRoutesByTo {
   '/access-denied': typeof AccessDeniedRoute
   '/agents': typeof AgentsRoute
   '/auth': typeof AuthRoute
+  '/book': typeof BookRoute
   '/brand-center': typeof BrandCenterRoute
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
@@ -1443,6 +1459,7 @@ export interface FileRoutesByTo {
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
+  '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
@@ -1474,6 +1491,7 @@ export interface FileRoutesById {
   '/access-denied': typeof AccessDeniedRoute
   '/agents': typeof AgentsRoute
   '/auth': typeof AuthRoute
+  '/book': typeof BookRoute
   '/brand-center': typeof BrandCenterRoute
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
@@ -1619,6 +1637,7 @@ export interface FileRoutesById {
   '/_authenticated/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/_authenticated/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
+  '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
@@ -1650,6 +1669,7 @@ export interface FileRouteTypes {
     | '/access-denied'
     | '/agents'
     | '/auth'
+    | '/book'
     | '/brand-center'
     | '/candidate-join'
     | '/candidate-success'
@@ -1795,6 +1815,7 @@ export interface FileRouteTypes {
     | '/me/applications/$id'
     | '/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
+    | '/api/public/booking/calendly-webhook'
     | '/api/public/candidate/closure-notices'
     | '/api/public/digest/weekly'
     | '/api/public/intake-status/$id'
@@ -1824,6 +1845,7 @@ export interface FileRouteTypes {
     | '/access-denied'
     | '/agents'
     | '/auth'
+    | '/book'
     | '/brand-center'
     | '/candidate-join'
     | '/candidate-success'
@@ -1959,6 +1981,7 @@ export interface FileRouteTypes {
     | '/me/applications/$id'
     | '/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
+    | '/api/public/booking/calendly-webhook'
     | '/api/public/candidate/closure-notices'
     | '/api/public/digest/weekly'
     | '/api/public/intake-status/$id'
@@ -1989,6 +2012,7 @@ export interface FileRouteTypes {
     | '/access-denied'
     | '/agents'
     | '/auth'
+    | '/book'
     | '/brand-center'
     | '/candidate-join'
     | '/candidate-success'
@@ -2134,6 +2158,7 @@ export interface FileRouteTypes {
     | '/_authenticated/me/applications/$id'
     | '/_authenticated/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
+    | '/api/public/booking/calendly-webhook'
     | '/api/public/candidate/closure-notices'
     | '/api/public/digest/weekly'
     | '/api/public/intake-status/$id'
@@ -2165,6 +2190,7 @@ export interface RootRouteChildren {
   AccessDeniedRoute: typeof AccessDeniedRoute
   AgentsRoute: typeof AgentsRoute
   AuthRoute: typeof AuthRoute
+  BookRoute: typeof BookRoute
   BrandCenterRoute: typeof BrandCenterRoute
   CandidateJoinRoute: typeof CandidateJoinRoute
   CandidateSuccessRoute: typeof CandidateSuccessRoute
@@ -2233,6 +2259,7 @@ export interface RootRouteChildren {
   JobsIdApplyRoute: typeof JobsIdApplyRoute
   JobsIdIndexRoute: typeof JobsIdIndexRoute
   ApiPublicBlueprintStatusIntakeIdRoute: typeof ApiPublicBlueprintStatusIntakeIdRoute
+  ApiPublicBookingCalendlyWebhookRoute: typeof ApiPublicBookingCalendlyWebhookRoute
   ApiPublicCandidateClosureNoticesRoute: typeof ApiPublicCandidateClosureNoticesRoute
   ApiPublicDigestWeeklyRoute: typeof ApiPublicDigestWeeklyRoute
   ApiPublicIntakeStatusIdRoute: typeof ApiPublicIntakeStatusIdRoute
@@ -2495,6 +2522,13 @@ declare module '@tanstack/react-router' {
       path: '/brand-center'
       fullPath: '/brand-center'
       preLoaderRoute: typeof BrandCenterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/book': {
+      id: '/book'
+      path: '/book'
+      fullPath: '/book'
+      preLoaderRoute: typeof BookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -3337,6 +3371,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCandidateClosureNoticesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/booking/calendly-webhook': {
+      id: '/api/public/booking/calendly-webhook'
+      path: '/api/public/booking/calendly-webhook'
+      fullPath: '/api/public/booking/calendly-webhook'
+      preLoaderRoute: typeof ApiPublicBookingCalendlyWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/blueprint-status/$intakeId': {
       id: '/api/public/blueprint-status/$intakeId'
       path: '/api/public/blueprint-status/$intakeId'
@@ -3787,6 +3828,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccessDeniedRoute: AccessDeniedRoute,
   AgentsRoute: AgentsRoute,
   AuthRoute: AuthRoute,
+  BookRoute: BookRoute,
   BrandCenterRoute: BrandCenterRoute,
   CandidateJoinRoute: CandidateJoinRoute,
   CandidateSuccessRoute: CandidateSuccessRoute,
@@ -3856,6 +3898,7 @@ const rootRouteChildren: RootRouteChildren = {
   JobsIdApplyRoute: JobsIdApplyRoute,
   JobsIdIndexRoute: JobsIdIndexRoute,
   ApiPublicBlueprintStatusIntakeIdRoute: ApiPublicBlueprintStatusIntakeIdRoute,
+  ApiPublicBookingCalendlyWebhookRoute: ApiPublicBookingCalendlyWebhookRoute,
   ApiPublicCandidateClosureNoticesRoute: ApiPublicCandidateClosureNoticesRoute,
   ApiPublicDigestWeeklyRoute: ApiPublicDigestWeeklyRoute,
   ApiPublicIntakeStatusIdRoute: ApiPublicIntakeStatusIdRoute,
