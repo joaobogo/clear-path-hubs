@@ -54,9 +54,11 @@ const EXCLUDE_PREFIXES = [
 const RULES = [
   {
     id: "our-recruiters",
-    pattern: /\b(our|your|dedicated|in-house|the)\s+recruiters?\b/i,
+    // First-person self-description only. "your recruiter" on partner pages
+    // means the reader's own recruiter and is left alone.
+    pattern:
+      /\bour\s+(recruiters?|sourcers?|consultants?)\b|\bour\s+team\s+of\s+recruiters\b|\brecruiters?\s+on\s+our\s+(team|bench)\b/i,
     use: "the TaaSFlow platform / sourcing agents / configurable expert oversight",
-    allow: [/\bfor (agencies|recruiters)\b/i, /\bagency recruiters\b/i],
   },
   {
     id: "recruiter-delivers",
