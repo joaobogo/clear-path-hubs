@@ -320,13 +320,15 @@ function ClientLayout() {
 
 const CLIENT_REFRESH_KEYS = [
   ACTIVITY_QUERY_KEY,
- ["client-context"],
- ["client", "kpis"],
- ["client", "positions"],
- ["client", "candidates"],
- ["client", "messages"],
- NOTIFICATIONS_QUERY_KEY,
+  AGENT_RAIL_QUERY_KEY,
+  ["client-context"],
+  ["client", "kpis"],
+  ["client", "positions"],
+  ["client", "candidates"],
+  ["client", "messages"],
+  NOTIFICATIONS_QUERY_KEY,
 ] as const;
+
 
 function ClientCoordinator() {
  const [userId, setUserId] = useState<string | null>(null);
