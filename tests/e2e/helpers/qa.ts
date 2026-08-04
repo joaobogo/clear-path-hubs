@@ -155,6 +155,31 @@ export function uniqueProspect(): {
   };
 }
 
+/**
+ * Waits until React has hydrated an interactive page.
+ *
+ * Server-rendered markup is visible long before its event handlers attach, so
+ * a click fired too early is silently dropped and typed values get replaced by
+ * the client's initial state. We prove interactivity by toggling a control that
+ * only responds once hydrated, then restore it.
+ */
+export async function waitForHydration(page: Page): Promise<void> {
+  const hide = page.getByRole("button", { name: /^hide$/i }).first();
+  const show = page.getByRole("button", { name: /show summary/i }).first();
+  await expect
+    .poll(
+      async () => {
+        if ((await show.count()) > 0) return true;
+        await hide.click({ timeout: 2_000 }).catch(() => undefined);
+        return (await show.count()) > 0;
+      },
+      { timeout: 45_000, intervals: [250, 500, 1_000] },
+    )
+    .toBe(true);
+  await show.click();
+  await expect(hide).toBeVisible();
+}
+
 /** Collects console errors so a test can assert a clean run. */
 export function collectConsoleErrors(page: Page): string[] {
   const errors: string[] = [];
