@@ -6,6 +6,7 @@ import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ProcessState } from "@/components/ds/process-state";
 import {
   getIntegrationHealth,
   runIntegrationChecks,
@@ -74,7 +75,10 @@ function IntegrationHealthPage() {
       );
       await qc.invalidateQueries({ queryKey: ["integration-health"] });
     },
-    onError: (e: Error) => setFeedback(`Could not complete the tests: ${e.message}`),
+    onError: () =>
+      setFeedback(
+        "The tests could not be completed. No credentials were changed — run them again.",
+      ),
   });
 
   const failing = data.integrations.filter(
@@ -96,6 +100,24 @@ function IntegrationHealthPage() {
           {run.isPending ? "Testing…" : "Run all tests"}
         </Button>
       </header>
+
+      {run.isPending || run.isError || (run.isSuccess && !run.isPending) ? (
+        <ProcessState
+          status={{
+            process: "integration",
+            phase: run.isPending ? "running" : run.isError ? "failed" : "done",
+            ...(run.isPending ? { stageIndex: 0 } : {}),
+            ...(run.isError
+              ? {
+                  errorMessage:
+                    "We could not finish the connection tests. Nothing was changed.",
+                }
+              : {}),
+          }}
+          onRetry={() => run.mutate(undefined)}
+          retrying={run.isPending}
+        />
+      ) : null}
 
       {feedback && (
         <Alert>

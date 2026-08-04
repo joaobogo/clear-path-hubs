@@ -4,8 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { BLUEPRINT_STAGES, blueprintProgress } from "@/lib/express-intake-schema";
+import { BLUEPRINT_STAGES } from "@/lib/express-intake-schema";
 import { CheckCircle2, CircleDashed, Loader2, TriangleAlert } from "lucide-react";
 
 const searchSchema = z.object({
@@ -153,10 +152,28 @@ function ConfirmationPage() {
                     {failed ? "Handed to a TaaSFlow specialist" : "System progress"}
                   </p>
                   <span className="text-xs text-muted-foreground">
-                    {blueprintProgress(status.blueprintStatus)}%
+                    {ready
+                      ? "All stages complete"
+                      : stageIndex > -1
+                        ? `Stage ${stageIndex + 1} of ${BLUEPRINT_STAGES.length}`
+                        : "Queued"}
                   </span>
                 </div>
-                <Progress value={blueprintProgress(status.blueprintStatus)} />
+                <ol className="flex gap-1.5" aria-hidden>
+                  {BLUEPRINT_STAGES.map((stage, i) => (
+                    <li
+                      key={`bar-${stage.key}`}
+                      className={
+                        "h-1.5 flex-1 rounded-full " +
+                        (ready || (stageIndex > -1 && i < stageIndex)
+                          ? "bg-primary"
+                          : !ready && !failed && i === stageIndex
+                            ? "bg-primary/50"
+                            : "bg-muted")
+                      }
+                    />
+                  ))}
+                </ol>
                 <ol className="space-y-2">
                   {BLUEPRINT_STAGES.map((stage, i) => {
                     const complete = ready || (stageIndex > -1 && i < stageIndex);

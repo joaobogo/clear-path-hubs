@@ -1,6 +1,5 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { Link, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
@@ -190,7 +189,31 @@ export function GeneratedBlueprintPanel({
 
       {!ready && (
         <div className="space-y-3 p-4">
-          <Progress value={blueprintProgress(status)} />
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+            <span>
+              {failed
+                ? "Stopped before completion"
+                : stageIndex > -1
+                  ? `Stage ${stageIndex + 1} of ${BLUEPRINT_STAGES.length}`
+                  : "Queued"}
+            </span>
+            <span>No countdown — this updates as each stage completes.</span>
+          </div>
+          <ol className="flex gap-1.5" aria-hidden>
+            {BLUEPRINT_STAGES.map((stage, i) => (
+              <li
+                key={`bar-${stage.key}`}
+                className={
+                  "h-1.5 flex-1 rounded-full " +
+                  (stageIndex > -1 && i < stageIndex
+                    ? "bg-primary"
+                    : !failed && i === stageIndex
+                      ? "bg-primary/50"
+                      : "bg-muted")
+                }
+              />
+            ))}
+          </ol>
           <ol className="grid gap-2 sm:grid-cols-2">
             {BLUEPRINT_STAGES.map((stage, i) => {
               const complete = stageIndex > -1 && i < stageIndex;

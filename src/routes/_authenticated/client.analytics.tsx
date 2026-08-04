@@ -17,6 +17,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SkeletonCards, NoWorkspaceState } from "@/components/client/states";
+import { AnalyticsSkeleton } from "@/components/ds/page-skeleton";
+import { ProcessState } from "@/components/ds/process-state";
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveNoAnalyticsState } from "@/lib/empty-states/empty-state-catalogue";
 import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
@@ -187,7 +189,18 @@ function AnalyticsPage() {
       </header>
 
       {insights.isLoading ? (
-        <SkeletonCards cards={3} />
+        <AnalyticsSkeleton label="Calculating your figures from your own records" />
+      ) : insights.isError ? (
+        <ProcessState
+          status={{
+            process: "analytics",
+            phase: "failed",
+            errorMessage:
+              "We could not read the records behind these figures. Nothing was changed.",
+          }}
+          onRetry={() => void insights.refetch()}
+          retrying={insights.isFetching}
+        />
       ) : !data ? (
         <SurfaceState
           content={resolveNoAnalyticsState({

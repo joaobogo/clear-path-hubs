@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { getPublicPosition } from "@/lib/jobs.functions";
 import { extractJobUuid } from "@/lib/marketing/job-slug";
 import { submitApplication } from "@/lib/apply.functions";
+import { ProcessState } from "@/components/ds/process-state";
 import {
   ALLOWED_CV_EXT,
   APPLY_DRAFT_KEY,
@@ -962,6 +963,21 @@ function ApplyPage() {
             >
               ← Back
             </Button>
+            {phase !== "idle" ? (
+              <ProcessState
+                compact
+                className="mb-3 w-full"
+                status={{
+                  process: "file",
+                  phase: "running",
+                  stageIndex: phase === "reading" ? 0 : 2,
+                  note:
+                    phase === "reading"
+                      ? "Checking your CV is a readable PDF."
+                      : "Sending your application and attaching your CV.",
+                }}
+              />
+            ) : null}
             {step < 5 ? (
               <Button
                 type="button"
