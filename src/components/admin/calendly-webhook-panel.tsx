@@ -23,11 +23,11 @@ export function CalendlyWebhookPanel() {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: QUERY_KEY,
-    queryFn: () => statusFn({ data: {} }),
+    queryFn: () => statusFn(),
   });
 
   const provision = useMutation({
-    mutationFn: async () => await provisionFn({ data: {} }),
+    mutationFn: async () => await provisionFn(),
     onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEY }),
   });
 
