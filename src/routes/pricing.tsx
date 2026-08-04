@@ -388,10 +388,10 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Is there a contract minimum?",
-    a: "The Starter and Growth tiers run month-to-month. Scale and Enterprise have quarterly minimums to align agent capacity planning with your programme. Exact terms are on your scoped quote.",
+    a: "The Bronze and Silver subscriptions run month-to-month. Gold and Enterprise have quarterly minimums to align agent capacity planning with your programme. One-off packages have no minimum at all. Exact terms are on your scoped quote.",
   },
   {
     q: "How does the pilot work?",
-    a: "The Starter tier itself is the pilot: one active role, no long commitment, full workflow. If it fits, keep going or move up. If it doesn't, walk away with every candidate the platform surfaced.",
+    a: "The Pilot itself is the pilot: one active role, no long commitment, full workflow. If it fits, keep going or move up. If it doesn't, walk away with every candidate the platform surfaced.",
   },
 ];
