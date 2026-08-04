@@ -533,10 +533,19 @@ export async function forceManualReview(matchId: string, reason: string): Promis
 }
 
 // Drain queued/stuck matches. Used by cron + fire-and-forget.
-export async function drainQueue(opts: { limit?: number } = {}): Promise<{ processed: number; results: PipelineOutcome[] }> {
+export async function drainQueue(
+  opts: { limit?: number } = {},
+): Promise<{ processed: number; results: PipelineOutcome[]; jobs: ApplicationJobOutcome[] }> {
   const s = await getAdmin();
   const limit = Math.min(Math.max(opts.limit ?? 5, 1), 25);
   const staleBefore = new Date(Date.now() - 15 * 60 * 1000).toISOString();
+
+  // 1. Consume queued/stuck `parse_and_score` jobs (entity_type='application').
+  //    These are the durable enqueue written at apply time; before this they
+  //    had no consumer at all and sat queued forever.
+  const jobs = await drainApplicationJobs({ limit });
+
+  // 2. Sweep candidate_matches whose processing_state stalled.
   const { data: rows } = await s.from("candidate_matches")
     .select("id,processing_state,updated_at")
     .in("processing_state", ["queued", "parsing", "enriching", "scoring", "ready_to_score", "parsed"])
@@ -548,6 +557,161 @@ export async function drainQueue(opts: { limit?: number } = {}): Promise<{ proce
     // Force through stuck non-queued rows.
     results.push(await runPipelineForMatch(r.id, { force: r.processing_state !== "queued" }));
   }
-  return { processed: results.length, results };
+  return { processed: results.length + jobs.length, results, jobs };
 }
+
+// ---------------------------------------------------------------------------
+// parse_and_score job worker
+// ---------------------------------------------------------------------------
+
+export type ApplicationJobOutcome = {
+  job_id: string;
+  application_id: string;
+  status: "completed" | "failed" | "cancelled" | "skipped";
+  attempts: number;
+  error_code?: string | null;
+  error_message?: string | null;
+  final_state?: State;
+};
+
+const JOB_MAX_ATTEMPTS = 3;
+/** Exponential-ish backoff between retries, keyed on attempts already made. */
+const JOB_BACKOFF_MS = [0, 2 * 60_000, 10 * 60_000, 30 * 60_000];
+/** A `running` job whose worker died is reclaimable after this long. */
+const JOB_RECLAIM_MS = 15 * 60_000;
+
+function backoffReady(row: Any): boolean {
+  const waited = JOB_BACKOFF_MS[Math.min(row.attempts ?? 0, JOB_BACKOFF_MS.length - 1)];
+  if (!waited) return true;
+  const last = row.started_at ?? row.created_at;
+  return Date.now() - new Date(last).getTime() >= waited;
+}
+
+async function finishJob(
+  s: Any, jobId: string,
+  // "queued" re-arms the job for a backed-off retry; the others are terminal.
+  status: "completed" | "failed" | "cancelled" | "queued",
+  err?: { code: string; message: string },
+) {
+  await s.from("processing_jobs").update({
+    status,
+    error_code: err?.code ?? null,
+    error_message: err?.message ? String(err.message).slice(0, 1000) : null,
+    completed_at: status === "queued" ? null : new Date().toISOString(),
+  }).eq("id", jobId);
+}
+
+/**
+ * Claim and run queued/stale `parse_and_score` jobs.
+ *
+ * Semantics per job: claim (status=running, attempts+1, started_at=now) →
+ * resolve the application's candidate_match → run the pipeline → write a
+ * terminal status with error_code/error_message. Jobs whose entity row was
+ * deleted become `cancelled` (terminal), not pending forever. Jobs that
+ * exhaust JOB_MAX_ATTEMPTS become `failed`, which is what the admin incident
+ * and processing-SLA surfaces read.
+ */
+export async function drainApplicationJobs(
+  opts: { limit?: number } = {},
+): Promise<ApplicationJobOutcome[]> {
+  const s = await getAdmin();
+  const limit = Math.min(Math.max(opts.limit ?? 5, 1), 25);
+  const reclaimBefore = new Date(Date.now() - JOB_RECLAIM_MS).toISOString();
+
+  const { data: candidates } = await s
+    .from("processing_jobs")
+    .select("id,entity_id,entity_type,status,attempts,started_at,created_at,trace_id")
+    .eq("job_type", "parse_and_score")
+    .eq("entity_type", "application")
+    .in("status", ["queued", "running"])
+    .order("created_at", { ascending: true })
+    .limit(limit * 4);
+
+  const out: ApplicationJobOutcome[] = [];
+  for (const row of (candidates ?? []) as Any[]) {
+    if (out.length >= limit) break;
+    if (row.status === "running" && (row.started_at ?? row.created_at) > reclaimBefore) continue;
+    if (row.status === "queued" && !backoffReady(row)) continue;
+
+    const attempts = (row.attempts ?? 0) + 1;
+    // Optimistic claim: only one worker wins the transition from this status.
+    const { data: claimed } = await s
+      .from("processing_jobs")
+      .update({ status: "running", attempts, started_at: new Date().toISOString() })
+      .eq("id", row.id)
+      .eq("status", row.status)
+      .select("id")
+      .maybeSingle();
+    if (!claimed) continue;
+
+    const base = { job_id: row.id as string, application_id: row.entity_id as string, attempts };
+
+    try {
+      const { data: app } = await s
+        .from("applications")
+        .select("id")
+        .eq("id", row.entity_id)
+        .maybeSingle();
+      if (!app) {
+        await finishJob(s, row.id, "cancelled", {
+          code: "entity_deleted",
+          message: `Application ${row.entity_id} no longer exists — nothing left to process.`,
+        });
+        out.push({ ...base, status: "cancelled", error_code: "entity_deleted" });
+        continue;
+      }
+
+      const { data: match } = await s
+        .from("candidate_matches")
+        .select("id,processing_state,processing_error_code,processing_error_message")
+        .eq("application_id", row.entity_id)
+        .maybeSingle();
+      if (!match) {
+        const terminal = attempts >= JOB_MAX_ATTEMPTS;
+        await finishJob(s, row.id, terminal ? "failed" : "queued", {
+          code: "match_missing",
+          message: `No candidate_match exists for application ${row.entity_id}.`,
+        });
+        out.push({ ...base, status: terminal ? "failed" : "skipped", error_code: "match_missing" });
+        continue;
+      }
+
+      const outcome = await runPipelineForMatch(match.id as string, {
+        force: match.processing_state !== "queued",
+      });
+      const ok = outcome.final_state === "scored" || outcome.final_state === "manual_review_required";
+      if (ok) {
+        await finishJob(s, row.id, "completed");
+        out.push({ ...base, status: "completed", final_state: outcome.final_state });
+        continue;
+      }
+
+      const { data: after } = await s
+        .from("candidate_matches")
+        .select("processing_error_code,processing_error_message")
+        .eq("id", match.id)
+        .maybeSingle();
+      const code = (after?.processing_error_code as string) ?? `incomplete_${outcome.final_state}`;
+      const message =
+        (after?.processing_error_message as string) ??
+        `Pipeline stopped at ${outcome.final_state} (trace ${outcome.trace_id}).`;
+      const terminal = attempts >= JOB_MAX_ATTEMPTS;
+      await finishJob(s, row.id, terminal ? "failed" : "queued", { code, message });
+      out.push({
+        ...base,
+        status: terminal ? "failed" : "skipped",
+        error_code: code,
+        error_message: message,
+        final_state: outcome.final_state,
+      });
+    } catch (e) {
+      const message = (e as Error).message ?? "worker_error";
+      const terminal = attempts >= JOB_MAX_ATTEMPTS;
+      await finishJob(s, row.id, terminal ? "failed" : "queued", { code: "worker_error", message });
+      out.push({ ...base, status: terminal ? "failed" : "skipped", error_code: "worker_error", error_message: message });
+    }
+  }
+  return out;
+}
+
 

@@ -504,10 +504,28 @@ export const submitApplication = createServerFn({ method: "POST" })
           },
         });
         if (result?.sent) {
-          await supabaseAdmin
+          const { error: stampErr } = await supabaseAdmin
             .from("applications")
             .update({ confirmation_email_sent_at: new Date().toISOString() })
             .eq("id", appRow.id);
+          // The send is what the candidate sees; the stamp is our record of it.
+          // Losing the stamp silently is how an application ends up looking
+          // un-notified when it was in fact emailed — so it is logged loudly.
+          if (stampErr) {
+            console.error(
+              "[submitApplication] confirmation sent but stamp failed",
+              trace_id,
+              appRow.id,
+              stampErr.message,
+            );
+          }
+        } else {
+          console.warn(
+            "[submitApplication] confirmation not sent",
+            trace_id,
+            appRow.id,
+            result?.reason ?? "unknown",
+          );
         }
       } catch (mailErr) {
         console.error("[submitApplication] confirmation email failed", trace_id, mailErr);
