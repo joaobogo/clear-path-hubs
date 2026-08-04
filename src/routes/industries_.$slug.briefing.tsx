@@ -15,6 +15,7 @@ import { Printer } from "lucide-react";
 import { getIndustryEntry, type IndustryEntry } from "@/content/industries-v2";
 
 import { toInternalSlug } from "@/lib/marketing/industry-slug-aliases";
+import { breadcrumbScript, clampDescription } from "@/lib/marketing/head";
 import { Button } from "@/components/ui/button";
 
 
