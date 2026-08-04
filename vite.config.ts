@@ -8,6 +8,31 @@ import path from "node:path";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/tanstack/vite";
 import { imagetools } from "vite-imagetools";
+import { spawnSync } from "node:child_process";
+
+/**
+ * Fails any production build when agency-dominant self-description survives on
+ * public routes or marketing components. Runs in the build regardless of how it
+ * was invoked, so the npm `prebuild` hook is a convenience, not the only gate.
+ */
+function publicVocabularyGuard() {
+  return {
+    name: "taasflow-public-vocabulary-guard",
+    apply: "build" as const,
+    buildStart() {
+      const result = spawnSync(
+        process.execPath,
+        ["scripts/check-public-vocabulary.mjs"],
+        { cwd: import.meta.dirname, encoding: "utf8" },
+      );
+      if (result.status !== 0) {
+        throw new Error(
+          `Public vocabulary check failed.\n${result.stderr || result.stdout || ""}`,
+        );
+      }
+    },
+  };
+}
 
 
 export default defineConfig({
@@ -17,7 +42,7 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
-    plugins: [imagetools(), mcpPlugin()],
+    plugins: [publicVocabularyGuard(), imagetools(), mcpPlugin()],
     resolve: {
       alias: {
         "entities/lib/decode.js": path.resolve(
