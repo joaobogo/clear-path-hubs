@@ -10,6 +10,8 @@ import {
   makeRouteNotFoundComponent,
 } from "@/components/workspace/route-states";
 import { ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
+import { AGENT_RAIL_QUERY_KEY } from "@/components/client/agent-activity-rail";
+
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
