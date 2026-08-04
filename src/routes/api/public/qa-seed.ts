@@ -222,7 +222,11 @@ async function seedQAData(): Promise<{
       compensation: { currency: "USD", min: 90000, max: 140000 },
       work_authorization: { required: false },
       status: "active",
+      // The publish gate requires a settled payment; QA fixtures are exempt so
+      // the harness never simulates a paid transaction.
+      payment_status: "exempt",
       visibility: "public",
+
       submitted_at: new Date().toISOString(),
       approved_at: new Date().toISOString(),
       published_at: new Date().toISOString(),
