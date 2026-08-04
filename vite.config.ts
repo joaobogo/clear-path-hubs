@@ -6,7 +6,9 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import path from "node:path";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/tanstack/vite";
 import { imagetools } from "vite-imagetools";
+
 
 export default defineConfig({
   tanstackStart: {
@@ -15,7 +17,7 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
-    plugins: [imagetools()],
+    plugins: [imagetools(), mcpPlugin()],
     resolve: {
       alias: {
         "entities/lib/decode.js": path.resolve(
