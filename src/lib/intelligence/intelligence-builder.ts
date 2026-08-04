@@ -23,6 +23,13 @@ import {
   type IntelligenceMetric,
   type MetricPoint,
 } from "./hiring-intelligence";
+import {
+  BEST_PRACTICES,
+  deriveRecommendations,
+  type BestPractice,
+  type Recommendation,
+} from "./recommendations";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = Record<string, any>;
