@@ -27,6 +27,7 @@ import {
   PRICE_SUB_GOLD_DISPLAY,
   PRICE_SUB_ENTERPRISE_DISPLAY,
   SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL,
+  POSITION_BANDS,
 } from "@/config/pricing-core";
 
 // Enterprise metadata authored inline. Legacy JSON contained unapproved
