@@ -864,12 +864,25 @@ const HEALTH_LABEL: Record<string, string> = {
 };
 
 function SystemsStep({ state, onDone, back, saveForLater }: BodyProps) {
+  const connected = state.integrations.length > 0;
   return (
     <div className="space-y-6">
-      {state.integrations.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          Nothing connected yet. You can start a run without any connections and add them later.
-        </p>
+      {!connected ? (
+        <div className="space-y-3 rounded-lg border border-border/70 p-4">
+          <p className="text-sm font-medium">Nothing connected yet</p>
+          <p className="text-sm text-muted-foreground">
+            Connections are optional. Without them, interviews are scheduled with links you send
+            yourself and updates arrive by email from TaaSFlow.
+          </p>
+          <ul className="space-y-1 text-sm text-muted-foreground">
+            <li>Calendar — interview slots booked straight into your availability.</li>
+            <li>Email — candidate threads kept in your own inbox.</li>
+            <li>Messaging — shortlist and decision alerts in your team channel.</li>
+          </ul>
+          <Button asChild type="button" variant="outline" size="sm">
+            <Link to="/client/account">Connect a system</Link>
+          </Button>
+        </div>
       ) : (
         <ul className="divide-y divide-border/60 rounded-lg border border-border/70">
           {state.integrations.map((i) => (
@@ -884,7 +897,7 @@ function SystemsStep({ state, onDone, back, saveForLater }: BodyProps) {
         </ul>
       )}
       <p className="text-sm text-muted-foreground">
-        Manage connections any time from{" "}
+        You can add or remove connections any time from{" "}
         <Link to="/client/account" className="underline">
           your account settings
         </Link>
@@ -894,14 +907,13 @@ function SystemsStep({ state, onDone, back, saveForLater }: BodyProps) {
         step={stepById("systems")}
         onBack={back}
         onContinue={() => void onDone({ confirm: true })}
-        continueLabel="Continue"
-        onSkip={() => void onDone({ confirm: true })}
-        skipLabel="Connect later"
+        continueLabel={connected ? "Continue" : "Continue without connections"}
         onSave={saveForLater}
       />
     </div>
   );
 }
+
 
 /* ---------------------------------- 9 ---------------------------------- */
 
