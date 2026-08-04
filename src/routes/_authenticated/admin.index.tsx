@@ -121,7 +121,7 @@ function Overview() {
 
 
       {/* Counts strip — each jumps to its queue below. */}
-      <nav aria-label="Queue counts" className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+      <nav aria-label="Queue counts" className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-7">
         {queues.map((q) => {
           const Icon = ICONS[q.key] ?? ClipboardCheck;
           return (
@@ -179,7 +179,10 @@ function Overview() {
               {q.items.length === 0 ? (
                 <div className="flex items-center gap-2 px-4 py-8 text-xs text-muted-foreground">
                   <CheckCircle2 className="h-4 w-4 text-success" />
-                  Clear — nothing in this queue.
+                  {q.key === "intakes_aging"
+                    ? "No intakes awaiting action."
+                    : "Clear — nothing in this queue."}
+
                 </div>
               ) : (
                 <ul className="divide-y">
