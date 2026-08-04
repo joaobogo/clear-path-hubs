@@ -163,8 +163,15 @@ export async function emitEventFromServer(args: {
     }
 
     // Teams channel: one post per workspace, only when that workspace has
-    // connected a channel and selected this event.
-    if (args.organization_id && notifs.some((n) => n.organization_id)) {
+    // connected a channel and selected this event. A shared channel is an
+    // audience whose individual permissions we cannot verify, so anything
+    // carrying candidate-specific detail is withheld from it.
+    const { isSafeForUncertainAudience } = await import("./notifications/notification-tiers");
+    if (
+      args.organization_id &&
+      notifs.some((n) => n.organization_id) &&
+      isSafeForUncertainAudience(args.event)
+    ) {
       try {
         const { notifyOrgTeamsSafe } = await import("./teams-notify.server");
         const first = notifs[0];
