@@ -11,6 +11,7 @@ import {
   type CandidateSafeStatus,
 } from "@/lib/candidate.functions";
 import { CANDIDATE_STATUS_TONE } from "@/lib/candidate-status";
+import { profileCompleteness } from "@/lib/candidate/profile-completeness";
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight,
