@@ -1,4 +1,9 @@
-import { cleanupFixtures, cleanupIntakeArtifacts, qaSeed } from "./helpers/qa";
+import {
+  cleanupCandidateArtifacts,
+  cleanupFixtures,
+  cleanupIntakeArtifacts,
+  qaSeed,
+} from "./helpers/qa";
 
 /** Removes every row this suite created — fixtures and UI-created artifacts. */
 export default async function globalTeardown() {
@@ -6,7 +11,9 @@ export default async function globalTeardown() {
   const booking = await qaSeed("cleanup_booking_e2e", {
     email_pattern: "qa.book+%@qa.taasflow.test",
   });
+  const candidates = await cleanupCandidateArtifacts();
+  // Candidate rows reference fixture positions, so they must go first.
   const fixtures = await cleanupFixtures();
   // eslint-disable-next-line no-console
-  console.log("[e2e] cleanup", JSON.stringify({ intake, booking, fixtures }));
+  console.log("[e2e] cleanup", JSON.stringify({ intake, booking, candidates, fixtures }));
 }
