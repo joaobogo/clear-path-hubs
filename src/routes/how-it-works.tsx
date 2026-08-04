@@ -68,6 +68,9 @@ function HowItWorksPage() {
             {MODULES.evidence}, {MODULES.scoring} and the {MODULES.workspace} —
             and who owns what. If you're evaluating us seriously, this is the page.
           </p>
+          <p className="mt-3 max-w-2xl text-sm font-semibold text-[color:var(--brand-navy)]">
+            First ranked shortlist in 7–14 days for most roles.
+          </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               to="/intake"

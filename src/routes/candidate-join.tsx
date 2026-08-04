@@ -102,20 +102,20 @@ function CandidateJoinPage() {
             Join TaaSFlow in a few minutes.
           </h1>
           <p className="mt-4 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
-            Applying to any open brief creates your candidate account. No separate signup form —
-            your first application is your join.
+            There's no separate signup form. Apply to any open role and your
+            candidate account is created automatically.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               to="/jobs"
-              className="inline-flex items-center rounded-lg bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-medium text-white"
+              className="inline-flex min-h-11 items-center rounded-lg bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-medium text-white"
             >
-              Browse open briefs
+              Browse roles — your first application creates your account
             </Link>
             <Link
               to="/login"
-              className="inline-flex items-center rounded-lg border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-medium text-[color:var(--brand-navy)]"
+              className="inline-flex min-h-11 items-center rounded-lg border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-medium text-[color:var(--brand-navy)]"
             >
               Candidate sign in
             </Link>

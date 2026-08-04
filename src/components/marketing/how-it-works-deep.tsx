@@ -644,29 +644,37 @@ export function ResponsibilityMatrix() {
 /* ─────────────────────── 7 · Numbered step rail ──────────────────────── */
 
 export function StepRail() {
+  // Timing labels mirror the /pilot day plan: Days 1–2 intake & blueprint,
+  // Days 3–10 sourcing/evidence/ranking, Days 10–14 client review, then
+  // hire & close (varies with candidate notice periods).
   const steps = [
-    { n: "01", icon: <ClipboardList className="h-4 w-4" aria-hidden />, label: "Intake" },
-    { n: "02", icon: <FileText className="h-4 w-4" aria-hidden />, label: "Blueprint" },
-    { n: "03", icon: <Search className="h-4 w-4" aria-hidden />, label: "Sourcing" },
-    { n: "04", icon: <Check className="h-4 w-4" aria-hidden />, label: "Evidence review" },
-    { n: "05", icon: <BarChart3 className="h-4 w-4" aria-hidden />, label: "Ranked delivery" },
-    { n: "06", icon: <Users className="h-4 w-4" aria-hidden />, label: "Client review" },
-    { n: "07", icon: <Building2 className="h-4 w-4" aria-hidden />, label: "Hire & close" },
+    { n: "01", icon: <ClipboardList className="h-4 w-4" aria-hidden />, label: "Intake", timing: "Days 1–2" },
+    { n: "02", icon: <FileText className="h-4 w-4" aria-hidden />, label: "Blueprint", timing: "Days 1–2" },
+    { n: "03", icon: <Search className="h-4 w-4" aria-hidden />, label: "Sourcing", timing: "Days 3–10" },
+    { n: "04", icon: <Check className="h-4 w-4" aria-hidden />, label: "Evidence review", timing: "Days 3–10" },
+    { n: "05", icon: <BarChart3 className="h-4 w-4" aria-hidden />, label: "Ranked delivery", timing: "Days 3–10" },
+    { n: "06", icon: <Users className="h-4 w-4" aria-hidden />, label: "Client review", timing: "Days 10–14" },
+    { n: "07", icon: <Building2 className="h-4 w-4" aria-hidden />, label: "Hire & close", timing: "Varies" },
   ];
   return (
     <ol className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
       {steps.map((s, i) => (
         <li
           key={s.n}
-          className="relative flex items-center gap-2 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white px-3 py-2.5"
+          className="relative flex items-start gap-2 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white px-3 py-2.5"
         >
           <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[color:var(--brand-navy)] text-[10px] font-semibold text-white">
             {s.n}
           </span>
-          <span className="flex min-w-0 items-center gap-1.5">
-            <span className="text-[color:var(--brand-navy)]/80">{s.icon}</span>
-            <span className="truncate text-xs font-semibold text-[color:var(--brand-navy)]">
-              {s.label}
+          <span className="flex min-w-0 flex-col gap-0.5">
+            <span className="flex min-w-0 items-center gap-1.5">
+              <span className="text-[color:var(--brand-navy)]/80">{s.icon}</span>
+              <span className="truncate text-xs font-semibold text-[color:var(--brand-navy)]">
+                {s.label}
+              </span>
+            </span>
+            <span className="text-[10px] font-medium uppercase tracking-wide text-[color:var(--brand-navy)]/70">
+              {s.timing}
             </span>
           </span>
           {i < steps.length - 1 ? (

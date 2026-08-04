@@ -286,9 +286,16 @@ function StudyCard({ study }: { study: Study }) {
         <div className={study.accent}>{study.pattern}</div>
         <div className="relative flex items-start justify-between">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-on-dark)]/15 px-3 py-1 text-xs font-semibold uppercase tracking-widest backdrop-blur">
-              <Icon className="h-3.5 w-3.5" aria-hidden />
-              {study.industry}
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-2 rounded-full bg-[color:var(--brand-on-dark)]/15 px-3 py-1 text-xs font-semibold uppercase tracking-widest backdrop-blur">
+                <Icon className="h-3.5 w-3.5" aria-hidden />
+                {study.industry}
+              </div>
+              {study.representative !== false && (
+                <span className="inline-flex items-center rounded-full border border-[color:var(--brand-on-dark)]/30 px-2.5 py-1 text-[10px] font-medium uppercase tracking-widest text-[color:var(--brand-on-dark)]/80">
+                  Representative engagement
+                </span>
+              )}
             </div>
             <p className="mt-2 text-xs font-medium text-[color:var(--brand-on-dark)]/90">{study.companyType}</p>
             <p className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-[color:var(--brand-on-dark)]/80">
@@ -494,6 +501,12 @@ function CaseStudiesPage() {
           <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight sm:text-6xl">
             Results, visualized.
           </h1>
+          <p className="mt-4 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
+            Metrics reflect aggregate delivery performance across representative
+            TaaSFlow engagements in each vertical. Named case studies with
+            written client approval are added individually as each client signs
+            off on attribution.
+          </p>
           <p className="mt-4 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             Six engagements across hospitality, finance, healthcare, tech,
             consumer, and industrial — with a global operating footprint and

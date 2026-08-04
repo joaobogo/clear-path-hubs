@@ -48,12 +48,12 @@ export const Route = createFileRoute("/jobs/")({
       {
         name: "description",
         content:
-          "Browse open roles curated by TaaSFlow. Remote, hybrid, and onsite positions across engineering, design, product, and data.",
+          "Browse the roles currently open through TaaSFlow. Every role is scored against an approved rubric — apply in minutes, no account needed.",
       },
       { property: "og:title", content: "Open roles — TaaSFlow" },
       {
         property: "og:description",
-        content: "Curated roles from TaaSFlow clients. Apply in minutes.",
+        content: "Roles currently open through TaaSFlow. Apply in minutes.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://taasflow.com/jobs" },
@@ -75,6 +75,21 @@ function labelWorkModel(m: string | null) {
 function labelEmployment(e: string | null) {
   if (!e) return null;
   return e.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+/**
+ * Formats the real published date. Returns null when the role has no date on
+ * record so the card omits the line entirely rather than inventing one.
+ */
+function formatPosted(value: string | null): string | null {
+  if (!value) return null;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 type ChipProps = { label: string; onClear: () => void };
@@ -174,8 +189,9 @@ function JobsPage() {
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">Open roles</h1>
           <p className="mt-2 text-muted-foreground">
-            {positions.length} live {positions.length === 1 ? "role" : "roles"} curated by TaaSFlow.
-            Apply in minutes — no account needed.
+            {positions.length === 0
+              ? "No roles are open through TaaSFlow right now."
+              : `${positions.length} live ${positions.length === 1 ? "role" : "roles"} open through TaaSFlow. Apply in minutes — no account needed.`}
           </p>
           <p className="mt-2 text-sm">
             Already applied?{" "}
@@ -283,15 +299,33 @@ function JobsPage() {
 
         {filtered.length === 0 ? (
           <div className="rounded-lg border bg-muted/30 py-16 text-center">
-            <div className="mx-auto max-w-md">
-              <h2 className="text-lg font-semibold">No roles match your filters</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Try widening the location or removing a filter. New roles are added weekly.
-              </p>
-              {activeChips.length > 0 && (
-                <Button variant="outline" className="mt-6" onClick={clearAll}>
-                  Clear filters
-                </Button>
+            <div className="mx-auto max-w-md px-4">
+              {positions.length === 0 ? (
+                <>
+                  <h2 className="text-lg font-semibold">No open roles right now</h2>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    No open roles right now — join the talent network to be first
+                    in line when the next role goes live.
+                  </p>
+                  <Link
+                    to="/candidate-join"
+                    className="mt-6 inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90"
+                  >
+                    Join the talent network
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-lg font-semibold">No roles match your filters</h2>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Try widening the location or removing a filter.
+                  </p>
+                  {activeChips.length > 0 && (
+                    <Button variant="outline" className="mt-6 min-h-11" onClick={clearAll}>
+                      Clear filters
+                    </Button>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -325,9 +359,16 @@ function JobsPage() {
                     <div className="mt-2 text-sm text-muted-foreground">
                       {[p.location, p.compensation_display].filter(Boolean).join(" · ")}
                     </div>
-                    <p className="mt-3 text-sm text-foreground/80 line-clamp-2">
+                    {/* Summary is clamped to 2 lines with a CSS ellipsis — the
+                        full description lives on the job detail page. */}
+                    <p className="mt-3 overflow-hidden text-ellipsis text-sm text-foreground/80 line-clamp-2">
                       {p.description_preview}
                     </p>
+                    {formatPosted(p.published_at) && (
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        Posted {formatPosted(p.published_at)}
+                      </p>
+                    )}
                     <div className="mt-4">
                       <span className="inline-flex items-center rounded-md bg-secondary px-3 py-1.5 text-sm font-medium text-secondary-foreground">
                         View role
