@@ -45,6 +45,7 @@ import { Route as CaseStudiesRouteImport } from './routes/case-studies'
 import { Route as CandidateSuccessRouteImport } from './routes/candidate-success'
 import { Route as CandidateJoinRouteImport } from './routes/candidate-join'
 import { Route as BrandCenterRouteImport } from './routes/brand-center'
+import { Route as BookRouteImport } from './routes/book'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AccessDeniedRouteImport } from './routes/access-denied'
@@ -362,6 +363,11 @@ const CandidateJoinRoute = CandidateJoinRouteImport.update({
 const BrandCenterRoute = BrandCenterRouteImport.update({
   id: '/brand-center',
   path: '/brand-center',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookRoute = BookRouteImport.update({
+  id: '/book',
+  path: '/book',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -1141,6 +1147,7 @@ export interface FileRoutesByFullPath {
   '/access-denied': typeof AccessDeniedRoute
   '/agents': typeof AgentsRoute
   '/auth': typeof AuthRoute
+  '/book': typeof BookRoute
   '/brand-center': typeof BrandCenterRoute
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
@@ -1316,6 +1323,7 @@ export interface FileRoutesByTo {
   '/access-denied': typeof AccessDeniedRoute
   '/agents': typeof AgentsRoute
   '/auth': typeof AuthRoute
+  '/book': typeof BookRoute
   '/brand-center': typeof BrandCenterRoute
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
@@ -1483,6 +1491,7 @@ export interface FileRoutesById {
   '/access-denied': typeof AccessDeniedRoute
   '/agents': typeof AgentsRoute
   '/auth': typeof AuthRoute
+  '/book': typeof BookRoute
   '/brand-center': typeof BrandCenterRoute
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
@@ -1660,6 +1669,7 @@ export interface FileRouteTypes {
     | '/access-denied'
     | '/agents'
     | '/auth'
+    | '/book'
     | '/brand-center'
     | '/candidate-join'
     | '/candidate-success'
@@ -1835,6 +1845,7 @@ export interface FileRouteTypes {
     | '/access-denied'
     | '/agents'
     | '/auth'
+    | '/book'
     | '/brand-center'
     | '/candidate-join'
     | '/candidate-success'
@@ -2001,6 +2012,7 @@ export interface FileRouteTypes {
     | '/access-denied'
     | '/agents'
     | '/auth'
+    | '/book'
     | '/brand-center'
     | '/candidate-join'
     | '/candidate-success'
@@ -2178,6 +2190,7 @@ export interface RootRouteChildren {
   AccessDeniedRoute: typeof AccessDeniedRoute
   AgentsRoute: typeof AgentsRoute
   AuthRoute: typeof AuthRoute
+  BookRoute: typeof BookRoute
   BrandCenterRoute: typeof BrandCenterRoute
   CandidateJoinRoute: typeof CandidateJoinRoute
   CandidateSuccessRoute: typeof CandidateSuccessRoute
@@ -2509,6 +2522,13 @@ declare module '@tanstack/react-router' {
       path: '/brand-center'
       fullPath: '/brand-center'
       preLoaderRoute: typeof BrandCenterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/book': {
+      id: '/book'
+      path: '/book'
+      fullPath: '/book'
+      preLoaderRoute: typeof BookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -3808,6 +3828,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccessDeniedRoute: AccessDeniedRoute,
   AgentsRoute: AgentsRoute,
   AuthRoute: AuthRoute,
+  BookRoute: BookRoute,
   BrandCenterRoute: BrandCenterRoute,
   CandidateJoinRoute: CandidateJoinRoute,
   CandidateSuccessRoute: CandidateSuccessRoute,
