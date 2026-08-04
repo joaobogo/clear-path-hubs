@@ -311,6 +311,11 @@ function OverviewPage() {
             </div>
           )}
 
+          {/* AGENT ACTIVITY — the observable record of work on your roles */}
+          <AgentActivityRail organizationId={orgId} className="max-h-[32rem]" />
+
+
+
           {/* ── Context below the fold ── */}
           <div className="flex items-center gap-3 pt-2">
             <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
