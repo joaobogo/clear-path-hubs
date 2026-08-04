@@ -17,6 +17,8 @@
  *  - Sections whose backing data is empty return `null` (never a placeholder).
  */
 
+import { Fragment } from "react";
+import { VerticalConfigurationSection } from "@/components/marketing/vertical-configuration";
 import { HeroPicture } from "@/components/marketing/hero-picture";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, CalendarDays } from "lucide-react";
@@ -66,6 +68,10 @@ export function IndustryPage({ entry }: { entry: IndustryEntry }) {
     : null;
 
   const ctx: Ctx = { entry, config, relationships };
+  const configAnchor =
+    (["scoring", "signal-explorer", "role-explorer", "challenges"] as const).find((k) =>
+      config.spec.sections.includes(k),
+    ) ?? config.spec.sections[config.spec.sections.length - 1];
 
   return (
     <SiteShell>
@@ -77,7 +83,12 @@ export function IndustryPage({ entry }: { entry: IndustryEntry }) {
         ]}
       />
       {config.spec.sections.map((key) => (
-        <SectionRenderer key={key} sectionKey={key} ctx={ctx} />
+        <Fragment key={key}>
+          <SectionRenderer sectionKey={key} ctx={ctx} />
+          {key === configAnchor ? (
+            <VerticalConfigurationSection slug={entry.slug} industryName={entry.name} />
+          ) : null}
+        </Fragment>
       ))}
       {jsonLd ? (
         <script
