@@ -40,6 +40,7 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as EnterpriseRouteImport } from './routes/enterprise'
 import { Route as EmployerOnboardingRouteImport } from './routes/employer-onboarding'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ChangelogRouteImport } from './routes/changelog'
 import { Route as CaseStudiesRouteImport } from './routes/case-studies'
 import { Route as CandidateSuccessRouteImport } from './routes/candidate-success'
 import { Route as CandidateJoinRouteImport } from './routes/candidate-join'
@@ -335,6 +336,11 @@ const EmployerOnboardingRoute = EmployerOnboardingRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChangelogRoute = ChangelogRouteImport.update({
+  id: '/changelog',
+  path: '/changelog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CaseStudiesRoute = CaseStudiesRouteImport.update({
@@ -1132,6 +1138,7 @@ export interface FileRoutesByFullPath {
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
   '/case-studies': typeof CaseStudiesRoute
+  '/changelog': typeof ChangelogRoute
   '/contact': typeof ContactRoute
   '/employer-onboarding': typeof EmployerOnboardingRoute
   '/enterprise': typeof EnterpriseRoute
@@ -1305,6 +1312,7 @@ export interface FileRoutesByTo {
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
   '/case-studies': typeof CaseStudiesRoute
+  '/changelog': typeof ChangelogRoute
   '/contact': typeof ContactRoute
   '/employer-onboarding': typeof EmployerOnboardingRoute
   '/enterprise': typeof EnterpriseRoute
@@ -1470,6 +1478,7 @@ export interface FileRoutesById {
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
   '/case-studies': typeof CaseStudiesRoute
+  '/changelog': typeof ChangelogRoute
   '/contact': typeof ContactRoute
   '/employer-onboarding': typeof EmployerOnboardingRoute
   '/enterprise': typeof EnterpriseRoute
@@ -1645,6 +1654,7 @@ export interface FileRouteTypes {
     | '/candidate-join'
     | '/candidate-success'
     | '/case-studies'
+    | '/changelog'
     | '/contact'
     | '/employer-onboarding'
     | '/enterprise'
@@ -1818,6 +1828,7 @@ export interface FileRouteTypes {
     | '/candidate-join'
     | '/candidate-success'
     | '/case-studies'
+    | '/changelog'
     | '/contact'
     | '/employer-onboarding'
     | '/enterprise'
@@ -1982,6 +1993,7 @@ export interface FileRouteTypes {
     | '/candidate-join'
     | '/candidate-success'
     | '/case-studies'
+    | '/changelog'
     | '/contact'
     | '/employer-onboarding'
     | '/enterprise'
@@ -2157,6 +2169,7 @@ export interface RootRouteChildren {
   CandidateJoinRoute: typeof CandidateJoinRoute
   CandidateSuccessRoute: typeof CandidateSuccessRoute
   CaseStudiesRoute: typeof CaseStudiesRoute
+  ChangelogRoute: typeof ChangelogRoute
   ContactRoute: typeof ContactRoute
   EmployerOnboardingRoute: typeof EmployerOnboardingRoute
   EnterpriseRoute: typeof EnterpriseRoute
@@ -2447,6 +2460,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/changelog': {
+      id: '/changelog'
+      path: '/changelog'
+      fullPath: '/changelog'
+      preLoaderRoute: typeof ChangelogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/case-studies': {
@@ -3771,6 +3791,7 @@ const rootRouteChildren: RootRouteChildren = {
   CandidateJoinRoute: CandidateJoinRoute,
   CandidateSuccessRoute: CandidateSuccessRoute,
   CaseStudiesRoute: CaseStudiesRoute,
+  ChangelogRoute: ChangelogRoute,
   ContactRoute: ContactRoute,
   EmployerOnboardingRoute: EmployerOnboardingRoute,
   EnterpriseRoute: EnterpriseRoute,
