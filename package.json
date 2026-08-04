@@ -9,7 +9,11 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "check:vocabulary": "node scripts/check-public-vocabulary.mjs",
+    "prebuild": "npm run check:vocabulary",
+    "prebuild:dev": "npm run check:vocabulary",
+    "test": "vitest run"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
