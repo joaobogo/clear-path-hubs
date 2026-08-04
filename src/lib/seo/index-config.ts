@@ -59,6 +59,7 @@ export const STATIC_PATHS = [
   "/changelog",
 
   "/intake",
+  "/book",
   "/talent-marketplace",
   "/candidate-join",
   "/candidate-success",
