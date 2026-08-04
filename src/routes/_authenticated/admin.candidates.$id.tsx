@@ -845,7 +845,15 @@ function EnrichmentTab({ cp, evidence }: { cp: Any; evidence: Any }) {
 }
 
 // ── Evidence ───────────────────────────────────────────────────────────────
-function EvidenceTab({ evidence, result }: { evidence: Any; result: Any }) {
+function EvidenceTab({
+  evidence,
+  result,
+  matchId,
+}: {
+  evidence: Any;
+  result: Any;
+  matchId: string;
+}) {
   const items = result?.requirement_assessment ?? result?.evidence ?? [];
   const llmVerdicts: Any[] = Array.isArray(evidence?.extracted?.insights?.requirement_verdicts)
     ? evidence.extracted.insights.requirement_verdicts
@@ -853,6 +861,25 @@ function EvidenceTab({ evidence, result }: { evidence: Any; result: Any }) {
   const contradictions = result?.contradiction_status && result.contradiction_status !== "none"
     ? result.contradiction_status
     : null;
+
+  // Evidence items carry the verbatim passages, reviewer status and any stored
+  // confidence. Failure here degrades the graph, it does not break the tab.
+  const { data: evidenceItems } = useQuery({
+    queryKey: ["admin-evidence-items", matchId],
+    queryFn: () => listAdminEvidence({ data: { matchId } }),
+    retry: false,
+  });
+
+  const chain = useMemo(
+    () =>
+      buildEvidenceChain({
+        assessment: result?.requirement_assessment ?? null,
+        verdicts: llmVerdicts,
+        items: (evidenceItems ?? []) as Any[],
+      }),
+    [result?.requirement_assessment, llmVerdicts, evidenceItems],
+  );
+
   return (
     <div className="space-y-4">
       {contradictions && (
@@ -863,6 +890,17 @@ function EvidenceTab({ evidence, result }: { evidence: Any; result: Any }) {
           </AlertDescription>
         </Alert>
       )}
+
+      <EvidenceGraph
+        nodes={chain.nodes}
+        meta={chain.meta}
+        variant="full"
+        idPrefix="admin-evidence-graph"
+        title="Evidence graph"
+        description="Follow one requirement from the evidence found, through the source passage and the rule applied, to the points it moved and what it means for the decision."
+      />
+
+
 
       {items.length === 0 ? (
         <div className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
