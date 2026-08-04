@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { ErrorState as ClientErrorState } from "@/components/client/states";
 import { OpenThreadButton } from "@/components/comms/open-thread-button";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -110,7 +111,7 @@ function PositionDetailPage() {
  });
  const orgId = ctx?.active?.organization_id;
  const queryKey = ["client-position", orgId, id];
- const { data, refetch } = useQuery({
+ const { data, isError, refetch } = useQuery({
  queryKey,
  queryFn: () => detailFn({ data: { orgId: orgId!, positionId: id } }),
  enabled: !!orgId,
@@ -195,6 +196,15 @@ function PositionDetailPage() {
  });
  }, [data]);
 
+ if (isError && !data)
+  return (
+   <div className="p-8">
+    <ClientErrorState
+     title="We couldn't load this role"
+     onRetry={() => void refetch()}
+    />
+   </div>
+  );
  if (!data) return <div className="p-8 text-muted-foreground">Loading…</div>;
  if (!data.position) throw notFound();
 

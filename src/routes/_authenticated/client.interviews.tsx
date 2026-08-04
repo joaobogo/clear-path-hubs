@@ -30,7 +30,7 @@ import { InterviewScorecardDialog } from "@/components/client/interview-scorecar
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { PageHeader, PageBody, PageShell } from "@/components/ds";
-import { EmptyState, SkeletonCards } from "@/components/client/states";
+import { EmptyState, SkeletonCards, ErrorState } from "@/components/client/states";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -269,6 +269,11 @@ function InterviewsPage() {
 
         {listQuery.isLoading ? (
           <SkeletonCards cards={3} />
+        ) : listQuery.isError ? (
+          <ErrorState
+            title="We couldn't load your interviews"
+            onRetry={() => void listQuery.refetch()}
+          />
         ) : interviews.length === 0 ? (
           <EmptyState
             icon={CalendarClock}

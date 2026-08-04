@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Briefcase, MessageSquare, Search, User } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { SkeletonRows } from "@/components/client/states";
+import { SkeletonRows, ErrorState } from "@/components/client/states";
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveNoMessagesState } from "@/lib/empty-states/empty-state-catalogue";
 import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
@@ -57,7 +57,7 @@ function ConversationsPage() {
   });
   const orgId = ctx?.active?.organization_id;
 
-    const { data, isLoading } = useQuery({
+    const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["conversations", orgId],
     queryFn: () => listFn({ data: { orgId: orgId! } }),
     enabled: !!orgId,
@@ -122,6 +122,11 @@ function ConversationsPage() {
 
       {isLoading && !data ? (
         <SkeletonRows rows={5} />
+      ) : isError && !data ? (
+        <ErrorState
+          title="We couldn't load your conversations"
+          onRetry={() => void refetch()}
+        />
       ) : items.length === 0 ? (
         <SurfaceState
           content={resolveNoMessagesState({ activeRoles: signals?.activeRoles ?? 0 })}

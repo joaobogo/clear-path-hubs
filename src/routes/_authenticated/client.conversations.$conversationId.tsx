@@ -8,6 +8,7 @@ import { useSupportView } from "@/lib/support-view";
 import { ConversationThread } from "@/components/comms/conversation-thread";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Briefcase, User } from "lucide-react";
+import { ErrorState } from "@/components/client/states";
 
 export const Route = createFileRoute("/_authenticated/client/conversations/$conversationId")({
   head: () => ({
@@ -30,10 +31,11 @@ function ConversationDetail() {
   const loadFn = useServerFn(getConversation);
   const ctxFn = useServerFn(getClientContext);
 
-  const { data } = useQuery({
+  const convoQuery = useQuery({
     queryKey: ["conversation", conversationId],
     queryFn: () => loadFn({ data: { conversationId } }),
   });
+  const data = convoQuery.data;
   const { data: ctx } = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
@@ -84,11 +86,18 @@ function ConversationDetail() {
         )}
       </div>
 
-      <ConversationThread
-        conversationId={conversationId}
-        canPost={canPost}
-        heightClass="h-[calc(100vh-16rem)]"
-      />
+      {convoQuery.isError ? (
+        <ErrorState
+          title="We couldn't load this conversation"
+          onRetry={() => void convoQuery.refetch()}
+        />
+      ) : (
+        <ConversationThread
+          conversationId={conversationId}
+          canPost={canPost}
+          heightClass="h-[calc(100vh-16rem)]"
+        />
+      )}
     </div>
   );
 }

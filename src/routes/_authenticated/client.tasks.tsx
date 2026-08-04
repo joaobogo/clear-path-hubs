@@ -16,7 +16,7 @@ import {
   type TaskView,
   type TaskType,
 } from "@/lib/tasks.functions";
-import { SkeletonRows, NoWorkspaceState } from "@/components/client/states";
+import { SkeletonRows, NoWorkspaceState, ErrorState } from "@/components/client/states";
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveNoApprovalsState } from "@/lib/empty-states/empty-state-catalogue";
 import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
@@ -284,6 +284,11 @@ function TasksPage() {
 
       {tasks.isLoading ? (
         <SkeletonRows rows={4} />
+      ) : tasks.isError ? (
+        <ErrorState
+          title="We couldn't load your tasks"
+          onRetry={() => void tasks.refetch()}
+        />
       ) : rows.length === 0 ? (
         <SurfaceState
           content={resolveNoApprovalsState({

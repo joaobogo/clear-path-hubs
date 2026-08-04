@@ -46,7 +46,7 @@ import {
 } from "@/lib/offer-stall";
 import { formatAge } from "@/lib/time-age";
 import { useClientOrgSearch } from "@/lib/use-client-org";
-import { SkeletonBoard } from "@/components/client/states";
+import { SkeletonBoard, ErrorState } from "@/components/client/states";
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveNoOutcomesState } from "@/lib/empty-states/empty-state-catalogue";
 import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
@@ -132,7 +132,7 @@ function OffersPage() {
   const orgId = ctx?.active?.organization_id;
   const readOnly = ctx?.active?.role === "client_viewer";
 
-  const { data, isPending, refetch } = useQuery({
+  const { data, isPending, isError, refetch } = useQuery({
     queryKey: ["hires", orgId],
     queryFn: () => listFn({ data: { orgId: orgId! } }),
     enabled: !!orgId,
@@ -248,6 +248,11 @@ function OffersPage() {
       <section className="mt-6 overflow-x-auto">
         {isPending ? (
           <SkeletonBoard columns={6} />
+        ) : isError ? (
+          <ErrorState
+            title="We couldn't load your offers"
+            onRetry={() => void refetch()}
+          />
         ) : hires.length === 0 ? (
           <OffersEmptyState orgId={orgId} />
         ) : (

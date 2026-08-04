@@ -10,7 +10,7 @@ import {
   submitDeliveryFeedback,
   type DeliveryRow,
 } from "@/lib/deliveries.functions";
-import { EmptyState, SkeletonCards, NoWorkspaceState } from "@/components/client/states";
+import { EmptyState, SkeletonCards, NoWorkspaceState, ErrorState } from "@/components/client/states";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -167,6 +167,11 @@ function DeliveriesPage() {
         <h2 className="text-lg font-semibold">Delivery history</h2>
         {deliveries.isLoading ? (
           <SkeletonCards cards={3} />
+        ) : deliveries.isError ? (
+          <ErrorState
+            title="We couldn't load your deliveries"
+            onRetry={() => void deliveries.refetch()}
+          />
         ) : (deliveries.data?.deliveries ?? []).length === 0 ? (
           <EmptyState
             icon={PackageOpen}
