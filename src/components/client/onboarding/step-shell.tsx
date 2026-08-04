@@ -85,23 +85,31 @@ export function StepRail({
 export function SequenceProgress({
   complete,
   remaining,
+  active,
 }: {
   complete: readonly OnboardingStepId[];
   remaining: number;
+  active?: OnboardingStepId;
 }) {
   const pct = Math.round((complete.length / ONBOARDING_STEPS.length) * 100);
+  // The header must agree with the step you are actually looking at, otherwise
+  // "Step 4 of 10" sits next to a panel labelled "Step 8".
+  const activeIndex = active
+    ? ONBOARDING_STEPS.find((s) => s.id === active)?.index
+    : undefined;
+  const shown = activeIndex ?? Math.min(complete.length + 1, ONBOARDING_STEPS.length);
   return (
     <div className="space-y-2">
       <div className="flex items-baseline justify-between text-sm">
         <span className="font-medium">
-          Step {Math.min(complete.length + 1, ONBOARDING_STEPS.length)} of{" "}
-          {ONBOARDING_STEPS.length}
+          Step {shown} of {ONBOARDING_STEPS.length}
         </span>
         <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
           <Clock className="size-3" aria-hidden />
           {formatMinutes(remaining)} left
         </span>
       </div>
+
       <div
         className="h-1.5 w-full overflow-hidden rounded-full bg-muted"
         role="progressbar"
