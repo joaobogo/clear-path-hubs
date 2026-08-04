@@ -9,6 +9,7 @@ import {
  updateMyProfile,
  type ProfilePatch,
 } from "@/lib/candidate.functions";
+import { profileCompleteness } from "@/lib/candidate/profile-completeness";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
