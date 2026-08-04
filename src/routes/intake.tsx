@@ -1191,14 +1191,19 @@ function Field({
     : children;
   return (
     <div className="space-y-1.5">
-      <Label htmlFor={labelFor} className="text-sm font-medium">
-        {label}
+      {/* The required marker sits outside the <label> so the label's text is
+          exactly the field name — that keeps the announced/programmatic name
+          clean, while aria-required carries the "required" semantics. */}
+      <div className="flex items-baseline">
+        <Label htmlFor={labelFor} className="text-sm font-medium">
+          {label}
+        </Label>
         {required && (
-          <span className="ml-1 text-[color:var(--brand-navy)]/70" aria-hidden="true">
+          <span className="ml-1 text-sm text-[color:var(--brand-navy)]/70" aria-hidden="true">
             *
           </span>
         )}
-      </Label>
+      </div>
       {control}
       {hint && !error && (
         <p id={hintId} className="text-xs text-[color:var(--brand-navy)]/75">
