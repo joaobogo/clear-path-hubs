@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { ErrorState } from "@/components/ds";
 import { AlertTriangle, ArrowRight, Search, X } from "lucide-react";
 
 const QUEUE_ORDER = Object.keys(REVIEW_QUEUES) as ReviewQueueId[];
@@ -169,10 +170,16 @@ function ReviewCenter() {
           </div>
 
           <p className="text-xs text-muted-foreground">
-            {list.isPending ? "Loading…" : `${total} in ${REVIEW_QUEUES[queue].label.toLowerCase()}`}
+            {list.isError ? "Couldn't load" : list.isPending ? "Loading…" : `${total} in ${REVIEW_QUEUES[queue].label.toLowerCase()}`}
           </p>
 
-          {!list.isPending && rows.length === 0 ? (
+          {list.isError ? (
+            <ErrorState
+              title="We couldn't load this queue"
+              description="The review queue didn't come back. Nothing is lost — try again."
+              onRetry={() => void list.refetch()}
+            />
+          ) : !list.isPending && rows.length === 0 ? (
             <Card className="p-10 text-center text-sm text-muted-foreground">
               Nothing waiting in this queue.
             </Card>
