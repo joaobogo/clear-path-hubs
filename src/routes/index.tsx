@@ -1,6 +1,7 @@
 import * as React from "react";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { HeroDecisionWorkspace } from "@/components/home/hero-decision-workspace";
+import { PRODUCT_CATEGORY, SYSTEM_CLAIM, MODULES } from "@/config/product-language";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Activity,
@@ -70,9 +71,9 @@ void getPage;
 export const Route = createFileRoute("/")({
   head: () =>
     marketingHead(undefined, "/", {
-      title: "TaaSFlow | AI Hiring Intelligence Platform",
+      title: `TaaSFlow | ${PRODUCT_CATEGORY}`,
       description:
-        "AI Hiring Intelligence Platform. Agents run the search. Evidence backs every score. Ranked candidates in a live Decision Workspace — no placement fees.",
+        `${PRODUCT_CATEGORY}. ${SYSTEM_CLAIM} Ranked candidates in a live ${MODULES.workspace} — no placement fees.`,
     }),
 
   component: Home,
@@ -1330,7 +1331,7 @@ function Home() {
             <div className="flex min-w-0 flex-col justify-center gap-6">
               <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80 backdrop-blur">
                 <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
-                AI Hiring Intelligence Platform
+                {PRODUCT_CATEGORY}
               </span>
               <h1
                 id="home-hero-heading"

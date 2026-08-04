@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { marketingHead } from "@/lib/marketing/head";
+import { PRODUCT_CATEGORY } from "@/config/product-language";
 import {
   SiteShell,
   PublicPage,
@@ -48,7 +49,8 @@ function PricingPage() {
               Plans that scale with volume
             </h1>
             <p className="mt-5 max-w-2xl mx-auto text-lg text-[color:var(--brand-navy)]/80">
-              Higher volume = lower cost per role. Annual commitment saves 10%.
+              Every plan is the full {PRODUCT_CATEGORY}. Higher volume = lower
+              cost per role. Annual commitment saves 10%.
             </p>
           </div>
           <ul className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-[color:var(--brand-navy)]/80">

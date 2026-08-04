@@ -30,13 +30,14 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
+import { PRODUCT_CATEGORY, MODULES } from "@/config/product-language";
 
 export const Route = createFileRoute("/platform")({
   head: () =>
     marketingHead(undefined, "/platform", {
-      title: "The TaaSFlow Platform — AI Hiring Intelligence, in one system",
+      title: `The TaaSFlow Platform — ${PRODUCT_CATEGORY}, in one system`,
       description:
-        "Not only an ATS. Not only an agency. Not only AI sourcing. Not only a CRM. TaaSFlow is an AI Hiring Intelligence Platform: Intake Engine, Agent Layer, Evidence Graph, Scoring Engine, Decision Workspace, and Talent Graph — in one system.",
+        `Not only an ATS. Not only AI sourcing. Not only a CRM. TaaSFlow is an ${PRODUCT_CATEGORY}: ${MODULES.intake}, ${MODULES.agents}, ${MODULES.evidence}, ${MODULES.scoring}, ${MODULES.workspace}, and ${MODULES.talentGraph} — in one system.`,
     }),
   component: PlatformPage,
 });
