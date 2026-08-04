@@ -151,7 +151,7 @@ function ProfilePage() {
  }
 
  return (
- <main className="mx-auto max-w-3xl px-6 py-8">
+ <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
  <header className="mb-6">
  <h1 className="text-2xl font-semibold">Your profile</h1>
  <p className="text-sm text-muted-foreground">
@@ -162,7 +162,24 @@ function ProfilePage() {
  </Link>
  .
  </p>
+ <div className="mt-4 rounded-lg border bg-card p-4">
+ <div className="flex items-center justify-between text-sm">
+ <span className="font-medium">Profile completeness</span>
+ <span className="text-muted-foreground">{pct}%</span>
+ </div>
+ <div
+ className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted"
+ role="progressbar"
+ aria-valuenow={pct}
+ aria-valuemin={0}
+ aria-valuemax={100}
+ aria-label="Profile completeness"
+ >
+ <div className="h-full bg-primary transition-all" style={{ width: `${pct}%` }} />
+ </div>
+ </div>
  </header>
+
 
       <form onSubmit={submit} className="space-y-6">
         <section className="rounded-lg border bg-card p-5 space-y-3">
