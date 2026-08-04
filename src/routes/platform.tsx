@@ -19,6 +19,8 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { PlatformArchitecture } from "@/components/marketing/platform-architecture";
+import { EvidenceGraph } from "@/components/evidence/evidence-graph";
+import { REPRESENTATIVE_CHAIN } from "@/lib/evidence/evidence-graph";
 import { marketingHead } from "@/lib/marketing/head";
 import {
   PRODUCT_CATEGORY,
