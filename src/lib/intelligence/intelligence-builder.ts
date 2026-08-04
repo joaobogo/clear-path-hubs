@@ -23,6 +23,13 @@ import {
   type IntelligenceMetric,
   type MetricPoint,
 } from "./hiring-intelligence";
+import {
+  BEST_PRACTICES,
+  deriveRecommendations,
+  type BestPractice,
+  type Recommendation,
+} from "./recommendations";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = Record<string, any>;
@@ -39,6 +46,10 @@ export type IntelligenceRecords = {
   commitments: Row[];
   interviews: Row[];
   marketSignals: Row[];
+  /** Open work queue items (approvals, actions). Optional: absent means none read. */
+  tasks?: Row[];
+  /** Outbound outreach touches, current and prior window. */
+  outreachTouches?: Row[];
   window: { days: number; from: string; priorFrom: string; to: string };
   positionId: string | null;
 };
@@ -47,9 +58,14 @@ export type IntelligenceResult = {
   window: IntelligenceRecords["window"];
   computedAt: string;
   metrics: IntelligenceMetric[];
+  /** System-detected recommendations, derived from the same records. */
+  recommendations: Recommendation[];
+  /** Static guidance, never derived from records. Kept separate on purpose. */
+  bestPractices: BestPractice[];
   /** True when the workspace holds no records at all in scope. */
   emptyWorkspace: boolean;
 };
+
 
 const FUNNEL_STEPS = [
   { key: "delivered", label: "Shown to you" },
@@ -934,13 +950,32 @@ export function buildIntelligence(
     });
   }
 
+  const recommendations = deriveRecommendations({
+    positions: records.positions,
+    matches: records.matches,
+    history: records.history,
+    scoreRuns: records.scoreRuns,
+    evidenceItems: records.evidenceItems,
+    agentRuns: records.agentRuns,
+    signals: {
+      tasks: records.tasks ?? [],
+      outreachTouches: records.outreachTouches ?? [],
+    },
+    window: win,
+    positionId: records.positionId,
+    now,
+  });
+
   return {
     window: win,
     computedAt,
     metrics,
+    recommendations,
+    bestPractices: BEST_PRACTICES,
     emptyWorkspace:
       records.positions.length === 0 &&
       records.matches.length === 0 &&
       records.scoreRuns.length === 0,
   };
+
 }
