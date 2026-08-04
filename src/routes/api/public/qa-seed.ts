@@ -450,7 +450,27 @@ async function handle(request: Request): Promise<Response> {
     if (action === "seed") {
       const res = await seedQAData();
       return Response.json({ ok: true, action, ...res });
+    if (action === "cleanup_intake_e2e") {
+      const res = await cleanupIntakeE2E(body.prefix ?? "QA_INTAKE_E2E_");
+      return Response.json({ ok: true, action, ...res });
     }
+    if (action === "cleanup_booking_e2e") {
+      const res = await cleanupBookingE2E(body.email_pattern ?? "qa.book+%@qa.taasflow.test");
+      return Response.json({ ok: true, action, ...res });
+    }
+    if (action === "lookup_intake") {
+      if (!body.company_name) {
+        return Response.json({ ok: false, error: "company_name required" }, { status: 400 });
+      }
+      const res = await lookupIntake(body.company_name, body.email);
+      return Response.json({ ok: true, action, ...res });
+    }
+    if (action === "lookup_booking") {
+      if (!body.email) return Response.json({ ok: false, error: "email required" }, { status: 400 });
+      const res = await lookupBooking(body.email);
+      return Response.json({ ok: true, action, ...res });
+    }
+
     if (action === "status") {
       const sb = await loadAdmin();
       const { count } = await sb
