@@ -225,5 +225,26 @@ export const requestDiscoveryCall = createServerFn({ method: "POST" })
     }
 
     if (error) return { ok: false, message: "We couldn't save your request. Please try again." };
+
+    // Welcome email — once per organisation, whichever commitment lands first.
+    try {
+      const { data: org } = await supabase
+        .from("organizations")
+        .select("name")
+        .eq("id", organizationId)
+        .maybeSingle();
+      const { sendWelcomeEmail } = await import("./welcome-email.server");
+      await sendWelcomeEmail({
+        email: profile?.email ?? null,
+        organizationId,
+        contactName: profile?.full_name ?? null,
+        companyName: org?.name ?? null,
+        roleTitle: position?.title ?? null,
+        positionId: position?.id ?? null,
+      });
+    } catch (err) {
+      console.error("[booking] welcome email failed (non-critical)", err);
+    }
+
     return { ok: true, callId: inserted?.id ?? null };
   });
