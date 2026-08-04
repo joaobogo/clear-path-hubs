@@ -1,3 +1,4 @@
+import { BOOKING_ROUTE } from "@/config/booking";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { MODULE_SECTIONS } from "@/config/product-language";
 
@@ -41,7 +42,7 @@ export const PRIMARY_CTA: NavLink = {
 
 /** Secondary header CTA — rendered next to the primary CTA. */
 export const BOOK_CALL_CTA: NavLink = {
-  to: "/contact",
+  to: BOOKING_ROUTE,
   label: "Book call",
   description: "Talk to a founder about your roles",
 };

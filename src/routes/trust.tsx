@@ -446,10 +446,6 @@ function TrustPage() {
               </a>
               .
             </p>
-            <p className="mt-2 text-xs text-[color:var(--brand-navy)]/70">
-              This hosting and sub-processor wording is pending review by
-              TaaSFlow's legal counsel.
-            </p>
           </div>
           <p className="mt-5 text-xs text-[color:var(--brand-navy)]/80">
             This page is maintained by the TaaSFlow team to answer common
