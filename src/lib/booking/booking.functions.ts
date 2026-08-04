@@ -56,6 +56,38 @@ export const submitBookingIntake = createServerFn({ method: "POST" })
       environment: environment(),
     });
 
+    // Unified lead notification: the meeting request is already a lead, even
+    // before a time is picked.
+    try {
+      const { processLeadEvent } = await import("@/lib/leads/lead-pipeline.server");
+      await processLeadEvent({
+        leadType: "discovery_call",
+        sourceId: stored.sessionId,
+        source: "booking_intake",
+        sourcePage: "/book",
+        fullName: `${data.intake.firstName} ${data.intake.lastName}`.trim(),
+        email: data.intake.email,
+        company: data.intake.companyName ?? null,
+        phone: data.intake.phone ?? null,
+        message: data.intake.additionalContext ?? data.intake.hiringChallenge ?? null,
+        facts: [
+          { label: "Meeting type", value: meetingType },
+          { label: "Job title", value: data.intake.jobTitle },
+          { label: "Open roles", value: data.intake.openRoles },
+          { label: "Hiring volume", value: data.intake.hiringVolume },
+          { label: "Timeline", value: data.intake.hiringTimeline },
+          { label: "Qualification score", value: stored.qualificationScore },
+          { label: "Meeting time", value: "not picked yet" },
+        ],
+        recordTable: "booking_sessions",
+        recordId: stored.sessionId,
+        linkPath: "/admin/pending-leads",
+        crmStatus: "synced",
+      });
+    } catch (err) {
+      console.error("[booking] lead notification failed", err);
+    }
+
     return { sessionId: stored.sessionId as string | null, qualificationScore: stored.qualificationScore };
   });
 
