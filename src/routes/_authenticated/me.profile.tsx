@@ -75,6 +75,8 @@ function ProfilePage() {
  setForm(next);
  setBaseline(JSON.stringify(next));
  }, [p]);
+ const pct = profileCompleteness(p);
+
 
 
  const save = useMutation({
