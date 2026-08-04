@@ -233,6 +233,10 @@ function IntegrationHealthPage() {
         })}
       </div>
 
+      <CalendlyWebhookPanel />
+
+
+
       <p className="text-xs text-muted-foreground">
         Tests are read-only: they list catalog entries, read CRM object names, resolve the
         booking page and read recent delivery events. No customer is charged, contacted or
