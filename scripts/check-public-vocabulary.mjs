@@ -18,7 +18,7 @@
  */
 
 import { readFileSync, readdirSync, statSync } from "node:fs";
-import { join, relative, sep } from "node:path";
+import { isAbsolute, join, relative, sep } from "node:path";
 
 const ROOT = process.cwd();
 const ARGS = process.argv.slice(2);
@@ -189,7 +189,7 @@ function scanCode(rel, raw) {
 }
 
 for (const dir of SCAN_DIRS) {
-  for (const file of walk(join(ROOT, dir))) {
+  for (const file of walk(isAbsolute(dir) ? dir : join(ROOT, dir))) {
     const rel = relative(ROOT, file).split(sep).join("/");
     if (isExcluded(rel)) continue;
     const raw = readFileSync(file, "utf8");
