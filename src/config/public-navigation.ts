@@ -133,6 +133,7 @@ export const FOOTER_GROUPS: NavGroup[] = [
       { to: "/platform", label: "Platform" },
       { to: "/agents",   label: "Agents" },
       { to: "/system",   label: "Intelligence" },
+      { to: "/integrations", label: "Integrations" },
       { to: "/security", label: "Security" },
     ],
   },
