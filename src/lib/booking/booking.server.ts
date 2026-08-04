@@ -306,10 +306,11 @@ export async function applyBookingStatus(
 
   const { data, error } = await db
     .from("booking_sessions")
-    .update(patch)
+    .update(patch as never)
     .eq("id", sessionId)
     .select(SESSION_COLUMNS)
     .maybeSingle();
+
 
   if (error) {
     console.error("booking status update failed", { session_id: sessionId, message: error.message });
