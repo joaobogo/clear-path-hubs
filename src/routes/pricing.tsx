@@ -13,7 +13,10 @@ import { SubscriptionTierCard } from "@/components/marketing/subscription-tier-c
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
 import { PRICING_TIERS, NEVER_CHARGED, PRICING_GUARANTEES } from "@/content/pricing";
 import { SUBSCRIPTION_TIERS } from "@/content/pricing-subscriptions";
-import { PRICE_PILOT_DISPLAY } from "@/config/pricing-core";
+import {
+  PRICE_PILOT_DISPLAY,
+  SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL,
+} from "@/config/pricing-core";
 import { Check, X } from "lucide-react";
 import { PageConnections } from "@/components/marketing/page-connections";
 import { AgencyFeeComparison } from "@/components/marketing/agency-fee-comparison";
@@ -62,7 +65,8 @@ function PricingPage() {
             <p className="mt-5 max-w-2xl mx-auto text-lg text-[color:var(--brand-navy)]/80">
               Every plan is the full {PRODUCT_CATEGORY}. What changes between
               plans is capacity — active roles, agent runs, intelligence and
-              governance. Annual commitment saves 10%.
+              governance. One-off packages are billed once; subscription
+              programmes are billed monthly.
             </p>
           </div>
           <ul className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-[color:var(--brand-navy)]/80">
@@ -146,11 +150,22 @@ function PricingPage() {
               </p>
             </>
           ) : (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {SUBSCRIPTION_TIERS.map((tier) => (
-                <SubscriptionTierCard key={tier.id} tier={tier} />
-              ))}
-            </div>
+            <>
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {SUBSCRIPTION_TIERS.map((tier) => (
+                  <SubscriptionTierCard key={tier.id} tier={tier} />
+                ))}
+              </div>
+              {/* Annual discount applies to subscription programmes only — never
+                  to the one-off packages above. */}
+              <p className="mt-6 text-sm text-[color:var(--brand-navy)]/80">
+                <span className="font-semibold text-[color:var(--brand-navy)]">
+                  {SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL}
+                </span>{" "}
+                — applied at subscription checkout or on your invoice. Monthly
+                prices are shown above.
+              </p>
+            </>
           )}
           <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[color:var(--brand-navy)]/80">
             {PRICING_GUARANTEES.map((g) => (
@@ -388,10 +403,10 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Is there a contract minimum?",
-    a: "The Starter and Growth tiers run month-to-month. Scale and Enterprise have quarterly minimums to align agent capacity planning with your programme. Exact terms are on your scoped quote.",
+    a: "The Bronze and Silver subscriptions run month-to-month. Gold and Enterprise have quarterly minimums to align agent capacity planning with your programme. One-off packages have no minimum at all. Exact terms are on your scoped quote.",
   },
   {
     q: "How does the pilot work?",
-    a: "The Starter tier itself is the pilot: one active role, no long commitment, full workflow. If it fits, keep going or move up. If it doesn't, walk away with every candidate the platform surfaced.",
+    a: "The Pilot itself is the pilot: one active role, no long commitment, full workflow. If it fits, keep going or move up. If it doesn't, walk away with every candidate the platform surfaced.",
   },
 ];

@@ -27,6 +27,7 @@ import {
   PRICE_SUB_GOLD_DISPLAY,
   PRICE_SUB_ENTERPRISE_DISPLAY,
   SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL,
+  POSITION_BANDS,
 } from "@/config/pricing-core";
 
 // Enterprise metadata authored inline. Legacy JSON contained unapproved
@@ -52,30 +53,32 @@ const DECISION_PATH = [
   { href: "#timeline", label: "Implementation" },
 ];
 
+// Subscription programmes start at 11+ active roles (POSITION_BANDS.subscription).
+// Buyers with 1–10 roles purchase the one-off packages instead — see /pricing.
 const VOLUME_BANDS = [
   {
-    band: "2–5 active roles",
+    band: "Bronze — up to 15 positions / month",
     price: PRICE_SUB_BRONZE_DISPLAY,
     cadence: "Weekly ranked delivery",
     agentCapacity: "One agent capacity block",
     fit: "A single function hiring steadily — usually one hiring manager group.",
   },
   {
-    band: "6–15 active roles",
+    band: "Silver — 16–30 positions / month",
     price: PRICE_SUB_SILVER_DISPLAY,
     cadence: "Weekly delivery per role family",
     agentCapacity: "Agent capacity per role family",
     fit: "Two or three functions hiring in parallel with shared standards.",
   },
   {
-    band: "16–40 active roles",
+    band: "Gold — 31–50 positions / month",
     price: PRICE_SUB_GOLD_DISPLAY,
     cadence: "Twice-weekly delivery on priority roles",
     agentCapacity: "Agent capacity plus a named account lead",
     fit: "Multi-business-unit hiring with executive reporting.",
   },
   {
-    band: "40+ or continuous hiring",
+    band: "Enterprise — 50+ or continuous hiring",
     price: PRICE_SUB_ENTERPRISE_DISPLAY,
     cadence: "Cadence agreed per business unit",
     agentCapacity: "Programme-scale agent capacity",
@@ -261,8 +264,17 @@ function EnterprisePage() {
             How the model scales with your requisition count.
           </h2>
           <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
-            Capacity is expressed in active roles, not headcount promises. Volume can move
-            up or down between review cycles — {SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL.toLowerCase()}.
+            Subscription programmes cover {POSITION_BANDS.subscription.min}+ active roles or
+            continuous hiring. Volume can move up or down between review
+            cycles — {SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL.toLowerCase()} on subscriptions.
+          </p>
+          <p className="mt-3 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
+            Hiring {POSITION_BANDS.pilot.min}–{POSITION_BANDS.sprint.max} roles? Those buy the
+            one-off packages instead — Pilot, Multi Position or Hiring Sprint on the{" "}
+            <Link to="/pricing" className="font-semibold underline underline-offset-4">
+              pricing page
+            </Link>
+            .
           </p>
 
           <ul className="mt-8 space-y-3 md:hidden">
@@ -295,7 +307,7 @@ function EnterprisePage() {
               </caption>
               <thead>
                 <tr className="border-b border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/[0.03]">
-                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Active roles</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Subscription programme</th>
                   <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Monthly</th>
                   <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">System operating cadence</th>
                   <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Agent capacity and oversight</th>
