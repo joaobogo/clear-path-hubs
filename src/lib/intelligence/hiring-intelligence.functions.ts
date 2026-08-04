@@ -141,6 +141,27 @@ export const getHiringIntelligence = createServerFn({ method: "POST" })
         .gte("observed_at", priorFromISO),
     )).data as Row[]) ?? [];
 
+    // ── Work queue items (approvals / actions) ───────────────────────────
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const tasks = ((await scoped<any>(
+      supabase
+        .from("tasks")
+        .select("id, position_id, status, blocking, priority, due_at, task_type, created_at")
+        .eq("organization_id", data.organization_id)
+        .in("status", ["open", "in_progress"])
+        .is("deleted_at", null),
+    )).data as Row[]) ?? [];
+
+    // ── Outbound outreach touches (reply-rate comparison) ────────────────
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const outreachTouches = ((await scoped<any>(
+      supabase
+        .from("outreach_touches")
+        .select("id, direction, state, sent_at, replied_at, created_at, is_test_record")
+        .eq("organization_id", data.organization_id)
+        .gte("created_at", priorFromISO),
+    )).data as Row[]) ?? [];
+
     const records: IntelligenceRecords = {
       positions,
       matches,
@@ -151,6 +172,8 @@ export const getHiringIntelligence = createServerFn({ method: "POST" })
       commitments,
       interviews,
       marketSignals,
+      tasks,
+      outreachTouches,
       window: {
         days: data.days,
         from: fromISO,
