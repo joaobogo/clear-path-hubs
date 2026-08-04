@@ -12,6 +12,7 @@ import { ArrowRight } from "lucide-react";
  */
 
 import { PRICING_TIERS } from "@/content/pricing";
+import { POSITION_BANDS } from "@/config/pricing-core";
 
 type TierMatch = {
   label: string;
@@ -19,34 +20,40 @@ type TierMatch = {
   price: number | null; // null => custom / quote
 };
 
+/**
+ * Band boundaries come from POSITION_BANDS in pricing-core (the single source
+ * of truth): pilot 1, multi 2–5, sprint 6–10, subscription 11+. Tier names come
+ * from PRICING_TIERS. Nothing here is hard-coded.
+ */
 function matchTier(positions: number): TierMatch {
   if (positions <= 0) {
     return { label: "—", detail: "Add at least 1 position", price: null };
   }
-  if (positions === 1) {
+  const { pilot, multi, sprint, subscription } = POSITION_BANDS;
+  if (positions <= pilot.max) {
     return {
       label: PRICING_TIERS[0].name,
-      detail: "Pilot — Single Position (1)",
+      detail: `One-off package (${pilot.min})`,
       price: PRICING_TIERS[0].oneTime,
     };
   }
-  if (positions >= 2 && positions <= 5) {
+  if (positions >= multi.min && positions <= multi.max) {
     return {
       label: PRICING_TIERS[1].name,
-      detail: "Multi Position package (2–5)",
+      detail: `One-off package (${multi.min}–${multi.max})`,
       price: PRICING_TIERS[1].oneTime,
     };
   }
-  if (positions >= 6 && positions <= 20) {
+  if (positions >= sprint.min && positions <= sprint.max) {
     return {
       label: PRICING_TIERS[2].name,
-      detail: "Hiring Sprint package (6–20)",
+      detail: `One-off package (${sprint.min}–${sprint.max})`,
       price: PRICING_TIERS[2].oneTime,
     };
   }
   return {
-    label: "Custom Billing",
-    detail: "20+ roles or continuous hiring — scoped quote",
+    label: "Subscription",
+    detail: `${subscription.min}+ roles or continuous hiring — Bronze to Enterprise, scoped quote`,
     price: null,
   };
 }
