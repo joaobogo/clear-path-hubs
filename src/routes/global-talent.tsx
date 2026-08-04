@@ -10,7 +10,7 @@ import {
 import { EcosystemCrossSell } from "@/components/marketing/ecosystem-cross-sell";
 
 const CANONICAL = canonicalUrl("/global-talent");
-const TITLE = "Global Talent — remote-first hiring with clear scope | TaaSFlow";
+const TITLE = "Global Talent — remote-first hiring | TaaSFlow";
 const DESC =
   "Hire globally with TaaSFlow: remote-first briefs, regional sourcing, and relocation only when the employer commits. Clear scope, no unverified promises.";
 

@@ -9,7 +9,7 @@ import {
 } from "@/components/marketing/site-shell";
 
 const CANONICAL = canonicalUrl("/talent-marketplace");
-const TITLE = "Talent Marketplace — where briefs meet vetted specialists | TaaSFlow";
+const TITLE = "Talent Marketplace — briefs meet specialists | TaaSFlow";
 const DESC =
   "The TaaSFlow Talent Marketplace connects live employer briefs with vetted, evidence-scored candidates. Curated, private and role-specific — not a job board.";
 
