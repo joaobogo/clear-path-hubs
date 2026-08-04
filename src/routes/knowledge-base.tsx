@@ -139,7 +139,7 @@ const ARTICLES: Article[] = [
     slug: "weekly-drops",
     category: "for-employers",
     title: "Weekly candidate drops",
-    summary: "Delivery cadence, what each drop contains, and how to give feedback.",
+    summary: "System operating cadence, what each drop contains, and how to give feedback.",
     readMinutes: 3,
     visibility: "public",
   },

@@ -95,7 +95,7 @@ function HowItWorksPage() {
               <SectionHead
                 eyebrow="01 · Blueprint"
                 title="The intake becomes an approved blueprint."
-                lead="Your intake is not filed away — it becomes the scoring rubric, the search plan, and the screening spec. Weights and deal-breakers are approved before we source a single candidate."
+                lead="Your intake is not filed away — it becomes the scoring rubric, the search plan, and the screening spec. Weights and deal-breakers are approved before sourcing agents identify a single candidate."
               />
               <ul className="mt-5 space-y-2 text-sm text-[color:var(--brand-navy)]/80">
                 {[
@@ -202,7 +202,7 @@ function HowItWorksPage() {
           <SectionHead
             eyebrow="05 · Workspace"
             title="The delivery is a workspace — not a PDF."
-            lead="Candidates arrive in a pipeline you and the TaaSFlow pod share. Stage moves are validated, threads are scoped per role, and every decision is recorded next to the candidate it applies to."
+            lead="Candidates arrive in a Decision Workspace you and your platform experts share. Stage moves are validated, threads are scoped per role, and every decision is recorded next to the candidate it applies to."
           />
           <div className="mt-6">
             <WorkspaceDeliveryDemo />

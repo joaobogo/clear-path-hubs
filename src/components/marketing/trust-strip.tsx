@@ -17,8 +17,8 @@ import {
 const PROOFS = [
   {
     icon: UserCheck,
-    title: "Recruiting expertise",
-    line: "Searches run by named recruiters, not chatbots.",
+    title: "Expert oversight",
+    line: "Named hiring experts approve every shortlist the agents produce.",
   },
   {
     icon: FileSearch,

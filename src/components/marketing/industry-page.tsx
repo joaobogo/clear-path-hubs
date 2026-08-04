@@ -1149,7 +1149,7 @@ function SectionProcess({ ctx }: { ctx: Ctx }) {
   const { entry, config } = ctx;
   const steps = [
     { n: "01", title: "Submit the role", body: `A guided intake captures everything the ${entry.name} search needs, in one flow.` },
-    { n: "02", title: "We source and score", body: "Multi-channel sourcing, role-specific rubric, evidence extracted from every CV." },
+    { n: "02", title: "Agents source and score", body: "Sourcing agents across talent signals, role-specific rubric, evidence extracted from every CV." },
     { n: "03", title: "Review in your workspace", body: "Ranked shortlist, evidence side-by-side, Kanban pipeline, direct messaging." },
   ];
   const style = config.spec.processStyle;

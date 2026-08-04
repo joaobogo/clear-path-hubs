@@ -107,7 +107,7 @@ function buildCredibility(entry: IndustryEntry, archetype: IndustryArchetype): s
     case "systems-capability":
       return `Evidence quoted from the CV · rubric versioned per role level · ${signalCount || "multiple"} evaluation criteria`;
     case "trust-compliance":
-      return `Credential-aware sourcing · licence and continuity checks before shortlist · weekly delivery cadence`;
+      return `Credential-aware sourcing · licence and continuity checks before shortlist · weekly system operating cadence`;
     case "risk-judgment":
       return `Jurisdiction and precedent scope reviewed at every stage · evidence quoted from the CV`;
     case "operations-delivery":
@@ -115,7 +115,7 @@ function buildCredibility(entry: IndustryEntry, archetype: IndustryArchetype): s
     case "service-experience":
       return `Coverage across ${roleFamilyCount || "core"} role families · weekly shortlist cadence · guest-experience signals validated`;
     case "expertise-growth":
-      return `Rubrics tuned per level · outcomes and progression quoted from the CV · weekly delivery cadence`;
+      return `Rubrics tuned per level · outcomes and progression quoted from the CV · weekly system operating cadence`;
   }
 }
 

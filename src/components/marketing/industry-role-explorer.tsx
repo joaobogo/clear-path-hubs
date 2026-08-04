@@ -143,7 +143,7 @@ export function IndustryRoleExplorer({ entry }: { entry: IndustryEntry }) {
             href="/how-it-works"
             className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-4 py-2 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
           >
-            See how we source it
+            See how the platform sources it
           </a>
         </div>
       </div>

@@ -33,7 +33,7 @@ const AUDIENCES: Audience[] = [
   {
     key: "founders",
     label: "Founders",
-    tagline: "Hire without a recruiting team.",
+    tagline: "Hire without building a talent team.",
     icon: Rocket,
     problem: "You need to hire without building an entire recruiting department.",
     role: "Your on-demand sourcing and candidate-delivery team.",
@@ -50,10 +50,10 @@ const AUDIENCES: Audience[] = [
     tagline: "Add sourcing capacity your team can trust.",
     icon: Users,
     problem:
-      "Your recruiters are overloaded with sourcing and fragmented agency management.",
+      "Your TA team is overloaded with sourcing and fragmented agency management.",
     role: "Continuous sourcing capacity with visible candidate delivery.",
     benefit: {
-      title: "Recruiters stop chasing agencies.",
+      title: "Your team stops chasing agencies.",
       body: "One workspace, one process, one evidence trail — across every role in flight.",
     },
     cta: { label: "See the HR workflow", to: "/how-it-works" },

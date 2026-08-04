@@ -42,7 +42,7 @@ const PAIRS: { old: string; oldNote: string; taas: string; taasNote: string }[] 
   },
   {
     old: "Delayed hiring velocity",
-    oldNote: "Days lost re-briefing new recruiters and re-explaining what \"good\" looks like.",
+    oldNote: "Days lost re-briefing new agencies and re-explaining what \"good\" looks like.",
     taas: "Rubric locked in intake",
     taasNote: "The definition of a strong candidate is signed off once and reused across the search.",
   },

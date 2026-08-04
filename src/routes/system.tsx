@@ -108,7 +108,7 @@ const PILLARS = [
     eyebrow: "Live workspace",
     title: "You watch the pipeline move in real time.",
     body:
-      "Clients see the same board recruiters use — no weekly PDF, no BCC threads. Kanban, decisions, offers, hire tracking, and the AI assistant all read from one system of record.",
+      "Clients see the same board the platform runs on — no weekly PDF, no BCC threads. Kanban, decisions, offers, hire tracking, and the AI assistant all read from one system of record.",
     bullets: [
       "Kanban + decision cockpit + offers board",
       "Realtime refresh across every surface",
@@ -123,7 +123,7 @@ const PILLARS = [
     body:
       "Recruiters, sourcers, and researchers run the accounts. The system automates parsing, scoring math, evidence linking, and audit logging so operators spend their time on judgment — outreach quality, calibration, client conversations, hiring decisions.",
     bullets: [
-      "Recruiters own outreach and calibration",
+      "Expert oversight owns calibration and escalation",
       "Researchers verify claims before shortlist",
       "Client success owns the relationship",
     ],

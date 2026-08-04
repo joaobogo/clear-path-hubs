@@ -42,7 +42,7 @@ function PartnershipsStaffingPage() {
           <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
             TaaSFlow extends staffing and search firms with ranked delivery,
             evidence per requirement, and a workspace clients can see into —
-            while you keep the relationship and the fee. Human recruiters +
+            while you keep the relationship and the fee. Sourcing agents +
             AI-supported structure. Subscription, not placement.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">

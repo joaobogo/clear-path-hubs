@@ -207,7 +207,7 @@ export const FOOTER_GROUPS: NavGroup[] = [
 ];
 
 export const FOOTER_DESCRIPTION =
-  "TaaSFlow is your ATS, recruiting team, and outreach engine in one. Ranked, pre-screened candidates in a live dashboard for one flat fee.";
+  "TaaSFlow is an AI Hiring Intelligence Platform. Agents run the search, evidence backs every score, and ranked candidates land in a live Decision Workspace for one flat fee.";
 
 export const SOCIAL_LINKS = [
   { href: "https://www.linkedin.com/company/taasflow", label: "LinkedIn" },

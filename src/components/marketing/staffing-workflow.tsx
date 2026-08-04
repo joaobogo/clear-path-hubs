@@ -49,7 +49,7 @@ const STEPS: Step[] = [
     actor: "taasflow",
     icon: Search,
     detail:
-      "TaaSFlow recruiters source, screen, and capture CV evidence against every requirement inside the workspace. All activity is auditable — no black-box output.",
+      "TaaSFlow agents source, screen, and capture CV evidence against every requirement inside the workspace. All activity is auditable — no black-box output.",
     owner: "TaaSFlow delivery layer.",
   },
   {

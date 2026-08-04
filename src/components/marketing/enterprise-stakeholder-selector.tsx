@@ -33,12 +33,12 @@ const STAKEHOLDERS: Stakeholder[] = [
       "Consistent scoring rubric across role families",
       "Requisition portfolio at a glance",
       "Cycle-time signals live, not lagged",
-      "Named pod owners per role family",
+      "Named oversight owners per role family",
     ],
     view: "Requisition portfolio · rollups by business unit · stage distribution · decision audit",
     proof: [
       "Same intake → same rubric → same evidence bar for every requisition.",
-      "Recruiter pods aligned to role families keep quality consistent as volume shifts.",
+      "Agent capacity aligned to role families keeps quality consistent as volume shifts.",
       "Every stage change is time-stamped and attributable.",
     ],
   },
@@ -53,7 +53,7 @@ const STAKEHOLDERS: Stakeholder[] = [
       "Ranked shortlist against the requirements you approved",
       "Evidence quotes from each CV",
       "Interview prompts pre-drafted from the rubric",
-      "Direct thread with the recruiter pod",
+      "Direct thread with your platform experts",
     ],
     view: "Role pipeline · candidate detail · evidence per requirement · fit summary · interview prompts",
     proof: [
