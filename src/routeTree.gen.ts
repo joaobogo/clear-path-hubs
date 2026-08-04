@@ -165,6 +165,7 @@ import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/publi
 import { Route as ApiPublicIntakeStatusIdRouteImport } from './routes/api/public/intake-status.$id'
 import { Route as ApiPublicDigestWeeklyRouteImport } from './routes/api/public/digest/weekly'
 import { Route as ApiPublicCandidateClosureNoticesRouteImport } from './routes/api/public/candidate/closure-notices'
+import { Route as ApiPublicBookingCalendlyWebhookRouteImport } from './routes/api/public/booking/calendly-webhook'
 import { Route as ApiPublicBlueprintStatusIntakeIdRouteImport } from './routes/api/public/blueprint-status.$intakeId'
 import { Route as AuthenticatedTeamsActTokenRouteImport } from './routes/_authenticated/teams.act.$token'
 import { Route as AuthenticatedMeApplicationsIdRouteImport } from './routes/_authenticated/me.applications.$id'
@@ -1025,6 +1026,12 @@ const ApiPublicCandidateClosureNoticesRoute =
     path: '/api/public/candidate/closure-notices',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicBookingCalendlyWebhookRoute =
+  ApiPublicBookingCalendlyWebhookRouteImport.update({
+    id: '/api/public/booking/calendly-webhook',
+    path: '/api/public/booking/calendly-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicBlueprintStatusIntakeIdRoute =
   ApiPublicBlueprintStatusIntakeIdRouteImport.update({
     id: '/api/public/blueprint-status/$intakeId',
@@ -1279,6 +1286,7 @@ export interface FileRoutesByFullPath {
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
+  '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
@@ -1443,6 +1451,7 @@ export interface FileRoutesByTo {
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
+  '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
@@ -1619,6 +1628,7 @@ export interface FileRoutesById {
   '/_authenticated/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/_authenticated/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
+  '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
@@ -1795,6 +1805,7 @@ export interface FileRouteTypes {
     | '/me/applications/$id'
     | '/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
+    | '/api/public/booking/calendly-webhook'
     | '/api/public/candidate/closure-notices'
     | '/api/public/digest/weekly'
     | '/api/public/intake-status/$id'
@@ -1959,6 +1970,7 @@ export interface FileRouteTypes {
     | '/me/applications/$id'
     | '/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
+    | '/api/public/booking/calendly-webhook'
     | '/api/public/candidate/closure-notices'
     | '/api/public/digest/weekly'
     | '/api/public/intake-status/$id'
@@ -2134,6 +2146,7 @@ export interface FileRouteTypes {
     | '/_authenticated/me/applications/$id'
     | '/_authenticated/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
+    | '/api/public/booking/calendly-webhook'
     | '/api/public/candidate/closure-notices'
     | '/api/public/digest/weekly'
     | '/api/public/intake-status/$id'
@@ -2233,6 +2246,7 @@ export interface RootRouteChildren {
   JobsIdApplyRoute: typeof JobsIdApplyRoute
   JobsIdIndexRoute: typeof JobsIdIndexRoute
   ApiPublicBlueprintStatusIntakeIdRoute: typeof ApiPublicBlueprintStatusIntakeIdRoute
+  ApiPublicBookingCalendlyWebhookRoute: typeof ApiPublicBookingCalendlyWebhookRoute
   ApiPublicCandidateClosureNoticesRoute: typeof ApiPublicCandidateClosureNoticesRoute
   ApiPublicDigestWeeklyRoute: typeof ApiPublicDigestWeeklyRoute
   ApiPublicIntakeStatusIdRoute: typeof ApiPublicIntakeStatusIdRoute
@@ -3337,6 +3351,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCandidateClosureNoticesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/booking/calendly-webhook': {
+      id: '/api/public/booking/calendly-webhook'
+      path: '/api/public/booking/calendly-webhook'
+      fullPath: '/api/public/booking/calendly-webhook'
+      preLoaderRoute: typeof ApiPublicBookingCalendlyWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/blueprint-status/$intakeId': {
       id: '/api/public/blueprint-status/$intakeId'
       path: '/api/public/blueprint-status/$intakeId'
@@ -3856,6 +3877,7 @@ const rootRouteChildren: RootRouteChildren = {
   JobsIdApplyRoute: JobsIdApplyRoute,
   JobsIdIndexRoute: JobsIdIndexRoute,
   ApiPublicBlueprintStatusIntakeIdRoute: ApiPublicBlueprintStatusIntakeIdRoute,
+  ApiPublicBookingCalendlyWebhookRoute: ApiPublicBookingCalendlyWebhookRoute,
   ApiPublicCandidateClosureNoticesRoute: ApiPublicCandidateClosureNoticesRoute,
   ApiPublicDigestWeeklyRoute: ApiPublicDigestWeeklyRoute,
   ApiPublicIntakeStatusIdRoute: ApiPublicIntakeStatusIdRoute,
