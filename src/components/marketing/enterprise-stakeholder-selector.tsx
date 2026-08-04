@@ -38,7 +38,7 @@ const STAKEHOLDERS: Stakeholder[] = [
     view: "Requisition portfolio · rollups by business unit · stage distribution · decision audit",
     proof: [
       "Same intake → same rubric → same evidence bar for every requisition.",
-      "Recruiter pods aligned to role families keep quality consistent as volume shifts.",
+      "Agent capacity aligned to role families keeps quality consistent as volume shifts.",
       "Every stage change is time-stamped and attributable.",
     ],
   },

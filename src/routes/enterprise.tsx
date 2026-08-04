@@ -333,7 +333,7 @@ function EnterprisePage() {
           </h2>
           <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
             An enterprise account is structured around your organization — business units,
-            role families, and hiring teams — with recruiter pods aligned to them. Every
+            role families, and hiring teams — with agent capacity aligned to them. Every
             search follows the same intake, sourcing, and ranked-delivery workflow, so
             standards travel across roles instead of resetting per requisition.
           </p>
@@ -345,8 +345,8 @@ function EnterprisePage() {
             />
             <Pillar
               icon={<Users className="h-5 w-5" aria-hidden />}
-              title="Aligned recruiter pods"
-              body="Dedicated pods per role family or business unit. Standards stay consistent as volume changes and new requisitions open."
+              title="Aligned agent capacity"
+              body="Dedicated agent capacity per role family or business unit. Standards stay consistent as volume changes and new requisitions open."
             />
             <Pillar
               icon={<Layers className="h-5 w-5" aria-hidden />}
