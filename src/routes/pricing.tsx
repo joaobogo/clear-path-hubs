@@ -62,7 +62,8 @@ function PricingPage() {
             <p className="mt-5 max-w-2xl mx-auto text-lg text-[color:var(--brand-navy)]/80">
               Every plan is the full {PRODUCT_CATEGORY}. What changes between
               plans is capacity — active roles, agent runs, intelligence and
-              governance. Annual commitment saves 10%.
+              governance. One-off packages are billed once; subscription
+              programmes are billed monthly.
             </p>
           </div>
           <ul className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-[color:var(--brand-navy)]/80">
