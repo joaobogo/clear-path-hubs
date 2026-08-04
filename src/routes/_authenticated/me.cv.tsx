@@ -122,6 +122,36 @@ function CvPage() {
  </p>
  </header>
 
+ <section className="rounded-lg border bg-card p-5">
+ <h2 className="text-sm font-medium flex items-center gap-2">
+ <FileText className="h-4 w-4" /> Current CV
+ </h2>
+ {currentCv ? (
+ <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+ <div className="min-w-0">
+ <div className="truncate font-medium">{currentCv.filename}</div>
+ <div className="text-xs text-muted-foreground">
+ {fmtSize(currentCv.size)} · added{" "}
+ {formatDistanceToNow(new Date(currentCv.created_at), { addSuffix: true })}
+ </div>
+ </div>
+ <Button
+ variant="outline"
+ size="sm"
+ className="min-h-11"
+ disabled={download.isPending}
+ onClick={() => download.mutate(currentCv.id)}
+ >
+ <Download className="h-4 w-4 mr-1" /> Download
+ </Button>
+ </div>
+ ) : (
+ <p className="mt-2 text-sm text-muted-foreground">
+ No CV on file yet. Upload one below and it becomes your current CV.
+ </p>
+ )}
+ </section>
+
  <section className="rounded-lg border bg-card p-5 space-y-3">
  <h2 className="text-sm font-medium flex items-center gap-2">
  <Upload className="h-4 w-4" /> Upload new CV
