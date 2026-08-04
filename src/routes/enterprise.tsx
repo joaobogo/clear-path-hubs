@@ -263,8 +263,17 @@ function EnterprisePage() {
             How the model scales with your requisition count.
           </h2>
           <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
-            Capacity is expressed in active roles, not headcount promises. Volume can move
-            up or down between review cycles — {SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL.toLowerCase()}.
+            Subscription programmes cover {POSITION_BANDS.subscription.min}+ active roles or
+            continuous hiring. Volume can move up or down between review
+            cycles — {SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL.toLowerCase()} on subscriptions.
+          </p>
+          <p className="mt-3 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
+            Hiring {POSITION_BANDS.pilot.min}–{POSITION_BANDS.sprint.max} roles? Those buy the
+            one-off packages instead — Pilot, Multi Position or Hiring Sprint on the{" "}
+            <Link to="/pricing" className="font-semibold underline underline-offset-4">
+              pricing page
+            </Link>
+            .
           </p>
 
           <ul className="mt-8 space-y-3 md:hidden">
