@@ -84,7 +84,27 @@ function ProfilePage() {
  onError: (e: Error) => toast.error(e.message.replace(/^Error: /, "")),
  });
 
- if (!form) return <main className="p-8">Loading…</main>;
+ const dirty = !!form && !!baseline && JSON.stringify(form) !== baseline;
+
+ useEffect(() => {
+ if (!dirty) return;
+ const onBeforeUnload = (e: BeforeUnloadEvent) => {
+ e.preventDefault();
+ e.returnValue = "";
+ };
+ window.addEventListener("beforeunload", onBeforeUnload);
+ return () => window.removeEventListener("beforeunload", onBeforeUnload);
+ }, [dirty]);
+
+ if (!form)
+ return (
+ <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-4" aria-hidden>
+ <div className="h-8 w-1/2 animate-pulse rounded bg-muted" />
+ <div className="h-40 animate-pulse rounded-lg bg-muted" />
+ <div className="h-40 animate-pulse rounded-lg bg-muted" />
+ </main>
+ );
+
 
  function submit(e: React.FormEvent) {
  e.preventDefault();
