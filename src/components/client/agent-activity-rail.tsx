@@ -54,6 +54,9 @@ import { clientAction } from "@/lib/client.functions";
 import { retryBlueprintAnalysis } from "@/lib/blueprint.functions";
 import { setAgentPaused } from "@/lib/agents.functions";
 import { DECLINE_REASONS } from "@/lib/client-decision-reasons";
+import { SurfaceState } from "@/components/ds/surface-state";
+import { resolveNoAgentRunsState } from "@/lib/empty-states/empty-state-catalogue";
+import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
 
 export const AGENT_RAIL_QUERY_KEY = ["agent-activity-rail"] as const;
 
@@ -358,6 +361,7 @@ export function AgentActivityRail({
   const qc = useQueryClient();
   const [filters, setFilters] = useState<RailFilters>(EMPTY_FILTERS);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const signals = useEmptyStateSignals(organizationId ?? undefined);
 
   const query = useQuery({
     queryKey: [...AGENT_RAIL_QUERY_KEY, organizationId ?? null],
@@ -529,13 +533,15 @@ export function AgentActivityRail({
 
       <div className="min-h-0 flex-1 overflow-y-auto">
         {unfilteredEmpty ? (
-          <div className="p-4 text-sm text-muted-foreground">
-            <p className="font-medium text-foreground">No activity in the last {data.window_days} days.</p>
-            <p className="mt-1">
-              Once a role is live, this rail records every run: blueprints
-              compiled, candidates identified, evidence extracted, assessments
-              updated and decisions asked of you.
-            </p>
+          <div className="p-4">
+            <SurfaceState
+              compact
+              className="max-w-none border-0 bg-transparent p-0"
+              content={resolveNoAgentRunsState({
+                activeRoles: signals?.activeRoles ?? 0,
+                running: signals?.runsRunning ?? 0,
+              })}
+            />
           </div>
         ) : groups.length === 0 ? (
           <div className="p-4 text-sm text-muted-foreground">
