@@ -253,7 +253,7 @@ export const Route = createFileRoute("/faq")({
     const base = marketingHead(undefined, "/faq", {
       title: "FAQ — TaaSFlow",
       description:
-        "Clear answers on the TaaSFlow model, pricing, candidate delivery, evidence-based scoring, client workspace, enterprise, partnerships, and privacy.",
+        "Clear answers on the TaaSFlow platform: pricing, candidate delivery, evidence-backed scoring, the Decision Workspace, enterprise, partnerships and privacy.",
     });
     const faqJsonLd = {
       "@context": "https://schema.org",

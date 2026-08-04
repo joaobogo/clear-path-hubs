@@ -34,7 +34,7 @@ import {
 export const Route = createFileRoute("/platform")({
   head: () =>
     marketingHead(undefined, "/platform", {
-      title: `The TaaSFlow Platform — ${PRODUCT_CATEGORY}, in one system`,
+      title: "TaaSFlow Platform — AI Hiring Intelligence in one system",
       description:
         `${SYSTEM_CLAIM} ${MODULES.intake}, ${MODULES.blueprint}, ${MODULES.agents}, ${MODULES.evidence}, ${MODULES.scoring}, ${MODULES.workspace} and ${MODULES.talentGraph} — one governed system, with an audit trail on every decision.`,
     }),

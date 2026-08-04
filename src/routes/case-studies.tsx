@@ -33,9 +33,9 @@ const entry = getPage("case-studies");
 export const Route = createFileRoute("/case-studies")({
   head: () =>
     marketingHead(entry, "/case-studies", {
-      title: "Case studies — TaaSFlow",
+      title: "Case studies — hiring outcomes | TaaSFlow",
       description:
-        "Hospitality, finance, healthcare, tech, consumer, and industrial engagements — visualized. Evidence-scored shortlists across global markets.",
+        "Hospitality, finance, healthcare, tech, consumer and industrial engagements — evidence-backed shortlists produced by the AI Hiring Intelligence Platform.",
     }),
   component: CaseStudiesPage,
 });

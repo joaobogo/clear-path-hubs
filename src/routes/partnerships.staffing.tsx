@@ -22,7 +22,7 @@ export const Route = createFileRoute("/partnerships/staffing")({
     marketingHead(undefined, "/partnerships/staffing", {
       title: "Staffing partnerships — TaaSFlow",
       description:
-        "A partnership model for staffing and recruiting agencies. Extend delivery capacity, keep the client relationship, and operate inside a transparent workspace with ranked candidates and evidence per requirement.",
+        "A partnership model for staffing and recruiting agencies. Extend delivery capacity, keep the client relationship, and operate inside an AI Hiring Intelligence Platform with ranked candidates and evidence per requirement.",
     }),
   component: PartnershipsStaffingPage,
 });

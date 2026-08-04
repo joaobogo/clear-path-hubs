@@ -40,9 +40,9 @@ export const Route = createFileRoute("/pitch")({
   validateSearch: search,
   head: () =>
     marketingHead(undefined, "/pitch", {
-      title: "TaaSFlow — the recruiting engine you can see through",
+      title: "TaaSFlow — AI Hiring Intelligence you can audit",
       description:
-        "Why placement hiring fails, how TaaSFlow's live engine replaces it, and what a subscription recruiting function costs.",
+        "Why placement-fee hiring fails, how the TaaSFlow platform replaces it, and what an AI Hiring Intelligence subscription costs.",
     }),
   component: PitchPage,
 });

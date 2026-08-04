@@ -88,9 +88,9 @@ const SERVES = [
 export const Route = createFileRoute("/about")({
   head: () =>
     marketingHead(undefined, "/about", {
-      title: "About TaaSFlow — a recruiting function delivered as product",
+      title: "About TaaSFlow — the AI Hiring Intelligence Platform",
       description:
-        "TaaSFlow was founded to make recruiting explainable. Evidence-based scoring, a shared workspace, and a subscription model that aligns incentives with your hires.",
+        "TaaSFlow was founded to make hiring explainable: evidence-backed scoring, a live Decision Workspace, and a subscription model aligned with your hires.",
     }),
   component: AboutPage,
 });

@@ -30,9 +30,9 @@ import {
 export const Route = createFileRoute("/system")({
   head: () =>
     marketingHead(undefined, "/system", {
-      title: "The TaaSFlow System — Sourcing, research, scoring, workflow, evidence, live workspace",
+      title: "The TaaSFlow System — agents, evidence, scoring, workspace",
       description:
-        "TaaSFlow is a proprietary recruiting system: multi-channel sourcing, web and database research, structured scoring, workflow automation, an evidence engine, and a live client workspace — run by expert operators, not by unattended AI.",
+        "TaaSFlow is an AI Hiring Intelligence Platform: multi-channel discovery, evidence extraction, versioned scoring rubrics and a live Decision Workspace — with expert approval gates, never unattended AI.",
     }),
   component: SystemPage,
 });

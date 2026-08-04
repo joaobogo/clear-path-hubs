@@ -9,9 +9,9 @@ const entry = getPage("pilot");
 export const Route = createFileRoute("/pilot")({
   head: () =>
     marketingHead(entry, "/pilot", {
-      title: `${PRICE_PILOT_DISPLAY} Recruiting Pilot | TaaSFlow`,
+      title: `${PRICE_PILOT_DISPLAY} Hiring Intelligence Pilot | TaaSFlow`,
       description:
-        "Validate candidate quality before you subscribe. One role, intake to ranked shortlist, delivered in a live dashboard.",
+        "Validate candidate quality before you subscribe. One role, intake to a ranked, evidence-backed shortlist in a live Decision Workspace.",
     }),
   component: PilotPage,
 });
