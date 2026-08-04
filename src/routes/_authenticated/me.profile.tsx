@@ -368,11 +368,17 @@ function ProfilePage() {
         </section>
 
 
- <div className="flex gap-2">
- <Button type="submit" disabled={save.isPending}>
+ <div className="flex flex-wrap items-center gap-3">
+ <Button type="submit" className="min-h-11" disabled={save.isPending}>
  {save.isPending ? "Saving…" : "Save profile"}
  </Button>
+ {dirty && !save.isPending && (
+ <span className="text-xs text-muted-foreground">
+ You have unsaved changes.
+ </span>
+ )}
  </div>
+
  </form>
  </main>
  );
