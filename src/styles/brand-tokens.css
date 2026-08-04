@@ -159,7 +159,7 @@
   --taas-status-danger:             var(--brand-danger);
   --taas-status-danger-foreground:  oklch(0.99 0.005 27);
   --taas-status-danger-soft:        oklch(0.96 0.04 27);
-  --taas-status-info:               var(--brand-ocean);
+  --taas-status-info:               var(--brand-ocean-text);
   --taas-status-info-foreground:    oklch(0.99 0.005 245);
   --taas-status-info-soft:          oklch(0.955 0.04 245);
   --taas-status-neutral:            oklch(0.55 0.02 262);
