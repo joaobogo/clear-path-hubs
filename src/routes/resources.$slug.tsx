@@ -339,6 +339,7 @@ function ResourceGuidePage() {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               to="/book"
+              search={{ type: undefined, cta: "resources" }}
               className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
             >
               Book a call

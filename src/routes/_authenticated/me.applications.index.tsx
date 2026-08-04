@@ -33,6 +33,13 @@ export const Route = createFileRoute("/_authenticated/me/applications/")({
  queryKey: ["me-applications"],
  queryFn: () => listMyApplications(),
  }),
+ pendingComponent: () => (
+ <main className="mx-auto max-w-4xl px-4 sm:px-6 py-8 space-y-4" aria-hidden>
+ <div className="h-8 w-1/2 animate-pulse rounded bg-muted" />
+ <div className="h-32 animate-pulse rounded-lg bg-muted" />
+ <div className="h-32 animate-pulse rounded-lg bg-muted" />
+ </main>
+ ),
  errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.applications.index.tsx"),
  notFoundComponent: () => <main className="p-8">Not found.</main>,
  component: MyApplicationsPage,
@@ -70,7 +77,7 @@ function MyApplicationsPage() {
  const apps = current.applications;
 
  return (
- <main className="mx-auto max-w-4xl px-6 py-8">
+ <main className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
  <header className="mb-6">
  <h1 className="text-2xl font-semibold">My applications</h1>
  <p className="text-sm text-muted-foreground">
@@ -168,11 +175,11 @@ function MyApplicationsPage() {
  </div>
  </div>
  </div>
- <div className="flex gap-2">
+ <div className="flex flex-wrap gap-2">
  <Link
  to="/me/applications/$id"
  params={{ id: a.id }}
- className="inline-flex items-center px-3 py-1.5 rounded border text-sm hover:bg-muted"
+ className="inline-flex min-h-11 items-center rounded border px-3.5 text-sm hover:bg-muted"
  >
  Track application
  </Link>

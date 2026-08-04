@@ -346,20 +346,27 @@ function TrackPage() {
 
       <section className="rounded-lg border bg-card p-5 mb-6">
         <h2 className="text-sm font-medium mb-3">Timeline</h2>
-        <ol className="space-y-3">
-          {data.events.map((e, i) => (
-            <li key={`${e.at}-${i}`} className="flex gap-3 text-sm">
-              <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" />
-              <div className="min-w-0 flex-1">
-                <div>{e.label}</div>
-                <div className="text-xs text-muted-foreground">
-                  {new Date(e.at).toLocaleString()}
+        {data.events.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            Nothing to show yet. Each step will appear here as it happens.
+          </p>
+        ) : (
+          <ol className="space-y-3">
+            {data.events.map((e, i) => (
+              <li key={`${e.at}-${i}`} className="flex gap-3 text-sm">
+                <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" />
+                <div className="min-w-0 flex-1">
+                  <div className="break-words">{e.label}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {new Date(e.at).toLocaleString()}
+                  </div>
                 </div>
-              </div>
-            </li>
-          ))}
-        </ol>
+              </li>
+            ))}
+          </ol>
+        )}
       </section>
+
 
       {data.role_description ? (
         <section className="rounded-lg border bg-card p-5">

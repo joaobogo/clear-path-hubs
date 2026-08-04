@@ -11,6 +11,7 @@ import {
   type CandidateSafeStatus,
 } from "@/lib/candidate.functions";
 import { CANDIDATE_STATUS_TONE } from "@/lib/candidate-status";
+import { profileCompleteness } from "@/lib/candidate/profile-completeness";
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight,
@@ -72,23 +73,8 @@ type App = {
   last_update: string;
 };
 
-function completeness(p: Record<string, unknown> | null | undefined): number {
-  if (!p) return 0;
-  const checks = [
-    !!p.full_name,
-    !!p.phone,
-    !!p.location,
-    !!p.headline,
-    !!p.summary,
-    (p.years_experience ?? null) !== null,
-    Array.isArray(p.skills) && (p.skills as unknown[]).length > 0,
-    Array.isArray(p.experience) && (p.experience as unknown[]).length > 0,
-    Array.isArray(p.education) && (p.education as unknown[]).length > 0,
-    !!p.linkedin_url || !!p.portfolio_url,
-  ];
-  const done = checks.filter(Boolean).length;
-  return Math.round((done / checks.length) * 100);
-}
+const completeness = profileCompleteness;
+
 
 function firstName(full?: string | null, email?: string | null): string {
   if (full) return full.split(" ")[0]!;

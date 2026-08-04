@@ -24,6 +24,13 @@ export const Route = createFileRoute("/_authenticated/me/cv")({
  queryKey: ["me", "cv"],
  queryFn: () => listMyCvVersions(),
  }),
+ pendingComponent: () => (
+ <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-4" aria-hidden>
+ <div className="h-8 w-1/2 animate-pulse rounded bg-muted" />
+ <div className="h-28 animate-pulse rounded-lg bg-muted" />
+ <div className="h-40 animate-pulse rounded-lg bg-muted" />
+ </main>
+ ),
  errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.cv.tsx"),
  notFoundComponent: () => <main className="p-8">Not found.</main>,
  component: CvPage,
@@ -52,26 +59,35 @@ function CvPage() {
  const download = useMutation({
  mutationFn: (file_id: string) => dlFn({ data: { file_id } }),
  onSuccess: (r) => {
- if (r.ok) {
+ if (r.ok && r.url) {
  window.open(r.url, "_blank", "noopener,noreferrer");
- } else toast.error(r.message);
+ } else {
+ toast.error(
+ (r.ok ? undefined : r.message) ??
+ "That download link isn't available right now. Please try again.",
+ );
+ }
  },
+ onError: (e: Error) => toast.error(e.message.replace(/^Error: /, "")),
  });
 
  const upload = useMutation({
  mutationFn: (file: File) =>
- new Promise<{ ok: boolean; message?: string }>((resolve) => {
+ new Promise<{ ok: boolean; message?: string }>((resolve, reject) => {
  const r = new FileReader();
- r.onload = async () => {
+ r.onerror = () =>
+ reject(new Error("We couldn't read that file. Please try again."));
+ r.onload = () => {
  const base64 = String(r.result).split(",")[1] ?? "";
- const res = await upFn({
+ upFn({
  data: {
  filename: file.name,
  mime: file.type || "application/pdf",
  base64,
  },
- });
- resolve(res);
+ })
+ .then(resolve)
+ .catch(reject);
  };
  r.readAsDataURL(file);
  }),
@@ -82,13 +98,22 @@ function CvPage() {
  qc.invalidateQueries({ queryKey: ["me-context"] });
  } else toast.error(r.message ?? "Upload failed");
  },
+ onError: (e: Error) =>
+ toast.error(e.message.replace(/^Error: /, "") || "Upload failed"),
  });
 
- const versions = data.versions ?? [];
+ const versions = (data.versions ?? []) as Array<{
+ id: string;
+ filename: string;
+ size: number | null;
+ created_at: string;
+ }>;
  const currentId = data.current_id;
+ const currentCv = versions.find((v) => v.id === currentId) ?? null;
 
  return (
- <main className="mx-auto max-w-3xl px-6 py-8 space-y-6">
+ <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-6">
+
  <header>
  <h1 className="text-2xl font-semibold">Your CV</h1>
  <p className="text-sm text-muted-foreground">
@@ -96,6 +121,36 @@ function CvPage() {
  your active applications always reference your current CV.
  </p>
  </header>
+
+ <section className="rounded-lg border bg-card p-5">
+ <h2 className="text-sm font-medium flex items-center gap-2">
+ <FileText className="h-4 w-4" /> Current CV
+ </h2>
+ {currentCv ? (
+ <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+ <div className="min-w-0">
+ <div className="truncate font-medium">{currentCv.filename}</div>
+ <div className="text-xs text-muted-foreground">
+ {fmtSize(currentCv.size)} · added{" "}
+ {formatDistanceToNow(new Date(currentCv.created_at), { addSuffix: true })}
+ </div>
+ </div>
+ <Button
+ variant="outline"
+ size="sm"
+ className="min-h-11"
+ disabled={download.isPending}
+ onClick={() => download.mutate(currentCv.id)}
+ >
+ <Download className="h-4 w-4 mr-1" /> Download
+ </Button>
+ </div>
+ ) : (
+ <p className="mt-2 text-sm text-muted-foreground">
+ No CV on file yet. Upload one below and it becomes your current CV.
+ </p>
+ )}
+ </section>
 
  <section className="rounded-lg border bg-card p-5 space-y-3">
  <h2 className="text-sm font-medium flex items-center gap-2">
@@ -149,12 +204,12 @@ function CvPage() {
  </p>
  ) : (
  <ul className="divide-y">
- {(versions as Array<{ id: string; filename: string; size: number | null; created_at: string }>).map((v) => {
+ {versions.map((v) => {
  const isCurrent = v.id === currentId;
  return (
  <li
  key={v.id}
- className="flex items-center justify-between gap-3 py-3"
+ className="flex flex-wrap items-center justify-between gap-3 py-3"
  >
  <div className="min-w-0">
  <div className="flex items-center gap-2">
@@ -175,11 +230,14 @@ function CvPage() {
  <Button
  variant="outline"
  size="sm"
+ className="min-h-11"
  disabled={download.isPending}
  onClick={() => download.mutate(v.id)}
+ aria-label={`Download ${v.filename}`}
  >
  <Download className="h-4 w-4 mr-1" /> Download
  </Button>
+
  </li>
  );
  })}

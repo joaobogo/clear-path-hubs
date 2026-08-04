@@ -21,6 +21,12 @@ export const Route = createFileRoute("/_authenticated/me/messages")({
  queryKey: ["me-messages"],
  queryFn: () => listMyMessages(),
  }),
+ pendingComponent: () => (
+ <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-4" aria-hidden>
+ <div className="h-8 w-40 animate-pulse rounded bg-muted" />
+ <div className="h-64 animate-pulse rounded-lg bg-muted" />
+ </main>
+ ),
  errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.messages.tsx"),
  notFoundComponent: () => <main className="p-8">Not found.</main>,
  component: MyMessages,
@@ -77,7 +83,7 @@ function MyMessages() {
  });
 
  return (
- <main className="mx-auto max-w-3xl px-6 py-8 flex flex-col h-[calc(100vh-4rem)]">
+ <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8 flex flex-col h-[calc(100dvh-4rem)]">
  <header className="mb-4">
  <h1 className="text-2xl font-semibold">Messages</h1>
  <p className="text-sm text-muted-foreground">
@@ -106,7 +112,7 @@ function MyMessages() {
  : "bg-muted text-foreground"
  }`}
  >
- <div className="whitespace-pre-wrap">{m.body}</div>
+ <div className="whitespace-pre-wrap break-words">{m.body}</div>
  <div
  className={`text-[10px] mt-1 ${
  mine ? "text-primary-foreground/70" : "text-muted-foreground"
@@ -125,19 +131,26 @@ function MyMessages() {
  className="mt-3 flex gap-2 items-end"
  onSubmit={(e) => {
  e.preventDefault();
+ if (send.isPending) return;
  if (body.trim()) send.mutate(body.trim());
  }}
  >
+ <label htmlFor="me-message-body" className="sr-only">
+ Write a message
+ </label>
  <Textarea
+ id="me-message-body"
  value={body}
  onChange={(e) => setBody(e.target.value)}
  rows={2}
  placeholder="Write a message…"
  className="flex-1"
+ disabled={send.isPending}
  />
- <Button type="submit" disabled={!body.trim() || send.isPending}>
- Send
+ <Button type="submit" className="min-h-11" disabled={!body.trim() || send.isPending}>
+ {send.isPending ? "Sending…" : "Send"}
  </Button>
+
  </form>
  </main>
  );
