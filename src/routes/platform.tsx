@@ -20,6 +20,8 @@ import {
 } from "@/components/marketing/site-shell";
 import { PlatformArchitecture } from "@/components/marketing/platform-architecture";
 import { EvidenceGraph } from "@/components/evidence/evidence-graph";
+import { LifecyclePreview } from "@/components/marketing/product-preview/lifecycle-preview";
+import { DecisionWorkspacePreview } from "@/components/marketing/product-preview/decision-workspace-preview";
 import { REPRESENTATIVE_CHAIN } from "@/lib/evidence/evidence-graph";
 import { marketingHead } from "@/lib/marketing/head";
 import {
@@ -243,6 +245,29 @@ function PlatformPage() {
       </PublicSection>
 
 
+
+      {/* 2c — LIFECYCLE + WORKSPACE PREVIEWS */}
+      <PublicSection className="bg-[color:var(--brand-paper)]">
+        <PublicPage>
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
+              Decision Workspace
+            </p>
+            <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
+              The same screens your team works in.
+            </h2>
+            <p className="mt-3 text-[color:var(--brand-navy)]/80">
+              A role moves through nine stages, and each one names its owner, its
+              outputs and what is blocking it. Decisions sit next to the evidence.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-6 lg:grid-cols-2">
+            <LifecyclePreview />
+            <DecisionWorkspacePreview />
+          </div>
+        </PublicPage>
+      </PublicSection>
 
       {/* 3 — SYSTEM CONTROLS */}
       <PublicSection className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
