@@ -56,11 +56,14 @@ function relTime(iso?: string | null): string {
 }
 
 function IntakeInbox() {
+  const { show_test } = Route.useSearch();
+  const navigate = Route.useNavigate();
   const [filter, setFilter] = useState<Filter>("pending");
   const [q, setQ] = useState("");
   const { data, isFetching } = useSuspenseQuery({
-    queryKey: ["admin", "intake-inbox", { filter, q }],
-    queryFn: () => listIntakeInbox({ data: { filter, q: q || undefined } }),
+    queryKey: ["admin", "intake-inbox", { filter, q, show_test }],
+    queryFn: () =>
+      listIntakeInbox({ data: { filter, q: q || undefined, include_test: show_test } }),
     refetchOnWindowFocus: true,
     staleTime: 15_000,
   });
@@ -73,9 +76,20 @@ function IntakeInbox() {
           <p className="mt-1 text-sm text-muted-foreground">
             Every client brief. Convert to a position, request clarification, or reject.
           </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {show_test
+              ? "Including test and internal organizations."
+              : "Test and internal organizations are hidden."}
+          </p>
         </div>
-        <div className="text-xs text-muted-foreground">
-          {data.total} shown{isFetching ? " · refreshing…" : ""}
+        <div className="flex flex-wrap items-center gap-3">
+          <TestRecordsToggle
+            checked={show_test}
+            onChange={(next) => navigate({ search: { show_test: next }, replace: true })}
+          />
+          <div className="text-xs text-muted-foreground">
+            {data.total} shown{isFetching ? " · refreshing…" : ""}
+          </div>
         </div>
       </header>
 
@@ -100,8 +114,10 @@ function IntakeInbox() {
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search company, role, email…"
           className="h-8 max-w-xs"
+          aria-label="Search intake submissions"
         />
       </div>
+
 
       {data.items.length === 0 ? (
         <div className="rounded-lg border border-dashed bg-card p-10 text-center">
