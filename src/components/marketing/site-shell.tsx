@@ -157,6 +157,7 @@ function GroupContent({ links }: { links: NavLink[] }) {
             <NavigationMenuPrimitive.Link asChild>
               <Link
                 to={l.to}
+                hash={l.hash}
                 className="block rounded-md px-3 py-2.5 text-sm text-[color:var(--brand-navy)]/85 hover:bg-[color:var(--brand-navy)]/5 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
               >
                 <span className="block font-medium">{l.label}</span>
@@ -292,6 +293,7 @@ function Header() {
                               <li key={`${l.to}-${l.label}`}>
                                 <Link
                                   to={l.to}
+                                  hash={l.hash}
                                   className="block min-h-11 rounded-md px-6 py-2.5 text-sm text-[color:var(--brand-navy)]/85 hover:bg-[color:var(--brand-navy)]/5 hover:text-[color:var(--brand-navy)]"
                                   activeProps={{ className: "font-semibold text-[color:var(--brand-navy)]" }}
                                 >
