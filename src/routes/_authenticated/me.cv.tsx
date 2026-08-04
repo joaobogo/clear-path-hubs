@@ -59,26 +59,35 @@ function CvPage() {
  const download = useMutation({
  mutationFn: (file_id: string) => dlFn({ data: { file_id } }),
  onSuccess: (r) => {
- if (r.ok) {
+ if (r.ok && r.url) {
  window.open(r.url, "_blank", "noopener,noreferrer");
- } else toast.error(r.message);
+ } else {
+ toast.error(
+ (r.ok ? undefined : r.message) ??
+ "That download link isn't available right now. Please try again.",
+ );
+ }
  },
+ onError: (e: Error) => toast.error(e.message.replace(/^Error: /, "")),
  });
 
  const upload = useMutation({
  mutationFn: (file: File) =>
- new Promise<{ ok: boolean; message?: string }>((resolve) => {
+ new Promise<{ ok: boolean; message?: string }>((resolve, reject) => {
  const r = new FileReader();
- r.onload = async () => {
+ r.onerror = () =>
+ reject(new Error("We couldn't read that file. Please try again."));
+ r.onload = () => {
  const base64 = String(r.result).split(",")[1] ?? "";
- const res = await upFn({
+ upFn({
  data: {
  filename: file.name,
  mime: file.type || "application/pdf",
  base64,
  },
- });
- resolve(res);
+ })
+ .then(resolve)
+ .catch(reject);
  };
  r.readAsDataURL(file);
  }),
@@ -89,13 +98,22 @@ function CvPage() {
  qc.invalidateQueries({ queryKey: ["me-context"] });
  } else toast.error(r.message ?? "Upload failed");
  },
+ onError: (e: Error) =>
+ toast.error(e.message.replace(/^Error: /, "") || "Upload failed"),
  });
 
- const versions = data.versions ?? [];
+ const versions = (data.versions ?? []) as Array<{
+ id: string;
+ filename: string;
+ size: number | null;
+ created_at: string;
+ }>;
  const currentId = data.current_id;
+ const currentCv = versions.find((v) => v.id === currentId) ?? null;
 
  return (
- <main className="mx-auto max-w-3xl px-6 py-8 space-y-6">
+ <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-6">
+
  <header>
  <h1 className="text-2xl font-semibold">Your CV</h1>
  <p className="text-sm text-muted-foreground">
