@@ -515,10 +515,18 @@ async function handle(request: Request): Promise<Response> {
     return new Response(`unknown action: ${action}`, { status: 400 });
 
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    // Supabase returns plain objects, not Errors — serialise them so QA runs
+    // get an actionable message instead of "[object Object]".
+    const message =
+      err instanceof Error
+        ? err.message
+        : typeof err === "object" && err !== null
+          ? JSON.stringify(err)
+          : String(err);
     console.error("[qa-seed] failed", message);
     return Response.json({ ok: false, error: message }, { status: 500 });
   }
+
 }
 
 export const Route = createFileRoute("/api/public/qa-seed")({
