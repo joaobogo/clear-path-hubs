@@ -441,6 +441,17 @@ function ExpressIntakePage() {
         const key = String(issue.path[0] ?? "form");
         if (!next[key]) next[key] = issue.message;
       }
+      // Object-level password checks only run once every field parses, so we
+      // surface them here too — otherwise a mismatch stays invisible while
+      // another field is still empty.
+      if (!authed) {
+        if (state.password && state.password.length < MIN_ACCOUNT_PASSWORD) {
+          next.password = `Use at least ${MIN_ACCOUNT_PASSWORD} characters`;
+        }
+        if ((state.password ?? "") !== (state.confirmPassword ?? "")) {
+          next.confirmPassword = "Both passwords must match";
+        }
+      }
       setErrors(next);
       toast.error("Please check the highlighted fields.");
       const first = document.querySelector<HTMLElement>("[data-field-error='true']");
