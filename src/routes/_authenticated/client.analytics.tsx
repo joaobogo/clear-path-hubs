@@ -16,7 +16,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SkeletonCards, EmptyState, NoWorkspaceState } from "@/components/client/states";
+import { SkeletonCards, NoWorkspaceState } from "@/components/client/states";
+import { SurfaceState } from "@/components/ds/surface-state";
+import { resolveNoAnalyticsState } from "@/lib/empty-states/empty-state-catalogue";
+import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
 import { TrendingDown, Timer, Wallet } from "lucide-react";
 import {
   BarChart,
@@ -126,7 +129,10 @@ function AnalyticsPage() {
           ...(positionId !== "all" ? { position_id: positionId } : {}),
         },
       }),
-    enabled: !!orgId,
+        enabled: !!orgId,
+  });
+  const signals = useEmptyStateSignals(orgId ?? undefined, {
+    enabled: !insights.isLoading && !insights.data,
   });
 
   if (!orgId) return <NoWorkspaceState />;
@@ -183,9 +189,12 @@ function AnalyticsPage() {
       {insights.isLoading ? (
         <SkeletonCards cards={3} />
       ) : !data ? (
-        <EmptyState
-          title="No insight yet"
-          description="Once candidates are shown to you, this page answers three questions about your hiring."
+        <SurfaceState
+          content={resolveNoAnalyticsState({
+            observations: signals?.observations ?? 0,
+            minimum: 5,
+            metricLabel: "Drop-out, speed and spend",
+          })}
         />
       ) : (
         <div className="grid gap-6">

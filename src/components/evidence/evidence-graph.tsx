@@ -10,6 +10,8 @@ import {
   UserCheck,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { SurfaceState } from "@/components/ds/surface-state";
+import { resolveNoEvidenceState } from "@/lib/empty-states/empty-state-catalogue";
 import {
   EVIDENCE_STATE_LABEL,
   EVIDENCE_STATE_MEANING,
@@ -112,10 +114,10 @@ export function EvidenceGraph({
 
   if (nodes.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-        No requirements have been evaluated yet, so there is no evidence chain to
-        show. Run the scoring pipeline to build one.
-      </div>
+      <SurfaceState
+        content={resolveNoEvidenceState({ cvPresent: true, processingState: null })}
+        compact
+      />
     );
   }
 

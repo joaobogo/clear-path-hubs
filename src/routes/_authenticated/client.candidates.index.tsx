@@ -1,5 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { SurfaceState } from "@/components/ds/surface-state";
+import {
+  resolveFilteredEmptyState,
+  resolveNoCandidatesState,
+} from "@/lib/empty-states/empty-state-catalogue";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
@@ -731,11 +736,14 @@ function CandidatesPage() {
  </Button>
  </div>
  ) : filtered.length === 0 ? (
- <EmptyState
- hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0}
- activeFilters={activeFilters}
- onClear={clearFilters}
- />
+ <CandidatesEmptyState
+            hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0}
+            activeFilters={activeFilters}
+            onClear={clearFilters}
+            activeRoles={positions.length}
+            inProcessing={overview?.kpis.delivered ? 0 : 0}
+            kpis={overview?.kpis}
+          />
  ) : search.view === "list" ? (
  <CompactList
  rows={paged}
@@ -882,14 +890,52 @@ function SnapshotTile({
  );
 }
 
-function EmptyState({
- hasCandidates,
- activeFilters,
- onClear,
+function CandidatesEmptyState({
+  hasCandidates,
+  activeFilters,
+  onClear,
+  activeRoles,
+  inProcessing,
+  kpis,
 }: {
- hasCandidates: boolean;
- activeFilters: { key: string; label: string }[];
- onClear: () => void;
+  hasCandidates: boolean;
+  activeFilters: { key: string; label: string }[];
+  onClear: () => void;
+  activeRoles: number;
+  inProcessing: number;
+  kpis?: { delivered: number; top: number; shortlisted: number; interviewing: number; offers: number; hires: number };
+}) {
+  const filteredOut = hasCandidates && activeFilters.length > 0;
+  if (filteredOut) {
+    return (
+      <SurfaceState
+        content={resolveFilteredEmptyState(activeFilters.map((f) => f.label))}
+        onAction={onClear}
+      />
+    );
+  }
+  return (
+    <SurfaceState
+      content={resolveNoCandidatesState({
+        activeRoles,
+        // Discovery has started once the platform has delivered anything for
+        // this workspace, or a role is live and past setup.
+        discoveryStarted: activeRoles > 0,
+        inProcessing,
+        runsCompleted: kpis && kpis.delivered === 0 ? 0 : 0,
+      })}
+    />
+  );
+}
+
+function LegacyCandidatesEmptyState({
+  hasCandidates,
+  activeFilters,
+  onClear,
+}: {
+  hasCandidates: boolean;
+  activeFilters: { key: string; label: string }[];
+  onClear: () => void;
 }) {
  const filtered = hasCandidates && activeFilters.length > 0;
  return (

@@ -9,7 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Briefcase, MessageSquare, Search, User } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { EmptyState, SkeletonRows } from "@/components/client/states";
+import { SkeletonRows } from "@/components/client/states";
+import { SurfaceState } from "@/components/ds/surface-state";
+import { resolveNoMessagesState } from "@/lib/empty-states/empty-state-catalogue";
+import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
 
 export const Route = createFileRoute("/_authenticated/client/conversations/")({
   head: () => ({
@@ -54,11 +57,14 @@ function ConversationsPage() {
   });
   const orgId = ctx?.active?.organization_id;
 
-  const { data, isLoading } = useQuery({
+    const { data, isLoading } = useQuery({
     queryKey: ["conversations", orgId],
     queryFn: () => listFn({ data: { orgId: orgId! } }),
     enabled: !!orgId,
     placeholderData: (prev) => prev,
+  });
+  const signals = useEmptyStateSignals(orgId, {
+    enabled: !isLoading && (data?.items?.length ?? 0) === 0,
   });
 
   const items = useMemo(() => {
@@ -117,13 +123,8 @@ function ConversationsPage() {
       {isLoading && !data ? (
         <SkeletonRows rows={5} />
       ) : items.length === 0 ? (
-        <EmptyState
-          icon={MessageSquare}
-          title="No conversations yet"
-          description="Every message about a role or a candidate lives in one thread here."
-          whatAppearsHere="Open a role or a candidate and start the thread there — it shows up in this list, and we mirror it to email."
-          action={{ label: "Go to your roles", to: "/client/positions" }}
-          secondaryAction={{ label: "See candidates", to: "/client/candidates" }}
+        <SurfaceState
+          content={resolveNoMessagesState({ activeRoles: signals?.activeRoles ?? 0 })}
         />
       ) : (
         <ul className="divide-y rounded-lg border bg-card">
