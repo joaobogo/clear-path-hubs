@@ -94,8 +94,9 @@ function BookCallPage() {
         toast.error(result.message);
         return;
       }
-      toast.success("Pick your time in the scheduler — we've saved your notes.");
+      toast.success("Call booked — your workspace is open. Check your email for the welcome note.");
       await queryClient.invalidateQueries({ queryKey: ["booking-state"] });
+      navigate({ to: "/client" });
     },
     onError: () => toast.error("We couldn't open the scheduler. Please try again."),
   });

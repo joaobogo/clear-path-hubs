@@ -114,6 +114,38 @@ async function applyEvent(args: {
     } catch (err) {
       console.error("payments webhook: receipt email failed (non-critical)", err);
     }
+
+    // Welcome — once per organisation, whichever commitment lands first.
+    try {
+      const recipient = session.customer_details?.email ?? session.customer_email ?? null;
+      let companyName: string | null = null;
+      let roleTitle: string | null = null;
+      const { data: org } = await supabaseAdmin
+        .from("organizations")
+        .select("name")
+        .eq("id", organizationId)
+        .maybeSingle();
+      companyName = org?.name ?? null;
+      if (positionId) {
+        const { data: pos } = await supabaseAdmin
+          .from("positions")
+          .select("title")
+          .eq("id", positionId)
+          .maybeSingle();
+        roleTitle = pos?.title ?? null;
+      }
+      const { sendWelcomeEmail } = await import("@/lib/welcome-email.server");
+      await sendWelcomeEmail({
+        email: recipient,
+        organizationId,
+        contactName: session.customer_details?.name ?? null,
+        companyName,
+        roleTitle,
+        positionId,
+      });
+    } catch (err) {
+      console.error("payments webhook: welcome email failed (non-critical)", err);
+    }
   }
 }
 
