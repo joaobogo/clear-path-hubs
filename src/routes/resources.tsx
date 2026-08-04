@@ -18,6 +18,8 @@ import { SiteShell } from "@/components/marketing/site-shell";
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 import { PageConnections } from "@/components/marketing/page-connections";
+import { RESOURCE_GUIDES, guideReadMinutes } from "@/content/resources";
+
 
 const entry = getPage("resources");
 
