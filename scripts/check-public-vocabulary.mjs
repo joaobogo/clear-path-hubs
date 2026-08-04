@@ -133,25 +133,63 @@ function isExcluded(rel) {
 
 const violations = [];
 
+/** Every rule match in one string, with the offending phrase captured. */
+function matchesIn(text) {
+  const hits = [];
+  for (const rule of RULES) {
+    const re = new RegExp(rule.pattern.source, "gi");
+    let m;
+    while ((m = re.exec(text)) !== null) {
+      const from = Math.max(0, m.index - 45);
+      const context = text.slice(from, m.index + m[0].length + 45).replace(/\s+/g, " ");
+      if (rule.allow?.some((a) => a.test(context))) continue;
+      hits.push({ rule: rule.id, use: rule.use, phrase: m[0], context: context.trim() });
+    }
+  }
+  return hits;
+}
+
+/** JSON page snapshots ship into public routes, so walk their string values. */
+function scanJson(rel, raw) {
+  let data;
+  try {
+    data = JSON.parse(raw);
+  } catch {
+    return;
+  }
+  const walkValue = (value, path) => {
+    if (typeof value === "string") {
+      if (ALLOW_MARKER.test(value)) return;
+      for (const hit of matchesIn(value)) {
+        violations.push({ file: rel, where: path || "(root)", ...hit });
+      }
+    } else if (Array.isArray(value)) {
+      value.forEach((v, i) => walkValue(v, `${path}[${i}]`));
+    } else if (value && typeof value === "object") {
+      for (const [k, v] of Object.entries(value)) {
+        walkValue(v, path ? `${path}.${k}` : k);
+      }
+    }
+  };
+  walkValue(data, "");
+}
+
+function scanCode(rel, raw) {
+  raw.split("\n").forEach((line, i) => {
+    if (NON_COPY_LINE.test(line) || ALLOW_MARKER.test(line)) return;
+    for (const hit of matchesIn(line)) {
+      violations.push({ file: rel, where: `line ${i + 1}`, ...hit });
+    }
+  });
+}
+
 for (const dir of SCAN_DIRS) {
   for (const file of walk(join(ROOT, dir))) {
-    const rel = relative(ROOT, file);
+    const rel = relative(ROOT, file).split(sep).join("/");
     if (isExcluded(rel)) continue;
-    const lines = readFileSync(file, "utf8").split("\n");
-    lines.forEach((line, i) => {
-      if (NON_COPY_LINE.test(line) || ALLOW_MARKER.test(line)) return;
-      for (const rule of RULES) {
-        if (!rule.pattern.test(line)) continue;
-        if (rule.allow?.some((a) => a.test(line))) continue;
-        violations.push({
-          file: rel.split(sep).join("/"),
-          line: i + 1,
-          rule: rule.id,
-          use: rule.use,
-          text: line.trim().slice(0, 140),
-        });
-      }
-    });
+    const raw = readFileSync(file, "utf8");
+    if (rel.endsWith(".json")) scanJson(rel, raw);
+    else scanCode(rel, raw);
   }
 }
 
@@ -168,8 +206,8 @@ console.error(
   } on public surfaces.\n`,
 );
 for (const v of violations) {
-  console.error(`  ${v.file}:${v.line}  [${v.rule}]`);
-  console.error(`    ${v.text}`);
+  console.error(`  ${v.file} ${v.where}  [${v.rule}] "${v.phrase}"`);
+  console.error(`    …${v.context}…`);
   console.error(`    → use: ${v.use}\n`);
 }
 console.error(
