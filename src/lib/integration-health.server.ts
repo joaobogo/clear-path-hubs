@@ -6,7 +6,7 @@
  * credential — only presence, status codes and provider error text (truncated).
  */
 
-import { CALENDLY_BOOKING_URL } from "@/lib/calendly";
+import { DEFAULT_MEETING_TYPE, MEETING_TYPES } from "@/config/booking";
 
 export type IntegrationId = "stripe" | "attio" | "calendly" | "email";
 
@@ -189,6 +189,8 @@ async function checkAttio(): Promise<CheckResult> {
 }
 
 /* ---------------------------------------------------------------- Calendly */
+
+const CALENDLY_BOOKING_URL = MEETING_TYPES[DEFAULT_MEETING_TYPE].schedulingUrl;
 
 async function checkCalendly(): Promise<CheckResult> {
   const base = {
