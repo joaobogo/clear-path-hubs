@@ -253,7 +253,7 @@ function MeHome() {
               What&apos;s next
             </p>
             <p className="mt-1 text-sm">
-              {spotlight.next_step ?? "You&apos;ll get an update here as soon as the hiring team moves forward. No need to check in."}
+              {spotlight.next_step ?? "You'll get an update here as soon as the hiring team moves forward. No need to check in."}
             </p>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
