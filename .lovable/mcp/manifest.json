@@ -1,0 +1,131 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.1",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://nfwetiyrxsrejdodvale.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "taasflow",
+      "version": "0.1.0",
+      "title": "TaaSFlow"
+    },
+    "tools": [
+      {
+        "name": "list_positions",
+        "title": "List roles",
+        "description": "List the hiring roles (positions) in the workspaces the signed-in user belongs to, with status and location.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "description": "Maximum roles to return."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_position",
+        "title": "Get role detail",
+        "description": "Get the detail of one hiring role the signed-in user can access: status, requirements, compensation and location.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "positionId": {
+              "type": "string",
+              "format": "uuid",
+              "description": "The role (position) id."
+            }
+          },
+          "required": [
+            "positionId"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_shortlist",
+        "title": "List shortlisted candidates",
+        "description": "List the candidates released to the client for one role, with stage and fit label. Only candidates already shared with the client are returned.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "positionId": {
+              "type": "string",
+              "format": "uuid",
+              "description": "The role (position) id."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "description": "Maximum candidates to return."
+            }
+          },
+          "required": [
+            "positionId"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_candidate",
+        "title": "Get candidate dossier",
+        "description": "Get the screening summary for one shortlisted candidate: profile, stage, fit label and the evidence behind it. Only candidates already shared with the client are returned.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "matchId": {
+              "type": "string",
+              "format": "uuid",
+              "description": "The candidate match id from list_shortlist."
+            }
+          },
+          "required": [
+            "matchId"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
