@@ -67,19 +67,26 @@ export const runBulkUpdateMessage = createServerFn({ method: "POST" })
 
 export const getSlaClock = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((raw) =>
+    z.object({ include_test: z.boolean().optional().default(false) }).parse(raw ?? {}),
+  )
+  .handler(async ({ data, context }) => {
     const admin = await staffAdmin(context as never);
     const { loadSlaClock } = await import("./admin-health.server");
-    return loadSlaClock(admin);
+    return loadSlaClock(admin, { includeTest: data.include_test });
   });
 
 export const getOperationalHealth = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((raw) =>
+    z.object({ include_test: z.boolean().optional().default(false) }).parse(raw ?? {}),
+  )
+  .handler(async ({ data, context }) => {
     const admin = await staffAdmin(context as never);
     const { loadOperationalHealth } = await import("./admin-health.server");
-    return loadOperationalHealth(admin);
+    return loadOperationalHealth(admin, { includeTest: data.include_test });
   });
+
 
 export const retryOperationalIssue = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
