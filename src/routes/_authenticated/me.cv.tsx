@@ -204,12 +204,12 @@ function CvPage() {
  </p>
  ) : (
  <ul className="divide-y">
- {(versions as Array<{ id: string; filename: string; size: number | null; created_at: string }>).map((v) => {
+ {versions.map((v) => {
  const isCurrent = v.id === currentId;
  return (
  <li
  key={v.id}
- className="flex items-center justify-between gap-3 py-3"
+ className="flex flex-wrap items-center justify-between gap-3 py-3"
  >
  <div className="min-w-0">
  <div className="flex items-center gap-2">
@@ -230,11 +230,14 @@ function CvPage() {
  <Button
  variant="outline"
  size="sm"
+ className="min-h-11"
  disabled={download.isPending}
  onClick={() => download.mutate(v.id)}
+ aria-label={`Download ${v.filename}`}
  >
  <Download className="h-4 w-4 mr-1" /> Download
  </Button>
+
  </li>
  );
  })}
