@@ -1,9 +1,11 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { ActivityFeed } from "@/components/activity/ActivityFeed";
 import { getAdminWorkQueues } from "@/lib/admin-ops.functions";
-import { Badge } from "@/components/ui/badge";
+import { TestRecordsToggle } from "@/components/admin/TestRecordsToggle";
 import { Button } from "@/components/ui/button";
 import {
   CreditCard,
@@ -15,14 +17,21 @@ import {
   ArrowRight,
   RefreshCw,
   CheckCircle2,
+  Inbox,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
+const searchSchema = z.object({
+  show_test: fallback(z.boolean(), false).default(false),
+});
+
 export const Route = createFileRoute("/_authenticated/admin/")({
-  loader: ({ context }) =>
+  validateSearch: zodValidator(searchSchema),
+  loaderDeps: ({ search }) => ({ show_test: search.show_test }),
+  loader: ({ context, deps }) =>
     context.queryClient.ensureQueryData({
-      queryKey: ["admin-work-queues"],
-      queryFn: () => getAdminWorkQueues(),
+      queryKey: ["admin-work-queues", deps.show_test],
+      queryFn: () => getAdminWorkQueues({ data: { include_test: deps.show_test } }),
     }),
   errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.index.tsx"),
   head: () => ({
@@ -35,6 +44,7 @@ export const Route = createFileRoute("/_authenticated/admin/")({
 });
 
 const ICONS: Record<string, ComponentType<{ className?: string }>> = {
+  intakes_aging: Inbox,
   unpaid: CreditCard,
   setup: Briefcase,
   review: ClipboardCheck,
@@ -42,6 +52,7 @@ const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   interviews: CalendarClock,
   blocked: AlertOctagon,
 };
+
 
 function waited(iso: string | null | undefined): string {
   if (!iso) return "—";
