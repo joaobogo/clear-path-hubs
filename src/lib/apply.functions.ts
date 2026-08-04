@@ -463,39 +463,29 @@ export const submitApplication = createServerFn({ method: "POST" })
         console.error("[submitApplication] emit failed", trace_id, emitErr);
       }
 
-      // Teams channel ping (non-critical, no contact details).
+      // Unified lead notification: Teams + internal email + delivery record.
+      // Candidate contact details stay inside the internal channel only.
       try {
-        const { notifyTeamsSafe } = await import("./teams-notify.server");
-        notifyTeamsSafe({
-          title: "New application",
-          subtitle: `${data.full_name} applied for ${pos.title}`,
+        const { processLeadEvent } = await import("./leads/lead-pipeline.server");
+        await processLeadEvent({
+          leadType: "candidate_application",
+          sourceId: appRow.id,
+          source: "job_board_application",
+          sourcePage: `/jobs/${data.position_id}/apply`,
+          fullName: data.full_name,
+          email: data.email ?? null,
           facts: [
             { label: "Role", value: pos.title },
             { label: "Reference", value: ref6(appRow.id) },
-            { label: "Received", value: new Date().toISOString() },
           ],
+          recordTable: "applications",
+          recordId: appRow.id,
+          organizationId: pos.organization_id,
+          positionId: data.position_id,
           linkPath: "/admin/candidates",
-          linkLabel: "Review in TaaSFlow",
         });
-      } catch (teamsErr) {
-        console.error("[submitApplication] teams notify failed", trace_id, teamsErr);
-      }
-
-      // Internal email alert (non-critical).
-      try {
-        const { sendTemplateEmail } = await import("./email-templates/send-email");
-        await sendTemplateEmail("new-application-alert", "john.kasprzak@taasflow.com", {
-          idempotencyKey: `new-application-alert-${appRow.id}`,
-          templateData: {
-            candidateName: data.full_name,
-            positionTitle: pos.title,
-            reference: ref6(appRow.id),
-            receivedAt: new Date().toISOString(),
-            reviewUrl: "https://taasflow.com/admin/candidates",
-          },
-        });
-      } catch (mailErr) {
-        console.error("[submitApplication] alert email failed", trace_id, mailErr);
+      } catch (notifyErr) {
+        console.error("[submitApplication] lead notification failed", trace_id, notifyErr);
       }
 
       // Candidate confirmation — the reference, the status link, and an honest
