@@ -17,6 +17,8 @@
  *  - Sections whose backing data is empty return `null` (never a placeholder).
  */
 
+import { Fragment } from "react";
+import { VerticalConfigurationSection } from "@/components/marketing/vertical-configuration";
 import { HeroPicture } from "@/components/marketing/hero-picture";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, CalendarDays } from "lucide-react";
@@ -66,6 +68,10 @@ export function IndustryPage({ entry }: { entry: IndustryEntry }) {
     : null;
 
   const ctx: Ctx = { entry, config, relationships };
+  const configAnchor =
+    (["scoring", "signal-explorer", "role-explorer", "challenges"] as const).find((k) =>
+      config.spec.sections.includes(k),
+    ) ?? config.spec.sections[config.spec.sections.length - 1];
 
   return (
     <SiteShell>
