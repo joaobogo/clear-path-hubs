@@ -278,8 +278,8 @@ export const ACTION_LABEL: Record<HealthActionKey, string> = {
 };
 
 export const ACTION_TO: Record<Exclude<HealthActionKey, "refresh">, string> = {
-  open_approvals: "/client/shortlist",
-  open_roles: "/client/roles",
+  open_approvals: "/client/candidates",
+  open_roles: "/client/positions",
   open_agents: "/client/agents",
   open_integrations: "/client/account",
   open_activity: "/client",
