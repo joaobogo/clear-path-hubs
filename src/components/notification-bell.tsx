@@ -279,7 +279,7 @@ function NotificationRow({
           className="mt-1.5 text-[10px] text-muted-foreground"
           title={new Date(lead.created_at).toLocaleString()}
         >
-          {actor} · {relativeTime(lead.latestAt ?? lead.created_at)}
+          {actor} · {relativeTime(group.latestAt)}
         </div>
 
         <div className="mt-2 flex items-center gap-3">
