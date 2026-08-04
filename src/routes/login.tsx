@@ -16,6 +16,7 @@ import {
   getQaPersonaConfig,
   qaPersonaLogin,
   provisionClientMembershipForSelf,
+  assertVerifiedSession,
 } from "@/lib/auth.functions";
 import {
   landingPathForRole,
@@ -103,6 +104,40 @@ function LoginPage() {
   const runPersona = useServerFn(qaPersonaLogin);
   const runSession = useServerFn(getSessionContext);
   const runProvision = useServerFn(provisionClientMembershipForSelf);
+  const runVerify = useServerFn(assertVerifiedSession);
+
+  /**
+   * A session alone is not a successful sign-in. The provider (Google
+   * included) can return a session for an address it never confirmed, so we
+   * check verification server-side and end the session when it fails.
+   * Returns true only when the caller may continue.
+   */
+  const ensureVerified = async (): Promise<boolean> => {
+    let result: Awaited<ReturnType<typeof assertVerifiedSession>>;
+    try {
+      result = await runVerify();
+    } catch {
+      await supabase.auth.signOut();
+      toast.error("We couldn't confirm your account. Please try signing in again.");
+      return false;
+    }
+    if (!result.verified) {
+      await supabase.auth.signOut();
+      toast.error(
+        result.provider === "email"
+          ? "Confirm your email address first — check your inbox for the confirmation link."
+          : "Your Google account's email address isn't verified. Verify it with Google, then sign in again.",
+      );
+      setMode("confirm");
+      return false;
+    }
+    if (!result.active) {
+      await supabase.auth.signOut();
+      toast.error("This account is no longer active. Contact your workspace admin.");
+      return false;
+    }
+    return true;
+  };
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -127,6 +162,7 @@ function LoginPage() {
         return;
       }
       if (result.redirected) return;
+      if (!(await ensureVerified())) return;
       // Popup flow: the session is already set — reload so the signed-in
       // routing effect picks the right destination.
       window.location.href = returnTo;
@@ -143,6 +179,8 @@ function LoginPage() {
     (async () => {
       const { data } = await supabase.auth.getSession();
       if (!data.session) return;
+      if (!(await ensureVerified())) return;
+      if (cancelled) return;
       try {
         let ctx = await runSession();
         // If the user has no memberships yet (e.g. just accepted an invite by
@@ -207,6 +245,7 @@ function LoginPage() {
         toast.error(GENERIC_SIGNIN_ERROR);
         return;
       }
+      if (!(await ensureVerified())) return;
       const ctx = await runSession();
       // Best-effort membership activation for freshly-invited users.
       if (!ctx.primary_role && ctx.memberships.length === 0) {
