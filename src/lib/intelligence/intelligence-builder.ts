@@ -950,13 +950,32 @@ export function buildIntelligence(
     });
   }
 
+  const recommendations = deriveRecommendations({
+    positions: records.positions,
+    matches: records.matches,
+    history: records.history,
+    scoreRuns: records.scoreRuns,
+    evidenceItems: records.evidenceItems,
+    agentRuns: records.agentRuns,
+    signals: {
+      tasks: records.tasks ?? [],
+      outreachTouches: records.outreachTouches ?? [],
+    },
+    window: win,
+    positionId: records.positionId,
+    now,
+  });
+
   return {
     window: win,
     computedAt,
     metrics,
+    recommendations,
+    bestPractices: BEST_PRACTICES,
     emptyWorkspace:
       records.positions.length === 0 &&
       records.matches.length === 0 &&
       records.scoreRuns.length === 0,
   };
+
 }
