@@ -115,7 +115,7 @@ function LoginPage() {
   const ensureVerified = async (): Promise<boolean> => {
     let result: Awaited<ReturnType<typeof assertVerifiedSession>>;
     try {
-      result = await runVerify({ data: {} });
+      result = await runVerify();
     } catch {
       await supabase.auth.signOut();
       toast.error("We couldn't confirm your account. Please try signing in again.");
