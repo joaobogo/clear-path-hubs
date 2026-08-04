@@ -18,6 +18,7 @@ import { Route as SystemRouteImport } from './routes/system'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SitemapRouteImport } from './routes/sitemap'
+import { Route as SecurityRouteImport } from './routes/security'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -220,6 +221,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const SitemapRoute = SitemapRouteImport.update({
   id: '/sitemap',
   path: '/sitemap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SecurityRoute = SecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
@@ -1119,6 +1125,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/security': typeof SecurityRoute
   '/sitemap': typeof SitemapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
@@ -1287,6 +1294,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/security': typeof SecurityRoute
   '/sitemap': typeof SitemapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
@@ -1447,6 +1455,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/resources': typeof ResourcesRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/security': typeof SecurityRoute
   '/sitemap': typeof SitemapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
@@ -1617,6 +1626,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/resources'
     | '/robots.txt'
+    | '/security'
     | '/sitemap'
     | '/sitemap.xml'
     | '/solutions'
@@ -1785,6 +1795,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/resources'
     | '/robots.txt'
+    | '/security'
     | '/sitemap'
     | '/sitemap.xml'
     | '/solutions'
@@ -1944,6 +1955,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/resources'
     | '/robots.txt'
+    | '/security'
     | '/sitemap'
     | '/sitemap.xml'
     | '/solutions'
@@ -2114,6 +2126,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   ResourcesRoute: typeof ResourcesRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SecurityRoute: typeof SecurityRoute
   SitemapRoute: typeof SitemapRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SolutionsRoute: typeof SolutionsRoute
@@ -2228,6 +2241,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap'
       fullPath: '/sitemap'
       preLoaderRoute: typeof SitemapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/security': {
+      id: '/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof SecurityRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/robots.txt': {
@@ -3686,6 +3706,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   ResourcesRoute: ResourcesRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
+  SecurityRoute: SecurityRoute,
   SitemapRoute: SitemapRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SolutionsRoute: SolutionsRoute,
