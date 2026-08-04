@@ -50,91 +50,148 @@ function ageTone(iso: string | null, warnDays: number, dangerDays: number): Queu
   return "default";
 }
 
-/** The five operator queues, each with an exact count and one direct action. */
-export async function loadWorkQueues(): Promise<WorkQueue[]> {
+/** The operator queues, each with an exact count and one direct action. */
+export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Promise<WorkQueue[]> {
   const s = await admin();
+  const { loadTestScope, excludeTestOrgs, loadAgingIntakes } = await import(
+    "./admin-test-scope.server"
+  );
+  const scope = await loadTestScope(s, opts.includeTest ?? false);
 
-  const [unpaid, setup, review, delivered, interviews, blocked] = await Promise.all([
+  const [unpaid, setup, review, delivered, interviews, blocked, aging] = await Promise.all([
     // 1 — submitted roles that have not been paid for (or are stuck mid-checkout).
-    s
-      .from("positions")
-      .select("id,title,status,payment_status,created_at,updated_at,organizations(name)", {
-        count: "exact",
-      })
-      .in("payment_status", ["unpaid", "pending"])
-      .not("status", "in", "(archived,closed,filled)")
-      .order("updated_at", { ascending: true })
-      .limit(8),
+    excludeTestOrgs(
+      s
+        .from("positions")
+        .select("id,title,status,payment_status,created_at,updated_at,organizations(name)", {
+          count: "exact",
+        })
+        .in("payment_status", ["unpaid", "pending"])
+        .not("status", "in", "(archived,closed,filled)")
+        .order("updated_at", { ascending: true })
+        .limit(8),
+      scope,
+    ),
 
     // 2 — paid or exempt roles still waiting on platform setup.
-    s
-      .from("positions")
-      .select("id,title,status,payment_status,created_at,organizations(name)", { count: "exact" })
-      .in("status", ["submitted", "needs_clarification"])
-      .in("payment_status", ["paid", "exempt"])
-      .order("created_at", { ascending: true })
-      .limit(8),
+    excludeTestOrgs(
+      s
+        .from("positions")
+        .select("id,title,status,payment_status,created_at,organizations(name)", { count: "exact" })
+        .in("status", ["submitted", "needs_clarification"])
+        .in("payment_status", ["paid", "exempt"])
+        .order("created_at", { ascending: true })
+        .limit(8),
+      scope,
+    ),
 
     // 3 — scored candidates awaiting an admin decision.
-    s
-      .from("candidate_matches")
-      .select(
-        "id,updated_at,processing_state,candidate_profiles(full_name),positions(title,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score)",
-        { count: "exact" },
-      )
-      .eq("admin_status", "pending")
-      .eq("processing_state", "scored")
-      .order("updated_at", { ascending: true })
-      .limit(8),
+    excludeTestOrgs(
+      s
+        .from("candidate_matches")
+        .select(
+          "id,updated_at,processing_state,candidate_profiles(full_name),positions(title,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score)",
+          { count: "exact" },
+        )
+        .eq("admin_status", "pending")
+        .eq("processing_state", "scored")
+        .order("updated_at", { ascending: true })
+        .limit(8),
+      scope,
+    ),
 
     // 4 — shared with the client, no decision recorded yet.
-    s
-      .from("candidate_matches")
-      .select(
-        "id,updated_at,stage,candidate_profiles(full_name),positions(title,organizations(name)),client_decisions(id)",
-        { count: "exact" },
-      )
-      .eq("client_visibility", "visible")
-      .in("stage", ["delivered", "shortlisted", "reviewing"])
-      .lt("updated_at", ISO(3 * DAY))
-      .order("updated_at", { ascending: true })
-      .limit(20),
+    excludeTestOrgs(
+      s
+        .from("candidate_matches")
+        .select(
+          "id,updated_at,stage,candidate_profiles(full_name),positions(title,organizations(name)),client_decisions(id)",
+          { count: "exact" },
+        )
+        .eq("client_visibility", "visible")
+        .in("stage", ["delivered", "shortlisted", "reviewing"])
+        .lt("updated_at", ISO(3 * DAY))
+        .order("updated_at", { ascending: true })
+        .limit(20),
+      scope,
+    ),
 
     // 5 — interviews requested, or happening in the next 48h.
-    s
-      .from("interviews")
-      .select(
-        "id,status,requested_at,scheduled_at,candidate_match_id,candidate_matches(candidate_profiles(full_name),positions(title,organizations(name)))",
-        { count: "exact" },
-      )
-      .or(
-        `status.eq.requested,and(status.eq.scheduled,scheduled_at.lte.${new Date(Date.now() + 48 * HOUR).toISOString()})`,
-      )
-      .order("requested_at", { ascending: true })
-      .limit(8),
+    excludeTestOrgs(
+      s
+        .from("interviews")
+        .select(
+          "id,status,requested_at,scheduled_at,candidate_match_id,candidate_matches(candidate_profiles(full_name),positions(title,organizations(name)))",
+          { count: "exact" },
+        )
+        .or(
+          `status.eq.requested,and(status.eq.scheduled,scheduled_at.lte.${new Date(Date.now() + 48 * HOUR).toISOString()})`,
+        )
+        .order("requested_at", { ascending: true })
+        .limit(8),
+      scope,
+    ),
 
     // Bonus — pipeline incidents that stop everything else.
-    s
-      .from("candidate_matches")
-      .select(
-        "id,processing_state,processing_error_code,processing_updated_at,candidate_profiles(full_name),positions(title,organizations(name))",
-        { count: "exact" },
-      )
-      .in("processing_state", [
-        "failed",
-        "provider_blocked",
-        "ocr_required",
-        "manual_review_required",
-      ])
-      .order("processing_updated_at", { ascending: true })
-      .limit(8),
+    excludeTestOrgs(
+      s
+        .from("candidate_matches")
+        .select(
+          "id,processing_state,processing_error_code,processing_updated_at,candidate_profiles(full_name),positions(title,organizations(name))",
+          { count: "exact" },
+        )
+        .in("processing_state", [
+          "failed",
+          "provider_blocked",
+          "ocr_required",
+          "manual_review_required",
+        ])
+        .order("processing_updated_at", { ascending: true })
+        .limit(8),
+      scope,
+    ),
+
+    // 6 — real client briefs sitting in the inbox for more than three days.
+    loadAgingIntakes(s, { includeTest: opts.includeTest ?? false, olderThanDays: 3, limit: 8 }),
   ]);
+
 
   const overdue = ((delivered.data ?? []) as Any[]).filter(
     (m) => !(m.client_decisions ?? []).length,
   );
 
+  const agingIntakes = aging as {
+    items: Array<{
+      id: string;
+      org_name: string | null;
+      role_title: string | null;
+      created_at: string;
+      days_waiting: number;
+    }>;
+    count: number;
+  };
+
   return [
+    {
+      key: "intakes_aging",
+      label: "Intakes awaiting action",
+      description: "Client briefs submitted more than three days ago with no position yet.",
+      count: agingIntakes.count,
+      action_hint: "Open the brief: convert it to a role, ask for clarification, or reject it.",
+      see_all: { to: "/admin/intake" },
+      items: agingIntakes.items.map((i) => ({
+        id: i.id,
+        title: i.org_name ?? "Client",
+        subtitle: i.role_title ?? "Role not stated",
+        meta: `${i.days_waiting} day${i.days_waiting === 1 ? "" : "s"} waiting`,
+        waiting_since: i.created_at,
+        to: "/admin/intake/$id",
+        params: { id: i.id },
+        action_label: "Open intake",
+        tone: ageTone(i.created_at, 3, 7),
+      })),
+    },
+
     {
       key: "unpaid",
       label: "Unpaid submissions",
