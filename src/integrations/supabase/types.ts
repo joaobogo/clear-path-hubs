@@ -842,6 +842,132 @@ export type Database = {
           },
         ]
       }
+      booking_sessions: {
+        Row: {
+          additional_context: string | null
+          attio: Json
+          attio_error: string | null
+          attio_synced_at: string | null
+          attribution: Json
+          calendly_event_uri: string | null
+          calendly_invitee_uri: string | null
+          cancel_url: string | null
+          cancelled_at: string | null
+          company_domain: string | null
+          company_name: string | null
+          company_size: string | null
+          company_website: string | null
+          created_at: string
+          current_process: string | null
+          email: string
+          first_name: string
+          heard_about: string | null
+          hiring_challenge: string | null
+          hiring_timeline: string | null
+          hiring_volume: string | null
+          host_email: string | null
+          host_name: string | null
+          id: string
+          job_title: string | null
+          join_url: string | null
+          last_name: string
+          meeting_type: string
+          open_roles: string | null
+          phone: string | null
+          qualification_score: number | null
+          reschedule_url: string | null
+          roles_hiring: string | null
+          scheduled_at: string | null
+          scheduled_end: string | null
+          scheduled_start: string | null
+          status: string
+          timezone: string | null
+          updated_at: string
+        }
+        Insert: {
+          additional_context?: string | null
+          attio?: Json
+          attio_error?: string | null
+          attio_synced_at?: string | null
+          attribution?: Json
+          calendly_event_uri?: string | null
+          calendly_invitee_uri?: string | null
+          cancel_url?: string | null
+          cancelled_at?: string | null
+          company_domain?: string | null
+          company_name?: string | null
+          company_size?: string | null
+          company_website?: string | null
+          created_at?: string
+          current_process?: string | null
+          email: string
+          first_name: string
+          heard_about?: string | null
+          hiring_challenge?: string | null
+          hiring_timeline?: string | null
+          hiring_volume?: string | null
+          host_email?: string | null
+          host_name?: string | null
+          id?: string
+          job_title?: string | null
+          join_url?: string | null
+          last_name: string
+          meeting_type?: string
+          open_roles?: string | null
+          phone?: string | null
+          qualification_score?: number | null
+          reschedule_url?: string | null
+          roles_hiring?: string | null
+          scheduled_at?: string | null
+          scheduled_end?: string | null
+          scheduled_start?: string | null
+          status?: string
+          timezone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          additional_context?: string | null
+          attio?: Json
+          attio_error?: string | null
+          attio_synced_at?: string | null
+          attribution?: Json
+          calendly_event_uri?: string | null
+          calendly_invitee_uri?: string | null
+          cancel_url?: string | null
+          cancelled_at?: string | null
+          company_domain?: string | null
+          company_name?: string | null
+          company_size?: string | null
+          company_website?: string | null
+          created_at?: string
+          current_process?: string | null
+          email?: string
+          first_name?: string
+          heard_about?: string | null
+          hiring_challenge?: string | null
+          hiring_timeline?: string | null
+          hiring_volume?: string | null
+          host_email?: string | null
+          host_name?: string | null
+          id?: string
+          job_title?: string | null
+          join_url?: string | null
+          last_name?: string
+          meeting_type?: string
+          open_roles?: string | null
+          phone?: string | null
+          qualification_score?: number | null
+          reschedule_url?: string | null
+          roles_hiring?: string | null
+          scheduled_at?: string | null
+          scheduled_end?: string | null
+          scheduled_start?: string | null
+          status?: string
+          timezone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       business_rules_audit: {
         Row: {
           action: string
@@ -901,6 +1027,38 @@ export type Database = {
           value?: Json
         }
         Relationships: []
+      }
+      calendly_webhook_events: {
+        Row: {
+          booking_session_id: string | null
+          event_type: string
+          id: string
+          payload: Json
+          received_at: string
+        }
+        Insert: {
+          booking_session_id?: string | null
+          event_type: string
+          id: string
+          payload?: Json
+          received_at?: string
+        }
+        Update: {
+          booking_session_id?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json
+          received_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendly_webhook_events_booking_session_id_fkey"
+            columns: ["booking_session_id"]
+            isOneToOne: false
+            referencedRelation: "booking_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       candidate_evidence: {
         Row: {
