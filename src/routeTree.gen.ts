@@ -135,6 +135,7 @@ import { Route as AuthenticatedAdminClients_newRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminClientsRouteImport } from './routes/_authenticated/admin.clients'
 import { Route as AuthenticatedAdminCandidatesRouteImport } from './routes/_authenticated/admin.candidates'
 import { Route as AuthenticatedAdminBusinessRulesRouteImport } from './routes/_authenticated/admin.business-rules'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedMeApplicationsIndexRouteImport } from './routes/_authenticated/me.applications.index'
 import { Route as AuthenticatedClientSharesIndexRouteImport } from './routes/_authenticated/client.shares.index'
 import { Route as AuthenticatedClientPositionsIndexRouteImport } from './routes/_authenticated/client.positions.index'
@@ -844,6 +845,11 @@ const AuthenticatedAdminBusinessRulesRoute =
     path: '/business-rules',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedMeApplicationsIndexRoute =
   AuthenticatedMeApplicationsIndexRouteImport.update({
     id: '/',
@@ -1099,6 +1105,7 @@ export interface FileRoutesByFullPath {
   '/blog/': typeof BlogIndexRoute
   '/industries/': typeof IndustriesIndexRoute
   '/jobs/': typeof JobsIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/admin/business-rules': typeof AuthenticatedAdminBusinessRulesRoute
   '/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
   '/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
@@ -1257,6 +1264,7 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogIndexRoute
   '/industries': typeof IndustriesIndexRoute
   '/jobs': typeof JobsIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/admin/business-rules': typeof AuthenticatedAdminBusinessRulesRoute
   '/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/admin/copilot': typeof AuthenticatedAdminCopilotRoute
@@ -1413,6 +1421,7 @@ export interface FileRoutesById {
   '/blog/': typeof BlogIndexRoute
   '/industries/': typeof IndustriesIndexRoute
   '/jobs/': typeof JobsIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/_authenticated/admin/business-rules': typeof AuthenticatedAdminBusinessRulesRoute
   '/_authenticated/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
   '/_authenticated/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
@@ -1576,6 +1585,7 @@ export interface FileRouteTypes {
     | '/blog/'
     | '/industries/'
     | '/jobs/'
+    | '/.lovable/oauth/consent'
     | '/admin/business-rules'
     | '/admin/candidates'
     | '/admin/clients'
@@ -1734,6 +1744,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/industries'
     | '/jobs'
+    | '/.lovable/oauth/consent'
     | '/admin/business-rules'
     | '/admin/clients_new'
     | '/admin/copilot'
@@ -1889,6 +1900,7 @@ export interface FileRouteTypes {
     | '/blog/'
     | '/industries/'
     | '/jobs/'
+    | '/.lovable/oauth/consent'
     | '/_authenticated/admin/business-rules'
     | '/_authenticated/admin/candidates'
     | '/_authenticated/admin/clients'
@@ -2046,6 +2058,7 @@ export interface RootRouteChildren {
   BlogIndexRoute: typeof BlogIndexRoute
   IndustriesIndexRoute: typeof IndustriesIndexRoute
   JobsIndexRoute: typeof JobsIndexRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   ApiPublicBlueprintRunRoute: typeof ApiPublicBlueprintRunRoute
   ApiPublicBootstrapAdminRoute: typeof ApiPublicBootstrapAdminRoute
   ApiPublicContactRoute: typeof ApiPublicContactRoute
@@ -2955,6 +2968,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBusinessRulesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/me/applications/': {
       id: '/_authenticated/me/applications/'
       path: '/'
@@ -3561,6 +3581,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogIndexRoute: BlogIndexRoute,
   IndustriesIndexRoute: IndustriesIndexRoute,
   JobsIndexRoute: JobsIndexRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   ApiPublicBlueprintRunRoute: ApiPublicBlueprintRunRoute,
   ApiPublicBootstrapAdminRoute: ApiPublicBootstrapAdminRoute,
   ApiPublicContactRoute: ApiPublicContactRoute,
