@@ -77,7 +77,7 @@ function MyApplicationsPage() {
  const apps = current.applications;
 
  return (
- <main className="mx-auto max-w-4xl px-6 py-8">
+ <main className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
  <header className="mb-6">
  <h1 className="text-2xl font-semibold">My applications</h1>
  <p className="text-sm text-muted-foreground">
