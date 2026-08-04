@@ -8,6 +8,11 @@ import {
 } from "@/lib/intelligence/hiring-intelligence.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { MetricCard, MetricCardSkeleton } from "@/components/intelligence/metric-card";
+import {
+  BestPracticeList,
+  RecommendationCard,
+} from "@/components/intelligence/recommendation-card";
+import { useRecommendationDismissals } from "@/lib/intelligence/use-recommendation-dismissals";
 import { NoWorkspaceState, ErrorState, EmptyState } from "@/components/client/states";
 import {
   Select,
@@ -38,6 +43,9 @@ function IntelligencePage() {
   const orgId = useClientOrgSearch();
   const [days, setDays] = useState(90);
   const [positionId, setPositionId] = useState("all");
+
+  const { hydrated, isSuppressed, dismiss, snooze, suppressedCount, restore } =
+    useRecommendationDismissals(orgId);
 
   const runIntelligence = useServerFn(getHiringIntelligence);
   const runPositions = useServerFn(getIntelligencePositions);
@@ -132,11 +140,61 @@ function IntelligencePage() {
               to start the record trail.
             </div>
           )}
+          {(() => {
+            const all = intel.data.recommendations;
+            const visible = hydrated ? all.filter((r) => !isSuppressed(r)) : all;
+            const hidden = all.length - visible.length;
+            return (
+              <section aria-labelledby="recommendations-heading" className="space-y-3">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <div>
+                    <h2 id="recommendations-heading" className="text-sm font-semibold">
+                      What the records suggest doing next
+                    </h2>
+                    <p className="text-xs text-muted-foreground">
+                      Detected from your own records in this window. Each one names the
+                      condition, the figures behind it and the control that changes it.
+                    </p>
+                  </div>
+                  {suppressedCount > 0 && hidden > 0 && (
+                    <button
+                      type="button"
+                      className="text-xs underline underline-offset-4"
+                      onClick={() => all.forEach((r) => restore(r.id))}
+                    >
+                      Show {hidden} hidden suggestion{hidden === 1 ? "" : "s"}
+                    </button>
+                  )}
+                </div>
+                {visible.length === 0 ? (
+                  <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
+                    {all.length === 0
+                      ? "No condition in this window crossed the thresholds that would justify a suggestion. That is a result, not an absence of analysis."
+                      : "Every detected suggestion is currently dismissed or snoozed."}
+                  </div>
+                ) : (
+                  <div className="grid gap-4 lg:grid-cols-2">
+                    {visible.map((r) => (
+                      <RecommendationCard
+                        key={r.id}
+                        recommendation={r}
+                        onDismiss={dismiss}
+                        onSnooze={snooze}
+                      />
+                    ))}
+                  </div>
+                )}
+              </section>
+            );
+          })()}
+
           <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
             {intel.data.metrics.map((m) => (
               <MetricCard key={m.key} metric={m} />
             ))}
           </div>
+
+          <BestPracticeList practices={intel.data.bestPractices} />
           <p className="text-xs text-muted-foreground">
             Window: last {intel.data.window.days} days, compared with the {intel.data.window.days}{" "}
             days before it where a baseline exists. Computed{" "}
