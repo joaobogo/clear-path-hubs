@@ -1,15 +1,21 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { CalendarClock, Check, Loader2, PhoneCall } from "lucide-react";
+import { CalendarClock, Check, ExternalLink, Loader2, PhoneCall } from "lucide-react";
 import {
   cancelDiscoveryCall,
+  confirmDiscoveryCall,
   getBookingState,
   requestDiscoveryCall,
 } from "@/lib/booking.functions";
-import { openCalendlyPopup } from "@/lib/calendly";
+import {
+  CALENDLY_BOOKING_URL,
+  initCalendlyInline,
+  onCalendlyScheduled,
+  openCalendlyPopup,
+} from "@/lib/calendly";
 import { submitToCrm } from "@/lib/crm/submit-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -65,9 +71,13 @@ function BookCallPage() {
   const queryClient = useQueryClient();
   const timeZone = useMemo(() => localTimeZone(), []);
   const [notes, setNotes] = useState("");
+  const [embedState, setEmbedState] = useState<"idle" | "ready" | "unavailable">("idle");
+  const embedRef = useRef<HTMLDivElement | null>(null);
+  const callIdRef = useRef<string | null>(null);
 
   const loadState = useServerFn(getBookingState);
   const request = useServerFn(requestDiscoveryCall);
+  const confirm = useServerFn(confirmDiscoveryCall);
   const cancel = useServerFn(cancelDiscoveryCall);
 
   const stateQuery = useQuery({
@@ -75,18 +85,36 @@ function BookCallPage() {
     queryFn: () => loadState({ data: { positionId: position } }),
   });
 
-  const requestMutation = useMutation({
+  // Calendly confirms the chosen time by postMessage. Only then is a call real,
+  // so only then do we mark it booked and leave the page.
+  const handleScheduled = useCallback(async () => {
+    const callId = callIdRef.current;
+    if (callId) {
+      try {
+        await confirm({ data: { callId } });
+      } catch {
+        /* the requested row already exists; status catch-up is not worth blocking on */
+      }
+    }
+    toast.success("Time confirmed — check your email for the invite. Your workspace is open.");
+    await queryClient.invalidateQueries({ queryKey: ["booking-state"] });
+    navigate({ to: "/client" });
+  }, [confirm, navigate, queryClient]);
+
+  useEffect(() => onCalendlyScheduled(() => void handleScheduled()), [handleScheduled]);
+
+  const openScheduler = useMutation({
     mutationFn: async () => {
       const result = await request({
         data: { positionId: position, timezone: timeZone, notes: notes.trim() || undefined },
       });
+      if (result.ok) callIdRef.current = result.callId;
       // CRM capture is a best-effort backstop; the sales_calls row is the truth.
       void submitToCrm({
         formId: "book-a-call",
         email: "",
         answers: { notes: notes.trim(), position_id: position ?? null, source: "in-app book-call" },
       }).catch(() => undefined);
-      await openCalendlyPopup();
       return result;
     },
     onSuccess: async (result) => {
@@ -94,11 +122,21 @@ function BookCallPage() {
         toast.error(result.message);
         return;
       }
-      toast.success("Call booked — your workspace is open. Check your email for the welcome note.");
-      await queryClient.invalidateQueries({ queryKey: ["booking-state"] });
-      navigate({ to: "/client" });
+      const host = embedRef.current;
+      const mounted = host ? await initCalendlyInline(host) : false;
+      if (mounted) {
+        setEmbedState("ready");
+        host?.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+      // Inline blocked — try the popup, and if that fails too, show a real link.
+      const popped = await openCalendlyPopup();
+      setEmbedState(popped ? "idle" : "unavailable");
+      if (!popped) {
+        toast.error("The scheduler couldn't load here. Use the direct booking link below.");
+      }
     },
-    onError: () => toast.error("We couldn't open the scheduler. Please try again."),
+    onError: () => toast.error("We couldn't start your booking. Please try again."),
   });
 
   const cancelMutation = useMutation({
@@ -111,6 +149,7 @@ function BookCallPage() {
 
   const booked = stateQuery.data?.call ?? null;
   const role = stateQuery.data?.position ?? null;
+  const schedulerVisible = embedState === "ready";
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-10">
@@ -148,8 +187,11 @@ function BookCallPage() {
             </div>
             <div className="flex flex-wrap gap-2">
               <Button onClick={() => navigate({ to: "/client" })}>Go to your workspace</Button>
-              <Button variant="outline" onClick={() => void openCalendlyPopup()}>
-                Change your time
+              <Button variant="outline" asChild>
+                <a href={CALENDLY_BOOKING_URL} target="_blank" rel="noopener noreferrer">
+                  Change your time
+                  <ExternalLink className="ml-2 h-4 w-4" aria-hidden />
+                </a>
               </Button>
               {role ? (
                 <Button
@@ -179,7 +221,7 @@ function BookCallPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div>
+              <div className={schedulerVisible ? "hidden" : undefined}>
                 <label htmlFor="call-notes" className="mb-1 block text-sm font-medium">
                   Anything we should read first? (optional)
                 </label>
@@ -192,18 +234,52 @@ function BookCallPage() {
                 />
               </div>
 
-              <Button
-                onClick={() => requestMutation.mutate()}
-                disabled={requestMutation.isPending}
-              >
-                {requestMutation.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden /> Opening scheduler…
-                  </>
-                ) : (
-                  "Open the scheduler"
-                )}
-              </Button>
+              {!schedulerVisible ? (
+                <Button
+                  onClick={() => openScheduler.mutate()}
+                  disabled={openScheduler.isPending}
+                >
+                  {openScheduler.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden /> Opening
+                      scheduler…
+                    </>
+                  ) : (
+                    "Open the scheduler"
+                  )}
+                </Button>
+              ) : null}
+
+              {/* The scheduler renders in place, so picking a time is never
+                  interrupted by a redirect or blocked by a popup blocker. */}
+              <div
+                ref={embedRef}
+                aria-label="Booking calendar"
+                className={
+                  schedulerVisible
+                    ? "min-h-[680px] w-full overflow-hidden rounded-lg border"
+                    : "hidden"
+                }
+              />
+
+              {embedState === "unavailable" ? (
+                <div className="rounded-lg border border-warning bg-warning/10 p-4 text-sm">
+                  <p className="font-medium text-warning-foreground">
+                    The calendar couldn't load in this browser.
+                  </p>
+                  <p className="mt-1 text-muted-foreground">
+                    An extension or network policy is blocking it. Your request is saved — pick your
+                    time directly instead.
+                  </p>
+                  <Button className="mt-3" asChild>
+                    <a href={CALENDLY_BOOKING_URL} target="_blank" rel="noopener noreferrer">
+                      Open the booking page
+                      <ExternalLink className="ml-2 h-4 w-4" aria-hidden />
+                    </a>
+                  </Button>
+                </div>
+              ) : null}
+
               <p className="text-xs text-muted-foreground">
                 Times are shown in your local time zone ({timeZone}) inside the scheduler, and every
                 slot is one we actually hold.
