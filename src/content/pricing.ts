@@ -44,12 +44,12 @@ export type PricingTier = {
 };
 
 const BASE_INCLUDED = [
-  "Delivered weekly",
+  "Ranked shortlist refreshed weekly",
   "Top 10 candidates per position",
   "Ranked candidate shortlist",
-  "Scoring with fit notes",
+  "Evidence-backed scoring with fit notes",
   "Criteria-based ethical ranking",
-  "3 months access to candidate data",
+  "3 months candidate-record retention",
 ];
 
 export const PRICING_TIERS: PricingTier[] = [
@@ -77,13 +77,13 @@ export const PRICING_TIERS: PricingTier[] = [
     rolesIncluded: "2–5 active roles",
     turnaround: TURNAROUND_LABEL,
     included: [
-      "Delivered weekly",
+      "Ranked shortlist refreshed weekly",
       "Top 10 candidates per position",
-      "All roles sourced simultaneously",
+      "All active roles worked in parallel",
       "Ranked shortlist per role",
-      "Scoring with fit notes",
+      "Evidence-backed scoring with fit notes",
       "Criteria-based ethical ranking",
-      "3 months access to candidate data",
+      "3 months candidate-record retention",
     ],
     ctaLabel: "Book a discovery call",
     ctaTo: "/contact",
@@ -100,13 +100,13 @@ export const PRICING_TIERS: PricingTier[] = [
     rolesIncluded: "6–10 active roles",
     turnaround: TURNAROUND_LABEL,
     included: [
-      "Delivered weekly",
+      "Ranked shortlist refreshed weekly",
       "Top 10 candidates per position",
-      "All roles sourced simultaneously",
+      "All active roles worked in parallel",
       "Ranked shortlist per role",
-      "Scoring with fit notes",
+      "Evidence-backed scoring with fit notes",
       "Criteria-based ethical ranking",
-      "3 months access to candidate data",
+      "3 months candidate-record retention",
       "Priority support",
     ],
     ctaLabel: "Book a discovery call",
