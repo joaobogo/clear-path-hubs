@@ -58,6 +58,9 @@ import { ScoreExplainability } from "@/components/candidate/score-explainability
 import { JourneyTimeline } from "@/components/candidate/journey-timeline";
 import { getCandidateJourney } from "@/lib/journey.functions";
 import { AdminDossier } from "@/components/candidate/admin-dossier";
+import { EvidenceGraph } from "@/components/evidence/evidence-graph";
+import { buildEvidenceChain } from "@/lib/evidence/evidence-graph";
+import { listAdminEvidence } from "@/lib/evidence/evidence.functions";
 import {
   approvePreflightBlock,
   explainApproveFailure,
@@ -222,7 +225,7 @@ function CandidateWorkspace() {
             {tab === "cv" && <CvTab cv={cv} matchId={id} cp={cp} insights={evidence?.extracted?.insights ?? null} />}
             {tab === "enrichment" && <EnrichmentTab cp={cp} evidence={evidence} />}
             {tab === "evidence" && (
-              <EvidenceTab evidence={evidence} result={currentResult} />
+              <EvidenceTab evidence={evidence} result={currentResult} matchId={id} />
             )}
             {tab === "score" && (
               <ScoreTab
