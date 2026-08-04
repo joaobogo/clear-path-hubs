@@ -1,5 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { SurfaceState } from "@/components/ds/surface-state";
+import {
+  resolveFilteredEmptyState,
+  resolveNoCandidatesState,
+} from "@/lib/empty-states/empty-state-catalogue";
+import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
@@ -731,11 +737,12 @@ function CandidatesPage() {
  </Button>
  </div>
  ) : filtered.length === 0 ? (
- <EmptyState
- hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0}
- activeFilters={activeFilters}
- onClear={clearFilters}
- />
+ <CandidatesEmptyState
+            hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0}
+            activeFilters={activeFilters}
+            onClear={clearFilters}
+            orgId={orgId}
+          />
  ) : search.view === "list" ? (
  <CompactList
  rows={paged}
@@ -882,55 +889,37 @@ function SnapshotTile({
  );
 }
 
-function EmptyState({
- hasCandidates,
- activeFilters,
- onClear,
+function CandidatesEmptyState({
+  hasCandidates,
+  activeFilters,
+  onClear,
+  orgId,
 }: {
- hasCandidates: boolean;
- activeFilters: { key: string; label: string }[];
- onClear: () => void;
+  hasCandidates: boolean;
+  activeFilters: { key: string; label: string }[];
+  onClear: () => void;
+  orgId: string | undefined;
 }) {
- const filtered = hasCandidates && activeFilters.length > 0;
- return (
- <div className="rounded-xl border bg-card p-10 text-center">
- <div className="text-base font-medium">
- {filtered
- ? "No candidates match the selected filters."
- : hasCandidates
- ? "No candidates to show."
- : "No candidates approved for you yet."}
- </div>
- <div className="text-sm text-muted-foreground mt-1 max-w-md mx-auto">
- {filtered ? (
- <>
- These filters removed every result:{" "}
- <span className="font-medium text-foreground">
- {activeFilters.map((f) => f.label).join(" · ")}
- </span>
- </>
- ) : (
- "Your TaaSFlow team is building the pipeline for your roles. Candidates appear here once they're approved for you."
- )}
- </div>
- <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
- {filtered ? (
- <Button size="sm" variant="outline" onClick={onClear}>
- Clear all filters
- </Button>
- ) : (
- <>
- <Button size="sm" asChild>
- <Link to="/client/positions">See your roles</Link>
- </Button>
- <Button size="sm" variant="outline" asChild>
- <Link to="/client/conversations">Ask your recruiter</Link>
- </Button>
- </>
- )}
- </div>
- </div>
- );
+  const filteredOut = hasCandidates && activeFilters.length > 0;
+  const signals = useEmptyStateSignals(orgId, { enabled: !filteredOut });
+  if (filteredOut) {
+    return (
+      <SurfaceState
+        content={resolveFilteredEmptyState(activeFilters.map((f) => f.label))}
+        onAction={onClear}
+      />
+    );
+  }
+  return (
+    <SurfaceState
+      content={resolveNoCandidatesState({
+        activeRoles: signals?.activeRoles ?? 0,
+        discoveryStarted: signals?.discoveryStarted ?? false,
+        inProcessing: signals?.inProcessing ?? 0,
+        runsCompleted: signals?.runsCompleted ?? 0,
+      })}
+    />
+  );
 }
 
 function CompactList({

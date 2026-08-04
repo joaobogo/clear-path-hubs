@@ -16,7 +16,10 @@ import {
   type TaskView,
   type TaskType,
 } from "@/lib/tasks.functions";
-import { EmptyState, SkeletonRows, NoWorkspaceState } from "@/components/client/states";
+import { SkeletonRows, NoWorkspaceState } from "@/components/client/states";
+import { SurfaceState } from "@/components/ds/surface-state";
+import { resolveNoApprovalsState } from "@/lib/empty-states/empty-state-catalogue";
+import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -101,6 +104,7 @@ function TasksPage() {
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
   const orgId = ctxQuery.data?.active?.organization_id ?? null;
+  const signals = useEmptyStateSignals(orgId ?? undefined);
 
   const tasks = useQuery({
     queryKey: ["client", "tasks", orgId, view, taskType],
@@ -281,15 +285,11 @@ function TasksPage() {
       {tasks.isLoading ? (
         <SkeletonRows rows={4} />
       ) : rows.length === 0 ? (
-        <EmptyState
-          icon={CheckCircle2}
-          title="Nothing in this view"
-          description={
-            view === "blocking"
-              ? "Nothing is currently blocking a delivery."
-              : "Tasks and approvals waiting on your team appear here."
-          }
-          whatAppearsHere="Approvals we need from you, interview confirmations, and anything holding up a shortlist land here. Use “New task” above to add your own."
+        <SurfaceState
+          content={resolveNoApprovalsState({
+            awaitingDecision: signals?.awaitingDecision ?? 0,
+            activeRoles: signals?.activeRoles ?? 0,
+          })}
         />
       ) : (
         <ul className="space-y-2">

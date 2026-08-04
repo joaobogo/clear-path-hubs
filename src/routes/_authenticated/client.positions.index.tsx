@@ -59,7 +59,11 @@ type AnyRow = any;
 
 import { RoleProgressTracker } from "@/components/client/role-progress-tracker";
 import type { RoleProgress } from "@/lib/client-role-progress";
-import { EmptyState as SharedEmptyState } from "@/components/client/states";
+import { SurfaceState } from "@/components/ds/surface-state";
+import {
+  resolveFilteredEmptyState,
+  resolveNoRolesState,
+} from "@/lib/empty-states/empty-state-catalogue";
 import { Skeleton } from "@/components/ui/skeleton";
 
 type Row = {
@@ -121,9 +125,16 @@ function PositionsPage() {
  } = useQuery<Row[]>({
  queryKey: ["client-positions", orgId, status],
  queryFn: () =>
- listFn({ data: { orgId: orgId!, status } }) as unknown as Promise<Row[]>,
- enabled: !!orgId,
- });
+     listFn({ data: { orgId: orgId!, status } }) as unknown as Promise<Row[]>,
+    enabled: !!orgId,
+  });
+  // Honest empty-state signals: do any roles exist at all, and how many are
+  // still in setup? Only fetched when this view has nothing to show.
+  const { data: allRows = [] } = useQuery<Row[]>({
+    queryKey: ["client-positions", orgId, "all"],
+    queryFn: () => listFn({ data: { orgId: orgId! } }) as unknown as Promise<Row[]>,
+    enabled: !!orgId && rows.length === 0,
+  });
  useEffect(() => {
  const onRefresh = () => refetch();
  window.addEventListener("client:refresh", onRefresh);
@@ -423,16 +434,16 @@ function PositionsPage() {
  )}
 
  {rows.length === 0 && !isFetching && !isError ? (
- <EmptyState status={status} />
+ <EmptyState
+          status={status}
+          hasAnyRole={allRows.length > 0}
+          pendingSetup={allRows.filter((r) => r.status === "draft").length}
+        />
  ) : filtered.length === 0 ? (
- <div className="rounded-xl border bg-card p-10 text-center">
- <p className="text-sm text-muted-foreground">
- No positions match the selected filters.
- </p>
- <Button variant="outline" size="sm" className="mt-3" onClick={clearAll}>
- Clear filters
- </Button>
- </div>
+ <SurfaceState
+          content={resolveFilteredEmptyState(activeChips.map((c) => c.label))}
+          onAction={clearAll}
+        />
  ) : view === "cards" ? (
  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
  {filtered.map((p) => (
@@ -684,43 +695,18 @@ function CompactList({ rows }: { rows: Row[] }) {
  );
 }
 
-function EmptyState({ status }: { status: string }) {
- const map: Record<string, { title: string; body: string; next: string }> = {
- active: {
- title: "No active searches right now",
- body: "Live searches appear here with progress, candidates delivered, and time in stage.",
- next: "Submit a role and we'll open the pipeline for it.",
- },
- draft: {
- title: "Nothing under review",
- body: "Roles we're scoping with you sit here until the search goes live.",
- next: "Submit a role to start the scoping conversation.",
- },
- paused: {
- title: "No paused searches",
- body: "If you pause a search, it stays here with its pipeline intact.",
- next: "Nothing to do — this is a good sign.",
- },
- closed: {
- title: "No closed searches yet",
- body: "Filled and closed roles stay here for reference, with their hires and outcomes.",
- next: "Nothing to do yet.",
- },
- };
- const s = map[status] ?? map.active;
- return (
- <SharedEmptyState
- icon={Briefcase}
- title={s.title}
- description={s.body}
- whatAppearsHere={s.next}
- action={
- status === "active" || status === "draft"
- ? { label: "Submit a role", to: "/intake" }
- : { label: "See active searches", to: "/client/positions" }
- }
- />
- );
+function EmptyState({
+  status,
+  hasAnyRole,
+  pendingSetup,
+}: {
+  status: string;
+  hasAnyRole: boolean;
+  pendingSetup: number;
+}) {
+  return (
+    <SurfaceState content={resolveNoRolesState({ status, hasAnyRole, pendingSetup })} />
+  );
 }
 
 function progressSummary(p: Row): string {

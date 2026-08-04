@@ -46,7 +46,10 @@ import {
 } from "@/lib/offer-stall";
 import { formatAge } from "@/lib/time-age";
 import { useClientOrgSearch } from "@/lib/use-client-org";
-import { EmptyState, SkeletonBoard } from "@/components/client/states";
+import { SkeletonBoard } from "@/components/client/states";
+import { SurfaceState } from "@/components/ds/surface-state";
+import { resolveNoOutcomesState } from "@/lib/empty-states/empty-state-catalogue";
+import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -246,7 +249,7 @@ function OffersPage() {
         {isPending ? (
           <SkeletonBoard columns={6} />
         ) : hires.length === 0 ? (
-          <OffersEmptyState />
+          <OffersEmptyState orgId={orgId} />
         ) : (
           <div className="grid min-w-[1100px] grid-cols-6 gap-3">
             {COLUMN_ORDER.map((status) => (
@@ -337,15 +340,15 @@ function Kpi({
   );
 }
 
-function OffersEmptyState() {
+function OffersEmptyState({ orgId }: { orgId: string }) {
+  const signals = useEmptyStateSignals(orgId);
   return (
-    <EmptyState
-      icon={HandCoins}
-      title="No offers yet"
-      description="Everything after shortlist lives on this board: offer drafted, sent, negotiating, accepted, hired."
-      whatAppearsHere="Draft an offer from a candidate's profile and it appears here with its status, compensation, and any stall warning."
-      action={{ label: "See your candidates", to: "/client/candidates" }}
-      secondaryAction={{ label: "View interviews", to: "/client/interviews" }}
+    <SurfaceState
+      content={resolveNoOutcomesState({
+        activeRoles: signals?.activeRoles ?? 0,
+        interviews: signals?.interviews ?? 0,
+        offers: signals?.openOffers ?? 0,
+      })}
     />
   );
 }
