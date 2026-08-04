@@ -1340,30 +1340,13 @@ function Home() {
                 <span className="text-[color:var(--brand-ocean-text)]">Evidence backs every score.</span>
               </h1>
               <p className="max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
-                For companies hiring 1 to 100+ roles a month. Flat monthly fee,
-                never a share of salary.
+                TaaSFlow runs hiring as a system—continuous sourcing,
+                rubric-versioned scoring and a complete decision audit.
               </p>
-              <ul className="grid gap-2 pt-1 sm:grid-cols-3">
-                {[
-                  { t: "Platform you keep", d: "Roles, pipeline and candidate records you own." },
-                  { t: "Agents we run", d: "Sourcing agents identify, screen and rank continuously." },
-                  { t: "Oversight you configure", d: "Human approval gates and escalation, tracked in the same place." },
-                ].map((p) => (
-                  <li
-                    key={p.t}
-                    className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white/70 p-3 backdrop-blur"
-                  >
-                    <p className="text-sm font-semibold text-[color:var(--brand-navy)]">{p.t}</p>
-                    <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/75">{p.d}</p>
-                  </li>
-                ))}
-              </ul>
-
-
               <ul className="flex flex-wrap gap-2 pt-1">
                 {[
-                  "First shortlist in 7–14 days",
-                  "No salary percentage fees",
+                  "For companies hiring 1 to 100+ roles a month",
+                  "Flat monthly fee, never a share of salary",
                   `$${PRICE_PILOT_USD} pilot available`,
                 ].map((t) => (
                   <li
@@ -1378,16 +1361,16 @@ function Home() {
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <Link
                   to="/pilot"
-                  aria-label={`Start a $${PRICE_PILOT_USD} pilot`}
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                  aria-label="Open your first role"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-6 py-3 text-base font-semibold text-white shadow-[var(--brand-shadow-sm)] hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  Start a ${PRICE_PILOT_USD} Pilot <ArrowRight className="h-4 w-4" aria-hidden />
+                  Open your first role <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
                 <Link
                   to="/how-it-works"
-                  className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md px-3 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)]/85 underline-offset-4 hover:text-[color:var(--brand-navy)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                 >
-                  See how it works
+                  See the platform
                 </Link>
               </div>
               <div className="text-xs text-[color:var(--brand-navy)]/80">
@@ -1403,11 +1386,9 @@ function Home() {
                 Use our software or keep your own. Either way, you own the
                 candidates and every hiring decision.
               </p>
-
-
             </div>
             <div className="min-w-0">
-              <HeroWorkspacePreview />
+              <HeroDecisionWorkspace />
             </div>
           </div>
         </PublicPage>
