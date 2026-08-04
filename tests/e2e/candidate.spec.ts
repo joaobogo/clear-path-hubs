@@ -37,6 +37,10 @@ function smallPdf(name = "qa-cv.pdf") {
 }
 
 async function fillStepOne(page: Page, email: string, fullName: string) {
+  // The optional-account block only renders once the client has resolved the
+  // session, so it is a reliable hydration marker: typing before hydration
+  // lets React's initial state overwrite the typed values.
+  await expect(page.getByText(/Create a candidate account/i)).toBeVisible();
   await page.locator("#full_name").fill(fullName);
   await page.locator("#email").fill(email);
   await page.locator("#phone").fill("+351912345678");
@@ -78,8 +82,10 @@ test.describe("candidate journey", () => {
   test("step 1 required-field validation blocks continue", async ({ page, context }) => {
     await allowTestFixtures(context);
     await page.goto(`/jobs/${fixtures.position_id}/apply`, { waitUntil: "domcontentloaded" });
+    await expect(page.getByText(/Create a candidate account/i)).toBeVisible();
     await page.getByTestId("apply-continue").click();
-    await expect(page.getByText(/required/i).first()).toBeVisible();
+    await expect(page.getByText("Enter your full name")).toBeVisible();
+    await expect(page.getByText("Enter a valid email")).toBeVisible();
     await expect(page.locator("#full_name")).toBeVisible();
 
     const { email, fullName } = uniqueCandidate();
