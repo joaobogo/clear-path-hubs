@@ -158,7 +158,7 @@ export function VerticalLeadCatcher({ verticalSlug, verticalName }: Props) {
       <span id="talk" className="sr-only" aria-hidden />
       <PublicPage>
         <div className="max-w-2xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/60">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/70">
             {verticalName} · get started
           </p>
           <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-[color:var(--brand-navy)] sm:text-3xl">
@@ -244,7 +244,7 @@ export function VerticalLeadCatcher({ verticalSlug, verticalName }: Props) {
                   note="Our published commitment for every tier. Actual delivery per role is tracked against it in your workspace."
                 />
               </div>
-              <p className="mt-3 text-xs leading-relaxed text-[color:var(--brand-navy)]/60">
+              <p className="mt-3 text-xs leading-relaxed text-[color:var(--brand-navy)]/70">
                 Prices are our published list prices. The comparison uses the
                 salary and fee percentage you entered — we don't assume what
                 you pay today.
@@ -425,7 +425,7 @@ function Choice({
 function Stat({ label, value, note }: { label: string; value: string; note: string }) {
   return (
     <div className="rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/50 p-4">
-      <p className="text-xs uppercase tracking-[0.1em] text-[color:var(--brand-navy)]/60">{label}</p>
+      <p className="text-xs uppercase tracking-[0.1em] text-[color:var(--brand-navy)]/70">{label}</p>
       <p className="mt-1 font-[family-name:var(--brand-font-display)] text-2xl font-semibold text-[color:var(--brand-navy)]">{value}</p>
       <p className="mt-1.5 text-xs leading-relaxed text-[color:var(--brand-navy)]/65">{note}</p>
     </div>

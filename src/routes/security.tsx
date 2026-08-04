@@ -46,7 +46,7 @@ function TrustCenterPage() {
     <SiteShell>
       <PublicSection className="pb-4">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/50">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/70">
             Trust Center
           </p>
           <h1 className="mt-4 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
@@ -130,7 +130,7 @@ function TrustCenterPage() {
                 {section.claims.map((claim) => (
                   <li key={claim.text} className="border-l-2 border-[color:var(--brand-navy)]/15 pl-4">
                     <p className="text-[15px] leading-relaxed">{claim.text}</p>
-                    <p className="mt-1.5 text-xs uppercase tracking-[0.08em] text-[color:var(--brand-navy)]/45">
+                    <p className="mt-1.5 text-xs uppercase tracking-[0.08em] text-[color:var(--brand-navy)]/70">
                       {SOURCE_LABEL[claim.source]} · {claim.reference}
                     </p>
                   </li>
@@ -173,7 +173,7 @@ function TrustCenterPage() {
             <dl className="mt-6 grid gap-6 sm:grid-cols-3">
               {TRUST_CONTACTS.map((c) => (
                 <div key={c.label}>
-                  <dt className="text-xs font-semibold uppercase tracking-[0.1em] text-[color:var(--brand-navy)]/50">
+                  <dt className="text-xs font-semibold uppercase tracking-[0.1em] text-[color:var(--brand-navy)]/70">
                     {c.label}
                   </dt>
                   <dd className="mt-2">
@@ -189,7 +189,7 @@ function TrustCenterPage() {
                 </div>
               ))}
             </dl>
-            <p className="mt-8 text-sm text-[color:var(--brand-navy)]/55">
+            <p className="mt-8 text-sm text-[color:var(--brand-navy)]/70">
               Last reviewed {TRUST_LAST_REVIEWED}. This page is reviewed when the platform's access
               model, subprocessors or published policies change.
             </p>

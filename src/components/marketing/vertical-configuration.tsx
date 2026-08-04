@@ -34,7 +34,7 @@ function Card({
   return (
     <div className="rounded-xl border border-[color:var(--brand-sky)] bg-[color:var(--brand-paper)] p-5">
       {eyebrow ? (
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean)]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
           {eyebrow}
         </p>
       ) : null}
@@ -96,7 +96,7 @@ export function VerticalConfigurationSection({
   return (
     <PublicSection className="bg-[color:var(--brand-mist)]/30 py-14">
       <div className="mx-auto max-w-3xl">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean)]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean-text)]">
           Platform configuration
         </p>
         <h2 className="mt-2 text-2xl font-semibold text-balance text-[color:var(--brand-ink)] sm:text-3xl">
@@ -178,7 +178,7 @@ export function VerticalConfigurationSection({
           </ul>
           <Link
             to="/integrations"
-            className="mt-4 inline-block text-sm font-medium text-[color:var(--brand-ocean)] underline-offset-4 hover:underline"
+            className="mt-4 inline-block text-sm font-medium text-[color:var(--brand-ocean-text)] underline-offset-4 hover:underline"
           >
             See the full integrations directory
           </Link>

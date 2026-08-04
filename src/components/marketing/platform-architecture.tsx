@@ -339,7 +339,7 @@ export function PlatformArchitecture() {
             const items = active[key];
             return (
               <div key={label} className="min-w-0">
-                <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/60">
+                <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/70">
                   {label}
                 </dt>
                 <dd className="mt-2">

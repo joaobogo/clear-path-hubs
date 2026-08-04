@@ -52,7 +52,7 @@ export function DegradedModeBanner({ className }: { className?: string }) {
         <p className="text-sm font-semibold text-[color:var(--brand-navy)]">{notice.title}</p>
         <p className="mt-0.5 text-sm text-[color:var(--brand-navy)]/75">{notice.body}</p>
         {data ? (
-          <p className="mt-1 flex items-center gap-1.5 text-xs text-[color:var(--brand-navy)]/55">
+          <p className="mt-1 flex items-center gap-1.5 text-xs text-[color:var(--brand-navy)]/70">
             <Clock className="h-3 w-3" aria-hidden />
             Checked {new Date(data.checked_at).toLocaleTimeString()}
           </p>

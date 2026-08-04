@@ -16,7 +16,7 @@ function ValueCell({ v }: { v: EntitlementValue }) {
   }
   if (v.kind === "not-included") {
     return (
-      <span className="inline-flex items-center gap-1.5 text-sm text-[color:var(--brand-navy)]/60">
+      <span className="inline-flex items-center gap-1.5 text-sm text-[color:var(--brand-navy)]/70">
         <Minus className="h-4 w-4 shrink-0" aria-hidden />
         Not included
       </span>

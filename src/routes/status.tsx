@@ -80,7 +80,7 @@ const TONE: Record<StatusLevel, { text: string; dot: string; band: string }> = {
     band: "border-[color:var(--brand-navy)]/15 bg-[color:var(--brand-navy)]/[0.04]",
   },
   unknown: {
-    text: "text-[color:var(--brand-navy)]/60",
+    text: "text-[color:var(--brand-navy)]/70",
     dot: "bg-[color:var(--brand-navy)]/35",
     band: "border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/[0.02]",
   },
@@ -136,7 +136,7 @@ function ServiceRow({ service }: { service: ServiceStatus }) {
               Planned work: {service.maintenance_note}
             </p>
           ) : null}
-          <p className="mt-1.5 text-xs text-[color:var(--brand-navy)]/50">
+          <p className="mt-1.5 text-xs text-[color:var(--brand-navy)]/70">
             {service.measured_by} Window: {service.window}.
           </p>
         </div>
@@ -157,13 +157,13 @@ function NoticeCard({ notice }: { notice: StatusNotice }) {
     <article className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white p-4 sm:p-5">
       <div className="flex flex-wrap items-center gap-2">
         <StatusPill level={notice.severity} />
-        <span className="text-xs font-semibold uppercase tracking-[0.1em] text-[color:var(--brand-navy)]/50">
+        <span className="text-xs font-semibold uppercase tracking-[0.1em] text-[color:var(--brand-navy)]/70">
           {notice.state.replace(/_/g, " ")}
         </span>
       </div>
       <h3 className="mt-2.5 text-base font-semibold text-[color:var(--brand-navy)]">{notice.title}</h3>
       <p className="mt-1.5 text-sm text-[color:var(--brand-navy)]/80">{notice.summary}</p>
-      <dl className="mt-3 grid gap-1.5 text-xs text-[color:var(--brand-navy)]/60 sm:grid-cols-2">
+      <dl className="mt-3 grid gap-1.5 text-xs text-[color:var(--brand-navy)]/70 sm:grid-cols-2">
         <div className="flex gap-1.5">
           <dt className="font-semibold">{notice.kind === "maintenance" ? "Window" : "Started"}:</dt>
           <dd>{window}</dd>
@@ -189,7 +189,7 @@ function StatusPage() {
     <SiteShell>
       <PublicSection className="pb-4">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/50">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/70">
             System status
           </p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
@@ -205,7 +205,7 @@ function StatusPage() {
               <p className="text-base font-semibold text-[color:var(--brand-navy)]">{data.headline}</p>
               <StatusPill level={data.overall} />
             </div>
-            <p className="mt-2 flex items-center gap-1.5 text-xs text-[color:var(--brand-navy)]/60">
+            <p className="mt-2 flex items-center gap-1.5 text-xs text-[color:var(--brand-navy)]/70">
               <Clock className="h-3.5 w-3.5" aria-hidden />
               Last updated {formatTime(data.checked_at)}. Measured when this page loaded.
             </p>
@@ -263,7 +263,7 @@ function StatusPage() {
             ))}
           </ul>
           {unmeasured.length > 0 ? (
-            <p className="mt-3 flex items-start gap-1.5 text-xs text-[color:var(--brand-navy)]/60">
+            <p className="mt-3 flex items-start gap-1.5 text-xs text-[color:var(--brand-navy)]/70">
               <HelpCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
               <span>
                 {unmeasured.length === 1

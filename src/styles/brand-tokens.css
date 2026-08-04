@@ -34,11 +34,14 @@
   --brand-chrome-minimise: #ffbd2e;
   --brand-chrome-expand:   #27c93f;
 
-  /* Status (dashboard-compatible; mirrors src/styles.css names) */
-  --brand-success: oklch(0.62 0.14 155);
-  --brand-warning: oklch(0.75 0.16 75);
-  --brand-danger:  oklch(0.58 0.22 27);
-  --brand-info:    oklch(0.60 0.19 258);
+  /* Status (dashboard-compatible; mirrors src/styles.css names)
+     Lightness is tuned so each hue clears WCAG AA (4.5:1) as text on both
+     white and its own *-soft tint — these tokens are used for status text,
+     not only fills. */
+  --brand-success: oklch(0.50 0.14 155);
+  --brand-warning: oklch(0.78 0.14 75);
+  --brand-danger:  oklch(0.52 0.22 27);
+  --brand-info:    oklch(0.49 0.19 258);
 
   /* Gradients */
   --brand-gradient-hero:   linear-gradient(180deg, oklch(0.985 0.003 245) 0%, oklch(0.965 0.005 245) 100%);
@@ -151,12 +154,12 @@
   --taas-status-success-foreground: oklch(0.99 0.005 155);
   --taas-status-success-soft:       oklch(0.955 0.045 155);
   --taas-status-warning:            var(--brand-warning);
-  --taas-status-warning-foreground: oklch(0.22 0.05 75);
+  --taas-status-warning-foreground: oklch(0.25 0.05 75);
   --taas-status-warning-soft:       oklch(0.965 0.05 82);
   --taas-status-danger:             var(--brand-danger);
   --taas-status-danger-foreground:  oklch(0.99 0.005 27);
   --taas-status-danger-soft:        oklch(0.96 0.04 27);
-  --taas-status-info:               var(--brand-ocean);
+  --taas-status-info:               var(--brand-info);
   --taas-status-info-foreground:    oklch(0.99 0.005 245);
   --taas-status-info-soft:          oklch(0.955 0.04 245);
   --taas-status-neutral:            oklch(0.55 0.02 262);

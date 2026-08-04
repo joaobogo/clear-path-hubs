@@ -28,9 +28,9 @@ export function PricingTierCard({ tier }: { tier: PricingTier }) {
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
             {tier.eyebrow}
           </p>
-          <h3 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight">
+          <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight">
             {tier.name}
-          </h3>
+          </h2>
         </div>
         {tier.highlight ? (
           <span className="rounded-full bg-[color:var(--brand-navy)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">

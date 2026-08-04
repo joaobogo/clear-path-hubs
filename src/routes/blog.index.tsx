@@ -204,7 +204,17 @@ function BlogIndex() {
                 key={p.slug}
                 className="group flex flex-col overflow-hidden rounded-xl border border-border/60 bg-card transition hover:border-primary/40 hover:shadow-sm"
               >
-                <Link to="/blog/$slug" params={{ slug: p.slug }} className="block">
+                {/* Decorative image link: the headline link below carries the
+                    accessible name, so this duplicate is hidden from AT and
+                    removed from the tab order. */}
+                <Link
+                  to="/blog/$slug"
+                  params={{ slug: p.slug }}
+                  className="block"
+                  aria-hidden="true"
+                  tabIndex={-1}
+                >
+
                   {p.heroImage ? (
                     <div className="aspect-[16/9] overflow-hidden bg-muted/20">
                       <img

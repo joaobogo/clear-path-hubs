@@ -69,7 +69,7 @@ function StatusChip({ status }: { status: (typeof AGENT_STATUSES)[number] }) {
 function DetailList({ label, items }: { label: string; items: readonly string[] }) {
   return (
     <div className="min-w-0">
-      <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/60">
+      <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/70">
         {label}
       </dt>
       <dd className="mt-1.5">
@@ -137,7 +137,7 @@ function AgentCard({ agent }: { agent: RosterEntry }) {
         <dl className="grid gap-4 border-t border-[color:var(--brand-navy)]/8 px-3 py-3">
           <DetailList label="What you control" items={agent.controls} />
           <div className="min-w-0">
-            <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/60">
+            <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/70">
               Approval required
             </dt>
             <dd className="mt-1.5 flex items-start gap-2 text-sm leading-snug text-[color:var(--brand-navy)]/85">
@@ -154,7 +154,7 @@ function AgentCard({ agent }: { agent: RosterEntry }) {
 
       <div className="mt-4 rounded-lg border border-dashed border-[color:var(--brand-navy)]/20 bg-[color:var(--brand-paper)] p-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/70">
             {REP_LABEL}
           </span>
           <StatusChip status={agent.representative.status} />
@@ -278,7 +278,7 @@ function AgentsPage() {
                     {h.payload}
                   </span>
                   <ArrowRight
-                    className="h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/50"
+                    className="h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/70"
                     aria-hidden
                   />
                 </div>

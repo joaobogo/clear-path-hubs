@@ -33,7 +33,7 @@ export function NextStepNote({
       )}
     >
       {next.overdue ? (
-        <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" aria-hidden />
+        <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning-foreground" aria-hidden />
       ) : waitingOnClient ? (
         <UserCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
       ) : (
