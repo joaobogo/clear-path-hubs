@@ -922,57 +922,6 @@ function CandidatesEmptyState({
   );
 }
 
-function LegacyCandidatesEmptyState({
-  hasCandidates,
-  activeFilters,
-  onClear,
-}: {
-  hasCandidates: boolean;
-  activeFilters: { key: string; label: string }[];
-  onClear: () => void;
-}) {
- const filtered = hasCandidates && activeFilters.length > 0;
- return (
- <div className="rounded-xl border bg-card p-10 text-center">
- <div className="text-base font-medium">
- {filtered
- ? "No candidates match the selected filters."
- : hasCandidates
- ? "No candidates to show."
- : "No candidates approved for you yet."}
- </div>
- <div className="text-sm text-muted-foreground mt-1 max-w-md mx-auto">
- {filtered ? (
- <>
- These filters removed every result:{" "}
- <span className="font-medium text-foreground">
- {activeFilters.map((f) => f.label).join(" · ")}
- </span>
- </>
- ) : (
- "Your TaaSFlow team is building the pipeline for your roles. Candidates appear here once they're approved for you."
- )}
- </div>
- <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
- {filtered ? (
- <Button size="sm" variant="outline" onClick={onClear}>
- Clear all filters
- </Button>
- ) : (
- <>
- <Button size="sm" asChild>
- <Link to="/client/positions">See your roles</Link>
- </Button>
- <Button size="sm" variant="outline" asChild>
- <Link to="/client/conversations">Ask your recruiter</Link>
- </Button>
- </>
- )}
- </div>
- </div>
- );
-}
-
 function CompactList({
  rows,
  orgSearch,
