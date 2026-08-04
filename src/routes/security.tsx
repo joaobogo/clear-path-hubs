@@ -44,7 +44,7 @@ function StateBadge({ state }: { state: TrustSection["state"] }) {
 function TrustCenterPage() {
   return (
     <SiteShell>
-      <PublicSection className="pb-8">
+      <PublicSection className="pb-4">
         <PublicPage>
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/50">
             Trust Center
@@ -110,7 +110,7 @@ function TrustCenterPage() {
         </PublicPage>
       </PublicSection>
 
-      <PublicSection>
+      <PublicSection className="pt-10">
         <PublicPage className="space-y-10">
           {TRUST_SECTIONS.map((section) => (
             <article
