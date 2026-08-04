@@ -197,12 +197,14 @@ export const FOOTER_GROUPS: NavGroup[] = [
     label: "Legal",
     links: [
       { to: "/security",    label: "Trust Center" },
+      { to: "/status",      label: "Status" },
       { to: "/privacy",     label: "Privacy" },
       { to: "/terms",       label: "Terms" },
       { to: "/sitemap.xml", label: "Sitemap", external: true },
     ],
   },
 ];
+
 
 export const FOOTER_DESCRIPTION =
   "TaaSFlow is an AI Hiring Intelligence Platform. Agents run the search, evidence backs every score, and ranked candidates land in a live Decision Workspace for one flat fee.";
