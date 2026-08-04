@@ -70,9 +70,13 @@ export function StepRail({
               <span className="min-w-0">
                 <span className="block truncate font-medium">{step.title}</span>
                 <span className="block text-xs">
-                  {done ? "Done" : `${step.minutes} min`}
-                  {!step.required && !done ? " · optional" : ""}
+                  {done
+                    ? step.required
+                      ? "Done"
+                      : "Reviewed"
+                    : `${step.minutes} min${step.required ? "" : " · optional"}`}
                 </span>
+
               </span>
             </button>
           </li>
