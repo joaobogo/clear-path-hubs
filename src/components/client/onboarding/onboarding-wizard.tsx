@@ -52,7 +52,7 @@ import {
 } from "@/lib/onboarding.functions";
 import { retryBlueprintAnalysis } from "@/lib/blueprint.functions";
 import { setRoleIntensity } from "@/lib/control-room.functions";
-import { ErrorState, PermissionDenied, SkeletonRows } from "@/components/client/states";
+import { EmptyState, ErrorState, PermissionDenied, SkeletonRows } from "@/components/client/states";
 
 /**
  * First-run sequence — ten steps that configure the hiring system rather than
@@ -123,16 +123,17 @@ export function OnboardingWizard({ orgId }: { orgId?: string }) {
       <ErrorState
         title="We could not load your setup"
         description="Your saved answers are safe. Try again in a moment."
-        action={{ label: "Try again", onClick: () => void stateQuery.refetch() }}
+        onRetry={() => void stateQuery.refetch()}
       />
     );
   }
 
   if (!state?.organization_id) {
     return (
-      <ErrorState
+      <EmptyState
         title="No workspace yet"
-        description="This setup starts once a workspace exists. Complete intake and we will bring you straight back here."
+        description="This setup starts once a workspace exists."
+        whatAppearsHere="Once your workspace is created, the ten setup steps appear here."
         action={{ label: "Start intake", to: "/intake" }}
       />
     );
