@@ -1402,6 +1402,28 @@ function Home() {
       {/* 2b — STRAIGHT ANSWERS (sales-risk removal) */}
       <StraightAnswers />
 
+      {/* 2b2 — CALCULATOR (moved up: cost question answered early) */}
+      <section
+        id="roi-calculator"
+        className="scroll-mt-24 border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]"
+      >
+        <PublicSection>
+          <PublicPage>
+            <SectionHead
+              eyebrow="What it costs"
+              title="Do the math on your next hire."
+              lead="Compare package-based TaaSFlow pricing against contingency placement fees and internal recruiter loading — for your actual role mix. Numbers reference SHRM & Ashby 2025 benchmarks; adjust to your reality."
+            />
+
+            <div className="mt-8">
+              <HomeCalculator />
+            </div>
+          </PublicPage>
+        </PublicSection>
+      </section>
+
+
+
       {/* 2c — PILOT */}
       <PublicSection>
         <PublicPage>
@@ -1514,26 +1536,8 @@ function Home() {
         </PublicPage>
       </PublicSection>
 
-      {/* 4 — CALCULATOR */}
-      <section
-        id="roi-calculator"
-        className="scroll-mt-24 border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]"
-      >
-        <PublicSection>
-          <PublicPage>
-            <SectionHead
-              eyebrow="What it costs"
-              title="Do the math on your next hire."
-              lead="Compare package-based TaaSFlow pricing against contingency placement fees and internal recruiter loading — for your actual role mix. Numbers reference SHRM & Ashby 2025 benchmarks; adjust to your reality."
-            />
 
-            <div className="mt-8">
-              <HomeCalculator />
-            </div>
 
-          </PublicPage>
-        </PublicSection>
-      </section>
 
       {/* 5 — MODEL COMPARISON */}
       <PublicSection>
