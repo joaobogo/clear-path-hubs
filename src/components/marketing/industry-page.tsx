@@ -77,7 +77,12 @@ export function IndustryPage({ entry }: { entry: IndustryEntry }) {
         ]}
       />
       {config.spec.sections.map((key) => (
-        <SectionRenderer key={key} sectionKey={key} ctx={ctx} />
+        <Fragment key={key}>
+          <SectionRenderer sectionKey={key} ctx={ctx} />
+          {key === configAnchor ? (
+            <VerticalConfigurationSection slug={entry.slug} industryName={entry.name} />
+          ) : null}
+        </Fragment>
       ))}
       {jsonLd ? (
         <script
