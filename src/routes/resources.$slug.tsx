@@ -13,7 +13,7 @@ import {
 } from "@/content/resources";
 
 export const Route = createFileRoute("/resources/$slug")({
-  loader: ({ params }) => {
+  loader: ({ params }): { guide: ResourceGuide } => {
     const guide = getResourceGuide(params.slug);
     if (!guide) throw notFound();
     return { guide };
@@ -215,7 +215,7 @@ function RelatedCard({ guide }: { guide: ResourceGuide }) {
 }
 
 function ResourceGuidePage() {
-  const { guide } = Route.useLoaderData();
+  const { guide } = Route.useLoaderData() as { guide: ResourceGuide };
   const read = guideReadMinutes(guide);
   const related = guide.related
     .map((slug) => RESOURCE_GUIDES.find((g) => g.slug === slug))
