@@ -23,6 +23,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
 import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
 import { SupportViewBanner } from "@/components/support-view-banner";
+import { DegradedModeBanner } from "@/components/client/degraded-mode-banner";
+
 import {
  SupportViewContext,
  type SupportViewState,
