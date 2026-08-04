@@ -140,163 +140,189 @@ function ProfilePage() {
  </p>
  </header>
 
- <form onSubmit={submit} className="space-y-6">
- <section className="rounded-lg border bg-card p-5 space-y-3">
- <h2 className="text-sm font-medium">Contact & basics</h2>
- <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
- <div>
- <Label>Full name</Label>
- <Input
- required
- value={form.full_name}
- onChange={(e) => setForm({ ...form, full_name: e.target.value })}
- />
- </div>
- <div>
- <Label>Phone</Label>
- <Input
- value={form.phone}
- onChange={(e) => setForm({ ...form, phone: e.target.value })}
- />
- </div>
- <div>
- <Label>Location</Label>
- <Input
- value={form.location}
- onChange={(e) => setForm({ ...form, location: e.target.value })}
- />
- </div>
- <div>
- <Label>Timezone</Label>
- <Input
- placeholder="Europe/Lisbon"
- value={form.timezone}
- onChange={(e) => setForm({ ...form, timezone: e.target.value })}
- />
- </div>
- <div className="sm:col-span-2">
- <Label>Headline</Label>
- <Input
- placeholder="Senior backend engineer"
- value={form.headline}
- onChange={(e) => setForm({ ...form, headline: e.target.value })}
- />
- </div>
- <div>
- <Label>Years of experience</Label>
- <Input
- type="number"
- min={0}
- max={80}
- value={form.years_experience}
- onChange={(e) =>
- setForm({ ...form, years_experience: e.target.value })
- }
- />
- </div>
- <div>
- <Label>LinkedIn URL</Label>
- <Input
- value={form.linkedin_url}
- onChange={(e) => setForm({ ...form, linkedin_url: e.target.value })}
- />
- </div>
- <div className="sm:col-span-2">
- <Label>Portfolio / website URL</Label>
- <Input
- value={form.portfolio_url}
- onChange={(e) => setForm({ ...form, portfolio_url: e.target.value })}
- />
- </div>
- <div className="sm:col-span-2">
- <Label>Summary</Label>
- <Textarea
- rows={4}
- value={form.summary}
- onChange={(e) => setForm({ ...form, summary: e.target.value })}
- placeholder="A short paragraph about what you do best."
- />
- </div>
- </div>
- </section>
+      <form onSubmit={submit} className="space-y-6">
+        <section className="rounded-lg border bg-card p-5 space-y-3">
+          <h2 className="text-sm font-medium">Contact &amp; basics</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <Label htmlFor="p-full-name">Full name</Label>
+              <Input
+                id="p-full-name"
+                required
+                value={form.full_name}
+                onChange={(e) => setForm({ ...form, full_name: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="p-phone">Phone</Label>
+              <Input
+                id="p-phone"
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="p-location">Location</Label>
+              <Input
+                id="p-location"
+                value={form.location}
+                onChange={(e) => setForm({ ...form, location: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="p-timezone">Timezone</Label>
+              <Input
+                id="p-timezone"
+                placeholder="Europe/Lisbon"
+                value={form.timezone}
+                onChange={(e) => setForm({ ...form, timezone: e.target.value })}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <Label htmlFor="p-headline">Headline</Label>
+              <Input
+                id="p-headline"
+                placeholder="Senior backend engineer"
+                value={form.headline}
+                onChange={(e) => setForm({ ...form, headline: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="p-years">Years of experience</Label>
+              <Input
+                id="p-years"
+                type="number"
+                min={0}
+                max={80}
+                value={form.years_experience}
+                onChange={(e) =>
+                  setForm({ ...form, years_experience: e.target.value })
+                }
+              />
+            </div>
+            <div>
+              <Label htmlFor="p-linkedin">LinkedIn URL</Label>
+              <Input
+                id="p-linkedin"
+                type="url"
+                inputMode="url"
+                placeholder="https://linkedin.com/in/…"
+                value={form.linkedin_url}
+                onChange={(e) => setForm({ ...form, linkedin_url: e.target.value })}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <Label htmlFor="p-portfolio">Portfolio / website URL</Label>
+              <Input
+                id="p-portfolio"
+                type="url"
+                inputMode="url"
+                placeholder="https://…"
+                value={form.portfolio_url}
+                onChange={(e) => setForm({ ...form, portfolio_url: e.target.value })}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <Label htmlFor="p-summary">Summary</Label>
+              <Textarea
+                id="p-summary"
+                rows={4}
+                value={form.summary}
+                onChange={(e) => setForm({ ...form, summary: e.target.value })}
+                placeholder="A short paragraph about what you do best."
+              />
+            </div>
+          </div>
+        </section>
 
- <section className="rounded-lg border bg-card p-5 space-y-3">
- <h2 className="text-sm font-medium">Skills</h2>
- <Label className="text-xs text-muted-foreground">Comma-separated</Label>
- <Input
- value={form.skills}
- onChange={(e) => setForm({ ...form, skills: e.target.value })}
- placeholder="TypeScript, PostgreSQL, GraphQL"
- />
- </section>
+        <section className="rounded-lg border bg-card p-5 space-y-3">
+          <h2 className="text-sm font-medium">Skills</h2>
+          <Label htmlFor="p-skills" className="text-xs text-muted-foreground">
+            Comma-separated
+          </Label>
+          <Input
+            id="p-skills"
+            value={form.skills}
+            onChange={(e) => setForm({ ...form, skills: e.target.value })}
+            placeholder="TypeScript, PostgreSQL, GraphQL"
+          />
+        </section>
 
- <section className="rounded-lg border bg-card p-5 space-y-3">
- <h2 className="text-sm font-medium">Experience, education, languages, certifications</h2>
- <p className="text-xs text-muted-foreground">
- Enter JSON arrays. A friendlier editor is coming — this keeps parsing exact.
- </p>
- <div>
- <Label>Experience</Label>
- <Textarea
- rows={5}
- value={form.experience_text}
- onChange={(e) => setForm({ ...form, experience_text: e.target.value })}
- />
- </div>
- <div>
- <Label>Education</Label>
- <Textarea
- rows={4}
- value={form.education_text}
- onChange={(e) => setForm({ ...form, education_text: e.target.value })}
- />
- </div>
- <div>
- <Label>Languages</Label>
- <Textarea
- rows={3}
- value={form.languages_text}
- onChange={(e) => setForm({ ...form, languages_text: e.target.value })}
- />
- </div>
- <div>
- <Label>Certifications</Label>
- <Textarea
- rows={3}
- value={form.certifications_text}
- onChange={(e) => setForm({ ...form, certifications_text: e.target.value })}
- placeholder='[{"name":"AWS Solutions Architect","year":2024}]'
- />
- </div>
- </section>
+        <section className="rounded-lg border bg-card p-5 space-y-3">
+          <h2 className="text-sm font-medium">Experience, education, languages, certifications</h2>
+          <p className="text-xs text-muted-foreground">
+            Enter JSON arrays. A friendlier editor is coming — this keeps parsing exact.
+          </p>
+          <div>
+            <Label htmlFor="p-experience">Experience</Label>
+            <Textarea
+              id="p-experience"
+              rows={5}
+              value={form.experience_text}
+              onChange={(e) => setForm({ ...form, experience_text: e.target.value })}
+            />
+          </div>
+          <div>
+            <Label htmlFor="p-education">Education</Label>
+            <Textarea
+              id="p-education"
+              rows={4}
+              value={form.education_text}
+              onChange={(e) => setForm({ ...form, education_text: e.target.value })}
+            />
+          </div>
+          <div>
+            <Label htmlFor="p-languages">Languages</Label>
+            <Textarea
+              id="p-languages"
+              rows={3}
+              value={form.languages_text}
+              onChange={(e) => setForm({ ...form, languages_text: e.target.value })}
+            />
+          </div>
+          <div>
+            <Label htmlFor="p-certifications">Certifications</Label>
+            <Textarea
+              id="p-certifications"
+              rows={3}
+              value={form.certifications_text}
+              onChange={(e) => setForm({ ...form, certifications_text: e.target.value })}
+              placeholder='[{"name":"AWS Solutions Architect","year":2024}]'
+            />
+          </div>
+        </section>
 
- <section className="rounded-lg border bg-card p-5 space-y-3">
- <h2 className="text-sm font-medium">Work preferences</h2>
- <div>
- <Label>Work authorization</Label>
- <Input
- value={form.work_auth}
- onChange={(e) => setForm({ ...form, work_auth: e.target.value })}
- placeholder="EU citizen, US work permit, etc."
- />
- </div>
- <div>
- <Label>Availability</Label>
- <Input
- value={form.availability}
- onChange={(e) => setForm({ ...form, availability: e.target.value })}
- placeholder="Available in 4 weeks, immediate, etc."
- />
- </div>
- <div>
- <Label>Compensation preferences</Label>
- <Input
- value={form.comp}
- onChange={(e) => setForm({ ...form, comp: e.target.value })}
- placeholder="Range or expectations"
- />
- </div>
- </section>
+        <section className="rounded-lg border bg-card p-5 space-y-3">
+          <h2 className="text-sm font-medium">Work preferences</h2>
+          <div>
+            <Label htmlFor="p-work-auth">Work authorization</Label>
+            <Input
+              id="p-work-auth"
+              value={form.work_auth}
+              onChange={(e) => setForm({ ...form, work_auth: e.target.value })}
+              placeholder="EU citizen, US work permit, etc."
+            />
+          </div>
+          <div>
+            <Label htmlFor="p-availability">Availability</Label>
+            <Input
+              id="p-availability"
+              value={form.availability}
+              onChange={(e) => setForm({ ...form, availability: e.target.value })}
+              placeholder="Available in 4 weeks, immediate, etc."
+            />
+          </div>
+          <div>
+            <Label htmlFor="p-comp">Compensation preferences</Label>
+            <Input
+              id="p-comp"
+              value={form.comp}
+              onChange={(e) => setForm({ ...form, comp: e.target.value })}
+              placeholder="Range or expectations"
+            />
+          </div>
+        </section>
+
 
  <div className="flex gap-2">
  <Button type="submit" disabled={save.isPending}>
