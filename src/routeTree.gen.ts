@@ -31,6 +31,7 @@ import { Route as McpRouteImport } from './routes/mcp'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as KnowledgeBaseRouteImport } from './routes/knowledge-base'
 import { Route as JourneyRouteImport } from './routes/journey'
+import { Route as IntegrationsRouteImport } from './routes/integrations'
 import { Route as IntakeRouteImport } from './routes/intake'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as GlobalTalentRouteImport } from './routes/global-talent'
@@ -286,6 +287,11 @@ const KnowledgeBaseRoute = KnowledgeBaseRouteImport.update({
 const JourneyRoute = JourneyRouteImport.update({
   id: '/journey',
   path: '/journey',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IntegrationsRoute = IntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IntakeRoute = IntakeRouteImport.update({
@@ -1113,6 +1119,7 @@ export interface FileRoutesByFullPath {
   '/global-talent': typeof GlobalTalentRoute
   '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
+  '/integrations': typeof IntegrationsRoute
   '/journey': typeof JourneyRoute
   '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
@@ -1282,6 +1289,7 @@ export interface FileRoutesByTo {
   '/global-talent': typeof GlobalTalentRoute
   '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
+  '/integrations': typeof IntegrationsRoute
   '/journey': typeof JourneyRoute
   '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
@@ -1443,6 +1451,7 @@ export interface FileRoutesById {
   '/global-talent': typeof GlobalTalentRoute
   '/how-it-works': typeof HowItWorksRoute
   '/intake': typeof IntakeRoute
+  '/integrations': typeof IntegrationsRoute
   '/journey': typeof JourneyRoute
   '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
@@ -1614,6 +1623,7 @@ export interface FileRouteTypes {
     | '/global-talent'
     | '/how-it-works'
     | '/intake'
+    | '/integrations'
     | '/journey'
     | '/knowledge-base'
     | '/login'
@@ -1783,6 +1793,7 @@ export interface FileRouteTypes {
     | '/global-talent'
     | '/how-it-works'
     | '/intake'
+    | '/integrations'
     | '/journey'
     | '/knowledge-base'
     | '/login'
@@ -1943,6 +1954,7 @@ export interface FileRouteTypes {
     | '/global-talent'
     | '/how-it-works'
     | '/intake'
+    | '/integrations'
     | '/journey'
     | '/knowledge-base'
     | '/login'
@@ -2114,6 +2126,7 @@ export interface RootRouteChildren {
   GlobalTalentRoute: typeof GlobalTalentRoute
   HowItWorksRoute: typeof HowItWorksRoute
   IntakeRoute: typeof IntakeRoute
+  IntegrationsRoute: typeof IntegrationsRoute
   JourneyRoute: typeof JourneyRoute
   KnowledgeBaseRoute: typeof KnowledgeBaseRoute
   LoginRoute: typeof LoginRoute
@@ -2332,6 +2345,13 @@ declare module '@tanstack/react-router' {
       path: '/journey'
       fullPath: '/journey'
       preLoaderRoute: typeof JourneyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/integrations': {
+      id: '/integrations'
+      path: '/integrations'
+      fullPath: '/integrations'
+      preLoaderRoute: typeof IntegrationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/intake': {
@@ -3694,6 +3714,7 @@ const rootRouteChildren: RootRouteChildren = {
   GlobalTalentRoute: GlobalTalentRoute,
   HowItWorksRoute: HowItWorksRoute,
   IntakeRoute: IntakeRoute,
+  IntegrationsRoute: IntegrationsRoute,
   JourneyRoute: JourneyRoute,
   KnowledgeBaseRoute: KnowledgeBaseRoute,
   LoginRoute: LoginRoute,
