@@ -9854,6 +9854,60 @@ export type Database = {
           },
         ]
       }
+      status_incidents: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          kind: string
+          published: boolean
+          resolved_at: string | null
+          scheduled_end: string | null
+          scheduled_start: string | null
+          services: string[]
+          severity: string
+          started_at: string
+          state: string
+          summary: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: string
+          published?: boolean
+          resolved_at?: string | null
+          scheduled_end?: string | null
+          scheduled_start?: string | null
+          services?: string[]
+          severity?: string
+          started_at?: string
+          state?: string
+          summary: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: string
+          published?: boolean
+          resolved_at?: string | null
+          scheduled_end?: string | null
+          scheduled_start?: string | null
+          services?: string[]
+          severity?: string
+          started_at?: string
+          state?: string
+          summary?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       subscription_webhook_events: {
         Row: {
           event_id: string

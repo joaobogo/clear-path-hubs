@@ -126,8 +126,8 @@ export const PRIMARY_NAV: NavLink[] = PRIMARY_ITEMS.filter(
 
 export const FOOTER_GROUPS: NavGroup[] = [
   {
-    // Product column. Status and Changelog are intentionally absent: no such
-    // route exists yet, and this file must never advertise a dead link.
+    // Product column. Changelog is intentionally absent: no such route exists
+    // yet, and this file must never advertise a dead link.
     label: "Product",
     links: [
       { to: "/platform", label: "Platform" },
@@ -135,8 +135,10 @@ export const FOOTER_GROUPS: NavGroup[] = [
       { to: "/system",   label: "Intelligence" },
       { to: "/integrations", label: "Integrations" },
       { to: "/security", label: "Security" },
+      { to: "/status",   label: "System Status" },
     ],
   },
+
   {
 
     label: "For Companies",
@@ -195,12 +197,14 @@ export const FOOTER_GROUPS: NavGroup[] = [
     label: "Legal",
     links: [
       { to: "/security",    label: "Trust Center" },
+      { to: "/status",      label: "Status" },
       { to: "/privacy",     label: "Privacy" },
       { to: "/terms",       label: "Terms" },
       { to: "/sitemap.xml", label: "Sitemap", external: true },
     ],
   },
 ];
+
 
 export const FOOTER_DESCRIPTION =
   "TaaSFlow is an AI Hiring Intelligence Platform. Agents run the search, evidence backs every score, and ranked candidates land in a live Decision Workspace for one flat fee.";

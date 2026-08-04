@@ -55,6 +55,7 @@ export const STATIC_PATHS = [
   "/system",
   "/trust",
   "/security",
+  "/status",
   "/intake",
   "/talent-marketplace",
   "/candidate-join",
