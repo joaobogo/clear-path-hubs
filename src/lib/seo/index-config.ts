@@ -8,6 +8,7 @@
 import { CANONICAL_ORIGIN } from "@/lib/canonical-origin";
 import { listIndustrySlugs } from "@/lib/marketing/content";
 import { listAllBlogRows } from "@/lib/marketing/blog-catalog";
+import { listResourceGuideSlugs } from "@/content/resources";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 import { BLOG_CATEGORY_BY_SLUG } from "@/lib/marketing/blog-manifest";
 
@@ -106,6 +107,11 @@ export function collectSitemapEntries(): SitemapEntry[] {
   for (const slug of industries) entries.push({ path: `/industries/${slug}`, priority: "0.7" });
   for (const slug of industries) {
     entries.push({ path: `/industries/${slug}/briefing`, priority: "0.6" });
+  }
+
+  // Authority library pillar guides at /resources/<slug>.
+  for (const slug of listResourceGuideSlugs()) {
+    entries.push({ path: `/resources/${slug}`, priority: "0.7" });
   }
 
   for (const categorySlug of Object.keys(BLOG_CATEGORY_BY_SLUG)) {
