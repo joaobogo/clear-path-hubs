@@ -268,6 +268,11 @@ function OverviewPage() {
         </div>
       </header>
 
+      {/* Is the system working, and is what I'm looking at current? */}
+      <SystemHealthStrip organizationId={orgId} />
+
+
+
       {isError && (
         <div className="flex items-center gap-3 rounded-lg border taas-bd-warning taas-bg-warning-soft px-4 py-3 text-sm">
           <AlertTriangle className="h-4 w-4 taas-fg-warning" />
