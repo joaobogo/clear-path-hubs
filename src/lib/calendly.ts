@@ -12,8 +12,15 @@ const WIDGET_CSS_URL = "https://assets.calendly.com/assets/external/widget.css";
 
 export const CALENDLY_BOOKING_URL = CALENDLY_URL;
 
+type CalendlyPrefill = { name?: string; email?: string };
+
 type CalendlyApi = {
-  initPopupWidget?: (opts: { url: string }) => void;
+  initPopupWidget?: (opts: { url: string; prefill?: CalendlyPrefill }) => void;
+  initInlineWidget?: (opts: {
+    url: string;
+    parentElement: HTMLElement;
+    prefill?: CalendlyPrefill;
+  }) => void;
   initBadgeWidget?: (opts: {
     url: string;
     text: string;
@@ -71,9 +78,46 @@ function ensureCalendlyLoaded(): Promise<void> {
   });
 }
 
-export async function openCalendlyPopup() {
+/**
+ * Popup scheduler. Returns false when the vendor widget never loaded (blocked
+ * by an extension, offline, CSP) so callers can fall back to a real link
+ * instead of pretending a booking happened.
+ */
+export async function openCalendlyPopup(prefill?: CalendlyPrefill): Promise<boolean> {
   await ensureCalendlyLoaded();
-  calendly()?.initPopupWidget?.({ url: CALENDLY_URL });
+  const api = calendly();
+  if (!api?.initPopupWidget) return false;
+  api.initPopupWidget({ url: CALENDLY_URL, prefill });
+  return true;
+}
+
+/** Inline scheduler — survives navigation-free flows and popup blockers. */
+export async function initCalendlyInline(
+  parentElement: HTMLElement,
+  prefill?: CalendlyPrefill,
+): Promise<boolean> {
+  await ensureCalendlyLoaded();
+  const api = calendly();
+  if (!api?.initInlineWidget) return false;
+  parentElement.innerHTML = "";
+  api.initInlineWidget({ url: CALENDLY_URL, parentElement, prefill });
+  return true;
+}
+
+/**
+ * Fires once the visitor actually confirms a time. Calendly posts this from the
+ * embed; without listening for it we can only guess that a call was booked.
+ */
+export function onCalendlyScheduled(handler: () => void): () => void {
+  if (typeof window === "undefined") return () => undefined;
+  const listener = (event: MessageEvent) => {
+    const data = event.data as { event?: string } | null;
+    if (typeof data === "object" && data && data.event === "calendly.event_scheduled") {
+      handler();
+    }
+  };
+  window.addEventListener("message", listener);
+  return () => window.removeEventListener("message", listener);
 }
 
 export async function initCalendlyBadge() {
