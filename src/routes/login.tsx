@@ -3,6 +3,7 @@ import { FormShell } from "@/components/marketing/form-shell";
 import { useState, useEffect } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -108,7 +109,33 @@ function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<"signin" | "forgot" | "confirm">("signin");
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [pickerFor, setPickerFor] = useState<SessionMembership[] | null>(null);
+
+  // Google sign-in. Same managed provider used at sign-up, so anyone who
+  // created their account with Google can get back in the same way.
+  const onGoogle = async () => {
+    setGoogleLoading(true);
+    try {
+      const safe = sanitizeRedirect(redirect);
+      const returnTo = `${window.location.origin}/login${
+        safe ? `?redirect=${encodeURIComponent(safe)}` : ""
+      }`;
+      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: returnTo });
+      if (result.error) {
+        toast.error("Google sign-in didn't complete. Try again or use your email and password.");
+        return;
+      }
+      if (result.redirected) return;
+      // Popup flow: the session is already set — reload so the signed-in
+      // routing effect picks the right destination.
+      window.location.href = returnTo;
+    } catch {
+      toast.error("Google sign-in didn't complete. Try again or use your email and password.");
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
 
   // Already signed in? Route accordingly.
   useEffect(() => {
@@ -290,7 +317,42 @@ function LoginPage() {
               ))}
             </div>
           ) : mode === "signin" ? (
-            <form onSubmit={onSignIn} className="space-y-3">
+            <div className="space-y-4">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full gap-2"
+                disabled={googleLoading || loading}
+                onClick={onGoogle}
+              >
+                <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    fill="#4285F4"
+                    d="M23.5 12.3c0-.9-.1-1.5-.2-2.2H12v4.1h6.6c-.1 1.1-.8 2.7-2.3 3.8v3.2h3.7c2.2-2 3.5-5 3.5-8.9z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 24c3.2 0 5.9-1.1 7.9-2.9l-3.7-3.2c-1 .7-2.4 1.2-4.2 1.2-3.3 0-6-2.2-7-5.2H1.2v3.3C3.2 21.3 7.3 24 12 24z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5 13.9c-.2-.7-.4-1.4-.4-2.2s.1-1.5.4-2.2V6.2H1.2A12 12 0 0 0 0 11.7c0 1.9.5 3.8 1.2 5.5L5 13.9z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 4.7c1.8 0 3.4.6 4.6 1.8l3.3-3.2C17.9 1.2 15.2 0 12 0 7.3 0 3.2 2.7 1.2 6.2L5 9.5c1-3 3.7-4.8 7-4.8z"
+                  />
+                </svg>
+                {googleLoading ? "Opening Google…" : "Continue with Google"}
+              </Button>
+              <div className="flex items-center gap-3">
+                <span className="h-px flex-1 bg-border" />
+                <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                  or use your email
+                </span>
+                <span className="h-px flex-1 bg-border" />
+              </div>
+              <form onSubmit={onSignIn} className="space-y-3">
               <div className="space-y-1.5">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -359,7 +421,8 @@ function LoginPage() {
                 </Link>{" "}
                 to talk to our team.
               </p>
-            </form>
+              </form>
+            </div>
           ) : mode === "forgot" ? (
             <form onSubmit={onForgot} className="space-y-3">
               <div className="space-y-1.5">
