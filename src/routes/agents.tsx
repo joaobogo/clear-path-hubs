@@ -1,13 +1,24 @@
 /**
- * /agents — Agent Layer entry point.
+ * /agents — the public Agent Layer page.
  *
- * Minimal, factual route so the primary navigation has no dead link. The full
- * experience is built in a later prompt; everything stated here is already
- * true of the running system and is sourced from canonical product language.
+ * Roster, orchestration and approval limits are all derived from
+ * src/config/agent-roster.ts, which maps every published agent to real
+ * functionality (src/lib/agents/registry.ts, the CV pipeline runner, the
+ * blueprint compiler, the scoring engine and audit events).
+ *
+ * No live status is shown anywhere. Illustrative activity sits under a
+ * visible "Representative data" label.
  */
 
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Check } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  ChevronDown,
+  Lock,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 
 import {
   PublicPage,
@@ -23,147 +34,357 @@ import {
   PRODUCT_CATEGORY,
   SYSTEM_CLAIM,
 } from "@/config/product-language";
+import {
+  ROSTER,
+  HANDOFFS,
+  APPROVAL_LIMITS,
+  AGENT_STATUSES,
+  type RosterEntry,
+} from "@/config/agent-roster";
 
 export const Route = createFileRoute("/agents")({
   head: () =>
     marketingHead(undefined, "/agents", {
-      title: `${MODULES.agents} — how TaaSFlow agents run a search`,
-      description: `${SYSTEM_CLAIM} The ${MODULES.agents} sources, screens and scores against a versioned blueprint, with expert oversight as the approval gate before any shortlist reaches you.`,
+      title: `${MODULES.agents} — the eight agents that run a TaaSFlow search`,
+      description: `${SYSTEM_CLAIM} Intake, blueprint, discovery, evidence, scoring, pipeline, coordination and governance agents — each with stated inputs, outputs, controls, approval gates and recorded events.`,
     }),
   component: AgentsPage,
 });
 
-/** What the agents do, in the order the system runs them. */
-const RUNS = [
-  {
-    name: "Sourcing",
-    detail:
-      "Continuously identifies candidates matching the compiled blueprint, refreshed on a weekly cadence rather than batched between calls.",
-  },
-  {
-    name: "Screening",
-    detail:
-      "Reads each CV against the role's must-haves and records what supports or contradicts each requirement.",
-  },
-  {
-    name: "Scoring",
-    detail:
-      "Produces a 0–100 score under a fixed rubric version, with the cited evidence attached to every line.",
-  },
-] as const;
+const REP_LABEL = "Representative data";
 
-const CONTROLS = [
-  OVERSIGHT_LANGUAGE.approvalGate,
-  OVERSIGHT_LANGUAGE.escalation,
-  OVERSIGHT_LANGUAGE.governance,
-] as const;
+function StatusChip({ status }: { status: (typeof AGENT_STATUSES)[number] }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--brand-navy)]/12 bg-white px-2.5 py-0.5 text-[11px] font-semibold text-[color:var(--brand-navy)]/80">
+      <span
+        className="h-1.5 w-1.5 rounded-full bg-[color:var(--brand-ocean-text)]"
+        aria-hidden
+      />
+      {status}
+    </span>
+  );
+}
+
+function DetailList({ label, items }: { label: string; items: readonly string[] }) {
+  return (
+    <div className="min-w-0">
+      <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/60">
+        {label}
+      </dt>
+      <dd className="mt-1.5">
+        <ul className="space-y-1.5">
+          {items.map((line) => (
+            <li
+              key={line}
+              className="flex items-start gap-2 text-sm leading-snug text-[color:var(--brand-navy)]/85"
+            >
+              <span
+                className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--brand-ocean-text)]"
+                aria-hidden
+              />
+              <span className="min-w-0">{line}</span>
+            </li>
+          ))}
+        </ul>
+      </dd>
+    </div>
+  );
+}
+
+function AgentCard({ agent }: { agent: RosterEntry }) {
+  return (
+    <li className="flex min-w-0 flex-col rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-5 sm:p-6">
+      <div className="flex flex-wrap items-center gap-2">
+        <h3 className="text-lg font-semibold text-[color:var(--brand-navy)]">
+          {agent.role}
+        </h3>
+        <span
+          className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.1em] ${
+            agent.kind === "agent"
+              ? "bg-[color:var(--brand-ocean)]/10 text-[color:var(--brand-ocean-text)]"
+              : "bg-[color:var(--brand-navy)]/8 text-[color:var(--brand-navy)]/70"
+          }`}
+        >
+          {agent.kind === "agent" ? "You switch it on" : "Always on"}
+        </span>
+      </div>
+
+      <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/85">
+        {agent.purpose}
+      </p>
+
+      <p className="mt-3 rounded-lg bg-[color:var(--brand-paper)] px-3 py-2 text-xs leading-snug text-[color:var(--brand-navy)]/80">
+        <span className="font-semibold text-[color:var(--brand-navy)]">
+          Operating state:
+        </span>{" "}
+        {agent.operatingState}
+      </p>
+
+      <dl className="mt-4 grid gap-4">
+        <DetailList label="Inputs" items={agent.inputs} />
+        <DetailList label="Outputs" items={agent.outputs} />
+      </dl>
+
+      <details className="group mt-4 rounded-lg border border-[color:var(--brand-navy)]/10">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2 text-sm font-semibold text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]">
+          Controls, approvals and records
+          <ChevronDown
+            className="h-4 w-4 shrink-0 transition-transform group-open:rotate-180"
+            aria-hidden
+          />
+        </summary>
+        <dl className="grid gap-4 border-t border-[color:var(--brand-navy)]/8 px-3 py-3">
+          <DetailList label="What you control" items={agent.controls} />
+          <div className="min-w-0">
+            <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/60">
+              Approval required
+            </dt>
+            <dd className="mt-1.5 flex items-start gap-2 text-sm leading-snug text-[color:var(--brand-navy)]/85">
+              <Lock
+                className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/70"
+                aria-hidden
+              />
+              <span className="min-w-0">{agent.approval}</span>
+            </dd>
+          </div>
+          <DetailList label="Events recorded" items={agent.events} />
+        </dl>
+      </details>
+
+      <div className="mt-4 rounded-lg border border-dashed border-[color:var(--brand-navy)]/20 bg-[color:var(--brand-paper)] p-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/60">
+            {REP_LABEL}
+          </span>
+          <StatusChip status={agent.representative.status} />
+        </div>
+        <p className="mt-1.5 text-xs leading-snug text-[color:var(--brand-navy)]/80">
+          {agent.representative.activity}
+        </p>
+      </div>
+    </li>
+  );
+}
 
 function AgentsPage() {
   const related = MODULE_SECTIONS.filter((m) =>
-    ["blueprint", "evidence", "scoring", "workspace"].includes(m.key),
+    ["blueprint", "evidence", "scoring", "workspace", "governance"].includes(m.key),
   );
 
   return (
     <SiteShell>
+      {/* INTRO */}
+      <section
+        aria-labelledby="agents-hero"
+        className="relative overflow-hidden bg-gradient-to-b from-[color:var(--brand-sky)]/30 via-[color:var(--brand-paper)] to-[color:var(--brand-paper)]"
+      >
+        <PublicPage>
+          <div className="py-16 sm:py-20">
+            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80 backdrop-blur">
+              <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
+              {PRODUCT_CATEGORY}
+            </span>
+            <h1
+              id="agents-hero"
+              className="mt-4 max-w-4xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl"
+            >
+              Eight agents. Each one has a job, a limit and a log.
+            </h1>
+            <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
+              {SYSTEM_CLAIM} Agents run inside role-specific rules, seat
+              permissions, a frozen scoring rubric and approval gates — and every
+              action they take is recorded.
+            </p>
+
+            <ul className="mt-8 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                "Six agents you switch on or pause",
+                "Two always-on system automations",
+                "No candidate released without approval",
+              ].map((t) => (
+                <li
+                  key={t}
+                  className="inline-flex items-start gap-2 rounded-lg border border-[color:var(--brand-navy)]/10 bg-white px-3 py-2 text-sm font-semibold text-[color:var(--brand-navy)]"
+                >
+                  <Check
+                    className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean-text)]"
+                    aria-hidden
+                  />
+                  <span className="min-w-0">{t}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </PublicPage>
+      </section>
+
+      {/* ROSTER */}
       <PublicSection className="bg-white">
         <PublicPage>
           <div className="max-w-3xl">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
-              {PRODUCT_CATEGORY}
+              The roster
             </p>
-            <h1 className="mt-2 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-5xl">
-              {MODULES.agents}
-            </h1>
-            <p className="mt-4 text-lg text-[color:var(--brand-navy)]/80">
-              {SYSTEM_CLAIM} Agents run against the rubric compiled from your
-              intake — and every candidate they rank carries the evidence behind
-              the score.
+            <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
+              Every agent in the system.
+            </h2>
+            <p className="mt-3 text-[color:var(--brand-navy)]/80">
+              Operating state describes how each agent is configured — not a live
+              reading. Activity examples are labelled {REP_LABEL.toLowerCase()}.
             </p>
           </div>
 
-          <ol className="mt-10 grid gap-4 md:grid-cols-3">
-            {RUNS.map((r, i) => (
-              <li
-                key={r.name}
-                className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-6"
-              >
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
-                  Run {String(i + 1).padStart(2, "0")}
-                </p>
-                <h2 className="mt-1 text-lg font-semibold text-[color:var(--brand-navy)]">
-                  {r.name}
-                </h2>
-                <p className="mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">
-                  {r.detail}
-                </p>
-              </li>
+          <ul className="mt-10 grid gap-4 lg:grid-cols-2">
+            {ROSTER.map((a) => (
+              <AgentCard key={a.id} agent={a} />
             ))}
-          </ol>
+          </ul>
         </PublicPage>
       </PublicSection>
 
+      {/* ORCHESTRATION */}
       <PublicSection className="border-y border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
         <PublicPage>
-          <div className="grid gap-10 lg:grid-cols-2">
-            <div>
-              <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)]">
-                {OVERSIGHT_LANGUAGE.label}
-              </h2>
-              <p className="mt-3 text-[color:var(--brand-navy)]/80">
-                Agents do the search. People keep the controls.
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
+              Orchestration
+            </p>
+            <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
+              What each agent hands to the next.
+            </h2>
+            <p className="mt-3 text-[color:var(--brand-navy)]/80">
+              Agents do not talk in prose. Each one passes a structured record
+              forward, and the Governance Agent records the handoff.
+            </p>
+          </div>
+
+          <ol className="mt-10 grid gap-3">
+            {HANDOFFS.map((h, i) => (
+              <li
+                key={`${h.from}-${h.to}`}
+                className="grid min-w-0 gap-2 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-4 sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-4"
+              >
+                <div className="flex min-w-0 items-center gap-2">
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[color:var(--brand-ocean)]/10 text-[11px] font-semibold text-[color:var(--brand-ocean-text)]">
+                    {i + 1}
+                  </span>
+                  <span className="min-w-0 text-sm font-semibold text-[color:var(--brand-navy)]">
+                    {h.from}
+                  </span>
+                </div>
+                <div className="flex min-w-0 items-center gap-2 sm:justify-center">
+                  <span className="min-w-0 rounded-md bg-[color:var(--brand-paper)] px-2.5 py-1 text-xs font-medium text-[color:var(--brand-navy)]/80">
+                    {h.payload}
+                  </span>
+                  <ArrowRight
+                    className="h-4 w-4 shrink-0 text-[color:var(--brand-navy)]/50"
+                    aria-hidden
+                  />
+                </div>
+                <span className="min-w-0 text-sm font-semibold text-[color:var(--brand-navy)] sm:text-right">
+                  {h.to}
+                </span>
+              </li>
+            ))}
+          </ol>
+
+          <p className="mt-4 max-w-3xl text-sm text-[color:var(--brand-navy)]/75">
+            Approval gates sit between the blueprint and sourcing, and between
+            scoring and release. Work stops at those gates until a person clears
+            it.
+          </p>
+        </PublicPage>
+      </PublicSection>
+
+      {/* WHAT AGENTS CANNOT DO */}
+      <PublicSection className="bg-white">
+        <PublicPage>
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-ocean-text)]">
+              Hard limits
+            </p>
+            <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
+              What no agent can do without approval.
+            </h2>
+            <p className="mt-3 text-[color:var(--brand-navy)]/80">
+              These are enforced in the system, not stated as policy.
+            </p>
+          </div>
+
+          <ul className="mt-10 grid gap-3 md:grid-cols-2">
+            {APPROVAL_LIMITS.map((limit) => (
+              <li
+                key={limit}
+                className="flex min-w-0 items-start gap-3 rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-4"
+              >
+                <ShieldCheck
+                  className="mt-0.5 h-5 w-5 shrink-0 text-[color:var(--brand-ocean-text)]"
+                  aria-hidden
+                />
+                <span className="min-w-0 text-sm leading-snug text-[color:var(--brand-navy)]/85">
+                  {limit}
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-8 grid gap-3 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-5 sm:grid-cols-3">
+            {[
+              OVERSIGHT_LANGUAGE.approvalGate,
+              OVERSIGHT_LANGUAGE.escalation,
+              OVERSIGHT_LANGUAGE.governance,
+            ].map((c) => (
+              <p
+                key={c}
+                className="min-w-0 text-sm leading-snug text-[color:var(--brand-navy)]/85"
+              >
+                {c}
               </p>
-              <ul className="mt-6 space-y-3">
-                {CONTROLS.map((c) => (
-                  <li
-                    key={c}
-                    className="flex items-start gap-2 text-sm text-[color:var(--brand-navy)]/85"
-                  >
-                    <Check
-                      className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean-text)]"
+            ))}
+          </div>
+        </PublicPage>
+      </PublicSection>
+
+      {/* WHERE THE AGENTS PLUG IN */}
+      <PublicSection className="border-t border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
+        <PublicPage>
+          <div className="max-w-3xl">
+            <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
+              What the agents connect to.
+            </h2>
+          </div>
+          <ul className="mt-8 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            {related.map((m) => (
+              <li key={m.anchor}>
+                <Link
+                  to="/platform"
+                  hash={m.anchor}
+                  className="group block h-full rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-4 transition-colors hover:border-[color:var(--brand-navy)]/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+                >
+                  <span className="flex items-center gap-2 font-medium text-[color:var(--brand-navy)]">
+                    {m.name}
+                    <ArrowRight
+                      className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5"
                       aria-hidden
                     />
-                    <span>{c}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h2 className="font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)]">
-                What the agents connect to
-              </h2>
-              <ul className="mt-6 space-y-2">
-                {related.map((m) => (
-                  <li key={m.anchor}>
-                    <Link
-                      to="/platform"
-                      hash={m.anchor}
-                      className="group block rounded-lg border border-[color:var(--brand-navy)]/10 bg-white p-4 transition-colors hover:border-[color:var(--brand-navy)]/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-                    >
-                      <span className="flex items-center gap-2 font-medium text-[color:var(--brand-navy)]">
-                        {m.name}
-                        <ArrowRight
-                          className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
-                          aria-hidden
-                        />
-                      </span>
-                      <span className="mt-1 block text-sm text-[color:var(--brand-navy)]/80">
-                        {m.description}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+                  </span>
+                  <span className="mt-1 block text-sm text-[color:var(--brand-navy)]/80">
+                    {m.description}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </PublicPage>
       </PublicSection>
 
       <CtaSection
-        title="See the Agent Layer running on one of your roles."
-        description="Open a role and the agents start on the compiled blueprint. Every score arrives with the evidence behind it."
+        eyebrow="Ready to see it"
+        title="Open a role and switch the agents on."
+        description="You choose which agents run, what they may send, and what must be approved before a candidate reaches you."
+        primary={{ to: "/intake", label: "Open your first role" }}
+        secondary={{ to: "/platform", label: "See the platform" }}
       />
-
     </SiteShell>
   );
 }
