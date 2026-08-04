@@ -94,12 +94,12 @@ export const submitInquiry = createServerFn({ method: "POST" })
       throw new Error("Could not submit inquiry. Please try again in a moment.");
     }
 
-    // Teams channel ping (non-critical).
+    // Unified lead notification: Teams + internal email + delivery record.
     try {
       const { processLeadEvent } = await import("./leads/lead-pipeline.server");
       await processLeadEvent({
         leadType: "marketing_inquiry",
-        sourceId: row.id,
+        sourceId: inserted?.id ?? crypto.randomUUID(),
         source: data.kind ? `inquiry_${data.kind}` : "website_inquiry",
         sourcePage: data.source_path ?? null,
         fullName: data.name,
@@ -117,12 +117,12 @@ export const submitInquiry = createServerFn({ method: "POST" })
           { label: "Preferred slot", value: data.preferred_slot },
         ],
         recordTable: "marketing_inquiries",
-        recordId: row.id,
+        recordId: inserted?.id ?? null,
         linkPath: "/admin/pending-leads",
         priority: routing.priority === "urgent" || routing.priority === "high" ? routing.priority : null,
       });
-    } catch {
-      // ignore
+    } catch (err) {
+      console.error("[inquiry] lead notification failed", err);
     }
 
     return {
