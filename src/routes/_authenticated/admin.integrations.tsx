@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ProcessState } from "@/components/ds/process-state";
+import { CalendlyWebhookPanel } from "@/components/admin/calendly-webhook-panel";
 import {
   getIntegrationHealth,
   runIntegrationChecks,
@@ -232,6 +233,10 @@ function IntegrationHealthPage() {
           );
         })}
       </div>
+
+      <CalendlyWebhookPanel />
+
+
 
       <p className="text-xs text-muted-foreground">
         Tests are read-only: they list catalog entries, read CRM object names, resolve the
