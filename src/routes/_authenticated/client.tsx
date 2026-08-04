@@ -304,8 +304,11 @@ function ClientLayout() {
       ) : (
         <>
           <SectionTabs groups={CLIENT_SECTION_GROUPS} linkSearch={linkSearch} />
+          {/* Tells the user whether to wait or to act when something measured is off. */}
+          <DegradedModeBanner className="mt-4" />
           <Outlet />
         </>
+
 
       )}
  {showOnboarding && (
