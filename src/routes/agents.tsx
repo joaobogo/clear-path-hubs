@@ -159,7 +159,11 @@ function AgentsPage() {
         </PublicPage>
       </PublicSection>
 
-      <CtaSection />
+      <CtaSection
+        title="See the Agent Layer running on one of your roles."
+        description="Open a role and the agents start on the compiled blueprint. Every score arrives with the evidence behind it."
+      />
+
     </SiteShell>
   );
 }
