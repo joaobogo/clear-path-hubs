@@ -84,10 +84,10 @@ export function HeroDecisionWorkspace() {
       <div className="mt-3 grid gap-3 lg:grid-cols-2">
         {/* Agent runs */}
         <section className="min-w-0 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3">
-          <h3 className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/70">
+          <h2 className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/70">
             <Bot className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
             Active agent runs
-          </h3>
+          </h2>
           <ul className="mt-2 space-y-2">
             {AGENT_RUNS.map((r) => (
               <li key={r.name} className="min-w-0">
@@ -168,10 +168,10 @@ export function HeroDecisionWorkspace() {
 
         {/* Pipeline movement */}
         <section className="min-w-0 rounded-xl border border-[color:var(--brand-navy)]/10 bg-white p-3">
-          <h3 className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/70">
+          <h2 className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/70">
             <ArrowRight className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
             Pipeline movement · last 7 days
-          </h3>
+          </h2>
           <ul className="mt-2 space-y-1.5">
             {PIPELINE.map((p) => (
               <li key={p.stage} className="flex items-center gap-2">
@@ -195,14 +195,14 @@ export function HeroDecisionWorkspace() {
 
         {/* Recent system activity */}
         <section className="min-w-0 rounded-xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-3">
-          <h3 className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/70">
+          <h2 className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/70">
             <Activity className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
             Recent system activity
-          </h3>
+          </h2>
           <ul className="mt-2 space-y-1.5">
             {ACTIVITY.map((a) => (
               <li key={a.at} className="flex min-w-0 gap-2">
-                <span className="shrink-0 text-[10px] font-semibold tabular-nums text-[color:var(--brand-navy)]/60">
+                <span className="shrink-0 text-[10px] font-semibold tabular-nums text-[color:var(--brand-navy)]/70">
                   {a.at}
                 </span>
                 <span className="min-w-0 text-[10px] leading-snug text-[color:var(--brand-navy)]/80">

@@ -65,7 +65,7 @@ function FilterRow<T extends string>({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="w-full text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/50 sm:w-auto">
+      <span className="w-full text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/70 sm:w-auto">
         {label}
       </span>
       {(["all", ...options] as Filter<T>[]).map((option) => {
@@ -103,7 +103,7 @@ function EntryCard({ entry }: { entry: ChangelogEntry }) {
         >
           {entry.category}
         </span>
-        <span className="text-xs text-[color:var(--brand-navy)]/60">{entry.area}</span>
+        <span className="text-xs text-[color:var(--brand-navy)]/70">{entry.area}</span>
       </div>
 
       <h3 className="mt-3 text-base font-semibold text-[color:var(--brand-navy)]">{entry.summary}</h3>
@@ -111,14 +111,14 @@ function EntryCard({ entry }: { entry: ChangelogEntry }) {
 
       <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
         <div>
-          <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/45">
+          <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/70">
             Availability
           </dt>
           <dd className="mt-1 text-[color:var(--brand-navy)]/80">{entry.availability}</dd>
         </div>
         {entry.docHref ? (
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/45">
+            <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/70">
               Documentation
             </dt>
             <dd className="mt-1">
@@ -168,7 +168,7 @@ function ChangelogPage() {
     <SiteShell>
       <PublicSection className="pb-4">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/50">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/70">
             Changelog
           </p>
           <h1 className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
@@ -200,7 +200,7 @@ function ChangelogPage() {
             <FilterRow label="Category" options={categories} value={category} onChange={setCategory} />
             <FilterRow label="Product area" options={areas} value={area} onChange={setArea} />
           </div>
-          <p className="mt-3 text-sm text-[color:var(--brand-navy)]/60" aria-live="polite">
+          <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70" aria-live="polite">
             Showing {visibleCount} {visibleCount === 1 ? "change" : "changes"}
           </p>
         </PublicPage>
@@ -228,7 +228,7 @@ function ChangelogPage() {
                         {release.version}
                       </span>
                     </div>
-                    <p className="mt-2 text-sm text-[color:var(--brand-navy)]/60">
+                    <p className="mt-2 text-sm text-[color:var(--brand-navy)]/70">
                       <time dateTime={release.date}>{formatReleaseDate(release.date)}</time>
                     </p>
                     <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[color:var(--brand-navy)]/80">

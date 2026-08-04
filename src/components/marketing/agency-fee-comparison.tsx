@@ -88,7 +88,7 @@ export function AgencyFeeComparison() {
         ))}
       </ul>
 
-      <div className="mt-8 hidden overflow-x-auto rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white shadow-[var(--brand-shadow-sm)] md:block" tabIndex={0} role="region" aria-label="Comparison table, scroll horizontally">
+      <div className="mt-8 hidden overflow-x-auto rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white shadow-[var(--brand-shadow-sm)] md:block" tabIndex={0} role="region" aria-label="Agency fee comparison table, scroll horizontally">
         <table className="w-full min-w-[44rem] border-collapse text-left text-sm">
 
           <caption className="sr-only">

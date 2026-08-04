@@ -196,7 +196,7 @@ function ContactPage() {
             className="grid gap-6 lg:grid-cols-5"
           >
             {/* Left: spec card */}
-            <aside className="lg:col-span-2">
+            <div className="lg:col-span-2">
               <div className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white p-6 sm:p-8">
                 <div className="flex items-center gap-2">
                   <intent.icon className="h-5 w-5 text-[color:var(--brand-navy)]" />
@@ -272,7 +272,7 @@ function ContactPage() {
                 </dl>
 
               </div>
-            </aside>
+            </div>
 
             {/* Right: form */}
             <div id="contact-form" className="lg:col-span-3">

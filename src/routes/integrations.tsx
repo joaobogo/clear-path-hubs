@@ -41,7 +41,7 @@ const AVAILABILITY_CLASS: Record<Availability, string> = {
   beta: "bg-sky-500/10 text-sky-700 border-sky-600/20",
   custom: "bg-amber-500/10 text-amber-700 border-amber-600/20",
   planned:
-    "border-[color:var(--brand-navy)]/15 bg-[color:var(--brand-navy)]/5 text-[color:var(--brand-navy)]/60",
+    "border-[color:var(--brand-navy)]/15 bg-[color:var(--brand-navy)]/5 text-[color:var(--brand-navy)]/70",
 };
 
 function AvailabilityBadge({ availability }: { availability: Availability }) {
@@ -57,7 +57,7 @@ function AvailabilityBadge({ availability }: { availability: Availability }) {
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/45">
+      <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/70">
         {label}
       </dt>
       <dd className="mt-1 text-sm text-[color:var(--brand-navy)]/75">{value}</dd>
@@ -73,7 +73,7 @@ function IntegrationCard({ item }: { item: Integration }) {
           <h3 className="font-[family-name:var(--brand-font-display)] text-xl font-semibold tracking-tight">
             {item.name}
           </h3>
-          <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/45">
+          <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--brand-navy)]/70">
             {CATEGORY_LABEL[item.category]}
           </p>
         </div>
@@ -112,7 +112,7 @@ function IntegrationCard({ item }: { item: Integration }) {
             {item.docs.label}
           </Link>
         ) : (
-          <span className="text-[color:var(--brand-navy)]/50">
+          <span className="text-[color:var(--brand-navy)]/70">
             No setup documentation — nothing to set up yet.
           </span>
         )}
@@ -160,7 +160,7 @@ function IntegrationsPage() {
     <SiteShell>
       <PublicSection className="pb-4">
         <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/50">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/70">
             Integrations
           </p>
           <h1 className="mt-4 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
@@ -193,7 +193,7 @@ function IntegrationsPage() {
             <label className="relative block">
               <span className="sr-only">Search integrations</span>
               <Search
-                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--brand-navy)]/40"
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--brand-navy)]/70"
                 aria-hidden
               />
               <Input
@@ -230,7 +230,7 @@ function IntegrationsPage() {
 
           {grouped.length === 0 ? (
             <div className="mt-8 rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white/60 p-8 text-center">
-              <Plug className="mx-auto h-6 w-6 text-[color:var(--brand-navy)]/40" aria-hidden />
+              <Plug className="mx-auto h-6 w-6 text-[color:var(--brand-navy)]/70" aria-hidden />
               <h2 className="mt-4 font-[family-name:var(--brand-font-display)] text-xl font-semibold">
                 No integration matches that
               </h2>

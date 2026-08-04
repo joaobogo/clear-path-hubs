@@ -109,7 +109,7 @@ function BriefingPage() {
       <div className="mx-auto max-w-3xl px-6 py-12 print:py-0">
         <header className="flex items-start justify-between gap-6 border-b border-[color:var(--brand-navy)]/15 pb-6">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/55">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/70">
               TaaSFlow · sector briefing
             </p>
             <h1 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold text-[color:var(--brand-navy)]">
@@ -134,7 +134,7 @@ function BriefingPage() {
                   <p className="font-medium text-[color:var(--brand-navy)]">{f.name}</p>
                   {f.blurb && <p className="mt-0.5">{f.blurb}</p>}
                   {f.roles && f.roles.length > 0 && (
-                    <p className="mt-1 text-xs text-[color:var(--brand-navy)]/60">{f.roles.join(" · ")}</p>
+                    <p className="mt-1 text-xs text-[color:var(--brand-navy)]/70">{f.roles.join(" · ")}</p>
                   )}
                 </li>
               ))}
@@ -197,7 +197,7 @@ function BriefingPage() {
           </p>
         </Section>
 
-        <footer className="mt-12 border-t border-[color:var(--brand-navy)]/15 pt-6 text-xs text-[color:var(--brand-navy)]/60">
+        <footer className="mt-12 border-t border-[color:var(--brand-navy)]/15 pt-6 text-xs text-[color:var(--brand-navy)]/70">
           <p>
             TaaSFlow — one subscription covering applicant tracking, recruiting and
             outreach. Prepared for {entry.name} hiring teams.
