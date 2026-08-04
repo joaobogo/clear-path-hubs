@@ -43,7 +43,7 @@ export const Route = createFileRoute("/industries/")({
   },
   head: () =>
     marketingHead(undefined, "/industries", {
-      title: "Industries — TaaSFlow",
+      title: "Industries — AI Hiring Intelligence by sector | TaaSFlow",
       description:
         "Fifty-seven industries, six page archetypes, one AI Hiring Intelligence Platform. Search or filter to the vertical you hire for.",
     }),

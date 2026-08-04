@@ -251,7 +251,7 @@ const GROUPS: Group[] = RAW_GROUPS.map((g) => ({
 export const Route = createFileRoute("/faq")({
   head: () => {
     const base = marketingHead(undefined, "/faq", {
-      title: "FAQ — TaaSFlow",
+      title: "FAQ — AI Hiring Intelligence Platform | TaaSFlow",
       description:
         "Clear answers on the TaaSFlow platform: pricing, candidate delivery, evidence-backed scoring, the Decision Workspace, enterprise, partnerships and privacy.",
     });

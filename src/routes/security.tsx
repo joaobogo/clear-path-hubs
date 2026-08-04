@@ -12,7 +12,7 @@ import { ShieldCheck, FileText, Clock, ExternalLink, Mail, CircleDot } from "luc
 export const Route = createFileRoute("/security")({
   head: () =>
     marketingHead(undefined, "/security", {
-      title: "Trust Center — Security, privacy and tenant isolation | TaaSFlow",
+      title: "Trust Center — security & tenant isolation | TaaSFlow",
       description:
         "Verified security and privacy information for TaaSFlow: row-level tenant isolation, access controls, encryption, retention, audit coverage, subprocessors and incident response — with dates and sources.",
     }),

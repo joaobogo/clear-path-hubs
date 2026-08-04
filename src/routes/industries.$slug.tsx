@@ -50,6 +50,12 @@ export const Route = createFileRoute("/industries/$slug")({
         },
         `/industries/${params.slug}`,
         { title: v2.meta.title, description: v2.meta.description },
+        {
+          breadcrumbs: [
+            { name: "Industries", path: "/industries" },
+            { name: v2.name ?? params.slug, path: `/industries/${params.slug}` },
+          ],
+        },
       );
     }
     if (!loaderData?.legacy) {

@@ -24,13 +24,33 @@ export const Route = createFileRoute("/blog/$slug")({
   },
   head: ({ params, loaderData }) => {
     const entry = loaderData?.entry;
-    const patched = entry
-      ? { ...entry, meta: { ...entry.meta, "og:type": "article" } }
-      : undefined;
-    return marketingHead(patched, `/blog/${params.slug}`, {
-      title: `${params.slug} — TaaSFlow Blog`,
-      description: "TaaSFlow blog article.",
-    });
+    if (!entry) {
+      // The loader threw notFound(); never let a slug-derived soft-404 index.
+      return {
+        meta: [
+          { title: "Article not found — TaaSFlow" },
+          { name: "robots", content: "noindex" },
+        ],
+      };
+    }
+    const patched = { ...entry, meta: { ...entry.meta, "og:type": "article" } };
+    return marketingHead(
+      patched,
+      `/blog/${params.slug}`,
+      {
+        title: `${params.slug} — TaaSFlow Blog`,
+        description: "TaaSFlow blog article.",
+      },
+      {
+        breadcrumbs: [
+          { name: "Blog", path: "/blog" },
+          {
+            name: entry.meta.title || params.slug,
+            path: `/blog/${params.slug}`,
+          },
+        ],
+      },
+    );
   },
   component: BlogPost,
   notFoundComponent: () => (

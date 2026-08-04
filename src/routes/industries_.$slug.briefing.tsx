@@ -25,9 +25,20 @@ export const Route = createFileRoute("/industries_/$slug/briefing")({
     return { entry };
   },
   head: ({ params, loaderData }) => {
-    const name = loaderData?.entry.name ?? params.slug;
+    if (!loaderData?.entry) {
+      // Loader threw notFound(): keep the soft-404 out of the index.
+      return {
+        meta: [
+          { title: "Briefing not found — TaaSFlow" },
+          { name: "robots", content: "noindex" },
+        ],
+      };
+    }
+    const name = loaderData.entry.name;
     const title = `${name} hiring briefing — TaaSFlow`;
-    const description = `How we run ${name.toLowerCase()} searches: role families, the evidence we score against, the certifications that matter, and what your shortlist contains.`;
+    const description = clampDescription(
+      `How we run ${name.toLowerCase()} searches: role families, the evidence we score against, the certifications that matter, and what your shortlist contains.`,
+    );
     const url = `${CANONICAL_ORIGIN}/industries/${params.slug}/briefing`;
     return {
       meta: [
@@ -38,8 +49,17 @@ export const Route = createFileRoute("/industries_/$slug/briefing")({
         { property: "og:type", content: "article" },
         { property: "og:url", content: url },
         { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: [
+        breadcrumbScript([
+          { name: "Industries", path: "/industries" },
+          { name, path: `/industries/${params.slug}` },
+          { name: "Hiring briefing", path: `/industries/${params.slug}/briefing` },
+        ]),
+      ],
     };
   },
   component: BriefingPage,

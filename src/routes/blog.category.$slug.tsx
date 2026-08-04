@@ -16,10 +16,23 @@ export const Route = createFileRoute("/blog/category/$slug")({
     return { category };
   },
   head: ({ params, loaderData }) =>
-    marketingHead(undefined, `/blog/category/${params.slug}`, {
-      title: `${loaderData?.category ?? "Category"} — TaaSFlow Blog`,
-      description: `Articles in ${loaderData?.category ?? ""} from the TaaSFlow blog.`,
-    }),
+    marketingHead(
+      undefined,
+      `/blog/category/${params.slug}`,
+      {
+        title: `${loaderData?.category ?? "Category"} — TaaSFlow Blog`,
+        description: `Articles in ${loaderData?.category ?? ""} from the TaaSFlow blog — hiring intelligence guides, benchmarks and market data.`,
+      },
+      {
+        breadcrumbs: [
+          { name: "Blog", path: "/blog" },
+          {
+            name: loaderData?.category ?? "Category",
+            path: `/blog/category/${params.slug}`,
+          },
+        ],
+      },
+    ),
   component: CategoryPage,
   notFoundComponent: () => (
     <SiteShell>
