@@ -456,8 +456,8 @@ function ExpressIntakePage() {
       // an object-level refine, so a too-short paste stayed invisible while any
       // other field was still empty.
       const jdTyped = (state.jobDescriptionText ?? "").trim();
-      if (!jdFile && jdTyped.length > 0 && jdTyped.length < n_TEXT) {
-        next.jobDescriptionText = `Paste at least ${n_TEXT} characters or upload the job description file`;
+      if (!jdFile && jdTyped.length > 0 && jdTyped.length < MIN_JD_TEXT) {
+        next.jobDescriptionText = `Paste at least ${MIN_JD_TEXT} characters or upload the job description file`;
       }
 
       setErrors(next);
