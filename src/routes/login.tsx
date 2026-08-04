@@ -394,7 +394,8 @@ function LoginPage() {
                 </Link>{" "}
                 to talk to our team.
               </p>
-            </form>
+              </form>
+            </div>
           ) : mode === "forgot" ? (
             <form onSubmit={onForgot} className="space-y-3">
               <div className="space-y-1.5">
