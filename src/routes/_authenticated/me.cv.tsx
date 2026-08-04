@@ -24,6 +24,13 @@ export const Route = createFileRoute("/_authenticated/me/cv")({
  queryKey: ["me", "cv"],
  queryFn: () => listMyCvVersions(),
  }),
+ pendingComponent: () => (
+ <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-4" aria-hidden>
+ <div className="h-8 w-1/2 animate-pulse rounded bg-muted" />
+ <div className="h-28 animate-pulse rounded-lg bg-muted" />
+ <div className="h-40 animate-pulse rounded-lg bg-muted" />
+ </main>
+ ),
  errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.cv.tsx"),
  notFoundComponent: () => <main className="p-8">Not found.</main>,
  component: CvPage,
