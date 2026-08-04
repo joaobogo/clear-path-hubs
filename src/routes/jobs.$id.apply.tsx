@@ -461,7 +461,8 @@ function ApplyPage() {
 
         <div className="mt-8 rounded-lg border bg-card p-5 md:p-6">
           {step === 1 && (
-            <div className="space-y-5">
+            <div className="space-y-5" data-hydrated={signedIn === null ? "pending" : "ready"}>
+
               <div>
                 <h2 className="text-lg font-semibold">Your details</h2>
                 <p className="text-sm text-muted-foreground">
