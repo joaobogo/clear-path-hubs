@@ -44,6 +44,68 @@ export const MODULE_LIST = [
 ] as const;
 
 /**
+ * Public module directory. `anchor` is the section id rendered on /platform,
+ * so navigation and page content can never drift apart. Descriptions state
+ * what the module does — no forward-looking or unverifiable claims.
+ */
+export const MODULE_SECTIONS = [
+  {
+    key: "intake",
+    name: MODULES.intake,
+    anchor: "intake-engine",
+    description: "Captures the role, must-haves and constraints as structured data.",
+  },
+  {
+    key: "blueprint",
+    name: MODULES.blueprint,
+    anchor: "blueprint-compiler",
+    description: "Compiles that intake into the versioned rubric agents score against.",
+  },
+  {
+    key: "agents",
+    name: MODULES.agents,
+    anchor: "agent-layer",
+    description: "Runs continuous sourcing, screening and scoring against the blueprint.",
+  },
+  {
+    key: "evidence",
+    name: MODULES.evidence,
+    anchor: "evidence-graph",
+    description: "Links every requirement to the CV line or note that supports it.",
+  },
+  {
+    key: "scoring",
+    name: MODULES.scoring,
+    anchor: "scoring-engine",
+    description: "Produces 0–100 scores from cited evidence under a fixed rubric version.",
+  },
+  {
+    key: "workspace",
+    name: MODULES.workspace,
+    anchor: "decision-workspace",
+    description: "Where you compare, approve, reject and advance candidates.",
+  },
+  {
+    key: "talentGraph",
+    name: MODULES.talentGraph,
+    anchor: "talent-graph",
+    description: "Keeps past candidates and evidence reachable across future roles.",
+  },
+  {
+    key: "governance",
+    name: MODULES.governance,
+    anchor: "governance-audit",
+    description: "Records every state change, override and access event.",
+  },
+] as const satisfies ReadonlyArray<{
+  key: ModuleKey;
+  name: string;
+  anchor: string;
+  description: string;
+}>;
+
+
+/**
  * Agency-style phrasing and the platform phrasing that replaces it.
  * Left side = do not ship on public marketing surfaces.
  */
