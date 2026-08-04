@@ -33,6 +33,12 @@ export type CaseStudy = {
   outcomeHighlight: string;
   /** Only present where a real testimonial exists; omit rather than invent. */
   testimonial?: CaseStudyTestimonial;
+  /**
+   * True (the default) when the study is anonymized and its figures reflect
+   * representative delivery performance rather than one named, approved
+   * client. Set to false only for named studies with written client approval.
+   */
+  representative?: boolean;
 };
 
 export const CASE_STUDIES: CaseStudy[] = [
