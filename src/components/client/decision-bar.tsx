@@ -2,6 +2,7 @@ import * as React from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DecisionDialog,
@@ -134,7 +135,7 @@ export function DecisionBar({
         {settled && (
           <span
             role="status"
-            className="motion-approved inline-flex items-center gap-1.5 rounded-full taas-bg-success-soft px-2.5 py-1 text-xs font-medium taas-tx-success"
+            className="motion-approved inline-flex items-center gap-1.5 rounded-full taas-bg-success-soft px-2.5 py-1 text-xs font-medium taas-fg-success"
           >
             <Check className="h-3.5 w-3.5" aria-hidden="true" />
             {settled}
