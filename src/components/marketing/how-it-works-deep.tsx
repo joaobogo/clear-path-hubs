@@ -55,14 +55,14 @@ function MockChrome({
       )}
     >
       <div className="flex items-center gap-2 border-b border-[color:var(--brand-navy)]/10 bg-white px-4 py-2.5">
-        <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-red-400/70" aria-hidden />
-        <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-yellow-400/70" aria-hidden />
-        <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-green-400/70" aria-hidden />
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[color:var(--brand-chrome-close)]/80" aria-hidden />
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[color:var(--brand-chrome-minimise)]/80" aria-hidden />
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[color:var(--brand-chrome-expand)]/80" aria-hidden />
         <span className="ml-3 min-w-0 flex-1 truncate text-xs font-medium text-[color:var(--brand-navy)]/80">
           {title}
         </span>
-        <span className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
+        <span className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-[10px] font-semibold text-success">
+          <span className="h-1.5 w-1.5 rounded-full bg-success" aria-hidden />
           Fictional example
         </span>
       </div>
@@ -324,7 +324,7 @@ export function EvidenceReviewPanel() {
               Reviewed by recruiter before publication
             </p>
           </div>
-          <span className="rounded-md bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
+          <span className="rounded-md bg-success-soft px-2 py-0.5 text-[11px] font-semibold text-success">
             Approved to publish
           </span>
         </div>
@@ -340,8 +340,8 @@ export function EvidenceReviewPanel() {
                   className={cn(
                     "rounded-full px-2 py-0.5 text-[10px] font-semibold",
                     i.verdict === "Match"
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-amber-100 text-amber-800",
+                      ? "bg-success-soft text-success"
+                      : "bg-warning-soft text-warning-foreground",
                   )}
                 >
                   {i.verdict}
@@ -607,7 +607,7 @@ export function ResponsibilityMatrix() {
   const badge: Record<Owner, string> = {
     Client: "bg-[color:var(--brand-ocean)]/12 text-[color:var(--brand-ocean-text)]",
     TaaSFlow: "bg-[color:var(--brand-navy)]/10 text-[color:var(--brand-navy)]",
-    Shared: "bg-amber-100 text-amber-800",
+    Shared: "bg-warning-soft text-warning-foreground",
   };
   return (
     <div className="overflow-hidden rounded-2xl border border-[color:var(--brand-navy)]/10 bg-white">

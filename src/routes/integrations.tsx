@@ -37,9 +37,9 @@ const AVAILABILITY_ORDER: Availability[] = ["available", "beta", "custom", "plan
 
 const AVAILABILITY_CLASS: Record<Availability, string> = {
   available:
-    "bg-emerald-500/10 text-emerald-700 border-emerald-600/20",
-  beta: "bg-sky-500/10 text-sky-700 border-sky-600/20",
-  custom: "bg-amber-500/10 text-amber-700 border-amber-600/20",
+    "bg-success/10 text-success border-success/25",
+  beta: "bg-info/10 text-info border-info/25",
+  custom: "bg-warning/15 text-warning-foreground border-warning/35",
   planned:
     "border-[color:var(--brand-navy)]/15 bg-[color:var(--brand-navy)]/5 text-[color:var(--brand-navy)]/70",
 };

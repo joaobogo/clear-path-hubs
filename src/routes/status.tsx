@@ -55,24 +55,24 @@ const ICON: Record<StatusLevel, typeof CheckCircle2> = {
 /** Colour is a reinforcement here; the label always carries the meaning. */
 const TONE: Record<StatusLevel, { text: string; dot: string; band: string }> = {
   operational: {
-    text: "text-emerald-700",
-    dot: "bg-emerald-600",
-    band: "border-emerald-600/25 bg-emerald-600/[0.06]",
+    text: "text-success",
+    dot: "bg-success",
+    band: "border-success/25 bg-success/[0.06]",
   },
   degraded_performance: {
-    text: "text-amber-700",
-    dot: "bg-amber-500",
-    band: "border-amber-500/30 bg-amber-500/[0.07]",
+    text: "text-warning-foreground",
+    dot: "bg-warning",
+    band: "border-warning/35 bg-warning/[0.10]",
   },
   partial_outage: {
-    text: "text-orange-700",
-    dot: "bg-orange-500",
-    band: "border-orange-500/30 bg-orange-500/[0.07]",
+    text: "text-warning-foreground",
+    dot: "bg-warning",
+    band: "border-warning/40 bg-warning/[0.14]",
   },
   major_outage: {
-    text: "text-red-700",
-    dot: "bg-red-600",
-    band: "border-red-600/30 bg-red-600/[0.07]",
+    text: "text-destructive",
+    dot: "bg-destructive",
+    band: "border-destructive/30 bg-destructive/[0.07]",
   },
   maintenance: {
     text: "text-[color:var(--brand-navy)]/80",

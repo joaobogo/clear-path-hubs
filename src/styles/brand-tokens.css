@@ -95,9 +95,11 @@
   --brand-focus-ring-inset: inset 0 0 0 2px oklch(0.60 0.19 258 / 0.55);
 
   /* Typography stacks */
-  --brand-font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-  --brand-font-display: "Fraunces", "Inter", Georgia, serif;
+  /* Body: IBM Plex Sans — systematic, engineered, deliberately not Inter.
+     Display: Space Grotesk — industrial, tight, technical. */
+  --brand-font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --brand-font-display: "Space Grotesk", "IBM Plex Sans", ui-sans-serif, sans-serif;
   --brand-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo,
     Consolas, monospace;
 

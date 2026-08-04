@@ -1324,15 +1324,15 @@ function Home() {
       {/* 1 — HERO */}
       <section
         aria-labelledby="home-hero-heading"
-        className="relative overflow-hidden bg-gradient-to-b from-[color:var(--brand-sky)]/30 via-[color:var(--brand-paper)] to-[color:var(--brand-paper)]"
+        className="relative overflow-hidden border-b border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-paper)]"
       >
         <PublicPage>
           <div className="grid grid-cols-1 gap-12 py-16 sm:py-20 lg:grid-cols-[1.05fr_1fr] lg:py-24">
             <div className="flex min-w-0 flex-col justify-center gap-6">
-              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/80 backdrop-blur">
-                <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
+              <span className="inline-flex w-fit items-center gap-2 border-l-2 border-[color:var(--brand-ocean-text)] pl-3 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--brand-navy)]/80">
                 {PRODUCT_CATEGORY}
               </span>
+
               <h1
                 id="home-hero-heading"
                 className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
