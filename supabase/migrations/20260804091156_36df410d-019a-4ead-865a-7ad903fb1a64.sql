@@ -1,0 +1,10 @@
+ALTER TYPE public.event_type ADD VALUE IF NOT EXISTS 'payment_failed';
+ALTER TYPE public.event_type ADD VALUE IF NOT EXISTS 'integration_failed';
+ALTER TYPE public.event_type ADD VALUE IF NOT EXISTS 'security_alert';
+ALTER TYPE public.event_type ADD VALUE IF NOT EXISTS 'agent_run_blocked';
+ALTER TYPE public.event_type ADD VALUE IF NOT EXISTS 'role_information_missing';
+ALTER TYPE public.event_type ADD VALUE IF NOT EXISTS 'approval_needed';
+ALTER TYPE public.event_type ADD VALUE IF NOT EXISTS 'shortlist_ready';
+ALTER TYPE public.event_type ADD VALUE IF NOT EXISTS 'scoring_completed';
+ALTER TYPE public.event_type ADD VALUE IF NOT EXISTS 'sync_completed';
+ALTER TYPE public.event_type ADD VALUE IF NOT EXISTS 'scheduled_run_completed';

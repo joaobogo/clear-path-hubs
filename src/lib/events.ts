@@ -39,6 +39,17 @@ export const EVENT_TYPES = [
   "client_declined",
   "client_information_requested",
   "contact_release_requested",
+  // System / operational events (see notification-tiers.ts for urgency rules).
+  "payment_failed",
+  "integration_failed",
+  "security_alert",
+  "agent_run_blocked",
+  "role_information_missing",
+  "approval_needed",
+  "shortlist_ready",
+  "scoring_completed",
+  "sync_completed",
+  "scheduled_run_completed",
 ] as const;
 
 export type EventType = (typeof EVENT_TYPES)[number];
@@ -65,6 +76,16 @@ export const ADMIN_COPY: Partial<Record<EventType, CopyEntry>> = {
   client_declined: { title: "Client declined a candidate", body: "A client decided not to move forward." },
   client_information_requested: { title: "Client requested more information" },
   contact_release_requested: { title: "Client requested contact details", body: "Review and release contact details if approved." },
+  payment_failed: { title: "Payment failed", body: "A workspace payment did not go through." },
+  integration_failed: { title: "Integration failing", body: "A connection stopped responding and needs attention." },
+  security_alert: { title: "Security alert", body: "Unusual account access was recorded." },
+  agent_run_blocked: { title: "Agent run blocked", body: "An automated run stopped and will not resume on its own." },
+  role_information_missing: { title: "Role information missing", body: "Required details are missing before sourcing can start." },
+  approval_needed: { title: "Approval needed", body: "An item is waiting on a decision." },
+  shortlist_ready: { title: "Shortlist ready", body: "A shortlist is ready to send to the client." },
+  scoring_completed: { title: "Evidence review finished" },
+  sync_completed: { title: "Synchronisation finished" },
+  scheduled_run_completed: { title: "Scheduled run finished" },
 };
 
 export const CLIENT_COPY: Partial<Record<EventType, CopyEntry>> = {
@@ -82,6 +103,16 @@ export const CLIENT_COPY: Partial<Record<EventType, CopyEntry>> = {
   position_closed: { title: "Position closed" },
   member_invited: { title: "Team member invited" },
   member_removed: { title: "Team member removed" },
+  payment_failed: { title: "Payment did not go through", body: "Update your payment details to keep roles publishing." },
+  integration_failed: { title: "A connection needs attention", body: "Updates from this system have stopped arriving." },
+  security_alert: { title: "Please review account access", body: "We recorded sign-in activity worth checking." },
+  approval_needed: { title: "Something is waiting on you", body: "A decision is needed before work continues." },
+  role_information_missing: { title: "Your role needs a few details", body: "Sourcing is paused until the role is complete." },
+  agent_run_blocked: { title: "Automated work is paused", body: "We hit a blocker on this role and need a quick input." },
+  shortlist_ready: { title: "Your shortlist is ready", body: "Compare the candidates side by side." },
+  scoring_completed: { title: "Candidate evidence updated", body: "New findings may change how candidates compare." },
+  sync_completed: { title: "Your workspace data is up to date" },
+  scheduled_run_completed: { title: "Scheduled sourcing run finished" },
 };
 
 export const CANDIDATE_COPY: Partial<Record<EventType, CopyEntry>> = {
@@ -138,6 +169,16 @@ export const ACTIVITY_LABELS: Record<EventType, string> = {
   interview_cancelled: "Interview cancelled",
   candidate_hired: "Placement confirmed",
   message_sent: "Message sent",
+  payment_failed: "Payment failed",
+  integration_failed: "Integration failed",
+  security_alert: "Security alert",
+  agent_run_blocked: "Agent run blocked",
+  role_information_missing: "Role information missing",
+  approval_needed: "Approval needed",
+  shortlist_ready: "Shortlist ready",
+  scoring_completed: "Evidence review completed",
+  sync_completed: "Synchronisation completed",
+  scheduled_run_completed: "Scheduled run completed",
   document_added: "Document added",
   member_invited: "Team member invited",
   member_removed: "Team member removed",
