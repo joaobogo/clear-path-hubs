@@ -116,6 +116,7 @@ const TABS: NavDef[] = [
 	{ to: "/client/analytics", label: "Insights", icon: Gauge, everyone: true, hint: "Questions, dashboards, your data" },
 	{ to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true, hint: "Assistant, agents, outreach" },
 	{ to: "/client/talent-memory", label: "Talent memory", icon: Award, everyone: true, hint: "People we already know" },
+	{ to: "/client/onboarding", label: "Setup", icon: Settings, everyone: false, hint: "Configure your hiring system" },
 	{ to: "/client/account", label: "Account", icon: Building2, everyone: false, hint: "Team, plan, settings" },
 ];
 
