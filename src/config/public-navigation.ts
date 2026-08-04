@@ -1,4 +1,6 @@
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
+import { MODULE_SECTIONS } from "@/config/product-language";
+
 
 /**
  * TaaSFlow Public Navigation — Single Source of Truth
