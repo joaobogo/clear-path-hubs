@@ -269,19 +269,178 @@ async function seedQAData(): Promise<{
   };
 }
 
+/**
+ * Removes everything the E2E suite created by driving the real /intake form:
+ * organizations named with the QA prefix, their positions and intakes, and the
+ * auth accounts on the qa.taasflow.test mailbox. Never matches real data.
+ */
+async function cleanupIntakeE2E(prefix: string): Promise<{ deleted: Record<string, number> }> {
+  const sb = await loadAdmin();
+  const counts: Record<string, number> = {};
+  const safePrefix = prefix.startsWith("QA_") ? prefix : "QA_INTAKE_E2E_";
+
+  const { data: orgs } = await sb.from("organizations").select("id").ilike("name", `${safePrefix}%`);
+  const orgIds = (orgs ?? []).map((o: { id: string }) => o.id);
+  counts.orgs_found = orgIds.length;
+
+  if (orgIds.length > 0) {
+    const { data: posRows } = await sb.from("positions").select("id").in("organization_id", orgIds);
+    const posIds = (posRows ?? []).map((p: { id: string }) => p.id);
+    if (posIds.length > 0) {
+      await sb.from("candidate_matches").delete().in("position_id", posIds);
+      await sb.from("applications").delete().in("position_id", posIds);
+      await sb.from("screening_questions").delete().in("position_id", posIds);
+      await sb.from("position_commitments").delete().in("position_id", posIds);
+      const { count: pc } = await sb
+        .from("positions")
+        .delete({ count: "exact" })
+        .in("id", posIds);
+      counts.positions_deleted = pc ?? 0;
+    }
+    const { count: ic } = await sb
+      .from("intake_submissions")
+      .delete({ count: "exact" })
+      .in("organization_id", orgIds);
+    counts.intakes_deleted = ic ?? 0;
+    await sb.from("memberships").delete().in("organization_id", orgIds);
+    const { count: oc } = await sb
+      .from("organizations")
+      .delete({ count: "exact" })
+      .in("id", orgIds);
+    counts.organizations_deleted = oc ?? 0;
+  }
+
+  // Intakes that never reached an organization (submit failed mid-way).
+  const { count: orphanIntakes } = await sb
+    .from("intake_submissions")
+    .delete({ count: "exact" })
+    .ilike("company_name", `${safePrefix}%`);
+  counts.orphan_intakes_deleted = orphanIntakes ?? 0;
+
+  const { count: bookings } = await sb
+    .from("booking_sessions")
+    .delete({ count: "exact" })
+    .ilike("company_name", `${safePrefix}%`);
+  counts.booking_sessions_deleted = bookings ?? 0;
+
+  // Auth accounts created through the form (qa.intake+<stamp>@qa.taasflow.test).
+  let usersDeleted = 0;
+  let page = 1;
+  while (page < 20) {
+    const { data, error } = await sb.auth.admin.listUsers({ page, perPage: 200 });
+    if (error) break;
+    const users = data?.users ?? [];
+    for (const u of users as Array<{ id: string; email?: string | null }>) {
+      const email = (u.email ?? "").toLowerCase();
+      if (email.startsWith("qa.intake+") && email.endsWith("@qa.taasflow.test")) {
+        const { error: delErr } = await sb.auth.admin.deleteUser(u.id);
+        if (!delErr) usersDeleted += 1;
+      }
+    }
+    if (users.length < 200) break;
+    page += 1;
+  }
+  counts.auth_users_deleted = usersDeleted;
+
+  // Profile rows left behind by deleted accounts.
+  const { count: profs } = await sb
+    .from("profiles")
+    .delete({ count: "exact" })
+    .ilike("email", "qa.intake+%@qa.taasflow.test");
+  counts.profiles_deleted = profs ?? 0;
+
+  return { deleted: counts };
+}
+
+/** Reads back what a real submit persisted, so tests assert on the database. */
+async function lookupIntake(companyName: string, email?: string) {
+  const sb = await loadAdmin();
+  const { data: org } = await sb
+    .from("organizations")
+    .select("id,name,is_test_record")
+    .eq("name", companyName)
+    .maybeSingle();
+  const { data: intake } = await sb
+    .from("intake_submissions")
+    .select("id,organization_id")
+    .eq("company_name", companyName)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  let position: { id: string; title: string; status: string } | null = null;
+  if (org?.id) {
+    const { data: pos } = await sb
+      .from("positions")
+      .select("id,title,status")
+      .eq("organization_id", org.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    position = (pos ?? null) as typeof position;
+  }
+  let authUser: { id: string; email: string } | null = null;
+  if (email) {
+    const uid = await findUserIdByEmail(sb, email);
+    if (uid) authUser = { id: uid, email };
+  }
+  const { count: bookingCount } = await sb
+    .from("booking_sessions")
+    .select("id", { count: "exact", head: true })
+    .eq("company_name", companyName);
+  return {
+    organization: org ?? null,
+    intake_submission: intake ?? null,
+    auth_user: authUser,
+    position,
+    booking_sessions: bookingCount ?? 0,
+  };
+}
+
+/** Booking sessions created by the /book flow, looked up by work email. */
+async function lookupBooking(email: string) {
+  const sb = await loadAdmin();
+  const { data: rows } = await sb
+    .from("booking_sessions")
+    .select("id,email,company_name,status")
+    .eq("email", email.toLowerCase())
+    .order("created_at", { ascending: false })
+    .limit(5);
+  return { sessions: rows ?? [] };
+}
+
+async function cleanupBookingE2E(emailPattern: string): Promise<{ deleted: number }> {
+  const sb = await loadAdmin();
+  const safe = emailPattern.includes("@qa.taasflow.test") ? emailPattern : "qa.book+%@qa.taasflow.test";
+  const { count } = await sb
+    .from("booking_sessions")
+    .delete({ count: "exact" })
+    .ilike("email", safe);
+  return { deleted: count ?? 0 };
+}
+
 async function handle(request: Request): Promise<Response> {
   const token = request.headers.get("x-qa-token");
   const expected = process.env.QA_SEED_TOKEN;
   if (!expected) return new Response("QA_SEED_TOKEN not configured", { status: 500 });
   if (!token || token !== expected) return new Response("forbidden", { status: 401 });
 
-  let body: { action?: string; email?: string; user_id?: string; position_id?: string; full_name?: string } = {};
+  let body: {
+    action?: string;
+    email?: string;
+    user_id?: string;
+    position_id?: string;
+    full_name?: string;
+    prefix?: string;
+    company_name?: string;
+    email_pattern?: string;
+  } = {};
   try {
     body = (await request.json()) as typeof body;
   } catch {
     body = {};
   }
   const action = body.action ?? "seed";
+
 
   try {
     if (action === "cleanup") {
