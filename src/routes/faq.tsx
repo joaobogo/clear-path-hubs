@@ -30,12 +30,12 @@ const RAW_GROUPS: Array<{
   {
     id: "model",
     title: "Model",
-    blurb: "What TaaSFlow is, who runs delivery, and how it replaces the agency loop.",
+    blurb: "What TaaSFlow is, how the system runs a search, and where expert oversight sits.",
     items: [
       {
         q: "What is TaaSFlow?",
         a: "A hiring operating system. You submit roles through a structured intake, our delivery team runs sourcing and screening, and candidates are delivered inside a shared workspace with evidence against every requirement.",
-        more: "Think of it as a recruiting function you subscribe to — not a placement agency. The same team, the same workspace, the same context across every role you run.",
+        more: "Think of it as hiring infrastructure you subscribe to: agents run the search, evidence backs every score, and expert oversight approves what reaches you — the same workspace and the same context across every role you run.",
       },
       {
         q: "How is TaaSFlow different from an agency?",
