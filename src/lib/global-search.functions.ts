@@ -156,6 +156,7 @@ export const globalSearch = createServerFn({ method: "POST" })
             id: p.id,
             label: p.title,
             context,
+            state,
             href: `/admin/positions/${p.id}`,
           };
         }
@@ -164,9 +165,11 @@ export const globalSearch = createServerFn({ method: "POST" })
           id: p.id,
           label: p.title,
           context,
+          state,
           href: `/client/positions/${p.id}`,
           search: { org: p.organization_id },
         };
+
       });
     }
 
