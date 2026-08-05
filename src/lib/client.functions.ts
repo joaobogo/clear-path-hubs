@@ -802,11 +802,12 @@ export const getClientPositions = createServerFn({ method: "GET" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
+    // "Archived" keeps closed roles readable: filled, closed and archived.
     const statusFilter = (data.status === "closed"
-      ? (["closed", "archived"] as const)
+      ? (["filled", "closed", "archived"] as const)
       : data.status
         ? ([data.status] as const)
-        : (["active", "draft", "paused", "closed", "archived"] as const)) as unknown as string[];
+        : (["active", "draft", "paused", "filled", "closed", "archived"] as const)) as unknown as string[];
     const { data: positions, error } = await context.supabase
       .from("positions")
       .select(
