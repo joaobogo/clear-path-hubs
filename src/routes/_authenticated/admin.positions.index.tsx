@@ -18,6 +18,7 @@ import {
 import { AlertCircle, ArrowUpRight, Building2, MapPin } from "lucide-react";
 import { ErrorState } from "@/components/ds";
 import { PositionsAttentionQueue } from "@/components/admin/positions-attention-queue";
+import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import { PublishGatePanel } from "@/components/admin/publish-gate-panel";
 
 
@@ -253,7 +254,7 @@ function PositionsPage() {
             location: search.location ?? "",
             sort: search.sort ?? "",
           }}
-          onApply={(f) =>
+          onApply={(f: Record<string, string>) =>
             navigate({
               search: (s: Record<string, unknown>) => ({
                 ...s,
