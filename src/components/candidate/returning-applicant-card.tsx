@@ -72,8 +72,8 @@ export function ReturningApplicantCard({
       setFile(null);
       return;
     }
-    if (!ALLOWED_CV_EXT.includes(fileExt(f.name))) {
-      setError(CV_MESSAGES.wrong_type);
+    if (!ALLOWED_CV_EXT.has(fileExt(f.name))) {
+      setError(CV_MESSAGES.bad_extension);
       setFile(null);
       return;
     }
