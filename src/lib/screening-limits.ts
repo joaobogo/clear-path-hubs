@@ -73,3 +73,6 @@ export function validateScreeningSet(qs: ScreeningRuleInput[]): string | null {
   }
   return null;
 }
+
+/** Cover note is always optional; cap exists only to keep storage sane. */
+export const COVER_NOTE_MAX = 5000;

@@ -29,6 +29,7 @@ import {
 import { CV_MESSAGES } from "@/lib/cv-validation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { COVER_NOTE_MAX } from "@/lib/screening-limits";
 import { SCREENING_ANSWER_MAX } from "@/lib/screening-limits";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
