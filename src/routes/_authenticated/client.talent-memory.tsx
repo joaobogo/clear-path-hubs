@@ -32,6 +32,7 @@ import { SkeletonCards } from "@/components/client/states";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { Input } from "@/components/ui/input";
 import {
   Sheet,
