@@ -77,7 +77,7 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
     admin
       .from("notification_deliveries")
       .select(
-        "id, channel, status, error_code, error_message, attempt_count, created_at, last_attempt_at, updated_at, recipient_address, notification_id, notifications:notification_id(title, audience, event_type, link_path, recipient_user_id, payload:event_id)",
+        "id, channel, status, error_code, error_message, attempt_count, created_at, last_attempt_at, updated_at, recipient_address, notification_id, notifications:notification_id(title, audience, event_type, link_path, recipient_user_id)",
       )
       .in("status", ["failed", "bounced", "suppressed"])
       .gte("created_at", cutoff)
