@@ -111,6 +111,9 @@ export interface HireRecordDTO {
   created_at: string;
   updated_at: string;
   applied_at: string | null;
+  /** Agreed response date. Null means none was agreed — never inferred. */
+  expected_response_date: string | null;
+  expected_response_set_at: string | null;
 }
 
 export interface TimeToHireReport {
