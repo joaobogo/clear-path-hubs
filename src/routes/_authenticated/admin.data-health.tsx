@@ -74,7 +74,7 @@ function Stat({
   );
 }
 
-function DataHealthPage() {
+function DataHealthMetrics() {
   const fn = useServerFn(getDataHealth);
   const { data, isPending, error } = useQuery({
     queryKey: ["data-health"],
@@ -84,13 +84,13 @@ function DataHealthPage() {
 
   if (isPending)
     return (
-      <div className="p-8 text-sm text-muted-foreground">
+      <div className="py-8 text-sm text-muted-foreground">
         Measuring the data spine…
       </div>
     );
   if (error || !data)
     return (
-      <div className="p-8 text-sm text-destructive">
+      <div className="py-8 text-sm text-destructive">
         Could not read data health. {(error as Error)?.message}
       </div>
     );
@@ -101,22 +101,11 @@ function DataHealthPage() {
     data.orphans.signals_without_position;
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:py-8">
-      <header className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-            <Database className="h-6 w-6 text-primary" aria-hidden />
-            Data health
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Coverage, freshness, duplicates, extraction failures and orphans.
-            Read live from the tables themselves.
-          </p>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Measured {when(data.generated_at)}
-        </p>
-      </header>
+    <>
+      <p className="mt-8 text-xs text-muted-foreground">
+        Measured {when(data.generated_at)}
+      </p>
+
 
       <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat
