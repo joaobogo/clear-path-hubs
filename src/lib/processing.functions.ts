@@ -587,12 +587,35 @@ export const replaceCv = createServerFn({ method: "POST" })
     return { ok: true as const, state: "queued" as State, trace_id, file_id: fileRow.id };
   });
 
-const decisionInput = z.object({
-  match_id: z.string().uuid(),
-  action: z.enum(["approve_for_client", "hold", "archive", "manual_override"]),
-  approved_score: z.number().min(0).max(100).optional(),
-  reason: z.string().max(1000).optional(),
-});
+const ADMIN_REJECT_CODES = new Set(ADMIN_REJECTION_REASONS.map((r) => r.code));
+
+const decisionInput = z
+  .object({
+    match_id: z.string().uuid(),
+    action: z.enum(["approve_for_client", "hold", "archive", "manual_override"]),
+    approved_score: z.number().min(0).max(100).optional(),
+    reason: z.string().max(1000).optional(),
+    reason_code: z.string().max(64).optional(),
+  })
+  .superRefine((v, ctx) => {
+    // A rejection can never be saved without attribution to a controlled reason.
+    if (v.action !== "archive") return;
+    if (!v.reason_code || !ADMIN_REJECT_CODES.has(v.reason_code)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["reason_code"],
+        message: "A rejection reason is required.",
+      });
+      return;
+    }
+    if (v.reason_code === "other" && !(v.reason ?? "").trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["reason"],
+        message: "Add a short explanation for 'Other'.",
+      });
+    }
+  });
 
 export const applyReviewDecision = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
