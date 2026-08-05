@@ -8,6 +8,8 @@ import { getAdminWorkQueues } from "@/lib/admin-ops.functions";
 import { TestRecordsToggle } from "@/components/admin/TestRecordsToggle";
 import { PortfolioHealthTable } from "@/components/admin/portfolio-health-table";
 import { DecisionBacklogPanel } from "@/components/admin/decision-backlog-panel";
+import { OfferHireRollupPanel } from "@/components/admin/offer-hire-panel";
+
 
 import { Button } from "@/components/ui/button";
 import {
