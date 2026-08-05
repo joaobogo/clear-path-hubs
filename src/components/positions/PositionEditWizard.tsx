@@ -799,6 +799,23 @@ export function PositionEditWizard({
                 placeholder="e.g. bootcamp only, agency"
               />
 
+              {/* Free-text deal-breakers, in the client's own words, as captured
+                  at intake — editable here so a rule learned later can be added. */}
+              <ChipInput
+                label="Your deal-breakers"
+                hint="Short rules that rule someone out, e.g. no hands-on Postgres experience."
+                values={state.disqualifier_tags.filter(
+                  (t) => !DISQUALIFIER_OPTIONS.includes(t),
+                )}
+                onChange={(v) =>
+                  set("disqualifier_tags", [
+                    ...state.disqualifier_tags.filter((t) => DISQUALIFIER_OPTIONS.includes(t)),
+                    ...v.map((t) => t.slice(0, 120)),
+                  ])
+                }
+                placeholder="e.g. no restaurant-scale experience"
+              />
+
               <div>
                 <Label className="mb-2 block text-sm">Immediate disqualification criteria</Label>
                 <p className="mb-3 text-xs text-muted-foreground">
