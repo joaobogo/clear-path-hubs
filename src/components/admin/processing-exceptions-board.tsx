@@ -96,7 +96,7 @@ export function ProcessingExceptionsBoard({ className }: { className?: string })
   });
 
   const board = query.data;
-  const active = board?.active ?? [];
+  const active = useMemo(() => board?.active ?? [], [board]);
   const permanent = board?.permanent ?? [];
 
   // Position grouping powers the "retry all failed for a position" action.
