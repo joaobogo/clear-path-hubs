@@ -334,7 +334,9 @@ export async function loadSlaBreaches(
   }
 
   rows.sort((x, y) => {
-    if (x.acknowledged !== null !== (y.acknowledged !== null)) return x.acknowledged ? 1 : -1;
+    const xAck = x.acknowledged !== null;
+    const yAck = y.acknowledged !== null;
+    if (xAck !== yAck) return xAck ? 1 : -1;
     if (y.days_over !== x.days_over) return y.days_over - x.days_over;
     return x.client_name.localeCompare(y.client_name);
   });
