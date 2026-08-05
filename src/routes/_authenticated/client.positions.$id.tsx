@@ -133,6 +133,14 @@ function PositionDetailPage() {
  queryFn: () => handoffFn({ data: { orgId: orgId!, positionId: id } }),
  enabled: !!orgId,
  });
+ // Recorded closure, if this role has been closed. Read from the position row,
+ // never inferred from status alone.
+ const closureFn = useServerFn(getRoleClosure);
+ const closure = useQuery({
+ queryKey: ["client-position-closure", orgId, id],
+ queryFn: () => closureFn({ data: { orgId: orgId!, positionId: id } }),
+ enabled: !!orgId,
+ });
  useEffect(() => {
  const onRefresh = () => {
  void refetch();
