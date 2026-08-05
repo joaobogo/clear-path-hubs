@@ -86,6 +86,7 @@ import {
   type FeedbackQueueItem,
 } from "@/lib/interview-feedback.functions";
 import { InterviewerAssignments } from "@/components/client/interviewer-assignments";
+import { CandidateTeamActivity } from "@/components/client/candidate-team-activity";
 
 export const Route = createFileRoute("/_authenticated/client/candidates/$id")({
  head: () => ({
@@ -453,6 +454,13 @@ function CandidateDetailPage() {
                 orgId={orgId}
                 matchId={candidate.match_id}
                 readOnly={support.readOnly}
+              />
+            )}
+            {orgId && (
+              <CandidateTeamActivity
+                orgId={orgId}
+                matchId={candidate.match_id}
+                recordView={!support.readOnly}
               />
             )}
             <ProfilePanel candidate={candidate} />
