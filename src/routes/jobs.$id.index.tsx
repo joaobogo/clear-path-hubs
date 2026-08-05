@@ -217,8 +217,6 @@ function labelEmployment(e: string | null) {
   return e ? e.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : null;
 }
 
-/** The stages this page commits to, in the order they are described below. */
-const HIRING_STAGES = ["apply", "TaaSFlow review", "employer interviews"] as const;
 
 /**
  * The seven deciding facts, in a fixed order, directly under the title.
