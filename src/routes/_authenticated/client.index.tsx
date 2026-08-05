@@ -42,13 +42,9 @@ import { DecisionQueue } from "@/components/client/decision-queue";
 import { VisibilityNote as _QueueVisibilityNote } from "@/components/client/visibility-note";
 import type { QueueRow } from "@/lib/client-decision-queue";
 
-
 export const Route = createFileRoute("/_authenticated/client/")({
   head: () => ({
-    meta: [
-      { title: "Overview · Client workspace" },
-      { name: "robots", content: "noindex" },
-    ],
+    meta: [{ title: "Overview · Client workspace" }, { name: "robots", content: "noindex" }],
   }),
   component: OverviewPage,
 });
@@ -61,7 +57,9 @@ function relTime(iso: string | null | undefined): string {
   if (!iso) return "";
   const diff = new Date(iso).getTime() - Date.now();
   const abs = Math.abs(diff);
-  const min = 60_000, hr = 60 * min, day = 24 * hr;
+  const min = 60_000,
+    hr = 60 * min,
+    day = 24 * hr;
   if (abs < hr) return RELATIVE.format(Math.round(diff / min), "minute");
   if (abs < day) return RELATIVE.format(Math.round(diff / hr), "hour");
   if (abs < 30 * day) return RELATIVE.format(Math.round(diff / day), "day");
@@ -124,7 +122,6 @@ function OverviewPage() {
     enabled: !!orgId,
   });
   const pendingRoles = pendingRolesData?.roles ?? [];
-
 
   useEffect(() => {
     const onRefresh = () => refetch();
@@ -213,12 +210,12 @@ function OverviewPage() {
       {/* Is the system working, and is what I'm looking at current? */}
       <SystemHealthStrip organizationId={orgId} />
 
-
-
       {isError && (
         <div className="flex items-center gap-3 rounded-lg border taas-bd-warning taas-bg-warning-soft px-4 py-3 text-sm">
           <AlertTriangle className="h-4 w-4 taas-fg-warning" />
-          <span className="flex-1">Overview could not be refreshed. Showing the latest confirmed information.</span>
+          <span className="flex-1">
+            Overview could not be refreshed. Showing the latest confirmed information.
+          </span>
           <button onClick={() => refetch()} className="font-medium text-primary hover:underline">
             Retry
           </button>
@@ -280,8 +277,6 @@ function OverviewPage() {
           {/* AGENT ACTIVITY — the observable record of work on your roles */}
           <AgentActivityRail organizationId={orgId} className="max-h-[32rem]" />
 
-
-
           {/* ── Context below the fold ── */}
           <div className="flex items-center gap-3 pt-2">
             <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
@@ -293,7 +288,12 @@ function OverviewPage() {
                 aria-label="Filter by role"
                 value={selectedRole}
                 onChange={(e) =>
-                  navigate({ search: ((prev: Any) => ({ ...prev, role: e.target.value || undefined })) as never })
+                  navigate({
+                    search: ((prev: Any) => ({
+                      ...prev,
+                      role: e.target.value || undefined,
+                    })) as never,
+                  })
                 }
                 className="min-h-9 rounded-md border bg-card px-2 text-xs"
               >
@@ -340,7 +340,10 @@ function OverviewPage() {
             ) : isError && !data ? (
               <div className="rounded-lg border taas-bd-warning taas-bg-warning-soft p-6 text-center text-sm">
                 We couldn't load your candidates just now.{" "}
-                <button onClick={() => refetch()} className="font-medium text-primary hover:underline">
+                <button
+                  onClick={() => refetch()}
+                  className="font-medium text-primary hover:underline"
+                >
                   Try again
                 </button>
               </div>
@@ -370,7 +373,8 @@ function OverviewPage() {
 
           {data?.last_updated && (
             <p className="pt-2 text-xs text-muted-foreground">
-              Last updated {relTime(data.last_updated)} · {new Date(data.last_updated).toLocaleString()}
+              Last updated {relTime(data.last_updated)} ·{" "}
+              {new Date(data.last_updated).toLocaleString()}
             </p>
           )}
         </>
@@ -385,7 +389,6 @@ function OverviewPage() {
 
 // The queue itself lives in src/components/client/decision-queue.tsx, and its
 // ordering rules in src/lib/client-decision-queue.ts.
-
 
 /**
  * Plain-language stage per role, with the date it entered that stage, how long
@@ -410,7 +413,9 @@ function RoleStatusList({
     );
   }
   if (roles.length === 0) {
-    return <EmptyBlock text="No live roles right now. Submit a role and its progress shows up here." />;
+    return (
+      <EmptyBlock text="No live roles right now. Submit a role and its progress shows up here." />
+    );
   }
   return (
     <ul className={compact ? "grid gap-1.5" : "grid gap-2"}>
@@ -429,106 +434,110 @@ function RoleStatusList({
                 r.at_risk ? "taas-bd-warning" : ""
               }`}
             >
-            <Link
-              to="/client/positions/$id"
-              params={{ id: r.position_id }}
-              className={`group flex flex-col gap-2 hover:bg-muted/30 ${
-                compact ? "px-4 py-2.5" : "px-4 py-3.5"
-              }`}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <Briefcase className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                    <span className="truncate text-sm font-semibold group-hover:text-primary">{r.title}</span>
-                  </div>
-                  <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
-                    <span className="font-medium text-foreground">{r.stage_label}</span>
-                    {since ? ` since ${since}` : ""}
-                    {days != null ? ` · ${days === 1 ? "1 day" : `${days} days`} in this stage` : ""}
-                  </p>
-                </div>
-                <div className="flex shrink-0 items-center gap-2">
-                  {r.delivered_pending > 0 && (
-                    <span className="rounded-full taas-bg-warning-soft px-2 py-0.5 text-[11px] font-semibold taas-fg-warning">
-                      {r.delivered_pending} to review
-                    </span>
-                  )}
-                  <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
-                </div>
-              </div>
-
-              {/* Our promise, next to what actually happened. Misses shown plainly. */}
-              {!compact && (
-              <div className="grid grid-cols-3 gap-2 rounded-lg border bg-muted/30 px-3 py-2 text-[11px] sm:text-xs">
-                <div className="min-w-0">
-                  <div className="text-muted-foreground">First shortlist promised</div>
-                  <div className="truncate font-medium text-foreground">
-                    {commitment.promisedAt
-                      ? formatCommitmentDate(commitment.promisedAt)
-                      : "Not committed"}
-                  </div>
-                </div>
-                <div className="min-w-0">
-                  <div className="text-muted-foreground">Actual</div>
-                  <div className="truncate font-medium text-foreground">
-                    {commitment.actualAt ? formatCommitmentDate(commitment.actualAt) : "Not yet"}
-                  </div>
-                </div>
-                <div className="min-w-0">
-                  <div className="text-muted-foreground">Variance</div>
-                  <div
-                    className={`truncate font-medium ${
-                      commitment.state === "missed" || commitment.state === "overdue"
-                        ? "taas-fg-danger"
-                        : commitment.state === "met"
-                          ? "taas-fg-success"
-                          : "text-foreground"
-                    }`}
-                  >
-                    {commitment.varianceLabel}
-                  </div>
-                </div>
-              </div>
-              )}
-
-              {/* What happens next: owner and date, always stated. */}
-              <p
-                className={`flex items-start gap-2 rounded-lg border border-dashed px-3 py-1.5 text-[11px] sm:text-xs ${
-                  next.overdue
-                    ? "taas-bd-warning taas-bg-warning-soft taas-fg-warning"
-                    : "bg-muted/30 text-muted-foreground"
+              <Link
+                to="/client/positions/$id"
+                params={{ id: r.position_id }}
+                className={`group flex flex-col gap-2 hover:bg-muted/30 ${
+                  compact ? "px-4 py-2.5" : "px-4 py-3.5"
                 }`}
               >
-                <span>
-                  <span className="font-semibold text-foreground">Next: </span>
-                  {next.sentence}{" "}
-                  <span className="font-medium text-foreground">{next.ownerLabel}</span>
-                  {next.dateLabel ? ` · by ${next.dateLabel}` : ""}
-                </span>
-              </p>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <Briefcase className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                      <span className="truncate text-sm font-semibold group-hover:text-primary">
+                        {r.title}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+                      <span className="font-medium text-foreground">{r.stage_label}</span>
+                      {since ? ` since ${since}` : ""}
+                      {days != null
+                        ? ` · ${days === 1 ? "1 day" : `${days} days`} in this stage`
+                        : ""}
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    {r.delivered_pending > 0 && (
+                      <span className="rounded-full taas-bg-warning-soft px-2 py-0.5 text-[11px] font-semibold taas-fg-warning">
+                        {r.delivered_pending} to review
+                      </span>
+                    )}
+                    <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
+                  </div>
+                </div>
 
+                {/* Our promise, next to what actually happened. Misses shown plainly. */}
+                {!compact && (
+                  <div className="grid grid-cols-3 gap-2 rounded-lg border bg-muted/30 px-3 py-2 text-[11px] sm:text-xs">
+                    <div className="min-w-0">
+                      <div className="text-muted-foreground">First shortlist promised</div>
+                      <div className="truncate font-medium text-foreground">
+                        {commitment.promisedAt
+                          ? formatCommitmentDate(commitment.promisedAt)
+                          : "Not committed"}
+                      </div>
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-muted-foreground">Actual</div>
+                      <div className="truncate font-medium text-foreground">
+                        {commitment.actualAt
+                          ? formatCommitmentDate(commitment.actualAt)
+                          : "Not yet"}
+                      </div>
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-muted-foreground">Variance</div>
+                      <div
+                        className={`truncate font-medium ${
+                          commitment.state === "missed" || commitment.state === "overdue"
+                            ? "taas-fg-danger"
+                            : commitment.state === "met"
+                              ? "taas-fg-success"
+                              : "text-foreground"
+                        }`}
+                      >
+                        {commitment.varianceLabel}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
-
-              {r.at_risk && r.risk_reason && (
-                <p className="flex items-start gap-2 rounded-lg taas-bg-warning-soft px-3 py-2 text-xs taas-fg-warning sm:text-sm">
-                  <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                {/* What happens next: owner and date, always stated. */}
+                <p
+                  className={`flex items-start gap-2 rounded-lg border border-dashed px-3 py-1.5 text-[11px] sm:text-xs ${
+                    next.overdue
+                      ? "taas-bd-warning taas-bg-warning-soft taas-fg-warning"
+                      : "bg-muted/30 text-muted-foreground"
+                  }`}
+                >
                   <span>
-                    <span className="font-semibold">At risk — </span>
-                    {r.risk_reason}
+                    <span className="font-semibold text-foreground">Next: </span>
+                    {next.sentence}{" "}
+                    <span className="font-medium text-foreground">{next.ownerLabel}</span>
+                    {next.dateLabel ? ` · by ${next.dateLabel}` : ""}
                   </span>
                 </p>
-              )}
-            </Link>
-            <div className="border-t px-4 py-2">
-              <Link
-                to="/client/candidates"
-                search={{ position: r.position_id, view: "compare" } as never}
-                className="text-xs font-medium text-primary hover:underline"
-              >
-                Compare shortlist side by side →
+
+                {r.at_risk && r.risk_reason && (
+                  <p className="flex items-start gap-2 rounded-lg taas-bg-warning-soft px-3 py-2 text-xs taas-fg-warning sm:text-sm">
+                    <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                    <span>
+                      <span className="font-semibold">At risk — </span>
+                      {r.risk_reason}
+                    </span>
+                  </p>
+                )}
               </Link>
-            </div>
+              <div className="border-t px-4 py-2">
+                <Link
+                  to="/client/candidates"
+                  search={{ position: r.position_id, view: "compare" } as never}
+                  className="text-xs font-medium text-primary hover:underline"
+                >
+                  Compare shortlist side by side →
+                </Link>
+              </div>
             </div>
           </li>
         );
@@ -536,7 +545,6 @@ function RoleStatusList({
     </ul>
   );
 }
-
 
 function SinceLastVisit({
   events,
@@ -557,7 +565,9 @@ function SinceLastVisit({
     <div className="rounded-xl border bg-card p-4 sm:p-5">
       <SectionHeader icon={<RefreshCw className="h-4 w-4" />} title={heading} size="sm" />
       {list.length === 0 ? (
-        <p className="mt-3 text-sm text-muted-foreground">Hiring activity will appear here as your searches progress.</p>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Hiring activity will appear here as your searches progress.
+        </p>
       ) : (
         <ul className="mt-3 space-y-2.5">
           {list.slice(0, 8).map((e) => (
@@ -590,8 +600,15 @@ function RecentMessages({ messages }: { messages: Any[] }) {
   return (
     <div className="rounded-xl border bg-card p-4 sm:p-5">
       <div className="flex items-center justify-between gap-3">
-        <SectionHeader icon={<MessageSquare className="h-4 w-4" />} title="Recent messages" size="sm" />
-        <Link to="/client/conversations" className="text-sm font-medium text-primary hover:underline">
+        <SectionHeader
+          icon={<MessageSquare className="h-4 w-4" />}
+          title="Recent messages"
+          size="sm"
+        />
+        <Link
+          to="/client/conversations"
+          className="text-sm font-medium text-primary hover:underline"
+        >
           View
         </Link>
       </div>
@@ -603,7 +620,9 @@ function RecentMessages({ messages }: { messages: Any[] }) {
             <li key={m.id} className="py-2.5 first:pt-0 last:pb-0">
               <div className="flex items-baseline justify-between gap-2">
                 <span className="text-xs font-medium text-muted-foreground">TaaSFlow</span>
-                <span className="shrink-0 text-xs text-muted-foreground">{relTime(m.created_at)}</span>
+                <span className="shrink-0 text-xs text-muted-foreground">
+                  {relTime(m.created_at)}
+                </span>
               </div>
               <p className="mt-0.5 line-clamp-2 text-sm">{m.body}</p>
             </li>

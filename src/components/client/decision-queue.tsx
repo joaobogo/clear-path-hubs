@@ -81,9 +81,12 @@ function useHandled(orgId: string | null | undefined) {
     setPending(null);
   };
 
-  React.useEffect(() => () => {
-    if (timer.current) window.clearTimeout(timer.current);
-  }, []);
+  React.useEffect(
+    () => () => {
+      if (timer.current) window.clearTimeout(timer.current);
+    },
+    [],
+  );
 
   return { hidden: handled, pending, markHandled, undo };
 }
@@ -184,7 +187,10 @@ export function DecisionQueue({
   if (loading) {
     return (
       <section aria-labelledby="queue-heading" className="space-y-3">
-        <h2 id="queue-heading" className="text-sm font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+        <h2
+          id="queue-heading"
+          className="text-sm font-semibold uppercase tracking-[0.12em] text-muted-foreground"
+        >
           What needs you
         </h2>
         <div className="space-y-2" aria-hidden="true">
@@ -234,7 +240,9 @@ export function DecisionQueue({
                 Nothing needs you today
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                {meta ? `${meta.checked} item${meta.checked === 1 ? "" : "s"} checked.` : "Your queue is clear."}
+                {meta
+                  ? `${meta.checked} item${meta.checked === 1 ? "" : "s"} checked.`
+                  : "Your queue is clear."}
                 {meta?.next_expected_at
                   ? ` Next delivery expected ${fmtDate(meta.next_expected_at)}.`
                   : ""}
@@ -249,7 +257,10 @@ export function DecisionQueue({
   return (
     <section aria-labelledby="queue-heading" className="space-y-3">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="queue-heading" className="text-sm font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+        <h2
+          id="queue-heading"
+          className="text-sm font-semibold uppercase tracking-[0.12em] text-muted-foreground"
+        >
           What needs you
         </h2>
         <span className="text-xs text-muted-foreground">
@@ -267,7 +278,12 @@ export function DecisionQueue({
           </h3>
           <ul className="divide-y bg-card">
             {overdue.map((r) => (
-              <QueueRowItem key={r.key} row={r} search={search} onHandled={() => markHandled(r.key)} />
+              <QueueRowItem
+                key={r.key}
+                row={r}
+                search={search}
+                onHandled={() => markHandled(r.key)}
+              />
             ))}
           </ul>
         </div>
@@ -276,7 +292,12 @@ export function DecisionQueue({
       {upcoming.length > 0 && (
         <ul className={cn("divide-y overflow-hidden rounded-xl border bg-card")}>
           {upcoming.map((r) => (
-            <QueueRowItem key={r.key} row={r} search={search} onHandled={() => markHandled(r.key)} />
+            <QueueRowItem
+              key={r.key}
+              row={r}
+              search={search}
+              onHandled={() => markHandled(r.key)}
+            />
           ))}
         </ul>
       )}
