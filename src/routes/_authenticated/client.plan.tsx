@@ -12,6 +12,7 @@ import { useSupportView } from "@/lib/support-view";
 import { PLAN_CATALOGUE } from "@/lib/payments-catalog";
 import { TURNAROUND_LABEL } from "@/config/pricing-core";
 import { PlanPanel } from "@/components/client/plan-panel";
+import { ServiceExpectationsTable } from "@/components/client/service-expectations-table";
 import { SkeletonRows } from "@/components/client/states";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
