@@ -1036,7 +1036,7 @@ function ApplyPage() {
           {step === 4 && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-lg font-semibold">Consent & review</h2>
+                <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Consent &amp; review</h2>
                 <p className="text-sm text-muted-foreground">
                   Confirm the details below before submitting.
                 </p>
