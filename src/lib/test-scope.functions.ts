@@ -54,7 +54,7 @@ export const getTestScopeState = createServerFn({ method: "GET" })
       const { data } = await admin
         .from("profiles")
         .select("show_test_records")
-        .eq("user_id", context.userId)
+        .eq("auth_user_id", context.userId)
         .maybeSingle();
       show = data?.show_test_records === true;
     } catch (e) {
@@ -80,7 +80,7 @@ export const setTestScopeState = createServerFn({ method: "POST" })
     const { error } = await admin
       .from("profiles")
       .update({ show_test_records: data.show })
-      .eq("user_id", context.userId);
+      .eq("auth_user_id", context.userId);
     if (error) throw new Error("Could not save the test-record preference.");
 
     await writeCookie(data.show);
