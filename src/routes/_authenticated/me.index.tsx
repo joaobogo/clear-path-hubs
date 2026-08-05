@@ -17,7 +17,6 @@ import { InterviewResponseCard } from "@/components/candidate/interview-response
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight,
-  CalendarClock,
   CheckCircle2,
   FileText,
   FileUp,
