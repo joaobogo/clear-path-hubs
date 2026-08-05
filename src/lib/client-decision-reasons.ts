@@ -60,7 +60,7 @@ export const INFO_REQUEST_TOPICS = [
 ] as const;
 
 export const REASON_CODES = [
-  ...DECLINE_REASONS.map((r) => r.code),
+  ...REJECTION_REASON_CODES,
   ...HOLD_REASONS.map((r) => r.code),
   ...INFO_REQUEST_TOPICS.map((r) => r.code),
 ] as string[];
@@ -76,6 +76,10 @@ export const FEEDBACK_SIGNALS = [
 
 export function reasonLabel(code: string | null | undefined): string | null {
   if (!code) return null;
-  const all = [...DECLINE_REASONS, ...HOLD_REASONS, ...INFO_REQUEST_TOPICS];
+  const all = [
+    ...REJECTION_REASONS.map((r) => ({ code: r.code as string, label: r.label as string })),
+    ...HOLD_REASONS,
+    ...INFO_REQUEST_TOPICS,
+  ];
   return all.find((r) => r.code === code)?.label ?? code;
 }
