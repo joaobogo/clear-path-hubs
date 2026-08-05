@@ -622,6 +622,22 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
         throw new Error(`publish_blocked:${gate.reason}`);
       }
 
+      // Evidence completeness gate: every must-have criterion needs at least one
+      // piece of evidence, or a recorded override with a written justification.
+      const { evidenceGateBlockers } = await import("@/lib/evidence/completeness.server");
+      const blockers = await evidenceGateBlockers(supabase, data.match_id);
+      if (blockers.length > 0) {
+        await writeAudit("score_approval_blocked", {
+          ...beforeState,
+          score_run_id: runIdForDecision,
+          blocked_reason: "evidence_incomplete",
+          missing_criteria: blockers,
+          reason: data.reason ?? null,
+        });
+        throw new Error(`publish_blocked:evidence_incomplete:${blockers.join(" | ")}`);
+      }
+
+
 
 
       // Single-transaction, idempotent approval. The RPC locks the match row,
