@@ -2979,7 +2979,7 @@ function ExpressIntakePage() {
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => editFromReview("roleTitle")}
+                        onClick={() => editFromReview({ step: 0, focusLabel: "Job title" })}
                       >
                         Change the title
                       </Button>
@@ -3011,7 +3011,7 @@ function ExpressIntakePage() {
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => editFromReview("salaryMin")}
+                        onClick={() => editFromReview({ step: 2, focusLabel: "From" })}
                       >
                         Review compensation
                       </Button>
