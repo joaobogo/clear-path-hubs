@@ -1135,6 +1135,9 @@ function PipelineTab({ matches, positionId }: { matches: Any[]; positionId: stri
       <PositionSourceQualityPanel positionId={positionId} />
 
       <InterviewExceptionsPanel positionId={positionId} />
+
+      <PositionOfferTrackingPanel positionId={positionId} />
+
     </div>
   );
 }
