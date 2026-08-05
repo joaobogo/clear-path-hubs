@@ -187,7 +187,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
 
     const { data: questions, error: qErr } = await supabase
       .from("screening_questions")
-      .select("id,question,answer_type,required,options,display_order")
+      .select("id,question,answer_type,required,options,display_order,why_asked")
       .eq("position_id", data.id)
       .order("display_order", { ascending: true });
     if (qErr) throw new Error(qErr.message);
@@ -309,6 +309,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
         answer_type: q.answer_type,
         required: q.required,
         options: q.options as string[] | null,
+        why_asked: (q.why_asked as string | null) ?? null,
       })),
     };
   });

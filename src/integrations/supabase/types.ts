@@ -11116,6 +11116,7 @@ export type Database = {
             | Database["public"]["Enums"]["migration_row_status"]
             | null
           migration_version: string | null
+          must_have: string | null
           options: Json | null
           position_id: string
           preferred_answer: Json | null
@@ -11123,6 +11124,7 @@ export type Database = {
           required: boolean
           scoring_weight: number
           updated_at: string
+          why_asked: string | null
         }
         Insert: {
           answer_type?: Database["public"]["Enums"]["answer_type"]
@@ -11139,6 +11141,7 @@ export type Database = {
             | Database["public"]["Enums"]["migration_row_status"]
             | null
           migration_version?: string | null
+          must_have?: string | null
           options?: Json | null
           position_id: string
           preferred_answer?: Json | null
@@ -11146,6 +11149,7 @@ export type Database = {
           required?: boolean
           scoring_weight?: number
           updated_at?: string
+          why_asked?: string | null
         }
         Update: {
           answer_type?: Database["public"]["Enums"]["answer_type"]
@@ -11162,6 +11166,7 @@ export type Database = {
             | Database["public"]["Enums"]["migration_row_status"]
             | null
           migration_version?: string | null
+          must_have?: string | null
           options?: Json | null
           position_id?: string
           preferred_answer?: Json | null
@@ -11169,6 +11174,7 @@ export type Database = {
           required?: boolean
           scoring_weight?: number
           updated_at?: string
+          why_asked?: string | null
         }
         Relationships: [
           {
@@ -15472,6 +15478,7 @@ export type Database = {
         Returns: Database["public"]["Enums"]["score_band"]
       }
       scoring_readiness: { Args: { _match_id: string }; Returns: Json }
+      screening_question_prohibited: { Args: { _q: string }; Returns: boolean }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
       write_back_closed_search: {
