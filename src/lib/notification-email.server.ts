@@ -175,11 +175,18 @@ export async function dispatchEmails(
       errorMessage = "Recipient preference or unsubscribe applies to this email.";
     } else {
       address = await recipientEmail(admin, n.recipient_user_id);
+      const blocked = address ? await isSuppressed(admin, address) : false;
       if (!address) {
         status = "failed";
         errorCode = "no_recipient_address";
         errorMessage = "No email address on file for this user.";
+      } else if (blocked) {
+        status = "suppressed";
+        errorCode = "recipient_suppressed";
+        errorMessage =
+          "This address is on the suppression list, so no email was sent. The in-app notification was still delivered.";
       } else if (!cfg.configured) {
+
         status = "suppressed";
         errorCode = cfg.reason;
         errorMessage =
