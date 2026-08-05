@@ -50,13 +50,19 @@ export async function resolveShowTestRecords(): Promise<boolean> {
  * `includeTest` is an explicit override used by account-scoped screens that
  * are already pinned to one organization. When it is omitted (the normal case
  * for every admin list and rollup) the single global per-user preference
- * decides, so counts can never disagree between screens.
+ * decides, so counts can never disagree between screens. Pass `"never"` on
+ * client-facing paths: test records are excluded there under any condition.
  */
-export async function loadTestScope(s: Any, includeTest?: boolean): Promise<TestScope> {
-  const effective = includeTest === true ? true : await resolveShowTestRecords();
+export async function loadTestScope(
+  s: Any,
+  includeTest?: boolean | "never",
+): Promise<TestScope> {
+  const effective =
+    includeTest === "never" ? false : includeTest === true ? true : await resolveShowTestRecords();
   if (effective) {
     return { includeTest: true, orgIds: [], positionIds: [], excludedOrgs: 0, excludedPositions: 0 };
   }
+
 
   const { data: orgs } = await s
     .from("organizations")
