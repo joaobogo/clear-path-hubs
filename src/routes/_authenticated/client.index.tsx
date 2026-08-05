@@ -33,6 +33,7 @@ import { HiringHealthLine } from "@/components/client/hiring-health-line";
 import { SystemHealthStrip } from "@/components/client/system-health-strip";
 import { AgentActivityRail } from "@/components/client/agent-activity-rail";
 import { DecisionQueue } from "@/components/client/decision-queue";
+import { NextMilestones, type MilestoneRow } from "@/components/client/next-milestones";
 import type { QueueRow } from "@/lib/client-decision-queue";
 
 export const Route = createFileRoute("/_authenticated/client/")({
@@ -227,6 +228,17 @@ function OverviewPage() {
             isError={isError && !data}
             onRetry={() => refetch()}
             canSubmit={canSubmit}
+            org={orgSearch ?? null}
+          />
+
+          {/* 3 · WHAT HAPPENS NEXT — one milestone per active role, with dates
+              only where a commitment or recorded due date exists */}
+          <NextMilestones
+            rows={((data as Any)?.next_milestones ?? null) as MilestoneRow[] | null}
+            totalRoles={roles.length}
+            loading={!data && isFetching}
+            isError={(isError && !data) || Boolean((data as Any)?.next_milestones_failed)}
+            onRetry={() => refetch()}
             org={orgSearch ?? null}
           />
 
