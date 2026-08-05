@@ -275,3 +275,102 @@ export const saveSchedulingSettings = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+/**
+ * Candidate reschedules or cancels a booked interview without an email thread.
+ *
+ * Available until the interview start time. A request inside twenty-four hours
+ * is permitted — the notice about timing is shown in the UI, never enforced
+ * here. Reschedule releases the booked time and asks for new options; cancel
+ * releases it and closes the interview. The candidate's application is not
+ * touched either way, and no reason is required.
+ */
+export const requestInterviewChange = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((raw) =>
+    z
+      .object({
+        interviewId: z.string().uuid(),
+        action: z.enum(["reschedule", "cancel"]),
+        note: z.string().max(1000).optional(),
+      })
+      .parse(raw),
+  )
+  .handler(async ({ context, data }) => {
+    const { data: profile } = await context.supabase
+      .from("candidate_profiles")
+      .select("id")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    if (!profile) throw new Error("Forbidden");
+
+    const { data: iv } = await context.supabase
+      .from("interviews")
+      .select("id, candidate_match_id, status, scheduled_at, reschedule_count")
+      .eq("id", data.interviewId)
+      .maybeSingle();
+    if (!iv) throw new Error("not_found");
+
+    const { data: match } = await context.supabase
+      .from("candidate_matches")
+      .select("id")
+      .eq("id", (iv as AnyRow).candidate_match_id)
+      .eq("candidate_profile_id", (profile as AnyRow).id)
+      .maybeSingle();
+    if (!match) throw new Error("Forbidden");
+
+    if (["cancelled", "completed"].includes((iv as AnyRow).status)) {
+      throw new Error("interview_closed");
+    }
+    const scheduledAt = (iv as AnyRow).scheduled_at as string | null;
+    if (!scheduledAt) throw new Error("not_scheduled");
+    if (new Date(scheduledAt).getTime() <= Date.now()) throw new Error("interview_started");
+
+    const now = new Date().toISOString();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const patch =
+      data.action === "reschedule"
+        ? {
+            status: "scheduling" as never,
+            candidate_response: "reschedule_requested",
+            candidate_response_at: now,
+            candidate_note: data.note ?? null,
+            candidate_selected_time: null,
+            previous_scheduled_at: scheduledAt,
+            scheduled_at: null,
+            confirmed_at: null,
+            proposed_times: [] as never,
+            availability_expires_at: null,
+            reschedule_count: (((iv as AnyRow).reschedule_count as number) ?? 0) + 1,
+          }
+        : {
+            status: "cancelled" as never,
+            candidate_response: "declined",
+            candidate_response_at: now,
+            candidate_note: data.note ?? null,
+            previous_scheduled_at: scheduledAt,
+            cancelled_at: now,
+            cancel_reason: "Cancelled by candidate",
+          };
+
+    const { error } = await supabaseAdmin
+      .from("interviews")
+      .update(patch)
+      .eq("id", data.interviewId);
+    if (error) throw new Error(error.message);
+
+    try {
+      const { emitInterviewEvent } = await import("./interview-events.server");
+      await emitInterviewEvent({
+        interviewId: data.interviewId,
+        event: data.action === "reschedule" ? "interview_requested" : "interview_cancelled",
+        actorUserId: context.userId,
+        scopeSuffix: `candidate_change:${data.action}:${now}`,
+      });
+    } catch (e) {
+      console.error("[requestInterviewChange] emit failed", e);
+    }
+
+    return { ok: true, action: data.action, at: now };
+  });

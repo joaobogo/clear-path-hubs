@@ -7,7 +7,7 @@
  *      Nothing is projected and nothing describes a future step.
  *   2. Internal recruiter activity never appears — no views, no notes, no
  *      scoring or processing steps, no actor names.
- *   3. Only these eight events exist. A stage with no candidate meaning is
+ *   3. Only these ten events exist. A stage with no candidate meaning is
  *      dropped rather than renamed.
  */
 
@@ -17,6 +17,8 @@ export const CANDIDATE_TIMELINE_LABELS = [
   "Review started",
   "Shared with the employer",
   "Interview scheduled",
+  "Reschedule requested",
+  "Interview cancelled",
   "Interview completed",
   "Decision recorded",
   "Withdrawn",
@@ -61,6 +63,9 @@ export interface TimelineInputs {
     status: string;
     scheduled_at: string | null;
     cancelled_at?: string | null;
+    /** Candidate's own reply, when they gave one. */
+    candidate_response?: string | null;
+    candidate_response_at?: string | null;
   }>;
   withdrawnAt: string | null;
 }
@@ -83,6 +88,13 @@ export function buildCandidateTimeline(input: TimelineInputs): CandidateTimeline
     }
     if (i.status === "completed" && i.scheduled_at) {
       events.push({ at: i.scheduled_at, label: "Interview completed" });
+    }
+    // A candidate-initiated change is recorded from the stored reply stamp.
+    if (i.candidate_response === "reschedule_requested" && i.candidate_response_at) {
+      events.push({ at: i.candidate_response_at, label: "Reschedule requested" });
+    }
+    if (i.cancelled_at) {
+      events.push({ at: i.cancelled_at, label: "Interview cancelled" });
     }
   }
 

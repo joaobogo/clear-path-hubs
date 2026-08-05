@@ -207,7 +207,7 @@ export const getMyApplication = createServerFn({ method: "GET" })
          cover_letter, portfolio_url, cv_file_id,
          positions:position_id ( id, title, description, status, closure_reason, closed_at, organization_id, employment_type, work_model, location, organizations:organization_id ( id, name ) ),
          candidate_matches ( id, stage, client_visibility, updated_at,
-           interviews ( id, status, scheduled_at, duration_minutes, interview_type, location, meeting_url, timezone, requested_at, cancelled_at ) )`,
+           interviews ( id, status, scheduled_at, duration_minutes, interview_type, location, meeting_url, timezone, requested_at, cancelled_at, candidate_response, candidate_response_at ) )`,
       )
       .eq("id", data.id)
       .eq("candidate_profile_id", cpId)
@@ -247,6 +247,8 @@ export const getMyApplication = createServerFn({ method: "GET" })
         timezone: i.timezone as string | null,
         requested_at: i.requested_at as string,
         cancelled_at: i.cancelled_at as string | null,
+        candidate_response: (i.candidate_response as string | null) ?? null,
+        candidate_response_at: (i.candidate_response_at as string | null) ?? null,
       }));
     const infoRequests = (reqs ?? []) as Array<{
       id: string;
@@ -270,7 +272,7 @@ export const getMyApplication = createServerFn({ method: "GET" })
 
     // Recorded stage history only. Candidates cannot read this table under RLS,
     // so it is loaded privileged *after* the application was proven to be
-    // theirs above, and mapped to the eight candidate-safe labels. Actor,
+    // theirs above, and mapped to the canonical candidate-safe labels. Actor,
     // reason and internal stages are never returned.
     const matchIds = matches.map((m: AnyRow) => m.id as string);
     let stageHistory: Array<{ to_stage: string; created_at: string }> = [];
