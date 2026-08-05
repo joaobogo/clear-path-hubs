@@ -144,7 +144,7 @@ function PositionsPage() {
   const total = payload.total;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
-  const setSearch = (patch: Record<string, string | number | undefined>) =>
+  const setSearch = (patch: Record<string, string | number | boolean | undefined>) =>
     navigate({
       search: (s: Record<string, unknown>) => ({ ...s, ...patch }),
       replace: true,
