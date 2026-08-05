@@ -70,6 +70,23 @@ type FormState = {
   confirmPassword: string;
   roleTitle: string;
   jobDescriptionText: string;
+  whyOpen: string;
+  mustHaves: string;
+  trainable: string;
+  dealBreakers: string;
+  location: string;
+  workModel: "remote" | "hybrid" | "onsite" | "";
+  onsiteDays: string;
+  currency: string;
+  compensationPeriod: string;
+  salaryMin: string;
+  salaryMax: string;
+  compensationNote: string;
+  workAuthorization: string;
+  workAuthorizationNote: string;
+  interviewProcess: string;
+  decisionMaker: string;
+  targetStartDate: string;
   consent: boolean;
   pilotAcknowledgement: boolean;
   researchConsent: boolean;
@@ -90,11 +107,29 @@ const EMPTY: FormState = {
   confirmPassword: "",
   roleTitle: "",
   jobDescriptionText: "",
+  whyOpen: "",
+  mustHaves: "",
+  trainable: "",
+  dealBreakers: "",
+  location: "",
+  workModel: "",
+  onsiteDays: "",
+  currency: "USD",
+  compensationPeriod: "year",
+  salaryMin: "",
+  salaryMax: "",
+  compensationNote: "",
+  workAuthorization: "",
+  workAuthorizationNote: "",
+  interviewProcess: "",
+  decisionMaker: "",
+  targetStartDate: "",
   consent: false,
   pilotAcknowledgement: false,
   researchConsent: true,
   companyFax: "",
 };
+
 
 type JdFile = { filename: string; mime: string; base64: string; size: number };
 
