@@ -32,7 +32,7 @@ export const listMyInterviews = createServerFn({ method: "GET" })
     const { data, error } = await context.supabase
       .from("interviews")
       .select(
-        "id, candidate_match_id, status, interview_type, scheduled_at, timezone, duration_minutes, meeting_url, location, proposed_times, availability_expires_at, candidate_response, calendly_url, scheduling_method, positions:position_id(title)",
+        "id, candidate_match_id, status, interview_type, scheduled_at, timezone, duration_minutes, meeting_url, location, proposed_times, participants, availability_expires_at, candidate_response, candidate_selected_time, confirmed_at, admin_coordination_required, calendly_url, scheduling_method, positions:position_id(title)",
       )
       .in("candidate_match_id", ids)
       .order("scheduled_at", { ascending: true, nullsFirst: false });
@@ -50,8 +50,18 @@ export const listMyInterviews = createServerFn({ method: "GET" })
         meeting_url: (r.meeting_url as string | null) ?? null,
         location: (r.location as string | null) ?? null,
         proposed_times: (r.proposed_times as string[] | null) ?? [],
+        // Interviewers are described by role only — never by name or email.
+        participant_roles: (Array.isArray(r.participants) ? r.participants : [])
+          .map((p: AnyRow) => (typeof p?.role === "string" ? p.role : ""))
+          .filter((role: string) => role.trim().length > 0),
         availability_expires_at: (r.availability_expires_at as string | null) ?? null,
-        candidate_response: (r.candidate_response as string | null) ?? null,
+        candidate_response:
+          (r.candidate_response as string | null) === "pending"
+            ? null
+            : ((r.candidate_response as string | null) ?? null),
+        candidate_selected_time: (r.candidate_selected_time as string | null) ?? null,
+        confirmed_at: (r.confirmed_at as string | null) ?? null,
+        awaiting_confirmation: Boolean(r.admin_coordination_required) && !r.confirmed_at,
         calendly_url: (r.calendly_url as string | null) ?? null,
         scheduling_method: (r.scheduling_method as string | null) ?? "manual",
         position_title: (r.positions?.title as string) ?? "Position",
@@ -59,11 +69,14 @@ export const listMyInterviews = createServerFn({ method: "GET" })
     };
   });
 
+
 /**
- * Candidate replies to a request. Accepting a specific slot records the
- * preference only — the coordinator still confirms the canonical time, so the
- * candidate never sees a meeting that was never actually booked.
+ * Candidate replies to a proposed time. Accepting releases the other slots and
+ * schedules the chosen one, unless the organisation coordinates manually — then
+ * the time is held and confirmed by a coordinator, so the candidate is never
+ * shown a booking that was not actually made.
  */
+
 export const respondToInterview = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw) =>
@@ -87,7 +100,7 @@ export const respondToInterview = createServerFn({ method: "POST" })
     const { data: iv } = await context.supabase
       .from("interviews")
       .select(
-        "id, organization_id, candidate_match_id, status, proposed_times, availability_expires_at",
+        "id, organization_id, candidate_match_id, status, proposed_times, availability_expires_at, admin_coordination_required",
       )
       .eq("id", data.interviewId)
       .maybeSingle();
@@ -114,15 +127,33 @@ export const respondToInterview = createServerFn({ method: "POST" })
       if (new Date(data.preferredTime).getTime() < Date.now()) throw new Error("slot_in_past");
     }
 
+    // Accepting a slot releases the others: the accepted time becomes the only
+    // one still held. When the organisation coordinates manually the time is
+    // held rather than confirmed, so the candidate is never shown a booking
+    // that has not actually been made.
+    const accepting = data.response === "accepted" && Boolean(data.preferredTime);
+    const coordinationRequired = Boolean((iv as AnyRow).admin_coordination_required);
+    const now = new Date().toISOString();
+
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
       .from("interviews")
       .update({
         candidate_response: data.response,
-        candidate_response_at: new Date().toISOString(),
+        candidate_response_at: now,
         candidate_selected_time: data.preferredTime ?? null,
         candidate_note: data.note ?? null,
-        status: (iv as AnyRow).status === "requested" ? "scheduling" : (iv as AnyRow).status,
+        ...(accepting
+          ? {
+              proposed_times: [data.preferredTime] as never,
+              scheduled_at: data.preferredTime as never,
+              ...(coordinationRequired
+                ? { status: "scheduling" as never }
+                : { status: "scheduled" as never, confirmed_at: now }),
+            }
+          : {
+              status: (iv as AnyRow).status === "requested" ? "scheduling" : (iv as AnyRow).status,
+            }),
       })
       .eq("id", data.interviewId);
 
@@ -140,6 +171,7 @@ export const respondToInterview = createServerFn({ method: "POST" })
     } catch (e) {
       console.error("[respondToInterview] emit failed", e);
     }
+
     return { ok: true };
   });
 
