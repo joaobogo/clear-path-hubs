@@ -1,4 +1,8 @@
 import { CANDIDATE_STATES, type CandidateStateKey } from "@/lib/candidate/candidate-transparency";
+import {
+  CANDIDATE_STATUS_COPY,
+  candidateStatusFromStateKey,
+} from "@/lib/candidate/status-vocabulary";
 
 /**
  * The single place a candidate is told where they stand: what the state
@@ -16,6 +20,9 @@ export function CandidateStatePanel({
   className?: string;
 }) {
   const copy = CANDIDATE_STATES[state];
+  // The chip always uses the shared six-word vocabulary, so this application
+  // reads identically here, on the list, on the detail page and in email.
+  const status = candidateStatusFromStateKey(state);
   return (
     <section
       className={`rounded-lg border bg-card p-5 sm:p-6 ${className ?? ""}`}
@@ -23,9 +30,9 @@ export function CandidateStatePanel({
     >
       <div className="flex flex-wrap items-center gap-2">
         <span
-          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${copy.tone}`}
+          className={`inline-flex max-w-full items-center whitespace-normal break-words rounded-full px-3 py-1 text-xs font-medium ${CANDIDATE_STATUS_COPY[status].tone}`}
         >
-          {copy.label}
+          {status}
         </span>
         <span className="text-xs text-muted-foreground">
           {copy.humanInvolved ? "A person is involved at this point" : "No action needed from you"}

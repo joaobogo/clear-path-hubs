@@ -121,3 +121,32 @@ export function canWithdrawFrom(status: CandidateStatus): boolean {
 export function candidateStatusEmailLine(status: CandidateStatus): string {
   return `Current status: ${status} — ${CANDIDATE_STATUS_COPY[status].meaning}`;
 }
+
+/**
+ * Bridge for the public reference lookup and the receipt, which model the
+ * journey in more detail internally but must show the same six words.
+ */
+export function candidateStatusFromStateKey(
+  key:
+    | "application_received"
+    | "information_required"
+    | "under_review"
+    | "interview_stage"
+    | "decision_made"
+    | "role_closed"
+    | "withdrawn"
+    | "support_required",
+): CandidateStatus {
+  switch (key) {
+    case "application_received":
+      return "Received";
+    case "interview_stage":
+      return "Interviewing";
+    case "decision_made":
+    case "role_closed":
+    case "withdrawn":
+      return "Closed";
+    default:
+      return "Under review";
+  }
+}
