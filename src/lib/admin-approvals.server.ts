@@ -160,7 +160,7 @@ export async function loadApprovals(
   const extraMatchIds = [
     ...new Set([
       ...reqRows.map((r) => r.candidate_match_id as string).filter(Boolean),
-      ...shareRows.flatMap((s) => ((s.match_ids ?? []) as string[]) ?? []),
+      ...shareRows.flatMap((s) => ((s.match_ids ?? []) as string[])),
     ]),
   ].filter((id) => !visRows.some((v) => v.id === id));
   let extraMatches: Any[] = [];
@@ -248,7 +248,7 @@ export async function loadApprovals(
   }
 
   for (const s of shareRows) {
-    const ids = ((s.match_ids ?? []) as string[]) ?? [];
+    const ids = (s.match_ids ?? []) as string[];
     const hidden = ids
       .map((id) => matchById.get(id))
       .filter((m): m is Any => !!m && m.client_visibility !== "visible");
