@@ -29,6 +29,10 @@ import {
   pendingActionDeadline,
   type CandidatePendingAction,
 } from "@/lib/candidate/pending-action";
+import {
+  formatTimelineDate,
+  type CandidateTimelineEvent,
+} from "@/lib/candidate/timeline";
 
 export const Route = createFileRoute("/_authenticated/me/applications/$id")({
   head: () => ({
@@ -47,6 +51,11 @@ export const Route = createFileRoute("/_authenticated/me/applications/$id")({
       <div className="h-8 w-2/3 animate-pulse rounded bg-muted" />
       <div className="h-4 w-3/4 animate-pulse rounded bg-muted" />
       <div className="h-32 animate-pulse rounded-lg bg-muted" />
+      <div className="space-y-3">
+        <div className="h-10 animate-pulse rounded bg-muted" />
+        <div className="h-10 animate-pulse rounded bg-muted" />
+        <div className="h-10 animate-pulse rounded bg-muted" />
+      </div>
     </main>
   ),
   errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.applications.$id.tsx"),
@@ -96,7 +105,7 @@ type MyApplication = {
   } | null;
   info_requests: InfoRequest[];
   interviews: Interview[];
-  events: Array<{ at: string; label: string }>;
+  events: CandidateTimelineEvent[];
 };
 
 function TrackPage() {
@@ -416,25 +425,25 @@ function TrackPage() {
 
       <section className="rounded-lg border bg-card p-5 mb-6">
         <h2 className="text-sm font-medium mb-3">Timeline</h2>
-        {data.events.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            Nothing to show yet. Each step will appear here as it happens.
-          </p>
-        ) : (
-          <ol className="space-y-3">
-            {data.events.map((e, i) => (
-              <li key={`${e.at}-${i}`} className="flex gap-3 text-sm">
-                <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" />
-                <div className="min-w-0 flex-1">
-                  <div className="break-words">{e.label}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {new Date(e.at).toLocaleString()}
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ol>
-        )}
+        <p className="mb-4 text-xs text-muted-foreground">
+          Only steps we have recorded, in your own time zone. Nothing here is a prediction.
+        </p>
+        <ol className="space-y-4">
+          {data.events.map((e, i) => (
+            <li key={`${e.at}-${e.label}-${i}`} className="flex gap-3">
+              <div
+                aria-hidden="true"
+                className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary"
+              />
+              <div className="min-w-0 flex-1">
+                {/* Date above the label: on a phone the date is the thing
+                    people scan for. */}
+                <div className="text-xs text-muted-foreground">{formatTimelineDate(e.at)}</div>
+                <div className="break-words text-sm font-medium">{e.label}</div>
+              </div>
+            </li>
+          ))}
+        </ol>
       </section>
 
 
