@@ -141,6 +141,14 @@ function PositionDetailPage() {
  queryFn: () => closureFn({ data: { orgId: orgId!, positionId: id } }),
  enabled: !!orgId,
  });
+ // Recap is only for a role that has been closed: the lessons from the last
+ // search, from this role's own recorded events.
+ const recapFn = useServerFn(getRoleRecap);
+ const recap = useQuery({
+ queryKey: ["client-position-recap", orgId, id],
+ queryFn: () => recapFn({ data: { orgId: orgId!, positionId: id } }),
+ enabled: !!orgId && !!closure.data && !closure.data.paused,
+ });
  useEffect(() => {
  const onRefresh = () => {
  void refetch();
