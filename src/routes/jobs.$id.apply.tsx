@@ -114,7 +114,9 @@ function ApplyPage() {
     null,
   );
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
   const submittingRef = useRef(false);
+
 
   // Restore text draft (never the CV).
   useEffect(() => {
@@ -153,11 +155,18 @@ function ApplyPage() {
   }, []);
 
 
+  // Persist the text draft on every keystroke, and tell the candidate it
+  // happened. An invisible draft still costs the whole application when a
+  // phone rings, because nobody knows their answers are safe.
+  const firstSaveSkipped = useRef(false);
   useEffect(() => {
     try {
       localStorage.setItem(draftKey, JSON.stringify({ form, answers, network }));
+      if (firstSaveSkipped.current) setDraftSavedAt(Date.now());
+      else firstSaveSkipped.current = true;
     } catch { /* ignore */ }
   }, [draftKey, form, answers, network]);
+
 
   /**
    * A CV upload must never hang on a spinner. FileReader can abort silently
@@ -452,9 +461,21 @@ function ApplyPage() {
         <h1 className="mt-1 text-2xl md:text-3xl font-semibold tracking-tight">
           Apply — {pos.title}
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Takes about 3 minutes. Your progress is saved as you type.
-        </p>
+        <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+          <span>Takes about 3 minutes. Your progress is saved as you type.</span>
+          <span
+            aria-live="polite"
+            className={
+              draftSavedAt
+                ? "inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground"
+                : "sr-only"
+            }
+            data-testid="apply-draft-saved"
+          >
+            {draftSavedAt ? "Answers saved on this device" : ""}
+          </span>
+        </div>
+
 
         {/* Progress bar */}
         <div className="mt-6">
@@ -509,12 +530,40 @@ function ApplyPage() {
           {step === 1 && (
             <div className="space-y-5" data-hydrated={signedIn === null ? "pending" : "ready"}>
 
+              {/* State the cost of applying before it is paid, so nobody
+                  starts on a phone without the one file they will need. */}
+              <section
+                className="rounded-lg border bg-muted/30 p-4"
+                aria-labelledby="apply-before-you-start"
+              >
+                <h2 id="apply-before-you-start" className="text-sm font-semibold">
+                  Before you start
+                </h2>
+                <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
+                  <li>· About 3 minutes, across {STEP_LABELS.length} short steps.</li>
+                  <li>· You need your CV as a PDF, up to 10 MB. It is required.</li>
+                  <li>
+                    ·{" "}
+                    {pos.questions.length > 0
+                      ? `${pos.questions.length} screening ${
+                          pos.questions.length === 1 ? "question" : "questions"
+                        } from the hiring team.`
+                      : "No screening questions for this role."}
+                  </li>
+                  <li>
+                    · Your typed answers are saved on this device as you go, so you can stop and
+                    come back. The CV itself is not kept, so re-attach it if you return.
+                  </li>
+                </ul>
+              </section>
+
               <div>
                 <h2 className="text-lg font-semibold">Your details</h2>
                 <p className="text-sm text-muted-foreground">
                   We'll use this to reach out about the role.
                 </p>
               </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="full_name">Full name *</Label>

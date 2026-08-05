@@ -13,8 +13,10 @@ import {
 
 import {
   CANDIDATE_STATUS_MEANING,
+  CANDIDATE_STATUS_NEXT_STEP,
   CANDIDATE_STATUS_TONE,
 } from "@/lib/candidate-status";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -175,14 +177,21 @@ function TrackPage() {
       <section className="rounded-lg border bg-card p-5 mb-6">
         <h2 className="text-sm font-medium mb-2">Where things stand</h2>
         <p className="text-sm">{CANDIDATE_STATUS_MEANING[data.status]}</p>
-        {data.next_step ? (
-          <p className="mt-1 text-sm text-muted-foreground">{data.next_step}</p>
-        ) : null}
-        {data.role_closed && data.status === "Closed" ? (
-          <p className="mt-2 text-sm text-muted-foreground">
-            This role is no longer open. Your profile stays with us for future roles.
+        {/* Always a next-step line — including an explicit "nothing needed".
+            A status word alone is what drives people to email support. */}
+        <p className="mt-1 text-sm font-medium">
+          {data.next_step ?? CANDIDATE_STATUS_NEXT_STEP[data.status]}
+        </p>
+        {data.status === "Closed" || data.status === "Withdrawn" ? (
+          <p className="mt-3 text-sm text-muted-foreground">
+            {data.role_closed
+              ? "The hiring team closed this role, so it is no longer being filled. That is a decision about the role, not about you."
+              : "A person reviewed this application and decided not to take it further for this role. It was not decided by an automated score."}{" "}
+            Your details stay with us for future roles for as long as you allow, and you can ask us
+            to delete them at any time.
           </p>
         ) : null}
+
         {data.can_withdraw ? (
           <div className="mt-4">
             <Button
