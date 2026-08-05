@@ -596,12 +596,17 @@ export const expressIntakeSchema = z
       z.array(interviewStageSchema).max(MAX_INTERVIEW_STAGES),
     ),
 
-    targetDaysToOffer: z.coerce
-      .number()
-      .int()
-      .min(MIN_TARGET_DAYS_TO_OFFER)
-      .max(MAX_TARGET_DAYS_TO_OFFER)
-      .optional(),
+    targetDaysToOffer: z.preprocess(
+      // Blank means "not stated", which is allowed on this optional step.
+      (v) => (v === "" || v === null ? undefined : v),
+      z.coerce
+        .number()
+        .int()
+        .min(MIN_TARGET_DAYS_TO_OFFER)
+        .max(MAX_TARGET_DAYS_TO_OFFER)
+        .optional(),
+    ),
+
     decisionMaker: z.string().trim().max(160).optional().or(z.literal("")),
     decisionMakerEmail: z
       .string()
