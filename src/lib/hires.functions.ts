@@ -821,3 +821,61 @@ export const nudgeOffer = createServerFn({ method: "POST" })
 
     return { ok: true, last_nudged_at: nowIso, trace_id: trace };
   });
+
+/**
+ * Records the date by which a response to the offer is expected.
+ *
+ * The date is only ever what a human agreed — passing null clears it, and the
+ * offer row then reads "No response date agreed" rather than showing a guess.
+ */
+export const setOfferResponseDate = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string; id: string; date: string | null }) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        id: z.string().uuid(),
+        date: z
+          .string()
+          .regex(/^\d{4}-\d{2}-\d{2}$/, "Use a calendar date")
+          .nullable(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const trace = traceId();
+    await assertEditor(context.supabase, context.userId, data.orgId);
+
+    const { data: before, error: readErr } = await context.supabase
+      .from("hire_records")
+      .select("id, organization_id, expected_response_date")
+      .eq("id", data.id)
+      .eq("organization_id", data.orgId)
+      .maybeSingle();
+    if (readErr) throw new Error(readErr.message);
+    if (!before) throw new Error("offer_not_found");
+
+    const { error } = await context.supabase
+      .from("hire_records")
+      .update({
+        expected_response_date: data.date,
+        expected_response_set_at: data.date ? new Date().toISOString() : null,
+        expected_response_set_by: data.date ? context.userId : null,
+      } as never)
+      .eq("id", data.id)
+      .eq("organization_id", data.orgId);
+    if (error) throw new Error(error.message);
+
+    await writeAudit(context.supabase, {
+      actor: context.userId,
+      action: "hire.response_date_set",
+      entity_type: "hire_records",
+      entity_id: data.id,
+      organization_id: data.orgId,
+      before: { expected_response_date: (before as AnyRow).expected_response_date ?? null },
+      after: { expected_response_date: data.date },
+      trace_id: trace,
+    });
+
+    return { ok: true, expected_response_date: data.date, trace_id: trace };
+  });
