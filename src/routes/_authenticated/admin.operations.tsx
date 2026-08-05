@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { ProcessingExceptionsBoard } from "@/components/admin/processing-exceptions-board";
+import { MilestoneTimingPanel } from "@/components/admin/milestone-timing-panel";
 import { SourceQualityRollupPanel } from "@/components/admin/source-quality-panels";
 import { OutreachHealthPanel } from "@/components/admin/outreach-health-panel";
 import { InterviewExceptionsPanel } from "@/components/admin/interview-exceptions-panel";
@@ -256,6 +257,8 @@ function OperationsPage() {
       </div>
 
       <ProcessingExceptionsBoard />
+
+      <MilestoneTimingPanel />
 
       <SourceQualityRollupPanel />
 
