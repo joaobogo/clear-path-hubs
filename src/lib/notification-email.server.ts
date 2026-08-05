@@ -11,6 +11,8 @@
 //    `suppressed / email_not_configured` instead of pretending to send.
 
 import type { EventType } from "./events";
+import { isSuppressed } from "./notification-suppression.server";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Admin = any;
