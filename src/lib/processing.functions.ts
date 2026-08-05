@@ -21,7 +21,6 @@ import {
 } from "@/lib/scoring-engine.server";
 import { executeScoring, assertPublishGate } from "@/lib/scoring-service.server";
 
-
 type State =
   | "queued"
   | "parsing"
@@ -50,11 +49,20 @@ function traceId() {
 
 // Naive extractor: pulls printable text from raw bytes, strips XML.
 // Real deployments swap this for a proper PDF parser; the interface is stable.
-async function extractText(bytes: Uint8Array, mime: string): Promise<{ text: string; needs_ocr: boolean }> {
+async function extractText(
+  bytes: Uint8Array,
+  mime: string,
+): Promise<{ text: string; needs_ocr: boolean }> {
   const td = new TextDecoder("utf-8", { fatal: false });
   const decoded = td.decode(bytes);
-  const printable = decoded.replace(/[^\x09\x0A\x0D\x20-\x7E\u00A0-\uFFFF]+/g, " ").replace(/\s+/g, " ").trim();
-  const stripped = printable.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  const printable = decoded
+    .replace(/[^\x09\x0A\x0D\x20-\x7E\u00A0-\uFFFF]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  const stripped = printable
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
   const text = stripped.length > printable.length * 0.3 ? stripped : printable;
   const looksLikePdf =
     mime.includes("pdf") || (bytes.length >= 4 && bytes[0] === 0x25 && bytes[1] === 0x50);
@@ -97,7 +105,9 @@ async function loadMatchContext(matchId: string) {
     ? (
         await supabase
           .from("files")
-          .select("id,storage_bucket,storage_path,mime_type,extracted_text,ocr_used,extraction_attempts")
+          .select(
+            "id,storage_bucket,storage_path,mime_type,extracted_text,ocr_used,extraction_attempts",
+          )
           .eq("id", profile.current_cv_file_id)
           .maybeSingle()
       ).data
@@ -105,7 +115,9 @@ async function loadMatchContext(matchId: string) {
 
   const { data: answers } = await supabase
     .from("application_answers")
-    .select("question_id,answer,screening_questions(question,answer_type,required,dealbreaker,preferred_answer)")
+    .select(
+      "question_id,answer,screening_questions(question,answer_type,required,dealbreaker,preferred_answer)",
+    )
     .eq("application_id", match.application_id);
 
   return { match, position, profile, file, answers: (answers ?? []) as AnyRow[] };
@@ -155,7 +167,9 @@ function buildRequirements(pos: {
   preferred_requirements: unknown;
 }): RequirementInput[] {
   const req = Array.isArray(pos.requirements) ? (pos.requirements as string[]) : [];
-  const pref = Array.isArray(pos.preferred_requirements) ? (pos.preferred_requirements as string[]) : [];
+  const pref = Array.isArray(pos.preferred_requirements)
+    ? (pos.preferred_requirements as string[])
+    : [];
   return [
     ...req.map((t, i) => ({ id: `req-${i}`, text: String(t), required: true, keywords: [] })),
     ...pref.map((t, i) => ({ id: `pref-${i}`, text: String(t), required: false, keywords: [] })),
@@ -164,7 +178,9 @@ function buildRequirements(pos: {
 
 function buildScreening(rows: AnyRow[]): ScreeningAnswer[] {
   return rows.map((r) => {
-    const q = Array.isArray(r.screening_questions) ? r.screening_questions[0] : r.screening_questions;
+    const q = Array.isArray(r.screening_questions)
+      ? r.screening_questions[0]
+      : r.screening_questions;
     // answers are stored as { value: X }
     const value =
       r.answer && typeof r.answer === "object" && "value" in r.answer
@@ -198,8 +214,15 @@ async function stepParse(matchId: string, trace_id: string): Promise<State> {
   const supabase = (await getAdmin()) as AnyRow;
   const ctx = await loadMatchContext(matchId);
   if (!ctx.file) {
-    await setState(matchId, "manual_review_required", { trace_id, code: "missing_usable_cv", message: "No CV on file — manual review required." });
-    await recordJob(matchId, "parse", "failed", trace_id, { code: "missing_usable_cv", message: "no_cv" });
+    await setState(matchId, "manual_review_required", {
+      trace_id,
+      code: "missing_usable_cv",
+      message: "No CV on file — manual review required.",
+    });
+    await recordJob(matchId, "parse", "failed", trace_id, {
+      code: "missing_usable_cv",
+      message: "no_cv",
+    });
     return "manual_review_required";
   }
 
@@ -336,7 +359,9 @@ export const retryParse = createServerFn({ method: "POST" })
 export const markOcrDone = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
-    z.object({ match_id: z.string().uuid(), ocr_text: z.string().min(60).max(200_000) }).parse(input),
+    z
+      .object({ match_id: z.string().uuid(), ocr_text: z.string().min(60).max(200_000) })
+      .parse(input),
   )
   .handler(async ({ data, context }) => {
     if (!(await isStaff(context.userId))) throw new Error("forbidden");
@@ -414,16 +439,18 @@ export const backfillCandidateInsights = createServerFn({ method: "POST" })
 
     const { data: matches } = await supabase
       .from("candidate_matches")
-      .select("id,candidate_profile_id,candidate_evidence(extracted),candidate_profiles!inner(current_cv_file_id,files:current_cv_file_id(extracted_text))")
+      .select(
+        "id,candidate_profile_id,candidate_evidence(extracted),candidate_profiles!inner(current_cv_file_id,files:current_cv_file_id(extracted_text))",
+      )
       .limit(limit);
 
     const targets: string[] = [];
     for (const row of (matches ?? []) as AnyRow[]) {
-      const ev = Array.isArray(row.candidate_evidence) ? row.candidate_evidence[0] : row.candidate_evidence;
+      const ev = Array.isArray(row.candidate_evidence)
+        ? row.candidate_evidence[0]
+        : row.candidate_evidence;
       const hasInsights =
-        ev?.extracted && typeof ev.extracted === "object" && ev.extracted.insights
-          ? true
-          : false;
+        ev?.extracted && typeof ev.extracted === "object" && ev.extracted.insights ? true : false;
       const cvText = row.candidate_profiles?.files?.extracted_text ?? "";
       if (!hasInsights && cvText && cvText.length >= 60) targets.push(row.id as string);
     }
@@ -434,7 +461,8 @@ export const backfillCandidateInsights = createServerFn({ method: "POST" })
     for (const id of targets) {
       try {
         const out = await runEnrichmentOnly(id);
-        if (out.final_state === "failed") failed.push({ match_id: id, message: "enrichment_failed" });
+        if (out.final_state === "failed")
+          failed.push({ match_id: id, message: "enrichment_failed" });
         else processed.push(id);
       } catch (err) {
         failed.push({ match_id: id, message: (err as Error).message ?? "error" });
@@ -453,7 +481,9 @@ export const backfillCandidateInsights = createServerFn({ method: "POST" })
 export const markManualReview = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
-    z.object({ match_id: z.string().uuid(), reason: z.string().trim().min(3).max(500) }).parse(input),
+    z
+      .object({ match_id: z.string().uuid(), reason: z.string().trim().min(3).max(500) })
+      .parse(input),
   )
   .handler(async ({ data, context }) => {
     if (!(await isStaff(context.userId))) throw new Error("forbidden");
@@ -481,7 +511,8 @@ export const replaceCv = createServerFn({ method: "POST" })
     const { data: m } = await supabase
       .from("candidate_matches")
       .select("id,candidate_profile_id")
-      .eq("id", data.match_id).maybeSingle();
+      .eq("id", data.match_id)
+      .maybeSingle();
     if (!m?.candidate_profile_id) return { ok: false as const, code: "match_not_found", trace_id };
 
     // Decode + validate CV
@@ -491,37 +522,57 @@ export const replaceCv = createServerFn({ method: "POST" })
     for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
     const { validateCv } = await import("./cv-validation");
     const v = await validateCv(bytes, data.cv.filename, data.cv.mime);
-    if (!v.ok) return { ok: false as const, code: v.code ?? "invalid_cv", message: v.message, trace_id };
+    if (!v.ok)
+      return { ok: false as const, code: v.code ?? "invalid_cv", message: v.message, trace_id };
 
     const safe = data.cv.filename.replace(/[^a-zA-Z0-9._-]+/g, "_").slice(0, 120) || "cv";
     const storagePath = `candidate/${m.candidate_profile_id}/${Date.now()}-admin-${safe}`;
     const up = await supabase.storage.from("cvs").upload(storagePath, bytes, {
-      contentType: v.detected_mime ?? data.cv.mime, upsert: false,
+      contentType: v.detected_mime ?? data.cv.mime,
+      upsert: false,
     });
-    if (up.error) return { ok: false as const, code: "upload_failed", message: up.error.message, trace_id };
+    if (up.error)
+      return { ok: false as const, code: "upload_failed", message: up.error.message, trace_id };
 
-    const { data: fileRow, error: fileErr } = await supabase.from("files").insert({
-      candidate_profile_id: m.candidate_profile_id,
-      storage_bucket: "cvs", storage_path: storagePath,
-      filename: data.cv.filename, mime_type: v.detected_mime ?? data.cv.mime,
-      size: bytes.length, checksum: v.sha256 ?? null, file_status: "ready",
-    }).select("id").single();
-    if (fileErr) return { ok: false as const, code: "file_insert_failed", message: fileErr.message, trace_id };
+    const { data: fileRow, error: fileErr } = await supabase
+      .from("files")
+      .insert({
+        candidate_profile_id: m.candidate_profile_id,
+        storage_bucket: "cvs",
+        storage_path: storagePath,
+        filename: data.cv.filename,
+        mime_type: v.detected_mime ?? data.cv.mime,
+        size: bytes.length,
+        checksum: v.sha256 ?? null,
+        file_status: "ready",
+      })
+      .select("id")
+      .single();
+    if (fileErr)
+      return { ok: false as const, code: "file_insert_failed", message: fileErr.message, trace_id };
 
-    await supabase.from("candidate_profiles")
+    await supabase
+      .from("candidate_profiles")
       .update({ current_cv_file_id: fileRow.id })
       .eq("id", m.candidate_profile_id);
 
     // Reset match to queued so the pipeline re-parses from scratch.
-    await supabase.from("candidate_matches").update({
-      processing_state: "queued",
-      processing_error_code: null, processing_error_message: null,
-      last_processing_trace_id: trace_id,
-    }).eq("id", data.match_id);
+    await supabase
+      .from("candidate_matches")
+      .update({
+        processing_state: "queued",
+        processing_error_code: null,
+        processing_error_message: null,
+        last_processing_trace_id: trace_id,
+      })
+      .eq("id", data.match_id);
 
     await supabase.from("processing_jobs").insert({
-      entity_type: "candidate_match", entity_id: data.match_id,
-      job_type: "replace_cv", status: "completed", trace_id,
+      entity_type: "candidate_match",
+      entity_id: data.match_id,
+      job_type: "replace_cv",
+      status: "completed",
+      trace_id,
       completed_at: new Date().toISOString(),
     });
 
@@ -529,11 +580,12 @@ export const replaceCv = createServerFn({ method: "POST" })
     try {
       const { runPipelineForMatch } = await import("./pipeline-runner.server");
       void runPipelineForMatch(data.match_id, { force: true }).catch(() => undefined);
-    } catch { /* swallow */ }
+    } catch {
+      /* swallow */
+    }
 
     return { ok: true as const, state: "queued" as State, trace_id, file_id: fileRow.id };
   });
-
 
 const decisionInput = z.object({
   match_id: z.string().uuid(),
@@ -637,9 +689,6 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
         throw new Error(`publish_blocked:evidence_incomplete:${blockers.join(" | ")}`);
       }
 
-
-
-
       // Single-transaction, idempotent approval. The RPC locks the match row,
       // inserts the approve decision at most once per (match, run), walks the
       // legal canonical-state path, and publishes — all atomically. Repeated
@@ -698,17 +747,18 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
       // The successful `score_approved` audit row is written inside the RPC
       // transaction, so it can never disagree with the published state.
 
-
-
       // Emit candidate_published to the client org (visible delivery)
       try {
         const { emitEventFromServer } = await import("./notifications.functions");
         const { data: matchRow } = await supabase
           .from("candidate_matches")
-          .select("organization_id, position_id, application_id, candidate_profile_id, candidate_profiles:candidate_profile_id(user_id)")
+          .select(
+            "organization_id, position_id, application_id, candidate_profile_id, candidate_profiles:candidate_profile_id(user_id)",
+          )
           .eq("id", data.match_id)
           .maybeSingle();
-        const cpUser = (matchRow?.candidate_profiles as { user_id: string | null } | null)?.user_id ?? null;
+        const cpUser =
+          (matchRow?.candidate_profiles as { user_id: string | null } | null)?.user_id ?? null;
         await emitEventFromServer({
           event: "candidate_published",
           scope: data.match_id,
@@ -726,7 +776,13 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
             scope: `candidate:${data.match_id}`,
             candidate_match_id: data.match_id,
             candidate_profile_id: matchRow?.candidate_profile_id ?? null,
-            recipients: [{ user_id: cpUser, audience: "candidate", link_path: `/me/applications/${matchRow?.application_id ?? ""}` }],
+            recipients: [
+              {
+                user_id: cpUser,
+                audience: "candidate",
+                link_path: `/me/applications/${matchRow?.application_id ?? ""}`,
+              },
+            ],
           });
         }
       } catch (emitErr) {
@@ -751,7 +807,10 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
       actor_user_id: context.userId,
     });
     if (data.action === "hold") {
-      await supabase.from("candidate_matches").update({ admin_status: "on_hold" }).eq("id", data.match_id);
+      await supabase
+        .from("candidate_matches")
+        .update({ admin_status: "on_hold" })
+        .eq("id", data.match_id);
     } else {
       await supabase
         .from("candidate_matches")
@@ -771,7 +830,6 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
       reason: data.reason ?? null,
     });
     return { ok: true as const, action: data.action, trace_id: decisionTrace };
-
   });
 
 // Permanently purge a candidate match. Works regardless of score state — admins can
@@ -779,10 +837,12 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
 export const deleteCandidateMatch = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
-    z.object({
-      match_id: z.string().uuid(),
-      reason: z.string().max(1000).optional(),
-    }).parse(input),
+    z
+      .object({
+        match_id: z.string().uuid(),
+        reason: z.string().max(1000).optional(),
+      })
+      .parse(input),
   )
   .handler(async ({ data, context }) => {
     if (!(await isStaff(context.userId))) throw new Error("forbidden");
@@ -821,7 +881,10 @@ export const deleteCandidateMatch = createServerFn({ method: "POST" })
 export const listAdminMatches = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
-    z.object({ include_archived: z.boolean().optional() }).partial().parse(input ?? {}),
+    z
+      .object({ include_archived: z.boolean().optional() })
+      .partial()
+      .parse(input ?? {}),
   )
   .handler(async ({ data, context }) => {
     if (!(await isStaff(context.userId))) throw new Error("forbidden");
@@ -835,31 +898,27 @@ export const listAdminMatches = createServerFn({ method: "GET" })
       // Hide deleted/archived rows so the admin list reflects the delete action.
       q = q.neq("client_visibility", "archived").neq("admin_status", "rejected");
     }
-    const { data: rows } = await q
-      .order("updated_at", { ascending: false })
-      .limit(200);
-    return (
-      (rows ?? []).map((m: AnyRow) => {
-        const cp = m.candidate_profiles;
-        const pos = m.positions;
-        const sr = m.score_runs;
-        return {
-          id: m.id as string,
-          candidate_name: cp?.full_name ?? "—",
-          candidate_email: cp?.email ?? "—",
-          position_title: pos?.title ?? "—",
-          organization_name: pos?.organizations?.name ?? "—",
-          processing_state: m.processing_state as State,
-          admin_status: m.admin_status as string,
-          client_visibility: m.client_visibility as string,
-          score: (sr?.score as number) ?? null,
-          fit_label: (sr?.fit_label as string) ?? null,
-          must_have_coverage: (sr?.must_have_coverage as number) ?? null,
-          contradiction_status: (sr?.contradiction_status as string) ?? null,
-          updated_at: m.updated_at as string,
-        };
-      })
-    );
+    const { data: rows } = await q.order("updated_at", { ascending: false }).limit(200);
+    return (rows ?? []).map((m: AnyRow) => {
+      const cp = m.candidate_profiles;
+      const pos = m.positions;
+      const sr = m.score_runs;
+      return {
+        id: m.id as string,
+        candidate_name: cp?.full_name ?? "—",
+        candidate_email: cp?.email ?? "—",
+        position_title: pos?.title ?? "—",
+        organization_name: pos?.organizations?.name ?? "—",
+        processing_state: m.processing_state as State,
+        admin_status: m.admin_status as string,
+        client_visibility: m.client_visibility as string,
+        score: (sr?.score as number) ?? null,
+        fit_label: (sr?.fit_label as string) ?? null,
+        must_have_coverage: (sr?.must_have_coverage as number) ?? null,
+        contradiction_status: (sr?.contradiction_status as string) ?? null,
+        updated_at: m.updated_at as string,
+      };
+    });
   });
 
 export const getAdminMatch = createServerFn({ method: "GET" })
@@ -881,7 +940,9 @@ export const getAdminMatch = createServerFn({ method: "GET" })
     const [runsRes, decisionsRes, jobsRes, evidenceRes, fileRes, siblingsRes] = await Promise.all([
       supabase
         .from("score_runs")
-        .select("id,score,confidence,status,fit_label,must_have_coverage,preferred_coverage,contradiction_status,explanation,result,completed_at,engine_version,input_hash")
+        .select(
+          "id,score,confidence,status,fit_label,must_have_coverage,preferred_coverage,contradiction_status,explanation,result,completed_at,engine_version,input_hash",
+        )
         .eq("candidate_match_id", data.id)
         .order("completed_at", { ascending: false }),
       supabase
@@ -905,7 +966,9 @@ export const getAdminMatch = createServerFn({ method: "GET" })
         .maybeSingle(),
       supabase
         .from("files")
-        .select("id,filename,storage_bucket,storage_path,mime_type,size,ocr_used,extracted_text,extraction_completed_at,extraction_attempts")
+        .select(
+          "id,filename,storage_bucket,storage_path,mime_type,size,ocr_used,extracted_text,extraction_completed_at,extraction_attempts",
+        )
         .eq("candidate_profile_id", cpId)
         .order("created_at", { ascending: false })
         .limit(1)
@@ -962,12 +1025,16 @@ export const downloadEvidenceRecord = createServerFn({ method: "POST" })
         .order("created_at", { ascending: false }),
       supabase
         .from("score_runs")
-        .select("id,score,fit_label,must_have_coverage,contradiction_status,engine_version,completed_at,explanation")
+        .select(
+          "id,score,fit_label,must_have_coverage,contradiction_status,engine_version,completed_at,explanation",
+        )
         .eq("candidate_match_id", data.id)
         .order("completed_at", { ascending: false }),
       supabase
         .from("files")
-        .select("id,filename,mime_type,size,ocr_used,extracted_text,extraction_completed_at,created_at")
+        .select(
+          "id,filename,mime_type,size,ocr_used,extracted_text,extraction_completed_at,created_at",
+        )
         .eq("candidate_profile_id", (m.candidate_profiles as AnyRow)?.id ?? m.candidate_profile_id)
         .order("created_at", { ascending: false })
         .limit(1)

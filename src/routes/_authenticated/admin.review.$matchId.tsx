@@ -40,10 +40,7 @@ export const Route = createFileRoute("/_authenticated/admin/review/$matchId")({
     "src/routes/_authenticated/admin.review.$matchId.tsx",
   ),
   head: () => ({
-    meta: [
-      { title: "Candidate review · TaaSFlow admin" },
-      { name: "robots", content: "noindex" },
-    ],
+    meta: [{ title: "Candidate review · TaaSFlow admin" }, { name: "robots", content: "noindex" }],
   }),
   component: ReviewScreen,
 });
@@ -115,6 +112,10 @@ function ReviewScreen() {
 
   async function run(action: "approve_for_client" | "hold" | "archive", label: string) {
     if (busy) return;
+    if (action === "approve_for_client" && approvalBlocked) {
+      toast.error(`Missing evidence for: ${blockingLabels.join(", ")}`);
+      return;
+    }
     setBusy(action);
     try {
       await decide({ data: { match_id: matchId, action, reason: note || undefined } });
@@ -206,10 +207,22 @@ function ReviewScreen() {
               {idx + 1} of {ids.length} in queue
             </span>
           )}
-          <Button variant="ghost" size="sm" className="h-7 px-2" onClick={() => go(prevId)} disabled={!prevId}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2"
+            onClick={() => go(prevId)}
+            disabled={!prevId}
+          >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="sm" className="h-7 px-2" onClick={() => go(nextId)} disabled={!nextId}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2"
+            onClick={() => go(nextId)}
+            disabled={!nextId}
+          >
             <ChevronRight className="h-4 w-4" />
           </Button>
           <Button asChild variant="ghost" size="sm" className="h-7 gap-1 px-2 text-xs">
@@ -236,7 +249,6 @@ function ReviewScreen() {
         <div className="min-h-0 overflow-y-auto">
           <EvidenceCompletenessGate matchId={matchId} showSubmit={false} />
         </div>
-
 
         {/* CV preview inline — no download round trip */}
         <section className="flex min-h-0 flex-col overflow-hidden rounded-lg border bg-card">
@@ -310,7 +322,8 @@ function ReviewScreen() {
                 : undefined
             }
           >
-            <Check className="h-4 w-4" /> Approve <kbd className="ml-1 text-[10px] opacity-70">A</kbd>
+            <Check className="h-4 w-4" /> Approve{" "}
+            <kbd className="ml-1 text-[10px] opacity-70">A</kbd>
           </Button>
 
           <Button
@@ -319,7 +332,8 @@ function ReviewScreen() {
             disabled={!!busy}
             className="gap-1.5"
           >
-            <PauseCircle className="h-4 w-4" /> Hold <kbd className="ml-1 text-[10px] opacity-70">H</kbd>
+            <PauseCircle className="h-4 w-4" /> Hold{" "}
+            <kbd className="ml-1 text-[10px] opacity-70">H</kbd>
           </Button>
           <Button
             variant="destructive"

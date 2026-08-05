@@ -51,10 +51,11 @@ function toAssessments(runResult: unknown, insights: unknown): RawAssessment[] {
       out.push({
         label,
         result: (r["status"] ?? r["verdict"] ?? r["result"] ?? null) as string | null,
-        snippet:
-          (r["cv_quote"] ?? r["snippet"] ?? r["quote"] ?? r["evidence"]?.[0]?.snippet ?? null) as
-            | string
-            | null,
+        snippet: (r["cv_quote"] ??
+          r["snippet"] ??
+          r["quote"] ??
+          r["evidence"]?.[0]?.snippet ??
+          null) as string | null,
         confidence: typeof r["confidence"] === "number" ? r["confidence"] : null,
       });
     }
@@ -122,7 +123,8 @@ export async function loadCompleteness(
   if (overrideRes.error) throw overrideRes.error;
 
   const items = (itemsRes.data ?? []) as RawEvidenceItem[];
-  const insights = (evidenceRes?.data?.extracted as Record<string, unknown> | null)?.["insights"] ?? null;
+  const insights =
+    (evidenceRes?.data?.extracted as Record<string, unknown> | null)?.["insights"] ?? null;
   const assessments = toAssessments(runRes?.data?.result ?? null, insights);
 
   const overrideRows = (overrideRes.data ?? []) as Array<{

@@ -87,7 +87,15 @@ export interface RawGateOverride {
 
 const STRONG = new Set(["strong", "met", "yes", "true", "pass", "confirmed", "supported"]);
 const WEAK = new Set(["partial", "weak", "probable", "likely", "needs_validation", "unclear"]);
-const EMPTY = new Set(["missing", "none", "no", "false", "not_found", "unsupported", "not_applicable"]);
+const EMPTY = new Set([
+  "missing",
+  "none",
+  "no",
+  "false",
+  "not_found",
+  "unsupported",
+  "not_applicable",
+]);
 
 export function slugifyCriterion(label: string): string {
   return label
@@ -98,7 +106,11 @@ export function slugifyCriterion(label: string): string {
 }
 
 function normalize(text: string): string {
-  return text.toLowerCase().replace(/[^a-z0-9\s]+/g, " ").replace(/\s+/g, " ").trim();
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 /** Loose label match: identical slug, or one normalized label contains the other. */

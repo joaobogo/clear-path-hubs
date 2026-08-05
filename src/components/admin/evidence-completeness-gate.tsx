@@ -134,9 +134,7 @@ export function EvidenceCompletenessGate({
         <Alert variant="destructive">
           <AlertTitle>Could not load the evidence checklist</AlertTitle>
           <AlertDescription className="flex flex-col items-start gap-2">
-            <span>
-              {query.error instanceof Error ? query.error.message : "Unexpected error."}
-            </span>
+            <span>{query.error instanceof Error ? query.error.message : "Unexpected error."}</span>
             <Button size="sm" variant="outline" onClick={() => void query.refetch()}>
               <RefreshCw className="mr-1.5 h-3.5 w-3.5" /> Retry
             </Button>
