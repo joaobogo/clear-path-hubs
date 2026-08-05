@@ -32,6 +32,10 @@ import {
   STEP_FIELDS,
   briefCompleteness,
   stepValidators,
+  linesToRequirements,
+  requirementsToLines,
+  validateRequirements,
+  type RequirementItem,
 
   MAX_JD_BYTES,
   MIN_ACCOUNT_PASSWORD,
@@ -39,6 +43,7 @@ import {
   expressIntakeSchema,
   jdFileExt,
 } from "@/lib/express-intake-schema";
+import { RequirementsList, type SuggestionState } from "@/components/intake/requirements-list";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { saveIntakeDraft, loadIntakeDraft, clearIntakeDraft } from "@/lib/intake-draft.functions";
@@ -91,6 +96,9 @@ type FormState = {
   mustHaves: string;
   niceToHaves: string;
   trainable: string;
+  /** The tagged, ordered requirements list step 2 actually edits. */
+  requirements: RequirementItem[];
+  manyMustHavesConfirmed: boolean;
   dealBreakers: string;
 
   location: string;
@@ -131,6 +139,8 @@ const EMPTY: FormState = {
   mustHaves: "",
   niceToHaves: "",
   trainable: "",
+  requirements: [],
+  manyMustHavesConfirmed: false,
   dealBreakers: "",
 
   location: "",
@@ -169,6 +179,20 @@ async function fileToBase64(file: File): Promise<string> {
   return btoa(binary);
 }
 
+/**
+ * Older drafts stored three line-separated strings. Rebuild the tagged list from
+ * them so a returning client never loses their requirements.
+ */
+function withRequirements(patch: Partial<FormState>): Partial<FormState> {
+  if (Array.isArray(patch.requirements) && patch.requirements.length > 0) return patch;
+  const rebuilt = linesToRequirements({
+    mustHaves: patch.mustHaves ?? "",
+    niceToHaves: patch.niceToHaves ?? "",
+    trainable: patch.trainable ?? "",
+  });
+  return rebuilt.length > 0 ? { ...patch, requirements: rebuilt } : patch;
+}
+
 function ExpressIntakePage() {
   const navigate = useNavigate();
   const [state, setState] = useState<FormState>(EMPTY);
@@ -193,6 +217,9 @@ function ExpressIntakePage() {
   const [reviewing, setReviewing] = useState(true);
   const [stepIndex, setStepIndex] = useState(0);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [rowErrors, setRowErrors] = useState<Record<number, string>>({});
+  const [suggestions, setSuggestions] = useState<SuggestionState>({ kind: "idle" });
+  const suggestedForRef = useRef<string>("");
   const lastIntentRef = useRef<"pay" | "call">("pay");
   const hydratedRef = useRef(false);
 
@@ -247,14 +274,16 @@ function ExpressIntakePage() {
           : `Upload a job description file or paste at least ${MIN_JD_TEXT} characters`;
       }
     }
+    let hardFail = false;
     if (key === "people") {
-      const res = stepValidators.people.safeParse({ mustHaves: state.mustHaves });
-      if (!res.success) {
-        for (const issue of res.error.issues) {
-          const f = String(issue.path[0] ?? "mustHaves");
-          if (!next[f]) next[f] = issue.message;
-        }
-      }
+      const res = validateRequirements(state.requirements, {
+        manyConfirmed: state.manyMustHavesConfirmed,
+      });
+      // Row problems render under their own row; only the list-level message
+      // belongs in the shared error map.
+      setRowErrors(res.rowErrors);
+      if (res.listError) next.requirements = res.listError;
+      hardFail = !res.ok;
     }
     if (key === "practicalities") {
       // Optional step: only what was filled in has to make sense.
@@ -281,7 +310,7 @@ function ExpressIntakePage() {
       for (const f of fields) delete carried[f];
       return { ...carried, ...next };
     });
-    if (Object.keys(next).length > 0) {
+    if (hardFail || Object.keys(next).length > 0) {
       focusFirstError();
       return false;
     }
@@ -326,7 +355,7 @@ function ExpressIntakePage() {
         const parsed = JSON.parse(raw) as Partial<FormState>;
         setState((s) => ({
           ...s,
-          ...parsed,
+          ...withRequirements(parsed),
           password: "",
           confirmPassword: "",
           consent: false,
@@ -355,7 +384,12 @@ function ExpressIntakePage() {
         try {
           const remote = await loadIntakeDraft();
           if (remote?.payload) {
-            setState((s3) => ({ ...s3, ...(remote.payload as Partial<FormState>), password: "", confirmPassword: "" }));
+            setState((s3) => ({
+              ...s3,
+              ...withRequirements(remote.payload as Partial<FormState>),
+              password: "",
+              confirmPassword: "",
+            }));
             if (remote.updatedAt) setSavedAt(remote.updatedAt);
           }
         } catch {
@@ -573,6 +607,57 @@ function ExpressIntakePage() {
   }, [stepIndex]);
 
 
+  /**
+   * Asks for requirement suggestions from the pasted job description once the
+   * client reaches step 2. Failure is non-fatal: the list still works by hand.
+   */
+  const fetchSuggestions = React.useCallback(
+    async (jd: string, roleTitle: string) => {
+      setSuggestions({ kind: "loading" });
+      try {
+        const res = await fetch("/api/public/jd-requirements", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ roleTitle, jobDescriptionText: jd }),
+        });
+        const json = (await res.json()) as {
+          ok?: boolean;
+          suggestions?: RequirementItem[];
+        };
+        if (json.ok && Array.isArray(json.suggestions) && json.suggestions.length > 0) {
+          setSuggestions({ kind: "ready", items: json.suggestions });
+        } else {
+          setSuggestions({ kind: "failed" });
+        }
+      } catch {
+        setSuggestions({ kind: "failed" });
+      }
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (stepIndex !== 1) return;
+    const jd = state.jobDescriptionText.trim();
+    // Only the pasted text can be read here; an uploaded file is parsed after
+    // submit, so the list simply starts blank in that case.
+    if (jd.length < MIN_JD_TEXT) return;
+    const signature = `${state.roleTitle.trim()}::${jd.length}`;
+    if (suggestedForRef.current === signature) return;
+    suggestedForRef.current = signature;
+    void fetchSuggestions(jd, state.roleTitle);
+  }, [stepIndex, state.jobDescriptionText, state.roleTitle, fetchSuggestions]);
+
+  const setRequirements = (next: RequirementItem[]) => {
+    if (!startedRef.current) {
+      startedRef.current = true;
+      trackEvent("express_intake_started", { flow: "express_onboarding" });
+    }
+    setState((s) => ({ ...s, requirements: next }));
+    setErrors((e) => ({ ...e, requirements: "" }));
+    setRowErrors({});
+  };
+
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     if (!startedRef.current) {
       startedRef.current = true;
@@ -633,9 +718,9 @@ function ExpressIntakePage() {
         ? { filename: jdFile.filename, mime: jdFile.mime, base64: jdFile.base64 }
         : null,
       whyOpen: state.whyOpen,
-      mustHaves: state.mustHaves,
-      niceToHaves: state.niceToHaves,
-      trainable: state.trainable,
+      ...requirementsToLines(state.requirements),
+      requirements: state.requirements,
+      manyMustHavesConfirmed: state.manyMustHavesConfirmed,
       dealBreakers: state.dealBreakers,
 
       location: state.location,
@@ -1285,54 +1370,38 @@ function ExpressIntakePage() {
         {step === 2 && (
         <Section id="section-people" title="Who you need" step={2}>
           <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-            These two answers decide whether your first shortlist lands.
+            One list. Tag each requirement so sourcing chases the right people instead of a wish list.
           </p>
 
-          <Field
-            label="Must-haves"
-            error={errors.mustHaves}
-            required
-            hint="One per line. Only what you would reject an otherwise-great candidate for."
-          >
-            <Textarea
-              value={state.mustHaves}
-              onChange={(e) => set("mustHaves", e.target.value)}
-              rows={4}
-              placeholder={"5+ years in clinical operations\nHas run a site through a CQC inspection\nFluent written English"}
-            />
-          </Field>
+          <RequirementsList
+            items={state.requirements}
+            onChange={setRequirements}
+            rowErrors={rowErrors}
+            listError={errors.requirements || null}
+            needsConfirm={
+              validateRequirements(state.requirements, {
+                manyConfirmed: state.manyMustHavesConfirmed,
+              }).needsConfirm
+            }
+            manyConfirmed={state.manyMustHavesConfirmed}
+            onConfirmMany={(confirmed) => {
+              set("manyMustHavesConfirmed", confirmed);
+              if (confirmed) setErrors((e) => ({ ...e, requirements: "" }));
+            }}
+            roleTitle={state.roleTitle}
+            suggestions={suggestions}
+            onRetrySuggestions={() => {
+              const jd = state.jobDescriptionText.trim();
+              if (jd.length < MIN_JD_TEXT) return;
+              suggestedForRef.current = "";
+              void fetchSuggestions(jd, state.roleTitle);
+            }}
+          />
+
           <Example>
-            Must-have: "Has managed a P&amp;L above $2M." Not a must-have: "Knows our scheduling tool" —
-            that is trainable.
+            Must have: "Has managed a P&amp;L above $2M." Can be trained: "Knows our scheduling
+            tool" — that one never rules anybody out.
           </Example>
-
-          <Field
-            label="Nice to have"
-            error={errors.niceToHaves}
-            hint="One per line. Real advantages, but you would still hire someone without them."
-          >
-            <Textarea
-              value={state.niceToHaves}
-              onChange={(e) => set("niceToHaves", e.target.value)}
-              rows={3}
-              placeholder={"Multi-site experience\nWorked in a regulated environment"}
-            />
-          </Field>
-
-          <Field
-            label="Willing to train"
-            error={errors.trainable}
-            hint="One per line. Naming these widens the pool without lowering the bar."
-          >
-            <Textarea
-              value={state.trainable}
-              onChange={(e) => set("trainable", e.target.value)}
-              rows={3}
-              placeholder={"Our EHR system\nExperience with multi-site rollouts"}
-            />
-          </Field>
-
-
         </Section>
         )}
 
@@ -1607,9 +1676,27 @@ function ExpressIntakePage() {
                   title="Who you need"
                   target="section-people"
                   rows={[
-                    ["Must-haves", splitLines(state.mustHaves).join(" · ")],
-                    ["Nice to have", splitLines(state.niceToHaves).join(" · ")],
-                    ["Willing to train", splitLines(state.trainable).join(" · ")],
+                    [
+                      "Must have",
+                      state.requirements
+                        .filter((r) => r.tag === "must_have")
+                        .map((r) => r.text)
+                        .join(" · "),
+                    ],
+                    [
+                      "Nice to have",
+                      state.requirements
+                        .filter((r) => r.tag === "nice_to_have")
+                        .map((r) => r.text)
+                        .join(" · "),
+                    ],
+                    [
+                      "Can be trained (never filtered)",
+                      state.requirements
+                        .filter((r) => r.tag === "trainable")
+                        .map((r) => r.text)
+                        .join(" · "),
+                    ],
                   ]}
                 />
                 <ReviewBlock

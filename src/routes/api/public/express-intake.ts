@@ -8,7 +8,7 @@ import {
   briefCompleteness,
   jdFileExt,
   splitLines,
-
+  type RequirementTag,
 } from "@/lib/express-intake-schema";
 
 
@@ -406,9 +406,16 @@ export const Route = createFileRoute("/api/public/express-intake")({
         // Steps 3 and 4 of the intake are optional. Anything the client left
         // blank is stored as null — never as an invented default — and the
         // brief is labelled incomplete until they finish it.
-        const mustHaves = splitLines(data.mustHaves);
-        const trainable = splitLines(data.trainable);
-        const niceToHaves = splitLines(data.niceToHaves);
+        // The tagged list is the source of truth when the client sent one: it
+        // carries the order they chose and the tag that decides how each item is
+        // used. Older payloads only had the three strings, so fall back to those.
+        const tagged = (data.requirements ?? []).filter((r) => r.text.trim().length > 0);
+        const pickTagged = (tag: RequirementTag) =>
+          tagged.filter((r) => r.tag === tag).map((r) => r.text.trim());
+        const mustHaves = tagged.length > 0 ? pickTagged("must_have") : splitLines(data.mustHaves);
+        const trainable = tagged.length > 0 ? pickTagged("trainable") : splitLines(data.trainable);
+        const niceToHaves =
+          tagged.length > 0 ? pickTagged("nice_to_have") : splitLines(data.niceToHaves);
         const dealBreakersText = (data.dealBreakers ?? "").trim();
         const dealbreakerLines = splitLines(dealBreakersText);
         const locationText = (data.location ?? "").trim();
@@ -432,10 +439,33 @@ export const Route = createFileRoute("/api/public/express-intake")({
             work_model: data.workModel || null,
             location: locationText || null,
             description: (data.jobDescriptionText ?? "").trim() || null,
-            requirements: mustHaves.map((label) => ({ label, kind: "must_have" })),
+            // Must-haves filter the shortlist and drive the evidence bullets the
+            // client reads. Nice-to-haves order it. Trainable items are stored
+            // as explicitly non-filtering so nothing downstream can screen on them.
+            requirements: mustHaves.map((label, i) => ({
+              label,
+              kind: "must_have",
+              rank: i + 1,
+              filters: true,
+              source: tagged.length > 0 ? "client_tagged" : "client_intake",
+            })),
             preferred_requirements: [
-              ...niceToHaves.map((label) => ({ label, kind: "nice_to_have" })),
-              ...trainable.map((label) => ({ label, kind: "trainable" })),
+              ...niceToHaves.map((label, i) => ({
+                label,
+                kind: "nice_to_have",
+                rank: i + 1,
+                filters: false,
+                orders: true,
+                source: tagged.length > 0 ? "client_tagged" : "client_intake",
+              })),
+              ...trainable.map((label, i) => ({
+                label,
+                kind: "trainable",
+                rank: i + 1,
+                filters: false,
+                orders: false,
+                source: tagged.length > 0 ? "client_tagged" : "client_intake",
+              })),
             ],
             dealbreakers: dealbreakerLines.map((label) => ({ label })),
             compensation: hasComp
@@ -586,6 +616,8 @@ export const Route = createFileRoute("/api/public/express-intake")({
                 mustHaves,
                 niceToHaves,
                 trainable,
+                requirements: tagged,
+                manyMustHavesConfirmed: data.manyMustHavesConfirmed ?? false,
                 dealBreakers: dealBreakersText,
                 location: locationText,
                 workModel: data.workModel || "",
