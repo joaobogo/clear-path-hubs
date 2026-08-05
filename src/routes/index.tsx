@@ -1345,8 +1345,9 @@ function Home() {
                 Human first, AI enabled
               </p>
               <p className="max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
-                TaaSFlow runs hiring as a system—continuous sourcing,
-                rubric-versioned scoring and a complete decision audit.
+                TaasFlow is a complete Talent Management Solution capable of
+                running continuous sourcing, creating live talent pipelines
+                — supported by full ATS functionality.
               </p>
               <ul className="flex flex-wrap gap-2 pt-1">
                 {[
