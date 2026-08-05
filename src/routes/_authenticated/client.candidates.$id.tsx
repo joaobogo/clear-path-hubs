@@ -199,6 +199,8 @@ function CandidateDetailPage() {
 
 
  const [dialogAction, setDialogAction] = useState<ActionKey | null>(null);
+ // Which action is in flight, so only the pressed button shows a spinner.
+ const [pendingKey, setPendingKey] = useState<ActionKey | null>(null);
  // Stage captured at mutate time so the toast's Undo knows where to return to.
  const stageBeforeRef = useRef<MatchStage | null>(null);
  // Consequence line for the stage the decision moves the candidate into.
@@ -247,6 +249,7 @@ function CandidateDetailPage() {
  qc.invalidateQueries({ queryKey: ["client-positions", orgId] });
  qc.invalidateQueries({ queryKey: ["client-candidates", orgId] });
  },
+ onSettled: () => setPendingKey(null),
  onError: (e: Error) => {
  const msg = e.message.replace(/^Error: /, "");
  toast.error(
@@ -276,8 +279,10 @@ function CandidateDetailPage() {
  stageBeforeRef.current = fromStage;
  const to = RESULT_STAGE[k];
  nextStepAfterRef.current = to ? confirmationLine(to) : null;
- if (NO_REASON_NEEDED.has(k)) act.mutate({ action: k });
- else setDialogAction(k);
+ if (NO_REASON_NEEDED.has(k)) {
+ setPendingKey(k);
+ act.mutate({ action: k });
+ } else setDialogAction(k);
  };
 
  if (!orgId || detailPending || (data === undefined && detailFetching)) {
@@ -416,6 +421,7 @@ function CandidateDetailPage() {
               actions={actions}
               readOnly={readOnly}
               pending={act.isPending}
+              pendingKey={pendingKey}
               onAct={(k) => handleAct(k, candidate.stage)}
               stage={candidate.stage}
               matchId={candidate.match_id}
@@ -450,6 +456,7 @@ function CandidateDetailPage() {
         onOpenChange={(v) => !v && setDialogAction(null)}
         onConfirm={(payload) => {
           if (act.isPending) return; // guard against double submission
+          setPendingKey(payload.action);
           stageBeforeRef.current = candidate.stage;
           nextStepAfterRef.current =
             payload.action === "hold"
@@ -1245,6 +1252,7 @@ function ActionArea({
  onAct,
  stage,
  matchId,
+ pendingKey,
 }: {
  actions: { primary: ActionDef | null; more: ActionDef[] };
  readOnly: boolean;
@@ -1252,6 +1260,7 @@ function ActionArea({
  onAct: (k: ActionKey) => void;
  stage: MatchStage;
  matchId: string;
+ pendingKey?: ActionKey | null;
 }) {
   return (
     <div className="rounded-xl border bg-card p-4 shadow-sm ring-1 ring-primary/5">
@@ -1275,7 +1284,14 @@ function ActionArea({
             disabled={readOnly || pending}
             onClick={() => onAct(actions.primary!.key)}
           >
-            {actions.primary.label}
+            {pendingKey === actions.primary.key ? (
+              <>
+                <Loader2 className="mr-1.5 h-4 w-4 animate-spin" aria-hidden="true" />
+                Saving…
+              </>
+            ) : (
+              actions.primary.label
+            )}
           </Button>
         )}
         {actions.more.length > 0 && (
