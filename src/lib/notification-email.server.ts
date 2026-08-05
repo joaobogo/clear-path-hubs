@@ -29,14 +29,10 @@ export const ESSENTIAL_EVENTS: ReadonlySet<EventType> = new Set<EventType>([
   "clarification_requested",
 ]);
 
-/** Preference column on client_notification_preferences, when one applies. */
-const PREFERENCE_COLUMN: Partial<Record<EventType, string>> = {
-  candidate_published: "candidate_delivered",
-  interview_requested: "interview_request",
-  message_sent: "new_message",
-  client_feedback_submitted: "new_message",
-  candidate_hired: "hire_update",
-};
+// Per-event delivery choices live in src/lib/client-notification-prefs.ts. Each
+// client event maps to one preference whose mode decides immediate / digest /
+// off. Essential transactional notices above ignore preferences entirely.
+
 
 /** Verified Lovable sender subdomain (NS-delegated). Overridable via env. */
 const SENDER_DOMAIN = "notify.taasflow.com";
@@ -75,23 +71,33 @@ async function recipientEmail(admin: Admin, userId: string): Promise<string | nu
   return (data?.email as string | undefined) ?? null;
 }
 
-async function emailAllowed(
+export type EmailDecision = "send" | "digest" | "off";
+
+/**
+ * Resolves the recipient's per-event delivery choice.
+ *  - "send"   email now
+ *  - "digest" hold it for the daily digest (no immediate email)
+ *  - "off"    no email at all
+ * Essential transactional notices always send.
+ */
+export async function emailDecision(
   admin: Admin,
   args: { userId: string; orgId: string | null; event: EventType },
-): Promise<{ allowed: boolean; reason?: string }> {
-  if (ESSENTIAL_EVENTS.has(args.event)) return { allowed: true };
-  if (!args.orgId) return { allowed: true };
+): Promise<EmailDecision> {
+  if (ESSENTIAL_EVENTS.has(args.event)) return "send";
+  const key = EVENT_PREFERENCE[args.event];
+  if (!key || !args.orgId) return "send";
   const { data } = await admin
     .from("client_notification_preferences")
     .select("*")
     .eq("user_id", args.userId)
     .eq("organization_id", args.orgId)
     .maybeSingle();
-  if (!data) return { allowed: true };
-  if (data.email_enabled === false) return { allowed: false, reason: "unsubscribed" };
-  const col = PREFERENCE_COLUMN[args.event];
-  if (col && data[col] === false) return { allowed: false, reason: "preference_off" };
-  return { allowed: true };
+  const prefs = normalizePreferences((data ?? null) as Record<string, unknown> | null);
+  const mode = prefs[key];
+  if (mode === "daily") return "digest";
+  if (mode === "off") return "off";
+  return "send";
 }
 
 const APP_ORIGIN =
