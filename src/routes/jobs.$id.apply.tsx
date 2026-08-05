@@ -102,6 +102,13 @@ type AnswerValue = string | boolean | number | null;
 const STEP_LABELS = APPLY_STEP_LABELS;
 
 
+/** Human file size — KB under 1 MB, one decimal above. */
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} bytes`;
+  if (bytes < 1024 * 1024) return `${Math.ceil(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 function ApplyPage() {
   const { id: rawId } = Route.useParams();
   const id = extractJobUuid(rawId);
@@ -143,6 +150,10 @@ function ApplyPage() {
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [cvError, setCvError] = useState<string | null>(null);
   const [cvChecking, setCvChecking] = useState(false);
+  const [cvProgress, setCvProgress] = useState(0);
+  const [cvStatus, setCvStatus] = useState("");
+  const cvReaderRef = useRef<FileReader | null>(null);
+  const cvInputRef = useRef<HTMLInputElement | null>(null);
   const [phase, setPhase] = useState<"idle" | "reading" | "sending">("idle");
   const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
   const [consent, setConsent] = useState(false);
@@ -288,41 +299,111 @@ function ApplyPage() {
     });
 
 
+  /** Name the actual problem — a wrong extension should say what to do about it. */
+  const extensionMessage = (name: string): string => {
+    const ext = fileExt(name);
+    if (ext === "docx") return "This is a Word file — export it as a PDF and try again.";
+    if (ext === "doc") return "This is an older Word file — save it as a PDF and try again.";
+    if (ext === "pages") return "This is a Pages file — export it as a PDF and try again.";
+    if (["png", "jpg", "jpeg", "heic", "webp"].includes(ext))
+      return "This is an image — upload a PDF of your CV, not a photo or screenshot.";
+    if (["txt", "rtf", "md"].includes(ext))
+      return "This is a text file — export or print it as a PDF and try again.";
+    if (["zip", "rar", "7z"].includes(ext))
+      return "This is a compressed folder — upload the CV itself as a single PDF.";
+    return `We only accept PDF files${ext ? ` (this one is .${ext})` : ""} — export your CV as a PDF and try again.`;
+  };
+
   const validateFile = (f: File): string | null => {
-    if (f.size === 0) return CV_MESSAGES.empty;
-    if (f.size > MAX_CV_BYTES) return CV_MESSAGES.too_large;
-    if (!ALLOWED_CV_EXT.has(fileExt(f.name))) return CV_MESSAGES.bad_extension;
+    if (!ALLOWED_CV_EXT.has(fileExt(f.name))) return extensionMessage(f.name);
+    if (f.size === 0)
+      return "That file is empty (0 bytes) — re-export your CV and pick the new file.";
+    if (f.size > MAX_CV_BYTES)
+      return `That file is ${(f.size / (1024 * 1024)).toFixed(1)} MB — the limit is 10 MB. Export a smaller PDF (images are usually the cause) and try again.`;
     return null;
+  };
+
+  /** Determinate, cancellable read so progress is real and never a dead spinner. */
+  const readBytes = (f: File) =>
+    new Promise<Uint8Array>((resolve, reject) => {
+      const r = new FileReader();
+      cvReaderRef.current = r;
+      let settled = false;
+      const done = (fn: () => void) => {
+        if (settled) return;
+        settled = true;
+        cvReaderRef.current = null;
+        fn();
+      };
+      r.onprogress = (e) => {
+        if (e.lengthComputable && e.total > 0)
+          setCvProgress(Math.min(99, Math.round((e.loaded / e.total) * 100)));
+      };
+      r.onload = () =>
+        done(() => resolve(new Uint8Array(r.result as ArrayBuffer)));
+      r.onerror = () => done(() => reject(new Error("read_failed")));
+      r.onabort = () => done(() => reject(new Error("cancelled")));
+      try {
+        r.readAsArrayBuffer(f);
+      } catch {
+        done(() => reject(new Error("read_failed")));
+      }
+    });
+
+  const cancelCvCheck = () => {
+    try { cvReaderRef.current?.abort(); } catch { /* ignore */ }
+    setCvChecking(false);
+    setCvProgress(0);
+    setCvError(null);
+    setCvStatus("Upload cancelled. No file attached.");
   };
 
   const onFile = async (f: File | null) => {
     setCvError(null);
     setCvFile(null);
+    setCvProgress(0);
     if (!f) return;
     const err = validateFile(f);
     if (err) {
       setCvError(err);
+      setCvStatus(`${f.name} was not accepted. ${err}`);
       return;
     }
     // Same signature/structure checks the server runs — catch renamed Word docs,
     // images and corrupt PDFs before the applicant waits on an upload.
     setCvChecking(true);
+    setCvStatus(`Checking ${f.name}.`);
     try {
-      const bytes = new Uint8Array(await f.arrayBuffer());
+      const bytes = await readBytes(f);
+      setCvProgress(100);
       const { validateCv } = await import("@/lib/cv-validation");
       const res = await validateCv(bytes, f.name, f.type || "application/pdf");
       if (!res.ok) {
-        setCvError(res.message ?? CV_MESSAGES.unknown);
+        const msg = res.message ?? CV_MESSAGES.unknown;
+        setCvError(msg);
+        setCvStatus(`${f.name} was not accepted. ${msg}`);
         return;
       }
-    } catch {
+    } catch (e) {
+      if ((e as Error).message === "cancelled") return;
       setCvError(CV_MESSAGES.corrupt);
+      setCvStatus(`${f.name} could not be read.`);
       return;
     } finally {
       setCvChecking(false);
     }
     setCvFile(f);
+    setCvStatus(`Attached ${f.name}, ${formatFileSize(f.size)}.`);
   };
+
+  const clearCv = () => {
+    setCvFile(null);
+    setCvError(null);
+    setCvProgress(0);
+    setCvStatus("CV removed. No file attached.");
+    if (cvInputRef.current) cvInputRef.current.value = "";
+  };
+
 
 
 
@@ -994,49 +1075,115 @@ function ApplyPage() {
                 </p>
               </div>
               <div>
-                <Label htmlFor="cv">CV file (PDF, max 10 MB) *</Label>
+                {/* Rules first, in plain text with no error styling, so nothing
+                    arrives as a surprise after a failed attempt. */}
+                <div className="rounded-lg border bg-muted/30 p-3 text-xs text-muted-foreground">
+                  <p className="font-medium text-foreground">Before you pick a file</p>
+                  <ul className="mt-1 list-disc space-y-0.5 pl-4">
+                    <li>PDF only — Word, Pages, images and text files are not accepted</li>
+                    <li>Maximum size 10 MB</li>
+                    <li>No password-protected PDFs — upload an unlocked copy</li>
+                    <li>Stored securely; only the hiring team can open it</li>
+                  </ul>
+                </div>
+
+                <Label htmlFor="cv" className="mt-4 block">CV file (PDF, max 10 MB) *</Label>
                 <Input
                   id="cv"
+                  ref={cvInputRef}
                   type="file"
                   data-field="cv"
-                  accept=".pdf,application/pdf"
+                  accept="application/pdf,.pdf"
+                  aria-describedby="cv-help"
                   className="h-auto py-2 file:mr-3 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-primary-foreground"
                   disabled={cvChecking}
                   onChange={(e) => onFile(e.target.files?.[0] ?? null)}
                 />
+                <p id="cv-help" className="mt-1 text-xs text-muted-foreground">
+                  Opens your phone's file picker — Files, Drive and iCloud all work.
+                </p>
+
+                {/* Screen-reader announcements: filename, outcome, cancellation. */}
+                <p className="sr-only" role="status" aria-live="polite">{cvStatus}</p>
+
                 {cvChecking && (
-                  <div className="mt-2" aria-live="polite">
-                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                      <div className="h-full w-1/2 animate-pulse rounded-full bg-primary" />
+                  <div className="mt-3 rounded-lg border p-3">
+                    <div
+                      className="h-1.5 w-full overflow-hidden rounded-full bg-muted"
+                      role="progressbar"
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={cvProgress}
+                      aria-label="Reading your CV"
+                    >
+                      <div
+                        className="h-full rounded-full bg-primary transition-all"
+                        style={{ width: `${Math.max(4, cvProgress)}%` }}
+                      />
                     </div>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Checking your file — this takes a moment.
-                    </p>
+                    <div className="mt-2 flex items-center justify-between gap-3">
+                      <p className="text-xs text-muted-foreground">
+                        Checking your file — {cvProgress}% read.
+                      </p>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 text-xs"
+                        onClick={cancelCvCheck}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
                   </div>
                 )}
+
                 {cvError ? (
-                  <p className="mt-1 text-xs text-destructive" aria-live="polite">
-                    {cvError} Your answers are saved — just pick another file.
-                  </p>
+                  <div className="mt-3 rounded-lg border border-destructive/40 bg-destructive/5 p-3">
+                    <p className="text-sm text-destructive">{cvError}</p>
+                    <div className="mt-2 flex items-center gap-3">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => cvInputRef.current?.click()}
+                      >
+                        Choose another file
+                      </Button>
+                      <span className="text-xs text-muted-foreground">
+                        Everything else you've filled in is kept.
+                      </span>
+                    </div>
+                  </div>
                 ) : fieldErrors.cv ? (
                   <p className="mt-1 text-xs text-destructive">{fieldErrors.cv}</p>
                 ) : null}
-                {cvFile && !cvError && !cvChecking && (
-                  <p className="mt-2 text-sm text-foreground/80" aria-live="polite">
-                    ✓ Attached: <span className="font-medium">{cvFile.name}</span>{" "}
-                    <span className="text-muted-foreground">
-                      ({Math.ceil(cvFile.size / 1024)} KB)
-                    </span>
-                  </p>
-                )}
 
-                <ul className="mt-3 text-xs text-muted-foreground list-disc pl-4 space-y-0.5">
-                  <li>Accepted format: .pdf only</li>
-                  <li>Max size: 10 MB</li>
-                  <li>Password-protected PDFs can't be reviewed — upload an unlocked copy</li>
-                  <li>We store your CV securely; only the hiring team can access it.</li>
-                </ul>
+                {cvFile && !cvError && !cvChecking && (
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-card p-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{cvFile.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        PDF · {formatFileSize(cvFile.size)} · ready to send
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => cvInputRef.current?.click()}
+                      >
+                        Replace
+                      </Button>
+                      <Button type="button" size="sm" variant="ghost" onClick={clearCv}>
+                        Remove
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
+
 
               <div className="space-y-4 border-t pt-5">
                 <div>
