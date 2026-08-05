@@ -132,17 +132,18 @@ export const expressIntakeSchema = z
       .or(z.literal("")),
     confirmPassword: z.string().max(128).optional().or(z.literal("")),
 
-    // Role
+    // ─── Step 1: the role ─────────────────────────────────────────────────
     roleTitle: z.string().trim().min(2, "Enter the job title").max(160),
+    team: z.string().trim().max(160).optional().or(z.literal("")),
     jobDescriptionText: z.string().trim().max(60000).optional().or(z.literal("")),
     jobDescriptionFile: jdFileSchema.optional().nullable(),
-
-    // Role brief — what actually decides whether the first shortlist lands.
     whyOpen: z
       .string()
       .trim()
       .min(MIN_WHY_OPEN, `Tell us in a sentence or two why this role is open (at least ${MIN_WHY_OPEN} characters)`)
       .max(2000),
+
+    // ─── Step 2: who you need ─────────────────────────────────────────────
     mustHaves: z
       .string()
       .trim()
@@ -150,36 +151,31 @@ export const expressIntakeSchema = z
       .refine((v) => splitLines(v).length >= MIN_MUST_HAVES, {
         message: `List at least ${MIN_MUST_HAVES} must-haves, one per line`,
       }),
+    niceToHaves: z.string().trim().max(4000).optional().or(z.literal("")),
     trainable: z.string().trim().max(4000).optional().or(z.literal("")),
-    dealBreakers: z
-      .string()
-      .trim()
-      .min(MIN_DEAL_BREAKERS, "Tell us what rules someone out, even if it is obvious to you")
-      .max(2000),
 
-    location: z.string().trim().min(2, "Where is this role based?").max(160),
-    workModel: z.enum(WORK_MODELS, { errorMap: () => ({ message: "Choose how this role works" }) }),
+    // ─── Step 3: practicalities ───────────────────────────────────────────
+    // Optional on submit. The recruiting team can read most of this from the
+    // JD; an empty answer marks the brief incomplete instead of blocking the
+    // client at the door.
+    location: z.string().trim().max(160).optional().or(z.literal("")),
+    workModel: z.enum(WORK_MODELS).optional().or(z.literal("")),
     onsiteDays: z.coerce.number().int().min(0).max(7).optional(),
 
     currency: z.enum(COMP_CURRENCIES).default("USD"),
     compensationPeriod: z.enum(COMP_PERIODS).default("year"),
-    salaryMin: z.coerce.number().min(1, "Enter the bottom of the range"),
-    salaryMax: z.coerce.number().min(1, "Enter the top of the range"),
+    salaryMin: z.coerce.number().min(1, "Enter the bottom of the range").optional(),
+    salaryMax: z.coerce.number().min(1, "Enter the top of the range").optional(),
     compensationNote: z.string().trim().max(1000).optional().or(z.literal("")),
 
-    workAuthorization: z.enum(WORK_AUTHORIZATION_VALUES, {
-      errorMap: () => ({ message: "Choose the work authorisation rule for this role" }),
-    }),
+    workAuthorization: z.enum(WORK_AUTHORIZATION_VALUES).optional().or(z.literal("")),
     workAuthorizationNote: z.string().trim().max(1000).optional().or(z.literal("")),
-
-    interviewProcess: z
-      .string()
-      .trim()
-      .min(MIN_INTERVIEW_PROCESS, "Describe the interview stages, even roughly")
-      .max(2000),
-    decisionMaker: z.string().trim().min(2, "Who makes the final hiring decision?").max(160),
     targetStartDate: z.string().trim().max(40).optional().or(z.literal("")),
 
+    // ─── Step 4: process and confirm ──────────────────────────────────────
+    interviewProcess: z.string().trim().max(2000).optional().or(z.literal("")),
+    decisionMaker: z.string().trim().max(160).optional().or(z.literal("")),
+    dealBreakers: z.string().trim().max(2000).optional().or(z.literal("")),
 
     consent: z.literal(true, {
       errorMap: () => ({ message: "You must accept the terms to continue" }),
@@ -203,14 +199,27 @@ export const expressIntakeSchema = z
       message: `Upload a job description file or paste at least ${MIN_JD_TEXT} characters`,
     },
   )
-  .refine((v) => Number(v.salaryMax) >= Number(v.salaryMin), {
+  // Compensation is optional, but half a range is worse than none: it looks
+  // like a fact and is not one.
+  .refine((v) => !(v.salaryMin && !v.salaryMax), {
+    path: ["salaryMax"],
+    message: "Add the top of the range too, or clear both",
+  })
+  .refine((v) => !(v.salaryMax && !v.salaryMin), {
+    path: ["salaryMin"],
+    message: "Add the bottom of the range too, or clear both",
+  })
+  .refine((v) => !(v.salaryMin && v.salaryMax) || Number(v.salaryMax) >= Number(v.salaryMin), {
     path: ["salaryMax"],
     message: "The top of the range must be at least the bottom",
   })
-  .refine((v) => v.workModel === "remote" || typeof v.onsiteDays === "number", {
-    path: ["onsiteDays"],
-    message: "How many days on site each week?",
-  });
+  .refine(
+    (v) => !v.workModel || v.workModel === "remote" || typeof v.onsiteDays === "number",
+    {
+      path: ["onsiteDays"],
+      message: "How many days on site each week?",
+    },
+  );
 
 
 
@@ -218,6 +227,141 @@ export type ExpressIntakeInput = z.infer<typeof expressIntakeSchema>;
 
 export const EXPRESS_DRAFT_KEY = "taasflow.express.intake.v1";
 export const EXPRESS_IDEMPOTENCY_KEY = "taasflow.express.intake.idem.v1";
+export const EXPRESS_STEP_KEY = "taasflow.express.intake.step.v1";
+
+/**
+ * The four steps the client sees, with honest time estimates.
+ *
+ * Steps 1 and 2 are what sourcing cannot start without, so they gate submit.
+ * Steps 3 and 4 can be finished later; until they are, the role carries a
+ * visible "Brief incomplete" label rather than passing as finished.
+ */
+export const INTAKE_STEPS = [
+  {
+    key: "role",
+    title: "The role",
+    blurb: "What the job is and why it exists.",
+    minutes: 3,
+    required: true,
+  },
+  {
+    key: "people",
+    title: "Who you need",
+    blurb: "What you would reject a great candidate for, and what you would teach.",
+    minutes: 3,
+    required: true,
+  },
+  {
+    key: "practicalities",
+    title: "Practicalities",
+    blurb: "Money, place, authorisation, timing. Finish later if you need to.",
+    minutes: 2,
+    required: false,
+  },
+  {
+    key: "process",
+    title: "Process and confirm",
+    blurb: "How you interview, who decides, and your details.",
+    minutes: 2,
+    required: false,
+  },
+] as const;
+
+export type IntakeStepKey = (typeof INTAKE_STEPS)[number]["key"];
+
+export const INTAKE_TOTAL_MINUTES = INTAKE_STEPS.reduce((sum, s) => sum + s.minutes, 0);
+
+/** Which fields belong to which step, for step-scoped validation and focus. */
+export const STEP_FIELDS: Record<IntakeStepKey, string[]> = {
+  role: ["roleTitle", "team", "whyOpen", "jobDescriptionText"],
+  people: ["mustHaves", "niceToHaves", "trainable"],
+  practicalities: [
+    "location",
+    "workModel",
+    "onsiteDays",
+    "salaryMin",
+    "salaryMax",
+    "compensationNote",
+    "workAuthorization",
+    "workAuthorizationNote",
+    "targetStartDate",
+  ],
+  process: [
+    "interviewProcess",
+    "decisionMaker",
+    "dealBreakers",
+    "companyName",
+    "companyWebsite",
+    "companyLinkedin",
+    "firstName",
+    "lastName",
+    "contactTitle",
+    "workEmail",
+    "phone",
+    "contactLinkedin",
+    "password",
+    "confirmPassword",
+    "consent",
+    "pilotAcknowledgement",
+  ],
+};
+
+/**
+ * Step-level validators for the two gating steps. Advancing past step 1 or 2
+ * with an invalid required field is not allowed; steps 3 and 4 only validate
+ * what was actually filled in, which the full schema already does.
+ */
+export const stepValidators = {
+  role: z.object({
+    roleTitle: z.string().trim().min(2, "Enter the job title").max(160),
+    whyOpen: z
+      .string()
+      .trim()
+      .min(MIN_WHY_OPEN, `Tell us in a sentence or two why this role is open (at least ${MIN_WHY_OPEN} characters)`)
+      .max(2000),
+  }),
+  people: z.object({
+    mustHaves: z
+      .string()
+      .trim()
+      .refine((v) => splitLines(v).length >= MIN_MUST_HAVES, {
+        message: `List at least ${MIN_MUST_HAVES} must-haves, one per line`,
+      }),
+  }),
+} as const;
+
+/** The answers that make a brief complete, in the words the client saw. */
+export const BRIEF_COMPLETENESS_FIELDS: Array<{ field: string; label: string }> = [
+  { field: "location", label: "Where the role is based" },
+  { field: "workModel", label: "Remote, hybrid or on site" },
+  { field: "salaryMin", label: "Compensation range" },
+  { field: "workAuthorization", label: "Work authorisation" },
+  { field: "interviewProcess", label: "How you interview" },
+  { field: "decisionMaker", label: "Who makes the final decision" },
+  { field: "dealBreakers", label: "What rules someone out" },
+];
+
+/**
+ * What is still missing from a brief. Used by the wizard, the submit endpoint
+ * and the role page, so the label never disagrees across surfaces.
+ */
+export function briefCompleteness(values: Record<string, unknown>): {
+  complete: boolean;
+  missing: string[];
+} {
+  const missing: string[] = [];
+  for (const { field, label } of BRIEF_COMPLETENESS_FIELDS) {
+    const raw = values[field];
+    const filled =
+      typeof raw === "number"
+        ? Number.isFinite(raw) && raw > 0
+        : typeof raw === "string"
+          ? raw.trim().length > 0
+          : Boolean(raw);
+    if (!filled) missing.push(label);
+  }
+  return { complete: missing.length === 0, missing };
+}
 
 export function jdFileExt(name: string): string {
   const i = name.lastIndexOf(".");
@@ -241,3 +385,4 @@ export function blueprintProgress(status: string): number {
   if (idx === -1) return 0;
   return Math.round(((idx + 1) / BLUEPRINT_STAGES.length) * 100);
 }
+
