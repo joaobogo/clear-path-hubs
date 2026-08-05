@@ -1020,6 +1020,20 @@ function ExpressIntakePage() {
     }
   };
 
+  /**
+   * The account exists now, so the brief keeps going by itself: straight on to
+   * the role. If something on this step is still missing we stay put and show
+   * it, rather than carrying an incomplete answer forward.
+   */
+  const continueAfterAccount = () => {
+    if (stepIndex !== 0) return;
+    setTimeout(() => {
+      if (!validateStep(0)) return;
+      setStepIndex(1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 300);
+  };
+
   const createAccountInline = async () => {
     const email = state.workEmail.trim().toLowerCase();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
