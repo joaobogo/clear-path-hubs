@@ -301,6 +301,10 @@ function ExpressIntakePage() {
   const [signInMode, setSignInMode] = useState(false);
   const [reviewing, setReviewing] = useState(true);
   const [stepIndex, setStepIndex] = useState(0);
+  // Set while the client is away editing one answer from the review panel, so
+  // Continue takes them straight back to review instead of walking the steps.
+  const [returnToReview, setReturnToReview] = useState(false);
+  const pendingFocus = useRef<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [rowErrors, setRowErrors] = useState<Record<number, string>>({});
   const [stageErrors, setStageErrors] = useState<
@@ -554,14 +558,65 @@ function ExpressIntakePage() {
     // "Finish this later" skips the checks on an optional step; Continue never does.
     if (!skipValidation && !validateStep(stepIndex)) return;
 
+    if (returnToReview) {
+      // Came here from the review panel: go back to it, not to the next step.
+      setReturnToReview(false);
+      setStepIndex(INTAKE_STEPS.length - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     setStepIndex((i) => Math.min(i + 1, INTAKE_STEPS.length - 1));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const goBack = () => {
+    if (returnToReview) {
+      setReturnToReview(false);
+      setStepIndex(INTAKE_STEPS.length - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     setStepIndex((i) => Math.max(i - 1, 0));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  /**
+   * Send the client from a review row to the answer behind it. State is never
+   * touched, so every other answer survives the round trip.
+   */
+  const editFromReview = (target: { step: number; focusLabel: string | null }) => {
+    pendingFocus.current = target.focusLabel;
+    const last = INTAKE_STEPS.length - 1;
+    if (target.step !== stepIndex) {
+      setReturnToReview(target.step !== last);
+      setStepIndex(target.step);
+    }
+    focusReviewTarget(target.focusLabel);
+  };
+
+  /** Scroll to and focus the control a review row points at. */
+  const focusReviewTarget = (focusLabel: string | null) => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const container = focusLabel
+          ? document.querySelector<HTMLElement>(`[data-field="${focusLabel}"]`)
+          : null;
+        const el = container ?? document.querySelector<HTMLElement>("form, main");
+        if (!el) return;
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        const control = container?.querySelector<HTMLElement>("input, textarea, select, button");
+        control?.focus?.();
+        pendingFocus.current = null;
+      });
+    });
+  };
+
+  // A step change caused by an Edit link still has to land on the field.
+  useEffect(() => {
+    if (pendingFocus.current === null) return;
+    focusReviewTarget(pendingFocus.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stepIndex]);
 
 
 
