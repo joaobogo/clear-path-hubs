@@ -9,17 +9,23 @@ import { Button } from "@/components/ui/button";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { parseJobDescription } from "@/lib/marketing/job-description";
 import {
+  NOT_SPECIFIED,
+  RANGE_ON_CALL,
+  type PublicJobFacts,
+} from "@/lib/jobs/public-facts";
+import {
   ArrowLeft,
   Building2,
+  CalendarDays,
   Check,
   Clock,
   ListOrdered,
   MapPin,
   ShieldCheck,
-  TrendingUp,
   Wallet,
   type LucideIcon,
 } from "lucide-react";
+
 
 
 export const Route = createFileRoute("/jobs/$id/")({
