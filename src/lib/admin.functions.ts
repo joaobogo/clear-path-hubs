@@ -542,8 +542,11 @@ export const listPositions = createServerFn({ method: "GET" })
       );
     if (data.status) base = base.eq("status", data.status);
     if (data.organization_id) base = base.eq("organization_id", data.organization_id);
+    if (data.owner === "__unassigned__") base = base.is("owner_user_id", null);
+    else if (data.owner) base = base.eq("owner_user_id", data.owner);
     if (data.location) base = base.ilike("location", `%${data.location}%`);
     if (data.q) base = base.ilike("title", `%${data.q}%`);
+
 
     // Sort — DB-side for updated/title; delivered/action sorts happen after enrichment.
     const sort = data.sort ?? "updated_desc";
