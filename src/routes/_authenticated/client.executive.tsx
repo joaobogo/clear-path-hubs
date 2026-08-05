@@ -1,3 +1,4 @@
+import { clientStageLabel } from "@/lib/client-stage-labels";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -342,7 +343,7 @@ function TimeInStageCard({ rows }: { rows: ExecutiveReport["time_in_stage"] }) {
               <li key={r.stage} className="space-y-1">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium capitalize">
-                    {r.stage.replace(/_/g, " ")}
+                    {clientStageLabel(r.stage)}
                   </span>
                   <span className="tabular-nums text-muted-foreground">
                     {r.count} candidates · avg <span className="text-foreground">{r.avg_days}d</span> · p90 <span className="text-foreground">{r.p90_days}d</span>

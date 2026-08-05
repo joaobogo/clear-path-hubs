@@ -1,3 +1,4 @@
+import { clientStageLabel } from "@/lib/client-stage-labels";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { SurfaceState } from "@/components/ds/surface-state";
@@ -969,7 +970,7 @@ function CompactList({
  {c.candidate.location ?? "—"}
  </td>
  <td className="py-2 px-3 text-muted-foreground capitalize">
- {c.stage.replace(/_/g, " ")}
+ {clientStageLabel(c.stage)}
  </td>
  <td className="py-2 px-3 text-right">
  <Link

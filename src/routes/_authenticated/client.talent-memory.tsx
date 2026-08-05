@@ -1,3 +1,4 @@
+import { clientStageLabel } from "@/lib/client-stage-labels";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
@@ -514,7 +515,7 @@ function MemorySheet({
                         <div>
                           <p className="font-medium">{h.position_title}</p>
                           <p className="text-muted-foreground">
-                            stage: {h.stage.replace(/_/g, " ")} ·{" "}
+                            {clientStageLabel(h.stage)} ·{" "}
                             {new Date(h.updated_at).toLocaleDateString()}
                           </p>
                         </div>

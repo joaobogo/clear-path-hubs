@@ -1,3 +1,4 @@
+import { clientStageLabel } from "@/lib/client-stage-labels";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
@@ -1403,7 +1404,7 @@ function ActionArea({
       <div className="mb-3 flex items-center justify-between gap-2">
         <h2 className="text-sm font-semibold uppercase tracking-[0.08em] text-foreground/90">Stage actions</h2>
         <Badge variant="outline" className="capitalize tabular-nums">
-          {stage.replace(/_/g, " ")}
+          {clientStageLabel(stage)}
         </Badge>
       </div>
       {stage === "hired" ? (
