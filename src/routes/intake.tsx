@@ -1949,11 +1949,22 @@ function ExpressIntakePage() {
                     ],
                     [
                       "Compensation",
-                      state.salaryMin && state.salaryMax
-                        ? `${state.currency} ${Number(state.salaryMin).toLocaleString()}–${Number(
-                            state.salaryMax,
-                          ).toLocaleString()} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
-                        : "",
+                      state.compensationUndecided
+                        ? "Not decided yet"
+                        : [
+                            state.salaryMin && state.salaryMax
+                              ? `${state.currency} ${Number(state.salaryMin).toLocaleString()}–${Number(
+                                  state.salaryMax,
+                                ).toLocaleString()} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
+                              : "",
+                            state.bonusStructure.trim() ? `Bonus: ${state.bonusStructure.trim()}` : "",
+                            state.equity
+                              ? COMP_EQUITY_LABELS[state.equity as "none"]
+                              : "",
+                            state.compensationFlexible ? "Flexible for the right person" : "",
+                          ]
+                            .filter(Boolean)
+                            .join(" · "),
                     ],
                     [
                       "Work authorisation",
