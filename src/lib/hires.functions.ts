@@ -249,6 +249,8 @@ function toDTO(row: AnyRow): HireRecordDTO {
     created_at: row.created_at,
     updated_at: row.updated_at,
     applied_at: row.applied_at ?? null,
+    expected_response_date: row.expected_response_date ?? null,
+    expected_response_set_at: row.expected_response_set_at ?? null,
   };
 }
 
