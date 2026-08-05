@@ -261,8 +261,14 @@ function TimelineItem({
               submitLabel="Send proposed times"
               onCancel={() => onCancelPropose?.()}
               onSubmit={(p) => onSubmitPropose(p)}
-              initialFormat={iv.interview_type ?? undefined}
-              initialDuration={iv.duration_minutes ?? undefined}
+              initial={{
+                ...(iv.interview_type === "video_call" ||
+                iv.interview_type === "phone_screen" ||
+                iv.interview_type === "onsite"
+                  ? { format: iv.interview_type }
+                  : {}),
+                ...(iv.duration_minutes ? { durationMinutes: iv.duration_minutes } : {}),
+              }}
             />
           </div>
         ) : null}
