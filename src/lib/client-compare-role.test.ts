@@ -27,7 +27,9 @@ function candidate(over: Record<string, unknown> = {}): ClientCandidateDTO {
     experience: (over.experience ?? [
       { title: "Ops Lead", company: "Acme", period: "2021–now", description: null },
     ]) as ClientCandidateDTO["experience"],
-    work_authorization: (over.work_authorization ?? "EU citizen") as string | null,
+    work_authorization: ("work_authorization" in over
+      ? over.work_authorization
+      : "EU citizen") as string | null,
   } as unknown as ClientCandidateDTO;
 }
 
