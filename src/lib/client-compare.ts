@@ -1,158 +1,179 @@
-import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
-import type { RequirementRow } from "@/lib/client-fit-presentation";
+/**
+ * Side-by-side candidate comparison (max three columns).
+ *
+ * Hard rules:
+ *  - Only client-visible fields. No score, band, percentile, rank or any
+ *    "recommended winner" — the builder deliberately has no ranking output.
+ *  - Rows where every candidate reads identically collapse under "Same for all".
+ */
 
-export const COMPARE_MIN = 2;
-export const COMPARE_MAX = 4;
+export const MAX_COMPARE = 3;
+export const MIN_COMPARE = 2;
 
-/** Client-facing status vocabulary: met / partially met / unknown. */
-export type CompareStatus = "met" | "partial" | "unknown" | "contradicted" | "not_applicable";
-
-export type CompareCell = {
+export type CompareCandidate = {
   match_id: string;
-  status: CompareStatus;
-  /** Evidence snippet revealed on hover — never a score or engine internal. */
-  evidence: string | null;
-  source: string | null;
+  stage: string;
+  candidate: {
+    display_name: string;
+    location: string | null;
+    availability: string | null;
+    years_experience: number | null;
+    current_role: string | null;
+    current_company: string | null;
+  };
+  requirement_rows: Array<{
+    label: string;
+    importance: "must_have" | "preferred";
+    status: string;
+  }>;
+  experience: Array<{ title: string; company: string | null; period: string | null }>;
+  work_authorization: string | null;
 };
 
-export type CompareMatrixRow = {
+export type CompareCellKind = "list" | "text";
+
+export type CompareRow = {
   key: string;
   label: string;
-  importance: RequirementRow["importance"];
-  cells: CompareCell[];
-  /** True when every candidate lands on the same status. */
-  uniform: boolean;
+  kind: CompareCellKind;
+  /** One entry per candidate, in the same order as the input. */
+  values: Array<{ matchId: string; lines: string[] }>;
+  /** True when every candidate reads identically. */
+  same: boolean;
 };
 
-function toStatus(s: RequirementRow["status"] | undefined): CompareStatus {
-  if (s === "met") return "met";
-  if (s === "partial") return "partial";
-  if (s === "contradicted") return "contradicted";
-  if (s === "not_applicable") return "not_applicable";
-  return "unknown";
-}
-
-export const STATUS_LABEL: Record<CompareStatus, string> = {
-  met: "Met",
-  partial: "Partially met",
-  unknown: "Unknown",
-  contradicted: "Contradicted",
-  not_applicable: "Not applicable",
+export type Comparison = {
+  candidates: Array<{ matchId: string; name: string; subtitle: string | null }>;
+  /** Rows that differ between candidates — shown first. */
+  differing: CompareRow[];
+  /** Rows identical across candidates — collapsed under "Same for all". */
+  identical: CompareRow[];
 };
 
-/**
- * Requirement grid across 2–4 candidates on the same role.
- * Must-haves first, then preferred, alphabetical inside each group.
- */
-export function buildCompareMatrix(candidates: ClientCandidateDTO[]): CompareMatrixRow[] {
-  const order = new Map<string, { label: string; importance: RequirementRow["importance"] }>();
-  for (const c of candidates) {
-    for (const r of c.requirement_rows) {
-      const key = `${r.importance}:${r.label.toLowerCase().trim()}`;
-      if (!order.has(key)) order.set(key, { label: r.label.trim(), importance: r.importance });
-    }
-  }
+const MET_STATUSES = new Set(["met", "strong", "evidenced", "partial"]);
+const MISSING_STATUSES = new Set(["missing", "not_evidenced", "gap", "contradicted"]);
 
-  const rows: CompareMatrixRow[] = Array.from(order.entries()).map(([key, meta]) => {
-    const cells: CompareCell[] = candidates.map((c) => {
-      const row = c.requirement_rows.find(
-        (x) =>
-          x.importance === meta.importance &&
-          x.label.toLowerCase().trim() === meta.label.toLowerCase(),
-      );
-      const ev = row?.evidence.find((e) => (e.snippet ?? "").trim().length > 0) ?? null;
-      return {
-        match_id: c.match_id,
-        status: toStatus(row?.status),
-        evidence: ev ? ev.snippet.trim() : (row?.explanation?.trim() || null),
-        source: ev?.source ?? null,
-      };
-    });
-    return {
-      key,
-      label: meta.label,
-      importance: meta.importance,
-      cells,
-      uniform: cells.every((x) => x.status === cells[0].status),
-    };
-  });
-
-  rows.sort((a, b) => {
-    if (a.importance !== b.importance) return a.importance === "must_have" ? -1 : 1;
-    return a.label.localeCompare(b.label);
-  });
-  return rows;
+function clean(v: unknown): string {
+  return String(v ?? "").replace(/\s+/g, " ").trim();
 }
 
-export type RubricGuard = {
-  /** Rubric identity per candidate: blueprint + engine version. */
-  versions: string[];
-  mismatched: boolean;
-  warning: string | null;
-};
-
-export function rubricVersion(c: ClientCandidateDTO): string {
-  const blueprint = c.evaluation.blueprint_version?.trim() || "unversioned";
-  const engine = c.evaluation.engine_version?.trim() || "unversioned";
-  return `${blueprint} · ${engine}`;
-}
-
-/**
- * Comparing candidates assessed against different rubric versions can mean the
- * same requirement label was judged with different criteria. We still render
- * the grid, but say so explicitly.
- */
-export function rubricGuard(candidates: ClientCandidateDTO[]): RubricGuard {
-  const versions = Array.from(new Set(candidates.map(rubricVersion)));
-  const mismatched = versions.length > 1;
-  return {
-    versions,
-    mismatched,
-    warning: mismatched
-      ? "These candidates were assessed against different versions of this role's requirements, so the same requirement may have been judged differently. Compare the evidence in each cell rather than the pattern of ticks."
-      : null,
+function stageLabel(stage: string): string {
+  const s = clean(stage).toLowerCase();
+  const map: Record<string, string> = {
+    delivered: "Awaiting your review",
+    shortlisted: "Shortlisted",
+    interview_process: "Interviewing",
+    interview: "Interviewing",
+    offer: "Offer out",
+    hired: "Hired",
+    not_moving_forward: "Not moving forward",
   };
+  return map[s] ?? (s ? s.replace(/_/g, " ") : "In progress");
 }
 
-export type CompareEligibility = {
-  ok: boolean;
-  reason: string | null;
-};
+function mustHaves(c: CompareCandidate, met: boolean): string[] {
+  const set = met ? MET_STATUSES : MISSING_STATUSES;
+  return c.requirement_rows
+    .filter((r) => r.importance === "must_have" && set.has(clean(r.status).toLowerCase()))
+    .map((r) => clean(r.label))
+    .filter(Boolean);
+}
 
-/** 2–4 candidates, single position. Anything else is refused with a reason. */
-export function compareEligibility(candidates: ClientCandidateDTO[]): CompareEligibility {
-  if (candidates.length < COMPARE_MIN) {
-    return { ok: false, reason: `Select at least ${COMPARE_MIN} candidates to compare` };
+function relevantExperience(c: CompareCandidate): string[] {
+  const lines = c.experience.slice(0, 3).map((e) => {
+    const head = [clean(e.title), clean(e.company)].filter(Boolean).join(" · ");
+    const period = clean(e.period);
+    return period ? `${head} (${period})` : head;
+  });
+  const years = c.candidate.years_experience;
+  if (years != null && Number.isFinite(years)) {
+    lines.unshift(`${years} years total experience`);
   }
-  if (candidates.length > COMPARE_MAX) {
-    return { ok: false, reason: `Compare up to ${COMPARE_MAX} candidates at a time` };
-  }
-  const positions = new Set(candidates.map((c) => c.position?.id ?? "none"));
-  if (positions.size > 1) {
-    return { ok: false, reason: "Select candidates from the same position to compare" };
-  }
-  return { ok: true, reason: null };
+  return lines.filter(Boolean);
+}
+
+function fingerprint(lines: string[]): string {
+  return lines.map((l) => l.toLowerCase()).join("|");
 }
 
 /**
- * Default comparison set: the shortlist-ready candidates for the largest
- * single position, capped at COMPARE_MAX and ordered as delivered.
+ * Build the comparison view for two or three candidates. Extra candidates
+ * beyond MAX_COMPARE are ignored rather than silently ranked.
  */
-export function defaultCompareSelection(candidates: ClientCandidateDTO[]): string[] {
-  const eligible = candidates.filter(
-    (c) => c.stage === "shortlisted" || c.stage === "delivered" || c.stage === "interview_process",
-  );
-  const byPosition = new Map<string, ClientCandidateDTO[]>();
-  for (const c of eligible) {
-    const key = c.position?.id ?? "none";
-    byPosition.set(key, [...(byPosition.get(key) ?? []), c]);
-  }
-  let best: ClientCandidateDTO[] = [];
-  for (const group of byPosition.values()) {
-    const shortlisted = group.filter((c) => c.stage === "shortlisted");
-    const pool = shortlisted.length >= COMPARE_MIN ? shortlisted : group;
-    if (pool.length > best.length) best = pool;
-  }
-  if (best.length < COMPARE_MIN) return [];
-  return best.slice(0, COMPARE_MAX).map((c) => c.match_id);
+export function buildComparison(input: CompareCandidate[]): Comparison {
+  const candidates = input.slice(0, MAX_COMPARE);
+
+  const rowDefs: Array<{ key: string; label: string; kind: CompareCellKind; get: (c: CompareCandidate) => string[] }> = [
+    {
+      key: "must_met",
+      label: "Must-haves met",
+      kind: "list",
+      get: (c) => {
+        const v = mustHaves(c, true);
+        return v.length ? v : ["None recorded yet"];
+      },
+    },
+    {
+      key: "must_missing",
+      label: "Must-haves missing",
+      kind: "list",
+      get: (c) => {
+        const v = mustHaves(c, false);
+        return v.length ? v : ["None"];
+      },
+    },
+    {
+      key: "experience",
+      label: "Relevant experience",
+      kind: "list",
+      get: (c) => {
+        const v = relevantExperience(c);
+        return v.length ? v : ["Not recorded"];
+      },
+    },
+    {
+      key: "availability",
+      label: "Availability",
+      kind: "text",
+      get: (c) => [clean(c.candidate.availability) || "Not confirmed"],
+    },
+    {
+      key: "location",
+      label: "Location",
+      kind: "text",
+      get: (c) => [clean(c.candidate.location) || "Not recorded"],
+    },
+    {
+      key: "work_auth",
+      label: "Work authorisation",
+      kind: "text",
+      get: (c) => [clean(c.work_authorization) || "Not recorded"],
+    },
+    {
+      key: "stage",
+      label: "Current stage",
+      kind: "text",
+      get: (c) => [stageLabel(c.stage)],
+    },
+  ];
+
+  const rows: CompareRow[] = rowDefs.map((def) => {
+    const values = candidates.map((c) => ({ matchId: c.match_id, lines: def.get(c) }));
+    const first = values.length > 0 ? fingerprint(values[0].lines) : "";
+    const same = values.length > 1 && values.every((v) => fingerprint(v.lines) === first);
+    return { key: def.key, label: def.label, kind: def.kind, values, same };
+  });
+
+  return {
+    candidates: candidates.map((c) => ({
+      matchId: c.match_id,
+      name: c.candidate.display_name,
+      subtitle:
+        [clean(c.candidate.current_role), clean(c.candidate.current_company)]
+          .filter(Boolean)
+          .join(" · ") || null,
+    })),
+    differing: rows.filter((r) => !r.same),
+    identical: rows.filter((r) => r.same),
+  };
 }
