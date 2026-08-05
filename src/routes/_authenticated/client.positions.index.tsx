@@ -44,7 +44,7 @@ const STATUS_TABS = [
  { key: "active", label: "Active" },
  { key: "draft", label: "Under review" },
  { key: "paused", label: "Paused" },
- { key: "closed", label: "Closed" },
+ { key: "closed", label: "Archived" },
 ] as const;
 
 
