@@ -27,6 +27,8 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
+import { EditorialHero } from "@/components/marketing/editorial-hero";
+import agentsHero from "@/assets/page-agents-hero.jpg";
 import { AgentRunsPreview } from "@/components/marketing/product-preview/agent-runs-preview";
 import {
   MODULES,
@@ -175,49 +177,36 @@ function AgentsPage() {
   return (
     <SiteShell>
       {/* INTRO */}
-      <section
-        aria-labelledby="agents-hero"
-        className="relative overflow-hidden bg-gradient-to-b from-[color:var(--brand-sky)]/30 via-[color:var(--brand-paper)] to-[color:var(--brand-paper)]"
+      <EditorialHero
+        eyebrow={PRODUCT_CATEGORY}
+        title="Eight agents. Each one has a job, a limit and a log."
+        lead="Agents work inside role rules, a frozen rubric and approval gates. Every action they take is recorded."
+        image={agentsHero}
+        imageAlt="A recruiter reviewing candidate evidence at a desk in the evening"
+        stats={[
+          { value: "6", label: "Agents you control" },
+          { value: "2", label: "System automations" },
+          { value: "0", label: "Releases without approval" },
+        ]}
+        primary={{ to: "/intake", label: "Start a role" }}
+        secondary={{ to: "/platform", label: "See the platform" }}
       >
-        <PublicPage>
-          <div className="py-16 sm:py-20">
-            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80 backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
-              {PRODUCT_CATEGORY}
-            </span>
-            <h1
-              id="agents-hero"
-              className="mt-4 max-w-4xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl"
+        <ul className="grid gap-2 sm:grid-cols-3">
+          {[
+            "Six agents you switch on or pause",
+            "Two always-on system automations",
+            "No candidate released without approval",
+          ].map((t) => (
+            <li
+              key={t}
+              className="inline-flex items-start gap-2 rounded-lg border border-[color:var(--brand-navy)]/10 bg-white px-3 py-2 text-sm font-semibold text-[color:var(--brand-navy)]"
             >
-              Eight agents. Each one has a job, a limit and a log.
-            </h1>
-            <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
-              {SYSTEM_CLAIM} Agents run inside role-specific rules, seat
-              permissions, a frozen scoring rubric and approval gates — and every
-              action they take is recorded.
-            </p>
-
-            <ul className="mt-8 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-              {[
-                "Six agents you switch on or pause",
-                "Two always-on system automations",
-                "No candidate released without approval",
-              ].map((t) => (
-                <li
-                  key={t}
-                  className="inline-flex items-start gap-2 rounded-lg border border-[color:var(--brand-navy)]/10 bg-white px-3 py-2 text-sm font-semibold text-[color:var(--brand-navy)]"
-                >
-                  <Check
-                    className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean-text)]"
-                    aria-hidden
-                  />
-                  <span className="min-w-0">{t}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </PublicPage>
-      </section>
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean-text)]" aria-hidden />
+              <span className="min-w-0">{t}</span>
+            </li>
+          ))}
+        </ul>
+      </EditorialHero>
 
       {/* ROSTER */}
       <PublicSection className="bg-white">
