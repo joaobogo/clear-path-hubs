@@ -73,6 +73,8 @@ import {
   type ApproveFailure,
 } from "@/lib/scoring/approve-failure";
 import { CandidateHistoryTimeline } from "@/components/admin/candidate-history-timeline";
+import { CandidateNextActionBar } from "@/components/admin/candidate-next-action-bar";
+
 
 
 
@@ -190,11 +192,14 @@ function CandidateWorkspace() {
         currentRun={currentRun}
       />
 
+      <CandidateNextActionBar matchId={id} onNavigateTab={(t) => setTab(t as TabId)} />
+
       <ContactSuppressionPanel
         organizationId={m?.organization_id ?? null}
         candidateProfileId={m?.candidate_profile_id ?? null}
         candidateMatchId={id}
       />
+
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-4">
