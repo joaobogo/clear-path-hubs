@@ -11,6 +11,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { FormShell } from "@/components/marketing/form-shell";
 import {
+  PILOT_INELIGIBLE_CLIENT_MESSAGE,
+  PILOT_ONE_PER_COMPANY,
+} from "@/lib/pilot-eligibility";
+
+import {
   DEAL_BREAKER_EMPTY_HINT,
   DEAL_BREAKER_POLICY_LINE,
   DEAL_BREAKER_WHY_IT_MATTERS,
@@ -354,6 +359,13 @@ function ExpressIntakePage() {
   const [returnToReview, setReturnToReview] = useState(false);
   const pendingFocus = useRef<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  /**
+   * Set when the company has already used its one pilot. Holds the step that
+   * continues onboarding, so nothing is lost — the client just sees the truth
+   * first.
+   */
+  const [pilotNotice, setPilotNotice] = useState<(() => void) | null>(null);
+
   const [rowErrors, setRowErrors] = useState<Record<number, string>>({});
   const [stageErrors, setStageErrors] = useState<
     Record<number, { name?: string; format?: string; ownerEmail?: string }>
@@ -1624,17 +1636,30 @@ function ExpressIntakePage() {
       }
 
 
-      if (signedIn && body.positionId) {
-        // Role stays a draft either way — payment (or a conversation) comes next.
-        trackEvent("intake_path_chosen", { flow: "express_onboarding", path: intent });
-        if (intent === "call") {
-          navigate({ to: "/book-call", search: { position: body.positionId } });
-        } else {
-          navigate({ to: "/checkout", search: { position: body.positionId } });
+      const proceed = () => {
+        if (signedIn && body.positionId) {
+          // Role stays a draft either way — payment (or a conversation) comes next.
+          trackEvent("intake_path_chosen", { flow: "express_onboarding", path: intent });
+          if (intent === "call") {
+            navigate({ to: "/book-call", search: { position: body.positionId } });
+          } else {
+            navigate({ to: "/checkout", search: { position: body.positionId } });
+          }
+          return;
         }
+        navigate({ to: "/intake/confirmation", search: { intake_id: body.intakeId } });
+      };
+
+      // The pilot runs once per company. If it has already been used — including
+      // under a different account — say so plainly before moving them on, rather
+      // than letting them believe they are on a pilot.
+      if (body.pilotEligible === false) {
+        setPilotNotice(() => proceed);
+        setSubmitting(false);
         return;
       }
-      navigate({ to: "/intake/confirmation", search: { intake_id: body.intakeId } });
+      proceed();
+
 
     } catch {
       setSubmitError("We couldn't reach us just now. Your answers are safe — please retry.");
@@ -1668,7 +1693,32 @@ function ExpressIntakePage() {
           if (hydratedRef.current) queueSave();
         }}
       >
+        {pilotNotice && (
+          <div
+            className="rounded-xl border border-amber-300 bg-amber-50 p-4"
+            role="status"
+            aria-live="polite"
+          >
+            <p className="text-sm font-semibold text-amber-900">
+              The pilot has already been used for your company.
+            </p>
+            <p className="mt-1 text-sm text-amber-900/80">{PILOT_INELIGIBLE_CLIENT_MESSAGE}</p>
+            <Button
+              type="button"
+              className="mt-3"
+              onClick={() => {
+                const go = pilotNotice;
+                setPilotNotice(null);
+                go();
+              }}
+            >
+              Continue
+            </Button>
+          </div>
+        )}
+
         <div className="rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/4 p-4">
+
           <p className="text-sm font-semibold">
             No payment today. Nothing is charged to start.
           </p>
@@ -3065,8 +3115,9 @@ function ExpressIntakePage() {
                 </li>
               </ol>
               <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                One active role, any industry, anywhere in the world, no placement fees. Available once
-                per company. First candidate activity usually begins within 3–5 days after go-live.
+                One active role, any industry, anywhere in the world, no placement fees.{" "}
+                {PILOT_ONE_PER_COMPANY} First candidate activity usually begins within 3–5 days after
+                go-live.
               </p>
             </div>
 
@@ -3083,9 +3134,12 @@ function ExpressIntakePage() {
               </span>
               <label htmlFor="pilot-acknowledgement" className="text-sm leading-relaxed">
                 I understand there is no charge today, and that the ${PRICE_PILOT_USD} one-time 14-day
-                pilot is billed only after my account is created and the role is accepted — once per
-                company, for one role.
+                pilot is billed only after my account is created and the role is accepted. The pilot
+                can be used once per company, for one position — a second sign-up or a new email does
+                not create a new pilot. Separate locations, franchises and subsidiaries are reviewed
+                case by case.
               </label>
+
             </div>
 
             {errors.pilotAcknowledgement && (

@@ -608,34 +608,24 @@ export const Route = createFileRoute("/api/public/express-intake")({
         }
 
         // ---------- Pilot eligibility (one introductory pilot per company) ----------
-        // Never blocks onboarding: an ineligible company still gets its workspace,
-        // role and blueprint — it just isn't granted a second pilot.
-        let pilotEligible = true;
-        let pilotReason: string | null = null;
-        try {
-          const { data: org } = await admin
-            .from("organizations")
-            .select("pilot_status, pilot_used, pilot_admin_override, pilot_position_id")
-            .eq("id", organizationId)
-            .maybeSingle();
-          const alreadyUsed = Boolean(org?.pilot_used) || (org?.pilot_status && org.pilot_status !== "none");
-          if (alreadyUsed && !org?.pilot_admin_override) {
-            pilotEligible = false;
-            pilotReason = "pilot_already_used";
-          } else {
-            await admin
-              .from("organizations")
-              .update({
-                // The 14-day clock starts when the search goes live, not now.
-                pilot_status: "reserved",
-                pilot_used: true,
-                pilot_position_id: positionId,
-              })
-              .eq("id", organizationId);
-          }
-        } catch (err) {
-          console.error("[express-intake] pilot state failed (non-critical)", err);
-        }
+        // The claim is recorded against the company, not the account, so a second
+        // pilot cannot be obtained by signing up again with a new email. Never
+        // blocks onboarding: an ineligible company still gets its workspace,
+        // role and blueprint — it just isn't granted a second pilot, and staff
+        // are warned about the repeat attempt.
+        const { claimPilot } = await import("@/lib/pilot-eligibility.server");
+        const pilotDecision = await claimPilot(admin as never, {
+          companyName: data.companyName,
+          companyWebsite: data.companyWebsite ?? null,
+          workEmail: data.workEmail,
+          organizationId,
+          positionId,
+          traceId,
+        });
+        const pilotEligible = pilotDecision.eligible;
+        const pilotReason = pilotDecision.reason;
+        const pilotMessage = pilotDecision.line;
+
 
 
         // ---------- Intake record ----------
@@ -716,6 +706,16 @@ export const Route = createFileRoute("/api/public/express-intake")({
           );
         }
         const intakeId = intakeRow.id as string;
+
+        // Tie the pilot decision to the intake so staff can open it from either side.
+        if (pilotDecision.claimId) {
+          await admin
+            .from("pilot_claims")
+            .update({ intake_submission_id: intakeId })
+            .eq("id", pilotDecision.claimId);
+        }
+
+
 
         // ---------- Audit ----------
         try {
@@ -815,6 +815,8 @@ export const Route = createFileRoute("/api/public/express-intake")({
           accountCreated,
           pilotEligible,
           pilotReason,
+          pilotMessage,
+
           blueprintStatus: "queued",
         });
 
