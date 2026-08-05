@@ -53,6 +53,9 @@ import { SlaScorecard } from "@/components/client/sla-scorecard";
 import { clientRoleStatusLabel } from "@/lib/client-role-status";
 import { getPositionHandoff } from "@/lib/hire-handoff.functions";
 import { HireHandoffPanel, HandoffSkeleton } from "@/components/client/hire-handoff";
+import { getRoleClosure } from "@/lib/role-closure.functions";
+import { CloseRoleDialog, RoleClosureRecord } from "@/components/client/close-role-dialog";
+import { isArchivedStatus } from "@/lib/role-closure";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  head: () => ({
