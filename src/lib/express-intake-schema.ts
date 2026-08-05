@@ -619,7 +619,9 @@ export const expressIntakeSchema = z
      * Explicit opt-in. Owners entered at intake are never emailed unless this
      * is true, and nothing is sent from the intake itself.
      */
-    inviteCollaborators: z.boolean().optional().default(false),
+    // Anything other than an explicit true means no invitations are sent.
+    inviteCollaborators: z.preprocess((v) => v === true, z.boolean()),
+
 
     dealBreakers: z.string().trim().max(2000).optional().or(z.literal("")),
 
