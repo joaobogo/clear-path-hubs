@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { getAdminMatch, applyReviewDecision } from "@/lib/processing.functions";
 import { getReviewQueueIds } from "@/lib/admin-ops.functions";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { EvidenceCompletenessGate } from "@/components/admin/evidence-completeness-gate";
+import { getEvidenceCompleteness } from "@/lib/evidence/completeness.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -77,8 +79,16 @@ function ReviewScreen() {
   const evidence = (data as Any).evidence;
   const currentRun = ((data as Any).runs ?? []).find((r: Any) => r.id === m.current_score_run_id);
   const result = currentRun?.result ?? {};
-  const assessments: Any[] = result?.requirement_assessment ?? result?.evidence ?? [];
-  const verdicts: Any[] = evidence?.extracted?.insights?.requirement_verdicts ?? [];
+  void result;
+  void evidence;
+
+  // Submission gate: must-have criteria without evidence block approval.
+  const { data: completeness } = useQuery({
+    queryKey: ["evidence-completeness", matchId],
+    queryFn: () => getEvidenceCompleteness({ data: { matchId } }),
+  });
+  const blockingLabels: string[] = completeness?.report.blockingLabels ?? [];
+  const approvalBlocked = blockingLabels.length > 0;
 
   const ids: string[] = queue?.ids ?? [];
   const idx = ids.indexOf(matchId);
