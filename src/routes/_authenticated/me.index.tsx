@@ -114,14 +114,6 @@ function MeHome() {
   }>;
   const openRequests = dashLive?.open_requests ?? 0;
   const unread = dashLive?.unread_messages ?? 0;
-  const upcoming = (dashLive?.upcoming_interviews ?? []) as Array<{
-    id: string;
-    application_id: string;
-    role_title: string;
-    scheduled_at: string;
-    interview_type: string | null;
-    timezone: string | null;
-  }>;
   const doc = (dashLive?.document ?? null) as {
     filename: string;
     uploaded_at: string;
