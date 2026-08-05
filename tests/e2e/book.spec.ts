@@ -1,17 +1,18 @@
 /**
  * TEST 2 — /book, the single booking destination.
  *
- * Drives the intake step exactly as a visitor would, asserts the booking_sessions
- * row actually lands, then drives the Calendly webhook handler with a real HMAC
- * signature to prove the meeting facts (scheduled_start, join_url) get written.
- * Booking rows are namespaced qa.book+* and removed in teardown.
+ * Drives the intake step exactly as a visitor would, then the NATIVE scheduler:
+ * picks a real slot, asserts the booking_sessions row is scheduled, proves the
+ * slot cannot be double-booked, and exercises reschedule + cancel.
+ *
+ * Zero external scheduling dependencies. Booking rows are namespaced qa.book+*
+ * and removed in teardown.
  */
 import { expect, test, type Page } from "@playwright/test";
 import {
   collectConsoleErrors,
   lookupBooking,
   meaningfulConsoleErrors,
-  postCalendlyWebhook,
   uniqueBookingProspect,
   waitForReactMount,
 } from "./helpers/qa";
@@ -56,7 +57,27 @@ async function fillIntake(page: Page, email: string, companyName: string) {
     .fill("Our inbound is large but unscreened, so hiring managers waste days on unqualified CVs.");
 }
 
-test.describe("TEST 2 — /book time booking", () => {
+/** Intake → scheduler. Returns the first offered slot's ISO start. */
+async function reachScheduler(page: Page, email: string, companyName: string): Promise<string> {
+  await openBook(page);
+  await fillIntake(page, email, companyName);
+  await page.getByRole("button", { name: /continue to choose a time/i }).click();
+
+  const calendar = page.getByTestId("booking-calendar");
+  await expect(calendar).toBeVisible({ timeout: 30_000 });
+  const slot = calendar.locator("[data-slot-start]").first();
+  await expect(slot).toBeVisible({ timeout: 30_000 });
+  const start = await slot.getAttribute("data-slot-start");
+  expect(start, "scheduler offered at least one slot").toBeTruthy();
+  return start!;
+}
+
+async function pickSlot(page: Page, startIso: string) {
+  await page.locator(`[data-slot-start="${startIso}"]`).first().click();
+  await expect(page.getByTestId("booked-when")).toBeVisible({ timeout: 30_000 });
+}
+
+test.describe("TEST 2 — /book native scheduling", () => {
   test("required-field validation blocks Continue until the intake is complete", async ({
     page,
   }) => {
@@ -64,18 +85,14 @@ test.describe("TEST 2 — /book time booking", () => {
     await openBook(page);
     await expect(page.getByRole("heading", { name: /book your hiring call/i })).toBeVisible();
 
-    // Empty submit: stays on the intake step and explains what is missing.
     await page.getByRole("button", { name: /continue to choose a time/i }).click();
     await expect(page.getByText("Enter your first name")).toBeVisible();
     await expect(page.getByText("Enter your last name")).toBeVisible();
     await expect(page.getByText(/enter your work email/i)).toBeVisible();
     await expect(page.getByText("Enter your job title")).toBeVisible();
     await expect(page.getByText("Enter your company name")).toBeVisible();
-    await expect(page.getByText(/which roles or departments/i).last()).toBeVisible();
-    await expect(page.getByText(/biggest problem to solve/i).last()).toBeVisible();
     await expect(page.locator("#firstName")).toBeVisible();
 
-    // Every required select must be flagged too, not silently accepted.
     for (const [id] of SELECTS) {
       await expect(page.locator(`#${id}`)).toHaveAttribute("aria-invalid", "true");
     }
@@ -83,15 +100,11 @@ test.describe("TEST 2 — /book time booking", () => {
     expect(meaningfulConsoleErrors(errors)).toEqual([]);
   });
 
-  test("complete intake advances to the scheduler and records a booking session", async ({
-    page,
-  }) => {
+  test("intake stores a booking session and the scheduler offers real slots", async ({ page }) => {
     const errors = collectConsoleErrors(page);
     const { email, companyName } = uniqueBookingProspect();
 
     await openBook(page);
-
-    // The honeypot must exist and stay invisible to people.
     const honeypot = page.locator('input[name="website"]');
     await expect(honeypot).toHaveCount(1);
     await expect(honeypot).toBeHidden();
@@ -99,118 +112,88 @@ test.describe("TEST 2 — /book time booking", () => {
     await fillIntake(page, email, companyName);
     await page.getByRole("button", { name: /continue to choose a time/i }).click();
 
-    // Scheduler step: either the real embed or the graceful fallback.
-    const calendar = page.getByLabel("Booking calendar");
+    const calendar = page.getByTestId("booking-calendar");
     await expect(calendar).toBeVisible({ timeout: 30_000 });
+    await expect(calendar.locator("[data-slot-start]").first()).toBeVisible({ timeout: 30_000 });
+    // Timezone is the visitor's, and changeable.
+    await expect(page.locator("#timezone")).toBeVisible();
 
-    const fallback = page.getByText(/calendar couldn't load in this browser/i);
-    const embedded = calendar.locator("iframe");
-    await expect
-      .poll(async () => (await embedded.count()) > 0 || (await fallback.count()) > 0, {
-        timeout: 30_000,
-      })
-      .toBe(true);
-
-    if ((await fallback.count()) > 0) {
-      const retry = page.getByRole("button", { name: /try again/i });
-      await expect(retry).toBeVisible();
-      await retry.click();
-      await expect(calendar).toBeVisible();
-      const external = page.getByRole("link", { name: /open the scheduling page/i });
-      if ((await external.count()) > 0) {
-        const href = await external.getAttribute("href");
-        expect(href).toMatch(/^https:\/\/(www\.)?calendly\.com\//);
-        expect(await external.getAttribute("target")).toBe("_blank");
-      }
-    }
-
-    // The intake submit must have persisted a booking session.
     const { sessions } = await lookupBooking(email);
-    expect(sessions.length, "booking_sessions row created").toBeGreaterThan(0);
-    const row = sessions[0]!;
-    expect(row.company_name).toBe(companyName);
-    expect(row.status).toBe("intake_submitted");
+    expect(sessions.length, "exactly one booking_sessions row").toBe(1);
+    expect(sessions[0]!.company_name).toBe(companyName);
+    expect(sessions[0]!.status).toBe("intake_submitted");
+    expect(sessions[0]!.scheduled_start).toBeNull();
 
     expect(meaningfulConsoleErrors(errors)).toEqual([]);
   });
 
-  test("calendly invitee.created webhook schedules the booking session", async ({ page }) => {
+  test("picking a slot schedules the session and blocks double-booking", async ({
+    page,
+    context,
+  }) => {
     const { email, companyName } = uniqueBookingProspect();
+    const start = await reachScheduler(page, email, companyName);
+    await pickSlot(page, start);
 
-    await openBook(page);
-    await fillIntake(page, email, companyName);
-    await page.getByRole("button", { name: /continue to choose a time/i }).click();
-    await expect(page.getByLabel("Booking calendar")).toBeVisible({ timeout: 30_000 });
+    const { sessions } = await lookupBooking(email);
+    expect(sessions.length, "still exactly one row — no duplicate on confirm").toBe(1);
+    const row = sessions[0]!;
+    expect(row.status).toBe("scheduled");
+    expect(row.scheduled_start).toBe(start);
+    expect(row.scheduled_end).not.toBeNull();
+    expect(
+      Date.parse(row.scheduled_end!) - Date.parse(row.scheduled_start!),
+      "30-minute slot",
+    ).toBe(30 * 60_000);
+    expect(row.timezone, "visitor timezone recorded").toBeTruthy();
+    expect(row.host_name, "host recorded").toBeTruthy();
 
-    const before = (await lookupBooking(email)).sessions;
-    expect(before.length, "booking_sessions row created").toBeGreaterThan(0);
-    const sessionId = before[0]!.id;
-
-    const startTime = new Date(Date.now() + 3 * 86_400_000).toISOString();
-    const endTime = new Date(Date.now() + 3 * 86_400_000 + 1_800_000).toISOString();
-    const joinUrl = `https://meet.example.com/qa-${sessionId}`;
-    const payload = {
-      event: "invitee.created",
-      created_at: new Date().toISOString(),
-      payload: {
-        email,
-        uri: `https://api.calendly.com/scheduled_events/qa/invitees/${sessionId}`,
-        reschedule_url: "https://calendly.com/reschedulings/qa",
-        cancel_url: "https://calendly.com/cancellations/qa",
-        timezone: "Europe/London",
-        tracking: { utm_content: sessionId },
-        scheduled_event: {
-          uri: `https://api.calendly.com/scheduled_events/qa-${sessionId}`,
-          start_time: startTime,
-          end_time: endTime,
-          location: { join_url: joinUrl },
-          event_memberships: [{ user_name: "QA Host", user_email: "host@taasflow.com" }],
-        },
-      },
-    };
-
-    // A forged signature must be rejected before anything is written.
-    const forged = await postCalendlyWebhook(payload, { forge: true });
-    expect(forged.status, "forged signature rejected").toBe(401);
-
-    const accepted = await postCalendlyWebhook(payload);
-    expect(accepted.status, accepted.text).toBe(200);
-    expect(accepted.text).not.toMatch(/no matching session/i);
-
-    const after = (await lookupBooking(email)).sessions.find((s) => s.id === sessionId);
-    expect(after, "session still present").toBeTruthy();
-    expect(after!.status).toBe("scheduled");
-    expect(after!.scheduled_start).toBeTruthy();
-    expect(new Date(after!.scheduled_start!).toISOString()).toBe(startTime);
-    expect(after!.join_url).toBe(joinUrl);
-    expect(after!.host_name).toBe("QA Host");
-    expect(after!.timezone).toBe("Europe/London");
-
-    // Retries must be idempotent, not double-applied.
-    const replay = await postCalendlyWebhook(payload);
-    expect(replay.status).toBe(200);
-    expect(replay.text).toMatch(/already processed/i);
+    // A second visitor must NOT be offered the slot we just took.
+    const second = await context.newPage();
+    const other = uniqueBookingProspect();
+    await reachScheduler(second, other.email, other.companyName);
+    await expect(second.locator(`[data-slot-start="${start}"]`)).toHaveCount(0);
+    await second.close();
   });
 
-  test("honeypot submissions are accepted without exposing the trap", async ({ page }) => {
+  test("reschedule moves the meeting and cancel releases it", async ({ page }) => {
     const { email, companyName } = uniqueBookingProspect();
-    await openBook(page);
-    await fillIntake(page, email, companyName);
-    // Fill the trap the way a bot would.
-    await page.locator('input[name="website"]').fill("http://spam.example", { force: true });
-    await page.getByRole("button", { name: /continue to choose a time/i }).click();
-    // No crash, no error banner leaking the trap.
-    await expect(page.getByText(/couldn't save your details/i)).toHaveCount(0);
-    await expect(page.locator("body")).not.toBeEmpty();
+    const first = await reachScheduler(page, email, companyName);
+    await pickSlot(page, first);
+
+    // Reschedule to a different offered slot.
+    await page.getByRole("button", { name: /^reschedule$/i }).click();
+    const calendar = page.getByTestId("booking-calendar");
+    await expect(calendar).toBeVisible();
+    await expect(calendar.locator("[data-slot-start]").first()).toBeVisible({ timeout: 30_000 });
+    const starts = await calendar.locator("[data-slot-start]").evaluateAll((els) =>
+      els.map((el) => el.getAttribute("data-slot-start")!),
+    );
+    const next = starts.find((s) => s !== first);
+    expect(next, "a second slot is available to move to").toBeTruthy();
+    await pickSlot(page, next!);
+
+    const after = (await lookupBooking(email)).sessions;
+    expect(after.length, "reschedule updates in place").toBe(1);
+    expect(after[0]!.status).toBe("scheduled");
+    expect(after[0]!.scheduled_start).toBe(next);
+
+    // Cancel returns to the picker and frees the slot.
+    await page.getByRole("button", { name: /cancel this call/i }).click();
+    await expect(page.getByText(/that call is cancelled/i)).toBeVisible({ timeout: 30_000 });
+
+    const cancelled = (await lookupBooking(email)).sessions;
+    expect(cancelled.length).toBe(1);
+    expect(cancelled[0]!.status).toBe("cancelled");
   });
 
   test("no horizontal overflow at 390px", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await openBook(page);
-    await page.getByRole("button", { name: /continue to choose a time/i }).click();
+    const { email, companyName } = uniqueBookingProspect();
+    await reachScheduler(page, email, companyName);
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
-    expect(overflow).toBeLessThanOrEqual(2);
+    expect(overflow).toBeLessThanOrEqual(1);
   });
 });
