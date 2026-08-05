@@ -6,7 +6,7 @@ import { formatWaitingSince, formatWindow } from "@/lib/client-weekly-update";
 /**
  * Weekly client digest — one email per recipient, per organisation, per week.
  * Facts only: what moved, what is waiting on them, what happens next.
- * Recipients opt in through client_notification_preferences.digest = 'weekly'.
+ * Recipients are those whose "Weekly summary" preference is on in /client/settings.
  */
 
 const SITE_URL = "https://taasflow.com";
