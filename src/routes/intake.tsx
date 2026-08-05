@@ -1108,6 +1108,7 @@ function ExpressIntakePage() {
       setAccountEmail(email);
       setEmailStatus({ kind: "idle" });
       toast.success("Signed in. This role will be added to your existing organisation.");
+      continueAfterAccount();
     } catch {
       toast.error("Network problem. Please try again.");
     } finally {
@@ -1133,6 +1134,7 @@ function ExpressIntakePage() {
         setAccountEmail(data.user.email);
         setState((s2) => ({ ...s2, workEmail: s2.workEmail || data.user!.email! }));
         toast.success("Signed in with Google. Your draft is safe.");
+        continueAfterAccount();
       }
     } catch {
       toast.error("Google sign-in didn't complete. Try again or use email.");
@@ -1141,11 +1143,12 @@ function ExpressIntakePage() {
     }
   };
 
-  // After a full-page Google redirect, land back on the confirm step.
+  // After a full-page Google redirect, land back on the step that holds the
+  // account block so the brief carries on from exactly where it paused.
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (!new URLSearchParams(window.location.search).has("resume")) return;
-    setStepIndex(INTAKE_STEPS.length - 1);
+    setStepIndex(0);
     const t = setTimeout(() => {
       document.getElementById("account-step")?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 400);
