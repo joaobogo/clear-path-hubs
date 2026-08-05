@@ -423,3 +423,62 @@ function renderIntakeWelcomeEmail(args: {
 </div>
 </body></html>`;
 }
+
+/* ----------------------------------------------- native booking lifecycle -- */
+
+/**
+ * Confirmation / reschedule / cancellation email for a natively booked sales
+ * call. Non-critical: returns a result instead of throwing, so the visitor's
+ * booking is never lost to an email problem.
+ */
+export async function sendBookingLifecycleEmail(args: {
+  to: string;
+  firstName: string;
+  kind: "scheduled" | "rescheduled" | "cancelled";
+  when: string;
+  sessionId: string;
+  joinUrl: string | null;
+  hostName: string;
+}): Promise<{ ok: boolean; reason?: string }> {
+  const cfg = readEmailConfig();
+  if (!cfg.configured) return { ok: false, reason: cfg.reason ?? "email_not_configured" };
+
+  const greeting = args.firstName ? `Hi ${args.firstName},` : "Hi,";
+  const subject =
+    args.kind === "cancelled"
+      ? "Your TaaSFlow call is cancelled"
+      : args.kind === "rescheduled"
+        ? `Your TaaSFlow call moved to ${args.when}`
+        : `Your TaaSFlow call is confirmed — ${args.when}`;
+  const body =
+    args.kind === "cancelled"
+      ? `${greeting} we've cancelled the call. You can pick a new time whenever it suits you.`
+      : `${greeting} you're booked with ${args.hostName} for ${args.when}.`;
+  const context =
+    args.kind === "cancelled"
+      ? null
+      : args.joinUrl
+        ? `Join here at the time: ${args.joinUrl}`
+        : "We'll send the meeting link before the call. You can reschedule or cancel from your booking page.";
+
+  const html = renderEmail({
+    title: subject,
+    body,
+    context,
+    actionLabel: args.kind === "cancelled" ? "Pick a new time" : "Manage this booking",
+    actionUrl: absoluteLink(`/book?session=${args.sessionId}`),
+  });
+
+  try {
+    const res = await sendViaProvider({
+      to: args.to,
+      subject,
+      html,
+      idempotencyKey: `booking:${args.sessionId}:${args.kind}:${args.when}`,
+      senderDomain: cfg.senderDomain!,
+    });
+    return res.ok ? { ok: true } : { ok: false, reason: res.code };
+  } catch (e) {
+    return { ok: false, reason: e instanceof Error ? e.message : "provider_exception" };
+  }
+}
