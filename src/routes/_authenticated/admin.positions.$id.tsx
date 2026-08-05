@@ -1,6 +1,6 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { PaymentExemptionDialog } from "@/components/admin/payment-exemption-dialog";
-import { InternalNotes } from "@/components/admin/InternalNotes";
+import { StructuredNotesPanel } from "@/components/admin/structured-notes-panel";
 import { StageAgingPanel } from "@/components/admin/stage-aging-panel";
 import { PositionBottleneckCard } from "@/components/admin/position-bottleneck-card";
 import { PositionSourceQualityPanel } from "@/components/admin/source-quality-panels";
@@ -314,11 +314,10 @@ function PositionWorkspace() {
         {tab === "activity" && (
           <div className="space-y-4">
             <ActivityTab id={id} />
-            <InternalNotes
-              entityType="position"
-              entityId={id}
-              organizationId={p.organization_id ?? null}
-              title="Internal notes and handoff for this role"
+            <StructuredNotesPanel
+              targetKind="position"
+              targetId={id}
+              title="Recruiter notes for this role"
             />
           </div>
         )}
