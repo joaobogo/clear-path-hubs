@@ -7,6 +7,8 @@ import { z } from "zod";
 import { computePendingAction } from "@/lib/candidate/pending-action";
 import { buildCandidateTimeline } from "@/lib/candidate/timeline";
 import { buildClosedOutcome } from "@/lib/candidate/closed-outcome";
+import { profileSectionPatchSchema } from "@/lib/candidate/profile-sections";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
