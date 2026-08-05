@@ -36,6 +36,7 @@ import { RoleMemoryPanel } from "@/components/role-memory-panel";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 
 import { RoleProgressTracker } from "@/components/client/role-progress-tracker";
+import { RoleDatedTimeline } from "@/components/client/role-dated-timeline";
 import { RoleLifecycleTimeline } from "@/components/client/role-lifecycle-timeline";
 import { getRoleLifecycle } from "@/lib/role-lifecycle/role-lifecycle.functions";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
@@ -99,7 +100,7 @@ function PositionDetailPage() {
  });
  const orgId = ctx?.active?.organization_id;
  const queryKey = ["client-position", orgId, id];
- const { data, isError, refetch } = useQuery({
+ const { data, isError, isLoading, error, refetch } = useQuery({
  queryKey,
  queryFn: () => detailFn({ data: { orgId: orgId!, positionId: id } }),
  enabled: !!orgId,
@@ -356,7 +357,20 @@ function PositionDetailPage() {
  {summary.pipeline_line}
  </p>
  )}
- </section>
+  <div className="mt-4 border-t pt-4">
+ <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+ Timeline
+ </h3>
+ <div className="mt-3">
+ <RoleDatedTimeline
+ timeline={data.timeline}
+ isLoading={isLoading}
+ error={isError ? error : undefined}
+ onRetry={() => void refetch()}
+ />
+ </div>
+ </div>
+</section>
 
  {/* Full system workflow — Intake through Hire, derived from real records */}
  <section className="rounded-xl border bg-card px-4 py-4">
