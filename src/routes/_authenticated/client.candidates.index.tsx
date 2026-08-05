@@ -1,3 +1,4 @@
+import { clientStageLabel } from "@/lib/client-stage-labels";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { SurfaceState } from "@/components/ds/surface-state";
@@ -389,8 +390,6 @@ function CandidatesPage() {
  label: `Availability: ${search.availability}`,
  },
  search.minExp && { key: "minExp", label: `${search.minExp}+ years experience` },
- search.minScore && { key: "minScore", label: `Match ≥ ${search.minScore}` },
- search.maxScore && { key: "maxScore", label: `Match ≤ ${search.maxScore}` },
  search.location && { key: "location", label: `Location: ${search.location}` },
  search.q && { key: "q", label: `Search: ${search.q}` },
  ].filter(Boolean) as { key: string; label: string }[];
@@ -554,32 +553,8 @@ function CandidatesPage() {
      onApply={(f) => navigate({ search: { ...search, ...f } as never, replace: true })}
      canShare={ctx?.active?.role === "client_admin"}
     />
-    <div className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
-     <span className="whitespace-nowrap">Score</span>
-     <Input
-      className="h-8 w-16"
-      type="number"
-      inputMode="numeric"
-      min={0}
-      max={100}
-      placeholder="min"
-      value={search.minScore}
-      onChange={(e) => setF({ minScore: e.target.value })}
-      aria-label="Minimum score"
-     />
-     <span>–</span>
-     <Input
-      className="h-8 w-16"
-      type="number"
-      inputMode="numeric"
-      min={0}
-      max={100}
-      placeholder="max"
-      value={search.maxScore}
-      onChange={(e) => setF({ maxScore: e.target.value })}
-      aria-label="Maximum score"
-     />
-    </div>
+    {/* No numeric score filter on client surfaces — fit is expressed as a
+        band (see the Fit select below), never as a number. */}
    </div>
    <div className="grid grid-cols-1 md:grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))_auto] gap-2">
  <Input
@@ -983,10 +958,10 @@ function CompactList({
  {c.position?.title ?? "—"}
  </td>
  <td className="py-2 px-3">
- <div className="font-medium tabular-nums">
- {c.score == null ? "—" : c.score.toFixed(0)}
+ <div className="font-medium">
+ {c.fit.headline}
  </div>
- <div className="text-xs text-muted-foreground">{c.fit.headline}</div>
+ <div className="text-xs text-muted-foreground">{c.fit.recommendation}</div>
  </td>
  <td className="py-2 px-3 tabular-nums">
  {c.coverage.must_met}/{c.coverage.must_total || "—"}
@@ -994,8 +969,8 @@ function CompactList({
  <td className="py-2 px-3 text-muted-foreground">
  {c.candidate.location ?? "—"}
  </td>
- <td className="py-2 px-3 text-muted-foreground capitalize">
- {c.stage.replace(/_/g, " ")}
+ <td className="py-2 px-3 text-muted-foreground">
+ {clientStageLabel(c.stage)}
  </td>
  <td className="py-2 px-3 text-right">
  <Link

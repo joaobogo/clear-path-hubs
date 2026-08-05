@@ -1,3 +1,4 @@
+import { clientStageLabel } from "@/lib/client-stage-labels";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
@@ -784,7 +785,7 @@ function FitHero({
  <div className="flex items-center gap-4">
  <div
  role="img"
- aria-label={`Approved fit score ${Math.round(score)} out of 100 — ${fit.headline}`}
+ aria-label={`Fit for this role: ${fit.headline} — ${fit.recommendation}`}
  className="relative"
  >
  <svg width="96" height="96" viewBox="0 0 96 96" aria-hidden>
@@ -802,14 +803,14 @@ function FitHero({
  transform="rotate(-90 48 48)"
  />
  </svg>
- <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
- <span className="text-2xl font-semibold tabular-nums">
- {Math.round(score)}
- </span>
- <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
- / 100
- </span>
- </div>
+  <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-3 text-center">
+  <span className="text-xs font-semibold leading-tight">
+  {fit.headline}
+  </span>
+  <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+  fit
+  </span>
+  </div>
  </div>
  </div>
  )}
@@ -1402,8 +1403,8 @@ function ActionArea({
     <div className="rounded-xl border bg-card p-4 shadow-sm ring-1 ring-primary/5">
       <div className="mb-3 flex items-center justify-between gap-2">
         <h2 className="text-sm font-semibold uppercase tracking-[0.08em] text-foreground/90">Stage actions</h2>
-        <Badge variant="outline" className="capitalize tabular-nums">
-          {stage.replace(/_/g, " ")}
+        <Badge variant="outline" className="tabular-nums">
+          {clientStageLabel(stage)}
         </Badge>
       </div>
       {stage === "hired" ? (

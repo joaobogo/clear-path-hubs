@@ -1,3 +1,4 @@
+import { clientStageLabel } from "@/lib/client-stage-labels";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
@@ -32,6 +33,7 @@ import { SkeletonCards } from "@/components/client/states";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { Input } from "@/components/ui/input";
 import {
   Sheet,
@@ -440,7 +442,7 @@ function MemorySheet({
                     <p className="mt-0.5 text-xs text-muted-foreground">
                       From role {m.role_title_snapshot}
                       {m.score_snapshot != null && (
-                        <> · score {Math.round(m.score_snapshot)}/100</>
+                        <> · {toFitPresentation(null, m.score_snapshot).headline}</>
                       )}
                     </p>
                   )}
@@ -513,7 +515,7 @@ function MemorySheet({
                         <div>
                           <p className="font-medium">{h.position_title}</p>
                           <p className="text-muted-foreground">
-                            stage: {h.stage.replace(/_/g, " ")} ·{" "}
+                            {clientStageLabel(h.stage)} ·{" "}
                             {new Date(h.updated_at).toLocaleDateString()}
                           </p>
                         </div>

@@ -1,3 +1,5 @@
+import { clientStageLabel } from "@/lib/client-stage-labels";
+import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -341,7 +343,7 @@ function TimeInStageCard({ rows }: { rows: ExecutiveReport["time_in_stage"] }) {
               <li key={r.stage} className="space-y-1">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium capitalize">
-                    {r.stage.replace(/_/g, " ")}
+                    {clientStageLabel(r.stage)}
                   </span>
                   <span className="tabular-nums text-muted-foreground">
                     {r.count} candidates · avg <span className="text-foreground">{r.avg_days}d</span> · p90 <span className="text-foreground">{r.p90_days}d</span>
@@ -403,18 +405,20 @@ function VelocityCard({
         </div>
         <div>
           <div className="mb-2 text-[11px] uppercase tracking-wide text-muted-foreground">
-            Avg shortlist score per week (approved)
+            Typical shortlist fit per week (approved)
           </div>
           <ul className="grid grid-cols-4 gap-2 sm:grid-cols-8">
             {quality.map((q) => (
               <li
                 key={q.week_start}
                 className="rounded-md border bg-card/40 p-1.5 text-center"
-                title={`${q.count} scored`}
+                title={`${q.count} candidate${q.count === 1 ? "" : "s"} delivered`}
               >
                 <div className="text-[10px] text-muted-foreground">{q.label}</div>
-                <div className="text-sm font-semibold tabular-nums">
-                  {q.avg_score ?? "—"}
+                <div className="text-[11px] font-semibold leading-tight">
+                  {q.avg_score == null
+                    ? "—"
+                    : toFitPresentation(null, Number(q.avg_score)).headline}
                 </div>
               </li>
             ))}
