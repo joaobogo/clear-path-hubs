@@ -51,6 +51,8 @@ import { RoleLifecycleTimeline } from "@/components/client/role-lifecycle-timeli
 import { getRoleLifecycle } from "@/lib/role-lifecycle/role-lifecycle.functions";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
 import { clientRoleStatusLabel } from "@/lib/client-role-status";
+import { getPositionHandoff } from "@/lib/hire-handoff.functions";
+import { HireHandoffPanel, HandoffSkeleton } from "@/components/client/hire-handoff";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  head: () => ({
