@@ -532,12 +532,18 @@ export const submitApplication = createServerFn({ method: "POST" })
       try {
         const { sendTemplateEmail } = await import("./email-templates/send-email");
         const reference = ref6(appRow.id);
+        // The confirmation names the employer, so the email must too.
+        const { data: orgRow } = await supabaseAdmin
+          .from("organizations")
+          .select("name")
+          .eq("id", pos.organization_id)
+          .maybeSingle();
         const result = await sendTemplateEmail("application-received", data.email, {
           idempotencyKey: `application-received-${appRow.id}`,
           templateData: {
             candidateFirstName: (data.full_name ?? "").trim().split(" ")[0] || null,
             positionTitle: pos.title,
-            organizationName: (pos as { organization_name?: string | null }).organization_name ?? null,
+            organizationName: orgRow?.name ?? null,
             reference,
             statusUrl: `https://taasflow.com/apply/status?ref=${reference}`,
           },
