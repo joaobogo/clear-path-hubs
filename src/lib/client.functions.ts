@@ -1437,6 +1437,10 @@ const REASON_REQUIRED: ReadonlySet<string> = new Set([
   "hold",
 ]);
 
+const CLIENT_DECLINE_CODES: ReadonlySet<string> = new Set(
+  DECLINE_REASONS.map((r) => r.code),
+);
+
 export const clientAction = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(
