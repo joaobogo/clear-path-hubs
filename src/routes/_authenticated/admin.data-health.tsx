@@ -4,8 +4,10 @@ import { useServerFn } from "@tanstack/react-start";
 import { Activity, AlertTriangle, CheckCircle2, Database } from "lucide-react";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { getDataHealth } from "@/lib/data-system.functions";
+import { DataHealthExceptionsPanel } from "@/components/admin/data-health-exceptions-panel";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+
 
 export const Route = createFileRoute("/_authenticated/admin/data-health")({
   head: () => ({
