@@ -18,9 +18,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { QueryErrorCard } from "@/components/workspace/query-error-card";
+import { QueryErrorCard } from "@/components/client/query-error";
 import { listPilotWarnings, grantPilotException } from "@/lib/pilot-eligibility.functions";
-import { PILOT_EXCEPTION_KINDS, PILOT_EXCEPTION_LABELS } from "@/lib/pilot-eligibility";
+import { PILOT_EXCEPTION_KINDS, exceptionKindLabel } from "@/lib/pilot-eligibility";
 
 type Props = {
   /** Limit to one workspace, e.g. on an intake or organisation page. */
@@ -111,7 +111,7 @@ export function PilotWarningsPanel({ organizationId = null, hideWhenEmpty, limit
               <span className="text-sm font-medium">{r.company_name}</span>
               {r.exception_granted && (
                 <Badge variant="secondary">
-                  Exception · {PILOT_EXCEPTION_LABELS[r.exception_kind ?? ""] ?? r.exception_kind}
+                  Exception · {exceptionKindLabel(r.exception_kind)}
                 </Badge>
               )}
               <span className="text-muted-foreground">
@@ -183,12 +183,12 @@ export function PilotWarningsPanel({ organizationId = null, hideWhenEmpty, limit
                 <div className="flex flex-wrap gap-2">
                   {PILOT_EXCEPTION_KINDS.map((k) => (
                     <Button
-                      key={k}
+                      key={k.value}
                       size="sm"
-                      variant={kind === k ? "default" : "outline"}
-                      onClick={() => setKind(k)}
+                      variant={kind === k.value ? "default" : "outline"}
+                      onClick={() => setKind(k.value)}
                     >
-                      {PILOT_EXCEPTION_LABELS[k]}
+                      {k.label}
                     </Button>
                   ))}
                 </div>
