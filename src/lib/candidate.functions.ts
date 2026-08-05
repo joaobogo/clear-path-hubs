@@ -656,6 +656,98 @@ export const updateMyProfile = createServerFn({ method: "POST" })
     return { ok: true, trace_id: trace };
   });
 
+/**
+ * Save one profile section on its own. Only the columns owned by that section
+ * are written, so a failure (or a stale form) in one section can never clear
+ * another. Email is not editable here — it goes through the confirmation flow.
+ */
+export const updateMyProfileSection = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => profileSectionPatchSchema.parse(input))
+  .handler(async ({ context, data }) => {
+    const trace = traceId();
+    const supabase = context.supabase as AnyRow;
+    const { data: cp } = await supabase
+      .from("candidate_profiles")
+      .select("id")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    if (!cp) return { ok: false, trace_id: trace, message: "No profile" };
+
+    let patch: Record<string, unknown>;
+    let rescore = false;
+    switch (data.section) {
+      case "contact":
+        patch = {
+          full_name: data.values.full_name,
+          phone: data.values.phone || null,
+        };
+        break;
+      case "location":
+        patch = {
+          location: data.values.location || null,
+          timezone: data.values.timezone || null,
+        };
+        break;
+      case "work_auth":
+        patch = {
+          work_authorization: data.values.work_authorization_note
+            ? { note: data.values.work_authorization_note }
+            : null,
+          availability: data.values.availability_note
+            ? { note: data.values.availability_note }
+            : null,
+          compensation_preferences: data.values.compensation_note
+            ? { note: data.values.compensation_note }
+            : null,
+        };
+        rescore = true;
+        break;
+      case "experience":
+        patch = {
+          headline: data.values.headline || null,
+          summary: data.values.summary || null,
+          years_experience: data.values.years_experience ?? null,
+          experience: data.values.experience,
+          education: data.values.education,
+          languages: data.values.languages,
+          certifications: data.values.certifications,
+        };
+        rescore = true;
+        break;
+      case "skills":
+        patch = { skills: data.values.skills };
+        rescore = true;
+        break;
+      case "links":
+        patch = {
+          linkedin_url: data.values.linkedin_url || null,
+          portfolio_url: data.values.portfolio_url || null,
+        };
+        break;
+    }
+
+    const { error } = await supabase
+      .from("candidate_profiles")
+      .update(patch)
+      .eq("id", cp.id);
+    if (error) return { ok: false, trace_id: trace, message: error.message };
+
+    if (rescore) {
+      // Evidence-bearing change: let staff re-check active matches.
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await supabaseAdmin
+        .from("candidate_matches")
+        .update({ processing_state: "ready_to_score" })
+        .eq("candidate_profile_id", cp.id)
+        .in("processing_state", ["scored", "manual_review_required"]);
+    }
+
+    return { ok: true, trace_id: trace, section: data.section };
+  });
+
+
+
 // ─── CV replacement ─────────────────────────────────────────────────────────
 
 const cvSchema = z.object({
