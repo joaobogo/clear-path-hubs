@@ -57,6 +57,7 @@ import { SectionTabs } from "@/components/workspace/section-tabs";
 import { CLIENT_SECTION_GROUPS } from "@/config/workspace-sections";
 import { OrgSwitcher } from "@/components/workspace/org-switcher";
 import { EmptyState, PermissionDenied } from "@/components/client/states";
+import { QueryErrorCard } from "@/components/client/query-error";
 
 const emptyToUndef = (v: unknown) => (v === "" ? undefined : v);
 const searchSchema = z.object({
@@ -137,7 +138,13 @@ function ClientLayout() {
  const search = Route.useSearch();
  const pathname = useRouterState({ select: (st) => st.location.pathname });
  const getCtx = useServerFn(getClientContext);
- const { data } = useQuery({
+ const {
+ data,
+ isError: ctxIsError,
+ error: ctxError,
+ isFetching: ctxIsFetching,
+ refetch: refetchCtx,
+ } = useQuery({
  queryKey: ["client-context", search.org ?? null],
  queryFn: () => getCtx({ data: search.org ? { orgId: search.org } : {} }),
  initialData: ctx,
@@ -173,6 +180,19 @@ function ClientLayout() {
  const supportSessionMissing =
  staffMembershipsElsewhere && activeSupportSession.isSuccess && supportSessionId == null;
 
+ if (staffMembershipsElsewhere && activeSupportSession.isError) {
+ return (
+ <div className="mx-auto max-w-2xl p-8">
+ <QueryErrorCard
+ title="We couldn't check your support session"
+ error={activeSupportSession.error}
+ onRetry={() => activeSupportSession.refetch()}
+ retrying={activeSupportSession.isFetching}
+ />
+ </div>
+ );
+ }
+
  const supportView: SupportViewState = useMemo(
  () => ({
  active: staffMembershipsElsewhere,
@@ -193,6 +213,19 @@ function ClientLayout() {
  effectiveRole === "client_admin" ||
  effectiveRole === "platform_admin" ||
  effectiveRole === "operations";
+
+ if (ctxIsError) {
+ return (
+ <div className="mx-auto max-w-3xl p-8">
+ <QueryErrorCard
+ title="We couldn't load your workspace"
+ error={ctxError}
+ onRetry={() => refetchCtx()}
+ retrying={ctxIsFetching}
+ />
+ </div>
+ );
+ }
 
  if (!active) {
  return (

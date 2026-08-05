@@ -26,6 +26,8 @@ import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { QueryErrorCard } from "@/components/client/query-error";
+import { useQueryState } from "@/hooks/use-query-state";
 
 export const Route = createFileRoute("/_authenticated/client/assistant")({
   head: () => ({
@@ -101,10 +103,11 @@ function AssistantPage() {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const composerRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const { data: ctx } = useQuery({
+  const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
+  const ctx = ctxQuery.data;
   const orgId = ctx?.active?.organization_id;
 
   const state = useQuery({
@@ -112,6 +115,7 @@ function AssistantPage() {
     queryFn: () => stateFn({ data: { orgId: orgId! } }),
     enabled: !!orgId,
   });
+  const stateQuery = useQueryState(state);
 
   const ask = useMutation({
     mutationFn: (message: string) => askFn({ data: { orgId: orgId!, message } }),
@@ -210,6 +214,18 @@ function AssistantPage() {
     ask.mutate(trimmed);
   };
 
+  if (ctxQuery.isError) {
+    return (
+      <div className="p-8">
+        <QueryErrorCard
+          error={ctxQuery.error}
+          onRetry={() => ctxQuery.refetch()}
+          retrying={ctxQuery.isFetching}
+        />
+      </div>
+    );
+  }
+
   if (!orgId) return <div className="p-8 text-sm text-muted-foreground">Loading…</div>;
 
   return (
@@ -244,7 +260,13 @@ function AssistantPage() {
         ref={scrollRef}
         className="flex-1 space-y-4 overflow-y-auto rounded-xl border bg-card/50 p-4 sm:p-6"
       >
-        {state.isPending ? (
+        {stateQuery.isError ? (
+          <QueryErrorCard
+            error={stateQuery.error}
+            onRetry={stateQuery.retry}
+            retrying={stateQuery.retrying}
+          />
+        ) : state.isPending ? (
           <p className="text-sm text-muted-foreground">Loading history…</p>
         ) : messages.length === 0 ? (
           <EmptyState onPick={(t) => setInput(t)} />

@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, List, Search, AlertCircle, Clock, Briefcase } from "lucide-react";
+import { QueryErrorCard } from "@/components/client/query-error";
 
 const searchSchema = z.object({
  status: fallback(z.string(), "active").default("active"),
@@ -110,10 +111,11 @@ function PositionsPage() {
  const ctxFn = useServerFn(getClientContext);
  const listFn = useServerFn(getClientPositions);
  const orgSearch = useClientOrgSearch();
- const { data: ctx } = useQuery({
+ const ctxQuery = useQuery({
  queryKey: ["client-context", orgSearch ?? null],
  queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
  });
+ const ctx = ctxQuery.data;
  const orgId = ctx?.active?.organization_id;
  const {
  data: rows = [],
@@ -424,20 +426,21 @@ function PositionsPage() {
  : `${filtered.length} result${filtered.length === 1 ? "" : "s"}`}
  </div>
 
- {isError && (
- <div className="mb-4 rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
- Could not load positions. {(error as Error)?.message ?? ""}{" "}
- <button
- className="underline"
- onClick={() => refetch()}
- type="button"
- >
- Retry
- </button>
- </div>
- )}
-
- {rows.length === 0 && !isFetching && !isError ? (
+ {ctxQuery.isError ? (
+   <QueryErrorCard
+     title="We couldn't load your workspace"
+     error={ctxQuery.error}
+     onRetry={() => ctxQuery.refetch()}
+     retrying={ctxQuery.isFetching}
+   />
+ ) : isError ? (
+   <QueryErrorCard
+     title="We couldn't load your positions"
+     error={error}
+     onRetry={() => refetch()}
+     retrying={isFetching}
+   />
+ ) : rows.length === 0 && !isFetching ? (
  <EmptyState
           status={status}
           hasAnyRole={allRows.length > 0}

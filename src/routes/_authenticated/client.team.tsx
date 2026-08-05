@@ -66,6 +66,7 @@ import {
  type CollaboratorRoleId,
 } from "@/lib/collaborator-roles";
 import { ErrorState } from "@/components/client/states";
+import { QueryErrorCard } from "@/components/client/query-error";
 import { getWorkspaceSeatUsage } from "@/lib/collaborator-team.functions";
 
 
@@ -137,7 +138,13 @@ function TeamPage() {
  supabase.auth.getUser().then(({ data }) => setSelfId(data.user?.id ?? null));
  }, []);
 
- const { data: ctx } = useQuery({
+ const {
+ data: ctx,
+ isError: ctxIsError,
+ error: ctxError,
+ isFetching: ctxIsFetching,
+ refetch: refetchCtx,
+ } = useQuery({
  queryKey: ["client-context", orgSearch ?? null],
  queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
  });
@@ -157,7 +164,13 @@ function TeamPage() {
  });
 
  const seatsFn = useServerFn(getWorkspaceSeatUsage);
- const { data: seats } = useQuery({
+ const {
+ data: seats,
+ isError: seatsIsError,
+ error: seatsError,
+ isFetching: seatsIsFetching,
+ refetch: refetchSeats,
+ } = useQuery({
  queryKey: ["client-team-seats", orgId],
  queryFn: () => seatsFn({ data: { orgId: orgId! } }),
  enabled: !!orgId && !!isAdmin,
@@ -176,6 +189,19 @@ function TeamPage() {
  }
  return c;
  }, [visible]);
+
+ if (ctxIsError) {
+ return (
+ <main className="mx-auto max-w-3xl px-6 py-10">
+ <QueryErrorCard
+ title="We couldn't load your workspace"
+ error={ctxError}
+ onRetry={() => refetchCtx()}
+ retrying={ctxIsFetching}
+ />
+ </main>
+ );
+ }
 
  if (!isAdmin) {
  return (
@@ -209,12 +235,16 @@ function TeamPage() {
  <h1 className="mt-1 truncate text-2xl font-semibold tracking-tight">
  {orgName ?? "Your workspace"}
  </h1>
+ {seatsIsError ? (
+ <p className="mt-1 text-sm text-destructive">Seat usage failed to load.</p>
+ ) : (
  <p className="mt-1 text-sm text-muted-foreground">
  {seatLimit === null
  ? `${counts.total} member${counts.total === 1 ? "" : "s"}`
  : `${seatsUsed} of ${seatLimit} seat${seatLimit === 1 ? "" : "s"} in use`}
  {counts.invited > 0 && ` · ${counts.invited} pending`}
  </p>
+ )}
  </div>
  {canMutate && orgId && <InviteDialog orgId={orgId} />}
  </header>
@@ -224,6 +254,16 @@ function TeamPage() {
  <Info className="h-4 w-4 shrink-0 taas-fg-warning" />
  <span>You are viewing as an administrator — team changes are disabled.</span>
  </div>
+ )}
+
+ {seatsIsError && (
+ <QueryErrorCard
+ compact
+ title="We couldn't load seat usage"
+ error={seatsError}
+ onRetry={() => refetchSeats()}
+ retrying={seatsIsFetching}
+ />
  )}
 
  {/* Members */}

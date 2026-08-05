@@ -1,5 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
-import { ErrorState as ClientErrorState } from "@/components/client/states";
+import { QueryErrorCard } from "@/components/client/query-error";
 import { OpenThreadButton } from "@/components/comms/open-thread-button";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -60,7 +60,6 @@ import { getRoleRecap } from "@/lib/role-recap.functions";
 import {
   RoleRecapPanel,
   RoleRecapSkeleton,
-  RoleRecapError,
 } from "@/components/client/role-recap";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
@@ -232,9 +231,11 @@ function PositionDetailPage() {
  if (isError && !data)
   return (
    <div className="p-8">
-    <ClientErrorState
+    <QueryErrorCard
      title="We couldn't load this role"
+     error={error}
      onRetry={() => void refetch()}
+     retrying={isLoading}
     />
    </div>
   );
@@ -390,7 +391,15 @@ function PositionDetailPage() {
   {closure.data && !closure.data.paused && (
    <>
     {recap.isPending && <RoleRecapSkeleton />}
-    {recap.isError && <RoleRecapError onRetry={() => void recap.refetch()} />}
+    {recap.isError && (
+     <QueryErrorCard
+      title="We couldn't load the recap for this role"
+      error={recap.error}
+      onRetry={() => void recap.refetch()}
+      retrying={recap.isFetching}
+      compact
+     />
+    )}
     {!recap.isPending && !recap.isError && recap.data && (
      <RoleRecapPanel recap={recap.data} />
     )}

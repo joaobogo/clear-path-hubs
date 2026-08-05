@@ -42,6 +42,8 @@ import {
  User,
 } from "lucide-react";
 import { TeamsConnectionCard } from "@/components/client/teams-connection-card";
+import { QueryErrorCard } from "@/components/client/query-error";
+import { useQueryState } from "@/hooks/use-query-state";
 
 export const Route = createFileRoute("/_authenticated/client/settings")({
  head: () => ({
@@ -97,21 +99,35 @@ function SettingsPage() {
  const support = useSupportView();
  const readOnlySupport = support.readOnly;
 
- const { data: ctx, isLoading: ctxLoading } = useQuery({
+ const ctxQuery = useQuery({
  queryKey: ["client-context", orgSearch ?? null],
  queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
  });
+ const ctxState = useQueryState(ctxQuery);
+ const ctx = ctxState.data;
+ const ctxLoading = ctxState.isLoading;
  const orgId = ctx?.active?.organization_id;
  const role = ctx?.active?.role;
  const isViewer = role === "client_viewer";
  const isAdmin = role === "client_admin" || role === "platform_admin" || role === "operations";
 
- const { data: settings, isLoading, error } = useQuery({
+ const settingsQuery = useQuery({
  queryKey: ["client-settings", orgId],
  queryFn: () => settingsFn({ data: { orgId: orgId! } }),
  enabled: !!orgId,
  placeholderData: (prev) => prev,
  });
+ const settingsState = useQueryState(settingsQuery);
+ const settings = settingsState.data;
+ const isLoading = settingsState.isLoading;
+
+ if (ctxState.isError) {
+ return (
+ <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
+ <QueryErrorCard error={ctxState.error} onRetry={ctxState.retry} retrying={ctxState.retrying} />
+ </main>
+ );
+ }
 
  if (ctxLoading || (!settings && isLoading)) {
  return (
@@ -124,11 +140,19 @@ function SettingsPage() {
  );
  }
 
+ if (settingsState.isError) {
+ return (
+ <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
+ <QueryErrorCard error={settingsState.error} onRetry={settingsState.retry} retrying={settingsState.retrying} />
+ </main>
+ );
+ }
+
  if (!orgId || !settings) {
  return (
  <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
  <div className="rounded-xl border bg-card p-8 text-center text-sm text-muted-foreground">
- {error ? (error as Error).message : "No workspace selected."}
+ No workspace selected.
  </div>
  </main>
  );

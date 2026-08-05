@@ -18,6 +18,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { QueryErrorCard } from "@/components/client/query-error";
+import { useQueryState } from "@/hooks/use-query-state";
+import { SkeletonCards } from "@/components/client/states";
 
 export const Route = createFileRoute("/_authenticated/client/outreach")({
   head: () => ({
@@ -155,17 +158,20 @@ function OutreachPage() {
   const spineFn = useServerFn(getOutreachSpine);
   const saveRuleFn = useServerFn(saveChannelRule);
 
-  const { data: ctx } = useQuery({
+  const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
-  const orgId = ctx?.active?.organization_id;
+  const ctxState = useQueryState(ctxQuery);
+  const orgId = ctxState.data?.active?.organization_id;
 
-  const { data: spine, isPending } = useQuery({
+  const spineQuery = useQuery({
     queryKey: ["outreach-spine", orgId],
     queryFn: () => spineFn({ data: { organization_id: orgId! } }),
     enabled: !!orgId,
   });
+  const spineState = useQueryState(spineQuery);
+  const spine = spineState.data;
 
   const saveRule = useMutation({
     mutationFn: (r: ChannelRule) =>
@@ -177,9 +183,35 @@ function OutreachPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  if (!orgId || isPending) {
+  if (ctxState.isError) {
     return (
-      <div className="p-8 text-sm text-muted-foreground">Loading outreach…</div>
+      <div className="p-8">
+        <QueryErrorCard error={ctxState.error} onRetry={ctxState.retry} retrying={ctxState.retrying} />
+      </div>
+    );
+  }
+
+  if (ctxState.isLoading) {
+    return (
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
+        <SkeletonCards />
+      </main>
+    );
+  }
+
+  if (spineState.isError) {
+    return (
+      <div className="p-8">
+        <QueryErrorCard error={spineState.error} onRetry={spineState.retry} retrying={spineState.retrying} />
+      </div>
+    );
+  }
+
+  if (!orgId || spineState.isLoading) {
+    return (
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
+        <SkeletonCards />
+      </main>
     );
   }
 

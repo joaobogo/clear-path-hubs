@@ -22,6 +22,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useConfirmAction } from "@/components/ds";
+import { QueryErrorCard } from "@/components/client/query-error";
+import { useQueryState } from "@/hooks/use-query-state";
 
 export const Route = createFileRoute("/_authenticated/client/shares/")({
   head: () => ({
@@ -40,10 +42,12 @@ export const Route = createFileRoute("/_authenticated/client/shares/")({
 function SharesPage() {
   const orgSearch = useClientOrgSearch();
   const ctxFn = useServerFn(getClientContext);
-  const ctx = useQuery({
+  const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
-  }).data;
+  });
+  const ctxState = useQueryState(ctxQuery);
+  const ctx = ctxState.data;
   const orgId = ctx?.active?.organization_id;
 
   const listFn = useServerFn(listShortlistShares);
@@ -85,7 +89,11 @@ function SharesPage() {
         </Button>
       </header>
 
-      {list.isLoading || !orgId ? (
+      {ctxState.isError ? (
+        <QueryErrorCard error={ctxState.error} onRetry={ctxState.retry} retrying={ctxState.retrying} />
+      ) : list.isError ? (
+        <QueryErrorCard error={list.error} onRetry={() => list.refetch()} retrying={list.isFetching} />
+      ) : list.isLoading || !orgId ? (
         <div className="space-y-3">
           <Skeleton className="h-24 w-full" />
           <Skeleton className="h-24 w-full" />

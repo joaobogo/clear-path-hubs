@@ -16,6 +16,7 @@ import { getClientContext } from "@/lib/client.functions";
 import { getPortfolioRollup, type PortfolioRollupRow } from "@/lib/portfolio.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Building2, ArrowRight, MapPin, Layers } from "lucide-react";
+import { QueryErrorCard } from "@/components/client/query-error";
 
 export const Route = createFileRoute("/_authenticated/client/portfolio")({
   head: () => ({
@@ -32,14 +33,15 @@ function PortfolioPage() {
   const getRollup = useServerFn(getPortfolioRollup);
   const getCtx = useServerFn(getClientContext);
 
-  const { data: ctx } = useQuery({
+  const ctxQuery = useQuery({
     queryKey: ["client-context", orgId ?? null],
     queryFn: () => getCtx({ data: orgId ? { orgId } : {} }),
   });
+  const ctx = ctxQuery.data;
 
   const activeOrgId = ctx?.active?.organization_id;
 
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading, isError, error, isFetching, refetch } = useQuery({
     queryKey: ["portfolio-rollup", activeOrgId],
     queryFn: () => getRollup({ data: { orgId: activeOrgId! } }),
     enabled: Boolean(activeOrgId),
@@ -68,6 +70,19 @@ function PortfolioPage() {
     return Array.from(map.entries());
   }, [filtered]);
 
+  if (ctxQuery.isError) {
+    return (
+      <main className="mx-auto max-w-6xl px-4 sm:px-6 py-6 sm:py-8">
+        <QueryErrorCard
+          title="We couldn't load your workspace"
+          error={ctxQuery.error}
+          onRetry={() => ctxQuery.refetch()}
+          retrying={ctxQuery.isFetching}
+        />
+      </main>
+    );
+  }
+
   if (!activeOrgId) {
     return <div className="p-8 text-muted-foreground">Loading workspace…</div>;
   }
@@ -92,24 +107,25 @@ function PortfolioPage() {
         </p>
       </header>
 
-      {isError && (
-        <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-          Could not load portfolio: {(error as Error)?.message}
-        </div>
-      )}
-
-      {isLoading && (
+      {isError ? (
+        <QueryErrorCard
+          title="We couldn't load the portfolio rollup"
+          error={error}
+          onRetry={() => refetch()}
+          retrying={isFetching}
+        />
+      ) : isLoading ? (
         <div className="text-sm text-muted-foreground">Loading rollup…</div>
-      )}
+      ) : null}
 
-      {data && !data.parent.is_parent && (
+      {!isError && data && !data.parent.is_parent && (
         <div className="rounded-lg border bg-muted/30 p-4 text-sm text-muted-foreground">
           This organization isn't linked to a parent portfolio yet. Portfolio rollups become
           available when two or more business units share a parent record.
         </div>
       )}
 
-      {data && data.parent.is_parent && (
+      {!isError && data && data.parent.is_parent && (
         <>
           {/* KPI tiles */}
           <section className="grid gap-3 sm:grid-cols-4">

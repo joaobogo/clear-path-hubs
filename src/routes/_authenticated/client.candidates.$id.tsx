@@ -87,6 +87,7 @@ import {
 } from "@/lib/interview-feedback.functions";
 import { InterviewerAssignments } from "@/components/client/interviewer-assignments";
 import { CandidateTeamActivity } from "@/components/client/candidate-team-activity";
+import { QueryErrorCard } from "@/components/client/query-error";
 
 export const Route = createFileRoute("/_authenticated/client/candidates/$id")({
  head: () => ({
@@ -181,30 +182,32 @@ function CandidateDetailPage() {
  const orgSearch = useClientOrgSearch();
  const support = useSupportView();
 
- const { data: ctx } = useQuery({
+ const ctxQuery = useQuery({
  queryKey: ["client-context", orgSearch ?? null],
  queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
  });
+ const ctx = ctxQuery.data;
  const orgId = ctx?.active?.organization_id;
 
- const {
- data,
- isPending: detailPending,
- isFetching: detailFetching,
- error: detailError,
- } = useQuery({
+ const detailQuery = useQuery({
  queryKey: ["client-candidate", orgId, id],
  queryFn: () => detailFn({ data: { orgId: orgId!, matchId: id } }),
  enabled: !!orgId,
   });
+  const data = detailQuery.data;
+  const detailPending = detailQuery.isPending;
+  const detailFetching = detailQuery.isFetching;
+  const detailError = detailQuery.error;
 
   // Compensation decision support — figures on record only, never estimates.
   const compFn = useServerFn(getCompensationSignal);
-  const { data: compSignal, isPending: compPending } = useQuery({
+  const compQuery = useQuery({
     queryKey: ["client-candidate-comp", orgId, id],
     queryFn: () => compFn({ data: { orgId: orgId!, matchId: id } }),
     enabled: !!orgId,
   });
+  const compSignal = compQuery.data;
+  const compPending = compQuery.isPending;
 
 
 
@@ -295,19 +298,38 @@ function CandidateDetailPage() {
  } else setDialogAction(k);
  };
 
- if (!orgId || detailPending || (data === undefined && detailFetching)) {
- return <div className="p-8 text-sm text-muted-foreground">Loading candidate…</div>;
- }
- if (detailError) {
- return (
- <main className="mx-auto max-w-3xl px-6 py-10">
- <BackLink />
- <div className="mt-4 rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-sm text-destructive">
- Failed to load candidate: {detailError.message}
- </div>
- </main>
- );
- }
+  // Error first, always: a failed load must never read as a missing candidate.
+  if (ctxQuery.isError) {
+    return (
+      <main className="mx-auto max-w-3xl px-6 py-10">
+        <BackLink />
+        <QueryErrorCard
+          className="mt-4"
+          title="We couldn't load your workspace"
+          error={ctxQuery.error}
+          onRetry={() => void ctxQuery.refetch()}
+          retrying={ctxQuery.isFetching}
+        />
+      </main>
+    );
+  }
+  if (detailError) {
+    return (
+      <main className="mx-auto max-w-3xl px-6 py-10">
+        <BackLink />
+        <QueryErrorCard
+          className="mt-4"
+          title="We couldn't load this candidate"
+          error={detailError}
+          onRetry={() => void detailQuery.refetch()}
+          retrying={detailQuery.isFetching}
+        />
+      </main>
+    );
+  }
+  if (!orgId || detailPending || (data === undefined && detailFetching)) {
+    return <div className="p-8 text-sm text-muted-foreground">Loading candidate…</div>;
+  }
  if (data === null || !data?.candidate) {
  return (
  <main className="mx-auto max-w-3xl px-6 py-12">
@@ -396,7 +418,17 @@ function CandidateDetailPage() {
           <div id="sec-risks" className="scroll-mt-24"><WhatNeedsValidation candidate={candidate} /></div>
           <AvailabilityAndComp candidate={candidate} />
           <div id="sec-comp" className="scroll-mt-24">
-            <CompensationPanel signal={compSignal} loading={compPending} />
+            {compQuery.isError ? (
+              <QueryErrorCard
+                compact
+                title="We couldn't load compensation figures"
+                error={compQuery.error}
+                onRetry={() => void compQuery.refetch()}
+                retrying={compQuery.isFetching}
+              />
+            ) : (
+              <CompensationPanel signal={compSignal} loading={compPending} />
+            )}
           </div>
           <div id="sec-interview" className="scroll-mt-24"><InterviewGuide candidate={candidate} /></div>
           {orgId ? (
@@ -1239,12 +1271,13 @@ function InterviewFeedbackSection({
   if (query.isError) {
     return (
       <SectionCard title="Interview feedback" icon={<ClipboardCheck className="h-4 w-4" />}>
-        <div role="alert" className="flex flex-wrap items-center gap-3 text-sm text-destructive">
-          <span>We could not load interview feedback.</span>
-          <Button size="sm" variant="outline" onClick={() => void query.refetch()}>
-            Retry
-          </Button>
-        </div>
+        <QueryErrorCard
+          compact
+          title="We couldn't load interview feedback"
+          error={query.error}
+          onRetry={() => void query.refetch()}
+          retrying={query.isFetching}
+        />
       </SectionCard>
     );
   }
@@ -1821,12 +1854,26 @@ function TalentMemoryAction({
 }
 
 function JourneySection({ matchId }: { matchId: string }) {
-  const { data, isLoading } = useQuery({
+  const query = useQuery({
     queryKey: ["candidate-journey", matchId],
     queryFn: () => getCandidateJourney({ data: { candidateMatchId: matchId } }),
   });
-  if (isLoading) return null;
-  const events = data?.events ?? [];
+  // A failed timeline load says so — it never silently reads as "no history".
+  if (query.isError) {
+    return (
+      <SectionCard title="Journey timeline" icon={<FileClock className="h-4 w-4" />}>
+        <QueryErrorCard
+          compact
+          title="We couldn't load the journey timeline"
+          error={query.error}
+          onRetry={() => void query.refetch()}
+          retrying={query.isFetching}
+        />
+      </SectionCard>
+    );
+  }
+  if (query.isPending) return null;
+  const events = query.data?.events ?? [];
   if (events.length === 0) return null;
   return (
     <SectionCard title="Journey timeline" icon={<FileClock className="h-4 w-4" />}>

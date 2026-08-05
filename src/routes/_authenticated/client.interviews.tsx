@@ -37,7 +37,8 @@ import type { FeedbackQueueItem } from "@/lib/interview-feedback.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { PageHeader, PageBody, PageShell } from "@/components/ds";
-import { EmptyState, SkeletonCards, ErrorState } from "@/components/client/states";
+import { EmptyState, SkeletonCards } from "@/components/client/states";
+import { QueryErrorCard } from "@/components/client/query-error";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -303,9 +304,11 @@ function InterviewsPage() {
         {listQuery.isLoading ? (
           <SkeletonCards cards={3} />
         ) : listQuery.isError ? (
-          <ErrorState
+          <QueryErrorCard
             title="We couldn't load your interviews"
+            error={listQuery.error}
             onRetry={() => void listQuery.refetch()}
+            retrying={listQuery.isFetching}
           />
         ) : interviews.length === 0 ? (
           <EmptyState
@@ -488,38 +491,49 @@ function RequestDialog({
             <label htmlFor="request-candidate" className="text-sm font-medium">
               Candidate
             </label>
-            <Select
-              value={matchId}
-              onValueChange={(v) => {
-                setMatchId(v);
-                setCandidateError(null);
-              }}
-              disabled={submitting}
-            >
-              <SelectTrigger id="request-candidate" className="mt-1">
-                <SelectValue placeholder="Select a candidate" />
-              </SelectTrigger>
-              <SelectContent>
-                {candidatesQ.isLoading ? (
-                  <div className="p-3 text-sm text-muted-foreground">Loading candidates…</div>
-                ) : candidates.length === 0 ? (
-                  <div className="p-3 text-sm text-muted-foreground">
-                    No delivered candidates available.
-                  </div>
-                ) : (
-                  candidates.map((c) => (
-                    <SelectItem
-                      key={c.match_id}
-                      value={c.match_id}
-                      disabled={c.has_active_interview}
-                    >
-                      {c.candidate_name} — {c.position_title}
-                      {c.has_active_interview ? " · (has active interview)" : ""}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
+            {candidatesQ.isError ? (
+              <QueryErrorCard
+                title="We couldn't load your candidates"
+                error={candidatesQ.error}
+                onRetry={() => candidatesQ.refetch()}
+                retrying={candidatesQ.isFetching}
+                compact
+                className="mt-1"
+              />
+            ) : (
+              <Select
+                value={matchId}
+                onValueChange={(v) => {
+                  setMatchId(v);
+                  setCandidateError(null);
+                }}
+                disabled={submitting}
+              >
+                <SelectTrigger id="request-candidate" className="mt-1">
+                  <SelectValue placeholder="Select a candidate" />
+                </SelectTrigger>
+                <SelectContent>
+                  {candidatesQ.isLoading ? (
+                    <div className="p-3 text-sm text-muted-foreground">Loading candidates…</div>
+                  ) : candidates.length === 0 ? (
+                    <div className="p-3 text-sm text-muted-foreground">
+                      No delivered candidates available.
+                    </div>
+                  ) : (
+                    candidates.map((c) => (
+                      <SelectItem
+                        key={c.match_id}
+                        value={c.match_id}
+                        disabled={c.has_active_interview}
+                      >
+                        {c.candidate_name} — {c.position_title}
+                        {c.has_active_interview ? " · (has active interview)" : ""}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+            )}
             {candidateError ? (
               <p className="mt-1 text-xs text-destructive">{candidateError}</p>
             ) : null}

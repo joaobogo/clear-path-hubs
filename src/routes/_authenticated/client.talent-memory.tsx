@@ -27,6 +27,8 @@ import {
   type TalentMemoryDTO,
 } from "@/lib/talent-memory.functions";
 import { getClientContext } from "@/lib/client.functions";
+import { QueryErrorCard } from "@/components/client/query-error";
+import { SkeletonCards } from "@/components/client/states";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -85,7 +87,13 @@ function TalentMemoryPage() {
   const ctxFn = useServerFn(getClientContext);
   const listFn = useServerFn(listSilverMedalists);
 
-  const { data: ctx } = useQuery({
+  const {
+    data: ctx,
+    isError: ctxIsError,
+    error: ctxError,
+    isFetching: ctxIsFetching,
+    refetch: refetchCtx,
+  } = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
@@ -94,7 +102,14 @@ function TalentMemoryPage() {
 
   const [qDraft, setQDraft] = useState(search.q ?? "");
 
-  const { data, isPending } = useQuery({
+  const {
+    data,
+    isPending,
+    isError: listIsError,
+    error: listError,
+    isFetching: listIsFetching,
+    refetch: refetchList,
+  } = useQuery({
     queryKey: [
       "talent-memory",
       orgId,
@@ -121,6 +136,19 @@ function TalentMemoryPage() {
     return c;
   }, [memories]);
 
+  if (ctxIsError) {
+    return (
+      <div className="mx-auto max-w-3xl p-8">
+        <QueryErrorCard
+          title="We couldn't load your workspace"
+          error={ctxError}
+          onRetry={() => refetchCtx()}
+          retrying={ctxIsFetching}
+        />
+      </div>
+    );
+  }
+
   if (!orgId) return <div className="p-8 text-sm text-muted-foreground">Loading…</div>;
 
   return (
@@ -138,7 +166,7 @@ function TalentMemoryPage() {
         </div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Users className="h-3.5 w-3.5" />
-          {memories.length} entries
+          {listIsError ? "— entries" : `${memories.length} entries`}
         </div>
       </header>
 
@@ -209,8 +237,15 @@ function TalentMemoryPage() {
 
       {/* List */}
       <div className="mt-6">
-        {isPending ? (
-          <p className="text-sm text-muted-foreground">Loading…</p>
+        {listIsError ? (
+          <QueryErrorCard
+            title="We couldn't load talent memory"
+            error={listError}
+            onRetry={() => refetchList()}
+            retrying={listIsFetching}
+          />
+        ) : isPending ? (
+          <SkeletonCards cards={3} />
         ) : memories.length === 0 ? (
           <EmptyState />
         ) : (
@@ -333,7 +368,13 @@ function MemorySheet({
   const updateFn = useServerFn(updateSilverMedalist);
   const reengageFn = useServerFn(logReengagement);
 
-  const { data } = useQuery({
+  const {
+    data,
+    isError: detailIsError,
+    error: detailError,
+    isFetching: detailIsFetching,
+    refetch: refetchDetail,
+  } = useQuery({
     queryKey: ["talent-memory", "detail", orgId, id],
     queryFn: () => getFn({ data: { orgId, id: id! } }),
     enabled: !!id,
@@ -364,7 +405,16 @@ function MemorySheet({
   return (
     <Sheet open={!!id} onOpenChange={(o) => (!o ? onClose() : undefined)}>
       <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
-        {!m ? (
+        {detailIsError ? (
+          <div className="p-4">
+            <QueryErrorCard
+              title="We couldn't load this record"
+              error={detailError}
+              onRetry={() => refetchDetail()}
+              retrying={detailIsFetching}
+            />
+          </div>
+        ) : !m ? (
           <p className="p-4 text-sm text-muted-foreground">Loading…</p>
         ) : (
           <>

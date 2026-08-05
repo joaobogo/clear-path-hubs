@@ -20,6 +20,8 @@ import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { formatStageDate } from "@/lib/client-role-progress";
 import { EmptyState, PermissionDenied, SkeletonRows, SkeletonStats } from "@/components/client/states";
+import { QueryErrorCard } from "@/components/client/query-error";
+import { useQueryState } from "@/hooks/use-query-state";
 import { TeamActivityPanel } from "@/components/client/team-activity-panel";
 import { PlanPanel } from "@/components/client/plan-panel";
 import { EmailChangeCard } from "@/components/account/email-change-card";
@@ -122,10 +124,11 @@ function AccountPage() {
     supabase.auth.getUser().then(({ data }) => setSelfId(data.user?.id ?? null));
   }, []);
 
-  const { data: ctx } = useQuery({
+  const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
+  const ctx = ctxQuery.data;
   const orgId = ctx?.active?.organization_id as string | undefined;
   const isAdmin =
     ctx?.active?.role === "client_admin" ||
@@ -152,6 +155,10 @@ function AccountPage() {
     placeholderData: (prev) => prev,
   });
 
+  const overviewState = useQueryState(overview);
+  const positionsState = useQueryState(positions);
+  const teamState = useQueryState(team);
+
   const data = overview.data;
   const roles = ((positions.data as AnyRow[]) ?? []).filter(
     (p) => !["archived"].includes(String(p.status)),
@@ -162,6 +169,18 @@ function AccountPage() {
     () => roles.filter((p) => ["active", "approved", "paused"].includes(String(p.status))),
     [roles],
   );
+
+  if (ctxQuery.isError) {
+    return (
+      <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+        <QueryErrorCard
+          error={ctxQuery.error}
+          onRetry={() => ctxQuery.refetch()}
+          retrying={ctxQuery.isFetching}
+        />
+      </main>
+    );
+  }
 
   if (!orgId) {
     return (
@@ -194,7 +213,13 @@ function AccountPage() {
       )}
 
       {/* Summary tiles */}
-      {overview.isLoading && !data ? (
+      {overviewState.isError ? (
+        <QueryErrorCard
+          error={overviewState.error}
+          onRetry={overviewState.retry}
+          retrying={overviewState.retrying}
+        />
+      ) : overview.isLoading && !data ? (
         <SkeletonStats tiles={4} />
       ) : (
         <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -246,6 +271,16 @@ function AccountPage() {
         <h2 className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
           Subscription
         </h2>
+        {overviewState.isError ? (
+          <QueryErrorCard
+            className="mt-4"
+            compact
+            error={overviewState.error}
+            onRetry={overviewState.retry}
+            retrying={overviewState.retrying}
+          />
+        ) : (
+        <>
         <dl className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <dt className="text-xs text-muted-foreground">Plan</dt>
@@ -318,6 +353,8 @@ function AccountPage() {
           These figures come straight from your account record. Anything marked “not on
           file” is not held in the system — nothing here is estimated.
         </p>
+        </>
+        )}
       </section>
 
       <PlanPanel organizationId={orgId} canMutate={canMutate} />
@@ -328,14 +365,23 @@ function AccountPage() {
           <div>
             <h2 className="text-sm font-semibold">Roles and where they are</h2>
             <p className="text-xs text-muted-foreground">
-              {openRoles.length} open · {roles.length} total
+              {positionsState.isError
+                ? "Couldn't load counts"
+                : `${openRoles.length} open · ${roles.length} total`}
             </p>
           </div>
           <Button asChild variant="ghost" size="sm">
             <Link to="/client/positions">Open positions</Link>
           </Button>
         </div>
-        {positions.isLoading && roles.length === 0 ? (
+        {positionsState.isError ? (
+          <QueryErrorCard
+            className="m-5"
+            error={positionsState.error}
+            onRetry={positionsState.retry}
+            retrying={positionsState.retrying}
+          />
+        ) : positions.isLoading && roles.length === 0 ? (
           <div className="p-5">
             <SkeletonRows rows={4} />
           </div>
@@ -416,9 +462,16 @@ function AccountPage() {
           <div>
             <h2 className="text-sm font-semibold">Team and permissions</h2>
             <p className="text-xs text-muted-foreground">
-              {members.length} member{members.length === 1 ? "" : "s"} ·{" "}
-              {data?.seats.remaining ?? 0} seat
-              {(data?.seats.remaining ?? 0) === 1 ? "" : "s"} free
+              {teamState.isError
+                ? "Couldn't load team"
+                : `${members.length} member${members.length === 1 ? "" : "s"}`}
+              {!teamState.isError && !overviewState.isError && (
+                <>
+                  {" "}
+                  · {data?.seats.remaining ?? 0} seat
+                  {(data?.seats.remaining ?? 0) === 1 ? "" : "s"} free
+                </>
+              )}
             </p>
           </div>
           <Button asChild variant="ghost" size="sm">
@@ -430,6 +483,13 @@ function AccountPage() {
             title="Team details are admin-only"
             description="Ask a workspace admin in your organisation to change permissions or invite teammates."
             whoToAsk="A workspace admin in your organisation"
+          />
+        ) : teamState.isError ? (
+          <QueryErrorCard
+            className="m-5"
+            error={teamState.error}
+            onRetry={teamState.retry}
+            retrying={teamState.retrying}
           />
         ) : team.isLoading && members.length === 0 ? (
           <div className="p-5">

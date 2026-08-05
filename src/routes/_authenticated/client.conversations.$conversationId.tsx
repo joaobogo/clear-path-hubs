@@ -8,7 +8,7 @@ import { useSupportView } from "@/lib/support-view";
 import { ConversationThread } from "@/components/comms/conversation-thread";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Briefcase, User } from "lucide-react";
-import { ErrorState } from "@/components/client/states";
+import { QueryErrorCard } from "@/components/client/query-error";
 
 export const Route = createFileRoute("/_authenticated/client/conversations/$conversationId")({
   head: () => ({
@@ -36,10 +36,11 @@ function ConversationDetail() {
     queryFn: () => loadFn({ data: { conversationId } }),
   });
   const data = convoQuery.data;
-  const { data: ctx } = useQuery({
+  const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
+  const ctx = ctxQuery.data;
 
   const isViewer = ctx?.active?.role === "client_viewer";
   const canPost = !support.readOnly && !isViewer;
@@ -87,9 +88,18 @@ function ConversationDetail() {
       </div>
 
       {convoQuery.isError ? (
-        <ErrorState
+        <QueryErrorCard
           title="We couldn't load this conversation"
-          onRetry={() => void convoQuery.refetch()}
+          error={convoQuery.error}
+          onRetry={() => convoQuery.refetch()}
+          retrying={convoQuery.isFetching}
+        />
+      ) : ctxQuery.isError ? (
+        <QueryErrorCard
+          title="We couldn't load your workspace"
+          error={ctxQuery.error}
+          onRetry={() => ctxQuery.refetch()}
+          retrying={ctxQuery.isFetching}
         />
       ) : (
         <ConversationThread

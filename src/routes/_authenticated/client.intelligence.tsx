@@ -13,7 +13,8 @@ import {
   RecommendationCard,
 } from "@/components/intelligence/recommendation-card";
 import { useRecommendationDismissals } from "@/lib/intelligence/use-recommendation-dismissals";
-import { NoWorkspaceState, ErrorState, EmptyState } from "@/components/client/states";
+import { NoWorkspaceState, EmptyState } from "@/components/client/states";
+import { QueryErrorCard } from "@/components/client/query-error";
 import {
   Select,
   SelectContent,
@@ -89,7 +90,19 @@ function IntelligencePage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All roles</SelectItem>
-              {(positions.data?.positions ?? []).map((p) => (
+              {positions.isError && (
+                <div className="px-2 py-1.5 text-xs text-destructive">
+                  Roles failed to load.{" "}
+                  <button
+                    type="button"
+                    className="underline"
+                    onClick={() => positions.refetch()}
+                  >
+                    Retry
+                  </button>
+                </div>
+              )}
+              {!positions.isError && (positions.data?.positions ?? []).map((p) => (
                 <SelectItem key={p.id} value={p.id}>
                   {p.title}
                 </SelectItem>
@@ -111,18 +124,19 @@ function IntelligencePage() {
         </div>
       </header>
 
-      {intel.isLoading ? (
+      {intel.isError ? (
+        <QueryErrorCard
+          title="Intelligence could not be loaded"
+          error={intel.error}
+          onRetry={() => intel.refetch()}
+          retrying={intel.isFetching}
+        />
+      ) : intel.isLoading ? (
         <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
             <MetricCardSkeleton key={i} />
           ))}
         </div>
-      ) : intel.isError ? (
-        <ErrorState
-          title="Intelligence could not be loaded"
-          description="Your records are safe — this screen simply could not read them. Nothing shown below would have been reliable, so nothing is shown."
-          onRetry={() => intel.refetch()}
-        />
       ) : !intel.data ? (
         <EmptyState
           title="Nothing to measure yet"

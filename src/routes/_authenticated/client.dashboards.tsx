@@ -28,6 +28,8 @@ import {
 import { BLOCK_LIBRARY, BLOCK_LIST, type BlockId } from "@/lib/dashboards/blocks";
 import { DashboardBlock } from "@/components/client/dashboards/dashboard-block";
 import { SkeletonRows } from "@/components/client/states";
+import { QueryErrorCard } from "@/components/client/query-error";
+import { useQueryState } from "@/hooks/use-query-state";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -80,17 +82,20 @@ function DashboardsPage() {
   const support = useSupportView();
   const queryClient = useQueryClient();
 
-  const { data: ctx } = useQuery({
+  const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
+  const ctx = ctxQuery.data;
   const orgId = ctx?.active?.organization_id as string | undefined;
 
-  const { data: workspace, isLoading } = useQuery({
+  const workspaceQuery = useQuery({
     queryKey: ["dashboard-workspace", orgId],
     queryFn: () => workspaceFn({ data: { orgId: orgId! } }),
     enabled: !!orgId,
   });
+  const { data: workspace, isLoading } = workspaceQuery;
+  const workspaceState = useQueryState(workspaceQuery);
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [draftBlocks, setDraftBlocks] = useState<BlockId[] | null>(null);
@@ -104,11 +109,12 @@ function DashboardsPage() {
   const allowed = workspace?.entitlement.allowed ?? false;
   const canEdit = (workspace?.canEdit ?? false) && !support.readOnly;
 
-  const { data: blockData, isFetching: blocksLoading } = useQuery({
+  const blocksQuery = useQuery({
     queryKey: ["dashboard-blocks", orgId, blocks.join(",")],
     queryFn: () => blocksFn({ data: { orgId: orgId!, blocks } }),
     enabled: !!orgId && allowed && blocks.length > 0,
   });
+  const { data: blockData, isFetching: blocksLoading } = blocksQuery;
 
   const saveFn = useServerFn(saveDashboard);
   const save = useMutation({
@@ -122,6 +128,30 @@ function DashboardsPage() {
       queryClient.invalidateQueries({ queryKey: ["dashboard-workspace", orgId] });
     },
   });
+
+  if (ctxQuery.isError) {
+    return (
+      <div className="mx-auto w-full max-w-6xl space-y-6 p-6">
+        <QueryErrorCard
+          error={ctxQuery.error}
+          onRetry={() => ctxQuery.refetch()}
+          retrying={ctxQuery.isFetching}
+        />
+      </div>
+    );
+  }
+
+  if (workspaceState.isError) {
+    return (
+      <div className="mx-auto w-full max-w-6xl space-y-6 p-6">
+        <QueryErrorCard
+          error={workspaceState.error}
+          onRetry={workspaceState.retry}
+          retrying={workspaceState.retrying}
+        />
+      </div>
+    );
+  }
 
   if (isLoading || !workspace) {
     return (
@@ -198,21 +228,29 @@ function DashboardsPage() {
             )}
           </div>
 
-          <div className="grid grid-cols-12 gap-4">
-            {blocks.map((id) => (
-              <DashboardBlock
-                key={id}
-                definition={BLOCK_LIBRARY[id]}
-                result={blockData?.results.find((r) => r.id === id)}
-                loading={blocksLoading && !blockData}
-                onRemove={
-                  canEdit && blocks.length > 1
-                    ? () => setDraftBlocks(blocks.filter((b) => b !== id))
-                    : undefined
-                }
-              />
-            ))}
-          </div>
+          {blocksQuery.isError ? (
+            <QueryErrorCard
+              error={blocksQuery.error}
+              onRetry={() => blocksQuery.refetch()}
+              retrying={blocksQuery.isFetching}
+            />
+          ) : (
+            <div className="grid grid-cols-12 gap-4">
+              {blocks.map((id) => (
+                <DashboardBlock
+                  key={id}
+                  definition={BLOCK_LIBRARY[id]}
+                  result={blockData?.results.find((r) => r.id === id)}
+                  loading={blocksLoading && !blockData}
+                  onRemove={
+                    canEdit && blocks.length > 1
+                      ? () => setDraftBlocks(blocks.filter((b) => b !== id))
+                      : undefined
+                  }
+                />
+              ))}
+            </div>
+          )}
 
           {canEdit && (
             <CustomRequestCard orgId={orgId!} openRequest={workspace.openRequest} />
@@ -388,11 +426,12 @@ function ScheduleDialog({ orgId, dashboardId }: { orgId: string; dashboardId: st
   const stopFn = useServerFn(stopDashboardDelivery);
   const listFn = useServerFn(listDashboardDeliveries);
 
-  const { data } = useQuery({
+  const deliveriesQuery = useQuery({
     queryKey: ["dashboard-deliveries", orgId],
     queryFn: () => listFn({ data: { orgId } }),
     enabled: open,
   });
+  const { data } = deliveriesQuery;
 
   const create = useMutation({
     mutationFn: () =>
@@ -460,7 +499,15 @@ function ScheduleDialog({ orgId, dashboardId }: { orgId: string; dashboardId: st
               </SelectContent>
             </Select>
           </div>
-          {!!data?.deliveries.length && (
+          {deliveriesQuery.isError && (
+            <QueryErrorCard
+              compact
+              error={deliveriesQuery.error}
+              onRetry={() => deliveriesQuery.refetch()}
+              retrying={deliveriesQuery.isFetching}
+            />
+          )}
+          {!deliveriesQuery.isError && !!data?.deliveries.length && (
             <ul className="space-y-2 border-t pt-3">
               {data.deliveries
                 .filter((d) => d.active)
