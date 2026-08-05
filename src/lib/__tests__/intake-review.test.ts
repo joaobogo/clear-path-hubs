@@ -49,8 +49,8 @@ describe("intake review", () => {
       required: {},
     });
     const fields = r.groups.flatMap((g) => g.rows.map((row) => row.field));
-    expect(fields).toEqual(["roleTitle", "whyOpen", "mustHaves", "location", "companyName"]);
-    expect(r.groups.map((g) => g.step)).toEqual([0, 1, 2, 3]);
+    expect(fields).toEqual(["companyName", "roleTitle", "whyOpen", "mustHaves", "location"]);
+    expect(r.groups.map((g) => g.step)).toEqual([0, 1, 2]);
     expect(r.answeredCount).toBe(5);
   });
 
@@ -69,8 +69,8 @@ describe("intake review", () => {
       snapshot: { ...EMPTY, roleTitle: "Head of Ops" },
       required: { roleTitle: true, whyOpen: true, companyName: true, team: false },
     });
-    expect(r.missing.map((m) => m.field)).toEqual(["whyOpen", "companyName"]);
-    expect(r.missing[0]).toMatchObject({ step: 0, focusLabel: "Why is this role open?" });
+    expect(r.missing.map((m) => m.field)).toEqual(["companyName", "whyOpen"]);
+    expect(r.missing[1]).toMatchObject({ step: 1, focusLabel: "Why is this role open?" });
   });
 
   it("counts ticks, files and secrets as answered without showing them", () => {
@@ -93,6 +93,6 @@ describe("intake review", () => {
       step: 2,
       focusLabel: "Ideal start date",
     });
-    expect(rows.find((x) => x.field === "decisionMaker")).toMatchObject({ step: 3 });
+    expect(rows.find((x) => x.field === "decisionMaker")).toMatchObject({ step: 2 });
   });
 });
