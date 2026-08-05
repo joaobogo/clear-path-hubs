@@ -101,7 +101,14 @@ async function cleanupQAData(): Promise<{ deleted: Record<string, number> }> {
   counts.orgs_found = orgIds.length;
 
   if (orgIds.length > 0) {
+    // Org-scoped audit/trace rows block the organizations delete (FK, no
+    // cascade), which used to leave orphan QA_* orgs and break the next seed
+    // on the unique name constraint.
+    for (const table of ["audit_events", "trace_index", "lead_notifications", "pilot_claims"]) {
+      await sb.from(table).delete().in("organization_id", orgIds);
+    }
     // Find positions
+
     const { data: posRows } = await sb
       .from("positions")
       .select("id")
