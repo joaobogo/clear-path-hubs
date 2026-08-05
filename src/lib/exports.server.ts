@@ -39,7 +39,7 @@ export type ExportJobRow = {
   export_type: string;
   status: "queued" | "running" | "completed" | "failed" | "expired";
   scope_label: string | null;
-  filters: Record<string, unknown>;
+  filters: Record<string, string | number | boolean | null>;
   row_count: number | null;
   contact_included: boolean;
   contact_omission_reason: string | null;
@@ -276,7 +276,7 @@ export async function listExportJobs(s: Any, userId: string): Promise<ExportJobR
     export_type: r.export_type,
     status: r.status,
     scope_label: r.scope_label ?? null,
-    filters: (r.filters ?? {}) as Record<string, unknown>,
+    filters: (r.filters ?? {}) as Record<string, string | number | boolean | null>,
     row_count: r.row_count ?? null,
     contact_included: r.contact_included === true,
     contact_omission_reason: r.contact_omission_reason ?? null,
