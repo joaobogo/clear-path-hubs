@@ -6,6 +6,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { isValidTimezone } from "./scheduling";
+import { assertProposedSlots, isEmail } from "./interview-proposal";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -315,11 +316,12 @@ export const requestInterview = createServerFn({ method: "POST" })
 
     if (!isValidTimezone(data.timezone)) throw new Error("invalid_timezone");
 
-    // Never accept a slot in the past — the request would be dead on arrival.
+    // Two or three future slots, none inside 24 hours, no duplicates — a
+    // proposal that can't be worked is never accepted.
     const now = Date.now();
-    const times = Array.from(new Set(data.proposedTimes)).sort();
-    if (times.some((t) => new Date(t).getTime() < now + 60_000)) {
-      throw new Error("proposed_time_in_past");
+    const times = assertProposedSlots(data.proposedTimes, now);
+    for (const p of data.participants) {
+      if (p.email && !isEmail(p.email)) throw new Error("invalid_attendee_email");
     }
 
     const { data: existing } = await context.supabase
@@ -402,12 +404,26 @@ export const requestInterview = createServerFn({ method: "POST" })
 export const proposeInterviewTimes = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(
-    (input: { orgId: string; id: string; proposedTimes: string[] }) =>
+    (input: {
+      orgId: string;
+      id: string;
+      proposedTimes: string[];
+      interviewType?: InterviewType;
+      timezone?: string;
+      durationMinutes?: number;
+      participants?: InterviewParticipant[];
+      notes?: string;
+    }) =>
       z
         .object({
           orgId: z.string().uuid(),
           id: z.string().uuid(),
           proposedTimes: proposedTimesSchema,
+          interviewType: z.enum(INTERVIEW_TYPES).optional(),
+          timezone: z.string().min(1).max(80).optional(),
+          durationMinutes: z.number().int().min(15).max(480).optional(),
+          participants: z.array(participantSchema).min(1).max(10).optional(),
+          notes: z.string().max(4000).optional(),
         })
         .parse(input),
   )
@@ -418,11 +434,25 @@ export const proposeInterviewTimes = createServerFn({ method: "POST" })
     if (!["requested", "scheduling"].includes(prev.status)) {
       throw new Error(`invalid_transition:${prev.status}->scheduling`);
     }
+    // Same rules as the form: two or three future slots, none inside 24 hours,
+    // no duplicates, every attendee reachable by email.
+    const times = assertProposedSlots(data.proposedTimes);
+    if (data.timezone && !isValidTimezone(data.timezone)) throw new Error("invalid_timezone");
+    for (const p of data.participants ?? []) {
+      if (p.email && !isEmail(p.email)) throw new Error("invalid_attendee_email");
+    }
+
     const { error } = await context.supabase
       .from("interviews")
       .update({
         status: "scheduling",
-        proposed_times: data.proposedTimes as never,
+        proposed_times: times as never,
+        ...(data.interviewType ? { interview_type: data.interviewType } : {}),
+        ...(data.timezone ? { timezone: data.timezone } : {}),
+        ...(data.durationMinutes ? { duration_minutes: data.durationMinutes } : {}),
+        ...(data.participants ? { participants: data.participants as never } : {}),
+        ...(data.notes ? { notes: data.notes } : {}),
+        availability_expires_at: times[times.length - 1],
         updated_by: context.userId,
       })
       .eq("id", data.id)
@@ -435,10 +465,24 @@ export const proposeInterviewTimes = createServerFn({ method: "POST" })
       entity_id: data.id,
       organization_id: data.orgId,
       before: { status: prev.status },
-      after: { status: "scheduling", proposed_times: data.proposedTimes },
+      after: { status: "scheduling", proposed_times: times },
       trace_id: trace,
     });
-    return { ok: true, trace_id: trace };
+
+    // The recruiting team confirms with the candidate — nothing is sent from
+    // the client account.
+    try {
+      const { emitInterviewEvent } = await import("./interview-events.server");
+      await emitInterviewEvent({
+        interviewId: data.id,
+        event: "interview_requested",
+        actorUserId: context.userId,
+        scopeSuffix: times.join(","),
+      });
+    } catch (e) {
+      console.error("[proposeInterviewTimes] emit failed", trace, e);
+    }
+    return { ok: true, trace_id: trace, proposed_times: times };
   });
 
 export const confirmInterviewTime = createServerFn({ method: "POST" })

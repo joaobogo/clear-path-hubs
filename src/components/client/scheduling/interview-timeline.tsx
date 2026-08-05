@@ -10,6 +10,7 @@ import {
 import { buildIcs, downloadIcs } from "@/lib/availability";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SlotProposer, type ProposalSubmission } from "./slot-proposer";
 import { AgeBadge } from "@/components/client/age-badge";
 import {
   CalendarPlus,
@@ -71,6 +72,13 @@ export function InterviewTimeline({
   onProposeFromAvailability,
   onReschedule,
   busyId,
+  timezone,
+  proposingId,
+  onStartPropose,
+  onCancelPropose,
+  onSubmitPropose,
+  proposeSubmitting = false,
+  proposeFailed = null,
 }: {
   interviews: InterviewDTO[];
   readOnly: boolean;
@@ -79,6 +87,13 @@ export function InterviewTimeline({
   onProposeFromAvailability: (iv: InterviewDTO) => void;
   onReschedule: (iv: InterviewDTO) => void;
   busyId?: string | null;
+  timezone: string;
+  proposingId?: string | null;
+  onStartPropose?: (iv: InterviewDTO) => void;
+  onCancelPropose?: () => void;
+  onSubmitPropose?: (iv: InterviewDTO, proposal: ProposalSubmission) => void;
+  proposeSubmitting?: boolean;
+  proposeFailed?: string | null;
 }) {
   const tz = viewerTimezone();
   const { upcoming, past } = useMemo(() => {
@@ -100,6 +115,13 @@ export function InterviewTimeline({
       onOpen={() => onOpen(iv)}
       onProposeFromAvailability={() => onProposeFromAvailability(iv)}
       onReschedule={() => onReschedule(iv)}
+      timezone={timezone}
+      proposing={proposingId === iv.id}
+      proposeSubmitting={proposeSubmitting}
+      proposeFailed={proposeFailed}
+      onStartPropose={onStartPropose ? () => onStartPropose(iv) : undefined}
+      onCancelPropose={onCancelPropose}
+      onSubmitPropose={onSubmitPropose ? (p) => onSubmitPropose(iv, p) : undefined}
     />
   );
 
@@ -136,6 +158,13 @@ function TimelineItem({
   onOpen,
   onProposeFromAvailability,
   onReschedule,
+  timezone,
+  proposing,
+  proposeSubmitting,
+  proposeFailed,
+  onStartPropose,
+  onCancelPropose,
+  onSubmitPropose,
 }: {
   interview: InterviewDTO;
   viewerTz: string;
@@ -145,6 +174,13 @@ function TimelineItem({
   onOpen: () => void;
   onProposeFromAvailability: () => void;
   onReschedule: () => void;
+  timezone: string;
+  proposing: boolean;
+  proposeSubmitting: boolean;
+  proposeFailed: string | null;
+  onStartPropose?: () => void;
+  onCancelPropose?: () => void;
+  onSubmitPropose?: (proposal: ProposalSubmission) => void;
 }) {
   const m = marker(iv);
   const Icon = m.icon;
@@ -216,8 +252,34 @@ function TimelineItem({
           ) : null}
         </div>
 
+        {proposing && onSubmitPropose ? (
+          <div className="mt-3 rounded-lg border bg-background p-3">
+            <SlotProposer
+              timezone={iv.timezone || timezone}
+              submitting={proposeSubmitting}
+              failed={proposeFailed}
+              submitLabel="Send proposed times"
+              onCancel={() => onCancelPropose?.()}
+              onSubmit={(p) => onSubmitPropose(p)}
+              initial={{
+                ...(iv.interview_type === "video_call" ||
+                iv.interview_type === "phone_screen" ||
+                iv.interview_type === "onsite"
+                  ? { format: iv.interview_type }
+                  : {}),
+                ...(iv.duration_minutes ? { durationMinutes: iv.duration_minutes } : {}),
+              }}
+            />
+          </div>
+        ) : null}
+
         <div className="mt-3 flex flex-wrap gap-2">
-          {!readOnly && iv.status === "requested" ? (
+          {!readOnly && !proposing && iv.status === "requested" && onStartPropose ? (
+            <Button size="sm" disabled={busy} onClick={onStartPropose}>
+              <Clock className="mr-1.5 h-4 w-4" /> Propose times
+            </Button>
+          ) : null}
+          {!readOnly && !proposing && iv.status === "requested" ? (
             <Button
               size="sm"
               disabled={busy || !hasWindows}
