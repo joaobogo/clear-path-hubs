@@ -54,7 +54,22 @@ import {
   MIN_JD_TEXT,
   expressIntakeSchema,
   jdFileExt,
+
+  DEFAULT_INTERVIEW_STAGE_TEMPLATE,
+  INTERVIEW_STAGE_FORMATS,
+  INTERVIEW_STAGE_FORMAT_LABELS,
+  INTERVIEW_PROCESS_WHY_IT_MATTERS,
+  COLLABORATOR_OPT_IN_LABEL,
+  MAX_INTERVIEW_STAGES,
+  MAX_STAGE_NAME_CHARS,
+  MIN_TARGET_DAYS_TO_OFFER,
+  MAX_TARGET_DAYS_TO_OFFER,
+  collaboratorCandidates,
+  interviewProcessSummary,
+  validateInterviewStages,
+  type InterviewStage,
 } from "@/lib/express-intake-schema";
+
 import { FieldExamples } from "@/components/intake/field-examples";
 import { RequirementsList, type SuggestionState } from "@/components/intake/requirements-list";
 import { supabase } from "@/integrations/supabase/client";
@@ -133,7 +148,12 @@ type FormState = {
   workAuthorization: string;
   workAuthorizationNote: string;
   interviewProcess: string;
+  interviewStages: InterviewStage[];
+  targetDaysToOffer: string;
+  inviteCollaborators: boolean;
+  decisionMakerEmail: string;
   decisionMaker: string;
+
   targetStartDate: string;
   consent: boolean;
   pilotAcknowledgement: boolean;
@@ -184,7 +204,14 @@ const EMPTY: FormState = {
   workAuthorization: "",
   workAuthorizationNote: "",
   interviewProcess: "",
+  // Empty until the client accepts or writes a process. The suggested template
+  // is offered on screen, never pre-submitted.
+  interviewStages: [],
+  targetDaysToOffer: "",
+  inviteCollaborators: false,
+  decisionMakerEmail: "",
   decisionMaker: "",
+
   targetStartDate: "",
   consent: false,
   pilotAcknowledgement: false,
@@ -248,6 +275,10 @@ function ExpressIntakePage() {
   const [stepIndex, setStepIndex] = useState(0);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [rowErrors, setRowErrors] = useState<Record<number, string>>({});
+  const [stageErrors, setStageErrors] = useState<
+    Record<number, { name?: string; format?: string; ownerEmail?: string }>
+  >({});
+
   const [suggestions, setSuggestions] = useState<SuggestionState>({ kind: "idle" });
   const suggestedForRef = useRef<string>("");
   const lastIntentRef = useRef<"pay" | "call">("pay");
@@ -283,6 +314,8 @@ function ExpressIntakePage() {
     salaryMin: state.salaryMin === "" ? 0 : Number(state.salaryMin),
     workAuthorization: state.workAuthorization,
     interviewProcess: state.interviewProcess,
+    interviewStages: state.interviewStages,
+
     decisionMaker: state.decisionMaker,
     dealBreakers: state.dealBreakers,
   });
@@ -314,6 +347,33 @@ function ExpressIntakePage() {
     }
     return out;
   };
+
+  /**
+   * Interview process rules, shared by the step check and the submit check. An
+   * untouched list is allowed; a started one has to be coherent.
+   */
+  const processErrors = () => {
+    const stages = state.interviewStages;
+    const days = state.targetDaysToOffer === "" ? null : Number(state.targetDaysToOffer);
+    const base =
+      stages.length === 0
+        ? { ok: true, rowErrors: {} as Record<number, { name?: string; format?: string; ownerEmail?: string }>, listError: undefined as string | undefined, targetError: undefined as string | undefined }
+        : validateInterviewStages(stages, { targetDaysToOffer: days });
+    let targetError = base.targetError;
+    if (stages.length === 0 && days !== null) {
+      if (!Number.isFinite(days) || days < MIN_TARGET_DAYS_TO_OFFER || days > MAX_TARGET_DAYS_TO_OFFER) {
+        targetError = `Between ${MIN_TARGET_DAYS_TO_OFFER} and ${MAX_TARGET_DAYS_TO_OFFER} days`;
+      }
+    }
+    const email = state.decisionMakerEmail.trim();
+    const decisionMakerEmail =
+      email.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)
+        ? "Enter a valid email address"
+        : undefined;
+    return { rowErrors: base.rowErrors, listError: base.listError, targetError, decisionMakerEmail };
+  };
+
+
 
   /**
    * Choosing a different work model drops the answers that no longer apply, so
@@ -423,6 +483,16 @@ function ExpressIntakePage() {
       }
       Object.assign(next, placementErrors());
     }
+    if (key === "process") {
+      // Optional step: an untouched stage list is fine, a half-built one is not.
+      const res = processErrors();
+      setStageErrors(res.rowErrors);
+      if (res.listError) next.interviewStages = res.listError;
+      if (res.targetError) next.targetDaysToOffer = res.targetError;
+      if (res.decisionMakerEmail) next.decisionMakerEmail = res.decisionMakerEmail;
+      hardFail = hardFail || Object.keys(res.rowErrors).length > 0;
+    }
+
     const fields = STEP_FIELDS[key];
     setErrors((prev) => {
       const carried = { ...prev };
@@ -778,7 +848,56 @@ function ExpressIntakePage() {
   };
 
   /** An example the client chose: appended as ordinary editable text. */
+  /* --- Interview process editing ------------------------------------- */
+
+  const setStages = (next: InterviewStage[]) => {
+    setState((s) => ({ ...s, interviewStages: next }));
+    setErrors((e) => ({ ...e, interviewStages: "" }));
+  };
+
+  const updateStage = (index: number, patch: Partial<InterviewStage>) => {
+    setStages(state.interviewStages.map((s, i) => (i === index ? { ...s, ...patch } : s)));
+    setStageErrors((prev) => {
+      const next = { ...prev };
+      delete next[index];
+      return next;
+    });
+  };
+
+  const addStage = () => {
+    if (state.interviewStages.length >= MAX_INTERVIEW_STAGES) return;
+    setStages([
+      ...state.interviewStages,
+      { name: "", format: "video_call", ownerName: "", ownerEmail: "" },
+    ]);
+  };
+
+  const removeStage = (index: number) => {
+    setStages(state.interviewStages.filter((_, i) => i !== index));
+    setStageErrors({});
+  };
+
+  /** The suggested three-stage process, accepted on purpose by the client. */
+  const useStageTemplate = () => {
+    setStages(DEFAULT_INTERVIEW_STAGE_TEMPLATE.map((s) => ({ ...s })));
+    setStageErrors({});
+  };
+
+  /**
+   * People the client named. Listed back to them so an invitation is always a
+   * deliberate choice — nothing is sent from this screen.
+   */
+  const collaborators = React.useMemo(
+    () =>
+      collaboratorCandidates(state.interviewStages, {
+        name: state.decisionMaker,
+        email: state.decisionMakerEmail,
+      }),
+    [state.interviewStages, state.decisionMaker, state.decisionMakerEmail],
+  );
+
   const useExample = (key: "whyOpen" | "dealBreakers" | "interviewProcess", text: string) => {
+
     setState((s) => {
       const current = (s[key] ?? "").trim();
       return { ...s, [key]: current.length > 0 ? `${current}\n${text}` : text };
@@ -853,7 +972,12 @@ function ExpressIntakePage() {
   };
 
   const submit = async (intent: "pay" | "call" = "pay") => {
+    // Blank rows the client added and never filled in are dropped, not sent.
+    const submittedStages = state.interviewStages.filter(
+      (s) => (s.name ?? "").trim().length > 0,
+    );
     const payload = {
+
       idempotencyKey: idem.current || newIdempotencyKey(),
       companyName: state.companyName,
       companyWebsite: state.companyWebsite,
@@ -901,8 +1025,23 @@ function ExpressIntakePage() {
       wideRangeConfirmed: state.wideRangeConfirmed,
       workAuthorization: state.workAuthorization,
       workAuthorizationNote: state.workAuthorizationNote,
-      interviewProcess: state.interviewProcess,
+      // The readable version of the structured stages, so every surface that
+      // reads text keeps working. Never invented — empty stages, empty text.
+      interviewProcess:
+        submittedStages.length > 0
+          ? interviewProcessSummary(
+              submittedStages,
+              state.targetDaysToOffer === "" ? null : Number(state.targetDaysToOffer),
+            )
+          : state.interviewProcess,
+      interviewStages: submittedStages,
+      targetDaysToOffer:
+        state.targetDaysToOffer === "" ? undefined : Number(state.targetDaysToOffer),
       decisionMaker: state.decisionMaker,
+      decisionMakerEmail: state.decisionMakerEmail,
+      // Only true when the client ticked the box on this screen.
+      inviteCollaborators: state.inviteCollaborators && collaborators.length > 0,
+
       targetStartDate: state.targetStartDate,
 
       consent: state.consent,
@@ -955,6 +1094,18 @@ function ExpressIntakePage() {
         next.compensationUndecided = "Clear the range, or untick 'Not decided yet'";
       }
       Object.assign(next, placementErrors());
+      {
+        const proc = processErrors();
+        setStageErrors(proc.rowErrors);
+        if (proc.listError) next.interviewStages = proc.listError;
+        if (proc.targetError) next.targetDaysToOffer = proc.targetError;
+        if (proc.decisionMakerEmail) next.decisionMakerEmail = proc.decisionMakerEmail;
+        for (const key of Object.keys(proc.rowErrors)) {
+          next.interviewStages = next.interviewStages ?? "Check your interview stages";
+          void key;
+        }
+      }
+
 
 
       setErrors(next);
@@ -2004,37 +2155,220 @@ function ExpressIntakePage() {
             onUse={(text) => useExample("dealBreakers", text)}
           />
 
-          <Field
-            label="How you interview"
-            error={errors.interviewProcess}
-            required={req["interviewProcess"]}
-            hint="The stages and roughly how long each takes. Candidates drop out of processes they cannot see."
-          >
-            <Textarea
-              value={state.interviewProcess}
-              onChange={(e) => set("interviewProcess", e.target.value)}
-              rows={3}
-              placeholder={"1. 30 min with me\n2. 60 min panel with the site team\n3. Half-day on site, offer same week"}
-            />
-          </Field>
-          <FieldExamples
-            field="interview_process"
-            roleTitle={state.roleTitle}
-            onUse={(text) => useExample("interviewProcess", text)}
-          />
+          <fieldset className="space-y-3" data-field="interviewStages">
+            <legend className="text-sm font-medium">
+              Your interview process
+              <span aria-hidden="true" className="ml-1 text-[color:var(--brand-navy)]/50 text-xs">
+                Optional
+              </span>
+            </legend>
+            <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+              {INTERVIEW_PROCESS_WHY_IT_MATTERS}
+            </p>
+
+            {state.interviewStages.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-[color:var(--brand-navy)]/25 bg-white p-4">
+                <p className="text-sm font-medium">Most clients run three stages</p>
+                <p className="mt-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                  {DEFAULT_INTERVIEW_STAGE_TEMPLATE.map((s) => s.name).join(" → ")}. Use it as a
+                  starting point, or build your own — nothing is saved until you choose.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button type="button" variant="outline" size="sm" onClick={useStageTemplate}>
+                    Use this as a starting point
+                  </Button>
+                  <Button type="button" variant="ghost" size="sm" onClick={addStage}>
+                    Build my own
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {state.interviewStages.map((stage, index) => {
+                  const issues = stageErrors[index] ?? {};
+                  return (
+                    <div
+                      key={index}
+                      className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+                          Stage {index + 1}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeStage(index)}
+                          className="text-xs underline text-[color:var(--brand-navy)]/70"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                        <div>
+                          <Label className="text-xs">What is this stage?</Label>
+                          <Input
+                            value={stage.name}
+                            maxLength={MAX_STAGE_NAME_CHARS}
+                            onChange={(e) => updateStage(index, { name: e.target.value })}
+                            placeholder="Hiring manager interview"
+                            aria-invalid={Boolean(issues.name)}
+                          />
+                          {issues.name && (
+                            <p
+                              data-field-error="true"
+                              className="mt-1 text-xs text-[color:var(--brand-danger)]"
+                            >
+                              {issues.name}
+                            </p>
+                          )}
+                        </div>
+                        <div>
+                          <Label className="text-xs">Format</Label>
+                          <select
+                            value={stage.format}
+                            onChange={(e) =>
+                              updateStage(index, {
+                                format: e.target.value as InterviewStage["format"],
+                              })
+                            }
+                            className="h-10 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                          >
+                            {INTERVIEW_STAGE_FORMATS.map((f) => (
+                              <option key={f} value={f}>
+                                {INTERVIEW_STAGE_FORMAT_LABELS[f]}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <Label className="text-xs">Who runs it?</Label>
+                          <Input
+                            value={stage.ownerName ?? ""}
+                            onChange={(e) => updateStage(index, { ownerName: e.target.value })}
+                            placeholder="Dana Okoro"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Their email</Label>
+                          <Input
+                            type="email"
+                            value={stage.ownerEmail ?? ""}
+                            onChange={(e) => updateStage(index, { ownerEmail: e.target.value })}
+                            placeholder="dana@company.com"
+                            aria-invalid={Boolean(issues.ownerEmail)}
+                          />
+                          {issues.ownerEmail && (
+                            <p
+                              data-field-error="true"
+                              className="mt-1 text-xs text-[color:var(--brand-danger)]"
+                            >
+                              {issues.ownerEmail}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+                {state.interviewStages.length < MAX_INTERVIEW_STAGES ? (
+                  <Button type="button" variant="outline" size="sm" onClick={addStage}>
+                    Add a stage
+                  </Button>
+                ) : (
+                  <p className="text-xs text-[color:var(--brand-navy)]/60">
+                    Five stages is the most we record — beyond that candidates drop out.
+                  </p>
+                )}
+              </div>
+            )}
+            {errors.interviewStages && (
+              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+                {errors.interviewStages}
+              </p>
+            )}
+          </fieldset>
 
           <Field
-            label="Who makes the final decision?"
-            error={errors.decisionMaker}
-            required={req["decisionMaker"]}
-            hint="Name and role. We keep the process moving through them."
+            label="Target days from shortlist to offer"
+            error={errors.targetDaysToOffer}
+            required={req["targetDaysToOffer"]}
+            hint={`Between ${MIN_TARGET_DAYS_TO_OFFER} and ${MAX_TARGET_DAYS_TO_OFFER} days. We will tell you honestly if it is achievable.`}
           >
             <Input
-              value={state.decisionMaker}
-              onChange={(e) => set("decisionMaker", e.target.value)}
-              placeholder="Dana Okoro, Operations Director"
+              type="text"
+              inputMode="numeric"
+              value={state.targetDaysToOffer}
+              onChange={(e) => {
+                const digits = e.target.value.replace(/[^0-9]/g, "").slice(0, 3);
+                set("targetDaysToOffer", digits);
+                setErrors((prev) => ({ ...prev, targetDaysToOffer: "" }));
+              }}
+              placeholder="21"
+              className="max-w-[8rem]"
             />
           </Field>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field
+              label="Who makes the final decision?"
+              error={errors.decisionMaker}
+              required={req["decisionMaker"]}
+              hint="Name and role. We keep the process moving through them."
+            >
+              <Input
+                value={state.decisionMaker}
+                onChange={(e) => set("decisionMaker", e.target.value)}
+                placeholder="Dana Okoro, Operations Director"
+              />
+            </Field>
+            <Field
+              label="Their email"
+              error={errors.decisionMakerEmail}
+              required={req["decisionMakerEmail"]}
+              hint="Only used if you invite them below."
+            >
+              <Input
+                type="email"
+                value={state.decisionMakerEmail}
+                onChange={(e) => {
+                  set("decisionMakerEmail", e.target.value);
+                  setErrors((prev) => ({ ...prev, decisionMakerEmail: "" }));
+                }}
+                placeholder="dana@company.com"
+              />
+            </Field>
+          </div>
+
+          {collaborators.length > 0 && (
+            <div className="rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-4">
+              <p className="text-sm font-semibold">People you named</p>
+              <ul className="mt-1 space-y-0.5 text-sm text-[color:var(--brand-navy)]/75">
+                {collaborators.map((c) => (
+                  <li key={c.email}>{c.name ? `${c.name} — ${c.email}` : c.email}</li>
+                ))}
+              </ul>
+              <div className="mt-3 flex items-start gap-3">
+                <Checkbox
+                  id="invite-collaborators"
+                  checked={state.inviteCollaborators}
+                  onCheckedChange={(v) => set("inviteCollaborators", v === true)}
+                  className="mt-0.5"
+                />
+                <span className="order-last text-xs text-[color:var(--brand-navy)]/60">
+                  Optional
+                </span>
+                <label htmlFor="invite-collaborators" className="text-sm leading-relaxed">
+                  {COLLABORATOR_OPT_IN_LABEL}
+                </label>
+              </div>
+              {!state.inviteCollaborators && (
+                <p className="mt-2 text-xs text-[color:var(--brand-navy)]/60">
+                  We will not email anyone on this list.
+                </p>
+              )}
+            </div>
+          )}
+
         </Section>
         )}
 
