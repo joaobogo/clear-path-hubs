@@ -1,407 +1,604 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { useMemo } from "react";
 import {
- getMyContext,
- updateMyProfile,
- type ProfilePatch,
+  getMyContext,
+  updateMyProfileSection,
 } from "@/lib/candidate.functions";
 import { profileCompleteness } from "@/lib/candidate/profile-completeness";
 import { PROFILE_GAP_FIELD_IDS } from "@/lib/candidate/profile-gaps";
-import { Button } from "@/components/ui/button";
+import {
+  PROFILE_SECTIONS,
+  contactValues,
+  experienceValues,
+  linksValues,
+  locationValues,
+  sectionForField,
+  skillsValues,
+  workAuthValues,
+  type ProfileSectionId,
+  type ProfileSectionMeta,
+} from "@/lib/candidate/profile-sections";
+import { ProfileSectionCard } from "@/components/candidate/profile-section-card";
+import { EmailChangeCard } from "@/components/account/email-change-card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { EmployerPreviewSheet } from "@/components/candidate/employer-preview-sheet";
 
-
 export const Route = createFileRoute("/_authenticated/me/profile")({
- head: () => ({
- meta: [
- { title: "My profile · TaaSFlow" },
- { name: "robots", content: "noindex" },
- ],
- }),
- validateSearch: (search: Record<string, unknown>) => {
-   const field = typeof search.field === "string" ? search.field : "";
-   return PROFILE_GAP_FIELD_IDS.includes(field) ? { field } : {};
- },
- loader: ({ context }) =>
- context.queryClient.ensureQueryData({
- queryKey: ["me-context"],
- queryFn: () => getMyContext(),
- }),
- errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.profile.tsx"),
- notFoundComponent: () => <main className="p-8">Not found.</main>,
- component: ProfilePage,
+  head: () => ({
+    meta: [
+      { title: "My profile · TaaSFlow" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
+  validateSearch: (search: Record<string, unknown>) => {
+    const field = typeof search.field === "string" ? search.field : "";
+    return PROFILE_GAP_FIELD_IDS.includes(field) ? { field } : {};
+  },
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData({
+      queryKey: ["me-context"],
+      queryFn: () => getMyContext(),
+    }),
+  errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.profile.tsx"),
+  notFoundComponent: () => <main className="p-8">Not found.</main>,
+  component: ProfilePage,
 });
 
+function meta(id: ProfileSectionId): ProfileSectionMeta {
+  return PROFILE_SECTIONS.find((s) => s.id === id)!;
+}
+
+function jsonText(value: unknown): string {
+  return JSON.stringify(Array.isArray(value) ? value : [], null, 2);
+}
+
+function parseJsonArray(text: string): unknown[] {
+  const parsed = JSON.parse(text || "[]");
+  if (!Array.isArray(parsed)) throw new Error("Expected a JSON array.");
+  return parsed;
+}
+
 function ProfilePage() {
- const ctxInit = Route.useLoaderData();
- const ctxFn = useServerFn(getMyContext);
- const saveFn = useServerFn(updateMyProfile);
- const qc = useQueryClient();
- const { data: ctx = ctxInit } = useQuery({
- queryKey: ["me-context"],
- queryFn: () => ctxFn(),
- initialData: ctxInit,
- });
+  const ctxInit = Route.useLoaderData();
+  const ctxFn = useServerFn(getMyContext);
+  const saveSection = useServerFn(updateMyProfileSection);
+  const qc = useQueryClient();
+  const { data: ctx = ctxInit, isFetching } = useQuery({
+    queryKey: ["me-context"],
+    queryFn: () => ctxFn(),
+    initialData: ctxInit,
+  });
 
- const { field } = Route.useSearch() as { field?: string };
- const p = ctx?.profile as Record<string, unknown> | null | undefined;
- // eslint-disable-next-line @typescript-eslint/no-explicit-any
- const [form, setForm] = useState<any>(null);
- const [baseline, setBaseline] = useState<string | null>(null);
+  const { field } = Route.useSearch() as { field?: string };
+  const openSection = field ? sectionForField(field) : null;
+  const p = (ctx?.profile ?? null) as Record<string, unknown> | null;
+  const pct = profileCompleteness(p);
 
- useEffect(() => {
- if (!p) return;
- const next = {
- full_name: (p.full_name as string) ?? "",
- phone: (p.phone as string) ?? "",
- location: (p.location as string) ?? "",
- headline: (p.headline as string) ?? "",
- summary: (p.summary as string) ?? "",
- years_experience:
- p.years_experience == null ? "" : String(p.years_experience),
- timezone: (p.timezone as string) ?? "",
- linkedin_url: (p.linkedin_url as string) ?? "",
- portfolio_url: (p.portfolio_url as string) ?? "",
- skills: Array.isArray(p.skills) ? (p.skills as string[]).join(", ") : "",
- certifications_text: JSON.stringify(p.certifications ?? [], null, 2),
- experience_text: JSON.stringify(p.experience ?? [], null, 2),
- education_text: JSON.stringify(p.education ?? [], null, 2),
- languages_text: JSON.stringify(p.languages ?? [], null, 2),
- work_auth:
- ((p.work_authorization as { note?: string } | null)?.note) ?? "",
- availability:
- ((p.availability as { note?: string } | null)?.note) ?? "",
- comp:
- ((p.compensation_preferences as { note?: string } | null)?.note) ?? "",
- };
- setForm(next);
- setBaseline(JSON.stringify(next));
- }, [p]);
- const pct = profileCompleteness(p);
+  const authNote = (p?.work_authorization as { note?: string } | null)?.note ?? "";
+  const availNote = (p?.availability as { note?: string } | null)?.note ?? "";
+  const compNote =
+    (p?.compensation_preferences as { note?: string } | null)?.note ?? "";
 
- // Deep link from the /me "finish these things" prompt: land focused on the
- // exact field rather than the top of the form.
- useEffect(() => {
-   if (!field || !form) return;
-   const el = document.getElementById(field) as HTMLElement | null;
-   if (!el) return;
-   el.scrollIntoView({ block: "center", behavior: "smooth" });
-   el.focus({ preventScroll: true });
- }, [field, !!form]);
+  const initial = useMemo(
+    () => ({
+      contact: {
+        full_name: (p?.full_name as string) ?? "",
+        phone: (p?.phone as string) ?? "",
+      },
+      location: {
+        location: (p?.location as string) ?? "",
+        timezone: (p?.timezone as string) ?? "",
+      },
+      work_auth: {
+        work_authorization_note: authNote,
+        availability_note: availNote,
+        compensation_note: compNote,
+      },
+      experience: {
+        headline: (p?.headline as string) ?? "",
+        summary: (p?.summary as string) ?? "",
+        years_experience:
+          p?.years_experience == null ? "" : String(p.years_experience),
+        experience_text: jsonText(p?.experience),
+        education_text: jsonText(p?.education),
+        languages_text: jsonText(p?.languages),
+        certifications_text: jsonText(p?.certifications),
+      },
+      skills: {
+        skills: Array.isArray(p?.skills) ? (p!.skills as string[]).join(", ") : "",
+      },
+      links: {
+        linkedin_url: (p?.linkedin_url as string) ?? "",
+        portfolio_url: (p?.portfolio_url as string) ?? "",
+      },
+    }),
+    [p, authNote, availNote, compNote],
+  );
 
+  async function commit(section: ProfileSectionId, values: unknown) {
+    const r = (await saveSection({ data: { section, values } as never })) as {
+      ok: boolean;
+      message?: string;
+    };
+    if (r.ok) await qc.invalidateQueries({ queryKey: ["me-context"] });
+    return r;
+  }
 
+  if (!p && isFetching)
+    return (
+      <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-4" aria-hidden>
+        <div className="h-8 w-1/2 animate-pulse rounded bg-muted" />
+        <div className="h-32 animate-pulse rounded-lg bg-muted" />
+        <div className="h-32 animate-pulse rounded-lg bg-muted" />
+        <div className="h-32 animate-pulse rounded-lg bg-muted" />
+      </main>
+    );
 
- const save = useMutation({
- mutationFn: (patch: ProfilePatch) => saveFn({ data: patch }),
- onSuccess: (r) => {
- if (r.ok) {
- toast.success("Profile saved.");
- qc.invalidateQueries({ queryKey: ["me-context"] });
- } else toast.error(r.message);
- },
- onError: (e: Error) => toast.error(e.message.replace(/^Error: /, "")),
- });
+  return (
+    <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
+      <header className="mb-6">
+        <h1 className="text-2xl font-semibold">Your profile</h1>
+        <p className="text-sm text-muted-foreground">
+          Edit one section at a time — each saves on its own. Manage your CV in
+          the{" "}
+          <Link to="/me/cv" className="underline">
+            CV tab
+          </Link>
+          .
+        </p>
+        <div className="mt-4">
+          <EmployerPreviewSheet />
+        </div>
 
- const dirty = !!form && !!baseline && JSON.stringify(form) !== baseline;
+        <div className="mt-4 rounded-lg border bg-card p-4">
+          <div className="flex items-center justify-between text-sm">
+            <span className="font-medium">Profile completeness</span>
+            <span className="text-muted-foreground">{pct}%</span>
+          </div>
+          <div
+            className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted"
+            role="progressbar"
+            aria-valuenow={pct}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Profile completeness"
+          >
+            <div className="h-full bg-primary transition-all" style={{ width: `${pct}%` }} />
+          </div>
+        </div>
+      </header>
 
- useEffect(() => {
- if (!dirty) return;
- const onBeforeUnload = (e: BeforeUnloadEvent) => {
- e.preventDefault();
- e.returnValue = "";
- };
- window.addEventListener("beforeunload", onBeforeUnload);
- return () => window.removeEventListener("beforeunload", onBeforeUnload);
- }, [dirty]);
+      <div className="space-y-5">
+        {/* Contact */}
+        <ProfileSectionCard
+          meta={meta("contact")}
+          initial={initial.contact}
+          autoOpen={openSection === "contact"}
+          focusField={field ?? null}
+          summary={(v) =>
+            v.full_name || v.phone ? (
+              <dl className="grid gap-2 sm:grid-cols-2">
+                <div>
+                  <dt className="text-xs text-muted-foreground">Full name</dt>
+                  <dd>{v.full_name || "Not added yet."}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted-foreground">Phone</dt>
+                  <dd>{v.phone || "Not added yet."}</dd>
+                </div>
+              </dl>
+            ) : null
+          }
+          fields={({ values, set }) => (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div>
+                <Label htmlFor="p-full-name">Full name</Label>
+                <Input
+                  id="p-full-name"
+                  value={values.full_name}
+                  onChange={(e) => set({ full_name: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="p-phone">Phone</Label>
+                <Input
+                  id="p-phone"
+                  inputMode="tel"
+                  value={values.phone}
+                  onChange={(e) => set({ phone: e.target.value })}
+                />
+              </div>
+            </div>
+          )}
+          save={async (v) => {
+            const parsed = contactValues.safeParse(v);
+            if (!parsed.success)
+              return {
+                ok: false,
+                message: parsed.error.issues[0]?.message ?? "Check these fields.",
+              };
+            return commit("contact", parsed.data);
+          }}
+        />
 
- if (!form)
- return (
- <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-4" aria-hidden>
- <div className="h-8 w-1/2 animate-pulse rounded bg-muted" />
- <div className="h-40 animate-pulse rounded-lg bg-muted" />
- <div className="h-40 animate-pulse rounded-lg bg-muted" />
- </main>
- );
+        {/* Email — confirmation flow, never a direct write */}
+        <EmailChangeCard />
 
+        {/* Location and time zone */}
+        <ProfileSectionCard
+          meta={meta("location")}
+          initial={initial.location}
+          autoOpen={openSection === "location"}
+          focusField={field ?? null}
+          summary={(v) =>
+            v.location || v.timezone ? (
+              <dl className="grid gap-2 sm:grid-cols-2">
+                <div>
+                  <dt className="text-xs text-muted-foreground">Based in</dt>
+                  <dd>{v.location || "Not added yet."}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted-foreground">Time zone</dt>
+                  <dd>{v.timezone || "Not added yet."}</dd>
+                </div>
+              </dl>
+            ) : null
+          }
+          fields={({ values, set }) => (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div>
+                <Label htmlFor="p-location">Location</Label>
+                <Input
+                  id="p-location"
+                  value={values.location}
+                  onChange={(e) => set({ location: e.target.value })}
+                  placeholder="Lisbon, Portugal"
+                />
+              </div>
+              <div>
+                <Label htmlFor="p-timezone">Time zone</Label>
+                <Input
+                  id="p-timezone"
+                  value={values.timezone}
+                  onChange={(e) => set({ timezone: e.target.value })}
+                  placeholder="Europe/Lisbon"
+                />
+              </div>
+            </div>
+          )}
+          save={async (v) => {
+            const parsed = locationValues.safeParse(v);
+            if (!parsed.success)
+              return {
+                ok: false,
+                message: parsed.error.issues[0]?.message ?? "Check these fields.",
+              };
+            return commit("location", parsed.data);
+          }}
+        />
 
- function submit(e: React.FormEvent) {
- e.preventDefault();
- let experience: unknown[] = [];
- let education: unknown[] = [];
- let languages: unknown[] = [];
- let certifications: unknown[] = [];
- try {
- experience = JSON.parse(form.experience_text || "[]");
- education = JSON.parse(form.education_text || "[]");
- languages = JSON.parse(form.languages_text || "[]");
- certifications = JSON.parse(form.certifications_text || "[]");
- } catch {
- toast.error("Experience/education/languages/certifications must be valid JSON arrays.");
- return;
- }
- save.mutate({
- full_name: form.full_name,
- phone: form.phone,
- location: form.location,
- headline: form.headline,
- summary: form.summary,
- years_experience:
- form.years_experience === "" ? null : Number(form.years_experience),
- timezone: form.timezone,
- linkedin_url: form.linkedin_url,
- portfolio_url: form.portfolio_url,
- skills: form.skills
- .split(",")
- .map((s: string) => s.trim())
- .filter(Boolean),
- certifications: certifications as never[],
- experience: experience as never[],
- education: education as never[],
- languages: languages as never[],
- work_authorization: form.work_auth ? { note: form.work_auth } : null,
- availability: form.availability ? { note: form.availability } : null,
- compensation_preferences: form.comp ? { note: form.comp } : null,
- });
- }
+        {/* Work authorisation and availability */}
+        <ProfileSectionCard
+          meta={meta("work_auth")}
+          initial={initial.work_auth}
+          autoOpen={openSection === "work_auth"}
+          focusField={field ?? null}
+          summary={(v) =>
+            v.work_authorization_note || v.availability_note || v.compensation_note ? (
+              <dl className="space-y-2">
+                <div>
+                  <dt className="text-xs text-muted-foreground">Work authorisation</dt>
+                  <dd>{v.work_authorization_note || "Not added yet."}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted-foreground">Availability</dt>
+                  <dd>{v.availability_note || "Not added yet."}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted-foreground">Compensation</dt>
+                  <dd>{v.compensation_note || "Not added yet."}</dd>
+                </div>
+              </dl>
+            ) : null
+          }
+          fields={({ values, set }) => (
+            <div className="space-y-3">
+              <div>
+                <Label htmlFor="p-work-auth">Work authorisation</Label>
+                <Input
+                  id="p-work-auth"
+                  value={values.work_authorization_note}
+                  onChange={(e) => set({ work_authorization_note: e.target.value })}
+                  placeholder="EU citizen, US work permit, etc."
+                />
+              </div>
+              <div>
+                <Label htmlFor="p-availability">Availability</Label>
+                <Input
+                  id="p-availability"
+                  value={values.availability_note}
+                  onChange={(e) => set({ availability_note: e.target.value })}
+                  placeholder="Available in 4 weeks, immediate, etc."
+                />
+              </div>
+              <div>
+                <Label htmlFor="p-comp">Compensation preferences</Label>
+                <Input
+                  id="p-comp"
+                  value={values.compensation_note}
+                  onChange={(e) => set({ compensation_note: e.target.value })}
+                  placeholder="Range or expectations"
+                />
+              </div>
+            </div>
+          )}
+          save={async (v) => {
+            const parsed = workAuthValues.safeParse(v);
+            if (!parsed.success)
+              return {
+                ok: false,
+                message: parsed.error.issues[0]?.message ?? "Check these fields.",
+              };
+            return commit("work_auth", parsed.data);
+          }}
+        />
 
- return (
- <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
- <header className="mb-6">
- <h1 className="text-2xl font-semibold">Your profile</h1>
- <p className="text-sm text-muted-foreground">
- Keep this up to date so we can match you to the right roles. Manage
- your CV in the{" "}
- <Link to="/me/cv" className="underline">
- CV tab
- </Link>
- .
-  </p>
-  <div className="mt-4">
-  <EmployerPreviewSheet />
-  </div>
+        {/* Experience */}
+        <ProfileSectionCard
+          meta={meta("experience")}
+          initial={initial.experience}
+          autoOpen={openSection === "experience"}
+          focusField={field ?? null}
+          summary={(v) => {
+            const roles = (() => {
+              try {
+                return parseJsonArray(v.experience_text).length;
+              } catch {
+                return 0;
+              }
+            })();
+            if (!v.headline && !v.summary && !v.years_experience && roles === 0)
+              return null;
+            return (
+              <dl className="space-y-2">
+                <div>
+                  <dt className="text-xs text-muted-foreground">Headline</dt>
+                  <dd>{v.headline || "Not added yet."}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted-foreground">Years of experience</dt>
+                  <dd>{v.years_experience || "Not added yet."}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted-foreground">Roles listed</dt>
+                  <dd>{roles === 0 ? "Not added yet." : `${roles}`}</dd>
+                </div>
+                {v.summary && (
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Summary</dt>
+                    <dd className="whitespace-pre-wrap">{v.summary}</dd>
+                  </div>
+                )}
+              </dl>
+            );
+          }}
+          fields={({ values, set }) => (
+            <div className="space-y-3">
+              <div>
+                <Label htmlFor="p-headline">Headline</Label>
+                <Input
+                  id="p-headline"
+                  value={values.headline}
+                  onChange={(e) => set({ headline: e.target.value })}
+                  placeholder="Senior backend engineer"
+                />
+              </div>
+              <div>
+                <Label htmlFor="p-years">Years of experience</Label>
+                <Input
+                  id="p-years"
+                  type="number"
+                  min={0}
+                  max={80}
+                  value={values.years_experience}
+                  onChange={(e) => set({ years_experience: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="p-summary">Summary</Label>
+                <Textarea
+                  id="p-summary"
+                  rows={4}
+                  value={values.summary}
+                  onChange={(e) => set({ summary: e.target.value })}
+                  placeholder="A short paragraph about what you do best."
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Roles, education, languages and certifications are JSON arrays for
+                now — this keeps parsing exact.
+              </p>
+              <div>
+                <Label htmlFor="p-experience">Experience</Label>
+                <Textarea
+                  id="p-experience"
+                  rows={5}
+                  value={values.experience_text}
+                  onChange={(e) => set({ experience_text: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="p-education">Education</Label>
+                <Textarea
+                  id="p-education"
+                  rows={4}
+                  value={values.education_text}
+                  onChange={(e) => set({ education_text: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="p-languages">Languages</Label>
+                <Textarea
+                  id="p-languages"
+                  rows={3}
+                  value={values.languages_text}
+                  onChange={(e) => set({ languages_text: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="p-certifications">Certifications</Label>
+                <Textarea
+                  id="p-certifications"
+                  rows={3}
+                  value={values.certifications_text}
+                  onChange={(e) => set({ certifications_text: e.target.value })}
+                  placeholder='[{"name":"AWS Solutions Architect","year":2024}]'
+                />
+              </div>
+            </div>
+          )}
+          save={async (v) => {
+            let payload;
+            try {
+              payload = {
+                headline: v.headline,
+                summary: v.summary,
+                years_experience:
+                  v.years_experience === "" ? null : Number(v.years_experience),
+                experience: parseJsonArray(v.experience_text),
+                education: parseJsonArray(v.education_text),
+                languages: parseJsonArray(v.languages_text),
+                certifications: parseJsonArray(v.certifications_text),
+              };
+            } catch {
+              return {
+                ok: false,
+                message:
+                  "Experience, education, languages and certifications must be valid JSON arrays.",
+              };
+            }
+            const parsed = experienceValues.safeParse(payload);
+            if (!parsed.success)
+              return {
+                ok: false,
+                message: parsed.error.issues[0]?.message ?? "Check these fields.",
+              };
+            return commit("experience", parsed.data);
+          }}
+        />
 
- <div className="mt-4 rounded-lg border bg-card p-4">
- <div className="flex items-center justify-between text-sm">
- <span className="font-medium">Profile completeness</span>
- <span className="text-muted-foreground">{pct}%</span>
- </div>
- <div
- className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted"
- role="progressbar"
- aria-valuenow={pct}
- aria-valuemin={0}
- aria-valuemax={100}
- aria-label="Profile completeness"
- >
- <div className="h-full bg-primary transition-all" style={{ width: `${pct}%` }} />
- </div>
- </div>
- </header>
-
-
-      <form onSubmit={submit} className="space-y-6">
-        <section className="rounded-lg border bg-card p-5 space-y-3">
-          <h2 className="text-sm font-medium">Contact &amp; basics</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* Skills */}
+        <ProfileSectionCard
+          meta={meta("skills")}
+          initial={initial.skills}
+          autoOpen={openSection === "skills"}
+          focusField={field ?? null}
+          summary={(v) =>
+            v.skills.trim() ? (
+              <ul className="flex flex-wrap gap-2">
+                {v.skills
+                  .split(",")
+                  .map((s) => s.trim())
+                  .filter(Boolean)
+                  .map((s) => (
+                    <li
+                      key={s}
+                      className="rounded-full border px-3 py-1 text-xs text-muted-foreground"
+                    >
+                      {s}
+                    </li>
+                  ))}
+              </ul>
+            ) : null
+          }
+          fields={({ values, set }) => (
             <div>
-              <Label htmlFor="p-full-name">Full name</Label>
+              <Label htmlFor="p-skills">Skills</Label>
               <Input
-                id="p-full-name"
-                required
-                value={form.full_name}
-                onChange={(e) => setForm({ ...form, full_name: e.target.value })}
+                id="p-skills"
+                value={values.skills}
+                onChange={(e) => set({ skills: e.target.value })}
+                placeholder="TypeScript, PostgreSQL, GraphQL"
               />
+              <p className="mt-1 text-xs text-muted-foreground">Comma-separated.</p>
             </div>
-            <div>
-              <Label htmlFor="p-phone">Phone</Label>
-              <Input
-                id="p-phone"
-                value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="p-location">Location</Label>
-              <Input
-                id="p-location"
-                value={form.location}
-                onChange={(e) => setForm({ ...form, location: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="p-timezone">Timezone</Label>
-              <Input
-                id="p-timezone"
-                placeholder="Europe/Lisbon"
-                value={form.timezone}
-                onChange={(e) => setForm({ ...form, timezone: e.target.value })}
-              />
-            </div>
-            <div className="sm:col-span-2">
-              <Label htmlFor="p-headline">Headline</Label>
-              <Input
-                id="p-headline"
-                placeholder="Senior backend engineer"
-                value={form.headline}
-                onChange={(e) => setForm({ ...form, headline: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="p-years">Years of experience</Label>
-              <Input
-                id="p-years"
-                type="number"
-                min={0}
-                max={80}
-                value={form.years_experience}
-                onChange={(e) =>
-                  setForm({ ...form, years_experience: e.target.value })
-                }
-              />
-            </div>
-            <div>
-              <Label htmlFor="p-linkedin">LinkedIn URL</Label>
-              <Input
-                id="p-linkedin"
-                type="url"
-                inputMode="url"
-                placeholder="https://linkedin.com/in/…"
-                value={form.linkedin_url}
-                onChange={(e) => setForm({ ...form, linkedin_url: e.target.value })}
-              />
-            </div>
-            <div className="sm:col-span-2">
-              <Label htmlFor="p-portfolio">Portfolio / website URL</Label>
-              <Input
-                id="p-portfolio"
-                type="url"
-                inputMode="url"
-                placeholder="https://…"
-                value={form.portfolio_url}
-                onChange={(e) => setForm({ ...form, portfolio_url: e.target.value })}
-              />
-            </div>
-            <div className="sm:col-span-2">
-              <Label htmlFor="p-summary">Summary</Label>
-              <Textarea
-                id="p-summary"
-                rows={4}
-                value={form.summary}
-                onChange={(e) => setForm({ ...form, summary: e.target.value })}
-                placeholder="A short paragraph about what you do best."
-              />
-            </div>
-          </div>
-        </section>
+          )}
+          save={async (v) => {
+            const parsed = skillsValues.safeParse({
+              skills: v.skills
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean),
+            });
+            if (!parsed.success)
+              return {
+                ok: false,
+                message: parsed.error.issues[0]?.message ?? "Check these skills.",
+              };
+            return commit("skills", parsed.data);
+          }}
+        />
 
-        <section className="rounded-lg border bg-card p-5 space-y-3">
-          <h2 className="text-sm font-medium">Skills</h2>
-          <Label htmlFor="p-skills" className="text-xs text-muted-foreground">
-            Comma-separated
-          </Label>
-          <Input
-            id="p-skills"
-            value={form.skills}
-            onChange={(e) => setForm({ ...form, skills: e.target.value })}
-            placeholder="TypeScript, PostgreSQL, GraphQL"
-          />
-        </section>
-
-        <section className="rounded-lg border bg-card p-5 space-y-3">
-          <h2 className="text-sm font-medium">Experience, education, languages, certifications</h2>
-          <p className="text-xs text-muted-foreground">
-            Enter JSON arrays. A friendlier editor is coming — this keeps parsing exact.
-          </p>
-          <div>
-            <Label htmlFor="p-experience">Experience</Label>
-            <Textarea
-              id="p-experience"
-              rows={5}
-              value={form.experience_text}
-              onChange={(e) => setForm({ ...form, experience_text: e.target.value })}
-            />
-          </div>
-          <div>
-            <Label htmlFor="p-education">Education</Label>
-            <Textarea
-              id="p-education"
-              rows={4}
-              value={form.education_text}
-              onChange={(e) => setForm({ ...form, education_text: e.target.value })}
-            />
-          </div>
-          <div>
-            <Label htmlFor="p-languages">Languages</Label>
-            <Textarea
-              id="p-languages"
-              rows={3}
-              value={form.languages_text}
-              onChange={(e) => setForm({ ...form, languages_text: e.target.value })}
-            />
-          </div>
-          <div>
-            <Label htmlFor="p-certifications">Certifications</Label>
-            <Textarea
-              id="p-certifications"
-              rows={3}
-              value={form.certifications_text}
-              onChange={(e) => setForm({ ...form, certifications_text: e.target.value })}
-              placeholder='[{"name":"AWS Solutions Architect","year":2024}]'
-            />
-          </div>
-        </section>
-
-        <section className="rounded-lg border bg-card p-5 space-y-3">
-          <h2 className="text-sm font-medium">Work preferences</h2>
-          <div>
-            <Label htmlFor="p-work-auth">Work authorization</Label>
-            <Input
-              id="p-work-auth"
-              value={form.work_auth}
-              onChange={(e) => setForm({ ...form, work_auth: e.target.value })}
-              placeholder="EU citizen, US work permit, etc."
-            />
-          </div>
-          <div>
-            <Label htmlFor="p-availability">Availability</Label>
-            <Input
-              id="p-availability"
-              value={form.availability}
-              onChange={(e) => setForm({ ...form, availability: e.target.value })}
-              placeholder="Available in 4 weeks, immediate, etc."
-            />
-          </div>
-          <div>
-            <Label htmlFor="p-comp">Compensation preferences</Label>
-            <Input
-              id="p-comp"
-              value={form.comp}
-              onChange={(e) => setForm({ ...form, comp: e.target.value })}
-              placeholder="Range or expectations"
-            />
-          </div>
-        </section>
-
-
- <div className="flex flex-wrap items-center gap-3">
- <Button type="submit" className="min-h-11" disabled={save.isPending}>
- {save.isPending ? "Saving…" : "Save profile"}
- </Button>
- {dirty && !save.isPending && (
- <span className="text-xs text-muted-foreground">
- You have unsaved changes.
- </span>
- )}
- </div>
-
- </form>
- </main>
- );
+        {/* Links */}
+        <ProfileSectionCard
+          meta={meta("links")}
+          initial={initial.links}
+          autoOpen={openSection === "links"}
+          focusField={field ?? null}
+          summary={(v) =>
+            v.linkedin_url || v.portfolio_url ? (
+              <dl className="space-y-2">
+                <div>
+                  <dt className="text-xs text-muted-foreground">LinkedIn</dt>
+                  <dd className="break-all">{v.linkedin_url || "Not added yet."}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted-foreground">Portfolio or website</dt>
+                  <dd className="break-all">{v.portfolio_url || "Not added yet."}</dd>
+                </div>
+              </dl>
+            ) : null
+          }
+          fields={({ values, set }) => (
+            <div className="space-y-3">
+              <div>
+                <Label htmlFor="p-linkedin">LinkedIn URL</Label>
+                <Input
+                  id="p-linkedin"
+                  inputMode="url"
+                  value={values.linkedin_url}
+                  onChange={(e) => set({ linkedin_url: e.target.value })}
+                  placeholder="https://linkedin.com/in/…"
+                />
+              </div>
+              <div>
+                <Label htmlFor="p-portfolio">Portfolio / website URL</Label>
+                <Input
+                  id="p-portfolio"
+                  inputMode="url"
+                  value={values.portfolio_url}
+                  onChange={(e) => set({ portfolio_url: e.target.value })}
+                  placeholder="https://…"
+                />
+              </div>
+            </div>
+          )}
+          save={async (v) => {
+            const parsed = linksValues.safeParse(v);
+            if (!parsed.success)
+              return {
+                ok: false,
+                message: parsed.error.issues[0]?.message ?? "Check these links.",
+              };
+            return commit("links", parsed.data);
+          }}
+        />
+      </div>
+    </main>
+  );
 }
