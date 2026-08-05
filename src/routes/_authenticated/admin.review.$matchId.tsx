@@ -110,7 +110,7 @@ function ReviewScreen() {
     navigate({ to: "/admin/review/$matchId", params: { matchId: id } });
   };
 
-  async function run(action: "approve_for_client" | "hold" | "archive", label: string) {
+  async function run(action: "approve_for_client" | "hold", label: string) {
     if (busy) return;
     if (action === "approve_for_client" && approvalBlocked) {
       toast.error(`Missing evidence for: ${blockingLabels.join(", ")}`);
@@ -130,6 +130,24 @@ function ReviewScreen() {
     } finally {
       setBusy(null);
     }
+  }
+
+  // Rejections always carry a controlled reason; errors bubble to the dialog.
+  async function rejectNow(p: { reasonCode: string; detail?: string }) {
+    await decide({
+      data: {
+        match_id: matchId,
+        action: "archive",
+        reason_code: p.reasonCode,
+        reason: p.detail || note || undefined,
+      },
+    });
+    toast.success(`Rejected — ${m.candidate_profiles?.full_name ?? "candidate"}`);
+    qc.invalidateQueries({ queryKey: ["admin-work-queues"] });
+    qc.invalidateQueries({ queryKey: ["admin-review-queue-ids"] });
+    qc.invalidateQueries({ queryKey: ["admin-candidate", matchId] });
+    setNote("");
+    go(nextId);
   }
 
   // Keyboard shortcuts for the repetitive parts.
