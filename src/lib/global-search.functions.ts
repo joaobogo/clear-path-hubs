@@ -100,10 +100,12 @@ export const globalSearch = createServerFn({ method: "POST" })
     // Bounded per-group limits.
     const LIMIT = 6;
 
-    // Test/QA records are hidden unless the caller is staff AND asked for them.
-    const includeTest = scope === "admin" && data.includeTest === true;
+    // Test/QA records follow the one global staff preference; client scope
+    // never sees them, whatever the preference says.
     const { loadTestScope, excludeTestOrgs } = await import("./admin-test-scope.server");
-    const testScope = await loadTestScope(supabase, includeTest);
+    const testScope = await loadTestScope(supabase, scope === "admin" ? undefined : "never");
+    const includeTest = testScope.includeTest;
+
 
     // Early exit for client scope with no org access.
     if (scope === "client" && orgIds.length === 0) {
