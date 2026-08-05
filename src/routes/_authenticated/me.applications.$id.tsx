@@ -251,14 +251,38 @@ function TrackPage() {
           </p>
         )}
         {data.status === "Closed" ? (
-          <p className="mt-3 text-sm text-muted-foreground">
-            {data.role_closed
-              ? "The hiring team closed this role, so it is no longer being filled. That is a decision about the role, not about you."
-              : "A person reviewed this application and decided not to take it further for this role. It was not decided by an automated score."}{" "}
-            Your details stay with us for future roles for as long as you allow, and you can ask us
-            to delete them at any time.
-          </p>
+          /* A closed application without a reason reads as a verdict on the
+             person. The reason below is the recorded outcome only, stacked with
+             a route to open roles rather than a dismissible banner. */
+          <div className="mt-5 space-y-4 border-t pt-5">
+            <div className="space-y-1">
+              <h3 className="text-sm font-medium">Why this closed</h3>
+              <p className="text-sm">{data.closed_outcome?.line ?? CLOSED_REASON_UNRECORDED}</p>
+              {data.closed_outcome?.closedAt ? (
+                <p className="text-sm text-muted-foreground">
+                  Closed on{" "}
+                  {new Date(data.closed_outcome.closedAt).toLocaleDateString(undefined, {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                  .
+                </p>
+              ) : null}
+            </div>
+            <p className="text-sm text-muted-foreground">
+              This is a decision about the role, not an assessment of you. Your details stay with us
+              for future roles for as long as you allow, and you can ask us to delete them at any
+              time.
+            </p>
+            <Button asChild variant="outline" className="min-h-11 w-full sm:w-auto">
+              <Link to="/jobs" search={{ q: similarRolesQuery(data.role_title) }}>
+                See similar open roles
+              </Link>
+            </Button>
+          </div>
         ) : null}
+
 
         {data.can_withdraw ? (
           <div className="mt-4">
