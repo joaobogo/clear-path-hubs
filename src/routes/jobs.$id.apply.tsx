@@ -3,13 +3,16 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getPublicPosition } from "@/lib/jobs.functions";
 import { extractJobUuid } from "@/lib/marketing/job-slug";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { submitApplication } from "@/lib/apply.functions";
 import {
+  APPLY_STEPS,
   APPLY_STEP_LABELS,
   EFFORT_DEFAULT,
   applyEffortLine,
   applyEffortProvenance,
 } from "@/lib/jobs/apply-effort";
+
 
 
 import { ProcessState } from "@/components/ds/process-state";
@@ -35,7 +38,18 @@ import { FormShell } from "@/components/marketing/form-shell";
 import { TransparencyPanel } from "@/components/candidate/transparency-panel";
 
 export const Route = createFileRoute("/jobs/$id/apply")({
+  // The step lives in the URL so the browser back button walks back through
+  // the flow instead of leaving it — the component stays mounted, so nothing
+  // the candidate typed (or attached) is lost.
+  validateSearch: (search: Record<string, unknown>): { step?: number; q?: number } => {
+    const clamp = (raw: unknown, max: number) => {
+      const n = Number(raw);
+      return Number.isFinite(n) ? Math.min(max, Math.max(1, Math.trunc(n))) : 1;
+    };
+    return { step: clamp(search.step, APPLY_STEPS), q: clamp(search.q, 99) };
+  },
   loader: async ({ context, params }) => {
+
     const uuid = extractJobUuid(params.id);
     const data = await context.queryClient.ensureQueryData({
       queryKey: ["public-position", uuid],
@@ -86,7 +100,26 @@ function ApplyPage() {
   const draftKey = APPLY_DRAFT_KEY(id);
   const idemKey = APPLY_IDEMPOTENCY_KEY(id);
 
-  const [step, setStep] = useState(1);
+  const isMobile = useIsMobile();
+  const { step: stepParam, q: qParam } = Route.useSearch();
+  const step = stepParam ?? 1;
+  const qIndex = qParam ?? 1;
+  // One writer for both step and question cursor, so back/forward always land
+  // on a state the flow can render.
+  const goTo = useCallback(
+    (next: { step?: number; q?: number }, opts?: { replace?: boolean }) => {
+      void navigate({
+        to: "/jobs/$id/apply",
+        params: { id: rawId },
+        search: (prev: Record<string, unknown>) => ({ ...prev, ...next }),
+        replace: opts?.replace ?? false,
+        resetScroll: false,
+      });
+    },
+    [navigate, rawId],
+  );
+  const setStep = useCallback((n: number) => goTo({ step: n, q: 1 }), [goTo]);
+
   const [form, setForm] = useState({
     full_name: "",
     email: "",
@@ -119,6 +152,7 @@ function ApplyPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
   const submittingRef = useRef(false);
+  const stepHeadingRef = useRef<HTMLHeadingElement>(null);
   // When this form first became usable. The gap to a successful submit is the
   // only honest source for the time we quote to the next candidate.
   const startedAtRef = useRef<number>(Date.now());
@@ -274,6 +308,24 @@ function ApplyPage() {
     }
   }, [idemKey]);
 
+  /**
+   * Required-answer check for a subset of screening questions. Scoped so a
+   * single question can gate its own screen without dragging in the rest.
+   */
+  const questionIssues = (
+    qs: { id: string; required?: boolean | null }[],
+  ): Record<string, string> => {
+    const errs: Record<string, string> = {};
+    qs.forEach((q) => {
+      if (!q?.required) return;
+      const v = answers[q.id];
+      const empty =
+        v == null || (typeof v === "string" && v.trim() === "");
+      if (empty) errs[`q:${q.id}`] = "This question is required";
+    });
+    return errs;
+  };
+
   // Per-step validation used to gate Continue.
   const stepIssues = (n: number): Record<string, string> => {
     const errs: Record<string, string> = {};
@@ -299,33 +351,75 @@ function ApplyPage() {
       if (!url(form.linkedin_url)) errs.linkedin_url = "Enter a full link starting with https://";
       if (!url(form.website_url)) errs.website_url = "Enter a full link starting with https://";
     }
-    if (n === 3) {
-      pos!.questions.forEach((q) => {
-        if (!q.required) return;
-        const v = answers[q.id];
-        const empty =
-          v == null ||
-          (typeof v === "string" && v.trim() === "") ||
-          (Array.isArray(v) && v.length === 0);
-        if (empty) errs[`q:${q.id}`] = "This question is required";
-      });
-    }
+    if (n === 3) Object.assign(errs, questionIssues(pos!.questions));
     if (n === 4) {
       if (!consent) errs.consent_terms = "You must accept the terms to continue";
     }
     return errs;
   };
 
+  // On a phone the screening step is shown one question per screen, so the
+  // cursor has to advance before the step does.
+  const questionCount = pos?.questions.length ?? 0;
+  const paginateQuestions = isMobile && step === 3 && questionCount > 1;
+  const qCursor = Math.min(Math.max(1, qIndex), Math.max(1, questionCount));
+
   const goNext = () => {
+    if (paginateQuestions && qCursor < questionCount) {
+      // Only this question gates the next question. Later ones are not its
+      // problem.
+      const errs = questionIssues([pos!.questions[qCursor - 1]]);
+      setFieldErrors(errs);
+      if (Object.keys(errs).length > 0) return;
+      goTo({ q: qCursor + 1 });
+      return;
+    }
     const errs = stepIssues(step);
     setFieldErrors(errs);
     if (Object.keys(errs).length > 0) return;
-    setStep((s) => Math.min(5, s + 1));
+    setStep(Math.min(APPLY_STEPS, step + 1));
   };
   const goBack = () => {
     setFieldErrors({});
-    setStep((s) => Math.max(1, s - 1));
+    if (paginateQuestions && qCursor > 1) {
+      goTo({ q: qCursor - 1 });
+      return;
+    }
+    setStep(Math.max(1, step - 1));
   };
+
+  // A pasted or reloaded URL can point at a step whose inputs are gone — the
+  // CV is deliberately never stored. Drop back to the first step that still
+  // needs something rather than showing a review of nothing.
+  const clampedRef = useRef(false);
+  useEffect(() => {
+    if (clampedRef.current || signedIn === null || step === 1) return;
+    clampedRef.current = true;
+    for (let n = 1; n < step; n++) {
+      if (Object.keys(stepIssues(n)).length > 0) {
+        goTo({ step: n, q: 1 }, { replace: true });
+        return;
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signedIn, step]);
+
+  // Every step change moves focus to the new heading and announces it, so a
+  // screen reader user is told where they are instead of guessing.
+  const firstStepRender = useRef(true);
+  useEffect(() => {
+    if (firstStepRender.current) {
+      firstStepRender.current = false;
+      return;
+    }
+    stepHeadingRef.current?.focus();
+  }, [step, qCursor]);
+
+  const stepName = STEP_LABELS[Math.min(step, STEP_LABELS.length) - 1];
+  const stepAnnouncement = paginateQuestions
+    ? `Step ${step} of ${APPLY_STEPS}, ${stepName}. Question ${qCursor} of ${questionCount}.`
+    : `Step ${step} of ${APPLY_STEPS}, ${stepName}.`;
+
 
   const onSubmit = async () => {
     if (submittingRef.current) return;
@@ -504,7 +598,21 @@ function ApplyPage() {
               style={{ width: `${(step / STEP_LABELS.length) * 100}%` }}
             />
           </div>
-          <ol className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+          <div className="mt-2 flex items-baseline justify-between gap-3 text-sm">
+            <span className="font-medium">
+              Step {step} of {APPLY_STEPS} · {stepName}
+            </span>
+            {paginateQuestions && (
+              <span className="text-xs text-muted-foreground">
+                Question {qCursor} of {questionCount}
+              </span>
+            )}
+          </div>
+          {/* Announce the move, and only the move — the heading itself takes focus. */}
+          <p className="sr-only" aria-live="polite" data-testid="apply-step-announcement">
+            {stepAnnouncement}
+          </p>
+          <ol className="mt-3 hidden flex-wrap gap-x-4 gap-y-1 text-xs sm:flex">
             {STEP_LABELS.map((label, i) => {
               const n = i + 1;
               const done = n < step;
@@ -545,7 +653,17 @@ function ApplyPage() {
           </Alert>
         )}
 
-        <div className="mt-8 rounded-lg border bg-card p-5 md:p-6">
+        {Object.keys(fieldErrors).length > 0 && (
+          <Alert variant="destructive" className="mt-6" data-testid="apply-step-error">
+            <AlertTitle>This step needs a little more</AlertTitle>
+            <AlertDescription>
+              Check the highlighted fields below. Everything you have already entered is still
+              here — nothing was cleared.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        <div data-apply-form className="mt-8 rounded-lg border bg-card p-5 md:p-6">
           {step === 1 && (
             <div className="space-y-5" data-hydrated={signedIn === null ? "pending" : "ready"}>
 
@@ -587,7 +705,7 @@ function ApplyPage() {
 
 
               <div>
-                <h2 className="text-lg font-semibold">Your details</h2>
+                <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Your details</h2>
                 <p className="text-sm text-muted-foreground">
                   We'll use this to reach out about the role.
                 </p>
@@ -612,7 +730,7 @@ function ApplyPage() {
                   <Input
                     id="email"
                     type="email"
-                    autoComplete="email"
+                    autoComplete="email" inputMode="email"
                     data-field="email"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -626,7 +744,7 @@ function ApplyPage() {
                   <Input
                     id="phone"
                     type="tel"
-                    autoComplete="tel"
+                    autoComplete="tel" inputMode="tel"
                     data-field="phone"
                     placeholder="+1 555 123 4567"
                     value={form.phone}
@@ -749,7 +867,7 @@ function ApplyPage() {
           {step === 2 && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-lg font-semibold">Upload your CV</h2>
+                <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Upload your CV</h2>
                 <p className="text-sm text-muted-foreground">
                   PDF only, up to 10 MB. Unicode filenames welcome.
                 </p>
@@ -868,18 +986,25 @@ function ApplyPage() {
           {step === 3 && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-lg font-semibold">Screening questions</h2>
+                <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Screening questions</h2>
                 <p className="text-sm text-muted-foreground">
-                  {pos.questions.length === 0
+                  {questionCount === 0
                     ? "No screening questions for this role — you're all set."
-                    : `${pos.questions.length} short ${
-                        pos.questions.length === 1 ? "question" : "questions"
-                      } from the hiring team.`}
+                    : paginateQuestions
+                      ? `Question ${qCursor} of ${questionCount} from the hiring team.`
+                      : `${questionCount} short ${
+                          questionCount === 1 ? "question" : "questions"
+                        } from the hiring team.`}
                 </p>
               </div>
-              {pos.questions.length > 0 && (
+              {questionCount > 0 && (
                 <div className="space-y-5">
-                  {pos.questions.map((q) => {
+                  {/* One question per screen on a phone; the full set fits a
+                      desktop column without becoming a wall of fields. */}
+                  {(paginateQuestions
+                    ? [pos.questions[qCursor - 1]]
+                    : pos.questions
+                  ).map((q) => {
                     const err = fieldErrors[`q:${q.id}`];
                     const val = answers[q.id];
                     return (
@@ -942,7 +1067,7 @@ function ApplyPage() {
           {step === 4 && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-lg font-semibold">Consent & review</h2>
+                <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Consent &amp; review</h2>
                 <p className="text-sm text-muted-foreground">
                   Confirm the details below before submitting.
                 </p>
@@ -1081,7 +1206,7 @@ function ApplyPage() {
           {step === 5 && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-lg font-semibold">Ready to submit</h2>
+                <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Ready to submit</h2>
                 <p className="text-sm text-muted-foreground">
                   Submit your application for <span className="font-medium">{pos.title}</span> at{" "}
                   <span className="font-medium">{pos.organization_name}</span>. You'll receive a

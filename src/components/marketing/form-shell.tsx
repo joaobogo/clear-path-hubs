@@ -54,12 +54,15 @@ export function FormShell({
             <img src={brand.logos.primary} alt="TaaSFlow" width={116} height={28} className="h-7 w-auto max-w-none shrink-0" />
           </Link>
           {progress && (
-            <div className="hidden items-center gap-3 sm:flex" aria-live="polite">
-              <span className="text-xs font-medium text-[color:var(--brand-navy)]/80">
+            /* Visible on phones too: a candidate who cannot see how much is
+               left is the candidate who stops mid-way. */
+            <div className="flex min-w-0 items-center gap-2 sm:gap-3" aria-live="polite">
+              <span className="truncate text-xs font-medium text-[color:var(--brand-navy)]/80">
+
                 {progress.label ?? `Step ${progress.step} of ${progress.total}`}
               </span>
               <div
-                className="h-1.5 w-40 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/10"
+                className="h-1.5 w-16 shrink-0 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/10 sm:w-40"
                 role="progressbar"
                 aria-label={progress.label ?? `Step ${progress.step} of ${progress.total}`}
                 aria-valuetext={progress.label ?? `Step ${progress.step} of ${progress.total}`}
