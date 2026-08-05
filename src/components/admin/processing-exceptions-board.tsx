@@ -102,12 +102,16 @@ export function ProcessingExceptionsBoard({ className }: { className?: string })
   // Position grouping powers the "retry all failed for a position" action.
   const positionCounts = useMemo(() => {
     const map = new Map<string, number>();
-    for (const r of active) if (r.position_id) map.set(r.position_id, (map.get(r.position_id) ?? 0) + 1);
+    for (const r of active)
+      if (r.position_id) map.set(r.position_id, (map.get(r.position_id) ?? 0) + 1);
     return map;
   }, [active]);
 
   return (
-    <section className={`rounded-lg border bg-card ${className ?? ""}`} aria-label="Processing exceptions">
+    <section
+      className={`rounded-lg border bg-card ${className ?? ""}`}
+      aria-label="Processing exceptions"
+    >
       <header className="flex flex-wrap items-start justify-between gap-3 border-b px-4 py-3">
         <div className="min-w-0">
           <h2 className="text-sm font-semibold">Processing exceptions</h2>
@@ -183,12 +187,24 @@ export function ProcessingExceptionsBoard({ className }: { className?: string })
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b text-xs text-muted-foreground">
-                <th scope="col" className="px-3 py-2 text-left font-medium">Job</th>
-                <th scope="col" className="px-3 py-2 text-left font-medium">Candidate · Position</th>
-                <th scope="col" className="px-3 py-2 text-left font-medium">Why</th>
-                <th scope="col" className="px-3 py-2 text-right font-medium">Attempts</th>
-                <th scope="col" className="px-3 py-2 text-right font-medium">Age</th>
-                <th scope="col" className="px-3 py-2 text-right font-medium">Actions</th>
+                <th scope="col" className="px-3 py-2 text-left font-medium">
+                  Job
+                </th>
+                <th scope="col" className="px-3 py-2 text-left font-medium">
+                  Candidate · Position
+                </th>
+                <th scope="col" className="px-3 py-2 text-left font-medium">
+                  Why
+                </th>
+                <th scope="col" className="px-3 py-2 text-right font-medium">
+                  Attempts
+                </th>
+                <th scope="col" className="px-3 py-2 text-right font-medium">
+                  Age
+                </th>
+                <th scope="col" className="px-3 py-2 text-right font-medium">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y">

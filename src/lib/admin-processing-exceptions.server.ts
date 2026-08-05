@@ -185,14 +185,18 @@ export async function loadExceptionBoard(admin: Admin): Promise<ExceptionBoard> 
       completed_at: job.completed_at ?? null,
       age_minutes: minutesSince(job.created_at),
       reasons: permanently ? [] : classify(job),
-      retryable: !permanently && !!(match?.application_id ?? (job.entity_type === "application" ? job.entity_id : null)),
+      retryable:
+        !permanently &&
+        !!(match?.application_id ?? (job.entity_type === "application" ? job.entity_id : null)),
       permanently_failed: permanently,
       permanent_reason: permanently ? (job.error_message ?? null) : null,
       match_id: match?.id ?? null,
       candidate_name: profile?.full_name ?? null,
       position_id: position?.id ?? match?.position_id ?? null,
       position_title: position?.title ?? null,
-      organization_id: org ? (position?.organization_id ?? match?.organization_id ?? null) : (match?.organization_id ?? null),
+      organization_id: org
+        ? (position?.organization_id ?? match?.organization_id ?? null)
+        : (match?.organization_id ?? null),
       organization_name: org?.name ?? null,
       processing_state: match?.processing_state ?? null,
     };
@@ -244,7 +248,11 @@ export async function retryProcessingJob(
   const job = jobRes.data as Any;
   if (!job) throw new Error("Job not found");
   if (job.status === "cancelled" && job.error_code === PERMANENT_FAIL_CODE)
-    return { job_id: jobId, result: "skipped", detail: "Marked permanently failed — retry blocked." };
+    return {
+      job_id: jobId,
+      result: "skipped",
+      detail: "Marked permanently failed — retry blocked.",
+    };
   if (job.status === "running")
     return { job_id: jobId, result: "already_active", detail: "A worker is running this job now." };
 
