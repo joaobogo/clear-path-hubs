@@ -42,6 +42,8 @@ import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 
 import { RoleProgressTracker } from "@/components/client/role-progress-tracker";
 import { RoleDatedTimeline } from "@/components/client/role-dated-timeline";
+import { DeliveryCommitmentBlock } from "@/components/client/delivery-commitment";
+import { buildDeliveryCommitment } from "@/lib/delivery-commitment";
 import { RoleShortlist } from "@/components/client/role-shortlist";
 import { RoleLifecycleTimeline } from "@/components/client/role-lifecycle-timeline";
 import { getRoleLifecycle } from "@/lib/role-lifecycle/role-lifecycle.functions";

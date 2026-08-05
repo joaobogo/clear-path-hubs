@@ -1117,12 +1117,13 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     // Named recruiter for the delivery commitment block. Staff profiles are not
     // client-readable under RLS, so read just the name with elevated access.
     let commitmentContactName: string | null = null;
-    if (position.owner_user_id) {
+    const ownerUserId = (position as AnyRow).owner_user_id as string | null | undefined;
+    if (ownerUserId) {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const { data: owner } = await (supabaseAdmin as AnyRow)
         .from("profiles")
         .select("full_name")
-        .eq("auth_user_id", position.owner_user_id)
+        .eq("auth_user_id", ownerUserId)
         .maybeSingle();
       commitmentContactName = (owner?.full_name as string | null) ?? null;
     }
