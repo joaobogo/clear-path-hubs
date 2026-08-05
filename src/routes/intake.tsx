@@ -1020,6 +1020,266 @@ function ExpressIntakePage() {
           </div>
         </Section>
 
+        <Section id="section-brief" title="The brief" step={authed ? 4 : 5}>
+          <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+            These answers decide whether your first shortlist lands. Five minutes here saves a week of
+            back and forth — and your answers are saved as you type.
+          </p>
+
+          <Field
+            label="Why is this role open?"
+            error={errors.whyOpen}
+            required
+            hint="Growth, a replacement, a new function — and what changes once it is filled."
+          >
+            <Textarea
+              value={state.whyOpen}
+              onChange={(e) => set("whyOpen", e.target.value)}
+              rows={3}
+              placeholder="Our two clinical ops leads are covering three sites. This hire owns one site so they can stop firefighting."
+            />
+          </Field>
+          <Example>
+            "The last person left in March. Since then the team has had no one owning payer contracts,
+            and renewals are slipping."
+          </Example>
+
+          <Field
+            label="Must-haves"
+            error={errors.mustHaves}
+            required
+            hint="One per line. Only what you would reject an otherwise-great candidate for."
+          >
+            <Textarea
+              value={state.mustHaves}
+              onChange={(e) => set("mustHaves", e.target.value)}
+              rows={4}
+              placeholder={"5+ years in clinical operations\nHas run a site through a CQC inspection\nFluent written English"}
+            />
+          </Field>
+          <Example>
+            Must-have: "Has managed a P&amp;L above $2M." Not a must-have: "Knows our scheduling tool" —
+            that is trainable.
+          </Example>
+
+          <Field
+            label="Nice to have, or willing to train"
+            error={errors.trainable}
+            hint="One per line. Naming these widens the pool without lowering the bar."
+          >
+            <Textarea
+              value={state.trainable}
+              onChange={(e) => set("trainable", e.target.value)}
+              rows={3}
+              placeholder={"Our EHR system\nExperience with multi-site rollouts"}
+            />
+          </Field>
+
+          <Field
+            label="What rules someone out?"
+            error={errors.dealBreakers}
+            required
+            hint="Say it plainly, even if it feels obvious. This is the fastest way to stop wasting your time."
+          >
+            <Textarea
+              value={state.dealBreakers}
+              onChange={(e) => set("dealBreakers", e.target.value)}
+              rows={3}
+              placeholder="No agency-side-only backgrounds. No one who needs more than four weeks' notice."
+            />
+          </Field>
+          <Example>
+            "More than three jobs in two years", "cannot be on site Tuesdays", "no direct competitor
+            X" — all valid, all better said now than after four interviews.
+          </Example>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field
+              label="Where is the role based?"
+              error={errors.location}
+              required
+              hint="City and country, or the region candidates must live in."
+            >
+              <Input
+                value={state.location}
+                onChange={(e) => set("location", e.target.value)}
+                placeholder="Manchester, United Kingdom"
+              />
+            </Field>
+            <Field label="How does it work?" error={errors.workModel} required htmlFor="work-model">
+              <select
+                id="work-model"
+                value={state.workModel}
+                onChange={(e) => set("workModel", e.target.value as FormState["workModel"])}
+                className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                aria-invalid={Boolean(errors.workModel)}
+              >
+                <option value="">Choose one</option>
+                {WORK_MODELS.map((m) => (
+                  <option key={m} value={m}>
+                    {WORK_MODEL_LABELS[m]}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          </div>
+
+          {state.workModel && state.workModel !== "remote" && (
+            <Field
+              label="Days on site each week"
+              error={errors.onsiteDays}
+              required
+              hint="Candidates ask this first. A wrong guess costs you offers."
+            >
+              <Input
+                value={state.onsiteDays}
+                onChange={(e) => set("onsiteDays", e.target.value.replace(/[^\d]/g, ""))}
+                inputMode="numeric"
+                placeholder="3"
+              />
+            </Field>
+          )}
+
+          <div className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/3 p-4">
+            <p className="text-sm font-semibold">Compensation range</p>
+            <p className="text-sm text-[color:var(--brand-navy)]/75">
+              We never publish this. We use it to avoid sending you people you cannot hire.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-4">
+              <Field label="Currency" htmlFor="currency">
+                <select
+                  id="currency"
+                  value={state.currency}
+                  onChange={(e) => set("currency", e.target.value)}
+                  className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                >
+                  {COMP_CURRENCIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="From" error={errors.salaryMin} required>
+                <Input
+                  value={state.salaryMin}
+                  onChange={(e) => set("salaryMin", e.target.value.replace(/[^\d]/g, ""))}
+                  inputMode="numeric"
+                  placeholder="70000"
+                />
+              </Field>
+              <Field label="To" error={errors.salaryMax} required>
+                <Input
+                  value={state.salaryMax}
+                  onChange={(e) => set("salaryMax", e.target.value.replace(/[^\d]/g, ""))}
+                  inputMode="numeric"
+                  placeholder="85000"
+                />
+              </Field>
+              <Field label="Period" htmlFor="comp-period">
+                <select
+                  id="comp-period"
+                  value={state.compensationPeriod}
+                  onChange={(e) => set("compensationPeriod", e.target.value)}
+                  className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                >
+                  {COMP_PERIODS.map((p) => (
+                    <option key={p} value={p}>
+                      {COMP_PERIOD_LABELS[p]}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </div>
+            <Field
+              label="Anything else about the package"
+              error={errors.compensationNote}
+              hint="Bonus, equity, shift premium, or where you have flexibility."
+            >
+              <Input
+                value={state.compensationNote}
+                onChange={(e) => set("compensationNote", e.target.value)}
+                placeholder="10% bonus, can stretch to 90k for someone exceptional"
+              />
+            </Field>
+          </div>
+
+          <fieldset className="space-y-2">
+            <legend className="text-sm font-medium">
+              Work authorisation
+              <span className="ml-1 text-[color:var(--brand-navy)]/70" aria-hidden="true">
+                *
+              </span>
+            </legend>
+            {WORK_AUTHORIZATION_OPTIONS.map((opt) => (
+              <label
+                key={opt.value}
+                className="flex cursor-pointer items-start gap-3 rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3"
+              >
+                <input
+                  type="radio"
+                  name="work-authorization"
+                  value={opt.value}
+                  checked={state.workAuthorization === opt.value}
+                  onChange={() => set("workAuthorization", opt.value)}
+                  className="mt-1"
+                />
+                <span className="text-sm leading-relaxed">
+                  <span className="font-medium">{opt.label}</span>
+                  <span className="block text-xs text-[color:var(--brand-navy)]/75">{opt.hint}</span>
+                </span>
+              </label>
+            ))}
+            {errors.workAuthorization && (
+              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+                {errors.workAuthorization}
+              </p>
+            )}
+          </fieldset>
+
+          <Field
+            label="How you interview"
+            error={errors.interviewProcess}
+            required
+            hint="The stages and roughly how long each takes. Candidates drop out of processes they cannot see."
+          >
+            <Textarea
+              value={state.interviewProcess}
+              onChange={(e) => set("interviewProcess", e.target.value)}
+              rows={3}
+              placeholder={"1. 30 min with me\n2. 60 min panel with the site team\n3. Half-day on site, offer same week"}
+            />
+          </Field>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field
+              label="Who makes the final decision?"
+              error={errors.decisionMaker}
+              required
+              hint="Name and role. We keep the process moving through them."
+            >
+              <Input
+                value={state.decisionMaker}
+                onChange={(e) => set("decisionMaker", e.target.value)}
+                placeholder="Dana Okoro, Operations Director"
+              />
+            </Field>
+            <Field
+              label="Ideal start date"
+              error={errors.targetStartDate}
+              hint="Optional. We will tell you honestly if it is achievable."
+            >
+              <Input
+                type="date"
+                value={state.targetStartDate}
+                onChange={(e) => set("targetStartDate", e.target.value)}
+              />
+            </Field>
+          </div>
+        </Section>
+
+
+
         <Card className="border-[color:var(--brand-navy)]/12">
           <CardContent className="space-y-4 pt-6">
             <div className="flex items-center justify-between gap-3">
