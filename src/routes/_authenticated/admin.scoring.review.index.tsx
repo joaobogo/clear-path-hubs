@@ -1,10 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
-import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   getReviewQueueCounts,
-  listReviewQueue,
   REVIEW_QUEUES,
   REVIEW_SORTS,
   type ReviewQueueId,
@@ -12,9 +11,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import { ErrorState } from "@/components/ds";
-import { AlertTriangle, ArrowRight, Search, X } from "lucide-react";
+import { ReviewTriageList } from "@/components/admin/review-triage-list";
+import { Search, X } from "lucide-react";
 
 const QUEUE_ORDER = Object.keys(REVIEW_QUEUES) as ReviewQueueId[];
 
@@ -37,7 +35,8 @@ export const Route = createFileRoute("/_authenticated/admin/scoring/review/")({
       { name: "robots", content: "noindex" },
       {
         name: "description",
-        content: "Human quality control over parsing, evidence, eligibility and approval decisions.",
+        content:
+          "Human quality control over parsing, evidence, eligibility and approval decisions.",
       },
     ],
   }),
@@ -64,24 +63,6 @@ function ReviewCenter() {
     queryKey: ["review-queue-counts"],
     queryFn: () => getReviewQueueCounts(),
   });
-
-  const list = useQuery({
-    queryKey: ["review-queue", queue, search.q, sort, page],
-    queryFn: () =>
-      listReviewQueue({
-        data: {
-          queue,
-          q: search.q || undefined,
-          sort,
-          limit: PAGE_SIZE,
-          offset: (page - 1) * PAGE_SIZE,
-        },
-      }),
-  });
-
-  const rows = list.data?.rows ?? [];
-  const total = list.data?.total ?? 0;
-  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div className="space-y-6">
@@ -138,7 +119,11 @@ function ReviewCenter() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     navigate({
-                      search: (p: SearchState) => ({ ...p, q: (e.target as HTMLInputElement).value, page: 1 }),
+                      search: (p: SearchState) => ({
+                        ...p,
+                        q: (e.target as HTMLInputElement).value,
+                        page: 1,
+                      }),
                     });
                   }
                 }}
@@ -169,88 +154,16 @@ function ReviewCenter() {
             ) : null}
           </div>
 
-          <p className="text-xs text-muted-foreground">
-            {list.isError ? "Couldn't load" : list.isPending ? "Loading…" : `${total} in ${REVIEW_QUEUES[queue].label.toLowerCase()}`}
-          </p>
-
-          {list.isError ? (
-            <ErrorState
-              title="We couldn't load this queue"
-              description="The review queue didn't come back. Nothing is lost — try again."
-              onRetry={() => void list.refetch()}
-            />
-          ) : !list.isPending && rows.length === 0 ? (
-            <Card className="p-10 text-center text-sm text-muted-foreground">
-              Nothing waiting in this queue.
-            </Card>
-          ) : null}
-
-          <ul className="space-y-2">
-            {rows.map((r) => (
-              <li key={r.match_id}>
-                <Link
-                  to="/admin/scoring/review/$matchId"
-                  params={{ matchId: r.match_id }}
-                  search={{ queue, q: search.q, sort, page }}
-                  className="flex items-center gap-4 rounded-lg border bg-card px-4 py-3 transition hover:border-primary/40 hover:bg-muted/40"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">
-                      {r.full_name ?? "Unnamed candidate"}
-                    </p>
-                    <p className="truncate text-xs text-muted-foreground">
-                      {r.position_title ?? "—"} · {r.org_name ?? "—"}
-                    </p>
-                  </div>
-                  <div className="hidden shrink-0 items-center gap-3 text-xs text-muted-foreground sm:flex">
-                    {r.missing_critical_count > 0 ? (
-                      <span className="inline-flex items-center gap-1 text-amber-600">
-                        <AlertTriangle className="size-3.5" />
-                        {r.missing_critical_count} missing
-                      </span>
-                    ) : null}
-                    {r.contradictory_count > 0 ? (
-                      <span className="text-destructive">{r.contradictory_count} conflict</span>
-                    ) : null}
-                    <span>
-                      conf{" "}
-                      {r.evidence_confidence != null
-                        ? Number(r.evidence_confidence).toFixed(2)
-                        : "—"}
-                    </span>
-                    <Badge variant="secondary">
-                      {r.final_score ?? r.score ?? "—"}
-                    </Badge>
-                  </div>
-                  <ArrowRight className="size-4 shrink-0 text-muted-foreground" />
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          {pages > 1 ? (
-            <div className="flex items-center justify-between text-sm">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page <= 1}
-                onClick={() => navigate({ search: (p: SearchState) => ({ ...p, page: page - 1 }) })}
-              >
-                Previous
-              </Button>
-              <span className="text-xs text-muted-foreground">
-                Page {page} of {pages}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page >= pages}
-                onClick={() => navigate({ search: (p: SearchState) => ({ ...p, page: page + 1 }) })}
-              >
-                Next
-              </Button>
-            </div>
-          ) : null}
+          <ReviewTriageList
+            queue={queue}
+            q={search.q}
+            sort={sort}
+            page={page}
+            pageSize={PAGE_SIZE}
+            onPageChange={(next) =>
+              navigate({ search: (p: SearchState) => ({ ...p, page: next }) })
+            }
+          />
         </section>
       </div>
     </div>

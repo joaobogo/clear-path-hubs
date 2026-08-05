@@ -300,9 +300,7 @@ export function DecisionBacklogPanel({
                         <OfflineDecisionForm
                           busy={record.isPending}
                           onCancel={() => setOpenFor(null)}
-                          onSubmit={(values) =>
-                            record.mutate({ match_id: r.match_id, ...values })
-                          }
+                          onSubmit={(values) => record.mutate({ match_id: r.match_id, ...values })}
                         />
                       </td>
                     </tr>

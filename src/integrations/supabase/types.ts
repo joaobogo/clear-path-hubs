@@ -9770,6 +9770,88 @@ export type Database = {
           },
         ]
       }
+      scoring_review_claims: {
+        Row: {
+          candidate_match_id: string
+          claimed_at: string
+          reviewer_user_id: string
+        }
+        Insert: {
+          candidate_match_id: string
+          claimed_at?: string
+          reviewer_user_id: string
+        }
+        Update: {
+          candidate_match_id?: string
+          claimed_at?: string
+          reviewer_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scoring_review_claims_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: true
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scoring_review_claims_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: true
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scoring_review_claims_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: true
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scoring_review_claims_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: true
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scoring_review_claims_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: true
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scoring_review_claims_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: true
+            referencedRelation: "client_visible_candidates"
+            referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "scoring_review_claims_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: true
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "scoring_review_claims_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: true
+            referencedRelation: "v_scoring_review_queue"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "scoring_review_claims_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: true
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+        ]
+      }
       screening_questions: {
         Row: {
           answer_type: Database["public"]["Enums"]["answer_type"]

@@ -78,18 +78,18 @@ export async function loadDecisionBacklog(
   const matchRes = await matchQuery;
   if (matchRes.error) throw new Error(matchRes.error.message);
   const allMatches = (matchRes.data ?? []) as Array<Record<string, unknown>>;
-  const matches = allMatches.filter((m) => opts.includeTest || m['is_test_record'] !== true);
+  const matches = allMatches.filter((m) => opts.includeTest || m["is_test_record"] !== true);
   if (matches.length === 0) {
     return { rows: [], generated_at: new Date().toISOString() };
   }
 
-  const matchIds = matches.map((m) => String(m['id']));
-  const positionIds = Array.from(new Set(matches.map((m) => String(m['position_id']))));
-  const orgIds = Array.from(new Set(matches.map((m) => String(m['organization_id']))));
+  const matchIds = matches.map((m) => String(m["id"]));
+  const positionIds = Array.from(new Set(matches.map((m) => String(m["position_id"]))));
+  const orgIds = Array.from(new Set(matches.map((m) => String(m["organization_id"]))));
   const profileIds = Array.from(
     new Set(
       matches
-        .map((m) => m['candidate_profile_id'])
+        .map((m) => m["candidate_profile_id"])
         .filter((v): v is string => typeof v === "string" && v.length > 0),
     ),
   );
@@ -103,7 +103,9 @@ export async function loadDecisionBacklog(
       : Promise.resolve({ data: [], error: null }),
     a
       .from("notifications")
-      .select("recipient_user_id, audience, created_at, event_id, notification_events!inner(candidate_match_id)")
+      .select(
+        "recipient_user_id, audience, created_at, event_id, notification_events!inner(candidate_match_id)",
+      )
       .eq("audience", "client")
       .in("notification_events.candidate_match_id", matchIds),
     a
@@ -121,19 +123,19 @@ export async function loadDecisionBacklog(
 
   const decided = new Set(
     ((decRes.data ?? []) as Array<Record<string, unknown>>).map((d) =>
-      String(d['candidate_match_id']),
+      String(d["candidate_match_id"]),
     ),
   );
   const positions = new Map(
-    ((posRes.data ?? []) as Array<Record<string, unknown>>).map((p) => [String(p['id']), p]),
+    ((posRes.data ?? []) as Array<Record<string, unknown>>).map((p) => [String(p["id"]), p]),
   );
   const orgs = new Map(
-    ((orgRes.data ?? []) as Array<Record<string, unknown>>).map((o) => [String(o['id']), o]),
+    ((orgRes.data ?? []) as Array<Record<string, unknown>>).map((o) => [String(o["id"]), o]),
   );
   const candidateName = new Map(
     ((candRes.data ?? []) as Array<Record<string, unknown>>).map((c) => [
-      String(c['id']),
-      String(c['full_name'] ?? "Unnamed candidate"),
+      String(c["id"]),
+      String(c["full_name"] ?? "Unnamed candidate"),
     ]),
   );
 
@@ -143,20 +145,23 @@ export async function loadDecisionBacklog(
   const staffIds = Array.from(
     new Set(
       nudgeRows
-        .map((r) => r['actor_user_id'])
+        .map((r) => r["actor_user_id"])
         .filter((v): v is string => typeof v === "string" && v.length > 0),
     ),
   );
   const recipientIds = Array.from(
     new Set(
       notifRows
-        .map((r) => r['recipient_user_id'])
+        .map((r) => r["recipient_user_id"])
         .filter((v): v is string => typeof v === "string" && v.length > 0),
     ),
   );
   const peopleIds = Array.from(new Set([...staffIds, ...recipientIds]));
   const profRes = peopleIds.length
-    ? await a.from("profiles").select("auth_user_id, full_name, email").in("auth_user_id", peopleIds)
+    ? await a
+        .from("profiles")
+        .select("auth_user_id, full_name, email")
+        .in("auth_user_id", peopleIds)
     : { data: [], error: null };
   if ((profRes as { error?: { message: string } | null }).error) {
     throw new Error((profRes as { error: { message: string } }).error.message);
@@ -173,58 +178,58 @@ export async function loadDecisionBacklog(
 
   const notifiedByMatch = new Map<string, Array<{ name: string; notified_at: string }>>();
   for (const n of notifRows) {
-    const event = n['notification_events'] as Record<string, unknown> | null;
-    const matchId = event ? event['candidate_match_id'] : null;
+    const event = n["notification_events"] as Record<string, unknown> | null;
+    const matchId = event ? event["candidate_match_id"] : null;
     if (typeof matchId !== "string") continue;
-    const uid = n['recipient_user_id'];
+    const uid = n["recipient_user_id"];
     const list = notifiedByMatch.get(matchId) ?? [];
     const name = typeof uid === "string" ? (personName.get(uid) ?? "Client user") : "Client user";
     if (!list.some((x) => x.name === name)) {
-      list.push({ name, notified_at: String(n['created_at']) });
+      list.push({ name, notified_at: String(n["created_at"]) });
     }
     notifiedByMatch.set(matchId, list);
   }
 
   const nudgeByMatch = new Map<string, { at: string; by: string | null }>();
   for (const r of nudgeRows) {
-    const id = String(r['entity_id']);
+    const id = String(r["entity_id"]);
     if (nudgeByMatch.has(id)) continue; // ordered desc — latest wins
-    const actor = r['actor_user_id'];
+    const actor = r["actor_user_id"];
     nudgeByMatch.set(id, {
-      at: String(r['created_at']),
+      at: String(r["created_at"]),
       by: typeof actor === "string" ? (personName.get(actor) ?? "Unknown staff") : null,
     });
   }
 
   const rows: DecisionBacklogRow[] = [];
   for (const m of matches) {
-    const matchId = String(m['id']);
+    const matchId = String(m["id"]);
     if (decided.has(matchId)) continue;
-    const position = positions.get(String(m['position_id']));
-    const org = orgs.get(String(m['organization_id']));
+    const position = positions.get(String(m["position_id"]));
+    const org = orgs.get(String(m["organization_id"]));
     const isTest =
-      m['is_test_record'] === true ||
-      position?.['is_test_record'] === true ||
-      org?.['is_test_record'] === true;
+      m["is_test_record"] === true ||
+      position?.["is_test_record"] === true ||
+      org?.["is_test_record"] === true;
     if (isTest && !opts.includeTest) continue;
 
-    const submittedAt = String(m['delivered_at']);
+    const submittedAt = String(m["delivered_at"]);
     const nudge = nudgeByMatch.get(matchId) ?? null;
     const nudgeMs = nudge ? new Date(nudge.at).getTime() : null;
     const nextAllowedMs = nudgeMs === null ? null : nudgeMs + NUDGE_COOLDOWN_MS;
-    const profileId = m['candidate_profile_id'];
+    const profileId = m["candidate_profile_id"];
 
     rows.push({
       match_id: matchId,
-      organization_id: String(m['organization_id']),
-      client_name: String(org?.['name'] ?? "Unknown client"),
-      position_id: String(m['position_id']),
-      position_title: String(position?.['title'] ?? "Untitled position"),
+      organization_id: String(m["organization_id"]),
+      client_name: String(org?.["name"] ?? "Unknown client"),
+      position_id: String(m["position_id"]),
+      position_title: String(position?.["title"] ?? "Untitled position"),
       candidate_name:
         typeof profileId === "string"
           ? (candidateName.get(profileId) ?? "Unnamed candidate")
           : "Unnamed candidate",
-      stage: String(m['stage'] ?? "delivered"),
+      stage: String(m["stage"] ?? "delivered"),
       submitted_at: submittedAt,
       days_waiting: dayCount(new Date(submittedAt).getTime(), nowMs),
       notified: notifiedByMatch.get(matchId) ?? [],
@@ -236,7 +241,9 @@ export async function loadDecisionBacklog(
     });
   }
 
-  rows.sort((x, y) => y.days_waiting - x.days_waiting || x.client_name.localeCompare(y.client_name));
+  rows.sort(
+    (x, y) => y.days_waiting - x.days_waiting || x.client_name.localeCompare(y.client_name),
+  );
 
   return { rows, generated_at: new Date().toISOString() };
 }
@@ -292,10 +299,10 @@ export async function sendDecisionNudge(
   await emitEventFromServer({
     event: "approval_needed",
     scope: `decision_nudge:${args.matchId}:${sentAt}`,
-    organization_id: String(match['organization_id']),
-    position_id: String(match['position_id']),
+    organization_id: String(match["organization_id"]),
+    position_id: String(match["position_id"]),
     candidate_match_id: args.matchId,
-    candidate_profile_id: (match['candidate_profile_id'] as string) ?? null,
+    candidate_profile_id: (match["candidate_profile_id"] as string) ?? null,
     actor_user_id: args.actorUserId,
     link_path: "/client/candidates",
     payload: { reason: "decision_backlog_nudge", note: args.note?.trim() || null },
@@ -303,7 +310,7 @@ export async function sendDecisionNudge(
 
   const { error: insErr } = await a.from("audit_events").insert({
     actor_user_id: args.actorUserId,
-    organization_id: match['organization_id'],
+    organization_id: match["organization_id"],
     entity_type: DECISION_ENTITY,
     entity_id: args.matchId,
     action: NUDGE_ACTION,
@@ -334,10 +341,10 @@ export async function recordOfflineDecision(
 
   const { error } = await a.from("client_decisions").insert({
     candidate_match_id: args.matchId,
-    organization_id: match['organization_id'],
+    organization_id: match["organization_id"],
     decision: args.decision,
     feedback: args.note,
-    from_stage: (match['stage'] as string) ?? null,
+    from_stage: (match["stage"] as string) ?? null,
     actor_user_id: args.actorUserId,
     details: {
       recorded_by_staff: true,
@@ -350,7 +357,7 @@ export async function recordOfflineDecision(
 
   const { error: insErr } = await a.from("audit_events").insert({
     actor_user_id: args.actorUserId,
-    organization_id: match['organization_id'],
+    organization_id: match["organization_id"],
     entity_type: DECISION_ENTITY,
     entity_id: args.matchId,
     action: OFFLINE_DECISION_ACTION,
