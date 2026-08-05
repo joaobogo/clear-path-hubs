@@ -98,7 +98,7 @@ export const respondToInterview = createServerFn({ method: "POST" })
     const { data: iv } = await context.supabase
       .from("interviews")
       .select(
-        "id, organization_id, candidate_match_id, status, proposed_times, availability_expires_at",
+        "id, organization_id, candidate_match_id, status, proposed_times, availability_expires_at, admin_coordination_required",
       )
       .eq("id", data.interviewId)
       .maybeSingle();
@@ -125,15 +125,33 @@ export const respondToInterview = createServerFn({ method: "POST" })
       if (new Date(data.preferredTime).getTime() < Date.now()) throw new Error("slot_in_past");
     }
 
+    // Accepting a slot releases the others: the accepted time becomes the only
+    // one still held. When the organisation coordinates manually the time is
+    // held rather than confirmed, so the candidate is never shown a booking
+    // that has not actually been made.
+    const accepting = data.response === "accepted" && Boolean(data.preferredTime);
+    const coordinationRequired = Boolean((iv as AnyRow).admin_coordination_required);
+    const now = new Date().toISOString();
+
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
       .from("interviews")
       .update({
         candidate_response: data.response,
-        candidate_response_at: new Date().toISOString(),
+        candidate_response_at: now,
         candidate_selected_time: data.preferredTime ?? null,
         candidate_note: data.note ?? null,
-        status: (iv as AnyRow).status === "requested" ? "scheduling" : (iv as AnyRow).status,
+        ...(accepting
+          ? {
+              proposed_times: [data.preferredTime] as never,
+              scheduled_at: data.preferredTime as never,
+              ...(coordinationRequired
+                ? { status: "scheduling" as never }
+                : { status: "scheduled" as never, confirmed_at: now }),
+            }
+          : {
+              status: (iv as AnyRow).status === "requested" ? "scheduling" : (iv as AnyRow).status,
+            }),
       })
       .eq("id", data.interviewId);
 
@@ -151,6 +169,7 @@ export const respondToInterview = createServerFn({ method: "POST" })
     } catch (e) {
       console.error("[respondToInterview] emit failed", e);
     }
+
     return { ok: true };
   });
 
