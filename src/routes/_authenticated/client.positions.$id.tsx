@@ -655,6 +655,15 @@ function PositionDetailPage() {
  firstShortlistExpectedAt={data.first_shortlist_expected_at}
  />
 
+ {/* Same stored delivery commitment the client saw on confirmation */}
+ <DeliveryCommitmentBlock
+ commitment={buildDeliveryCommitment({
+ commitment: data.commitment,
+ positionId: id,
+ contactName: data.commitment_contact_name,
+ })}
+ />
+
    {/* 5b. Role setup timeline + search channels — evidence-backed */}
   {launch && <RoleLaunchPanel launch={launch} />}
 
