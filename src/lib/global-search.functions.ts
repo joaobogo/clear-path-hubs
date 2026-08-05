@@ -177,11 +177,12 @@ export const globalSearch = createServerFn({ method: "POST" })
     {
       // Two-step: find matching candidate_profile ids, then look up matches
       // scoped correctly. Keeps embedding simple and RLS-friendly.
-      const { data: profiles } = await supabase
+      const { data: profiles, error: pErr } = await supabase
         .from("candidate_profiles")
         .select("id, full_name, email, headline")
         .or(`full_name.ilike.${like},email.ilike.${like},headline.ilike.${like}`)
         .limit(20);
+      if (pErr) throw new Error(pErr.message);
       const profileIds = ((profiles as AnyRow[]) ?? []).map((p) => p.id);
       const profileById = new Map<string, AnyRow>(
         ((profiles as AnyRow[]) ?? []).map((p) => [p.id, p]),
@@ -190,15 +191,18 @@ export const globalSearch = createServerFn({ method: "POST" })
         let mq = supabase
           .from("candidate_matches")
           .select(
-            "id, candidate_profile_id, position_id, organization_id, client_visibility, positions(title), organizations(name)",
+            "id, candidate_profile_id, position_id, organization_id, client_visibility, stage, positions(title), organizations(name)",
           )
           .in("candidate_profile_id", profileIds)
           .order("updated_at", { ascending: false })
           .limit(LIMIT * 2);
         if (scope === "client") {
           mq = mq.in("organization_id", orgIds).eq("client_visibility", "visible");
+        } else {
+          mq = excludeTestOrgs(mq, testScope);
         }
-        const { data: matches } = await mq;
+        const { data: matches, error } = await mq;
+        if (error) throw new Error(error.message);
         const seen = new Set<string>();
         const list: SearchResult[] = [];
         for (const m of ((matches as AnyRow[]) ?? [])) {
@@ -208,12 +212,14 @@ export const globalSearch = createServerFn({ method: "POST" })
           const prof = profileById.get(m.candidate_profile_id);
           const label = prof?.full_name || prof?.email || "Candidate";
           const context = [m.positions?.title, m.organizations?.name].filter(Boolean).join(" · ");
+          const state = m.stage ? String(m.stage).replace(/_/g, " ") : undefined;
           if (scope === "admin") {
             list.push({
               type: "candidate",
               id: m.id,
               label,
               context,
+              state,
               href: `/admin/candidates/${m.id}`,
             });
           } else {
@@ -222,6 +228,7 @@ export const globalSearch = createServerFn({ method: "POST" })
               id: m.id,
               label,
               context,
+              state,
               href: `/client/candidates/${m.id}`,
               search: { org: m.organization_id },
             });
@@ -230,6 +237,43 @@ export const globalSearch = createServerFn({ method: "POST" })
         groups.candidates = list;
       }
     }
+
+    // Intakes — admin only. Company or role title, with lead/conversion state.
+    if (scope === "admin") {
+      let iq = supabase
+        .from("intake_submissions")
+        .select(
+          "id, company_name, role_title, status, lead_status, position_id, organization_id, created_at",
+        )
+        .or(`company_name.ilike.${like},role_title.ilike.${like},primary_email.ilike.${like}`)
+        .order("created_at", { ascending: false })
+        .limit(LIMIT);
+      if (testScope.orgIds.length) {
+        // Keep intakes with no org yet; drop the ones tied to a test org.
+        iq = iq.or(
+          `organization_id.is.null,organization_id.not.in.(${testScope.orgIds.join(",")})`,
+        );
+      }
+      const { data: intakes, error } = await iq;
+      if (error) throw new Error(error.message);
+      groups.intakes = ((intakes as AnyRow[]) ?? []).map((i) => ({
+        type: "intake" as const,
+        id: i.id,
+        label: i.role_title || i.company_name || "Intake",
+        context: [i.company_name, new Date(i.created_at).toLocaleDateString()]
+          .filter(Boolean)
+          .join(" · "),
+        state: [
+          i.position_id ? "converted" : "not converted",
+          i.lead_status && i.lead_status !== "open" ? i.lead_status : i.status,
+        ]
+          .filter(Boolean)
+          .join(" · ")
+          .replace(/_/g, " "),
+        href: "/admin/intake",
+      }));
+    }
+
 
     // Messages — body search. Client scope filtered by thread_id in orgIds.
     {
