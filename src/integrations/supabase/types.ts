@@ -6673,6 +6673,39 @@ export type Database = {
           },
         ]
       }
+      notification_suppressions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          email: string
+          id: string
+          reason: string | null
+          released_at: string | null
+          released_by: string | null
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          email: string
+          id?: string
+          reason?: string | null
+          released_at?: string | null
+          released_by?: string | null
+          source?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          id?: string
+          reason?: string | null
+          released_at?: string | null
+          released_by?: string | null
+          source?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           audience: Database["public"]["Enums"]["notification_audience"]

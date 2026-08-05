@@ -11,6 +11,8 @@
 //    `suppressed / email_not_configured` instead of pretending to send.
 
 import type { EventType } from "./events";
+import { isSuppressed } from "./notification-suppression.server";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Admin = any;
@@ -175,11 +177,18 @@ export async function dispatchEmails(
       errorMessage = "Recipient preference or unsubscribe applies to this email.";
     } else {
       address = await recipientEmail(admin, n.recipient_user_id);
+      const blocked = address ? await isSuppressed(admin, address) : false;
       if (!address) {
         status = "failed";
         errorCode = "no_recipient_address";
         errorMessage = "No email address on file for this user.";
+      } else if (blocked) {
+        status = "suppressed";
+        errorCode = "recipient_suppressed";
+        errorMessage =
+          "This address is on the suppression list, so no email was sent. The in-app notification was still delivered.";
       } else if (!cfg.configured) {
+
         status = "suppressed";
         errorCode = cfg.reason;
         errorMessage =
@@ -272,11 +281,21 @@ async function sendViaProvider(args: {
 export async function retryDelivery(admin: Admin, deliveryId: string) {
   const { data: delivery } = await admin
     .from("notification_deliveries")
-    .select("id, notification_id, channel, attempt_count")
+    .select("id, notification_id, channel, attempt_count, status")
     .eq("id", deliveryId)
     .maybeSingle();
   if (!delivery) throw new Error("delivery_not_found");
   if (delivery.channel !== "email") throw new Error("channel_not_retryable");
+  // Never re-send something that already left successfully.
+  if (delivery.status === "delivered" || delivery.status === "provider_accepted") {
+    return {
+      notificationId: delivery.notification_id as string,
+      status: delivery.status as "delivered" | "provider_accepted",
+      errorCode: "already_sent",
+      errorMessage: "This delivery already succeeded, so nothing was re-sent.",
+    };
+  }
+
 
   const { data: n } = await admin
     .from("notifications")

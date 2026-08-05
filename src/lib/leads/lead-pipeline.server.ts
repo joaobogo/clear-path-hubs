@@ -86,7 +86,15 @@ async function sendEmail(event: NormalizedLeadEvent, recipients: string[]) {
     };
 
     const failures: string[] = [];
+    // Suppression is enforced before any send attempt, including retries.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { suppressedAmong } = await import("@/lib/notification-suppression.server");
+    const suppressed = await suppressedAmong(supabaseAdmin, recipients);
     for (const to of recipients) {
+      if (suppressed.has(to.trim().toLowerCase())) {
+        failures.push(`${to}: recipient_suppressed`);
+        continue;
+      }
       try {
         const res = await sendTemplateEmail("internal-lead-alert", to, {
           idempotencyKey: `lead-alert:${event.idempotencyKey}:${to}`,
@@ -98,6 +106,7 @@ async function sendEmail(event: NormalizedLeadEvent, recipients: string[]) {
         failures.push(`${to}: ${err instanceof Error ? err.message.slice(0, 160) : "error"}`);
       }
     }
+
     return {
       ok: failures.length < recipients.length,
       detail: failures.length > 0 ? failures.join("; ").slice(0, 500) : null,
