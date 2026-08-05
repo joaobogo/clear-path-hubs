@@ -6,6 +6,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { computePendingAction } from "@/lib/candidate/pending-action";
 import { buildCandidateTimeline } from "@/lib/candidate/timeline";
+import { buildClosedOutcome } from "@/lib/candidate/closed-outcome";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -196,7 +197,7 @@ export const getMyApplication = createServerFn({ method: "GET" })
       .select(
         `id, position_id, status, applied_at, updated_at, withdrawn_at, candidate_profile_id,
          cover_letter, portfolio_url, cv_file_id,
-         positions:position_id ( id, title, description, status, organization_id, employment_type, work_model, location, organizations:organization_id ( id, name ) ),
+         positions:position_id ( id, title, description, status, closure_reason, closed_at, organization_id, employment_type, work_model, location, organizations:organization_id ( id, name ) ),
          candidate_matches ( id, stage, client_visibility, updated_at,
            interviews ( id, status, scheduled_at, duration_minutes, interview_type, location, meeting_url, timezone, requested_at, cancelled_at ) )`,
       )
@@ -288,7 +289,27 @@ export const getMyApplication = createServerFn({ method: "GET" })
       withdrawnAt: (a.withdrawn_at as string | null) ?? null,
     });
 
+    // Closed applications get a recorded reason or a single honest sentence.
+    // The decision date comes from the stored "not moving forward" row, the
+    // role's recorded closure, or the candidate's own withdrawal — never guessed.
+    const notMovingForwardAt =
+      [...stageHistory].reverse().find((h) => h.to_stage === "not_moving_forward")?.created_at ??
+      null;
+    const closedOutcome =
+      status === "Closed"
+        ? buildClosedOutcome({
+            withdrawnAt: (a.withdrawn_at as string | null) ?? null,
+            positionClosureReason: (pos.closure_reason as string | null) ?? null,
+            positionClosedAt: (pos.closed_at as string | null) ?? null,
+            notMovingForward:
+              matches.some((m: AnyRow) => m.stage === "not_moving_forward") ||
+              a.status === "rejected",
+            notMovingForwardAt,
+          })
+        : null;
+
     return {
+
       id: a.id,
       role_title: pos.title ?? "Role",
       role_description: pos.description ?? "",
@@ -322,6 +343,8 @@ export const getMyApplication = createServerFn({ method: "GET" })
       info_requests: infoRequests,
       interviews,
       events,
+      closed_outcome: closedOutcome,
+
     };
   });
 
