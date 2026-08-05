@@ -1031,6 +1031,14 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
         offers: stageCounts.offer,
         not_moving_forward: stageCounts.not_moving_forward,
         pipeline_line: pipelineLine,
+        client_status: computeClientRoleStatus({
+          status: String(position.status),
+          hires: stageCounts.hired,
+          offers: stageCounts.offer,
+          interviewing: stageCounts.interview_process,
+          shortlisted: stageCounts.shortlisted,
+          delivered: stageCounts.delivered,
+        }),
       },
       progress: computeRoleProgress({
         status: String(position.status),
