@@ -7,6 +7,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
 import { computeRoleLaunchState } from "@/lib/role-launch.server";
+import { DECLINE_REASONS } from "@/lib/client-decision-reasons";
 
 
 import {
@@ -1437,6 +1438,10 @@ const REASON_REQUIRED: ReadonlySet<string> = new Set([
   "hold",
 ]);
 
+const CLIENT_DECLINE_CODES: ReadonlySet<string> = new Set(
+  DECLINE_REASONS.map((r) => r.code),
+);
+
 export const clientAction = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(
@@ -1465,6 +1470,19 @@ export const clientAction = createServerFn({ method: "POST" })
               code: z.ZodIssueCode.custom,
               path: ["reasonCode"],
               message: "A reason is required for this action.",
+            });
+          }
+          // Declines must use the shared rejection vocabulary so reason counts
+          // reconcile across the client and admin surfaces.
+          if (
+            v.action === "not_moving_forward" &&
+            v.reasonCode &&
+            !CLIENT_DECLINE_CODES.has(v.reasonCode)
+          ) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ["reasonCode"],
+              message: "Pick a reason from the list.",
             });
           }
           if (v.reasonCode === "other" && !(v.feedback ?? "").trim()) {

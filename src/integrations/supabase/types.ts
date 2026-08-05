@@ -9270,7 +9270,9 @@ export type Database = {
           decision_type: Database["public"]["Enums"]["score_decision_type"]
           id: string
           reason: string | null
+          reason_code: string | null
           score_run_id: string
+          stage_at_decision: string | null
         }
         Insert: {
           actor_user_id?: string | null
@@ -9280,7 +9282,9 @@ export type Database = {
           decision_type: Database["public"]["Enums"]["score_decision_type"]
           id?: string
           reason?: string | null
+          reason_code?: string | null
           score_run_id: string
+          stage_at_decision?: string | null
         }
         Update: {
           actor_user_id?: string | null
@@ -9290,7 +9294,9 @@ export type Database = {
           decision_type?: Database["public"]["Enums"]["score_decision_type"]
           id?: string
           reason?: string | null
+          reason_code?: string | null
           score_run_id?: string
+          stage_at_decision?: string | null
         }
         Relationships: [
           {
@@ -13541,6 +13547,21 @@ export type Database = {
           organization_name: string | null
           portfolio_org_id: string | null
           region: string | null
+        }
+        Relationships: []
+      }
+      v_rejection_decisions: {
+        Row: {
+          actor_user_id: string | null
+          created_at: string | null
+          decision_id: string | null
+          detail: string | null
+          match_id: string | null
+          organization_id: string | null
+          position_id: string | null
+          reason_code: string | null
+          stage_at_decision: string | null
+          surface: string | null
         }
         Relationships: []
       }

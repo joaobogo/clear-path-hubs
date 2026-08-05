@@ -69,6 +69,7 @@ const listInput = z.object({
   critical: z.string().optional(), // flagged | clear
   country: z.string().optional(),
   source: z.string().optional(),
+  rejection_reason: z.string().max(64).optional(),
   date_from: z.string().optional(),
   date_to: z.string().optional(),
   sort: z.enum(CANDIDATE_SORTS).optional(),
@@ -103,10 +104,24 @@ export const searchCandidateIndex = createServerFn({ method: "POST" })
 
     let q = s.from("v_admin_candidate_index").select("*", { count: "exact" });
 
+    if (data.rejection_reason) {
+      // Reason lives on the decision rows, not on the match — resolve the ids
+      // first so the filter can never silently return an unfiltered page.
+      const { data: decisions, error: decisionError } = await s
+        .from("v_rejection_decisions")
+        .select("match_id")
+        .eq("reason_code", data.rejection_reason)
+        .limit(5000);
+      if (decisionError) throw new Error(decisionError.message);
+      const ids = [...new Set(((decisions ?? []) as AnyRow[]).map((r) => r.match_id as string))];
+      if (ids.length === 0) return { rows: [], total: 0, limit, offset };
+      q = q.in("match_id", ids);
+    }
     if (data.q) {
       const needle = data.q.trim().toLowerCase().replace(/[%,()]/g, " ");
       if (needle) q = q.ilike("search_text", `%${needle}%`);
     }
+
     if (data.organization_id) q = q.eq("organization_id", data.organization_id);
     if (data.position_id) q = q.eq("position_id", data.position_id);
     if (data.stage) q = q.eq("stage", data.stage);

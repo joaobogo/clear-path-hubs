@@ -20,6 +20,7 @@ import {
   type ScreeningAnswer,
 } from "@/lib/scoring-engine.server";
 import { executeScoring, assertPublishGate } from "@/lib/scoring-service.server";
+import { ADMIN_REJECTION_REASONS } from "@/lib/client-decision-reasons";
 
 type State =
   | "queued"
@@ -587,12 +588,35 @@ export const replaceCv = createServerFn({ method: "POST" })
     return { ok: true as const, state: "queued" as State, trace_id, file_id: fileRow.id };
   });
 
-const decisionInput = z.object({
-  match_id: z.string().uuid(),
-  action: z.enum(["approve_for_client", "hold", "archive", "manual_override"]),
-  approved_score: z.number().min(0).max(100).optional(),
-  reason: z.string().max(1000).optional(),
-});
+const ADMIN_REJECT_CODES = new Set(ADMIN_REJECTION_REASONS.map((r) => r.code));
+
+const decisionInput = z
+  .object({
+    match_id: z.string().uuid(),
+    action: z.enum(["approve_for_client", "hold", "archive", "manual_override"]),
+    approved_score: z.number().min(0).max(100).optional(),
+    reason: z.string().max(1000).optional(),
+    reason_code: z.string().max(64).optional(),
+  })
+  .superRefine((v, ctx) => {
+    // A rejection can never be saved without attribution to a controlled reason.
+    if (v.action !== "archive") return;
+    if (!v.reason_code || !ADMIN_REJECT_CODES.has(v.reason_code)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["reason_code"],
+        message: "A rejection reason is required.",
+      });
+      return;
+    }
+    if (v.reason_code === "other" && !(v.reason ?? "").trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["reason"],
+        message: "Add a short explanation for 'Other'.",
+      });
+    }
+  });
 
 export const applyReviewDecision = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -803,6 +827,10 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
       candidate_match_id: data.match_id,
       score_run_id: runIdForDecision,
       decision_type: "reject",
+      // Holds are parked under the reserved `hold` code so rejection reporting
+      // never counts them as rejections.
+      reason_code: data.action === "hold" ? "hold" : (data.reason_code ?? null),
+      stage_at_decision: (match.stage as string) ?? null,
       reason: (data.action === "hold" ? "HOLD: " : "ARCHIVE: ") + (data.reason ?? ""),
       actor_user_id: context.userId,
     });
