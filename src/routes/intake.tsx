@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import * as React from "react";
 import { useEffect, useId, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -104,8 +105,18 @@ import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { Check, CheckCircle2, Eye, EyeOff, FileText, Loader2, Upload, X } from "lucide-react";
 import { IntakeReviewPanel } from "@/components/intake/review-panel";
 import { buildIntakeReview } from "@/lib/intake-review";
+import { CARRY_NOTICE, type CarryForward } from "@/lib/intake-carry";
+import { getCompanyCarryForward } from "@/lib/intake-carry.functions";
 
 export const Route = createFileRoute("/intake")({
+  /**
+   * ?carry=<intake id> or ?carry=org starts a second role from the company
+   * profile instead of a blank form. Anything else is ignored.
+   */
+  validateSearch: (search: Record<string, unknown>): { carry?: string } => {
+    const carry = typeof search["carry"] === "string" ? (search["carry"] as string).trim() : "";
+    return carry ? { carry } : {};
+  },
   head: () => ({
     meta: [
       { title: "Start your hiring pilot — TaaSFlow" },
@@ -277,6 +288,34 @@ function withRequirements(patch: Partial<FormState>): Partial<FormState> {
   return rebuilt.length > 0 ? { ...patch, requirements: rebuilt } : patch;
 }
 
+/**
+ * Company defaults for a role started from a submission reference. Public and
+ * deliberately contact-free; the signed-in path adds the contact details.
+ */
+async function fetchCarryByIntakeId(intakeId: string): Promise<CarryForward | null> {
+  try {
+    const res = await fetch(`/api/public/intake-carry/${intakeId}`, { headers: { accept: "application/json" } });
+    if (!res.ok) return null;
+    const json = (await res.json()) as { ok?: boolean } & Partial<CarryForward>;
+    if (!json.ok || !json.values || !json.carried) return null;
+    return { companyName: json.companyName ?? null, values: json.values, carried: json.carried };
+  } catch {
+    return null;
+  }
+}
+
+/** Later sources only fill gaps — never overwrite an answer already carried. */
+function mergeCarry(base: CarryForward | null, extra: CarryForward | null): CarryForward | null {
+  if (!base) return extra;
+  if (!extra) return base;
+  const values = { ...extra.values, ...base.values };
+  return {
+    companyName: base.companyName ?? extra.companyName,
+    values,
+    carried: Object.keys(values) as CarryForward["carried"],
+  };
+}
+
 function ExpressIntakePage() {
   const navigate = useNavigate();
   const [state, setState] = useState<FormState>(EMPTY);
@@ -317,6 +356,13 @@ function ExpressIntakePage() {
   const suggestedForRef = useRef<string>("");
   const lastIntentRef = useRef<"pay" | "call">("pay");
   const hydratedRef = useRef(false);
+  const { carry: carryParam } = Route.useSearch();
+  const loadCompanyCarry = useServerFn(getCompanyCarryForward);
+  // The answers that arrived from the company profile, so each one can say so
+  // — and stop saying so the moment the client edits it for this role.
+  const [carriedFields, setCarriedFields] = useState<Set<string>>(() => new Set());
+  const [carryCompany, setCarryCompany] = useState<string | null>(null);
+  const isCarried = (field: string) => carriedFields.has(field);
 
   const currentStep = INTAKE_STEPS[stepIndex];
   const step = stepIndex + 1;
@@ -722,9 +768,23 @@ function ExpressIntakePage() {
     }));
   };
 
+  /**
+   * Carried answers land as ordinary editable values. They are marked as
+   * inherited so the client can see what to check, and they never write back to
+   * the company profile — role two edits stay in role two.
+   */
+  const applyCarry = (carry: CarryForward | null) => {
+    if (!carry || carry.carried.length === 0) return;
+    setState((s) => ({ ...s, ...(carry.values as Partial<FormState>) }));
+    setCarriedFields(new Set<string>(carry.carried as unknown as string[]));
+    setCarryCompany(carry.companyName);
+  };
+
   useEffect(() => {
     try {
-      const existingIdem = localStorage.getItem(EXPRESS_IDEMPOTENCY_KEY);
+      // A new role must never reuse the previous role's idempotency key, or the
+      // server would replay the first submission instead of creating a second.
+      const existingIdem = carryParam ? null : localStorage.getItem(EXPRESS_IDEMPOTENCY_KEY);
       idem.current = existingIdem || newIdempotencyKey();
       localStorage.setItem(EXPRESS_IDEMPOTENCY_KEY, idem.current);
     } catch {
@@ -765,6 +825,31 @@ function ExpressIntakePage() {
         }
       } catch {
         /* anonymous visitor — normal path */
+      }
+
+      if (carryParam) {
+        // Starting another role: begin from the company profile, not from the
+        // draft of the role that was just submitted.
+        try {
+          let carry: CarryForward | null =
+            carryParam === "org" ? null : await fetchCarryByIntakeId(carryParam);
+          if (signedIn) {
+            try {
+              carry = mergeCarry(carry, await loadCompanyCarry());
+            } catch {
+              /* company lookup unavailable — carried company fields still apply */
+            }
+          }
+          if (!cancelled) applyCarry(carry);
+        } catch {
+          /* nothing carried — the client fills the form as usual */
+        } finally {
+          if (!cancelled) {
+            setDraftPhase("ready");
+            hydratedRef.current = true;
+          }
+        }
+        return;
       }
 
       try {
@@ -1040,6 +1125,12 @@ function ExpressIntakePage() {
   const setStages = (next: InterviewStage[]) => {
     setState((s) => ({ ...s, interviewStages: next }));
     setErrors((e) => ({ ...e, interviewStages: "" }));
+    setCarriedFields((prev) => {
+      if (!prev.has("interviewStages")) return prev;
+      const nextSet = new Set(prev);
+      nextSet.delete("interviewStages");
+      return nextSet;
+    });
   };
 
   const updateStage = (index: number, patch: Partial<InterviewStage>) => {
@@ -1142,6 +1233,13 @@ function ExpressIntakePage() {
       trackEvent("express_intake_started", { flow: "express_onboarding" });
     }
     setState((s) => ({ ...s, [key]: value }));
+    // An edited answer is this role's own answer, not an inherited one.
+    setCarriedFields((prev) => {
+      if (!prev.has(key as string)) return prev;
+      const next = new Set(prev);
+      next.delete(key as string);
+      return next;
+    });
   };
 
   /**
@@ -1634,11 +1732,24 @@ function ExpressIntakePage() {
         </nav>
 
 
+        {carryCompany && (
+          <div
+            className="rounded-lg border border-[color:var(--brand-teal)]/40 bg-[color:var(--brand-teal)]/8 px-4 py-3 text-sm text-[color:var(--brand-navy)]"
+            data-testid="carry-banner"
+          >
+            <p className="font-semibold">Another role for {carryCompany}</p>
+            <p className="text-[color:var(--brand-navy)]/75">
+              Your company, contact, location, process and package defaults are filled in already. Edit anything
+              that differs for this role — it stays with this role only.
+            </p>
+          </div>
+        )}
+
         {step === 4 && (
           <>
         <Section id="section-company" title="Your company" step={4}>
 
-          <Field label="Company name" error={errors.companyName} required={req["companyName"]}>
+          <Field label="Company name" carried={isCarried("companyName")} error={errors.companyName} required={req["companyName"]}>
             <Input
               value={state.companyName}
               onChange={(e) => set("companyName", e.target.value)}
@@ -1648,7 +1759,7 @@ function ExpressIntakePage() {
           </Field>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field
-              label="Company website"
+              label="Company website" carried={isCarried("companyWebsite")}
               error={errors.companyWebsite}
               required={req["companyWebsite"]}
               hint="We read only your public pages."
@@ -1661,7 +1772,7 @@ function ExpressIntakePage() {
                 inputMode="url"
               />
             </Field>
-            <Field label="Company LinkedIn" error={errors.companyLinkedin} required={req["companyLinkedin"]}>
+            <Field label="Company LinkedIn" carried={isCarried("companyLinkedin")} error={errors.companyLinkedin} required={req["companyLinkedin"]}>
               <Input
                 value={state.companyLinkedin}
                 onChange={(e) => set("companyLinkedin", e.target.value)}
@@ -1674,14 +1785,14 @@ function ExpressIntakePage() {
 
         <Section id="section-you" title="You" step={2}>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="First name" error={errors.firstName} required={req["firstName"]}>
+            <Field label="First name" carried={isCarried("firstName")} error={errors.firstName} required={req["firstName"]}>
               <Input
                 value={state.firstName}
                 onChange={(e) => set("firstName", e.target.value)}
                 autoComplete="given-name"
               />
             </Field>
-            <Field label="Last name" error={errors.lastName} required={req["lastName"]}>
+            <Field label="Last name" carried={isCarried("lastName")} error={errors.lastName} required={req["lastName"]}>
               <Input
                 value={state.lastName}
                 onChange={(e) => set("lastName", e.target.value)}
@@ -1689,7 +1800,7 @@ function ExpressIntakePage() {
               />
             </Field>
           </div>
-          <Field label="Your job title" error={errors.contactTitle} required={req["contactTitle"]}>
+          <Field label="Your job title" carried={isCarried("contactTitle")} error={errors.contactTitle} required={req["contactTitle"]}>
             <Input
               value={state.contactTitle}
               onChange={(e) => set("contactTitle", e.target.value)}
@@ -1698,7 +1809,7 @@ function ExpressIntakePage() {
             />
           </Field>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Work email" error={errors.workEmail} required={req["workEmail"]}>
+            <Field label="Work email" carried={isCarried("workEmail")} error={errors.workEmail} required={req["workEmail"]}>
               <Input
                 type="email"
                 value={state.workEmail}
@@ -1711,7 +1822,7 @@ function ExpressIntakePage() {
                 inputMode="email"
               />
             </Field>
-            <Field label="Phone" error={errors.phone} required={req["phone"]}>
+            <Field label="Phone" carried={isCarried("phone")} error={errors.phone} required={req["phone"]}>
               <Input
                 value={state.phone}
                 onChange={(e) => set("phone", e.target.value)}
@@ -1720,7 +1831,7 @@ function ExpressIntakePage() {
               />
             </Field>
           </div>
-          <Field label="Your LinkedIn" error={errors.contactLinkedin} required={req["contactLinkedin"]}>
+          <Field label="Your LinkedIn" carried={isCarried("contactLinkedin")} error={errors.contactLinkedin} required={req["contactLinkedin"]}>
             <Input
               value={state.contactLinkedin}
               onChange={(e) => set("contactLinkedin", e.target.value)}
@@ -2053,7 +2164,7 @@ function ExpressIntakePage() {
           <div className="grid gap-4 sm:grid-cols-2">
 
             <Field
-              label="Where is the role based?"
+              label="Where is the role based?" carried={isCarried("location")}
               error={errors.location}
               required={req["location"]}
               hint="City and country, or the region candidates must live in."
@@ -2064,7 +2175,7 @@ function ExpressIntakePage() {
                 placeholder="Manchester, United Kingdom"
               />
             </Field>
-            <Field label="How does it work?" error={errors.workModel} required={req["workModel"]} htmlFor="work-model">
+            <Field label="How does it work?" carried={isCarried("workModel")} error={errors.workModel} required={req["workModel"]} htmlFor="work-model">
               <select
                 id="work-model"
                 value={state.workModel}
@@ -2085,7 +2196,7 @@ function ExpressIntakePage() {
           {/* Hybrid is the only model that needs a day count. */}
           {state.workModel === "hybrid" && (
             <Field
-              label="Days on site each week"
+              label="Days on site each week" carried={isCarried("onsiteDays")}
               error={errors.onsiteDays}
               required={req["onsiteDays"]}
               hint="Between 1 and 5. Candidates ask this first, and a wrong guess costs you offers."
@@ -2208,7 +2319,7 @@ function ExpressIntakePage() {
             <p className="text-sm font-semibold">Compensation range</p>
             <p className="text-sm text-[color:var(--brand-navy)]/75">{COMPENSATION_HONEST_LINE}</p>
             <div className="grid gap-3 sm:grid-cols-4">
-              <Field label="Currency" htmlFor="currency">
+              <Field label="Currency" carried={isCarried("currency")} htmlFor="currency">
                 <select
                   id="currency"
                   value={state.currency}
@@ -2240,7 +2351,7 @@ function ExpressIntakePage() {
                   placeholder="85000"
                 />
               </Field>
-              <Field label="Period" htmlFor="comp-period">
+              <Field label="Period" carried={isCarried("compensationPeriod")} htmlFor="comp-period">
                 <select
                   id="comp-period"
                   value={state.compensationPeriod}
@@ -2321,7 +2432,7 @@ function ExpressIntakePage() {
 
             <div className="grid gap-3 sm:grid-cols-2">
               <Field
-                label="Bonus structure"
+                label="Bonus structure" carried={isCarried("bonusStructure")}
                 error={errors.bonusStructure}
                 required={req["bonusStructure"]}
                 hint="Only what you would actually pay."
@@ -2332,7 +2443,7 @@ function ExpressIntakePage() {
                   placeholder="10% annual, paid on company and personal targets"
                 />
               </Field>
-              <Field label="Equity" htmlFor="comp-equity" required={req["equity"]}>
+              <Field label="Equity" carried={isCarried("equity")} htmlFor="comp-equity" required={req["equity"]}>
                 <select
                   id="comp-equity"
                   value={state.equity}
@@ -2525,6 +2636,9 @@ function ExpressIntakePage() {
             <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
               {INTERVIEW_PROCESS_WHY_IT_MATTERS}
             </p>
+            {isCarried("interviewStages") && (
+              <p className="text-xs text-[color:var(--brand-navy)]/70">{CARRY_NOTICE}</p>
+            )}
 
             {state.interviewStages.length === 0 ? (
               <div className="rounded-lg border border-dashed border-[color:var(--brand-navy)]/25 bg-white p-4">
@@ -2649,7 +2763,7 @@ function ExpressIntakePage() {
           </fieldset>
 
           <Field
-            label="Target days from shortlist to offer"
+            label="Target days from shortlist to offer" carried={isCarried("targetDaysToOffer")}
             error={errors.targetDaysToOffer}
             required={req["targetDaysToOffer"]}
             hint={`Between ${MIN_TARGET_DAYS_TO_OFFER} and ${MAX_TARGET_DAYS_TO_OFFER} days. We will tell you honestly if it is achievable.`}
@@ -2670,7 +2784,7 @@ function ExpressIntakePage() {
 
           <div className="grid gap-3 sm:grid-cols-2">
             <Field
-              label="Who makes the final decision?"
+              label="Who makes the final decision?" carried={isCarried("decisionMaker")}
               error={errors.decisionMaker}
               required={req["decisionMaker"]}
               hint="Name and role. We keep the process moving through them."
@@ -2682,7 +2796,7 @@ function ExpressIntakePage() {
               />
             </Field>
             <Field
-              label="Their email"
+              label="Their email" carried={isCarried("decisionMakerEmail")}
               error={errors.decisionMakerEmail}
               required={req["decisionMakerEmail"]}
               hint="Only used if you invite them below."
@@ -3011,12 +3125,15 @@ function Field({
   hint,
   required,
   htmlFor,
+  carried,
 }: {
   label: string;
   children: React.ReactNode;
   error?: string;
   hint?: string;
   required?: boolean;
+  /** True when the value arrived from the company profile and is worth checking. */
+  carried?: boolean;
   /** Set when the control is nested inside wrapper markup and carries its own id. */
   htmlFor?: string;
 }) {
@@ -3061,6 +3178,9 @@ function Field({
         )}
       </div>
       {control}
+      {carried && !error && (
+        <p className="text-xs text-[color:var(--brand-navy)]/70">{CARRY_NOTICE}</p>
+      )}
       {hint && !error && (
         <p id={hintId} className="text-xs text-[color:var(--brand-navy)]/75">
           {hint}
