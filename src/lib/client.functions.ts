@@ -24,6 +24,7 @@ import {
   type PipelineStatusInput,
 } from "@/lib/client-pipeline-language";
 import { computeRoleProgress } from "@/lib/client-role-progress";
+import { computeClientRoleStatus } from "@/lib/client-role-status";
 import { computeRoleRisk } from "@/lib/client-role-risk";
 import { computeHiringHealth } from "@/lib/client-hiring-health";
 import { buildQueue, type QueueItem } from "@/lib/client-decision-queue";
@@ -451,6 +452,15 @@ export const getClientOverview = createServerFn({ method: "GET" })
         stage_entered_at: progress.currentEnteredAt,
         days_in_stage: progress.daysInCurrentStage,
         stage_caption: progress.caption,
+        client_status: computeClientRoleStatus({
+          status: p.status as string,
+          hires: posRows.filter((r) => r.stage === "hired").length,
+          offers: posRows.filter((r) => r.stage === "offer").length,
+          interviewing: posRows.filter((r) => r.interview_active || r.stage === "interview_process")
+            .length,
+          shortlisted: posRows.filter((r) => r.stage === "shortlisted").length,
+          delivered: awaiting.length,
+        }),
         last_movement_at: lastMovementAt,
         promised_shortlist_by: promisedShortlistBy,
         shortlist_delivered_at: dates.shortlist,
@@ -785,6 +795,15 @@ export const getClientPositions = createServerFn({ method: "GET" })
         ...p,
 
         kpis: kpi,
+        // Single shared mapping — the same role never shows two statuses.
+        client_status: computeClientRoleStatus({
+          status: String(p.status),
+          hires: kpi.hires,
+          offers: kpi.offers,
+          interviewing: kpi.interviewing,
+          shortlisted: kpi.shortlisted,
+          delivered: kpi.awaiting_decision,
+        }),
         pipeline_line: buildPipelineStatusLine(language),
         progress: computeRoleProgress({
           status: String(p.status),
@@ -1021,6 +1040,14 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
         offers: stageCounts.offer,
         not_moving_forward: stageCounts.not_moving_forward,
         pipeline_line: pipelineLine,
+        client_status: computeClientRoleStatus({
+          status: String(position.status),
+          hires: stageCounts.hired,
+          offers: stageCounts.offer,
+          interviewing: stageCounts.interview_process,
+          shortlisted: stageCounts.shortlisted,
+          delivered: stageCounts.delivered,
+        }),
       },
       progress: computeRoleProgress({
         status: String(position.status),

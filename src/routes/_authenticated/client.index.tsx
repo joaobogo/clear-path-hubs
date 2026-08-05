@@ -27,6 +27,7 @@ import { useDensity } from "@/lib/use-density";
 import { roleNextStep } from "@/lib/client-role-next-step";
 import { supabase } from "@/integrations/supabase/client";
 import { SystemStatusStrip } from "@/components/client/control-room/system-status-strip";
+import { clientRoleStatusLabel } from "@/lib/client-role-status";
 import { LiveTicker } from "@/components/client/control-room/live-ticker";
 import { IntensityDial } from "@/components/client/control-room/intensity-dial";
 import { HiringHealthLine } from "@/components/client/hiring-health-line";
@@ -438,6 +439,9 @@ function RoleStatusList({
                       <Briefcase className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                       <span className="truncate text-sm font-semibold group-hover:text-primary">
                         {r.title}
+                      </span>
+                      <span className="shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                        {clientRoleStatusLabel(r.client_status)}
                       </span>
                     </div>
                     <p className="mt-1 text-xs text-muted-foreground sm:text-sm">

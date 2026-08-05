@@ -39,6 +39,7 @@ import { RoleProgressTracker } from "@/components/client/role-progress-tracker";
 import { RoleLifecycleTimeline } from "@/components/client/role-lifecycle-timeline";
 import { getRoleLifecycle } from "@/lib/role-lifecycle/role-lifecycle.functions";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
+import { clientRoleStatusLabel } from "@/lib/client-role-status";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  head: () => ({
@@ -80,19 +81,6 @@ const STAGE_LABELS: Record<MatchStage, string> = {
  not_moving_forward: "Not moving forward",
 };
 
-// Client-friendly status labels — never expose internal enum values.
-const STATUS_LABELS: Record<string, string> = {
- draft: "Draft",
- submitted: "Submitted",
- under_review: "TaaSFlow reviewing",
- needs_clarification: "Clarification needed",
- approved: "Approved",
- active: "Active — sourcing",
- paused: "Paused",
- filled: "Filled",
- closed: "Closed",
- archived: "Archived",
-};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -288,7 +276,7 @@ function PositionDetailPage() {
  {position.title}
  </h1>
  <Badge variant="secondary">
- {STATUS_LABELS[position.status] ?? "Active"}
+ {clientRoleStatusLabel(data?.summary?.client_status)}
  </Badge>
  </div>
  <div className="mt-1 text-sm text-muted-foreground">
