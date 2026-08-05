@@ -247,7 +247,12 @@ function CandidateDetailPage() {
  qc.invalidateQueries({ queryKey: ["client-positions", orgId] });
  qc.invalidateQueries({ queryKey: ["client-candidates", orgId] });
  },
- onError: (e: Error) => toast.error(e.message.replace(/^Error: /, "")),
+ onError: (e: Error) => {
+ const msg = e.message.replace(/^Error: /, "");
+ toast.error(
+ /reason/i.test(msg) ? "Pick a reason so we can act on it." : "That did not save — try again",
+ );
+ },
  });
 
 
