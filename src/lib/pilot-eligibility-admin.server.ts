@@ -137,7 +137,7 @@ export async function grantException(
       entity_type: "pilot_claim",
       entity_id: input.claimId,
       action: "pilot_exception_granted",
-      metadata: { kind: input.kind, reason: input.reason, company: claim.company_name },
+      after_state: { kind: input.kind, reason: input.reason, company: claim.company_name },
     });
   } catch (err) {
     console.error("[pilot] exception audit failed (non-critical)", err);
