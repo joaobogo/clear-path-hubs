@@ -38,10 +38,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FormShell } from "@/components/marketing/form-shell";
 import { TransparencyPanel } from "@/components/candidate/transparency-panel";
-import {
-  ReturningApplicantCard,
-  ReturningApplicantSkeleton,
-} from "@/components/candidate/returning-applicant-card";
+import { ReturningApplicantCard } from "@/components/candidate/returning-applicant-card";
 import type { ExistingApplicationSummary } from "@/lib/candidate/existing-application.server";
 import { Loader2 } from "lucide-react";
 
@@ -730,6 +727,9 @@ function ApplyPage() {
       await navigate({
         to: "/apply/received/$applicationId",
         params: { applicationId: result.application_id },
+        // A withdrawn or rejected earlier application permits this fresh
+        // submission — the confirmation says so plainly.
+        search: result.prior_closed ? { again: true } : {},
         replace: true,
       });
     } catch (err) {
