@@ -11,6 +11,7 @@ import {
   requestIntakeClarification,
 } from "@/lib/intake-admin.functions";
 import { Badge } from "@/components/ui/badge";
+import { PilotWarningsPanel } from "@/components/admin/pilot-warnings-panel";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertTriangle, ArrowLeft, CheckCircle2, MessageSquareWarning, XCircle } from "lucide-react";
@@ -178,6 +179,8 @@ function IntakeDetail() {
           </div>
         </div>
       </header>
+
+      <PilotWarningsPanel organizationId={organization?.id ?? null} hideWhenEmpty />
 
       {duplicates.length > 0 && (
         <section className="rounded-lg border border-warning/60 bg-warning/60 p-4 dark:bg-warning/20">

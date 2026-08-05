@@ -8312,6 +8312,156 @@ export type Database = {
           },
         ]
       }
+      pilot_claims: {
+        Row: {
+          blocked: boolean
+          blocked_reason: string | null
+          company_domain: string | null
+          company_name: string
+          company_name_normalized: string
+          contact_email: string | null
+          created_at: string
+          email_domain: string | null
+          exception_at: string | null
+          exception_by: string | null
+          exception_granted: boolean
+          exception_kind: string | null
+          exception_reason: string | null
+          id: string
+          intake_submission_id: string | null
+          matched_claim_id: string | null
+          organization_id: string | null
+          position_id: string | null
+          status: string
+          trace_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          blocked?: boolean
+          blocked_reason?: string | null
+          company_domain?: string | null
+          company_name: string
+          company_name_normalized: string
+          contact_email?: string | null
+          created_at?: string
+          email_domain?: string | null
+          exception_at?: string | null
+          exception_by?: string | null
+          exception_granted?: boolean
+          exception_kind?: string | null
+          exception_reason?: string | null
+          id?: string
+          intake_submission_id?: string | null
+          matched_claim_id?: string | null
+          organization_id?: string | null
+          position_id?: string | null
+          status?: string
+          trace_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          blocked?: boolean
+          blocked_reason?: string | null
+          company_domain?: string | null
+          company_name?: string
+          company_name_normalized?: string
+          contact_email?: string | null
+          created_at?: string
+          email_domain?: string | null
+          exception_at?: string | null
+          exception_by?: string | null
+          exception_granted?: boolean
+          exception_kind?: string | null
+          exception_reason?: string | null
+          id?: string
+          intake_submission_id?: string | null
+          matched_claim_id?: string | null
+          organization_id?: string | null
+          position_id?: string | null
+          status?: string
+          trace_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pilot_claims_intake_submission_id_fkey"
+            columns: ["intake_submission_id"]
+            isOneToOne: false
+            referencedRelation: "intake_submissions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pilot_claims_matched_claim_id_fkey"
+            columns: ["matched_claim_id"]
+            isOneToOne: false
+            referencedRelation: "pilot_claims"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pilot_claims_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pilot_claims_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pilot_claims_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "pilot_claims_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "pilot_claims_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pilot_claims_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "pilot_claims_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pilot_claims_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pilot_claims_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "v_position_time_to_submission"
+            referencedColumns: ["position_id"]
+          },
+        ]
+      }
       plan_entitlements: {
         Row: {
           created_at: string
