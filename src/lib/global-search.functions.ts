@@ -19,12 +19,15 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 export const globalSearchInput = z.object({
   q: z.string().trim().min(1).max(120),
   scope: z.enum(["admin", "client"]).optional(),
+  /** Admin-only: include QA/internal orgs and their records. Default false. */
+  includeTest: z.boolean().optional(),
 });
 
 export type SearchResultType =
   | "client"
   | "position"
   | "candidate"
+  | "intake"
   | "message"
   | "task";
 
@@ -32,21 +35,29 @@ export type SearchResult = {
   type: SearchResultType;
   id: string;
   label: string;
+  /** Client / org context for the row. */
   context?: string;
+  /** Current operational state, rendered as its own badge. */
+  state?: string;
   href: string;
   search?: Record<string, string>;
 };
 
 export type SearchResponse = {
   scope: "admin" | "client";
+  includeTest: boolean;
+  /** Per-group cap applied server-side. */
+  limit: number;
   groups: {
     clients: SearchResult[];
     positions: SearchResult[];
     candidates: SearchResult[];
+    intakes: SearchResult[];
     messages: SearchResult[];
     tasks: SearchResult[];
   };
 };
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = Record<string, any>;
@@ -77,32 +88,47 @@ export const globalSearch = createServerFn({ method: "POST" })
       .filter((m) => m.organization_id)
       .map((m) => m.organization_id as string);
 
-    // Early exit for client scope with no org access.
-    if (scope === "client" && orgIds.length === 0) {
-      return {
-        scope,
-        groups: { clients: [], positions: [], candidates: [], messages: [], tasks: [] },
-      };
-    }
+    const emptyGroups = (): SearchResponse["groups"] => ({
+      clients: [],
+      positions: [],
+      candidates: [],
+      intakes: [],
+      messages: [],
+      tasks: [],
+    });
 
     // Bounded per-group limits.
     const LIMIT = 6;
-    const empty = { clients: [], positions: [], candidates: [], messages: [], tasks: [] } as SearchResponse["groups"];
-    const groups: SearchResponse["groups"] = { ...empty };
+
+    // Test/QA records are hidden unless the caller is staff AND asked for them.
+    const includeTest = scope === "admin" && data.includeTest === true;
+    const { loadTestScope, excludeTestOrgs } = await import("./admin-test-scope.server");
+    const testScope = await loadTestScope(supabase, includeTest);
+
+    // Early exit for client scope with no org access.
+    if (scope === "client" && orgIds.length === 0) {
+      return { scope, includeTest, limit: LIMIT, groups: emptyGroups() };
+    }
+
+    const groups: SearchResponse["groups"] = emptyGroups();
 
     // Clients — admin only.
     if (scope === "admin") {
-      const { data: orgs } = await supabase
+      let oq = supabase
         .from("organizations")
-        .select("id, name, industry, archived_at")
+        .select("id, name, industry, status, archived_at")
         .ilike("name", like)
         .order("name")
         .limit(LIMIT);
+      oq = excludeTestOrgs(oq, testScope, "id");
+      const { data: orgs, error } = await oq;
+      if (error) throw new Error(error.message);
       groups.clients = ((orgs as AnyRow[]) ?? []).map((o) => ({
         type: "client",
         id: o.id,
         label: o.name,
-        context: [o.industry, o.archived_at ? "archived" : null].filter(Boolean).join(" · "),
+        context: o.industry ?? undefined,
+        state: o.archived_at ? "archived" : (o.status ?? undefined),
         href: `/admin/clients/${o.id}`,
       }));
     }
@@ -116,18 +142,21 @@ export const globalSearch = createServerFn({ method: "POST" })
         .order("updated_at", { ascending: false })
         .limit(LIMIT);
       if (scope === "client") query = query.in("organization_id", orgIds);
-      const { data: positions } = await query;
+      else query = excludeTestOrgs(query, testScope);
+      const { data: positions, error } = await query;
+      if (error) throw new Error(error.message);
       groups.positions = ((positions as AnyRow[]) ?? []).map((p) => {
         const orgName = p.organizations?.name as string | undefined;
-        const context = [orgName, p.location, p.status]
-          .filter(Boolean)
-          .join(" · ");
+        const context = [orgName, p.location].filter(Boolean).join(" · ");
+        const state = p.status ? String(p.status).replace(/_/g, " ") : undefined;
+
         if (scope === "admin") {
           return {
             type: "position",
             id: p.id,
             label: p.title,
             context,
+            state,
             href: `/admin/positions/${p.id}`,
           };
         }
@@ -136,9 +165,11 @@ export const globalSearch = createServerFn({ method: "POST" })
           id: p.id,
           label: p.title,
           context,
+          state,
           href: `/client/positions/${p.id}`,
           search: { org: p.organization_id },
         };
+
       });
     }
 
@@ -146,11 +177,12 @@ export const globalSearch = createServerFn({ method: "POST" })
     {
       // Two-step: find matching candidate_profile ids, then look up matches
       // scoped correctly. Keeps embedding simple and RLS-friendly.
-      const { data: profiles } = await supabase
+      const { data: profiles, error: pErr } = await supabase
         .from("candidate_profiles")
         .select("id, full_name, email, headline")
         .or(`full_name.ilike.${like},email.ilike.${like},headline.ilike.${like}`)
         .limit(20);
+      if (pErr) throw new Error(pErr.message);
       const profileIds = ((profiles as AnyRow[]) ?? []).map((p) => p.id);
       const profileById = new Map<string, AnyRow>(
         ((profiles as AnyRow[]) ?? []).map((p) => [p.id, p]),
@@ -159,15 +191,18 @@ export const globalSearch = createServerFn({ method: "POST" })
         let mq = supabase
           .from("candidate_matches")
           .select(
-            "id, candidate_profile_id, position_id, organization_id, client_visibility, positions(title), organizations(name)",
+            "id, candidate_profile_id, position_id, organization_id, client_visibility, stage, positions(title), organizations(name)",
           )
           .in("candidate_profile_id", profileIds)
           .order("updated_at", { ascending: false })
           .limit(LIMIT * 2);
         if (scope === "client") {
           mq = mq.in("organization_id", orgIds).eq("client_visibility", "visible");
+        } else {
+          mq = excludeTestOrgs(mq, testScope);
         }
-        const { data: matches } = await mq;
+        const { data: matches, error } = await mq;
+        if (error) throw new Error(error.message);
         const seen = new Set<string>();
         const list: SearchResult[] = [];
         for (const m of ((matches as AnyRow[]) ?? [])) {
@@ -177,12 +212,14 @@ export const globalSearch = createServerFn({ method: "POST" })
           const prof = profileById.get(m.candidate_profile_id);
           const label = prof?.full_name || prof?.email || "Candidate";
           const context = [m.positions?.title, m.organizations?.name].filter(Boolean).join(" · ");
+          const state = m.stage ? String(m.stage).replace(/_/g, " ") : undefined;
           if (scope === "admin") {
             list.push({
               type: "candidate",
               id: m.id,
               label,
               context,
+              state,
               href: `/admin/candidates/${m.id}`,
             });
           } else {
@@ -191,6 +228,7 @@ export const globalSearch = createServerFn({ method: "POST" })
               id: m.id,
               label,
               context,
+              state,
               href: `/client/candidates/${m.id}`,
               search: { org: m.organization_id },
             });
@@ -199,6 +237,43 @@ export const globalSearch = createServerFn({ method: "POST" })
         groups.candidates = list;
       }
     }
+
+    // Intakes — admin only. Company or role title, with lead/conversion state.
+    if (scope === "admin") {
+      let iq = supabase
+        .from("intake_submissions")
+        .select(
+          "id, company_name, role_title, status, lead_status, position_id, organization_id, created_at",
+        )
+        .or(`company_name.ilike.${like},role_title.ilike.${like},primary_email.ilike.${like}`)
+        .order("created_at", { ascending: false })
+        .limit(LIMIT);
+      if (testScope.orgIds.length) {
+        // Keep intakes with no org yet; drop the ones tied to a test org.
+        iq = iq.or(
+          `organization_id.is.null,organization_id.not.in.(${testScope.orgIds.join(",")})`,
+        );
+      }
+      const { data: intakes, error } = await iq;
+      if (error) throw new Error(error.message);
+      groups.intakes = ((intakes as AnyRow[]) ?? []).map((i) => ({
+        type: "intake" as const,
+        id: i.id,
+        label: i.role_title || i.company_name || "Intake",
+        context: [i.company_name, new Date(i.created_at).toLocaleDateString()]
+          .filter(Boolean)
+          .join(" · "),
+        state: [
+          i.position_id ? "converted" : "not converted",
+          i.lead_status && i.lead_status !== "open" ? i.lead_status : i.status,
+        ]
+          .filter(Boolean)
+          .join(" · ")
+          .replace(/_/g, " "),
+        href: "/admin/intake",
+      }));
+    }
+
 
     // Messages — body search. Client scope filtered by thread_id in orgIds.
     {
@@ -209,7 +284,8 @@ export const globalSearch = createServerFn({ method: "POST" })
         .order("created_at", { ascending: false })
         .limit(LIMIT);
       if (scope === "client") mq = mq.in("thread_id", orgIds);
-      const { data: msgs } = await mq;
+      const { data: msgs, error } = await mq;
+      if (error) throw new Error(error.message);
       groups.messages = ((msgs as AnyRow[]) ?? []).map((m) => {
         const snippet = String(m.body ?? "").slice(0, 120);
         const href = scope === "admin" ? "/admin/messages" : "/client/messages";
@@ -235,19 +311,23 @@ export const globalSearch = createServerFn({ method: "POST" })
         .order("updated_at", { ascending: false })
         .limit(LIMIT);
       if (scope === "client") tq = tq.in("organization_id", orgIds);
-      const { data: tasks } = await tq;
+      else tq = excludeTestOrgs(tq, testScope);
+      const { data: tasks, error } = await tq;
+      if (error) throw new Error(error.message);
       groups.tasks = ((tasks as AnyRow[]) ?? []).map((t) => ({
         type: "task" as const,
         id: t.id,
         label: t.title,
-        context: [t.task_type?.replace(/_/g, " "), t.blocking ? "blocking" : null, t.status]
+        context: [t.task_type?.replace(/_/g, " "), t.blocking ? "blocking" : null]
           .filter(Boolean)
           .join(" · "),
+        state: t.status ? String(t.status).replace(/_/g, " ") : undefined,
         href: scope === "admin" ? "/admin" : "/client/tasks",
         search: scope === "client" ? { org: t.organization_id as string } : undefined,
       }));
     }
 
-    return { scope, groups };
+    return { scope, includeTest, limit: LIMIT, groups };
+
   });
 
