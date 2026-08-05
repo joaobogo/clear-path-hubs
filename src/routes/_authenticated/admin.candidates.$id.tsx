@@ -179,6 +179,12 @@ function CandidateWorkspace() {
         currentRun={currentRun}
       />
 
+      <ContactSuppressionPanel
+        organizationId={m?.organization_id ?? null}
+        candidateProfileId={m?.candidate_profile_id ?? null}
+        candidateMatchId={id}
+      />
+
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-4">
           <nav
