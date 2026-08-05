@@ -8,7 +8,6 @@ import {
  getClientContext,
  getClientSettings,
  updateClientCompanyProfile,
- updateClientNotificationPreferences,
  updateClientTimezone,
  updateClientBranding,
 } from "@/lib/client.functions";
@@ -19,7 +18,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import {
  Select,
  SelectContent,
@@ -30,19 +28,18 @@ import {
 import {
  AlertCircle,
  BadgeCheck,
- Bell,
  Building2,
  CheckCircle2,
  Clock,
  Info,
  LogOut,
- Mail,
  MessagesSquare,
  ShieldCheck,
  User,
 } from "lucide-react";
 import { TeamsConnectionCard } from "@/components/client/teams-connection-card";
 import { QueryErrorCard } from "@/components/client/query-error";
+import { NotificationPreferences } from "@/components/client/notification-preferences";
 import { useQueryState } from "@/hooks/use-query-state";
 
 export const Route = createFileRoute("/_authenticated/client/settings")({
@@ -58,16 +55,6 @@ export const Route = createFileRoute("/_authenticated/client/settings")({
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
-
-const NOTIF_KEYS = [
- { key: "candidate_delivered", label: "Candidate delivered", desc: "A new candidate has been delivered to your workspace." },
- { key: "interview_request", label: "Interview request", desc: "The TaaSFlow team requests an interview time." },
- { key: "new_message", label: "New message", desc: "Someone sends you a workspace message." },
- { key: "offer_update", label: "Offer update", desc: "An offer changes stage (extended, accepted, declined)." },
- { key: "hire_update", label: "Hire update", desc: "A candidate becomes a hire." },
-] as const;
-
-type NotifKey = (typeof NOTIF_KEYS)[number]["key"];
 
 const COMMON_TIMEZONES = [
  "UTC",
@@ -202,17 +189,8 @@ function SettingsPage() {
  canEdit={!!isAdmin && !readOnlySupport}
  />
 
- <NotificationsSection
- orgId={orgId}
- initial={settings.notifications}
- canEdit={!isViewer && !readOnlySupport}
- />
+  <NotificationPreferences orgId={orgId} canEdit={!isViewer && !readOnlySupport} />
 
-          <CommunicationSection
-            orgId={orgId}
-            initial={settings.notifications}
-            canEdit={!isViewer && !readOnlySupport}
-          />
 
           <SectionCard
             icon={<MessagesSquare className="h-5 w-5" />}
@@ -489,173 +467,10 @@ function Field({
  );
 }
 
-/* ─────────────────────── NOTIFICATIONS ─────────────────────── */
+/* Notification preferences now live in
+   src/components/client/notification-preferences.tsx — one delivery choice per
+   event, saved per row. */
 
-type Notifications = {
- candidate_delivered: boolean;
- interview_request: boolean;
- new_message: boolean;
- offer_update: boolean;
- hire_update: boolean;
- email_enabled: boolean;
- digest: "immediate" | "daily" | "weekly" | "off";
-};
-
-function useNotifSave(orgId: string) {
- const qc = useQueryClient();
- const fn = useServerFn(updateClientNotificationPreferences);
- return useMutation({
- mutationFn: (row: Notifications) =>
- fn({
- data: {
- orgId,
- ...row,
- },
- }),
- onSuccess: () => {
- qc.invalidateQueries({ queryKey: ["client-settings", orgId] });
- },
- });
-}
-
-function NotificationsSection({
- orgId,
- initial,
- canEdit,
-}: {
- orgId: string;
- initial: Notifications;
- canEdit: boolean;
-}) {
- const [row, setRow] = useState<Notifications>(initial);
- useEffect(() => setRow(initial), [initial]);
- const save = useNotifSave(orgId);
-
- const toggle = async (key: NotifKey, value: boolean) => {
- if (!canEdit) return;
- const previous = row;
- const next = { ...row, [key]: value };
- setRow(next);
- try {
- await save.mutateAsync(next);
- toast.success("Preference saved");
- } catch (e) {
- setRow(previous); // restore previous value on failure
- toast.error((e as Error).message.replace(/^Error: /, "") || "Could not save preference");
- }
- };
-
- return (
- <SectionCard
- icon={<Bell className="h-5 w-5" />}
- title="Notifications"
- description="Choose which workspace events send you a notification."
- >
- <ul className="divide-y">
- {NOTIF_KEYS.map((n) => (
- <li key={n.key} className="flex items-start justify-between gap-4 py-3 first:pt-0 last:pb-0">
- <div className="min-w-0">
- <Label htmlFor={`n-${n.key}`} className="text-sm font-medium">
- {n.label}
- </Label>
- <p className="mt-0.5 text-xs text-muted-foreground">{n.desc}</p>
- </div>
- <Switch
- id={`n-${n.key}`}
- checked={row[n.key]}
- onCheckedChange={(v) => toggle(n.key, !!v)}
- disabled={!canEdit || save.isPending}
- aria-label={n.label}
- />
- </li>
- ))}
- </ul>
- </SectionCard>
- );
-}
-
-/* ─────────────────── COMMUNICATION PREFERENCES ─────────────────── */
-
-function CommunicationSection({
- orgId,
- initial,
- canEdit,
-}: {
- orgId: string;
- initial: Notifications;
- canEdit: boolean;
-}) {
- const [row, setRow] = useState<Notifications>(initial);
- useEffect(() => setRow(initial), [initial]);
- const save = useNotifSave(orgId);
-
- const commit = async (patch: Partial<Notifications>) => {
- if (!canEdit) return;
- const previous = row;
- const next = { ...row, ...patch };
- setRow(next);
- try {
- await save.mutateAsync(next);
- toast.success("Communication preferences saved");
- } catch (e) {
- setRow(previous);
- toast.error((e as Error).message.replace(/^Error: /, "") || "Could not save preferences");
- }
- };
-
- return (
- <SectionCard
- icon={<Mail className="h-5 w-5" />}
- title="Communication preferences"
- description="How and when TaaSFlow reaches you for the notifications above."
- >
- <div className="space-y-4">
- <div className="flex items-start justify-between gap-4">
- <div className="min-w-0">
- <Label htmlFor="cp-email" className="text-sm font-medium">
- Email delivery
- </Label>
- <p className="mt-0.5 text-xs text-muted-foreground">
- Send enabled notifications to {" "}
- <span className="font-medium text-foreground">your work email</span>.
- In-app notifications continue regardless.
- </p>
- </div>
- <Switch
- id="cp-email"
- checked={row.email_enabled}
- onCheckedChange={(v) => commit({ email_enabled: !!v })}
- disabled={!canEdit || save.isPending}
- aria-label="Email delivery"
- />
- </div>
- <div className="space-y-1.5">
- <Label htmlFor="cp-digest" className="text-sm font-medium">
- Delivery cadence
- </Label>
- <Select
- value={row.digest}
- onValueChange={(v) => commit({ digest: v as Notifications["digest"] })}
- disabled={!canEdit || save.isPending}
- >
- <SelectTrigger id="cp-digest" className="max-w-sm">
- <SelectValue />
- </SelectTrigger>
- <SelectContent>
- <SelectItem value="immediate">Immediate — send each event as it happens</SelectItem>
- <SelectItem value="daily">Daily digest — one summary each morning</SelectItem>
- <SelectItem value="weekly">Weekly digest — one summary each Monday</SelectItem>
- <SelectItem value="off">Off — no emails (in-app only)</SelectItem>
- </SelectContent>
- </Select>
- <p className="text-xs text-muted-foreground">
- You can still see everything in the workspace and in Messages.
- </p>
- </div>
- </div>
- </SectionCard>
- );
-}
 
 /* ─────────────────────── TIMEZONE ─────────────────────── */
 

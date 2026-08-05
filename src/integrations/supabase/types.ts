@@ -2740,6 +2740,12 @@ export type Database = {
           new_message: boolean
           offer_update: boolean
           organization_id: string
+          pref_decision_overdue: string
+          pref_information_needed: string
+          pref_interview_update: string
+          pref_offer_response: string
+          pref_shortlist_delivered: string
+          pref_weekly_summary: string
           updated_at: string
           user_id: string
         }
@@ -2753,6 +2759,12 @@ export type Database = {
           new_message?: boolean
           offer_update?: boolean
           organization_id: string
+          pref_decision_overdue?: string
+          pref_information_needed?: string
+          pref_interview_update?: string
+          pref_offer_response?: string
+          pref_shortlist_delivered?: string
+          pref_weekly_summary?: string
           updated_at?: string
           user_id: string
         }
@@ -2766,6 +2778,12 @@ export type Database = {
           new_message?: boolean
           offer_update?: boolean
           organization_id?: string
+          pref_decision_overdue?: string
+          pref_information_needed?: string
+          pref_interview_update?: string
+          pref_offer_response?: string
+          pref_shortlist_delivered?: string
+          pref_weekly_summary?: string
           updated_at?: string
           user_id?: string
         }

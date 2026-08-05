@@ -11,6 +11,7 @@
 //    `suppressed / email_not_configured` instead of pretending to send.
 
 import type { EventType } from "./events";
+import { EVENT_PREFERENCE, normalizePreferences } from "./client-notification-prefs";
 import { isSuppressed } from "./notification-suppression.server";
 
 
@@ -29,14 +30,10 @@ export const ESSENTIAL_EVENTS: ReadonlySet<EventType> = new Set<EventType>([
   "clarification_requested",
 ]);
 
-/** Preference column on client_notification_preferences, when one applies. */
-const PREFERENCE_COLUMN: Partial<Record<EventType, string>> = {
-  candidate_published: "candidate_delivered",
-  interview_requested: "interview_request",
-  message_sent: "new_message",
-  client_feedback_submitted: "new_message",
-  candidate_hired: "hire_update",
-};
+// Per-event delivery choices live in src/lib/client-notification-prefs.ts. Each
+// client event maps to one preference whose mode decides immediate / digest /
+// off. Essential transactional notices above ignore preferences entirely.
+
 
 /** Verified Lovable sender subdomain (NS-delegated). Overridable via env. */
 const SENDER_DOMAIN = "notify.taasflow.com";
@@ -75,23 +72,33 @@ async function recipientEmail(admin: Admin, userId: string): Promise<string | nu
   return (data?.email as string | undefined) ?? null;
 }
 
-async function emailAllowed(
+export type EmailDecision = "send" | "digest" | "off";
+
+/**
+ * Resolves the recipient's per-event delivery choice.
+ *  - "send"   email now
+ *  - "digest" hold it for the daily digest (no immediate email)
+ *  - "off"    no email at all
+ * Essential transactional notices always send.
+ */
+export async function emailDecision(
   admin: Admin,
   args: { userId: string; orgId: string | null; event: EventType },
-): Promise<{ allowed: boolean; reason?: string }> {
-  if (ESSENTIAL_EVENTS.has(args.event)) return { allowed: true };
-  if (!args.orgId) return { allowed: true };
+): Promise<EmailDecision> {
+  if (ESSENTIAL_EVENTS.has(args.event)) return "send";
+  const key = EVENT_PREFERENCE[args.event];
+  if (!key || !args.orgId) return "send";
   const { data } = await admin
     .from("client_notification_preferences")
     .select("*")
     .eq("user_id", args.userId)
     .eq("organization_id", args.orgId)
     .maybeSingle();
-  if (!data) return { allowed: true };
-  if (data.email_enabled === false) return { allowed: false, reason: "unsubscribed" };
-  const col = PREFERENCE_COLUMN[args.event];
-  if (col && data[col] === false) return { allowed: false, reason: "preference_off" };
-  return { allowed: true };
+  const prefs = normalizePreferences((data ?? null) as Record<string, unknown> | null);
+  const mode = prefs[key];
+  if (mode === "daily") return "digest";
+  if (mode === "off") return "off";
+  return "send";
 }
 
 const APP_ORIGIN =
@@ -162,7 +169,7 @@ export async function dispatchEmails(
   const results: EmailAttempt[] = [];
 
   for (const n of notifications) {
-    const gate = await emailAllowed(admin, {
+    const decision = await emailDecision(admin, {
       userId: n.recipient_user_id,
       orgId: n.organization_id,
       event: n.event_type,
@@ -172,9 +179,12 @@ export async function dispatchEmails(
     let errorMessage: string | null = null;
     let address: string | null = null;
 
-    if (!gate.allowed) {
-      errorCode = gate.reason ?? "suppressed";
-      errorMessage = "Recipient preference or unsubscribe applies to this email.";
+    if (decision !== "send") {
+      errorCode = decision === "digest" ? "deferred_to_daily_digest" : "preference_off";
+      errorMessage =
+        decision === "digest"
+          ? "The recipient chose the daily digest for this event, so it is held for the next digest instead of sending now."
+          : "The recipient turned off email for this event. The in-app notification was still delivered.";
     } else {
       address = await recipientEmail(admin, n.recipient_user_id);
       const blocked = address ? await isSuppressed(admin, address) : false;
