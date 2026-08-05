@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Button, Text } from '@react-email/components'
 import { Shell, button, footer, text } from './brand'
 import type { TemplateEntry } from './registry'
+import { candidateStatusEmailLine } from '@/lib/candidate/status-vocabulary'
 
 interface ApplicationClosedProps {
   candidateFirstName?: string
@@ -42,6 +43,7 @@ const ApplicationClosed = ({
         touch when a closer match opens up.
       </Text>
     ) : null}
+    <Text style={text}>{candidateStatusEmailLine('Closed')}</Text>
     {jobsUrl && (
       <Button style={button} href={jobsUrl}>
         See open roles
