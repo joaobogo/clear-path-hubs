@@ -256,19 +256,22 @@ export const submitApplication = createServerFn({ method: "POST" })
       }
 
 
-      // 4. Idempotency short-circuit: if a matching application already exists for this
-      // (candidate, position) that is not withdrawn/rejected/archived, treat as duplicate.
-      const { data: existingApp, error: appFindErr } = await supabaseAdmin
+      // 4. Idempotency short-circuit: an existing non-withdrawn application for this
+      // (candidate, position) IS this submission. Rapid double taps, a retried request
+      // or a reload all resolve to the original reference — never an error, and never a
+      // second confirmation email (we return before any notification is emitted).
+      const { data: existingApps, error: appFindErr } = await supabaseAdmin
         .from("applications")
-        .select("id,source")
+        .select("id,created_at")
         .eq("candidate_profile_id", candidateProfileId)
         .eq("position_id", data.position_id)
-        .not("status", "in", "(withdrawn,rejected,archived)")
-        .maybeSingle();
+        .neq("status", "withdrawn")
+        .order("created_at", { ascending: true })
+        .limit(1);
       if (appFindErr) throw appFindErr;
+      const existingApp = existingApps?.[0];
 
       if (existingApp) {
-        // Same idempotency key? just return the existing.
         return {
           ok: true,
           application_id: existingApp.id,
@@ -278,6 +281,7 @@ export const submitApplication = createServerFn({ method: "POST" })
           account: accountOutcome,
         };
       }
+
 
       // 5. Upload CV to private storage. The storage key is fully server-generated;
       //    the sanitised original name is only a trailing, path-free label.
@@ -353,14 +357,16 @@ export const submitApplication = createServerFn({ method: "POST" })
         .single();
 
       if (appErr) {
-        // Unique-index race → fetch existing and dedupe.
-        const { data: race } = await supabaseAdmin
+        // Unique-index race → the concurrent request won; return its reference.
+        const { data: raceRows } = await supabaseAdmin
           .from("applications")
-          .select("id")
+          .select("id,created_at")
           .eq("candidate_profile_id", candidateProfileId)
           .eq("position_id", data.position_id)
-          .not("status", "in", "(withdrawn,rejected,archived)")
-          .maybeSingle();
+          .neq("status", "withdrawn")
+          .order("created_at", { ascending: true })
+          .limit(1);
+        const race = raceRows?.[0];
         if (race) {
           return {
             ok: true,
@@ -373,6 +379,7 @@ export const submitApplication = createServerFn({ method: "POST" })
         }
         throw appErr;
       }
+
 
       // 8. Store screening answers (idempotent by unique (application_id, question_id)).
       if (cleanAnswers.length > 0) {

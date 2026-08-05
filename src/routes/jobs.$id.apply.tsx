@@ -38,6 +38,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FormShell } from "@/components/marketing/form-shell";
 import { TransparencyPanel } from "@/components/candidate/transparency-panel";
+import { Loader2 } from "lucide-react";
+
 
 const EMPTY_FORM = {
   full_name: "",
@@ -833,12 +835,12 @@ function ApplyPage() {
 
         {serverError && (
           <Alert variant="destructive" className="mt-6" data-testid="apply-server-error">
-            <AlertTitle>Something went wrong</AlertTitle>
+            <AlertTitle>No application was created</AlertTitle>
             <AlertDescription>
               {serverError.message}
               <span className="block mt-1">
-                Nothing was lost — your answers are still here. Press submit again when you're
-                ready.
+                Nothing was sent and nothing was lost — your answers are still here. Press submit
+                again when you're ready.
               </span>
               {serverError.trace_id && (
                 <span className="block mt-1 text-xs opacity-70">
@@ -848,6 +850,7 @@ function ApplyPage() {
             </AlertDescription>
           </Alert>
         )}
+
 
         {Object.keys(fieldErrors).length > 0 && (
           <Alert variant="destructive" className="mt-6" data-testid="apply-step-error">
@@ -921,7 +924,13 @@ function ApplyPage() {
           </Alert>
         )}
 
-        <div data-apply-form className="mt-8 rounded-lg border bg-card p-5 md:p-6">
+        <div
+          data-apply-form
+          aria-busy={submitting}
+          className={`mt-8 rounded-lg border bg-card p-5 md:p-6 ${
+            submitting ? "pointer-events-none select-none opacity-60" : ""
+          }`}
+        >
           {step === 1 && (
             <div className="space-y-5" data-hydrated={signedIn === null ? "pending" : "ready"}>
 
@@ -1676,17 +1685,26 @@ function ApplyPage() {
                 size="lg"
                 onClick={onSubmit}
                 disabled={submitting}
+                aria-disabled={submitting}
+                aria-busy={submitting}
                 data-testid="apply-submit"
                 className="w-full sm:w-auto"
               >
-                {phase === "reading"
-                  ? "Preparing your CV…"
-                  : phase === "sending"
-                    ? "Sending your application…"
-                    : "Submit application"}
+                {submitting ? (
+                  <span className="inline-flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                    {phase === "reading" ? "Preparing your CV…" : "Sending…"}
+                  </span>
+                ) : (
+                  "Submit application"
+                )}
               </Button>
             )}
           </div>
+          <p aria-live="assertive" className="sr-only">
+            {submitting ? "Sending your application. Please wait." : ""}
+          </p>
+
 
         </div>
 
