@@ -254,7 +254,7 @@ export function PositionSourceQualityPanel({ positionId }: { positionId: string 
         <Skeleton />
       ) : query.isError ? (
         <ErrorState error={query.error} onRetry={() => query.refetch()} />
-      ) : query.data.channels.length === 0 ? (
+      ) : !query.data || query.data.channels.length === 0 ? (
         <p className="px-4 py-10 text-center text-sm text-muted-foreground">
           No attributed candidates yet
         </p>
@@ -284,7 +284,7 @@ export function SourceQualityRollupPanel({ includeTest = false }: { includeTest?
         <Skeleton />
       ) : query.isError ? (
         <ErrorState error={query.error} onRetry={() => query.refetch()} />
-      ) : query.data.channels.length === 0 ? (
+      ) : !query.data || query.data.channels.length === 0 ? (
         <p className="px-4 py-10 text-center text-sm text-muted-foreground">
           No attributed candidates yet
         </p>
