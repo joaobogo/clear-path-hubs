@@ -12,8 +12,9 @@ import {
   StepRail,
 } from "@/components/marketing/how-it-works-deep";
 import { PageConnections } from "@/components/marketing/page-connections";
-import { EditorialHero } from "@/components/marketing/editorial-hero";
+import { EditorialHero, PhotoBand } from "@/components/marketing/editorial-hero";
 import hiwHero from "@/assets/page-how-it-works-hero.jpg";
+import bandHire from "@/assets/band-hire.jpg";
 import { PRODUCT_CATEGORY, MODULES } from "@/config/product-language";
 
 const entry = getPage("how-it-works");
@@ -186,6 +187,19 @@ function HowItWorksPage() {
           </div>
         </PublicPage>
       </PublicSection>
+
+      <PhotoBand
+        className="py-8"
+        image={bandHire}
+        imageAlt="A candidate and hiring manager shaking hands after an interview"
+        eyebrow="The outcome"
+        caption="You interview fewer people, and better ones."
+        stats={[
+          { value: "Days", label: "To first shortlist" },
+          { value: "Evidence", label: "Behind every ranking" },
+          { value: "Yours", label: "Candidate records" },
+        ]}
+      />
 
       {/* ── 5 · Workspace delivery ────────────────────────────── */}
       <PublicSection className="py-10">

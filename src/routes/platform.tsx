@@ -20,6 +20,7 @@ import {
 } from "@/components/marketing/site-shell";
 import { EditorialHero, PhotoBand } from "@/components/marketing/editorial-hero";
 import platformHero from "@/assets/page-platform-hero.jpg";
+import bandReview from "@/assets/band-review.jpg";
 import { PlatformArchitecture } from "@/components/marketing/platform-architecture";
 import { EvidenceGraph } from "@/components/evidence/evidence-graph";
 import { LifecyclePreview } from "@/components/marketing/product-preview/lifecycle-preview";
@@ -276,6 +277,19 @@ function PlatformPage() {
           </dl>
         </PublicPage>
       </PublicSection>
+
+      <PhotoBand
+        className="py-8"
+        image={bandReview}
+        imageAlt="Two colleagues reviewing candidate profiles on a large screen"
+        eyebrow="Decision Workspace"
+        caption="Every shortlist arrives with the evidence that produced it."
+        stats={[
+          { value: "Side by side", label: "Candidate comparison" },
+          { value: "Rubric-versioned", label: "Every score" },
+          { value: "Recorded", label: "Every decision" },
+        ]}
+      />
 
       {/* 4 — LEARNING LOOP */}
       <PublicSection className="bg-white">

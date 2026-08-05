@@ -27,8 +27,9 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
-import { EditorialHero } from "@/components/marketing/editorial-hero";
+import { EditorialHero, PhotoBand } from "@/components/marketing/editorial-hero";
 import agentsHero from "@/assets/page-agents-hero.jpg";
+import bandOps from "@/assets/band-ops.jpg";
 import { AgentRunsPreview } from "@/components/marketing/product-preview/agent-runs-preview";
 import {
   MODULES,
@@ -285,6 +286,19 @@ function AgentsPage() {
           </p>
         </PublicPage>
       </PublicSection>
+
+      <PhotoBand
+        className="py-8"
+        image={bandOps}
+        imageAlt="A quiet operations desk at night with monitors glowing"
+        eyebrow="Always on"
+        caption="Agents keep working between your meetings — inside limits you set."
+        stats={[
+          { value: "24/7", label: "Sourcing and screening" },
+          { value: "Per role", label: "Weights and intensity" },
+          { value: "Logged", label: "Every agent action" },
+        ]}
+      />
 
       {/* WHAT AGENTS CANNOT DO */}
       <PublicSection className="bg-white">
