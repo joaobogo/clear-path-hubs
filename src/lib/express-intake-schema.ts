@@ -590,7 +590,12 @@ export const expressIntakeSchema = z
     // ─── Step 4: process and confirm ──────────────────────────────────────
     interviewProcess: z.string().trim().max(2000).optional().or(z.literal("")),
     /** The structured process: one to five named stages, each with an owner. */
-    interviewStages: z.array(interviewStageSchema).max(MAX_INTERVIEW_STAGES).optional().default([]),
+    interviewStages: z.preprocess(
+      // An empty or missing value means "no process stated", not an error.
+      (v) => (Array.isArray(v) ? v : []),
+      z.array(interviewStageSchema).max(MAX_INTERVIEW_STAGES),
+    ),
+
     targetDaysToOffer: z.coerce
       .number()
       .int()
