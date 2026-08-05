@@ -541,17 +541,22 @@ export const getClientOverview = createServerFn({ method: "GET" })
       };
     });
 
-    // Interview feedback outstanding: the interview happened, no scorecard yet.
-    // Feedback is due 2 days after the interview ends — a date derived from the
-    // recorded completion, not a guess about intent.
+    // Interview feedback outstanding: the interview happened, no feedback yet.
+    // The prompt appears the day after the interview — a date derived from the
+    // recorded completion or the scheduled time, never an email nag.
+    const nowIsoFeedback = new Date().toISOString();
     const { data: completedInterviews } = await context.supabase
       .from("interviews")
-      .select("id, candidate_match_id, position_id, completed_at, status")
+      .select("id, candidate_match_id, position_id, completed_at, scheduled_at, status")
       .eq("organization_id", data.orgId)
-      .not("completed_at", "is", null)
-      .order("completed_at", { ascending: true })
-      .limit(50);
-    const completedList = (completedInterviews as AnyRow[]) ?? [];
+      .in("status", ["scheduled", "completed"])
+      .order("scheduled_at", { ascending: true })
+      .limit(100);
+    const completedList = ((completedInterviews as AnyRow[]) ?? []).filter((iv) => {
+      const happened =
+        (iv.completed_at as string | null) ?? (iv.scheduled_at as string | null) ?? null;
+      return !!happened && happened < nowIsoFeedback;
+    });
     const scoredInterviewIds = new Set<string>();
     if (completedList.length > 0) {
       const { data: cards } = await context.supabase
@@ -568,7 +573,8 @@ export const getClientOverview = createServerFn({ method: "GET" })
     for (const iv of completedList) {
       if (scoredInterviewIds.has(iv.id as string)) continue;
       const matchId = iv.candidate_match_id as string | null;
-      const completedAt = iv.completed_at as string | null;
+      const happenedAt =
+        (iv.completed_at as string | null) ?? (iv.scheduled_at as string | null) ?? null;
       queueItems.push({
         key: `feedback:${iv.id}`,
         kind: "feedback",
@@ -576,10 +582,10 @@ export const getClientOverview = createServerFn({ method: "GET" })
         role_title: titleByPosition.get(iv.position_id as string) ?? "Your role",
         position_id: (iv.position_id as string) ?? null,
         subject_id: matchId,
-        due_at: completedAt
-          ? new Date(new Date(completedAt).getTime() + 2 * 86_400_000).toISOString()
+        due_at: happenedAt
+          ? new Date(new Date(happenedAt).getTime() + 86_400_000).toISOString()
           : null,
-        waiting_since: completedAt,
+        waiting_since: happenedAt,
         action: "Add feedback",
         to: "/client/interviews",
       });

@@ -26,7 +26,11 @@ import {
  useAvailability,
 } from "@/components/client/scheduling/availability-manager";
 import { InterviewTimeline } from "@/components/client/scheduling/interview-timeline";
-import { InterviewScorecardDialog } from "@/components/client/interview-scorecard-dialog";
+import {
+  InterviewFeedbackDialog,
+  InterviewFeedbackQueue,
+} from "@/components/client/interview-feedback-form";
+import type { FeedbackQueueItem } from "@/lib/interview-feedback.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { PageHeader, PageBody, PageShell } from "@/components/ds";
@@ -137,7 +141,7 @@ function InterviewsPage() {
   const [requestOpen, setRequestOpen] = useState(false);
   const [detail, setDetail] = useState<InterviewDTO | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
-  const [scorecardId, setScorecardId] = useState<string | null>(null);
+  const [feedbackFor, setFeedbackFor] = useState<FeedbackQueueItem | null>(null);
 
   const listQuery = useQuery({
     queryKey: ["client-interviews", org, "all"],
@@ -265,6 +269,8 @@ function InterviewsPage() {
         }
       />
       <PageBody>
+        {org ? <InterviewFeedbackQueue orgId={org} readOnly={readOnly} /> : null}
+
         {org ? <AvailabilityManager orgId={org} readOnly={readOnly} /> : null}
 
         {listQuery.isLoading ? (
@@ -337,7 +343,17 @@ function InterviewsPage() {
             completeMut.mutate({ orgId: detail.organization_id, id: detail.id, feedback })
           }
           onScorecard={() => {
-            setScorecardId(detail.id);
+            setFeedbackFor({
+              interview_id: detail.id,
+              candidate_match_id: detail.candidate_match_id,
+              candidate_name: detail.candidate?.name ?? "Candidate",
+              position_id: detail.position_id ?? null,
+              position_title: detail.position?.title ?? "Your role",
+              interview_type: detail.interview_type ?? null,
+              happened_at: detail.completed_at ?? detail.scheduled_at ?? null,
+              prompt_from: null,
+              status: detail.status,
+            });
             setDetail(null);
           }}
           pending={
@@ -349,13 +365,14 @@ function InterviewsPage() {
         />
       ) : null}
 
-      {org && scorecardId ? (
-        <InterviewScorecardDialog
+      {org && feedbackFor ? (
+        <InterviewFeedbackDialog
           orgId={org}
-          interviewId={scorecardId}
+          item={feedbackFor}
+          readOnly={readOnly}
           open
-          onOpenChange={(v) => {
-            if (!v) setScorecardId(null);
+          onOpenChange={(v: boolean) => {
+            if (!v) setFeedbackFor(null);
           }}
         />
       ) : null}

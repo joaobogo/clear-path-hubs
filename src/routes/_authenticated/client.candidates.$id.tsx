@@ -76,7 +76,15 @@ import {
   TagSilverMedalistDialog,
   SilverMedalistBadge,
 } from "@/components/client/tag-silver-medalist-dialog";
-import { Award, Loader2 } from "lucide-react";
+import { Award, ClipboardCheck, Loader2 } from "lucide-react";
+import {
+  InterviewFeedbackForm,
+  SubmittedFeedbackList,
+} from "@/components/client/interview-feedback-form";
+import {
+  getMatchFeedback,
+  type FeedbackQueueItem,
+} from "@/lib/interview-feedback.functions";
 
 export const Route = createFileRoute("/_authenticated/client/candidates/$id")({
  head: () => ({
@@ -389,6 +397,11 @@ function CandidateDetailPage() {
             <CompensationPanel signal={compSignal} loading={compPending} />
           </div>
           <div id="sec-interview" className="scroll-mt-24"><InterviewGuide candidate={candidate} /></div>
+          {orgId ? (
+            <div id="sec-feedback" className="scroll-mt-24">
+              <InterviewFeedbackSection orgId={orgId} matchId={id} readOnly={readOnly} />
+            </div>
+          ) : null}
           <div id="sec-experience" className="scroll-mt-24"><ExperienceTimeline candidate={candidate} /></div>
           <div id="sec-skills" className="scroll-mt-24"><SkillsAndEducation candidate={candidate} /></div>
           {candidate.screening_answers.length > 0 && (
@@ -1176,6 +1189,79 @@ function SkillsAndEducation({
  </div>
  </SectionCard>
  );
+}
+
+function InterviewFeedbackSection({
+  orgId,
+  matchId,
+  readOnly,
+}: {
+  orgId: string;
+  matchId: string;
+  readOnly: boolean;
+}) {
+  const fetchFn = useServerFn(getMatchFeedback);
+  const query = useQuery({
+    queryKey: ["match-feedback", orgId, matchId],
+    queryFn: () => fetchFn({ data: { orgId, matchId } }),
+    enabled: !!orgId && !!matchId,
+  });
+
+  if (query.isLoading) {
+    return (
+      <SectionCard title="Interview feedback" icon={<ClipboardCheck className="h-4 w-4" />}>
+        <div className="space-y-2">
+          <div className="h-4 w-48 animate-pulse rounded bg-muted" />
+          <div className="h-20 animate-pulse rounded bg-muted" />
+          <div className="h-9 w-32 animate-pulse rounded bg-muted" />
+        </div>
+      </SectionCard>
+    );
+  }
+
+  if (query.isError) {
+    return (
+      <SectionCard title="Interview feedback" icon={<ClipboardCheck className="h-4 w-4" />}>
+        <div role="alert" className="flex flex-wrap items-center gap-3 text-sm text-destructive">
+          <span>We could not load interview feedback.</span>
+          <Button size="sm" variant="outline" onClick={() => void query.refetch()}>
+            Retry
+          </Button>
+        </div>
+      </SectionCard>
+    );
+  }
+
+  const pending = query.data?.pending ?? [];
+  const submitted = query.data?.submitted ?? [];
+
+  return (
+    <SectionCard title="Interview feedback" icon={<ClipboardCheck className="h-4 w-4" />}>
+      {pending.length === 0 && submitted.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No interviews to review.</p>
+      ) : null}
+      {pending.length > 0 ? (
+        <div className="space-y-4">
+          {pending.map((item: FeedbackQueueItem) => (
+            <InterviewFeedbackForm
+              key={item.interview_id}
+              orgId={orgId}
+              item={item}
+              readOnly={readOnly}
+            />
+          ))}
+        </div>
+      ) : null}
+      {submitted.length > 0 ? (
+        <div className={pending.length > 0 ? "mt-5" : ""}>
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Feedback given
+          </h3>
+          <SubmittedFeedbackList rows={submitted} />
+        </div>
+      ) : null}
+    </SectionCard>
+  );
 }
 
 function ActivitySection({
