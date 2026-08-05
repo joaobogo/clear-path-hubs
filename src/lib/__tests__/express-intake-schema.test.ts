@@ -20,9 +20,24 @@ const valid = {
   confirmPassword: "correct-horse",
   roleTitle: "Front Office Manager",
   jobDescriptionText: "x".repeat(MIN_JD_TEXT),
+  whyOpen: "Our front office lead left in March and no one owns the guest experience.",
+  mustHaves: "5+ years front office\nOpera PMS",
+  trainable: "Our loyalty programme",
+  dealBreakers: "No one who cannot work weekend shifts.",
+  location: "Lisbon, Portugal",
+  workModel: "onsite" as const,
+  onsiteDays: 5,
+  currency: "EUR" as const,
+  compensationPeriod: "year" as const,
+  salaryMin: 40000,
+  salaryMax: 50000,
+  workAuthorization: "already_authorized" as const,
+  interviewProcess: "Call with me, then a panel on site, offer the same week.",
+  decisionMaker: "Ana Reis, General Manager",
   consent: true as const,
   pilotAcknowledgement: true as const,
 };
+
 
 describe("expressIntakeSchema", () => {
   it("accepts a complete submission", () => {
