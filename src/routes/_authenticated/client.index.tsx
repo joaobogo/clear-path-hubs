@@ -38,6 +38,9 @@ import { IntensityDial } from "@/components/client/control-room/intensity-dial";
 import { HiringHealthLine } from "@/components/client/hiring-health-line";
 import { SystemHealthStrip } from "@/components/client/system-health-strip";
 import { AgentActivityRail } from "@/components/client/agent-activity-rail";
+import { DecisionQueue } from "@/components/client/decision-queue";
+import { VisibilityNote as _QueueVisibilityNote } from "@/components/client/visibility-note";
+import type { QueueRow } from "@/lib/client-decision-queue";
 
 
 export const Route = createFileRoute("/_authenticated/client/")({
@@ -78,29 +81,6 @@ function waitLabel(iso: string | null | undefined): string {
   if (d === 0) return "Today";
   return d === 1 ? "1 day" : `${d} days`;
 }
-
-// ─── Decision queue ─────────────────────────────────────────────────────────
-// One prioritised list. Every row: the role, the person, how long it has been
-// waiting, and exactly one primary action.
-type QueueItem = {
-  key: string;
-  kind: "decision" | "interview" | "offer" | "task";
-  person: string;
-  role_title: string;
-  position_id?: string;
-  what: string;
-  action: string;
-  to: string;
-  search?: Record<string, string>;
-  waiting_since: string | null;
-};
-
-const KIND_ICON: Record<QueueItem["kind"], React.ReactNode> = {
-  decision: <Users className="h-4 w-4" />,
-  interview: <CalendarClock className="h-4 w-4" />,
-  offer: <Handshake className="h-4 w-4" />,
-  task: <AlertTriangle className="h-4 w-4" />,
-};
 
 function OverviewPage() {
   const [selfId, setSelfId] = useState<string | null>(null);
@@ -167,40 +147,11 @@ function OverviewPage() {
     return selectedRole ? all.filter((c: Any) => c.position?.id === selectedRole) : all;
   }, [data, selectedRole]);
 
-  const queue: QueueItem[] = useMemo(() => {
-    const items: QueueItem[] = [];
-    const blockingCount = blocking?.count ?? 0;
-    if (blockingCount > 0) {
-      items.push({
-        key: "blocking-tasks",
-        kind: "task",
-        person: "Your team",
-        role_title: `${blockingCount} approval${blockingCount === 1 ? "" : "s"} blocking delivery`,
-        what: "We can't move candidates until these are answered",
-        action: "Resolve",
-        to: "/client/tasks",
-        search: { view: "blocking" },
-        waiting_since: (blocking as Any)?.oldest_at ?? null,
-      });
-    }
-    const server: Any[] = (data as Any)?.decision_queue ?? [];
-    for (const q of server) {
-      if (selectedRole && q.position_id !== selectedRole) continue;
-      items.push({
-        key: q.key,
-        kind: q.kind,
-        person: q.person,
-        role_title: q.role_title,
-        position_id: q.position_id,
-        what: q.what,
-        action: q.action,
-        to: q.to,
-        search: orgSearch ? { org: orgSearch } : undefined,
-        waiting_since: q.waiting_since ?? null,
-      });
-    }
-    return items;
-  }, [data, blocking, orgSearch, selectedRole]);
+  // One queue, built on the server and only filtered by the role picker here.
+  const queue: QueueRow[] = useMemo(() => {
+    const server: QueueRow[] = ((data as Any)?.decision_queue ?? []) as QueueRow[];
+    return selectedRole ? server.filter((q) => q.position_id === selectedRole) : server;
+  }, [data, selectedRole]);
 
   // "Since last visit" — activity newer than the last time this org was viewed.
   const lastSeenKey = orgId ? `client:lastSeen:${orgId}` : null;
@@ -304,7 +255,16 @@ function OverviewPage() {
           />
 
           {/* 2 · WHAT NEEDS ME TODAY — the only thing on the first screen */}
-          <DecisionQueue queue={queue} loading={!data && isFetching} />
+          <DecisionQueue
+            rows={queue}
+            meta={(data as Any)?.decision_queue_meta ?? null}
+            loading={!data && isFetching}
+            isError={isError && !data}
+            onRetry={() => refetch()}
+            orgId={orgId ?? null}
+            orgSearch={orgSearch ?? null}
+          />
+          <_QueueVisibilityNote />
 
           {/* CONTROL ROOM — what is running, what moved, how hard we work */}
           {orgId && (
