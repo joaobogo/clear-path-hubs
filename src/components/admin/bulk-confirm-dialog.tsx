@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { previewBulkAction, executeBulkAction } from "@/lib/bulk-actions.functions";
 import type { BulkPreview, ExecResult, PlanRow } from "@/lib/bulk-actions.types";
+import type { BulkStage } from "@/lib/admin-bulk-constants";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -16,7 +17,12 @@ import {
 import { AlertTriangle, ArrowRight, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-type PreviewInput = Parameters<typeof previewBulkAction>[0]["data"];
+type PreviewInput =
+  | { kind: "candidate_stage"; match_ids: string[]; to_stage: BulkStage }
+  | { kind: "candidate_assign"; candidate_profile_ids: string[]; position_id: string }
+  | { kind: "candidate_update_message"; match_ids: string[]; message: string }
+  | { kind: "position_pause"; position_ids: string[] };
+export type { PreviewInput };
 
 const SAMPLE_LIMIT = 8;
 
