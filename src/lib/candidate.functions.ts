@@ -5,6 +5,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { computePendingAction } from "@/lib/candidate/pending-action";
+import { buildCandidateTimeline } from "@/lib/candidate/timeline";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -258,20 +259,34 @@ export const getMyApplication = createServerFn({ method: "GET" })
       withdrawnAt: a.withdrawn_at ?? null,
     });
 
-    const events: { at: string; label: string }[] = [
-      { at: a.applied_at, label: "Application submitted" },
-    ];
-    for (const r of infoRequests) {
-      events.push({ at: r.created_at, label: "Information requested" });
-      if (r.responded_at) events.push({ at: r.responded_at, label: "You replied" });
+    // Recorded stage history only. Candidates cannot read this table under RLS,
+    // so it is loaded privileged *after* the application was proven to be
+    // theirs above, and mapped to the eight candidate-safe labels. Actor,
+    // reason and internal stages are never returned.
+    const matchIds = matches.map((m: AnyRow) => m.id as string);
+    let stageHistory: Array<{ to_stage: string; created_at: string }> = [];
+    if (matchIds.length > 0) {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: hist } = await (supabaseAdmin as AnyRow)
+        .from("candidate_stage_history")
+        .select("to_stage, created_at")
+        .in("candidate_match_id", matchIds)
+        .order("created_at", { ascending: true });
+      stageHistory = (hist ?? []) as Array<{ to_stage: string; created_at: string }>;
     }
-    for (const i of interviews) {
-      events.push({ at: i.requested_at, label: "Interview requested" });
-      if (i.scheduled_at) events.push({ at: i.scheduled_at, label: "Interview scheduled" });
-      if (i.cancelled_at) events.push({ at: i.cancelled_at, label: "Interview cancelled" });
-    }
-    if (a.withdrawn_at) events.push({ at: a.withdrawn_at, label: "Withdrawn" });
-    events.sort((x, y) => x.at.localeCompare(y.at));
+
+    const events = buildCandidateTimeline({
+      appliedAt: a.applied_at,
+      cv: cvFile
+        ? {
+            uploaded_at: cvFile.created_at as string,
+            received: cvFile.parse_state !== "failed",
+          }
+        : null,
+      stageHistory,
+      interviews,
+      withdrawnAt: (a.withdrawn_at as string | null) ?? null,
+    });
 
     return {
       id: a.id,
