@@ -203,7 +203,12 @@ describe("role brief", () => {
       expressIntakeSchema.safeParse({ ...valid, workModel: "hybrid", onsiteDays: undefined }).success,
     ).toBe(false);
     expect(
-      expressIntakeSchema.safeParse({ ...valid, workModel: "remote", onsiteDays: undefined }).success,
+      expressIntakeSchema.safeParse({
+        ...valid,
+        workModel: "remote",
+        onsiteDays: undefined,
+        remoteAnywhereInCountry: true,
+      }).success,
     ).toBe(true);
   });
 });
@@ -313,6 +318,9 @@ describe("intakeRequiredness", () => {
       // The salary pair is optional together: half a range is rejected as a
       // pair rule, not because either field is required on its own.
       if (field === "salaryMin" || field === "salaryMax") continue;
+      // Remote boundary is a pair rule too: a timezone band OR anywhere in the
+      // country satisfies it, so neither field is required on its own.
+      if (field === "remoteTimezones" || field === "remoteAnywhereInCountry") continue;
       const payload: Record<string, unknown> = { ...valid, [field]: blankFor(field) };
       const serverRejects = !expressIntakeSchema.safeParse(payload).success;
       expect(
