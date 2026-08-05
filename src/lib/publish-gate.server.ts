@@ -88,9 +88,9 @@ export async function loadPublishGateQueue(
   if (ownerIds.length > 0) {
     const { data: profiles } = await admin
       .from("profiles")
-      .select("user_id, full_name")
-      .in("user_id", ownerIds);
-    for (const p of (profiles ?? []) as Any[]) owners.set(p['user_id'], p['full_name'] ?? "");
+      .select("auth_user_id, full_name")
+      .in("auth_user_id", ownerIds);
+    for (const p of (profiles ?? []) as Any[]) owners.set(p['auth_user_id'], p['full_name'] ?? "");
   }
 
   const rows: PublishGateRow[] = positions.map((p) => {
