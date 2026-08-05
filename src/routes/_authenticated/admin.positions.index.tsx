@@ -519,6 +519,9 @@ function PositionsPage() {
           </div>
         </div>
       )}
+      </>
+      )}
     </div>
+
   );
 }
