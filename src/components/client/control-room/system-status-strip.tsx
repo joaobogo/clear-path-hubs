@@ -18,17 +18,9 @@ export function SystemStatusStrip({ orgId }: { orgId: string }) {
     queryKey: ["system-status", orgId],
     queryFn: () => statusFn({ data: { organization_id: orgId } }),
     refetchInterval: 60_000,
+    retry: 2,
     placeholderData: (prev) => prev,
   });
-
-  if (isError) {
-    return (
-      <div className="rounded-lg border border-destructive/40 bg-destructive/5 px-4 py-3 text-sm">
-        We cannot read system status right now. Everything else on this page is
-        still live.
-      </div>
-    );
-  }
 
   if (isPending && !data) {
     return (
@@ -36,8 +28,27 @@ export function SystemStatusStrip({ orgId }: { orgId: string }) {
     );
   }
 
+  if (isError && !data) {
+    return (
+      <div className="rounded-lg border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
+        System status is catching up. Everything else on this page is live.
+      </div>
+    );
+  }
+
   const s = data!;
+
+  if (!s.can_read) {
+    return (
+      <div className="rounded-lg border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
+        {s.unavailable_reason ??
+          "System status isn't available on your seat. Everything else on this page is live."}
+      </div>
+    );
+  }
+
   const broken = s.failed_total > 0;
+
 
   return (
     <section
