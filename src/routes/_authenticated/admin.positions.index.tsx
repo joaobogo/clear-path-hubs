@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/select";
 import { AlertCircle, ArrowUpRight, Building2, MapPin } from "lucide-react";
 import { ErrorState } from "@/components/ds";
+import { PositionsAttentionQueue } from "@/components/admin/positions-attention-queue";
+
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
@@ -25,7 +27,10 @@ const searchSchema = z.object({
   location: fallback(z.string(), "").default(""),
   sort: fallback(z.string(), "updated_desc").default("updated_desc"),
   page: fallback(z.number().int(), 1).default(1),
+  tab: fallback(z.enum(["all", "attention"]), "all").default("all"),
+  show_test: fallback(z.boolean(), false).default(false),
 });
+
 
 export const Route = createFileRoute("/_authenticated/admin/positions/")({
   validateSearch: zodValidator(searchSchema),
@@ -139,7 +144,7 @@ function PositionsPage() {
   const total = payload.total;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
-  const setSearch = (patch: Record<string, string | number | undefined>) =>
+  const setSearch = (patch: Record<string, string | number | boolean | undefined>) =>
     navigate({
       search: (s: Record<string, unknown>) => ({ ...s, ...patch }),
       replace: true,
@@ -190,7 +195,46 @@ function PositionsPage() {
         </div>
       </header>
 
+      {/* Tabs: the whole book vs today's stalling roles. */}
+      <div className="flex flex-wrap items-center gap-2 border-b" role="tablist" aria-label="Position views">
+        {([
+          ["all", "All positions"],
+          ["attention", "Needs attention"],
+        ] as const).map(([id, label]) => (
+          <button
+            key={id}
+            type="button"
+            role="tab"
+            aria-selected={search.tab === id}
+            onClick={() => setSearch({ tab: id === "all" ? undefined : id })}
+            className={`-mb-px border-b-2 px-3 py-2 text-sm ${
+              search.tab === id
+                ? "border-primary font-medium text-foreground"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+        {search.tab === "attention" && (
+          <label className="ml-auto flex items-center gap-2 py-2 text-xs text-muted-foreground">
+            <input
+              type="checkbox"
+              className="h-3.5 w-3.5"
+              checked={search.show_test}
+              onChange={(e) => setSearch({ show_test: e.target.checked || undefined })}
+            />
+            Show test records
+          </label>
+        )}
+      </div>
+
+      {search.tab === "attention" ? (
+        <PositionsAttentionQueue includeTest={search.show_test} />
+      ) : (
+      <>
       <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-card p-3">
+
         <Input
           placeholder="Search title…"
           value={q}
@@ -477,6 +521,9 @@ function PositionsPage() {
           </div>
         </div>
       )}
+      </>
+      )}
     </div>
+
   );
 }
