@@ -6,7 +6,7 @@
  * above the stated volume floors; below them the cells read "counts only" rather
  * than a misleading percentage. No sender-reputation score, no inbox placement.
  */
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -190,8 +190,8 @@ export function OutreachHealthPanel() {
             </thead>
             <tbody>
               {data.channels.map((c) => (
-                <>
-                  <tr key={c.channel} className="border-t border-border">
+                <Fragment key={c.channel}>
+                  <tr className="border-t border-border">
                     <td className="py-2 pr-3 font-medium" colSpan={8}>
                       {channelLabel(c.channel)}
                     </td>
@@ -199,7 +199,7 @@ export function OutreachHealthPanel() {
                   {([7, 30] as WindowDays[]).map((w) => (
                     <WindowRow key={`${c.channel}-${w}`} stats={c.windows[w]} />
                   ))}
-                </>
+                </Fragment>
               ))}
               <tr className="border-t-2 border-border font-medium">
                 <td className="py-2 pr-3">All channels · 30 days</td>
