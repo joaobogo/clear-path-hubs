@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ProcessState } from "@/components/ds/process-state";
+import { IntegrationHealthStrip } from "@/components/admin/integration-health-strip";
 import { CalendlyWebhookPanel } from "@/components/admin/calendly-webhook-panel";
 import {
   getIntegrationHealth,
@@ -101,6 +102,8 @@ function IntegrationHealthPage() {
           {run.isPending ? "Testing…" : "Run all tests"}
         </Button>
       </header>
+
+      <IntegrationHealthStrip onRunChecks={() => run.mutate(undefined)} />
 
       {run.isPending || run.isError || (run.isSuccess && !run.isPending) ? (
         <ProcessState
