@@ -288,41 +288,111 @@ function ApplyPage() {
     });
 
 
+  /** Name the actual problem — a wrong extension should say what to do about it. */
+  const extensionMessage = (name: string): string => {
+    const ext = fileExt(name);
+    if (ext === "docx") return "This is a Word file — export it as a PDF and try again.";
+    if (ext === "doc") return "This is an older Word file — save it as a PDF and try again.";
+    if (ext === "pages") return "This is a Pages file — export it as a PDF and try again.";
+    if (["png", "jpg", "jpeg", "heic", "webp"].includes(ext))
+      return "This is an image — upload a PDF of your CV, not a photo or screenshot.";
+    if (["txt", "rtf", "md"].includes(ext))
+      return "This is a text file — export or print it as a PDF and try again.";
+    if (["zip", "rar", "7z"].includes(ext))
+      return "This is a compressed folder — upload the CV itself as a single PDF.";
+    return `We only accept PDF files${ext ? ` (this one is .${ext})` : ""} — export your CV as a PDF and try again.`;
+  };
+
   const validateFile = (f: File): string | null => {
-    if (f.size === 0) return CV_MESSAGES.empty;
-    if (f.size > MAX_CV_BYTES) return CV_MESSAGES.too_large;
-    if (!ALLOWED_CV_EXT.has(fileExt(f.name))) return CV_MESSAGES.bad_extension;
+    if (!ALLOWED_CV_EXT.has(fileExt(f.name))) return extensionMessage(f.name);
+    if (f.size === 0)
+      return "That file is empty (0 bytes) — re-export your CV and pick the new file.";
+    if (f.size > MAX_CV_BYTES)
+      return `That file is ${(f.size / (1024 * 1024)).toFixed(1)} MB — the limit is 10 MB. Export a smaller PDF (images are usually the cause) and try again.`;
     return null;
+  };
+
+  /** Determinate, cancellable read so progress is real and never a dead spinner. */
+  const readBytes = (f: File) =>
+    new Promise<Uint8Array>((resolve, reject) => {
+      const r = new FileReader();
+      cvReaderRef.current = r;
+      let settled = false;
+      const done = (fn: () => void) => {
+        if (settled) return;
+        settled = true;
+        cvReaderRef.current = null;
+        fn();
+      };
+      r.onprogress = (e) => {
+        if (e.lengthComputable && e.total > 0)
+          setCvProgress(Math.min(99, Math.round((e.loaded / e.total) * 100)));
+      };
+      r.onload = () =>
+        done(() => resolve(new Uint8Array(r.result as ArrayBuffer)));
+      r.onerror = () => done(() => reject(new Error("read_failed")));
+      r.onabort = () => done(() => reject(new Error("cancelled")));
+      try {
+        r.readAsArrayBuffer(f);
+      } catch {
+        done(() => reject(new Error("read_failed")));
+      }
+    });
+
+  const cancelCvCheck = () => {
+    try { cvReaderRef.current?.abort(); } catch { /* ignore */ }
+    setCvChecking(false);
+    setCvProgress(0);
+    setCvError(null);
+    setCvStatus("Upload cancelled. No file attached.");
   };
 
   const onFile = async (f: File | null) => {
     setCvError(null);
     setCvFile(null);
+    setCvProgress(0);
     if (!f) return;
     const err = validateFile(f);
     if (err) {
       setCvError(err);
+      setCvStatus(`${f.name} was not accepted. ${err}`);
       return;
     }
     // Same signature/structure checks the server runs — catch renamed Word docs,
     // images and corrupt PDFs before the applicant waits on an upload.
     setCvChecking(true);
+    setCvStatus(`Checking ${f.name}.`);
     try {
-      const bytes = new Uint8Array(await f.arrayBuffer());
+      const bytes = await readBytes(f);
+      setCvProgress(100);
       const { validateCv } = await import("@/lib/cv-validation");
       const res = await validateCv(bytes, f.name, f.type || "application/pdf");
       if (!res.ok) {
-        setCvError(res.message ?? CV_MESSAGES.unknown);
+        const msg = res.message ?? CV_MESSAGES.unknown;
+        setCvError(msg);
+        setCvStatus(`${f.name} was not accepted. ${msg}`);
         return;
       }
-    } catch {
+    } catch (e) {
+      if ((e as Error).message === "cancelled") return;
       setCvError(CV_MESSAGES.corrupt);
+      setCvStatus(`${f.name} could not be read.`);
       return;
     } finally {
       setCvChecking(false);
     }
     setCvFile(f);
+    setCvStatus(`Attached ${f.name}, ${formatFileSize(f.size)}.`);
   };
+
+  const clearCv = () => {
+    setCvFile(null);
+    setCvError(null);
+    setCvProgress(0);
+    setCvStatus("CV removed. No file attached.");
+    if (cvInputRef.current) cvInputRef.current.value = "";
+  };
+
 
 
 
