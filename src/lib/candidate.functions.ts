@@ -343,6 +343,8 @@ export const getMyApplication = createServerFn({ method: "GET" })
       info_requests: infoRequests,
       interviews,
       events,
+      closed_outcome: closedOutcome,
+
     };
   });
 
