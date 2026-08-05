@@ -14,6 +14,13 @@ import {
   type PublicJobFacts,
 } from "@/lib/jobs/public-facts";
 import {
+  APPLY_STEPS,
+  EFFORT_DEFAULT,
+  applyEffortLine,
+  applyEffortProvenance,
+} from "@/lib/jobs/apply-effort";
+
+import {
   ArrowLeft,
   Building2,
   CalendarDays,
