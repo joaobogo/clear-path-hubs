@@ -494,56 +494,20 @@ function JobDetail() {
             </div>
           </div>
 
-          {/* Sidebar: the facts a candidate scans for, plus a persistent apply. */}
-          {/* On a phone the deciding facts come before the prose — pay, work
-              arrangement and authorisation are what people screen on. */}
+          {/* Sidebar: a persistent apply, plus locations. The deciding facts
+              now live in the fixed block under the title, so they are not
+              repeated here. */}
           <aside className="order-1 lg:sticky lg:top-24 lg:order-2 lg:self-start">
 
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                Role at a glance
+                Apply to this role
               </h2>
-              {/* The four facts candidates actually screen on are always
-                  rendered. A missing value says so plainly rather than
-                  vanishing, so nobody has to guess whether pay was withheld
-                  or simply not scrolled to. */}
-              <div className="mt-4 space-y-4">
-                <FactRow
-                  icon={Wallet}
-                  label="Compensation"
-                  value={pos.compensation_display}
-                  fallback="Not stated by the employer"
-                />
-                <FactRow
-                  icon={Building2}
-                  label="Work arrangement"
-                  value={workModel}
-                  fallback="Not stated by the employer"
-                />
-                <FactRow
-                  icon={MapPin}
-                  label="Location"
-                  value={pos.location}
-                  fallback="Not stated by the employer"
-                />
-                <FactRow
-                  icon={ShieldCheck}
-                  label="Work authorisation"
-                  value={pos.work_authorization_note}
-                  fallback="Not stated by the employer — ask us and we'll confirm"
-                />
-                <FactRow
-                  icon={ListOrdered}
-                  label="Stages"
-                  value={`${HIRING_STAGES.length} before an offer: ${HIRING_STAGES.join(", ")}`}
-                />
-                {employment && (
-                  <FactRow icon={Clock} label="Employment" value={employment} />
-                )}
-                {pos.seniority && (
-                  <FactRow icon={TrendingUp} label="Seniority" value={pos.seniority} />
-                )}
-              </div>
+              <p className="mt-3 text-sm text-muted-foreground">
+                {pos.seniority ? `${pos.seniority} · ` : ""}
+                {pos.openings > 1 ? `${pos.openings} openings` : "1 opening"}
+              </p>
+
 
 
               {pos.locations.length > 0 && (
