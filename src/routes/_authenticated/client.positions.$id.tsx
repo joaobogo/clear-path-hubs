@@ -386,6 +386,18 @@ function PositionDetailPage() {
   {/* Recorded closure — reason, note, date and who closed it. */}
   {closure.data && <RoleClosureRecord closure={closure.data} />}
 
+  {/* One-screen recap of the finished search. */}
+  {closure.data && !closure.data.paused && (
+   <>
+    {recap.isPending && <RoleRecapSkeleton />}
+    {recap.isError && <RoleRecapError onRetry={() => void recap.refetch()} />}
+    {!recap.isPending && !recap.isError && recap.data && (
+     <RoleRecapPanel recap={recap.data} />
+    )}
+   </>
+  )}
+
+
 
 
  {/* 1. Header */}
