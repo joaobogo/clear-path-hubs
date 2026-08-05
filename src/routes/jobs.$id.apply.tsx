@@ -598,7 +598,21 @@ function ApplyPage() {
               style={{ width: `${(step / STEP_LABELS.length) * 100}%` }}
             />
           </div>
-          <ol className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+          <div className="mt-2 flex items-baseline justify-between gap-3 text-sm">
+            <span className="font-medium">
+              Step {step} of {APPLY_STEPS} · {stepName}
+            </span>
+            {paginateQuestions && (
+              <span className="text-xs text-muted-foreground">
+                Question {qCursor} of {questionCount}
+              </span>
+            )}
+          </div>
+          {/* Announce the move, and only the move — the heading itself takes focus. */}
+          <p className="sr-only" aria-live="polite" data-testid="apply-step-announcement">
+            {stepAnnouncement}
+          </p>
+          <ol className="mt-3 hidden flex-wrap gap-x-4 gap-y-1 text-xs sm:flex">
             {STEP_LABELS.map((label, i) => {
               const n = i + 1;
               const done = n < step;
@@ -639,7 +653,17 @@ function ApplyPage() {
           </Alert>
         )}
 
-        <div className="mt-8 rounded-lg border bg-card p-5 md:p-6">
+        {Object.keys(fieldErrors).length > 0 && (
+          <Alert variant="destructive" className="mt-6" data-testid="apply-step-error">
+            <AlertTitle>This step needs a little more</AlertTitle>
+            <AlertDescription>
+              Check the highlighted fields below. Everything you have already entered is still
+              here — nothing was cleared.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        <div data-apply-form className="mt-8 rounded-lg border bg-card p-5 md:p-6">
           {step === 1 && (
             <div className="space-y-5" data-hydrated={signedIn === null ? "pending" : "ready"}>
 
