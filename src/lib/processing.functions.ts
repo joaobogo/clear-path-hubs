@@ -827,6 +827,10 @@ export const applyReviewDecision = createServerFn({ method: "POST" })
       candidate_match_id: data.match_id,
       score_run_id: runIdForDecision,
       decision_type: "reject",
+      // Holds are parked under the reserved `hold` code so rejection reporting
+      // never counts them as rejections.
+      reason_code: data.action === "hold" ? "hold" : (data.reason_code ?? null),
+      stage_at_decision: (match.stage as string) ?? null,
       reason: (data.action === "hold" ? "HOLD: " : "ARCHIVE: ") + (data.reason ?? ""),
       actor_user_id: context.userId,
     });
