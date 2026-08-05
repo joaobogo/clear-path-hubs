@@ -240,6 +240,37 @@ function PositionDetailPage() {
   move.mutate({ matchId, toStage: to });
  };
 
+ /**
+  * Placement and authorisation, read back from what the client actually stated
+  * at intake. Nothing is inferred: a missing answer simply does not show.
+  */
+ const placementLine = React.useMemo(() => {
+  const ctx = (position.intake_context ?? {}) as Record<string, unknown>;
+  const auth = (position.work_authorization ?? {}) as Record<string, unknown>;
+  const parts: string[] = [];
+  const days = Number(ctx.onsite_days ?? 0);
+  if (position.work_model === "hybrid" && days > 0) {
+   parts.push(`${days} day${days === 1 ? "" : "s"} on site each week`);
+  }
+  if (position.work_model === "remote") {
+   if (ctx.remote_anywhere_in_country === true) parts.push("Anywhere in the country");
+   const tz = Array.isArray(ctx.remote_timezones) ? (ctx.remote_timezones as string[]) : [];
+   if (tz.length > 0) {
+    parts.push(`Timezones: ${tz.map((t) => TIMEZONE_BAND_LABELS[t] ?? t).join(", ")}`);
+   }
+  }
+  const sponsorship =
+   typeof auth.sponsorship_available === "boolean"
+    ? auth.sponsorship_available
+    : typeof ctx.sponsorship_available === "string"
+      ? ctx.sponsorship_available === "yes"
+      : null;
+  if (sponsorship !== null) {
+   parts.push(SPONSORSHIP_LABELS[sponsorship ? "yes" : "no"]);
+  }
+  return parts.join(" · ");
+ }, [position.intake_context, position.work_authorization, position.work_model]);
+
 
  const actionRequired: Array<{ label: string; href?: string }> = [];
  if (summary.delivered > 0) {
