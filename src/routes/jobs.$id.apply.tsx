@@ -37,6 +37,20 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FormShell } from "@/components/marketing/form-shell";
 import { TransparencyPanel } from "@/components/candidate/transparency-panel";
 
+const EMPTY_FORM = {
+  full_name: "",
+  email: "",
+  phone: "",
+  country: "",
+  region: "",
+  city: "",
+  cover_letter: "",
+  portfolio_url: "",
+  linkedin_url: "",
+  website_url: "",
+  accommodation_request: "",
+};
+
 export const Route = createFileRoute("/jobs/$id/apply")({
   // The step lives in the URL so the browser back button walks back through
   // the flow instead of leaving it — the component stays mounted, so nothing
@@ -120,19 +134,7 @@ function ApplyPage() {
   );
   const setStep = useCallback((n: number) => goTo({ step: n, q: 1 }), [goTo]);
 
-  const [form, setForm] = useState({
-    full_name: "",
-    email: "",
-    phone: "",
-    country: "",
-    region: "",
-    city: "",
-    cover_letter: "",
-    portfolio_url: "",
-    linkedin_url: "",
-    website_url: "",
-    accommodation_request: "",
-  });
+  const [form, setForm] = useState(EMPTY_FORM);
   // Account creation for applicants who are not signed in.
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const [wantsAccount, setWantsAccount] = useState(false);
@@ -151,6 +153,13 @@ function ApplyPage() {
   );
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
+  // Set only when the browser refuses to keep the draft (private mode, full
+  // quota). We say so instead of implying the answers are safe.
+  const [draftError, setDraftError] = useState(false);
+  // A draft found on reopen: what step it reached, and when it was last saved.
+  const [resume, setResume] = useState<{ step: number; savedAt: number | null } | null>(null);
+  // Ticks so "Saved just now" ages into "Saved 3 minutes ago" on its own.
+  const [savedTick, setSavedTick] = useState(0);
   const submittingRef = useRef(false);
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
   // When this form first became usable. The gap to a successful submit is the
@@ -159,18 +168,33 @@ function ApplyPage() {
 
 
 
-  // Restore text draft (never the CV).
+  // Restore the text draft — never the CV, which is not stored anywhere until
+  // the application is submitted. Keyed per posting and per browser.
   useEffect(() => {
     try {
       const raw = localStorage.getItem(draftKey);
-      if (raw) {
-        const d = JSON.parse(raw);
-        if (d.form) setForm(d.form);
-        if (d.answers) setAnswers(d.answers);
-        if (typeof d.network === "boolean") setNetwork(d.network);
+      if (!raw) return;
+      const d = JSON.parse(raw);
+      if (d.form) setForm(d.form);
+      if (d.answers) setAnswers(d.answers);
+      if (typeof d.network === "boolean") setNetwork(d.network);
+      const hasContent =
+        Object.values(d.form ?? {}).some((v) => typeof v === "string" && v.trim() !== "") ||
+        Object.keys(d.answers ?? {}).length > 0;
+      if (hasContent) {
+        setResume({
+          step: typeof d.step === "number" ? Math.min(APPLY_STEPS, Math.max(1, d.step)) : 1,
+          savedAt: typeof d.savedAt === "number" ? d.savedAt : null,
+        });
       }
-    } catch { /* ignore */ }
+    } catch { /* a corrupt draft is the same as no draft */ }
   }, [draftKey]);
+
+  useEffect(() => {
+    if (!draftSavedAt) return;
+    const t = setInterval(() => setSavedTick((n) => n + 1), 30_000);
+    return () => clearInterval(t);
+  }, [draftSavedAt]);
 
   // Is this applicant already signed in? If so we skip account creation and
   // prefill the email we already know. We read the locally stored session
@@ -201,12 +225,21 @@ function ApplyPage() {
   // phone rings, because nobody knows their answers are safe.
   const firstSaveSkipped = useRef(false);
   useEffect(() => {
+    const savedAt = Date.now();
     try {
-      localStorage.setItem(draftKey, JSON.stringify({ form, answers, network }));
-      if (firstSaveSkipped.current) setDraftSavedAt(Date.now());
+      localStorage.setItem(
+        draftKey,
+        JSON.stringify({ form, answers, network, step, savedAt }),
+      );
+      setDraftError(false);
+      if (firstSaveSkipped.current) setDraftSavedAt(savedAt);
       else firstSaveSkipped.current = true;
-    } catch { /* ignore */ }
-  }, [draftKey, form, answers, network]);
+    } catch {
+      // Storage refused us. Never pretend the draft exists.
+      setDraftError(true);
+      setDraftSavedAt(null);
+    }
+  }, [draftKey, form, answers, network, step]);
 
 
   /**
@@ -415,6 +448,17 @@ function ApplyPage() {
     stepHeadingRef.current?.focus();
   }, [step, qCursor]);
 
+  // Relative, plain-language save marker. Absent until the first real save,
+  // so nothing claims to be saved before it is.
+  const savedLabel = (() => {
+    void savedTick;
+    if (draftError) return null;
+    if (!draftSavedAt) return null;
+    const mins = Math.floor((Date.now() - draftSavedAt) / 60_000);
+    if (mins < 1) return "Saved just now";
+    return `Saved ${mins} ${mins === 1 ? "minute" : "minutes"} ago`;
+  })();
+
   const stepName = STEP_LABELS[Math.min(step, STEP_LABELS.length) - 1];
   const stepAnnouncement = paginateQuestions
     ? `Step ${step} of ${APPLY_STEPS}, ${stepName}. Question ${qCursor} of ${questionCount}.`
@@ -561,7 +605,28 @@ function ApplyPage() {
     <FormShell
       exitTo={`/jobs/${id}`}
       exitLabel="← Role details"
-      progress={{ step, total: STEP_LABELS.length, label: `Step ${step} of ${STEP_LABELS.length}` }}
+      progress={{
+        step,
+        total: STEP_LABELS.length,
+        label: `Step ${step} of ${STEP_LABELS.length}`,
+        note: draftError ? (
+          <span
+            className="shrink-0 rounded-full bg-destructive/10 px-2 py-0.5 text-[11px] font-medium text-destructive"
+            data-testid="apply-draft-error"
+            role="status"
+          >
+            Not saved — finish this step before leaving
+          </span>
+        ) : savedLabel ? (
+          <span
+            className="shrink-0 rounded-full bg-[color:var(--brand-navy)]/8 px-2 py-0.5 text-[11px] font-medium text-[color:var(--brand-navy)]/80"
+            data-testid="apply-draft-saved-marker"
+            role="status"
+          >
+            {savedLabel}
+          </span>
+        ) : null,
+      }}
       width="md"
     >
       <div className="text-sm text-[color:var(--brand-navy)]/80">{pos.organization_name}</div>
@@ -576,16 +641,10 @@ function ApplyPage() {
             {applyEffortLine(effort, STEP_LABELS.length)}
           </span>
 
-          <span
-            aria-live="polite"
-            className={
-              draftSavedAt
-                ? "inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground"
-                : "sr-only"
-            }
-            data-testid="apply-draft-saved"
-          >
-            {draftSavedAt ? "Answers saved on this device" : ""}
+          {/* The visible marker lives in the sticky header; this keeps the
+              same fact available to assistive tech in reading order. */}
+          <span aria-live="polite" className="sr-only" data-testid="apply-draft-saved">
+            {savedLabel ? `${savedLabel} on this device` : ""}
           </span>
         </div>
 
@@ -659,6 +718,68 @@ function ApplyPage() {
             <AlertDescription>
               Check the highlighted fields below. Everything you have already entered is still
               here — nothing was cleared.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {draftError && (
+          <Alert variant="destructive" className="mt-6" data-testid="apply-draft-error-alert">
+            <AlertTitle>We could not save your progress</AlertTitle>
+            <AlertDescription>
+              This browser is not letting us keep a local draft, so finish this step before
+              leaving the page. Nothing has been sent yet.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {resume && (
+          <Alert className="mt-6" data-testid="apply-resume-prompt">
+            <AlertTitle>Pick up where you left off</AlertTitle>
+            <AlertDescription>
+              <span className="block">
+                You already started applying for {pos.title}
+                {resume.savedAt
+                  ? ` — saved on this device ${new Date(resume.savedAt).toLocaleString()}`
+                  : ""}
+                . You reached step {resume.step} of {APPLY_STEPS},{" "}
+                {STEP_LABELS[Math.min(resume.step, STEP_LABELS.length) - 1]}.
+              </span>
+              <span className="mt-1 block">
+                Your answers are restored. Your CV is not — files are never kept on this device,
+                so you will need to attach the PDF again.
+              </span>
+              <span className="mt-3 flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => {
+                    const target = resume.step;
+                    setResume(null);
+                    // The CV is gone, so never drop someone past the upload step.
+                    goTo({ step: Math.min(target, 2), q: 1 });
+                  }}
+                >
+                  Continue application
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    try {
+                      localStorage.removeItem(draftKey);
+                    } catch { /* ignore */ }
+                    setForm(EMPTY_FORM);
+                    setAnswers({});
+                    setNetwork(false);
+                    setDraftSavedAt(null);
+                    setResume(null);
+                    goTo({ step: 1, q: 1 });
+                  }}
+                >
+                  Start over
+                </Button>
+              </span>
             </AlertDescription>
           </Alert>
         )}
