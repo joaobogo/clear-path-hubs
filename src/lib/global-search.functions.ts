@@ -284,7 +284,8 @@ export const globalSearch = createServerFn({ method: "POST" })
         .order("created_at", { ascending: false })
         .limit(LIMIT);
       if (scope === "client") mq = mq.in("thread_id", orgIds);
-      const { data: msgs } = await mq;
+      const { data: msgs, error } = await mq;
+      if (error) throw new Error(error.message);
       groups.messages = ((msgs as AnyRow[]) ?? []).map((m) => {
         const snippet = String(m.body ?? "").slice(0, 120);
         const href = scope === "admin" ? "/admin/messages" : "/client/messages";
@@ -310,19 +311,23 @@ export const globalSearch = createServerFn({ method: "POST" })
         .order("updated_at", { ascending: false })
         .limit(LIMIT);
       if (scope === "client") tq = tq.in("organization_id", orgIds);
-      const { data: tasks } = await tq;
+      else tq = excludeTestOrgs(tq, testScope);
+      const { data: tasks, error } = await tq;
+      if (error) throw new Error(error.message);
       groups.tasks = ((tasks as AnyRow[]) ?? []).map((t) => ({
         type: "task" as const,
         id: t.id,
         label: t.title,
-        context: [t.task_type?.replace(/_/g, " "), t.blocking ? "blocking" : null, t.status]
+        context: [t.task_type?.replace(/_/g, " "), t.blocking ? "blocking" : null]
           .filter(Boolean)
           .join(" · "),
+        state: t.status ? String(t.status).replace(/_/g, " ") : undefined,
         href: scope === "admin" ? "/admin" : "/client/tasks",
         search: scope === "client" ? { org: t.organization_id as string } : undefined,
       }));
     }
 
-    return { scope, groups };
+    return { scope, includeTest, limit: LIMIT, groups };
+
   });
 
