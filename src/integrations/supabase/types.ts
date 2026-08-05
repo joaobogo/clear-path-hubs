@@ -3352,6 +3352,73 @@ export type Database = {
           },
         ]
       }
+      duplicate_person_decisions: {
+        Row: {
+          created_at: string
+          decided_by: string | null
+          decision: string
+          id: string
+          merged_into_id: string | null
+          moved_identifier_ids: string[]
+          note: string | null
+          person_a_id: string
+          person_b_id: string
+          reverted_at: string | null
+          reverted_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          decided_by?: string | null
+          decision: string
+          id?: string
+          merged_into_id?: string | null
+          moved_identifier_ids?: string[]
+          note?: string | null
+          person_a_id: string
+          person_b_id: string
+          reverted_at?: string | null
+          reverted_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          decided_by?: string | null
+          decision?: string
+          id?: string
+          merged_into_id?: string | null
+          moved_identifier_ids?: string[]
+          note?: string | null
+          person_a_id?: string
+          person_b_id?: string
+          reverted_at?: string | null
+          reverted_by?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "duplicate_person_decisions_merged_into_id_fkey"
+            columns: ["merged_into_id"]
+            isOneToOne: false
+            referencedRelation: "talent_persons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "duplicate_person_decisions_person_a_id_fkey"
+            columns: ["person_a_id"]
+            isOneToOne: false
+            referencedRelation: "talent_persons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "duplicate_person_decisions_person_b_id_fkey"
+            columns: ["person_b_id"]
+            isOneToOne: false
+            referencedRelation: "talent_persons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       eligibility_checks: {
         Row: {
           actor_user_id: string | null
