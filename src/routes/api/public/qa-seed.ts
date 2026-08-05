@@ -24,6 +24,35 @@ async function loadAdmin() {
   return supabaseAdmin as any;
 }
 
+/**
+ * Every destructive/read helper here is scoped to QA mailboxes only.
+ *
+ * `.test` is a reserved TLD that can never be a deliverable address, and we
+ * additionally require the local part to start with `qa`. That makes it
+ * impossible for these helpers to touch a real candidate, whichever QA
+ * mailbox convention a spec uses (`qa.cand+…@qa.taasflow.test` or
+ * `qa+apply-…@taasflow.test`).
+ */
+function assertQaMailbox(email: string, action: string): string {
+  const lower = (email ?? "").trim().toLowerCase();
+  const local = lower.split("@")[0] ?? "";
+  const domain = lower.split("@")[1] ?? "";
+  if (!domain.endsWith(".test") || !local.startsWith("qa")) {
+    throw new Error(`${action} only accepts qa*@*.test mailboxes`);
+  }
+  return lower;
+}
+
+/** Same rule for LIKE patterns used by the cleanup helpers. */
+function assertQaPattern(pattern: string, fallback: string): string {
+  const lower = (pattern ?? "").trim().toLowerCase();
+  const local = lower.split("@")[0] ?? "";
+  const domain = lower.split("@")[1] ?? "";
+  if (!domain.endsWith(".test") || !local.startsWith("qa")) return fallback;
+  return lower;
+}
+
+
 async function findUserIdByEmail(supabase: unknown, email: string): Promise<string | null> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sb = supabase as any;
@@ -72,7 +101,14 @@ async function cleanupQAData(): Promise<{ deleted: Record<string, number> }> {
   counts.orgs_found = orgIds.length;
 
   if (orgIds.length > 0) {
+    // Org-scoped audit/trace rows block the organizations delete (FK, no
+    // cascade), which used to leave orphan QA_* orgs and break the next seed
+    // on the unique name constraint.
+    for (const table of ["audit_events", "trace_index", "lead_notifications", "pilot_claims"]) {
+      await sb.from(table).delete().in("organization_id", orgIds);
+    }
     // Find positions
+
     const { data: posRows } = await sb
       .from("positions")
       .select("id")
@@ -463,28 +499,53 @@ async function cleanupBookingE2E(emailPattern: string): Promise<{ deleted: numbe
  */
 async function lookupCandidateApplication(email: string) {
   const sb = await loadAdmin();
-  const emailLower = email.toLowerCase();
-  if (!emailLower.endsWith("@qa.taasflow.test")) {
-    throw new Error("lookup_candidate_application only accepts @qa.taasflow.test mailboxes");
-  }
+  const emailLower = assertQaMailbox(email, "lookup_candidate_application");
   const { data: cp } = await sb
     .from("candidate_profiles")
-    .select("id,full_name,email,user_id")
+    .select("id,full_name,email,user_id,current_cv_file_id,phone,city,country")
     .eq("email", emailLower)
     .maybeSingle();
   if (!cp) {
-    return { candidate_profile: null, applications: [], matches: [], jobs: [], score_runs: [], evidence: 0 };
+    return {
+      candidate_profile: null,
+      applications: [],
+      matches: [],
+      jobs: [],
+      score_runs: [],
+      evidence: 0,
+      answers: [],
+      files: [],
+      notification_events: [],
+      notifications: 0,
+      notification_deliveries: 0,
+      storage_objects: [],
+    };
   }
   const { data: apps } = await sb
     .from("applications")
-    .select("id,position_id,status,source,cv_file_id,created_at")
+    .select("id,position_id,status,source,cv_file_id,created_at,question_version,consent")
     .eq("candidate_profile_id", cp.id)
     .order("created_at", { ascending: true });
   const appIds = (apps ?? []).map((a: { id: string }) => a.id);
+
+  // Organization is resolved through the position so the suite can assert the
+  // application really is linked to the right tenant.
+  const positionIds = [...new Set((apps ?? []).map((a: { position_id: string }) => a.position_id))];
+  const { data: positions } = positionIds.length
+    ? await sb.from("positions").select("id,organization_id,title").in("id", positionIds)
+    : { data: [] };
+  const orgByPosition = new Map(
+    (positions ?? []).map((p: { id: string; organization_id: string }) => [p.id, p.organization_id]),
+  );
+  const applications = (apps ?? []).map((a: { position_id: string }) => ({
+    ...a,
+    organization_id: orgByPosition.get(a.position_id) ?? null,
+  }));
+
   const { data: matches } = appIds.length
     ? await sb
         .from("candidate_matches")
-        .select("id,application_id,processing_state,stage,admin_status,client_visibility,total_score,score_band")
+        .select("id,application_id,organization_id,position_id,processing_state,stage,admin_status,client_visibility,total_score,score_band")
         .in("application_id", appIds)
     : { data: [] };
   const { data: jobs } = appIds.length
@@ -493,6 +554,37 @@ async function lookupCandidateApplication(email: string) {
         .select("id,entity_id,job_type,status,attempts")
         .in("entity_id", appIds)
     : { data: [] };
+  const { data: answers } = appIds.length
+    ? await sb
+        .from("application_answers")
+        .select("id,application_id,question_id,answer")
+        .in("application_id", appIds)
+    : { data: [] };
+  const { data: files } = await sb
+    .from("files")
+    .select("id,storage_bucket,storage_path,filename,mime_type,size,page_count,parse_state,file_status,upload_source")
+    .eq("candidate_profile_id", cp.id);
+
+  // Prove the CV bytes really landed in the private bucket.
+  const storage_objects: Array<{ path: string; exists: boolean; size: number | null }> = [];
+  for (const f of files ?? []) {
+    const path = (f as { storage_path: string }).storage_path;
+    if (!path) continue;
+    const slash = path.lastIndexOf("/");
+    const dir = slash > 0 ? path.slice(0, slash) : "";
+    const name = slash > 0 ? path.slice(slash + 1) : path;
+    const { data: listed } = await sb.storage
+      .from((f as { storage_bucket: string }).storage_bucket ?? "cvs")
+      .list(dir, { search: name, limit: 100 });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const hit = (listed ?? []).find((o: any) => o.name === name);
+    storage_objects.push({
+      path,
+      exists: Boolean(hit),
+      size: hit?.metadata?.size ?? null,
+    });
+  }
+
   const matchIds = (matches ?? []).map((m: { id: string }) => m.id);
   const { data: runs } = matchIds.length
     ? await sb
@@ -500,6 +592,34 @@ async function lookupCandidateApplication(email: string) {
         .select("id,candidate_match_id,status,total_score,score_band")
         .in("candidate_match_id", matchIds)
     : { data: [] };
+
+  // Downstream notification fan-out for this application.
+  const { data: events } = appIds.length
+    ? await sb
+        .from("notification_events")
+        .select("id,event_type,application_id,organization_id,created_at")
+        .in("application_id", appIds)
+    : { data: [] };
+  const eventIds = (events ?? []).map((e: { id: string }) => e.id);
+  let notifications = 0;
+  let notification_deliveries = 0;
+  if (eventIds.length) {
+    const { count: nc } = await sb
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .in("event_id", eventIds);
+    notifications = nc ?? 0;
+    const { data: notifRows } = await sb.from("notifications").select("id").in("event_id", eventIds);
+    const notifIds = (notifRows ?? []).map((n: { id: string }) => n.id);
+    if (notifIds.length) {
+      const { count: dc } = await sb
+        .from("notification_deliveries")
+        .select("id", { count: "exact", head: true })
+        .in("notification_id", notifIds);
+      notification_deliveries = dc ?? 0;
+    }
+  }
+
   let evidence = 0;
   if (matchIds.length) {
     const { count } = await sb
@@ -510,21 +630,31 @@ async function lookupCandidateApplication(email: string) {
   }
   return {
     candidate_profile: cp,
-    applications: apps ?? [],
+    applications,
     matches: matches ?? [],
     jobs: jobs ?? [],
     score_runs: runs ?? [],
     evidence,
+    answers: answers ?? [],
+    files: files ?? [],
+    notification_events: events ?? [],
+    notifications,
+    notification_deliveries,
+    storage_objects,
   };
 }
 
-/** Deletes every candidate artefact the suite created via the real apply UI. */
+
+/**
+ * Deletes every candidate artefact the suite created via the real apply UI:
+ * matches and all their children, the application and its answers, processing
+ * jobs, score runs, notification fan-out, talent-graph rows, the CV row AND the
+ * object bytes in the private bucket, the profile, and the auth user.
+ */
 async function cleanupCandidateE2E(emailPattern: string): Promise<{ deleted: Record<string, number> }> {
   const sb = await loadAdmin();
   const counts: Record<string, number> = {};
-  const safe = emailPattern.includes("@qa.taasflow.test")
-    ? emailPattern
-    : "qa.cand+%@qa.taasflow.test";
+  const safe = assertQaPattern(emailPattern, "qa.cand+%@qa.taasflow.test");
 
   const { data: cps } = await sb
     .from("candidate_profiles")
@@ -536,6 +666,7 @@ async function cleanupCandidateE2E(emailPattern: string): Promise<{ deleted: Rec
   if (cpIds.length > 0) {
     const { data: apps } = await sb.from("applications").select("id").in("candidate_profile_id", cpIds);
     const appIds = (apps ?? []).map((a: { id: string }) => a.id);
+
     if (appIds.length > 0) {
       const { data: ms } = await sb.from("candidate_matches").select("id").in("application_id", appIds);
       const matchIds = (ms ?? []).map((m: { id: string }) => m.id);
@@ -546,27 +677,115 @@ async function cleanupCandidateE2E(emailPattern: string): Promise<{ deleted: Rec
           "score_decisions",
           "scoring_debug_events",
           "candidate_stage_history",
+          "scoring_orphans",
+          "scoring_review_claims",
+          "eligibility_checks",
+          "eligibility_exceptions",
+          "evidence_overrides",
+          "candidate_notes",
+          "candidate_interviewer_assignments",
+          "interview_scorecards",
+          "interviews",
+          "client_decisions",
+          "conversations",
+          "tasks",
+          "agent_activity",
+          "teams_action_links",
+          "talent_graph_edges",
         ]) {
           await sb.from(table).delete().in("candidate_match_id", matchIds);
         }
         await sb.from("score_runs").delete().in("candidate_match_id", matchIds);
+      }
+
+      // Notification fan-out is keyed off notification_events for the app.
+      const { data: nEvents } = await sb
+        .from("notification_events")
+        .select("id")
+        .in("application_id", appIds);
+      const eventIds = (nEvents ?? []).map((e: { id: string }) => e.id);
+      if (eventIds.length > 0) {
+        const { data: notifs } = await sb.from("notifications").select("id").in("event_id", eventIds);
+        const notifIds = (notifs ?? []).map((n: { id: string }) => n.id);
+        if (notifIds.length > 0) {
+          const { count: dc } = await sb
+            .from("notification_deliveries")
+            .delete({ count: "exact" })
+            .in("notification_id", notifIds);
+          counts.notification_deliveries_deleted = dc ?? 0;
+          const { count: nc } = await sb
+            .from("notifications")
+            .delete({ count: "exact" })
+            .in("id", notifIds);
+          counts.notifications_deleted = nc ?? 0;
+        }
+        const { count: ec } = await sb
+          .from("notification_events")
+          .delete({ count: "exact" })
+          .in("id", eventIds);
+        counts.notification_events_deleted = ec ?? 0;
+      }
+
+      if (matchIds.length > 0) {
         const { count } = await sb.from("candidate_matches").delete({ count: "exact" }).in("id", matchIds);
         counts.matches_deleted = count ?? 0;
       }
       await sb.from("processing_jobs").delete().in("entity_id", appIds);
-      await sb.from("application_answers").delete().in("application_id", appIds);
+      await sb.from("score_runs").delete().in("application_id", appIds);
+      await sb.from("outreach_touches").delete().in("application_id", appIds);
+      await sb.from("candidate_info_requests").delete().in("application_id", appIds);
+      await sb.from("hire_records").delete().in("application_id", appIds);
+      const { count: aac } = await sb
+        .from("application_answers")
+        .delete({ count: "exact" })
+        .in("application_id", appIds);
+      counts.application_answers_deleted = aac ?? 0;
       const { count: ac } = await sb.from("applications").delete({ count: "exact" }).in("id", appIds);
       counts.applications_deleted = ac ?? 0;
     }
-    // CV files + storage objects
+
+    // Profile-scoped leftovers that survive without an application.
+    for (const table of [
+      "score_runs",
+      "candidate_evidence",
+      "consent_records",
+      "data_subject_requests",
+      "outreach_opt_outs",
+      "outreach_touches",
+      "role_memory",
+      "search_signals",
+      "talent_pool_members",
+      "talent_graph_edges",
+      "notification_events",
+    ]) {
+      await sb.from(table).delete().in("candidate_profile_id", cpIds);
+    }
+    const { data: tms } = await sb.from("talent_memory").select("id").in("candidate_profile_id", cpIds);
+    const tmIds = (tms ?? []).map((t: { id: string }) => t.id);
+    if (tmIds.length > 0) {
+      await sb.from("talent_memory_events").delete().in("talent_memory_id", tmIds);
+      await sb.from("talent_memory").delete().in("id", tmIds);
+    }
+
+    // CV rows + the actual object bytes in the private bucket.
     const { data: files } = await sb
       .from("files")
-      .select("id,storage_path")
+      .select("id,storage_bucket,storage_path")
       .in("candidate_profile_id", cpIds);
-    const paths = (files ?? []).map((f: { storage_path: string }) => f.storage_path).filter(Boolean);
-    if (paths.length > 0) {
-      await sb.storage.from("cvs").remove(paths);
+    const buckets = new Map<string, string[]>();
+    for (const f of files ?? []) {
+      const row = f as { storage_bucket: string | null; storage_path: string | null };
+      if (!row.storage_path) continue;
+      const bucket = row.storage_bucket ?? "cvs";
+      buckets.set(bucket, [...(buckets.get(bucket) ?? []), row.storage_path]);
     }
+    let objectsRemoved = 0;
+    for (const [bucket, paths] of buckets) {
+      const { data: removed } = await sb.storage.from(bucket).remove(paths);
+      objectsRemoved += (removed ?? []).length;
+    }
+    counts.storage_objects_deleted = objectsRemoved;
+
     await sb.from("candidate_profiles").update({ current_cv_file_id: null }).in("id", cpIds);
     const { count: fc } = await sb.from("files").delete({ count: "exact" }).in("candidate_profile_id", cpIds);
     counts.files_deleted = fc ?? 0;
@@ -587,8 +806,26 @@ async function cleanupCandidateE2E(emailPattern: string): Promise<{ deleted: Rec
     }
     counts.auth_users_deleted = usersDeleted;
   }
+
+  // Lead notifications are keyed by email, not by profile.
+  const { count: lc } = await sb
+    .from("lead_notifications")
+    .delete({ count: "exact" })
+    .ilike("email", safe);
+  counts.lead_notifications_deleted = lc ?? 0;
+
+  // Orphaned talent persons for the same mailbox.
+  const { data: persons } = await sb.from("talent_persons").select("id").ilike("primary_email", safe);
+  const personIds = (persons ?? []).map((p: { id: string }) => p.id);
+  if (personIds.length > 0) {
+    await sb.from("talent_person_identifiers").delete().in("person_id", personIds);
+    const { count: pc } = await sb.from("talent_persons").delete({ count: "exact" }).in("id", personIds);
+    counts.talent_persons_deleted = pc ?? 0;
+  }
+
   return { deleted: counts };
 }
+
 
 async function handle(request: Request): Promise<Response> {
   const token = request.headers.get("x-qa-token");

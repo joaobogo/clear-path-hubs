@@ -159,16 +159,51 @@ function ApplyPage() {
     } catch { /* ignore */ }
   }, [draftKey, form, answers, network]);
 
+  /**
+   * A CV upload must never hang on a spinner. FileReader can abort silently
+   * (file moved/renamed mid-read, revoked permission), so we settle the promise
+   * on abort as well as error and cap the read with a timeout.
+   */
   const readFileAsBase64 = (f: File) =>
     new Promise<string>((resolve, reject) => {
       const r = new FileReader();
-      r.onload = () => {
-        const s = String(r.result ?? "");
-        resolve(s.includes(",") ? s.split(",", 2)[1] : s);
+      let settled = false;
+      const timer = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        try { r.abort(); } catch { /* ignore */ }
+        reject(new Error("read_timeout"));
+      }, 45_000);
+      const done = (fn: () => void) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        fn();
       };
-      r.onerror = () => reject(new Error("read_failed"));
-      r.readAsDataURL(f);
+      r.onload = () =>
+        done(() => {
+          const s = String(r.result ?? "");
+          resolve(s.includes(",") ? s.split(",", 2)[1] : s);
+        });
+      r.onerror = () => done(() => reject(new Error("read_failed")));
+      r.onabort = () => done(() => reject(new Error("read_failed")));
+      try {
+        r.readAsDataURL(f);
+      } catch {
+        done(() => reject(new Error("read_failed")));
+      }
     });
+
+  /** Caps any submit round-trip so a stalled request always surfaces an error. */
+  const withTimeout = <T,>(p: Promise<T>, ms: number): Promise<T> =>
+    new Promise<T>((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error("submit_timeout")), ms);
+      p.then(
+        (v) => { clearTimeout(timer); resolve(v); },
+        (e) => { clearTimeout(timer); reject(e); },
+      );
+    });
+
 
   const validateFile = (f: File): string | null => {
     if (f.size === 0) return CV_MESSAGES.empty;
@@ -354,7 +389,7 @@ function ApplyPage() {
         return;
       }
 
-      const result = await submitApplication({ data: parsed.data });
+      const result = await withTimeout(submitApplication({ data: parsed.data }), 90_000);
       if (!result.ok) {
         setServerError({ message: result.message, trace_id: result.trace_id });
         setPhase("idle");
@@ -385,11 +420,22 @@ function ApplyPage() {
       });
     } catch (err) {
       console.error(err);
-      setServerError({ message: "Network error — please try again." });
+      // Always name the failure so the applicant is never left on a spinner.
+      const code = err instanceof Error ? err.message : "";
+      const message =
+        code === "read_failed"
+          ? "We couldn't read that file. Please re-select your CV and try again."
+          : code === "read_timeout"
+            ? "Reading your CV took too long. Please re-select the file and try again."
+            : code === "submit_timeout"
+              ? "The upload timed out. Your details are saved — please press Submit again."
+              : "Network error — please try again.";
+      setServerError({ message });
       setPhase("idle");
       setSubmitting(false);
       submittingRef.current = false;
     }
+
   };
 
   if (!pos) return null;

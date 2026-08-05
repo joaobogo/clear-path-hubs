@@ -83,11 +83,30 @@ export const CANDIDATE_EMAIL_PREFIX = "qa.cand+";
 
 export type CandidateArtifacts = {
   ok: boolean;
-  candidate_profile: { id: string; full_name: string; email: string; user_id: string | null } | null;
-  applications: Array<{ id: string; position_id: string; status: string; cv_file_id: string | null }>;
+  candidate_profile: {
+    id: string;
+    full_name: string;
+    email: string;
+    user_id: string | null;
+    current_cv_file_id: string | null;
+    phone: string | null;
+    city: string | null;
+    country: string | null;
+  } | null;
+  applications: Array<{
+    id: string;
+    position_id: string;
+    organization_id: string | null;
+    status: string;
+    source: string | null;
+    cv_file_id: string | null;
+    consent: unknown;
+  }>;
   matches: Array<{
     id: string;
     application_id: string;
+    organization_id: string;
+    position_id: string;
     processing_state: string;
     stage: string;
     admin_status: string;
@@ -98,6 +117,28 @@ export type CandidateArtifacts = {
   jobs: Array<{ id: string; entity_id: string; job_type: string; status: string; attempts: number }>;
   score_runs: Array<{ id: string; candidate_match_id: string; status: string; total_score: number | null }>;
   evidence: number;
+  answers: Array<{ id: string; application_id: string; question_id: string; answer: unknown }>;
+  files: Array<{
+    id: string;
+    storage_bucket: string | null;
+    storage_path: string | null;
+    filename: string | null;
+    mime_type: string | null;
+    size: number | null;
+    page_count: number | null;
+    parse_state: string | null;
+    file_status: string | null;
+    upload_source: string | null;
+  }>;
+  notification_events: Array<{
+    id: string;
+    event_type: string;
+    application_id: string | null;
+    organization_id: string | null;
+  }>;
+  notifications: number;
+  notification_deliveries: number;
+  storage_objects: Array<{ path: string; exists: boolean; size: number | null }>;
 };
 
 /** Reads back the rows the real apply flow persisted for one QA mailbox. */
@@ -118,6 +159,36 @@ export function uniqueCandidate(): { stamp: string; email: string; fullName: str
     fullName: `QA Candidate ${stamp}`,
   };
 }
+
+/**
+ * Mailbox family for the dedicated apply-flow suite.
+ * `.test` is a reserved TLD, so nothing here can ever reach a real inbox, and
+ * the qa-seed helpers refuse any address outside `qa*@*.test`.
+ */
+export const APPLY_EMAIL_PREFIX = "qa+apply-";
+export const APPLY_EMAIL_DOMAIN = "taasflow.test";
+export const APPLY_EMAIL_PATTERN = `${APPLY_EMAIL_PREFIX}%@${APPLY_EMAIL_DOMAIN}`;
+
+/** Unique-per-run apply mailbox, e.g. qa+apply-1712…@taasflow.test */
+export function uniqueApplicant(label = "TESTRUN"): {
+  stamp: string;
+  email: string;
+  fullName: string;
+} {
+  const stamp = `${label}-${Date.now()}${Math.floor(Math.random() * 1000)}`;
+  return {
+    stamp,
+    email: `${APPLY_EMAIL_PREFIX}${stamp}@${APPLY_EMAIL_DOMAIN}`.toLowerCase(),
+    fullName: `QA Applicant ${stamp}`,
+  };
+}
+
+/** Removes every artefact the apply suite created (all qa+apply-* mailboxes). */
+export const cleanupApplyArtifacts = () =>
+  qaSeed<{ deleted: Record<string, number> }>("cleanup_candidate_e2e", {
+    email_pattern: APPLY_EMAIL_PATTERN,
+  });
+
 
 export const BOOKING_EMAIL_PREFIX = "qa.book+";
 
