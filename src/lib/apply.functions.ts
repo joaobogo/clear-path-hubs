@@ -625,3 +625,32 @@ export const getApplicationReceipt = createServerFn({ method: "GET" })
       candidate_email: cp?.email ?? null,
     };
   });
+
+// Replace the CV on the candidate's OWN existing application (verified by the
+// email on that application). Used by the returning-applicant outcome screen
+// instead of a dead-end duplicate error.
+export const replaceApplicationCv = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        application_id: z.string().uuid(),
+        email: z.string().email(),
+        filename: z.string().min(1).max(300),
+        mime: z.string().min(1).max(200),
+        base64: z.string().min(1),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data }) => {
+    try {
+      const { replaceCvForApplication } = await import("./candidate/cv-replace.server");
+      return await replaceCvForApplication(data);
+    } catch (err) {
+      console.error("[replaceApplicationCv]", err);
+      return {
+        ok: false as const,
+        message:
+          "Something went wrong on our end. Your existing application is unaffected — email hello@taasflow.com if this keeps happening.",
+      };
+    }
+  });
