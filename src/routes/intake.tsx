@@ -1547,9 +1547,7 @@ function ExpressIntakePage() {
 
           <div className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/3 p-4">
             <p className="text-sm font-semibold">Compensation range</p>
-            <p className="text-sm text-[color:var(--brand-navy)]/75">
-              We never publish this. We use it to avoid sending you people you cannot hire.
-            </p>
+            <p className="text-sm text-[color:var(--brand-navy)]/75">{COMPENSATION_HONEST_LINE}</p>
             <div className="grid gap-3 sm:grid-cols-4">
               <Field label="Currency" htmlFor="currency">
                 <select
@@ -1568,7 +1566,8 @@ function ExpressIntakePage() {
               <Field label="From" error={errors.salaryMin} required={req["salaryMin"]}>
                 <Input
                   value={state.salaryMin}
-                  onChange={(e) => set("salaryMin", e.target.value.replace(/[^\d]/g, ""))}
+                  disabled={state.compensationUndecided}
+                  onChange={(e) => onSalaryChange("salaryMin", e.target.value)}
                   inputMode="numeric"
                   placeholder="70000"
                 />
@@ -1576,7 +1575,8 @@ function ExpressIntakePage() {
               <Field label="To" error={errors.salaryMax} required={req["salaryMax"]}>
                 <Input
                   value={state.salaryMax}
-                  onChange={(e) => set("salaryMax", e.target.value.replace(/[^\d]/g, ""))}
+                  disabled={state.compensationUndecided}
+                  onChange={(e) => onSalaryChange("salaryMax", e.target.value)}
                   inputMode="numeric"
                   placeholder="85000"
                 />
@@ -1596,19 +1596,124 @@ function ExpressIntakePage() {
                 </select>
               </Field>
             </div>
+
+            {/* Wide-range confirmation: it goes through, but on purpose. */}
+            {wideRange && (
+              <div
+                className="space-y-1 rounded-md border border-amber-300 bg-amber-50 p-3"
+                data-field="wideRangeConfirmed"
+              >
+                <label className="flex cursor-pointer items-start gap-3 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={state.wideRangeConfirmed}
+                    onChange={(e) => set("wideRangeConfirmed", e.target.checked)}
+                    className="mt-0.5 h-4 w-4"
+                  />
+                  <span>{COMPENSATION_WIDE_RANGE_WARNING}</span>
+                </label>
+                {errors.wideRangeConfirmed && !state.wideRangeConfirmed && (
+                  <p className="text-sm text-red-600" data-field-error="true">
+                    {errors.wideRangeConfirmed}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* "Not decided yet" is recorded as undecided, never as zero. */}
+            <div className="space-y-1" data-field="compensationUndecided">
+              <label className="flex cursor-pointer items-start gap-3 text-sm">
+                <input
+                  type="checkbox"
+                  checked={state.compensationUndecided}
+                  onChange={(e) => {
+                    const on = e.target.checked;
+                    setState((prev) => ({
+                      ...prev,
+                      compensationUndecided: on,
+                      salaryMin: on ? "" : prev.salaryMin,
+                      salaryMax: on ? "" : prev.salaryMax,
+                      wideRangeConfirmed: on ? false : prev.wideRangeConfirmed,
+                    }));
+                    setErrors((prev) => {
+                      const nextErrors = { ...prev };
+                      delete nextErrors.salaryMin;
+                      delete nextErrors.salaryMax;
+                      delete nextErrors.compensationUndecided;
+                      delete nextErrors.wideRangeConfirmed;
+                      return nextErrors;
+                    });
+                  }}
+                  className="mt-0.5 h-4 w-4"
+                />
+                <span>
+                  Not decided yet
+                  <span className="block text-[color:var(--brand-navy)]/65">
+                    We will record this as undecided and mark the brief incomplete for compensation.
+                  </span>
+                </span>
+              </label>
+              {errors.compensationUndecided && (
+                <p className="text-sm text-red-600" data-field-error="true">
+                  {errors.compensationUndecided}
+                </p>
+              )}
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field
+                label="Bonus structure"
+                error={errors.bonusStructure}
+                required={req["bonusStructure"]}
+                hint="Only what you would actually pay."
+              >
+                <Input
+                  value={state.bonusStructure}
+                  onChange={(e) => set("bonusStructure", e.target.value)}
+                  placeholder="10% annual, paid on company and personal targets"
+                />
+              </Field>
+              <Field label="Equity" htmlFor="comp-equity" required={req["equity"]}>
+                <select
+                  id="comp-equity"
+                  value={state.equity}
+                  onChange={(e) => set("equity", e.target.value)}
+                  className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                >
+                  <option value="">Not stated</option>
+                  {COMP_EQUITY.map((k) => (
+                    <option key={k} value={k}>
+                      {COMP_EQUITY_LABELS[k]}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </div>
+
+            <label className="flex cursor-pointer items-start gap-3 text-sm">
+              <input
+                type="checkbox"
+                checked={state.compensationFlexible}
+                onChange={(e) => set("compensationFlexible", e.target.checked)}
+                className="mt-0.5 h-4 w-4"
+              />
+              <span>Flexible for the right person</span>
+            </label>
+
             <Field
               label="Anything else about the package"
               error={errors.compensationNote}
               required={req["compensationNote"]}
-              hint="Bonus, equity, shift premium, or where you have flexibility."
+              hint="Shift premium, relocation, or where exactly you have room."
             >
               <Input
                 value={state.compensationNote}
                 onChange={(e) => set("compensationNote", e.target.value)}
-                placeholder="10% bonus, can stretch to 90k for someone exceptional"
+                placeholder="Can stretch to 90k for someone exceptional"
               />
             </Field>
           </div>
+
 
           <fieldset className="space-y-2">
             <legend className="text-sm font-medium">
