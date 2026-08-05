@@ -239,6 +239,7 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await fillYou(page, email);
     await fillPasswords(page, "QaTest!Phase11");
     await fillRole(page, true);
+    await fillBrief(page);
     await acceptTerms(page);
 
     await page.getByRole("button", { name: /start now — pay and publish/i }).click();
