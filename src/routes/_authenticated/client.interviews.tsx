@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
+import { proposalErrorMessage } from "@/lib/interview-proposal";
+import { SlotProposer } from "@/components/client/scheduling/slot-proposer";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
  listClientInterviews,
@@ -142,6 +145,9 @@ function InterviewsPage() {
   const [detail, setDetail] = useState<InterviewDTO | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [feedbackFor, setFeedbackFor] = useState<FeedbackQueueItem | null>(null);
+  const [proposingId, setProposingId] = useState<string | null>(null);
+  const [requestFailed, setRequestFailed] = useState<string | null>(null);
+  const [proposeFailed, setProposeFailed] = useState<string | null>(null);
 
   const listQuery = useQuery({
     queryKey: ["client-interviews", org, "all"],
@@ -150,6 +156,9 @@ function InterviewsPage() {
   });
   const availability = useAvailability(org);
   const hasWindows = ((availability.data?.windows ?? []) as unknown[]).length > 0;
+  // The client's stored timezone wins; the browser is only a fallback.
+  const orgTimezone =
+    (availability.data?.timezone as string | null | undefined) || detectTimezone();
 
   const interviews = (listQuery.data?.interviews as InterviewDTO[] | undefined) ?? [];
 
@@ -159,31 +168,49 @@ function InterviewsPage() {
     qc.invalidateQueries({ queryKey: ["client-candidates"] });
   };
 
+  // A confirmation from the recruiting team updates the same card, no refresh.
+  useEffect(() => {
+    if (!org) return;
+    const channel = supabase
+      .channel(`client-interviews-${org}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "interviews",
+          filter: `organization_id=eq.${org}`,
+        },
+        () => invalidate(),
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [org]);
+
   const requestMut = useMutation({
     mutationFn: (payload: Parameters<typeof requestFn>[0]["data"]) => requestFn({ data: payload }),
     onSuccess: () => {
-      toast.success("Interview requested");
+      toast.success("Times proposed — we'll confirm with the candidate");
+      setRequestFailed(null);
       setRequestOpen(false);
       invalidate();
     },
-    onError: (e: Error) => {
-      if (e.message === "interview_already_active")
-        toast.error("This candidate already has an active interview.");
-      else if (e.message === "forbidden") toast.error("You don't have permission.");
-      else if (e.message === "SUPPORT_VIEW_READ_ONLY")
-        toast.error("Support view is read-only.");
-      else toast.error(e.message);
-    },
+    onError: (e: Error) => setRequestFailed(proposalErrorMessage(e.message)),
   });
 
   const proposeMut = useMutation({
     mutationFn: (payload: Parameters<typeof proposeFn>[0]["data"]) => proposeFn({ data: payload }),
     onSuccess: () => {
-      toast.success("Times proposed");
+      toast.success("Times proposed — awaiting confirmation");
+      setProposeFailed(null);
+      setProposingId(null);
       invalidate();
       setDetail(null);
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => setProposeFailed(proposalErrorMessage(e.message)),
   });
 
   const autoProposeMut = useMutation({
@@ -318,8 +345,13 @@ function InterviewsPage() {
       {requestOpen && org ? (
         <RequestDialog
           orgId={org}
-          onClose={() => setRequestOpen(false)}
+          onClose={() => {
+            setRequestOpen(false);
+            setRequestFailed(null);
+          }}
           submitting={requestMut.isPending}
+          failed={requestFailed}
+          timezone={orgTimezone}
           onSubmit={(payload) => requestMut.mutate(payload)}
           fetchCandidates={() => candidatesFn({ data: { orgId: org } })}
         />
@@ -383,277 +415,119 @@ function InterviewsPage() {
 // ─── Request Dialog ─────────────────────────────────────────────────────────
 
 function RequestDialog({
- orgId: _orgId,
- onClose,
- onSubmit,
- submitting,
- fetchCandidates,
+  orgId,
+  onClose,
+  onSubmit,
+  submitting,
+  failed,
+  fetchCandidates,
+  timezone,
 }: {
- orgId: string;
- onClose: () => void;
- onSubmit: (payload: {
- orgId: string;
- matchId: string;
- interviewType: InterviewType;
- timezone: string;
- durationMinutes: number;
- proposedTimes: string[];
- participants: InterviewParticipant[];
- notes?: string;
- }) => void;
- submitting: boolean;
- fetchCandidates: () => Promise<{ candidates: SchedulableCandidate[] }>;
+  orgId: string;
+  onClose: () => void;
+  onSubmit: (payload: {
+    orgId: string;
+    matchId: string;
+    interviewType: InterviewType;
+    timezone: string;
+    durationMinutes: number;
+    proposedTimes: string[];
+    participants: InterviewParticipant[];
+    notes?: string;
+  }) => void;
+  submitting: boolean;
+  failed: string | null;
+  fetchCandidates: () => Promise<{ candidates: SchedulableCandidate[] }>;
+  timezone: string;
 }) {
- const orgId = _orgId;
- const candidatesQ = useQuery({
- queryKey: ["client-schedulable", orgId],
- queryFn: fetchCandidates,
- });
- const [matchId, setMatchId] = useState<string>("");
- const [type, setType] = useState<InterviewType>("video_call");
- const [tz, setTz] = useState<string>(detectTimezone());
- const [duration, setDuration] = useState<number>(45);
- const [times, setTimes] = useState<string[]>([""]);
- const [participants, setParticipants] = useState<InterviewParticipant[]>([{ name: "" }]);
- const [notes, setNotes] = useState<string>("");
+  const candidatesQ = useQuery({
+    queryKey: ["client-schedulable", orgId],
+    queryFn: fetchCandidates,
+  });
+  const [matchId, setMatchId] = useState<string>("");
+  const [candidateError, setCandidateError] = useState<string | null>(null);
+  const candidates = candidatesQ.data?.candidates ?? [];
 
- const submit = () => {
- const filteredTimes = times
- .map((t) => t.trim())
- .filter(Boolean)
- .map((t) => new Date(t).toISOString());
- if (filteredTimes.length === 0) {
- toast.error("Add at least one proposed time.");
- return;
- }
- const filteredParticipants = participants
- .filter((p) => p.name.trim().length > 0)
- .map((p) => ({
- name: p.name.trim(),
- email: p.email?.trim() || undefined,
- role: p.role?.trim() || undefined,
- }));
- if (filteredParticipants.length === 0) {
- toast.error("Add at least one participant.");
- return;
- }
- if (!matchId) {
- toast.error("Select a candidate.");
- return;
- }
- onSubmit({
- orgId,
- matchId,
- interviewType: type,
- timezone: tz,
- durationMinutes: duration,
- proposedTimes: filteredTimes,
- participants: filteredParticipants,
- notes: notes.trim() || undefined,
- });
- };
+  return (
+    <Dialog open onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Propose interview times</DialogTitle>
+          <DialogDescription>
+            Pick up to three slots and who joins. We confirm one with the candidate — no
+            back-and-forth from your inbox.
+          </DialogDescription>
+        </DialogHeader>
 
- const candidates = candidatesQ.data?.candidates ?? [];
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="request-candidate" className="text-sm font-medium">
+              Candidate
+            </label>
+            <Select
+              value={matchId}
+              onValueChange={(v) => {
+                setMatchId(v);
+                setCandidateError(null);
+              }}
+              disabled={submitting}
+            >
+              <SelectTrigger id="request-candidate" className="mt-1">
+                <SelectValue placeholder="Select a candidate" />
+              </SelectTrigger>
+              <SelectContent>
+                {candidatesQ.isLoading ? (
+                  <div className="p-3 text-sm text-muted-foreground">Loading candidates…</div>
+                ) : candidates.length === 0 ? (
+                  <div className="p-3 text-sm text-muted-foreground">
+                    No delivered candidates available.
+                  </div>
+                ) : (
+                  candidates.map((c) => (
+                    <SelectItem
+                      key={c.match_id}
+                      value={c.match_id}
+                      disabled={c.has_active_interview}
+                    >
+                      {c.candidate_name} — {c.position_title}
+                      {c.has_active_interview ? " · (has active interview)" : ""}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+            {candidateError ? (
+              <p className="mt-1 text-xs text-destructive">{candidateError}</p>
+            ) : null}
+          </div>
 
- return (
- <Dialog open onOpenChange={(v) => !v && onClose()}>
- <DialogContent className="max-w-2xl">
- <DialogHeader>
- <DialogTitle>Request interview</DialogTitle>
- <DialogDescription>
- Propose times to the TaaSFlow team. We&apos;ll coordinate with the candidate and confirm a
- slot.
- </DialogDescription>
- </DialogHeader>
-
- <div className="space-y-4">
- <div>
- <label className="text-sm font-medium">Candidate</label>
- <Select value={matchId} onValueChange={setMatchId}>
- <SelectTrigger className="mt-1">
- <SelectValue placeholder="Select a candidate" />
- </SelectTrigger>
- <SelectContent>
- {candidates.length === 0 ? (
- <div className="p-3 text-sm text-muted-foreground">
- No delivered candidates available.
- </div>
- ) : (
- candidates.map((c) => (
- <SelectItem key={c.match_id} value={c.match_id} disabled={c.has_active_interview}>
- {c.candidate_name} — {c.position_title}
- {c.has_active_interview ? " · (has active interview)" : ""}
- </SelectItem>
- ))
- )}
- </SelectContent>
- </Select>
- </div>
-
- <div className="grid gap-3 sm:grid-cols-3">
- <div>
- <label className="text-sm font-medium">Type</label>
- <Select value={type} onValueChange={(v) => setType(v as InterviewType)}>
- <SelectTrigger className="mt-1">
- <SelectValue />
- </SelectTrigger>
- <SelectContent>
- {TYPE_OPTIONS.map((o) => (
- <SelectItem key={o.value} value={o.value}>
- {o.label}
- </SelectItem>
- ))}
- </SelectContent>
- </Select>
- </div>
- <div>
- <label className="text-sm font-medium">Duration (min)</label>
- <Input
- type="number"
- min={15}
- max={480}
- value={duration}
- onChange={(e) => setDuration(Number(e.target.value) || 45)}
- className="mt-1"
- />
- </div>
- <div>
- <label className="text-sm font-medium">Timezone</label>
- <Input value={tz} onChange={(e) => setTz(e.target.value)} className="mt-1" />
- </div>
- </div>
-
- <div>
- <div className="flex items-center justify-between">
- <label className="text-sm font-medium">Proposed times</label>
- <Button
- type="button"
- variant="ghost"
- size="sm"
- onClick={() => setTimes((t) => [...t, ""])}
- >
- <Plus className="mr-1 h-3 w-3" /> Add
- </Button>
- </div>
- <div className="mt-1 space-y-2">
- {times.map((t, i) => (
- <div key={i} className="flex gap-2">
- <Input
- type="datetime-local"
- value={t}
- onChange={(e) =>
- setTimes((arr) => arr.map((v, idx) => (idx === i ? e.target.value : v)))
- }
- />
- {times.length > 1 ? (
- <Button
- type="button"
- variant="ghost"
- size="icon"
- aria-label={`Remove time slot ${i + 1}`}
- className="min-h-11 min-w-11"
- onClick={() => setTimes((arr) => arr.filter((_, idx) => idx !== i))}
- >
- <X className="h-4 w-4" aria-hidden />
- </Button>
- ) : null}
- </div>
- ))}
- </div>
- <p className="mt-1 text-xs text-muted-foreground">
- Times are interpreted in the timezone above.
- </p>
- </div>
-
- <div>
- <div className="flex items-center justify-between">
- <label className="text-sm font-medium">Participants</label>
- <Button
- type="button"
- variant="ghost"
- size="sm"
- onClick={() =>
- setParticipants((p) => [...p, { name: "" }])
- }
- >
- <Plus className="mr-1 h-3 w-3" /> Add
- </Button>
- </div>
- <div className="mt-1 space-y-2">
- {participants.map((p, i) => (
- <div key={i} className="grid gap-2 sm:grid-cols-[1fr_1fr_1fr_auto]">
- <Input
- placeholder="Name"
- value={p.name}
- onChange={(e) =>
- setParticipants((arr) =>
- arr.map((v, idx) => (idx === i ? { ...v, name: e.target.value } : v)),
- )
- }
- />
- <Input
- placeholder="Email (optional)"
- value={p.email ?? ""}
- onChange={(e) =>
- setParticipants((arr) =>
- arr.map((v, idx) => (idx === i ? { ...v, email: e.target.value } : v)),
- )
- }
- />
- <Input
- placeholder="Role (optional)"
- value={p.role ?? ""}
- onChange={(e) =>
- setParticipants((arr) =>
- arr.map((v, idx) => (idx === i ? { ...v, role: e.target.value } : v)),
- )
- }
- />
- {participants.length > 1 ? (
- <Button
- type="button"
- variant="ghost"
- size="icon"
- aria-label={`Remove participant ${i + 1}`}
- className="min-h-11 min-w-11"
- onClick={() =>
- setParticipants((arr) => arr.filter((_, idx) => idx !== i))
- }
- >
- <X className="h-4 w-4" aria-hidden />
- </Button>
- ) : (
- <span />
- )}
- </div>
- ))}
- </div>
- </div>
-
- <div>
- <label className="text-sm font-medium">Notes (optional)</label>
- <Textarea
- value={notes}
- onChange={(e) => setNotes(e.target.value)}
- className="mt-1"
- rows={3}
- maxLength={4000}
- placeholder="Focus areas, must-cover topics, anything the team should know."
- />
- </div>
- </div>
-
- <DialogFooter>
- <Button variant="ghost" onClick={onClose} disabled={submitting}>
- Cancel
- </Button>
- <Button onClick={submit} disabled={submitting || !matchId}>
- {submitting ? "Requesting…" : "Request interview"}
- </Button>
- </DialogFooter>
- </DialogContent>
- </Dialog>
- );
+          <SlotProposer
+            timezone={timezone}
+            submitting={submitting}
+            failed={failed}
+            onCancel={onClose}
+            submitLabel="Send proposed times"
+            onSubmit={(p) => {
+              if (!matchId) {
+                setCandidateError("Choose a candidate first.");
+                return;
+              }
+              onSubmit({
+                orgId,
+                matchId,
+                interviewType: p.format,
+                timezone: p.timezone,
+                durationMinutes: p.durationMinutes,
+                proposedTimes: p.slotsIso,
+                participants: p.attendees,
+                ...(p.notes ? { notes: p.notes } : {}),
+              });
+            }}
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
 }
 
 // ─── Detail Dialog ──────────────────────────────────────────────────────────
