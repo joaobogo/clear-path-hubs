@@ -39,6 +39,7 @@ import { RoleProgressTracker } from "@/components/client/role-progress-tracker";
 import { RoleLifecycleTimeline } from "@/components/client/role-lifecycle-timeline";
 import { getRoleLifecycle } from "@/lib/role-lifecycle/role-lifecycle.functions";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
+import { clientRoleStatusLabel } from "@/lib/client-role-status";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  head: () => ({
@@ -275,7 +276,7 @@ function PositionDetailPage() {
  {position.title}
  </h1>
  <Badge variant="secondary">
- {clientRoleStatusLabel(data?.client_status)}
+ {clientRoleStatusLabel(data?.summary?.client_status)}
  </Badge>
  </div>
  <div className="mt-1 text-sm text-muted-foreground">
