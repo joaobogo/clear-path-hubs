@@ -274,13 +274,28 @@ function CandidatesPage() {
             Every row is one candidate submission. Counts always match the records behind them.
           </p>
         </div>
-        <div className="text-sm text-muted-foreground" aria-live="polite">
-          {searchFailed
-            ? "Couldn't load candidates"
-            : isFetching
-              ? "Searching…"
-              : `${total} submission${total === 1 ? "" : "s"}`}
+        <div className="flex items-center gap-3">
+          <div className="text-sm text-muted-foreground" aria-live="polite">
+            {searchFailed
+              ? "Couldn't load candidates"
+              : isFetching
+                ? "Searching…"
+                : `${total} submission${total === 1 ? "" : "s"}`}
+          </div>
+          <ExportControl
+            scope={{
+              organization_id: search.organization_id || undefined,
+              position_id: search.position_id || undefined,
+              stage: search.stage || undefined,
+              client_visibility: search.client_visibility || undefined,
+              recommendation: search.recommendation || undefined,
+              score_band: search.score_band || undefined,
+              date_from: search.date_from || undefined,
+              date_to: search.date_to ? `${search.date_to}T23:59:59Z` : undefined,
+            }}
+          />
         </div>
+
       </header>
 
       <div className="mb-4 space-y-3">
