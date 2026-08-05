@@ -102,6 +102,13 @@ type AnswerValue = string | boolean | number | null;
 const STEP_LABELS = APPLY_STEP_LABELS;
 
 
+/** Human file size — KB under 1 MB, one decimal above. */
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} bytes`;
+  if (bytes < 1024 * 1024) return `${Math.ceil(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 function ApplyPage() {
   const { id: rawId } = Route.useParams();
   const id = extractJobUuid(rawId);
