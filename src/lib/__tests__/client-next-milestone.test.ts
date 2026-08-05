@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { computeNextMilestone, type MilestoneInput } from "@/lib/client-next-milestone";
+import {
+  computeNextMilestone,
+  formatMilestoneDate,
+  type MilestoneInput,
+} from "@/lib/client-next-milestone";
 
 const NOW = new Date("2026-05-20T09:00:00.000Z");
 const iso = (d: number) => new Date(NOW.getTime() + d * 86_400_000).toISOString();
@@ -23,7 +27,7 @@ describe("computeNextMilestone", () => {
   it("shows the committed first-shortlist date when a commitment exists", () => {
     const m = computeNextMilestone(role({ promised_shortlist_by: iso(6) }), NOW);
     expect(m.stage).toBe("shortlist");
-    expect(m.text).toBe("First shortlist expected by 26 May");
+    expect(m.text).toBe(`First shortlist expected by ${formatMilestoneDate(iso(6))}`);
     expect(m.behind_schedule).toBe(false);
   });
 
@@ -60,7 +64,7 @@ describe("computeNextMilestone", () => {
       NOW,
     );
     expect(m.stage).toBe("interview_feedback");
-    expect(m.text).toBe("Interview feedback due by 21 May");
+    expect(m.text).toBe(`Interview feedback due by ${formatMilestoneDate(iso(1))}`);
   });
 
   it("reports the offer response when an offer is out, ahead of every other stage", () => {
@@ -74,7 +78,7 @@ describe("computeNextMilestone", () => {
       NOW,
     );
     expect(m.stage).toBe("offer_response");
-    expect(m.text).toBe("Offer response expected by 18 May");
+    expect(m.text).toBe(`Offer response expected by ${formatMilestoneDate(iso(-2))}`);
     expect(m.behind_schedule).toBe(true);
   });
 
