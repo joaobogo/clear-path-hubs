@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   ALLOWED_JD_EXT,
+  COMPENSATION_HONEST_LINE,
+  briefCompleteness,
+  isWideCompensationRange,
   UNREADABLE_JD_EXT,
   blueprintProgress,
   expressIntakeSchema,
