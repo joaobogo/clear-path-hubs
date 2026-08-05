@@ -8,6 +8,10 @@ import { z } from "zod";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
 import { computeRoleLaunchState } from "@/lib/role-launch.server";
 import { DECLINE_REASONS } from "@/lib/client-decision-reasons";
+import {
+  DEAL_BREAKER_REASON_CODES,
+  normalizeDealBreakers,
+} from "@/lib/client-deal-breakers";
 
 import {
   loadKpiRows,
@@ -1736,7 +1740,62 @@ const REASON_REQUIRED: ReadonlySet<string> = new Set([
   "hold",
 ]);
 
-const CLIENT_DECLINE_CODES: ReadonlySet<string> = new Set(DECLINE_REASONS.map((r) => r.code));
+const CLIENT_DECLINE_CODES: ReadonlySet<string> = new Set([
+  ...DECLINE_REASONS.map((r) => r.code),
+  // The client's own stated deal-breakers are pickable reasons too, so the
+  // rule they wrote at intake is the reason we record.
+  ...DEAL_BREAKER_REASON_CODES,
+]);
+
+/**
+ * What the decline dialog needs to close the loop on a role: the deal-breakers
+ * the client stated, and how often they have already fallen back to "Other".
+ */
+export const getMatchDeclineContext = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string; matchId: string }) =>
+    z.object({ orgId: z.string().uuid(), matchId: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const match = await loadMatch(context.supabase, data.orgId, data.matchId);
+    const positionId = (match["position_id"] as string | null) ?? null;
+    if (!positionId) return { positionId: null, dealBreakers: [], otherDeclineCount: 0 };
+
+    const { data: position } = await context.supabase
+      .from("positions")
+      .select("id, dealbreakers, intake_context")
+      .eq("organization_id", data.orgId)
+      .eq("id", positionId)
+      .maybeSingle();
+
+    const raw = (position?.["dealbreakers"] ?? []) as unknown;
+    const fromColumn = Array.isArray(raw)
+      ? raw.map((r) =>
+          typeof r === "string" ? r : String((r as { label?: unknown })?.label ?? ""),
+        )
+      : [];
+    const ctx = (position?.["intake_context"] ?? {}) as Record<string, unknown>;
+    const dealBreakers = normalizeDealBreakers(
+      fromColumn.length > 0 ? fromColumn : (ctx["deal_breaker_list"] ?? ctx["deal_breakers"]),
+    );
+
+    // "Other" declines on this role, across everyone in the workspace.
+    const { data: rows } = await context.supabase
+      .from("client_decisions")
+      .select("id, candidate_matches!inner(position_id)")
+      .eq("organization_id", data.orgId)
+      .eq("decision", "not_moving_forward")
+      .eq("reason_code", "other")
+      .is("reversed_at", null)
+      .eq("candidate_matches.position_id", positionId)
+      .limit(50);
+
+    return {
+      positionId,
+      dealBreakers,
+      otherDeclineCount: (rows ?? []).length,
+    };
+  });
 
 export const clientAction = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

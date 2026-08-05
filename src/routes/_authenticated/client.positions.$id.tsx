@@ -34,6 +34,7 @@ import { RoleBlueprint } from "@/components/product/role-blueprint";
 import { GeneratedBlueprintPanel } from "@/components/positions/generated-blueprint-panel";
 import { RoleLaunchPanel } from "@/components/positions/role-launch-panel";
 import { PositionLifecycleMenu } from "@/components/positions/position-lifecycle-menu";
+import { normalizeDealBreakers } from "@/lib/client-deal-breakers";
 import type { RoleLaunchState } from "@/lib/role-launch";
 import { PreviouslyConsidered } from "@/components/client/previously-considered";
 import { RoleMemoryPanel } from "@/components/role-memory-panel";
@@ -331,6 +332,24 @@ function PositionDetailPage() {
   {placementLine ? (
   <div className="mt-1 text-sm text-muted-foreground">{placementLine}</div>
   ) : null}
+  {/* The deal-breakers the client stated, in their own words. */}
+  {(() => {
+   const raw = (position.dealbreakers ?? []) as unknown;
+   const list = normalizeDealBreakers(
+    Array.isArray(raw)
+     ? raw.map((r) =>
+        typeof r === "string" ? r : String((r as { label?: unknown })?.label ?? ""),
+       )
+     : [],
+   );
+   if (list.length === 0) return null;
+   return (
+    <div className="mt-2 text-sm text-muted-foreground">
+     <span className="font-medium text-foreground">Rules someone out: </span>
+     {list.join(" · ")}
+    </div>
+   );
+  })()}
   {/* The interview process the client stated at intake, unchanged. */}
   {(() => {
    const ctx = (position.intake_context ?? {}) as Record<string, unknown>;

@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useEffect, useState } from "react";
 import {
   Dialog,
@@ -130,12 +131,20 @@ export function DecisionDialog({
   pending,
   onOpenChange,
   onConfirm,
+  extraReasons,
+  extraReasonsLabel,
+  banner,
 }: {
   action: DecisionActionKey | null;
   open: boolean;
   pending: boolean;
   onOpenChange: (v: boolean) => void;
   onConfirm: (payload: DecisionPayload) => void;
+  /** Role-specific reasons — the deal-breakers the client stated at intake. */
+  extraReasons?: ReadonlyArray<{ code: string; label: string }>;
+  extraReasonsLabel?: string;
+  /** Inline prompt shown above the reasons, e.g. "add a deal-breaker". */
+  banner?: React.ReactNode;
 }) {
   const [reason, setReason] = useState("");
   const [note, setNote] = useState("");
@@ -171,12 +180,27 @@ export function DecisionDialog({
         </DialogHeader>
 
         <div className="space-y-4">
+          {banner}
+
           {cfg.reasons && (
             <div className="space-y-2">
               <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 {cfg.reasonLabel}
               </Label>
               <RadioGroup value={reason} onValueChange={setReason} className="gap-2">
+                {(extraReasons ?? []).length > 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    {extraReasonsLabel ?? "Your stated deal-breakers"}
+                  </p>
+                )}
+                {(extraReasons ?? []).map((r) => (
+                  <div key={r.code} className="flex items-start gap-2">
+                    <RadioGroupItem value={r.code} id={`reason-${r.code}`} className="mt-0.5" />
+                    <Label htmlFor={`reason-${r.code}`} className="text-sm font-normal leading-5">
+                      {r.label}
+                    </Label>
+                  </div>
+                ))}
                 {cfg.reasons.map((r) => (
                   <div key={r.code} className="flex items-start gap-2">
                     <RadioGroupItem value={r.code} id={`reason-${r.code}`} className="mt-0.5" />

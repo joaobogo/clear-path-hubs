@@ -9,7 +9,20 @@ import {
   type DecisionActionKey,
   type DecisionPayload,
 } from "@/components/client/decision-dialog";
-import { clientAction, undoClientDecision } from "@/lib/client.functions";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import {
+  clientAction,
+  getMatchDeclineContext,
+  undoClientDecision,
+} from "@/lib/client.functions";
+import {
+  DEAL_BREAKER_PROMPT_TITLE,
+  dealBreakerDeclineOptions,
+  dealBreakerPromptBody,
+  dealBreakerPromptDismissKey,
+  shouldPromptForDealBreakers,
+} from "@/lib/client-deal-breakers";
 import type { MatchStage } from "@/lib/client-kpi.server";
 import { confirmationLine } from "@/lib/client-next-step";
 
@@ -96,6 +109,55 @@ export function DecisionBar({
   const [optimistic, setOptimistic] = React.useState<MatchStage | null>(null);
   React.useEffect(() => setOptimistic(null), [stage]);
   const shownStage = optimistic ?? stage;
+
+  /**
+   * The role's stated deal-breakers, loaded only once a decline dialog opens —
+   * no extra request on a dashboard full of cards.
+   */
+  const declineContext = useServerFn(getMatchDeclineContext);
+  const declineQuery = useQuery({
+    queryKey: ["decline-context", orgId, matchId],
+    queryFn: () => declineContext({ data: { orgId, matchId } }),
+    enabled: dialog === "not_moving_forward",
+    staleTime: 60_000,
+  });
+  const dealBreakers = declineQuery.data?.dealBreakers ?? [];
+  const dealBreakerReasons = React.useMemo(
+    () => dealBreakerDeclineOptions(dealBreakers),
+    [dealBreakers],
+  );
+
+  // Two "Other" rejections on one role means a rule went unsaid. We ask once,
+  // and the ask stays dismissed after that.
+  const positionId = declineQuery.data?.positionId ?? null;
+  const [promptDismissed, setPromptDismissed] = React.useState(false);
+  React.useEffect(() => {
+    if (!positionId) return;
+    try {
+      setPromptDismissed(
+        window.localStorage.getItem(dealBreakerPromptDismissKey(positionId)) === "1",
+      );
+    } catch {
+      setPromptDismissed(false);
+    }
+  }, [positionId]);
+  const dismissPrompt = () => {
+    setPromptDismissed(true);
+    if (!positionId) return;
+    try {
+      window.localStorage.setItem(dealBreakerPromptDismissKey(positionId), "1");
+    } catch {
+      /* a dismissed prompt that cannot be remembered is not worth an error */
+    }
+  };
+  const showDealBreakerPrompt =
+    !promptDismissed &&
+    !!positionId &&
+    !!declineQuery.data &&
+    shouldPromptForDealBreakers({
+      dealBreakers,
+      otherDeclineCount: declineQuery.data.otherDeclineCount,
+    });
 
   const advance = advanceFor(shownStage);
   const canHold = shownStage !== "hired" && shownStage !== "not_moving_forward";
@@ -205,6 +267,36 @@ export function DecisionBar({
       </div>
 
       <DecisionDialog
+        extraReasons={dialog === "not_moving_forward" ? dealBreakerReasons : undefined}
+        extraReasonsLabel="Your stated deal-breakers for this role"
+        banner={
+          showDealBreakerPrompt && positionId ? (
+            <div className="rounded-lg border border-warning/30 bg-warning/10 p-3">
+              <p className="text-sm font-semibold">{DEAL_BREAKER_PROMPT_TITLE}</p>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                {dealBreakerPromptBody(declineQuery.data?.otherDeclineCount ?? 2)}
+              </p>
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <Button asChild size="sm" variant="outline">
+                  <Link
+                    to="/client/positions/$id/edit"
+                    params={{ id: positionId }}
+                    search={{ step: undefined }}
+                  >
+                    Add a deal-breaker
+                  </Link>
+                </Button>
+                <button
+                  type="button"
+                  onClick={dismissPrompt}
+                  className="text-xs underline text-muted-foreground"
+                >
+                  Not now
+                </button>
+              </div>
+            </div>
+          ) : null
+        }
         action={dialog}
         open={dialog !== null}
         pending={busy}
