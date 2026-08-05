@@ -83,7 +83,37 @@ describe("expressIntakeSchema", () => {
         companyLinkedin: "https://linkedin.com/company/northwind",
       }).success,
     ).toBe(true);
+});
+
+describe("role brief", () => {
+  it("requires at least two must-haves", () => {
+    expect(
+      expressIntakeSchema.safeParse({ ...valid, mustHaves: "5+ years front office" }).success,
+    ).toBe(false);
   });
+
+  it("requires why the role is open and what rules someone out", () => {
+    expect(expressIntakeSchema.safeParse({ ...valid, whyOpen: "growth" }).success).toBe(false);
+    expect(expressIntakeSchema.safeParse({ ...valid, dealBreakers: "none" }).success).toBe(false);
+  });
+
+  it("rejects an inverted compensation range", () => {
+    expect(
+      expressIntakeSchema.safeParse({ ...valid, salaryMin: 60000, salaryMax: 40000 }).success,
+    ).toBe(false);
+  });
+
+  it("requires on-site days unless the role is fully remote", () => {
+    expect(
+      expressIntakeSchema.safeParse({ ...valid, workModel: "hybrid", onsiteDays: undefined }).success,
+    ).toBe(false);
+    expect(
+      expressIntakeSchema.safeParse({ ...valid, workModel: "remote", onsiteDays: undefined }).success,
+    ).toBe(true);
+  });
+});
+
+
 });
 
 describe("job description file types", () => {
