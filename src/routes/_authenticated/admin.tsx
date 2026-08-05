@@ -153,7 +153,12 @@ function AdminLayout() {
       contextSubLabel={email ?? undefined}
       navItems={NAV}
       searchScope="admin"
-      headerSlot={<ExceptionDigest />}
+      headerSlot={
+        <div className="flex items-center gap-2">
+          <TestRecordsToggle />
+          <ExceptionDigest />
+        </div>
+      }
     >
       <SectionTabs groups={ADMIN_SECTION_GROUPS} />
       <Outlet />
