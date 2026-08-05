@@ -296,7 +296,7 @@ function PositionWorkspace() {
         {tab === "blueprint" && (
           <BlueprintTab position={p} screening={screening} />
         )}
-        {tab === "pipeline" && <PipelineTab matches={matches} />}
+        {tab === "pipeline" && <PipelineTab matches={matches} positionId={id} />}
         {tab === "sourcing" && <SourcingOpsPanel positionId={id} />}
         {tab === "memory" && <RoleMemoryPanel positionId={id} canEdit={true} />}
         {tab === "activity" && (
