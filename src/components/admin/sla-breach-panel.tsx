@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -180,9 +180,8 @@ export function SlaBreachPanel({ data, isLoading, isError, error, onRetry, query
             {rows.map((r) => {
               const muted = Boolean(r.acknowledged);
               return (
-                <>
+                <Fragment key={r.id}>
                   <TableRow
-                    key={r.id}
                     className={muted ? "opacity-70" : "bg-destructive/5"}
                   >
                     <TableCell className="font-medium">{r.client_name}</TableCell>
@@ -226,14 +225,14 @@ export function SlaBreachPanel({ data, isLoading, isError, error, onRetry, query
                     </TableCell>
                   </TableRow>
                   {r.acknowledged ? (
-                    <TableRow key={`${r.id}-ack`} className="opacity-70">
+                    <TableRow className="opacity-70">
                       <TableCell colSpan={9} className="pt-0 text-xs text-muted-foreground">
                         {new Date(r.acknowledged.at).toLocaleString()} — {r.acknowledged.note}
                       </TableCell>
                     </TableRow>
                   ) : null}
                   {openRow === r.id ? (
-                    <TableRow key={`${r.id}-form`}>
+                    <TableRow>
                       <TableCell colSpan={9}>
                         <div className="space-y-2">
                           <label
@@ -278,7 +277,7 @@ export function SlaBreachPanel({ data, isLoading, isError, error, onRetry, query
                       </TableCell>
                     </TableRow>
                   ) : null}
-                </>
+                </Fragment>
               );
             })}
           </TableBody>
