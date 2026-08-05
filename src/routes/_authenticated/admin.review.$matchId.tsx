@@ -302,11 +302,17 @@ function ReviewScreen() {
         <div className="flex items-center gap-2">
           <Button
             onClick={() => run("approve_for_client", "Approved for client")}
-            disabled={!!busy}
+            disabled={!!busy || approvalBlocked}
             className="gap-1.5"
+            title={
+              approvalBlocked
+                ? `Blocked — no evidence for: ${blockingLabels.join(", ")}`
+                : undefined
+            }
           >
             <Check className="h-4 w-4" /> Approve <kbd className="ml-1 text-[10px] opacity-70">A</kbd>
           </Button>
+
           <Button
             variant="secondary"
             onClick={() => run("hold", "Held")}
