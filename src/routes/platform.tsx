@@ -18,6 +18,9 @@ import {
   SiteShell,
   CtaSection,
 } from "@/components/marketing/site-shell";
+import { EditorialHero, PhotoBand } from "@/components/marketing/editorial-hero";
+import platformHero from "@/assets/page-platform-hero.jpg";
+import bandReview from "@/assets/band-review.jpg";
 import { PlatformArchitecture } from "@/components/marketing/platform-architecture";
 import { EvidenceGraph } from "@/components/evidence/evidence-graph";
 import { LifecyclePreview } from "@/components/marketing/product-preview/lifecycle-preview";
@@ -132,65 +135,37 @@ function PlatformPage() {
   return (
     <SiteShell>
       {/* 1 — PLATFORM INTRODUCTION */}
-      <section
-        aria-labelledby="platform-hero"
-        className="relative overflow-hidden bg-gradient-to-b from-[color:var(--brand-sky)]/30 via-[color:var(--brand-paper)] to-[color:var(--brand-paper)]"
+      <EditorialHero
+        eyebrow={PRODUCT_CATEGORY}
+        title="Hiring, run as a governed system."
+        lead="Requirements enter once, compile into a versioned rubric, and every step after that is recorded."
+        image={platformHero}
+        imageAlt="An operations lead reviewing hiring performance on a wall display in a modern office"
+        stats={[
+          { value: "1", label: "Record per role" },
+          { value: "100%", label: "Scores rubric-versioned" },
+          { value: "Append-only", label: "Audit trail" },
+        ]}
+        primary={{ to: "/intake", label: "Open your first role" }}
+        secondary={{ to: "/agents", label: `See the ${MODULES.agents}` }}
       >
-        <PublicPage>
-          <div className="py-16 sm:py-20 lg:py-24">
-            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80 backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5 text-[color:var(--brand-ocean-text)]" aria-hidden />
-              {PRODUCT_CATEGORY}
-            </span>
-            <h1
-              id="platform-hero"
-              className="mt-4 max-w-4xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
+        <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            "One record per role and candidate",
+            "Rubric version on every score",
+            "Approval gate before release",
+            "Append-only audit trail",
+          ].map((t) => (
+            <li
+              key={t}
+              className="inline-flex items-start gap-2 rounded-lg border border-[color:var(--brand-navy)]/10 bg-white px-3 py-2 text-sm font-semibold text-[color:var(--brand-navy)]"
             >
-              Hiring, run as a governed system.
-            </h1>
-            <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
-              {SYSTEM_CLAIM} Requirements enter once, compile into a versioned rubric,
-              and every step after that is recorded — so you can see why a candidate
-              ranked where they did.
-            </p>
-
-            <ul className="mt-8 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-              {[
-                "One record per role and candidate",
-                "Rubric version on every score",
-                "Approval gate before release",
-                "Append-only audit trail",
-              ].map((t) => (
-                <li
-                  key={t}
-                  className="inline-flex items-start gap-2 rounded-lg border border-[color:var(--brand-navy)]/10 bg-white px-3 py-2 text-sm font-semibold text-[color:var(--brand-navy)]"
-                >
-                  <Check
-                    className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean-text)]"
-                    aria-hidden
-                  />
-                  <span className="min-w-0">{t}</span>
-                </li>
-              ))}
-            </ul>
-
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link
-                to="/intake"
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-              >
-                Open your first role <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
-              <Link
-                to="/agents"
-                className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-              >
-                See the {MODULES.agents}
-              </Link>
-            </div>
-          </div>
-        </PublicPage>
-      </section>
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-ocean-text)]" aria-hidden />
+              <span className="min-w-0">{t}</span>
+            </li>
+          ))}
+        </ul>
+      </EditorialHero>
 
       {/* 2 — INTERACTIVE ARCHITECTURE */}
       <PublicSection className="bg-white">
@@ -302,6 +277,19 @@ function PlatformPage() {
           </dl>
         </PublicPage>
       </PublicSection>
+
+      <PhotoBand
+        className="py-8"
+        image={bandReview}
+        imageAlt="Two colleagues reviewing candidate profiles on a large screen"
+        eyebrow="Decision Workspace"
+        caption="Every shortlist arrives with the evidence that produced it."
+        stats={[
+          { value: "Side by side", label: "Candidate comparison" },
+          { value: "Rubric-versioned", label: "Every score" },
+          { value: "Recorded", label: "Every decision" },
+        ]}
+      />
 
       {/* 4 — LEARNING LOOP */}
       <PublicSection className="bg-white">

@@ -560,7 +560,7 @@ export function PublicSection({
   as?: "section" | "div" | "article";
 }) {
   return (
-    <Tag id={id} className={cn("py-16 sm:py-20 lg:py-24", className)}>
+    <Tag id={id} className={cn("py-10 sm:py-14 lg:py-16", className)}>
       {children}
     </Tag>
   );

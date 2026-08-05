@@ -12,6 +12,9 @@ import {
   StepRail,
 } from "@/components/marketing/how-it-works-deep";
 import { PageConnections } from "@/components/marketing/page-connections";
+import { EditorialHero, PhotoBand } from "@/components/marketing/editorial-hero";
+import hiwHero from "@/assets/page-how-it-works-hero.jpg";
+import bandHire from "@/assets/band-hire.jpg";
 import { PRODUCT_CATEGORY, MODULES } from "@/config/product-language";
 
 const entry = getPage("how-it-works");
@@ -54,41 +57,25 @@ function HowItWorksPage() {
   return (
     <SiteShell>
       {/* ── Hero ────────────────────────────────────────────────── */}
-      <PublicSection className="pb-8 pt-16 sm:pt-20">
-        <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
-            How it works
-          </p>
-          <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-            The operational anatomy of a TaaSFlow hire.
-          </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
-            Not a marketing overview — the actual mechanics of the{" "}
-            {PRODUCT_CATEGORY}: {MODULES.blueprint}, {MODULES.agents},{" "}
-            {MODULES.evidence}, {MODULES.scoring} and the {MODULES.workspace} —
-            and who owns what. If you're evaluating us seriously, this is the page.
-          </p>
-          <p className="mt-3 max-w-2xl text-sm font-semibold text-[color:var(--brand-navy)]">
-            First ranked shortlist in in days for most roles.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              to="/intake"
-              className="inline-flex min-h-11 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
-            >
-              Start a role
-            </Link>
-            <Link
-              to="/contact"
-              className="inline-flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/20 px-5 py-2.5 text-sm font-semibold text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
-            >
-              Talk to us
-            </Link>
-          </div>
+      <EditorialHero
+        eyebrow="How it works"
+        title="The operational anatomy of a TaaSFlow hire."
+        lead="The actual mechanics — blueprint, agents, evidence, scoring, decision — and who owns what."
+        image={hiwHero}
+        imageAlt="A hiring team reviewing candidate shortlists together at a table"
+        stats={[
+          { value: "5", label: "Stages, start to hire" },
+          { value: "Days", label: "To first ranked shortlist" },
+          { value: "Every score", label: "Backed by evidence" },
+        ]}
+        primary={{ to: "/intake", label: "Start a role" }}
+        secondary={{ to: "/contact", label: "Talk to us" }}
+        note={`The ${PRODUCT_CATEGORY}: ${MODULES.blueprint}, ${MODULES.agents}, ${MODULES.evidence}, ${MODULES.scoring} and the ${MODULES.workspace}.`}
+      />
 
-          <div className="mt-10">
-            <StepRail />
-          </div>
+      <PublicSection className="py-8">
+        <PublicPage>
+          <StepRail />
         </PublicPage>
       </PublicSection>
 
@@ -200,6 +187,19 @@ function HowItWorksPage() {
           </div>
         </PublicPage>
       </PublicSection>
+
+      <PhotoBand
+        className="py-8"
+        image={bandHire}
+        imageAlt="A candidate and hiring manager shaking hands after an interview"
+        eyebrow="The outcome"
+        caption="You interview fewer people, and better ones."
+        stats={[
+          { value: "Days", label: "To first shortlist" },
+          { value: "Evidence", label: "Behind every ranking" },
+          { value: "Yours", label: "Candidate records" },
+        ]}
+      />
 
       {/* ── 5 · Workspace delivery ────────────────────────────── */}
       <PublicSection className="py-10">

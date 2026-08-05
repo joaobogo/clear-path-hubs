@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { marketingHead } from "@/lib/marketing/head";
 import { PublicPage, PublicSection, SiteShell } from "@/components/marketing/site-shell";
+import { EditorialHero } from "@/components/marketing/editorial-hero";
+import faqHero from "@/assets/page-faq-hero.jpg";
 import {
   Accordion,
   AccordionContent,
@@ -315,43 +317,36 @@ function FaqPage() {
   return (
     <SiteShell>
       {/* ── Hero ─────────────────────────────────────────────────── */}
-      <PublicSection className="pb-6 pt-16 sm:pt-20">
-        <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
-            FAQ
-          </p>
-          <h1 className="mt-3 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-            Straight answers, before you ask.
-          </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/80">
-            The nine things buyers and candidates ask most, answered without hedging. If you need
-            depth, expand the deeper explanation on any answer.
-          </p>
-
-          {/* Search */}
-          <div className="mt-8 max-w-xl">
-            <label htmlFor="faq-search" className="sr-only">
-              Search FAQ
-            </label>
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--brand-navy)]/80" />
-              <input
-                id="faq-search"
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search: pricing, scoring, SSO, referrals…"
-                className="w-full rounded-md border border-[color:var(--brand-navy)]/15 bg-white py-2.5 pl-9 pr-3 text-sm outline-none focus:border-[color:var(--brand-navy)]/40 focus:ring-2 focus:ring-[color:var(--brand-navy)]/10"
-              />
-            </div>
-            {q && (
-              <p className="mt-2 text-xs text-[color:var(--brand-navy)]/80">
-                {totalMatches} answer{totalMatches === 1 ? "" : "s"} match &ldquo;{query}&rdquo;
-              </p>
-            )}
+      <EditorialHero
+        eyebrow="FAQ"
+        title="Straight answers, before you ask."
+        lead="The questions buyers and candidates ask most — answered without hedging."
+        image={faqHero}
+        imageAlt="Two colleagues talking across a meeting table in a bright office"
+        tone="warm"
+      >
+        <div className="max-w-xl">
+          <label htmlFor="faq-search" className="sr-only">
+            Search FAQ
+          </label>
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--brand-navy)]/80" />
+            <input
+              id="faq-search"
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search: pricing, scoring, SSO, referrals…"
+              className="w-full rounded-md border border-[color:var(--brand-navy)]/15 bg-white py-2.5 pl-9 pr-3 text-sm outline-none focus:border-[color:var(--brand-navy)]/40 focus:ring-2 focus:ring-[color:var(--brand-navy)]/10"
+            />
           </div>
-        </PublicPage>
-      </PublicSection>
+          {q && (
+            <p className="mt-2 text-xs text-[color:var(--brand-navy)]/80">
+              {totalMatches} answer{totalMatches === 1 ? "" : "s"} match &ldquo;{query}&rdquo;
+            </p>
+          )}
+        </div>
+      </EditorialHero>
 
       {/* ── Category nav ────────────────────────────────────────── */}
       <PublicSection className="pb-4">

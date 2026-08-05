@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { marketingHead } from "@/lib/marketing/head";
 import { SiteShell, PublicPage, PublicSection, CtaSection } from "@/components/marketing/site-shell";
+import { EditorialHero } from "@/components/marketing/editorial-hero";
+import securityHero from "@/assets/page-security-hero.jpg";
 import {
   TRUST_SECTIONS,
   TRUST_CONTACTS,
@@ -44,46 +46,27 @@ function StateBadge({ state }: { state: TrustSection["state"] }) {
 function TrustCenterPage() {
   return (
     <SiteShell>
-      <PublicSection className="pb-4">
-        <PublicPage>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-navy)]/70">
-            Trust Center
-          </p>
-          <h1 className="mt-4 max-w-3xl font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-            Security and privacy, stated only where we can prove it
-          </h1>
-          <p className="mt-5 max-w-2xl text-lg text-[color:var(--brand-navy)]/70">
-            Every claim below traces to the platform itself, an internal certification, or a
-            published policy. Where something is not in place yet, it says so.
-          </p>
+      <EditorialHero
+        eyebrow="Trust Center"
+        title="Security and privacy, stated only where we can prove it"
+        lead="Every claim here traces to the platform, an internal control, or a published policy. Where something is not in place yet, it says so."
+        image={securityHero}
+        imageAlt="A secure data facility corridor lit by a single warm light"
+        stats={[
+          { value: "EU", label: "Data residency" },
+          { value: "Append-only", label: "Audit events" },
+          { value: TRUST_LAST_REVIEWED, label: "Last reviewed" },
+        ]}
+        primary={{ to: "/privacy", label: "Read the Privacy Notice" }}
+        secondary={{ to: "/contact", label: "Ask our security team" }}
+      >
+        <p className="max-w-3xl rounded-xl border border-[color:var(--brand-navy)]/10 bg-white/70 p-4 text-sm text-[color:var(--brand-navy)]/75">
+          This page is our own account of how the system works — not an independent audit or a
+          third-party verification. No certifications are claimed.
+        </p>
+      </EditorialHero>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3 text-sm text-[color:var(--brand-navy)]/70">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 px-3 py-1.5">
-              <Clock className="h-4 w-4" aria-hidden />
-              Last reviewed {TRUST_LAST_REVIEWED}
-            </span>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 px-3 py-1.5">
-              <ShieldCheck className="h-4 w-4" aria-hidden />
-              No certifications claimed
-            </span>
-            <Link
-              to="/privacy"
-              className="inline-flex items-center gap-2 rounded-full border border-[color:var(--brand-navy)]/12 px-3 py-1.5 hover:bg-[color:var(--brand-navy)]/5"
-            >
-              <FileText className="h-4 w-4" aria-hidden />
-              Privacy Notice
-            </Link>
-          </div>
-
-          <p className="mt-8 max-w-3xl rounded-xl border border-[color:var(--brand-navy)]/10 bg-white/60 p-4 text-sm text-[color:var(--brand-navy)]/70">
-            This page is maintained by TaaSFlow to answer common security and privacy questions
-            about the platform. It is our own account of how the system works — not an independent
-            audit or a third-party verification.
-          </p>
-        </PublicPage>
-      </PublicSection>
-
-      <PublicSection className="py-0">
+      <PublicSection className="!py-0">
         <PublicPage>
           <nav aria-label="Trust Center sections" className="border-y border-[color:var(--brand-navy)]/10 py-6">
             <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
@@ -110,7 +93,7 @@ function TrustCenterPage() {
         </PublicPage>
       </PublicSection>
 
-      <PublicSection className="pt-10">
+      <PublicSection className="pt-8">
         <PublicPage className="space-y-10">
           {TRUST_SECTIONS.map((section) => (
             <article

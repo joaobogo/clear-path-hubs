@@ -15,6 +15,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { SiteShell } from "@/components/marketing/site-shell";
+import { EditorialHero } from "@/components/marketing/editorial-hero";
+import resourcesHero from "@/assets/page-resources-hero.jpg";
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 import { PageConnections } from "@/components/marketing/page-connections";
@@ -437,20 +439,21 @@ function CollectionsNav() {
 function ResourcesPage() {
   return (
     <SiteShell>
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <header className="max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-ocean-text)]">
-            Resources
-          </p>
-          <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-            Guides, insights, and tools
-          </h1>
-          <p className="mt-4 text-lg text-[color:var(--brand-navy)]/80">
-            Short, visual, and linked. Every insight leads to a full source
-            article, calculator, or industry destination.
-          </p>
-        </header>
+      <EditorialHero
+        eyebrow="Resources"
+        title="Guides, insights, and tools"
+        lead="Short, visual, and linked. Every insight leads to a full guide, calculator, or industry page."
+        image={resourcesHero}
+        imageAlt="A desk still life with notebooks, a laptop and morning light"
+        tone="warm"
+        stats={[
+          { value: `${RESOURCE_GUIDES.length}`, label: "Evergreen guides" },
+          { value: "Evidence-first", label: "Every claim sourced" },
+          { value: "Maintained", label: "Reviewed regularly" },
+        ]}
+      />
 
+      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <CollectionsNav />
 
         <Section
