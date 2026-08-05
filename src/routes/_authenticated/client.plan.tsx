@@ -13,7 +13,8 @@ import { PLAN_CATALOGUE } from "@/lib/payments-catalog";
 import { TURNAROUND_LABEL } from "@/config/pricing-core";
 import { PlanPanel } from "@/components/client/plan-panel";
 import { ServiceExpectationsTable } from "@/components/client/service-expectations-table";
-import { SkeletonRows } from "@/components/client/states";
+import { PermissionDenied, SkeletonRows } from "@/components/client/states";
+import { areaDeniedMessage, canAccessArea } from "@/lib/collaborator-roles";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -59,6 +60,7 @@ function PlanPage() {
     ctx?.active?.role === "platform_admin" ||
     ctx?.active?.role === "operations";
   const canMutate = Boolean(isAdmin) && !support.readOnly;
+  const canSeeBilling = canAccessArea(ctx?.active?.role as string | undefined, "billing");
 
   const packages = PLAN_CATALOGUE.filter((p) => p.kind === "package");
   const subscriptions = PLAN_CATALOGUE.filter((p) => p.kind === "subscription");
@@ -73,9 +75,21 @@ function PlanPage() {
         </p>
       </div>
 
-      {isLoading || !orgId ? <SkeletonRows /> : <PlanPanel organizationId={orgId} canMutate={canMutate} />}
-
-      {isLoading || !orgId ? <SkeletonRows /> : <ServiceExpectationsTable orgId={orgId} />}
+      {isLoading || !orgId ? (
+        <SkeletonRows />
+      ) : !canSeeBilling ? (
+        <PermissionDenied
+          title="Plan and billing is Admin-only"
+          description={areaDeniedMessage("billing")}
+          whoToAsk="Your Admin can share what the plan covers, or change your role."
+          action={{ label: "Back to your workspace", to: "/client" }}
+        />
+      ) : (
+        <>
+          <PlanPanel organizationId={orgId} canMutate={canMutate} />
+          <ServiceExpectationsTable orgId={orgId} />
+        </>
+      )}
 
       <section className="space-y-3">
         <h2 className="text-sm font-semibold">One-off packages</h2>
