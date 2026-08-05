@@ -45,7 +45,7 @@ export type DeliveryFailure = {
   retryBlockedReason: string | null;
   staleWarning: boolean;
   relatedPath: string | null;
-  payload: Record<string, unknown>;
+  payloadJson: string;
 };
 
 function since(): string {
@@ -155,7 +155,7 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
           : "Only email deliveries can be re-attempted from here.",
       staleWarning: isStale(eventType, lastAttemptAt),
       relatedPath: n?.link_path ?? null,
-      payload: {
+      payloadJson: JSON.stringify({
         notification_id: r["notification_id"],
         event_type: eventType,
         title: n?.title ?? null,
@@ -166,7 +166,7 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
         error_code: r["error_code"] ?? null,
         error_message: r["error_message"] ?? null,
         link_path: n?.link_path ?? null,
-      },
+      }, null, 2),
     };
   });
 
@@ -183,7 +183,7 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
       firstAttemptAt: String(l["created_at"]),
       lastAttemptAt: String(l["last_attempt_at"] ?? l["updated_at"] ?? l["created_at"]),
       relatedPath: payload.link_path ?? null,
-      payload: {
+      payloadJson: JSON.stringify({
         lead_notification_id: l["id"],
         lead_type: l["lead_type"],
         source: l["source"],
@@ -197,7 +197,7 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
         teams_detail: l["teams_detail"],
         record_table: l["record_table"],
         record_id: l["record_id"],
-      } as Record<string, unknown>,
+      }, null, 2),
     };
     if (l["email_status"] === "failed") {
       leadItems.push({
