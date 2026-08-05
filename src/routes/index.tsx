@@ -1352,7 +1352,7 @@ function Home() {
               <ul className="flex flex-wrap gap-2 pt-1">
                 {[
                   "For companies hiring 1 to 100+ roles a month",
-                  "Flat fees — never a share of salary",
+                  "Only Fair Flat Fees - Always",
                   `$${PRICE_PILOT_USD} pilot available`,
                 ].map((t) => (
                   <li
