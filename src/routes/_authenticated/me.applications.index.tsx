@@ -168,12 +168,13 @@ function MyApplicationsPage() {
  {new Date(a.last_update).toLocaleDateString()}
  </div>
  </div>
- <div>
- <div className="uppercase tracking-wide">Next step</div>
- <div className="text-foreground text-sm">
- {a.next_step ?? "—"}
- </div>
- </div>
+  <div>
+  <div className="uppercase tracking-wide">Next step</div>
+  <div className="text-foreground text-sm">
+  {a.next_step ?? CANDIDATE_STATUS_NEXT_STEP[a.status]}
+  </div>
+  </div>
+
  </div>
  <div className="flex flex-wrap gap-2">
  <Link
