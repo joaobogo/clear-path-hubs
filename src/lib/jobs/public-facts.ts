@@ -71,8 +71,10 @@ export function resolveCompensation(
 
   if (!isPublic) return { display: null, line: RANGE_ON_CALL };
 
-  const summary = str(c.summary);
-  if (summary) return { display: summary, line: summary };
+  // A structured range beats the free-text summary: the summary often carries
+  // caveats ("depends on portfolio") that belong in the description, not in a
+  // block someone scans in fifteen seconds.
+
 
   const min = num(c.budget_min) ?? num(c.min);
   const max = num(c.budget_max) ?? num(c.max);
