@@ -354,6 +354,83 @@ function ExpressIntakePage() {
   });
 
   /**
+   * The whole brief on one screen before submit. Built from the same state the
+   * form writes and the same requiredness map the server validates against, so
+   * review can never show something different from what gets submitted.
+   */
+  const review = React.useMemo(() => {
+    const compensation = state.compensationUndecided
+      ? "Not decided yet"
+      : [
+          state.salaryMin && state.salaryMax
+            ? `${state.currency} ${Number(state.salaryMin).toLocaleString()}–${Number(
+                state.salaryMax,
+              ).toLocaleString()} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
+            : "",
+          state.bonusStructure.trim() ? `Bonus: ${state.bonusStructure.trim()}` : "",
+          state.equity ? COMP_EQUITY_LABELS[state.equity as "none"] : "",
+          state.compensationFlexible ? "Flexible for the right person" : "",
+          state.compensationNote.trim(),
+        ]
+          .filter(Boolean)
+          .join(" · ");
+
+    return buildIntakeReview({
+      snapshot: {
+        roleTitle: state.roleTitle,
+        team: state.team,
+        whyOpen: state.whyOpen,
+        jobDescriptionText: state.jobDescriptionText,
+        jdFilename: jdFile ? jdFile.filename : null,
+        requirements: state.requirements.map((r) => ({ text: r.text, tag: String(r.tag) })),
+        location: state.location,
+        workModelLabel: state.workModel ? WORK_MODEL_LABELS[state.workModel] : "",
+        onsiteDays: state.workModel === "hybrid" ? state.onsiteDays : "",
+        remoteAnywhereInCountry:
+          state.workModel === "remote" && state.remoteAnywhereInCountry,
+        remoteTimezoneLabels:
+          state.workModel === "remote"
+            ? state.remoteTimezones.map((t) => TIMEZONE_BAND_LABELS[t] ?? t)
+            : [],
+        sponsorshipLabel: state.sponsorshipAvailable
+          ? SPONSORSHIP_LABELS[state.sponsorshipAvailable]
+          : "",
+        compensationLine: compensation,
+        workAuthorizationLabel:
+          WORK_AUTHORIZATION_OPTIONS.find((o) => o.value === state.workAuthorization)?.label ?? "",
+        workAuthorizationNote: state.workAuthorizationNote,
+        targetStartDate: state.targetStartDate,
+        interviewStageLines: state.interviewStages
+          .filter((st) => st.name.trim())
+          .map((st) => st.name.trim()),
+        interviewProcess: state.interviewProcess,
+        targetDaysToOffer: state.targetDaysToOffer,
+        decisionMaker: state.decisionMaker,
+        decisionMakerEmail: state.decisionMakerEmail,
+        dealBreakers: normalizeDealBreakers(state.dealBreakerList),
+        companyName: state.companyName,
+        companyWebsite: state.companyWebsite,
+        companyLinkedin: state.companyLinkedin,
+        firstName: state.firstName,
+        lastName: state.lastName,
+        contactTitle: state.contactTitle,
+        workEmail: state.workEmail,
+        phone: state.phone,
+        contactLinkedin: state.contactLinkedin,
+      },
+      required: req,
+      // Answers that live outside the text state: ticks, files, typed secrets.
+      satisfied: {
+        jobDescriptionText: Boolean(jdFile) || state.jobDescriptionText.trim().length > 0,
+        consent: state.consent,
+        pilotAcknowledgement: state.pilotAcknowledgement,
+        password: state.password.length > 0,
+        confirmPassword: state.confirmPassword.length > 0,
+      },
+    });
+  }, [state, jdFile, req]);
+
+  /**
    * Location, on-site expectation and authorisation rules, in one place so the
    * step check and the submit check can never drift apart.
    */
@@ -2884,7 +2961,7 @@ function ExpressIntakePage() {
             )}
             {stepIndex < INTAKE_STEPS.length - 1 && (
               <Button type="button" onClick={() => goNext()} className="min-h-11">
-                Continue
+                {returnToReview ? "Back to review" : "Continue"}
               </Button>
             )}
           </div>
