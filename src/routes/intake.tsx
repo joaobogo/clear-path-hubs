@@ -599,6 +599,10 @@ function ExpressIntakePage() {
     trackEvent("express_intake_viewed", { flow: "express_onboarding" });
 
     let cancelled = false;
+    // The form must never be held hostage by a slow draft lookup.
+    const safety = setTimeout(() => {
+      if (!cancelled) setDraftPhase("ready");
+    }, 6000);
     void (async () => {
       let signedIn = false;
       try {
@@ -659,6 +663,7 @@ function ExpressIntakePage() {
     })();
     return () => {
       cancelled = true;
+      clearTimeout(safety);
     };
   }, []);
 
