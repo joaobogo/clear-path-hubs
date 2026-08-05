@@ -1403,7 +1403,7 @@ function ActionArea({
     <div className="rounded-xl border bg-card p-4 shadow-sm ring-1 ring-primary/5">
       <div className="mb-3 flex items-center justify-between gap-2">
         <h2 className="text-sm font-semibold uppercase tracking-[0.08em] text-foreground/90">Stage actions</h2>
-        <Badge variant="outline" className="capitalize tabular-nums">
+        <Badge variant="outline" className="tabular-nums">
           {clientStageLabel(stage)}
         </Badge>
       </div>
