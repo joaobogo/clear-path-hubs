@@ -56,6 +56,12 @@ import { HireHandoffPanel, HandoffSkeleton } from "@/components/client/hire-hand
 import { getRoleClosure } from "@/lib/role-closure.functions";
 import { CloseRoleDialog, RoleClosureRecord } from "@/components/client/close-role-dialog";
 import { isArchivedStatus } from "@/lib/role-closure";
+import { getRoleRecap } from "@/lib/role-recap.functions";
+import {
+  RoleRecapPanel,
+  RoleRecapSkeleton,
+  RoleRecapError,
+} from "@/components/client/role-recap";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  head: () => ({
@@ -140,6 +146,14 @@ function PositionDetailPage() {
  queryKey: ["client-position-closure", orgId, id],
  queryFn: () => closureFn({ data: { orgId: orgId!, positionId: id } }),
  enabled: !!orgId,
+ });
+ // Recap is only for a role that has been closed: the lessons from the last
+ // search, from this role's own recorded events.
+ const recapFn = useServerFn(getRoleRecap);
+ const recap = useQuery({
+ queryKey: ["client-position-recap", orgId, id],
+ queryFn: () => recapFn({ data: { orgId: orgId!, positionId: id } }),
+ enabled: !!orgId && !!closure.data && !closure.data.paused,
  });
  useEffect(() => {
  const onRefresh = () => {
@@ -371,6 +385,18 @@ function PositionDetailPage() {
 
   {/* Recorded closure — reason, note, date and who closed it. */}
   {closure.data && <RoleClosureRecord closure={closure.data} />}
+
+  {/* One-screen recap of the finished search. */}
+  {closure.data && !closure.data.paused && (
+   <>
+    {recap.isPending && <RoleRecapSkeleton />}
+    {recap.isError && <RoleRecapError onRetry={() => void recap.refetch()} />}
+    {!recap.isPending && !recap.isError && recap.data && (
+     <RoleRecapPanel recap={recap.data} />
+    )}
+   </>
+  )}
+
 
 
 
