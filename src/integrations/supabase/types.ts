@@ -8968,6 +8968,9 @@ export type Database = {
           business_unit: string | null
           channel_plan: Json | null
           closed_at: string | null
+          closed_by: string | null
+          closure_note: string | null
+          closure_reason: string | null
           company_research: Json
           compensation: Json
           compensation_collected: boolean
@@ -9019,6 +9022,7 @@ export type Database = {
           requirements: Json
           rescore_requested_at: string | null
           rescore_state: string
+          restart_expected_on: string | null
           scoring_signature: string | null
           search_live_at: string | null
           search_live_email_at: string | null
@@ -9053,6 +9057,9 @@ export type Database = {
           business_unit?: string | null
           channel_plan?: Json | null
           closed_at?: string | null
+          closed_by?: string | null
+          closure_note?: string | null
+          closure_reason?: string | null
           company_research?: Json
           compensation?: Json
           compensation_collected?: boolean
@@ -9106,6 +9113,7 @@ export type Database = {
           requirements?: Json
           rescore_requested_at?: string | null
           rescore_state?: string
+          restart_expected_on?: string | null
           scoring_signature?: string | null
           search_live_at?: string | null
           search_live_email_at?: string | null
@@ -9140,6 +9148,9 @@ export type Database = {
           business_unit?: string | null
           channel_plan?: Json | null
           closed_at?: string | null
+          closed_by?: string | null
+          closure_note?: string | null
+          closure_reason?: string | null
           company_research?: Json
           compensation?: Json
           compensation_collected?: boolean
@@ -9193,6 +9204,7 @@ export type Database = {
           requirements?: Json
           rescore_requested_at?: string | null
           rescore_state?: string
+          restart_expected_on?: string | null
           scoring_signature?: string | null
           search_live_at?: string | null
           search_live_email_at?: string | null

@@ -259,7 +259,9 @@ export const getClientOverview = createServerFn({ method: "GET" })
       .from("positions")
       .select("id, title, status, updated_at, created_at")
       .eq("organization_id", data.orgId)
-      .in("status", ["active", "paused", "approved"])
+      // Active work only: a closed or on-hold role must leave every count and
+      // the decision queue in the same refresh.
+      .in("status", ["active", "approved"])
       .order("updated_at", { ascending: false });
     const activePositionsList = (positions as AnyRow[]) ?? [];
     const activePositions = activePositionsList.length;
@@ -802,11 +804,12 @@ export const getClientPositions = createServerFn({ method: "GET" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
+    // "Archived" keeps closed roles readable: filled, closed and archived.
     const statusFilter = (data.status === "closed"
-      ? (["closed", "archived"] as const)
+      ? (["filled", "closed", "archived"] as const)
       : data.status
         ? ([data.status] as const)
-        : (["active", "draft", "paused", "closed", "archived"] as const)) as unknown as string[];
+        : (["active", "draft", "paused", "filled", "closed", "archived"] as const)) as unknown as string[];
     const { data: positions, error } = await context.supabase
       .from("positions")
       .select(

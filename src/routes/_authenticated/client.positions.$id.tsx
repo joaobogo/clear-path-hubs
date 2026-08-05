@@ -53,6 +53,9 @@ import { SlaScorecard } from "@/components/client/sla-scorecard";
 import { clientRoleStatusLabel } from "@/lib/client-role-status";
 import { getPositionHandoff } from "@/lib/hire-handoff.functions";
 import { HireHandoffPanel, HandoffSkeleton } from "@/components/client/hire-handoff";
+import { getRoleClosure } from "@/lib/role-closure.functions";
+import { CloseRoleDialog, RoleClosureRecord } from "@/components/client/close-role-dialog";
+import { isArchivedStatus } from "@/lib/role-closure";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  head: () => ({
@@ -128,6 +131,14 @@ function PositionDetailPage() {
  const handoff = useQuery({
  queryKey: ["client-position-handoff", orgId, id],
  queryFn: () => handoffFn({ data: { orgId: orgId!, positionId: id } }),
+ enabled: !!orgId,
+ });
+ // Recorded closure, if this role has been closed. Read from the position row,
+ // never inferred from status alone.
+ const closureFn = useServerFn(getRoleClosure);
+ const closure = useQuery({
+ queryKey: ["client-position-closure", orgId, id],
+ queryFn: () => closureFn({ data: { orgId: orgId!, positionId: id } }),
  enabled: !!orgId,
  });
  useEffect(() => {
@@ -356,7 +367,12 @@ function PositionDetailPage() {
  >
  ← All positions
  </Link>
- </div>
+  </div>
+
+  {/* Recorded closure — reason, note, date and who closed it. */}
+  {closure.data && <RoleClosureRecord closure={closure.data} />}
+
+
 
  {/* 1. Header */}
  <header className="flex flex-wrap items-start justify-between gap-3">
@@ -457,12 +473,20 @@ function PositionDetailPage() {
   </Link>
   </Button>
 
-   <PositionLifecycleMenu
-     positionId={position.id}
-     status={position.status}
-     title={position.title}
-     onChanged={() => void refetch()}
-   />
+    <PositionLifecycleMenu
+      positionId={position.id}
+      status={position.status}
+      title={position.title}
+      onChanged={() => void refetch()}
+    />
+    {/* A role is closed with a recorded reason, never by message. */}
+    {orgId && !closure.data && !isArchivedStatus(position.status) && (
+     <CloseRoleDialog
+      orgId={orgId}
+      positionId={position.id}
+      positionTitle={position.title}
+     />
+    )}
   </>
  )}
   {orgId && (
