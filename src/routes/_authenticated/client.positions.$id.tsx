@@ -331,6 +331,26 @@ function PositionDetailPage() {
   {placementLine ? (
   <div className="mt-1 text-sm text-muted-foreground">{placementLine}</div>
   ) : null}
+  {/* The interview process the client stated at intake, unchanged. */}
+  {(() => {
+   const ctx = (position.intake_context ?? {}) as Record<string, unknown>;
+   const stages = Array.isArray(ctx["interview_stages"])
+    ? (ctx["interview_stages"] as Array<Record<string, unknown>>)
+    : [];
+   const days = typeof ctx["target_days_to_offer"] === "number" ? ctx["target_days_to_offer"] : null;
+   if (stages.length === 0) return null;
+   return (
+    <div className="mt-2 text-sm text-muted-foreground">
+     <span className="font-medium text-foreground">Interview process: </span>
+     {stages
+      .map((s, i) => `${i + 1}. ${String(s["name"] ?? "").trim()}`)
+      .filter(Boolean)
+      .join(" · ")}
+     {days ? ` · target ${days} days to offer` : ""}
+    </div>
+   );
+  })()}
+
  {support.readOnly ? (
  <div className="mt-2 text-xs text-muted-foreground">
  Kanban movement is disabled while viewing this workspace as a
