@@ -97,7 +97,7 @@ export function computePendingAction(input: PendingActionInputs): CandidatePendi
       title: "Upload your CV again",
       detail: "We could not read the file you sent, so a reviewer cannot see your experience.",
       actionLabel: "Replace your CV",
-      target: "#document",
+      target: "/me/cv",
       dueAt: null,
       overdue: false,
     };

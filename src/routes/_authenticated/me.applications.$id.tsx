@@ -24,6 +24,11 @@ import { TransparencyPanel } from "@/components/candidate/transparency-panel";
 import { FileText } from "lucide-react";
 import { CandidateInterviews } from "@/components/candidate/CandidateInterviews";
 import { useConfirmAction } from "@/components/ds";
+import {
+  NOTHING_NEEDED_LINE,
+  pendingActionDeadline,
+  type CandidatePendingAction,
+} from "@/lib/candidate/pending-action";
 
 export const Route = createFileRoute("/_authenticated/me/applications/$id")({
   head: () => ({
@@ -40,6 +45,7 @@ export const Route = createFileRoute("/_authenticated/me/applications/$id")({
   pendingComponent: () => (
     <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-4">
       <div className="h-8 w-2/3 animate-pulse rounded bg-muted" />
+      <div className="h-4 w-3/4 animate-pulse rounded bg-muted" />
       <div className="h-32 animate-pulse rounded-lg bg-muted" />
     </main>
   ),
@@ -80,6 +86,7 @@ type MyApplication = {
   role_closed: boolean;
   status: CandidateSafeStatus;
   next_step: string | null;
+  pending_action: CandidatePendingAction | null;
   can_withdraw: boolean;
   portfolio_url: string | null;
   document: {
@@ -101,7 +108,12 @@ function TrackPage() {
   const qc = useQueryClient();
   const [replies, setReplies] = useState<Record<string, string>>({});
 
-  const { data: raw = initial } = useQuery({
+  const {
+    data: raw = initial,
+    isError,
+    isFetching,
+    refetch,
+  } = useQuery({
     queryKey: ["me-application", id],
     queryFn: () => fn({ data: { id } }),
     initialData: initial,
@@ -145,6 +157,9 @@ function TrackPage() {
     onError: (e: Error) => toast.error(e.message.replace(/^Error: /, "")),
   });
 
+  const action = data.pending_action;
+  const deadline = action ? pendingActionDeadline(action) : null;
+
   const openRequests = data.info_requests.filter((r) => r.status === "open");
   const answeredRequests = data.info_requests.filter((r) => r.status !== "open");
 
@@ -174,14 +189,58 @@ function TrackPage() {
         </Badge>
       </header>
 
+      {isError ? (
+        <div
+          role="alert"
+          className="mb-6 rounded-lg border border-destructive/30 bg-destructive/5 p-5"
+        >
+          <p className="text-sm font-medium">We couldn&apos;t refresh this application</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            What you see below may be out of date. Nothing has changed on your application.
+          </p>
+          <Button
+            variant="outline"
+            className="mt-3 min-h-11 w-full sm:w-auto"
+            onClick={() => void refetch()}
+            disabled={isFetching}
+          >
+            {isFetching ? "Retrying…" : "Try again"}
+          </Button>
+        </div>
+      ) : null}
+
       <section className="rounded-lg border bg-card p-5 mb-6">
         <h2 className="text-sm font-medium mb-2">Where things stand</h2>
         <p className="text-sm">{CANDIDATE_STATUS_MEANING[data.status]}</p>
         {/* Always a next-step line — including an explicit "nothing needed".
             A status word alone is what drives people to email support. */}
-        <p className="mt-1 text-sm font-medium">
-          {data.next_step ?? CANDIDATE_STATUS_NEXT_STEP[data.status]}
-        </p>
+        {/* One line saying whose move it is, then — only when a real item is
+            pending — the action itself directly beneath it. */}
+        {action ? (
+          <div className="mt-3 rounded-md border taas-bg-warning-soft p-4">
+            <p className="text-sm font-medium">{action.title}</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {action.detail}
+              {deadline ? ` ${deadline}.` : ""}
+            </p>
+            {action.target.startsWith("/") ? (
+              <Button asChild className="mt-3 min-h-11 w-full sm:w-auto">
+                <Link to={action.target}>{action.actionLabel}</Link>
+              </Button>
+            ) : (
+              <Button asChild className="mt-3 min-h-11 w-full sm:w-auto">
+                <a href={action.target}>{action.actionLabel}</a>
+              </Button>
+            )}
+          </div>
+        ) : (
+          <p className="mt-1 text-sm font-medium">
+            {NOTHING_NEEDED_LINE}{" "}
+            <span className="font-normal text-muted-foreground">
+              {data.next_step ?? CANDIDATE_STATUS_NEXT_STEP[data.status]}
+            </span>
+          </p>
+        )}
         {data.status === "Closed" ? (
           <p className="mt-3 text-sm text-muted-foreground">
             {data.role_closed
@@ -224,7 +283,7 @@ function TrackPage() {
       </section>
 
       {openRequests.length > 0 ? (
-        <section className="rounded-lg border taas-bg-warning-soft p-5 mb-6">
+        <section id="info-requests" className="rounded-lg border taas-bg-warning-soft p-5 mb-6 scroll-mt-24">
           <h2 className="text-sm font-medium mb-1">The team asked you something</h2>
           <p className="text-xs text-muted-foreground mb-4">
             Reply in your own words. Anything you write here goes to the TaaSFlow team.
@@ -288,7 +347,9 @@ function TrackPage() {
         </section>
       ) : null}
 
-      <CandidateInterviews applicationId={id} />
+      <div id="interviews" className="scroll-mt-24">
+        <CandidateInterviews applicationId={id} />
+      </div>
 
 
       <section className="rounded-lg border bg-card p-5 mb-6">
