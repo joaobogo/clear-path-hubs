@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { Building2, Briefcase, Users, MessageSquare, Loader2, Clock, CheckSquare, Zap, LineChart, PlusCircle, Truck, Bot, Gauge, Send } from "lucide-react";
+import { Building2, Briefcase, Users, MessageSquare, Loader2, Clock, CheckSquare, Zap, LineChart, PlusCircle, Truck, Bot, Gauge, Send, ClipboardList, AlertTriangle, RotateCw } from "lucide-react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -15,11 +15,13 @@ import {
 import { globalSearch, type SearchResult } from "@/lib/global-search.functions";
 
 const RECENT_KEY = "taasflow:search:recent";
+// Session-scoped: recents disappear when the tab closes.
+const store = () => (typeof window === "undefined" ? null : window.sessionStorage);
 const MAX_RECENT = 6;
 
 function readRecent(): string[] {
   try {
-    const v = JSON.parse(localStorage.getItem(RECENT_KEY) ?? "[]");
+    const v = JSON.parse(store()?.getItem(RECENT_KEY) ?? "[]");
     return Array.isArray(v) ? v.filter((x) => typeof x === "string").slice(0, MAX_RECENT) : [];
   } catch {
     return [];
@@ -29,7 +31,7 @@ function pushRecent(q: string) {
   try {
     const list = readRecent().filter((x) => x.toLowerCase() !== q.toLowerCase());
     list.unshift(q);
-    localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, MAX_RECENT)));
+    store()?.setItem(RECENT_KEY, JSON.stringify(list.slice(0, MAX_RECENT)));
   } catch {
     /* ignore */
   }
@@ -48,8 +50,18 @@ const ICONS: Record<SearchResult["type"], React.ComponentType<{ className?: stri
   client: Building2,
   position: Briefcase,
   candidate: Users,
+  intake: ClipboardList,
   message: MessageSquare,
   task: CheckSquare,
+};
+
+const LABELS: Record<SearchResult["type"], string> = {
+  client: "Client",
+  position: "Role",
+  candidate: "Candidate",
+  intake: "Intake",
+  message: "Message",
+  task: "Task",
 };
 
 type QuickAction = {
@@ -98,10 +110,13 @@ export function GlobalSearchDialog({
     if (!open) setQ("");
   }, [open]);
 
-  const { data, isFetching } = useQuery({
-    queryKey: ["global-search", scope, debounced],
-    queryFn: () => search({ data: { q: debounced, scope } }),
+  const [includeTest, setIncludeTest] = useState(false);
+
+  const { data, isFetching, isError, refetch } = useQuery({
+    queryKey: ["global-search", scope, debounced, includeTest],
+    queryFn: () => search({ data: { q: debounced, scope, includeTest } }),
     enabled: debounced.length >= 2,
+    retry: false,
     staleTime: 15_000,
   });
 
@@ -113,6 +128,7 @@ export function GlobalSearchDialog({
       ...data.groups.clients,
       ...data.groups.positions,
       ...data.groups.candidates,
+      ...data.groups.intakes,
       ...data.groups.messages,
       ...data.groups.tasks,
     ];
@@ -190,14 +206,32 @@ export function GlobalSearchDialog({
                 <Loader2 className="h-3.5 w-3.5 animate-spin" /> Searching…
               </div>
             )}
-            {!isFetching && allResults.length === 0 && (
+            {isError && (
+              <div className="px-4 py-6 text-center text-sm">
+                <div className="flex items-center justify-center gap-2 font-medium text-destructive">
+                  <AlertTriangle className="h-4 w-4" /> Search unavailable
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  We could not reach search. Your results are not empty — they did not load.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => void refetch()}
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium hover:bg-accent"
+                >
+                  <RotateCw className="h-3.5 w-3.5" /> Retry
+                </button>
+              </div>
+            )}
+            {!isError && !isFetching && data && allResults.length === 0 && (
               <CommandEmpty>
-                No results for &ldquo;{debounced}&rdquo;.
+                No matches for &ldquo;{debounced}&rdquo;.
               </CommandEmpty>
             )}
 
             {groups &&
-              (["clients", "positions", "candidates", "tasks", "messages"] as const).map((key, idx) => {
+              !isError &&
+              (["clients", "positions", "candidates", "intakes", "tasks", "messages"] as const).map((key, idx) => {
                 const items = groups[key];
                 if (!items || items.length === 0) return null;
                 return (
@@ -214,10 +248,17 @@ export function GlobalSearchDialog({
                           >
                             <Icon className="mr-2 h-4 w-4 text-muted-foreground" />
                             <div className="min-w-0 flex-1">
-                              <div className="truncate text-sm">{r.label}</div>
-                              {r.context && (
+                              <div className="flex items-center gap-2">
+                                <span className="truncate text-sm">{r.label}</span>
+                                <span className="shrink-0 rounded border border-border px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+                                  {LABELS[r.type]}
+                                </span>
+                              </div>
+                              {(r.context || r.state) && (
                                 <div className="truncate text-xs text-muted-foreground">
                                   {r.context}
+                                  {r.context && r.state ? " · " : ""}
+                                  {r.state && <span className="font-medium text-foreground/70">{r.state}</span>}
                                 </div>
                               )}
                             </div>
@@ -231,6 +272,20 @@ export function GlobalSearchDialog({
           </>
         )}
       </CommandList>
+      {scope === "admin" && (
+        <div className="flex items-center justify-between border-t border-border px-3 py-2 text-xs text-muted-foreground">
+          <span>↑↓ to navigate · Enter to open</span>
+          <label className="flex cursor-pointer items-center gap-2">
+            <input
+              type="checkbox"
+              className="h-3.5 w-3.5 accent-primary"
+              checked={includeTest}
+              onChange={(e) => setIncludeTest(e.target.checked)}
+            />
+            Show test records
+          </label>
+        </div>
+      )}
     </CommandDialog>
   );
 }
