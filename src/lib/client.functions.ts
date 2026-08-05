@@ -452,6 +452,15 @@ export const getClientOverview = createServerFn({ method: "GET" })
         stage_entered_at: progress.currentEnteredAt,
         days_in_stage: progress.daysInCurrentStage,
         stage_caption: progress.caption,
+        client_status: computeClientRoleStatus({
+          status: p.status as string,
+          hires: posRows.filter((r) => r.stage === "hired").length,
+          offers: posRows.filter((r) => r.stage === "offer").length,
+          interviewing: posRows.filter((r) => r.interview_active || r.stage === "interview_process")
+            .length,
+          shortlisted: posRows.filter((r) => r.stage === "shortlisted").length,
+          delivered: awaiting.length,
+        }),
         last_movement_at: lastMovementAt,
         promised_shortlist_by: promisedShortlistBy,
         shortlist_delivered_at: dates.shortlist,
