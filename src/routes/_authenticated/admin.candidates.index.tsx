@@ -289,7 +289,7 @@ function CandidatesPage() {
               position_id: search.position_id || undefined,
               stage: search.stage || undefined,
               client_visibility: search.client_visibility || undefined,
-              admin_status: search.admin_status || undefined,
+              recommendation: undefined,
               score_band: search.score_band || undefined,
               date_from: search.date_from || undefined,
               date_to: search.date_to ? `${search.date_to}T23:59:59Z` : undefined,
