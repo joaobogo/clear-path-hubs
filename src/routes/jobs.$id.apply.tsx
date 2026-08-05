@@ -69,13 +69,8 @@ export const Route = createFileRoute("/jobs/$id/apply")({
 
 type AnswerValue = string | boolean | number | null;
 
-const STEP_LABELS = [
-  "Your details",
-  "CV upload",
-  "Screening",
-  "Consent & review",
-  "Submit",
-] as const;
+const STEP_LABELS = APPLY_STEP_LABELS;
+
 
 function ApplyPage() {
   const { id: rawId } = Route.useParams();
