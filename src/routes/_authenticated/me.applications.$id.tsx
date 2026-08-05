@@ -26,7 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { TransparencyPanel } from "@/components/candidate/transparency-panel";
 import { FileText } from "lucide-react";
-import { CandidateInterviews } from "@/components/candidate/CandidateInterviews";
+import { InterviewResponseCard } from "@/components/candidate/interview-response-card";
 import { useConfirmAction } from "@/components/ds";
 import {
   NOTHING_NEEDED_LINE,
@@ -395,7 +395,7 @@ function TrackPage() {
       ) : null}
 
       <div id="interviews" className="scroll-mt-24">
-        <CandidateInterviews applicationId={id} />
+        <InterviewResponseCard applicationId={id} />
       </div>
 
 
