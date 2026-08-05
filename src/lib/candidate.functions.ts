@@ -676,7 +676,7 @@ export const updateMyProfileSection = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!cp) return { ok: false, trace_id: trace, message: "No profile" };
 
-    let patch: Record<string, unknown>;
+    let patch: Record<string, unknown> = {};
     let rescore = false;
     switch (data.section) {
       case "contact":
