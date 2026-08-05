@@ -151,6 +151,13 @@ function ApplyPage() {
   );
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
+  // Set only when the browser refuses to keep the draft (private mode, full
+  // quota). We say so instead of implying the answers are safe.
+  const [draftError, setDraftError] = useState(false);
+  // A draft found on reopen: what step it reached, and when it was last saved.
+  const [resume, setResume] = useState<{ step: number; savedAt: number | null } | null>(null);
+  // Ticks so "Saved just now" ages into "Saved 3 minutes ago" on its own.
+  const [savedTick, setSavedTick] = useState(0);
   const submittingRef = useRef(false);
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
   // When this form first became usable. The gap to a successful submit is the
@@ -159,18 +166,33 @@ function ApplyPage() {
 
 
 
-  // Restore text draft (never the CV).
+  // Restore the text draft — never the CV, which is not stored anywhere until
+  // the application is submitted. Keyed per posting and per browser.
   useEffect(() => {
     try {
       const raw = localStorage.getItem(draftKey);
-      if (raw) {
-        const d = JSON.parse(raw);
-        if (d.form) setForm(d.form);
-        if (d.answers) setAnswers(d.answers);
-        if (typeof d.network === "boolean") setNetwork(d.network);
+      if (!raw) return;
+      const d = JSON.parse(raw);
+      if (d.form) setForm(d.form);
+      if (d.answers) setAnswers(d.answers);
+      if (typeof d.network === "boolean") setNetwork(d.network);
+      const hasContent =
+        Object.values(d.form ?? {}).some((v) => typeof v === "string" && v.trim() !== "") ||
+        Object.keys(d.answers ?? {}).length > 0;
+      if (hasContent) {
+        setResume({
+          step: typeof d.step === "number" ? Math.min(APPLY_STEPS, Math.max(1, d.step)) : 1,
+          savedAt: typeof d.savedAt === "number" ? d.savedAt : null,
+        });
       }
-    } catch { /* ignore */ }
+    } catch { /* a corrupt draft is the same as no draft */ }
   }, [draftKey]);
+
+  useEffect(() => {
+    if (!draftSavedAt) return;
+    const t = setInterval(() => setSavedTick((n) => n + 1), 30_000);
+    return () => clearInterval(t);
+  }, [draftSavedAt]);
 
   // Is this applicant already signed in? If so we skip account creation and
   // prefill the email we already know. We read the locally stored session
@@ -201,12 +223,21 @@ function ApplyPage() {
   // phone rings, because nobody knows their answers are safe.
   const firstSaveSkipped = useRef(false);
   useEffect(() => {
+    const savedAt = Date.now();
     try {
-      localStorage.setItem(draftKey, JSON.stringify({ form, answers, network }));
-      if (firstSaveSkipped.current) setDraftSavedAt(Date.now());
+      localStorage.setItem(
+        draftKey,
+        JSON.stringify({ form, answers, network, step, savedAt }),
+      );
+      setDraftError(false);
+      if (firstSaveSkipped.current) setDraftSavedAt(savedAt);
       else firstSaveSkipped.current = true;
-    } catch { /* ignore */ }
-  }, [draftKey, form, answers, network]);
+    } catch {
+      // Storage refused us. Never pretend the draft exists.
+      setDraftError(true);
+      setDraftSavedAt(null);
+    }
+  }, [draftKey, form, answers, network, step]);
 
 
   /**
