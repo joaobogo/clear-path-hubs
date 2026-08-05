@@ -1709,6 +1709,31 @@ export const inviteClientMember = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
+    // Seat cap is enforced here, server-side: the owner seat plus the
+    // organization's recruiter seat limit. Invited seats are already reserved,
+    // so a pending invitation counts against the cap.
+    const [{ data: capOrg }, { data: capSeats }] = await Promise.all([
+      supabaseAdmin
+        .from("organizations")
+        .select("client_seat_limit")
+        .eq("id", data.orgId)
+        .maybeSingle(),
+      supabaseAdmin
+        .from("memberships")
+        .select("id, status")
+        .eq("organization_id", data.orgId)
+        .in("role", ["client_admin", "client_editor", "client_viewer"])
+        .in("status", ["active", "invited"]),
+    ]);
+    const seatLimit =
+      (capOrg as { client_seat_limit?: number | null } | null)?.client_seat_limit ?? 3;
+    const seatsUsed = ((capSeats as { id: string }[] | null) ?? []).length;
+    if (seatsUsed >= seatLimit + 1) {
+      throw new Error(
+        `Seat limit reached — this organization has ${seatsUsed} of ${seatLimit + 1} seats in use. Release a seat before inviting someone new.`,
+      );
+    }
+
     // Resolve or invite the auth user by email.
     let authUserId: string | null = null;
     const { data: existingProfile } = await supabaseAdmin

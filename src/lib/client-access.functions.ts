@@ -62,7 +62,7 @@ export const inspectClientAccess = createServerFn({ method: "GET" })
         .from("memberships")
         .select("id, user_id, role, status, created_at, permissions")
         .eq("organization_id", data.organization_id)
-        .in("role", CLIENT_ROLE_LIST as unknown as string[])
+        .in("role", [...CLIENT_ROLE_LIST])
         .neq("status", "removed")
         .order("created_at", { ascending: true }),
     ]);
@@ -102,7 +102,7 @@ export const inspectClientAccess = createServerFn({ method: "GET" })
         const { data: defs } = await context.supabase.rpc("default_permissions_for_role", {
           _role: role as never,
         });
-        defaultsByRole.set(role, ((defs ?? []) as ClientPermission[]) ?? []);
+        defaultsByRole.set(role, (defs ?? []) as ClientPermission[]);
       }),
     );
 
