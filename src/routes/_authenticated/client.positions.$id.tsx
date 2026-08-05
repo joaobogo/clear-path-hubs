@@ -12,6 +12,10 @@ import {
  moveMatchStage,
  type MatchStage,
 } from "@/lib/client.functions";
+import {
+ TIMEZONE_BAND_LABELS,
+ SPONSORSHIP_LABELS,
+} from "@/lib/express-intake-schema";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
 
 import { confirmRoleBlueprint } from "@/lib/client.functions";
@@ -244,7 +248,7 @@ function PositionDetailPage() {
   * Placement and authorisation, read back from what the client actually stated
   * at intake. Nothing is inferred: a missing answer simply does not show.
   */
- const placementLine = React.useMemo(() => {
+ const placementLine = useMemo(() => {
   const ctx = (position.intake_context ?? {}) as Record<string, unknown>;
   const auth = (position.work_authorization ?? {}) as Record<string, unknown>;
   const parts: string[] = [];
