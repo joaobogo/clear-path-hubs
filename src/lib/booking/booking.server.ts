@@ -17,8 +17,11 @@ import { CRM_SOURCE_BRAND } from "@/lib/crm/attio-config";
 import {
   createNote,
   assertPerson,
+  assertCompany,
 } from "@/lib/crm/attio-client.server";
 import {
+  normalizeDomain,
+  personNameValue,
   sanitizeAnswers,
   sanitizeText,
   syncSubmissionToAttio,
@@ -218,6 +221,8 @@ export type BookingSessionRow = {
   first_name: string;
   last_name: string;
   company_name: string | null;
+  company_website: string | null;
+  company_domain: string | null;
   meeting_type: string;
   status: string;
   scheduled_start: string | null;
@@ -231,7 +236,7 @@ export type BookingSessionRow = {
 };
 
 const SESSION_COLUMNS =
-  "id, email, first_name, last_name, company_name, meeting_type, status, scheduled_start, scheduled_end, timezone, host_name, join_url, reschedule_url, cancel_url, attio";
+  "id, email, first_name, last_name, company_name, company_website, company_domain, meeting_type, status, scheduled_start, scheduled_end, timezone, host_name, join_url, reschedule_url, cancel_url, attio";
 
 export async function findBookingSession(params: {
   sessionId?: string | null;
@@ -327,23 +332,32 @@ const STATUS_LABEL: Record<BookingStatusUpdate["status"], string> = {
 };
 
 /**
- * Mirrors the booking outcome onto the EXISTING Attio person via a note, and
- * refreshes the person record. We never create a second person or deal here.
+ * Mirrors a native-scheduler outcome (scheduled / rescheduled / cancelled) into
+ * Attio: upsert the Person on email, upsert the Company on domain and link it,
+ * then record the meeting as a Note on the Person — the same shape the intake
+ * mirror uses, so we never create a duplicate person, company, or deal.
+ *
+ * Non-blocking by contract: every failure lands in attio_error and the booking
+ * itself still stands.
  */
 export async function syncBookingStatusToCrm(
   row: BookingSessionRow,
   update: BookingStatusUpdate,
 ): Promise<void> {
   const db = await admin();
-  const personId = (row.attio?.["person_id"] as string | undefined) ?? null;
   const meeting = MEETING_TYPES[(row.meeting_type as MeetingTypeId) ?? "discovery"];
 
   const lines = [
     `Status: ${STATUS_LABEL[update.status]}`,
     `Meeting: ${meeting?.name ?? row.meeting_type}`,
-    update.scheduledStart ? `When: ${update.scheduledStart}` : null,
-    update.timezone ? `Timezone: ${update.timezone}` : null,
-    update.hostName ? `Host: ${update.hostName}` : null,
+    update.scheduledStart ?? row.scheduled_start
+      ? `When: ${update.scheduledStart ?? row.scheduled_start}`
+      : null,
+    update.scheduledEnd ? `Until: ${update.scheduledEnd}` : null,
+    update.timezone ?? row.timezone ? `Timezone: ${update.timezone ?? row.timezone}` : null,
+    update.hostName ?? row.host_name ? `Host: ${update.hostName ?? row.host_name}` : null,
+    update.joinUrl ?? row.join_url ? `Join: ${update.joinUrl ?? row.join_url}` : null,
+    row.company_name ? `Company: ${row.company_name}` : null,
     update.calendlyEventUri ? `Calendly event: ${update.calendlyEventUri}` : null,
     update.rescheduleUrl ? `Reschedule: ${update.rescheduleUrl}` : null,
     update.cancelUrl ? `Cancel: ${update.cancelUrl}` : null,
@@ -353,34 +367,57 @@ export async function syncBookingStatusToCrm(
     .join("\n");
 
   try {
-    if (personId) {
-      await createNote({
-        parentObject: "people",
-        parentRecordId: personId,
-        title: `${CRM_SOURCE_BRAND} | ${STATUS_LABEL[update.status]}`,
-        content: sanitizeText(lines, 4000),
-      });
-    } else {
-      // No person yet (the earlier mirror failed) — assert one by email so the
-      // booking is never lost, then attach the note.
-      const id = await assertPerson({
-        email_addresses: [row.email],
-        name: { first_name: row.first_name, last_name: row.last_name, full_name: `${row.first_name} ${row.last_name}`.trim() },
-      });
-      await createNote({
-        parentObject: "people",
-        parentRecordId: id,
-        title: `${CRM_SOURCE_BRAND} | ${STATUS_LABEL[update.status]}`,
-        content: sanitizeText(lines, 4000),
-      });
-      await db
-        .from("booking_sessions")
-        .update({ attio: { ...(row.attio ?? {}), person_id: id } })
-        .eq("id", row.id);
+    if (!process.env["ATTIO_API_KEY"]) throw new Error("ATTIO_API_KEY is not configured");
+
+    const existing = (row.attio ?? {}) as Record<string, unknown>;
+    const fullName = `${row.first_name} ${row.last_name}`.trim();
+
+    // Person — upsert on email, so a booking without a prior mirror still lands.
+    const personId = await assertPerson({
+      email_addresses: [row.email],
+      name: personNameValue(fullName),
+    });
+
+    // Company — upsert on domain, then link the person to it.
+    const domain =
+      normalizeDomain(row.company_domain) ?? normalizeDomain(row.company_website) ?? null;
+    let companyId = (existing["company_id"] as string | undefined) ?? null;
+    if (domain) {
+      try {
+        companyId = await assertCompany({
+          domains: [domain],
+          name: row.company_name ?? undefined,
+        });
+        await assertPerson({ email_addresses: [row.email], company: companyId });
+      } catch (companyError) {
+        // A renamed/locked company attribute must not lose the meeting note.
+        console.error("booking crm company link failed", {
+          session_id: row.id,
+          message: companyError instanceof Error ? companyError.message : "unknown",
+        });
+      }
     }
+
+    const noteId = await createNote({
+      parentObject: "people",
+      parentRecordId: personId,
+      title: `${CRM_SOURCE_BRAND} | ${STATUS_LABEL[update.status]}`,
+      content: sanitizeText(lines, 4000),
+    });
+
     await db
       .from("booking_sessions")
-      .update({ attio_synced_at: new Date().toISOString(), attio_error: null })
+      .update({
+        attio: {
+          ...existing,
+          person_id: personId,
+          company_id: companyId,
+          last_status_note_id: noteId,
+          last_status: update.status,
+        },
+        attio_synced_at: new Date().toISOString(),
+        attio_error: null,
+      })
       .eq("id", row.id);
   } catch (error) {
     const message = error instanceof Error ? error.message : "attio_status_sync_failed";
@@ -391,6 +428,7 @@ export async function syncBookingStatusToCrm(
       .eq("id", row.id);
   }
 }
+
 
 /** Idempotency gate for scheduling webhooks. True when this is a fresh event. */
 export async function recordWebhookEvent(params: {

@@ -263,5 +263,16 @@ export const cancelBookingSlot = createServerFn({ method: "POST" })
       console.error("[booking] cancellation email failed", err);
     }
 
+    // CRM mirror of the cancellation — best-effort, never blocks the cancel.
+    try {
+      const { findBookingSession, syncBookingStatusToCrm } = await import(
+        "@/lib/booking/booking.server"
+      );
+      const row = await findBookingSession({ sessionId: data.sessionId });
+      if (row) await syncBookingStatusToCrm(row, { status: "cancelled" });
+    } catch (err) {
+      console.error("[booking] crm cancel sync failed", err);
+    }
+
     return { ok: true as const };
   });
