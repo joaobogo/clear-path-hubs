@@ -180,7 +180,11 @@ function ProfilePage() {
  CV tab
  </Link>
  .
- </p>
+  </p>
+  <div className="mt-4">
+  <EmployerPreviewSheet />
+  </div>
+
  <div className="mt-4 rounded-lg border bg-card p-4">
  <div className="flex items-center justify-between text-sm">
  <span className="font-medium">Profile completeness</span>
