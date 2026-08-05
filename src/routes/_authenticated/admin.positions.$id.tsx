@@ -2,6 +2,8 @@ import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { PaymentExemptionDialog } from "@/components/admin/payment-exemption-dialog";
 import { InternalNotes } from "@/components/admin/InternalNotes";
 import { StageAgingPanel } from "@/components/admin/stage-aging-panel";
+import { PositionBottleneckCard } from "@/components/admin/position-bottleneck-card";
+
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -222,6 +224,14 @@ function PositionWorkspace() {
           />
         </div>
       </header>
+
+      <PositionBottleneckCard
+        positionId={id}
+        organizationId={p.organization_id ?? null}
+        onOpenStage={() => setTab("pipeline")}
+      />
+
+
 
       <nav
         role="tablist"

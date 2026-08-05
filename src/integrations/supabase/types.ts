@@ -4303,6 +4303,7 @@ export type Database = {
             | null
           migration_version: string | null
           organization_id: string | null
+          owner_user_id: string | null
           payload: Json
           position_id: string | null
           primary_email: string
@@ -4335,6 +4336,7 @@ export type Database = {
             | null
           migration_version?: string | null
           organization_id?: string | null
+          owner_user_id?: string | null
           payload?: Json
           position_id?: string | null
           primary_email: string
@@ -4367,6 +4369,7 @@ export type Database = {
             | null
           migration_version?: string | null
           organization_id?: string | null
+          owner_user_id?: string | null
           payload?: Json
           position_id?: string | null
           primary_email?: string
