@@ -8746,6 +8746,7 @@ export type Database = {
             | null
           migration_version: string | null
           phone: string | null
+          show_test_records: boolean
           status: Database["public"]["Enums"]["profile_status"]
           test_run_id: string | null
           timezone: string | null
@@ -8772,6 +8773,7 @@ export type Database = {
             | null
           migration_version?: string | null
           phone?: string | null
+          show_test_records?: boolean
           status?: Database["public"]["Enums"]["profile_status"]
           test_run_id?: string | null
           timezone?: string | null
@@ -8798,6 +8800,7 @@ export type Database = {
             | null
           migration_version?: string | null
           phone?: string | null
+          show_test_records?: boolean
           status?: Database["public"]["Enums"]["profile_status"]
           test_run_id?: string | null
           timezone?: string | null

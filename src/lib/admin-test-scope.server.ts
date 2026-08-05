@@ -21,12 +21,48 @@ export type TestScope = {
   orgIds: string[];
   /** Positions belonging to those organizations. Empty when includeTest is true. */
   positionIds: string[];
+  /** How many records the current scope hid — surfaced in empty states. */
+  excludedOrgs: number;
+  excludedPositions: number;
 };
 
 const DAY = 86_400_000;
 
-export async function loadTestScope(s: Any, includeTest = false): Promise<TestScope> {
-  if (includeTest) return { includeTest: true, orgIds: [], positionIds: [] };
+/**
+ * Cookie mirror of `profiles.show_test_records`. The DB row is the source of
+ * truth (set through `setShowTestRecords`); the cookie lets every shared
+ * loader resolve the preference without threading a user id through dozens of
+ * call sites. Anything unreadable resolves to "hide test records" — fail
+ * closed, never fail open.
+ */
+export const TEST_SCOPE_COOKIE = "taasflow_show_test";
+
+export async function resolveShowTestRecords(): Promise<boolean> {
+  try {
+    const { getCookie } = await import("@tanstack/react-start/server");
+    return getCookie(TEST_SCOPE_COOKIE) === "1";
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * `includeTest` is an explicit override used by account-scoped screens that
+ * are already pinned to one organization. When it is omitted (the normal case
+ * for every admin list and rollup) the single global per-user preference
+ * decides, so counts can never disagree between screens. Pass `"never"` on
+ * client-facing paths: test records are excluded there under any condition.
+ */
+export async function loadTestScope(
+  s: Any,
+  includeTest?: boolean | "never",
+): Promise<TestScope> {
+  const effective =
+    includeTest === "never" ? false : includeTest === true ? true : await resolveShowTestRecords();
+  if (effective) {
+    return { includeTest: true, orgIds: [], positionIds: [], excludedOrgs: 0, excludedPositions: 0 };
+  }
+
 
   const { data: orgs } = await s
     .from("organizations")
@@ -34,19 +70,29 @@ export async function loadTestScope(s: Any, includeTest = false): Promise<TestSc
     .eq("is_test_record", true)
     .limit(1000);
   const orgIds = ((orgs ?? []) as Any[]).map((o) => o.id as string);
-  if (orgIds.length === 0) return { includeTest: false, orgIds: [], positionIds: [] };
 
+  // Positions can be flagged directly even when their org is real (QA roles
+  // inside a live account), so both flags feed the exclusion set.
   const { data: positions } = await s
     .from("positions")
     .select("id")
-    .in("organization_id", orgIds)
-    .limit(2000);
+    .or(
+      orgIds.length
+        ? `is_test_record.eq.true,organization_id.in.(${orgIds.join(",")})`
+        : "is_test_record.eq.true",
+    )
+    .limit(4000);
+  const positionIds = ((positions ?? []) as Any[]).map((p) => p.id as string);
+
   return {
     includeTest: false,
     orgIds,
-    positionIds: ((positions ?? []) as Any[]).map((p) => p.id as string),
+    positionIds,
+    excludedOrgs: orgIds.length,
+    excludedPositions: positionIds.length,
   };
 }
+
 
 /** `column NOT IN (test org ids)` — no-op when nothing is flagged. */
 export function excludeIds(query: Any, column: string, ids: string[]): Any {

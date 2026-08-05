@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AlertTriangle, BellRing, Loader2, RefreshCw } from "lucide-react";
+import { TestScopeEmptyNote } from "@/components/admin/test-records-toggle";
 
 type Backlog = Awaited<ReturnType<typeof getDecisionBacklog>>;
 type Row = Backlog["rows"][number];
@@ -161,6 +162,7 @@ export function DecisionBacklogPanel({
             {organizationId
               ? "No candidates waiting on this client"
               : "No candidates waiting on a client decision"}
+            <TestScopeEmptyNote />
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
             Submitted candidates appear here until a decision is recorded.
