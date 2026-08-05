@@ -10,6 +10,7 @@ import {
  type ProfilePatch,
 } from "@/lib/candidate.functions";
 import { profileCompleteness } from "@/lib/candidate/profile-completeness";
+import { PROFILE_GAP_FIELD_IDS } from "@/lib/candidate/profile-gaps";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +23,10 @@ export const Route = createFileRoute("/_authenticated/me/profile")({
  { name: "robots", content: "noindex" },
  ],
  }),
+ validateSearch: (search: Record<string, unknown>) => {
+   const field = typeof search.field === "string" ? search.field : "";
+   return PROFILE_GAP_FIELD_IDS.includes(field) ? { field } : {};
+ },
  loader: ({ context }) =>
  context.queryClient.ensureQueryData({
  queryKey: ["me-context"],
@@ -43,6 +48,7 @@ function ProfilePage() {
  initialData: ctxInit,
  });
 
+ const { field } = Route.useSearch() as { field?: string };
  const p = ctx?.profile as Record<string, unknown> | null | undefined;
  // eslint-disable-next-line @typescript-eslint/no-explicit-any
  const [form, setForm] = useState<any>(null);
@@ -77,6 +83,16 @@ function ProfilePage() {
  setBaseline(JSON.stringify(next));
  }, [p]);
  const pct = profileCompleteness(p);
+
+ // Deep link from the /me "finish these things" prompt: land focused on the
+ // exact field rather than the top of the form.
+ useEffect(() => {
+   if (!field || !form) return;
+   const el = document.getElementById(field) as HTMLElement | null;
+   if (!el) return;
+   el.scrollIntoView({ block: "center", behavior: "smooth" });
+   el.focus({ preventScroll: true });
+ }, [field, !!form]);
 
 
 
