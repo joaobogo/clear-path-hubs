@@ -9117,6 +9117,7 @@ export type Database = {
           id: string
           is_default: boolean
           is_shared: boolean
+          last_used_at: string | null
           name: string
           organization_id: string | null
           surface: string
@@ -9129,6 +9130,7 @@ export type Database = {
           id?: string
           is_default?: boolean
           is_shared?: boolean
+          last_used_at?: string | null
           name: string
           organization_id?: string | null
           surface: string
@@ -9141,6 +9143,7 @@ export type Database = {
           id?: string
           is_default?: boolean
           is_shared?: boolean
+          last_used_at?: string | null
           name?: string
           organization_id?: string | null
           surface?: string

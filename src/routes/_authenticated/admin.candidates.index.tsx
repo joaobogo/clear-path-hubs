@@ -288,6 +288,7 @@ function CandidatesPage() {
 
       <SavedViewsBar
         surface="admin_candidates"
+        canShare
         currentFilters={Object.fromEntries(
           (Object.keys(FILTER_LABELS) as Array<keyof SearchState>).map((k) => [
             k,
