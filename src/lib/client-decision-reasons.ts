@@ -109,6 +109,9 @@ export const FEEDBACK_SIGNALS = [
 
 export function reasonLabel(code: string | null | undefined): string | null {
   if (!code) return null;
+  // Deal-breaker codes carry the client's own wording on the role, so the
+  // generic label only says where the reason came from.
+  if (/^dealbreaker_[1-5]$/.test(code)) return "Stated deal-breaker";
   const all = [
     ...REJECTION_REASONS.map((r) => ({ code: r.code as string, label: r.label as string })),
     ...HOLD_REASONS,
