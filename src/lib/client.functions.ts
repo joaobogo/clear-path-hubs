@@ -588,6 +588,8 @@ export const getClientOverview = createServerFn({ method: "GET" })
 
     return {
       kpis,
+      hiring_health,
+
       active_positions: activePositions,
       new_this_week,
       action_required,
