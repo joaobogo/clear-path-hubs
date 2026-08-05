@@ -780,30 +780,23 @@ export const EXPRESS_STEP_KEY = "taasflow.express.intake.step.v1";
  */
 export const INTAKE_STEPS = [
   {
+    key: "company",
+    title: "You and your company",
+    blurb: "Who you are and where you work, then your account so nothing is lost.",
+    minutes: 2,
+    required: true,
+  },
+  {
     key: "role",
     title: "The role",
-    blurb: "What the job is and why it exists.",
+    blurb: "What the job is, why it exists, and what a candidate must have.",
     minutes: 3,
     required: true,
   },
   {
-    key: "people",
-    title: "Who you need",
-    blurb: "What you would reject a great candidate for, and what you would teach.",
-    minutes: 3,
-    required: true,
-  },
-  {
-    key: "practicalities",
-    title: "Practicalities",
-    blurb: "Money, place, authorisation, timing. Finish later if you need to.",
-    minutes: 2,
-    required: false,
-  },
-  {
-    key: "process",
-    title: "Process and confirm",
-    blurb: "How you interview, who decides, and your details.",
+    key: "details",
+    title: "Details and confirm",
+    blurb: "Money, place, timing and process. Optional now — finish later if you prefer.",
     minutes: 2,
     required: false,
   },
@@ -815,9 +808,32 @@ export const INTAKE_TOTAL_MINUTES = INTAKE_STEPS.reduce((sum, s) => sum + s.minu
 
 /** Which fields belong to which step, for step-scoped validation and focus. */
 export const STEP_FIELDS: Record<IntakeStepKey, string[]> = {
-  role: ["roleTitle", "team", "whyOpen", "jobDescriptionText"],
-  people: ["requirements", "mustHaves", "niceToHaves", "trainable"],
-  practicalities: [
+  company: [
+    "companyName",
+    "companyWebsite",
+    "companyLinkedin",
+    "firstName",
+    "lastName",
+    "contactTitle",
+    "workEmail",
+    "phone",
+    "contactLinkedin",
+    "password",
+    "confirmPassword",
+    "consent",
+    "pilotAcknowledgement",
+  ],
+  role: [
+    "roleTitle",
+    "team",
+    "whyOpen",
+    "jobDescriptionText",
+    "requirements",
+    "mustHaves",
+    "niceToHaves",
+    "trainable",
+  ],
+  details: [
     "location",
     "workModel",
     "onsiteDays",
@@ -835,39 +851,30 @@ export const STEP_FIELDS: Record<IntakeStepKey, string[]> = {
     "workAuthorization",
     "workAuthorizationNote",
     "targetStartDate",
-  ],
-  process: [
     "interviewProcess",
     "interviewStages",
     "targetDaysToOffer",
     "decisionMakerEmail",
     "inviteCollaborators",
-
     "decisionMaker",
     "dealBreakers",
     "dealBreakerList",
-    "companyName",
-    "companyWebsite",
-    "companyLinkedin",
-    "firstName",
-    "lastName",
-    "contactTitle",
-    "workEmail",
-    "phone",
-    "contactLinkedin",
-    "password",
-    "confirmPassword",
-    "consent",
-    "pilotAcknowledgement",
   ],
 };
 
 /**
  * Step-level validators for the two gating steps. Advancing past step 1 or 2
- * with an invalid required field is not allowed; steps 3 and 4 only validate
- * what was actually filled in, which the full schema already does.
+ * with an invalid required field is not allowed; step 3 only validates what
+ * was actually filled in, which the full schema already does.
  */
 export const stepValidators = {
+  company: z.object({
+    companyName: z.string().trim().min(2, "Enter your company name").max(200),
+    companyWebsite: z.string().trim().min(3, "Enter your company website").max(300),
+    firstName: z.string().trim().min(1, "Enter your first name").max(100),
+    lastName: z.string().trim().min(1, "Enter your last name").max(100),
+    workEmail: z.string().trim().email("Enter a valid work email"),
+  }),
   role: z.object({
     roleTitle: z.string().trim().min(2, "Enter the job title").max(160),
     whyOpen: z
@@ -885,6 +892,7 @@ export const stepValidators = {
       }),
   }),
 } as const;
+
 
 /* ------------------------------------------------------------------ */
 /* Requiredness: one source of truth for the form and the server        */
