@@ -706,7 +706,7 @@ export const updateMyProfileSection = createServerFn({ method: "POST" })
           // Keep the stated general availability preference intact — the note
           // and the preference live side by side on the same column.
           availability: (() => {
-            const keep = parseStoredPreference(current?.availability);
+            const keep = parseStoredPreference(cp.availability);
             const base: Record<string, unknown> = data.values.availability_note
               ? { note: data.values.availability_note }
               : {};
