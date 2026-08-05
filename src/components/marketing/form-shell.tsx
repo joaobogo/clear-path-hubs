@@ -29,7 +29,7 @@ export function FormShell({
   eyebrow?: string;
   title?: string;
   description?: string;
-  progress?: { step: number; total: number; label?: string };
+  progress?: { step: number; total: number; label?: string; note?: ReactNode };
   width?: "sm" | "md" | "lg";
   className?: string;
 }) {
@@ -61,6 +61,9 @@ export function FormShell({
 
                 {progress.label ?? `Step ${progress.step} of ${progress.total}`}
               </span>
+              {/* Status that must survive being missed — a toast would be gone
+                  before a candidate on a phone finished reading it. */}
+              {progress.note}
               <div
                 className="h-1.5 w-16 shrink-0 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/10 sm:w-40"
                 role="progressbar"
