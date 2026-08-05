@@ -1682,17 +1682,26 @@ function ApplyPage() {
                 size="lg"
                 onClick={onSubmit}
                 disabled={submitting}
+                aria-disabled={submitting}
+                aria-busy={submitting}
                 data-testid="apply-submit"
                 className="w-full sm:w-auto"
               >
-                {phase === "reading"
-                  ? "Preparing your CV…"
-                  : phase === "sending"
-                    ? "Sending your application…"
-                    : "Submit application"}
+                {submitting ? (
+                  <span className="inline-flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                    {phase === "reading" ? "Preparing your CV…" : "Sending…"}
+                  </span>
+                ) : (
+                  "Submit application"
+                )}
               </Button>
             )}
           </div>
+          <p aria-live="assertive" className="sr-only">
+            {submitting ? "Sending your application. Please wait." : ""}
+          </p>
+
 
         </div>
 
