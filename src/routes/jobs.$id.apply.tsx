@@ -722,6 +722,16 @@ function ApplyPage() {
           </Alert>
         )}
 
+        {draftError && (
+          <Alert variant="destructive" className="mt-6" data-testid="apply-draft-error-alert">
+            <AlertTitle>We could not save your progress</AlertTitle>
+            <AlertDescription>
+              This browser is not letting us keep a local draft, so finish this step before
+              leaving the page. Nothing has been sent yet.
+            </AlertDescription>
+          </Alert>
+        )}
+
         {resume && (
           <Alert className="mt-6" data-testid="apply-resume-prompt">
             <AlertTitle>Pick up where you left off</AlertTitle>
