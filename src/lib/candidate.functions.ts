@@ -272,7 +272,7 @@ export const getMyApplication = createServerFn({ method: "GET" })
 
     // Recorded stage history only. Candidates cannot read this table under RLS,
     // so it is loaded privileged *after* the application was proven to be
-    // theirs above, and mapped to the eight candidate-safe labels. Actor,
+    // theirs above, and mapped to the canonical candidate-safe labels. Actor,
     // reason and internal stages are never returned.
     const matchIds = matches.map((m: AnyRow) => m.id as string);
     let stageHistory: Array<{ to_stage: string; created_at: string }> = [];
