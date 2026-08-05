@@ -27,7 +27,9 @@ const SELECTS: [string, string][] = [
 
 /** Opens /book and waits until the form is genuinely interactive. */
 async function openBook(page: Page) {
-  await page.goto("/book", { waitUntil: "domcontentloaded" });
+  // "domcontentloaded" can hang on this route in dev (streamed module graph),
+  // so commit + explicit hydration wait is the reliable gate.
+  await page.goto("/book", { waitUntil: "commit" });
   await waitForReactMount(page, "#firstName");
 }
 
