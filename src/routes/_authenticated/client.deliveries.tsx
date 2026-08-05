@@ -10,7 +10,8 @@ import {
   submitDeliveryFeedback,
   type DeliveryRow,
 } from "@/lib/deliveries.functions";
-import { EmptyState, SkeletonCards, NoWorkspaceState, ErrorState } from "@/components/client/states";
+import { EmptyState, SkeletonCards, NoWorkspaceState } from "@/components/client/states";
+import { QueryErrorCard } from "@/components/client/query-error";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -100,6 +101,17 @@ function DeliveriesPage() {
       .slice(-8);
   }, [deliveries.data]);
 
+  if (ctxQuery.isError) {
+    return (
+      <QueryErrorCard
+        title="We couldn't load your workspace"
+        error={ctxQuery.error}
+        onRetry={() => ctxQuery.refetch()}
+        retrying={ctxQuery.isFetching}
+      />
+    );
+  }
+
   if (!orgId) return <NoWorkspaceState />;
 
   return (
@@ -116,22 +128,32 @@ function DeliveriesPage() {
         <div className="mb-3 flex items-center gap-2 text-sm font-medium">
           <CalendarClock className="h-4 w-4 text-primary" /> Upcoming deliveries
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {(schedule.data?.schedule ?? []).map((s, i) => (
-            <div key={s.scheduled_at} className="rounded-md border bg-background p-3 text-sm">
-              <div className="text-xs uppercase tracking-wide text-muted-foreground">
-                {i === 0 ? "Next" : `Week +${i}`}
+        {schedule.isError ? (
+          <QueryErrorCard
+            title="We couldn't load the upcoming schedule"
+            error={schedule.error}
+            onRetry={() => schedule.refetch()}
+            retrying={schedule.isFetching}
+            compact
+          />
+        ) : (
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {(schedule.data?.schedule ?? []).map((s, i) => (
+              <div key={s.scheduled_at} className="rounded-md border bg-background p-3 text-sm">
+                <div className="text-xs uppercase tracking-wide text-muted-foreground">
+                  {i === 0 ? "Next" : `Week +${i}`}
+                </div>
+                <div className="font-medium">{fmtDate(s.scheduled_at)}</div>
+                <div className="text-xs text-muted-foreground">
+                  {new Date(s.scheduled_at).toLocaleTimeString(undefined, {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </div>
               </div>
-              <div className="font-medium">{fmtDate(s.scheduled_at)}</div>
-              <div className="text-xs text-muted-foreground">
-                {new Date(s.scheduled_at).toLocaleTimeString(undefined, {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
         <p className="mt-2 text-xs text-muted-foreground">
           Cadence: weekly. Times shown in your local timezone.
         </p>
@@ -165,13 +187,15 @@ function DeliveriesPage() {
       {/* Deliveries list */}
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Delivery history</h2>
-        {deliveries.isLoading ? (
-          <SkeletonCards cards={3} />
-        ) : deliveries.isError ? (
-          <ErrorState
+        {deliveries.isError ? (
+          <QueryErrorCard
             title="We couldn't load your deliveries"
-            onRetry={() => void deliveries.refetch()}
+            error={deliveries.error}
+            onRetry={() => deliveries.refetch()}
+            retrying={deliveries.isFetching}
           />
+        ) : deliveries.isLoading ? (
+          <SkeletonCards cards={3} />
         ) : (deliveries.data?.deliveries ?? []).length === 0 ? (
           <EmptyState
             icon={PackageOpen}

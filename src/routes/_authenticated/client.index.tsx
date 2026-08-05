@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getClientContext, getClientOverview } from "@/lib/client.functions";
 import { listPendingPaymentRoles } from "@/lib/booking.functions";
 import { PaymentGateBanner } from "@/components/client/payment-gate-banner";
+import { QueryErrorCard } from "@/components/client/query-error";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { VisibilityNote } from "@/components/client/visibility-note";
@@ -91,7 +92,7 @@ function OverviewPage() {
   const role = ctx?.active?.role;
   const canSubmit = role === "client_admin" || role === "client_editor";
 
-  const { data, refetch, isFetching, isError } = useQuery({
+  const { data, refetch, isFetching, isError, error } = useQuery({
     queryKey: ["client-overview", orgId],
     queryFn: () => overviewFn({ data: { orgId: orgId! } }),
     enabled: !!orgId,
@@ -193,7 +194,15 @@ function OverviewPage() {
       {/* Is the system working, and is what I'm looking at current? */}
       <SystemHealthStrip organizationId={orgId} />
 
-      {isError && (
+      {isError && !data && (
+        <QueryErrorCard
+          title="We couldn't load your overview"
+          error={error}
+          onRetry={() => refetch()}
+          retrying={isFetching}
+        />
+      )}
+      {isError && data && (
         <div className="flex items-center gap-3 rounded-lg border taas-bd-warning taas-bg-warning-soft px-4 py-3 text-sm">
           <AlertTriangle className="h-4 w-4 taas-fg-warning" />
           <span className="flex-1">
@@ -337,15 +346,13 @@ function OverviewPage() {
                 ))}
               </div>
             ) : isError && !data ? (
-              <div className="rounded-lg border taas-bd-warning taas-bg-warning-soft p-6 text-center text-sm">
-                We couldn't load your candidates just now.{" "}
-                <button
-                  onClick={() => refetch()}
-                  className="font-medium text-primary hover:underline"
-                >
-                  Try again
-                </button>
-              </div>
+              <QueryErrorCard
+                title="We couldn't load your candidates"
+                error={error}
+                onRetry={() => refetch()}
+                retrying={isFetching}
+                compact
+              />
             ) : latest.length === 0 ? (
               <EmptyBlock text="No candidates released to you yet. They appear here the moment they're approved for this role." />
             ) : (

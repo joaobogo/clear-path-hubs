@@ -35,6 +35,8 @@ import {
 import { getClientContext } from "@/lib/client.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { RoleFitPanel } from "@/components/client/role-fit-panel";
+import { QueryErrorCard } from "@/components/client/query-error";
+import { SkeletonCards } from "@/components/client/states";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -101,21 +103,39 @@ function TalentPoolPage() {
   const facetsFn = useServerFn(getRediscoveryFacets);
   const searchFn = useServerFn(searchRediscovery);
 
-  const { data: ctx } = useQuery({
+  const {
+    data: ctx,
+    isError: ctxIsError,
+    error: ctxError,
+    isFetching: ctxIsFetching,
+    refetch: refetchCtx,
+  } = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
   const orgId = ctx?.active?.organization_id;
   const readOnly = ctx?.active?.role === "client_viewer";
 
-  const { data: poolsData } = useQuery({
+  const {
+    data: poolsData,
+    isError: poolsIsError,
+    error: poolsError,
+    isFetching: poolsIsFetching,
+    refetch: refetchPools,
+  } = useQuery({
     queryKey: ["talent-pool", "pools", orgId],
     queryFn: () => poolsFn({ data: { orgId: orgId! } }),
     enabled: !!orgId,
   });
   const pools = poolsData?.pools ?? [];
 
-  const { data: facets } = useQuery({
+  const {
+    data: facets,
+    isError: facetsIsError,
+    error: facetsError,
+    isFetching: facetsIsFetching,
+    refetch: refetchFacets,
+  } = useQuery({
     queryKey: ["talent-pool", "facets", orgId],
     queryFn: () => facetsFn({ data: { orgId: orgId! } }),
     enabled: !!orgId,
@@ -136,7 +156,14 @@ function TalentPoolPage() {
     [search],
   );
 
-  const { data: results, isPending } = useQuery({
+  const {
+    data: results,
+    isPending,
+    isError: resultsIsError,
+    error: resultsError,
+    isFetching: resultsIsFetching,
+    refetch: refetchResults,
+  } = useQuery({
     queryKey: ["talent-pool", "search", orgId, filters],
     queryFn: () => searchFn({ data: { orgId: orgId!, ...filters, limit: 200 } }),
     enabled: !!orgId,
@@ -152,6 +179,19 @@ function TalentPoolPage() {
     (search.recency ? 1 : 0) +
     (search.future ? 1 : 0) +
     (search.silver ? 1 : 0);
+
+  if (ctxIsError) {
+    return (
+      <div className="mx-auto max-w-3xl p-8">
+        <QueryErrorCard
+          title="We couldn't load your workspace"
+          error={ctxError}
+          onRetry={() => refetchCtx()}
+          retrying={ctxIsFetching}
+        />
+      </div>
+    );
+  }
 
   if (!orgId) return <div className="p-8 text-sm text-muted-foreground">Loading…</div>;
 
@@ -170,7 +210,7 @@ function TalentPoolPage() {
         </div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Users className="h-3.5 w-3.5" />
-          {results?.total ?? 0} candidates
+          {resultsIsError ? "— candidates" : `${results?.total ?? 0} candidates`}
         </div>
       </header>
 
@@ -181,33 +221,45 @@ function TalentPoolPage() {
       <div className="mt-6 grid gap-6 lg:grid-cols-[240px_1fr]">
         {/* Pools sidebar */}
         <aside className="space-y-2">
-          <PoolButton
-            active={!search.pool}
-            onClick={() =>
-              navigate({ search: (s: z.infer<typeof searchSchema>) => ({ ...s, pool: "", future: false }) })
-            }
-            label="All past candidates"
-            count={undefined}
-          />
-          {pools.map((p) => (
-            <PoolButton
-              key={p.id}
-              active={search.pool === p.id}
-              onClick={() =>
-                navigate({ search: (s: z.infer<typeof searchSchema>) => ({ ...s, pool: p.id, future: false }) })
-              }
-              label={p.name}
-              count={p.member_count}
-              isSystem={p.is_system}
+          {poolsIsError ? (
+            <QueryErrorCard
+              compact
+              title="We couldn't load your pools"
+              error={poolsError}
+              onRetry={() => refetchPools()}
+              retrying={poolsIsFetching}
             />
-          ))}
-          {!readOnly && (
-            <CreatePoolDialog
-              orgId={orgId}
-              onCreated={(id) =>
-                navigate({ search: (s: z.infer<typeof searchSchema>) => ({ ...s, pool: id }) })
-              }
-            />
+          ) : (
+            <>
+              <PoolButton
+                active={!search.pool}
+                onClick={() =>
+                  navigate({ search: (s: z.infer<typeof searchSchema>) => ({ ...s, pool: "", future: false }) })
+                }
+                label="All past candidates"
+                count={undefined}
+              />
+              {pools.map((p) => (
+                <PoolButton
+                  key={p.id}
+                  active={search.pool === p.id}
+                  onClick={() =>
+                    navigate({ search: (s: z.infer<typeof searchSchema>) => ({ ...s, pool: p.id, future: false }) })
+                  }
+                  label={p.name}
+                  count={p.member_count}
+                  isSystem={p.is_system}
+                />
+              ))}
+              {!readOnly && (
+                <CreatePoolDialog
+                  orgId={orgId}
+                  onCreated={(id) =>
+                    navigate({ search: (s: z.infer<typeof searchSchema>) => ({ ...s, pool: id }) })
+                  }
+                />
+              )}
+            </>
           )}
         </aside>
 
@@ -240,6 +292,15 @@ function TalentPoolPage() {
               positions={facets?.positions ?? []}
               filterCount={filterCount}
             />
+            {facetsIsError && (
+              <QueryErrorCard
+                compact
+                title="Filter options failed to load"
+                error={facetsError}
+                onRetry={() => refetchFacets()}
+                retrying={facetsIsFetching}
+              />
+            )}
 
             <QuickChip
               active={search.silver}
@@ -294,8 +355,15 @@ function TalentPoolPage() {
 
           {/* Results */}
           <div className="mt-4">
-            {isPending ? (
-              <p className="text-sm text-muted-foreground">Loading…</p>
+            {resultsIsError ? (
+              <QueryErrorCard
+                title="We couldn't load candidates"
+                error={resultsError}
+                onRetry={() => refetchResults()}
+                retrying={resultsIsFetching}
+              />
+            ) : isPending ? (
+              <SkeletonCards cards={3} />
             ) : (results?.candidates ?? []).length === 0 ? (
               <EmptyState hasFilters={!!search.q || filterCount > 0 || !!search.pool} />
             ) : (

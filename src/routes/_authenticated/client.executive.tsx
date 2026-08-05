@@ -5,6 +5,9 @@ import { useServerFn } from "@tanstack/react-start";
 import { getClientContext } from "@/lib/client.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { getExecutiveReport, type ExecutiveReport } from "@/lib/executive.functions";
+import { QueryErrorCard } from "@/components/client/query-error";
+import { useQueryState } from "@/hooks/use-query-state";
+import { SkeletonStats } from "@/components/client/states";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -39,22 +42,54 @@ function ExecutivePage() {
   const ctxFn = useServerFn(getClientContext);
   const reportFn = useServerFn(getExecutiveReport);
 
-  const { data: ctx } = useQuery({
+  const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
-  const orgId = ctx?.active?.organization_id;
+  const ctxState = useQueryState(ctxQuery);
+  const orgId = ctxState.data?.active?.organization_id;
 
-  const { data, isPending } = useQuery({
+  const reportQuery = useQuery({
     queryKey: ["executive-report", orgId],
     queryFn: () => reportFn({ data: { organization_id: orgId! } }),
     enabled: !!orgId,
     staleTime: 60_000,
   });
+  const reportState = useQueryState(reportQuery);
 
-  if (!orgId || isPending || !data) {
-    return <div className="p-8 text-sm text-muted-foreground">Loading executive portfolio…</div>;
+  if (ctxState.isError) {
+    return (
+      <div className="p-6 md:p-8">
+        <QueryErrorCard error={ctxState.error} onRetry={ctxState.retry} retrying={ctxState.retrying} />
+      </div>
+    );
   }
+
+  if (ctxState.isLoading) {
+    return (
+      <div className="mx-auto max-w-7xl space-y-8 p-6 md:p-8">
+        <SkeletonStats />
+      </div>
+    );
+  }
+
+  if (reportState.isError) {
+    return (
+      <div className="p-6 md:p-8">
+        <QueryErrorCard error={reportState.error} onRetry={reportState.retry} retrying={reportState.retrying} />
+      </div>
+    );
+  }
+
+  if (!orgId || reportState.isLoading || !reportState.data) {
+    return (
+      <div className="mx-auto max-w-7xl space-y-8 p-6 md:p-8">
+        <SkeletonStats />
+      </div>
+    );
+  }
+
+  const data = reportState.data;
 
   return (
     <div className="mx-auto max-w-7xl space-y-8 p-6 md:p-8">

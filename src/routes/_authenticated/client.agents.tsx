@@ -23,6 +23,8 @@ import {
   type AgentCard,
 } from "@/lib/agents.functions";
 import { HonestSwitch } from "@/components/ds/honest-switch";
+import { QueryErrorCard } from "@/components/client/query-error";
+import { useQueryState } from "@/hooks/use-query-state";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -229,19 +231,23 @@ function AgentControlPage() {
   const pauseFn = useServerFn(setAgentPaused);
   const [filter, setFilter] = useState<string | null>(null);
 
-  const { data: ctx } = useQuery({
+  const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
+  const ctx = ctxQuery.data;
   const orgId = ctx?.active?.organization_id;
 
-  const { data: panel, isPending } = useQuery({
+  const panelQuery = useQuery({
     queryKey: ["agent-panel", orgId],
     queryFn: () => panelFn({ data: { organization_id: orgId! } }),
     enabled: !!orgId,
   });
+  const panel = panelQuery.data;
+  const isPending = panelQuery.isPending;
+  const panelState = useQueryState(panelQuery);
 
-  const { data: activity } = useQuery({
+  const activityQuery = useQuery({
     queryKey: ["agent-activity", orgId, filter],
     queryFn: () =>
       activityFn({
@@ -252,6 +258,8 @@ function AgentControlPage() {
       }),
     enabled: !!orgId,
   });
+  const activity = activityQuery.data;
+  const activityState = useQueryState(activityQuery);
 
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ["agent-panel", orgId] });
@@ -285,9 +293,33 @@ function AgentControlPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  if (!orgId || isPending) {
+  if (ctxQuery.isError) {
+    return (
+      <div className="p-8">
+        <QueryErrorCard
+          error={ctxQuery.error}
+          onRetry={() => ctxQuery.refetch()}
+          retrying={ctxQuery.isFetching}
+        />
+      </div>
+    );
+  }
+
+  if (!orgId || (isPending && !panel)) {
     return (
       <div className="p-8 text-sm text-muted-foreground">Loading agents…</div>
+    );
+  }
+
+  if (panelState.isError) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
+        <QueryErrorCard
+          error={panelState.error}
+          onRetry={panelState.retry}
+          retrying={panelState.retrying}
+        />
+      </div>
     );
   }
 
@@ -358,7 +390,16 @@ function AgentControlPage() {
         </div>
 
         <ul className="mt-4 divide-y divide-border rounded-lg border border-border">
-          {(activity ?? []).length === 0 ? (
+          {activityState.isError ? (
+            <li className="p-4">
+              <QueryErrorCard
+                error={activityState.error}
+                onRetry={activityState.retry}
+                retrying={activityState.retrying}
+                compact
+              />
+            </li>
+          ) : (activity ?? []).length === 0 ? (
             <li className="p-6 text-sm text-muted-foreground">
               Nothing recorded yet. When an agent acts — or is stopped by a rule
               — the sentence appears here.

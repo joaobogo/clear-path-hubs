@@ -11,6 +11,8 @@ import {
 } from "@/lib/data-system.functions";
 import { ProvenanceFigure } from "@/components/ds/provenance-figure";
 import { Badge } from "@/components/ui/badge";
+import { QueryErrorCard } from "@/components/client/query-error";
+import { useQueryState } from "@/hooks/use-query-state";
 
 export const Route = createFileRoute("/_authenticated/client/data")({
   head: () => ({
@@ -44,28 +46,57 @@ function DataAdvantagePage() {
   const advantageFn = useServerFn(getDataAdvantage);
   const marketFn = useServerFn(getMarketIntelligence);
 
-  const { data: ctx } = useQuery({
+  const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
+  const ctx = ctxQuery.data;
   const orgId = ctx?.active?.organization_id;
 
-  const { data, isPending } = useQuery({
+  const advantageQuery = useQuery({
     queryKey: ["data-advantage", orgId],
     queryFn: () => advantageFn({ data: { organization_id: orgId! } }),
     enabled: !!orgId,
   });
+  const { data, isPending } = advantageQuery;
+  const advantageState = useQueryState(advantageQuery);
 
-  const { data: market } = useQuery({
+  const marketQuery = useQuery({
     queryKey: ["market-intelligence"],
     queryFn: () => marketFn({ data: {} }),
   });
+  const { data: market } = marketQuery;
+  const marketState = useQueryState(marketQuery);
 
-  if (!orgId || isPending) {
+  if (ctxQuery.isError) {
+    return (
+      <div className="p-8">
+        <QueryErrorCard
+          error={ctxQuery.error}
+          onRetry={() => ctxQuery.refetch()}
+          retrying={ctxQuery.isFetching}
+        />
+      </div>
+    );
+  }
+
+  if (!orgId || (isPending && !data)) {
     return (
       <div className="p-8 text-sm text-muted-foreground">
         Reading what we hold for you…
       </div>
+    );
+  }
+
+  if (advantageState.isError) {
+    return (
+      <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:py-8">
+        <QueryErrorCard
+          error={advantageState.error}
+          onRetry={advantageState.retry}
+          retrying={advantageState.retrying}
+        />
+      </main>
     );
   }
 
@@ -170,7 +201,14 @@ function DataAdvantagePage() {
           stays hidden rather than being dressed up as insight.
         </p>
 
-        {market && market.rows.length > 0 ? (
+        {marketState.isError ? (
+          <QueryErrorCard
+            className="mt-4"
+            error={marketState.error}
+            onRetry={marketState.retry}
+            retrying={marketState.retrying}
+          />
+        ) : market && market.rows.length > 0 ? (
           <div className="mt-4 overflow-x-auto rounded-lg border border-border">
             <table className="w-full text-sm">
               <caption className="sr-only">

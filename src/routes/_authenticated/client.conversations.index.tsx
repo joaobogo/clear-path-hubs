@@ -9,7 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Briefcase, MessageSquare, Search, User } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { SkeletonRows, ErrorState } from "@/components/client/states";
+import { SkeletonRows } from "@/components/client/states";
+import { QueryErrorCard } from "@/components/client/query-error";
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveNoMessagesState } from "@/lib/empty-states/empty-state-catalogue";
 import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
@@ -51,13 +52,14 @@ function ConversationsPage() {
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["key"]>("all");
   const [q, setQ] = useState("");
 
-  const { data: ctx } = useQuery({
+  const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
+  const ctx = ctxQuery.data;
   const orgId = ctx?.active?.organization_id;
 
-    const { data, isLoading, isError, refetch } = useQuery({
+    const { data, isLoading, isError, isFetching, error, refetch } = useQuery({
     queryKey: ["conversations", orgId],
     queryFn: () => listFn({ data: { orgId: orgId! } }),
     enabled: !!orgId,
@@ -120,13 +122,22 @@ function ConversationsPage() {
         </div>
       </div>
 
-      {isLoading && !data ? (
-        <SkeletonRows rows={5} />
-      ) : isError && !data ? (
-        <ErrorState
-          title="We couldn't load your conversations"
-          onRetry={() => void refetch()}
+      {ctxQuery.isError ? (
+        <QueryErrorCard
+          title="We couldn't load your workspace"
+          error={ctxQuery.error}
+          onRetry={() => ctxQuery.refetch()}
+          retrying={ctxQuery.isFetching}
         />
+      ) : isError ? (
+        <QueryErrorCard
+          title="We couldn't load your conversations"
+          error={error}
+          onRetry={() => refetch()}
+          retrying={isFetching}
+        />
+      ) : isLoading && !data ? (
+        <SkeletonRows rows={5} />
       ) : items.length === 0 ? (
         <SurfaceState
           content={resolveNoMessagesState({ activeRoles: signals?.activeRoles ?? 0 })}

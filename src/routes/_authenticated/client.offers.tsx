@@ -47,7 +47,8 @@ import {
 } from "@/lib/offer-stall";
 import { formatAge } from "@/lib/time-age";
 import { useClientOrgSearch } from "@/lib/use-client-org";
-import { SkeletonBoard, ErrorState } from "@/components/client/states";
+import { SkeletonBoard } from "@/components/client/states";
+import { QueryErrorCard } from "@/components/client/query-error";
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveNoOutcomesState } from "@/lib/empty-states/empty-state-catalogue";
 import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
@@ -126,23 +127,25 @@ function OffersPage() {
   const listFn = useServerFn(listHires);
   const reportFn = useServerFn(getTimeToHireReport);
 
-  const { data: ctx } = useQuery({
+  const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
+  const ctx = ctxQuery.data;
   const orgId = ctx?.active?.organization_id;
   const readOnly = ctx?.active?.role === "client_viewer";
 
-  const { data, isPending, isError, refetch } = useQuery({
+  const { data, isPending, isError, error, isFetching, refetch } = useQuery({
     queryKey: ["hires", orgId],
     queryFn: () => listFn({ data: { orgId: orgId! } }),
     enabled: !!orgId,
   });
-  const { data: report } = useQuery({
+  const reportQuery = useQuery({
     queryKey: ["hires-report", orgId],
     queryFn: () => reportFn({ data: { orgId: orgId!, sinceDays: 180 } }),
     enabled: !!orgId,
   });
+  const report = reportQuery.data;
 
   const hires = data?.hires ?? [];
   const byStatus = useMemo(() => {
@@ -156,6 +159,19 @@ function OffersPage() {
     () => hires.filter((h) => isStalled(h)).sort((a, b) => byStallDesc(a, b)),
     [hires],
   );
+
+  if (ctxQuery.isError) {
+    return (
+      <main className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 lg:py-8">
+        <QueryErrorCard
+          title="We couldn't load your workspace"
+          error={ctxQuery.error}
+          onRetry={() => ctxQuery.refetch()}
+          retrying={ctxQuery.isFetching}
+        />
+      </main>
+    );
+  }
 
   if (!orgId) return <div className="p-8 text-sm text-muted-foreground">Loading…</div>;
 
@@ -175,40 +191,52 @@ function OffersPage() {
       </header>
 
       {/* KPI strip */}
-      <section className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Kpi
-          label="Open offers"
-          value={report?.totals.open_offers ?? 0}
-          hint="Drafted, sent, or accepted"
-        />
-        <Kpi
-          label="Hires confirmed"
-          value={report?.totals.hires_confirmed ?? 0}
-          hint="Last 180 days"
-        />
-        <Kpi
-          label="Acceptance rate"
-          value={
-            report?.totals.acceptance_rate == null
-              ? "—"
-              : `${Math.round(report.totals.acceptance_rate * 100)}%`
-          }
-          hint="Accepted ÷ decided"
-        />
-        <Kpi
-          label="Avg time to hire"
-          value={
-            report?.totals.avg_days_to_hire == null
-              ? "—"
-              : `${Math.round(report.totals.avg_days_to_hire)}d`
-          }
-          hint={
-            report?.totals.median_days_to_hire == null
-              ? "Application → signed"
-              : `median ${Math.round(report.totals.median_days_to_hire)}d`
-          }
-        />
-      </section>
+      {reportQuery.isError ? (
+        <section className="mt-5">
+          <QueryErrorCard
+            title="We couldn't load the time-to-hire report"
+            error={reportQuery.error}
+            onRetry={() => reportQuery.refetch()}
+            retrying={reportQuery.isFetching}
+            compact
+          />
+        </section>
+      ) : (
+        <section className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <Kpi
+            label="Open offers"
+            value={report?.totals.open_offers ?? 0}
+            hint="Drafted, sent, or accepted"
+          />
+          <Kpi
+            label="Hires confirmed"
+            value={report?.totals.hires_confirmed ?? 0}
+            hint="Last 180 days"
+          />
+          <Kpi
+            label="Acceptance rate"
+            value={
+              report?.totals.acceptance_rate == null
+                ? "—"
+                : `${Math.round(report.totals.acceptance_rate * 100)}%`
+            }
+            hint="Accepted ÷ decided"
+          />
+          <Kpi
+            label="Avg time to hire"
+            value={
+              report?.totals.avg_days_to_hire == null
+                ? "—"
+                : `${Math.round(report.totals.avg_days_to_hire)}d`
+            }
+            hint={
+              report?.totals.median_days_to_hire == null
+                ? "Application → signed"
+                : `median ${Math.round(report.totals.median_days_to_hire)}d`
+            }
+          />
+        </section>
+      )}
 
       {/* Who owes what — one row per offer, holder derived from events */}
       <section className="mt-6">
@@ -265,13 +293,15 @@ function OffersPage() {
 
       {/* Board */}
       <section className="mt-6 overflow-x-auto">
-        {isPending ? (
-          <SkeletonBoard columns={6} />
-        ) : isError ? (
-          <ErrorState
+        {isError ? (
+          <QueryErrorCard
             title="We couldn't load your offers"
-            onRetry={() => void refetch()}
+            error={error}
+            onRetry={() => refetch()}
+            retrying={isFetching}
           />
+        ) : isPending ? (
+          <SkeletonBoard columns={6} />
         ) : hires.length === 0 ? (
           <OffersEmptyState orgId={orgId} />
         ) : (
@@ -291,7 +321,7 @@ function OffersPage() {
       </section>
 
       {/* Reporting: by owner + close reasons */}
-      {report && report.totals.hires_confirmed + report.totals.closed_lost > 0 && (
+      {!reportQuery.isError && report && report.totals.hires_confirmed + report.totals.closed_lost > 0 && (
         <section className="mt-8 grid gap-4 md:grid-cols-2">
           <div className="rounded-xl border bg-card p-4">
             <h2 className="text-sm font-semibold">Hires by owner</h2>

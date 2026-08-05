@@ -14,6 +14,8 @@ import { TURNAROUND_LABEL } from "@/config/pricing-core";
 import { PlanPanel } from "@/components/client/plan-panel";
 import { ServiceExpectationsTable } from "@/components/client/service-expectations-table";
 import { PermissionDenied, SkeletonRows } from "@/components/client/states";
+import { QueryErrorCard } from "@/components/client/query-error";
+import { useQueryState } from "@/hooks/use-query-state";
 import { areaDeniedMessage, canAccessArea } from "@/lib/collaborator-roles";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -49,10 +51,13 @@ function PlanPage() {
   const orgSearch = useClientOrgSearch();
   const support = useSupportView();
 
-  const { data: ctx, isLoading } = useQuery({
+  const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
+  const ctxState = useQueryState(ctxQuery);
+  const ctx = ctxState.data;
+  const isLoading = ctxState.isLoading;
 
   const orgId = ctx?.active?.organization_id as string | undefined;
   const isAdmin =
@@ -75,7 +80,9 @@ function PlanPage() {
         </p>
       </div>
 
-      {isLoading || !orgId ? (
+      {ctxState.isError ? (
+        <QueryErrorCard error={ctxState.error} onRetry={ctxState.retry} retrying={ctxState.retrying} />
+      ) : isLoading || !orgId ? (
         <SkeletonRows />
       ) : !canSeeBilling ? (
         <PermissionDenied

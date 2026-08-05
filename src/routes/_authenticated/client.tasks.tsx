@@ -16,7 +16,8 @@ import {
   type TaskView,
   type TaskType,
 } from "@/lib/tasks.functions";
-import { SkeletonRows, NoWorkspaceState, ErrorState } from "@/components/client/states";
+import { SkeletonRows, NoWorkspaceState } from "@/components/client/states";
+import { QueryErrorCard } from "@/components/client/query-error";
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveNoApprovalsState } from "@/lib/empty-states/empty-state-catalogue";
 import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
@@ -203,6 +204,17 @@ function TasksPage() {
     URL.revokeObjectURL(url);
   };
 
+  if (ctxQuery.isError) {
+    return (
+      <QueryErrorCard
+        title="We couldn't load your workspace"
+        error={ctxQuery.error}
+        onRetry={() => ctxQuery.refetch()}
+        retrying={ctxQuery.isFetching}
+      />
+    );
+  }
+
   if (!orgId) {
     return <NoWorkspaceState />;
   }
@@ -282,13 +294,15 @@ function TasksPage() {
         )}
       </div>
 
-      {tasks.isLoading ? (
-        <SkeletonRows rows={4} />
-      ) : tasks.isError ? (
-        <ErrorState
+      {tasks.isError ? (
+        <QueryErrorCard
           title="We couldn't load your tasks"
-          onRetry={() => void tasks.refetch()}
+          error={tasks.error}
+          onRetry={() => tasks.refetch()}
+          retrying={tasks.isFetching}
         />
+      ) : tasks.isLoading ? (
+        <SkeletonRows rows={4} />
       ) : rows.length === 0 ? (
         <SurfaceState
           content={resolveNoApprovalsState({

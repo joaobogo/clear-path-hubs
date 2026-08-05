@@ -6,6 +6,7 @@ import {
   resolveNoCandidatesState,
 } from "@/lib/empty-states/empty-state-catalogue";
 import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
+import { QueryErrorCard } from "@/components/client/query-error";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
@@ -150,6 +151,7 @@ function CandidatesPage() {
  isFetching,
  isLoading,
  isError,
+ error: rowsError,
  refetch,
  } = useQuery({
  queryKey: ["client-candidates", orgId, search.position],
@@ -727,15 +729,12 @@ function CandidatesPage() {
  ))}
  </div>
  ) : isError && (rowsRaw as ClientCandidateDTO[]).length === 0 ? (
- <div className="rounded-xl border taas-bd-warning taas-bg-warning-soft p-10 text-center">
- <div className="text-base font-medium">We couldn't load your candidates.</div>
- <p className="mt-1 text-sm text-muted-foreground">
- This is a temporary problem on our side — your data is unchanged.
- </p>
- <Button size="sm" variant="outline" className="mt-4" onClick={() => refetch()}>
- Try again
- </Button>
- </div>
+ <QueryErrorCard
+ title="We couldn't load your candidates"
+ error={rowsError}
+ onRetry={() => refetch()}
+ retrying={isFetching}
+ />
  ) : filtered.length === 0 ? (
  <CandidatesEmptyState
             hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0}

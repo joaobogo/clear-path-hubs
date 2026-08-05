@@ -16,9 +16,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SkeletonCards, NoWorkspaceState } from "@/components/client/states";
+import { NoWorkspaceState } from "@/components/client/states";
+import { QueryErrorCard } from "@/components/client/query-error";
 import { AnalyticsSkeleton } from "@/components/ds/page-skeleton";
-import { ProcessState } from "@/components/ds/process-state";
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveNoAnalyticsState } from "@/lib/empty-states/empty-state-catalogue";
 import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
@@ -176,7 +176,19 @@ function AnalyticsPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All roles</SelectItem>
-              {(positions.data?.positions ?? []).map((p) => (
+              {positions.isError && (
+                <div className="px-2 py-1.5 text-xs text-destructive">
+                  Roles failed to load.{" "}
+                  <button
+                    type="button"
+                    className="underline"
+                    onClick={() => positions.refetch()}
+                  >
+                    Retry
+                  </button>
+                </div>
+              )}
+              {!positions.isError && (positions.data?.positions ?? []).map((p) => (
                 <SelectItem key={p.id} value={p.id}>
                   {p.title}
                 </SelectItem>
@@ -201,19 +213,15 @@ function AnalyticsPage() {
         </div>
       </header>
 
-      {insights.isLoading ? (
-        <AnalyticsSkeleton label="Calculating your figures from your own records" />
-      ) : insights.isError ? (
-        <ProcessState
-          status={{
-            process: "analytics",
-            phase: "failed",
-            errorMessage:
-              "We could not read the records behind these figures. Nothing was changed.",
-          }}
-          onRetry={() => void insights.refetch()}
+      {insights.isError ? (
+        <QueryErrorCard
+          title="We couldn't calculate these figures"
+          error={insights.error}
+          onRetry={() => insights.refetch()}
           retrying={insights.isFetching}
         />
+      ) : insights.isLoading ? (
+        <AnalyticsSkeleton label="Calculating your figures from your own records" />
       ) : !data ? (
         <SurfaceState
           content={resolveNoAnalyticsState({
