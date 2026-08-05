@@ -173,6 +173,7 @@ import { Route as ApiPublicIntakeStatusIdRouteImport } from './routes/api/public
 import { Route as ApiPublicIntakeCarryIntakeIdRouteImport } from './routes/api/public/intake-carry.$intakeId'
 import { Route as ApiPublicDigestWeeklyRouteImport } from './routes/api/public/digest/weekly'
 import { Route as ApiPublicCandidateClosureNoticesRouteImport } from './routes/api/public/candidate/closure-notices'
+import { Route as ApiPublicBookingRemindersRouteImport } from './routes/api/public/booking.reminders'
 import { Route as ApiPublicBookingCalendlyWebhookRouteImport } from './routes/api/public/booking/calendly-webhook'
 import { Route as ApiPublicBlueprintStatusIntakeIdRouteImport } from './routes/api/public/blueprint-status.$intakeId'
 import { Route as AuthenticatedTeamsActTokenRouteImport } from './routes/_authenticated/teams.act.$token'
@@ -187,6 +188,7 @@ import { Route as AuthenticatedAdminIntakeIdRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminClientsIdRouteImport } from './routes/_authenticated/admin.clients.$id'
 import { Route as AuthenticatedAdminCandidatesIdRouteImport } from './routes/_authenticated/admin.candidates.$id'
 import { Route as AuthenticatedAdminScoringReviewIndexRouteImport } from './routes/_authenticated/admin.scoring.review.index'
+import { Route as ApiPublicBookingSessionIdIcsRouteImport } from './routes/api/public/booking.$sessionId.ics'
 import { Route as AuthenticatedClientPositionsIdEditRouteImport } from './routes/_authenticated/client.positions.$id_.edit'
 import { Route as AuthenticatedAdminScoringReviewMatchIdRouteImport } from './routes/_authenticated/admin.scoring.review.$matchId'
 import { Route as AuthenticatedAdminPositionsIdEditRouteImport } from './routes/_authenticated/admin.positions.$id_.edit'
@@ -1077,6 +1079,12 @@ const ApiPublicCandidateClosureNoticesRoute =
     path: '/api/public/candidate/closure-notices',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicBookingRemindersRoute =
+  ApiPublicBookingRemindersRouteImport.update({
+    id: '/api/public/booking/reminders',
+    path: '/api/public/booking/reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicBookingCalendlyWebhookRoute =
   ApiPublicBookingCalendlyWebhookRouteImport.update({
     id: '/api/public/booking/calendly-webhook',
@@ -1160,6 +1168,12 @@ const AuthenticatedAdminScoringReviewIndexRoute =
     id: '/scoring/review/',
     path: '/scoring/review/',
     getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const ApiPublicBookingSessionIdIcsRoute =
+  ApiPublicBookingSessionIdIcsRouteImport.update({
+    id: '/api/public/booking/$sessionId/ics',
+    path: '/api/public/booking/$sessionId/ics',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const AuthenticatedClientPositionsIdEditRoute =
   AuthenticatedClientPositionsIdEditRouteImport.update({
@@ -1345,6 +1359,7 @@ export interface FileRoutesByFullPath {
   '/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
+  '/api/public/booking/reminders': typeof ApiPublicBookingRemindersRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
   '/api/public/intake-carry/$intakeId': typeof ApiPublicIntakeCarryIntakeIdRoute
@@ -1367,6 +1382,7 @@ export interface FileRoutesByFullPath {
   '/admin/positions/$id/edit': typeof AuthenticatedAdminPositionsIdEditRoute
   '/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/client/positions/$id/edit': typeof AuthenticatedClientPositionsIdEditRoute
+  '/api/public/booking/$sessionId/ics': typeof ApiPublicBookingSessionIdIcsRoute
   '/admin/scoring/review/': typeof AuthenticatedAdminScoringReviewIndexRoute
 }
 export interface FileRoutesByTo {
@@ -1518,6 +1534,7 @@ export interface FileRoutesByTo {
   '/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
+  '/api/public/booking/reminders': typeof ApiPublicBookingRemindersRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
   '/api/public/intake-carry/$intakeId': typeof ApiPublicIntakeCarryIntakeIdRoute
@@ -1540,6 +1557,7 @@ export interface FileRoutesByTo {
   '/admin/positions/$id/edit': typeof AuthenticatedAdminPositionsIdEditRoute
   '/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/client/positions/$id/edit': typeof AuthenticatedClientPositionsIdEditRoute
+  '/api/public/booking/$sessionId/ics': typeof ApiPublicBookingSessionIdIcsRoute
   '/admin/scoring/review': typeof AuthenticatedAdminScoringReviewIndexRoute
 }
 export interface FileRoutesById {
@@ -1703,6 +1721,7 @@ export interface FileRoutesById {
   '/_authenticated/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
   '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
+  '/api/public/booking/reminders': typeof ApiPublicBookingRemindersRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
   '/api/public/intake-carry/$intakeId': typeof ApiPublicIntakeCarryIntakeIdRoute
@@ -1725,6 +1744,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/positions/$id_/edit': typeof AuthenticatedAdminPositionsIdEditRoute
   '/_authenticated/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/_authenticated/client/positions/$id_/edit': typeof AuthenticatedClientPositionsIdEditRoute
+  '/api/public/booking/$sessionId/ics': typeof ApiPublicBookingSessionIdIcsRoute
   '/_authenticated/admin/scoring/review/': typeof AuthenticatedAdminScoringReviewIndexRoute
 }
 export interface FileRouteTypes {
@@ -1888,6 +1908,7 @@ export interface FileRouteTypes {
     | '/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
     | '/api/public/booking/calendly-webhook'
+    | '/api/public/booking/reminders'
     | '/api/public/candidate/closure-notices'
     | '/api/public/digest/weekly'
     | '/api/public/intake-carry/$intakeId'
@@ -1910,6 +1931,7 @@ export interface FileRouteTypes {
     | '/admin/positions/$id/edit'
     | '/admin/scoring/review/$matchId'
     | '/client/positions/$id/edit'
+    | '/api/public/booking/$sessionId/ics'
     | '/admin/scoring/review/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -2061,6 +2083,7 @@ export interface FileRouteTypes {
     | '/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
     | '/api/public/booking/calendly-webhook'
+    | '/api/public/booking/reminders'
     | '/api/public/candidate/closure-notices'
     | '/api/public/digest/weekly'
     | '/api/public/intake-carry/$intakeId'
@@ -2083,6 +2106,7 @@ export interface FileRouteTypes {
     | '/admin/positions/$id/edit'
     | '/admin/scoring/review/$matchId'
     | '/client/positions/$id/edit'
+    | '/api/public/booking/$sessionId/ics'
     | '/admin/scoring/review'
   id:
     | '__root__'
@@ -2245,6 +2269,7 @@ export interface FileRouteTypes {
     | '/_authenticated/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
     | '/api/public/booking/calendly-webhook'
+    | '/api/public/booking/reminders'
     | '/api/public/candidate/closure-notices'
     | '/api/public/digest/weekly'
     | '/api/public/intake-carry/$intakeId'
@@ -2267,6 +2292,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/positions/$id_/edit'
     | '/_authenticated/admin/scoring/review/$matchId'
     | '/_authenticated/client/positions/$id_/edit'
+    | '/api/public/booking/$sessionId/ics'
     | '/_authenticated/admin/scoring/review/'
   fileRoutesById: FileRoutesById
 }
@@ -2351,6 +2377,7 @@ export interface RootRouteChildren {
   JobsIdIndexRoute: typeof JobsIdIndexRoute
   ApiPublicBlueprintStatusIntakeIdRoute: typeof ApiPublicBlueprintStatusIntakeIdRoute
   ApiPublicBookingCalendlyWebhookRoute: typeof ApiPublicBookingCalendlyWebhookRoute
+  ApiPublicBookingRemindersRoute: typeof ApiPublicBookingRemindersRoute
   ApiPublicCandidateClosureNoticesRoute: typeof ApiPublicCandidateClosureNoticesRoute
   ApiPublicDigestWeeklyRoute: typeof ApiPublicDigestWeeklyRoute
   ApiPublicIntakeCarryIntakeIdRoute: typeof ApiPublicIntakeCarryIntakeIdRoute
@@ -2360,6 +2387,7 @@ export interface RootRouteChildren {
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
+  ApiPublicBookingSessionIdIcsRoute: typeof ApiPublicBookingSessionIdIcsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -3512,6 +3540,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCandidateClosureNoticesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/booking/reminders': {
+      id: '/api/public/booking/reminders'
+      path: '/api/public/booking/reminders'
+      fullPath: '/api/public/booking/reminders'
+      preLoaderRoute: typeof ApiPublicBookingRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/booking/calendly-webhook': {
       id: '/api/public/booking/calendly-webhook'
       path: '/api/public/booking/calendly-webhook'
@@ -3609,6 +3644,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/scoring/review/'
       preLoaderRoute: typeof AuthenticatedAdminScoringReviewIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/api/public/booking/$sessionId/ics': {
+      id: '/api/public/booking/$sessionId/ics'
+      path: '/api/public/booking/$sessionId/ics'
+      fullPath: '/api/public/booking/$sessionId/ics'
+      preLoaderRoute: typeof ApiPublicBookingSessionIdIcsRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/client/positions/$id_/edit': {
       id: '/_authenticated/client/positions/$id_/edit'
@@ -4048,6 +4090,7 @@ const rootRouteChildren: RootRouteChildren = {
   JobsIdIndexRoute: JobsIdIndexRoute,
   ApiPublicBlueprintStatusIntakeIdRoute: ApiPublicBlueprintStatusIntakeIdRoute,
   ApiPublicBookingCalendlyWebhookRoute: ApiPublicBookingCalendlyWebhookRoute,
+  ApiPublicBookingRemindersRoute: ApiPublicBookingRemindersRoute,
   ApiPublicCandidateClosureNoticesRoute: ApiPublicCandidateClosureNoticesRoute,
   ApiPublicDigestWeeklyRoute: ApiPublicDigestWeeklyRoute,
   ApiPublicIntakeCarryIntakeIdRoute: ApiPublicIntakeCarryIntakeIdRoute,
@@ -4057,6 +4100,7 @@ const rootRouteChildren: RootRouteChildren = {
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
+  ApiPublicBookingSessionIdIcsRoute: ApiPublicBookingSessionIdIcsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

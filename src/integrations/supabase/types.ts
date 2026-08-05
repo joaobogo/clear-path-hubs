@@ -921,6 +921,9 @@ export type Database = {
           current_process: string | null
           email: string
           first_name: string
+          graph_error: string | null
+          graph_event_id: string | null
+          graph_synced_at: string | null
           heard_about: string | null
           hiring_challenge: string | null
           hiring_timeline: string | null
@@ -935,6 +938,7 @@ export type Database = {
           open_roles: string | null
           phone: string | null
           qualification_score: number | null
+          reminder_sent_at: string | null
           reschedule_url: string | null
           roles_hiring: string | null
           scheduled_at: string | null
@@ -962,6 +966,9 @@ export type Database = {
           current_process?: string | null
           email: string
           first_name: string
+          graph_error?: string | null
+          graph_event_id?: string | null
+          graph_synced_at?: string | null
           heard_about?: string | null
           hiring_challenge?: string | null
           hiring_timeline?: string | null
@@ -976,6 +983,7 @@ export type Database = {
           open_roles?: string | null
           phone?: string | null
           qualification_score?: number | null
+          reminder_sent_at?: string | null
           reschedule_url?: string | null
           roles_hiring?: string | null
           scheduled_at?: string | null
@@ -1003,6 +1011,9 @@ export type Database = {
           current_process?: string | null
           email?: string
           first_name?: string
+          graph_error?: string | null
+          graph_event_id?: string | null
+          graph_synced_at?: string | null
           heard_about?: string | null
           hiring_challenge?: string | null
           hiring_timeline?: string | null
@@ -1017,6 +1028,7 @@ export type Database = {
           open_roles?: string | null
           phone?: string | null
           qualification_score?: number | null
+          reminder_sent_at?: string | null
           reschedule_url?: string | null
           roles_hiring?: string | null
           scheduled_at?: string | null

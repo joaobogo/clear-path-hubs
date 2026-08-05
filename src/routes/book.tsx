@@ -35,11 +35,10 @@ import {
 import {
   detectTimezone,
   fullLabel,
-  groupByDay,
-  rangeLabel,
   type Slot,
 } from "@/lib/booking/slots";
 import { getAttribution, getPageContext } from "@/lib/crm/attribution";
+import { SchedulerPanel } from "@/components/booking/scheduler-panel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -182,7 +181,7 @@ function BookPage() {
     })();
   }, [session, readConfirmation, refreshSlots]);
 
-  const days = useMemo(() => (slots ? groupByDay(slots, tz) : []), [slots, tz]);
+
 
   async function onIntakeSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -425,64 +424,35 @@ function BookPage() {
             </p>
           ) : null}
 
-          <div className="mb-5 flex flex-wrap items-end gap-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="timezone">Your timezone</Label>
-              <select
-                id="timezone"
-                className="h-10 w-[260px] rounded-md border border-input bg-background px-3 text-sm"
-                value={tz}
-                onChange={(e) => setTz(e.target.value)}
-              >
-                {zones.map((zone) => (
-                  <option key={zone} value={zone}>
-                    {zone}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <Button variant="outline" onClick={() => void refreshSlots(sessionId)} disabled={pending}>
-              Refresh times
-            </Button>
-          </div>
-
           {slotsError ? <p className="mb-4 text-sm text-destructive">{slotsError}</p> : null}
 
           {slots === null && !slotsError ? (
             <p className="text-sm text-muted-foreground">Loading available times…</p>
           ) : null}
 
-          {slots !== null && days.length === 0 ? (
+          {slots !== null && slots.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              Every slot in the next two weeks is taken. Your details are saved — we'll email you with
-              the next openings.
+              Every slot in the next three weeks is taken. Your details are saved — we'll email you
+              with the next openings.
             </p>
           ) : null}
 
-          <div className="space-y-6">
-            {days.map((day) => (
-              <div key={day.key}>
-                <h2 className="text-sm font-semibold">{day.label}</h2>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {day.slots.map((slot) => (
-                    <Button
-                      key={slot.start}
-                      variant="outline"
-                      size="sm"
-                      disabled={pending}
-                      data-slot-start={slot.start}
-                      onClick={() => void onPickSlot(slot)}
-                    >
-                      <Clock className="mr-1.5 h-3.5 w-3.5" aria-hidden />
-                      {rangeLabel(slot.start, slot.end, tz)}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+          {slots !== null && slots.length > 0 ? (
+            <SchedulerPanel
+              slots={slots}
+              timezone={tz}
+              timezoneChoices={zones}
+              onTimezoneChange={setTz}
+              onPick={(slot) => void onPickSlot(slot)}
+              pending={pending}
+              meetingName={meeting.name}
+              durationLabel={`${meeting.durationLabel} meeting`}
+              hostName="TaaSFlow"
+            />
+          ) : null}
         </section>
       ) : null}
+
 
       {step === "done" && booked ? (
         <Card className="mt-8">
@@ -516,7 +486,15 @@ function BookPage() {
               <Button variant="ghost" onClick={() => void onCancel()} disabled={pending}>
                 Cancel this call
               </Button>
+              {sessionId ? (
+                <Button variant="ghost" asChild>
+                  <a href={`/api/public/booking/${sessionId}/ics`} download data-testid="add-to-calendar">
+                    <Clock className="mr-1.5 h-4 w-4" aria-hidden /> Add to calendar
+                  </a>
+                </Button>
+              ) : null}
             </div>
+
 
             <div className="border-t pt-4 text-muted-foreground">
               <p className="font-medium text-foreground">On the call</p>
