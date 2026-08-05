@@ -614,6 +614,64 @@ export const getClientOverview = createServerFn({ method: "GET" })
           .map((ms) => new Date(ms).toISOString())[0] ?? null,
     };
 
+    // ── What happens next ───────────────────────────────────────────────────
+    // One milestone per active role, so "when do I see candidates?" is answered
+    // on screen instead of by email. Dates come only from stored commitments
+    // and recorded due dates; roles whose commitment failed to load are marked
+    // so the client sees an error row rather than a silently missing role.
+    const feedbackDueByPosition = new Map<string, string>();
+    for (const iv of completedList) {
+      if (scoredInterviewIds.has(iv.id as string)) continue;
+      const pid = iv.position_id as string | null;
+      const completedAt = iv.completed_at as string | null;
+      if (!pid || !completedAt) continue;
+      const due = new Date(new Date(completedAt).getTime() + 2 * 86_400_000).toISOString();
+      const existing = feedbackDueByPosition.get(pid);
+      if (!existing || due < existing) feedbackDueByPosition.set(pid, due);
+    }
+    const offerDueByPosition = new Map<string, string>();
+    for (const r of rows) {
+      if (r.stage !== "offer" || !r.client_decision_due_at) continue;
+      const existing = offerDueByPosition.get(r.position_id);
+      if (!existing || r.client_decision_due_at < existing) {
+        offerDueByPosition.set(r.position_id, r.client_decision_due_at);
+      }
+    }
+
+    const next_milestones = activePositionsList.map((p) => {
+      const pid = p.id as string;
+      const posRows = rowsByPosition.get(pid) ?? [];
+      // A commitment read failure must not read as "no date committed".
+      if (healthCommitmentError) {
+        return {
+          position_id: pid,
+          title: p.title as string,
+          error: true as const,
+        };
+      }
+      const promised = promisedByPosition.get(pid);
+      return {
+        ...computeNextMilestone({
+          position_id: pid,
+          title: p.title as string,
+          awaiting_review: posRows.filter((r) => r.stage === "delivered").length,
+          has_offer: posRows.some((r) => r.stage === "offer"),
+          has_interview: posRows.some(
+            (r) => r.interview_active || r.stage === "interview_process",
+          ),
+          promised_shortlist_by: promised != null ? new Date(promised).toISOString() : null,
+          shortlist_delivered_at:
+            posRows
+              .map((r) => r.delivered_at)
+              .filter((v): v is string => Boolean(v))
+              .sort()[0] ?? null,
+          feedback_due_at: feedbackDueByPosition.get(pid) ?? null,
+          offer_response_due_at: offerDueByPosition.get(pid) ?? null,
+        }),
+        error: false as const,
+      };
+    });
+    const next_milestones_failed = Boolean(positionsError);
 
 
     // Latest delivered candidates (top 4 — kept concise).
