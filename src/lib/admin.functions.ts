@@ -297,20 +297,28 @@ export const listClients = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
+    const { resolveShowTestRecordsForUser, excludeTestFlag } = await import(
+      "./admin-test-scope.server"
+    );
+    const showTest = await resolveShowTestRecordsForUser(s, context.userId);
 
     // Bounded fetch: pull a working set, then compute counts + last activity in memory
     // and paginate the merged result. Cap protects the endpoint on large tenants.
     let q = s
       .from("organizations")
       .select(
-        "id,name,status,domain,industry,updated_at,archived_at,onboarding_status,dashboard_status,primary_contact_name,primary_contact_email",
+        "id,name,status,domain,industry,updated_at,archived_at,onboarding_status,dashboard_status,primary_contact_name,primary_contact_email,is_test_record",
       )
       .limit(500);
     if (data.q) q = q.ilike("name", `%${data.q}%`);
     if (data.status) q = q.eq("status", data.status);
     if (data.industry) q = q.eq("industry", data.industry);
     if (!data.include_archived) q = q.is("archived_at", null);
+    // The global "test records" preference decides here, in Postgres, so the
+    // list and the "N organizations" count can never disagree.
+    if (!showTest) q = excludeTestFlag(q);
     const { data: rows } = await q;
+
     const orgIds = (rows ?? []).map((r: AnyRow) => r.id);
 
     const stats: Record<
