@@ -5,10 +5,12 @@ import { getPublicPosition } from "@/lib/jobs.functions";
 import { extractJobUuid } from "@/lib/marketing/job-slug";
 import { submitApplication } from "@/lib/apply.functions";
 import {
+  APPLY_STEP_LABELS,
   EFFORT_DEFAULT,
   applyEffortLine,
   applyEffortProvenance,
 } from "@/lib/jobs/apply-effort";
+
 
 import { ProcessState } from "@/components/ds/process-state";
 import {
