@@ -168,7 +168,7 @@ export async function dispatchEmails(
   const results: EmailAttempt[] = [];
 
   for (const n of notifications) {
-    const gate = await emailAllowed(admin, {
+    const decision = await emailDecision(admin, {
       userId: n.recipient_user_id,
       orgId: n.organization_id,
       event: n.event_type,
@@ -178,9 +178,12 @@ export async function dispatchEmails(
     let errorMessage: string | null = null;
     let address: string | null = null;
 
-    if (!gate.allowed) {
-      errorCode = gate.reason ?? "suppressed";
-      errorMessage = "Recipient preference or unsubscribe applies to this email.";
+    if (decision !== "send") {
+      errorCode = decision === "digest" ? "deferred_to_daily_digest" : "preference_off";
+      errorMessage =
+        decision === "digest"
+          ? "The recipient chose the daily digest for this event, so it is held for the next digest instead of sending now."
+          : "The recipient turned off email for this event. The in-app notification was still delivered.";
     } else {
       address = await recipientEmail(admin, n.recipient_user_id);
       const blocked = address ? await isSuppressed(admin, address) : false;
