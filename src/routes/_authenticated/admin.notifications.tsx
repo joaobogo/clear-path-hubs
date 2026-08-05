@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
+import { DeliveryFailuresPanel } from "@/components/admin/delivery-failures-panel";
 
 export const Route = createFileRoute("/_authenticated/admin/notifications")({
   head: () => ({
@@ -166,6 +167,8 @@ function NotificationsPage() {
           </table>
         </div>
       )}
+
+      <DeliveryFailuresPanel />
     </main>
   );
 }
