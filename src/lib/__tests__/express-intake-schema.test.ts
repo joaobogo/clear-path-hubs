@@ -6,6 +6,10 @@ import {
   expressIntakeSchema,
   jdFileExt,
   MIN_JD_TEXT,
+  countMustHaves,
+  linesToRequirements,
+  requirementsToLines,
+  validateRequirements,
 } from "@/lib/express-intake-schema";
 
 const valid = {
@@ -86,15 +90,36 @@ describe("expressIntakeSchema", () => {
 });
 
 describe("role brief", () => {
-  it("requires at least two must-haves", () => {
+  it("accepts a single must-have but not an empty list", () => {
     expect(
       expressIntakeSchema.safeParse({ ...valid, mustHaves: "5+ years front office" }).success,
-    ).toBe(false);
+    ).toBe(true);
+    expect(expressIntakeSchema.safeParse({ ...valid, mustHaves: "" }).success).toBe(false);
   });
 
-  it("requires why the role is open and what rules someone out", () => {
+  it("requires why the role is open, and lets deal-breakers be finished later", () => {
     expect(expressIntakeSchema.safeParse({ ...valid, whyOpen: "growth" }).success).toBe(false);
-    expect(expressIntakeSchema.safeParse({ ...valid, dealBreakers: "none" }).success).toBe(false);
+    expect(expressIntakeSchema.safeParse({ ...valid, dealBreakers: "" }).success).toBe(true);
+  });
+
+  it("rejects a tagged requirements list that breaks the rules", () => {
+    const withReqs = (requirements: Array<{ text: string; tag: string }>) =>
+      expressIntakeSchema.safeParse({ ...valid, requirements }).success;
+    expect(withReqs([{ text: "Nice bonus skill", tag: "nice_to_have" }])).toBe(false);
+    expect(
+      withReqs([
+        { text: "Runs a P&L", tag: "must_have" },
+        { text: "runs a p&l", tag: "must_have" },
+      ]),
+    ).toBe(false);
+    expect(withReqs([{ text: "AB", tag: "must_have" }])).toBe(false);
+    expect(
+      withReqs([
+        { text: "Runs a P&L above $2M", tag: "must_have" },
+        { text: "Multi-site experience", tag: "nice_to_have" },
+        { text: "Our scheduling tool", tag: "trainable" },
+      ]),
+    ).toBe(true);
   });
 
   it("rejects an inverted compensation range", () => {
@@ -139,5 +164,55 @@ describe("blueprintProgress", () => {
   it("treats unknown states as no progress and failures as terminal", () => {
     expect(blueprintProgress("not_started")).toBe(0);
     expect(blueprintProgress("failed")).toBe(100);
+  });
+});
+
+describe("validateRequirements", () => {
+  const must = (text: string) => ({ text, tag: "must_have" as const });
+
+  it("guards above six must-haves and clears once confirmed", () => {
+    const seven = [
+      "one thing",
+      "two thing",
+      "three thing",
+      "four thing",
+      "five thing",
+      "six thing",
+      "seven thing",
+    ].map(must);
+    const first = validateRequirements(seven);
+    expect(first.ok).toBe(false);
+    expect(first.needsConfirm).toBe(true);
+    expect(first.listError).toContain("6 or fewer must-haves");
+    const confirmed = validateRequirements(seven, { manyConfirmed: true });
+    expect(confirmed.ok).toBe(true);
+    expect(confirmed.needsConfirm).toBe(false);
+  });
+
+  it("keeps trainable items out of the must-have count", () => {
+    const res = validateRequirements([
+      must("Runs a P&L above $2M"),
+      { text: "Our scheduling tool", tag: "trainable" },
+      { text: "Multi-site experience", tag: "nice_to_have" },
+    ]);
+    expect(res.ok).toBe(true);
+    expect(countMustHaves([must("a thing"), { text: "b thing", tag: "trainable" }])).toBe(1);
+  });
+
+  it("reports duplicates on the later row only", () => {
+    const res = validateRequirements([must("Runs a P&L"), must("runs a  p&l")]);
+    expect(res.rowErrors[0]).toBeUndefined();
+    expect(res.rowErrors[1]).toBe("You already listed this one");
+  });
+
+  it("round-trips between the tagged list and the legacy strings", () => {
+    const items = [
+      must("Runs a P&L above $2M"),
+      { text: "Multi-site experience", tag: "nice_to_have" as const },
+      { text: "Our scheduling tool", tag: "trainable" as const },
+    ];
+    const lines = requirementsToLines(items);
+    expect(lines.mustHaves).toBe("Runs a P&L above $2M");
+    expect(linesToRequirements(lines)).toEqual(items);
   });
 });
