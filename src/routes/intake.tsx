@@ -1335,6 +1335,45 @@ function ExpressIntakePage() {
                     ],
                   ]}
                 />
+                <ReviewBlock
+                  title="The brief"
+                  target="section-brief"
+                  rows={[
+                    ["Why it is open", state.whyOpen],
+                    ["Must-haves", splitLines(state.mustHaves).join(" · ")],
+                    ["Willing to train", splitLines(state.trainable).join(" · ")],
+                    ["Rules someone out", state.dealBreakers],
+                    [
+                      "Location",
+                      [
+                        state.location,
+                        state.workModel ? WORK_MODEL_LABELS[state.workModel] : "",
+                        state.workModel && state.workModel !== "remote" && state.onsiteDays
+                          ? `${state.onsiteDays} days on site`
+                          : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" · "),
+                    ],
+                    [
+                      "Compensation",
+                      state.salaryMin && state.salaryMax
+                        ? `${state.currency} ${Number(state.salaryMin).toLocaleString()}–${Number(
+                            state.salaryMax,
+                          ).toLocaleString()} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
+                        : "",
+                    ],
+                    [
+                      "Work authorisation",
+                      WORK_AUTHORIZATION_OPTIONS.find((o) => o.value === state.workAuthorization)
+                        ?.label ?? "",
+                    ],
+                    ["Interview process", state.interviewProcess],
+                    ["Final decision", state.decisionMaker],
+                    ["Ideal start", state.targetStartDate],
+                  ]}
+                />
+
               </div>
             )}
           </CardContent>
