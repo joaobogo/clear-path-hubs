@@ -11,6 +11,7 @@
 //    `suppressed / email_not_configured` instead of pretending to send.
 
 import type { EventType } from "./events";
+import { EVENT_PREFERENCE, normalizePreferences } from "./client-notification-prefs";
 import { isSuppressed } from "./notification-suppression.server";
 
 
