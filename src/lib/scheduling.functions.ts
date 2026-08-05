@@ -71,10 +71,12 @@ export const listMyInterviews = createServerFn({ method: "GET" })
 
 
 /**
- * Candidate replies to a request. Accepting a specific slot records the
- * preference only — the coordinator still confirms the canonical time, so the
- * candidate never sees a meeting that was never actually booked.
+ * Candidate replies to a proposed time. Accepting releases the other slots and
+ * schedules the chosen one, unless the organisation coordinates manually — then
+ * the time is held and confirmed by a coordinator, so the candidate is never
+ * shown a booking that was not actually made.
  */
+
 export const respondToInterview = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw) =>
