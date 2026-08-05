@@ -8,7 +8,6 @@ import {
  getClientContext,
  getClientSettings,
  updateClientCompanyProfile,
- updateClientNotificationPreferences,
  updateClientTimezone,
  updateClientBranding,
 } from "@/lib/client.functions";
@@ -30,7 +29,6 @@ import {
 import {
  AlertCircle,
  BadgeCheck,
- Bell,
  Building2,
  CheckCircle2,
  Clock,
@@ -59,16 +57,6 @@ export const Route = createFileRoute("/_authenticated/client/settings")({
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
-
-const NOTIF_KEYS = [
- { key: "candidate_delivered", label: "Candidate delivered", desc: "A new candidate has been delivered to your workspace." },
- { key: "interview_request", label: "Interview request", desc: "The TaaSFlow team requests an interview time." },
- { key: "new_message", label: "New message", desc: "Someone sends you a workspace message." },
- { key: "offer_update", label: "Offer update", desc: "An offer changes stage (extended, accepted, declined)." },
- { key: "hire_update", label: "Hire update", desc: "A candidate becomes a hire." },
-] as const;
-
-type NotifKey = (typeof NOTIF_KEYS)[number]["key"];
 
 const COMMON_TIMEZONES = [
  "UTC",
