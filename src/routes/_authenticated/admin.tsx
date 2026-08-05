@@ -83,6 +83,13 @@ const NAV: WorkspaceNavItem[] = [
   { to: "/admin/positions", label: "Positions", icon: Briefcase, group: "Delivery", hint: "Requisitions and jobs" },
   { to: "/admin/candidates", label: "Candidates", icon: Users, group: "Delivery", hint: "Applications and screening" },
   { to: "/admin/publish", label: "Publish Desk", icon: Send, group: "Delivery", hint: "Release candidates to clients" },
+  {
+    to: "/admin/approvals",
+    label: "Approvals",
+    icon: ShieldCheck,
+    group: "Delivery",
+    hint: "Pending client-visible actions",
+  },
 
   {
     to: "/admin/scoring/review",
