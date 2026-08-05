@@ -32,6 +32,10 @@ import {
   STEP_FIELDS,
   briefCompleteness,
   stepValidators,
+  linesToRequirements,
+  requirementsToLines,
+  validateRequirements,
+  type RequirementItem,
 
   MAX_JD_BYTES,
   MIN_ACCOUNT_PASSWORD,
@@ -39,6 +43,7 @@ import {
   expressIntakeSchema,
   jdFileExt,
 } from "@/lib/express-intake-schema";
+import { RequirementsList, type SuggestionState } from "@/components/intake/requirements-list";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { saveIntakeDraft, loadIntakeDraft, clearIntakeDraft } from "@/lib/intake-draft.functions";
@@ -91,6 +96,9 @@ type FormState = {
   mustHaves: string;
   niceToHaves: string;
   trainable: string;
+  /** The tagged, ordered requirements list step 2 actually edits. */
+  requirements: RequirementItem[];
+  manyMustHavesConfirmed: boolean;
   dealBreakers: string;
 
   location: string;
@@ -131,6 +139,8 @@ const EMPTY: FormState = {
   mustHaves: "",
   niceToHaves: "",
   trainable: "",
+  requirements: [],
+  manyMustHavesConfirmed: false,
   dealBreakers: "",
 
   location: "",
@@ -248,12 +258,18 @@ function ExpressIntakePage() {
       }
     }
     if (key === "people") {
-      const res = stepValidators.people.safeParse({ mustHaves: state.mustHaves });
-      if (!res.success) {
-        for (const issue of res.error.issues) {
-          const f = String(issue.path[0] ?? "mustHaves");
-          if (!next[f]) next[f] = issue.message;
-        }
+      const res = validateRequirements(state.requirements, {
+        manyConfirmed: state.manyMustHavesConfirmed,
+      });
+      setRowErrors(res.rowErrors);
+      if (res.listError) next.requirements = res.listError;
+      else if (Object.keys(res.rowErrors).length > 0) {
+        // Row errors render under their own row; the step still must not pass.
+        next.requirements = "";
+      }
+      if (!res.ok && !next.requirements) {
+        focusFirstError();
+        return false;
       }
     }
     if (key === "practicalities") {
@@ -633,9 +649,9 @@ function ExpressIntakePage() {
         ? { filename: jdFile.filename, mime: jdFile.mime, base64: jdFile.base64 }
         : null,
       whyOpen: state.whyOpen,
-      mustHaves: state.mustHaves,
-      niceToHaves: state.niceToHaves,
-      trainable: state.trainable,
+      ...requirementsToLines(state.requirements),
+      requirements: state.requirements,
+      manyMustHavesConfirmed: state.manyMustHavesConfirmed,
       dealBreakers: state.dealBreakers,
 
       location: state.location,
