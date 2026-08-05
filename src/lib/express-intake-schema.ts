@@ -100,6 +100,59 @@ export const WORK_AUTHORIZATION_VALUES = [
   "contractor",
 ] as const;
 
+/**
+ * Sponsorship is asked as an explicit yes or no, because it changes the
+ * candidate pool more than anything else on this step. There is deliberately
+ * no default: we do not guess, and we give no immigration advice.
+ */
+export const SPONSORSHIP_OPTIONS = [
+  {
+    value: "yes",
+    label: "Yes — we can sponsor or transfer a visa",
+    hint: "Widens the pool. We will still only shortlist people you can hire.",
+  },
+  {
+    value: "no",
+    label: "No — candidates must already be authorised to work here",
+    hint: "Narrows the pool, and avoids a wasted shortlist.",
+  },
+] as const;
+
+export const SPONSORSHIP_VALUES = ["yes", "no"] as const;
+
+export const SPONSORSHIP_LABELS: Record<(typeof SPONSORSHIP_VALUES)[number], string> = {
+  yes: "Sponsorship available",
+  no: "Must already be authorised to work in this location",
+};
+
+/** Why the sponsorship answer is not optional, said in one line. */
+export const SPONSORSHIP_WHY_IT_MATTERS =
+  "This is the single biggest filter on who we can approach, so we ask it outright rather than assuming.";
+
+/**
+ * Acceptable timezone bands for remote roles. Broad working-hours bands, not
+ * country lists — we never guess where somebody is allowed to work.
+ */
+export const TIMEZONE_BANDS = [
+  { value: "americas_west", label: "Americas West (UTC−8 to UTC−6)" },
+  { value: "americas_east", label: "Americas East (UTC−5 to UTC−3)" },
+  { value: "uk_ireland", label: "UK and Ireland (UTC+0 to UTC+1)" },
+  { value: "europe_central", label: "Europe Central (UTC+1 to UTC+3)" },
+  { value: "middle_east_africa", label: "Middle East and Africa (UTC+2 to UTC+4)" },
+  { value: "south_asia", label: "South Asia (UTC+5 to UTC+6)" },
+  { value: "asia_pacific", label: "Asia Pacific (UTC+7 to UTC+9)" },
+  { value: "oceania", label: "Australia and New Zealand (UTC+10 to UTC+13)" },
+] as const;
+
+export const TIMEZONE_BAND_VALUES = TIMEZONE_BANDS.map((t) => t.value) as unknown as [
+  string,
+  ...string[],
+];
+
+export const TIMEZONE_BAND_LABELS: Record<string, string> = Object.fromEntries(
+  TIMEZONE_BANDS.map((t) => [t.value, t.label]),
+);
+
 export const WORK_MODEL_LABELS: Record<(typeof WORK_MODELS)[number], string> = {
   remote: "Fully remote",
   hybrid: "Hybrid",
@@ -343,6 +396,10 @@ export const expressIntakeSchema = z
     location: z.string().trim().max(160).optional().or(z.literal("")),
     workModel: z.enum(WORK_MODELS).optional().or(z.literal("")),
     onsiteDays: z.coerce.number().int().min(0).max(7).optional(),
+    /** Remote only: acceptable working-hours bands. */
+    remoteTimezones: z.array(z.enum(TIMEZONE_BAND_VALUES)).max(8).optional().default([]),
+    /** Remote only: "anywhere in the country", stated explicitly. */
+    remoteAnywhereInCountry: z.boolean().optional().default(false),
 
     currency: z.enum(COMP_CURRENCIES).default("USD"),
     compensationPeriod: z.enum(COMP_PERIODS).default("year"),
@@ -359,6 +416,13 @@ export const expressIntakeSchema = z
     wideRangeConfirmed: z.boolean().optional().default(false),
 
     workAuthorization: z.enum(WORK_AUTHORIZATION_VALUES).optional().or(z.literal("")),
+    /**
+     * Always answered. No default — an unanswered sponsorship question is a
+     * validation error, not a silent "yes".
+     */
+    sponsorshipAvailable: z.enum(SPONSORSHIP_VALUES, {
+      errorMap: () => ({ message: "Answer yes or no — we do not assume either way" }),
+    }),
     workAuthorizationNote: z.string().trim().max(1000).optional().or(z.literal("")),
     targetStartDate: z.string().trim().max(40).optional().or(z.literal("")),
 
@@ -428,13 +492,50 @@ export const expressIntakeSchema = z
       message: COMPENSATION_WIDE_RANGE_WARNING,
     },
   )
+  // Hybrid is the only model that needs a day count, and it must be 1–5.
+  .refine((v) => v.workModel !== "hybrid" || typeof v.onsiteDays === "number", {
+    path: ["onsiteDays"],
+    message: "How many days on site each week?",
+  })
   .refine(
-    (v) => !v.workModel || v.workModel === "remote" || typeof v.onsiteDays === "number",
+    (v) =>
+      v.workModel !== "hybrid" ||
+      typeof v.onsiteDays !== "number" ||
+      (v.onsiteDays >= 1 && v.onsiteDays <= 5),
     {
       path: ["onsiteDays"],
-      message: "How many days on site each week?",
+      message: "Between 1 and 5 days a week",
     },
-  );
+  )
+  // Hybrid and on-site both need somewhere to be.
+  .refine(
+    (v) => (v.workModel !== "hybrid" && v.workModel !== "onsite") || Boolean(v.location?.trim()),
+    {
+      path: ["location"],
+      message: "Which city and country is this based in?",
+    },
+  )
+  // Remote needs a boundary: timezone bands, or an explicit anywhere-in-country.
+  .refine(
+    (v) =>
+      v.workModel !== "remote" ||
+      (v.remoteTimezones?.length ?? 0) > 0 ||
+      v.remoteAnywhereInCountry === true,
+    {
+      path: ["remoteTimezones"],
+      message: "Pick at least one acceptable timezone, or say anywhere in the country",
+    },
+  )
+  /**
+   * Fields that are hidden for the chosen work model never submit a stale
+   * value from an earlier selection.
+   */
+  .transform((v) => ({
+    ...v,
+    onsiteDays: v.workModel === "hybrid" ? v.onsiteDays : undefined,
+    remoteTimezones: v.workModel === "remote" ? (v.remoteTimezones ?? []) : [],
+    remoteAnywhereInCountry: v.workModel === "remote" ? v.remoteAnywhereInCountry === true : false,
+  }));
 
 
 
@@ -494,6 +595,9 @@ export const STEP_FIELDS: Record<IntakeStepKey, string[]> = {
     "location",
     "workModel",
     "onsiteDays",
+    "remoteTimezones",
+    "remoteAnywhereInCountry",
+    "sponsorshipAvailable",
     "salaryMin",
     "salaryMax",
     "compensationNote",
@@ -571,6 +675,8 @@ export const ALWAYS_REQUIRED_INTAKE_FIELDS = [
   "requirements",
   "consent",
   "pilotAcknowledgement",
+  // Sponsorship changes the pool most, so it is never left blank.
+  "sponsorshipAvailable",
 ] as const;
 
 /**
@@ -586,6 +692,8 @@ export type IntakeRequirednessContext = {
   signInMode?: boolean;
   /** Anything other than fully remote needs a day count. */
   workModel?: string;
+  /** "Anywhere in the country" removes the timezone requirement. */
+  remoteAnywhereInCountry?: boolean;
 };
 
 /** Every intake field name mapped to whether it is required right now. */
@@ -612,6 +720,7 @@ export function intakeRequiredness(
     workAuthorization: false,
     workAuthorizationNote: false,
     targetStartDate: false,
+    remoteAnywhereInCountry: false,
     interviewProcess: false,
     decisionMaker: false,
     dealBreakers: false,
@@ -622,7 +731,11 @@ export function intakeRequiredness(
   map["jobDescriptionText"] = !ctx.hasJdFile;
   map["password"] = !ctx.authed;
   map["confirmPassword"] = !ctx.authed && !ctx.signInMode;
-  map["onsiteDays"] = Boolean(ctx.workModel) && ctx.workModel !== "remote";
+  // Only hybrid asks for a day count; on site is by definition full weeks.
+  map["onsiteDays"] = ctx.workModel === "hybrid";
+  // Hybrid and on-site roles need a place; remote roles need a boundary.
+  map["location"] = ctx.workModel === "hybrid" || ctx.workModel === "onsite";
+  map["remoteTimezones"] = ctx.workModel === "remote" && !ctx.remoteAnywhereInCountry;
   return map;
 }
 
@@ -651,14 +764,25 @@ export function briefCompleteness(values: Record<string, unknown>): {
   missing: string[];
 } {
   const missing: string[] = [];
+  /**
+   * A remote role bounded by timezones or an explicit "anywhere in the country"
+   * counts as answered, even without a city.
+   */
+  const remoteBounded =
+    values["workModel"] === "remote" &&
+    (Array.isArray(values["remoteTimezones"]) && values["remoteTimezones"].length > 0
+      ? true
+      : values["remoteAnywhereInCountry"] === true);
   for (const { field, label } of BRIEF_COMPLETENESS_FIELDS) {
     const raw = values[field];
     const filled =
-      typeof raw === "number"
-        ? Number.isFinite(raw) && raw > 0
-        : typeof raw === "string"
-          ? raw.trim().length > 0
-          : Boolean(raw);
+      field === "location" && remoteBounded
+        ? true
+        : typeof raw === "number"
+          ? Number.isFinite(raw) && raw > 0
+          : typeof raw === "string"
+            ? raw.trim().length > 0
+            : Boolean(raw);
     if (!filled) missing.push(label);
   }
   return { complete: missing.length === 0, missing };

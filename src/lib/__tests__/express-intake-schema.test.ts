@@ -40,6 +40,7 @@ const valid = {
   salaryMin: 40000,
   salaryMax: 50000,
   workAuthorization: "already_authorized" as const,
+  sponsorshipAvailable: "no" as const,
   interviewProcess: "Call with me, then a panel on site, offer the same week.",
   decisionMaker: "Ana Reis, General Manager",
   consent: true as const,
@@ -202,7 +203,12 @@ describe("role brief", () => {
       expressIntakeSchema.safeParse({ ...valid, workModel: "hybrid", onsiteDays: undefined }).success,
     ).toBe(false);
     expect(
-      expressIntakeSchema.safeParse({ ...valid, workModel: "remote", onsiteDays: undefined }).success,
+      expressIntakeSchema.safeParse({
+        ...valid,
+        workModel: "remote",
+        onsiteDays: undefined,
+        remoteAnywhereInCountry: true,
+      }).success,
     ).toBe(true);
   });
 });
@@ -312,6 +318,9 @@ describe("intakeRequiredness", () => {
       // The salary pair is optional together: half a range is rejected as a
       // pair rule, not because either field is required on its own.
       if (field === "salaryMin" || field === "salaryMax") continue;
+      // Remote boundary is a pair rule too: a timezone band OR anywhere in the
+      // country satisfies it, so neither field is required on its own.
+      if (field === "remoteTimezones" || field === "remoteAnywhereInCountry") continue;
       const payload: Record<string, unknown> = { ...valid, [field]: blankFor(field) };
       const serverRejects = !expressIntakeSchema.safeParse(payload).success;
       expect(
@@ -354,5 +363,62 @@ describe("intakeRequiredness", () => {
     expect(intakeRequiredness({ workModel: "" })["onsiteDays"]).toBe(false);
     expect(intakeRequiredness({ workModel: "remote" })["onsiteDays"]).toBe(false);
     expect(intakeRequiredness({ workModel: "hybrid" })["onsiteDays"]).toBe(true);
+  });
+});
+
+
+describe("location, on-site expectation and work authorisation", () => {
+  it("requires an explicit sponsorship answer", () => {
+    const { sponsorshipAvailable: _drop, ...rest } = valid;
+    expect(expressIntakeSchema.safeParse(rest).success).toBe(false);
+  });
+
+  it("requires a location and 1-5 on-site days for hybrid", () => {
+    const base = { ...valid, workModel: "hybrid" as const };
+    expect(expressIntakeSchema.safeParse({ ...base, onsiteDays: 3 }).success).toBe(true);
+    expect(expressIntakeSchema.safeParse({ ...base, onsiteDays: 0 }).success).toBe(false);
+    expect(expressIntakeSchema.safeParse({ ...base, onsiteDays: 6 }).success).toBe(false);
+    expect(
+      expressIntakeSchema.safeParse({ ...base, onsiteDays: 3, location: "" }).success,
+    ).toBe(false);
+  });
+
+  it("requires a timezone band or anywhere-in-country for remote", () => {
+    const base = { ...valid, workModel: "remote" as const, onsiteDays: undefined };
+    expect(expressIntakeSchema.safeParse(base).success).toBe(false);
+    expect(
+      expressIntakeSchema.safeParse({ ...base, remoteTimezones: ["uk_ireland"] }).success,
+    ).toBe(true);
+    expect(
+      expressIntakeSchema.safeParse({ ...base, remoteAnywhereInCountry: true }).success,
+    ).toBe(true);
+  });
+
+  it("drops answers that no longer apply to the chosen work model", () => {
+    const r = expressIntakeSchema.safeParse({
+      ...valid,
+      workModel: "remote" as const,
+      onsiteDays: 3,
+      remoteAnywhereInCountry: true,
+    });
+    expect(r.success).toBe(true);
+    if (r.success) {
+      expect(r.data.onsiteDays ?? null).toBeNull();
+    }
+  });
+
+  it("counts a remote role with timezones as located in the brief", () => {
+    const brief = briefCompleteness({
+      location: "",
+      workModel: "remote",
+      remoteTimezones: ["uk_ireland"],
+      remoteAnywhereInCountry: false,
+      salaryMin: 40000,
+      workAuthorization: "already_authorized",
+      interviewProcess: "Call, panel, offer.",
+      decisionMaker: "Ana Reis",
+      dealBreakers: "Weekend shifts required.",
+    });
+    expect(brief.missing).not.toContain("Where the role is based");
   });
 });
