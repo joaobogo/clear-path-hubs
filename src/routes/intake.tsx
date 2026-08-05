@@ -513,6 +513,18 @@ function ExpressIntakePage() {
       if (!jdFile && jdTyped.length > 0 && jdTyped.length < MIN_JD_TEXT) {
         next.jobDescriptionText = `Paste at least ${MIN_JD_TEXT} characters or upload the job description file`;
       }
+      // Same for the two brief rules that live in object-level refines.
+      if (
+        state.salaryMin !== "" &&
+        state.salaryMax !== "" &&
+        Number(state.salaryMax) < Number(state.salaryMin)
+      ) {
+        next.salaryMax = "The top of the range must be at least the bottom";
+      }
+      if (state.workModel && state.workModel !== "remote" && state.onsiteDays === "") {
+        next.onsiteDays = "How many days on site each week?";
+      }
+
 
       setErrors(next);
       toast.error("Please check the highlighted fields.");
