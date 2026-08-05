@@ -29,6 +29,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { ProcessingExceptionsBoard } from "@/components/admin/processing-exceptions-board";
 import { AlertTriangle, Wifi, Server, User, MoreHorizontal, FileText, Search } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/operations")({
@@ -250,6 +251,8 @@ function OperationsPage() {
           tone={deliveryItems.length > 0 ? "warn" : "ok"}
         />
       </div>
+
+      <ProcessingExceptionsBoard />
 
       <Tabs defaultValue="pipeline">
         <TabsList>
