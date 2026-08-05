@@ -798,7 +798,7 @@ function ExpressIntakePage() {
     try {
       // A new role must never reuse the previous role's idempotency key, or the
       // server would replay the first submission instead of creating a second.
-      const existingIdem = carryParam ? null : localStorage.getItem(EXPRESS_IDEMPOTENCY_KEY);
+      const existingIdem = carryParam || duplicateParam ? null : localStorage.getItem(EXPRESS_IDEMPOTENCY_KEY);
       idem.current = existingIdem || newIdempotencyKey();
       localStorage.setItem(EXPRESS_IDEMPOTENCY_KEY, idem.current);
     } catch {
@@ -839,6 +839,39 @@ function ExpressIntakePage() {
         }
       } catch {
         /* anonymous visitor — normal path */
+      }
+
+      if (duplicateParam) {
+        // A duplicate copies the brief only, and lands on the review step so the
+        // client checks it instead of submitting blind. A failure here changes
+        // nothing about the original role.
+        try {
+          const result = await loadDuplicateDraft({ data: { positionId: duplicateParam } });
+          if (cancelled) return;
+          if (!result?.draft) {
+            setDuplicateError(
+              "We could not find that role to duplicate. Your original role is unchanged \u2014 start this brief from scratch or try again from the role page.",
+            );
+          } else {
+            const dup = result.draft;
+            applyCarry(result.carry);
+            setState((prev) => ({ ...prev, ...(dup.values as Partial<FormState>) }));
+            setDuplicate(dup);
+            setStepIndex(INTAKE_STEPS.length - 1);
+          }
+        } catch {
+          if (!cancelled) {
+            setDuplicateError(
+              "We could not prepare the duplicate. Your original role is unchanged \u2014 nothing was copied or altered.",
+            );
+          }
+        } finally {
+          if (!cancelled) {
+            setDraftPhase("ready");
+            hydratedRef.current = true;
+          }
+        }
+        return;
       }
 
       if (carryParam) {
@@ -1240,6 +1273,21 @@ function ExpressIntakePage() {
     });
     setErrors((e) => ({ ...e, [key]: "" }));
   };
+
+  /**
+   * A duplicate must be deliberate: either the title changes, or the client says
+   * the identical title is intentional. And compensation copied from a brief
+   * older than 180 days is checked before it goes back out to candidates.
+   */
+  const dupTitleUnchanged =
+    duplicate !== null &&
+    duplicate.sourceTitle !== null &&
+    state.roleTitle.trim().toLowerCase() === duplicate.sourceTitle.trim().toLowerCase();
+  const dupBlockers: string[] = [];
+  if (dupTitleUnchanged && !dupTitleConfirmed) dupBlockers.push("Confirm or change the job title");
+  if (duplicate?.compensationStale && !dupCompReviewed) {
+    dupBlockers.push("Check the copied compensation is still right");
+  }
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     if (!startedRef.current) {
@@ -3028,7 +3076,7 @@ function ExpressIntakePage() {
                 <Button
                   type="button"
                   onClick={() => void submit("pay")}
-                  disabled={submitting || review.missing.length > 0}
+                  disabled={submitting || review.missing.length > 0 || dupBlockers.length > 0}
                   className="min-h-12 w-full"
                 >
                   {submitting ? (
@@ -3044,7 +3092,7 @@ function ExpressIntakePage() {
                   type="button"
                   variant="outline"
                   onClick={() => void submit("call")}
-                  disabled={submitting || review.missing.length > 0}
+                  disabled={submitting || review.missing.length > 0 || dupBlockers.length > 0}
                   className="min-h-12 w-full"
                 >
                   Book a call first
@@ -3053,6 +3101,11 @@ function ExpressIntakePage() {
               {review.missing.length > 0 && (
                 <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75" role="status">
                   Submit unlocks once the required answers named in the review above are filled in.
+                </p>
+              )}
+              {dupBlockers.length > 0 && (
+                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75" role="status">
+                  Before you submit this duplicate: {dupBlockers.join(" \u00b7 ")}.
                 </p>
               )}
               <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
