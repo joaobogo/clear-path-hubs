@@ -249,7 +249,8 @@ export async function setChannelEnabled(
     action: input.enabled ? "outreach_channel_resumed" : "outreach_channel_paused",
     entity_type: "outreach_channel_rules",
     entity_id: existing.data?.id ?? null,
-    metadata: { channel: input.channel, enabled: input.enabled },
+    before_state: { enabled: !input.enabled },
+    after_state: { channel: input.channel, enabled: input.enabled },
   });
 
   return { ok: true, enabled: input.enabled };
