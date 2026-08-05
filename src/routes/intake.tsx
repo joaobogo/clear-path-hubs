@@ -2900,7 +2900,7 @@ function ExpressIntakePage() {
                 <Button
                   type="button"
                   onClick={() => void submit("pay")}
-                  disabled={submitting}
+                  disabled={submitting || review.missing.length > 0}
                   className="min-h-12 w-full"
                 >
                   {submitting ? (
@@ -2916,12 +2916,17 @@ function ExpressIntakePage() {
                   type="button"
                   variant="outline"
                   onClick={() => void submit("call")}
-                  disabled={submitting}
+                  disabled={submitting || review.missing.length > 0}
                   className="min-h-12 w-full"
                 >
                   Book a call first
                 </Button>
               </div>
+              {review.missing.length > 0 && (
+                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75" role="status">
+                  Submit unlocks once the required answers named in the review above are filled in.
+                </p>
+              )}
               <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
                 Booking a call still opens your workspace straight away. The role stays saved with
                 payment pending until we agree the plan.
@@ -3076,50 +3081,4 @@ function Field({
 
 }
 
-function ReviewBlock({
-  title,
-  target,
-  rows,
-}: {
-  title: string;
-  target: string;
-  rows: Array<[string, string]>;
-}) {
-  // Anything the client chose to skip is simply left out of the summary —
-  // a list of "Not provided" rows reads like a list of mistakes.
-  const filled = rows.filter(([, value]) => Boolean(value?.trim()));
-  return (
-    <div className="rounded-lg border border-[color:var(--brand-navy)]/12 p-4">
-      <div className="flex items-center justify-between gap-3">
-        <h3 className="text-sm font-semibold">{title}</h3>
-        <button
-          type="button"
-          onClick={() =>
-            document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "start" })
-          }
-          className="flex items-center gap-1 text-sm underline text-[color:var(--brand-navy)]/70"
-        >
-          <Pencil className="h-3.5 w-3.5" aria-hidden />
-          Edit
-        </button>
-      </div>
-      {filled.length === 0 ? (
-        <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75">
-          Nothing filled in yet.
-        </p>
-      ) : (
-        <dl className="mt-3 space-y-2">
-          {filled.map(([label, value]) => (
-            <div key={label} className="grid gap-1 sm:grid-cols-[160px_1fr]">
-              <dt className="text-xs uppercase tracking-wide text-[color:var(--brand-navy)]/75">
-                {label}
-              </dt>
-              <dd className="text-sm whitespace-pre-wrap break-words">{value}</dd>
-            </div>
-          ))}
-        </dl>
-      )}
-    </div>
-  );
-}
 
