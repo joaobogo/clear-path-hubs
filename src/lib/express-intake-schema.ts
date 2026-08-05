@@ -81,6 +81,50 @@ export const expressIntakeSchema = z
     jobDescriptionText: z.string().trim().max(60000).optional().or(z.literal("")),
     jobDescriptionFile: jdFileSchema.optional().nullable(),
 
+    // Role brief — what actually decides whether the first shortlist lands.
+    whyOpen: z
+      .string()
+      .trim()
+      .min(MIN_WHY_OPEN, `Tell us in a sentence or two why this role is open (at least ${MIN_WHY_OPEN} characters)`)
+      .max(2000),
+    mustHaves: z
+      .string()
+      .trim()
+      .max(4000)
+      .refine((v) => splitLines(v).length >= MIN_MUST_HAVES, {
+        message: `List at least ${MIN_MUST_HAVES} must-haves, one per line`,
+      }),
+    trainable: z.string().trim().max(4000).optional().or(z.literal("")),
+    dealBreakers: z
+      .string()
+      .trim()
+      .min(MIN_DEAL_BREAKERS, "Tell us what rules someone out, even if it is obvious to you")
+      .max(2000),
+
+    location: z.string().trim().min(2, "Where is this role based?").max(160),
+    workModel: z.enum(WORK_MODELS, { errorMap: () => ({ message: "Choose how this role works" }) }),
+    onsiteDays: z.coerce.number().int().min(0).max(7).optional(),
+
+    currency: z.enum(COMP_CURRENCIES).default("USD"),
+    compensationPeriod: z.enum(COMP_PERIODS).default("year"),
+    salaryMin: z.coerce.number().min(1, "Enter the bottom of the range"),
+    salaryMax: z.coerce.number().min(1, "Enter the top of the range"),
+    compensationNote: z.string().trim().max(1000).optional().or(z.literal("")),
+
+    workAuthorization: z.enum(WORK_AUTHORIZATION_VALUES, {
+      errorMap: () => ({ message: "Choose the work authorisation rule for this role" }),
+    }),
+    workAuthorizationNote: z.string().trim().max(1000).optional().or(z.literal("")),
+
+    interviewProcess: z
+      .string()
+      .trim()
+      .min(MIN_INTERVIEW_PROCESS, "Describe the interview stages, even roughly")
+      .max(2000),
+    decisionMaker: z.string().trim().min(2, "Who makes the final hiring decision?").max(160),
+    targetStartDate: z.string().trim().max(40).optional().or(z.literal("")),
+
+
     consent: z.literal(true, {
       errorMap: () => ({ message: "You must accept the terms to continue" }),
     }),
