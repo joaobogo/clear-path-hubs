@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ErrorState } from "@/components/workspace/route-states";
+import { ErrorState } from "@/components/ds";
 import {
   Select,
   SelectContent,
