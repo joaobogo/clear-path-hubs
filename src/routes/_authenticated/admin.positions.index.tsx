@@ -24,6 +24,7 @@ const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
   status: fallback(z.string(), "").default(""),
   client: fallback(z.string(), "").default(""),
+  owner: fallback(z.string(), "").default(""),
   location: fallback(z.string(), "").default(""),
   sort: fallback(z.string(), "updated_desc").default("updated_desc"),
   page: fallback(z.number().int(), 1).default(1),
@@ -114,6 +115,7 @@ function PositionsPage() {
         q: search.q,
         status: search.status,
         client: search.client,
+        owner: search.owner,
         location: search.location,
         sort: search.sort,
         page: search.page,
@@ -125,6 +127,7 @@ function PositionsPage() {
           q: search.q || undefined,
           status: search.status || undefined,
           organization_id: search.client || undefined,
+          owner: search.owner || undefined,
           location: search.location || undefined,
           sort: search.sort as never,
           page: search.page,
@@ -153,6 +156,7 @@ function PositionsPage() {
   const activeFilters =
     (search.status ? 1 : 0) +
     (search.client ? 1 : 0) +
+    (search.owner ? 1 : 0) +
     (search.location ? 1 : 0) +
     (search.q ? 1 : 0);
 
@@ -179,6 +183,7 @@ function PositionsPage() {
                         q: undefined,
                         status: undefined,
                         client: undefined,
+                        owner: undefined,
                         location: undefined,
                         sort: undefined,
                         page: 1,

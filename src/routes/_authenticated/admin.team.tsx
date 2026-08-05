@@ -21,6 +21,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useConfirmAction } from "@/components/ds";
+import { WorkloadTable } from "@/components/admin/workload-table";
 
 const searchSchema = z.object({ org: z.string().uuid().optional() });
 
@@ -49,6 +50,8 @@ function TeamPage() {
           organization.
         </p>
       </header>
+
+      <WorkloadTable />
 
       <div className="grid gap-6 md:grid-cols-[240px_1fr]">
         <Card className="p-3">
