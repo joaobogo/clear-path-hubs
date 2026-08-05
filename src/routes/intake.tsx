@@ -1351,54 +1351,38 @@ function ExpressIntakePage() {
         {step === 2 && (
         <Section id="section-people" title="Who you need" step={2}>
           <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-            These two answers decide whether your first shortlist lands.
+            One list. Tag each requirement so sourcing chases the right people instead of a wish list.
           </p>
 
-          <Field
-            label="Must-haves"
-            error={errors.mustHaves}
-            required
-            hint="One per line. Only what you would reject an otherwise-great candidate for."
-          >
-            <Textarea
-              value={state.mustHaves}
-              onChange={(e) => set("mustHaves", e.target.value)}
-              rows={4}
-              placeholder={"5+ years in clinical operations\nHas run a site through a CQC inspection\nFluent written English"}
-            />
-          </Field>
+          <RequirementsList
+            items={state.requirements}
+            onChange={setRequirements}
+            rowErrors={rowErrors}
+            listError={errors.requirements || null}
+            needsConfirm={
+              validateRequirements(state.requirements, {
+                manyConfirmed: state.manyMustHavesConfirmed,
+              }).needsConfirm
+            }
+            manyConfirmed={state.manyMustHavesConfirmed}
+            onConfirmMany={(confirmed) => {
+              set("manyMustHavesConfirmed", confirmed);
+              if (confirmed) setErrors((e) => ({ ...e, requirements: "" }));
+            }}
+            roleTitle={state.roleTitle}
+            suggestions={suggestions}
+            onRetrySuggestions={() => {
+              const jd = state.jobDescriptionText.trim();
+              if (jd.length < MIN_JD_TEXT) return;
+              suggestedForRef.current = "";
+              void fetchSuggestions(jd, state.roleTitle);
+            }}
+          />
+
           <Example>
-            Must-have: "Has managed a P&amp;L above $2M." Not a must-have: "Knows our scheduling tool" —
-            that is trainable.
+            Must have: "Has managed a P&amp;L above $2M." Can be trained: "Knows our scheduling
+            tool" — that one never rules anybody out.
           </Example>
-
-          <Field
-            label="Nice to have"
-            error={errors.niceToHaves}
-            hint="One per line. Real advantages, but you would still hire someone without them."
-          >
-            <Textarea
-              value={state.niceToHaves}
-              onChange={(e) => set("niceToHaves", e.target.value)}
-              rows={3}
-              placeholder={"Multi-site experience\nWorked in a regulated environment"}
-            />
-          </Field>
-
-          <Field
-            label="Willing to train"
-            error={errors.trainable}
-            hint="One per line. Naming these widens the pool without lowering the bar."
-          >
-            <Textarea
-              value={state.trainable}
-              onChange={(e) => set("trainable", e.target.value)}
-              rows={3}
-              placeholder={"Our EHR system\nExperience with multi-site rollouts"}
-            />
-          </Field>
-
-
         </Section>
         )}
 
@@ -1673,9 +1657,27 @@ function ExpressIntakePage() {
                   title="Who you need"
                   target="section-people"
                   rows={[
-                    ["Must-haves", splitLines(state.mustHaves).join(" · ")],
-                    ["Nice to have", splitLines(state.niceToHaves).join(" · ")],
-                    ["Willing to train", splitLines(state.trainable).join(" · ")],
+                    [
+                      "Must have",
+                      state.requirements
+                        .filter((r) => r.tag === "must_have")
+                        .map((r) => r.text)
+                        .join(" · "),
+                    ],
+                    [
+                      "Nice to have",
+                      state.requirements
+                        .filter((r) => r.tag === "nice_to_have")
+                        .map((r) => r.text)
+                        .join(" · "),
+                    ],
+                    [
+                      "Can be trained (never filtered)",
+                      state.requirements
+                        .filter((r) => r.tag === "trainable")
+                        .map((r) => r.text)
+                        .join(" · "),
+                    ],
                   ]}
                 />
                 <ReviewBlock
