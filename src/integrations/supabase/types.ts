@@ -1764,8 +1764,13 @@ export type Database = {
           body: string
           candidate_match_id: string
           created_at: string
+          edited_at: string | null
           id: string
+          note_type: string
           organization_id: string
+          revision_group_id: string
+          revision_number: number
+          superseded_at: string | null
           updated_at: string
           visibility: string
         }
@@ -1774,8 +1779,13 @@ export type Database = {
           body: string
           candidate_match_id: string
           created_at?: string
+          edited_at?: string | null
           id?: string
+          note_type?: string
           organization_id: string
+          revision_group_id: string
+          revision_number?: number
+          superseded_at?: string | null
           updated_at?: string
           visibility?: string
         }
@@ -1784,8 +1794,13 @@ export type Database = {
           body?: string
           candidate_match_id?: string
           created_at?: string
+          edited_at?: string | null
           id?: string
+          note_type?: string
           organization_id?: string
+          revision_group_id?: string
+          revision_number?: number
+          superseded_at?: string | null
           updated_at?: string
           visibility?: string
         }
@@ -4548,37 +4563,55 @@ export type Database = {
         Row: {
           author_user_id: string | null
           body: string
+          client_shareable: boolean
           created_at: string
+          edited_at: string | null
           entity_id: string
           entity_type: string
           id: string
           kind: string
+          note_type: string
           organization_id: string | null
           pinned: boolean
+          revision_group_id: string
+          revision_number: number
+          superseded_at: string | null
           updated_at: string
         }
         Insert: {
           author_user_id?: string | null
           body: string
+          client_shareable?: boolean
           created_at?: string
+          edited_at?: string | null
           entity_id: string
           entity_type: string
           id?: string
           kind?: string
+          note_type?: string
           organization_id?: string | null
           pinned?: boolean
+          revision_group_id: string
+          revision_number?: number
+          superseded_at?: string | null
           updated_at?: string
         }
         Update: {
           author_user_id?: string | null
           body?: string
+          client_shareable?: boolean
           created_at?: string
+          edited_at?: string | null
           entity_id?: string
           entity_type?: string
           id?: string
           kind?: string
+          note_type?: string
           organization_id?: string | null
           pinned?: boolean
+          revision_group_id?: string
+          revision_number?: number
+          superseded_at?: string | null
           updated_at?: string
         }
         Relationships: [
