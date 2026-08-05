@@ -85,6 +85,7 @@ import {
   getMatchFeedback,
   type FeedbackQueueItem,
 } from "@/lib/interview-feedback.functions";
+import { InterviewerAssignments } from "@/components/client/interviewer-assignments";
 
 export const Route = createFileRoute("/_authenticated/client/candidates/$id")({
  head: () => ({
