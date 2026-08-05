@@ -13,6 +13,7 @@ import {
   loadKpiRows,
   loadRoleStageDates,
   computeKpis,
+  loadClientEvidenceItems,
   toClientCandidateDTO,
   TOP_FIT_LABELS,
   type MatchStage,
@@ -1069,12 +1070,27 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       attribution,
     });
 
+    // Expected first shortlist — only when a commitment baseline exists.
+    const { data: commitment } = await context.supabase
+      .from("position_commitments")
+      .select("baseline_at, first_shortlist_days")
+      .eq("position_id", data.positionId)
+      .maybeSingle();
+    const firstShortlistExpectedAt = (() => {
+      const c = commitment as AnyRow | null;
+      if (!c?.baseline_at || c.first_shortlist_days == null) return null;
+      const base = Date.parse(String(c.baseline_at));
+      if (Number.isNaN(base)) return null;
+      return new Date(base + Number(c.first_shortlist_days) * 86_400_000).toISOString();
+    })();
+
     return {
       position,
       matches: (matches as AnyRow[]) ?? [],
       activity,
       launch,
       timeline,
+      first_shortlist_expected_at: firstShortlistExpectedAt,
       summary: {
         openings,
         hires,
@@ -1158,8 +1174,16 @@ export const getClientCandidates = createServerFn({ method: "GET" })
     const { data: rows, error } = await q.order("delivered_at", { ascending: false });
     if (error) throw new Error(error.message);
 
+    // Verified, shareable evidence for the shortlist cards.
+    const evidenceByMatch = await loadClientEvidenceItems(
+      context.supabase,
+      ((rows as AnyRow[]) ?? []).map((r) => r.id as string),
+    );
+
     // Map to sanitized client-safe DTOs first — filters below operate on those.
-    let dtos = ((rows as AnyRow[]) ?? []).map(toClientCandidateDTO);
+    let dtos = ((rows as AnyRow[]) ?? []).map((r) =>
+      toClientCandidateDTO({ ...r, evidence_items: evidenceByMatch.get(r.id as string) ?? [] }),
+    );
 
     if (data.filter && data.filter !== "all") {
       dtos = dtos.filter((d) => {
@@ -1244,8 +1268,12 @@ export const getClientCandidate = createServerFn({ method: "GET" })
       (a, b) =>
         (a.screening_questions?.display_order ?? 0) - (b.screening_questions?.display_order ?? 0),
     );
+    const evidenceItems =
+      (await loadClientEvidenceItems(context.supabase, [data.matchId])).get(data.matchId) ?? [];
+
     const matchWithAnswers = {
       ...(match as AnyRow),
+      evidence_items: evidenceItems,
       application_answers: answers,
       audit_events: ((auditRes as AnyRow).data as AnyRow[]) ?? [],
     };
