@@ -38,6 +38,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FormShell } from "@/components/marketing/form-shell";
 import { TransparencyPanel } from "@/components/candidate/transparency-panel";
+import { Loader2 } from "lucide-react";
+
 
 const EMPTY_FORM = {
   full_name: "",
