@@ -56,6 +56,12 @@ import { HireHandoffPanel, HandoffSkeleton } from "@/components/client/hire-hand
 import { getRoleClosure } from "@/lib/role-closure.functions";
 import { CloseRoleDialog, RoleClosureRecord } from "@/components/client/close-role-dialog";
 import { isArchivedStatus } from "@/lib/role-closure";
+import { getRoleRecap } from "@/lib/role-recap.functions";
+import {
+  RoleRecapPanel,
+  RoleRecapSkeleton,
+  RoleRecapError,
+} from "@/components/client/role-recap";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  head: () => ({
