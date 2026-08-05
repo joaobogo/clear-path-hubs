@@ -7,6 +7,7 @@ import { getAdminMatch, applyReviewDecision } from "@/lib/processing.functions";
 import { getReviewQueueIds } from "@/lib/admin-ops.functions";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { EvidenceCompletenessGate } from "@/components/admin/evidence-completeness-gate";
+import { RejectReasonDialog } from "@/components/admin/reject-reason-dialog";
 import { getEvidenceCompleteness } from "@/lib/evidence/completeness.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -69,6 +70,7 @@ function ReviewScreen() {
 
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
+  const [rejectOpen, setRejectOpen] = useState(false);
   const noteRef = useRef<HTMLTextAreaElement>(null);
 
   const m = (data as Any).match;
@@ -172,7 +174,7 @@ function ReviewScreen() {
           break;
         case "r":
           e.preventDefault();
-          void run("archive", "Rejected");
+          setRejectOpen(true);
           break;
         case "n":
         case "j":
@@ -355,7 +357,7 @@ function ReviewScreen() {
           </Button>
           <Button
             variant="destructive"
-            onClick={() => run("archive", "Rejected")}
+            onClick={() => setRejectOpen(true)}
             disabled={!!busy}
             className="gap-1.5"
           >
@@ -366,6 +368,11 @@ function ReviewScreen() {
           <Keyboard className="h-3 w-3" /> J/K next & previous
         </span>
       </footer>
+      <RejectReasonDialog
+        open={rejectOpen}
+        onOpenChange={setRejectOpen}
+        onConfirm={rejectNow}
+      />
     </div>
   );
 }
