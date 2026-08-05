@@ -289,12 +289,25 @@ export async function loadAttentionQueue(
 /** Staff who can own a position. */
 export async function listOwnerOptions(admin: Admin) {
   const a = admin as unknown as { from: (t: string) => any };
-  const roles = await a.from("user_roles").select("user_id").eq("role", "admin");
+  const [roles, staff] = await Promise.all([
+    a.from("user_roles").select("user_id").eq("role", "admin"),
+    a
+      .from("memberships")
+      .select("user_id")
+      .eq("status", "active")
+      .in("role", ["platform_admin", "operations"]),
+  ]);
   if (roles.error) throw new Error(roles.error.message);
+  if (staff.error) throw new Error(staff.error.message);
   const ids = Array.from(
-    new Set(((roles.data ?? []) as Array<{ user_id: string }>).map((r) => r.user_id)),
+    new Set(
+      [...((roles.data ?? []) as Array<{ user_id: string }>), ...((staff.data ?? []) as Array<{ user_id: string }>)].map(
+        (r) => r.user_id,
+      ),
+    ),
   );
   if (ids.length === 0) return [] as Array<{ user_id: string; name: string }>;
+
   const profs = await a
     .from("profiles")
     .select("auth_user_id, full_name, email")
