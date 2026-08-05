@@ -26,6 +26,8 @@ import {
 } from "@/lib/client-pipeline-language";
 import { computeRoleProgress } from "@/lib/client-role-progress";
 import { computeRoleRisk } from "@/lib/client-role-risk";
+import { computeHiringHealth } from "@/lib/client-hiring-health";
+
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
