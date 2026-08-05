@@ -677,8 +677,9 @@ export const updateMyProfileSection = createServerFn({ method: "POST" })
     const supabase = context.supabase as AnyRow;
     const { data: cp } = await supabase
       .from("candidate_profiles")
-      .select("id")
+      .select("id, availability")
       .eq("user_id", context.userId)
+
       .maybeSingle();
     if (!cp) return { ok: false, trace_id: trace, message: "No profile" };
 
