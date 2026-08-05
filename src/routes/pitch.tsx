@@ -81,7 +81,7 @@ const ENGINE_STEPS = [
   },
   {
     n: "03",
-    title: "Ranked shortlist in 14 days",
+    title: "Ranked shortlist in days",
     body: "Top candidates delivered with evidence, interview guide, and fit narrative. Silver medalists stay in your workspace, not ours.",
   },
   {
@@ -118,7 +118,7 @@ const ECONOMICS: Array<{
     price: PRICE_PILOT_DISPLAY,
     unit: " one-time",
     fits: PILOT_ROLES_LABEL,
-    line: "Test the model on one critical hire. 14-day turnaround.",
+    line: "Test the model on one critical hire. turnaround in days.",
   },
   {
     tier: "Multi Position",

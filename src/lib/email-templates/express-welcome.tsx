@@ -29,7 +29,7 @@ const ExpressWelcome = ({ contactName, companyName, roleTitle, workspaceUrl }: P
     </Text>
     <Text style={text}>
       First candidate activity usually begins within 3–5 days after the search goes live. Your
-      one-time pilot runs for 14 days and covers one role.
+      one-time pilot runs in days and covers one role.
     </Text>
     {workspaceUrl && (
       <Button style={button} href={workspaceUrl}>

@@ -239,7 +239,7 @@ export function GeneratedBlueprintPanel({
               <p>You do not need to keep this page open. TaaSFlow will email you when the role blueprint is ready.</p>
               <p>
                 First candidate activity usually begins within 3–5 days after the search goes live. Your
-                complete pilot runs for 14 days.
+                complete pilot runs in days.
               </p>
             </div>
           )}

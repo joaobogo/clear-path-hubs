@@ -435,7 +435,7 @@ function SlideNext() {
         {[
           "Confirm the roles for the next 90 days.",
           "Select the package (Pilot, Multi, Sprint, or Custom) and start date.",
-          "Kick off intake — first shortlist within 14 days.",
+          "Kick off intake — first shortlist in days.",
           "Weekly operating review starts week two.",
         ].map((t, idx) => (
           <li

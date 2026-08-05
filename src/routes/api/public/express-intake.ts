@@ -795,7 +795,7 @@ export const Route = createFileRoute("/api/public/express-intake")({
               companyName: data.companyName.trim(),
               roleTitle: data.roleTitle.trim(),
               nextStep:
-                "Complete payment in your workspace to publish the role and start the 14-day pilot.",
+                "Complete payment in your workspace to publish the role and start the pilot.",
               dueDate: due,
               workspaceUrl: absoluteUrl(`/client/positions/${positionId}`),
             },

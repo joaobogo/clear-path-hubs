@@ -159,7 +159,7 @@ const IMPLEMENTATION = [
   { step: "Week 0", title: "Scoping call", body: "Role families, business units, expected volume, stakeholders and reporting needs." },
   { step: "Week 1", title: "Account design", body: "Business units, hiring teams, permissions and dashboards configured to match your org." },
   { step: "Week 1–2", title: "Intake and calibration", body: "Criteria and weightings approved per role family. Agent capacity assigned and oversight briefed." },
-  { step: "Week 2–3", title: "First ranked shortlists", body: "Delivery begins in the workspace, 7–14 days from an approved brief." },
+  { step: "Week 2–3", title: "First ranked shortlists", body: "Delivery begins in the workspace, in days from an approved brief." },
   { step: "Ongoing", title: "Review cadence", body: "Calibration on the first batches, then a standing review on volume, quality and cycle time." },
 ];
 

@@ -3125,7 +3125,7 @@ function ExpressIntakePage() {
                 <li>1. Your account and workspace are created — free.</li>
                 <li>2. We review the role and confirm we can deliver it.</li>
                 <li>
-                  3. Only then do you pay the ${PRICE_PILOT_USD} one-time pilot fee. The 14 days start
+                  3. Only then do you pay the ${PRICE_PILOT_USD} one-time pilot fee. The pilot window starts
                   when the search goes live.
                 </li>
               </ol>
@@ -3148,7 +3148,7 @@ function ExpressIntakePage() {
                 *
               </span>
               <label htmlFor="pilot-acknowledgement" className="text-sm leading-relaxed">
-                I understand there is no charge today, and that the ${PRICE_PILOT_USD} one-time 14-day
+                I understand there is no charge today, and that the ${PRICE_PILOT_USD} one-time
                 pilot is billed only after my account is created and the role is accepted. The pilot
                 can be used once per company, for one position — a second sign-up or a new email does
                 not create a new pilot. Separate locations, franchises and subsidiaries are reviewed

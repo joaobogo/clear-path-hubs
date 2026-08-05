@@ -106,9 +106,9 @@ export interface ScoreBand {
 export const BUSINESS_RULES_DEFAULTS = {
   delivery: {
     /** Canonical first-shortlist promise. Resolves prior "48h / one week / 14 days" conflicts. */
-    firstShortlistLabel: "First ranked shortlist within 14 days",
-    firstShortlistShort: "within 14 days",
-    turnaroundLabel: TURNAROUND_LABEL, // "14-day turnaround"
+    firstShortlistLabel: "First ranked shortlist in days",
+    firstShortlistShort: "in days",
+    turnaroundLabel: TURNAROUND_LABEL, // "turnaround in days"
     recurringCadence: "Weekly refresh after go-live",
     recurringCadenceShort: "weekly",
     responseTime: "We reply to inbound within one business day",
@@ -136,7 +136,7 @@ export const BUSINESS_RULES_DEFAULTS = {
       priceDisplay: PRICE_PILOT_DISPLAY,
       cta: "book_a_call",
       deliverables: [
-        "First ranked shortlist within 14 days",
+        "First ranked shortlist in days",
         "Top 10 evidence-scored candidates",
         "Scoring rubric with fit notes",
         "3 months workspace access",
@@ -152,7 +152,7 @@ export const BUSINESS_RULES_DEFAULTS = {
       priceDisplay: PRICE_MULTI_DISPLAY,
       cta: "book_a_call",
       deliverables: [
-        "First ranked shortlist within 14 days",
+        "First ranked shortlist in days",
         "Top 10 per role, weekly refresh",
         "Shared intake context across roles",
         "3 months workspace access",
@@ -168,7 +168,7 @@ export const BUSINESS_RULES_DEFAULTS = {
       priceDisplay: PRICE_SPRINT_DISPLAY,
       cta: "book_a_call",
       deliverables: [
-        "First ranked shortlist within 14 days",
+        "First ranked shortlist in days",
         "Parallel sourcing across roles",
         "Executive-portfolio dashboard",
         "3 months workspace access",

@@ -400,7 +400,7 @@ function renderIntakeWelcomeEmail(args: {
     ],
     [
       "Evaluation model in progress",
-      "Our team is calibrating the scoring rubric for this role. First ranked candidates follow within 7–14 days.",
+      "Our team is calibrating the scoring rubric for this role. First ranked candidates follow in days.",
     ],
   ];
 
