@@ -244,10 +244,15 @@ function PositionsPage() {
       </div>
 
       {search.tab === "attention" ? (
-        <PositionsAttentionQueue includeTest={search.show_test} />
+        <>
+          <OwnershipCoveragePanel includeTest={search.show_test} />
+          <PositionsAttentionQueue includeTest={search.show_test} />
+        </>
       ) : (
       <>
+      <OwnershipCoveragePanel includeTest={search.show_test} />
       <PublishGatePanel includeTest={search.show_test} />
+
       <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-card p-3">
 
         <SavedViewsBar
