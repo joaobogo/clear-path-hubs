@@ -5,6 +5,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { applySchema, composeLocation, type ApplyInput } from "./apply-schema";
 import { normalizeCompletionSeconds } from "./jobs/apply-effort";
+import type { ExistingApplicationSummary } from "./candidate/existing-application.server";
 
 
 export type SubmitApplicationResult =
@@ -269,24 +270,35 @@ export const submitApplication = createServerFn({ method: "POST" })
       // (candidate, position) IS this submission. Rapid double taps, a retried request
       // or a reload all resolve to the original reference — never an error, and never a
       // second confirmation email (we return before any notification is emitted).
-      const { data: existingApps, error: appFindErr } = await supabaseAdmin
+      // A withdrawn, rejected or archived earlier application is closed: it does
+      // not block a fresh submission, and we say so on the confirmation.
+      const CLOSED_STATUSES = ["withdrawn", "rejected", "archived"] as const;
+      const { data: allPrior, error: appFindErr } = await supabaseAdmin
         .from("applications")
-        .select("id,created_at")
+        .select("id,created_at,status")
         .eq("candidate_profile_id", candidateProfileId)
         .eq("position_id", data.position_id)
-        .neq("status", "withdrawn")
-        .order("created_at", { ascending: true })
-        .limit(1);
+        .order("created_at", { ascending: true });
       if (appFindErr) throw appFindErr;
-      const existingApp = existingApps?.[0];
+      const existingApp = (allPrior ?? []).find(
+        (a) => !CLOSED_STATUSES.includes(a.status as (typeof CLOSED_STATUSES)[number]),
+      );
+      const priorClosed = (allPrior ?? []).some((a) =>
+        CLOSED_STATUSES.includes(a.status as (typeof CLOSED_STATUSES)[number]),
+      );
 
       if (existingApp) {
+        const { loadExistingApplicationSummary } = await import(
+          "./candidate/existing-application.server"
+        );
+        const existing = await loadExistingApplicationSummary(existingApp.id);
         return {
           ok: true,
           application_id: existingApp.id,
           reference: ref6(existingApp.id),
           tracking_path: `/apply/received/${existingApp.id}`,
           deduped: true,
+          existing,
           account: accountOutcome,
         };
       }
@@ -372,17 +384,21 @@ export const submitApplication = createServerFn({ method: "POST" })
           .select("id,created_at")
           .eq("candidate_profile_id", candidateProfileId)
           .eq("position_id", data.position_id)
-          .neq("status", "withdrawn")
+          .not("status", "in", "(withdrawn,rejected,archived)")
           .order("created_at", { ascending: true })
           .limit(1);
         const race = raceRows?.[0];
         if (race) {
+          const { loadExistingApplicationSummary } = await import(
+            "./candidate/existing-application.server"
+          );
           return {
             ok: true,
             application_id: race.id,
             reference: ref6(race.id),
             tracking_path: `/apply/received/${race.id}`,
             deduped: true,
+            existing: await loadExistingApplicationSummary(race.id),
             account: accountOutcome,
           };
         }
@@ -562,6 +578,7 @@ export const submitApplication = createServerFn({ method: "POST" })
         reference: ref6(appRow.id),
         tracking_path: `/apply/received/${appRow.id}`,
         deduped: false,
+        prior_closed: priorClosed,
         account: accountOutcome,
       };
     } catch (err) {
