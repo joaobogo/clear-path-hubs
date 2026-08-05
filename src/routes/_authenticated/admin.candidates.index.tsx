@@ -12,6 +12,7 @@ import {
 } from "@/lib/admin-candidates.functions";
 import { listOrgOptions, listPositionOptions } from "@/lib/admin.functions";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
+import { REJECTION_REASONS } from "@/lib/client-decision-reasons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -56,6 +57,7 @@ const searchSchema = z.object({
   critical: fallback(z.string(), "").default(""),
   country: fallback(z.string(), "").default(""),
   source: fallback(z.string(), "").default(""),
+  rejection_reason: fallback(z.string(), "").default(""),
   date_from: fallback(z.string(), "").default(""),
   date_to: fallback(z.string(), "").default(""),
   sort: fallback(z.string(), "updated_desc").default("updated_desc"),
@@ -67,7 +69,7 @@ type SearchState = z.infer<typeof searchSchema>;
 const FILTER_KEYS = [
   "q", "organization_id", "position_id", "stage", "admin_status", "processing_state",
   "client_visibility", "eligibility_status", "score_band", "confidence",
-  "contact_released", "critical", "country", "source", "date_from", "date_to",
+  "contact_released", "critical", "country", "source", "rejection_reason", "date_from", "date_to",
 ] as const;
 
 const EMPTY_DEFAULTS = Object.fromEntries(FILTER_KEYS.map((k) => [k, ""]));
@@ -144,6 +146,7 @@ const FILTER_LABELS: Partial<Record<keyof SearchState, string>> = {
   critical: "Flags",
   country: "Location",
   source: "Source",
+  rejection_reason: "Rejection reason",
   date_from: "From",
   date_to: "To",
 };
@@ -185,6 +188,7 @@ function CandidatesPage() {
       critical: search.critical || undefined,
       country: search.country || undefined,
       source: search.source || undefined,
+      rejection_reason: search.rejection_reason || undefined,
       date_from: search.date_from || undefined,
       date_to: search.date_to ? `${search.date_to}T23:59:59Z` : undefined,
       sort: search.sort as never,
@@ -419,6 +423,13 @@ function CandidatesPage() {
             value: s,
             label: s,
           }))}
+        />
+        <FilterSelect
+          label="Rejection reason"
+          value={search.rejection_reason}
+          onChange={(v) => setF({ rejection_reason: v })}
+          anyLabel="Any reason"
+          options={REJECTION_REASONS.map((r) => ({ value: r.code, label: r.label }))}
         />
         <div className="flex items-center gap-1">
           <Input
