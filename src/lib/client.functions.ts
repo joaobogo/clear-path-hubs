@@ -27,6 +27,7 @@ import {
 import { computeRoleProgress } from "@/lib/client-role-progress";
 import { computeRoleRisk } from "@/lib/client-role-risk";
 import { computeHiringHealth } from "@/lib/client-hiring-health";
+import { buildQueue, type QueueItem } from "@/lib/client-decision-queue";
 
 
 
@@ -673,6 +674,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
       action_required,
       whats_next,
       decision_queue,
+      decision_queue_meta,
       latest_candidates,
       recent_messages: (recentMessages as AnyRow[]) ?? [],
       recent_activity: (events as AnyRow[]) ?? [],
