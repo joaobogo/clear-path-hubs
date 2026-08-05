@@ -835,12 +835,12 @@ function ApplyPage() {
 
         {serverError && (
           <Alert variant="destructive" className="mt-6" data-testid="apply-server-error">
-            <AlertTitle>Something went wrong</AlertTitle>
+            <AlertTitle>No application was created</AlertTitle>
             <AlertDescription>
               {serverError.message}
               <span className="block mt-1">
-                Nothing was lost — your answers are still here. Press submit again when you're
-                ready.
+                Nothing was sent and nothing was lost — your answers are still here. Press submit
+                again when you're ready.
               </span>
               {serverError.trace_id && (
                 <span className="block mt-1 text-xs opacity-70">
@@ -850,6 +850,7 @@ function ApplyPage() {
             </AlertDescription>
           </Alert>
         )}
+
 
         {Object.keys(fieldErrors).length > 0 && (
           <Alert variant="destructive" className="mt-6" data-testid="apply-step-error">
