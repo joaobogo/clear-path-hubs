@@ -72,6 +72,8 @@ export type WorkspaceShellProps = {
   searchScope?: "admin" | "client";
   /** Contextual page-level primary action (top-bar CTA + mobile sticky). */
   primaryAction?: WorkspacePrimaryAction;
+  /** Optional slot rendered in the top bar, before the notification bell. */
+  headerSlot?: ReactNode;
   children: ReactNode;
 };
 
@@ -289,6 +291,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
     searchScope,
     primaryAction,
     children,
+    headerSlot,
   } = props;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { collapsed, toggle, mobileOpen, setMobileOpen } = useSidebarState();
@@ -548,6 +551,8 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
           >
             <HelpCircle className="h-4 w-4" />
           </a>
+
+          {headerSlot}
 
           <NotificationBell />
 
