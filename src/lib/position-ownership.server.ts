@@ -245,6 +245,7 @@ export async function loadCoverageQueue(
       backup_owner_user_id: p.backup_owner_user_id,
       backup_owner_name: backup?.name ?? null,
       backup_owner_is_active: Boolean(p.backup_owner_user_id && backup?.is_active),
+      backup_owner_assigned_at: p.backup_owner_assigned_at,
       needs_reassignment: Boolean(p.needs_reassignment),
       reassignment_flagged_at: p.reassignment_flagged_at,
       reassignment_reason: p.reassignment_reason,
