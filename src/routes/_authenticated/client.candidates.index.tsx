@@ -597,26 +597,27 @@ function CandidatesPage() {
  onChange={(e) => setF({ location: e.target.value })}
  aria-label="Filter by location"
  />
- <div className="flex items-center gap-2 justify-end">
- <Select value={search.sort} onValueChange={(v) => setF({ sort: v })}>
- <SelectTrigger className="min-w-[10rem]" aria-label="Sort"><SelectValue /></SelectTrigger>
- <SelectContent>
- {SORT_OPTIONS.map((o) => (
- <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
- ))}
- </SelectContent>
- </Select>
- <div className="inline-flex rounded-md border p-0.5">
+  <div className="flex items-stretch gap-2 justify-end">
+  <Select value={search.sort} onValueChange={(v) => setF({ sort: v })}>
+  <SelectTrigger className="h-10 min-w-[10rem]" aria-label="Sort"><SelectValue /></SelectTrigger>
+  <SelectContent>
+  {SORT_OPTIONS.map((o) => (
+  <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
+  ))}
+  </SelectContent>
+  </Select>
+  <div className="inline-flex h-10 shrink-0 items-center rounded-md border p-0.5">
+
  <button
  onClick={() => setF({ view: "cards" })}
- className={`px-2 py-1 text-xs rounded ${search.view === "cards" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+ className={`h-full whitespace-nowrap px-2.5 text-xs rounded ${search.view === "cards" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
  aria-pressed={search.view === "cards"}
  >
  Cards
  </button>
  <button
  onClick={() => setF({ view: "list" })}
- className={`px-2 py-1 text-xs rounded ${search.view === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+ className={`h-full whitespace-nowrap px-2.5 text-xs rounded ${search.view === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
  aria-pressed={search.view === "list"}
  >
  List
@@ -625,7 +626,7 @@ function CandidatesPage() {
  onClick={() => { setF({ view: "compare" }); setCompareOpen(true); }}
  disabled={!compareCheck.ok}
  title={compareCheck.reason ?? undefined}
- className={`px-2 py-1 text-xs rounded disabled:opacity-40 ${search.view === "compare" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+ className={`h-full whitespace-nowrap px-2.5 text-xs rounded disabled:opacity-40 ${search.view === "compare" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
  aria-pressed={search.view === "compare"}
  >
  Side by side
