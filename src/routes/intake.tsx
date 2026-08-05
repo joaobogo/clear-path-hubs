@@ -179,6 +179,20 @@ async function fileToBase64(file: File): Promise<string> {
   return btoa(binary);
 }
 
+/**
+ * Older drafts stored three line-separated strings. Rebuild the tagged list from
+ * them so a returning client never loses their requirements.
+ */
+function withRequirements(patch: Partial<FormState>): Partial<FormState> {
+  if (Array.isArray(patch.requirements) && patch.requirements.length > 0) return patch;
+  const rebuilt = linesToRequirements({
+    mustHaves: patch.mustHaves ?? "",
+    niceToHaves: patch.niceToHaves ?? "",
+    trainable: patch.trainable ?? "",
+  });
+  return rebuilt.length > 0 ? { ...patch, requirements: rebuilt } : patch;
+}
+
 function ExpressIntakePage() {
   const navigate = useNavigate();
   const [state, setState] = useState<FormState>(EMPTY);
@@ -341,7 +355,7 @@ function ExpressIntakePage() {
         const parsed = JSON.parse(raw) as Partial<FormState>;
         setState((s) => ({
           ...s,
-          ...parsed,
+          ...withRequirements(parsed),
           password: "",
           confirmPassword: "",
           consent: false,
@@ -370,7 +384,12 @@ function ExpressIntakePage() {
         try {
           const remote = await loadIntakeDraft();
           if (remote?.payload) {
-            setState((s3) => ({ ...s3, ...(remote.payload as Partial<FormState>), password: "", confirmPassword: "" }));
+            setState((s3) => ({
+              ...s3,
+              ...withRequirements(remote.payload as Partial<FormState>),
+              password: "",
+              confirmPassword: "",
+            }));
             if (remote.updatedAt) setSavedAt(remote.updatedAt);
           }
         } catch {
