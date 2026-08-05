@@ -170,6 +170,7 @@ import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/em
 import { Route as ApiPublicPipelineRunRouteImport } from './routes/api/public/pipeline.run'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicIntakeStatusIdRouteImport } from './routes/api/public/intake-status.$id'
+import { Route as ApiPublicIntakeCarryIntakeIdRouteImport } from './routes/api/public/intake-carry.$intakeId'
 import { Route as ApiPublicDigestWeeklyRouteImport } from './routes/api/public/digest/weekly'
 import { Route as ApiPublicCandidateClosureNoticesRouteImport } from './routes/api/public/candidate/closure-notices'
 import { Route as ApiPublicBookingCalendlyWebhookRouteImport } from './routes/api/public/booking/calendly-webhook'
@@ -1059,6 +1060,12 @@ const ApiPublicIntakeStatusIdRoute = ApiPublicIntakeStatusIdRouteImport.update({
   path: '/api/public/intake-status/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicIntakeCarryIntakeIdRoute =
+  ApiPublicIntakeCarryIntakeIdRouteImport.update({
+    id: '/api/public/intake-carry/$intakeId',
+    path: '/api/public/intake-carry/$intakeId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicDigestWeeklyRoute = ApiPublicDigestWeeklyRouteImport.update({
   id: '/api/public/digest/weekly',
   path: '/api/public/digest/weekly',
@@ -1340,6 +1347,7 @@ export interface FileRoutesByFullPath {
   '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
+  '/api/public/intake-carry/$intakeId': typeof ApiPublicIntakeCarryIntakeIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
@@ -1512,6 +1520,7 @@ export interface FileRoutesByTo {
   '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
+  '/api/public/intake-carry/$intakeId': typeof ApiPublicIntakeCarryIntakeIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
@@ -1696,6 +1705,7 @@ export interface FileRoutesById {
   '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
+  '/api/public/intake-carry/$intakeId': typeof ApiPublicIntakeCarryIntakeIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
@@ -1880,6 +1890,7 @@ export interface FileRouteTypes {
     | '/api/public/booking/calendly-webhook'
     | '/api/public/candidate/closure-notices'
     | '/api/public/digest/weekly'
+    | '/api/public/intake-carry/$intakeId'
     | '/api/public/intake-status/$id'
     | '/api/public/payments/webhook'
     | '/api/public/pipeline/run'
@@ -2052,6 +2063,7 @@ export interface FileRouteTypes {
     | '/api/public/booking/calendly-webhook'
     | '/api/public/candidate/closure-notices'
     | '/api/public/digest/weekly'
+    | '/api/public/intake-carry/$intakeId'
     | '/api/public/intake-status/$id'
     | '/api/public/payments/webhook'
     | '/api/public/pipeline/run'
@@ -2235,6 +2247,7 @@ export interface FileRouteTypes {
     | '/api/public/booking/calendly-webhook'
     | '/api/public/candidate/closure-notices'
     | '/api/public/digest/weekly'
+    | '/api/public/intake-carry/$intakeId'
     | '/api/public/intake-status/$id'
     | '/api/public/payments/webhook'
     | '/api/public/pipeline/run'
@@ -2340,6 +2353,7 @@ export interface RootRouteChildren {
   ApiPublicBookingCalendlyWebhookRoute: typeof ApiPublicBookingCalendlyWebhookRoute
   ApiPublicCandidateClosureNoticesRoute: typeof ApiPublicCandidateClosureNoticesRoute
   ApiPublicDigestWeeklyRoute: typeof ApiPublicDigestWeeklyRoute
+  ApiPublicIntakeCarryIntakeIdRoute: typeof ApiPublicIntakeCarryIntakeIdRoute
   ApiPublicIntakeStatusIdRoute: typeof ApiPublicIntakeStatusIdRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   ApiPublicPipelineRunRoute: typeof ApiPublicPipelineRunRoute
@@ -3477,6 +3491,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicIntakeStatusIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/intake-carry/$intakeId': {
+      id: '/api/public/intake-carry/$intakeId'
+      path: '/api/public/intake-carry/$intakeId'
+      fullPath: '/api/public/intake-carry/$intakeId'
+      preLoaderRoute: typeof ApiPublicIntakeCarryIntakeIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/digest/weekly': {
       id: '/api/public/digest/weekly'
       path: '/api/public/digest/weekly'
@@ -4029,6 +4050,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBookingCalendlyWebhookRoute: ApiPublicBookingCalendlyWebhookRoute,
   ApiPublicCandidateClosureNoticesRoute: ApiPublicCandidateClosureNoticesRoute,
   ApiPublicDigestWeeklyRoute: ApiPublicDigestWeeklyRoute,
+  ApiPublicIntakeCarryIntakeIdRoute: ApiPublicIntakeCarryIntakeIdRoute,
   ApiPublicIntakeStatusIdRoute: ApiPublicIntakeStatusIdRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   ApiPublicPipelineRunRoute: ApiPublicPipelineRunRoute,
