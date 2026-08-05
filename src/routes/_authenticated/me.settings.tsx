@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useConfirmAction } from "@/components/ds";
+import { AvailabilityBlock } from "@/components/candidate/availability-block";
 
 export const Route = createFileRoute("/_authenticated/me/settings")({
  head: () => ({
@@ -159,6 +160,12 @@ function SettingsPage() {
  Save preferences
  </Button>
  </section>
+
+ <AvailabilityBlock
+ availability={data?.profile?.availability ?? null}
+ profileTimezone={data?.profile?.timezone ?? null}
+ onSaved={() => qc.invalidateQueries({ queryKey: ["me-context"] })}
+ />
 
  <section className="rounded-lg border bg-card p-5 space-y-3">
  <h2 className="text-sm font-medium">Request a correction</h2>

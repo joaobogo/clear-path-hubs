@@ -5,6 +5,10 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { isValidTimezone } from "./scheduling";
 import { generateSlots, type AvailabilityWindow } from "./availability";
+import {
+  filterSlotsByPreference,
+  parseStoredPreference,
+} from "@/lib/candidate/availability-preference";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -144,6 +148,29 @@ async function windowsFor(supabase: AnyRow, orgId: string) {
   return (data ?? []) as AvailabilityWindow[];
 }
 
+
+/**
+ * The candidate's stated general availability, if they gave one. Used to reduce
+ * generated slots to times they said work — a preference, so if nothing fits we
+ * keep the full list rather than proposing nothing.
+ */
+async function candidatePreferenceFor(supabase: AnyRow, matchId: string | null) {
+  if (!matchId) return null;
+  const { data: match } = await supabase
+    .from("candidate_matches")
+    .select("candidate_profile_id")
+    .eq("id", matchId)
+    .maybeSingle();
+  const cpId = (match as AnyRow)?.candidate_profile_id as string | undefined;
+  if (!cpId) return null;
+  const { data: cp } = await supabase
+    .from("candidate_profiles")
+    .select("availability")
+    .eq("id", cpId)
+    .maybeSingle();
+  return parseStoredPreference((cp as AnyRow)?.availability);
+}
+
 /** Propose times generated from the org's saved availability windows. */
 export const proposeFromAvailability = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -168,8 +195,13 @@ export const proposeFromAvailability = createServerFn({ method: "POST" })
     if (windows.length === 0) throw new Error("no_availability_windows");
     const timezone = windows[0].timezone || "UTC";
     const duration = data.durationMinutes ?? Number(prev.duration_minutes ?? 60);
-    const slots = generateSlots({ windows, timezone, durationMinutes: duration });
-    if (slots.length === 0) throw new Error("no_slots_available");
+    const generated = generateSlots({ windows, timezone, durationMinutes: duration });
+    if (generated.length === 0) throw new Error("no_slots_available");
+    const preference = await candidatePreferenceFor(
+      context.supabase,
+      (prev.candidate_match_id as string) ?? null,
+    );
+    const slots = filterSlotsByPreference(generated, preference);
 
     const { error } = await context.supabase
       .from("interviews")
@@ -237,9 +269,16 @@ export const rescheduleInterview = createServerFn({ method: "POST" })
     const windows = await windowsFor(context.supabase, data.orgId);
     const timezone = windows[0]?.timezone || (prev.timezone as string) || "UTC";
     const duration = Number(prev.duration_minutes ?? 60);
+    const preference = await candidatePreferenceFor(
+      context.supabase,
+      (prev.candidate_match_id as string) ?? null,
+    );
     const slots =
       windows.length > 0
-        ? generateSlots({ windows, timezone, durationMinutes: duration })
+        ? filterSlotsByPreference(
+            generateSlots({ windows, timezone, durationMinutes: duration }),
+            preference,
+          )
         : [];
 
     const { error } = await context.supabase

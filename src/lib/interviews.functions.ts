@@ -5,6 +5,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import {
+  parseStoredPreference,
+  type AvailabilityPreference,
+} from "@/lib/candidate/availability-preference";
 import { isValidTimezone } from "./scheduling";
 import { assertProposedSlots, isEmail } from "./interview-proposal";
 
@@ -254,7 +258,7 @@ export const listClientInterviews = createServerFn({ method: "POST" })
     const [matchesRes, positionsRes] = await Promise.all([
       context.supabase
         .from("candidate_matches")
-        .select("id, candidate_profile_id, candidate_profiles:candidate_profile_id(id, display_name, email)")
+        .select("id, candidate_profile_id, candidate_profiles:candidate_profile_id(id, display_name, email, availability)")
         .in("id", matchIds),
       context.supabase
         .from("positions")
@@ -703,6 +707,8 @@ export type SchedulableCandidate = {
   position_title: string;
   stage: string;
   has_active_interview: boolean;
+  /** Stated once by the candidate — a preference, never a commitment. */
+  availability_preference: AvailabilityPreference | null;
 };
 
 export const listSchedulableCandidates = createServerFn({ method: "POST" })
@@ -738,6 +744,7 @@ export const listSchedulableCandidates = createServerFn({ method: "POST" })
       position_title: (r.positions?.title as string) ?? "Position",
       stage: r.stage as string,
       has_active_interview: activeSet.has(r.id as string),
+      availability_preference: parseStoredPreference(r.candidate_profiles?.availability),
     }));
     return { candidates };
   });

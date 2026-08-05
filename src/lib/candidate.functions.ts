@@ -8,6 +8,12 @@ import { computePendingAction } from "@/lib/candidate/pending-action";
 import { buildCandidateTimeline } from "@/lib/candidate/timeline";
 import { buildClosedOutcome } from "@/lib/candidate/closed-outcome";
 import { profileSectionPatchSchema } from "@/lib/candidate/profile-sections";
+import {
+  availabilityPreferenceSchema,
+  mergeIntoAvailability,
+  normalizePreference,
+  parseStoredPreference,
+} from "@/lib/candidate/availability-preference";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -671,8 +677,9 @@ export const updateMyProfileSection = createServerFn({ method: "POST" })
     const supabase = context.supabase as AnyRow;
     const { data: cp } = await supabase
       .from("candidate_profiles")
-      .select("id")
+      .select("id, availability")
       .eq("user_id", context.userId)
+
       .maybeSingle();
     if (!cp) return { ok: false, trace_id: trace, message: "No profile" };
 
@@ -696,9 +703,15 @@ export const updateMyProfileSection = createServerFn({ method: "POST" })
           work_authorization: data.values.work_authorization_note
             ? { note: data.values.work_authorization_note }
             : null,
-          availability: data.values.availability_note
-            ? { note: data.values.availability_note }
-            : null,
+          // Keep the stated general availability preference intact — the note
+          // and the preference live side by side on the same column.
+          availability: (() => {
+            const keep = parseStoredPreference(cp.availability);
+            const base: Record<string, unknown> = data.values.availability_note
+              ? { note: data.values.availability_note }
+              : {};
+            return keep ? mergeIntoAvailability(base, keep) : base;
+          })(),
           compensation_preferences: data.values.compensation_note
             ? { note: data.values.compensation_note }
             : null,
@@ -1158,4 +1171,31 @@ export const applyCvToApplications = createServerFn({ method: "POST" })
       })),
       skipped,
     };
+  });
+
+// ─── General availability: stated once, a preference not a commitment ───────
+
+export const updateMyAvailabilityPreference = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ preference: availabilityPreferenceSchema }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const trace = traceId();
+    const supabase = context.supabase as AnyRow;
+    const { data: cp } = await supabase
+      .from("candidate_profiles")
+      .select("id, availability")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    if (!cp) return { ok: false as const, trace_id: trace, message: "No profile yet." };
+
+    const pref = normalizePreference(data.preference);
+    const next = mergeIntoAvailability(cp.availability, pref);
+    const { error } = await supabase
+      .from("candidate_profiles")
+      .update({ availability: next as never })
+      .eq("id", cp.id);
+    if (error) return { ok: false as const, trace_id: trace, message: error.message };
+    return { ok: true as const, trace_id: trace, preference: pref };
   });
