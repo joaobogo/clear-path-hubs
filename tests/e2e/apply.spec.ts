@@ -108,14 +108,27 @@ test.describe("candidate apply flow", () => {
     await answerScreening(page);
     await continueBtn(page).click();
 
-    // Step 4 — consent & review
-    await expect(page.getByText(fullName).first()).toBeVisible();
-    await expect(page.getByText(email).first()).toBeVisible();
+    // Step 4 — consent
+
     await page.getByRole("checkbox", { name: /i agree to the terms/i }).click();
     await continueBtn(page).click();
 
-    // Step 5 — submit
+    // Step 5 — review, grouped by section, then submit
+    await expect(page.getByRole("heading", { name: /review & submit/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /your details/i })).toBeVisible();
+    await expect(page.getByText(fullName).first()).toBeVisible();
+    await expect(page.getByText(email).first()).toBeVisible();
+    await expect(page.getByText(/\.pdf/i).first()).toBeVisible();
+
+    // A mistyped email is correctable in two taps: Edit → back to review.
+    await page.getByTestId("review-edit-details").click();
+    await expect(page.locator("#email")).toBeFocused();
+    await page.getByTestId("apply-return-to-review").click();
+    await expect(page.getByRole("heading", { name: /review & submit/i })).toBeVisible();
+    await expect(page.getByText(email).first()).toBeVisible();
+
     await page.getByTestId("apply-submit").click();
+
     await expect
       .poll(() => new URL(page.url()).pathname, { timeout: 120_000 })
       .toContain("/apply/received/");

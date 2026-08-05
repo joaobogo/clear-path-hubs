@@ -520,16 +520,70 @@ function ApplyPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signedIn, step]);
 
+  // Editing from the review screen: jump to the owning step, put focus on the
+  // first field of that section, and offer a one-tap way back to review so
+  // nobody walks the whole flow again to fix a typo.
+  const [returningToReview, setReturningToReview] = useState(false);
+  const pendingFocusRef = useRef<string | null>(null);
+  const editSection = useCallback(
+    (targetStep: number, field: string) => {
+      pendingFocusRef.current = field;
+      setReturningToReview(true);
+      setFieldErrors({});
+      setStep(targetStep);
+    },
+    [setStep],
+  );
+  const returnToReview = useCallback(() => {
+    const errs = stepIssues(step);
+    setFieldErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+    setReturningToReview(false);
+    setStep(5);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, setStep, form, answers, consent, cvFile, cvError, password, password2]);
+
   // Every step change moves focus to the new heading and announces it, so a
-  // screen reader user is told where they are instead of guessing.
+  // screen reader user is told where they are instead of guessing. When the
+  // candidate came from an Edit link, focus the field they came to change.
   const firstStepRender = useRef(true);
   useEffect(() => {
     if (firstStepRender.current) {
       firstStepRender.current = false;
       return;
     }
+    const field = pendingFocusRef.current;
+    if (field) {
+      pendingFocusRef.current = null;
+      const el =
+        (document.querySelector(`[data-field="${field}"]`) as HTMLElement | null) ??
+        document.getElementById(field);
+      if (el) {
+        el.scrollIntoView({ block: "center" });
+        el.focus();
+        return;
+      }
+    }
     stepHeadingRef.current?.focus();
   }, [step, qCursor]);
+
+  // Only answers the candidate actually gave. A skipped optional question is
+  // omitted from the review rather than rendered as an empty row.
+  const answeredQuestions = (pos?.questions ?? [])
+    .map((q) => {
+      const v = answers[q.id];
+      const text =
+        typeof v === "boolean"
+          ? v
+            ? "Yes"
+            : "No"
+          : v == null
+            ? ""
+            : String(v).trim();
+      return { id: q.id, question: q.question, value: text };
+    })
+    .filter((a) => a.value !== "");
+
 
   // Relative, plain-language save marker. Absent until the first real save,
   // so nothing claims to be saved before it is.
@@ -1385,68 +1439,12 @@ function ApplyPage() {
           {step === 4 && (
             <div className="space-y-5">
               <div>
-                <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Consent &amp; review</h2>
+                <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Consent &amp; privacy</h2>
                 <p className="text-sm text-muted-foreground">
-                  Confirm the details below before submitting.
+                  Two consents, then a full review of everything you entered.
                 </p>
               </div>
 
-              <div className="rounded-md border divide-y">
-                <ReviewRow label="Name" value={form.full_name || "—"} onEdit={() => setStep(1)} />
-                <ReviewRow label="Email" value={form.email || "—"} onEdit={() => setStep(1)} />
-                <ReviewRow
-                  label="Phone"
-                  value={form.phone || "—"}
-                  onEdit={() => setStep(1)}
-                />
-                <ReviewRow
-                  label="Location"
-                  value={
-                    composeLocation({
-                      city: form.city,
-                      region: form.region,
-                      country: form.country,
-                    }) || "—"
-                  }
-                  onEdit={() => setStep(1)}
-                />
-                <ReviewRow
-                  label="Links"
-                  value={
-                    [form.linkedin_url, form.portfolio_url, form.website_url]
-                      .filter(Boolean)
-                      .join("  ·  ") || "—"
-                  }
-                  onEdit={() => setStep(2)}
-                />
-                <ReviewRow
-                  label="CV"
-                  value={cvFile ? `${cvFile.name} (${Math.ceil(cvFile.size / 1024)} KB)` : "—"}
-                  onEdit={() => setStep(2)}
-                />
-                <ReviewRow
-                  label="Screening"
-                  value={
-                    pos.questions.length === 0
-                      ? "No questions"
-                      : `${pos.questions.filter((q) => {
-                          const v = answers[q.id];
-                          return v != null && !(typeof v === "string" && v.trim() === "");
-                        }).length} of ${pos.questions.length} answered`
-                  }
-                  onEdit={() => setStep(3)}
-                />
-                <ReviewRow
-                  label="Cover note"
-                  value={
-                    form.cover_letter.trim()
-                      ? form.cover_letter.trim()
-                      : "Left blank — that's fine, it's optional"
-                  }
-                  onEdit={() => setStep(2)}
-                />
-
-              </div>
 
               <div className="space-y-2 rounded-lg border bg-muted/30 p-4 text-sm">
                 <p className="font-medium">What happens to your data</p>
@@ -1488,7 +1486,9 @@ function ApplyPage() {
                   <Checkbox
                     checked={consent}
                     onCheckedChange={(v) => setConsent(v === true)}
+                    data-field="consent"
                     aria-label="I agree to the terms"
+
                   />
                   <span>
                     I agree to TaaSFlow's terms and privacy policy and consent to sharing my CV
@@ -1534,20 +1534,108 @@ function ApplyPage() {
           {step === 5 && (
             <div className="space-y-5">
               <div>
-                <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Ready to submit</h2>
+                <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Review &amp; submit</h2>
                 <p className="text-sm text-muted-foreground">
-                  Submit your application for <span className="font-medium">{pos.title}</span> at{" "}
-                  <span className="font-medium">{pos.organization_name}</span>. You'll receive a
-                  tracking reference on the next screen.
+                  Check your email address carefully — every update about{" "}
+                  <span className="font-medium">{pos.title}</span> at{" "}
+                  <span className="font-medium">{pos.organization_name}</span> goes there.
                 </p>
               </div>
+
+              {signedIn === null ? (
+                <ReviewSkeleton />
+              ) : (
+                <div className="space-y-3">
+                  <ReviewSection
+                    title="Your details"
+                    editLabel="details"
+                    onEdit={() => editSection(1, "email")}
+                  >
+                    <ReviewRow label="Name" value={form.full_name.trim()} />
+                    <ReviewRow label="Email" value={form.email.trim()} />
+                    <ReviewRow label="Phone" value={form.phone.trim()} />
+                    <ReviewRow
+                      label="Location"
+                      value={composeLocation({
+                        city: form.city,
+                        region: form.region,
+                        country: form.country,
+                      })}
+                    />
+                  </ReviewSection>
+
+                  <ReviewSection
+                    title="CV and links"
+                    editLabel="cv"
+                    onEdit={() => editSection(2, "cv")}
+                  >
+                    <ReviewRow
+                      label="CV file"
+                      value={
+                        cvFile
+                          ? `${cvFile.name} · ${formatFileSize(cvFile.size)}`
+                          : "Not attached yet"
+                      }
+                    />
+                    {form.linkedin_url.trim() && (
+                      <ReviewRow label="LinkedIn" value={form.linkedin_url.trim()} />
+                    )}
+                    {form.portfolio_url.trim() && (
+                      <ReviewRow label="Portfolio" value={form.portfolio_url.trim()} />
+                    )}
+                    {form.website_url.trim() && (
+                      <ReviewRow label="Website" value={form.website_url.trim()} />
+                    )}
+                    {form.cover_letter.trim() && (
+                      <ReviewRow label="Cover note" value={form.cover_letter.trim()} />
+                    )}
+                  </ReviewSection>
+
+                  {answeredQuestions.length > 0 && (
+                    <ReviewSection
+                      title="Screening answers"
+                      editLabel="screening"
+                      onEdit={() => editSection(3, pos.questions[0]?.id ?? "")}
+                    >
+                      {answeredQuestions.map((a) => (
+                        <ReviewRow key={a.id} label={a.question} value={a.value} />
+                      ))}
+                    </ReviewSection>
+                  )}
+
+                  <ReviewSection
+                    title="Consent and privacy"
+                    editLabel="consent"
+                    onEdit={() => editSection(4, "consent")}
+                  >
+                    <ReviewRow
+                      label="Terms and data sharing"
+                      value={consent ? "Agreed" : "Not agreed yet"}
+                    />
+                    {network && <ReviewRow label="Talent network" value="Yes, add me" />}
+                    {form.accommodation_request.trim() && (
+                      <ReviewRow
+                        label="Adjustments (private)"
+                        value={form.accommodation_request.trim()}
+                      />
+                    )}
+                  </ReviewSection>
+                </div>
+              )}
+
               <div className="rounded-md border bg-muted/30 p-4 text-sm text-muted-foreground">
                 Submissions are final. We'll email you when there's a decision or a next step.
               </div>
             </div>
           )}
 
-          <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+          <div
+            className={`mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between ${
+              step === 5
+                ? "sticky bottom-0 -mx-4 border-t bg-background/95 px-4 py-3 backdrop-blur sm:mx-0 sm:rounded-lg sm:px-0"
+                : ""
+            }`}
+          >
             <Button
               type="button"
               variant="ghost"
@@ -1575,12 +1663,12 @@ function ApplyPage() {
             {step < 5 ? (
               <Button
                 type="button"
-                onClick={goNext}
-                data-testid="apply-continue"
+                onClick={returningToReview ? returnToReview : goNext}
+                data-testid={returningToReview ? "apply-return-to-review" : "apply-continue"}
                 className="w-full sm:w-auto"
                 disabled={cvChecking}
               >
-                Continue →
+                {returningToReview ? "Done — back to review" : "Continue →"}
               </Button>
             ) : (
               <Button
@@ -1599,6 +1687,7 @@ function ApplyPage() {
               </Button>
             )}
           </div>
+
         </div>
 
 
@@ -1615,28 +1704,63 @@ function ApplyPage() {
   );
 }
 
-function ReviewRow({
-  label,
-  value,
-  onEdit,
-}: {
-  label: string;
-  value: string;
-  onEdit: () => void;
-}) {
+/** One value the candidate entered. Never rendered for a skipped field. */
+function ReviewRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-start justify-between gap-3 px-4 py-3">
-      <div className="min-w-0">
-        <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
-        <div className="mt-0.5 text-sm text-foreground/90 truncate">{value}</div>
+    <div className="px-4 py-3">
+      <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className="mt-0.5 whitespace-pre-wrap break-words text-sm text-foreground/90">
+        {value}
       </div>
-      <button
-        type="button"
-        onClick={onEdit}
-        className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2"
-      >
-        Edit
-      </button>
     </div>
   );
 }
+
+/**
+ * A named group of entered values with its own edit link. The heading is a real
+ * heading so a screen reader can jump between sections instead of reading the
+ * whole summary top to bottom.
+ */
+function ReviewSection({
+  title,
+  editLabel,
+  onEdit,
+  children,
+}: {
+  title: string;
+  editLabel: string;
+  onEdit: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="rounded-md border" aria-label={title}>
+      <div className="flex items-center justify-between gap-3 border-b bg-muted/30 px-4 py-2">
+        <h3 className="text-sm font-semibold">{title}</h3>
+        <button
+          type="button"
+          onClick={onEdit}
+          data-testid={`review-edit-${editLabel}`}
+          className="inline-flex min-h-11 items-center px-1 text-sm font-medium text-primary underline underline-offset-2"
+        >
+          Edit<span className="sr-only"> {title}</span>
+        </button>
+      </div>
+      <div className="divide-y">{children}</div>
+    </section>
+  );
+}
+
+function ReviewSkeleton() {
+  return (
+    <div className="space-y-3" data-testid="review-skeleton" aria-hidden="true">
+      {[0, 1, 2].map((i) => (
+        <div key={i} className="rounded-md border p-4">
+          <div className="h-3 w-28 animate-pulse rounded bg-muted" />
+          <div className="mt-3 h-3 w-2/3 animate-pulse rounded bg-muted" />
+          <div className="mt-2 h-3 w-1/2 animate-pulse rounded bg-muted" />
+        </div>
+      ))}
+    </div>
+  );
+}
+

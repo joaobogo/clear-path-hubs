@@ -173,17 +173,19 @@ test.describe("candidate journey", () => {
     await answerScreening(page);
     await page.getByTestId("apply-continue").click();
 
-    // Step 4: review + consent gate.
-    await expect(page.getByText(fullName).first()).toBeVisible();
-    await expect(page.getByText(email).first()).toBeVisible();
+    // Step 4: consent gate.
     await page.getByTestId("apply-continue").click();
     await expect(page.getByText(/must accept the terms/i)).toBeVisible();
     await page.getByRole("checkbox", { name: /i agree to the terms/i }).click();
     await page.getByRole("checkbox", { name: /talent network/i }).click();
     await page.getByTestId("apply-continue").click();
 
-    // Step 5: submit.
+    // Step 5: review grouped by section, then submit.
+    await expect(page.getByRole("heading", { name: /review & submit/i })).toBeVisible();
+    await expect(page.getByText(fullName).first()).toBeVisible();
+    await expect(page.getByText(email).first()).toBeVisible();
     await page.getByTestId("apply-submit").click();
+
     await expect
       .poll(() => new URL(page.url()).pathname, { timeout: 90_000 })
       .toContain("/apply/received/");
