@@ -18,7 +18,8 @@ type FigureTarget = {
 };
 
 function figureTarget(key: HiringHealthFigureKey, org?: string | null): FigureTarget {
-  const orgPart = org ? { org } : {};
+  const orgPart: Record<string, string> = org ? { org } : {};
+
   switch (key) {
     case "open_roles":
       return { to: "/client/positions", search: { ...orgPart, status: "active" } };
