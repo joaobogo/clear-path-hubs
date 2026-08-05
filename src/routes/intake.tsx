@@ -16,6 +16,11 @@ import {
 
   COMP_PERIODS,
   COMP_PERIOD_LABELS,
+  COMP_EQUITY,
+  COMP_EQUITY_LABELS,
+  COMPENSATION_HONEST_LINE,
+  COMPENSATION_WIDE_RANGE_WARNING,
+  isWideCompensationRange,
   WORK_MODELS,
   WORK_MODEL_LABELS,
   WORK_AUTHORIZATION_OPTIONS,
@@ -112,6 +117,11 @@ type FormState = {
   salaryMin: string;
   salaryMax: string;
   compensationNote: string;
+  compensationUndecided: boolean;
+  bonusStructure: string;
+  equity: string;
+  compensationFlexible: boolean;
+  wideRangeConfirmed: boolean;
   workAuthorization: string;
   workAuthorizationNote: string;
   interviewProcess: string;
@@ -154,6 +164,11 @@ const EMPTY: FormState = {
   salaryMin: "",
   salaryMax: "",
   compensationNote: "",
+  compensationUndecided: false,
+  bonusStructure: "",
+  equity: "",
+  compensationFlexible: false,
+  wideRangeConfirmed: false,
   workAuthorization: "",
   workAuthorizationNote: "",
   interviewProcess: "",
@@ -317,6 +332,15 @@ function ExpressIntakePage() {
         Number(state.salaryMax) < Number(state.salaryMin)
       ) {
         next.salaryMax = "The top of the range must be at least the bottom";
+      }
+      if (state.compensationUndecided && (state.salaryMin !== "" || state.salaryMax !== "")) {
+        next.compensationUndecided = "Clear the range, or untick 'Not decided yet'";
+      }
+      if (
+        isWideCompensationRange(Number(state.salaryMin) || 0, Number(state.salaryMax) || 0) &&
+        !state.wideRangeConfirmed
+      ) {
+        next.wideRangeConfirmed = COMPENSATION_WIDE_RANGE_WARNING;
       }
       if (state.workModel && state.workModel !== "remote" && state.onsiteDays === "") {
         next.onsiteDays = "How many days on site each week?";
@@ -693,6 +717,33 @@ function ExpressIntakePage() {
     setState((s) => ({ ...s, [key]: value }));
   };
 
+  /**
+   * Compensation inputs take digits only. Anything else is rejected inline
+   * instead of being silently swallowed, so nobody wonders where their "$" went.
+   */
+  const onSalaryChange = (key: "salaryMin" | "salaryMax", raw: string) => {
+    const digits = raw.replace(/[^\d]/g, "");
+    set(key, digits);
+    setErrors((prev) => {
+      const next = { ...prev };
+      if (raw.trim() !== "" && digits !== raw.replace(/\s/g, "")) {
+        next[key] = "Numbers only — no currency symbols, commas or text";
+      } else {
+        delete next[key];
+      }
+      // Re-open the wide-range confirmation whenever the numbers move.
+      delete next.wideRangeConfirmed;
+      return next;
+    });
+    setState((s) => ({ ...s, wideRangeConfirmed: false }));
+  };
+
+  /** Whether the current range trips the stated wide-range threshold. */
+  const wideRange = isWideCompensationRange(
+    Number(state.salaryMin) || 0,
+    Number(state.salaryMax) || 0,
+  );
+
   const onPickFile = async (file: File | null) => {
     if (!file) return;
     const ext = jdFileExt(file.name);
@@ -759,6 +810,11 @@ function ExpressIntakePage() {
       salaryMin: state.salaryMin === "" ? undefined : Number(state.salaryMin),
       salaryMax: state.salaryMax === "" ? undefined : Number(state.salaryMax),
       compensationNote: state.compensationNote,
+      compensationUndecided: state.compensationUndecided,
+      bonusStructure: state.bonusStructure,
+      equity: state.equity,
+      compensationFlexible: state.compensationFlexible,
+      wideRangeConfirmed: state.wideRangeConfirmed,
       workAuthorization: state.workAuthorization,
       workAuthorizationNote: state.workAuthorizationNote,
       interviewProcess: state.interviewProcess,
@@ -804,6 +860,15 @@ function ExpressIntakePage() {
         Number(state.salaryMax) < Number(state.salaryMin)
       ) {
         next.salaryMax = "The top of the range must be at least the bottom";
+      }
+      if (
+        isWideCompensationRange(Number(state.salaryMin) || 0, Number(state.salaryMax) || 0) &&
+        !state.wideRangeConfirmed
+      ) {
+        next.wideRangeConfirmed = COMPENSATION_WIDE_RANGE_WARNING;
+      }
+      if (state.compensationUndecided && (state.salaryMin !== "" || state.salaryMax !== "")) {
+        next.compensationUndecided = "Clear the range, or untick 'Not decided yet'";
       }
       if (state.workModel && state.workModel !== "remote" && state.onsiteDays === "") {
         next.onsiteDays = "How many days on site each week?";
@@ -1509,9 +1574,7 @@ function ExpressIntakePage() {
 
           <div className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/3 p-4">
             <p className="text-sm font-semibold">Compensation range</p>
-            <p className="text-sm text-[color:var(--brand-navy)]/75">
-              We never publish this. We use it to avoid sending you people you cannot hire.
-            </p>
+            <p className="text-sm text-[color:var(--brand-navy)]/75">{COMPENSATION_HONEST_LINE}</p>
             <div className="grid gap-3 sm:grid-cols-4">
               <Field label="Currency" htmlFor="currency">
                 <select
@@ -1530,7 +1593,8 @@ function ExpressIntakePage() {
               <Field label="From" error={errors.salaryMin} required={req["salaryMin"]}>
                 <Input
                   value={state.salaryMin}
-                  onChange={(e) => set("salaryMin", e.target.value.replace(/[^\d]/g, ""))}
+                  disabled={state.compensationUndecided}
+                  onChange={(e) => onSalaryChange("salaryMin", e.target.value)}
                   inputMode="numeric"
                   placeholder="70000"
                 />
@@ -1538,7 +1602,8 @@ function ExpressIntakePage() {
               <Field label="To" error={errors.salaryMax} required={req["salaryMax"]}>
                 <Input
                   value={state.salaryMax}
-                  onChange={(e) => set("salaryMax", e.target.value.replace(/[^\d]/g, ""))}
+                  disabled={state.compensationUndecided}
+                  onChange={(e) => onSalaryChange("salaryMax", e.target.value)}
                   inputMode="numeric"
                   placeholder="85000"
                 />
@@ -1558,19 +1623,124 @@ function ExpressIntakePage() {
                 </select>
               </Field>
             </div>
+
+            {/* Wide-range confirmation: it goes through, but on purpose. */}
+            {wideRange && (
+              <div
+                className="space-y-1 rounded-md border border-amber-300 bg-amber-50 p-3"
+                data-field="wideRangeConfirmed"
+              >
+                <label className="flex cursor-pointer items-start gap-3 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={state.wideRangeConfirmed}
+                    onChange={(e) => set("wideRangeConfirmed", e.target.checked)}
+                    className="mt-0.5 h-4 w-4"
+                  />
+                  <span>{COMPENSATION_WIDE_RANGE_WARNING}</span>
+                </label>
+                {errors.wideRangeConfirmed && !state.wideRangeConfirmed && (
+                  <p className="text-sm text-red-600" data-field-error="true">
+                    {errors.wideRangeConfirmed}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* "Not decided yet" is recorded as undecided, never as zero. */}
+            <div className="space-y-1" data-field="compensationUndecided">
+              <label className="flex cursor-pointer items-start gap-3 text-sm">
+                <input
+                  type="checkbox"
+                  checked={state.compensationUndecided}
+                  onChange={(e) => {
+                    const on = e.target.checked;
+                    setState((prev) => ({
+                      ...prev,
+                      compensationUndecided: on,
+                      salaryMin: on ? "" : prev.salaryMin,
+                      salaryMax: on ? "" : prev.salaryMax,
+                      wideRangeConfirmed: on ? false : prev.wideRangeConfirmed,
+                    }));
+                    setErrors((prev) => {
+                      const nextErrors = { ...prev };
+                      delete nextErrors.salaryMin;
+                      delete nextErrors.salaryMax;
+                      delete nextErrors.compensationUndecided;
+                      delete nextErrors.wideRangeConfirmed;
+                      return nextErrors;
+                    });
+                  }}
+                  className="mt-0.5 h-4 w-4"
+                />
+                <span>
+                  Not decided yet
+                  <span className="block text-[color:var(--brand-navy)]/65">
+                    We will record this as undecided and mark the brief incomplete for compensation.
+                  </span>
+                </span>
+              </label>
+              {errors.compensationUndecided && (
+                <p className="text-sm text-red-600" data-field-error="true">
+                  {errors.compensationUndecided}
+                </p>
+              )}
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field
+                label="Bonus structure"
+                error={errors.bonusStructure}
+                required={req["bonusStructure"]}
+                hint="Only what you would actually pay."
+              >
+                <Input
+                  value={state.bonusStructure}
+                  onChange={(e) => set("bonusStructure", e.target.value)}
+                  placeholder="10% annual, paid on company and personal targets"
+                />
+              </Field>
+              <Field label="Equity" htmlFor="comp-equity" required={req["equity"]}>
+                <select
+                  id="comp-equity"
+                  value={state.equity}
+                  onChange={(e) => set("equity", e.target.value)}
+                  className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
+                >
+                  <option value="">Not stated</option>
+                  {COMP_EQUITY.map((k) => (
+                    <option key={k} value={k}>
+                      {COMP_EQUITY_LABELS[k]}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </div>
+
+            <label className="flex cursor-pointer items-start gap-3 text-sm">
+              <input
+                type="checkbox"
+                checked={state.compensationFlexible}
+                onChange={(e) => set("compensationFlexible", e.target.checked)}
+                className="mt-0.5 h-4 w-4"
+              />
+              <span>Flexible for the right person</span>
+            </label>
+
             <Field
               label="Anything else about the package"
               error={errors.compensationNote}
               required={req["compensationNote"]}
-              hint="Bonus, equity, shift premium, or where you have flexibility."
+              hint="Shift premium, relocation, or where exactly you have room."
             >
               <Input
                 value={state.compensationNote}
                 onChange={(e) => set("compensationNote", e.target.value)}
-                placeholder="10% bonus, can stretch to 90k for someone exceptional"
+                placeholder="Can stretch to 90k for someone exceptional"
               />
             </Field>
           </div>
+
 
           <fieldset className="space-y-2">
             <legend className="text-sm font-medium">
@@ -1779,11 +1949,22 @@ function ExpressIntakePage() {
                     ],
                     [
                       "Compensation",
-                      state.salaryMin && state.salaryMax
-                        ? `${state.currency} ${Number(state.salaryMin).toLocaleString()}–${Number(
-                            state.salaryMax,
-                          ).toLocaleString()} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
-                        : "",
+                      state.compensationUndecided
+                        ? "Not decided yet"
+                        : [
+                            state.salaryMin && state.salaryMax
+                              ? `${state.currency} ${Number(state.salaryMin).toLocaleString()}–${Number(
+                                  state.salaryMax,
+                                ).toLocaleString()} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
+                              : "",
+                            state.bonusStructure.trim() ? `Bonus: ${state.bonusStructure.trim()}` : "",
+                            state.equity
+                              ? COMP_EQUITY_LABELS[state.equity as "none"]
+                              : "",
+                            state.compensationFlexible ? "Flexible for the right person" : "",
+                          ]
+                            .filter(Boolean)
+                            .join(" · "),
                     ],
                     [
                       "Work authorisation",

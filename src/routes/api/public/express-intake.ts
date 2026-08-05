@@ -422,6 +422,27 @@ export const Route = createFileRoute("/api/public/express-intake")({
         const interviewProcessText = (data.interviewProcess ?? "").trim();
         const decisionMakerText = (data.decisionMaker ?? "").trim();
         const hasComp = typeof data.salaryMin === "number" && typeof data.salaryMax === "number";
+        const compUndecided = data.compensationUndecided === true;
+        /**
+         * Compensation is stored as what the client said: a range, or an
+         * explicit "undecided". Never a zero standing in for "we don't know".
+         */
+        const compensationRecord =
+          hasComp || compUndecided || data.compensationFlexible || data.equity || data.bonusStructure
+            ? {
+                undecided: compUndecided,
+                currency: hasComp ? data.currency : null,
+                period: hasComp ? data.compensationPeriod : null,
+                min: hasComp ? data.salaryMin : null,
+                max: hasComp ? data.salaryMax : null,
+                bonus: (data.bonusStructure ?? "").trim() || null,
+                equity: data.equity || null,
+                flexible: data.compensationFlexible === true,
+                wide_range_confirmed: data.wideRangeConfirmed === true,
+                note: (data.compensationNote ?? "").trim() || null,
+                source: "client_intake",
+              }
+            : null;
         const brief = briefCompleteness({
           location: locationText,
           workModel: data.workModel ?? "",
@@ -468,16 +489,7 @@ export const Route = createFileRoute("/api/public/express-intake")({
               })),
             ],
             dealbreakers: dealbreakerLines.map((label) => ({ label })),
-            compensation: hasComp
-              ? {
-                  currency: data.currency,
-                  period: data.compensationPeriod,
-                  min: data.salaryMin,
-                  max: data.salaryMax,
-                  note: (data.compensationNote ?? "").trim() || null,
-                  source: "client_intake",
-                }
-              : null,
+            compensation: compensationRecord,
             compensation_collected: hasComp,
             compensation_visibility: "internal",
             work_authorization: data.workAuthorization
@@ -622,15 +634,7 @@ export const Route = createFileRoute("/api/public/express-intake")({
                 location: locationText,
                 workModel: data.workModel || "",
                 onsiteDays: data.onsiteDays ?? null,
-                compensation: hasComp
-                  ? {
-                      currency: data.currency,
-                      period: data.compensationPeriod,
-                      min: data.salaryMin,
-                      max: data.salaryMax,
-                      note: data.compensationNote ?? "",
-                    }
-                  : null,
+                compensation: compensationRecord,
                 workAuthorization: data.workAuthorization || "",
                 workAuthorizationNote: data.workAuthorizationNote ?? "",
                 interviewProcess: interviewProcessText,
