@@ -909,14 +909,11 @@ export const ALWAYS_REQUIRED_INTAKE_FIELDS = [
   "firstName",
   "lastName",
   "workEmail",
-  "phone",
   "roleTitle",
   "whyOpen",
   "requirements",
   "consent",
   "pilotAcknowledgement",
-  // Sponsorship changes the pool most, so it is never left blank.
-  "sponsorshipAvailable",
 ] as const;
 
 /**
@@ -944,6 +941,9 @@ export function intakeRequiredness(
     // Optional across the board — declared explicitly so the form never has
     // to guess, and so a new field cannot slip through undecorated.
     companyLinkedin: false,
+    phone: false,
+    // Lives on the optional details step, so it cannot be always-required.
+    sponsorshipAvailable: false,
     contactTitle: false,
     contactLinkedin: false,
     team: false,
