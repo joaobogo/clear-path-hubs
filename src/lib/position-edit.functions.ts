@@ -5,7 +5,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { SCREENING_MAX_QUESTIONS, SCREENING_MAX_REQUIRED } from "@/lib/screening-limits";
+import {
+  SCREENING_MAX_QUESTIONS,
+  SCREENING_MAX_REQUIRED,
+  screeningTopicIssue,
+} from "@/lib/screening-limits";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -64,7 +68,12 @@ export type ScreeningInput = {
   answer_type: "text" | "boolean" | "number";
   required: boolean;
   dealbreaker: boolean;
+  /** The must-have on the brief this question tests. */
+  must_have: string;
+  /** One line the candidate reads explaining why it is asked. */
+  why_asked: string;
 };
+
 
 export type PositionEditInitial = {
   id: string;
@@ -165,7 +174,7 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
         .maybeSingle(),
       s
         .from("screening_questions")
-        .select("id,question,answer_type,required,dealbreaker,display_order")
+        .select("id,question,answer_type,required,dealbreaker,display_order,must_have,why_asked")
         .eq("position_id", data.id)
         .order("display_order", { ascending: true }),
     ]);
@@ -239,7 +248,10 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
         answer_type: r.answer_type,
         required: !!r.required,
         dealbreaker: !!r.dealbreaker,
+        must_have: (r.must_have as string) ?? "",
+        why_asked: (r.why_asked as string) ?? "",
       })),
+
     };
 
     return initial;
@@ -309,12 +321,21 @@ const saveInput = z.object({
         answer_type: z.enum(["text", "boolean", "number"]).default("text"),
         required: z.boolean().default(false),
         dealbreaker: z.boolean().default(false),
+        must_have: z.string().trim().max(160).default(""),
+        why_asked: z.string().trim().max(200).default(""),
       }),
     )
     .max(SCREENING_MAX_QUESTIONS, {
       message: `Keep it to ${SCREENING_MAX_QUESTIONS} screening questions or fewer.`,
     })
+    .superRefine((qs, ctx) => {
+      for (const q of qs) {
+        const topic = screeningTopicIssue(q.question);
+        if (topic) ctx.addIssue({ code: "custom", message: topic });
+      }
+    })
     .refine((qs) => qs.filter((q) => q.required).length <= SCREENING_MAX_REQUIRED, {
+
       message: `At most ${SCREENING_MAX_REQUIRED} screening questions can be mandatory — make the rest optional.`,
     })
     .default([]),
@@ -441,8 +462,11 @@ export const savePositionEdit = createServerFn({ method: "POST" })
         answer_type: q.answer_type,
         required: q.required,
         dealbreaker: q.dealbreaker,
+        must_have: q.must_have || null,
+        why_asked: q.why_asked || null,
         display_order: i,
       };
+
       if (q.id && existingIds.has(q.id)) {
         const { error: uErr } = await s
           .from("screening_questions")

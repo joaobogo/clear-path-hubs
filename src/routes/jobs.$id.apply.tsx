@@ -29,6 +29,7 @@ import {
 import { CV_MESSAGES } from "@/lib/cv-validation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SCREENING_ANSWER_MAX } from "@/lib/screening-limits";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -1275,15 +1276,27 @@ function ApplyPage() {
                   ).map((q) => {
                     const err = fieldErrors[`q:${q.id}`];
                     const val = answers[q.id];
+                    const reason = (q as { why_asked?: string | null }).why_asked?.trim();
+                    const isFreeText =
+                      q.answer_type === "long_text" || q.answer_type === "text";
+                    const used = typeof val === "string" ? val.length : 0;
                     return (
-                      <div key={q.id}>
+                      <fieldset key={q.id} className="space-y-1 border-0 p-0 m-0">
+                        <legend className="sr-only">{q.question}</legend>
                         <Label htmlFor={q.id}>
                           {q.question}
                           {q.required && " *"}
                         </Label>
+                        {reason && (
+                          <p id={`${q.id}-why`} className="text-xs text-muted-foreground">
+                            Why we ask: {reason}
+                          </p>
+                        )}
                         {q.answer_type === "long_text" ? (
                           <Textarea
                             id={q.id}
+                            aria-describedby={reason ? `${q.id}-why` : undefined}
+                            maxLength={SCREENING_ANSWER_MAX}
                             value={(val as string) ?? ""}
                             onChange={(e) => setAnswer(q.id, e.target.value)}
                             rows={4}
@@ -1291,14 +1304,15 @@ function ApplyPage() {
                         ) : q.answer_type === "boolean" ? (
                           <RadioGroup
                             id={q.id}
+                            aria-describedby={reason ? `${q.id}-why` : undefined}
                             value={val === true ? "yes" : val === false ? "no" : ""}
                             onValueChange={(v) => setAnswer(q.id, v === "yes")}
                             className="flex gap-4 mt-1"
                           >
-                            <label className="flex items-center gap-2 text-sm">
+                            <label className="flex min-h-11 items-center gap-2 text-sm">
                               <RadioGroupItem value="yes" id={`${q.id}-y`} /> Yes
                             </label>
-                            <label className="flex items-center gap-2 text-sm">
+                            <label className="flex min-h-11 items-center gap-2 text-sm">
                               <RadioGroupItem value="no" id={`${q.id}-n`} /> No
                             </label>
                           </RadioGroup>
@@ -1307,6 +1321,7 @@ function ApplyPage() {
                             id={q.id}
                             type="number"
                             inputMode="decimal"
+                            aria-describedby={reason ? `${q.id}-why` : undefined}
                             value={val == null ? "" : String(val)}
                             onChange={(e) =>
                               setAnswer(
@@ -1319,14 +1334,23 @@ function ApplyPage() {
                           <Input
                             id={q.id}
                             type="text"
+                            aria-describedby={reason ? `${q.id}-why` : undefined}
+                            maxLength={SCREENING_ANSWER_MAX}
                             value={(val as string) ?? ""}
                             onChange={(e) => setAnswer(q.id, e.target.value)}
                           />
                         )}
+                        {isFreeText && used > SCREENING_ANSWER_MAX - 60 && (
+                          <p className="text-xs text-muted-foreground">
+                            {SCREENING_ANSWER_MAX - used} characters left — a sentence or
+                            two is enough.
+                          </p>
+                        )}
                         {err && <p className="mt-1 text-xs text-destructive">{err}</p>}
-                      </div>
+                      </fieldset>
                     );
                   })}
+
                 </div>
               )}
             </div>

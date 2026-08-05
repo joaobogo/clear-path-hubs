@@ -5,6 +5,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   SCREENING_MAX_QUESTIONS,
+  screeningTopicIssue,
   SCREENING_MAX_REQUIRED,
   countRequired,
 } from "@/lib/screening-limits";
@@ -145,6 +146,7 @@ export function PositionEditWizard({
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [qDraft, setQDraft] = useState("");
+  const [qTopicError, setQTopicError] = useState<string | null>(null);
   const [reqDirty, setReqDirty] = useState(false);
   const [savedAt, setSavedAt] = useState<number | null>(null);
 
@@ -854,15 +856,26 @@ export function PositionEditWizard({
 
               <SectionHeader
                 title="Screening Questions"
-                subtitle={`Keep it short: up to ${SCREENING_MAX_QUESTIONS} questions, max ${SCREENING_MAX_REQUIRED} mandatory. Everything else is optional for the candidate.`}
+                subtitle={`Ask only what changes the outcome: up to ${SCREENING_MAX_QUESTIONS} questions, max ${SCREENING_MAX_REQUIRED} mandatory. Each one must map to a must-have and carry a one-line reason the candidate reads.`}
               />
               {(() => {
                 const qs = state.screening_questions;
                 const requiredCount = countRequired(qs);
                 const atMax = qs.length >= SCREENING_MAX_QUESTIONS;
+                const setQ = (i: number, patch: Partial<ScreeningInput>) =>
+                  set(
+                    "screening_questions",
+                    qs.map((item, idx) => (idx === i ? { ...item, ...patch } : item)),
+                  );
                 const addQuestion = () => {
                   const v = qDraft.trim();
                   if (v.length < 3 || atMax) return;
+                  const topic = screeningTopicIssue(v);
+                  if (topic) {
+                    setQTopicError(topic);
+                    return;
+                  }
+                  setQTopicError(null);
                   set("screening_questions", [
                     ...qs,
                     {
@@ -870,10 +883,15 @@ export function PositionEditWizard({
                       answer_type: "text",
                       required: false,
                       dealbreaker: false,
+                      must_have: "",
+                      why_asked: "",
                     } satisfies ScreeningInput,
                   ]);
                   setQDraft("");
                 };
+                const unmapped = qs.filter(
+                  (q) => !q.must_have.trim() || !q.why_asked.trim(),
+                ).length;
                 return (
                   <>
                     <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
@@ -885,10 +903,19 @@ export function PositionEditWizard({
                         {requiredCount}/{SCREENING_MAX_REQUIRED} mandatory
                       </span>
                     </div>
+                    {unmapped > 0 && (
+                      <p className="text-xs text-amber-600 dark:text-amber-500">
+                        {unmapped} question{unmapped === 1 ? "" : "s"} still need a must-have
+                        and a reason. The role cannot be published until they do.
+                      </p>
+                    )}
                     <div className="flex gap-2">
                       <Input
                         value={qDraft}
-                        onChange={(e) => setQDraft(e.target.value)}
+                        onChange={(e) => {
+                          setQDraft(e.target.value);
+                          if (qTopicError) setQTopicError(null);
+                        }}
                         disabled={atMax}
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
@@ -911,6 +938,9 @@ export function PositionEditWizard({
                         Add
                       </Button>
                     </div>
+                    {qTopicError && (
+                      <p className="text-xs text-destructive">{qTopicError}</p>
+                    )}
                     {qs.length > 0 && (
                       <ul className="mt-1 space-y-2">
                         {qs.map((q, i) => {
@@ -918,37 +948,63 @@ export function PositionEditWizard({
                           return (
                             <li
                               key={q.id ?? `new-${i}`}
-                              className="flex flex-wrap items-start justify-between gap-2 rounded-md border p-3 text-sm"
+                              className="space-y-2 rounded-md border p-3 text-sm"
                             >
-                              <span className="flex-1 min-w-[12rem]">{q.question}</span>
-                              <label className="flex items-center gap-2 text-xs">
-                                <Checkbox
-                                  checked={!!q.required}
-                                  disabled={lockRequired}
-                                  onCheckedChange={(v) =>
+                              <div className="flex flex-wrap items-start justify-between gap-2">
+                                <span className="flex-1 min-w-[12rem]">{q.question}</span>
+                                <label className="flex items-center gap-2 text-xs">
+                                  <Checkbox
+                                    checked={!!q.required}
+                                    disabled={lockRequired}
+                                    onCheckedChange={(v) => setQ(i, { required: !!v })}
+                                  />
+                                  <span>{q.required ? "Mandatory" : "Optional"}</span>
+                                </label>
+                                <button
+                                  type="button"
+                                  className="text-xs text-muted-foreground underline"
+                                  aria-label={`Remove ${q.question}`}
+                                  onClick={() =>
                                     set(
                                       "screening_questions",
-                                      qs.map((item, idx) =>
-                                        idx === i ? { ...item, required: !!v } : item,
-                                      ),
+                                      qs.filter((_, idx) => idx !== i),
                                     )
                                   }
-                                />
-                                <span>{q.required ? "Mandatory" : "Optional"}</span>
-                              </label>
-                              <button
-                                type="button"
-                                className="text-xs text-muted-foreground underline"
-                                aria-label={`Remove ${q.question}`}
-                                onClick={() =>
-                                  set(
-                                    "screening_questions",
-                                    qs.filter((_, idx) => idx !== i),
-                                  )
-                                }
-                              >
-                                Remove
-                              </button>
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                              <div className="grid gap-2 md:grid-cols-2">
+                                <label className="text-xs">
+                                  <span className="text-muted-foreground">
+                                    Must-have it tests
+                                  </span>
+                                  <Input
+                                    className="mt-1"
+                                    list={`must-haves-${i}`}
+                                    value={q.must_have}
+                                    onChange={(e) => setQ(i, { must_have: e.target.value })}
+                                    placeholder="e.g. 5+ years Postgres"
+                                  />
+                                  <datalist id={`must-haves-${i}`}>
+                                    {state.must_have_skills.map((m) => (
+                                      <option key={m} value={m} />
+                                    ))}
+                                  </datalist>
+                                </label>
+                                <label className="text-xs">
+                                  <span className="text-muted-foreground">
+                                    Why we ask (shown to candidates)
+                                  </span>
+                                  <Input
+                                    className="mt-1"
+                                    maxLength={200}
+                                    value={q.why_asked}
+                                    onChange={(e) => setQ(i, { why_asked: e.target.value })}
+                                    placeholder="Confirms the depth this role needs on day one."
+                                  />
+                                </label>
+                              </div>
                             </li>
                           );
                         })}
@@ -958,6 +1014,7 @@ export function PositionEditWizard({
                 );
               })()}
             </div>
+
           )}
 
           {/* STEP 5 — Locations, ownership, evaluation priorities */}
