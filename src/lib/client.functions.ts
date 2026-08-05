@@ -27,6 +27,7 @@ import {
 import { computeRoleProgress } from "@/lib/client-role-progress";
 import { computeRoleRisk } from "@/lib/client-role-risk";
 import { computeHiringHealth } from "@/lib/client-hiring-health";
+import { buildQueue, type QueueItem } from "@/lib/client-decision-queue";
 
 
 
@@ -460,8 +461,12 @@ export const getClientOverview = createServerFn({ method: "GET" })
     });
 
     // ── Decision queue ──────────────────────────────────────────────────────
-    // One prioritised list of decisions: the role, the person, how long it has
-    // been waiting, and a single primary action. Built from real rows only.
+    // The only work list on the client's first screen. Four real sources:
+    // candidates delivered and awaiting review, interview feedback still
+    // outstanding, offers awaiting a response, and information requests from
+    // the recruiting team. Each item carries the role, what it concerns, its
+    // recorded due date and when the wait started; ordering, deduping and
+    // overdue grouping happen in the pure module.
     const queueRows = rows.filter(
       (r) => r.stage === "delivered" || r.interview_needs_confirmation || r.stage === "offer",
     );
@@ -481,60 +486,134 @@ export const getClientOverview = createServerFn({ method: "GET" })
     const titleByPosition = new Map<string, string>(
       activePositionsList.map((p) => [p.id as string, p.title as string]),
     );
-    const decision_queue = queueRows
-      .map((r) => {
-        const person = queueNames.get(r.id) ?? "Candidate";
-        const role_title = titleByPosition.get(r.position_id) ?? "Your role";
-        if (r.interview_needs_confirmation) {
-          return {
-            key: `interview:${r.id}`,
-            kind: "interview" as const,
-            priority: 1,
-            person,
-            role_title,
-            position_id: r.position_id,
-            match_id: r.id,
-            what: "Interview time needs confirming",
-            action: "Confirm a time",
-            to: "/client/interviews",
-            waiting_since: r.interview_requested_at ?? r.stage_entered_at,
-          };
-        }
-        if (r.stage === "offer") {
-          return {
-            key: `offer:${r.id}`,
-            kind: "offer" as const,
-            priority: 2,
-            person,
-            role_title,
-            position_id: r.position_id,
-            match_id: r.id,
-            what: "Offer out, awaiting a response",
-            action: "Follow up",
-            to: "/client/offers",
-            waiting_since: r.stage_entered_at,
-          };
-        }
+
+    const queueItems: QueueItem[] = queueRows.map((r) => {
+      const concerns = queueNames.get(r.id) ?? "Candidate";
+      const role_title = titleByPosition.get(r.position_id) ?? "Your role";
+      const base = {
+        concerns,
+        role_title,
+        position_id: r.position_id,
+        subject_id: r.id,
+      };
+      if (r.interview_needs_confirmation) {
         return {
-          key: `decision:${r.id}`,
-          kind: "decision" as const,
-          priority: 0,
-          person,
-          role_title,
-          position_id: r.position_id,
-          match_id: r.id,
-          what: "Waiting on your decision",
-          action: "Review candidate",
-          to: "/client/candidates",
-          waiting_since: r.delivered_at ?? r.stage_entered_at,
+          ...base,
+          key: `interview:${r.id}`,
+          kind: "interview" as const,
+          due_at: r.next_interview_at ?? null,
+          waiting_since: r.interview_requested_at ?? r.stage_entered_at,
+          action: "Confirm a time",
+          to: "/client/interviews",
         };
-      })
-      .sort((a, b) => {
-        const at = a.waiting_since ?? "";
-        const bt = b.waiting_since ?? "";
-        if (a.priority !== b.priority) return a.priority - b.priority;
-        return at < bt ? -1 : at > bt ? 1 : 0;
+      }
+      if (r.stage === "offer") {
+        return {
+          ...base,
+          key: `offer:${r.id}`,
+          kind: "offer" as const,
+          due_at: r.client_decision_due_at ?? null,
+          waiting_since: r.stage_entered_at,
+          action: "Follow up",
+          to: "/client/offers",
+        };
+      }
+      return {
+        ...base,
+        key: `decision:${r.id}`,
+        kind: "decision" as const,
+        due_at: r.client_decision_due_at ?? null,
+        waiting_since: r.delivered_at ?? r.stage_entered_at,
+        action: "Review candidate",
+        to: "/client/candidates",
+      };
+    });
+
+    // Interview feedback outstanding: the interview happened, no scorecard yet.
+    // Feedback is due 2 days after the interview ends — a date derived from the
+    // recorded completion, not a guess about intent.
+    const { data: completedInterviews } = await context.supabase
+      .from("interviews")
+      .select("id, candidate_match_id, position_id, completed_at, status")
+      .eq("organization_id", data.orgId)
+      .not("completed_at", "is", null)
+      .order("completed_at", { ascending: true })
+      .limit(50);
+    const completedList = (completedInterviews as AnyRow[]) ?? [];
+    const scoredInterviewIds = new Set<string>();
+    if (completedList.length > 0) {
+      const { data: cards } = await context.supabase
+        .from("interview_scorecards")
+        .select("interview_id")
+        .in(
+          "interview_id",
+          completedList.map((i) => i.id as string),
+        );
+      for (const c of ((cards as AnyRow[]) ?? [])) {
+        scoredInterviewIds.add(c.interview_id as string);
+      }
+    }
+    for (const iv of completedList) {
+      if (scoredInterviewIds.has(iv.id as string)) continue;
+      const matchId = iv.candidate_match_id as string | null;
+      const completedAt = iv.completed_at as string | null;
+      queueItems.push({
+        key: `feedback:${iv.id}`,
+        kind: "feedback",
+        concerns: matchId ? (queueNames.get(matchId) ?? "Candidate") : "Candidate",
+        role_title: titleByPosition.get(iv.position_id as string) ?? "Your role",
+        position_id: (iv.position_id as string) ?? null,
+        subject_id: matchId,
+        due_at: completedAt
+          ? new Date(new Date(completedAt).getTime() + 2 * 86_400_000).toISOString()
+          : null,
+        waiting_since: completedAt,
+        action: "Add feedback",
+        to: "/client/interviews",
       });
+    }
+
+    // Information requests from the recruiting team — open tasks on this org.
+    const { data: openTasks } = await context.supabase
+      .from("tasks")
+      .select("id, title, position_id, due_at, created_at, blocking")
+      .eq("organization_id", data.orgId)
+      .is("deleted_at", null)
+      .in("status", ["open", "in_progress"])
+      .order("created_at", { ascending: true })
+      .limit(50);
+    for (const t of ((openTasks as AnyRow[]) ?? [])) {
+      queueItems.push({
+        key: `task:${t.id}`,
+        kind: "info_request",
+        concerns: (t.title as string) ?? "A question from your recruiter",
+        role_title: titleByPosition.get(t.position_id as string) ?? "Your account",
+        position_id: (t.position_id as string) ?? null,
+        subject_id: null,
+        due_at: (t.due_at as string) ?? null,
+        waiting_since: (t.created_at as string) ?? null,
+        action: "Answer",
+        to: "/client/tasks",
+      });
+    }
+
+    // Ordered, deduped and grouped once, on the server, so every surface that
+    // reads this payload sees the same queue.
+    const queueGroups = buildQueue(queueItems);
+    const decision_queue = [...queueGroups.overdue, ...queueGroups.upcoming];
+    const decision_queue_meta = {
+      /** How many candidates, interviews, offers and requests were examined. */
+      checked:
+        rows.length + completedList.length + (((openTasks as AnyRow[]) ?? []).length),
+      overdue: queueGroups.overdue.length,
+      /** Nearest promised first-shortlist date still ahead of us. */
+      next_expected_at:
+        Array.from(promisedByPosition.values())
+          .filter((ms) => ms > nowMs)
+          .sort((a, b) => a - b)
+          .map((ms) => new Date(ms).toISOString())[0] ?? null,
+    };
+
 
 
     // Latest delivered candidates (top 4 — kept concise).
@@ -595,6 +674,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
       action_required,
       whats_next,
       decision_queue,
+      decision_queue_meta,
       latest_candidates,
       recent_messages: (recentMessages as AnyRow[]) ?? [],
       recent_activity: (events as AnyRow[]) ?? [],
