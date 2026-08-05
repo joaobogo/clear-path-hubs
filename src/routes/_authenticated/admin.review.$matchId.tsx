@@ -222,54 +222,11 @@ function ReviewScreen() {
 
       {/* One screen: evidence · CV · requirements */}
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_260px]">
-        {/* Evidence */}
-        <section className="min-h-0 overflow-y-auto rounded-lg border bg-card p-4">
-          <h2 className="mb-3 text-sm font-semibold">Evidence</h2>
-          {assessments.length === 0 && verdicts.length === 0 ? (
-            <p className="text-xs text-muted-foreground">
-              No evidence extracted yet. Run scoring before deciding.
-            </p>
-          ) : (
-            <ul className="space-y-2">
-              {(assessments.length ? assessments : verdicts).map((r: Any, i: number) => {
-                const status = r.status ?? r.verdict;
-                const quote = r.cv_quote ?? r.snippet ?? r.evidence?.[0]?.snippet;
-                return (
-                  <li key={i} className="rounded-md border p-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <span className="text-sm">
-                        {(r.required ?? false) && <span className="text-destructive">* </span>}
-                        {reqText(r)}
-                      </span>
-                      {status && (
-                        <Badge
-                          variant={
-                            status === "met"
-                              ? "default"
-                              : status === "partial"
-                                ? "secondary"
-                                : "destructive"
-                          }
-                          className="shrink-0 capitalize"
-                        >
-                          {status}
-                        </Badge>
-                      )}
-                    </div>
-                    {quote && (
-                      <p className="mt-1 border-l-2 border-primary/30 pl-2 text-xs italic text-muted-foreground">
-                        "{quote}"
-                      </p>
-                    )}
-                    {r.rationale && (
-                      <p className="mt-1 text-xs text-muted-foreground">{r.rationale}</p>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </section>
+        {/* Evidence completeness checklist — also gates submission */}
+        <div className="min-h-0 overflow-y-auto">
+          <EvidenceCompletenessGate matchId={matchId} showSubmit={false} />
+        </div>
+
 
         {/* CV preview inline — no download round trip */}
         <section className="flex min-h-0 flex-col overflow-hidden rounded-lg border bg-card">
