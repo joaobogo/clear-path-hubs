@@ -1113,6 +1113,8 @@ function PipelineTab({ matches, positionId }: { matches: Any[]; positionId: stri
           </tbody>
         </table>
       </div>
+
+      <StageAgingPanel positionId={positionId} />
     </div>
   );
 }
