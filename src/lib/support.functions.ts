@@ -11,7 +11,7 @@ import { z } from "zod";
 const startInput = z.object({
   organization_id: z.string().uuid(),
   mode: z.enum(["read_only", "interactive"]).default("read_only"),
-  reason: z.string().max(500).optional().nullable(),
+  reason: z.string().trim().min(10, "A reason of at least 10 characters is required").max(500),
   permission_preview: z
     .enum(["client_admin", "client_editor", "client_viewer"])
     .default("client_admin"),
@@ -49,11 +49,6 @@ export const startSupportSession = createServerFn({ method: "POST" })
       );
     }
 
-    // Reason is required for interactive mode.
-    if (data.mode === "interactive" && !data.reason?.trim()) {
-      throw new Error("A reason is required to enable interactive support mode.");
-    }
-
     // Look up organization name for the audit trail.
     const { data: org } = await supabaseAdmin
       .from("organizations")
@@ -76,24 +71,20 @@ export const startSupportSession = createServerFn({ method: "POST" })
       .maybeSingle();
     const targetAuthUserId = (targetMember?.user_id as string | null) ?? context.userId;
 
-    // DB constraint: actor_user_id <> target_user_id. If no distinct client
-    // member exists to impersonate, skip logging (nothing to audit).
+    // Support access must always be attributable to an auditable target user.
+    // If the workspace has no distinct client member yet, there is nothing to
+    // support and no auditable subject — refuse rather than access silently.
     if (targetAuthUserId === context.userId) {
-      return {
-        session_id: null as string | null,
-        organization_id: data.organization_id,
-        organization_name: org.name as string,
-        mode: data.mode,
-        expires_at: null as string | null,
-      };
+      throw new Error(
+        "This workspace has no client user to support yet, so an auditable support session cannot be opened.",
+      );
     }
 
     // DB constraint: expires_at <= started_at + 30 minutes.
     const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString();
     const trace = `sv_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
     // DB constraint: length(reason) >= 10.
-    const rawReason = data.reason?.trim() || "";
-    const reason = rawReason.length >= 10 ? rawReason : "Support view session (read-only)";
+    const reason = data.reason.trim();
 
     const { data: session, error } = await supabaseAdmin
       .from("support_sessions")
@@ -114,6 +105,19 @@ export const startSupportSession = createServerFn({ method: "POST" })
       .single();
     if (error) throw error;
 
+    const { recordSupportAction } = await import("@/lib/support-audit.server");
+    await recordSupportAction(supabaseAdmin, {
+      session_id: session.id as string,
+      actor_user_id: context.userId,
+      organization_id: data.organization_id,
+      action: "view_as_start",
+      target_type: "organizations",
+      target_id: data.organization_id,
+      reason,
+      after_state: { mode: data.mode, permission_preview: data.permission_preview },
+      trace_id: trace,
+    });
+
     await supabaseAdmin.from("audit_events").insert({
       actor_user_id: context.userId,
       organization_id: data.organization_id,
@@ -122,7 +126,7 @@ export const startSupportSession = createServerFn({ method: "POST" })
       action: "support.session_started",
       after_state: {
         mode: data.mode,
-        reason: data.reason ?? null,
+        reason,
         permission_preview: data.permission_preview,
         organization_name: org.name,
       },
@@ -143,12 +147,28 @@ export const endSupportSession = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertPlatformStaff(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin
+    const { data: updated, error } = await supabaseAdmin
       .from("support_sessions")
-      .update({ ended_at: new Date().toISOString() })
+      .update({ ended_at: new Date().toISOString(), end_reason: "user_exit" })
       .eq("id", data.session_id)
-      .eq("actor_user_id", context.userId);
+      .eq("actor_user_id", context.userId)
+      .is("ended_at", null)
+      .select("id, organization_id, reason, trace_id")
+      .maybeSingle();
     if (error) throw error;
+    if (updated) {
+      const { recordSupportAction } = await import("@/lib/support-audit.server");
+      await recordSupportAction(supabaseAdmin, {
+        session_id: updated.id as string,
+        actor_user_id: context.userId,
+        organization_id: (updated.organization_id as string | null) ?? null,
+        action: "view_as_end",
+        target_type: "support_sessions",
+        target_id: updated.id as string,
+        reason: updated.reason as string,
+        trace_id: (updated.trace_id as string | null) ?? null,
+      });
+    }
     await supabaseAdmin.from("audit_events").insert({
       actor_user_id: context.userId,
       entity_type: "support_sessions",

@@ -18,7 +18,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { getClientContext } from "@/lib/client.functions";
-import { startSupportSession } from "@/lib/support.functions";
+import { getActiveSupportSession } from "@/lib/support-audit.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
 import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
@@ -156,24 +156,22 @@ function ClientLayout() {
  active != null &&
  !data!.organizations.some((o: { id: string }) => o.id === active.organization_id);
 
- const [supportSessionId, setSupportSessionId] = useState<string | null>(null);
  const permissionPreview: PermissionPreview =
  (search.preview as PermissionPreview | undefined) ?? "client_admin";
- const startSession = useMutation({
- mutationFn: (input: { organization_id: string; permission_preview: PermissionPreview }) =>
- startSupportSession({ data: { ...input, mode: "read_only" } }),
- onSuccess: (r) => setSupportSessionId(r.session_id),
- onError: (e: Error) => console.warn("[support-view] session log failed", e.message),
+
+ // Support access is never opened implicitly. A session — with a recorded
+ // reason — must already exist, started from /admin/support. Here we only look
+ // it up so the visit can be attributed to it.
+ const activeSupportSession = useQuery({
+ queryKey: ["active-support-session", active?.organization_id ?? null],
+ queryFn: () =>
+ getActiveSupportSession({ data: { organization_id: active!.organization_id } }),
+ enabled: staffMembershipsElsewhere && !!active?.organization_id,
+ refetchInterval: 60_000,
  });
- useEffect(() => {
- if (staffMembershipsElsewhere && active && supportSessionId == null) {
- startSession.mutate({
- organization_id: active.organization_id,
- permission_preview: permissionPreview,
- });
- }
- // eslint-disable-next-line react-hooks/exhaustive-deps
- }, [staffMembershipsElsewhere, active?.organization_id, permissionPreview]);
+ const supportSessionId = activeSupportSession.data?.session?.id ?? null;
+ const supportSessionMissing =
+ staffMembershipsElsewhere && activeSupportSession.isSuccess && supportSessionId == null;
 
  const supportView: SupportViewState = useMemo(
  () => ({
@@ -210,6 +208,19 @@ function ClientLayout() {
  your email address.
  </p>
  </EmptyState>
+ </div>
+ );
+ }
+
+ if (supportSessionMissing) {
+ return (
+ <div className="mx-auto max-w-2xl p-8">
+ <EmptyState
+ title="Support session required"
+ description={`Viewing ${active.name} as staff needs an open support session with a stated reason. Nothing here loads until one exists.`}
+ whatAppearsHere="Open a session from the support screen; it is recorded, attributable to you, and closes itself after 30 minutes."
+ action={{ label: "Open a support session", to: "/admin/support" }}
+ />
  </div>
  );
  }
