@@ -17,7 +17,7 @@ import {
  CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CANDIDATE_STATUS_TONE } from "@/lib/candidate-status";
+import { CANDIDATE_STATUS_NEXT_STEP, CANDIDATE_STATUS_TONE } from "@/lib/candidate-status";
 import { useConfirmAction } from "@/components/ds";
 
 
