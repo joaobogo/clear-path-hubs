@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { ArrowDown, ArrowUp, Check, Info, Loader2, Plus, Sparkles, X } from "lucide-react";
 import {
   MAX_MUST_HAVES,
@@ -386,14 +385,3 @@ function EmptyExamples({
     </div>
   );
 }
-
-/** Kept for clients who prefer typing a block of lines; not rendered by default. */
-export function requirementsFromTextarea(value: string, tag: RequirementTag): RequirementItem[] {
-  return value
-    .split("\n")
-    .map((l) => l.replace(/^[-•*\s]+/, "").trim())
-    .filter((l) => l.length > 0)
-    .map((text) => ({ text, tag }));
-}
-
-export { Textarea as _Textarea };
