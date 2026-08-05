@@ -1436,6 +1436,16 @@ function ApplyPage() {
                   }
                   onEdit={() => setStep(3)}
                 />
+                <ReviewRow
+                  label="Cover note"
+                  value={
+                    form.cover_letter.trim()
+                      ? form.cover_letter.trim()
+                      : "Left blank — that's fine, it's optional"
+                  }
+                  onEdit={() => setStep(2)}
+                />
+
               </div>
 
               <div className="space-y-2 rounded-lg border bg-muted/30 p-4 text-sm">
