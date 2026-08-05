@@ -1,5 +1,7 @@
 import { sendTemplateEmail } from "@/lib/email-templates/send-email";
-import type { DigestRoleLine } from "@/lib/email-templates/client-weekly-digest";
+import type { DigestRoleLine, DigestSummary } from "@/lib/email-templates/client-weekly-digest";
+import { buildWeeklyUpdate } from "@/lib/client-weekly-update.server";
+import { formatWaitingSince, formatWindow } from "@/lib/client-weekly-update";
 
 /**
  * Weekly client digest — one email per recipient, per organisation, per week.
@@ -60,6 +62,22 @@ export async function runWeeklyDigest(options: { dryRun?: boolean } = {}): Promi
   let skipped = 0;
 
   for (const [orgId, userIds] of byOrg) {
+    // "This week" comes from the same builder the dashboard card uses, so the
+    // email and the screen can never show different numbers.
+    const weekly = await buildWeeklyUpdate(supabaseAdmin, orgId);
+    const summary: DigestSummary = {
+      windowLabel: formatWindow(weekly),
+      metrics: weekly.metrics.map((m) => ({ label: m.label, count: m.count })),
+      awaiting: weekly.awaiting_client.map((a) => ({
+        title: a.title,
+        reason: a.reason,
+        waitingSince: formatWaitingSince(a.waiting_since)?.replace("Waiting on you since ", "") ?? null,
+      })),
+      nextWeek: weekly.next_week.map((n) => (n.title ? `${n.title}: ${n.text}` : n.text)),
+      noMovement: weekly.no_movement,
+      noMovementReason: weekly.no_movement_reason,
+    };
+
     const [orgRes, positionsRes] = await Promise.all([
       supabaseAdmin.from("organizations").select("id, name").eq("id", orgId).maybeSingle(),
       supabaseAdmin
@@ -134,6 +152,7 @@ export async function runWeeklyDigest(options: { dryRun?: boolean } = {}): Promi
       try {
         const result = await sendTemplateEmail("client-weekly-digest", prof.email as string, {
           templateData: {
+            summary,
             contactName: (prof.full_name as string | null) ?? undefined,
             companyName: (orgRes.data as AnyRow | null)?.name ?? undefined,
             weekEnding,
