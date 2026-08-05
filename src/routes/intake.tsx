@@ -106,6 +106,11 @@ import { Check, CheckCircle2, Eye, EyeOff, FileText, Loader2, Upload, X } from "
 import { IntakeReviewPanel } from "@/components/intake/review-panel";
 import { buildIntakeReview } from "@/lib/intake-review";
 import { CARRY_NOTICE, type CarryForward } from "@/lib/intake-carry";
+import {
+  COMPENSATION_STALE_DAYS,
+  type DuplicateDraft,
+} from "@/lib/position-duplicate";
+import { getPositionDuplicateDraft } from "@/lib/position-duplicate.functions";
 import { getCompanyCarryForward } from "@/lib/intake-carry.functions";
 
 export const Route = createFileRoute("/intake")({
@@ -113,9 +118,11 @@ export const Route = createFileRoute("/intake")({
    * ?carry=<intake id> or ?carry=org starts a second role from the company
    * profile instead of a blank form. Anything else is ignored.
    */
-  validateSearch: (search: Record<string, unknown>): { carry?: string } => {
+  validateSearch: (search: Record<string, unknown>): { carry?: string; duplicate?: string } => {
     const carry = typeof search["carry"] === "string" ? (search["carry"] as string).trim() : "";
-    return carry ? { carry } : {};
+    const duplicate =
+      typeof search["duplicate"] === "string" ? (search["duplicate"] as string).trim() : "";
+    return { ...(carry ? { carry } : {}), ...(duplicate ? { duplicate } : {}) };
   },
   head: () => ({
     meta: [
@@ -356,8 +363,15 @@ function ExpressIntakePage() {
   const suggestedForRef = useRef<string>("");
   const lastIntentRef = useRef<"pay" | "call">("pay");
   const hydratedRef = useRef(false);
-  const { carry: carryParam } = Route.useSearch();
+  const { carry: carryParam, duplicate: duplicateParam } = Route.useSearch();
   const loadCompanyCarry = useServerFn(getCompanyCarryForward);
+  const loadDuplicateDraft = useServerFn(getPositionDuplicateDraft);
+  // Duplicating a role copies the brief and nothing else. What came across and
+  // what deliberately did not is stated on screen, not assumed.
+  const [duplicate, setDuplicate] = useState<DuplicateDraft | null>(null);
+  const [duplicateError, setDuplicateError] = useState<string | null>(null);
+  const [dupTitleConfirmed, setDupTitleConfirmed] = useState(false);
+  const [dupCompReviewed, setDupCompReviewed] = useState(false);
   // The answers that arrived from the company profile, so each one can say so
   // — and stop saying so the moment the client edits it for this role.
   const [carriedFields, setCarriedFields] = useState<Set<string>>(() => new Set());
