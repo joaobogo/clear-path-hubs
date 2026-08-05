@@ -159,3 +159,109 @@ export const getBookingConfirmation = createServerFn({ method: "POST" })
       firstName: row.first_name,
     };
   });
+
+/* ------------------------------------------------ native scheduler surface -- */
+
+const slotsSchema = z.object({
+  /** Reschedules must not be blocked by their own current slot. */
+  sessionId: z.string().uuid().nullable().optional(),
+});
+
+/** Open 30-minute slots across the booking horizon. Public by design. */
+export const listBookingSlots = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => slotsSchema.parse(input ?? {}))
+  .handler(async ({ data }) => {
+    const { loadAvailability } = await import("@/lib/booking/native-scheduling.server");
+    const availability = await loadAvailability({ excludeSessionId: data.sessionId ?? null });
+    return {
+      slots: availability.slots,
+      hostTimezone: availability.hostTimezone,
+      slotMinutes: availability.slotMinutes,
+    };
+  });
+
+const bookSchema = z.object({
+  sessionId: z.string().uuid(),
+  start: z.string().datetime(),
+  timezone: z.string().min(1).max(120),
+});
+
+/**
+ * Claims a slot for an intake row. Used for both the first booking and a
+ * reschedule — the server re-checks availability, so two visitors racing for
+ * the same slot cannot both win.
+ */
+export const bookBookingSlot = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => bookSchema.parse(input))
+  .handler(async ({ data }) => {
+    const { bookSlot } = await import("@/lib/booking/native-scheduling.server");
+    const result = await bookSlot(data);
+    if (!result.ok) return { ok: false as const, reason: result.reason };
+
+    // Confirmation email + CRM note are best-effort: the booking already stands.
+    try {
+      const { sendBookingLifecycleEmail } = await import("@/lib/notification-email.server");
+      const { fullLabel } = await import("@/lib/booking/slots");
+      await sendBookingLifecycleEmail({
+        to: result.email,
+        firstName: result.firstName,
+        kind: result.rescheduled ? "rescheduled" : "scheduled",
+        when: fullLabel(result.meeting.scheduledStart, result.meeting.scheduledEnd, result.meeting.timezone),
+        sessionId: result.meeting.sessionId,
+        joinUrl: result.meeting.joinUrl,
+        hostName: result.meeting.hostName,
+      });
+    } catch (err) {
+      console.error("[booking] confirmation email failed", err);
+    }
+
+    try {
+      const { findBookingSession, syncBookingStatusToCrm } = await import(
+        "@/lib/booking/booking.server"
+      );
+      const row = await findBookingSession({ sessionId: data.sessionId });
+      if (row) {
+        await syncBookingStatusToCrm(row, {
+          status: result.rescheduled ? "rescheduled" : "scheduled",
+          scheduledStart: result.meeting.scheduledStart,
+          scheduledEnd: result.meeting.scheduledEnd,
+          timezone: result.meeting.timezone,
+          hostName: result.meeting.hostName,
+          joinUrl: result.meeting.joinUrl,
+        });
+      }
+    } catch (err) {
+      console.error("[booking] crm status sync failed", err);
+    }
+
+    return { ok: true as const, meeting: result.meeting };
+  });
+
+const cancelSchema = z.object({ sessionId: z.string().uuid() });
+
+/** Cancels a booked call and frees the slot. */
+export const cancelBookingSlot = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => cancelSchema.parse(input))
+  .handler(async ({ data }) => {
+    const { cancelBooking } = await import("@/lib/booking/native-scheduling.server");
+    const result = await cancelBooking(data.sessionId);
+    if (!result.ok) return { ok: false as const, reason: result.reason };
+
+    try {
+      const { sendBookingLifecycleEmail } = await import("@/lib/notification-email.server");
+      const { HOST } = await import("@/lib/booking/native-scheduling.server");
+      await sendBookingLifecycleEmail({
+        to: result.email,
+        firstName: result.firstName,
+        kind: "cancelled",
+        when: result.scheduledStart ?? "",
+        sessionId: data.sessionId,
+        joinUrl: null,
+        hostName: HOST.name,
+      });
+    } catch (err) {
+      console.error("[booking] cancellation email failed", err);
+    }
+
+    return { ok: true as const };
+  });
