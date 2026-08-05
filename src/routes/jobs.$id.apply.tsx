@@ -37,6 +37,20 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FormShell } from "@/components/marketing/form-shell";
 import { TransparencyPanel } from "@/components/candidate/transparency-panel";
 
+const EMPTY_FORM = {
+  full_name: "",
+  email: "",
+  phone: "",
+  country: "",
+  region: "",
+  city: "",
+  cover_letter: "",
+  portfolio_url: "",
+  linkedin_url: "",
+  website_url: "",
+  accommodation_request: "",
+};
+
 export const Route = createFileRoute("/jobs/$id/apply")({
   // The step lives in the URL so the browser back button walks back through
   // the flow instead of leaving it — the component stays mounted, so nothing
@@ -120,19 +134,7 @@ function ApplyPage() {
   );
   const setStep = useCallback((n: number) => goTo({ step: n, q: 1 }), [goTo]);
 
-  const [form, setForm] = useState({
-    full_name: "",
-    email: "",
-    phone: "",
-    country: "",
-    region: "",
-    city: "",
-    cover_letter: "",
-    portfolio_url: "",
-    linkedin_url: "",
-    website_url: "",
-    accommodation_request: "",
-  });
+  const [form, setForm] = useState(EMPTY_FORM);
   // Account creation for applicants who are not signed in.
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const [wantsAccount, setWantsAccount] = useState(false);
