@@ -2927,6 +2927,109 @@ function ExpressIntakePage() {
             <p className="text-sm text-[color:var(--brand-navy)]/70">
               This is the last chance to correct anything before you submit.
             </p>
+
+            {duplicateError && (
+              <div
+                role="alert"
+                className="rounded-lg border border-[color:var(--brand-danger)]/30 bg-[color:var(--brand-danger)]/5 p-4 text-sm leading-relaxed"
+              >
+                {duplicateError}
+              </div>
+            )}
+
+            {duplicate && (
+              <div
+                className="space-y-3 rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/4 p-4"
+                data-testid="duplicate-notice"
+              >
+                <p className="text-sm font-semibold">
+                  Started from{" "}
+                  {duplicate.sourceTitle ? `your “${duplicate.sourceTitle}” brief` : "an earlier role"}
+                </p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+                      Copied
+                    </p>
+                    <ul className="mt-1 space-y-1 text-sm text-[color:var(--brand-navy)]/75">
+                      {duplicate.copied.map((c) => (
+                        <li key={c}>{c}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+                      Not copied
+                    </p>
+                    <ul className="mt-1 space-y-1 text-sm text-[color:var(--brand-navy)]/75">
+                      {duplicate.notCopied.map((c) => (
+                        <li key={c}>{c}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {dupTitleUnchanged && (
+                  <div className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white/60 p-3">
+                    <p className="text-sm">
+                      This role still has the same title as the one you copied.
+                    </p>
+                    <div className="mt-2 flex flex-wrap items-center gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => editFromReview("roleTitle")}
+                      >
+                        Change the title
+                      </Button>
+                      <label className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4"
+                          checked={dupTitleConfirmed}
+                          onChange={(e) => setDupTitleConfirmed(e.target.checked)}
+                          data-testid="duplicate-title-confirm"
+                        />
+                        The title is intentionally the same
+                      </label>
+                    </div>
+                  </div>
+                )}
+
+                {duplicate.compensationStale && (
+                  <div className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white/60 p-3">
+                    <p className="text-sm">
+                      The compensation came from a brief more than {COMPENSATION_STALE_DAYS} days old
+                      {duplicate.compensationAsOf
+                        ? ` (last set ${new Date(duplicate.compensationAsOf).toLocaleDateString()})`
+                        : ""}
+                      . Worth a look before it goes out to candidates.
+                    </p>
+                    <div className="mt-2 flex flex-wrap items-center gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => editFromReview("salaryMin")}
+                      >
+                        Review compensation
+                      </Button>
+                      <label className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4"
+                          checked={dupCompReviewed}
+                          onChange={(e) => setDupCompReviewed(e.target.checked)}
+                          data-testid="duplicate-comp-confirm"
+                        />
+                        I have checked the range is still right
+                      </label>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
             {reviewing && (
               <IntakeReviewPanel
                 review={review}
