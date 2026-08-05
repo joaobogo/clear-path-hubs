@@ -25,7 +25,10 @@ const searchSchema = z.object({
   location: fallback(z.string(), "").default(""),
   sort: fallback(z.string(), "updated_desc").default("updated_desc"),
   page: fallback(z.number().int(), 1).default(1),
+  tab: fallback(z.enum(["all", "attention"]), "all").default("all"),
+  show_test: fallback(z.boolean(), false).default(false),
 });
+
 
 export const Route = createFileRoute("/_authenticated/admin/positions/")({
   validateSearch: zodValidator(searchSchema),
