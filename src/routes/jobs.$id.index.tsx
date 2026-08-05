@@ -355,15 +355,31 @@ function JobDetail() {
   const workModel = labelWorkModel(pos.work_model);
   const employment = labelEmployment(pos.employment_type);
 
+  // What applying costs, stated before the button is pressed. The text is the
+  // button's accessible description, so a screen reader hears the cost as part
+  // of the action rather than as stray prose somewhere else on the page.
+  const effort = pos.apply_effort ?? EFFORT_DEFAULT;
+  const effortLine = applyEffortLine(effort, APPLY_STEPS);
+
   const applyButton = pos.accepting_applications ? (
-    <Button asChild size="lg" className="w-full sm:w-auto">
-      <Link to="/jobs/$id/apply" params={{ id: pos.id }}>Apply for this role</Link>
-    </Button>
+    <div className="w-full sm:w-auto">
+      <Button asChild size="lg" className="w-full sm:w-auto" aria-describedby="apply-effort">
+        <Link to="/jobs/$id/apply" params={{ id: pos.id }}>Apply for this role</Link>
+      </Button>
+      <p
+        id="apply-effort"
+        title={applyEffortProvenance(effort)}
+        className="mt-2 max-w-xs text-sm text-muted-foreground sm:text-right"
+      >
+        {effortLine}
+      </p>
+    </div>
   ) : (
     <Button size="lg" disabled className="w-full sm:w-auto">
       Applications paused
     </Button>
   );
+
 
   return (
     <SiteShell>

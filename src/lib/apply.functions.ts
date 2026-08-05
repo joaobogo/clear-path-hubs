@@ -4,6 +4,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { applySchema, composeLocation, type ApplyInput } from "./apply-schema";
+import { normalizeCompletionSeconds } from "./jobs/apply-effort";
+
 
 export type SubmitApplicationResult =
   | {
@@ -331,6 +333,10 @@ export const submitApplication = createServerFn({ method: "POST" })
 
           source_channel: data.source,
           status: "submitted",
+          // Honest input for the "how long does this take" line on the job
+          // page. Out-of-range values are dropped, not clamped into the median.
+          completion_seconds: normalizeCompletionSeconds(data.elapsed_seconds),
+
           cover_letter: data.cover_letter || null,
           portfolio_url: data.portfolio_url || null,
           accommodation_request: data.accommodation_request || null,

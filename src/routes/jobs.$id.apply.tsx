@@ -4,6 +4,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { getPublicPosition } from "@/lib/jobs.functions";
 import { extractJobUuid } from "@/lib/marketing/job-slug";
 import { submitApplication } from "@/lib/apply.functions";
+import {
+  EFFORT_DEFAULT,
+  applyEffortLine,
+  applyEffortProvenance,
+} from "@/lib/jobs/apply-effort";
+
 import { ProcessState } from "@/components/ds/process-state";
 import {
   ALLOWED_CV_EXT,
@@ -116,6 +122,10 @@ function ApplyPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
   const submittingRef = useRef(false);
+  // When this form first became usable. The gap to a successful submit is the
+  // only honest source for the time we quote to the next candidate.
+  const startedAtRef = useRef<number>(Date.now());
+
 
 
   // Restore text draft (never the CV).
@@ -382,6 +392,8 @@ function ApplyPage() {
         consent_terms: consent as true,
         network_opt_in: network,
         idempotency_key: getOrCreateIdempotencyKey(),
+        elapsed_seconds: Math.round((Date.now() - startedAtRef.current) / 1000),
+
         ...(signedIn === false && password ? { password } : {}),
       };
 
@@ -449,6 +461,11 @@ function ApplyPage() {
 
   if (!pos) return null;
 
+  // The same figure the job page quoted, so the cost does not change between
+  // deciding to apply and starting.
+  const effort = pos.apply_effort ?? EFFORT_DEFAULT;
+
+
   return (
     <FormShell
       exitTo={`/jobs/${id}`}
@@ -462,7 +479,12 @@ function ApplyPage() {
           Apply — {pos.title}
         </h1>
         <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
-          <span>Takes about 3 minutes. Your progress is saved as you type.</span>
+          {/* The measured cost, repeated from the job page. Never a figure we
+              invented — see applyEffortLine. */}
+          <span title={applyEffortProvenance(effort)}>
+            {applyEffortLine(effort, STEP_LABELS.length)}
+          </span>
+
           <span
             aria-live="polite"
             className={
@@ -540,7 +562,16 @@ function ApplyPage() {
                   Before you start
                 </h2>
                 <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
-                  <li>· About 3 minutes, across {STEP_LABELS.length} short steps.</li>
+                  <li>
+                    ·{" "}
+                    {effort.measured
+                      ? `${STEP_LABELS.length} short steps, about ${effort.minutes} ${
+                          effort.minutes === 1 ? "minute" : "minutes"
+                        } — the median for people who completed this application.`
+                      : `${STEP_LABELS.length} short steps, usually under ${
+                          effort.minutes + 2
+                        } minutes.`}
+                  </li>
                   <li>· You need your CV as a PDF, up to 10 MB. It is required.</li>
                   <li>
                     ·{" "}
@@ -556,6 +587,7 @@ function ApplyPage() {
                   </li>
                 </ul>
               </section>
+
 
               <div>
                 <h2 className="text-lg font-semibold">Your details</h2>
