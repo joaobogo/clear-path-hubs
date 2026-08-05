@@ -175,3 +175,49 @@ export function intakeAnswers(intake: BookingIntake): Record<string, string> {
     ...(intake.additionalContext ? { "Additional context": intake.additionalContext } : {}),
   };
 }
+
+/**
+ * Quick booking — the one-screen path. A visitor gives only the four facts a
+ * human needs to run the call (name, email, phone) and picks a time. Everything
+ * else in the full intake is recorded as "Not provided yet" rather than guessed,
+ * so nothing invented reaches the CRM or the internal summary.
+ */
+export const quickBookingSchema = z.object({
+  firstName: text(80).min(1, "Enter your first name"),
+  lastName: text(80).min(1, "Enter your last name"),
+  email: text(255)
+    .min(1, "Enter your email")
+    .email("Enter a valid email address")
+    .transform((v) => v.toLowerCase()),
+  phone: text(40).min(6, "Enter a phone number we can reach you on"),
+  /** Honeypot — must stay empty. */
+  website: optional(200),
+});
+
+export type QuickBooking = z.infer<typeof quickBookingSchema>;
+
+const NOT_PROVIDED = "Not provided yet";
+
+/** Expands a quick booking into the stored intake shape, without inventing answers. */
+export function quickBookingToIntake(input: QuickBooking): BookingIntake {
+  const domain = deriveCompanyDomain({ email: input.email });
+  return {
+    firstName: input.firstName,
+    lastName: input.lastName,
+    email: input.email,
+    phone: input.phone,
+    companyName: domain ?? NOT_PROVIDED,
+    companyWebsite: domain ? `https://${domain}` : null,
+    jobTitle: NOT_PROVIDED,
+    companySize: "1–10",
+    openRoles: "1",
+    hiringVolume: "Not sure yet",
+    rolesHiring: NOT_PROVIDED,
+    hiringChallenge: "To be discussed on the call.",
+    currentProcess: "A mix of the above",
+    hiringTimeline: "Exploring / no date yet",
+    heardAbout: "Other",
+    additionalContext: null,
+    website: null,
+  };
+}

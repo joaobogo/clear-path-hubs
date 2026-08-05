@@ -1020,6 +1020,20 @@ function ExpressIntakePage() {
     }
   };
 
+  /**
+   * The account exists now, so the brief keeps going by itself: straight on to
+   * the role. If something on this step is still missing we stay put and show
+   * it, rather than carrying an incomplete answer forward.
+   */
+  const continueAfterAccount = () => {
+    if (stepIndex !== 0) return;
+    setTimeout(() => {
+      if (!validateStep(0)) return;
+      setStepIndex(1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 300);
+  };
+
   const createAccountInline = async () => {
     const email = state.workEmail.trim().toLowerCase();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
@@ -1069,6 +1083,7 @@ function ExpressIntakePage() {
       setAccountEmail(email);
       trackEvent("account_created_from_intake", { flow: "express_onboarding" });
       toast.success("Account created. Everything you've typed is saved to it.");
+      continueAfterAccount();
     } catch {
       toast.error("Network problem. Please try again.");
     } finally {
@@ -1093,6 +1108,7 @@ function ExpressIntakePage() {
       setAccountEmail(email);
       setEmailStatus({ kind: "idle" });
       toast.success("Signed in. This role will be added to your existing organisation.");
+      continueAfterAccount();
     } catch {
       toast.error("Network problem. Please try again.");
     } finally {
@@ -1118,6 +1134,7 @@ function ExpressIntakePage() {
         setAccountEmail(data.user.email);
         setState((s2) => ({ ...s2, workEmail: s2.workEmail || data.user!.email! }));
         toast.success("Signed in with Google. Your draft is safe.");
+        continueAfterAccount();
       }
     } catch {
       toast.error("Google sign-in didn't complete. Try again or use email.");
@@ -1126,11 +1143,12 @@ function ExpressIntakePage() {
     }
   };
 
-  // After a full-page Google redirect, land back on the confirm step.
+  // After a full-page Google redirect, land back on the step that holds the
+  // account block so the brief carries on from exactly where it paused.
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (!new URLSearchParams(window.location.search).has("resume")) return;
-    setStepIndex(INTAKE_STEPS.length - 1);
+    setStepIndex(0);
     const t = setTimeout(() => {
       document.getElementById("account-step")?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 400);
