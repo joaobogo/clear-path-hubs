@@ -75,13 +75,23 @@ async function assertOrgAccess(
   userId: string,
   orgId: string,
 ): Promise<{ staff: boolean }> {
-  const { data: member } = await supabase.rpc("is_org_member", {
-    _user: userId,
-    _org: orgId,
-  });
   const { data: staff } = await supabase.rpc("is_platform_staff", { _user: userId });
-  if (member !== true && staff !== true) throw new Error("forbidden");
-  return { staff: staff === true };
+  if (staff === true) return { staff: true };
+
+  // Membership is the same signal the client context uses to pick the active
+  // account. is_org_member() additionally requires the organization not to be
+  // archived, which made conversations 403 for accounts that can still open
+  // every other client surface.
+  const { data: member } = await supabase
+    .from("memberships")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("organization_id", orgId)
+    .eq("status", "active")
+    .limit(1)
+    .maybeSingle();
+  if (!member) throw new Error("forbidden");
+  return { staff: false };
 }
 
 /**
