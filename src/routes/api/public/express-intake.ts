@@ -8,7 +8,7 @@ import {
   briefCompleteness,
   jdFileExt,
   splitLines,
-
+  type RequirementTag,
 } from "@/lib/express-intake-schema";
 
 
