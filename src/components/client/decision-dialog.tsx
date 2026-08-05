@@ -227,7 +227,7 @@ export function DecisionDialog({
             />
             <div className="flex items-start justify-between gap-3">
               <p className="text-xs text-muted-foreground">
-                {reason === "other" ? "Tell us in a sentence what did not fit." : "\u00A0"}
+                {reason === "other" ? "Tell us in a sentence what did not fit." : "\u00a0"}
               </p>
               <span
                 id="decision-note-count"

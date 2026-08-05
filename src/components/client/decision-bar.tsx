@@ -165,7 +165,7 @@ export function DecisionBar({
             {pending === advance.action ? (
               <>
                 <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" aria-hidden="true" />
-                Saving\u2026
+                Saving…
               </>
             ) : (
               advance.label
@@ -177,7 +177,7 @@ export function DecisionBar({
             {pending === "hold" ? (
               <>
                 <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" aria-hidden="true" />
-                Saving\u2026
+                Saving…
               </>
             ) : (
               "Hold"
@@ -195,7 +195,7 @@ export function DecisionBar({
             {pending === "not_moving_forward" ? (
               <>
                 <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" aria-hidden="true" />
-                Saving\u2026
+                Saving…
               </>
             ) : (
               "Not a fit"
