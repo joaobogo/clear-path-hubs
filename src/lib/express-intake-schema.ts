@@ -30,7 +30,15 @@ export const MIN_ACCOUNT_PASSWORD = 8;
 
 /** Role-brief minimums. Enforced identically on the client and the server. */
 export const MIN_WHY_OPEN = 40;
-export const MIN_MUST_HAVES = 2;
+export const MIN_MUST_HAVES = 1;
+/**
+ * Above six must-haves a shortlist stops being a shortlist. We do not block
+ * the client — we say so once and ask them to confirm or re-tag.
+ */
+export const MAX_MUST_HAVES = 6;
+export const MIN_REQUIREMENT_CHARS = 3;
+export const MAX_REQUIREMENT_CHARS = 120;
+export const MAX_REQUIREMENTS = 30;
 export const MIN_DEAL_BREAKERS = 20;
 export const MIN_INTERVIEW_PROCESS = 20;
 
@@ -83,6 +91,143 @@ export function splitLines(value: string | undefined | null): string[] {
     .slice(0, 40);
 }
 
+
+/* ------------------------------------------------------------------ */
+/* Requirements: one list, three tags                                  */
+/* ------------------------------------------------------------------ */
+
+export const REQUIREMENT_TAGS = ["must_have", "nice_to_have", "trainable"] as const;
+export type RequirementTag = (typeof REQUIREMENT_TAGS)[number];
+
+export const REQUIREMENT_TAG_LABELS: Record<RequirementTag, string> = {
+  must_have: "Must have",
+  nice_to_have: "Nice to have",
+  trainable: "Can be trained",
+};
+
+/** Said on screen, so nobody has to guess what a tag does to sourcing. */
+export const REQUIREMENT_TAG_EFFECTS: Record<RequirementTag, string> = {
+  must_have: "Filters the shortlist and drives the evidence bullets you read.",
+  nice_to_have: "Orders the shortlist. Never rules anyone out.",
+  trainable: "Excluded from filtering entirely. We simply note you would teach it.",
+};
+
+export const requirementSchema = z.object({
+  text: z
+    .string()
+    .trim()
+    .min(MIN_REQUIREMENT_CHARS, `Use at least ${MIN_REQUIREMENT_CHARS} characters`)
+    .max(MAX_REQUIREMENT_CHARS, `Keep it under ${MAX_REQUIREMENT_CHARS} characters`),
+  tag: z.enum(REQUIREMENT_TAGS),
+});
+
+export type RequirementItem = z.infer<typeof requirementSchema>;
+
+export function normalizeRequirementKey(text: string): string {
+  return text.trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+export function countMustHaves(items: Array<{ text: string; tag: RequirementTag }>): number {
+  return items.filter((i) => i.tag === "must_have" && i.text.trim().length > 0).length;
+}
+
+/**
+ * Validates the whole requirements list in the order the client arranged it.
+ * Returns per-row messages plus a single list-level message, so the UI can put
+ * every error under the thing it is about.
+ */
+export function validateRequirements(
+  items: Array<{ text: string; tag: RequirementTag }>,
+  opts: { manyConfirmed?: boolean } = {},
+): { ok: boolean; rowErrors: Record<number, string>; listError: string | null; needsConfirm: boolean } {
+  const rowErrors: Record<number, string> = {};
+  const seen = new Map<string, number>();
+  items.forEach((item, i) => {
+    const text = item.text.trim();
+    if (text.length === 0) {
+      rowErrors[i] = "Write the requirement, or remove the row";
+      return;
+    }
+    if (text.length < MIN_REQUIREMENT_CHARS) {
+      rowErrors[i] = `Use at least ${MIN_REQUIREMENT_CHARS} characters`;
+      return;
+    }
+    if (text.length > MAX_REQUIREMENT_CHARS) {
+      rowErrors[i] = `Keep it under ${MAX_REQUIREMENT_CHARS} characters`;
+      return;
+    }
+    const key = normalizeRequirementKey(text);
+    if (seen.has(key)) {
+      rowErrors[i] = "You already listed this one";
+      return;
+    }
+    seen.set(key, i);
+  });
+
+  const mustHaves = countMustHaves(items);
+  let listError: string | null = null;
+  let needsConfirm = false;
+  if (mustHaves < MIN_MUST_HAVES) {
+    listError = "Tag at least one requirement as a must have";
+  } else if (mustHaves > MAX_MUST_HAVES) {
+    needsConfirm = !opts.manyConfirmed;
+    if (needsConfirm) {
+      listError = `${MAX_MUST_HAVES} or fewer must-haves gets you a shortlist faster. Re-tag a few, or confirm you want all ${mustHaves}.`;
+    }
+  }
+
+  return {
+    ok: Object.keys(rowErrors).length === 0 && !listError,
+    rowErrors,
+    listError,
+    needsConfirm,
+  };
+}
+
+/** The three legacy lines-per-field strings, derived from the tagged list. */
+export function requirementsToLines(items: Array<{ text: string; tag: RequirementTag }>): {
+  mustHaves: string;
+  niceToHaves: string;
+  trainable: string;
+} {
+  const pick = (tag: RequirementTag) =>
+    items
+      .filter((i) => i.tag === tag && i.text.trim().length > 0)
+      .map((i) => i.text.trim())
+      .join("\n");
+  return {
+    mustHaves: pick("must_have"),
+    niceToHaves: pick("nice_to_have"),
+    trainable: pick("trainable"),
+  };
+}
+
+/** Rebuilds a tagged list from a saved draft that only had the three strings. */
+export function linesToRequirements(values: {
+  mustHaves?: string | null;
+  niceToHaves?: string | null;
+  trainable?: string | null;
+}): RequirementItem[] {
+  const out: RequirementItem[] = [];
+  const add = (raw: string | null | undefined, tag: RequirementTag) => {
+    for (const text of splitLines(raw)) out.push({ text, tag });
+  };
+  add(values.mustHaves, "must_have");
+  add(values.niceToHaves, "nice_to_have");
+  add(values.trainable, "trainable");
+  return out;
+}
+
+/** Three worked examples for an empty list, shaped by the job title entered. */
+export function requirementExamples(roleTitle: string): RequirementItem[] {
+  const title = (roleTitle ?? "").trim();
+  const role = title.length > 0 ? title : "this role";
+  return [
+    { text: `Has done ${role} work for at least three years`, tag: "must_have" },
+    { text: "Has owned a budget or a team, not just contributed", tag: "nice_to_have" },
+    { text: "Our internal systems and reporting tools", tag: "trainable" },
+  ];
+}
 
 export const jdFileSchema = z.object({
   filename: z.string().trim().min(1).max(255),
@@ -153,6 +298,13 @@ export const expressIntakeSchema = z
       }),
     niceToHaves: z.string().trim().max(4000).optional().or(z.literal("")),
     trainable: z.string().trim().max(4000).optional().or(z.literal("")),
+    /**
+     * The tagged list exactly as the client ordered it. The three strings above
+     * stay in the payload because everything downstream already reads them;
+     * this carries the order and the tag so neither is lost.
+     */
+    requirements: z.array(requirementSchema).max(MAX_REQUIREMENTS).optional().default([]),
+    manyMustHavesConfirmed: z.boolean().optional().default(false),
 
     // ─── Step 3: practicalities ───────────────────────────────────────────
     // Optional on submit. The recruiting team can read most of this from the
@@ -188,6 +340,17 @@ export const expressIntakeSchema = z
     // Silent spam trap — must stay empty.
     companyFax: z.string().max(200).optional().or(z.literal("")),
   })
+  .refine(
+    (v) => {
+      const items = v.requirements ?? [];
+      if (items.length === 0) return true; // legacy payloads validated by mustHaves
+      return validateRequirements(items, { manyConfirmed: v.manyMustHavesConfirmed }).ok;
+    },
+    {
+      path: ["requirements"],
+      message: "Check your requirements list",
+    },
+  )
   .refine((v) => (v.password ?? "") === (v.confirmPassword ?? ""), {
     path: ["confirmPassword"],
     message: "Both passwords must match",
@@ -274,7 +437,7 @@ export const INTAKE_TOTAL_MINUTES = INTAKE_STEPS.reduce((sum, s) => sum + s.minu
 /** Which fields belong to which step, for step-scoped validation and focus. */
 export const STEP_FIELDS: Record<IntakeStepKey, string[]> = {
   role: ["roleTitle", "team", "whyOpen", "jobDescriptionText"],
-  people: ["mustHaves", "niceToHaves", "trainable"],
+  people: ["requirements", "mustHaves", "niceToHaves", "trainable"],
   practicalities: [
     "location",
     "workModel",
@@ -325,7 +488,7 @@ export const stepValidators = {
       .string()
       .trim()
       .refine((v) => splitLines(v).length >= MIN_MUST_HAVES, {
-        message: `List at least ${MIN_MUST_HAVES} must-haves, one per line`,
+        message: "Tag at least one requirement as a must have",
       }),
   }),
 } as const;
