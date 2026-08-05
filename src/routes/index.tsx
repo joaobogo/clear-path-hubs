@@ -1459,7 +1459,7 @@ function Home() {
                 {[
                   { n: "01", when: "Day 1–2", t: "Intake", b: "Upload the job description. TaaSFlow builds the blueprint and search plan for you to review." },
                   { n: "02", when: "Day 3–10", t: "Sourcing and scoring", b: "Multi-channel sourcing, then scoring against your rubric with evidence per requirement." },
-                  { n: "03", when: "Day 10–14", t: "Ranked shortlist review", b: "Reviewed candidates published to your dashboard, ranked, with CVs and evidence." },
+                  { n: "03", when: "Within days", t: "Ranked shortlist review", b: "Reviewed candidates published to your dashboard, ranked, with CVs and evidence." },
                 ].map((s) => (
                   <li key={s.n} className="rounded-2xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-paper)] p-5">
                     <div className="flex items-center gap-2">

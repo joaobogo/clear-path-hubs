@@ -219,7 +219,7 @@ function PitchPage() {
             </h2>
             <p className="mt-4 text-[color:var(--brand-navy)]/80">
               Every stage is visible. Every score cites its evidence. The engine
-              runs continuously — you don't wait two weeks to see progress.
+              runs continuously — you don't wait weeks to see progress.
             </p>
           </div>
           <ol className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
