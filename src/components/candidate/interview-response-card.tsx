@@ -5,6 +5,7 @@ import { CalendarClock, Check, Link2, MapPin, Users } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { InterviewChangeControls } from "@/components/candidate/interview-change-controls";
 import { listMyInterviews, respondToInterview } from "@/lib/scheduling.functions";
 import { calendarLink, calendlyLink, formatInZone, viewerTimezone } from "@/lib/scheduling";
 import {
@@ -231,6 +232,12 @@ export function InterviewResponseCard({ applicationId, compact = false }: Props)
                       </a>
                     ) : null}
                   </div>
+                  <InterviewChangeControls
+                    interviewId={i.id}
+                    scheduledAt={i.scheduled_at}
+                    status={i.status}
+                    applicationId={i.application_id}
+                  />
                 </div>
               ) : null}
 
