@@ -118,7 +118,11 @@ export const Route = createFileRoute("/jobs/$id/")({
       ],
     };
   },
+  // A failed load shows one error card for the whole page — never a partial
+  // job with some facts missing, which reads as "the employer withheld this".
   errorComponent: makeRouteErrorComponent("public", "src/routes/jobs.$id.index.tsx"),
+  pendingComponent: JobDetailPending,
+
   notFoundComponent: () => (
     <SiteShell>
       <div className="mx-auto max-w-2xl px-4 py-20 text-center">
