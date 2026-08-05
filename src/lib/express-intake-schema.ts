@@ -623,7 +623,14 @@ export const expressIntakeSchema = z
     inviteCollaborators: z.preprocess((v) => v === true, z.boolean()),
 
 
+    /** Legacy free text. Derived from the list below when the client sends one. */
     dealBreakers: z.string().trim().max(2000).optional().or(z.literal("")),
+    /** Up to five short lines. Optional — an empty list is a valid answer. */
+    dealBreakerList: z.preprocess(
+      (v) => (Array.isArray(v) ? v : []),
+      z.array(z.string().trim().max(MAX_DEAL_BREAKER_CHARS + 40)).max(20),
+    ),
+
 
     consent: z.literal(true, {
       errorMap: () => ({ message: "You must accept the terms to continue" }),
