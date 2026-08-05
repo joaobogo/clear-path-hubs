@@ -95,8 +95,9 @@ export const APPLY_STEP_LABELS = [
   "Your details",
   "CV upload",
   "Screening",
-  "Consent & review",
-  "Submit",
+  "Consent",
+  "Review & submit",
+
 ] as const;
 
 export const APPLY_STEPS = APPLY_STEP_LABELS.length;
