@@ -23,3 +23,20 @@ export const CANDIDATE_STATUS_MEANING: Record<CandidateSafeStatus, string> = {
   Closed: "This application is no longer active.",
   Withdrawn: "You withdrew this application.",
 };
+
+/**
+ * The one line that answers "what do I do now?". A status word on its own
+ * generates most support contact, so every state — including the ones where
+ * we need nothing — says so explicitly. Never left blank.
+ */
+export const CANDIDATE_STATUS_NEXT_STEP: Record<CandidateSafeStatus, string> = {
+  Submitted: "Nothing needed from you. We'll email you when there's news.",
+  "Under review": "Nothing needed from you. You can still upload a newer CV.",
+  "Additional information requested": "Answer the team's question to continue.",
+  Progressing: "Nothing needed from you yet. Keep an eye on your inbox.",
+  "Interview requested": "Accept, decline or ask for another time.",
+  "Interview scheduled": "Attend at the confirmed time, or tell us if it no longer works.",
+  Closed: "Nothing further for this role. You're welcome to apply to others.",
+  Withdrawn: "Nothing needed. You can apply to other roles at any time.",
+};
+

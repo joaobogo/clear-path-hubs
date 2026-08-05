@@ -13,11 +13,14 @@ import {
   Building2,
   Check,
   Clock,
+  ListOrdered,
   MapPin,
+  ShieldCheck,
   TrendingUp,
   Wallet,
   type LucideIcon,
 } from "lucide-react";
+
 
 export const Route = createFileRoute("/jobs/$id/")({
   loader: async ({ context, params }) => {
@@ -208,17 +211,41 @@ function labelEmployment(e: string | null) {
   return e ? e.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : null;
 }
 
-function FactRow({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
+/** The stages this page commits to, in the order they are described below. */
+const HIRING_STAGES = ["apply", "TaaSFlow review", "employer interviews"] as const;
+
+function FactRow({
+  icon: Icon,
+  label,
+  value,
+  fallback,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: string | null | undefined;
+  fallback?: string;
+}) {
+  const stated = typeof value === "string" && value.trim().length > 0;
+  if (!stated && !fallback) return null;
   return (
     <div className="flex items-start gap-3">
       <Icon className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
       <div className="min-w-0">
         <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
-        <div className="text-sm font-medium break-words">{value}</div>
+        <div
+          className={
+            stated
+              ? "text-sm font-medium break-words"
+              : "text-sm italic text-muted-foreground break-words"
+          }
+        >
+          {stated ? value : fallback}
+        </div>
       </div>
     </div>
   );
 }
+
 
 function BulletList({ items }: { items: string[] }) {
   return (
@@ -420,23 +447,48 @@ function JobDetail() {
               <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                 Role at a glance
               </h2>
+              {/* The four facts candidates actually screen on are always
+                  rendered. A missing value says so plainly rather than
+                  vanishing, so nobody has to guess whether pay was withheld
+                  or simply not scrolled to. */}
               <div className="mt-4 space-y-4">
-                {pos.location && (
-                  <FactRow icon={MapPin} label="Location" value={pos.location} />
-                )}
-                {workModel && (
-                  <FactRow icon={Building2} label="Work model" value={workModel} />
-                )}
+                <FactRow
+                  icon={Wallet}
+                  label="Compensation"
+                  value={pos.compensation_display}
+                  fallback="Not stated by the employer"
+                />
+                <FactRow
+                  icon={Building2}
+                  label="Work arrangement"
+                  value={workModel}
+                  fallback="Not stated by the employer"
+                />
+                <FactRow
+                  icon={MapPin}
+                  label="Location"
+                  value={pos.location}
+                  fallback="Not stated by the employer"
+                />
+                <FactRow
+                  icon={ShieldCheck}
+                  label="Work authorisation"
+                  value={pos.work_authorization_note}
+                  fallback="Not stated by the employer — ask us and we'll confirm"
+                />
+                <FactRow
+                  icon={ListOrdered}
+                  label="Stages"
+                  value={`${HIRING_STAGES.length} before an offer: ${HIRING_STAGES.join(", ")}`}
+                />
                 {employment && (
                   <FactRow icon={Clock} label="Employment" value={employment} />
-                )}
-                {pos.compensation_display && (
-                  <FactRow icon={Wallet} label="Compensation" value={pos.compensation_display} />
                 )}
                 {pos.seniority && (
                   <FactRow icon={TrendingUp} label="Seniority" value={pos.seniority} />
                 )}
               </div>
+
 
               {pos.locations.length > 0 && (
                 <div className="mt-6 border-t pt-4">
