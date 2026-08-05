@@ -148,6 +148,7 @@ import { Route as AuthenticatedAdminClients_newRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminClientsRouteImport } from './routes/_authenticated/admin.clients'
 import { Route as AuthenticatedAdminCandidatesRouteImport } from './routes/_authenticated/admin.candidates'
 import { Route as AuthenticatedAdminBusinessRulesRouteImport } from './routes/_authenticated/admin.business-rules'
+import { Route as AuthenticatedAdminApprovalsRouteImport } from './routes/_authenticated/admin.approvals'
 import { Route as AuthenticatedAdminAgentOpsRouteImport } from './routes/_authenticated/admin.agent-ops'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
@@ -931,6 +932,12 @@ const AuthenticatedAdminBusinessRulesRoute =
     path: '/business-rules',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminApprovalsRoute =
+  AuthenticatedAdminApprovalsRouteImport.update({
+    id: '/approvals',
+    path: '/approvals',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminAgentOpsRoute =
   AuthenticatedAdminAgentOpsRouteImport.update({
     id: '/agent-ops',
@@ -1222,6 +1229,7 @@ export interface FileRoutesByFullPath {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/agent-ops': typeof AuthenticatedAdminAgentOpsRoute
+  '/admin/approvals': typeof AuthenticatedAdminApprovalsRoute
   '/admin/business-rules': typeof AuthenticatedAdminBusinessRulesRoute
   '/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
   '/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
@@ -1397,6 +1405,7 @@ export interface FileRoutesByTo {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/agent-ops': typeof AuthenticatedAdminAgentOpsRoute
+  '/admin/approvals': typeof AuthenticatedAdminApprovalsRoute
   '/admin/business-rules': typeof AuthenticatedAdminBusinessRulesRoute
   '/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/admin/copilot': typeof AuthenticatedAdminCopilotRoute
@@ -1570,6 +1579,7 @@ export interface FileRoutesById {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/agent-ops': typeof AuthenticatedAdminAgentOpsRoute
+  '/_authenticated/admin/approvals': typeof AuthenticatedAdminApprovalsRoute
   '/_authenticated/admin/business-rules': typeof AuthenticatedAdminBusinessRulesRoute
   '/_authenticated/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
   '/_authenticated/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
@@ -1750,6 +1760,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/agent-ops'
+    | '/admin/approvals'
     | '/admin/business-rules'
     | '/admin/candidates'
     | '/admin/clients'
@@ -1925,6 +1936,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/agent-ops'
+    | '/admin/approvals'
     | '/admin/business-rules'
     | '/admin/clients_new'
     | '/admin/copilot'
@@ -2097,6 +2109,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/admin/agent-ops'
+    | '/_authenticated/admin/approvals'
     | '/_authenticated/admin/business-rules'
     | '/_authenticated/admin/candidates'
     | '/_authenticated/admin/clients'
@@ -3271,6 +3284,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBusinessRulesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/approvals': {
+      id: '/_authenticated/admin/approvals'
+      path: '/approvals'
+      fullPath: '/admin/approvals'
+      preLoaderRoute: typeof AuthenticatedAdminApprovalsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/agent-ops': {
       id: '/_authenticated/admin/agent-ops'
       path: '/agent-ops'
@@ -3614,6 +3634,7 @@ const AuthenticatedAdminPositionsRouteWithChildren =
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAgentOpsRoute: typeof AuthenticatedAdminAgentOpsRoute
+  AuthenticatedAdminApprovalsRoute: typeof AuthenticatedAdminApprovalsRoute
   AuthenticatedAdminBusinessRulesRoute: typeof AuthenticatedAdminBusinessRulesRoute
   AuthenticatedAdminCandidatesRoute: typeof AuthenticatedAdminCandidatesRouteWithChildren
   AuthenticatedAdminClientsRoute: typeof AuthenticatedAdminClientsRouteWithChildren
@@ -3650,6 +3671,7 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAgentOpsRoute: AuthenticatedAdminAgentOpsRoute,
+  AuthenticatedAdminApprovalsRoute: AuthenticatedAdminApprovalsRoute,
   AuthenticatedAdminBusinessRulesRoute: AuthenticatedAdminBusinessRulesRoute,
   AuthenticatedAdminCandidatesRoute:
     AuthenticatedAdminCandidatesRouteWithChildren,
