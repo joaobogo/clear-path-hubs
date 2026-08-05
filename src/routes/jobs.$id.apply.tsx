@@ -1075,49 +1075,115 @@ function ApplyPage() {
                 </p>
               </div>
               <div>
-                <Label htmlFor="cv">CV file (PDF, max 10 MB) *</Label>
+                {/* Rules first, in plain text with no error styling, so nothing
+                    arrives as a surprise after a failed attempt. */}
+                <div className="rounded-lg border bg-muted/30 p-3 text-xs text-muted-foreground">
+                  <p className="font-medium text-foreground">Before you pick a file</p>
+                  <ul className="mt-1 list-disc space-y-0.5 pl-4">
+                    <li>PDF only — Word, Pages, images and text files are not accepted</li>
+                    <li>Maximum size 10 MB</li>
+                    <li>No password-protected PDFs — upload an unlocked copy</li>
+                    <li>Stored securely; only the hiring team can open it</li>
+                  </ul>
+                </div>
+
+                <Label htmlFor="cv" className="mt-4 block">CV file (PDF, max 10 MB) *</Label>
                 <Input
                   id="cv"
+                  ref={cvInputRef}
                   type="file"
                   data-field="cv"
-                  accept=".pdf,application/pdf"
+                  accept="application/pdf,.pdf"
+                  aria-describedby="cv-help"
                   className="h-auto py-2 file:mr-3 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-primary-foreground"
                   disabled={cvChecking}
                   onChange={(e) => onFile(e.target.files?.[0] ?? null)}
                 />
+                <p id="cv-help" className="mt-1 text-xs text-muted-foreground">
+                  Opens your phone's file picker — Files, Drive and iCloud all work.
+                </p>
+
+                {/* Screen-reader announcements: filename, outcome, cancellation. */}
+                <p className="sr-only" role="status" aria-live="polite">{cvStatus}</p>
+
                 {cvChecking && (
-                  <div className="mt-2" aria-live="polite">
-                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                      <div className="h-full w-1/2 animate-pulse rounded-full bg-primary" />
+                  <div className="mt-3 rounded-lg border p-3">
+                    <div
+                      className="h-1.5 w-full overflow-hidden rounded-full bg-muted"
+                      role="progressbar"
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={cvProgress}
+                      aria-label="Reading your CV"
+                    >
+                      <div
+                        className="h-full rounded-full bg-primary transition-all"
+                        style={{ width: `${Math.max(4, cvProgress)}%` }}
+                      />
                     </div>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Checking your file — this takes a moment.
-                    </p>
+                    <div className="mt-2 flex items-center justify-between gap-3">
+                      <p className="text-xs text-muted-foreground">
+                        Checking your file — {cvProgress}% read.
+                      </p>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 text-xs"
+                        onClick={cancelCvCheck}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
                   </div>
                 )}
+
                 {cvError ? (
-                  <p className="mt-1 text-xs text-destructive" aria-live="polite">
-                    {cvError} Your answers are saved — just pick another file.
-                  </p>
+                  <div className="mt-3 rounded-lg border border-destructive/40 bg-destructive/5 p-3">
+                    <p className="text-sm text-destructive">{cvError}</p>
+                    <div className="mt-2 flex items-center gap-3">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => cvInputRef.current?.click()}
+                      >
+                        Choose another file
+                      </Button>
+                      <span className="text-xs text-muted-foreground">
+                        Everything else you've filled in is kept.
+                      </span>
+                    </div>
+                  </div>
                 ) : fieldErrors.cv ? (
                   <p className="mt-1 text-xs text-destructive">{fieldErrors.cv}</p>
                 ) : null}
-                {cvFile && !cvError && !cvChecking && (
-                  <p className="mt-2 text-sm text-foreground/80" aria-live="polite">
-                    ✓ Attached: <span className="font-medium">{cvFile.name}</span>{" "}
-                    <span className="text-muted-foreground">
-                      ({Math.ceil(cvFile.size / 1024)} KB)
-                    </span>
-                  </p>
-                )}
 
-                <ul className="mt-3 text-xs text-muted-foreground list-disc pl-4 space-y-0.5">
-                  <li>Accepted format: .pdf only</li>
-                  <li>Max size: 10 MB</li>
-                  <li>Password-protected PDFs can't be reviewed — upload an unlocked copy</li>
-                  <li>We store your CV securely; only the hiring team can access it.</li>
-                </ul>
+                {cvFile && !cvError && !cvChecking && (
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-card p-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{cvFile.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        PDF · {formatFileSize(cvFile.size)} · ready to send
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => cvInputRef.current?.click()}
+                      >
+                        Replace
+                      </Button>
+                      <Button type="button" size="sm" variant="ghost" onClick={clearCv}>
+                        Remove
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
+
 
               <div className="space-y-4 border-t pt-5">
                 <div>
