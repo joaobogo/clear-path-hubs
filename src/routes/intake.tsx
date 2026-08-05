@@ -24,6 +24,11 @@ import {
   WORK_MODELS,
   WORK_MODEL_LABELS,
   WORK_AUTHORIZATION_OPTIONS,
+  SPONSORSHIP_OPTIONS,
+  SPONSORSHIP_LABELS,
+  SPONSORSHIP_WHY_IT_MATTERS,
+  TIMEZONE_BANDS,
+  TIMEZONE_BAND_LABELS,
 
   UNREADABLE_JD_EXT,
   JD_ACCEPT_ATTR,
@@ -112,6 +117,9 @@ type FormState = {
   location: string;
   workModel: "remote" | "hybrid" | "onsite" | "";
   onsiteDays: string;
+  remoteTimezones: string[];
+  remoteAnywhereInCountry: boolean;
+  sponsorshipAvailable: "yes" | "no" | "";
   currency: string;
   compensationPeriod: string;
   salaryMin: string;
@@ -159,6 +167,10 @@ const EMPTY: FormState = {
   location: "",
   workModel: "",
   onsiteDays: "",
+  remoteTimezones: [],
+  remoteAnywhereInCountry: false,
+  // No default: sponsorship is answered by the client, never assumed.
+  sponsorshipAvailable: "",
   currency: "USD",
   compensationPeriod: "year",
   salaryMin: "",
@@ -256,8 +268,9 @@ function ExpressIntakePage() {
         authed,
         signInMode,
         workModel: state.workModel,
+        remoteAnywhereInCountry: state.remoteAnywhereInCountry,
       }),
-    [jdFile, authed, signInMode, state.workModel],
+    [jdFile, authed, signInMode, state.workModel, state.remoteAnywhereInCountry],
   );
 
   // What is still missing from the brief, in the client's own words. Shown
@@ -265,12 +278,78 @@ function ExpressIntakePage() {
   const brief = briefCompleteness({
     location: state.location,
     workModel: state.workModel,
+    remoteTimezones: state.remoteTimezones,
+    remoteAnywhereInCountry: state.remoteAnywhereInCountry,
     salaryMin: state.salaryMin === "" ? 0 : Number(state.salaryMin),
     workAuthorization: state.workAuthorization,
     interviewProcess: state.interviewProcess,
     decisionMaker: state.decisionMaker,
     dealBreakers: state.dealBreakers,
   });
+
+  /**
+   * Location, on-site expectation and authorisation rules, in one place so the
+   * step check and the submit check can never drift apart.
+   */
+  const placementErrors = (): Record<string, string> => {
+    const out: Record<string, string> = {};
+    const days = state.onsiteDays === "" ? null : Number(state.onsiteDays);
+    if (state.workModel === "hybrid" || state.workModel === "onsite") {
+      if (!state.location.trim()) out.location = "Which city and country is this based in?";
+    }
+    if (state.workModel === "hybrid") {
+      if (days === null) out.onsiteDays = "How many days on site each week?";
+      else if (days < 1 || days > 5) out.onsiteDays = "Between 1 and 5 days a week";
+    }
+    if (
+      state.workModel === "remote" &&
+      state.remoteTimezones.length === 0 &&
+      !state.remoteAnywhereInCountry
+    ) {
+      out.remoteTimezones =
+        "Pick at least one acceptable timezone, or say anywhere in the country";
+    }
+    if (!state.sponsorshipAvailable) {
+      out.sponsorshipAvailable = "Answer yes or no — we do not assume either way";
+    }
+    return out;
+  };
+
+  /**
+   * Choosing a different work model drops the answers that no longer apply, so
+   * a hidden field can never submit a stale value from an earlier selection.
+   */
+  const onWorkModelChange = (value: FormState["workModel"]) => {
+    setState((s) => ({
+      ...s,
+      workModel: value,
+      onsiteDays: value === "hybrid" ? s.onsiteDays : "",
+      remoteTimezones: value === "remote" ? s.remoteTimezones : [],
+      remoteAnywhereInCountry: value === "remote" ? s.remoteAnywhereInCountry : false,
+    }));
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next.workModel;
+      delete next.onsiteDays;
+      delete next.remoteTimezones;
+      delete next.location;
+      return next;
+    });
+  };
+
+  const toggleTimezone = (value: string) => {
+    setState((s) => ({
+      ...s,
+      remoteTimezones: s.remoteTimezones.includes(value)
+        ? s.remoteTimezones.filter((t) => t !== value)
+        : [...s.remoteTimezones, value],
+    }));
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next.remoteTimezones;
+      return next;
+    });
+  };
 
   /** Move focus and announcement to the first invalid field on this step. */
   const focusFirstError = () => {
@@ -342,9 +421,7 @@ function ExpressIntakePage() {
       ) {
         next.wideRangeConfirmed = COMPENSATION_WIDE_RANGE_WARNING;
       }
-      if (state.workModel && state.workModel !== "remote" && state.onsiteDays === "") {
-        next.onsiteDays = "How many days on site each week?";
-      }
+      Object.assign(next, placementErrors());
     }
     const fields = STEP_FIELDS[key];
     setErrors((prev) => {
@@ -803,8 +880,15 @@ function ExpressIntakePage() {
 
       location: state.location,
       workModel: state.workModel,
+      // Hidden fields submit nothing, not a stale earlier answer.
       onsiteDays:
-        state.workModel === "remote" || state.onsiteDays === "" ? undefined : Number(state.onsiteDays),
+        state.workModel === "hybrid" && state.onsiteDays !== ""
+          ? Number(state.onsiteDays)
+          : undefined,
+      remoteTimezones: state.workModel === "remote" ? state.remoteTimezones : [],
+      remoteAnywhereInCountry:
+        state.workModel === "remote" ? state.remoteAnywhereInCountry : false,
+      sponsorshipAvailable: state.sponsorshipAvailable,
       currency: state.currency,
       compensationPeriod: state.compensationPeriod,
       salaryMin: state.salaryMin === "" ? undefined : Number(state.salaryMin),
@@ -870,9 +954,7 @@ function ExpressIntakePage() {
       if (state.compensationUndecided && (state.salaryMin !== "" || state.salaryMax !== "")) {
         next.compensationUndecided = "Clear the range, or untick 'Not decided yet'";
       }
-      if (state.workModel && state.workModel !== "remote" && state.onsiteDays === "") {
-        next.onsiteDays = "How many days on site each week?";
-      }
+      Object.assign(next, placementErrors());
 
 
       setErrors(next);
@@ -1542,7 +1624,7 @@ function ExpressIntakePage() {
               <select
                 id="work-model"
                 value={state.workModel}
-                onChange={(e) => set("workModel", e.target.value as FormState["workModel"])}
+                onChange={(e) => onWorkModelChange(e.target.value as FormState["workModel"])}
                 className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
                 aria-invalid={Boolean(errors.workModel)}
               >
@@ -1556,12 +1638,13 @@ function ExpressIntakePage() {
             </Field>
           </div>
 
-          {state.workModel && state.workModel !== "remote" && (
+          {/* Hybrid is the only model that needs a day count. */}
+          {state.workModel === "hybrid" && (
             <Field
               label="Days on site each week"
               error={errors.onsiteDays}
               required={req["onsiteDays"]}
-              hint="Candidates ask this first. A wrong guess costs you offers."
+              hint="Between 1 and 5. Candidates ask this first, and a wrong guess costs you offers."
             >
               <Input
                 value={state.onsiteDays}
@@ -1571,6 +1654,111 @@ function ExpressIntakePage() {
               />
             </Field>
           )}
+
+          {/* Remote roles need a boundary: timezone bands, or the whole country. */}
+          {state.workModel === "remote" && (
+            <fieldset className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-white p-4">
+              <legend className="text-sm font-medium">
+                Acceptable timezones
+                {req["remoteTimezones"] ? (
+                  <span aria-hidden="true" className="ml-1 text-[color:var(--brand-danger)]">
+                    *
+                  </span>
+                ) : (
+                  <span className="ml-2 text-xs font-normal text-[color:var(--brand-navy)]/60">
+                    Optional
+                  </span>
+                )}
+              </legend>
+              <p className="text-sm text-[color:var(--brand-navy)]/75">
+                Pick the working-hours bands you can live with, or say anywhere in the country.
+              </p>
+              <label className="flex cursor-pointer items-start gap-3 text-sm">
+                <input
+                  type="checkbox"
+                  className="mt-1"
+                  checked={state.remoteAnywhereInCountry}
+                  onChange={(e) => {
+                    const on = e.target.checked;
+                    setState((s) => ({
+                      ...s,
+                      remoteAnywhereInCountry: on,
+                      remoteTimezones: on ? [] : s.remoteTimezones,
+                    }));
+                    setErrors((prev) => {
+                      const next = { ...prev };
+                      delete next.remoteTimezones;
+                      return next;
+                    });
+                  }}
+                />
+                <span>Anywhere in the country — timezone does not matter</span>
+              </label>
+              {!state.remoteAnywhereInCountry && (
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {TIMEZONE_BANDS.map((tz) => (
+                    <label key={tz.value} className="flex cursor-pointer items-start gap-3 text-sm">
+                      <input
+                        type="checkbox"
+                        className="mt-1"
+                        checked={state.remoteTimezones.includes(tz.value)}
+                        onChange={() => toggleTimezone(tz.value)}
+                      />
+                      <span>{tz.label}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+              {errors.remoteTimezones && (
+                <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+                  {errors.remoteTimezones}
+                </p>
+              )}
+            </fieldset>
+          )}
+
+          {/* Always asked, never defaulted. */}
+          <fieldset
+            className={`space-y-2 rounded-lg border p-4 ${
+              errors.sponsorshipAvailable
+                ? "border-[color:var(--brand-danger)] bg-[color:var(--brand-danger)]/5"
+                : "border-[color:var(--brand-navy)]/12 bg-white"
+            }`}
+          >
+            <legend className="text-sm font-medium">
+              Can you sponsor a visa?
+              <span aria-hidden="true" className="ml-1 text-[color:var(--brand-danger)]">
+                *
+              </span>
+            </legend>
+            <p className="text-sm text-[color:var(--brand-navy)]/75">
+              {SPONSORSHIP_WHY_IT_MATTERS}
+            </p>
+            {SPONSORSHIP_OPTIONS.map((opt) => (
+              <label
+                key={opt.value}
+                className="flex cursor-pointer items-start gap-3 rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3"
+              >
+                <input
+                  type="radio"
+                  name="sponsorship-available"
+                  value={opt.value}
+                  checked={state.sponsorshipAvailable === opt.value}
+                  onChange={() => set("sponsorshipAvailable", opt.value)}
+                  className="mt-1"
+                />
+                <span className="text-sm leading-relaxed">
+                  <span className="font-medium">{opt.label}</span>
+                  <span className="block text-xs text-[color:var(--brand-navy)]/75">{opt.hint}</span>
+                </span>
+              </label>
+            ))}
+            {errors.sponsorshipAvailable && (
+              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+                {errors.sponsorshipAvailable}
+              </p>
+            )}
+          </fieldset>
 
           <div className="space-y-3 rounded-lg border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/3 p-4">
             <p className="text-sm font-semibold">Compensation range</p>
@@ -1940,12 +2128,26 @@ function ExpressIntakePage() {
                       [
                         state.location,
                         state.workModel ? WORK_MODEL_LABELS[state.workModel] : "",
-                        state.workModel && state.workModel !== "remote" && state.onsiteDays
+                        state.workModel === "hybrid" && state.onsiteDays
                           ? `${state.onsiteDays} days on site`
+                          : "",
+                        state.workModel === "remote" && state.remoteAnywhereInCountry
+                          ? "Anywhere in the country"
+                          : "",
+                        state.workModel === "remote" && state.remoteTimezones.length > 0
+                          ? state.remoteTimezones
+                              .map((t) => TIMEZONE_BAND_LABELS[t] ?? t)
+                              .join(", ")
                           : "",
                       ]
                         .filter(Boolean)
                         .join(" · "),
+                    ],
+                    [
+                      "Work authorisation",
+                      state.sponsorshipAvailable
+                        ? SPONSORSHIP_LABELS[state.sponsorshipAvailable]
+                        : "",
                     ],
                     [
                       "Compensation",

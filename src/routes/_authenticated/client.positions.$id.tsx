@@ -281,17 +281,21 @@ function PositionDetailPage() {
  {clientRoleStatusLabel(data?.summary?.client_status)}
  </Badge>
  </div>
- <div className="mt-1 text-sm text-muted-foreground">
- {[
- position.department,
- position.location,
- position.work_model,
- position.employment_type,
- position.seniority,
- ]
- .filter(Boolean)
- .join(" · ")}
- </div>
+  <div className="mt-1 text-sm text-muted-foreground">
+  {[
+  position.department,
+  position.location,
+  position.work_model,
+  position.employment_type,
+  position.seniority,
+  ]
+  .filter(Boolean)
+  .join(" · ")}
+  </div>
+  {/* Placement and authorisation answers, exactly as the client stated them. */}
+  {placementLine ? (
+  <div className="mt-1 text-sm text-muted-foreground">{placementLine}</div>
+  ) : null}
  {support.readOnly ? (
  <div className="mt-2 text-xs text-muted-foreground">
  Kanban movement is disabled while viewing this workspace as a

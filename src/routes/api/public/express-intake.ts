@@ -446,6 +446,8 @@ export const Route = createFileRoute("/api/public/express-intake")({
         const brief = briefCompleteness({
           location: locationText,
           workModel: data.workModel ?? "",
+          remoteTimezones: data.remoteTimezones ?? [],
+          remoteAnywhereInCountry: data.remoteAnywhereInCountry === true,
           salaryMin: data.salaryMin ?? 0,
           workAuthorization: data.workAuthorization ?? "",
           interviewProcess: interviewProcessText,
@@ -492,12 +494,16 @@ export const Route = createFileRoute("/api/public/express-intake")({
             compensation: compensationRecord,
             compensation_collected: hasComp,
             compensation_visibility: "internal",
-            work_authorization: data.workAuthorization
-              ? {
-                  rule: data.workAuthorization,
-                  note: (data.workAuthorizationNote ?? "").trim() || null,
-                }
-              : null,
+            work_authorization: {
+              // Sponsorship is always answered, so it is always recorded.
+              sponsorship_available: data.sponsorshipAvailable === "yes",
+              ...(data.workAuthorization
+                ? {
+                    rule: data.workAuthorization,
+                    note: (data.workAuthorizationNote ?? "").trim() || null,
+                  }
+                : {}),
+            },
             target_start_date: (data.targetStartDate ?? "").trim() || null,
             intake_context: {
               why_open: data.whyOpen.trim(),
@@ -506,6 +512,9 @@ export const Route = createFileRoute("/api/public/express-intake")({
               interview_process: interviewProcessText || null,
               decision_maker: decisionMakerText || null,
               onsite_days: data.onsiteDays ?? null,
+              remote_timezones: data.remoteTimezones ?? [],
+              remote_anywhere_in_country: data.remoteAnywhereInCountry === true,
+              sponsorship_available: data.sponsorshipAvailable,
               brief_complete: brief.complete,
               brief_missing: brief.missing,
               collected_at: new Date().toISOString(),
@@ -634,6 +643,9 @@ export const Route = createFileRoute("/api/public/express-intake")({
                 location: locationText,
                 workModel: data.workModel || "",
                 onsiteDays: data.onsiteDays ?? null,
+                remoteTimezones: data.remoteTimezones ?? [],
+                remoteAnywhereInCountry: data.remoteAnywhereInCountry === true,
+                sponsorshipAvailable: data.sponsorshipAvailable,
                 compensation: compensationRecord,
                 workAuthorization: data.workAuthorization || "",
                 workAuthorizationNote: data.workAuthorizationNote ?? "",
