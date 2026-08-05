@@ -49,7 +49,10 @@ export type KpiRow = {
   interview_requested_at: string | null;
   /** When this candidate entered its current stage (falls back to delivery). */
   stage_entered_at: string | null;
+  /** Recorded date the client's decision is due by, when one is stored. */
+  client_decision_due_at: string | null;
 };
+
 
 
 
