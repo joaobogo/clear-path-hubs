@@ -59,7 +59,8 @@ async function openWizard(page: Page) {
   await page.goto(applyUrl(), { waitUntil: "domcontentloaded" });
   // Step 1 flips to ready once the client resolved the session; typing earlier
   // lets React's initial state overwrite the values we filled.
-  await expect(page.locator('[data-hydrated="ready"]')).toBeVisible();
+  // Generous timeout: the first hit can pay a cold dev-server compile.
+  await expect(page.locator('[data-hydrated="ready"]')).toBeVisible({ timeout: 90_000 });
 }
 
 async function fillDetails(page: Page, email: string, fullName: string) {
