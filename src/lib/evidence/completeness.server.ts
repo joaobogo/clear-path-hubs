@@ -140,10 +140,10 @@ export async function loadCompleteness(
   if (actorIds.length) {
     const { data: profiles } = await supabase
       .from("profiles")
-      .select("user_id, full_name")
-      .in("user_id", actorIds);
+      .select("id, full_name")
+      .in("id", actorIds);
     for (const p of profiles ?? []) {
-      if (p.full_name) nameById.set(p.user_id, p.full_name);
+      if (p.full_name) nameById.set(p.id, p.full_name);
     }
   }
 
