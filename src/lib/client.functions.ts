@@ -29,6 +29,7 @@ import { computeClientRoleStatus } from "@/lib/client-role-status";
 import { computeRoleRisk } from "@/lib/client-role-risk";
 import { computeHiringHealth } from "@/lib/client-hiring-health";
 import { buildQueue, type QueueItem } from "@/lib/client-decision-queue";
+import { buildOfferRow } from "@/lib/client-offer-holder";
 import { computeNextMilestone } from "@/lib/client-next-milestone";
 import { buildRoleTimeline } from "@/lib/client-role-timeline";
 
@@ -499,6 +500,29 @@ export const getClientOverview = createServerFn({ method: "GET" })
       activePositionsList.map((p) => [p.id as string, p.title as string]),
     );
 
+    // Offers carry their own agreed response date. When one exists and it has
+    // passed, the queue item reads as overdue against that date — the holder is
+    // derived from recorded events, never from a manual field.
+    const offerByMatch = new Map<string, { due: string | null; holder: string; open: boolean }>();
+    const offerMatchIds = queueRows.filter((r) => r.stage === "offer").map((r) => r.id);
+    if (offerMatchIds.length > 0) {
+      const { data: offerRows } = await context.supabase
+        .from("hire_records")
+        .select(
+          "candidate_match_id, status, drafted_at, sent_at, negotiating_at, accepted_at, declined_at, hired_at, closed_at, last_nudged_at, start_date, expected_response_date",
+        )
+        .eq("organization_id", data.orgId)
+        .in("candidate_match_id", offerMatchIds);
+      for (const o of (offerRows as AnyRow[]) ?? []) {
+        const built = buildOfferRow(o as never);
+        offerByMatch.set(o.candidate_match_id as string, {
+          due: (o.expected_response_date as string | null) ?? null,
+          holder: built.holder_label,
+          open: built.open,
+        });
+      }
+    }
+
     const queueItems: QueueItem[] = queueRows.map((r) => {
       const concerns = queueNames.get(r.id) ?? "Candidate";
       const role_title = titleByPosition.get(r.position_id) ?? "Your role";
@@ -520,13 +544,14 @@ export const getClientOverview = createServerFn({ method: "GET" })
         };
       }
       if (r.stage === "offer") {
+        const offer = offerByMatch.get(r.id);
         return {
           ...base,
           key: `offer:${r.id}`,
           kind: "offer" as const,
-          due_at: r.client_decision_due_at ?? null,
+          due_at: offer?.due ?? r.client_decision_due_at ?? null,
           waiting_since: r.stage_entered_at,
-          action: "Follow up",
+          action: offer ? `Follow up — waiting on ${offer.holder}` : "Follow up",
           to: "/client/offers",
         };
       }

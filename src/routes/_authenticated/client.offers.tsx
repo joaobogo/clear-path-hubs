@@ -36,6 +36,7 @@ import {
   type HireCloseReason,
 } from "@/lib/hires.functions";
 import { guaranteeLine } from "@/lib/interview-scorecard";
+import { OfferHolderRows } from "@/components/client/offer-holder-rows";
 import { getClientContext } from "@/lib/client.functions";
 import {
   isStalled,
@@ -207,6 +208,24 @@ function OffersPage() {
               : `median ${Math.round(report.totals.median_days_to_hire)}d`
           }
         />
+      </section>
+
+      {/* Who owes what — one row per offer, holder derived from events */}
+      <section className="mt-6">
+        <h2 className="text-sm font-semibold">Who owes what</h2>
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          Status, whose turn it is, and the response date that was agreed.
+        </p>
+        <div className="mt-3">
+          <OfferHolderRows
+            orgId={orgId}
+            hires={hires}
+            isPending={isPending}
+            isError={isError}
+            onRetry={() => void refetch()}
+            readOnly={!!readOnly}
+          />
+        </div>
       </section>
 
       {/* Stalled offers */}

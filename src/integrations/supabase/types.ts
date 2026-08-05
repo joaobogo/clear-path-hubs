@@ -4281,6 +4281,9 @@ export type Database = {
           drafted_at: string | null
           employment_type: string | null
           equity_notes: string | null
+          expected_response_date: string | null
+          expected_response_set_at: string | null
+          expected_response_set_by: string | null
           guarantee_days: number | null
           guarantee_ends_on: string | null
           guarantee_starts_on: string | null
@@ -4321,6 +4324,9 @@ export type Database = {
           drafted_at?: string | null
           employment_type?: string | null
           equity_notes?: string | null
+          expected_response_date?: string | null
+          expected_response_set_at?: string | null
+          expected_response_set_by?: string | null
           guarantee_days?: number | null
           guarantee_ends_on?: string | null
           guarantee_starts_on?: string | null
@@ -4361,6 +4367,9 @@ export type Database = {
           drafted_at?: string | null
           employment_type?: string | null
           equity_notes?: string | null
+          expected_response_date?: string | null
+          expected_response_set_at?: string | null
+          expected_response_set_by?: string | null
           guarantee_days?: number | null
           guarantee_ends_on?: string | null
           guarantee_starts_on?: string | null
