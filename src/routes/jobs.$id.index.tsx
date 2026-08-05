@@ -443,7 +443,10 @@ function JobDetail() {
           </div>
 
           {/* Sidebar: the facts a candidate scans for, plus a persistent apply. */}
-          <aside className="lg:sticky lg:top-24 lg:self-start">
+          {/* On a phone the deciding facts come before the prose — pay, work
+              arrangement and authorisation are what people screen on. */}
+          <aside className="order-1 lg:sticky lg:top-24 lg:order-2 lg:self-start">
+
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                 Role at a glance
