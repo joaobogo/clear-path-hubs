@@ -19,12 +19,15 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 export const globalSearchInput = z.object({
   q: z.string().trim().min(1).max(120),
   scope: z.enum(["admin", "client"]).optional(),
+  /** Admin-only: include QA/internal orgs and their records. Default false. */
+  includeTest: z.boolean().optional(),
 });
 
 export type SearchResultType =
   | "client"
   | "position"
   | "candidate"
+  | "intake"
   | "message"
   | "task";
 
@@ -32,21 +35,29 @@ export type SearchResult = {
   type: SearchResultType;
   id: string;
   label: string;
+  /** Client / org context for the row. */
   context?: string;
+  /** Current operational state, rendered as its own badge. */
+  state?: string;
   href: string;
   search?: Record<string, string>;
 };
 
 export type SearchResponse = {
   scope: "admin" | "client";
+  includeTest: boolean;
+  /** Per-group cap applied server-side. */
+  limit: number;
   groups: {
     clients: SearchResult[];
     positions: SearchResult[];
     candidates: SearchResult[];
+    intakes: SearchResult[];
     messages: SearchResult[];
     tasks: SearchResult[];
   };
 };
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = Record<string, any>;
