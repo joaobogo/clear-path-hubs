@@ -8,7 +8,10 @@ import {
   briefCompleteness,
   jdFileExt,
   splitLines,
+  collaboratorCandidates,
+  interviewProcessSummary,
   type RequirementTag,
+
 } from "@/lib/express-intake-schema";
 
 
@@ -419,8 +422,28 @@ export const Route = createFileRoute("/api/public/express-intake")({
         const dealBreakersText = (data.dealBreakers ?? "").trim();
         const dealbreakerLines = splitLines(dealBreakersText);
         const locationText = (data.location ?? "").trim();
-        const interviewProcessText = (data.interviewProcess ?? "").trim();
+        /**
+         * The structured stages are the record of truth; the text version is
+         * derived so surfaces that read prose keep working.
+         */
+        const interviewStages = (data.interviewStages ?? []).filter(
+          (s) => (s.name ?? "").trim().length > 0,
+        );
+        const targetDaysToOffer =
+          typeof data.targetDaysToOffer === "number" ? data.targetDaysToOffer : null;
+        const interviewProcessText =
+          interviewStages.length > 0
+            ? interviewProcessSummary(interviewStages, targetDaysToOffer)
+            : (data.interviewProcess ?? "").trim();
         const decisionMakerText = (data.decisionMaker ?? "").trim();
+        const decisionMakerEmailText = (data.decisionMakerEmail ?? "").trim().toLowerCase();
+        // Owners are recorded, never contacted. Invitations require the opt-in.
+        const inviteCollaborators = data.inviteCollaborators === true;
+        const collaborators = collaboratorCandidates(interviewStages, {
+          name: decisionMakerText,
+          email: decisionMakerEmailText,
+        });
+
         const hasComp = typeof data.salaryMin === "number" && typeof data.salaryMax === "number";
         const compUndecided = data.compensationUndecided === true;
         /**
@@ -510,7 +533,14 @@ export const Route = createFileRoute("/api/public/express-intake")({
               team: (data.team ?? "").trim() || null,
               deal_breakers: dealBreakersText || null,
               interview_process: interviewProcessText || null,
+              interview_stages: interviewStages,
+              target_days_to_offer: targetDaysToOffer,
               decision_maker: decisionMakerText || null,
+              decision_maker_email: decisionMakerEmailText || null,
+              // Recorded so the team can offer invitations later, on request.
+              collaborator_invites_opted_in: inviteCollaborators,
+              collaborator_candidates: inviteCollaborators ? collaborators : [],
+
               onsite_days: data.onsiteDays ?? null,
               remote_timezones: data.remoteTimezones ?? [],
               remote_anywhere_in_country: data.remoteAnywhereInCountry === true,
@@ -650,7 +680,12 @@ export const Route = createFileRoute("/api/public/express-intake")({
                 workAuthorization: data.workAuthorization || "",
                 workAuthorizationNote: data.workAuthorizationNote ?? "",
                 interviewProcess: interviewProcessText,
+                interviewStages,
+                targetDaysToOffer,
                 decisionMaker: decisionMakerText,
+                decisionMakerEmail: decisionMakerEmailText,
+                inviteCollaborators,
+
                 targetStartDate: data.targetStartDate ?? "",
                 complete: brief.complete,
                 missing: brief.missing,

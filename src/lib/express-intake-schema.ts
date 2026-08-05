@@ -327,6 +327,167 @@ const linkedinField = (label: string) =>
     .or(z.literal(""))
     .refine((v) => !v || /linkedin\.com\//i.test(v), `Enter a valid ${label} LinkedIn URL`);
 
+/* ------------------------------------------------------------------ */
+/* Interview process: stages, owners, and a target time to offer        */
+/* ------------------------------------------------------------------ */
+
+export const MIN_INTERVIEW_STAGES = 1;
+export const MAX_INTERVIEW_STAGES = 5;
+export const MIN_STAGE_NAME_CHARS = 2;
+export const MAX_STAGE_NAME_CHARS = 60;
+export const MIN_TARGET_DAYS_TO_OFFER = 1;
+export const MAX_TARGET_DAYS_TO_OFFER = 90;
+
+export const INTERVIEW_STAGE_FORMATS = [
+  "phone_screen",
+  "video_call",
+  "panel",
+  "onsite",
+  "take_home",
+  "other",
+] as const;
+
+export type InterviewStageFormat = (typeof INTERVIEW_STAGE_FORMATS)[number];
+
+export const INTERVIEW_STAGE_FORMAT_LABELS: Record<InterviewStageFormat, string> = {
+  phone_screen: "Phone screen",
+  video_call: "Video call",
+  panel: "Panel",
+  onsite: "On site",
+  take_home: "Take-home or task",
+  other: "Other",
+};
+
+export const interviewStageSchema = z.object({
+  name: z.string().trim().min(MIN_STAGE_NAME_CHARS).max(MAX_STAGE_NAME_CHARS),
+  format: z.enum(INTERVIEW_STAGE_FORMATS),
+  ownerName: z.string().trim().max(120).optional().or(z.literal("")),
+  ownerEmail: z.string().trim().max(255).optional().or(z.literal("")),
+});
+
+export type InterviewStage = z.infer<typeof interviewStageSchema>;
+
+/**
+ * A suggestion, never a submitted default. The client accepts it, edits it, or
+ * replaces it — the form starts with an empty list until they choose.
+ */
+export const DEFAULT_INTERVIEW_STAGE_TEMPLATE: InterviewStage[] = [
+  { name: "Intro call", format: "video_call", ownerName: "", ownerEmail: "" },
+  { name: "Hiring manager interview", format: "video_call", ownerName: "", ownerEmail: "" },
+  { name: "Final panel", format: "panel", ownerName: "", ownerEmail: "" },
+];
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+export function isValidOwnerEmail(value: string): boolean {
+  return EMAIL_RE.test(value.trim());
+}
+
+/** Why we ask, said once, in the client's terms. */
+export const INTERVIEW_PROCESS_WHY_IT_MATTERS =
+  "Scheduling stalls at the first shortlist when nobody knows how many rounds there are or who decides. Tell us once and we work around your people.";
+
+export const COLLABORATOR_OPT_IN_LABEL =
+  "Invite the people above to this workspace after the role is accepted. Nothing is sent unless you tick this.";
+
+export type InterviewStageIssues = { name?: string; format?: string; ownerEmail?: string };
+
+/**
+ * Stage-list rules, in one place so the wizard, the step check and the submit
+ * endpoint can never disagree about what a valid process looks like.
+ */
+export function validateInterviewStages(
+  stages: InterviewStage[],
+  opts: { targetDaysToOffer?: number | null } = {},
+): { ok: boolean; rowErrors: Record<number, InterviewStageIssues>; listError?: string; targetError?: string } {
+  const rowErrors: Record<number, InterviewStageIssues> = {};
+  let listError: string | undefined;
+  let targetError: string | undefined;
+
+  const filled = stages.filter(
+    (s) => (s.name ?? "").trim().length > 0 || (s.ownerName ?? "").trim().length > 0 || (s.ownerEmail ?? "").trim().length > 0,
+  );
+  if (filled.length < MIN_INTERVIEW_STAGES) {
+    listError = "Add at least one interview stage";
+  }
+  if (stages.length > MAX_INTERVIEW_STAGES) {
+    listError = `Keep it to ${MAX_INTERVIEW_STAGES} stages or fewer`;
+  }
+
+  const seen = new Map<string, number>();
+  stages.forEach((stage, i) => {
+    const issues: InterviewStageIssues = {};
+    const name = (stage.name ?? "").trim();
+    if (name.length < MIN_STAGE_NAME_CHARS) {
+      issues.name = `Name this stage (${MIN_STAGE_NAME_CHARS}–${MAX_STAGE_NAME_CHARS} characters)`;
+    } else if (name.length > MAX_STAGE_NAME_CHARS) {
+      issues.name = `Keep the stage name under ${MAX_STAGE_NAME_CHARS} characters`;
+    } else {
+      const key = name.toLowerCase();
+      if (seen.has(key)) issues.name = "Two stages cannot share the same name";
+      else seen.set(key, i);
+    }
+    if (!stage.format) issues.format = "Pick a format";
+    const email = (stage.ownerEmail ?? "").trim();
+    if (email.length > 0 && !isValidOwnerEmail(email)) {
+      issues.ownerEmail = "Enter a valid email address";
+    }
+    if (Object.keys(issues).length > 0) rowErrors[i] = issues;
+  });
+
+  const days = opts.targetDaysToOffer;
+  if (days !== undefined && days !== null && Number.isFinite(days)) {
+    if (days < MIN_TARGET_DAYS_TO_OFFER || days > MAX_TARGET_DAYS_TO_OFFER) {
+      targetError = `Between ${MIN_TARGET_DAYS_TO_OFFER} and ${MAX_TARGET_DAYS_TO_OFFER} days`;
+    }
+  }
+
+  return {
+    ok: !listError && !targetError && Object.keys(rowErrors).length === 0,
+    rowErrors,
+    listError,
+    targetError,
+  };
+}
+
+/** The stages as one readable line per stage, for surfaces that read text. */
+export function interviewProcessSummary(
+  stages: InterviewStage[],
+  targetDaysToOffer?: number | null,
+): string {
+  const lines = stages
+    .filter((s) => (s.name ?? "").trim().length > 0)
+    .map((s, i) => {
+      const owner = [(s.ownerName ?? "").trim(), (s.ownerEmail ?? "").trim()]
+        .filter(Boolean)
+        .join(", ");
+      const format = INTERVIEW_STAGE_FORMAT_LABELS[s.format] ?? s.format;
+      return `${i + 1}. ${s.name.trim()} — ${format}${owner ? ` (${owner})` : ""}`;
+    });
+  if (targetDaysToOffer && Number.isFinite(targetDaysToOffer)) {
+    lines.push(`Target: shortlist to offer in ${targetDaysToOffer} days`);
+  }
+  return lines.join("\n");
+}
+
+/** Owners the client entered, de-duplicated by email. Never contacted here. */
+export function collaboratorCandidates(
+  stages: InterviewStage[],
+  extra: { name?: string; email?: string } = {},
+): Array<{ name: string; email: string }> {
+  const out = new Map<string, { name: string; email: string }>();
+  const add = (name: string, email: string) => {
+    const clean = email.trim().toLowerCase();
+    if (!clean || !isValidOwnerEmail(clean)) return;
+    if (!out.has(clean)) out.set(clean, { name: name.trim(), email: clean });
+  };
+  for (const s of stages) add(s.ownerName ?? "", s.ownerEmail ?? "");
+  add(extra.name ?? "", extra.email ?? "");
+  return Array.from(out.values());
+}
+
+
+
 export const expressIntakeSchema = z
   .object({
     idempotencyKey: z.string().trim().min(8).max(128),
@@ -428,7 +589,40 @@ export const expressIntakeSchema = z
 
     // ─── Step 4: process and confirm ──────────────────────────────────────
     interviewProcess: z.string().trim().max(2000).optional().or(z.literal("")),
+    /** The structured process: one to five named stages, each with an owner. */
+    interviewStages: z.preprocess(
+      // An empty or missing value means "no process stated", not an error.
+      (v) => (Array.isArray(v) ? v : []),
+      z.array(interviewStageSchema).max(MAX_INTERVIEW_STAGES),
+    ),
+
+    targetDaysToOffer: z.preprocess(
+      // Blank means "not stated", which is allowed on this optional step.
+      (v) => (v === "" || v === null ? undefined : v),
+      z.coerce
+        .number()
+        .int()
+        .min(MIN_TARGET_DAYS_TO_OFFER)
+        .max(MAX_TARGET_DAYS_TO_OFFER)
+        .optional(),
+    ),
+
     decisionMaker: z.string().trim().max(160).optional().or(z.literal("")),
+    decisionMakerEmail: z
+      .string()
+      .trim()
+      .max(255)
+      .optional()
+      .or(z.literal(""))
+      .refine((v) => !v || isValidOwnerEmail(v), "Enter a valid email address"),
+    /**
+     * Explicit opt-in. Owners entered at intake are never emailed unless this
+     * is true, and nothing is sent from the intake itself.
+     */
+    // Anything other than an explicit true means no invitations are sent.
+    inviteCollaborators: z.preprocess((v) => v === true, z.boolean()),
+
+
     dealBreakers: z.string().trim().max(2000).optional().or(z.literal("")),
 
     consent: z.literal(true, {
@@ -453,6 +647,20 @@ export const expressIntakeSchema = z
       message: "Check your requirements list",
     },
   )
+  // The stage list is optional, but a half-built one is worse than none: it
+  // looks like an agreed process and is not one.
+  .refine(
+    (v) => {
+      const stages = v.interviewStages ?? [];
+      if (stages.length === 0) return true;
+      return validateInterviewStages(stages, { targetDaysToOffer: v.targetDaysToOffer ?? null }).ok;
+    },
+    {
+      path: ["interviewStages"],
+      message: "Check your interview stages",
+    },
+  )
+
   .refine((v) => (v.password ?? "") === (v.confirmPassword ?? ""), {
     path: ["confirmPassword"],
     message: "Both passwords must match",
@@ -612,6 +820,11 @@ export const STEP_FIELDS: Record<IntakeStepKey, string[]> = {
   ],
   process: [
     "interviewProcess",
+    "interviewStages",
+    "targetDaysToOffer",
+    "decisionMakerEmail",
+    "inviteCollaborators",
+
     "decisionMaker",
     "dealBreakers",
     "companyName",
@@ -722,7 +935,12 @@ export function intakeRequiredness(
     targetStartDate: false,
     remoteAnywhereInCountry: false,
     interviewProcess: false,
+    interviewStages: false,
+    targetDaysToOffer: false,
+    decisionMakerEmail: false,
+    inviteCollaborators: false,
     decisionMaker: false,
+
     dealBreakers: false,
     researchConsent: false,
   };
@@ -773,18 +991,27 @@ export function briefCompleteness(values: Record<string, unknown>): {
     (Array.isArray(values["remoteTimezones"]) && values["remoteTimezones"].length > 0
       ? true
       : values["remoteAnywhereInCountry"] === true);
+  /** A named stage list answers "how you interview" as well as free text does. */
+  const hasStages =
+    Array.isArray(values["interviewStages"]) &&
+    (values["interviewStages"] as unknown[]).some(
+      (s) => typeof (s as { name?: string })?.name === "string" && (s as { name: string }).name.trim().length > 0,
+    );
   for (const { field, label } of BRIEF_COMPLETENESS_FIELDS) {
     const raw = values[field];
     const filled =
       field === "location" && remoteBounded
         ? true
-        : typeof raw === "number"
-          ? Number.isFinite(raw) && raw > 0
-          : typeof raw === "string"
-            ? raw.trim().length > 0
-            : Boolean(raw);
+        : field === "interviewProcess" && hasStages
+          ? true
+          : typeof raw === "number"
+            ? Number.isFinite(raw) && raw > 0
+            : typeof raw === "string"
+              ? raw.trim().length > 0
+              : Boolean(raw);
     if (!filled) missing.push(label);
   }
+
   return { complete: missing.length === 0, missing };
 }
 
