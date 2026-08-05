@@ -25,6 +25,7 @@ import {
   type PreviewInput,
 } from "@/components/admin/bulk-confirm-dialog";
 import { PublishGatePanel } from "@/components/admin/publish-gate-panel";
+import { OwnershipCoveragePanel } from "@/components/admin/ownership-coverage-panel";
 
 
 const searchSchema = z.object({
@@ -244,10 +245,15 @@ function PositionsPage() {
       </div>
 
       {search.tab === "attention" ? (
-        <PositionsAttentionQueue includeTest={search.show_test} />
+        <>
+          <OwnershipCoveragePanel includeTest={search.show_test} />
+          <PositionsAttentionQueue includeTest={search.show_test} />
+        </>
       ) : (
       <>
+      <OwnershipCoveragePanel includeTest={search.show_test} />
       <PublishGatePanel includeTest={search.show_test} />
+
       <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-card p-3">
 
         <SavedViewsBar

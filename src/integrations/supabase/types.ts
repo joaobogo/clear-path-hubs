@@ -8173,6 +8173,8 @@ export type Database = {
       positions: {
         Row: {
           approved_at: string | null
+          backup_owner_assigned_at: string | null
+          backup_owner_user_id: string | null
           blueprint: Json
           blueprint_attempts: number
           blueprint_confirmed_at: string | null
@@ -8217,13 +8219,17 @@ export type Database = {
             | Database["public"]["Enums"]["migration_row_status"]
             | null
           migration_version: string | null
+          needs_reassignment: boolean
           openings: number
           organization_id: string
+          owner_assigned_at: string | null
           owner_user_id: string | null
           payment_status: Database["public"]["Enums"]["payment_status"]
           preferred_requirements: Json
           primary_timezone: string | null
           published_at: string | null
+          reassignment_flagged_at: string | null
+          reassignment_reason: string | null
           reference_code: string | null
           region: string | null
           requirements: Json
@@ -8250,6 +8256,8 @@ export type Database = {
         }
         Insert: {
           approved_at?: string | null
+          backup_owner_assigned_at?: string | null
+          backup_owner_user_id?: string | null
           blueprint?: Json
           blueprint_attempts?: number
           blueprint_confirmed_at?: string | null
@@ -8296,13 +8304,17 @@ export type Database = {
             | Database["public"]["Enums"]["migration_row_status"]
             | null
           migration_version?: string | null
+          needs_reassignment?: boolean
           openings?: number
           organization_id: string
+          owner_assigned_at?: string | null
           owner_user_id?: string | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
           preferred_requirements?: Json
           primary_timezone?: string | null
           published_at?: string | null
+          reassignment_flagged_at?: string | null
+          reassignment_reason?: string | null
           reference_code?: string | null
           region?: string | null
           requirements?: Json
@@ -8329,6 +8341,8 @@ export type Database = {
         }
         Update: {
           approved_at?: string | null
+          backup_owner_assigned_at?: string | null
+          backup_owner_user_id?: string | null
           blueprint?: Json
           blueprint_attempts?: number
           blueprint_confirmed_at?: string | null
@@ -8375,13 +8389,17 @@ export type Database = {
             | Database["public"]["Enums"]["migration_row_status"]
             | null
           migration_version?: string | null
+          needs_reassignment?: boolean
           openings?: number
           organization_id?: string
+          owner_assigned_at?: string | null
           owner_user_id?: string | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
           preferred_requirements?: Json
           primary_timezone?: string | null
           published_at?: string | null
+          reassignment_flagged_at?: string | null
+          reassignment_reason?: string | null
           reference_code?: string | null
           region?: string | null
           requirements?: Json
@@ -13959,6 +13977,7 @@ export type Database = {
         }
         Returns: Json
       }
+      clear_reassignment_flags: { Args: { _user_id: string }; Returns: number }
       consume_role_allowance: {
         Args: { _actor_user_id: string; _position_id: string }
         Returns: Json
@@ -13966,6 +13985,10 @@ export type Database = {
       default_permissions_for_role: {
         Args: { _role: Database["public"]["Enums"]["membership_role"] }
         Returns: Database["public"]["Enums"]["client_permission"][]
+      }
+      flag_roles_for_reassignment: {
+        Args: { _reason: string; _user_id: string }
+        Returns: number
       }
       grant_plan_entitlement: {
         Args: {
