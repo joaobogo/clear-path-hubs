@@ -29,6 +29,7 @@ import { computeRoleRisk } from "@/lib/client-role-risk";
 import { computeHiringHealth } from "@/lib/client-hiring-health";
 import { buildQueue, type QueueItem } from "@/lib/client-decision-queue";
 import { computeNextMilestone } from "@/lib/client-next-milestone";
+import { buildRoleTimeline } from "@/lib/client-role-timeline";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -1015,6 +1016,49 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       .map(([label, count]) => ({ label, count }))
       .sort((a, b) => b.count - a.count);
 
+    // Dated timeline — real stored timestamps only, no inference from siblings.
+    const minOf = (values: (string | null | undefined)[]) =>
+      values.filter((v): v is string => Boolean(v)).sort()[0] ?? null;
+
+    const [historyRes, timelineInterviewsRes] = await Promise.all([
+      context.supabase
+        .from("candidate_stage_history")
+        .select("to_stage, created_at")
+        .eq("organization_id", data.orgId)
+        .eq("position_id", data.positionId)
+        .in("to_stage", ["shortlisted", "offer", "hired"]),
+      matchIdList.length > 0
+        ? context.supabase
+            .from("interviews")
+            .select("scheduled_at, completed_at")
+            .in("candidate_match_id", matchIdList)
+        : Promise.resolve({ data: [] as AnyRow[] }),
+    ]);
+    const historyRows = ((historyRes as AnyRow).data as AnyRow[]) ?? [];
+    const stageFirst = (stage: string) =>
+      minOf(historyRows.filter((h) => h.to_stage === stage).map((h) => h.created_at as string));
+    const firstInterviewAt = minOf(
+      (((timelineInterviewsRes as AnyRow).data as AnyRow[]) ?? []).flatMap((iv) => [
+        iv.completed_at as string | null,
+        iv.scheduled_at as string | null,
+      ]),
+    );
+    const timeline = buildRoleTimeline({
+      briefConfirmedAt:
+        (position.blueprint_confirmed_at as string | null) ??
+        (position.approved_at as string | null),
+      sourcingStartedAt:
+        ((campaigns as AnyRow[]) ?? [])
+          .filter((c) => !c.is_test_record)
+          .map((c) => c.started_at as string | null)
+          .filter((v): v is string => Boolean(v))
+          .sort()[0] ?? (position.published_at as string | null),
+      firstShortlistAt: minOf([stageFirst("shortlisted"), deliveredAt]),
+      firstInterviewAt,
+      offerAt: stageFirst("offer"),
+      hiredAt: stageFirst("hired"),
+    });
+
     const launch = computeRoleLaunchState({
       position,
       campaigns: ((campaigns as AnyRow[]) ?? []).filter((c) => !c.is_test_record),
@@ -1030,6 +1074,7 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       matches: (matches as AnyRow[]) ?? [],
       activity,
       launch,
+      timeline,
       summary: {
         openings,
         hires,
