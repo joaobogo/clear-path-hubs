@@ -988,16 +988,23 @@ function ApplyPage() {
               <div>
                 <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Screening questions</h2>
                 <p className="text-sm text-muted-foreground">
-                  {pos.questions.length === 0
+                  {questionCount === 0
                     ? "No screening questions for this role — you're all set."
-                    : `${pos.questions.length} short ${
-                        pos.questions.length === 1 ? "question" : "questions"
-                      } from the hiring team.`}
+                    : paginateQuestions
+                      ? `Question ${qCursor} of ${questionCount} from the hiring team.`
+                      : `${questionCount} short ${
+                          questionCount === 1 ? "question" : "questions"
+                        } from the hiring team.`}
                 </p>
               </div>
-              {pos.questions.length > 0 && (
+              {questionCount > 0 && (
                 <div className="space-y-5">
-                  {pos.questions.map((q) => {
+                  {/* One question per screen on a phone; the full set fits a
+                      desktop column without becoming a wall of fields. */}
+                  {(paginateQuestions
+                    ? [pos.questions[qCursor - 1]]
+                    : pos.questions
+                  ).map((q) => {
                     const err = fieldErrors[`q:${q.id}`];
                     const val = answers[q.id];
                     return (
