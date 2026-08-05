@@ -71,16 +71,46 @@ export const getAccountOverview = createServerFn({ method: "GET" })
   .handler(async ({ context, data }) => {
     const { supabase } = context;
 
+    const ORG_COLUMNS =
+      "id, name, industry, created_at, client_seat_limit, plan_name, billing_interval, billing_period_start, billing_period_end, renewal_date, pilot_status, pilot_ends_at";
+
     const { data: org, error: orgErr } = await supabase
       .from("organizations")
-      .select(
-        "id, name, industry, created_at, client_seat_limit, plan_name, billing_interval, billing_period_start, billing_period_end, renewal_date, pilot_status, pilot_ends_at",
-      )
+      .select(ORG_COLUMNS)
       .eq("id", data.orgId)
       .maybeSingle();
     if (orgErr) throw new Error(orgErr.message);
-    if (!org) throw new Error("not_found");
-    const o = org as AnyRow;
+
+    let resolved = org as AnyRow | null;
+
+    // The workspace can be readable through membership even when the
+    // organization row itself is filtered out (for example an archived
+    // workspace). A member should still see their own account numbers rather
+    // than a load-failure card, so re-read as the platform after confirming
+    // the caller is genuinely a member of this workspace.
+    if (!resolved) {
+      const { data: membership } = await supabase
+        .from("memberships")
+        .select("organization_id, status")
+        .eq("organization_id", data.orgId)
+        .eq("user_id", context.userId)
+        .maybeSingle();
+      if ((membership as AnyRow | null)?.status === "active") {
+        const { supabaseAdmin } = await import(
+          "@/integrations/supabase/client.server"
+        );
+        const { data: asPlatform } = await supabaseAdmin
+          .from("organizations")
+          .select(ORG_COLUMNS)
+          .eq("id", data.orgId)
+          .maybeSingle();
+        resolved = (asPlatform as AnyRow | null) ?? null;
+      }
+    }
+
+    if (!resolved) throw new Error("not_found");
+    const o = resolved as AnyRow;
+
 
     const [{ data: members }, { data: positions }, { data: hires }] =
       await Promise.all([
