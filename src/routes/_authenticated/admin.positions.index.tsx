@@ -25,6 +25,7 @@ import {
   type PreviewInput,
 } from "@/components/admin/bulk-confirm-dialog";
 import { PublishGatePanel } from "@/components/admin/publish-gate-panel";
+import { OwnershipCoveragePanel } from "@/components/admin/ownership-coverage-panel";
 
 
 const searchSchema = z.object({
