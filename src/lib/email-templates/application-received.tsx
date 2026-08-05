@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Button, Text } from '@react-email/components'
 import { Shell, button, footer, text } from './brand'
 import type { TemplateEntry } from './registry'
+import { candidateStatusEmailLine } from '@/lib/candidate/status-vocabulary'
 import {
   APPLICATION_NEXT_STEPS,
   CONTACT_METHOD_SENTENCE,
@@ -42,6 +43,7 @@ const ApplicationReceived = ({
       Your reference is <strong>{reference ?? '—'}</strong>. Keep it — you can check where your
       application stands at any time with that reference and this email address. No account needed.
     </Text>
+    <Text style={text}>{candidateStatusEmailLine('Received')}</Text>
     <Text style={{ ...text, fontWeight: 600 }}>What happens next</Text>
     {APPLICATION_NEXT_STEPS.map((step, i) => (
       <Text key={step.title} style={text}>

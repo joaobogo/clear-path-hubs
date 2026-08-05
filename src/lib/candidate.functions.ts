@@ -20,69 +20,22 @@ function asArray<T = any>(v: T | T[] | null | undefined): T[] {
 
 const traceId = () =>
   `cd_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
+import {
+  CANDIDATE_STATUSES,
+  CANDIDATE_STATUS_COPY,
+  canWithdrawFrom,
+  toCandidateStatus,
+  type CandidateStatus,
+} from "@/lib/candidate/status-vocabulary";
 
 // ─── Candidate-safe status vocabulary ───────────────────────────────────────
-// Canonical, candidate-facing only. Never exposes scores, rankings, client
-// identity decisions, admin notes, or internal processing states.
-export type CandidateSafeStatus =
-  | "Submitted"
-  | "Under review"
-  | "Additional information requested"
-  | "Progressing"
-  | "Interview requested"
-  | "Interview scheduled"
-  | "Closed"
-  | "Withdrawn";
+// One vocabulary, defined in @/lib/candidate/status-vocabulary and shared with
+// the list, detail, public lookup and email surfaces. Nothing internal leaks.
+export type CandidateSafeStatus = CandidateStatus;
 
-export const CANDIDATE_SAFE_STATUSES: CandidateSafeStatus[] = [
-  "Submitted",
-  "Under review",
-  "Additional information requested",
-  "Progressing",
-  "Interview requested",
-  "Interview scheduled",
-  "Closed",
-  "Withdrawn",
-];
+export const CANDIDATE_SAFE_STATUSES: CandidateSafeStatus[] = [...CANDIDATE_STATUSES];
 
-export const TERMINAL_STATUSES: CandidateSafeStatus[] = ["Closed", "Withdrawn"];
-
-// Map internal workflow state → single candidate-safe label.
-function mapStatus(input: {
-  applicationStatus: string;
-  positionStatus: string;
-  visibleStage: string | null;
-  infoRequested: boolean;
-  interviewState: "none" | "requested" | "scheduled";
-}): CandidateSafeStatus {
-  if (input.applicationStatus === "withdrawn" || input.applicationStatus === "archived") {
-    return "Withdrawn";
-  }
-  if (input.applicationStatus === "rejected") return "Closed";
-  if (input.positionStatus === "closed" || input.positionStatus === "filled") return "Closed";
-  if (input.infoRequested) return "Additional information requested";
-  if (input.interviewState === "scheduled") return "Interview scheduled";
-  if (input.interviewState === "requested") return "Interview requested";
-  if (input.visibleStage) {
-    switch (input.visibleStage) {
-      case "not_moving_forward":
-        return "Closed";
-      case "interview_process":
-        return "Interview requested";
-      case "hired":
-      case "offer":
-      case "shortlisted":
-        return "Progressing";
-      default:
-        return "Under review";
-    }
-  }
-  if (input.applicationStatus === "ready_for_review") return "Under review";
-  if (input.applicationStatus === "processing") return "Under review";
-  return "Submitted";
-}
-
-
+export const TERMINAL_STATUSES: CandidateSafeStatus[] = ["Closed"];
 
 // ─── Context: link auth user to candidate profile (auto-claim by email) ─────
 
@@ -144,7 +97,7 @@ function interviewStateOf(rows: AnyRow[]): InterviewState {
 }
 
 function canWithdraw(status: CandidateSafeStatus): boolean {
-  return !TERMINAL_STATUSES.includes(status);
+  return canWithdrawFrom(status);
 }
 
 async function myProfileId(supabase: AnyRow, userId: string): Promise<string | null> {
@@ -191,12 +144,13 @@ export const listMyApplications = createServerFn({ method: "GET" })
       const interviews = matches.flatMap((m: AnyRow) => asArray(m.interviews));
       const interviewState = interviewStateOf(interviews);
       const infoRequested = openByApp.has(a.id);
-      const status = mapStatus({
+      const status = toCandidateStatus({
         applicationStatus: a.status,
         positionStatus: pos.status ?? "active",
-        visibleStage: visibleMatch?.stage ?? null,
-        infoRequested,
+        matchStage: visibleMatch?.stage ?? null,
+        matchVisible: Boolean(visibleMatch),
         interviewState,
+        withdrawnAt: a.withdrawn_at ?? null,
       });
       const nextInterview = interviews
         .filter((i: AnyRow) => i.scheduled_at && i.status !== "cancelled")
@@ -223,25 +177,8 @@ export const listMyApplications = createServerFn({ method: "GET" })
     return { applications: shaped };
   });
 
-function nextStepHint(status: CandidateSafeStatus): string | null {
-  switch (status) {
-    case "Submitted":
-      return "We have your application. Nothing to do right now.";
-    case "Under review":
-      return "The team is reading through your application.";
-    case "Additional information requested":
-      return "There's a question waiting for you below.";
-    case "Progressing":
-      return "Your application is moving forward with the hiring team.";
-    case "Interview requested":
-      return "An interview has been requested. Times will appear here once confirmed.";
-    case "Interview scheduled":
-      return "Your interview details are below.";
-    case "Closed":
-      return "This application is closed. You can apply to other open roles.";
-    case "Withdrawn":
-      return null;
-  }
+function nextStepHint(status: CandidateSafeStatus): string {
+  return CANDIDATE_STATUS_COPY[status].nextStep;
 }
 
 export const getMyApplication = createServerFn({ method: "GET" })
@@ -311,12 +248,13 @@ export const getMyApplication = createServerFn({ method: "GET" })
     }>;
     const infoRequested = infoRequests.some((r) => r.status === "open");
 
-    const status = mapStatus({
+    const status = toCandidateStatus({
       applicationStatus: a.status,
       positionStatus: pos.status ?? "active",
-      visibleStage: visibleMatch?.stage ?? null,
-      infoRequested,
+      matchStage: visibleMatch?.stage ?? null,
+      matchVisible: Boolean(visibleMatch),
       interviewState: interviewStateOf(interviews),
+      withdrawnAt: a.withdrawn_at ?? null,
     });
 
     const events: { at: string; label: string }[] = [
