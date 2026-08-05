@@ -805,11 +805,13 @@ export function PositionEditWizard({
                 label="Your deal-breakers"
                 hint="Short rules that rule someone out, e.g. no hands-on Postgres experience."
                 values={state.disqualifier_tags.filter(
-                  (t) => !DISQUALIFIER_OPTIONS.includes(t),
+                  (t) => !(DISQUALIFIER_OPTIONS as readonly string[]).includes(t),
                 )}
                 onChange={(v) =>
                   set("disqualifier_tags", [
-                    ...state.disqualifier_tags.filter((t) => DISQUALIFIER_OPTIONS.includes(t)),
+                    ...state.disqualifier_tags.filter((t) =>
+                      (DISQUALIFIER_OPTIONS as readonly string[]).includes(t),
+                    ),
                     ...v.map((t) => t.slice(0, 120)),
                   ])
                 }
