@@ -5,10 +5,12 @@ import {
   ALLOWED_JD_MIME,
   MAX_JD_BYTES,
   UNREADABLE_JD_EXT,
+  briefCompleteness,
   jdFileExt,
   splitLines,
 
 } from "@/lib/express-intake-schema";
+
 
 /**
  * Express onboarding.
@@ -401,44 +403,69 @@ export const Route = createFileRoute("/api/public/express-intake")({
         }
 
         // ---------- Position ----------
+        // Steps 3 and 4 of the intake are optional. Anything the client left
+        // blank is stored as null — never as an invented default — and the
+        // brief is labelled incomplete until they finish it.
         const mustHaves = splitLines(data.mustHaves);
         const trainable = splitLines(data.trainable);
-        const dealbreakerLines = splitLines(data.dealBreakers);
+        const niceToHaves = splitLines(data.niceToHaves);
+        const dealBreakersText = (data.dealBreakers ?? "").trim();
+        const dealbreakerLines = splitLines(dealBreakersText);
+        const locationText = (data.location ?? "").trim();
+        const interviewProcessText = (data.interviewProcess ?? "").trim();
+        const decisionMakerText = (data.decisionMaker ?? "").trim();
+        const hasComp = typeof data.salaryMin === "number" && typeof data.salaryMax === "number";
+        const brief = briefCompleteness({
+          location: locationText,
+          workModel: data.workModel ?? "",
+          salaryMin: data.salaryMin ?? 0,
+          workAuthorization: data.workAuthorization ?? "",
+          interviewProcess: interviewProcessText,
+          decisionMaker: decisionMakerText,
+          dealBreakers: dealBreakersText,
+        });
         const { data: pos, error: posErr } = await admin
           .from("positions")
           .insert({
             organization_id: organizationId,
             title: data.roleTitle.trim(),
-            work_model: data.workModel,
-            location: data.location.trim(),
+            work_model: data.workModel || null,
+            location: locationText || null,
             description: (data.jobDescriptionText ?? "").trim() || null,
             requirements: mustHaves.map((label) => ({ label, kind: "must_have" })),
-            preferred_requirements: trainable.map((label) => ({ label, kind: "trainable" })),
-            dealbreakers:
-              dealbreakerLines.length > 0
-                ? dealbreakerLines.map((label) => ({ label }))
-                : [{ label: data.dealBreakers.trim() }],
-            compensation: {
-              currency: data.currency,
-              period: data.compensationPeriod,
-              min: data.salaryMin,
-              max: data.salaryMax,
-              note: (data.compensationNote ?? "").trim() || null,
-              source: "client_intake",
-            },
-            compensation_collected: true,
+            preferred_requirements: [
+              ...niceToHaves.map((label) => ({ label, kind: "nice_to_have" })),
+              ...trainable.map((label) => ({ label, kind: "trainable" })),
+            ],
+            dealbreakers: dealbreakerLines.map((label) => ({ label })),
+            compensation: hasComp
+              ? {
+                  currency: data.currency,
+                  period: data.compensationPeriod,
+                  min: data.salaryMin,
+                  max: data.salaryMax,
+                  note: (data.compensationNote ?? "").trim() || null,
+                  source: "client_intake",
+                }
+              : null,
+            compensation_collected: hasComp,
             compensation_visibility: "internal",
-            work_authorization: {
-              rule: data.workAuthorization,
-              note: (data.workAuthorizationNote ?? "").trim() || null,
-            },
+            work_authorization: data.workAuthorization
+              ? {
+                  rule: data.workAuthorization,
+                  note: (data.workAuthorizationNote ?? "").trim() || null,
+                }
+              : null,
             target_start_date: (data.targetStartDate ?? "").trim() || null,
             intake_context: {
               why_open: data.whyOpen.trim(),
-              deal_breakers: data.dealBreakers.trim(),
-              interview_process: data.interviewProcess.trim(),
-              decision_maker: data.decisionMaker.trim(),
+              team: (data.team ?? "").trim() || null,
+              deal_breakers: dealBreakersText || null,
+              interview_process: interviewProcessText || null,
+              decision_maker: decisionMakerText || null,
               onsite_days: data.onsiteDays ?? null,
+              brief_complete: brief.complete,
+              brief_missing: brief.missing,
               collected_at: new Date().toISOString(),
               collected_via: "express_intake",
             },
@@ -452,6 +479,7 @@ export const Route = createFileRoute("/api/public/express-intake")({
           })
           .select("id")
           .single();
+
 
         if (posErr) {
           return Response.json(
@@ -554,25 +582,32 @@ export const Route = createFileRoute("/api/public/express-intake")({
               jobDescriptionChars: (data.jobDescriptionText ?? "").length,
               brief: {
                 whyOpen: data.whyOpen,
+                team: (data.team ?? "").trim(),
                 mustHaves,
+                niceToHaves,
                 trainable,
-                dealBreakers: data.dealBreakers,
-                location: data.location,
-                workModel: data.workModel,
+                dealBreakers: dealBreakersText,
+                location: locationText,
+                workModel: data.workModel || "",
                 onsiteDays: data.onsiteDays ?? null,
-                compensation: {
-                  currency: data.currency,
-                  period: data.compensationPeriod,
-                  min: data.salaryMin,
-                  max: data.salaryMax,
-                  note: data.compensationNote ?? "",
-                },
-                workAuthorization: data.workAuthorization,
+                compensation: hasComp
+                  ? {
+                      currency: data.currency,
+                      period: data.compensationPeriod,
+                      min: data.salaryMin,
+                      max: data.salaryMax,
+                      note: data.compensationNote ?? "",
+                    }
+                  : null,
+                workAuthorization: data.workAuthorization || "",
                 workAuthorizationNote: data.workAuthorizationNote ?? "",
-                interviewProcess: data.interviewProcess,
-                decisionMaker: data.decisionMaker,
+                interviewProcess: interviewProcessText,
+                decisionMaker: decisionMakerText,
                 targetStartDate: data.targetStartDate ?? "",
+                complete: brief.complete,
+                missing: brief.missing,
               },
+
 
               jobDescriptionFile: jdPath,
               source: data.source,

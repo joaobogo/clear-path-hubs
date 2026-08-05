@@ -26,6 +26,13 @@ import {
 
   EXPRESS_DRAFT_KEY,
   EXPRESS_IDEMPOTENCY_KEY,
+  EXPRESS_STEP_KEY,
+  INTAKE_STEPS,
+  INTAKE_TOTAL_MINUTES,
+  STEP_FIELDS,
+  briefCompleteness,
+  stepValidators,
+
   MAX_JD_BYTES,
   MIN_ACCOUNT_PASSWORD,
   MIN_JD_TEXT,
@@ -78,11 +85,14 @@ type FormState = {
   password: string;
   confirmPassword: string;
   roleTitle: string;
+  team: string;
   jobDescriptionText: string;
   whyOpen: string;
   mustHaves: string;
+  niceToHaves: string;
   trainable: string;
   dealBreakers: string;
+
   location: string;
   workModel: "remote" | "hybrid" | "onsite" | "";
   onsiteDays: string;
@@ -115,11 +125,14 @@ const EMPTY: FormState = {
   password: "",
   confirmPassword: "",
   roleTitle: "",
+  team: "",
   jobDescriptionText: "",
   whyOpen: "",
   mustHaves: "",
+  niceToHaves: "",
   trainable: "",
   dealBreakers: "",
+
   location: "",
   workModel: "",
   onsiteDays: "",
@@ -178,7 +191,131 @@ function ExpressIntakePage() {
   const [accountBusy, setAccountBusy] = useState(false);
   const [signInMode, setSignInMode] = useState(false);
   const [reviewing, setReviewing] = useState(true);
+  const [stepIndex, setStepIndex] = useState(0);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const lastIntentRef = useRef<"pay" | "call">("pay");
   const hydratedRef = useRef(false);
+
+  const currentStep = INTAKE_STEPS[stepIndex];
+  const step = stepIndex + 1;
+  const minutesLeft = INTAKE_STEPS.slice(stepIndex).reduce((sum, s) => sum + s.minutes, 0);
+
+  // What is still missing from the brief, in the client's own words. Shown
+  // before submit so an incomplete brief is a stated choice, not a surprise.
+  const brief = briefCompleteness({
+    location: state.location,
+    workModel: state.workModel,
+    salaryMin: state.salaryMin === "" ? 0 : Number(state.salaryMin),
+    workAuthorization: state.workAuthorization,
+    interviewProcess: state.interviewProcess,
+    decisionMaker: state.decisionMaker,
+    dealBreakers: state.dealBreakers,
+  });
+
+  /** Move focus and announcement to the first invalid field on this step. */
+  const focusFirstError = () => {
+    requestAnimationFrame(() => {
+      const err = document.querySelector<HTMLElement>("[data-field-error='true']");
+      if (!err) return;
+      err.scrollIntoView({ behavior: "smooth", block: "center" });
+      const field = err.closest("[data-field]")?.querySelector<HTMLElement>(
+        "input, textarea, select",
+      );
+      (field ?? err).focus?.();
+    });
+  };
+
+  /** Validate only the fields belonging to the step being left. */
+  const validateStep = (index: number): boolean => {
+    const key = INTAKE_STEPS[index].key;
+    const next: Record<string, string> = {};
+    if (key === "role") {
+      const res = stepValidators.role.safeParse({
+        roleTitle: state.roleTitle,
+        whyOpen: state.whyOpen,
+      });
+      if (!res.success) {
+        for (const issue of res.error.issues) {
+          const f = String(issue.path[0] ?? "form");
+          if (!next[f]) next[f] = issue.message;
+        }
+      }
+      const jd = state.jobDescriptionText.trim();
+      if (!jdFile && jd.length < MIN_JD_TEXT) {
+        next.jobDescriptionText = jd.length
+          ? `Paste at least ${MIN_JD_TEXT} characters or upload the job description file`
+          : `Upload a job description file or paste at least ${MIN_JD_TEXT} characters`;
+      }
+    }
+    if (key === "people") {
+      const res = stepValidators.people.safeParse({ mustHaves: state.mustHaves });
+      if (!res.success) {
+        for (const issue of res.error.issues) {
+          const f = String(issue.path[0] ?? "mustHaves");
+          if (!next[f]) next[f] = issue.message;
+        }
+      }
+    }
+    if (key === "practicalities") {
+      // Optional step: only what was filled in has to make sense.
+      if (state.salaryMin !== "" && state.salaryMax === "") {
+        next.salaryMax = "Add the top of the range too, or clear both";
+      }
+      if (state.salaryMax !== "" && state.salaryMin === "") {
+        next.salaryMin = "Add the bottom of the range too, or clear both";
+      }
+      if (
+        state.salaryMin !== "" &&
+        state.salaryMax !== "" &&
+        Number(state.salaryMax) < Number(state.salaryMin)
+      ) {
+        next.salaryMax = "The top of the range must be at least the bottom";
+      }
+      if (state.workModel && state.workModel !== "remote" && state.onsiteDays === "") {
+        next.onsiteDays = "How many days on site each week?";
+      }
+    }
+    const fields = STEP_FIELDS[key];
+    setErrors((prev) => {
+      const carried = { ...prev };
+      for (const f of fields) delete carried[f];
+      return { ...carried, ...next };
+    });
+    if (Object.keys(next).length > 0) {
+      focusFirstError();
+      return false;
+    }
+    return true;
+  };
+
+  const goToStep = (index: number) => {
+    if (index === stepIndex) return;
+    // Going back never blocks. Jumping forward respects the gating steps.
+    if (index > stepIndex) {
+      for (let i = stepIndex; i < index; i++) {
+        if (INTAKE_STEPS[i].required && !validateStep(i)) {
+          setStepIndex(i);
+          return;
+        }
+      }
+    }
+    setStepIndex(index);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const goNext = (skipValidation = false) => {
+    // "Finish this later" skips the checks on an optional step; Continue never does.
+    if (!skipValidation && !validateStep(stepIndex)) return;
+
+    setStepIndex((i) => Math.min(i + 1, INTAKE_STEPS.length - 1));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const goBack = () => {
+    setStepIndex((i) => Math.max(i - 1, 0));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
 
   // Restore a draft so a refresh never costs the client their typing. Passwords
   // are deliberately never persisted.
@@ -403,15 +540,38 @@ function ExpressIntakePage() {
     }
   };
 
-  // After a full-page Google redirect, land back on the account step.
+  // After a full-page Google redirect, land back on the confirm step.
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (!new URLSearchParams(window.location.search).has("resume")) return;
+    setStepIndex(INTAKE_STEPS.length - 1);
     const t = setTimeout(() => {
       document.getElementById("account-step")?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 400);
     return () => clearTimeout(t);
   }, []);
+
+  // Remember which step the client was on, so a refresh costs them nothing.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(EXPRESS_STEP_KEY);
+      const saved = raw === null ? NaN : Number(raw);
+      if (Number.isInteger(saved) && saved >= 0 && saved < INTAKE_STEPS.length) {
+        setStepIndex(saved);
+      }
+    } catch {
+      /* storage unavailable — start at step 1 */
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(EXPRESS_STEP_KEY, String(stepIndex));
+    } catch {
+      /* ignore */
+    }
+  }, [stepIndex]);
+
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     if (!startedRef.current) {
@@ -467,14 +627,17 @@ function ExpressIntakePage() {
       password: state.password,
       confirmPassword: state.confirmPassword,
       roleTitle: state.roleTitle,
+      team: state.team,
       jobDescriptionText: state.jobDescriptionText,
       jobDescriptionFile: jdFile
         ? { filename: jdFile.filename, mime: jdFile.mime, base64: jdFile.base64 }
         : null,
       whyOpen: state.whyOpen,
       mustHaves: state.mustHaves,
+      niceToHaves: state.niceToHaves,
       trainable: state.trainable,
       dealBreakers: state.dealBreakers,
+
       location: state.location,
       workModel: state.workModel,
       onsiteDays:
@@ -537,14 +700,22 @@ function ExpressIntakePage() {
 
       setErrors(next);
       toast.error("Please check the highlighted fields.");
-      const first = document.querySelector<HTMLElement>("[data-field-error='true']");
-      first?.scrollIntoView({ behavior: "smooth", block: "center" });
+      // Send the client to the step that actually holds the first problem,
+      // rather than showing an error they cannot see.
+      const badStep = INTAKE_STEPS.findIndex((s) =>
+        STEP_FIELDS[s.key].some((f) => next[f]),
+      );
+      if (badStep >= 0 && badStep !== stepIndex) setStepIndex(badStep);
+      focusFirstError();
       return;
     }
     setErrors({});
+    setSubmitError(null);
+    lastIntentRef.current = intent;
     setSubmitting(true);
 
     try {
+
       // A signed-in client proves ownership of the account with their bearer
       // token; the server refuses to touch an existing workspace without it.
       const headers: Record<string, string> = { "Content-Type": "application/json" };
@@ -560,10 +731,12 @@ function ExpressIntakePage() {
       });
       const body = await res.json();
       if (!res.ok || !body?.ok) {
-        toast.error(body?.message || "We couldn't submit that. Please try again.");
+        // Keep every entered value; show one clear message with Retry.
+        setSubmitError(body?.message || "We couldn't submit that. Nothing was lost — please retry.");
         setSubmitting(false);
         return;
       }
+
 
 
       trackFgv(FGV_EVENTS.formSubmit, { form_type: "employer_intake" });
@@ -641,6 +814,7 @@ function ExpressIntakePage() {
       if (signedIn) void clearIntakeDraft().catch(() => undefined);
       try {
         localStorage.removeItem(EXPRESS_DRAFT_KEY);
+        localStorage.removeItem(EXPRESS_STEP_KEY);
         localStorage.removeItem(EXPRESS_IDEMPOTENCY_KEY);
       } catch {
         /* ignore */
@@ -659,9 +833,10 @@ function ExpressIntakePage() {
       navigate({ to: "/intake/confirmation", search: { intake_id: body.intakeId } });
 
     } catch {
-      toast.error("Network problem. Please try again.");
+      setSubmitError("We couldn't reach us just now. Your answers are safe — please retry.");
       setSubmitting(false);
     }
+
   };
 
   const jdChars = state.jobDescriptionText.trim().length;
@@ -709,8 +884,53 @@ function ExpressIntakePage() {
           )}
         </div>
 
+        {/* Step counter and an honest time estimate — not a fake "2 minutes". */}
+        <nav aria-label="Intake progress" className="space-y-3">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <p className="text-sm font-semibold">
+              Step {stepIndex + 1} of {INTAKE_STEPS.length}: {currentStep.title}
+            </p>
+            <p className="text-xs text-[color:var(--brand-navy)]/70">
+              About {minutesLeft} min left · {INTAKE_TOTAL_MINUTES} min in total
+            </p>
+          </div>
+          <ol className="grid grid-cols-4 gap-2">
+            {INTAKE_STEPS.map((s, i) => {
+              const done = i < stepIndex;
+              const current = i === stepIndex;
+              return (
+                <li key={s.key}>
+                  <button
+                    type="button"
+                    onClick={() => goToStep(i)}
+                    aria-current={current ? "step" : undefined}
+                    className={`w-full rounded-md border px-2 py-2 text-left text-xs transition ${
+                      current
+                        ? "border-[color:var(--brand-navy)] bg-[color:var(--brand-navy)] text-white"
+                        : done
+                          ? "border-[color:var(--brand-teal)]/40 bg-[color:var(--brand-teal)]/8"
+                          : "border-[color:var(--brand-navy)]/15 bg-white text-[color:var(--brand-navy)]/70"
+                    }`}
+                  >
+                    <span className="block font-semibold">{i + 1}. {s.title}</span>
+                    {!s.required && (
+                      <span className={current ? "text-white/75" : "text-[color:var(--brand-navy)]/60"}>
+                        Optional now
+                      </span>
+                    )}
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+          <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">{currentStep.blurb}</p>
+        </nav>
 
-        <Section id="section-company" title="Your company" step={1}>
+
+        {step === 4 && (
+          <>
+        <Section id="section-company" title="Your company" step={4}>
+
           <Field label="Company name" error={errors.companyName} required>
             <Input
               value={state.companyName}
@@ -919,15 +1139,30 @@ function ExpressIntakePage() {
         </Section>
         )}
         </div>
+          </>
+        )}
 
-        <Section id="section-role" title="The role" step={authed ? 3 : 4}>
-          <Field label="Job title" error={errors.roleTitle} required>
-            <Input
-              value={state.roleTitle}
-              onChange={(e) => set("roleTitle", e.target.value)}
-              placeholder="Clinical Operations Manager"
-            />
-          </Field>
+
+
+        {step === 1 && (
+        <Section id="section-role" title="The role" step={1}>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Job title" error={errors.roleTitle} required>
+              <Input
+                value={state.roleTitle}
+                onChange={(e) => set("roleTitle", e.target.value)}
+                placeholder="Clinical Operations Manager"
+              />
+            </Field>
+            <Field label="Team" error={errors.team} hint="Optional. Which team it sits in.">
+              <Input
+                value={state.team}
+                onChange={(e) => set("team", e.target.value)}
+                placeholder="Clinical Operations"
+              />
+            </Field>
+          </div>
+
 
           <div className="space-y-3">
             <Label htmlFor="jd-text" className="text-sm font-medium">
@@ -1027,14 +1262,6 @@ function ExpressIntakePage() {
               </p>
             )}
           </div>
-        </Section>
-
-        <Section id="section-brief" title="The brief" step={authed ? 4 : 5}>
-          <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-            These answers decide whether your first shortlist lands. Five minutes here saves a week of
-            back and forth — and your answers are saved as you type.
-          </p>
-
           <Field
             label="Why is this role open?"
             error={errors.whyOpen}
@@ -1052,6 +1279,14 @@ function ExpressIntakePage() {
             "The last person left in March. Since then the team has had no one owning payer contracts,
             and renewals are slipping."
           </Example>
+        </Section>
+        )}
+
+        {step === 2 && (
+        <Section id="section-people" title="Who you need" step={2}>
+          <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+            These two answers decide whether your first shortlist lands.
+          </p>
 
           <Field
             label="Must-haves"
@@ -1072,7 +1307,20 @@ function ExpressIntakePage() {
           </Example>
 
           <Field
-            label="Nice to have, or willing to train"
+            label="Nice to have"
+            error={errors.niceToHaves}
+            hint="One per line. Real advantages, but you would still hire someone without them."
+          >
+            <Textarea
+              value={state.niceToHaves}
+              onChange={(e) => set("niceToHaves", e.target.value)}
+              rows={3}
+              placeholder={"Multi-site experience\nWorked in a regulated environment"}
+            />
+          </Field>
+
+          <Field
+            label="Willing to train"
             error={errors.trainable}
             hint="One per line. Naming these widens the pool without lowering the bar."
           >
@@ -1084,29 +1332,22 @@ function ExpressIntakePage() {
             />
           </Field>
 
-          <Field
-            label="What rules someone out?"
-            error={errors.dealBreakers}
-            required
-            hint="Say it plainly, even if it feels obvious. This is the fastest way to stop wasting your time."
-          >
-            <Textarea
-              value={state.dealBreakers}
-              onChange={(e) => set("dealBreakers", e.target.value)}
-              rows={3}
-              placeholder="No agency-side-only backgrounds. No one who needs more than four weeks' notice."
-            />
-          </Field>
-          <Example>
-            "More than three jobs in two years", "cannot be on site Tuesdays", "no direct competitor
-            X" — all valid, all better said now than after four interviews.
-          </Example>
+
+        </Section>
+        )}
+
+        {step === 3 && (
+        <Section id="section-practicalities" title="Practicalities" step={3}>
+          <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+            Money, place, authorisation, timing. If you do not have an answer yet, leave it — the role
+            will simply be marked <span className="font-medium">Brief incomplete</span> until you do.
+          </p>
 
           <div className="grid gap-4 sm:grid-cols-2">
+
             <Field
               label="Where is the role based?"
               error={errors.location}
-              required
               hint="City and country, or the region candidates must live in."
             >
               <Input
@@ -1115,7 +1356,7 @@ function ExpressIntakePage() {
                 placeholder="Manchester, United Kingdom"
               />
             </Field>
-            <Field label="How does it work?" error={errors.workModel} required htmlFor="work-model">
+            <Field label="How does it work?" error={errors.workModel} htmlFor="work-model">
               <select
                 id="work-model"
                 value={state.workModel}
@@ -1169,7 +1410,7 @@ function ExpressIntakePage() {
                   ))}
                 </select>
               </Field>
-              <Field label="From" error={errors.salaryMin} required>
+              <Field label="From" error={errors.salaryMin}>
                 <Input
                   value={state.salaryMin}
                   onChange={(e) => set("salaryMin", e.target.value.replace(/[^\d]/g, ""))}
@@ -1177,7 +1418,7 @@ function ExpressIntakePage() {
                   placeholder="70000"
                 />
               </Field>
-              <Field label="To" error={errors.salaryMax} required>
+              <Field label="To" error={errors.salaryMax}>
                 <Input
                   value={state.salaryMax}
                   onChange={(e) => set("salaryMax", e.target.value.replace(/[^\d]/g, ""))}
@@ -1216,9 +1457,6 @@ function ExpressIntakePage() {
           <fieldset className="space-y-2">
             <legend className="text-sm font-medium">
               Work authorisation
-              <span className="ml-1 text-[color:var(--brand-navy)]/70" aria-hidden="true">
-                *
-              </span>
             </legend>
             {WORK_AUTHORIZATION_OPTIONS.map((opt) => (
               <label
@@ -1247,9 +1485,46 @@ function ExpressIntakePage() {
           </fieldset>
 
           <Field
+            label="Ideal start date"
+            error={errors.targetStartDate}
+            hint="Optional. We will tell you honestly if it is achievable."
+          >
+            <Input
+              type="date"
+              value={state.targetStartDate}
+              onChange={(e) => set("targetStartDate", e.target.value)}
+            />
+          </Field>
+        </Section>
+        )}
+
+        {step === 4 && (
+        <Section id="section-process" title="Process and confirm" step={4}>
+          <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+            How you decide, and what rules someone out. Two minutes here saves candidates dropping
+            out halfway.
+          </p>
+
+          <Field
+            label="What rules someone out?"
+            error={errors.dealBreakers}
+            hint="Say it plainly, even if it feels obvious. This is the fastest way to stop wasting your time."
+          >
+            <Textarea
+              value={state.dealBreakers}
+              onChange={(e) => set("dealBreakers", e.target.value)}
+              rows={3}
+              placeholder="No agency-side-only backgrounds. No one who needs more than four weeks' notice."
+            />
+          </Field>
+          <Example>
+            "More than three jobs in two years", "cannot be on site Tuesdays", "no direct competitor
+            X" — all valid, all better said now than after four interviews.
+          </Example>
+
+          <Field
             label="How you interview"
             error={errors.interviewProcess}
-            required
             hint="The stages and roughly how long each takes. Candidates drop out of processes they cannot see."
           >
             <Textarea
@@ -1260,35 +1535,24 @@ function ExpressIntakePage() {
             />
           </Field>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field
-              label="Who makes the final decision?"
-              error={errors.decisionMaker}
-              required
-              hint="Name and role. We keep the process moving through them."
-            >
-              <Input
-                value={state.decisionMaker}
-                onChange={(e) => set("decisionMaker", e.target.value)}
-                placeholder="Dana Okoro, Operations Director"
-              />
-            </Field>
-            <Field
-              label="Ideal start date"
-              error={errors.targetStartDate}
-              hint="Optional. We will tell you honestly if it is achievable."
-            >
-              <Input
-                type="date"
-                value={state.targetStartDate}
-                onChange={(e) => set("targetStartDate", e.target.value)}
-              />
-            </Field>
-          </div>
+          <Field
+            label="Who makes the final decision?"
+            error={errors.decisionMaker}
+            hint="Name and role. We keep the process moving through them."
+          >
+            <Input
+              value={state.decisionMaker}
+              onChange={(e) => set("decisionMaker", e.target.value)}
+              placeholder="Dana Okoro, Operations Director"
+            />
+          </Field>
         </Section>
+        )}
 
 
 
+        {step === 4 && (
+          <>
         <Card className="border-[color:var(--brand-navy)]/12">
           <CardContent className="space-y-4 pt-6">
             <div className="flex items-center justify-between gap-3">
@@ -1302,7 +1566,7 @@ function ExpressIntakePage() {
               </button>
             </div>
             <p className="text-sm text-[color:var(--brand-navy)]/70">
-              This is the last chance to correct anything before you pay.
+              This is the last chance to correct anything before you submit.
             </p>
             {reviewing && (
               <div className="space-y-4">
@@ -1331,6 +1595,8 @@ function ExpressIntakePage() {
                   target="section-role"
                   rows={[
                     ["Job title", state.roleTitle],
+                    ["Team", state.team],
+                    ["Why it is open", state.whyOpen],
                     [
                       "Job description",
                       jdFile ? jdFile.filename : state.jobDescriptionText.trim().slice(0, 400),
@@ -1338,13 +1604,18 @@ function ExpressIntakePage() {
                   ]}
                 />
                 <ReviewBlock
-                  title="The brief"
-                  target="section-brief"
+                  title="Who you need"
+                  target="section-people"
                   rows={[
-                    ["Why it is open", state.whyOpen],
                     ["Must-haves", splitLines(state.mustHaves).join(" · ")],
+                    ["Nice to have", splitLines(state.niceToHaves).join(" · ")],
                     ["Willing to train", splitLines(state.trainable).join(" · ")],
-                    ["Rules someone out", state.dealBreakers],
+                  ]}
+                />
+                <ReviewBlock
+                  title="Practicalities"
+                  target="section-practicalities"
+                  rows={[
                     [
                       "Location",
                       [
@@ -1370,12 +1641,31 @@ function ExpressIntakePage() {
                       WORK_AUTHORIZATION_OPTIONS.find((o) => o.value === state.workAuthorization)
                         ?.label ?? "",
                     ],
-                    ["Interview process", state.interviewProcess],
-                    ["Final decision", state.decisionMaker],
                     ["Ideal start", state.targetStartDate],
                   ]}
                 />
+                <ReviewBlock
+                  title="Process"
+                  target="section-process"
+                  rows={[
+                    ["Rules someone out", state.dealBreakers],
+                    ["Interview process", state.interviewProcess],
+                    ["Final decision", state.decisionMaker],
+                  ]}
+                />
 
+              </div>
+            )}
+            {!brief.complete && (
+              <div className="rounded-lg border border-[color:var(--brand-amber,#b45309)]/30 bg-[color:var(--brand-navy)]/4 p-4">
+                <p className="text-sm font-semibold">
+                  This brief is incomplete — you can still submit it.
+                </p>
+                <p className="mt-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+                  The role will be labelled <span className="font-medium">Brief incomplete</span> in
+                  your workspace until you add: {brief.missing.join(", ").toLowerCase()}. You can
+                  finish it any time from the role page.
+                </p>
               </div>
             )}
           </CardContent>
@@ -1470,6 +1760,27 @@ function ExpressIntakePage() {
               />
             </div>
 
+            {submitError && (
+              <div
+                role="alert"
+                className="space-y-3 rounded-lg border border-[color:var(--brand-danger)]/30 bg-[color:var(--brand-danger)]/5 p-4"
+              >
+                <p className="text-sm leading-relaxed">{submitError}</p>
+                <p className="text-xs text-[color:var(--brand-navy)]/70">
+                  Nothing you typed was lost.
+                </p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => void submit(lastIntentRef.current)}
+                  disabled={submitting}
+                >
+                  Retry
+                </Button>
+              </div>
+            )}
+
             <div className="rounded-xl border border-[color:var(--brand-navy)]/12 p-4">
               <p className="text-sm font-semibold">Choose how you'd like to start</p>
               <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
@@ -1517,10 +1828,42 @@ function ExpressIntakePage() {
             </ul>
           </CardContent>
         </Card>
+          </>
+        )}
+
+        {/* Step navigation. Back never validates; Continue does. */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--brand-navy)]/12 pt-5">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={goBack}
+            disabled={stepIndex === 0 || submitting}
+            className="min-h-11"
+          >
+            Back
+          </Button>
+          <div className="flex items-center gap-3">
+            {!currentStep.required && stepIndex < INTAKE_STEPS.length - 1 && (
+              <button
+                type="button"
+                className="text-sm underline text-[color:var(--brand-navy)]/70"
+                onClick={() => goNext(true)}
+              >
+                Finish this later
+              </button>
+            )}
+            {stepIndex < INTAKE_STEPS.length - 1 && (
+              <Button type="button" onClick={() => goNext()} className="min-h-11">
+                Continue
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
     </FormShell>
   );
 }
+
 
 function Section({
   title,
@@ -1594,7 +1937,7 @@ function Field({
       })
     : children;
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-1.5" data-field={label}>
       {/* The required marker sits outside the <label> so the label's text is
           exactly the field name — that keeps the announced/programmatic name
           clean, while aria-required carries the "required" semantics. */}
@@ -1618,6 +1961,7 @@ function Field({
         <p
           id={errorId}
           data-field-error="true"
+          role="alert"
           className="text-sm text-[color:var(--brand-danger)]"
         >
           {error}
@@ -1625,6 +1969,7 @@ function Field({
       )}
     </div>
   );
+
 }
 
 function ReviewBlock({
