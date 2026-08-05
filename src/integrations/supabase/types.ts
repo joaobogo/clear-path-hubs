@@ -1567,6 +1567,7 @@ export type Database = {
           approved_score_run_id: string | null
           candidate_profile_id: string
           canonical_state: Database["public"]["Enums"]["canonical_scoring_state"]
+          client_decision_due_at: string | null
           client_visibility: Database["public"]["Enums"]["client_visibility"]
           contact_release_reason: string | null
           contact_released_at: string | null
@@ -1574,6 +1575,7 @@ export type Database = {
           created_at: string
           created_by_audit: boolean | null
           current_score_run_id: string | null
+          current_stage_entered_at: string | null
           delivered_at: string | null
           eligibility_status: Database["public"]["Enums"]["eligibility_status"]
           eligibility_updated_at: string | null
@@ -1602,6 +1604,7 @@ export type Database = {
           recommendation_reason: string | null
           recommendation_updated_at: string | null
           stage: Database["public"]["Enums"]["match_stage"]
+          submitted_to_client_at: string | null
           test_run_id: string | null
           updated_at: string
         }
@@ -1611,6 +1614,7 @@ export type Database = {
           approved_score_run_id?: string | null
           candidate_profile_id: string
           canonical_state?: Database["public"]["Enums"]["canonical_scoring_state"]
+          client_decision_due_at?: string | null
           client_visibility?: Database["public"]["Enums"]["client_visibility"]
           contact_release_reason?: string | null
           contact_released_at?: string | null
@@ -1618,6 +1622,7 @@ export type Database = {
           created_at?: string
           created_by_audit?: boolean | null
           current_score_run_id?: string | null
+          current_stage_entered_at?: string | null
           delivered_at?: string | null
           eligibility_status?: Database["public"]["Enums"]["eligibility_status"]
           eligibility_updated_at?: string | null
@@ -1646,6 +1651,7 @@ export type Database = {
           recommendation_reason?: string | null
           recommendation_updated_at?: string | null
           stage?: Database["public"]["Enums"]["match_stage"]
+          submitted_to_client_at?: string | null
           test_run_id?: string | null
           updated_at?: string
         }
@@ -1655,6 +1661,7 @@ export type Database = {
           approved_score_run_id?: string | null
           candidate_profile_id?: string
           canonical_state?: Database["public"]["Enums"]["canonical_scoring_state"]
+          client_decision_due_at?: string | null
           client_visibility?: Database["public"]["Enums"]["client_visibility"]
           contact_release_reason?: string | null
           contact_released_at?: string | null
@@ -1662,6 +1669,7 @@ export type Database = {
           created_at?: string
           created_by_audit?: boolean | null
           current_score_run_id?: string | null
+          current_stage_entered_at?: string | null
           delivered_at?: string | null
           eligibility_status?: Database["public"]["Enums"]["eligibility_status"]
           eligibility_updated_at?: string | null
@@ -1690,6 +1698,7 @@ export type Database = {
           recommendation_reason?: string | null
           recommendation_updated_at?: string | null
           stage?: Database["public"]["Enums"]["match_stage"]
+          submitted_to_client_at?: string | null
           test_run_id?: string | null
           updated_at?: string
         }
@@ -1841,6 +1850,7 @@ export type Database = {
           author_user_id: string | null
           body: string
           candidate_match_id: string
+          client_shareable: boolean
           created_at: string
           edited_at: string | null
           id: string
@@ -1848,6 +1858,7 @@ export type Database = {
           organization_id: string
           revision_group_id: string
           revision_number: number
+          revision_of: string | null
           superseded_at: string | null
           updated_at: string
           visibility: string
@@ -1856,6 +1867,7 @@ export type Database = {
           author_user_id?: string | null
           body: string
           candidate_match_id: string
+          client_shareable?: boolean
           created_at?: string
           edited_at?: string | null
           id?: string
@@ -1863,6 +1875,7 @@ export type Database = {
           organization_id: string
           revision_group_id: string
           revision_number?: number
+          revision_of?: string | null
           superseded_at?: string | null
           updated_at?: string
           visibility?: string
@@ -1871,6 +1884,7 @@ export type Database = {
           author_user_id?: string | null
           body?: string
           candidate_match_id?: string
+          client_shareable?: boolean
           created_at?: string
           edited_at?: string | null
           id?: string
@@ -1878,6 +1892,7 @@ export type Database = {
           organization_id?: string
           revision_group_id?: string
           revision_number?: number
+          revision_of?: string | null
           superseded_at?: string | null
           updated_at?: string
           visibility?: string
@@ -1973,6 +1988,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_portfolio_rollup"
             referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "candidate_notes_revision_of_fkey"
+            columns: ["revision_of"]
+            isOneToOne: false
+            referencedRelation: "candidate_notes"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -2333,6 +2355,8 @@ export type Database = {
           migration_version: string | null
           organization_id: string
           reason_code: string | null
+          recorded_by_staff: boolean
+          recorded_by_user_id: string | null
           reversed_at: string | null
           reversed_by: string | null
           updated_at: string
@@ -2357,6 +2381,8 @@ export type Database = {
           migration_version?: string | null
           organization_id: string
           reason_code?: string | null
+          recorded_by_staff?: boolean
+          recorded_by_user_id?: string | null
           reversed_at?: string | null
           reversed_by?: string | null
           updated_at?: string
@@ -2381,6 +2407,8 @@ export type Database = {
           migration_version?: string | null
           organization_id?: string
           reason_code?: string | null
+          recorded_by_staff?: boolean
+          recorded_by_user_id?: string | null
           reversed_at?: string | null
           reversed_by?: string | null
           updated_at?: string
@@ -4022,6 +4050,7 @@ export type Database = {
           output_file_id: string | null
           requested_at: string
           requested_by: string
+          requested_scope_hash: string | null
           row_count: number | null
           scope_label: string | null
           status: string
@@ -4043,6 +4072,7 @@ export type Database = {
           output_file_id?: string | null
           requested_at?: string
           requested_by: string
+          requested_scope_hash?: string | null
           row_count?: number | null
           scope_label?: string | null
           status?: string
@@ -4064,6 +4094,7 @@ export type Database = {
           output_file_id?: string | null
           requested_at?: string
           requested_by?: string
+          requested_scope_hash?: string | null
           row_count?: number | null
           scope_label?: string | null
           status?: string
@@ -4251,6 +4282,7 @@ export type Database = {
           employment_type: string | null
           equity_notes: string | null
           guarantee_days: number | null
+          guarantee_ends_on: string | null
           guarantee_starts_on: string | null
           guarantee_terms: string | null
           guarantee_visible_to_client: boolean
@@ -4269,6 +4301,7 @@ export type Database = {
           salary_period: string | null
           sent_at: string | null
           start_date: string | null
+          start_date_confirmed: boolean
           status: Database["public"]["Enums"]["hire_status"]
           updated_at: string
           work_model: string | null
@@ -4289,6 +4322,7 @@ export type Database = {
           employment_type?: string | null
           equity_notes?: string | null
           guarantee_days?: number | null
+          guarantee_ends_on?: string | null
           guarantee_starts_on?: string | null
           guarantee_terms?: string | null
           guarantee_visible_to_client?: boolean
@@ -4307,6 +4341,7 @@ export type Database = {
           salary_period?: string | null
           sent_at?: string | null
           start_date?: string | null
+          start_date_confirmed?: boolean
           status?: Database["public"]["Enums"]["hire_status"]
           updated_at?: string
           work_model?: string | null
@@ -4327,6 +4362,7 @@ export type Database = {
           employment_type?: string | null
           equity_notes?: string | null
           guarantee_days?: number | null
+          guarantee_ends_on?: string | null
           guarantee_starts_on?: string | null
           guarantee_terms?: string | null
           guarantee_visible_to_client?: boolean
@@ -4345,6 +4381,7 @@ export type Database = {
           salary_period?: string | null
           sent_at?: string | null
           start_date?: string | null
+          start_date_confirmed?: boolean
           status?: Database["public"]["Enums"]["hire_status"]
           updated_at?: string
           work_model?: string | null
@@ -4826,6 +4863,7 @@ export type Database = {
           pinned: boolean
           revision_group_id: string
           revision_number: number
+          revision_of: string | null
           superseded_at: string | null
           updated_at: string
         }
@@ -4844,6 +4882,7 @@ export type Database = {
           pinned?: boolean
           revision_group_id: string
           revision_number?: number
+          revision_of?: string | null
           superseded_at?: string | null
           updated_at?: string
         }
@@ -4862,6 +4901,7 @@ export type Database = {
           pinned?: boolean
           revision_group_id?: string
           revision_number?: number
+          revision_of?: string | null
           superseded_at?: string | null
           updated_at?: string
         }
@@ -4886,6 +4926,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_portfolio_rollup"
             referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "internal_notes_revision_of_fkey"
+            columns: ["revision_of"]
+            isOneToOne: false
+            referencedRelation: "internal_notes"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -5169,6 +5216,7 @@ export type Database = {
           candidate_selected_time: string | null
           candidate_submission_id: string | null
           completed_at: string | null
+          confirmed_at: string | null
           created_at: string
           created_by: string | null
           duration_minutes: number | null
@@ -5215,6 +5263,7 @@ export type Database = {
           candidate_selected_time?: string | null
           candidate_submission_id?: string | null
           completed_at?: string | null
+          confirmed_at?: string | null
           created_at?: string
           created_by?: string | null
           duration_minutes?: number | null
@@ -5261,6 +5310,7 @@ export type Database = {
           candidate_selected_time?: string | null
           candidate_submission_id?: string | null
           completed_at?: string | null
+          confirmed_at?: string | null
           created_at?: string
           created_by?: string | null
           duration_minutes?: number | null
@@ -7153,6 +7203,7 @@ export type Database = {
           industry: string | null
           internal_notes: string | null
           is_test_record: boolean | null
+          last_client_update_sent_at: string | null
           legacy_source_id: string | null
           legacy_source_system: string | null
           legacy_source_table: string | null
@@ -7207,6 +7258,7 @@ export type Database = {
           industry?: string | null
           internal_notes?: string | null
           is_test_record?: boolean | null
+          last_client_update_sent_at?: string | null
           legacy_source_id?: string | null
           legacy_source_system?: string | null
           legacy_source_table?: string | null
@@ -7261,6 +7313,7 @@ export type Database = {
           industry?: string | null
           internal_notes?: string | null
           is_test_record?: boolean | null
+          last_client_update_sent_at?: string | null
           legacy_source_id?: string | null
           legacy_source_system?: string | null
           legacy_source_table?: string | null
@@ -8412,6 +8465,7 @@ export type Database = {
       positions: {
         Row: {
           approved_at: string | null
+          attention_reviewed_at: string | null
           backup_owner_assigned_at: string | null
           backup_owner_user_id: string | null
           blueprint: Json
@@ -8466,6 +8520,7 @@ export type Database = {
           payment_status: Database["public"]["Enums"]["payment_status"]
           preferred_requirements: Json
           primary_timezone: string | null
+          publish_ready_at: string | null
           published_at: string | null
           reassignment_flagged_at: string | null
           reassignment_reason: string | null
@@ -8495,6 +8550,7 @@ export type Database = {
         }
         Insert: {
           approved_at?: string | null
+          attention_reviewed_at?: string | null
           backup_owner_assigned_at?: string | null
           backup_owner_user_id?: string | null
           blueprint?: Json
@@ -8551,6 +8607,7 @@ export type Database = {
           payment_status?: Database["public"]["Enums"]["payment_status"]
           preferred_requirements?: Json
           primary_timezone?: string | null
+          publish_ready_at?: string | null
           published_at?: string | null
           reassignment_flagged_at?: string | null
           reassignment_reason?: string | null
@@ -8580,6 +8637,7 @@ export type Database = {
         }
         Update: {
           approved_at?: string | null
+          attention_reviewed_at?: string | null
           backup_owner_assigned_at?: string | null
           backup_owner_user_id?: string | null
           blueprint?: Json
@@ -8636,6 +8694,7 @@ export type Database = {
           payment_status?: Database["public"]["Enums"]["payment_status"]
           preferred_requirements?: Json
           primary_timezone?: string | null
+          publish_ready_at?: string | null
           published_at?: string | null
           reassignment_flagged_at?: string | null
           reassignment_reason?: string | null
