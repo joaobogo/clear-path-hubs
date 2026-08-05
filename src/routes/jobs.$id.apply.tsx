@@ -921,7 +921,13 @@ function ApplyPage() {
           </Alert>
         )}
 
-        <div data-apply-form className="mt-8 rounded-lg border bg-card p-5 md:p-6">
+        <div
+          data-apply-form
+          aria-busy={submitting}
+          className={`mt-8 rounded-lg border bg-card p-5 md:p-6 ${
+            submitting ? "pointer-events-none select-none opacity-60" : ""
+          }`}
+        >
           {step === 1 && (
             <div className="space-y-5" data-hydrated={signedIn === null ? "pending" : "ready"}>
 
