@@ -786,6 +786,15 @@ export const getClientPositions = createServerFn({ method: "GET" })
         ...p,
 
         kpis: kpi,
+        // Single shared mapping — the same role never shows two statuses.
+        client_status: computeClientRoleStatus({
+          status: String(p.status),
+          hires: kpi.hires,
+          offers: kpi.offers,
+          interviewing: kpi.interviewing,
+          shortlisted: kpi.shortlisted,
+          delivered: kpi.awaiting_decision,
+        }),
         pipeline_line: buildPipelineStatusLine(language),
         progress: computeRoleProgress({
           status: String(p.status),
