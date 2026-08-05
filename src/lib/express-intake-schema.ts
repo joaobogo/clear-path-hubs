@@ -44,7 +44,37 @@ export const MIN_INTERVIEW_PROCESS = 20;
 
 export const WORK_MODELS = ["remote", "hybrid", "onsite"] as const;
 export const COMP_CURRENCIES = ["USD", "EUR", "GBP", "BRL", "CAD", "AUD"] as const;
-export const COMP_PERIODS = ["year", "month", "hour"] as const;
+export const COMP_PERIODS = ["year", "hour"] as const;
+
+/** What the client says about equity. No inferred or benchmarked values. */
+export const COMP_EQUITY = ["none", "offered", "negotiable"] as const;
+
+export const COMP_EQUITY_LABELS: Record<(typeof COMP_EQUITY)[number], string> = {
+  none: "No equity",
+  offered: "Equity offered",
+  negotiable: "Equity negotiable",
+};
+
+/**
+ * A range wider than this share of the bottom of the range makes candidates
+ * self-select out, so the client is asked to confirm it on purpose.
+ */
+export const COMPENSATION_WIDE_RANGE_RATIO = 0.6;
+
+export const COMPENSATION_WIDE_RANGE_WARNING =
+  "That range is wide — candidates will self-select out. Tick to confirm you meant it.";
+
+/** The plain trade-off, stated once. No benchmark figures, ever. */
+export const COMPENSATION_HONEST_LINE =
+  "A stated range gets you to a first shortlist faster, and we screen candidates against it. We never publish it, and we do not show you market figures as fact.";
+
+export function isWideCompensationRange(
+  min: number | undefined | null,
+  max: number | undefined | null,
+): boolean {
+  if (!min || !max || max < min) return false;
+  return max - min > min * COMPENSATION_WIDE_RANGE_RATIO;
+}
 
 export const WORK_AUTHORIZATION_OPTIONS = [
   {
@@ -78,7 +108,7 @@ export const WORK_MODEL_LABELS: Record<(typeof WORK_MODELS)[number], string> = {
 
 export const COMP_PERIOD_LABELS: Record<(typeof COMP_PERIODS)[number], string> = {
   year: "per year",
-  month: "per month",
+  
   hour: "per hour",
 };
 
@@ -319,6 +349,14 @@ export const expressIntakeSchema = z
     salaryMin: z.coerce.number().min(1, "Enter the bottom of the range").optional(),
     salaryMax: z.coerce.number().min(1, "Enter the top of the range").optional(),
     compensationNote: z.string().trim().max(1000).optional().or(z.literal("")),
+    /** "Not decided yet" — recorded as undecided, never as zero. */
+    compensationUndecided: z.boolean().optional().default(false),
+    bonusStructure: z.string().trim().max(500).optional().or(z.literal("")),
+    equity: z.enum(COMP_EQUITY).optional().or(z.literal("")),
+    /** "Flexible for the right person" — stated by the client, not inferred. */
+    compensationFlexible: z.boolean().optional().default(false),
+    /** Set when the client confirms a range wider than the stated threshold. */
+    wideRangeConfirmed: z.boolean().optional().default(false),
 
     workAuthorization: z.enum(WORK_AUTHORIZATION_VALUES).optional().or(z.literal("")),
     workAuthorizationNote: z.string().trim().max(1000).optional().or(z.literal("")),
@@ -376,6 +414,20 @@ export const expressIntakeSchema = z
     path: ["salaryMax"],
     message: "The top of the range must be at least the bottom",
   })
+  // "Not decided yet" is a real answer, not a zero. It cannot coexist with a
+  // range, or the brief would carry two different truths.
+  .refine((v) => !(v.compensationUndecided && (v.salaryMin || v.salaryMax)), {
+    path: ["compensationUndecided"],
+    message: "Clear the range, or untick 'Not decided yet'",
+  })
+  // A very wide range still goes through — but only once the client says so.
+  .refine(
+    (v) => !isWideCompensationRange(v.salaryMin, v.salaryMax) || v.wideRangeConfirmed === true,
+    {
+      path: ["wideRangeConfirmed"],
+      message: COMPENSATION_WIDE_RANGE_WARNING,
+    },
+  )
   .refine(
     (v) => !v.workModel || v.workModel === "remote" || typeof v.onsiteDays === "number",
     {
@@ -445,6 +497,11 @@ export const STEP_FIELDS: Record<IntakeStepKey, string[]> = {
     "salaryMin",
     "salaryMax",
     "compensationNote",
+    "compensationUndecided",
+    "bonusStructure",
+    "equity",
+    "compensationFlexible",
+    "wideRangeConfirmed",
     "workAuthorization",
     "workAuthorizationNote",
     "targetStartDate",
@@ -547,6 +604,11 @@ export function intakeRequiredness(
     salaryMin: false,
     salaryMax: false,
     compensationNote: false,
+    compensationUndecided: false,
+    bonusStructure: false,
+    equity: false,
+    compensationFlexible: false,
+    wideRangeConfirmed: false,
     workAuthorization: false,
     workAuthorizationNote: false,
     targetStartDate: false,

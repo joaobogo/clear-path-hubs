@@ -16,6 +16,11 @@ import {
 
   COMP_PERIODS,
   COMP_PERIOD_LABELS,
+  COMP_EQUITY,
+  COMP_EQUITY_LABELS,
+  COMPENSATION_HONEST_LINE,
+  COMPENSATION_WIDE_RANGE_WARNING,
+  isWideCompensationRange,
   WORK_MODELS,
   WORK_MODEL_LABELS,
   WORK_AUTHORIZATION_OPTIONS,
@@ -112,6 +117,11 @@ type FormState = {
   salaryMin: string;
   salaryMax: string;
   compensationNote: string;
+  compensationUndecided: boolean;
+  bonusStructure: string;
+  equity: string;
+  compensationFlexible: boolean;
+  wideRangeConfirmed: boolean;
   workAuthorization: string;
   workAuthorizationNote: string;
   interviewProcess: string;
@@ -154,6 +164,11 @@ const EMPTY: FormState = {
   salaryMin: "",
   salaryMax: "",
   compensationNote: "",
+  compensationUndecided: false,
+  bonusStructure: "",
+  equity: "",
+  compensationFlexible: false,
+  wideRangeConfirmed: false,
   workAuthorization: "",
   workAuthorizationNote: "",
   interviewProcess: "",
@@ -317,6 +332,15 @@ function ExpressIntakePage() {
         Number(state.salaryMax) < Number(state.salaryMin)
       ) {
         next.salaryMax = "The top of the range must be at least the bottom";
+      }
+      if (state.compensationUndecided && (state.salaryMin !== "" || state.salaryMax !== "")) {
+        next.compensationUndecided = "Clear the range, or untick 'Not decided yet'";
+      }
+      if (
+        isWideCompensationRange(Number(state.salaryMin) || 0, Number(state.salaryMax) || 0) &&
+        !state.wideRangeConfirmed
+      ) {
+        next.wideRangeConfirmed = COMPENSATION_WIDE_RANGE_WARNING;
       }
       if (state.workModel && state.workModel !== "remote" && state.onsiteDays === "") {
         next.onsiteDays = "How many days on site each week?";
@@ -759,6 +783,11 @@ function ExpressIntakePage() {
       salaryMin: state.salaryMin === "" ? undefined : Number(state.salaryMin),
       salaryMax: state.salaryMax === "" ? undefined : Number(state.salaryMax),
       compensationNote: state.compensationNote,
+      compensationUndecided: state.compensationUndecided,
+      bonusStructure: state.bonusStructure,
+      equity: state.equity,
+      compensationFlexible: state.compensationFlexible,
+      wideRangeConfirmed: state.wideRangeConfirmed,
       workAuthorization: state.workAuthorization,
       workAuthorizationNote: state.workAuthorizationNote,
       interviewProcess: state.interviewProcess,
@@ -804,6 +833,15 @@ function ExpressIntakePage() {
         Number(state.salaryMax) < Number(state.salaryMin)
       ) {
         next.salaryMax = "The top of the range must be at least the bottom";
+      }
+      if (
+        isWideCompensationRange(Number(state.salaryMin) || 0, Number(state.salaryMax) || 0) &&
+        !state.wideRangeConfirmed
+      ) {
+        next.wideRangeConfirmed = COMPENSATION_WIDE_RANGE_WARNING;
+      }
+      if (state.compensationUndecided && (state.salaryMin !== "" || state.salaryMax !== "")) {
+        next.compensationUndecided = "Clear the range, or untick 'Not decided yet'";
       }
       if (state.workModel && state.workModel !== "remote" && state.onsiteDays === "") {
         next.onsiteDays = "How many days on site each week?";
