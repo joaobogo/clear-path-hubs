@@ -681,7 +681,7 @@ function ApplyPage() {
 
 
               <div>
-                <h2 className="text-lg font-semibold">Your details</h2>
+                <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Your details</h2>
                 <p className="text-sm text-muted-foreground">
                   We'll use this to reach out about the role.
                 </p>
@@ -843,7 +843,7 @@ function ApplyPage() {
           {step === 2 && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-lg font-semibold">Upload your CV</h2>
+                <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Upload your CV</h2>
                 <p className="text-sm text-muted-foreground">
                   PDF only, up to 10 MB. Unicode filenames welcome.
                 </p>
@@ -962,7 +962,7 @@ function ApplyPage() {
           {step === 3 && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-lg font-semibold">Screening questions</h2>
+                <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Screening questions</h2>
                 <p className="text-sm text-muted-foreground">
                   {pos.questions.length === 0
                     ? "No screening questions for this role — you're all set."
@@ -1175,7 +1175,7 @@ function ApplyPage() {
           {step === 5 && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-lg font-semibold">Ready to submit</h2>
+                <h2 ref={stepHeadingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Ready to submit</h2>
                 <p className="text-sm text-muted-foreground">
                   Submit your application for <span className="font-medium">{pos.title}</span> at{" "}
                   <span className="font-medium">{pos.organization_name}</span>. You'll receive a
