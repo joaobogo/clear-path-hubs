@@ -396,7 +396,17 @@ function PositionDetailPage() {
  >
  Edit position
  </Link>
- </Button>
+  </Button>
+  <Button asChild variant="outline" size="sm">
+  <Link
+  to="/intake"
+  search={{ duplicate: position.id }}
+  data-qa-action="duplicate-position"
+  >
+  Duplicate this role
+  </Link>
+  </Button>
+
    <PositionLifecycleMenu
      positionId={position.id}
      status={position.status}
