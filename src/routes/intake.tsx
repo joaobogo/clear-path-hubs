@@ -203,6 +203,9 @@ function ExpressIntakePage() {
   const [reviewing, setReviewing] = useState(true);
   const [stepIndex, setStepIndex] = useState(0);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [rowErrors, setRowErrors] = useState<Record<number, string>>({});
+  const [suggestions, setSuggestions] = useState<SuggestionState>({ kind: "idle" });
+  const suggestedForRef = useRef<string>("");
   const lastIntentRef = useRef<"pay" | "call">("pay");
   const hydratedRef = useRef(false);
 
@@ -257,20 +260,16 @@ function ExpressIntakePage() {
           : `Upload a job description file or paste at least ${MIN_JD_TEXT} characters`;
       }
     }
+    let hardFail = false;
     if (key === "people") {
       const res = validateRequirements(state.requirements, {
         manyConfirmed: state.manyMustHavesConfirmed,
       });
+      // Row problems render under their own row; only the list-level message
+      // belongs in the shared error map.
       setRowErrors(res.rowErrors);
       if (res.listError) next.requirements = res.listError;
-      else if (Object.keys(res.rowErrors).length > 0) {
-        // Row errors render under their own row; the step still must not pass.
-        next.requirements = "";
-      }
-      if (!res.ok && !next.requirements) {
-        focusFirstError();
-        return false;
-      }
+      hardFail = !res.ok;
     }
     if (key === "practicalities") {
       // Optional step: only what was filled in has to make sense.
@@ -297,7 +296,7 @@ function ExpressIntakePage() {
       for (const f of fields) delete carried[f];
       return { ...carried, ...next };
     });
-    if (Object.keys(next).length > 0) {
+    if (hardFail || Object.keys(next).length > 0) {
       focusFirstError();
       return false;
     }
