@@ -52,8 +52,9 @@ function toAssessments(runResult: unknown, insights: unknown): RawAssessment[] {
         label,
         result: (r["status"] ?? r["verdict"] ?? r["result"] ?? null) as string | null,
         snippet:
-          (r["cv_quote"] ?? r["snippet"] ?? r["quote"] ?? r["evidence"]?.[0]?.snippet ?? null) ??
-          null,
+          (r["cv_quote"] ?? r["snippet"] ?? r["quote"] ?? r["evidence"]?.[0]?.snippet ?? null) as
+            | string
+            | null,
         confidence: typeof r["confidence"] === "number" ? r["confidence"] : null,
       });
     }
