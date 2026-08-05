@@ -37,16 +37,8 @@ export function rejectionReasonsFor(
 
 export const REJECTION_REASON_CODES: string[] = REJECTION_REASONS.map((r) => r.code);
 
-/**
- * Human label for a recorded reason code. Unknown or missing codes return null
- * so callers show nothing rather than a raw code.
- */
-export function reasonLabel(code: string | null | undefined): string | null {
-  if (!code) return null;
-  const found = REJECTION_REASONS.find((r) => r.code === code);
-  if (found) return found.code === "other" ? "Other" : found.label;
-  return null;
-}
+
+
 
 
 /**
