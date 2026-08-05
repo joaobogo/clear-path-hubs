@@ -297,20 +297,28 @@ export const listClients = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
+    const { resolveShowTestRecordsForUser, excludeTestFlag } = await import(
+      "./admin-test-scope.server"
+    );
+    const showTest = await resolveShowTestRecordsForUser(s, context.userId);
 
     // Bounded fetch: pull a working set, then compute counts + last activity in memory
     // and paginate the merged result. Cap protects the endpoint on large tenants.
     let q = s
       .from("organizations")
       .select(
-        "id,name,status,domain,industry,updated_at,archived_at,onboarding_status,dashboard_status,primary_contact_name,primary_contact_email",
+        "id,name,status,domain,industry,updated_at,archived_at,onboarding_status,dashboard_status,primary_contact_name,primary_contact_email,is_test_record",
       )
       .limit(500);
     if (data.q) q = q.ilike("name", `%${data.q}%`);
     if (data.status) q = q.eq("status", data.status);
     if (data.industry) q = q.eq("industry", data.industry);
     if (!data.include_archived) q = q.is("archived_at", null);
+    // The global "test records" preference decides here, in Postgres, so the
+    // list and the "N organizations" count can never disagree.
+    if (!showTest) q = excludeTestFlag(q);
     const { data: rows } = await q;
+
     const orgIds = (rows ?? []).map((r: AnyRow) => r.id);
 
     const stats: Record<
@@ -428,6 +436,7 @@ export const listClients = createServerFn({ method: "GET" })
       items,
       total,
       industries,
+      test_records_hidden: !showTest,
       page: data.page,
       page_size: data.page_size,
       page_count: Math.max(1, Math.ceil(total / data.page_size)),
@@ -532,6 +541,11 @@ export const listPositions = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
+    const { resolveShowTestRecordsForUser, loadTestScope, excludeTestOrgs } = await import(
+      "./admin-test-scope.server"
+    );
+    const showTest = await resolveShowTestRecordsForUser(s, context.userId);
+    const scope = await loadTestScope(s, showTest);
 
     // Base query with count for pagination.
     let base = s
@@ -546,6 +560,11 @@ export const listPositions = createServerFn({ method: "GET" })
     else if (data.owner) base = base.eq("owner_user_id", data.owner);
     if (data.location) base = base.ilike("location", `%${data.location}%`);
     if (data.q) base = base.ilike("title", `%${data.q}%`);
+    if (!showTest) {
+      base = excludeTestOrgs(base, scope);
+      base = base.or("is_test_record.is.null,is_test_record.eq.false");
+    }
+
 
 
     // Sort — DB-side for updated/title; delivered/action sorts happen after enrichment.

@@ -157,3 +157,35 @@ export async function loadAgingIntakes(
   }));
   return { items, count: count ?? items.length, older_than_days: olderThanDays };
 }
+
+// ─── Per-user preference (authoritative) ─────────────────────────────────────
+
+/**
+ * The preference as stored on the user's profile, with the cookie mirror only
+ * as a fallback. Server functions that already know the caller should use this
+ * rather than the cookie: a cookie written by a server-function response is not
+ * guaranteed to be present on the very next request, which is how a hidden
+ * toggle could still show test records.
+ */
+export async function resolveShowTestRecordsForUser(
+  s: Any,
+  userId: string,
+): Promise<boolean> {
+  try {
+    const { data } = await s
+      .from("profiles")
+      .select("show_test_records")
+      .eq("auth_user_id", userId)
+      .maybeSingle();
+    if (typeof data?.show_test_records === "boolean") return data.show_test_records;
+  } catch (e) {
+    console.error("[test-scope] profile preference read failed; excluding test records", e);
+    return false;
+  }
+  return resolveShowTestRecords();
+}
+
+/** `is_test_record` is nullable, so "not true" needs both branches. */
+export function excludeTestFlag(query: Any): Any {
+  return query.or("is_test_record.is.null,is_test_record.eq.false");
+}
