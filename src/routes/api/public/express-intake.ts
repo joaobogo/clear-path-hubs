@@ -13,6 +13,7 @@ import {
   type RequirementTag,
 
 } from "@/lib/express-intake-schema";
+import { normalizeDealBreakers } from "@/lib/client-deal-breakers";
 
 
 /**
@@ -483,6 +484,7 @@ export const Route = createFileRoute("/api/public/express-intake")({
           interviewProcess: interviewProcessText,
           decisionMaker: decisionMakerText,
           dealBreakers: dealBreakersText,
+          dealBreakerList: dealbreakerLines,
         });
         const { data: pos, error: posErr } = await admin
           .from("positions")
@@ -677,7 +679,7 @@ export const Route = createFileRoute("/api/public/express-intake")({
                 trainable,
                 requirements: tagged,
                 manyMustHavesConfirmed: data.manyMustHavesConfirmed ?? false,
-                dealBreakers: dealBreakersText,
+                dealBreakers: dealbreakerLines,
                 location: locationText,
                 workModel: data.workModel || "",
                 onsiteDays: data.onsiteDays ?? null,
@@ -687,7 +689,6 @@ export const Route = createFileRoute("/api/public/express-intake")({
                 compensation: compensationRecord,
                 workAuthorization: data.workAuthorization || "",
                 workAuthorizationNote: data.workAuthorizationNote ?? "",
-                dealBreakers: dealbreakerLines,
                 interviewProcess: interviewProcessText,
                 interviewStages,
                 targetDaysToOffer,
