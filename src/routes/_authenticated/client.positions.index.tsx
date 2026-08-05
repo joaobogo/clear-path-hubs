@@ -47,14 +47,6 @@ const STATUS_TABS = [
  { key: "closed", label: "Closed" },
 ] as const;
 
-const STATUS_LABELS: Record<string, string> = {
- active: "Active search",
- approved: "Active search",
- draft: "Under review",
- paused: "Paused",
- closed: "Closed",
- archived: "Closed",
-};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -67,6 +59,10 @@ import {
   resolveNoRolesState,
 } from "@/lib/empty-states/empty-state-catalogue";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  clientRoleStatusLabel,
+  type ClientRoleStatus,
+} from "@/lib/client-role-status";
 
 type Row = {
  id: string;
@@ -88,6 +84,7 @@ type Row = {
  };
  pipeline_line: string | null;
  progress: RoleProgress | null;
+ client_status: ClientRoleStatus | null;
  next_milestone: string | null;
  action_required: string | null;
 };
@@ -564,7 +561,7 @@ function PositionCard({ p }: { p: Row }) {
  </div>
  </div>
  <Badge variant="secondary" className="shrink-0 whitespace-nowrap text-xs">
- {STATUS_LABELS[p.status] ?? p.status}
+ {clientRoleStatusLabel(p.client_status)}
  </Badge>
  </div>
 
@@ -663,7 +660,7 @@ function CompactList({ rows }: { rows: Row[] }) {
  </td>
  <td className="px-3 py-2">
  <Badge variant="secondary" className="text-[11px]">
- {STATUS_LABELS[p.status] ?? p.status}
+ {clientRoleStatusLabel(p.client_status)}
  </Badge>
  </td>
  <td className="px-3 py-2 text-muted-foreground">
