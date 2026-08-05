@@ -1049,10 +1049,10 @@ export const applyCvToApplications = createServerFn({ method: "POST" })
 
     await supabaseAdmin.from("audit_events").insert({
       actor_user_id: context.userId,
-      event_type: "candidate.cv_scope_updated",
+      action: "candidate.cv_scope_updated",
       entity_type: "candidate_profile",
       entity_id: cpId,
-      payload: { file_id: data.file_id, updated: ids, skipped: skipped.map((s) => s.id) },
+      after_state: { file_id: data.file_id, updated: ids, skipped: skipped.map((s) => s.id) },
     });
 
     return {
