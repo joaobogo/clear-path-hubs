@@ -28,6 +28,62 @@ export const JD_ACCEPT_LABEL = "PDF, DOCX, TXT or RTF, up to 10 MB";
 export const MIN_JD_TEXT = 80;
 export const MIN_ACCOUNT_PASSWORD = 8;
 
+/** Role-brief minimums. Enforced identically on the client and the server. */
+export const MIN_WHY_OPEN = 40;
+export const MIN_MUST_HAVES = 2;
+export const MIN_DEAL_BREAKERS = 20;
+export const MIN_INTERVIEW_PROCESS = 20;
+
+export const WORK_MODELS = ["remote", "hybrid", "onsite"] as const;
+export const COMP_CURRENCIES = ["USD", "EUR", "GBP", "BRL", "CAD", "AUD"] as const;
+export const COMP_PERIODS = ["year", "month", "hour"] as const;
+
+export const WORK_AUTHORIZATION_OPTIONS = [
+  {
+    value: "already_authorized",
+    label: "Must already be authorised to work in this location",
+    hint: "No sponsorship or visa transfer available.",
+  },
+  {
+    value: "will_sponsor",
+    label: "We can sponsor or transfer a visa",
+    hint: "Widens the pool considerably.",
+  },
+  {
+    value: "contractor",
+    label: "Contractor or agency of record",
+    hint: "Candidate invoices or is employed through a third party.",
+  },
+] as const;
+
+export const WORK_AUTHORIZATION_VALUES = [
+  "already_authorized",
+  "will_sponsor",
+  "contractor",
+] as const;
+
+export const WORK_MODEL_LABELS: Record<(typeof WORK_MODELS)[number], string> = {
+  remote: "Fully remote",
+  hybrid: "Hybrid",
+  onsite: "On site",
+};
+
+export const COMP_PERIOD_LABELS: Record<(typeof COMP_PERIODS)[number], string> = {
+  year: "per year",
+  month: "per month",
+  hour: "per hour",
+};
+
+/** One item per line, blanks and stray bullets removed. */
+export function splitLines(value: string | undefined | null): string[] {
+  return (value ?? "")
+    .split("\n")
+    .map((l) => l.replace(/^[-•*\s]+/, "").trim())
+    .filter((l) => l.length > 0)
+    .slice(0, 40);
+}
+
+
 export const jdFileSchema = z.object({
   filename: z.string().trim().min(1).max(255),
   mime: z.string().trim().min(1).max(160),
