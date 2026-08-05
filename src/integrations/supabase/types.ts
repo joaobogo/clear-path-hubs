@@ -1599,6 +1599,189 @@ export type Database = {
           },
         ]
       }
+      candidate_interviewer_assignments: {
+        Row: {
+          candidate_match_id: string
+          created_at: string
+          ended_at: string | null
+          ended_reason: string | null
+          granted_by_user_id: string
+          id: string
+          interview_id: string | null
+          interviewer_user_id: string
+          organization_id: string
+          position_id: string | null
+          stage_label: string | null
+        }
+        Insert: {
+          candidate_match_id: string
+          created_at?: string
+          ended_at?: string | null
+          ended_reason?: string | null
+          granted_by_user_id: string
+          id?: string
+          interview_id?: string | null
+          interviewer_user_id: string
+          organization_id: string
+          position_id?: string | null
+          stage_label?: string | null
+        }
+        Update: {
+          candidate_match_id?: string
+          created_at?: string
+          ended_at?: string | null
+          ended_reason?: string | null
+          granted_by_user_id?: string
+          id?: string
+          interview_id?: string | null
+          interviewer_user_id?: string
+          organization_id?: string
+          position_id?: string | null
+          stage_label?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_interviewer_assignments_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_visible_candidates"
+            referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_match_milestone_timings"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_scoring_review_queue"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: false
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_interviewer_assignments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "v_position_time_to_submission"
+            referencedColumns: ["position_id"]
+          },
+        ]
+      }
       candidate_matches: {
         Row: {
           admin_status: Database["public"]["Enums"]["admin_review_status"]
@@ -14897,6 +15080,10 @@ export type Database = {
       }
       is_candidate_visible_to_org: {
         Args: { _cp: string; _org: string; _user: string }
+        Returns: boolean
+      }
+      is_match_assigned_interviewer: {
+        Args: { _match: string; _user: string }
         Returns: boolean
       }
       is_match_client_visible: {
