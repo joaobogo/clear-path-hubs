@@ -910,6 +910,50 @@ function ExpressIntakePage() {
     [state.interviewStages, state.decisionMaker, state.decisionMakerEmail],
   );
 
+  /**
+   * Deal-breaker lines. Optional, validated inline, and never longer than five —
+   * the same rules the server applies.
+   */
+  const dealBreakerIssues = React.useMemo(
+    () => validateDealBreakers(state.dealBreakerList),
+    [state.dealBreakerList],
+  );
+
+  const setDealBreaker = (index: number, value: string) => {
+    setState((s) => {
+      const next = [...s.dealBreakerList];
+      next[index] = value;
+      return { ...s, dealBreakerList: next };
+    });
+  };
+
+  const addDealBreaker = () => {
+    setState((s) =>
+      s.dealBreakerList.length >= MAX_DEAL_BREAKERS
+        ? s
+        : { ...s, dealBreakerList: [...s.dealBreakerList, ""] },
+    );
+  };
+
+  const removeDealBreaker = (index: number) => {
+    setState((s) => {
+      const next = s.dealBreakerList.filter((_, i) => i !== index);
+      return { ...s, dealBreakerList: next.length > 0 ? next : [""] };
+    });
+  };
+
+  /** An example lands in the first empty line, or appends a new one. */
+  const useDealBreakerExample = (text: string) => {
+    setState((s) => {
+      const next = [...s.dealBreakerList];
+      const slot = next.findIndex((l) => l.trim().length === 0);
+      if (slot >= 0) next[slot] = text;
+      else if (next.length < MAX_DEAL_BREAKERS) next.push(text);
+      else return s;
+      return { ...s, dealBreakerList: next };
+    });
+  };
+
   const useExample = (key: "whyOpen" | "dealBreakers" | "interviewProcess", text: string) => {
 
     setState((s) => {
@@ -2151,24 +2195,91 @@ function ExpressIntakePage() {
             out halfway.
           </p>
 
-          <Field
-            label="What rules someone out?"
-            error={errors.dealBreakers}
-            required={req["dealBreakers"]}
-            hint="Say it plainly, even if it feels obvious. This is the fastest way to stop wasting your time."
-          >
-            <Textarea
-              value={state.dealBreakers}
-              onChange={(e) => set("dealBreakers", e.target.value)}
-              rows={3}
-              placeholder="No agency-side-only backgrounds. No one who needs more than four weeks' notice."
+          <fieldset className="space-y-3" data-field="dealBreakerList">
+            <legend className="text-sm font-medium">
+              What would rule someone out?
+              <span aria-hidden="true" className="ml-1 text-[color:var(--brand-navy)]/50 text-xs">
+                Optional
+              </span>
+            </legend>
+            <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
+              {DEAL_BREAKER_WHY_IT_MATTERS}
+            </p>
+            <p className="text-xs leading-relaxed text-[color:var(--brand-navy)]/60">
+              {DEAL_BREAKER_POLICY_LINE}
+            </p>
+
+            <div className="space-y-2">
+              {state.dealBreakerList.map((line, index) => {
+                const rowError = dealBreakerIssues.rowErrors[index];
+                return (
+                  <div key={index}>
+                    <div className="flex items-start gap-2">
+                      <Input
+                        value={line}
+                        maxLength={MAX_DEAL_BREAKER_CHARS}
+                        onChange={(e) => setDealBreaker(index, e.target.value)}
+                        placeholder={
+                          index === 0
+                            ? "No agency-side-only backgrounds"
+                            : index === 1
+                              ? "Cannot start within six weeks"
+                              : "No hands-on ownership of the core system"
+                        }
+                        aria-label={`Deal-breaker ${index + 1}`}
+                        aria-invalid={Boolean(rowError)}
+                      />
+                      {state.dealBreakerList.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeDealBreaker(index)}
+                          className="mt-2 text-xs underline text-[color:var(--brand-navy)]/70"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                    {rowError && (
+                      <p
+                        data-field-error="true"
+                        className="mt-1 text-xs text-[color:var(--brand-danger)]"
+                      >
+                        {rowError}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {dealBreakerIssues.listError && (
+              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
+                {dealBreakerIssues.listError}
+              </p>
+            )}
+
+            {normalizeDealBreakers(state.dealBreakerList).length === 0 && (
+              <p className="text-xs leading-relaxed text-[color:var(--brand-navy)]/60">
+                {DEAL_BREAKER_EMPTY_HINT}
+              </p>
+            )}
+
+            {state.dealBreakerList.length < MAX_DEAL_BREAKERS ? (
+              <Button type="button" variant="outline" size="sm" onClick={addDealBreaker}>
+                Add another
+              </Button>
+            ) : (
+              <p className="text-xs text-[color:var(--brand-navy)]/60">
+                Five is the most we record — beyond that it stops being a filter.
+              </p>
+            )}
+
+            <FieldExamples
+              field="deal_breakers"
+              roleTitle={state.roleTitle}
+              onUse={(text) => useDealBreakerExample(text)}
             />
-          </Field>
-          <FieldExamples
-            field="deal_breakers"
-            roleTitle={state.roleTitle}
-            onUse={(text) => useExample("dealBreakers", text)}
-          />
+          </fieldset>
 
           <fieldset className="space-y-3" data-field="interviewStages">
             <legend className="text-sm font-medium">
@@ -2529,7 +2640,10 @@ function ExpressIntakePage() {
                   title="Process"
                   target="section-process"
                   rows={[
-                    ["Rules someone out", state.dealBreakers],
+                    [
+                      "Rules someone out",
+                      normalizeDealBreakers(state.dealBreakerList).join(" · "),
+                    ],
                     ["Interview process", state.interviewProcess],
                     ["Final decision", state.decisionMaker],
                   ]}
