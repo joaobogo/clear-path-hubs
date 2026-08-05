@@ -214,37 +214,83 @@ function labelEmployment(e: string | null) {
 /** The stages this page commits to, in the order they are described below. */
 const HIRING_STAGES = ["apply", "TaaSFlow review", "employer interviews"] as const;
 
-function FactRow({
-  icon: Icon,
-  label,
-  value,
-  fallback,
-}: {
-  icon: LucideIcon;
-  label: string;
-  value: string | null | undefined;
-  fallback?: string;
-}) {
-  const stated = typeof value === "string" && value.trim().length > 0;
-  if (!stated && !fallback) return null;
+/**
+ * The seven deciding facts, in a fixed order, directly under the title.
+ * Every row renders a value — resolvers upstream guarantee a non-empty line,
+ * so a blank row is structurally impossible.
+ */
+function FactsBlock({ facts }: { facts: PublicJobFacts }) {
+  const rows: Array<{ icon: LucideIcon; label: string; value: string }> = [
+    { icon: Wallet, label: "Compensation", value: facts.compensation },
+    { icon: Building2, label: "Work arrangement", value: facts.workArrangement },
+    { icon: MapPin, label: "Location", value: facts.location },
+    { icon: ShieldCheck, label: "Work authorisation", value: facts.workAuthorisation },
+    { icon: Clock, label: "Employment type", value: facts.employmentType },
+    { icon: ListOrdered, label: "Interview stages", value: facts.stages },
+    { icon: CalendarDays, label: "Posted", value: facts.posted },
+  ];
   return (
-    <div className="flex items-start gap-3">
-      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-      <div className="min-w-0">
-        <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
-        <div
-          className={
-            stated
-              ? "text-sm font-medium break-words"
-              : "text-sm italic text-muted-foreground break-words"
-          }
-        >
-          {stated ? value : fallback}
-        </div>
+    <section aria-labelledby="job-facts" className="border-b bg-card">
+      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+        <h2 id="job-facts" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          The deciding facts
+        </h2>
+        {/* Label over value at every width — a two-column row truncates the
+            value on a 375px screen, which is exactly the fact people came for. */}
+        <dl className="mt-4 grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+          {rows.map((row) => (
+            <div key={row.label} className="flex min-w-0 items-start gap-3">
+              <row.icon className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+              <div className="min-w-0">
+                <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+                  {row.label}
+                </dt>
+                <dd
+                  className={
+                    isUnstated(row.value)
+                      ? "text-sm italic text-muted-foreground break-words"
+                      : "text-sm font-medium break-words"
+                  }
+                >
+                  {row.value}
+                </dd>
+              </div>
+            </div>
+          ))}
+        </dl>
       </div>
-    </div>
+    </section>
   );
 }
+
+/** Not-specified and range-on-call read as asides, not as facts. */
+function isUnstated(value: string) {
+  return value.startsWith(NOT_SPECIFIED) || value === RANGE_ON_CALL;
+}
+
+/** Loading: seven skeleton rows, so the block never pops in from nothing. */
+function FactsBlockSkeleton() {
+  return (
+    <section className="border-b bg-card">
+      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="h-3 w-32 animate-pulse rounded bg-muted" />
+        <div className="mt-4 grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 7 }).map((_, i) => (
+            <div key={i} className="flex items-start gap-3">
+              <div className="mt-0.5 h-4 w-4 shrink-0 animate-pulse rounded bg-muted" />
+              <div className="min-w-0 flex-1">
+                <div className="h-3 w-24 animate-pulse rounded bg-muted" />
+                <div className="mt-2 h-4 w-40 animate-pulse rounded bg-muted" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
 
 
 function BulletList({ items }: { items: string[] }) {

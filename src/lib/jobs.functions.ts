@@ -4,6 +4,8 @@ import { getRequestHeader } from "@tanstack/react-start/server";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
+import { buildPublicJobFacts, resolveCompensation } from "@/lib/jobs/public-facts";
+
 
 /**
  * QA fixtures are flagged is_test_record and are invisible to the public board.
@@ -58,6 +60,9 @@ export type PublicPositionSummary = {
   seniority: string | null;
   organization_name: string;
   compensation_display: string | null;
+  /** Always non-empty: the range, "Range shared on the first call", or "Not specified". */
+  compensation_line: string;
+
   published_at: string | null;
   description_preview: string;
   openings: number;
@@ -87,7 +92,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
     let query = supabase
       .from("positions")
       .select(
-        "id,title,location,work_model,employment_type,seniority,description,requirements,compensation,published_at,openings,organizations(name)",
+        "id,title,location,work_model,employment_type,seniority,description,requirements,compensation,compensation_visibility,published_at,openings,organizations(name)",
       )
       .eq("status", "active")
       .eq("visibility", "public");
@@ -105,7 +110,10 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
         return desc.length >= MIN_DESC && reqs.length > 0;
       })
       .map((p) => {
-        const comp = (p.compensation ?? {}) as { approved?: boolean; display?: string };
+        const comp = resolveCompensation(
+          p.compensation,
+          (p as { compensation_visibility?: string | null }).compensation_visibility,
+        );
         const desc = (p.description ?? "").trim();
         return {
           id: p.id,
@@ -116,7 +124,9 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
           seniority: p.seniority,
           organization_name:
             (p.organizations as unknown as { name?: string } | null)?.name ?? "TaaSFlow client",
-          compensation_display: comp.approved && comp.display ? comp.display : null,
+          compensation_display: comp.display,
+          compensation_line: comp.line,
+
           published_at: p.published_at,
           description_preview:
             desc.length > 220 ? desc.slice(0, 217).trimEnd() + "…" : desc,
@@ -157,7 +167,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     let detail = supabase
       .from("positions")
       .select(
-        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,intake_context,published_at,openings,status,organizations(name,logo_url)",
+        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,compensation_visibility,primary_timezone,timezone_overlap_hours,work_authorization,intake_context,published_at,openings,status,organizations(name,logo_url)",
       )
       .eq("id", data.id)
       .in("status", ["active", "paused"])
@@ -194,13 +204,33 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     )("public_position_employer", { _id: data.id });
     const employer = (employerRow ?? null) as { name?: string; logo_url?: string | null } | null;
 
-    const comp = (pos.compensation ?? {}) as { approved?: boolean; display?: string };
     const ctx = (pos as { intake_context?: Record<string, unknown> }).intake_context ?? {};
     const posting = (ctx.posting ?? {}) as Record<string, string>;
     const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
     const deadline = str(posting.application_deadline);
     const deadlinePassed = deadline ? new Date(`${deadline}T23:59:59`) < new Date() : false;
     const confidential = str(posting.confidentiality) === "confidential";
+    const p = pos as Record<string, unknown>;
+    const comp = resolveCompensation(
+      pos.compensation,
+      p.compensation_visibility as string | null,
+    );
+    // The seven deciding facts are resolved server-side so the board card, the
+    // detail page and the JSON-LD can never drift apart.
+    const facts = buildPublicJobFacts({
+      compensation: pos.compensation,
+      compensation_visibility: p.compensation_visibility as string | null,
+      work_model: pos.work_model,
+      onsite_days: (posting as Record<string, unknown>).onsite_days,
+      location: pos.location,
+      primary_timezone: p.primary_timezone as string | null,
+      timezone_overlap_hours: p.timezone_overlap_hours,
+      work_authorization: p.work_authorization,
+      work_authorization_note: str(posting.work_authorization_note) || null,
+      employment_type: pos.employment_type,
+      published_at: pos.published_at,
+    });
+
 
     return {
       id: pos.id,
@@ -213,7 +243,9 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       description: desc,
       requirements: reqs,
       preferred_requirements: toReqStrings(pos.preferred_requirements),
-      compensation_display: comp.approved && comp.display ? comp.display : null,
+      compensation_display: comp.display,
+      facts,
+
       published_at: pos.published_at,
       openings: (pos as { openings?: number }).openings ?? 1,
       accepting_applications:
