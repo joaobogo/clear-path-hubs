@@ -71,9 +71,16 @@ async function resolveContext(supabase: AnyRow, userId: string, orgId?: string) 
     .eq("user_id", userId)
     .eq("status", "active");
   if (error) throw new Error(error.message);
-  const clientMemberships = (memberships as AnyRow[]).filter((m) =>
+  const allClientMemberships = (memberships as AnyRow[]).filter((m) =>
     ["client_admin", "client_editor", "client_viewer"].includes(m.role),
   );
+  // A membership row survives after its organization is archived, but the org
+  // itself stops being readable (is_org_member() requires
+  // organizations.archived_at IS NULL, and RLS applies that to this join and to
+  // every downstream read). Selecting such a row as the active workspace made
+  // healthy pages fail authorization and render "we couldn't load ..." cards.
+  // Only memberships whose organization is actually readable are usable.
+  const clientMemberships = allClientMemberships.filter((m) => m.organizations != null);
   const staffMemberships = (memberships as AnyRow[]).filter((m) =>
     ["platform_admin", "operations"].includes(m.role),
   );
