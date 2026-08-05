@@ -26,7 +26,7 @@ describe("assertProposedSlots", () => {
   });
 
   it("rejects slots inside the notice window", () => {
-    expect(() => assertProposedSlots([iso(MIN_NOTICE_HOURS - 1), iso(50)], now)).toThrow(/notice/);
+    expect(() => assertProposedSlots([iso(MIN_NOTICE_HOURS - 1), iso(50)], now)).toThrow(/too_soon/);
   });
 
   it("rejects duplicates", () => {
