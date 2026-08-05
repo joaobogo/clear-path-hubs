@@ -541,6 +541,11 @@ export const listPositions = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
+    const { resolveShowTestRecordsForUser, loadTestScope, excludeTestOrgs } = await import(
+      "./admin-test-scope.server"
+    );
+    const showTest = await resolveShowTestRecordsForUser(s, context.userId);
+    const scope = await loadTestScope(s, showTest);
 
     // Base query with count for pagination.
     let base = s
@@ -555,6 +560,11 @@ export const listPositions = createServerFn({ method: "GET" })
     else if (data.owner) base = base.eq("owner_user_id", data.owner);
     if (data.location) base = base.ilike("location", `%${data.location}%`);
     if (data.q) base = base.ilike("title", `%${data.q}%`);
+    if (!showTest) {
+      base = excludeTestOrgs(base, scope);
+      base = base.or("is_test_record.is.null,is_test_record.eq.false");
+    }
+
 
 
     // Sort — DB-side for updated/title; delivered/action sorts happen after enrichment.
