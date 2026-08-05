@@ -9,7 +9,6 @@ import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
 import { computeRoleLaunchState } from "@/lib/role-launch.server";
 import { DECLINE_REASONS } from "@/lib/client-decision-reasons";
 
-
 import {
   loadKpiRows,
   loadRoleStageDates,
@@ -30,13 +29,10 @@ import { computeHiringHealth } from "@/lib/client-hiring-health";
 import { buildQueue, type QueueItem } from "@/lib/client-decision-queue";
 import { computeNextMilestone } from "@/lib/client-next-milestone";
 
-
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
 
-const traceId = () =>
-  `cl_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
+const traceId = () => `cl_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -57,7 +53,9 @@ export type { MatchStage };
 async function resolveContext(supabase: AnyRow, userId: string, orgId?: string) {
   const { data: memberships, error } = await supabase
     .from("memberships")
-    .select("organization_id, role, status, permissions, organizations(id, name, industry, parent_organization_id, logo_url, brand_display_name, brand_primary_color, brand_accent_color)")
+    .select(
+      "organization_id, role, status, permissions, organizations(id, name, industry, parent_organization_id, logo_url, brand_display_name, brand_primary_color, brand_accent_color)",
+    )
 
     .eq("user_id", userId)
     .eq("status", "active");
@@ -75,7 +73,9 @@ async function resolveContext(supabase: AnyRow, userId: string, orgId?: string) 
   if (!active && isStaff && orgId) {
     const { data: org } = await supabase
       .from("organizations")
-      .select("id, name, industry, parent_organization_id, logo_url, brand_display_name, brand_primary_color, brand_accent_color")
+      .select(
+        "id, name, industry, parent_organization_id, logo_url, brand_display_name, brand_primary_color, brand_accent_color",
+      )
       .eq("id", orgId)
       .maybeSingle();
     if (org) {
@@ -86,7 +86,6 @@ async function resolveContext(supabase: AnyRow, userId: string, orgId?: string) 
         permissions: [...CLIENT_PERMISSIONS],
         organizations: org,
       };
-
     }
   }
   return { active, memberships: clientMemberships, isStaff };
@@ -162,7 +161,7 @@ export const getClientContext = createServerFn({ method: "GET" })
         parent_name: parentName,
         // Server-verified seat permissions. UI uses these to hide controls;
         // RLS + server assertions independently enforce the same rules.
-        permissions: ((active.permissions ?? []) as ClientPermission[]),
+        permissions: (active.permissions ?? []) as ClientPermission[],
       },
 
       organizations: memberships.map((m) => ({
@@ -275,17 +274,14 @@ export const getClientOverview = createServerFn({ method: "GET" })
       rows.filter((r) => r.delivered_at != null).map((r) => r.position_id),
     );
     const promisedByPosition = new Map<string, number>();
-    for (const c of ((healthCommitmentRows as AnyRow[]) ?? [])) {
+    for (const c of (healthCommitmentRows as AnyRow[]) ?? []) {
       if (!c.baseline_at || c.first_shortlist_days == null) continue;
       promisedByPosition.set(
         c.position_id as string,
-        new Date(c.baseline_at as string).getTime() +
-          Number(c.first_shortlist_days) * 86_400_000,
+        new Date(c.baseline_at as string).getTime() + Number(c.first_shortlist_days) * 86_400_000,
       );
     }
-    const rolesWithoutShortlist = allPositionIds.filter(
-      (id) => !deliveredPositionIds.has(id),
-    );
+    const rolesWithoutShortlist = allPositionIds.filter((id) => !deliveredPositionIds.has(id));
     const hiring_health =
       positionsError || healthCommitmentError
         ? null
@@ -305,7 +301,6 @@ export const getClientOverview = createServerFn({ method: "GET" })
             }).length,
           });
 
-
     // "What's new" — matches delivered in the past 7 days.
     const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
     const new_this_week = rows.filter(
@@ -323,7 +318,8 @@ export const getClientOverview = createServerFn({ method: "GET" })
         positionCounts.set(r.position_id, (positionCounts.get(r.position_id) ?? 0) + 1);
       }
     }
-    const action_required: Array<{ type: string; label: string; href: string; count?: number }> = [];
+    const action_required: Array<{ type: string; label: string; href: string; count?: number }> =
+      [];
     for (const [pid, count] of positionCounts) {
       const p = positionsById.get(pid);
       action_required.push({
@@ -378,7 +374,10 @@ export const getClientOverview = createServerFn({ method: "GET" })
     );
 
     const maxIso = (values: Array<string | null | undefined>) =>
-      values.filter((v): v is string => Boolean(v)).sort().at(-1) ?? null;
+      values
+        .filter((v): v is string => Boolean(v))
+        .sort()
+        .at(-1) ?? null;
     const minIso = (values: Array<string | null | undefined>) =>
       values.filter((v): v is string => Boolean(v)).sort()[0] ?? null;
 
@@ -480,7 +479,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
           "id",
           queueRows.map((r) => r.id),
         );
-      for (const m of ((queueMatches as AnyRow[]) ?? [])) {
+      for (const m of (queueMatches as AnyRow[]) ?? []) {
         queueNames.set(m.id as string, (m.candidate_profiles?.full_name as string) ?? "Candidate");
       }
     }
@@ -550,7 +549,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
           "interview_id",
           completedList.map((i) => i.id as string),
         );
-      for (const c of ((cards as AnyRow[]) ?? [])) {
+      for (const c of (cards as AnyRow[]) ?? []) {
         scoredInterviewIds.add(c.interview_id as string);
       }
     }
@@ -583,7 +582,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
       .in("status", ["open", "in_progress"])
       .order("created_at", { ascending: true })
       .limit(50);
-    for (const t of ((openTasks as AnyRow[]) ?? [])) {
+    for (const t of (openTasks as AnyRow[]) ?? []) {
       queueItems.push({
         key: `task:${t.id}`,
         kind: "info_request",
@@ -604,8 +603,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
     const decision_queue = [...queueGroups.overdue, ...queueGroups.upcoming];
     const decision_queue_meta = {
       /** How many candidates, interviews, offers and requests were examined. */
-      checked:
-        rows.length + completedList.length + (((openTasks as AnyRow[]) ?? []).length),
+      checked: rows.length + completedList.length + ((openTasks as AnyRow[]) ?? []).length,
       overdue: queueGroups.overdue.length,
       /** Nearest promised first-shortlist date still ahead of us. */
       next_expected_at:
@@ -657,9 +655,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
           title: p.title as string,
           awaiting_review: posRows.filter((r) => r.stage === "delivered").length,
           has_offer: posRows.some((r) => r.stage === "offer"),
-          has_interview: posRows.some(
-            (r) => r.interview_active || r.stage === "interview_process",
-          ),
+          has_interview: posRows.some((r) => r.interview_active || r.stage === "interview_process"),
           promised_shortlist_by: promised != null ? new Date(promised).toISOString() : null,
           shortlist_delivered_at:
             posRows
@@ -673,7 +669,6 @@ export const getClientOverview = createServerFn({ method: "GET" })
       };
     });
     const next_milestones_failed = Boolean(positionsError);
-
 
     // Latest delivered candidates (top 4 — kept concise).
     const { data: latestMatches } = await context.supabase
@@ -743,8 +738,6 @@ export const getClientOverview = createServerFn({ method: "GET" })
     };
   });
 
-
-
 // ─── Positions ──────────────────────────────────────────────────────────────
 
 export const getClientPositions = createServerFn({ method: "GET" })
@@ -758,13 +751,11 @@ export const getClientPositions = createServerFn({ method: "GET" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
-    const statusFilter = (
-      data.status === "closed"
-        ? (["closed", "archived"] as const)
-        : data.status
-          ? ([data.status] as const)
-          : (["active", "draft", "paused", "closed", "archived"] as const)
-    ) as unknown as string[];
+    const statusFilter = (data.status === "closed"
+      ? (["closed", "archived"] as const)
+      : data.status
+        ? ([data.status] as const)
+        : (["active", "draft", "paused", "closed", "archived"] as const)) as unknown as string[];
     const { data: positions, error } = await context.supabase
       .from("positions")
       .select(
@@ -798,8 +789,7 @@ export const getClientPositions = createServerFn({ method: "GET" })
         progress: computeRoleProgress({
           status: String(p.status),
           briefedAt: (p.approved_at as string | null) ?? (p.created_at as string | null),
-          sourcingStartedAt:
-            stageDates.get(p.id)?.sourcing ?? (p.published_at as string | null),
+          sourcingStartedAt: stageDates.get(p.id)?.sourcing ?? (p.published_at as string | null),
           screeningStartedAt: stageDates.get(p.id)?.screening ?? null,
           shortlistStartedAt: stageDates.get(p.id)?.shortlist ?? null,
           offerStartedAt: stageDates.get(p.id)?.offer ?? null,
@@ -843,7 +833,6 @@ function nextMilestoneFor(rows: KpiRow[], status: string): string | null {
   return "Awaiting first candidates";
 }
 
-
 export const getClientPositionDetail = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { orgId: string; positionId: string }) =>
@@ -860,7 +849,6 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
          jd_file_name, jd_source, company_research,
          published_at, approved_at, submitted_at, closed_at, created_at, updated_at`,
       )
-
 
       .eq("organization_id", data.orgId)
       .eq("id", data.positionId)
@@ -899,9 +887,7 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       "message.external",
     ];
     const activity = ((rawActivity as AnyRow[]) ?? [])
-      .filter((a) =>
-        SAFE_ACTION_PREFIXES.some((p) => String(a.action ?? "").startsWith(p)),
-      )
+      .filter((a) => SAFE_ACTION_PREFIXES.some((p) => String(a.action ?? "").startsWith(p)))
       .slice(0, 10);
 
     // Pipeline counts (visible only, matches server truth).
@@ -934,7 +920,7 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
         .in("status", ["requested", "scheduling", "scheduled"]);
       const confirmSet = new Set<string>();
       const scheduledSet = new Set<string>();
-      for (const iv of ((ivs as AnyRow[]) ?? [])) {
+      for (const iv of (ivs as AnyRow[]) ?? []) {
         if (iv.status === "scheduled") {
           scheduledSet.add(iv.candidate_match_id);
           const at = iv.scheduled_at as string | null;
@@ -957,7 +943,6 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       hires,
       totalCandidates: ((matches as AnyRow[]) ?? []).length,
     });
-
 
     const positionStageDates = (
       await loadRoleStageDates(context.supabase, data.orgId, [data.positionId])
@@ -1011,7 +996,6 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       .map(([label, count]) => ({ label, count }))
       .sort((a, b) => b.count - a.count);
 
-
     const launch = computeRoleLaunchState({
       position,
       campaigns: ((campaigns as AnyRow[]) ?? []).filter((c) => !c.is_test_record),
@@ -1021,7 +1005,6 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       touches,
       attribution,
     });
-
 
     return {
       position,
@@ -1043,16 +1026,13 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
         status: String(position.status),
         briefedAt:
           (position.approved_at as string | null) ?? (position.created_at as string | null),
-        sourcingStartedAt:
-          positionStageDates?.sourcing ?? (position.published_at as string | null),
+        sourcingStartedAt: positionStageDates?.sourcing ?? (position.published_at as string | null),
         screeningStartedAt: positionStageDates?.screening ?? null,
         shortlistStartedAt: positionStageDates?.shortlist ?? null,
         offerStartedAt: positionStageDates?.offer ?? null,
       }),
-
     };
   });
-
 
 // ─── Candidates ─────────────────────────────────────────────────────────────
 
@@ -1101,7 +1081,6 @@ export const getClientCandidates = createServerFn({ method: "GET" })
       .eq("organization_id", data.orgId)
       .eq("client_visibility", "visible");
 
-
     if (data.positionId) q = q.eq("position_id", data.positionId);
 
     const { data: rows, error } = await q.order("delivered_at", { ascending: false });
@@ -1115,26 +1094,19 @@ export const getClientCandidates = createServerFn({ method: "GET" })
         if (data.filter === "new") return d.stage === "delivered";
         if (data.filter === "shortlisted") return d.stage === "shortlisted";
         if (data.filter === "hired") return d.stage === "hired";
-        if (data.filter === "not_moving_forward")
-          return d.stage === "not_moving_forward";
+        if (data.filter === "not_moving_forward") return d.stage === "not_moving_forward";
         if (data.filter === "interview")
           return d.stage === "interview_process" || d.stage === "offer";
         if (data.filter === "top")
-          return (
-            d.fit_label != null &&
-            (TOP_FIT_LABELS as readonly string[]).includes(d.fit_label)
-          );
+          return d.fit_label != null && (TOP_FIT_LABELS as readonly string[]).includes(d.fit_label);
         return true;
       });
     }
-    if (data.minScore != null)
-      dtos = dtos.filter((d) => (d.score ?? 0) >= data.minScore!);
+    if (data.minScore != null) dtos = dtos.filter((d) => (d.score ?? 0) >= data.minScore!);
     if (data.fitBand) dtos = dtos.filter((d) => d.fit_label === data.fitBand);
     if (data.location) {
       const needle = data.location.toLowerCase();
-      dtos = dtos.filter((d) =>
-        (d.candidate.location ?? "").toLowerCase().includes(needle),
-      );
+      dtos = dtos.filter((d) => (d.candidate.location ?? "").toLowerCase().includes(needle));
     }
 
     return dtos;
@@ -1185,7 +1157,9 @@ export const getClientCandidate = createServerFn({ method: "GET" })
       auditIds.length > 0
         ? context.supabase
             .from("audit_events")
-            .select("id, action, entity_type, entity_id, actor_user_id, before_state, after_state, created_at")
+            .select(
+              "id, action, entity_type, entity_id, actor_user_id, before_state, after_state, created_at",
+            )
             .eq("organization_id", data.orgId)
             .in("entity_id", auditIds)
             .order("created_at", { ascending: false })
@@ -1196,8 +1170,7 @@ export const getClientCandidate = createServerFn({ method: "GET" })
     const answers = ((answersRes as AnyRow).data as AnyRow[]) ?? [];
     answers.sort(
       (a, b) =>
-        (a.screening_questions?.display_order ?? 0) -
-        (b.screening_questions?.display_order ?? 0),
+        (a.screening_questions?.display_order ?? 0) - (b.screening_questions?.display_order ?? 0),
     );
     const matchWithAnswers = {
       ...(match as AnyRow),
@@ -1211,7 +1184,6 @@ export const getClientCandidate = createServerFn({ method: "GET" })
       decisions: (decisions as AnyRow[]) ?? [],
     };
   });
-
 
 // ─── Stage transitions ──────────────────────────────────────────────────────
 //
@@ -1234,11 +1206,7 @@ const STAGE_GRAPH: Record<MatchStage, MatchStage[]> = {
  * exists for that org. Throws the typed `SUPPORT_VIEW_READ_ONLY` error the
  * spec requires; UI translates it to a friendly toast.
  */
-async function assertNotSupportViewReadOnly(
-  supabase: AnyRow,
-  userId: string,
-  orgId: string,
-) {
+async function assertNotSupportViewReadOnly(supabase: AnyRow, userId: string, orgId: string) {
   const { data: isClientEditor } = await supabase.rpc("is_org_editor", {
     _user: userId,
     _org: orgId,
@@ -1270,7 +1238,9 @@ async function assertEditor(supabase: AnyRow, userId: string, orgId: string) {
 async function loadMatch(supabase: AnyRow, orgId: string, matchId: string) {
   const { data, error } = await supabase
     .from("candidate_matches")
-    .select("id, stage, organization_id, position_id, application_id, candidate_profile_id, client_visibility")
+    .select(
+      "id, stage, organization_id, position_id, application_id, candidate_profile_id, client_visibility",
+    )
     .eq("id", matchId)
     .eq("organization_id", orgId)
     .maybeSingle();
@@ -1308,12 +1278,7 @@ async function writeAudit(
 export const moveMatchStage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(
-    (input: {
-      orgId: string;
-      matchId: string;
-      toStage: MatchStage;
-      reason?: string;
-    }) =>
+    (input: { orgId: string; matchId: string; toStage: MatchStage; reason?: string }) =>
       z
         .object({
           orgId: z.string().uuid(),
@@ -1395,7 +1360,9 @@ export const moveMatchStage = createServerFn({ method: "POST" })
 
     try {
       const { emitEventFromServer } = await import("./notifications.functions");
-      const stageToEvent: Partial<Record<MatchStage, "client_shortlisted" | "interview_requested" | "candidate_hired">> = {
+      const stageToEvent: Partial<
+        Record<MatchStage, "client_shortlisted" | "interview_requested" | "candidate_hired">
+      > = {
         shortlisted: "client_shortlisted",
         interview_process: "interview_requested",
         hired: "candidate_hired",
@@ -1415,12 +1382,21 @@ export const moveMatchStage = createServerFn({ method: "POST" })
         }));
         const { data: matchRow } = await supabaseAdmin
           .from("candidate_matches")
-          .select("candidate_profile_id, application_id, position_id, candidate_profiles:candidate_profile_id(user_id)")
+          .select(
+            "candidate_profile_id, application_id, position_id, candidate_profiles:candidate_profile_id(user_id)",
+          )
           .eq("id", data.matchId)
           .maybeSingle();
-        const cpUser = (matchRow?.candidate_profiles as { user_id: string | null } | null)?.user_id ?? null;
+        const cpUser =
+          (matchRow?.candidate_profiles as { user_id: string | null } | null)?.user_id ?? null;
         const candidateRecipients = cpUser
-          ? [{ user_id: cpUser, audience: "candidate" as const, link_path: `/me/applications/${matchRow?.application_id ?? ""}` }]
+          ? [
+              {
+                user_id: cpUser,
+                audience: "candidate" as const,
+                link_path: `/me/applications/${matchRow?.application_id ?? ""}`,
+              },
+            ]
           : [];
         await emitEventFromServer({
           event: evt,
@@ -1558,9 +1534,7 @@ export const undoClientDecision = createServerFn({ method: "POST" })
  */
 export const listReversibleDecisions = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { orgId: string }) =>
-    z.object({ orgId: z.string().uuid() }).parse(input),
-  )
+  .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
     // Viewers simply have nothing to undo — never an error on a dashboard read.
     try {
@@ -1585,10 +1559,11 @@ export const listReversibleDecisions = createServerFn({ method: "GET" })
       decision: r.decision as string,
       created_at: r.created_at as string,
       from_stage: ((r as AnyRow).from_stage as MatchStage | null) ?? null,
-      expires_at: new Date(new Date(r.created_at as string).getTime() + UNDO_WINDOW_MS).toISOString(),
+      expires_at: new Date(
+        new Date(r.created_at as string).getTime() + UNDO_WINDOW_MS,
+      ).toISOString(),
     }));
   });
-
 
 // ─── Client actions ─────────────────────────────────────────────────────────
 
@@ -1630,9 +1605,7 @@ const REASON_REQUIRED: ReadonlySet<string> = new Set([
   "hold",
 ]);
 
-const CLIENT_DECLINE_CODES: ReadonlySet<string> = new Set(
-  DECLINE_REASONS.map((r) => r.code),
-);
+const CLIENT_DECLINE_CODES: ReadonlySet<string> = new Set(DECLINE_REASONS.map((r) => r.code));
 
 export const clientAction = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -1806,7 +1779,6 @@ export const clientAction = createServerFn({ method: "POST" })
     return { ok: true, trace_id: trace };
   });
 
-
 // ─── Messages ───────────────────────────────────────────────────────────────
 // Threads are org-scoped; we key them on the organization id itself so a client
 // workspace has one persistent conversation with the TaaSFlow team.
@@ -1887,11 +1859,7 @@ export const getClientTeam = createServerFn({ method: "GET" })
 // Only client_admin (or staff in an interactive support session) may mutate.
 // Support view read-only is enforced through assertNotSupportViewReadOnly.
 
-async function assertOrgAdmin(
-  supabase: AnyRow,
-  userId: string,
-  orgId: string,
-): Promise<void> {
+async function assertOrgAdmin(supabase: AnyRow, userId: string, orgId: string): Promise<void> {
   const { data: isAdmin } = await supabase.rpc("is_org_admin", {
     _user: userId,
     _org: orgId,
@@ -1904,14 +1872,23 @@ const clientMemberRoleZ = z.enum(["client_admin", "client_editor", "client_viewe
 
 export const inviteClientMember = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { orgId: string; email: string; role: "client_admin" | "client_editor" | "client_viewer" }) =>
-    z
-      .object({
-        orgId: z.string().uuid(),
-        email: z.string().email().max(200).transform((s) => s.trim().toLowerCase()),
-        role: clientMemberRoleZ,
-      })
-      .parse(input),
+  .inputValidator(
+    (input: {
+      orgId: string;
+      email: string;
+      role: "client_admin" | "client_editor" | "client_viewer";
+    }) =>
+      z
+        .object({
+          orgId: z.string().uuid(),
+          email: z
+            .string()
+            .email()
+            .max(200)
+            .transform((s) => s.trim().toLowerCase()),
+          role: clientMemberRoleZ,
+        })
+        .parse(input),
   )
   .handler(async ({ context, data }) => {
     await assertOrgAdmin(context.supabase, context.userId, data.orgId);
@@ -1959,7 +1936,8 @@ export const inviteClientMember = createServerFn({ method: "POST" })
         data.email,
         { data: { invited_org_id: data.orgId } },
       );
-      if (invErr || !invite?.user?.id) throw new Error(invErr?.message ?? "Failed to send invitation");
+      if (invErr || !invite?.user?.id)
+        throw new Error(invErr?.message ?? "Failed to send invitation");
       authUserId = invite.user.id;
       await supabaseAdmin
         .from("profiles")
@@ -2035,14 +2013,19 @@ export const resendClientInvitation = createServerFn({ method: "POST" })
 
 export const updateClientMemberRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { orgId: string; userId: string; role: "client_admin" | "client_editor" | "client_viewer" }) =>
-    z
-      .object({
-        orgId: z.string().uuid(),
-        userId: z.string().uuid(),
-        role: clientMemberRoleZ,
-      })
-      .parse(input),
+  .inputValidator(
+    (input: {
+      orgId: string;
+      userId: string;
+      role: "client_admin" | "client_editor" | "client_viewer";
+    }) =>
+      z
+        .object({
+          orgId: z.string().uuid(),
+          userId: z.string().uuid(),
+          role: clientMemberRoleZ,
+        })
+        .parse(input),
   )
   .handler(async ({ context, data }) => {
     await assertOrgAdmin(context.supabase, context.userId, data.orgId);
@@ -2220,9 +2203,7 @@ const timezoneZ = z.object({
 
 export const getClientSettings = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { orgId: string }) =>
-    z.object({ orgId: z.string().uuid() }).parse(input),
-  )
+  .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
     // Tenant gate — must be an active member (or platform staff).
     const { data: member } = await context.supabase
@@ -2240,7 +2221,9 @@ export const getClientSettings = createServerFn({ method: "GET" })
     const [{ data: org }, { data: prefs }, { data: profile }] = await Promise.all([
       context.supabase
         .from("organizations")
-        .select("id, name, website, industry, headquarters, phone, onboarding_status, dashboard_status, status")
+        .select(
+          "id, name, website, industry, headquarters, phone, onboarding_status, dashboard_status, status",
+        )
         .eq("id", data.orgId)
         .maybeSingle(),
       context.supabase
@@ -2271,8 +2254,10 @@ export const getClientSettings = createServerFn({ method: "GET" })
         phone: ((org as AnyRow).phone as string | null) ?? "",
       },
       notifications: {
-        candidate_delivered: (prefs as AnyRow)?.candidate_delivered ?? notifPrefsShape.candidate_delivered,
-        interview_request: (prefs as AnyRow)?.interview_request ?? notifPrefsShape.interview_request,
+        candidate_delivered:
+          (prefs as AnyRow)?.candidate_delivered ?? notifPrefsShape.candidate_delivered,
+        interview_request:
+          (prefs as AnyRow)?.interview_request ?? notifPrefsShape.interview_request,
         new_message: (prefs as AnyRow)?.new_message ?? notifPrefsShape.new_message,
         offer_update: (prefs as AnyRow)?.offer_update ?? notifPrefsShape.offer_update,
         hire_update: (prefs as AnyRow)?.hire_update ?? notifPrefsShape.hire_update,
@@ -2388,10 +2373,7 @@ export const updateClientNotificationPreferences = createServerFn({ method: "POS
 export const updateClientTimezone = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { orgId: string; timezone: string }) =>
-    z
-      .object({ orgId: z.string().uuid() })
-      .merge(timezoneZ)
-      .parse(input),
+    z.object({ orgId: z.string().uuid() }).merge(timezoneZ).parse(input),
   )
   .handler(async ({ context, data }) => {
     const { data: member } = await context.supabase

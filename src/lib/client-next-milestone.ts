@@ -74,7 +74,8 @@ export function computeNextMilestone(input: MilestoneInput, now: Date = new Date
     withDate: (label: string) => string,
     withoutDate: string,
   ): Milestone => {
-    const valid = expected_at && !Number.isNaN(new Date(expected_at).getTime()) ? expected_at : null;
+    const valid =
+      expected_at && !Number.isNaN(new Date(expected_at).getTime()) ? expected_at : null;
     const behind = passed(valid, nowMs);
     return {
       position_id: input.position_id,

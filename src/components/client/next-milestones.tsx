@@ -12,7 +12,9 @@ import type { Milestone } from "@/lib/client-next-milestone";
  * is labelled "behind schedule" in text rather than by colour alone.
  */
 
-export type MilestoneRow = (Milestone & { error?: false }) | { position_id: string; title: string; error: true };
+export type MilestoneRow =
+  | (Milestone & { error?: false })
+  | { position_id: string; title: string; error: true };
 
 const MAX_ROWS = 4;
 
