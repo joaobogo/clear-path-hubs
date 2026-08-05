@@ -486,6 +486,18 @@ function normScreeningAnswers(raw: unknown): ClientCandidateDTO["screening_answe
   }).filter((a) => a.question);
 }
 
+/**
+ * The exact row shape `toClientCandidateDTO` reads. Shared by the employer
+ * detail view and the candidate's "what employers see" preview so the two can
+ * never select different columns.
+ */
+export const CLIENT_CANDIDATE_SELECT = `id, stage, delivered_at, position_id, application_id, candidate_profile_id,
+         candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, compensation_preferences),
+         positions(id, title, location, work_model, requirements, preferred_requirements, compensation),
+         applications(id, source, applied_at, created_at),
+         score_runs:approved_score_run_id (score, fit_label, explanation, result, evidence, requirement_coverage, completed_at, engine_version, blueprint_version, contradiction_status, must_have_coverage, preferred_coverage)`;
+
+
 export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const cp = row.candidate_profiles ?? {};
   const pos = row.positions ?? null;

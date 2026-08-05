@@ -15,6 +15,8 @@ import {
 } from "@/lib/client-deal-breakers";
 
 import {
+  CLIENT_CANDIDATE_SELECT,
+
   loadKpiRows,
   loadRoleStageDates,
   computeKpis,
@@ -1284,13 +1286,8 @@ export const getClientCandidate = createServerFn({ method: "GET" })
   .handler(async ({ context, data }) => {
     const { data: match, error } = await context.supabase
       .from("candidate_matches")
-      .select(
-        `id, stage, delivered_at, position_id, application_id, candidate_profile_id,
-         candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, compensation_preferences),
-         positions(id, title, location, work_model, requirements, preferred_requirements, compensation),
-         applications(id, source, applied_at, created_at),
-         score_runs:approved_score_run_id (score, fit_label, explanation, result, evidence, requirement_coverage, completed_at, engine_version, blueprint_version, contradiction_status, must_have_coverage, preferred_coverage)`,
-      )
+      .select(CLIENT_CANDIDATE_SELECT)
+
       .eq("organization_id", data.orgId)
       .eq("id", data.matchId)
       .eq("client_visibility", "visible")

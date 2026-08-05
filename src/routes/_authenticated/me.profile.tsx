@@ -15,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { EmployerPreviewSheet } from "@/components/candidate/employer-preview-sheet";
+
 
 export const Route = createFileRoute("/_authenticated/me/profile")({
  head: () => ({
@@ -180,7 +182,11 @@ function ProfilePage() {
  CV tab
  </Link>
  .
- </p>
+  </p>
+  <div className="mt-4">
+  <EmployerPreviewSheet />
+  </div>
+
  <div className="mt-4 rounded-lg border bg-card p-4">
  <div className="flex items-center justify-between text-sm">
  <span className="font-medium">Profile completeness</span>
