@@ -239,6 +239,30 @@ function DataHealthMetrics() {
           </div>
         </div>
       </section>
+    </>
+  );
+}
+
+function DataHealthPage() {
+  return (
+    <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:py-8">
+      <header>
+        <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+          <Database className="h-6 w-6 text-primary" aria-hidden />
+          Data health
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Broken records that block operations, plus coverage, freshness, duplicates and
+          extraction failures. Read live from the tables themselves.
+        </p>
+      </header>
+
+      <div className="mt-8">
+        <DataHealthExceptionsPanel />
+      </div>
+
+      <DataHealthMetrics />
     </main>
   );
 }
+
