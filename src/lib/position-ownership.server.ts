@@ -205,7 +205,9 @@ export async function loadCoverageQueue(
     .in("status", OPEN_OWNERSHIP_STATUSES as unknown as string[])
     .order("updated_at", { ascending: false })
     .limit(500);
-  if (!opts.includeTest) q.eq("is_test_record", false);
+  const { resolveShowTestRecords } = await import("./admin-test-scope.server");
+  const showTest = opts.includeTest === true || (await resolveShowTestRecords());
+  if (!showTest) q.eq("is_test_record", false);
 
   const res = await q;
   if (res.error) throw new Error(res.error.message);
@@ -310,7 +312,9 @@ export async function previewBulkReassign(
       "id, title, status, organization_id, owner_user_id, backup_owner_user_id",
     )
     .in("status", OPEN_OWNERSHIP_STATUSES as unknown as string[]);
-  if (!input.includeTest) q.eq("is_test_record", false);
+  const { resolveShowTestRecords } = await import("./admin-test-scope.server");
+  const showTest = input.includeTest === true || (await resolveShowTestRecords());
+  if (!showTest) q.eq("is_test_record", false);
   const res = await q;
   if (res.error) throw new Error(res.error.message);
 
