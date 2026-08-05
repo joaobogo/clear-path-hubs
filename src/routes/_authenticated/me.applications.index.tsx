@@ -36,6 +36,7 @@ export const Route = createFileRoute("/_authenticated/me/applications/")({
  pendingComponent: () => (
  <main className="mx-auto max-w-4xl px-4 sm:px-6 py-8 space-y-4" aria-hidden>
  <div className="h-8 w-1/2 animate-pulse rounded bg-muted" />
+ <div className="h-6 w-40 animate-pulse rounded-full bg-muted" />
  <div className="h-32 animate-pulse rounded-lg bg-muted" />
  <div className="h-32 animate-pulse rounded-lg bg-muted" />
  </main>
@@ -53,7 +54,12 @@ function MyApplicationsPage() {
  const listFn = useServerFn(listMyApplications);
  const withdrawFn = useServerFn(withdrawApplication);
  const qc = useQueryClient();
- const { data: current = data } = useQuery({
+ const {
+ data: current = data,
+ isError,
+ isFetching,
+ refetch,
+ } = useQuery({
  queryKey: ["me-applications"],
  queryFn: () => listFn(),
  initialData: data,
@@ -86,7 +92,24 @@ function MyApplicationsPage() {
  </p>
  </header>
 
- {apps.length === 0 && (
+ {isError ? (
+ <Card role="alert" className="border-destructive/30 bg-destructive/5">
+ <CardHeader>
+ <CardTitle>We couldn&apos;t load your applications</CardTitle>
+ <CardDescription>
+ Nothing has changed on your applications — this is a problem loading them.
+ Try again in a moment.
+ </CardDescription>
+ </CardHeader>
+ <CardContent>
+ <Button onClick={() => refetch()} disabled={isFetching}>
+ {isFetching ? "Retrying…" : "Try again"}
+ </Button>
+ </CardContent>
+ </Card>
+ ) : null}
+
+ {!isError && apps.length === 0 && (
  <Card>
  <CardHeader>
  <CardTitle>No applications yet</CardTitle>
@@ -137,7 +160,10 @@ function MyApplicationsPage() {
  </CardDescription>
  </div>
  <div className="flex shrink-0 flex-col items-end gap-1">
- <Badge className={STATUS_TONE[a.status]} variant="outline">
+ <Badge
+ className={`${STATUS_TONE[a.status]} max-w-[9rem] whitespace-normal break-words text-right`}
+ variant="outline"
+ >
  {a.status}
  </Badge>
  {a.info_requested ? (
