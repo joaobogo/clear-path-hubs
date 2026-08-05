@@ -111,7 +111,7 @@ function ApplyPage() {
       void navigate({
         to: "/jobs/$id/apply",
         params: { id: rawId },
-        search: (prev: { step?: number; q?: number }) => ({ ...prev, ...next }),
+        search: (prev: Record<string, unknown>) => ({ ...prev, ...next }),
         replace: opts?.replace ?? false,
         resetScroll: false,
       });
