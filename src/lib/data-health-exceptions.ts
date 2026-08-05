@@ -36,7 +36,7 @@ export type DataHealthException = {
   candidate_name: string | null;
   position_id: string | null;
   position_title: string | null;
-  organization_id: string | null
+  organization_id: string | null;
   client_name: string | null;
   /** True when a client can see the broken record right now. */
   client_visible: boolean;
