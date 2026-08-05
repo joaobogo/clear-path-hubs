@@ -197,7 +197,7 @@ export const getMyApplication = createServerFn({ method: "GET" })
       .select(
         `id, position_id, status, applied_at, updated_at, withdrawn_at, candidate_profile_id,
          cover_letter, portfolio_url, cv_file_id,
-         positions:position_id ( id, title, description, status, organization_id, employment_type, work_model, location, organizations:organization_id ( id, name ) ),
+         positions:position_id ( id, title, description, status, closure_reason, closed_at, organization_id, employment_type, work_model, location, organizations:organization_id ( id, name ) ),
          candidate_matches ( id, stage, client_visibility, updated_at,
            interviews ( id, status, scheduled_at, duration_minutes, interview_type, location, meeting_url, timezone, requested_at, cancelled_at ) )`,
       )
