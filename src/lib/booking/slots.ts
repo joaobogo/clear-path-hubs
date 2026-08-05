@@ -8,16 +8,24 @@
 
 export type Slot = { start: string; end: string };
 
+/** One bookable window on one weekday (0 = Sunday), host-local minutes. */
+export type DayWindow = { weekday: number; startMinute: number; endMinute: number };
+
 export type SlotRules = {
   hostTimezone: string;
-  /** Minutes from midnight, host time. */
+  /** Minutes from midnight, host time. Used when `windows` is absent. */
   startMinute: number;
   endMinute: number;
   slotMinutes: number;
-  /** Business days (Mon–Fri) to open, counting from today, host time. */
+  /** Open days to generate, counting from today, host time. */
   businessDays: number;
   /** Nothing bookable inside this window from `now`. */
   leadMinutes: number;
+  /**
+   * Per-weekday availability from org_scheduling_settings. When omitted we fall
+   * back to Mon–Fri `startMinute`–`endMinute`, so booking works with no setup.
+   */
+  windows?: readonly DayWindow[];
 };
 
 type CalendarDay = { year: number; month: number; day: number };
@@ -84,9 +92,19 @@ function addDays(day: CalendarDay, count: number): CalendarDay {
   };
 }
 
-function isBusinessDay(day: CalendarDay): boolean {
-  const weekday = new Date(Date.UTC(day.year, day.month - 1, day.day)).getUTCDay();
-  return weekday >= 1 && weekday <= 5;
+function weekdayOf(day: CalendarDay): number {
+  return new Date(Date.UTC(day.year, day.month - 1, day.day)).getUTCDay();
+}
+
+/** The bookable windows for a given day, honouring configured availability. */
+function windowsFor(rules: SlotRules, day: CalendarDay): DayWindow[] {
+  const weekday = weekdayOf(day);
+  if (rules.windows && rules.windows.length > 0) {
+    return rules.windows.filter((w) => w.weekday === weekday);
+  }
+  // Default: Mon–Fri business hours.
+  if (weekday < 1 || weekday > 5) return [];
+  return [{ weekday, startMinute: rules.startMinute, endMinute: rules.endMinute }];
 }
 
 /**
@@ -100,26 +118,29 @@ export function generateSlots(rules: SlotRules, now: Date = new Date()): Slot[] 
   let opened = 0;
   let guard = 0;
 
-  while (opened < rules.businessDays && guard < 90) {
+  while (opened < rules.businessDays && guard < 120) {
     guard += 1;
-    if (isBusinessDay(day)) {
+    const windows = windowsFor(rules, day);
+    if (windows.length > 0) {
       opened += 1;
-      for (
-        let minute = rules.startMinute;
-        minute + rules.slotMinutes <= rules.endMinute;
-        minute += rules.slotMinutes
-      ) {
-        const start = zonedToUtc(day, minute, rules.hostTimezone);
-        if (start.getTime() < earliest) continue;
-        slots.push({
-          start: start.toISOString(),
-          end: new Date(start.getTime() + rules.slotMinutes * 60_000).toISOString(),
-        });
+      for (const window of windows) {
+        for (
+          let minute = window.startMinute;
+          minute + rules.slotMinutes <= window.endMinute;
+          minute += rules.slotMinutes
+        ) {
+          const start = zonedToUtc(day, minute, rules.hostTimezone);
+          if (start.getTime() < earliest) continue;
+          slots.push({
+            start: start.toISOString(),
+            end: new Date(start.getTime() + rules.slotMinutes * 60_000).toISOString(),
+          });
+        }
       }
     }
     day = addDays(day, 1);
   }
-  return slots;
+  return slots.sort((a, b) => a.start.localeCompare(b.start));
 }
 
 export type BusyInterval = { start: string; end: string };
@@ -205,5 +226,100 @@ export function isValidTimezone(tz: string): boolean {
     return true;
   } catch {
     return false;
+  }
+}
+
+/* ------------------------------------------------------------- month grid -- */
+
+export type MonthCell = {
+  /** en-CA day key, or null for the leading/trailing padding cells. */
+  key: string | null;
+  dayOfMonth: number | null;
+  slotCount: number;
+};
+
+export type MonthGrid = {
+  /** First of the month, as a day key — the grid's identity. */
+  monthKey: string;
+  label: string;
+  /** Mon-first rows of 7 cells. */
+  weeks: MonthCell[][];
+};
+
+/** Month key ("YYYY-MM") for an instant, in `tz`. */
+export function monthKeyOf(iso: string, tz: string): string {
+  return dayKey(iso, tz).slice(0, 7);
+}
+
+function daysInMonth(year: number, month: number): number {
+  return new Date(Date.UTC(year, month, 0)).getUTCDate();
+}
+
+/**
+ * Builds a Mon-first month grid, tagging each day with how many slots are open.
+ * Days with a zero count render as non-selectable, which is what makes the
+ * calendar honest: you can only click a date we can actually meet on.
+ */
+export function buildMonthGrid(monthKey: string, slots: Slot[], tz: string): MonthGrid {
+  const [year, month] = monthKey.split("-").map(Number) as [number, number];
+  const counts = new Map<string, number>();
+  for (const slot of slots) {
+    const key = dayKey(slot.start, tz);
+    if (key.startsWith(monthKey)) counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+
+  const total = daysInMonth(year, month);
+  // Monday-first offset: JS getUTCDay() is Sunday-first.
+  const firstWeekday = new Date(Date.UTC(year, month - 1, 1)).getUTCDay();
+  const lead = (firstWeekday + 6) % 7;
+
+  const cells: MonthCell[] = [];
+  for (let i = 0; i < lead; i += 1) cells.push({ key: null, dayOfMonth: null, slotCount: 0 });
+  for (let d = 1; d <= total; d += 1) {
+    const key = `${monthKey}-${String(d).padStart(2, "0")}`;
+    cells.push({ key, dayOfMonth: d, slotCount: counts.get(key) ?? 0 });
+  }
+  while (cells.length % 7 !== 0) cells.push({ key: null, dayOfMonth: null, slotCount: 0 });
+
+  const weeks: MonthCell[][] = [];
+  for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+
+  const label = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "UTC",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(Date.UTC(year, month - 1, 1)));
+
+  return { monthKey, label, weeks };
+}
+
+/** Ordered month keys that contain at least one open slot. */
+export function monthsWithSlots(slots: Slot[], tz: string): string[] {
+  const keys = new Set<string>();
+  for (const slot of slots) keys.add(monthKeyOf(slot.start, tz));
+  return [...keys].sort();
+}
+
+/** Short "Wed 12 Aug" heading for the chosen day's slot column. */
+export function shortDayLabel(dayKeyValue: string): string {
+  const [year, month, day] = dayKeyValue.split("-").map(Number) as [number, number, number];
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "UTC",
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  }).format(new Date(Date.UTC(year, month - 1, day)));
+}
+
+/** Human offset label, e.g. "GMT+2", for the timezone selector. */
+export function tzAbbreviation(tz: string, at: Date = new Date()): string {
+  try {
+    const parts = new Intl.DateTimeFormat("en-GB", {
+      timeZone: tz,
+      timeZoneName: "shortOffset",
+    }).formatToParts(at);
+    return parts.find((p) => p.type === "timeZoneName")?.value ?? "";
+  } catch {
+    return "";
   }
 }

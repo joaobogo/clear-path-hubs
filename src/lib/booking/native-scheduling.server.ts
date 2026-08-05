@@ -2,16 +2,22 @@
  * Native scheduling — server only.
  *
  * Availability, double-booking prevention, and the confirm / reschedule / cancel
- * writes for booking_sessions. No external scheduling provider is involved: a
- * slot is taken when another non-cancelled booking overlaps it.
+ * writes for booking_sessions. We are the source of truth: a slot is taken when
+ * another non-cancelled booking overlaps it, or when the host's Outlook calendar
+ * is busy for it (only when Outlook is configured).
+ *
+ * Every external integration in here is best-effort. A Graph failure records an
+ * error on the row and still confirms the booking.
  */
-import { SCHEDULER_CONFIG, HOST_NAME, HOST_EMAIL, MEETING_JOIN_URL } from "@/config/scheduler";
+import { HOST_NAME, HOST_EMAIL, MEETING_JOIN_URL } from "@/config/scheduler";
+import { generateSlots, removeBooked, isValidTimezone, fullLabel, type Slot } from "@/lib/booking/slots";
+import { resolveSlotRules } from "@/lib/booking/scheduling-settings.server";
 import {
-  generateSlots,
-  removeBooked,
-  isValidTimezone,
-  type Slot,
-} from "@/lib/booking/slots";
+  cancelBookingEvent,
+  createBookingEvent,
+  fetchHostBusy,
+  updateBookingEvent,
+} from "@/lib/booking/outlook.server";
 
 type AdminClient = Awaited<
   typeof import("@/integrations/supabase/client.server")
@@ -57,17 +63,25 @@ export type Availability = {
 export async function loadAvailability(
   opts: { excludeSessionId?: string | null } = {},
 ): Promise<Availability> {
-  const all = generateSlots(SCHEDULER_CONFIG);
+  const rules = await resolveSlotRules();
+  const all = generateSlots(rules);
   if (all.length === 0) {
-    return { slots: [], hostTimezone: SCHEDULER_CONFIG.hostTimezone, slotMinutes: SCHEDULER_CONFIG.slotMinutes };
+    return { slots: [], hostTimezone: rules.hostTimezone, slotMinutes: rules.slotMinutes };
   }
   const from = all[0]!.start;
   const to = all[all.length - 1]!.end;
-  const busy = await busyIntervals(from, to, opts.excludeSessionId ?? null);
+
+  // Our own bookings are authoritative; Outlook busy time is additive and
+  // silently empty when the integration isn't configured.
+  const [ours, outlook] = await Promise.all([
+    busyIntervals(from, to, opts.excludeSessionId ?? null),
+    fetchHostBusy(from, to),
+  ]);
+
   return {
-    slots: removeBooked(all, busy),
-    hostTimezone: SCHEDULER_CONFIG.hostTimezone,
-    slotMinutes: SCHEDULER_CONFIG.slotMinutes,
+    slots: removeBooked(all, [...ours, ...outlook]),
+    hostTimezone: rules.hostTimezone,
+    slotMinutes: rules.slotMinutes,
   };
 }
 
@@ -95,23 +109,47 @@ export async function bookSlot(input: {
   timezone: string;
 }): Promise<BookOutcome> {
   const db = await admin();
-  const timezone = isValidTimezone(input.timezone) ? input.timezone : SCHEDULER_CONFIG.hostTimezone;
+  const rules = await resolveSlotRules();
+  const timezone = isValidTimezone(input.timezone) ? input.timezone : rules.hostTimezone;
 
   const { data: row } = await db
     .from("booking_sessions")
-    .select("id, status, first_name, email, scheduled_start")
+    .select(
+      "id, status, first_name, last_name, email, company_name, scheduled_start, graph_event_id",
+    )
     .eq("id", input.sessionId)
     .maybeSingle();
   if (!row) return { ok: false, reason: "not_found" };
   if (row.status === "cancelled") return { ok: false, reason: "already_cancelled" };
 
-  const offered = generateSlots(SCHEDULER_CONFIG).find((slot) => slot.start === input.start);
+  const offered = generateSlots(rules).find((slot) => slot.start === input.start);
   if (!offered) return { ok: false, reason: "invalid_slot" };
 
   const busy = await busyIntervals(offered.start, offered.end, input.sessionId);
   if (busy.length > 0) return { ok: false, reason: "slot_taken" };
 
   const wasScheduled = Boolean(row.scheduled_start);
+
+  // Outlook event: create on first booking, move on reschedule. Non-blocking —
+  // a failure is recorded and the booking still stands.
+  const attendeeName = `${row.first_name} ${row.last_name}`.trim();
+  const eventInput = {
+    subject: `TaaSFlow hiring call — ${row.company_name ?? attendeeName}`,
+    bodyHtml: `<p>Hiring discovery call with ${attendeeName}${
+      row.company_name ? ` (${row.company_name})` : ""
+    }.</p><p>Booked at ${fullLabel(offered.start, offered.end, timezone)}.</p>`,
+    startIso: offered.start.replace("Z", ""),
+    endIso: offered.end.replace("Z", ""),
+    attendeeEmail: row.email,
+    attendeeName,
+  };
+  const calendar = row.graph_event_id
+    ? await updateBookingEvent(row.graph_event_id, eventInput)
+    : await createBookingEvent(eventInput);
+
+  const joinUrl =
+    calendar.status === "ok" && calendar.joinUrl ? calendar.joinUrl : HOST.joinUrl;
+
   const now = new Date().toISOString();
   const { error } = await db
     .from("booking_sessions")
@@ -122,9 +160,15 @@ export async function bookSlot(input: {
       timezone,
       host_name: HOST.name,
       host_email: HOST.email,
-      join_url: HOST.joinUrl,
+      join_url: joinUrl,
       scheduled_at: now,
       cancelled_at: null,
+      reminder_sent_at: null,
+      ...(calendar.status === "ok"
+        ? { graph_event_id: calendar.eventId, graph_synced_at: now, graph_error: null }
+        : calendar.status === "error"
+          ? { graph_error: calendar.error }
+          : {}),
     })
     .eq("id", input.sessionId);
   if (error) return { ok: false, reason: "not_found" };
@@ -140,22 +184,50 @@ export async function bookSlot(input: {
       scheduledEnd: offered.end,
       timezone,
       hostName: HOST.name,
-      joinUrl: HOST.joinUrl,
+      joinUrl,
       status: "scheduled",
     },
   };
 }
 
 export type CancelOutcome =
-  | { ok: true; email: string; firstName: string; scheduledStart: string | null; timezone: string | null }
+  | {
+      ok: true;
+      email: string;
+      firstName: string;
+      scheduledStart: string | null;
+      timezone: string | null;
+    }
   | { ok: false; reason: "not_found" };
 
 /** Cancels a meeting and frees its slot for everybody else. */
 export async function cancelBooking(sessionId: string): Promise<CancelOutcome> {
   const db = await admin();
+
+  const { data: existing } = await db
+    .from("booking_sessions")
+    .select("graph_event_id")
+    .eq("id", sessionId)
+    .maybeSingle();
+
+  // Pull the event off the host's calendar first so a cancelled booking never
+  // leaves a ghost meeting behind. Still non-blocking.
+  let graphError: string | null = null;
+  if (existing?.graph_event_id) {
+    const result = await cancelBookingEvent(
+      existing.graph_event_id,
+      "This call was cancelled from the TaaSFlow booking page.",
+    );
+    if (result.status === "error") graphError = result.error ?? "graph_cancel_failed";
+  }
+
   const { data, error } = await db
     .from("booking_sessions")
-    .update({ status: "cancelled", cancelled_at: new Date().toISOString() })
+    .update({
+      status: "cancelled",
+      cancelled_at: new Date().toISOString(),
+      ...(graphError ? { graph_error: graphError } : { graph_error: null }),
+    })
     .eq("id", sessionId)
     .select("id, email, first_name, scheduled_start, timezone")
     .maybeSingle();

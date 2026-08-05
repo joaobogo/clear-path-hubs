@@ -56,7 +56,7 @@ export const SLOT_MINUTES = envInt(import.meta.env["VITE_BOOKING_SLOT_MINUTES"],
 /** How many business days ahead we open for booking. */
 export const HORIZON_BUSINESS_DAYS = envInt(
   import.meta.env["VITE_BOOKING_HORIZON_DAYS"],
-  10,
+  15,
   1,
   30,
 );

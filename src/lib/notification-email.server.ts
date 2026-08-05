@@ -434,7 +434,7 @@ function renderIntakeWelcomeEmail(args: {
 export async function sendBookingLifecycleEmail(args: {
   to: string;
   firstName: string;
-  kind: "scheduled" | "rescheduled" | "cancelled";
+  kind: "scheduled" | "rescheduled" | "cancelled" | "reminder";
   when: string;
   sessionId: string;
   joinUrl: string | null;
@@ -449,11 +449,15 @@ export async function sendBookingLifecycleEmail(args: {
       ? "Your TaaSFlow call is cancelled"
       : args.kind === "rescheduled"
         ? `Your TaaSFlow call moved to ${args.when}`
-        : `Your TaaSFlow call is confirmed — ${args.when}`;
+        : args.kind === "reminder"
+          ? `Reminder: your TaaSFlow call is coming up — ${args.when}`
+          : `Your TaaSFlow call is confirmed — ${args.when}`;
   const body =
     args.kind === "cancelled"
       ? `${greeting} we've cancelled the call. You can pick a new time whenever it suits you.`
-      : `${greeting} you're booked with ${args.hostName} for ${args.when}.`;
+      : args.kind === "reminder"
+        ? `${greeting} a quick reminder that you're speaking with ${args.hostName} at ${args.when}.`
+        : `${greeting} you're booked with ${args.hostName} for ${args.when}.`;
   const context =
     args.kind === "cancelled"
       ? null
