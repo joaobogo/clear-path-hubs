@@ -27,6 +27,11 @@ export const Route = createFileRoute("/api/public/blueprint-status/$intakeId")({
         let blueprintStatus = "not_started";
         let blueprintError: string | null = null;
         let summary: { mustHaves: number; screeningQuestions: number; confidence: number } | null = null;
+        // The delivery commitment is returned only when a row exists and is
+        // attached to this role, so the confirmation can never show a date the
+        // system cannot back.
+        let commitment: Record<string, unknown> | null = null;
+        let contactName: string | null = null;
 
         if (intake.position_id) {
           const { data: pos } = await admin
@@ -46,6 +51,30 @@ export const Route = createFileRoute("/api/public/blueprint-status/$intakeId")({
                 confidence: Number(conf.overall) || 0,
               };
             }
+
+            const { data: row } = await admin
+              .from("position_commitments")
+              .select(
+                "position_id, first_shortlist_days, shortlist_size, interview_slots_hours, baseline_at",
+              )
+              .eq("position_id", intake.position_id)
+              .maybeSingle();
+            commitment = row ?? null;
+
+            const { data: posOwner } = await admin
+              .from("positions")
+              .select("owner_user_id")
+              .eq("id", intake.position_id)
+              .maybeSingle();
+            if (posOwner?.owner_user_id) {
+              const { data: owner } = await admin
+                .from("profiles")
+                .select("full_name")
+                .eq("auth_user_id", posOwner.owner_user_id)
+                .maybeSingle();
+              // Name only — never the recruiter's contact details.
+              contactName = (owner?.full_name as string | null) ?? null;
+            }
           }
         }
 
@@ -61,6 +90,8 @@ export const Route = createFileRoute("/api/public/blueprint-status/$intakeId")({
           blueprintFailed: blueprintStatus === "failed",
           blueprintErrorCode: blueprintError ? blueprintError.split(":")[0] : null,
           summary,
+          commitment,
+          contactName,
           createdAt: intake.created_at,
         });
       },
