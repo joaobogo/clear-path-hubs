@@ -4944,6 +4944,7 @@ export type Database = {
           criteria: Json
           id: string
           interview_id: string
+          next_step: string | null
           organization_id: string
           position_id: string | null
           recommendation: string
@@ -4961,6 +4962,7 @@ export type Database = {
           criteria?: Json
           id?: string
           interview_id: string
+          next_step?: string | null
           organization_id: string
           position_id?: string | null
           recommendation?: string
@@ -4978,6 +4980,7 @@ export type Database = {
           criteria?: Json
           id?: string
           interview_id?: string
+          next_step?: string | null
           organization_id?: string
           position_id?: string | null
           recommendation?: string
