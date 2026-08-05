@@ -21,6 +21,10 @@ export type TestScope = {
   orgIds: string[];
   /** Positions belonging to those organizations. Empty when includeTest is true. */
   positionIds: string[];
+  positionIds: string[];
+  /** How many records the current scope hid — surfaced in empty states. */
+  excludedOrgs: number;
+  excludedPositions: number;
 };
 
 const DAY = 86_400_000;
