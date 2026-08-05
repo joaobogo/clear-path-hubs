@@ -121,6 +121,13 @@ function PositionDetailPage() {
  queryFn: () => lifecycleFn({ data: { orgId: orgId!, positionId: id } }),
  enabled: !!orgId,
  });
+ // Once a hire is confirmed, this role becomes a handoff rather than a search.
+ const handoffFn = useServerFn(getPositionHandoff);
+ const handoff = useQuery({
+ queryKey: ["client-position-handoff", orgId, id],
+ queryFn: () => handoffFn({ data: { orgId: orgId!, positionId: id } }),
+ enabled: !!orgId,
+ });
  useEffect(() => {
  const onRefresh = () => {
  void refetch();
