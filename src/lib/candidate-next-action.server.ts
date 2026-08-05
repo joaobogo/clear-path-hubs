@@ -304,7 +304,7 @@ export async function addBlockingNote(
       author_user_id: input.actorUserId,
       body: input.body,
       note_type: "risk",
-      client_shareable: false,
+      visibility: "internal",
     })
     .select("id")
     .maybeSingle();
