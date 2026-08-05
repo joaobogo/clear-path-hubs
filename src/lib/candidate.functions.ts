@@ -4,6 +4,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { computePendingAction } from "@/lib/candidate/pending-action";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -295,6 +296,13 @@ export const getMyApplication = createServerFn({ method: "GET" })
         : null,
       status,
       next_step: nextStepHint(status),
+      // Derived from real pending rows only — never from the stage.
+      pending_action: computePendingAction({
+        infoRequests: infoRequests,
+        interviews,
+        document: cvFile ? { received: cvFile.parse_state !== "failed" } : null,
+        closed: status === "Closed",
+      }),
       can_withdraw: canWithdraw(status),
       info_requests: infoRequests,
       interviews,
