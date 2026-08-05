@@ -1028,7 +1028,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     ],
     resources: DEFAULT_RESOURCES,
     faqs: [
-      { q: "Do you understand grant-funded hiring timelines?", a: "Yes. Intake is built to move quickly once a grant or board approval opens a headcount, with the usual 7-14 day shortlist window." },
+      { q: "Do you understand grant-funded hiring timelines?", a: "Yes. Intake is built to move quickly once a grant or board approval opens a headcount, with the usual days-not-weeks shortlist window." },
       { q: "Can the rubric reflect multi-hat roles?", a: "Yes — intake captures the real combined scope of a role (e.g. programme plus communications) so candidates aren't penalised for generalist breadth." },
       { q: "Do you work with small teams and tight budgets?", a: "Yes. Flat subscription pricing with no placement fees is designed to be predictable for board-approved and grant-funded budgets." },
       { q: "Can you evaluate international programme experience?", a: "Yes. Country and regional context, language and field-office experience are captured as structured intake fields." },
@@ -2044,7 +2044,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     resources: DEFAULT_RESOURCES,
     faqs: [
       { q: "Can you separate DTC from marketplace experience?", a: "Yes. Channel is a first-class intake field, and DTC, Amazon/marketplace and wholesale experience are scored on their own evidence." },
-      { q: "Do you account for seasonal hiring spikes?", a: "Yes. Roles tied to peak-period ramp-up move through the same 7-14 day shortlist window as any other requisition." },
+      { q: "Do you account for seasonal hiring spikes?", a: "Yes. Roles tied to peak-period ramp-up move through the same days-not-weeks shortlist window as any other requisition." },
       { q: "How do you evaluate growth marketing claims?", a: "CAC, AOV, LTV and channel-specific ROAS figures are quoted from the CV with the source line, so your team can sanity-check the numbers." },
       { q: "Can you hire for a platform migration?", a: "Yes. Platform history (Shopify, BigCommerce, Salesforce Commerce Cloud, headless) is captured explicitly so migrations aren't staffed on assumed familiarity." },
     ],

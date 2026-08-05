@@ -141,7 +141,7 @@ export const PRICING_TIERS: PricingTier[] = [
 export const PRICING_GUARANTEES: string[] = [
   "No hidden fees",
   "You keep all candidates",
-  "14-day pilot before you subscribe",
+  "pilot before you subscribe",
 ];
 
 /**

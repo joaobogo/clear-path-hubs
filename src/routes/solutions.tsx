@@ -23,7 +23,7 @@ export const Route = createFileRoute("/solutions")({
     marketingHead(undefined, "/solutions", {
       title: "Solutions — AI Hiring Intelligence for every hiring need",
       description:
-        "Pilot a single hire, scale volume hiring, run enterprise programmes or hire globally. One platform, one monthly fee, ranked candidates in 14 days.",
+        "Pilot a single hire, scale volume hiring, run enterprise programmes or hire globally. One platform, one monthly fee, ranked candidates in days.",
     }),
   component: SolutionsPage,
 });

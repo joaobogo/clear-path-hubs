@@ -118,7 +118,7 @@ function DesignSystemGallery() {
             <div className="rounded-xl border border-border bg-card p-6">
               <p className="text-xs uppercase tracking-wide text-muted-foreground">Display · Fraunces</p>
               <h1 className="mt-1 font-display text-4xl font-semibold tracking-tight text-foreground">
-                A first ranked shortlist within 14 days
+                A first ranked shortlist in days
               </h1>
               <h2 className="mt-4 text-2xl font-semibold text-foreground">Dashboard heading</h2>
               <h3 className="mt-2 text-lg font-semibold text-foreground">Section heading</h3>
@@ -179,7 +179,7 @@ function DesignSystemGallery() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <KpiCard label="Open positions" value={12} hint="+3 vs last week" icon={<Sparkles className="h-4 w-4" />} />
               <KpiCard label="Applications" value={287} hint="Rolling 30 days" drillTo="/admin/candidates" />
-              <KpiCard label="Time-to-shortlist" value="9d" hint="Target: within 14 days" />
+              <KpiCard label="Time-to-shortlist" value="9d" hint="Target: in days" />
               <KpiCard label="Placeholder" value={null} emptyHint="No data yet — add a role to begin." />
             </div>
           </Section>

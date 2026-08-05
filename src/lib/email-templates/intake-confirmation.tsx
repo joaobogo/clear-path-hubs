@@ -59,7 +59,7 @@ export const template = {
     contactName: 'Jane',
     companyName: 'Northwind Health',
     roleTitle: 'Clinical Operations Manager',
-    nextStep: 'Complete payment to publish the role and start the 14-day pilot.',
+    nextStep: 'Complete payment to publish the role and start the pilot.',
     dueDate: '12 August 2026',
     workspaceUrl: 'https://taasflow.com/client',
   },

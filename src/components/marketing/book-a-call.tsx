@@ -137,7 +137,7 @@ export function BookACallSection({
             <li className="flex items-start gap-3">
               <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-[color:var(--brand-ocean-light)]" />
               <span>
-                Ranked shortlist in 14 days — with evidence quoted from every CV.
+                Ranked shortlist in days — with evidence quoted from every CV.
               </span>
             </li>
             <li className="flex items-start gap-3">

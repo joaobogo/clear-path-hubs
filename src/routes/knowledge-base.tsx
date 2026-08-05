@@ -199,7 +199,7 @@ const ARTICLES: Article[] = [
     category: "pricing-billing",
     title: "How the paid pilot works",
     summary:
-      "One live role, one ranked shortlist within 14 days, no placement fee if you hire.",
+      "One live role, one ranked shortlist in days, no placement fee if you hire.",
     readMinutes: 3,
     visibility: "public",
   },

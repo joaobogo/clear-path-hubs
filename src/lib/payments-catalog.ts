@@ -65,7 +65,7 @@ export const PLAN_CATALOGUE: readonly PlanOffer[] = [
     rolesTotal: 1,
     validForDays: 90,
     tier: 1,
-    summary: "One active role, 14-day turnaround.",
+    summary: "One active role, turnaround in days.",
   },
   {
     priceId: "multi_onetime",

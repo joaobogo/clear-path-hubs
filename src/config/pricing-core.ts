@@ -53,7 +53,7 @@ export const ROI_REFERENCE_PACKAGE_LABEL =
   "Multi Position one-off package (2–5 roles)";
 
 /** Turnaround guarantee shared across every published tier. */
-export const TURNAROUND_LABEL = "14-day turnaround";
+export const TURNAROUND_LABEL = "turnaround in days";
 
 /** Position-band boundaries used by the calculator selector. */
 export const POSITION_BANDS = {

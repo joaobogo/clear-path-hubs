@@ -13,7 +13,7 @@ export const PILOT_DURATION_DAYS = 14;
 export const PILOT_INCLUDES = [
   "One role, run end to end by a recruiter.",
   "Full workspace access for your hiring team.",
-  "Shortlist delivered within the 14 days.",
+  "Shortlist delivered in days.",
 ] as const;
 
 /** What happens on day one after the pilot window closes. */

@@ -15,7 +15,7 @@ import { PublicPage, PublicSection } from "@/components/marketing/site-shell";
  *
  * 1. Pricing        — flat monthly, no placement fee, cancel anytime.
  * 2. ROI            — assumptions are editable in the calculator, not baked in.
- * 3. Delivery       — first ranked shortlist within 14 days of intake.
+ * 3. Delivery       — first ranked shortlist in days of intake.
  * 4. Ownership      — you keep the candidates, the ATS, and the final call.
  * 5. Next step      — what happens in the 48h after you submit intake.
  * 6. Human vs AI    — humans decide, AI structures — the boundary is explicit.
@@ -45,7 +45,7 @@ const ITEMS: {
     icon: Calendar,
     question: "What is the delivery promise?",
     answer:
-      "A first ranked shortlist within 14 days of intake sign-off. Weekly refresh after that.",
+      "A first ranked shortlist in days of intake sign-off. Weekly refresh after that.",
     detail:
       "If a role is unusually niche, we surface that in intake — not on delivery day. No vague 'we'll get back to you' timelines.",
   },
