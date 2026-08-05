@@ -3,14 +3,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { getClientContext, getClientOverview } from "@/lib/client.functions";
-import { countBlockingTasks } from "@/lib/tasks.functions";
-import { staggerStyle, useArrivals } from "@/lib/motion/use-motion";
 import { listPendingPaymentRoles } from "@/lib/booking.functions";
 import { PaymentGateBanner } from "@/components/client/payment-gate-banner";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { VisibilityNote } from "@/components/client/visibility-note";
-import { AgeBadge } from "@/components/client/age-badge";
 import { formatStageDate } from "@/lib/client-role-progress";
 import { shortlistCommitment, formatCommitmentDate } from "@/lib/client-commitment";
 import { Button } from "@/components/ui/button";
@@ -18,14 +15,11 @@ import {
   AlertTriangle,
   ArrowRight,
   Briefcase,
-  CalendarClock,
   CheckCircle2,
   ChevronRight,
-  Handshake,
   MessageSquare,
   RefreshCw,
   Sparkles,
-  Users,
 } from "lucide-react";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
 import { DensityToggle } from "@/components/client/density-toggle";
@@ -39,7 +33,6 @@ import { HiringHealthLine } from "@/components/client/hiring-health-line";
 import { SystemHealthStrip } from "@/components/client/system-health-strip";
 import { AgentActivityRail } from "@/components/client/agent-activity-rail";
 import { DecisionQueue } from "@/components/client/decision-queue";
-import { VisibilityNote as _QueueVisibilityNote } from "@/components/client/visibility-note";
 import type { QueueRow } from "@/lib/client-decision-queue";
 
 export const Route = createFileRoute("/_authenticated/client/")({
@@ -73,13 +66,6 @@ function daysWaiting(iso: string | null | undefined): number | null {
   return Math.max(0, Math.floor((Date.now() - t) / 86_400_000));
 }
 
-function waitLabel(iso: string | null | undefined): string {
-  const d = daysWaiting(iso);
-  if (d == null) return "";
-  if (d === 0) return "Today";
-  return d === 1 ? "1 day" : `${d} days`;
-}
-
 function OverviewPage() {
   const [selfId, setSelfId] = useState<string | null>(null);
   useEffect(() => {
@@ -106,13 +92,6 @@ function OverviewPage() {
     queryFn: () => overviewFn({ data: { orgId: orgId! } }),
     enabled: !!orgId,
     placeholderData: (prev) => prev,
-  });
-
-  const blockingFn = useServerFn(countBlockingTasks);
-  const { data: blocking } = useQuery({
-    queryKey: ["client", "blocking-tasks", orgId],
-    queryFn: () => blockingFn({ data: { organization_id: orgId! } }),
-    enabled: !!orgId,
   });
 
   const pendingRolesFn = useServerFn(listPendingPaymentRoles);
@@ -261,7 +240,7 @@ function OverviewPage() {
             orgId={orgId ?? null}
             orgSearch={orgSearch ?? null}
           />
-          <_QueueVisibilityNote />
+          <VisibilityNote />
 
           {/* CONTROL ROOM — what is running, what moved, how hard we work */}
           {orgId && (
