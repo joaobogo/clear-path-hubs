@@ -436,6 +436,7 @@ export const listClients = createServerFn({ method: "GET" })
       items,
       total,
       industries,
+      test_records_hidden: !showTest,
       page: data.page,
       page_size: data.page_size,
       page_count: Math.max(1, Math.ceil(total / data.page_size)),
