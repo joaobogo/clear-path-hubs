@@ -2,7 +2,7 @@ import * as React from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Check } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DecisionDialog,
@@ -39,13 +39,17 @@ type AdvanceStep = { action: DecisionActionKey; label: string; done: string };
 export function advanceFor(stage: MatchStage): AdvanceStep | null {
   return (
     {
-      delivered: { action: "shortlist", label: "Advance", done: "Added to your shortlist" },
+      delivered: {
+        action: "shortlist",
+        label: "Advance to shortlist",
+        done: "Added to your shortlist",
+      },
       shortlisted: {
         action: "request_interview",
-        label: "Advance",
+        label: "Advance to interview",
         done: "Interview requested",
       },
-      interview_process: { action: "offer", label: "Advance", done: "Moved to offer stage" },
+      interview_process: { action: "offer", label: "Advance to offer", done: "Moved to offer stage" },
       offer: { action: "hire", label: "Mark hired", done: "Marked as hired" },
       hired: null,
       not_moving_forward: { action: "shortlist", label: "Reopen", done: "Back on your shortlist" },
@@ -87,9 +91,15 @@ export function DecisionBar({
     return () => window.clearTimeout(t);
   }, [settled]);
 
-  const advance = advanceFor(stage);
-  const canHold = stage !== "hired" && stage !== "not_moving_forward";
-  const canDecline = stage !== "hired" && stage !== "not_moving_forward";
+  // The stage shown on screen. A decision paints it immediately and a failed
+  // write paints it back, so no phantom stage change ever survives an error.
+  const [optimistic, setOptimistic] = React.useState<MatchStage | null>(null);
+  React.useEffect(() => setOptimistic(null), [stage]);
+  const shownStage = optimistic ?? stage;
+
+  const advance = advanceFor(shownStage);
+  const canHold = shownStage !== "hired" && shownStage !== "not_moving_forward";
+  const canDecline = shownStage !== "hired" && shownStage !== "not_moving_forward";
 
   async function runUndo(toStage: MatchStage) {
     try {
@@ -102,8 +112,10 @@ export function DecisionBar({
   }
 
   async function run(payload: DecisionPayload, done: string) {
-    const fromStage = stage;
+    const fromStage = shownStage;
     setPending(payload.action);
+    const landing = RESULT_STAGE[payload.action];
+    if (landing) setOptimistic(landing);
     try {
       await act({ data: { orgId, matchId, ...payload } });
       setDialog(null);
@@ -115,11 +127,14 @@ export function DecisionBar({
       });
       await queryClient.invalidateQueries();
     } catch (e) {
+      // Visible revert: the card returns to the stage it was in before.
+      setOptimistic(null);
+      setSettled(null);
       const msg = e instanceof Error ? e.message : "";
       toast.error(
         msg.includes("reason")
-          ? "Please pick a reason so we can act on it."
-          : "We couldn't save that decision. Please try again.",
+          ? "Pick a reason so we can act on it."
+          : "That did not save — try again",
       );
     } finally {
       setPending(null);
@@ -147,12 +162,26 @@ export function DecisionBar({
             disabled={busy}
             onClick={() => void run({ action: advance.action }, advance.done)}
           >
-            {pending === advance.action ? "Saving…" : advance.label}
+            {pending === advance.action ? (
+              <>
+                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                Saving\u2026
+              </>
+            ) : (
+              advance.label
+            )}
           </Button>
         )}
         {canHold && (
           <Button size={size} variant="outline" disabled={busy} onClick={() => setDialog("hold")}>
-            Hold
+            {pending === "hold" ? (
+              <>
+                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                Saving\u2026
+              </>
+            ) : (
+              "Hold"
+            )}
           </Button>
         )}
         {canDecline && (
@@ -163,7 +192,14 @@ export function DecisionBar({
             disabled={busy}
             onClick={() => setDialog("not_moving_forward")}
           >
-            Decline
+            {pending === "not_moving_forward" ? (
+              <>
+                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                Saving\u2026
+              </>
+            ) : (
+              "Not a fit"
+            )}
           </Button>
         )}
       </div>
@@ -176,7 +212,7 @@ export function DecisionBar({
         onConfirm={(payload) =>
           void run(
             payload,
-            payload.action === "hold" ? "Placed on hold" : "Declined for this role",
+            payload.action === "hold" ? "Placed on hold" : "Marked not a fit",
           )
         }
       />
