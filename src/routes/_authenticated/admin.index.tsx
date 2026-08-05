@@ -7,6 +7,7 @@ import { ActivityFeed } from "@/components/activity/ActivityFeed";
 import { getAdminWorkQueues } from "@/lib/admin-ops.functions";
 import { TestRecordsToggle } from "@/components/admin/TestRecordsToggle";
 import { PortfolioHealthTable } from "@/components/admin/portfolio-health-table";
+import { DecisionBacklogPanel } from "@/components/admin/decision-backlog-panel";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -123,6 +124,8 @@ function Overview() {
 
       {/* Portfolio health first: which accounts are in trouble, not totals. */}
       <PortfolioHealthTable includeTest={show_test} />
+
+      <DecisionBacklogPanel includeTest={show_test} showClientColumn />
 
       {/* Counts strip — each jumps to its queue below. */}
       <nav aria-label="Queue counts" className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-7">

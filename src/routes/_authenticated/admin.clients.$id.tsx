@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { DecisionBacklogPanel } from "@/components/admin/decision-backlog-panel";
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -227,6 +228,7 @@ function OverviewTab({ org, members, positions }: { org: any; members: any[]; po
           <dt>Updated</dt><dd className="text-foreground">{new Date(org.updated_at).toLocaleString()}</dd>
         </dl>
       </div>
+      <DecisionBacklogPanel organizationId={org.id} className="md:col-span-3" />
     </section>
   );
 }
