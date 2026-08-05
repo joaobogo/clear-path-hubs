@@ -168,7 +168,7 @@ function TrackPage() {
         </div>
         <Badge
           variant="outline"
-          className={`${CANDIDATE_STATUS_TONE[data.status]} shrink-0 whitespace-nowrap`}
+          className={`${CANDIDATE_STATUS_TONE[data.status]} max-w-[9rem] shrink-0 whitespace-normal break-words text-left sm:max-w-none`}
         >
           {data.status}
         </Badge>
@@ -182,7 +182,7 @@ function TrackPage() {
         <p className="mt-1 text-sm font-medium">
           {data.next_step ?? CANDIDATE_STATUS_NEXT_STEP[data.status]}
         </p>
-        {data.status === "Closed" || data.status === "Withdrawn" ? (
+        {data.status === "Closed" ? (
           <p className="mt-3 text-sm text-muted-foreground">
             {data.role_closed
               ? "The hiring team closed this role, so it is no longer being filled. That is a decision about the role, not about you."
