@@ -10,6 +10,16 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { FormShell } from "@/components/marketing/form-shell";
 import {
+  DEAL_BREAKER_EMPTY_HINT,
+  DEAL_BREAKER_POLICY_LINE,
+  DEAL_BREAKER_WHY_IT_MATTERS,
+  DEFAULT_DEAL_BREAKER_LINES,
+  MAX_DEAL_BREAKERS,
+  MAX_DEAL_BREAKER_CHARS,
+  normalizeDealBreakers,
+  validateDealBreakers,
+} from "@/lib/client-deal-breakers";
+import {
   ALLOWED_JD_EXT,
   COMP_CURRENCIES,
   splitLines,
@@ -128,6 +138,8 @@ type FormState = {
   requirements: RequirementItem[];
   manyMustHavesConfirmed: boolean;
   dealBreakers: string;
+  /** Up to five short lines: what rules someone out. */
+  dealBreakerList: string[];
 
   location: string;
   workModel: "remote" | "hybrid" | "onsite" | "";
@@ -183,6 +195,7 @@ const EMPTY: FormState = {
   requirements: [],
   manyMustHavesConfirmed: false,
   dealBreakers: "",
+  dealBreakerList: Array.from({ length: DEFAULT_DEAL_BREAKER_LINES }, () => ""),
 
   location: "",
   workModel: "",
@@ -318,6 +331,7 @@ function ExpressIntakePage() {
 
     decisionMaker: state.decisionMaker,
     dealBreakers: state.dealBreakers,
+    dealBreakerList: state.dealBreakerList,
   });
 
   /**
@@ -1000,7 +1014,8 @@ function ExpressIntakePage() {
       ...requirementsToLines(state.requirements),
       requirements: state.requirements,
       manyMustHavesConfirmed: state.manyMustHavesConfirmed,
-      dealBreakers: state.dealBreakers,
+      dealBreakers: normalizeDealBreakers(state.dealBreakerList).join("\n"),
+      dealBreakerList: normalizeDealBreakers(state.dealBreakerList),
 
       location: state.location,
       workModel: state.workModel,
