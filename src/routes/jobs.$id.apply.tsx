@@ -639,16 +639,10 @@ function ApplyPage() {
             {applyEffortLine(effort, STEP_LABELS.length)}
           </span>
 
-          <span
-            aria-live="polite"
-            className={
-              draftSavedAt
-                ? "inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground"
-                : "sr-only"
-            }
-            data-testid="apply-draft-saved"
-          >
-            {draftSavedAt ? "Answers saved on this device" : ""}
+          {/* The visible marker lives in the sticky header; this keeps the
+              same fact available to assistive tech in reading order. */}
+          <span aria-live="polite" className="sr-only" data-testid="apply-draft-saved">
+            {savedLabel ? `${savedLabel} on this device` : ""}
           </span>
         </div>
 
@@ -722,6 +716,58 @@ function ApplyPage() {
             <AlertDescription>
               Check the highlighted fields below. Everything you have already entered is still
               here — nothing was cleared.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {resume && (
+          <Alert className="mt-6" data-testid="apply-resume-prompt">
+            <AlertTitle>Pick up where you left off</AlertTitle>
+            <AlertDescription>
+              <span className="block">
+                You already started applying for {pos.title}
+                {resume.savedAt
+                  ? ` — saved on this device ${new Date(resume.savedAt).toLocaleString()}`
+                  : ""}
+                . You reached step {resume.step} of {APPLY_STEPS},{" "}
+                {STEP_LABELS[Math.min(resume.step, STEP_LABELS.length) - 1]}.
+              </span>
+              <span className="mt-1 block">
+                Your answers are restored. Your CV is not — files are never kept on this device,
+                so you will need to attach the PDF again.
+              </span>
+              <span className="mt-3 flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => {
+                    const target = resume.step;
+                    setResume(null);
+                    // The CV is gone, so never drop someone past the upload step.
+                    goTo({ step: Math.min(target, 2), q: 1 });
+                  }}
+                >
+                  Continue application
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    try {
+                      localStorage.removeItem(draftKey);
+                    } catch { /* ignore */ }
+                    setForm(EMPTY_FORM);
+                    setAnswers({});
+                    setNetwork(false);
+                    setDraftSavedAt(null);
+                    setResume(null);
+                    goTo({ step: 1, q: 1 });
+                  }}
+                >
+                  Start over
+                </Button>
+              </span>
             </AlertDescription>
           </Alert>
         )}
