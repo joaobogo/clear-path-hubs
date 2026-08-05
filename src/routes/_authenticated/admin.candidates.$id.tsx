@@ -902,6 +902,9 @@ function EvidenceTab({
         </Alert>
       )}
 
+      <EvidenceCompletenessGate matchId={matchId} />
+
+
       <EvidenceGraph
         nodes={chain.nodes}
         meta={chain.meta}
