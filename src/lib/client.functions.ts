@@ -1119,7 +1119,7 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     let commitmentContactName: string | null = null;
     if (position.owner_user_id) {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const { data: owner } = await (supabaseAdmin as AnyClient)
+      const { data: owner } = await (supabaseAdmin as AnyRow)
         .from("profiles")
         .select("full_name")
         .eq("auth_user_id", position.owner_user_id)
