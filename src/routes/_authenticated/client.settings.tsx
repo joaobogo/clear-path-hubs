@@ -202,17 +202,8 @@ function SettingsPage() {
  canEdit={!!isAdmin && !readOnlySupport}
  />
 
- <NotificationsSection
- orgId={orgId}
- initial={settings.notifications}
- canEdit={!isViewer && !readOnlySupport}
- />
+  <NotificationPreferences orgId={orgId} canEdit={!isViewer && !readOnlySupport} />
 
-          <CommunicationSection
-            orgId={orgId}
-            initial={settings.notifications}
-            canEdit={!isViewer && !readOnlySupport}
-          />
 
           <SectionCard
             icon={<MessagesSquare className="h-5 w-5" />}
