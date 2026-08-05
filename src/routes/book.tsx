@@ -47,7 +47,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/book")({
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { type?: string; cta?: string; session?: string } => ({
     type: typeof search["type"] === "string" ? (search["type"] as string) : undefined,
     cta: typeof search["cta"] === "string" ? (search["cta"] as string) : undefined,
     session: typeof search["session"] === "string" ? (search["session"] as string) : undefined,
