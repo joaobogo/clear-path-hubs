@@ -281,11 +281,21 @@ async function sendViaProvider(args: {
 export async function retryDelivery(admin: Admin, deliveryId: string) {
   const { data: delivery } = await admin
     .from("notification_deliveries")
-    .select("id, notification_id, channel, attempt_count")
+    .select("id, notification_id, channel, attempt_count, status")
     .eq("id", deliveryId)
     .maybeSingle();
   if (!delivery) throw new Error("delivery_not_found");
   if (delivery.channel !== "email") throw new Error("channel_not_retryable");
+  // Never re-send something that already left successfully.
+  if (delivery.status === "delivered" || delivery.status === "provider_accepted") {
+    return {
+      notificationId: delivery.notification_id as string,
+      status: delivery.status as "delivered" | "provider_accepted",
+      errorCode: "already_sent",
+      errorMessage: "This delivery already succeeded, so nothing was re-sent.",
+    };
+  }
+
 
   const { data: n } = await admin
     .from("notifications")
