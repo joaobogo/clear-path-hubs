@@ -4487,6 +4487,135 @@ export type Database = {
           },
         ]
       }
+      hire_handoff_steps: {
+        Row: {
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string
+          hire_id: string
+          id: string
+          label: string
+          organization_id: string
+          owner_label: string | null
+          owner_user_id: string | null
+          plan_source: string | null
+          position_id: string
+          sequence: number
+          step_key: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          hire_id: string
+          id?: string
+          label: string
+          organization_id: string
+          owner_label?: string | null
+          owner_user_id?: string | null
+          plan_source?: string | null
+          position_id: string
+          sequence?: number
+          step_key: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          hire_id?: string
+          id?: string
+          label?: string
+          organization_id?: string
+          owner_label?: string | null
+          owner_user_id?: string | null
+          plan_source?: string | null
+          position_id?: string
+          sequence?: number
+          step_key?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hire_handoff_steps_hire_id_fkey"
+            columns: ["hire_id"]
+            isOneToOne: false
+            referencedRelation: "hire_records"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_handoff_steps_hire_id_fkey"
+            columns: ["hire_id"]
+            isOneToOne: false
+            referencedRelation: "v_time_to_hire"
+            referencedColumns: ["hire_record_id"]
+          },
+          {
+            foreignKeyName: "hire_handoff_steps_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_handoff_steps_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_handoff_steps_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "hire_handoff_steps_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "hire_handoff_steps_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_handoff_steps_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "hire_handoff_steps_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_handoff_steps_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hire_handoff_steps_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "v_position_time_to_submission"
+            referencedColumns: ["position_id"]
+          },
+        ]
+      }
       hire_records: {
         Row: {
           accepted_at: string | null
