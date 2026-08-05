@@ -588,6 +588,57 @@ function ExpressIntakePage() {
   }, [stepIndex]);
 
 
+  /**
+   * Asks for requirement suggestions from the pasted job description once the
+   * client reaches step 2. Failure is non-fatal: the list still works by hand.
+   */
+  const fetchSuggestions = React.useCallback(
+    async (jd: string, roleTitle: string) => {
+      setSuggestions({ kind: "loading" });
+      try {
+        const res = await fetch("/api/public/jd-requirements", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ roleTitle, jobDescriptionText: jd }),
+        });
+        const json = (await res.json()) as {
+          ok?: boolean;
+          suggestions?: RequirementItem[];
+        };
+        if (json.ok && Array.isArray(json.suggestions) && json.suggestions.length > 0) {
+          setSuggestions({ kind: "ready", items: json.suggestions });
+        } else {
+          setSuggestions({ kind: "failed" });
+        }
+      } catch {
+        setSuggestions({ kind: "failed" });
+      }
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (stepIndex !== 1) return;
+    const jd = state.jobDescriptionText.trim();
+    // Only the pasted text can be read here; an uploaded file is parsed after
+    // submit, so the list simply starts blank in that case.
+    if (jd.length < MIN_JD_TEXT) return;
+    const signature = `${state.roleTitle.trim()}::${jd.length}`;
+    if (suggestedForRef.current === signature) return;
+    suggestedForRef.current = signature;
+    void fetchSuggestions(jd, state.roleTitle);
+  }, [stepIndex, state.jobDescriptionText, state.roleTitle, fetchSuggestions]);
+
+  const setRequirements = (next: RequirementItem[]) => {
+    if (!startedRef.current) {
+      startedRef.current = true;
+      trackEvent("express_intake_started", { flow: "express_onboarding" });
+    }
+    setState((s) => ({ ...s, requirements: next }));
+    setErrors((e) => ({ ...e, requirements: "" }));
+    setRowErrors({});
+  };
+
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     if (!startedRef.current) {
       startedRef.current = true;
