@@ -29,6 +29,7 @@ import {
 import { CV_MESSAGES } from "@/lib/cv-validation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { COVER_NOTE_MAX } from "@/lib/screening-limits";
 import { SCREENING_ANSWER_MAX } from "@/lib/screening-limits";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -1194,16 +1195,41 @@ function ApplyPage() {
                   </p>
                 </div>
                 <div>
-                  <Label htmlFor="cover_letter">Cover letter</Label>
+                  <Label htmlFor="cover_letter">
+                    Cover note{" "}
+                    <span className="font-normal text-muted-foreground">(optional)</span>
+                  </Label>
+                  <p id="cover_letter-help" className="text-xs text-muted-foreground">
+                    In two or three sentences, what makes this role a fit for you? Skip it
+                    if you'd rather — it never blocks your application.
+                  </p>
                   <Textarea
                     id="cover_letter"
                     rows={4}
                     data-field="cover_letter"
-                    placeholder="A short note on why this role fits you."
+                    aria-describedby="cover_letter-help cover_letter-count"
+                    maxLength={COVER_NOTE_MAX}
+                    placeholder="In two or three sentences, what makes this role a fit for you?"
+                    className="mt-1 max-h-[40vh] min-h-[6.5rem] resize-none overflow-y-auto"
                     value={form.cover_letter}
-                    onChange={(e) => setForm({ ...form, cover_letter: e.target.value })}
+                    onChange={(e) => {
+                      const el = e.currentTarget;
+                      el.style.height = "auto";
+                      el.style.height = `${Math.min(el.scrollHeight, window.innerHeight * 0.4)}px`;
+                      setForm({ ...form, cover_letter: e.target.value });
+                    }}
                   />
+                  <p
+                    id="cover_letter-count"
+                    aria-live="polite"
+                    className="mt-1 text-xs text-muted-foreground"
+                  >
+                    {form.cover_letter.length === 0
+                      ? `Up to ${COVER_NOTE_MAX.toLocaleString()} characters. A few sentences is plenty.`
+                      : `${form.cover_letter.length.toLocaleString()} of ${COVER_NOTE_MAX.toLocaleString()} characters`}
+                  </p>
                 </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="linkedin_url">LinkedIn</Label>
@@ -1410,6 +1436,16 @@ function ApplyPage() {
                   }
                   onEdit={() => setStep(3)}
                 />
+                <ReviewRow
+                  label="Cover note"
+                  value={
+                    form.cover_letter.trim()
+                      ? form.cover_letter.trim()
+                      : "Left blank — that's fine, it's optional"
+                  }
+                  onEdit={() => setStep(2)}
+                />
+
               </div>
 
               <div className="space-y-2 rounded-lg border bg-muted/30 p-4 text-sm">
