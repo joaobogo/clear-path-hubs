@@ -88,7 +88,9 @@ export function ReviewTriageList({
     mutationFn: () => releaseStaleFn({}),
     onSuccess: (res) => {
       toast.success(
-        res.released === 0 ? "No stale claims to release" : `${res.released} stale claim(s) released`,
+        res.released === 0
+          ? "No stale claims to release"
+          : `${res.released} stale claim(s) released`,
       );
       invalidate();
     },
@@ -161,7 +163,13 @@ export function ReviewTriageList({
             rows={blocking}
             onClaim={(id) => claim.mutate(id)}
             onRelease={(id) => release.mutate(id)}
-            busyId={claim.isPending ? (claim.variables ?? null) : release.isPending ? (release.variables ?? null) : null}
+            busyId={
+              claim.isPending
+                ? (claim.variables ?? null)
+                : release.isPending
+                  ? (release.variables ?? null)
+                  : null
+            }
             queue={queue}
             q={q}
             sort={sort}
@@ -174,7 +182,13 @@ export function ReviewTriageList({
             rows={standard}
             onClaim={(id) => claim.mutate(id)}
             onRelease={(id) => release.mutate(id)}
-            busyId={claim.isPending ? (claim.variables ?? null) : release.isPending ? (release.variables ?? null) : null}
+            busyId={
+              claim.isPending
+                ? (claim.variables ?? null)
+                : release.isPending
+                  ? (release.variables ?? null)
+                  : null
+            }
             queue={queue}
             q={q}
             sort={sort}
@@ -240,8 +254,7 @@ function Group({
     <section className="space-y-2" aria-label={title}>
       <header className="flex flex-wrap items-baseline gap-2">
         <h2 className="text-sm font-semibold">
-          {title}{" "}
-          <span className="font-normal text-muted-foreground">({rows.length})</span>
+          {title} <span className="font-normal text-muted-foreground">({rows.length})</span>
         </h2>
         <p className="text-xs text-muted-foreground">{hint}</p>
       </header>

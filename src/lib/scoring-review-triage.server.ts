@@ -65,7 +65,7 @@ export type TriageQueue = {
 };
 
 function bandOf(row: Record<string, unknown>): string | null {
-  const band = row['fit_band'] ?? row['fit_label'];
+  const band = row["fit_band"] ?? row["fit_label"];
   return typeof band === "string" && band.length > 0 ? band : null;
 }
 
@@ -111,7 +111,10 @@ export async function loadReviewTriage(
   let query = a.from("v_scoring_review_queue").select("*", { count: "exact" });
   if (args.queueColumn) query = query.eq(args.queueColumn, true);
   if (args.q) {
-    const needle = args.q.trim().toLowerCase().replace(/[%,()]/g, " ");
+    const needle = args.q
+      .trim()
+      .toLowerCase()
+      .replace(/[%,()]/g, " ");
     if (needle) query = query.ilike("search_text", `%${needle}%`);
   }
   if (hiddenIds.size > 0) {
@@ -128,16 +131,13 @@ export async function loadReviewTriage(
   const positionIds = Array.from(
     new Set(
       view
-        .map((r) => r['position_id'])
+        .map((r) => r["position_id"])
         .filter((v): v is string => typeof v === "string" && v.length > 0),
     ),
   );
 
   // Commitments + delivered counts per position → open / blocking.
-  const commitmentByPosition = new Map<
-    string,
-    { due_at: string | null; open: boolean }
-  >();
+  const commitmentByPosition = new Map<string, { due_at: string | null; open: boolean }>();
   if (positionIds.length > 0) {
     const [commitRes, deliveredRes] = await Promise.all([
       a
@@ -157,18 +157,18 @@ export async function loadReviewTriage(
     }
     const deliveredCount = new Map<string, number>();
     for (const d of (deliveredRes.data ?? []) as Array<Record<string, unknown>>) {
-      const pid = String(d['position_id']);
+      const pid = String(d["position_id"]);
       deliveredCount.set(pid, (deliveredCount.get(pid) ?? 0) + 1);
     }
     for (const c of (commitRes.data ?? []) as Array<Record<string, unknown>>) {
-      const pid = String(c['position_id']);
-      const baseline = c['baseline_at'];
-      const days = c['first_shortlist_days'];
+      const pid = String(c["position_id"]);
+      const baseline = c["baseline_at"];
+      const days = c["first_shortlist_days"];
       const dueAt =
         typeof baseline === "string" && typeof days === "number"
           ? new Date(new Date(baseline).getTime() + days * DAY).toISOString()
           : null;
-      const promised = typeof c['shortlist_size'] === "number" ? c['shortlist_size'] : 1;
+      const promised = typeof c["shortlist_size"] === "number" ? c["shortlist_size"] : 1;
       const open = (deliveredCount.get(pid) ?? 0) < Math.max(1, promised);
       const prev = commitmentByPosition.get(pid);
       // Keep the tightest due date if a position carries several commitments.
@@ -182,7 +182,7 @@ export async function loadReviewTriage(
   const claimUserIds = Array.from(
     new Set(
       view
-        .map((r) => activeClaims.get(String(r['match_id']))?.reviewer_user_id)
+        .map((r) => activeClaims.get(String(r["match_id"]))?.reviewer_user_id)
         .filter((v): v is string => typeof v === "string"),
     ),
   );
@@ -194,39 +194,36 @@ export async function loadReviewTriage(
       .in("auth_user_id", claimUserIds);
     if (profErr) throw new Error(profErr.message);
     for (const p of (profiles ?? []) as Array<Record<string, unknown>>) {
-      nameById.set(
-        String(p['auth_user_id']),
-        String(p['full_name'] ?? p['email'] ?? "Reviewer"),
-      );
+      nameById.set(String(p["auth_user_id"]), String(p["full_name"] ?? p["email"] ?? "Reviewer"));
     }
   }
 
   const rows: TriageRow[] = view.map((r) => {
-    const matchId = String(r['match_id']);
-    const positionId = typeof r['position_id'] === "string" ? r['position_id'] : null;
+    const matchId = String(r["match_id"]);
+    const positionId = typeof r["position_id"] === "string" ? r["position_id"] : null;
     const commitment = positionId ? (commitmentByPosition.get(positionId) ?? null) : null;
     const dueMs = commitment?.due_at ? new Date(commitment.due_at).getTime() : null;
     const blocking = Boolean(
       commitment?.open && dueMs !== null && dueMs - nowMs <= BLOCKING_WINDOW_MS,
     );
-    const items = Number(r['evidence_item_count'] ?? 0);
-    const unresolved = Number(r['unresolved_item_count'] ?? 0);
-    const scoredAt = typeof r['scored_at'] === "string" ? r['scored_at'] : null;
+    const items = Number(r["evidence_item_count"] ?? 0);
+    const unresolved = Number(r["unresolved_item_count"] ?? 0);
+    const scoredAt = typeof r["scored_at"] === "string" ? r["scored_at"] : null;
     const claim = activeClaims.get(matchId) ?? null;
 
     return {
       match_id: matchId,
-      organization_id: typeof r['organization_id'] === "string" ? r['organization_id'] : null,
+      organization_id: typeof r["organization_id"] === "string" ? r["organization_id"] : null,
       position_id: positionId,
-      candidate_name: String(r['full_name'] ?? "Unnamed candidate"),
-      position_title: String(r['position_title'] ?? "—"),
-      client_name: String(r['org_name'] ?? "—"),
+      candidate_name: String(r["full_name"] ?? "Unnamed candidate"),
+      position_title: String(r["position_title"] ?? "—"),
+      client_name: String(r["org_name"] ?? "—"),
       score_band: bandOf(r),
       final_score:
-        r['final_score'] != null
-          ? Number(r['final_score'])
-          : r['score'] != null
-            ? Number(r['score'])
+        r["final_score"] != null
+          ? Number(r["final_score"])
+          : r["score"] != null
+            ? Number(r["score"])
             : null,
       evidence_items: items,
       evidence_resolved: Math.max(0, items - unresolved),
@@ -237,8 +234,7 @@ export async function loadReviewTriage(
           : Math.max(0, Math.floor((nowMs - new Date(scoredAt).getTime()) / HOUR)),
       blocking,
       commitment_due_at: commitment?.due_at ?? null,
-      commitment_days_left:
-        dueMs === null ? null : Math.ceil((dueMs - nowMs) / DAY),
+      commitment_days_left: dueMs === null ? null : Math.ceil((dueMs - nowMs) / DAY),
       claim: claim
         ? {
             reviewer_user_id: claim.reviewer_user_id,
@@ -290,16 +286,14 @@ export async function claimReview(
     }
   }
 
-  const { error: upErr } = await a
-    .from("scoring_review_claims")
-    .upsert(
-      {
-        candidate_match_id: args.matchId,
-        reviewer_user_id: args.reviewerUserId,
-        claimed_at: new Date().toISOString(),
-      },
-      { onConflict: "candidate_match_id" },
-    );
+  const { error: upErr } = await a.from("scoring_review_claims").upsert(
+    {
+      candidate_match_id: args.matchId,
+      reviewer_user_id: args.reviewerUserId,
+      claimed_at: new Date().toISOString(),
+    },
+    { onConflict: "candidate_match_id" },
+  );
   if (upErr) throw new Error(upErr.message);
   return { ok: true };
 }
@@ -319,9 +313,7 @@ export async function releaseReview(
 }
 
 /** Bulk-releases every claim older than the stale window. */
-export async function releaseStaleClaims(
-  admin: Admin,
-): Promise<{ released: number }> {
+export async function releaseStaleClaims(admin: Admin): Promise<{ released: number }> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const a = admin as unknown as { from: (t: string) => any };
   const cutoff = new Date(Date.now() - CLAIM_STALE_MS).toISOString();

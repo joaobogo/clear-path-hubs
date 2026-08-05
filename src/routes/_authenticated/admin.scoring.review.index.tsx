@@ -35,7 +35,8 @@ export const Route = createFileRoute("/_authenticated/admin/scoring/review/")({
       { name: "robots", content: "noindex" },
       {
         name: "description",
-        content: "Human quality control over parsing, evidence, eligibility and approval decisions.",
+        content:
+          "Human quality control over parsing, evidence, eligibility and approval decisions.",
       },
     ],
   }),
@@ -118,7 +119,11 @@ function ReviewCenter() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     navigate({
-                      search: (p: SearchState) => ({ ...p, q: (e.target as HTMLInputElement).value, page: 1 }),
+                      search: (p: SearchState) => ({
+                        ...p,
+                        q: (e.target as HTMLInputElement).value,
+                        page: 1,
+                      }),
                     });
                   }
                 }}
@@ -159,7 +164,6 @@ function ReviewCenter() {
               navigate({ search: (p: SearchState) => ({ ...p, page: next }) })
             }
           />
-
         </section>
       </div>
     </div>
