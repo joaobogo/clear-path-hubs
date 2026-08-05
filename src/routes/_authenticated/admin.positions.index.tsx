@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/select";
 import { AlertCircle, ArrowUpRight, Building2, MapPin } from "lucide-react";
 import { ErrorState } from "@/components/ds";
+import { PositionsAttentionQueue } from "@/components/admin/positions-attention-queue";
+
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
