@@ -319,6 +319,10 @@ function PositionsPage() {
  </div>
 
   <div className="mb-4 flex flex-wrap items-center gap-2">
+   <Button asChild size="sm">
+    {/* A new role starts from this company's profile — no re-typing. */}
+    <Link to="/intake" search={{ carry: "org" }}>New role</Link>
+   </Button>
    <SavedViewsBar
     surface="client_positions"
     organizationId={orgId ?? undefined}

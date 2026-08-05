@@ -264,6 +264,15 @@ function ConfirmationPage() {
                     <Link to="/client">Open your workspace</Link>
                   </Button>
                 )}
+                {intake_id && (
+                  <Button asChild variant="outline">
+                    {/* Hiring more than one role: start from the company profile
+                        already on file instead of an empty form. */}
+                    <Link to="/intake" search={{ carry: intake_id }}>
+                      Add another role
+                    </Link>
+                  </Button>
+                )}
                 <Button asChild variant="outline">
                   <a href="/">Back to home</a>
                 </Button>
