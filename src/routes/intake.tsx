@@ -44,9 +44,7 @@ import {
   JD_ACCEPT_ATTR,
   JD_ACCEPT_LABEL,
 
-  EXPRESS_DRAFT_KEY,
   EXPRESS_IDEMPOTENCY_KEY,
-  EXPRESS_STEP_KEY,
   INTAKE_STEPS,
   INTAKE_TOTAL_MINUTES,
   STEP_FIELDS,
@@ -84,7 +82,21 @@ import { FieldExamples } from "@/components/intake/field-examples";
 import { RequirementsList, type SuggestionState } from "@/components/intake/requirements-list";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
-import { saveIntakeDraft, loadIntakeDraft, clearIntakeDraft } from "@/lib/intake-draft.functions";
+import { clearIntakeDraft } from "@/lib/intake-draft.functions";
+import {
+  emailIntakeResumeLink,
+  fetchIntakeDraft,
+  markIntakeSubmitted,
+  useIntakeDraftSaver,
+} from "@/lib/intake-draft-client";
+import {
+  INTAKE_DRAFT_EXPIRED_MESSAGE,
+  INTAKE_DRAFT_RESTORING_LABEL,
+  INTAKE_DRAFT_SAVE_ERROR_MESSAGE,
+  INTAKE_DRAFT_SUBMITTED_MESSAGE,
+  savedAtLabel,
+  stripNeverPersisted,
+} from "@/lib/intake-draft-shared";
 import { submitToCrm } from "@/lib/crm/submit-form";
 import { trackEvent } from "@/lib/tracking/pixels";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
@@ -277,8 +289,11 @@ function ExpressIntakePage() {
   const pastedRef = useRef(false);
   const [authed, setAuthed] = useState(false);
   const [accountEmail, setAccountEmail] = useState<string | null>(null);
-  const [savedAt, setSavedAt] = useState<string | null>(null);
-  const [savingDraft, setSavingDraft] = useState(false);
+  const [draftPhase, setDraftPhase] = useState<"restoring" | "ready">("restoring");
+  const [draftNotice, setDraftNotice] = useState<string | null>(null);
+  const [resumeEmailState, setResumeEmailState] = useState<
+    { kind: "idle" } | { kind: "sending" } | { kind: "sent"; email: string } | { kind: "error" }
+  >({ kind: "idle" });
   const [emailStatus, setEmailStatus] = useState<
     { kind: "idle" } | { kind: "checking" } | { kind: "exists"; message: string } | { kind: "free" }
   >({ kind: "idle" });
@@ -549,22 +564,32 @@ function ExpressIntakePage() {
   };
 
 
-  // Restore a draft so a refresh never costs the client their typing. Passwords
-  // are deliberately never persisted.
+
+  // A draft belongs to the person, not the tab: it is loaded from the server on
+  // every visit — account first, private draft token otherwise — so a closed
+  // laptop, a new tab, or another device all resume the same brief. Passwords
+  // and consent ticks are never persisted.
+  const draftSaver = useIntakeDraftSaver({
+    authed,
+    getPayload: () => stripNeverPersisted(state as unknown as Record<string, unknown>),
+    getLastStep: () => stepIndex,
+  });
+  const { savedAt, setSavedAt, saving: savingDraft, saveError, submittedElsewhere, queueSave, saveNow } =
+    draftSaver;
+
+  const applyDraftPayload = (payload: Record<string, unknown>) => {
+    setState((s) => ({
+      ...s,
+      ...withRequirements(payload as Partial<FormState>),
+      password: "",
+      confirmPassword: "",
+      consent: false,
+      pilotAcknowledgement: false,
+    }));
+  };
+
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(EXPRESS_DRAFT_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as Partial<FormState>;
-        setState((s) => ({
-          ...s,
-          ...withRequirements(parsed),
-          password: "",
-          confirmPassword: "",
-          consent: false,
-          pilotAcknowledgement: false,
-        }));
-      }
       const existingIdem = localStorage.getItem(EXPRESS_IDEMPOTENCY_KEY);
       idem.current = existingIdem || newIdempotencyKey();
       localStorage.setItem(EXPRESS_IDEMPOTENCY_KEY, idem.current);
@@ -573,80 +598,106 @@ function ExpressIntakePage() {
     }
     trackEvent("express_intake_viewed", { flow: "express_onboarding" });
 
-    // Already signed in? Reuse the account — never ask for another password.
+    let cancelled = false;
     void (async () => {
+      let signedIn = false;
       try {
         const { data: sess } = await supabase.auth.getSession();
-        if (!sess?.session) return;
-        const { data } = await supabase.auth.getUser();
-        const user = data?.user;
-        if (!user?.email) return;
-        setAuthed(true);
-        setAccountEmail(user.email);
-        // Their draft belongs to the account, not this tab.
-        try {
-          const remote = await loadIntakeDraft();
-          if (remote?.payload) {
-            setState((s3) => ({
-              ...s3,
-              ...withRequirements(remote.payload as Partial<FormState>),
-              password: "",
-              confirmPassword: "",
-            }));
-            if (remote.updatedAt) setSavedAt(remote.updatedAt);
+        if (sess?.session) {
+          const { data } = await supabase.auth.getUser();
+          const user = data?.user;
+          if (user?.email) {
+            signedIn = true;
+            if (!cancelled) {
+              setAuthed(true);
+              setAccountEmail(user.email);
+              const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
+              const full = typeof meta.full_name === "string" ? meta.full_name : "";
+              const [first, ...rest] = full.split(" ");
+              setState((s2) => ({
+                ...s2,
+                workEmail: s2.workEmail || user.email!,
+                firstName: s2.firstName || first || "",
+                lastName: s2.lastName || rest.join(" "),
+                password: "",
+                confirmPassword: "",
+              }));
+            }
           }
-        } catch {
-          /* no server draft yet */
         }
-        const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
-        const full = typeof meta.full_name === "string" ? meta.full_name : "";
-        const [first, ...rest] = full.split(" ");
-        setState((s2) => ({
-          ...s2,
-          workEmail: s2.workEmail || user.email!,
-          firstName: s2.firstName || first || "",
-          lastName: s2.lastName || rest.join(" "),
-          password: "",
-          confirmPassword: "",
-        }));
       } catch {
         /* anonymous visitor — normal path */
       }
+
+      try {
+        const remote = await fetchIntakeDraft(signedIn);
+        if (cancelled) return;
+        if (remote.status === "restored" && remote.payload) {
+          applyDraftPayload(remote.payload);
+          if (remote.savedAt) setSavedAt(remote.savedAt);
+          if (
+            Number.isInteger(remote.lastStep) &&
+            remote.lastStep > 0 &&
+            remote.lastStep < INTAKE_STEPS.length
+          ) {
+            setStepIndex(remote.lastStep);
+          }
+          setDraftNotice(null);
+        } else if (remote.status === "expired") {
+          setDraftNotice(INTAKE_DRAFT_EXPIRED_MESSAGE);
+        } else if (remote.status === "submitted") {
+          setDraftNotice(INTAKE_DRAFT_SUBMITTED_MESSAGE);
+        }
+      } catch {
+        /* no draft reachable — the form still works, saves will retry */
+      } finally {
+        if (!cancelled) {
+          setDraftPhase("ready");
+          hydratedRef.current = true;
+        }
+      }
     })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  // Autosave: locally always, and against the account once it exists.
+  // Signing in mid-form moves the draft onto the account.
   useEffect(() => {
-    const {
-      password: _pw,
-      confirmPassword: _cpw,
-      consent: _c,
-      pilotAcknowledgement: _p,
-      companyFax: _f,
-      ...safe
-    } = state;
+    if (!hydratedRef.current || !authed) return;
+    void saveNow();
+  }, [authed, saveNow]);
+
+  // Moving between steps is a deliberate checkpoint — save immediately.
+  useEffect(() => {
+    if (!hydratedRef.current) return;
+    void saveNow();
+  }, [stepIndex, saveNow]);
+
+  useEffect(() => {
+    if (submittedElsewhere) setDraftNotice(INTAKE_DRAFT_SUBMITTED_MESSAGE);
+  }, [submittedElsewhere]);
+
+  const sendResumeLink = async () => {
+    const email = (accountEmail ?? state.workEmail).trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      setResumeEmailState({ kind: "error" });
+      return;
+    }
+    setResumeEmailState({ kind: "sending" });
     try {
-      localStorage.setItem(EXPRESS_DRAFT_KEY, JSON.stringify(safe));
+      await saveNow();
+      await emailIntakeResumeLink({
+        email,
+        roleTitle: state.roleTitle || undefined,
+        stepLabel: `Step ${stepIndex + 1} of ${INTAKE_STEPS.length}: ${INTAKE_STEPS[stepIndex]!.title}`,
+      });
+      setResumeEmailState({ kind: "sent", email });
     } catch {
-      /* storage unavailable — the form still works */
+      setResumeEmailState({ kind: "error" });
     }
-    if (!hydratedRef.current) {
-      hydratedRef.current = true;
-      return;
-    }
-    if (!authed) {
-      setSavedAt(new Date().toISOString());
-      return;
-    }
-    const t = setTimeout(() => {
-      setSavingDraft(true);
-      void saveIntakeDraft({ data: { payload: safe } })
-        .then((r) => setSavedAt(r?.savedAt ?? new Date().toISOString()))
-        .catch(() => undefined)
-        .finally(() => setSavingDraft(false));
-    }, 1200);
-    return () => clearTimeout(t);
-  }, [state, authed]);
+  };
+
 
   // Recognise a returning client before they type a password.
   const checkEmail = async () => {
@@ -788,26 +839,9 @@ function ExpressIntakePage() {
     return () => clearTimeout(t);
   }, []);
 
-  // Remember which step the client was on, so a refresh costs them nothing.
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(EXPRESS_STEP_KEY);
-      const saved = raw === null ? NaN : Number(raw);
-      if (Number.isInteger(saved) && saved >= 0 && saved < INTAKE_STEPS.length) {
-        setStepIndex(saved);
-      }
-    } catch {
-      /* storage unavailable — start at step 1 */
-    }
-  }, []);
+  // Which step the client was on is part of the server-side draft, so it
+  // survives a closed laptop rather than living in this browser only.
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(EXPRESS_STEP_KEY, String(stepIndex));
-    } catch {
-      /* ignore */
-    }
-  }, [stepIndex]);
 
 
   /**
@@ -1280,14 +1314,16 @@ function ExpressIntakePage() {
         }).catch(() => undefined);
       }
 
+      // The brief is in: mark the draft submitted so a stale tab can never
+      // resurrect it, and clear the account copy.
+      void markIntakeSubmitted(signedIn).catch(() => undefined);
       if (signedIn) void clearIntakeDraft().catch(() => undefined);
       try {
-        localStorage.removeItem(EXPRESS_DRAFT_KEY);
-        localStorage.removeItem(EXPRESS_STEP_KEY);
         localStorage.removeItem(EXPRESS_IDEMPOTENCY_KEY);
       } catch {
         /* ignore */
       }
+
 
       if (signedIn && body.positionId) {
         // Role stays a draft either way — payment (or a conversation) comes next.
@@ -1325,7 +1361,14 @@ function ExpressIntakePage() {
       title="Launch a role in minutes."
       description="Create your workspace and upload the job description. TaaSFlow will build the complete role blueprint, screening criteria, and sourcing plan for you."
     >
-      <div className="space-y-6" id="form-main">
+      <div
+        className="space-y-6"
+        id="form-main"
+        // Leaving a field is the natural moment to checkpoint the answer.
+        onBlur={() => {
+          if (hydratedRef.current) queueSave();
+        }}
+      >
         <div className="rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/4 p-4">
           <p className="text-sm font-semibold">
             No payment today. Nothing is charged to start.
@@ -1336,8 +1379,38 @@ function ExpressIntakePage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-[color:var(--brand-navy)]/75" aria-live="polite">
-          {savingDraft ? (
+        {draftNotice && (
+          <div
+            className="rounded-xl border border-[color:var(--brand-navy)]/15 bg-white p-4 text-sm text-[color:var(--brand-navy)]/80"
+            data-testid="draft-notice"
+          >
+            {draftNotice}
+          </div>
+        )}
+
+        <div
+          className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-[color:var(--brand-navy)]/75"
+          aria-live="polite"
+          data-testid="draft-status"
+        >
+          {draftPhase === "restoring" ? (
+            <>
+              <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+              {INTAKE_DRAFT_RESTORING_LABEL}…
+            </>
+          ) : saveError ? (
+            <>
+              <span className="text-[color:var(--brand-navy)]">{INTAKE_DRAFT_SAVE_ERROR_MESSAGE}</span>
+              <button
+                type="button"
+                className="underline"
+                onClick={() => void saveNow()}
+                disabled={savingDraft}
+              >
+                Try saving now
+              </button>
+            </>
+          ) : savingDraft ? (
             <>
               <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
               Saving…
@@ -1345,13 +1418,35 @@ function ExpressIntakePage() {
           ) : savedAt ? (
             <>
               <Check className="h-3.5 w-3.5 text-[color:var(--brand-teal)]" aria-hidden />
-              Saved {new Date(savedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-              {authed ? " to your account" : " on this device"}
+              {savedAtLabel(savedAt)}
+              {authed ? " to your account" : " — you can close this and come back"}
             </>
           ) : (
-            "We save your answers as you type."
+            "We save your answers as you go, so you can leave and come back."
+          )}
+          {draftPhase === "ready" && !authed && (
+            <>
+              <span aria-hidden className="text-[color:var(--brand-navy)]/30">·</span>
+              {resumeEmailState.kind === "sent" ? (
+                <span>Link sent to {resumeEmailState.email}.</span>
+              ) : (
+                <button
+                  type="button"
+                  className="underline"
+                  onClick={() => void sendResumeLink()}
+                  disabled={resumeEmailState.kind === "sending"}
+                  data-testid="email-resume-link"
+                >
+                  {resumeEmailState.kind === "sending" ? "Sending…" : "Email me a link back to this"}
+                </button>
+              )}
+              {resumeEmailState.kind === "error" && (
+                <span>We need a valid work email first — we could not send that link.</span>
+              )}
+            </>
           )}
         </div>
+
 
         {/* Step counter and an honest time estimate — not a fake "2 minutes". */}
         <nav aria-label="Intake progress" className="space-y-3">

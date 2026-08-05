@@ -85,6 +85,8 @@ import { Route as ApplyReceivedApplicationIdRouteImport } from './routes/apply.r
 import { Route as ApiPublicSubmitToAttioRouteImport } from './routes/api/public/submit-to-attio'
 import { Route as ApiPublicQaSeedRouteImport } from './routes/api/public/qa-seed'
 import { Route as ApiPublicJdRequirementsRouteImport } from './routes/api/public/jd-requirements'
+import { Route as ApiPublicIntakeResumeRouteImport } from './routes/api/public/intake-resume'
+import { Route as ApiPublicIntakeDraftRouteImport } from './routes/api/public/intake-draft'
 import { Route as ApiPublicIntakeAccountRouteImport } from './routes/api/public/intake-account'
 import { Route as ApiPublicIntakeRouteImport } from './routes/api/public/intake'
 import { Route as ApiPublicExpressIntakeRouteImport } from './routes/api/public/express-intake'
@@ -570,6 +572,16 @@ const ApiPublicQaSeedRoute = ApiPublicQaSeedRouteImport.update({
 const ApiPublicJdRequirementsRoute = ApiPublicJdRequirementsRouteImport.update({
   id: '/api/public/jd-requirements',
   path: '/api/public/jd-requirements',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicIntakeResumeRoute = ApiPublicIntakeResumeRouteImport.update({
+  id: '/api/public/intake-resume',
+  path: '/api/public/intake-resume',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicIntakeDraftRoute = ApiPublicIntakeDraftRouteImport.update({
+  id: '/api/public/intake-draft',
+  path: '/api/public/intake-draft',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicIntakeAccountRoute = ApiPublicIntakeAccountRouteImport.update({
@@ -1300,6 +1312,8 @@ export interface FileRoutesByFullPath {
   '/api/public/express-intake': typeof ApiPublicExpressIntakeRoute
   '/api/public/intake': typeof ApiPublicIntakeRoute
   '/api/public/intake-account': typeof ApiPublicIntakeAccountRoute
+  '/api/public/intake-draft': typeof ApiPublicIntakeDraftRoute
+  '/api/public/intake-resume': typeof ApiPublicIntakeResumeRoute
   '/api/public/jd-requirements': typeof ApiPublicJdRequirementsRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/api/public/submit-to-attio': typeof ApiPublicSubmitToAttioRoute
@@ -1470,6 +1484,8 @@ export interface FileRoutesByTo {
   '/api/public/express-intake': typeof ApiPublicExpressIntakeRoute
   '/api/public/intake': typeof ApiPublicIntakeRoute
   '/api/public/intake-account': typeof ApiPublicIntakeAccountRoute
+  '/api/public/intake-draft': typeof ApiPublicIntakeDraftRoute
+  '/api/public/intake-resume': typeof ApiPublicIntakeResumeRoute
   '/api/public/jd-requirements': typeof ApiPublicJdRequirementsRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/api/public/submit-to-attio': typeof ApiPublicSubmitToAttioRoute
@@ -1652,6 +1668,8 @@ export interface FileRoutesById {
   '/api/public/express-intake': typeof ApiPublicExpressIntakeRoute
   '/api/public/intake': typeof ApiPublicIntakeRoute
   '/api/public/intake-account': typeof ApiPublicIntakeAccountRoute
+  '/api/public/intake-draft': typeof ApiPublicIntakeDraftRoute
+  '/api/public/intake-resume': typeof ApiPublicIntakeResumeRoute
   '/api/public/jd-requirements': typeof ApiPublicJdRequirementsRoute
   '/api/public/qa-seed': typeof ApiPublicQaSeedRoute
   '/api/public/submit-to-attio': typeof ApiPublicSubmitToAttioRoute
@@ -1834,6 +1852,8 @@ export interface FileRouteTypes {
     | '/api/public/express-intake'
     | '/api/public/intake'
     | '/api/public/intake-account'
+    | '/api/public/intake-draft'
+    | '/api/public/intake-resume'
     | '/api/public/jd-requirements'
     | '/api/public/qa-seed'
     | '/api/public/submit-to-attio'
@@ -2004,6 +2024,8 @@ export interface FileRouteTypes {
     | '/api/public/express-intake'
     | '/api/public/intake'
     | '/api/public/intake-account'
+    | '/api/public/intake-draft'
+    | '/api/public/intake-resume'
     | '/api/public/jd-requirements'
     | '/api/public/qa-seed'
     | '/api/public/submit-to-attio'
@@ -2185,6 +2207,8 @@ export interface FileRouteTypes {
     | '/api/public/express-intake'
     | '/api/public/intake'
     | '/api/public/intake-account'
+    | '/api/public/intake-draft'
+    | '/api/public/intake-resume'
     | '/api/public/jd-requirements'
     | '/api/public/qa-seed'
     | '/api/public/submit-to-attio'
@@ -2302,6 +2326,8 @@ export interface RootRouteChildren {
   ApiPublicExpressIntakeRoute: typeof ApiPublicExpressIntakeRoute
   ApiPublicIntakeRoute: typeof ApiPublicIntakeRoute
   ApiPublicIntakeAccountRoute: typeof ApiPublicIntakeAccountRoute
+  ApiPublicIntakeDraftRoute: typeof ApiPublicIntakeDraftRoute
+  ApiPublicIntakeResumeRoute: typeof ApiPublicIntakeResumeRoute
   ApiPublicJdRequirementsRoute: typeof ApiPublicJdRequirementsRoute
   ApiPublicQaSeedRoute: typeof ApiPublicQaSeedRoute
   ApiPublicSubmitToAttioRoute: typeof ApiPublicSubmitToAttioRoute
@@ -2854,6 +2880,20 @@ declare module '@tanstack/react-router' {
       path: '/api/public/jd-requirements'
       fullPath: '/api/public/jd-requirements'
       preLoaderRoute: typeof ApiPublicJdRequirementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/intake-resume': {
+      id: '/api/public/intake-resume'
+      path: '/api/public/intake-resume'
+      fullPath: '/api/public/intake-resume'
+      preLoaderRoute: typeof ApiPublicIntakeResumeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/intake-draft': {
+      id: '/api/public/intake-draft'
+      path: '/api/public/intake-draft'
+      fullPath: '/api/public/intake-draft'
+      preLoaderRoute: typeof ApiPublicIntakeDraftRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/intake-account': {
@@ -3975,6 +4015,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicExpressIntakeRoute: ApiPublicExpressIntakeRoute,
   ApiPublicIntakeRoute: ApiPublicIntakeRoute,
   ApiPublicIntakeAccountRoute: ApiPublicIntakeAccountRoute,
+  ApiPublicIntakeDraftRoute: ApiPublicIntakeDraftRoute,
+  ApiPublicIntakeResumeRoute: ApiPublicIntakeResumeRoute,
   ApiPublicJdRequirementsRoute: ApiPublicJdRequirementsRoute,
   ApiPublicQaSeedRoute: ApiPublicQaSeedRoute,
   ApiPublicSubmitToAttioRoute: ApiPublicSubmitToAttioRoute,
