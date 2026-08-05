@@ -372,6 +372,11 @@ function JobDetail() {
         </div>
       </header>
 
+      {/* Directly under the title, above the description: the block a
+          candidate needs to decide whether to spend the next three minutes. */}
+      <FactsBlock facts={pos.facts} />
+
+
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         {!pos.accepting_applications && (
           <div className="mb-8 rounded-lg border border-amber-500/40 bg-amber-500/5 p-4 text-sm">
