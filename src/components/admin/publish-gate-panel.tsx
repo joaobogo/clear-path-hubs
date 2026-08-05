@@ -37,7 +37,7 @@ function BlockerChip({ blocker, positionId }: { blocker: PublishBlocker; positio
     <Link
       to="/admin/positions/$id/edit"
       params={{ id: positionId }}
-      search={{}}
+      search={{ step: undefined }}
       hash={field}
       className="inline-flex items-center gap-1 rounded bg-warning/15 px-1.5 py-0.5 text-[11px] font-medium text-warning-foreground underline-offset-2 hover:underline"
     >

@@ -1,6 +1,7 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { DecisionBacklogPanel } from "@/components/admin/decision-backlog-panel";
 import { UpdateReadinessPanel } from "@/components/admin/update-readiness-panel";
+import { ClientAccessPanel } from "@/components/admin/client-access-panel";
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -50,6 +51,7 @@ import {
   ExternalLink,
   MessagesSquare,
   ClipboardCheck,
+  KeyRound,
 } from "lucide-react";
 
 const TABS = [
@@ -57,6 +59,7 @@ const TABS = [
   "company",
   "contacts",
   "team",
+  "access",
   "positions",
   "candidates",
   "readiness",
@@ -74,6 +77,7 @@ const TAB_LABELS: Record<TabKey, { label: string; icon: typeof Building2 }> = {
   company: { label: "Company", icon: Building2 },
   contacts: { label: "Contacts", icon: Contact2 },
   team: { label: "Team", icon: Users2 },
+  access: { label: "Access", icon: KeyRound },
   positions: { label: "Positions", icon: Briefcase },
   candidates: { label: "Candidates", icon: UserCheck },
   readiness: { label: "Update readiness", icon: ClipboardCheck },
@@ -192,6 +196,7 @@ function ClientDetail() {
       {tab === "company" && <CompanyTab org={org} />}
       {tab === "contacts" && <ContactsTab org={org} members={members} />}
       {tab === "team" && <TeamTab members={members} org={org} />}
+      {tab === "access" && <ClientAccessPanel organizationId={org.id} />}
       {tab === "positions" && <PositionsTab positions={positions} />}
       {tab === "candidates" && <CandidatesTab id={id} />}
       {tab === "readiness" && <UpdateReadinessPanel organizationId={org.id} />}
