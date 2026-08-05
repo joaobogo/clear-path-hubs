@@ -127,6 +127,9 @@ function Overview() {
 
       <DecisionBacklogPanel includeTest={show_test} showClientColumn />
 
+      <OfferHireRollupPanel />
+
+
       {/* Counts strip — each jumps to its queue below. */}
       <nav aria-label="Queue counts" className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-7">
 
