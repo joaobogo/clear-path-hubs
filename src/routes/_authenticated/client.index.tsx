@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { InfoRequestsPanel } from "@/components/client/info-requests";
+import { WeeklyUpdateCard } from "@/components/client/weekly-update-card";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { getClientContext, getClientOverview } from "@/lib/client.functions";
@@ -256,6 +257,9 @@ function OverviewPage() {
           />
           {/* Missing brief details block sourcing — answerable in place */}
           <InfoRequestsPanel orgId={orgId} onAnswered={() => refetch()} />
+
+          {/* This week — recorded events only, identical to the weekly email */}
+          {orgId && <WeeklyUpdateCard orgId={orgId} />}
           <VisibilityNote />
 
           {/* CONTROL ROOM — what is running, what moved, how hard we work */}
