@@ -468,12 +468,20 @@ function PositionDetailPage() {
   </Link>
   </Button>
 
-   <PositionLifecycleMenu
-     positionId={position.id}
-     status={position.status}
-     title={position.title}
-     onChanged={() => void refetch()}
-   />
+    <PositionLifecycleMenu
+      positionId={position.id}
+      status={position.status}
+      title={position.title}
+      onChanged={() => void refetch()}
+    />
+    {/* A role is closed with a recorded reason, never by message. */}
+    {orgId && !closure.data && !isArchivedStatus(position.status) && (
+     <CloseRoleDialog
+      orgId={orgId}
+      positionId={position.id}
+      positionTitle={position.title}
+     />
+    )}
   </>
  )}
   {orgId && (
