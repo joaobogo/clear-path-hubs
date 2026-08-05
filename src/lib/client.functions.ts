@@ -259,7 +259,9 @@ export const getClientOverview = createServerFn({ method: "GET" })
       .from("positions")
       .select("id, title, status, updated_at, created_at")
       .eq("organization_id", data.orgId)
-      .in("status", ["active", "paused", "approved"])
+      // Active work only: a closed or on-hold role must leave every count and
+      // the decision queue in the same refresh.
+      .in("status", ["active", "approved"])
       .order("updated_at", { ascending: false });
     const activePositionsList = (positions as AnyRow[]) ?? [];
     const activePositions = activePositionsList.length;
