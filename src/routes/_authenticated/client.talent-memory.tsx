@@ -440,7 +440,7 @@ function MemorySheet({
                     <p className="mt-0.5 text-xs text-muted-foreground">
                       From role {m.role_title_snapshot}
                       {m.score_snapshot != null && (
-                        <> · score {Math.round(m.score_snapshot)}/100</>
+                        <> · {toFitPresentation(null, m.score_snapshot).headline}</>
                       )}
                     </p>
                   )}
