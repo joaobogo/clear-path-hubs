@@ -149,7 +149,7 @@ export function InterviewResponseCard({ applicationId, compact = false }: Props)
             candidateResponse: i.candidate_response,
             viewerTz: tz,
           });
-          const confirmed = i.candidate_response === "accepted" && i.scheduled_at;
+          const confirmed = Boolean(i.candidate_response === "accepted" && i.scheduled_at);
           const roles = meetingRolesLine(i.participant_roles);
           const formatLine = formatAndDuration(i.interview_type, i.duration_minutes);
           const deadline =
@@ -172,13 +172,13 @@ export function InterviewResponseCard({ applicationId, compact = false }: Props)
               </div>
 
               <dl className="mt-3 space-y-1 text-xs text-muted-foreground">
-                {formatLine ? (
+                {formatLine && !confirmed ? (
                   <div>
                     <dt className="sr-only">Format</dt>
                     <dd>{formatLine}</dd>
                   </div>
                 ) : null}
-                {roles ? (
+                {roles && !confirmed ? (
                   <div className="flex items-start gap-1.5">
                     <dt className="sr-only">Who you will meet</dt>
                     <dd className="flex items-start gap-1.5">
@@ -186,7 +186,7 @@ export function InterviewResponseCard({ applicationId, compact = false }: Props)
                     </dd>
                   </div>
                 ) : null}
-                {i.location ? (
+                {i.location && !confirmed ? (
                   <div>
                     <dt className="sr-only">Location</dt>
                     <dd className="flex items-start gap-1.5">
