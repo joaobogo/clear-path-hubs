@@ -12,6 +12,7 @@ import {
 } from "@/lib/candidate.functions";
 import { CANDIDATE_STATUS_TONE } from "@/lib/candidate-status";
 import { profileCompleteness } from "@/lib/candidate/profile-completeness";
+import { ProfileGapsBlock } from "@/components/candidate/profile-gaps-block";
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight,
@@ -153,6 +154,8 @@ function MeHome() {
           hiring teams here — nothing is lost, nothing is hidden.
         </p>
       </header>
+
+      <ProfileGapsBlock profile={profile} error={!ctxLive} />
 
       {/* Outstanding actions — only shown when something needs the candidate */}
       {openRequests > 0 ? (
