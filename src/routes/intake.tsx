@@ -462,6 +462,25 @@ function ExpressIntakePage() {
       jobDescriptionFile: jdFile
         ? { filename: jdFile.filename, mime: jdFile.mime, base64: jdFile.base64 }
         : null,
+      whyOpen: state.whyOpen,
+      mustHaves: state.mustHaves,
+      trainable: state.trainable,
+      dealBreakers: state.dealBreakers,
+      location: state.location,
+      workModel: state.workModel,
+      onsiteDays:
+        state.workModel === "remote" || state.onsiteDays === "" ? undefined : Number(state.onsiteDays),
+      currency: state.currency,
+      compensationPeriod: state.compensationPeriod,
+      salaryMin: state.salaryMin === "" ? undefined : Number(state.salaryMin),
+      salaryMax: state.salaryMax === "" ? undefined : Number(state.salaryMax),
+      compensationNote: state.compensationNote,
+      workAuthorization: state.workAuthorization,
+      workAuthorizationNote: state.workAuthorizationNote,
+      interviewProcess: state.interviewProcess,
+      decisionMaker: state.decisionMaker,
+      targetStartDate: state.targetStartDate,
+
       consent: state.consent,
       pilotAcknowledgement: state.pilotAcknowledgement,
       researchConsent: state.researchConsent,
