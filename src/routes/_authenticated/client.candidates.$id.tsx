@@ -76,7 +76,7 @@ import {
   TagSilverMedalistDialog,
   SilverMedalistBadge,
 } from "@/components/client/tag-silver-medalist-dialog";
-import { Award } from "lucide-react";
+import { Award, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/client/candidates/$id")({
  head: () => ({
