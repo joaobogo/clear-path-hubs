@@ -36,6 +36,7 @@ import {
   type HireCloseReason,
 } from "@/lib/hires.functions";
 import { guaranteeLine } from "@/lib/interview-scorecard";
+import { OfferHolderRows } from "@/components/client/offer-holder-rows";
 import { getClientContext } from "@/lib/client.functions";
 import {
   isStalled,
