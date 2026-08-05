@@ -100,7 +100,7 @@ function PositionDetailPage() {
  });
  const orgId = ctx?.active?.organization_id;
  const queryKey = ["client-position", orgId, id];
- const { data, isError, refetch } = useQuery({
+ const { data, isError, isLoading, error, refetch } = useQuery({
  queryKey,
  queryFn: () => detailFn({ data: { orgId: orgId!, positionId: id } }),
  enabled: !!orgId,
