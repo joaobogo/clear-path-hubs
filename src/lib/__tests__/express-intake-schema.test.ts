@@ -232,6 +232,9 @@ describe("intakeRequiredness", () => {
       // requirements is validated as a list by validateRequirements, and the
       // legacy mustHaves string covers it in the schema — checked separately.
       if (field === "requirements" || field === "confirmPassword") continue;
+      // The salary pair is optional together: half a range is rejected as a
+      // pair rule, not because either field is required on its own.
+      if (field === "salaryMin" || field === "salaryMax") continue;
       const payload: Record<string, unknown> = { ...valid, [field]: blankFor(field) };
       const serverRejects = !expressIntakeSchema.safeParse(payload).success;
       expect(
@@ -239,6 +242,18 @@ describe("intakeRequiredness", () => {
         `${field}: UI requiredness must match the server`,
       ).toEqual({ field, required: serverRejects, serverRejects });
     }
+  });
+
+  it("treats the salary range as optional, but only as a pair", () => {
+    const req = intakeRequiredness();
+    expect(req["salaryMin"]).toBe(false);
+    expect(req["salaryMax"]).toBe(false);
+    const bothBlank = expressIntakeSchema.safeParse({
+      ...valid,
+      salaryMin: undefined,
+      salaryMax: undefined,
+    });
+    expect(bothBlank.success).toBe(true);
   });
 
   it("requires at least one must-have, so requirements is required", () => {
