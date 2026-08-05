@@ -166,13 +166,14 @@ function ApplyPage() {
   const [network, setNetwork] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState<{ message: string; trace_id?: string } | null>(
+    null,
+  );
   // A repeat application is not an error: we show the candidate their own
   // existing application instead of a duplicate failure.
   const [returning, setReturning] = useState<
     { existing: ExistingApplicationSummary | null; email: string } | null
   >(null);
-    null,
-  );
+
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
   // Set only when the browser refuses to keep the draft (private mode, full
