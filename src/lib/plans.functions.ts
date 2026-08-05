@@ -108,6 +108,10 @@ export const getPlanState = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<PlanState> => {
     const supabase = context.supabase as unknown as AnySupabase;
 
+    // Plan and billing is an Admin area — enforced here, not just in navigation.
+    const { assertWorkspaceArea } = await import("@/lib/collaborator-roles.server");
+    await assertWorkspaceArea(supabase, context.userId, data.organizationId, "billing");
+
     const { data: sub } = await supabase
       .from("subscriptions")
       .select(

@@ -44,7 +44,12 @@ import {
  SelectValue,
 } from "@/components/ui/select";
 import {
- AlertCircle,
+  AlertCircle,
+  CheckCircle2,
+
+  MinusCircle,
+
+
  Info,
  Mail,
  MoreHorizontal,
@@ -55,24 +60,37 @@ import {
  UserPlus,
  Users,
 } from "lucide-react";
+import {
+ COLLABORATOR_ROLES,
+ COLLABORATOR_ROLE_IDS,
+ type CollaboratorRoleId,
+} from "@/lib/collaborator-roles";
+import { ErrorState } from "@/components/client/states";
+import { getWorkspaceSeatUsage } from "@/lib/collaborator-team.functions";
 
-type ClientRoleId = "client_admin" | "client_editor" | "client_viewer";
+
+
+type ClientRoleId = CollaboratorRoleId;
 type MemberStatus = "active" | "invited" | "suspended" | "removed";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
 
+// Labels and descriptions come from the same module the server enforces with,
+// so a capability shown here is a capability the server allows.
+const ROLE_IDS = COLLABORATOR_ROLE_IDS;
 const ROLE_LABEL: Record<ClientRoleId, string> = {
- client_admin: "Workspace admin",
- client_editor: "Editor",
- client_viewer: "Viewer",
+ client_admin: COLLABORATOR_ROLES.client_admin.label,
+ client_editor: COLLABORATOR_ROLES.client_editor.label,
+ client_viewer: COLLABORATOR_ROLES.client_viewer.label,
 };
 
 const ROLE_DESCRIPTION: Record<ClientRoleId, string> = {
- client_admin: "Full access — can manage team, positions, and candidates.",
- client_editor: "Can act on positions, candidates, and interviews.",
- client_viewer: "Read-only across the workspace.",
+ client_admin: COLLABORATOR_ROLES.client_admin.summary,
+ client_editor: COLLABORATOR_ROLES.client_editor.summary,
+ client_viewer: COLLABORATOR_ROLES.client_viewer.summary,
 };
+
 
 const STATUS_META: Record<
  MemberStatus,
@@ -131,41 +149,54 @@ function TeamPage() {
  ctx?.active?.role === "operations";
  const canMutate = isAdmin && !readOnly;
 
- const { data: rows = [], isLoading, error } = useQuery({
+ const { data: rows = [], isLoading, error, refetch } = useQuery({
  queryKey: ["client-team", orgId],
  queryFn: () => teamFn({ data: { orgId: orgId! } }),
  enabled: !!orgId && !!isAdmin,
  placeholderData: (prev) => prev,
  });
 
- if (!isAdmin) {
- return (
- <main className="mx-auto max-w-3xl px-6 py-10">
- <div className="rounded-xl border bg-card p-8 text-center">
- <div className="mx-auto grid h-11 w-11 place-items-center rounded-full bg-muted text-muted-foreground">
- <Users className="h-5 w-5" />
- </div>
- <h1 className="mt-4 text-lg font-semibold">Team management is admin-only</h1>
- <p className="mt-1 text-sm text-muted-foreground">
- Ask a workspace admin for access to invite or manage teammates.
- </p>
- </div>
- </main>
- );
- }
+ const seatsFn = useServerFn(getWorkspaceSeatUsage);
+ const { data: seats } = useQuery({
+ queryKey: ["client-team-seats", orgId],
+ queryFn: () => seatsFn({ data: { orgId: orgId! } }),
+ enabled: !!orgId && !!isAdmin,
+ });
 
- const visible = (rows as AnyRow[]).filter((r) => r.status !== "removed");
+ const visible = useMemo(
+ () => (rows as AnyRow[]).filter((r) => r.status !== "removed"),
+ [rows],
+ );
  const counts = useMemo(() => {
- const c = { total: 0, admin: 0, editor: 0, viewer: 0, invited: 0 };
+ const c = { total: 0, admin: 0, invited: 0 };
  for (const r of visible) {
  c.total += 1;
  if (r.role === "client_admin") c.admin += 1;
- if (r.role === "client_editor") c.editor += 1;
- if (r.role === "client_viewer") c.viewer += 1;
  if (r.status === "invited") c.invited += 1;
  }
  return c;
  }, [visible]);
+
+ if (!isAdmin) {
+ return (
+ <main className="mx-auto max-w-3xl px-6 py-10 space-y-6">
+ <div className="rounded-xl border bg-card p-8 text-center">
+ <div className="mx-auto grid h-11 w-11 place-items-center rounded-full bg-muted text-muted-foreground">
+ <Users className="h-5 w-5" />
+ </div>
+ <h1 className="mt-4 text-lg font-semibold">Only an Admin can manage the team</h1>
+ <p className="mt-1 text-sm text-muted-foreground">
+ Ask a workspace Admin to invite teammates or change a role. The same rule applies to
+ the server, not just this page.
+ </p>
+ </div>
+ <RoleLegend />
+ </main>
+ );
+ }
+
+ const seatsUsed = seats?.seatsUsed ?? counts.total;
+ const seatLimit = seats?.seatLimit ?? null;
 
  return (
  <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 space-y-6">
@@ -179,7 +210,9 @@ function TeamPage() {
  {orgName ?? "Your workspace"}
  </h1>
  <p className="mt-1 text-sm text-muted-foreground">
- {counts.total} member{counts.total === 1 ? "" : "s"}
+ {seatLimit === null
+ ? `${counts.total} member${counts.total === 1 ? "" : "s"}`
+ : `${seatsUsed} of ${seatLimit} seat${seatLimit === 1 ? "" : "s"} in use`}
  {counts.invited > 0 && ` · ${counts.invited} pending`}
  </p>
  </div>
@@ -193,30 +226,56 @@ function TeamPage() {
  </div>
  )}
 
- {error && (
- <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
- <AlertCircle className="h-4 w-4" />
- Failed to load team: {(error as Error).message}
- </div>
- )}
-
  {/* Members */}
+ {error ? (
+ <ErrorState
+ title="We couldn't load your team"
+ description={(error as Error).message.replace(/^Error: /, "")}
+ onRetry={() => void refetch()}
+ />
+ ) : (
  <section className="rounded-xl border bg-card">
  {isLoading && visible.length === 0 ? (
- <div className="space-y-2 p-4">
+ <div className="divide-y" aria-hidden>
  {[0, 1, 2].map((i) => (
- <div key={i} className="h-14 animate-pulse rounded-lg bg-muted/40" />
+ <div key={i} className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 p-4">
+ <div className="h-10 w-10 animate-pulse rounded-full bg-muted/60" />
+ <div className="space-y-1.5">
+ <div className="h-3.5 w-40 animate-pulse rounded bg-muted/60" />
+ <div className="h-3 w-56 animate-pulse rounded bg-muted/40" />
+ </div>
+ <div className="h-6 w-28 animate-pulse rounded bg-muted/50" />
+ </div>
  ))}
  </div>
- ) : visible.length === 0 ? (
+ ) : visible.length <= 1 ? (
  <div className="p-10 text-center">
  <div className="mx-auto grid h-11 w-11 place-items-center rounded-full bg-primary/10 text-primary">
  <Users className="h-5 w-5" />
  </div>
  <div className="mt-3 text-base font-semibold">Just you so far</div>
  <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
- Invite teammates so they can collaborate on positions and candidate decisions.
+ Add hiring managers to run roles and interviewers to give feedback — each only gets
+ what their role needs.
  </p>
+ {canMutate && orgId && (
+ <div className="mt-4 flex justify-center">
+ <InviteDialog orgId={orgId} />
+ </div>
+ )}
+ {visible.length === 1 && (
+ <ul className="mt-6 divide-y border-t text-left">
+ {visible.map((m: AnyRow) => (
+ <MemberRow
+ key={m.user_id}
+ orgId={orgId!}
+ member={m}
+ canMutate={!!canMutate}
+ selfId={selfId}
+ />
+ ))}
+ </ul>
+ )}
  </div>
  ) : (
  <ul className="divide-y">
@@ -232,27 +291,62 @@ function TeamPage() {
  </ul>
  )}
  </section>
+ )}
 
- {/* Role legend */}
+ <RoleLegend />
+ </main>
+ );
+
+}
+
+/**
+ * What each role can and cannot do, in plain sentences. Rendered from
+ * COLLABORATOR_ROLES — the same definitions the server enforces, so nothing
+ * listed here is protected by hidden navigation alone.
+ */
+function RoleLegend() {
+ return (
  <section className="rounded-xl border bg-card/50 p-4">
  <h2 className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
- Roles
+ What each role can do
  </h2>
- <dl className="mt-3 grid gap-3 sm:grid-cols-3">
- {(Object.keys(ROLE_LABEL) as ClientRoleId[]).map((r) => (
+ <dl className="mt-3 grid gap-5 sm:grid-cols-3">
+ {ROLE_IDS.map((r) => {
+ const def = COLLABORATOR_ROLES[r];
+ return (
  <div key={r} className="min-w-0">
  <dt className="flex items-center gap-1.5 text-sm font-medium">
  <RoleIcon role={r} />
- {ROLE_LABEL[r]}
+ {def.label}
  </dt>
- <dd className="mt-0.5 text-xs text-muted-foreground">{ROLE_DESCRIPTION[r]}</dd>
- </div>
+ <dd className="mt-1 space-y-2 text-xs text-muted-foreground">
+ <p>{def.summary}</p>
+ <ul className="space-y-1">
+ {def.can.map((line) => (
+ <li key={line} className="flex gap-1.5">
+ <CheckCircle2 className="mt-[1px] h-3 w-3 shrink-0 taas-fg-success" />
+ <span>{line}</span>
+ </li>
  ))}
+ {def.cannot.map((line) => (
+ <li key={line} className="flex gap-1.5">
+ <MinusCircle className="mt-[1px] h-3 w-3 shrink-0" />
+ <span>{line}</span>
+ </li>
+ ))}
+ </ul>
+ </dd>
+ </div>
+ );
+ })}
  </dl>
+ <p className="mt-4 text-xs text-muted-foreground">
+ Nobody outside TaaSFlow sees internal recruiter notes or scoring, whatever their role.
+ </p>
  </section>
- </main>
  );
 }
+
 
 function RoleIcon({ role }: { role: ClientRoleId }) {
  if (role === "client_admin") return <ShieldCheck className="h-3.5 w-3.5 text-primary" />;
@@ -462,22 +556,35 @@ function InviteDialog({ orgId }: { orgId: string }) {
  const [open, setOpen] = useState(false);
  const [email, setEmail] = useState("");
  const [role, setRole] = useState<ClientRoleId>("client_editor");
+ const [failure, setFailure] = useState<string | null>(null);
  const qc = useQueryClient();
  const inviteFn = useServerFn(inviteClientMember);
  const invite = useMutation({
- mutationFn: () => inviteFn({ data: { orgId, email, role } }),
+ mutationFn: () => inviteFn({ data: { orgId, email: email.trim(), role } }),
  onSuccess: () => {
  toast.success("Invitation sent");
  setEmail("");
+ setFailure(null);
  setOpen(false);
  qc.invalidateQueries({ queryKey: ["client-team", orgId] });
+ qc.invalidateQueries({ queryKey: ["client-team-seats", orgId] });
  },
  onError: (e: Error) =>
- toast.error(e.message.replace(/^Error: /, "") || "Failed to invite"),
+ setFailure(e.message.replace(/^Error: /, "") || "We couldn't send that invitation."),
  });
 
+ // The email format is checked here as well as on the server so the reason is
+ // never a generic failure.
+ const emailLooksValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
+
  return (
- <Dialog open={open} onOpenChange={setOpen}>
+ <Dialog
+ open={open}
+ onOpenChange={(next) => {
+ setOpen(next);
+ if (!next) setFailure(null);
+ }}
+ >
  <DialogTrigger asChild>
  <Button size="sm" className="min-h-11">
  <UserPlus className="mr-1.5 h-4 w-4" />
@@ -488,17 +595,30 @@ function InviteDialog({ orgId }: { orgId: string }) {
  <DialogHeader>
  <DialogTitle>Invite team member</DialogTitle>
  <DialogDescription>
- We'll email them a secure link to join this workspace.
+ We'll email them a secure link to join this workspace. Their role decides what they can
+ open — you can change it later.
  </DialogDescription>
  </DialogHeader>
  <form
  className="space-y-4"
  onSubmit={(e) => {
  e.preventDefault();
+ setFailure(null);
  if (!email.trim()) return;
+ if (!emailLooksValid) {
+ setFailure("That email address doesn't look right — check it and try again.");
+ return;
+ }
  invite.mutate();
  }}
  >
+ {failure && (
+ <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+ <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+ <span>{failure}</span>
+ </div>
+ )}
+
  <div className="space-y-1.5">
  <label htmlFor="invite-email" className="text-sm font-medium">
  Work email

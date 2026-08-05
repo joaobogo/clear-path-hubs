@@ -2143,16 +2143,18 @@ export const inviteClientMember = createServerFn({ method: "POST" })
         .in("role", ["client_admin", "client_editor", "client_viewer"])
         .in("status", ["active", "invited"]),
     ]);
-    const seatLimit =
+    const recruiterSeats =
       (capOrg as { client_seat_limit?: number | null } | null)?.client_seat_limit ?? 3;
+    const seatLimit = recruiterSeats + 1;
     const seatsUsed = ((capSeats as { id: string }[] | null) ?? []).length;
-    if (seatsUsed >= seatLimit + 1) {
+    if (seatsUsed >= seatLimit) {
       throw new Error(
-        `Seat limit reached — this organization has ${seatsUsed} of ${seatLimit + 1} seats in use. Release a seat before inviting someone new.`,
+        `Seat limit reached — your plan includes ${seatLimit} seats and all ${seatsUsed} are in use (pending invitations hold a seat). Remove a teammate to free a seat, or message your recruiter to raise the limit.`,
       );
     }
 
-    // Resolve or invite the auth user by email.
+    // Resolve the person first: if they are already on this team we say so
+    // without sending them another email.
     let authUserId: string | null = null;
     const { data: existingProfile } = await supabaseAdmin
       .from("profiles")
@@ -2162,13 +2164,38 @@ export const inviteClientMember = createServerFn({ method: "POST" })
 
     if (existingProfile?.auth_user_id) {
       authUserId = existingProfile.auth_user_id;
+      const { data: existing } = await supabaseAdmin
+        .from("memberships")
+        .select("id, status")
+        .eq("organization_id", data.orgId)
+        .eq("user_id", authUserId)
+        .maybeSingle();
+      if (existing) {
+        if (existing.status === "removed") {
+          const { error: uErr } = await supabaseAdmin
+            .from("memberships")
+            .update({ status: "invited", role: data.role })
+            .eq("id", existing.id);
+          if (uErr) throw new Error(uErr.message);
+          return { ok: true, reactivated: true };
+        }
+        throw new Error(
+          existing.status === "invited"
+            ? `${data.email} already has a pending invitation to this workspace — resend it from their row instead.`
+            : `${data.email} is already a member of this workspace.`,
+        );
+      }
     } else {
       const { data: invite, error: invErr } = await supabaseAdmin.auth.admin.inviteUserByEmail(
         data.email,
         { data: { invited_org_id: data.orgId } },
       );
       if (invErr || !invite?.user?.id)
-        throw new Error(invErr?.message ?? "Failed to send invitation");
+        throw new Error(
+          invErr?.message
+            ? `We couldn't email that address: ${invErr.message}`
+            : "We couldn't send that invitation. Check the email address and try again.",
+        );
       authUserId = invite.user.id;
       await supabaseAdmin
         .from("profiles")
@@ -2178,24 +2205,6 @@ export const inviteClientMember = createServerFn({ method: "POST" })
         );
     }
 
-    // Prevent duplicate membership.
-    const { data: existing } = await supabaseAdmin
-      .from("memberships")
-      .select("id, status")
-      .eq("organization_id", data.orgId)
-      .eq("user_id", authUserId)
-      .maybeSingle();
-    if (existing) {
-      if (existing.status === "removed") {
-        const { error: uErr } = await supabaseAdmin
-          .from("memberships")
-          .update({ status: "invited", role: data.role })
-          .eq("id", existing.id);
-        if (uErr) throw new Error(uErr.message);
-        return { ok: true, reactivated: true };
-      }
-      throw new Error("This person is already on your team.");
-    }
 
     const { error: mErr } = await supabaseAdmin.from("memberships").insert({
       user_id: authUserId,
@@ -2271,7 +2280,7 @@ export const updateClientMemberRole = createServerFn({ method: "POST" })
         .eq("status", "active");
       const adminIds = new Set(((admins as AnyRow[]) ?? []).map((a) => a.user_id));
       adminIds.delete(data.userId);
-      if (adminIds.size === 0) throw new Error("You need at least one workspace admin.");
+      if (adminIds.size === 0) throw new Error("You need at least one Admin — promote someone else first.");
     }
     const { error } = await context.supabase
       .from("memberships")
@@ -2306,7 +2315,7 @@ export const setClientMemberStatus = createServerFn({ method: "POST" })
         (a) => a.role === "client_admin" && a.user_id !== data.userId,
       );
       if (activeAdmins.length === 0)
-        throw new Error("You need at least one active workspace admin.");
+        throw new Error("You need at least one active Admin — promote someone else first.");
     }
     const { error } = await context.supabase
       .from("memberships")
