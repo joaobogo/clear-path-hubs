@@ -222,6 +222,8 @@ describe("intakeRequiredness", () => {
   const blankFor = (field: string): unknown => {
     if (field === "consent" || field === "pilotAcknowledgement") return false;
     if (field === "requirements") return [];
+    // An unticked optional checkbox falls back to its default, not "".
+    if (field === "researchConsent") return undefined;
     if (field === "onsiteDays" || field === "salaryMin" || field === "salaryMax") return undefined;
     return "";
   };
