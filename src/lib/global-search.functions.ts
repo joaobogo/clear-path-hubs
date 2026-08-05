@@ -88,32 +88,47 @@ export const globalSearch = createServerFn({ method: "POST" })
       .filter((m) => m.organization_id)
       .map((m) => m.organization_id as string);
 
-    // Early exit for client scope with no org access.
-    if (scope === "client" && orgIds.length === 0) {
-      return {
-        scope,
-        groups: { clients: [], positions: [], candidates: [], messages: [], tasks: [] },
-      };
-    }
+    const emptyGroups = (): SearchResponse["groups"] => ({
+      clients: [],
+      positions: [],
+      candidates: [],
+      intakes: [],
+      messages: [],
+      tasks: [],
+    });
 
     // Bounded per-group limits.
     const LIMIT = 6;
-    const empty = { clients: [], positions: [], candidates: [], messages: [], tasks: [] } as SearchResponse["groups"];
-    const groups: SearchResponse["groups"] = { ...empty };
+
+    // Test/QA records are hidden unless the caller is staff AND asked for them.
+    const includeTest = scope === "admin" && data.includeTest === true;
+    const { loadTestScope, excludeTestOrgs } = await import("./admin-test-scope.server");
+    const testScope = await loadTestScope(supabase, includeTest);
+
+    // Early exit for client scope with no org access.
+    if (scope === "client" && orgIds.length === 0) {
+      return { scope, includeTest, limit: LIMIT, groups: emptyGroups() };
+    }
+
+    const groups: SearchResponse["groups"] = emptyGroups();
 
     // Clients — admin only.
     if (scope === "admin") {
-      const { data: orgs } = await supabase
+      let oq = supabase
         .from("organizations")
-        .select("id, name, industry, archived_at")
+        .select("id, name, industry, status, archived_at")
         .ilike("name", like)
         .order("name")
         .limit(LIMIT);
+      oq = excludeTestOrgs(oq, testScope, "id");
+      const { data: orgs, error } = await oq;
+      if (error) throw new Error(error.message);
       groups.clients = ((orgs as AnyRow[]) ?? []).map((o) => ({
         type: "client",
         id: o.id,
         label: o.name,
-        context: [o.industry, o.archived_at ? "archived" : null].filter(Boolean).join(" · "),
+        context: o.industry ?? undefined,
+        state: o.archived_at ? "archived" : (o.status ?? undefined),
         href: `/admin/clients/${o.id}`,
       }));
     }
@@ -127,12 +142,14 @@ export const globalSearch = createServerFn({ method: "POST" })
         .order("updated_at", { ascending: false })
         .limit(LIMIT);
       if (scope === "client") query = query.in("organization_id", orgIds);
-      const { data: positions } = await query;
+      else query = excludeTestOrgs(query, testScope);
+      const { data: positions, error } = await query;
+      if (error) throw new Error(error.message);
       groups.positions = ((positions as AnyRow[]) ?? []).map((p) => {
         const orgName = p.organizations?.name as string | undefined;
-        const context = [orgName, p.location, p.status]
-          .filter(Boolean)
-          .join(" · ");
+        const context = [orgName, p.location].filter(Boolean).join(" · ");
+        const state = p.status ? String(p.status).replace(/_/g, " ") : undefined;
+
         if (scope === "admin") {
           return {
             type: "position",
