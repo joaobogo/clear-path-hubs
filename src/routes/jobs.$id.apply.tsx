@@ -38,6 +38,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { FormShell } from "@/components/marketing/form-shell";
 import { TransparencyPanel } from "@/components/candidate/transparency-panel";
+import { ReturningApplicantCard } from "@/components/candidate/returning-applicant-card";
+import type { ExistingApplicationSummary } from "@/lib/candidate/existing-application.server";
 import { Loader2 } from "lucide-react";
 
 
@@ -166,6 +168,12 @@ function ApplyPage() {
   const [serverError, setServerError] = useState<{ message: string; trace_id?: string } | null>(
     null,
   );
+  // A repeat application is not an error: we show the candidate their own
+  // existing application instead of a duplicate failure.
+  const [returning, setReturning] = useState<
+    { existing: ExistingApplicationSummary | null; email: string } | null
+  >(null);
+
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
   // Set only when the browser refuses to keep the draft (private mode, full
@@ -708,9 +716,21 @@ function ApplyPage() {
       }
       setPassword("");
       setPassword2("");
+      if (result.deduped) {
+        // Their first application stands. Tell them the truth about it and
+        // offer a CV replacement rather than a dead end.
+        setReturning({ existing: result.existing ?? null, email: form.email.trim() });
+        setPhase("idle");
+        setSubmitting(false);
+        submittingRef.current = false;
+        return;
+      }
       await navigate({
         to: "/apply/received/$applicationId",
         params: { applicationId: result.application_id },
+        // A withdrawn or rejected earlier application permits this fresh
+        // submission — the confirmation says so plainly.
+        search: result.prior_closed ? { again: true } : {},
         replace: true,
       });
     } catch (err) {
@@ -734,6 +754,36 @@ function ApplyPage() {
   };
 
   if (!pos) return null;
+
+  if (returning) {
+    return (
+      <FormShell exitTo="/jobs" exitLabel="Browse more roles" width="md">
+        {returning.existing ? (
+          <ReturningApplicantCard
+            email={returning.email}
+            existing={returning.existing}
+            positionTitle={pos.title}
+          />
+        ) : (
+          <div className="w-full rounded-lg border bg-card p-6 md:p-8">
+            <h1 className="text-2xl font-semibold tracking-tight">
+              You already applied to this role — you&apos;re all set
+            </h1>
+            <p className="mt-3 text-sm text-muted-foreground">
+              We have your application for {pos.title} and it is with our team. We could not load
+              its details just now — email hello@taasflow.com and a person will send you the date,
+              status and reference.
+            </p>
+            <div className="mt-6">
+              <Button asChild className="w-full min-h-11" size="lg">
+                <Link to="/apply/status">Find my application</Link>
+              </Button>
+            </div>
+          </div>
+        )}
+      </FormShell>
+    );
+  }
 
   // The same figure the job page quoted, so the cost does not change between
   // deciding to apply and starting.

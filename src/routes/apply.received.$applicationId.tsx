@@ -9,6 +9,9 @@ import { CandidateStatePanel } from "@/components/candidate/candidate-state-pane
 import { SUPPORT_EMAIL } from "@/lib/candidate/candidate-transparency";
 
 export const Route = createFileRoute("/apply/received/$applicationId")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    again: search.again === true || search.again === "true" || search.again === "1",
+  }),
   loader: async ({ context, params }) => {
     const data = await context.queryClient.ensureQueryData({
       queryKey: ["application-receipt", params.applicationId],
@@ -37,6 +40,7 @@ export const Route = createFileRoute("/apply/received/$applicationId")({
 
 function Received() {
   const { applicationId } = Route.useParams();
+  const { again } = Route.useSearch();
   const { data } = useSuspenseQuery({
     queryKey: ["application-receipt", applicationId],
     queryFn: () => getApplicationReceipt({ data: { id: applicationId } }),
@@ -57,6 +61,16 @@ function Received() {
 
   return (
     <FormShell exitTo="/jobs" exitLabel="Browse more roles" width="md">
+        {again ? (
+          <p
+            className="mb-4 rounded-md border bg-muted/40 p-4 text-sm text-muted-foreground"
+            data-testid="apply-fresh-after-closed"
+            role="status"
+          >
+            Your earlier application for this role was closed, so this is a new application — it
+            starts fresh with the reference below.
+          </p>
+        ) : null}
         <div className="rounded-lg border bg-card p-8 text-center">
           <div className="mx-auto h-12 w-12 rounded-full bg-primary/10 text-primary flex items-center justify-center text-2xl">
             ✓
