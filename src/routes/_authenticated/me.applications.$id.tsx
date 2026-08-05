@@ -16,6 +16,10 @@ import {
   CANDIDATE_STATUS_NEXT_STEP,
   CANDIDATE_STATUS_TONE,
 } from "@/lib/candidate-status";
+import {
+  CLOSED_REASON_UNRECORDED,
+  type ClosedReasonKey,
+} from "@/lib/candidate/closed-outcome";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -106,7 +110,17 @@ type MyApplication = {
   info_requests: InfoRequest[];
   interviews: Interview[];
   events: CandidateTimelineEvent[];
+  closed_outcome: {
+    reason: ClosedReasonKey | null;
+    line: string;
+    closedAt: string | null;
+  } | null;
 };
+
+/** Keeps the "similar roles" link honest: the role words, no invented filters. */
+function similarRolesQuery(title: string): string {
+  return title.trim().split(/\s+/).slice(0, 2).join(" ").slice(0, 60);
+}
 
 function TrackPage() {
   const { id } = Route.useParams();
