@@ -242,6 +242,35 @@ function PositionsPage() {
       <PublishGatePanel includeTest={search.show_test} />
       <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-card p-3">
 
+        <SavedViewsBar
+          surface="admin_positions"
+          canShare
+          currentFilters={{
+            q: search.q ?? "",
+            status: search.status ?? "",
+            client: search.client ?? "",
+            owner: search.owner ?? "",
+            location: search.location ?? "",
+            sort: search.sort ?? "",
+          }}
+          onApply={(f) =>
+            navigate({
+              search: (s: Record<string, unknown>) => ({
+                ...s,
+                q: f["q"] || undefined,
+                status: f["status"] || undefined,
+                client: f["client"] || undefined,
+                owner: f["owner"] || undefined,
+                location: f["location"] || undefined,
+                sort: f["sort"] || undefined,
+                page: 1,
+              }),
+              replace: true,
+            })
+          }
+        />
+
+
         <Input
           placeholder="Search title…"
           value={q}
