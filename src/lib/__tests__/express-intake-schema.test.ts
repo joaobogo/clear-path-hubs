@@ -20,9 +20,24 @@ const valid = {
   confirmPassword: "correct-horse",
   roleTitle: "Front Office Manager",
   jobDescriptionText: "x".repeat(MIN_JD_TEXT),
+  whyOpen: "Our front office lead left in March and no one owns the guest experience.",
+  mustHaves: "5+ years front office\nOpera PMS",
+  trainable: "Our loyalty programme",
+  dealBreakers: "No one who cannot work weekend shifts.",
+  location: "Lisbon, Portugal",
+  workModel: "onsite" as const,
+  onsiteDays: 5,
+  currency: "EUR" as const,
+  compensationPeriod: "year" as const,
+  salaryMin: 40000,
+  salaryMax: 50000,
+  workAuthorization: "already_authorized" as const,
+  interviewProcess: "Call with me, then a panel on site, offer the same week.",
+  decisionMaker: "Ana Reis, General Manager",
   consent: true as const,
   pilotAcknowledgement: true as const,
 };
+
 
 describe("expressIntakeSchema", () => {
   it("accepts a complete submission", () => {
@@ -68,7 +83,37 @@ describe("expressIntakeSchema", () => {
         companyLinkedin: "https://linkedin.com/company/northwind",
       }).success,
     ).toBe(true);
+});
+
+describe("role brief", () => {
+  it("requires at least two must-haves", () => {
+    expect(
+      expressIntakeSchema.safeParse({ ...valid, mustHaves: "5+ years front office" }).success,
+    ).toBe(false);
   });
+
+  it("requires why the role is open and what rules someone out", () => {
+    expect(expressIntakeSchema.safeParse({ ...valid, whyOpen: "growth" }).success).toBe(false);
+    expect(expressIntakeSchema.safeParse({ ...valid, dealBreakers: "none" }).success).toBe(false);
+  });
+
+  it("rejects an inverted compensation range", () => {
+    expect(
+      expressIntakeSchema.safeParse({ ...valid, salaryMin: 60000, salaryMax: 40000 }).success,
+    ).toBe(false);
+  });
+
+  it("requires on-site days unless the role is fully remote", () => {
+    expect(
+      expressIntakeSchema.safeParse({ ...valid, workModel: "hybrid", onsiteDays: undefined }).success,
+    ).toBe(false);
+    expect(
+      expressIntakeSchema.safeParse({ ...valid, workModel: "remote", onsiteDays: undefined }).success,
+    ).toBe(true);
+  });
+});
+
+
 });
 
 describe("job description file types", () => {

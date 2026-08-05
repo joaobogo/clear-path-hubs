@@ -6,6 +6,8 @@ import {
   MAX_JD_BYTES,
   UNREADABLE_JD_EXT,
   jdFileExt,
+  splitLines,
+
 } from "@/lib/express-intake-schema";
 
 /**
@@ -399,13 +401,47 @@ export const Route = createFileRoute("/api/public/express-intake")({
         }
 
         // ---------- Position ----------
+        const mustHaves = splitLines(data.mustHaves);
+        const trainable = splitLines(data.trainable);
+        const dealbreakerLines = splitLines(data.dealBreakers);
         const { data: pos, error: posErr } = await admin
           .from("positions")
           .insert({
             organization_id: organizationId,
             title: data.roleTitle.trim(),
-            work_model: "remote",
+            work_model: data.workModel,
+            location: data.location.trim(),
             description: (data.jobDescriptionText ?? "").trim() || null,
+            requirements: mustHaves.map((label) => ({ label, kind: "must_have" })),
+            preferred_requirements: trainable.map((label) => ({ label, kind: "trainable" })),
+            dealbreakers:
+              dealbreakerLines.length > 0
+                ? dealbreakerLines.map((label) => ({ label }))
+                : [{ label: data.dealBreakers.trim() }],
+            compensation: {
+              currency: data.currency,
+              period: data.compensationPeriod,
+              min: data.salaryMin,
+              max: data.salaryMax,
+              note: (data.compensationNote ?? "").trim() || null,
+              source: "client_intake",
+            },
+            compensation_collected: true,
+            compensation_visibility: "internal",
+            work_authorization: {
+              rule: data.workAuthorization,
+              note: (data.workAuthorizationNote ?? "").trim() || null,
+            },
+            target_start_date: (data.targetStartDate ?? "").trim() || null,
+            intake_context: {
+              why_open: data.whyOpen.trim(),
+              deal_breakers: data.dealBreakers.trim(),
+              interview_process: data.interviewProcess.trim(),
+              decision_maker: data.decisionMaker.trim(),
+              onsite_days: data.onsiteDays ?? null,
+              collected_at: new Date().toISOString(),
+              collected_via: "express_intake",
+            },
             jd_source: data.jobDescriptionFile ? "file" : "pasted",
             blueprint_status: "queued",
             status: "submitted",
@@ -416,6 +452,7 @@ export const Route = createFileRoute("/api/public/express-intake")({
           })
           .select("id")
           .single();
+
         if (posErr) {
           return Response.json(
             { ok: false, trace_id: traceId, error: "position_create_failed", message: posErr.message },
@@ -515,6 +552,28 @@ export const Route = createFileRoute("/api/public/express-intake")({
               pilotEligible,
               pilotReason,
               jobDescriptionChars: (data.jobDescriptionText ?? "").length,
+              brief: {
+                whyOpen: data.whyOpen,
+                mustHaves,
+                trainable,
+                dealBreakers: data.dealBreakers,
+                location: data.location,
+                workModel: data.workModel,
+                onsiteDays: data.onsiteDays ?? null,
+                compensation: {
+                  currency: data.currency,
+                  period: data.compensationPeriod,
+                  min: data.salaryMin,
+                  max: data.salaryMax,
+                  note: data.compensationNote ?? "",
+                },
+                workAuthorization: data.workAuthorization,
+                workAuthorizationNote: data.workAuthorizationNote ?? "",
+                interviewProcess: data.interviewProcess,
+                decisionMaker: data.decisionMaker,
+                targetStartDate: data.targetStartDate ?? "",
+              },
+
               jobDescriptionFile: jdPath,
               source: data.source,
             },

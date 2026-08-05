@@ -41,6 +41,26 @@ async function fillRole(page: Page, withJd: boolean) {
   if (withJd) await page.locator("#jd-text").fill(JD_TEXT);
 }
 
+async function fillBrief(page: Page) {
+  await page
+    .getByLabel("Why is this role open?")
+    .fill("Our two clinical ops leads are covering three sites and renewals are slipping.");
+  await page.getByLabel("Must-haves").fill("5+ years in clinical operations\nHas run a site inspection");
+  await page.getByLabel("What rules someone out?").fill("No agency-side-only backgrounds.");
+  await page.getByLabel("Where is the role based?").fill("Manchester, United Kingdom");
+  await page.locator("#work-model").selectOption("hybrid");
+  await page.getByLabel("Days on site each week").fill("3");
+  await page.locator("#currency").selectOption("GBP");
+  await page.getByLabel("From", { exact: true }).fill("70000");
+  await page.getByLabel("To", { exact: true }).fill("85000");
+  await page.getByRole("radio", { name: /already be authorised/i }).check();
+  await page
+    .getByLabel("How you interview")
+    .fill("30 min with me, then a panel with the site team, offer the same week.");
+  await page.getByLabel("Who makes the final decision?").fill("Dana Okoro, Operations Director");
+}
+
+
 async function acceptTerms(page: Page) {
   await page.locator("#pilot-acknowledgement").click();
   await page.locator("#terms-consent").click();
@@ -184,6 +204,7 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await fillYou(page, email);
     await fillPasswords(page, "QaTest!Phase11");
     await fillRole(page, true);
+    await fillBrief(page);
     await acceptTerms(page);
 
     await page.getByRole("button", { name: /book a call first/i }).click();
@@ -218,6 +239,7 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await fillYou(page, email);
     await fillPasswords(page, "QaTest!Phase11");
     await fillRole(page, true);
+    await fillBrief(page);
     await acceptTerms(page);
 
     await page.getByRole("button", { name: /start now — pay and publish/i }).click();
