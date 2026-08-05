@@ -13,6 +13,7 @@ import {
 import { CANDIDATE_STATUS_TONE } from "@/lib/candidate-status";
 import { profileCompleteness } from "@/lib/candidate/profile-completeness";
 import { ProfileGapsBlock } from "@/components/candidate/profile-gaps-block";
+import { InterviewResponseCard } from "@/components/candidate/interview-response-card";
 import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight,
@@ -184,37 +185,7 @@ function MeHome() {
         </section>
       ) : null}
 
-      {upcoming.length > 0 ? (
-        <section className="rounded-2xl border bg-card p-5 motion-surface">
-          <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
-            <span className="grid h-6 w-6 place-items-center rounded-full bg-primary/10 text-primary">
-              <CalendarClock className="h-3.5 w-3.5" />
-            </span>
-            Upcoming interviews
-          </div>
-          <ul className="mt-3 space-y-2">
-            {upcoming.map((i) => (
-              <li key={i.id}>
-                <Link
-                  to="/me/applications/$id"
-                  params={{ id: i.application_id }}
-                  className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-lg border p-3 text-sm hover:bg-muted transition-colors"
-                >
-                  <span className="min-w-0">
-                    <span className="block truncate font-medium">{i.role_title}</span>
-                    <span className="block text-xs text-muted-foreground">
-                      {new Date(i.scheduled_at).toLocaleString()}
-                      {i.timezone ? ` · ${i.timezone}` : ""}
-                      {i.interview_type ? ` · ${i.interview_type}` : ""}
-                    </span>
-                  </span>
-                  <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground" />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
+      <InterviewResponseCard compact />
 
 
 
