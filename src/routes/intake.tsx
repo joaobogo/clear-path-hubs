@@ -43,6 +43,7 @@ import {
   expressIntakeSchema,
   jdFileExt,
 } from "@/lib/express-intake-schema";
+import { FieldExamples } from "@/components/intake/field-examples";
 import { RequirementsList, type SuggestionState } from "@/components/intake/requirements-list";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
@@ -656,6 +657,15 @@ function ExpressIntakePage() {
     setState((s) => ({ ...s, requirements: next }));
     setErrors((e) => ({ ...e, requirements: "" }));
     setRowErrors({});
+  };
+
+  /** An example the client chose: appended as ordinary editable text. */
+  const useExample = (key: "whyOpen" | "dealBreakers" | "interviewProcess", text: string) => {
+    setState((s) => {
+      const current = (s[key] ?? "").trim();
+      return { ...s, [key]: current.length > 0 ? `${current}\n${text}` : text };
+    });
+    setErrors((e) => ({ ...e, [key]: "" }));
   };
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
@@ -1360,10 +1370,11 @@ function ExpressIntakePage() {
               placeholder="Our two clinical ops leads are covering three sites. This hire owns one site so they can stop firefighting."
             />
           </Field>
-          <Example>
-            "The last person left in March. Since then the team has had no one owning payer contracts,
-            and renewals are slipping."
-          </Example>
+          <FieldExamples
+            field="why_open"
+            roleTitle={state.roleTitle}
+            onUse={(text) => useExample("whyOpen", text)}
+          />
         </Section>
         )}
 
@@ -1398,10 +1409,14 @@ function ExpressIntakePage() {
             }}
           />
 
-          <Example>
-            Must have: "Has managed a P&amp;L above $2M." Can be trained: "Knows our scheduling
-            tool" — that one never rules anybody out.
-          </Example>
+          <FieldExamples
+            field="must_haves"
+            roleTitle={state.roleTitle}
+            label="See an example must-have"
+            onUse={(text) =>
+              setRequirements([...state.requirements, { text, tag: "must_have" }])
+            }
+          />
         </Section>
         )}
 
@@ -1586,10 +1601,11 @@ function ExpressIntakePage() {
               placeholder="No agency-side-only backgrounds. No one who needs more than four weeks' notice."
             />
           </Field>
-          <Example>
-            "More than three jobs in two years", "cannot be on site Tuesdays", "no direct competitor
-            X" — all valid, all better said now than after four interviews.
-          </Example>
+          <FieldExamples
+            field="deal_breakers"
+            roleTitle={state.roleTitle}
+            onUse={(text) => useExample("dealBreakers", text)}
+          />
 
           <Field
             label="How you interview"
@@ -1603,6 +1619,11 @@ function ExpressIntakePage() {
               placeholder={"1. 30 min with me\n2. 60 min panel with the site team\n3. Half-day on site, offer same week"}
             />
           </Field>
+          <FieldExamples
+            field="interview_process"
+            roleTitle={state.roleTitle}
+            onUse={(text) => useExample("interviewProcess", text)}
+          />
 
           <Field
             label="Who makes the final decision?"
@@ -1973,16 +1994,6 @@ function Section({
       </div>
       {children}
     </section>
-  );
-}
-
-/** A worked example under the fields people otherwise skip or answer in three words. */
-function Example({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="rounded-lg border-l-2 border-[color:var(--brand-teal)] bg-[color:var(--brand-teal)]/5 px-3 py-2 text-xs leading-relaxed text-[color:var(--brand-navy)]/80">
-      <span className="font-semibold">For example: </span>
-      {children}
-    </p>
   );
 }
 
