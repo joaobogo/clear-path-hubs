@@ -19,6 +19,11 @@ import { AlertCircle, ArrowUpRight, Building2, MapPin } from "lucide-react";
 import { ErrorState } from "@/components/ds";
 import { PositionsAttentionQueue } from "@/components/admin/positions-attention-queue";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  BulkConfirmDialog,
+  type PreviewInput,
+} from "@/components/admin/bulk-confirm-dialog";
 import { PublishGatePanel } from "@/components/admin/publish-gate-panel";
 
 
@@ -90,6 +95,8 @@ function PositionsPage() {
 
   // Local, debounced search input.
   const [q, setQ] = useState(search.q);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [bulkRequest, setBulkRequest] = useState<PreviewInput | null>(null);
   useEffect(() => setQ(search.q), [search.q]);
   useEffect(() => {
     const t = setTimeout(() => {
@@ -348,12 +355,46 @@ function PositionsPage() {
         </Select>
       </div>
 
+      {selected.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-card px-3 py-2">
+          <span className="text-sm font-medium">{selected.length} selected</span>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setBulkRequest({ kind: "position_pause", position_ids: selected })}
+          >
+            Preview pause
+          </Button>
+          <Button size="sm" variant="ghost" onClick={() => setSelected([])}>
+            Clear selection
+          </Button>
+          <span className="text-xs text-muted-foreground">
+            Closing or reopening roles stays a per-role decision.
+          </span>
+        </div>
+      )}
+
+      <BulkConfirmDialog
+        request={bulkRequest}
+        onClose={() => setBulkRequest(null)}
+        onCommitted={() => setSelected([])}
+      />
+
       <div className="rounded-lg border bg-card">
         {/* Desktop table */}
         <div className="hidden overflow-x-auto md:block">
           <table className="w-full text-sm">
             <thead className="border-b bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
+                <th className="w-10 px-4 py-2">
+                  <Checkbox
+                    aria-label="Select all positions on this page"
+                    checked={rows.length > 0 && selected.length === rows.length}
+                    onCheckedChange={(v) =>
+                      setSelected(v ? rows.map((r) => r.id) : [])
+                    }
+                  />
+                </th>
                 <th className="px-4 py-2">Title</th>
                 <th className="px-4 py-2">Client</th>
                 <th className="px-4 py-2">Location</th>
@@ -371,7 +412,7 @@ function PositionsPage() {
             <tbody>
               {listQuery.isError && rows.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="p-4">
+                  <td colSpan={11} className="p-4">
                     <ErrorState
                       title="We couldn't load positions"
                       description="This is on our side. Your filters are still applied — try again."
@@ -381,13 +422,13 @@ function PositionsPage() {
                 </tr>
               ) : listQuery.isLoading && rows.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="px-4 py-10 text-center text-muted-foreground">
+                  <td colSpan={11} className="px-4 py-10 text-center text-muted-foreground">
                     Loading positions…
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="px-4 py-10 text-center text-muted-foreground">
+                  <td colSpan={11} className="px-4 py-10 text-center text-muted-foreground">
                     No positions match these filters.
                   </td>
                 </tr>
@@ -398,6 +439,17 @@ function PositionsPage() {
                     className="border-b last:border-0 hover:bg-muted/30"
                     data-position-id={p.id}
                   >
+                    <td className="px-4 py-3">
+                      <Checkbox
+                        aria-label={`Select ${p.title}`}
+                        checked={selected.includes(p.id)}
+                        onCheckedChange={(v) =>
+                          setSelected((prev) =>
+                            v ? [...prev, p.id] : prev.filter((id) => id !== p.id),
+                          )
+                        }
+                      />
+                    </td>
                     <td className="max-w-[16rem] truncate px-4 py-3 font-medium">
                       <Link
                         to="/admin/positions/$id"
