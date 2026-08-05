@@ -1467,6 +1467,19 @@ export const clientAction = createServerFn({ method: "POST" })
               message: "A reason is required for this action.",
             });
           }
+          // Declines must use the shared rejection vocabulary so reason counts
+          // reconcile across the client and admin surfaces.
+          if (
+            v.action === "not_moving_forward" &&
+            v.reasonCode &&
+            !CLIENT_DECLINE_CODES.has(v.reasonCode)
+          ) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ["reasonCode"],
+              message: "Pick a reason from the list.",
+            });
+          }
           if (v.reasonCode === "other" && !(v.feedback ?? "").trim()) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
