@@ -75,7 +75,8 @@ export function InterviewChangeControls({
     ) : null;
   }
 
-  const copy = open ? CHANGE_COPY[open] : null;
+  const action = open;
+  const copy = action ? CHANGE_COPY[action] : null;
   const busy = mut.isPending;
 
   return (
@@ -120,7 +121,7 @@ export function InterviewChangeControls({
           side="bottom"
           className="flex h-[100dvh] flex-col gap-0 overflow-y-auto rounded-none sm:h-auto sm:max-h-[85vh] sm:rounded-t-2xl"
         >
-          {copy ? (
+          {action && copy ? (
             <>
               <SheetHeader className="text-left">
                 <SheetTitle>{copy.title}</SheetTitle>
@@ -163,11 +164,11 @@ export function InterviewChangeControls({
                 </Button>
                 <div className="border-t pt-3">
                   <Button
-                    variant={open === "cancel" ? "destructive" : "default"}
+                    variant={action === "cancel" ? "destructive" : "default"}
                     className="min-h-11 w-full"
                     disabled={busy}
                     aria-busy={busy}
-                    onClick={() => mut.mutate({ action: open, note: note.trim() || undefined })}
+                    onClick={() => mut.mutate({ action, note: note.trim() || undefined })}
                   >
                     {busy ? copy.pending : copy.confirm}
                   </Button>
