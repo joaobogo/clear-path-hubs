@@ -1,6 +1,8 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { InternalNotes } from "@/components/admin/InternalNotes";
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { useSuspenseQuery, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import React, { useMemo, useState } from "react";
@@ -70,10 +72,17 @@ import {
   explainApproveFailure,
   type ApproveFailure,
 } from "@/lib/scoring/approve-failure";
+import { CandidateHistoryTimeline } from "@/components/admin/candidate-history-timeline";
 
 
+
+const searchSchema = z.object({
+  /** Permalink target from the history timeline: `<source>:<row id>`. */
+  event: fallback(z.string(), "").default(""),
+});
 
 export const Route = createFileRoute("/_authenticated/admin/candidates/$id")({
+  validateSearch: zodValidator(searchSchema),
   loader: async ({ context, params }) => {
     const d = await context.queryClient.ensureQueryData({
       queryKey: ["admin-candidate", params.id],
@@ -134,7 +143,8 @@ function CandidateWorkspace() {
     queryFn: () => getAdminMatch({ data: { id } }),
   });
 
-  const [tab, setTab] = useState<TabId>("profile");
+  const { event: focusEventId } = Route.useSearch();
+  const [tab, setTab] = useState<TabId>(focusEventId ? "history" : "profile");
   const [busy, setBusy] = useState<string | null>(null);
 
   if (!data) return null;
@@ -250,7 +260,13 @@ function CandidateWorkspace() {
               <ScreeningTab result={currentResult} evidence={evidence} />
             )}
             {tab === "history" && (
-              <HistoryTab runs={runs} jobs={jobs} decisions={decisions} />
+              <div className="space-y-4">
+                <CandidateHistoryTimeline
+                  matchId={id}
+                  focusEventId={focusEventId || null}
+                />
+                <HistoryTab runs={runs} jobs={jobs} decisions={decisions} />
+              </div>
             )}
             {tab === "preview" && <PreviewTab matchId={id} />}
             {tab === "activity" && (
