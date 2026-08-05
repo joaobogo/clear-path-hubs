@@ -4010,6 +4010,8 @@ export type Database = {
       export_jobs: {
         Row: {
           completed_at: string | null
+          contact_included: boolean
+          contact_omission_reason: string | null
           data_freshness_at: string | null
           error: string | null
           expires_at: string | null
@@ -4021,11 +4023,16 @@ export type Database = {
           requested_at: string
           requested_by: string
           row_count: number | null
+          scope_label: string | null
           status: string
+          storage_bucket: string | null
+          storage_path: string | null
           trace_id: string | null
         }
         Insert: {
           completed_at?: string | null
+          contact_included?: boolean
+          contact_omission_reason?: string | null
           data_freshness_at?: string | null
           error?: string | null
           expires_at?: string | null
@@ -4037,11 +4044,16 @@ export type Database = {
           requested_at?: string
           requested_by: string
           row_count?: number | null
+          scope_label?: string | null
           status?: string
+          storage_bucket?: string | null
+          storage_path?: string | null
           trace_id?: string | null
         }
         Update: {
           completed_at?: string | null
+          contact_included?: boolean
+          contact_omission_reason?: string | null
           data_freshness_at?: string | null
           error?: string | null
           expires_at?: string | null
@@ -4053,7 +4065,10 @@ export type Database = {
           requested_at?: string
           requested_by?: string
           row_count?: number | null
+          scope_label?: string | null
           status?: string
+          storage_bucket?: string | null
+          storage_path?: string | null
           trace_id?: string | null
         }
         Relationships: [
