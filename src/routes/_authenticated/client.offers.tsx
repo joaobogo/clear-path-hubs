@@ -209,6 +209,24 @@ function OffersPage() {
         />
       </section>
 
+      {/* Who owes what — one row per offer, holder derived from events */}
+      <section className="mt-6">
+        <h2 className="text-sm font-semibold">Who owes what</h2>
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          Status, whose turn it is, and the response date that was agreed.
+        </p>
+        <div className="mt-3">
+          <OfferHolderRows
+            orgId={orgId}
+            hires={hires}
+            isPending={isPending}
+            isError={isError}
+            onRetry={() => void refetch()}
+            readOnly={!!readOnly}
+          />
+        </div>
+      </section>
+
       {/* Stalled offers */}
       {stalled.length > 0 && (
         <section className="mt-6 rounded-xl border border-amber-300/70 bg-amber-50/60 p-4 dark:bg-amber-950/20">
