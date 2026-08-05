@@ -1997,16 +1997,6 @@ function Section({
   );
 }
 
-/** A worked example under the fields people otherwise skip or answer in three words. */
-function Example({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="rounded-lg border-l-2 border-[color:var(--brand-teal)] bg-[color:var(--brand-teal)]/5 px-3 py-2 text-xs leading-relaxed text-[color:var(--brand-navy)]/80">
-      <span className="font-semibold">For example: </span>
-      {children}
-    </p>
-  );
-}
-
 function Field({
 
   label,
