@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { SupportSessionAuditList } from "@/components/admin/support-session-audit-list";
 
 export const Route = createFileRoute("/_authenticated/admin/support")({
   loader: ({ context }) =>
@@ -35,10 +36,11 @@ function SupportPage() {
 
   const start = useMutation({
     mutationFn: async (organization_id: string) =>
-      startFn({ data: { organization_id, mode: "read_only", reason: reason || "Support review" } }),
+      startFn({ data: { organization_id, mode: "read_only", reason: reason.trim() } }),
     onSuccess: async (_r, orgId) => {
       setMessage("Read-only session opened and logged. Opening the client workspace…");
       await qc.invalidateQueries({ queryKey: ["admin-support"] });
+      await qc.invalidateQueries({ queryKey: ["support-audit"] });
       window.open(`/client?org=${orgId}`, "_blank", "noopener");
     },
     onError: (e: Error) => setMessage(e.message),
@@ -49,9 +51,12 @@ function SupportPage() {
     onSuccess: async () => {
       setMessage("Session closed.");
       await qc.invalidateQueries({ queryKey: ["admin-support"] });
+      await qc.invalidateQueries({ queryKey: ["support-audit"] });
     },
     onError: (e: Error) => setMessage(e.message),
   });
+
+  const reasonValid = reason.trim().length >= 10;
 
   const orgs = (data.organizations as any[]).filter((o) =>
     filter.trim() ? String(o.name).toLowerCase().includes(filter.trim().toLowerCase()) : true,
@@ -89,11 +94,18 @@ function SupportPage() {
             <Input
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="Reason (ticket ref or short note)"
+              placeholder="Reason (required — ticket ref or short note)"
               className="max-w-sm"
               aria-label="Support reason"
+              aria-describedby="support-reason-hint"
+              required
             />
           </div>
+          <p id="support-reason-hint" className="text-xs text-muted-foreground">
+            {reasonValid
+              ? "This reason is stored with the session and shown in the audit trail."
+              : "A reason of at least 10 characters is required before a workspace can be opened."}
+          </p>
           <div className="max-h-80 space-y-1 overflow-y-auto">
             {orgs.length === 0 ? (
               <p className="text-sm text-muted-foreground">No clients match that filter.</p>
@@ -102,7 +114,13 @@ function SupportPage() {
                 <div key={o.id} className="flex items-center gap-3 rounded-md border border-border/60 p-2">
                   <span className="flex-1 text-sm font-medium">{o.name}</span>
                   <Badge variant="outline">{o.status}</Badge>
-                  <Button size="sm" variant="secondary" onClick={() => start.mutate(o.id)} disabled={start.isPending}>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => start.mutate(o.id)}
+                    disabled={start.isPending || !reasonValid}
+                    title={reasonValid ? undefined : "Enter a reason first"}
+                  >
                     Open read-only
                   </Button>
                 </div>
@@ -112,51 +130,7 @@ function SupportPage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">Recent sessions</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          {data.sessions.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No support sessions recorded yet.</p>
-          ) : (
-            (data.sessions as any[]).map((s) => (
-              <div key={s.id} className="flex flex-wrap items-center gap-3 rounded-md border border-border/60 p-2 text-sm">
-                <Badge variant={s.mode === "interactive" ? "destructive" : "secondary"}>{s.mode}</Badge>
-                <span className="font-medium">{s.org_name}</span>
-                <span className="text-muted-foreground">{new Date(s.started_at).toLocaleString()}</span>
-                {s.reason ? <span className="text-muted-foreground">· {s.reason}</span> : null}
-                <span className="ml-auto text-muted-foreground">
-                  {s.ended_at ? `Closed ${new Date(s.ended_at).toLocaleTimeString()}` : "Open"}
-                </span>
-                {!s.ended_at ? (
-                  <Button size="sm" variant="ghost" onClick={() => end.mutate(s.id)}>
-                    End
-                  </Button>
-                ) : null}
-              </div>
-            ))
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">Support audit trail</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-1">
-          {data.actions.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No support actions logged.</p>
-          ) : (
-            (data.actions as any[]).map((a) => (
-              <p key={a.id} className="text-sm text-muted-foreground">
-                <span className="text-foreground">{a.action}</span> · {a.org_name} · {a.target_type ?? "—"} ·{" "}
-                {new Date(a.occurred_at).toLocaleString()}
-              </p>
-            ))
-          )}
-        </CardContent>
-      </Card>
+      <SupportSessionAuditList />
 
       <p className="text-xs text-muted-foreground">
         Need to change something on a client&apos;s behalf? Use the admin surfaces directly —{" "}
