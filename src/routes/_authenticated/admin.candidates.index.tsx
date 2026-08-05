@@ -274,6 +274,13 @@ function CandidatesPage() {
         </div>
       </header>
 
+      <div className="mb-4 space-y-3">
+        <DuplicateCandidatesBanner onReview={() => setShowDuplicates(true)} />
+        {showDuplicates ? <DuplicateCandidatesPanel /> : null}
+      </div>
+
+
+
       <SavedViewsBar
         surface="admin_candidates"
         currentFilters={Object.fromEntries(
