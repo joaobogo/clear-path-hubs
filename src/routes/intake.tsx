@@ -452,6 +452,14 @@ function ExpressIntakePage() {
           next.confirmPassword = "Both passwords must match";
         }
       }
+      // Same class of problem for the job description: the length rule lives in
+      // an object-level refine, so a too-short paste stayed invisible while any
+      // other field was still empty.
+      const jdTyped = (state.jobDescriptionText ?? "").trim();
+      if (!jdFile && jdTyped.length > 0 && jdTyped.length < MIN_JD_TEXT) {
+        next.jobDescriptionText = `Paste at least ${MIN_JD_TEXT} characters or upload the job description file`;
+      }
+
       setErrors(next);
       toast.error("Please check the highlighted fields.");
       const first = document.querySelector<HTMLElement>("[data-field-error='true']");
