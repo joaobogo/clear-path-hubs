@@ -446,6 +446,17 @@ function ApplyPage() {
     stepHeadingRef.current?.focus();
   }, [step, qCursor]);
 
+  // Relative, plain-language save marker. Absent until the first real save,
+  // so nothing claims to be saved before it is.
+  const savedLabel = (() => {
+    void savedTick;
+    if (draftError) return null;
+    if (!draftSavedAt) return null;
+    const mins = Math.floor((Date.now() - draftSavedAt) / 60_000);
+    if (mins < 1) return "Saved just now";
+    return `Saved ${mins} ${mins === 1 ? "minute" : "minutes"} ago`;
+  })();
+
   const stepName = STEP_LABELS[Math.min(step, STEP_LABELS.length) - 1];
   const stepAnnouncement = paginateQuestions
     ? `Step ${step} of ${APPLY_STEPS}, ${stepName}. Question ${qCursor} of ${questionCount}.`
@@ -592,7 +603,28 @@ function ApplyPage() {
     <FormShell
       exitTo={`/jobs/${id}`}
       exitLabel="← Role details"
-      progress={{ step, total: STEP_LABELS.length, label: `Step ${step} of ${STEP_LABELS.length}` }}
+      progress={{
+        step,
+        total: STEP_LABELS.length,
+        label: `Step ${step} of ${STEP_LABELS.length}`,
+        note: draftError ? (
+          <span
+            className="shrink-0 rounded-full bg-destructive/10 px-2 py-0.5 text-[11px] font-medium text-destructive"
+            data-testid="apply-draft-error"
+            role="status"
+          >
+            Not saved — finish this step before leaving
+          </span>
+        ) : savedLabel ? (
+          <span
+            className="shrink-0 rounded-full bg-[color:var(--brand-navy)]/8 px-2 py-0.5 text-[11px] font-medium text-[color:var(--brand-navy)]/80"
+            data-testid="apply-draft-saved-marker"
+            role="status"
+          >
+            {savedLabel}
+          </span>
+        ) : null,
+      }}
       width="md"
     >
       <div className="text-sm text-[color:var(--brand-navy)]/80">{pos.organization_name}</div>
