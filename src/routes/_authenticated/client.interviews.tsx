@@ -338,6 +338,30 @@ function InterviewsPage() {
               setBusyId(iv.id);
               rescheduleMut.mutate({ orgId: iv.organization_id, id: iv.id });
             }}
+            timezone={orgTimezone}
+            proposingId={proposingId}
+            proposeSubmitting={proposeMut.isPending}
+            proposeFailed={proposeFailed}
+            onStartPropose={(iv) => {
+              setProposeFailed(null);
+              setProposingId(iv.id);
+            }}
+            onCancelPropose={() => {
+              setProposingId(null);
+              setProposeFailed(null);
+            }}
+            onSubmitPropose={(iv, p) =>
+              proposeMut.mutate({
+                orgId: iv.organization_id,
+                id: iv.id,
+                proposedTimes: p.slotsIso,
+                interviewType: p.format,
+                timezone: p.timezone,
+                durationMinutes: p.durationMinutes,
+                participants: p.attendees,
+                ...(p.notes ? { notes: p.notes } : {}),
+              })
+            }
           />
         )}
       </PageBody>
