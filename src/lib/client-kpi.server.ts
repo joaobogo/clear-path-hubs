@@ -49,7 +49,10 @@ export type KpiRow = {
   interview_requested_at: string | null;
   /** When this candidate entered its current stage (falls back to delivery). */
   stage_entered_at: string | null;
+  /** Recorded date the client's decision is due by, when one is stored. */
+  client_decision_due_at: string | null;
 };
+
 
 
 
@@ -85,6 +88,7 @@ export async function loadKpiRows(
     .from("candidate_matches")
     .select(
       `id, candidate_profile_id, position_id, stage, approved_score_run_id, delivered_at,
+       client_decision_due_at,
        score_runs:approved_score_run_id (score, fit_label)`,
     )
     .eq("organization_id", orgId)
@@ -157,6 +161,7 @@ export async function loadKpiRows(
     interview_requested_at: interviewRequestedAt.get(m.id) ?? null,
     stage_entered_at: stageEnteredAt.get(m.id) ?? m.delivered_at ?? null,
 
+    client_decision_due_at: m.client_decision_due_at ?? null,
     interview_needs_confirmation: unconfirmedInterviews.has(m.id),
   }));
 }

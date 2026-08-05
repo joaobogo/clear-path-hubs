@@ -35,6 +35,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SystemStatusStrip } from "@/components/client/control-room/system-status-strip";
 import { LiveTicker } from "@/components/client/control-room/live-ticker";
 import { IntensityDial } from "@/components/client/control-room/intensity-dial";
+import { HiringHealthLine } from "@/components/client/hiring-health-line";
 import { SystemHealthStrip } from "@/components/client/system-health-strip";
 import { AgentActivityRail } from "@/components/client/agent-activity-rail";
 
@@ -221,15 +222,6 @@ function OverviewPage() {
     return activity.filter((e) => new Date(e.created_at).getTime() > lastSeen);
   }, [activity, lastSeen]);
 
-  const summary = useMemo(() => {
-    if (!kpis) return null;
-    if (queue.length > 0) {
-      return `${queue.length} decision${queue.length === 1 ? "" : "s"} need${queue.length === 1 ? "s" : ""} you today.`;
-    }
-    if (kpis.active_positions) return "Nothing needs you today. Your searches are running.";
-    return "Your workspace is quiet. Submit a role to get started.";
-  }, [kpis, queue]);
-
   const showOnboarding = !!kpis && kpis.active_positions === 0 && kpis.delivered === 0;
 
   return (
@@ -242,9 +234,6 @@ function OverviewPage() {
           <h1 className="mt-1 truncate text-2xl sm:text-3xl font-semibold tracking-tight">
             {ctx?.active?.name ?? "Your organization"}
           </h1>
-          {summary && (
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">{summary}</p>
-          )}
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <DensityToggle density={density} onChange={setDensity} />
@@ -304,7 +293,17 @@ function OverviewPage() {
             </div>
           )}
 
-          {/* 1 · WHAT NEEDS ME TODAY — the only thing on the first screen */}
+          {/* 1 · HIRING HEALTH — one sentence, three figures, above the queue */}
+          <HiringHealthLine
+            health={data?.hiring_health ?? null}
+            loading={!data && isFetching}
+            isError={isError && !data}
+            onRetry={() => refetch()}
+            canSubmit={canSubmit}
+            org={orgSearch ?? null}
+          />
+
+          {/* 2 · WHAT NEEDS ME TODAY — the only thing on the first screen */}
           <DecisionQueue queue={queue} loading={!data && isFetching} />
 
           {/* CONTROL ROOM — what is running, what moved, how hard we work */}

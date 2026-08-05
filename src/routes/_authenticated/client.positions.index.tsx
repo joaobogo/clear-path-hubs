@@ -25,6 +25,8 @@ const searchSchema = z.object({
  location: fallback(z.string(), "all").default("all"),
  view: fallback(z.enum(["cards", "list"]), "cards").default("cards"),
  sort: fallback(z.string(), "action").default("action"),
+ // Drill-through from the hiring health line: roles with no shortlist yet.
+ shortlist: fallback(z.enum(["all", "none"]), "all").default("all"),
 });
 
 export const Route = createFileRoute("/_authenticated/client/positions/")({
@@ -92,7 +94,7 @@ type Row = {
 
 
 function PositionsPage() {
- const { status, q, location, view, sort } = Route.useSearch();
+ const { status, q, location, view, sort, shortlist } = Route.useSearch();
  const navigate = Route.useNavigate();
  const [searchInput, setSearchInput] = useState(q);
  useEffect(() => setSearchInput(q), [q]);
@@ -151,6 +153,7 @@ function PositionsPage() {
  const term = q.trim().toLowerCase();
  let list = rows.filter((p) => {
  if (location !== "all" && p.location !== location) return false;
+ if (shortlist === "none" && p.kpis.delivered > 0) return false;
  if (!term) return true;
  const hay = [p.title, p.location, p.work_model, p.seniority, p.employment_type]
  .filter(Boolean)
@@ -182,7 +185,7 @@ function PositionsPage() {
  }
  });
  return list;
- }, [rows, q, location, sort]);
+ }, [rows, q, location, sort, shortlist]);
 
  const portfolio = useMemo(() => {
  const acc = {

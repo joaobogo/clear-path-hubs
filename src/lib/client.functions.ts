@@ -26,6 +26,8 @@ import {
 } from "@/lib/client-pipeline-language";
 import { computeRoleProgress } from "@/lib/client-role-progress";
 import { computeRoleRisk } from "@/lib/client-role-risk";
+import { computeHiringHealth } from "@/lib/client-hiring-health";
+
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -243,17 +245,64 @@ export const getClientOverview = createServerFn({ method: "GET" })
   .handler(async ({ context, data }) => {
     const rows = await loadKpiRows(context.supabase, data.orgId);
 
-    const { data: positions } = await context.supabase
+    const { data: positions, error: positionsError } = await context.supabase
       .from("positions")
       .select("id, title, status, updated_at, created_at")
       .eq("organization_id", data.orgId)
-      .in("status", ["active", "paused", "approved"])
-
       .in("status", ["active", "paused", "approved"])
       .order("updated_at", { ascending: false });
     const activePositionsList = (positions as AnyRow[]) ?? [];
     const activePositions = activePositionsList.length;
     const kpis = computeKpis(rows, activePositions);
+
+    // ── Hiring health line ──────────────────────────────────────────────────
+    // One judgement plus three figures. Every input is a recorded date or a
+    // stored commitment; nothing is projected. If any input fails to load we
+    // return null so the client shows an error state rather than "on track".
+    const allPositionIds = activePositionsList.map((p) => p.id as string);
+    const { data: healthCommitmentRows, error: healthCommitmentError } = allPositionIds.length
+      ? await context.supabase
+          .from("position_commitments")
+          .select("position_id, first_shortlist_days, baseline_at")
+          .eq("organization_id", data.orgId)
+          .in("position_id", allPositionIds)
+      : { data: [] as AnyRow[], error: null };
+
+    const nowMs = Date.now();
+    const deliveredPositionIds = new Set(
+      rows.filter((r) => r.delivered_at != null).map((r) => r.position_id),
+    );
+    const promisedByPosition = new Map<string, number>();
+    for (const c of ((healthCommitmentRows as AnyRow[]) ?? [])) {
+      if (!c.baseline_at || c.first_shortlist_days == null) continue;
+      promisedByPosition.set(
+        c.position_id as string,
+        new Date(c.baseline_at as string).getTime() +
+          Number(c.first_shortlist_days) * 86_400_000,
+      );
+    }
+    const rolesWithoutShortlist = allPositionIds.filter(
+      (id) => !deliveredPositionIds.has(id),
+    );
+    const hiring_health =
+      positionsError || healthCommitmentError
+        ? null
+        : computeHiringHealth({
+            openRoles: activePositions,
+            awaitingDecision: kpis.awaiting_decision,
+            rolesWithoutShortlist: rolesWithoutShortlist.length,
+            overdueDecisions: rows.filter(
+              (r) =>
+                r.stage === "delivered" &&
+                r.client_decision_due_at != null &&
+                new Date(r.client_decision_due_at).getTime() < nowMs,
+            ).length,
+            behindScheduleRoles: rolesWithoutShortlist.filter((id) => {
+              const promised = promisedByPosition.get(id);
+              return promised != null && promised < nowMs;
+            }).length,
+          });
+
 
     // "What's new" — matches delivered in the past 7 days.
     const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
@@ -539,6 +588,8 @@ export const getClientOverview = createServerFn({ method: "GET" })
 
     return {
       kpis,
+      hiring_health,
+
       active_positions: activePositions,
       new_this_week,
       action_required,
