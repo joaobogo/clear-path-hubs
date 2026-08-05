@@ -73,6 +73,8 @@ import {
   type ApproveFailure,
 } from "@/lib/scoring/approve-failure";
 import { CandidateHistoryTimeline } from "@/components/admin/candidate-history-timeline";
+import { CandidateNextActionBar } from "@/components/admin/candidate-next-action-bar";
+
 
 
 
