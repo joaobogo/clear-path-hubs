@@ -446,6 +446,14 @@ function CandidateDetailPage() {
               roleTitle={candidate.position?.title ?? null}
               readOnly={readOnly}
             />
+            {/* Interviewers never see who else was given access to a candidate. */}
+            {!isViewer && orgId && (
+              <InterviewerAssignments
+                orgId={orgId}
+                matchId={candidate.match_id}
+                readOnly={support.readOnly}
+              />
+            )}
             <ProfilePanel candidate={candidate} />
             <LinksPanel candidate={candidate} />
           </div>
