@@ -717,6 +717,33 @@ function ExpressIntakePage() {
     setState((s) => ({ ...s, [key]: value }));
   };
 
+  /**
+   * Compensation inputs take digits only. Anything else is rejected inline
+   * instead of being silently swallowed, so nobody wonders where their "$" went.
+   */
+  const onSalaryChange = (key: "salaryMin" | "salaryMax", raw: string) => {
+    const digits = raw.replace(/[^\d]/g, "");
+    set(key, digits);
+    setErrors((prev) => {
+      const next = { ...prev };
+      if (raw.trim() !== "" && digits !== raw.replace(/\s/g, "")) {
+        next[key] = "Numbers only — no currency symbols, commas or text";
+      } else {
+        delete next[key];
+      }
+      // Re-open the wide-range confirmation whenever the numbers move.
+      delete next.wideRangeConfirmed;
+      return next;
+    });
+    setState((s) => ({ ...s, wideRangeConfirmed: false }));
+  };
+
+  /** Whether the current range trips the stated wide-range threshold. */
+  const wideRange = isWideCompensationRange(
+    Number(state.salaryMin) || 0,
+    Number(state.salaryMax) || 0,
+  );
+
   const onPickFile = async (file: File | null) => {
     if (!file) return;
     const ext = jdFileExt(file.name);
