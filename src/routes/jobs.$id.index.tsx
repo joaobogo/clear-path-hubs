@@ -330,7 +330,8 @@ function JobDetail() {
 
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
           {/* Main column: the description, rendered with real hierarchy. */}
-          <div className="min-w-0">
+          <div className="order-2 min-w-0 lg:order-1">
+
             {pos.company_intro ? (
               <section className="mb-8 rounded-xl border bg-muted/30 p-6">
                 <h2 className="text-xl font-semibold tracking-tight">About the company</h2>
