@@ -1,13 +1,14 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { CalendarClock, Check, Link2, MapPin, Users } from "lucide-react";
+import { CalendarClock, Check, MapPin, Users } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { InterviewAttendBlock } from "@/components/candidate/interview-attend-block";
 import { InterviewChangeControls } from "@/components/candidate/interview-change-controls";
 import { listMyInterviews, respondToInterview } from "@/lib/scheduling.functions";
-import { calendarLink, calendlyLink, formatInZone, viewerTimezone } from "@/lib/scheduling";
+import { calendlyLink, formatInZone, viewerTimezone } from "@/lib/scheduling";
 import {
   buildCandidateSlots,
   formatAndDuration,
@@ -207,30 +208,19 @@ export function InterviewResponseCard({ applicationId, compact = false }: Props)
                       ? "We're confirming this with the hiring team and will send the invite."
                       : "This time is confirmed. The other times have been released."}
                   </p>
-                  <div className="mt-3 flex flex-wrap gap-3">
-                    <a
-                      className="text-xs text-primary underline underline-offset-2"
-                      href={calendarLink({
-                        title: `Interview · ${i.position_title}`,
-                        startIso: i.scheduled_at as string,
-                        durationMinutes: i.duration_minutes,
-                        location: i.meeting_url ?? i.location ?? undefined,
-                      })}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                    >
-                      Add to calendar
-                    </a>
-                    {i.meeting_url ? (
-                      <a
-                        href={i.meeting_url}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        className="inline-flex items-center gap-1.5 text-xs text-primary underline underline-offset-2"
-                      >
-                        <Link2 className="h-3.5 w-3.5" /> Join link
-                      </a>
-                    ) : null}
+                  <div className="mt-4 border-t pt-3">
+                    <InterviewAttendBlock
+                      interviewId={i.id}
+                      positionTitle={i.position_title}
+                      scheduledAt={i.scheduled_at}
+                      durationMinutes={i.duration_minutes}
+                      interviewType={i.interview_type}
+                      meetingUrl={i.meeting_url}
+                      location={i.location}
+                      people={i.participant_people ?? []}
+                      viewerTz={tz}
+                      awaitingConfirmation={i.awaiting_confirmation}
+                    />
                   </div>
                   <InterviewChangeControls
                     interviewId={i.id}
