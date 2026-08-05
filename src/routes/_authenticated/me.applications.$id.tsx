@@ -13,8 +13,10 @@ import {
 
 import {
   CANDIDATE_STATUS_MEANING,
+  CANDIDATE_STATUS_NEXT_STEP,
   CANDIDATE_STATUS_TONE,
 } from "@/lib/candidate-status";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
