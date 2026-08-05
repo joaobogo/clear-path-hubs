@@ -512,7 +512,7 @@ export const expressIntakeSchema = z
     lastName: z.string().trim().min(1, "Enter your last name").max(80),
     contactTitle: z.string().trim().max(120).optional().or(z.literal("")),
     workEmail: z.string().trim().toLowerCase().email("Enter a valid work email").max(255),
-    phone: z.string().trim().min(6, "Enter a phone number we can reach you on").max(40),
+    phone: optionalText(40),
     contactLinkedin: linkedinField("personal"),
 
     // Account
