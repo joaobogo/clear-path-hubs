@@ -3,13 +3,16 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getPublicPosition } from "@/lib/jobs.functions";
 import { extractJobUuid } from "@/lib/marketing/job-slug";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { submitApplication } from "@/lib/apply.functions";
 import {
+  APPLY_STEPS,
   APPLY_STEP_LABELS,
   EFFORT_DEFAULT,
   applyEffortLine,
   applyEffortProvenance,
 } from "@/lib/jobs/apply-effort";
+
 
 
 import { ProcessState } from "@/components/ds/process-state";
@@ -35,7 +38,18 @@ import { FormShell } from "@/components/marketing/form-shell";
 import { TransparencyPanel } from "@/components/candidate/transparency-panel";
 
 export const Route = createFileRoute("/jobs/$id/apply")({
+  // The step lives in the URL so the browser back button walks back through
+  // the flow instead of leaving it — the component stays mounted, so nothing
+  // the candidate typed (or attached) is lost.
+  validateSearch: (search: Record<string, unknown>): { step?: number; q?: number } => {
+    const clamp = (raw: unknown, max: number) => {
+      const n = Number(raw);
+      return Number.isFinite(n) ? Math.min(max, Math.max(1, Math.trunc(n))) : 1;
+    };
+    return { step: clamp(search.step, APPLY_STEPS), q: clamp(search.q, 99) };
+  },
   loader: async ({ context, params }) => {
+
     const uuid = extractJobUuid(params.id);
     const data = await context.queryClient.ensureQueryData({
       queryKey: ["public-position", uuid],
@@ -86,7 +100,26 @@ function ApplyPage() {
   const draftKey = APPLY_DRAFT_KEY(id);
   const idemKey = APPLY_IDEMPOTENCY_KEY(id);
 
-  const [step, setStep] = useState(1);
+  const isMobile = useIsMobile();
+  const { step: stepParam, q: qParam } = Route.useSearch();
+  const step = stepParam ?? 1;
+  const qIndex = qParam ?? 1;
+  // One writer for both step and question cursor, so back/forward always land
+  // on a state the flow can render.
+  const goTo = useCallback(
+    (next: { step?: number; q?: number }, opts?: { replace?: boolean }) => {
+      void navigate({
+        to: "/jobs/$id/apply",
+        params: { id: rawId },
+        search: (prev: { step?: number; q?: number }) => ({ ...prev, ...next }),
+        replace: opts?.replace ?? false,
+        resetScroll: false,
+      });
+    },
+    [navigate, rawId],
+  );
+  const setStep = useCallback((n: number) => goTo({ step: n, q: 1 }), [goTo]);
+
   const [form, setForm] = useState({
     full_name: "",
     email: "",
@@ -119,6 +152,7 @@ function ApplyPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
   const submittingRef = useRef(false);
+  const stepHeadingRef = useRef<HTMLHeadingElement>(null);
   // When this form first became usable. The gap to a successful submit is the
   // only honest source for the time we quote to the next candidate.
   const startedAtRef = useRef<number>(Date.now());
@@ -274,6 +308,24 @@ function ApplyPage() {
     }
   }, [idemKey]);
 
+  /**
+   * Required-answer check for a subset of screening questions. Scoped so a
+   * single question can gate its own screen without dragging in the rest.
+   */
+  const questionIssues = (
+    qs: { id: string; required?: boolean | null }[],
+  ): Record<string, string> => {
+    const errs: Record<string, string> = {};
+    qs.forEach((q) => {
+      if (!q?.required) return;
+      const v = answers[q.id];
+      const empty =
+        v == null || (typeof v === "string" && v.trim() === "");
+      if (empty) errs[`q:${q.id}`] = "This question is required";
+    });
+    return errs;
+  };
+
   // Per-step validation used to gate Continue.
   const stepIssues = (n: number): Record<string, string> => {
     const errs: Record<string, string> = {};
@@ -299,33 +351,75 @@ function ApplyPage() {
       if (!url(form.linkedin_url)) errs.linkedin_url = "Enter a full link starting with https://";
       if (!url(form.website_url)) errs.website_url = "Enter a full link starting with https://";
     }
-    if (n === 3) {
-      pos!.questions.forEach((q) => {
-        if (!q.required) return;
-        const v = answers[q.id];
-        const empty =
-          v == null ||
-          (typeof v === "string" && v.trim() === "") ||
-          (Array.isArray(v) && v.length === 0);
-        if (empty) errs[`q:${q.id}`] = "This question is required";
-      });
-    }
+    if (n === 3) Object.assign(errs, questionIssues(pos!.questions));
     if (n === 4) {
       if (!consent) errs.consent_terms = "You must accept the terms to continue";
     }
     return errs;
   };
 
+  // On a phone the screening step is shown one question per screen, so the
+  // cursor has to advance before the step does.
+  const questionCount = pos?.questions.length ?? 0;
+  const paginateQuestions = isMobile && step === 3 && questionCount > 1;
+  const qCursor = Math.min(Math.max(1, qIndex), Math.max(1, questionCount));
+
   const goNext = () => {
+    if (paginateQuestions && qCursor < questionCount) {
+      // Only this question gates the next question. Later ones are not its
+      // problem.
+      const errs = questionIssues([pos!.questions[qCursor - 1]]);
+      setFieldErrors(errs);
+      if (Object.keys(errs).length > 0) return;
+      goTo({ q: qCursor + 1 });
+      return;
+    }
     const errs = stepIssues(step);
     setFieldErrors(errs);
     if (Object.keys(errs).length > 0) return;
-    setStep((s) => Math.min(5, s + 1));
+    setStep(Math.min(APPLY_STEPS, step + 1));
   };
   const goBack = () => {
     setFieldErrors({});
-    setStep((s) => Math.max(1, s - 1));
+    if (paginateQuestions && qCursor > 1) {
+      goTo({ q: qCursor - 1 });
+      return;
+    }
+    setStep(Math.max(1, step - 1));
   };
+
+  // A pasted or reloaded URL can point at a step whose inputs are gone — the
+  // CV is deliberately never stored. Drop back to the first step that still
+  // needs something rather than showing a review of nothing.
+  const clampedRef = useRef(false);
+  useEffect(() => {
+    if (clampedRef.current || signedIn === null || step === 1) return;
+    clampedRef.current = true;
+    for (let n = 1; n < step; n++) {
+      if (Object.keys(stepIssues(n)).length > 0) {
+        goTo({ step: n, q: 1 }, { replace: true });
+        return;
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signedIn, step]);
+
+  // Every step change moves focus to the new heading and announces it, so a
+  // screen reader user is told where they are instead of guessing.
+  const firstStepRender = useRef(true);
+  useEffect(() => {
+    if (firstStepRender.current) {
+      firstStepRender.current = false;
+      return;
+    }
+    stepHeadingRef.current?.focus();
+  }, [step, qCursor]);
+
+  const stepName = STEP_LABELS[Math.min(step, STEP_LABELS.length) - 1];
+  const stepAnnouncement = paginateQuestions
+    ? `Step ${step} of ${APPLY_STEPS}, ${stepName}. Question ${qCursor} of ${questionCount}.`
+    : `Step ${step} of ${APPLY_STEPS}, ${stepName}.`;
+
 
   const onSubmit = async () => {
     if (submittingRef.current) return;
