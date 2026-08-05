@@ -314,6 +314,14 @@ export async function setHireStartDate(
   if (!isLiveOffer(String(hire["status"])) && !qualifiesAsHire(String(hire["status"]))) {
     throw new Error("Start dates can only be set on live or confirmed offers");
   }
+  // A start date must be a real date and cannot precede acceptance.
+  const { validateStartDate } = await import("./hire-handoff");
+  const invalid = validateStartDate(
+    args.startDate,
+    (hire["accepted_at"] as string | null) ?? null,
+  );
+  if (invalid) throw new Error(invalid);
+
 
   const patch: Row = {
     start_date: args.startDate,
