@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BLUEPRINT_STAGES } from "@/lib/express-intake-schema";
 import { CheckCircle2, CircleDashed, Loader2, TriangleAlert } from "lucide-react";
+import { DeliveryCommitmentBlock } from "@/components/client/delivery-commitment";
+import { buildDeliveryCommitment, type StoredCommitment } from "@/lib/delivery-commitment";
 
 const searchSchema = z.object({
   intake_id: z.string().uuid().optional(),
@@ -21,6 +23,8 @@ type StatusBody = {
   blueprintStatus: string;
   blueprintFailed: boolean;
   summary: { mustHaves: number; screeningQuestions: number; confidence: number } | null;
+  commitment: StoredCommitment | null;
+  contactName: string | null;
   createdAt: string;
 };
 
@@ -124,17 +128,25 @@ function ConfirmationPage() {
             </p>
           )}
 
-          {intake_id && loading && !status && <p className="text-muted-foreground">Loading status…</p>}
+          {intake_id && loading && !status && (
+            <>
+              <p className="text-muted-foreground">Loading status…</p>
+              <DeliveryCommitmentBlock commitment={null} loading />
+            </>
+          )}
 
           {intake_id && error && !status && (
             <>
               <p className="text-destructive">We couldn't load your status ({error}).</p>
+              {/* The confirmation still stands: reference plus an honest note
+                  that the delivery dates follow by email. */}
+              <DeliveryCommitmentBlock commitment={null} reference={intake_id} datesFollowByEmail />
               <p className="text-muted-foreground">
-                Your reference is <span className="font-mono">{intake_id.slice(0, 8)}</span>. Email{" "}
+                Email{" "}
                 <a className="underline" href="mailto:hello@taasflow.com">
                   hello@taasflow.com
                 </a>{" "}
-                and include it.
+                and include your reference.
               </p>
             </>
           )}
@@ -145,6 +157,17 @@ function ConfirmationPage() {
                 <strong>{status.roleTitle}</strong> is live in the {status.companyName} workspace. You can
                 open it right now — we'll keep filling in the details.
               </p>
+
+              {/* Every date here comes from the commitment stored against this
+                  role — the same one shown on the role page. */}
+              <DeliveryCommitmentBlock
+                commitment={buildDeliveryCommitment({
+                  commitment: status.commitment,
+                  positionId: status.positionId,
+                  contactName: status.contactName,
+                })}
+                reference={status.intakeId}
+              />
 
               <div className="space-y-3 rounded-lg border p-4">
                 <div className="flex items-center justify-between gap-3">

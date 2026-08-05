@@ -42,6 +42,8 @@ import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 
 import { RoleProgressTracker } from "@/components/client/role-progress-tracker";
 import { RoleDatedTimeline } from "@/components/client/role-dated-timeline";
+import { DeliveryCommitmentBlock } from "@/components/client/delivery-commitment";
+import { buildDeliveryCommitment } from "@/lib/delivery-commitment";
 import { RoleShortlist } from "@/components/client/role-shortlist";
 import { RoleLifecycleTimeline } from "@/components/client/role-lifecycle-timeline";
 import { getRoleLifecycle } from "@/lib/role-lifecycle/role-lifecycle.functions";
@@ -653,6 +655,15 @@ function PositionDetailPage() {
  orgId={orgId}
  positionId={id}
  firstShortlistExpectedAt={data.first_shortlist_expected_at}
+ />
+
+ {/* Same stored delivery commitment the client saw on confirmation */}
+ <DeliveryCommitmentBlock
+ commitment={buildDeliveryCommitment({
+ commitment: data.commitment,
+ positionId: id,
+ contactName: data.commitment_contact_name,
+ })}
  />
 
    {/* 5b. Role setup timeline + search channels — evidence-backed */}
