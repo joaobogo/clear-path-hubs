@@ -431,10 +431,16 @@ async function lookupIntake(companyName: string, email?: string) {
 /** Booking sessions created by the /book flow, looked up by work email. */
 async function lookupBooking(email: string) {
   const sb = await loadAdmin();
+  const emailLower = email.toLowerCase();
+  if (!emailLower.endsWith("@qa.taasflow.test")) {
+    throw new Error("lookup_booking only accepts @qa.taasflow.test mailboxes");
+  }
   const { data: rows } = await sb
     .from("booking_sessions")
-    .select("id,email,company_name,status")
-    .eq("email", email.toLowerCase())
+    .select(
+      "id,email,company_name,status,scheduled_start,scheduled_end,join_url,timezone,host_name,calendly_event_uri,calendly_invitee_uri,qualification_score",
+    )
+    .eq("email", emailLower)
     .order("created_at", { ascending: false })
     .limit(5);
   return { sessions: rows ?? [] };

@@ -38,7 +38,9 @@ type QaAction =
   | "cleanup_intake_e2e"
   | "lookup_intake"
   | "lookup_candidate_application"
-  | "cleanup_candidate_e2e";
+  | "cleanup_candidate_e2e"
+  | "lookup_booking"
+  | "cleanup_booking_e2e";
 
 function token(): string {
   const value = process.env["QA_SEED_TOKEN"];
@@ -115,6 +117,91 @@ export function uniqueCandidate(): { stamp: string; email: string; fullName: str
     email: `${CANDIDATE_EMAIL_PREFIX}${stamp}@${QA_EMAIL_DOMAIN}`,
     fullName: `QA Candidate ${stamp}`,
   };
+}
+
+export const BOOKING_EMAIL_PREFIX = "qa.book+";
+
+export type BookingSessionRow = {
+  id: string;
+  email: string;
+  company_name: string | null;
+  status: string;
+  scheduled_start: string | null;
+  scheduled_end: string | null;
+  join_url: string | null;
+  timezone: string | null;
+  host_name: string | null;
+  calendly_event_uri: string | null;
+  calendly_invitee_uri: string | null;
+  qualification_score: number | null;
+};
+
+/** Reads back the booking_sessions rows the real /book submit persisted. */
+export const lookupBooking = (email: string) =>
+  qaSeed<{ ok: boolean; sessions: BookingSessionRow[] }>("lookup_booking", { email });
+
+/** Removes every booking row this suite created through the real UI. */
+export const cleanupBookingArtifacts = (
+  emailPattern = `${BOOKING_EMAIL_PREFIX}%@${QA_EMAIL_DOMAIN}`,
+) => qaSeed<{ deleted: number }>("cleanup_booking_e2e", { email_pattern: emailPattern });
+
+/** Unique-per-run booking prospect mailbox. */
+export function uniqueBookingProspect(): { stamp: string; email: string; companyName: string } {
+  const stamp = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
+  return {
+    stamp,
+    email: `${BOOKING_EMAIL_PREFIX}${stamp}@${QA_EMAIL_DOMAIN}`,
+    companyName: `${INTAKE_ORG_PREFIX}BOOK_${stamp}`,
+  };
+}
+
+/**
+ * Posts a Calendly-shaped webhook to our public handler with a real HMAC
+ * signature, so the test exercises the same code path Calendly hits.
+ * Returns the raw status so a test can assert 401 on a forged signature.
+ */
+export async function postCalendlyWebhook(
+  body: unknown,
+  opts: { signingKey?: string; forge?: boolean } = {},
+): Promise<{ status: number; text: string }> {
+  const key = opts.signingKey ?? process.env["CALENDLY_WEBHOOK_SIGNING_KEY"];
+  if (!key) throw new Error("CALENDLY_WEBHOOK_SIGNING_KEY is not set in the environment");
+  const raw = JSON.stringify(body);
+  const timestamp = Math.floor(Date.now() / 1000).toString();
+  const { createHmac } = await import("node:crypto");
+  const v1 = opts.forge
+    ? "0".repeat(64)
+    : createHmac("sha256", key).update(`${timestamp}.${raw}`).digest("hex");
+  const res = await fetch(`${BASE_URL}/api/public/booking/calendly-webhook`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "calendly-webhook-signature": `t=${timestamp},v1=${v1}`,
+    },
+    body: raw,
+  });
+  return { status: res.status, text: await res.text() };
+}
+
+/**
+ * Waits until React has attached to a specific server-rendered control.
+ *
+ * Cheaper and more general than waitForHydration: it inspects the DOM node for
+ * React's internal props key, which only exists after hydration commits.
+ */
+export async function waitForReactMount(page: Page, selector: string): Promise<void> {
+  await page.waitForSelector(selector, { state: "attached", timeout: 60_000 });
+  await expect
+    .poll(
+      () =>
+        page.evaluate((sel) => {
+          const el = document.querySelector(sel);
+          if (!el) return false;
+          return Object.keys(el).some((k) => k.startsWith("__reactProps"));
+        }, selector),
+      { timeout: 90_000, intervals: [250, 500, 1_000] },
+    )
+    .toBe(true);
 }
 
 /**

@@ -1,17 +1,20 @@
 /**
  * TEST 2 — /book, the single booking destination.
  *
- * Drives the intake step exactly as a visitor would, then verifies the
- * scheduler step either embeds the real calendar or degrades to the honest
- * fallback. Booking rows are namespaced qa.book+* and removed in teardown.
+ * Drives the intake step exactly as a visitor would, asserts the booking_sessions
+ * row actually lands, then drives the Calendly webhook handler with a real HMAC
+ * signature to prove the meeting facts (scheduled_start, join_url) get written.
+ * Booking rows are namespaced qa.book+* and removed in teardown.
  */
 import { expect, test, type Page } from "@playwright/test";
-import { collectConsoleErrors, meaningfulConsoleErrors, qaSeed } from "./helpers/qa";
-
-function prospect() {
-  const stamp = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
-  return { stamp, email: `qa.book+${stamp}@qa.taasflow.test` };
-}
+import {
+  collectConsoleErrors,
+  lookupBooking,
+  meaningfulConsoleErrors,
+  postCalendlyWebhook,
+  uniqueBookingProspect,
+  waitForReactMount,
+} from "./helpers/qa";
 
 const SELECTS: [string, string][] = [
   ["companySize", "51–200"],
@@ -21,6 +24,12 @@ const SELECTS: [string, string][] = [
   ["currentProcess", ""],
   ["heardAbout", ""],
 ];
+
+/** Opens /book and waits until the form is genuinely interactive. */
+async function openBook(page: Page) {
+  await page.goto("/book", { waitUntil: "domcontentloaded" });
+  await waitForReactMount(page, "#firstName");
+}
 
 async function fillIntake(page: Page, email: string, companyName: string) {
   await page.locator("#firstName").fill("Dana");
@@ -50,7 +59,7 @@ test.describe("TEST 2 — /book time booking", () => {
     page,
   }) => {
     const errors = collectConsoleErrors(page);
-    await page.goto("/book", { waitUntil: "domcontentloaded" });
+    await openBook(page);
     await expect(page.getByRole("heading", { name: /book your hiring call/i })).toBeVisible();
 
     // Empty submit: stays on the intake step and explains what is missing.
@@ -76,10 +85,9 @@ test.describe("TEST 2 — /book time booking", () => {
     page,
   }) => {
     const errors = collectConsoleErrors(page);
-    const { email, stamp } = prospect();
-    const companyName = `QA_INTAKE_E2E_BOOK_${stamp}`;
+    const { email, companyName } = uniqueBookingProspect();
 
-    await page.goto("/book", { waitUntil: "domcontentloaded" });
+    await openBook(page);
 
     // The honeypot must exist and stay invisible to people.
     const honeypot = page.locator('input[name="website"]');
@@ -102,7 +110,6 @@ test.describe("TEST 2 — /book time booking", () => {
       .toBe(true);
 
     if ((await fallback.count()) > 0) {
-      // Fallback must offer a working retry and a real scheduling link.
       const retry = page.getByRole("button", { name: /try again/i });
       await expect(retry).toBeVisible();
       await retry.click();
@@ -116,19 +123,77 @@ test.describe("TEST 2 — /book time booking", () => {
     }
 
     // The intake submit must have persisted a booking session.
-    const { sessions } = await qaSeed<{ sessions: Array<{ id: string; email: string }> }>(
-      "lookup_booking",
-      { email },
-    );
+    const { sessions } = await lookupBooking(email);
     expect(sessions.length, "booking_sessions row created").toBeGreaterThan(0);
+    const row = sessions[0]!;
+    expect(row.company_name).toBe(companyName);
+    expect(row.status).toBe("intake_submitted");
 
     expect(meaningfulConsoleErrors(errors)).toEqual([]);
   });
 
+  test("calendly invitee.created webhook schedules the booking session", async ({ page }) => {
+    const { email, companyName } = uniqueBookingProspect();
+
+    await openBook(page);
+    await fillIntake(page, email, companyName);
+    await page.getByRole("button", { name: /continue to choose a time/i }).click();
+    await expect(page.getByLabel("Booking calendar")).toBeVisible({ timeout: 30_000 });
+
+    const before = (await lookupBooking(email)).sessions;
+    expect(before.length, "booking_sessions row created").toBeGreaterThan(0);
+    const sessionId = before[0]!.id;
+
+    const startTime = new Date(Date.now() + 3 * 86_400_000).toISOString();
+    const endTime = new Date(Date.now() + 3 * 86_400_000 + 1_800_000).toISOString();
+    const joinUrl = `https://meet.example.com/qa-${sessionId}`;
+    const payload = {
+      event: "invitee.created",
+      created_at: new Date().toISOString(),
+      payload: {
+        email,
+        uri: `https://api.calendly.com/scheduled_events/qa/invitees/${sessionId}`,
+        reschedule_url: "https://calendly.com/reschedulings/qa",
+        cancel_url: "https://calendly.com/cancellations/qa",
+        timezone: "Europe/London",
+        tracking: { utm_content: sessionId },
+        scheduled_event: {
+          uri: `https://api.calendly.com/scheduled_events/qa-${sessionId}`,
+          start_time: startTime,
+          end_time: endTime,
+          location: { join_url: joinUrl },
+          event_memberships: [{ user_name: "QA Host", user_email: "host@taasflow.com" }],
+        },
+      },
+    };
+
+    // A forged signature must be rejected before anything is written.
+    const forged = await postCalendlyWebhook(payload, { forge: true });
+    expect(forged.status, "forged signature rejected").toBe(401);
+
+    const accepted = await postCalendlyWebhook(payload);
+    expect(accepted.status, accepted.text).toBe(200);
+    expect(accepted.text).not.toMatch(/no matching session/i);
+
+    const after = (await lookupBooking(email)).sessions.find((s) => s.id === sessionId);
+    expect(after, "session still present").toBeTruthy();
+    expect(after!.status).toBe("scheduled");
+    expect(after!.scheduled_start).toBeTruthy();
+    expect(new Date(after!.scheduled_start!).toISOString()).toBe(startTime);
+    expect(after!.join_url).toBe(joinUrl);
+    expect(after!.host_name).toBe("QA Host");
+    expect(after!.timezone).toBe("Europe/London");
+
+    // Retries must be idempotent, not double-applied.
+    const replay = await postCalendlyWebhook(payload);
+    expect(replay.status).toBe(200);
+    expect(replay.text).toMatch(/already processed/i);
+  });
+
   test("honeypot submissions are accepted without exposing the trap", async ({ page }) => {
-    const { email, stamp } = prospect();
-    await page.goto("/book", { waitUntil: "domcontentloaded" });
-    await fillIntake(page, email, `QA_INTAKE_E2E_BOOK_${stamp}`);
+    const { email, companyName } = uniqueBookingProspect();
+    await openBook(page);
+    await fillIntake(page, email, companyName);
     // Fill the trap the way a bot would.
     await page.locator('input[name="website"]').fill("http://spam.example", { force: true });
     await page.getByRole("button", { name: /continue to choose a time/i }).click();
@@ -139,7 +204,7 @@ test.describe("TEST 2 — /book time booking", () => {
 
   test("no horizontal overflow at 390px", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/book", { waitUntil: "domcontentloaded" });
+    await openBook(page);
     await page.getByRole("button", { name: /continue to choose a time/i }).click();
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
