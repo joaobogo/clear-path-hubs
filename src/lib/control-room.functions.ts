@@ -5,6 +5,7 @@ import { buildSystemStatus, type SystemStatus } from "@/lib/control-room.server"
 import { AGENT_REGISTRY } from "@/lib/agents/registry";
 import { describeEvent, isTickerEvent } from "@/lib/control-room-shared";
 import { INTENSITIES } from "@/lib/role-intensity";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Db = any;
@@ -34,11 +35,7 @@ export const getSystemStatus = createServerFn({ method: "GET" })
   )
   .handler(async ({ data, context }): Promise<SystemStatus> => {
     const { supabase, userId } = context as { supabase: Db; userId: string };
-    const { data: member } = await supabase.rpc("is_org_member", {
-      _user: userId,
-      _org: data.organization_id,
-    });
-    if (!member) throw new Error("You do not have access to this workspace.");
+    await assertWorkspaceAccess(supabase, userId, data.organization_id);
     return buildSystemStatus(
       supabase,
       data.organization_id,
@@ -58,11 +55,7 @@ export const getLiveFeed = createServerFn({ method: "GET" })
   )
   .handler(async ({ data, context }): Promise<LiveEvent[]> => {
     const { supabase, userId } = context as { supabase: Db; userId: string };
-    const { data: member } = await supabase.rpc("is_org_member", {
-      _user: userId,
-      _org: data.organization_id,
-    });
-    if (!member) throw new Error("You do not have access to this workspace.");
+    await assertWorkspaceAccess(supabase, userId, data.organization_id);
 
     const { data: rows, error } = await supabase
       .from("notification_events")
@@ -95,11 +88,7 @@ export const getRoleControls = createServerFn({ method: "GET" })
   )
   .handler(async ({ data, context }): Promise<RoleControl[]> => {
     const { supabase, userId } = context as { supabase: Db; userId: string };
-    const { data: member } = await supabase.rpc("is_org_member", {
-      _user: userId,
-      _org: data.organization_id,
-    });
-    if (!member) throw new Error("You do not have access to this workspace.");
+    await assertWorkspaceAccess(supabase, userId, data.organization_id);
 
     const { data: rows, error } = await supabase
       .from("positions")

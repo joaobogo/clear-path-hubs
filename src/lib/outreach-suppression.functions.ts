@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
   BLOCK_EXPLANATION,
   BLOCK_LABEL,
   CHANNEL_LABEL,
@@ -20,10 +21,7 @@ import {
 type Db = any;
 
 async function assertMember(supabase: Db, userId: string, org: string) {
-  const { data } = await supabase.rpc("is_org_member", { _user: userId, _org: org });
-  if (data) return;
-  const { data: staff } = await supabase.rpc("is_platform_staff", { _user: userId });
-  if (!staff) throw new Error("You do not have access to this workspace.");
+  await assertWorkspaceAccess(supabase, userId, org);
 }
 
 async function assertGrantor(supabase: Db, userId: string, org: string) {

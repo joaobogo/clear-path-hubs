@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
   AGENT_KEYS,
   AGENT_REGISTRY,
   agentName,
@@ -14,11 +15,7 @@ type Db = any;
 const agentKey = z.enum(AGENT_KEYS as [string, ...string[]]);
 
 async function assertMember(supabase: Db, userId: string, org: string) {
-  const { data } = await supabase.rpc("is_org_member", {
-    _user: userId,
-    _org: org,
-  });
-  if (!data) throw new Error("You do not have access to this workspace.");
+  await assertWorkspaceAccess(supabase, userId, org);
 }
 
 async function assertCanSwitch(supabase: Db, userId: string, org: string) {

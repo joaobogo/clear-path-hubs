@@ -21,6 +21,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { agentName } from "@/lib/agents/registry";
 import {
+import { readWorkspaceAccess } from "@/lib/authz/workspace-access";
   collapseItems,
   groupItems,
   kindFromAgentKey,
@@ -79,18 +80,15 @@ export const getAgentActivityRail = createServerFn({ method: "GET" })
     const windowDays = data.days ?? 30;
     const since = new Date(Date.now() - windowDays * 86_400_000).toISOString();
 
-    const [{ data: isMember }, { data: isEditor }, { data: isAdmin }, { data: isStaff }] =
-      await Promise.all([
-        supabase.rpc("is_org_member", { _user: userId, _org: org }),
-        supabase.rpc("is_org_editor", { _user: userId, _org: org }),
-        supabase.rpc("is_org_admin", { _user: userId, _org: org }),
-        supabase.rpc("is_platform_staff", { _user: userId }),
-      ]);
+    const access = await readWorkspaceAccess(supabase, userId, org);
 
     const permission = {
-      can_read: !!isMember || !!isStaff,
-      can_decide: !!isEditor || !!isAdmin || !!isStaff,
-      can_manage_agents: !!isAdmin || !!isStaff,
+      can_read: access.allowed,
+      can_decide:
+        access.isStaff ||
+        access.role === "client_admin" ||
+        access.role === "client_editor",
+      can_manage_agents: access.isAdmin,
     };
 
     const empty: AgentRail = {

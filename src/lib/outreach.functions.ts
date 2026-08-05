@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Db = any;
@@ -60,11 +61,7 @@ export const BLOCK_REASON_LABELS: Record<string, string> = {
 };
 
 async function assertMember(supabase: Db, userId: string, org: string) {
-  const { data } = await supabase.rpc("is_org_member", {
-    _user: userId,
-    _org: org,
-  });
-  if (!data) throw new Error("You do not have access to this workspace.");
+  await assertWorkspaceAccess(supabase, userId, org);
 }
 
 async function assertAdmin(supabase: Db, userId: string, org: string) {

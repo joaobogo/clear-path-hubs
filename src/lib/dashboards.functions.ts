@@ -14,6 +14,7 @@ import {
   resolveDashboardEntitlement,
 } from "@/lib/dashboards/blocks.server";
 import {
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
   type BlockId,
   type BlockResult,
   BLOCK_IDS,
@@ -30,13 +31,8 @@ type AnySupabase = {
 };
 
 async function assertMember(ctx: { supabase: any; userId: string }, orgId: string) {
-  const { data: member } = await ctx.supabase.rpc("is_org_member", {
-    _user: ctx.userId,
-    _org: orgId,
-  });
-  const { data: staff } = await ctx.supabase.rpc("is_platform_staff", { _user: ctx.userId });
-  if (member !== true && staff !== true) throw new Error("forbidden");
-  return { isStaff: staff === true };
+  const access = await assertWorkspaceAccess(ctx.supabase, ctx.userId, orgId);
+  return { isStaff: access.isStaff };
 }
 
 async function assertEditor(ctx: { supabase: any; userId: string }, orgId: string) {

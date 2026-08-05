@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
   MIN_CLOSED_SEARCHES,
   isPublishable,
   sourced,
@@ -26,11 +27,7 @@ async function assertStaff(supabase: Db, userId: string) {
 }
 
 async function assertOrgMember(supabase: Db, userId: string, orgId: string) {
-  const { data } = await supabase.rpc("is_org_member", {
-    _user: userId,
-    _org: orgId,
-  });
-  if (!data) throw new Error("You do not have access to this workspace.");
+  await assertWorkspaceAccess(supabase, userId, orgId);
 }
 
 function prov(

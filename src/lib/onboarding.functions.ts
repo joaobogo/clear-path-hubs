@@ -17,6 +17,7 @@ import {
   type OnboardingStepId,
 } from "@/lib/onboarding/onboarding-steps";
 import {
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
   DEFAULT_WEIGHTS,
   WEIGHT_DIMENSIONS,
   balanceWeights,
@@ -38,10 +39,7 @@ type DraftShape = {
 };
 
 async function assertMember(supabase: Db, userId: string, org: string) {
-  const { data } = await supabase.rpc("is_org_member", { _user: userId, _org: org });
-  if (data === true) return;
-  const { data: staff } = await supabase.rpc("is_platform_staff", { _user: userId });
-  if (staff !== true) throw new Error("You do not have access to this workspace.");
+  await assertWorkspaceAccess(supabase, userId, org);
 }
 
 async function canConfigure(supabase: Db, userId: string, org: string) {
