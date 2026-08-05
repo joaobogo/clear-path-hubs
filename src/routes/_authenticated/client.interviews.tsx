@@ -541,6 +541,9 @@ function RequestDialog({
 
           <SlotProposer
             timezone={timezone}
+            candidatePreference={
+              candidates.find((c) => c.match_id === matchId)?.availability_preference ?? null
+            }
             submitting={submitting}
             failed={failed}
             onCancel={onClose}

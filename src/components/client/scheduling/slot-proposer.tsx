@@ -25,6 +25,12 @@ import {
   type ProposalFormat,
 } from "@/lib/interview-proposal";
 import { formatInZone } from "@/lib/scheduling";
+import {
+  isPreferenceSet,
+  preferenceSummary,
+  slotFitsPreference,
+  type AvailabilityPreference,
+} from "@/lib/candidate/availability-preference";
 
 export type ProposalSubmission = {
   format: ProposalFormat;
@@ -55,6 +61,7 @@ export function SlotProposer({
   onCancel,
   initial,
   submitLabel = "Send proposed times",
+  candidatePreference,
 }: {
   timezone: string;
   submitting: boolean;
@@ -64,6 +71,8 @@ export function SlotProposer({
   onCancel?: () => void;
   initial?: Partial<ProposalDraft>;
   submitLabel?: string;
+  /** What the candidate said generally works. A preference, not a commitment. */
+  candidatePreference?: AvailabilityPreference | null;
 }) {
   const [draft, setDraft] = useState<ProposalDraft>(() => ({
     ...emptyProposal(timezone),
@@ -160,6 +169,20 @@ export function SlotProposer({
         </div>
       </div>
 
+      {isPreferenceSet(candidatePreference ?? null) ? (
+        <div className="rounded-md border bg-muted/40 p-3">
+          <p className="text-xs font-medium">When the candidate said interviews usually suit</p>
+          {preferenceSummary(candidatePreference ?? null).map((line) => (
+            <p key={line} className="mt-0.5 text-xs text-muted-foreground">
+              {line}
+            </p>
+          ))}
+          <p className="mt-1 text-xs text-muted-foreground">
+            A preference, not a commitment — you can offer other times.
+          </p>
+        </div>
+      ) : null}
+
       <fieldset disabled={submitting} className="min-w-0">
         <legend className="text-sm font-medium">Times you can offer</legend>
         <p className="mt-0.5 text-xs text-muted-foreground">
@@ -205,6 +228,10 @@ export function SlotProposer({
                 ) : iso ? (
                   <p className="mt-1 text-xs text-muted-foreground">
                     {formatInZone(iso, draft.timezone)}
+                    {isPreferenceSet(candidatePreference ?? null) &&
+                    !slotFitsPreference(iso, candidatePreference ?? null)
+                      ? " · outside their stated preference"
+                      : ""}
                   </p>
                 ) : null}
               </div>
