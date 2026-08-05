@@ -334,6 +334,45 @@ export type Database = {
           },
         ]
       }
+      anonymous_intake_drafts: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          last_step: number
+          payload: Json
+          resume_email: string | null
+          resume_email_sent_at: string | null
+          submitted_at: string | null
+          token_hash: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          last_step?: number
+          payload?: Json
+          resume_email?: string | null
+          resume_email_sent_at?: string | null
+          submitted_at?: string | null
+          token_hash: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          last_step?: number
+          payload?: Json
+          resume_email?: string | null
+          resume_email_sent_at?: string | null
+          submitted_at?: string | null
+          token_hash?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       application_answers: {
         Row: {
           answer: Json
@@ -4569,19 +4608,28 @@ export type Database = {
       intake_drafts: {
         Row: {
           created_at: string
+          expires_at: string
+          last_step: number
           payload: Json
+          submitted_at: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          expires_at?: string
+          last_step?: number
           payload?: Json
+          submitted_at?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
+          expires_at?: string
+          last_step?: number
           payload?: Json
+          submitted_at?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -14772,6 +14820,7 @@ export type Database = {
       person_for_candidate_profile: { Args: { _cp: string }; Returns: string }
       public_position_closure: { Args: { _id: string }; Returns: Json }
       public_position_employer: { Args: { _id: string }; Returns: Json }
+      purge_expired_intake_drafts: { Args: never; Returns: number }
       resolve_talent_person: {
         Args: {
           _auth_user_id?: string

@@ -10,6 +10,7 @@ import { template as clientWeeklyDigestTemplate } from './client-weekly-digest'
 import { template as applicationReceivedTemplate } from './application-received'
 import { template as applicationClosedTemplate } from './application-closed'
 import { template as internalLeadAlertTemplate } from './internal-lead-alert'
+import { template as intakeResumeTemplate } from './intake-resume'
 
 
 
@@ -37,6 +38,7 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'blueprint-delayed': blueprintDelayedTemplate,
   'search-live': searchLiveTemplate,
   'intake-confirmation': intakeConfirmationTemplate,
+  'intake-resume': intakeResumeTemplate,
   'payment-receipt': paymentReceiptTemplate,
   'client-weekly-digest': clientWeeklyDigestTemplate,
   'application-received': applicationReceivedTemplate,
