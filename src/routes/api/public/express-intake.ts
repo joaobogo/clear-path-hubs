@@ -489,16 +489,7 @@ export const Route = createFileRoute("/api/public/express-intake")({
               })),
             ],
             dealbreakers: dealbreakerLines.map((label) => ({ label })),
-            compensation: hasComp
-              ? {
-                  currency: data.currency,
-                  period: data.compensationPeriod,
-                  min: data.salaryMin,
-                  max: data.salaryMax,
-                  note: (data.compensationNote ?? "").trim() || null,
-                  source: "client_intake",
-                }
-              : null,
+            compensation: compensationRecord,
             compensation_collected: hasComp,
             compensation_visibility: "internal",
             work_authorization: data.workAuthorization
