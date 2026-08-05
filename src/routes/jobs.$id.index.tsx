@@ -298,6 +298,27 @@ function FactsBlockSkeleton() {
   );
 }
 
+function JobDetailPending() {
+  return (
+    <SiteShell>
+      <header className="border-b bg-muted/30">
+        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+          <div className="h-4 w-28 animate-pulse rounded bg-muted" />
+          <div className="mt-5 h-9 w-full max-w-lg animate-pulse rounded bg-muted" />
+        </div>
+      </header>
+      <FactsBlockSkeleton />
+      <div className="mx-auto max-w-6xl space-y-3 px-4 py-10 sm:px-6 lg:px-8">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="h-4 w-full animate-pulse rounded bg-muted" />
+        ))}
+      </div>
+    </SiteShell>
+  );
+}
+
+
+
 
 
 
