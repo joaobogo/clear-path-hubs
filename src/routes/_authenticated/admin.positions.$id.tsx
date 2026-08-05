@@ -4,6 +4,10 @@ import { StructuredNotesPanel } from "@/components/admin/structured-notes-panel"
 import { StageAgingPanel } from "@/components/admin/stage-aging-panel";
 import { PositionBottleneckCard } from "@/components/admin/position-bottleneck-card";
 import { PositionSourceQualityPanel } from "@/components/admin/source-quality-panels";
+import {
+  InterviewExceptionsBadge,
+  InterviewExceptionsPanel,
+} from "@/components/admin/interview-exceptions-panel";
 
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -191,6 +195,7 @@ function PositionWorkspace() {
                 {p.status.replace(/_/g, " ")}
               </Badge>
               <Badge variant="outline">{p.visibility}</Badge>
+              <InterviewExceptionsBadge positionId={p.id} />
             </div>
             <div className="mt-1 flex flex-wrap gap-3 text-xs text-muted-foreground">
               {p.location && <span>{p.location}</span>}
@@ -1128,6 +1133,8 @@ function PipelineTab({ matches, positionId }: { matches: Any[]; positionId: stri
       <StageAgingPanel positionId={positionId} />
 
       <PositionSourceQualityPanel positionId={positionId} />
+
+      <InterviewExceptionsPanel positionId={positionId} />
     </div>
   );
 }
