@@ -223,6 +223,14 @@ function PositionWorkspace() {
         </div>
       </header>
 
+      <PositionBottleneckCard
+        positionId={id}
+        organizationId={p.organization_id ?? null}
+        onOpenStage={() => setTab("pipeline")}
+      />
+
+
+
       <nav
         role="tablist"
         aria-label="Position sections"
