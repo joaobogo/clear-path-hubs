@@ -11,6 +11,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FormShell } from "@/components/marketing/form-shell";
 import {
   ALLOWED_JD_EXT,
+  COMP_CURRENCIES,
+  COMP_PERIODS,
+  COMP_PERIOD_LABELS,
+  WORK_MODELS,
+  WORK_MODEL_LABELS,
+  WORK_AUTHORIZATION_OPTIONS,
+
   UNREADABLE_JD_EXT,
   JD_ACCEPT_ATTR,
   JD_ACCEPT_LABEL,
