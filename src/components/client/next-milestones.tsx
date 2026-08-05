@@ -116,8 +116,8 @@ export function NextMilestones({
               </p>
             ) : (
               <Link
-                to="/client/positions/$positionId"
-                params={{ positionId: row.position_id }}
+                to="/client/positions/$id"
+                params={{ id: row.position_id }}
                 search={search as never}
                 className="group flex flex-wrap items-baseline gap-x-2 text-sm"
               >
