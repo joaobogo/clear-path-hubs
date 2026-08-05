@@ -367,7 +367,12 @@ function PositionDetailPage() {
  >
  ← All positions
  </Link>
- </div>
+  </div>
+
+  {/* Recorded closure — reason, note, date and who closed it. */}
+  {closure.data && <RoleClosureRecord closure={closure.data} />}
+
+
 
  {/* 1. Header */}
  <header className="flex flex-wrap items-start justify-between gap-3">
