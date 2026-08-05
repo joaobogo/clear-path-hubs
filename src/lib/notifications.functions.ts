@@ -129,7 +129,7 @@ export async function emitEventFromServer(args: {
   const { data: notifs, error: nerr } = await supabaseAdmin
     .from("notifications")
     .upsert(rows, { onConflict: "event_id,recipient_user_id", ignoreDuplicates: true })
-    .select("id, recipient_user_id, organization_id, event_type, title, body, link_path");
+    .select("id, recipient_user_id, organization_id, event_type, title, body, link_path, audience");
   if (nerr) throw nerr;
 
   // Record in_app delivery as delivered for each new notification
@@ -156,6 +156,7 @@ export async function emitEventFromServer(args: {
           title: n.title as string,
           body: (n.body as string | null) ?? null,
           link_path: (n.link_path as string | null) ?? null,
+          audience: (n.audience as string | null) ?? null,
         })),
       );
     } catch (e) {
