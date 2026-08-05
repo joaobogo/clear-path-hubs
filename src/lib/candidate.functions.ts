@@ -289,7 +289,27 @@ export const getMyApplication = createServerFn({ method: "GET" })
       withdrawnAt: (a.withdrawn_at as string | null) ?? null,
     });
 
+    // Closed applications get a recorded reason or a single honest sentence.
+    // The decision date comes from the stored "not moving forward" row, the
+    // role's recorded closure, or the candidate's own withdrawal — never guessed.
+    const notMovingForwardAt =
+      [...stageHistory].reverse().find((h) => h.to_stage === "not_moving_forward")?.created_at ??
+      null;
+    const closedOutcome =
+      status === "Closed"
+        ? buildClosedOutcome({
+            withdrawnAt: (a.withdrawn_at as string | null) ?? null,
+            positionClosureReason: (pos.closure_reason as string | null) ?? null,
+            positionClosedAt: (pos.closed_at as string | null) ?? null,
+            notMovingForward:
+              matches.some((m: AnyRow) => m.stage === "not_moving_forward") ||
+              a.status === "rejected",
+            notMovingForwardAt,
+          })
+        : null;
+
     return {
+
       id: a.id,
       role_title: pos.title ?? "Role",
       role_description: pos.description ?? "",
