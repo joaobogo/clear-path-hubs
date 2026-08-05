@@ -75,6 +75,8 @@ function PlanPage() {
 
       {isLoading || !orgId ? <SkeletonRows /> : <PlanPanel organizationId={orgId} canMutate={canMutate} />}
 
+      {isLoading || !orgId ? <SkeletonRows /> : <ServiceExpectationsTable orgId={orgId} />}
+
       <section className="space-y-3">
         <h2 className="text-sm font-semibold">One-off packages</h2>
         <div className="grid gap-4 md:grid-cols-3">
