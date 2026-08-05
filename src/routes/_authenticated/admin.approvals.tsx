@@ -44,8 +44,10 @@ function ApprovalsPage() {
           </p>
         </div>
         <TestRecordsToggle
-          value={show_test}
-          onChange={(next) => void navigate({ search: (prev) => ({ ...prev, show_test: next }) })}
+          checked={show_test}
+          onChange={(next: boolean) =>
+            void navigate({ search: () => ({ show_test: next }) })
+          }
         />
       </header>
       <ApprovalsInbox includeTest={show_test} />
