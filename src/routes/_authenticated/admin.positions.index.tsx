@@ -193,7 +193,46 @@ function PositionsPage() {
         </div>
       </header>
 
+      {/* Tabs: the whole book vs today's stalling roles. */}
+      <div className="flex flex-wrap items-center gap-2 border-b" role="tablist" aria-label="Position views">
+        {([
+          ["all", "All positions"],
+          ["attention", "Needs attention"],
+        ] as const).map(([id, label]) => (
+          <button
+            key={id}
+            type="button"
+            role="tab"
+            aria-selected={search.tab === id}
+            onClick={() => setSearch({ tab: id === "all" ? undefined : id })}
+            className={`-mb-px border-b-2 px-3 py-2 text-sm ${
+              search.tab === id
+                ? "border-primary font-medium text-foreground"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+        {search.tab === "attention" && (
+          <label className="ml-auto flex items-center gap-2 py-2 text-xs text-muted-foreground">
+            <input
+              type="checkbox"
+              className="h-3.5 w-3.5"
+              checked={search.show_test}
+              onChange={(e) => setSearch({ show_test: e.target.checked || undefined })}
+            />
+            Show test records
+          </label>
+        )}
+      </div>
+
+      {search.tab === "attention" ? (
+        <PositionsAttentionQueue includeTest={search.show_test} />
+      ) : (
+      <>
       <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-card p-3">
+
         <Input
           placeholder="Search title…"
           value={q}
