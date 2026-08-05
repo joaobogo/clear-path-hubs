@@ -15,6 +15,11 @@ import {
   type InterviewQuestion,
   type FitPresentation,
 } from "@/lib/client-fit-presentation";
+import {
+  buildEvidenceCard,
+  type EvidenceCard,
+  type ClientEvidenceRow,
+} from "@/lib/client-evidence-card";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -287,6 +292,8 @@ export type ClientCandidateDTO = {
     at: string;
     summary: string | null;
   }>;
+  /** Verified, shareable evidence bullets for the shortlist card. */
+  evidence_card: EvidenceCard;
   evaluation: {
     engine_version: string | null;
     blueprint_version: string | null;
@@ -653,6 +660,10 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     },
     source_trace,
     audit_trail,
+    evidence_card: buildEvidenceCard(
+      (row as AnyRow).evidence_items as ClientEvidenceRow[] | null,
+      requirement_rows.map((r) => ({ label: r.label, importance: r.importance })),
+    ),
     evaluation: {
       engine_version: run?.engine_version ?? null,
       blueprint_version: run?.blueprint_version ?? null,
@@ -778,5 +789,36 @@ export async function loadRoleStageDates(
     }
   }
 
+  return out;
+}
+
+
+// ─── Verified evidence for shortlist cards ──────────────────────────────────
+
+/**
+ * Load verified, shareable evidence for a set of matches. Reads the
+ * `candidate_evidence_client` view, which already excludes pending/rejected
+ * rows and rows that failed integrity checks. RLS restricts it to matches the
+ * caller may see.
+ */
+export async function loadClientEvidenceItems(
+  supabase: AnyRow,
+  matchIds: string[],
+): Promise<Map<string, ClientEvidenceRow[]>> {
+  const out = new Map<string, ClientEvidenceRow[]>();
+  if (matchIds.length === 0) return out;
+  const { data, error } = await supabase
+    .from("candidate_evidence_client")
+    .select(
+      "id, candidate_match_id, rubric_criterion_key, rubric_dimension_key, result, match_type, factual_quote, interpretation, source_kind, source_ref, source_location",
+    )
+    .in("candidate_match_id", matchIds);
+  if (error) throw new Error(error.message);
+  for (const r of ((data as AnyRow[]) ?? [])) {
+    const key = String(r.candidate_match_id);
+    const list = out.get(key) ?? [];
+    list.push(r as ClientEvidenceRow);
+    out.set(key, list);
+  }
   return out;
 }

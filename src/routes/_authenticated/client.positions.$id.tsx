@@ -37,6 +37,7 @@ import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 
 import { RoleProgressTracker } from "@/components/client/role-progress-tracker";
 import { RoleDatedTimeline } from "@/components/client/role-dated-timeline";
+import { RoleShortlist } from "@/components/client/role-shortlist";
 import { RoleLifecycleTimeline } from "@/components/client/role-lifecycle-timeline";
 import { getRoleLifecycle } from "@/lib/role-lifecycle/role-lifecycle.functions";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
@@ -569,53 +570,12 @@ function PositionDetailPage() {
  </div>
  </section>
 
- {/* 5. Delivered candidates (chronological list) */}
- <section aria-label="Delivered candidates" className="rounded-xl border bg-card p-4">
- <div className="flex items-center justify-between mb-3">
- <h2 className="text-lg font-semibold">Delivered candidates</h2>
- <span className="text-xs text-muted-foreground">
- Most recent first · Client-visible only
- </span>
- </div>
- {delivered.length === 0 ? (
- <div className="text-sm text-muted-foreground py-4">
- No candidates have been delivered yet. TaaSFlow will notify you as
- soon as the first is ready.
- </div>
- ) : (
- <ul className="divide-y">
- {delivered.slice(0, 10).map((m) => (
- <li
- key={m.id}
- className="py-2.5 flex items-center justify-between gap-3"
- >
- <Link
- to="/client/candidates/$id"
- params={{ id: m.id }}
- className="min-w-0 flex-1 group"
- >
- <div className="text-sm font-medium group-hover:underline truncate">
- {m.candidate_profiles?.full_name ?? "Candidate"}
- </div>
- <div className="text-xs text-muted-foreground truncate">
- {m.candidate_profiles?.headline ?? ""}
- </div>
- </Link>
- <div className="text-right shrink-0">
- <div className="text-xs text-muted-foreground capitalize">
- {String(m.stage).replace(/_/g, " ")}
- </div>
- <div className="text-xs text-muted-foreground">
- {m.delivered_at
- ? new Date(m.delivered_at).toLocaleDateString()
- : ""}
- </div>
- </div>
- </li>
- ))}
- </ul>
- )}
- </section>
+ {/* 5. Shortlist — standard evidence card per candidate */}
+ <RoleShortlist
+ orgId={orgId}
+ positionId={id}
+ firstShortlistExpectedAt={data.first_shortlist_expected_at}
+ />
 
    {/* 5b. Role setup timeline + search channels — evidence-backed */}
   {launch && <RoleLaunchPanel launch={launch} />}

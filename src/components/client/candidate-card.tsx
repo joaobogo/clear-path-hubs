@@ -72,7 +72,9 @@ export function CandidateCard({
   const c = candidate;
   const accent = ACCENT[c.fit.accent];
   const rationale = React.useMemo(() => buildShortlistRationale(c), [c]);
-  const bullets = rationale.evidenced.slice(0, 3);
+  // Bullets come only from evidence a recruiter verified and marked shareable.
+  const evidenceCard = c.evidence_card ?? { bullets: [], summaryInProgress: true, verifiedCount: 0 };
+  const bullets = evidenceCard.bullets;
   const gaps = rationale.gaps;
   const chips = React.useMemo(() => fitChips(c), [c]);
 
@@ -101,7 +103,7 @@ export function CandidateCard({
         <div className="flex items-center gap-2 flex-wrap">
           <h3 className="font-semibold text-base truncate">{c.candidate.display_name}</h3>
           <span className={`text-[11px] font-medium rounded-full px-2 py-0.5 border ${accent.chip}`}>
-            {rationale.summary}
+            {evidenceCard.summaryInProgress ? "Summary in progress" : rationale.summary}
           </span>
         </div>
         {c.candidate.headline && (
@@ -125,28 +127,19 @@ export function CandidateCard({
               <li key={b.id} className="flex gap-2 text-xs leading-snug">
                 <span
                   aria-hidden
-                  className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${
-                    b.verdict === "met" ? accent.dot : "bg-muted-foreground/50"
-                  }`}
+                  className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${accent.dot}`}
                 />
                 <span className="min-w-0">
                   <span className="font-medium text-foreground">{b.requirement}</span>
-                  {b.verdict === "partial" && (
-                    <span className="text-muted-foreground"> (partly)</span>
-                  )}
                   <span className="text-muted-foreground"> — {b.claim}</span>
-                  {b.sources.length > 0 && (
-                    <span className="ml-1 text-[10px] text-muted-foreground/80">
-                      [{b.sources.join(" · ")}]
-                    </span>
-                  )}
+                  <span className="ml-1 text-[10px] text-muted-foreground/80">[{b.where}]</span>
                 </span>
               </li>
             ))}
           </ul>
         ) : (
           <p className="mt-2 text-xs text-muted-foreground">
-            We haven't evidenced your requirements for this candidate yet.
+            Verified evidence for your requirements is still being written up.
           </p>
         )}
         {gaps.length > 0 && (
