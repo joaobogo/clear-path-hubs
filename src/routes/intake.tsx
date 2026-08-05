@@ -1069,6 +1069,7 @@ function ExpressIntakePage() {
       setAccountEmail(email);
       trackEvent("account_created_from_intake", { flow: "express_onboarding" });
       toast.success("Account created. Everything you've typed is saved to it.");
+      continueAfterAccount();
     } catch {
       toast.error("Network problem. Please try again.");
     } finally {
