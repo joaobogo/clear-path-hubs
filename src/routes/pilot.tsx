@@ -34,7 +34,7 @@ const TIMELINE = [
   {
     n: "03",
     title: "Ranked shortlist review",
-    when: "Day 10–14",
+    when: "Within days",
     body:
       "Reviewed, evidence-backed candidates are published to your dashboard, ranked. You review, message your platform experts, and give feedback that shapes the next round.",
   },
