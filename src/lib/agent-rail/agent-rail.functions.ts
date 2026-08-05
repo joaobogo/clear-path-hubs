@@ -21,7 +21,6 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { agentName } from "@/lib/agents/registry";
 import {
-import { readWorkspaceAccess } from "@/lib/authz/workspace-access";
   collapseItems,
   groupItems,
   kindFromAgentKey,
@@ -35,6 +34,7 @@ import { readWorkspaceAccess } from "@/lib/authz/workspace-access";
   type RailItem,
   type RailRoleRef,
 } from "@/lib/agent-rail/agent-rail";
+import { readWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Db = any;

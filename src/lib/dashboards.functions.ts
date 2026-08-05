@@ -14,13 +14,13 @@ import {
   resolveDashboardEntitlement,
 } from "@/lib/dashboards/blocks.server";
 import {
-import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
   type BlockId,
   type BlockResult,
   BLOCK_IDS,
   DEFAULT_LAYOUT,
   isBlockId,
 } from "@/lib/dashboards/blocks";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 const orgSchema = z.object({ orgId: z.string().uuid() });
 const blockIdSchema = z.enum(BLOCK_IDS);

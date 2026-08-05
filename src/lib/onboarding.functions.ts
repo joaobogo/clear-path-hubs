@@ -17,7 +17,6 @@ import {
   type OnboardingStepId,
 } from "@/lib/onboarding/onboarding-steps";
 import {
-import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
   DEFAULT_WEIGHTS,
   WEIGHT_DIMENSIONS,
   balanceWeights,
@@ -25,6 +24,7 @@ import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
   weightsSchema,
   type EvaluationWeights,
 } from "@/lib/requisition-schema";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Db = any;

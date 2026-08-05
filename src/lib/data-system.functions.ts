@@ -2,13 +2,13 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
-import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
   MIN_CLOSED_SEARCHES,
   isPublishable,
   sourced,
   type Provenance,
   type Sourced,
 } from "@/lib/provenance";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 /**
  * The data system, told honestly.

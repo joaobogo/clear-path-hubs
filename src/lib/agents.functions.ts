@@ -2,12 +2,12 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
-import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
   AGENT_KEYS,
   AGENT_REGISTRY,
   agentName,
   type AgentKey,
 } from "@/lib/agents/registry";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Db = any;

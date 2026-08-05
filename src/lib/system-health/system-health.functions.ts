@@ -12,7 +12,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
-import { readWorkspaceAccess } from "@/lib/authz/workspace-access";
   freshnessWord,
   hiddenSignal,
   hoursSince,
@@ -23,6 +22,7 @@ import { readWorkspaceAccess } from "@/lib/authz/workspace-access";
   type HealthSignal,
   type SystemHealth,
 } from "@/lib/system-health/system-health";
+import { readWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Db = any;

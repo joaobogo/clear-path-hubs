@@ -2,7 +2,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
-import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
   BLOCK_EXPLANATION,
   BLOCK_LABEL,
   CHANNEL_LABEL,
@@ -16,6 +15,7 @@ import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
   type SuppressionChannel,
   type SuppressionException,
 } from "@/lib/outreach-suppression";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Db = any;
