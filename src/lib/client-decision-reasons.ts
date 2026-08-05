@@ -7,12 +7,14 @@
 // action, so reason counts across surfaces are comparable. `surfaces` says
 // where a code may be picked; the labels never diverge between surfaces.
 export const REJECTION_REASONS = [
-  { code: "experience_depth", label: "Not enough depth in the core experience", surfaces: ["client", "admin"] },
-  { code: "missing_critical", label: "Missing a critical requirement", surfaces: ["client", "admin"] },
-  { code: "seniority_mismatch", label: "Seniority level does not match the role", surfaces: ["client", "admin"] },
-  { code: "compensation", label: "Compensation expectations do not align", surfaces: ["client", "admin"] },
-  { code: "location_or_work_setup", label: "Location or work setup does not work", surfaces: ["client", "admin"] },
-  { code: "availability", label: "Availability does not fit our timeline", surfaces: ["client", "admin"] },
+  { code: "experience_depth", label: "Not enough depth in the core experience", surfaces: ["admin"] },
+  { code: "missing_critical", label: "Missing a must-have", surfaces: ["client", "admin"] },
+  { code: "seniority_mismatch", label: "Seniority level does not match the role", surfaces: ["admin"] },
+  { code: "too_junior", label: "Too junior for the role", surfaces: ["client", "admin"] },
+  { code: "too_senior", label: "Too senior for the role", surfaces: ["client", "admin"] },
+  { code: "compensation", label: "Compensation mismatch", surfaces: ["client", "admin"] },
+  { code: "location_or_work_setup", label: "Location or work authorisation", surfaces: ["client", "admin"] },
+  { code: "availability", label: "Timing does not work", surfaces: ["client", "admin"] },
   { code: "language", label: "Language requirements not met", surfaces: ["client", "admin"] },
   { code: "role_filled_or_paused", label: "Role is filled, paused, or changed", surfaces: ["client", "admin"] },
   { code: "evidence_insufficient", label: "Evidence in the CV does not support the claims", surfaces: ["admin"] },
@@ -35,8 +37,35 @@ export function rejectionReasonsFor(
 
 export const REJECTION_REASON_CODES: string[] = REJECTION_REASONS.map((r) => r.code);
 
-/** Client-facing decline list (subset of the shared catalogue). */
+/**
+ * Client-facing "Not a fit" list — fixed, short, and ordered the way clients
+ * think. These codes drive the recruiting team's next search, so the list stays
+ * closed: no free-text-only rejections.
+ */
 export const DECLINE_REASONS = rejectionReasonsFor("client");
+export const NOT_A_FIT_REASONS = DECLINE_REASONS;
+
+/** Note limits shared by the client decision UI and the server validator. */
+export const DECISION_NOTE_MAX = 500;
+export const OTHER_NOTE_MIN = 10;
+
+/**
+ * One validator for the whole decision bar, used on both sides of the wire.
+ * Returns a human message when the decision may not be submitted yet.
+ */
+export function decisionReasonError(input: {
+  reasonRequired: boolean;
+  reasonCode?: string | null;
+  note?: string | null;
+}): string | null {
+  const note = (input.note ?? "").trim();
+  if (input.reasonRequired && !input.reasonCode) return "Pick a reason so we can act on it.";
+  if (input.reasonCode === "other" && note.length < OTHER_NOTE_MIN)
+    return `Add at least ${OTHER_NOTE_MIN} characters explaining why.`;
+  if (note.length > DECISION_NOTE_MAX)
+    return `Keep the note under ${DECISION_NOTE_MAX} characters.`;
+  return null;
+}
 
 /** Admin-facing reject list (subset of the shared catalogue). */
 export const ADMIN_REJECTION_REASONS = rejectionReasonsFor("admin");

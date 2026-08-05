@@ -1750,11 +1750,22 @@ export const clientAction = createServerFn({ method: "POST" })
               message: "Pick a reason from the list.",
             });
           }
-          if (v.reasonCode === "other" && !(v.feedback ?? "").trim()) {
+          if (v.reasonCode === "other" && (v.feedback ?? "").trim().length < 10) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               path: ["feedback"],
-              message: "Please add a short explanation.",
+              message: "Please add at least ten characters explaining why.",
+            });
+          }
+          // Decision notes are short by design; long-form feedback has its own action.
+          if (
+            (v.action === "not_moving_forward" || v.action === "hold") &&
+            (v.feedback ?? "").trim().length > 500
+          ) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ["feedback"],
+              message: "Keep the note under 500 characters.",
             });
           }
         })

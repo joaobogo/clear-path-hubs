@@ -13,10 +13,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
+  DECISION_NOTE_MAX,
   DECLINE_REASONS,
   FEEDBACK_SIGNALS,
   HOLD_REASONS,
   INFO_REQUEST_TOPICS,
+  decisionReasonError,
 } from "@/lib/client-decision-reasons";
 
 export type DecisionActionKey =
@@ -99,10 +101,10 @@ const CONFIG: Record<DecisionActionKey, Config> = {
     signals: true,
   },
   not_moving_forward: {
-    title: "Decline for this role",
+    title: "Not a fit for this role",
     description:
       "This closes the candidate for this role only. We will handle the communication with the candidate respectfully.",
-    confirmLabel: "Decline candidate",
+    confirmLabel: "Not a fit",
     destructive: true,
     reasons: DECLINE_REASONS,
     reasonLabel: "Main reason",
@@ -151,8 +153,14 @@ export function DecisionDialog({
   const cfg = CONFIG[action];
   const needsReason = !!cfg.reasons;
   const noteRequired = cfg.noteRequired || reason === "other";
-  const invalid =
-    (needsReason && !reason) || (noteRequired && note.trim().length === 0);
+  const validation = decisionReasonError({
+    reasonRequired: needsReason,
+    reasonCode: reason || null,
+    note,
+  });
+  // Actions that ask for their own free-text detail still require something.
+  const missingRequiredNote = !!cfg.noteRequired && note.trim().length === 0;
+  const invalid = !!validation || missingRequiredNote;
 
   return (
     <Dialog open={open} onOpenChange={(v) => !pending && onOpenChange(v)}>
@@ -213,11 +221,29 @@ export function DecisionDialog({
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder={cfg.notePlaceholder}
-              maxLength={4000}
+              maxLength={DECISION_NOTE_MAX}
               rows={4}
+              aria-describedby="decision-note-count"
             />
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-xs text-muted-foreground">
+                {reason === "other" ? "Tell us in a sentence what did not fit." : "\u00a0"}
+              </p>
+              <span
+                id="decision-note-count"
+                className="shrink-0 text-xs tabular-nums text-muted-foreground"
+              >
+                {note.length}/{DECISION_NOTE_MAX}
+              </span>
+            </div>
           </div>
         </div>
+
+        {validation && (
+          <p role="status" className="text-xs text-muted-foreground">
+            {validation}
+          </p>
+        )}
 
         <DialogFooter>
           <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={pending}>
