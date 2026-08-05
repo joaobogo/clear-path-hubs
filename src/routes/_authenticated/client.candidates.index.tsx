@@ -969,7 +969,7 @@ function CompactList({
  <td className="py-2 px-3 text-muted-foreground">
  {c.candidate.location ?? "—"}
  </td>
- <td className="py-2 px-3 text-muted-foreground capitalize">
+ <td className="py-2 px-3 text-muted-foreground">
  {clientStageLabel(c.stage)}
  </td>
  <td className="py-2 px-3 text-right">
