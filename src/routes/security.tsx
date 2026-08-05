@@ -66,7 +66,7 @@ function TrustCenterPage() {
         </p>
       </EditorialHero>
 
-      <PublicSection className="py-0">
+      <PublicSection className="!py-0">
         <PublicPage>
           <nav aria-label="Trust Center sections" className="border-y border-[color:var(--brand-navy)]/10 py-6">
             <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
@@ -93,7 +93,7 @@ function TrustCenterPage() {
         </PublicPage>
       </PublicSection>
 
-      <PublicSection className="pt-10">
+      <PublicSection className="pt-8">
         <PublicPage className="space-y-10">
           {TRUST_SECTIONS.map((section) => (
             <article
