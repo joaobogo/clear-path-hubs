@@ -9,17 +9,23 @@ import { Button } from "@/components/ui/button";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { parseJobDescription } from "@/lib/marketing/job-description";
 import {
+  NOT_SPECIFIED,
+  RANGE_ON_CALL,
+  type PublicJobFacts,
+} from "@/lib/jobs/public-facts";
+import {
   ArrowLeft,
   Building2,
+  CalendarDays,
   Check,
   Clock,
   ListOrdered,
   MapPin,
   ShieldCheck,
-  TrendingUp,
   Wallet,
   type LucideIcon,
 } from "lucide-react";
+
 
 
 export const Route = createFileRoute("/jobs/$id/")({
@@ -112,7 +118,11 @@ export const Route = createFileRoute("/jobs/$id/")({
       ],
     };
   },
+  // A failed load shows one error card for the whole page — never a partial
+  // job with some facts missing, which reads as "the employer withheld this".
   errorComponent: makeRouteErrorComponent("public", "src/routes/jobs.$id.index.tsx"),
+  pendingComponent: JobDetailPending,
+
   notFoundComponent: () => (
     <SiteShell>
       <div className="mx-auto max-w-2xl px-4 py-20 text-center">
@@ -211,40 +221,105 @@ function labelEmployment(e: string | null) {
   return e ? e.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : null;
 }
 
-/** The stages this page commits to, in the order they are described below. */
-const HIRING_STAGES = ["apply", "TaaSFlow review", "employer interviews"] as const;
 
-function FactRow({
-  icon: Icon,
-  label,
-  value,
-  fallback,
-}: {
-  icon: LucideIcon;
-  label: string;
-  value: string | null | undefined;
-  fallback?: string;
-}) {
-  const stated = typeof value === "string" && value.trim().length > 0;
-  if (!stated && !fallback) return null;
+/**
+ * The seven deciding facts, in a fixed order, directly under the title.
+ * Every row renders a value — resolvers upstream guarantee a non-empty line,
+ * so a blank row is structurally impossible.
+ */
+function FactsBlock({ facts }: { facts: PublicJobFacts }) {
+  const rows: Array<{ icon: LucideIcon; label: string; value: string }> = [
+    { icon: Wallet, label: "Compensation", value: facts.compensation },
+    { icon: Building2, label: "Work arrangement", value: facts.workArrangement },
+    { icon: MapPin, label: "Location", value: facts.location },
+    { icon: ShieldCheck, label: "Work authorisation", value: facts.workAuthorisation },
+    { icon: Clock, label: "Employment type", value: facts.employmentType },
+    { icon: ListOrdered, label: "Interview stages", value: facts.stages },
+    { icon: CalendarDays, label: "Posted", value: facts.posted },
+  ];
   return (
-    <div className="flex items-start gap-3">
-      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-      <div className="min-w-0">
-        <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
-        <div
-          className={
-            stated
-              ? "text-sm font-medium break-words"
-              : "text-sm italic text-muted-foreground break-words"
-          }
-        >
-          {stated ? value : fallback}
-        </div>
+    <section aria-labelledby="job-facts" className="border-b bg-card">
+      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+        <h2 id="job-facts" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          The deciding facts
+        </h2>
+        {/* Label over value at every width — a two-column row truncates the
+            value on a 375px screen, which is exactly the fact people came for. */}
+        <dl className="mt-4 grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+          {rows.map((row) => (
+            <div key={row.label} className="flex min-w-0 items-start gap-3">
+              <row.icon className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+              <div className="min-w-0">
+                <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+                  {row.label}
+                </dt>
+                <dd
+                  className={
+                    isUnstated(row.value)
+                      ? "text-sm italic text-muted-foreground break-words"
+                      : "text-sm font-medium break-words"
+                  }
+                >
+                  {row.value}
+                </dd>
+              </div>
+            </div>
+          ))}
+        </dl>
       </div>
-    </div>
+    </section>
   );
 }
+
+/** Not-specified and range-on-call read as asides, not as facts. */
+function isUnstated(value: string) {
+  return value.startsWith(NOT_SPECIFIED) || value === RANGE_ON_CALL;
+}
+
+/** Loading: seven skeleton rows, so the block never pops in from nothing. */
+function FactsBlockSkeleton() {
+  return (
+    <section className="border-b bg-card">
+      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="h-3 w-32 animate-pulse rounded bg-muted" />
+        <div className="mt-4 grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 7 }).map((_, i) => (
+            <div key={i} className="flex items-start gap-3">
+              <div className="mt-0.5 h-4 w-4 shrink-0 animate-pulse rounded bg-muted" />
+              <div className="min-w-0 flex-1">
+                <div className="h-3 w-24 animate-pulse rounded bg-muted" />
+                <div className="mt-2 h-4 w-40 animate-pulse rounded bg-muted" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function JobDetailPending() {
+  return (
+    <SiteShell>
+      <header className="border-b bg-muted/30">
+        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+          <div className="h-4 w-28 animate-pulse rounded bg-muted" />
+          <div className="mt-5 h-9 w-full max-w-lg animate-pulse rounded bg-muted" />
+        </div>
+      </header>
+      <FactsBlockSkeleton />
+      <div className="mx-auto max-w-6xl space-y-3 px-4 py-10 sm:px-6 lg:px-8">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="h-4 w-full animate-pulse rounded bg-muted" />
+        ))}
+      </div>
+    </SiteShell>
+  );
+}
+
+
+
+
 
 
 function BulletList({ items }: { items: string[] }) {
@@ -319,6 +394,11 @@ function JobDetail() {
           </div>
         </div>
       </header>
+
+      {/* Directly under the title, above the description: the block a
+          candidate needs to decide whether to spend the next three minutes. */}
+      <FactsBlock facts={pos.facts} />
+
 
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         {!pos.accepting_applications && (
@@ -442,56 +522,20 @@ function JobDetail() {
             </div>
           </div>
 
-          {/* Sidebar: the facts a candidate scans for, plus a persistent apply. */}
-          {/* On a phone the deciding facts come before the prose — pay, work
-              arrangement and authorisation are what people screen on. */}
+          {/* Sidebar: a persistent apply, plus locations. The deciding facts
+              now live in the fixed block under the title, so they are not
+              repeated here. */}
           <aside className="order-1 lg:sticky lg:top-24 lg:order-2 lg:self-start">
 
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                Role at a glance
+                Apply to this role
               </h2>
-              {/* The four facts candidates actually screen on are always
-                  rendered. A missing value says so plainly rather than
-                  vanishing, so nobody has to guess whether pay was withheld
-                  or simply not scrolled to. */}
-              <div className="mt-4 space-y-4">
-                <FactRow
-                  icon={Wallet}
-                  label="Compensation"
-                  value={pos.compensation_display}
-                  fallback="Not stated by the employer"
-                />
-                <FactRow
-                  icon={Building2}
-                  label="Work arrangement"
-                  value={workModel}
-                  fallback="Not stated by the employer"
-                />
-                <FactRow
-                  icon={MapPin}
-                  label="Location"
-                  value={pos.location}
-                  fallback="Not stated by the employer"
-                />
-                <FactRow
-                  icon={ShieldCheck}
-                  label="Work authorisation"
-                  value={pos.work_authorization_note}
-                  fallback="Not stated by the employer — ask us and we'll confirm"
-                />
-                <FactRow
-                  icon={ListOrdered}
-                  label="Stages"
-                  value={`${HIRING_STAGES.length} before an offer: ${HIRING_STAGES.join(", ")}`}
-                />
-                {employment && (
-                  <FactRow icon={Clock} label="Employment" value={employment} />
-                )}
-                {pos.seniority && (
-                  <FactRow icon={TrendingUp} label="Seniority" value={pos.seniority} />
-                )}
-              </div>
+              <p className="mt-3 text-sm text-muted-foreground">
+                {pos.seniority ? `${pos.seniority} · ` : ""}
+                {pos.openings > 1 ? `${pos.openings} openings` : "1 opening"}
+              </p>
+
 
 
               {pos.locations.length > 0 && (
