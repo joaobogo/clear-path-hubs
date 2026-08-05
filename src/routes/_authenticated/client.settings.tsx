@@ -43,6 +43,7 @@ import {
 } from "lucide-react";
 import { TeamsConnectionCard } from "@/components/client/teams-connection-card";
 import { QueryErrorCard } from "@/components/client/query-error";
+import { NotificationPreferences } from "@/components/client/notification-preferences";
 import { useQueryState } from "@/hooks/use-query-state";
 
 export const Route = createFileRoute("/_authenticated/client/settings")({
