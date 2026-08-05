@@ -202,7 +202,16 @@ export const expressIntakeSchema = z
       path: ["jobDescriptionText"],
       message: `Upload a job description file or paste at least ${MIN_JD_TEXT} characters`,
     },
-  );
+  )
+  .refine((v) => Number(v.salaryMax) >= Number(v.salaryMin), {
+    path: ["salaryMax"],
+    message: "The top of the range must be at least the bottom",
+  })
+  .refine((v) => v.workModel === "remote" || typeof v.onsiteDays === "number", {
+    path: ["onsiteDays"],
+    message: "How many days on site each week?",
+  });
+
 
 
 export type ExpressIntakeInput = z.infer<typeof expressIntakeSchema>;
