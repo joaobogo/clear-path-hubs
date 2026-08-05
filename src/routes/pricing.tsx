@@ -8,6 +8,8 @@ import {
   PublicSection,
   CtaSection,
 } from "@/components/marketing/site-shell";
+import { EditorialHero } from "@/components/marketing/editorial-hero";
+import pricingHero from "@/assets/page-pricing-hero.jpg";
 import { PricingTierCard } from "@/components/marketing/pricing-tier-card";
 import { SubscriptionTierCard } from "@/components/marketing/subscription-tier-card";
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
@@ -53,40 +55,34 @@ function PricingPage() {
   return (
     <SiteShell>
       {/* Hero — mirrors taasflow.com/pricing */}
-      <PublicSection className="pb-6 pt-16 sm:pt-20">
-        <PublicPage>
-          <div className="text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--brand-navy)]/80">
-              Plans & Entitlements
-            </p>
-            <h1 className="mt-3 font-[family-name:var(--brand-font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-              One platform. Entitlements that scale.
-            </h1>
-            <p className="mt-5 max-w-2xl mx-auto text-lg text-[color:var(--brand-navy)]/80">
-              Every plan is the full {PRODUCT_CATEGORY}. What changes between
-              plans is capacity — active roles, agent runs, intelligence and
-              governance. One-off packages are billed once; subscription
-              programmes are billed monthly.
-            </p>
-          </div>
-          <ul className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-[color:var(--brand-navy)]/80">
-            {[
-              "No salary percentage fees",
-              "Evidence-backed scoring on every candidate",
-              "Expert oversight included in every plan",
-              "Candidate records stay yours",
-            ].map((x) => (
-              <li key={x} className="flex items-start gap-2">
-                <Check
-                  className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]"
-                  aria-hidden
-                />
-                {x}
-              </li>
-            ))}
-          </ul>
-        </PublicPage>
-      </PublicSection>
+      <EditorialHero
+        eyebrow="Plans & Entitlements"
+        title="One platform. Entitlements that scale."
+        lead={`Every plan is the full ${PRODUCT_CATEGORY}. What changes is capacity — active roles, agent runs, intelligence and governance.`}
+        image={pricingHero}
+        imageAlt="A hiring team planning roles together in a light-filled meeting room"
+        stats={[
+          { value: PRICE_PILOT_DISPLAY, label: "Pilot, billed once" },
+          { value: "0%", label: "Of salary, ever" },
+          { value: SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL, label: "Paying annually" },
+        ]}
+        primary={{ to: "/intake", label: "Start a role" }}
+        secondary={{ to: "/book", label: "Book a call" }}
+      >
+        <ul className="flex flex-wrap gap-x-8 gap-y-3 text-sm text-[color:var(--brand-navy)]/80">
+          {[
+            "No salary percentage fees",
+            "Evidence-backed scoring on every candidate",
+            "Expert oversight included",
+            "Candidate records stay yours",
+          ].map((x) => (
+            <li key={x} className="flex items-start gap-2">
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--brand-navy)]" aria-hidden />
+              {x}
+            </li>
+          ))}
+        </ul>
+      </EditorialHero>
 
       {/* Tab toggle — One-Off Package / Subscription (mirrors taasflow.com) */}
       <PublicSection className="pt-4">
