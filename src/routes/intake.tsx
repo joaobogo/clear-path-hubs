@@ -106,6 +106,11 @@ import { Check, CheckCircle2, Eye, EyeOff, FileText, Loader2, Upload, X } from "
 import { IntakeReviewPanel } from "@/components/intake/review-panel";
 import { buildIntakeReview } from "@/lib/intake-review";
 import { CARRY_NOTICE, type CarryForward } from "@/lib/intake-carry";
+import {
+  COMPENSATION_STALE_DAYS,
+  type DuplicateDraft,
+} from "@/lib/position-duplicate";
+import { getPositionDuplicateDraft } from "@/lib/position-duplicate.functions";
 import { getCompanyCarryForward } from "@/lib/intake-carry.functions";
 
 export const Route = createFileRoute("/intake")({
@@ -113,9 +118,11 @@ export const Route = createFileRoute("/intake")({
    * ?carry=<intake id> or ?carry=org starts a second role from the company
    * profile instead of a blank form. Anything else is ignored.
    */
-  validateSearch: (search: Record<string, unknown>): { carry?: string } => {
+  validateSearch: (search: Record<string, unknown>): { carry?: string; duplicate?: string } => {
     const carry = typeof search["carry"] === "string" ? (search["carry"] as string).trim() : "";
-    return carry ? { carry } : {};
+    const duplicate =
+      typeof search["duplicate"] === "string" ? (search["duplicate"] as string).trim() : "";
+    return { ...(carry ? { carry } : {}), ...(duplicate ? { duplicate } : {}) };
   },
   head: () => ({
     meta: [
@@ -356,8 +363,15 @@ function ExpressIntakePage() {
   const suggestedForRef = useRef<string>("");
   const lastIntentRef = useRef<"pay" | "call">("pay");
   const hydratedRef = useRef(false);
-  const { carry: carryParam } = Route.useSearch();
+  const { carry: carryParam, duplicate: duplicateParam } = Route.useSearch();
   const loadCompanyCarry = useServerFn(getCompanyCarryForward);
+  const loadDuplicateDraft = useServerFn(getPositionDuplicateDraft);
+  // Duplicating a role copies the brief and nothing else. What came across and
+  // what deliberately did not is stated on screen, not assumed.
+  const [duplicate, setDuplicate] = useState<DuplicateDraft | null>(null);
+  const [duplicateError, setDuplicateError] = useState<string | null>(null);
+  const [dupTitleConfirmed, setDupTitleConfirmed] = useState(false);
+  const [dupCompReviewed, setDupCompReviewed] = useState(false);
   // The answers that arrived from the company profile, so each one can say so
   // — and stop saying so the moment the client edits it for this role.
   const [carriedFields, setCarriedFields] = useState<Set<string>>(() => new Set());
@@ -784,7 +798,7 @@ function ExpressIntakePage() {
     try {
       // A new role must never reuse the previous role's idempotency key, or the
       // server would replay the first submission instead of creating a second.
-      const existingIdem = carryParam ? null : localStorage.getItem(EXPRESS_IDEMPOTENCY_KEY);
+      const existingIdem = carryParam || duplicateParam ? null : localStorage.getItem(EXPRESS_IDEMPOTENCY_KEY);
       idem.current = existingIdem || newIdempotencyKey();
       localStorage.setItem(EXPRESS_IDEMPOTENCY_KEY, idem.current);
     } catch {
@@ -825,6 +839,39 @@ function ExpressIntakePage() {
         }
       } catch {
         /* anonymous visitor — normal path */
+      }
+
+      if (duplicateParam) {
+        // A duplicate copies the brief only, and lands on the review step so the
+        // client checks it instead of submitting blind. A failure here changes
+        // nothing about the original role.
+        try {
+          const result = await loadDuplicateDraft({ data: { positionId: duplicateParam } });
+          if (cancelled) return;
+          if (!result?.draft) {
+            setDuplicateError(
+              "We could not find that role to duplicate. Your original role is unchanged \u2014 start this brief from scratch or try again from the role page.",
+            );
+          } else {
+            const dup = result.draft;
+            applyCarry(result.carry);
+            setState((prev) => ({ ...prev, ...(dup.values as Partial<FormState>) }));
+            setDuplicate(dup);
+            setStepIndex(INTAKE_STEPS.length - 1);
+          }
+        } catch {
+          if (!cancelled) {
+            setDuplicateError(
+              "We could not prepare the duplicate. Your original role is unchanged \u2014 nothing was copied or altered.",
+            );
+          }
+        } finally {
+          if (!cancelled) {
+            setDraftPhase("ready");
+            hydratedRef.current = true;
+          }
+        }
+        return;
       }
 
       if (carryParam) {
@@ -1226,6 +1273,21 @@ function ExpressIntakePage() {
     });
     setErrors((e) => ({ ...e, [key]: "" }));
   };
+
+  /**
+   * A duplicate must be deliberate: either the title changes, or the client says
+   * the identical title is intentional. And compensation copied from a brief
+   * older than 180 days is checked before it goes back out to candidates.
+   */
+  const dupTitleUnchanged =
+    duplicate !== null &&
+    duplicate.sourceTitle !== null &&
+    state.roleTitle.trim().toLowerCase() === duplicate.sourceTitle.trim().toLowerCase();
+  const dupBlockers: string[] = [];
+  if (dupTitleUnchanged && !dupTitleConfirmed) dupBlockers.push("Confirm or change the job title");
+  if (duplicate?.compensationStale && !dupCompReviewed) {
+    dupBlockers.push("Check the copied compensation is still right");
+  }
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     if (!startedRef.current) {
@@ -1633,7 +1695,7 @@ function ExpressIntakePage() {
           {draftPhase === "restoring" ? (
             <>
               <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
-              {INTAKE_DRAFT_RESTORING_LABEL}…
+              {duplicateParam ? "Preparing your draft" : INTAKE_DRAFT_RESTORING_LABEL}…
             </>
           ) : saveError ? (
             <>
@@ -2865,6 +2927,109 @@ function ExpressIntakePage() {
             <p className="text-sm text-[color:var(--brand-navy)]/70">
               This is the last chance to correct anything before you submit.
             </p>
+
+            {duplicateError && (
+              <div
+                role="alert"
+                className="rounded-lg border border-[color:var(--brand-danger)]/30 bg-[color:var(--brand-danger)]/5 p-4 text-sm leading-relaxed"
+              >
+                {duplicateError}
+              </div>
+            )}
+
+            {duplicate && (
+              <div
+                className="space-y-3 rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/4 p-4"
+                data-testid="duplicate-notice"
+              >
+                <p className="text-sm font-semibold">
+                  Started from{" "}
+                  {duplicate.sourceTitle ? `your “${duplicate.sourceTitle}” brief` : "an earlier role"}
+                </p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+                      Copied
+                    </p>
+                    <ul className="mt-1 space-y-1 text-sm text-[color:var(--brand-navy)]/75">
+                      {duplicate.copied.map((c) => (
+                        <li key={c}>{c}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--brand-navy)]/60">
+                      Not copied
+                    </p>
+                    <ul className="mt-1 space-y-1 text-sm text-[color:var(--brand-navy)]/75">
+                      {duplicate.notCopied.map((c) => (
+                        <li key={c}>{c}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {dupTitleUnchanged && (
+                  <div className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white/60 p-3">
+                    <p className="text-sm">
+                      This role still has the same title as the one you copied.
+                    </p>
+                    <div className="mt-2 flex flex-wrap items-center gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => editFromReview({ step: 0, focusLabel: "Job title" })}
+                      >
+                        Change the title
+                      </Button>
+                      <label className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4"
+                          checked={dupTitleConfirmed}
+                          onChange={(e) => setDupTitleConfirmed(e.target.checked)}
+                          data-testid="duplicate-title-confirm"
+                        />
+                        The title is intentionally the same
+                      </label>
+                    </div>
+                  </div>
+                )}
+
+                {duplicate.compensationStale && (
+                  <div className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white/60 p-3">
+                    <p className="text-sm">
+                      The compensation came from a brief more than {COMPENSATION_STALE_DAYS} days old
+                      {duplicate.compensationAsOf
+                        ? ` (last set ${new Date(duplicate.compensationAsOf).toLocaleDateString()})`
+                        : ""}
+                      . Worth a look before it goes out to candidates.
+                    </p>
+                    <div className="mt-2 flex flex-wrap items-center gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => editFromReview({ step: 2, focusLabel: "From" })}
+                      >
+                        Review compensation
+                      </Button>
+                      <label className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4"
+                          checked={dupCompReviewed}
+                          onChange={(e) => setDupCompReviewed(e.target.checked)}
+                          data-testid="duplicate-comp-confirm"
+                        />
+                        I have checked the range is still right
+                      </label>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
             {reviewing && (
               <IntakeReviewPanel
                 review={review}
@@ -3014,7 +3179,7 @@ function ExpressIntakePage() {
                 <Button
                   type="button"
                   onClick={() => void submit("pay")}
-                  disabled={submitting || review.missing.length > 0}
+                  disabled={submitting || review.missing.length > 0 || dupBlockers.length > 0}
                   className="min-h-12 w-full"
                 >
                   {submitting ? (
@@ -3030,7 +3195,7 @@ function ExpressIntakePage() {
                   type="button"
                   variant="outline"
                   onClick={() => void submit("call")}
-                  disabled={submitting || review.missing.length > 0}
+                  disabled={submitting || review.missing.length > 0 || dupBlockers.length > 0}
                   className="min-h-12 w-full"
                 >
                   Book a call first
@@ -3039,6 +3204,11 @@ function ExpressIntakePage() {
               {review.missing.length > 0 && (
                 <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75" role="status">
                   Submit unlocks once the required answers named in the review above are filled in.
+                </p>
+              )}
+              {dupBlockers.length > 0 && (
+                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75" role="status">
+                  Before you submit this duplicate: {dupBlockers.join(" \u00b7 ")}.
                 </p>
               )}
               <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
