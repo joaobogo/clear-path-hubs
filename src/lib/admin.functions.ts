@@ -842,6 +842,13 @@ export const setPositionStatus = createServerFn({ method: "POST" })
       }
     }
 
+    // Publish gate: the queue on /admin/positions and /admin/publish reads the
+    // exact same check, so the list can never disagree with the action.
+    if (data.action === "activate" || data.action === "reopen") {
+      const { assertPositionPublishable } = await import("./publish-gate.server");
+      await assertPositionPublishable(s, data.id);
+    }
+
     // A role cannot be closed as filled without a confirmed hire record —
     // otherwise placement data goes missing the moment the role closes.
     if (data.action === "mark_filled") {

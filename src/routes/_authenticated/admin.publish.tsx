@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle, Ban, CheckCircle2, Eye, Pause, ExternalLink } from "lucide-react";
+import { PublishGatePanel } from "@/components/admin/publish-gate-panel";
 
 export const Route = createFileRoute("/_authenticated/admin/publish")({
   loader: ({ context }) =>
@@ -126,6 +127,8 @@ function PublishDesk() {
           <AlertDescription>{feedback}</AlertDescription>
         </Alert>
       )}
+
+      <PublishGatePanel />
 
       <div className="grid gap-3 md:grid-cols-5">
         {GROUPS.map((g) => {

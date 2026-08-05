@@ -1,0 +1,91 @@
+/**
+ * Position publish gate — one shared definition of "why can't this role go live?".
+ *
+ * The same pure evaluation is used by:
+ *  - the server check that runs before a position is activated (setPositionStatus)
+ *  - the admin "Publish blockers" list
+ *
+ * so the list can never disagree with the action. There is no client-side
+ * bypass: payment state is read from the row and only cleared by a real payment
+ * or an audited exemption.
+ */
+
+export type PublishBlocker =
+  | "payment_unpaid"
+  | "not_approved"
+  | "missing_title"
+  | "missing_description"
+  | "missing_employment_type"
+  | "missing_work_model"
+  | "missing_seniority"
+  | "missing_location";
+
+export const PUBLISH_BLOCKER_LABEL: Record<PublishBlocker, string> = {
+  payment_unpaid: "Payment not complete",
+  not_approved: "Not approved for publishing yet",
+  missing_title: "Role title missing",
+  missing_description: "Role description too short (80 characters minimum)",
+  missing_employment_type: "Employment type missing",
+  missing_work_model: "Work model missing",
+  missing_seniority: "Seniority missing",
+  missing_location: "Location missing (required unless fully remote)",
+};
+
+/** Field on the position edit form that resolves each blocker, when there is one. */
+export const PUBLISH_BLOCKER_FIELD: Partial<Record<PublishBlocker, string>> = {
+  missing_title: "title",
+  missing_description: "description",
+  missing_employment_type: "employment_type",
+  missing_work_model: "work_model",
+  missing_seniority: "seniority",
+  missing_location: "location",
+};
+
+export const PAID_PAYMENT_STATES = ["paid", "exempt", "covered"] as const;
+
+export type PublishGateInput = {
+  status: string | null;
+  payment_status: string | null;
+  approved_at: string | null;
+  published_at: string | null;
+  title: string | null;
+  description: string | null;
+  employment_type: string | null;
+  work_model: string | null;
+  seniority: string | null;
+  location: string | null;
+};
+
+export function isPaymentSatisfied(paymentStatus: string | null | undefined): boolean {
+  return (PAID_PAYMENT_STATES as readonly string[]).includes(paymentStatus ?? "unpaid");
+}
+
+/** Blockers, in the order a recruiter should resolve them. */
+export function evaluatePublishGate(p: PublishGateInput): PublishBlocker[] {
+  const blockers: PublishBlocker[] = [];
+
+  if (!isPaymentSatisfied(p.payment_status)) blockers.push("payment_unpaid");
+
+  if (!p.title || p.title.trim().length < 3) blockers.push("missing_title");
+  if (!p.description || p.description.trim().length < 80) blockers.push("missing_description");
+  if (!p.employment_type) blockers.push("missing_employment_type");
+  if (!p.work_model) blockers.push("missing_work_model");
+  if (!p.seniority || !p.seniority.trim()) blockers.push("missing_seniority");
+  if (p.work_model !== "remote" && !(p.location ?? "").trim()) blockers.push("missing_location");
+
+  // Approval is a workflow gate, not a data gate: only mention it once the
+  // role is otherwise ready, so the list surfaces the real work first.
+  if (!p.approved_at && !p.published_at && blockers.length === 0) blockers.push("not_approved");
+
+  return blockers;
+}
+
+export const PUBLISH_BLOCKED_PREFIX = "publish_blocked: ";
+
+export function publishBlockedMessage(blockers: PublishBlocker[]): string {
+  return (
+    PUBLISH_BLOCKED_PREFIX +
+    blockers.map((b) => PUBLISH_BLOCKER_LABEL[b]).join("; ") +
+    ". Resolve these first — publishing is not bypassable."
+  );
+}

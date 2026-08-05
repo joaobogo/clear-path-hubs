@@ -18,6 +18,7 @@ import {
 import { AlertCircle, ArrowUpRight, Building2, MapPin } from "lucide-react";
 import { ErrorState } from "@/components/ds";
 import { PositionsAttentionQueue } from "@/components/admin/positions-attention-queue";
+import { PublishGatePanel } from "@/components/admin/publish-gate-panel";
 
 
 const searchSchema = z.object({
@@ -238,6 +239,7 @@ function PositionsPage() {
         <PositionsAttentionQueue includeTest={search.show_test} />
       ) : (
       <>
+      <PublishGatePanel includeTest={search.show_test} />
       <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-card p-3">
 
         <Input
