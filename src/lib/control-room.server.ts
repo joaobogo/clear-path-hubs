@@ -26,7 +26,32 @@ export type SystemStatus = {
   }[];
   agents: { on: number; paused: number; off: number; total: number };
   checked_at: string;
+  /** False when this seat/workspace cannot read status. Never an error. */
+  can_read: boolean;
+  /** Plain-language reason when `can_read` is false. */
+  unavailable_reason: string | null;
 };
+
+/** A readable, non-error status shape for when we simply cannot read status. */
+export function emptySystemStatus(
+  totalAgents: number,
+  reason: string,
+): SystemStatus {
+  return {
+    running: [],
+    running_total: 0,
+    queued_total: 0,
+    retrying_total: 0,
+    failed_total: 0,
+    failed_examples: [],
+    last_completed_at: null,
+    integrations: [],
+    agents: { on: 0, paused: 0, off: totalAgents, total: totalAgents },
+    checked_at: new Date().toISOString(),
+    can_read: false,
+    unavailable_reason: reason,
+  };
+}
 
 const MAX_IDS = 4000;
 
@@ -66,15 +91,20 @@ export async function buildSystemStatus(
   const since = new Date(Date.now() - 7 * 86_400_000).toISOString();
 
   let jobs: Db[] = [];
-  if (ids.length) {
-    const { data } = await supabase
-      .from("processing_jobs")
-      .select("job_type, status, attempts, error_message, created_at, completed_at")
-      .in("entity_id", ids)
-      .gte("created_at", since)
-      .order("created_at", { ascending: false })
-      .limit(4000);
-    jobs = data ?? [];
+  for (let i = 0; i < ids.length; i += 200) {
+    const batch = ids.slice(i, i + 200);
+    try {
+      const { data } = await supabase
+        .from("processing_jobs")
+        .select("job_type, status, attempts, error_message, created_at, completed_at")
+        .in("entity_id", batch)
+        .gte("created_at", since)
+        .order("created_at", { ascending: false })
+        .limit(1000);
+      if (data) jobs = jobs.concat(data);
+    } catch {
+      // Job visibility is staff-scoped on some seats; never fail the strip.
+    }
   }
 
   const runningCounts = new Map<string, number>();
@@ -136,5 +166,7 @@ export async function buildSystemStatus(
       total: totalAgents,
     },
     checked_at: new Date().toISOString(),
+    can_read: true,
+    unavailable_reason: null,
   };
 }

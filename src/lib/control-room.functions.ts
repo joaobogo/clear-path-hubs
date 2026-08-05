@@ -1,11 +1,18 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { buildSystemStatus, type SystemStatus } from "@/lib/control-room.server";
+import {
+  buildSystemStatus,
+  emptySystemStatus,
+  type SystemStatus,
+} from "@/lib/control-room.server";
 import { AGENT_REGISTRY } from "@/lib/agents/registry";
 import { describeEvent, isTickerEvent } from "@/lib/control-room-shared";
 import { INTENSITIES } from "@/lib/role-intensity";
-import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
+import {
+  assertWorkspaceAccess,
+  readWorkspaceAccess,
+} from "@/lib/authz/workspace-access";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Db = any;
@@ -35,12 +42,29 @@ export const getSystemStatus = createServerFn({ method: "GET" })
   )
   .handler(async ({ data, context }): Promise<SystemStatus> => {
     const { supabase, userId } = context as { supabase: Db; userId: string };
-    await assertWorkspaceAccess(supabase, userId, data.organization_id);
-    return buildSystemStatus(
-      supabase,
-      data.organization_id,
-      AGENT_REGISTRY.length,
-    );
+
+    // Status is ambient information, never a blocker: an unreadable status
+    // returns a "not available" shape instead of failing the whole page.
+    const access = await readWorkspaceAccess(supabase, userId, data.organization_id);
+    if (!access.allowed) {
+      return emptySystemStatus(
+        AGENT_REGISTRY.length,
+        "System status isn't shown for this workspace on your seat.",
+      );
+    }
+
+    try {
+      return await buildSystemStatus(
+        supabase,
+        data.organization_id,
+        AGENT_REGISTRY.length,
+      );
+    } catch {
+      return emptySystemStatus(
+        AGENT_REGISTRY.length,
+        "System status is catching up. Everything else on this page is live.",
+      );
+    }
   });
 
 export const getLiveFeed = createServerFn({ method: "GET" })
