@@ -1,0 +1,37 @@
+create or replace view public.v_rejection_decisions
+with (security_invoker = on) as
+select
+  cd.id as decision_id,
+  'client'::text as surface,
+  cd.candidate_match_id as match_id,
+  cm.organization_id,
+  cm.position_id,
+  cd.reason_code,
+  cd.feedback as detail,
+  cd.actor_user_id,
+  coalesce(cd.from_stage, cm.stage::text) as stage_at_decision,
+  cd.created_at
+from public.client_decisions cd
+join public.candidate_matches cm on cm.id = cd.candidate_match_id
+where cd.decision = 'not_moving_forward'::client_decision_type
+  and cd.reversed_at is null
+union all
+select
+  sd.id as decision_id,
+  'admin'::text as surface,
+  sd.candidate_match_id as match_id,
+  cm.organization_id,
+  cm.position_id,
+  sd.reason_code,
+  sd.reason as detail,
+  sd.actor_user_id,
+  coalesce(sd.stage_at_decision, cm.stage::text) as stage_at_decision,
+  sd.created_at
+from public.score_decisions sd
+join public.candidate_matches cm on cm.id = sd.candidate_match_id
+where sd.decision_type = 'reject'::score_decision_type
+  and coalesce(sd.reason_code, '') <> 'hold'
+  and coalesce(sd.reason, '') not like 'HOLD:%';
+
+grant select on public.v_rejection_decisions to authenticated;
+grant select on public.v_rejection_decisions to service_role;
