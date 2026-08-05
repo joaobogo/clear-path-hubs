@@ -6,6 +6,8 @@ import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { ActivityFeed } from "@/components/activity/ActivityFeed";
 import { getAdminWorkQueues } from "@/lib/admin-ops.functions";
 import { TestRecordsToggle } from "@/components/admin/TestRecordsToggle";
+import { PortfolioHealthTable } from "@/components/admin/portfolio-health-table";
+
 import { Button } from "@/components/ui/button";
 import {
   CreditCard,
@@ -119,9 +121,12 @@ function Overview() {
         </div>
       </header>
 
+      {/* Portfolio health first: which accounts are in trouble, not totals. */}
+      <PortfolioHealthTable includeTest={show_test} />
 
       {/* Counts strip — each jumps to its queue below. */}
       <nav aria-label="Queue counts" className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-7">
+
         {queues.map((q) => {
           const Icon = ICONS[q.key] ?? ClipboardCheck;
           return (
