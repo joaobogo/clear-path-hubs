@@ -1337,10 +1337,13 @@ function Home() {
                 id="home-hero-heading"
                 className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
               >
-                Agents run the search.
+                Your sourcing and
                 <br className="hidden sm:block" />{" "}
-                <span className="text-[color:var(--brand-ocean-text)]">Evidence backs every score.</span>
+                <span className="text-[color:var(--brand-ocean-text)]">recruitment solution</span>
               </h1>
+              <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean-text)]">
+                Human first, AI enabled
+              </p>
               <p className="max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
                 TaaSFlow runs hiring as a system—continuous sourcing,
                 rubric-versioned scoring and a complete decision audit.
