@@ -37,6 +37,10 @@ export function rejectionReasonsFor(
 
 export const REJECTION_REASON_CODES: string[] = REJECTION_REASONS.map((r) => r.code);
 
+
+
+
+
 /**
  * Client-facing "Not a fit" list — fixed, short, and ordered the way clients
  * think. These codes drive the recruiting team's next search, so the list stays
