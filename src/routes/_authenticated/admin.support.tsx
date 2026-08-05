@@ -3,7 +3,7 @@ import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-q
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { getSupportOverview } from "@/lib/admin-workbench.functions";
-import { startSupportSession, endSupportSession } from "@/lib/support.functions";
+import { startSupportSession } from "@/lib/support.functions";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,6 @@ function SupportPage() {
   const qc = useQueryClient();
   const { data } = useSuspenseQuery({ queryKey: ["admin-support"], queryFn: () => getSupportOverview() });
   const startFn = useServerFn(startSupportSession);
-  const endFn = useServerFn(endSupportSession);
   const [filter, setFilter] = useState("");
   const [reason, setReason] = useState("");
   const [message, setMessage] = useState<string | null>(null);
@@ -42,16 +41,6 @@ function SupportPage() {
       await qc.invalidateQueries({ queryKey: ["admin-support"] });
       await qc.invalidateQueries({ queryKey: ["support-audit"] });
       window.open(`/client?org=${orgId}`, "_blank", "noopener");
-    },
-    onError: (e: Error) => setMessage(e.message),
-  });
-
-  const end = useMutation({
-    mutationFn: async (session_id: string) => endFn({ data: { session_id } }),
-    onSuccess: async () => {
-      setMessage("Session closed.");
-      await qc.invalidateQueries({ queryKey: ["admin-support"] });
-      await qc.invalidateQueries({ queryKey: ["support-audit"] });
     },
     onError: (e: Error) => setMessage(e.message),
   });
