@@ -1,6 +1,7 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { PaymentExemptionDialog } from "@/components/admin/payment-exemption-dialog";
 import { InternalNotes } from "@/components/admin/InternalNotes";
+import { StageAgingPanel } from "@/components/admin/stage-aging-panel";
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -296,7 +297,7 @@ function PositionWorkspace() {
         {tab === "blueprint" && (
           <BlueprintTab position={p} screening={screening} />
         )}
-        {tab === "pipeline" && <PipelineTab matches={matches} />}
+        {tab === "pipeline" && <PipelineTab matches={matches} positionId={id} />}
         {tab === "sourcing" && <SourcingOpsPanel positionId={id} />}
         {tab === "memory" && <RoleMemoryPanel positionId={id} canEdit={true} />}
         {tab === "activity" && (
@@ -1001,7 +1002,7 @@ function BlueprintRow({
 }
 
 // ── Pipeline ────────────────────────────────────────────────────────────────
-function PipelineTab({ matches }: { matches: Any[] }) {
+function PipelineTab({ matches, positionId }: { matches: Any[]; positionId: string }) {
   const byStage = useMemo(() => {
     const buckets: Record<string, Any[]> = {};
     for (const s of STAGE_ORDER) buckets[s] = [];
@@ -1113,6 +1114,8 @@ function PipelineTab({ matches }: { matches: Any[] }) {
           </tbody>
         </table>
       </div>
+
+      <StageAgingPanel positionId={positionId} />
     </div>
   );
 }
