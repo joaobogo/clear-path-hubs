@@ -36,6 +36,10 @@ import {
 } from "@/components/ui/select";
 import { ArrowRight, ArrowUpDown, X, AlertTriangle, Unlock } from "lucide-react";
 import { ErrorState } from "@/components/ds";
+import {
+  DuplicateCandidatesBanner,
+  DuplicateCandidatesPanel,
+} from "@/components/admin/duplicate-candidates-panel";
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
@@ -163,6 +167,7 @@ function CandidatesPage() {
   useEffect(() => setQ(search.q ?? ""), [search.q]);
   const [selected, setSelected] = useState<string[]>([]);
   const [confirm, setConfirm] = useState<null | "visible" | "hidden">(null);
+  const [showDuplicates, setShowDuplicates] = useState(false);
 
   const filters = useMemo(
     () => ({
@@ -273,6 +278,13 @@ function CandidatesPage() {
               : `${total} submission${total === 1 ? "" : "s"}`}
         </div>
       </header>
+
+      <div className="mb-4 space-y-3">
+        <DuplicateCandidatesBanner onReview={() => setShowDuplicates(true)} />
+        {showDuplicates ? <DuplicateCandidatesPanel /> : null}
+      </div>
+
+
 
       <SavedViewsBar
         surface="admin_candidates"
