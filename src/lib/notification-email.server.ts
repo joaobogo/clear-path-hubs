@@ -12,6 +12,10 @@
 
 import type { EventType } from "./events";
 import { EVENT_PREFERENCE, normalizePreferences } from "./client-notification-prefs";
+import {
+  CANDIDATE_EVENT_PREFERENCE,
+  normalizeCandidatePrefs,
+} from "./candidate/notification-prefs";
 import { isSuppressed } from "./notification-suppression.server";
 
 
@@ -83,8 +87,27 @@ export type EmailDecision = "send" | "digest" | "off";
  */
 export async function emailDecision(
   admin: Admin,
-  args: { userId: string; orgId: string | null; event: EventType },
+  args: { userId: string; orgId: string | null; event: EventType; audience?: string | null },
 ): Promise<EmailDecision> {
+  // Candidates keep their own per-event choices on their profile. They are
+  // resolved first: a candidate is never governed by a workspace row, and a
+  // deadline-bearing notice can only be deferred, never dropped.
+  if (args.audience === "candidate") {
+    const key = CANDIDATE_EVENT_PREFERENCE[args.event];
+    if (!key) return "send";
+    const { data: profile } = await admin
+      .from("candidate_profiles")
+      .select("consent")
+      .eq("user_id", args.userId)
+      .maybeSingle();
+    const { prefs } = normalizeCandidatePrefs(
+      (profile?.consent ?? null) as Record<string, unknown> | null,
+    );
+    const mode = prefs[key];
+    if (mode === "digest") return "digest";
+    if (mode === "off") return "off";
+    return "send";
+  }
   if (ESSENTIAL_EVENTS.has(args.event)) return "send";
   const key = EVENT_PREFERENCE[args.event];
   if (!key || !args.orgId) return "send";
@@ -163,6 +186,7 @@ export async function dispatchEmails(
     title: string;
     body: string | null;
     link_path: string | null;
+    audience?: string | null;
   }>,
 ): Promise<EmailAttempt[]> {
   const cfg = readEmailConfig();
@@ -173,6 +197,7 @@ export async function dispatchEmails(
       userId: n.recipient_user_id,
       orgId: n.organization_id,
       event: n.event_type,
+      audience: n.audience ?? null,
     });
     let status: EmailAttempt["status"] = "suppressed";
     let errorCode: string | null = null;
