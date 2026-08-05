@@ -1001,7 +1001,7 @@ function BlueprintRow({
 }
 
 // ── Pipeline ────────────────────────────────────────────────────────────────
-function PipelineTab({ matches }: { matches: Any[] }) {
+function PipelineTab({ matches, positionId }: { matches: Any[]; positionId: string }) {
   const byStage = useMemo(() => {
     const buckets: Record<string, Any[]> = {};
     for (const s of STAGE_ORDER) buckets[s] = [];
