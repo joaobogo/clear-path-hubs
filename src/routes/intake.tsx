@@ -612,6 +612,22 @@ function ExpressIntakePage() {
   const validateStep = (index: number): boolean => {
     const key = INTAKE_STEPS[index].key;
     const next: Record<string, string> = {};
+    if (key === "company") {
+      const res = stepValidators.company.safeParse({
+        companyName: state.companyName,
+        companyWebsite: state.companyWebsite,
+        firstName: state.firstName,
+        lastName: state.lastName,
+        workEmail: state.workEmail,
+      });
+      if (!res.success) {
+        for (const issue of res.error.issues) {
+          const f = String(issue.path[0] ?? "form");
+          if (!next[f]) next[f] = issue.message;
+        }
+      }
+    }
+    let hardFail = false;
     if (key === "role") {
       const res = stepValidators.role.safeParse({
         roleTitle: state.roleTitle,
@@ -630,8 +646,7 @@ function ExpressIntakePage() {
           : `Upload a job description file or paste at least ${MIN_JD_TEXT} characters`;
       }
     }
-    let hardFail = false;
-    if (key === "people") {
+    if (key === "role") {
       const res = validateRequirements(state.requirements, {
         manyConfirmed: state.manyMustHavesConfirmed,
       });
@@ -641,7 +656,7 @@ function ExpressIntakePage() {
       if (res.listError) next.requirements = res.listError;
       hardFail = !res.ok;
     }
-    if (key === "practicalities") {
+    if (key === "details") {
       // Optional step: only what was filled in has to make sense.
       if (state.salaryMin !== "" && state.salaryMax === "") {
         next.salaryMax = "Add the top of the range too, or clear both";
@@ -667,7 +682,7 @@ function ExpressIntakePage() {
       }
       Object.assign(next, placementErrors());
     }
-    if (key === "process") {
+    if (key === "details") {
       // Optional step: an untouched stage list is fine, a half-built one is not.
       const res = processErrors();
       setStageErrors(res.rowErrors);
@@ -1807,7 +1822,7 @@ function ExpressIntakePage() {
               About {minutesLeft} min left · {INTAKE_TOTAL_MINUTES} min in total
             </p>
           </div>
-          <ol className="grid grid-cols-4 gap-2">
+          <ol className="grid grid-cols-3 gap-2">
             {INTAKE_STEPS.map((s, i) => {
               const done = i < stepIndex;
               const current = i === stepIndex;
@@ -1857,9 +1872,9 @@ function ExpressIntakePage() {
           </div>
         )}
 
-        {step === 4 && (
+        {step === 1 && (
           <>
-        <Section id="section-company" title="Your company" step={4}>
+        <Section id="section-company" title="Your company" step={1}>
 
           <Field label="Company name" carried={isCarried("companyName")} error={errors.companyName} required={req["companyName"]}>
             <Input
@@ -1895,7 +1910,7 @@ function ExpressIntakePage() {
           </div>
         </Section>
 
-        <Section id="section-you" title="You" step={2}>
+        <Section id="section-you" title="You" step={1}>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="First name" carried={isCarried("firstName")} error={errors.firstName} required={req["firstName"]}>
               <Input
@@ -1963,7 +1978,7 @@ function ExpressIntakePage() {
             </p>
           </section>
         ) : (
-        <Section title="Create your account" step={3}>
+        <Section title="Create your account" step={1}>
           <p className="text-sm text-[color:var(--brand-navy)]/70">
             Create it now and nothing you've typed can be lost — you stay on this page the whole time.
           </p>
@@ -2074,8 +2089,8 @@ function ExpressIntakePage() {
 
 
 
-        {step === 1 && (
-        <Section id="section-role" title="The role" step={1}>
+        {step === 2 && (
+        <Section id="section-role" title="The role" step={2}>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Job title" error={errors.roleTitle} required={req["roleTitle"]}>
               <Input
@@ -2645,8 +2660,8 @@ function ExpressIntakePage() {
         </Section>
         )}
 
-        {step === 4 && (
-        <Section id="section-process" title="Process and confirm" step={4}>
+        {step === 3 && (
+        <Section id="section-process" title="Process and confirm" step={3}>
           <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
             How you decide, and what rules someone out. Two minutes here saves candidates dropping
             out halfway.
@@ -2960,7 +2975,7 @@ function ExpressIntakePage() {
 
 
 
-        {step === 4 && (
+        {step === 3 && (
           <>
         <Card className="border-[color:var(--brand-navy)]/12">
           <CardContent className="space-y-4 pt-6">
@@ -3029,7 +3044,7 @@ function ExpressIntakePage() {
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => editFromReview({ step: 0, focusLabel: "Job title" })}
+                        onClick={() => editFromReview({ step: 1, focusLabel: "Job title" })}
                       >
                         Change the title
                       </Button>

@@ -28,7 +28,6 @@ async function fillYou(page: Page, email: string) {
   await page.getByLabel("First name").fill("Dana");
   await page.getByLabel("Last name").fill("Whitfield");
   await page.getByLabel("Work email").fill(email);
-  await page.getByLabel("Phone", { exact: true }).fill("+15551234567");
 }
 
 async function fillPasswords(page: Page, password: string, confirm = password) {
@@ -82,7 +81,6 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await expect(page.getByText("Enter your first name")).toBeVisible();
     await expect(page.getByText("Enter your last name")).toBeVisible();
     await expect(page.getByText("Enter a valid work email")).toBeVisible();
-    await expect(page.getByText(/phone number we can reach you on/i)).toBeVisible();
     await expect(page.getByText("Enter the job title")).toBeVisible();
     await expect(page.getByText(/must accept the terms/i)).toBeVisible();
     await expect(page.getByText(/confirm you understand how the pilot works/i)).toBeVisible();
