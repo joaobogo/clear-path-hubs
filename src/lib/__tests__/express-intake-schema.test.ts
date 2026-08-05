@@ -4,6 +4,7 @@ import {
   UNREADABLE_JD_EXT,
   blueprintProgress,
   expressIntakeSchema,
+  intakeRequiredness,
   jdFileExt,
   MIN_JD_TEXT,
   countMustHaves,
@@ -214,5 +215,69 @@ describe("validateRequirements", () => {
     const lines = requirementsToLines(items);
     expect(lines.mustHaves).toBe("Runs a P&L above $2M");
     expect(linesToRequirements(lines)).toEqual(items);
+  });
+});
+
+describe("intakeRequiredness", () => {
+  const blankFor = (field: string): unknown => {
+    if (field === "consent" || field === "pilotAcknowledgement") return false;
+    if (field === "requirements") return [];
+    // An unticked optional checkbox falls back to its default, not "".
+    if (field === "researchConsent") return undefined;
+    if (field === "onsiteDays" || field === "salaryMin" || field === "salaryMax") return undefined;
+    return "";
+  };
+
+  it("marks a field required in the UI whenever the server rejects it blank", () => {
+    const req = intakeRequiredness({ workModel: valid.workModel });
+    for (const [field, required] of Object.entries(req)) {
+      // requirements is validated as a list by validateRequirements, and the
+      // legacy mustHaves string covers it in the schema — checked separately.
+      if (field === "requirements" || field === "confirmPassword") continue;
+      // The salary pair is optional together: half a range is rejected as a
+      // pair rule, not because either field is required on its own.
+      if (field === "salaryMin" || field === "salaryMax") continue;
+      const payload: Record<string, unknown> = { ...valid, [field]: blankFor(field) };
+      const serverRejects = !expressIntakeSchema.safeParse(payload).success;
+      expect(
+        { field, required, serverRejects },
+        `${field}: UI requiredness must match the server`,
+      ).toEqual({ field, required: serverRejects, serverRejects });
+    }
+  });
+
+  it("treats the salary range as optional, but only as a pair", () => {
+    const req = intakeRequiredness();
+    expect(req["salaryMin"]).toBe(false);
+    expect(req["salaryMax"]).toBe(false);
+    const bothBlank = expressIntakeSchema.safeParse({
+      ...valid,
+      salaryMin: undefined,
+      salaryMax: undefined,
+    });
+    expect(bothBlank.success).toBe(true);
+  });
+
+  it("requires at least one must-have, so requirements is required", () => {
+    expect(intakeRequiredness()["requirements"]).toBe(true);
+    expect(validateRequirements([]).ok).toBe(false);
+  });
+
+  it("drops the pasted-JD requirement once a file is attached", () => {
+    expect(intakeRequiredness()["jobDescriptionText"]).toBe(true);
+    expect(intakeRequiredness({ hasJdFile: true })["jobDescriptionText"]).toBe(false);
+  });
+
+  it("only asks a signed-out client for a password", () => {
+    expect(intakeRequiredness()["password"]).toBe(true);
+    expect(intakeRequiredness()["confirmPassword"]).toBe(true);
+    expect(intakeRequiredness({ authed: true })["password"]).toBe(false);
+    expect(intakeRequiredness({ signInMode: true })["confirmPassword"]).toBe(false);
+  });
+
+  it("requires on-site days only when the role is not fully remote", () => {
+    expect(intakeRequiredness({ workModel: "" })["onsiteDays"]).toBe(false);
+    expect(intakeRequiredness({ workModel: "remote" })["onsiteDays"]).toBe(false);
+    expect(intakeRequiredness({ workModel: "hybrid" })["onsiteDays"]).toBe(true);
   });
 });

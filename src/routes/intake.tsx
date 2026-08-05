@@ -30,6 +30,8 @@ import {
   INTAKE_STEPS,
   INTAKE_TOTAL_MINUTES,
   STEP_FIELDS,
+  INTAKE_REQUIRED_LEGEND,
+  intakeRequiredness,
   briefCompleteness,
   stepValidators,
   linesToRequirements,
@@ -227,6 +229,21 @@ function ExpressIntakePage() {
   const currentStep = INTAKE_STEPS[stepIndex];
   const step = stepIndex + 1;
   const minutesLeft = INTAKE_STEPS.slice(stepIndex).reduce((sum, s) => sum + s.minutes, 0);
+
+  /**
+   * Requiredness comes from the same map the server validator uses, so the
+   * asterisks on screen can never disagree with what submit will accept.
+   */
+  const req = React.useMemo(
+    () =>
+      intakeRequiredness({
+        hasJdFile: Boolean(jdFile),
+        authed,
+        signInMode,
+        workModel: state.workModel,
+      }),
+    [jdFile, authed, signInMode, state.workModel],
+  );
 
   // What is still missing from the brief, in the client's own words. Shown
   // before submit so an incomplete brief is a stated choice, not a surprise.
@@ -1019,6 +1036,10 @@ function ExpressIntakePage() {
             })}
           </ol>
           <p className="text-sm leading-relaxed text-[color:var(--brand-navy)]/75">{currentStep.blurb}</p>
+          {/* One legend per step — the only place requiredness is explained. */}
+          <p className="text-xs text-[color:var(--brand-navy)]/70" data-testid="required-legend">
+            {INTAKE_REQUIRED_LEGEND}
+          </p>
         </nav>
 
 
@@ -1026,7 +1047,7 @@ function ExpressIntakePage() {
           <>
         <Section id="section-company" title="Your company" step={4}>
 
-          <Field label="Company name" error={errors.companyName} required>
+          <Field label="Company name" error={errors.companyName} required={req["companyName"]}>
             <Input
               value={state.companyName}
               onChange={(e) => set("companyName", e.target.value)}
@@ -1038,7 +1059,7 @@ function ExpressIntakePage() {
             <Field
               label="Company website"
               error={errors.companyWebsite}
-              required
+              required={req["companyWebsite"]}
               hint="We read only your public pages."
             >
               <Input
@@ -1049,7 +1070,7 @@ function ExpressIntakePage() {
                 inputMode="url"
               />
             </Field>
-            <Field label="Company LinkedIn" error={errors.companyLinkedin} hint="Optional">
+            <Field label="Company LinkedIn" error={errors.companyLinkedin} required={req["companyLinkedin"]}>
               <Input
                 value={state.companyLinkedin}
                 onChange={(e) => set("companyLinkedin", e.target.value)}
@@ -1062,14 +1083,14 @@ function ExpressIntakePage() {
 
         <Section id="section-you" title="You" step={2}>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="First name" error={errors.firstName} required>
+            <Field label="First name" error={errors.firstName} required={req["firstName"]}>
               <Input
                 value={state.firstName}
                 onChange={(e) => set("firstName", e.target.value)}
                 autoComplete="given-name"
               />
             </Field>
-            <Field label="Last name" error={errors.lastName} required>
+            <Field label="Last name" error={errors.lastName} required={req["lastName"]}>
               <Input
                 value={state.lastName}
                 onChange={(e) => set("lastName", e.target.value)}
@@ -1077,7 +1098,7 @@ function ExpressIntakePage() {
               />
             </Field>
           </div>
-          <Field label="Your job title" error={errors.contactTitle} hint="Optional">
+          <Field label="Your job title" error={errors.contactTitle} required={req["contactTitle"]}>
             <Input
               value={state.contactTitle}
               onChange={(e) => set("contactTitle", e.target.value)}
@@ -1086,7 +1107,7 @@ function ExpressIntakePage() {
             />
           </Field>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Work email" error={errors.workEmail} required>
+            <Field label="Work email" error={errors.workEmail} required={req["workEmail"]}>
               <Input
                 type="email"
                 value={state.workEmail}
@@ -1099,7 +1120,7 @@ function ExpressIntakePage() {
                 inputMode="email"
               />
             </Field>
-            <Field label="Phone" error={errors.phone} required>
+            <Field label="Phone" error={errors.phone} required={req["phone"]}>
               <Input
                 value={state.phone}
                 onChange={(e) => set("phone", e.target.value)}
@@ -1108,7 +1129,7 @@ function ExpressIntakePage() {
               />
             </Field>
           </div>
-          <Field label="Your LinkedIn" error={errors.contactLinkedin} hint="Optional">
+          <Field label="Your LinkedIn" error={errors.contactLinkedin} required={req["contactLinkedin"]}>
             <Input
               value={state.contactLinkedin}
               onChange={(e) => set("contactLinkedin", e.target.value)}
@@ -1154,7 +1175,7 @@ function ExpressIntakePage() {
               label="Password"
               htmlFor="account-password"
               error={errors.password}
-              required
+              required={req["password"]}
               hint={signInMode ? "The password for your existing account." : `At least ${MIN_ACCOUNT_PASSWORD} characters.`}
             >
               <div className="relative">
@@ -1184,7 +1205,7 @@ function ExpressIntakePage() {
               <Field
                 label="Confirm password"
                 error={errors.confirmPassword}
-                required
+                required={req["confirmPassword"]}
                 hint="Type it once more so we know it's right."
               >
                 <Input
@@ -1242,14 +1263,14 @@ function ExpressIntakePage() {
         {step === 1 && (
         <Section id="section-role" title="The role" step={1}>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Job title" error={errors.roleTitle} required>
+            <Field label="Job title" error={errors.roleTitle} required={req["roleTitle"]}>
               <Input
                 value={state.roleTitle}
                 onChange={(e) => set("roleTitle", e.target.value)}
                 placeholder="Clinical Operations Manager"
               />
             </Field>
-            <Field label="Team" error={errors.team} hint="Optional. Which team it sits in.">
+            <Field label="Team" error={errors.team} required={req["team"]} hint="Which team it sits in.">
               <Input
                 value={state.team}
                 onChange={(e) => set("team", e.target.value)}
@@ -1260,9 +1281,20 @@ function ExpressIntakePage() {
 
 
           <div className="space-y-3">
-            <Label htmlFor="jd-text" className="text-sm font-medium">
-              Job description
-            </Label>
+            <div className="flex items-baseline">
+              <Label htmlFor="jd-text" className="text-sm font-medium">
+                Job description
+              </Label>
+              {req["jobDescriptionText"] ? (
+                <span className="ml-1 text-sm text-[color:var(--brand-navy)]/70" aria-hidden="true">
+                  *
+                </span>
+              ) : (
+                <span className="ml-2 text-xs font-normal text-[color:var(--brand-navy)]/60">
+                  Optional
+                </span>
+              )}
+            </div>
             {jdFile ? (
               <div className="flex items-center justify-between gap-3 rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3">
                 <div className="flex min-w-0 items-center gap-3">
@@ -1360,7 +1392,7 @@ function ExpressIntakePage() {
           <Field
             label="Why is this role open?"
             error={errors.whyOpen}
-            required
+            required={req["whyOpen"]}
             hint="Growth, a replacement, a new function — and what changes once it is filled."
           >
             <Textarea
@@ -1432,6 +1464,7 @@ function ExpressIntakePage() {
             <Field
               label="Where is the role based?"
               error={errors.location}
+              required={req["location"]}
               hint="City and country, or the region candidates must live in."
             >
               <Input
@@ -1440,7 +1473,7 @@ function ExpressIntakePage() {
                 placeholder="Manchester, United Kingdom"
               />
             </Field>
-            <Field label="How does it work?" error={errors.workModel} htmlFor="work-model">
+            <Field label="How does it work?" error={errors.workModel} required={req["workModel"]} htmlFor="work-model">
               <select
                 id="work-model"
                 value={state.workModel}
@@ -1462,7 +1495,7 @@ function ExpressIntakePage() {
             <Field
               label="Days on site each week"
               error={errors.onsiteDays}
-              required
+              required={req["onsiteDays"]}
               hint="Candidates ask this first. A wrong guess costs you offers."
             >
               <Input
@@ -1494,7 +1527,7 @@ function ExpressIntakePage() {
                   ))}
                 </select>
               </Field>
-              <Field label="From" error={errors.salaryMin}>
+              <Field label="From" error={errors.salaryMin} required={req["salaryMin"]}>
                 <Input
                   value={state.salaryMin}
                   onChange={(e) => set("salaryMin", e.target.value.replace(/[^\d]/g, ""))}
@@ -1502,7 +1535,7 @@ function ExpressIntakePage() {
                   placeholder="70000"
                 />
               </Field>
-              <Field label="To" error={errors.salaryMax}>
+              <Field label="To" error={errors.salaryMax} required={req["salaryMax"]}>
                 <Input
                   value={state.salaryMax}
                   onChange={(e) => set("salaryMax", e.target.value.replace(/[^\d]/g, ""))}
@@ -1528,6 +1561,7 @@ function ExpressIntakePage() {
             <Field
               label="Anything else about the package"
               error={errors.compensationNote}
+              required={req["compensationNote"]}
               hint="Bonus, equity, shift premium, or where you have flexibility."
             >
               <Input
@@ -1541,6 +1575,9 @@ function ExpressIntakePage() {
           <fieldset className="space-y-2">
             <legend className="text-sm font-medium">
               Work authorisation
+              <span className="ml-2 text-xs font-normal text-[color:var(--brand-navy)]/60">
+                Optional
+              </span>
             </legend>
             {WORK_AUTHORIZATION_OPTIONS.map((opt) => (
               <label
@@ -1571,7 +1608,8 @@ function ExpressIntakePage() {
           <Field
             label="Ideal start date"
             error={errors.targetStartDate}
-            hint="Optional. We will tell you honestly if it is achievable."
+            required={req["targetStartDate"]}
+            hint="We will tell you honestly if it is achievable."
           >
             <Input
               type="date"
@@ -1592,6 +1630,7 @@ function ExpressIntakePage() {
           <Field
             label="What rules someone out?"
             error={errors.dealBreakers}
+            required={req["dealBreakers"]}
             hint="Say it plainly, even if it feels obvious. This is the fastest way to stop wasting your time."
           >
             <Textarea
@@ -1610,6 +1649,7 @@ function ExpressIntakePage() {
           <Field
             label="How you interview"
             error={errors.interviewProcess}
+            required={req["interviewProcess"]}
             hint="The stages and roughly how long each takes. Candidates drop out of processes they cannot see."
           >
             <Textarea
@@ -1628,6 +1668,7 @@ function ExpressIntakePage() {
           <Field
             label="Who makes the final decision?"
             error={errors.decisionMaker}
+            required={req["decisionMaker"]}
             hint="Name and role. We keep the process moving through them."
           >
             <Input
@@ -1805,6 +1846,9 @@ function ExpressIntakePage() {
                 className="mt-0.5"
                 aria-invalid={Boolean(errors.pilotAcknowledgement)}
               />
+              <span aria-hidden="true" className="order-last text-sm text-[color:var(--brand-navy)]/70">
+                *
+              </span>
               <label htmlFor="pilot-acknowledgement" className="text-sm leading-relaxed">
                 I understand there is no charge today, and that the ${PRICE_PILOT_USD} one-time 14-day
                 pilot is billed only after my account is created and the role is accepted — once per
@@ -1825,6 +1869,7 @@ function ExpressIntakePage() {
                 onCheckedChange={(v) => set("researchConsent", v === true)}
                 className="mt-0.5"
               />
+              <span className="order-last text-xs text-[color:var(--brand-navy)]/60">Optional</span>
               <label htmlFor="research-consent" className="text-sm leading-relaxed">
                 Review my company's public website to fill in company context. You can turn this off —
                 we'll use only the job description.
@@ -1838,6 +1883,9 @@ function ExpressIntakePage() {
                 className="mt-0.5"
                 aria-invalid={Boolean(errors.consent)}
               />
+              <span aria-hidden="true" className="order-last text-sm text-[color:var(--brand-navy)]/70">
+                *
+              </span>
               <label htmlFor="terms-consent" className="text-sm leading-relaxed">
                 I accept the{" "}
                 <a href="/terms" className="underline">
@@ -2031,7 +2079,7 @@ function Field({
           | undefined) ?? fieldId,
         "aria-describedby": described || undefined,
         "aria-invalid": error ? true : undefined,
-        "aria-required": required || undefined,
+        "aria-required": required === true || undefined,
       })
     : children;
   return (
@@ -2043,9 +2091,14 @@ function Field({
         <Label htmlFor={labelFor} className="text-sm font-medium">
           {label}
         </Label>
-        {required && (
+        {required === true && (
           <span className="ml-1 text-sm text-[color:var(--brand-navy)]/70" aria-hidden="true">
             *
+          </span>
+        )}
+        {required === false && (
+          <span className="ml-2 text-xs font-normal text-[color:var(--brand-navy)]/60">
+            Optional
           </span>
         )}
       </div>

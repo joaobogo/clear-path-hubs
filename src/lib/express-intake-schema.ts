@@ -493,6 +493,82 @@ export const stepValidators = {
   }),
 } as const;
 
+/* ------------------------------------------------------------------ */
+/* Requiredness: one source of truth for the form and the server        */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Fields the server refuses to accept empty, no matter the context.
+ * The form reads this same list, so a field can never be required on the
+ * server and quietly optional on screen.
+ */
+export const ALWAYS_REQUIRED_INTAKE_FIELDS = [
+  "companyName",
+  "companyWebsite",
+  "firstName",
+  "lastName",
+  "workEmail",
+  "phone",
+  "roleTitle",
+  "whyOpen",
+  "requirements",
+  "consent",
+  "pilotAcknowledgement",
+] as const;
+
+/**
+ * Fields that become required because of something the client already chose.
+ * Stated up front, never turned on after a failed submit.
+ */
+export type IntakeRequirednessContext = {
+  /** A job description file removes the "paste the text" requirement. */
+  hasJdFile?: boolean;
+  /** Signed-in clients keep their existing password. */
+  authed?: boolean;
+  /** Signing in needs a password; confirming one does not apply. */
+  signInMode?: boolean;
+  /** Anything other than fully remote needs a day count. */
+  workModel?: string;
+};
+
+/** Every intake field name mapped to whether it is required right now. */
+export function intakeRequiredness(
+  ctx: IntakeRequirednessContext = {},
+): Record<string, boolean> {
+  const map: Record<string, boolean> = {
+    // Optional across the board — declared explicitly so the form never has
+    // to guess, and so a new field cannot slip through undecorated.
+    companyLinkedin: false,
+    contactTitle: false,
+    contactLinkedin: false,
+    team: false,
+    location: false,
+    workModel: false,
+    salaryMin: false,
+    salaryMax: false,
+    compensationNote: false,
+    workAuthorization: false,
+    workAuthorizationNote: false,
+    targetStartDate: false,
+    interviewProcess: false,
+    decisionMaker: false,
+    dealBreakers: false,
+    researchConsent: false,
+  };
+  for (const field of ALWAYS_REQUIRED_INTAKE_FIELDS) map[field] = true;
+
+  map["jobDescriptionText"] = !ctx.hasJdFile;
+  map["password"] = !ctx.authed;
+  map["confirmPassword"] = !ctx.authed && !ctx.signInMode;
+  map["onsiteDays"] = Boolean(ctx.workModel) && ctx.workModel !== "remote";
+  return map;
+}
+
+/** Said once per step, so nobody has to infer it from the styling. */
+export const INTAKE_REQUIRED_LEGEND =
+  "Fields marked * are required. Everything else is marked Optional.";
+
+
 /** The answers that make a brief complete, in the words the client saw. */
 export const BRIEF_COMPLETENESS_FIELDS: Array<{ field: string; label: string }> = [
   { field: "location", label: "Where the role is based" },
