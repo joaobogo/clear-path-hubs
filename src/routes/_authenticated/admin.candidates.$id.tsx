@@ -1,5 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
-import { InternalNotes } from "@/components/admin/InternalNotes";
+import { StructuredNotesPanel } from "@/components/admin/structured-notes-panel";
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
@@ -235,11 +235,7 @@ function CandidateWorkspace() {
             {tab === "journey" && (
               <div className="space-y-4">
                 <JourneyTab matchId={id} />
-                <InternalNotes
-                  entityType="candidate_match"
-                  entityId={id}
-                  organizationId={m?.organization_id ?? null}
-                />
+                <StructuredNotesPanel targetKind="candidate_match" targetId={id} />
               </div>
             )}
             {tab === "cv" && <CvTab cv={cv} matchId={id} cp={cp} insights={evidence?.extracted?.insights ?? null} />}
