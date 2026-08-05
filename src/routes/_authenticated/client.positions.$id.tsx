@@ -31,7 +31,7 @@ import { GeneratedBlueprintPanel } from "@/components/positions/generated-bluepr
 import { RoleLaunchPanel } from "@/components/positions/role-launch-panel";
 import { PositionLifecycleMenu } from "@/components/positions/position-lifecycle-menu";
 import type { RoleLaunchState } from "@/lib/role-launch";
-import { ResurfacePanel } from "@/components/client/resurface-panel";
+import { PreviouslyConsidered } from "@/components/client/previously-considered";
 import { RoleMemoryPanel } from "@/components/role-memory-panel";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 
@@ -593,8 +593,8 @@ function PositionDetailPage() {
    {/* 6. Role blueprint — ATS-grade source of truth */}
   <RoleBlueprint position={position} activity={activity} />
 
- {/* 6b. Silver medalists from talent memory */}
- {orgId && <ResurfacePanel orgId={orgId} positionId={id} />}
+ {/* 6b. Previously considered — earlier candidates matched to this brief */}
+ {orgId && <PreviouslyConsidered orgId={orgId} positionId={id} />}
 
  {/* 7. Hiring process */}
  <section aria-label="Hiring process" className="rounded-xl border bg-card p-4">
