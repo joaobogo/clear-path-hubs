@@ -192,7 +192,12 @@ function ClientDetail() {
         })}
       </nav>
 
-      {tab === "overview" && <OverviewTab org={org} members={members} positions={positions} />}
+      {tab === "overview" && (
+        <>
+          <AccountOperatingSummary organizationId={org.id} onOpenTab={(t) => setTab(t)} />
+          <OverviewTab org={org} members={members} positions={positions} />
+        </>
+      )}
       {tab === "company" && <CompanyTab org={org} />}
       {tab === "contacts" && <ContactsTab org={org} members={members} />}
       {tab === "team" && <TeamTab members={members} org={org} />}
