@@ -730,7 +730,7 @@ function ApplyPage() {
                   <Input
                     id="email"
                     type="email"
-                    autoComplete="email"
+                    autoComplete="email" inputMode="email"
                     data-field="email"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -744,7 +744,7 @@ function ApplyPage() {
                   <Input
                     id="phone"
                     type="tel"
-                    autoComplete="tel"
+                    autoComplete="tel" inputMode="tel"
                     data-field="phone"
                     placeholder="+1 555 123 4567"
                     value={form.phone}
