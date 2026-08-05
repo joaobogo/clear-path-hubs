@@ -3,6 +3,7 @@ import { PaymentExemptionDialog } from "@/components/admin/payment-exemption-dia
 import { InternalNotes } from "@/components/admin/InternalNotes";
 import { StageAgingPanel } from "@/components/admin/stage-aging-panel";
 import { PositionBottleneckCard } from "@/components/admin/position-bottleneck-card";
+import { PositionSourceQualityPanel } from "@/components/admin/source-quality-panels";
 
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -1126,6 +1127,8 @@ function PipelineTab({ matches, positionId }: { matches: Any[]; positionId: stri
       </div>
 
       <StageAgingPanel positionId={positionId} />
+
+      <PositionSourceQualityPanel positionId={positionId} />
     </div>
   );
 }

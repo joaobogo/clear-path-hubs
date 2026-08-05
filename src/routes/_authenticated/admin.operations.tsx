@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { ProcessingExceptionsBoard } from "@/components/admin/processing-exceptions-board";
+import { SourceQualityRollupPanel } from "@/components/admin/source-quality-panels";
 import { AlertTriangle, Wifi, Server, User, MoreHorizontal, FileText, Search } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/operations")({
@@ -253,6 +254,8 @@ function OperationsPage() {
       </div>
 
       <ProcessingExceptionsBoard />
+
+      <SourceQualityRollupPanel />
 
       <Tabs defaultValue="pipeline">
         <TabsList>
