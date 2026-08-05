@@ -6,6 +6,7 @@ import { z } from "zod";
 import { useState } from "react";
 import { listIntakeInbox } from "@/lib/intake-admin.functions";
 import { TestRecordsToggle } from "@/components/admin/TestRecordsToggle";
+import { IntakeAgingTable } from "@/components/admin/intake-aging-table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { AlertTriangle, ArrowRight, Inbox } from "lucide-react";
@@ -92,6 +93,8 @@ function IntakeInbox() {
           </div>
         </div>
       </header>
+
+      <IntakeAgingTable includeTest={show_test} />
 
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex flex-wrap gap-1 rounded-lg border bg-card p-1">
