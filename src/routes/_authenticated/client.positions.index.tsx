@@ -92,7 +92,7 @@ type Row = {
 
 
 function PositionsPage() {
- const { status, q, location, view, sort } = Route.useSearch();
+ const { status, q, location, view, sort, shortlist } = Route.useSearch();
  const navigate = Route.useNavigate();
  const [searchInput, setSearchInput] = useState(q);
  useEffect(() => setSearchInput(q), [q]);
