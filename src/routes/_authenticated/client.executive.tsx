@@ -1,3 +1,4 @@
+import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
