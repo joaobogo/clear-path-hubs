@@ -357,14 +357,16 @@ export const submitApplication = createServerFn({ method: "POST" })
         .single();
 
       if (appErr) {
-        // Unique-index race → fetch existing and dedupe.
-        const { data: race } = await supabaseAdmin
+        // Unique-index race → the concurrent request won; return its reference.
+        const { data: raceRows } = await supabaseAdmin
           .from("applications")
-          .select("id")
+          .select("id,created_at")
           .eq("candidate_profile_id", candidateProfileId)
           .eq("position_id", data.position_id)
-          .not("status", "in", "(withdrawn,rejected,archived)")
-          .maybeSingle();
+          .neq("status", "withdrawn")
+          .order("created_at", { ascending: true })
+          .limit(1);
+        const race = raceRows?.[0];
         if (race) {
           return {
             ok: true,
@@ -377,6 +379,7 @@ export const submitApplication = createServerFn({ method: "POST" })
         }
         throw appErr;
       }
+
 
       // 8. Store screening answers (idempotent by unique (application_id, question_id)).
       if (cleanAnswers.length > 0) {
