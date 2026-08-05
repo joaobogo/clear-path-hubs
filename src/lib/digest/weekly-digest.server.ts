@@ -42,11 +42,11 @@ export async function runWeeklyDigest(options: { dryRun?: boolean } = {}): Promi
     year: "numeric",
   });
 
+  // Recipients are everyone whose weekly-summary preference is still on.
   const { data: prefs, error: prefErr } = await supabaseAdmin
     .from("client_notification_preferences")
-    .select("user_id, organization_id, email_enabled, digest")
-    .eq("digest", "weekly")
-    .eq("email_enabled", true);
+    .select("user_id, organization_id, pref_weekly_summary")
+    .eq("pref_weekly_summary", "immediate");
   if (prefErr) throw new Error(prefErr.message);
 
   const byOrg = new Map<string, string[]>();
