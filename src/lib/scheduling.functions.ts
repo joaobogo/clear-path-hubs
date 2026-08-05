@@ -54,6 +54,17 @@ export const listMyInterviews = createServerFn({ method: "GET" })
         participant_roles: (Array.isArray(r.participants) ? r.participants : [])
           .map((p: AnyRow) => (typeof p?.role === "string" ? p.role : ""))
           .filter((role: string) => role.trim().length > 0),
+        // Names are released only once the interview is actually scheduled —
+        // that is the point at which the candidate needs to know who to meet.
+        participant_people: (Array.isArray(r.participants) ? r.participants : [])
+          .map((p: AnyRow) => ({
+            role: typeof p?.role === "string" && p.role.trim() ? (p.role as string) : null,
+            name:
+              r.status === "scheduled" && typeof p?.name === "string" && p.name.trim()
+                ? (p.name as string)
+                : null,
+          }))
+          .filter((p: { role: string | null; name: string | null }) => p.role || p.name),
         availability_expires_at: (r.availability_expires_at as string | null) ?? null,
         candidate_response:
           (r.candidate_response as string | null) === "pending"
