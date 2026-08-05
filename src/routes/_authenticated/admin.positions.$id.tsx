@@ -195,7 +195,7 @@ function PositionWorkspace() {
                 {p.status.replace(/_/g, " ")}
               </Badge>
               <Badge variant="outline">{p.visibility}</Badge>
-              <InterviewExceptionsBadge positionId={positionId} />
+              <InterviewExceptionsBadge positionId={p.id} />
             </div>
             <div className="mt-1 flex flex-wrap gap-3 text-xs text-muted-foreground">
               {p.location && <span>{p.location}</span>}
