@@ -1695,7 +1695,7 @@ function ExpressIntakePage() {
           {draftPhase === "restoring" ? (
             <>
               <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
-              {INTAKE_DRAFT_RESTORING_LABEL}…
+              {duplicateParam ? "Preparing your draft" : INTAKE_DRAFT_RESTORING_LABEL}…
             </>
           ) : saveError ? (
             <>
