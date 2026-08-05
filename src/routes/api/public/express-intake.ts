@@ -419,8 +419,15 @@ export const Route = createFileRoute("/api/public/express-intake")({
         const trainable = tagged.length > 0 ? pickTagged("trainable") : splitLines(data.trainable);
         const niceToHaves =
           tagged.length > 0 ? pickTagged("nice_to_have") : splitLines(data.niceToHaves);
-        const dealBreakersText = (data.dealBreakers ?? "").trim();
-        const dealbreakerLines = splitLines(dealBreakersText);
+        /**
+         * The structured list is the record of truth; the text version is
+         * derived so surfaces that read prose keep working.
+         */
+        const dealbreakerLines =
+          (data.dealBreakerList ?? []).length > 0
+            ? normalizeDealBreakers(data.dealBreakerList)
+            : splitLines((data.dealBreakers ?? "").trim());
+        const dealBreakersText = dealbreakerLines.join("\n");
         const locationText = (data.location ?? "").trim();
         /**
          * The structured stages are the record of truth; the text version is
@@ -532,6 +539,7 @@ export const Route = createFileRoute("/api/public/express-intake")({
               why_open: data.whyOpen.trim(),
               team: (data.team ?? "").trim() || null,
               deal_breakers: dealBreakersText || null,
+              deal_breaker_list: dealbreakerLines,
               interview_process: interviewProcessText || null,
               interview_stages: interviewStages,
               target_days_to_offer: targetDaysToOffer,
@@ -679,6 +687,7 @@ export const Route = createFileRoute("/api/public/express-intake")({
                 compensation: compensationRecord,
                 workAuthorization: data.workAuthorization || "",
                 workAuthorizationNote: data.workAuthorizationNote ?? "",
+                dealBreakers: dealbreakerLines,
                 interviewProcess: interviewProcessText,
                 interviewStages,
                 targetDaysToOffer,
