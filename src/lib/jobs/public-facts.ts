@@ -93,8 +93,12 @@ export function resolveCompensation(
     const one = `${formatAmount(single, currency)}${suffix}`;
     return { display: one, line: one };
   }
+  // Only when there is no structured range do we fall back to the free text.
+  const summary = str(c.summary);
+  if (summary) return { display: summary, line: summary };
   return { display: null, line: NOT_SPECIFIED };
 }
+
 
 /**
  * Hybrid without a day count is the complaint we hear most, so an unstated
