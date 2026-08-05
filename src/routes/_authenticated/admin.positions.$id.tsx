@@ -4,6 +4,8 @@ import { StructuredNotesPanel } from "@/components/admin/structured-notes-panel"
 import { StageAgingPanel } from "@/components/admin/stage-aging-panel";
 import { PositionBottleneckCard } from "@/components/admin/position-bottleneck-card";
 import { PositionSourceQualityPanel } from "@/components/admin/source-quality-panels";
+import { PositionOfferTrackingPanel } from "@/components/admin/offer-hire-panel";
+
 import {
   InterviewExceptionsBadge,
   InterviewExceptionsPanel,
@@ -1135,6 +1137,9 @@ function PipelineTab({ matches, positionId }: { matches: Any[]; positionId: stri
       <PositionSourceQualityPanel positionId={positionId} />
 
       <InterviewExceptionsPanel positionId={positionId} />
+
+      <PositionOfferTrackingPanel positionId={positionId} />
+
     </div>
   );
 }

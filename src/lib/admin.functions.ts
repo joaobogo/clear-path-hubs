@@ -842,7 +842,18 @@ export const setPositionStatus = createServerFn({ method: "POST" })
       }
     }
 
+    // A role cannot be closed as filled without a confirmed hire record —
+    // otherwise placement data goes missing the moment the role closes.
+    if (data.action === "mark_filled") {
+      const { positionHasConfirmedHire } = await import("./offer-hire.server");
+      const { CLOSE_FILLED_BLOCKED } = await import("./offer-hire");
+      if (!(await positionHasConfirmedHire(s as never, data.id))) {
+        throw new Error(CLOSE_FILLED_BLOCKED);
+      }
+    }
+
     const next = STATUS_MAP[data.action];
+
     const patch: AnyRow = { status: next };
 
     if (data.action === "submit") patch.submitted_at = new Date().toISOString();
