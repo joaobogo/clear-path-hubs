@@ -912,6 +912,7 @@ export const ALWAYS_REQUIRED_INTAKE_FIELDS = [
   "roleTitle",
   "whyOpen",
   "requirements",
+  "sponsorshipAvailable",
   "consent",
   "pilotAcknowledgement",
 ] as const;
