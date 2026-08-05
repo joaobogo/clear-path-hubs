@@ -49,11 +49,7 @@ describe("collaborator roles", () => {
     expect(collaboratorRoleLabel(null)).toBe("Member");
   });
 
-  it("never claims a client role can see internal recruiter data", () => {
-    for (const id of COLLABORATOR_ROLE_IDS) {
-      const all = [...COLLABORATOR_ROLES[id].can, ...COLLABORATOR_ROLES[id].cannot].join(" ");
-      expect(all).not.toMatch(/internal recruiter notes or scoring/i.source ? /^$/ : /^$/);
-    }
+  it("states plainly that no client role sees internal recruiter data", () => {
     expect(COLLABORATOR_ROLES.client_admin.cannot.join(" ")).toMatch(/internal recruiter/i);
   });
 });
