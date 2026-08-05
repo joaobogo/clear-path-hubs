@@ -899,3 +899,169 @@ export const getMyCvDownloadUrl = createServerFn({ method: "POST" })
     if (error || !signed) return { ok: false as const, message: error?.message ?? "Sign failed" };
     return { ok: true as const, url: signed.signedUrl, filename: f.filename };
   });
+
+/* ---------------------------------------------------------------------------
+ * CV scope: which applications use which CV, and swapping a CV on the
+ * applications the candidate chooses (never silently across all of them).
+ * ------------------------------------------------------------------------ */
+
+export const listMyCvApplications = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { cvScopeReason } = await import("./candidate/cv-scope");
+    const supabase = context.supabase as AnyRow;
+    const cpId = await myProfileId(supabase, context.userId);
+    if (!cpId) return { applications: [] as AnyRow[] };
+
+    const { data, error } = await supabase
+      .from("applications")
+      .select(
+        `id, status, applied_at, withdrawn_at, cv_file_id,
+         positions:position_id ( title, status, organizations:organization_id ( name ) ),
+         candidate_matches ( stage ),
+         files:cv_file_id ( id, filename )`,
+      )
+      .eq("candidate_profile_id", cpId)
+      .order("applied_at", { ascending: false });
+    if (error) throw new Error(error.message);
+
+    return {
+      applications: (data ?? []).map((a: AnyRow) => {
+        const pos = a.positions ?? {};
+        const file = a.files ?? null;
+        const reason = cvScopeReason({
+          application_status: a.status,
+          withdrawn_at: a.withdrawn_at,
+          position_status: pos.status,
+          match_stages: asArray(a.candidate_matches).map((m: AnyRow) => m.stage),
+        });
+        return {
+          id: a.id,
+          role_title: pos.title ?? "Role",
+          company: pos.organizations?.name ?? null,
+          applied_at: a.applied_at,
+          cv_file_id: a.cv_file_id ?? null,
+          cv_filename: (file?.filename as string | undefined) ?? null,
+          scope_reason: reason,
+          can_replace: reason === "eligible",
+        };
+      }),
+    };
+  });
+
+export const applyCvToApplications = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { file_id: string; application_ids: string[] }) =>
+    z
+      .object({
+        file_id: z.string().uuid(),
+        application_ids: z.array(z.string().uuid()).min(1).max(50),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const { cvScopeReason } = await import("./candidate/cv-scope");
+    const supabase = context.supabase as AnyRow;
+    const cpId = await myProfileId(supabase, context.userId);
+    if (!cpId) {
+      return {
+        ok: false as const,
+        message: "We couldn't find your profile. Your previous CV is still in use.",
+      };
+    }
+
+    // The file must be one of the candidate's own CV versions.
+    const { data: file } = await supabase
+      .from("files")
+      .select("id,filename")
+      .eq("id", data.file_id)
+      .eq("candidate_profile_id", cpId)
+      .eq("storage_bucket", "cvs")
+      .maybeSingle();
+    if (!file) {
+      return {
+        ok: false as const,
+        message: "We couldn't find that CV. Your previous CV is still in use on your applications.",
+      };
+    }
+
+    const { data: apps, error } = await supabase
+      .from("applications")
+      .select(
+        `id, status, withdrawn_at,
+         positions:position_id ( title, status ),
+         candidate_matches ( stage )`,
+      )
+      .eq("candidate_profile_id", cpId)
+      .in("id", data.application_ids);
+    if (error) {
+      return {
+        ok: false as const,
+        message: "We couldn't update your applications just now. Your previous CV is still in use.",
+      };
+    }
+
+    const eligible: AnyRow[] = [];
+    const skipped: Array<{ id: string; role_title: string; reason: string }> = [];
+    for (const a of apps ?? []) {
+      const pos = (a as AnyRow).positions ?? {};
+      const reason = cvScopeReason({
+        application_status: (a as AnyRow).status,
+        withdrawn_at: (a as AnyRow).withdrawn_at,
+        position_status: pos.status,
+        match_stages: asArray((a as AnyRow).candidate_matches).map((m: AnyRow) => m.stage),
+      });
+      if (reason === "eligible") eligible.push(a);
+      else skipped.push({ id: (a as AnyRow).id, role_title: pos.title ?? "Role", reason });
+    }
+
+    if (eligible.length === 0) {
+      return {
+        ok: false as const,
+        message:
+          "None of those applications can take a new CV — they are closed or at offer stage. Your previous CV is still in use.",
+      };
+    }
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const ids = eligible.map((a) => (a as AnyRow).id as string);
+    const { error: updErr } = await supabaseAdmin
+      .from("applications")
+      .update({ cv_file_id: data.file_id })
+      .in("id", ids);
+    if (updErr) {
+      return {
+        ok: false as const,
+        message: "We couldn't update your applications just now. Your previous CV is still in use.",
+      };
+    }
+
+    // Re-read the new CV for the applications that changed.
+    await supabaseAdmin.from("processing_jobs").insert(
+      ids.map((id) => ({
+        entity_type: "application",
+        entity_id: id,
+        job_type: "parse_and_score",
+        status: "queued",
+        trace_id: crypto.randomUUID(),
+      })),
+    );
+
+    await supabaseAdmin.from("audit_events").insert({
+      actor_user_id: context.userId,
+      event_type: "candidate.cv_scope_updated",
+      entity_type: "candidate_profile",
+      entity_id: cpId,
+      payload: { file_id: data.file_id, updated: ids, skipped: skipped.map((s) => s.id) },
+    });
+
+    return {
+      ok: true as const,
+      filename: file.filename as string,
+      updated: eligible.map((a) => ({
+        id: (a as AnyRow).id as string,
+        role_title: ((a as AnyRow).positions?.title as string | undefined) ?? "Role",
+      })),
+      skipped,
+    };
+  });
