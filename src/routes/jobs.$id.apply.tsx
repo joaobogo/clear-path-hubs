@@ -143,6 +143,10 @@ function ApplyPage() {
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [cvError, setCvError] = useState<string | null>(null);
   const [cvChecking, setCvChecking] = useState(false);
+  const [cvProgress, setCvProgress] = useState(0);
+  const [cvStatus, setCvStatus] = useState("");
+  const cvReaderRef = useRef<FileReader | null>(null);
+  const cvInputRef = useRef<HTMLInputElement | null>(null);
   const [phase, setPhase] = useState<"idle" | "reading" | "sending">("idle");
   const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
   const [consent, setConsent] = useState(false);
