@@ -129,6 +129,71 @@ describe("role brief", () => {
     ).toBe(false);
   });
 
+  describe("compensation trade-off", () => {
+    it("flags ranges wider than the stated threshold and not below it", () => {
+      // 60% of 40000 is 24000: 64000 is exactly at the line, 65000 is over it.
+      expect(isWideCompensationRange(40000, 64000)).toBe(false);
+      expect(isWideCompensationRange(40000, 65000)).toBe(true);
+      expect(isWideCompensationRange(undefined, 90000)).toBe(false);
+    });
+
+    it("requires confirmation for a wide range, and accepts it once confirmed", () => {
+      const wide = { ...valid, salaryMin: 40000, salaryMax: 120000 };
+      const rejected = expressIntakeSchema.safeParse(wide);
+      expect(rejected.success).toBe(false);
+      if (!rejected.success) {
+        expect(rejected.error.issues.some((i) => i.path[0] === "wideRangeConfirmed")).toBe(true);
+      }
+      expect(
+        expressIntakeSchema.safeParse({ ...wide, wideRangeConfirmed: true }).success,
+      ).toBe(true);
+    });
+
+    it("records an undecided range as undecided rather than zero", () => {
+      const res = expressIntakeSchema.safeParse({
+        ...valid,
+        salaryMin: undefined,
+        salaryMax: undefined,
+        compensationUndecided: true,
+      });
+      expect(res.success).toBe(true);
+      if (res.success) {
+        expect(res.data.compensationUndecided).toBe(true);
+        expect(res.data.salaryMin).toBeUndefined();
+        expect(res.data.salaryMax).toBeUndefined();
+      }
+      // An undecided range leaves the brief incomplete for that field.
+      expect(briefCompleteness({ ...valid, salaryMin: undefined }).missing).toContain(
+        "Compensation range",
+      );
+    });
+
+    it("refuses undecided alongside a stated range", () => {
+      expect(
+        expressIntakeSchema.safeParse({ ...valid, compensationUndecided: true }).success,
+      ).toBe(false);
+    });
+
+    it("accepts bonus, equity and the flexibility flag", () => {
+      const res = expressIntakeSchema.safeParse({
+        ...valid,
+        bonusStructure: "10% annual",
+        equity: "negotiable",
+        compensationFlexible: true,
+      });
+      expect(res.success).toBe(true);
+      if (res.success) {
+        expect(res.data.equity).toBe("negotiable");
+        expect(res.data.compensationFlexible).toBe(true);
+      }
+    });
+
+    it("never states a market benchmark as fact", () => {
+      expect(COMPENSATION_HONEST_LINE).not.toMatch(/market (rate|average|benchmark) (is|of)/i);
+      expect(COMPENSATION_HONEST_LINE).toMatch(/shortlist/i);
+    });
+  });
+
   it("requires on-site days unless the role is fully remote", () => {
     expect(
       expressIntakeSchema.safeParse({ ...valid, workModel: "hybrid", onsiteDays: undefined }).success,
