@@ -1,4 +1,9 @@
 import { z } from "zod";
+import {
+  MAX_DEAL_BREAKER_CHARS,
+  normalizeDealBreakers,
+  validateDealBreakers,
+} from "@/lib/client-deal-breakers";
 
 /**
  * Express onboarding contract.
@@ -668,6 +673,12 @@ export const expressIntakeSchema = z
     },
   )
 
+  // Deal-breakers are optional, but a half-typed line is not a rule.
+  .refine((v) => validateDealBreakers(v.dealBreakerList ?? []).ok, {
+    path: ["dealBreakerList"],
+    message: "Check your deal-breakers",
+  })
+
   .refine((v) => (v.password ?? "") === (v.confirmPassword ?? ""), {
     path: ["confirmPassword"],
     message: "Both passwords must match",
@@ -834,6 +845,7 @@ export const STEP_FIELDS: Record<IntakeStepKey, string[]> = {
 
     "decisionMaker",
     "dealBreakers",
+    "dealBreakerList",
     "companyName",
     "companyWebsite",
     "companyLinkedin",
@@ -949,6 +961,7 @@ export function intakeRequiredness(
     decisionMaker: false,
 
     dealBreakers: false,
+    dealBreakerList: false,
     researchConsent: false,
   };
   for (const field of ALWAYS_REQUIRED_INTAKE_FIELDS) map[field] = true;
@@ -998,6 +1011,8 @@ export function briefCompleteness(values: Record<string, unknown>): {
     (Array.isArray(values["remoteTimezones"]) && values["remoteTimezones"].length > 0
       ? true
       : values["remoteAnywhereInCountry"] === true);
+  /** A named list answers "what rules someone out" as well as free text does. */
+  const hasDealBreakers = normalizeDealBreakers(values["dealBreakerList"]).length > 0;
   /** A named stage list answers "how you interview" as well as free text does. */
   const hasStages =
     Array.isArray(values["interviewStages"]) &&
@@ -1010,6 +1025,8 @@ export function briefCompleteness(values: Record<string, unknown>): {
       field === "location" && remoteBounded
         ? true
         : field === "interviewProcess" && hasStages
+          ? true
+        : field === "dealBreakers" && hasDealBreakers
           ? true
           : typeof raw === "number"
             ? Number.isFinite(raw) && raw > 0
