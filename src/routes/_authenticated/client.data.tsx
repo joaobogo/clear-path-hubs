@@ -209,8 +209,8 @@ function DataAdvantagePage() {
             retrying={marketState.retrying}
           />
         ) : market && market.rows.length > 0 ? (
-          <div className="mt-4 overflow-x-auto rounded-lg border border-border">
-            <table className="w-full text-sm">
+          <div className="taas-stack-scroll mt-4 overflow-x-auto rounded-lg border border-border max-sm:border-0">
+            <table className="taas-stack-table w-full text-sm">
               <caption className="sr-only">
                 Market benchmarks by role family and region
               </caption>
@@ -239,19 +239,19 @@ function DataAdvantagePage() {
                     key={`${r.role_family}-${r.region}-${r.signal_key}`}
                     className="hover:bg-muted/30"
                   >
-                    <td className="px-4 py-2 font-medium">{r.role_family}</td>
-                    <td className="px-4 py-2 text-muted-foreground">
+                    <td data-label="Role family" className="px-4 py-2 font-medium">{r.role_family}</td>
+                    <td data-label="Region" className="px-4 py-2 text-muted-foreground">
                       {r.region}
                     </td>
-                    <td className="px-4 py-2 text-muted-foreground">
+                    <td data-label="Measure" className="px-4 py-2 text-muted-foreground">
                       {r.signal_key.replace(/_/g, " ")}
                     </td>
-                    <td className="px-4 py-2 text-right tabular-nums">
+                    <td data-label="Median" className="px-4 py-2 text-right tabular-nums max-sm:text-left">
                       {r.median_value === null
                         ? "—"
                         : `${r.currency ? `${r.currency} ` : ""}${fmt(Math.round(r.median_value))}`}
                     </td>
-                    <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">
+                    <td data-label="Closed searches" className="px-4 py-2 text-right tabular-nums text-muted-foreground max-sm:text-left">
                       {r.closed_searches}
                     </td>
                   </tr>

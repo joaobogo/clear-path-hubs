@@ -348,14 +348,14 @@ function ClientLayout() {
           action={{ label: "Back to overview", to: "/client" }}
         />
       ) : (
-        <>
+        // data-client-workspace scopes the phone ergonomics in
+        // styles/client-mobile.css: 44px targets, 14px floor, no side scroll.
+        <div data-client-workspace className="min-w-0">
           <SectionTabs groups={CLIENT_SECTION_GROUPS} linkSearch={linkSearch} />
           {/* Tells the user whether to wait or to act when something measured is off. */}
           <DegradedModeBanner className="mt-4" />
           <Outlet />
-        </>
-
-
+        </div>
       )}
  {showOnboarding && (
  <ClientOnboardingModal

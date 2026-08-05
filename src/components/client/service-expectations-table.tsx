@@ -81,8 +81,8 @@ export function ServiceExpectationsTable({ orgId }: { orgId: string }) {
         ) : null}
       </div>
 
-      <div className="mt-4 overflow-x-auto">
-        <table className="w-full text-sm">
+      <div className="taas-stack-scroll mt-4 overflow-x-auto">
+        <table className="taas-stack-table w-full text-sm">
           <caption className="sr-only">
             Your stored service commitments and measured performance against them
           </caption>
@@ -102,11 +102,11 @@ export function ServiceExpectationsTable({ orgId }: { orgId: string }) {
           <tbody>
             {expectations.rows.map((row) => (
               <tr key={row.key} className="border-b last:border-0 align-top">
-                <th scope="row" className="py-3 pr-4 text-left font-medium">
+                <th scope="row" data-label="Commitment" className="py-3 pr-4 text-left font-medium">
                   {row.commitment}
                 </th>
-                <td className="py-3 pr-4 text-muted-foreground">{row.promised}</td>
-                <td className="py-3">
+                <td data-label="Your plan" className="py-3 pr-4 text-muted-foreground">{row.promised}</td>
+                <td data-label="Performance" className="py-3">
                   {row.performance ? (
                     <>
                       <span>{row.performance}</span>

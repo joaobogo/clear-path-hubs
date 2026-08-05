@@ -218,8 +218,8 @@ function PortfolioPage() {
                   </div>
 
                   {unit.rows.length > 0 && (
-                    <div className="mt-4 overflow-x-auto rounded-lg border">
-                      <table className="w-full min-w-[520px] text-sm">
+                    <div className="taas-stack-scroll mt-4 overflow-x-auto rounded-lg border max-sm:border-0">
+                      <table className="taas-stack-table w-full text-sm sm:min-w-[520px]">
 
                         <thead className="bg-muted/40 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                           <tr>
@@ -236,11 +236,11 @@ function PortfolioPage() {
                               key={`${r.business_unit}-${r.region}-${i}`}
                               className="border-t"
                             >
-                              <td className="px-3 py-2">{r.business_unit}</td>
-                              <td className="px-3 py-2 text-muted-foreground">{r.region}</td>
-                              <td className="px-3 py-2 text-right font-medium">{r.open_positions}</td>
-                              <td className="px-3 py-2 text-right">{r.candidates_in_flight}</td>
-                              <td className="px-3 py-2 text-right">{r.hires}</td>
+                              <td data-label="Business unit" className="px-3 py-2">{r.business_unit}</td>
+                              <td data-label="Region" className="px-3 py-2 text-muted-foreground">{r.region}</td>
+                              <td data-label="Open" className="px-3 py-2 text-right font-medium sm:text-right max-sm:text-left">{r.open_positions}</td>
+                              <td data-label="In flight" className="px-3 py-2 text-right max-sm:text-left">{r.candidates_in_flight}</td>
+                              <td data-label="Hires" className="px-3 py-2 text-right max-sm:text-left">{r.hires}</td>
                             </tr>
                           ))}
                         </tbody>

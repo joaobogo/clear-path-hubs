@@ -208,7 +208,9 @@ export function DecisionBar({
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-2">
+      {/* On a phone the three decisions stack to full-width, 44px tall rows. */}
+      <div className="flex w-full flex-wrap items-center gap-2 [&>button]:min-h-11 [&>button]:flex-1 sm:[&>button]:min-h-0 sm:[&>button]:flex-none">
+
         {settled && (
           <span
             role="status"
