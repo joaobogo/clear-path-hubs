@@ -33,6 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AlertTriangle, ArrowRight, Loader2, RefreshCw, Undo2 } from "lucide-react";
+import { TestScopeEmptyNote } from "@/components/admin/test-records-toggle";
 
 type AgingTable = Awaited<ReturnType<typeof getIntakeAging>>;
 type Row = AgingTable["rows"][number];
@@ -228,6 +229,7 @@ export function IntakeAgingTable({ includeTest = false }: { includeTest?: boolea
       ) : rows.length === 0 ? (
         <p className="px-4 py-10 text-center text-sm text-muted-foreground">
           {showClosed ? "Nothing marked as not proceeding" : "No open intakes"}
+          <TestScopeEmptyNote />
         </p>
       ) : (
         <div className="overflow-x-auto">

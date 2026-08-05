@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/select";
 import { ErrorState } from "@/components/ds";
 import { ArrowUpRight, ChevronDown, ChevronRight } from "lucide-react";
+import { TestScopeEmptyNote } from "@/components/admin/test-records-toggle";
 
 const UNASSIGNED = "__unassigned__";
 
@@ -257,7 +258,12 @@ function OwnedPositions({ owner, includeTest }: { owner: string; includeTest: bo
   }
   const rows = list.data ?? [];
   if (rows.length === 0) {
-    return <p className="text-sm text-muted-foreground">No open positions.</p>;
+    return (
+      <div>
+        <p className="text-sm text-muted-foreground">No open positions.</p>
+        <TestScopeEmptyNote />
+      </div>
+    );
   }
 
   return (

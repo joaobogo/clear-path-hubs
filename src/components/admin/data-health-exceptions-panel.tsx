@@ -30,6 +30,7 @@ import {
   type DataHealthException,
 } from "@/lib/data-health-exceptions";
 import { setMatchClientVisibility } from "@/lib/admin.functions";
+import { TestScopeEmptyNote } from "@/components/admin/test-records-toggle";
 
 type PreviewState = {
   exception: DataHealthException;
@@ -152,6 +153,7 @@ export function DataHealthExceptionsPanel() {
       ) : rows.length === 0 ? (
         <p className="p-10 text-center text-sm text-muted-foreground">
           No data health exceptions.
+          <TestScopeEmptyNote />
         </p>
       ) : (
         <div className="overflow-x-auto">
