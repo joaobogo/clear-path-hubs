@@ -37,6 +37,7 @@ import { PositionLifecycleMenu } from "@/components/positions/position-lifecycle
 import { normalizeDealBreakers } from "@/lib/client-deal-breakers";
 import type { RoleLaunchState } from "@/lib/role-launch";
 import { PreviouslyConsidered } from "@/components/client/previously-considered";
+import { RoleMessagesPanel } from "@/components/client/role-messages-panel";
 import { RoleMemoryPanel } from "@/components/role-memory-panel";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 
@@ -774,41 +775,15 @@ function PositionDetailPage() {
  )}
  </section>
 
- {/* 9. Collaboration */}
- <section aria-label="Collaboration" className="rounded-xl border bg-card p-4">
- <div className="flex items-start justify-between gap-3">
- <div>
- <h2 className="text-lg font-semibold">Collaboration</h2>
- <p className="text-sm text-muted-foreground mt-1">
- Talk to your TaaSFlow team about this role. Request changes to the
- brief, ask for more candidates, or flag urgency — all in one
- thread scoped to this position.
- </p>
- </div>
- </div>
- <div className="mt-3 flex flex-wrap gap-2">
- <Button asChild variant="outline" size="sm">
- <Link to="/client/conversations" search={{ position: position.id } as never}>
- Open thread
- </Link>
- </Button>
- {canEdit && (
- <Button asChild size="sm">
- <Link
- to="/client/conversations"
- search={
- {
- position: position.id,
- intent: "change_request",
- } as never
- }
- >
- Request a change
- </Link>
- </Button>
- )}
- </div>
- </section>
+        {/* 9. Messages — one thread per role */}
+        {orgId && (
+          <RoleMessagesPanel
+            orgId={orgId}
+            positionId={position.id}
+            positionTitle={position.title as string | undefined}
+            canPost={canEdit}
+          />
+        )}
 
  <section className="mt-8">
   <RoleMemoryPanel positionId={position.id} canEdit={true} />

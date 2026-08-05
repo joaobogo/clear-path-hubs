@@ -1,6 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import {
+  MAX_ATTACHMENTS_PER_MESSAGE,
+  MAX_ATTACHMENT_BYTES,
+  checkAttachment,
+  type MessageAttachment,
+} from "@/lib/message-attachments";
 
 /**
  * Unified conversations.
@@ -39,9 +45,30 @@ export type ConversationMessage = {
   created_at: string;
   sender_user_id: string | null;
   sender_name: string;
+  /** Plain-English role of the sender, e.g. "TaaSFlow recruiter". */
+  sender_role: string;
   sender_side: "client" | "taasflow" | "system";
   mine: boolean;
+  attachments: MessageAttachment[];
 };
+
+/** Attachment rows are jsonb; only well-formed entries reach the client. */
+function readAttachments(raw: unknown): MessageAttachment[] {
+  if (!Array.isArray(raw)) return [];
+  const out: MessageAttachment[] = [];
+  for (const item of raw.slice(0, MAX_ATTACHMENTS_PER_MESSAGE)) {
+    if (!item || typeof item !== "object") continue;
+    const a = item as Record<string, unknown>;
+    if (typeof a.path !== "string" || typeof a.name !== "string") continue;
+    out.push({
+      path: a.path,
+      name: a.name,
+      mime: typeof a.mime === "string" ? a.mime : "application/octet-stream",
+      size: typeof a.size === "number" ? a.size : 0,
+    });
+  }
+  return out;
+}
 
 async function assertOrgAccess(
   supabase: Row,
@@ -80,7 +107,24 @@ async function assertCanPost(supabase: Row, userId: string, orgId: string): Prom
   if (!interactive) throw new Error("SUPPORT_VIEW_READ_ONLY");
 }
 
-async function nameMap(userIds: string[]): Promise<Record<string, { name: string; staff: boolean }>> {
+/** Membership role -> the words a client should read next to a name. */
+function roleLabel(role: string | null, staff: boolean): string {
+  if (staff) return role === "operations" ? "TaaSFlow recruiter" : "TaaSFlow team";
+  switch (role) {
+    case "client_admin":
+      return "Hiring lead";
+    case "client_editor":
+      return "Hiring team";
+    case "client_viewer":
+      return "Observer";
+    default:
+      return "Your team";
+  }
+}
+
+async function nameMap(
+  userIds: string[],
+): Promise<Record<string, { name: string; staff: boolean; role: string }>> {
   const ids = Array.from(new Set(userIds.filter(Boolean)));
   if (ids.length === 0) return {};
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -93,15 +137,26 @@ async function nameMap(userIds: string[]): Promise<Record<string, { name: string
       .filter((m) => m.role === "platform_admin" || m.role === "operations")
       .map((m) => m.user_id as string),
   );
-  const out: Record<string, { name: string; staff: boolean }> = {};
+  const rawRole: Record<string, string | null> = {};
+  for (const m of ((mems as Row[]) ?? [])) rawRole[m.user_id as string] = (m.role as string | null) ?? null;
+
+  const out: Record<string, { name: string; staff: boolean; role: string }> = {};
   for (const p of (profiles as Row[]) ?? []) {
     const id = p.auth_user_id as string;
+    const staff = staffIds.has(id);
     out[id] = {
       name: (p.full_name as string | null) ?? (p.email as string | null) ?? "Teammate",
-      staff: staffIds.has(id),
+      staff,
+      role: roleLabel(rawRole[id] ?? null, staff),
     };
   }
-  for (const id of ids) if (!out[id]) out[id] = { name: "Teammate", staff: staffIds.has(id) };
+  for (const id of ids)
+    if (!out[id])
+      out[id] = {
+        name: "Teammate",
+        staff: staffIds.has(id),
+        role: roleLabel(rawRole[id] ?? null, staffIds.has(id)),
+      };
   return out;
 }
 
@@ -282,7 +337,7 @@ export const getConversation = createServerFn({ method: "GET" })
 
     const { data: msgs, error: mErr } = await supabase
       .from("messages")
-      .select("id, body, created_at, sender_user_id")
+      .select("id, body, created_at, sender_user_id, attachments")
       .eq("conversation_id", data.conversationId)
       .order("created_at", { ascending: true })
       .limit(500);
@@ -299,8 +354,10 @@ export const getConversation = createServerFn({ method: "GET" })
         created_at: m.created_at as string,
         sender_user_id: sid,
         sender_name: sid ? (meta?.name ?? "Teammate") : "TaaSFlow",
+        sender_role: sid ? (meta?.role ?? "Your team") : "TaaSFlow system",
         sender_side: !sid ? "system" : meta?.staff ? "taasflow" : "client",
         mine: sid === userId,
+        attachments: readAttachments(m.attachments),
       };
     });
 
@@ -348,6 +405,17 @@ export const postConversationMessage = createServerFn({ method: "POST" })
       .object({
         conversationId: z.string().uuid(),
         body: z.string().trim().min(1).max(4000),
+        attachments: z
+          .array(
+            z.object({
+              path: z.string().trim().min(1).max(400),
+              name: z.string().trim().min(1).max(200),
+              mime: z.string().trim().max(200).default("application/octet-stream"),
+              size: z.number().int().positive().max(MAX_ATTACHMENT_BYTES),
+            }),
+          )
+          .max(MAX_ATTACHMENTS_PER_MESSAGE)
+          .optional(),
       })
       .parse(raw),
   )
@@ -364,6 +432,18 @@ export const postConversationMessage = createServerFn({ method: "POST" })
 
     await assertCanPost(supabase, userId, orgId);
 
+    // Same rules as the composer, enforced again here: the browser check is a
+    // courtesy, this one is the guarantee.
+    const attachments: MessageAttachment[] = [];
+    for (const a of data.attachments ?? []) {
+      const check = checkAttachment({ name: a.name, size: a.size, type: a.mime });
+      if (!check.ok) throw new Error(check.error);
+      if (!a.path.startsWith(`${orgId}/${data.conversationId}/`)) {
+        throw new Error("That attachment does not belong to this conversation.");
+      }
+      attachments.push({ path: a.path, name: a.name, mime: a.mime, size: a.size });
+    }
+
     const { data: row, error } = await supabase
       .from("messages")
       .insert({
@@ -371,13 +451,14 @@ export const postConversationMessage = createServerFn({ method: "POST" })
         thread_id: orgId,
         sender_user_id: userId,
         body: data.body,
+        attachments,
         recipient_context: {
           org_id: orgId,
           conversation_id: data.conversationId,
           scope: (convo as Row).scope,
         },
       })
-      .select("id, body, created_at, sender_user_id")
+      .select("id, body, created_at, sender_user_id, attachments")
       .single();
     if (error) throw new Error(error.message);
 

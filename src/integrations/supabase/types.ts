@@ -6460,6 +6460,7 @@ export type Database = {
       }
       messages: {
         Row: {
+          attachments: Json
           body: string
           conversation_id: string | null
           created_at: string
@@ -6479,6 +6480,7 @@ export type Database = {
           thread_id: string
         }
         Insert: {
+          attachments?: Json
           body: string
           conversation_id?: string | null
           created_at?: string
@@ -6498,6 +6500,7 @@ export type Database = {
           thread_id: string
         }
         Update: {
+          attachments?: Json
           body?: string
           conversation_id?: string | null
           created_at?: string
