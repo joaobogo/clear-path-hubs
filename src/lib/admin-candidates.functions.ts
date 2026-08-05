@@ -69,6 +69,7 @@ const listInput = z.object({
   critical: z.string().optional(), // flagged | clear
   country: z.string().optional(),
   source: z.string().optional(),
+  rejection_reason: z.string().max(64).optional(),
   date_from: z.string().optional(),
   date_to: z.string().optional(),
   sort: z.enum(CANDIDATE_SORTS).optional(),
