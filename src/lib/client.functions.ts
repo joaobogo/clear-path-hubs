@@ -1108,9 +1108,24 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     // Expected first shortlist — only when a commitment baseline exists.
     const { data: commitment } = await context.supabase
       .from("position_commitments")
-      .select("baseline_at, first_shortlist_days")
+      .select(
+        "position_id, baseline_at, first_shortlist_days, shortlist_size, interview_slots_hours",
+      )
       .eq("position_id", data.positionId)
       .maybeSingle();
+
+    // Named recruiter for the delivery commitment block. Staff profiles are not
+    // client-readable under RLS, so read just the name with elevated access.
+    let commitmentContactName: string | null = null;
+    if (position.owner_user_id) {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: owner } = await (supabaseAdmin as AnyClient)
+        .from("profiles")
+        .select("full_name")
+        .eq("auth_user_id", position.owner_user_id)
+        .maybeSingle();
+      commitmentContactName = (owner?.full_name as string | null) ?? null;
+    }
     const firstShortlistExpectedAt = (() => {
       const c = commitment as AnyRow | null;
       if (!c?.baseline_at || c.first_shortlist_days == null) return null;
@@ -1126,6 +1141,16 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       launch,
       timeline,
       first_shortlist_expected_at: firstShortlistExpectedAt,
+      commitment: (commitment as AnyRow | null)
+        ? {
+            position_id: String((commitment as AnyRow)['position_id']),
+            first_shortlist_days: Number((commitment as AnyRow)['first_shortlist_days']),
+            shortlist_size: Number((commitment as AnyRow)['shortlist_size']),
+            interview_slots_hours: Number((commitment as AnyRow)['interview_slots_hours']),
+            baseline_at: String((commitment as AnyRow)['baseline_at']),
+          }
+        : null,
+      commitment_contact_name: commitmentContactName,
       summary: {
         openings,
         hires,
