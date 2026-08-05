@@ -2,6 +2,11 @@ import * as React from 'react'
 import { Button, Text } from '@react-email/components'
 import { Shell, button, footer, text } from './brand'
 import type { TemplateEntry } from './registry'
+import {
+  APPLICATION_NEXT_STEPS,
+  CONTACT_METHOD_SENTENCE,
+  REVIEW_WINDOW_EMAIL_LINE,
+} from '@/lib/candidate/response-commitment'
 
 interface ApplicationReceivedProps {
   candidateFirstName?: string
@@ -37,16 +42,24 @@ const ApplicationReceived = ({
       Your reference is <strong>{reference ?? '—'}</strong>. Keep it — you can check where your
       application stands at any time with that reference and this email address. No account needed.
     </Text>
+    <Text style={{ ...text, fontWeight: 600 }}>What happens next</Text>
+    {APPLICATION_NEXT_STEPS.map((step, i) => (
+      <Text key={step.title} style={text}>
+        <strong>
+          {i + 1}. {step.title}.
+        </strong>{' '}
+        {step.detail}
+      </Text>
+    ))}
+    <Text style={text}>
+      <strong>When you&apos;ll hear back:</strong> {responseWindow ?? REVIEW_WINDOW_EMAIL_LINE}
+    </Text>
+    <Text style={text}>{CONTACT_METHOD_SENTENCE}</Text>
     {statusUrl && (
       <Button style={button} href={statusUrl}>
-        Check your status
+        Track your application
       </Button>
     )}
-    <Text style={text}>
-      <strong>When you'll hear back:</strong>{' '}
-      {responseWindow ??
-        'a person reads every application, and we aim to come back to you within 10 working days. If the employer is slower than that, we will still write to tell you where things stand — you will not be left in silence.'}
-    </Text>
     <Text style={footer}>
       We store your CV, answers and contact details to review this application. Only the TaaSFlow
       review team and the employer for this role can see them. You can ask us to correct or delete

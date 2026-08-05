@@ -730,7 +730,7 @@ function ApplyPage() {
         params: { applicationId: result.application_id },
         // A withdrawn or rejected earlier application permits this fresh
         // submission — the confirmation says so plainly.
-        search: result.prior_closed ? { again: true } : {},
+        search: { again: Boolean(result.prior_closed) },
         replace: true,
       });
     } catch (err) {
