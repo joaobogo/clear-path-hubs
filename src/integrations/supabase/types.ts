@@ -968,6 +968,42 @@ export type Database = {
         }
         Relationships: []
       }
+      bulk_action_plans: {
+        Row: {
+          actor_user_id: string
+          created_at: string
+          executed_at: string | null
+          expires_at: string
+          id: string
+          kind: string
+          params: Json
+          result: Json | null
+          rows: Json
+        }
+        Insert: {
+          actor_user_id: string
+          created_at?: string
+          executed_at?: string | null
+          expires_at?: string
+          id?: string
+          kind: string
+          params?: Json
+          result?: Json | null
+          rows?: Json
+        }
+        Update: {
+          actor_user_id?: string
+          created_at?: string
+          executed_at?: string | null
+          expires_at?: string
+          id?: string
+          kind?: string
+          params?: Json
+          result?: Json | null
+          rows?: Json
+        }
+        Relationships: []
+      }
       business_rules_audit: {
         Row: {
           action: string
