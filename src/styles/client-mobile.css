@@ -142,3 +142,17 @@
     word-break: break-word;
   }
 }
+
+/* Apply flow on a phone: one column, and every control big enough to hit
+   reliably with a thumb (44px minimum per WCAG target size). */
+@media (max-width: 640px) {
+  [data-apply-form] input,
+  [data-apply-form] select,
+  [data-apply-form] button,
+  [data-apply-form] [role="combobox"] {
+    min-height: 44px;
+  }
+  [data-apply-form] textarea {
+    min-height: 88px;
+  }
+}
