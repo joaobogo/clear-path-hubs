@@ -101,7 +101,9 @@ import { submitToCrm } from "@/lib/crm/submit-form";
 import { trackEvent } from "@/lib/tracking/pixels";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
-import { Check, CheckCircle2, Eye, EyeOff, FileText, Loader2, Pencil, Upload, X } from "lucide-react";
+import { Check, CheckCircle2, Eye, EyeOff, FileText, Loader2, Upload, X } from "lucide-react";
+import { IntakeReviewPanel } from "@/components/intake/review-panel";
+import { buildIntakeReview } from "@/lib/intake-review";
 
 export const Route = createFileRoute("/intake")({
   head: () => ({
@@ -301,6 +303,10 @@ function ExpressIntakePage() {
   const [signInMode, setSignInMode] = useState(false);
   const [reviewing, setReviewing] = useState(true);
   const [stepIndex, setStepIndex] = useState(0);
+  // Set while the client is away editing one answer from the review panel, so
+  // Continue takes them straight back to review instead of walking the steps.
+  const [returnToReview, setReturnToReview] = useState(false);
+  const pendingFocus = useRef<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [rowErrors, setRowErrors] = useState<Record<number, string>>({});
   const [stageErrors, setStageErrors] = useState<
@@ -348,6 +354,83 @@ function ExpressIntakePage() {
     dealBreakers: state.dealBreakers,
     dealBreakerList: state.dealBreakerList,
   });
+
+  /**
+   * The whole brief on one screen before submit. Built from the same state the
+   * form writes and the same requiredness map the server validates against, so
+   * review can never show something different from what gets submitted.
+   */
+  const review = React.useMemo(() => {
+    const compensation = state.compensationUndecided
+      ? "Not decided yet"
+      : [
+          state.salaryMin && state.salaryMax
+            ? `${state.currency} ${Number(state.salaryMin).toLocaleString()}–${Number(
+                state.salaryMax,
+              ).toLocaleString()} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
+            : "",
+          state.bonusStructure.trim() ? `Bonus: ${state.bonusStructure.trim()}` : "",
+          state.equity ? COMP_EQUITY_LABELS[state.equity as "none"] : "",
+          state.compensationFlexible ? "Flexible for the right person" : "",
+          state.compensationNote.trim(),
+        ]
+          .filter(Boolean)
+          .join(" · ");
+
+    return buildIntakeReview({
+      snapshot: {
+        roleTitle: state.roleTitle,
+        team: state.team,
+        whyOpen: state.whyOpen,
+        jobDescriptionText: state.jobDescriptionText,
+        jdFilename: jdFile ? jdFile.filename : null,
+        requirements: state.requirements.map((r) => ({ text: r.text, tag: String(r.tag) })),
+        location: state.location,
+        workModelLabel: state.workModel ? WORK_MODEL_LABELS[state.workModel] : "",
+        onsiteDays: state.workModel === "hybrid" ? state.onsiteDays : "",
+        remoteAnywhereInCountry:
+          state.workModel === "remote" && state.remoteAnywhereInCountry,
+        remoteTimezoneLabels:
+          state.workModel === "remote"
+            ? state.remoteTimezones.map((t) => TIMEZONE_BAND_LABELS[t] ?? t)
+            : [],
+        sponsorshipLabel: state.sponsorshipAvailable
+          ? SPONSORSHIP_LABELS[state.sponsorshipAvailable]
+          : "",
+        compensationLine: compensation,
+        workAuthorizationLabel:
+          WORK_AUTHORIZATION_OPTIONS.find((o) => o.value === state.workAuthorization)?.label ?? "",
+        workAuthorizationNote: state.workAuthorizationNote,
+        targetStartDate: state.targetStartDate,
+        interviewStageLines: state.interviewStages
+          .filter((st) => st.name.trim())
+          .map((st) => st.name.trim()),
+        interviewProcess: state.interviewProcess,
+        targetDaysToOffer: state.targetDaysToOffer,
+        decisionMaker: state.decisionMaker,
+        decisionMakerEmail: state.decisionMakerEmail,
+        dealBreakers: normalizeDealBreakers(state.dealBreakerList),
+        companyName: state.companyName,
+        companyWebsite: state.companyWebsite,
+        companyLinkedin: state.companyLinkedin,
+        firstName: state.firstName,
+        lastName: state.lastName,
+        contactTitle: state.contactTitle,
+        workEmail: state.workEmail,
+        phone: state.phone,
+        contactLinkedin: state.contactLinkedin,
+      },
+      required: req,
+      // Answers that live outside the text state: ticks, files, typed secrets.
+      satisfied: {
+        jobDescriptionText: Boolean(jdFile) || state.jobDescriptionText.trim().length > 0,
+        consent: state.consent,
+        pilotAcknowledgement: state.pilotAcknowledgement,
+        password: state.password.length > 0,
+        confirmPassword: state.confirmPassword.length > 0,
+      },
+    });
+  }, [state, jdFile, req]);
 
   /**
    * Location, on-site expectation and authorisation rules, in one place so the
@@ -554,14 +637,65 @@ function ExpressIntakePage() {
     // "Finish this later" skips the checks on an optional step; Continue never does.
     if (!skipValidation && !validateStep(stepIndex)) return;
 
+    if (returnToReview) {
+      // Came here from the review panel: go back to it, not to the next step.
+      setReturnToReview(false);
+      setStepIndex(INTAKE_STEPS.length - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     setStepIndex((i) => Math.min(i + 1, INTAKE_STEPS.length - 1));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const goBack = () => {
+    if (returnToReview) {
+      setReturnToReview(false);
+      setStepIndex(INTAKE_STEPS.length - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     setStepIndex((i) => Math.max(i - 1, 0));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  /**
+   * Send the client from a review row to the answer behind it. State is never
+   * touched, so every other answer survives the round trip.
+   */
+  const editFromReview = (target: { step: number; focusLabel: string | null }) => {
+    pendingFocus.current = target.focusLabel;
+    const last = INTAKE_STEPS.length - 1;
+    if (target.step !== stepIndex) {
+      setReturnToReview(target.step !== last);
+      setStepIndex(target.step);
+    }
+    focusReviewTarget(target.focusLabel);
+  };
+
+  /** Scroll to and focus the control a review row points at. */
+  const focusReviewTarget = (focusLabel: string | null) => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const container = focusLabel
+          ? document.querySelector<HTMLElement>(`[data-field="${focusLabel}"]`)
+          : null;
+        const el = container ?? document.querySelector<HTMLElement>("form, main");
+        if (!el) return;
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        const control = container?.querySelector<HTMLElement>("input, textarea, select, button");
+        control?.focus?.();
+        pendingFocus.current = null;
+      });
+    });
+  };
+
+  // A step change caused by an Edit link still has to land on the field.
+  useEffect(() => {
+    if (pendingFocus.current === null) return;
+    focusReviewTarget(pendingFocus.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stepIndex]);
 
 
 
@@ -2618,138 +2752,11 @@ function ExpressIntakePage() {
               This is the last chance to correct anything before you submit.
             </p>
             {reviewing && (
-              <div className="space-y-4">
-                <ReviewBlock
-                  title="Your company"
-                  target="section-company"
-                  rows={[
-                    ["Company", state.companyName],
-                    ["Website", state.companyWebsite],
-                    ["LinkedIn", state.companyLinkedin],
-                  ]}
-                />
-                <ReviewBlock
-                  title="You"
-                  target="section-you"
-                  rows={[
-                    ["Name", `${state.firstName} ${state.lastName}`.trim()],
-                    ["Job title", state.contactTitle],
-                    ["Work email", state.workEmail],
-                    ["Phone", state.phone],
-                    ["LinkedIn", state.contactLinkedin],
-                  ]}
-                />
-                <ReviewBlock
-                  title="The role"
-                  target="section-role"
-                  rows={[
-                    ["Job title", state.roleTitle],
-                    ["Team", state.team],
-                    ["Why it is open", state.whyOpen],
-                    [
-                      "Job description",
-                      jdFile ? jdFile.filename : state.jobDescriptionText.trim().slice(0, 400),
-                    ],
-                  ]}
-                />
-                <ReviewBlock
-                  title="Who you need"
-                  target="section-people"
-                  rows={[
-                    [
-                      "Must have",
-                      state.requirements
-                        .filter((r) => r.tag === "must_have")
-                        .map((r) => r.text)
-                        .join(" · "),
-                    ],
-                    [
-                      "Nice to have",
-                      state.requirements
-                        .filter((r) => r.tag === "nice_to_have")
-                        .map((r) => r.text)
-                        .join(" · "),
-                    ],
-                    [
-                      "Can be trained (never filtered)",
-                      state.requirements
-                        .filter((r) => r.tag === "trainable")
-                        .map((r) => r.text)
-                        .join(" · "),
-                    ],
-                  ]}
-                />
-                <ReviewBlock
-                  title="Practicalities"
-                  target="section-practicalities"
-                  rows={[
-                    [
-                      "Location",
-                      [
-                        state.location,
-                        state.workModel ? WORK_MODEL_LABELS[state.workModel] : "",
-                        state.workModel === "hybrid" && state.onsiteDays
-                          ? `${state.onsiteDays} days on site`
-                          : "",
-                        state.workModel === "remote" && state.remoteAnywhereInCountry
-                          ? "Anywhere in the country"
-                          : "",
-                        state.workModel === "remote" && state.remoteTimezones.length > 0
-                          ? state.remoteTimezones
-                              .map((t) => TIMEZONE_BAND_LABELS[t] ?? t)
-                              .join(", ")
-                          : "",
-                      ]
-                        .filter(Boolean)
-                        .join(" · "),
-                    ],
-                    [
-                      "Work authorisation",
-                      state.sponsorshipAvailable
-                        ? SPONSORSHIP_LABELS[state.sponsorshipAvailable]
-                        : "",
-                    ],
-                    [
-                      "Compensation",
-                      state.compensationUndecided
-                        ? "Not decided yet"
-                        : [
-                            state.salaryMin && state.salaryMax
-                              ? `${state.currency} ${Number(state.salaryMin).toLocaleString()}–${Number(
-                                  state.salaryMax,
-                                ).toLocaleString()} ${COMP_PERIOD_LABELS[state.compensationPeriod as "year"]}`
-                              : "",
-                            state.bonusStructure.trim() ? `Bonus: ${state.bonusStructure.trim()}` : "",
-                            state.equity
-                              ? COMP_EQUITY_LABELS[state.equity as "none"]
-                              : "",
-                            state.compensationFlexible ? "Flexible for the right person" : "",
-                          ]
-                            .filter(Boolean)
-                            .join(" · "),
-                    ],
-                    [
-                      "Work authorisation",
-                      WORK_AUTHORIZATION_OPTIONS.find((o) => o.value === state.workAuthorization)
-                        ?.label ?? "",
-                    ],
-                    ["Ideal start", state.targetStartDate],
-                  ]}
-                />
-                <ReviewBlock
-                  title="Process"
-                  target="section-process"
-                  rows={[
-                    [
-                      "Rules someone out",
-                      normalizeDealBreakers(state.dealBreakerList).join(" · "),
-                    ],
-                    ["Interview process", state.interviewProcess],
-                    ["Final decision", state.decisionMaker],
-                  ]}
-                />
-
-              </div>
+              <IntakeReviewPanel
+                review={review}
+                loading={draftPhase === "restoring"}
+                onEdit={editFromReview}
+              />
             )}
             {!brief.complete && (
               <div className="rounded-lg border border-[color:var(--brand-amber,#b45309)]/30 bg-[color:var(--brand-navy)]/4 p-4">
@@ -2893,7 +2900,7 @@ function ExpressIntakePage() {
                 <Button
                   type="button"
                   onClick={() => void submit("pay")}
-                  disabled={submitting}
+                  disabled={submitting || review.missing.length > 0}
                   className="min-h-12 w-full"
                 >
                   {submitting ? (
@@ -2909,12 +2916,17 @@ function ExpressIntakePage() {
                   type="button"
                   variant="outline"
                   onClick={() => void submit("call")}
-                  disabled={submitting}
+                  disabled={submitting || review.missing.length > 0}
                   className="min-h-12 w-full"
                 >
                   Book a call first
                 </Button>
               </div>
+              {review.missing.length > 0 && (
+                <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75" role="status">
+                  Submit unlocks once the required answers named in the review above are filled in.
+                </p>
+              )}
               <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
                 Booking a call still opens your workspace straight away. The role stays saved with
                 payment pending until we agree the plan.
@@ -2956,7 +2968,7 @@ function ExpressIntakePage() {
             )}
             {stepIndex < INTAKE_STEPS.length - 1 && (
               <Button type="button" onClick={() => goNext()} className="min-h-11">
-                Continue
+                {returnToReview ? "Back to review" : "Continue"}
               </Button>
             )}
           </div>
@@ -3069,50 +3081,4 @@ function Field({
 
 }
 
-function ReviewBlock({
-  title,
-  target,
-  rows,
-}: {
-  title: string;
-  target: string;
-  rows: Array<[string, string]>;
-}) {
-  // Anything the client chose to skip is simply left out of the summary —
-  // a list of "Not provided" rows reads like a list of mistakes.
-  const filled = rows.filter(([, value]) => Boolean(value?.trim()));
-  return (
-    <div className="rounded-lg border border-[color:var(--brand-navy)]/12 p-4">
-      <div className="flex items-center justify-between gap-3">
-        <h3 className="text-sm font-semibold">{title}</h3>
-        <button
-          type="button"
-          onClick={() =>
-            document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "start" })
-          }
-          className="flex items-center gap-1 text-sm underline text-[color:var(--brand-navy)]/70"
-        >
-          <Pencil className="h-3.5 w-3.5" aria-hidden />
-          Edit
-        </button>
-      </div>
-      {filled.length === 0 ? (
-        <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75">
-          Nothing filled in yet.
-        </p>
-      ) : (
-        <dl className="mt-3 space-y-2">
-          {filled.map(([label, value]) => (
-            <div key={label} className="grid gap-1 sm:grid-cols-[160px_1fr]">
-              <dt className="text-xs uppercase tracking-wide text-[color:var(--brand-navy)]/75">
-                {label}
-              </dt>
-              <dd className="text-sm whitespace-pre-wrap break-words">{value}</dd>
-            </div>
-          ))}
-        </dl>
-      )}
-    </div>
-  );
-}
 
