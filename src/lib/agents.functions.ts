@@ -7,6 +7,7 @@ import {
   agentName,
   type AgentKey,
 } from "@/lib/agents/registry";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Db = any;
@@ -14,11 +15,7 @@ type Db = any;
 const agentKey = z.enum(AGENT_KEYS as [string, ...string[]]);
 
 async function assertMember(supabase: Db, userId: string, org: string) {
-  const { data } = await supabase.rpc("is_org_member", {
-    _user: userId,
-    _org: org,
-  });
-  if (!data) throw new Error("You do not have access to this workspace.");
+  await assertWorkspaceAccess(supabase, userId, org);
 }
 
 async function assertCanSwitch(supabase: Db, userId: string, org: string) {

@@ -3,6 +3,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { readWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -120,11 +121,9 @@ export const getCandidateJourney = createServerFn({ method: "GET" })
     // Tenant/role gate. Staff can read any journey; non-staff must be a member of
     // the owning org AND (for non-editors) the underlying match must be visible.
     if (organizationId) {
-      const [{ data: isStaff }, { data: isMember }] = await Promise.all([
-        supabase.rpc("is_platform_staff", { _user: context.userId }),
-        supabase.rpc("is_org_member", { _user: context.userId, _org: organizationId }),
-      ]);
-      if (!isStaff && !isMember) return { events: [] };
+      const access = await readWorkspaceAccess(supabase, context.userId, organizationId);
+      const isStaff = access.isStaff;
+      if (!access.allowed) return { events: [] };
       if (!isStaff) {
         const { data: isEditor } = await supabase.rpc("is_org_editor", {
           _user: context.userId,

@@ -8,6 +8,7 @@ import {
   type Provenance,
   type Sourced,
 } from "@/lib/provenance";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 /**
  * The data system, told honestly.
@@ -26,11 +27,7 @@ async function assertStaff(supabase: Db, userId: string) {
 }
 
 async function assertOrgMember(supabase: Db, userId: string, orgId: string) {
-  const { data } = await supabase.rpc("is_org_member", {
-    _user: userId,
-    _org: orgId,
-  });
-  if (!data) throw new Error("You do not have access to this workspace.");
+  await assertWorkspaceAccess(supabase, userId, orgId);
 }
 
 function prov(

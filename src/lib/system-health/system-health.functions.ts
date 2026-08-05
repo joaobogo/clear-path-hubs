@@ -22,6 +22,7 @@ import {
   type HealthSignal,
   type SystemHealth,
 } from "@/lib/system-health/system-health";
+import { readWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Db = any;
@@ -46,15 +47,10 @@ export const getSystemHealth = createServerFn({ method: "GET" })
     const org = data.organization_id;
     const now = new Date();
 
-    const [{ data: isMember }, { data: isAdmin }, { data: isStaff }] = await Promise.all([
-      supabase.rpc("is_org_member", { _user: userId, _org: org }),
-      supabase.rpc("is_org_admin", { _user: userId, _org: org }),
-      supabase.rpc("is_platform_staff", { _user: userId }),
-    ]);
-
-    const canRead = !!isMember || !!isStaff;
-    const canSeeAgents = !!isMember || !!isStaff;
-    const canSeeIntegrations = !!isAdmin || !!isStaff;
+    const access = await readWorkspaceAccess(supabase, userId, org);
+    const canRead = access.allowed;
+    const canSeeAgents = access.allowed;
+    const canSeeIntegrations = access.isAdmin;
 
     if (!canRead) {
       return {

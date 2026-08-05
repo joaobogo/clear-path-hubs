@@ -20,6 +20,7 @@ import {
   DEFAULT_LAYOUT,
   isBlockId,
 } from "@/lib/dashboards/blocks";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 const orgSchema = z.object({ orgId: z.string().uuid() });
 const blockIdSchema = z.enum(BLOCK_IDS);
@@ -30,13 +31,8 @@ type AnySupabase = {
 };
 
 async function assertMember(ctx: { supabase: any; userId: string }, orgId: string) {
-  const { data: member } = await ctx.supabase.rpc("is_org_member", {
-    _user: ctx.userId,
-    _org: orgId,
-  });
-  const { data: staff } = await ctx.supabase.rpc("is_platform_staff", { _user: ctx.userId });
-  if (member !== true && staff !== true) throw new Error("forbidden");
-  return { isStaff: staff === true };
+  const access = await assertWorkspaceAccess(ctx.supabase, ctx.userId, orgId);
+  return { isStaff: access.isStaff };
 }
 
 async function assertEditor(ctx: { supabase: any; userId: string }, orgId: string) {
