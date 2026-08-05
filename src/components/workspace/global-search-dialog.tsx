@@ -110,11 +110,9 @@ export function GlobalSearchDialog({
     if (!open) setQ("");
   }, [open]);
 
-  const [includeTest, setIncludeTest] = useState(false);
-
   const { data, isFetching, isError, refetch } = useQuery({
-    queryKey: ["global-search", scope, debounced, includeTest],
-    queryFn: () => search({ data: { q: debounced, scope, includeTest } }),
+    queryKey: ["global-search", scope, debounced],
+    queryFn: () => search({ data: { q: debounced, scope } }),
     enabled: debounced.length >= 2,
     retry: false,
     staleTime: 15_000,
@@ -275,15 +273,7 @@ export function GlobalSearchDialog({
       {scope === "admin" && (
         <div className="flex items-center justify-between border-t border-border px-3 py-2 text-xs text-muted-foreground">
           <span>↑↓ to navigate · Enter to open</span>
-          <label className="flex cursor-pointer items-center gap-2">
-            <input
-              type="checkbox"
-              className="h-3.5 w-3.5 accent-primary"
-              checked={includeTest}
-              onChange={(e) => setIncludeTest(e.target.checked)}
-            />
-            Show test records
-          </label>
+          <span>Test records follow the global admin setting</span>
         </div>
       )}
     </CommandDialog>

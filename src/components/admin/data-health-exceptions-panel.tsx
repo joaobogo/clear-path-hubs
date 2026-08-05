@@ -45,7 +45,6 @@ type PreviewState = {
  */
 export function DataHealthExceptionsPanel() {
   const qc = useQueryClient();
-  const [includeTest, setIncludeTest] = useState(false);
   const [preview, setPreview] = useState<PreviewState | null>(null);
   const [note, setNote] = useState("");
 
@@ -55,8 +54,8 @@ export function DataHealthExceptionsPanel() {
   const hideFn = useServerFn(setMatchClientVisibility);
 
   const query = useQuery({
-    queryKey: ["data-health-exceptions", includeTest],
-    queryFn: () => load({ data: { includeTest } }),
+    queryKey: ["data-health-exceptions"],
+    queryFn: () => load({ data: {} }),
   });
 
   const previewMut = useMutation({
@@ -133,14 +132,6 @@ export function DataHealthExceptionsPanel() {
               </div>
             </div>
           )}
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => setIncludeTest((v) => !v)}
-            aria-pressed={includeTest}
-          >
-            {includeTest ? "Hide test records" : "Show test records"}
-          </Button>
         </div>
       </header>
 
