@@ -1,0 +1,144 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Client workspace on a phone (375px).
+
+   Hiring managers decide between meetings, on a phone. Nothing here changes
+   what is shown — only how it sits on a small screen: no horizontal scroll,
+   tap targets of at least 44px, and no text below 14px in the workspace.
+
+   Scoped to [data-client-workspace] and to portalled dialogs/sheets, so
+   marketing pages keep their own type scale.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+/* Stacked rows: opt-in on any table that cannot fit a phone in columns. */
+@media (max-width: 639.98px) {
+  .taas-stack-table,
+  .taas-stack-table > tbody,
+  .taas-stack-table > tbody > tr,
+  .taas-stack-table > tbody > tr > td,
+  .taas-stack-table > tbody > tr > th {
+    display: block;
+    width: 100%;
+  }
+
+  .taas-stack-table > thead {
+    display: none;
+  }
+
+  .taas-stack-table > tbody > tr {
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    margin-bottom: 0.625rem;
+  }
+
+  .taas-stack-table > tbody > tr:last-child {
+    margin-bottom: 0;
+  }
+
+  .taas-stack-table > tbody > tr > td,
+  .taas-stack-table > tbody > tr > th {
+    padding: 0.25rem 0;
+    border: 0;
+    text-align: left;
+  }
+
+  /* Every stacked cell carries its own column label. */
+  .taas-stack-table > tbody > tr > td[data-label],
+  .taas-stack-table > tbody > tr > th[data-label] {
+    display: grid;
+    grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: start;
+  }
+
+  .taas-stack-table > tbody > tr > td[data-label]::before,
+  .taas-stack-table > tbody > tr > th[data-label]::before {
+    content: attr(data-label);
+    color: var(--muted-foreground);
+    font-weight: 500;
+  }
+
+  /* A wrapper that only exists to scroll wide columns must not scroll now. */
+  .taas-stack-scroll {
+    overflow-x: visible;
+  }
+
+  /* Legibility and tap size inside the workspace and inside any dialog. */
+  [data-client-workspace],
+  [data-slot="dialog-content"],
+  [data-slot="sheet-content"],
+  [data-slot="drawer-content"] {
+    /* Micro-type is fine on a 27" monitor and unreadable on a phone. */
+    --taas-mobile-text: 0.875rem;
+  }
+
+  [data-client-workspace] .text-\[10px\],
+  [data-client-workspace] .text-\[11px\],
+  [data-client-workspace] .text-xs,
+  [data-slot="dialog-content"] .text-\[10px\],
+  [data-slot="dialog-content"] .text-\[11px\],
+  [data-slot="dialog-content"] .text-xs,
+  [data-slot="sheet-content"] .text-xs {
+    font-size: var(--taas-mobile-text);
+    line-height: 1.35rem;
+  }
+
+  /* 44px minimum on anything you tap. */
+  [data-client-workspace] :is(button, [role="button"], [role="tab"], [role="menuitem"], [role="option"]),
+  [data-client-workspace] a[data-slot="button"],
+  [data-slot="dialog-content"] :is(button, [role="button"], [role="menuitem"]),
+  [data-slot="sheet-content"] :is(button, [role="button"]) {
+    min-height: 2.75rem;
+  }
+
+  /* Icon-only controls need width as well as height. */
+  [data-client-workspace] button:has(> svg:only-child),
+  [data-slot="dialog-content"] button:has(> svg:only-child) {
+    min-width: 2.75rem;
+  }
+
+  /* Close affordances stay where the design put them. */
+  [data-client-workspace] :is([data-slot="dialog-close"], [data-slot="sheet-close"]),
+  [data-slot="dialog-content"] [data-slot="dialog-close"],
+  [data-slot="sheet-content"] [data-slot="sheet-close"] {
+    min-height: 2.25rem;
+    min-width: 2.25rem;
+  }
+
+  /* Form fields: reachable, and never below 14px so iOS does not zoom in. */
+  [data-client-workspace] :is(input, select, textarea, [data-slot="select-trigger"]),
+  [data-slot="dialog-content"] :is(input, select, textarea, [data-slot="select-trigger"]),
+  [data-slot="sheet-content"] :is(input, select, textarea, [data-slot="select-trigger"]) {
+    font-size: 1rem;
+  }
+
+  [data-client-workspace] :is(input:not([type="checkbox"]):not([type="radio"]), select, [data-slot="select-trigger"]),
+  [data-slot="dialog-content"] :is(input:not([type="checkbox"]):not([type="radio"]), select, [data-slot="select-trigger"]),
+  [data-slot="sheet-content"] :is(input:not([type="checkbox"]):not([type="radio"]), select, [data-slot="select-trigger"]) {
+    min-height: 2.75rem;
+  }
+
+  /* Choosing a reason must be easy with a thumb. */
+  [data-client-workspace] :is([data-slot="checkbox"], [data-slot="radio-group-item"], input[type="checkbox"], input[type="radio"]),
+  [data-slot="dialog-content"] :is([data-slot="checkbox"], [data-slot="radio-group-item"], input[type="checkbox"], input[type="radio"]) {
+    height: 1.25rem;
+    width: 1.25rem;
+    min-height: 1.25rem;
+    min-width: 1.25rem;
+  }
+
+  [data-slot="dialog-content"] :is([data-slot="radio-group-item"], [data-slot="checkbox"]) + label,
+  [data-slot="dialog-content"] label:has(> [data-slot="checkbox"]) {
+    min-height: 2.25rem;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Wide blocks wrap or stack instead of pushing the page sideways.
+     Deliberately no overflow clip here: it would crop the pinned decision
+     bar, which is the one control that must always be reachable. */
+  [data-client-workspace] :is(pre, code) {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+}

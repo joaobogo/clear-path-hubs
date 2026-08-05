@@ -292,7 +292,7 @@ function OffersPage() {
       )}
 
       {/* Board */}
-      <section className="mt-6 overflow-x-auto">
+      <section className="mt-6 overflow-x-auto max-sm:overflow-x-visible">
         {isError ? (
           <QueryErrorCard
             title="We couldn't load your offers"
@@ -305,7 +305,7 @@ function OffersPage() {
         ) : hires.length === 0 ? (
           <OffersEmptyState orgId={orgId} />
         ) : (
-          <div className="grid min-w-[1100px] grid-cols-6 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:min-w-[1100px] sm:grid-cols-6">
             {COLUMN_ORDER.map((status) => (
               <Column
                 key={status}

@@ -173,7 +173,7 @@ export function DecisionDialog({
 
   return (
     <Dialog open={open} onOpenChange={(v) => !pending && onOpenChange(v)}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-h-[85vh] sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{cfg.title}</DialogTitle>
           <DialogDescription>{cfg.description}</DialogDescription>
@@ -269,12 +269,19 @@ export function DecisionDialog({
           </p>
         )}
 
-        <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={pending}>
+        {/* Confirm sits under the thumb on a phone, above Cancel. */}
+        <DialogFooter className="gap-2 sm:gap-2">
+          <Button
+            variant="ghost"
+            className="w-full min-h-11 sm:w-auto"
+            onClick={() => onOpenChange(false)}
+            disabled={pending}
+          >
             Cancel
           </Button>
           <Button
             variant={cfg.destructive ? "destructive" : "default"}
+            className="w-full min-h-11 sm:w-auto"
             disabled={pending || invalid}
             onClick={() =>
               onConfirm({

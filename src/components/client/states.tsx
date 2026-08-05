@@ -212,7 +212,7 @@ export function SkeletonCards({ cards = 3 }: { cards?: number }) {
 export function SkeletonBoard({ columns = 6 }: { columns?: number }) {
   return (
     <div
-      className="grid min-w-[1100px] gap-3"
+      className="grid gap-3 sm:min-w-[1100px]"
       style={{ gridTemplateColumns: `repeat(${columns}, minmax(0,1fr))` }}
       aria-busy="true"
       aria-live="polite"

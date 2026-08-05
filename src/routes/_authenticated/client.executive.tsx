@@ -275,13 +275,13 @@ function PipelineByBU({ rows }: { rows: ExecutiveReport["pipeline_by_bu"] }) {
           <Building2 className="h-4 w-4" /> Pipeline health by business unit
         </CardTitle>
       </CardHeader>
-      <CardContent className="overflow-x-auto">
+      <CardContent className="taas-stack-scroll overflow-x-auto">
         {rows.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             No business units in play yet. Add a department to your positions.
           </p>
         ) : (
-          <table className="w-full text-sm">
+          <table className="taas-stack-table w-full text-sm">
             <thead>
               <tr className="border-b text-[11px] uppercase tracking-wide text-muted-foreground">
                 <th className="py-2 text-left font-medium">Business unit</th>
@@ -296,13 +296,13 @@ function PipelineByBU({ rows }: { rows: ExecutiveReport["pipeline_by_bu"] }) {
             <tbody>
               {rows.map((r) => (
                 <tr key={r.business_unit} className="border-b last:border-0">
-                  <td className="py-2 font-medium">{r.business_unit}</td>
-                  <td className="py-2 text-right tabular-nums">{r.open_roles}</td>
-                  <td className="py-2 text-right tabular-nums">{r.active_candidates}</td>
-                  <td className="py-2 text-right tabular-nums">{r.delivered}</td>
-                  <td className="py-2 text-right tabular-nums">{r.shortlisted}</td>
-                  <td className="py-2 text-right tabular-nums">{r.hired}</td>
-                  <td className="py-2 text-right tabular-nums">
+                  <td data-label="Business unit" className="py-2 font-medium">{r.business_unit}</td>
+                  <td data-label="Open roles" className="py-2 text-right tabular-nums max-sm:text-left">{r.open_roles}</td>
+                  <td data-label="Active" className="py-2 text-right tabular-nums max-sm:text-left">{r.active_candidates}</td>
+                  <td data-label="Delivered" className="py-2 text-right tabular-nums max-sm:text-left">{r.delivered}</td>
+                  <td data-label="Shortlisted" className="py-2 text-right tabular-nums max-sm:text-left">{r.shortlisted}</td>
+                  <td data-label="Hired" className="py-2 text-right tabular-nums max-sm:text-left">{r.hired}</td>
+                  <td data-label="Blocked" className="py-2 text-right tabular-nums max-sm:text-left">
                     {r.blocked > 0 ? (
                       <Badge variant="destructive">{r.blocked}</Badge>
                     ) : (

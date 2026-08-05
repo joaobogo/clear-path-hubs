@@ -355,7 +355,7 @@ function CandidateDetailPage() {
  const actions = ACTIONS_BY_STAGE[candidate.stage] ?? { primary: null, more: [] };
 
  return (
- <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
+ <main className="mx-auto max-w-7xl px-4 pb-28 pt-6 sm:px-6 lg:pb-8 lg:pt-8">
  <BackLink />
 
  {/* HEADER */}
@@ -1918,6 +1918,9 @@ function MobileActionBar({
   onAct: (k: ActionKey) => void;
 }) {
   if (!actions.primary) return null;
+  // Declining is a decision, not an overflow item: it stays on screen at 375px.
+  const decline = actions.more.find((a) => a.key === "not_moving_forward") ?? null;
+  const rest = actions.more.filter((a) => a.key !== "not_moving_forward");
   return (
     <div
       role="toolbar"
@@ -1927,35 +1930,39 @@ function MobileActionBar({
     >
       <div className="mx-auto flex max-w-3xl items-center gap-2">
         <Button
-          className="flex-1 min-h-11"
+          className="min-h-11 flex-1"
           disabled={pending}
           onClick={() => onAct(actions.primary!.key)}
         >
           {actions.primary.label}
         </Button>
-        {actions.more.length > 0 && (
+        {decline && (
+          <Button
+            variant="outline"
+            className="min-h-11 shrink-0 text-destructive hover:text-destructive"
+            disabled={pending}
+            onClick={() => onAct(decline.key)}
+          >
+            Not a fit
+          </Button>
+        )}
+        {rest.length > 0 && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
                 size="icon"
                 aria-label="More actions"
-                className="min-h-11 min-w-11"
+                className="min-h-11 min-w-11 shrink-0"
               >
                 <MoreHorizontal className="h-4 w-4" aria-hidden />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" side="top" className="w-56">
-              {actions.more.map((a, i) => (
+              {rest.map((a, i) => (
                 <div key={a.key}>
-                  {i > 0 && a.key === "not_moving_forward" && <DropdownMenuSeparator />}
-                  <DropdownMenuItem
-                    onSelect={() => onAct(a.key)}
-                    disabled={pending}
-                    className={cn(
-                      a.key === "not_moving_forward" && "text-destructive focus:text-destructive",
-                    )}
-                  >
+                  {i > 0 && <DropdownMenuSeparator />}
+                  <DropdownMenuItem onSelect={() => onAct(a.key)} disabled={pending}>
                     {a.label}
                   </DropdownMenuItem>
                 </div>

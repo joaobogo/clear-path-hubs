@@ -261,13 +261,18 @@ export function InterviewFeedbackForm({
         </div>
       ) : null}
 
-      <div className="flex items-center justify-between gap-3">
+      {/* On a phone: the note first, then a full-width submit under the thumb. */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-muted-foreground">
           {draft.next_step
             ? `Submitting moves ${item.candidate_name} to: ${FEEDBACK_NEXT_STEP_LABEL[draft.next_step]}.`
             : "Your draft is kept on this device until you submit."}
         </p>
-        <Button onClick={onSubmit} disabled={readOnly || submit.isPending}>
+        <Button
+          className="w-full min-h-11 sm:w-auto"
+          onClick={onSubmit}
+          disabled={readOnly || submit.isPending}
+        >
           {submit.isPending ? (
             <>
               <Loader2 className="mr-1.5 h-4 w-4 animate-spin" aria-hidden /> Saving…
@@ -280,6 +285,8 @@ export function InterviewFeedbackForm({
     </div>
   );
 }
+
+
 
 export function InterviewFeedbackDialog({
   orgId,

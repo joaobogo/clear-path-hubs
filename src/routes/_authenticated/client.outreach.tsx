@@ -349,7 +349,7 @@ function OutreachPage() {
                 </dl>
 
                 {role.per_channel.length > 0 && (
-                  <table className="mt-4 w-full text-sm">
+                  <table className="taas-stack-table mt-4 w-full text-sm">
                     <caption className="sr-only">
                       Outreach per channel for {role.position_title}
                     </caption>
@@ -372,10 +372,10 @@ function OutreachPage() {
                     <tbody>
                       {role.per_channel.map((c) => (
                         <tr key={c.channel} className="border-t border-border">
-                          <td className="py-1.5">{c.label}</td>
-                          <td className="py-1.5 tabular-nums">{c.sent}</td>
-                          <td className="py-1.5 tabular-nums">{c.replied}</td>
-                          <td className="py-1.5 tabular-nums">{c.blocked}</td>
+                          <td data-label="Channel" className="py-1.5">{c.label}</td>
+                          <td data-label="Sent" className="py-1.5 tabular-nums">{c.sent}</td>
+                          <td data-label="Replied" className="py-1.5 tabular-nums">{c.replied}</td>
+                          <td data-label="Blocked by a rule" className="py-1.5 tabular-nums">{c.blocked}</td>
                         </tr>
                       ))}
                     </tbody>
