@@ -9,8 +9,8 @@ import type {
   ReviewMetric,
   ReviewRecord,
   WeeklyReview,
-} from "@/lib/wbr-review.server";
-import { reviewToCsv } from "@/lib/wbr-review.server";
+} from "@/lib/wbr-review";
+import { reviewToCsv } from "@/lib/wbr-review";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
