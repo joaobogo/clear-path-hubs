@@ -509,7 +509,10 @@ export const listPositions = createServerFn({ method: "GET" })
         status: z.string().optional(),
         q: z.string().optional(),
         organization_id: z.string().uuid().optional(),
+        /** A staff user id, or "__unassigned__" for ownerless positions. */
+        owner: z.string().min(1).optional(),
         location: z.string().optional(),
+
         sort: z
           .enum([
             "updated_desc",
