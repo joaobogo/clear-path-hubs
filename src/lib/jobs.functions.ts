@@ -5,6 +5,8 @@ import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
 import { buildPublicJobFacts, resolveCompensation } from "@/lib/jobs/public-facts";
+import { EFFORT_DEFAULT, resolveApplyEffort } from "@/lib/jobs/apply-effort";
+
 
 
 /**
@@ -231,6 +233,23 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       published_at: pos.published_at,
     });
 
+    // How long applying really takes, from this posting's own completed
+    // submissions. A failed read falls back to the platform default rather
+    // than blocking the page or printing a broken figure.
+    let applyEffort = EFFORT_DEFAULT;
+    try {
+      const { data: effortRow } = await (
+        supabase.rpc as unknown as (
+          fn: string,
+          args: Record<string, unknown>,
+        ) => Promise<{ data: unknown; error: unknown }>
+      )("public_application_effort", { _position_id: data.id });
+      applyEffort = resolveApplyEffort(effortRow);
+    } catch {
+      applyEffort = EFFORT_DEFAULT;
+    }
+
+
 
     return {
       id: pos.id,
@@ -245,6 +264,8 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       preferred_requirements: toReqStrings(pos.preferred_requirements),
       compensation_display: comp.display,
       facts,
+      apply_effort: applyEffort,
+
 
       published_at: pos.published_at,
       openings: (pos as { openings?: number }).openings ?? 1,

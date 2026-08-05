@@ -57,6 +57,10 @@ export const applySchema = z.object({
     .optional(),
   // Client-generated stable id so a double-tap or reload cannot double-submit.
   idempotency_key: z.string().min(8).max(64),
+  // Seconds the candidate actually spent on the form. Feeds the median we
+  // quote on the job page, so it is clamped server-side before storage.
+  elapsed_seconds: z.number().finite().nonnegative().optional(),
+
 });
 
 export type ApplyInput = z.infer<typeof applySchema>;

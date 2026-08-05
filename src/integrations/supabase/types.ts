@@ -462,6 +462,7 @@ export type Database = {
           applied_at: string
           candidate_profile_id: string
           closure_notified_at: string | null
+          completion_seconds: number | null
           confirmation_email_sent_at: string | null
           consent: Json
           cover_letter: string | null
@@ -501,6 +502,7 @@ export type Database = {
           applied_at?: string
           candidate_profile_id: string
           closure_notified_at?: string | null
+          completion_seconds?: number | null
           confirmation_email_sent_at?: string | null
           consent?: Json
           cover_letter?: string | null
@@ -540,6 +542,7 @@ export type Database = {
           applied_at?: string
           candidate_profile_id?: string
           closure_notified_at?: string | null
+          completion_seconds?: number | null
           confirmation_email_sent_at?: string | null
           consent?: Json
           cover_letter?: string | null
@@ -15444,6 +15447,10 @@ export type Database = {
         Returns: Json
       }
       person_for_candidate_profile: { Args: { _cp: string }; Returns: string }
+      public_application_effort: {
+        Args: { _position_id: string }
+        Returns: Json
+      }
       public_position_closure: { Args: { _id: string }; Returns: Json }
       public_position_employer: { Args: { _id: string }; Returns: Json }
       purge_expired_intake_drafts: { Args: never; Returns: number }
