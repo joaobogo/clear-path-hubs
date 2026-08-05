@@ -14,6 +14,9 @@
  * stamped as recorded by staff.
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { OfflineDecision } from "./admin-decision-backlog";
+
+export type { OfflineDecision };
 
 type Admin = SupabaseClient<never, never, never>;
 
@@ -24,25 +27,6 @@ export const OFFLINE_DECISION_ACTION = "client_decision.recorded_offline";
 export const DECISION_ENTITY = "candidate_match";
 /** Rate limit: one nudge per candidate per 48 hours. */
 export const NUDGE_COOLDOWN_MS = 48 * 3_600_000;
-
-export type OfflineDecision =
-  | "shortlist"
-  | "request_interview"
-  | "request_information"
-  | "hold"
-  | "not_moving_forward"
-  | "offer"
-  | "hire";
-
-export const OFFLINE_DECISION_LABEL: Record<OfflineDecision, string> = {
-  shortlist: "Shortlisted",
-  request_interview: "Interview requested",
-  request_information: "More information requested",
-  hold: "On hold",
-  not_moving_forward: "Not moving forward",
-  offer: "Offer",
-  hire: "Hired",
-};
 
 export type DecisionBacklogRow = {
   match_id: string;

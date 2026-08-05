@@ -5,7 +5,7 @@
  * rate limited server-side (one per candidate per 48h) and offline decisions
  * are always labelled as recorded by staff.
  */
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -15,7 +15,7 @@ import {
   logOfflineClientDecision,
   nudgeClientDecision,
 } from "@/lib/admin-decision-backlog.functions";
-import { OFFLINE_DECISION_LABEL } from "@/lib/admin-decision-backlog.server";
+import { OFFLINE_DECISION_LABEL } from "@/lib/admin-decision-backlog";
 import { OpenThreadButton } from "@/components/comms/open-thread-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -198,8 +198,8 @@ export function DecisionBacklogPanel({
             </thead>
             <tbody className="divide-y">
               {rows.map((r: Row) => (
-                <>
-                  <tr key={r.match_id} className="hover:bg-muted/40">
+                <Fragment key={r.match_id}>
+                  <tr className="hover:bg-muted/40">
                     <td className="max-w-[16rem] px-3 py-2">
                       <Link
                         to="/admin/candidates/$id"
@@ -295,7 +295,7 @@ export function DecisionBacklogPanel({
                     </td>
                   </tr>
                   {openFor === r.match_id ? (
-                    <tr key={`${r.match_id}-form`} className="bg-muted/30">
+                    <tr className="bg-muted/30">
                       <td colSpan={showClientColumn ? 7 : 6} className="px-3 py-3">
                         <OfflineDecisionForm
                           busy={record.isPending}
@@ -307,7 +307,7 @@ export function DecisionBacklogPanel({
                       </td>
                     </tr>
                   ) : null}
-                </>
+                </Fragment>
               ))}
             </tbody>
           </table>
