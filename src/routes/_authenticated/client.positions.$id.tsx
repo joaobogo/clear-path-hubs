@@ -51,6 +51,8 @@ import { RoleLifecycleTimeline } from "@/components/client/role-lifecycle-timeli
 import { getRoleLifecycle } from "@/lib/role-lifecycle/role-lifecycle.functions";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
 import { clientRoleStatusLabel } from "@/lib/client-role-status";
+import { getPositionHandoff } from "@/lib/hire-handoff.functions";
+import { HireHandoffPanel, HandoffSkeleton } from "@/components/client/hire-handoff";
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  head: () => ({
@@ -119,6 +121,13 @@ function PositionDetailPage() {
  const lifecycle = useQuery({
  queryKey: ["role-lifecycle", orgId, id],
  queryFn: () => lifecycleFn({ data: { orgId: orgId!, positionId: id } }),
+ enabled: !!orgId,
+ });
+ // Once a hire is confirmed, this role becomes a handoff rather than a search.
+ const handoffFn = useServerFn(getPositionHandoff);
+ const handoff = useQuery({
+ queryKey: ["client-position-handoff", orgId, id],
+ queryFn: () => handoffFn({ data: { orgId: orgId!, positionId: id } }),
  enabled: !!orgId,
  });
  useEffect(() => {
@@ -216,6 +225,45 @@ function PositionDetailPage() {
 
  const { position, matches, activity, summary } = data;
  const launch = (data as { launch?: RoleLaunchState }).launch;
+
+ // ── Handoff after a hire ────────────────────────────────────────────────────
+ // With a confirmed hire on the role, the search view is replaced by what
+ // remains: agreed terms, the derived guarantee window, and the outstanding
+ // steps. The role stays reachable — messages and history remain open.
+ if (handoff.isLoading && orgId) {
+  return (
+   <main className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+    <HandoffSkeleton />
+   </main>
+  );
+ }
+ if (orgId && handoff.data) {
+  return (
+   <main className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+    <div>
+     <Link to="/client/positions" className="text-sm text-muted-foreground hover:underline">
+      ← All positions
+     </Link>
+    </div>
+    <header>
+     <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">{position.title}</h1>
+     <div className="mt-1 text-sm text-muted-foreground">
+      {[position.department, position.location, position.work_model, position.employment_type]
+       .filter(Boolean)
+       .join(" · ")}
+     </div>
+    </header>
+    <HireHandoffPanel orgId={orgId} positionId={id} canEdit={canEdit} />
+    <RoleMessagesPanel
+     orgId={orgId}
+     positionId={id}
+     positionTitle={position.title}
+     canPost={canEdit}
+    />
+   </main>
+  );
+ }
+
  const byStage: Record<string, AnyRow[]> = {};
  for (const col of KANBAN_COLUMNS) byStage[col.key] = [];
  for (const m of matches as AnyRow[]) {
