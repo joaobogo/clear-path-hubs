@@ -3,6 +3,7 @@
 // KPI counts are computed via the canonical service in client-kpi.server.ts so
 // every dashboard tile and drill-through view stays reconciled.
 import { createServerFn } from "@tanstack/react-start";
+import { briefField } from "@/lib/position-info-requests";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
@@ -620,27 +621,30 @@ export const getClientOverview = createServerFn({ method: "GET" })
       });
     }
 
-    // Information requests from the recruiting team — open tasks on this org.
-    const { data: openTasks } = await context.supabase
-      .from("tasks")
-      .select("id, title, position_id, due_at, created_at, blocking")
+    // Missing-information requests from the recruiting team. Each one names the
+    // exact brief field it needs, and leads to the role page where it can be
+    // answered — never a contentless "your recruiter has a question".
+    const { data: infoRequests } = await context.supabase
+      .from("position_info_requests")
+      .select("id, position_id, brief_field, question, created_at")
       .eq("organization_id", data.orgId)
-      .is("deleted_at", null)
-      .in("status", ["open", "in_progress"])
+      .eq("status", "open")
       .order("created_at", { ascending: true })
       .limit(50);
-    for (const t of (openTasks as AnyRow[]) ?? []) {
+    for (const r of (infoRequests as AnyRow[]) ?? []) {
+      const field = briefField(r.brief_field as string);
+      const positionId = (r.position_id as string) ?? null;
       queueItems.push({
-        key: `task:${t.id}`,
+        key: `info:${r.id}`,
         kind: "info_request",
-        concerns: (t.title as string) ?? "A question from your recruiter",
-        role_title: titleByPosition.get(t.position_id as string) ?? "Your account",
-        position_id: (t.position_id as string) ?? null,
+        concerns: field ? `${field.label} — needed to keep sourcing` : (r.question as string),
+        role_title: positionId ? (titleByPosition.get(positionId) ?? "Your role") : "Your account",
+        position_id: positionId,
         subject_id: null,
-        due_at: (t.due_at as string) ?? null,
-        waiting_since: (t.created_at as string) ?? null,
+        due_at: null,
+        waiting_since: (r.created_at as string) ?? null,
         action: "Answer",
-        to: "/client/tasks",
+        to: positionId ? `/client/positions/${positionId}#information-needed` : "/client/tasks",
       });
     }
 
@@ -650,7 +654,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
     const decision_queue = [...queueGroups.overdue, ...queueGroups.upcoming];
     const decision_queue_meta = {
       /** How many candidates, interviews, offers and requests were examined. */
-      checked: rows.length + completedList.length + ((openTasks as AnyRow[]) ?? []).length,
+      checked: rows.length + completedList.length + ((infoRequests as AnyRow[]) ?? []).length,
       overdue: queueGroups.overdue.length,
       /** Nearest promised first-shortlist date still ahead of us. */
       next_expected_at:

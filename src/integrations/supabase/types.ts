@@ -8171,6 +8171,121 @@ export type Database = {
           },
         ]
       }
+      position_info_requests: {
+        Row: {
+          answer: string | null
+          answered_at: string | null
+          answered_by: string | null
+          brief_field: string
+          created_at: string
+          id: string
+          organization_id: string
+          position_id: string | null
+          question: string
+          requested_by: string | null
+          status: string
+          unblocks: string | null
+          updated_at: string
+          why_needed: string | null
+        }
+        Insert: {
+          answer?: string | null
+          answered_at?: string | null
+          answered_by?: string | null
+          brief_field: string
+          created_at?: string
+          id?: string
+          organization_id: string
+          position_id?: string | null
+          question: string
+          requested_by?: string | null
+          status?: string
+          unblocks?: string | null
+          updated_at?: string
+          why_needed?: string | null
+        }
+        Update: {
+          answer?: string | null
+          answered_at?: string | null
+          answered_by?: string | null
+          brief_field?: string
+          created_at?: string
+          id?: string
+          organization_id?: string
+          position_id?: string | null
+          question?: string
+          requested_by?: string | null
+          status?: string
+          unblocks?: string | null
+          updated_at?: string
+          why_needed?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "position_info_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "position_info_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "position_info_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "position_info_requests_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_pipeline_health"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "position_info_requests_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "admin_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "position_info_requests_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_my_applications"
+            referencedColumns: ["position_id"]
+          },
+          {
+            foreignKeyName: "position_info_requests_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "client_positions_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "position_info_requests_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "position_info_requests_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "v_position_time_to_submission"
+            referencedColumns: ["position_id"]
+          },
+        ]
+      }
       position_locations: {
         Row: {
           city: string | null

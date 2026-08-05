@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { InfoRequestsPanel } from "@/components/client/info-requests";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { getClientContext, getClientOverview } from "@/lib/client.functions";
@@ -253,6 +254,8 @@ function OverviewPage() {
             orgId={orgId ?? null}
             orgSearch={orgSearch ?? null}
           />
+          {/* Missing brief details block sourcing — answerable in place */}
+          <InfoRequestsPanel orgId={orgId} onAnswered={() => refetch()} />
           <VisibilityNote />
 
           {/* CONTROL ROOM — what is running, what moved, how hard we work */}

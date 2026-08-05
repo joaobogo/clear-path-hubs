@@ -43,6 +43,8 @@ import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { RoleProgressTracker } from "@/components/client/role-progress-tracker";
 import { RoleDatedTimeline } from "@/components/client/role-dated-timeline";
 import { DeliveryCommitmentBlock } from "@/components/client/delivery-commitment";
+import { InfoRequestsPanel } from "@/components/client/info-requests";
+import { InfoRequestsPanel } from "@/components/client/info-requests";
 import { buildDeliveryCommitment } from "@/lib/delivery-commitment";
 import { RoleShortlist } from "@/components/client/role-shortlist";
 import { RoleLifecycleTimeline } from "@/components/client/role-lifecycle-timeline";
@@ -434,6 +436,18 @@ function PositionDetailPage() {
  </div>
  )}
  </header>
+
+			<div id="information-needed" className="scroll-mt-24">
+				<InfoRequestsPanel
+					orgId={orgId}
+					positionId={id}
+					heading="Information needed to keep sourcing"
+					onAnswered={() => {
+						void refetch();
+						qc.invalidateQueries({ queryKey: ["client-overview", orgId] });
+					}}
+				/>
+			</div>
 
  {/* Where we are — persistent five-stage tracker + plain-language status */}
  <section className="rounded-xl border bg-card px-4 py-4">
