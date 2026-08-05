@@ -634,15 +634,7 @@ export const Route = createFileRoute("/api/public/express-intake")({
                 location: locationText,
                 workModel: data.workModel || "",
                 onsiteDays: data.onsiteDays ?? null,
-                compensation: hasComp
-                  ? {
-                      currency: data.currency,
-                      period: data.compensationPeriod,
-                      min: data.salaryMin,
-                      max: data.salaryMax,
-                      note: data.compensationNote ?? "",
-                    }
-                  : null,
+                compensation: compensationRecord,
                 workAuthorization: data.workAuthorization || "",
                 workAuthorizationNote: data.workAuthorizationNote ?? "",
                 interviewProcess: interviewProcessText,
