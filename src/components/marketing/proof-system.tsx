@@ -341,7 +341,7 @@ export function ProofSystem() {
                   TaaSFlow Bronze (one month, flat)
                 </dt>
                 <dd className="font-semibold tabular-nums text-[color:var(--brand-ocean-text)]">
-                  {usd(PRICE_SUB_BRONZE_USD)}
+                  {usd(COMPARISON_SUB_USD)}
                 </dd>
               </div>
               <div className="flex items-baseline justify-between gap-4">
