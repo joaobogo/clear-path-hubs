@@ -34,7 +34,6 @@ const RESOURCE_LINKS = [
 
 const CANDIDATE_LINKS = [
   { to: "/jobs", label: "Browse open roles" },
-  { to: "/candidate-join", label: "Join the Talent Network" },
   { to: "/talent-network", label: "How the Talent Network works" },
   { to: "/candidate-success", label: "Candidate success stories" },
 ] as const;
