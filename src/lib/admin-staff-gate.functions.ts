@@ -11,8 +11,13 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getStaffAccess = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }): Promise<{ staff: boolean }> => {
+  .handler(async ({ context }): Promise<{ staff: boolean; platformAdmin: boolean }> => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data } = await supabaseAdmin.rpc("is_platform_staff", { _user: context.userId });
-    return { staff: data === true };
+    const [staff, admin] = await Promise.all([
+      supabaseAdmin.rpc("is_platform_staff", { _user: context.userId }),
+      supabaseAdmin.rpc("is_platform_admin", { _user: context.userId }),
+    ]);
+    // The nav is derived from the same two predicates the server enforces, so a
+    // visible entry can never lead to a page whose data calls all fail.
+    return { staff: staff.data === true, platformAdmin: admin.data === true };
   });

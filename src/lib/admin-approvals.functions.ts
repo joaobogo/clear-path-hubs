@@ -30,6 +30,7 @@ export const approveApprovalItem = createServerFn({ method: "POST" })
         match_ids: z.array(z.string().uuid()).max(200).optional(),
         reason: z.string().trim().max(1000).optional(),
       })
+      .strict()
       .parse(i),
   )
   .handler(async ({ data, context }) => {
@@ -37,6 +38,7 @@ export const approveApprovalItem = createServerFn({ method: "POST" })
     await requireStaff(context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { approveApproval } = await import("./admin-approvals.server");
+    // The actor is always the authenticated caller; it is never accepted as input.
     return approveApproval(supabaseAdmin as never, { ...data, actor_user_id: context.userId });
   });
 
@@ -54,6 +56,7 @@ export const bulkApproveApprovals = createServerFn({ method: "POST" })
         target_ids: z.array(z.string().uuid()).min(1).max(100),
         reason: z.string().trim().max(1000).optional(),
       })
+      .strict()
       .parse(i),
   )
   .handler(async ({ data, context }) => {
@@ -103,6 +106,7 @@ export const declineApprovalItem = createServerFn({ method: "POST" })
         target_id: z.string().uuid(),
         reason: z.string().trim().min(MIN_DECLINE_REASON).max(1000),
       })
+      .strict()
       .parse(i),
   )
   .handler(async ({ data, context }) => {

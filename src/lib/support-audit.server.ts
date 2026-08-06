@@ -64,18 +64,18 @@ export async function findActiveSupportSession(
   admin: Admin,
   actorUserId: string,
   organizationId: string,
-): Promise<{ id: string; expires_at: string; reason: string } | null> {
+): Promise<{ id: string; expires_at: string; reason: string; trace_id: string | null } | null> {
   await sweepExpiredSupportSessions(admin);
   const { data } = await admin
     .from("support_sessions")
-    .select("id, expires_at, reason")
+    .select("id, expires_at, reason, trace_id")
     .eq("actor_user_id", actorUserId)
     .eq("organization_id", organizationId)
     .is("ended_at", null)
     .order("started_at", { ascending: false })
     .limit(1)
     .maybeSingle();
-  return (data as { id: string; expires_at: string; reason: string } | null) ?? null;
+  return (data as { id: string; expires_at: string; reason: string; trace_id: string | null } | null) ?? null;
 }
 
 /**
