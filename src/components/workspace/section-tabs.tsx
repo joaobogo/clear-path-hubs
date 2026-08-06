@@ -10,8 +10,30 @@ import { cn } from "@/lib/utils";
  * keyboard reachable, back-button friendly), not local state.
  */
 
-export type SectionTab = { to: string; label: string; exact?: boolean };
+export type SectionTab = {
+  to: string;
+  label: string;
+  exact?: boolean;
+  /**
+   * Tabs whose data calls enforce `is_platform_admin` on the server. Hidden for
+   * staff without that capability so a visible tab never leads to a 403 page.
+   */
+  requiresPlatformAdmin?: boolean;
+};
 export type SectionGroup = { id: string; label: string; tabs: SectionTab[] };
+
+/** Drop tabs (and then empty groups) the caller has no capability for. */
+export function filterSectionGroups(
+  groups: SectionGroup[],
+  caps: { platformAdmin: boolean },
+): SectionGroup[] {
+  return groups
+    .map((group) => ({
+      ...group,
+      tabs: group.tabs.filter((tab) => !tab.requiresPlatformAdmin || caps.platformAdmin),
+    }))
+    .filter((group) => group.tabs.length > 0);
+}
 
 function isActive(pathname: string, tab: SectionTab) {
   return tab.exact

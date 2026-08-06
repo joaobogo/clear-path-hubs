@@ -91,7 +91,7 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
       { to: "/admin/parse-failures", label: "Unreadable docs" },
       { to: "/admin/evidence-gaps", label: "Missing evidence" },
       { to: "/admin/outcome-sla", label: "Answers we owe" },
-      { to: "/admin/business-rules", label: "Business rules" },
+      { to: "/admin/business-rules", label: "Business rules", requiresPlatformAdmin: true },
       { to: "/admin/qa-report", label: "QA report" },
     ],
   },
@@ -110,7 +110,7 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
     label: "Operations",
     tabs: [
       { to: "/admin/operations", label: "Operations" },
-      { to: "/admin/agent-ops", label: "Agent operations" },
+      { to: "/admin/agent-ops", label: "Agent operations", requiresPlatformAdmin: true },
       { to: "/admin/sla", label: "SLA clock" },
       { to: "/admin/wbr", label: "Weekly review" },
       { to: "/admin/health", label: "System health" },
@@ -136,9 +136,9 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
     id: "access",
     label: "Access",
     tabs: [
-      { to: "/admin/team", label: "Team & access" },
-      { to: "/admin/settings", label: "Settings" },
-      { to: "/admin/design-system", label: "Design system" },
+      { to: "/admin/team", label: "Team & access", requiresPlatformAdmin: true },
+      { to: "/admin/settings", label: "Settings", requiresPlatformAdmin: true },
+      { to: "/admin/design-system", label: "Design system", requiresPlatformAdmin: true },
     ],
   },
 ];

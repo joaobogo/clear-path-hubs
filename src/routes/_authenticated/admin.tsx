@@ -12,7 +12,7 @@ import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
 import { getStaffAccess } from "@/lib/admin-staff-gate.functions";
 import { ExceptionDigest } from "@/components/admin/exception-digest";
 import { TestRecordsToggle } from "@/components/admin/test-records-toggle";
-import { SectionTabs } from "@/components/workspace/section-tabs";
+import { SectionTabs, filterSectionGroups } from "@/components/workspace/section-tabs";
 import { ADMIN_SECTION_GROUPS } from "@/config/workspace-sections";
 import { ADMIN_NAV } from "@/config/admin-nav";
 import { WorkspaceShell } from "@/components/workspace/workspace-shell";
@@ -62,6 +62,11 @@ function AdminLayout() {
   const navItems = staffAccess.platformAdmin
     ? ADMIN_NAV
     : ADMIN_NAV.filter((item) => !item.requiresPlatformAdmin);
+  // Tabs come from the same capabilities, so no desk is offered whose data
+  // calls would 403.
+  const sectionGroups = filterSectionGroups(ADMIN_SECTION_GROUPS, {
+    platformAdmin: staffAccess.platformAdmin,
+  });
   const [userId, setUserId] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   useEffect(() => {
@@ -87,7 +92,7 @@ function AdminLayout() {
         </div>
       }
     >
-      <SectionTabs groups={ADMIN_SECTION_GROUPS} />
+      <SectionTabs groups={sectionGroups} />
       <Outlet />
 
     </WorkspaceShell>
