@@ -260,7 +260,8 @@ function CandidateWorkspace() {
             {tab === "profile" && (
               <ProfileTab cp={cp} pos={pos} m={m} siblings={siblings} evidence={evidence} />
             )}
-            {tab === "dossier" && <AdminDossier matchId={id} />}
+            <Suspense fallback={<TabFallback />}>
+              {tab === "dossier" && <AdminDossier matchId={id} />}
             {tab === "journey" && (
               <div className="space-y-4">
                 <JourneyTab matchId={id} />
@@ -301,6 +302,7 @@ function CandidateWorkspace() {
                 decisions={decisions}
               />
             )}
+            </Suspense>
           </section>
         </div>
 
