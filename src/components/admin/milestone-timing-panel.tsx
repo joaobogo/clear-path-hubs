@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
+import { useScopedIncludeTest } from "@/lib/admin-scope";
 
 const PERIODS = [30, 90, 180, 365] as const;
 
@@ -66,7 +67,7 @@ export function MilestoneTimingPanel() {
 
   const q = useQuery({
     queryKey: ["milestone-timings", period],
-    queryFn: () => fn({ data: { period_days: period, include_test: false } }),
+    queryFn: () => fn({ data: { period_days: period, include_test: includeTest } }),
   });
 
   return (

@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { ChevronDown, ChevronRight, RefreshCw } from "lucide-react";
+import { useScopedIncludeTest } from "@/lib/admin-scope";
 
 const CHANNEL_LABEL: Record<string, string> = {
   unknown: "Unattributed",
@@ -237,7 +238,10 @@ export function PositionSourceQualityPanel({ positionId }: { positionId: string 
 }
 
 /** Cross-client rollup for /admin/operations. */
-export function SourceQualityRollupPanel({ includeTest = false }: { includeTest?: boolean }) {
+export function SourceQualityRollupPanel({
+  includeTest: explicit,
+}: { includeTest?: boolean } = {}) {
+  const includeTest = useScopedIncludeTest(explicit);
   const query = useQuery({
     queryKey: ["admin", "source-quality-rollup", includeTest],
     queryFn: () => getSourceQualityRollup({ data: { include_test: includeTest } }),
