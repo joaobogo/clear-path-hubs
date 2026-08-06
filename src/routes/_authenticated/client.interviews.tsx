@@ -61,6 +61,7 @@ import {
  DialogDescription,
 } from "@/components/ui/dialog";
 import {
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
  CalendarClock,
  CheckCircle2,
  Circle,
@@ -72,7 +73,11 @@ import {
  X,
 } from "lucide-react";
 
+
+const RoutePending = makeWorkspacePending({ shape: "cards", kpis: false, width: "6xl" });
 export const Route = createFileRoute("/_authenticated/client/interviews")({
+	pendingMs: 150,
+	pendingComponent: RoutePending,
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.interviews.tsx"),
   notFoundComponent: makeRouteNotFoundComponent("client"),
  head: () => ({

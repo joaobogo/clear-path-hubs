@@ -64,6 +64,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
   Dialog,
   DialogContent,
   DialogDescription,
@@ -72,7 +73,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+
+const RoutePending = makeWorkspacePending({ shape: "board", kpis: false, width: "7xl" });
 export const Route = createFileRoute("/_authenticated/client/offers")({
+	pendingMs: 150,
+	pendingComponent: RoutePending,
   head: () => ({
     meta: [
       { title: "Offers & hires · TaaSFlow" },

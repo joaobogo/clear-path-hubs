@@ -42,6 +42,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import {
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
   Select,
   SelectContent,
   SelectItem,
@@ -67,7 +68,11 @@ const searchSchema = z.object({
   q: z.string().optional(),
 });
 
+
+const RoutePending = makeWorkspacePending({ shape: "cards", kpis: false, width: "7xl" });
 export const Route = createFileRoute("/_authenticated/client/talent-memory")({
+	pendingMs: 150,
+	pendingComponent: RoutePending,
   validateSearch: searchSchema,
   head: () => ({
     meta: [

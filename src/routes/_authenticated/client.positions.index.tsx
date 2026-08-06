@@ -32,7 +32,11 @@ const searchSchema = z.object({
  shortlist: fallback(z.enum(["all", "none"]), "all").default("all"),
 });
 
+
+const RoutePending = makeWorkspacePending({ shape: "rows", kpis: true, width: "7xl" });
 export const Route = createFileRoute("/_authenticated/client/positions/")({
+	pendingMs: 150,
+	pendingComponent: RoutePending,
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.positions.index.tsx"),
   notFoundComponent: makeRouteNotFoundComponent("client"),
  validateSearch: zodValidator(searchSchema),
@@ -65,6 +69,7 @@ import {
 } from "@/lib/empty-states/empty-state-catalogue";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
   clientRoleStatusLabel,
   type ClientRoleStatus,
 } from "@/lib/client-role-status";

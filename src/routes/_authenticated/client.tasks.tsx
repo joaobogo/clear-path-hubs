@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
   Plus,
   CheckCircle2,
   Circle,
@@ -53,7 +54,11 @@ import {
   ShieldAlert,
 } from "lucide-react";
 
+
+const RoutePending = makeWorkspacePending({ shape: "rows", kpis: false, width: "6xl" });
 export const Route = createFileRoute("/_authenticated/client/tasks")({
+	pendingMs: 150,
+	pendingComponent: RoutePending,
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.tasks.tsx"),
   notFoundComponent: makeRouteNotFoundComponent("client"),
   validateSearch: (search: Record<string, unknown>) => ({
