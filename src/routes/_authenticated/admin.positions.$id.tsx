@@ -15,7 +15,7 @@ import {
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
   getPosition,
@@ -61,6 +61,26 @@ import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { GeneratedBlueprintPanel } from "@/components/positions/generated-blueprint-panel";
 import { RoleMemoryPanel } from "@/components/role-memory-panel";
 import { SourcingOpsPanel } from "@/components/positions/sourcing-ops-panel";
+
+// Secondary panels are code-split; opening a role only pays for the overview.
+const TAB_MODULE = () => import("@/components/admin/position-detail/tabs");
+const RequirementsEditor = lazy(() => TAB_MODULE().then((m) => ({ default: m.RequirementsEditor })));
+const ScreeningEditor = lazy(() => TAB_MODULE().then((m) => ({ default: m.ScreeningEditor })));
+const BlueprintTab = lazy(() => TAB_MODULE().then((m) => ({ default: m.BlueprintTab })));
+const PipelineTab = lazy(() => TAB_MODULE().then((m) => ({ default: m.PipelineTab })));
+const ActivityTab = lazy(() => TAB_MODULE().then((m) => ({ default: m.ActivityTab })));
+const SettingsTab = lazy(() => TAB_MODULE().then((m) => ({ default: m.SettingsTab })));
+const AuditTab = lazy(() => TAB_MODULE().then((m) => ({ default: m.AuditTab })));
+
+function TabFallback() {
+  return (
+    <div className="space-y-3" aria-busy="true" aria-live="polite">
+      <div className="h-5 w-40 animate-pulse rounded bg-muted motion-reduce:animate-none" />
+      <div className="h-32 animate-pulse rounded-lg bg-muted motion-reduce:animate-none" />
+      <span className="sr-only">Loading panel…</span>
+    </div>
+  );
+}
 import { useConfirmAction } from "@/components/ds";
 import {
   DropdownMenu,
@@ -283,6 +303,7 @@ function PositionWorkspace() {
           </div>
         )}
 
+        <Suspense fallback={<TabFallback />}>
         {tab === "requirements" && (
           <RequirementsEditor
             positionId={id}
@@ -331,6 +352,7 @@ function PositionWorkspace() {
         )}
         {tab === "audit" && <AuditTab id={id} />}
         {tab === "settings" && <SettingsTab position={p} onDone={invalidate} />}
+        </Suspense>
       </section>
     </main>
   );
