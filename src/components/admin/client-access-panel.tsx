@@ -114,9 +114,39 @@ export function ClientAccessPanel({ organizationId }: { organizationId: string }
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const d = q.data;
+  const noMembers = !!d && d.members.length === 0 && d.pending.length === 0;
+
   return (
-    <PanelState query={q} isEmpty={false} skeletonRows={5}>
-      {q.data && <ClientAccessBody data={q.data} setInviteOpen={setInviteOpen} changeRole={changeRole} revoke={revoke} resend={resend} />}
+    <>
+      <PanelState
+        query={q}
+        isEmpty={noMembers}
+        skeletonRows={5}
+        empty={
+          <PanelEmpty
+            title="No client members yet"
+            description="Nobody from this account has access. Invite the first member to get them started."
+          >
+            <div className="mt-3">
+              <Button size="sm" onClick={() => setInviteOpen(true)}>
+                Invite the first member
+              </Button>
+            </div>
+          </PanelEmpty>
+        }
+      >
+        {d ? (
+          <ClientAccessBody
+            data={d}
+            setInviteOpen={setInviteOpen}
+            changeRole={changeRole}
+            revoke={revoke}
+            resend={resend}
+          />
+        ) : null}
+      </PanelState>
+
       <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
         <DialogContent>
           <DialogHeader>
@@ -161,9 +191,10 @@ export function ClientAccessPanel({ organizationId }: { organizationId: string }
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </PanelState>
+    </>
   );
 }
+
 
 function ClientAccessBody({
   data: d,
