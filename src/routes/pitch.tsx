@@ -7,7 +7,6 @@ import {
   CtaSection,
 } from "@/components/marketing/site-shell";
 import { marketingHead } from "@/lib/marketing/head";
-import { FoundersStrip } from "@/components/marketing/founders-strip";
 import { CheckCircle2, XCircle, Sparkles, ShieldCheck, LineChart, Users } from "lucide-react";
 import {
   PRICE_PILOT_DISPLAY,
@@ -389,15 +388,6 @@ function PitchPage() {
           </p>
         </PublicPage>
       </PublicSection>
-
-      {/* Founders trust marker */}
-      {!print ? (
-        <PublicSection className="border-t border-[color:var(--brand-navy)]/10">
-          <PublicPage>
-            <FoundersStrip />
-          </PublicPage>
-        </PublicSection>
-      ) : null}
 
       {!focus ? (
         <CtaSection
