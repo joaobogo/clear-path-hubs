@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
@@ -142,27 +142,16 @@ export function DeliveryFailuresPanel() {
         </p>
       </header>
 
-      {query.isLoading ? (
-        <div className="space-y-2">
-          {[0, 1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-16 w-full" />
-          ))}
-        </div>
-      ) : query.isError ? (
-        <Card className="p-6 border-destructive/40 bg-destructive/5">
-          <p className="text-sm font-medium">Could not load delivery failures</p>
-          <p className="text-sm text-muted-foreground mb-3">
-            {query.error instanceof Error ? query.error.message : "Unexpected error."}
-          </p>
-          <Button size="sm" variant="outline" onClick={() => void query.refetch()}>
-            Retry
-          </Button>
-        </Card>
-      ) : items.length === 0 ? (
-        <Card className="p-6 text-sm text-muted-foreground">
-          No delivery failures in the last {windowDays} days
-        </Card>
-      ) : (
+      <PanelState
+        query={query}
+        isEmpty={items.length === 0}
+        empty={
+          <PanelEmpty
+            title="No delivery failures"
+            description={`No delivery failures in the last ${windowDays} days.`}
+          />
+        }
+      >
         <div className="border rounded-lg overflow-x-auto">
           <table className="w-full text-sm min-w-[980px]">
             <thead className="bg-muted/50 text-left">
@@ -254,7 +243,7 @@ export function DeliveryFailuresPanel() {
             </tbody>
           </table>
         </div>
-      )}
+      </PanelState>
 
       {suppressions.length > 0 ? (
         <Card className="p-4 mt-6">

@@ -13,8 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ErrorState } from "@/components/ds";
 import { getCandidateHistory } from "@/lib/candidate-history.functions";
+import { PanelState } from "@/components/admin/panel-state";
 import {
   HISTORY_PAGE_SIZE,
   SOURCE_LABEL,
@@ -82,38 +82,9 @@ export function CandidateHistoryTimeline({
     }
   };
 
-  if (query.isPending) {
-    return (
-      <div className="rounded-lg border bg-card">
-        <div className="border-b px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          History
-        </div>
-        <ul className="divide-y" aria-busy="true" aria-label="Loading history">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <li key={i} className="flex gap-3 px-4 py-3">
-              <div className="mt-1 h-2 w-2 shrink-0 animate-pulse rounded-full bg-muted" />
-              <div className="min-w-0 flex-1 space-y-2">
-                <div className="h-3 w-1/3 animate-pulse rounded bg-muted" />
-                <div className="h-3 w-2/3 animate-pulse rounded bg-muted" />
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
-  }
-
-  if (query.isError) {
-    return (
-      <ErrorState
-        title="History could not be loaded"
-        description={(query.error as Error).message}
-        onRetry={() => void query.refetch()}
-      />
-    );
-  }
 
   return (
+    <PanelState query={query} skeletonRows={5}>
     <div className="space-y-4">
       <div className="rounded-lg border bg-card">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-2.5">
@@ -322,5 +293,6 @@ export function CandidateHistoryTimeline({
         )}
       </div>
     </div>
+    </PanelState>
   );
 }

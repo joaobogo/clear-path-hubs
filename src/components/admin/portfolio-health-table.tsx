@@ -10,7 +10,8 @@ import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getPortfolioHealth } from "@/lib/admin-portfolio.functions";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, ArrowDown, ArrowUp, RefreshCw } from "lucide-react";
+import { ArrowDown, ArrowUp, RefreshCw } from "lucide-react";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 
 type Health = Awaited<ReturnType<typeof getPortfolioHealth>>;
 type Row = Health["rows"][number];
@@ -129,49 +130,21 @@ export function PortfolioHealthTable({ includeTest }: { includeTest: boolean }) 
         </Button>
       </header>
 
-      {query.isPending ? (
-        <div className="divide-y" aria-busy="true" aria-label="Loading portfolio health">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="flex items-center gap-4 px-4 py-3">
-              <div className="h-4 w-48 animate-pulse rounded bg-muted" />
-              <div className="h-4 w-20 animate-pulse rounded bg-muted" />
-              <div className="ml-auto h-4 w-40 animate-pulse rounded bg-muted" />
-            </div>
-          ))}
-        </div>
-      ) : query.isError ? (
-        <div className="m-4 rounded-md border border-destructive/40 bg-destructive/5 p-4">
-          <div className="flex items-start gap-2">
-            <AlertTriangle className="mt-0.5 h-4 w-4 text-destructive" />
-            <div className="min-w-0">
-              <p className="text-sm font-medium text-destructive">
-                Portfolio health could not be loaded
-              </p>
-              <p className="mt-1 break-words text-xs text-muted-foreground">
-                {query.error instanceof Error ? query.error.message : "Unknown error"}
-              </p>
-              <Button
-                size="sm"
-                variant="outline"
-                className="mt-3 h-7 text-xs"
-                onClick={() => query.refetch()}
-              >
-                Retry
-              </Button>
-            </div>
+      <PanelState
+        query={query}
+        isEmpty={rows.length === 0}
+        empty={
+          <div className="px-4 py-10 text-center">
+            <p className="text-sm font-medium">No active client accounts yet</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Accounts appear here as soon as they have an open position.
+            </p>
+            <Button asChild size="sm" variant="secondary" className="mt-3 h-7 text-xs">
+              <Link to="/admin/clients_new">Add a client account</Link>
+            </Button>
           </div>
-        </div>
-      ) : rows.length === 0 ? (
-        <div className="px-4 py-10 text-center">
-          <p className="text-sm font-medium">No active client accounts yet</p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Accounts appear here as soon as they have an open position.
-          </p>
-          <Button asChild size="sm" variant="secondary" className="mt-3 h-7 text-xs">
-            <Link to="/admin/clients_new">Add a client account</Link>
-          </Button>
-        </div>
-      ) : (
+        }
+      >
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -262,7 +235,7 @@ export function PortfolioHealthTable({ includeTest }: { includeTest: boolean }) 
             </tbody>
           </table>
         </div>
-      )}
+      </PanelState>
     </section>
   );
 }

@@ -30,7 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ErrorState } from "@/components/ds";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { ArrowUpRight, AlertTriangle } from "lucide-react";
 
 const NONE = "__none__";
@@ -93,25 +93,12 @@ export function OwnershipCoveragePanel({
         </div>
       </div>
 
-      {q.isError ? (
-        <div className="mt-4">
-          <ErrorState
-            title="Couldn't load ownership coverage"
-            description={(q.error as Error)?.message ?? "The request failed."}
-            onRetry={() => void q.refetch()}
-          />
-        </div>
-      ) : q.isLoading ? (
-        <div className="mt-4 space-y-2" aria-busy="true">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-12 animate-pulse rounded bg-muted" />
-          ))}
-        </div>
-      ) : (q.data?.rows ?? []).length === 0 ? (
-        <p className="mt-6 py-8 text-center text-sm text-muted-foreground">
-          All open roles have an active owner
-        </p>
-      ) : (
+      <PanelState
+        query={q}
+        isEmpty={(q.data?.rows ?? []).length === 0}
+        className="mt-4"
+        empty={<PanelEmpty className="mt-4" title="All open roles have an active owner" description="Nothing needs reassignment right now." />}
+      >
         <div className="mt-4 overflow-x-auto">
           <table className="w-full text-sm">
             <caption className="sr-only">
@@ -133,7 +120,7 @@ export function OwnershipCoveragePanel({
             </tbody>
           </table>
         </div>
-      )}
+      </PanelState>
 
       <BulkReassign staff={staff} includeTest={includeTest} />
     </Card>

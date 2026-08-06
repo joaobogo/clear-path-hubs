@@ -6,9 +6,8 @@ import { endSupportSession } from "@/lib/support.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ChevronDown, ChevronRight, ShieldAlert } from "lucide-react";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
+import { ChevronDown, ChevronRight } from "lucide-react";
 
 const PERIODS = [
   { days: 1, label: "24 hours" },
@@ -70,113 +69,101 @@ export function SupportSessionAuditList() {
         </div>
       </CardHeader>
       <CardContent className="space-y-2">
-        {query.isPending ? (
-          <div className="space-y-2" aria-busy="true">
-            {[0, 1, 2].map((i) => (
-              <Skeleton key={i} className="h-16 w-full" />
-            ))}
-          </div>
-        ) : query.isError ? (
-          <Alert variant="destructive">
-            <ShieldAlert className="h-4 w-4" />
-            <AlertDescription className="flex flex-wrap items-center gap-3">
-              <span>Could not load the support audit trail.</span>
-              <Button size="sm" variant="outline" onClick={() => query.refetch()}>
-                Retry
-              </Button>
-            </AlertDescription>
-          </Alert>
-        ) : query.data.sessions.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No support sessions in this period.</p>
-        ) : (
-          <>
-            {query.data.expired_now > 0 ? (
-              <p className="text-xs text-muted-foreground">
-                {query.data.expired_now} session
-                {query.data.expired_now === 1 ? "" : "s"} closed automatically at expiry.
-              </p>
-            ) : null}
-            <ul className="space-y-2">
-              {query.data.sessions.map((s) => {
-                const isOpen = open[s.id] ?? false;
-                return (
-                  <li key={s.id} className="rounded-md border border-border/60">
-                    <div className="flex flex-wrap items-center gap-3 p-3 text-sm">
-                      <button
-                        type="button"
-                        onClick={() => setOpen((prev) => ({ ...prev, [s.id]: !isOpen }))}
-                        className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
-                        aria-expanded={isOpen}
-                        aria-label={isOpen ? "Hide session actions" : "Review session actions"}
-                      >
-                        {isOpen ? (
-                          <ChevronDown className="h-4 w-4" />
-                        ) : (
-                          <ChevronRight className="h-4 w-4" />
-                        )}
-                      </button>
-                      <Badge variant={s.mode === "interactive" ? "destructive" : "secondary"}>
-                        {s.mode === "interactive" ? "Interactive" : "Read-only"}
-                      </Badge>
-                      <span className="font-medium">{s.staff_name}</span>
-                      <span className="text-muted-foreground">→</span>
-                      <span className="font-medium">{s.organization_name}</span>
-                      <span className="text-muted-foreground">
-                        {fmt(s.started_at)} · {duration(s.started_at, s.ended_at)}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {s.actions.length} action{s.actions.length === 1 ? "" : "s"}
-                      </span>
-                      <span className="ml-auto flex items-center gap-2">
-                        {s.is_active ? (
-                          <>
-                            <Badge variant="outline">Open · expires {fmt(s.expires_at)}</Badge>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => end.mutate(s.id)}
-                              disabled={end.isPending}
-                            >
-                              End
-                            </Button>
-                          </>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">
-                            {s.end_reason === "expired" ? "Expired" : "Closed"}{" "}
-                            {s.ended_at ? fmt(s.ended_at) : ""}
-                          </span>
-                        )}
-                      </span>
-                    </div>
-                    <p className="border-t border-border/60 px-3 py-2 text-xs text-muted-foreground">
-                      Reason: <span className="text-foreground">{s.reason}</span> · role{" "}
-                      {s.actor_role} · scope {s.scope}
-                    </p>
-                    {isOpen ? (
-                      <div className="border-t border-border/60 p-3">
-                        {s.actions.length === 0 ? (
-                          <p className="text-xs text-muted-foreground">
-                            No actions were recorded inside this session.
-                          </p>
-                        ) : (
-                          <ol className="space-y-1">
-                            {s.actions.map((a) => (
-                              <li key={a.id} className="text-xs text-muted-foreground">
-                                <span className="text-foreground">{a.action}</span> ·{" "}
-                                {a.target_type ?? "—"} · {fmt(a.occurred_at)}
-                                {a.reason ? ` · ${a.reason}` : ""}
-                              </li>
-                            ))}
-                          </ol>
-                        )}
+        <PanelState
+          query={query}
+          isEmpty={(query.data?.sessions.length ?? 0) === 0}
+          empty={<PanelEmpty title="No support sessions in this period." />}
+        >
+          {query.data && (
+            <>
+              {query.data.expired_now > 0 ? (
+                <p className="text-xs text-muted-foreground">
+                  {query.data.expired_now} session
+                  {query.data.expired_now === 1 ? "" : "s"} closed automatically at expiry.
+                </p>
+              ) : null}
+              <ul className="space-y-2">
+                {query.data.sessions.map((s) => {
+                  const isOpen = open[s.id] ?? false;
+                  return (
+                    <li key={s.id} className="rounded-md border border-border/60">
+                      <div className="flex flex-wrap items-center gap-3 p-3 text-sm">
+                        <button
+                          type="button"
+                          onClick={() => setOpen((prev) => ({ ...prev, [s.id]: !isOpen }))}
+                          className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
+                          aria-expanded={isOpen}
+                          aria-label={isOpen ? "Hide session actions" : "Review session actions"}
+                        >
+                          {isOpen ? (
+                            <ChevronDown className="h-4 w-4" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4" />
+                          )}
+                        </button>
+                        <Badge variant={s.mode === "interactive" ? "destructive" : "secondary"}>
+                          {s.mode === "interactive" ? "Interactive" : "Read-only"}
+                        </Badge>
+                        <span className="font-medium">{s.staff_name}</span>
+                        <span className="text-muted-foreground">→</span>
+                        <span className="font-medium">{s.organization_name}</span>
+                        <span className="text-muted-foreground">
+                          {fmt(s.started_at)} · {duration(s.started_at, s.ended_at)}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {s.actions.length} action{s.actions.length === 1 ? "" : "s"}
+                        </span>
+                        <span className="ml-auto flex items-center gap-2">
+                          {s.is_active ? (
+                            <>
+                              <Badge variant="outline">Open · expires {fmt(s.expires_at)}</Badge>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => end.mutate(s.id)}
+                                disabled={end.isPending}
+                              >
+                                End
+                              </Button>
+                            </>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">
+                              {s.end_reason === "expired" ? "Expired" : "Closed"}{" "}
+                              {s.ended_at ? fmt(s.ended_at) : ""}
+                            </span>
+                          )}
+                        </span>
                       </div>
-                    ) : null}
-                  </li>
-                );
-              })}
-            </ul>
-          </>
-        )}
+                      <p className="border-t border-border/60 px-3 py-2 text-xs text-muted-foreground">
+                        Reason: <span className="text-foreground">{s.reason}</span> · role{" "}
+                        {s.actor_role} · scope {s.scope}
+                      </p>
+                      {isOpen ? (
+                        <div className="border-t border-border/60 p-3">
+                          {s.actions.length === 0 ? (
+                            <p className="text-xs text-muted-foreground">
+                              No actions were recorded inside this session.
+                            </p>
+                          ) : (
+                            <ol className="space-y-1">
+                              {s.actions.map((a) => (
+                                <li key={a.id} className="text-xs text-muted-foreground">
+                                  <span className="text-foreground">{a.action}</span> ·{" "}
+                                  {a.target_type ?? "—"} · {fmt(a.occurred_at)}
+                                  {a.reason ? ` · ${a.reason}` : ""}
+                                </li>
+                              ))}
+                            </ol>
+                          )}
+                        </div>
+                      ) : null}
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          )}
+        </PanelState>
       </CardContent>
     </Card>
   );

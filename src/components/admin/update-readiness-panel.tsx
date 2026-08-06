@@ -4,8 +4,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { AlertTriangle, Check, Copy, RotateCcw } from "lucide-react";
+import { Check, Copy, RotateCcw } from "lucide-react";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import {
   getUpdateReadiness,
   markClientUpdateSent,
@@ -67,46 +67,28 @@ export function UpdateReadinessPanel({ organizationId }: { organizationId: strin
     [query.data],
   );
 
-  if (query.isPending) {
-    return (
-      <section className="rounded-lg border p-5">
-        <Skeleton className="h-5 w-48" />
-        <Skeleton className="mt-2 h-4 w-72" />
-        <div className="mt-5 space-y-3">
-          {[0, 1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-12 w-full" />
-          ))}
-        </div>
-      </section>
-    );
-  }
 
-  if (query.isError || !query.data) {
-    return (
-      <section className="rounded-lg border border-destructive/40 bg-destructive/5 p-5">
-        <div className="flex items-start gap-3">
-          <AlertTriangle className="mt-0.5 h-4 w-4 text-destructive" />
-          <div>
-            <h3 className="font-medium">Update readiness could not be loaded</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {query.error instanceof Error ? query.error.message : "Unexpected error."}
-            </p>
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-3"
-              onClick={() => void query.refetch()}
-            >
-              Retry
-            </Button>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  return (
+    <PanelState
+      query={query}
+      isEmpty={false}
+      skeletonRows={4}
+      className="rounded-lg border p-5"
+    >
+      {query.data && <UpdateReadinessBody organizationId={organizationId} r={query.data} summaryText={summaryText} copied={copied} setCopied={setCopied} markSent={markSent} revert={revert} />}
+    </PanelState>
+  );
+}
 
-  const r = query.data;
-
+function UpdateReadinessBody({
+  organizationId,
+  r,
+  summaryText,
+  copied,
+  setCopied,
+  markSent,
+  revert,
+}: any) {
   return (
     <section className="rounded-lg border" data-qa="update-readiness">
       <header className="flex flex-wrap items-start justify-between gap-3 border-b p-5">

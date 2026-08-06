@@ -4,7 +4,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
@@ -16,7 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Copy, Users, Undo2 } from "lucide-react";
-import { ErrorState } from "@/components/ds";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import {
   getDuplicateReview,
   markPersonsDistinctFn,
@@ -274,28 +273,17 @@ export function DuplicateCandidatesPanel() {
         nothing is merged automatically.
       </p>
 
-      {query.isPending ? (
-        <div className="space-y-2">
-          <Skeleton className="h-24 w-full" />
-          <Skeleton className="h-24 w-full" />
-        </div>
-      ) : query.isError ? (
-        <ErrorState
-          title="Could not load duplicate review"
-          description={(query.error as Error)?.message ?? "Something went wrong."}
-          onRetry={() => void query.refetch()}
-        />
-      ) : query.data.pairs.length === 0 ? (
-        <p className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
-          No duplicate identifiers found.
-        </p>
-      ) : (
+      <PanelState
+        query={query}
+        isEmpty={(query.data?.pairs.length ?? 0) === 0}
+        empty={<PanelEmpty title="No duplicate identifiers found" />}
+      >
         <div className="space-y-3">
-          {query.data.pairs.map((pair) => (
+          {query.data?.pairs.map((pair) => (
             <PairRow key={pair.pair_key} pair={pair} />
           ))}
         </div>
-      )}
+      </PanelState>
 
       {query.data && query.data.resolved.length > 0 ? (
         <div className="space-y-2 pt-2">
