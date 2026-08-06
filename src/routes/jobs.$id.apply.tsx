@@ -702,6 +702,7 @@ function ApplyPage() {
         submittingRef.current = false;
         return;
       }
+      track("apply_submitted", { position_id: id, device: deviceBucket(window.innerWidth) });
       try {
         localStorage.removeItem(draftKey);
       } catch { /* ignore */ }
