@@ -2,7 +2,12 @@ import { useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { previewBulkAction, executeBulkAction } from "@/lib/bulk-actions.functions";
-import type { BulkPreview, ExecResult, PlanRow } from "@/lib/bulk-actions.types";
+import type {
+  BulkPreview,
+  ExecResult,
+  ExecItemResult,
+  PlanRow,
+} from "@/lib/bulk-actions.types";
 import type { BulkStage } from "@/lib/admin-bulk-constants";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -43,8 +48,11 @@ export function BulkConfirmDialog({ request, onClose, onCommitted }: BulkConfirm
   const previewFn = useServerFn(previewBulkAction);
   const executeFn = useServerFn(executeBulkAction);
   const [preview, setPreview] = useState<BulkPreview | null>(null);
-  const [report, setReport] = useState<ExecResult | null>(null);
-  const [progress, setProgress] = useState(0);
+  const [report, setReport] = useState<RunReport | null>(null);
+  // Live batch progress, driven by the cursor the server returns — not a timer.
+  const [progress, setProgress] = useState<{ processed: number; total: number } | null>(null);
+  // Set when a batch call itself fails. Holds everything needed to resume.
+  const [stalled, setStalled] = useState<Stall | null>(null);
 
   const open = request !== null;
 
@@ -63,29 +71,66 @@ export function BulkConfirmDialog({ request, onClose, onCommitted }: BulkConfirm
     setSeen(request);
     setPreview(null);
     setReport(null);
-    setProgress(0);
+    setProgress(null);
+    setStalled(null);
     previewQ.mutate(request);
   }
 
+  /**
+   * Runs a plan in bounded batches, following the cursor the server hands back.
+   * Each batch commits on its own, so a mid-run failure keeps everything before
+   * it and leaves a resume point instead of an unknown partial state.
+   */
   const exec = useMutation({
-    mutationFn: async (onlyIds?: string[]) => {
+    mutationFn: async (start: RunStart): Promise<RunReport> => {
       if (!preview) throw new Error("No preview to execute");
-      const total = onlyIds?.length ?? preview.eligible;
-      setProgress(0);
-      const ticker = setInterval(
-        () => setProgress((n) => (n < total ? n + 1 : n)),
-        Math.max(80, Math.min(400, 3000 / Math.max(1, total))),
-      );
-      try {
-        return await executeFn({
-          data: { plan_id: preview.plan_id, ...(onlyIds ? { only_ids: onlyIds } : {}) },
-        });
-      } finally {
-        clearInterval(ticker);
+      const collected: ExecItemResult[] = [...(start.priorResults ?? [])];
+      let cursor: number | null = start.cursor ?? 0;
+      let total = start.expectedTotal ?? preview.eligible;
+      let processed = collected.length;
+      setProgress({ processed, total });
+
+      while (cursor !== null) {
+        const from: number = cursor;
+        let batch: ExecResult;
+        try {
+          batch = await executeFn({
+            data: {
+              plan_id: preview.plan_id,
+              ...(start.onlyIds ? { only_ids: start.onlyIds } : {}),
+              cursor: from,
+            },
+          });
+        } catch (e) {
+          // The batch never landed: keep the resume point and stop cleanly.
+          setStalled({
+            cursor: from,
+            ...(start.onlyIds ? { onlyIds: start.onlyIds } : {}),
+            priorResults: collected,
+            expectedTotal: total,
+            message: e instanceof Error ? e.message : "The batch failed",
+          });
+          throw e;
+        }
+        collected.push(...batch.results);
+        total = batch.total;
+        processed = batch.processed;
+        cursor = batch.next_cursor;
+        setProgress({ processed, total });
       }
+
+      return {
+        results: collected,
+        attempted: collected.length,
+        succeeded: collected.filter((r) => r.ok).length,
+        failed: collected.filter((r) => !r.ok).length,
+        total,
+      };
     },
-    onSuccess: async (r: ExecResult) => {
+    onMutate: () => setStalled(null),
+    onSuccess: async (r: RunReport) => {
       setReport(r);
+      setProgress(null);
       if (r.failed > 0) {
         toast.error(`${r.succeeded} of ${r.attempted} changed · ${r.failed} failed`);
       } else {
@@ -96,7 +141,12 @@ export function BulkConfirmDialog({ request, onClose, onCommitted }: BulkConfirm
         onCommitted?.();
       }
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: async (e: Error) => {
+      setProgress(null);
+      toast.error(e.message);
+      // Rows that did commit before the stall are real changes: refresh.
+      await qc.invalidateQueries();
+    },
   });
 
   const eligibleRows = useMemo(
@@ -227,11 +277,36 @@ export function BulkConfirmDialog({ request, onClose, onCommitted }: BulkConfirm
               </div>
             )}
 
-            {exec.isPending && (
-              <p className="flex items-center gap-2 text-muted-foreground" aria-live="polite">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Applying {Math.min(progress, eligibleRows.length)} of {eligibleRows.length}…
-              </p>
+            {exec.isPending && progress && (
+              <div className="space-y-1" aria-live="polite">
+                <p className="flex items-center gap-2 text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Applying {progress.processed} of {progress.total}…
+                </p>
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-primary transition-all"
+                    style={{
+                      width: `${Math.round((progress.processed / Math.max(1, progress.total)) * 100)}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {stalled && !exec.isPending && (
+              <div className="space-y-2 rounded-md border border-destructive/40 bg-destructive/5 p-3">
+                <p className="flex items-center gap-1.5 font-medium text-destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  Stopped after {stalled.priorResults.length} of {stalled.expectedTotal}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {stalled.message}. Everything before this point is already saved.
+                </p>
+                <Button size="sm" variant="outline" onClick={() => exec.mutate(stalled)}>
+                  Resume from record {stalled.cursor + 1}
+                </Button>
+              </div>
             )}
           </div>
         ) : null}
@@ -243,7 +318,7 @@ export function BulkConfirmDialog({ request, onClose, onCommitted }: BulkConfirm
                 <Button
                   variant="outline"
                   disabled={exec.isPending}
-                  onClick={() => exec.mutate(failures.map((f) => f.id))}
+                  onClick={() => exec.mutate({ onlyIds: failures.map((f) => f.id), cursor: 0 })}
                 >
                   {exec.isPending ? "Retrying…" : `Retry ${failures.length} failure(s)`}
                 </Button>
@@ -270,7 +345,7 @@ export function BulkConfirmDialog({ request, onClose, onCommitted }: BulkConfirm
               </Button>
               <Button
                 disabled={!preview || preview.eligible === 0 || exec.isPending}
-                onClick={() => exec.mutate(undefined)}
+                onClick={() => exec.mutate({ cursor: 0 })}
               >
                 {exec.isPending
                   ? "Applying…"
@@ -283,6 +358,29 @@ export function BulkConfirmDialog({ request, onClose, onCommitted }: BulkConfirm
     </Dialog>
   );
 }
+
+type RunStart = {
+  cursor?: number;
+  onlyIds?: string[];
+  priorResults?: ExecItemResult[];
+  expectedTotal?: number;
+};
+
+type Stall = {
+  cursor: number;
+  onlyIds?: string[];
+  priorResults: ExecItemResult[];
+  expectedTotal: number;
+  message: string;
+};
+
+type RunReport = {
+  results: ExecItemResult[];
+  attempted: number;
+  succeeded: number;
+  failed: number;
+  total: number;
+};
 
 function countOf(request: PreviewInput | null): number {
   if (!request) return 0;
