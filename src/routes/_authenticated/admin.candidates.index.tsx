@@ -488,7 +488,6 @@ function CandidatesPage() {
         }
       />
 
-      {/* Filters */}
       {/* Filters: full grid on desktop, drawer on small screens */}
       <div className="mt-4 hidden grid-cols-2 gap-2 md:grid md:grid-cols-4 xl:grid-cols-6">
         {filterControls}
