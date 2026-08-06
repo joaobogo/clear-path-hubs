@@ -40,7 +40,8 @@ type QaAction =
   | "lookup_candidate_application"
   | "cleanup_candidate_e2e"
   | "lookup_booking"
-  | "cleanup_booking_e2e";
+  | "cleanup_booking_e2e"
+  | "lookup_tenant";
 
 function token(): string {
   const value = process.env["QA_SEED_TOKEN"];
