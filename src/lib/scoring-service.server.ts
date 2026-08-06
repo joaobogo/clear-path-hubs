@@ -597,6 +597,13 @@ export async function executeScoring(
     await releaseLock(s, matchId, finalState, trace_id);
     await recordJob(s, matchId, "completed", trace_id, 1);
 
+    // A fresh run describes today's facts: the staleness record is cleared so
+    // no surface keeps warning about a change that has now been accounted for.
+    if (!reused) {
+      const { clearScoreStaleness } = await import("./scoring/freshness-reconcile.server");
+      await clearScoreStaleness(matchId);
+    }
+
     return {
       ok: true, run_id: runId, match_id: matchId, trace_id,
       final_state: finalState, reused, score: raw.score,
