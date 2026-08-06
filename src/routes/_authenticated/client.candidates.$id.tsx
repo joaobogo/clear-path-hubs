@@ -40,6 +40,7 @@ import {
 import type { MatchStage } from "@/lib/client-kpi.server";
 import { buildShortlistRationale } from "@/lib/client-rationale";
 import { DownloadCvButton } from "@/components/download-cv-button";
+import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { OpenThreadButton } from "@/components/comms/open-thread-button";
 import { JourneyTimeline } from "@/components/candidate/journey-timeline";
