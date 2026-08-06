@@ -25,9 +25,6 @@ export const Route = createFileRoute("/_authenticated/admin/lead-delivery")({
     ],
   }),
   errorComponent: makeRouteErrorComponent(
-    "admin",
-    "src/routes/_authenticated/admin.lead-delivery.tsx",
-  ),
   component: LeadDeliveryPage,
 });
 

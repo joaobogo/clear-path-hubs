@@ -23,9 +23,6 @@ export const Route = createFileRoute("/_authenticated/admin/approvals")({
     ],
   }),
   errorComponent: makeRouteErrorComponent(
-    "admin",
-    "src/routes/_authenticated/admin.approvals.tsx",
-  ),
   component: ApprovalsPage,
 });
 

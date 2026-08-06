@@ -36,9 +36,6 @@ export const Route = createFileRoute("/_authenticated/admin/review/$matchId")({
     if (!d) throw notFound();
     return d;
   },
-    "admin",
-    "src/routes/_authenticated/admin.review.$matchId.tsx",
-  ),
   head: () => ({
     meta: [{ title: "Candidate review · TaaSFlow admin" }, { name: "robots", content: "noindex" }],
   }),

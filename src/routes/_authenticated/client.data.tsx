@@ -27,9 +27,6 @@ export const Route = createFileRoute("/_authenticated/client/data")({
     ],
   }),
   errorComponent: makeRouteErrorComponent(
-    "client",
-    "src/routes/_authenticated/client.data.tsx",
-  ),
   notFoundComponent: () => (
     <div className="p-8 text-sm text-muted-foreground">Not found.</div>
   ),

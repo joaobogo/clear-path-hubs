@@ -24,9 +24,6 @@ const healthQuery = {
 export const Route = createFileRoute("/_authenticated/admin/integrations")({
   loader: ({ context }) => context.queryClient.ensureQueryData(healthQuery),
   head: () => ({ meta: [{ title: "Integration health · TaaSFlow admin" }] }),
-    "admin",
-    "src/routes/_authenticated/admin.integrations.tsx",
-  ),
   component: IntegrationHealthPage,
   errorComponent: makeRouteErrorComponent("admin", "_authenticated/admin.integrations"),
   notFoundComponent: makeRouteNotFoundComponent("admin"),

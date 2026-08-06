@@ -29,9 +29,6 @@ export const Route = createFileRoute("/_authenticated/admin/parse-failures")({
     ],
   }),
   errorComponent: makeRouteErrorComponent(
-    "admin",
-    "src/routes/_authenticated/admin.parse-failures.tsx",
-  ),
   component: ParseFailures,
 });
 

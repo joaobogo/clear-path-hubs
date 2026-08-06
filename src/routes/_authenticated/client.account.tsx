@@ -85,9 +85,6 @@ export const Route = createFileRoute("/_authenticated/client/account")({
     ],
   }),
   errorComponent: makeRouteErrorComponent(
-    "client",
-    "src/routes/_authenticated/client.account.tsx",
-  ),
   component: AccountPage,
 });
 

@@ -47,9 +47,6 @@ export const Route = createFileRoute("/_authenticated/client/agents")({
     ],
   }),
   errorComponent: makeRouteErrorComponent(
-    "client",
-    "src/routes/_authenticated/client.agents.tsx",
-  ),
   notFoundComponent: () => (
     <div className="p-8 text-sm text-muted-foreground">Not found.</div>
   ),
