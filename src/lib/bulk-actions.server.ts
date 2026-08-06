@@ -12,17 +12,58 @@
 
 import { BULK_STAGES, type BulkStage } from "./admin-bulk-constants";
 
-export type {
-  FieldChange,
-  PlanRow,
-  BulkKind,
-  BulkPreview,
-  ExecResult,
-} from "./bulk-actions.types";
-import type { PlanRow, BulkPreview, ExecResult } from "./bulk-actions.types";
+export type { FieldChange, PlanRow, BulkKind, BulkPreview, ExecResult } from "./bulk-actions.types";
+import type { PlanRow, BulkPreview, ExecResult, ExecItemResult } from "./bulk-actions.types";
+import { BULK_EXEC_BATCH, BULK_SELECTION_CAP } from "./bulk-actions.types";
+
+/**
+ * Reads are chunked instead of capped. The old `.limit(500)` silently dropped
+ * every id past the cap, so an operator could confirm a plan for 500 records
+ * without ever learning the rest of their selection existed.
+ */
+const READ_CHUNK = 100;
+
+/* eslint-disable @typescript-eslint/no-explicit-any -- PostgREST embeds are
+   dynamically shaped; rows are read defensively below. */
+type LooseRow = Record<string, any>;
+
+function chunk<T>(items: T[], size = READ_CHUNK): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
+  return out;
+}
+
+/** The cap is explicit: past it the request is refused, never truncated. */
+function assertWithinCap(ids: string[]) {
+  if (ids.length > BULK_SELECTION_CAP) {
+    throw new Error(
+      `Selection of ${ids.length} records exceeds the bulk limit of ${BULK_SELECTION_CAP}. Narrow the filter and run it in passes.`,
+    );
+  }
+}
+
+/** Loads every requested row in bounded parallel batches, keyed by id. */
+async function loadByIds(
+  admin: Admin,
+  table: string,
+  select: string,
+  ids: string[],
+): Promise<Map<string, LooseRow>> {
+  assertWithinCap(ids);
+  const unique = [...new Set(ids)];
+  const results = await Promise.all(
+    chunk(unique).map((batch) => admin.from(table).select(select).in("id", batch)),
+  );
+  const map = new Map<string, LooseRow>();
+  for (const r of results) {
+    if (r.error) throw r.error;
+    for (const row of (r.data ?? []) as LooseRow[]) map.set(row.id as string, row);
+  }
+  return map;
+}
 
 // Untyped admin client: these queries span many generated table types.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 type Admin = any;
 
 const STAGE_LABEL: Record<string, string> = {
@@ -44,21 +85,23 @@ async function planCandidateStage(
   matchIds: string[],
   toStage: BulkStage,
 ): Promise<{ summary: string; rows: PlanRow[] }> {
-  const { data, error } = await admin
-    .from("candidate_matches")
-    .select(
-      "id, stage, admin_status, position_id, candidate_profiles:candidate_profile_id(full_name), positions:position_id(title, status)",
-    )
-    .in("id", matchIds)
-    .limit(500);
-  if (error) throw error;
-  const found = new Map<string, Record<string, any>>(
-    (data ?? []).map((r: any) => [r.id as string, r]),
+  const found = await loadByIds(
+    admin,
+    "candidate_matches",
+    "id, stage, admin_status, position_id, candidate_profiles:candidate_profile_id(full_name), positions:position_id(title, status)",
+    matchIds,
   );
   const rows: PlanRow[] = matchIds.map((id) => {
     const row = found.get(id);
     if (!row) {
-      return { id, label: "Unknown record", context: "—", eligible: false, reason: "Record not found", changes: [] };
+      return {
+        id,
+        label: "Unknown record",
+        context: "—",
+        eligible: false,
+        reason: "Record not found",
+        changes: [],
+      };
     }
     let reason: string | undefined;
     if (row.stage === toStage) reason = "Already at this stage";
@@ -90,25 +133,36 @@ async function planCandidateAssign(
   candidateProfileIds: string[],
   positionId: string,
 ): Promise<{ summary: string; rows: PlanRow[] }> {
-  const [posRes, profilesRes, existingRes] = await Promise.all([
+  assertWithinCap(candidateProfileIds);
+  const idChunks = chunk([...new Set(candidateProfileIds)]);
+  const [posRes, profiles, existingChunks] = await Promise.all([
     admin
       .from("positions")
       .select("id, title, status, organization_id")
       .eq("id", positionId)
       .maybeSingle(),
-    admin.from("candidate_profiles").select("id, full_name").in("id", candidateProfileIds).limit(500),
-    admin
-      .from("candidate_matches")
-      .select("candidate_profile_id")
-      .eq("position_id", positionId)
-      .in("candidate_profile_id", candidateProfileIds),
+    loadByIds(admin, "candidate_profiles", "id, full_name", candidateProfileIds),
+    Promise.all(
+      idChunks.map((batch) =>
+        admin
+          .from("candidate_matches")
+          .select("candidate_profile_id")
+          .eq("position_id", positionId)
+          .in("candidate_profile_id", batch),
+      ),
+    ),
   ]);
   if (posRes.error) throw posRes.error;
   if (!posRes.data) throw new Error("Position not found");
   const position = posRes.data as Record<string, any>;
-  const already = new Set((existingRes.data ?? []).map((r: any) => r.candidate_profile_id as string));
+  for (const r of existingChunks) if (r.error) throw r.error;
+  const already = new Set(
+    existingChunks
+      .flatMap((r) => (r.data ?? []) as LooseRow[])
+      .map((r) => r.candidate_profile_id as string),
+  );
   const names = new Map<string, string>(
-    (profilesRes.data ?? []).map((p: any) => [p.id as string, (p.full_name as string) ?? "Candidate"]),
+    [...profiles.entries()].map(([id, p]) => [id, (p.full_name as string) ?? "Candidate"]),
   );
 
   const rows: PlanRow[] = candidateProfileIds.map((id) => {
@@ -142,19 +196,23 @@ async function planCandidateMessage(
   admin: Admin,
   matchIds: string[],
 ): Promise<{ summary: string; rows: PlanRow[] }> {
-  const { data, error } = await admin
-    .from("candidate_matches")
-    .select("id, candidate_profiles:candidate_profile_id(full_name), positions:position_id(title)")
-    .in("id", matchIds)
-    .limit(500);
-  if (error) throw error;
-  const found = new Map<string, Record<string, any>>(
-    (data ?? []).map((r: any) => [r.id as string, r]),
+  const found = await loadByIds(
+    admin,
+    "candidate_matches",
+    "id, candidate_profiles:candidate_profile_id(full_name), positions:position_id(title)",
+    matchIds,
   );
   const rows: PlanRow[] = matchIds.map((id) => {
     const row = found.get(id);
     if (!row)
-      return { id, label: "Unknown record", context: "—", eligible: false, reason: "Record not found", changes: [] };
+      return {
+        id,
+        label: "Unknown record",
+        context: "—",
+        eligible: false,
+        reason: "Record not found",
+        changes: [],
+      };
     return {
       id,
       label: (row.candidate_profiles?.full_name as string) || "Candidate",
@@ -170,19 +228,23 @@ async function planPositionPause(
   admin: Admin,
   positionIds: string[],
 ): Promise<{ summary: string; rows: PlanRow[] }> {
-  const { data, error } = await admin
-    .from("positions")
-    .select("id, title, status, organizations:organization_id(name)")
-    .in("id", positionIds)
-    .limit(500);
-  if (error) throw error;
-  const found = new Map<string, Record<string, any>>(
-    (data ?? []).map((r: any) => [r.id as string, r]),
+  const found = await loadByIds(
+    admin,
+    "positions",
+    "id, title, status, organizations:organization_id(name)",
+    positionIds,
   );
   const rows: PlanRow[] = positionIds.map((id) => {
     const row = found.get(id);
     if (!row)
-      return { id, label: "Unknown role", context: "—", eligible: false, reason: "Record not found", changes: [] };
+      return {
+        id,
+        label: "Unknown role",
+        context: "—",
+        eligible: false,
+        reason: "Record not found",
+        changes: [],
+      };
     const reason =
       row.status === "paused"
         ? "Already paused"
@@ -242,12 +304,7 @@ export async function createPreview(
 
 // ── Per-record execution ─────────────────────────────────────────────────────
 
-async function execStage(
-  admin: Admin,
-  row: PlanRow,
-  toStage: BulkStage,
-  actorUserId: string,
-) {
+async function execStage(admin: Admin, row: PlanRow, toStage: BulkStage, actorUserId: string) {
   const { error } = await admin
     .from("candidate_matches")
     .update({ stage: toStage, updated_at: new Date().toISOString() })
@@ -261,11 +318,7 @@ async function execStage(
   } as never);
 }
 
-async function execAssign(
-  admin: Admin,
-  row: PlanRow,
-  positionId: string,
-) {
+async function execAssign(admin: Admin, row: PlanRow, positionId: string) {
   const { data: position, error: posErr } = await admin
     .from("positions")
     .select("id, organization_id")
@@ -297,12 +350,7 @@ async function execAssign(
   if (matchErr) throw new Error(matchErr.message);
 }
 
-async function execMessage(
-  admin: Admin,
-  row: PlanRow,
-  message: string,
-  actorUserId: string,
-) {
+async function execMessage(admin: Admin, row: PlanRow, message: string, actorUserId: string) {
   const { data: match, error } = await admin
     .from("candidate_matches")
     .select("id, organization_id, position_id, candidate_profile_id")
@@ -342,15 +390,44 @@ async function execPositionPause(admin: Admin, row: PlanRow) {
   if (error) throw new Error(error.message);
 }
 
+export type ExecuteOptions = {
+  /** Retry a specific subset (typically the failures of an earlier batch). */
+  onlyIds?: string[];
+  /** Resume position in the plan's ordered eligible rows. Defaults to 0. */
+  cursor?: number;
+  /** Rows to process in this call. Bounded by BULK_EXEC_BATCH. */
+  batchSize?: number;
+};
+
+type StoredProgress = {
+  cursor: number;
+  processed: number;
+  total: number;
+  succeeded: number;
+  failed: number;
+  results: ExecItemResult[];
+  only_ids?: string[] | null;
+};
+
+/**
+ * Executes ONE bounded batch of a plan and returns a cursor for the next one.
+ *
+ * Why batching with a cursor rather than one long request: a 2,000 record run in
+ * a single call has no observable progress, and any failure mid-way leaves the
+ * operator unable to tell what committed. Here each batch commits its own rows,
+ * writes its cursor and per-record outcomes onto the plan, and hands back
+ * `next_cursor`. If a batch dies (timeout, transport error), the caller resumes
+ * from the stored cursor and no committed row is redone.
+ */
 export async function executePlan(
   admin: Admin,
   actorUserId: string,
   planId: string,
-  onlyIds?: string[],
+  options: ExecuteOptions = {},
 ): Promise<ExecResult> {
   const { data: plan, error } = await admin
     .from("bulk_action_plans")
-    .select("id, actor_user_id, kind, params, rows, expires_at")
+    .select("id, actor_user_id, kind, params, rows, expires_at, result")
     .eq("id", planId)
     .maybeSingle();
   if (error) throw new Error(error.message);
@@ -361,14 +438,29 @@ export async function executePlan(
 
   const params = plan.params as BulkParams;
   const allRows = (plan.rows as PlanRow[]) ?? [];
-  const only = onlyIds && onlyIds.length > 0 ? new Set(onlyIds) : null;
-  // Only records the operator saw counted as eligible can be written.
+  const only = options.onlyIds && options.onlyIds.length > 0 ? new Set(options.onlyIds) : null;
+  // Only records the operator saw counted as eligible can be written. The order
+  // comes from the stored plan, so a cursor means the same thing on every call.
   const targets = allRows.filter((r) => r.eligible && (!only || only.has(r.id)));
+  const total = targets.length;
 
-  const results: ExecResult["results"] = [];
-  for (const row of targets) {
+  const stored = (plan.result ?? null) as StoredProgress | null;
+  const sameRun =
+    stored != null &&
+    JSON.stringify(stored.only_ids ?? null) === JSON.stringify(only ? Array.from(only) : null);
+  // A resume with no explicit cursor picks up where the stored progress stopped.
+  const cursor = Math.max(0, Math.min(total, options.cursor ?? (sameRun ? stored!.cursor : 0)));
+  const batchSize = Math.max(1, Math.min(options.batchSize ?? BULK_EXEC_BATCH, BULK_EXEC_BATCH));
+  const batch = targets.slice(cursor, cursor + batchSize);
+
+  const priorResults: ExecItemResult[] =
+    sameRun && cursor > 0 ? (stored!.results ?? []).slice(0, cursor) : [];
+
+  const results: ExecItemResult[] = [];
+  for (const row of batch) {
     try {
-      if (params.kind === "candidate_stage") await execStage(admin, row, params.to_stage, actorUserId);
+      if (params.kind === "candidate_stage")
+        await execStage(admin, row, params.to_stage, actorUserId);
       else if (params.kind === "candidate_assign") await execAssign(admin, row, params.position_id);
       else if (params.kind === "candidate_update_message")
         await execMessage(admin, row, params.message, actorUserId);
@@ -386,31 +478,63 @@ export async function executePlan(
 
   const succeeded = results.filter((r) => r.ok).length;
   const failed = results.length - succeeded;
+  const runResults = [...priorResults, ...results];
+  const nextCursor = cursor + results.length;
+  const done = nextCursor >= total;
 
+  const progress: StoredProgress = {
+    cursor: nextCursor,
+    processed: runResults.length,
+    total,
+    succeeded: runResults.filter((r) => r.ok).length,
+    failed: runResults.filter((r) => !r.ok).length,
+    results: runResults,
+    only_ids: only ? Array.from(only) : null,
+  };
+
+  // Persist progress before returning: if the client never sees this response,
+  // the next call still resumes from here instead of replaying committed rows.
   await admin
     .from("bulk_action_plans")
     .update({
-      executed_at: new Date().toISOString(),
-      result: { attempted: results.length, succeeded, failed, results },
+      ...(done ? { executed_at: new Date().toISOString() } : {}),
+      result: progress,
     } as never)
     .eq("id", planId);
 
+  // One audit row per batch, so a resumed run leaves a readable trail.
   await admin.from("audit_events").insert({
     actor_user_id: actorUserId,
     action: `bulk.${params.kind}`,
     entity_type: params.kind === "position_pause" ? "position" : "candidate_match",
-    entity_id: targets[0]?.id ?? null,
+    entity_id: batch[0]?.id ?? null,
     metadata: {
       plan_id: planId,
+      batch_from: cursor,
+      batch_to: nextCursor,
+      total,
       attempted: results.length,
       succeeded,
       failed,
+      done,
       skipped: allRows.filter((r) => !r.eligible).length,
       retry_only: only ? Array.from(only) : null,
     },
   } as never);
 
-  return { plan_id: planId, attempted: results.length, succeeded, failed, results };
+  return {
+    plan_id: planId,
+    cursor,
+    next_cursor: done ? null : nextCursor,
+    total,
+    processed: runResults.length,
+    done,
+    attempted: results.length,
+    succeeded,
+    failed,
+    results,
+    failures_so_far: runResults.filter((r) => !r.ok),
+  };
 }
 
 export { BULK_STAGES };
