@@ -29,6 +29,7 @@ import { readStaleStateError } from "@/lib/decision-concurrency";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 
 import { BackLink, CandidateHeader, JumpNav, SectionCard } from "@/components/client/candidate-detail/shared";
+import { ScoreFreshnessNote } from "@/components/client/score-freshness-note";
 import {
   EvaluationProvenance,
   FitHero,
