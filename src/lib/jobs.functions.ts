@@ -94,7 +94,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
     let query = supabase
       .from("positions")
       .select(
-        "id,title,location,work_model,employment_type,seniority,description,requirements,compensation,compensation_visibility,published_at,openings,organizations(name)",
+        "id,title,location,work_model,employment_type,seniority,description,requirements,compensation,compensation_visibility,published_at,openings",
       )
       .eq("status", "active")
       .eq("visibility", "public");
@@ -104,6 +104,22 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
       .order("published_at", { ascending: false, nullsFirst: false })
       .limit(200);
     if (error) throw new Error(error.message);
+
+    // Employer identity comes from a definer lookup: anon has no read access to
+    // organizations, and it must stay that way (the client list is private).
+    const employerNames = new Map<string, string>();
+    const ids = (data ?? []).map((p) => p.id);
+    if (ids.length > 0) {
+      const { data: employers } = await (
+        supabase.rpc as unknown as (
+          fn: string,
+          args: Record<string, unknown>,
+        ) => Promise<{ data: unknown; error: unknown }>
+      )("public_position_employers", { _ids: ids });
+      for (const row of (employers ?? []) as { position_id: string; name: string | null }[]) {
+        if (row?.position_id && row.name) employerNames.set(row.position_id, row.name);
+      }
+    }
 
     return (data ?? [])
       .filter((p) => {
@@ -124,8 +140,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
           work_model: p.work_model,
           employment_type: p.employment_type,
           seniority: p.seniority,
-          organization_name:
-            (p.organizations as unknown as { name?: string } | null)?.name ?? "TaaSFlow client",
+          organization_name: employerNames.get(p.id) ?? "TaaSFlow client",
           compensation_display: comp.display,
           compensation_line: comp.line,
 
@@ -169,7 +184,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     let detail = supabase
       .from("positions")
       .select(
-        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,compensation_visibility,primary_timezone,timezone_overlap_hours,work_authorization,intake_context,published_at,openings,status,organizations(name,logo_url)",
+        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,compensation_visibility,primary_timezone,timezone_overlap_hours,work_authorization,intake_context,published_at,openings,status",
       )
       .eq("id", data.id)
       .in("status", ["active", "paused"])
@@ -292,17 +307,13 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       })),
       organization_logo_url: (() => {
         if (confidential) return null;
-        const raw =
-          employer?.logo_url ??
-          (pos.organizations as unknown as { logo_url?: string | null } | null)?.logo_url;
+        const raw = employer?.logo_url ?? null;
         const trimmed = typeof raw === "string" ? raw.trim() : "";
         return /^https:\/\//i.test(trimmed) ? trimmed : null;
       })(),
       organization_name: confidential
         ? "Confidential employer"
-        : (employer?.name ??
-          (pos.organizations as unknown as { name?: string } | null)?.name ??
-          "TaaSFlow client"),
+        : (employer?.name ?? "TaaSFlow client"),
       questions: (questions ?? []).map((q) => ({
         id: q.id,
         question: q.question,

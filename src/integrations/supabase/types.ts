@@ -15730,6 +15730,14 @@ export type Database = {
       }
       public_position_closure: { Args: { _id: string }; Returns: Json }
       public_position_employer: { Args: { _id: string }; Returns: Json }
+      public_position_employers: {
+        Args: { _ids: string[] }
+        Returns: {
+          logo_url: string
+          name: string
+          position_id: string
+        }[]
+      }
       purge_expired_intake_drafts: { Args: never; Returns: number }
       resolve_talent_person: {
         Args: {
