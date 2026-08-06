@@ -10,7 +10,7 @@ import {
   rateLimitResponse,
   withRateLimitHeaders,
 } from "@/lib/public-api/rate-limit";
-import { auditConflict, auditRateLimited, emailDomain } from "@/lib/public-api/outcome-audit";
+import { auditConflict, auditRateLimited } from "@/lib/public-api/outcome-audit";
 
 // ---------- Canonical intake payload contract ----------
 const workModel = z.enum(["remote", "hybrid", "onsite"]);

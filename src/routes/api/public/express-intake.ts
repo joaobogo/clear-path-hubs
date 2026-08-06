@@ -8,7 +8,7 @@ import {
   rateLimitResponse,
   withRateLimitHeaders,
 } from "@/lib/public-api/rate-limit";
-import { auditConflict, auditRateLimited, emailDomain } from "@/lib/public-api/outcome-audit";
+import { auditConflict, auditRateLimited } from "@/lib/public-api/outcome-audit";
 import {
   expressIntakeSchema,
   ALLOWED_JD_EXT,
