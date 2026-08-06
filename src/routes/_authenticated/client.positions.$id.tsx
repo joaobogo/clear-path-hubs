@@ -6,12 +6,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import {
- getClientContext,
- getClientPositionDetail,
- moveMatchStage,
- type MatchStage,
-} from "@/lib/client.functions";
+import { getClientContext } from "@/lib/client-context.functions";
+import { getClientPositionDetail } from "@/lib/client-positions.functions";
+import { moveMatchStage } from "@/lib/client-decisions.functions";
+import { type MatchStage } from "@/lib/client-kpi.server";
 import {
  TIMEZONE_BAND_LABELS,
  SPONSORSHIP_LABELS,
@@ -22,7 +20,7 @@ import { DeclineReasonDialog } from "@/components/client/decline-reason-dialog";
 
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 
-import { confirmRoleBlueprint } from "@/lib/client.functions";
+import { confirmRoleBlueprint } from "@/lib/client-positions.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { Button } from "@/components/ui/button";

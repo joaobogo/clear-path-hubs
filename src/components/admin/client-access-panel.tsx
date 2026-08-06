@@ -2,11 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { inspectClientAccess, type AccessMember } from "@/lib/client-access.functions";
-import {
-  inviteClientMember,
-  resendClientInvitation,
-  updateClientMemberRole,
-} from "@/lib/client.functions";
+import { inviteClientMember, resendClientInvitation, updateClientMemberRole } from "@/lib/client-team.functions";
 import { setSeatStatus } from "@/lib/authz.functions";
 import {
   CLIENT_PERMISSIONS,

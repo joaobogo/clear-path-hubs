@@ -5,15 +5,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import {
- getClientContext,
- getClientTeam,
- inviteClientMember,
- resendClientInvitation,
- updateClientMemberRole,
- setClientMemberStatus,
- removeClientMember,
-} from "@/lib/client.functions";
+import { getClientContext } from "@/lib/client-context.functions";
+import { getClientTeam, inviteClientMember, resendClientInvitation, updateClientMemberRole, setClientMemberStatus, removeClientMember } from "@/lib/client-team.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { Button } from "@/components/ui/button";

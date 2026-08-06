@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Database, LineChart, Users, TrendingUp } from "lucide-react";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
-import { getClientContext } from "@/lib/client.functions";
+import { getClientContext } from "@/lib/client-context.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import {
   getDataAdvantage,

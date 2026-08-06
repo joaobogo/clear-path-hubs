@@ -50,7 +50,7 @@ import {
   type RailItem,
   type RailStatus,
 } from "@/lib/agent-rail/agent-rail";
-import { clientAction } from "@/lib/client.functions";
+import { clientAction } from "@/lib/client-decisions.functions";
 import { retryBlueprintAnalysis } from "@/lib/blueprint.functions";
 import { setAgentPaused } from "@/lib/agents.functions";
 import { DECLINE_REASONS } from "@/lib/client-decision-reasons";

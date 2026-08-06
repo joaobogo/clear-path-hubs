@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Undo2 } from "lucide-react";
-import { listReversibleDecisions, undoClientDecision } from "@/lib/client.functions";
+import { listReversibleDecisions, undoClientDecision } from "@/lib/client-decisions.functions";
 import type { MatchStage } from "@/lib/client-kpi.server";
 import { Button } from "@/components/ui/button";
 

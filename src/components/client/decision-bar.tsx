@@ -11,11 +11,7 @@ import {
 } from "@/components/client/decision-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import {
-  clientAction,
-  getMatchDeclineContext,
-  undoClientDecision,
-} from "@/lib/client.functions";
+import { clientAction, getMatchDeclineContext, undoClientDecision } from "@/lib/client-decisions.functions";
 import {
   DEAL_BREAKER_PROMPT_TITLE,
   dealBreakerDeclineOptions,

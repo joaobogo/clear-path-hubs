@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { toast } from "sonner";
 import { readTeamsActionLink, consumeTeamsActionLink } from "@/lib/teams.functions";
-import { clientAction } from "@/lib/client.functions";
+import { clientAction } from "@/lib/client-decisions.functions";
 
 export const Route = createFileRoute("/_authenticated/teams/act/$token")({
   head: () => ({

@@ -31,12 +31,9 @@ import {
  Sparkles,
  XCircle,
 } from "lucide-react";
-import {
- clientAction,
- undoClientDecision,
- getClientCandidate,
- getClientContext,
-} from "@/lib/client.functions";
+import { clientAction, undoClientDecision } from "@/lib/client-decisions.functions";
+import { getClientCandidate } from "@/lib/client-candidates.functions";
+import { getClientContext } from "@/lib/client-context.functions";
 import type { MatchStage } from "@/lib/client-kpi.server";
 import { buildShortlistRationale } from "@/lib/client-rationale";
 import { DownloadCvButton } from "@/components/download-cv-button";
