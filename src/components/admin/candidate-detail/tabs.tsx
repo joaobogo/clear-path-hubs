@@ -28,7 +28,6 @@ import {
   getClientPreview,
   setMatchClientVisibility,
   getPositionActivity,
-  getCandidateAudit,
 } from "@/lib/admin.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
