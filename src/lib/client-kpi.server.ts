@@ -658,20 +658,31 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     last_updated: run?.completed_at ?? row.updated_at ?? row.delivered_at ?? null,
     position: pos ? { id: pos.id, title: pos.title } : null,
     unicorn: isUnicornMatch({ score: run?.score ?? null, hired: row.stage === "hired" }),
-    freshness: assessFreshness({
-      scored_at: run?.completed_at ?? null,
-      scored_input_hash: run?.input_hash ?? null,
-      scored_engine_version: run?.engine_version ?? null,
-      scored_calibration_version:
-        (run?.result as AnyRow | null)?.calibration_version ?? null,
-      current_engine_version: run?.engine_version ? ENGINE_VERSION : null,
-      current_calibration_version: (run?.result as AnyRow | null)?.calibration_version
-        ? CALIBRATION_VERSION
-        : null,
-      profile_updated_at: cp.updated_at ?? null,
-      brief_updated_at: pos?.updated_at ?? null,
-      criteria_updated_at: (row as AnyRow).criteria_updated_at ?? null,
-    }),
+    freshness: mergeStoredStaleness(
+      assessFreshness({
+        scored_at: run?.completed_at ?? null,
+        scored_input_hash: run?.input_hash ?? null,
+        scored_engine_version: run?.engine_version ?? null,
+        scored_calibration_version:
+          (run?.result as AnyRow | null)?.calibration_version ?? null,
+        current_engine_version: run?.engine_version ? ENGINE_VERSION : null,
+        current_calibration_version: (run?.result as AnyRow | null)?.calibration_version
+          ? CALIBRATION_VERSION
+          : null,
+        profile_updated_at: cp.updated_at ?? null,
+        brief_updated_at: pos?.updated_at ?? null,
+        criteria_updated_at: (row as AnyRow).criteria_updated_at ?? null,
+      }),
+      // Recorded invalidations from the database triggers — a client must never
+      // see a superseded assessment presented as current.
+      {
+        score_stale: (row as AnyRow).score_stale ?? null,
+        score_stale_reasons: (row as AnyRow).score_stale_reasons ?? null,
+        score_stale_at: (row as AnyRow).score_stale_at ?? null,
+        rescore_queued_at: (row as AnyRow).rescore_queued_at ?? null,
+      },
+    ),
+
     candidate: {
       full_name: fullName,
       display_name: displayName,
