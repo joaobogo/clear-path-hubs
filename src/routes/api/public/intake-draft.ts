@@ -169,6 +169,16 @@ export const Route = createFileRoute("/api/public/intake-draft")({
           );
           if (error) return json({ ok: false, error: "save_failed" }, { status: 500 });
 
+          // Staff hear about an incomplete intake as soon as it is actionable.
+          const { alertPartialIntake } = await import("@/lib/leads/partial-intake-alert.server");
+          await alertPartialIntake({
+            draftKey: tokenHash,
+            payload: safe as Record<string, unknown>,
+            lastStep: parsed.lastStep,
+            source: "intake_anonymous_draft",
+            sourcePage: new URL(request.url).pathname,
+          });
+
           return json(
             { ok: true, status: "saved", savedAt, expiresAt },
             validToken

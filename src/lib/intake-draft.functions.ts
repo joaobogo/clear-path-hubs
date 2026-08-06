@@ -53,6 +53,17 @@ export const saveIntakeDraft = createServerFn({ method: "POST" })
       { onConflict: "user_id" },
     );
     if (error) throw new Error(error.message);
+
+    // Staff hear about an incomplete intake as soon as it is actionable.
+    const { alertPartialIntake } = await import("@/lib/leads/partial-intake-alert.server");
+    await alertPartialIntake({
+      draftKey: context.userId,
+      payload: safe as Record<string, unknown>,
+      lastStep: data.lastStep,
+      source: "intake_account_draft",
+      sourcePage: "/intake",
+    });
+
     return { savedAt, status: "restored" as IntakeDraftStatus };
   });
 
