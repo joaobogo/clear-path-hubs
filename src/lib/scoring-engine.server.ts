@@ -493,17 +493,18 @@ export function scoreCandidate(input: {
   const overall_confidence =
     Math.round(((cvTokenBoost * 0.4 + evidenceBoost * 0.4 + screeningBoost * 0.2)) * 100) / 100;
 
-  const fit_label: ScoringResult["fit_label"] =
-    disqualified
-      ? "not_a_fit"
-      : score >= cal.strong_fit.min_score &&
-          must_have_coverage >= cal.strong_fit.min_must_have_coverage
-        ? "strong_fit"
-        : score >= cal.worth_considering_min_score
-          ? "worth_considering"
-          : cv.trim().length < 60
-            ? "unknown"
-            : "not_a_fit";
+  // Bands come from the canonical band table (src/lib/scoring/bands.ts); the
+  // engine only decides the non-numeric overrides (disqualification, and CVs
+  // whose text could not be extracted, which are "unknown", not "not a fit").
+  const canonicalBand = classifyBand(score);
+  const fit_label: ScoringResult["fit_label"] = disqualified
+    ? "not_a_fit"
+    : cv.trim().length < 60
+      ? "unknown"
+      : bandToFitLabel(canonicalBand) === "strong_fit" &&
+          must_have_coverage < cal.strong_fit.min_must_have_coverage
+        ? "worth_considering"
+        : bandToFitLabel(canonicalBand);
 
   const strengths: string[] = assessment
     .filter((a) => a.status === "met")
