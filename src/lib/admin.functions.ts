@@ -792,6 +792,7 @@ export const updatePosition = createServerFn({ method: "POST" })
         scope: `${data.id}:updated:${stableHash(data.patch)}`,
         organization_id: before.organization_id,
         position_id: data.id,
+        // Actor is server-derived from the authenticated session, never from the request payload.
         actor_user_id: context.userId,
         link_path: `/client/positions/${data.id}`,
         payload: { fields: Object.keys(data.patch ?? {}) },
@@ -949,6 +950,7 @@ export const setPositionStatus = createServerFn({ method: "POST" })
           scope: `${data.id}:${data.action}`,
           organization_id: before.organization_id,
           position_id: data.id,
+          // Actor is server-derived from the authenticated session, never from the request payload.
           actor_user_id: context.userId,
           link_path: `/client/positions/${data.id}`,
           payload: { title: before.title ?? null },
@@ -1058,6 +1060,7 @@ export const deletePosition = createServerFn({ method: "POST" })
     if (!before) throw new Error("position_not_found");
     const { data: deleted, error } = await s.rpc("hard_delete_position", {
       _position_id: data.id,
+      // Actor is server-derived from the authenticated session, never from the request payload.
       _actor_user_id: context.userId,
       _reason: data.reason ?? null,
     });
@@ -1276,6 +1279,7 @@ export const setMatchClientVisibility = createServerFn({ method: "POST" })
           application_id: full?.application_id ?? null,
           candidate_match_id: data.match_id,
           candidate_profile_id: full?.candidate_profile_id ?? null,
+          // Actor is server-derived from the authenticated session, never from the request payload.
           actor_user_id: context.userId,
           link_path: `/client/candidates/${data.match_id}`,
           // Client recipients auto-fanout; append candidate recipient explicitly.
@@ -1295,6 +1299,7 @@ export const setMatchClientVisibility = createServerFn({ method: "POST" })
             application_id: full?.application_id ?? null,
             candidate_match_id: data.match_id,
             candidate_profile_id: full?.candidate_profile_id ?? null,
+            // Actor is server-derived from the authenticated session, never from the request payload.
             actor_user_id: context.userId,
             recipients: candidateRecipients,
           });

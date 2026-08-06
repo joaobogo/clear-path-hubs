@@ -87,6 +87,7 @@ export const bulkApproveApprovals = createServerFn({ method: "POST" })
           kind: data.kind,
           target_id: id,
           reason: data.reason ?? null,
+          // Actor is server-derived from the authenticated session, never from the request payload.
           actor_user_id: context.userId,
         });
         approved.push(id);

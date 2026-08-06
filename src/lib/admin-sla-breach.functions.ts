@@ -41,6 +41,7 @@ export const acknowledgeBreach = createServerFn({ method: "POST" })
       commitmentId: data.commitmentId,
       metric: data.metric,
       note: data.note,
+      // Actor is server-derived from the authenticated session, never from the request payload.
       actorUserId: context.userId,
     });
   });

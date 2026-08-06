@@ -46,6 +46,7 @@ export const assignIntakeOwner = createServerFn({ method: "POST" })
     return assignIntakeOwnerRow(supabaseAdmin as never, {
       intakeId: data.intake_id,
       ownerUserId: data.owner_user_id,
+      // Actor is server-derived from the authenticated session, never from the request payload.
       actorUserId: context.userId,
     });
   });
@@ -74,6 +75,7 @@ export const setIntakeProceeding = createServerFn({ method: "POST" })
       intakeId: data.intake_id,
       proceeding: data.proceeding,
       reason: data.reason,
+      // Actor is server-derived from the authenticated session, never from the request payload.
       actorUserId: context.userId,
     });
   });

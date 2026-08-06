@@ -66,6 +66,7 @@ export const setPositionOwners = createServerFn({ method: "POST" })
       ...(data.backup_owner_user_id !== undefined
         ? { backupOwnerUserId: data.backup_owner_user_id }
         : {}),
+      // Actor is server-derived from the authenticated session, never from the request payload.
       actorUserId: context.userId,
       reason: data.reason ?? null,
     });
@@ -100,6 +101,7 @@ export const applyOwnerBulkReassign = createServerFn({ method: "POST" })
       toUserId: data.to_user_id,
       includeBackup: data.include_backup,
       includeTest: data.include_test ?? false,
+      // Actor is server-derived from the authenticated session, never from the request payload.
       actorUserId: context.userId,
       reason: data.reason ?? null,
     });
