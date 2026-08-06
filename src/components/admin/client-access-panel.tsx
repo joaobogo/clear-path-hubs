@@ -284,7 +284,6 @@ function ClientAccessBody({
               </tbody>
             </table>
           </div>
-        )}
       </div>
 
       <p className="text-xs text-muted-foreground">
