@@ -33,6 +33,8 @@ import { makeWorkspacePending } from "@/components/workspace/pending-states";
 const RoutePending = makeWorkspacePending({ shape: "rows", width: "7xl" });
 
 export const Route = createFileRoute("/_authenticated/client/assistant")({
+	pendingMs: 150,
+	pendingComponent: RoutePending,
   head: () => ({
     meta: [
       { title: "Pipeline assistant · TaaSFlow" },

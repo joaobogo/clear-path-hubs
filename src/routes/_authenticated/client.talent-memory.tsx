@@ -48,7 +48,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { makeWorkspacePending } from "@/components/workspace/pending-states";
+import { makeWorkspacePending, WorkspaceRowsSkeleton } from "@/components/workspace/pending-states";
 
 const searchSchema = z.object({
   id: z.string().uuid().optional(),
@@ -422,7 +422,7 @@ function MemorySheet({
             />
           </div>
         ) : !m ? (
-          <p className="p-4 text-sm text-muted-foreground">Loading…</p>
+          <div className="p-4"><WorkspaceRowsSkeleton rows={3} /></div>
         ) : (
           <>
             <SheetHeader>

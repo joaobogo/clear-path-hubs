@@ -78,6 +78,8 @@ const searchSchema = z.object({
 const RoutePending = makeWorkspacePending({ shape: "cards", width: "7xl" });
 
 export const Route = createFileRoute("/_authenticated/client/talent-pool")({
+	pendingMs: 150,
+	pendingComponent: RoutePending,
   validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [
