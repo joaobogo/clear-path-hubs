@@ -11,6 +11,8 @@ import {
 
 import { ENGINE_VERSION } from "./scoring/engine-version";
 import { bandToFitLabel, classifyBand } from "./scoring/bands";
+import { computeFit } from "./scoring/fit-math";
+import { expandTerm } from "./scoring/term-synonyms";
 
 export { ENGINE_VERSION, EVALUATION_METHOD };
 
@@ -158,6 +160,13 @@ export function findTermMatches(cv: string, term: string): number[] {
   return out;
 }
 
+/**
+ * Bare negators only count when they sit very close to the mention, because
+ * "no" appears constantly in prose ("no downtime, shipped Kubernetes").
+ */
+const SHORT_RANGE_NEGATORS = ["no", "not", "never", "without", "nor", "zero"];
+const SHORT_RANGE_WINDOW = 25;
+
 const NEGATION_CUES = [
   "no experience",
   "not experienced",
@@ -190,8 +199,20 @@ export function isNegatedMention(cv: string, idx: number): boolean {
     idx - 70,
     0,
   );
-  const window = lower.slice(sentenceStart, idx);
-  return NEGATION_CUES.some((cue) => window.includes(cue));
+  let window = lower.slice(sentenceStart, idx);
+  // Contrastive conjunctions end the negated clause: in "no experience with
+  // Kubernetes, but deep Docker work", the negation does not reach Docker.
+  for (const pivot of [" but ", " however", " although", " whereas", " though "]) {
+    const at = window.lastIndexOf(pivot);
+    if (at !== -1) window = window.slice(at + pivot.length);
+  }
+  if (NEGATION_CUES.some((cue) => window.includes(cue))) return true;
+  // Bare negators ("no Kubernetes", "never touched Terraform") need proximity,
+  // checked on word boundaries so "nor" never fires inside "normalise".
+  const near = window.slice(Math.max(0, window.length - SHORT_RANGE_WINDOW));
+  return SHORT_RANGE_NEGATORS.some((n) =>
+    new RegExp(`(^|[^a-z0-9])${n}([^a-z0-9]|$)`).test(near),
+  );
 }
 
 function findSnippet(cv: string, term: string, at?: number): { snippet: string; location: string } | null {
@@ -343,13 +364,25 @@ export function scoreCandidate(input: {
     const localEvidence: EvidenceRef[] = [];
     for (const kw of r.keywords) {
       const k = kw.toLowerCase();
-      const hits = findTermMatches(cv, k);
+      // Route the term through the synonym table: "k8s" is evidence for
+      // "kubernetes", while "java" and "javascript" stay disjoint terms.
+      const surfaceForms = expandTerm(k);
+      let hits: number[] = [];
+      let matchedForm = k;
+      for (const form of surfaceForms) {
+        const formHits = findTermMatches(cv, form);
+        if (formHits.length > 0) {
+          hits = formHits;
+          matchedForm = form;
+          break;
+        }
+      }
       if (hits.length === 0) continue;
       const affirmative = hits.filter((idx) => !isNegatedMention(cv, idx));
       if (affirmative.length === 0) {
         // Every mention is inside a negating clause ("no experience with X").
         negated.push(kw);
-        const sn = findSnippet(cv, k, hits[0]);
+        const sn = findSnippet(cv, matchedForm, hits[0]);
         if (sn) {
           localEvidence.push({
             requirement_id: r.id,
@@ -363,7 +396,7 @@ export function scoreCandidate(input: {
         continue;
       }
       matched.push(kw);
-      const sn = findSnippet(cv, k, affirmative[0]);
+      const sn = findSnippet(cv, matchedForm, affirmative[0]);
       if (sn) {
         localEvidence.push({
           requirement_id: r.id,
@@ -392,7 +425,13 @@ export function scoreCandidate(input: {
       }
     } else if (
       matched.length >=
-      Math.max(cal.met_keyword_floor, Math.ceil(r.keywords.length * cal.met_keyword_ratio))
+      // The floor can never exceed the number of terms the requirement actually
+      // has, otherwise a single-term requirement ("HACCP") could only ever
+      // reach "partial" no matter how clearly the CV evidences it.
+      Math.min(
+        r.keywords.length,
+        Math.max(cal.met_keyword_floor, Math.ceil(r.keywords.length * cal.met_keyword_ratio)),
+      )
     ) {
 
       status = "met";
@@ -462,21 +501,41 @@ export function scoreCandidate(input: {
     ? (alignedCount - misalignedCount) / totalScreening / 2 + 0.5 // 0-1
     : 0;
 
-  // Weighted score: must-haves dominate. Absent categories drop out and the
-  // remaining weights are renormalised so nothing earns free points.
-  const category_weights = renormaliseWeights({
-    must_have: must.length ? cal.base_weights.must_have : 0,
-    preferred: pref.length ? cal.base_weights.preferred : 0,
-    screening_alignment: screeningCount ? cal.base_weights.screening_alignment : 0,
-  });
-  let score01 = combineCategories(
+  // Weighted score via the canonical fit math: applicable criteria only, with
+  // absent dimensions REMOVED from the denominator rather than credited with a
+  // neutral half-score. A role with must-haves only therefore earns nothing
+  // from the preferred or screening dimensions it does not have.
+  const fit = computeFit([
     {
-      must_have: must_have_coverage,
-      preferred: preferred_coverage,
-      screening_alignment,
+      key: "must_have",
+      weight_pct: cal.base_weights.must_have * 100,
+      criteria: must.map((a) => ({ key: a.id, score: scoreOf(a) * 100 })),
     },
-    category_weights,
-  );
+    {
+      key: "preferred",
+      weight_pct: cal.base_weights.preferred * 100,
+      criteria: pref.map((a) => ({ key: a.id, score: scoreOf(a) * 100 })),
+    },
+    {
+      key: "screening_alignment",
+      weight_pct: cal.base_weights.screening_alignment * 100,
+      criteria: screeningCount
+        ? [{ key: "screening", score: screening_alignment * 100 }]
+        : [],
+    },
+  ]);
+  const dimensionApplied = (key: string) =>
+    (fit.dimensions.find((d) => d.key === key)?.score ?? null) !== null;
+  // Reported weights mirror what fit-math actually applied, so a stored run
+  // stays reproducible through combineCategories().
+  const category_weights = renormaliseWeights({
+    must_have: dimensionApplied("must_have") ? cal.base_weights.must_have : 0,
+    preferred: dimensionApplied("preferred") ? cal.base_weights.preferred : 0,
+    screening_alignment: dimensionApplied("screening_alignment")
+      ? cal.base_weights.screening_alignment
+      : 0,
+  });
+  let score01 = (fit.fit_score ?? 0) / 100;
   // Caps are recorded, not just applied: raw_score, applied_caps and score are
   // three distinct facts so the reconciliation actually proves something
   // (audit finding 11 — raw == cap == final proved nothing).
