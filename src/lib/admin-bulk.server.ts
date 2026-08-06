@@ -28,16 +28,35 @@ export type BulkPlan = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Admin = any;
 
-async function loadMatches(admin: Admin, matchIds: string[]) {
+/**
+ * Rows per read. A single `.in()` with hundreds of ids is one long statement that
+ * gets slower as the platform grows; chunking keeps each read small and bounded.
+ */
+const LOAD_CHUNK = 100;
+
+async function loadMatchesChunk(admin: Admin, matchIds: string[]) {
   const { data, error } = await admin
     .from("candidate_matches")
     .select(
       "id, stage, admin_status, client_visibility, position_id, organization_id, candidate_profile_id, candidate_profiles:candidate_profile_id(full_name), positions:position_id(title, status)",
     )
-    .in("id", matchIds)
-    .limit(500);
+    .in("id", matchIds);
   if (error) throw error;
   return (data ?? []) as Array<Record<string, any>>;
+}
+
+/**
+ * Loads every requested match, in chunks, with no arbitrary ceiling. The old
+ * hardcoded limit(500) silently dropped rows past the cap — an operator would
+ * confirm a plan for 500 and never learn the rest existed.
+ */
+async function loadMatches(admin: Admin, matchIds: string[]) {
+  const unique = [...new Set(matchIds)];
+  const out: Array<Record<string, any>> = [];
+  for (let i = 0; i < unique.length; i += LOAD_CHUNK) {
+    out.push(...(await loadMatchesChunk(admin, unique.slice(i, i + LOAD_CHUNK))));
+  }
+  return out;
 }
 
 function displayName(row: Record<string, any>) {
@@ -221,9 +240,10 @@ export async function applyBulkUpdateMessage(
 ) {
   const rows = await loadMatches(admin, matchIds);
   const { emitEventFromServer } = await import("./notifications.functions");
-  // Emit in parallel: a 100-row bulk update used to await one event at a time.
+  // Emit in parallel and keep every outcome: a partial failure has to be
+  // reportable per recipient, not averaged into a count.
   const stamp = Date.now();
-  const results = await Promise.all(
+  const settled = await Promise.allSettled(
     rows.map((row) =>
       emitEventFromServer({
         event: "message_sent",
@@ -235,18 +255,40 @@ export async function applyBulkUpdateMessage(
         actor_user_id: actorUserId,
         payload: { message },
         link_path: `/admin/review/${row.id}`,
-      })
-        .then(() => true)
-        .catch(() => false),
+      }),
     ),
   );
-  const sent = results.filter(Boolean).length;
+
+  const failures = settled.flatMap((r, i) =>
+    r.status === "rejected"
+      ? [
+          {
+            match_id: rows[i]?.id as string,
+            candidate_name: displayName(rows[i] ?? {}),
+            reason:
+              r.reason instanceof Error ? r.reason.message : String(r.reason ?? "Unknown error"),
+          },
+        ]
+      : [],
+  );
+  const sent = settled.length - failures.length;
+
   await admin.from("audit_events").insert({
     actor_user_id: actorUserId,
     action: "bulk.send_update",
     entity_type: "candidate_match",
     entity_id: rows[0]?.id ?? null,
-    metadata: { match_ids: matchIds, recipients: sent },
+    metadata: {
+      match_ids: matchIds,
+      recipients: sent,
+      failed: failures.length,
+      failures: failures.slice(0, 25),
+    },
   } as never);
-  return { changed: sent, skipped: matchIds.length - sent };
+
+  return {
+    changed: sent,
+    skipped: matchIds.length - rows.length,
+    failures,
+  };
 }
