@@ -2,7 +2,13 @@ import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { OpenThreadButton } from "@/components/comms/open-thread-button";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+ queryOptions,
+ useMutation,
+ useQuery,
+ useQueryClient,
+ useSuspenseQuery,
+} from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
