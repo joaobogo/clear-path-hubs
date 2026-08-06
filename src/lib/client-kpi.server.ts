@@ -25,7 +25,6 @@ import {
 import { assessFreshness, type Freshness } from "@/lib/scoring/score-freshness";
 import { CALIBRATION_VERSION } from "@/lib/scoring/engine-calibration";
 import { ENGINE_VERSION } from "@/lib/scoring/engine-version";
-import { SCORE_BAND_DEFS } from "@/config/scoring-bands";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -280,6 +279,11 @@ export type ClientCandidateDTO = {
   main_consideration: string | null;
   requirement_rows: RequirementRow[];
   coverage: CoverageSummary;
+  /**
+   * Evidence support behind the band — what employer surfaces render next to
+   * the band instead of a numeric score.
+   */
+  evidence_support: { supported: number; total: number };
   interview_guide: InterviewQuestion[];
   evidence: Array<{ label: string; snippet: string }>;
   experience: Array<{ title: string; company: string | null; period: string | null; description: string | null }>;
@@ -689,6 +693,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     concerns,
     main_consideration: mainConsideration,
     requirement_rows,
+    evidence_support: evidenceSupport(requirement_rows),
     coverage: coverageSummary,
     interview_guide,
     evidence,
