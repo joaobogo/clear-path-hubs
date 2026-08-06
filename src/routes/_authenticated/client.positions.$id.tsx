@@ -141,62 +141,76 @@ const STAGE_LABELS: Record<MatchStage, string> = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
 
+/**
+ * Skeleton that mirrors the real role page: same width, same header, same
+ * card grid, so nothing shifts when the payload lands.
+ */
+function PositionDetailPending() {
+ return (
+  <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+   <Skeleton className="h-4 w-28" />
+   <header className="flex flex-wrap items-start justify-between gap-3">
+    <div className="min-w-0 space-y-2">
+     <Skeleton className="h-8 w-64" />
+     <Skeleton className="h-4 w-80" />
+    </div>
+    <div className="flex gap-2">
+     <Skeleton className="h-8 w-28" />
+     <Skeleton className="h-8 w-28" />
+    </div>
+   </header>
+   <Skeleton className="h-28 w-full rounded-xl" />
+   <Skeleton className="h-24 w-full rounded-xl" />
+   <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    {[0, 1, 2, 3].map((i) => (
+     <Skeleton key={i} className="h-24 w-full rounded-xl" />
+    ))}
+   </section>
+   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+    {[0, 1, 2, 3, 4, 5].map((i) => (
+     <Skeleton key={i} className="h-[280px] w-full rounded-lg" />
+    ))}
+   </div>
+  </main>
+ );
+}
+
 function PositionDetailPage() {
- const { id } = Route.useParams();
- const qc = useQueryClient();
- const ctxFn = useServerFn(getClientContext);
- const detailFn = useServerFn(getClientPositionDetail);
- const moveFn = useServerFn(moveMatchStage);
  const orgSearch = useClientOrgSearch();
- const support = useSupportView();
+ const ctxFn = useServerFn(getClientContext);
  const { data: ctx } = useQuery({
- queryKey: ["client-context", orgSearch ?? null],
- queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
+  queryKey: ["client-context", orgSearch ?? null],
+  queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
  });
  const orgId = ctx?.active?.organization_id;
+ // No resolved workspace means no role to show; the layout already redirects
+ // callers with no membership, so this is only the brief pre-resolve window.
+ if (!orgId) return <PositionDetailPending />;
+ return <PositionDetailView orgId={orgId} ctx={ctx} />;
+}
+
+function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
+ const { id } = Route.useParams();
+ const qc = useQueryClient();
+ const moveFn = useServerFn(moveMatchStage);
+ const support = useSupportView();
  const queryKey = ["client-position", orgId, id];
- const { data, isError, isLoading, error, refetch } = useQuery({
- queryKey,
- queryFn: () => detailFn({ data: { orgId: orgId!, positionId: id } }),
- enabled: !!orgId,
- });
- const lifecycleFn = useServerFn(getRoleLifecycle);
- const lifecycle = useQuery({
- queryKey: ["role-lifecycle", orgId, id],
- queryFn: () => lifecycleFn({ data: { orgId: orgId!, positionId: id } }),
- enabled: !!orgId,
- });
- // Once a hire is confirmed, this role becomes a handoff rather than a search.
- const handoffFn = useServerFn(getPositionHandoff);
- const handoff = useQuery({
- queryKey: ["client-position-handoff", orgId, id],
- queryFn: () => handoffFn({ data: { orgId: orgId!, positionId: id } }),
- enabled: !!orgId,
- });
- // Recorded closure, if this role has been closed. Read from the position row,
- // never inferred from status alone.
- const closureFn = useServerFn(getRoleClosure);
- const closure = useQuery({
- queryKey: ["client-position-closure", orgId, id],
- queryFn: () => closureFn({ data: { orgId: orgId!, positionId: id } }),
- enabled: !!orgId,
- });
- // Recap is only for a role that has been closed: the lessons from the last
- // search, from this role's own recorded events.
- const recapFn = useServerFn(getRoleRecap);
- const recap = useQuery({
- queryKey: ["client-position-recap", orgId, id],
- queryFn: () => recapFn({ data: { orgId: orgId!, positionId: id } }),
- enabled: !!orgId && !!closure.data && !closure.data.paused,
- });
+ // One request for the primary payload: role, pipeline, timeline, lifecycle,
+ // closure, recap and open information requests.
+ const { data, refetch, isFetching } = useSuspenseQuery(positionDetailQuery(orgId, id));
+ const lifecycle = data?.lifecycle ?? null;
+ const handoff = data?.handoff ?? null;
+ const closure = data?.closure ?? null;
+ const recap = data?.recap ?? null;
+ const infoRequests = data?.info_requests ?? [];
  useEffect(() => {
- const onRefresh = () => {
- void refetch();
- void lifecycle.refetch();
- };
- window.addEventListener("client:refresh", onRefresh);
- return () => window.removeEventListener("client:refresh", onRefresh);
- }, [refetch, lifecycle]);
+  const onRefresh = () => {
+   void refetch();
+  };
+  window.addEventListener("client:refresh", onRefresh);
+  return () => window.removeEventListener("client:refresh", onRefresh);
+ }, [refetch]);
+
 
   const [dragOver, setDragOver] = useState<MatchStage | null>(null);
   const [declining, setDeclining] = useState<{ matchId: string; name: string | null } | null>(null);
