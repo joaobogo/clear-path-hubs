@@ -39,7 +39,7 @@ import { buildQueue, type QueueItem } from "@/lib/client-decision-queue";
 import { buildOfferRow } from "@/lib/client-offer-holder";
 import { computeNextMilestone } from "@/lib/client-next-milestone";
 import { buildRoleTimeline } from "@/lib/client-role-timeline";
-import { readWorkspaceAccess } from "@/lib/authz/workspace-access";
+import { assertWorkspaceAccess, readWorkspaceAccess } from "@/lib/authz/workspace-access";
 import { hydrateClientCandidateProfiles } from "@/lib/client-candidate-hydrate.server";
 import {
   advanceGateError,
