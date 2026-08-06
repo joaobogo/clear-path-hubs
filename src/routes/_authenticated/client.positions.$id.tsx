@@ -1,5 +1,4 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
-import { QueryErrorCard } from "@/components/client/query-error";
 import { OpenThreadButton } from "@/components/comms/open-thread-button";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import {
@@ -57,19 +56,12 @@ import { InfoRequestList } from "@/components/client/info-requests";
 import { buildDeliveryCommitment } from "@/lib/delivery-commitment";
 import { RoleShortlist } from "@/components/client/role-shortlist";
 import { RoleLifecycleTimeline } from "@/components/client/role-lifecycle-timeline";
-import { getRoleLifecycle } from "@/lib/role-lifecycle/role-lifecycle.functions";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
 import { clientRoleStatusLabel } from "@/lib/client-role-status";
-import { getPositionHandoff } from "@/lib/hire-handoff.functions";
-import { HireHandoffPanel, HandoffSkeleton } from "@/components/client/hire-handoff";
-import { getRoleClosure } from "@/lib/role-closure.functions";
+import { HireHandoffPanel } from "@/components/client/hire-handoff";
 import { CloseRoleDialog, RoleClosureRecord } from "@/components/client/close-role-dialog";
 import { isArchivedStatus } from "@/lib/role-closure";
-import { getRoleRecap } from "@/lib/role-recap.functions";
-import {
-  RoleRecapPanel,
-  RoleRecapSkeleton,
-} from "@/components/client/role-recap";
+import { RoleRecapPanel } from "@/components/client/role-recap";
 
 /**
  * One payload for the whole role. The server returns the role, its pipeline,
