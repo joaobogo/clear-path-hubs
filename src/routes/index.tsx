@@ -255,7 +255,7 @@ const AGENCY_COMPARE = [
 const HOMEPAGE_FAQ = [
   {
     q: "What is TaaSFlow?",
-    a: "TaaSFlow is an on-demand recruiting function delivered as scoped packages. A recruiter runs sourcing and evaluation for your roles inside a live workspace your team can see at any time.",
+    a: "TaasFlow is an on-demand Talent Management SaaS platform delivered on flexible commercial terms. A recruiter runs sourcing and evaluation for your roles inside a live workspace your team can see at any time.",
   },
   {
     q: "How is TaaSFlow different from a recruiting agency?",
