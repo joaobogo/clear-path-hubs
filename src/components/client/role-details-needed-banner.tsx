@@ -39,6 +39,7 @@ export function RoleDetailsNeededBanner({ roles }: { roles: IncompleteRole[] }) 
               <Link
                 to="/client/positions/$id/edit"
                 params={{ id: role.positionId }}
+                search={{ step: role.gaps[0]?.step }}
                 className="shrink-0 whitespace-nowrap rounded-md bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground"
               >
                 Complete the brief
