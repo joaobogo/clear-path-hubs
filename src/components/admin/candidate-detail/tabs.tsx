@@ -31,6 +31,8 @@ import {
 } from "@/lib/admin.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { AdminScoreNumber } from "@/components/admin/admin-score-number";
+import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -552,15 +554,8 @@ export function ScoreTab({
             engine {currentRun.engine_version} · {currentRun.completed_at ? new Date(currentRun.completed_at).toLocaleString() : "—"}
           </span>
         </div>
-        <div className="mt-4 flex items-baseline gap-4">
-          <div className="text-5xl font-semibold tabular-nums">
-            {Math.round(currentRun.score ?? 0)}
-          </div>
-          <Badge variant="secondary">{(currentRun.fit_label ?? "").replace(/_/g, " ")}</Badge>
-          <span className="text-sm text-muted-foreground">
-            confidence {Math.round((currentRun.confidence ?? 0) * 100)}%
-          </span>
-        </div>
+        {/* Staff-only number: always with its confidence and rubric version. */}
+        <AdminScoreNumber run={currentRun} size="lg" className="mt-4" />
         {currentRun.explanation && (
           <p className="mt-3 whitespace-pre-wrap text-sm">{cleanLine(String(currentRun.explanation))}</p>
         )}
@@ -816,9 +811,7 @@ export function HistoryTab({
                 <code className="opacity-60">{r.engine_version}</code>{" "}
                 <span className="ml-1 text-muted-foreground">{r.status}</span>
               </span>
-              <span className="tabular-nums">
-                {r.score != null ? Math.round(r.score) : "—"}
-              </span>
+              <AdminScoreNumber run={r} />
             </li>
           ))}
         </ul>
@@ -919,9 +912,12 @@ export function PreviewTab({ matchId }: { matchId: string }) {
               {dto.headline ?? ""}{dto.location ? ` · ${dto.location}` : ""}
             </div>
           </div>
-          {dto.score != null && (
-            <Badge variant="secondary" className="tabular-nums">Fit {Math.round(dto.score)}</Badge>
-          )}
+          {/* Client preview mirrors the employer surface: band, never a number. */}
+          <CandidateScoreBadge
+            score={dto.score ?? null}
+            fitLabel={dto.fit_label ?? null}
+            evidence={dto.evidence_support ?? null}
+          />
         </div>
         {dto.explanation && <p className="mt-3 whitespace-pre-wrap text-sm">{dto.explanation}</p>}
         {Array.isArray(dto.strengths) && dto.strengths.length > 0 && (

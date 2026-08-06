@@ -1,6 +1,7 @@
 // Extracted from the candidate detail route so first paint ships less code.
 import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
+import { AdminScoreNumber } from "@/components/admin/admin-score-number";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ScanText } from "lucide-react";
@@ -63,16 +64,7 @@ function WorkspaceHeader({
                 })}
               />
             )}
-            {currentRun?.score != null && (
-              <Badge variant="secondary" className="tabular-nums">
-                Score {Math.round(currentRun.score)}
-                {currentRun.fit_label && (
-                  <span className="ml-1 opacity-70">
-                    · {String(currentRun.fit_label).replace(/_/g, " ")}
-                  </span>
-                )}
-              </Badge>
-            )}
+            {currentRun?.score != null && <AdminScoreNumber run={currentRun} />}
             <Badge className={stateTone}>
               {m.processing_state.replace(/_/g, " ")}
             </Badge>
