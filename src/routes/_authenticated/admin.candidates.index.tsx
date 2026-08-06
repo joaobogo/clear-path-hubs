@@ -1,5 +1,9 @@
 import { createFileRoute, Link, stripSearchParams } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  makeRouteErrorComponent,
+  makeRouteNotFoundComponent,
+} from "@/components/workspace/route-states";
+import { useQuery, useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, useEffect, useMemo } from "react";
 import { z } from "zod";
@@ -42,6 +46,7 @@ import {
   DuplicateCandidatesPanel,
 } from "@/components/admin/duplicate-candidates-panel";
 import { ExportControl } from "@/components/admin/export-control";
+import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
@@ -80,6 +85,13 @@ const SEARCH_DEFAULTS = { ...(EMPTY_DEFAULTS as Record<string, string>), sort: "
 export const Route = createFileRoute("/_authenticated/admin/candidates/")({
   validateSearch: zodValidator(searchSchema),
   search: { middlewares: [stripSearchParams(SEARCH_DEFAULTS)] },
+  // Only the fields the query reads, so unrelated URL params never refetch.
+  loaderDeps: ({ search }) => ({ filters: buildFilters(search) }),
+  loader: ({ context, deps }) =>
+    context.queryClient.ensureQueryData({
+      queryKey: ["candidate-index", deps.filters],
+      queryFn: () => searchCandidateIndex({ data: deps.filters }),
+    }),
   head: () => ({
     meta: [
       { title: "Candidate database · TaaSFlow admin" },
@@ -87,6 +99,11 @@ export const Route = createFileRoute("/_authenticated/admin/candidates/")({
     ],
   }),
   component: CandidatesPage,
+  errorComponent: makeRouteErrorComponent(
+    "admin",
+    "src/routes/_authenticated/admin.candidates.index.tsx",
+  ),
+  notFoundComponent: makeRouteNotFoundComponent("admin"),
 });
 
 const PAGE_SIZE = 50;
