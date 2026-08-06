@@ -180,56 +180,19 @@ export async function applyAssign(
   const ids = plan.rows.filter((r) => r.eligible).map((r) => r.candidate_profile_id);
   if (ids.length === 0) return { changed: 0, skipped: plan.skipped };
 
-  const { data: position, error: posErr } = await admin
-    .from("positions")
-    .select("id, organization_id")
-    .eq("id", positionId)
-    .single();
-  if (posErr) throw posErr;
-
-  const { data: apps, error: appErr } = await admin
-    .from("applications")
-    .insert(
-      ids.map((cid) => ({
-        candidate_profile_id: cid,
-        position_id: positionId,
-        status: "submitted",
-        source: "admin_assignment",
-      })) as never,
-    )
-    .select("id, candidate_profile_id");
-  if (appErr) throw appErr;
-
-  // Two tables, no transaction available over the Data API: if the match insert
-  // fails we roll the applications back so an assignment is never half-written.
-  const { error: matchErr } = await admin.from("candidate_matches").insert(
-    (apps ?? []).map((a: any) => ({
-      application_id: a.id,
-      candidate_profile_id: a.candidate_profile_id,
-      position_id: positionId,
-      organization_id: position.organization_id,
-      stage: "screening",
-      admin_status: "pending",
-      client_visibility: "hidden",
-    })) as never,
-  );
-  if (matchErr) {
-    const appIds = (apps ?? []).map((a: any) => a.id as string);
-    if (appIds.length > 0) {
-      await admin.from("applications").delete().in("id", appIds);
-    }
-    throw matchErr;
-  }
-
-  await admin.from("audit_events").insert({
-    actor_user_id: actorUserId,
-    action: "bulk.assign_to_position",
-    entity_type: "position",
-    entity_id: positionId,
-    metadata: { candidate_profile_ids: ids, skipped: plan.skipped },
+  // One database routine writes the applications, the matches and the audit row
+  // inside a single transaction: a partial failure rolls everything back, so an
+  // assignment can never leave orphaned application rows behind.
+  const { data, error } = await admin.rpc("admin_bulk_assign_candidates" as never, {
+    _position_id: positionId,
+    _candidate_profile_ids: ids,
+    _actor_user_id: actorUserId,
   } as never);
+  if (error) throw error;
 
-  return { changed: ids.length, skipped: plan.skipped };
+  const result = (data ?? {}) as { changed?: number; skipped?: number };
+  const changed = Number(result.changed ?? 0);
+  return { changed, skipped: plan.skipped + Math.max(0, ids.length - changed) };
 }
 
 export async function applyBulkUpdateMessage(
