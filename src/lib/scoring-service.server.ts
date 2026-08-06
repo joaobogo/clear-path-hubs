@@ -32,7 +32,6 @@ import {
   type ScoringResult,
 } from "./scoring-engine.server";
 import {
-  DEFAULT_CALIBRATION,
   EVALUATION_METHOD,
   resolveCalibration,
 } from "./scoring/engine-calibration";
