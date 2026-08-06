@@ -123,6 +123,9 @@ export function OnboardingWizard({ orgId }: { orgId?: string }) {
       <ErrorState
         title="We could not load your setup"
         description="Your saved answers are safe. Try again in a moment."
+        detail={
+          stateQuery.error instanceof Error ? stateQuery.error.message : null
+        }
         onRetry={() => void stateQuery.refetch()}
       />
     );
