@@ -355,7 +355,7 @@ export const getMyApplication = createServerFn({ method: "GET" })
             filename: cvFile.filename as string,
             size: (cvFile.size as number | null) ?? null,
             uploaded_at: cvFile.created_at as string,
-            received: cvFile.parse_state !== "failed",
+            received: !isBlockingParseState(cvFile.parse_state as string),
           }
         : null,
       status,
@@ -549,7 +549,7 @@ export const getMyDashboard = createServerFn({ method: "GET" })
           filename: f.filename,
           size: f.size,
           uploaded_at: f.created_at,
-          received: f.parse_state !== "failed",
+          received: !isBlockingParseState(f.parse_state as string),
         };
       }
     }
