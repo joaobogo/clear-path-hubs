@@ -19,6 +19,7 @@ import { SectionTabs, filterSectionGroups } from "@/components/workspace/section
 import { ADMIN_SECTION_GROUPS } from "@/config/workspace-sections";
 import { ADMIN_NAV } from "@/config/admin-nav";
 import { WorkspaceShell } from "@/components/workspace/workspace-shell";
+import { SupportSessionBanner } from "@/components/admin/support-session-banner";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   errorComponent: makeRouteErrorComponent("admin", "/_authenticated/admin"),
@@ -113,7 +114,14 @@ function AdminLayout() {
         </div>
       }
     >
+      {/* Support access to a customer workspace stays visible everywhere in
+          Admin, with a one-click way to give it back. */}
+      <div className="-mx-4 mb-4 sm:-mx-6">
+        <SupportSessionBanner />
+      </div>
+
       <SectionTabs groups={sectionGroups} />
+
 
       {/* Included test records change every number on every desk, so say so
           once, loudly, instead of per-panel footnotes. */}

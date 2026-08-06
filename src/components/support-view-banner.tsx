@@ -1,7 +1,11 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ShieldAlert, ArrowLeft, Building2, Users, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
 import { useSupportView } from "@/lib/support-view";
+import { endSupportSession } from "@/lib/support.functions";
 
 /** Minutes:seconds left on a support session, recomputed every second. */
 function useTimeRemaining(expiresAt: string | null) {
@@ -30,6 +34,21 @@ export function SupportViewBanner() {
   const support = useSupportView();
   const navigate = useNavigate();
   const remaining = useTimeRemaining(support.sessionExpiresAt);
+  const qc = useQueryClient();
+  const end = useServerFn(endSupportSession);
+  // Staff should be able to hand access back from the workspace they are in,
+  // not only from Admin.
+  const endSession = useMutation({
+    mutationFn: (sessionId: string) => end({ data: { session_id: sessionId } }),
+    onSuccess: () => {
+      toast.success("Support session ended");
+      void qc.invalidateQueries({ queryKey: ["active-support-session"] });
+      void qc.invalidateQueries({ queryKey: ["my-support-sessions"] });
+      navigate({ to: "/admin" });
+    },
+    onError: (e: unknown) =>
+      toast.error(e instanceof Error ? e.message : "Could not end the session"),
+  });
   if (!support.active) return null;
   const color =
     support.mode === "interactive"
@@ -94,6 +113,15 @@ export function SupportViewBanner() {
             <Users className="h-3 w-3" />
             Change Client
           </Link>
+          {support.sessionId ? (
+            <button
+              onClick={() => endSession.mutate(support.sessionId!)}
+              disabled={endSession.isPending}
+              className="inline-flex items-center gap-1 rounded border border-current/40 bg-background/40 px-2 py-1 text-xs hover:bg-background/70 disabled:opacity-60"
+            >
+              {endSession.isPending ? "Ending…" : "End session"}
+            </button>
+          ) : null}
         </div>
       </div>
     </div>
