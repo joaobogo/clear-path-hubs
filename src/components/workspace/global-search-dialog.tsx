@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { Building2, Briefcase, Users, MessageSquare, Loader2, Clock, CheckSquare, Zap, LineChart, PlusCircle, Truck, Bot, Gauge, Send, ClipboardList, AlertTriangle, RotateCw } from "lucide-react";
+import { Building2, Briefcase, Users, MessageSquare, Loader2, Clock, CheckSquare, Zap, LineChart, PlusCircle, Bot, Gauge, Send, ClipboardList, AlertTriangle, RotateCw } from "lucide-react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -79,7 +79,6 @@ const CLIENT_QUICK_ACTIONS: QuickAction[] = [
   { id: "qa-agents", label: "Turn agents on or off", keywords: "agents sourcing screening outreach scheduling turn on off pause control", href: "/client/agents", icon: Bot },
   { id: "qa-pace", label: "Change how hard we work a role", keywords: "pace intensity steady standard aggressive dial control room", href: "/client", icon: Gauge },
   { id: "qa-outreach", label: "Set outreach rules", keywords: "outreach channels contact rules frequency caps", href: "/client/outreach", icon: Send },
-  { id: "qa-deliveries", label: "Go to latest delivery", keywords: "deliveries weekly delivery", href: "/client/deliveries", icon: Truck },
   { id: "qa-analytics", label: "Open analytics", keywords: "analytics metrics conversion", href: "/client/analytics", icon: LineChart },
   { id: "qa-inbox", label: "Open inbox", keywords: "messages notifications inbox", href: "/client/inbox", icon: MessageSquare },
 ];
