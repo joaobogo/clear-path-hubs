@@ -876,6 +876,71 @@ async function handle(request: Request): Promise<Response> {
       const res = await lookupIntake(body.company_name, body.email);
       return Response.json({ ok: true, action, ...res });
     }
+    // Tenant-isolation assertions: what a workspace's member list actually is,
+    // and how many organizations exist for one company name. Read-only.
+    if (action === "lookup_tenant") {
+      if (!body.organization_id && !body.company_name) {
+        return Response.json(
+          { ok: false, error: "organization_id or company_name required" },
+          { status: 400 },
+        );
+      }
+      const sb = await loadAdmin();
+      let orgIds: string[] = body.organization_id ? [body.organization_id] : [];
+      let organizations: Array<{ id: string; name: string; status: string; domain: string | null }> = [];
+      if (body.company_name) {
+        const norm = String(body.company_name)
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, " ")
+          .replace(/[.,]/g, "");
+        const { data } = await sb
+          .from("organizations")
+          .select("id, name, status, domain")
+          .eq("name_normalized", norm);
+        organizations = (data ?? []) as typeof organizations;
+        orgIds = organizations.map((o) => o.id);
+      } else {
+        const { data } = await sb
+          .from("organizations")
+          .select("id, name, status, domain")
+          .in("id", orgIds);
+        organizations = (data ?? []) as typeof organizations;
+      }
+      let memberships: Array<{
+        user_id: string;
+        organization_id: string;
+        role: string;
+        status: string;
+        email: string | null;
+      }> = [];
+      if (orgIds.length > 0) {
+        const { data: mems } = await sb
+          .from("memberships")
+          .select("user_id, organization_id, role, status")
+          .in("organization_id", orgIds);
+        const rows = (mems ?? []) as Array<{
+          user_id: string;
+          organization_id: string;
+          role: string;
+          status: string;
+        }>;
+        const userIds = Array.from(new Set(rows.map((r) => r.user_id)));
+        const emailByUser = new Map<string, string>();
+        if (userIds.length > 0) {
+          const { data: profs } = await sb
+            .from("profiles")
+            .select("auth_user_id, email")
+            .in("auth_user_id", userIds);
+          for (const p of (profs ?? []) as Array<{ auth_user_id: string; email: string }>) {
+            emailByUser.set(p.auth_user_id, p.email);
+          }
+        }
+        memberships = rows.map((r) => ({ ...r, email: emailByUser.get(r.user_id) ?? null }));
+      }
+      return Response.json({ ok: true, action, organizations, memberships });
+    }
+
     if (action === "lookup_candidate_application") {
       if (!body.email) return Response.json({ ok: false, error: "email required" }, { status: 400 });
       const res = await lookupCandidateApplication(body.email);
