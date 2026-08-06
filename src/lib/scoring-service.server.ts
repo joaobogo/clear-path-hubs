@@ -33,8 +33,12 @@ import {
 } from "./scoring-engine.server";
 import {
   EVALUATION_METHOD,
+  parseCalibration,
   resolveCalibration,
+  serialiseCalibration,
+  type EngineCalibration,
 } from "./scoring/engine-calibration";
+import { buildReplaySnapshot } from "./scoring/replay";
 import type { Json } from "@/integrations/supabase/types";
 
 export const SCORING_BLUEPRINT_VERSION = "taasflow-blueprint-v1.0.0";
@@ -216,7 +220,7 @@ function reconcile(result: ScoringResult): {
  * requirements and stamp it approved — a score with no criteria list behind it
  * is unauditable (audit finding 1).
  */
-async function ensureRubricVersionId(
+async function ensureRubricVersion(
   s: Any,
   position: {
     id: string;
@@ -225,17 +229,23 @@ async function ensureRubricVersionId(
     requirements?: unknown;
     preferred_requirements?: unknown;
   },
-): Promise<string> {
+  /** Calibration written onto a NEWLY minted version. Existing versions keep theirs. */
+  defaultCalibration: EngineCalibration,
+): Promise<{ id: string; calibration: EngineCalibration }> {
   const { data: existing } = await s
     .from("rubric_versions")
-    .select("id,version_number,status")
+    .select("id,version_number,status,calibration")
     .eq("position_id", position.id)
     .in("status", ["approved", "active"])
     .is("superseded_at", null)
     .order("version_number", { ascending: false })
     .limit(1)
     .maybeSingle();
-  if (existing?.id) return existing.id as string;
+  if (existing?.id) {
+    // A published rubric version is immutable, so its stored calibration — not
+    // today's defaults — governs every run that names it.
+    return { id: existing.id as string, calibration: parseCalibration(existing.calibration) };
+  }
 
   const { data: latest } = await s
     .from("rubric_versions")
@@ -263,6 +273,8 @@ async function ensureRubricVersionId(
       weights: {},
       anchors: {},
       qualifiers: preferred,
+      calibration: serialiseCalibration(defaultCalibration),
+      engine_version: defaultCalibration.engine_version,
       snapshot: {
         origin: "auto-from-position-requirements",
         position_title: position.title ?? null,
@@ -279,17 +291,19 @@ async function ensureRubricVersionId(
     // Losing the race against a concurrent run is fine — re-read.
     const { data: retry } = await s
       .from("rubric_versions")
-      .select("id")
+      .select("id,calibration")
       .eq("position_id", position.id)
       .in("status", ["approved", "active"])
       .is("superseded_at", null)
       .order("version_number", { ascending: false })
       .limit(1)
       .maybeSingle();
-    if (retry?.id) return retry.id as string;
+    if (retry?.id) {
+      return { id: retry.id as string, calibration: parseCalibration(retry.calibration) };
+    }
     throw new Error(`rubric_version_unavailable:${error?.message ?? "insert_failed"}`);
   }
-  return created.id as string;
+  return { id: created.id as string, calibration: defaultCalibration };
 }
 
 
@@ -421,10 +435,26 @@ export async function executeScoring(
     const cvText: string = ctx.cvFile.extracted_text ?? "";
     if (cvText.length < 60) throw new Error("cv_unparsed");
 
-    // 5) Score. Calibration is resolved from the role family and stamped on the
-    //    run, so every constant behind the number has provenance.
+    // 5) Resolve the governing rubric version FIRST: it owns the calibration,
+    //    so every constant behind the number is stored alongside the criteria
+    //    and a run replays from its rubric version plus its inputs. Role-family
+    //    defaults only apply when a brand-new version is minted here.
     const roleFamily = await resolveRoleFamily(s, ctx.position.title ?? null);
-    const calibration = resolveCalibration(roleFamily);
+    const rubric = await ensureRubricVersion(
+      s,
+      {
+        id: ctx.match.position_id,
+        organization_id: ctx.match.organization_id,
+        title: ctx.position.title ?? null,
+        requirements: (ctx.position as Any).requirements,
+        preferred_requirements: (ctx.position as Any).preferred_requirements,
+      },
+      resolveCalibration(roleFamily),
+    );
+    const rubricVersionId = rubric.id;
+    const calibration = rubric.calibration;
+
+    // 6) Score with the rubric's own calibration.
     const raw = scoreCandidate({
       cv_text: cvText,
       requirements: ctx.requirements,
@@ -432,22 +462,15 @@ export async function executeScoring(
       calibration,
     });
 
-    // 6) Reconcile caps.
+    // 7) Reconcile caps.
     const rec = reconcile(raw);
     if (!rec.reconciled) {
       throw new Error(`reconciliation_failed:${rec.mismatch}`);
     }
 
-    // 7) Reuse: identical inputs AND the same governing rubric version means the
+    // 8) Reuse: identical inputs AND the same governing rubric version means the
     //    answer cannot differ, so we point at the existing run instead of
-    //    inserting a duplicate. Resolve the rubric first — it is part of the key.
-    const rubricVersionId = await ensureRubricVersionId(s, {
-      id: ctx.match.position_id,
-      organization_id: ctx.match.organization_id,
-      title: ctx.position.title ?? null,
-      requirements: (ctx.position as Any).requirements,
-      preferred_requirements: (ctx.position as Any).preferred_requirements,
-    });
+    //    inserting a duplicate.
     const { data: dup } = await s.from("score_runs")
       .select("id,score,fit_label")
       .eq("candidate_match_id", matchId)
@@ -471,8 +494,16 @@ export async function executeScoring(
         blueprint_version: SCORING_BLUEPRINT_VERSION,
         rubric_version_id: rubricVersionId,
         calibration_version: calibration.calibration_version,
-        calibration,
+        calibration: serialiseCalibration(calibration),
         role_family: roleFamily,
+        // Inputs are stored verbatim so `replayScoreRun` can recompute this
+        // exact score from the run alone. Runs are staff-only by RLS.
+        inputs: buildReplaySnapshot({
+          cv_text: cvText,
+          requirements: ctx.requirements,
+          screening: ctx.screening,
+          role_family: roleFamily,
+        }),
         evaluation_method: EVALUATION_METHOD,
         applied_caps: rec.applied_caps,
         reconciliation: {
@@ -553,7 +584,8 @@ export async function executeScoring(
       .eq("id", matchId);
 
     const finalState: "scored" | "manual_review_required" =
-      raw.contradiction_status === "disqualifying_answer" || raw.overall_confidence < 0.35
+      raw.contradiction_status === "disqualifying_answer" ||
+      raw.overall_confidence < calibration.manual_review_confidence
         ? "manual_review_required"
         : "scored";
 
