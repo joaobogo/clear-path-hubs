@@ -328,7 +328,7 @@ function LoginPage() {
             </h1>
             <p className="text-sm text-muted-foreground">
               {mode === "signin"
-                ? "Sign in with the email your team invited or your candidate account."
+                ? "Sign in with the email your team invited."
                 : mode === "forgot"
                   ? "We'll email you a secure reset link."
                   : "We'll send a new link to confirm your email address."}
