@@ -1,5 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  rateLimitResponse,
+  rateLimited,
+} from "@/lib/public-api/rate-limit";
+import {
   expressIntakeSchema,
   ALLOWED_JD_EXT,
   ALLOWED_JD_MIME,
@@ -104,6 +110,11 @@ export const Route = createFileRoute("/api/public/express-intake")({
     handlers: {
       POST: async ({ request }) => {
         const traceId = crypto.randomUUID();
+
+        if (rateLimited("express_intake", clientIp(request), PUBLIC_RATE_LIMITS.express_intake)) {
+          return rateLimitResponse(traceId, PUBLIC_RATE_LIMITS.express_intake.windowMs);
+        }
+
         let body: unknown;
         try {
           body = await request.json();

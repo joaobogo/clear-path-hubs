@@ -1,5 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
+import {
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  rateLimitResponse,
+  rateLimited,
+} from "@/lib/public-api/rate-limit";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(120),
@@ -33,6 +39,11 @@ export const Route = createFileRoute("/api/public/contact")({
     handlers: {
       POST: async ({ request }) => {
         const traceId = crypto.randomUUID();
+
+        if (rateLimited("contact", clientIp(request), PUBLIC_RATE_LIMITS.contact)) {
+          return rateLimitResponse(traceId, PUBLIC_RATE_LIMITS.contact.windowMs);
+        }
+
         let body: unknown;
         try {
           body = await request.json();
