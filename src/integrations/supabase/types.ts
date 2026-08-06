@@ -14648,6 +14648,7 @@ export type Database = {
           admin_status: string | null
           application_id: string | null
           applied_at: string | null
+          brief_updated_at: string | null
           candidate_profile_id: string | null
           canonical_state: string | null
           city: string | null
@@ -14675,11 +14676,15 @@ export type Database = {
           position_id: string | null
           position_title: string | null
           processing_state: string | null
+          profile_updated_at: string | null
           recommendation: string | null
           region: string | null
           score: number | null
           score_band: string | null
           score_run_id: string | null
+          scored_at: string | null
+          scored_engine_version: string | null
+          scored_input_hash: string | null
           search_text: string | null
           source: string | null
           source_channel: string | null
