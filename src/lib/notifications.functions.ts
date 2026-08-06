@@ -257,9 +257,35 @@ export const listMyNotifications = createServerFn({ method: "GET" })
       }
     }
 
+    // Delivery state for the email copy of each notification. The deliveries
+    // ledger is staff-readable only, so this reads through the admin client but
+    // is hard-scoped to notification ids we already proved belong to the caller.
+    const deliveryByNotification = new Map<string, string>();
+    if (rows.length > 0) {
+      const { normaliseDeliveryStatus } = await import("./notifications/delivery-state");
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: deliveries } = await supabaseAdmin
+        .from("notification_deliveries")
+        .select("notification_id, status, last_attempt_at, created_at")
+        .in(
+          "notification_id",
+          rows.map((r) => r.id),
+        )
+        .order("created_at", { ascending: true });
+      for (const d of deliveries ?? []) {
+        const state = normaliseDeliveryStatus(d.status as string | null);
+        if (!state) continue;
+        const id = d.notification_id as string | null;
+        if (!id) continue;
+        // Later attempts win, so a successful resend clears an earlier failure.
+        deliveryByNotification.set(id, state);
+      }
+    }
+
     const items = rows.map((r) => ({
       ...r,
       actor_label: r.event_id ? (actorByEvent.get(r.event_id) ?? null) : null,
+      delivery_state: deliveryByNotification.get(r.id) ?? null,
     }));
     const unread = items.filter((n) => !n.read_at).length;
     return { items, unread };

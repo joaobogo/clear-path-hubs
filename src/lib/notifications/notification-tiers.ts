@@ -528,6 +528,8 @@ export type NotificationRecord = {
   entity_type: string | null;
   entity_id: string | null;
   actor_label?: string | null;
+  /** Email delivery state for this notification, when an email was attempted. */
+  delivery_state?: string | null;
 };
 
 export type NotificationGroup = {
