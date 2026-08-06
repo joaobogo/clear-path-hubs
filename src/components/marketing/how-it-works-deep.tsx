@@ -249,8 +249,8 @@ export function SourcingEcosystemMap() {
       </div>
 
       <p className="mt-4 text-xs text-[color:var(--brand-navy)]/80">
-        Every candidate — regardless of channel — is evaluated against the same
-        approved rubric. No side-doors that skip evidence. No channel gets a
+        Each of these channels has its own agent, and every candidate —
+        regardless of channel — is evaluated against the same approved rubric. No side-doors that skip evidence. No channel gets a
         shortcut past the scoring bar.
       </p>
     </MockChrome>
