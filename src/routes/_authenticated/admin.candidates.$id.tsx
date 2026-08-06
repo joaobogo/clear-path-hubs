@@ -64,7 +64,6 @@ import { EvidenceGraph } from "@/components/evidence/evidence-graph";
 import { buildEvidenceChain } from "@/lib/evidence/evidence-graph";
 import { listAdminEvidence } from "@/lib/evidence/evidence.functions";
 import { EvidenceCompletenessGate } from "@/components/admin/evidence-completeness-gate";
-import { ContactSuppressionPanel } from "@/components/admin/contact-suppression-panel";
 import { ProcessState } from "@/components/ds/process-state";
 import { candidateProcessStatus } from "@/lib/loading/process-catalogue";
 import {
@@ -194,11 +193,6 @@ function CandidateWorkspace() {
 
       <CandidateNextActionBar matchId={id} onNavigateTab={(t) => setTab(t as TabId)} />
 
-      <ContactSuppressionPanel
-        organizationId={m?.organization_id ?? null}
-        candidateProfileId={m?.candidate_profile_id ?? null}
-        candidateMatchId={id}
-      />
 
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
