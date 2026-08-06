@@ -191,6 +191,7 @@ import { Route as ApiPublicBookingSessionIdIcsRouteImport } from './routes/api/p
 import { Route as AuthenticatedClientPositionsIdEditRouteImport } from './routes/_authenticated/client.positions.$id_.edit'
 import { Route as AuthenticatedAdminScoringReviewMatchIdRouteImport } from './routes/_authenticated/admin.scoring.review.$matchId'
 import { Route as AuthenticatedAdminPositionsIdEditRouteImport } from './routes/_authenticated/admin.positions.$id_.edit'
+import { Route as AuthenticatedAdminCandidatesIdParseRouteImport } from './routes/_authenticated/admin.candidates.$id_.parse'
 import { Route as AuthenticatedAdminCandidatesIdEvidenceRouteImport } from './routes/_authenticated/admin.candidates.$id_.evidence'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
@@ -1186,6 +1187,12 @@ const AuthenticatedAdminPositionsIdEditRoute =
     path: '/$id/edit',
     getParentRoute: () => AuthenticatedAdminPositionsRoute,
   } as any)
+const AuthenticatedAdminCandidatesIdParseRoute =
+  AuthenticatedAdminCandidatesIdParseRouteImport.update({
+    id: '/$id_/parse',
+    path: '/$id/parse',
+    getParentRoute: () => AuthenticatedAdminCandidatesRoute,
+  } as any)
 const AuthenticatedAdminCandidatesIdEvidenceRoute =
   AuthenticatedAdminCandidatesIdEvidenceRouteImport.update({
     id: '/$id_/evidence',
@@ -1371,6 +1378,7 @@ export interface FileRoutesByFullPath {
   '/client/shares/': typeof AuthenticatedClientSharesIndexRoute
   '/me/applications/': typeof AuthenticatedMeApplicationsIndexRoute
   '/admin/candidates/$id/evidence': typeof AuthenticatedAdminCandidatesIdEvidenceRoute
+  '/admin/candidates/$id/parse': typeof AuthenticatedAdminCandidatesIdParseRoute
   '/admin/positions/$id/edit': typeof AuthenticatedAdminPositionsIdEditRoute
   '/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/client/positions/$id/edit': typeof AuthenticatedClientPositionsIdEditRoute
@@ -1545,6 +1553,7 @@ export interface FileRoutesByTo {
   '/client/shares': typeof AuthenticatedClientSharesIndexRoute
   '/me/applications': typeof AuthenticatedMeApplicationsIndexRoute
   '/admin/candidates/$id/evidence': typeof AuthenticatedAdminCandidatesIdEvidenceRoute
+  '/admin/candidates/$id/parse': typeof AuthenticatedAdminCandidatesIdParseRoute
   '/admin/positions/$id/edit': typeof AuthenticatedAdminPositionsIdEditRoute
   '/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/client/positions/$id/edit': typeof AuthenticatedClientPositionsIdEditRoute
@@ -1731,6 +1740,7 @@ export interface FileRoutesById {
   '/_authenticated/client/shares/': typeof AuthenticatedClientSharesIndexRoute
   '/_authenticated/me/applications/': typeof AuthenticatedMeApplicationsIndexRoute
   '/_authenticated/admin/candidates/$id_/evidence': typeof AuthenticatedAdminCandidatesIdEvidenceRoute
+  '/_authenticated/admin/candidates/$id_/parse': typeof AuthenticatedAdminCandidatesIdParseRoute
   '/_authenticated/admin/positions/$id_/edit': typeof AuthenticatedAdminPositionsIdEditRoute
   '/_authenticated/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/_authenticated/client/positions/$id_/edit': typeof AuthenticatedClientPositionsIdEditRoute
@@ -1917,6 +1927,7 @@ export interface FileRouteTypes {
     | '/client/shares/'
     | '/me/applications/'
     | '/admin/candidates/$id/evidence'
+    | '/admin/candidates/$id/parse'
     | '/admin/positions/$id/edit'
     | '/admin/scoring/review/$matchId'
     | '/client/positions/$id/edit'
@@ -2091,6 +2102,7 @@ export interface FileRouteTypes {
     | '/client/shares'
     | '/me/applications'
     | '/admin/candidates/$id/evidence'
+    | '/admin/candidates/$id/parse'
     | '/admin/positions/$id/edit'
     | '/admin/scoring/review/$matchId'
     | '/client/positions/$id/edit'
@@ -2276,6 +2288,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/shares/'
     | '/_authenticated/me/applications/'
     | '/_authenticated/admin/candidates/$id_/evidence'
+    | '/_authenticated/admin/candidates/$id_/parse'
     | '/_authenticated/admin/positions/$id_/edit'
     | '/_authenticated/admin/scoring/review/$matchId'
     | '/_authenticated/client/positions/$id_/edit'
@@ -3653,6 +3666,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPositionsIdEditRouteImport
       parentRoute: typeof AuthenticatedAdminPositionsRoute
     }
+    '/_authenticated/admin/candidates/$id_/parse': {
+      id: '/_authenticated/admin/candidates/$id_/parse'
+      path: '/$id/parse'
+      fullPath: '/admin/candidates/$id/parse'
+      preLoaderRoute: typeof AuthenticatedAdminCandidatesIdParseRouteImport
+      parentRoute: typeof AuthenticatedAdminCandidatesRoute
+    }
     '/_authenticated/admin/candidates/$id_/evidence': {
       id: '/_authenticated/admin/candidates/$id_/evidence'
       path: '/$id/evidence'
@@ -3667,6 +3687,7 @@ interface AuthenticatedAdminCandidatesRouteChildren {
   AuthenticatedAdminCandidatesIdRoute: typeof AuthenticatedAdminCandidatesIdRoute
   AuthenticatedAdminCandidatesIndexRoute: typeof AuthenticatedAdminCandidatesIndexRoute
   AuthenticatedAdminCandidatesIdEvidenceRoute: typeof AuthenticatedAdminCandidatesIdEvidenceRoute
+  AuthenticatedAdminCandidatesIdParseRoute: typeof AuthenticatedAdminCandidatesIdParseRoute
 }
 
 const AuthenticatedAdminCandidatesRouteChildren: AuthenticatedAdminCandidatesRouteChildren =
@@ -3676,6 +3697,8 @@ const AuthenticatedAdminCandidatesRouteChildren: AuthenticatedAdminCandidatesRou
       AuthenticatedAdminCandidatesIndexRoute,
     AuthenticatedAdminCandidatesIdEvidenceRoute:
       AuthenticatedAdminCandidatesIdEvidenceRoute,
+    AuthenticatedAdminCandidatesIdParseRoute:
+      AuthenticatedAdminCandidatesIdParseRoute,
   }
 
 const AuthenticatedAdminCandidatesRouteWithChildren =
