@@ -690,7 +690,7 @@ export function PositionEditWizard({
                 title="Budget range"
                 subtitle="Give us a realistic band. We use this to filter candidates."
               />
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <Field label="Currency">
                   <Select value={state.currency} onValueChange={(v) => set("currency", v)}>
                     <SelectTrigger>
@@ -704,6 +704,21 @@ export function PositionEditWizard({
                       <SelectItem value="AUD">AUD</SelectItem>
                       <SelectItem value="BRL">BRL</SelectItem>
                       <SelectItem value="INR">INR</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field label="Period">
+                  <Select
+                    value={state.budget_period || "year"}
+                    onValueChange={(v) => set("budget_period", v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="year">Per year</SelectItem>
+                      <SelectItem value="month">Per month</SelectItem>
+                      <SelectItem value="hour">Per hour</SelectItem>
                     </SelectContent>
                   </Select>
                 </Field>
@@ -1098,6 +1113,11 @@ export function PositionEditWizard({
                 <div>
                   {state.budget_min || "—"}
                   {state.budget_max ? ` – ${state.budget_max}` : ""} {state.currency}
+                  {state.budget_period === "hour"
+                    ? " per hour"
+                    : state.budget_period === "month"
+                      ? " per month"
+                      : " per year"}
                 </div>
                 {state.compensation && (
                   <div className="text-muted-foreground">{state.compensation}</div>
