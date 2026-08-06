@@ -92,7 +92,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+const TAB_IDS = [
+  "overview","requirements","preferred","dealbreakers","screening","blueprint",
+  "pipeline","sourcing","memory","activity","audit","settings",
+] as const;
+
 export const Route = createFileRoute("/_authenticated/admin/positions/$id")({
+  // Tabs live in the URL so deep links and back/forward keep working.
+  validateSearch: (search: Record<string, unknown>) => {
+    const raw = String(search.tab ?? "overview");
+    const tab = (TAB_IDS as readonly string[]).includes(raw)
+      ? (raw as (typeof TAB_IDS)[number])
+      : ("overview" as const);
+    return { tab };
+  },
   loader: async ({ context, params }) => {
     const d = await context.queryClient.ensureQueryData({
       queryKey: ["admin-position", params.id],
@@ -185,7 +198,10 @@ function PositionWorkspace() {
   const screening = data!.screening as Any[];
   const matches = data!.matches as Any[];
 
-  const [tab, setTab] = useState<TabId>("overview");
+  const { tab } = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const setTab = (next: TabId) =>
+    navigate({ search: (prev: { tab: TabId }) => ({ ...prev, tab: next }), replace: true });
 
   const invalidate = async () => {
     await qc.invalidateQueries({ queryKey: ["admin-position", id] });
