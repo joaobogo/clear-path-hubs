@@ -326,9 +326,11 @@ export async function executeScoring(
       reused = true;
     } else {
       const explanation = buildExplanation(raw, rec.applied_caps);
+      const rubricVersionId = await resolveRubricVersionId(s, ctx.match.position_id);
       const enrichedResult = {
         ...raw,
         blueprint_version: SCORING_BLUEPRINT_VERSION,
+        rubric_version_id: rubricVersionId,
         applied_caps: rec.applied_caps,
         reconciliation: { computed: rec.computed, declared: raw.score, ok: true },
         actor_user_id: opts.actor_user_id ?? null,
@@ -350,6 +352,7 @@ export async function executeScoring(
         candidate_submission_id: ctx.match.application_id,
         organization_id: ctx.match.organization_id,
         blueprint_version: SCORING_BLUEPRINT_VERSION,
+        rubric_version_id: rubricVersionId,
         // ── Math (raw / cap / final) ───────────────────────────────────────
         raw_score: rec.computed,
         applied_cap: raw.score,
@@ -366,8 +369,10 @@ export async function executeScoring(
           must_have: raw.category_breakdown.must_have,
           preferred: raw.category_breakdown.preferred,
           screening_alignment: raw.category_breakdown.screening_alignment,
+          category_weights: raw.category_weights,
           requirement_assessment: raw.requirement_assessment,
         } as unknown as Json,
+
         started_at: new Date().toISOString(),
         completed_at: new Date().toISOString(),
         trace_id,
