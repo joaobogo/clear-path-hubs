@@ -8206,6 +8206,166 @@ export type Database = {
           },
         ]
       }
+      parse_field_reviews: {
+        Row: {
+          candidate_match_id: string
+          candidate_profile_id: string | null
+          created_at: string
+          field_label: string | null
+          field_path: string
+          human_value: Json | null
+          id: string
+          located: boolean
+          machine_value: Json | null
+          organization_id: string | null
+          review_state: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          reviewer_note: string | null
+          updated_at: string
+        }
+        Insert: {
+          candidate_match_id: string
+          candidate_profile_id?: string | null
+          created_at?: string
+          field_label?: string | null
+          field_path: string
+          human_value?: Json | null
+          id?: string
+          located?: boolean
+          machine_value?: Json | null
+          organization_id?: string | null
+          review_state?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_note?: string | null
+          updated_at?: string
+        }
+        Update: {
+          candidate_match_id?: string
+          candidate_profile_id?: string | null
+          created_at?: string
+          field_label?: string | null
+          field_path?: string
+          human_value?: Json | null
+          id?: string
+          located?: boolean
+          machine_value?: Json | null
+          organization_id?: string | null
+          review_state?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_note?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parse_field_reviews_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parse_field_reviews_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "admin_work_inbox"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parse_field_reviews_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parse_field_reviews_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_candidate_matches_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parse_field_reviews_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_kanban_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parse_field_reviews_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "client_visible_candidates"
+            referencedColumns: ["candidate_match_id"]
+          },
+          {
+            foreignKeyName: "parse_field_reviews_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "parse_field_reviews_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_match_milestone_timings"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "parse_field_reviews_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_scoring_review_queue"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "parse_field_reviews_candidate_match_id_fkey"
+            columns: ["candidate_match_id"]
+            isOneToOne: false
+            referencedRelation: "v_source_attribution"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "parse_field_reviews_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profile_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parse_field_reviews_candidate_profile_id_fkey"
+            columns: ["candidate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "candidate_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parse_field_reviews_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "admin_clients_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parse_field_reviews_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parse_field_reviews_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_portfolio_rollup"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount_cents: number
