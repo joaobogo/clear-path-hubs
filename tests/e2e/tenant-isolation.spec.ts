@@ -305,7 +305,7 @@ test.describe("tenant isolation — /intake and /express-intake", () => {
   });
 
   test("/express-intake refuses to join an existing workspace by company name alone", async () => {
-    const stranger = uniqueProspect();
+    const stranger = prospect();
 
     const { status, body } = await postPublic<IntakeResponse>(
       "/api/public/express-intake",
@@ -316,7 +316,7 @@ test.describe("tenant isolation — /intake and /express-intake", () => {
       }),
     );
 
-    expect(status).toBe(409);
+    expect(status, JSON.stringify(body)).toBe(409);
     expect(body.error).toBe("organization_exists");
 
     const tenant = await lookupTenant({ companyName: owner.companyName });
@@ -328,32 +328,32 @@ test.describe("tenant isolation — /intake and /express-intake", () => {
     // Establish a tenant whose organization carries a corporate domain, then
     // have a stranger on that same domain try to walk into it under a company
     // name of their own. Domain ownership is not identity.
-    const domainOwner = uniqueProspect();
-    const domain = `qa-domain-${Date.now()}.test`;
+    const domainOwner = prospect();
+    const sharedDomain = `d${domainOwner.stamp}.qa.taasflow.test`;
 
     const created = await postPublic<IntakeResponse>(
       "/api/public/intake",
       intakePayload({
         companyName: domainOwner.companyName,
-        workEmail: `qa.intake+dom-${Date.now()}@${domain}`,
+        workEmail: `qa.intake+dom${domainOwner.stamp}@${sharedDomain}`,
         password: OWNER_PASSWORD,
-        companyWebsite: `https://${domain}`,
+        companyWebsite: `https://${sharedDomain}`,
       }),
     );
     expect(created.status, JSON.stringify(created.body)).toBe(200);
     const domainOrgId = created.body.organizationId!;
 
-    const strangerCompany = `${uniqueProspect().companyName}_SAMEDOMAIN`;
+    const strangerCompany = prospect().companyName;
     const stranger = await postPublic<IntakeResponse>(
       "/api/public/intake",
       intakePayload({
         companyName: strangerCompany,
-        workEmail: `qa.intake+stranger-${Date.now()}@${domain}`,
+        workEmail: `qa.intake+str${domainOwner.stamp}@${sharedDomain}`,
         password: ATTACKER_PASSWORD,
       }),
     );
 
-    expect(stranger.status).toBe(409);
+    expect(stranger.status, JSON.stringify(stranger.body)).toBe(409);
     expect(stranger.body.error).toBe("organization_exists");
 
     const tenant = await lookupTenant({ organizationId: domainOrgId });
@@ -362,6 +362,7 @@ test.describe("tenant isolation — /intake and /express-intake", () => {
     // And no workspace was forked under the stranger's company name either.
     expect((await lookupTenant({ companyName: strangerCompany })).organizations).toHaveLength(0);
   });
+
 
 
   // ── 3. tenant hijack prevention ──────────────────────────────────────────
