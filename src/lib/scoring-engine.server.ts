@@ -460,6 +460,8 @@ export function scoreCandidate(input: {
       preferred: Math.round(preferred_coverage * 10000) / 10000,
       screening_alignment: Math.round(screening_alignment * 10000) / 10000,
     },
+    category_weights,
+
     requirement_assessment: assessment,
     strengths,
     concerns,
