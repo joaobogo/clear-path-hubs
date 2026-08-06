@@ -208,7 +208,7 @@ function PricingPage() {
       <PublicSection className="py-10">
         <PublicPage>
           <h2 className="font-[family-name:var(--brand-font-display)] text-2xl font-semibold tracking-tight sm:text-3xl">
-            How the entitlements work
+            How our commercial options work.
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
             Plain answers to the questions that decide whether a plan fits. Your
