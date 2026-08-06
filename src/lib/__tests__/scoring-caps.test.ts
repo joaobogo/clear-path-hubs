@@ -76,9 +76,16 @@ describe("applied caps", () => {
     `.repeat(3);
     const r = scoreCandidate({ cv_text: cv, requirements: REQS, screening: [], calibration: cal });
     expect(r.must_have_coverage).toBeLessThan(cal.must_have_floor);
-    const cap = r.applied_caps.find((c) => c.reason.startsWith("must_have_floor"));
-    expect(cap?.cap).toBe(cal.must_have_floor_cap);
-    expect(cap!.reason).toContain("below the rubric floor");
+    // The ceiling is binding either way: below-floor coverage can never publish
+    // above must_have_floor_cap.
     expect(r.score).toBeLessThanOrEqual(cal.must_have_floor_cap * 100 + 0.05);
+    const cap = r.applied_caps.find((c) => c.reason.startsWith("must_have_floor"));
+    if (r.raw_score > cal.must_have_floor_cap * 100) {
+      expect(cap?.cap).toBe(cal.must_have_floor_cap);
+      expect(cap!.reason).toContain("below the rubric floor");
+    } else {
+      // Already under the ceiling, so nothing was clamped — no phantom cap.
+      expect(cap).toBeUndefined();
+    }
   });
 });
