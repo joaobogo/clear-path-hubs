@@ -528,7 +528,7 @@ export function SiteShell({
         {children}
       </main>
       {!hideLinkHub && <InternalLinkHub />}
-      <Footer />
+      <SiteFooter />
       <MobileCtaBar />
     </div>
   );
