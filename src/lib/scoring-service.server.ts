@@ -451,7 +451,13 @@ export async function executeScoring(
       reused = true;
     } else {
       const explanation = buildExplanation(raw, rec.applied_caps);
-      const rubricVersionId = await resolveRubricVersionId(s, ctx.match.position_id);
+      const rubricVersionId = await ensureRubricVersionId(s, {
+        id: ctx.match.position_id,
+        organization_id: ctx.match.organization_id,
+        title: ctx.position.title ?? null,
+        requirements: (ctx.position as Any).requirements,
+        preferred_requirements: (ctx.position as Any).preferred_requirements,
+      });
       const enrichedResult = {
         ...raw,
         blueprint_version: SCORING_BLUEPRINT_VERSION,
