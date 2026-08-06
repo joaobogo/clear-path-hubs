@@ -248,7 +248,7 @@ function ClientAccessBody({
 
         {/* The empty case is owned by PanelState above, so a failed read can
             never look like an account with no members. */}
-        {(
+
 
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
