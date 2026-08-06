@@ -68,6 +68,7 @@ export function CandidateScoreBadge({
   fitLabel = null,
   evidence = null,
   rechecking = false,
+  humanReviewed = false,
   unicorn = false,
   className = "",
 }: Props) {
