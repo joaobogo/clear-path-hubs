@@ -122,10 +122,13 @@ export async function applyStageMove(
 
   const now = new Date().toISOString();
   // Chunked writes: a selection of any size lands, and each statement stays small.
-  const updates = await mapChunks(ids, WRITE_CHUNK, (batch) =>
-    admin.from("candidate_matches").update({ stage: toStage, updated_at: now }).in("id", batch),
-  );
-  for (const u of updates) if (u.error) throw u.error;
+  await mapChunks(ids, WRITE_CHUNK, async (batch) => {
+    const { error: updateError } = await admin
+      .from("candidate_matches")
+      .update({ stage: toStage, updated_at: now })
+      .in("id", batch);
+    if (updateError) throw updateError;
+  });
 
   // The history rows and the audit row are independent inserts; both are
   // required, so they go out together and either failure still surfaces.
