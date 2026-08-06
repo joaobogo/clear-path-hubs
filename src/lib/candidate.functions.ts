@@ -1,6 +1,7 @@
 // Candidate self-service service layer (Phase 9).
 // All reads/writes use the authenticated Supabase client (RLS applies as caller).
 // The candidate NEVER sees scores, rankings, admin_status, or processing errors.
+import { isBlockingParseState } from "@/lib/parse-failure/parse-failure-codes";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
@@ -241,7 +242,7 @@ export const getMyApplication = createServerFn({ method: "GET" })
       a.cv_file_id
         ? supabase
             .from("files")
-            .select("id, filename, size, created_at, parse_state")
+            .select("id, filename, size, created_at, parse_state, parse_error_code")
             .eq("id", a.cv_file_id)
             .maybeSingle()
         : Promise.resolve({ data: null }),
@@ -354,7 +355,7 @@ export const getMyApplication = createServerFn({ method: "GET" })
             filename: cvFile.filename as string,
             size: (cvFile.size as number | null) ?? null,
             uploaded_at: cvFile.created_at as string,
-            received: cvFile.parse_state !== "failed",
+            received: !isBlockingParseState(cvFile.parse_state as string),
           }
         : null,
       status,
@@ -363,7 +364,13 @@ export const getMyApplication = createServerFn({ method: "GET" })
       pending_action: computePendingAction({
         infoRequests: infoRequests,
         interviews,
-        document: cvFile ? { received: cvFile.parse_state !== "failed" } : null,
+        document: cvFile
+          ? {
+              received: !isBlockingParseState(cvFile.parse_state as string),
+              parseState: (cvFile.parse_state as string) ?? null,
+              errorCode: (cvFile.parse_error_code as string | null) ?? null,
+            }
+          : null,
         closed: status === "Closed",
       }),
       can_withdraw: canWithdraw(status),
@@ -533,7 +540,7 @@ export const getMyDashboard = createServerFn({ method: "GET" })
     if (profile?.current_cv_file_id) {
       const { data: f } = await supabase
         .from("files")
-        .select("id, filename, size, created_at, parse_state")
+        .select("id, filename, size, created_at, parse_state, parse_error_code")
         .eq("id", profile.current_cv_file_id)
         .maybeSingle();
       if (f) {
@@ -542,7 +549,7 @@ export const getMyDashboard = createServerFn({ method: "GET" })
           filename: f.filename,
           size: f.size,
           uploaded_at: f.created_at,
-          received: f.parse_state !== "failed",
+          received: !isBlockingParseState(f.parse_state as string),
         };
       }
     }
