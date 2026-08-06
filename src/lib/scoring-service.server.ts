@@ -22,6 +22,7 @@
 
 import {
   ENGINE_VERSION,
+  combineCategories,
   scoreCandidate,
   type RequirementInput,
   type ScreeningAnswer,
