@@ -10,7 +10,7 @@
  * device) so the whole thing is a phone number and a click.
  */
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { CalendarCheck, Clock, Loader2 } from "lucide-react";
 import { MEETING_TYPES, resolveMeetingType } from "@/config/booking";
