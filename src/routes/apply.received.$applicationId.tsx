@@ -8,6 +8,7 @@ import { TransparencyPanel } from "@/components/candidate/transparency-panel";
 import { CandidateStatePanel } from "@/components/candidate/candidate-state-panel";
 import { SUPPORT_EMAIL } from "@/lib/candidate/candidate-transparency";
 import { ReferenceBlock } from "@/components/candidate/reference-block";
+import { ProcessingWindowNote, RetentionNote } from "@/components/candidate/candidate-notes";
 import {
   APPLICATION_NEXT_STEPS,
   CONTACT_METHOD_SENTENCE,
@@ -211,6 +212,10 @@ function Received() {
         <div className="mt-6">
           <CandidateStatePanel state="application_received" />
         </div>
+
+        <ProcessingWindowNote />
+
+        <RetentionNote />
 
   
         <div className="mt-6">

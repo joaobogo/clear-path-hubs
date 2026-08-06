@@ -2251,6 +2251,8 @@ export type Database = {
           experience: Json
           expires_at: string | null
           full_name: string
+          gap_nudge_count: number
+          gap_nudge_last_at: string | null
           headline: string | null
           id: string
           is_test_record: boolean | null
@@ -2294,6 +2296,8 @@ export type Database = {
           experience?: Json
           expires_at?: string | null
           full_name: string
+          gap_nudge_count?: number
+          gap_nudge_last_at?: string | null
           headline?: string | null
           id?: string
           is_test_record?: boolean | null
@@ -2337,6 +2341,8 @@ export type Database = {
           experience?: Json
           expires_at?: string | null
           full_name?: string
+          gap_nudge_count?: number
+          gap_nudge_last_at?: string | null
           headline?: string | null
           id?: string
           is_test_record?: boolean | null
@@ -5639,12 +5645,15 @@ export type Database = {
             | Database["public"]["Enums"]["migration_row_status"]
             | null
           migration_version: string | null
+          no_show_flagged_at: string | null
           notes: string | null
           organization_id: string
           participants: Json
           position_id: string
           previous_scheduled_at: string | null
           proposed_times: Json
+          reminder_1h_sent_at: string | null
+          reminder_24h_sent_at: string | null
           requested_at: string
           requested_by_user_id: string | null
           reschedule_count: number
@@ -5686,12 +5695,15 @@ export type Database = {
             | Database["public"]["Enums"]["migration_row_status"]
             | null
           migration_version?: string | null
+          no_show_flagged_at?: string | null
           notes?: string | null
           organization_id: string
           participants?: Json
           position_id: string
           previous_scheduled_at?: string | null
           proposed_times?: Json
+          reminder_1h_sent_at?: string | null
+          reminder_24h_sent_at?: string | null
           requested_at?: string
           requested_by_user_id?: string | null
           reschedule_count?: number
@@ -5733,12 +5745,15 @@ export type Database = {
             | Database["public"]["Enums"]["migration_row_status"]
             | null
           migration_version?: string | null
+          no_show_flagged_at?: string | null
           notes?: string | null
           organization_id?: string
           participants?: Json
           position_id?: string
           previous_scheduled_at?: string | null
           proposed_times?: Json
+          reminder_1h_sent_at?: string | null
+          reminder_24h_sent_at?: string | null
           requested_at?: string
           requested_by_user_id?: string | null
           reschedule_count?: number

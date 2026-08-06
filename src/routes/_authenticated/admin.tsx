@@ -28,6 +28,7 @@ import {
   Timer,
   LifeBuoy,
   FileWarning,
+  MailWarning,
   SearchX,
   AlarmClock,
 
@@ -127,6 +128,16 @@ const NAV: WorkspaceNavItem[] = [
     group: "Quality",
     hint: "Why candidates arrived without evidence, and what they were told",
   },
+
+  {
+    to: "/admin/outcome-sla",
+    label: "Answers we owe",
+    icon: MailWarning,
+    group: "Quality",
+    hint: "Applications past our review commitment, and decisions never sent",
+  },
+
+
 
 
   { to: "/admin/messages", label: "Comms", icon: MessageSquare, group: "Comms", hint: "Messages, notifications, copilot" },
