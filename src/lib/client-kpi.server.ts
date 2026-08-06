@@ -517,7 +517,7 @@ export const CLIENT_CANDIDATE_SELECT = `id, stage, delivered_at, position_id, ap
 
 
 /** Lowest score inside the strongest configured band. Single source of truth. */
-const TOP_BAND_MIN = SCORE_BAND_DEFS[0]?.min ?? 95;
+
 
 export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const cp = row.candidate_profiles ?? {};
@@ -650,7 +650,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
         : (row.updated_at ?? row.delivered_at ?? null),
     last_updated: run?.completed_at ?? row.updated_at ?? row.delivered_at ?? null,
     position: pos ? { id: pos.id, title: pos.title } : null,
-    unicorn: (run?.score ?? 0) >= TOP_BAND_MIN || row.stage === "hired",
+    unicorn: isUnicornMatch({ score: run?.score ?? null, hired: row.stage === "hired" }),
     freshness: assessFreshness({
       scored_at: run?.completed_at ?? null,
       scored_input_hash: run?.input_hash ?? null,
