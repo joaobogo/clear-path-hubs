@@ -14,10 +14,10 @@ async function getAdmin() {
   return supabaseAdmin as unknown as AnyRow;
 }
 
+// One shared server-side staff guard for the whole admin surface.
 async function requireStaff(userId: string) {
-  const s = await getAdmin();
-  const { data } = await s.rpc("is_platform_staff", { _user: userId });
-  if (data !== true) throw new Error("forbidden");
+  const { requireStaff: guard } = await import("./admin-ops.server");
+  await guard(userId);
 }
 
 async function writeAudit(opts: {

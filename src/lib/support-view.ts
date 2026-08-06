@@ -18,6 +18,10 @@ export interface SupportViewState {
   readOnly: boolean;
   permissionPreview: PermissionPreview;
   sessionId: string | null;
+  /** Short human-quotable session reference written to the audit trail. */
+  sessionRef: string | null;
+  /** ISO timestamp when read-only access lapses, when known. */
+  sessionExpiresAt: string | null;
 }
 
 const DEFAULT: SupportViewState = {
@@ -28,6 +32,8 @@ const DEFAULT: SupportViewState = {
   readOnly: false,
   permissionPreview: "client_admin",
   sessionId: null,
+  sessionRef: null,
+  sessionExpiresAt: null,
 };
 
 export const SupportViewContext = createContext<SupportViewState>(DEFAULT);

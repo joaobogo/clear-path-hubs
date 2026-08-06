@@ -80,5 +80,6 @@ export const ADMIN_NAV: WorkspaceNavItem[] = [
     icon: UserCog,
     group: "Access",
     hint: "Staff access and settings",
+    requiresPlatformAdmin: true,
   },
 ];

@@ -24,8 +24,9 @@ export const Route = createFileRoute("/_authenticated/admin")({
     // Same question the admin server functions ask (is_platform_staff), so the
     // layout gate and the server checks can never disagree.
     try {
-      const { staff } = await getStaffAccess();
-      if (!staff) throw redirect({ to: "/access-denied" });
+      const access = await getStaffAccess();
+      if (!access.staff) throw redirect({ to: "/access-denied" });
+      return { staffAccess: access };
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (e && typeof e === "object" && (e as any).isRedirect) throw e;
@@ -56,6 +57,11 @@ const ADMIN_REFRESH_KEYS = [
 ] as const;
 
 function AdminLayout() {
+  const { staffAccess } = Route.useRouteContext();
+  // Nav comes from the same predicate the gate and the server functions use.
+  const navItems = staffAccess.platformAdmin
+    ? ADMIN_NAV
+    : ADMIN_NAV.filter((item) => !item.requiresPlatformAdmin);
   const [userId, setUserId] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   useEffect(() => {
@@ -72,7 +78,7 @@ function AdminLayout() {
       contextKicker="TaaSFlow"
       contextLabel="Admin"
       contextSubLabel={email ?? undefined}
-      navItems={ADMIN_NAV}
+      navItems={navItems}
       searchScope="admin"
       headerSlot={
         <div className="flex items-center gap-2">

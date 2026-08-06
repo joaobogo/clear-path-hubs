@@ -33,6 +33,8 @@ export type WorkspaceNavItem = {
   group?: string;
   /** Longer description used as the collapsed tooltip. */
   hint?: string;
+  /** Only show when the viewer is a platform administrator, not general staff. */
+  requiresPlatformAdmin?: boolean;
 };
 
 
