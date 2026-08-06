@@ -175,6 +175,15 @@ function BookPage() {
           email: profile?.email ?? user.email ?? next.email ?? "",
           phone: profile?.phone ?? next.phone ?? "",
         };
+
+        // A client seat means we can hand them straight to their dashboard.
+        const { data: membership } = await supabase
+          .from("memberships")
+          .select("id")
+          .eq("user_id", user.id)
+          .limit(1)
+          .maybeSingle();
+        if (active && membership) setHasWorkspace(true);
       }
 
       if (!active) return;
