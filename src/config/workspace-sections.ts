@@ -36,10 +36,17 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
       { to: "/client/analytics", label: "Questions" },
       { to: "/client/dashboards", label: "Dashboards" },
       { to: "/client/data", label: "Your data" },
+    ],
+  },
+  {
+    id: "reporting",
+    label: "Reporting",
+    tabs: [
       { to: "/client/executive", label: "Executive" },
       { to: "/client/portfolio", label: "Portfolio" },
     ],
   },
+
   {
     id: "automation",
     label: "Assistant",
