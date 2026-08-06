@@ -11,7 +11,8 @@ import { PaymentGateBanner } from "@/components/client/payment-gate-banner";
 import { listRolesNeedingDetails } from "@/lib/position-readiness.functions";
 import { RoleDetailsNeededBanner } from "@/components/client/role-details-needed-banner";
 import { QueryErrorCard } from "@/components/client/query-error";
-import { DegradedPanelsBanner } from "@/components/client/degraded-banner";
+import { DegradedPanelsBanner, NotCurrentChip } from "@/components/client/degraded-banner";
+import { panelReadiness, panelSignal } from "@/lib/panel-readiness";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { VisibilityNote } from "@/components/client/visibility-note";
@@ -92,58 +93,54 @@ function OverviewPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
 
-  const {
-    data: ctx,
-    isError: ctxError,
-    refetch: refetchCtx,
-    isFetching: ctxFetching,
-  } = useQuery({
+  const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
+  const ctx = ctxQuery.data;
   const orgId = ctx?.active?.organization_id;
   const role = ctx?.active?.role;
   const canSubmit = role === "client_admin" || role === "client_editor";
 
-  const { data, refetch, isFetching, isError, error } = useQuery({
+  const overviewQuery = useQuery({
     queryKey: ["client-overview", orgId],
     queryFn: () => overviewFn({ data: { orgId: orgId! } }),
     enabled: !!orgId,
     placeholderData: (prev) => prev,
   });
+  const { data, refetch, isFetching, isError, error } = overviewQuery;
 
   const pendingRolesFn = useServerFn(listPendingPaymentRoles);
-  const {
-    data: pendingRolesData,
-    isError: pendingRolesError,
-    refetch: refetchPendingRoles,
-    isFetching: pendingRolesFetching,
-  } = useQuery({
+  const pendingRolesQuery = useQuery({
     queryKey: ["client", "pending-payment-roles", orgId],
     queryFn: () => pendingRolesFn({ data: { orgId } }),
     enabled: !!orgId,
   });
-  const pendingRoles = pendingRolesData?.roles ?? [];
+  const pendingRoles = pendingRolesQuery.data?.roles ?? [];
 
   // Roles that can't be approved yet because the brief is missing details.
   const rolesNeedingDetailsFn = useServerFn(listRolesNeedingDetails);
-  const {
-    data: incompleteData,
-    isError: incompleteError,
-    refetch: refetchIncomplete,
-    isFetching: incompleteFetching,
-  } = useQuery({
+  const incompleteQuery = useQuery({
     queryKey: ["client", "roles-needing-details", orgId],
     queryFn: () => rolesNeedingDetailsFn({ data: { orgId } }),
     enabled: !!orgId,
   });
-  const rolesNeedingDetails = incompleteData?.roles ?? [];
+  const rolesNeedingDetails = incompleteQuery.data?.roles ?? [];
 
   useEffect(() => {
     const onRefresh = () => refetch();
     window.addEventListener("client:refresh", onRefresh);
     return () => window.removeEventListener("client:refresh", onRefresh);
   }, [refetch]);
+
+  // One readiness summary for the four independent queries on this page.
+  const readiness = panelReadiness([
+    panelSignal("Workspace access", ctxQuery),
+    panelSignal("Pipeline overview", overviewQuery),
+    panelSignal("Roles awaiting payment", pendingRolesQuery),
+    panelSignal("Roles missing details", incompleteQuery),
+  ]);
+  const pipelineNotCurrent = readiness.isNotCurrent("Pipeline overview");
 
   const kpis = data?.kpis;
   const roles: Any[] = data?.whats_next ?? [];
@@ -233,15 +230,7 @@ function OverviewPage() {
 
 
       {/* One aggregate signal for the four independent panels on this page. */}
-      <DegradedPanelsBanner
-        retrying={ctxFetching || isFetching || pendingRolesFetching || incompleteFetching}
-        panels={[
-          { label: "Workspace access", failed: ctxError, retry: () => refetchCtx() },
-          { label: "Pipeline overview", failed: isError, retry: () => refetch() },
-          { label: "Roles awaiting payment", failed: pendingRolesError, retry: () => refetchPendingRoles() },
-          { label: "Roles missing details", failed: incompleteError, retry: () => refetchIncomplete() },
-        ]}
-      />
+      <DegradedPanelsBanner retrying={readiness.retrying} panels={readiness.signals} />
 
       {isError && !data && (
         <QueryErrorCard
@@ -288,6 +277,8 @@ function OverviewPage() {
 
           {/* 1 · HIRING HEALTH — one sentence, three figures, above the queue */}
           <HiringHealthLine
+            notCurrent={pipelineNotCurrent}
+            notCurrentReason={readiness.reasonFor("Pipeline overview")}
             health={data?.hiring_health ?? null}
             loading={!data && isFetching}
             isError={isError && !data}
@@ -343,6 +334,9 @@ function OverviewPage() {
             <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               Where your roles are
             </span>
+            {pipelineNotCurrent && (
+              <NotCurrentChip reason={readiness.reasonFor("Pipeline overview")} />
+            )}
             <span className="h-px flex-1 bg-border" />
             {roles.length > 1 && (
               <select
