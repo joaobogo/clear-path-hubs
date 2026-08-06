@@ -41,7 +41,9 @@ export function panelSignal(label: string, query: PanelQueryLike): PanelSignal {
     stale:
       (query.isError && hasData) ||
       Boolean(hasData && query.isStale && !query.isFetching && age > STALE_AFTER_MS),
-    retry: () => query.refetch(),
+    retry: () => {
+      void query.refetch();
+    },
     retrying: query.isFetching,
   };
 }
