@@ -10588,6 +10588,7 @@ export type Database = {
           candidate_match_id: string
           candidate_profile_id: string
           candidate_submission_id: string
+          cap_reason: string | null
           completed_at: string | null
           confidence: number | null
           contradiction_status: string | null
@@ -10638,6 +10639,7 @@ export type Database = {
           candidate_match_id: string
           candidate_profile_id: string
           candidate_submission_id: string
+          cap_reason?: string | null
           completed_at?: string | null
           confidence?: number | null
           contradiction_status?: string | null
@@ -10688,6 +10690,7 @@ export type Database = {
           candidate_match_id?: string
           candidate_profile_id?: string
           candidate_submission_id?: string
+          cap_reason?: string | null
           completed_at?: string | null
           confidence?: number | null
           contradiction_status?: string | null

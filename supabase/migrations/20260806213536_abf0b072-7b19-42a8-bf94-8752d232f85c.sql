@@ -1,0 +1,2 @@
+ALTER TABLE public.score_runs ADD COLUMN IF NOT EXISTS cap_reason text;
+COMMENT ON COLUMN public.score_runs.cap_reason IS 'Human-readable reason(s) for the ceiling recorded in applied_cap. Null when no cap fired.';
