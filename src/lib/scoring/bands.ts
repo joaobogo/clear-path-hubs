@@ -104,6 +104,34 @@ export function bandToTier(
   }
 }
 
+/** The strongest tier — used for standout markers, never a literal number. */
+export const TOP_TIER_BANDS: readonly ScoreBandKey[] = ["exceptional", "top"];
+
+export function isTopBand(band: ScoreBandKey): boolean {
+  return TOP_TIER_BANDS.includes(band);
+}
+
+/**
+ * The unicorn rule, in one place.
+ *
+ * It used to be `score >= 95 || hired`. 95 sits inside a band the deterministic
+ * engine has never produced, so in practice the marker only ever appeared on
+ * hires. Now it needs *both* signals: the assessment landed in the canonical top
+ * tier AND the hire is confirmed. That makes the marker mean something —
+ * outcome-verified top-tier fit — instead of decorating every hire.
+ */
+export function isUnicornMatch(input: {
+  score?: number | null;
+  band?: ScoreBandKey | null;
+  /** True only for a confirmed hire (stage `hired`). */
+  hired: boolean;
+}): boolean {
+  const band = input.band ?? classifyBand(input.score ?? null);
+  return input.hired && isTopBand(band);
+}
+
+
+
 // ── SQL generation ───────────────────────────────────────────────────────────
 
 /**
