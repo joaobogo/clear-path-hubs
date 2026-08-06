@@ -1,3 +1,4 @@
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -89,6 +90,9 @@ type Row = {
 function PositionsPage() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
+  // Admin-wide scope from the layout: the overview count and this list read the
+  // same set of organisations.
+  const includeTest = useIncludeTestRecords();
 
   const list = useServerFn(listPositions);
   const filtersFn = useServerFn(listPositionFilters);

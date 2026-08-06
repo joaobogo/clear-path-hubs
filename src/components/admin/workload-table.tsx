@@ -180,7 +180,7 @@ function WorkloadRowView({
           <Button asChild size="sm" variant="outline">
             <Link
               to="/admin/positions"
-              search={{ owner: row.is_unassigned ? UNASSIGNED : row.key, show_test: includeTest }}
+              search={{ owner: row.is_unassigned ? UNASSIGNED : row.key }}
             >
               Positions <ArrowUpRight className="ml-1 h-3.5 w-3.5" aria-hidden />
             </Link>
