@@ -136,6 +136,7 @@ import { Route as AuthenticatedAdminPositionsRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminPendingLeadsRouteImport } from './routes/_authenticated/admin.pending-leads'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin.payments'
 import { Route as AuthenticatedAdminParseFailuresRouteImport } from './routes/_authenticated/admin.parse-failures'
+import { Route as AuthenticatedAdminOutcomeSlaRouteImport } from './routes/_authenticated/admin.outcome-sla'
 import { Route as AuthenticatedAdminOperationsRouteImport } from './routes/_authenticated/admin.operations'
 import { Route as AuthenticatedAdminNotificationsRouteImport } from './routes/_authenticated/admin.notifications'
 import { Route as AuthenticatedAdminMyDayRouteImport } from './routes/_authenticated/admin.my-day'
@@ -174,6 +175,8 @@ import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/publi
 import { Route as ApiPublicIntakeStatusIdRouteImport } from './routes/api/public/intake-status.$id'
 import { Route as ApiPublicIntakeCarryIntakeIdRouteImport } from './routes/api/public/intake-carry.$intakeId'
 import { Route as ApiPublicDigestWeeklyRouteImport } from './routes/api/public/digest/weekly'
+import { Route as ApiPublicCandidateProfileNudgesRouteImport } from './routes/api/public/candidate/profile-nudges'
+import { Route as ApiPublicCandidateInterviewRemindersRouteImport } from './routes/api/public/candidate/interview-reminders'
 import { Route as ApiPublicCandidateClosureNoticesRouteImport } from './routes/api/public/candidate/closure-notices'
 import { Route as ApiPublicBookingRemindersRouteImport } from './routes/api/public/booking.reminders'
 import { Route as ApiPublicBookingCalendlyWebhookRouteImport } from './routes/api/public/booking/calendly-webhook'
@@ -866,6 +869,12 @@ const AuthenticatedAdminParseFailuresRoute =
     path: '/parse-failures',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminOutcomeSlaRoute =
+  AuthenticatedAdminOutcomeSlaRouteImport.update({
+    id: '/outcome-sla',
+    path: '/outcome-sla',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminOperationsRoute =
   AuthenticatedAdminOperationsRouteImport.update({
     id: '/operations',
@@ -1087,6 +1096,18 @@ const ApiPublicDigestWeeklyRoute = ApiPublicDigestWeeklyRouteImport.update({
   path: '/api/public/digest/weekly',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCandidateProfileNudgesRoute =
+  ApiPublicCandidateProfileNudgesRouteImport.update({
+    id: '/api/public/candidate/profile-nudges',
+    path: '/api/public/candidate/profile-nudges',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicCandidateInterviewRemindersRoute =
+  ApiPublicCandidateInterviewRemindersRouteImport.update({
+    id: '/api/public/candidate/interview-reminders',
+    path: '/api/public/candidate/interview-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicCandidateClosureNoticesRoute =
   ApiPublicCandidateClosureNoticesRouteImport.update({
     id: '/api/public/candidate/closure-notices',
@@ -1306,6 +1327,7 @@ export interface FileRoutesByFullPath {
   '/admin/my-day': typeof AuthenticatedAdminMyDayRoute
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
+  '/admin/outcome-sla': typeof AuthenticatedAdminOutcomeSlaRoute
   '/admin/parse-failures': typeof AuthenticatedAdminParseFailuresRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/pending-leads': typeof AuthenticatedAdminPendingLeadsRoute
@@ -1383,6 +1405,8 @@ export interface FileRoutesByFullPath {
   '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/booking/reminders': typeof ApiPublicBookingRemindersRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
+  '/api/public/candidate/interview-reminders': typeof ApiPublicCandidateInterviewRemindersRoute
+  '/api/public/candidate/profile-nudges': typeof ApiPublicCandidateProfileNudgesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
   '/api/public/intake-carry/$intakeId': typeof ApiPublicIntakeCarryIntakeIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
@@ -1488,6 +1512,7 @@ export interface FileRoutesByTo {
   '/admin/my-day': typeof AuthenticatedAdminMyDayRoute
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
+  '/admin/outcome-sla': typeof AuthenticatedAdminOutcomeSlaRoute
   '/admin/parse-failures': typeof AuthenticatedAdminParseFailuresRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/pending-leads': typeof AuthenticatedAdminPendingLeadsRoute
@@ -1561,6 +1586,8 @@ export interface FileRoutesByTo {
   '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/booking/reminders': typeof ApiPublicBookingRemindersRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
+  '/api/public/candidate/interview-reminders': typeof ApiPublicCandidateInterviewRemindersRoute
+  '/api/public/candidate/profile-nudges': typeof ApiPublicCandidateProfileNudgesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
   '/api/public/intake-carry/$intakeId': typeof ApiPublicIntakeCarryIntakeIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
@@ -1674,6 +1701,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/my-day': typeof AuthenticatedAdminMyDayRoute
   '/_authenticated/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/_authenticated/admin/operations': typeof AuthenticatedAdminOperationsRoute
+  '/_authenticated/admin/outcome-sla': typeof AuthenticatedAdminOutcomeSlaRoute
   '/_authenticated/admin/parse-failures': typeof AuthenticatedAdminParseFailuresRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/_authenticated/admin/pending-leads': typeof AuthenticatedAdminPendingLeadsRoute
@@ -1751,6 +1779,8 @@ export interface FileRoutesById {
   '/api/public/booking/calendly-webhook': typeof ApiPublicBookingCalendlyWebhookRoute
   '/api/public/booking/reminders': typeof ApiPublicBookingRemindersRoute
   '/api/public/candidate/closure-notices': typeof ApiPublicCandidateClosureNoticesRoute
+  '/api/public/candidate/interview-reminders': typeof ApiPublicCandidateInterviewRemindersRoute
+  '/api/public/candidate/profile-nudges': typeof ApiPublicCandidateProfileNudgesRoute
   '/api/public/digest/weekly': typeof ApiPublicDigestWeeklyRoute
   '/api/public/intake-carry/$intakeId': typeof ApiPublicIntakeCarryIntakeIdRoute
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
@@ -1864,6 +1894,7 @@ export interface FileRouteTypes {
     | '/admin/my-day'
     | '/admin/notifications'
     | '/admin/operations'
+    | '/admin/outcome-sla'
     | '/admin/parse-failures'
     | '/admin/payments'
     | '/admin/pending-leads'
@@ -1941,6 +1972,8 @@ export interface FileRouteTypes {
     | '/api/public/booking/calendly-webhook'
     | '/api/public/booking/reminders'
     | '/api/public/candidate/closure-notices'
+    | '/api/public/candidate/interview-reminders'
+    | '/api/public/candidate/profile-nudges'
     | '/api/public/digest/weekly'
     | '/api/public/intake-carry/$intakeId'
     | '/api/public/intake-status/$id'
@@ -2046,6 +2079,7 @@ export interface FileRouteTypes {
     | '/admin/my-day'
     | '/admin/notifications'
     | '/admin/operations'
+    | '/admin/outcome-sla'
     | '/admin/parse-failures'
     | '/admin/payments'
     | '/admin/pending-leads'
@@ -2119,6 +2153,8 @@ export interface FileRouteTypes {
     | '/api/public/booking/calendly-webhook'
     | '/api/public/booking/reminders'
     | '/api/public/candidate/closure-notices'
+    | '/api/public/candidate/interview-reminders'
+    | '/api/public/candidate/profile-nudges'
     | '/api/public/digest/weekly'
     | '/api/public/intake-carry/$intakeId'
     | '/api/public/intake-status/$id'
@@ -2231,6 +2267,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/my-day'
     | '/_authenticated/admin/notifications'
     | '/_authenticated/admin/operations'
+    | '/_authenticated/admin/outcome-sla'
     | '/_authenticated/admin/parse-failures'
     | '/_authenticated/admin/payments'
     | '/_authenticated/admin/pending-leads'
@@ -2308,6 +2345,8 @@ export interface FileRouteTypes {
     | '/api/public/booking/calendly-webhook'
     | '/api/public/booking/reminders'
     | '/api/public/candidate/closure-notices'
+    | '/api/public/candidate/interview-reminders'
+    | '/api/public/candidate/profile-nudges'
     | '/api/public/digest/weekly'
     | '/api/public/intake-carry/$intakeId'
     | '/api/public/intake-status/$id'
@@ -2417,6 +2456,8 @@ export interface RootRouteChildren {
   ApiPublicBookingCalendlyWebhookRoute: typeof ApiPublicBookingCalendlyWebhookRoute
   ApiPublicBookingRemindersRoute: typeof ApiPublicBookingRemindersRoute
   ApiPublicCandidateClosureNoticesRoute: typeof ApiPublicCandidateClosureNoticesRoute
+  ApiPublicCandidateInterviewRemindersRoute: typeof ApiPublicCandidateInterviewRemindersRoute
+  ApiPublicCandidateProfileNudgesRoute: typeof ApiPublicCandidateProfileNudgesRoute
   ApiPublicDigestWeeklyRoute: typeof ApiPublicDigestWeeklyRoute
   ApiPublicIntakeCarryIntakeIdRoute: typeof ApiPublicIntakeCarryIntakeIdRoute
   ApiPublicIntakeStatusIdRoute: typeof ApiPublicIntakeStatusIdRoute
@@ -3319,6 +3360,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminParseFailuresRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/outcome-sla': {
+      id: '/_authenticated/admin/outcome-sla'
+      path: '/outcome-sla'
+      fullPath: '/admin/outcome-sla'
+      preLoaderRoute: typeof AuthenticatedAdminOutcomeSlaRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/operations': {
       id: '/_authenticated/admin/operations'
       path: '/operations'
@@ -3585,6 +3633,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicDigestWeeklyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/candidate/profile-nudges': {
+      id: '/api/public/candidate/profile-nudges'
+      path: '/api/public/candidate/profile-nudges'
+      fullPath: '/api/public/candidate/profile-nudges'
+      preLoaderRoute: typeof ApiPublicCandidateProfileNudgesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/candidate/interview-reminders': {
+      id: '/api/public/candidate/interview-reminders'
+      path: '/api/public/candidate/interview-reminders'
+      fullPath: '/api/public/candidate/interview-reminders'
+      preLoaderRoute: typeof ApiPublicCandidateInterviewRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/candidate/closure-notices': {
       id: '/api/public/candidate/closure-notices'
       path: '/api/public/candidate/closure-notices'
@@ -3837,6 +3899,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminMyDayRoute: typeof AuthenticatedAdminMyDayRoute
   AuthenticatedAdminNotificationsRoute: typeof AuthenticatedAdminNotificationsRoute
   AuthenticatedAdminOperationsRoute: typeof AuthenticatedAdminOperationsRoute
+  AuthenticatedAdminOutcomeSlaRoute: typeof AuthenticatedAdminOutcomeSlaRoute
   AuthenticatedAdminParseFailuresRoute: typeof AuthenticatedAdminParseFailuresRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
   AuthenticatedAdminPendingLeadsRoute: typeof AuthenticatedAdminPendingLeadsRoute
@@ -3879,6 +3942,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminMyDayRoute: AuthenticatedAdminMyDayRoute,
   AuthenticatedAdminNotificationsRoute: AuthenticatedAdminNotificationsRoute,
   AuthenticatedAdminOperationsRoute: AuthenticatedAdminOperationsRoute,
+  AuthenticatedAdminOutcomeSlaRoute: AuthenticatedAdminOutcomeSlaRoute,
   AuthenticatedAdminParseFailuresRoute: AuthenticatedAdminParseFailuresRoute,
   AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
   AuthenticatedAdminPendingLeadsRoute: AuthenticatedAdminPendingLeadsRoute,
@@ -4158,6 +4222,9 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBookingCalendlyWebhookRoute: ApiPublicBookingCalendlyWebhookRoute,
   ApiPublicBookingRemindersRoute: ApiPublicBookingRemindersRoute,
   ApiPublicCandidateClosureNoticesRoute: ApiPublicCandidateClosureNoticesRoute,
+  ApiPublicCandidateInterviewRemindersRoute:
+    ApiPublicCandidateInterviewRemindersRoute,
+  ApiPublicCandidateProfileNudgesRoute: ApiPublicCandidateProfileNudgesRoute,
   ApiPublicDigestWeeklyRoute: ApiPublicDigestWeeklyRoute,
   ApiPublicIntakeCarryIntakeIdRoute: ApiPublicIntakeCarryIntakeIdRoute,
   ApiPublicIntakeStatusIdRoute: ApiPublicIntakeStatusIdRoute,
@@ -4171,13 +4238,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
