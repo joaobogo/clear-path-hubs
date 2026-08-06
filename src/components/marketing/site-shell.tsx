@@ -392,7 +392,7 @@ function FooterCol({ title, links }: { title: string; links: NavLink[] }) {
   );
 }
 
-function Footer() {
+export function SiteFooter() {
   const legalGroup = FOOTER_GROUPS.find((g) => g.label === "Legal");
   const columnGroups = FOOTER_GROUPS.filter((g) => g.label !== "Legal");
 
