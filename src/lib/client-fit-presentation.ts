@@ -4,6 +4,12 @@
 // Two concerns live here:
 //   1) Fit-band normalisation — internal labels → Client-facing language + tone.
 //   2) Interview-guide generator — deterministic, evidence-grounded, personalised.
+//
+// Thresholds are not defined in this file. Any score → band decision defers to
+// src/lib/scoring/bands.ts.
+
+import { classifyBand, type ScoreBandKey } from "@/lib/scoring/bands";
+
 
 export type FitBand =
   | "exceptional"
@@ -53,6 +59,21 @@ const RAW_LABEL_MAP: Record<string, FitBand> = {
   weak: "limited",
   none: "not_recommended",
 };
+
+/**
+ * Canonical band key → client-facing fit band. Keeps the existing client
+ * vocabulary while the numbers behind it live in one place.
+ */
+const CANONICAL_TO_FIT_BAND: Record<ScoreBandKey, FitBand> = {
+  exceptional: "exceptional",
+  top: "exceptional",
+  strong: "strong",
+  consider: "mixed",
+  not_recommended: "not_recommended",
+  unscored: "mixed",
+};
+
+
 
 
 const BAND_TABLE: Record<FitBand, Omit<FitPresentation, "band">> = {
@@ -108,12 +129,8 @@ export function toFitPresentation(
     band = RAW_LABEL_MAP[key] ?? null;
   }
   if (!band && typeof score === "number") {
-    if (score >= 90) band = "exceptional";
-    else if (score >= 80) band = "strong";
-    else if (score >= 70) band = "good";
-    else if (score >= 55) band = "mixed";
-    else if (score >= 40) band = "limited";
-    else band = "not_recommended";
+    // Numeric fallback derives from the ONE band table, never local cut-offs.
+    band = CANONICAL_TO_FIT_BAND[classifyBand(score)] ?? null;
   }
   band ??= "mixed";
   return { band, ...BAND_TABLE[band] };

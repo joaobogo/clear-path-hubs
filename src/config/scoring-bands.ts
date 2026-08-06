@@ -1,29 +1,27 @@
 /**
- * Canonical score-band configuration.
+ * Score-band *presentation*: labels, tone, accent, description.
  *
- * SINGLE SOURCE OF TRUTH for numeric-score -> band mapping across the entire
- * product. A score of 87 must be "Top Fit" everywhere — on the admin desk,
- * client kanban, share links, exports, PDFs, and analytics.
- *
- * Mirrors public.score_band enum and public.score_band(numeric) SQL function.
- * If you change thresholds here, migrate the SQL function in lockstep.
+ * Thresholds are NOT defined here any more. Every boundary and the score →
+ * band function come from `src/lib/scoring/bands.ts`, which is also what
+ * generates the SQL `public.score_band()` function. This file only decides how
+ * a band is worded and coloured.
  */
 
-export const SCORE_BANDS = [
-  "exceptional",
-  "top",
-  "strong",
-  "consider",
-  "not_recommended",
-  "unscored",
-] as const;
+import {
+  SCORE_BAND_KEYS,
+  bandRange,
+  classifyBand,
+  type ScoreBandKey,
+} from "@/lib/scoring/bands";
 
-export type ScoreBand = (typeof SCORE_BANDS)[number];
+export const SCORE_BANDS = SCORE_BAND_KEYS;
+
+export type ScoreBand = ScoreBandKey;
 
 export type ScoreBandDef = {
   key: ScoreBand;
-  min: number; // inclusive
-  max: number; // inclusive
+  min: number; // inclusive — derived from the canonical band table
+  max: number; // inclusive — derived from the canonical band table
   label: string; // client-facing headline
   shortLabel: string; // for chips / tables
   tone: "confident" | "positive" | "neutral" | "cautious" | "dissuade" | "muted";
@@ -31,15 +29,11 @@ export type ScoreBandDef = {
   description: string;
 };
 
-/**
- * Thresholds mirror the public website methodology.
- * Ordered from strongest to weakest — order matters for classify().
- */
-export const SCORE_BAND_DEFS: readonly ScoreBandDef[] = [
+type BandCopy = Omit<ScoreBandDef, "min" | "max">;
+
+const COPY: readonly BandCopy[] = [
   {
     key: "exceptional",
-    min: 95,
-    max: 100,
     label: "Exceptional Fit",
     shortLabel: "Exceptional",
     tone: "confident",
@@ -48,8 +42,6 @@ export const SCORE_BAND_DEFS: readonly ScoreBandDef[] = [
   },
   {
     key: "top",
-    min: 85,
-    max: 94,
     label: "Top Fit",
     shortLabel: "Top",
     tone: "confident",
@@ -58,8 +50,6 @@ export const SCORE_BAND_DEFS: readonly ScoreBandDef[] = [
   },
   {
     key: "strong",
-    min: 70,
-    max: 84,
     label: "Strong Fit",
     shortLabel: "Strong",
     tone: "positive",
@@ -68,8 +58,6 @@ export const SCORE_BAND_DEFS: readonly ScoreBandDef[] = [
   },
   {
     key: "consider",
-    min: 50,
-    max: 69,
     label: "Consider",
     shortLabel: "Consider",
     tone: "neutral",
@@ -78,8 +66,6 @@ export const SCORE_BAND_DEFS: readonly ScoreBandDef[] = [
   },
   {
     key: "not_recommended",
-    min: 0,
-    max: 49,
     label: "Not Recommended",
     shortLabel: "Not Recommended",
     tone: "dissuade",
@@ -88,10 +74,15 @@ export const SCORE_BAND_DEFS: readonly ScoreBandDef[] = [
   },
 ] as const;
 
+/** Strongest to weakest, with ranges read off the canonical band table. */
+export const SCORE_BAND_DEFS: readonly ScoreBandDef[] = COPY.map((c) => ({
+  ...c,
+  ...bandRange(c.key),
+}));
+
 export const UNSCORED_DEF: ScoreBandDef = {
   key: "unscored",
-  min: 0,
-  max: 0,
+  ...bandRange("unscored"),
   label: "Not Scored",
   shortLabel: "Unscored",
   tone: "muted",
@@ -100,20 +91,11 @@ export const UNSCORED_DEF: ScoreBandDef = {
 };
 
 /**
- * Classify a numeric score to a canonical band definition.
- * Null/undefined/NaN -> unscored. Values are clamped to 0..100.
+ * Classify a numeric score to a canonical band definition. Delegates the
+ * numbers to `classifyBand` so there is exactly one threshold table.
  */
-export function classifyScoreBand(
-  score: number | null | undefined,
-): ScoreBandDef {
-  if (score === null || score === undefined || !Number.isFinite(score)) {
-    return UNSCORED_DEF;
-  }
-  const clamped = Math.max(0, Math.min(100, score));
-  for (const def of SCORE_BAND_DEFS) {
-    if (clamped >= def.min && clamped <= def.max) return def;
-  }
-  return UNSCORED_DEF;
+export function classifyScoreBand(score: number | null | undefined): ScoreBandDef {
+  return bandByKey(classifyBand(score));
 }
 
 /**

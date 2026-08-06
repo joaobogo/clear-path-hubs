@@ -7,6 +7,8 @@
  * never depends on colour alone (WCAG 1.4.1).
  */
 
+import { bandToTier, classifyBand } from "@/lib/scoring/bands";
+
 export type StatusTone = "neutral" | "success" | "warning" | "danger" | "info";
 
 /** Non-colour redundant encoding, rendered as a small leading mark. */
@@ -121,19 +123,15 @@ export function resolveStatus(
 /** Score band semantics shared by every score visual. */
 export type ScoreBandKey = "excellent" | "strong" | "moderate" | "weak" | "poor";
 
-export const SCORE_BANDS: Record<ScoreBandKey, { label: string; tone: StatusTone; min: number }> = {
-  excellent: { label: "Excellent match", tone: "success", min: 85 },
-  strong: { label: "Strong match", tone: "success", min: 70 },
-  moderate: { label: "Moderate match", tone: "warning", min: 55 },
-  weak: { label: "Weak match", tone: "warning", min: 40 },
-  poor: { label: "Poor match", tone: "danger", min: 0 },
+export const SCORE_BANDS: Record<ScoreBandKey, { label: string; tone: StatusTone }> = {
+  excellent: { label: "Excellent match", tone: "success" },
+  strong: { label: "Strong match", tone: "success" },
+  moderate: { label: "Moderate match", tone: "warning" },
+  weak: { label: "Weak match", tone: "warning" },
+  poor: { label: "Poor match", tone: "danger" },
 };
 
+/** Wording only — the numbers come from the canonical band table. */
 export function scoreBand(score: number | null | undefined): ScoreBandKey | null {
-  if (score == null || Number.isNaN(score)) return null;
-  if (score >= 85) return "excellent";
-  if (score >= 70) return "strong";
-  if (score >= 55) return "moderate";
-  if (score >= 40) return "weak";
-  return "poor";
+  return bandToTier(classifyBand(score));
 }
