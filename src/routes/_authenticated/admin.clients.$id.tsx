@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
+import { RecordActivityTab } from "@/components/admin/record-activity-tab";
 import {
   getClient,
   updateOrganization,
