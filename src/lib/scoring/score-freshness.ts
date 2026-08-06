@@ -41,7 +41,13 @@ export type StaleReasonCode =
   | "inputs_changed"
   | "engine_changed"
   | "calibration_changed"
-  | "criteria_changed";
+  | "criteria_changed"
+  // Codes written to candidate_matches.score_stale_reasons by the database
+  // invalidation triggers. They are recorded facts, not timestamp inferences.
+  | "requirements_changed"
+  | "screening_changed"
+  | "rubric_superseded"
+  | "new_cv";
 
 export type StaleReason = {
   code: StaleReasonCode;
