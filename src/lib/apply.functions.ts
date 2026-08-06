@@ -306,37 +306,76 @@ export const submitApplication = createServerFn({ method: "POST" })
 
       // 5. Upload CV to private storage. The storage key is fully server-generated;
       //    the sanitised original name is only a trailing, path-free label.
+      //
+      //    Before uploading, look for a document this same candidate already sent
+      //    that never got attached to an application. That is the signature of an
+      //    earlier submit that failed after the upload: without this check, every
+      //    retry stores another copy of the identical file and the person shows up
+      //    as several evidence-less uploads instead of one person trying twice.
       const { sanitizeFilename } = await import("./cv-validation");
       const cleanName = sanitizeFilename(data.cv.filename);
-      const storagePath = `candidate/${candidateProfileId}/${crypto.randomUUID()}-${cleanName}`;
-      const upload = await supabaseAdmin.storage
-        .from("cvs")
-        .upload(storagePath, bytes, {
-          contentType: "application/pdf",
-          upsert: false,
-        });
-      if (upload.error) throw upload.error;
 
-      // 6. Insert files row — canonical original PDF, queued for parsing.
-      const { data: fileRow, error: fileErr } = await supabaseAdmin
-        .from("files")
-        .insert({
-          owner_user_id: authUserId,
-          candidate_profile_id: candidateProfileId,
-          storage_bucket: "cvs",
-          storage_path: storagePath,
-          filename: cleanName,
-          mime_type: "application/pdf",
-          size: bytes.length,
-          checksum: v.sha256 ?? null,
-          file_status: "ready",
-          parse_state: "queued",
-          page_count: v.page_count ?? null,
-          upload_source: "candidate_application",
-        })
-        .select("id")
-        .single();
-      if (fileErr) throw fileErr;
+      let reusedFileId: string | null = null;
+      if (v.sha256) {
+        const { data: priorUpload } = await supabaseAdmin
+          .from("files")
+          .select("id")
+          .eq("candidate_profile_id", candidateProfileId)
+          .eq("checksum", v.sha256)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (priorUpload?.id) {
+          const { data: attached } = await supabaseAdmin
+            .from("applications")
+            .select("id")
+            .eq("cv_file_id", priorUpload.id)
+            .limit(1)
+            .maybeSingle();
+          if (!attached) reusedFileId = priorUpload.id as string;
+        }
+      }
+
+      let fileId: string;
+      if (reusedFileId) {
+        fileId = reusedFileId;
+      } else {
+        const storagePath = `candidate/${candidateProfileId}/${crypto.randomUUID()}-${cleanName}`;
+        const upload = await supabaseAdmin.storage
+          .from("cvs")
+          .upload(storagePath, bytes, {
+            contentType: "application/pdf",
+            upsert: false,
+          });
+        if (upload.error) throw upload.error;
+
+        // 6. Insert files row — canonical original PDF, queued for parsing.
+        const { data: fileRow, error: fileErr } = await supabaseAdmin
+          .from("files")
+          .insert({
+            owner_user_id: authUserId,
+            candidate_profile_id: candidateProfileId,
+            storage_bucket: "cvs",
+            storage_path: storagePath,
+            filename: cleanName,
+            mime_type: "application/pdf",
+            size: bytes.length,
+            checksum: v.sha256 ?? null,
+            file_status: "ready",
+            parse_state: "queued",
+            page_count: v.page_count ?? null,
+            upload_source: "candidate_application",
+          })
+          .select("id")
+          .single();
+        if (fileErr) throw fileErr;
+        fileId = fileRow.id as string;
+      }
+      // From here on the candidate's document is in our hands. If anything below
+      // fails, the catch must say so honestly rather than implying nothing arrived.
+      orphanUpload = { fileId, candidateProfileId, filename: cleanName, email: emailLower, fullName: data.full_name };
+      const fileRow = { id: fileId };
+
 
 
       // Point candidate profile at latest CV.
