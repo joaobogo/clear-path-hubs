@@ -55,14 +55,19 @@ export async function summarizeClientPortfolio(
   }
 
   const orgIds = list.map((o) => o.id);
-  const { data: positions } = await supabase
-    .from("positions")
-    .select("id, title, status, organization_id, created_at")
-    .in("organization_id", orgIds);
-  const { data: matches } = await supabase
-    .from("candidate_matches")
-    .select("id, stage, organization_id")
-    .in("organization_id", orgIds);
+  // Positions and matches are keyed off the same org ids — one round trip each,
+  // issued together.
+  const [{ data: positions }, { data: matches }] = await Promise.all([
+    supabase
+      .from("positions")
+      .select("id, title, status, organization_id, created_at")
+      .in("organization_id", orgIds),
+    supabase
+      .from("candidate_matches")
+      .select("id, stage, organization_id")
+      .in("organization_id", orgIds),
+  ]);
+
 
   const byOrg = list.map((o) => {
     const pos = (positions ?? []).filter((p: any) => p.organization_id === o.id);
