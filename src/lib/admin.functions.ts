@@ -657,12 +657,16 @@ export const listPositions = createServerFn({ method: "GET" })
       enriched = enriched.slice(from, from + data.page_size);
     }
 
+    const total = count ?? enriched.length;
     return {
       rows: enriched as AnyRow[],
-      total: count ?? enriched.length,
+      total,
       page: data.page,
       page_size: data.page_size,
+      include_test: showTest,
+      hidden_test: Math.max(0, unfilteredTotal - total),
     };
+
   });
 
 export const listPositionFilters = createServerFn({ method: "GET" })
