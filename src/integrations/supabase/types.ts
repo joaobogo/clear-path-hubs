@@ -10129,9 +10129,11 @@ export type Database = {
           anchors: Json
           approved_at: string | null
           approved_by: string | null
+          calibration: Json
           created_at: string
           created_by: string | null
           dimensions: Json
+          engine_version: string | null
           id: string
           label: string
           organization_id: string
@@ -10148,9 +10150,11 @@ export type Database = {
           anchors?: Json
           approved_at?: string | null
           approved_by?: string | null
+          calibration?: Json
           created_at?: string
           created_by?: string | null
           dimensions?: Json
+          engine_version?: string | null
           id?: string
           label: string
           organization_id: string
@@ -10167,9 +10171,11 @@ export type Database = {
           anchors?: Json
           approved_at?: string | null
           approved_by?: string | null
+          calibration?: Json
           created_at?: string
           created_by?: string | null
           dimensions?: Json
+          engine_version?: string | null
           id?: string
           label?: string
           organization_id?: string
