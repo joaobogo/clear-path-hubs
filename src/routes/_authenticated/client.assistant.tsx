@@ -28,6 +28,9 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { useQueryState } from "@/hooks/use-query-state";
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
+
+const RoutePending = makeWorkspacePending({ shape: "rows", width: "7xl" });
 
 export const Route = createFileRoute("/_authenticated/client/assistant")({
   head: () => ({
@@ -226,7 +229,7 @@ function AssistantPage() {
     );
   }
 
-  if (!orgId) return <div className="p-8 text-sm text-muted-foreground">Loading…</div>;
+  if (!orgId) return <RoutePending />;
 
   return (
     <main className="mx-auto flex h-[calc(100vh-var(--workspace-header-h,72px))] max-w-4xl flex-col px-4 sm:px-6">

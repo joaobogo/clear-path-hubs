@@ -178,7 +178,7 @@ function OffersPage() {
     );
   }
 
-  if (!orgId) return <div className="p-8 text-sm text-muted-foreground">Loading…</div>;
+  if (!orgId) return <RoutePending />;
 
   return (
     <main className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 lg:py-8">

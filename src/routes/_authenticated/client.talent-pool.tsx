@@ -61,6 +61,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
 
 const searchSchema = z.object({
   pool: fallback(z.string(), "").default(""),
@@ -73,6 +74,8 @@ const searchSchema = z.object({
   future: fallback(z.boolean(), false).default(false),
   silver: fallback(z.boolean(), false).default(false),
 });
+
+const RoutePending = makeWorkspacePending({ shape: "cards", width: "7xl" });
 
 export const Route = createFileRoute("/_authenticated/client/talent-pool")({
   validateSearch: zodValidator(searchSchema),
@@ -193,7 +196,7 @@ function TalentPoolPage() {
     );
   }
 
-  if (!orgId) return <div className="p-8 text-sm text-muted-foreground">Loading…</div>;
+  if (!orgId) return <RoutePending />;
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
