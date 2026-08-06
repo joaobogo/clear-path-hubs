@@ -107,6 +107,15 @@ function OverviewPage() {
   });
   const pendingRoles = pendingRolesData?.roles ?? [];
 
+  // Roles that can't be approved yet because the brief is missing details.
+  const rolesNeedingDetailsFn = useServerFn(listRolesNeedingDetails);
+  const { data: incompleteData } = useQuery({
+    queryKey: ["client", "roles-needing-details", orgId],
+    queryFn: () => rolesNeedingDetailsFn({ data: { orgId } }),
+    enabled: !!orgId,
+  });
+  const rolesNeedingDetails = incompleteData?.roles ?? [];
+
   useEffect(() => {
     const onRefresh = () => refetch();
     window.addEventListener("client:refresh", onRefresh);
