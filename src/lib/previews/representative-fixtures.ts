@@ -46,7 +46,7 @@ export type PreviewCandidate = {
 export const PREVIEW_DECISION_QUEUE: PreviewCandidate[] = [
   {
     ref: "Candidate ref 4F2K9Q",
-    score: 91,
+    score: 98,
     band: "Top fit",
     stage: "Awaiting your decision",
     requirementsMet: "7 of 8 requirements evidenced",
