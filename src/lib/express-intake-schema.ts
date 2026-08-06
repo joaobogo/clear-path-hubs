@@ -49,7 +49,7 @@ export const MIN_INTERVIEW_PROCESS = 20;
 
 export const WORK_MODELS = ["remote", "hybrid", "onsite"] as const;
 export const COMP_CURRENCIES = ["USD", "EUR", "GBP", "BRL", "CAD", "AUD"] as const;
-export const COMP_PERIODS = ["year", "hour"] as const;
+export const COMP_PERIODS = ["year", "month", "hour"] as const;
 
 /** What the client says about equity. No inferred or benchmarked values. */
 export const COMP_EQUITY = ["none", "offered", "negotiable"] as const;
@@ -166,7 +166,7 @@ export const WORK_MODEL_LABELS: Record<(typeof WORK_MODELS)[number], string> = {
 
 export const COMP_PERIOD_LABELS: Record<(typeof COMP_PERIODS)[number], string> = {
   year: "per year",
-  
+  month: "per month",
   hour: "per hour",
 };
 
