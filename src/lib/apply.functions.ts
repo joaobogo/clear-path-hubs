@@ -56,7 +56,18 @@ export const submitApplication = createServerFn({ method: "POST" })
   .inputValidator((input: unknown): ApplyInput => applySchema.parse(input))
   .handler(async ({ data }): Promise<SubmitApplicationResult> => {
     const trace_id = crypto.randomUUID();
+    // Set the moment the candidate's document is stored. Its presence in the
+    // catch below is what separates "nothing reached us" from "we have their CV
+    // and lost the rest", which are two completely different things to say.
+    let orphanUpload: {
+      fileId: string;
+      candidateProfileId: string;
+      filename: string;
+      email: string;
+      fullName: string;
+    } | null = null;
     try {
+
       // Validate CV bytes first — cheap fail-fast.
       const bytes = b64ToBytes(data.cv.base64);
       const { validateCv, CV_MESSAGES } = await import("./cv-validation");
@@ -306,37 +317,76 @@ export const submitApplication = createServerFn({ method: "POST" })
 
       // 5. Upload CV to private storage. The storage key is fully server-generated;
       //    the sanitised original name is only a trailing, path-free label.
+      //
+      //    Before uploading, look for a document this same candidate already sent
+      //    that never got attached to an application. That is the signature of an
+      //    earlier submit that failed after the upload: without this check, every
+      //    retry stores another copy of the identical file and the person shows up
+      //    as several evidence-less uploads instead of one person trying twice.
       const { sanitizeFilename } = await import("./cv-validation");
       const cleanName = sanitizeFilename(data.cv.filename);
-      const storagePath = `candidate/${candidateProfileId}/${crypto.randomUUID()}-${cleanName}`;
-      const upload = await supabaseAdmin.storage
-        .from("cvs")
-        .upload(storagePath, bytes, {
-          contentType: "application/pdf",
-          upsert: false,
-        });
-      if (upload.error) throw upload.error;
 
-      // 6. Insert files row — canonical original PDF, queued for parsing.
-      const { data: fileRow, error: fileErr } = await supabaseAdmin
-        .from("files")
-        .insert({
-          owner_user_id: authUserId,
-          candidate_profile_id: candidateProfileId,
-          storage_bucket: "cvs",
-          storage_path: storagePath,
-          filename: cleanName,
-          mime_type: "application/pdf",
-          size: bytes.length,
-          checksum: v.sha256 ?? null,
-          file_status: "ready",
-          parse_state: "queued",
-          page_count: v.page_count ?? null,
-          upload_source: "candidate_application",
-        })
-        .select("id")
-        .single();
-      if (fileErr) throw fileErr;
+      let reusedFileId: string | null = null;
+      if (v.sha256) {
+        const { data: priorUpload } = await supabaseAdmin
+          .from("files")
+          .select("id")
+          .eq("candidate_profile_id", candidateProfileId)
+          .eq("checksum", v.sha256)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (priorUpload?.id) {
+          const { data: attached } = await supabaseAdmin
+            .from("applications")
+            .select("id")
+            .eq("cv_file_id", priorUpload.id)
+            .limit(1)
+            .maybeSingle();
+          if (!attached) reusedFileId = priorUpload.id as string;
+        }
+      }
+
+      let fileId: string;
+      if (reusedFileId) {
+        fileId = reusedFileId;
+      } else {
+        const storagePath = `candidate/${candidateProfileId}/${crypto.randomUUID()}-${cleanName}`;
+        const upload = await supabaseAdmin.storage
+          .from("cvs")
+          .upload(storagePath, bytes, {
+            contentType: "application/pdf",
+            upsert: false,
+          });
+        if (upload.error) throw upload.error;
+
+        // 6. Insert files row — canonical original PDF, queued for parsing.
+        const { data: fileRow, error: fileErr } = await supabaseAdmin
+          .from("files")
+          .insert({
+            owner_user_id: authUserId,
+            candidate_profile_id: candidateProfileId,
+            storage_bucket: "cvs",
+            storage_path: storagePath,
+            filename: cleanName,
+            mime_type: "application/pdf",
+            size: bytes.length,
+            checksum: v.sha256 ?? null,
+            file_status: "ready",
+            parse_state: "queued",
+            page_count: v.page_count ?? null,
+            upload_source: "candidate_application",
+          })
+          .select("id")
+          .single();
+        if (fileErr) throw fileErr;
+        fileId = fileRow.id as string;
+      }
+      // From here on the candidate's document is in our hands. If anything below
+      // fails, the catch must say so honestly rather than implying nothing arrived.
+      orphanUpload = { fileId, candidateProfileId, filename: cleanName, email: emailLower, fullName: data.full_name };
+      const fileRow = { id: fileId };
+
 
 
       // Point candidate profile at latest CV.
@@ -590,6 +640,58 @@ export const submitApplication = createServerFn({ method: "POST" })
       };
     } catch (err) {
       console.error("[submitApplication]", trace_id, err);
+
+      // The document is already stored but the application is not. Telling this
+      // person "network error, try again" is false: retrying re-sends a file we
+      // already hold and produces another candidate with no evidence. Raise it
+      // with us instead, and say plainly what we have.
+      if (orphanUpload) {
+        try {
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          await supabaseAdmin.from("processing_jobs").insert({
+            entity_type: "file",
+            entity_id: orphanUpload.fileId,
+            job_type: "parse",
+            status: "queued",
+            trace_id,
+          });
+        } catch (jobErr) {
+          console.error("[submitApplication] orphan parse enqueue failed", trace_id, jobErr);
+        }
+        try {
+          const { processLeadEvent } = await import("./leads/lead-pipeline.server");
+          await processLeadEvent({
+            leadType: "candidate_application",
+            sourceId: orphanUpload.fileId,
+            source: "application_submit_incomplete",
+            sourcePage: `/jobs/${data.position_id}/apply`,
+            fullName: orphanUpload.fullName,
+            email: orphanUpload.email,
+            facts: [
+              { label: "What happened", value: "CV stored, application record not created" },
+              { label: "Document", value: orphanUpload.filename },
+              { label: "Trace", value: trace_id },
+            ],
+            recordTable: "files",
+            recordId: orphanUpload.fileId,
+            positionId: data.position_id,
+            linkPath: "/admin/evidence-gaps",
+            priority: "high",
+          });
+        } catch (notifyErr) {
+          console.error("[submitApplication] orphan alert failed", trace_id, notifyErr);
+        }
+        return {
+          ok: false,
+          trace_id,
+          code: "submit_incomplete",
+          message:
+            "Your CV reached us, but we could not finish creating your application. Our team has been alerted and will pick it up — you do not need to upload it again. If you would rather not wait, email hello@taasflow.com and quote " +
+            trace_id.slice(0, 8).toUpperCase() +
+            ".",
+        };
+      }
+
       return {
         ok: false,
         trace_id,
@@ -597,6 +699,7 @@ export const submitApplication = createServerFn({ method: "POST" })
         message: "Something went wrong on our end. Please try again in a moment.",
       };
     }
+
   });
 
 // Public confirmation lookup — no PII beyond what the candidate just submitted.

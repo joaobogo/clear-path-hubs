@@ -143,6 +143,7 @@ import { Route as AuthenticatedAdminLeadDeliveryRouteImport } from './routes/_au
 import { Route as AuthenticatedAdminIntegrationsRouteImport } from './routes/_authenticated/admin.integrations'
 import { Route as AuthenticatedAdminIntakeRouteImport } from './routes/_authenticated/admin.intake'
 import { Route as AuthenticatedAdminHealthRouteImport } from './routes/_authenticated/admin.health'
+import { Route as AuthenticatedAdminEvidenceGapsRouteImport } from './routes/_authenticated/admin.evidence-gaps'
 import { Route as AuthenticatedAdminDesignSystemRouteImport } from './routes/_authenticated/admin.design-system'
 import { Route as AuthenticatedAdminDataHealthRouteImport } from './routes/_authenticated/admin.data-health'
 import { Route as AuthenticatedAdminDashboardRequestsRouteImport } from './routes/_authenticated/admin.dashboard-requests'
@@ -906,6 +907,12 @@ const AuthenticatedAdminHealthRoute =
     path: '/health',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminEvidenceGapsRoute =
+  AuthenticatedAdminEvidenceGapsRouteImport.update({
+    id: '/evidence-gaps',
+    path: '/evidence-gaps',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminDesignSystemRoute =
   AuthenticatedAdminDesignSystemRouteImport.update({
     id: '/design-system',
@@ -1284,6 +1291,7 @@ export interface FileRoutesByFullPath {
   '/admin/dashboard-requests': typeof AuthenticatedAdminDashboardRequestsRoute
   '/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
   '/admin/design-system': typeof AuthenticatedAdminDesignSystemRoute
+  '/admin/evidence-gaps': typeof AuthenticatedAdminEvidenceGapsRoute
   '/admin/health': typeof AuthenticatedAdminHealthRoute
   '/admin/intake': typeof AuthenticatedAdminIntakeRouteWithChildren
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
@@ -1465,6 +1473,7 @@ export interface FileRoutesByTo {
   '/admin/dashboard-requests': typeof AuthenticatedAdminDashboardRequestsRoute
   '/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
   '/admin/design-system': typeof AuthenticatedAdminDesignSystemRoute
+  '/admin/evidence-gaps': typeof AuthenticatedAdminEvidenceGapsRoute
   '/admin/health': typeof AuthenticatedAdminHealthRoute
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
@@ -1648,6 +1657,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/dashboard-requests': typeof AuthenticatedAdminDashboardRequestsRoute
   '/_authenticated/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
   '/_authenticated/admin/design-system': typeof AuthenticatedAdminDesignSystemRoute
+  '/_authenticated/admin/evidence-gaps': typeof AuthenticatedAdminEvidenceGapsRoute
   '/_authenticated/admin/health': typeof AuthenticatedAdminHealthRoute
   '/_authenticated/admin/intake': typeof AuthenticatedAdminIntakeRouteWithChildren
   '/_authenticated/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
@@ -1836,6 +1846,7 @@ export interface FileRouteTypes {
     | '/admin/dashboard-requests'
     | '/admin/data-health'
     | '/admin/design-system'
+    | '/admin/evidence-gaps'
     | '/admin/health'
     | '/admin/intake'
     | '/admin/integrations'
@@ -2017,6 +2028,7 @@ export interface FileRouteTypes {
     | '/admin/dashboard-requests'
     | '/admin/data-health'
     | '/admin/design-system'
+    | '/admin/evidence-gaps'
     | '/admin/health'
     | '/admin/integrations'
     | '/admin/lead-delivery'
@@ -2199,6 +2211,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/dashboard-requests'
     | '/_authenticated/admin/data-health'
     | '/_authenticated/admin/design-system'
+    | '/_authenticated/admin/evidence-gaps'
     | '/_authenticated/admin/health'
     | '/_authenticated/admin/intake'
     | '/_authenticated/admin/integrations'
@@ -3343,6 +3356,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminHealthRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/evidence-gaps': {
+      id: '/_authenticated/admin/evidence-gaps'
+      path: '/evidence-gaps'
+      fullPath: '/admin/evidence-gaps'
+      preLoaderRoute: typeof AuthenticatedAdminEvidenceGapsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/design-system': {
       id: '/_authenticated/admin/design-system'
       path: '/design-system'
@@ -3789,6 +3809,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminDashboardRequestsRoute: typeof AuthenticatedAdminDashboardRequestsRoute
   AuthenticatedAdminDataHealthRoute: typeof AuthenticatedAdminDataHealthRoute
   AuthenticatedAdminDesignSystemRoute: typeof AuthenticatedAdminDesignSystemRoute
+  AuthenticatedAdminEvidenceGapsRoute: typeof AuthenticatedAdminEvidenceGapsRoute
   AuthenticatedAdminHealthRoute: typeof AuthenticatedAdminHealthRoute
   AuthenticatedAdminIntakeRoute: typeof AuthenticatedAdminIntakeRouteWithChildren
   AuthenticatedAdminIntegrationsRoute: typeof AuthenticatedAdminIntegrationsRoute
@@ -3829,6 +3850,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
     AuthenticatedAdminDashboardRequestsRoute,
   AuthenticatedAdminDataHealthRoute: AuthenticatedAdminDataHealthRoute,
   AuthenticatedAdminDesignSystemRoute: AuthenticatedAdminDesignSystemRoute,
+  AuthenticatedAdminEvidenceGapsRoute: AuthenticatedAdminEvidenceGapsRoute,
   AuthenticatedAdminHealthRoute: AuthenticatedAdminHealthRoute,
   AuthenticatedAdminIntakeRoute: AuthenticatedAdminIntakeRouteWithChildren,
   AuthenticatedAdminIntegrationsRoute: AuthenticatedAdminIntegrationsRoute,
