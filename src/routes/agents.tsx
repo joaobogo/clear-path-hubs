@@ -189,7 +189,7 @@ function AgentsPage() {
         stats={[
           { value: "6", label: "Agents you control" },
           { value: "2", label: "System automations" },
-          { value: String(CHANNEL_AGENT_COUNT), label: "Sourcing channels with a dedicated agent" },
+          { value: String(CHANNEL_AGENT_COUNT), label: "Talent signal streams with a dedicated agent" },
         ]}
         primary={{ to: "/intake", label: "Start a role" }}
         secondary={{ to: "/platform", label: "See the platform" }}
