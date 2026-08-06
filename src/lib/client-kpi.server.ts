@@ -19,6 +19,11 @@ import {
 } from "@/lib/client-fit-presentation";
 import { clientReviewStatement } from "@/lib/scoring/human-adjustment";
 import {
+  clientMethodLabel,
+  normalizeEvaluationMethod,
+  type EvaluationMethod,
+} from "@/lib/scoring/evaluation-method";
+import {
   buildScoreExplanation,
   type ScoreExplanation,
 } from "@/lib/scoring/score-explanation";
@@ -805,6 +810,8 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
           ? String(run.contradiction_status)
           : null,
       completed_at: run?.completed_at ?? null,
+      method: normalizeEvaluationMethod((run as AnyRow)?.evaluation_method),
+      method_label: clientMethodLabel((run as AnyRow)?.evaluation_method),
       category_breakdown: [
         {
           label: "Must-have coverage",
