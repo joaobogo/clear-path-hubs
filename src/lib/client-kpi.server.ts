@@ -340,6 +340,9 @@ export type ClientCandidateDTO = {
     blueprint_version: string | null;
     contradiction: string | null;
     completed_at: string | null;
+    /** Truthful method behind the run: never "hybrid". */
+    method: EvaluationMethod;
+    method_label: string;
     category_breakdown: Array<{ label: string; value: number | null; weight: number | null }>;
   };
 };
