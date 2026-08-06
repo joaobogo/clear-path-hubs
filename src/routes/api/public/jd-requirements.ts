@@ -3,9 +3,13 @@ import { z } from "zod";
 import {
   PUBLIC_RATE_LIMITS,
   clientIp,
+  conflictResponse,
+  consumeRateLimit,
+  newTraceId,
   rateLimitResponse,
-  rateLimited,
+  withRateLimitHeaders,
 } from "@/lib/public-api/rate-limit";
+import { auditConflict, auditRateLimited, emailDomain } from "@/lib/public-api/outcome-audit";
 import {
   MAX_REQUIREMENT_CHARS,
   MIN_REQUIREMENT_CHARS,
@@ -66,11 +70,24 @@ export const Route = createFileRoute("/api/public/jd-requirements")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const ip = clientIp(request);
+        const traceId = newTraceId("jd_requirements");
+        const decision = consumeRateLimit("jd_requirements", ip, PUBLIC_RATE_LIMITS.jd_requirements);
+        if (decision.limited) {
+          await auditRateLimited({
+            scope: "jd_requirements",
+            traceId,
+            ip,
+            path: "/api/public/jd-requirements",
+            limit: decision.limit,
+            retryAfterSeconds: decision.retryAfterSeconds,
+          });
+          return rateLimitResponse(traceId, decision);
+        }
+
+        const response = await (async (): Promise<Response> => {
         // This endpoint spends money on every call: an unauthenticated caller can
         // push 60k characters into a paid LLM gateway. Throttle before parsing.
-        if (rateLimited("jd_requirements", clientIp(request), PUBLIC_RATE_LIMITS.jd_requirements)) {
-          return rateLimitResponse(crypto.randomUUID(), PUBLIC_RATE_LIMITS.jd_requirements.windowMs);
-        }
 
         let raw: unknown;
         try {
@@ -145,6 +162,10 @@ export const Route = createFileRoute("/api/public/jd-requirements")({
         } catch {
           return Response.json({ ok: false, error: "suggestions_failed" });
         }
+      
+        })();
+
+        return withRateLimitHeaders(response, decision, traceId);
       },
     },
   },
