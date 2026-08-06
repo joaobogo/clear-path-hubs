@@ -190,14 +190,24 @@ export async function runExportJob(
           : null;
 
     const columns = includeContact ? [...BASE_COLUMNS, ...CONTACT_COLUMNS] : [...BASE_COLUMNS];
+    // The file states exactly what it contains: who asked, what was filtered,
+    // and what was withheld — so a spreadsheet can never be read as the whole
+    // picture by mistake.
+    const filterStamp = Object.entries(filters)
+      .filter(([, v]) => v !== undefined && v !== null && v !== "" && v !== false)
+      .map(([k, v]) => `${k}=${String(v)}`)
+      .join(" · ");
     const header: string[] = [
       `# TaaSFlow candidate export ${jobId}`,
       `# Generated ${new Date().toISOString()} · scope: ${job.scope_label ?? "candidate list"}`,
+      `# Filters applied: ${filterStamp || "none (full scope)"}`,
       `# Rows: ${list.length}${(count ?? 0) > EXPORT_ROW_CAP ? ` (capped at ${EXPORT_ROW_CAP} of ${count})` : ""}`,
       includeContact
         ? "# Contact details: INCLUDED (released to the requester for every row in scope)"
         : `# Contact details: OMITTED${omissionReason ? ` — ${omissionReason.replace(/^Contact columns omitted: /, "")}` : " — not requested"}`,
+      "# Masking: candidate contact details appear only where contact has been released; internal notes and scoring internals are never exported.",
     ];
+
 
     const csv = [
       ...header,

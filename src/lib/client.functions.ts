@@ -41,6 +41,13 @@ import { computeNextMilestone } from "@/lib/client-next-milestone";
 import { buildRoleTimeline } from "@/lib/client-role-timeline";
 import { readWorkspaceAccess } from "@/lib/authz/workspace-access";
 import { hydrateClientCandidateProfiles } from "@/lib/client-candidate-hydrate.server";
+import {
+  advanceGateError,
+  stageNeedsAgreedBrief,
+  evaluateAdvanceGate,
+} from "@/lib/client/advance-gate";
+import { assessFreshness, type Freshness } from "@/lib/scoring/score-freshness";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -1457,7 +1464,13 @@ async function writeAudit(
 export const moveMatchStage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(
-    (input: { orgId: string; matchId: string; toStage: MatchStage; reason?: string }) =>
+    (input: {
+      orgId: string;
+      matchId: string;
+      toStage: MatchStage;
+      reason?: string;
+      reasonCode?: string;
+    }) =>
       z
         .object({
           orgId: z.string().uuid(),
@@ -1471,6 +1484,24 @@ export const moveMatchStage = createServerFn({ method: "POST" })
             "not_moving_forward",
           ]),
           reason: z.string().trim().max(2000).optional(),
+          reasonCode: z.string().max(64).optional(),
+        })
+        .superRefine((v, ctx) => {
+          if (v.toStage === "not_moving_forward") {
+            if (!v.reasonCode || !CLIENT_DECLINE_CODES.has(v.reasonCode)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "A decline reason is required.",
+                path: ["reasonCode"],
+              });
+            } else if (v.reasonCode === "other" && (v.reason ?? "").trim().length < 10) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Tell us a little more when the reason is 'Other'.",
+                path: ["reason"],
+              });
+            }
+          }
         })
         .parse(input),
   )
@@ -1484,9 +1515,19 @@ export const moveMatchStage = createServerFn({ method: "POST" })
     if (!allowed.includes(data.toStage)) {
       throw new Error(`invalid_transition:${from}->${data.toStage}`);
     }
-    // Business rule: rejecting a candidate requires a reason.
-    if (data.toStage === "not_moving_forward" && !data.reason?.trim()) {
-      throw new Error("reason_required");
+    // Business rule: a candidate cannot be advanced towards an interview or an
+    // offer while the role brief the interview is judged against is incomplete.
+    if (stageNeedsAgreedBrief(data.toStage)) {
+      const { data: pos } = await context.supabase
+        .from("positions")
+        .select(
+          "title, description, location, work_model, employment_type, seniority, must_have_skills, experience, responsibilities, budget_min, budget_max, currency",
+        )
+        .eq("id", match.position_id as string)
+        .eq("organization_id", data.orgId)
+        .maybeSingle();
+      const gate = evaluateAdvanceGate({ toStage: data.toStage, position: pos as never });
+      if (gate.blocked) throw advanceGateError(gate.missing);
     }
     const { error } = await context.supabase
       .from("candidate_matches")
@@ -1512,8 +1553,10 @@ export const moveMatchStage = createServerFn({ method: "POST" })
         decision: decision as never,
         actor_user_id: context.userId,
         feedback: data.reason?.trim() || null,
-      });
+        reason_code: data.reasonCode ?? null,
+      } as never);
     }
+
     if (data.toStage === "interview_process" && from !== "interview_process") {
       await context.supabase.from("interviews").insert({
         candidate_match_id: data.matchId,
