@@ -639,6 +639,19 @@ function CvTab({ cv, matchId, cp, insights }: { cv: Any; matchId: string; cp: An
   const pitchTone = String(insights?.pitch_tone ?? "balanced");
   return (
     <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-muted/30 px-4 py-2.5 text-sm">
+        <span className="text-muted-foreground">
+          Check what was read from this CV beside the original document, field by field.
+        </span>
+        <Link
+          to="/admin/candidates/$id/parse"
+          params={{ id: matchId }}
+          className="font-medium underline underline-offset-2"
+        >
+          Open parse review
+        </Link>
+      </div>
+
       {insights?.pitch_summary && (
         <div
           className={`rounded-lg border-l-4 p-4 text-sm leading-relaxed ${
