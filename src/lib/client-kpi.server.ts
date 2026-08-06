@@ -680,9 +680,11 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
           ? "met"
           : r.status === "partial"
             ? "partial"
-            : r.status === "missing"
-              ? "missing"
-              : "unknown",
+            : r.status === "not_applicable"
+              ? "not_applicable"
+              : r.status === "not_evidenced" || r.status === "contradicted"
+                ? "missing"
+                : "unknown",
       evidence_snippet: r.evidence?.[0]?.snippet ?? null,
       source: r.evidence?.[0]?.source ?? null,
     })),
