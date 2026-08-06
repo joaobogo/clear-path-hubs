@@ -74,6 +74,7 @@ export function ActionArea({
   stage,
   matchId,
   pendingKey,
+  subject,
 }: {
   actions: { primary: ActionDef | null; more: ActionDef[] };
   readOnly: boolean;
@@ -82,7 +83,10 @@ export function ActionArea({
   stage: MatchStage;
   matchId: string;
   pendingKey?: ActionKey | null;
+  /** Who/what the actions apply to, e.g. "Maria Santos for Front Desk Lead". */
+  subject?: string;
 }) {
+  const forSubject = subject ? ` for ${subject}` : "";
   return (
     <div className="rounded-xl border bg-card p-4 shadow-sm ring-1 ring-primary/5">
       <div className="mb-3 flex items-center justify-between gap-2">
@@ -118,7 +122,13 @@ export function ActionArea({
         {actions.more.length > 0 && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" aria-label="More actions" disabled={readOnly} className="min-h-11 min-w-11">
+              <Button
+                variant="outline"
+                size="icon"
+                aria-label={`More actions${forSubject}`}
+                disabled={readOnly}
+                className="min-h-11 min-w-11"
+              >
                 <MoreHorizontal className="h-4 w-4" aria-hidden />
               </Button>
             </DropdownMenuTrigger>
@@ -173,11 +183,14 @@ export function MobileActionBar({
   actions,
   pending,
   onAct,
+  subject,
 }: {
   actions: { primary: ActionDef | null; more: ActionDef[] };
   pending: boolean;
   onAct: (k: ActionKey) => void;
+  subject?: string;
 }) {
+  const forSubject = subject ? ` for ${subject}` : "";
   if (!actions.primary) return null;
   // Declining is a decision, not an overflow item: it stays on screen at 375px.
   const decline = actions.more.find((a) => a.key === "not_moving_forward") ?? null;
@@ -185,7 +198,7 @@ export function MobileActionBar({
   return (
     <div
       role="toolbar"
-      aria-label="Candidate actions"
+      aria-label={`Candidate actions${forSubject}`}
       className="fixed inset-x-0 bottom-0 z-30 border-t bg-background/95 px-4 py-3 shadow-[0_-4px_16px_-8px_rgba(0,0,0,0.15)] backdrop-blur lg:hidden"
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 0.75rem)" }}
     >
@@ -213,7 +226,7 @@ export function MobileActionBar({
               <Button
                 variant="outline"
                 size="icon"
-                aria-label="More actions"
+                aria-label={`More actions${forSubject}`}
                 className="min-h-11 min-w-11 shrink-0"
               >
                 <MoreHorizontal className="h-4 w-4" aria-hidden />
