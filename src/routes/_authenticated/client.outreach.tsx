@@ -1,26 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { toast } from "sonner";
-import { useEffect, useState } from "react";
 import { Lock, MessageSquare, ShieldCheck } from "lucide-react";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { getClientContext } from "@/lib/client.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import {
   getOutreachSpine,
-  saveChannelRule,
   CHANNEL_LABELS,
-  type ChannelRule,
 } from "@/lib/outreach.functions";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { useQueryState } from "@/hooks/use-query-state";
 import { SkeletonCards } from "@/components/client/states";
+
 
 export const Route = createFileRoute("/_authenticated/client/outreach")({
   head: () => ({
@@ -48,115 +41,10 @@ function pct(v: number | null) {
   return v === null ? "—" : `${v}%`;
 }
 
-function RuleRow({
-  rule,
-  canManage,
-  onSave,
-  saving,
-}: {
-  rule: ChannelRule;
-  canManage: boolean;
-  onSave: (r: ChannelRule) => void;
-  saving: boolean;
-}) {
-  const [max, setMax] = useState(String(rule.max_contacts_per_person));
-  const [win, setWin] = useState(String(rule.window_hours));
-  const [enabled, setEnabled] = useState(rule.enabled);
-
-  useEffect(() => {
-    setMax(String(rule.max_contacts_per_person));
-    setWin(String(rule.window_hours));
-    setEnabled(rule.enabled);
-  }, [rule.max_contacts_per_person, rule.window_hours, rule.enabled]);
-
-  const dirty =
-    Number(max) !== rule.max_contacts_per_person ||
-    Number(win) !== rule.window_hours ||
-    enabled !== rule.enabled;
-
-  return (
-    <div className="flex flex-wrap items-end gap-4 border-b border-border py-4 last:border-0">
-      <div className="min-w-32">
-        <p className="text-sm font-medium">
-          {CHANNEL_LABELS[rule.channel] ?? rule.channel}
-        </p>
-        <p className="text-xs text-muted-foreground">
-          {enabled ? "In use" : "Not used"}
-        </p>
-      </div>
-      <div className="flex items-center gap-2">
-        <Switch
-          checked={enabled}
-          disabled={!canManage}
-          onCheckedChange={setEnabled}
-          aria-label={`Use ${CHANNEL_LABELS[rule.channel]}`}
-        />
-      </div>
-      <div className="w-28">
-        <Label
-          htmlFor={`max-${rule.channel}`}
-          className="text-xs text-muted-foreground"
-        >
-          Max contacts
-        </Label>
-        <Input
-          id={`max-${rule.channel}`}
-          type="number"
-          min={1}
-          max={10}
-          value={max}
-          disabled={!canManage}
-          onChange={(e) => setMax(e.target.value)}
-        />
-      </div>
-      <div className="w-32">
-        <Label
-          htmlFor={`win-${rule.channel}`}
-          className="text-xs text-muted-foreground"
-        >
-          Window (hours)
-        </Label>
-        <Input
-          id={`win-${rule.channel}`}
-          type="number"
-          min={1}
-          max={2160}
-          value={win}
-          disabled={!canManage}
-          onChange={(e) => setWin(e.target.value)}
-        />
-      </div>
-      <p className="flex-1 text-xs text-muted-foreground">
-        At most {max || "1"} contact{Number(max) === 1 ? "" : "s"} to the same
-        person on this channel every {win || "0"} hours. The platform blocks the
-        rest.
-      </p>
-      {canManage && dirty && (
-        <Button
-          size="sm"
-          disabled={saving}
-          onClick={() =>
-            onSave({
-              channel: rule.channel,
-              max_contacts_per_person: Number(max) || 1,
-              window_hours: Number(win) || 1,
-              enabled,
-            })
-          }
-        >
-          Save
-        </Button>
-      )}
-    </div>
-  );
-}
-
 function OutreachPage() {
   const orgSearch = useClientOrgSearch();
-  const qc = useQueryClient();
   const ctxFn = useServerFn(getClientContext);
   const spineFn = useServerFn(getOutreachSpine);
-  const saveRuleFn = useServerFn(saveChannelRule);
 
   const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
@@ -173,15 +61,6 @@ function OutreachPage() {
   const spineState = useQueryState(spineQuery);
   const spine = spineState.data;
 
-  const saveRule = useMutation({
-    mutationFn: (r: ChannelRule) =>
-      saveRuleFn({ data: { organization_id: orgId!, ...r } as never }),
-    onSuccess: () => {
-      toast.success("Rule saved. It applies to the next message.");
-      qc.invalidateQueries({ queryKey: ["outreach-spine", orgId] });
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
 
   if (ctxState.isError) {
     return (
@@ -248,25 +127,7 @@ function OutreachPage() {
         </p>
       </section>
 
-      <section className="mt-8 rounded-lg border border-border bg-card p-5">
-        <h2 className="text-lg font-semibold">Channel rules</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {spine?.can_manage
-            ? "Set how often a single person can be contacted on each channel."
-            : "These are your workspace rules. An admin can change them."}
-        </p>
-        <div className="mt-4">
-          {spine?.rules.map((r) => (
-            <RuleRow
-              key={r.channel}
-              rule={r}
-              canManage={!!spine.can_manage}
-              saving={saveRule.isPending}
-              onSave={(next) => saveRule.mutate(next)}
-            />
-          ))}
-        </div>
-      </section>
+
 
       <section className="mt-8">
         <h2 className="text-lg font-semibold">What outreach produced</h2>

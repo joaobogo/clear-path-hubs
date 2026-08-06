@@ -8,11 +8,10 @@
  */
 import { Fragment, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
   getOutreachHealth,
-  setOutreachChannelEnabled,
 } from "@/lib/admin-outreach-health.functions";
 import {
   BOUNCE_MIN_SENDS,
@@ -27,7 +26,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle, Pause, Play, RefreshCw } from "lucide-react";
+import { AlertTriangle, RefreshCw } from "lucide-react";
 
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
@@ -82,19 +81,10 @@ export function OutreachHealthPanel() {
   const [includeTest, setIncludeTest] = useState(false);
   const [detail, setDetail] = useState<"none" | "bounces" | "opt_outs">("none");
   const fetchHealth = useServerFn(getOutreachHealth);
-  const toggleChannel = useServerFn(setOutreachChannelEnabled);
-  const queryClient = useQueryClient();
 
   const query = useQuery({
     queryKey: ["admin", "outreach-health", includeTest],
     queryFn: () => fetchHealth({ data: { include_test: includeTest } }),
-  });
-
-  const pause = useMutation({
-    mutationFn: (vars: { organization_id: string; channel: string; enabled: boolean }) =>
-      toggleChannel({ data: vars as never }),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["admin", "outreach-health", includeTest] }),
   });
 
   const header = (
@@ -102,7 +92,7 @@ export function OutreachHealthPanel() {
       <div>
         <h2 className="text-lg font-semibold">Outreach health</h2>
         <p className="text-sm text-muted-foreground">
-          Deliverability and opt-out trend per channel, plus current rule limits.
+          Deliverability and opt-out trend per channel.
         </p>
       </div>
       <div className="flex items-center gap-2">
@@ -303,87 +293,6 @@ export function OutreachHealthPanel() {
         </div>
       )}
 
-      <div className="mt-6">
-        <h3 className="text-sm font-semibold">Channel rules</h3>
-        <p className="text-xs text-muted-foreground">
-          Pausing a channel sets it disabled on the rule the send guard checks, so queued and new
-          sends on that channel are blocked immediately.
-        </p>
-        {data.rules.length === 0 ? (
-          <p className="mt-3 text-sm text-muted-foreground">
-            No channel rules configured. Defaults apply: 1 contact per person per 168 hours.
-          </p>
-        ) : (
-          <div className="mt-3 overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="text-left text-xs uppercase tracking-wide text-muted-foreground">
-                <tr>
-                  <th className="py-2 pr-3 font-medium">Client</th>
-                  <th className="px-3 py-2 font-medium">Channel</th>
-                  <th className="px-3 py-2 font-medium">Limit</th>
-                  <th className="px-3 py-2 font-medium">Usage in window</th>
-                  <th className="px-3 py-2 font-medium">Status</th>
-                  <th className="px-3 py-2 font-medium sr-only">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.rules.map((r) => (
-                  <tr key={`${r.organization_id}-${r.channel}`} className="border-t border-border">
-                    <td className="py-2 pr-3">{r.org_name ?? "—"}</td>
-                    <td className="px-3 py-2">{channelLabel(r.channel)}</td>
-                    <td className="px-3 py-2 tabular-nums">
-                      {r.max_contacts_per_person} per person / {r.window_hours}h
-                    </td>
-                    <td className="px-3 py-2 tabular-nums">
-                      {r.sends_in_window} sends · {r.people_in_window} people ·{" "}
-                      <span className={r.people_at_cap > 0 ? "text-amber-600" : undefined}>
-                        {r.people_at_cap} at cap
-                      </span>
-                    </td>
-                    <td className="px-3 py-2">
-                      {r.enabled ? (
-                        <Badge variant="outline">Active</Badge>
-                      ) : (
-                        <Badge variant="destructive">Paused</Badge>
-                      )}
-                    </td>
-                    <td className="px-3 py-2 text-right">
-                      <Button
-                        size="sm"
-                        variant={r.enabled ? "outline" : "default"}
-                        disabled={pause.isPending}
-                        onClick={() =>
-                          pause.mutate({
-                            organization_id: r.organization_id,
-                            channel: r.channel,
-                            enabled: !r.enabled,
-                          })
-                        }
-                      >
-                        {r.enabled ? (
-                          <>
-                            <Pause className="mr-2 h-3.5 w-3.5" /> Pause
-                          </>
-                        ) : (
-                          <>
-                            <Play className="mr-2 h-3.5 w-3.5" /> Resume
-                          </>
-                        )}
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-        {pause.isError && (
-          <Alert variant="destructive" className="mt-3">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>Could not change the channel. Try again.</AlertDescription>
-          </Alert>
-        )}
-      </div>
 
       <p className="mt-4 text-xs text-muted-foreground">
         Rates are suppressed below {BOUNCE_MIN_SENDS} sends (bounce) and {OPT_OUT_MIN_SENDS} sends
