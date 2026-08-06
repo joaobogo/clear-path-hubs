@@ -277,21 +277,15 @@ export async function draftClientUpdate(
   supabase: Sb,
   orgId: string,
 ): Promise<CopilotToolResult> {
-  const { data: org } = await supabase
-    .from("organizations")
-    .select("id, name")
-    .eq("id", orgId)
-    .maybeSingle();
+  // All three reads key off the org id only — no ordering dependency.
+  const [{ data: org }, { data: positions }, { data: matches }] = await Promise.all([
+    supabase.from("organizations").select("id, name").eq("id", orgId).maybeSingle(),
+    supabase.from("positions").select("id, title, status").eq("organization_id", orgId),
+    supabase.from("candidate_matches").select("id, stage").eq("organization_id", orgId),
+  ]);
   if (!org) return { data: { error: "org_not_found" }, citations: [] };
 
-  const { data: positions } = await supabase
-    .from("positions")
-    .select("id, title, status")
-    .eq("organization_id", orgId);
-  const { data: matches } = await supabase
-    .from("candidate_matches")
-    .select("id, stage")
-    .eq("organization_id", orgId);
+
   const pos = (positions ?? []) as any[];
   const m = (matches ?? []) as any[];
   const open = pos.filter((p) => p.status === "open").length;
