@@ -9,6 +9,7 @@
 import { StructuredNotesPanel } from "@/components/admin/structured-notes-panel";
 import { Link } from "@tanstack/react-router";
 import { useSuspenseQuery, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { RecordActivityTab } from "@/components/admin/record-activity-tab";
 import { useServerFn } from "@tanstack/react-start";
 import React, { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -960,11 +961,6 @@ export function ActivityAuditTab({
   positionId?: string;
   decisions: Any[];
 }) {
-  const auditFn = useServerFn(getCandidateAudit);
-  const { data: recordAudit } = useQuery({
-    queryKey: ["candidate-record-audit", matchId],
-    queryFn: () => auditFn({ data: { match_id: matchId, limit: 100 } }),
-  });
   const posActivityFn = useServerFn(getPositionActivity);
   const { data: posActivity } = useQuery({
     queryKey: ["position-activity-for-match", positionId],
@@ -987,34 +983,23 @@ export function ActivityAuditTab({
       detail: r.actor_user_id ? `actor ${String(r.actor_user_id).slice(0, 8)}` : "system",
       trace: r.trace_id,
     }));
-    // Record-level rows come first in intent: these are the audited changes to
-    // this candidate, not the surrounding role.
-    const recordEvents = ((recordAudit as Any[]) ?? []).map((r) => ({
-      when: r.created_at,
-      kind: "record",
-      label: r.action,
-      detail: [
-        r.entity_type ? String(r.entity_type).replace(/_/g, " ") : null,
-        r.actor_user_id ? `actor ${String(r.actor_user_id).slice(0, 8)}` : "system",
-      ]
-        .filter(Boolean)
-        .join(" · "),
-      trace: r.trace_id,
-    }));
-    return [...recordEvents, ...decisionEvents, ...posEvents].sort(
+    return [...decisionEvents, ...posEvents].sort(
       (a, b) => new Date(b.when).valueOf() - new Date(a.when).valueOf(),
     );
-  }, [decisions, posActivity, recordAudit]);
+  }, [decisions, posActivity]);
 
   return (
+    <div className="space-y-4">
+      {/* The audited record changes, paginated so the whole history is reachable. */}
+      <RecordActivityTab entity="candidate" id={matchId} title="Record audit" />
+
     <div className="rounded-lg border bg-card">
       <div className="border-b px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-        Activity &amp; audit — match #{matchId.slice(0, 8)} · record changes, decisions and role
+        Decisions &amp; role events — match #{matchId.slice(0, 8)} · record changes, decisions and role
         events
       </div>
       <div className="border-b bg-muted/40 px-4 py-2 text-xs text-muted-foreground">
-        Audit rows are immutable; "record" entries are changes to this candidate, "audit" entries
-        are changes to the role.
+        Decisions taken on this candidate, interleaved with changes to the surrounding role.
       </div>
       {events.length === 0 ? (
         <p className="p-6 text-center text-sm text-muted-foreground">
