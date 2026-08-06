@@ -22,7 +22,7 @@ import {
   type EvidenceCard,
   type ClientEvidenceRow,
 } from "@/lib/client-evidence-card";
-import { assessFreshness, type Freshness } from "@/lib/scoring/score-freshness";
+import { assessFreshness, mergeStoredStaleness, type Freshness } from "@/lib/scoring/score-freshness";
 import { CALIBRATION_VERSION } from "@/lib/scoring/engine-calibration";
 import { ENGINE_VERSION } from "@/lib/scoring/engine-version";
 
