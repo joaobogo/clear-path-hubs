@@ -9,6 +9,8 @@ import { useClientOrgSearch } from "@/lib/use-client-org";
 import { getExecutiveReport, type ExecutiveReport } from "@/lib/executive.functions";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { useQueryState } from "@/hooks/use-query-state";
+import { DegradedPanelsBanner, NotCurrentChip } from "@/components/client/degraded-banner";
+import { panelReadiness, panelSignal } from "@/lib/panel-readiness";
 import { SkeletonStats } from "@/components/client/states";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -59,6 +61,14 @@ function ExecutivePage() {
   });
   const reportState = useQueryState(reportQuery);
 
+  // Same multi-query shape as the overview: one readiness summary, no
+  // confident figures from a failed or out-of-date read.
+  const readiness = panelReadiness([
+    panelSignal("Workspace access", ctxQuery),
+    panelSignal("Portfolio report", reportQuery),
+  ]);
+  const reportNotCurrent = readiness.isNotCurrent("Portfolio report");
+
   if (ctxState.isError) {
     return (
       <div className="p-6 md:p-8">
@@ -107,7 +117,13 @@ function ExecutivePage() {
         </p>
       </header>
 
-      <FinanceStrip fin={data.finance_summary} />
+      <DegradedPanelsBanner retrying={readiness.retrying} panels={readiness.signals} />
+
+      <FinanceStrip
+        fin={data.finance_summary}
+        notCurrent={reportNotCurrent}
+        notCurrentReason={readiness.reasonFor("Portfolio report")}
+      />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <RegionCard rows={data.open_by_region} />
@@ -143,7 +159,15 @@ function fmtMoney(cents: number | null, currency: string | null): string {
   }
 }
 
-function FinanceStrip({ fin }: { fin: ExecutiveReport["finance_summary"] }) {
+function FinanceStrip({
+  fin,
+  notCurrent = false,
+  notCurrentReason,
+}: {
+  fin: ExecutiveReport["finance_summary"];
+  notCurrent?: boolean;
+  notCurrentReason?: string | null;
+}) {
   const tiles = [
     { label: "Hires · 30d", value: String(fin.hires_30d), icon: CheckCircle2 },
     { label: "Hires · 90d", value: String(fin.hires_90d), icon: TrendingUp },
@@ -170,6 +194,7 @@ function FinanceStrip({ fin }: { fin: ExecutiveReport["finance_summary"] }) {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
           <DollarSign className="h-4 w-4" /> Finance-ready hiring summary
+          {notCurrent && <NotCurrentChip reason={notCurrentReason} className="ml-1" />}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -179,10 +204,18 @@ function FinanceStrip({ fin }: { fin: ExecutiveReport["finance_summary"] }) {
               <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-muted-foreground">
                 <t.icon className="h-3 w-3" /> {t.label}
               </div>
-              <div className="mt-1 text-xl font-semibold tabular-nums">{t.value}</div>
+              <div className="mt-1 text-xl font-semibold tabular-nums">
+                {notCurrent ? "\u2014" : t.value}
+              </div>
             </div>
           ))}
         </div>
+        {notCurrent && (
+          <p className="mt-3 text-xs text-muted-foreground">
+            {notCurrentReason ?? "This section is out of date"} — figures are withheld rather than
+            shown as zero.
+          </p>
+        )}
       </CardContent>
     </Card>
   );

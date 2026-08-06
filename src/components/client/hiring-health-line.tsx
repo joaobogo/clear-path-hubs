@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { AlertTriangle, CheckCircle2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { NotCurrentChip } from "@/components/client/degraded-banner";
 import type { HiringHealth, HiringHealthFigureKey } from "@/lib/client-hiring-health";
 
 /**
@@ -35,6 +36,8 @@ function figureTarget(key: HiringHealthFigureKey, org?: string | null): FigureTa
 
 export function HiringHealthLine({
   health,
+  notCurrent = false,
+  notCurrentReason,
   loading,
   isError,
   onRetry,
@@ -43,6 +46,9 @@ export function HiringHealthLine({
   className,
 }: {
   health: HiringHealth | null | undefined;
+  /** Underlying query failed or is out of date — never show confident figures. */
+  notCurrent?: boolean;
+  notCurrentReason?: string | null;
   loading: boolean;
   isError: boolean;
   onRetry: () => void;
@@ -78,6 +84,40 @@ export function HiringHealthLine({
           Retry
         </Button>
       </div>
+    );
+  }
+
+  // A stale or partly failed load must not be read as a real zero.
+  if (notCurrent) {
+    return (
+      <section
+        aria-label="Hiring health"
+        className={cn(
+          "rounded-xl border taas-bd-warning taas-bg-warning-soft px-4 py-4",
+          className,
+        )}
+      >
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-sm font-medium">Hiring summary</p>
+          <NotCurrentChip reason={notCurrentReason} />
+          <Button size="sm" variant="outline" className="ml-auto" onClick={onRetry}>
+            <RefreshCw className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
+            Refresh
+          </Button>
+        </div>
+        <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
+          {health.figures.map((f) => (
+            <li key={f.key} className="inline-flex items-baseline gap-1.5 text-sm text-muted-foreground">
+              <span className="text-lg font-semibold tabular-nums text-foreground">&mdash;</span>
+              <span>{f.label}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-2 text-xs text-muted-foreground">
+          {notCurrentReason ?? "This section is out of date"}, so figures are hidden rather than
+          shown as zero.
+        </p>
+      </section>
     );
   }
 
