@@ -438,13 +438,8 @@ function LoginPage() {
                 >
                   Forgot password?
                 </button>
-                <Link
-                  to="/candidate-join"
-                  className="text-xs text-muted-foreground hover:underline"
-                >
-                  Apply as a candidate →
-                </Link>
               </div>
+
               <button
                 type="button"
                 className="text-xs text-muted-foreground hover:underline"
