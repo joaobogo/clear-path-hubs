@@ -470,7 +470,11 @@ export function scoreCandidate(input: {
     aligned: screeningAlignment(s, cv),
   }));
 
-  const disqualified = input.screening.some(isDisqualifying);
+  const disqualifyingAnswers = input.screening.filter(isDisqualifying);
+  const disqualified = disqualifyingAnswers.length > 0;
+  const disqualifyingQuestions = disqualifyingAnswers.map(
+    (s) => (s.question || "").trim() || `question ${s.question_id}`,
+  );
 
   // Contradiction: screening claims yes to a boolean but nothing corroborating in CV.
   // Distinct from "missing evidence" — only flag if the screening asserted a strong claim
@@ -553,14 +557,33 @@ export function scoreCandidate(input: {
   // (audit finding 11 — raw == cap == final proved nothing).
   const raw_score = Math.round(score01 * 1000) / 10;
   const applied_caps: ScoringResult["applied_caps"] = [];
-  if (disqualified && score01 > cal.disqualified_cap) {
-    applied_caps.push({
-      reason: "disqualifying_answer",
-      cap: cal.disqualified_cap,
-      before: Math.round(score01 * 10000) / 10000,
-    });
+  const applyCap = (reason: string, cap: number) => {
+    if (score01 <= cap) return; // not a cap that fired
+    applied_caps.push({ reason, cap, before: Math.round(score01 * 10000) / 10000 });
+    score01 = cap;
+  };
+  // 1) A dealbreaker answer. The reason names the question so a reviewer can
+  //    see which answer capped the run without opening the screening record.
+  if (disqualified) {
+    const names = disqualifyingQuestions.length
+      ? disqualifyingQuestions.join("; ")
+      : "unnamed screening question";
+    applyCap(`disqualifying_answer: ${names}`, cal.disqualified_cap);
   }
-  if (disqualified) score01 = Math.min(score01, cal.disqualified_cap);
+  // 2) An unparsed CV. We assessed no document, so no confident composite.
+  if (cv.trim().length < cal.unreadable_cv_chars) {
+    applyCap(
+      `unparsed_cv: CV text under ${cal.unreadable_cv_chars} characters could not be extracted`,
+      cal.unparsed_cv_cap,
+    );
+  }
+  // 3) Must-have coverage below the rubric floor: the role's core is unproven.
+  if (must.length && must_have_coverage < cal.must_have_floor) {
+    applyCap(
+      `must_have_floor: ${Math.round(must_have_coverage * 100)}% must-have coverage is below the rubric floor of ${Math.round(cal.must_have_floor * 100)}%`,
+      cal.must_have_floor_cap,
+    );
+  }
 
   const score = Math.round(score01 * 1000) / 10; // 0.0-100.0
 
