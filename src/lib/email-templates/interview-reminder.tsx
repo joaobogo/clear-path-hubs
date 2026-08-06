@@ -10,6 +10,8 @@ interface InterviewReminderProps {
   /** Already formatted in the candidate's timezone by the sender. */
   whenLabel?: string
   timezone?: string
+  /** UTC offset in force on that date, e.g. "GMT+1". */
+  offsetLabel?: string | null
   meetingUrl?: string | null
   location?: string | null
   manageUrl?: string
@@ -22,6 +24,7 @@ const InterviewReminder = ({
   organizationName,
   whenLabel,
   timezone,
+  offsetLabel,
   meetingUrl,
   location,
   manageUrl,
@@ -40,8 +43,15 @@ const InterviewReminder = ({
       </Text>
       <Text style={text}>
         <strong>{whenLabel ?? 'See your status page for the time'}</strong>
-        {timezone ? ` (${timezone})` : ''}
+        {timezone ? ` (${timezone}${offsetLabel ? `, ${offsetLabel}` : ''})` : ''}
       </Text>
+      {timezone ? (
+        <Text style={text}>
+          Times are shown in {timezone}
+          {offsetLabel ? ` (${offsetLabel})` : ''} — your timezone on record. Tell us if that is
+          wrong.
+        </Text>
+      ) : null}
       {location ? <Text style={text}>Where: {location}</Text> : null}
       {meetingUrl ? (
         <Button style={button} href={meetingUrl}>
@@ -77,6 +87,7 @@ export const template = {
     organizationName: 'Flow Group Ventures',
     whenLabel: 'Tuesday 14 May, 10:00',
     timezone: 'Europe/Lisbon',
+    offsetLabel: 'GMT+1',
     meetingUrl: 'https://meet.example.com/abc',
     manageUrl: 'https://taasflow.com/me/interviews',
     window: '24h',
