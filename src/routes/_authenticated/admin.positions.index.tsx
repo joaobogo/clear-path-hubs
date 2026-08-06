@@ -129,6 +129,7 @@ function PositionsPage() {
         location: search.location,
         sort: search.sort,
         page: search.page,
+        show_test: search.show_test,
       },
     ],
     queryFn: () =>
@@ -142,6 +143,7 @@ function PositionsPage() {
           sort: search.sort as never,
           page: search.page,
           page_size: PAGE_SIZE,
+          include_test: search.show_test || undefined,
         },
       }),
     placeholderData: (prev) => prev,
@@ -152,10 +154,21 @@ function PositionsPage() {
     total: 0,
     page: 1,
     page_size: PAGE_SIZE,
-  }) as { rows: Row[]; total: number; page: number; page_size: number };
+    include_test: false,
+    hidden_test: 0,
+  }) as {
+    rows: Row[];
+    total: number;
+    page: number;
+    page_size: number;
+    include_test?: boolean;
+    hidden_test?: number;
+  };
   const rows = payload.rows;
   const total = payload.total;
+  const hiddenTest = payload.hidden_test ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
 
   const setSearch = (patch: Record<string, string | number | boolean | undefined>) =>
     navigate({
