@@ -33,7 +33,7 @@ import { z } from "zod";
  * ladder, snippet radius, negation windows, unreadable-CV cut) moved in here
  * and onto the rubric version.
  */
-export const CALIBRATION_VERSION = "taasflow-calibration-v1.1.0";
+export const CALIBRATION_VERSION = "taasflow-calibration-v1.2.0";
 
 /**
  * How the engine reaches its numbers. Recorded on every run as
@@ -74,6 +74,9 @@ export const CalibrationSchema = z.object({
 
   // Caps and weights
   disqualified_cap: z.number().min(0).max(1).optional(),
+  unparsed_cv_cap: z.number().min(0).max(1).optional(),
+  must_have_floor: z.number().min(0).max(1).optional(),
+  must_have_floor_cap: z.number().min(0).max(1).optional(),
   base_weights: z
     .object({
       must_have: z.number().min(0),
@@ -142,6 +145,15 @@ export type EngineCalibration = {
   unreadable_cv_chars: number;
   /** Hard ceiling (0-1) once a disqualifying screening answer is present. */
   disqualified_cap: number;
+  /**
+   * Hard ceiling (0-1) when the CV text could not be extracted. An unparsed CV
+   * is an evidence failure, so the run must not publish a confident number.
+   */
+  unparsed_cv_cap: number;
+  /** Must-have coverage (0-1) below which the composite is capped. */
+  must_have_floor: number;
+  /** Ceiling (0-1) applied when must-have coverage sits below the floor. */
+  must_have_floor_cap: number;
   /** Base category weights before absent categories are dropped. */
   base_weights: { must_have: number; preferred: number; screening_alignment: number };
   /** Weights of the three overall-confidence components (sum to 1). */
@@ -176,7 +188,7 @@ export type EngineCalibration = {
  */
 export const DEFAULT_CALIBRATION: EngineCalibration = {
   calibration_version: CALIBRATION_VERSION,
-  engine_version: "taasflow-scoring-v1.1.0",
+  engine_version: "taasflow-scoring-v1.2.0",
   role_family: null,
   // Absent evidence is an information gap, not a negative finding. 0.4 sits
   // just below `partial` so an unvalidated requirement can never outrank one
@@ -208,6 +220,13 @@ export const DEFAULT_CALIBRATION: EngineCalibration = {
   // A dealbreaker answer must dominate the composite, but the run stays
   // readable rather than collapsing to zero.
   disqualified_cap: 0.15,
+  // An unparsed CV means we assessed nothing; the run stays low and routes to
+  // review rather than presenting a confident composite.
+  unparsed_cv_cap: 0.3,
+  // Below 40% of the must-haves evidenced, the role's core is unproven, so the
+  // composite cannot present as better than a partial fit.
+  must_have_floor: 0.4,
+  must_have_floor_cap: 0.5,
   base_weights: { must_have: 0.6, preferred: 0.2, screening_alignment: 0.2 },
   // Length and evidence volume carry equal weight; screening completeness is a
   // supporting signal, not the main one.
@@ -292,6 +311,11 @@ export function calibrationProvenance(c: EngineCalibration): Array<{ label: stri
     { label: "Keyword cap", value: String(c.keyword_cap) },
     { label: "Thin CV cut", value: `${c.thin_cv_chars} chars / ${c.thin_cv_tokens} tokens` },
     { label: "Disqualified cap", value: `${Math.round(c.disqualified_cap * 100)}/100` },
+    { label: "Unparsed CV cap", value: `${Math.round(c.unparsed_cv_cap * 100)}/100` },
+    {
+      label: "Must-have floor",
+      value: `below ${Math.round(c.must_have_floor * 100)}% coverage caps at ${Math.round(c.must_have_floor_cap * 100)}/100`,
+    },
     {
       label: "Weights",
       value: `must-have ${c.base_weights.must_have}, preferred ${c.base_weights.preferred}, screening ${c.base_weights.screening_alignment}`,
