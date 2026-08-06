@@ -412,7 +412,7 @@ function TrustPage() {
             icon={ShieldCheck}
             eyebrow="Security & process"
             title="The controls that are actually in the product."
-            lede="No certification-theater. Just the enforced controls a buyer would want to verify."
+            lede="The enforced controls a buyer would want to verify."
           />
           <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {SECURITY_LINES.map((s) => (
