@@ -435,13 +435,14 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
  return (
  <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
  {/* Breadcrumb */}
- <div>
+ <div className="flex items-center justify-between gap-3">
  <Link
  to="/client/positions"
  className="text-sm text-muted-foreground hover:underline"
  >
  ← All positions
  </Link>
+ <LiveUpdatedChip updatedAt={live.updatedAt} />
   </div>
 
   {/* Recorded closure — reason, note, date and who closed it. */}
