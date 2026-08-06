@@ -290,6 +290,150 @@ function CandidatesPage() {
     </button>
   );
 
+  const filterControls = (
+    <>
+          <form
+            className="col-span-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              setF({ q });
+            }}
+          >
+            <Input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Name, email, phone, job or client"
+              aria-label="Search candidates"
+            />
+          </form>
+
+          <FilterSelect
+            label="Client"
+            value={search.organization_id}
+            onChange={(v) => setF({ organization_id: v, position_id: "" })}
+            anyLabel="Any client"
+            options={(orgs as AnyRow[]).map((o) => ({ value: o.id, label: o.name }))}
+          />
+          <FilterSelect
+            label="Job"
+            value={search.position_id}
+            onChange={(v) => setF({ position_id: v })}
+            anyLabel="Any job"
+            options={(positions as AnyRow[]).map((p) => ({ value: p.id, label: p.title }))}
+          />
+          <FilterSelect
+            label="Application stage"
+            value={search.stage}
+            onChange={(v) => setF({ stage: v })}
+            anyLabel="Any stage"
+            options={STAGES.map((s) => ({ value: s, label: s.replace(/_/g, " ") }))}
+          />
+          <FilterSelect
+            label="Screening state"
+            value={search.processing_state}
+            onChange={(v) => setF({ processing_state: v })}
+            anyLabel="Any screening state"
+            options={PROCESSING_STATES.map((s) => ({ value: s, label: s.replace(/_/g, " ") }))}
+          />
+          <FilterSelect
+            label="Approval"
+            value={search.admin_status}
+            onChange={(v) => setF({ admin_status: v })}
+            anyLabel="Any approval"
+            options={["pending", "approved", "rejected", "on_hold"].map((s) => ({
+              value: s,
+              label: s.replace(/_/g, " "),
+            }))}
+          />
+          <FilterSelect
+            label="Publication"
+            value={search.client_visibility}
+            onChange={(v) => setF({ client_visibility: v })}
+            anyLabel="Any publication"
+            options={[
+              { value: "hidden", label: "Not published" },
+              { value: "visible", label: "Published to client" },
+            ]}
+          />
+          <FilterSelect
+            label="Contact release"
+            value={search.contact_released}
+            onChange={(v) => setF({ contact_released: v })}
+            anyLabel="Any contact state"
+            options={[
+              { value: "released", label: "Contact released" },
+              { value: "withheld", label: "Contact withheld" },
+            ]}
+          />
+          <FilterSelect
+            label="Score band"
+            value={search.score_band}
+            onChange={(v) => setF({ score_band: v })}
+            anyLabel="Any score band"
+            options={SCORE_BANDS.map((s) => ({ value: s, label: s.replace(/_/g, " ") }))}
+          />
+          <FilterSelect
+            label="Evidence confidence"
+            value={search.confidence}
+            onChange={(v) => setF({ confidence: v })}
+            anyLabel="Any confidence"
+            options={[
+              { value: "high", label: "High (≥ 0.8)" },
+              { value: "medium", label: "Medium (0.5–0.8)" },
+              { value: "low", label: "Low (< 0.5)" },
+            ]}
+          />
+          <FilterSelect
+            label="Critical flags"
+            value={search.critical}
+            onChange={(v) => setF({ critical: v })}
+            anyLabel="Any flags"
+            options={[
+              { value: "flagged", label: "Flagged only" },
+              { value: "clear", label: "No flags" },
+            ]}
+          />
+          <FilterSelect
+            label="Location"
+            value={search.country}
+            onChange={(v) => setF({ country: v })}
+            anyLabel="Any location"
+            options={(countries as string[]).map((c) => ({ value: c, label: c }))}
+          />
+          <FilterSelect
+            label="Source"
+            value={search.source}
+            onChange={(v) => setF({ source: v })}
+            anyLabel="Any source"
+            options={["inbound", "outbound", "referral", "agency", "import"].map((s) => ({
+              value: s,
+              label: s,
+            }))}
+          />
+          <FilterSelect
+            label="Rejection reason"
+            value={search.rejection_reason}
+            onChange={(v) => setF({ rejection_reason: v })}
+            anyLabel="Any reason"
+            options={REJECTION_REASONS.map((r) => ({ value: r.code, label: r.label }))}
+          />
+          <div className="flex items-center gap-1">
+            <Input
+              type="date"
+              value={search.date_from}
+              onChange={(e) => setF({ date_from: e.target.value })}
+              aria-label="Applied from"
+            />
+            <Input
+              type="date"
+              value={search.date_to}
+              onChange={(e) => setF({ date_to: e.target.value })}
+              aria-label="Applied until"
+            />
+          </div>
+    </>
+  );
+
   return (
     <main className="mx-auto max-w-[1600px] px-6 py-8">
       <header className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
@@ -345,147 +489,17 @@ function CandidatesPage() {
       />
 
       {/* Filters */}
-      <div className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-4 xl:grid-cols-6">
-        <form
-          className="col-span-2"
-          onSubmit={(e) => {
-            e.preventDefault();
-            setF({ q });
-          }}
-        >
-          <Input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Name, email, phone, job or client"
-            aria-label="Search candidates"
-          />
-        </form>
-
-        <FilterSelect
-          label="Client"
-          value={search.organization_id}
-          onChange={(v) => setF({ organization_id: v, position_id: "" })}
-          anyLabel="Any client"
-          options={(orgs as AnyRow[]).map((o) => ({ value: o.id, label: o.name }))}
-        />
-        <FilterSelect
-          label="Job"
-          value={search.position_id}
-          onChange={(v) => setF({ position_id: v })}
-          anyLabel="Any job"
-          options={(positions as AnyRow[]).map((p) => ({ value: p.id, label: p.title }))}
-        />
-        <FilterSelect
-          label="Application stage"
-          value={search.stage}
-          onChange={(v) => setF({ stage: v })}
-          anyLabel="Any stage"
-          options={STAGES.map((s) => ({ value: s, label: s.replace(/_/g, " ") }))}
-        />
-        <FilterSelect
-          label="Screening state"
-          value={search.processing_state}
-          onChange={(v) => setF({ processing_state: v })}
-          anyLabel="Any screening state"
-          options={PROCESSING_STATES.map((s) => ({ value: s, label: s.replace(/_/g, " ") }))}
-        />
-        <FilterSelect
-          label="Approval"
-          value={search.admin_status}
-          onChange={(v) => setF({ admin_status: v })}
-          anyLabel="Any approval"
-          options={["pending", "approved", "rejected", "on_hold"].map((s) => ({
-            value: s,
-            label: s.replace(/_/g, " "),
-          }))}
-        />
-        <FilterSelect
-          label="Publication"
-          value={search.client_visibility}
-          onChange={(v) => setF({ client_visibility: v })}
-          anyLabel="Any publication"
-          options={[
-            { value: "hidden", label: "Not published" },
-            { value: "visible", label: "Published to client" },
-          ]}
-        />
-        <FilterSelect
-          label="Contact release"
-          value={search.contact_released}
-          onChange={(v) => setF({ contact_released: v })}
-          anyLabel="Any contact state"
-          options={[
-            { value: "released", label: "Contact released" },
-            { value: "withheld", label: "Contact withheld" },
-          ]}
-        />
-        <FilterSelect
-          label="Score band"
-          value={search.score_band}
-          onChange={(v) => setF({ score_band: v })}
-          anyLabel="Any score band"
-          options={SCORE_BANDS.map((s) => ({ value: s, label: s.replace(/_/g, " ") }))}
-        />
-        <FilterSelect
-          label="Evidence confidence"
-          value={search.confidence}
-          onChange={(v) => setF({ confidence: v })}
-          anyLabel="Any confidence"
-          options={[
-            { value: "high", label: "High (≥ 0.8)" },
-            { value: "medium", label: "Medium (0.5–0.8)" },
-            { value: "low", label: "Low (< 0.5)" },
-          ]}
-        />
-        <FilterSelect
-          label="Critical flags"
-          value={search.critical}
-          onChange={(v) => setF({ critical: v })}
-          anyLabel="Any flags"
-          options={[
-            { value: "flagged", label: "Flagged only" },
-            { value: "clear", label: "No flags" },
-          ]}
-        />
-        <FilterSelect
-          label="Location"
-          value={search.country}
-          onChange={(v) => setF({ country: v })}
-          anyLabel="Any location"
-          options={(countries as string[]).map((c) => ({ value: c, label: c }))}
-        />
-        <FilterSelect
-          label="Source"
-          value={search.source}
-          onChange={(v) => setF({ source: v })}
-          anyLabel="Any source"
-          options={["inbound", "outbound", "referral", "agency", "import"].map((s) => ({
-            value: s,
-            label: s,
-          }))}
-        />
-        <FilterSelect
-          label="Rejection reason"
-          value={search.rejection_reason}
-          onChange={(v) => setF({ rejection_reason: v })}
-          anyLabel="Any reason"
-          options={REJECTION_REASONS.map((r) => ({ value: r.code, label: r.label }))}
-        />
-        <div className="flex items-center gap-1">
-          <Input
-            type="date"
-            value={search.date_from}
-            onChange={(e) => setF({ date_from: e.target.value })}
-            aria-label="Applied from"
-          />
-          <Input
-            type="date"
-            value={search.date_to}
-            onChange={(e) => setF({ date_to: e.target.value })}
-            aria-label="Applied until"
-          />
-        </div>
+      {/* Filters: full grid on desktop, drawer on small screens */}
+      <div className="mt-4 hidden grid-cols-2 gap-2 md:grid md:grid-cols-4 xl:grid-cols-6">
+        {filterControls}
       </div>
+      <FilterDrawer
+        className="mt-4 md:hidden"
+        activeCount={activeChips.length}
+        onClear={() => navigate({ search: { ...search, ...EMPTY, page: 1 } as SearchState })}
+      >
+        {filterControls}
+      </FilterDrawer>
 
       {/* Active filters */}
       {activeChips.length > 0 && (
