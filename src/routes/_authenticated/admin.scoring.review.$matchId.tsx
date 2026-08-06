@@ -400,8 +400,11 @@ function ReviewWorkspace() {
             </div>
             <div className="rounded-md bg-muted/50 p-3 text-xs text-muted-foreground">
               Rubric {rubric ? `v${rubric.version_number} (${fmt(rubric.status)})` : "not versioned"} ·
-              engine {fmt(currentRun?.engine_version)} · method {fmt(currentRun?.evaluation_method)}
-              {currentRun?.evaluation_method === "legacy" ? (
+              engine {fmt(currentRun?.engine_version)} ·{" "}
+              <span title={methodSentence(currentRun?.evaluation_method)}>
+                method {methodLabel(currentRun?.evaluation_method)}
+              </span>
+              {normalizeEvaluationMethod(currentRun?.evaluation_method) === "legacy" ? (
                 <> · produced before the current scoring contract</>
               ) : null}
               {Object.keys(dimensionWeights).length > 0 ? (
