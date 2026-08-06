@@ -1652,7 +1652,7 @@ function Home() {
           <PublicPage>
             <SectionHead
               eyebrow="Industries"
-              title="Recruiting tuned to the industry you actually hire in."
+              title="A Talent Management solution tuned to your industry."
               lead="Every intake, evidence file, and shortlist is scoped to the hiring reality of the industry — not a generic recruiter template."
             />
             <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
