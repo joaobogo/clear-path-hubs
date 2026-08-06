@@ -188,12 +188,16 @@ function NavList({
                     className={cn(
                       "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium outline-none transition-all duration-150",
                       "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+                      item.subdued && "py-1.5 text-[0.8125rem] font-normal",
                       active
                         ? "text-[color:var(--taas-shell-nav-active-fg)] bg-[color:var(--taas-shell-nav-active-bg)] shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--taas-brand-primary)_18%,transparent)]"
-                        : "text-muted-foreground hover:bg-[color:var(--taas-shell-nav-hover-bg)] hover:text-foreground",
+                        : item.subdued
+                          ? "text-muted-foreground/75 hover:bg-[color:var(--taas-shell-nav-hover-bg)] hover:text-foreground"
+                          : "text-muted-foreground hover:bg-[color:var(--taas-shell-nav-hover-bg)] hover:text-foreground",
                       collapsed && "justify-center px-2",
                     )}
                   >
+
                     {active && (
                       <span
                         aria-hidden
