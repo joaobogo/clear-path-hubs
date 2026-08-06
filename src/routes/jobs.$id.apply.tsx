@@ -42,6 +42,8 @@ import { TransparencyPanel } from "@/components/candidate/transparency-panel";
 import { ReturningApplicantCard } from "@/components/candidate/returning-applicant-card";
 import type { ExistingApplicationSummary } from "@/lib/candidate/existing-application.server";
 import { Loader2 } from "lucide-react";
+import { track } from "@/lib/candidate/funnel-events.functions";
+import { deviceBucket } from "@/lib/candidate/funnel-events";
 
 
 const EMPTY_FORM = {
