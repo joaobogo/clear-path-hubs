@@ -558,7 +558,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
         `id, stage, delivered_at, position_id, candidate_profile_id,
          candidate_profiles(id, full_name, headline, location, availability, years_experience, summary),
          positions(id, title),
-         score_runs:approved_score_run_id (score, fit_label, explanation, result, requirement_coverage, evidence)`,
+         score_runs:approved_score_run_id (score, fit_label, explanation, result, requirement_coverage, evidence, completed_at, engine_version, input_hash)`,
       )
       .eq("organization_id", data.orgId)
       .eq("client_visibility", "visible")

@@ -17,7 +17,10 @@
 //   • readiness gate — precise blockers returned instead of "scoring failed"
 //   • immutability   — completed runs are never mutated; rescore = new row
 //                      (DB trigger `score_runs_immutable` also enforces this)
-//   • reconciliation — result.applied_caps + category_breakdown reproduce score
+//   • reconciliation — category_breakdown x weights reproduce raw_score, and
+//                      raw_score + applied caps reproduce final_score
+//   • calibration    — every engine constant comes from a versioned calibration
+//                      (scoring/engine-calibration.ts), stamped on the run
 //   • provenance     — trace_id, blueprint_version, engine_version stamped
 
 import {
@@ -28,6 +31,10 @@ import {
   type ScreeningAnswer,
   type ScoringResult,
 } from "./scoring-engine.server";
+import {
+  EVALUATION_METHOD,
+  resolveCalibration,
+} from "./scoring/engine-calibration";
 import type { Json } from "@/integrations/supabase/types";
 
 export const SCORING_BLUEPRINT_VERSION = "taasflow-blueprint-v1.0.0";
@@ -151,22 +158,56 @@ async function loadInputs(matchId: string) {
   return { match, position: posRes.data, profile: profRes.data, cvFile, requirements, screening };
 }
 
-/** Reconcile category_breakdown against final score (guards against engine drift). */
+/**
+ * Reconcile the stored triple. The engine now reports raw_score and the caps it
+ * applied, so this proves three separate things instead of restating one
+ * (audit finding 11):
+ *   1. category_breakdown x category_weights reproduces raw_score,
+ *   2. applying the recorded caps to raw_score reproduces the final score,
+ *   3. raw_score >= final_score, with a cap present whenever they differ.
+ */
 function reconcile(result: ScoringResult): {
   reconciled: boolean;
+  raw: number;
   computed: number;
+  applied_cap: number | null;
   applied_caps: Array<{ reason: string; cap: number; before: number }>;
+  mismatch?: string;
 } {
   // Use the run's own weights so absent categories stay excluded.
   const raw01 = combineCategories(result.category_breakdown, result.category_weights);
-  const applied_caps: Array<{ reason: string; cap: number; before: number }> = [];
+  const raw = Math.round(raw01 * 1000) / 10;
+  const applied_caps = result.applied_caps ?? [];
   let capped01 = raw01;
-  if (result.contradiction_status === "disqualifying_answer") {
-    applied_caps.push({ reason: "disqualifying_answer", cap: 0.15, before: raw01 });
-    capped01 = Math.min(capped01, 0.15);
-  }
+  for (const cap of applied_caps) capped01 = Math.min(capped01, cap.cap);
   const computed = Math.round(capped01 * 1000) / 10;
-  return { reconciled: Math.abs(computed - result.score) < 0.15, computed, applied_caps };
+  // The lowest cap in force, expressed on the 0-100 scale. Null when the score
+  // was never clamped — an honest "no cap applied" rather than a mirror value.
+  const applied_cap = applied_caps.length
+    ? Math.round(Math.min(...applied_caps.map((c) => c.cap)) * 1000) / 10
+    : null;
+
+  const mismatches: string[] = [];
+  if (Math.abs(raw - result.raw_score) >= 0.15) {
+    mismatches.push(`raw:computed=${raw} declared=${result.raw_score}`);
+  }
+  if (Math.abs(computed - result.score) >= 0.15) {
+    mismatches.push(`final:computed=${computed} declared=${result.score}`);
+  }
+  if (result.raw_score < result.score - 0.15) {
+    mismatches.push(`raw_below_final:${result.raw_score}<${result.score}`);
+  }
+  if (Math.abs(result.raw_score - result.score) >= 0.15 && applied_caps.length === 0) {
+    mismatches.push("uncapped_drop_without_reason");
+  }
+  return {
+    reconciled: mismatches.length === 0,
+    raw,
+    computed,
+    applied_cap,
+    applied_caps,
+    mismatch: mismatches.join("; ") || undefined,
+  };
 }
 
 /**
@@ -187,6 +228,21 @@ async function resolveRubricVersionId(s: Any, positionId: string): Promise<strin
   return data?.id ?? null;
 }
 
+
+/**
+ * Role family for calibration lookup. Uses the same SQL classifier the rest of
+ * the platform uses so the family recorded on a run matches reporting.
+ */
+async function resolveRoleFamily(s: Any, title: string | null): Promise<string | null> {
+  if (!title) return null;
+  try {
+    const { data, error } = await s.rpc("role_family_of", { _title: title });
+    if (error) return null;
+    return typeof data === "string" && data.trim() ? data.trim().toLowerCase() : null;
+  } catch {
+    return null;
+  }
+}
 
 async function acquireLock(s: Any, matchId: string, trace_id: string): Promise<boolean> {
   // Atomic "acquire" — transition the state to `scoring` only if not already there.
@@ -300,17 +356,21 @@ export async function executeScoring(
     const cvText: string = ctx.cvFile.extracted_text ?? "";
     if (cvText.length < 60) throw new Error("cv_unparsed");
 
-    // 5) Score.
+    // 5) Score. Calibration is resolved from the role family and stamped on the
+    //    run, so every constant behind the number has provenance.
+    const roleFamily = await resolveRoleFamily(s, ctx.position.title ?? null);
+    const calibration = resolveCalibration(roleFamily);
     const raw = scoreCandidate({
       cv_text: cvText,
       requirements: ctx.requirements,
       screening: ctx.screening,
+      calibration,
     });
 
     // 6) Reconcile caps.
     const rec = reconcile(raw);
     if (!rec.reconciled) {
-      throw new Error(`reconciliation_failed:computed=${rec.computed} declared=${raw.score}`);
+      throw new Error(`reconciliation_failed:${rec.mismatch}`);
     }
 
     // 7) Dedup on (match, input_hash).
@@ -331,8 +391,19 @@ export async function executeScoring(
         ...raw,
         blueprint_version: SCORING_BLUEPRINT_VERSION,
         rubric_version_id: rubricVersionId,
+        calibration_version: calibration.calibration_version,
+        calibration,
+        role_family: roleFamily,
+        evaluation_method: EVALUATION_METHOD,
         applied_caps: rec.applied_caps,
-        reconciliation: { computed: rec.computed, declared: raw.score, ok: true },
+        reconciliation: {
+          raw_computed: rec.raw,
+          raw_declared: raw.raw_score,
+          final_computed: rec.computed,
+          final_declared: raw.score,
+          applied_cap: rec.applied_cap,
+          ok: true,
+        },
         actor_user_id: opts.actor_user_id ?? null,
         reason: opts.reason ?? null,
         identity: {
@@ -354,9 +425,12 @@ export async function executeScoring(
         blueprint_version: SCORING_BLUEPRINT_VERSION,
         rubric_version_id: rubricVersionId,
         // ── Math (raw / cap / final) ───────────────────────────────────────
-        raw_score: rec.computed,
-        applied_cap: raw.score,
+        // Three distinct facts: pre-cap composite, the cap in force (null when
+        // none), and the published number.
+        raw_score: raw.raw_score,
+        applied_cap: rec.applied_cap,
         final_score: raw.score,
+        evaluation_method: EVALUATION_METHOD,
         fit_band: raw.fit_label,
         // ── Legacy mirror columns kept for existing readers ────────────────
         engine_version: ENGINE_VERSION,

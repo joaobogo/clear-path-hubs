@@ -29,6 +29,7 @@ import { readStaleStateError } from "@/lib/decision-concurrency";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 
 import { BackLink, CandidateHeader, JumpNav, SectionCard } from "@/components/client/candidate-detail/shared";
+import { ScoreFreshnessNote } from "@/components/client/score-freshness-note";
 import {
   EvaluationProvenance,
   FitHero,
@@ -346,7 +347,15 @@ function CandidateDetailPage() {
               { id: "sec-activity", label: "Activity" },
             ]}
           />
-          <div id="sec-fit" className="scroll-mt-24"><FitHero candidate={candidate} /></div>
+          <div id="sec-fit" className="scroll-mt-24 space-y-3">
+            <FitHero candidate={candidate} />
+            {/* Freshness is stated next to the assessment it qualifies, never hidden. */}
+            <ScoreFreshnessNote
+              freshness={candidate.freshness}
+              orgId={orgId ?? null}
+              matchId={id}
+            />
+          </div>
           <EvaluationProvenance candidate={candidate} />
           <div id="sec-why" className="scroll-mt-24"><WhyWeShortlisted candidate={candidate} /></div>
           <div id="sec-coverage" className="scroll-mt-24"><RequirementCoverage candidate={candidate} /></div>

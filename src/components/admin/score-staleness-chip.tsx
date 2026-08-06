@@ -7,6 +7,8 @@
  */
 import { Clock, HelpCircle } from "lucide-react";
 import { assessFreshness, type Freshness, type FreshnessInput } from "@/lib/scoring/score-freshness";
+import { CALIBRATION_VERSION } from "@/lib/scoring/engine-calibration";
+import { ENGINE_VERSION } from "@/lib/scoring/engine-version";
 import {
   Tooltip,
   TooltipContent,
@@ -21,8 +23,18 @@ export function freshnessFromRow(row: {
   scored_engine_version?: string | null;
   profile_updated_at?: string | null;
   brief_updated_at?: string | null;
+  scored_calibration_version?: string | null;
+  criteria_updated_at?: string | null;
 }): Freshness {
-  return assessFreshness(row as FreshnessInput);
+  return assessFreshness({
+    ...(row as FreshnessInput),
+    // Compared against what is running today: an older engine or calibration
+    // means the same evidence would not produce the same number now.
+    current_engine_version: ENGINE_VERSION,
+    current_calibration_version: row.scored_calibration_version
+      ? CALIBRATION_VERSION
+      : null,
+  });
 }
 
 /**

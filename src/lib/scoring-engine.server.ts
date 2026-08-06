@@ -2,7 +2,16 @@
 // Runs server-side. Same inputs + same engine version = same output.
 // No LLM calls: evidence-first, no hallucinated inference.
 
-export const ENGINE_VERSION = "taasflow-scoring-v1.0.0";
+import {
+  DEFAULT_CALIBRATION,
+  EVALUATION_METHOD,
+  resolveCalibration,
+  type EngineCalibration,
+} from "./scoring/engine-calibration";
+
+import { ENGINE_VERSION } from "./scoring/engine-version";
+
+export { ENGINE_VERSION, EVALUATION_METHOD };
 
 export interface RequirementInput {
   id: string;
@@ -43,6 +52,14 @@ export interface RequirementAssessment {
 
 export interface ScoringResult {
   engine_version: string;
+  /** Calibration set that produced these numbers (see engine-calibration.ts). */
+  calibration_version: string;
+  /** How the numbers were reached. Deterministic — never a model call. */
+  evaluation_method: typeof EVALUATION_METHOD;
+  /** Composite before any cap was applied, 0-100. */
+  raw_score: number;
+  /** Caps applied in order, with the value they clamped from. */
+  applied_caps: Array<{ reason: string; cap: number; before: number }>;
   score: number; // 0-100
   fit_label: "strong_fit" | "worth_considering" | "not_a_fit" | "unknown";
   overall_confidence: number; // 0-1
@@ -93,7 +110,7 @@ export function tokenize(text: string): string[] {
   return (text.toLowerCase().match(/[a-z0-9+.#-]{2,}/g) ?? []).filter((t) => !STOP.has(t));
 }
 
-function extractKeywordsFromRequirement(text: string): string[] {
+function extractKeywordsFromRequirement(text: string, cap: number): string[] {
   const toks = tokenize(text);
   // Preserve multi-word phrases up to 3 tokens if they look like techs.
   const seen = new Set<string>();
@@ -105,7 +122,7 @@ function extractKeywordsFromRequirement(text: string): string[] {
       out.push(t);
     }
   }
-  return out.slice(0, 12);
+  return out.slice(0, cap);
 }
 
 function escapeRe(s: string) {
@@ -190,12 +207,14 @@ function fnv1a(input: string): string {
 
 export function computeInputHash(parts: {
   engine_version: string;
+  calibration_version?: string;
   cv_text: string;
   requirements: RequirementInput[];
   screening: ScreeningAnswer[];
 }): string {
   const canon = JSON.stringify({
     v: parts.engine_version,
+    cal: parts.calibration_version ?? DEFAULT_CALIBRATION.calibration_version,
     c: parts.cv_text.trim().toLowerCase(),
     r: parts.requirements
       .map((r) => ({ id: r.id, text: r.text.trim().toLowerCase(), req: r.required }))
@@ -282,21 +301,32 @@ export function scoreCandidate(input: {
   cv_text: string;
   requirements: RequirementInput[];
   screening: ScreeningAnswer[];
+  /** Role family used to resolve calibration overrides. */
+  role_family?: string | null;
+  /** Explicit calibration (tests, replay of a historical run). */
+  calibration?: EngineCalibration;
 }): ScoringResult {
   const cv = input.cv_text ?? "";
+  const cal = input.calibration ?? resolveCalibration(input.role_family);
   const engine_version = ENGINE_VERSION;
-  const input_hash = computeInputHash({ engine_version, ...input });
+  const input_hash = computeInputHash({
+    engine_version,
+    calibration_version: cal.calibration_version,
+    cv_text: input.cv_text,
+    requirements: input.requirements,
+    screening: input.screening,
+  });
   const completed_at = new Date().toISOString();
 
   const requirements = input.requirements.map((r) => ({
     ...r,
-    keywords: r.keywords?.length ? r.keywords : extractKeywordsFromRequirement(r.text),
+    keywords: r.keywords?.length ? r.keywords : extractKeywordsFromRequirement(r.text, cal.keyword_cap),
   }));
 
   const cvTokens = new Set(tokenize(cv));
   // "Insufficient parse" signal — CV is too short/garbled to draw negative conclusions.
   // Missing keywords in this regime map to `unknown` (validate), never irrational zero.
-  const cvIsThin = cv.trim().length < 300 || cvTokens.size < 40;
+  const cvIsThin = cv.trim().length < cal.thin_cv_chars || cvTokens.size < cal.thin_cv_tokens;
 
   const evidence: EvidenceRef[] = [];
   const assessment: RequirementAssessment[] = requirements.map((r) => {
@@ -352,7 +382,10 @@ export function scoreCandidate(input: {
       } else {
         status = "missing";
       }
-    } else if (matched.length >= Math.max(2, Math.ceil(r.keywords.length * 0.6))) {
+    } else if (
+      matched.length >=
+      Math.max(cal.met_keyword_floor, Math.ceil(r.keywords.length * cal.met_keyword_ratio))
+    ) {
 
       status = "met";
     } else {
@@ -403,9 +436,9 @@ export function scoreCandidate(input: {
     a.status === "met"
       ? 1
       : a.status === "partial"
-        ? 0.5
+        ? cal.partial_credit
         : a.status === "unknown"
-          ? 0.4
+          ? cal.unknown_credit
           : 0;
   const must_have_coverage = must.length
     ? must.reduce((s, a) => s + scoreOf(a), 0) / must.length
@@ -424,9 +457,9 @@ export function scoreCandidate(input: {
   // Weighted score: must-haves dominate. Absent categories drop out and the
   // remaining weights are renormalised so nothing earns free points.
   const category_weights = renormaliseWeights({
-    must_have: must.length ? 0.6 : 0,
-    preferred: pref.length ? 0.2 : 0,
-    screening_alignment: screeningCount ? 0.2 : 0,
+    must_have: must.length ? cal.base_weights.must_have : 0,
+    preferred: pref.length ? cal.base_weights.preferred : 0,
+    screening_alignment: screeningCount ? cal.base_weights.screening_alignment : 0,
   });
   let score01 = combineCategories(
     {
@@ -436,7 +469,19 @@ export function scoreCandidate(input: {
     },
     category_weights,
   );
-  if (disqualified) score01 = Math.min(score01, 0.15);
+  // Caps are recorded, not just applied: raw_score, applied_caps and score are
+  // three distinct facts so the reconciliation actually proves something
+  // (audit finding 11 — raw == cap == final proved nothing).
+  const raw_score = Math.round(score01 * 1000) / 10;
+  const applied_caps: ScoringResult["applied_caps"] = [];
+  if (disqualified && score01 > cal.disqualified_cap) {
+    applied_caps.push({
+      reason: "disqualifying_answer",
+      cap: cal.disqualified_cap,
+      before: Math.round(score01 * 10000) / 10000,
+    });
+  }
+  if (disqualified) score01 = Math.min(score01, cal.disqualified_cap);
 
   const score = Math.round(score01 * 1000) / 10; // 0.0-100.0
 
@@ -451,9 +496,10 @@ export function scoreCandidate(input: {
   const fit_label: ScoringResult["fit_label"] =
     disqualified
       ? "not_a_fit"
-      : score >= 75 && must_have_coverage >= 0.75
+      : score >= cal.strong_fit.min_score &&
+          must_have_coverage >= cal.strong_fit.min_must_have_coverage
         ? "strong_fit"
-        : score >= 55
+        : score >= cal.worth_considering_min_score
           ? "worth_considering"
           : cv.trim().length < 60
             ? "unknown"
@@ -484,6 +530,10 @@ export function scoreCandidate(input: {
 
   return {
     engine_version,
+    calibration_version: cal.calibration_version,
+    evaluation_method: EVALUATION_METHOD,
+    raw_score,
+    applied_caps,
     score,
     fit_label,
     overall_confidence,
@@ -499,7 +549,7 @@ export function scoreCandidate(input: {
     requirement_assessment: assessment,
     strengths,
     concerns,
-    evidence: evidence.slice(0, 12),
+    evidence: evidence.slice(0, cal.keyword_cap),
     screening_evidence,
     contradiction_status,
     completed_at,
