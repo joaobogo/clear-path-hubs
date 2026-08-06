@@ -15,7 +15,8 @@ import { MIN_COMPARABLE_ROLES } from "@/lib/position-bottleneck";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { AlertTriangle, Info, RefreshCw } from "lucide-react";
+import { Info, RefreshCw } from "lucide-react";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 
 export function PositionBottleneckCard({
   positionId,
@@ -58,45 +59,17 @@ export function PositionBottleneckCard({
     onError: (e) => toast.error(e instanceof Error ? e.message : "Could not save the note"),
   });
 
-  if (query.isLoading) {
-    return (
-      <section className="rounded-lg border bg-card p-4">
-        <div className="h-4 w-48 animate-pulse rounded bg-muted" />
-        <div className="mt-3 grid gap-2 sm:grid-cols-3">
-          {[0, 1, 2].map((i) => (
-            <div key={i} className="h-16 animate-pulse rounded bg-muted" />
-          ))}
-        </div>
-      </section>
-    );
-  }
-
-  if (query.isError) {
-    return (
-      <section className="rounded-lg border bg-card p-4 text-center">
-        <AlertTriangle className="mx-auto h-5 w-5 text-destructive" />
-        <p className="mt-2 text-sm font-medium">Could not load the bottleneck diagnosis</p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {query.error instanceof Error ? query.error.message : "Unexpected error"}
-        </p>
-        <Button
-          variant="outline"
-          size="sm"
-          className="mt-3"
-          onClick={() => query.refetch()}
-          disabled={query.isFetching}
-        >
-          Retry
-        </Button>
-      </section>
-    );
-  }
-
-  const data = query.data!;
-  const diagnosed = data.state === "diagnosed";
-  const comparisonAvailable = diagnosed && data.comparison.available;
+  const data = query.data;
+  const diagnosed = data?.state === "diagnosed";
+  const comparisonAvailable = diagnosed && (data as { comparison: { available: boolean } }).comparison.available;
 
   return (
+    <PanelState
+      query={query}
+      isEmpty={false}
+      empty={<PanelEmpty title="No pipeline data yet" />}
+    >
+    {data && (
     <section className="rounded-lg border bg-card" aria-labelledby="bottleneck-heading">
       <header className="flex flex-wrap items-start justify-between gap-3 border-b px-4 py-3">
         <div>
@@ -241,5 +214,7 @@ export function PositionBottleneckCard({
         </div>
       )}
     </section>
+    )}
+    </PanelState>
   );
 }

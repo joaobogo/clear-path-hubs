@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { AlertTriangle, Clock, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -35,6 +34,7 @@ import {
   type PipelineStage,
 } from "@/lib/stage-aging";
 import type { AgingCandidate } from "@/lib/admin-stage-aging.server";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 
 export function StageAgingPanel({ positionId }: { positionId: string }) {
   const qc = useQueryClient();
@@ -87,32 +87,12 @@ export function StageAgingPanel({ positionId }: { positionId: string }) {
         )}
       </header>
 
-      {q.isPending ? (
-        <div className="space-y-3 p-4">
-          <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Skeleton key={i} className="h-20 w-full" />
-            ))}
-          </div>
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-8 w-full" />
-          ))}
-        </div>
-      ) : q.isError ? (
-        <div className="m-4 rounded-md border border-destructive/40 bg-destructive/5 p-4">
-          <p className="text-sm font-medium text-destructive">Stage aging failed to load.</p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {q.error instanceof Error ? q.error.message : "Unknown error."}
-          </p>
-          <Button variant="outline" size="sm" className="mt-3" onClick={() => void q.refetch()}>
-            <RefreshCw className="mr-1.5 h-3.5 w-3.5" /> Retry
-          </Button>
-        </div>
-      ) : (q.data?.total_in_pipeline ?? 0) === 0 ? (
-        <p className="p-8 text-center text-sm text-muted-foreground">
-          No candidates in pipeline yet.
-        </p>
-      ) : (
+      <PanelState
+        query={q}
+        isEmpty={(q.data?.total_in_pipeline ?? 0) === 0}
+        empty={<PanelEmpty className="m-4" title="No candidates in pipeline yet." />}
+        skeletonRows={4}
+      >
         <div className="space-y-4 p-4">
           <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
             {(q.data?.buckets ?? [])
@@ -227,7 +207,7 @@ export function StageAgingPanel({ positionId }: { positionId: string }) {
             </table>
           </div>
         </div>
-      )}
+      </PanelState>
 
       <Dialog open={moving != null} onOpenChange={(o) => !o && setMoving(null)}>
         <DialogContent>

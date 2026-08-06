@@ -15,7 +15,7 @@ import { getContactStatus } from "@/lib/outreach-suppression.functions";
 import { BLOCK_EXPLANATION, BLOCK_LABEL } from "@/lib/outreach-suppression";
 import type { ContactStatus } from "@/lib/outreach-suppression";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import { PanelState } from "@/components/admin/panel-state";
 import {
   Tooltip,
   TooltipContent,
@@ -35,7 +35,7 @@ export function ContactStatusBadges({
   const load = useServerFn(getContactStatus);
   const enabled = Boolean(organizationId && candidateProfileId);
 
-  const { data, isLoading, isError } = useQuery({
+  const query = useQuery({
     queryKey: ["admin", "contact-status", organizationId, candidateProfileId],
     queryFn: () =>
       load({
@@ -49,27 +49,20 @@ export function ContactStatusBadges({
   });
 
   if (!enabled) return null;
-  if (isLoading) return <Skeleton className="h-6 w-40" />;
 
-  if (isError || !data) {
-    return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Badge variant="outline" className={className}>
-              <ShieldQuestion className="mr-1 h-3 w-3" />
-              {BLOCK_LABEL.unknown}
-            </Badge>
-          </TooltipTrigger>
-          <TooltipContent className="max-w-xs">
-            {BLOCK_EXPLANATION.unknown}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    );
-  }
+  return (
+    <PanelState
+      query={query}
+      skeletonRows={1}
+      className="h-6 w-40"
+    >
+      <ContactStatusBadgesLoaded data={query.data as ContactStatus} className={className} />
+    </PanelState>
+  );
+}
 
-  const status = data as ContactStatus;
+function ContactStatusBadgesLoaded({ data, className }: { data: ContactStatus; className?: string }) {
+  const status = data;
   const blocked = status.verdicts.filter((v) => !v.allowed);
 
   return (

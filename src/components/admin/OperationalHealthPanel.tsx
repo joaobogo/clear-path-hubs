@@ -4,8 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { getOperationalHealth, retryOperationalIssue } from "@/lib/admin-workbench.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { PanelError } from "@/components/admin/panel-error";
 import { Button } from "@/components/ui/button";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 
 const KIND_LABEL: Record<string, string> = {
   webhook: "Failed webhooks",
@@ -20,10 +20,11 @@ export function OperationalHealthPanel() {
   const retryFn = useServerFn(retryOperationalIssue);
   const [note, setNote] = useState<string | null>(null);
 
-  const { data, isLoading, isError, refetch, isFetching } = useQuery({
+  const query = useQuery({
     queryKey: ["ops-health"],
     queryFn: () => healthFn(),
   });
+  const { data } = query;
 
   const retry = useMutation({
     mutationFn: async (v: { kind: "webhook" | "processing" | "email" | "cv"; id: string }) =>
@@ -58,17 +59,16 @@ export function OperationalHealthPanel() {
 
         {note ? <p className="text-xs text-muted-foreground">{note}</p> : null}
 
-        {isLoading ? (
-          <p className="text-sm text-muted-foreground">Checking systems…</p>
-        ) : isError ? (
-          <PanelError
-            message="We couldn't reach the health checks. Treat this as unknown, not healthy."
-            onRetry={() => void refetch()}
-            retrying={isFetching}
-          />
-        ) : issues.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Nothing failing right now. Everything has been picked up.</p>
-        ) : (
+        <PanelState
+          query={query}
+          isEmpty={issues.length === 0}
+          empty={
+            <PanelEmpty
+              title="Nothing failing right now"
+              description="Everything has been picked up."
+            />
+          }
+        >
           <div className="space-y-2">
             {issues.map((i: any) => (
               <div key={`${i.kind}-${i.id}`} className="rounded-md border border-border/60 p-3">
@@ -93,7 +93,7 @@ export function OperationalHealthPanel() {
               </div>
             ))}
           </div>
-        )}
+        </PanelState>
       </CardContent>
     </Card>
   );

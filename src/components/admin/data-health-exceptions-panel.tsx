@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { AlertTriangle, EyeOff, ExternalLink, ShieldAlert, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
@@ -17,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ErrorState } from "@/components/ds";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import {
   applyDataHealthRepair,
   getDataHealthExceptions,
@@ -136,26 +135,15 @@ export function DataHealthExceptionsPanel() {
         </div>
       </header>
 
-      {query.isPending ? (
-        <div className="space-y-2 p-5">
-          {[0, 1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-12 w-full" />
-          ))}
-        </div>
-      ) : query.isError ? (
-        <div className="p-5">
-          <ErrorState
-            title="Could not load data health exceptions"
-            description={(query.error as Error)?.message}
-            onRetry={() => void query.refetch()}
-          />
-        </div>
-      ) : rows.length === 0 ? (
-        <p className="p-10 text-center text-sm text-muted-foreground">
-          No data health exceptions.
-          <TestScopeEmptyNote />
-        </p>
-      ) : (
+      <PanelState
+        query={query}
+        isEmpty={rows.length === 0}
+        empty={
+          <PanelEmpty className="p-10" title="No data health exceptions">
+            <TestScopeEmptyNote />
+          </PanelEmpty>
+        }
+      >
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-muted/40 text-left text-xs uppercase text-muted-foreground">
@@ -253,7 +241,7 @@ export function DataHealthExceptionsPanel() {
             </tbody>
           </table>
         </div>
-      )}
+      </PanelState>
 
       <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
         <DialogContent>

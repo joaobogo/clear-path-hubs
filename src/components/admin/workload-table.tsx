@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ErrorState } from "@/components/ds";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { ArrowUpRight, ChevronDown, ChevronRight } from "lucide-react";
 import { TestScopeEmptyNote } from "@/components/admin/test-records-toggle";
 
@@ -67,25 +68,11 @@ export function WorkloadTable({ includeTest = false }: { includeTest?: boolean }
         )}
       </div>
 
-      {q.isError ? (
-        <div className="mt-4">
-          <ErrorState
-            title="Couldn't load workload"
-            description={(q.error as Error)?.message ?? "The request failed."}
-            onRetry={() => void q.refetch()}
-          />
-        </div>
-      ) : q.isLoading ? (
-        <div className="mt-4 space-y-2" aria-busy="true">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-11 animate-pulse rounded bg-muted" />
-          ))}
-        </div>
-      ) : (q.data?.rows ?? []).length === 0 ? (
-        <p className="mt-6 py-8 text-center text-sm text-muted-foreground">
-          No staff with active assignments
-        </p>
-      ) : (
+      <PanelState
+        query={q}
+        isEmpty={(q.data?.rows ?? []).length === 0}
+        empty={<PanelEmpty className="mt-6" title="No staff with active assignments" />}
+      >
         <div className="mt-4 overflow-x-auto">
           <table className="w-full text-sm">
             <caption className="sr-only">
@@ -116,7 +103,7 @@ export function WorkloadTable({ includeTest = false }: { includeTest?: boolean }
             </tbody>
           </table>
         </div>
-      )}
+      </PanelState>
     </Card>
   );
 }
@@ -238,37 +225,21 @@ function OwnedPositions({ owner, includeTest }: { owner: string; includeTest: bo
     onError: (e: Error) => toast.error(e.message),
   });
 
-  if (list.isError) {
-    return (
-      <ErrorState
-        title="Couldn't load positions"
-        description={(list.error as Error)?.message ?? "The request failed."}
-        onRetry={() => void list.refetch()}
-      />
-    );
-  }
-  if (list.isLoading) {
-    return (
-      <div className="space-y-2" aria-busy="true">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-8 animate-pulse rounded bg-muted" />
-        ))}
-      </div>
-    );
-  }
   const rows = list.data ?? [];
-  if (rows.length === 0) {
-    return (
-      <div>
-        <p className="text-sm text-muted-foreground">No open positions.</p>
-        <TestScopeEmptyNote />
-      </div>
-    );
-  }
 
   return (
-    <ul className="space-y-2">
-      {rows.map((p) => (
+    <PanelState
+      query={list}
+      isEmpty={rows.length === 0}
+      empty={
+        <div>
+          <PanelEmpty title="No open positions." />
+          <TestScopeEmptyNote />
+        </div>
+      }
+    >
+      <ul className="space-y-2">
+        {rows.map((p) => (
         <li key={p.id} className="flex flex-wrap items-center justify-between gap-2">
           <div className="min-w-0">
             <Link
@@ -304,8 +275,9 @@ function OwnedPositions({ owner, includeTest }: { owner: string; includeTest: bo
               ))}
             </SelectContent>
           </Select>
-        </li>
-      ))}
-    </ul>
+          </li>
+        ))}
+      </ul>
+    </PanelState>
   );
 }

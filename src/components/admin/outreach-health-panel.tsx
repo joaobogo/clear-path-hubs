@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle, RefreshCw } from "lucide-react";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
@@ -106,50 +107,30 @@ export function OutreachHealthPanel() {
     </div>
   );
 
-  if (query.isPending) {
-    return (
-      <section className="rounded-xl border border-border bg-card p-5">
-        {header}
-        <div className="mt-4 space-y-2" aria-busy="true">
-          {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="h-9 animate-pulse rounded bg-muted/60" />
-          ))}
-        </div>
-      </section>
-    );
-  }
-
-  if (query.isError) {
-    return (
-      <section className="rounded-xl border border-border bg-card p-5">
-        {header}
-        <Alert variant="destructive" className="mt-4">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription className="flex items-center justify-between gap-3">
-            <span>Could not load outreach health.</span>
-            <Button size="sm" variant="outline" onClick={() => query.refetch()}>
-              Retry
-            </Button>
-          </AlertDescription>
-        </Alert>
-      </section>
-    );
-  }
-
   const data = query.data;
-  const warnings = data.channels.filter(
-    (c) =>
-      c.windows[7].bounce_warning ||
-      c.windows[30].bounce_warning ||
-      c.windows[7].opt_out_warning ||
-      c.windows[30].opt_out_warning,
-  );
-  const hasActivity = data.totals[30].sent > 0 || data.totals[30].opted_out > 0;
+  const warnings = data
+    ? data.channels.filter(
+        (c) =>
+          c.windows[7].bounce_warning ||
+          c.windows[30].bounce_warning ||
+          c.windows[7].opt_out_warning ||
+          c.windows[30].opt_out_warning,
+      )
+    : [];
+  const hasActivity = data ? data.totals[30].sent > 0 || data.totals[30].opted_out > 0 : false;
 
   return (
     <section className="rounded-xl border border-border bg-card p-5">
       {header}
 
+      <PanelState
+        query={query}
+        isEmpty={!hasActivity}
+        className="mt-4"
+        empty={<PanelEmpty className="mt-4" title="No outreach activity" description="No outreach activity in this period." />}
+      >
+      {data && (
+      <>
       {warnings.length > 0 && (
         <Alert variant="destructive" className="mt-4">
           <AlertTriangle className="h-4 w-4" />
@@ -161,9 +142,6 @@ export function OutreachHealthPanel() {
         </Alert>
       )}
 
-      {!hasActivity ? (
-        <p className="mt-6 text-sm text-muted-foreground">No outreach activity in this period.</p>
-      ) : (
         <div className="mt-4 overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="text-left text-xs uppercase tracking-wide text-muted-foreground">
@@ -208,8 +186,12 @@ export function OutreachHealthPanel() {
             </tbody>
           </table>
         </div>
+      </>
       )}
+      </PanelState>
 
+      {data && (
+      <>
       <div className="mt-5 flex flex-wrap gap-2">
         <Button
           size="sm"
@@ -298,6 +280,8 @@ export function OutreachHealthPanel() {
         Rates are suppressed below {BOUNCE_MIN_SENDS} sends (bounce) and {OPT_OUT_MIN_SENDS} sends
         (opt-out). Touch history is read over the last {data.loaded_days} days.
       </p>
+      </>
+      )}
     </section>
   );
 }

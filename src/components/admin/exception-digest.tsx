@@ -14,6 +14,7 @@ import { getExceptionDigest } from "@/lib/exception-digest.functions";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 
 const DISMISS_KEY = "taasflow:admin:exception-digest:dismissed";
 const REFRESH_MS = 60_000;
@@ -114,27 +115,12 @@ export function ExceptionDigest() {
         </div>
 
         <div className="p-2">
-          {q.isPending ? (
-            <div className="space-y-1.5 p-1">
-              {[0, 1, 2, 3, 4].map((i) => (
-                <div key={i} className="flex items-center justify-between gap-2 px-1.5 py-1.5">
-                  <span className="h-3 w-40 rounded bg-muted" />
-                  <span className="h-3 w-8 rounded bg-muted" />
-                </div>
-              ))}
-            </div>
-          ) : q.isError ? (
-            <div className="space-y-2 p-2">
-              <p className="text-sm text-muted-foreground">
-                Status unavailable — counts could not be read, so none are shown.
-              </p>
-              <Button size="sm" variant="outline" onClick={() => void q.refetch()}>
-                Retry
-              </Button>
-            </div>
-          ) : known.length > 0 && total === 0 && !anyUnavailable ? (
-            <p className="px-2 py-3 text-sm text-muted-foreground">All clear</p>
-          ) : (
+          <PanelState
+            query={q}
+            skeletonRows={5}
+            isEmpty={known.length > 0 && total === 0 && !anyUnavailable}
+            empty={<PanelEmpty className="border-none p-0 py-3" title="All clear" />}
+          >
             <ul className="space-y-0.5">
               {entries.map((e) => (
                 <li key={e.key}>
@@ -160,7 +146,7 @@ export function ExceptionDigest() {
                 </li>
               ))}
             </ul>
-          )}
+          </PanelState>
         </div>
 
         {q.data ? (

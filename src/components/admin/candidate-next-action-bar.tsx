@@ -14,9 +14,8 @@ import { toast } from "sonner";
 import { AlertTriangle, ArrowRight, Clock, UserCog, Ban } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { ErrorState } from "@/components/ds";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import {
   Select,
   SelectContent,
@@ -138,45 +137,16 @@ export function CandidateNextActionBar({
     onError: (e: Error) => toast.error(e.message),
   });
 
-  if (query.isPending) {
-    return (
-      <div
-        data-qa="next-action-loading"
-        className="rounded-lg border bg-card p-4 flex items-center gap-4"
-      >
-        <Skeleton className="h-5 w-28" />
-        <Skeleton className="h-5 flex-1 max-w-md" />
-        <Skeleton className="h-9 w-32" />
-      </div>
-    );
-  }
-
-  if (query.isError) {
-    return (
-      <ErrorState
-        title="Could not work out the next step"
-        description={(query.error as Error).message}
-        onRetry={() => void query.refetch()}
-      />
-    );
-  }
-
   const payload = query.data;
-  if (!payload) {
-    return (
-      <div className="rounded-lg border bg-card p-4 text-sm text-muted-foreground">
-        No action required.
-      </div>
-    );
-  }
 
-  const a = payload.action;
+  const a = payload!.action;
   const wait = waitingFor(a.waiting_since);
-  const task = payload.step_task;
+  const task = payload!.step_task;
   const isBlocked = Boolean(task?.blocking);
   const noAction = a.action.kind === "none";
 
   return (
+    <PanelState query={query} isEmpty={!payload} empty={<PanelEmpty title="No action required" />}>
     <section
       data-qa="next-action-bar"
       data-qa-step={a.step}
@@ -318,5 +288,6 @@ export function CandidateNextActionBar({
         </div>
       ) : null}
     </section>
+    </PanelState>
   );
 }

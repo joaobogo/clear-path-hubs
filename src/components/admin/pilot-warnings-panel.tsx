@@ -17,8 +17,7 @@ import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { QueryErrorCard } from "@/components/client/query-error";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { listPilotWarnings, grantPilotException } from "@/lib/pilot-eligibility.functions";
 import { PILOT_EXCEPTION_KINDS, exceptionKindLabel } from "@/lib/pilot-eligibility";
 
@@ -57,42 +56,27 @@ export function PilotWarningsPanel({ organizationId = null, hideWhenEmpty, limit
     onError: (e) => toast.error(e instanceof Error ? e.message : "Could not grant the exception."),
   });
 
-  if (q.isLoading) {
-    if (hideWhenEmpty) return null;
-    return (
-      <section className="rounded-lg border bg-card p-4">
-        <Skeleton className="h-4 w-48" />
-        <Skeleton className="mt-3 h-16 w-full" />
-      </section>
-    );
-  }
-
-  if (q.isError) {
-    return (
-      <QueryErrorCard
-        title="Repeat pilot attempts could not be loaded"
-        error={q.error}
-        onRetry={() => q.refetch()}
-      />
-    );
-  }
-
   const rows = q.data ?? [];
-  if (rows.length === 0) {
-    if (hideWhenEmpty) return null;
-    return (
-      <section className="rounded-lg border bg-card p-4">
-        <div className="flex items-center gap-2 text-sm font-semibold">
-          <CheckCircle2 className="h-4 w-4 text-primary" /> No repeat pilot attempts
-        </div>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Every pilot on record is a company's first.
-        </p>
-      </section>
-    );
-  }
+
+  // hideWhenEmpty only hides the loading/empty chrome; a failed read must
+  // still be visible so a broken read is never mistaken for "nothing to show".
+  if (hideWhenEmpty && !q.isError && (q.isPending || rows.length === 0)) return null;
 
   return (
+    <PanelState
+      query={q}
+      isEmpty={rows.length === 0}
+      empty={
+        <section className="rounded-lg border bg-card p-4">
+          <div className="flex items-center gap-2 text-sm font-semibold">
+            <CheckCircle2 className="h-4 w-4 text-primary" /> No repeat pilot attempts
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Every pilot on record is a company's first.
+          </p>
+        </section>
+      }
+    >
     <section className="rounded-lg border border-warning/60 bg-warning/10 p-4">
       <div className="flex items-center gap-2 text-sm font-semibold">
         <AlertTriangle className="h-4 w-4" /> Repeat pilot attempt
@@ -211,5 +195,6 @@ export function PilotWarningsPanel({ organizationId = null, hideWhenEmpty, limit
         ))}
       </ul>
     </section>
+    </PanelState>
   );
 }

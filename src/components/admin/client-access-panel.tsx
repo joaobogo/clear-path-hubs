@@ -17,8 +17,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ErrorState } from "@/components/ds";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
+
 import {
   Select,
   SelectContent,
@@ -114,114 +114,38 @@ export function ClientAccessPanel({ organizationId }: { organizationId: string }
     onError: (e: Error) => toast.error(e.message),
   });
 
-  if (q.isLoading) {
-    return (
-      <section className="space-y-4">
-        <Skeleton className="h-20 w-full rounded-lg" />
-        <Skeleton className="h-56 w-full rounded-lg" />
-      </section>
-    );
-  }
-
-  if (q.isError || !q.data) {
-    return (
-      <ErrorState
-        title="We couldn't load access for this client"
-        description="This is on our side. Nothing was changed."
-        onRetry={() => void q.refetch()}
-      />
-    );
-  }
-
   const d = q.data;
-  const totalSeats = d.seat_limit + 1;
-  const atCap = d.seats_remaining === 0;
+  const noMembers = !!d && d.members.length === 0 && d.pending.length === 0;
 
   return (
-    <section className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card p-4">
-        <div>
-          <div className="text-xs uppercase tracking-wide text-muted-foreground">Seat usage</div>
-          <div className="mt-1 text-2xl font-semibold tabular-nums">
-            {d.seats_used}
-            <span className="text-base font-normal text-muted-foreground"> / {totalSeats}</span>
-          </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Owner seat plus {d.seat_limit} recruiter seat{d.seat_limit === 1 ? "" : "s"} on the
-            current plan. Pending invitations hold a seat.
-          </p>
-        </div>
-        <Button
-          onClick={() => setInviteOpen(true)}
-          disabled={atCap}
-          title={atCap ? "Seat limit reached — release a seat first" : undefined}
-          data-qa-action="access-invite"
-        >
-          <UserPlus className="mr-1.5 h-4 w-4" />
-          Invite member
-        </Button>
-      </div>
-
-      <div className="rounded-lg border bg-card">
-        <div className="flex items-center gap-2 border-b px-4 py-3 text-sm font-medium">
-          <ShieldCheck className="h-4 w-4 text-primary" />
-          Resolved permissions
-          <span className="font-normal text-muted-foreground">
-            · read live from the database functions the policies use
-          </span>
-        </div>
-
-        {d.members.length === 0 && d.pending.length === 0 ? (
-          <div className="p-8 text-center text-sm text-muted-foreground">
-            No members yet.
+    <>
+      <PanelState
+        query={q}
+        isEmpty={noMembers}
+        skeletonRows={5}
+        empty={
+          <PanelEmpty
+            title="No client members yet"
+            description="Nobody from this account has access. Invite the first member to get them started."
+          >
             <div className="mt-3">
-              <Button size="sm" onClick={() => setInviteOpen(true)} disabled={atCap}>
+              <Button size="sm" onClick={() => setInviteOpen(true)}>
                 Invite the first member
               </Button>
             </div>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
-                <tr>
-                  <th className="px-4 py-2">Member</th>
-                  <th className="px-4 py-2">Role</th>
-                  {CLIENT_PERMISSIONS.map((p) => (
-                    <th key={p} className="px-2 py-2 text-center">
-                      {CLIENT_PERMISSION_LABELS[p]}
-                    </th>
-                  ))}
-                  <th className="px-4 py-2">Last sign-in</th>
-                  <th className="px-4 py-2 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {[...d.members, ...d.pending].map((m) => (
-                  <MemberRow
-                    key={m.membership_id}
-                    m={m}
-                    busy={changeRole.isPending || revoke.isPending}
-                    onRole={(role) => changeRole.mutate({ userId: m.user_id, role })}
-                    onResend={() => resend.mutate(m.user_id)}
-                    onRevoke={() =>
-                      revoke.mutate({
-                        membershipId: m.membership_id,
-                        reason: m.status === "invited" ? "seat_released" : "access_revoked",
-                      })
-                    }
-                  />
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      <p className="text-xs text-muted-foreground">
-        Permissions follow the role. There is no per-permission editing on this tab, and access is
-        never assumed on behalf of a client user.
-      </p>
+          </PanelEmpty>
+        }
+      >
+        {d ? (
+          <ClientAccessBody
+            data={d}
+            setInviteOpen={setInviteOpen}
+            changeRole={changeRole}
+            revoke={revoke}
+            resend={resend}
+          />
+        ) : null}
+      </PanelState>
 
       <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
         <DialogContent>
@@ -267,6 +191,105 @@ export function ClientAccessPanel({ organizationId }: { organizationId: string }
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </>
+  );
+}
+
+
+function ClientAccessBody({
+  data: d,
+  setInviteOpen,
+  changeRole,
+  revoke,
+  resend,
+}: {
+  data: NonNullable<ReturnType<typeof useQuery<Awaited<ReturnType<typeof inspectClientAccess>>>>["data"]>;
+  setInviteOpen: (v: boolean) => void;
+  changeRole: ReturnType<typeof useMutation<unknown, Error, { userId: string; role: string }>>;
+  revoke: ReturnType<typeof useMutation<unknown, Error, { membershipId: string; reason: string }>>;
+  resend: ReturnType<typeof useMutation<unknown, Error, string>>;
+}) {
+  const totalSeats = d.seat_limit + 1;
+  const atCap = d.seats_remaining === 0;
+
+  return (
+    <section className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card p-4">
+        <div>
+          <div className="text-xs uppercase tracking-wide text-muted-foreground">Seat usage</div>
+          <div className="mt-1 text-2xl font-semibold tabular-nums">
+            {d.seats_used}
+            <span className="text-base font-normal text-muted-foreground"> / {totalSeats}</span>
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Owner seat plus {d.seat_limit} recruiter seat{d.seat_limit === 1 ? "" : "s"} on the
+            current plan. Pending invitations hold a seat.
+          </p>
+        </div>
+        <Button
+          onClick={() => setInviteOpen(true)}
+          disabled={atCap}
+          title={atCap ? "Seat limit reached — release a seat first" : undefined}
+          data-qa-action="access-invite"
+        >
+          <UserPlus className="mr-1.5 h-4 w-4" />
+          Invite member
+        </Button>
+      </div>
+
+      <div className="rounded-lg border bg-card">
+        <div className="flex items-center gap-2 border-b px-4 py-3 text-sm font-medium">
+          <ShieldCheck className="h-4 w-4 text-primary" />
+          Resolved permissions
+          <span className="font-normal text-muted-foreground">
+            · read live from the database functions the policies use
+          </span>
+        </div>
+
+        {/* The empty case is owned by PanelState above, so a failed read can
+            never look like an account with no members. */}
+
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
+                <tr>
+                  <th className="px-4 py-2">Member</th>
+                  <th className="px-4 py-2">Role</th>
+                  {CLIENT_PERMISSIONS.map((p) => (
+                    <th key={p} className="px-2 py-2 text-center">
+                      {CLIENT_PERMISSION_LABELS[p]}
+                    </th>
+                  ))}
+                  <th className="px-4 py-2">Last sign-in</th>
+                  <th className="px-4 py-2 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {[...d.members, ...d.pending].map((m) => (
+                  <MemberRow
+                    key={m.membership_id}
+                    m={m}
+                    busy={changeRole.isPending || revoke.isPending}
+                    onRole={(role) => changeRole.mutate({ userId: m.user_id, role })}
+                    onResend={() => resend.mutate(m.user_id)}
+                    onRevoke={() =>
+                      revoke.mutate({
+                        membershipId: m.membership_id,
+                        reason: m.status === "invited" ? "seat_released" : "access_revoked",
+                      })
+                    }
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
+      </div>
+
+      <p className="text-xs text-muted-foreground">
+        Permissions follow the role. There is no per-permission editing on this tab, and access is
+        never assumed on behalf of a client user.
+      </p>
     </section>
   );
 }

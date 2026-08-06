@@ -17,7 +17,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -25,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 
 type Props = {
   targetKind: NoteTargetKind;
@@ -173,31 +173,15 @@ export function StructuredNotesPanel({ targetKind, targetId, title = "Recruiter 
         </div>
 
         {/* List */}
-        {notesQuery.isLoading ? (
-          <div className="space-y-3" aria-busy="true">
-            {[0, 1, 2].map((i) => (
-              <div key={i} className="space-y-2 rounded-md border border-border/60 p-3">
-                <Skeleton className="h-3 w-40" />
-                <Skeleton className="h-3 w-full" />
-                <Skeleton className="h-3 w-3/4" />
-              </div>
-            ))}
-          </div>
-        ) : notesQuery.isError ? (
-          <div className="space-y-2 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm">
-            <p className="font-medium text-destructive">Notes could not be loaded.</p>
-            <p className="text-xs text-muted-foreground">
-              This is a load failure, not an empty note history.
-            </p>
-            <Button size="sm" variant="outline" onClick={() => notesQuery.refetch()}>
-              Retry
-            </Button>
-          </div>
-        ) : visible.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            {notes.length === 0 ? "No notes yet" : `No ${noteTypeLabel(filter).toLowerCase()} notes yet`}
-          </p>
-        ) : (
+        <PanelState
+          query={notesQuery}
+          isEmpty={visible.length === 0}
+          empty={
+            <PanelEmpty
+              title={notes.length === 0 ? "No notes yet" : `No ${noteTypeLabel(filter).toLowerCase()} notes yet`}
+            />
+          }
+        >
           <ul className="space-y-3">
             {visible.map((n) => {
               const stillEditable = n.is_mine && withinEditWindow(n.created_at);
@@ -300,7 +284,7 @@ export function StructuredNotesPanel({ targetKind, targetId, title = "Recruiter 
               );
             })}
           </ul>
-        )}
+        </PanelState>
       </CardContent>
     </Card>
   );

@@ -17,7 +17,8 @@ import { formatRate, type ChannelQuality, type Rate, type SourceQuality } from "
 import type { ChannelCandidate } from "@/lib/admin-source-quality.server";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, ChevronDown, ChevronRight, RefreshCw } from "lucide-react";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
+import { ChevronDown, ChevronRight, RefreshCw } from "lucide-react";
 
 const CHANNEL_LABEL: Record<string, string> = {
   unknown: "Unattributed",
@@ -40,21 +41,6 @@ function RateCell({ rate }: { rate: Rate }) {
         {rate.suppressed && rate.denominator > 0 ? " · low volume" : ""}
       </span>
     </span>
-  );
-}
-
-function Skeleton() {
-  return (
-    <div className="divide-y">
-      {[0, 1, 2, 3].map((i) => (
-        <div key={i} className="flex items-center gap-4 px-4 py-3">
-          <div className="h-4 w-32 animate-pulse rounded bg-muted" />
-          <div className="h-4 w-16 animate-pulse rounded bg-muted" />
-          <div className="h-4 w-16 animate-pulse rounded bg-muted" />
-          <div className="ml-auto h-4 w-24 animate-pulse rounded bg-muted" />
-        </div>
-      ))}
-    </div>
   );
 }
 
@@ -220,21 +206,6 @@ function Frame({
   );
 }
 
-function ErrorState({ error, onRetry }: { error: unknown; onRetry: () => void }) {
-  return (
-    <div className="px-4 py-8 text-center">
-      <AlertTriangle className="mx-auto h-5 w-5 text-destructive" />
-      <p className="mt-2 text-sm font-medium">Could not load channel quality</p>
-      <p className="mt-1 text-xs text-muted-foreground">
-        {error instanceof Error ? error.message : "Unexpected error"}
-      </p>
-      <Button variant="outline" size="sm" className="mt-3" onClick={onRetry}>
-        Retry
-      </Button>
-    </div>
-  );
-}
-
 /** Per-position channel quality with a drill-down into each channel's candidates. */
 export function PositionSourceQualityPanel({ positionId }: { positionId: string }) {
   const query = useQuery({
@@ -250,17 +221,17 @@ export function PositionSourceQualityPanel({ positionId }: { positionId: string 
       onRefresh={() => query.refetch()}
       refreshing={query.isFetching}
     >
-      {query.isLoading ? (
-        <Skeleton />
-      ) : query.isError ? (
-        <ErrorState error={query.error} onRetry={() => query.refetch()} />
-      ) : !query.data || query.data.channels.length === 0 ? (
-        <p className="px-4 py-10 text-center text-sm text-muted-foreground">
-          No attributed candidates yet
-        </p>
-      ) : (
-        <QualityTable data={query.data} candidatesByChannel={query.data.candidates_by_channel} />
-      )}
+      <PanelState
+        query={query}
+        isEmpty={(query.data?.channels.length ?? 0) === 0}
+        empty={
+          <PanelEmpty className="px-4 py-10" title="No attributed candidates yet" />
+        }
+      >
+        {query.data && (
+          <QualityTable data={query.data} candidatesByChannel={query.data.candidates_by_channel} />
+        )}
+      </PanelState>
     </Frame>
   );
 }
@@ -280,23 +251,23 @@ export function SourceQualityRollupPanel({ includeTest = false }: { includeTest?
       onRefresh={() => query.refetch()}
       refreshing={query.isFetching}
     >
-      {query.isLoading ? (
-        <Skeleton />
-      ) : query.isError ? (
-        <ErrorState error={query.error} onRetry={() => query.refetch()} />
-      ) : !query.data || query.data.channels.length === 0 ? (
-        <p className="px-4 py-10 text-center text-sm text-muted-foreground">
-          No attributed candidates yet
-        </p>
-      ) : (
-        <>
-          <div className="flex flex-wrap gap-1.5 border-b px-4 py-2">
-            <Badge variant="outline">{query.data.totals.candidates} candidates attributed</Badge>
-            <Badge variant="outline">{query.data.totals.hired} hired</Badge>
-          </div>
-          <QualityTable data={query.data} />
-        </>
-      )}
+      <PanelState
+        query={query}
+        isEmpty={(query.data?.channels.length ?? 0) === 0}
+        empty={
+          <PanelEmpty className="px-4 py-10" title="No attributed candidates yet" />
+        }
+      >
+        {query.data && (
+          <>
+            <div className="flex flex-wrap gap-1.5 border-b px-4 py-2">
+              <Badge variant="outline">{query.data.totals.candidates} candidates attributed</Badge>
+              <Badge variant="outline">{query.data.totals.hired} hired</Badge>
+            </div>
+            <QualityTable data={query.data} />
+          </>
+        )}
+      </PanelState>
     </Frame>
   );
 }
