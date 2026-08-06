@@ -95,17 +95,26 @@ export async function loadExceptionBoard(admin: Admin): Promise<ExceptionBoard> 
   const s = admin as never as { from: (t: string) => Any };
   const since = new Date(Date.now() - EXCEPTION_WINDOW_DAYS * 86400_000).toISOString();
 
-  const jobsRes = await s
-    .from("processing_jobs")
-    .select(
-      "id, job_type, status, entity_type, entity_id, attempts, error_code, error_message, trace_id, created_at, started_at, completed_at",
-    )
-    .gte("created_at", since)
-    .in("status", ["queued", "running", "failed", "cancelled"])
-    .order("created_at", { ascending: false })
-    .limit(500);
+  // The job list and the orphan count are independent reads.
+  const [jobsRes, orphansRes] = await Promise.all([
+    s
+      .from("processing_jobs")
+      .select(
+        "id, job_type, status, entity_type, entity_id, attempts, error_code, error_message, trace_id, created_at, started_at, completed_at",
+      )
+      .gte("created_at", since)
+      .in("status", ["queued", "running", "failed", "cancelled"])
+      .order("created_at", { ascending: false })
+      .limit(500),
+    s
+      .from("scoring_orphans")
+      .select("id", { count: "exact", head: true })
+      .is("resolved_at", null),
+  ]);
   if (jobsRes.error) throw new Error(jobsRes.error.message);
   const jobs = (jobsRes.data ?? []) as Any[];
+  const scoringOrphans = Number(orphansRes.count ?? 0);
+
 
   const permanentRows = jobs.filter(
     (j) => j.status === "cancelled" && j.error_code === PERMANENT_FAIL_CODE,
