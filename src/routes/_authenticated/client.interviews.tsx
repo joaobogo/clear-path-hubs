@@ -302,11 +302,14 @@ function InterviewsPage() {
         title="Interviews"
         description="Set your availability once — everything else happens on this one timeline."
         actions={
-          !readOnly ? (
-            <Button onClick={() => setRequestOpen(true)}>
-              <Plus className="mr-1.5 h-4 w-4" /> Request interview
-            </Button>
-          ) : null
+          <div className="flex items-center gap-2">
+            <LiveUpdatedChip updatedAt={live.updatedAt} />
+            {!readOnly ? (
+              <Button onClick={() => setRequestOpen(true)}>
+                <Plus className="mr-1.5 h-4 w-4" /> Request interview
+              </Button>
+            ) : null}
+          </div>
         }
       />
       <PageBody>
