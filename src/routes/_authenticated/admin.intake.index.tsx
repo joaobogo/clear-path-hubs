@@ -1,28 +1,21 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
-import { z } from "zod";
 import { useState } from "react";
 import { listIntakeInbox } from "@/lib/intake-admin.functions";
-import { TestRecordsToggle } from "@/components/admin/TestRecordsToggle";
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { IntakeAgingTable } from "@/components/admin/intake-aging-table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { AlertTriangle, ArrowRight, Inbox } from "lucide-react";
 
-const searchSchema = z.object({
-  show_test: fallback(z.boolean(), false).default(false),
-});
-
 export const Route = createFileRoute("/_authenticated/admin/intake/")({
-  validateSearch: zodValidator(searchSchema),
-  loaderDeps: ({ search }) => ({ show_test: search.show_test }),
-  loader: ({ context, deps }) =>
+  // No scope in the URL: the server resolves the staff user's saved preference,
+  // which is the same value the layout puts on route context.
+  loader: ({ context }) =>
     context.queryClient.ensureQueryData({
-      queryKey: ["admin", "intake-inbox", { filter: "pending", q: "", show_test: deps.show_test }],
-      queryFn: () =>
-        listIntakeInbox({ data: { filter: "pending", include_test: deps.show_test } }),
+      queryKey: ["admin", "intake-inbox", { filter: "pending", q: "", show_test: false }],
+      queryFn: () => listIntakeInbox({ data: { filter: "pending" } }),
     }),
   head: () => ({
     meta: [
@@ -58,8 +51,7 @@ function relTime(iso?: string | null): string {
 }
 
 function IntakeInbox() {
-  const { show_test } = Route.useSearch();
-  const navigate = Route.useNavigate();
+  const show_test = useIncludeTestRecords();
   const [filter, setFilter] = useState<Filter>("pending");
   const [q, setQ] = useState("");
   const { data, isFetching } = useSuspenseQuery({
@@ -85,10 +77,6 @@ function IntakeInbox() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <TestRecordsToggle
-            checked={show_test}
-            onChange={(next) => navigate({ search: { show_test: next }, replace: true })}
-          />
           <div className="text-xs text-muted-foreground">
             {data.total} shown{isFetching ? " · refreshing…" : ""}
           </div>
