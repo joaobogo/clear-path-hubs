@@ -1,6 +1,7 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { MessageSquareWarning, SearchX } from "lucide-react";
@@ -39,7 +40,8 @@ function toldTone(told: string) {
 
 function EvidenceGaps() {
   const fetchGaps = useServerFn(listEvidenceGaps);
-  const [showTest, setShowTest] = useState(false);
+  // Global admin scope, not a per-desk switch.
+  const showTest = useIncludeTestRecords();
   const [openRow, setOpenRow] = useState<string | null>(null);
 
   const query = useQuery({
@@ -58,13 +60,6 @@ function EvidenceGaps() {
           Each row names the step of ours that did not finish, and what the candidate saw at that
           moment. Where the message hid the real cause, the gap is ours to explain — not theirs to fix.
         </p>
-        <button
-          type="button"
-          className="text-xs underline underline-offset-4 text-muted-foreground"
-          onClick={() => setShowTest((v) => !v)}
-        >
-          {showTest ? "Hide test records" : "Show test records"}
-        </button>
       </header>
 
       {query.isLoading ? <p className="text-sm text-muted-foreground">Reading the records…</p> : null}

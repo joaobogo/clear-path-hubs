@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { useQueries } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
@@ -43,7 +44,8 @@ const OWNER_LABEL: Record<string, string> = {
 function IntakeQuality() {
   const fetchParse = useServerFn(listParseFailures);
   const fetchGaps = useServerFn(listEvidenceGaps);
-  const [showTest, setShowTest] = useState(false);
+  // Global admin scope, shared with every other desk.
+  const showTest = useIncludeTestRecords();
   const [ownerFilter, setOwnerFilter] = useState<string>("all");
 
   const [parseQuery, gapQuery] = useQueries({
@@ -110,9 +112,6 @@ function IntakeQuality() {
             {owner === "all" ? "All owners" : OWNER_LABEL[owner]}
           </Button>
         ))}
-        <Button size="sm" variant="ghost" onClick={() => setShowTest((v) => !v)}>
-          {showTest ? "Hide test records" : "Show test records"}
-        </Button>
         <span className="ml-auto text-xs text-muted-foreground">
           {summary.parse_failures} parse failures · {summary.evidence_gaps} evidence gaps ·{" "}
           {summary.our_fault_items} caused by us · {summary.misinformed_items} where our message hid

@@ -10,6 +10,7 @@ import { Fragment, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import {
   getOutreachHealth,
 } from "@/lib/admin-outreach-health.functions";
@@ -79,7 +80,8 @@ function WindowRow({ stats }: { stats: WindowStats }) {
 }
 
 export function OutreachHealthPanel() {
-  const [includeTest, setIncludeTest] = useState(false);
+  // Global admin scope; this panel no longer owns its own filter.
+  const includeTest = useIncludeTestRecords();
   const [detail, setDetail] = useState<"none" | "bounces" | "opt_outs">("none");
   const fetchHealth = useServerFn(getOutreachHealth);
 
@@ -97,9 +99,6 @@ export function OutreachHealthPanel() {
         </p>
       </div>
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="sm" onClick={() => setIncludeTest((v) => !v)}>
-          {includeTest ? "Hide test records" : "Show test records"}
-        </Button>
         <Button variant="outline" size="sm" onClick={() => query.refetch()}>
           <RefreshCw className="mr-2 h-3.5 w-3.5" /> Refresh
         </Button>
