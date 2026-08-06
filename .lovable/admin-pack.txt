@@ -1,0 +1,1065 @@
+TAASFLOW / INTERNAL
+
+
+
+
+Admin Command Center
+Build Prompt Pack
+An audit of the internal admin dashboard and forty narrowly scoped, production-ready build prompts.
+Each prompt solves one operational problem on one screen, using data TAASFlow already stores. The
+goal is a recruiting operating system that a delivery team can run a week from — not a reporting surface.
+
+
+    Scope                     Internal admin surfaces (/admin/*) and the admin shell
+
+    Audience                  Product, delivery operations, engineering
+
+    Prompt count              40 build prompts, each independently shippable
+
+    Constraint                No new data sources. Every metric is computable from the current schema.
+
+    Out of scope              Client workspace redesign, marketing surfaces, pricing, candidate portal
+
+
+
+
+FLOW GROUP VENTURES   ·   TAASFLOW   ·   INTERNAL BUILD DOCUMENT
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                            INTERNAL
+
+
+
+
+01 — WHAT THE AUDIT FOUND
+
+
+The admin surface is broad but not operational
+There are more than forty admin routes covering intake, positions, candidates, scoring, clients, payments,
+operations, integrations and support. The coverage is genuinely good. The problem is that the surface is organised
+by entity rather than by work: to find out what is going wrong today, a recruiter has to visit six screens and hold the
+answer in their head.
+
+— No single work queue. Attention-worthy jobs, stalled candidates, breached commitments and failed processing
+  jobs each live on their own page, with no shared notion of priority or ownership.
+— Aging is not computed anywhere the operator can see it. Stage history exists, but time-in-stage — the single
+  most useful recruiting signal — is not surfaced on the pipeline.
+— Ownership is implicit. Positions can be open, published and unowned. Nothing reassigns work when staff
+  change.
+— Exceptions fail quietly. Processing jobs, notification deliveries and integration syncs can all fail without any visible
+  counter in the shell.
+— Client readiness is manual. Before an update call, the admin reconstructs what changed by hand, from several
+  screens.
+— Error states still read as empty states in places. A failed query that renders 'no results' is worse than a crash,
+  because the operator acts on it.
+— Decision provenance is scattered. Approvals, overrides, rejections and stage moves are recorded in different
+  tables with no unified timeline per candidate.
+
+
+Six strengths worth protecting
+— A canonical schema with real audit tables (audit_events, candidate_stage_history, score_decisions,
+  evidence_overrides).
+— Role-aware RLS with SECURITY DEFINER helpers, so permissions can be displayed by calling the same functions
+  that enforce them.
+— Immutable score runs and rubric versions — evaluation history is defensible to a client.
+— Existing attribution and timing views (v_source_attribution, v_time_to_hire, v_portfolio_rollup) that most of these
+  prompts simply need to surface.
+— A working processing worker with claim logic and retries; exceptions need visibility, not a rewrite.
+— Test-record flagging already in place, so operational counts can be kept clean.
+
+
+Rules applied to every prompt in this pack
+— Every number must be derivable from existing tables. No invented metrics, no imported benchmarks.
+— Any rate shown must state its denominator, and be suppressed below a stated sample floor.
+— Loading, empty and error are three distinct states. A failed query never renders as zero or empty.
+— Every state-changing action writes an attributable audit row with an actor and, where it affects a client, a reason.
+— Nothing becomes client-visible without a recorded approval.
+— No decorative widgets, no fabricated activity, no gamification, no AI-authored client communication.
+
+
+
+
+                                                                                                                          02
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                    INTERNAL
+
+
+
+
+02 — BUILD PROMPTS · 40 SCOPED UNITS
+
+
+Each prompt is one screen, one problem, one release
+Hand a prompt over as-is. Priority marks sequencing, not importance; effort is S under a day, M one to three days, L a
+week.
+
+
+    01 Portfolio rollup with account health bands                                                 NOW · M
+
+    PROBLEM            Admins open the dashboard and see totals, not which client accounts are actually in trouble.
+                       Health is judged by memory and by whoever shouts loudest.
+    SCREEN             /admin (index) — replace the top summary strip with a Portfolio Health table.
+    DATA SHOWN         Per organization from v_portfolio_rollup and admin_clients_view: org name, plan/subscription
+                       state, open positions, positions with zero submitted candidates, oldest open position age
+                       (days), submissions in last 7 days, client decisions pending, days since last client-visible activity.
+                       Exclude is_test_record orgs unless the existing test toggle is on.
+    ACTIONS            Sort by any column; click a row to open /admin/clients/$id; toggle 'Show test records'.
+    TRIGGER / LOGIC    Health band computed at query time: At risk = any open position with 0 submissions and age >
+                       14 days, OR pending client decisions > 5, OR no client-visible activity in 10+ days. Watch = half
+                       those thresholds. Healthy = neither.
+    STATES             Loading: 6 skeleton rows. Empty: 'No active client accounts yet' + link to /admin/clients/new.
+                       Error: inline error card with the failure reason and a Retry button — never an empty table.
+    ACCEPTANCE         Every non-test org with at least one open position appears exactly once; band matches the
+                       stated rule; row click lands on the correct client; error state renders on a forced query failure.
+    DO NOT BUILD       No health 'score' out of 100, no trend sparkline, no colour-only signalling without a text label.
+
+
+
+    02 Jobs needing attention queue                                                               NOW · M
+
+    PROBLEM            Open roles quietly stall. Nobody can name today's five most at-risk jobs without opening each
+                       one.
+    SCREEN             /admin/positions — add an 'Needs attention' tab above the existing list.
+    DATA SHOWN         From admin_positions_view + candidate_matches: position title, client, days open, recruiter
+                       owner, candidates sourced, submitted to client, in interview, last pipeline movement date,
+                       payment/publish state.
+    ACTIONS            Open the position; reassign owner; mark 'reviewed today' (writes an audit_events row so it
+                       drops off for 24h).
+    TRIGGER / LOGIC    Attention reasons, each shown as a labelled chip: no new candidate in 7 days; zero submissions
+                       and open > 10 days; submitted but no client decision in 5 days; published without an owner;
+                       payment gate blocking publish.
+    STATES             Loading: skeleton list. Empty: 'No jobs need attention right now' with the count of jobs checked.
+                       Error: error card + Retry.
+    ACCEPTANCE         Each row shows at least one reason chip; reasons are derived, never hand-set; 'reviewed today'
+                       hides the row until the next UTC day and is visible in audit history.
+    DO NOT BUILD       No priority score, no drag-and-drop ranking, no auto-closing of jobs.
+
+
+
+
+                                                                                                                                03
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                     INTERNAL
+
+
+
+
+    03 Stage-aging board for open pipelines                                                      NOW · M
+
+    PROBLEM            Candidates sit in a stage for weeks and no one notices until the client asks.
+    SCREEN             /admin/positions/$id — add a 'Stage aging' panel under the pipeline.
+    DATA SHOWN         From candidate_stage_history and candidate_matches: current stage, days in current stage,
+                       previous stage, who moved it, count per stage, oldest candidate per stage.
+    ACTIONS            Click a stage to filter the candidate list; open a candidate; move stage with a required reason
+                       note.
+    TRIGGER / LOGIC    Days in stage = now − most recent candidate_stage_history entry for that match. Flag any
+                       candidate above the stage threshold (screening 3d, submitted 5d, interview 7d, offer 3d).
+    STATES             Loading: skeleton bars. Empty: 'No candidates in pipeline yet'. Error: error card + Retry.
+    ACCEPTANCE         Aging matches stage history exactly; moving a stage writes history and resets the counter;
+                       thresholds are configurable in one constants file, not scattered.
+    DO NOT BUILD       No burndown chart, no predicted time-to-hire, no stage automation.
+
+
+
+    04 Recruiter workload and ownership view                                                     NOW · M
+
+    PROBLEM            Work distribution is invisible. Some recruiters carry 12 roles, others 3, and unowned roles fall
+                       through.
+    SCREEN             /admin/team — add a 'Workload' table.
+    DATA SHOWN         Per staff member: open positions owned, candidates in active stages, submissions this week,
+                       pending scoring reviews assigned, overdue tasks, oldest untouched position.
+    ACTIONS            Reassign a position owner from the row; open a filtered position list for that recruiter.
+    TRIGGER / LOGIC    Ownership resolved from positions.owner (or memberships where the column is absent). A
+                       separate 'Unassigned' row aggregates ownerless open positions.
+    STATES             Loading: skeleton rows. Empty: 'No staff with active assignments'. Error: error card + Retry.
+    ACCEPTANCE         Counts reconcile with the position and match tables; the Unassigned row links to the ownerless
+                       list; reassignment writes an audit event.
+    DO NOT BUILD       No leaderboards, no productivity scores, no per-person activity feed.
+
+
+
+
+                                                                                                                               04
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                INTERNAL
+
+
+
+
+    05 My day — recruiter priority list                                                         NOW · L
+
+    PROBLEM            A recruiter logging in has no single ordered list of what to do first.
+    SCREEN             New route /admin/my-day, linked from the admin sidebar top.
+    DATA SHOWN         Scoped to the signed-in staff user: candidates awaiting your scoring review, submissions
+                       awaiting client follow-up past SLA, interviews scheduled today and tomorrow, tasks due today,
+                       intakes assigned and unstarted.
+    ACTIONS            Complete a task inline; open the underlying record; snooze an item to tomorrow with a reason.
+    TRIGGER / LOGIC    Ordered by hard deadline first (interviews today), then SLA breach, then age. Reads only
+                       existing tables — tasks, interviews, candidate_matches, intake_submissions.
+    STATES             Loading: skeletons per section. Empty per section: a plain 'Nothing here today' line, not a
+                       hidden section. Error: per-section error card + Retry.
+    ACCEPTANCE         Every item links to a working record; snooze persists across reload; sections load independently
+                       so one failure does not blank the page.
+    DO NOT BUILD       No streaks, no daily goals, no motivational copy.
+
+
+
+    06 SLA breach and exception panel                                                           NOW · M
+
+    PROBLEM            SLA commitments exist in position_commitments but breaches are not surfaced anywhere
+                       operational.
+    SCREEN             /admin/sla — rebuild the page as a breach list, keeping the existing definitions below.
+    DATA SHOWN         Per commitment: client, position, commitment type, target (days or count), actual to date, days
+                       over, owner, first-breach timestamp.
+    ACTIONS            Acknowledge a breach with a required note; open the position; export the current list to CSV.
+    TRIGGER / LOGIC    Breach = actual exceeds target as of now, computed from position_commitments joined to real
+                       pipeline counts and dates. Acknowledgement writes to audit_events and mutes escalation
+                       styling but keeps the row.
+    STATES             Loading: skeleton rows. Empty: 'No commitments breached' plus the number of commitments
+                       monitored. Error: error card + Retry.
+    ACCEPTANCE         Breach maths is reproducible from the source rows; acknowledgement is attributable to a user
+                       and timestamp; CSV matches the on-screen rows.
+    DO NOT BUILD       No predicted-breach forecasting, no automatic client emails from this panel.
+
+
+
+
+                                                                                                                          05
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                  INTERNAL
+
+
+
+
+    07 Client decision backlog                                                                   NOW · M
+
+    PROBLEM            Submitted candidates wait on client feedback and admins cannot see which client is the
+                       blocker.
+    SCREEN             /admin/clients/$id and /admin (portfolio drilldown).
+    DATA SHOWN         From client_decisions and candidate_matches: candidates submitted with no decision, days
+                       waiting, position, who at the client was notified, last nudge sent.
+    ACTIONS            Send a follow-up nudge through the existing notification path; log an offline decision on the
+                       client's behalf with attribution; open the conversation thread.
+    TRIGGER / LOGIC    Waiting = submitted_at set and no client_decisions row. Nudge is rate-limited to once per 48h
+                       per candidate.
+    STATES             Loading: skeleton. Empty: 'No candidates waiting on this client'. Error: error card + Retry.
+    ACCEPTANCE         Offline decisions are marked as recorded-by-staff, never as client-authored; nudge rate limit
+                       enforced server-side.
+    DO NOT BUILD       No automatic decisions after a timeout, no fake client activity indicators.
+
+
+
+    08 Scoring review queue triage                                                               NOW · M
+
+    PROBLEM            The review queue is a flat list; reviewers cannot tell which reviews actually block a client
+                       deliverable.
+    SCREEN             /admin/scoring/review — add grouping and a blocking flag.
+    DATA SHOWN         From v_scoring_review_queue: candidate, position, client, score band, evidence completeness,
+                       hours since scored, whether the position has an outstanding client delivery commitment.
+    ACTIONS            Claim a review; open the review detail; bulk-release claims older than 2 hours.
+    TRIGGER / LOGIC    Blocking = the position has an open commitment whose due date is within 3 days. Claim writes
+                       reviewer and claimed_at so two people never open the same review.
+    STATES             Loading: skeleton. Empty: 'Review queue clear'. Error: error card + Retry.
+    ACCEPTANCE         A claimed review disappears from other reviewers' queues; stale claims auto-release; grouping
+                       is derived, not manual.
+    DO NOT BUILD       No auto-approval, no reviewer accuracy scoring.
+
+
+
+
+                                                                                                                            06
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                     INTERNAL
+
+
+
+
+    09 Evidence completeness gate before submission                                              NOW · M
+
+    PROBLEM            Candidates get submitted with thin evidence, which erodes client trust and creates rework.
+    SCREEN             /admin/candidates/$id and /admin/review/$matchId.
+    DATA SHOWN         From candidate_evidence / candidate_evidence_items: which rubric criteria have evidence,
+                       which are unsupported, source of each evidence item, any evidence_overrides applied.
+    ACTIONS            Add or correct evidence; override with a mandatory written justification; submit to client.
+    TRIGGER / LOGIC    Submission button is disabled while any must-have criterion has zero evidence, unless an
+                       override exists with a justification recorded in audit_events.
+    STATES             Loading: skeleton checklist. Empty: 'No evidence extracted yet' with a link to reprocess. Error:
+                       error card + Retry.
+    ACCEPTANCE         Blocked submission shows exactly which criteria are missing; overrides are attributable and
+                       appear in the candidate's audit history.
+    DO NOT BUILD       No auto-generated evidence, no AI-written justification.
+
+
+
+    10 Processing pipeline exception board                                                       NOW · M
+
+    PROBLEM            Failed or stuck CV processing jobs are only found when someone asks why a candidate is
+                       missing.
+    SCREEN             /admin/operations — dedicated 'Processing exceptions' section.
+    DATA SHOWN         From processing_jobs: job type, state, attempts, last error, age, related candidate and position,
+                       plus scoring_orphans count.
+    ACTIONS            Retry a single job; retry all failed for a position; open the candidate; mark permanently failed
+                       with a reason.
+    TRIGGER / LOGIC    Exception = state failed, OR queued longer than 15 minutes, OR attempts at the retry ceiling.
+                       Retry re-enqueues through the existing worker path only.
+    STATES             Loading: skeleton. Empty: 'No processing exceptions in the last 7 days'. Error: error card + Retry.
+    ACCEPTANCE         Retry uses the existing claim logic and does not duplicate jobs; the board empties when the
+                       worker drains; permanent failures stay visible in history.
+    DO NOT BUILD       No new queue implementation, no direct database state edits from the UI.
+
+
+
+
+                                                                                                                               07
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                  INTERNAL
+
+
+
+
+    11 Intake aging and conversion tracker                                                       NOW · S
+
+    PROBLEM            Submitted intakes sit unconverted and there is no visible clock on them.
+    SCREEN             /admin/intake — add age and status columns plus an aging filter.
+    DATA SHOWN         From intake_submissions: submitted date, days waiting, company, contact, assigned owner,
+                       converted position id if any, blocking reason.
+    ACTIONS            Assign an owner; open the intake; convert to a position; mark as not proceeding with a reason.
+    TRIGGER / LOGIC    Aging tiers at 1, 3 and 7 days. Conversion is detected by an existing linked position, not a manual
+                       flag.
+    STATES             Loading: skeleton. Empty: 'No open intakes'. Error: error card + Retry.
+    ACCEPTANCE         Age matches submitted_at; converted intakes leave the open list automatically; 'not
+                       proceeding' requires a reason and is reversible.
+    DO NOT BUILD       No lead scoring, no sales-forecast projections.
+
+
+
+    12 Position bottleneck diagnosis card                                                        NEXT · M
+
+    PROBLEM            When a role is failing, admins cannot tell whether the problem is sourcing, screening, client
+                       response or offer.
+    SCREEN             /admin/positions/$id — a single diagnosis card at the top.
+    DATA SHOWN         Counts and median days at each stage for this position, versus the same figures across the org's
+                       other closed roles where at least 3 comparable roles exist.
+    ACTIONS            Open the stage that is flagged; add an internal note explaining the cause.
+    TRIGGER / LOGIC    Bottleneck = the stage with the highest ratio of candidates-in versus candidates-out over the
+                       last 14 days. If fewer than 5 candidates have entered the pipeline, show 'Insufficient pipeline to
+                       diagnose' instead of a conclusion.
+    STATES             Loading: skeleton card. Empty/insufficient: explicit insufficient-data message. Error: error card
+                       + Retry.
+    ACCEPTANCE         Never renders a diagnosis below the data threshold; the named stage matches the underlying
+                       counts.
+    DO NOT BUILD       No benchmark against invented industry averages, no AI narrative.
+
+
+
+
+                                                                                                                             08
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                INTERNAL
+
+
+
+
+    13 Sourcing channel quality by role                                                          NEXT · M
+
+    PROBLEM            Outreach spend and effort are not tied to which channels actually produce submitted or hired
+                       candidates.
+    SCREEN             /admin/positions/$id and a rollup on /admin/operations.
+    DATA SHOWN         From v_source_attribution and v_source_attribution_rollup: candidates per channel, submitted
+                       per channel, client-accepted per channel, hires per channel, and the conversion rate at each
+                       step.
+    ACTIONS            Filter the candidate list by channel; open a channel's candidates.
+    TRIGGER / LOGIC    Show absolute counts alongside every rate, and suppress rates where the denominator is below
+                       10.
+    STATES             Loading: skeleton table. Empty: 'No attributed candidates yet'. Error: error card + Retry.
+    ACCEPTANCE         Counts reconcile with the candidate list; low-volume rates are hidden rather than shown as
+                       misleading percentages.
+    DO NOT BUILD       No cost-per-hire unless spend data exists for the period, no channel recommendations.
+
+
+
+    14 Outreach deliverability and opt-out monitor                                               NEXT · M
+
+    PROBLEM            Bounces and opt-outs quietly degrade outreach and nobody sees the trend until reply rates
+                       collapse.
+    SCREEN             /admin/operations — 'Outreach health' panel.
+    DATA SHOWN         From outreach_touches, outreach_opt_outs and outreach_channel_rules: touches sent,
+                       delivered, bounced, replied, opted out — per channel, last 7 and 30 days; current channel rule
+                       limits and how close usage is to them.
+    ACTIONS            Pause a channel; open the bounce list; open the opt-out list.
+    TRIGGER / LOGIC    Warn when the bounce rate exceeds 3% over at least 50 sends, or when opt-outs exceed 1%
+                       over at least 100 sends. Below those volumes, show counts only.
+    STATES             Loading: skeleton. Empty: 'No outreach activity in this period'. Error: error card + Retry.
+    ACCEPTANCE         Pausing a channel actually blocks new sends through the existing rule check; thresholds only
+                       fire above the stated volume floor.
+    DO NOT BUILD       No sender-reputation score, no fabricated inbox-placement data.
+
+
+
+
+                                                                                                                          09
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                INTERNAL
+
+
+
+
+    15 Opt-out and suppression enforcement check                                              NOW · S
+
+    PROBLEM            Contacting an opted-out person is a compliance and reputation failure with no visible guardrail
+                       in admin.
+    SCREEN             /admin/candidates/$id and any outreach composer surface.
+    DATA SHOWN         Opt-out status, source of the opt-out, date, channel scope, and the result of
+                       outreach_contact_allowed for this person.
+    ACTIONS            View the reason; request an exception through the existing eligibility_exceptions path.
+    TRIGGER / LOGIC    The send action is disabled whenever outreach_contact_allowed returns false. Enforcement
+                       lives server-side; the UI only mirrors it.
+    STATES             Loading: skeleton badge. Empty: no badge when contact is allowed. Error: fail closed — block
+                       sending and say why.
+    ACCEPTANCE         A suppressed contact cannot be messaged from any admin surface; the block is enforced
+                       server-side even if the UI is bypassed.
+    DO NOT BUILD       No admin override without an exception record, no soft warning that can be clicked through.
+
+
+
+    16 Approvals inbox for client-visible actions                                             NOW · M
+
+    PROBLEM            Approvals for candidate visibility and contact release are scattered across screens.
+    SCREEN             New /admin/approvals, linked from the sidebar.
+    DATA SHOWN         Pending approvals grouped by type: candidate visible to client, contact released, shortlist
+                       share, publish position. Each with requester, target, age, and the client affected.
+    ACTIONS            Approve, decline with a required reason, or open the underlying record. Bulk approve within a
+                       single position only.
+    TRIGGER / LOGIC    Uses the existing approve_candidate_match and permission functions. Every decision writes
+                       audit_events with actor, target and reason.
+    STATES             Loading: skeleton. Empty: 'No approvals pending'. Error: error card + Retry.
+    ACCEPTANCE         Approving from this inbox produces exactly the same result as approving in-place; declines
+                       require a reason; nothing becomes client-visible without a recorded approval.
+    DO NOT BUILD       No bulk approve across clients, no auto-approve rules.
+
+
+
+
+                                                                                                                          10
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                    INTERNAL
+
+
+
+
+    17 Candidate audit history timeline                                                         NEXT · M
+
+    PROBLEM            When a client disputes a decision, reconstructing what happened takes an engineer.
+    SCREEN             /admin/candidates/$id — an 'History' tab.
+    DATA SHOWN         From audit_events, candidate_stage_history, score_decisions, evidence_overrides and
+                       client_decisions: timestamp, actor, action, before/after values, reason text.
+    ACTIONS            Filter by actor or action type; copy a permalink to a specific event.
+    TRIGGER / LOGIC    Read-only, newest first, paginated. Nothing here is editable or deletable from the UI.
+    STATES             Loading: skeleton timeline. Empty: 'No recorded activity for this candidate'. Error: error card +
+                       Retry.
+    ACCEPTANCE         Every stage move, score decision, override and client decision appears; the timeline is
+                       immutable; permalinks resolve after reload.
+    DO NOT BUILD       No editing of history, no soft-deletion, no inferred events.
+
+
+
+    18 Recruiter notes with structure                                                           NEXT · S
+
+    PROBLEM            Notes are free text, so context needed for a client update is unfindable.
+    SCREEN             /admin/candidates/$id and /admin/positions/$id note panels.
+    DATA SHOWN         From candidate_notes and internal_notes: author, timestamp, note type (screening, client
+                       feedback, risk, logistics), body, whether it is safe to share with the client.
+    ACTIONS            Add a note with a required type; mark client-shareable; edit within 15 minutes of writing; filter
+                       by type.
+    TRIGGER / LOGIC    Client-shareable notes are the only ones eligible to appear in an update draft. Edits after the
+                       window create a new revision rather than overwriting.
+    STATES             Loading: skeleton. Empty: 'No notes yet' with the composer visible. Error: keep the draft text
+                       and show a retry on save failure.
+    ACCEPTANCE         A failed save never loses typed text; note type is mandatory; non-shareable notes never surface
+                       on client surfaces.
+    DO NOT BUILD       No sentiment tagging, no auto-summarised notes.
+
+
+
+
+                                                                                                                              11
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                      INTERNAL
+
+
+
+
+    19 Client update readiness check                                                               NEXT · M
+
+    PROBLEM            Before a client call, admins manually piece together what changed since the last update.
+    SCREEN             /admin/clients/$id — 'Update readiness' panel.
+    DATA SHOWN         Since the last recorded client-visible activity: new candidates submitted, decisions received,
+                       interviews scheduled or completed, stage moves, open blockers, and shareable notes.
+    ACTIONS            Copy the summary as text; open each referenced record; mark the update as sent (records the
+                       new baseline date).
+    TRIGGER / LOGIC    Baseline is the last 'update sent' marker, falling back to the last client-visible activity. All content
+                       is drawn from real records only.
+    STATES             Loading: skeleton. Empty: 'Nothing has changed since the last update on '. Error: error card +
+                       Retry.
+    ACCEPTANCE         Every line in the summary links to a real record; marking as sent moves the baseline and is
+                       reversible within 24 hours.
+    DO NOT BUILD       No AI-written client email, no sending from this panel.
+
+
+
+    20 Interview logistics exceptions                                                              NEXT · M
+
+    PROBLEM            Interviews without confirmed times, missing scorecards, and no-shows are only caught after
+                       the fact.
+    SCREEN             /admin/operations — 'Interviews' section, plus a badge on the position.
+    DATA SHOWN         From interviews, interview_status_history and interview_scorecards: scheduled time,
+                       confirmation state, interviewer, candidate, missing scorecard after completion, cancellations in
+                       the last 7 days.
+    ACTIONS            Nudge for confirmation; reschedule; record an outcome; chase a missing scorecard.
+    TRIGGER / LOGIC    Exception = unconfirmed within 24h of the slot, completed over 24h ago with no scorecard, or
+                       two or more reschedules.
+    STATES             Loading: skeleton. Empty: 'No interview exceptions'. Error: error card + Retry.
+    ACCEPTANCE         Recording an outcome writes interview_status_history; the exception clears immediately once
+                       resolved.
+    DO NOT BUILD       No calendar rebuild, no automatic rescheduling.
+
+
+
+
+                                                                                                                                  12
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                  INTERNAL
+
+
+
+
+    21 Offer and hire confirmation tracking                                                      NEXT · M
+
+    PROBLEM            Offers extended without recorded outcomes leave revenue and placement data incomplete.
+    SCREEN             /admin/positions/$id and a rollup on /admin.
+    DATA SHOWN         From hire_records and candidate_matches: offers extended, accepted, declined, start dates
+                       confirmed, guarantee period end, missing hire record for a closed-won position.
+    ACTIONS            Record an offer outcome; set a start date; close the position with an outcome reason.
+    TRIGGER / LOGIC    A position cannot be closed as filled without a hire record. Guarantee windows are computed
+                       from the recorded start date.
+    STATES             Loading: skeleton. Empty: 'No offers on this role'. Error: error card + Retry.
+    ACCEPTANCE         Closing as filled is blocked without a hire record; guarantee end dates are derived, not typed.
+    DO NOT BUILD       No revenue forecasting, no commission calculations.
+
+
+
+    22 Duplicate candidate detection across clients                                              NEXT · L
+
+    PROBLEM            The same person enters via multiple sources and gets scored and submitted twice.
+    SCREEN             /admin/candidates — a 'Possible duplicates' banner and a review list.
+    DATA SHOWN         From talent_persons, talent_person_identifiers and resolve_talent_person: matching identifiers,
+                       application dates, positions, and current stages for each suspected pair.
+    ACTIONS            Merge into a single person; mark as distinct people; open both profiles side by side.
+    TRIGGER / LOGIC    Candidates are suspected duplicates only on an exact identifier match (email or phone). Fuzzy
+                       name matching is out of scope.
+    STATES             Loading: skeleton. Empty: 'No duplicate identifiers found'. Error: error card + Retry.
+    ACCEPTANCE         Merging preserves all applications and history under one person; 'distinct' suppresses that pair
+                       permanently; both actions are audited and reversible by a platform admin.
+    DO NOT BUILD       No probabilistic matching, no automatic merging.
+
+
+
+    23 Position publish and payment gate visibility                                              NOW · S
+
+    PROBLEM            Roles sit unpublished because of a payment or configuration gate that is not visible in the list.
+    SCREEN             /admin/positions and /admin/publish.
+    DATA SHOWN         Publish state, payment state, missing required fields blocking publish, owner, and the date the
+                       role became publish-ready.
+    ACTIONS            Open the blocking field; grant an exemption through the existing exempt function; publish.
+    TRIGGER / LOGIC    Blocking reasons are read from the same server checks that gate publishing, so the list can
+                       never disagree with the action.
+    STATES             Loading: skeleton. Empty: 'All roles publishable'. Error: error card + Retry.
+    ACCEPTANCE         Every unpublished role shows a reason; exemption grants are audited and attributed.
+    DO NOT BUILD       No bypass of payment checks in client-facing code, no silent publish.
+
+
+
+
+                                                                                                                            13
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                     INTERNAL
+
+
+
+
+    24 Data health exceptions that block operations                                                  NEXT · M
+
+    PROBLEM            Orphan scores, matches with no position, and missing files break screens with confusing errors.
+    SCREEN             /admin/data-health — prioritise by operational impact.
+    DATA SHOWN         From scoring_orphans, candidate_matches, files and positions: orphan type, affected record,
+                       client impacted, whether it is currently client-visible, age.
+    ACTIONS            Repair using the existing tooling; hide from client view; open the record.
+    TRIGGER / LOGIC    Rank by whether the broken record is currently visible to a client, then by age. Nothing is
+                       deleted from this screen.
+    STATES             Loading: skeleton. Empty: 'No data health exceptions'. Error: error card + Retry.
+    ACCEPTANCE         Client-visible breakages sort first; repairs are audited; no destructive delete is exposed.
+    DO NOT BUILD       No bulk delete, no automated repair without a preview.
+
+
+
+    25 Search across operational entities                                                            NEXT · M
+
+    PROBLEM            Finding a candidate or role by partial name takes several screens.
+    SCREEN             Admin shell header — extend the existing global search.
+    DATA SHOWN         Candidates, positions, clients and intakes with type label, client context, and current state in
+                       each result row.
+    ACTIONS            Keyboard open, arrow navigation, enter to open; recent searches for the session.
+    TRIGGER / LOGIC    Server-side search respecting the caller's permissions; results capped and grouped by type;
+                       test records excluded unless the toggle is on.
+    STATES             Loading: inline spinner in the panel. Empty: 'No matches for '. Error: 'Search unavailable' with
+                       Retry, never silent zero results.
+    ACCEPTANCE         A failed search is visibly distinct from zero results; permissions are enforced server-side.
+    DO NOT BUILD       No natural-language query interpretation, no fuzzy ranking rewrite.
+
+
+
+    26 Saved operational views                                                                       LATER · S
+
+    PROBLEM            Admins re-apply the same filters daily.
+    SCREEN             /admin/positions and /admin/candidates filter bars.
+    DATA SHOWN         From saved_views: view name, owner, filters, whether it is shared with the team, last used.
+    ACTIONS            Save the current filters, rename, share with staff, set as default, delete.
+    TRIGGER / LOGIC    Views store filter state only, never result snapshots, so they always reflect live data.
+    STATES             Loading: skeleton in the dropdown. Empty: 'No saved views yet'. Error: error toast, filters remain
+                       applied.
+    ACCEPTANCE         Reloading with a saved view reproduces the exact filter set; shared views are visible only to
+                       staff.
+    DO NOT BUILD       No auto-created views, no view-level access control beyond staff.
+
+
+
+
+                                                                                                                               14
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                  INTERNAL
+
+
+
+
+    27 Bulk actions with a confirmation preview                                                 NEXT · M
+
+    PROBLEM            Bulk operations are risky because the affected set is not shown before execution.
+    SCREEN             /admin/candidates and /admin/positions bulk action bar.
+    DATA SHOWN         Selected count, a listed sample of affected records, the exact fields that will change, and any
+                       records that will be skipped with the reason.
+    ACTIONS            Preview, confirm, cancel; view the result report after execution.
+    TRIGGER / LOGIC    Two-step commit: server returns a dry-run plan, the UI shows it, then the same plan id is
+                       executed. Partial failures are reported per record.
+    STATES             Loading: progress with a running count. Empty selection: the action bar stays hidden. Error:
+                       per-record failure list plus a Retry for failures only.
+    ACCEPTANCE         No bulk write happens without a shown preview; partial failures never appear as full success.
+    DO NOT BUILD       No irreversible bulk deletes, no bulk client-visibility change without approvals.
+
+
+
+    28 Client access and permission inspector                                                   NOW · M
+
+    PROBLEM            Admins cannot answer 'what can this client user actually see?' without reading policies.
+    SCREEN             /admin/clients/$id — 'Access' tab.
+    DATA SHOWN         Members with role, permissions resolved via default_permissions_for_role and
+                       has_client_permission, seat usage against the plan cap, pending invitations, last sign-in.
+    ACTIONS            Change a role, revoke access, resend an invitation, release a seat.
+    TRIGGER / LOGIC    Permissions are displayed by calling the same functions the policies use, so display and
+                       enforcement cannot drift.
+    STATES             Loading: skeleton. Empty: 'No members yet' with an invite action. Error: error card + Retry.
+    ACCEPTANCE         Displayed permissions match actual behaviour in a spot check; seat caps are enforced
+                       server-side on invite.
+    DO NOT BUILD       No permission editing outside defined roles, no impersonation from this tab.
+
+
+
+
+                                                                                                                            15
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                    INTERNAL
+
+
+
+
+    29 Support session and impersonation audit                                                    NOW · M
+
+    PROBLEM            Staff access to client data needs a visible, reviewable trail.
+    SCREEN             /admin/support — add an audit list.
+    DATA SHOWN         From support_sessions and support_actions: staff member, client, reason, start and end time,
+                       actions taken during the session.
+    ACTIONS            Start a session with a mandatory reason; end a session; review a past session.
+    TRIGGER / LOGIC    Sessions expire automatically after a fixed window; every write performed during a session is
+                       tagged with the session id.
+    STATES             Loading: skeleton. Empty: 'No support sessions in this period'. Error: error card + Retry.
+    ACCEPTANCE         No support access is possible without a reason; every action inside a session is attributable to it;
+                       sessions expire without manual action.
+    DO NOT BUILD       No silent impersonation, no session extension without a new reason.
+
+
+
+    30 Notification delivery failures                                                             NEXT · M
+
+    PROBLEM            Client and candidate notifications fail silently, so people believe they were informed.
+    SCREEN             /admin/notifications — 'Delivery failures' section.
+    DATA SHOWN         From notification_deliveries and lead_notifications: event type, recipient, channel, failure
+                       reason, attempts, first and last attempt time.
+    ACTIONS            Retry a delivery, copy the payload, open the related record, suppress a recipient.
+    TRIGGER / LOGIC    Failure = the final attempt did not succeed. Retries go through the existing send path with the
+                       original payload.
+    STATES             Loading: skeleton. Empty: 'No delivery failures in the last 7 days'. Error: error card + Retry.
+    ACCEPTANCE         Retry does not duplicate a successful send; suppression is respected by subsequent sends.
+    DO NOT BUILD       No new email provider integration, no resend of stale time-sensitive notifications without a
+                       warning.
+
+
+
+
+                                                                                                                              16
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                 INTERNAL
+
+
+
+
+    31 Integration health strip                                                                  NOW · M
+
+    PROBLEM            Calendly, CRM and payment sync failures surface as user complaints rather than alerts.
+    SCREEN             /admin/integrations — a status strip at the top.
+    DATA SHOWN         From integration_health_checks, integration_sync_status, calendly_webhook_events and
+                       crm_submission_queue: last successful sync, last failure, queue depth, oldest unprocessed
+                       item.
+    ACTIONS            Re-run a health check, drain a queue, open the failure detail.
+    TRIGGER / LOGIC    Degraded = last success older than the integration's expected interval, or queue depth above
+                       its threshold. Every state is derived from a real check, never assumed healthy.
+    STATES             Loading: skeleton chips. Empty: not applicable — always show every configured integration.
+                       Error: show the integration as 'Unknown' with the check error, never as healthy.
+    ACCEPTANCE         An unreachable integration never renders green; draining a queue uses the existing worker.
+    DO NOT BUILD       No uptime percentages, no synthetic status colours without a backing check.
+
+
+
+    32 Weekly operating review page                                                              NEXT · M
+
+    PROBLEM            The weekly review is assembled by hand from several screens.
+    SCREEN             /admin/wbr — restructure around decisions rather than metrics.
+    DATA SHOWN         Week over week: intakes received and converted, positions opened and closed, candidates
+                       submitted, client decisions received, hires, SLA breaches, and the list of roles that regressed.
+    ACTIONS            Set the week, export to CSV, open any underlying list.
+    TRIGGER / LOGIC    Weeks are Monday-to-Sunday UTC and fixed once past, so numbers do not change
+                       retroactively except by real data corrections.
+    STATES             Loading: skeleton. Empty: 'No activity in this week'. Error: error card + Retry.
+    ACCEPTANCE         Two loads of the same past week return identical numbers; every figure drills through to its
+                       records.
+    DO NOT BUILD       No narrative commentary, no targets invented by the system.
+
+
+
+
+                                                                                                                           17
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                   INTERNAL
+
+
+
+
+    33 Account-level operating view per client                                                  NEXT · M
+
+    PROBLEM            Client account reviews need one page that covers commercial and delivery state together.
+    SCREEN             /admin/clients/$id — a top summary section.
+    DATA SHOWN         Plan and subscription state, seats used, open and filled roles, candidates in pipeline, decisions
+                       pending, SLA breaches, last update sent, open support sessions, last payment state.
+    ACTIONS            Open any linked area; start an update readiness check; open the access tab.
+    TRIGGER / LOGIC    Read-only aggregation from existing tables; nothing is stored specifically for this page.
+    STATES             Loading: skeleton. Empty: 'This account has no activity yet'. Error: per-block error, so one
+                       failing block does not blank the page.
+    ACCEPTANCE         Figures match their source screens exactly; blocks fail independently.
+    DO NOT BUILD       No health score, no churn-risk prediction.
+
+
+
+    34 Position ownership and coverage rules                                                    NEXT · S
+
+    PROBLEM            Roles lose their owner when staff change and nothing reassigns them.
+    SCREEN             /admin/positions and /admin/team.
+    DATA SHOWN         Owner, backup owner, date assigned, and any open role with an inactive owner.
+    ACTIONS            Assign owner and backup; bulk reassign all roles from one recruiter to another with a preview.
+    TRIGGER / LOGIC    Deactivating a staff member flags their open roles for reassignment instead of silently
+                       orphaning them.
+    STATES             Loading: skeleton. Empty: 'All open roles have an active owner'. Error: error card + Retry.
+    ACCEPTANCE         Deactivation produces a visible reassignment queue; bulk reassign shows a preview and writes
+                       audit events.
+    DO NOT BUILD       No round-robin auto-assignment, no capacity-based auto-balancing.
+
+
+
+    35 Candidate next-action clarity                                                            NOW · M
+
+    PROBLEM            Opening a candidate does not tell the recruiter what the single next step is.
+    SCREEN             /admin/candidates/$id — a next-action bar under the header.
+    DATA SHOWN         Current stage, who owns the next step (us or the client), what that step is, how long it has been
+                       waiting, and the action button for it.
+    ACTIONS            Perform the next action directly; reassign the step; add a blocking note.
+    TRIGGER / LOGIC    Derived from stage plus the presence or absence of the expected next record (scorecard,
+                       decision, submission). If the state is ambiguous, say so rather than guessing.
+    STATES             Loading: skeleton bar. Empty: 'No action required'. Error: error card + Retry.
+    ACCEPTANCE         The bar's action always matches the pipeline state; ambiguity is stated explicitly rather than
+                       resolved by guessing.
+    DO NOT BUILD       No AI recommendation, no confidence percentage.
+
+
+
+
+                                                                                                                             18
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                   INTERNAL
+
+
+
+
+    36 Rejection and decline reason capture                                                     NEXT · S
+
+    PROBLEM            Rejection reasons are inconsistent, so patterns cannot be reviewed.
+    SCREEN             Every reject action in admin, and /admin/candidates filters.
+    DATA SHOWN         From client_decisions and score_decisions: a controlled reason list, free-text detail, who
+                       decided, stage at decision.
+    ACTIONS            Reject with a required reason; filter candidates by reason; view reason counts per position.
+    TRIGGER / LOGIC    The reason list is a shared constant used by both admin and client surfaces so the vocabulary
+                       matches.
+    STATES             Loading: skeleton. Empty: 'No rejections recorded'. Error: keep the dialog open and show the
+                       failure.
+    ACCEPTANCE         No rejection can be saved without a reason; reason counts reconcile with the decision rows.
+    DO NOT BUILD       No automatic reason inference, no rejection without attribution.
+
+
+
+    37 Time-to-milestone reporting                                                              NEXT · M
+
+    PROBLEM            Delivery speed claims cannot be verified against real timings.
+    SCREEN             /admin/operations — 'Timing' section, using v_time_to_hire.
+    DATA SHOWN         Median and interquartile days for: intake to first submission, submission to client decision,
+                       decision to interview, interview to offer, offer to start. Segmented by client and role family
+                       where volume allows.
+    ACTIONS            Change the period; drill into the underlying roles.
+    TRIGGER / LOGIC    Show medians only where at least 5 completed instances exist; otherwise state the sample is
+                       too small.
+    STATES             Loading: skeleton. Empty: 'Not enough completed roles to report timing'. Error: error card +
+                       Retry.
+    ACCEPTANCE         Every figure names its sample size; low-sample segments are suppressed, not shown with a
+                       caveat in small print.
+    DO NOT BUILD       No averages without sample size, no external benchmarks.
+
+
+
+
+                                                                                                                             19
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                 INTERNAL
+
+
+
+
+    38 Exception digest for the admin shell                                                      NOW · S
+
+    PROBLEM            Critical exceptions live on pages that nobody opens until something breaks.
+    SCREEN             Admin shell — a persistent exception counter in the header.
+    DATA SHOWN         Counts of: SLA breaches, processing exceptions, integration degradations, approvals pending,
+                       delivery failures. Each with a link to its screen.
+    ACTIONS            Open the relevant screen; dismiss for the session only.
+    TRIGGER / LOGIC    Refreshed on a fixed interval and on navigation. Counts come from the same queries as the
+                       source screens.
+    STATES             Loading: neutral placeholder, never a zero. Empty: a plain 'All clear' state. Error: 'Status
+                       unavailable' rather than zero counts.
+    ACCEPTANCE         A failed fetch never renders as zero exceptions; counts match their source pages.
+    DO NOT BUILD       No toast storms, no browser notifications, no sound.
+
+
+
+    39 Test and internal record isolation everywhere                                             NOW · S
+
+    PROBLEM            QA and internal records distort operational counts.
+    SCREEN             Every admin list and rollup.
+    DATA SHOWN         is_test_record on organizations and positions, plus the existing admin test-scope helper.
+    ACTIONS            A single global 'Show test records' toggle, persisted per user.
+    TRIGGER / LOGIC    Test exclusion is applied server-side in one shared helper used by every admin query, not per
+                       screen.
+    STATES             Loading: unchanged. Empty: state whether test records are hidden and how many were
+                       excluded. Error: fail closed by excluding test records.
+    ACCEPTANCE         Turning the toggle off changes every count consistently; no screen silently includes test data.
+    DO NOT BUILD       No per-screen toggles, no test data on client-facing surfaces under any condition.
+
+
+
+
+                                                                                                                           20
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                                 INTERNAL
+
+
+
+
+    40 Export with permission and audit controls                                               NEXT · M
+
+    PROBLEM            Ad-hoc exports of candidate data are a privacy exposure with no record.
+    SCREEN             Admin list screens — a single export control.
+    DATA SHOWN         From export_jobs: requester, scope, filters, row count, whether contact details were included,
+                       timestamp.
+    ACTIONS            Request an export, download once ready, review past exports.
+    TRIGGER / LOGIC    Contact details are included only if the requester holds the contact-release permission for
+                       every row in scope; otherwise those columns are omitted and the omission is stated in the file
+                       header.
+    STATES             Loading: queued and processing states with a real job id. Empty: 'No exports yet'. Error: failure
+                       reason with Retry.
+    ACCEPTANCE         Exports never contain contact data the requester cannot access in the UI; every export is
+                       recorded.
+    DO NOT BUILD       No unlimited-scope exports, no direct client-side CSV generation from raw rows.
+
+
+
+
+                                                                                                                           21
+TAASFLOW ADMIN COMMAND CENTER     ·   BUILD PROMPT PACK                                                    INTERNAL
+
+
+
+
+03 — TOP TEN, IN ORDER
+
+
+Implement these first
+01 Exception digest in the admin shell
+Nothing else matters if failures stay invisible. It is small and it makes every later item discoverable.
+
+02 Test and internal record isolation everywhere
+Every count below is wrong until this is enforced in one shared server helper.
+
+03 Jobs needing attention queue
+The single highest-value screen: names today's at-risk roles with a derived reason.
+
+04 Portfolio rollup with account health bands
+Turns the landing page from totals into a triage list across accounts.
+
+05 Stage-aging board for open pipelines
+Makes the core recruiting signal — time in stage — visible where work happens.
+
+06 SLA breach and exception panel
+Converts existing commitments into an accountable, acknowledgeable list.
+
+07 Approvals inbox for client-visible actions
+Consolidates the riskiest actions behind one reviewed, audited surface.
+
+08 Processing pipeline exception board
+Protects the candidate flow that quietly breaks delivery when it stalls.
+
+09 Candidate next-action clarity
+Removes the per-candidate guesswork that slows every recruiter all day.
+
+10 Client access and permission inspector
+Answers the access question with the same functions the policies enforce.
+
+
+04 — REQUIRED DATA FIELDS AND PRODUCT EVENTS
+
+
+What must exist before the queues are trustworthy
+Fields to add or backfill
+— positions: owner_user_id, backup_owner_user_id, publish_ready_at, attention_reviewed_at.
+— organizations: is_test_record enforced everywhere; last_client_update_sent_at.
+— candidate_matches: submitted_to_client_at, client_decision_due_at, current_stage_entered_at (denormalised
+   from stage history for cheap aging queries).
+— client_decisions: reason_code from a shared constant list; recorded_by_staff boolean plus recorded_by_user_id
+   for offline decisions.
+— candidate_notes / internal_notes: note_type, client_shareable, revision_of.
+— interviews: confirmed_at, reschedule_count.
+— hire_records: start_date_confirmed, guarantee_ends_on (derived).
+— export_jobs: included_contact_details, requested_scope_hash.
+— support_sessions: reason, expires_at, and a session id stamped on every write made during the session.
+Product events to emit (one shared emitter, written to audit_events)
+— intake.submitted · intake.assigned · intake.converted · intake.declined
+
+
+                                                                                                                22
+TAASFLOW ADMIN COMMAND CENTER   ·    BUILD PROMPT PACK                                                                        INTERNAL
+
+
+
+
+— position.created · position.published · position.publish_blocked · position.owner_changed · position.closed
+— candidate.applied · candidate.processed · candidate.processing_failed · candidate.scored ·
+  candidate.evidence_overridden
+— candidate.stage_changed (from, to, actor, reason) · candidate.submitted_to_client · candidate.rejected
+  (reason_code)
+— client.decision_recorded · client.contact_released · client.update_sent · client.nudged
+— approval.requested · approval.granted · approval.declined
+— sla.breached · sla.acknowledged
+— outreach.sent · outreach.bounced · outreach.replied · outreach.opted_out · outreach.blocked_by_suppression
+— integration.sync_failed · notification.delivery_failed · export.requested · support.session_started
+
+05 — SMALLEST VIABLE RELEASE PLAN
+
+
+Four releases, each usable on its own
+            RELEASE                 CONTENTS                                                     PROMPTS          WINDOW
+
+
+      R1    Make failures           Exception digest · test-record isolation ·                   Prompts 37,      Week 1
+            visible                 publish/payment gate reasons · suppression                   38, 24, 15
+
+                                    enforcement
+
+
+      R2    One work queue          Jobs needing attention · portfolio health bands · intake     Prompts 2, 1,    Weeks 2-3
+                                    aging · stage aging                                          11, 3
+
+
+
+      R3    Accountability          SLA breaches · approvals inbox · candidate audit             Prompts 6, 16,   Weeks 4-5
+                                    timeline · access inspector · support audit                  17, 28, 29
+
+
+
+      R4    Throughput and          Processing exceptions · next-action bar · scoring triage ·   Prompts 10,      Weeks 6-8
+            quality                 evidence gate · client update readiness                      34, 8, 9, 19
+
+
+
+Each release ships behind a staff-only route flag, is reviewed against the regression checklist below, and is
+dark-launched for one working day with real data before the sidebar link appears.
+
+
+
+
+                                                                                                                                   23
+TAASFLOW ADMIN COMMAND CENTER   ·   BUILD PROMPT PACK                                                           INTERNAL
+
+
+
+
+06 — REGRESSION CHECKLIST
+
+
+Run before every release in this pack
+LIVE JOBS
+[ ] The public job board shows every genuinely open, published, non-test role and nothing else.
+
+[ ] No test fixture or internal role appears on /jobs, in the sitemap, or in any public search result.
+
+[ ] Applications submitted during the release window are processed and scored; the processing queue drains to
+   zero.
+[ ] No open position changes owner, publish state or payment state as a side effect of a deploy.
+
+CLIENT ACCESS
+[ ] A client user sees only their own organisation's positions, candidates and conversations.
+
+[ ] Candidates remain invisible to a client until approved for that client and role; contact details remain withheld
+   until separately released.
+[ ] No raw score, internal note or non-shareable evidence appears on any client surface.
+
+[ ] Seat caps still enforce on invite; no client user gains a capability they did not previously hold.
+
+PERMISSIONS
+[ ] Run the existing authz test suite; every SECURITY DEFINER function keeps its fixed search_path and its
+   EXECUTE revoked from anon and public.
+[ ] New admin routes are unreachable for client and candidate roles, verified by request, not by hidden navigation.
+
+[ ] Every new write path has an RLS policy and an explicit GRANT; nothing relies on default privileges.
+
+[ ] Support access still requires a reason and still expires automatically.
+
+INTEGRATIONS AND DELIVERY
+[ ] Calendly booking, CRM submission and payment webhooks each complete one real round trip.
+
+[ ] Notification and email sends still succeed from the verified sending domain; suppression lists are respected.
+
+[ ] Scheduled workers still run on their interval; no duplicate job claims after the release.
+
+DATA INTEGRITY
+[ ] Score runs, rubric versions and stage history remain immutable — attempted edits fail.
+
+[ ] No migration drops or rewrites production rows; every change is additive with a documented rollback.
+
+[ ] Counts on the new queues reconcile with their source screens on a spot check of three accounts.
+
+
+
+
+                                                                                                                       24
+

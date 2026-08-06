@@ -58,7 +58,11 @@ export async function loadTestScope(
   includeTest?: boolean | "never",
 ): Promise<TestScope> {
   const effective =
-    includeTest === "never" ? false : includeTest === true ? true : await resolveShowTestRecords();
+    includeTest === "never"
+      ? false
+      : includeTest === true
+        ? true
+        : await resolveShowTestRecordsForCaller(s);
   if (effective) {
     return { includeTest: true, orgIds: [], positionIds: [], excludedOrgs: 0, excludedPositions: 0 };
   }
@@ -181,6 +185,23 @@ export async function resolveShowTestRecordsForUser(
   } catch (e) {
     console.error("[test-scope] profile preference read failed; excluding test records", e);
     return false;
+  }
+  return resolveShowTestRecords();
+}
+
+/**
+ * The single resolution path used by every shared loader: the caller's profile
+ * row decides, and the cookie is only a fallback when no session can be read.
+ * Two readers therefore never disagree, which is what makes "turning the
+ * toggle off changes every count" true rather than eventually true.
+ */
+export async function resolveShowTestRecordsForCaller(s: Any): Promise<boolean> {
+  try {
+    const { data } = await s.auth.getUser();
+    const userId = data?.user?.id as string | undefined;
+    if (userId) return resolveShowTestRecordsForUser(s, userId);
+  } catch {
+    // No readable session (service-role client): fall through to the cookie.
   }
   return resolveShowTestRecords();
 }

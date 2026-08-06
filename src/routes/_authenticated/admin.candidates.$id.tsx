@@ -73,6 +73,7 @@ import {
 } from "@/lib/scoring/approve-failure";
 import { CandidateHistoryTimeline } from "@/components/admin/candidate-history-timeline";
 import { CandidateNextActionBar } from "@/components/admin/candidate-next-action-bar";
+import { ContactStatusBadges } from "@/components/admin/contact-status-badges";
 
 
 
@@ -192,6 +193,12 @@ function CandidateWorkspace() {
       />
 
       <CandidateNextActionBar matchId={id} onNavigateTab={(t) => setTab(t as TabId)} />
+
+      {/* Mirrors the database's contact decision. Explains, never gates. */}
+      <ContactStatusBadges
+        organizationId={m.organization_id}
+        candidateProfileId={cp?.id}
+      />
 
 
 
