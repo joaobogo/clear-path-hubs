@@ -284,6 +284,11 @@ export type ClientCandidateDTO = {
    * the band instead of a numeric score.
    */
   evidence_support: { supported: number; total: number };
+  /**
+   * A person reviewed this assessment by hand. Clients see the fact and the
+   * count of hand-verified requirements — never the reviewer's internal note.
+   */
+  human_review: { reviewed: boolean; verified_requirements: number; statement: string | null };
   interview_guide: InterviewQuestion[];
   evidence: Array<{ label: string; snippet: string }>;
   experience: Array<{ title: string; company: string | null; period: string | null; description: string | null }>;
