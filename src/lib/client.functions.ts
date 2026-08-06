@@ -933,7 +933,7 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     if (!position) return null;
 
     // Client-visible candidates only. Wrong-tenant / unpublished filtered at source.
-    const { data: matches } = await context.supabase
+    const { data: rawMatches } = await context.supabase
       .from("candidate_matches")
       .select(
         `id, stage, admin_status, delivered_at, approved_score_run_id, candidate_profile_id,
@@ -944,6 +944,7 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       .eq("position_id", data.positionId)
       .eq("client_visibility", "visible")
       .order("delivered_at", { ascending: false });
+    const matches = await hydrateClientCandidateProfiles(rawMatches as AnyRow[]);
 
     // Recent activity — sanitized safe audit trail for this position.
     // Filter out internal admin_note / scoring_weight / score_run.* actions.
