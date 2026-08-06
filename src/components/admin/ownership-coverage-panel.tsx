@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/select";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { ArrowUpRight, AlertTriangle } from "lucide-react";
+import { useScopedIncludeTest } from "@/lib/admin-scope";
 
 const NONE = "__none__";
 
@@ -50,10 +51,11 @@ function fmtDate(iso: string | null): string {
 }
 
 export function OwnershipCoveragePanel({
-  includeTest = false,
+  includeTest: explicit,
 }: {
   includeTest?: boolean;
 }) {
+  const includeTest = useScopedIncludeTest(explicit);
   const load = useServerFn(getCoverageQueue);
   const [showAll, setShowAll] = useState(false);
 

@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { toast } from "sonner";
 import { AlarmClock, MailWarning } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -45,7 +46,8 @@ function OutcomeSla() {
   const fetchRows = useServerFn(listOutcomeBreaches);
   const sendNotices = useServerFn(sendPendingOutcomeNotices);
   const queryClient = useQueryClient();
-  const [showTest, setShowTest] = useState(false);
+  // One global scope, set on the admin layout.
+  const showTest = useIncludeTestRecords();
 
   const query = useQuery({
     queryKey: ["admin", "outcome-sla", showTest],
@@ -80,13 +82,6 @@ function OutcomeSla() {
       </header>
 
       <div className="flex flex-wrap items-center gap-3">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowTest((v) => !v)}
-        >
-          {showTest ? "Hide test records" : "Include test records"}
-        </Button>
         <Button size="sm" disabled={send.isPending} onClick={() => send.mutate()}>
           {send.isPending ? "Sending…" : "Send outstanding outcome notices"}
         </Button>

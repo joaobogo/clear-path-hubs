@@ -15,6 +15,7 @@ import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { PaymentExemptionDialog } from "@/components/admin/payment-exemption-dialog";
 import { CheckCircle2, Lock, PencilLine } from "lucide-react";
 import { toast } from "sonner";
+import { useScopedIncludeTest } from "@/lib/admin-scope";
 
 function fmtDate(iso: string | null) {
   if (!iso) return "—";
@@ -52,7 +53,8 @@ function BlockerChip({ blocker, positionId }: { blocker: PublishBlocker; positio
  * the payment check: the only way past it is a real payment or an audited
  * exemption granted through the existing exempt function.
  */
-export function PublishGatePanel({ includeTest = false }: { includeTest?: boolean }) {
+export function PublishGatePanel({ includeTest: explicit }: { includeTest?: boolean } = {}) {
+  const includeTest = useScopedIncludeTest(explicit);
   const qc = useQueryClient();
   const [busy, setBusy] = useState<string | null>(null);
   const fetchQueue = useServerFn(getPublishGateQueue);

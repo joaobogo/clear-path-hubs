@@ -1,3 +1,4 @@
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -37,7 +38,6 @@ const searchSchema = z.object({
   sort: fallback(z.string(), "updated_desc").default("updated_desc"),
   page: fallback(z.number().int(), 1).default(1),
   tab: fallback(z.enum(["all", "attention"]), "all").default("all"),
-  show_test: fallback(z.boolean(), false).default(false),
 });
 
 
@@ -90,6 +90,9 @@ type Row = {
 function PositionsPage() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
+  // Admin-wide scope from the layout: the overview count and this list read the
+  // same set of organisations.
+  const includeTest = useIncludeTestRecords();
 
   const list = useServerFn(listPositions);
   const filtersFn = useServerFn(listPositionFilters);
@@ -129,7 +132,7 @@ function PositionsPage() {
         location: search.location,
         sort: search.sort,
         page: search.page,
-        show_test: search.show_test,
+        show_test: includeTest,
       },
     ],
     queryFn: () =>
@@ -143,7 +146,7 @@ function PositionsPage() {
           sort: search.sort as never,
           page: search.page,
           page_size: PAGE_SIZE,
-          include_test: search.show_test || undefined,
+          include_test: includeTest || undefined,
         },
       }),
     placeholderData: (prev) => prev,
@@ -197,13 +200,7 @@ function PositionsPage() {
             {!listQuery.isLoading && !listQuery.isError && hiddenTest > 0 && (
               <>
                 {" · "}
-                <button
-                  type="button"
-                  className="underline underline-offset-2"
-                  onClick={() => setSearch({ show_test: true, page: 1 })}
-                >
-                  {hiddenTest.toLocaleString()} hidden as test/internal — show all
-                </button>
+                <span>{hiddenTest.toLocaleString()} hidden as test/internal</span>
               </>
             )}
 
@@ -257,29 +254,18 @@ function PositionsPage() {
             {label}
           </button>
         ))}
-        <label className="ml-auto flex items-center gap-2 py-2 text-xs text-muted-foreground">
-          <input
-            type="checkbox"
-            className="h-3.5 w-3.5"
-            checked={search.show_test}
-            onChange={(e) =>
-              setSearch({ show_test: e.target.checked || undefined, page: 1 })
-            }
-          />
-          Show test records
-        </label>
 
       </div>
 
       {search.tab === "attention" ? (
         <>
-          <OwnershipCoveragePanel includeTest={search.show_test} />
-          <PositionsAttentionQueue includeTest={search.show_test} />
+          <OwnershipCoveragePanel includeTest={includeTest} />
+          <PositionsAttentionQueue includeTest={includeTest} />
         </>
       ) : (
       <>
-      <OwnershipCoveragePanel includeTest={search.show_test} />
-      <PublishGatePanel includeTest={search.show_test} />
+      <OwnershipCoveragePanel includeTest={includeTest} />
+      <PublishGatePanel includeTest={includeTest} />
 
       <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-card p-3">
 

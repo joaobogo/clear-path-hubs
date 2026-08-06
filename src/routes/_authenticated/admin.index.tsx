@@ -4,7 +4,7 @@ import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { ActivityFeed, ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
 import { getAdminWorkQueues } from "@/lib/admin-ops.functions";
-import { useTestScopeState } from "@/components/admin/test-records-toggle";
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { PortfolioHealthTable } from "@/components/admin/portfolio-health-table";
 import { DecisionBacklogPanel } from "@/components/admin/decision-backlog-panel";
 import { OfferHireRollupPanel } from "@/components/admin/offer-hire-panel";
@@ -28,10 +28,13 @@ import type { ComponentType } from "react";
 const WORK_QUEUES_KEY = ["admin", "work-queues"] as const;
 
 export const Route = createFileRoute("/_authenticated/admin/")({
+  // The layout resolved the scope in beforeLoad, so the prefetch primes exactly
+  // the key the component subscribes to.
   loader: ({ context }) =>
     context.queryClient.ensureQueryData({
-      queryKey: WORK_QUEUES_KEY,
-      queryFn: () => getAdminWorkQueues({ data: {} }),
+      queryKey: [...WORK_QUEUES_KEY, context.testScope.includeTest],
+      queryFn: () =>
+        getAdminWorkQueues({ data: { include_test: context.testScope.includeTest } }),
     }),
   head: () => ({
     meta: [
@@ -59,12 +62,13 @@ function Overview() {
   const router = useRouter();
   // Test scope is a per-user preference owned by the admin layout toggle, not a
   // URL flag, so every desk inherits the same view.
-  const scope = useTestScopeState();
-  const showTest = scope.data?.show_test_records === true;
+  const showTest = useIncludeTestRecords();
 
   const { data, isFetching } = useSuspenseQuery({
-    queryKey: WORK_QUEUES_KEY,
-    queryFn: () => getAdminWorkQueues({ data: {} }),
+    // Scope belongs in the key so the counts here always match the desk each
+    // row links to.
+    queryKey: [...WORK_QUEUES_KEY, showTest],
+    queryFn: () => getAdminWorkQueues({ data: { include_test: showTest } }),
     refetchOnWindowFocus: true,
     staleTime: 30_000,
   });

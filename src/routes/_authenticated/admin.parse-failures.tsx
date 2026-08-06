@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { toast } from "sonner";
 import { FileWarning, ScanLine, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -50,11 +51,14 @@ function ParseFailures() {
   const paste = useServerFn(pasteCvText);
   const offline = useServerFn(markParseReviewedOffline);
 
-  const [showTest, setShowTest] = useState(false);
   const [openRow, setOpenRow] = useState<string | null>(null);
   const [mode, setMode] = useState<"reupload" | "paste" | "offline" | null>(null);
   const [draft, setDraft] = useState("");
   const [busy, setBusy] = useState(false);
+
+  // Scope comes from the admin layout, so this desk can never disagree with
+  // the count that linked here.
+  const showTest = useIncludeTestRecords();
 
   const query = useQuery({
     queryKey: ["admin", "parse-failures", showTest],
@@ -104,15 +108,6 @@ function ParseFailures() {
             here retries on its own.
           </p>
         </div>
-        <label className="flex items-center gap-2 text-xs text-muted-foreground">
-          <input
-            type="checkbox"
-            checked={showTest}
-            onChange={(e) => setShowTest(e.target.checked)}
-            className="h-3.5 w-3.5"
-          />
-          Show test records
-        </label>
       </header>
 
       {query.isError && (

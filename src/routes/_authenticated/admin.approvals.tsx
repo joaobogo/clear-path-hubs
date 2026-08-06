@@ -1,16 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
-import { z } from "zod";
 import { ApprovalsInbox } from "@/components/admin/approvals-inbox";
-import { TestRecordsToggle } from "@/components/admin/TestRecordsToggle";
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 
-const searchSchema = z.object({
-  show_test: fallback(z.boolean(), false).default(false),
-});
-
 export const Route = createFileRoute("/_authenticated/admin/approvals")({
-  validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [
       { title: "Approvals · TaaSFlow admin" },
@@ -30,8 +23,8 @@ export const Route = createFileRoute("/_authenticated/admin/approvals")({
 });
 
 function ApprovalsPage() {
-  const { show_test } = Route.useSearch();
-  const navigate = Route.useNavigate();
+  // One admin-wide scope, owned by the layout toggle.
+  const includeTest = useIncludeTestRecords();
 
   return (
     <div className="space-y-6 p-6">
@@ -43,14 +36,8 @@ function ApprovalsPage() {
             gates and write the same audit trail.
           </p>
         </div>
-        <TestRecordsToggle
-          checked={show_test}
-          onChange={(next: boolean) =>
-            void navigate({ search: () => ({ show_test: next }) })
-          }
-        />
       </header>
-      <ApprovalsInbox includeTest={show_test} />
+      <ApprovalsInbox includeTest={includeTest} />
     </div>
   );
 }

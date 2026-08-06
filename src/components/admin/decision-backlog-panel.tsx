@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/select";
 import { AlertTriangle, BellRing, Loader2, RefreshCw } from "lucide-react";
 import { TestScopeEmptyNote } from "@/components/admin/test-records-toggle";
+import { useScopedIncludeTest } from "@/lib/admin-scope";
 
 type Backlog = Awaited<ReturnType<typeof getDecisionBacklog>>;
 type Row = Backlog["rows"][number];
@@ -43,7 +44,7 @@ function fmt(iso: string | null): string {
 
 export function DecisionBacklogPanel({
   organizationId,
-  includeTest = false,
+  includeTest: explicit,
   showClientColumn = false,
   className,
 }: {
@@ -52,6 +53,7 @@ export function DecisionBacklogPanel({
   showClientColumn?: boolean;
   className?: string;
 }) {
+  const includeTest = useScopedIncludeTest(explicit);
   const qc = useQueryClient();
   const queryKey = ["admin", "decision-backlog", organizationId ?? "all", includeTest] as const;
   const query = useQuery<Backlog>({

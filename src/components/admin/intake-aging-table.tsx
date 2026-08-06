@@ -35,6 +35,7 @@ import {
 import { ArrowRight, Loader2, RefreshCw, Undo2 } from "lucide-react";
 import { TestScopeEmptyNote } from "@/components/admin/test-records-toggle";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
+import { useScopedIncludeTest } from "@/lib/admin-scope";
 
 type AgingTable = Awaited<ReturnType<typeof getIntakeAging>>;
 type Row = AgingTable["rows"][number];
@@ -66,7 +67,8 @@ function ageLabel(days: number): string {
   return days === 1 ? "1 day" : `${days} days`;
 }
 
-export function IntakeAgingTable({ includeTest = false }: { includeTest?: boolean }) {
+export function IntakeAgingTable({ includeTest: explicit }: { includeTest?: boolean } = {}) {
+  const includeTest = useScopedIncludeTest(explicit);
   const qc = useQueryClient();
   const [filter, setFilter] = useState<IntakeAgingFilter>("all");
   const [showClosed, setShowClosed] = useState(false);

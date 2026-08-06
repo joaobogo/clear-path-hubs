@@ -31,6 +31,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle, Check, Loader2, RefreshCw, X } from "lucide-react";
+import { useScopedIncludeTest } from "@/lib/admin-scope";
 
 function TierBadge({ days }: { days: number }) {
   const tier = ageTier(days);
@@ -180,7 +181,8 @@ function Row({
   );
 }
 
-export function ApprovalsInbox({ includeTest = false }: { includeTest?: boolean }) {
+export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolean } = {}) {
+  const includeTest = useScopedIncludeTest(explicit);
   const qc = useQueryClient();
   const queryKey = ["admin", "approvals", includeTest] as const;
   const query = useQuery<ApprovalsPayload>({

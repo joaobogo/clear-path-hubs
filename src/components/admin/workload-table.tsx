@@ -33,13 +33,16 @@ import { ErrorState } from "@/components/ds";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { ArrowUpRight, ChevronDown, ChevronRight } from "lucide-react";
 import { TestScopeEmptyNote } from "@/components/admin/test-records-toggle";
+import { useScopedIncludeTest } from "@/lib/admin-scope";
 
 const UNASSIGNED = "__unassigned__";
 
 type Workload = Awaited<ReturnType<typeof getRecruiterWorkload>>;
 type Row = Workload["rows"][number];
 
-export function WorkloadTable({ includeTest = false }: { includeTest?: boolean }) {
+export function WorkloadTable({ includeTest: explicit }: { includeTest?: boolean } = {}) {
+  // Falls back to the admin-wide scope instead of a hardcoded false.
+  const includeTest = useScopedIncludeTest(explicit);
   const load = useServerFn(getRecruiterWorkload);
   const [open, setOpen] = useState<string | null>(null);
 
@@ -180,7 +183,7 @@ function WorkloadRowView({
           <Button asChild size="sm" variant="outline">
             <Link
               to="/admin/positions"
-              search={{ owner: row.is_unassigned ? UNASSIGNED : row.key, show_test: includeTest }}
+              search={{ owner: row.is_unassigned ? UNASSIGNED : row.key }}
             >
               Positions <ArrowUpRight className="ml-1 h-3.5 w-3.5" aria-hidden />
             </Link>

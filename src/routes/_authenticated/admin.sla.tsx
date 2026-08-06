@@ -1,19 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
-import { z } from "zod";
 import { getSlaBreaches } from "@/lib/admin-sla-breach.functions";
 import { SlaBreachPanel } from "@/components/admin/sla-breach-panel";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
-import { TestRecordsToggle } from "@/components/admin/TestRecordsToggle";
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const searchSchema = z.object({
-  show_test: fallback(z.boolean(), false).default(false),
-});
-
 export const Route = createFileRoute("/_authenticated/admin/sla")({
-  validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [
       { title: "SLA breaches · TaaSFlow admin" },
@@ -44,8 +37,7 @@ const DEFINITIONS = [
 ];
 
 function SlaBreachPage() {
-  const { show_test } = Route.useSearch();
-  const navigate = Route.useNavigate();
+  const show_test = useIncludeTestRecords();
   const queryKey = ["admin-sla-breaches", show_test] as const;
   const query = useQuery({
     queryKey,
@@ -66,10 +58,6 @@ function SlaBreachPage() {
               : "Test and internal organizations are hidden."}
           </p>
         </div>
-        <TestRecordsToggle
-          checked={show_test}
-          onChange={(next) => navigate({ search: { show_test: next }, replace: true })}
-        />
       </header>
 
       <SlaBreachPanel

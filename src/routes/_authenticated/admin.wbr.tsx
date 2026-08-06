@@ -2,6 +2,7 @@ import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { useState } from "react";
 import { toast } from "sonner";
 import { getWeeklyOperatingReview } from "@/lib/wbr-review.functions";
@@ -43,7 +44,6 @@ export const Route = createFileRoute("/_authenticated/admin/wbr")({
     week: /^\d{4}-\d{2}-\d{2}$/.test(String(raw.week ?? ""))
       ? String(raw.week)
       : mondayOf(new Date()),
-    include_test: raw.include_test === true || raw.include_test === "true",
   }),
   errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.wbr.tsx"),
   head: () => ({
@@ -188,11 +188,14 @@ function WbrPage() {
   const navigate = Route.useNavigate();
   const fetchReview = useServerFn(getWeeklyOperatingReview);
 
+  // Scope is admin-wide, so a week's figures match every other desk.
+  const includeTest = useIncludeTestRecords();
+
   const query = useQuery({
-    queryKey: ["wbr-review", search.week, search.include_test],
+    queryKey: ["wbr-review", search.week, includeTest],
     queryFn: () =>
       fetchReview({
-        data: { week_start: search.week, include_test: search.include_test },
+        data: { week_start: search.week, include_test: includeTest },
       }) as Promise<WeeklyReview>,
     staleTime: 60_000,
   });
@@ -257,13 +260,6 @@ function WbrPage() {
             onClick={() => navigate({ search: { ...search, week: thisWeek } })}
           >
             This week
-          </Button>
-          <Button
-            variant={search.include_test ? "secondary" : "outline"}
-            size="sm"
-            onClick={() => navigate({ search: { ...search, include_test: !search.include_test } })}
-          >
-            {search.include_test ? "Hide test records" : "Show test records"}
           </Button>
           <Button variant="outline" size="sm" onClick={downloadCsv} disabled={!review}>
             <Download className="mr-1 h-4 w-4" />
