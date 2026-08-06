@@ -13,6 +13,7 @@ import {
   canAccessArea,
   type WorkspaceArea,
 } from "@/lib/collaborator-roles";
+import { readWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 // The authenticated Supabase client injected by `requireSupabaseAuth`.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,16 +25,8 @@ export async function readWorkspaceRole(
   userId: string,
   orgId: string,
 ): Promise<string | null> {
-  const { data: staff } = await db.rpc("is_platform_staff", { _user: userId });
-  if (staff === true) return "platform_admin";
-  const { data: row } = await db
-    .from("memberships")
-    .select("role")
-    .eq("organization_id", orgId)
-    .eq("user_id", userId)
-    .eq("status", "active")
-    .maybeSingle();
-  return (row?.role as string | undefined) ?? null;
+  const access = await readWorkspaceAccess(db, userId, orgId);
+  return access.isStaff ? "platform_admin" : access.role;
 }
 
 export async function assertWorkspaceArea(
