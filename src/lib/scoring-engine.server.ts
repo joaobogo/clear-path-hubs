@@ -419,7 +419,13 @@ export function scoreCandidate(input: {
       }
     } else if (
       matched.length >=
-      Math.max(cal.met_keyword_floor, Math.ceil(r.keywords.length * cal.met_keyword_ratio))
+      // The floor can never exceed the number of terms the requirement actually
+      // has, otherwise a single-term requirement ("HACCP") could only ever
+      // reach "partial" no matter how clearly the CV evidences it.
+      Math.min(
+        r.keywords.length,
+        Math.max(cal.met_keyword_floor, Math.ceil(r.keywords.length * cal.met_keyword_ratio)),
+      )
     ) {
 
       status = "met";
