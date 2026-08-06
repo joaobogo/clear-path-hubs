@@ -1033,8 +1033,10 @@ export function ActivityAuditTab({
         </ul>
       )}
     </div>
+    </div>
   );
 }
+
 
 // ── Action rail (all lifecycle actions in one place) ───────────────────────
 export function JourneyTab({ matchId }: { matchId: string }) {
