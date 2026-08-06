@@ -138,6 +138,7 @@ import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminParseFailuresRouteImport } from './routes/_authenticated/admin.parse-failures'
 import { Route as AuthenticatedAdminOperationsRouteImport } from './routes/_authenticated/admin.operations'
 import { Route as AuthenticatedAdminNotificationsRouteImport } from './routes/_authenticated/admin.notifications'
+import { Route as AuthenticatedAdminMyDayRouteImport } from './routes/_authenticated/admin.my-day'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
 import { Route as AuthenticatedAdminLeadDeliveryRouteImport } from './routes/_authenticated/admin.lead-delivery'
 import { Route as AuthenticatedAdminIntegrationsRouteImport } from './routes/_authenticated/admin.integrations'
@@ -877,6 +878,11 @@ const AuthenticatedAdminNotificationsRoute =
     path: '/notifications',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminMyDayRoute = AuthenticatedAdminMyDayRouteImport.update({
+  id: '/my-day',
+  path: '/my-day',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminMessagesRoute =
   AuthenticatedAdminMessagesRouteImport.update({
     id: '/messages',
@@ -1297,6 +1303,7 @@ export interface FileRoutesByFullPath {
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
+  '/admin/my-day': typeof AuthenticatedAdminMyDayRoute
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/parse-failures': typeof AuthenticatedAdminParseFailuresRoute
@@ -1478,6 +1485,7 @@ export interface FileRoutesByTo {
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
+  '/admin/my-day': typeof AuthenticatedAdminMyDayRoute
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/admin/parse-failures': typeof AuthenticatedAdminParseFailuresRoute
@@ -1663,6 +1671,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/_authenticated/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
+  '/_authenticated/admin/my-day': typeof AuthenticatedAdminMyDayRoute
   '/_authenticated/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/_authenticated/admin/operations': typeof AuthenticatedAdminOperationsRoute
   '/_authenticated/admin/parse-failures': typeof AuthenticatedAdminParseFailuresRoute
@@ -1852,6 +1861,7 @@ export interface FileRouteTypes {
     | '/admin/integrations'
     | '/admin/lead-delivery'
     | '/admin/messages'
+    | '/admin/my-day'
     | '/admin/notifications'
     | '/admin/operations'
     | '/admin/parse-failures'
@@ -2033,6 +2043,7 @@ export interface FileRouteTypes {
     | '/admin/integrations'
     | '/admin/lead-delivery'
     | '/admin/messages'
+    | '/admin/my-day'
     | '/admin/notifications'
     | '/admin/operations'
     | '/admin/parse-failures'
@@ -2217,6 +2228,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/integrations'
     | '/_authenticated/admin/lead-delivery'
     | '/_authenticated/admin/messages'
+    | '/_authenticated/admin/my-day'
     | '/_authenticated/admin/notifications'
     | '/_authenticated/admin/operations'
     | '/_authenticated/admin/parse-failures'
@@ -3321,6 +3333,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminNotificationsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/my-day': {
+      id: '/_authenticated/admin/my-day'
+      path: '/my-day'
+      fullPath: '/admin/my-day'
+      preLoaderRoute: typeof AuthenticatedAdminMyDayRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/messages': {
       id: '/_authenticated/admin/messages'
       path: '/messages'
@@ -3815,6 +3834,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminIntegrationsRoute: typeof AuthenticatedAdminIntegrationsRoute
   AuthenticatedAdminLeadDeliveryRoute: typeof AuthenticatedAdminLeadDeliveryRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
+  AuthenticatedAdminMyDayRoute: typeof AuthenticatedAdminMyDayRoute
   AuthenticatedAdminNotificationsRoute: typeof AuthenticatedAdminNotificationsRoute
   AuthenticatedAdminOperationsRoute: typeof AuthenticatedAdminOperationsRoute
   AuthenticatedAdminParseFailuresRoute: typeof AuthenticatedAdminParseFailuresRoute
@@ -3856,6 +3876,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminIntegrationsRoute: AuthenticatedAdminIntegrationsRoute,
   AuthenticatedAdminLeadDeliveryRoute: AuthenticatedAdminLeadDeliveryRoute,
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
+  AuthenticatedAdminMyDayRoute: AuthenticatedAdminMyDayRoute,
   AuthenticatedAdminNotificationsRoute: AuthenticatedAdminNotificationsRoute,
   AuthenticatedAdminOperationsRoute: AuthenticatedAdminOperationsRoute,
   AuthenticatedAdminParseFailuresRoute: AuthenticatedAdminParseFailuresRoute,
@@ -4150,13 +4171,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
