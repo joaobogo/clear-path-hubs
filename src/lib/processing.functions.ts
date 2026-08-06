@@ -981,8 +981,8 @@ export const getAdminMatch = createServerFn({ method: "GET" })
         .from("score_runs")
         .select(
           heavy
-            ? "id,score,confidence,status,fit_label,must_have_coverage,preferred_coverage,contradiction_status,explanation,result,completed_at,engine_version,input_hash"
-            : "id,score,confidence,status,fit_label,must_have_coverage,preferred_coverage,contradiction_status,completed_at,engine_version,input_hash",
+            ? "id,score,confidence,evidence_confidence,status,fit_label,must_have_coverage,preferred_coverage,contradiction_status,explanation,result,completed_at,engine_version,input_hash"
+            : "id,score,confidence,evidence_confidence,status,fit_label,must_have_coverage,preferred_coverage,contradiction_status,completed_at,engine_version,input_hash",
         )
         .eq("candidate_match_id", data.id)
         .order("completed_at", { ascending: false }),
@@ -1080,7 +1080,7 @@ export const getMatchHeavyDetail = createServerFn({ method: "GET" })
       supabase
         .from("score_runs")
         .select(
-          "id,score,confidence,status,fit_label,must_have_coverage,preferred_coverage,contradiction_status,explanation,result,completed_at,engine_version,input_hash,rubric_version_id,rubric_versions(label,version_number)",
+          "id,score,confidence,evidence_confidence,status,fit_label,must_have_coverage,preferred_coverage,contradiction_status,explanation,result,completed_at,engine_version,input_hash,rubric_version_id,rubric_versions(label,version_number)",
         )
         .eq("candidate_match_id", data.id)
         .order("completed_at", { ascending: false }),
@@ -1148,7 +1148,7 @@ export const downloadEvidenceRecord = createServerFn({ method: "POST" })
       supabase
         .from("score_runs")
         .select(
-          "id,score,confidence,fit_label,must_have_coverage,contradiction_status,engine_version,completed_at,explanation,rubric_version_id,rubric_versions(label,version_number)",
+          "id,score,confidence,evidence_confidence,fit_label,must_have_coverage,contradiction_status,engine_version,completed_at,explanation,rubric_version_id,rubric_versions(label,version_number)",
         )
         .eq("candidate_match_id", data.id)
         .order("completed_at", { ascending: false }),

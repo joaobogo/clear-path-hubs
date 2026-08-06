@@ -454,6 +454,7 @@ export async function executeScoring(
       .eq("input_hash", raw.input_hash)
       .eq("rubric_version_id", rubricVersionId)
       .eq("status", "completed")
+      .is("superseded_at", null)
       // Earliest wins, so the reused run stays stable across repeat calls.
       .order("completed_at", { ascending: true })
       .limit(1).maybeSingle();
