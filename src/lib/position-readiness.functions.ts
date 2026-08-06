@@ -13,6 +13,9 @@ export type IncompleteRole = {
   gaps: RoleGap[];
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyRow = any;
+
 /**
  * Roles that cannot be approved yet because the brief is missing details.
  * RLS scopes this to the caller's workspaces; the org filter narrows further.
@@ -26,9 +29,8 @@ export const listRolesNeedingDetails = createServerFn({ method: "POST" })
     let query = supabase
       .from("positions")
       .select(
-        "id, title, status, description, location, work_model, employment_type, seniority, must_have_skills, experience, responsibilities, budget_min, budget_max, currency",
+        "id, title, status, description, location, work_model, employment_type, seniority, requirements, compensation, intake_context",
       )
-      .not("status", "in", "(closed,cancelled,filled,archived)")
       .order("created_at", { ascending: false })
       .limit(25);
     if (data.orgId && isUuid(data.orgId)) query = query.eq("organization_id", data.orgId);
@@ -36,14 +38,32 @@ export const listRolesNeedingDetails = createServerFn({ method: "POST" })
     const { data: rows, error } = await query;
     if (error) throw new Error(error.message);
 
+    const closed = new Set(["closed", "cancelled", "filled", "archived"]);
     const roles: IncompleteRole[] = [];
-    for (const row of rows ?? []) {
-      const gaps = roleGaps(row);
+    for (const raw of (rows ?? []) as AnyRow[]) {
+      const status = String(raw.status ?? "");
+      if (closed.has(status)) continue;
+      const comp = (raw.compensation ?? {}) as AnyRow;
+      const ctx = (raw.intake_context ?? {}) as AnyRow;
+      const gaps = roleGaps({
+        title: raw.title,
+        description: raw.description,
+        location: raw.location,
+        work_model: raw.work_model,
+        employment_type: raw.employment_type,
+        seniority: raw.seniority,
+        must_have_skills: Array.isArray(raw.requirements) ? raw.requirements : [],
+        experience: typeof ctx.experience === "string" ? ctx.experience : "",
+        responsibilities: typeof ctx.responsibilities === "string" ? ctx.responsibilities : "",
+        budget_min: comp.budget_min ?? null,
+        budget_max: comp.budget_max ?? null,
+        currency: comp.currency ?? null,
+      });
       if (gaps.length === 0) continue;
       roles.push({
-        positionId: row.id as string,
-        title: (row.title as string) || "Untitled role",
-        status: String(row.status ?? ""),
+        positionId: raw.id as string,
+        title: (raw.title as string) || "Untitled role",
+        status,
         gaps,
       });
     }
