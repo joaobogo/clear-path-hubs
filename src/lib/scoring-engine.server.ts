@@ -108,14 +108,76 @@ function extractKeywordsFromRequirement(text: string): string[] {
   return out.slice(0, 12);
 }
 
-function findSnippet(cv: string, term: string): { snippet: string; location: string } | null {
-  const idx = cv.toLowerCase().indexOf(term.toLowerCase());
+function escapeRe(s: string) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Whole-term match. Prevents substring false positives such as `java` matching
+ * `javascript`, or `go` matching `google`. Terms containing punctuation
+ * (`node.js`, `c++`, `.net`) still match because only alphanumeric neighbours
+ * are rejected.
+ */
+export function findTermMatches(cv: string, term: string): number[] {
+  const t = term.trim().toLowerCase();
+  if (!t) return [];
+  const re = new RegExp(`(^|[^a-z0-9])${escapeRe(t)}([^a-z0-9]|$)`, "gi");
+  const out: number[] = [];
+  let m: RegExpExecArray | null;
+  const lower = cv.toLowerCase();
+  while ((m = re.exec(lower)) !== null) {
+    out.push(m.index + (m[1]?.length ?? 0));
+    re.lastIndex = m.index + Math.max(1, m[0].length - 1);
+    if (out.length >= 5) break;
+  }
+  return out;
+}
+
+const NEGATION_CUES = [
+  "no experience",
+  "not experienced",
+  "no exposure",
+  "no hands-on",
+  "never used",
+  "never worked",
+  "no knowledge",
+  "not familiar",
+  "unfamiliar with",
+  "without any",
+  "without",
+  "lacks",
+  "lack of",
+  "no formal",
+  "limited to no",
+];
+
+/**
+ * True when the mention at `idx` sits inside a negating clause, e.g.
+ * "no experience with Kubernetes". Only the preceding ~70 characters of the
+ * same sentence are considered, so a later positive mention still counts.
+ */
+export function isNegatedMention(cv: string, idx: number): boolean {
+  const lower = cv.toLowerCase();
+  const sentenceStart = Math.max(
+    lower.lastIndexOf(".", idx - 1) + 1,
+    lower.lastIndexOf("\n", idx - 1) + 1,
+    lower.lastIndexOf(";", idx - 1) + 1,
+    idx - 70,
+    0,
+  );
+  const window = lower.slice(sentenceStart, idx);
+  return NEGATION_CUES.some((cue) => window.includes(cue));
+}
+
+function findSnippet(cv: string, term: string, at?: number): { snippet: string; location: string } | null {
+  const idx = at ?? cv.toLowerCase().indexOf(term.toLowerCase());
   if (idx === -1) return null;
   const start = Math.max(0, idx - 80);
   const end = Math.min(cv.length, idx + term.length + 80);
   const snippet = cv.slice(start, end).replace(/\s+/g, " ").trim();
   return { snippet, location: `cv:${start}-${end}` };
 }
+
 
 function fnv1a(input: string): string {
   let h = 0x811c9dc5;
