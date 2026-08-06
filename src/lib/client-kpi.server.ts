@@ -711,6 +711,18 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     main_consideration: mainConsideration,
     requirement_rows,
     evidence_support: evidenceSupport(requirement_rows),
+    human_review: (() => {
+      const res = (run?.result as AnyRow | null) ?? null;
+      const reviewed =
+        (run as AnyRow)?.evaluation_method === "human_adjusted" ||
+        Boolean(res?.human_adjustment);
+      const verified = Number(res?.verified_evidence?.human_verified ?? 0);
+      return {
+        reviewed,
+        verified_requirements: reviewed ? verified : 0,
+        statement: clientReviewStatement({ humanAdjusted: reviewed, verifiedCount: verified }),
+      };
+    })(),
     coverage: coverageSummary,
     interview_guide,
     evidence,
