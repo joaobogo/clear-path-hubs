@@ -64,6 +64,8 @@ import { SourcingOpsPanel } from "@/components/positions/sourcing-ops-panel";
 
 // Secondary panels are code-split; opening a role only pays for the overview.
 const TAB_MODULE = () => import("@/components/admin/position-detail/tabs");
+import { LifecycleBar } from "@/components/admin/position-detail/lifecycle-bar";
+import { OverviewTab } from "@/components/admin/position-detail/overview-tab";
 const RequirementsEditor = lazy(() => TAB_MODULE().then((m) => ({ default: m.RequirementsEditor })));
 const ScreeningEditor = lazy(() => TAB_MODULE().then((m) => ({ default: m.ScreeningEditor })));
 const BlueprintTab = lazy(() => TAB_MODULE().then((m) => ({ default: m.BlueprintTab })));
