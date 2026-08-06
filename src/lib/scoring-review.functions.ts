@@ -7,6 +7,10 @@
 // available for exceptional cases, but this module never exposes a bare total
 // edit without an underlying change.
 import { createServerFn } from "@tanstack/react-start";
+import {
+  resolveEligibilityFromRows,
+  type EligibilityCheckRow,
+} from "@/lib/scoring/eligibility";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
@@ -296,6 +300,9 @@ export const getReviewRecord = createServerFn({ method: "POST" })
       runs,
       evidenceItems: (itemsRes.data ?? []) as AnyRow[],
       eligibility: (eligibilityRes.data ?? []) as AnyRow[],
+      eligibilityResolution: resolveEligibilityFromRows(
+        (eligibilityRes.data ?? []) as unknown as EligibilityCheckRow[],
+      ),
       overrides: (overridesRes.data ?? []) as AnyRow[],
       decisions: (decisionsRes.data ?? []) as AnyRow[],
       answers: (answersRes.data ?? []) as AnyRow[],
