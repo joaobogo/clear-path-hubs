@@ -22,6 +22,8 @@ function isDeskRoute(file: string): boolean {
   if (file === "admin.tsx") return false;
   // `$` marks a param segment: detail pages and their children.
   if (file.includes("$")) return false;
+  // Create screens are reached from a button on their list desk, not a tab.
+  if (file === "admin.clients_new.tsx") return false;
   // `x.index.tsx` pairs with its `x.tsx` layout; the layout carries the tab.
   return true;
 }
