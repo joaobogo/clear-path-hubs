@@ -143,6 +143,8 @@ function BookPage() {
   const [slots, setSlots] = useState<Slot[] | null>(null);
   const [slotsError, setSlotsError] = useState<string | null>(null);
   const [booked, setBooked] = useState<Meeting | null>(null);
+  const [hasWorkspace, setHasWorkspace] = useState(false);
+  const navigate = useNavigate();
   const [cancelled, setCancelled] = useState(false);
 
   // Browser-only state: resolve after mount so SSR and hydration agree.
