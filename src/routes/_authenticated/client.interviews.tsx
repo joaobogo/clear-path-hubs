@@ -1,3 +1,4 @@
+import { formatZonedTime } from "@/lib/time/zone-label";
 import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { proposalErrorMessage } from "@/lib/interview-proposal";
@@ -100,16 +101,11 @@ function detectTimezone(): string {
 
 function formatWhen(iso: string | null, tz: string | null): string {
  if (!iso) return "—";
- try {
- const zone = tz || detectTimezone();
- return new Intl.DateTimeFormat(undefined, {
- dateStyle: "medium",
- timeStyle: "short",
- timeZone: zone,
- }).format(new Date(iso));
- } catch {
- return new Date(iso).toLocaleString();
- }
+ // Never show a bare clock time: the zone and its offset on that date are part
+ // of the answer, not decoration.
+ const zoned = formatZonedTime(iso, tz || detectTimezone());
+ if (!zoned) return new Date(iso).toLocaleString();
+ return `${zoned.timeLabel} (${zoned.zoneLabel})`;
 }
 
 function statusBadgeClass(status: InterviewStatus): string {
