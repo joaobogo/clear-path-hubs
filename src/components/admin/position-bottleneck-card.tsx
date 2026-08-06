@@ -61,7 +61,7 @@ export function PositionBottleneckCard({
 
   const data = query.data;
   const diagnosed = data?.state === "diagnosed";
-  const comparisonAvailable = diagnosed && data!.comparison.available;
+  const comparisonAvailable = diagnosed && (data as { comparison: { available: boolean } }).comparison.available;
 
   return (
     <PanelState

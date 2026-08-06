@@ -114,26 +114,70 @@ export function ClientAccessPanel({ organizationId }: { organizationId: string }
     onError: (e: Error) => toast.error(e.message),
   });
 
-  if (q.isLoading) {
-    return (
-      <section className="space-y-4">
-        <Skeleton className="h-20 w-full rounded-lg" />
-        <Skeleton className="h-56 w-full rounded-lg" />
-      </section>
-    );
-  }
+  return (
+    <PanelState query={q} isEmpty={false} skeletonRows={5}>
+      {q.data && <ClientAccessBody data={q.data} setInviteOpen={setInviteOpen} changeRole={changeRole} revoke={revoke} resend={resend} />}
+      <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Invite a client member</DialogTitle>
+            <DialogDescription>
+              They receive the permissions of the chosen role. The seat limit is enforced on the
+              server.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="name@company.com"
+              aria-label="Email address"
+            />
+            <Select value={inviteRole} onValueChange={setInviteRole}>
+              <SelectTrigger aria-label="Role">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {CLIENT_ROLES.map((r) => (
+                  <SelectItem key={r} value={r}>
+                    {ROLE_LABEL[r]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setInviteOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              disabled={!/.+@.+\..+/.test(email) || invite.isPending}
+              onClick={() => invite.mutate()}
+              data-qa-action="access-invite-confirm"
+            >
+              {invite.isPending ? "Sending…" : "Send invitation"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </PanelState>
+  );
+}
 
-  if (q.isError || !q.data) {
-    return (
-      <ErrorState
-        title="We couldn't load access for this client"
-        description="This is on our side. Nothing was changed."
-        onRetry={() => void q.refetch()}
-      />
-    );
-  }
-
-  const d = q.data;
+function ClientAccessBody({
+  data: d,
+  setInviteOpen,
+  changeRole,
+  revoke,
+  resend,
+}: {
+  data: NonNullable<ReturnType<typeof useQuery<Awaited<ReturnType<typeof inspectClientAccess>>>>["data"]>;
+  setInviteOpen: (v: boolean) => void;
+  changeRole: ReturnType<typeof useMutation<unknown, Error, { userId: string; role: string }>>;
+  revoke: ReturnType<typeof useMutation<unknown, Error, { membershipId: string; reason: string }>>;
+  resend: ReturnType<typeof useMutation<unknown, Error, string>>;
+}) {
   const totalSeats = d.seat_limit + 1;
   const atCap = d.seats_remaining === 0;
 
