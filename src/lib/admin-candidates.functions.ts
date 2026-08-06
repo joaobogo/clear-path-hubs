@@ -377,8 +377,10 @@ export const getCandidateDossier = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => z.object({ match_id: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
-    await requireStaff(context.userId);
-    const s = await getAdmin();
+    // The staff gate and the admin client are independent; awaiting them
+    // together removes a round trip before the first read.
+    const [, s] = await Promise.all([requireStaff(context.userId), getAdmin()]);
+
 
     const { data: m } = await s
       .from("candidate_matches")
