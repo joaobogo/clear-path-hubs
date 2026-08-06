@@ -198,7 +198,7 @@ function AgentsPage() {
           {[
             "Six agents you switch on or pause",
             "Two always-on system automations",
-            `A dedicated agent on each of ${CHANNEL_AGENT_COUNT} sourcing channels`,
+            `A dedicated agent on each of ${CHANNEL_AGENT_COUNT} talent signal streams`,
           ].map((t) => (
             <li
               key={t}
