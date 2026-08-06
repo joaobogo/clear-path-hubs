@@ -56,19 +56,17 @@ export async function loadPositionBottleneck(
   const nowMs = Date.now();
   const windowStart = nowMs - BOTTLENECK_WINDOW_DAYS * DAY;
 
-  const posRes = await admin
-    .from("positions")
-    .select("id, organization_id")
-    .eq("id", positionId)
-    .maybeSingle();
+  // The three reads only need the position id, so they go out together instead
+  // of paying three sequential round trips.
+  const [posRes, matchRes, history] = await Promise.all([
+    admin.from("positions").select("id, organization_id").eq("id", positionId).maybeSingle(),
+    admin.from("candidate_matches").select("id, stage, created_at").eq("position_id", positionId),
+    fetchHistory(admin, [positionId]),
+  ]);
   if (posRes.error) throw new Error(posRes.error.message);
   if (!posRes.data) throw new Error("Position not found");
   const organizationId = posRes.data.organization_id as string | null;
 
-  const matchRes = await admin
-    .from("candidate_matches")
-    .select("id, stage, created_at")
-    .eq("position_id", positionId);
   if (matchRes.error) throw new Error(matchRes.error.message);
   const matches = (matchRes.data ?? []) as Array<{
     id: string;
@@ -76,7 +74,7 @@ export async function loadPositionBottleneck(
     created_at: string;
   }>;
 
-  const history = await fetchHistory(admin, [positionId]);
+
 
   // Every match that ever entered the pipeline, whether or not it has history.
   const enteredTotal = matches.length;
