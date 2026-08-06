@@ -650,44 +650,9 @@ function CandidatesTab({ id }: { id: string }) {
 }
 
 function ActivityTab({ id, audit = false }: { id: string; audit?: boolean }) {
-  const { data } = useSuspenseQuery({
-    queryKey: ["admin-client-activity", id],
-    queryFn: () => getClientActivity({ data: { id, limit: 100 } }),
-  });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const rows = (data ?? []) as any[];
+  // One paginated trail for the workspace, with actor names and any reason text.
   return (
-    <div className="rounded-lg border overflow-hidden">
-      <table className="w-full text-sm">
-        <thead className="bg-muted/50 text-left">
-          <tr>
-            <th className="px-3 py-2 font-medium">When</th>
-            <th className="px-3 py-2 font-medium">Action</th>
-            <th className="px-3 py-2 font-medium">Entity</th>
-            <th className="px-3 py-2 font-medium">Trace</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.id} className="border-t">
-              <td className="px-3 py-2 text-xs text-muted-foreground">
-                {new Date(r.created_at).toLocaleString()}
-              </td>
-              <td className="px-3 py-2 font-mono text-xs">{r.action}</td>
-              <td className="px-3 py-2 text-xs">{r.entity_type}:{String(r.entity_id).slice(0, 8)}</td>
-              <td className="px-3 py-2 font-mono text-[10px] text-muted-foreground">{r.trace_id ?? "—"}</td>
-            </tr>
-          ))}
-          {rows.length === 0 && (
-            <tr>
-              <td colSpan={4} className="px-3 py-8 text-center text-muted-foreground">
-                No activity recorded.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
+    <RecordActivityTab entity="client" id={id} title={audit ? "Audit trail" : "Activity"} />
   );
 }
 

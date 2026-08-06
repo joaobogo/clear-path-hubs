@@ -20,6 +20,7 @@ import {
 
 import { Link, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { RecordActivityTab } from "@/components/admin/record-activity-tab";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -593,48 +594,9 @@ export function PipelineTab({ matches, positionId }: { matches: Any[]; positionI
 
 // ── Activity ────────────────────────────────────────────────────────────────
 export function ActivityTab({ id }: { id: string }) {
-  const { data } = useSuspenseQuery({
-    queryKey: ["admin-position-activity", id],
-    queryFn: () => getPositionActivity({ data: { id, limit: 100 } }),
-  });
-  const rows = (data ?? []) as Any[];
-  return (
-    <div className="overflow-hidden rounded-lg border bg-card">
-      <table className="w-full text-sm">
-        <thead className="bg-muted/40 text-left text-xs uppercase text-muted-foreground">
-          <tr>
-            <th className="px-3 py-2 font-medium">When</th>
-            <th className="px-3 py-2 font-medium">Action</th>
-            <th className="px-3 py-2 font-medium">Actor</th>
-            <th className="px-3 py-2 font-medium">Trace</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y">
-          {rows.map((r) => (
-            <tr key={r.id}>
-              <td className="px-3 py-2 text-xs text-muted-foreground">
-                {new Date(r.created_at).toLocaleString()}
-              </td>
-              <td className="px-3 py-2 font-mono text-xs">{r.action}</td>
-              <td className="px-3 py-2 font-mono text-[10px] text-muted-foreground">
-                {r.actor_user_id ? String(r.actor_user_id).slice(0, 8) : "system"}
-              </td>
-              <td className="px-3 py-2 font-mono text-[10px] text-muted-foreground">
-                {r.trace_id ?? "—"}
-              </td>
-            </tr>
-          ))}
-          {rows.length === 0 && (
-            <tr>
-              <td colSpan={4} className="px-3 py-10 text-center text-muted-foreground">
-                No activity yet.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
-  );
+  // Paginated, actor-named, reason-carrying trail shared with the candidate and
+  // client detail pages.
+  return <RecordActivityTab entity="position" id={id} title="Activity" />;
 }
 
 // ── Settings ────────────────────────────────────────────────────────────────
