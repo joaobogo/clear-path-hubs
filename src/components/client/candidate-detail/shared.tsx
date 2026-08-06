@@ -46,7 +46,7 @@ export function CandidateHeader({
             score={candidate.score}
             fitLabel={candidate.fit_label}
             evidence={candidate.evidence_support}
-            rechecking={candidate.freshness?.stale === true}
+            rechecking={candidate.freshness?.state === "stale"}
             unicorn={candidate.unicorn}
           />
           <Badge variant="outline" className="capitalize">
