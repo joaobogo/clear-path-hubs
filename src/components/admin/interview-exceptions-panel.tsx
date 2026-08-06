@@ -4,7 +4,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -22,7 +21,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { AlertTriangle, CalendarClock } from "lucide-react";
+import { CalendarClock } from "lucide-react";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import {
   getInterviewExceptions,
   nudgeInterview,
@@ -100,39 +100,8 @@ export function InterviewExceptionsPanel({ positionId }: { positionId?: string }
       }),
   });
 
-  if (query.isPending) {
-    return (
-      <section className="rounded-lg border p-5">
-        <Skeleton className="h-5 w-40" />
-        <div className="mt-4 space-y-3">
-          {[0, 1, 2].map((i) => (
-            <Skeleton key={i} className="h-16 w-full" />
-          ))}
-        </div>
-      </section>
-    );
-  }
-
-  if (query.isError || !query.data) {
-    return (
-      <section className="rounded-lg border border-destructive/40 bg-destructive/5 p-5">
-        <div className="flex items-start gap-3">
-          <AlertTriangle className="mt-0.5 h-4 w-4 text-destructive" />
-          <div>
-            <h3 className="font-medium">Interview exceptions could not be loaded</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {query.error instanceof Error ? query.error.message : "Unexpected error."}
-            </p>
-            <Button variant="outline" size="sm" className="mt-3" onClick={() => void query.refetch()}>
-              Retry
-            </Button>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  const { rows, cancellations_7d } = query.data;
+  const rows = query.data?.rows ?? [];
+  const cancellations_7d = query.data?.cancellations_7d ?? 0;
 
   return (
     <section className="rounded-lg border" data-qa="interview-exceptions">
@@ -152,9 +121,12 @@ export function InterviewExceptionsPanel({ positionId }: { positionId?: string }
         </div>
       </header>
 
-      {rows.length === 0 ? (
-        <p className="p-5 text-sm text-muted-foreground">No interview exceptions</p>
-      ) : (
+      <PanelState
+        query={query}
+        isEmpty={rows.length === 0}
+        className="m-5"
+        empty={<PanelEmpty title="No interview exceptions" description="Nothing unconfirmed, uncompleted, or repeatedly rescheduled." className="m-5" />}
+      >
         <ul className="divide-y">
           {rows.map((r) => (
             <li key={r.interview_id} className="flex flex-wrap gap-4 p-4">
@@ -271,7 +243,7 @@ export function InterviewExceptionsPanel({ positionId }: { positionId?: string }
             </li>
           ))}
         </ul>
-      )}
+      </PanelState>
 
       <Dialog open={!!outcomeFor} onOpenChange={(open) => !open && setOutcomeFor(null)}>
         <DialogContent>
