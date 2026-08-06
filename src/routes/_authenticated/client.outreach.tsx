@@ -1,26 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { toast } from "sonner";
-import { useEffect, useState } from "react";
 import { Lock, MessageSquare, ShieldCheck } from "lucide-react";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { getClientContext } from "@/lib/client.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import {
   getOutreachSpine,
-  saveChannelRule,
   CHANNEL_LABELS,
-  type ChannelRule,
 } from "@/lib/outreach.functions";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { useQueryState } from "@/hooks/use-query-state";
 import { SkeletonCards } from "@/components/client/states";
+
 
 export const Route = createFileRoute("/_authenticated/client/outreach")({
   head: () => ({
