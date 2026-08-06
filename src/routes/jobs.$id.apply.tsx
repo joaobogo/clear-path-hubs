@@ -1552,8 +1552,10 @@ function ApplyPage() {
 
                   />
                   <span>
-                    I agree to TaaSFlow's terms and privacy policy and consent to sharing my CV
-                    and answers with the hiring team for this role. *
+                    I agree that TaaSFlow may share my CV and answers with the hiring team for
+                    this role, keep them to review this application, and contact me about it.
+                    Nothing is shared with any other employer without my say-so, and I can ask
+                    for my data to be deleted at any time. *
                   </span>
                 </label>
                 {fieldErrors.consent_terms && (
