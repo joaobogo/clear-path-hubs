@@ -5,9 +5,39 @@ export type PanelStatus = {
   /** Human label for the panel, e.g. "Pipeline". */
   label: string;
   failed: boolean;
+  /** Has data, but the data is known out of date. */
+  stale?: boolean;
   /** Re-runs only this panel's query. */
   retry: () => void | Promise<unknown>;
 };
+
+function joinLabels(names: string[]): string {
+  if (names.length === 1) return names[0]!;
+  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+}
+
+/**
+ * Inline marker for a single panel whose numbers cannot be trusted right now.
+ * Sits next to the panel heading so the aggregate banner and the panel agree.
+ */
+export function NotCurrentChip({
+  reason,
+  className,
+}: {
+  reason?: string | null;
+  className?: string;
+}) {
+  return (
+    <span
+      data-testid="not-current-chip"
+      title={reason ?? undefined}
+      className={`inline-flex items-center gap-1 rounded-full border taas-bd-warning taas-bg-warning-soft px-2 py-0.5 text-[11px] font-medium taas-fg-warning ${className ?? ""}`}
+    >
+      <AlertTriangle className="h-3 w-3" aria-hidden="true" />
+      Not current
+    </span>
+  );
+}
 
 /**
  * One aggregate signal for a multi-query page.
@@ -24,13 +54,10 @@ export function DegradedPanelsBanner({
   retrying?: boolean;
 }) {
   const failed = panels.filter((p) => p.failed);
-  if (failed.length === 0) return null;
+  const stale = panels.filter((p) => !p.failed && p.stale);
+  if (failed.length === 0 && stale.length === 0) return null;
 
-  const names = failed.map((p) => p.label);
-  const list =
-    names.length === 1
-      ? names[0]
-      : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+  const affected = [...failed, ...stale];
 
   return (
     <div
@@ -41,10 +68,17 @@ export function DegradedPanelsBanner({
       <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 taas-fg-warning sm:mt-0" />
       <div className="min-w-0 flex-1">
         <p className="font-medium text-foreground">
-          This page is incomplete — {list} {failed.length === 1 ? "didn't load" : "didn't load"}.
+          This page is incomplete.
+          {failed.length > 0 && (
+            <> {joinLabels(failed.map((p) => p.label))} didn&apos;t load.</>
+          )}
+          {stale.length > 0 && (
+            <> {joinLabels(stale.map((p) => p.label))} {stale.length === 1 ? "is" : "are"} out of date.</>
+          )}
         </p>
         <p className="text-muted-foreground">
-          Counts and lists below exclude that data, so treat them as partial until it loads.
+          Those sections are marked &ldquo;not current&rdquo; below and show a dash instead of a
+          figure — nothing here is a confirmed zero.
         </p>
       </div>
       <Button
@@ -53,11 +87,11 @@ export function DegradedPanelsBanner({
         className="shrink-0"
         disabled={retrying}
         onClick={() => {
-          for (const panel of failed) void panel.retry();
+          for (const panel of affected) void panel.retry();
         }}
         data-testid="degraded-panels-retry"
       >
-        {retrying ? "Retrying…" : "Retry failed panels"}
+        {retrying ? "Retrying…" : "Refresh these sections"}
       </Button>
     </div>
   );
