@@ -31,6 +31,8 @@ import { DashboardBlock } from "@/components/client/dashboards/dashboard-block";
 import { SkeletonRows } from "@/components/client/states";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { useQueryState } from "@/hooks/use-query-state";
+import { DegradedPanelsBanner, NotCurrentChip } from "@/components/client/degraded-banner";
+import { panelReadiness, panelSignal } from "@/lib/panel-readiness";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -119,6 +121,14 @@ function DashboardsPage() {
   });
   const { data: blockData, isFetching: blocksLoading } = blocksQuery;
 
+  // One readiness summary across the three queries feeding this page.
+  const readiness = panelReadiness([
+    panelSignal("Workspace access", ctxQuery),
+    panelSignal("Dashboard settings", workspaceQuery),
+    panelSignal("Dashboard figures", blocksQuery),
+  ]);
+  const blocksNotCurrent = readiness.isNotCurrent("Dashboard figures");
+
   const saveFn = useServerFn(saveDashboard);
   const save = useMutation({
     mutationFn: (input: { id?: string; name: string; blocks: BlockId[]; isDefault?: boolean }) =>
@@ -184,6 +194,8 @@ function DashboardsPage() {
         )}
       </header>
 
+      <DegradedPanelsBanner retrying={readiness.retrying} panels={readiness.signals} />
+
       {!allowed ? (
         <LockedPanel
           reason={workspace.entitlement.reason}
@@ -230,6 +242,15 @@ function DashboardsPage() {
               />
             )}
           </div>
+
+          {blocksNotCurrent && !blocksQuery.isError && (
+            <div className="flex items-center gap-2">
+              <NotCurrentChip reason={readiness.reasonFor("Dashboard figures")} />
+              <span className="text-xs text-muted-foreground">
+                Figures below are out of date — refresh before relying on them.
+              </span>
+            </div>
+          )}
 
           {blocksQuery.isError ? (
             <QueryErrorCard
