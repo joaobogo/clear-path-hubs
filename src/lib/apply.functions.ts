@@ -676,6 +676,7 @@ export const submitApplication = createServerFn({ method: "POST" })
             recordId: orphanUpload.fileId,
             positionId: data.position_id,
             linkPath: "/admin/evidence-gaps",
+            priority: "high",
           });
         } catch (notifyErr) {
           console.error("[submitApplication] orphan alert failed", trace_id, notifyErr);
