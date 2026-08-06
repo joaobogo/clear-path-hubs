@@ -19,7 +19,55 @@ export type {
   BulkPreview,
   ExecResult,
 } from "./bulk-actions.types";
-import type { PlanRow, BulkPreview, ExecResult } from "./bulk-actions.types";
+import type {
+  PlanRow,
+  BulkPreview,
+  ExecResult,
+  ExecItemResult,
+} from "./bulk-actions.types";
+import { BULK_EXEC_BATCH, BULK_SELECTION_CAP } from "./bulk-actions.types";
+
+/**
+ * Reads are chunked instead of capped. The old `.limit(500)` silently dropped
+ * every id past the cap, so an operator could confirm a plan for 500 records
+ * without ever learning the rest of their selection existed.
+ */
+const READ_CHUNK = 100;
+
+function chunk<T>(items: T[], size = READ_CHUNK): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
+  return out;
+}
+
+/** The cap is explicit: past it the request is refused, never truncated. */
+function assertWithinCap(ids: string[]) {
+  if (ids.length > BULK_SELECTION_CAP) {
+    throw new Error(
+      `Selection of ${ids.length} records exceeds the bulk limit of ${BULK_SELECTION_CAP}. Narrow the filter and run it in passes.`,
+    );
+  }
+}
+
+/** Loads every requested row in bounded parallel batches, keyed by id. */
+async function loadByIds(
+  admin: Admin,
+  table: string,
+  select: string,
+  ids: string[],
+): Promise<Map<string, Record<string, any>>> {
+  assertWithinCap(ids);
+  const unique = [...new Set(ids)];
+  const results = await Promise.all(
+    chunk(unique).map((batch) => admin.from(table).select(select).in("id", batch)),
+  );
+  const map = new Map<string, Record<string, any>>();
+  for (const r of results) {
+    if (r.error) throw r.error;
+    for (const row of (r.data ?? []) as any[]) map.set(row.id as string, row);
+  }
+  return map;
+}
 
 // Untyped admin client: these queries span many generated table types.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,16 +92,11 @@ async function planCandidateStage(
   matchIds: string[],
   toStage: BulkStage,
 ): Promise<{ summary: string; rows: PlanRow[] }> {
-  const { data, error } = await admin
-    .from("candidate_matches")
-    .select(
-      "id, stage, admin_status, position_id, candidate_profiles:candidate_profile_id(full_name), positions:position_id(title, status)",
-    )
-    .in("id", matchIds)
-    .limit(500);
-  if (error) throw error;
-  const found = new Map<string, Record<string, any>>(
-    (data ?? []).map((r: any) => [r.id as string, r]),
+  const found = await loadByIds(
+    admin,
+    "candidate_matches",
+    "id, stage, admin_status, position_id, candidate_profiles:candidate_profile_id(full_name), positions:position_id(title, status)",
+    matchIds,
   );
   const rows: PlanRow[] = matchIds.map((id) => {
     const row = found.get(id);
@@ -90,25 +133,36 @@ async function planCandidateAssign(
   candidateProfileIds: string[],
   positionId: string,
 ): Promise<{ summary: string; rows: PlanRow[] }> {
-  const [posRes, profilesRes, existingRes] = await Promise.all([
+  assertWithinCap(candidateProfileIds);
+  const idChunks = chunk([...new Set(candidateProfileIds)]);
+  const [posRes, profiles, existingChunks] = await Promise.all([
     admin
       .from("positions")
       .select("id, title, status, organization_id")
       .eq("id", positionId)
       .maybeSingle(),
-    admin.from("candidate_profiles").select("id, full_name").in("id", candidateProfileIds).limit(500),
-    admin
-      .from("candidate_matches")
-      .select("candidate_profile_id")
-      .eq("position_id", positionId)
-      .in("candidate_profile_id", candidateProfileIds),
+    loadByIds(admin, "candidate_profiles", "id, full_name", candidateProfileIds),
+    Promise.all(
+      idChunks.map((batch) =>
+        admin
+          .from("candidate_matches")
+          .select("candidate_profile_id")
+          .eq("position_id", positionId)
+          .in("candidate_profile_id", batch),
+      ),
+    ),
   ]);
   if (posRes.error) throw posRes.error;
   if (!posRes.data) throw new Error("Position not found");
   const position = posRes.data as Record<string, any>;
-  const already = new Set((existingRes.data ?? []).map((r: any) => r.candidate_profile_id as string));
+  for (const r of existingChunks) if (r.error) throw r.error;
+  const already = new Set(
+    existingChunks
+      .flatMap((r) => (r.data ?? []) as any[])
+      .map((r: any) => r.candidate_profile_id as string),
+  );
   const names = new Map<string, string>(
-    (profilesRes.data ?? []).map((p: any) => [p.id as string, (p.full_name as string) ?? "Candidate"]),
+    [...profiles.entries()].map(([id, p]) => [id, (p.full_name as string) ?? "Candidate"]),
   );
 
   const rows: PlanRow[] = candidateProfileIds.map((id) => {
@@ -142,14 +196,11 @@ async function planCandidateMessage(
   admin: Admin,
   matchIds: string[],
 ): Promise<{ summary: string; rows: PlanRow[] }> {
-  const { data, error } = await admin
-    .from("candidate_matches")
-    .select("id, candidate_profiles:candidate_profile_id(full_name), positions:position_id(title)")
-    .in("id", matchIds)
-    .limit(500);
-  if (error) throw error;
-  const found = new Map<string, Record<string, any>>(
-    (data ?? []).map((r: any) => [r.id as string, r]),
+  const found = await loadByIds(
+    admin,
+    "candidate_matches",
+    "id, candidate_profiles:candidate_profile_id(full_name), positions:position_id(title)",
+    matchIds,
   );
   const rows: PlanRow[] = matchIds.map((id) => {
     const row = found.get(id);
@@ -170,14 +221,11 @@ async function planPositionPause(
   admin: Admin,
   positionIds: string[],
 ): Promise<{ summary: string; rows: PlanRow[] }> {
-  const { data, error } = await admin
-    .from("positions")
-    .select("id, title, status, organizations:organization_id(name)")
-    .in("id", positionIds)
-    .limit(500);
-  if (error) throw error;
-  const found = new Map<string, Record<string, any>>(
-    (data ?? []).map((r: any) => [r.id as string, r]),
+  const found = await loadByIds(
+    admin,
+    "positions",
+    "id, title, status, organizations:organization_id(name)",
+    positionIds,
   );
   const rows: PlanRow[] = positionIds.map((id) => {
     const row = found.get(id);
