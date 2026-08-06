@@ -24,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ErrorState } from "@/components/ds";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { ArrowUpRight, Check } from "lucide-react";
 
 type Queue = Awaited<ReturnType<typeof getPositionsNeedingAttention>>;
@@ -90,51 +90,23 @@ export function PositionsAttentionQueue({ includeTest }: { includeTest: boolean 
     onError: (e) => toast.error(e instanceof Error ? e.message : "Could not reassign the owner"),
   });
 
-  if (queue.isPending) {
-    return (
-      <div className="space-y-2" aria-busy="true" aria-label="Loading jobs needing attention">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="rounded-lg border bg-card p-4">
-            <div className="h-4 w-56 animate-pulse rounded bg-muted" />
-            <div className="mt-3 flex gap-2">
-              <div className="h-5 w-40 animate-pulse rounded-full bg-muted" />
-              <div className="h-5 w-32 animate-pulse rounded-full bg-muted" />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  if (queue.isError) {
-    return (
-      <ErrorState
-        title="We couldn't load the attention queue"
-        description={
-          queue.error instanceof Error ? queue.error.message : "This is on our side — try again."
-        }
-        onRetry={() => void queue.refetch()}
-      />
-    );
-  }
-
-  const data = queue.data as Queue;
-
-  if (data.rows.length === 0) {
-    return (
-      <div className="rounded-lg border bg-card px-4 py-10 text-center">
-        <p className="text-sm font-medium">No jobs need attention right now</p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {data.checked.toLocaleString()} open job{data.checked === 1 ? "" : "s"} checked
-          {data.reviewed_today > 0
-            ? ` · ${data.reviewed_today} marked reviewed today`
-            : ""}
-        </p>
-      </div>
-    );
-  }
+  const data = queue.data;
 
   return (
+    <PanelState
+      query={queue}
+      isEmpty={(data?.rows.length ?? 0) === 0}
+      empty={
+        <div className="rounded-lg border bg-card px-4 py-10 text-center">
+          <p className="text-sm font-medium">No jobs need attention right now</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {data ? `${data.checked.toLocaleString()} open job${data.checked === 1 ? "" : "s"} checked` : ""}
+            {data && data.reviewed_today > 0 ? ` · ${data.reviewed_today} marked reviewed today` : ""}
+          </p>
+        </div>
+      }
+    >
+    {data && (
     <div className="space-y-3">
       <p className="text-xs text-muted-foreground">
         {data.rows.length} of {data.checked.toLocaleString()} open jobs need attention
@@ -158,6 +130,8 @@ export function PositionsAttentionQueue({ includeTest }: { includeTest: boolean 
         />
       ))}
     </div>
+    )}
+    </PanelState>
   );
 }
 

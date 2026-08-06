@@ -32,8 +32,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AlertTriangle, ArrowRight, Loader2, RefreshCw, Undo2 } from "lucide-react";
+import { ArrowRight, Loader2, RefreshCw, Undo2 } from "lucide-react";
 import { TestScopeEmptyNote } from "@/components/admin/test-records-toggle";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 
 type AgingTable = Awaited<ReturnType<typeof getIntakeAging>>;
 type Row = AgingTable["rows"][number];
@@ -198,40 +199,16 @@ export function IntakeAgingTable({ includeTest = false }: { includeTest?: boolea
         </button>
       </div>
 
-      {query.isLoading ? (
-        <div className="divide-y">
-          {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="flex items-center gap-4 px-4 py-3">
-              <div className="h-4 w-40 animate-pulse rounded bg-muted" />
-              <div className="h-4 w-24 animate-pulse rounded bg-muted" />
-              <div className="h-4 w-32 animate-pulse rounded bg-muted" />
-              <div className="ml-auto h-7 w-24 animate-pulse rounded bg-muted" />
-            </div>
-          ))}
-        </div>
-      ) : query.isError ? (
-        <div className="px-4 py-8 text-center">
-          <AlertTriangle className="mx-auto h-5 w-5 text-destructive" />
-          <p className="mt-2 text-sm font-medium">Could not load open intakes</p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {query.error instanceof Error ? query.error.message : "Unexpected error"}
-          </p>
-          <Button
-            variant="outline"
-            size="sm"
-            className="mt-3"
-            onClick={() => query.refetch()}
-            disabled={query.isFetching}
-          >
-            Retry
-          </Button>
-        </div>
-      ) : rows.length === 0 ? (
-        <p className="px-4 py-10 text-center text-sm text-muted-foreground">
-          {showClosed ? "Nothing marked as not proceeding" : "No open intakes"}
-          <TestScopeEmptyNote />
-        </p>
-      ) : (
+      <PanelState
+        query={query}
+        isEmpty={rows.length === 0}
+        empty={
+          <div className="px-4 py-10 text-center text-sm text-muted-foreground">
+            <PanelEmpty title={showClosed ? "Nothing marked as not proceeding" : "No open intakes"} />
+            <TestScopeEmptyNote />
+          </div>
+        }
+      >
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="border-b bg-muted/40 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -418,7 +395,7 @@ export function IntakeAgingTable({ includeTest = false }: { includeTest?: boolea
             </tbody>
           </table>
         </div>
-      )}
+      </PanelState>
     </section>
   );
 }

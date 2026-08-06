@@ -139,9 +139,9 @@ export function CandidateNextActionBar({
 
   const payload = query.data;
 
-  const a = payload.action;
+  const a = payload!.action;
   const wait = waitingFor(a.waiting_since);
-  const task = payload.step_task;
+  const task = payload!.step_task;
   const isBlocked = Boolean(task?.blocking);
   const noAction = a.action.kind === "none";
 
