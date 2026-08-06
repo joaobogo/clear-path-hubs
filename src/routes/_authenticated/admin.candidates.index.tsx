@@ -46,6 +46,7 @@ import {
   DuplicateCandidatesPanel,
 } from "@/components/admin/duplicate-candidates-panel";
 import { ExportControl } from "@/components/admin/export-control";
+import { FilterDrawer } from "@/components/admin/filter-drawer";
 import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
 
 const searchSchema = z.object({
