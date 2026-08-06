@@ -32,6 +32,7 @@ export const Route = createFileRoute("/_authenticated/admin/tracking")({
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
+  errorComponent: makeRouteErrorComponent(
     "admin",
     "src/routes/_authenticated/admin.tracking.tsx",
   ),

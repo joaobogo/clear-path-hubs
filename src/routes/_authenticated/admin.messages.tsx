@@ -17,6 +17,7 @@ export const Route = createFileRoute("/_authenticated/admin/messages")({
       { name: "robots", content: "noindex" },
     ],
   }),
+  errorComponent: makeRouteErrorComponent(
     "admin",
     "src/routes/_authenticated/admin.messages.tsx",
   ),

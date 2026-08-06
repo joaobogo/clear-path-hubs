@@ -36,6 +36,7 @@ export const Route = createFileRoute("/_authenticated/admin/review/$matchId")({
     if (!d) throw notFound();
     return d;
   },
+  errorComponent: makeRouteErrorComponent(
     "admin",
     "src/routes/_authenticated/admin.review.$matchId.tsx",
   ),
