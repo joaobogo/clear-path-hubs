@@ -77,7 +77,8 @@ export type DimensionScore = {
 export type SemanticScoreResult = {
   final_score: number; // 0–100
   raw_score: number;
-  applied_cap: number;
+  /** Ceiling that fired, or null when no cap applied to this run. */
+  applied_cap: number | null;
   dimension_scores: DimensionScore[];
   qualifiers_passed: boolean;
   disqualifiers_triggered: string[];
@@ -274,12 +275,14 @@ export function evaluateSemanticScore(input: {
   );
 
   // Caps: any disqualifier caps at 0; failing qualifier caps at 34 (weak).
-  let applied_cap = 100;
+  // Null means "no cap defined for this run" — recording 100 would be a
+  // meaningless value indistinguishable from a real ceiling.
+  let applied_cap: number | null = null;
   if (disqualifiers_triggered.length > 0) applied_cap = 0;
   else if (!qualifiers_passed) applied_cap = 33;
   else if (must_haves_missing.length > 0) applied_cap = 66; // must-have gaps cap at partial
 
-  const final_score = Math.min(raw_score, applied_cap);
+  const final_score = applied_cap === null ? raw_score : Math.min(raw_score, applied_cap);
 
   return {
     final_score,
