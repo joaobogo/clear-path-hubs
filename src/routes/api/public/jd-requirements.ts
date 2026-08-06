@@ -1,6 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import {
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  rateLimitResponse,
+  rateLimited,
+} from "@/lib/public-api/rate-limit";
+import {
   MAX_REQUIREMENT_CHARS,
   MIN_REQUIREMENT_CHARS,
   REQUIREMENT_TAGS,
@@ -60,6 +66,12 @@ export const Route = createFileRoute("/api/public/jd-requirements")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        // This endpoint spends money on every call: an unauthenticated caller can
+        // push 60k characters into a paid LLM gateway. Throttle before parsing.
+        if (rateLimited("jd_requirements", clientIp(request), PUBLIC_RATE_LIMITS.jd_requirements)) {
+          return rateLimitResponse(crypto.randomUUID(), PUBLIC_RATE_LIMITS.jd_requirements.windowMs);
+        }
+
         let raw: unknown;
         try {
           raw = await request.json();
