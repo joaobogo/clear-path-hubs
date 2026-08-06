@@ -55,6 +55,7 @@ export function OwnershipCoveragePanel({
 }: {
   includeTest?: boolean;
 }) {
+  const includeTest = useScopedIncludeTest(explicit);
   const load = useServerFn(getCoverageQueue);
   const [showAll, setShowAll] = useState(false);
 

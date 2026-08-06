@@ -61,6 +61,7 @@ function SegmentTable({ segment, caption }: { segment: TimingSegment; caption?: 
 }
 
 export function MilestoneTimingPanel() {
+  const includeTest = useScopedIncludeTest();
   const [period, setPeriod] = useState<(typeof PERIODS)[number]>(90);
   const [open, setOpen] = useState<string | null>(null);
   const fn = useServerFn(getMilestoneTimingReport);

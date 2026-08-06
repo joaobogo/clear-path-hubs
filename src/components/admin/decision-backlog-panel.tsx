@@ -53,6 +53,7 @@ export function DecisionBacklogPanel({
   showClientColumn?: boolean;
   className?: string;
 }) {
+  const includeTest = useScopedIncludeTest(explicit);
   const qc = useQueryClient();
   const queryKey = ["admin", "decision-backlog", organizationId ?? "all", includeTest] as const;
   const query = useQuery<Backlog>({
