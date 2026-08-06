@@ -263,7 +263,7 @@ function ApprovalsPage() {
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
           <div>
             <div className="font-medium">
-              {overdueCount} task{overdueCount === 1 ? "" : "s"} overdue in this view
+              {overdueCount} approval{overdueCount === 1 ? "" : "s"} overdue in this view
             </div>
             <button
               type="button"
@@ -492,7 +492,7 @@ function ApprovalRowItem({
         checked={selected}
         onCheckedChange={onToggleSelect}
         className="mt-1"
-        aria-label="Select task"
+        aria-label="Select approval"
       />
       <button
         type="button"
