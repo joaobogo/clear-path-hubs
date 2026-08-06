@@ -34,6 +34,24 @@ type Admin = any;
  */
 const LOAD_CHUNK = 100;
 
+function chunk<T>(items: T[], size = LOAD_CHUNK): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
+  return out;
+}
+
+/**
+ * Emission/write fan-out. Reads can all go at once, but writes are throttled so a
+ * 2,000-row bulk action does not open two thousand simultaneous statements.
+ */
+const WRITE_CHUNK = 200;
+
+async function mapChunks<T, R>(items: T[], size: number, fn: (batch: T[]) => Promise<R>) {
+  const out: R[] = [];
+  for (const batch of chunk(items, size)) out.push(await fn(batch));
+  return out;
+}
+
 async function loadMatchesChunk(admin: Admin, matchIds: string[]) {
   const { data, error } = await admin
     .from("candidate_matches")
@@ -52,8 +70,7 @@ async function loadMatchesChunk(admin: Admin, matchIds: string[]) {
  */
 async function loadMatches(admin: Admin, matchIds: string[]) {
   const unique = [...new Set(matchIds)];
-  const chunks: string[][] = [];
-  for (let i = 0; i < unique.length; i += LOAD_CHUNK) chunks.push(unique.slice(i, i + LOAD_CHUNK));
+  const chunks = chunk(unique);
   // The chunks are disjoint id sets, so they load in parallel: the plan preview
   // no longer costs one round trip per hundred rows in sequence.
   const results = await Promise.all(chunks.map((c) => loadMatchesChunk(admin, c)));
@@ -104,23 +121,26 @@ export async function applyStageMove(
   if (ids.length === 0) return { changed: 0, skipped: plan.skipped };
 
   const now = new Date().toISOString();
-  const { error } = await admin
-    .from("candidate_matches")
-    .update({ stage: toStage, updated_at: now })
-    .in("id", ids);
-  if (error) throw error;
+  // Chunked writes: a selection of any size lands, and each statement stays small.
+  const updates = await mapChunks(ids, WRITE_CHUNK, (batch) =>
+    admin.from("candidate_matches").update({ stage: toStage, updated_at: now }).in("id", batch),
+  );
+  for (const u of updates) if (u.error) throw u.error;
 
   // The history rows and the audit row are independent inserts; both are
   // required, so they go out together and either failure still surfaces.
   await Promise.all([
-    admin.from("candidate_stage_history").insert(
-      ids.map((id) => ({
-        candidate_match_id: id,
-        to_stage: toStage,
-        changed_by: actorUserId,
-        note: "Bulk stage change",
-      })) as never,
-    ),
+    mapChunks(ids, WRITE_CHUNK, async (batch) => {
+      const { error: histError } = await admin.from("candidate_stage_history").insert(
+        batch.map((id) => ({
+          candidate_match_id: id,
+          to_stage: toStage,
+          changed_by: actorUserId,
+          note: "Bulk stage change",
+        })) as never,
+      );
+      if (histError) throw histError;
+    }),
     admin.from("audit_events").insert({
       actor_user_id: actorUserId,
       action: "bulk.stage_move",
@@ -146,21 +166,37 @@ export async function planAssign(
   candidateProfileIds: string[],
   positionId: string,
 ): Promise<AssignPlan> {
-  const [posRes, profilesRes, existingRes] = await Promise.all([
+  // Every read is chunked, so the plan covers all selected ids instead of the
+  // first 500: an operator confirming a plan sees the real scope of the action.
+  const uniqueProfileIds = [...new Set(candidateProfileIds)];
+  const idChunks = chunk(uniqueProfileIds);
+  const [posRes, profileChunks, existingChunks] = await Promise.all([
     admin.from("positions").select("id, title, status, organization_id").eq("id", positionId).maybeSingle(),
-    admin.from("candidate_profiles").select("id, full_name").in("id", candidateProfileIds).limit(500),
-    admin
-      .from("candidate_matches")
-      .select("candidate_profile_id")
-      .eq("position_id", positionId)
-      .in("candidate_profile_id", candidateProfileIds),
+    Promise.all(
+      idChunks.map((c) => admin.from("candidate_profiles").select("id, full_name").in("id", c)),
+    ),
+    Promise.all(
+      idChunks.map((c) =>
+        admin
+          .from("candidate_matches")
+          .select("candidate_profile_id")
+          .eq("position_id", positionId)
+          .in("candidate_profile_id", c),
+      ),
+    ),
   ]);
   if (posRes.error) throw posRes.error;
   if (!posRes.data) throw new Error("Position not found");
-  const already = new Set((existingRes.data ?? []).map((r: any) => r.candidate_profile_id as string));
+  for (const r of [...profileChunks, ...existingChunks]) if (r.error) throw r.error;
+  const profileRows = profileChunks.flatMap((r) => (r.data ?? []) as any[]);
+  const already = new Set(
+    existingChunks
+      .flatMap((r) => (r.data ?? []) as any[])
+      .map((r: any) => r.candidate_profile_id as string),
+  );
 
   type AssignRow = { candidate_profile_id: string; name: string; eligible: boolean; reason?: string };
-  const rows: AssignRow[] = (profilesRes.data ?? []).map((p: any) => {
+  const rows: AssignRow[] = profileRows.map((p: any) => {
     const reason = already.has(p.id)
       ? "Already on this role"
       : posRes.data!.status === "closed"
@@ -229,8 +265,10 @@ export async function applyBulkUpdateMessage(
   // Emit in parallel and keep every outcome: a partial failure has to be
   // reportable per recipient, not averaged into a count.
   const stamp = Date.now();
-  const settled = await Promise.allSettled(
-    rows.map((row) =>
+  const settled: PromiseSettledResult<unknown>[] = [];
+  for (const batch of chunk(rows, WRITE_CHUNK)) {
+    settled.push(...(await Promise.allSettled(
+    batch.map((row) =>
       emitEventFromServer({
         event: "message_sent",
         scope: `bulk:${row.id}:${stamp}`,
@@ -243,7 +281,8 @@ export async function applyBulkUpdateMessage(
         link_path: `/admin/review/${row.id}`,
       }),
     ),
-  );
+  )));
+  }
 
   const failures = settled.flatMap((r, i) =>
     r.status === "rejected"
