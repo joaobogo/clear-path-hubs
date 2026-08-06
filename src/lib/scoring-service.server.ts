@@ -438,10 +438,24 @@ export async function executeScoring(
       throw new Error(`reconciliation_failed:${rec.mismatch}`);
     }
 
-    // 7) Dedup on (match, input_hash).
+    // 7) Reuse: identical inputs AND the same governing rubric version means the
+    //    answer cannot differ, so we point at the existing run instead of
+    //    inserting a duplicate. Resolve the rubric first — it is part of the key.
+    const rubricVersionId = await ensureRubricVersionId(s, {
+      id: ctx.match.position_id,
+      organization_id: ctx.match.organization_id,
+      title: ctx.position.title ?? null,
+      requirements: (ctx.position as Any).requirements,
+      preferred_requirements: (ctx.position as Any).preferred_requirements,
+    });
     const { data: dup } = await s.from("score_runs")
-      .select("id,score,fit_label").eq("candidate_match_id", matchId)
-      .eq("input_hash", raw.input_hash).eq("status", "completed")
+      .select("id,score,fit_label")
+      .eq("candidate_match_id", matchId)
+      .eq("input_hash", raw.input_hash)
+      .eq("rubric_version_id", rubricVersionId)
+      .eq("status", "completed")
+      // Earliest wins, so the reused run stays stable across repeat calls.
+      .order("completed_at", { ascending: true })
       .limit(1).maybeSingle();
 
     let runId: string;
@@ -451,13 +465,6 @@ export async function executeScoring(
       reused = true;
     } else {
       const explanation = buildExplanation(raw, rec.applied_caps);
-      const rubricVersionId = await ensureRubricVersionId(s, {
-        id: ctx.match.position_id,
-        organization_id: ctx.match.organization_id,
-        title: ctx.position.title ?? null,
-        requirements: (ctx.position as Any).requirements,
-        preferred_requirements: (ctx.position as Any).preferred_requirements,
-      });
       const enrichedResult = {
         ...raw,
         blueprint_version: SCORING_BLUEPRINT_VERSION,
@@ -506,7 +513,10 @@ export async function executeScoring(
         // ── Legacy mirror columns kept for existing readers ────────────────
         engine_version: ENGINE_VERSION,
         score: raw.score,
+        // Two distinct facts, both persisted: how confident the run is overall,
+        // and how much of the rubric its evidence could actually decide.
         confidence: raw.overall_confidence,
+        evidence_confidence: raw.evidence_confidence,
         status: "completed",
         explanation,
         evidence: raw.evidence as unknown as Json,
@@ -533,7 +543,13 @@ export async function executeScoring(
       runId = run.id;
     }
 
-    await s.from("candidate_matches").update({ current_score_run_id: runId }).eq("id", matchId);
+    await s
+      .from("candidate_matches")
+      .update({
+        current_score_run_id: runId,
+        ...(reused ? {} : { evidence_confidence: raw.evidence_confidence }),
+      })
+      .eq("id", matchId);
 
     const finalState: "scored" | "manual_review_required" =
       raw.contradiction_status === "disqualifying_answer" || raw.overall_confidence < 0.35
