@@ -1,24 +1,19 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { bandToTier, classifyBand } from "@/lib/scoring/bands";
 
 /**
  * TaaSFlow branded score visual. VISUAL ONLY — does not compute, transform,
  * or override the provided value. Consumers pass the canonical 0–100 fit
- * score directly from the scoring engine. Band thresholds mirror the
- * scoring-engine bands (excellent 85+, strong 70+, moderate 55+, weak 40+,
- * poor <40) and are used only to pick a token color, never to relabel or
- * re-derive recommendation.
+ * score directly from the scoring engine. The band comes from the canonical
+ * band table (src/lib/scoring/bands.ts) and is used only to pick a token
+ * color, never to relabel or re-derive recommendation.
  */
 
 export type ScoreBand = "excellent" | "strong" | "moderate" | "weak" | "poor";
 
 export function bandForScore(score: number | null | undefined): ScoreBand | null {
-  if (score === null || score === undefined || Number.isNaN(score)) return null;
-  if (score >= 85) return "excellent";
-  if (score >= 70) return "strong";
-  if (score >= 55) return "moderate";
-  if (score >= 40) return "weak";
-  return "poor";
+  return bandToTier(classifyBand(score));
 }
 
 const bandColor: Record<ScoreBand, string> = {
