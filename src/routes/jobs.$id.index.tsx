@@ -1,4 +1,7 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { useEffect } from "react";
+import { track } from "@/lib/candidate/funnel-events.functions";
+import { deviceBucket } from "@/lib/candidate/funnel-events";
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getPositionClosure, getPublicPosition, listPublicPositions } from "@/lib/jobs.functions";
