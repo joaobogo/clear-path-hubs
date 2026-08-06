@@ -166,7 +166,7 @@ export const WORK_MODEL_LABELS: Record<(typeof WORK_MODELS)[number], string> = {
 
 export const COMP_PERIOD_LABELS: Record<(typeof COMP_PERIODS)[number], string> = {
   year: "per year",
-  
+  month: "per month",
   hour: "per hour",
 };
 
