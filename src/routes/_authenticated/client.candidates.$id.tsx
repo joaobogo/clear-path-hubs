@@ -565,9 +565,13 @@ function CandidateHeader({
  <h1 className="truncate text-2xl font-semibold tracking-tight sm:text-3xl">
  {c.display_name}
  </h1>
- <Badge variant="outline" className="capitalize">
- {String(candidate.stage).replace(/_/g, " ")}
- </Badge>
+                            <CandidateScoreBadge
+                              score={candidate.score}
+                              unicorn={candidate.unicorn}
+                            />
+                            <Badge variant="outline" className="capitalize">
+                              {String(candidate.stage).replace(/_/g, " ")}
+                            </Badge>
  </div>
  {c.headline && (
  <p className="mt-1 text-base text-muted-foreground">
