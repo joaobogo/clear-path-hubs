@@ -213,6 +213,18 @@ function CandidateDetailPage() {
     enabled: !!orgId,
   });
   const compSignal = compQuery.data;
+
+  // Deep decision surface: a teammate or our team may move this candidate
+  // while the page is open. Refresh in place and say so, rather than swapping
+  // the panel silently.
+  const live = useRouteRealtime({
+    scope: "client-candidate",
+    orgId: orgId ?? null,
+    invalidateKeys: [
+      ["client-candidate", orgId, id],
+      ["client-candidate-comp", orgId, id],
+    ],
+  });
   const compPending = compQuery.isPending;
 
 
@@ -233,6 +245,9 @@ function CandidateDetailPage() {
  orgId: orgId!,
  matchId: id,
  action: p.action,
+ // Stage the operator was looking at. If the candidate has already
+ // moved, the server refuses instead of applying a stale decision.
+ expectedStage: data?.stage,
  feedback: p.feedback,
  reasonCode: p.reasonCode,
  signals: p.signals,
@@ -270,6 +285,13 @@ function CandidateDetailPage() {
  },
  onSettled: () => setPendingKey(null),
  onError: (e: Error) => {
+ const stale = readStaleStateError(e);
+ if (stale) {
+ setDialogAction(null);
+ qc.invalidateQueries({ queryKey: ["client-candidate", orgId, id] });
+ toast.error("This candidate already moved", { description: stale.message, duration: 12_000 });
+ return;
+ }
  const msg = e.message.replace(/^Error: /, "");
  toast.error(
  /reason/i.test(msg) ? "Pick a reason so we can act on it." : "That did not save — try again",
@@ -362,7 +384,10 @@ function CandidateDetailPage() {
 
  return (
  <main className="mx-auto max-w-7xl px-4 pb-28 pt-6 sm:px-6 lg:pb-8 lg:pt-8">
+ <div className="flex items-center justify-between gap-3">
  <BackLink />
+ <LiveUpdatedChip updatedAt={live.updatedAt} />
+ </div>
 
  {/* HEADER */}
  <CandidateHeader
