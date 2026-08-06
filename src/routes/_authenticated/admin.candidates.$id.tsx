@@ -331,7 +331,7 @@ function WorkspaceHeader({
                   scored_input_hash: currentRun.input_hash ?? null,
                   scored_engine_version: currentRun.engine_version ?? null,
                   profile_updated_at: cp?.updated_at ?? null,
-                  brief_updated_at: position?.updated_at ?? null,
+                  brief_updated_at: pos?.updated_at ?? null,
                 })}
               />
             )}
