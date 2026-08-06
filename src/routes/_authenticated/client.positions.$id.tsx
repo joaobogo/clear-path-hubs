@@ -62,6 +62,9 @@ import { HireHandoffPanel } from "@/components/client/hire-handoff";
 import { CloseRoleDialog, RoleClosureRecord } from "@/components/client/close-role-dialog";
 import { isArchivedStatus } from "@/lib/role-closure";
 import { RoleRecapPanel } from "@/components/client/role-recap";
+import { useRouteRealtime } from "@/hooks/use-route-realtime";
+import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
+import { readStaleStateError } from "@/lib/decision-concurrency";
 
 /**
  * One payload for the whole role. The server returns the role, its pipeline,
@@ -204,6 +207,15 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
   return () => window.removeEventListener("client:refresh", onRefresh);
  }, [refetch]);
 
+ // This role is a shared surface. When a candidate on it moves elsewhere, the
+ // board refreshes itself and says so instead of reshuffling under the cursor.
+ const live = useRouteRealtime({
+  scope: "client-position",
+  orgId,
+  positionId: id,
+  invalidateKeys: [queryKey, ["client-overview", orgId], ["client-positions", orgId]],
+ });
+
 
   const [dragOver, setDragOver] = useState<MatchStage | null>(null);
   const [declining, setDeclining] = useState<{ matchId: string; name: string | null } | null>(null);
@@ -228,6 +240,12 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
      orgId: orgId!,
      matchId: v.matchId,
      toStage: v.toStage,
+     // The stage this candidate was on when the operator grabbed the card.
+     // If they have already moved, the server refuses the change.
+     expectedStage:
+      ((qc.getQueryData<AnyRow>(queryKey)?.matches as AnyRow[] | undefined) ?? []).find(
+       (m: AnyRow) => m.id === v.matchId,
+      )?.stage as string | undefined,
      reason: v.reason,
      reasonCode: v.reasonCode,
     },
@@ -248,6 +266,14 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
  },
  onError: (e: Error, _v, ctx) => {
  if (ctx?.snapshot) qc.setQueryData(queryKey, ctx.snapshot);
+ // Someone else already moved this candidate: block the action, restore the
+ // board and explain what changed rather than reporting a failed save.
+ const stale = readStaleStateError(e);
+ if (stale) {
+ void refetch();
+ toast.error("This candidate already moved", { description: stale.message, duration: 12_000 });
+ return;
+ }
  const raw = e.message.replace(/^Error: /, "");
  const gate = readAdvanceGateError(raw);
   const msg = gate
