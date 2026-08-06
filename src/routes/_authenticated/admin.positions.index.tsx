@@ -129,6 +129,7 @@ function PositionsPage() {
         location: search.location,
         sort: search.sort,
         page: search.page,
+        show_test: search.show_test,
       },
     ],
     queryFn: () =>
@@ -142,6 +143,7 @@ function PositionsPage() {
           sort: search.sort as never,
           page: search.page,
           page_size: PAGE_SIZE,
+          include_test: search.show_test || undefined,
         },
       }),
     placeholderData: (prev) => prev,
@@ -152,10 +154,21 @@ function PositionsPage() {
     total: 0,
     page: 1,
     page_size: PAGE_SIZE,
-  }) as { rows: Row[]; total: number; page: number; page_size: number };
+    include_test: false,
+    hidden_test: 0,
+  }) as {
+    rows: Row[];
+    total: number;
+    page: number;
+    page_size: number;
+    include_test?: boolean;
+    hidden_test?: number;
+  };
   const rows = payload.rows;
   const total = payload.total;
+  const hiddenTest = payload.hidden_test ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
 
   const setSearch = (patch: Record<string, string | number | boolean | undefined>) =>
     navigate({
@@ -181,6 +194,19 @@ function PositionsPage() {
               : listQuery.isLoading
               ? "Loading positions…"
               : `${total.toLocaleString()} position${total === 1 ? "" : "s"} across all clients`}
+            {!listQuery.isLoading && !listQuery.isError && hiddenTest > 0 && (
+              <>
+                {" · "}
+                <button
+                  type="button"
+                  className="underline underline-offset-2"
+                  onClick={() => setSearch({ show_test: true, page: 1 })}
+                >
+                  {hiddenTest.toLocaleString()} hidden as test/internal — show all
+                </button>
+              </>
+            )}
+
             {activeFilters > 0 && (
               <>
                 {" · "}
@@ -231,17 +257,18 @@ function PositionsPage() {
             {label}
           </button>
         ))}
-        {search.tab === "attention" && (
-          <label className="ml-auto flex items-center gap-2 py-2 text-xs text-muted-foreground">
-            <input
-              type="checkbox"
-              className="h-3.5 w-3.5"
-              checked={search.show_test}
-              onChange={(e) => setSearch({ show_test: e.target.checked || undefined })}
-            />
-            Show test records
-          </label>
-        )}
+        <label className="ml-auto flex items-center gap-2 py-2 text-xs text-muted-foreground">
+          <input
+            type="checkbox"
+            className="h-3.5 w-3.5"
+            checked={search.show_test}
+            onChange={(e) =>
+              setSearch({ show_test: e.target.checked || undefined, page: 1 })
+            }
+          />
+          Show test records
+        </label>
+
       </div>
 
       {search.tab === "attention" ? (

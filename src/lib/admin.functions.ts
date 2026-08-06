@@ -535,6 +535,8 @@ export const listPositions = createServerFn({ method: "GET" })
           .default("updated_desc"),
         page: z.number().int().min(1).max(200).optional().default(1),
         page_size: z.number().int().min(5).max(100).optional().default(25),
+        /** Explicit per-request override of the "hide test/internal records" default. */
+        include_test: z.boolean().optional(),
       })
       .parse(i ?? {}),
   )
@@ -544,8 +546,12 @@ export const listPositions = createServerFn({ method: "GET" })
     const { resolveShowTestRecordsForUser, loadTestScope, excludeTestOrgs } = await import(
       "./admin-test-scope.server"
     );
-    const showTest = await resolveShowTestRecordsForUser(s, context.userId);
+    const showTest =
+      data.include_test === true
+        ? true
+        : await resolveShowTestRecordsForUser(s, context.userId);
     const scope = await loadTestScope(s, showTest);
+
 
     // Base query with count for pagination.
     let base = s
@@ -583,8 +589,25 @@ export const listPositions = createServerFn({ method: "GET" })
     if (!isPostFilterSort) base = base.range(from, to);
     else base = base.range(0, Math.min(299, from + data.page_size * 4 - 1));
 
-    const { data: rows, count } = await base;
+    const { data: rows, count, error: listError } = await base;
+    if (listError) throw new Error(`positions_list_failed: ${listError.message}`);
     const positions = (rows ?? []) as AnyRow[];
+
+    // How many rows the same filters would return with test/internal records
+    // included — so the UI can say "N hidden" instead of silently truncating.
+    let unfilteredTotal = count ?? positions.length;
+    if (!showTest) {
+      let all = s.from("positions").select("id", { count: "exact", head: true });
+      if (data.status) all = all.eq("status", data.status);
+      if (data.organization_id) all = all.eq("organization_id", data.organization_id);
+      if (data.owner === "__unassigned__") all = all.is("owner_user_id", null);
+      else if (data.owner) all = all.eq("owner_user_id", data.owner);
+      if (data.location) all = all.ilike("location", `%${data.location}%`);
+      if (data.q) all = all.ilike("title", `%${data.q}%`);
+      const { count: allCount } = await all;
+      unfilteredTotal = allCount ?? unfilteredTotal;
+    }
+
 
     // Enrich each position with pipeline counts + action-required count.
     const ids = positions.map((p) => p.id);
@@ -634,12 +657,16 @@ export const listPositions = createServerFn({ method: "GET" })
       enriched = enriched.slice(from, from + data.page_size);
     }
 
+    const total = count ?? enriched.length;
     return {
       rows: enriched as AnyRow[],
-      total: count ?? enriched.length,
+      total,
       page: data.page,
       page_size: data.page_size,
+      include_test: showTest,
+      hidden_test: Math.max(0, unfilteredTotal - total),
     };
+
   });
 
 export const listPositionFilters = createServerFn({ method: "GET" })
