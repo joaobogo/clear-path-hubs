@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Users } from "lucide-react";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
-import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { type MatchStage } from "@/lib/client-match-stage";
 import { KANBAN_COLUMNS, STAGE_GRAPH, STAGE_LABELS } from "./constants";
 
