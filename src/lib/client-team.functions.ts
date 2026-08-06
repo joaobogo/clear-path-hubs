@@ -37,7 +37,11 @@ import { buildQueue, type QueueItem } from "@/lib/client-decision-queue";
 import { buildOfferRow } from "@/lib/client-offer-holder";
 import { computeNextMilestone } from "@/lib/client-next-milestone";
 import { buildRoleTimeline } from "@/lib/client-role-timeline";
-import { assertWorkspaceAccess, readWorkspaceAccess } from "@/lib/authz/workspace-access";
+import {
+  assertWorkspaceAccess,
+  assertWorkspaceTeamAccess,
+  readWorkspaceAccess,
+} from "@/lib/authz/workspace-access";
 import { hydrateClientCandidateProfiles } from "@/lib/client-candidate-hydrate.server";
 import {
   advanceGateError,
@@ -80,12 +84,9 @@ export const getClientTeam = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
-    // Verify the caller's active seat directly. The legacy RPC also checks the
-    // workspace archival flag, which incorrectly turned a valid client seat
-    // into a bare "forbidden" response across Account and Team.
-    const access = await readWorkspaceAccess(context.supabase, context.userId, data.orgId);
-    const canRead = access.isStaff || access.role === "client_admin" || access.role === "client_editor";
-    if (!canRead) throw new Error("You need team access in this workspace.");
+    // One canonical access resolution: membership, role and staff flag all come
+    // from the shared helper, which also handles archived workspaces and staff.
+    await assertWorkspaceTeamAccess(context.supabase, context.userId, data.orgId);
 
     // After authorization, use the privileged server client for the roster so
     // organization-row visibility cannot make an authorized team appear broken.

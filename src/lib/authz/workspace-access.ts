@@ -31,6 +31,13 @@ export type WorkspaceAccess = {
   isStaff: boolean;
   isMember: boolean;
   isAdmin: boolean;
+  /**
+   * May change workspace data. `client_viewer` is read-only by product rule, so
+   * consumers branch on this flag instead of re-testing role strings.
+   */
+  canWrite: boolean;
+  /** May see and manage the workspace team (owners, editors, platform staff). */
+  canManageTeam: boolean;
 };
 
 /**
@@ -107,6 +114,8 @@ export async function readWorkspaceAccess(
     isStaff,
     isMember,
     isAdmin: role === "client_admin" || role === "platform_admin" || role === "operations" || isStaff,
+    canWrite: isStaff || (isMember && role !== "client_viewer"),
+    canManageTeam: isStaff || role === "client_admin" || role === "client_editor",
   };
 }
 
@@ -119,5 +128,44 @@ export async function assertWorkspaceAccess(
 ): Promise<WorkspaceAccess> {
   const access = await readWorkspaceAccess(supabase, userId, orgId);
   if (!access.allowed) throw new WorkspaceAccessError();
+  return access;
+}
+
+/** Throws when the caller may read the workspace but not change it. */
+export async function assertWorkspaceWrite(
+  supabase: Db,
+  userId: string,
+  orgId: string,
+): Promise<WorkspaceAccess> {
+  const access = await assertWorkspaceAccess(supabase, userId, orgId);
+  if (!access.canWrite) {
+    throw new WorkspaceAccessError("Your role in this workspace is read-only.");
+  }
+  return access;
+}
+
+/** Throws unless the caller owns the workspace (or is platform staff). */
+export async function assertWorkspaceAdmin(
+  supabase: Db,
+  userId: string,
+  orgId: string,
+): Promise<WorkspaceAccess> {
+  const access = await assertWorkspaceAccess(supabase, userId, orgId);
+  if (!access.isAdmin) {
+    throw new WorkspaceAccessError("You need owner access in this workspace.");
+  }
+  return access;
+}
+
+/** Throws unless the caller may see and manage the workspace team. */
+export async function assertWorkspaceTeamAccess(
+  supabase: Db,
+  userId: string,
+  orgId: string,
+): Promise<WorkspaceAccess> {
+  const access = await assertWorkspaceAccess(supabase, userId, orgId);
+  if (!access.canManageTeam) {
+    throw new WorkspaceAccessError("You need team access in this workspace.");
+  }
   return access;
 }

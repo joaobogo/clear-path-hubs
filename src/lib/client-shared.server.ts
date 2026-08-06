@@ -38,7 +38,12 @@ import { buildQueue, type QueueItem } from "@/lib/client-decision-queue";
 import { buildOfferRow } from "@/lib/client-offer-holder";
 import { computeNextMilestone } from "@/lib/client-next-milestone";
 import { buildRoleTimeline } from "@/lib/client-role-timeline";
-import { assertWorkspaceAccess, readWorkspaceAccess } from "@/lib/authz/workspace-access";
+import {
+  assertWorkspaceAccess,
+  assertWorkspaceAdmin,
+  assertWorkspaceWrite,
+  readWorkspaceAccess,
+} from "@/lib/authz/workspace-access";
 import { hydrateClientCandidateProfiles } from "@/lib/client-candidate-hydrate.server";
 import {
   advanceGateError,
@@ -205,8 +210,15 @@ export async function assertNotSupportViewReadOnly(supabase: AnyRow, userId: str
   if (!interactive) throw new Error("SUPPORT_VIEW_READ_ONLY");
 }
 
+/**
+ * Canonical write guard for the client workspace: organisation access and the
+ * read-only `client_viewer` rule both come from `assertWorkspaceWrite`, then the
+ * support-session rule is applied on top.
+ */
 export async function assertEditor(supabase: AnyRow, userId: string, orgId: string) {
+  const access = await assertWorkspaceWrite(supabase, userId, orgId);
   await assertNotSupportViewReadOnly(supabase, userId, orgId);
+  return access;
 }
 
 export async function loadMatch(supabase: AnyRow, orgId: string, matchId: string) {
@@ -298,8 +310,7 @@ export const CLIENT_DECLINE_CODES: ReadonlySet<string> = new Set([
 ]);
 
 export async function assertOrgAdmin(supabase: AnyRow, userId: string, orgId: string): Promise<void> {
-  const access = await readWorkspaceAccess(supabase, userId, orgId);
-  if (!access.isAdmin) throw new Error("You need owner access in this workspace.");
+  await assertWorkspaceAdmin(supabase, userId, orgId);
 }
 
 export const clientMemberRoleZ = z.enum(["client_admin", "client_editor", "client_viewer"]);
