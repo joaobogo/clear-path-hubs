@@ -241,6 +241,40 @@ function isDisqualifying(a: ScreeningAnswer): boolean {
   if (cond.operator === "max" && typeof v === "number" && typeof cond.value === "number") return v > cond.value;
   return false;
 }
+export type CategoryWeights = {
+  must_have: number;
+  preferred: number;
+  screening_alignment: number;
+};
+
+/** Scale a weight set so the present (non-zero) weights sum to exactly 1. */
+export function renormaliseWeights(w: CategoryWeights): CategoryWeights {
+  const total = w.must_have + w.preferred + w.screening_alignment;
+  if (total <= 0) return { must_have: 1, preferred: 0, screening_alignment: 0 };
+  const round = (x: number) => Math.round((x / total) * 10000) / 10000;
+  return {
+    must_have: round(w.must_have),
+    preferred: round(w.preferred),
+    screening_alignment: round(w.screening_alignment),
+  };
+}
+
+/**
+ * The single canonical combination step. Both the engine and the service-layer
+ * reconciliation call this, so a stored run can always be reproduced from its
+ * category_breakdown + category_weights.
+ */
+export function combineCategories(
+  breakdown: CategoryWeights,
+  weights: CategoryWeights,
+): number {
+  return (
+    breakdown.must_have * weights.must_have +
+    breakdown.preferred * weights.preferred +
+    breakdown.screening_alignment * weights.screening_alignment
+  );
+}
+
 
 // ---------- main entry ----------
 
