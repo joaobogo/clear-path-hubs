@@ -52,11 +52,10 @@ export const Route = createFileRoute("/_authenticated/admin")({
   errorComponent: makeRouteErrorComponent("admin", "/_authenticated/admin"),
   notFoundComponent: makeRouteNotFoundComponent("admin"),
   beforeLoad: async () => {
+    // Same question the admin server functions ask (is_platform_staff), so the
+    // layout gate and the server checks can never disagree.
     try {
-      const ctx = await getSessionContext();
-      const staff = ctx.memberships.some(
-        (m) => m.status === "active" && (m.role === "platform_admin" || m.role === "operations"),
-      );
+      const { staff } = await getStaffAccess();
       if (!staff) throw redirect({ to: "/access-denied" });
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,6 +63,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
       throw redirect({ to: "/access-denied" });
     }
   },
+
   head: () => ({
     meta: [
       { title: "Admin · TaaSFlow" },
