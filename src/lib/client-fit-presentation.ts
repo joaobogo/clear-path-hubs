@@ -108,12 +108,8 @@ export function toFitPresentation(
     band = RAW_LABEL_MAP[key] ?? null;
   }
   if (!band && typeof score === "number") {
-    if (score >= 90) band = "exceptional";
-    else if (score >= 80) band = "strong";
-    else if (score >= 70) band = "good";
-    else if (score >= 55) band = "mixed";
-    else if (score >= 40) band = "limited";
-    else band = "not_recommended";
+    // Numeric fallback derives from the ONE band table, never local cut-offs.
+    band = CANONICAL_TO_FIT_BAND[classifyBand(score)] ?? null;
   }
   band ??= "mixed";
   return { band, ...BAND_TABLE[band] };
