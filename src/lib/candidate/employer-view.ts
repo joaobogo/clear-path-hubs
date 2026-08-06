@@ -92,6 +92,12 @@ export const EMPLOYER_VIEW_FIELDS: EmployerViewField[] = [
     label: "Numeric rating behind the fit band",
     note: "The employer sees this number. It is a measure of how your evidence covers this role's requirements, not a judgement of you.",
   },
+  {
+    key: "unicorn",
+    group: "role_fit",
+    label: "Standout marker for exceptionally strong matches",
+    note: "Set automatically for the very highest ratings. It only ever helps you.",
+  },
   { key: "summary", group: "role_fit", label: "Written summary of your fit" },
   { key: "strengths", group: "role_fit", label: "Strengths we highlighted" },
   { key: "concerns", group: "role_fit", label: "Points we flagged for the employer to explore" },
