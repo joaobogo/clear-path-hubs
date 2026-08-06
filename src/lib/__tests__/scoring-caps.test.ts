@@ -15,10 +15,10 @@ TypeScript, Node.js, Postgres, Terraform, AWS, CI/CD, Prometheus.
 `.repeat(3);
 
 const REQS = [
-  { id: "r1", text: "Kubernetes and Terraform on AWS", required: true },
-  { id: "r2", text: "TypeScript and Node.js services", required: true },
-  { id: "r3", text: "Postgres schema design", required: true },
-  { id: "r4", text: "Observability with Prometheus and Grafana", required: false },
+  { id: "r1", text: "Kubernetes and Terraform on AWS", required: true, keywords: null },
+  { id: "r2", text: "TypeScript and Node.js services", required: true, keywords: null },
+  { id: "r3", text: "Postgres schema design", required: true, keywords: null },
+  { id: "r4", text: "Observability with Prometheus and Grafana", required: false, keywords: null },
 ];
 
 describe("applied caps", () => {
