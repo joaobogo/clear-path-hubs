@@ -919,6 +919,8 @@ const consentSchema = z.object({
   marketing_opt_in: z.boolean().optional(),
   notifications_email: z.boolean().optional(),
   notifications_sms: z.boolean().optional(),
+  /** Per-event notification choices, keyed by CANDIDATE_NOTIFICATION_EVENTS. */
+  notification_events: z.record(z.string().max(40), z.boolean()).optional(),
 });
 
 export const updateMyConsent = createServerFn({ method: "POST" })
