@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { InfoRequestsPanel } from "@/components/client/info-requests";
 import { WeeklyUpdateCard } from "@/components/client/weekly-update-card";
@@ -10,6 +11,7 @@ import { PaymentGateBanner } from "@/components/client/payment-gate-banner";
 import { listRolesNeedingDetails } from "@/lib/position-readiness.functions";
 import { RoleDetailsNeededBanner } from "@/components/client/role-details-needed-banner";
 import { QueryErrorCard } from "@/components/client/query-error";
+import { DegradedPanelsBanner } from "@/components/client/degraded-banner";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { VisibilityNote } from "@/components/client/visibility-note";
@@ -45,6 +47,7 @@ import { NextMilestones, type MilestoneRow } from "@/components/client/next-mile
 import type { QueueRow } from "@/lib/client-decision-queue";
 
 export const Route = createFileRoute("/_authenticated/client/")({
+  errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.index.tsx"),
   head: () => ({
     meta: [{ title: "Overview · Client workspace" }, { name: "robots", content: "noindex" }],
   }),
@@ -88,7 +91,12 @@ function OverviewPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
 
-  const { data: ctx } = useQuery({
+  const {
+    data: ctx,
+    isError: ctxError,
+    refetch: refetchCtx,
+    isFetching: ctxFetching,
+  } = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
@@ -104,7 +112,12 @@ function OverviewPage() {
   });
 
   const pendingRolesFn = useServerFn(listPendingPaymentRoles);
-  const { data: pendingRolesData } = useQuery({
+  const {
+    data: pendingRolesData,
+    isError: pendingRolesError,
+    refetch: refetchPendingRoles,
+    isFetching: pendingRolesFetching,
+  } = useQuery({
     queryKey: ["client", "pending-payment-roles", orgId],
     queryFn: () => pendingRolesFn({ data: { orgId } }),
     enabled: !!orgId,
@@ -113,7 +126,12 @@ function OverviewPage() {
 
   // Roles that can't be approved yet because the brief is missing details.
   const rolesNeedingDetailsFn = useServerFn(listRolesNeedingDetails);
-  const { data: incompleteData } = useQuery({
+  const {
+    data: incompleteData,
+    isError: incompleteError,
+    refetch: refetchIncomplete,
+    isFetching: incompleteFetching,
+  } = useQuery({
     queryKey: ["client", "roles-needing-details", orgId],
     queryFn: () => rolesNeedingDetailsFn({ data: { orgId } }),
     enabled: !!orgId,
@@ -212,6 +230,17 @@ function OverviewPage() {
         <OpenItemsStrip orgId={orgId} />
       </div>
 
+
+      {/* One aggregate signal for the four independent panels on this page. */}
+      <DegradedPanelsBanner
+        retrying={ctxFetching || isFetching || pendingRolesFetching || incompleteFetching}
+        panels={[
+          { label: "Workspace access", failed: ctxError, retry: () => refetchCtx() },
+          { label: "Pipeline overview", failed: isError, retry: () => refetch() },
+          { label: "Roles awaiting payment", failed: pendingRolesError, retry: () => refetchPendingRoles() },
+          { label: "Roles missing details", failed: incompleteError, retry: () => refetchIncomplete() },
+        ]}
+      />
 
       {isError && !data && (
         <QueryErrorCard

@@ -1,4 +1,5 @@
 import { formatZonedTime } from "@/lib/time/zone-label";
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { proposalErrorMessage } from "@/lib/interview-proposal";
@@ -72,6 +73,7 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/client/interviews")({
+  errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.interviews.tsx"),
  head: () => ({
  meta: [
  { title: "Interviews · Client workspace" },
