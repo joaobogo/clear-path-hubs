@@ -4,6 +4,12 @@
 // Two concerns live here:
 //   1) Fit-band normalisation — internal labels → Client-facing language + tone.
 //   2) Interview-guide generator — deterministic, evidence-grounded, personalised.
+//
+// Thresholds are not defined in this file. Any score → band decision defers to
+// src/lib/scoring/bands.ts.
+
+import { classifyBand, type ScoreBandKey } from "@/lib/scoring/bands";
+
 
 export type FitBand =
   | "exceptional"
