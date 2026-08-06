@@ -39,7 +39,7 @@ export function RiskProof({ className = "" }: { className?: string }) {
           Proof that lowers hiring risk
         </p>
         <h2 className="mt-3 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
-          See the work before you buy it.
+          Try before you buy, no strings attached.
         </h2>
         <p className="mt-4 text-base text-[color:var(--brand-navy)]/80">
           Three artefacts you receive on every engagement — a scored candidate,
