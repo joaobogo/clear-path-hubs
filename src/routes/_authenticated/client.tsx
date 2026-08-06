@@ -182,7 +182,13 @@ function ClientLayout() {
  		enabled: staffMembershipsElsewhere && !!active?.organization_id,
  		refetchInterval: 60_000,
  	});
- 	const supportSessionId = activeSupportSession.data?.session?.id ?? null;
+ 	const supportSession = activeSupportSession.data?.session ?? null;
+ 	const supportSessionId = supportSession?.id ?? null;
+ 	const supportSessionRef =
+ 		((supportSession as { trace_id?: string | null } | null)?.trace_id ?? null) ||
+ 		(supportSessionId ? supportSessionId.slice(0, 8) : null);
+ 	const supportSessionExpiresAt =
+ 		(supportSession as { expires_at?: string | null } | null)?.expires_at ?? null;
 
 
  const supportView: SupportViewState = useMemo(
@@ -194,8 +200,17 @@ function ClientLayout() {
  readOnly: staffMembershipsElsewhere,
  permissionPreview,
  sessionId: supportSessionId,
+ sessionRef: supportSessionRef,
+ sessionExpiresAt: supportSessionExpiresAt,
  }),
- [staffMembershipsElsewhere, active, permissionPreview, supportSessionId],
+ [
+ staffMembershipsElsewhere,
+ active,
+ permissionPreview,
+ supportSessionId,
+ supportSessionRef,
+ supportSessionExpiresAt,
+ ],
  );
 
  const effectiveRole = staffMembershipsElsewhere
