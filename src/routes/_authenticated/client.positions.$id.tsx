@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { getClientContext } from "@/lib/client-context.functions";
 import { getClientPositionDetail } from "@/lib/client-positions.functions";
 import { moveMatchStage } from "@/lib/client-decisions.functions";
-import { type MatchStage } from "@/lib/client-kpi.server";
+import { type MatchStage } from "@/lib/client-match-stage";
 import {
  TIMEZONE_BAND_LABELS,
  SPONSORSHIP_LABELS,
