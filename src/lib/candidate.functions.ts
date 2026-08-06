@@ -86,11 +86,28 @@ export const getMyContext = createServerFn({ method: "GET" })
       }
     }
 
+    // Seat detection: a client or staff seat must never be pushed into the
+    // candidate job-seeker funnel when no candidate profile exists.
+    let seat: "candidate" | "client" | "staff" = "candidate";
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: memberships } = await supabaseAdmin
+        .from("memberships")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("status", "active");
+      const roles = ((memberships ?? []) as { role?: string }[]).map((r) => r.role);
+      if (roles.some((r) => r === "platform_admin" || r === "operations")) seat = "staff";
+      else if (roles.length > 0) seat = "client";
+    } catch {
+      // Leave seat as candidate; the empty state stays safe either way.
+    }
 
     return {
       user_id: userId,
       email: email ?? null,
       profile: cp ?? null,
+      seat,
     };
   });
 
