@@ -45,35 +45,6 @@ function readCriteria(row: Record<string, unknown>): CriterionDraft[] {
   });
 }
 
-export function normaliseWeights(criteria: CriterionDraft[]): CriterionDraft[] {
-  const total = criteria.reduce((sum, c) => sum + Math.max(0, c.weight), 0);
-  if (total <= 0) {
-    const even = criteria.length > 0 ? Math.round(100 / criteria.length) : 0;
-    return criteria.map((c) => ({ ...c, weight: even }));
-  }
-  return criteria.map((c) => ({
-    ...c,
-    weight: Math.round((Math.max(0, c.weight) / total) * 1000) / 10,
-  }));
-}
-
-export function validateForPublish(criteria: CriterionDraft[]): string[] {
-  const problems: string[] = [];
-  if (criteria.length < 2) problems.push("A published rubric needs at least two criteria.");
-  if (criteria.some((c) => !c.label.trim())) problems.push("Every criterion needs a label.");
-  if (criteria.some((c) => !c.evidence.trim())) {
-    problems.push("Every criterion needs to say what counts as evidence.");
-  }
-  if (!criteria.some((c) => c.must_have)) {
-    problems.push("Mark at least one criterion as a must-have.");
-  }
-  const keys = new Set<string>();
-  for (const c of criteria) {
-    if (keys.has(c.key)) problems.push(`Duplicate criterion key: ${c.key}`);
-    keys.add(c.key);
-  }
-  return problems;
-}
 
 export async function listRubricVersions(
   admin: Admin,
