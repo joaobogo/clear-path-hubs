@@ -48,7 +48,6 @@ export const CTA_KEYS = [
   "start_intake",
   "book_a_call",
   "contact_sales",
-  "join_talent_network",
   "browse_jobs",
   "sign_in",
 ] as const;
@@ -273,7 +272,6 @@ export const BUSINESS_RULES_DEFAULTS = {
     start_intake: { label: "Start client intake", to: "/intake", description: "Open the 5-step intake wizard." },
     book_a_call: { label: "Book a real call", to: "/contact", description: "30-minute discovery call with a human." },
     contact_sales: { label: "Contact sales", to: "/contact", description: "For enterprise / custom scope." },
-    join_talent_network: { label: "Join the talent network", to: "/jobs", description: "Candidates browse open roles and apply." },
     browse_jobs: { label: "Browse open jobs", to: "/jobs", description: "Public job board." },
     sign_in: { label: "Sign in", to: "/auth", description: "Existing users sign in to their workspace." },
   } satisfies Record<CtaKey, Cta>,

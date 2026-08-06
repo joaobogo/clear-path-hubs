@@ -21,14 +21,14 @@ export function SubtleCta({
     headline ??
     (hire
       ? "Hiring for this? TaaSFlow ships ranked candidates weekly."
-      : "Looking for your next role? Join the TaaSFlow Talent Network.");
+      : "Looking for your next role? See what TaaSFlow is hiring for now.");
 
   const primary = hire
     ? { to: "/intake", label: "Start hiring" }
-    : { to: "/candidate-join", label: "Join the Network" };
+    : { to: "/jobs", label: "Browse open roles" };
   const secondary = hire
     ? { to: "/how-it-works", label: "See how it works" }
-    : { to: "/jobs", label: "Browse open roles" };
+    : { to: "/candidate-success", label: "Candidate stories" };
 
   return (
     <aside

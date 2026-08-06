@@ -188,7 +188,6 @@ function Header() {
 
   const signIn = SECONDARY_CTAS.find((c) => c.label === "Sign in") ?? { to: "/login", label: "Sign in" };
   const browseJobs = SECONDARY_CTAS.find((c) => c.label === "Browse Jobs") ?? { to: "/jobs", label: "Browse Jobs" };
-  const joinNetwork = SECONDARY_CTAS.find((c) => c.label === "Join the Talent Network") ?? { to: "/candidate-join", label: "Join the Talent Network" };
 
   return (
     <>
@@ -235,12 +234,14 @@ function Header() {
             >
               {signIn.label}
             </ProductionLink>
-            <Link
-              to={ctaSecondary.to}
-              className="ml-1 whitespace-nowrap rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3.5 py-1.5 text-sm font-semibold text-[color:var(--brand-navy)] transition-colors hover:border-[color:var(--brand-navy)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-            >
-              {ctaSecondary.label}
-            </Link>
+            {ctaSecondary ? (
+              <Link
+                to={ctaSecondary.to}
+                className="ml-1 whitespace-nowrap rounded-md border border-[color:var(--brand-navy)]/15 bg-white px-3.5 py-1.5 text-sm font-semibold text-[color:var(--brand-navy)] transition-colors hover:border-[color:var(--brand-navy)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+              >
+                {ctaSecondary.label}
+              </Link>
+            ) : null}
             <Link
               to={ctaPrimary.to}
               className="whitespace-nowrap rounded-md bg-[color:var(--brand-navy)] px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[color:var(--brand-navy-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
@@ -317,12 +318,6 @@ function Header() {
                   >
                     {browseJobs.label}
                   </Link>
-                  <Link
-                    to={joinNetwork.to}
-                    className="flex min-h-11 items-center rounded-md px-3 py-2.5 text-base text-[color:var(--brand-navy)] hover:bg-[color:var(--brand-navy)]/5"
-                  >
-                    {joinNetwork.label}
-                  </Link>
                   {!candidateMode ? (
                     <Link
                       to="/intake"
@@ -340,12 +335,14 @@ function Header() {
                 >
                   {ctaPrimary.label}
                 </Link>
-                <Link
-                  to={ctaSecondary.to}
-                  className="flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 px-3 py-2 text-sm font-semibold text-[color:var(--brand-navy)]"
-                >
-                  {ctaSecondary.label}
-                </Link>
+                {ctaSecondary ? (
+                  <Link
+                    to={ctaSecondary.to}
+                    className="flex min-h-11 items-center justify-center rounded-md border border-[color:var(--brand-navy)]/15 px-3 py-2 text-sm font-semibold text-[color:var(--brand-navy)]"
+                  >
+                    {ctaSecondary.label}
+                  </Link>
+                ) : null}
                 <ProductionLink
                   to={signIn.to}
                   className="flex min-h-11 items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-[color:var(--brand-navy)]/80"
@@ -500,13 +497,15 @@ function MobileCtaBar() {
         >
           {primary.label}
         </Link>
-        <Link
-          to={secondary.to}
-          tabIndex={shown ? undefined : -1}
-          className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-xl border border-[color:var(--brand-navy)]/15 bg-white px-4 text-sm font-semibold text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
-        >
-          {secondary.label}
-        </Link>
+        {secondary ? (
+          <Link
+            to={secondary.to}
+            tabIndex={shown ? undefined : -1}
+            className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-xl border border-[color:var(--brand-navy)]/15 bg-white px-4 text-sm font-semibold text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+          >
+            {secondary.label}
+          </Link>
+        ) : null}
       </div>
     </div>
   );

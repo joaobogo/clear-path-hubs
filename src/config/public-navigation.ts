@@ -49,7 +49,6 @@ export const BOOK_CALL_CTA: NavLink = {
 
 export const SECONDARY_CTAS: NavLink[] = [
   { to: "/jobs",           label: "Browse Jobs" },
-  { to: "/candidate-join", label: "Join the Talent Network" },
   { to: "/login",          label: "Sign in" },
 ];
 
@@ -61,11 +60,9 @@ export const CANDIDATE_PRIMARY_CTA: NavLink = {
   description: "Live roles we are hiring for right now",
 };
 
-export const CANDIDATE_SECONDARY_CTA: NavLink = {
-  to: "/candidate-join",
-  label: "Join the talent network",
-  description: "Be considered for roles before they are advertised",
-};
+/** No secondary CTA on candidate-facing pages — the primary "Browse open
+ *  roles" action is the only one we want to push at job seekers. */
+export const CANDIDATE_SECONDARY_CTA: NavLink | null = null;
 
 /** Public routes that belong to the candidate journey, not the employer one. */
 const CANDIDATE_PATH_PREFIXES = [
