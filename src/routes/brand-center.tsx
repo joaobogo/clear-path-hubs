@@ -735,6 +735,8 @@ function BrandCenter() {
         </div>
       </div>
     </main>
+    <SiteFooter />
+    </>
   );
 }
 

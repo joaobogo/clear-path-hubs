@@ -530,5 +530,7 @@ function BookPage() {
         </Card>
       ) : null}
     </main>
+    <SiteFooter />
+    </>
   );
 }
