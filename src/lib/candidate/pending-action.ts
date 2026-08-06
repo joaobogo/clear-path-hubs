@@ -12,6 +12,8 @@
  *      makes candidates email support.
  */
 
+import { candidateParseMessage } from "@/lib/parse-failure/parse-failure-codes";
+
 export const NOTHING_NEEDED_LINE = "Nothing needed from you right now.";
 
 export type CandidatePendingActionKind = "info_request" | "interview_times" | "document";
@@ -42,7 +44,7 @@ export interface PendingActionInputs {
     scheduled_at: string | null;
     cancelled_at?: string | null;
   }>;
-  document: { received: boolean } | null;
+  document: { received: boolean; parseState?: string | null; errorCode?: string | null } | null;
   /** Closed applications never ask anything of the candidate. */
   closed: boolean;
 }
@@ -92,10 +94,18 @@ export function computePendingAction(input: PendingActionInputs): CandidatePendi
   }
 
   if (input.document && !input.document.received) {
+    // The reason is written out in plain words, taken from the recorded failure
+    // cause. Internal codes never reach the candidate.
+    const written = candidateParseMessage(
+      input.document.parseState ?? "failed",
+      input.document.errorCode ?? null,
+    );
     return {
       kind: "document",
       title: "Upload your CV again",
-      detail: "We could not read the file you sent, so a reviewer cannot see your experience.",
+      detail:
+        written ??
+        "We could not read the file you sent, so a reviewer cannot see your experience.",
       actionLabel: "Replace your CV",
       target: "/me/cv",
       dueAt: null,
