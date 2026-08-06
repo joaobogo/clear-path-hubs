@@ -47,6 +47,7 @@ export function CandidateHeader({
             fitLabel={candidate.fit_label}
             evidence={candidate.evidence_support}
             rechecking={candidate.freshness?.state === "stale"}
+            humanReviewed={candidate.human_review?.reviewed === true}
             unicorn={candidate.unicorn}
           />
           <Badge variant="outline" className="capitalize">
@@ -57,6 +58,9 @@ export function CandidateHeader({
           <p className="mt-1 text-base text-muted-foreground">
             {c.headline}
           </p>
+        )}
+        {candidate.human_review?.statement && (
+          <p className="mt-1 text-sm text-primary">{candidate.human_review.statement}</p>
         )}
         {c.headline_chips.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1.5">

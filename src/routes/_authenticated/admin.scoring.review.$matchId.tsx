@@ -12,6 +12,7 @@ import {
   requestCandidateInformation,
 } from "@/lib/scoring-review.functions";
 import { applyReviewDecision } from "@/lib/processing.functions";
+import { HumanVerificationPanel } from "@/components/admin/human-verification-panel";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminScoreNumber } from "@/components/admin/admin-score-number";
@@ -425,6 +426,9 @@ function ReviewWorkspace() {
               </Alert>
             ) : null}
           </Card>
+
+          {/* Machine-derived vs human-verified criteria, and reviewer verdicts */}
+          <HumanVerificationPanel matchId={params.matchId} onChanged={refresh} />
 
           {/* Evidence per dimension */}
           <section className="space-y-3">

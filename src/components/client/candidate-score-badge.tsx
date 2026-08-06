@@ -33,6 +33,11 @@ type Props = {
    * marked as being re-checked so it is never presented as current.
    */
   rechecking?: boolean;
+  /**
+   * A specialist reviewed this assessment by hand. We state the fact only —
+   * the reviewer's internal note never reaches an employer surface.
+   */
+  humanReviewed?: boolean;
   unicorn?: boolean;
   className?: string;
 };
@@ -63,6 +68,7 @@ export function CandidateScoreBadge({
   fitLabel = null,
   evidence = null,
   rechecking = false,
+  humanReviewed = false,
   unicorn = false,
   className = "",
 }: Props) {
@@ -102,6 +108,14 @@ export function CandidateScoreBadge({
       {support && !rechecking && (
         <span className="text-[11px] text-muted-foreground" title={support}>
           {evidence!.supported}/{evidence!.total} evidenced
+        </span>
+      )}
+      {humanReviewed && (
+        <span
+          className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary"
+          title="A TaaSFlow specialist reviewed this assessment by hand."
+        >
+          Specialist reviewed
         </span>
       )}
       {unicorn && <UnicornBadge />}

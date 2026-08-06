@@ -17,6 +17,7 @@ import {
   type InterviewQuestion,
   type FitPresentation,
 } from "@/lib/client-fit-presentation";
+import { clientReviewStatement } from "@/lib/scoring/human-adjustment";
 import {
   buildEvidenceCard,
   type EvidenceCard,
@@ -284,6 +285,11 @@ export type ClientCandidateDTO = {
    * the band instead of a numeric score.
    */
   evidence_support: { supported: number; total: number };
+  /**
+   * A person reviewed this assessment by hand. Clients see the fact and the
+   * count of hand-verified requirements — never the reviewer's internal note.
+   */
+  human_review: { reviewed: boolean; verified_requirements: number; statement: string | null };
   interview_guide: InterviewQuestion[];
   evidence: Array<{ label: string; snippet: string }>;
   experience: Array<{ title: string; company: string | null; period: string | null; description: string | null }>;
@@ -520,7 +526,7 @@ export const CLIENT_CANDIDATE_SELECT = `id, stage, delivered_at, position_id, ap
          candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, compensation_preferences, updated_at),
          positions(id, title, location, work_model, requirements, preferred_requirements, compensation, updated_at),
          applications(id, source, applied_at, created_at),
-         score_runs:approved_score_run_id (score, fit_label, explanation, result, evidence, requirement_coverage, completed_at, engine_version, input_hash, blueprint_version, contradiction_status, must_have_coverage, preferred_coverage)`;
+         score_runs:approved_score_run_id (score, fit_label, explanation, result, evidence, requirement_coverage, completed_at, engine_version, evaluation_method, input_hash, blueprint_version, contradiction_status, must_have_coverage, preferred_coverage)`;
 
 
 /** Lowest score inside the strongest configured band. Single source of truth. */
@@ -706,6 +712,18 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     main_consideration: mainConsideration,
     requirement_rows,
     evidence_support: evidenceSupport(requirement_rows),
+    human_review: (() => {
+      const res = (run?.result as AnyRow | null) ?? null;
+      const reviewed =
+        (run as AnyRow)?.evaluation_method === "human_adjusted" ||
+        Boolean(res?.human_adjustment);
+      const verified = Number(res?.verified_evidence?.human_verified ?? 0);
+      return {
+        reviewed,
+        verified_requirements: reviewed ? verified : 0,
+        statement: clientReviewStatement({ humanAdjusted: reviewed, verifiedCount: verified }),
+      };
+    })(),
     coverage: coverageSummary,
     interview_guide,
     evidence,
