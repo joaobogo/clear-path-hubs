@@ -1491,7 +1491,7 @@ function Home() {
               What you receive
             </p>
             <h2 className="mt-2 font-[family-name:var(--brand-font-display)] text-3xl font-semibold tracking-tight text-[color:var(--brand-navy)] sm:text-4xl">
-              This is the deliverable. Not a stack of CVs.
+              Our deliverable to you: Real Candidate analytics and insight. Not a stack of CVs.
             </h2>
             <p className="mt-3 text-[color:var(--brand-navy)]/80">
               Pick a candidate. The fit recommendation, requirement coverage,
