@@ -117,9 +117,12 @@ export function assessFreshness(input: FreshnessInput): Freshness {
     });
   }
 
+  // Only the base version is compared: a role-family suffix ("…+engineering")
+  // still applies today, so it must not read as a change.
+  const base = (v: string) => v.split("+")[0]!;
   const scoredCal = str(input.scored_calibration_version);
   const currentCal = str(input.current_calibration_version);
-  if (scoredCal && currentCal && scoredCal !== currentCal) {
+  if (scoredCal && currentCal && base(scoredCal) !== base(currentCal)) {
     reasons.push({
       code: "calibration_changed",
       label: "The way requirements are weighted changed after this was assessed.",
