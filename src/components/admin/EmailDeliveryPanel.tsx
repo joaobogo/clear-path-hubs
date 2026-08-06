@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { listEmailDeliveryEvents } from "@/lib/email-delivery.functions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PanelError } from "@/components/admin/panel-error";
 
 const FILTERS = [
   { value: "", label: "Everything" },
@@ -31,7 +32,7 @@ const PROBLEM_EVENTS = new Set([
 export function EmailDeliveryPanel() {
   const [filter, setFilter] = useState<string>("");
   const fn = useServerFn(listEmailDeliveryEvents);
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch, isFetching } = useQuery({
     queryKey: ["email-delivery", filter],
     queryFn: () => fn({ data: filter ? { eventType: filter } : {} }),
   });
@@ -70,9 +71,12 @@ export function EmailDeliveryPanel() {
       {isLoading ? (
         <p className="mt-3 text-sm text-muted-foreground">Loading delivery history…</p>
       ) : error ? (
-        <p className="mt-3 text-sm text-muted-foreground">
-          Delivery history is unavailable right now.
-        </p>
+        <PanelError
+          className="mt-3"
+          message="We couldn't load delivery history. This is a read failure on our side — it does not mean there were no sends."
+          onRetry={() => void refetch()}
+          retrying={isFetching}
+        />
       ) : !data?.available ? (
         <p className="mt-3 text-sm text-muted-foreground">{data?.reason}</p>
       ) : data.items.length === 0 ? (

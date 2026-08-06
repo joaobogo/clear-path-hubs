@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listTeamsDeliveries } from "@/lib/teams.functions";
 import { Badge } from "@/components/ui/badge";
+import { PanelError } from "@/components/admin/panel-error";
 
 /**
  * Staff view of Microsoft Teams delivery: how many workspaces are connected,
@@ -9,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
  */
 export function TeamsDeliveryPanel() {
   const fn = useServerFn(listTeamsDeliveries);
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch, isFetching } = useQuery({
     queryKey: ["teams-deliveries"],
     queryFn: () => fn(),
   });
@@ -26,9 +27,12 @@ export function TeamsDeliveryPanel() {
     return (
       <section className="rounded-lg border p-4">
         <h3 className="font-semibold">Teams delivery</h3>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Delivery history is unavailable right now.
-        </p>
+        <PanelError
+          className="mt-3"
+          message="We couldn't load Teams delivery history. This is a read failure, not proof that nothing was posted."
+          onRetry={() => void refetch()}
+          retrying={isFetching}
+        />
       </section>
     );
   }

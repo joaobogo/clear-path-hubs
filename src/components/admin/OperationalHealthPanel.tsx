@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getOperationalHealth, retryOperationalIssue } from "@/lib/admin-workbench.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { PanelError } from "@/components/admin/panel-error";
 import { Button } from "@/components/ui/button";
 
 const KIND_LABEL: Record<string, string> = {
@@ -19,7 +20,10 @@ export function OperationalHealthPanel() {
   const retryFn = useServerFn(retryOperationalIssue);
   const [note, setNote] = useState<string | null>(null);
 
-  const { data, isLoading } = useQuery({ queryKey: ["ops-health"], queryFn: () => healthFn() });
+  const { data, isLoading, isError, refetch, isFetching } = useQuery({
+    queryKey: ["ops-health"],
+    queryFn: () => healthFn(),
+  });
 
   const retry = useMutation({
     mutationFn: async (v: { kind: "webhook" | "processing" | "email" | "cv"; id: string }) =>
@@ -56,6 +60,12 @@ export function OperationalHealthPanel() {
 
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Checking systems…</p>
+        ) : isError ? (
+          <PanelError
+            message="We couldn't reach the health checks. Treat this as unknown, not healthy."
+            onRetry={() => void refetch()}
+            retrying={isFetching}
+          />
         ) : issues.length === 0 ? (
           <p className="text-sm text-muted-foreground">Nothing failing right now. Everything has been picked up.</p>
         ) : (
