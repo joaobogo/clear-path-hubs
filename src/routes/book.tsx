@@ -36,6 +36,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SiteFooter } from "@/components/marketing/site-shell";
 
 export const Route = createFileRoute("/book")({
   validateSearch: (
@@ -365,6 +366,7 @@ function BookPage() {
   }
 
   return (
+    <>
     <main className="mx-auto max-w-3xl px-6 py-14">
       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
         {meeting.durationLabel} · {meeting.name}
@@ -529,5 +531,7 @@ function BookPage() {
         </Card>
       ) : null}
     </main>
+    <SiteFooter />
+    </>
   );
 }

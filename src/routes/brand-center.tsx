@@ -30,6 +30,7 @@ import { BRAND_COLORS, C, CONTRAST_RESULTS } from "@/lib/brand-center/palette";
 import { VISUAL_SYSTEMS, clearSpaceDiagram, gridDiagram, LOGO } from "@/lib/brand-center/templates";
 import { brand } from "@/config/brand";
 import { triggerDownload } from "@/lib/brand-center/scene";
+import { SiteFooter } from "@/components/marketing/site-shell";
 
 const CANONICAL = canonicalUrl("/brand-center");
 const TITLE = "TaaSFlow Brand Center — logos, messaging, assets";
@@ -126,6 +127,7 @@ function BrandCenter() {
   }
 
   return (
+    <>
     <main
       data-brand-print={printMode ? "1" : undefined}
       className="mx-auto max-w-6xl px-5 pb-24 sm:px-8"
@@ -734,6 +736,8 @@ function BrandCenter() {
         </div>
       </div>
     </main>
+    <SiteFooter />
+    </>
   );
 }
 
