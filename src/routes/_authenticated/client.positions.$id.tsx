@@ -17,6 +17,7 @@ import {
  SPONSORSHIP_LABELS,
 } from "@/lib/express-intake-schema";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
+import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 
 import { confirmRoleBlueprint } from "@/lib/client.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
@@ -719,23 +720,32 @@ function PositionDetailPage() {
  canEdit ? "cursor-grab active:cursor-grabbing" : ""
  }`}
  >
- <Link
- to="/client/candidates/$id"
- params={{ id: m.id }}
- className="block text-sm font-medium hover:underline"
- >
- {m.candidate_profiles?.full_name ?? "Candidate"}
- </Link>
- <div className="text-xs text-muted-foreground truncate">
- {m.candidate_profiles?.headline ?? ""}
- </div>
- <div className="mt-1 flex items-center gap-2 text-xs">
- {(m.score_runs?.fit_label || m.score_runs?.score != null) && (
- <span className="text-muted-foreground">
- {toFitPresentation(m.score_runs?.fit_label, m.score_runs?.score).headline}
- </span>
- )}
- </div>
+                                <Link
+                                  to="/client/candidates/$id"
+                                  params={{ id: m.id }}
+                                  className="block text-sm font-medium hover:underline"
+                                >
+                                  {m.candidate_profiles?.full_name ?? "Candidate"}
+                                </Link>
+                                <div className="text-xs text-muted-foreground truncate">
+                                  {m.candidate_profiles?.headline ??
+                                    m.candidate_profiles?.location ??
+                                    ""}
+                                </div>
+                                <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs">
+                                  <CandidateScoreBadge
+                                    score={m.score_runs?.score ?? null}
+                                    unicorn={
+                                      (m.score_runs?.score ?? 0) >= 95 || m.stage === "hired"
+                                    }
+                                  />
+                                  {(m.score_runs?.fit_label || m.score_runs?.score != null) && (
+                                    <span className="text-muted-foreground">
+                                      {toFitPresentation(m.score_runs?.fit_label, m.score_runs?.score).headline}
+                                    </span>
+                                  )}
+                                </div>
+
 
  {canEdit && allowed.length > 0 && (
  <div className="mt-2">

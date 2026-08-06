@@ -40,6 +40,7 @@ import {
 import type { MatchStage } from "@/lib/client-kpi.server";
 import { buildShortlistRationale } from "@/lib/client-rationale";
 import { DownloadCvButton } from "@/components/download-cv-button";
+import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { OpenThreadButton } from "@/components/comms/open-thread-button";
 import { JourneyTimeline } from "@/components/candidate/journey-timeline";
@@ -564,9 +565,13 @@ function CandidateHeader({
  <h1 className="truncate text-2xl font-semibold tracking-tight sm:text-3xl">
  {c.display_name}
  </h1>
- <Badge variant="outline" className="capitalize">
- {String(candidate.stage).replace(/_/g, " ")}
- </Badge>
+                            <CandidateScoreBadge
+                              score={candidate.score}
+                              unicorn={candidate.unicorn}
+                            />
+                            <Badge variant="outline" className="capitalize">
+                              {String(candidate.stage).replace(/_/g, " ")}
+                            </Badge>
  </div>
  {c.headline && (
  <p className="mt-1 text-base text-muted-foreground">

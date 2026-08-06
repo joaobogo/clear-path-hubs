@@ -233,8 +233,11 @@ export type ClientCandidateDTO = {
   stage_entered_at: string | null;
   last_updated: string | null;
   position: { id: string; title: string } | null;
+  /** True for a standout candidate: approved score of 95+ or an actual hire. */
+  unicorn: boolean;
   candidate: {
-    display_name: string; // first name + last initial
+    full_name: string;
+    display_name: string; // full name when known, else the anonymous placeholder
     location: string | null;
     timezone: string | null;
     headline: string | null;
@@ -504,12 +507,10 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const run = row.score_runs ?? null;
   const coverage = run?.requirement_coverage ?? null;
 
-  const fullName: string = cp.full_name ?? "Candidate";
-  const parts = fullName.trim().split(/\s+/);
-  const displayName =
-    parts.length > 1
-      ? `${parts[0]} ${parts[parts.length - 1][0]}.`
-      : (parts[0] ?? "Candidate");
+  const fullName: string = (cp.full_name ?? "").trim() || "Candidate";
+  // Employers see the full name on any candidate that reached their workspace —
+  // the delivery decision already happened upstream.
+  const displayName = fullName;
 
   const availability = (() => {
     const av = cp.availability;
@@ -631,7 +632,9 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
         : (row.updated_at ?? row.delivered_at ?? null),
     last_updated: run?.completed_at ?? row.updated_at ?? row.delivered_at ?? null,
     position: pos ? { id: pos.id, title: pos.title } : null,
+    unicorn: (run?.score ?? 0) >= 95 || row.stage === "hired",
     candidate: {
+      full_name: fullName,
       display_name: displayName,
       location: cp.location ?? null,
       timezone: cp.timezone ?? null,
