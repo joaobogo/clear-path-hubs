@@ -8,8 +8,6 @@ import {
   getInsightsPositions,
 } from "@/lib/insights.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -23,21 +21,11 @@ import { AnalyticsSkeleton } from "@/components/ds/page-skeleton";
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveNoAnalyticsState } from "@/lib/empty-states/empty-state-catalogue";
 import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
-import { TrendingDown, Timer, Wallet } from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-  Cell,
-  LabelList,
-} from "recharts";
 import { usePrefersReducedMotion } from "@/lib/motion/use-motion";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
-
-
+import { DropoutQuestion } from "@/components/client/analytics/dropout-question";
+import { SpeedQuestion } from "@/components/client/analytics/speed-question";
+import { CostQuestion } from "@/components/client/analytics/cost-question";
 
 const RoutePending = makeWorkspacePending({ shape: "kpis", kpis: true, width: "7xl" });
 export const Route = createFileRoute("/_authenticated/client/analytics")({
@@ -60,62 +48,6 @@ export const Route = createFileRoute("/_authenticated/client/analytics")({
 });
 
 const WINDOWS = [30, 60, 90, 180];
-
-function money(amount: number, currency: string): string {
-  try {
-    return new Intl.NumberFormat("en-GB", {
-      style: "currency",
-      currency,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  } catch {
-    return `${Math.round(amount)} ${currency}`;
-  }
-}
-
-function days(v: number | null): string {
-  if (v === null) return "—";
-  return `${v.toFixed(1)} days`;
-}
-
-function QuestionCard({
-  icon,
-  question,
-  children,
-}: {
-  icon: React.ReactNode;
-  question: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <span className="text-muted-foreground">{icon}</span>
-          {question}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">{children}</CardContent>
-    </Card>
-  );
-}
-
-function NotAvailable({ reason }: { reason: string }) {
-  return (
-    <p className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
-      {reason} We only show figures we can back with your records — nothing here
-      is estimated.
-    </p>
-  );
-}
-
-function Interpretation({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="border-l-2 border-primary/40 pl-3 text-sm text-foreground">
-      {children}
-    </p>
-  );
-}
 
 function AnalyticsPage() {
   // Recharts animates series by default; a reduced-motion reader gets the
@@ -240,186 +172,9 @@ function AnalyticsPage() {
         />
       ) : (
         <div className="grid gap-6">
-          {/* 1 — Drop-out */}
-          <QuestionCard
-            icon={<TrendingDown className="h-4 w-4" />}
-            question="Where do candidates drop out?"
-          >
-            {!data.dropout.available ? (
-              <NotAvailable reason={data.dropout.reason ?? ""} />
-            ) : (
-              <>
-                <div className="h-[240px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={data.dropout.steps}
-                      layout="vertical"
-                      margin={{ left: 24, right: 32 }}
-                    >
-                      <CartesianGrid horizontal={false} strokeOpacity={0.2} />
-                      <XAxis type="number" allowDecimals={false} />
-                      <YAxis
-                        type="category"
-                        dataKey="label"
-                        width={110}
-                        tickLine={false}
-                        axisLine={false}
-                      />
-                      <Bar dataKey="count" radius={4} {...chartAnim}>
-                        <LabelList dataKey="count" position="right" />
-                        {data.dropout.steps.map((s) => (
-                          <Cell
-                            key={s.key}
-                            fill={
-                              data.dropout.biggest_drop &&
-                              s.label === data.dropout.biggest_drop.label
-                                ? "hsl(var(--destructive))"
-                                : "hsl(var(--primary))"
-                            }
-                          />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-                <Interpretation>
-                  {data.dropout.biggest_drop
-                    ? `Of the ${data.dropout.total} candidates shown to you, the largest fall-off is between ${data.dropout.biggest_drop.from} and ${data.dropout.biggest_drop.label} — ${data.dropout.biggest_drop.dropped} candidates stopped there.`
-                    : `All ${data.dropout.total} candidates shown to you are still moving forward — no drop-off recorded yet.`}
-                </Interpretation>
-              </>
-            )}
-          </QuestionCard>
-
-          {/* 2 — Speed vs promise */}
-          <QuestionCard
-            icon={<Timer className="h-4 w-4" />}
-            question="How fast are we vs. our promise?"
-          >
-            {!data.speed.available ? (
-              <NotAvailable reason={data.speed.reason ?? ""} />
-            ) : (
-              <>
-                <div className="h-[220px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={data.speed.rows} margin={{ left: 8, right: 8 }}>
-                      <CartesianGrid vertical={false} strokeOpacity={0.2} />
-                      <XAxis dataKey="label" tickLine={false} axisLine={false} />
-                      <YAxis
-                        tickLine={false}
-                        axisLine={false}
-                        label={{ value: "days", angle: -90, position: "insideLeft" }}
-                      />
-                      <Bar
-                        dataKey="promise_days"
-                        name="Promised"
-                        fill="hsl(var(--muted-foreground))"
-                        radius={4}
-                        {...chartAnim}
-                      >
-                        <LabelList dataKey="promise_days" position="top" />
-                      </Bar>
-                      <Bar
-                        dataKey="actual_days"
-                        name="Actual"
-                        fill="hsl(var(--primary))"
-                        radius={4}
-                        {...chartAnim}
-                      >
-                        <LabelList
-                          dataKey="actual_days"
-                          position="top"
-                          formatter={(v: number) => v?.toFixed(1)}
-                        />
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {data.speed.rows.map((r) => (
-                    <Badge
-                      key={r.key}
-                      variant={
-                        r.variance_days !== null && r.variance_days <= 0
-                          ? "default"
-                          : "destructive"
-                      }
-                    >
-                      {r.label}: {days(r.actual_days)} vs {r.promise_days} promised
-                      {r.variance_days !== null
-                        ? ` (${r.variance_days <= 0 ? "" : "+"}${r.variance_days.toFixed(1)}d)`
-                        : ""}
-                    </Badge>
-                  ))}
-                </div>
-                <Interpretation>
-                  {(() => {
-                    const first = data.speed.rows[0];
-                    if (!first || first.variance_days === null)
-                      return "Measured across your roles with a live commitment.";
-                    const late = first.variance_days > 0;
-                    return `${late ? "We are running behind" : "We are keeping ahead of"} the promise we made at role launch: ${first.label.toLowerCase()} took ${days(first.actual_days)} against ${first.promise_days} promised, measured across ${first.measured} role${first.measured === 1 ? "" : "s"}.`;
-                  })()}
-                </Interpretation>
-              </>
-            )}
-          </QuestionCard>
-
-          {/* 3 — Spend per hire */}
-          <QuestionCard
-            icon={<Wallet className="h-4 w-4" />}
-            question="What did we spend per hire?"
-          >
-            {!data.cost.available ? (
-              <NotAvailable reason={data.cost.reason ?? ""} />
-            ) : (
-              <>
-                <div className="grid gap-4 sm:grid-cols-3">
-                  <div>
-                    <p className="text-xs uppercase text-muted-foreground">
-                      Recorded spend
-                    </p>
-                    <p className="text-2xl font-semibold">
-                      {money(data.cost.total_spend, data.cost.currency)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase text-muted-foreground">
-                      Confirmed hires
-                    </p>
-                    <p className="text-2xl font-semibold">{data.cost.hires}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase text-muted-foreground">
-                      Cost per hire
-                    </p>
-                    <p className="text-2xl font-semibold">
-                      {money(data.cost.cost_per_hire ?? 0, data.cost.currency)}
-                    </p>
-                  </div>
-                </div>
-                <div className="h-[200px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={data.cost.by_category} margin={{ left: 8, right: 8 }}>
-                      <CartesianGrid vertical={false} strokeOpacity={0.2} />
-                      <XAxis dataKey="category" tickLine={false} axisLine={false} />
-                      <YAxis tickLine={false} axisLine={false} />
-                      <Bar dataKey="amount" fill="hsl(var(--primary))" radius={4}>
-                        <LabelList
-                          dataKey="amount"
-                          position="top"
-                          formatter={(v: number) => money(v, data.cost.currency)}
-                        />
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-                <Interpretation>
-                  {`You hired ${data.cost.hires} ${data.cost.hires === 1 ? "person" : "people"} in this window and recorded ${money(data.cost.total_spend, data.cost.currency)} of recruiting spend, so each hire cost ${money(data.cost.cost_per_hire ?? 0, data.cost.currency)}. Based on ${data.cost.entries_counted} recorded spend ${data.cost.entries_counted === 1 ? "entry" : "entries"} — no estimates included.`}
-                </Interpretation>
-              </>
-            )}
-          </QuestionCard>
+          <DropoutQuestion dropout={data.dropout} chartAnim={chartAnim} />
+          <SpeedQuestion speed={data.speed} chartAnim={chartAnim} />
+          <CostQuestion cost={data.cost} />
         </div>
       )}
     </div>

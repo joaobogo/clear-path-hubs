@@ -9,17 +9,6 @@ import { getClientContext } from "@/lib/client-context.functions";
 import { getClientPositions } from "@/lib/client-positions.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import {
- Select,
- SelectContent,
- SelectItem,
- SelectTrigger,
- SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { LayoutGrid, List, Search, AlertCircle } from "lucide-react";
 import { QueryErrorCard } from "@/components/client/query-error";
 import {
   PortfolioSnapshot,
@@ -28,6 +17,13 @@ import {
   EmptyState,
   type Row,
 } from "@/components/client/position-list/position-cards";
+import {
+  STATUS_TABS,
+  ActionRequiredBanner,
+  StatusTabs,
+  FilterBar,
+  ActiveChips,
+} from "@/components/client/position-list/toolbar";
 
 const searchSchema = z.object({
  status: fallback(z.string(), "active").default("active"),
@@ -55,14 +51,6 @@ export const Route = createFileRoute("/_authenticated/client/positions/")({
  }),
  component: PositionsPage,
 });
-
-const STATUS_TABS = [
- { key: "active", label: "Active" },
- { key: "draft", label: "Under review" },
- { key: "paused", label: "Paused" },
- { key: "closed", label: "Archived" },
-] as const;
-
 
 
 import { SurfaceState } from "@/components/ds/surface-state";
@@ -246,57 +234,9 @@ function PositionsPage() {
 
  <PortfolioSnapshot data={portfolio} loading={isFetching && rows.length === 0} />
 
- {actionItems.length > 0 && (
- <section className="mb-6 rounded-xl border taas-bd-warning taas-bg-warning-soft p-4 ">
- <div className="flex items-center gap-2 mb-3">
- <AlertCircle className="h-4 w-4 taas-fg-warning " />
- <h2 className="text-sm font-semibold">Action required</h2>
- <span className="text-xs text-muted-foreground">
- {actionItems.length} position{actionItems.length === 1 ? "" : "s"}
- </span>
- </div>
- <ul className="space-y-2">
- {actionItems.slice(0, 5).map((p) => (
- <li
- key={p.id}
- className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-background/60 px-3 py-2 text-sm"
- >
- <div className="min-w-0">
- <div className="font-medium truncate">{p.title}</div>
- <div className="text-xs text-muted-foreground">
- {p.action_required}
- </div>
- </div>
- <Link
- to="/client/positions/$id/edit"
- params={{ id: p.id }}
- search={{ step: undefined }}
- className="text-xs font-medium text-primary hover:underline shrink-0"
- >
- Review →
- </Link>
- </li>
- ))}
- </ul>
- </section>
- )}
+ <ActionRequiredBanner actionItems={actionItems} />
 
- <div className="mb-3 flex flex-wrap items-center gap-1 border-b">
- {STATUS_TABS.map((t) => (
- <button
- key={t.key}
- type="button"
- onClick={() => setSearch({ status: t.key })}
- className={`px-3 py-2 text-sm border-b-2 -mb-px transition-colors ${
- status === t.key
- ? "border-primary text-foreground"
- : "border-transparent text-muted-foreground hover:text-foreground"
- }`}
- >
- {t.label}
- </button>
- ))}
- </div>
+  <StatusTabs status={status} setSearch={setSearch} />
 
   <FilterBar
     orgId={orgId}
