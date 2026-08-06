@@ -426,6 +426,9 @@ function ReviewWorkspace() {
             ) : null}
           </Card>
 
+          {/* Machine-derived vs human-verified criteria, and reviewer verdicts */}
+          <HumanVerificationPanel matchId={params.matchId} onChanged={refresh} />
+
           {/* Evidence per dimension */}
           <section className="space-y-3">
             <h2 className="text-sm font-semibold">Evidence by dimension</h2>
