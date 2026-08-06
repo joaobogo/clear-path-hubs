@@ -15,6 +15,7 @@
 // an empty result set.
 
 import type { ClientPermission } from "@/lib/authz";
+import { readWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 // The authenticated Supabase client injected by `requireSupabaseAuth`.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -65,20 +66,20 @@ export async function assertPlatformAdmin(db: Db, userId: string) {
 // ─── Client organization membership ─────────────────────────────────────────
 
 export async function assertOrgMember(db: Db, userId: string, orgId: string) {
-  if (await rpcBool(db, "is_org_member", { _user: userId, _org: orgId })) return;
-  if (await isPlatformStaff(db, userId)) return;
+  const access = await readWorkspaceAccess(db, userId, orgId);
+  if (access.allowed) return;
   denied("forbidden_org_member", "You do not have access to this organization.");
 }
 
 export async function assertOrgEditor(db: Db, userId: string, orgId: string) {
-  if (await rpcBool(db, "is_org_editor", { _user: userId, _org: orgId })) return;
-  if (await isPlatformStaff(db, userId)) return;
+  const access = await readWorkspaceAccess(db, userId, orgId);
+  if (access.isStaff || access.role === "client_admin" || access.role === "client_editor") return;
   denied("forbidden_org_editor", "You need edit access in this organization.");
 }
 
 export async function assertOrgAdmin(db: Db, userId: string, orgId: string) {
-  if (await rpcBool(db, "is_org_admin", { _user: userId, _org: orgId })) return;
-  if (await isPlatformStaff(db, userId)) return;
+  const access = await readWorkspaceAccess(db, userId, orgId);
+  if (access.isAdmin) return;
   denied("forbidden_org_admin", "You need owner access in this organization.");
 }
 

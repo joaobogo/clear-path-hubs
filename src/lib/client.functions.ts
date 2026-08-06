@@ -39,6 +39,7 @@ import { buildQueue, type QueueItem } from "@/lib/client-decision-queue";
 import { buildOfferRow } from "@/lib/client-offer-holder";
 import { computeNextMilestone } from "@/lib/client-next-milestone";
 import { buildRoleTimeline } from "@/lib/client-role-timeline";
+import { readWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -2076,16 +2077,17 @@ export const getClientTeam = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
-    // Only admins/editors of this org (or staff) can view the team.
-    const { data: canRead } = await context.supabase.rpc("is_org_editor", {
-      _user: context.userId,
-      _org: data.orgId,
-    });
-    const { data: staff } = await context.supabase.rpc("is_platform_staff", {
-      _user: context.userId,
-    });
-    if (canRead !== true && staff !== true) throw new Error("forbidden");
-    const { data: rows, error } = await context.supabase
+    // Verify the caller's active seat directly. The legacy RPC also checks the
+    // workspace archival flag, which incorrectly turned a valid client seat
+    // into a bare "forbidden" response across Account and Team.
+    const access = await readWorkspaceAccess(context.supabase, context.userId, data.orgId);
+    const canRead = access.isStaff || access.role === "client_admin" || access.role === "client_editor";
+    if (!canRead) throw new Error("You need team access in this workspace.");
+
+    // After authorization, use the privileged server client for the roster so
+    // organization-row visibility cannot make an authorized team appear broken.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin
       .from("memberships")
       .select("user_id, role, status, created_at, profiles:user_id(full_name, email)")
       .eq("organization_id", data.orgId);
@@ -2098,12 +2100,8 @@ export const getClientTeam = createServerFn({ method: "GET" })
 // Support view read-only is enforced through assertNotSupportViewReadOnly.
 
 async function assertOrgAdmin(supabase: AnyRow, userId: string, orgId: string): Promise<void> {
-  const { data: isAdmin } = await supabase.rpc("is_org_admin", {
-    _user: userId,
-    _org: orgId,
-  });
-  const { data: staff } = await supabase.rpc("is_platform_staff", { _user: userId });
-  if (isAdmin !== true && staff !== true) throw new Error("Forbidden");
+  const access = await readWorkspaceAccess(supabase, userId, orgId);
+  if (!access.isAdmin) throw new Error("You need owner access in this workspace.");
 }
 
 const clientMemberRoleZ = z.enum(["client_admin", "client_editor", "client_viewer"]);

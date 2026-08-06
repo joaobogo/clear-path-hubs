@@ -50,6 +50,7 @@ export async function readWorkspaceAccess(
   ]);
 
   // A failed read is a failure, never a silent "no access".
+  if (staffRes?.error) throw new Error(staffRes.error.message);
   if (memberRes?.error) throw new Error(memberRes.error.message);
 
   const isStaff = staffRes?.data === true;
