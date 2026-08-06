@@ -1,0 +1,1 @@
+GRANT SELECT ON public.screening_questions TO anon;
