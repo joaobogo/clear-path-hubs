@@ -19,6 +19,10 @@ import {
 } from "@/lib/client-fit-presentation";
 import { clientReviewStatement } from "@/lib/scoring/human-adjustment";
 import {
+  buildScoreExplanation,
+  type ScoreExplanation,
+} from "@/lib/scoring/score-explanation";
+import {
   buildEvidenceCard,
   type EvidenceCard,
   type ClientEvidenceRow,
