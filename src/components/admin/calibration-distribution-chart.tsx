@@ -17,9 +17,9 @@ export function CalibrationDistributionChart({ desk }: { desk: CalibrationDesk }
         {desk.buckets.map((bucket) => {
           const height = (bucket.count / maxCount) * 100;
           const reached =
-            desk.range.observed_max !== null && bucket.min <= desk.range.observed_max;
+            desk.range.observed_max !== null && bucket.from <= desk.range.observed_max;
           return (
-            <div key={`${bucket.min}-${bucket.max}`} className="flex-1 flex flex-col items-center gap-1">
+            <div key={`${bucket.from}-${bucket.to}`} className="flex-1 flex flex-col items-center gap-1">
               <span className="text-[10px] text-muted-foreground tabular-nums">
                 {bucket.count || ""}
               </span>
@@ -32,7 +32,7 @@ export function CalibrationDistributionChart({ desk }: { desk: CalibrationDesk }
                   style={{ height: `${Math.max(bucket.count > 0 ? 4 : 1, height)}%` }}
                 />
               </div>
-              <span className="text-[10px] text-muted-foreground tabular-nums">{bucket.min}</span>
+              <span className="text-[10px] text-muted-foreground tabular-nums">{bucket.from}</span>
             </div>
           );
         })}
