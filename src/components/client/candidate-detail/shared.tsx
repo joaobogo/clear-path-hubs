@@ -48,6 +48,7 @@ export function CandidateHeader({
             evidence={candidate.evidence_support}
             rechecking={candidate.freshness?.state === "stale"}
             humanReviewed={candidate.human_review?.reviewed === true}
+            evidencePending={candidate.explanation?.kind === "evidence_pending"}
             unicorn={candidate.unicorn}
           />
           <Badge variant="outline" className="capitalize">
@@ -59,6 +60,18 @@ export function CandidateHeader({
             {c.headline}
           </p>
         )}
+        {candidate.explanation?.kind === "explained" ? (
+          <p className="mt-1 text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">
+              {candidate.explanation.method_label}:
+            </span>{" "}
+            {candidate.explanation.criteria_summary}.
+          </p>
+        ) : candidate.explanation ? (
+          <p className="mt-1 text-sm text-muted-foreground">
+            Evidence pending — {candidate.explanation.reason}
+          </p>
+        ) : null}
         {candidate.human_review?.statement && (
           <p className="mt-1 text-sm text-primary">{candidate.human_review.statement}</p>
         )}

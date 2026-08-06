@@ -26,6 +26,7 @@
  */
 
 import { z } from "zod";
+import type { EvaluationMethod } from "./evaluation-method";
 
 /**
  * Bump whenever any value below changes. Semantic: engine-behaviour version.
@@ -38,9 +39,10 @@ export const CALIBRATION_VERSION = "taasflow-calibration-v1.2.0";
 /**
  * How the engine reaches its numbers. Recorded on every run as
  * `evaluation_method` so audits and client-facing explanations never claim a
- * model was involved when none was (audit finding 14).
+ * model was involved when none was (audit finding 14). Canonical vocabulary
+ * lives in `scoring/evaluation-method.ts` — "hybrid" is not a method.
  */
-export const EVALUATION_METHOD = "deterministic_keyword" as const;
+export const EVALUATION_METHOD: EvaluationMethod = "deterministic";
 
 /**
  * Zod shape of a persisted calibration. Every field is optional on the way in

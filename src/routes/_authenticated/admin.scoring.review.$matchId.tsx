@@ -13,6 +13,11 @@ import {
 } from "@/lib/scoring-review.functions";
 import { applyReviewDecision } from "@/lib/processing.functions";
 import { HumanVerificationPanel } from "@/components/admin/human-verification-panel";
+import {
+  methodLabel,
+  methodSentence,
+  normalizeEvaluationMethod,
+} from "@/lib/scoring/evaluation-method";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminScoreNumber } from "@/components/admin/admin-score-number";
@@ -400,8 +405,11 @@ function ReviewWorkspace() {
             </div>
             <div className="rounded-md bg-muted/50 p-3 text-xs text-muted-foreground">
               Rubric {rubric ? `v${rubric.version_number} (${fmt(rubric.status)})` : "not versioned"} ·
-              engine {fmt(currentRun?.engine_version)} · method {fmt(currentRun?.evaluation_method)}
-              {currentRun?.evaluation_method === "legacy" ? (
+              engine {fmt(currentRun?.engine_version)} ·{" "}
+              <span title={methodSentence(currentRun?.evaluation_method)}>
+                method {methodLabel(currentRun?.evaluation_method)}
+              </span>
+              {normalizeEvaluationMethod(currentRun?.evaluation_method) === "legacy" ? (
                 <> · produced before the current scoring contract</>
               ) : null}
               {Object.keys(dimensionWeights).length > 0 ? (

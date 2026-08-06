@@ -19,6 +19,15 @@ import {
 } from "@/lib/client-fit-presentation";
 import { clientReviewStatement } from "@/lib/scoring/human-adjustment";
 import {
+  clientMethodLabel,
+  normalizeEvaluationMethod,
+  type EvaluationMethod,
+} from "@/lib/scoring/evaluation-method";
+import {
+  buildScoreExplanation,
+  type ScoreExplanation,
+} from "@/lib/scoring/score-explanation";
+import {
   buildEvidenceCard,
   type EvidenceCard,
   type ClientEvidenceRow,
@@ -290,6 +299,13 @@ export type ClientCandidateDTO = {
    * count of hand-verified requirements — never the reviewer's internal note.
    */
   human_review: { reviewed: boolean; verified_requirements: number; statement: string | null };
+  /**
+   * The band is never a bare adjective: this names the method that produced the
+   * assessment and lists the criteria with their evidence snippets. When no
+   * criterion carries evidence the shape is `evidence_pending` and the surface
+   * shows the band with "Evidence pending" instead of a figure.
+   */
+  explanation: ScoreExplanation;
   interview_guide: InterviewQuestion[];
   evidence: Array<{ label: string; snippet: string }>;
   experience: Array<{ title: string; company: string | null; period: string | null; description: string | null }>;
@@ -329,6 +345,9 @@ export type ClientCandidateDTO = {
     blueprint_version: string | null;
     contradiction: string | null;
     completed_at: string | null;
+    /** Truthful method behind the run: never "hybrid". */
+    method: EvaluationMethod;
+    method_label: string;
     category_breakdown: Array<{ label: string; value: number | null; weight: number | null }>;
   };
 };
@@ -653,6 +672,33 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
 
   const audit_trail = buildAuditTrail((row as AnyRow).audit_events);
 
+  // Method + criteria + evidence snippets. When no criterion carries a quoted
+  // snippet, this comes back as `evidence_pending` and the surface shows the
+  // band without a figure rather than an unsupported claim.
+  const clientExplanation = buildScoreExplanation({
+    audience: "client",
+    method: (run as AnyRow)?.evaluation_method ?? null,
+    bandLabel: fit.headline,
+    evidencePath: { kind: "route", to: `/client/candidates/${row.id}` },
+    criteria: requirement_rows.map((r) => ({
+      label: r.label,
+      importance: r.importance === "must_have" ? "must_have" : "preferred",
+      verdict:
+        r.status === "met"
+          ? "met"
+          : r.status === "partial"
+            ? "partial"
+            : r.status === "not_applicable"
+              ? "not_applicable"
+              : r.status === "not_evidenced" || r.status === "contradicted"
+                ? "missing"
+                : "unknown",
+      evidence_snippet: r.evidence?.[0]?.snippet ?? null,
+      source: r.evidence?.[0]?.source ?? null,
+    })),
+  });
+
+
   return {
     match_id: row.id,
     stage: row.stage,
@@ -706,7 +752,14 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     score: run?.score ?? null,
     fit_label: run?.fit_label ?? null,
     fit,
-    summary: run?.explanation ?? null,
+    // The engine's own explanation string carries a raw n/100 figure, which is
+    // internal. Employer surfaces get the criteria-backed explanation instead.
+    summary: (() => {
+      const explained = clientExplanation;
+      return explained.kind === "explained"
+        ? `${explained.method_sentence} ${explained.criteria_summary}.`
+        : null;
+    })(),
     strengths,
     concerns,
     main_consideration: mainConsideration,
@@ -724,6 +777,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
         statement: clientReviewStatement({ humanAdjusted: reviewed, verifiedCount: verified }),
       };
     })(),
+    explanation: clientExplanation,
     coverage: coverageSummary,
     interview_guide,
     evidence,
@@ -756,6 +810,8 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
           ? String(run.contradiction_status)
           : null,
       completed_at: run?.completed_at ?? null,
+      method: normalizeEvaluationMethod((run as AnyRow)?.evaluation_method),
+      method_label: clientMethodLabel((run as AnyRow)?.evaluation_method),
       category_breakdown: [
         {
           label: "Must-have coverage",

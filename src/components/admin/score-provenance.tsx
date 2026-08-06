@@ -54,9 +54,30 @@ export function ScoreProvenanceBadge({
   );
 }
 
-export function ProvenanceLines({ provenance }: { provenance: ScoreProvenance }) {
+export type ProvenanceCriterion = {
+  label: string;
+  verdict_label: string;
+  evidence_snippet: string | null;
+  source?: string | null;
+  human_verified?: boolean;
+};
+
+export function ProvenanceLines({
+  provenance,
+  criteria,
+}: {
+  provenance: ScoreProvenance;
+  criteria?: ProvenanceCriterion[];
+}) {
+  const evidenced = (criteria ?? []).filter(
+    (c) => Boolean(c.evidence_snippet) || c.human_verified === true,
+  );
   return (
     <>
+      <div>
+        <span className="font-semibold">Method:</span> {provenance.methodLabel}
+      </div>
+      <div className="opacity-80">{provenance.methodSentence}</div>
       <div>
         <span className="font-semibold">Engine value:</span> {fmt(provenance.engineValue)}
         {provenance.engineVersion ? ` · engine ${provenance.engineVersion}` : ""}
@@ -86,6 +107,27 @@ export function ProvenanceLines({ provenance }: { provenance: ScoreProvenance })
               provenance.rubric.versionNumber ? ` v${provenance.rubric.versionNumber}` : ""
             }`}
       </div>
+      {criteria ? (
+        evidenced.length > 0 ? (
+          <ul className="space-y-1">
+            {evidenced.slice(0, 6).map((c, i) => (
+              <li key={`${c.label}-${i}`}>
+                <span className="font-medium">{c.label}</span> — {c.verdict_label}
+                {c.human_verified ? " (human-verified)" : ""}
+                {c.evidence_snippet ? (
+                  <span className="block opacity-80">
+                    “{c.evidence_snippet}”{c.source ? ` — ${c.source}` : ""}
+                  </span>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="taas-tx-warning">
+            Evidence pending — no criterion carries a quoted snippet yet.
+          </div>
+        )
+      ) : null}
       {provenance.computedAt && (
         <div className="opacity-80">Computed {provenance.computedAt.slice(0, 10)}</div>
       )}
@@ -94,11 +136,18 @@ export function ProvenanceLines({ provenance }: { provenance: ScoreProvenance })
 }
 
 /** Block form for detail pages, where a tooltip is not enough. */
-export function ScoreProvenancePanel({ provenance }: { provenance: ScoreProvenance }) {
+export function ScoreProvenancePanel({
+  provenance,
+  criteria,
+}: {
+  provenance: ScoreProvenance;
+  criteria?: ProvenanceCriterion[];
+}) {
   return (
     <div className="rounded-lg border p-3 text-sm">
       <div className="mb-2 flex items-center gap-2">
         <span className="text-lg font-semibold">Fit {fmt(provenance.effectiveValue)}</span>
+        <Badge variant="secondary">{provenance.methodLabel}</Badge>
         {provenance.override ? (
           <Badge variant="outline" className="taas-tx-warning">
             Human override
@@ -114,7 +163,7 @@ export function ScoreProvenancePanel({ provenance }: { provenance: ScoreProvenan
         )}
       </div>
       <div className="space-y-1 text-xs text-muted-foreground">
-        <ProvenanceLines provenance={provenance} />
+        <ProvenanceLines provenance={provenance} criteria={criteria} />
       </div>
     </div>
   );

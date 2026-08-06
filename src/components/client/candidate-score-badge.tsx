@@ -38,6 +38,12 @@ type Props = {
    * the reviewer's internal note never reaches an employer surface.
    */
   humanReviewed?: boolean;
+  /**
+   * True when this surface cannot supply the criteria and evidence behind the
+   * assessment. The band still shows, marked "Evidence pending" — we never
+   * print a supported-count that we cannot back with snippets.
+   */
+  evidencePending?: boolean;
   unicorn?: boolean;
   className?: string;
 };
@@ -69,6 +75,7 @@ export function CandidateScoreBadge({
   evidence = null,
   rechecking = false,
   humanReviewed = false,
+  evidencePending = false,
   unicorn = false,
   className = "",
 }: Props) {
@@ -105,7 +112,15 @@ export function CandidateScoreBadge({
           Being re-checked
         </span>
       )}
-      {support && !rechecking && (
+      {evidencePending && !rechecking && (
+        <span
+          className="inline-flex items-center rounded-full border border-border bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
+          title="The criteria and evidence behind this assessment are not available on this view yet."
+        >
+          Evidence pending
+        </span>
+      )}
+      {support && !rechecking && !evidencePending && (
         <span className="text-[11px] text-muted-foreground" title={support}>
           {evidence!.supported}/{evidence!.total} evidenced
         </span>

@@ -7,6 +7,13 @@
  * context is not shippable to a recruiter making a decision.
  */
 
+import {
+  methodLabel,
+  methodSentence,
+  normalizeEvaluationMethod,
+  type EvaluationMethod,
+} from "./evaluation-method";
+
 export type ProvenanceOverride = {
   value: number | null;
   actor: string | null;
@@ -15,6 +22,10 @@ export type ProvenanceOverride = {
 };
 
 export type ScoreProvenance = {
+  /** Truthful method behind the run (`deterministic` | `semantic` | `human_adjusted` | `legacy`). */
+  method: EvaluationMethod;
+  methodLabel: string;
+  methodSentence: string;
   /** What the engine computed, before any human intervention. */
   engineValue: number | null;
   /** The value in force now (override if present, else engine). */
@@ -35,6 +46,7 @@ type RunLike = {
   completed_at?: string | null;
   created_at?: string | null;
   rubric_version_id?: string | null;
+  evaluation_method?: string | null;
 } | null | undefined;
 
 type DecisionLike = {
@@ -85,7 +97,12 @@ export function resolveScoreProvenance(args: {
       }
     : null;
 
+  const method = normalizeEvaluationMethod(run?.evaluation_method);
+
   return {
+    method,
+    methodLabel: methodLabel(run?.evaluation_method),
+    methodSentence: methodSentence(run?.evaluation_method),
     engineValue,
     effectiveValue: override?.value ?? finalValue,
     override,
