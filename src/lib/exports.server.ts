@@ -230,19 +230,23 @@ export async function runExportJob(
       })
       .eq("id", jobId);
 
-    await s.from("audit_events").insert({
-      actor_user_id: userId,
-      action: "export_generated",
-      entity_type: "export_job",
-      entity_id: jobId,
-      organization_id: filters.organization_id ?? null,
-      after_state: {
+    // Canonical product event through the single emitter — never an ad-hoc
+    // action string, so dashboards written against `export.requested` see it.
+    const { emitProductEvent } = await import("./product-events.server");
+    await emitProductEvent(s, {
+      event: "export.requested",
+      entityType: "export_job",
+      entityId: jobId,
+      organizationId: filters.organization_id ?? null,
+      actorUserId: userId,
+      after: {
+        phase: "generated",
         export_type: job.export_type,
         scope: job.scope_label,
         filters,
         row_count: list.length,
         contact_included: includeContact,
-      } as never,
+      },
     });
 
     return { status: "completed" };
@@ -309,12 +313,13 @@ export async function signExportDownload(
     throw new Error(signed.error?.message ?? "Could not create download link.");
   }
 
-  await s.from("audit_events").insert({
-    actor_user_id: userId,
-    action: "export_downloaded",
-    entity_type: "export_job",
-    entity_id: jobId,
-    after_state: { at: new Date().toISOString() } as never,
+  const { emitProductEvent } = await import("./product-events.server");
+  await emitProductEvent(s, {
+    event: "export.requested",
+    entityType: "export_job",
+    entityId: jobId,
+    actorUserId: userId,
+    after: { phase: "downloaded", at: new Date().toISOString() },
   });
 
   return { url: signed.data.signedUrl };
