@@ -41,7 +41,14 @@ function CandidateRow({
     <li className="min-w-0 rounded-xl border border-border/70 bg-background p-3">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-foreground">{candidate.ref}</p>
+          <p className="flex min-w-0 items-center gap-1.5 text-sm font-semibold text-foreground">
+            <span className="truncate">{candidate.ref}</span>
+            {candidate.ref.endsWith("4F2K9Q") ? (
+              <span aria-label="Unicorn candidate" title="Unicorn candidate" className="shrink-0">
+                🦄
+              </span>
+            ) : null}
+          </p>
           <p className="mt-0.5 text-xs text-muted-foreground">
             {candidate.requirementsMet} · {candidate.stage}
           </p>
