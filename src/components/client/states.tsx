@@ -130,10 +130,13 @@ export function ErrorState({
   title = "We couldn't load this",
   description = "Nothing is lost — this is a temporary problem on our side.",
   onRetry,
+  detail,
 }: {
   title?: string;
   description?: string;
   onRetry?: () => void;
+  /** Plain-language reason, shown when we actually know it. */
+  detail?: string | null;
 }) {
   return (
     <div className="mx-auto flex max-w-md flex-col items-center rounded-xl border bg-card px-6 py-12 text-center">
@@ -142,6 +145,9 @@ export function ErrorState({
       </span>
       <h3 className="mt-4 text-base font-medium text-foreground">{title}</h3>
       <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+      {detail ? (
+        <p className="mt-2 text-xs text-muted-foreground">{detail}</p>
+      ) : null}
       <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
         {onRetry && (
           <Button size="sm" onClick={onRetry}>
