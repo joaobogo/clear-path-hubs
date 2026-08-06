@@ -143,6 +143,7 @@ import { Route as AuthenticatedAdminMyDayRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
 import { Route as AuthenticatedAdminLeadDeliveryRouteImport } from './routes/_authenticated/admin.lead-delivery'
 import { Route as AuthenticatedAdminIntegrationsRouteImport } from './routes/_authenticated/admin.integrations'
+import { Route as AuthenticatedAdminIntakeQualityRouteImport } from './routes/_authenticated/admin.intake-quality'
 import { Route as AuthenticatedAdminIntakeRouteImport } from './routes/_authenticated/admin.intake'
 import { Route as AuthenticatedAdminHealthRouteImport } from './routes/_authenticated/admin.health'
 import { Route as AuthenticatedAdminEvidenceGapsRouteImport } from './routes/_authenticated/admin.evidence-gaps'
@@ -197,6 +198,7 @@ import { Route as ApiPublicBookingSessionIdIcsRouteImport } from './routes/api/p
 import { Route as AuthenticatedClientPositionsIdEditRouteImport } from './routes/_authenticated/client.positions.$id_.edit'
 import { Route as AuthenticatedAdminScoringReviewMatchIdRouteImport } from './routes/_authenticated/admin.scoring.review.$matchId'
 import { Route as AuthenticatedAdminPositionsIdEditRouteImport } from './routes/_authenticated/admin.positions.$id_.edit'
+import { Route as AuthenticatedAdminPositionsIdCriteriaRouteImport } from './routes/_authenticated/admin.positions.$id_.criteria'
 import { Route as AuthenticatedAdminCandidatesIdParseRouteImport } from './routes/_authenticated/admin.candidates.$id_.parse'
 import { Route as AuthenticatedAdminCandidatesIdEvidenceRouteImport } from './routes/_authenticated/admin.candidates.$id_.evidence'
 
@@ -910,6 +912,12 @@ const AuthenticatedAdminIntegrationsRoute =
     path: '/integrations',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminIntakeQualityRoute =
+  AuthenticatedAdminIntakeQualityRouteImport.update({
+    id: '/intake-quality',
+    path: '/intake-quality',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminIntakeRoute =
   AuthenticatedAdminIntakeRouteImport.update({
     id: '/intake',
@@ -1228,6 +1236,12 @@ const AuthenticatedAdminPositionsIdEditRoute =
     path: '/$id/edit',
     getParentRoute: () => AuthenticatedAdminPositionsRoute,
   } as any)
+const AuthenticatedAdminPositionsIdCriteriaRoute =
+  AuthenticatedAdminPositionsIdCriteriaRouteImport.update({
+    id: '/$id_/criteria',
+    path: '/$id/criteria',
+    getParentRoute: () => AuthenticatedAdminPositionsRoute,
+  } as any)
 const AuthenticatedAdminCandidatesIdParseRoute =
   AuthenticatedAdminCandidatesIdParseRouteImport.update({
     id: '/$id_/parse',
@@ -1321,6 +1335,7 @@ export interface FileRoutesByFullPath {
   '/admin/evidence-gaps': typeof AuthenticatedAdminEvidenceGapsRoute
   '/admin/health': typeof AuthenticatedAdminHealthRoute
   '/admin/intake': typeof AuthenticatedAdminIntakeRouteWithChildren
+  '/admin/intake-quality': typeof AuthenticatedAdminIntakeQualityRoute
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -1426,6 +1441,7 @@ export interface FileRoutesByFullPath {
   '/me/applications/': typeof AuthenticatedMeApplicationsIndexRoute
   '/admin/candidates/$id/evidence': typeof AuthenticatedAdminCandidatesIdEvidenceRoute
   '/admin/candidates/$id/parse': typeof AuthenticatedAdminCandidatesIdParseRoute
+  '/admin/positions/$id/criteria': typeof AuthenticatedAdminPositionsIdCriteriaRoute
   '/admin/positions/$id/edit': typeof AuthenticatedAdminPositionsIdEditRoute
   '/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/client/positions/$id/edit': typeof AuthenticatedClientPositionsIdEditRoute
@@ -1506,6 +1522,7 @@ export interface FileRoutesByTo {
   '/admin/design-system': typeof AuthenticatedAdminDesignSystemRoute
   '/admin/evidence-gaps': typeof AuthenticatedAdminEvidenceGapsRoute
   '/admin/health': typeof AuthenticatedAdminHealthRoute
+  '/admin/intake-quality': typeof AuthenticatedAdminIntakeQualityRoute
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -1607,6 +1624,7 @@ export interface FileRoutesByTo {
   '/me/applications': typeof AuthenticatedMeApplicationsIndexRoute
   '/admin/candidates/$id/evidence': typeof AuthenticatedAdminCandidatesIdEvidenceRoute
   '/admin/candidates/$id/parse': typeof AuthenticatedAdminCandidatesIdParseRoute
+  '/admin/positions/$id/criteria': typeof AuthenticatedAdminPositionsIdCriteriaRoute
   '/admin/positions/$id/edit': typeof AuthenticatedAdminPositionsIdEditRoute
   '/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/client/positions/$id/edit': typeof AuthenticatedClientPositionsIdEditRoute
@@ -1695,6 +1713,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/evidence-gaps': typeof AuthenticatedAdminEvidenceGapsRoute
   '/_authenticated/admin/health': typeof AuthenticatedAdminHealthRoute
   '/_authenticated/admin/intake': typeof AuthenticatedAdminIntakeRouteWithChildren
+  '/_authenticated/admin/intake-quality': typeof AuthenticatedAdminIntakeQualityRoute
   '/_authenticated/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/_authenticated/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -1800,6 +1819,7 @@ export interface FileRoutesById {
   '/_authenticated/me/applications/': typeof AuthenticatedMeApplicationsIndexRoute
   '/_authenticated/admin/candidates/$id_/evidence': typeof AuthenticatedAdminCandidatesIdEvidenceRoute
   '/_authenticated/admin/candidates/$id_/parse': typeof AuthenticatedAdminCandidatesIdParseRoute
+  '/_authenticated/admin/positions/$id_/criteria': typeof AuthenticatedAdminPositionsIdCriteriaRoute
   '/_authenticated/admin/positions/$id_/edit': typeof AuthenticatedAdminPositionsIdEditRoute
   '/_authenticated/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/_authenticated/client/positions/$id_/edit': typeof AuthenticatedClientPositionsIdEditRoute
@@ -1888,6 +1908,7 @@ export interface FileRouteTypes {
     | '/admin/evidence-gaps'
     | '/admin/health'
     | '/admin/intake'
+    | '/admin/intake-quality'
     | '/admin/integrations'
     | '/admin/lead-delivery'
     | '/admin/messages'
@@ -1993,6 +2014,7 @@ export interface FileRouteTypes {
     | '/me/applications/'
     | '/admin/candidates/$id/evidence'
     | '/admin/candidates/$id/parse'
+    | '/admin/positions/$id/criteria'
     | '/admin/positions/$id/edit'
     | '/admin/scoring/review/$matchId'
     | '/client/positions/$id/edit'
@@ -2073,6 +2095,7 @@ export interface FileRouteTypes {
     | '/admin/design-system'
     | '/admin/evidence-gaps'
     | '/admin/health'
+    | '/admin/intake-quality'
     | '/admin/integrations'
     | '/admin/lead-delivery'
     | '/admin/messages'
@@ -2174,6 +2197,7 @@ export interface FileRouteTypes {
     | '/me/applications'
     | '/admin/candidates/$id/evidence'
     | '/admin/candidates/$id/parse'
+    | '/admin/positions/$id/criteria'
     | '/admin/positions/$id/edit'
     | '/admin/scoring/review/$matchId'
     | '/client/positions/$id/edit'
@@ -2261,6 +2285,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/evidence-gaps'
     | '/_authenticated/admin/health'
     | '/_authenticated/admin/intake'
+    | '/_authenticated/admin/intake-quality'
     | '/_authenticated/admin/integrations'
     | '/_authenticated/admin/lead-delivery'
     | '/_authenticated/admin/messages'
@@ -2366,6 +2391,7 @@ export interface FileRouteTypes {
     | '/_authenticated/me/applications/'
     | '/_authenticated/admin/candidates/$id_/evidence'
     | '/_authenticated/admin/candidates/$id_/parse'
+    | '/_authenticated/admin/positions/$id_/criteria'
     | '/_authenticated/admin/positions/$id_/edit'
     | '/_authenticated/admin/scoring/review/$matchId'
     | '/_authenticated/client/positions/$id_/edit'
@@ -3409,6 +3435,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIntegrationsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/intake-quality': {
+      id: '/_authenticated/admin/intake-quality'
+      path: '/intake-quality'
+      fullPath: '/admin/intake-quality'
+      preLoaderRoute: typeof AuthenticatedAdminIntakeQualityRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/intake': {
       id: '/_authenticated/admin/intake'
       path: '/intake'
@@ -3787,6 +3820,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPositionsIdEditRouteImport
       parentRoute: typeof AuthenticatedAdminPositionsRoute
     }
+    '/_authenticated/admin/positions/$id_/criteria': {
+      id: '/_authenticated/admin/positions/$id_/criteria'
+      path: '/$id/criteria'
+      fullPath: '/admin/positions/$id/criteria'
+      preLoaderRoute: typeof AuthenticatedAdminPositionsIdCriteriaRouteImport
+      parentRoute: typeof AuthenticatedAdminPositionsRoute
+    }
     '/_authenticated/admin/candidates/$id_/parse': {
       id: '/_authenticated/admin/candidates/$id_/parse'
       path: '/$id/parse'
@@ -3862,6 +3902,7 @@ const AuthenticatedAdminIntakeRouteWithChildren =
 interface AuthenticatedAdminPositionsRouteChildren {
   AuthenticatedAdminPositionsIdRoute: typeof AuthenticatedAdminPositionsIdRoute
   AuthenticatedAdminPositionsIndexRoute: typeof AuthenticatedAdminPositionsIndexRoute
+  AuthenticatedAdminPositionsIdCriteriaRoute: typeof AuthenticatedAdminPositionsIdCriteriaRoute
   AuthenticatedAdminPositionsIdEditRoute: typeof AuthenticatedAdminPositionsIdEditRoute
 }
 
@@ -3870,6 +3911,8 @@ const AuthenticatedAdminPositionsRouteChildren: AuthenticatedAdminPositionsRoute
     AuthenticatedAdminPositionsIdRoute: AuthenticatedAdminPositionsIdRoute,
     AuthenticatedAdminPositionsIndexRoute:
       AuthenticatedAdminPositionsIndexRoute,
+    AuthenticatedAdminPositionsIdCriteriaRoute:
+      AuthenticatedAdminPositionsIdCriteriaRoute,
     AuthenticatedAdminPositionsIdEditRoute:
       AuthenticatedAdminPositionsIdEditRoute,
   }
@@ -3893,6 +3936,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminEvidenceGapsRoute: typeof AuthenticatedAdminEvidenceGapsRoute
   AuthenticatedAdminHealthRoute: typeof AuthenticatedAdminHealthRoute
   AuthenticatedAdminIntakeRoute: typeof AuthenticatedAdminIntakeRouteWithChildren
+  AuthenticatedAdminIntakeQualityRoute: typeof AuthenticatedAdminIntakeQualityRoute
   AuthenticatedAdminIntegrationsRoute: typeof AuthenticatedAdminIntegrationsRoute
   AuthenticatedAdminLeadDeliveryRoute: typeof AuthenticatedAdminLeadDeliveryRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
@@ -3936,6 +3980,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminEvidenceGapsRoute: AuthenticatedAdminEvidenceGapsRoute,
   AuthenticatedAdminHealthRoute: AuthenticatedAdminHealthRoute,
   AuthenticatedAdminIntakeRoute: AuthenticatedAdminIntakeRouteWithChildren,
+  AuthenticatedAdminIntakeQualityRoute: AuthenticatedAdminIntakeQualityRoute,
   AuthenticatedAdminIntegrationsRoute: AuthenticatedAdminIntegrationsRoute,
   AuthenticatedAdminLeadDeliveryRoute: AuthenticatedAdminLeadDeliveryRoute,
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
@@ -4238,13 +4283,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
