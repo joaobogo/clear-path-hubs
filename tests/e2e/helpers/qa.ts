@@ -40,7 +40,8 @@ type QaAction =
   | "lookup_candidate_application"
   | "cleanup_candidate_e2e"
   | "lookup_booking"
-  | "cleanup_booking_e2e";
+  | "cleanup_booking_e2e"
+  | "lookup_tenant";
 
 function token(): string {
   const value = process.env["QA_SEED_TOKEN"];
@@ -385,4 +386,105 @@ export async function loginAs(
   await expect
     .poll(() => new URL(page.url()).pathname, { timeout: 30_000 })
     .not.toMatch(/login/);
+}
+
+// ─────────────────────────────────────────────────────────────
+// Tenant-isolation helpers
+// ─────────────────────────────────────────────────────────────
+
+export type TenantSnapshot = {
+  ok: boolean;
+  organizations: Array<{ id: string; name: string; status: string; domain: string | null }>;
+  memberships: Array<{
+    user_id: string;
+    organization_id: string;
+    role: string;
+    status: string;
+    email: string | null;
+  }>;
+};
+
+/**
+ * Reads the real organizations + membership rows for a company name (or org id)
+ * so a test can prove a rejected request created no tenant and granted no
+ * access. Assertions must never rely on the API response alone: the security
+ * property is about what is persisted.
+ */
+export const lookupTenant = (args: { companyName?: string; organizationId?: string }) =>
+  qaSeed<TenantSnapshot>("lookup_tenant", {
+    company_name: args.companyName,
+    organization_id: args.organizationId,
+  });
+
+function supabaseAuthConfig(): { url: string; key: string } {
+  const url = process.env["SUPABASE_URL"] ?? process.env["VITE_SUPABASE_URL"];
+  const key =
+    process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
+  if (!url || !key) throw new Error("Supabase URL/publishable key are not set in the environment");
+  return { url, key };
+}
+
+/**
+ * Signs in with a password and returns the access token, exactly as the browser
+ * would. Used to prove the difference between an anonymous caller and the real
+ * owner of an account — the only thing these endpoints accept as identity.
+ */
+export async function signIn(
+  email: string,
+  password: string,
+): Promise<{ status: number; accessToken: string | null; userId: string | null }> {
+  const { url, key } = supabaseAuthConfig();
+  const res = await fetch(`${url}/auth/v1/token?grant_type=password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", apikey: key },
+    body: JSON.stringify({ email, password }),
+  });
+  const json = (await res.json().catch(() => ({}))) as {
+    access_token?: string;
+    user?: { id?: string };
+  };
+  return {
+    status: res.status,
+    accessToken: json.access_token ?? null,
+    userId: json.user?.id ?? null,
+  };
+}
+
+/** Signs in and fails loudly when it does not work — for arranging a test. */
+export async function accessTokenFor(email: string, password: string): Promise<string> {
+  const { status, accessToken } = await signIn(email, password);
+  if (!accessToken) throw new Error(`sign-in for ${email} failed (${status})`);
+  return accessToken;
+}
+
+export type PublicApiResult<T = Record<string, unknown>> = { status: number; body: T };
+
+/** POSTs JSON to one of our public endpoints, optionally as a signed-in user. */
+export async function postPublic<T = Record<string, unknown>>(
+  path: string,
+  payload: unknown,
+  opts: { accessToken?: string | null; noRetry?: boolean } = {},
+): Promise<PublicApiResult<T>> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (opts.accessToken) headers["authorization"] = `Bearer ${opts.accessToken}`;
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+  });
+  const text = await res.text();
+  let body: unknown = {};
+  try {
+    body = JSON.parse(text);
+  } catch {
+    body = { raw: text };
+  }
+  // These endpoints rate-limit per connection by the minute. A 429 is the
+  // limiter working, not the behaviour under test, so wait it out once rather
+  // than reporting a false failure.
+  if (res.status === 429 && !opts.noRetry) {
+    await new Promise((r) => setTimeout(r, 62_000));
+    return postPublic<T>(path, payload, { ...opts, noRetry: true });
+  }
+  return { status: res.status, body: body as T };
 }
