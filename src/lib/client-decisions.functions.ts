@@ -465,6 +465,7 @@ export const clientAction = createServerFn({ method: "POST" })
       orgId: string;
       matchId: string;
       action: ClientActionKey;
+      expectedStage?: string;
       feedback?: string;
       reasonCode?: string;
       signals?: string[];
