@@ -33,6 +33,11 @@ type Props = {
    * marked as being re-checked so it is never presented as current.
    */
   rechecking?: boolean;
+  /**
+   * A specialist reviewed this assessment by hand. We state the fact only —
+   * the reviewer's internal note never reaches an employer surface.
+   */
+  humanReviewed?: boolean;
   unicorn?: boolean;
   className?: string;
 };
