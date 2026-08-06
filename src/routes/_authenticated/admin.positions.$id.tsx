@@ -99,12 +99,12 @@ const TAB_IDS = [
 
 export const Route = createFileRoute("/_authenticated/admin/positions/$id")({
   // Tabs live in the URL so deep links and back/forward keep working.
-  validateSearch: (search: Record<string, unknown>) => {
-    const raw = String(search.tab ?? "overview");
-    const tab = (TAB_IDS as readonly string[]).includes(raw)
-      ? (raw as (typeof TAB_IDS)[number])
-      : ("overview" as const);
-    return { tab };
+  validateSearch: (search: Record<string, unknown>): { tab?: (typeof TAB_IDS)[number] } => {
+    const raw = search.tab == null ? null : String(search.tab);
+    if (raw && (TAB_IDS as readonly string[]).includes(raw)) {
+      return { tab: raw as (typeof TAB_IDS)[number] };
+    }
+    return {};
   },
   loader: async ({ context, params }) => {
     const d = await context.queryClient.ensureQueryData({
@@ -198,10 +198,11 @@ function PositionWorkspace() {
   const screening = data!.screening as Any[];
   const matches = data!.matches as Any[];
 
-  const { tab } = Route.useSearch();
+  const { tab: tabParam } = Route.useSearch();
+  const tab: TabId = tabParam ?? "overview";
   const navigate = Route.useNavigate();
   const setTab = (next: TabId) =>
-    navigate({ search: (prev: { tab: TabId }) => ({ ...prev, tab: next }), replace: true });
+    navigate({ search: (prev: { tab?: TabId }) => ({ ...prev, tab: next }), replace: true });
 
   const invalidate = async () => {
     await qc.invalidateQueries({ queryKey: ["admin-position", id] });
