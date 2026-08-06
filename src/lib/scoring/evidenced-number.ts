@@ -1,11 +1,16 @@
 /**
- * No number without its evidence — Prompt 23.
+ * No number without its evidence — Prompt 23, tightened by Prompt 11.
  *
  * Every surface that shows a score, a coverage figure or a count must also
- * carry the criteria behind it and a path to the evidence. This makes that
- * structural: a bare number has no way to be rendered, including in exports,
- * digests and emails.
+ * carry the criteria behind it, the method that produced it, and a path to the
+ * evidence. This makes that structural: a bare number has no way to be
+ * rendered, including in exports, digests and emails.
  */
+import {
+  methodLabel,
+  normalizeEvaluationMethod,
+  type EvaluationMethod,
+} from "./evaluation-method";
 
 export type EvidencePath =
   | { kind: "route"; to: string }
@@ -18,6 +23,10 @@ export type EvidencedNumber = {
   label: string;
   /** One line naming the criteria behind the figure. */
   criteria_summary: string;
+  /** Which engine path produced it. Never inferred at render time. */
+  method: EvaluationMethod;
+  /** Human wording for `method`. */
+  method_label: string;
   /** Where a human goes to see the evidence. Never optional. */
   evidence: EvidencePath;
   /** Named uncertainty travelling with the figure, when any. */
@@ -37,6 +46,8 @@ export function evidencedNumber(input: {
   value: number | null | undefined;
   label: string;
   criteria_summary: string;
+  /** Raw `score_runs.evaluation_method`; normalised here, never guessed. */
+  method: string | null | undefined;
   evidence: EvidencePath | null | undefined;
   caveat?: string | null;
 }): EvidencedNumber | null {
@@ -48,6 +59,8 @@ export function evidencedNumber(input: {
     value: input.value,
     label: input.label,
     criteria_summary: input.criteria_summary.trim(),
+    method: normalizeEvaluationMethod(input.method),
+    method_label: methodLabel(input.method),
     evidence: input.evidence,
     caveat: input.caveat?.trim() || null,
   };
@@ -63,16 +76,17 @@ export function evidenceHref(path: EvidencePath, origin?: string): string {
 export function csvCells(
   n: EvidencedNumber,
   origin?: string,
-): { value: string; criteria: string; evidence: string } {
+): { value: string; criteria: string; method: string; evidence: string } {
   return {
     value: String(n.value),
     criteria: n.caveat ? `${n.criteria_summary} (${n.caveat})` : n.criteria_summary,
+    method: n.method_label,
     evidence: evidenceHref(n.evidence, origin),
   };
 }
 
-/** Email and digest line: figure, criteria and link in one readable sentence. */
+/** Email and digest line: figure, method, criteria and link in one sentence. */
 export function emailLine(n: EvidencedNumber, origin?: string): string {
   const caveat = n.caveat ? ` ${n.caveat}.` : "";
-  return `${n.label}: ${n.value} — ${n.criteria_summary}.${caveat} See the evidence: ${evidenceHref(n.evidence, origin)}`;
+  return `${n.label}: ${n.value} (${n.method_label}) — ${n.criteria_summary}.${caveat} See the evidence: ${evidenceHref(n.evidence, origin)}`;
 }
