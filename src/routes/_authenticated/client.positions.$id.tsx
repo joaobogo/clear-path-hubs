@@ -38,6 +38,7 @@ import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
 import { readStaleStateError } from "@/lib/decision-concurrency";
 
 import { PositionDetailPending } from "@/components/client/position-detail/pending";
+import { QueryErrorCard } from "@/components/client/query-error";
 import { KANBAN_COLUMNS, STAGE_GRAPH, STAGE_LABELS } from "@/components/client/position-detail/constants";
 import { SummaryTile } from "@/components/client/position-detail/summary-tile";
 import { PipelineBoard } from "@/components/client/position-detail/pipeline-board";
@@ -93,10 +94,23 @@ type AnyRow = any;
 function PositionDetailPage() {
   const orgSearch = useClientOrgSearch();
   const ctxFn = useServerFn(getClientContext);
-  const { data: ctx } = useQuery({
+  const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
+  const ctx = ctxQuery.data;
+  // A failed workspace lookup must say so rather than skeleton forever.
+  if (ctxQuery.isError) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+        <QueryErrorCard
+          title="We couldn't load this role"
+          error={ctxQuery.error}
+          onRetry={() => ctxQuery.refetch()}
+        />
+      </div>
+    );
+  }
   const orgId = ctx?.active?.organization_id;
   // No resolved workspace means no role to show; the layout already redirects
   // callers with no membership, so this is only the brief pre-resolve window.
