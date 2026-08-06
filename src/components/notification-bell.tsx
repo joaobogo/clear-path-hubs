@@ -20,6 +20,12 @@ import {
   type NotificationTier,
 } from "@/lib/notifications/notification-tiers";
 import { Button } from "@/components/ui/button";
+import {
+  deliveryChipClass,
+  deliveryNotice,
+  normaliseDeliveryStatus,
+  type DeliveryState,
+} from "@/lib/notifications/delivery-state";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { staggerStyle, useArrivals, useJustChanged } from "@/lib/motion/use-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -42,7 +48,7 @@ export function NotificationBell() {
   const qc = useQueryClient();
   const [filter, setFilter] = useState<Filter>("all");
 
-  const { data, isPending, isError } = useQuery({
+  const { data, isPending, isError, refetch, isFetching } = useQuery({
     queryKey: NOTIFICATIONS_QUERY_KEY,
     queryFn: () => list(),
     refetchOnWindowFocus: true,
@@ -167,8 +173,20 @@ export function NotificationBell() {
               ))}
             </ul>
           ) : isError ? (
-            <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-              We could not load your notifications. Nothing was missed — try again in a moment.
+            <div className="px-4 py-8 text-center text-sm">
+              <p className="font-medium">We could not load your notifications.</p>
+              <p className="mt-1 text-muted-foreground">
+                This is a load failure, not an empty inbox — nothing was dismissed.
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-3"
+                disabled={isFetching}
+                onClick={() => void refetch()}
+              >
+                {isFetching ? "Retrying…" : "Try again"}
+              </Button>
             </div>
           ) : visible.length === 0 ? (
             <div className="px-4 py-8 text-center text-sm text-muted-foreground">
@@ -243,6 +261,9 @@ function NotificationRow({
   const Icon = TIER_ICON[tier];
   const extra = items.length - 1;
   const actor = actorLabel(lead.actor_label, null);
+  // Worst delivery state in the group: a bounced email must not hide behind a
+  // sibling notification that went out fine.
+  const delivery = deliveryNotice(worstDeliveryState(items.map((n) => n.delivery_state)));
 
   const body = (
     <div className="flex items-start gap-3 px-4 py-3">
@@ -294,6 +315,14 @@ function NotificationRow({
         >
           {actor} · {relativeTime(group.latestAt)}
         </div>
+
+        {delivery && delivery.prominent && (
+          <div
+            className={`mt-1.5 rounded border px-2 py-1 text-[11px] ${deliveryChipClass(delivery.tone)}`}
+          >
+            <span className="font-semibold">{delivery.label}.</span> {delivery.detail}
+          </div>
+        )}
 
         <div className="mt-2 flex items-center gap-3">
           {rule.action && lead.link_path && (
@@ -348,4 +377,16 @@ function NotificationRow({
       )}
     </li>
   );
+}
+
+const DELIVERY_SEVERITY: DeliveryState[] = ["bounced", "suppressed", "failed", "pending", "sent"];
+
+function worstDeliveryState(states: Array<string | null | undefined>): DeliveryState | null {
+  const normalised = states
+    .map((s) => normaliseDeliveryStatus(s))
+    .filter((s): s is DeliveryState => s !== null);
+  for (const candidate of DELIVERY_SEVERITY) {
+    if (normalised.includes(candidate)) return candidate;
+  }
+  return null;
 }

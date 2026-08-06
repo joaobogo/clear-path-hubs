@@ -7,6 +7,7 @@
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
+import { formatZonedTime, resolveRecipientZone } from "@/lib/time/zone-label";
 
 const paramsSchema = z.object({ sessionId: z.string().uuid() });
 
@@ -30,7 +31,9 @@ export const Route = createFileRoute("/api/public/booking/$sessionId/ics")({
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { data } = await supabaseAdmin
           .from("booking_sessions")
-          .select("id, status, scheduled_start, scheduled_end, host_name, host_email, join_url")
+          .select(
+            "id, status, scheduled_start, scheduled_end, host_name, host_email, join_url, timezone",
+          )
           .eq("id", parsed.data.sessionId)
           .maybeSingle();
 
@@ -39,9 +42,18 @@ export const Route = createFileRoute("/api/public/booking/$sessionId/ics")({
         }
 
         const host = data.host_name ?? "TaaSFlow";
-        const description = data.join_url
-          ? `Join the call: ${data.join_url}`
-          : "We'll send the meeting link before the call.";
+        // Calendar apps convert the UTC stamps themselves, but a reader glancing at
+        // the invite body should still see which zone we booked it in.
+        const zone = resolveRecipientZone((data as { timezone?: string | null }).timezone);
+        const zoned = formatZonedTime(data.scheduled_start, zone);
+        const description = [
+          data.join_url
+            ? `Join the call: ${data.join_url}`
+            : "We'll send the meeting link before the call.",
+          zoned ? `Booked for ${zoned.full}.` : null,
+        ]
+          .filter((line): line is string => line !== null)
+          .join("\n");
 
         const lines = [
           "BEGIN:VCALENDAR",
@@ -49,6 +61,7 @@ export const Route = createFileRoute("/api/public/booking/$sessionId/ics")({
           "PRODID:-//TaaSFlow//Booking//EN",
           "CALSCALE:GREGORIAN",
           "METHOD:PUBLISH",
+          ...(zoned ? [`X-WR-TIMEZONE:${esc(zoned.zone)}`] : []),
           "BEGIN:VEVENT",
           `UID:booking-${data.id}@taasflow.com`,
           `DTSTAMP:${icsStamp(new Date().toISOString())}`,
