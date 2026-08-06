@@ -15,7 +15,6 @@ import {
 
 export const Route = createFileRoute("/resources/$slug")({
   loader: ({ params }): { guide: ResourceGuide } => {
-    throw new Error("FORCED_QA_FAILURE resources");
     const guide = getResourceGuide(params.slug);
     if (!guide) throw notFound();
     return { guide };

@@ -32,7 +32,7 @@ const statusQuery = queryOptions({
 });
 
 export const Route = createFileRoute("/status")({
-  loader: () => { throw new Error("FORCED_QA_FAILURE status"); },
+  loader: ({ context }) => context.queryClient.ensureQueryData(statusQuery),
   head: () =>
     marketingHead(undefined, "/status", {
       title: "System status — TaaSFlow platform availability",
