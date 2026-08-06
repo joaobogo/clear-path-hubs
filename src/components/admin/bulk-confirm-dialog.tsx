@@ -2,12 +2,7 @@ import { useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { previewBulkAction, executeBulkAction } from "@/lib/bulk-actions.functions";
-import type {
-  BulkPreview,
-  ExecResult,
-  ExecItemResult,
-  PlanRow,
-} from "@/lib/bulk-actions.types";
+import type { BulkPreview, ExecResult, ExecItemResult, PlanRow } from "@/lib/bulk-actions.types";
 import type { BulkStage } from "@/lib/admin-bulk-constants";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -149,14 +144,8 @@ export function BulkConfirmDialog({ request, onClose, onCommitted }: BulkConfirm
     },
   });
 
-  const eligibleRows = useMemo(
-    () => (preview?.rows ?? []).filter((r) => r.eligible),
-    [preview],
-  );
-  const skippedRows = useMemo(
-    () => (preview?.rows ?? []).filter((r) => !r.eligible),
-    [preview],
-  );
+  const eligibleRows = useMemo(() => (preview?.rows ?? []).filter((r) => r.eligible), [preview]);
+  const skippedRows = useMemo(() => (preview?.rows ?? []).filter((r) => !r.eligible), [preview]);
   const changedFields = useMemo(() => {
     const map = new Map<string, string>();
     for (const r of eligibleRows) {
@@ -193,8 +182,8 @@ export function BulkConfirmDialog({ request, onClose, onCommitted }: BulkConfirm
 
         {previewQ.isPending ? (
           <div className="flex items-center gap-2 py-6 text-sm text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin" /> Checking {" "}
-            {countOf(request)} selected record(s)…
+            <Loader2 className="h-4 w-4 animate-spin" /> Checking {countOf(request)} selected
+            record(s)…
           </div>
         ) : report ? (
           <div className="space-y-3 text-sm">
@@ -237,9 +226,7 @@ export function BulkConfirmDialog({ request, onClose, onCommitted }: BulkConfirm
             )}
 
             <div>
-              <p className="mb-1 font-medium">
-                Records that will change ({eligibleRows.length})
-              </p>
+              <p className="mb-1 font-medium">Records that will change ({eligibleRows.length})</p>
               {eligibleRows.length === 0 ? (
                 <p className="text-muted-foreground">
                   Nothing in this selection can change right now.

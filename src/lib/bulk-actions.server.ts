@@ -12,19 +12,8 @@
 
 import { BULK_STAGES, type BulkStage } from "./admin-bulk-constants";
 
-export type {
-  FieldChange,
-  PlanRow,
-  BulkKind,
-  BulkPreview,
-  ExecResult,
-} from "./bulk-actions.types";
-import type {
-  PlanRow,
-  BulkPreview,
-  ExecResult,
-  ExecItemResult,
-} from "./bulk-actions.types";
+export type { FieldChange, PlanRow, BulkKind, BulkPreview, ExecResult } from "./bulk-actions.types";
+import type { PlanRow, BulkPreview, ExecResult, ExecItemResult } from "./bulk-actions.types";
 import { BULK_EXEC_BATCH, BULK_SELECTION_CAP } from "./bulk-actions.types";
 
 /**
@@ -55,16 +44,17 @@ async function loadByIds(
   table: string,
   select: string,
   ids: string[],
-): Promise<Map<string, Record<string, any>>> {
+): Promise<Map<string, Record<string, unknown>>> {
   assertWithinCap(ids);
   const unique = [...new Set(ids)];
   const results = await Promise.all(
     chunk(unique).map((batch) => admin.from(table).select(select).in("id", batch)),
   );
-  const map = new Map<string, Record<string, any>>();
+  const map = new Map<string, Record<string, unknown>>();
   for (const r of results) {
     if (r.error) throw r.error;
-    for (const row of (r.data ?? []) as any[]) map.set(row.id as string, row);
+    for (const row of (r.data ?? []) as Record<string, unknown>[])
+      map.set(row["id"] as string, row);
   }
   return map;
 }
@@ -101,7 +91,14 @@ async function planCandidateStage(
   const rows: PlanRow[] = matchIds.map((id) => {
     const row = found.get(id);
     if (!row) {
-      return { id, label: "Unknown record", context: "—", eligible: false, reason: "Record not found", changes: [] };
+      return {
+        id,
+        label: "Unknown record",
+        context: "—",
+        eligible: false,
+        reason: "Record not found",
+        changes: [],
+      };
     }
     let reason: string | undefined;
     if (row.stage === toStage) reason = "Already at this stage";
@@ -158,11 +155,11 @@ async function planCandidateAssign(
   for (const r of existingChunks) if (r.error) throw r.error;
   const already = new Set(
     existingChunks
-      .flatMap((r) => (r.data ?? []) as any[])
-      .map((r: any) => r.candidate_profile_id as string),
+      .flatMap((r) => (r.data ?? []) as Record<string, unknown>[])
+      .map((r) => r["candidate_profile_id"] as string),
   );
   const names = new Map<string, string>(
-    [...profiles.entries()].map(([id, p]) => [id, (p.full_name as string) ?? "Candidate"]),
+    [...profiles.entries()].map(([id, p]) => [id, (p["full_name"] as string) ?? "Candidate"]),
   );
 
   const rows: PlanRow[] = candidateProfileIds.map((id) => {
@@ -205,7 +202,14 @@ async function planCandidateMessage(
   const rows: PlanRow[] = matchIds.map((id) => {
     const row = found.get(id);
     if (!row)
-      return { id, label: "Unknown record", context: "—", eligible: false, reason: "Record not found", changes: [] };
+      return {
+        id,
+        label: "Unknown record",
+        context: "—",
+        eligible: false,
+        reason: "Record not found",
+        changes: [],
+      };
     return {
       id,
       label: (row.candidate_profiles?.full_name as string) || "Candidate",
@@ -230,7 +234,14 @@ async function planPositionPause(
   const rows: PlanRow[] = positionIds.map((id) => {
     const row = found.get(id);
     if (!row)
-      return { id, label: "Unknown role", context: "—", eligible: false, reason: "Record not found", changes: [] };
+      return {
+        id,
+        label: "Unknown role",
+        context: "—",
+        eligible: false,
+        reason: "Record not found",
+        changes: [],
+      };
     const reason =
       row.status === "paused"
         ? "Already paused"
@@ -290,12 +301,7 @@ export async function createPreview(
 
 // ── Per-record execution ─────────────────────────────────────────────────────
 
-async function execStage(
-  admin: Admin,
-  row: PlanRow,
-  toStage: BulkStage,
-  actorUserId: string,
-) {
+async function execStage(admin: Admin, row: PlanRow, toStage: BulkStage, actorUserId: string) {
   const { error } = await admin
     .from("candidate_matches")
     .update({ stage: toStage, updated_at: new Date().toISOString() })
@@ -309,11 +315,7 @@ async function execStage(
   } as never);
 }
 
-async function execAssign(
-  admin: Admin,
-  row: PlanRow,
-  positionId: string,
-) {
+async function execAssign(admin: Admin, row: PlanRow, positionId: string) {
   const { data: position, error: posErr } = await admin
     .from("positions")
     .select("id, organization_id")
@@ -345,12 +347,7 @@ async function execAssign(
   if (matchErr) throw new Error(matchErr.message);
 }
 
-async function execMessage(
-  admin: Admin,
-  row: PlanRow,
-  message: string,
-  actorUserId: string,
-) {
+async function execMessage(admin: Admin, row: PlanRow, message: string, actorUserId: string) {
   const { data: match, error } = await admin
     .from("candidate_matches")
     .select("id, organization_id, position_id, candidate_profile_id")
@@ -449,10 +446,7 @@ export async function executePlan(
     stored != null &&
     JSON.stringify(stored.only_ids ?? null) === JSON.stringify(only ? Array.from(only) : null);
   // A resume with no explicit cursor picks up where the stored progress stopped.
-  const cursor = Math.max(
-    0,
-    Math.min(total, options.cursor ?? (sameRun ? stored!.cursor : 0)),
-  );
+  const cursor = Math.max(0, Math.min(total, options.cursor ?? (sameRun ? stored!.cursor : 0)));
   const batchSize = Math.max(1, Math.min(options.batchSize ?? BULK_EXEC_BATCH, BULK_EXEC_BATCH));
   const batch = targets.slice(cursor, cursor + batchSize);
 
@@ -462,7 +456,8 @@ export async function executePlan(
   const results: ExecItemResult[] = [];
   for (const row of batch) {
     try {
-      if (params.kind === "candidate_stage") await execStage(admin, row, params.to_stage, actorUserId);
+      if (params.kind === "candidate_stage")
+        await execStage(admin, row, params.to_stage, actorUserId);
       else if (params.kind === "candidate_assign") await execAssign(admin, row, params.position_id);
       else if (params.kind === "candidate_update_message")
         await execMessage(admin, row, params.message, actorUserId);

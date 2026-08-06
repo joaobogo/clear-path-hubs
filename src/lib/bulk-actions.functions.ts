@@ -11,7 +11,11 @@ import { BULK_EXEC_BATCH, BULK_SELECTION_CAP } from "./bulk-actions.types";
 const idList = z.array(z.string().uuid()).min(1).max(BULK_SELECTION_CAP);
 
 const paramsSchema = z.discriminatedUnion("kind", [
-  z.object({ kind: z.literal("candidate_stage"), match_ids: idList, to_stage: z.enum(BULK_STAGES) }),
+  z.object({
+    kind: z.literal("candidate_stage"),
+    match_ids: idList,
+    to_stage: z.enum(BULK_STAGES),
+  }),
   z.object({
     kind: z.literal("candidate_assign"),
     candidate_profile_ids: idList,
