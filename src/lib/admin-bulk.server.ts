@@ -52,12 +52,14 @@ async function loadMatchesChunk(admin: Admin, matchIds: string[]) {
  */
 async function loadMatches(admin: Admin, matchIds: string[]) {
   const unique = [...new Set(matchIds)];
-  const out: Array<Record<string, any>> = [];
-  for (let i = 0; i < unique.length; i += LOAD_CHUNK) {
-    out.push(...(await loadMatchesChunk(admin, unique.slice(i, i + LOAD_CHUNK))));
-  }
-  return out;
+  const chunks: string[][] = [];
+  for (let i = 0; i < unique.length; i += LOAD_CHUNK) chunks.push(unique.slice(i, i + LOAD_CHUNK));
+  // The chunks are disjoint id sets, so they load in parallel: the plan preview
+  // no longer costs one round trip per hundred rows in sequence.
+  const results = await Promise.all(chunks.map((c) => loadMatchesChunk(admin, c)));
+  return results.flat();
 }
+
 
 function displayName(row: Record<string, any>) {
   return (row.candidate_profiles?.full_name as string) || "Candidate";
