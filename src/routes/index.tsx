@@ -1337,9 +1337,10 @@ function Home() {
                 id="home-hero-heading"
                 className="font-[family-name:var(--brand-font-display)] text-4xl font-semibold leading-[1.05] tracking-tight text-[color:var(--brand-navy)] sm:text-5xl lg:text-[3.5rem]"
               >
-                Your sourcing and
+                Your Talent
                 <br className="hidden sm:block" />{" "}
-                <span className="text-[color:var(--brand-ocean-text)]">recruitment solution</span>
+                <span className="text-[color:var(--brand-ocean-text)]">Management Solution</span>
+
               </h1>
               <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-danger)]">
                 Human first, AI enabled
