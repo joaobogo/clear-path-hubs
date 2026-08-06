@@ -13,6 +13,8 @@ import {
   type FeedbackNextStep,
   type FeedbackRecommendation,
 } from "./interview-feedback";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
+import { assertEditor } from "@/lib/client-shared.server";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -20,31 +22,6 @@ type AnyRow = any;
 const traceId = () => `fb_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
 
 const DAY = 86_400_000;
-
-async function assertEditor(supabase: AnyRow, userId: string, orgId: string) {
-  const { data: m, error } = await supabase
-    .from("memberships")
-    .select("role, status")
-    .eq("user_id", userId)
-    .eq("organization_id", orgId)
-    .eq("status", "active")
-    .maybeSingle();
-  if (error) throw new Error(error.message);
-  const role = (m as AnyRow)?.role as string | undefined;
-  const allowed = new Set(["client_admin", "client_editor", "platform_admin", "operations"]);
-  if (!role || !allowed.has(role)) throw new Error("forbidden");
-  const { data: session } = await supabase
-    .from("support_sessions")
-    .select("mode, expires_at, ended_at")
-    .eq("actor_user_id", userId)
-    .eq("target_organization_id", orgId)
-    .is("ended_at", null)
-    .gt("expires_at", new Date().toISOString())
-    .maybeSingle();
-  if (session && (session as AnyRow).mode !== "interactive") {
-    throw new Error("SUPPORT_VIEW_READ_ONLY");
-  }
-}
 
 export type FeedbackQueueItem = {
   interview_id: string;
@@ -96,6 +73,7 @@ export const listInterviewsAwaitingFeedback = createServerFn({ method: "POST" })
     z.object({ orgId: z.string().uuid() }).parse(input),
   )
   .handler(async ({ context, data }): Promise<FeedbackQueueItem[]> => {
+    await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
     const sel = (s: string): string => s;
     const nowIso = new Date().toISOString();
     const { data: rows, error } = await context.supabase
@@ -157,6 +135,7 @@ export const getMatchFeedback = createServerFn({ method: "POST" })
       context,
       data,
     }): Promise<{ pending: FeedbackQueueItem[]; submitted: SubmittedFeedback[] }> => {
+      await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
       const sel = (s: string): string => s;
       const nowIso = new Date().toISOString();
 
