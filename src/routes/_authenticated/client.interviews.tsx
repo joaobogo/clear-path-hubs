@@ -72,6 +72,8 @@ import {
  X,
 } from "lucide-react";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
+import { useRouteRealtime } from "@/hooks/use-route-realtime";
+import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
 
 
 const RoutePending = makeWorkspacePending({ shape: "cards", kpis: false, width: "6xl" });

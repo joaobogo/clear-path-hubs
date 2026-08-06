@@ -72,6 +72,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
+import { useRouteRealtime } from "@/hooks/use-route-realtime";
+import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
 
 
 const RoutePending = makeWorkspacePending({ shape: "board", kpis: false, width: "7xl" });

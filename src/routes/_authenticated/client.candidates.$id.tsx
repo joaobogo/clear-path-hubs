@@ -88,6 +88,8 @@ import { InterviewerAssignments } from "@/components/client/interviewer-assignme
 import { CandidateTeamActivity } from "@/components/client/candidate-team-activity";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
+import { useRouteRealtime } from "@/hooks/use-route-realtime";
+import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
 
 
 const RoutePending = makeWorkspacePending({ shape: "detail", kpis: false, width: "6xl" });
