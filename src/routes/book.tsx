@@ -200,6 +200,20 @@ function BookPage() {
     };
   }, []);
 
+  /**
+   * A signed-in client who just booked belongs in their dashboard, not on a
+   * confirmation page. The call details are already in their email and on the
+   * dashboard, so we hand them straight over.
+   */
+  useEffect(() => {
+    if (step !== "done" || !booked || !hasWorkspace) return;
+    const t = window.setTimeout(() => {
+      void navigate({ to: "/client" });
+    }, 1500);
+    return () => window.clearTimeout(t);
+  }, [step, booked, hasWorkspace, navigate]);
+
+
   const zones = useMemo(() => [...new Set<string>([tz, ...TIMEZONE_CHOICES])], [tz]);
 
   const refreshSlots = useCallback(
