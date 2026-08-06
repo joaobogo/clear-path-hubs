@@ -53,10 +53,18 @@ export interface ScoringResult {
     preferred: number;
     screening_alignment: number;
   };
-  requirement_assessment: RequirementAssessment[];
-  strengths: string[];
-  concerns: string[];
-  evidence: EvidenceRef[];
+  /**
+   * Weight actually applied to each category for THIS run. A category with no
+   * inputs (no preferred requirements, no screening answers) gets weight 0 and
+   * the remaining weights are renormalised — absent categories never award
+   * free points.
+   */
+  category_weights: {
+    must_have: number;
+    preferred: number;
+    screening_alignment: number;
+  };
+
   screening_evidence: Array<{
     question_id: string;
     question: string;
