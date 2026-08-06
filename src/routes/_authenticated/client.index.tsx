@@ -7,6 +7,8 @@ import { useEffect, useMemo, useState } from "react";
 import { getClientContext, getClientOverview } from "@/lib/client.functions";
 import { listPendingPaymentRoles } from "@/lib/booking.functions";
 import { PaymentGateBanner } from "@/components/client/payment-gate-banner";
+import { listRolesNeedingDetails } from "@/lib/position-readiness.functions";
+import { RoleDetailsNeededBanner } from "@/components/client/role-details-needed-banner";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { CandidateCard } from "@/components/client/candidate-card";
