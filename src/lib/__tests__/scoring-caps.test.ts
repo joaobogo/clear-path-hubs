@@ -64,10 +64,16 @@ describe("applied caps", () => {
 
   it("caps runs whose must-have coverage sits below the rubric floor", () => {
     const cv = `
-      Graphic designer with eight years in brand identity, print production and
-      motion graphics. Ran studio operations, managed vendor relationships and
-      built a Postgres schema design reference for the asset catalogue.
-    `.repeat(4);
+      Graphic designer with eight years across brand identity, print production,
+      packaging, editorial layout, signage, exhibition graphics and motion work.
+      Ran studio operations for a retail group: vendor negotiation, print buying,
+      colour proofing, photography direction, retouching, prepress checks and
+      press approvals. Built an illustration library, typographic guidelines,
+      wayfinding standards and a photography style guide adopted across seven
+      regional markets. Mentored three junior designers, managed freelancers,
+      scheduled campaign deliverables and reported on studio throughput monthly.
+      Tools: Illustrator, Photoshop, InDesign, After Effects, Figma, Sketch.
+    `.repeat(3);
     const r = scoreCandidate({ cv_text: cv, requirements: REQS, screening: [], calibration: cal });
     expect(r.must_have_coverage).toBeLessThan(cal.must_have_floor);
     const cap = r.applied_caps.find((c) => c.reason.startsWith("must_have_floor"));
