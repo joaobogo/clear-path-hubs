@@ -4173,7 +4173,7 @@ export type Database = {
           before_state: Json
           candidate_match_id: string
           created_at: string
-          evidence_item_id: string
+          evidence_item_id: string | null
           id: string
           organization_id: string
           reason: string
@@ -4184,7 +4184,7 @@ export type Database = {
           before_state: Json
           candidate_match_id: string
           created_at?: string
-          evidence_item_id: string
+          evidence_item_id?: string | null
           id?: string
           organization_id: string
           reason: string
@@ -4195,7 +4195,7 @@ export type Database = {
           before_state?: Json
           candidate_match_id?: string
           created_at?: string
-          evidence_item_id?: string
+          evidence_item_id?: string | null
           id?: string
           organization_id?: string
           reason?: string
