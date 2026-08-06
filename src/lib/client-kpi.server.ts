@@ -20,6 +20,10 @@ import {
   type EvidenceCard,
   type ClientEvidenceRow,
 } from "@/lib/client-evidence-card";
+import { assessFreshness, type Freshness } from "@/lib/scoring/score-freshness";
+import { CALIBRATION_VERSION } from "@/lib/scoring/engine-calibration";
+import { ENGINE_VERSION } from "@/lib/scoring/engine-version";
+import { SCORE_BAND_DEFS } from "@/config/scoring-bands";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -233,8 +237,19 @@ export type ClientCandidateDTO = {
   stage_entered_at: string | null;
   last_updated: string | null;
   position: { id: string; title: string } | null;
-  /** True for a standout candidate: approved score of 95+ or an actual hire. */
+  /**
+   * True for a standout candidate: an approved score inside the top configured
+   * band, or an actual hire. The threshold comes from the band configuration —
+   * never a number written here.
+   */
   unicorn: boolean;
+  /**
+   * Whether the shown assessment still describes current facts. Computed from
+   * the run's own stamps versus the profile, the brief, the criteria, and the
+   * engine/calibration in force today. The visible result is never rewritten;
+   * a stale one is flagged and a reassessment is offered.
+   */
+  freshness: Freshness;
   candidate: {
     full_name: string;
     display_name: string; // full name when known, else the anonymous placeholder
@@ -501,6 +516,9 @@ export const CLIENT_CANDIDATE_SELECT = `id, stage, delivered_at, position_id, ap
          score_runs:approved_score_run_id (score, fit_label, explanation, result, evidence, requirement_coverage, completed_at, engine_version, blueprint_version, contradiction_status, must_have_coverage, preferred_coverage)`;
 
 
+/** Lowest score inside the strongest configured band. Single source of truth. */
+const TOP_BAND_MIN = SCORE_BAND_DEFS[0]?.min ?? 95;
+
 export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const cp = row.candidate_profiles ?? {};
   const pos = row.positions ?? null;
@@ -632,7 +650,21 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
         : (row.updated_at ?? row.delivered_at ?? null),
     last_updated: run?.completed_at ?? row.updated_at ?? row.delivered_at ?? null,
     position: pos ? { id: pos.id, title: pos.title } : null,
-    unicorn: (run?.score ?? 0) >= 95 || row.stage === "hired",
+    unicorn: (run?.score ?? 0) >= TOP_BAND_MIN || row.stage === "hired",
+    freshness: assessFreshness({
+      scored_at: run?.completed_at ?? null,
+      scored_input_hash: run?.input_hash ?? null,
+      scored_engine_version: run?.engine_version ?? null,
+      scored_calibration_version:
+        (run?.result as AnyRow | null)?.calibration_version ?? null,
+      current_engine_version: run?.engine_version ? ENGINE_VERSION : null,
+      current_calibration_version: (run?.result as AnyRow | null)?.calibration_version
+        ? CALIBRATION_VERSION
+        : null,
+      profile_updated_at: cp.updated_at ?? null,
+      brief_updated_at: pos?.updated_at ?? null,
+      criteria_updated_at: (row as AnyRow).criteria_updated_at ?? null,
+    }),
     candidate: {
       full_name: fullName,
       display_name: displayName,
