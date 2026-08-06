@@ -50,6 +50,7 @@ export const markPositionReviewed = createServerFn({ method: "POST" })
       entity_id: data.position_id,
       organization_id: pos.data.organization_id,
       action: REVIEW_ACTION,
+      // Actor is server-derived from the authenticated session, never from the request payload.
       actor_user_id: context.userId,
       after_state: { reviewed_at: new Date().toISOString() },
     });
@@ -94,6 +95,7 @@ export const reassignPositionOwner = createServerFn({ method: "POST" })
       entity_id: data.position_id,
       organization_id: pos.data.organization_id,
       action: OWNER_ACTION,
+      // Actor is server-derived from the authenticated session, never from the request payload.
       actor_user_id: context.userId,
       before_state: { owner_user_id: pos.data.owner_user_id ?? null },
       after_state: { owner_user_id: data.owner_user_id, reason: data.reason ?? null },

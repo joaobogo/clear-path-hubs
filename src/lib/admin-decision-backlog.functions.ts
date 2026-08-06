@@ -53,6 +53,7 @@ export const nudgeClientDecision = createServerFn({ method: "POST" })
     return sendDecisionNudge(supabaseAdmin as never, {
       matchId: data.match_id,
       note: data.note ?? null,
+      // Actor is server-derived from the authenticated session, never from the request payload.
       actorUserId: context.userId,
     });
   });
@@ -79,6 +80,7 @@ export const logOfflineClientDecision = createServerFn({ method: "POST" })
       decision: data.decision,
       note: data.note,
       receivedFrom: data.received_from,
+      // Actor is server-derived from the authenticated session, never from the request payload.
       actorUserId: context.userId,
     });
   });

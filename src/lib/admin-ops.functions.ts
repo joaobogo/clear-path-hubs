@@ -51,6 +51,7 @@ export const claimWorkQueueItem = createServerFn({ method: "POST" })
       await setPositionOwnership(supabaseAdmin as never, {
         positionId: data.id,
         ownerUserId: context.userId,
+        // Actor is server-derived from the authenticated session, never from the request payload.
         actorUserId: context.userId,
         reason: "Claimed from the admin work queue",
       });
@@ -59,6 +60,7 @@ export const claimWorkQueueItem = createServerFn({ method: "POST" })
       await assignIntakeOwnerRow(supabaseAdmin as never, {
         intakeId: data.id,
         ownerUserId: context.userId,
+        // Actor is server-derived from the authenticated session, never from the request payload.
         actorUserId: context.userId,
       });
     }

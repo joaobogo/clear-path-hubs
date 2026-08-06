@@ -36,6 +36,7 @@ export const moveCandidateStage = createServerFn({ method: "POST" })
       matchId: data.match_id,
       toStage: data.to_stage,
       reason: data.reason,
+      // Actor is server-derived from the authenticated session, never from the request payload.
       actorUserId: context.userId,
     });
   });
