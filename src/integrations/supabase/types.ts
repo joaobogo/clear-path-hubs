@@ -14730,9 +14730,13 @@ export type Database = {
           profile_updated_at: string | null
           recommendation: string | null
           region: string | null
+          rescore_queued_at: string | null
           score: number | null
           score_band: string | null
           score_run_id: string | null
+          score_stale: boolean | null
+          score_stale_at: string | null
+          score_stale_reasons: string[] | null
           scored_at: string | null
           scored_engine_version: string | null
           scored_input_hash: string | null
