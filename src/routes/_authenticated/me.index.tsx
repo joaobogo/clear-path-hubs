@@ -11,7 +11,6 @@ import {
   type CandidateSafeStatus,
 } from "@/lib/candidate.functions";
 import { CANDIDATE_STATUS_TONE } from "@/lib/candidate-status";
-import { profileCompleteness } from "@/lib/candidate/profile-completeness";
 import { ProfileGapsBlock } from "@/components/candidate/profile-gaps-block";
 import { InterviewResponseCard } from "@/components/candidate/interview-response-card";
 import { Badge } from "@/components/ui/badge";
@@ -75,7 +74,6 @@ type App = {
   last_update: string;
 };
 
-const completeness = profileCompleteness;
 
 
 function firstName(full?: string | null, email?: string | null): string {
@@ -125,7 +123,6 @@ function MeHome() {
   );
   const spotlight = active[0] ?? applications[0] ?? null;
 
-  const pct = completeness(profile);
   const cv = cvVersions[0] ?? null;
   const name = firstName(
     (profile?.full_name as string | undefined) ?? undefined,
@@ -257,14 +254,9 @@ function MeHome() {
           to="/me/profile"
           icon={<User className="h-4 w-4" />}
           eyebrow="Profile"
-          title={`Completeness · ${pct}%`}
-          body={
-            pct >= 80
-              ? "Your profile is strong. Small edits still help hiring teams understand you."
-              : "A more complete profile helps hiring teams see the real you. Takes ~3 minutes."
-          }
-          cta={pct >= 80 ? "Review profile" : "Complete profile"}
-          progress={pct}
+          title="Your details"
+          body="Keep your contact details, location and work authorisation current so hiring teams can act on your application."
+          cta="Review profile"
         />
         <Tile
           to="/me/cv"
