@@ -18,7 +18,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { getClientContext } from "@/lib/client.functions";
-import { getActiveSupportSession } from "@/lib/support-audit.functions";
+import { ensureSupportSession } from "@/lib/support-audit.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
 import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
@@ -166,32 +166,24 @@ function ClientLayout() {
  const permissionPreview: PermissionPreview =
  (search.preview as PermissionPreview | undefined) ?? "client_admin";
 
- // Support access is never opened implicitly. A session — with a recorded
- // reason — must already exist, started from /admin/support. Here we only look
- // it up so the visit can be attributed to it.
- const activeSupportSession = useQuery({
- queryKey: ["active-support-session", active?.organization_id ?? null],
- queryFn: () =>
- getActiveSupportSession({ data: { organization_id: active!.organization_id } }),
- enabled: staffMembershipsElsewhere && !!active?.organization_id,
- refetchInterval: 60_000,
- });
- const supportSessionId = activeSupportSession.data?.session?.id ?? null;
- const supportSessionMissing =
- staffMembershipsElsewhere && activeSupportSession.isSuccess && supportSessionId == null;
+  // Staff access to a client workspace is allowed on arrival — opening it from
+  // the admin client list is the sanctioned path. Access is recorded, not
+  // gated: this opens (or reuses) a read-only support session for the audit
+  // trail and never blocks the view if recording fails.
+ 	const activeSupportSession = useQuery({
+ 		queryKey: ["active-support-session", active?.organization_id ?? null],
+ 		queryFn: () =>
+ 			ensureSupportSession({
+ 				data: {
+ 					organization_id: active!.organization_id,
+ 					permission_preview: permissionPreview,
+ 				},
+ 			}),
+ 		enabled: staffMembershipsElsewhere && !!active?.organization_id,
+ 		refetchInterval: 60_000,
+ 	});
+ 	const supportSessionId = activeSupportSession.data?.session?.id ?? null;
 
- if (staffMembershipsElsewhere && activeSupportSession.isError) {
- return (
- <div className="mx-auto max-w-2xl p-8">
- <QueryErrorCard
- title="We couldn't check your support session"
- error={activeSupportSession.error}
- onRetry={() => activeSupportSession.refetch()}
- retrying={activeSupportSession.isFetching}
- />
- </div>
- );
- }
 
  const supportView: SupportViewState = useMemo(
  () => ({
@@ -245,18 +237,8 @@ function ClientLayout() {
  );
  }
 
- if (supportSessionMissing) {
- return (
- <div className="mx-auto max-w-2xl p-8">
- <EmptyState
- title="Support session required"
- description={`Viewing ${active.name} as staff needs an open support session with a stated reason. Nothing here loads until one exists.`}
- whatAppearsHere="Open a session from the support screen; it is recorded, attributable to you, and closes itself after 30 minutes."
- action={{ label: "Open a support session", to: "/admin/support" }}
- />
- </div>
- );
- }
+
+
 
  const deniedTab = MANAGE_ONLY_PATHS.find(
  (path) => pathname === path || pathname.startsWith(path + "/"),
