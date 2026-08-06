@@ -152,7 +152,12 @@ function AccountPage() {
       <Tabs
         value={tab}
         onValueChange={(v) =>
-          void navigate({ search: (prev) => ({ ...prev, tab: parseTab(v) }) })
+          void navigate({
+            search: (prev: { tab: AccountTab; org?: string }) => ({
+              ...prev,
+              tab: parseTab(v),
+            }),
+          })
         }
       >
         {/* Wraps instead of scrolling sideways on a tablet. */}
