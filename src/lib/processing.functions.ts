@@ -949,6 +949,9 @@ export const listAdminMatches = createServerFn({ method: "GET" })
     });
   });
 
+/** Lifetime of a staff CV preview link. Short by design; re-signed on demand. */
+const CV_URL_TTL_SECONDS = 300;
+
 export const getAdminMatch = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
@@ -1009,11 +1012,17 @@ export const getAdminMatch = createServerFn({ method: "GET" })
     ]);
 
     let cv_signed_url: string | null = null;
+    let cv_url_expires_at: string | null = null;
     if (fileRes.data) {
       const signed = await supabase.storage
         .from(fileRes.data.storage_bucket)
-        .createSignedUrl(fileRes.data.storage_path, 300);
+        .createSignedUrl(fileRes.data.storage_path, CV_URL_TTL_SECONDS);
       cv_signed_url = signed.data?.signedUrl ?? null;
+      // The reviewer needs to know when the preview link dies, not discover it
+      // through a broken iframe halfway through a decision.
+      if (cv_signed_url) {
+        cv_url_expires_at = new Date(Date.now() + CV_URL_TTL_SECONDS * 1000).toISOString();
+      }
     }
 
     return {
@@ -1022,7 +1031,9 @@ export const getAdminMatch = createServerFn({ method: "GET" })
       decisions: decisionsRes.data ?? [],
       jobs: jobsRes.data ?? [],
       evidence: evidenceRes.data ?? null,
-      cv: fileRes.data ? { ...fileRes.data, signed_url: cv_signed_url } : null,
+      cv: fileRes.data
+        ? { ...fileRes.data, signed_url: cv_signed_url, url_expires_at: cv_url_expires_at }
+        : null,
       siblings: ((siblingsRes.data ?? []) as AnyRow[]).map((s) => ({
         id: s.id as string,
         position_title: (s.positions as AnyRow)?.title ?? "—",
@@ -1083,4 +1094,39 @@ export const downloadEvidenceRecord = createServerFn({ method: "POST" })
       cv: file.data ?? null,
       audit: audit.data ?? [],
     } as Json;
+  });
+
+
+/**
+ * Re-sign the CV preview link for a match. Called when the reviewer comes back
+ * to the tab or hits refresh, so a long review never dies on an expired URL.
+ */
+export const resignAdminCvUrl = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ match_id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    if (!(await isStaff(context.userId))) throw new Error("forbidden");
+    const supabase = (await getAdmin()) as AnyRow;
+    const { data: match } = await supabase
+      .from("candidate_matches")
+      .select("candidate_profile_id")
+      .eq("id", data.match_id)
+      .maybeSingle();
+    if (!match?.candidate_profile_id) return { signed_url: null, url_expires_at: null };
+    const { data: file } = await supabase
+      .from("files")
+      .select("storage_bucket,storage_path")
+      .eq("candidate_profile_id", match.candidate_profile_id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (!file) return { signed_url: null, url_expires_at: null };
+    const signed = await supabase.storage
+      .from(file.storage_bucket)
+      .createSignedUrl(file.storage_path, CV_URL_TTL_SECONDS);
+    const url = signed.data?.signedUrl ?? null;
+    return {
+      signed_url: url,
+      url_expires_at: url ? new Date(Date.now() + CV_URL_TTL_SECONDS * 1000).toISOString() : null,
+    };
   });
