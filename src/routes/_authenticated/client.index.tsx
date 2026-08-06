@@ -225,6 +225,10 @@ function OverviewPage() {
         </div>
       )}
 
+      {/* Blocking gaps come first — before onboarding, health, or the queue */}
+      <RoleDetailsNeededBanner roles={rolesNeedingDetails} />
+
+
       {showOnboarding ? (
         <EmptyWelcome canSubmit={canSubmit} />
       ) : (
