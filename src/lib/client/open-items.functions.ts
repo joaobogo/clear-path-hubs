@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { isOverdue, sortOpenItems, type OpenItem } from "@/lib/client/open-items";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -15,6 +16,7 @@ export const getClientOpenItems = createServerFn({ method: "GET" })
     z.object({ orgId: z.string().uuid() }).parse(input),
   )
   .handler(async ({ context, data }): Promise<{ items: OpenItem[] }> => {
+    await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
     const s = context.supabase as AnyRow;
 
     const [requestsRes, matchesRes, interviewsRes] = await Promise.all([

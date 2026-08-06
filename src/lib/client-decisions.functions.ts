@@ -418,6 +418,7 @@ export const getMatchDeclineContext = createServerFn({ method: "GET" })
     z.object({ orgId: z.string().uuid(), matchId: z.string().uuid() }).parse(input),
   )
   .handler(async ({ context, data }) => {
+    await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
     const match = await loadMatch(context.supabase, data.orgId, data.matchId);
     const positionId = (match["position_id"] as string | null) ?? null;
     if (!positionId) return { positionId: null, dealBreakers: [], otherDeclineCount: 0 };

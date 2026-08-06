@@ -80,6 +80,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
+    await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
     const rows = await loadKpiRows(context.supabase, data.orgId);
 
     const { data: positions, error: positionsError } = await context.supabase

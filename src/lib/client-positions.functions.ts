@@ -87,6 +87,7 @@ export const getClientPositions = createServerFn({ method: "GET" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
+    await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
     // "Archived" keeps closed roles readable: filled, closed and archived.
     const statusFilter = (data.status === "closed"
       ? (["filled", "closed", "archived"] as const)
@@ -152,6 +153,7 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     z.object({ orgId: z.string().uuid(), positionId: z.string().uuid() }).parse(input),
   )
   .handler(async ({ context, data }) => {
+    await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
     const { data: position, error } = await context.supabase
       .from("positions")
       .select(
@@ -490,6 +492,7 @@ export const confirmRoleBlueprint = createServerFn({ method: "POST" })
     confirmBlueprintSchema.parse(input),
   )
   .handler(async ({ context, data }) => {
+    await assertEditor(context.supabase, context.userId, data.orgId);
     const trace_id = crypto.randomUUID();
     const { data: before } = await context.supabase
       .from("positions")

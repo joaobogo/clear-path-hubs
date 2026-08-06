@@ -6,7 +6,7 @@ import { PositionLifecycleMenu } from "@/components/positions/position-lifecycle
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { CloseRoleDialog } from "@/components/client/close-role-dialog";
 import { normalizeDealBreakers } from "@/lib/client-deal-breakers";
-import { clientRoleStatusLabel } from "@/lib/client-role-status";
+import { type ClientRoleStatus, clientRoleStatusLabel } from "@/lib/client-role-status";
 import { isArchivedStatus } from "@/lib/role-closure";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,7 +27,7 @@ export function PositionHeader({
   canEdit: boolean;
   supportReadOnly: boolean;
   hasClosure: boolean;
-  clientStatus: string | undefined;
+  clientStatus: ClientRoleStatus | null | undefined;
   placementLine: string;
   onRefetch: () => void;
 }) {

@@ -22,7 +22,7 @@ export function EvidencePanels({
   onConfirmBlueprint,
   confirmingBlueprint,
 }: {
-  orgId: string | undefined;
+  orgId: string | null | undefined;
   positionId: string;
   firstShortlistExpectedAt: AnyRow;
   commitment: AnyRow;
@@ -37,7 +37,7 @@ export function EvidencePanels({
     <>
       {/* 5. Shortlist — standard evidence card per candidate */}
       <RoleShortlist
-        orgId={orgId}
+        orgId={orgId ?? null}
         positionId={positionId}
         firstShortlistExpectedAt={firstShortlistExpectedAt}
       />

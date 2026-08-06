@@ -80,6 +80,7 @@ export const getClientMessages = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
+    await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
     const { data: rows, error } = await context.supabase
       .from("messages")
       .select("id, sender_user_id, body, created_at, recipient_context")
@@ -95,9 +96,9 @@ export const sendClientMessage = createServerFn({ method: "POST" })
     z.object({ orgId: z.string().uuid(), body: z.string().min(1).max(4000) }).parse(input),
   )
   .handler(async ({ context, data }) => {
-    // Sender must be a real client member of the org, OR staff in an active
-    // interactive support session. Read-only support view cannot send.
-    await assertNotSupportViewReadOnly(context.supabase, context.userId, data.orgId);
+    // Sender must be able to write to this workspace (viewers are read-only),
+    // OR staff in an active interactive support session.
+    await assertEditor(context.supabase, context.userId, data.orgId);
     const { data: row, error } = await context.supabase
       .from("messages")
       .insert({
