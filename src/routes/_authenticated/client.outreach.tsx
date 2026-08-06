@@ -248,7 +248,7 @@ function OutreachPage() {
         </p>
       </section>
 
-      <section className="mt-8 rounded-lg border border-border bg-card p-5">
+
 
       <section className="mt-8">
         <h2 className="text-lg font-semibold">What outreach produced</h2>
