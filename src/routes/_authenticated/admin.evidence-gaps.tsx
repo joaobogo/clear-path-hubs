@@ -26,7 +26,7 @@ export const Route = createFileRoute("/_authenticated/admin/evidence-gaps")({
     "admin",
     "src/routes/_authenticated/admin.evidence-gaps.tsx",
   ),
-  component: EvidenceGaps;
+  component: EvidenceGaps,
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
