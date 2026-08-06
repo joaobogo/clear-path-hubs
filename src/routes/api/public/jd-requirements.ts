@@ -9,7 +9,13 @@ import {
   rateLimitResponse,
   withRateLimitHeaders,
 } from "@/lib/public-api/rate-limit";
-import { auditConflict, auditRateLimited, emailDomain } from "@/lib/public-api/outcome-audit";
+import {
+  auditConflict,
+  auditPayloadTooLarge,
+  auditRateLimited,
+  emailDomain,
+} from "@/lib/public-api/outcome-audit";
+import { assertFieldLength, readJsonWithLimit } from "@/lib/public-api/body-limit";
 import {
   MAX_REQUIREMENT_CHARS,
   MIN_REQUIREMENT_CHARS,
@@ -31,9 +37,22 @@ import {
  * wizard falls back to manual entry with a visible note.
  */
 
+/**
+ * Hard ceilings, enforced before any LLM call.
+ *
+ * MAX_BODY_BYTES bounds what we are willing to read off the wire at all;
+ * the character limits bound what a single field may contain. A job
+ * description longer than this is a paste accident or an abuse attempt, not a
+ * role brief — either way the caller gets a clear 413 instead of us paying to
+ * tokenize it.
+ */
+const MAX_BODY_BYTES = 80_000;
+const MAX_JD_CHARS = 30_000;
+const MAX_TITLE_CHARS = 160;
+
 const bodySchema = z.object({
-  roleTitle: z.string().trim().max(160).optional().default(""),
-  jobDescriptionText: z.string().trim().min(1).max(60000),
+  roleTitle: z.string().trim().max(MAX_TITLE_CHARS).optional().default(""),
+  jobDescriptionText: z.string().trim().min(1).max(MAX_JD_CHARS),
 });
 
 const MODEL = "google/gemini-2.5-flash";
@@ -89,21 +108,69 @@ export const Route = createFileRoute("/api/public/jd-requirements")({
         // This endpoint spends money on every call: an unauthenticated caller can
         // push 60k characters into a paid LLM gateway. Throttle before parsing.
 
-        let raw: unknown;
-        try {
-          raw = await request.json();
-        } catch {
-          return Response.json({ ok: false, error: "invalid_json" }, { status: 400 });
+        const read = await readJsonWithLimit(request, MAX_BODY_BYTES);
+        if (!read.ok) {
+          if (read.status === 413) {
+            await auditPayloadTooLarge({
+              scope: "jd_requirements",
+              traceId,
+              ip,
+              path: "/api/public/jd-requirements",
+              reason: read.error,
+              detail: read.detail,
+            });
+          }
+          return Response.json(
+            {
+              ok: false,
+              error: read.error,
+              message:
+                read.status === 413
+                  ? `Job description is too large. Limit is ${MAX_BODY_BYTES} bytes.`
+                  : "Request body could not be read as JSON.",
+              limits: { maxBodyBytes: MAX_BODY_BYTES, maxCharacters: MAX_JD_CHARS },
+              traceId,
+            },
+            { status: read.status },
+          );
         }
-        const parsed = bodySchema.safeParse(raw);
+
+        // Character ceilings are checked separately from Zod so an oversized
+        // paste reads as "too long" (413), not as a malformed request (400).
+        const fields = (read.body ?? {}) as Record<string, unknown>;
+        const tooLong =
+          assertFieldLength("jobDescriptionText", fields["jobDescriptionText"], MAX_JD_CHARS) ??
+          assertFieldLength("roleTitle", fields["roleTitle"], MAX_TITLE_CHARS);
+        if (tooLong) {
+          await auditPayloadTooLarge({
+            scope: "jd_requirements",
+            traceId,
+            ip,
+            path: "/api/public/jd-requirements",
+            reason: tooLong.error,
+            detail: tooLong.detail,
+          });
+          return Response.json(
+            {
+              ok: false,
+              error: tooLong.error,
+              message: `${String(tooLong.detail["field"])} exceeds the ${MAX_JD_CHARS} character limit. Trim it and try again.`,
+              limits: { maxBodyBytes: MAX_BODY_BYTES, maxCharacters: MAX_JD_CHARS },
+              traceId,
+            },
+            { status: 413 },
+          );
+        }
+
+        const parsed = bodySchema.safeParse(read.body);
         if (!parsed.success) {
-          return Response.json({ ok: false, error: "invalid_request" }, { status: 400 });
+          return Response.json({ ok: false, error: "invalid_request", traceId }, { status: 400 });
         }
 
         const key = process.env["LOVABLE_API_KEY"];
         if (!key) return Response.json({ ok: false, error: "suggestions_unavailable" });
 
-        const jd = parsed.data.jobDescriptionText.slice(0, 24000);
+        const jd = parsed.data.jobDescriptionText;
         const prompt = [
           `Job title: ${parsed.data.roleTitle || "not stated"}`,
           "",

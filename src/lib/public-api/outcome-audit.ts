@@ -96,3 +96,33 @@ export async function auditConflict(event: ConflictAudit): Promise<void> {
     ...(event.detail ?? {}),
   });
 }
+
+type OversizeAudit = {
+  scope: string;
+  traceId: string;
+  ip: string;
+  path: string;
+  /** Machine code returned to the caller, e.g. payload_too_large. */
+  reason: string;
+  /** Sizes only — never the payload itself. */
+  detail?: Record<string, number | string>;
+};
+
+/** A 413: the caller sent more than this endpoint will read or tokenize. */
+export async function auditPayloadTooLarge(event: OversizeAudit): Promise<void> {
+  console.warn("[public-api] payload refused", {
+    scope: event.scope,
+    reason: event.reason,
+    traceId: event.traceId,
+  });
+  await record("public_api.payload_too_large", {
+    outcome: "payload_too_large",
+    status: 413,
+    scope: event.scope,
+    reason: event.reason,
+    trace_id: event.traceId,
+    path: event.path,
+    ip_hint: ipHint(event.ip),
+    ...(event.detail ?? {}),
+  });
+}
