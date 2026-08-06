@@ -18,6 +18,7 @@ import { isPublishedBlogSlug, listAllBlogRows } from "@/lib/marketing/blog-catal
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: ({ params }) => {
+    throw new Error("FORCED_QA_FAILURE blog");
     const entry = getBlogPost(params.slug);
     if (!entry) throw notFound();
     if (!isPublishedBlogSlug(params.slug)) throw notFound();
