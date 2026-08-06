@@ -107,6 +107,7 @@ export function CandidateCard({
             score={c.score}
             fitLabel={c.fit_label}
             evidence={c.evidence_support}
+            rechecking={c.freshness?.stale === true}
             unicorn={c.unicorn}
           />
           <span className={`text-[11px] font-medium rounded-full px-2 py-0.5 border ${accent.chip}`}>
