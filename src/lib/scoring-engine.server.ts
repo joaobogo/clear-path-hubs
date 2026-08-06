@@ -10,6 +10,7 @@ import {
 } from "./scoring/engine-calibration";
 
 import { ENGINE_VERSION } from "./scoring/engine-version";
+import { bandToFitLabel, classifyBand } from "./scoring/bands";
 
 export { ENGINE_VERSION, EVALUATION_METHOD };
 
