@@ -1814,8 +1814,8 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
           "current_score_run_id,approved_score_run_id",
           "candidate_profiles(id,full_name,email)",
           "positions(id,title,status,organization_id,organizations(id,name))",
-          "current_run:score_runs!candidate_matches_current_score_run_id_fkey(id,status,score,fit_label,contradiction_status,must_have_coverage,position_id,candidate_profile_id,organization_id,application_id)",
-          "approved_run:score_runs!candidate_matches_approved_score_run_id_fkey(id,status,score,fit_label,contradiction_status,must_have_coverage,evidence,raw_score,applied_cap,final_score,position_id,candidate_profile_id,organization_id,application_id)",
+          "current_run:score_runs!candidate_matches_current_score_run_id_fkey(id,status,score,confidence,fit_label,contradiction_status,must_have_coverage,position_id,candidate_profile_id,organization_id,application_id)",
+          "approved_run:score_runs!candidate_matches_approved_score_run_id_fkey(id,status,score,confidence,fit_label,contradiction_status,must_have_coverage,evidence,raw_score,applied_cap,final_score,position_id,candidate_profile_id,organization_id,application_id)",
         ].join(","),
       )
       .order("updated_at", { ascending: false })

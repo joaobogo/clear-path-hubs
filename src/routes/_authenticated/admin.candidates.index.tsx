@@ -48,6 +48,21 @@ import {
 import { ExportControl } from "@/components/admin/export-control";
 import { FilterDrawer } from "@/components/admin/filter-drawer";
 import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
+import { classifyBand } from "@/lib/scoring/bands";
+
+/** Dense list label: band + confidence, no bare number (rubric lives on detail). */
+function scoreBandListLabel(m: {
+  score?: number | null;
+  final_score?: number | null;
+  fit_band?: string | null;
+  confidence?: number | null;
+}): string {
+  const raw = m.final_score ?? m.score ?? null;
+  if (raw == null) return "Not scored";
+  const band = classifyBand(Number(raw)).replace(/_/g, " ");
+  const conf = m.confidence == null ? "" : ` · ${Math.round(Number(m.confidence) * 100)}%`;
+  return `${band}${conf}`;
+}
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
@@ -756,10 +771,10 @@ function CandidatesPage() {
                     {m.org_name} · {m.position_title}
                   </div>
                 </div>
-                <div className="flex shrink-0 items-center gap-1 text-right text-sm font-semibold tabular-nums">
-                  {m.final_score ?? m.score == null
-                    ? "—"
-                    : Math.round(Number(m.final_score ?? m.score))}
+                {/* List density: band + confidence. A raw number only appears on the
+                    detail view, where its rubric version can sit beside it. */}
+                <div className="flex shrink-0 items-center gap-1 text-right text-xs font-semibold">
+                  <span>{scoreBandListLabel(m)}</span>
                   <ScoreStalenessChip freshness={freshnessFromRow(m)} compact />
                 </div>
               </div>

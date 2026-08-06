@@ -4,9 +4,11 @@
 //
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
+import { isUnicornMatch } from "@/lib/scoring/bands";
 import {
   buildRequirementRows,
   summariseCoverage,
+  evidenceSupport,
   buildInterviewGuide,
   toFitPresentation,
   prettifyHeadline,
@@ -23,7 +25,6 @@ import {
 import { assessFreshness, type Freshness } from "@/lib/scoring/score-freshness";
 import { CALIBRATION_VERSION } from "@/lib/scoring/engine-calibration";
 import { ENGINE_VERSION } from "@/lib/scoring/engine-version";
-import { SCORE_BAND_DEFS } from "@/config/scoring-bands";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -278,6 +279,11 @@ export type ClientCandidateDTO = {
   main_consideration: string | null;
   requirement_rows: RequirementRow[];
   coverage: CoverageSummary;
+  /**
+   * Evidence support behind the band — what employer surfaces render next to
+   * the band instead of a numeric score.
+   */
+  evidence_support: { supported: number; total: number };
   interview_guide: InterviewQuestion[];
   evidence: Array<{ label: string; snippet: string }>;
   experience: Array<{ title: string; company: string | null; period: string | null; description: string | null }>;
@@ -517,7 +523,7 @@ export const CLIENT_CANDIDATE_SELECT = `id, stage, delivered_at, position_id, ap
 
 
 /** Lowest score inside the strongest configured band. Single source of truth. */
-const TOP_BAND_MIN = SCORE_BAND_DEFS[0]?.min ?? 95;
+
 
 export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const cp = row.candidate_profiles ?? {};
@@ -650,7 +656,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
         : (row.updated_at ?? row.delivered_at ?? null),
     last_updated: run?.completed_at ?? row.updated_at ?? row.delivered_at ?? null,
     position: pos ? { id: pos.id, title: pos.title } : null,
-    unicorn: (run?.score ?? 0) >= TOP_BAND_MIN || row.stage === "hired",
+    unicorn: isUnicornMatch({ score: run?.score ?? null, hired: row.stage === "hired" }),
     freshness: assessFreshness({
       scored_at: run?.completed_at ?? null,
       scored_input_hash: run?.input_hash ?? null,
@@ -687,6 +693,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     concerns,
     main_consideration: mainConsideration,
     requirement_rows,
+    evidence_support: evidenceSupport(requirement_rows),
     coverage: coverageSummary,
     interview_guide,
     evidence,

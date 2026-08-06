@@ -103,7 +103,12 @@ export function CandidateCard({
       <div className="min-w-0 pr-24">
         <div className="flex items-center gap-2 flex-wrap">
           <h3 className="font-semibold text-base truncate">{c.candidate.display_name}</h3>
-          <CandidateScoreBadge score={c.score} fitLabel={c.fit_label} unicorn={c.unicorn} />
+          <CandidateScoreBadge
+            score={c.score}
+            fitLabel={c.fit_label}
+            evidence={c.evidence_support}
+            unicorn={c.unicorn}
+          />
           <span className={`text-[11px] font-medium rounded-full px-2 py-0.5 border ${accent.chip}`}>
             {evidenceCard.summaryInProgress ? "Summary in progress" : rationale.summary}
           </span>

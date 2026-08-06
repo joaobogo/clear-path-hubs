@@ -90,7 +90,13 @@ export const EMPLOYER_VIEW_FIELDS: EmployerViewField[] = [
     key: "score",
     group: "role_fit",
     label: "Numeric rating behind the fit band",
-    note: "The employer sees this number. It is a measure of how your evidence covers this role's requirements, not a judgement of you.",
+    note: "Employers see a fit band, not this number. It is a measure of how your evidence covers this role's requirements, not a judgement of you.",
+  },
+  {
+    key: "evidence_support",
+    group: "role_fit",
+    label: "How many requirements your evidence supported",
+    note: "Employers see this alongside the fit band, so they can tell how much of the role your application actually evidenced.",
   },
   {
     key: "unicorn",

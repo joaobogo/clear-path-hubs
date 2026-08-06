@@ -311,6 +311,25 @@ export function summariseCoverage(rows: RequirementRow[]): CoverageSummary {
   };
 }
 
+/**
+ * How many requirements the assessment could actually evidence, out of how many
+ * were assessed. This is what employer surfaces show *instead of* a number: a
+ * band plus the amount of support behind it. `not_applicable` rows are excluded
+ * because they were never in scope.
+ */
+export function evidenceSupport(rows: RequirementRow[]): {
+  supported: number;
+  total: number;
+} {
+  const scoped = rows.filter((r) => r.status !== "not_applicable");
+  return {
+    supported: scoped.filter((r) => r.status === "met" || r.status === "partial").length,
+    total: scoped.length,
+  };
+}
+
+
+
 // ── Interview guide ──────────────────────────────────────────────────────────
 
 export type InterviewQuestion = {

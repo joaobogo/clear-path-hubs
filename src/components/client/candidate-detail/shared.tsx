@@ -45,6 +45,7 @@ export function CandidateHeader({
           <CandidateScoreBadge
             score={candidate.score}
             fitLabel={candidate.fit_label}
+            evidence={candidate.evidence_support}
             unicorn={candidate.unicorn}
           />
           <Badge variant="outline" className="capitalize">

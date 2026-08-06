@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Users } from "lucide-react";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
+import { isUnicornMatch } from "@/lib/scoring/bands";
 import { type MatchStage } from "@/lib/client-match-stage";
 import { KANBAN_COLUMNS, STAGE_GRAPH, STAGE_LABELS } from "./constants";
 
@@ -117,9 +118,10 @@ export function PipelineBoard({
                         <CandidateScoreBadge
                           score={m.score_runs?.score ?? null}
                           fitLabel={m.score_runs?.fit_label ?? null}
-                          unicorn={
-                            (m.score_runs?.score ?? 0) >= 95 || m.stage === "hired"
-                          }
+                          unicorn={isUnicornMatch({
+                            score: m.score_runs?.score ?? null,
+                            hired: m.stage === "hired",
+                          })}
                         />
 
                       </div>
