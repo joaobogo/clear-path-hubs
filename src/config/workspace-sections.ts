@@ -63,15 +63,39 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
 
 export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
   {
+    id: "command",
+    label: "Command",
+    tabs: [
+      { to: "/admin", label: "Overview", exact: true },
+      { to: "/admin/my-day", label: "My day" },
+    ],
+  },
+  {
+    id: "delivery",
+    label: "Delivery",
+    tabs: [
+      { to: "/admin/intake", label: "Intake" },
+      { to: "/admin/clients", label: "Clients" },
+      { to: "/admin/positions", label: "Positions" },
+      { to: "/admin/candidates", label: "Candidates" },
+      { to: "/admin/publish", label: "Publish desk" },
+      { to: "/admin/approvals", label: "Approvals" },
+    ],
+  },
+  {
     id: "quality",
     label: "Quality",
     tabs: [
       { to: "/admin/scoring/review", label: "Scoring review" },
       { to: "/admin/scoring/orphans", label: "Orphans" },
+      { to: "/admin/parse-failures", label: "Unreadable docs" },
+      { to: "/admin/evidence-gaps", label: "Missing evidence" },
+      { to: "/admin/outcome-sla", label: "Answers we owe" },
       { to: "/admin/business-rules", label: "Business rules" },
       { to: "/admin/qa-report", label: "QA report" },
     ],
   },
+
   {
     id: "comms",
     label: "Comms",
