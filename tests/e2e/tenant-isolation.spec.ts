@@ -325,9 +325,11 @@ test.describe("tenant isolation — /intake and /express-intake", () => {
 
     const tenant = await lookupTenant({ organizationId: domainOrgId });
     expect(tenant.memberships).toHaveLength(1);
-    expect(tenant.memberships[0]?.email?.toLowerCase()).toBe(
-      created.body.userId ? tenant.memberships[0]?.email?.toLowerCase() ?? "" : "",
-    );
+    expect(tenant.memberships[0]?.user_id).toBe(created.body.userId);
+    // And no workspace was forked for the stranger's company name either.
+    expect((await lookupTenant({ companyName: `${stranger.body.organizationId ?? ""}` })).organizations)
+      .toHaveLength(0);
+
   });
 
   // ── 3. tenant hijack prevention ──────────────────────────────────────────
