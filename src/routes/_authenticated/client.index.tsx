@@ -39,6 +39,8 @@ import { HiringHealthLine } from "@/components/client/hiring-health-line";
 import { SystemHealthStrip } from "@/components/client/system-health-strip";
 import { AgentActivityRail } from "@/components/client/agent-activity-rail";
 import { DecisionQueue } from "@/components/client/decision-queue";
+import { OpenItemsStrip } from "@/components/client/open-items-strip";
+
 import { NextMilestones, type MilestoneRow } from "@/components/client/next-milestones";
 import type { QueueRow } from "@/lib/client-decision-queue";
 
@@ -204,6 +206,12 @@ function OverviewPage() {
 
       {/* Is the system working, and is what I'm looking at current? */}
       <SystemHealthStrip organizationId={orgId} />
+
+      {/* Everything still waiting on you, overdue work first. */}
+      <div className="mt-4">
+        <OpenItemsStrip orgId={orgId} />
+      </div>
+
 
       {isError && !data && (
         <QueryErrorCard

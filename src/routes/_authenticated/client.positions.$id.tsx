@@ -17,6 +17,9 @@ import {
  SPONSORSHIP_LABELS,
 } from "@/lib/express-intake-schema";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
+import { readAdvanceGateError } from "@/lib/client/advance-gate";
+import { DeclineReasonDialog } from "@/components/client/decline-reason-dialog";
+
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 
 import { confirmRoleBlueprint } from "@/lib/client.functions";
@@ -165,6 +168,8 @@ function PositionDetailPage() {
  }, [refetch, lifecycle]);
 
   const [dragOver, setDragOver] = useState<MatchStage | null>(null);
+  const [declining, setDeclining] = useState<{ matchId: string; name: string | null } | null>(null);
+
 
   const confirmBlueprintFn = useServerFn(confirmRoleBlueprint);
   const confirmBlueprint = useMutation({
@@ -179,8 +184,16 @@ function PositionDetailPage() {
 
 
  const move = useMutation({
-  mutationFn: (v: { matchId: string; toStage: MatchStage; reason?: string }) =>
-   moveFn({ data: { orgId: orgId!, matchId: v.matchId, toStage: v.toStage, reason: v.reason } }),
+  mutationFn: (v: { matchId: string; toStage: MatchStage; reason?: string; reasonCode?: string }) =>
+   moveFn({
+    data: {
+     orgId: orgId!,
+     matchId: v.matchId,
+     toStage: v.toStage,
+     reason: v.reason,
+     reasonCode: v.reasonCode,
+    },
+   }),
  onMutate: async (v) => {
  await qc.cancelQueries({ queryKey });
  const snapshot = qc.getQueryData<AnyRow>(queryKey);
@@ -198,10 +211,14 @@ function PositionDetailPage() {
  onError: (e: Error, _v, ctx) => {
  if (ctx?.snapshot) qc.setQueryData(queryKey, ctx.snapshot);
  const raw = e.message.replace(/^Error: /, "");
-  const msg = raw.startsWith("invalid_transition")
+ const gate = readAdvanceGateError(raw);
+  const msg = gate
+  ? gate
+  : raw.startsWith("invalid_transition")
   ? "That move is not allowed for this stage."
   : raw === "reason_required"
   ? "A reason is required to mark a candidate as not moving forward."
+
   : raw === "SUPPORT_VIEW_READ_ONLY"
   ? "Unavailable while viewing this workspace in read-only support mode."
   : raw === "forbidden"
@@ -308,19 +325,13 @@ function PositionDetailPage() {
    return;
   }
   if (to === "not_moving_forward") {
-   const reason =
-    typeof window !== "undefined"
-     ? window.prompt(
-        "Reason for not moving this candidate forward (required, visible to your team):",
-       )
-     : null;
-   if (!reason || !reason.trim()) {
-    toast.error("A reason is required to reject a candidate.");
-    return;
-   }
-   move.mutate({ matchId, toStage: to, reason: reason.trim() });
+   // A decline is a real answer to a person: it always carries a structured
+   // reason from the shared catalogue, never a free-text prompt.
+   const m = (matches as AnyRow[]).find((r) => r.id === matchId);
+   setDeclining({ matchId, name: (m?.candidate_name as string) ?? null });
    return;
   }
+
   move.mutate({ matchId, toStage: to });
  };
 
@@ -905,7 +916,25 @@ function PositionDetailPage() {
  <section className="mt-8">
   <RoleMemoryPanel positionId={position.id} canEdit={true} />
  </section>
+
+ <DeclineReasonDialog
+  open={!!declining}
+  onOpenChange={(v) => !v && setDeclining(null)}
+  candidateName={declining?.name ?? null}
+  pending={move.isPending}
+  onConfirm={({ reasonCode, note }) => {
+   if (!declining) return;
+   move.mutate({
+    matchId: declining.matchId,
+    toStage: "not_moving_forward",
+    reasonCode,
+    reason: note || undefined,
+   });
+   setDeclining(null);
+  }}
+ />
  </main>
+
  );
 }
 
