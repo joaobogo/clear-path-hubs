@@ -26,9 +26,17 @@ type Props = {
    * surface has no requirement rows loaded.
    */
   evidence?: { supported: number; total: number } | null;
+  /**
+   * True when the assessment's inputs changed after it was produced (role
+   * requirements edited, screening questions changed, a newer CV attached).
+   * The band still shows — hiding the candidate would be worse — but it is
+   * marked as being re-checked so it is never presented as current.
+   */
+  rechecking?: boolean;
   unicorn?: boolean;
   className?: string;
 };
+
 
 const ACCENT_CLASSES: Record<FitPresentation["accent"], string> = {
   emerald: "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
