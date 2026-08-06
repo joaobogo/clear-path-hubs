@@ -25,7 +25,7 @@ const NARRATIVE = [
 ];
 
 const TIMELINE = [
-  { when: "Day 1–2", what: "Intake locked", detail: "Requirements, must-haves, and scoring weights agreed in writing." },
+  { when: "Day 1", what: "Intake locked", detail: "Job description completed/ uploaded and scoring model defined. Your User Account set up on the platform - Welcome!" },
   { when: "Day 3–7", what: "Sourcing and screening", detail: "Outreach runs; every CV is read and scored by a recruiter." },
   { when: "Day 7–14", what: "First ranked shortlist", detail: "Top candidates land in your dashboard with evidence per requirement." },
   { when: "Every week after", what: "Refreshed delivery", detail: "New candidates, updated scores, and your decisions logged." },
