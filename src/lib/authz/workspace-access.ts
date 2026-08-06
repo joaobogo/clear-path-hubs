@@ -33,6 +33,45 @@ export type WorkspaceAccess = {
   isAdmin: boolean;
 };
 
+/**
+ * Reads the caller's own membership, with a server-side confirmation step.
+ *
+ * RLS on `memberships` can hide a caller's own row in edge cases (archived or
+ * prospect workspaces, stale policy joins, a failing helper function). When the
+ * caller-scoped read finds nothing, we re-check *only this caller's own*
+ * membership with the service client before concluding "no access" — a member
+ * must never be told a workspace isn't theirs.
+ */
+async function confirmMembership(
+  userId: string,
+  orgId: string,
+): Promise<{ role: string | null; isStaff: boolean }> {
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const [{ data: row }, { data: staffRows }] = await Promise.all([
+      supabaseAdmin
+        .from("memberships")
+        .select("role")
+        .eq("organization_id", orgId)
+        .eq("user_id", userId)
+        .eq("status", "active")
+        .maybeSingle(),
+      supabaseAdmin
+        .from("memberships")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("status", "active")
+        .in("role", ["platform_admin", "operations"]),
+    ]);
+    return {
+      role: ((row as { role?: string } | null)?.role as string | undefined) ?? null,
+      isStaff: Array.isArray(staffRows) && staffRows.length > 0,
+    };
+  } catch {
+    return { role: null, isStaff: false };
+  }
+}
+
 export async function readWorkspaceAccess(
   supabase: Db,
   userId: string,
@@ -49,12 +88,17 @@ export async function readWorkspaceAccess(
       .maybeSingle(),
   ]);
 
-  // A failed read is a failure, never a silent "no access".
-  if (staffRes?.error) throw new Error(staffRes.error.message);
-  if (memberRes?.error) throw new Error(memberRes.error.message);
+  let isStaff = staffRes?.data === true;
+  let role = (memberRes?.data?.role as string | undefined) ?? null;
 
-  const isStaff = staffRes?.data === true;
-  const role = (memberRes?.data?.role as string | undefined) ?? null;
+  // A caller-scoped read that finds nothing — or fails — is never treated as
+  // "not your workspace" until the service client has confirmed it.
+  if (!role && !isStaff) {
+    const confirmed = await confirmMembership(userId, orgId);
+    role = confirmed.role;
+    isStaff = confirmed.isStaff;
+  }
+
   const isMember = Boolean(role);
 
   return {
@@ -62,9 +106,10 @@ export async function readWorkspaceAccess(
     role,
     isStaff,
     isMember,
-    isAdmin: role === "client_admin" || isStaff,
+    isAdmin: role === "client_admin" || role === "platform_admin" || role === "operations" || isStaff,
   };
 }
+
 
 /** Throws a consistent, plain-language error when the caller has no access. */
 export async function assertWorkspaceAccess(
