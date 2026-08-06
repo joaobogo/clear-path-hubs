@@ -4,9 +4,11 @@
 //
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
+import { isUnicornMatch } from "@/lib/scoring/bands";
 import {
   buildRequirementRows,
   summariseCoverage,
+  evidenceSupport,
   buildInterviewGuide,
   toFitPresentation,
   prettifyHeadline,
