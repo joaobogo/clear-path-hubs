@@ -10,6 +10,11 @@ const richCv = [
   "travel booking, expense reconciliation, meeting minutes, onboarding packs and office supplies",
   "across two sites for six years. Built the induction handbook, ran the visitor policy refresh,",
   "coordinated facilities contractors, tracked purchase orders and owned the stationery budget.",
+  "Worked across product squads shipping customer facing features on a weekly cadence.",
+  "Owned reliability targets, wrote architecture decision records, ran incident reviews,",
+  "mentored junior colleagues, improved onboarding documentation, tracked delivery metrics,",
+  "partnered with design and support, presented quarterly roadmaps to leadership, and",
+  "drove hiring loops for the team across four consecutive quarters of headcount growth.",
 ].join(" ");
 
 const mustHaves = [
