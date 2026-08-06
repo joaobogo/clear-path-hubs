@@ -38,7 +38,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
 import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
-import { getSessionContext } from "@/lib/auth.functions";
+import { getStaffAccess } from "@/lib/admin-staff-gate.functions";
 import { ExceptionDigest } from "@/components/admin/exception-digest";
 import { TestRecordsToggle } from "@/components/admin/test-records-toggle";
 import { SectionTabs } from "@/components/workspace/section-tabs";
@@ -52,11 +52,10 @@ export const Route = createFileRoute("/_authenticated/admin")({
   errorComponent: makeRouteErrorComponent("admin", "/_authenticated/admin"),
   notFoundComponent: makeRouteNotFoundComponent("admin"),
   beforeLoad: async () => {
+    // Same question the admin server functions ask (is_platform_staff), so the
+    // layout gate and the server checks can never disagree.
     try {
-      const ctx = await getSessionContext();
-      const staff = ctx.memberships.some(
-        (m) => m.status === "active" && (m.role === "platform_admin" || m.role === "operations"),
-      );
+      const { staff } = await getStaffAccess();
       if (!staff) throw redirect({ to: "/access-denied" });
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,6 +63,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
       throw redirect({ to: "/access-denied" });
     }
   },
+
   head: () => ({
     meta: [
       { title: "Admin · TaaSFlow" },
