@@ -5,6 +5,9 @@ import { AccountOperatingSummary } from "@/components/admin/account-operating-su
 import { ClientAccessPanel } from "@/components/admin/client-access-panel";
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Suspense } from "react";
+import { ComponentErrorBoundary } from "@/components/ds/component-error-boundary";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -114,6 +117,19 @@ export const Route = createFileRoute("/_authenticated/admin/clients/$id")({
   component: ClientDetail,
 });
 
+/**
+ * One independently loading, independently failing account block. The suspense
+ * fallback keeps the tab shell visible while a block resolves; the boundary
+ * keeps a thrown loader error inside the block.
+ */
+function Block({ name, children }: { name: string; children: React.ReactNode }) {
+  return (
+    <ComponentErrorBoundary boundary={`admin.clients.detail.${name}`} tone="admin">
+      <Suspense fallback={<Skeleton className="h-40 w-full" />}>{children}</Suspense>
+    </ComponentErrorBoundary>
+  );
+}
+
 function ClientDetail() {
   const { id } = Route.useParams();
   const { tab } = Route.useSearch();
@@ -193,25 +209,83 @@ function ClientDetail() {
         })}
       </nav>
 
+      {/* Each block loads and fails on its own: one broken panel never blanks
+          the account view or escalates to the route-level error card. */}
       {tab === "overview" && (
         <>
-          <AccountOperatingSummary organizationId={org.id} onOpenTab={(t) => setTab(t)} />
-          <OverviewTab org={org} members={members} positions={positions} />
+          <Block name="account-operating-summary">
+            <AccountOperatingSummary organizationId={org.id} onOpenTab={(t) => setTab(t)} />
+          </Block>
+          <Block name="overview">
+            <OverviewTab org={org} members={members} positions={positions} />
+          </Block>
         </>
       )}
-      {tab === "company" && <CompanyTab org={org} />}
-      {tab === "contacts" && <ContactsTab org={org} members={members} />}
-      {tab === "team" && <TeamTab members={members} org={org} />}
-      {tab === "access" && <ClientAccessPanel organizationId={org.id} />}
-      {tab === "positions" && <PositionsTab positions={positions} />}
-      {tab === "candidates" && <CandidatesTab id={id} />}
-      {tab === "readiness" && <UpdateReadinessPanel organizationId={org.id} />}
-      {tab === "messages" && <MessagesTab orgId={org.id} />}
-      {tab === "notes" && <NotesTab org={org} />}
-      {tab === "documents" && <DocumentsTab id={id} />}
-      {tab === "activity" && <ActivityTab id={id} />}
-      {tab === "audit" && <ActivityTab id={id} audit />}
-      {tab === "settings" && <SettingsTab org={org} />}
+      {tab === "company" && (
+        <Block name="company">
+          <CompanyTab org={org} />
+        </Block>
+      )}
+      {tab === "contacts" && (
+        <Block name="contacts">
+          <ContactsTab org={org} members={members} />
+        </Block>
+      )}
+      {tab === "team" && (
+        <Block name="team">
+          <TeamTab members={members} org={org} />
+        </Block>
+      )}
+      {tab === "access" && (
+        <Block name="access">
+          <ClientAccessPanel organizationId={org.id} />
+        </Block>
+      )}
+      {tab === "positions" && (
+        <Block name="positions">
+          <PositionsTab positions={positions} />
+        </Block>
+      )}
+      {tab === "candidates" && (
+        <Block name="candidates">
+          <CandidatesTab id={id} />
+        </Block>
+      )}
+      {tab === "readiness" && (
+        <Block name="readiness">
+          <UpdateReadinessPanel organizationId={org.id} />
+        </Block>
+      )}
+      {tab === "messages" && (
+        <Block name="messages">
+          <MessagesTab orgId={org.id} />
+        </Block>
+      )}
+      {tab === "notes" && (
+        <Block name="notes">
+          <NotesTab org={org} />
+        </Block>
+      )}
+      {tab === "documents" && (
+        <Block name="documents">
+          <DocumentsTab id={id} />
+        </Block>
+      )}
+      {tab === "activity" && (
+        <Block name="activity">
+          <ActivityTab id={id} />
+        </Block>
+      )}
+      {tab === "audit" && (
+        <Block name="audit">
+          <ActivityTab id={id} audit />
+        </Block>
+      )}
+      {tab === "settings" && (
+        <Block name="settings">
+          <SettingsTab org={org} />
+        </Block>
+      )}
     </div>
   );
 }
