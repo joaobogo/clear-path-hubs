@@ -28,7 +28,7 @@ const TIMELINE = [
   { when: "Day 1", what: "Intake locked", detail: "Job description completed/ uploaded and scoring model defined. Your User Account set up on the platform - Welcome!" },
   { when: "Day 1", what: "Sourcing and screening starts", detail: "Monitoring of CVs and scoring results — adjust scoring model if required." },
   { when: "Day 2–14", what: "Your candidate dashboard is live", detail: "Review your candidates' evidence-based scoring. 24/7." },
-  { when: "Every week after", what: "Refreshed delivery", detail: "New candidates, updated scores, and your decisions logged." },
+  { when: "Daily/Weekly activity", what: "Interviews and ATS", detail: "Start interviews with candidates and manage all interview activities in the ATS space." },
 ];
 
 export function RiskProof({ className = "" }: { className?: string }) {
