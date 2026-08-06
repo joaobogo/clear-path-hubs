@@ -48,115 +48,11 @@ function pct(v: number | null) {
   return v === null ? "—" : `${v}%`;
 }
 
-function RuleRow({
-  rule,
-  canManage,
-  onSave,
-  saving,
-}: {
-  rule: ChannelRule;
-  canManage: boolean;
-  onSave: (r: ChannelRule) => void;
-  saving: boolean;
-}) {
-  const [max, setMax] = useState(String(rule.max_contacts_per_person));
-  const [win, setWin] = useState(String(rule.window_hours));
-  const [enabled, setEnabled] = useState(rule.enabled);
-
-  useEffect(() => {
-    setMax(String(rule.max_contacts_per_person));
-    setWin(String(rule.window_hours));
-    setEnabled(rule.enabled);
-  }, [rule.max_contacts_per_person, rule.window_hours, rule.enabled]);
-
-  const dirty =
-    Number(max) !== rule.max_contacts_per_person ||
-    Number(win) !== rule.window_hours ||
-    enabled !== rule.enabled;
-
-  return (
-    <div className="flex flex-wrap items-end gap-4 border-b border-border py-4 last:border-0">
-      <div className="min-w-32">
-        <p className="text-sm font-medium">
-          {CHANNEL_LABELS[rule.channel] ?? rule.channel}
-        </p>
-        <p className="text-xs text-muted-foreground">
-          {enabled ? "In use" : "Not used"}
-        </p>
-      </div>
-      <div className="flex items-center gap-2">
-        <Switch
-          checked={enabled}
-          disabled={!canManage}
-          onCheckedChange={setEnabled}
-          aria-label={`Use ${CHANNEL_LABELS[rule.channel]}`}
-        />
-      </div>
-      <div className="w-28">
-        <Label
-          htmlFor={`max-${rule.channel}`}
-          className="text-xs text-muted-foreground"
-        >
-          Max contacts
-        </Label>
-        <Input
-          id={`max-${rule.channel}`}
-          type="number"
-          min={1}
-          max={10}
-          value={max}
-          disabled={!canManage}
-          onChange={(e) => setMax(e.target.value)}
-        />
-      </div>
-      <div className="w-32">
-        <Label
-          htmlFor={`win-${rule.channel}`}
-          className="text-xs text-muted-foreground"
-        >
-          Window (hours)
-        </Label>
-        <Input
-          id={`win-${rule.channel}`}
-          type="number"
-          min={1}
-          max={2160}
-          value={win}
-          disabled={!canManage}
-          onChange={(e) => setWin(e.target.value)}
-        />
-      </div>
-      <p className="flex-1 text-xs text-muted-foreground">
-        At most {max || "1"} contact{Number(max) === 1 ? "" : "s"} to the same
-        person on this channel every {win || "0"} hours. The platform blocks the
-        rest.
-      </p>
-      {canManage && dirty && (
-        <Button
-          size="sm"
-          disabled={saving}
-          onClick={() =>
-            onSave({
-              channel: rule.channel,
-              max_contacts_per_person: Number(max) || 1,
-              window_hours: Number(win) || 1,
-              enabled,
-            })
-          }
-        >
-          Save
-        </Button>
-      )}
-    </div>
-  );
-}
-
 function OutreachPage() {
   const orgSearch = useClientOrgSearch();
   const qc = useQueryClient();
   const ctxFn = useServerFn(getClientContext);
   const spineFn = useServerFn(getOutreachSpine);
-  const saveRuleFn = useServerFn(saveChannelRule);
 
   const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
@@ -173,15 +69,6 @@ function OutreachPage() {
   const spineState = useQueryState(spineQuery);
   const spine = spineState.data;
 
-  const saveRule = useMutation({
-    mutationFn: (r: ChannelRule) =>
-      saveRuleFn({ data: { organization_id: orgId!, ...r } as never }),
-    onSuccess: () => {
-      toast.success("Rule saved. It applies to the next message.");
-      qc.invalidateQueries({ queryKey: ["outreach-spine", orgId] });
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
 
   if (ctxState.isError) {
     return (
