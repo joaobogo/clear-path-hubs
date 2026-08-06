@@ -253,27 +253,7 @@ function PositionsPage() {
     navigate={navigate}
   />
 
- {activeChips.length > 0 && (
- <div className="mb-4 flex flex-wrap items-center gap-2">
- {activeChips.map((c) => (
- <button
- key={c.key}
- type="button"
- onClick={c.onClear}
- className="rounded-full border bg-muted/60 px-2.5 py-1 text-xs hover:bg-muted"
- >
- {c.label} ×
- </button>
- ))}
- <button
- type="button"
- onClick={clearAll}
- className="text-xs text-muted-foreground hover:text-foreground"
- >
- Clear all
- </button>
- </div>
- )}
+  <ActiveChips activeChips={activeChips} clearAll={clearAll} />
 
  <div className="mb-2 text-xs text-muted-foreground" aria-live="polite">
  {isFetching

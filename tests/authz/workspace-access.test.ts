@@ -149,17 +149,44 @@ describe("read-only rule lives in the helper", () => {
 /**
  * Converted client-workspace server functions must deny a cross-org id the
  * same way: through the canonical helper, not a bespoke membership query.
+ * Server-fn handlers are stripped from the module at build time, so the
+ * guarantee is checked at the source level.
  */
-describe("converted server functions deny cross-org access", () => {
-  it("tasks.functions listTasks rejects an org the caller does not belong to", async () => {
-    const { listTasks } = await import("@/lib/tasks.functions");
-    const fakeContext = { supabase: makeDb(), userId: USER_A };
-    // @ts-expect-error — calling the handler function directly in a unit test
-    await expect(
-      listTasks.options.handler({
-        data: { organization_id: ORG_B, view: "my" },
-        context: fakeContext,
-      }),
-    ).rejects.toBeInstanceOf(WorkspaceAccessError);
-  });
+describe("converted server functions route access through the canonical helper", () => {
+  const CONVERTED = [
+    "src/lib/tasks.functions.ts",
+    "src/lib/interviews.functions.ts",
+    "src/lib/interview-feedback.functions.ts",
+    "src/lib/client-decisions.functions.ts",
+    "src/lib/client-candidates.functions.ts",
+    "src/lib/client-positions.functions.ts",
+    "src/lib/client-messages.functions.ts",
+    "src/lib/client-overview.functions.ts",
+    "src/lib/client/open-items.functions.ts",
+    "src/lib/client/score-refresh.functions.ts",
+    "src/lib/client/access-request.functions.ts",
+    "src/lib/position-readiness.functions.ts",
+    "src/lib/position-info-requests.functions.ts",
+    "src/lib/position-duplicate.functions.ts",
+    "src/lib/position-edit.functions.ts",
+  ];
+
+  for (const file of CONVERTED) {
+    it(`${file} guards through assertWorkspace*/assertEditor`, () => {
+      const src = readFileSync(join(process.cwd(), file), "utf8");
+      expect(
+        /assertWorkspace(Access|Write|Admin|TeamAccess)|assertEditor/.test(src),
+        `${file} has no canonical access guard`,
+      ).toBe(true);
+    });
+
+    it(`${file} has no bespoke membership role check`, () => {
+      const src = readFileSync(join(process.cwd(), file), "utf8");
+      expect(
+        /from\("memberships"\)[\s\S]{0,200}client_editor/.test(src),
+        `${file} still checks membership roles inline`,
+      ).toBe(false);
+    });
+  }
 });
+

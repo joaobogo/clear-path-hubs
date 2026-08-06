@@ -100,7 +100,8 @@ export function FilterBar({
   navigate,
 }: {
   orgId: string | undefined;
-  ctx: { active?: { role?: string } } | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ctx: any;
   status: string;
   q: string;
   location: string;

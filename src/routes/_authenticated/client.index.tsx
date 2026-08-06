@@ -44,7 +44,8 @@ import type { QueueRow } from "@/lib/client-decision-queue";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
 import { RoleStatusList } from "@/components/client/overview/role-status-list";
 import { SinceLastVisit, RecentMessages } from "@/components/client/overview/activity-panels";
-import { SectionHeader, EmptyBlock, EmptyWelcome } from "@/components/client/overview/section-primitives";
+import { EmptyWelcome } from "@/components/client/overview/section-primitives";
+import { CandidatesReleasedSection } from "@/components/client/overview/candidates-released-section";
 import { relTime } from "@/components/client/overview/utils";
 
 
@@ -349,50 +350,16 @@ function OverviewPage() {
           <RoleStatusList roles={visibleRoles} loading={!data && isFetching} compact={compact} />
 
           {/* 3 · CANDIDATES WAITING ON YOU */}
-          <section aria-labelledby="open-first-heading" className="space-y-3">
-            <SectionHeader
-              id="open-first-heading"
-              icon={<Sparkles className="h-4 w-4 text-primary" />}
-              title="Candidates released to you"
-              action={
-                <Link
-                  to="/client/candidates"
-                  search={
-                    {
-                      ...(orgSearch ? { org: orgSearch } : {}),
-                      ...(selectedRole ? { position: selectedRole } : {}),
-                    } as never
-                  }
-                  className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-                >
-                  All candidates <ChevronRight className="h-3.5 w-3.5" />
-                </Link>
-              }
-            />
-            {!data && isFetching ? (
-              <div className="grid gap-3">
-                {[0, 1].map((i) => (
-                  <div key={i} className="h-24 animate-pulse rounded-xl border bg-muted/40" />
-                ))}
-              </div>
-            ) : isError && !data ? (
-              <QueryErrorCard
-                title="We couldn't load your candidates"
-                error={error}
-                onRetry={() => refetch()}
-                retrying={isFetching}
-                compact
-              />
-            ) : latest.length === 0 ? (
-              <EmptyBlock text="No candidates released to you yet. They appear here the moment they're approved for this role." />
-            ) : (
-              <div className="grid gap-3">
-                {latest.slice(0, 3).map((c: Any) => (
-                  <CandidateCard key={c.match_id} candidate={c} />
-                ))}
-              </div>
-            )}
-          </section>
+          <CandidatesReleasedSection
+            orgSearch={orgSearch ?? null}
+            selectedRole={selectedRole}
+            data={data}
+            isFetching={isFetching}
+            isError={isError}
+            error={error}
+            refetch={refetch}
+            latest={latest}
+          />
 
           {/* 4 · PROMISE VS ACTUAL */}
           <SlaScorecard orgId={orgId} positionId={selectedRole || undefined} />
