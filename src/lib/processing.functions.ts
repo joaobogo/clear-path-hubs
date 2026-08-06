@@ -949,9 +949,6 @@ export const listAdminMatches = createServerFn({ method: "GET" })
     });
   });
 
-/** Lifetime of a staff CV preview link. Short by design; re-signed on demand. */
-const CV_URL_TTL_SECONDS = 300;
-
 export const getAdminMatch = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
@@ -1011,6 +1008,8 @@ export const getAdminMatch = createServerFn({ method: "GET" })
         .order("created_at", { ascending: false }),
     ]);
 
+    // Lifetime of a staff CV preview link. Short by design; re-signed on demand.
+    const CV_URL_TTL_SECONDS = 300;
     let cv_signed_url: string | null = null;
     let cv_url_expires_at: string | null = null;
     if (fileRes.data) {
@@ -1106,6 +1105,7 @@ export const resignAdminCvUrl = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => z.object({ match_id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     if (!(await isStaff(context.userId))) throw new Error("forbidden");
+    const CV_URL_TTL_SECONDS = 300;
     const supabase = (await getAdmin()) as AnyRow;
     const { data: match } = await supabase
       .from("candidate_matches")
