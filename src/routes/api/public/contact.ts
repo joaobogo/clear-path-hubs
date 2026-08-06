@@ -3,9 +3,13 @@ import { z } from "zod";
 import {
   PUBLIC_RATE_LIMITS,
   clientIp,
+  conflictResponse,
+  consumeRateLimit,
+  newTraceId,
   rateLimitResponse,
-  rateLimited,
+  withRateLimitHeaders,
 } from "@/lib/public-api/rate-limit";
+import { auditConflict, auditRateLimited, emailDomain } from "@/lib/public-api/outcome-audit";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(120),
@@ -38,11 +42,23 @@ export const Route = createFileRoute("/api/public/contact")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const traceId = crypto.randomUUID();
-
-        if (rateLimited("contact", clientIp(request), PUBLIC_RATE_LIMITS.contact)) {
-          return rateLimitResponse(traceId, PUBLIC_RATE_LIMITS.contact.windowMs);
+        const ip = clientIp(request);
+        const traceId = newTraceId("contact");
+        const decision = consumeRateLimit("contact", ip, PUBLIC_RATE_LIMITS.contact);
+        if (decision.limited) {
+          await auditRateLimited({
+            scope: "contact",
+            traceId,
+            ip,
+            path: "/api/public/contact",
+            limit: decision.limit,
+            retryAfterSeconds: decision.retryAfterSeconds,
+          });
+          return rateLimitResponse(traceId, decision);
         }
+
+        const response = await (async (): Promise<Response> => {
+
 
         let body: unknown;
         try {
@@ -153,6 +169,10 @@ export const Route = createFileRoute("/api/public/contact")({
 
         return Response.json({ ok: true, trace_id: traceId });
 
+      
+        })();
+
+        return withRateLimitHeaders(response, decision, traceId);
       },
     },
   },

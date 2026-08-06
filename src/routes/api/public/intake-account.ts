@@ -1,6 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { MIN_ACCOUNT_PASSWORD } from "@/lib/express-intake-schema";
+import {
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  conflictResponse,
+  consumeRateLimit,
+  newTraceId,
+  rateLimitResponse,
+  withRateLimitHeaders,
+} from "@/lib/public-api/rate-limit";
+import { auditConflict, auditRateLimited, emailDomain } from "@/lib/public-api/outcome-audit";
 
 /**
  * Inline account creation for the intake flow. The visitor never leaves the
@@ -35,6 +45,22 @@ export const Route = createFileRoute("/api/public/intake-account")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const ip = clientIp(request);
+        const traceId = newTraceId("intake_account");
+        const decision = consumeRateLimit("intake_account", ip, PUBLIC_RATE_LIMITS.intake_account);
+        if (decision.limited) {
+          await auditRateLimited({
+            scope: "intake_account",
+            traceId,
+            ip,
+            path: "/api/public/intake-account",
+            limit: decision.limit,
+            retryAfterSeconds: decision.retryAfterSeconds,
+          });
+          return rateLimitResponse(traceId, decision);
+        }
+
+        const response = await (async (): Promise<Response> => {
         let parsed;
         try {
           parsed = bodySchema.parse(await request.json());
@@ -59,14 +85,19 @@ export const Route = createFileRoute("/api/public/intake-account")({
         }
 
         if (existingId) {
-          return Response.json(
-            {
-              ok: false,
-              error: "account_exists",
-              message:
-                "That email already has a TaaSFlow account. Sign in below and we'll attach this role to your existing organisation.",
-            },
-            { status: 409 },
+          await auditConflict({
+            scope: "intake_account",
+            traceId,
+            ip,
+            path: "/api/public/intake-account",
+            reason: "account_exists",
+            detail: { email_domain: emailDomain(parsed.email) },
+          });
+          return conflictResponse(
+            traceId,
+            "account_exists",
+            "That email already has a TaaSFlow account. Sign in below and we'll attach this role to your existing organisation.",
+            decision,
           );
         }
 
@@ -90,6 +121,10 @@ export const Route = createFileRoute("/api/public/intake-account")({
         }
 
         return Response.json({ ok: true, created: true, userId: created.user.id });
+      
+        })();
+
+        return withRateLimitHeaders(response, decision, traceId);
       },
     },
   },

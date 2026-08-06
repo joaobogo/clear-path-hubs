@@ -7,6 +7,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import {
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  consumeRateLimit,
+  newTraceId,
+  rateLimitResponse,
+  withRateLimitHeaders,
+} from "@/lib/public-api/rate-limit";
+import { auditRateLimited } from "@/lib/public-api/outcome-audit";
+import {
   CRM_ALLOWED_ORIGINS,
   CRM_FORMS,
   CRM_MAX_PAYLOAD_BYTES,
@@ -93,33 +102,32 @@ const submissionSchema = z.object({
   website: z.string().max(200).optional().nullable(),
 });
 
-// Simple in-memory rate limit (per isolate): 5 submissions / minute / IP.
-const hits = new Map<string, number[]>();
-function rateLimited(ip: string) {
-  const now = Date.now();
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < 60_000);
-  recent.push(now);
-  hits.set(ip, recent);
-  if (hits.size > 5000) hits.clear();
-  return recent.length > 5;
-}
 
 export const Route = createFileRoute("/api/public/submit-to-attio")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const ip = clientIp(request);
+        const traceId = newTraceId("crm_submission");
+        const decision = consumeRateLimit("crm_submission", ip, PUBLIC_RATE_LIMITS.crm_submission);
+        if (decision.limited) {
+          await auditRateLimited({
+            scope: "crm_submission",
+            traceId,
+            ip,
+            path: "/api/public/submit-to-attio",
+            limit: decision.limit,
+            retryAfterSeconds: decision.retryAfterSeconds,
+          });
+          return rateLimitResponse(traceId, decision);
+        }
+
+        const response = await (async (): Promise<Response> => {
         const origin = request.headers.get("origin");
         if (origin && !CRM_ALLOWED_ORIGINS.includes(origin)) {
           return Response.json({ ok: false, error: "origin_not_allowed" }, { status: 403 });
         }
 
-        const ip =
-          request.headers.get("cf-connecting-ip") ??
-          request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-          "unknown";
-        if (rateLimited(ip)) {
-          return Response.json({ ok: false, error: "rate_limited" }, { status: 429 });
-        }
 
         const raw = await request.text();
         if (raw.length > CRM_MAX_PAYLOAD_BYTES) {
@@ -338,6 +346,10 @@ export const Route = createFileRoute("/api/public/submit-to-attio")({
           }
           return Response.json({ ok: false, error: "crm_unavailable" }, { status: 503 });
         }
+      
+        })();
+
+        return withRateLimitHeaders(response, decision, traceId);
       },
     },
   },

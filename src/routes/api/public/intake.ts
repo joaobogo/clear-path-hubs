@@ -4,9 +4,13 @@ import { SCREENING_MAX_QUESTIONS, SCREENING_MAX_REQUIRED } from "@/lib/screening
 import {
   PUBLIC_RATE_LIMITS,
   clientIp,
+  conflictResponse,
+  consumeRateLimit,
+  newTraceId,
   rateLimitResponse,
-  rateLimited,
+  withRateLimitHeaders,
 } from "@/lib/public-api/rate-limit";
+import { auditConflict, auditRateLimited, emailDomain } from "@/lib/public-api/outcome-audit";
 
 // ---------- Canonical intake payload contract ----------
 const workModel = z.enum(["remote", "hybrid", "onsite"]);
@@ -154,11 +158,23 @@ export const Route = createFileRoute("/api/public/intake")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const traceId = crypto.randomUUID();
-
-        if (rateLimited("intake", clientIp(request), PUBLIC_RATE_LIMITS.intake)) {
-          return rateLimitResponse(traceId, PUBLIC_RATE_LIMITS.intake.windowMs);
+        const ip = clientIp(request);
+        const traceId = newTraceId("intake");
+        const decision = consumeRateLimit("intake", ip, PUBLIC_RATE_LIMITS.intake);
+        if (decision.limited) {
+          await auditRateLimited({
+            scope: "intake",
+            traceId,
+            ip,
+            path: "/api/public/intake",
+            limit: decision.limit,
+            retryAfterSeconds: decision.retryAfterSeconds,
+          });
+          return rateLimitResponse(traceId, decision);
         }
+
+        const response = await (async (): Promise<Response> => {
+
 
         let body: unknown;
         try {
@@ -278,15 +294,19 @@ export const Route = createFileRoute("/api/public/intake")({
           }
         }
         if (!organizationId && claimedExistingOrgId) {
-          return Response.json(
-            {
-              ok: false,
-              trace_id: traceId,
-              error: "organization_exists",
-              message:
-                "Your company already has a TaaSFlow workspace. Sign in, or ask a workspace admin to invite you, then launch your role.",
-            },
-            { status: 409 },
+          await auditConflict({
+            scope: "intake",
+            traceId,
+            ip,
+            path: "/api/public/intake",
+            reason: "organization_exists",
+            detail: { email_domain: emailDomain(data.workEmail), organization_id: claimedExistingOrgId },
+          });
+          return conflictResponse(
+            traceId,
+            "organization_exists",
+            "Your company already has a TaaSFlow workspace. Sign in, or ask a workspace admin to invite you, then launch your role.",
+            decision,
           );
         }
 
@@ -320,14 +340,19 @@ export const Route = createFileRoute("/api/public/intake")({
             // to it, and we only continue when the request provably comes from
             // its owner.
             if (callerUserId !== found) {
-              return Response.json(
-                {
-                  ok: false,
-                  trace_id: traceId,
-                  error: "account_exists",
-                  message: "An account already uses that email. Sign in first, then launch your role.",
-                },
-                { status: 409 },
+              await auditConflict({
+                scope: "intake",
+                traceId,
+                ip,
+                path: "/api/public/intake",
+                reason: "account_exists",
+                detail: { email_domain: emailDomain(data.workEmail) },
+              });
+              return conflictResponse(
+                traceId,
+                "account_exists",
+                "An account already uses that email. Sign in first, then launch your role.",
+                decision,
               );
             }
             authUserId = found;
@@ -665,6 +690,10 @@ export const Route = createFileRoute("/api/public/intake")({
           workspaceStatus,
           requisitionPending,
         });
+      
+        })();
+
+        return withRateLimitHeaders(response, decision, traceId);
       },
     },
   },
