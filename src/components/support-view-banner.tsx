@@ -1,6 +1,25 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ShieldAlert, ArrowLeft, Building2, Users } from "lucide-react";
+import { ShieldAlert, ArrowLeft, Building2, Users, Clock } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useSupportView } from "@/lib/support-view";
+
+/** Minutes:seconds left on a support session, recomputed every second. */
+function useTimeRemaining(expiresAt: string | null) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!expiresAt) return;
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, [expiresAt]);
+  if (!expiresAt) return null;
+  const ms = new Date(expiresAt).getTime() - now;
+  if (!Number.isFinite(ms)) return null;
+  if (ms <= 0) return "expired";
+  const total = Math.round(ms / 1000);
+  const mins = Math.floor(total / 60);
+  const secs = total % 60;
+  return `${mins}:${String(secs).padStart(2, "0")} left`;
+}
 
 /**
  * Persistent banner rendered by the client layout whenever a platform staff
@@ -10,6 +29,7 @@ import { useSupportView } from "@/lib/support-view";
 export function SupportViewBanner() {
   const support = useSupportView();
   const navigate = useNavigate();
+  const remaining = useTimeRemaining(support.sessionExpiresAt);
   if (!support.active) return null;
   const color =
     support.mode === "interactive"
@@ -29,6 +49,19 @@ export function SupportViewBanner() {
             <span className="font-semibold">
               {support.organizationName ?? "this client"}
             </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs opacity-80">
+            {support.sessionRef ? (
+              <span>
+                Support session <span className="font-mono">{support.sessionRef}</span>
+              </span>
+            ) : null}
+            {remaining ? (
+              <span className="inline-flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                {remaining === "expired" ? "Session expired — reopen from Admin" : remaining}
+              </span>
+            ) : null}
           </div>
           <div className="text-xs opacity-80">
             {support.mode === "interactive"
