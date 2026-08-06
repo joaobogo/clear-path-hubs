@@ -257,17 +257,18 @@ function PositionsPage() {
             {label}
           </button>
         ))}
-        {search.tab === "attention" && (
-          <label className="ml-auto flex items-center gap-2 py-2 text-xs text-muted-foreground">
-            <input
-              type="checkbox"
-              className="h-3.5 w-3.5"
-              checked={search.show_test}
-              onChange={(e) => setSearch({ show_test: e.target.checked || undefined })}
-            />
-            Show test records
-          </label>
-        )}
+        <label className="ml-auto flex items-center gap-2 py-2 text-xs text-muted-foreground">
+          <input
+            type="checkbox"
+            className="h-3.5 w-3.5"
+            checked={search.show_test}
+            onChange={(e) =>
+              setSearch({ show_test: e.target.checked || undefined, page: 1 })
+            }
+          />
+          Show test records
+        </label>
+
       </div>
 
       {search.tab === "attention" ? (
