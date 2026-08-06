@@ -144,7 +144,10 @@ export function AvailabilityManager({
 
             <div className="space-y-2">
               {rows.map((r, i) => (
-                <div key={i} className="flex items-center gap-2">
+                <div
+                  key={i}
+                  className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:flex"
+                >
                   <select
                     className="h-9 flex-1 rounded-md border bg-background px-2 text-sm"
                     value={r.weekday}
@@ -164,6 +167,7 @@ export function AvailabilityManager({
                   </select>
                   <Input
                     type="time"
+                    aria-label={`Start time on ${WEEKDAY_LABELS[r.weekday]}`}
                     className="w-28"
                     value={minutesToLabel(r.start_minute)}
                     onChange={(e) =>
@@ -176,6 +180,7 @@ export function AvailabilityManager({
                   />
                   <Input
                     type="time"
+                    aria-label={`End time on ${WEEKDAY_LABELS[r.weekday]}`}
                     className="w-28"
                     value={minutesToLabel(r.end_minute)}
                     onChange={(e) =>
@@ -189,7 +194,8 @@ export function AvailabilityManager({
                   <Button
                     variant="ghost"
                     size="icon"
-                    aria-label="Remove window"
+                    className="min-h-11 min-w-11"
+                    aria-label={`Remove availability window on ${WEEKDAY_LABELS[r.weekday]} at ${minutesToLabel(r.start_minute)}`}
                     onClick={() => setRows((prev) => prev.filter((_, j) => j !== i))}
                   >
                     <Trash2 className="h-4 w-4" />

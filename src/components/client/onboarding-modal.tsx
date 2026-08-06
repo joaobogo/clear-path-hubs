@@ -213,7 +213,7 @@ export function ClientOnboardingModal({
                 </Link>{" "}
                 — your TaaSFlow team replies in the same workspace. You can reopen this
                 tour any time from{" "}
-                <Link to="/client/settings" className="underline">
+                <Link to="/client/account" search={{ tab: "workspace" }} className="underline">
                   Settings
                 </Link>
                 .

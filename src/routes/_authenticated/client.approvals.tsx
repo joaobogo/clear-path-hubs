@@ -288,7 +288,7 @@ function ApprovalsPage() {
 
       <div className="flex flex-wrap items-center gap-2">
         <Select value={taskType} onValueChange={(v) => setTaskType(v as TaskType | "all")}>
-          <SelectTrigger className="w-52">
+          <SelectTrigger className="w-full sm:w-52">
             <SelectValue placeholder="Type" />
           </SelectTrigger>
           <SelectContent>
@@ -486,13 +486,21 @@ function ApprovalRowItem({
     task.task_type === "offer_decision" ||
     task.task_type === "feedback_submission";
 
+  // Icon-only controls name both the action and its subject, e.g.
+  // "Approve Maria Santos for Front Desk Lead". Playwright selects on these.
+  const subject = [task.candidate_name, task.position_title]
+    .filter(Boolean)
+    .join(" for ");
+  const label = subject ? `${task.title} — ${subject}` : task.title;
+
   return (
-    <li className="flex items-start gap-3 rounded-lg border bg-card p-3 shadow-sm">
+    <li className="flex flex-col gap-3 rounded-lg border bg-card p-3 shadow-sm md:flex-row md:items-start">
+      <div className="flex items-start gap-3 md:contents">
       <Checkbox
         checked={selected}
         onCheckedChange={onToggleSelect}
-        className="mt-1"
-        aria-label="Select approval"
+        className="mt-1 shrink-0"
+        aria-label={`Select ${label}`}
       />
       <button
         type="button"
@@ -502,7 +510,7 @@ function ApprovalRowItem({
           else complete.mutate();
         }}
         className="mt-0.5 shrink-0 text-muted-foreground hover:text-foreground"
-        aria-label={done ? "Reopen" : "Mark done"}
+        aria-label={done ? `Reopen ${label}` : `Approve ${label}`}
       >
         {done ? (
           <CheckCircle2 className="h-5 w-5 text-primary" />
@@ -510,6 +518,7 @@ function ApprovalRowItem({
           <Circle className="h-5 w-5" />
         )}
       </button>
+      </div>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <div
@@ -587,8 +596,8 @@ function ApprovalRowItem({
       <button
         type="button"
         onClick={() => remove.mutate()}
-        className="shrink-0 rounded p-1 text-muted-foreground hover:bg-muted hover:text-destructive"
-        aria-label="Delete task"
+        className="self-start shrink-0 rounded p-1 text-muted-foreground hover:bg-muted hover:text-destructive"
+        aria-label={`Delete ${label}`}
       >
         <Trash2 className="h-4 w-4" />
       </button>

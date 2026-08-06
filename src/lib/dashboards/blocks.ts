@@ -81,7 +81,7 @@ export const BLOCK_LIBRARY: Record<BlockId, BlockDefinition> = {
     title: "Spend per hire",
     definition: "Payments recorded against your account divided by confirmed hires.",
     emptyHint: "Fills after your first confirmed hire.",
-    href: "/client/plan",
+    href: "/client/account?tab=plan",
     span: 4,
   },
   talent_pool_growth: {
@@ -97,7 +97,7 @@ export const BLOCK_LIBRARY: Record<BlockId, BlockDefinition> = {
     title: "Team activity",
     definition: "Decisions each member of your team recorded in the last 30 days.",
     emptyHint: "Fills when your team starts recording decisions.",
-    href: "/client/team",
+    href: "/client/account?tab=team",
     span: 6,
   },
 };

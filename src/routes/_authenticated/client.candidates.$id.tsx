@@ -281,6 +281,11 @@ function CandidateDetailPage() {
  const isViewer = ctx?.active?.role === "client_viewer";
  const readOnly = support.readOnly || isViewer;
  const actions = ACTIONS_BY_STAGE[candidate.stage] ?? { primary: null, more: [] };
+ // Icon-only controls name their subject so assistive tech (and the Playwright
+ // suite) knows which candidate and role a decision applies to.
+ const actionSubject = [candidate.candidate.display_name, candidate.position?.title]
+  .filter(Boolean)
+  .join(" for ");
 
  return (
  <main className="mx-auto max-w-7xl px-4 pb-28 pt-6 sm:px-6 lg:pb-8 lg:pt-8">
@@ -403,6 +408,7 @@ function CandidateDetailPage() {
               onAct={(k) => handleAct(k, candidate.stage)}
               stage={candidate.stage}
               matchId={candidate.match_id}
+              subject={actionSubject}
             />
             <TalentMemoryAction
               orgId={orgId}
@@ -438,6 +444,7 @@ function CandidateDetailPage() {
           actions={actions}
           pending={act.isPending}
           onAct={(k) => handleAct(k, candidate.stage)}
+          subject={actionSubject}
         />
       )}
 

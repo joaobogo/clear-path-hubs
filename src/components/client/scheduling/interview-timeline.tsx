@@ -187,6 +187,9 @@ function TimelineItem({
   const slots = liveSlots(iv.proposed_times, iv.availability_expires_at);
   const when = dualZone(iv.scheduled_at, iv.timezone, viewerTz);
   const title = `Interview — ${iv.position?.title ?? "Position"}`;
+  // Action labels name the candidate and role so they stay unambiguous for
+  // screen readers and stable as Playwright selectors.
+  const subject = `${iv.candidate?.name ?? "candidate"} for ${iv.position?.title ?? "this role"}`;
 
   return (
     <div className="relative grid grid-cols-[auto_1fr] gap-3 pb-4">
@@ -214,7 +217,11 @@ function TimelineItem({
           ) : null}
         </div>
 
-        <button onClick={onOpen} className="mt-1.5 block text-left">
+        <button
+          onClick={onOpen}
+          className="mt-1.5 block text-left"
+          aria-label={`Open interview details for ${subject}`}
+        >
           <span className="font-medium">{iv.candidate?.name ?? "Candidate"}</span>
           <span className="mx-1.5 text-muted-foreground">·</span>
           <span className="text-muted-foreground">{iv.position?.title ?? "Position"}</span>
@@ -275,15 +282,23 @@ function TimelineItem({
 
         <div className="mt-3 flex flex-wrap gap-2">
           {!readOnly && !proposing && iv.status === "requested" && onStartPropose ? (
-            <Button size="sm" disabled={busy} onClick={onStartPropose}>
+            <Button
+              size="sm"
+              className="min-h-11 sm:min-h-9"
+              disabled={busy}
+              onClick={onStartPropose}
+              aria-label={`Propose interview times for ${subject}`}
+            >
               <Clock className="mr-1.5 h-4 w-4" /> Propose times
             </Button>
           ) : null}
           {!readOnly && !proposing && iv.status === "requested" ? (
             <Button
               size="sm"
+              className="min-h-11 sm:min-h-9"
               disabled={busy || !hasWindows}
               onClick={onProposeFromAvailability}
+              aria-label={`Send my available times for ${subject}`}
               title={hasWindows ? undefined : "Set your availability first"}
             >
               <Sparkles className="mr-1.5 h-4 w-4" />
@@ -291,7 +306,14 @@ function TimelineItem({
             </Button>
           ) : null}
           {!readOnly && (iv.status === "scheduled" || iv.status === "scheduling") ? (
-            <Button size="sm" variant="outline" disabled={busy} onClick={onReschedule}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="min-h-11 sm:min-h-9"
+              disabled={busy}
+              onClick={onReschedule}
+              aria-label={`Reschedule interview for ${subject}`}
+            >
               <RefreshCw className="mr-1.5 h-4 w-4" />
               {busy ? "Working…" : "Reschedule"}
             </Button>

@@ -362,7 +362,7 @@ async function teamActivity(sb: AnySupabase, org: string): Promise<BlockData | n
         label: m.profiles?.full_name ?? m.profiles?.email ?? "Team member",
         value: `${n} decision${n === 1 ? "" : "s"}`,
         note: String(m.role).replace(/_/g, " "),
-        href: "/client/team",
+        href: "/client/account?tab=team",
       };
     }),
   };
