@@ -31,6 +31,8 @@ import { EditorialHero, PhotoBand } from "@/components/marketing/editorial-hero"
 import agentsHero from "@/assets/page-agents-hero.jpg";
 import bandOps from "@/assets/band-ops.jpg";
 import { AgentRunsPreview } from "@/components/marketing/product-preview/agent-runs-preview";
+import { ChannelAgentCoverage } from "@/components/marketing/channel-agent-coverage";
+import { CHANNEL_AGENT_COUNT } from "@/config/channel-agents";
 import {
   MODULES,
   MODULE_SECTIONS,
@@ -50,7 +52,7 @@ export const Route = createFileRoute("/agents")({
   head: () =>
     marketingHead(undefined, "/agents", {
       title: `${MODULES.agents} — the eight agents that run a TaaSFlow search`,
-      description: `${SYSTEM_CLAIM} Intake, blueprint, discovery, evidence, scoring, pipeline, coordination and governance agents — each with stated inputs, outputs, controls, approval gates and recorded events.`,
+      description: `${SYSTEM_CLAIM} A dedicated agent on every sourcing channel. Intake, blueprint, discovery, evidence, scoring, pipeline, coordination and governance agents — each with stated inputs, outputs, controls, approval gates and recorded events.`,
     }),
   component: AgentsPage,
 });
@@ -180,14 +182,14 @@ function AgentsPage() {
       {/* INTRO */}
       <EditorialHero
         eyebrow={PRODUCT_CATEGORY}
-        title="Eight agents. Each one has a job, a limit and a log."
+        title="Eight agents run the search. Twenty-three run the channels."
         lead="Agents work inside role rules, a frozen rubric and approval gates. Every action they take is recorded."
         image={agentsHero}
         imageAlt="A recruiter reviewing candidate evidence at a desk in the evening"
         stats={[
           { value: "6", label: "Agents you control" },
           { value: "2", label: "System automations" },
-          { value: "0", label: "Releases without approval" },
+          { value: String(CHANNEL_AGENT_COUNT), label: "Sourcing channels with a dedicated agent" },
         ]}
         primary={{ to: "/intake", label: "Start a role" }}
         secondary={{ to: "/platform", label: "See the platform" }}
@@ -196,7 +198,7 @@ function AgentsPage() {
           {[
             "Six agents you switch on or pause",
             "Two always-on system automations",
-            "No candidate released without approval",
+            `A dedicated agent on each of ${CHANNEL_AGENT_COUNT} sourcing channels`,
           ].map((t) => (
             <li
               key={t}
@@ -230,6 +232,13 @@ function AgentsPage() {
               <AgentCard key={a.id} agent={a} />
             ))}
           </ul>
+        </PublicPage>
+      </PublicSection>
+
+      {/* CHANNEL COVERAGE */}
+      <PublicSection className="border-t border-[color:var(--brand-navy)]/8 bg-[color:var(--brand-paper)]">
+        <PublicPage>
+          <ChannelAgentCoverage />
         </PublicPage>
       </PublicSection>
 
