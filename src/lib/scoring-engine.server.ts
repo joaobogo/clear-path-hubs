@@ -64,8 +64,12 @@ export interface ScoringResult {
     preferred: number;
     screening_alignment: number;
   };
-
+  requirement_assessment: RequirementAssessment[];
+  strengths: string[];
+  concerns: string[];
+  evidence: EvidenceRef[];
   screening_evidence: Array<{
+
     question_id: string;
     question: string;
     normalized_value: string;
