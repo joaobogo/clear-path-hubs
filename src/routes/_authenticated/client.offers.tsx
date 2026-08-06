@@ -140,6 +140,13 @@ function OffersPage() {
   });
   const ctx = ctxQuery.data;
   const orgId = ctx?.active?.organization_id;
+
+  // Offers move as candidates move. Refresh the board in place and say so.
+  const live = useRouteRealtime({
+    scope: "client-offers",
+    orgId: orgId ?? null,
+    invalidateKeys: [["hires", orgId], ["hires-report", orgId], ["client-kpis"]],
+  });
   const readOnly = ctx?.active?.role === "client_viewer";
 
   const { data, isPending, isError, error, isFetching, refetch } = useQuery({
@@ -188,7 +195,8 @@ function OffersPage() {
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight sm:text-3xl">
             <HandCoins className="h-6 w-6 text-primary" aria-hidden />
-            Offers & hires
+            Offers &amp; hires
+            <LiveUpdatedChip updatedAt={live.updatedAt} />
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Track every offer from draft through signed hire, with owner

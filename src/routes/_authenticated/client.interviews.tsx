@@ -162,6 +162,13 @@ function InterviewsPage() {
     enabled: !!org,
   });
   const availability = useAvailability(org);
+
+  // The interviews desk also moves when a candidate match changes elsewhere.
+  const live = useRouteRealtime({
+    scope: "client-interviews",
+    orgId: org ?? null,
+    invalidateKeys: [["client-interviews"], ["client-schedulable", org], ["client-kpis"]],
+  });
   const hasWindows = ((availability.data?.windows ?? []) as unknown[]).length > 0;
   // The client's stored timezone wins; the browser is only a fallback.
   const orgTimezone =

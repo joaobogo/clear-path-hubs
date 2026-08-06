@@ -115,6 +115,17 @@ function TasksPage() {
     queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
   });
   const orgId = ctxQuery.data?.active?.organization_id ?? null;
+
+  // Tasks are driven by candidate and role state, so a remote move changes
+  // this inbox. Refresh in place and mark it rather than reshuffling rows.
+  const live = useRouteRealtime({
+    scope: "client-tasks",
+    orgId,
+    invalidateKeys: [
+      ["client", "tasks", orgId],
+      ["client-kpis", orgId],
+    ],
+  });
   const signals = useEmptyStateSignals(orgId ?? undefined);
 
   const tasks = useQuery({
@@ -239,6 +250,7 @@ function TasksPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <LiveUpdatedChip updatedAt={live.updatedAt} />
           <Button variant="outline" size="sm" onClick={exportCsv}>
             Export CSV
           </Button>
