@@ -26,6 +26,7 @@
  */
 
 import { z } from "zod";
+import type { EvaluationMethod } from "./evaluation-method";
 
 /**
  * Bump whenever any value below changes. Semantic: engine-behaviour version.
