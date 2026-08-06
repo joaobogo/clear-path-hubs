@@ -1341,7 +1341,7 @@ function Home() {
                 <br className="hidden sm:block" />{" "}
                 <span className="text-[color:var(--brand-ocean-text)]">recruitment solution</span>
               </h1>
-              <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-ocean-text)]">
+              <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[color:var(--brand-danger)]">
                 Human first, AI enabled
               </p>
               <p className="max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
