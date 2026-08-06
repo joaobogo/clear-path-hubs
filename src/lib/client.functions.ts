@@ -1252,8 +1252,9 @@ export const getClientCandidates = createServerFn({ method: "GET" })
 
     if (data.positionId) q = q.eq("position_id", data.positionId);
 
-    const { data: rows, error } = await q.order("delivered_at", { ascending: false });
+    const { data: rawRows, error } = await q.order("delivered_at", { ascending: false });
     if (error) throw new Error(error.message);
+    const rows = await hydrateClientCandidateProfiles(rawRows as AnyRow[]);
 
     // Verified, shareable evidence for the shortlist cards.
     const evidenceByMatch = await loadClientEvidenceItems(
@@ -1305,6 +1306,7 @@ export const getClientCandidate = createServerFn({ method: "GET" })
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!match) return null;
+    const [hydratedMatch] = await hydrateClientCandidateProfiles([match as AnyRow]);
 
     const applicationId = (match as AnyRow).application_id;
     const candidateProfileId = (match as AnyRow).candidate_profile_id;
@@ -1348,7 +1350,7 @@ export const getClientCandidate = createServerFn({ method: "GET" })
       (await loadClientEvidenceItems(context.supabase, [data.matchId])).get(data.matchId) ?? [];
 
     const matchWithAnswers = {
-      ...(match as AnyRow),
+      ...(hydratedMatch as AnyRow),
       evidence_items: evidenceItems,
       application_answers: answers,
       audit_events: ((auditRes as AnyRow).data as AnyRow[]) ?? [],
