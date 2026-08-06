@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { classifyBand } from "@/lib/scoring/bands";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -214,10 +215,22 @@ function PublishDesk() {
                         {r.positions?.title ?? "—"}
                       </div>
                     </td>
-                    <td className="px-3 py-2 tabular-nums">
-                      {run?.score != null ? Math.round(run.score) : "—"}
-                      {run?.fit_label && (
-                        <div className="text-[10px] text-muted-foreground">{run.fit_label}</div>
+                    <td className="px-3 py-2">
+                      {/* Band + confidence in the list; the number and its rubric
+                          version live on the candidate detail view. */}
+                      {run?.score == null ? (
+                        <span className="text-muted-foreground">Not scored</span>
+                      ) : (
+                        <>
+                          <div className="capitalize">
+                            {classifyBand(Number(run.score)).replace(/_/g, " ")}
+                          </div>
+                          <div className="text-[10px] text-muted-foreground">
+                            {run.confidence == null
+                              ? "confidence n/a"
+                              : `confidence ${Math.round(Number(run.confidence) * 100)}%`}
+                          </div>
+                        </>
                       )}
                     </td>
                     <td className="px-3 py-2">

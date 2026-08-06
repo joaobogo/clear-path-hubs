@@ -48,6 +48,21 @@ import {
 import { ExportControl } from "@/components/admin/export-control";
 import { FilterDrawer } from "@/components/admin/filter-drawer";
 import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
+import { classifyBand } from "@/lib/scoring/bands";
+
+/** Dense list label: band + confidence, no bare number (rubric lives on detail). */
+function scoreBandListLabel(m: {
+  score?: number | null;
+  final_score?: number | null;
+  fit_band?: string | null;
+  confidence?: number | null;
+}): string {
+  const raw = m.final_score ?? m.score ?? null;
+  if (raw == null) return "Not scored";
+  const band = classifyBand(Number(raw)).replace(/_/g, " ");
+  const conf = m.confidence == null ? "" : ` · ${Math.round(Number(m.confidence) * 100)}%`;
+  return `${band}${conf}`;
+}
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
