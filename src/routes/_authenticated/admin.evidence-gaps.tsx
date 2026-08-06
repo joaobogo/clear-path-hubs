@@ -23,6 +23,9 @@ export const Route = createFileRoute("/_authenticated/admin/evidence-gaps")({
     ],
   }),
   errorComponent: makeRouteErrorComponent(
+    "admin",
+    "src/routes/_authenticated/admin.evidence-gaps.tsx",
+  ),
   component: EvidenceGaps,
 });
 

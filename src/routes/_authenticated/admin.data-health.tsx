@@ -22,6 +22,9 @@ export const Route = createFileRoute("/_authenticated/admin/data-health")({
     ],
   }),
   errorComponent: makeRouteErrorComponent(
+    "admin",
+    "src/routes/_authenticated/admin.data-health.tsx",
+  ),
   notFoundComponent: () => (
     <div className="p-8 text-sm text-muted-foreground">Not found.</div>
   ),

@@ -17,8 +17,10 @@ export const Route = createFileRoute("/_authenticated/admin/messages")({
       { name: "robots", content: "noindex" },
     ],
   }),
+    "admin",
+    "src/routes/_authenticated/admin.messages.tsx",
+  ),
   component: AdminConversationsPage,
-  errorComponent: makeRouteErrorComponent("admin", "_authenticated/admin.messages"),
   notFoundComponent: makeRouteNotFoundComponent("admin"),
 });
 

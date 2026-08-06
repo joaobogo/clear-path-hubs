@@ -73,6 +73,9 @@ export const Route = createFileRoute("/_authenticated/admin/agent-ops")({
     ],
   }),
   errorComponent: makeRouteErrorComponent(
+    "admin",
+    "src/routes/_authenticated/admin.agent-ops.tsx",
+  ),
   notFoundComponent: () => <div className="p-8">Not found.</div>,
   component: AgentOpsPage,
 });

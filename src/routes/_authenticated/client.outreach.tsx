@@ -28,6 +28,9 @@ export const Route = createFileRoute("/_authenticated/client/outreach")({
     ],
   }),
   errorComponent: makeRouteErrorComponent(
+    "client",
+    "src/routes/_authenticated/client.outreach.tsx",
+  ),
   notFoundComponent: () => (
     <div className="p-8 text-sm text-muted-foreground">Not found.</div>
   ),

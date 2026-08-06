@@ -33,6 +33,9 @@ export const Route = createFileRoute("/_authenticated/admin/candidates/$id_/pars
     <div className="p-10 text-center text-muted-foreground">Match not found.</div>
   ),
   errorComponent: makeRouteErrorComponent(
+    "admin",
+    "src/routes/_authenticated/admin.candidates.$id_.parse.tsx",
+  ),
   component: ParseReview,
 });
 

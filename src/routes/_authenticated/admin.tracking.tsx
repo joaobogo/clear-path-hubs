@@ -32,8 +32,10 @@ export const Route = createFileRoute("/_authenticated/admin/tracking")({
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
+    "admin",
+    "src/routes/_authenticated/admin.tracking.tsx",
+  ),
   component: TrackingPolicyPage,
-  errorComponent: makeRouteErrorComponent("admin", "_authenticated/admin.tracking"),
   notFoundComponent: makeRouteNotFoundComponent("admin"),
 });
 
