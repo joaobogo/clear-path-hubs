@@ -664,6 +664,31 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
 
   const audit_trail = buildAuditTrail((row as AnyRow).audit_events);
 
+  // Method + criteria + evidence snippets. When no criterion carries a quoted
+  // snippet, this comes back as `evidence_pending` and the surface shows the
+  // band without a figure rather than an unsupported claim.
+  const clientExplanation = buildScoreExplanation({
+    audience: "client",
+    method: (run as AnyRow)?.evaluation_method ?? null,
+    bandLabel: fit.headline,
+    evidencePath: { kind: "route", to: `/client/candidates/${row.id}` },
+    criteria: requirement_rows.map((r) => ({
+      label: r.label,
+      importance: r.importance === "must_have" ? "must_have" : "preferred",
+      verdict:
+        r.status === "met"
+          ? "met"
+          : r.status === "partial"
+            ? "partial"
+            : r.status === "missing"
+              ? "missing"
+              : "unknown",
+      evidence_snippet: r.evidence?.[0]?.snippet ?? null,
+      source: r.evidence?.[0]?.source ?? null,
+    })),
+  });
+
+
   return {
     match_id: row.id,
     stage: row.stage,
