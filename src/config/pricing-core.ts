@@ -17,7 +17,7 @@ export const PRICE_MULTI_USD = 2_100;
 export const PRICE_SPRINT_USD = 4_500;
 
 /**
- * Monthly subscription anchors — volume-based programmes.
+ * Monthly subscription anchors — volume-based options.
  * Mirrors taasflow.com/pricing (Subscription tab): Bronze / Silver / Gold / Enterprise.
  * Annual commit saves 10% (applied at checkout / on invoice).
  */

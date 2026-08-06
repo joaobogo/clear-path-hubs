@@ -53,7 +53,7 @@ const DECISION_PATH = [
   { href: "#timeline", label: "Implementation" },
 ];
 
-// Subscription programmes start at 11+ active roles (POSITION_BANDS.subscription).
+// Subscription options start at 11+ active roles (POSITION_BANDS.subscription).
 // Buyers with 1–10 roles purchase the one-off packages instead — see /pricing.
 const VOLUME_BANDS = [
   {
@@ -81,8 +81,8 @@ const VOLUME_BANDS = [
     band: "Enterprise — 50+ or continuous hiring",
     price: PRICE_SUB_ENTERPRISE_DISPLAY,
     cadence: "Cadence agreed per business unit",
-    agentCapacity: "Programme-scale agent capacity",
-    fit: "Programme hiring where volume shifts by quarter.",
+    agentCapacity: "Enterprise-scale agent capacity",
+    fit: "Continuous hiring where volume shifts by quarter.",
   },
 ];
 
@@ -264,7 +264,7 @@ function EnterprisePage() {
             How the model scales with your requisition count.
           </h2>
           <p className="mt-4 max-w-2xl text-[color:var(--brand-navy)]/80">
-            Subscription programmes cover {POSITION_BANDS.subscription.min}+ active roles or
+            Subscription options cover {POSITION_BANDS.subscription.min}+ active roles or
             continuous hiring. Volume can move up or down between review
             cycles — {SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL.toLowerCase()} on subscriptions.
           </p>
@@ -307,7 +307,7 @@ function EnterprisePage() {
               </caption>
               <thead>
                 <tr className="border-b border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/[0.03]">
-                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Subscription programme</th>
+                  <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Subscription option</th>
                   <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Monthly</th>
                   <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">System operating cadence</th>
                   <th scope="col" className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]/80">Agent capacity and oversight</th>
