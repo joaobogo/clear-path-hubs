@@ -45,7 +45,7 @@ export function PricingTierCard({ tier }: { tier: PricingTier }) {
         </span>
       </div>
       <p className="mt-1 text-xs text-[color:var(--brand-navy)]/80">
-        {isCustom ? "Scoped to your programme" : "one-time flat fee"}
+        {isCustom ? "Scoped to your plan" : "one-time flat fee"}
       </p>
       {tier.pricePer ? (
         <p className="mt-0.5 text-xs text-[color:var(--brand-navy)]/80">{tier.pricePer}</p>

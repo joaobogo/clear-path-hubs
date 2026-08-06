@@ -152,7 +152,7 @@ function PricingPage() {
                   <SubscriptionTierCard key={tier.id} tier={tier} />
                 ))}
               </div>
-              {/* Annual discount applies to subscription programmes only — never
+              {/* Annual discount applies to subscription options only — never
                   to the one-off packages above. */}
               <p className="mt-6 text-sm text-[color:var(--brand-navy)]/80">
                 <span className="font-semibold text-[color:var(--brand-navy)]">
@@ -399,7 +399,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Is there a contract minimum?",
-    a: "The Bronze and Silver subscriptions run month-to-month. Gold and Enterprise have quarterly minimums to align agent capacity planning with your programme. One-off packages have no minimum at all. Exact terms are on your scoped quote.",
+    a: "The Bronze and Silver subscriptions run month-to-month. Gold and Enterprise have quarterly minimums to align agent capacity planning with your plan. One-off packages have no minimum at all. Exact terms are on your scoped quote.",
   },
   {
     q: "How does the pilot work?",

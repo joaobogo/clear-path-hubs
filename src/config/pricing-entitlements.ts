@@ -90,7 +90,7 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
       pilot: value("1"),
       multi: value("2–5"),
       sprint: value("6–10"),
-      enterprise: value("Scoped", "Set with your programme"),
+      enterprise: value("Scoped", "Set with your plan"),
     },
   },
   {
@@ -113,7 +113,7 @@ export const ONEOFF_ENTITLEMENTS: EntitlementRow[] = [
       pilot: value("Full agent layer", "Scoped to 1 active role"),
       multi: value("Full agent layer", "Scoped to your active roles"),
       sprint: value("Full agent layer", "Concurrent runs across all active roles"),
-      enterprise: value("Full agent layer", "Capacity planned with your programme"),
+      enterprise: value("Full agent layer", "Capacity planned with your plan"),
     },
   },
   {
@@ -246,7 +246,7 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
       bronze: value("Up to 15 per month"),
       silver: value("16–30 per month"),
       gold: value("31–50 per month"),
-      enterprise: value("50+ per month", "Scoped to your programme"),
+      enterprise: value("50+ per month", "Scoped to your plan"),
     },
   },
   {
@@ -269,7 +269,7 @@ export const SUBSCRIPTION_ENTITLEMENTS: EntitlementRow[] = [
       bronze: value("Full agent layer", "Within your monthly role band"),
       silver: value("Full agent layer", "Faster calibration cycles"),
       gold: value("Full agent layer", "Highest concurrency in the published bands"),
-      enterprise: value("Full agent layer", "Capacity planned with your programme"),
+      enterprise: value("Full agent layer", "Capacity planned with your plan"),
     },
   },
   {
