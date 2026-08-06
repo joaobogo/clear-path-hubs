@@ -537,7 +537,47 @@ function JobDetail() {
                   </li>
                 ))}
               </ol>
+              {/* Set expectations before someone applies, not after they
+                  submit — it is the only point where it changes a decision. */}
+              <dl className="mt-6 grid gap-4 rounded-xl border bg-muted/30 p-5 sm:grid-cols-2">
+                <div>
+                  <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+                    When you hear from us
+                  </dt>
+                  <dd className="mt-1 text-[0.95rem] text-foreground/90">
+                    A confirmation straight away, and a real decision on your application
+                    within five business days.
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+                    If it is a no
+                  </dt>
+                  <dd className="mt-1 text-[0.95rem] text-foreground/90">
+                    We tell you, in writing. We do not leave applications unanswered.
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+                    Who sees your application
+                  </dt>
+                  <dd className="mt-1 text-[0.95rem] text-foreground/90">
+                    TaaSFlow reviewers first. {pos.organization_name} sees it only if you are
+                    shortlisted for this role.
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+                    Tracking it
+                  </dt>
+                  <dd className="mt-1 text-[0.95rem] text-foreground/90">
+                    Every stage is visible in your application tracker, with the next step
+                    named.
+                  </dd>
+                </div>
+              </dl>
             </section>
+
 
             <div className="mt-12 flex flex-wrap gap-3 border-t pt-8">
               {pos.accepting_applications && (
