@@ -62,7 +62,24 @@ export const listParseFailures = createServerFn({ method: "GET" })
     }
     const nameByCp = new Map(((profRes.data ?? []) as Any[]).map((p) => [p.id, p.full_name]));
 
-    const out = rows.flatMap((f) => {
+    type QueueRow = {
+      file_id: string;
+      filename: string;
+      candidate_profile_id: string;
+      candidate_name: string | null;
+      parse_state: string;
+      needs_ocr: boolean;
+      attempts: number;
+      uploaded_at: string;
+      failure: ReturnType<typeof resolveParseFailure>;
+      detail: string | null;
+      match_id: string | null;
+      position_title: string | null;
+      client_name: string | null;
+      processing_state: string | null;
+    };
+
+    const out: QueueRow[] = rows.flatMap((f): QueueRow[] => {
       const failure = resolveParseFailure(f.parse_error_code);
       const matches = matchesByCp.get(f.candidate_profile_id) ?? [];
       const base = {
