@@ -56,7 +56,18 @@ export const submitApplication = createServerFn({ method: "POST" })
   .inputValidator((input: unknown): ApplyInput => applySchema.parse(input))
   .handler(async ({ data }): Promise<SubmitApplicationResult> => {
     const trace_id = crypto.randomUUID();
+    // Set the moment the candidate's document is stored. Its presence in the
+    // catch below is what separates "nothing reached us" from "we have their CV
+    // and lost the rest", which are two completely different things to say.
+    let orphanUpload: {
+      fileId: string;
+      candidateProfileId: string;
+      filename: string;
+      email: string;
+      fullName: string;
+    } | null = null;
     try {
+
       // Validate CV bytes first — cheap fail-fast.
       const bytes = b64ToBytes(data.cv.base64);
       const { validateCv, CV_MESSAGES } = await import("./cv-validation");
