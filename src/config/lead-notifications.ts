@@ -13,6 +13,7 @@
 
 export const LEAD_TYPES = [
   "employer_intake",
+  "partial_intake",
   "express_intake",
   "discovery_call",
   "marketing_inquiry",
@@ -27,6 +28,7 @@ export type LeadPriority = "urgent" | "high" | "standard";
 /** Human labels used in Teams cards, emails and the admin ledger. */
 export const LEAD_TYPE_LABEL: Record<LeadType, string> = {
   employer_intake: "Employer intake",
+  partial_intake: "Intake started (incomplete)",
   express_intake: "Express onboarding",
   discovery_call: "Discovery call booking",
   marketing_inquiry: "Marketing inquiry",
@@ -37,6 +39,7 @@ export const LEAD_TYPE_LABEL: Record<LeadType, string> = {
 /** Baseline urgency per lead type. Individual events can raise this. */
 export const LEAD_TYPE_PRIORITY: Record<LeadType, LeadPriority> = {
   employer_intake: "urgent",
+  partial_intake: "high",
   express_intake: "urgent",
   discovery_call: "urgent",
   marketing_inquiry: "high",
@@ -47,6 +50,7 @@ export const LEAD_TYPE_PRIORITY: Record<LeadType, LeadPriority> = {
 /** Where staff should land to action the lead. */
 export const LEAD_TYPE_DEFAULT_LINK: Record<LeadType, string> = {
   employer_intake: "/admin/intake",
+  partial_intake: "/admin/intake",
   express_intake: "/admin/positions",
   discovery_call: "/admin/pending-leads",
   marketing_inquiry: "/admin/pending-leads",
