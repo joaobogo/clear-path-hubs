@@ -95,17 +95,26 @@ export async function loadExceptionBoard(admin: Admin): Promise<ExceptionBoard> 
   const s = admin as never as { from: (t: string) => Any };
   const since = new Date(Date.now() - EXCEPTION_WINDOW_DAYS * 86400_000).toISOString();
 
-  const jobsRes = await s
-    .from("processing_jobs")
-    .select(
-      "id, job_type, status, entity_type, entity_id, attempts, error_code, error_message, trace_id, created_at, started_at, completed_at",
-    )
-    .gte("created_at", since)
-    .in("status", ["queued", "running", "failed", "cancelled"])
-    .order("created_at", { ascending: false })
-    .limit(500);
+  // The job list and the orphan count are independent reads.
+  const [jobsRes, orphansRes] = await Promise.all([
+    s
+      .from("processing_jobs")
+      .select(
+        "id, job_type, status, entity_type, entity_id, attempts, error_code, error_message, trace_id, created_at, started_at, completed_at",
+      )
+      .gte("created_at", since)
+      .in("status", ["queued", "running", "failed", "cancelled"])
+      .order("created_at", { ascending: false })
+      .limit(500),
+    s
+      .from("scoring_orphans")
+      .select("id", { count: "exact", head: true })
+      .is("resolved_at", null),
+  ]);
   if (jobsRes.error) throw new Error(jobsRes.error.message);
   const jobs = (jobsRes.data ?? []) as Any[];
+  const scoringOrphans = Number(orphansRes.count ?? 0);
+
 
   const permanentRows = jobs.filter(
     (j) => j.status === "cancelled" && j.error_code === PERMANENT_FAIL_CODE,
@@ -131,31 +140,23 @@ export async function loadExceptionBoard(admin: Admin): Promise<ExceptionBoard> 
   const select =
     "id, application_id, position_id, organization_id, processing_state, candidate_profiles(full_name), positions(id, title, organization_id, organizations(name))";
 
-  if (applicationIds.length) {
-    const res = await s
-      .from("candidate_matches")
-      .select(select)
-      .in("application_id", Array.from(new Set(applicationIds)));
-    if (res.error) throw new Error(res.error.message);
-    for (const m of (res.data ?? []) as Any[]) {
-      if (m.application_id) matchByApplication.set(m.application_id, m);
-      matchById.set(m.id, m);
-    }
+  // Both context reads hit the same table on disjoint key sets — run together.
+  const [byApplicationRes, byIdRes] = await Promise.all([
+    applicationIds.length
+      ? s.from("candidate_matches").select(select).in("application_id", Array.from(new Set(applicationIds)))
+      : Promise.resolve({ data: [] as Any[], error: null }),
+    directMatchIds.length
+      ? s.from("candidate_matches").select(select).in("id", Array.from(new Set(directMatchIds)))
+      : Promise.resolve({ data: [] as Any[], error: null }),
+  ]);
+  if (byApplicationRes.error) throw new Error(byApplicationRes.error.message);
+  if (byIdRes.error) throw new Error(byIdRes.error.message);
+  for (const m of (byApplicationRes.data ?? []) as Any[]) {
+    if (m.application_id) matchByApplication.set(m.application_id, m);
+    matchById.set(m.id, m);
   }
-  if (directMatchIds.length) {
-    const res = await s
-      .from("candidate_matches")
-      .select(select)
-      .in("id", Array.from(new Set(directMatchIds)));
-    if (res.error) throw new Error(res.error.message);
-    for (const m of (res.data ?? []) as Any[]) matchById.set(m.id, m);
-  }
+  for (const m of (byIdRes.data ?? []) as Any[]) matchById.set(m.id, m);
 
-  const orphansRes = await s
-    .from("scoring_orphans")
-    .select("id", { count: "exact", head: true })
-    .is("resolved_at", null);
-  const scoringOrphans = Number(orphansRes.count ?? 0);
 
   const shape = (job: Any): ExceptionRow => {
     const match =
@@ -347,19 +348,22 @@ export async function retryPositionExceptions(
 ): Promise<RetryOutcome[]> {
   const board = await loadExceptionBoard(admin);
   const rows = board.active.filter((r) => r.position_id === positionId && r.retryable);
-  const out: RetryOutcome[] = [];
-  for (const row of rows) {
-    try {
-      out.push(await retryProcessingJob(admin, row.job_id, actorUserId));
-    } catch (e) {
-      out.push({
-        job_id: row.job_id,
-        result: "skipped",
-        detail: e instanceof Error ? e.message : "Retry failed",
-      });
-    }
-  }
+  // Retries are independent per job and partial success is acceptable, so they
+  // run together and each rejection is surfaced against its own job id.
+  const settled = await Promise.allSettled(
+    rows.map((row) => retryProcessingJob(admin, row.job_id, actorUserId)),
+  );
+  const out: RetryOutcome[] = settled.map((r, i) =>
+    r.status === "fulfilled"
+      ? r.value
+      : {
+          job_id: rows[i]!.job_id,
+          result: "skipped",
+          detail: r.reason instanceof Error ? r.reason.message : "Retry failed",
+        },
+  );
   return out;
+
 }
 
 /**

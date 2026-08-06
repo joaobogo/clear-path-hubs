@@ -52,12 +52,14 @@ async function loadMatchesChunk(admin: Admin, matchIds: string[]) {
  */
 async function loadMatches(admin: Admin, matchIds: string[]) {
   const unique = [...new Set(matchIds)];
-  const out: Array<Record<string, any>> = [];
-  for (let i = 0; i < unique.length; i += LOAD_CHUNK) {
-    out.push(...(await loadMatchesChunk(admin, unique.slice(i, i + LOAD_CHUNK))));
-  }
-  return out;
+  const chunks: string[][] = [];
+  for (let i = 0; i < unique.length; i += LOAD_CHUNK) chunks.push(unique.slice(i, i + LOAD_CHUNK));
+  // The chunks are disjoint id sets, so they load in parallel: the plan preview
+  // no longer costs one round trip per hundred rows in sequence.
+  const results = await Promise.all(chunks.map((c) => loadMatchesChunk(admin, c)));
+  return results.flat();
 }
+
 
 function displayName(row: Record<string, any>) {
   return (row.candidate_profiles?.full_name as string) || "Candidate";
@@ -108,21 +110,26 @@ export async function applyStageMove(
     .in("id", ids);
   if (error) throw error;
 
-  await admin.from("candidate_stage_history").insert(
-    ids.map((id) => ({
-      candidate_match_id: id,
-      to_stage: toStage,
-      changed_by: actorUserId,
-      note: "Bulk stage change",
-    })) as never,
-  );
-  await admin.from("audit_events").insert({
-    actor_user_id: actorUserId,
-    action: "bulk.stage_move",
-    entity_type: "candidate_match",
-    entity_id: ids[0],
-    metadata: { match_ids: ids, to_stage: toStage, skipped: plan.skipped },
-  } as never);
+  // The history rows and the audit row are independent inserts; both are
+  // required, so they go out together and either failure still surfaces.
+  await Promise.all([
+    admin.from("candidate_stage_history").insert(
+      ids.map((id) => ({
+        candidate_match_id: id,
+        to_stage: toStage,
+        changed_by: actorUserId,
+        note: "Bulk stage change",
+      })) as never,
+    ),
+    admin.from("audit_events").insert({
+      actor_user_id: actorUserId,
+      action: "bulk.stage_move",
+      entity_type: "candidate_match",
+      entity_id: ids[0],
+      metadata: { match_ids: ids, to_stage: toStage, skipped: plan.skipped },
+    } as never),
+  ]);
+
 
   return { changed: ids.length, skipped: plan.skipped };
 }
