@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useRouter, Link } from "@tanstack/react-router";
+import { useRouter, useParams, Link } from "@tanstack/react-router";
 import { ErrorState, PermissionState } from "@/components/ds";
 import { Button } from "@/components/ui/button";
 import { normalizeError, logTechnical, type AudienceTone } from "@/lib/error-taxonomy";
