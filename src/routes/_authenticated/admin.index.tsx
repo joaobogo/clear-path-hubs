@@ -28,10 +28,13 @@ import type { ComponentType } from "react";
 const WORK_QUEUES_KEY = ["admin", "work-queues"] as const;
 
 export const Route = createFileRoute("/_authenticated/admin/")({
+  // The layout resolved the scope in beforeLoad, so the prefetch primes exactly
+  // the key the component subscribes to.
   loader: ({ context }) =>
     context.queryClient.ensureQueryData({
-      queryKey: WORK_QUEUES_KEY,
-      queryFn: () => getAdminWorkQueues({ data: {} }),
+      queryKey: [...WORK_QUEUES_KEY, context.testScope.includeTest],
+      queryFn: () =>
+        getAdminWorkQueues({ data: { include_test: context.testScope.includeTest } }),
     }),
   head: () => ({
     meta: [
