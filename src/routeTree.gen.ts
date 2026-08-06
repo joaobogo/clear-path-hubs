@@ -119,6 +119,7 @@ import { Route as AuthenticatedClientDataRouteImport } from './routes/_authentic
 import { Route as AuthenticatedClientDashboardsRouteImport } from './routes/_authenticated/client.dashboards'
 import { Route as AuthenticatedClientCandidatesRouteImport } from './routes/_authenticated/client.candidates'
 import { Route as AuthenticatedClientAssistantRouteImport } from './routes/_authenticated/client.assistant'
+import { Route as AuthenticatedClientApprovalsRouteImport } from './routes/_authenticated/client.approvals'
 import { Route as AuthenticatedClientAnalyticsRouteImport } from './routes/_authenticated/client.analytics'
 import { Route as AuthenticatedClientAgentsRouteImport } from './routes/_authenticated/client.agents'
 import { Route as AuthenticatedClientAccountRouteImport } from './routes/_authenticated/client.account'
@@ -773,6 +774,12 @@ const AuthenticatedClientAssistantRoute =
     path: '/assistant',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
+const AuthenticatedClientApprovalsRoute =
+  AuthenticatedClientApprovalsRouteImport.update({
+    id: '/approvals',
+    path: '/approvals',
+    getParentRoute: () => AuthenticatedClientRoute,
+  } as any)
 const AuthenticatedClientAnalyticsRoute =
   AuthenticatedClientAnalyticsRouteImport.update({
     id: '/analytics',
@@ -1360,6 +1367,7 @@ export interface FileRoutesByFullPath {
   '/client/account': typeof AuthenticatedClientAccountRoute
   '/client/agents': typeof AuthenticatedClientAgentsRoute
   '/client/analytics': typeof AuthenticatedClientAnalyticsRoute
+  '/client/approvals': typeof AuthenticatedClientApprovalsRoute
   '/client/assistant': typeof AuthenticatedClientAssistantRoute
   '/client/candidates': typeof AuthenticatedClientCandidatesRouteWithChildren
   '/client/dashboards': typeof AuthenticatedClientDashboardsRoute
@@ -1546,6 +1554,7 @@ export interface FileRoutesByTo {
   '/client/account': typeof AuthenticatedClientAccountRoute
   '/client/agents': typeof AuthenticatedClientAgentsRoute
   '/client/analytics': typeof AuthenticatedClientAnalyticsRoute
+  '/client/approvals': typeof AuthenticatedClientApprovalsRoute
   '/client/assistant': typeof AuthenticatedClientAssistantRoute
   '/client/dashboards': typeof AuthenticatedClientDashboardsRoute
   '/client/data': typeof AuthenticatedClientDataRoute
@@ -1738,6 +1747,7 @@ export interface FileRoutesById {
   '/_authenticated/client/account': typeof AuthenticatedClientAccountRoute
   '/_authenticated/client/agents': typeof AuthenticatedClientAgentsRoute
   '/_authenticated/client/analytics': typeof AuthenticatedClientAnalyticsRoute
+  '/_authenticated/client/approvals': typeof AuthenticatedClientApprovalsRoute
   '/_authenticated/client/assistant': typeof AuthenticatedClientAssistantRoute
   '/_authenticated/client/candidates': typeof AuthenticatedClientCandidatesRouteWithChildren
   '/_authenticated/client/dashboards': typeof AuthenticatedClientDashboardsRoute
@@ -1933,6 +1943,7 @@ export interface FileRouteTypes {
     | '/client/account'
     | '/client/agents'
     | '/client/analytics'
+    | '/client/approvals'
     | '/client/assistant'
     | '/client/candidates'
     | '/client/dashboards'
@@ -2119,6 +2130,7 @@ export interface FileRouteTypes {
     | '/client/account'
     | '/client/agents'
     | '/client/analytics'
+    | '/client/approvals'
     | '/client/assistant'
     | '/client/dashboards'
     | '/client/data'
@@ -2310,6 +2322,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/account'
     | '/_authenticated/client/agents'
     | '/_authenticated/client/analytics'
+    | '/_authenticated/client/approvals'
     | '/_authenticated/client/assistant'
     | '/_authenticated/client/candidates'
     | '/_authenticated/client/dashboards'
@@ -3267,6 +3280,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientAssistantRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
+    '/_authenticated/client/approvals': {
+      id: '/_authenticated/client/approvals'
+      path: '/approvals'
+      fullPath: '/client/approvals'
+      preLoaderRoute: typeof AuthenticatedClientApprovalsRouteImport
+      parentRoute: typeof AuthenticatedClientRoute
+    }
     '/_authenticated/client/analytics': {
       id: '/_authenticated/client/analytics'
       path: '/analytics'
@@ -4055,6 +4075,7 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientAccountRoute: typeof AuthenticatedClientAccountRoute
   AuthenticatedClientAgentsRoute: typeof AuthenticatedClientAgentsRoute
   AuthenticatedClientAnalyticsRoute: typeof AuthenticatedClientAnalyticsRoute
+  AuthenticatedClientApprovalsRoute: typeof AuthenticatedClientApprovalsRoute
   AuthenticatedClientAssistantRoute: typeof AuthenticatedClientAssistantRoute
   AuthenticatedClientCandidatesRoute: typeof AuthenticatedClientCandidatesRouteWithChildren
   AuthenticatedClientDashboardsRoute: typeof AuthenticatedClientDashboardsRoute
@@ -4085,6 +4106,7 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
   AuthenticatedClientAccountRoute: AuthenticatedClientAccountRoute,
   AuthenticatedClientAgentsRoute: AuthenticatedClientAgentsRoute,
   AuthenticatedClientAnalyticsRoute: AuthenticatedClientAnalyticsRoute,
+  AuthenticatedClientApprovalsRoute: AuthenticatedClientApprovalsRoute,
   AuthenticatedClientAssistantRoute: AuthenticatedClientAssistantRoute,
   AuthenticatedClientCandidatesRoute:
     AuthenticatedClientCandidatesRouteWithChildren,
