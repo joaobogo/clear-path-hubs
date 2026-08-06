@@ -23,7 +23,7 @@ export const getParseReview = createServerFn({ method: "GET" })
     const { data: match, error: mErr } = await supabaseAdmin
       .from("candidate_matches")
       .select(
-        "id,organization_id,candidate_profile_id,reference_code,processing_state,candidate_profiles(id,full_name,current_cv_file_id),positions(id,title)",
+        "id,organization_id,candidate_profile_id,processing_state,candidate_profiles(id,full_name,current_cv_file_id),positions(id,title)",
       )
       .eq("id", data.matchId)
       .maybeSingle();
@@ -99,7 +99,7 @@ export const getParseReview = createServerFn({ method: "GET" })
     return {
       match: {
         id: match.id as string,
-        reference_code: (match as Any).reference_code ?? null,
+        reference_code: null as string | null,
         candidate_name: (match as Any).candidate_profiles?.full_name ?? null,
         position_title: (match as Any).positions?.title ?? null,
         processing_state: (match as Any).processing_state ?? null,
