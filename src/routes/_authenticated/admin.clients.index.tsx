@@ -10,6 +10,7 @@ import {
   restoreOrganization,
 } from "@/lib/admin.functions";
 import { Input } from "@/components/ui/input";
+import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -166,6 +167,32 @@ function ClientsPage() {
           + New client
         </Link>
       </header>
+
+      {/* Filters live in the URL, so any view here can be named, saved and shared. */}
+      <SavedViewsBar
+        surface="admin_clients"
+        canShare
+        currentFilters={{
+          q: search.q ?? "",
+          status: search.status ?? "",
+          industry: search.industry ?? "",
+          sort: search.sort ?? "activity_desc",
+          archived: search.archived ?? "0",
+        }}
+        onApply={(f) =>
+          navigate({
+            search: {
+              ...search,
+              q: f.q ?? "",
+              status: f.status ?? "",
+              industry: f.industry ?? "",
+              sort: f.sort || "activity_desc",
+              archived: f.archived === "1" ? "1" : "0",
+              page: 1,
+            },
+          })
+        }
+      />
 
       <form
         onSubmit={(e) => {
