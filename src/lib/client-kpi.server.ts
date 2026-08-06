@@ -22,7 +22,7 @@ import {
   type EvidenceCard,
   type ClientEvidenceRow,
 } from "@/lib/client-evidence-card";
-import { assessFreshness, type Freshness } from "@/lib/scoring/score-freshness";
+import { assessFreshness, mergeStoredStaleness, type Freshness } from "@/lib/scoring/score-freshness";
 import { CALIBRATION_VERSION } from "@/lib/scoring/engine-calibration";
 import { ENGINE_VERSION } from "@/lib/scoring/engine-version";
 
@@ -516,6 +516,7 @@ function normScreeningAnswers(raw: unknown): ClientCandidateDTO["screening_answe
  * never select different columns.
  */
 export const CLIENT_CANDIDATE_SELECT = `id, stage, delivered_at, position_id, application_id, candidate_profile_id,
+         score_stale, score_stale_reasons, score_stale_at, rescore_queued_at,
          candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, compensation_preferences, updated_at),
          positions(id, title, location, work_model, requirements, preferred_requirements, compensation, updated_at),
          applications(id, source, applied_at, created_at),
@@ -657,20 +658,31 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     last_updated: run?.completed_at ?? row.updated_at ?? row.delivered_at ?? null,
     position: pos ? { id: pos.id, title: pos.title } : null,
     unicorn: isUnicornMatch({ score: run?.score ?? null, hired: row.stage === "hired" }),
-    freshness: assessFreshness({
-      scored_at: run?.completed_at ?? null,
-      scored_input_hash: run?.input_hash ?? null,
-      scored_engine_version: run?.engine_version ?? null,
-      scored_calibration_version:
-        (run?.result as AnyRow | null)?.calibration_version ?? null,
-      current_engine_version: run?.engine_version ? ENGINE_VERSION : null,
-      current_calibration_version: (run?.result as AnyRow | null)?.calibration_version
-        ? CALIBRATION_VERSION
-        : null,
-      profile_updated_at: cp.updated_at ?? null,
-      brief_updated_at: pos?.updated_at ?? null,
-      criteria_updated_at: (row as AnyRow).criteria_updated_at ?? null,
-    }),
+    freshness: mergeStoredStaleness(
+      assessFreshness({
+        scored_at: run?.completed_at ?? null,
+        scored_input_hash: run?.input_hash ?? null,
+        scored_engine_version: run?.engine_version ?? null,
+        scored_calibration_version:
+          (run?.result as AnyRow | null)?.calibration_version ?? null,
+        current_engine_version: run?.engine_version ? ENGINE_VERSION : null,
+        current_calibration_version: (run?.result as AnyRow | null)?.calibration_version
+          ? CALIBRATION_VERSION
+          : null,
+        profile_updated_at: cp.updated_at ?? null,
+        brief_updated_at: pos?.updated_at ?? null,
+        criteria_updated_at: (row as AnyRow).criteria_updated_at ?? null,
+      }),
+      // Recorded invalidations from the database triggers — a client must never
+      // see a superseded assessment presented as current.
+      {
+        score_stale: (row as AnyRow).score_stale ?? null,
+        score_stale_reasons: (row as AnyRow).score_stale_reasons ?? null,
+        score_stale_at: (row as AnyRow).score_stale_at ?? null,
+        rescore_queued_at: (row as AnyRow).rescore_queued_at ?? null,
+      },
+    ),
+
     candidate: {
       full_name: fullName,
       display_name: displayName,

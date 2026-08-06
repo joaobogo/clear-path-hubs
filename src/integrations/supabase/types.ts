@@ -1840,6 +1840,10 @@ export type Database = {
           recommendation: Database["public"]["Enums"]["recommendation_status"]
           recommendation_reason: string | null
           recommendation_updated_at: string | null
+          rescore_queued_at: string | null
+          score_stale: boolean
+          score_stale_at: string | null
+          score_stale_reasons: string[]
           stage: Database["public"]["Enums"]["match_stage"]
           submitted_to_client_at: string | null
           test_run_id: string | null
@@ -1887,6 +1891,10 @@ export type Database = {
           recommendation?: Database["public"]["Enums"]["recommendation_status"]
           recommendation_reason?: string | null
           recommendation_updated_at?: string | null
+          rescore_queued_at?: string | null
+          score_stale?: boolean
+          score_stale_at?: string | null
+          score_stale_reasons?: string[]
           stage?: Database["public"]["Enums"]["match_stage"]
           submitted_to_client_at?: string | null
           test_run_id?: string | null
@@ -1934,6 +1942,10 @@ export type Database = {
           recommendation?: Database["public"]["Enums"]["recommendation_status"]
           recommendation_reason?: string | null
           recommendation_updated_at?: string | null
+          rescore_queued_at?: string | null
+          score_stale?: boolean
+          score_stale_at?: string | null
+          score_stale_reasons?: string[]
           stage?: Database["public"]["Enums"]["match_stage"]
           submitted_to_client_at?: string | null
           test_run_id?: string | null
@@ -14718,9 +14730,13 @@ export type Database = {
           profile_updated_at: string | null
           recommendation: string | null
           region: string | null
+          rescore_queued_at: string | null
           score: number | null
           score_band: string | null
           score_run_id: string | null
+          score_stale: boolean | null
+          score_stale_at: string | null
+          score_stale_reasons: string[] | null
           scored_at: string | null
           scored_engine_version: string | null
           scored_input_hash: string | null
@@ -15573,6 +15589,10 @@ export type Database = {
         }
         Returns: Json
       }
+      clear_match_score_stale: {
+        Args: { _match_id: string }
+        Returns: undefined
+      }
       clear_reassignment_flags: { Args: { _user_id: string }; Returns: number }
       consume_role_allowance: {
         Args: { _actor_user_id: string; _position_id: string }
@@ -15661,6 +15681,14 @@ export type Database = {
       }
       is_platform_admin: { Args: { _user: string }; Returns: boolean }
       is_platform_staff: { Args: { _user: string }; Returns: boolean }
+      mark_matches_score_stale: {
+        Args: { _match_ids: string[]; _reason: string }
+        Returns: number
+      }
+      mark_position_scores_stale: {
+        Args: { _position_id: string; _reason: string }
+        Returns: number
+      }
       notify_platform_staff: {
         Args: {
           _body: string

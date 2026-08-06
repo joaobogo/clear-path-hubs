@@ -172,6 +172,7 @@ import { Route as AuthenticatedAdminCandidatesIndexRouteImport } from './routes/
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as ApiPublicScoringReconcileFreshnessRouteImport } from './routes/api/public/scoring/reconcile-freshness'
 import { Route as ApiPublicPipelineRunRouteImport } from './routes/api/public/pipeline.run'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicIntakeStatusIdRouteImport } from './routes/api/public/intake-status.$id'
@@ -1084,6 +1085,12 @@ const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
   path: '/lovable/email/auth/preview',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicScoringReconcileFreshnessRoute =
+  ApiPublicScoringReconcileFreshnessRouteImport.update({
+    id: '/api/public/scoring/reconcile-freshness',
+    path: '/api/public/scoring/reconcile-freshness',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicPipelineRunRoute = ApiPublicPipelineRunRouteImport.update({
   id: '/api/public/pipeline/run',
   path: '/api/public/pipeline/run',
@@ -1435,6 +1442,7 @@ export interface FileRoutesByFullPath {
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
+  '/api/public/scoring/reconcile-freshness': typeof ApiPublicScoringReconcileFreshnessRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -1619,6 +1627,7 @@ export interface FileRoutesByTo {
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
+  '/api/public/scoring/reconcile-freshness': typeof ApiPublicScoringReconcileFreshnessRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -1815,6 +1824,7 @@ export interface FileRoutesById {
   '/api/public/intake-status/$id': typeof ApiPublicIntakeStatusIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/pipeline/run': typeof ApiPublicPipelineRunRoute
+  '/api/public/scoring/reconcile-freshness': typeof ApiPublicScoringReconcileFreshnessRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -2011,6 +2021,7 @@ export interface FileRouteTypes {
     | '/api/public/intake-status/$id'
     | '/api/public/payments/webhook'
     | '/api/public/pipeline/run'
+    | '/api/public/scoring/reconcile-freshness'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
@@ -2195,6 +2206,7 @@ export interface FileRouteTypes {
     | '/api/public/intake-status/$id'
     | '/api/public/payments/webhook'
     | '/api/public/pipeline/run'
+    | '/api/public/scoring/reconcile-freshness'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
@@ -2390,6 +2402,7 @@ export interface FileRouteTypes {
     | '/api/public/intake-status/$id'
     | '/api/public/payments/webhook'
     | '/api/public/pipeline/run'
+    | '/api/public/scoring/reconcile-freshness'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
@@ -2502,6 +2515,7 @@ export interface RootRouteChildren {
   ApiPublicIntakeStatusIdRoute: typeof ApiPublicIntakeStatusIdRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   ApiPublicPipelineRunRoute: typeof ApiPublicPipelineRunRoute
+  ApiPublicScoringReconcileFreshnessRoute: typeof ApiPublicScoringReconcileFreshnessRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
@@ -3651,6 +3665,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/scoring/reconcile-freshness': {
+      id: '/api/public/scoring/reconcile-freshness'
+      path: '/api/public/scoring/reconcile-freshness'
+      fullPath: '/api/public/scoring/reconcile-freshness'
+      preLoaderRoute: typeof ApiPublicScoringReconcileFreshnessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/pipeline/run': {
       id: '/api/public/pipeline/run'
       path: '/api/public/pipeline/run'
@@ -4297,6 +4318,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicIntakeStatusIdRoute: ApiPublicIntakeStatusIdRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   ApiPublicPipelineRunRoute: ApiPublicPipelineRunRoute,
+  ApiPublicScoringReconcileFreshnessRoute:
+    ApiPublicScoringReconcileFreshnessRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,

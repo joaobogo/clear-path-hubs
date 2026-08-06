@@ -6,7 +6,13 @@
  * silence here is how people trust a number that is no longer true.
  */
 import { Clock, HelpCircle } from "lucide-react";
-import { assessFreshness, type Freshness, type FreshnessInput } from "@/lib/scoring/score-freshness";
+import {
+  assessFreshness,
+  mergeStoredStaleness,
+  type Freshness,
+  type FreshnessInput,
+  type StoredStaleness,
+} from "@/lib/scoring/score-freshness";
 import { CALIBRATION_VERSION } from "@/lib/scoring/engine-calibration";
 import { ENGINE_VERSION } from "@/lib/scoring/engine-version";
 import {
@@ -17,16 +23,18 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-export function freshnessFromRow(row: {
-  scored_at?: string | null;
-  scored_input_hash?: string | null;
-  scored_engine_version?: string | null;
-  profile_updated_at?: string | null;
-  brief_updated_at?: string | null;
-  scored_calibration_version?: string | null;
-  criteria_updated_at?: string | null;
-}): Freshness {
-  return assessFreshness({
+export function freshnessFromRow(
+  row: {
+    scored_at?: string | null;
+    scored_input_hash?: string | null;
+    scored_engine_version?: string | null;
+    profile_updated_at?: string | null;
+    brief_updated_at?: string | null;
+    scored_calibration_version?: string | null;
+    criteria_updated_at?: string | null;
+  } & StoredStaleness,
+): Freshness {
+  const inferred = assessFreshness({
     ...(row as FreshnessInput),
     // Compared against what is running today: an older engine or calibration
     // means the same evidence would not produce the same number now.
@@ -35,6 +43,9 @@ export function freshnessFromRow(row: {
       ? CALIBRATION_VERSION
       : null,
   });
+  // A recorded invalidation (rubric superseded, brief edited, newer CV) is a
+  // fact, not an inference — it always shows.
+  return mergeStoredStaleness(inferred, row);
 }
 
 /**

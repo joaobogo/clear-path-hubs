@@ -252,8 +252,14 @@ function ReviewScreen() {
                   scored_engine_version: currentRun?.engine_version ?? null,
                   profile_updated_at: m.candidate_profiles?.updated_at ?? null,
                   brief_updated_at: m.positions?.updated_at ?? null,
+                  // Recorded invalidations from the database triggers.
+                  score_stale: m.score_stale ?? null,
+                  score_stale_reasons: m.score_stale_reasons ?? null,
+                  score_stale_at: m.score_stale_at ?? null,
+                  rescore_queued_at: m.rescore_queued_at ?? null,
                 })}
               />
+
             </span>
           )}
           {currentRun?.must_have_coverage != null && (

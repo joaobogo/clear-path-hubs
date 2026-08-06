@@ -26,9 +26,17 @@ type Props = {
    * surface has no requirement rows loaded.
    */
   evidence?: { supported: number; total: number } | null;
+  /**
+   * True when the assessment's inputs changed after it was produced (role
+   * requirements edited, screening questions changed, a newer CV attached).
+   * The band still shows — hiding the candidate would be worse — but it is
+   * marked as being re-checked so it is never presented as current.
+   */
+  rechecking?: boolean;
   unicorn?: boolean;
   className?: string;
 };
+
 
 const ACCENT_CLASSES: Record<FitPresentation["accent"], string> = {
   emerald: "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
@@ -54,6 +62,7 @@ export function CandidateScoreBadge({
   score,
   fitLabel = null,
   evidence = null,
+  rechecking = false,
   unicorn = false,
   className = "",
 }: Props) {
@@ -64,17 +73,33 @@ export function CandidateScoreBadge({
     evidence && evidence.total > 0
       ? `${evidence.supported} of ${evidence.total} requirements evidenced`
       : null;
+  const recheckNote =
+    "This assessment is being re-checked because the role details or the candidate's CV changed after it was produced.";
   return (
     <span className={`inline-flex flex-wrap items-center gap-1.5 ${className}`}>
       {fit && (
         <span
-          className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${ACCENT_CLASSES[fit.accent]}`}
-          title={support ? `${fit.recommendation} · ${support}` : fit.recommendation}
+          className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${ACCENT_CLASSES[fit.accent]} ${rechecking ? "opacity-70" : ""}`}
+          title={
+            rechecking
+              ? `${fit.recommendation} · ${recheckNote}`
+              : support
+                ? `${fit.recommendation} · ${support}`
+                : fit.recommendation
+          }
         >
           {fit.headline}
         </span>
       )}
-      {support && (
+      {rechecking && (
+        <span
+          className="inline-flex items-center rounded-full border border-border bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
+          title={recheckNote}
+        >
+          Being re-checked
+        </span>
+      )}
+      {support && !rechecking && (
         <span className="text-[11px] text-muted-foreground" title={support}>
           {evidence!.supported}/{evidence!.total} evidenced
         </span>
@@ -83,3 +108,4 @@ export function CandidateScoreBadge({
     </span>
   );
 }
+
