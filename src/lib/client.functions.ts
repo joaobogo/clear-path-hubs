@@ -2493,7 +2493,7 @@ export const getClientSettings = createServerFn({ method: "GET" })
   .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
     // Tenant gate — canonical helper (active member or platform staff).
-    await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
+    const access = await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
 
     const [{ data: org }, { data: prefs }, { data: profile }] = await Promise.all([
       context.supabase
@@ -2517,7 +2517,7 @@ export const getClientSettings = createServerFn({ method: "GET" })
     ]);
     if (!org) throw new Error("Workspace not found");
     return {
-      role: (member?.role ?? "operations") as ClientRole,
+      role: (access.role ?? "operations") as ClientRole,
       approved:
         (org as AnyRow).onboarding_status === "active" ||
         (org as AnyRow).dashboard_status === "active" ||
