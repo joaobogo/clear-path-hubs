@@ -25,12 +25,6 @@ import { confirmRoleBlueprint } from "@/lib/client-positions.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { AlertCircle } from "lucide-react";
 import { RoleBlueprint } from "@/components/product/role-blueprint";
 import { GeneratedBlueprintPanel } from "@/components/positions/generated-blueprint-panel";
@@ -48,8 +42,7 @@ import { buildDeliveryCommitment } from "@/lib/delivery-commitment";
 import { RoleShortlist } from "@/components/client/role-shortlist";
 import { RoleLifecycleTimeline } from "@/components/client/role-lifecycle-timeline";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
-import { HireHandoffPanel as _unused } from "@/components/client/hire-handoff";
-import { CloseRoleDialog, RoleClosureRecord } from "@/components/client/close-role-dialog";
+import { RoleClosureRecord } from "@/components/client/close-role-dialog";
 import { RoleRecapPanel } from "@/components/client/role-recap";
 import { useRouteRealtime } from "@/hooks/use-route-realtime";
 import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
@@ -231,16 +224,6 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
     },
     onSettled: () => qc.invalidateQueries({ queryKey }),
   });
-
-  const delivered = useMemo(() => {
-    if (!data) return [];
-    return [...(data.matches as AnyRow[])].sort((a, b) => {
-      const at = a.delivered_at ? new Date(a.delivered_at).getTime() : 0;
-      const bt = b.delivered_at ? new Date(b.delivered_at).getTime() : 0;
-      return bt - at;
-    });
-  }, [data]);
-  void delivered;
 
   // Load failures raise to the route errorComponent; a missing role is a 404.
   if (!data) throw notFound();
