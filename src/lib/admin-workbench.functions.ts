@@ -5,7 +5,9 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { BULK_STAGES } from "./admin-bulk-constants";
 
-const idList = z.array(z.string().uuid()).min(1).max(200);
+// Bulk actions chunk every read and write, so the cap is a sanity bound on the
+// request body rather than a limit on how much work the pipeline can do.
+const idList = z.array(z.string().uuid()).min(1).max(2000);
 
 async function staffAdmin(context: { userId: string; supabase: any }) {
   const { requireStaff } = await import("./admin-ops.server");
