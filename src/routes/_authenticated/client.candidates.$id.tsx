@@ -90,6 +90,7 @@ import { QueryErrorCard } from "@/components/client/query-error";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
 import { useRouteRealtime } from "@/hooks/use-route-realtime";
 import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
+import { readStaleStateError } from "@/lib/decision-concurrency";
 
 
 const RoutePending = makeWorkspacePending({ shape: "detail", kpis: false, width: "6xl" });
