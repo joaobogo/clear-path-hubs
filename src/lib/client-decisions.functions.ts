@@ -4,6 +4,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { briefField } from "@/lib/position-info-requests";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { staleStateError } from "@/lib/decision-concurrency";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
 import { computeRoleLaunchState } from "@/lib/role-launch.server";
 import { DECLINE_REASONS } from "@/lib/client-decision-reasons";
@@ -83,6 +84,7 @@ export const moveMatchStage = createServerFn({ method: "POST" })
       orgId: string;
       matchId: string;
       toStage: MatchStage;
+      expectedStage?: string;
       reason?: string;
       reasonCode?: string;
     }) =>
@@ -98,6 +100,7 @@ export const moveMatchStage = createServerFn({ method: "POST" })
             "hired",
             "not_moving_forward",
           ]),
+          expectedStage: z.string().max(48).optional(),
           reason: z.string().trim().max(2000).optional(),
           reasonCode: z.string().max(64).optional(),
         })
@@ -125,6 +128,11 @@ export const moveMatchStage = createServerFn({ method: "POST" })
     await assertEditor(context.supabase, context.userId, data.orgId);
     const match = await loadMatch(context.supabase, data.orgId, data.matchId);
     const from = match.stage as MatchStage;
+    // Someone else may have moved this candidate since the screen was drawn.
+    // Refuse rather than apply a decision to a stage the client never saw.
+    if (data.expectedStage && data.expectedStage !== from) {
+      throw staleStateError(data.expectedStage, from);
+    }
     if (from === data.toStage) return { ok: true, trace_id: trace };
     const allowed = STAGE_GRAPH[from] ?? [];
     if (!allowed.includes(data.toStage)) {
@@ -467,6 +475,7 @@ export const clientAction = createServerFn({ method: "POST" })
           orgId: z.string().uuid(),
           matchId: z.string().uuid(),
           action: z.enum(CLIENT_ACTION_KEYS),
+          expectedStage: z.string().max(48).optional(),
           feedback: z.string().max(4000).optional(),
           reasonCode: z.string().max(64).optional(),
           signals: z.array(z.string().max(64)).max(12).optional(),
@@ -518,6 +527,10 @@ export const clientAction = createServerFn({ method: "POST" })
     const trace = traceId();
     await assertEditor(context.supabase, context.userId, data.orgId);
     const match = await loadMatch(context.supabase, data.orgId, data.matchId);
+
+    if (data.expectedStage && data.expectedStage !== match.stage) {
+      throw staleStateError(data.expectedStage, match.stage as string);
+    }
 
     const nextStage = ACTION_TO_STAGE[data.action];
     if (nextStage && match.stage !== nextStage) {
