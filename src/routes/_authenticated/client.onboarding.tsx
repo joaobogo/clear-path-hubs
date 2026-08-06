@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { createFileRoute } from "@tanstack/react-router";
 import { OnboardingWizard } from "@/components/client/onboarding/onboarding-wizard";
 import {
@@ -26,6 +27,8 @@ export const Route = createFileRoute("/_authenticated/client/onboarding")({
       { name: "robots", content: "noindex" },
     ],
   }),
+  errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.onboarding.tsx"),
+  notFoundComponent: makeRouteNotFoundComponent("client"),
   component: OnboardingPage,
 });
 

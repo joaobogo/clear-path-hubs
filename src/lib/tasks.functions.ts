@@ -1,6 +1,24 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
+import { assertEditor } from "@/lib/client-shared.server";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyRow = any;
+
+/** Resolves the organization_id for a task id, then asserts the caller may edit it. */
+async function assertTaskEditor(supabase: AnyRow, userId: string, taskId: string) {
+  const { data: task, error } = await supabase
+    .from("tasks")
+    .select("organization_id")
+    .eq("id", taskId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!task) throw new Error("task_not_found");
+  await assertEditor(supabase, userId, (task as { organization_id: string }).organization_id);
+  return task as { organization_id: string };
+}
 
 export const TASK_TYPES = [
   "role_brief_approval",
@@ -83,6 +101,7 @@ export const listTasks = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => listInput.parse(v))
   .handler(async ({ data, context }) => {
+    await assertWorkspaceAccess(context.supabase, context.userId, data.organization_id);
     let q = context.supabase
       .from("tasks")
       .select(SELECT_COLUMNS)
@@ -125,6 +144,7 @@ export const countBlockingTasks = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => z.object({ organization_id: z.string().uuid() }).parse(v))
   .handler(async ({ data, context }) => {
+    await assertWorkspaceAccess(context.supabase, context.userId, data.organization_id);
     const { data: rows, error, count } = await context.supabase
       .from("tasks")
       .select("id, created_at", { count: "exact" })
@@ -163,6 +183,7 @@ export const createTask = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => createInput.parse(v))
   .handler(async ({ data, context }) => {
+    await assertEditor(context.supabase, context.userId, data.organization_id);
     const metadata = data.idempotency_key ? { idempotency_key: data.idempotency_key } : {};
 
     // Idempotent retry: return existing row if key already used
@@ -221,6 +242,7 @@ export const updateTask = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => updateInput.parse(v))
   .handler(async ({ data, context }) => {
+    await assertTaskEditor(context.supabase, context.userId, data.id);
     const patch: Record<string, unknown> = {};
     if (data.status !== undefined) {
       patch.status = data.status;
@@ -261,6 +283,17 @@ export const bulkUpdateTasks = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => bulkInput.parse(v))
   .handler(async ({ data, context }) => {
+    const { data: tasks, error: lookupError } = await context.supabase
+      .from("tasks")
+      .select("id, organization_id")
+      .in("id", data.ids);
+    if (lookupError) throw new Error(lookupError.message);
+    const orgIds = Array.from(
+      new Set(((tasks ?? []) as AnyRow[]).map((t) => t.organization_id as string)),
+    );
+    for (const orgId of orgIds) {
+      await assertEditor(context.supabase, context.userId, orgId);
+    }
     const patch: Record<string, unknown> = {};
     if (data.assignee_user_id !== undefined) patch.assignee_user_id = data.assignee_user_id;
     if (data.due_at !== undefined) patch.due_at = data.due_at;
@@ -286,6 +319,7 @@ export const deleteTask = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((v) => deleteInput.parse(v))
   .handler(async ({ data, context }) => {
+    await assertTaskEditor(context.supabase, context.userId, data.id);
     const { error } = await context.supabase
       .from("tasks")
       .update({ deleted_at: new Date().toISOString() })

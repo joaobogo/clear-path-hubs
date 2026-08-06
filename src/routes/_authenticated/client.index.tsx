@@ -17,26 +17,20 @@ import { panelReadiness, panelSignal } from "@/lib/panel-readiness";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { VisibilityNote } from "@/components/client/visibility-note";
-import { formatStageDate } from "@/lib/client-role-progress";
-import { shortlistCommitment, formatCommitmentDate } from "@/lib/client-commitment";
 import { Button } from "@/components/ui/button";
 import {
   AlertTriangle,
   ArrowRight,
-  Briefcase,
   CheckCircle2,
   ChevronRight,
-  MessageSquare,
   RefreshCw,
   Sparkles,
 } from "lucide-react";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
 import { DensityToggle } from "@/components/client/density-toggle";
 import { useDensity } from "@/lib/use-density";
-import { roleNextStep } from "@/lib/client-role-next-step";
 import { supabase } from "@/integrations/supabase/client";
 import { SystemStatusStrip } from "@/components/client/control-room/system-status-strip";
-import { clientRoleStatusLabel } from "@/lib/client-role-status";
 import { LiveTicker } from "@/components/client/control-room/live-ticker";
 import { IntensityDial } from "@/components/client/control-room/intensity-dial";
 import { HiringHealthLine } from "@/components/client/hiring-health-line";
@@ -48,6 +42,11 @@ import { OpenItemsStrip } from "@/components/client/open-items-strip";
 import { NextMilestones, type MilestoneRow } from "@/components/client/next-milestones";
 import type { QueueRow } from "@/lib/client-decision-queue";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
+import { RoleStatusList } from "@/components/client/overview/role-status-list";
+import { SinceLastVisit, RecentMessages } from "@/components/client/overview/activity-panels";
+import { EmptyWelcome } from "@/components/client/overview/section-primitives";
+import { CandidatesReleasedSection } from "@/components/client/overview/candidates-released-section";
+import { relTime } from "@/components/client/overview/utils";
 
 
 const RoutePending = makeWorkspacePending({ shape: "kpis", kpis: true, width: "7xl" });
@@ -64,27 +63,6 @@ export const Route = createFileRoute("/_authenticated/client/")({
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
-
-const RELATIVE = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-function relTime(iso: string | null | undefined): string {
-  if (!iso) return "";
-  const diff = new Date(iso).getTime() - Date.now();
-  const abs = Math.abs(diff);
-  const min = 60_000,
-    hr = 60 * min,
-    day = 24 * hr;
-  if (abs < hr) return RELATIVE.format(Math.round(diff / min), "minute");
-  if (abs < day) return RELATIVE.format(Math.round(diff / hr), "hour");
-  if (abs < 30 * day) return RELATIVE.format(Math.round(diff / day), "day");
-  return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
-}
-
-function daysWaiting(iso: string | null | undefined): number | null {
-  if (!iso) return null;
-  const t = new Date(iso).getTime();
-  if (Number.isNaN(t)) return null;
-  return Math.max(0, Math.floor((Date.now() - t) / 86_400_000));
-}
 
 function OverviewPage() {
   const [selfId, setSelfId] = useState<string | null>(null);
@@ -372,50 +350,16 @@ function OverviewPage() {
           <RoleStatusList roles={visibleRoles} loading={!data && isFetching} compact={compact} />
 
           {/* 3 · CANDIDATES WAITING ON YOU */}
-          <section aria-labelledby="open-first-heading" className="space-y-3">
-            <SectionHeader
-              id="open-first-heading"
-              icon={<Sparkles className="h-4 w-4 text-primary" />}
-              title="Candidates released to you"
-              action={
-                <Link
-                  to="/client/candidates"
-                  search={
-                    {
-                      ...(orgSearch ? { org: orgSearch } : {}),
-                      ...(selectedRole ? { position: selectedRole } : {}),
-                    } as never
-                  }
-                  className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-                >
-                  All candidates <ChevronRight className="h-3.5 w-3.5" />
-                </Link>
-              }
-            />
-            {!data && isFetching ? (
-              <div className="grid gap-3">
-                {[0, 1].map((i) => (
-                  <div key={i} className="h-24 animate-pulse rounded-xl border bg-muted/40" />
-                ))}
-              </div>
-            ) : isError && !data ? (
-              <QueryErrorCard
-                title="We couldn't load your candidates"
-                error={error}
-                onRetry={() => refetch()}
-                retrying={isFetching}
-                compact
-              />
-            ) : latest.length === 0 ? (
-              <EmptyBlock text="No candidates released to you yet. They appear here the moment they're approved for this role." />
-            ) : (
-              <div className="grid gap-3">
-                {latest.slice(0, 3).map((c: Any) => (
-                  <CandidateCard key={c.match_id} candidate={c} />
-                ))}
-              </div>
-            )}
-          </section>
+          <CandidatesReleasedSection
+            orgSearch={orgSearch ?? null}
+            selectedRole={selectedRole}
+            data={data}
+            isFetching={isFetching}
+            isError={isError}
+            error={error}
+            refetch={refetch}
+            latest={latest}
+          />
 
           {/* 4 · PROMISE VS ACTUAL */}
           <SlaScorecard orgId={orgId} positionId={selectedRole || undefined} />
@@ -442,332 +386,3 @@ function OverviewPage() {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// Sections
-// ═══════════════════════════════════════════════════════════════════════════
-
-// The queue itself lives in src/components/client/decision-queue.tsx, and its
-// ordering rules in src/lib/client-decision-queue.ts.
-
-/**
- * Plain-language stage per role, with the date it entered that stage, how long
- * it has been there, and an "at risk" line derived only from real timing data.
- */
-function RoleStatusList({
-  roles,
-  loading,
-  compact,
-}: {
-  roles: Any[];
-  loading: boolean;
-  compact?: boolean;
-}) {
-  if (loading) {
-    return (
-      <div className="space-y-2">
-        {[0, 1].map((i) => (
-          <div key={i} className="h-20 animate-pulse rounded-xl border bg-muted/40" />
-        ))}
-      </div>
-    );
-  }
-  if (roles.length === 0) {
-    return (
-      <EmptyBlock text="No live roles right now. Submit a role and its progress shows up here." />
-    );
-  }
-  return (
-    <ul className={compact ? "grid gap-1.5" : "grid gap-2"}>
-      {roles.map((r) => {
-        const since = formatStageDate(r.stage_entered_at);
-        const days = r.days_in_stage as number | null;
-        const commitment = shortlistCommitment({
-          promisedShortlistBy: r.promised_shortlist_by,
-          shortlistDeliveredAt: r.shortlist_delivered_at,
-        });
-        const next = roleNextStep(r);
-        return (
-          <li key={r.position_id}>
-            <div
-              className={`rounded-xl border bg-card transition ${
-                r.at_risk ? "taas-bd-warning" : ""
-              }`}
-            >
-              <Link
-                to="/client/positions/$id"
-                params={{ id: r.position_id }}
-                className={`group flex flex-col gap-2 hover:bg-muted/30 ${
-                  compact ? "px-4 py-2.5" : "px-4 py-3.5"
-                }`}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <Briefcase className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                      <span className="truncate text-sm font-semibold group-hover:text-primary">
-                        {r.title}
-                      </span>
-                      <span className="shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
-                        {clientRoleStatusLabel(r.client_status)}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
-                      <span className="font-medium text-foreground">{r.stage_label}</span>
-                      {since ? ` since ${since}` : ""}
-                      {days != null
-                        ? ` · ${days === 1 ? "1 day" : `${days} days`} in this stage`
-                        : ""}
-                    </p>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-2">
-                    {r.delivered_pending > 0 && (
-                      <span className="rounded-full taas-bg-warning-soft px-2 py-0.5 text-[11px] font-semibold taas-fg-warning">
-                        {r.delivered_pending} to review
-                      </span>
-                    )}
-                    <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
-                  </div>
-                </div>
-
-                {/* Our promise, next to what actually happened. Misses shown plainly. */}
-                {!compact && (
-                  <div className="grid grid-cols-3 gap-2 rounded-lg border bg-muted/30 px-3 py-2 text-[11px] sm:text-xs">
-                    <div className="min-w-0">
-                      <div className="text-muted-foreground">First shortlist promised</div>
-                      <div className="truncate font-medium text-foreground">
-                        {commitment.promisedAt
-                          ? formatCommitmentDate(commitment.promisedAt)
-                          : "Not committed"}
-                      </div>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-muted-foreground">Actual</div>
-                      <div className="truncate font-medium text-foreground">
-                        {commitment.actualAt
-                          ? formatCommitmentDate(commitment.actualAt)
-                          : "Not yet"}
-                      </div>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-muted-foreground">Variance</div>
-                      <div
-                        className={`truncate font-medium ${
-                          commitment.state === "missed" || commitment.state === "overdue"
-                            ? "taas-fg-danger"
-                            : commitment.state === "met"
-                              ? "taas-fg-success"
-                              : "text-foreground"
-                        }`}
-                      >
-                        {commitment.varianceLabel}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* What happens next: owner and date, always stated. */}
-                <p
-                  className={`flex items-start gap-2 rounded-lg border border-dashed px-3 py-1.5 text-[11px] sm:text-xs ${
-                    next.overdue
-                      ? "taas-bd-warning taas-bg-warning-soft taas-fg-warning"
-                      : "bg-muted/30 text-muted-foreground"
-                  }`}
-                >
-                  <span>
-                    <span className="font-semibold text-foreground">Next: </span>
-                    {next.sentence}{" "}
-                    <span className="font-medium text-foreground">{next.ownerLabel}</span>
-                    {next.dateLabel ? ` · by ${next.dateLabel}` : ""}
-                  </span>
-                </p>
-
-                {r.at_risk && r.risk_reason && (
-                  <p className="flex items-start gap-2 rounded-lg taas-bg-warning-soft px-3 py-2 text-xs taas-fg-warning sm:text-sm">
-                    <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                    <span>
-                      <span className="font-semibold">At risk — </span>
-                      {r.risk_reason}
-                    </span>
-                  </p>
-                )}
-              </Link>
-              <div className="border-t px-4 py-2">
-                <Link
-                  to="/client/candidates"
-                  search={{ position: r.position_id, view: "compare" } as never}
-                  className="text-xs font-medium text-primary hover:underline"
-                >
-                  Compare shortlist side by side →
-                </Link>
-              </div>
-            </div>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
-function SinceLastVisit({
-  events,
-  fallback,
-  lastSeen,
-}: {
-  events: Any[];
-  fallback: Any[];
-  lastSeen: number | null;
-}) {
-  const list = events.length ? events : fallback.slice(0, 6);
-  const isNew = (e: Any) => lastSeen != null && new Date(e.created_at).getTime() > lastSeen;
-  const heading =
-    lastSeen && events.length > 0
-      ? `Since your last visit · ${events.length} update${events.length === 1 ? "" : "s"}`
-      : "Recent activity";
-  return (
-    <div className="rounded-xl border bg-card p-4 sm:p-5">
-      <SectionHeader icon={<RefreshCw className="h-4 w-4" />} title={heading} size="sm" />
-      {list.length === 0 ? (
-        <p className="mt-3 text-sm text-muted-foreground">
-          Hiring activity will appear here as your searches progress.
-        </p>
-      ) : (
-        <ul className="mt-3 space-y-2.5">
-          {list.slice(0, 8).map((e) => (
-            <li key={e.id} className="flex items-start gap-3">
-              <span
-                className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${
-                  isNew(e) ? "bg-primary" : "bg-muted-foreground/40"
-                }`}
-              />
-              <div className="min-w-0 flex-1">
-                <div className="text-sm">
-                  {formatAction(String(e.action))}
-                  {isNew(e) && (
-                    <span className="ml-2 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
-                      New
-                    </span>
-                  )}
-                </div>
-                <div className="text-xs text-muted-foreground">{relTime(e.created_at)}</div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
-
-function RecentMessages({ messages }: { messages: Any[] }) {
-  return (
-    <div className="rounded-xl border bg-card p-4 sm:p-5">
-      <div className="flex items-center justify-between gap-3">
-        <SectionHeader
-          icon={<MessageSquare className="h-4 w-4" />}
-          title="Recent messages"
-          size="sm"
-        />
-        <Link
-          to="/client/conversations"
-          className="text-sm font-medium text-primary hover:underline"
-        >
-          View
-        </Link>
-      </div>
-      {messages.length === 0 ? (
-        <p className="mt-3 text-sm text-muted-foreground">No recent messages.</p>
-      ) : (
-        <ul className="mt-3 divide-y">
-          {messages.slice(0, 4).map((m) => (
-            <li key={m.id} className="py-2.5 first:pt-0 last:pb-0">
-              <div className="flex items-baseline justify-between gap-2">
-                <span className="text-xs font-medium text-muted-foreground">TaaSFlow</span>
-                <span className="shrink-0 text-xs text-muted-foreground">
-                  {relTime(m.created_at)}
-                </span>
-              </div>
-              <p className="mt-0.5 line-clamp-2 text-sm">{m.body}</p>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// Shared primitives
-// ═══════════════════════════════════════════════════════════════════════════
-
-function SectionHeader({
-  id,
-  icon,
-  title,
-  action,
-  size = "md",
-}: {
-  id?: string;
-  icon?: React.ReactNode;
-  title: string;
-  action?: React.ReactNode;
-  size?: "sm" | "md";
-}) {
-  return (
-    <div className="flex items-center justify-between gap-3">
-      <h2
-        id={id}
-        className={`flex items-center gap-2 font-semibold tracking-tight ${
-          size === "sm" ? "text-sm" : "text-base sm:text-lg"
-        }`}
-      >
-        {icon}
-        {title}
-      </h2>
-      {action}
-    </div>
-  );
-}
-
-function EmptyBlock({ text }: { text: string }) {
-  return (
-    <div className="rounded-xl border border-dashed bg-card/40 p-6 text-center text-sm text-muted-foreground">
-      {text}
-    </div>
-  );
-}
-
-function EmptyWelcome({ canSubmit }: { canSubmit: boolean }) {
-  return (
-    <section className="rounded-xl border bg-card p-6 sm:p-8">
-      <h2 className="text-xl font-semibold tracking-tight">Welcome to your workspace</h2>
-      <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
-        Submit your first role and this page becomes a single list of decisions waiting on you —
-        candidates to review, interviews to confirm, offers to close.
-      </p>
-      {canSubmit && (
-        <Link to="/intake" className="mt-4 inline-block">
-          <Button size="sm" className="min-h-11">
-            Submit a role <ArrowRight className="ml-1.5 h-4 w-4" />
-          </Button>
-        </Link>
-      )}
-    </section>
-  );
-}
-
-/** Audit-event actions in client language. Never shows an internal state name. */
-function formatAction(action: string): string {
-  const map: Record<string, string> = {
-    "candidate_match.stage_changed": "A candidate moved forward",
-    "client.shortlist": "You shortlisted a candidate",
-    "client.request_interview": "You requested an interview",
-    "client.offer": "An offer was made",
-    "client.hire": "A hire was confirmed",
-    "client.not_moving_forward": "A candidate was declined",
-    "client.submit_feedback": "Interview feedback was captured",
-    "position.approved": "A role was approved",
-    "position.activated": "A role went live",
-    "position.paused": "A role was paused",
-  };
-  return map[action] ?? "Your search progressed";
-}

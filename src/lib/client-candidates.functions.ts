@@ -101,6 +101,7 @@ export const getClientCandidates = createServerFn({ method: "GET" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
     let q = context.supabase
       .from("candidate_matches")
       .select(
@@ -158,6 +159,7 @@ export const getClientCandidate = createServerFn({ method: "GET" })
     z.object({ orgId: z.string().uuid(), matchId: z.string().uuid() }).parse(input),
   )
   .handler(async ({ context, data }) => {
+    await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
     const { data: match, error } = await context.supabase
       .from("candidate_matches")
       .select(CLIENT_CANDIDATE_SELECT)

@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { AREA_LABELS, AREA_ROLES, COLLABORATOR_ROLES, type WorkspaceArea } from "@/lib/collaborator-roles";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -27,6 +28,7 @@ export const requestWorkspaceAccess = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const s = context.supabase as AnyRow;
     // The caller must be a member of the workspace they are asking about.
+    await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
     const { data: mine } = await s
       .from("memberships")
       .select("id, role")

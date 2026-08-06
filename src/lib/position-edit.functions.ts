@@ -14,12 +14,14 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
 
+import { assertWorkspaceAccess, assertWorkspaceWrite } from "@/lib/authz/workspace-access";
+
 async function getAdmin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   return supabaseAdmin as unknown as AnyRow;
 }
 
-async function assertCanEdit(userId: string, positionId: string) {
+async function loadPosition(positionId: string) {
   const s = await getAdmin();
   const { data: pos } = await s
     .from("positions")
@@ -27,25 +29,23 @@ async function assertCanEdit(userId: string, positionId: string) {
     .eq("id", positionId)
     .maybeSingle();
   if (!pos) throw new Error("position_not_found");
-  // Membership is read directly rather than through is_org_editor(): that RPC
-  // also requires the organization to be un-archived, which turned an ordinary
-  // "open my own live role" click into a permission wall. Platform staff and
-  // any active client_admin / client_editor seat may edit.
-  const { data: membership, error: memberError } = await s
-    .from("memberships")
-    .select("role")
-    .eq("user_id", userId)
-    .eq("organization_id", pos.organization_id)
-    .eq("status", "active")
-    .maybeSingle();
-  if (memberError) throw new Error(memberError.message);
-  const role = (membership as { role?: string } | null)?.role ?? null;
-  if (role === "platform_admin" || role === "operations") return pos;
-  if (role === "client_admin" || role === "client_editor") return pos;
-  const { data: staff } = await s.rpc("is_platform_staff", { _user: userId });
-  if (staff === true) return pos;
-  throw new Error("forbidden");
+  return pos as AnyRow;
+}
 
+/** Read access: any workspace member (including viewers) or platform staff. */
+async function assertCanView(userId: string, positionId: string) {
+  const pos = await loadPosition(positionId);
+  const s = await getAdmin();
+  await assertWorkspaceAccess(s, userId, pos.organization_id as string);
+  return pos;
+}
+
+/** Write access: editors/admins/staff — read-only viewers are refused. */
+async function assertCanEdit(userId: string, positionId: string) {
+  const pos = await loadPosition(positionId);
+  const s = await getAdmin();
+  await assertWorkspaceWrite(s, userId, pos.organization_id as string);
+  return pos;
 }
 
 async function writeAudit(opts: {
@@ -176,7 +176,7 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
-    await assertCanEdit(context.userId, data.id);
+    await assertCanView(context.userId, data.id);
     const s = await getAdmin();
     const [posRes, screeningRes] = await Promise.all([
       s

@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { roleGaps, type RoleGap } from "@/lib/position-readiness";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 function isUuid(value: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
@@ -25,6 +26,13 @@ export const listRolesNeedingDetails = createServerFn({ method: "POST" })
   .inputValidator((data: { orgId?: string }) => data)
   .handler(async ({ data, context }): Promise<{ roles: IncompleteRole[] }> => {
     const { supabase } = context;
+
+    // An org id must resolve to a workspace the caller can see; omitting it
+    // is only meaningful for platform staff browsing across workspaces, and
+    // that is exactly what assertWorkspaceAccess-via-RLS still enforces below.
+    if (data.orgId && isUuid(data.orgId)) {
+      await assertWorkspaceAccess(supabase, context.userId, data.orgId);
+    }
 
     let query = supabase
       .from("positions")

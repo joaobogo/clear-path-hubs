@@ -11,6 +11,8 @@ import {
 } from "@/lib/candidate/availability-preference";
 import { isValidTimezone } from "./scheduling";
 import { assertProposedSlots, isEmail } from "./interview-proposal";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
+import { assertEditor } from "@/lib/client-shared.server";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,38 +47,6 @@ const participantSchema = z.object({
 export type InterviewParticipant = z.infer<typeof participantSchema>;
 
 // ─── Guards ─────────────────────────────────────────────────────────────────
-
-async function assertEditor(supabase: AnyRow, userId: string, orgId: string) {
-  const { data: m, error } = await supabase
-    .from("memberships")
-    .select("role, status")
-    .eq("user_id", userId)
-    .eq("organization_id", orgId)
-    .eq("status", "active")
-    .maybeSingle();
-  if (error) throw new Error(error.message);
-  const role = (m as AnyRow)?.role as string | undefined;
-  const allowed = new Set([
-    "client_admin",
-    "client_editor",
-    "platform_admin",
-    "operations",
-  ]);
-  if (!role || !allowed.has(role)) throw new Error("forbidden");
-
-  // Deny when caller is inside a support session that's read-only.
-  const { data: session } = await supabase
-    .from("support_sessions")
-    .select("mode, expires_at, ended_at")
-    .eq("actor_user_id", userId)
-    .eq("target_organization_id", orgId)
-    .is("ended_at", null)
-    .gt("expires_at", new Date().toISOString())
-    .maybeSingle();
-  if (session && (session as AnyRow).mode !== "interactive") {
-    throw new Error("SUPPORT_VIEW_READ_ONLY");
-  }
-}
 
 async function loadMatch(supabase: AnyRow, orgId: string, matchId: string) {
   const { data, error } = await supabase
@@ -240,6 +210,7 @@ export const listClientInterviews = createServerFn({ method: "POST" })
         .parse(input),
   )
   .handler(async ({ context, data }) => {
+    await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
     let q = context.supabase
       .from("interviews")
       .select("*")
@@ -717,6 +688,7 @@ export const listSchedulableCandidates = createServerFn({ method: "POST" })
     z.object({ orgId: z.string().uuid() }).parse(input),
   )
   .handler(async ({ context, data }) => {
+    await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
     const { data: rows, error } = await context.supabase
       .from("candidate_matches")
       .select(

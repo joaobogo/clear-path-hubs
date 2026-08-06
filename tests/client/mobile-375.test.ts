@@ -80,11 +80,16 @@ describe("client workspace at 375px", () => {
 
   it("keeps the decline decision visible in the pinned candidate bar", () => {
     const detail = readFileSync(join(ROUTES_DIR, "client.candidates.$id.tsx"), "utf8");
-    const bar = detail.slice(detail.indexOf("function MobileActionBar"));
+    const actions = readFileSync(
+      join(COMPONENTS_DIR, "candidate-detail/actions.tsx"),
+      "utf8",
+    );
+    const bar = actions.slice(actions.indexOf("function MobileActionBar"));
     expect(bar).toContain("Not a fit");
     expect(bar).toContain("fixed inset-x-0 bottom-0");
     expect(bar).toContain("min-h-11");
-    // Content must clear the pinned bar rather than sit under it.
+    // The route still renders the pinned bar, and content clears it.
+    expect(detail).toContain("<MobileActionBar");
     expect(detail).toContain("pb-28");
   });
 });

@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { assertEditor } from "@/lib/client-shared.server";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -24,6 +25,7 @@ export const requestScoreRefresh = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ context, data }) => {
+    await assertEditor(context.supabase, context.userId, data.orgId);
     const s = context.supabase as AnyRow;
     const { data: match } = await s
       .from("candidate_matches")
