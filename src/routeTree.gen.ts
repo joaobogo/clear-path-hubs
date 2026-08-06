@@ -115,7 +115,6 @@ import { Route as AuthenticatedClientInterviewsRouteImport } from './routes/_aut
 import { Route as AuthenticatedClientIntelligenceRouteImport } from './routes/_authenticated/client.intelligence'
 import { Route as AuthenticatedClientInboxRouteImport } from './routes/_authenticated/client.inbox'
 import { Route as AuthenticatedClientExecutiveRouteImport } from './routes/_authenticated/client.executive'
-import { Route as AuthenticatedClientDeliveriesRouteImport } from './routes/_authenticated/client.deliveries'
 import { Route as AuthenticatedClientDataRouteImport } from './routes/_authenticated/client.data'
 import { Route as AuthenticatedClientDashboardsRouteImport } from './routes/_authenticated/client.dashboards'
 import { Route as AuthenticatedClientCandidatesRouteImport } from './routes/_authenticated/client.candidates'
@@ -742,12 +741,6 @@ const AuthenticatedClientExecutiveRoute =
     path: '/executive',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
-const AuthenticatedClientDeliveriesRoute =
-  AuthenticatedClientDeliveriesRouteImport.update({
-    id: '/deliveries',
-    path: '/deliveries',
-    getParentRoute: () => AuthenticatedClientRoute,
-  } as any)
 const AuthenticatedClientDataRoute = AuthenticatedClientDataRouteImport.update({
   id: '/data',
   path: '/data',
@@ -1304,7 +1297,6 @@ export interface FileRoutesByFullPath {
   '/client/candidates': typeof AuthenticatedClientCandidatesRouteWithChildren
   '/client/dashboards': typeof AuthenticatedClientDashboardsRoute
   '/client/data': typeof AuthenticatedClientDataRoute
-  '/client/deliveries': typeof AuthenticatedClientDeliveriesRoute
   '/client/executive': typeof AuthenticatedClientExecutiveRoute
   '/client/inbox': typeof AuthenticatedClientInboxRoute
   '/client/intelligence': typeof AuthenticatedClientIntelligenceRoute
@@ -1481,7 +1473,6 @@ export interface FileRoutesByTo {
   '/client/assistant': typeof AuthenticatedClientAssistantRoute
   '/client/dashboards': typeof AuthenticatedClientDashboardsRoute
   '/client/data': typeof AuthenticatedClientDataRoute
-  '/client/deliveries': typeof AuthenticatedClientDeliveriesRoute
   '/client/executive': typeof AuthenticatedClientExecutiveRoute
   '/client/inbox': typeof AuthenticatedClientInboxRoute
   '/client/intelligence': typeof AuthenticatedClientIntelligenceRoute
@@ -1666,7 +1657,6 @@ export interface FileRoutesById {
   '/_authenticated/client/candidates': typeof AuthenticatedClientCandidatesRouteWithChildren
   '/_authenticated/client/dashboards': typeof AuthenticatedClientDashboardsRoute
   '/_authenticated/client/data': typeof AuthenticatedClientDataRoute
-  '/_authenticated/client/deliveries': typeof AuthenticatedClientDeliveriesRoute
   '/_authenticated/client/executive': typeof AuthenticatedClientExecutiveRoute
   '/_authenticated/client/inbox': typeof AuthenticatedClientInboxRoute
   '/_authenticated/client/intelligence': typeof AuthenticatedClientIntelligenceRoute
@@ -1853,7 +1843,6 @@ export interface FileRouteTypes {
     | '/client/candidates'
     | '/client/dashboards'
     | '/client/data'
-    | '/client/deliveries'
     | '/client/executive'
     | '/client/inbox'
     | '/client/intelligence'
@@ -2030,7 +2019,6 @@ export interface FileRouteTypes {
     | '/client/assistant'
     | '/client/dashboards'
     | '/client/data'
-    | '/client/deliveries'
     | '/client/executive'
     | '/client/inbox'
     | '/client/intelligence'
@@ -2214,7 +2202,6 @@ export interface FileRouteTypes {
     | '/_authenticated/client/candidates'
     | '/_authenticated/client/dashboards'
     | '/_authenticated/client/data'
-    | '/_authenticated/client/deliveries'
     | '/_authenticated/client/executive'
     | '/_authenticated/client/inbox'
     | '/_authenticated/client/intelligence'
@@ -3134,13 +3121,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientExecutiveRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
-    '/_authenticated/client/deliveries': {
-      id: '/_authenticated/client/deliveries'
-      path: '/deliveries'
-      fullPath: '/client/deliveries'
-      preLoaderRoute: typeof AuthenticatedClientDeliveriesRouteImport
-      parentRoute: typeof AuthenticatedClientRoute
-    }
     '/_authenticated/client/data': {
       id: '/_authenticated/client/data'
       path: '/data'
@@ -3882,7 +3862,6 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientCandidatesRoute: typeof AuthenticatedClientCandidatesRouteWithChildren
   AuthenticatedClientDashboardsRoute: typeof AuthenticatedClientDashboardsRoute
   AuthenticatedClientDataRoute: typeof AuthenticatedClientDataRoute
-  AuthenticatedClientDeliveriesRoute: typeof AuthenticatedClientDeliveriesRoute
   AuthenticatedClientExecutiveRoute: typeof AuthenticatedClientExecutiveRoute
   AuthenticatedClientInboxRoute: typeof AuthenticatedClientInboxRoute
   AuthenticatedClientIntelligenceRoute: typeof AuthenticatedClientIntelligenceRoute
@@ -3914,7 +3893,6 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
     AuthenticatedClientCandidatesRouteWithChildren,
   AuthenticatedClientDashboardsRoute: AuthenticatedClientDashboardsRoute,
   AuthenticatedClientDataRoute: AuthenticatedClientDataRoute,
-  AuthenticatedClientDeliveriesRoute: AuthenticatedClientDeliveriesRoute,
   AuthenticatedClientExecutiveRoute: AuthenticatedClientExecutiveRoute,
   AuthenticatedClientInboxRoute: AuthenticatedClientInboxRoute,
   AuthenticatedClientIntelligenceRoute: AuthenticatedClientIntelligenceRoute,

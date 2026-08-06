@@ -16,7 +16,6 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
       { to: "/client/positions", label: "Roles" },
       { to: "/client/interviews", label: "Interviews" },
       { to: "/client/offers", label: "Offers" },
-      { to: "/client/deliveries", label: "Deliveries" },
     ],
   },
   {
