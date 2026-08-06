@@ -170,30 +170,46 @@ export async function planAssign(
   };
 }
 
+export type AssignItemResult = {
+  candidate_profile_id: string;
+  name: string;
+  assigned: boolean;
+  reason: string | null;
+};
+
 export async function applyAssign(
   admin: Admin,
   candidateProfileIds: string[],
   positionId: string,
   actorUserId: string,
-) {
-  const plan = await planAssign(admin, candidateProfileIds, positionId);
-  const ids = plan.rows.filter((r) => r.eligible).map((r) => r.candidate_profile_id);
-  if (ids.length === 0) return { changed: 0, skipped: plan.skipped };
+): Promise<{ changed: number; skipped: number; results: AssignItemResult[] }> {
+  if (candidateProfileIds.length === 0) return { changed: 0, skipped: 0, results: [] };
 
   // One database routine writes the applications, the matches and the audit row
   // inside a single transaction: a partial failure rolls everything back, so an
-  // assignment can never leave orphaned application rows behind.
+  // assignment can never leave orphaned application rows behind. It also returns
+  // a per-candidate outcome so the UI can report partial success accurately.
   const { data, error } = await admin.rpc("admin_bulk_assign_candidates" as never, {
     _position_id: positionId,
-    _candidate_profile_ids: ids,
+    _candidate_profile_ids: candidateProfileIds,
     _actor_user_id: actorUserId,
   } as never);
   if (error) throw error;
 
-  const result = (data ?? {}) as { changed?: number; skipped?: number };
-  const changed = Number(result.changed ?? 0);
-  return { changed, skipped: plan.skipped + Math.max(0, ids.length - changed) };
+  const result = (data ?? {}) as {
+    changed?: number;
+    skipped?: number;
+    results?: AssignItemResult[];
+  };
+  const results = Array.isArray(result.results) ? result.results : [];
+  const changed = Number(result.changed ?? results.filter((r) => r.assigned).length);
+  return {
+    changed,
+    skipped: Number(result.skipped ?? Math.max(0, candidateProfileIds.length - changed)),
+    results,
+  };
 }
+
 
 export async function applyBulkUpdateMessage(
   admin: Admin,
