@@ -380,8 +380,8 @@ test.describe("tenant isolation — /intake and /express-intake", () => {
     for (const path of ["/api/public/intake", "/api/public/express-intake"] as const) {
       const payload =
         path === "/api/public/intake"
-          ? intakePayload({ companyName: owner.companyName, workEmail: uniqueProspect().email, password: ATTACKER_PASSWORD })
-          : expressPayload({ companyName: owner.companyName, workEmail: uniqueProspect().email, password: ATTACKER_PASSWORD });
+          ? intakePayload({ companyName: owner.companyName, workEmail: prospect().email, password: ATTACKER_PASSWORD })
+          : expressPayload({ companyName: owner.companyName, workEmail: prospect().email, password: ATTACKER_PASSWORD });
 
       const { status, body } = await postPublic<IntakeResponse>(path, payload, {
         accessToken: token,
@@ -424,10 +424,10 @@ test.describe("tenant isolation — /intake and /express-intake", () => {
   });
 
   test("replaying the same idempotency key never creates a second tenant", async () => {
-    const prospect = uniqueProspect();
+    const newcomer = prospect();
     const payload = intakePayload({
-      companyName: prospect.companyName,
-      workEmail: prospect.email,
+      companyName: newcomer.companyName,
+      workEmail: newcomer.email,
       password: OWNER_PASSWORD,
     });
 
@@ -439,7 +439,7 @@ test.describe("tenant isolation — /intake and /express-intake", () => {
     expect(replay.body.replay).toBe(true);
     expect(replay.body.organizationId).toBe(first.body.organizationId);
 
-    const tenant = await lookupTenant({ companyName: prospect.companyName });
+    const tenant = await lookupTenant({ companyName: newcomer.companyName });
     expect(tenant.organizations).toHaveLength(1);
     expect(tenant.memberships).toHaveLength(1);
   });
