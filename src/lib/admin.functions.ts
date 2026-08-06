@@ -589,8 +589,25 @@ export const listPositions = createServerFn({ method: "GET" })
     if (!isPostFilterSort) base = base.range(from, to);
     else base = base.range(0, Math.min(299, from + data.page_size * 4 - 1));
 
-    const { data: rows, count } = await base;
+    const { data: rows, count, error: listError } = await base;
+    if (listError) throw new Error(`positions_list_failed: ${listError.message}`);
     const positions = (rows ?? []) as AnyRow[];
+
+    // How many rows the same filters would return with test/internal records
+    // included — so the UI can say "N hidden" instead of silently truncating.
+    let unfilteredTotal = count ?? positions.length;
+    if (!showTest) {
+      let all = s.from("positions").select("id", { count: "exact", head: true });
+      if (data.status) all = all.eq("status", data.status);
+      if (data.organization_id) all = all.eq("organization_id", data.organization_id);
+      if (data.owner === "__unassigned__") all = all.is("owner_user_id", null);
+      else if (data.owner) all = all.eq("owner_user_id", data.owner);
+      if (data.location) all = all.ilike("location", `%${data.location}%`);
+      if (data.q) all = all.ilike("title", `%${data.q}%`);
+      const { count: allCount } = await all;
+      unfilteredTotal = allCount ?? unfilteredTotal;
+    }
+
 
     // Enrich each position with pipeline counts + action-required count.
     const ids = positions.map((p) => p.id);
