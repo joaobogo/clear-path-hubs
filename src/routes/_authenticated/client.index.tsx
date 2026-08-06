@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { InfoRequestsPanel } from "@/components/client/info-requests";
 import { WeeklyUpdateCard } from "@/components/client/weekly-update-card";
@@ -45,6 +46,7 @@ import { NextMilestones, type MilestoneRow } from "@/components/client/next-mile
 import type { QueueRow } from "@/lib/client-decision-queue";
 
 export const Route = createFileRoute("/_authenticated/client/")({
+  errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.index.tsx"),
   head: () => ({
     meta: [{ title: "Overview · Client workspace" }, { name: "robots", content: "noindex" }],
   }),

@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
@@ -37,6 +38,7 @@ import { usePrefersReducedMotion } from "@/lib/motion/use-motion";
 
 
 export const Route = createFileRoute("/_authenticated/client/analytics")({
+  errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.analytics.tsx"),
   head: () => ({
     meta: [
       { title: "Three questions · TaaSFlow client workspace" },
