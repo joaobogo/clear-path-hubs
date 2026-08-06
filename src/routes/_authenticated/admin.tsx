@@ -81,6 +81,13 @@ const NAV: WorkspaceNavItem[] = [
     group: "Command",
     hint: "Urgent queue and workload",
   },
+  {
+    to: "/admin/my-day",
+    label: "My day",
+    icon: AlarmClock,
+    group: "Command",
+    hint: "The roles you own that need action today",
+  },
 
   { to: "/admin/intake", label: "Intake", icon: Inbox, group: "Delivery", hint: "New client requests" },
   { to: "/admin/clients", label: "Clients", icon: Building2, group: "Delivery", hint: "Organizations and seats" },
