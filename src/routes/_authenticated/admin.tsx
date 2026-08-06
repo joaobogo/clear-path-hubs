@@ -19,6 +19,7 @@ import { SectionTabs, filterSectionGroups } from "@/components/workspace/section
 import { ADMIN_SECTION_GROUPS } from "@/config/workspace-sections";
 import { ADMIN_NAV } from "@/config/admin-nav";
 import { WorkspaceShell } from "@/components/workspace/workspace-shell";
+import { SupportSessionBanner } from "@/components/admin/support-session-banner";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   errorComponent: makeRouteErrorComponent("admin", "/_authenticated/admin"),
