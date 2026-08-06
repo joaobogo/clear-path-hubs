@@ -112,7 +112,15 @@ export function CandidateScoreBadge({
           Being re-checked
         </span>
       )}
-      {support && !rechecking && (
+      {evidencePending && !rechecking && (
+        <span
+          className="inline-flex items-center rounded-full border border-border bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
+          title="The criteria and evidence behind this assessment are not available on this view yet."
+        >
+          Evidence pending
+        </span>
+      )}
+      {support && !rechecking && !evidencePending && (
         <span className="text-[11px] text-muted-foreground" title={support}>
           {evidence!.supported}/{evidence!.total} evidenced
         </span>
