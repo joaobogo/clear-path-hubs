@@ -98,21 +98,28 @@ export function CandidateCard({
         </label>
       )}
 
-      {/* Identity — counts against requirements only, never adjectives or scores */}
+      {/* Identity — full name, current role, approved score and unicorn marker */}
       <div className="min-w-0 pr-24">
         <div className="flex items-center gap-2 flex-wrap">
           <h3 className="font-semibold text-base truncate">{c.candidate.display_name}</h3>
+          <CandidateScoreBadge score={c.score} unicorn={c.unicorn} />
           <span className={`text-[11px] font-medium rounded-full px-2 py-0.5 border ${accent.chip}`}>
             {evidenceCard.summaryInProgress ? "Summary in progress" : rationale.summary}
           </span>
         </div>
-        {c.candidate.headline && (
-          <p className="text-sm text-foreground/80 mt-0.5 line-clamp-1">{c.candidate.headline}</p>
+        {(c.candidate.headline || c.candidate.current_role) && (
+          <p className="text-sm text-foreground/80 mt-0.5 line-clamp-1">
+            {c.candidate.headline ??
+              [c.candidate.current_role, c.candidate.current_company]
+                .filter(Boolean)
+                .join(" · ")}
+          </p>
         )}
         {c.position?.title && (
           <p className="text-xs text-muted-foreground mt-1 truncate">For {c.position.title}</p>
         )}
       </div>
+
 
       {/* Why we shortlisted — one bullet per requirement, each attributed */}
       <div className="mt-4">
