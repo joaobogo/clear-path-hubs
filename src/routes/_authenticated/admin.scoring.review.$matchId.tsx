@@ -14,6 +14,7 @@ import {
 import { applyReviewDecision } from "@/lib/processing.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { AdminScoreNumber } from "@/components/admin/admin-score-number";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -303,11 +304,10 @@ function ReviewWorkspace() {
           {fmt(match.canonical_state)} · processing {fmt(match.processing_state)}
         </p>
         <div className="flex flex-wrap gap-2">
-          <Badge variant="secondary">Score {fmt(currentRun?.final_score ?? currentRun?.score)}</Badge>
+          {/* Staff view: the number never travels without its confidence pair
+              and the rubric version it was scored against. */}
+          <AdminScoreNumber run={currentRun as never} />
           <Badge variant="secondary">Fit {fmt(currentRun?.fit_label ?? currentRun?.fit_band)}</Badge>
-          <Badge variant="secondary">
-            Confidence {currentRun?.evidence_confidence ?? currentRun?.confidence ?? "—"}
-          </Badge>
           <Badge variant="secondary">Eligibility {fmt(match.eligibility_status)}</Badge>
           <Badge variant={match.contact_released_at ? "default" : "outline"}>
             <Lock className="mr-1 size-3" />
