@@ -119,12 +119,13 @@ export async function loadPositionBottleneck(
     rolesCompared = closedIds.length;
 
     if (closedIds.length >= MIN_COMPARABLE_ROLES) {
-      const closedHistory = await fetchHistory(admin, closedIds);
-      const closedMatchRes = await admin
-        .from("candidate_matches")
-        .select("id, stage")
-        .in("position_id", closedIds);
+      // Independent comparison reads over the same id list — fetched together.
+      const [closedHistory, closedMatchRes] = await Promise.all([
+        fetchHistory(admin, closedIds),
+        admin.from("candidate_matches").select("id, stage").in("position_id", closedIds),
+      ]);
       if (closedMatchRes.error) throw new Error(closedMatchRes.error.message);
+
       const currentByMatch = new Map<string, string | null>(
         ((closedMatchRes.data ?? []) as Array<{ id: string; stage: string | null }>).map((m) => [
           m.id,
