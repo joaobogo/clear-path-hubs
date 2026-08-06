@@ -2,13 +2,6 @@ import { clientStageLabel } from "@/lib/client-stage-labels";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { SurfaceState } from "@/components/ds/surface-state";
-import {
-  resolveFilteredEmptyState,
-  resolveNoCandidatesState,
-} from "@/lib/empty-states/empty-state-catalogue";
-import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
-import { QueryErrorCard } from "@/components/client/query-error";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
@@ -19,15 +12,7 @@ import { getClientOverview } from "@/lib/client-overview.functions";
 import { getClientPositions } from "@/lib/client-positions.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { VisibilityNote } from "@/components/client/visibility-note";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
- Select,
- SelectContent,
- SelectItem,
- SelectTrigger,
- SelectValue,
-} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { CompareTray, CompareSheet } from "@/components/client/candidate-comparison";
@@ -36,52 +21,16 @@ import {
   defaultCompareSelection,
   COMPARE_MAX,
 } from "@/lib/client-compare";
+import { QueryErrorCard } from "@/components/client/query-error";
 import { ShareShortlistDialog } from "@/components/client/share-shortlist-dialog";
 import { Share2 } from "lucide-react";
-import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
-
-const STAGE_OPTIONS = [
- { key: "all", label: "All stages" },
- { key: "delivered", label: "New — awaiting review" },
- { key: "shortlisted", label: "Shortlisted" },
- { key: "interview_process", label: "Interview process" },
- { key: "offer", label: "Offer" },
- { key: "hired", label: "Hired" },
- { key: "not_moving_forward", label: "Not moving forward" },
-] as const;
-
-const FIT_OPTIONS = [
- { key: "all", label: "Any fit" },
- { key: "exceptional", label: "Exceptional" },
- { key: "strong", label: "Strong" },
- { key: "good", label: "Good potential" },
- { key: "mixed", label: "Mixed" },
- { key: "limited", label: "Limited" },
-] as const;
-
-const CRITICAL_OPTIONS = [
- { key: "all", label: "Any critical status" },
- { key: "met", label: "All critical requirements met" },
- { key: "gaps", label: "Has critical gaps" },
- { key: "missing_evidence", label: "Missing evidence" },
-] as const;
-
-const REVIEW_OPTIONS = [
- { key: "all", label: "Any review status" },
- { key: "awaiting", label: "Awaiting your review" },
- { key: "in_progress", label: "In progress with your team" },
- { key: "closed", label: "Closed" },
-] as const;
-
-const SORT_OPTIONS = [
- { key: "recent", label: "Recently delivered" },
- { key: "score", label: "Highest approved fit" },
- { key: "must", label: "Must-have coverage" },
- { key: "stage", label: "Stage" },
- { key: "name", label: "Candidate name" },
-] as const;
+import { STAGE_OPTIONS, FIT_OPTIONS } from "@/components/client/candidates/constants";
+import { HiringSnapshot } from "@/components/client/candidates/hiring-snapshot";
+import { CandidatesFiltersPanel } from "@/components/client/candidates/filters-panel";
+import { CandidatesEmptyState } from "@/components/client/candidates/candidates-empty-state";
+import { CompactList } from "@/components/client/candidates/compact-list";
 
 const searchSchema = z.object({
  q: fallback(z.string(), "").default(""),
@@ -385,11 +334,11 @@ function CandidatesPage() {
  },
  search.critical !== "all" && {
  key: "critical",
- label: CRITICAL_OPTIONS.find((s) => s.key === search.critical)?.label,
+ label: undefined,
  },
  search.review !== "all" && {
  key: "review",
- label: REVIEW_OPTIONS.find((s) => s.key === search.review)?.label,
+ label: undefined,
  },
  search.availability !== "all" && {
  key: "availability",
@@ -399,8 +348,6 @@ function CandidatesPage() {
  search.location && { key: "location", label: `Location: ${search.location}` },
  search.q && { key: "q", label: `Search: ${search.q}` },
  ].filter(Boolean) as { key: string; label: string }[];
-
- const RESET_TO_ALL = new Set(["stage", "fit", "critical", "review", "availability"]);
 
  const clearFilters = () =>
  navigate({
@@ -461,58 +408,7 @@ function CandidatesPage() {
  </div>
  </header>
 
- {/* Hiring snapshot */}
- <section aria-label="Hiring snapshot" className="mb-6">
- <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
- <SnapshotTile
- label="Delivered"
- value={overview?.kpis.delivered}
- loading={kpisLoading && !overview}
- to="/client/candidates"
- org={orgSearch}
- />
- <SnapshotTile
- label="Top matches"
- value={overview?.kpis.top}
- loading={kpisLoading && !overview}
- to="/client/candidates"
- filter={{ fit: "strong" }}
- org={orgSearch}
- />
- <SnapshotTile
- label="Shortlisted"
- value={overview?.kpis.shortlisted}
- loading={kpisLoading && !overview}
- to="/client/candidates"
- filter={{ stage: "shortlisted" }}
- org={orgSearch}
- />
- <SnapshotTile
- label="Interviewing"
- value={overview?.kpis.interviewing}
- loading={kpisLoading && !overview}
- to="/client/candidates"
- filter={{ stage: "interview_process" }}
- org={orgSearch}
- />
- <SnapshotTile
- label="Offers"
- value={overview?.kpis.offers}
- loading={kpisLoading && !overview}
- to="/client/candidates"
- filter={{ stage: "offer" }}
- org={orgSearch}
- />
- <SnapshotTile
- label="Hires"
- value={overview?.kpis.hires}
- loading={kpisLoading && !overview}
- to="/client/candidates"
- filter={{ stage: "hired" }}
- org={orgSearch}
- />
- </div>
- </section>
+ <HiringSnapshot overview={overview} kpisLoading={kpisLoading} orgSearch={orgSearch} />
 
  {/* Action required */}
  {overview?.action_required && overview.action_required.length > 0 && (
@@ -538,170 +434,19 @@ function CandidatesPage() {
  </section>
  )}
 
-  {/* Search + filters */}
-  <section aria-label="Search and filters" className="mb-4 rounded-xl border bg-card p-3 sm:p-4">
-   <div className="mb-3 flex flex-wrap items-center gap-2">
-    <SavedViewsBar
-     surface="client_candidates"
-     organizationId={orgId ?? undefined}
-     currentFilters={{
-      q: search.q,
-      position: search.position,
-      stage: search.stage,
-      fit: search.fit,
-      location: search.location,
-      sort: search.sort,
-      view: search.view,
-      filter: search.filter,
-      minScore: search.minScore,
-      maxScore: search.maxScore,
-     }}
-     onApply={(f) => navigate({ search: { ...search, ...f } as never, replace: true })}
-     canShare={ctx?.active?.role === "client_admin"}
-    />
-    {/* No numeric score filter on client surfaces — fit is expressed as a
-        band (see the Fit select below), never as a number. */}
-   </div>
-   <div className="grid grid-cols-1 md:grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))_auto] gap-2">
- <Input
- placeholder="Search by name, skill, role, location…"
- value={search.q}
- onChange={(e) => setF({ q: e.target.value })}
- aria-label="Search candidates"
+ <CandidatesFiltersPanel
+  search={search}
+  setF={setF}
+  positions={positions as Array<{ id: string; title: string }>}
+  availabilityOptions={availabilityOptions}
+  activeFilters={activeFilters}
+  clearFilters={clearFilters}
+  compareCheck={compareCheck}
+  setCompareOpen={setCompareOpen}
+  orgId={orgId}
+  ctxRole={ctx?.active?.role}
+  onApplySavedView={(f) => navigate({ search: { ...search, ...f } as never, replace: true })}
  />
- <Select
- value={search.position || "all"}
- onValueChange={(v) => setF({ position: v === "all" ? "" : v })}
- >
- <SelectTrigger aria-label="Position"><SelectValue placeholder="All positions" /></SelectTrigger>
- <SelectContent>
- <SelectItem value="all">All positions</SelectItem>
- {(positions as Array<{ id: string; title: string }>).map((p) => (
- <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>
- ))}
- </SelectContent>
- </Select>
- <Select value={search.stage} onValueChange={(v) => setF({ stage: v })}>
- <SelectTrigger aria-label="Stage"><SelectValue /></SelectTrigger>
- <SelectContent>
- {STAGE_OPTIONS.map((o) => (
- <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
- ))}
- </SelectContent>
- </Select>
- <Select value={search.fit} onValueChange={(v) => setF({ fit: v })}>
- <SelectTrigger aria-label="Fit"><SelectValue /></SelectTrigger>
- <SelectContent>
- {FIT_OPTIONS.map((o) => (
- <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
- ))}
- </SelectContent>
- </Select>
- <Input
- placeholder="Location"
- value={search.location}
- onChange={(e) => setF({ location: e.target.value })}
- aria-label="Filter by location"
- />
-  <div className="flex items-stretch gap-2 justify-end">
-  <Select value={search.sort} onValueChange={(v) => setF({ sort: v })}>
-  <SelectTrigger className="h-10 min-w-[10rem]" aria-label="Sort"><SelectValue /></SelectTrigger>
-  <SelectContent>
-  {SORT_OPTIONS.map((o) => (
-  <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
-  ))}
-  </SelectContent>
-  </Select>
-  <div className="inline-flex h-10 shrink-0 items-center rounded-md border p-0.5">
-
- <button
- onClick={() => setF({ view: "cards" })}
- className={`h-full whitespace-nowrap px-2.5 text-xs rounded ${search.view === "cards" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
- aria-pressed={search.view === "cards"}
- >
- Cards
- </button>
- <button
- onClick={() => setF({ view: "list" })}
- className={`h-full whitespace-nowrap px-2.5 text-xs rounded ${search.view === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
- aria-pressed={search.view === "list"}
- >
- List
- </button>
- <button
- onClick={() => { setF({ view: "compare" }); setCompareOpen(true); }}
- disabled={!compareCheck.ok}
- title={compareCheck.reason ?? undefined}
- className={`h-full whitespace-nowrap px-2.5 text-xs rounded disabled:opacity-40 ${search.view === "compare" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
- aria-pressed={search.view === "compare"}
- >
- Side by side
- </button>
- </div>
-
- </div>
-  </div>
-
-  {/* Secondary, permitted dimensions */}
-  <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
-   <Select value={search.critical} onValueChange={(v) => setF({ critical: v })}>
-    <SelectTrigger aria-label="Critical requirements"><SelectValue /></SelectTrigger>
-    <SelectContent>
-     {CRITICAL_OPTIONS.map((o) => (
-      <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
-     ))}
-    </SelectContent>
-   </Select>
-   <Select value={search.availability} onValueChange={(v) => setF({ availability: v })}>
-    <SelectTrigger aria-label="Availability"><SelectValue /></SelectTrigger>
-    <SelectContent>
-     <SelectItem value="all">Any availability</SelectItem>
-     {availabilityOptions.map((a) => (
-      <SelectItem key={a} value={a}>{a}</SelectItem>
-     ))}
-    </SelectContent>
-   </Select>
-   <Select value={search.minExp} onValueChange={(v) => setF({ minExp: v === "all" ? "" : v })}>
-    <SelectTrigger aria-label="Minimum experience"><SelectValue placeholder="Any experience" /></SelectTrigger>
-    <SelectContent>
-     <SelectItem value="all">Any experience</SelectItem>
-     <SelectItem value="2">2+ years</SelectItem>
-     <SelectItem value="5">5+ years</SelectItem>
-     <SelectItem value="8">8+ years</SelectItem>
-     <SelectItem value="12">12+ years</SelectItem>
-    </SelectContent>
-   </Select>
-   <Select value={search.review} onValueChange={(v) => setF({ review: v })}>
-    <SelectTrigger aria-label="Review status"><SelectValue /></SelectTrigger>
-    <SelectContent>
-     {REVIEW_OPTIONS.map((o) => (
-      <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
-     ))}
-    </SelectContent>
-   </Select>
-  </div>
-
- {activeFilters.length > 0 && (
- <div className="mt-3 flex items-center gap-2 flex-wrap">
- {activeFilters.map((f) => (
- <span
- key={f.key}
- className="inline-flex items-center gap-1 rounded-full border bg-background px-2 py-0.5 text-xs"
- >
- {f.label}
- <button
- onClick={() => setF({ [f.key]: RESET_TO_ALL.has(f.key) ? "all" : "" } as never)}
- className="text-muted-foreground hover:text-foreground"
- aria-label={`Remove ${f.label}`}
- >
- ×
- </button>
- </span>
- ))}
- <Button size="sm" variant="ghost" onClick={clearFilters}>Clear all</Button>
- </div>
- )}
- </section>
 
  {/* Results — loading, failure and "none approved yet" are distinct states */}
  {isLoading && (rowsRaw as ClientCandidateDTO[]).length === 0 ? (
@@ -838,162 +583,4 @@ function toggleCompare(
  if (prev.length >= 4) return prev;
  return [...prev, id];
  });
-}
-
-function SnapshotTile({
- label,
- value,
- loading,
- to,
- filter,
- org,
-}: {
- label: string;
- value: number | undefined;
- loading: boolean;
- to: string;
- filter?: Record<string, string>;
- org?: string;
-}) {
- const searchObj = { ...(filter ?? {}), ...(org ? { org } : {}) };
- return (
- <Link
- to={to as never}
- search={Object.keys(searchObj).length ? (searchObj as never) : undefined}
- className="rounded-xl border bg-card p-3 hover:border-primary/40 transition min-h-16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
- >
- <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
- <div className="text-2xl font-semibold tabular-nums mt-1 min-h-[2rem]">
- {loading ? <Skeleton className="h-7 w-10" /> : (value ?? "—")}
- </div>
- </Link>
- );
-}
-
-function CandidatesEmptyState({
-  hasCandidates,
-  activeFilters,
-  onClear,
-  orgId,
-}: {
-  hasCandidates: boolean;
-  activeFilters: { key: string; label: string }[];
-  onClear: () => void;
-  orgId: string | undefined;
-}) {
-  const filteredOut = hasCandidates && activeFilters.length > 0;
-  const signals = useEmptyStateSignals(orgId, { enabled: !filteredOut });
-  if (filteredOut) {
-    return (
-      <SurfaceState
-        content={resolveFilteredEmptyState(activeFilters.map((f) => f.label))}
-        onAction={onClear}
-      />
-    );
-  }
-  return (
-    <SurfaceState
-      content={resolveNoCandidatesState({
-        activeRoles: signals?.activeRoles ?? 0,
-        discoveryStarted: signals?.discoveryStarted ?? false,
-        inProcessing: signals?.inProcessing ?? 0,
-        runsCompleted: signals?.runsCompleted ?? 0,
-      })}
-    />
-  );
-}
-
-function CompactList({
- rows,
- orgSearch,
- compareIds,
- onToggleCompare,
-}: {
- rows: ClientCandidateDTO[];
- orgSearch?: string;
- compareIds: string[];
- onToggleCompare: (id: string) => void;
-}) {
- return (
- <>
- {/* Mobile: stacked cards */}
- <div className="grid gap-3 md:hidden">
- {rows.map((c) => (
- <CandidateCard
- key={c.match_id}
- candidate={c}
- compareSelected={compareIds.includes(c.match_id)}
- compareDisabled={compareIds.length >= 4}
- onToggleCompare={onToggleCompare}
- />
- ))}
- </div>
- {/* Desktop: table */}
- <div className="hidden md:block overflow-hidden rounded-xl border bg-card">
- <table className="w-full text-sm">
- <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
- <tr>
- <th className="w-8 py-2 px-3"></th>
- <th className="text-left py-2 px-3">Candidate</th>
- <th className="text-left py-2 px-3">Position</th>
- <th className="text-left py-2 px-3">Fit</th>
- <th className="text-left py-2 px-3">Must-haves</th>
- <th className="text-left py-2 px-3">Location</th>
- <th className="text-left py-2 px-3">Stage</th>
- <th className="text-right py-2 px-3">Action</th>
- </tr>
- </thead>
- <tbody className="divide-y">
- {rows.map((c) => (
- <tr key={c.match_id} className="hover:bg-muted/20">
- <td className="py-2 px-3">
- <input
- type="checkbox"
- checked={compareIds.includes(c.match_id)}
- disabled={compareIds.length >= 4 && !compareIds.includes(c.match_id)}
- onChange={() => onToggleCompare(c.match_id)}
- aria-label={`Compare ${c.candidate.display_name}`}
- />
- </td>
- <td className="py-2 px-3">
- <div className="font-medium">{c.candidate.display_name}</div>
- <div className="text-xs text-muted-foreground truncate max-w-xs">
- {c.candidate.headline ?? ""}
- </div>
- </td>
- <td className="py-2 px-3 text-muted-foreground truncate max-w-[12rem]">
- {c.position?.title ?? "—"}
- </td>
- <td className="py-2 px-3">
- <div className="font-medium">
- {c.fit.headline}
- </div>
- <div className="text-xs text-muted-foreground">{c.fit.recommendation}</div>
- </td>
- <td className="py-2 px-3 tabular-nums">
- {c.coverage.must_met}/{c.coverage.must_total || "—"}
- </td>
- <td className="py-2 px-3 text-muted-foreground">
- {c.candidate.location ?? "—"}
- </td>
- <td className="py-2 px-3 text-muted-foreground">
- {clientStageLabel(c.stage)}
- </td>
- <td className="py-2 px-3 text-right">
- <Link
- to="/client/candidates/$id"
- params={{ id: c.match_id }}
- search={orgSearch ? { org: orgSearch } : undefined}
- className="text-primary hover:underline text-sm"
- >
- Open →
- </Link>
- </td>
- </tr>
- ))}
- </tbody>
- </table>
- </div>
- </>
- );
 }
