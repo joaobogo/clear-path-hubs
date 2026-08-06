@@ -15,6 +15,7 @@ const filtersInput = z
     date_from: z.string().max(40).optional(),
     date_to: z.string().max(40).optional(),
     include_contact: z.boolean().optional(),
+    mask_contacts: z.boolean().optional(),
   })
   // No unlimited-scope exports: a position or a client must be named.
   .refine((f) => Boolean(f.position_id || f.organization_id), {
@@ -35,6 +36,25 @@ export const requestCandidateExport = createServerFn({ method: "POST" })
       userId: context.userId,
       filters: data,
       scopeLabel,
+    });
+    // The requester's masking choice is audited at request time, before any
+    // data is read, so the record survives even if generation later fails.
+    const { emitProductEvent } = await import("./product-events.server");
+    await emitProductEvent(s, {
+      event: "export.requested",
+      entityType: "export_job",
+      entityId: jobId,
+      organizationId: data.organization_id ?? null,
+      actorUserId: context.userId,
+      after: {
+        phase: "requested",
+        scope: scopeLabel,
+        contact_choice: !data.include_contact
+          ? "omitted"
+          : data.mask_contacts === false
+            ? "full"
+            : "masked",
+      },
     });
     // Generated inline so the job id is real and the file exists on completion;
     // failures are recorded on the job row rather than thrown away.

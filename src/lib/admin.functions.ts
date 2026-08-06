@@ -1757,6 +1757,44 @@ export const getPositionActivity = createServerFn({ method: "GET" })
 //   final_score <= applied_cap and <= raw_score; identity matches parent match
 // Plus admin-facing checks: no critical contradictions, complete Client-safe
 // DTO, admin approval, and no fatal processing state.
+/**
+ * Per-record audit trail for one candidate: every audited change to the match,
+ * the underlying application and the candidate profile, newest first. Staff-only.
+ */
+export const getCandidateAudit = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        match_id: z.string().uuid(),
+        limit: z.number().int().min(1).max(200).optional().default(100),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const { data: match } = await s
+      .from("candidate_matches")
+      .select("id, application_id, candidate_profile_id")
+      .eq("id", data.match_id)
+      .maybeSingle();
+    const ids = [
+      data.match_id,
+      (match?.application_id as string | null) ?? null,
+      (match?.candidate_profile_id as string | null) ?? null,
+    ].filter((v): v is string => Boolean(v));
+    const { data: rows } = await s
+      .from("audit_events")
+      .select(
+        "id,action,entity_type,entity_id,created_at,actor_user_id,trace_id,before_state,after_state",
+      )
+      .in("entity_id", ids)
+      .order("created_at", { ascending: false })
+      .limit(data.limit);
+    return (rows ?? []) as AnyRow[];
+  });
+
 export const getPublishDeskGroups = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {

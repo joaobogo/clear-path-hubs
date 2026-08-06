@@ -57,6 +57,8 @@ function fmt(value: string | null) {
 export function ExportControl({ scope }: { scope: ExportScope }) {
   const [open, setOpen] = useState(false);
   const [includeContact, setIncludeContact] = useState(false);
+  // Masking is the default whenever contact details are included at all.
+  const [maskContacts, setMaskContacts] = useState(true);
   const qc = useQueryClient();
 
   const requestFn = useServerFn(requestCandidateExport);
@@ -74,7 +76,10 @@ export function ExportControl({ scope }: { scope: ExportScope }) {
   });
 
   const request = useMutation({
-    mutationFn: () => requestFn({ data: { ...scope, include_contact: includeContact } }),
+    mutationFn: () =>
+      requestFn({
+        data: { ...scope, include_contact: includeContact, mask_contacts: maskContacts },
+      }),
     onSuccess: (res) => {
       toast.success(`Export requested — job ${res.job_id.slice(0, 8)}`);
       void qc.invalidateQueries({ queryKey: ["my-exports"] });
@@ -156,6 +161,23 @@ export function ExportControl({ scope }: { scope: ExportScope }) {
             </Label>
           </div>
 
+          {includeContact ? (
+            <div className="ml-6 flex items-start gap-2 rounded-md border bg-muted/30 p-3">
+              <Checkbox
+                id="export-mask-contacts"
+                checked={maskContacts}
+                onCheckedChange={(v) => setMaskContacts(v === true)}
+              />
+              <Label htmlFor="export-mask-contacts" className="text-sm font-normal leading-snug">
+                Mask contact details
+                <span className="block text-muted-foreground">
+                  Emails become j***@domain and phones show only the last two digits. Your choice
+                  is recorded on the export audit record either way.
+                </span>
+              </Label>
+            </div>
+          ) : null}
+
           <div>
             <div className="mb-2 text-sm font-medium">Past exports</div>
             {history.isPending ? (
@@ -187,7 +209,11 @@ export function ExportControl({ scope }: { scope: ExportScope }) {
                         <div className="text-xs text-muted-foreground">
                           {r.requester_name ?? "You"} · {fmt(r.requested_at)} ·{" "}
                           {r.row_count === null ? "—" : `${r.row_count} rows`} ·{" "}
-                          {r.contact_included ? "contact included" : "contact omitted"}
+                          {r.contact_included
+                            ? r.contact_omission_reason?.includes("masked")
+                              ? "contact masked"
+                              : "contact included in full"
+                            : "contact omitted"}
                         </div>
                         {r.contact_omission_reason ? (
                           <div className="mt-1 text-xs text-muted-foreground">

@@ -32,6 +32,8 @@ export type ExportFilters = {
   date_from?: string;
   date_to?: string;
   include_contact?: boolean;
+  /** Chosen at request time: masked contact details instead of raw values. */
+  mask_contacts?: boolean;
 };
 
 export type ExportJobRow = {
@@ -73,6 +75,22 @@ const BASE_COLUMNS = [
   "created_at",
   "updated_at",
 ] as const;
+
+/** Masks an email to its first character and domain: j***@acme.com. */
+function maskEmail(value: unknown): string {
+  const s = value === null || value === undefined ? "" : String(value);
+  const at = s.indexOf("@");
+  if (at < 1) return s ? "***" : "";
+  return `${s[0]}***${s.slice(at)}`;
+}
+
+/** Masks a phone to its last two digits: ••••34. */
+function maskPhone(value: unknown): string {
+  const s = value === null || value === undefined ? "" : String(value).trim();
+  if (!s) return "";
+  const digits = s.replace(/\D/g, "");
+  return digits.length <= 2 ? "••" : `••••${digits.slice(-2)}`;
+}
 
 function csvCell(value: unknown): string {
   if (value === null || value === undefined) return "";
@@ -189,6 +207,9 @@ export async function runExportJob(
           ? `Contact columns omitted: contact details are not released to you for ${withheld} of ${list.length} rows in scope.`
           : null;
 
+    // The masking choice is made by the requester before the job runs and is
+    // stored on the job row, so the audit says which form of the data left here.
+    const masked = includeContact && filters.mask_contacts !== false;
     const columns = includeContact ? [...BASE_COLUMNS, ...CONTACT_COLUMNS] : [...BASE_COLUMNS];
     // The file states exactly what it contains: who asked, what was filtered,
     // and what was withheld — so a spreadsheet can never be read as the whole
@@ -203,7 +224,9 @@ export async function runExportJob(
       `# Filters applied: ${filterStamp || "none (full scope)"}`,
       `# Rows: ${list.length}${(count ?? 0) > EXPORT_ROW_CAP ? ` (capped at ${EXPORT_ROW_CAP} of ${count})` : ""}`,
       includeContact
-        ? "# Contact details: INCLUDED (released to the requester for every row in scope)"
+        ? masked
+          ? "# Contact details: INCLUDED BUT MASKED at the requester's choice (email as j***@domain, phone as last two digits)"
+          : "# Contact details: INCLUDED IN FULL at the requester's choice (released to the requester for every row in scope)"
         : `# Contact details: OMITTED${omissionReason ? ` — ${omissionReason.replace(/^Contact columns omitted: /, "")}` : " — not requested"}`,
       "# Masking: candidate contact details appear only where contact has been released; internal notes and scoring internals are never exported.",
     ];
@@ -212,7 +235,15 @@ export async function runExportJob(
     const csv = [
       ...header,
       columns.join(","),
-      ...list.map((r) => columns.map((c) => csvCell(r[c])).join(",")),
+      ...list.map((r) =>
+        columns
+          .map((c) => {
+            if (masked && c === "email") return csvCell(maskEmail(r[c]));
+            if (masked && c === "phone") return csvCell(maskPhone(r[c]));
+            return csvCell(r[c]);
+          })
+          .join(","),
+      ),
     ].join("\n");
 
     const path = `${userId}/${jobId}.csv`;
@@ -230,7 +261,11 @@ export async function runExportJob(
         status: "completed",
         row_count: list.length,
         contact_included: includeContact,
-        contact_omission_reason: includeContact ? null : omissionReason,
+        contact_omission_reason: includeContact
+          ? masked
+            ? "Contact details included in masked form at the requester's choice."
+            : null
+          : omissionReason,
         storage_bucket: EXPORT_BUCKET,
         storage_path: path,
         data_freshness_at: new Date().toISOString(),
@@ -256,6 +291,8 @@ export async function runExportJob(
         filters,
         row_count: list.length,
         contact_included: includeContact,
+        contact_masked: masked,
+        contact_choice: !includeContact ? "omitted" : masked ? "masked" : "full",
       },
     });
 

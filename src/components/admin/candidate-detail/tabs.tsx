@@ -27,6 +27,7 @@ import {
   getClientPreview,
   setMatchClientVisibility,
   getPositionActivity,
+  getCandidateAudit,
 } from "@/lib/admin.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -959,6 +960,11 @@ export function ActivityAuditTab({
   positionId?: string;
   decisions: Any[];
 }) {
+  const auditFn = useServerFn(getCandidateAudit);
+  const { data: recordAudit } = useQuery({
+    queryKey: ["candidate-record-audit", matchId],
+    queryFn: () => auditFn({ data: { match_id: matchId, limit: 100 } }),
+  });
   const posActivityFn = useServerFn(getPositionActivity);
   const { data: posActivity } = useQuery({
     queryKey: ["position-activity-for-match", positionId],
@@ -981,15 +987,34 @@ export function ActivityAuditTab({
       detail: r.actor_user_id ? `actor ${String(r.actor_user_id).slice(0, 8)}` : "system",
       trace: r.trace_id,
     }));
-    return [...decisionEvents, ...posEvents].sort(
+    // Record-level rows come first in intent: these are the audited changes to
+    // this candidate, not the surrounding role.
+    const recordEvents = ((recordAudit as Any[]) ?? []).map((r) => ({
+      when: r.created_at,
+      kind: "record",
+      label: r.action,
+      detail: [
+        r.entity_type ? String(r.entity_type).replace(/_/g, " ") : null,
+        r.actor_user_id ? `actor ${String(r.actor_user_id).slice(0, 8)}` : "system",
+      ]
+        .filter(Boolean)
+        .join(" · "),
+      trace: r.trace_id,
+    }));
+    return [...recordEvents, ...decisionEvents, ...posEvents].sort(
       (a, b) => new Date(b.when).valueOf() - new Date(a.when).valueOf(),
     );
-  }, [decisions, posActivity]);
+  }, [decisions, posActivity, recordAudit]);
 
   return (
     <div className="rounded-lg border bg-card">
       <div className="border-b px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-        Activity &amp; audit — match #{matchId.slice(0, 8)}
+        Activity &amp; audit — match #{matchId.slice(0, 8)} · record changes, decisions and role
+        events
+      </div>
+      <div className="border-b bg-muted/40 px-4 py-2 text-xs text-muted-foreground">
+        Audit rows are immutable; "record" entries are changes to this candidate, "audit" entries
+        are changes to the role.
       </div>
       {events.length === 0 ? (
         <p className="p-6 text-center text-sm text-muted-foreground">
@@ -1001,7 +1026,11 @@ export function ActivityAuditTab({
             <li key={i} className="flex items-start justify-between gap-4 px-4 py-2 text-sm">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <Badge variant={e.kind === "decision" ? "default" : "outline"}>
+                  <Badge
+                    variant={
+                      e.kind === "decision" ? "default" : e.kind === "record" ? "secondary" : "outline"
+                    }
+                  >
                     {e.kind}
                   </Badge>
                   <span className="font-mono text-xs">{e.label}</span>
