@@ -348,19 +348,22 @@ export async function retryPositionExceptions(
 ): Promise<RetryOutcome[]> {
   const board = await loadExceptionBoard(admin);
   const rows = board.active.filter((r) => r.position_id === positionId && r.retryable);
-  const out: RetryOutcome[] = [];
-  for (const row of rows) {
-    try {
-      out.push(await retryProcessingJob(admin, row.job_id, actorUserId));
-    } catch (e) {
-      out.push({
-        job_id: row.job_id,
-        result: "skipped",
-        detail: e instanceof Error ? e.message : "Retry failed",
-      });
-    }
-  }
+  // Retries are independent per job and partial success is acceptable, so they
+  // run together and each rejection is surfaced against its own job id.
+  const settled = await Promise.allSettled(
+    rows.map((row) => retryProcessingJob(admin, row.job_id, actorUserId)),
+  );
+  const out: RetryOutcome[] = settled.map((r, i) =>
+    r.status === "fulfilled"
+      ? r.value
+      : {
+          job_id: rows[i]!.job_id,
+          result: "skipped",
+          detail: r.reason instanceof Error ? r.reason.message : "Retry failed",
+        },
+  );
   return out;
+
 }
 
 /**
