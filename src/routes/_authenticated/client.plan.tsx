@@ -126,6 +126,14 @@ function PlanPage() {
   const packages = PLAN_CATALOGUE.filter((p) => p.kind === "package");
   const subscriptions = PLAN_CATALOGUE.filter((p) => p.kind === "subscription");
 
+  const [requested, setRequested] = useState<string | null>(null);
+  const canPick = Boolean(orgId) && canSeeBilling && canMutate;
+  const pick = (priceId: string) => {
+    setRequested(priceId);
+    document.getElementById("plan-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+
   return (
     <div className="space-y-8">
       <div>
