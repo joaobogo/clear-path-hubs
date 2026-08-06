@@ -717,7 +717,14 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     score: run?.score ?? null,
     fit_label: run?.fit_label ?? null,
     fit,
-    summary: run?.explanation ?? null,
+    // The engine's own explanation string carries a raw n/100 figure, which is
+    // internal. Employer surfaces get the criteria-backed explanation instead.
+    summary: (() => {
+      const explained = clientExplanation;
+      return explained.kind === "explained"
+        ? `${explained.method_sentence} ${explained.criteria_summary}.`
+        : null;
+    })(),
     strengths,
     concerns,
     main_consideration: mainConsideration,
@@ -735,6 +742,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
         statement: clientReviewStatement({ humanAdjusted: reviewed, verifiedCount: verified }),
       };
     })(),
+    explanation: clientExplanation,
     coverage: coverageSummary,
     interview_guide,
     evidence,
