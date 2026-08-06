@@ -85,7 +85,7 @@ const KANBAN_COLUMNS: { key: MatchStage; label: string }[] = [
  { key: "not_moving_forward", label: "Not Moving Forward" },
 ];
 
-// Canonical transition matrix (mirrors server STAGE_GRAPH in client.functions.ts).
+// Canonical transition matrix (mirrors server STAGE_GRAPH in client-shared.server.ts).
 const STAGE_GRAPH: Record<MatchStage, MatchStage[]> = {
  delivered: ["shortlisted", "interview_process", "not_moving_forward"],
  shortlisted: ["interview_process", "not_moving_forward"],
