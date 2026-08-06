@@ -1522,7 +1522,7 @@ function Home() {
           <PublicPage>
             <SectionHead
               eyebrow="Decision Workspace"
-              title="Decisions, not a pile of CVs."
+              title="Informed decision making, not just a pile of flat CVs"
               lead="Evidence-first candidate cards, side-by-side comparison, and every decision reversible for five minutes. This is the product interface, running on representative data."
             />
 
