@@ -10,6 +10,13 @@ import { EvidenceCompletenessGate } from "@/components/admin/evidence-completene
 import { CvPreviewPane } from "@/components/admin/cv-preview-pane";
 import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
 import { RejectReasonDialog } from "@/components/admin/reject-reason-dialog";
+import {
+  Kbd,
+  ShortcutHelpButton,
+  ShortcutHelpDialog,
+  useShortcutHelp,
+  type Shortcut,
+} from "@/components/admin/shortcut-help";
 import { getEvidenceCompleteness } from "@/lib/evidence/completeness.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +36,17 @@ import {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
+
+const REVIEW_SHORTCUTS: Shortcut[] = [
+  { keys: ["J"], label: "Next candidate in the queue" },
+  { keys: ["K"], label: "Previous candidate in the queue" },
+  { keys: ["A"], label: "Approve for client" },
+  { keys: ["H"], label: "Hold" },
+  { keys: ["R"], label: "Reject (opens the reason dialog)" },
+  { keys: ["C"], label: "Focus the decision note" },
+  { keys: ["Esc"], label: "Leave the note field" },
+  { keys: ["?"], label: "Show or hide this list" },
+];
 
 export const Route = createFileRoute("/_authenticated/admin/review/$matchId")({
   loader: async ({ context, params }) => {
@@ -156,6 +174,8 @@ function ReviewScreen() {
     go(nextId);
   }
 
+  const shortcutHelp = useShortcutHelp();
+
   // Keyboard shortcuts for the repetitive parts.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -199,6 +219,8 @@ function ReviewScreen() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   });
+
+  const { open: helpOpen, setOpen: setHelpOpen } = shortcutHelp;
 
   const score = currentRun?.score != null ? Math.round(Number(currentRun.score)) : null;
 
@@ -247,21 +269,28 @@ function ReviewScreen() {
           <Button
             variant="ghost"
             size="sm"
-            className="h-7 px-2"
+            className="h-7 gap-1 px-2"
             onClick={() => go(prevId)}
             disabled={!prevId}
+            title="Previous in queue (K)"
+            aria-label="Previous in queue (shortcut K)"
           >
             <ChevronLeft className="h-4 w-4" />
+            <Kbd>K</Kbd>
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            className="h-7 px-2"
+            className="h-7 gap-1 px-2"
             onClick={() => go(nextId)}
             disabled={!nextId}
+            title="Next in queue (J)"
+            aria-label="Next in queue (shortcut J)"
           >
+            <Kbd>J</Kbd>
             <ChevronRight className="h-4 w-4" />
           </Button>
+          <ShortcutHelpButton onOpen={() => setHelpOpen(true)} />
           <Button asChild variant="ghost" size="sm" className="h-7 gap-1 px-2 text-xs">
             <Link to="/admin/candidates/$id" params={{ id: matchId }}>
               Full record <ExternalLink className="h-3 w-3" />
@@ -382,10 +411,21 @@ function ReviewScreen() {
             <X className="h-4 w-4" /> Reject <kbd className="ml-1 text-[10px] opacity-70">R</kbd>
           </Button>
         </div>
-        <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
-          <Keyboard className="h-3 w-3" /> J/K next & previous
-        </span>
+        <button
+          type="button"
+          onClick={() => setHelpOpen(true)}
+          className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground"
+        >
+          <Keyboard className="h-3 w-3" /> <Kbd>J</Kbd>/<Kbd>K</Kbd> next &amp; previous ·
+          all shortcuts <Kbd>?</Kbd>
+        </button>
       </footer>
+      <ShortcutHelpDialog
+        open={helpOpen}
+        onOpenChange={setHelpOpen}
+        shortcuts={REVIEW_SHORTCUTS}
+        title="Review shortcuts"
+      />
       <RejectReasonDialog
         open={rejectOpen}
         onOpenChange={setRejectOpen}

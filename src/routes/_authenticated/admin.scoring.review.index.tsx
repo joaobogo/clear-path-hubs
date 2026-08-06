@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import { ReviewTriageList } from "@/components/admin/review-triage-list";
 import { Search, X } from "lucide-react";
 
@@ -108,6 +109,23 @@ function ReviewCenter() {
         </nav>
 
         <section className="space-y-4">
+          {/* Queue, search and sort are all URL state, so views are shareable. */}
+          <SavedViewsBar
+            surface="admin_matches"
+            canShare
+            currentFilters={{ queue: search.queue, q: search.q ?? "", sort: search.sort }}
+            onApply={(f) =>
+              navigate({
+                search: (p: SearchState) => ({
+                  ...p,
+                  queue: f.queue || "ready_for_decision",
+                  q: f.q ?? "",
+                  sort: f.sort || "oldest_first",
+                  page: 1,
+                }),
+              })
+            }
+          />
           <div className="flex flex-wrap items-center gap-2">
             <div className="relative min-w-[220px] flex-1">
               <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />

@@ -13,6 +13,7 @@ const SURFACES = [
   "admin_matches",
   "admin_activity",
   "admin_privacy",
+  "admin_clients",
 ] as const;
 export type SavedViewSurface = (typeof SURFACES)[number];
 
