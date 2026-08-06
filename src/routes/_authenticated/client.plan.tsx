@@ -93,7 +93,12 @@ function PlanPage() {
         />
       ) : (
         <>
-          <PlanPanel organizationId={orgId} canMutate={canMutate} />
+          <PlanPanel
+            organizationId={orgId}
+            canMutate={canMutate}
+            requestedPriceId={requested}
+            onRequestHandled={() => setRequested(null)}
+          />
           <ServiceExpectationsTable orgId={orgId} />
         </>
       )}
@@ -102,23 +107,15 @@ function PlanPage() {
         <h2 className="text-sm font-semibold">One-off packages</h2>
         <div className="grid gap-4 md:grid-cols-3">
           {packages.map((plan) => (
-            <Card key={plan.priceId}>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center justify-between text-base">
-                  {plan.label}
-                  <Badge variant="outline">{money(plan.amountUsd)}</Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm text-muted-foreground">
-                <p>{plan.summary}</p>
-                <p>
-                  {plan.rolesTotal === null
-                    ? "Unlimited roles"
-                    : `${plan.rolesTotal} role${plan.rolesTotal === 1 ? "" : "s"}`}
-                  {plan.validForDays ? ` · valid ${plan.validForDays} days` : ""}
-                </p>
-              </CardContent>
-            </Card>
+            <PlanCard
+              key={plan.priceId}
+              label={plan.label}
+              price={money(plan.amountUsd)}
+              summary={plan.summary}
+              detail={plan.validForDays ? `Valid ${plan.validForDays} days` : null}
+              onSelect={canPick ? () => pick(plan.priceId) : null}
+              actionLabel="Buy this package"
+            />
           ))}
         </div>
       </section>
@@ -127,27 +124,18 @@ function PlanPage() {
         <h2 className="text-sm font-semibold">Subscriptions</h2>
         <div className="grid gap-4 md:grid-cols-3">
           {subscriptions.map((plan) => (
-            <Card key={plan.priceId}>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center justify-between text-base">
-                  {plan.label}
-                  <Badge variant="outline">
-                    {money(plan.amountUsd)}/{plan.interval === "year" ? "yr" : "mo"}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm text-muted-foreground">
-                <p>{plan.summary}</p>
-                <p>
-                  {plan.rolesTotal === null
-                    ? "Unlimited active roles"
-                    : `Up to ${plan.rolesTotal} active roles`}{" "}
-                  · cancel any time, runs to the end of the period
-                </p>
-              </CardContent>
-            </Card>
+            <PlanCard
+              key={plan.priceId}
+              label={plan.label}
+              price={`${money(plan.amountUsd)}/${plan.interval === "year" ? "yr" : "mo"}`}
+              summary={plan.summary}
+              detail="Cancel any time — it runs to the end of the period"
+              onSelect={canPick ? () => pick(plan.priceId) : null}
+              actionLabel="Switch to this plan"
+            />
           ))}
         </div>
+
       </section>
 
       <Card>
