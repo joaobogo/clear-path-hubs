@@ -91,6 +91,8 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
     label: "Quality",
     tabs: [
       { to: "/admin/scoring/review", label: "Scoring review" },
+      { to: "/admin/scoring/calibration", label: "Calibration desk", requiresPlatformAdmin: true },
+
       { to: "/admin/scoring/orphans", label: "Orphans" },
       { to: "/admin/parse-failures", label: "Unreadable docs" },
       { to: "/admin/evidence-gaps", label: "Missing evidence" },
