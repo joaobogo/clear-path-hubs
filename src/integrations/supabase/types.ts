@@ -10619,6 +10619,9 @@ export type Database = {
           score: number | null
           started_at: string | null
           status: Database["public"]["Enums"]["score_status"]
+          superseded_at: string | null
+          superseded_by_run_id: string | null
+          superseded_reason: string | null
           test_run_id: string | null
           trace_id: string | null
         }
@@ -10666,6 +10669,9 @@ export type Database = {
           score?: number | null
           started_at?: string | null
           status?: Database["public"]["Enums"]["score_status"]
+          superseded_at?: string | null
+          superseded_by_run_id?: string | null
+          superseded_reason?: string | null
           test_run_id?: string | null
           trace_id?: string | null
         }
@@ -10713,6 +10719,9 @@ export type Database = {
           score?: number | null
           started_at?: string | null
           status?: Database["public"]["Enums"]["score_status"]
+          superseded_at?: string | null
+          superseded_by_run_id?: string | null
+          superseded_reason?: string | null
           test_run_id?: string | null
           trace_id?: string | null
         }
@@ -10891,6 +10900,27 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "rubric_versions"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "score_runs_superseded_by_run_id_fkey"
+            columns: ["superseded_by_run_id"]
+            isOneToOne: false
+            referencedRelation: "score_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "score_runs_superseded_by_run_id_fkey"
+            columns: ["superseded_by_run_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_candidate_index"
+            referencedColumns: ["score_run_id"]
+          },
+          {
+            foreignKeyName: "score_runs_superseded_by_run_id_fkey"
+            columns: ["superseded_by_run_id"]
+            isOneToOne: false
+            referencedRelation: "v_scoring_review_queue"
+            referencedColumns: ["score_run_id"]
           },
         ]
       }

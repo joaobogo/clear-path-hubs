@@ -64,6 +64,13 @@ export interface ScoringResult {
   score: number; // 0-100
   fit_label: "strong_fit" | "worth_considering" | "not_a_fit" | "unknown";
   overall_confidence: number; // 0-1
+  /**
+   * How much of the rubric the assessment could actually decide, 0-100,
+   * weighted by the category weights in force for this run. A run can be
+   * confident overall (long CV, complete screening) while still leaving
+   * must-haves undecided — this is the number that says so.
+   */
+  evidence_confidence: number; // 0-100
   must_have_coverage: number; // 0-1
   preferred_coverage: number; // 0-1
   category_breakdown: {
@@ -494,6 +501,36 @@ export function scoreCandidate(input: {
   const overall_confidence =
     Math.round(((cvTokenBoost * 0.4 + evidenceBoost * 0.4 + screeningBoost * 0.2)) * 100) / 100;
 
+  // Weighted evidence confidence: per requirement, how decided its status is,
+  // averaged inside each category and weighted by that category's live weight.
+  // "unknown" contributes nothing — an undecided requirement is the whole point
+  // of this signal.
+  const decidedness = (a: RequirementAssessment): number =>
+    a.status === "met" || a.status === "contradicted"
+      ? 1
+      : a.status === "missing"
+        ? 0.8
+        : a.status === "partial"
+          ? 0.6
+          : 0;
+  const avgDecided = (rows: RequirementAssessment[]): number =>
+    rows.length ? rows.reduce((t, a) => t + decidedness(a), 0) / rows.length : 0;
+  const mustRows = assessment.filter((a) => a.required);
+  const prefRows = assessment.filter((a) => !a.required);
+  const evidenceWeightTotal =
+    category_weights.must_have + category_weights.preferred + category_weights.screening_alignment;
+  const evidence_confidence =
+    evidenceWeightTotal > 0
+      ? Math.round(
+          ((avgDecided(mustRows) * category_weights.must_have +
+            avgDecided(prefRows) * category_weights.preferred +
+            (totalScreening ? alignedCount / totalScreening : 0) *
+              category_weights.screening_alignment) /
+            evidenceWeightTotal) *
+            10000,
+        ) / 100
+      : 0;
+
   // Bands come from the canonical band table (src/lib/scoring/bands.ts); the
   // engine only decides the non-numeric overrides (disqualification, and CVs
   // whose text could not be extracted, which are "unknown", not "not a fit").
@@ -539,6 +576,7 @@ export function scoreCandidate(input: {
     score,
     fit_label,
     overall_confidence,
+    evidence_confidence,
     must_have_coverage: Math.round(must_have_coverage * 10000) / 10000,
     preferred_coverage: Math.round(preferred_coverage * 10000) / 10000,
     category_breakdown: {

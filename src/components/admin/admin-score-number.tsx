@@ -11,6 +11,8 @@ import { Badge } from "@/components/ui/badge";
 type RunLike = {
   score?: number | null;
   confidence?: number | null;
+  /** 0-100: how much of the rubric the run's evidence could actually decide. */
+  evidence_confidence?: number | null;
   fit_label?: string | null;
   rubric_version_id?: string | null;
   rubric_versions?: { label?: string | null; version_number?: number | null } | null;
@@ -25,9 +27,17 @@ export function rubricVersionLabel(run: RunLike | null | undefined): string {
 }
 
 export function confidenceLabel(run: RunLike | null | undefined): string {
-  return run?.confidence == null
-    ? "confidence n/a"
-    : `confidence ${Math.round(Number(run.confidence) * 100)}%`;
+  const overall =
+    run?.confidence == null
+      ? "confidence n/a"
+      : `confidence ${Math.round(Number(run.confidence) * 100)}%`;
+  // Both confidences travel together: overall confidence in the run, and how
+  // much of the rubric its evidence actually decided.
+  const evidence =
+    run?.evidence_confidence == null
+      ? null
+      : `evidence ${Math.round(Number(run.evidence_confidence))}%`;
+  return evidence ? `${overall} · ${evidence}` : overall;
 }
 
 /** Inline staff-only score: number + confidence + rubric version, always together. */

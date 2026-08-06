@@ -218,7 +218,7 @@ export const getReviewRecord = createServerFn({ method: "POST" })
       s
         .from("score_runs")
         .select(
-          "id,score,raw_score,final_score,applied_cap,confidence,evidence_confidence,status,fit_label,fit_band,must_have_coverage,preferred_coverage,contradiction_status,explanation,result,requirement_coverage,completed_at,engine_version,evaluation_method,rubric_version_id,input_hash",
+          "id,score,raw_score,final_score,applied_cap,confidence,evidence_confidence,superseded_at,status,fit_label,fit_band,must_have_coverage,preferred_coverage,contradiction_status,explanation,result,requirement_coverage,completed_at,engine_version,evaluation_method,rubric_version_id,input_hash",
         )
         .eq("candidate_match_id", data.match_id)
         .order("completed_at", { ascending: false, nullsFirst: false })
