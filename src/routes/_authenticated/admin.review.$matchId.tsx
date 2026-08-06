@@ -8,6 +8,7 @@ import { getAdminMatch, applyReviewDecision } from "@/lib/processing.functions";
 import { getReviewQueueIds } from "@/lib/admin-ops.functions";
 import { EvidenceCompletenessGate } from "@/components/admin/evidence-completeness-gate";
 import { CvPreviewPane } from "@/components/admin/cv-preview-pane";
+import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
 import { RejectReasonDialog } from "@/components/admin/reject-reason-dialog";
 import { getEvidenceCompleteness } from "@/lib/evidence/completeness.functions";
 import { Button } from "@/components/ui/button";
@@ -216,9 +217,22 @@ function ReviewScreen() {
         </div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           {score != null && (
-            <Badge variant="secondary" className="tabular-nums">
-              score {score}
-            </Badge>
+            <span className="inline-flex items-center gap-1">
+              <Badge variant="secondary" className="tabular-nums">
+                score {score}
+              </Badge>
+              {/* Staff should never weigh a score without knowing what it was
+                  measured against. */}
+              <ScoreStalenessChip
+                freshness={freshnessFromRow({
+                  scored_at: currentRun?.completed_at ?? null,
+                  scored_input_hash: currentRun?.input_hash ?? null,
+                  scored_engine_version: currentRun?.engine_version ?? null,
+                  profile_updated_at: m.candidate_profiles?.updated_at ?? null,
+                  brief_updated_at: m.positions?.updated_at ?? null,
+                })}
+              />
+            </span>
           )}
           {currentRun?.must_have_coverage != null && (
             <span className="tabular-nums">

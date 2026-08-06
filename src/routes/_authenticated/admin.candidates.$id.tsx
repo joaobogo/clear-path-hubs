@@ -57,6 +57,7 @@ import {
 } from "lucide-react";
 import { DownloadCvButton } from "@/components/download-cv-button";
 import { ScoreExplainability } from "@/components/candidate/score-explainability";
+import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
 import { JourneyTimeline } from "@/components/candidate/journey-timeline";
 import { getCandidateJourney } from "@/lib/journey.functions";
 import { AdminDossier } from "@/components/candidate/admin-dossier";
@@ -323,6 +324,17 @@ function WorkspaceHeader({
             <h1 className="truncate text-2xl font-semibold tracking-tight">
               {cp?.full_name ?? "Unknown candidate"}
             </h1>
+            {currentRun?.score != null && (
+              <ScoreStalenessChip
+                freshness={freshnessFromRow({
+                  scored_at: currentRun.completed_at ?? null,
+                  scored_input_hash: currentRun.input_hash ?? null,
+                  scored_engine_version: currentRun.engine_version ?? null,
+                  profile_updated_at: cp?.updated_at ?? null,
+                  brief_updated_at: position?.updated_at ?? null,
+                })}
+              />
+            )}
             {currentRun?.score != null && (
               <Badge variant="secondary" className="tabular-nums">
                 Score {Math.round(currentRun.score)}
