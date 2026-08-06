@@ -166,32 +166,24 @@ function ClientLayout() {
  const permissionPreview: PermissionPreview =
  (search.preview as PermissionPreview | undefined) ?? "client_admin";
 
- // Support access is never opened implicitly. A session — with a recorded
- // reason — must already exist, started from /admin/support. Here we only look
- // it up so the visit can be attributed to it.
- const activeSupportSession = useQuery({
- queryKey: ["active-support-session", active?.organization_id ?? null],
- queryFn: () =>
- getActiveSupportSession({ data: { organization_id: active!.organization_id } }),
- enabled: staffMembershipsElsewhere && !!active?.organization_id,
- refetchInterval: 60_000,
- });
- const supportSessionId = activeSupportSession.data?.session?.id ?? null;
- const supportSessionMissing =
- staffMembershipsElsewhere && activeSupportSession.isSuccess && supportSessionId == null;
+  // Staff access to a client workspace is allowed on arrival — opening it from
+  // the admin client list is the sanctioned path. Access is recorded, not
+  // gated: this opens (or reuses) a read-only support session for the audit
+  // trail and never blocks the view if recording fails.
+ 	const activeSupportSession = useQuery({
+ 		queryKey: ["active-support-session", active?.organization_id ?? null],
+ 		queryFn: () =>
+ 			ensureSupportSession({
+ 				data: {
+ 					organization_id: active!.organization_id,
+ 					permission_preview: permissionPreview,
+ 				},
+ 			}),
+ 		enabled: staffMembershipsElsewhere && !!active?.organization_id,
+ 		refetchInterval: 60_000,
+ 	});
+ 	const supportSessionId = activeSupportSession.data?.session?.id ?? null;
 
- if (staffMembershipsElsewhere && activeSupportSession.isError) {
- return (
- <div className="mx-auto max-w-2xl p-8">
- <QueryErrorCard
- title="We couldn't check your support session"
- error={activeSupportSession.error}
- onRetry={() => activeSupportSession.refetch()}
- retrying={activeSupportSession.isFetching}
- />
- </div>
- );
- }
 
  const supportView: SupportViewState = useMemo(
  () => ({
