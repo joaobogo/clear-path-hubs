@@ -61,9 +61,6 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
     label: "Account",
     tabs: [
       { to: "/client/account", label: "Account" },
-      { to: "/client/team", label: "Team" },
-      { to: "/client/plan", label: "Plan & billing" },
-      { to: "/client/settings", label: "Settings" },
     ],
   },
 ];
