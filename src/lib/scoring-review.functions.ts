@@ -278,7 +278,9 @@ export const getReviewRecord = createServerFn({ method: "POST" })
     if (currentRun?.rubric_version_id) {
       const { data: rv } = await s
         .from("rubric_versions")
-        .select("id,version_number,status,label,dimensions,weights,anchors,qualifiers,approved_at")
+        .select(
+          "id,version_number,status,label,dimensions,weights,anchors,qualifiers,snapshot,approved_at",
+        )
         .eq("id", currentRun.rubric_version_id)
         .maybeSingle();
       rubric = rv ?? null;

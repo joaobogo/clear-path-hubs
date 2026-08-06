@@ -211,22 +211,87 @@ function reconcile(result: ScoringResult): {
 }
 
 /**
- * The approved rubric version that governs this position, if any. Stamped onto
- * every run so a score can always be traced back to the criteria that produced
- * it (findings: runs with a NULL rubric_version_id are unauditable).
+ * The rubric version that governs this position. Every run must name one, so
+ * when a position has no governing version yet we mint one from its current
+ * requirements and stamp it approved — a score with no criteria list behind it
+ * is unauditable (audit finding 1).
  */
-async function resolveRubricVersionId(s: Any, positionId: string): Promise<string | null> {
-  const { data } = await s
+async function ensureRubricVersionId(
+  s: Any,
+  position: {
+    id: string;
+    organization_id: string;
+    title?: string | null;
+    requirements?: unknown;
+    preferred_requirements?: unknown;
+  },
+): Promise<string> {
+  const { data: existing } = await s
     .from("rubric_versions")
-    .select("id,version_number,status,approved_at")
-    .eq("position_id", positionId)
-    .eq("status", "approved")
+    .select("id,version_number,status")
+    .eq("position_id", position.id)
+    .in("status", ["approved", "active"])
     .is("superseded_at", null)
     .order("version_number", { ascending: false })
     .limit(1)
     .maybeSingle();
-  return data?.id ?? null;
+  if (existing?.id) return existing.id as string;
+
+  const { data: latest } = await s
+    .from("rubric_versions")
+    .select("version_number")
+    .eq("position_id", position.id)
+    .order("version_number", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const nextVersion = Number(latest?.version_number ?? 0) + 1;
+
+  const requirements = Array.isArray(position.requirements) ? position.requirements : [];
+  const preferred = Array.isArray(position.preferred_requirements)
+    ? position.preferred_requirements
+    : [];
+
+  const { data: created, error } = await s
+    .from("rubric_versions")
+    .insert({
+      position_id: position.id,
+      organization_id: position.organization_id,
+      version_number: nextVersion,
+      status: "approved",
+      label: `auto-v${nextVersion}`,
+      dimensions: requirements,
+      weights: {},
+      anchors: {},
+      qualifiers: preferred,
+      snapshot: {
+        origin: "auto-from-position-requirements",
+        position_title: position.title ?? null,
+        requirements,
+        preferred_requirements: preferred,
+        captured_at: new Date().toISOString(),
+      },
+      approved_at: new Date().toISOString(),
+    })
+    .select("id")
+    .single();
+
+  if (error || !created?.id) {
+    // Losing the race against a concurrent run is fine — re-read.
+    const { data: retry } = await s
+      .from("rubric_versions")
+      .select("id")
+      .eq("position_id", position.id)
+      .in("status", ["approved", "active"])
+      .is("superseded_at", null)
+      .order("version_number", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (retry?.id) return retry.id as string;
+    throw new Error(`rubric_version_unavailable:${error?.message ?? "insert_failed"}`);
+  }
+  return created.id as string;
 }
+
 
 
 /**
@@ -386,7 +451,13 @@ export async function executeScoring(
       reused = true;
     } else {
       const explanation = buildExplanation(raw, rec.applied_caps);
-      const rubricVersionId = await resolveRubricVersionId(s, ctx.match.position_id);
+      const rubricVersionId = await ensureRubricVersionId(s, {
+        id: ctx.match.position_id,
+        organization_id: ctx.match.organization_id,
+        title: ctx.position.title ?? null,
+        requirements: (ctx.position as Any).requirements,
+        preferred_requirements: (ctx.position as Any).preferred_requirements,
+      });
       const enrichedResult = {
         ...raw,
         blueprint_version: SCORING_BLUEPRINT_VERSION,

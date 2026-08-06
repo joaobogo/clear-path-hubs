@@ -371,9 +371,38 @@ function ReviewWorkspace() {
                 </ul>
               </div>
             </div>
+            {/* The criteria list the score was actually computed against. */}
+            <div className="rounded-md border p-3">
+              <div className="text-xs font-medium">
+                Criteria as scored{" "}
+                {rubric ? `— ${fmt(rubric.label)} v${rubric.version_number}` : ""}
+              </div>
+              <ul className="mt-1 space-y-1 text-sm">
+                {(Array.isArray(rubric?.dimensions) ? rubric.dimensions : []).map(
+                  (r: Any, i: number) => (
+                    <li key={`d-${i}`}>• {typeof r === "string" ? r : r?.label ?? JSON.stringify(r)}</li>
+                  ),
+                )}
+                {(Array.isArray(rubric?.qualifiers) ? rubric.qualifiers : []).map(
+                  (r: Any, i: number) => (
+                    <li key={`q-${i}`} className="text-muted-foreground">
+                      • {typeof r === "string" ? r : r?.label ?? JSON.stringify(r)} (preferred)
+                    </li>
+                  ),
+                )}
+                {!Array.isArray(rubric?.dimensions) || rubric.dimensions.length === 0 ? (
+                  <li className="text-muted-foreground">
+                    No criteria recorded on this rubric version
+                  </li>
+                ) : null}
+              </ul>
+            </div>
             <div className="rounded-md bg-muted/50 p-3 text-xs text-muted-foreground">
               Rubric {rubric ? `v${rubric.version_number} (${fmt(rubric.status)})` : "not versioned"} ·
               engine {fmt(currentRun?.engine_version)} · method {fmt(currentRun?.evaluation_method)}
+              {currentRun?.evaluation_method === "legacy" ? (
+                <> · produced before the current scoring contract</>
+              ) : null}
               {Object.keys(dimensionWeights).length > 0 ? (
                 <>
                   {" "}

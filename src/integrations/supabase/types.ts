@@ -10577,7 +10577,7 @@ export type Database = {
       score_runs: {
         Row: {
           application_id: string
-          applied_cap: number
+          applied_cap: number | null
           blueprint_version: string
           candidate_match_id: string
           candidate_profile_id: string
@@ -10615,7 +10615,7 @@ export type Database = {
           raw_score: number
           requirement_coverage: Json
           result: Json
-          rubric_version_id: string | null
+          rubric_version_id: string
           score: number | null
           started_at: string | null
           status: Database["public"]["Enums"]["score_status"]
@@ -10624,7 +10624,7 @@ export type Database = {
         }
         Insert: {
           application_id: string
-          applied_cap: number
+          applied_cap?: number | null
           blueprint_version: string
           candidate_match_id: string
           candidate_profile_id: string
@@ -10662,7 +10662,7 @@ export type Database = {
           raw_score: number
           requirement_coverage?: Json
           result?: Json
-          rubric_version_id?: string | null
+          rubric_version_id: string
           score?: number | null
           started_at?: string | null
           status?: Database["public"]["Enums"]["score_status"]
@@ -10671,7 +10671,7 @@ export type Database = {
         }
         Update: {
           application_id?: string
-          applied_cap?: number
+          applied_cap?: number | null
           blueprint_version?: string
           candidate_match_id?: string
           candidate_profile_id?: string
@@ -10709,7 +10709,7 @@ export type Database = {
           raw_score?: number
           requirement_coverage?: Json
           result?: Json
-          rubric_version_id?: string | null
+          rubric_version_id?: string
           score?: number | null
           started_at?: string | null
           status?: Database["public"]["Enums"]["score_status"]
