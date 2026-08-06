@@ -181,6 +181,8 @@ export async function applyAssign(
     .select("id, candidate_profile_id");
   if (appErr) throw appErr;
 
+  // Two tables, no transaction available over the Data API: if the match insert
+  // fails we roll the applications back so an assignment is never half-written.
   const { error: matchErr } = await admin.from("candidate_matches").insert(
     (apps ?? []).map((a: any) => ({
       application_id: a.id,
@@ -192,7 +194,13 @@ export async function applyAssign(
       client_visibility: "hidden",
     })) as never,
   );
-  if (matchErr) throw matchErr;
+  if (matchErr) {
+    const appIds = (apps ?? []).map((a: any) => a.id as string);
+    if (appIds.length > 0) {
+      await admin.from("applications").delete().in("id", appIds);
+    }
+    throw matchErr;
+  }
 
   await admin.from("audit_events").insert({
     actor_user_id: actorUserId,
@@ -213,21 +221,26 @@ export async function applyBulkUpdateMessage(
 ) {
   const rows = await loadMatches(admin, matchIds);
   const { emitEventFromServer } = await import("./notifications.functions");
-  let sent = 0;
-  for (const row of rows) {
-    await emitEventFromServer({
-      event: "message_sent",
-      scope: `bulk:${row.id}:${Date.now()}`,
-      organization_id: row.organization_id as string,
-      position_id: row.position_id as string,
-      candidate_match_id: row.id as string,
-      candidate_profile_id: row.candidate_profile_id as string,
-      actor_user_id: actorUserId,
-      payload: { message },
-      link_path: `/admin/review/${row.id}`,
-    }).catch(() => null);
-    sent += 1;
-  }
+  // Emit in parallel: a 100-row bulk update used to await one event at a time.
+  const stamp = Date.now();
+  const results = await Promise.all(
+    rows.map((row) =>
+      emitEventFromServer({
+        event: "message_sent",
+        scope: `bulk:${row.id}:${stamp}`,
+        organization_id: row.organization_id as string,
+        position_id: row.position_id as string,
+        candidate_match_id: row.id as string,
+        candidate_profile_id: row.candidate_profile_id as string,
+        actor_user_id: actorUserId,
+        payload: { message },
+        link_path: `/admin/review/${row.id}`,
+      })
+        .then(() => true)
+        .catch(() => false),
+    ),
+  );
+  const sent = results.filter(Boolean).length;
   await admin.from("audit_events").insert({
     actor_user_id: actorUserId,
     action: "bulk.send_update",
