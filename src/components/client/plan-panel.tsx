@@ -99,9 +99,14 @@ function PlanCheckout({
 export function PlanPanel({
   organizationId,
   canMutate,
+  requestedPriceId = null,
+  onRequestHandled,
 }: {
   organizationId: string;
   canMutate: boolean;
+  /** A plan the client picked elsewhere on the page — buy or switch to it. */
+  requestedPriceId?: string | null;
+  onRequestHandled?: () => void;
 }) {
   const queryClient = useQueryClient();
   const planStateFn = useServerFn(getPlanState);
