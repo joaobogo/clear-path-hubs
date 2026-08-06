@@ -198,33 +198,134 @@ export const Route = createFileRoute("/api/public/intake")({
           });
         }
 
-        // ---------- Organization: resolve or create ----------
+        // ---------- Who is calling? ----------
+        // A bearer token is the only thing on this endpoint that proves identity.
+        // The posted work email does not: it is never verified here.
+        let callerUserId: string | null = null;
+        {
+          const authHeader = request.headers.get("authorization") ?? "";
+          const bearer = authHeader.toLowerCase().startsWith("bearer ")
+            ? authHeader.slice(7).trim()
+            : null;
+          if (bearer) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const { data: u } = await (supabaseAdmin as any).auth.getUser(bearer);
+            callerUserId = u?.user?.id ?? null;
+          }
+        }
+
+        // ---------- Organization: resolve, but never join someone else's ----------
+        // Joining an EXISTING tenant is a privilege. Neither a matching company
+        // name nor a matching email domain proves identity, so an existing
+        // organization is only ever joined by a caller who is already an active
+        // member of it. The service-role client below bypasses
+        // tg_memberships_guard (its checks sit inside IF v_actor IS NOT NULL and
+        // auth.uid() is NULL for service role), so this check must live here.
         const companyNorm = normalizeCompany(data.companyName);
         const domain = emailDomain(data.workEmail);
+        const corporateDomain = domain && !isGenericDomain(domain) ? domain : null;
         let organizationId: string | null = null;
+        let claimedExistingOrgId: string | null = null;
         {
+          let candidate: string | null = null;
           const { data: byName } = await supabaseAdmin
             .from("organizations")
             .select("id")
             .eq("name_normalized", companyNorm)
             .maybeSingle();
-          if (byName) organizationId = byName.id;
+          if (byName) candidate = byName.id as string;
+          if (!candidate && corporateDomain) {
+            const { data: byDomain } = await supabaseAdmin
+              .from("organizations")
+              .select("id")
+              .eq("domain", corporateDomain)
+              .maybeSingle();
+            if (byDomain) candidate = byDomain.id as string;
+          }
+          if (candidate) {
+            claimedExistingOrgId = candidate;
+            if (callerUserId) {
+              const { data: mem } = await supabaseAdmin
+                .from("memberships")
+                .select("id")
+                .eq("user_id", callerUserId)
+                .eq("organization_id", candidate)
+                .eq("status", "active")
+                .maybeSingle();
+              if (mem) organizationId = candidate;
+            }
+          }
         }
-        if (!organizationId && domain && !isGenericDomain(domain)) {
-          const { data: byDomain } = await supabaseAdmin
-            .from("organizations")
-            .select("id")
-            .eq("domain", domain)
-            .maybeSingle();
-          if (byDomain) organizationId = byDomain.id;
+        if (!organizationId && claimedExistingOrgId) {
+          return Response.json(
+            {
+              ok: false,
+              trace_id: traceId,
+              error: "organization_exists",
+              message:
+                "Your company already has a TaaSFlow workspace. Sign in, or ask a workspace admin to invite you, then launch your role.",
+            },
+            { status: 409 },
+          );
         }
+
+        // The organization is deliberately NOT created yet. Creating it before
+        // the account is resolved leaves an orphan "prospect" org behind on every
+        // rejected request, and that orphan then matches the lookup above and
+        // permanently 409s the real user out of their own company.
+
+        // ---------- Auth user: create new, never touch an existing one ----------
+        let authUserId: string | null = null;
+        {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const admin = supabaseAdmin as any;
+          const chosenPassword = data.password && data.password.length >= 8 ? data.password : cryptoRandomPassword(20);
+          const { data: created, error: createErr } = await admin.auth.admin.createUser({
+            email: data.workEmail,
+            password: chosenPassword,
+            email_confirm: true,
+            user_metadata: { full_name: `${data.firstName} ${data.lastName}`.trim() },
+          });
+          if (createErr) {
+            const found = await lookupUserIdByEmail(admin, data.workEmail);
+            if (!found) {
+              return Response.json(
+                { ok: false, trace_id: traceId, error: "auth_user_failed", message: createErr.message },
+                { status: 500 },
+              );
+            }
+            // An account already uses this email. Setting its password from a
+            // public form would hand any visitor that account, so we never write
+            // to it, and we only continue when the request provably comes from
+            // its owner.
+            if (callerUserId !== found) {
+              return Response.json(
+                {
+                  ok: false,
+                  trace_id: traceId,
+                  error: "account_exists",
+                  message: "An account already uses that email. Sign in first, then launch your role.",
+                },
+                { status: 409 },
+              );
+            }
+            authUserId = found;
+          } else {
+            authUserId = created?.user?.id ?? null;
+          }
+        }
+        if (!authUserId) {
+          return Response.json({ ok: false, trace_id: traceId, error: "auth_user_missing" }, { status: 500 });
+        }
+
+        // ---------- Organization: created only once the account is real ----------
         if (!organizationId) {
           const { data: newOrg, error: orgErr } = await supabaseAdmin
             .from("organizations")
             .insert({
               name: data.companyName.trim(),
               website: data.companyWebsite || null,
-              domain: domain && !isGenericDomain(domain) ? domain : null,
+              domain: corporateDomain,
               industry: data.industry || null,
               headquarters: data.headquarters || null,
               status: "prospect",
@@ -240,42 +341,6 @@ export const Route = createFileRoute("/api/public/intake")({
           organizationId = newOrg.id;
         }
 
-        // ---------- Auth user: resolve or create ----------
-        let authUserId: string | null = null;
-        {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const admin = supabaseAdmin as any;
-          const chosenPassword = data.password && data.password.length >= 8 ? data.password : cryptoRandomPassword(20);
-          const { data: created, error: createErr } = await admin.auth.admin.createUser({
-            email: data.workEmail,
-            password: chosenPassword,
-            email_confirm: true,
-            user_metadata: { full_name: `${data.firstName} ${data.lastName}`.trim() },
-          });
-          if (createErr) {
-            const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
-            const found = list?.users?.find(
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (u: any) => (u.email ?? "").toLowerCase() === data.workEmail,
-            );
-            if (!found) {
-              return Response.json(
-                { ok: false, trace_id: traceId, error: "auth_user_failed", message: createErr.message },
-                { status: 500 },
-              );
-            }
-            authUserId = found.id;
-            // Update password for the existing user so they can sign in with what they just chose.
-            if (data.password && data.password.length >= 8) {
-              await admin.auth.admin.updateUserById(found.id, { password: data.password });
-            }
-          } else {
-            authUserId = created?.user?.id ?? null;
-          }
-        }
-        if (!authUserId) {
-          return Response.json({ ok: false, trace_id: traceId, error: "auth_user_missing" }, { status: 500 });
-        }
 
         // ---------- Profile upsert ----------
         {
