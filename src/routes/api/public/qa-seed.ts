@@ -414,7 +414,7 @@ async function cleanupIntakeE2E(prefix: string): Promise<{ deleted: Record<strin
   const { count: profs } = await sb
     .from("profiles")
     .delete({ count: "exact" })
-    .ilike("email", "qa.intake+%@qa.taasflow.test");
+    .ilike("email", "qa.intake+%qa.taasflow.test");
   counts.profiles_deleted = profs ?? 0;
 
   return { deleted: counts };
