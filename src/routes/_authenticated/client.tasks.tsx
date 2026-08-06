@@ -8,7 +8,10 @@ export const Route = createFileRoute("/_authenticated/client/tasks")({
   beforeLoad: ({ search }) => {
     throw redirect({
       to: "/client/approvals",
-      search: { ...(search as Record<string, unknown>), view: undefined } as never,
+      search: ((s: Record<string, unknown>) => ({
+        ...s,
+        view: typeof s.view === "string" ? s.view : undefined,
+      }))(search as Record<string, unknown>) as never,
       statusCode: 301,
     });
   },
