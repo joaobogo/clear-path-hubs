@@ -49,10 +49,12 @@ export type EngineCalibration = {
   disqualified_cap: number;
   /** Base category weights before absent categories are dropped. */
   base_weights: { must_have: number; preferred: number; screening_alignment: number };
-  /** Score (0-100) + must-have coverage required for `strong_fit`. */
-  strong_fit: { min_score: number; min_must_have_coverage: number };
-  /** Score (0-100) required for `worth_considering`. */
-  worth_considering_min_score: number;
+  /**
+   * Must-have coverage required before a score-derived `strong_fit` band is
+   * allowed. Numeric band cut-offs live in src/lib/scoring/bands.ts — this is
+   * the only fit gate the calibration still owns.
+   */
+  strong_fit: { min_must_have_coverage: number };
   /** Below this confidence a run is routed to human review, never published. */
   manual_review_confidence: number;
 };
@@ -82,8 +84,7 @@ export const DEFAULT_CALIBRATION: EngineCalibration = {
   // readable rather than collapsing to zero.
   disqualified_cap: 0.15,
   base_weights: { must_have: 0.6, preferred: 0.2, screening_alignment: 0.2 },
-  strong_fit: { min_score: 75, min_must_have_coverage: 0.75 },
-  worth_considering_min_score: 55,
+  strong_fit: { min_must_have_coverage: 0.75 },
   manual_review_confidence: 0.35,
 };
 
