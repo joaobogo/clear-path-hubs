@@ -64,7 +64,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-import { makeWorkspacePending } from "@/components/workspace/pending-states";
   Dialog,
   DialogContent,
   DialogDescription,
@@ -72,6 +71,7 @@ import { makeWorkspacePending } from "@/components/workspace/pending-states";
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
 
 
 const RoutePending = makeWorkspacePending({ shape: "board", kpis: false, width: "7xl" });

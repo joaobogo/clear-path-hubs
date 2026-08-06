@@ -44,7 +44,6 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-import { makeWorkspacePending } from "@/components/workspace/pending-states";
   Plus,
   CheckCircle2,
   Circle,
@@ -53,6 +52,7 @@ import { makeWorkspacePending } from "@/components/workspace/pending-states";
   AlertTriangle,
   ShieldAlert,
 } from "lucide-react";
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
 
 
 const RoutePending = makeWorkspacePending({ shape: "rows", kpis: false, width: "6xl" });

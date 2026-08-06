@@ -61,7 +61,6 @@ import {
  DialogDescription,
 } from "@/components/ui/dialog";
 import {
-import { makeWorkspacePending } from "@/components/workspace/pending-states";
  CalendarClock,
  CheckCircle2,
  Circle,
@@ -72,6 +71,7 @@ import { makeWorkspacePending } from "@/components/workspace/pending-states";
  Video,
  X,
 } from "lucide-react";
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
 
 
 const RoutePending = makeWorkspacePending({ shape: "cards", kpis: false, width: "6xl" });

@@ -69,10 +69,10 @@ import {
 } from "@/lib/empty-states/empty-state-catalogue";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-import { makeWorkspacePending } from "@/components/workspace/pending-states";
   clientRoleStatusLabel,
   type ClientRoleStatus,
 } from "@/lib/client-role-status";
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
 
 type Row = {
  id: string;
