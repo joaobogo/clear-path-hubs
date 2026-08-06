@@ -236,16 +236,9 @@ export const updateClientBranding = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: z.infer<typeof brandingSchema>) => brandingSchema.parse(input))
   .handler(async ({ context, data }) => {
-    // Must be a client_admin of this org (or platform staff via RLS).
-    const { data: membership } = await context.supabase
-      .from("memberships")
-      .select("role, status")
-      .eq("user_id", context.userId)
-      .eq("organization_id", data.orgId)
-      .eq("status", "active")
-      .maybeSingle();
-    const role = (membership as { role?: string } | null)?.role;
-    if (role !== "client_admin" && role !== "platform_admin" && role !== "operations") {
+    // Must be a client_admin of this org (or platform staff).
+    const access = await readWorkspaceAccess(context.supabase, context.userId, data.orgId);
+    if (!access.isAdmin) {
       throw new Error("Only client admins can update branding.");
     }
     const { error } = await context.supabase
@@ -2499,18 +2492,8 @@ export const getClientSettings = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
-    // Tenant gate — must be an active member (or platform staff).
-    const { data: member } = await context.supabase
-      .from("memberships")
-      .select("role, status")
-      .eq("organization_id", data.orgId)
-      .eq("user_id", context.userId)
-      .eq("status", "active")
-      .maybeSingle();
-    const { data: staff } = await context.supabase.rpc("is_platform_staff", {
-      _user: context.userId,
-    });
-    if (!member && staff !== true) throw new Error("Forbidden");
+    // Tenant gate — canonical helper (active member or platform staff).
+    await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
 
     const [{ data: org }, { data: prefs }, { data: profile }] = await Promise.all([
       context.supabase
@@ -2613,18 +2596,8 @@ export const updateClientNotificationPreferences = createServerFn({ method: "POS
   .inputValidator((input: z.input<typeof notifPrefsZ>) => notifPrefsZ.parse(input))
   .handler(async ({ context, data }) => {
     // Any active member may manage their own — but block viewers per product rule.
-    const { data: member } = await context.supabase
-      .from("memberships")
-      .select("role, status")
-      .eq("organization_id", data.orgId)
-      .eq("user_id", context.userId)
-      .eq("status", "active")
-      .maybeSingle();
-    const { data: staff } = await context.supabase.rpc("is_platform_staff", {
-      _user: context.userId,
-    });
-    if (!member && staff !== true) throw new Error("Forbidden");
-    if (member?.role === "client_viewer") throw new Error("Read-only role");
+    const access = await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
+    if (access.role === "client_viewer") throw new Error("Read-only role");
     await assertNotSupportViewReadOnly(context.supabase, context.userId, data.orgId);
 
     const trace_id = `st-np-${crypto.randomUUID()}`;
