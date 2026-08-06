@@ -4,7 +4,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,6 +23,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { AlertTriangle, BadgeCheck, CalendarCheck2, ShieldCheck } from "lucide-react";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import {
   closePositionWithOutcomeFn,
   getOfferHireRollup,
@@ -155,23 +155,8 @@ export function PositionOfferTrackingPanel({ positionId }: { positionId: string 
     onError: (e: Error) => toast.error(e.message),
   });
 
-  if (query.isPending) {
-    return (
-      <div className="space-y-3">
-        <Skeleton className="h-6 w-48" />
-        <div className="grid gap-3 sm:grid-cols-4">
-          {[0, 1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-20" />
-          ))}
-        </div>
-        <Skeleton className="h-28" />
-      </div>
-    );
-  }
-  if (query.isError) return <ErrorCard onRetry={() => void query.refetch()} />;
-
   const data = query.data;
-  const closed = data.position_status === "filled" || data.position_status === "closed";
+  const closed = data ? data.position_status === "filled" || data.position_status === "closed" : false;
 
   return (
     <section className="space-y-4">
@@ -185,13 +170,20 @@ export function PositionOfferTrackingPanel({ positionId }: { positionId: string 
             Guarantee end dates are derived from the recorded start date.
           </p>
         </div>
-        {!closed && (
+        {data && !closed && (
           <Button variant="outline" size="sm" onClick={() => setCloseOpen(true)}>
             Close position
           </Button>
         )}
       </header>
 
+      <PanelState
+        query={query}
+        isEmpty={(data?.offers.length ?? 0) === 0}
+        empty={<PanelEmpty title="No offers on this role" description="Offers extended for this position will appear here." />}
+      >
+      {data && (
+      <>
       {!data.can_close_filled && !closed && (
         <div className="flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/5 p-3 text-sm">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
@@ -206,11 +198,6 @@ export function PositionOfferTrackingPanel({ positionId }: { positionId: string 
         <Stat label="Start dates confirmed" value={data.totals.start_dates_confirmed} />
       </div>
 
-      {data.offers.length === 0 ? (
-        <p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-          No offers on this role
-        </p>
-      ) : (
         <div className="overflow-x-auto rounded-lg border">
           <table className="w-full text-sm">
             <thead className="bg-muted/50 text-left text-xs uppercase text-muted-foreground">
@@ -283,7 +270,9 @@ export function PositionOfferTrackingPanel({ positionId }: { positionId: string 
             </tbody>
           </table>
         </div>
+      </>
       )}
+      </PanelState>
 
       {/* Record outcome */}
       <Dialog open={outcomeFor != null} onOpenChange={(v) => !v && setOutcomeFor(null)}>
@@ -445,8 +434,8 @@ export function PositionOfferTrackingPanel({ positionId }: { positionId: string 
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="filled" disabled={!data.can_close_filled}>
-                    Filled {data.can_close_filled ? "" : "(no confirmed hire)"}
+                  <SelectItem value="filled" disabled={!data?.can_close_filled}>
+                    Filled {data?.can_close_filled ? "" : "(no confirmed hire)"}
                   </SelectItem>
                   <SelectItem value="closed">Closed without a hire</SelectItem>
                 </SelectContent>
@@ -471,7 +460,7 @@ export function PositionOfferTrackingPanel({ positionId }: { positionId: string 
               disabled={
                 closePosition.isPending ||
                 closeNote.trim().length < 3 ||
-                (closeOutcome === "filled" && !data.can_close_filled)
+                (closeOutcome === "filled" && !data?.can_close_filled)
               }
               onClick={() =>
                 closePosition.mutate({

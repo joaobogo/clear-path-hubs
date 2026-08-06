@@ -5,9 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getRejectionReasonSummary } from "@/lib/rejection-reasons.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 
 export function RejectionReasonsPanel({
   positionId,
@@ -39,66 +38,55 @@ export function RejectionReasonsPanel({
         ) : null}
       </CardHeader>
       <CardContent className="space-y-3">
-        {q.isPending ? (
-          <div className="space-y-2">
-            {[0, 1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-8 w-full" />
-            ))}
-          </div>
-        ) : q.isError ? (
-          <div className="space-y-3 rounded-md border border-destructive/40 bg-destructive/5 p-4">
-            <p className="text-sm text-destructive">
-              Reason counts could not be loaded, so this list is incomplete.
-            </p>
-            <Button size="sm" variant="outline" onClick={() => void q.refetch()}>
-              Retry
-            </Button>
-          </div>
-        ) : q.data.total_decisions === 0 ? (
-          <p className="text-sm text-muted-foreground">No rejections recorded</p>
-        ) : (
-          <>
-            <ul className="divide-y">
-              {q.data.reasons.map((r) => (
-                <li key={r.code ?? "none"} className="flex items-center justify-between gap-3 py-2">
-                  <span className="text-sm">{r.label}</span>
-                  <span className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Badge variant="outline">us {r.admin}</Badge>
-                    <Badge variant="outline">client {r.client}</Badge>
-                    <span className="w-8 text-right text-sm font-semibold text-foreground">
-                      {r.total}
+        <PanelState
+          query={q}
+          isEmpty={(q.data?.total_decisions ?? 0) === 0}
+          empty={<PanelEmpty title="No rejections recorded" />}
+        >
+          {q.data && (
+            <>
+              <ul className="divide-y">
+                {q.data.reasons.map((r) => (
+                  <li key={r.code ?? "none"} className="flex items-center justify-between gap-3 py-2">
+                    <span className="text-sm">{r.label}</span>
+                    <span className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Badge variant="outline">us {r.admin}</Badge>
+                      <Badge variant="outline">client {r.client}</Badge>
+                      <span className="w-8 text-right text-sm font-semibold text-foreground">
+                        {r.total}
+                      </span>
                     </span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-            {q.data.unattributed > 0 ? (
-              <p className="text-xs text-muted-foreground">
-                {q.data.unattributed} older decision
-                {q.data.unattributed === 1 ? "" : "s"} carry no structured reason. New rejections
-                always require one.
-              </p>
-            ) : null}
-            <div className="space-y-2 border-t pt-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Most recent
-              </p>
-              <ul className="space-y-2">
-                {q.data.recent.slice(0, 6).map((d) => (
-                  <li key={d.decision_id} className="text-xs text-muted-foreground">
-                    <span className="font-medium text-foreground">{d.reason_label}</span>
-                    {" · "}
-                    {d.surface === "client" ? "client decision" : "our decision"}
-                    {d.stage_at_decision ? ` · at ${d.stage_at_decision.replace(/_/g, " ")}` : ""}
-                    {" · "}
-                    {new Date(d.created_at).toLocaleDateString()}
-                    {d.detail ? <span className="block">{d.detail}</span> : null}
                   </li>
                 ))}
               </ul>
-            </div>
-          </>
-        )}
+              {q.data.unattributed > 0 ? (
+                <p className="text-xs text-muted-foreground">
+                  {q.data.unattributed} older decision
+                  {q.data.unattributed === 1 ? "" : "s"} carry no structured reason. New rejections
+                  always require one.
+                </p>
+              ) : null}
+              <div className="space-y-2 border-t pt-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Most recent
+                </p>
+                <ul className="space-y-2">
+                  {q.data.recent.slice(0, 6).map((d) => (
+                    <li key={d.decision_id} className="text-xs text-muted-foreground">
+                      <span className="font-medium text-foreground">{d.reason_label}</span>
+                      {" · "}
+                      {d.surface === "client" ? "client decision" : "our decision"}
+                      {d.stage_at_decision ? ` · at ${d.stage_at_decision.replace(/_/g, " ")}` : ""}
+                      {" · "}
+                      {new Date(d.created_at).toLocaleDateString()}
+                      {d.detail ? <span className="block">{d.detail}</span> : null}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </>
+          )}
+        </PanelState>
       </CardContent>
     </Card>
   );

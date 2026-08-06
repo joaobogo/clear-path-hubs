@@ -10,8 +10,8 @@ import { getMilestoneTimingReport } from "@/lib/milestone-timings.functions";
 import { MILESTONES, MIN_SAMPLE, formatDays, type TimingSegment } from "@/lib/milestone-timings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 
 const PERIODS = [30, 90, 180, 365] as const;
 
@@ -93,26 +93,17 @@ export function MilestoneTimingPanel() {
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        {q.isPending ? (
-          <div className="space-y-2">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} className="h-9 w-full" />
-            ))}
-          </div>
-        ) : q.isError ? (
-          <div className="space-y-3 rounded-md border border-destructive/40 bg-destructive/5 p-4">
-            <p className="text-sm text-destructive">
-              Timing could not be loaded, so no figures are shown here.
-            </p>
-            <Button size="sm" variant="outline" onClick={() => void q.refetch()}>
-              Retry
-            </Button>
-          </div>
-        ) : q.data.overall.total_instances === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            Not enough completed roles to report timing
-          </p>
-        ) : (
+        <PanelState
+          query={q}
+          isEmpty={(q.data?.overall.total_instances ?? 0) === 0}
+          empty={
+            <PanelEmpty
+              title="Not enough completed roles to report timing"
+              description="Figures appear once enough milestones have been completed."
+            />
+          }
+        >
+          {q.data && (
           <>
             <SegmentTable segment={q.data.overall} caption="All delivery" />
 
@@ -188,7 +179,8 @@ export function MilestoneTimingPanel() {
               Milestones measured: {MILESTONES.map((m) => m.label).join(" · ")}.
             </p>
           </>
-        )}
+          )}
+        </PanelState>
       </CardContent>
     </Card>
   );

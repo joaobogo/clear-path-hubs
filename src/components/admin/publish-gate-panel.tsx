@@ -11,8 +11,7 @@ import {
 } from "@/lib/publish-gate";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ErrorState } from "@/components/ds";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { PaymentExemptionDialog } from "@/components/admin/payment-exemption-dialog";
 import { CheckCircle2, Lock, PencilLine } from "lucide-react";
 import { toast } from "sonner";
@@ -96,109 +95,99 @@ export function PublishGatePanel({ includeTest = false }: { includeTest?: boolea
         )}
       </header>
 
-      {query.isPending ? (
-        <div className="space-y-2 p-4">
-          {[0, 1, 2].map((i) => (
-            <Skeleton key={i} className="h-12 w-full" />
-          ))}
-        </div>
-      ) : query.isError ? (
-        <div className="p-4">
-          <ErrorState
-            title="Could not load publish blockers"
-            description={(query.error as Error).message}
-            onRetry={() => query.refetch()}
-          />
-        </div>
-      ) : (query.data?.rows.length ?? 0) === 0 ? (
-        <p className="p-10 text-center text-sm text-muted-foreground">All roles publishable.</p>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/40 text-left text-xs uppercase text-muted-foreground">
-              <tr>
-                <th className="px-3 py-2 font-medium">Role · Client</th>
-                <th className="px-3 py-2 font-medium">Publish state</th>
-                <th className="px-3 py-2 font-medium">Payment</th>
-                <th className="px-3 py-2 font-medium">Blocking</th>
-                <th className="px-3 py-2 font-medium">Owner</th>
-                <th className="px-3 py-2 font-medium">Publish-ready</th>
-                <th className="px-3 py-2 text-right font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {query.data!.rows.map((r) => (
-                <tr key={r.position_id} className="align-top">
-                  <td className="px-3 py-2">
-                    <Link
-                      to="/admin/positions/$id"
-                      params={{ id: r.position_id }}
-                      className="font-medium hover:underline"
-                    >
-                      {r.title}
-                    </Link>
-                    <div className="text-xs text-muted-foreground">{r.organization_name}</div>
-                  </td>
-                  <td className="px-3 py-2 text-xs capitalize">{r.status.replace(/_/g, " ")}</td>
-                  <td className="px-3 py-2 text-xs">
-                    <span
-                      className={
-                        r.payment_satisfied
-                          ? "text-success dark:text-success"
-                          : "font-medium text-destructive"
-                      }
-                    >
-                      {r.payment_status ?? "unpaid"}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2">
-                    {r.blockers.length === 0 ? (
-                      <span className="inline-flex items-center gap-1 text-xs text-success dark:text-success">
-                        <CheckCircle2 className="h-3.5 w-3.5" /> Nothing blocking
-                      </span>
-                    ) : (
-                      <div className="flex flex-wrap gap-1">
-                        {r.blockers.map((b) => (
-                          <BlockerChip key={b} blocker={b} positionId={r.position_id} />
-                        ))}
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-3 py-2 text-xs text-muted-foreground">
-                    {r.owner_name ?? (r.owner_user_id ? "Assigned" : "Unassigned")}
-                  </td>
-                  <td className="px-3 py-2 text-xs tabular-nums text-muted-foreground">
-                    {r.can_publish ? fmtDate(r.publish_ready_at) : "Not ready"}
-                  </td>
-                  <td className="px-3 py-2">
-                    <div className="flex flex-wrap items-center justify-end gap-2">
-                      {!r.payment_satisfied && (
-                        <PaymentExemptionDialog
-                          positionId={r.position_id}
-                          paymentStatus={r.payment_status}
-                        />
-                      )}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        disabled={!r.can_publish || busy === r.position_id}
-                        onClick={() => publishMut.mutate(r.position_id)}
-                        title={
-                          r.can_publish
-                            ? "Publish this role"
-                            : "Resolve the blocking items before publishing"
+      <div className="p-4">
+        <PanelState
+          query={query}
+          isEmpty={(query.data?.rows.length ?? 0) === 0}
+          empty={<PanelEmpty title="All roles publishable" />}
+        >
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/40 text-left text-xs uppercase text-muted-foreground">
+                <tr>
+                  <th className="px-3 py-2 font-medium">Role · Client</th>
+                  <th className="px-3 py-2 font-medium">Publish state</th>
+                  <th className="px-3 py-2 font-medium">Payment</th>
+                  <th className="px-3 py-2 font-medium">Blocking</th>
+                  <th className="px-3 py-2 font-medium">Owner</th>
+                  <th className="px-3 py-2 font-medium">Publish-ready</th>
+                  <th className="px-3 py-2 text-right font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {query.data?.rows.map((r) => (
+                  <tr key={r.position_id} className="align-top">
+                    <td className="px-3 py-2">
+                      <Link
+                        to="/admin/positions/$id"
+                        params={{ id: r.position_id }}
+                        className="font-medium hover:underline"
+                      >
+                        {r.title}
+                      </Link>
+                      <div className="text-xs text-muted-foreground">{r.organization_name}</div>
+                    </td>
+                    <td className="px-3 py-2 text-xs capitalize">{r.status.replace(/_/g, " ")}</td>
+                    <td className="px-3 py-2 text-xs">
+                      <span
+                        className={
+                          r.payment_satisfied
+                            ? "text-success dark:text-success"
+                            : "font-medium text-destructive"
                         }
                       >
-                        {busy === r.position_id ? "Publishing…" : "Publish"}
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+                        {r.payment_status ?? "unpaid"}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2">
+                      {r.blockers.length === 0 ? (
+                        <span className="inline-flex items-center gap-1 text-xs text-success dark:text-success">
+                          <CheckCircle2 className="h-3.5 w-3.5" /> Nothing blocking
+                        </span>
+                      ) : (
+                        <div className="flex flex-wrap gap-1">
+                          {r.blockers.map((b) => (
+                            <BlockerChip key={b} blocker={b} positionId={r.position_id} />
+                          ))}
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-3 py-2 text-xs text-muted-foreground">
+                      {r.owner_name ?? (r.owner_user_id ? "Assigned" : "Unassigned")}
+                    </td>
+                    <td className="px-3 py-2 text-xs tabular-nums text-muted-foreground">
+                      {r.can_publish ? fmtDate(r.publish_ready_at) : "Not ready"}
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="flex flex-wrap items-center justify-end gap-2">
+                        {!r.payment_satisfied && (
+                          <PaymentExemptionDialog
+                            positionId={r.position_id}
+                            paymentStatus={r.payment_status}
+                          />
+                        )}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={!r.can_publish || busy === r.position_id}
+                          onClick={() => publishMut.mutate(r.position_id)}
+                          title={
+                            r.can_publish
+                              ? "Publish this role"
+                              : "Resolve the blocking items before publishing"
+                          }
+                        >
+                          {busy === r.position_id ? "Publishing…" : "Publish"}
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </PanelState>
+      </div>
     </section>
   );
 }
