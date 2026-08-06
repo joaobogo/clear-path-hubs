@@ -4,7 +4,7 @@
  * Shows what the client is on, how much of it is left, and lets an admin buy,
  * change or cancel — with the consequence spelled out before they click.
  */
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
@@ -99,9 +99,14 @@ function PlanCheckout({
 export function PlanPanel({
   organizationId,
   canMutate,
+  requestedPriceId = null,
+  onRequestHandled,
 }: {
   organizationId: string;
   canMutate: boolean;
+  /** A plan the client picked elsewhere on the page — buy or switch to it. */
+  requestedPriceId?: string | null;
+  onRequestHandled?: () => void;
 }) {
   const queryClient = useQueryClient();
   const planStateFn = useServerFn(getPlanState);
@@ -185,8 +190,33 @@ export function PlanPanel({
       ? ""
       : `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`;
 
+  // A plan chosen from the catalogue further down the page routes through the
+  // same buy / change path as the buttons in here — one code path, one result.
+  useEffect(() => {
+    if (!requestedPriceId) return;
+    const plan = catalogue.find((p) => p.priceId === requestedPriceId);
+    onRequestHandled?.();
+    if (!plan) return;
+    if (!canMutate) {
+      toast.error("Only an Admin on this workspace can change the plan.");
+      return;
+    }
+    if (plan.priceId === sub?.priceId) {
+      toast.info("You're already on this plan.");
+      return;
+    }
+    setShowAll(true);
+    if (plan.kind === "subscription" && sub) {
+      change.mutate(plan.priceId);
+      return;
+    }
+    setBuying(plan.priceId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requestedPriceId, catalogue.length, canMutate, sub?.priceId]);
+
+
   return (
-    <section className="rounded-xl border bg-card p-5">
+    <section id="plan-panel" className="rounded-xl border bg-card p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
@@ -297,7 +327,6 @@ export function PlanPanel({
                             {plan.interval === "year" ? " / year" : " / month"}
                           </span>
                         </div>
-                        <div className="text-xs text-muted-foreground">{plan.allowance}</div>
                         {!isCurrent && (
                           <Button
                             size="sm"
@@ -335,7 +364,6 @@ export function PlanPanel({
                       <div className="text-sm font-medium">{plan.label}</div>
                       <div className="text-xs text-muted-foreground">{plan.summary}</div>
                       <div className="mt-2 text-sm">{money(plan.amountUsd)}</div>
-                      <div className="text-xs text-muted-foreground">{plan.allowance}</div>
                       <Button
                         size="sm"
                         variant="outline"

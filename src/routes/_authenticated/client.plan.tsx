@@ -3,6 +3,7 @@
  * Prices come from the catalogue, which mirrors the public pricing page —
  * there is no second set of numbers anywhere.
  */
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -46,6 +47,62 @@ function money(amountUsd: number) {
   return `$${amountUsd.toLocaleString("en-US")}`;
 }
 
+/**
+ * One plan, clickable when the viewer is allowed to buy or switch. The whole
+ * card is the control so it works on a phone without hunting for a button.
+ */
+function PlanCard({
+  label,
+  price,
+  summary,
+  detail,
+  onSelect,
+  actionLabel,
+}: {
+  label: string;
+  price: string;
+  summary: string;
+  detail: string | null;
+  onSelect: (() => void) | null;
+  actionLabel: string;
+}) {
+  const body = (
+    <>
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center justify-between gap-2 text-base">
+          {label}
+          <Badge variant="outline">{price}</Badge>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2 text-sm text-muted-foreground">
+        <p>{summary}</p>
+        {detail ? <p className="text-xs">{detail}</p> : null}
+      </CardContent>
+    </>
+  );
+
+  if (!onSelect) return <Card>{body}</Card>;
+
+  return (
+    <Card
+      role="button"
+      tabIndex={0}
+      aria-label={`${actionLabel} — ${label}, ${price}`}
+      onClick={onSelect}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect();
+        }
+      }}
+      className="cursor-pointer transition hover:border-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      {body}
+    </Card>
+  );
+}
+
+
 function PlanPage() {
   const ctxFn = useServerFn(getClientContext);
   const orgSearch = useClientOrgSearch();
@@ -70,6 +127,14 @@ function PlanPage() {
   const packages = PLAN_CATALOGUE.filter((p) => p.kind === "package");
   const subscriptions = PLAN_CATALOGUE.filter((p) => p.kind === "subscription");
 
+  const [requested, setRequested] = useState<string | null>(null);
+  const canPick = Boolean(orgId) && canSeeBilling && canMutate;
+  const pick = (priceId: string) => {
+    setRequested(priceId);
+    document.getElementById("plan-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+
   return (
     <div className="space-y-8">
       <div>
@@ -93,7 +158,12 @@ function PlanPage() {
         />
       ) : (
         <>
-          <PlanPanel organizationId={orgId} canMutate={canMutate} />
+          <PlanPanel
+            organizationId={orgId}
+            canMutate={canMutate}
+            requestedPriceId={requested}
+            onRequestHandled={() => setRequested(null)}
+          />
           <ServiceExpectationsTable orgId={orgId} />
         </>
       )}
@@ -102,23 +172,15 @@ function PlanPage() {
         <h2 className="text-sm font-semibold">One-off packages</h2>
         <div className="grid gap-4 md:grid-cols-3">
           {packages.map((plan) => (
-            <Card key={plan.priceId}>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center justify-between text-base">
-                  {plan.label}
-                  <Badge variant="outline">{money(plan.amountUsd)}</Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm text-muted-foreground">
-                <p>{plan.summary}</p>
-                <p>
-                  {plan.rolesTotal === null
-                    ? "Unlimited roles"
-                    : `${plan.rolesTotal} role${plan.rolesTotal === 1 ? "" : "s"}`}
-                  {plan.validForDays ? ` · valid ${plan.validForDays} days` : ""}
-                </p>
-              </CardContent>
-            </Card>
+            <PlanCard
+              key={plan.priceId}
+              label={plan.label}
+              price={money(plan.amountUsd)}
+              summary={plan.summary}
+              detail={plan.validForDays ? `Valid ${plan.validForDays} days` : null}
+              onSelect={canPick ? () => pick(plan.priceId) : null}
+              actionLabel="Buy this package"
+            />
           ))}
         </div>
       </section>
@@ -127,27 +189,18 @@ function PlanPage() {
         <h2 className="text-sm font-semibold">Subscriptions</h2>
         <div className="grid gap-4 md:grid-cols-3">
           {subscriptions.map((plan) => (
-            <Card key={plan.priceId}>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center justify-between text-base">
-                  {plan.label}
-                  <Badge variant="outline">
-                    {money(plan.amountUsd)}/{plan.interval === "year" ? "yr" : "mo"}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm text-muted-foreground">
-                <p>{plan.summary}</p>
-                <p>
-                  {plan.rolesTotal === null
-                    ? "Unlimited active roles"
-                    : `Up to ${plan.rolesTotal} active roles`}{" "}
-                  · cancel any time, runs to the end of the period
-                </p>
-              </CardContent>
-            </Card>
+            <PlanCard
+              key={plan.priceId}
+              label={plan.label}
+              price={`${money(plan.amountUsd)}/${plan.interval === "year" ? "yr" : "mo"}`}
+              summary={plan.summary}
+              detail="Cancel any time — it runs to the end of the period"
+              onSelect={canPick ? () => pick(plan.priceId) : null}
+              actionLabel="Switch to this plan"
+            />
           ))}
         </div>
+
       </section>
 
       <Card>
