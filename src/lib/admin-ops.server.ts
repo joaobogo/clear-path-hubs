@@ -15,28 +15,15 @@ export async function requireStaff(userId: string) {
   if (data !== true) throw new Error("forbidden");
 }
 
-export type QueueItem = {
-  id: string;
-  title: string;
-  subtitle: string;
-  meta: string | null;
-  waiting_since: string | null;
-  /** Route + params for the single direct action. */
-  to: string;
-  params: Record<string, string>;
-  action_label: string;
-  tone: "default" | "warning" | "danger";
-};
-
-export type WorkQueue = {
-  key: string;
-  label: string;
-  description: string;
-  count: number;
-  action_hint: string;
-  items: QueueItem[];
-  see_all?: { to: string };
-};
+export type {
+  QueueTarget,
+  QueueOwner,
+  QueueClaim,
+  QueueItem,
+  QueueSeeAll,
+  WorkQueue,
+} from "./admin-ops-types";
+import type { QueueClaim, QueueItem, QueueOwner, WorkQueue } from "./admin-ops-types";
 
 const ISO = (ms: number) => new Date(Date.now() - ms).toISOString();
 const HOUR = 3_600_000;
@@ -63,7 +50,7 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
     excludeTestOrgs(
       s
         .from("positions")
-        .select("id,title,status,payment_status,created_at,updated_at,organizations(name)", {
+        .select("id,title,status,payment_status,owner_user_id,created_at,updated_at,organizations(name)", {
           count: "exact",
         })
         .in("payment_status", ["unpaid", "pending"])
@@ -77,7 +64,7 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
     excludeTestOrgs(
       s
         .from("positions")
-        .select("id,title,status,payment_status,created_at,organizations(name)", { count: "exact" })
+        .select("id,title,status,payment_status,owner_user_id,created_at,organizations(name)", { count: "exact" })
         .in("status", ["submitted", "needs_clarification"])
         .in("payment_status", ["paid", "exempt"])
         .order("created_at", { ascending: true })
@@ -90,7 +77,7 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       s
         .from("candidate_matches")
         .select(
-          "id,updated_at,processing_state,candidate_profiles(full_name),positions(title,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score)",
+          "id,updated_at,processing_state,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score)",
           { count: "exact" },
         )
         .eq("admin_status", "pending")
@@ -105,7 +92,7 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       s
         .from("candidate_matches")
         .select(
-          "id,updated_at,stage,candidate_profiles(full_name),positions(title,organizations(name)),client_decisions(id)",
+          "id,updated_at,stage,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(name)),client_decisions(id)",
           { count: "exact" },
         )
         .eq("client_visibility", "visible")
@@ -121,7 +108,7 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       s
         .from("interviews")
         .select(
-          "id,status,requested_at,scheduled_at,candidate_match_id,candidate_matches(candidate_profiles(full_name),positions(title,organizations(name)))",
+          "id,status,requested_at,scheduled_at,candidate_match_id,candidate_matches(candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(name)))",
           { count: "exact" },
         )
         .or(
@@ -137,7 +124,7 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       s
         .from("candidate_matches")
         .select(
-          "id,processing_state,processing_error_code,processing_updated_at,candidate_profiles(full_name),positions(title,organizations(name))",
+          "id,processing_state,processing_error_code,processing_updated_at,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(name))",
           { count: "exact" },
         )
         .in("processing_state", [
@@ -165,11 +152,44 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       id: string;
       org_name: string | null;
       role_title: string | null;
+      owner_user_id: string | null;
       created_at: string;
       days_waiting: number;
     }>;
     count: number;
   };
+
+  // One profile read for every owner id on the page, so each row can show who
+  // holds it without a second click.
+  const ownerIds = new Set<string>();
+  const addOwner = (v: unknown) => {
+    if (typeof v === "string" && v) ownerIds.add(v);
+  };
+  for (const p of (unpaid.data ?? []) as Any[]) addOwner(p.owner_user_id);
+  for (const p of (setup.data ?? []) as Any[]) addOwner(p.owner_user_id);
+  for (const m of (review.data ?? []) as Any[]) addOwner(m.positions?.owner_user_id);
+  for (const m of overdue) addOwner(m.positions?.owner_user_id);
+  for (const iv of (interviews.data ?? []) as Any[])
+    addOwner(iv.candidate_matches?.positions?.owner_user_id);
+  for (const m of (blocked.data ?? []) as Any[]) addOwner(m.positions?.owner_user_id);
+  for (const i of agingIntakes.items) addOwner(i.owner_user_id);
+
+  const ownerName = new Map<string, string>();
+  if (ownerIds.size) {
+    const { data: profiles } = await s
+      .from("profiles")
+      .select("auth_user_id,full_name,email")
+      .in("auth_user_id", [...ownerIds]);
+    for (const pr of (profiles ?? []) as Any[]) {
+      ownerName.set(pr.auth_user_id, pr.full_name || pr.email || "Unknown staff");
+    }
+  }
+  const owner = (id: unknown): QueueOwner =>
+    typeof id === "string" && id
+      ? { user_id: id, name: ownerName.get(id) ?? "Unknown staff" }
+      : null;
+  const positionClaim = (id: unknown): QueueClaim =>
+    typeof id === "string" && id ? { kind: "position" as const, id } : null;
 
   return [
     {
@@ -185,9 +205,10 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
         subtitle: i.role_title ?? "Role not stated",
         meta: `${i.days_waiting} day${i.days_waiting === 1 ? "" : "s"} waiting`,
         waiting_since: i.created_at,
-        to: "/admin/intake/$id",
-        params: { id: i.id },
+        target: { kind: "intake" as const, id: i.id },
         action_label: "Open intake",
+        owner: owner(i.owner_user_id),
+        claim: { kind: "intake" as const, id: i.id },
         tone: ageTone(i.created_at, 3, 7),
       })),
     },
@@ -205,9 +226,10 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
         subtitle: p.organizations?.name ?? "—",
         meta: p.payment_status === "pending" ? "checkout started" : "no checkout yet",
         waiting_since: p.updated_at ?? p.created_at,
-        to: "/admin/positions/$id",
-        params: { id: p.id },
+        target: { kind: "position" as const, id: p.id },
         action_label: "Resolve payment",
+        owner: owner(p.owner_user_id),
+        claim: positionClaim(p.id),
         tone: ageTone(p.updated_at ?? p.created_at, 2, 5),
       })),
     },
@@ -224,9 +246,10 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
         subtitle: p.organizations?.name ?? "—",
         meta: String(p.status).replace(/_/g, " "),
         waiting_since: p.created_at,
-        to: "/admin/positions/$id",
-        params: { id: p.id },
+        target: { kind: "position" as const, id: p.id },
         action_label: "Set up role",
+        owner: owner(p.owner_user_id),
+        claim: positionClaim(p.id),
         tone: ageTone(p.created_at, 1, 3),
       })),
     },
@@ -243,9 +266,10 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
         subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
         meta: m.score_runs?.score != null ? `score ${Math.round(Number(m.score_runs.score))}` : null,
         waiting_since: m.updated_at,
-        to: "/admin/review/$matchId",
-        params: { matchId: m.id },
+        target: { kind: "review" as const, matchId: m.id },
         action_label: "Review",
+        owner: owner(m.positions?.owner_user_id),
+        claim: positionClaim(m.positions?.id),
         tone: ageTone(m.updated_at, 1, 3),
       })),
     },
@@ -262,9 +286,10 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
         subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
         meta: String(m.stage).replace(/_/g, " "),
         waiting_since: m.updated_at,
-        to: "/admin/candidates/$id",
-        params: { id: m.id },
+        target: { kind: "match" as const, id: m.id },
         action_label: "Chase decision",
+        owner: owner(m.positions?.owner_user_id),
+        claim: positionClaim(m.positions?.id),
         tone: ageTone(m.updated_at, 5, 8),
       })),
     },
@@ -283,9 +308,10 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
         }`,
         meta: iv.status === "requested" ? "awaiting slot" : "scheduled soon",
         waiting_since: iv.scheduled_at ?? iv.requested_at,
-        to: "/admin/candidates/$id",
-        params: { id: iv.candidate_match_id },
+        target: { kind: "match" as const, id: iv.candidate_match_id },
         action_label: "Coordinate",
+        owner: owner(iv.candidate_matches?.positions?.owner_user_id),
+        claim: positionClaim(iv.candidate_matches?.positions?.id),
         tone: iv.status === "requested" ? "warning" : "default",
       })),
     },
@@ -302,9 +328,10 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
         subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
         meta: (m.processing_error_code ?? m.processing_state ?? "").replace(/_/g, " "),
         waiting_since: m.processing_updated_at,
-        to: "/admin/candidates/$id",
-        params: { id: m.id },
+        target: { kind: "match" as const, id: m.id },
         action_label: "Fix",
+        owner: owner(m.positions?.owner_user_id),
+        claim: positionClaim(m.positions?.id),
         tone: "danger" as const,
       })),
     },

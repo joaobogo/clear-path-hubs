@@ -1,15 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
-import { z } from "zod";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
-import { ActivityFeed } from "@/components/activity/ActivityFeed";
+import { useRouter } from "@tanstack/react-router";
+import { ActivityFeed, ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
 import { getAdminWorkQueues } from "@/lib/admin-ops.functions";
-import { TestRecordsToggle } from "@/components/admin/TestRecordsToggle";
+import { useTestScopeState } from "@/components/admin/test-records-toggle";
 import { PortfolioHealthTable } from "@/components/admin/portfolio-health-table";
 import { DecisionBacklogPanel } from "@/components/admin/decision-backlog-panel";
 import { OfferHireRollupPanel } from "@/components/admin/offer-hire-panel";
-
+import { WorkQueueRow } from "@/components/admin/work-queue-row";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,24 +19,19 @@ import {
   Clock,
   CalendarClock,
   AlertOctagon,
-  ArrowRight,
   RefreshCw,
   CheckCircle2,
   Inbox,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
-const searchSchema = z.object({
-  show_test: fallback(z.boolean(), false).default(false),
-});
+const WORK_QUEUES_KEY = ["admin", "work-queues"] as const;
 
 export const Route = createFileRoute("/_authenticated/admin/")({
-  validateSearch: zodValidator(searchSchema),
-  loaderDeps: ({ search }) => ({ show_test: search.show_test }),
-  loader: ({ context, deps }) =>
+  loader: ({ context }) =>
     context.queryClient.ensureQueryData({
-      queryKey: ["admin-work-queues", deps.show_test],
-      queryFn: () => getAdminWorkQueues({ data: { include_test: deps.show_test } }),
+      queryKey: WORK_QUEUES_KEY,
+      queryFn: () => getAdminWorkQueues({ data: {} }),
     }),
   head: () => ({
     meta: [
@@ -59,36 +54,34 @@ const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   blocked: AlertOctagon,
 };
 
-
-function waited(iso: string | null | undefined): string {
-  if (!iso) return "—";
-  const ms = Date.now() - new Date(iso).getTime();
-  const m = Math.round(ms / 60_000);
-  if (m < 60) return `${Math.max(m, 1)}m`;
-  const h = Math.round(m / 60);
-  if (h < 48) return `${h}h`;
-  return `${Math.round(h / 24)}d`;
-}
-
-function toneClass(tone: string) {
-  if (tone === "danger") return "text-destructive";
-  if (tone === "warning") return "text-warning-foreground";
-  return "text-muted-foreground";
-}
-
 function Overview() {
   const qc = useQueryClient();
-  const { show_test } = Route.useSearch();
-  const navigate = Route.useNavigate();
+  const router = useRouter();
+  // Test scope is a per-user preference owned by the admin layout toggle, not a
+  // URL flag, so every desk inherits the same view.
+  const scope = useTestScopeState();
+  const showTest = scope.data?.show_test_records === true;
+
   const { data, isFetching } = useSuspenseQuery({
-    queryKey: ["admin-work-queues", show_test],
-    queryFn: () => getAdminWorkQueues({ data: { include_test: show_test } }),
+    queryKey: WORK_QUEUES_KEY,
+    queryFn: () => getAdminWorkQueues({ data: {} }),
     refetchOnWindowFocus: true,
     staleTime: 30_000,
   });
 
   const queues = data.queues;
   const total = queues.reduce((n, q) => n + q.count, 0);
+  // An empty day should look empty: only queues with work render a section.
+  const active = queues.filter((q) => q.items.length > 0);
+
+  async function refreshAll() {
+    // Every admin panel keys under ["admin", ...]; the feed is the one exception.
+    await Promise.all([
+      qc.invalidateQueries({ queryKey: ["admin"] }),
+      qc.invalidateQueries({ queryKey: ACTIVITY_QUERY_KEY }),
+    ]);
+    await router.invalidate();
+  }
 
   return (
     <div className="space-y-6">
@@ -101,41 +94,33 @@ function Overview() {
               : `${total} item${total === 1 ? "" : "s"} waiting on you. Every row opens the one action it needs.`}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            {show_test
+            {showTest
               ? "Including test and internal organizations."
               : "Test and internal organizations are hidden."}
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <TestRecordsToggle
-            checked={show_test}
-            onChange={(next) => navigate({ search: { show_test: next }, replace: true })}
-          />
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 gap-1.5 px-2 text-xs"
-            onClick={() => qc.invalidateQueries({ queryKey: ["admin-work-queues"] })}
-            disabled={isFetching}
-            aria-label="Refresh work queue"
-          >
-            <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} />
-            Refresh
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 gap-1.5 px-2 text-xs"
+          onClick={() => void refreshAll()}
+          disabled={isFetching}
+          aria-label="Refresh work queue"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} />
+          Refresh
+        </Button>
       </header>
 
       {/* Portfolio health first: which accounts are in trouble, not totals. */}
-      <PortfolioHealthTable includeTest={show_test} />
+      <PortfolioHealthTable includeTest={showTest} />
 
-      <DecisionBacklogPanel includeTest={show_test} showClientColumn />
+      <DecisionBacklogPanel includeTest={showTest} showClientColumn />
 
       <OfferHireRollupPanel />
 
-
       {/* Counts strip — each jumps to its queue below. */}
       <nav aria-label="Queue counts" className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-7">
-
         {queues.map((q) => {
           const Icon = ICONS[q.key] ?? ClipboardCheck;
           return (
@@ -160,80 +145,76 @@ function Overview() {
         })}
       </nav>
 
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        {queues.map((q) => {
-          const Icon = ICONS[q.key] ?? ClipboardCheck;
-          return (
-            <section
-              key={q.key}
-              id={`queue-${q.key}`}
-              className="scroll-mt-20 rounded-lg border bg-card"
-            >
-              <header className="flex items-start justify-between gap-3 border-b px-4 py-3">
-                <div className="flex items-start gap-2">
-                  <Icon className="mt-0.5 h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <h2 className="text-sm font-semibold">
-                      {q.label}{" "}
-                      <span className="ml-1 tabular-nums text-muted-foreground">{q.count}</span>
-                    </h2>
-                    <p className="text-xs text-muted-foreground">{q.description}</p>
+      {active.length === 0 ? (
+        <section className="rounded-lg border bg-card px-4 py-10 text-center">
+          <CheckCircle2 className="mx-auto h-6 w-6 text-success" />
+          <h2 className="mt-3 text-sm font-semibold">Every queue is clear</h2>
+          <p className="mx-auto mt-1 max-w-md text-xs text-muted-foreground">
+            No intake, payment, review, decision, interview or processing item is
+            waiting on the platform team.
+          </p>
+        </section>
+      ) : (
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+          {active.map((q) => {
+            const Icon = ICONS[q.key] ?? ClipboardCheck;
+            return (
+              <section
+                key={q.key}
+                id={`queue-${q.key}`}
+                className="scroll-mt-20 rounded-lg border bg-card"
+              >
+                <header className="flex items-start justify-between gap-3 border-b px-4 py-3">
+                  <div className="flex items-start gap-2">
+                    <Icon className="mt-0.5 h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <h2 className="text-sm font-semibold">
+                        {q.label}{" "}
+                        <span className="ml-1 tabular-nums text-muted-foreground">{q.count}</span>
+                      </h2>
+                      <p className="text-xs text-muted-foreground">{q.description}</p>
+                    </div>
                   </div>
-                </div>
-                {q.see_all && q.count > q.items.length ? (
-                  <Link
-                    to={q.see_all.to}
-                    className="shrink-0 whitespace-nowrap text-xs font-medium text-primary hover:underline"
-                  >
-                    See all {q.count}
-                  </Link>
-                ) : null}
-              </header>
+                  {q.see_all && q.count > q.items.length ? (
+                    <Link
+                      to={q.see_all.to}
+                      className="shrink-0 whitespace-nowrap text-xs font-medium text-primary hover:underline"
+                    >
+                      See all {q.count}
+                    </Link>
+                  ) : null}
+                </header>
 
-              {q.items.length === 0 ? (
-                <div className="flex items-center gap-2 px-4 py-8 text-xs text-muted-foreground">
-                  <CheckCircle2 className="h-4 w-4 text-success" />
-                  {q.key === "intakes_aging"
-                    ? "No intakes awaiting action."
-                    : "Clear — nothing in this queue."}
-
-                </div>
-              ) : (
                 <ul className="divide-y">
                   {q.items.map((it) => (
-                    <li key={it.id} className="group flex items-center gap-3 px-4 py-2.5">
-                      <div className="min-w-0 flex-1">
-                        <div className="truncate text-sm font-medium">{it.title}</div>
-                        <div className="truncate text-xs text-muted-foreground">
-                          {it.subtitle}
-                          {it.meta ? ` · ${it.meta}` : ""}
-                        </div>
-                      </div>
-                      <span
-                        className={`shrink-0 tabular-nums text-xs ${toneClass(it.tone)}`}
-                        title="Waiting"
-                      >
-                        {waited(it.waiting_since)}
-                      </span>
-                      <Button asChild size="sm" variant="secondary" className="h-7 shrink-0 text-xs">
-                        <Link to={it.to} params={it.params as never}>
-                          {it.action_label}
-                          <ArrowRight className="ml-1 h-3 w-3" />
-                        </Link>
-                      </Button>
-                    </li>
+                    <WorkQueueRow key={it.id} item={it} />
                   ))}
                 </ul>
-              )}
-              <footer className="border-t px-4 py-2 text-[11px] text-muted-foreground">
-                {q.action_hint}
-              </footer>
-            </section>
-          );
-        })}
-      </div>
 
-      <ActivityFeed />
+                <footer className="border-t px-4 py-2 text-[11px] text-muted-foreground">
+                  {q.action_hint}
+                </footer>
+              </section>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Capped: the overview shows the latest 25 events, the full log lives on
+          the operations desk. */}
+      <section>
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            Latest activity
+          </h2>
+          <Link to="/admin/operations" className="text-xs font-medium text-primary hover:underline">
+            View all activity
+          </Link>
+        </div>
+        <ScrollArea className="h-[26rem] rounded-xl border bg-card">
+          <ActivityFeed limit={25} className="border-0" title="Last 25 events" />
+        </ScrollArea>
+      </section>
     </div>
   );
 }

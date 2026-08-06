@@ -118,6 +118,7 @@ export type AgingIntake = {
   role_title: string | null;
   organization_id: string | null;
   org_name: string | null;
+  owner_user_id: string | null;
   created_at: string;
   days_waiting: number;
 };
@@ -139,7 +140,7 @@ export async function loadAgingIntakes(
 
   let q = s
     .from("intake_submissions")
-    .select("id,company_name,role_title,organization_id,created_at,organizations(name)", {
+    .select("id,company_name,role_title,organization_id,owner_user_id,created_at,organizations(name)", {
       count: "exact",
     })
     .eq("status", "submitted")
@@ -156,6 +157,7 @@ export async function loadAgingIntakes(
     role_title: (r.role_title as string) ?? null,
     organization_id: (r.organization_id as string) ?? null,
     org_name: (r.organizations?.name as string) ?? (r.company_name as string) ?? null,
+    owner_user_id: (r.owner_user_id as string) ?? null,
     created_at: r.created_at as string,
     days_waiting: Math.floor((Date.now() - new Date(r.created_at as string).getTime()) / DAY),
   }));
