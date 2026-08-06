@@ -38,6 +38,12 @@ type Props = {
    * the reviewer's internal note never reaches an employer surface.
    */
   humanReviewed?: boolean;
+  /**
+   * True when this surface cannot supply the criteria and evidence behind the
+   * assessment. The band still shows, marked "Evidence pending" — we never
+   * print a supported-count that we cannot back with snippets.
+   */
+  evidencePending?: boolean;
   unicorn?: boolean;
   className?: string;
 };
