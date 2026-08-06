@@ -7,6 +7,8 @@
  * never depends on colour alone (WCAG 1.4.1).
  */
 
+import { bandToTier, classifyBand } from "@/lib/scoring/bands";
+
 export type StatusTone = "neutral" | "success" | "warning" | "danger" | "info";
 
 /** Non-colour redundant encoding, rendered as a small leading mark. */
