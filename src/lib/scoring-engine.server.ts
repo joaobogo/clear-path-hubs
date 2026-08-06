@@ -199,7 +199,13 @@ export function isNegatedMention(cv: string, idx: number): boolean {
     idx - 70,
     0,
   );
-  const window = lower.slice(sentenceStart, idx);
+  let window = lower.slice(sentenceStart, idx);
+  // Contrastive conjunctions end the negated clause: in "no experience with
+  // Kubernetes, but deep Docker work", the negation does not reach Docker.
+  for (const pivot of [" but ", " however", " although", " whereas", " though "]) {
+    const at = window.lastIndexOf(pivot);
+    if (at !== -1) window = window.slice(at + pivot.length);
+  }
   if (NEGATION_CUES.some((cue) => window.includes(cue))) return true;
   // Bare negators ("no Kubernetes", "never touched Terraform") need proximity,
   // checked on word boundaries so "nor" never fires inside "normalise".
