@@ -298,83 +298,20 @@ function PositionsPage() {
  ))}
  </div>
 
-  <div className="mb-4 flex flex-wrap items-center gap-2">
-   <Button asChild size="sm">
-    {/* A new role starts from this company's profile — no re-typing. */}
-    <Link to="/intake" search={{ carry: "org" }}>New role</Link>
-   </Button>
-   <SavedViewsBar
-    surface="client_positions"
-    organizationId={orgId ?? undefined}
-    currentFilters={{ status, q, location, view, sort }}
-    onApply={(f) =>
-     navigate({
-      search: (prev: Record<string, unknown>) => ({ ...prev, ...f }),
-      replace: true,
-     })
-    }
-    canShare={ctx?.active?.role === "client_admin"}
-   />
-   <div className="relative flex-1 min-w-[200px] max-w-md">
- <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
- <Input
- value={searchInput}
- onChange={(e) => setSearchInput(e.target.value)}
- placeholder="Search title, location, skills…"
- className="pl-9"
- aria-label="Search positions"
- />
- </div>
- <Select
- value={location}
- onValueChange={(v) => setSearch({ location: v })}
- >
- <SelectTrigger className="w-[160px]" aria-label="Filter by location">
- <SelectValue placeholder="Location" />
- </SelectTrigger>
- <SelectContent>
- <SelectItem value="all">All locations</SelectItem>
- {locations.map((l) => (
- <SelectItem key={l} value={l}>
- {l}
- </SelectItem>
- ))}
- </SelectContent>
- </Select>
- <Select value={sort} onValueChange={(v) => setSearch({ sort: v })}>
- <SelectTrigger className="w-[180px]" aria-label="Sort positions">
- <SelectValue placeholder="Sort" />
- </SelectTrigger>
- <SelectContent>
- <SelectItem value="action">Action required first</SelectItem>
- <SelectItem value="updated">Recently updated</SelectItem>
- <SelectItem value="delivered">Most candidates</SelectItem>
- <SelectItem value="title">Title (A–Z)</SelectItem>
- </SelectContent>
- </Select>
- <div className="ml-auto inline-flex rounded-md border bg-background p-0.5">
- <Button
- variant={view === "cards" ? "secondary" : "ghost"}
- size="sm"
- className="h-8 px-2"
- aria-label="Card view"
- aria-pressed={view === "cards"}
- onClick={() => setSearch({ view: "cards" })}
- >
- <LayoutGrid className="h-4 w-4" />
- </Button>
- <Button
- variant={view === "list" ? "secondary" : "ghost"}
- size="sm"
- className="h-8 px-2"
- aria-label="List view"
- aria-pressed={view === "list"}
- onClick={() => setSearch({ view: "list" })}
- >
- <List className="h-4 w-4" />
- </Button>
- </div>
- </div>
+  <FilterBar
+    orgId={orgId}
+    ctx={ctx}
+    status={status}
+    q={q}
+    location={location}
+    view={view}
+    sort={sort}
+    locations={locations}
+    searchInput={searchInput}
+    setSearchInput={setSearchInput}
+    setSearch={setSearch}
+    navigate={navigate}
+  />
 
  {activeChips.length > 0 && (
  <div className="mb-4 flex flex-wrap items-center gap-2">
