@@ -7,6 +7,8 @@ import {
   type InfoRequestCard,
   type InfoRequestRow,
 } from "@/lib/position-info-requests";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
+import { assertEditor } from "@/lib/client-shared.server";
 
 const UUID = /^[0-9a-f-]{36}$/i;
 
@@ -27,6 +29,7 @@ export const listInfoRequests = createServerFn({ method: "GET" })
     return { orgId, positionId: UUID.test(positionId) ? positionId : null };
   })
   .handler(async ({ data, context }): Promise<{ requests: InfoRequestCard[] }> => {
+    await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
     const { loadInfoRequests } = await import("@/lib/position-info-requests.server");
     return loadInfoRequests(context.supabase, data);
   });
@@ -57,6 +60,7 @@ export const answerInfoRequest = createServerFn({ method: "POST" })
         .maybeSingle();
       if (error) return { ok: false, error: "We could not open that request just now" };
       if (!request) return { ok: false, error: "That request is no longer open" };
+      await assertEditor(context.supabase, context.userId, request.organization_id as string);
       if (request.status !== "open") {
         return { ok: false, error: "That request has already been answered" };
       }

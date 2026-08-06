@@ -145,3 +145,21 @@ describe("read-only rule lives in the helper", () => {
     await expect(assertWorkspaceWrite(makeDb(), VIEWER_A, ORG_A)).rejects.toThrow(/read-only/i);
   });
 });
+
+/**
+ * Converted client-workspace server functions must deny a cross-org id the
+ * same way: through the canonical helper, not a bespoke membership query.
+ */
+describe("converted server functions deny cross-org access", () => {
+  it("tasks.functions listTasks rejects an org the caller does not belong to", async () => {
+    const { listTasks } = await import("@/lib/tasks.functions");
+    const fakeContext = { supabase: makeDb(), userId: USER_A };
+    // @ts-expect-error — calling the handler function directly in a unit test
+    await expect(
+      listTasks.options.handler({
+        data: { organization_id: ORG_B, view: "my" },
+        context: fakeContext,
+      }),
+    ).rejects.toBeInstanceOf(WorkspaceAccessError);
+  });
+});

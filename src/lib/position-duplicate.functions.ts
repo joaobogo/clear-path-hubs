@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { buildCarryForward, type CarryForward } from "@/lib/intake-carry";
 import { buildDuplicateDraft, type DuplicateDraft } from "@/lib/position-duplicate";
+import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 /**
  * A pre-filled brief for "Duplicate this role".
@@ -31,6 +32,7 @@ export const getPositionDuplicateDraft = createServerFn({ method: "GET" })
 
     if (error) throw new Error("We could not read that role just now");
     if (!position) return { draft: null, carry: { companyName: null, values: {}, carried: [] } };
+    await assertWorkspaceAccess(supabase, context.userId, position.organization_id as string);
 
     const [{ data: org }, { data: profile }] = await Promise.all([
       supabase

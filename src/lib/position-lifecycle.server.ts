@@ -15,14 +15,8 @@ async function assertCanManage(userId: string, positionId: string) {
   const s = await getAdmin();
   const { data: pos } = await s.from("positions").select("*").eq("id", positionId).maybeSingle();
   if (!pos) throw new Error("position_not_found");
-  const { data: staff } = await s.rpc("is_platform_staff", { _user: userId });
-  if (staff !== true) {
-    const { data: editor } = await s.rpc("is_org_editor", {
-      _user: userId,
-      _org: pos.organization_id,
-    });
-    if (editor !== true) throw new Error("forbidden");
-  }
+  const { assertWorkspaceWrite } = await import("@/lib/authz/workspace-access");
+  await assertWorkspaceWrite(s, userId, pos.organization_id as string);
   return pos as AnyRow;
 }
 
