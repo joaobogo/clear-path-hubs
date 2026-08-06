@@ -48,6 +48,10 @@ import { OpenItemsStrip } from "@/components/client/open-items-strip";
 import { NextMilestones, type MilestoneRow } from "@/components/client/next-milestones";
 import type { QueueRow } from "@/lib/client-decision-queue";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
+import { RoleStatusList } from "@/components/client/overview/role-status-list";
+import { SinceLastVisit, RecentMessages } from "@/components/client/overview/activity-panels";
+import { SectionHeader, EmptyBlock, EmptyWelcome } from "@/components/client/overview/section-primitives";
+import { relTime } from "@/components/client/overview/utils";
 
 
 const RoutePending = makeWorkspacePending({ shape: "kpis", kpis: true, width: "7xl" });
@@ -64,27 +68,6 @@ export const Route = createFileRoute("/_authenticated/client/")({
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
-
-const RELATIVE = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-function relTime(iso: string | null | undefined): string {
-  if (!iso) return "";
-  const diff = new Date(iso).getTime() - Date.now();
-  const abs = Math.abs(diff);
-  const min = 60_000,
-    hr = 60 * min,
-    day = 24 * hr;
-  if (abs < hr) return RELATIVE.format(Math.round(diff / min), "minute");
-  if (abs < day) return RELATIVE.format(Math.round(diff / hr), "hour");
-  if (abs < 30 * day) return RELATIVE.format(Math.round(diff / day), "day");
-  return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
-}
-
-function daysWaiting(iso: string | null | undefined): number | null {
-  if (!iso) return null;
-  const t = new Date(iso).getTime();
-  if (Number.isNaN(t)) return null;
-  return Math.max(0, Math.floor((Date.now() - t) / 86_400_000));
-}
 
 function OverviewPage() {
   const [selfId, setSelfId] = useState<string | null>(null);
