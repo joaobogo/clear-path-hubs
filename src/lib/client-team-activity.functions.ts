@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { readWorkspaceAccess } from "@/lib/authz/workspace-access";
+import { assertWorkspaceTeamAccess } from "@/lib/authz/workspace-access";
 
 /**
  * Who is doing what on the hiring team — facts only, pulled from records.
@@ -41,9 +41,7 @@ export const getClientTeamActivity = createServerFn({ method: "GET" })
     z.object({ orgId: z.string().uuid() }).parse(input),
   )
   .handler(async ({ context, data }): Promise<TeamActivity> => {
-    const access = await readWorkspaceAccess(context.supabase, context.userId, data.orgId);
-    const canRead = access.isStaff || access.role === "client_admin" || access.role === "client_editor";
-    if (!canRead) throw new Error("You need team access in this workspace.");
+    await assertWorkspaceTeamAccess(context.supabase, context.userId, data.orgId);
 
     const nowIso = new Date().toISOString();
     const since30 = new Date(Date.now() - 30 * 86_400_000).toISOString();

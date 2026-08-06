@@ -37,7 +37,11 @@ import { buildQueue, type QueueItem } from "@/lib/client-decision-queue";
 import { buildOfferRow } from "@/lib/client-offer-holder";
 import { computeNextMilestone } from "@/lib/client-next-milestone";
 import { buildRoleTimeline } from "@/lib/client-role-timeline";
-import { assertWorkspaceAccess, readWorkspaceAccess } from "@/lib/authz/workspace-access";
+import {
+  assertWorkspaceAccess,
+  assertWorkspaceWrite,
+  readWorkspaceAccess,
+} from "@/lib/authz/workspace-access";
 import { hydrateClientCandidateProfiles } from "@/lib/client-candidate-hydrate.server";
 import {
   advanceGateError,
@@ -183,9 +187,8 @@ export const updateClientNotificationPreferences = createServerFn({ method: "POS
   .middleware([requireSupabaseAuth])
   .inputValidator((input: z.input<typeof notifPrefsZ>) => notifPrefsZ.parse(input))
   .handler(async ({ context, data }) => {
-    // Any active member may manage their own — but block viewers per product rule.
-    const access = await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
-    if (access.role === "client_viewer") throw new Error("Read-only role");
+    // Access, role and the read-only viewer rule all come from one helper.
+    await assertWorkspaceWrite(context.supabase, context.userId, data.orgId);
     await assertNotSupportViewReadOnly(context.supabase, context.userId, data.orgId);
 
     const trace_id = `st-np-${crypto.randomUUID()}`;
@@ -231,18 +234,7 @@ export const updateClientTimezone = createServerFn({ method: "POST" })
     z.object({ orgId: z.string().uuid() }).merge(timezoneZ).parse(input),
   )
   .handler(async ({ context, data }) => {
-    const { data: member } = await context.supabase
-      .from("memberships")
-      .select("role, status")
-      .eq("organization_id", data.orgId)
-      .eq("user_id", context.userId)
-      .eq("status", "active")
-      .maybeSingle();
-    const { data: staff } = await context.supabase.rpc("is_platform_staff", {
-      _user: context.userId,
-    });
-    if (!member && staff !== true) throw new Error("Forbidden");
-    if (member?.role === "client_viewer") throw new Error("Read-only role");
+    await assertWorkspaceWrite(context.supabase, context.userId, data.orgId);
     await assertNotSupportViewReadOnly(context.supabase, context.userId, data.orgId);
 
     const trace_id = `st-tz-${crypto.randomUUID()}`;
