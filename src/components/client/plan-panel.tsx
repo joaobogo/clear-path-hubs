@@ -216,7 +216,7 @@ export function PlanPanel({
 
 
   return (
-    <section className="rounded-xl border bg-card p-5">
+    <section id="plan-panel" className="rounded-xl border bg-card p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
