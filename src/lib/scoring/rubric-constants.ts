@@ -196,8 +196,12 @@ export const DEBUG_EVENT_TYPES = [
 ] as const;
 export type DebugEventType = (typeof DEBUG_EVENT_TYPES)[number];
 
-export const EVALUATION_METHODS = ["keyword", "semantic", "hybrid"] as const;
-export type EvaluationMethod = (typeof EVALUATION_METHODS)[number];
+// Method vocabulary is owned by `scoring/evaluation-method.ts`. The old list
+// here included "hybrid", which never said which path actually ran.
+export {
+  EVALUATION_METHODS,
+  type EvaluationMethod,
+} from "./evaluation-method";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Weight validation helper — used by rubric builder and DB triggers.
