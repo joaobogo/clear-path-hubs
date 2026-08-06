@@ -11,7 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getPortfolioHealth } from "@/lib/admin-portfolio.functions";
 import { Button } from "@/components/ui/button";
 import { ArrowDown, ArrowUp, RefreshCw } from "lucide-react";
-import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
+import { PanelState } from "@/components/admin/panel-state";
 
 type Health = Awaited<ReturnType<typeof getPortfolioHealth>>;
 type Row = Health["rows"][number];
