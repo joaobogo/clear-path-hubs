@@ -17,26 +17,20 @@ import { panelReadiness, panelSignal } from "@/lib/panel-readiness";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { VisibilityNote } from "@/components/client/visibility-note";
-import { formatStageDate } from "@/lib/client-role-progress";
-import { shortlistCommitment, formatCommitmentDate } from "@/lib/client-commitment";
 import { Button } from "@/components/ui/button";
 import {
   AlertTriangle,
   ArrowRight,
-  Briefcase,
   CheckCircle2,
   ChevronRight,
-  MessageSquare,
   RefreshCw,
   Sparkles,
 } from "lucide-react";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
 import { DensityToggle } from "@/components/client/density-toggle";
 import { useDensity } from "@/lib/use-density";
-import { roleNextStep } from "@/lib/client-role-next-step";
 import { supabase } from "@/integrations/supabase/client";
 import { SystemStatusStrip } from "@/components/client/control-room/system-status-strip";
-import { clientRoleStatusLabel } from "@/lib/client-role-status";
 import { LiveTicker } from "@/components/client/control-room/live-ticker";
 import { IntensityDial } from "@/components/client/control-room/intensity-dial";
 import { HiringHealthLine } from "@/components/client/hiring-health-line";

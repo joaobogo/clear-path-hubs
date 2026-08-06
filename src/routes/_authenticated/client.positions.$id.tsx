@@ -8,7 +8,7 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { getClientContext } from "@/lib/client-context.functions";
 import { getClientPositionDetail } from "@/lib/client-positions.functions";
@@ -24,7 +24,6 @@ import { DeclineReasonDialog } from "@/components/client/decline-reason-dialog";
 import { confirmRoleBlueprint } from "@/lib/client-positions.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
-import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 import { RoleBlueprint } from "@/components/product/role-blueprint";
 import { GeneratedBlueprintPanel } from "@/components/positions/generated-blueprint-panel";
