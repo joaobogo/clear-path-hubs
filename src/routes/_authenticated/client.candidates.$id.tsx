@@ -248,7 +248,7 @@ function CandidateDetailPage() {
  action: p.action,
  // Stage the operator was looking at. If the candidate has already
  // moved, the server refuses instead of applying a stale decision.
- expectedStage: data?.stage,
+ expectedStage: data?.candidate?.stage,
  feedback: p.feedback,
  reasonCode: p.reasonCode,
  signals: p.signals,
