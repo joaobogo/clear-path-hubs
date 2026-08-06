@@ -22,7 +22,7 @@ import {
   validateForPublish,
   type CriterionDraft,
   type RubricVersionSummary,
-} from "@/lib/scoring/criteria-authoring.server";
+} from "@/lib/scoring/criteria-model";
 
 export const Route = createFileRoute("/_authenticated/admin/positions/$id_/criteria")({
   head: () => ({

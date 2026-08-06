@@ -16,34 +16,17 @@ type Any = any;
 
 export const CRITERIA_AUDIT_ENTITY = "rubric_version";
 
-export type CriterionDraft = {
-  key: string;
-  label: string;
-  /** What counts as evidence for this criterion, in plain language. */
-  evidence: string;
-  /** Relative weight; normalised to 100 on publish. */
-  weight: number;
-  must_have: boolean;
-};
+export type { CriterionDraft, RubricVersionSummary } from "./criteria-model";
+import {
+  EDITABLE_STATUSES,
+  PUBLISHED_STATUSES,
+  normaliseWeights,
+  validateForPublish,
+  type CriterionDraft,
+  type RubricVersionSummary,
+} from "./criteria-model";
 
-export type RubricVersionSummary = {
-  id: string;
-  position_id: string;
-  organization_id: string;
-  label: string;
-  version_number: number;
-  status: string;
-  editable: boolean;
-  criteria: CriterionDraft[];
-  created_at: string;
-  approved_at: string | null;
-  superseded_at: string | null;
-  /** How many score runs referenced this version. */
-  scored_runs: number;
-};
-
-const EDITABLE_STATUSES = new Set(["draft", "pending_approval", "pending_client_approval"]);
-const PUBLISHED_STATUSES = ["active", "approved"] as const;
+export { normaliseWeights, validateForPublish };
 
 function readCriteria(row: Record<string, unknown>): CriterionDraft[] {
   const dims = row['dimensions'];
