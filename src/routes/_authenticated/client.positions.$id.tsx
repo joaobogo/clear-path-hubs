@@ -291,19 +291,10 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
  });
  }, [data]);
 
- if (isError && !data)
-  return (
-   <div className="p-8">
-    <QueryErrorCard
-     title="We couldn't load this role"
-     error={error}
-     onRetry={() => void refetch()}
-     retrying={isLoading}
-    />
-   </div>
-  );
- if (!data) return <div className="p-8 text-muted-foreground">Loading…</div>;
+ // Load failures raise to the route errorComponent; a missing role is a 404.
+ if (!data) throw notFound();
  if (!data.position) throw notFound();
+
 
  const canEdit =
  !support.readOnly &&
