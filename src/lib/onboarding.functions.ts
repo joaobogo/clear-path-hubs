@@ -24,7 +24,7 @@ import {
   weightsSchema,
   type EvaluationWeights,
 } from "@/lib/requisition-schema";
-import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
+import { assertWorkspaceAccess, readWorkspaceAccess } from "@/lib/authz/workspace-access";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Db = any;
@@ -167,6 +167,67 @@ function labels(value: unknown): string[] {
     .filter(Boolean);
 }
 
+/**
+ * The caller's own workspace, resolved without depending on a single RLS path.
+ * Client seats come first; any other active membership is used as a fallback so
+ * staff and legacy seats still see their setup instead of a load failure.
+ */
+async function resolveOwnWorkspace(supabase: Db, userId: string): Promise<string | null> {
+  const pick = (rows: unknown): string | null => {
+    const list = (rows ?? []) as Array<{ organization_id?: string; role?: string }>;
+    const client = list.find((r) =>
+      ["client_admin", "client_editor", "client_viewer"].includes(r.role ?? ""),
+    );
+    return client?.organization_id ?? list[0]?.organization_id ?? null;
+  };
+
+  const { data } = await supabase
+    .from("memberships")
+    .select("organization_id, role, created_at")
+    .eq("user_id", userId)
+    .eq("status", "active")
+    .order("created_at", { ascending: true })
+    .limit(20);
+  const scoped = pick(data);
+  if (scoped) return scoped;
+
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: own } = await supabaseAdmin
+      .from("memberships")
+      .select("organization_id, role, created_at")
+      .eq("user_id", userId)
+      .eq("status", "active")
+      .order("created_at", { ascending: true })
+      .limit(20);
+    return pick(own);
+  } catch {
+    return null;
+  }
+}
+
+function emptyOnboardingState(updatedAt: string | null): OnboardingState {
+  return {
+    organization_id: null,
+    organization_name: "",
+    can_configure: false,
+    is_admin: false,
+    workspace: null,
+    billing: {
+      role_paid: false,
+      payment_status: "unpaid",
+      plan_name: null,
+      entitlement_available: false,
+    },
+    positions: [],
+    position: null,
+    integrations: [],
+    complete: [],
+    current_step: "workspace",
+    draft_saved_at: updatedAt,
+  };
+}
+
 export const getOnboardingState = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw: unknown) =>
@@ -176,45 +237,30 @@ export const getOnboardingState = createServerFn({ method: "GET" })
     const { supabase, userId } = context as { supabase: Db; userId: string };
 
     // Which workspace? The named one, else the caller's first client membership.
+    // A membership read that RLS hides must never look like "no workspace", so we
+    // confirm the caller's own memberships server-side when the scoped read is empty.
     let org = data.organization_id ?? null;
-    if (!org) {
-      const { data: m } = await supabase
-        .from("memberships")
-        .select("organization_id, role")
-        .eq("user_id", userId)
-        .eq("status", "active")
-        .in("role", ["client_admin", "client_editor", "client_viewer"])
-        .order("created_at", { ascending: true })
-        .limit(1)
-        .maybeSingle();
-      org = (m as { organization_id?: string } | null)?.organization_id ?? null;
-    }
+    if (!org) org = await resolveOwnWorkspace(supabase, userId);
 
     const { draft, updatedAt } = await readDraft(supabase, userId);
 
     if (!org) {
-      return {
-        organization_id: null,
-        organization_name: "",
-        can_configure: false,
-        is_admin: false,
-        workspace: null,
-        billing: {
-          role_paid: false,
-          payment_status: "unpaid",
-          plan_name: null,
-          entitlement_available: false,
-        },
-        positions: [],
-        position: null,
-        integrations: [],
-        complete: [],
-        current_step: "workspace",
-        draft_saved_at: updatedAt,
-      };
+      return emptyOnboardingState(updatedAt);
     }
 
-    await assertMember(supabase, userId, org);
+    // Access is checked, never assumed — but a workspace the caller cannot reach
+    // falls back to one they can instead of failing the whole screen.
+    let access = await readWorkspaceAccess(supabase, userId, org);
+    if (!access.allowed) {
+      const fallback = await resolveOwnWorkspace(supabase, userId);
+      if (fallback && fallback !== org) {
+        org = fallback;
+        access = await readWorkspaceAccess(supabase, userId, org);
+      }
+    }
+    if (!access.allowed) {
+      return emptyOnboardingState(updatedAt);
+    }
     const configure = await canConfigure(supabase, userId, org);
     const { data: adminFlag } = await supabase.rpc("is_org_admin", {
       _user: userId,
