@@ -393,7 +393,45 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       return new Date(base + Number(c.first_shortlist_days) * 86_400_000).toISOString();
     })();
 
+    // ── Companion payloads, one round trip ──────────────────────────────────
+    // Lifecycle, handoff, closure, recap and open information requests all read
+    // from this same role. Fetching them here means the detail page renders one
+    // coherent loading state instead of six staggered ones. Each is optional:
+    // a failure degrades that section to null rather than failing the page.
+    const [lifecycleRes, handoffRes, closureRes, infoRes] = await Promise.all([
+      import("@/lib/role-lifecycle/role-lifecycle.server")
+        .then((m) => m.loadRoleLifecycle(context.supabase, data))
+        .catch(() => null),
+      import("@/lib/hire-handoff.server")
+        .then((m) => m.loadPositionHandoff(context.supabase, data))
+        .catch(() => null),
+      import("@/lib/role-closure.server")
+        .then((m) => m.loadRoleClosure(context.supabase, data))
+        .catch(() => null),
+      import("@/lib/position-info-requests.server")
+        .then((m) =>
+          m.loadInfoRequests(context.supabase, {
+            orgId: data.orgId,
+            positionId: data.positionId,
+          }),
+        )
+        .catch(() => ({ requests: [] })),
+    ]);
+    // The recap only exists for a closed (not paused) role, so it depends on
+    // the closure record and cannot be fanned out with the rest.
+    const recapRes =
+      closureRes && !closureRes.paused
+        ? await import("@/lib/role-recap.server")
+            .then((m) => m.loadRoleRecap(context.supabase, data))
+            .catch(() => null)
+        : null;
+
     return {
+      lifecycle: lifecycleRes,
+      handoff: handoffRes,
+      closure: closureRes,
+      recap: recapRes,
+      info_requests: infoRes.requests,
       position,
       matches: (matches as AnyRow[]) ?? [],
       activity,
