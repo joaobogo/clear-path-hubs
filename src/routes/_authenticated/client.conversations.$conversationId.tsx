@@ -108,7 +108,7 @@ function ConversationDetail() {
         <ConversationThread
           conversationId={conversationId}
           canPost={canPost}
-          heightClass="h-[calc(100vh-16rem)]"
+          heightClass="h-[calc(100dvh-19rem)] md:h-[calc(100dvh-16rem)]"
         />
       )}
     </div>
