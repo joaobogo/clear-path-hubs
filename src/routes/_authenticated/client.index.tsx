@@ -47,8 +47,13 @@ import { OpenItemsStrip } from "@/components/client/open-items-strip";
 
 import { NextMilestones, type MilestoneRow } from "@/components/client/next-milestones";
 import type { QueueRow } from "@/lib/client-decision-queue";
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
 
+
+const RoutePending = makeWorkspacePending({ shape: "kpis", kpis: true, width: "7xl" });
 export const Route = createFileRoute("/_authenticated/client/")({
+	pendingMs: 150,
+	pendingComponent: RoutePending,
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.index.tsx"),
   notFoundComponent: makeRouteNotFoundComponent("client"),
   head: () => ({

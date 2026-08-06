@@ -61,6 +61,7 @@ import {
 import { ErrorState } from "@/components/client/states";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { getWorkspaceSeatUsage } from "@/lib/collaborator-team.functions";
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
 
 
 
@@ -108,7 +109,11 @@ const STATUS_META: Record<
  },
 };
 
+
+const RoutePending = makeWorkspacePending({ shape: "rows", kpis: false, width: "6xl" });
 export const Route = createFileRoute("/_authenticated/client/team")({
+	pendingMs: 150,
+	pendingComponent: RoutePending,
  head: () => ({
  meta: [
  { title: "Team · Client workspace" },

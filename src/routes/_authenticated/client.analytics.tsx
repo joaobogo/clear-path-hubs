@@ -35,9 +35,14 @@ import {
   LabelList,
 } from "recharts";
 import { usePrefersReducedMotion } from "@/lib/motion/use-motion";
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
 
 
+
+const RoutePending = makeWorkspacePending({ shape: "kpis", kpis: true, width: "7xl" });
 export const Route = createFileRoute("/_authenticated/client/analytics")({
+	pendingMs: 150,
+	pendingComponent: RoutePending,
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.analytics.tsx"),
   notFoundComponent: makeRouteNotFoundComponent("client"),
   head: () => ({

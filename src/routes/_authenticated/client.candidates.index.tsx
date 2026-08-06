@@ -40,6 +40,7 @@ import { ShareShortlistDialog } from "@/components/client/share-shortlist-dialog
 import { Share2 } from "lucide-react";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
 
 const STAGE_OPTIONS = [
  { key: "all", label: "All stages" },
@@ -106,7 +107,11 @@ const searchSchema = z.object({
  maxScore: fallback(z.string(), "").default(""),
 });
 
+
+const RoutePending = makeWorkspacePending({ shape: "rows", kpis: true, width: "7xl" });
 export const Route = createFileRoute("/_authenticated/client/candidates/")({
+	pendingMs: 150,
+	pendingComponent: RoutePending,
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.candidates.index.tsx"),
   notFoundComponent: makeRouteNotFoundComponent("client"),
  validateSearch: zodValidator(searchSchema),

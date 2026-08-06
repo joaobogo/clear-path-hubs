@@ -52,8 +52,13 @@ import {
   AlertTriangle,
   ShieldAlert,
 } from "lucide-react";
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
 
+
+const RoutePending = makeWorkspacePending({ shape: "rows", kpis: false, width: "6xl" });
 export const Route = createFileRoute("/_authenticated/client/tasks")({
+	pendingMs: 150,
+	pendingComponent: RoutePending,
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.tasks.tsx"),
   notFoundComponent: makeRouteNotFoundComponent("client"),
   validateSearch: (search: Record<string, unknown>) => ({

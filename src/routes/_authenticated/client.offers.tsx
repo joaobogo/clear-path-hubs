@@ -71,8 +71,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
 
+
+const RoutePending = makeWorkspacePending({ shape: "board", kpis: false, width: "7xl" });
 export const Route = createFileRoute("/_authenticated/client/offers")({
+	pendingMs: 150,
+	pendingComponent: RoutePending,
   head: () => ({
     meta: [
       { title: "Offers & hires · TaaSFlow" },
@@ -173,7 +178,7 @@ function OffersPage() {
     );
   }
 
-  if (!orgId) return <div className="p-8 text-sm text-muted-foreground">Loading…</div>;
+  if (!orgId) return <RoutePending />;
 
   return (
     <main className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 lg:py-8">

@@ -21,8 +21,13 @@ import { areaDeniedMessage, canAccessArea } from "@/lib/collaborator-roles";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
 
+
+const RoutePending = makeWorkspacePending({ shape: "rows", kpis: false, width: "5xl" });
 export const Route = createFileRoute("/_authenticated/client/plan")({
+	pendingMs: 150,
+	pendingComponent: RoutePending,
   head: () => ({
     meta: [
       { title: "Plan and pricing — your subscription | TaaSFlow" },

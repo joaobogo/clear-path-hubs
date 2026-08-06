@@ -15,8 +15,13 @@ import { QueryErrorCard } from "@/components/client/query-error";
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveNoMessagesState } from "@/lib/empty-states/empty-state-catalogue";
 import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
 
+
+const RoutePending = makeWorkspacePending({ shape: "rows", kpis: false, width: "6xl" });
 export const Route = createFileRoute("/_authenticated/client/conversations/")({
+	pendingMs: 150,
+	pendingComponent: RoutePending,
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.conversations.index.tsx"),
   notFoundComponent: makeRouteNotFoundComponent("client"),
   head: () => ({

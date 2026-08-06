@@ -1,8 +1,13 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
-import { QueryErrorCard } from "@/components/client/query-error";
 import { OpenThreadButton } from "@/components/comms/open-thread-button";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+ queryOptions,
+ useMutation,
+ useQuery,
+ useQueryClient,
+ useSuspenseQuery,
+} from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -32,6 +37,7 @@ import {
  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AlertCircle, MessageSquare, Users } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { RoleBlueprint } from "@/components/product/role-blueprint";
 import { GeneratedBlueprintPanel } from "@/components/positions/generated-blueprint-panel";
 import { RoleLaunchPanel } from "@/components/positions/role-launch-panel";
@@ -46,23 +52,27 @@ import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { RoleProgressTracker } from "@/components/client/role-progress-tracker";
 import { RoleDatedTimeline } from "@/components/client/role-dated-timeline";
 import { DeliveryCommitmentBlock } from "@/components/client/delivery-commitment";
-import { InfoRequestsPanel } from "@/components/client/info-requests";
+import { InfoRequestList } from "@/components/client/info-requests";
 import { buildDeliveryCommitment } from "@/lib/delivery-commitment";
 import { RoleShortlist } from "@/components/client/role-shortlist";
 import { RoleLifecycleTimeline } from "@/components/client/role-lifecycle-timeline";
-import { getRoleLifecycle } from "@/lib/role-lifecycle/role-lifecycle.functions";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
 import { clientRoleStatusLabel } from "@/lib/client-role-status";
-import { getPositionHandoff } from "@/lib/hire-handoff.functions";
-import { HireHandoffPanel, HandoffSkeleton } from "@/components/client/hire-handoff";
-import { getRoleClosure } from "@/lib/role-closure.functions";
+import { HireHandoffPanel } from "@/components/client/hire-handoff";
 import { CloseRoleDialog, RoleClosureRecord } from "@/components/client/close-role-dialog";
 import { isArchivedStatus } from "@/lib/role-closure";
-import { getRoleRecap } from "@/lib/role-recap.functions";
-import {
-  RoleRecapPanel,
-  RoleRecapSkeleton,
-} from "@/components/client/role-recap";
+import { RoleRecapPanel } from "@/components/client/role-recap";
+
+/**
+ * One payload for the whole role. The server returns the role, its pipeline,
+ * timeline, lifecycle, closure, recap and open information requests together,
+ * so the page has a single loading state and a single retry.
+ */
+const positionDetailQuery = (orgId: string, positionId: string) =>
+ queryOptions({
+  queryKey: ["client-position", orgId, positionId],
+  queryFn: () => getClientPositionDetail({ data: { orgId, positionId } }),
+ });
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  head: () => ({
@@ -71,6 +81,22 @@ export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  { name: "robots", content: "noindex" },
  ],
  }),
+ // Prefetch the primary payload before first paint. The workspace context is
+ // already in cache from the /client layout loader, so this is one request.
+ loader: async ({ context, params, location }) => {
+  const org = (location.search as { org?: string } | undefined)?.org ?? null;
+  const ctx = await context.queryClient.ensureQueryData({
+   queryKey: ["client-context", org],
+   queryFn: () => getClientContext({ data: org ? { orgId: org } : {} }),
+  });
+  const orgId = (ctx as { active?: { organization_id?: string } } | null)?.active
+   ?.organization_id;
+  if (!orgId) return;
+  await context.queryClient.ensureQueryData(positionDetailQuery(orgId, params.id));
+ },
+ // Fast navigations never flash a skeleton; slow ones get the real layout.
+ pendingMs: 150,
+ pendingComponent: PositionDetailPending,
  notFoundComponent: () => <div className="p-8">Position not found.</div>,
  errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.positions.$id.tsx"),
  component: PositionDetailPage,
@@ -108,62 +134,76 @@ const STAGE_LABELS: Record<MatchStage, string> = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
 
+/**
+ * Skeleton that mirrors the real role page: same width, same header, same
+ * card grid, so nothing shifts when the payload lands.
+ */
+function PositionDetailPending() {
+ return (
+  <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+   <Skeleton className="h-4 w-28" />
+   <header className="flex flex-wrap items-start justify-between gap-3">
+    <div className="min-w-0 space-y-2">
+     <Skeleton className="h-8 w-64" />
+     <Skeleton className="h-4 w-80" />
+    </div>
+    <div className="flex gap-2">
+     <Skeleton className="h-8 w-28" />
+     <Skeleton className="h-8 w-28" />
+    </div>
+   </header>
+   <Skeleton className="h-28 w-full rounded-xl" />
+   <Skeleton className="h-24 w-full rounded-xl" />
+   <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    {[0, 1, 2, 3].map((i) => (
+     <Skeleton key={i} className="h-24 w-full rounded-xl" />
+    ))}
+   </section>
+   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+    {[0, 1, 2, 3, 4, 5].map((i) => (
+     <Skeleton key={i} className="h-[280px] w-full rounded-lg" />
+    ))}
+   </div>
+  </main>
+ );
+}
+
 function PositionDetailPage() {
- const { id } = Route.useParams();
- const qc = useQueryClient();
- const ctxFn = useServerFn(getClientContext);
- const detailFn = useServerFn(getClientPositionDetail);
- const moveFn = useServerFn(moveMatchStage);
  const orgSearch = useClientOrgSearch();
- const support = useSupportView();
+ const ctxFn = useServerFn(getClientContext);
  const { data: ctx } = useQuery({
- queryKey: ["client-context", orgSearch ?? null],
- queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
+  queryKey: ["client-context", orgSearch ?? null],
+  queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
  });
  const orgId = ctx?.active?.organization_id;
+ // No resolved workspace means no role to show; the layout already redirects
+ // callers with no membership, so this is only the brief pre-resolve window.
+ if (!orgId) return <PositionDetailPending />;
+ return <PositionDetailView orgId={orgId} ctx={ctx} />;
+}
+
+function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
+ const { id } = Route.useParams();
+ const qc = useQueryClient();
+ const moveFn = useServerFn(moveMatchStage);
+ const support = useSupportView();
  const queryKey = ["client-position", orgId, id];
- const { data, isError, isLoading, error, refetch } = useQuery({
- queryKey,
- queryFn: () => detailFn({ data: { orgId: orgId!, positionId: id } }),
- enabled: !!orgId,
- });
- const lifecycleFn = useServerFn(getRoleLifecycle);
- const lifecycle = useQuery({
- queryKey: ["role-lifecycle", orgId, id],
- queryFn: () => lifecycleFn({ data: { orgId: orgId!, positionId: id } }),
- enabled: !!orgId,
- });
- // Once a hire is confirmed, this role becomes a handoff rather than a search.
- const handoffFn = useServerFn(getPositionHandoff);
- const handoff = useQuery({
- queryKey: ["client-position-handoff", orgId, id],
- queryFn: () => handoffFn({ data: { orgId: orgId!, positionId: id } }),
- enabled: !!orgId,
- });
- // Recorded closure, if this role has been closed. Read from the position row,
- // never inferred from status alone.
- const closureFn = useServerFn(getRoleClosure);
- const closure = useQuery({
- queryKey: ["client-position-closure", orgId, id],
- queryFn: () => closureFn({ data: { orgId: orgId!, positionId: id } }),
- enabled: !!orgId,
- });
- // Recap is only for a role that has been closed: the lessons from the last
- // search, from this role's own recorded events.
- const recapFn = useServerFn(getRoleRecap);
- const recap = useQuery({
- queryKey: ["client-position-recap", orgId, id],
- queryFn: () => recapFn({ data: { orgId: orgId!, positionId: id } }),
- enabled: !!orgId && !!closure.data && !closure.data.paused,
- });
+ // One request for the primary payload: role, pipeline, timeline, lifecycle,
+ // closure, recap and open information requests.
+ const { data, refetch, isFetching } = useSuspenseQuery(positionDetailQuery(orgId, id));
+ const lifecycle = data?.lifecycle ?? null;
+ const handoff = data?.handoff ?? null;
+ const closure = data?.closure ?? null;
+ const recap = data?.recap ?? null;
+ const infoRequests = data?.info_requests ?? [];
  useEffect(() => {
- const onRefresh = () => {
- void refetch();
- void lifecycle.refetch();
- };
- window.addEventListener("client:refresh", onRefresh);
- return () => window.removeEventListener("client:refresh", onRefresh);
- }, [refetch, lifecycle]);
+  const onRefresh = () => {
+   void refetch();
+  };
+  window.addEventListener("client:refresh", onRefresh);
+  return () => window.removeEventListener("client:refresh", onRefresh);
+ }, [refetch]);
+
 
   const [dragOver, setDragOver] = useState<MatchStage | null>(null);
   const [declining, setDeclining] = useState<{ matchId: string; name: string | null } | null>(null);
@@ -244,19 +284,10 @@ function PositionDetailPage() {
  });
  }, [data]);
 
- if (isError && !data)
-  return (
-   <div className="p-8">
-    <QueryErrorCard
-     title="We couldn't load this role"
-     error={error}
-     onRetry={() => void refetch()}
-     retrying={isLoading}
-    />
-   </div>
-  );
- if (!data) return <div className="p-8 text-muted-foreground">Loading…</div>;
+ // Load failures raise to the route errorComponent; a missing role is a 404.
+ if (!data) throw notFound();
  if (!data.position) throw notFound();
+
 
  const canEdit =
  !support.readOnly &&
@@ -272,14 +303,7 @@ function PositionDetailPage() {
  // With a confirmed hire on the role, the search view is replaced by what
  // remains: agreed terms, the derived guarantee window, and the outstanding
  // steps. The role stays reachable — messages and history remain open.
- if (handoff.isLoading && orgId) {
-  return (
-   <main className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
-    <HandoffSkeleton />
-   </main>
-  );
- }
- if (orgId && handoff.data) {
+ if (handoff) {
   return (
    <main className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
     <div>
@@ -395,26 +419,10 @@ function PositionDetailPage() {
   </div>
 
   {/* Recorded closure — reason, note, date and who closed it. */}
-  {closure.data && <RoleClosureRecord closure={closure.data} />}
+  {closure && <RoleClosureRecord closure={closure} />}
 
   {/* One-screen recap of the finished search. */}
-  {closure.data && !closure.data.paused && (
-   <>
-    {recap.isPending && <RoleRecapSkeleton />}
-    {recap.isError && (
-     <QueryErrorCard
-      title="We couldn't load the recap for this role"
-      error={recap.error}
-      onRetry={() => void recap.refetch()}
-      retrying={recap.isFetching}
-      compact
-     />
-    )}
-    {!recap.isPending && !recap.isError && recap.data && (
-     <RoleRecapPanel recap={recap.data} />
-    )}
-   </>
-  )}
+  {closure && !closure.paused && recap && <RoleRecapPanel recap={recap} />}
 
 
 
@@ -525,7 +533,7 @@ function PositionDetailPage() {
       onChanged={() => void refetch()}
     />
     {/* A role is closed with a recorded reason, never by message. */}
-    {orgId && !closure.data && !isArchivedStatus(position.status) && (
+    {orgId && !closure && !isArchivedStatus(position.status) && (
      <CloseRoleDialog
       orgId={orgId}
       positionId={position.id}
@@ -555,9 +563,8 @@ function PositionDetailPage() {
  </header>
 
 			<div id="information-needed" className="scroll-mt-24">
-				<InfoRequestsPanel
-					orgId={orgId}
-					positionId={id}
+				<InfoRequestList
+					requests={infoRequests}
 					heading="Information needed to keep sourcing"
 					onAnswered={() => {
 						void refetch();
@@ -586,8 +593,7 @@ function PositionDetailPage() {
  <div className="mt-3">
  <RoleDatedTimeline
  timeline={data.timeline}
- isLoading={isLoading}
- error={isError ? error : undefined}
+ isLoading={isFetching && !data.timeline}
  onRetry={() => void refetch()}
  />
  </div>
@@ -597,10 +603,9 @@ function PositionDetailPage() {
  {/* Full system workflow — Intake through Hire, derived from real records */}
  <section className="rounded-xl border bg-card px-4 py-4">
  <RoleLifecycleTimeline
- lifecycle={lifecycle.data}
- isLoading={lifecycle.isLoading}
- error={lifecycle.error}
- onRetry={() => void lifecycle.refetch()}
+ lifecycle={lifecycle}
+ isLoading={false}
+ onRetry={() => void refetch()}
  />
  </section>
 

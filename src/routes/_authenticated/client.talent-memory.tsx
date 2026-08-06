@@ -48,6 +48,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { makeWorkspacePending, WorkspaceRowsSkeleton } from "@/components/workspace/pending-states";
 
 const searchSchema = z.object({
   id: z.string().uuid().optional(),
@@ -67,7 +68,11 @@ const searchSchema = z.object({
   q: z.string().optional(),
 });
 
+
+const RoutePending = makeWorkspacePending({ shape: "cards", kpis: false, width: "7xl" });
 export const Route = createFileRoute("/_authenticated/client/talent-memory")({
+	pendingMs: 150,
+	pendingComponent: RoutePending,
   validateSearch: searchSchema,
   head: () => ({
     meta: [
@@ -151,7 +156,7 @@ function TalentMemoryPage() {
     );
   }
 
-  if (!orgId) return <div className="p-8 text-sm text-muted-foreground">Loading…</div>;
+  if (!orgId) return <RoutePending />;
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
@@ -417,7 +422,7 @@ function MemorySheet({
             />
           </div>
         ) : !m ? (
-          <p className="p-4 text-sm text-muted-foreground">Loading…</p>
+          <div className="p-4"><WorkspaceRowsSkeleton rows={3} /></div>
         ) : (
           <>
             <SheetHeader>

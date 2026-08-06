@@ -87,8 +87,13 @@ import {
 import { InterviewerAssignments } from "@/components/client/interviewer-assignments";
 import { CandidateTeamActivity } from "@/components/client/candidate-team-activity";
 import { QueryErrorCard } from "@/components/client/query-error";
+import { makeWorkspacePending } from "@/components/workspace/pending-states";
 
+
+const RoutePending = makeWorkspacePending({ shape: "detail", kpis: false, width: "6xl" });
 export const Route = createFileRoute("/_authenticated/client/candidates/$id")({
+	pendingMs: 150,
+	pendingComponent: RoutePending,
  head: () => ({
  meta: [
  { title: "Candidate · Client workspace" },
