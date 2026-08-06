@@ -1,4 +1,5 @@
 import { createFileRoute, Link, stripSearchParams, useNavigate } from "@tanstack/react-router";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
@@ -63,6 +64,8 @@ export const Route = createFileRoute("/jobs/")({
   }),
   loader: async ({ context }) => context.queryClient.ensureQueryData(positionsQuery),
   component: JobsPage,
+  errorComponent: makeRouteErrorComponent("public", "jobs.index"),
+  notFoundComponent: makeRouteNotFoundComponent("public"),
 });
 
 function labelWorkModel(m: string | null) {

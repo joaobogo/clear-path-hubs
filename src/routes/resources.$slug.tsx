@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { ArrowRight, BookOpen, CalendarClock, CheckCircle2, Compass, Users } from "lucide-react";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { UnfilledPositionCalculator } from "@/components/marketing/unfilled-position-calculator";
@@ -91,6 +92,7 @@ export const Route = createFileRoute("/resources/$slug")({
       </div>
     </SiteShell>
   ),
+  errorComponent: makeRouteErrorComponent("public", "resources.$slug"),
 });
 
 function sectionId(heading: string): string {

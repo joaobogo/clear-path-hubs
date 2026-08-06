@@ -1,5 +1,5 @@
-import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
@@ -24,7 +24,6 @@ export const Route = createFileRoute("/_authenticated/admin/intake/")({
       queryFn: () =>
         listIntakeInbox({ data: { filter: "pending", include_test: deps.show_test } }),
     }),
-  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.intake.index.tsx"),
   head: () => ({
     meta: [
       { title: "Intake inbox · TaaSFlow admin" },
@@ -32,6 +31,8 @@ export const Route = createFileRoute("/_authenticated/admin/intake/")({
     ],
   }),
   component: IntakeInbox,
+  errorComponent: makeRouteErrorComponent("admin", "_authenticated/admin.intake.index"),
+  notFoundComponent: makeRouteNotFoundComponent("admin"),
 });
 
 

@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { getSupportOverview } from "@/lib/admin-workbench.functions";
 import { startSupportSession } from "@/lib/support.functions";
-import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,8 +21,9 @@ export const Route = createFileRoute("/_authenticated/admin/support")({
       { name: "description", content: "Read-only, fully audited view of a client workspace." },
     ],
   }),
-  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.support.tsx"),
   component: SupportPage,
+  errorComponent: makeRouteErrorComponent("admin", "_authenticated/admin.support"),
+  notFoundComponent: makeRouteNotFoundComponent("admin"),
 });
 
 function SupportPage() {

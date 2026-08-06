@@ -1,4 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,7 @@ export const Route = createFileRoute("/.lovable/oauth/consent")({
       </Card>
     </FormShell>
   ),
+  notFoundComponent: makeRouteNotFoundComponent("public"),
 });
 
 function Consent() {

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useRouter, Link } from "@tanstack/react-router";
+import { useRouter, useParams, Link } from "@tanstack/react-router";
 import { ErrorState, PermissionState } from "@/components/ds";
 import { Button } from "@/components/ui/button";
 import { normalizeError, logTechnical, type AudienceTone } from "@/lib/error-taxonomy";
@@ -85,15 +85,28 @@ export function makeRouteErrorComponent(tone: AudienceTone, surface: string) {
   };
 }
 
-/** Missing or deleted record — designed, never a blank page or raw 404. */
+/**
+ * Missing or deleted record — designed, never a blank page or raw 404.
+ * Reads route params only (never loader data, which is undefined here) so it
+ * can name the identifier the visitor actually asked for.
+ */
 export function makeRouteNotFoundComponent(tone: AudienceTone) {
   return function RouteNotFound() {
     const normalized = normalizeError({ status: 404 }, { tone });
+    const params = useParams({ strict: false }) as Record<string, string | undefined>;
+    const identifier = Object.values(params ?? {}).find(
+      (value) => typeof value === "string" && value.length > 0,
+    );
     return (
       <div className="p-6">
         <ErrorState
           title={normalized.title}
-          description={normalized.description}
+          description={
+            identifier
+              ? `${normalized.description} (requested: ${identifier})`
+              : normalized.description
+          }
+
           action={
             <Button asChild variant="outline" size="sm">
               <Link to={HOME[tone].to}>{HOME[tone].label}</Link>

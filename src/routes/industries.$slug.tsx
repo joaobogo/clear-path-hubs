@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { ContentPage } from "@/components/marketing/content-page";
 import { IndustryPage } from "@/components/marketing/industry-page";
@@ -87,6 +88,7 @@ export const Route = createFileRoute("/industries/$slug")({
       </div>
     </SiteShell>
   ),
+  errorComponent: makeRouteErrorComponent("public", "industries.$slug"),
 });
 
 function IndustryDetail() {

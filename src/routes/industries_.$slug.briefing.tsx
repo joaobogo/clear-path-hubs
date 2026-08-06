@@ -9,6 +9,7 @@
  * dialog, so the document is always current.
  */
 import { CANONICAL_ORIGIN } from "@/lib/canonical-origin";
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Printer } from "lucide-react";
 
@@ -72,6 +73,7 @@ export const Route = createFileRoute("/industries_/$slug/briefing")({
       </Link>
     </div>
   ),
+  errorComponent: makeRouteErrorComponent("public", "industries_.$slug.briefing"),
 });
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {

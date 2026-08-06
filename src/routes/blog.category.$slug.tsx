@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { blog, estimateReadMinutes, extractExcerpt } from "@/lib/marketing/content";
@@ -44,6 +45,7 @@ export const Route = createFileRoute("/blog/category/$slug")({
       </div>
     </SiteShell>
   ),
+  errorComponent: makeRouteErrorComponent("public", "blog.category.$slug"),
 });
 
 function CategoryPage() {

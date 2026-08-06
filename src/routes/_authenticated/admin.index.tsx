@@ -1,5 +1,5 @@
-import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
@@ -38,7 +38,6 @@ export const Route = createFileRoute("/_authenticated/admin/")({
       queryKey: ["admin-work-queues", deps.show_test],
       queryFn: () => getAdminWorkQueues({ data: { include_test: deps.show_test } }),
     }),
-  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.index.tsx"),
   head: () => ({
     meta: [
       { title: "Work queue · TaaSFlow admin" },
@@ -46,6 +45,8 @@ export const Route = createFileRoute("/_authenticated/admin/")({
     ],
   }),
   component: Overview,
+  errorComponent: makeRouteErrorComponent("admin", "_authenticated/admin.index"),
+  notFoundComponent: makeRouteNotFoundComponent("admin"),
 });
 
 const ICONS: Record<string, ComponentType<{ className?: string }>> = {
