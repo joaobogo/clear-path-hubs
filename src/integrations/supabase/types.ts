@@ -15528,8 +15528,8 @@ export type Database = {
       }
     }
     Functions: {
-      _authz_probe_insert: {
-        Args: { _sql: string; _user: string }
+      _authz_probe_insert_allowed: {
+        Args: { _row: string; _table: string; _user: string }
         Returns: boolean
       }
       _authz_probe_visible: {
