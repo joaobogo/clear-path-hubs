@@ -102,7 +102,7 @@ describe("deriveRecommendations", () => {
       signals: { tasks: [{ status: "open", due_at: ago(3), blocking: false }], outreachTouches: [] },
     }).find((r) => r.key === "approval_queue_growing");
     expect(rec?.severity).toBe("act_now");
-    expect(rec?.link.to).toBe("/client/tasks");
+    expect(rec?.link.to).toBe("/client/approvals");
   });
 
   it("ignores completed queue items", () => {

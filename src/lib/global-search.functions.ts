@@ -324,7 +324,7 @@ export const globalSearch = createServerFn({ method: "POST" })
           .filter(Boolean)
           .join(" · "),
         state: t.status ? String(t.status).replace(/_/g, " ") : undefined,
-        href: scope === "admin" ? "/admin" : "/client/tasks",
+        href: scope === "admin" ? "/admin" : "/client/approvals",
         search: scope === "client" ? { org: t.organization_id as string } : undefined,
       }));
     }

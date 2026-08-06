@@ -74,8 +74,8 @@ type QuickAction = {
 
 const CLIENT_QUICK_ACTIONS: QuickAction[] = [
   { id: "qa-new-role", label: "Create new role", keywords: "create new role position intake", href: "/intake", icon: PlusCircle },
-  { id: "qa-overdue", label: "View overdue tasks", keywords: "overdue tasks approvals", href: "/client/tasks?view=overdue", icon: CheckSquare },
-  { id: "qa-blocking", label: "View blocking tasks", keywords: "blocking urgent approvals", href: "/client/tasks?view=blocking", icon: Zap },
+  { id: "qa-overdue", label: "View overdue approvals", keywords: "overdue tasks approvals", href: "/client/approvals?view=overdue", icon: CheckSquare },
+  { id: "qa-blocking", label: "View blocking approvals", keywords: "blocking urgent approvals", href: "/client/approvals?view=blocking", icon: Zap },
   { id: "qa-agents", label: "Turn agents on or off", keywords: "agents sourcing screening outreach scheduling turn on off pause control", href: "/client/agents", icon: Bot },
   { id: "qa-pace", label: "Change how hard we work a role", keywords: "pace intensity steady standard aggressive dial control room", href: "/client", icon: Gauge },
   { id: "qa-outreach", label: "Set outreach rules", keywords: "outreach channels contact rules frequency caps", href: "/client/outreach", icon: Send },

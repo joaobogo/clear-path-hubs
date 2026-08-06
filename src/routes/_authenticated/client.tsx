@@ -114,7 +114,7 @@ const TABS: NavDef[] = [
 	{ to: "/client", label: "Overview", icon: LayoutDashboard, exact: true, everyone: true, hint: "What needs you today" },
 	{ to: "/client/positions", label: "Roles", icon: Briefcase, everyone: true, hint: "Roles, interviews, offers, deliveries" },
 	{ to: "/client/candidates", label: "Candidates", icon: Users, everyone: true, hint: "Shortlist, talent pool, shared links" },
-	{ to: "/client/tasks", label: "Approvals", icon: CheckSquare, everyone: true, hint: "Decisions waiting on you" },
+	{ to: "/client/approvals", label: "Approvals", icon: CheckSquare, everyone: true, hint: "Decisions waiting on you" },
 	{ to: "/client/conversations", label: "Messages", icon: MessageSquare, everyone: true, hint: "One thread per role and candidate" },
 	{ to: "/client/analytics", label: "Insights", icon: Gauge, everyone: true, hint: "Questions, dashboards, your data" },
 	{ to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true, hint: "Assistant, agents, outreach" },

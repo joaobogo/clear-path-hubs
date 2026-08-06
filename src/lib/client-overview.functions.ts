@@ -473,7 +473,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
         due_at: null,
         waiting_since: (r.created_at as string) ?? null,
         action: "Answer",
-        to: positionId ? `/client/positions/${positionId}#information-needed` : "/client/tasks",
+        to: positionId ? `/client/positions/${positionId}#information-needed` : "/client/approvals",
       });
     }
 
