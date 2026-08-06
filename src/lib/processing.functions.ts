@@ -951,9 +951,20 @@ export const listAdminMatches = createServerFn({ method: "GET" })
 
 export const getAdminMatch = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        // The detail route opens on the profile tab, which never reads the large
+        // payloads (score run results, raw CV text). It passes heavy:false and
+        // fetches the rest through getMatchHeavyDetail when a tab needs it.
+        heavy: z.boolean().optional().default(true),
+      })
+      .parse(input),
+  )
   .handler(async ({ data, context }) => {
     if (!(await isStaff(context.userId))) throw new Error("forbidden");
+    const heavy = data.heavy !== false;
     const supabase = (await getAdmin()) as AnyRow;
     const { data: m, error } = await supabase
       .from("candidate_matches")
@@ -969,7 +980,9 @@ export const getAdminMatch = createServerFn({ method: "GET" })
       supabase
         .from("score_runs")
         .select(
-          "id,score,confidence,status,fit_label,must_have_coverage,preferred_coverage,contradiction_status,explanation,result,completed_at,engine_version,input_hash",
+          heavy
+            ? "id,score,confidence,status,fit_label,must_have_coverage,preferred_coverage,contradiction_status,explanation,result,completed_at,engine_version,input_hash"
+            : "id,score,confidence,status,fit_label,must_have_coverage,preferred_coverage,contradiction_status,completed_at,engine_version,input_hash",
         )
         .eq("candidate_match_id", data.id)
         .order("completed_at", { ascending: false }),
@@ -987,7 +1000,11 @@ export const getAdminMatch = createServerFn({ method: "GET" })
         .limit(20),
       supabase
         .from("candidate_evidence")
-        .select("id,engine_version,extracted,screening_normalized,raw_text_sample,created_at")
+        .select(
+          heavy
+            ? "id,engine_version,extracted,screening_normalized,raw_text_sample,created_at"
+            : "id,engine_version,extracted,screening_normalized,created_at",
+        )
         .eq("candidate_match_id", data.id)
         .order("created_at", { ascending: false })
         .limit(1)
@@ -995,7 +1012,9 @@ export const getAdminMatch = createServerFn({ method: "GET" })
       supabase
         .from("files")
         .select(
-          "id,filename,storage_bucket,storage_path,mime_type,size,ocr_used,extracted_text,extraction_completed_at,extraction_attempts",
+          heavy
+            ? "id,filename,storage_bucket,storage_path,mime_type,size,ocr_used,extracted_text,extraction_completed_at,extraction_attempts"
+            : "id,filename,storage_bucket,storage_path,mime_type,size,ocr_used,extraction_completed_at,extraction_attempts",
         )
         .eq("candidate_profile_id", cpId)
         .order("created_at", { ascending: false })
@@ -1012,7 +1031,8 @@ export const getAdminMatch = createServerFn({ method: "GET" })
     const CV_URL_TTL_SECONDS = 300;
     let cv_signed_url: string | null = null;
     let cv_url_expires_at: string | null = null;
-    if (fileRes.data) {
+    // Signing costs a storage round trip; only the CV tab renders the preview.
+    if (heavy && fileRes.data) {
       const signed = await supabase.storage
         .from(fileRes.data.storage_bucket)
         .createSignedUrl(fileRes.data.storage_path, CV_URL_TTL_SECONDS);
