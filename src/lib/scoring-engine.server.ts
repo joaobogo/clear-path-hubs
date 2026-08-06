@@ -259,7 +259,6 @@ export function scoreCandidate(input: {
     keywords: r.keywords?.length ? r.keywords : extractKeywordsFromRequirement(r.text),
   }));
 
-  const cvLower = cv.toLowerCase();
   const cvTokens = new Set(tokenize(cv));
   // "Insufficient parse" signal — CV is too short/garbled to draw negative conclusions.
   // Missing keywords in this regime map to `unknown` (validate), never irrational zero.
@@ -268,12 +267,17 @@ export function scoreCandidate(input: {
   const evidence: EvidenceRef[] = [];
   const assessment: RequirementAssessment[] = requirements.map((r) => {
     const matched: string[] = [];
+    const negated: string[] = [];
     const localEvidence: EvidenceRef[] = [];
     for (const kw of r.keywords) {
       const k = kw.toLowerCase();
-      if (cvTokens.has(k) || cvLower.includes(k)) {
-        matched.push(kw);
-        const sn = findSnippet(cv, k);
+      const hits = findTermMatches(cv, k);
+      if (hits.length === 0) continue;
+      const affirmative = hits.filter((idx) => !isNegatedMention(cv, idx));
+      if (affirmative.length === 0) {
+        // Every mention is inside a negating clause ("no experience with X").
+        negated.push(kw);
+        const sn = findSnippet(cv, k, hits[0]);
         if (sn) {
           localEvidence.push({
             requirement_id: r.id,
@@ -284,11 +288,28 @@ export function scoreCandidate(input: {
             location: sn.location,
           });
         }
+        continue;
+      }
+      matched.push(kw);
+      const sn = findSnippet(cv, k, affirmative[0]);
+      if (sn) {
+        localEvidence.push({
+          requirement_id: r.id,
+          requirement_text: r.text,
+          source: "cv",
+          matched_terms: [kw],
+          snippet: sn.snippet,
+          location: sn.location,
+        });
       }
     }
     let status: RequirementAssessment["status"];
     let needs_validation = false;
-    if (matched.length === 0) {
+    if (matched.length === 0 && negated.length > 0) {
+      // The CV explicitly denies the requirement — that is contradicting
+      // evidence, not merely absent evidence.
+      status = "contradicted";
+    } else if (matched.length === 0) {
       // If the CV is too thin OR the requirement is one of many with no matches,
       // treat as UNKNOWN (needs validation) rather than a hard MISSING zero.
       if (cvIsThin) {
@@ -298,6 +319,7 @@ export function scoreCandidate(input: {
         status = "missing";
       }
     } else if (matched.length >= Math.max(2, Math.ceil(r.keywords.length * 0.6))) {
+
       status = "met";
     } else {
       status = "partial";
