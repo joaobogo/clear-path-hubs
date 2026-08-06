@@ -40,6 +40,7 @@ import { buildOfferRow } from "@/lib/client-offer-holder";
 import { computeNextMilestone } from "@/lib/client-next-milestone";
 import { buildRoleTimeline } from "@/lib/client-role-timeline";
 import { readWorkspaceAccess } from "@/lib/authz/workspace-access";
+import { hydrateClientCandidateProfiles } from "@/lib/client-candidate-hydrate.server";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -504,12 +505,12 @@ export const getClientOverview = createServerFn({ method: "GET" })
     if (queueRows.length > 0) {
       const { data: queueMatches } = await context.supabase
         .from("candidate_matches")
-        .select("id, candidate_profiles(full_name)")
+        .select("id, candidate_profile_id, candidate_profiles(full_name)")
         .in(
           "id",
           queueRows.map((r) => r.id),
         );
-      for (const m of (queueMatches as AnyRow[]) ?? []) {
+      for (const m of await hydrateClientCandidateProfiles(queueMatches as AnyRow[])) {
         queueNames.set(m.id as string, (m.candidate_profiles?.full_name as string) ?? "Candidate");
       }
     }
@@ -737,7 +738,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
     const { data: latestMatches } = await context.supabase
       .from("candidate_matches")
       .select(
-        `id, stage, delivered_at, position_id,
+        `id, stage, delivered_at, position_id, candidate_profile_id,
          candidate_profiles(id, full_name, headline, location, availability, years_experience, summary),
          positions(id, title),
          score_runs:approved_score_run_id (score, fit_label, explanation, result, requirement_coverage, evidence)`,
@@ -746,7 +747,9 @@ export const getClientOverview = createServerFn({ method: "GET" })
       .eq("client_visibility", "visible")
       .order("delivered_at", { ascending: false })
       .limit(4);
-    const latest_candidates = ((latestMatches as AnyRow[]) ?? []).map(toClientCandidateDTO);
+    const latest_candidates = (
+      await hydrateClientCandidateProfiles(latestMatches as AnyRow[])
+    ).map(toClientCandidateDTO);
 
     // Recent messages (last 3).
     const { data: recentMessages } = await context.supabase
@@ -933,7 +936,7 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
     const { data: matches } = await context.supabase
       .from("candidate_matches")
       .select(
-        `id, stage, admin_status, delivered_at, approved_score_run_id,
+        `id, stage, admin_status, delivered_at, approved_score_run_id, candidate_profile_id,
          candidate_profiles(id, full_name, headline, location),
          score_runs:approved_score_run_id (score, fit_label, explanation)`,
       )
@@ -1239,7 +1242,7 @@ export const getClientCandidates = createServerFn({ method: "GET" })
     let q = context.supabase
       .from("candidate_matches")
       .select(
-        `id, stage, delivered_at, position_id, application_id,
+        `id, stage, delivered_at, position_id, application_id, candidate_profile_id,
          candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications),
          positions(id, title),
          score_runs:approved_score_run_id (score, fit_label, explanation, result, requirement_coverage, evidence)`,
