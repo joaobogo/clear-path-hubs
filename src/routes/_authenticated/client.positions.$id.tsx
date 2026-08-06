@@ -25,21 +25,11 @@ import { confirmRoleBlueprint } from "@/lib/client-positions.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { AlertCircle } from "lucide-react";
-import { RoleBlueprint } from "@/components/product/role-blueprint";
-import { GeneratedBlueprintPanel } from "@/components/positions/generated-blueprint-panel";
-import { RoleLaunchPanel } from "@/components/positions/role-launch-panel";
 import type { RoleLaunchState } from "@/lib/role-launch";
-import { PreviouslyConsidered } from "@/components/client/previously-considered";
 import { RoleMessagesPanel } from "@/components/client/role-messages-panel";
 import { RoleMemoryPanel } from "@/components/role-memory-panel";
 
-import { RoleProgressTracker } from "@/components/client/role-progress-tracker";
-import { RoleDatedTimeline } from "@/components/client/role-dated-timeline";
-import { DeliveryCommitmentBlock } from "@/components/client/delivery-commitment";
 import { InfoRequestList } from "@/components/client/info-requests";
-import { buildDeliveryCommitment } from "@/lib/delivery-commitment";
-import { RoleShortlist } from "@/components/client/role-shortlist";
-import { RoleLifecycleTimeline } from "@/components/client/role-lifecycle-timeline";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
 import { RoleClosureRecord } from "@/components/client/close-role-dialog";
 import { RoleRecapPanel } from "@/components/client/role-recap";
@@ -55,6 +45,8 @@ import { PositionHeader } from "@/components/client/position-detail/header";
 import { PositionHandoffView } from "@/components/client/position-detail/handoff-view";
 import { HiringProcessSection } from "@/components/client/position-detail/hiring-process-section";
 import { ActivitySection } from "@/components/client/position-detail/activity-section";
+import { RoleStatusSection } from "@/components/client/position-detail/role-status-section";
+import { EvidencePanels } from "@/components/client/position-detail/evidence-panels";
 
 /**
  * One payload for the whole role. The server returns the role, its pipeline,
@@ -370,41 +362,14 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
         />
       </div>
 
-      {/* Where we are — persistent five-stage tracker + plain-language status */}
-      <section className="rounded-xl border bg-card px-4 py-4">
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          Where we are
-        </h2>
-        <div className="mt-3">
-          <RoleProgressTracker progress={data.progress} />
-        </div>
-        {summary.pipeline_line && (
-          <p className="mt-3 border-t pt-3 text-sm font-medium text-foreground/90">
-            {summary.pipeline_line}
-          </p>
-        )}
-        <div className="mt-4 border-t pt-4">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Timeline
-          </h3>
-          <div className="mt-3">
-            <RoleDatedTimeline
-              timeline={data.timeline}
-              isLoading={isFetching && !data.timeline}
-              onRetry={() => void refetch()}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Full system workflow — Intake through Hire, derived from real records */}
-      <section className="rounded-xl border bg-card px-4 py-4">
-        <RoleLifecycleTimeline
-          lifecycle={lifecycle}
-          isLoading={false}
-          onRetry={() => void refetch()}
-        />
-      </section>
+      <RoleStatusSection
+        progress={data.progress}
+        pipelineLine={summary.pipeline_line}
+        timeline={data.timeline}
+        timelineLoading={isFetching && !data.timeline}
+        lifecycle={lifecycle}
+        onRetry={() => void refetch()}
+      />
 
       {/* What we committed to at launch — promise, actual, variance */}
       <SlaScorecard orgId={orgId} positionId={id} title="What we committed to for this role" />
@@ -469,39 +434,18 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
         attemptMove={attemptMove}
       />
 
-      {/* 5. Shortlist — standard evidence card per candidate */}
-      <RoleShortlist
+      <EvidencePanels
         orgId={orgId}
         positionId={id}
         firstShortlistExpectedAt={data.first_shortlist_expected_at}
-      />
-
-      {/* Same stored delivery commitment the client saw on confirmation */}
-      <DeliveryCommitmentBlock
-        commitment={buildDeliveryCommitment({
-          commitment: data.commitment,
-          positionId: id,
-          contactName: data.commitment_contact_name,
-        })}
-      />
-
-      {/* 5b. Role setup timeline + search channels — evidence-backed */}
-      {launch && <RoleLaunchPanel launch={launch} />}
-
-      {/* 5c. Generated role blueprint from express onboarding */}
-      <GeneratedBlueprintPanel
+        commitment={data.commitment}
+        commitmentContactName={data.commitment_contact_name}
+        launch={launch}
         position={position}
-        audience="client"
-        editTo={{ to: "/client/positions/$id/edit", params: { id } }}
-        onConfirm={() => confirmBlueprint.mutate()}
-        confirming={confirmBlueprint.isPending}
+        activity={activity}
+        onConfirmBlueprint={() => confirmBlueprint.mutate()}
+        confirmingBlueprint={confirmBlueprint.isPending}
       />
-
-      {/* 6. Role blueprint — ATS-grade source of truth */}
-      <RoleBlueprint position={position} activity={activity} />
-
-      {/* 6b. Previously considered — earlier candidates matched to this brief */}
-      {orgId && <PreviouslyConsidered orgId={orgId} positionId={id} />}
 
       {/* 7. Hiring process */}
       <HiringProcessSection
