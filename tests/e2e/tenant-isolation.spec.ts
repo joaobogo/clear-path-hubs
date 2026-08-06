@@ -311,10 +311,11 @@ test.describe("tenant isolation — /intake and /express-intake", () => {
     expect(created.status, JSON.stringify(created.body)).toBe(200);
     const domainOrgId = created.body.organizationId!;
 
+    const strangerCompany = `${uniqueProspect().companyName}_SAMEDOMAIN`;
     const stranger = await postPublic<IntakeResponse>(
       "/api/public/intake",
       intakePayload({
-        companyName: `${uniqueProspect().companyName}_SAMEDOMAIN`,
+        companyName: strangerCompany,
         workEmail: `qa.intake+stranger-${Date.now()}@${domain}`,
         password: ATTACKER_PASSWORD,
       }),
@@ -326,11 +327,10 @@ test.describe("tenant isolation — /intake and /express-intake", () => {
     const tenant = await lookupTenant({ organizationId: domainOrgId });
     expect(tenant.memberships).toHaveLength(1);
     expect(tenant.memberships[0]?.user_id).toBe(created.body.userId);
-    // And no workspace was forked for the stranger's company name either.
-    expect((await lookupTenant({ companyName: `${stranger.body.organizationId ?? ""}` })).organizations)
-      .toHaveLength(0);
-
+    // And no workspace was forked under the stranger's company name either.
+    expect((await lookupTenant({ companyName: strangerCompany })).organizations).toHaveLength(0);
   });
+
 
   // ── 3. tenant hijack prevention ──────────────────────────────────────────
 
