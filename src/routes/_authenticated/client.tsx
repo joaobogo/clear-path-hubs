@@ -107,21 +107,23 @@ export const Route = createFileRoute("/_authenticated/client")({
 
 type NavDef = WorkspaceNavItem & { everyone: boolean };
 
-// Part 9 subtraction: nine entries instead of fifteen. Everything that used to
-// have its own sidebar row now lives as a tab inside one of these sections
-// (see src/config/workspace-sections.ts).
+// Part 9 subtraction, then hierarchy: four primary entries carry the decision
+// job (see what needs you, work a role, judge a candidate, approve). Everything
+// else is a subordinate "More" group. URLs are unchanged — this is hierarchy
+// only, so nothing became unreachable.
 const TABS: NavDef[] = [
 	{ to: "/client", label: "Overview", icon: LayoutDashboard, exact: true, everyone: true, hint: "What needs you today" },
-	{ to: "/client/positions", label: "Roles", icon: Briefcase, everyone: true, hint: "Roles, interviews, offers, deliveries" },
+	{ to: "/client/positions", label: "Roles", icon: Briefcase, everyone: true, hint: "Roles, interviews, offers" },
 	{ to: "/client/candidates", label: "Candidates", icon: Users, everyone: true, hint: "Shortlist, talent pool, shared links" },
-	{ to: "/client/tasks", label: "Approvals", icon: CheckSquare, everyone: true, hint: "Decisions waiting on you" },
-	{ to: "/client/conversations", label: "Messages", icon: MessageSquare, everyone: true, hint: "One thread per role and candidate" },
-	{ to: "/client/analytics", label: "Insights", icon: Gauge, everyone: true, hint: "Questions, dashboards, your data" },
-	{ to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true, hint: "Assistant, agents, outreach" },
-	{ to: "/client/talent-memory", label: "Talent memory", icon: Award, everyone: true, hint: "People we already know" },
-	{ to: "/client/onboarding", label: "Setup", icon: Settings, everyone: false, hint: "Configure your hiring system" },
-	{ to: "/client/account", label: "Account", icon: Building2, everyone: false, hint: "Team, plan, settings" },
+	{ to: "/client/approvals", label: "Approvals", icon: CheckSquare, everyone: true, hint: "Decisions waiting on you" },
+	{ to: "/client/conversations", label: "Messages", icon: MessageSquare, everyone: true, group: "More", subdued: true, hint: "One thread per role and candidate" },
+	{ to: "/client/intelligence", label: "Insights", icon: Gauge, everyone: true, group: "More", subdued: true, hint: "Questions, dashboards, your data" },
+	{ to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true, group: "More", subdued: true, hint: "Assistant, agents, outreach" },
+	{ to: "/client/talent-memory", label: "Talent memory", icon: Award, everyone: true, group: "More", subdued: true, hint: "People we already know" },
+	{ to: "/client/onboarding", label: "Setup", icon: Settings, everyone: false, group: "More", subdued: true, hint: "Configure your hiring system" },
+	{ to: "/client/account", label: "Account", icon: Building2, everyone: false, group: "More", subdued: true, hint: "Team, plan, settings" },
 ];
+
 
 // Manage-only areas are gated by path, not by whether they appear in the rail —
 // several of them are now tabs inside the Account section.

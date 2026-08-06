@@ -364,7 +364,7 @@ export function deriveRecommendations(input: {
           "Open pending approvals and clear the blocking items first — those are the ones holding other work up.",
         expectedImpact:
           "Clearing blocking items lets dependent work resume. Items not marked blocking can wait without stopping the pipeline.",
-        link: { label: "Open pending approvals", to: "/client/tasks" },
+        link: { label: "Open pending approvals", to: "/client/approvals" },
         derivedFrom: "role_risk",
         dismissible: false,
         snoozable: true,
