@@ -8,6 +8,7 @@ import { DecisionBar } from "@/components/client/decision-bar";
 import { NextStepNote } from "@/components/client/next-step-note";
 import { UndoWindow } from "@/components/client/undo-window";
 import { fitChips } from "@/lib/client-evidence-bullets";
+import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { buildShortlistRationale } from "@/lib/client-rationale";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type { FitPresentation } from "@/lib/client-fit-presentation";
