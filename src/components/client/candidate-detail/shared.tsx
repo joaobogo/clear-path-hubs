@@ -59,6 +59,9 @@ export function CandidateHeader({
             {c.headline}
           </p>
         )}
+        {candidate.human_review?.statement && (
+          <p className="mt-1 text-sm text-primary">{candidate.human_review.statement}</p>
+        )}
         {c.headline_chips.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1.5">
             {c.headline_chips.map((chip) => (
