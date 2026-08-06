@@ -65,7 +65,7 @@ export function SupportRequestSheet({
           {triggerLabel}
         </Button>
       </SheetTrigger>
-      <SheetContent side="bottom" className="max-h-[90vh] overflow-y-auto sm:max-w-lg sm:side-right">
+      <SheetContent side="bottom" className="max-h-[90vh] overflow-y-auto">
         <SheetHeader className="text-left">
           <SheetTitle>Get help</SheetTitle>
           <SheetDescription>{SUPPORT_RESPONSE_PROMISE}</SheetDescription>
