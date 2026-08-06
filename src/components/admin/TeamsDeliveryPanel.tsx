@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listTeamsDeliveries } from "@/lib/teams.functions";
 import { Badge } from "@/components/ui/badge";
-import { PanelError } from "@/components/admin/panel-error";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 
 /**
  * Staff view of Microsoft Teams delivery: how many workspaces are connected,
@@ -10,53 +10,41 @@ import { PanelError } from "@/components/admin/panel-error";
  */
 export function TeamsDeliveryPanel() {
   const fn = useServerFn(listTeamsDeliveries);
-  const { data, isLoading, error, refetch, isFetching } = useQuery({
+  const query = useQuery({
     queryKey: ["teams-deliveries"],
     queryFn: () => fn(),
   });
-
-  if (isLoading) {
-    return (
-      <section className="rounded-lg border p-4">
-        <h3 className="font-semibold">Teams delivery</h3>
-        <p className="mt-1 text-sm text-muted-foreground">Loading…</p>
-      </section>
-    );
-  }
-  if (error || !data) {
-    return (
-      <section className="rounded-lg border p-4">
-        <h3 className="font-semibold">Teams delivery</h3>
-        <PanelError
-          className="mt-3"
-          message="We couldn't load Teams delivery history. This is a read failure, not proof that nothing was posted."
-          onRetry={() => void refetch()}
-          retrying={isFetching}
-        />
-      </section>
-    );
-  }
+  const { data } = query;
 
   return (
     <section className="rounded-lg border p-4">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">Teams delivery</h3>
-        <div className="flex gap-2 text-xs">
-          <Badge variant="secondary">{data.connected} connected</Badge>
-          <Badge variant="secondary">{data.active} active</Badge>
-          <Badge variant={data.failures > 0 ? "destructive" : "secondary"}>
-            {data.failures} failed
-          </Badge>
-        </div>
+        {data ? (
+          <div className="flex gap-2 text-xs">
+            <Badge variant="secondary">{data.connected} connected</Badge>
+            <Badge variant="secondary">{data.active} active</Badge>
+            <Badge variant={data.failures > 0 ? "destructive" : "secondary"}>
+              {data.failures} failed
+            </Badge>
+          </div>
+        ) : null}
       </div>
 
-      {data.items.length === 0 ? (
-        <p className="mt-3 text-sm text-muted-foreground">
-          No Teams posts yet. Nothing is sent until a workspace connects a channel.
-        </p>
-      ) : (
+      <PanelState
+        query={query}
+        className="mt-3"
+        isEmpty={(data?.items.length ?? 0) === 0}
+        empty={
+          <PanelEmpty
+            className="mt-3"
+            title="No Teams posts yet"
+            description="Nothing is sent until a workspace connects a channel."
+          />
+        }
+      >
         <ul className="mt-3 divide-y text-sm">
-          {data.items.slice(0, 15).map((row) => (
+          {data?.items.slice(0, 15).map((row) => (
             <li key={row.id as string} className="flex items-start justify-between gap-4 py-2">
               <div className="min-w-0">
                 <div className="font-medium">
@@ -74,7 +62,7 @@ export function TeamsDeliveryPanel() {
             </li>
           ))}
         </ul>
-      )}
+      </PanelState>
     </section>
   );
 }

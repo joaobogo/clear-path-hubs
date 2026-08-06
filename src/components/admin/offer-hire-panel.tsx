@@ -486,23 +486,10 @@ export function OfferHireRollupPanel() {
     queryFn: () => getOfferHireRollup({ data: {} }),
   });
 
-  if (query.isPending) {
-    return (
-      <div className="space-y-3">
-        <Skeleton className="h-6 w-40" />
-        <div className="grid gap-3 sm:grid-cols-4">
-          {[0, 1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-20" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-  if (query.isError) return <ErrorCard onRetry={() => void query.refetch()} />;
-
   const d = query.data;
-  const empty =
-    d.totals.extended === 0 && d.missing_hire_records.length === 0 && d.totals.hires_confirmed === 0;
+  const empty = d
+    ? d.totals.extended === 0 && d.missing_hire_records.length === 0 && d.totals.hires_confirmed === 0
+    : false;
 
   return (
     <section className="space-y-4">
@@ -516,11 +503,12 @@ export function OfferHireRollupPanel() {
         </p>
       </header>
 
-      {empty ? (
-        <p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-          No offers on record
-        </p>
-      ) : (
+      <PanelState
+        query={query}
+        isEmpty={empty}
+        empty={<PanelEmpty title="No offers on record" description="Offer and hire outcomes will appear here once recorded." />}
+      >
+      {d && (
         <>
           <div className="grid gap-3 sm:grid-cols-4">
             <Stat label="Offers extended" value={d.totals.extended} />
@@ -597,6 +585,7 @@ export function OfferHireRollupPanel() {
           )}
         </>
       )}
+      </PanelState>
     </section>
   );
 }

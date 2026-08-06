@@ -7,10 +7,10 @@
  */
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, ArrowRight, RotateCcw } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import {
   getAccountCommercial,
   getAccountDelivery,
@@ -46,34 +46,6 @@ function BlockShell({
   );
 }
 
-function BlockError({ onRetry }: { onRetry: () => void }) {
-  return (
-    <div role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-3">
-      <div className="flex items-start gap-2 text-sm">
-        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" aria-hidden />
-        <div>
-          <p className="font-medium">This block could not load</p>
-          <p className="text-xs text-muted-foreground">
-            The rest of the page is unaffected.
-          </p>
-        </div>
-      </div>
-      <Button size="sm" variant="outline" className="mt-3" onClick={onRetry}>
-        <RotateCcw className="mr-1.5 h-3.5 w-3.5" /> Retry
-      </Button>
-    </div>
-  );
-}
-
-function BlockSkeleton({ rows = 3 }: { rows?: number }) {
-  return (
-    <div className="space-y-2">
-      {Array.from({ length: rows }).map((_, i) => (
-        <Skeleton key={i} className="h-6 w-full" />
-      ))}
-    </div>
-  );
-}
 
 function Figure({
   label,
@@ -147,11 +119,7 @@ export function AccountOperatingSummary({
     engagement.data.open_support_sessions === 0;
 
   if (noActivity) {
-    return (
-      <section className="rounded-lg border border-dashed p-8 text-center">
-        <p className="text-sm text-muted-foreground">This account has no activity yet</p>
-      </section>
-    );
+    return <PanelEmpty title="This account has no activity yet" />;
   }
 
   return (

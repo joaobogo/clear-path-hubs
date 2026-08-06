@@ -4,13 +4,13 @@ import { useServerFn } from "@tanstack/react-start";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import {
   getIntegrationStrip,
   drainIntegrationQueue,
   type StripChip,
 } from "@/lib/integration-strip.functions";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 
 const STATE_STYLE: Record<
   StripChip["state"],
@@ -61,147 +61,133 @@ export function IntegrationHealthStrip({ onRunChecks }: { onRunChecks?: () => vo
       toast.error(e instanceof Error ? e.message : "The queue could not be drained."),
   });
 
-  if (strip.isLoading) {
-    return (
-      <div className="flex flex-wrap gap-2">
-        {[0, 1, 2, 3].map((i) => (
-          <Skeleton key={i} className="h-9 w-44 rounded-full" />
-        ))}
-      </div>
-    );
-  }
-
-  if (strip.isError) {
-    return (
-      <Card className="border-destructive/40 bg-destructive/5 p-4">
-        <p className="text-sm font-medium">Integration status could not be read</p>
-        <p className="text-sm text-muted-foreground">
-          {strip.error instanceof Error ? strip.error.message : "Unknown error."} Nothing here
-          should be treated as healthy until this loads.
-        </p>
-        <Button size="sm" variant="outline" className="mt-3" onClick={() => strip.refetch()}>
-          Retry
-        </Button>
-      </Card>
-    );
-  }
-
   const chips = strip.data?.chips ?? [];
   const open = chips.find((c) => c.key === openKey) ?? null;
 
   return (
-    <section className="space-y-3" aria-label="Integration status">
-      <div className="flex flex-wrap items-center gap-2">
-        {chips.map((chip) => {
-          const style = STATE_STYLE[chip.state];
-          const selected = openKey === chip.key;
-          return (
-            <button
-              key={chip.key}
-              type="button"
-              onClick={() => setOpenKey(selected ? null : chip.key)}
-              aria-expanded={selected}
-              className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors ${
-                selected ? "border-foreground/40 bg-muted" : "hover:bg-muted/60"
-              }`}
-            >
-              <span className={`h-2 w-2 rounded-full ${style.dot}`} aria-hidden />
-              <span className="font-medium">{chip.name}</span>
-              <Badge variant={style.variant} className="text-[10px]">
-                {style.label}
-              </Badge>
-              {chip.queue && chip.queue.depth > 0 ? (
-                <span className="text-xs tabular-nums text-muted-foreground">
-                  {chip.queue.depth} queued
-                </span>
-              ) : null}
-            </button>
-          );
-        })}
-        {onRunChecks ? (
-          <Button size="sm" variant="outline" onClick={onRunChecks}>
-            Re-run checks
-          </Button>
-        ) : null}
-      </div>
+    <PanelState
+      query={strip}
+      isEmpty={chips.length === 0}
+      empty={
+        <PanelEmpty
+          title="No integrations configured"
+          description="Nothing to check yet — connected integrations will appear here."
+        />
+      }
+    >
+      <section className="space-y-3" aria-label="Integration status">
+        <div className="flex flex-wrap items-center gap-2">
+          {chips.map((chip) => {
+            const style = STATE_STYLE[chip.state];
+            const selected = openKey === chip.key;
+            return (
+              <button
+                key={chip.key}
+                type="button"
+                onClick={() => setOpenKey(selected ? null : chip.key)}
+                aria-expanded={selected}
+                className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors ${
+                  selected ? "border-foreground/40 bg-muted" : "hover:bg-muted/60"
+                }`}
+              >
+                <span className={`h-2 w-2 rounded-full ${style.dot}`} aria-hidden />
+                <span className="font-medium">{chip.name}</span>
+                <Badge variant={style.variant} className="text-[10px]">
+                  {style.label}
+                </Badge>
+                {chip.queue && chip.queue.depth > 0 ? (
+                  <span className="text-xs tabular-nums text-muted-foreground">
+                    {chip.queue.depth} queued
+                  </span>
+                ) : null}
+              </button>
+            );
+          })}
+          {onRunChecks ? (
+            <Button size="sm" variant="outline" onClick={onRunChecks}>
+              Re-run checks
+            </Button>
+          ) : null}
+        </div>
 
-      {open ? (
-        <Card className="p-4">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <h3 className="text-sm font-semibold">{open.name}</h3>
-              <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{open.reason}</p>
-            </div>
-            <Badge variant={STATE_STYLE[open.state].variant}>
-              {STATE_STYLE[open.state].label}
-            </Badge>
-          </div>
-
-          <dl className="mt-4 grid gap-3 text-xs sm:grid-cols-4">
-            <div>
-              <dt className="text-muted-foreground">Last successful sync</dt>
-              <dd className="font-medium">{ago(open.last_success_at)}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">Last failure</dt>
-              <dd className="font-medium">{ago(open.last_failure_at)}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">Last check</dt>
-              <dd className="font-medium">
-                {ago(open.last_check_at)}
-                {open.last_check_status ? ` · ${open.last_check_status}` : ""}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">Expected interval</dt>
-              <dd className="font-medium">
-                {Math.round(open.expected_interval_minutes / 60)}h
-              </dd>
-            </div>
-          </dl>
-
-          {open.queue ? (
-            <div className="mt-4 rounded-md border p-3">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <p className="text-sm font-medium">{open.queue.label}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {open.queue.error
-                      ? `Depth unknown — ${open.queue.error}`
-                      : `${open.queue.depth} waiting (threshold ${open.queue.threshold})` +
-                        (open.queue.oldest_at
-                          ? ` · oldest ${ago(open.queue.oldest_at)}`
-                          : " · no unprocessed items")}
-                  </p>
-                </div>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  disabled={!open.queue.drainable || open.queue.depth === 0 || drain.isPending}
-                  onClick={() => drain.mutate(open.queue!.key)}
-                >
-                  {drain.isPending ? "Draining…" : "Drain queue"}
-                </Button>
+        {open ? (
+          <Card className="p-4">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-semibold">{open.name}</h3>
+                <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{open.reason}</p>
               </div>
+              <Badge variant={STATE_STYLE[open.state].variant}>
+                {STATE_STYLE[open.state].label}
+              </Badge>
             </div>
-          ) : null}
 
-          {open.clients ? (
-            <p className="mt-3 text-xs text-muted-foreground">
-              Client connections — {open.clients.healthy} healthy · {open.clients.degraded}{" "}
-              degraded · {open.clients.failing} failing · {open.clients.not_connected} not
-              connected
-            </p>
-          ) : null}
+            <dl className="mt-4 grid gap-3 text-xs sm:grid-cols-4">
+              <div>
+                <dt className="text-muted-foreground">Last successful sync</dt>
+                <dd className="font-medium">{ago(open.last_success_at)}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">Last failure</dt>
+                <dd className="font-medium">{ago(open.last_failure_at)}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">Last check</dt>
+                <dd className="font-medium">
+                  {ago(open.last_check_at)}
+                  {open.last_check_status ? ` · ${open.last_check_status}` : ""}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">Expected interval</dt>
+                <dd className="font-medium">
+                  {Math.round(open.expected_interval_minutes / 60)}h
+                </dd>
+              </div>
+            </dl>
 
-          {open.last_failure_detail ? (
-            <pre className="mt-3 max-h-40 overflow-auto whitespace-pre-wrap break-words rounded-md bg-muted p-3 text-xs">
-              {open.last_failure_detail}
-            </pre>
-          ) : null}
-        </Card>
-      ) : null}
-    </section>
+            {open.queue ? (
+              <div className="mt-4 rounded-md border p-3">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-medium">{open.queue.label}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {open.queue.error
+                        ? `Depth unknown — ${open.queue.error}`
+                        : `${open.queue.depth} waiting (threshold ${open.queue.threshold})` +
+                          (open.queue.oldest_at
+                            ? ` · oldest ${ago(open.queue.oldest_at)}`
+                            : " · no unprocessed items")}
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    disabled={!open.queue.drainable || open.queue.depth === 0 || drain.isPending}
+                    onClick={() => drain.mutate(open.queue!.key)}
+                  >
+                    {drain.isPending ? "Draining…" : "Drain queue"}
+                  </Button>
+                </div>
+              </div>
+            ) : null}
+
+            {open.clients ? (
+              <p className="mt-3 text-xs text-muted-foreground">
+                Client connections — {open.clients.healthy} healthy · {open.clients.degraded}{" "}
+                degraded · {open.clients.failing} failing · {open.clients.not_connected} not
+                connected
+              </p>
+            ) : null}
+
+            {open.last_failure_detail ? (
+              <pre className="mt-3 max-h-40 overflow-auto whitespace-pre-wrap break-words rounded-md bg-muted p-3 text-xs">
+                {open.last_failure_detail}
+              </pre>
+            ) : null}
+          </Card>
+        ) : null}
+      </section>
+    </PanelState>
   );
 }

@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { listEmailDeliveryEvents } from "@/lib/email-delivery.functions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PanelError } from "@/components/admin/panel-error";
+import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 
 const FILTERS = [
   { value: "", label: "Everything" },
@@ -32,10 +32,11 @@ const PROBLEM_EVENTS = new Set([
 export function EmailDeliveryPanel() {
   const [filter, setFilter] = useState<string>("");
   const fn = useServerFn(listEmailDeliveryEvents);
-  const { data, isLoading, error, refetch, isFetching } = useQuery({
+  const query = useQuery({
     queryKey: ["email-delivery", filter],
     queryFn: () => fn({ data: filter ? { eventType: filter } : {} }),
   });
+  const { data } = query;
 
   const problems = data?.available
     ? data.items.filter((i) => PROBLEM_EVENTS.has(i.eventType)).length
@@ -68,53 +69,52 @@ export function EmailDeliveryPanel() {
         ))}
       </div>
 
-      {isLoading ? (
-        <p className="mt-3 text-sm text-muted-foreground">Loading delivery history…</p>
-      ) : error ? (
-        <PanelError
-          className="mt-3"
-          message="We couldn't load delivery history. This is a read failure on our side — it does not mean there were no sends."
-          onRetry={() => void refetch()}
-          retrying={isFetching}
-        />
-      ) : !data?.available ? (
-        <p className="mt-3 text-sm text-muted-foreground">{data?.reason}</p>
-      ) : data.items.length === 0 ? (
-        <p className="mt-3 text-sm text-muted-foreground">
-          No matching delivery events. Sends, bounces, complaints, unsubscribes and blocked
-          sends will appear here as they happen.
-        </p>
-      ) : (
-        <ul className="mt-3 divide-y text-sm">
-          {data.items.slice(0, 40).map((row, i) => (
-            <li
-              key={`${row.messageId ?? "e"}-${row.timestamp}-${i}`}
-              className="flex items-start justify-between gap-4 py-2"
-            >
-              <div className="min-w-0">
-                <div className="font-medium">
-                  {row.who ?? row.recipient}{" "}
-                  <span className="text-xs font-normal text-muted-foreground">
-                    · {row.role}
-                  </span>
+      <PanelState
+        query={query}
+        className="mt-3"
+        isEmpty={!!data?.available && data.items.length === 0}
+        empty={
+          <PanelEmpty
+            className="mt-3"
+            title="No matching delivery events"
+            description="Sends, bounces, complaints, unsubscribes and blocked sends will appear here as they happen."
+          />
+        }
+      >
+        {data?.available ? (
+          <ul className="mt-3 divide-y text-sm">
+            {data.items.slice(0, 40).map((row, i) => (
+              <li
+                key={`${row.messageId ?? "e"}-${row.timestamp}-${i}`}
+                className="flex items-start justify-between gap-4 py-2"
+              >
+                <div className="min-w-0">
+                  <div className="font-medium">
+                    {row.who ?? row.recipient}{" "}
+                    <span className="text-xs font-normal text-muted-foreground">
+                      · {row.role}
+                    </span>
+                  </div>
+                  <div className="truncate text-xs text-muted-foreground">
+                    {row.recipient}
+                    {row.status ? ` — ${row.status}` : ""}
+                  </div>
                 </div>
-                <div className="truncate text-xs text-muted-foreground">
-                  {row.recipient}
-                  {row.status ? ` — ${row.status}` : ""}
+                <div className="shrink-0 text-right">
+                  <Badge variant={PROBLEM_EVENTS.has(row.eventType) ? "destructive" : "secondary"}>
+                    {row.eventType.replace(/_/g, " ")}
+                  </Badge>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {new Date(row.timestamp).toLocaleString()}
+                  </div>
                 </div>
-              </div>
-              <div className="shrink-0 text-right">
-                <Badge variant={PROBLEM_EVENTS.has(row.eventType) ? "destructive" : "secondary"}>
-                  {row.eventType.replace(/_/g, " ")}
-                </Badge>
-                <div className="mt-1 text-xs text-muted-foreground">
-                  {new Date(row.timestamp).toLocaleString()}
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-3 text-sm text-muted-foreground">{data?.reason}</p>
+        )}
+      </PanelState>
 
       {data?.available && data.historyStartsAt ? (
         <p className="mt-3 text-xs text-muted-foreground">
