@@ -5,7 +5,7 @@ import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useSuspenseQuery, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import React, { useMemo, useState } from "react";
+import React, { lazy, Suspense, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
   advanceProcessing,
@@ -75,6 +75,28 @@ import {
 import { CandidateHistoryTimeline } from "@/components/admin/candidate-history-timeline";
 import { CandidateNextActionBar } from "@/components/admin/candidate-next-action-bar";
 import { ContactStatusBadges } from "@/components/admin/contact-status-badges";
+
+// Secondary tabs are code-split: first paint pays only for the profile view.
+const TAB_MODULE = () => import("@/components/admin/candidate-detail/tabs");
+const CvTab = lazy(() => TAB_MODULE().then((m) => ({ default: m.CvTab })));
+const EnrichmentTab = lazy(() => TAB_MODULE().then((m) => ({ default: m.EnrichmentTab })));
+const EvidenceTab = lazy(() => TAB_MODULE().then((m) => ({ default: m.EvidenceTab })));
+const ScoreTab = lazy(() => TAB_MODULE().then((m) => ({ default: m.ScoreTab })));
+const ScreeningTab = lazy(() => TAB_MODULE().then((m) => ({ default: m.ScreeningTab })));
+const HistoryTab = lazy(() => TAB_MODULE().then((m) => ({ default: m.HistoryTab })));
+const PreviewTab = lazy(() => TAB_MODULE().then((m) => ({ default: m.PreviewTab })));
+const ActivityAuditTab = lazy(() => TAB_MODULE().then((m) => ({ default: m.ActivityAuditTab })));
+const JourneyTab = lazy(() => TAB_MODULE().then((m) => ({ default: m.JourneyTab })));
+
+function TabFallback() {
+  return (
+    <div className="space-y-3" aria-busy="true" aria-live="polite">
+      <div className="h-5 w-40 animate-pulse rounded bg-muted motion-reduce:animate-none" />
+      <div className="h-32 animate-pulse rounded-lg bg-muted motion-reduce:animate-none" />
+      <span className="sr-only">Loading panel…</span>
+    </div>
+  );
+}
 
 
 
