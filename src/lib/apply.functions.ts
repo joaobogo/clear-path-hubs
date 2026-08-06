@@ -640,6 +640,57 @@ export const submitApplication = createServerFn({ method: "POST" })
       };
     } catch (err) {
       console.error("[submitApplication]", trace_id, err);
+
+      // The document is already stored but the application is not. Telling this
+      // person "network error, try again" is false: retrying re-sends a file we
+      // already hold and produces another candidate with no evidence. Raise it
+      // with us instead, and say plainly what we have.
+      if (orphanUpload) {
+        try {
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          await supabaseAdmin.from("processing_jobs").insert({
+            entity_type: "file",
+            entity_id: orphanUpload.fileId,
+            job_type: "parse",
+            status: "queued",
+            trace_id,
+          });
+        } catch (jobErr) {
+          console.error("[submitApplication] orphan parse enqueue failed", trace_id, jobErr);
+        }
+        try {
+          const { processLeadEvent } = await import("./leads/lead-pipeline.server");
+          await processLeadEvent({
+            leadType: "candidate_application",
+            sourceId: orphanUpload.fileId,
+            source: "application_submit_incomplete",
+            sourcePage: `/jobs/${data.position_id}/apply`,
+            fullName: orphanUpload.fullName,
+            email: orphanUpload.email,
+            facts: [
+              { label: "What happened", value: "CV stored, application record not created" },
+              { label: "Document", value: orphanUpload.filename },
+              { label: "Trace", value: trace_id },
+            ],
+            recordTable: "files",
+            recordId: orphanUpload.fileId,
+            positionId: data.position_id,
+            linkPath: "/admin/evidence-gaps",
+          });
+        } catch (notifyErr) {
+          console.error("[submitApplication] orphan alert failed", trace_id, notifyErr);
+        }
+        return {
+          ok: false,
+          trace_id,
+          code: "submit_incomplete",
+          message:
+            "Your CV reached us, but we could not finish creating your application. Our team has been alerted and will pick it up — you do not need to upload it again. If you would rather not wait, email hello@taasflow.com and quote " +
+            trace_id.slice(0, 8).toUpperCase() +
+            ".",
+        };
+      }
+
       return {
         ok: false,
         trace_id,
@@ -647,6 +698,7 @@ export const submitApplication = createServerFn({ method: "POST" })
         message: "Something went wrong on our end. Please try again in a moment.",
       };
     }
+
   });
 
 // Public confirmation lookup — no PII beyond what the candidate just submitted.
