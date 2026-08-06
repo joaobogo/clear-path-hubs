@@ -14,12 +14,6 @@ export async function loadInfoRequests(
   supabase: Client,
   data: { orgId: string; positionId: string | null },
 ): Promise<{ requests: InfoRequestCard[] }> {
-    const orgId = String(input?.orgId ?? "").trim();
-    if (!UUID.test(orgId)) throw new Error("A workspace is required");
-    const positionId = String(input?.positionId ?? "").trim();
-    return { orgId, positionId: UUID.test(positionId) ? positionId : null };
-  })
-  .handler(async ({ data, context }): Promise<{ requests: InfoRequestCard[] }> => {
     let query = supabase
       .from("position_info_requests")
       .select(
