@@ -290,6 +290,13 @@ export type ClientCandidateDTO = {
    * count of hand-verified requirements — never the reviewer's internal note.
    */
   human_review: { reviewed: boolean; verified_requirements: number; statement: string | null };
+  /**
+   * The band is never a bare adjective: this names the method that produced the
+   * assessment and lists the criteria with their evidence snippets. When no
+   * criterion carries evidence the shape is `evidence_pending` and the surface
+   * shows the band with "Evidence pending" instead of a figure.
+   */
+  explanation: ScoreExplanation;
   interview_guide: InterviewQuestion[];
   evidence: Array<{ label: string; snippet: string }>;
   experience: Array<{ title: string; company: string | null; period: string | null; description: string | null }>;
