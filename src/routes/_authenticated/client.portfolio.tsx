@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 /**
  * /client/portfolio — Enterprise multi-business-unit rollup.
  *
@@ -25,6 +26,8 @@ export const Route = createFileRoute("/_authenticated/client/portfolio")({
       { name: "robots", content: "noindex" },
     ],
   }),
+  errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.portfolio.tsx"),
+  notFoundComponent: makeRouteNotFoundComponent("client"),
   component: PortfolioPage,
 });
 

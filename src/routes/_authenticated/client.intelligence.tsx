@@ -1,3 +1,4 @@
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -35,6 +36,8 @@ export const Route = createFileRoute("/_authenticated/client/intelligence")({
       { name: "robots", content: "noindex" },
     ],
   }),
+  errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.intelligence.tsx"),
+  notFoundComponent: makeRouteNotFoundComponent("client"),
   component: IntelligencePage,
 });
 

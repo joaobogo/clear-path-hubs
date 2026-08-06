@@ -1,6 +1,6 @@
 import { clientStageLabel } from "@/lib/client-stage-labels";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
-import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -38,6 +38,7 @@ export const Route = createFileRoute("/_authenticated/client/executive")({
     ],
   }),
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.executive.tsx"),
+  notFoundComponent: makeRouteNotFoundComponent("client"),
   component: ExecutivePage,
 });
 

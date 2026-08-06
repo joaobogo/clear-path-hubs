@@ -7,7 +7,7 @@
  * team CRUD and the read-only subscription card were deleted rather than
  * kept alongside the real forms.
  */
-import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -79,6 +79,7 @@ export const Route = createFileRoute("/_authenticated/client/account")({
     "client",
     "src/routes/_authenticated/client.account.tsx",
   ),
+  notFoundComponent: makeRouteNotFoundComponent("client"),
   component: AccountPage,
 });
 
