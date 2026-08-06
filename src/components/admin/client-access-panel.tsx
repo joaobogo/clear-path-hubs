@@ -246,16 +246,10 @@ function ClientAccessBody({
           </span>
         </div>
 
-        {d.members.length === 0 && d.pending.length === 0 ? (
-          <div className="p-8 text-center text-sm text-muted-foreground">
-            No members yet.
-            <div className="mt-3">
-              <Button size="sm" onClick={() => setInviteOpen(true)} disabled={atCap}>
-                Invite the first member
-              </Button>
-            </div>
-          </div>
-        ) : (
+        {/* The empty case is owned by PanelState above, so a failed read can
+            never look like an account with no members. */}
+        {(
+
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
