@@ -28,6 +28,7 @@ import {
   Timer,
   LifeBuoy,
   FileWarning,
+  MailWarning,
   SearchX,
   AlarmClock,
 
