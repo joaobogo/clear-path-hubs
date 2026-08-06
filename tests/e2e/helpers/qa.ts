@@ -463,7 +463,7 @@ export type PublicApiResult<T = Record<string, unknown>> = { status: number; bod
 export async function postPublic<T = Record<string, unknown>>(
   path: string,
   payload: unknown,
-  opts: { accessToken?: string | null } = {},
+  opts: { accessToken?: string | null; noRetry?: boolean } = {},
 ): Promise<PublicApiResult<T>> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   if (opts.accessToken) headers["authorization"] = `Bearer ${opts.accessToken}`;
@@ -478,6 +478,13 @@ export async function postPublic<T = Record<string, unknown>>(
     body = JSON.parse(text);
   } catch {
     body = { raw: text };
+  }
+  // These endpoints rate-limit per connection by the minute. A 429 is the
+  // limiter working, not the behaviour under test, so wait it out once rather
+  // than reporting a false failure.
+  if (res.status === 429 && !opts.noRetry) {
+    await new Promise((r) => setTimeout(r, 62_000));
+    return postPublic<T>(path, payload, { ...opts, noRetry: true });
   }
   return { status: res.status, body: body as T };
 }
