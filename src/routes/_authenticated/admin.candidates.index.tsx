@@ -756,10 +756,10 @@ function CandidatesPage() {
                     {m.org_name} · {m.position_title}
                   </div>
                 </div>
-                <div className="flex shrink-0 items-center gap-1 text-right text-sm font-semibold tabular-nums">
-                  {m.final_score ?? m.score == null
-                    ? "—"
-                    : Math.round(Number(m.final_score ?? m.score))}
+                {/* List density: band + confidence. A raw number only appears on the
+                    detail view, where its rubric version can sit beside it. */}
+                <div className="flex shrink-0 items-center gap-1 text-right text-xs font-semibold">
+                  <span>{scoreBandListLabel(m)}</span>
                   <ScoreStalenessChip freshness={freshnessFromRow(m)} compact />
                 </div>
               </div>
