@@ -512,6 +512,7 @@ export async function executeScoring(
           final_computed: rec.computed,
           final_declared: raw.score,
           applied_cap: rec.applied_cap,
+          cap_reasons: rec.applied_caps.map((c) => c.reason),
           ok: true,
         },
         actor_user_id: opts.actor_user_id ?? null,
@@ -538,7 +539,11 @@ export async function executeScoring(
         // Three distinct facts: pre-cap composite, the cap in force (null when
         // none), and the published number.
         raw_score: raw.raw_score,
+        // Null, not a mirror of raw_score, when nothing clamped this run.
         applied_cap: rec.applied_cap,
+        cap_reason: rec.applied_caps.length
+          ? rec.applied_caps.map((c) => c.reason).join(" | ")
+          : null,
         final_score: raw.score,
         evaluation_method: EVALUATION_METHOD,
         fit_band: raw.fit_label,

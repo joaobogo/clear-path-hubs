@@ -6,4 +6,4 @@
  * order to say "this was assessed by an older engine". Keeping the constants
  * here means no UI file imports a `.server` module to read a string.
  */
-export const ENGINE_VERSION = "taasflow-scoring-v1.1.0";
+export const ENGINE_VERSION = "taasflow-scoring-v1.2.0";
