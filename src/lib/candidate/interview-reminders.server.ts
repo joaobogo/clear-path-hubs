@@ -21,24 +21,20 @@ export interface ReminderSweepResult {
   failed: number;
 }
 
+import { formatZonedTime, resolveRecipientZone } from "@/lib/time/zone-label";
+
 const HOUR_MS = 60 * 60 * 1000;
 /** How late a scheduled interview must be before we call it a no-show. */
 export const NO_SHOW_GRACE_MS = 2 * HOUR_MS;
 
-/** Human time label in the candidate's own timezone. */
+/**
+ * Human time label in the candidate's own timezone. Always carries the zone and
+ * the offset that applies on that date, so a reader never has to guess.
+ */
 export function formatSlotLabel(iso: string, timezone: string | null | undefined): string {
-  try {
-    return new Intl.DateTimeFormat("en-GB", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: timezone || "UTC",
-    }).format(new Date(iso));
-  } catch {
-    return new Date(iso).toISOString().replace("T", " ").slice(0, 16) + " UTC";
-  }
+  const zoned = formatZonedTime(iso, timezone);
+  if (!zoned) return new Date(iso).toISOString().replace("T", " ").slice(0, 16) + " (UTC, GMT)";
+  return zoned.timeLabel;
 }
 
 /** Which reminder, if any, is due for a scheduled interview right now. */
@@ -169,7 +165,8 @@ export async function runInterviewReminders(limit = 200): Promise<ReminderSweepR
       continue;
     }
 
-    const timezone = cp.timezone ?? row.timezone ?? "UTC";
+    const timezone = resolveRecipientZone(cp.timezone, row.timezone as string | null);
+    const zoned = formatZonedTime(String(row.scheduled_at), timezone);
     try {
       const outcome = await sendTemplateEmail("interview-reminder", cp.email, {
         idempotencyKey: `interview-reminder-${due}-${row.id}`,
@@ -177,8 +174,9 @@ export async function runInterviewReminders(limit = 200): Promise<ReminderSweepR
           candidateFirstName: (cp.full_name ?? "").trim().split(" ")[0] || null,
           positionTitle: pos?.title ?? null,
           organizationName: pos?.organizations?.name ?? null,
-          whenLabel: formatSlotLabel(String(row.scheduled_at), timezone),
+          whenLabel: zoned?.timeLabel ?? formatSlotLabel(String(row.scheduled_at), timezone),
           timezone,
+          offsetLabel: zoned?.offsetLabel ?? null,
           meetingUrl: row.meeting_url ?? null,
           location: row.location ?? null,
           manageUrl: "https://taasflow.com/me/interviews",
