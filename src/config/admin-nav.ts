@@ -62,7 +62,7 @@ export const ADMIN_NAV: WorkspaceNavItem[] = [
     to: "/admin/operations",
     label: "Operations",
     icon: Activity,
-    group: "Insight",
+    group: "Operations",
     hint: "Pipeline health, SLA clock, weekly review, system and data health",
   },
 
