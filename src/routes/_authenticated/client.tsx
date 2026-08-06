@@ -237,18 +237,8 @@ function ClientLayout() {
  );
  }
 
- if (supportSessionMissing) {
- return (
- <div className="mx-auto max-w-2xl p-8">
- <EmptyState
- title="Support session required"
- description={`Viewing ${active.name} as staff needs an open support session with a stated reason. Nothing here loads until one exists.`}
- whatAppearsHere="Open a session from the support screen; it is recorded, attributable to you, and closes itself after 30 minutes."
- action={{ label: "Open a support session", to: "/admin/support" }}
- />
- </div>
- );
- }
+
+
 
  const deniedTab = MANAGE_ONLY_PATHS.find(
  (path) => pathname === path || pathname.startsWith(path + "/"),
