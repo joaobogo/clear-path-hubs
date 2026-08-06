@@ -9,8 +9,8 @@
  * dialog, so the document is always current.
  */
 import { CANONICAL_ORIGIN } from "@/lib/canonical-origin";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Printer } from "lucide-react";
 
 import { getIndustryEntry, type IndustryEntry } from "@/content/industries-v2";

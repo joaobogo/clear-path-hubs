@@ -1,6 +1,5 @@
-import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { makeRouteNotFoundComponent } from "@/components/workspace/route-states";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { listAllConversations } from "@/lib/conversations.functions";
 import { Badge } from "@/components/ui/badge";
@@ -18,11 +17,11 @@ export const Route = createFileRoute("/_authenticated/admin/messages")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  errorComponent: makeRouteErrorComponent(
     "admin",
     "src/routes/_authenticated/admin.messages.tsx",
   ),
   component: AdminConversationsPage,
+  errorComponent: makeRouteErrorComponent("admin", "_authenticated/admin.messages"),
   notFoundComponent: makeRouteNotFoundComponent("admin"),
 });
 

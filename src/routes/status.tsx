@@ -29,8 +29,6 @@ const statusQuery = queryOptions({
   queryFn: () => getPlatformStatus(),
   staleTime: 30_000,
   refetchInterval: 60_000,
-  errorComponent: makeRouteErrorComponent("public", "status"),
-  notFoundComponent: makeRouteNotFoundComponent("public"),
 });
 
 export const Route = createFileRoute("/status")({
@@ -42,6 +40,8 @@ export const Route = createFileRoute("/status")({
         "Live, measured status for the TaaSFlow platform: public website, authentication, client workspace, role management, agent processing, candidate data, scoring, integrations, notifications and billing.",
     }),
   component: StatusPage,
+  errorComponent: makeRouteErrorComponent("public", "status"),
+  notFoundComponent: makeRouteNotFoundComponent("public"),
 });
 
 /* --------------------------------------------------------------- presentation */

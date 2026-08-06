@@ -1,12 +1,11 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { makeRouteNotFoundComponent } from "@/components/workspace/route-states";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { getAdminMatch, applyReviewDecision } from "@/lib/processing.functions";
 import { getReviewQueueIds } from "@/lib/admin-ops.functions";
-import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { EvidenceCompletenessGate } from "@/components/admin/evidence-completeness-gate";
 import { RejectReasonDialog } from "@/components/admin/reject-reason-dialog";
 import { getEvidenceCompleteness } from "@/lib/evidence/completeness.functions";
@@ -37,7 +36,6 @@ export const Route = createFileRoute("/_authenticated/admin/review/$matchId")({
     if (!d) throw notFound();
     return d;
   },
-  errorComponent: makeRouteErrorComponent(
     "admin",
     "src/routes/_authenticated/admin.review.$matchId.tsx",
   ),
@@ -45,6 +43,7 @@ export const Route = createFileRoute("/_authenticated/admin/review/$matchId")({
     meta: [{ title: "Candidate review · TaaSFlow admin" }, { name: "robots", content: "noindex" }],
   }),
   component: ReviewScreen,
+  errorComponent: makeRouteErrorComponent("admin", "_authenticated/admin.review.$matchId"),
   notFoundComponent: makeRouteNotFoundComponent("admin"),
 });
 

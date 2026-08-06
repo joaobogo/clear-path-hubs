@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { blog, estimateReadMinutes, extractExcerpt } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";

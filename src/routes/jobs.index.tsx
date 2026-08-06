@@ -22,8 +22,6 @@ import { buildJobSlug } from "@/lib/marketing/job-slug";
 const positionsQuery = queryOptions({
   queryKey: ["public-positions"],
   queryFn: () => listPublicPositions(),
-  errorComponent: makeRouteErrorComponent("public", "jobs.index"),
-  notFoundComponent: makeRouteNotFoundComponent("public"),
 });
 
 const PAGE_SIZE = 20;
@@ -66,6 +64,8 @@ export const Route = createFileRoute("/jobs/")({
   }),
   loader: async ({ context }) => context.queryClient.ensureQueryData(positionsQuery),
   component: JobsPage,
+  errorComponent: makeRouteErrorComponent("public", "jobs.index"),
+  notFoundComponent: makeRouteNotFoundComponent("public"),
 });
 
 function labelWorkModel(m: string | null) {

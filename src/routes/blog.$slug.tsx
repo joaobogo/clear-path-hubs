@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowRight, BookOpen, Sparkles } from "lucide-react";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { Markdown, slugifyHeading } from "@/components/marketing/markdown";

@@ -1,6 +1,5 @@
-import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { makeRouteNotFoundComponent } from "@/components/workspace/route-states";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -59,8 +58,8 @@ export const Route = createFileRoute("/_authenticated/me/")({
     ]);
     return { ctx, apps, cvs, dash };
   },
-  errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.index.tsx"),
   component: MeHome,
+  errorComponent: makeRouteErrorComponent("candidate", "_authenticated/me.index"),
   notFoundComponent: makeRouteNotFoundComponent("candidate"),
 });
 

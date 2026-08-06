@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { makeRouteNotFoundComponent } from "@/components/workspace/route-states";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -25,11 +24,11 @@ const healthQuery = {
 export const Route = createFileRoute("/_authenticated/admin/integrations")({
   loader: ({ context }) => context.queryClient.ensureQueryData(healthQuery),
   head: () => ({ meta: [{ title: "Integration health · TaaSFlow admin" }] }),
-  errorComponent: makeRouteErrorComponent(
     "admin",
     "src/routes/_authenticated/admin.integrations.tsx",
   ),
   component: IntegrationHealthPage,
+  errorComponent: makeRouteErrorComponent("admin", "_authenticated/admin.integrations"),
   notFoundComponent: makeRouteNotFoundComponent("admin"),
 });
 
