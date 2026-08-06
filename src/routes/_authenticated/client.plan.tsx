@@ -46,6 +46,62 @@ function money(amountUsd: number) {
   return `$${amountUsd.toLocaleString("en-US")}`;
 }
 
+/**
+ * One plan, clickable when the viewer is allowed to buy or switch. The whole
+ * card is the control so it works on a phone without hunting for a button.
+ */
+function PlanCard({
+  label,
+  price,
+  summary,
+  detail,
+  onSelect,
+  actionLabel,
+}: {
+  label: string;
+  price: string;
+  summary: string;
+  detail: string | null;
+  onSelect: (() => void) | null;
+  actionLabel: string;
+}) {
+  const body = (
+    <>
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center justify-between gap-2 text-base">
+          {label}
+          <Badge variant="outline">{price}</Badge>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2 text-sm text-muted-foreground">
+        <p>{summary}</p>
+        {detail ? <p className="text-xs">{detail}</p> : null}
+      </CardContent>
+    </>
+  );
+
+  if (!onSelect) return <Card>{body}</Card>;
+
+  return (
+    <Card
+      role="button"
+      tabIndex={0}
+      aria-label={`${actionLabel} — ${label}, ${price}`}
+      onClick={onSelect}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect();
+        }
+      }}
+      className="cursor-pointer transition hover:border-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      {body}
+    </Card>
+  );
+}
+
+
 function PlanPage() {
   const ctxFn = useServerFn(getClientContext);
   const orgSearch = useClientOrgSearch();
