@@ -104,10 +104,17 @@ export function AccountOperatingSummary({
     queryFn: () => getAccountEngagement({ data: { organization_id: organizationId } }),
   });
 
+  // "No activity" is only honest when all three reads succeeded.
+  const d = delivery.data;
+  const c = commercial.data;
+  const e = engagement.data;
   const noActivity =
     delivery.isSuccess &&
     commercial.isSuccess &&
     engagement.isSuccess &&
+    !!d &&
+    !!c &&
+    !!e &&
     d.open_roles === 0 &&
     d.filled_roles === 0 &&
     d.candidates_in_pipeline === 0 &&
@@ -121,6 +128,7 @@ export function AccountOperatingSummary({
   if (noActivity) {
     return <PanelEmpty title="This account has no activity yet" />;
   }
+
 
   return (
     <div className="grid gap-4 lg:grid-cols-3" data-qa-action="account-operating-summary">
