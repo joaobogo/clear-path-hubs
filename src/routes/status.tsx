@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import {
   CheckCircle2,
@@ -28,6 +29,8 @@ const statusQuery = queryOptions({
   queryFn: () => getPlatformStatus(),
   staleTime: 30_000,
   refetchInterval: 60_000,
+  errorComponent: makeRouteErrorComponent("public", "status"),
+  notFoundComponent: makeRouteNotFoundComponent("public"),
 });
 
 export const Route = createFileRoute("/status")({

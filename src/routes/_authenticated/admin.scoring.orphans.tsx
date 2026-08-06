@@ -1,5 +1,6 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute } from "@tanstack/react-router";
+import { makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/_authenticated/admin/scoring/orphans")({
   }),
   errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.scoring.orphans.tsx"),
   component: OrphansPage,
+  notFoundComponent: makeRouteNotFoundComponent("admin"),
 });
 
 function OrphansPage() {

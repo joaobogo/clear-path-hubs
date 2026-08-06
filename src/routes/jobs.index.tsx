@@ -1,4 +1,5 @@
 import { createFileRoute, Link, stripSearchParams, useNavigate } from "@tanstack/react-router";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
@@ -21,6 +22,8 @@ import { buildJobSlug } from "@/lib/marketing/job-slug";
 const positionsQuery = queryOptions({
   queryKey: ["public-positions"],
   queryFn: () => listPublicPositions(),
+  errorComponent: makeRouteErrorComponent("public", "jobs.index"),
+  notFoundComponent: makeRouteNotFoundComponent("public"),
 });
 
 const PAGE_SIZE = 20;

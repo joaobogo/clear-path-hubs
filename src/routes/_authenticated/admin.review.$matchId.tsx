@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
+import { makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -44,6 +45,7 @@ export const Route = createFileRoute("/_authenticated/admin/review/$matchId")({
     meta: [{ title: "Candidate review · TaaSFlow admin" }, { name: "robots", content: "noindex" }],
   }),
   component: ReviewScreen,
+  notFoundComponent: makeRouteNotFoundComponent("admin"),
 });
 
 function reqText(r: Any): string {

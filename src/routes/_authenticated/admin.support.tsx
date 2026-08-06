@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/_authenticated/admin/support")({
   }),
   errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.support.tsx"),
   component: SupportPage,
+  notFoundComponent: makeRouteNotFoundComponent("admin"),
 });
 
 function SupportPage() {

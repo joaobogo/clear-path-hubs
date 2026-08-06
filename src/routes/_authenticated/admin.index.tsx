@@ -1,5 +1,6 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
@@ -28,6 +29,7 @@ import type { ComponentType } from "react";
 
 const searchSchema = z.object({
   show_test: fallback(z.boolean(), false).default(false),
+  notFoundComponent: makeRouteNotFoundComponent("admin"),
 });
 
 export const Route = createFileRoute("/_authenticated/admin/")({

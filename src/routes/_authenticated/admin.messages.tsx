@@ -1,5 +1,6 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { listAllConversations } from "@/lib/conversations.functions";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/_authenticated/admin/messages")({
     "src/routes/_authenticated/admin.messages.tsx",
   ),
   component: AdminConversationsPage,
+  notFoundComponent: makeRouteNotFoundComponent("admin"),
 });
 
 function AdminConversationsPage() {

@@ -1,5 +1,6 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
@@ -13,6 +14,7 @@ import { AlertTriangle, ArrowRight, Inbox } from "lucide-react";
 
 const searchSchema = z.object({
   show_test: fallback(z.boolean(), false).default(false),
+  notFoundComponent: makeRouteNotFoundComponent("admin"),
 });
 
 export const Route = createFileRoute("/_authenticated/admin/intake/")({

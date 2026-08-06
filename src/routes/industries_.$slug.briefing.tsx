@@ -10,6 +10,7 @@
  */
 import { CANONICAL_ORIGIN } from "@/lib/canonical-origin";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { Printer } from "lucide-react";
 
 import { getIndustryEntry, type IndustryEntry } from "@/content/industries-v2";
@@ -72,6 +73,7 @@ export const Route = createFileRoute("/industries_/$slug/briefing")({
       </Link>
     </div>
   ),
+  errorComponent: makeRouteErrorComponent("public", "industries_.$slug.briefing"),
 });
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {

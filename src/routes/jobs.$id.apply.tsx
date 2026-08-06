@@ -1,4 +1,5 @@
 import { createFileRoute, Link, redirect, useNavigate, notFound } from "@tanstack/react-router";
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getPublicPosition } from "@/lib/jobs.functions";
@@ -101,6 +102,7 @@ export const Route = createFileRoute("/jobs/$id/apply")({
     </div>
   ),
   component: ApplyPage,
+  errorComponent: makeRouteErrorComponent("public", "jobs.$id.apply"),
 });
 
 type AnswerValue = string | boolean | number | null;

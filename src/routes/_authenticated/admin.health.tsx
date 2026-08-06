@@ -1,5 +1,6 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/_authenticated/admin/health")({
   head: () => ({ meta: [{ title: "Pipeline Health · TaaSFlow admin" }] }),
   errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.health.tsx"),
   component: HealthPage,
+  notFoundComponent: makeRouteNotFoundComponent("admin"),
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

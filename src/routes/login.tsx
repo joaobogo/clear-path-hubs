@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { FormShell } from "@/components/marketing/form-shell";
 import { useState, useEffect } from "react";
 import { useServerFn } from "@tanstack/react-start";
@@ -63,6 +64,7 @@ export const Route = createFileRoute("/login")({
   component: LoginPage,
   pendingComponent: LoginFallback,
   errorComponent: LoginFallback,
+  notFoundComponent: makeRouteNotFoundComponent("public"),
 });
 
 /**

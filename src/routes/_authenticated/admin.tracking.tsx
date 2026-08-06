@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
@@ -37,6 +38,7 @@ export const Route = createFileRoute("/_authenticated/admin/tracking")({
     "src/routes/_authenticated/admin.tracking.tsx",
   ),
   component: TrackingPolicyPage,
+  notFoundComponent: makeRouteNotFoundComponent("admin"),
 });
 
 type TrackerKey = keyof typeof TRACKER_CATEGORY;

@@ -1,5 +1,6 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -60,6 +61,7 @@ export const Route = createFileRoute("/_authenticated/me/")({
   },
   errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.index.tsx"),
   component: MeHome,
+  notFoundComponent: makeRouteNotFoundComponent("candidate"),
 });
 
 const STATUS_TONE = CANDIDATE_STATUS_TONE;
