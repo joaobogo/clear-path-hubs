@@ -82,6 +82,35 @@ const EMPTY_DEFAULTS = Object.fromEntries(FILTER_KEYS.map((k) => [k, ""]));
 
 const SEARCH_DEFAULTS = { ...(EMPTY_DEFAULTS as Record<string, string>), sort: "updated_desc", page: 1 };
 
+/**
+ * The one place the URL is turned into a query for the candidate index. Shared by
+ * the route loader and the component so both always read the same cache entry.
+ */
+function buildFilters(search: SearchState) {
+  return {
+      q: search.q || undefined,
+      organization_id: search.organization_id || undefined,
+      position_id: search.position_id || undefined,
+      stage: search.stage || undefined,
+      admin_status: search.admin_status || undefined,
+      processing_state: search.processing_state || undefined,
+      client_visibility: search.client_visibility || undefined,
+      eligibility_status: search.eligibility_status || undefined,
+      score_band: search.score_band || undefined,
+      confidence: search.confidence || undefined,
+      contact_released: search.contact_released || undefined,
+      critical: search.critical || undefined,
+      country: search.country || undefined,
+      source: search.source || undefined,
+      rejection_reason: search.rejection_reason || undefined,
+      date_from: search.date_from || undefined,
+      date_to: search.date_to ? `${search.date_to}T23:59:59Z` : undefined,
+      sort: search.sort as never,
+      limit: PAGE_SIZE,
+      offset: Math.max(0, (search.page - 1) * PAGE_SIZE),
+  };
+}
+
 export const Route = createFileRoute("/_authenticated/admin/candidates/")({
   validateSearch: zodValidator(searchSchema),
   search: { middlewares: [stripSearchParams(SEARCH_DEFAULTS)] },
@@ -190,38 +219,16 @@ function CandidatesPage() {
   const [confirm, setConfirm] = useState<null | "visible" | "hidden">(null);
   const [showDuplicates, setShowDuplicates] = useState(false);
 
-  const filters = useMemo(
-    () => ({
-      q: search.q || undefined,
-      organization_id: search.organization_id || undefined,
-      position_id: search.position_id || undefined,
-      stage: search.stage || undefined,
-      admin_status: search.admin_status || undefined,
-      processing_state: search.processing_state || undefined,
-      client_visibility: search.client_visibility || undefined,
-      eligibility_status: search.eligibility_status || undefined,
-      score_band: search.score_band || undefined,
-      confidence: search.confidence || undefined,
-      contact_released: search.contact_released || undefined,
-      critical: search.critical || undefined,
-      country: search.country || undefined,
-      source: search.source || undefined,
-      rejection_reason: search.rejection_reason || undefined,
-      date_from: search.date_from || undefined,
-      date_to: search.date_to ? `${search.date_to}T23:59:59Z` : undefined,
-      sort: search.sort as never,
-      limit: PAGE_SIZE,
-      offset: Math.max(0, (search.page - 1) * PAGE_SIZE),
-    }),
-    [search],
-  );
+  const filters = useMemo(() => buildFilters(search), [search]);
 
+  // Primary read matches every other admin desk: primed in the loader, read
+  // with suspense, so the page never flickers through a bare loading state.
   const {
     data,
     isFetching,
     isError: searchFailed,
     refetch: refetchSearch,
-  } = useQuery({
+  } = useSuspenseQuery({
     queryKey: ["candidate-index", filters],
     queryFn: () => searchFn({ data: filters }),
   });
