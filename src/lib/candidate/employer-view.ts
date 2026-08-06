@@ -137,6 +137,12 @@ export const EMPLOYER_VIEW_FIELDS: EmployerViewField[] = [
   { key: "delivered_at", group: "process", label: "Date you were shared with the employer" },
   { key: "stage_entered_at", group: "process", label: "Date you entered the current stage" },
   { key: "last_updated", group: "process", label: "Date the record was last updated" },
+  {
+    key: "freshness",
+    group: "process",
+    label:
+      "Whether your assessment still matches your current profile and the role's current brief",
+  },
   { key: "source_trace", group: "process", label: "How you reached this role, and your application reference" },
   {
     key: "audit_trail",
