@@ -128,12 +128,18 @@ export const Route = createFileRoute("/api/public/intake")({
     handlers: {
       POST: async ({ request }) => {
         const traceId = crypto.randomUUID();
+
+        if (rateLimited("intake", clientIp(request), PUBLIC_RATE_LIMITS.intake)) {
+          return rateLimitResponse(traceId, PUBLIC_RATE_LIMITS.intake.windowMs);
+        }
+
         let body: unknown;
         try {
           body = await request.json();
         } catch {
           return Response.json({ ok: false, trace_id: traceId, error: "invalid_json" }, { status: 400 });
         }
+
 
         const parsed = intakePayloadSchema.safeParse(body);
         if (!parsed.success) {
