@@ -18,8 +18,8 @@ import {
   InterviewExceptionsPanel,
 } from "@/components/admin/interview-exceptions-panel";
 
-import { Link } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link, useRouter } from "@tanstack/react-router";
+import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -79,6 +79,19 @@ import {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
+
+/** Canonical pipeline stage order, mirrored from the position workspace. */
+const STAGE_ORDER = [
+  "new",
+  "reviewing",
+  "delivered",
+  "shortlisted",
+  "interview_process",
+  "offer",
+  "hired",
+  "not_moving_forward",
+  "archived",
+] as const;
 
 function labelFrom(entry: unknown): string {
   if (typeof entry === "string") return entry;
