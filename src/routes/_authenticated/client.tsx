@@ -17,7 +17,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
-import { getClientContext } from "@/lib/client.functions";
+import { getClientContext } from "@/lib/client-context.functions";
 import { ensureSupportSession } from "@/lib/support-audit.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";

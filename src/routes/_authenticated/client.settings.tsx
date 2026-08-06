@@ -4,13 +4,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import {
- getClientContext,
- getClientSettings,
- updateClientCompanyProfile,
- updateClientTimezone,
- updateClientBranding,
-} from "@/lib/client.functions";
+import { getClientContext, updateClientBranding } from "@/lib/client-context.functions";
+import { getClientSettings, updateClientCompanyProfile, updateClientTimezone } from "@/lib/client-settings.functions";
 import { ClientBrandHeader } from "@/components/client/client-brand-header";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";

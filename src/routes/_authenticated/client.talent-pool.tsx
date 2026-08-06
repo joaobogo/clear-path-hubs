@@ -32,7 +32,7 @@ import {
   type RediscoveryCandidateDTO,
   type TalentPoolDTO,
 } from "@/lib/talent-pool.functions";
-import { getClientContext } from "@/lib/client.functions";
+import { getClientContext } from "@/lib/client-context.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { RoleFitPanel } from "@/components/client/role-fit-panel";
 import { QueryErrorCard } from "@/components/client/query-error";

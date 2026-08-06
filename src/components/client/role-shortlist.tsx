@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CandidateCard } from "@/components/client/candidate-card";
-import { getClientCandidates } from "@/lib/client.functions";
+import { getClientCandidates } from "@/lib/client-candidates.functions";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Tooltip,

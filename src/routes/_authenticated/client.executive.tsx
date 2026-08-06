@@ -4,7 +4,7 @@ import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getClientContext } from "@/lib/client.functions";
+import { getClientContext } from "@/lib/client-context.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { getExecutiveReport, type ExecutiveReport } from "@/lib/executive.functions";
 import { QueryErrorCard } from "@/components/client/query-error";

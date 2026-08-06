@@ -5,7 +5,7 @@
  *
  * Never expose these labels to candidates or clients; they are internal
  * operational states. Client-safe status text lives in candidate.functions.ts
- * and client.functions.ts.
+ * and the client-*.functions.ts modules.
  */
 
 export const CANONICAL_SCORING_STATES = [

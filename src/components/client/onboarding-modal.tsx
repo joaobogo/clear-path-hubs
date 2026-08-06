@@ -2,11 +2,8 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
-import {
-  dismissClientOnboarding,
-  updateClientTimezone,
-  updateClientNotificationPreferences,
-} from "@/lib/client.functions";
+import { dismissClientOnboarding } from "@/lib/client-context.functions";
+import { updateClientTimezone, updateClientNotificationPreferences } from "@/lib/client-settings.functions";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

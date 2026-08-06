@@ -27,7 +27,7 @@ import {
   type SilverReason,
   type TalentMemoryDTO,
 } from "@/lib/talent-memory.functions";
-import { getClientContext } from "@/lib/client.functions";
+import { getClientContext } from "@/lib/client-context.functions";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { SkeletonCards } from "@/components/client/states";
 import { useClientOrgSearch } from "@/lib/use-client-org";

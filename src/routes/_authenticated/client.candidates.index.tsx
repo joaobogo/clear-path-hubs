@@ -13,12 +13,10 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
-import {
- getClientCandidates,
- getClientContext,
- getClientOverview,
- getClientPositions,
-} from "@/lib/client.functions";
+import { getClientCandidates } from "@/lib/client-candidates.functions";
+import { getClientContext } from "@/lib/client-context.functions";
+import { getClientOverview } from "@/lib/client-overview.functions";
+import { getClientPositions } from "@/lib/client-positions.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { VisibilityNote } from "@/components/client/visibility-note";
 import { Input } from "@/components/ui/input";

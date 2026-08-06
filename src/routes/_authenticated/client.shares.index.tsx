@@ -17,7 +17,7 @@ import {
   listShortlistShares,
   revokeShortlistShare,
 } from "@/lib/shares.functions";
-import { getClientContext } from "@/lib/client.functions";
+import { getClientContext } from "@/lib/client-context.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

@@ -13,7 +13,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
-import { getClientContext } from "@/lib/client.functions";
+import { getClientContext } from "@/lib/client-context.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import {
   getAgentPanel,

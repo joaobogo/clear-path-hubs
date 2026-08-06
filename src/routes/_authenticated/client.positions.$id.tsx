@@ -6,12 +6,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import {
- getClientContext,
- getClientPositionDetail,
- moveMatchStage,
- type MatchStage,
-} from "@/lib/client.functions";
+import { getClientContext } from "@/lib/client-context.functions";
+import { getClientPositionDetail } from "@/lib/client-positions.functions";
+import { moveMatchStage } from "@/lib/client-decisions.functions";
+import { type MatchStage } from "@/lib/client-match-stage";
 import {
  TIMEZONE_BAND_LABELS,
  SPONSORSHIP_LABELS,
@@ -22,7 +20,7 @@ import { DeclineReasonDialog } from "@/components/client/decline-reason-dialog";
 
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 
-import { confirmRoleBlueprint } from "@/lib/client.functions";
+import { confirmRoleBlueprint } from "@/lib/client-positions.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { Button } from "@/components/ui/button";
@@ -87,7 +85,7 @@ const KANBAN_COLUMNS: { key: MatchStage; label: string }[] = [
  { key: "not_moving_forward", label: "Not Moving Forward" },
 ];
 
-// Canonical transition matrix (mirrors server STAGE_GRAPH in client.functions.ts).
+// Canonical transition matrix (mirrors server STAGE_GRAPH in client-shared.server.ts).
 const STAGE_GRAPH: Record<MatchStage, MatchStage[]> = {
  delivered: ["shortlisted", "interview_process", "not_moving_forward"],
  shortlisted: ["interview_process", "not_moving_forward"],
