@@ -141,11 +141,16 @@ test.describe.configure({ mode: "serial" });
 
 test.describe("tenant isolation — /intake and /express-intake", () => {
   // The legitimate first tenant, created once by the real endpoint.
-  const owner = uniqueProspect();
+  const owner = prospect();
   let ownerOrgId: string | null = null;
   let ownerUserId: string | null = null;
+  // An account with no workspace, so the account rule is tested on its own:
+  // with a shared corporate domain the (correct) tenant rule fires first.
+  let orphanEmail = "";
 
   test("a brand-new prospect creates their own account, workspace and role", async () => {
+    orphanEmail = await createOrphanAccount(OWNER_PASSWORD);
+
     const { status, body } = await postPublic<IntakeResponse>(
       "/api/public/intake",
       intakePayload({
@@ -178,79 +183,70 @@ test.describe("tenant isolation — /intake and /express-intake", () => {
   // ── 1. account_exists ────────────────────────────────────────────────────
 
   test("/intake refuses an email that already has an account, and writes nothing", async () => {
-    const attacker = uniqueProspect();
+    const attacker = prospect();
 
     const { status, body } = await postPublic<IntakeResponse>(
       "/api/public/intake",
-      // Attacker's own company name, but the owner's email and a password of
+      // The attacker's own company name, someone else's email, and a password of
       // their choosing: the classic account-takeover shape.
       intakePayload({
         companyName: attacker.companyName,
-        workEmail: owner.email,
+        workEmail: orphanEmail,
         password: ATTACKER_PASSWORD,
       }),
     );
 
-    expect(status).toBe(409);
+    expect(status, JSON.stringify(body)).toBe(409);
     expect(body.error).toBe("account_exists");
     expect(body.ok).toBe(false);
-    // Never disclose which workspace that email belongs to.
-    expect(JSON.stringify(body)).not.toContain(owner.companyName);
-    expect(JSON.stringify(body)).not.toContain(String(ownerOrgId));
 
     // No orphan tenant for the attacker's company name.
     const attackerTenant = await lookupTenant({ companyName: attacker.companyName });
     expect(attackerTenant.organizations).toHaveLength(0);
 
-    // The owner's account is untouched: their password still works and the
+    // The targeted account is untouched: its password still works and the
     // attacker's chosen password does not.
-    expect((await signIn(owner.email, OWNER_PASSWORD)).accessToken).toBeTruthy();
-    expect((await signIn(owner.email, ATTACKER_PASSWORD)).accessToken).toBeNull();
-
-    // And the owner's workspace gained no new member.
-    const ownerTenant = await lookupTenant({ organizationId: ownerOrgId! });
-    expect(ownerTenant.memberships).toHaveLength(1);
+    expect((await signIn(orphanEmail, OWNER_PASSWORD)).accessToken).toBeTruthy();
+    expect((await signIn(orphanEmail, ATTACKER_PASSWORD)).accessToken).toBeNull();
   });
 
   test("/express-intake refuses an email that already has an account, and writes nothing", async () => {
-    const attacker = uniqueProspect();
+    const attacker = prospect();
 
     const { status, body } = await postPublic<IntakeResponse>(
       "/api/public/express-intake",
       expressPayload({
         companyName: attacker.companyName,
-        workEmail: owner.email,
+        workEmail: orphanEmail,
         password: ATTACKER_PASSWORD,
       }),
     );
 
-    expect(status).toBe(409);
+    expect(status, JSON.stringify(body)).toBe(409);
     expect(body.error).toBe("account_exists");
 
     const attackerTenant = await lookupTenant({ companyName: attacker.companyName });
     expect(attackerTenant.organizations).toHaveLength(0);
-    expect((await signIn(owner.email, ATTACKER_PASSWORD)).accessToken).toBeNull();
-    expect((await signIn(owner.email, OWNER_PASSWORD)).accessToken).toBeTruthy();
+    expect((await signIn(orphanEmail, ATTACKER_PASSWORD)).accessToken).toBeNull();
+    expect((await signIn(orphanEmail, OWNER_PASSWORD)).accessToken).toBeTruthy();
   });
 
   test("/express-intake refuses an unproven caller who supplies no password", async () => {
-    // No password and no bearer token: the request cannot prove it is the owner
-    // of that mailbox, so it must be rejected outright.
+    // No password and no bearer token: the request cannot prove it owns that
+    // mailbox, so it must be rejected outright.
     const { status, body } = await postPublic<IntakeResponse>(
       "/api/public/express-intake",
-      expressPayload({ companyName: uniqueProspect().companyName, workEmail: owner.email }),
+      expressPayload({ companyName: prospect().companyName, workEmail: orphanEmail }),
     );
 
-    expect(status).toBe(400);
+    expect(status, JSON.stringify(body)).toBe(400);
     expect(body.error).toBe("password_required");
   });
 
   test("/intake-account recognises an existing account without creating a second one", async () => {
-    const fresh = uniqueProspect();
-
     const unknown = await postPublic<{ ok: boolean; exists: boolean }>(
       "/api/public/intake-account",
-      { mode: "check", email: fresh.email },
+      { mode: "check", email: prospect().email },
     );
     expect(unknown.status).toBe(200);
     expect(unknown.body.exists).toBe(false);
@@ -263,6 +259,7 @@ test.describe("tenant isolation — /intake and /express-intake", () => {
     expect(known.body.exists).toBe(true);
     // Recognising the person must not reveal their organization.
     expect(JSON.stringify(known.body)).not.toContain(owner.companyName);
+    expect(JSON.stringify(known.body)).not.toContain(String(ownerOrgId));
 
     const create = await postPublic<IntakeResponse>("/api/public/intake-account", {
       mode: "create",
@@ -274,12 +271,13 @@ test.describe("tenant isolation — /intake and /express-intake", () => {
     expect(create.status).toBe(409);
     expect(create.body.error).toBe("account_exists");
     expect((await signIn(owner.email, ATTACKER_PASSWORD)).accessToken).toBeNull();
+    expect((await signIn(owner.email, OWNER_PASSWORD)).accessToken).toBeTruthy();
   });
 
   // ── 2. organization_exists ───────────────────────────────────────────────
 
   test("/intake refuses to join an existing workspace by company name alone", async () => {
-    const stranger = uniqueProspect();
+    const stranger = prospect();
 
     const { status, body } = await postPublic<IntakeResponse>(
       "/api/public/intake",
@@ -288,6 +286,7 @@ test.describe("tenant isolation — /intake and /express-intake", () => {
         companyName: owner.companyName,
         workEmail: stranger.email,
         password: ATTACKER_PASSWORD,
+
       }),
     );
 
