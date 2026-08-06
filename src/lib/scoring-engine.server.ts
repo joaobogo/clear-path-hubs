@@ -9,8 +9,9 @@ import {
   type EngineCalibration,
 } from "./scoring/engine-calibration";
 
-export const ENGINE_VERSION = "taasflow-scoring-v1.0.0";
-export { EVALUATION_METHOD };
+import { ENGINE_VERSION } from "./scoring/engine-version";
+
+export { ENGINE_VERSION, EVALUATION_METHOD };
 
 export interface RequirementInput {
   id: string;

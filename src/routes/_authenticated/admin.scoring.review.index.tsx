@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import { ReviewTriageList } from "@/components/admin/review-triage-list";
+import { ScoreCalibrationPanel } from "@/components/admin/score-calibration-panel";
 import { Search, X } from "lucide-react";
 
 const QUEUE_ORDER = Object.keys(REVIEW_QUEUES) as ReviewQueueId[];
@@ -184,6 +185,8 @@ function ReviewCenter() {
           />
         </section>
       </div>
+
+      <ScoreCalibrationPanel />
     </div>
   );
 }
