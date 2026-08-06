@@ -1345,7 +1345,7 @@ function Home() {
                 Human first, AI enabled
               </p>
               <p className="max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
-                TaasFlow is a complete Talent Management Solution capable of
+                TaasFlow is a complete Talent Management solution capable of
                 running continuous sourcing, creating live talent pipelines
                 — supported by full ATS functionality.
               </p>
