@@ -136,11 +136,18 @@ export function ProvenanceLines({
 }
 
 /** Block form for detail pages, where a tooltip is not enough. */
-export function ScoreProvenancePanel({ provenance }: { provenance: ScoreProvenance }) {
+export function ScoreProvenancePanel({
+  provenance,
+  criteria,
+}: {
+  provenance: ScoreProvenance;
+  criteria?: ProvenanceCriterion[];
+}) {
   return (
     <div className="rounded-lg border p-3 text-sm">
       <div className="mb-2 flex items-center gap-2">
         <span className="text-lg font-semibold">Fit {fmt(provenance.effectiveValue)}</span>
+        <Badge variant="secondary">{provenance.methodLabel}</Badge>
         {provenance.override ? (
           <Badge variant="outline" className="taas-tx-warning">
             Human override
@@ -156,7 +163,7 @@ export function ScoreProvenancePanel({ provenance }: { provenance: ScoreProvenan
         )}
       </div>
       <div className="space-y-1 text-xs text-muted-foreground">
-        <ProvenanceLines provenance={provenance} />
+        <ProvenanceLines provenance={provenance} criteria={criteria} />
       </div>
     </div>
   );
