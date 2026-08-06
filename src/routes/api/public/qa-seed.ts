@@ -400,7 +400,7 @@ async function cleanupIntakeE2E(prefix: string): Promise<{ deleted: Record<strin
     const users = data?.users ?? [];
     for (const u of users as Array<{ id: string; email?: string | null }>) {
       const email = (u.email ?? "").toLowerCase();
-      if (email.startsWith("qa.intake+") && email.endsWith("@qa.taasflow.test")) {
+      if (email.startsWith("qa.intake+") && email.endsWith("qa.taasflow.test")) {
         const { error: delErr } = await sb.auth.admin.deleteUser(u.id);
         if (!delErr) usersDeleted += 1;
       }
