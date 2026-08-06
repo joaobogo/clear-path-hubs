@@ -104,7 +104,7 @@ export function PermissionDenied({
       {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
       <p className="mt-2 text-sm text-muted-foreground">{whoToAsk}</p>
       <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-        <ActionButton action={action ?? { label: "Open Team settings", to: "/client/team" }} />
+        <ActionButton action={action ?? { label: "Open Team settings", to: "/client/account", search: { tab: "team" } }} />
         <Button asChild size="sm" variant="outline">
           <Link to="/client/conversations">Message your recruiter</Link>
         </Button>

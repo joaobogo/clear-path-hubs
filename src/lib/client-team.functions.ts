@@ -218,7 +218,7 @@ export const inviteClientMember = createServerFn({ method: "POST" })
         scope: `member:${data.orgId}:${authUserId}:invited`,
         organization_id: data.orgId,
         actor_user_id: context.userId,
-        link_path: "/client/settings",
+        link_path: "/client/account?tab=team",
         payload: { role: data.role },
       });
     } catch (e) {
@@ -357,7 +357,7 @@ export const removeClientMember = createServerFn({ method: "POST" })
         scope: `member:${data.orgId}:${data.userId}:removed`,
         organization_id: data.orgId,
         actor_user_id: context.userId,
-        link_path: "/client/settings",
+        link_path: "/client/account?tab=team",
       });
     } catch (e) {
       console.error("[removeClientMember] emit failed", e);

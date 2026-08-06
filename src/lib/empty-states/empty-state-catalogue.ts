@@ -562,7 +562,7 @@ export function resolveNoNotificationsState(signals: {
     expected: EXPECTED_QUIET,
     populates: "New candidate deliveries, interview updates and offer movement land here.",
     activity: "Pipelines are running; you'll be notified when something needs you.",
-    action: { label: "Check notification settings", to: "/client/settings" },
+    action: { label: "Check notification settings", to: "/client/account?tab=notifications" },
   };
 }
 

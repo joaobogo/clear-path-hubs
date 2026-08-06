@@ -146,7 +146,7 @@ export function InterviewerAssignments({
             you assign them.
           </p>
           <Button asChild size="sm" variant="outline" className="mt-1">
-            <Link to="/client/team">Invite an interviewer</Link>
+            <Link to="/client/account" search={{ tab: "team" }}>Invite an interviewer</Link>
           </Button>
         </div>
       ) : (

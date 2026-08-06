@@ -71,7 +71,7 @@ export const requestWorkspaceAccess = createServerFn({ method: "POST" })
         organization_id: data.orgId,
         title: `${who} is asking for access to ${AREA_LABELS[data.area as WorkspaceArea].toLowerCase()}`,
         body: `${who} needs the ${required} role to use it.${data.note ? ` They added: “${data.note}”` : ""}`,
-        link_path: "/client/team",
+        link_path: "/client/account?tab=team",
         entity_type: "memberships",
         entity_id: (mine as AnyRow).id as string,
       })),

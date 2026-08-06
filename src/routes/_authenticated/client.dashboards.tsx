@@ -317,7 +317,7 @@ function LockedPanel({
           </div>
           <div className="flex flex-wrap gap-2">
             <Button asChild>
-              <Link to="/client/plan">See annual plans</Link>
+              <Link to="/client/account" search={{ tab: "plan" }}>See annual plans</Link>
             </Button>
             {canRequest && !openRequest && <RequestDialog orgId={orgId} />}
           </div>
