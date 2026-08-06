@@ -47,6 +47,7 @@ export function CandidateHeader({
             fitLabel={candidate.fit_label}
             evidence={candidate.evidence_support}
             rechecking={candidate.freshness?.state === "stale"}
+            humanReviewed={candidate.human_review?.reviewed === true}
             unicorn={candidate.unicorn}
           />
           <Badge variant="outline" className="capitalize">
