@@ -51,10 +51,11 @@ function parseTab(value: unknown): AccountTab {
 }
 
 export const Route = createFileRoute("/_authenticated/client/account")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    tab: parseTab(search.tab),
-    org: typeof search.org === "string" ? search.org : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>) =>
+    ({
+      tab: parseTab(search.tab),
+      ...(typeof search.org === "string" ? { org: search.org } : {}),
+    }) as { tab: AccountTab; org?: string },
   head: () => ({
     meta: [
       { title: "Account · TaaSFlow client workspace" },

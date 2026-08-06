@@ -883,7 +883,7 @@ function SystemsStep({ state, onDone, back, saveForLater }: BodyProps) {
             <li>Messaging — shortlist and decision alerts in your team channel.</li>
           </ul>
           <Button asChild type="button" variant="outline" size="sm">
-            <Link to="/client/account">Connect a system</Link>
+            <Link to="/client/account" search={{ tab: "workspace" }}>Connect a system</Link>
           </Button>
         </div>
       ) : (
@@ -901,7 +901,7 @@ function SystemsStep({ state, onDone, back, saveForLater }: BodyProps) {
       )}
       <p className="text-sm text-muted-foreground">
         You can add or remove connections any time from{" "}
-        <Link to="/client/account" className="underline">
+        <Link to="/client/account" search={{ tab: "workspace" }} className="underline">
           your account settings
         </Link>
         .
