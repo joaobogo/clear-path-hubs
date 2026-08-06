@@ -23,6 +23,10 @@ import { BULK_EXEC_BATCH, BULK_SELECTION_CAP } from "./bulk-actions.types";
  */
 const READ_CHUNK = 100;
 
+/* eslint-disable @typescript-eslint/no-explicit-any -- PostgREST embeds are
+   dynamically shaped; rows are read defensively below. */
+type LooseRow = Record<string, any>;
+
 function chunk<T>(items: T[], size = READ_CHUNK): T[][] {
   const out: T[][] = [];
   for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
@@ -44,23 +48,22 @@ async function loadByIds(
   table: string,
   select: string,
   ids: string[],
-): Promise<Map<string, Record<string, unknown>>> {
+): Promise<Map<string, LooseRow>> {
   assertWithinCap(ids);
   const unique = [...new Set(ids)];
   const results = await Promise.all(
     chunk(unique).map((batch) => admin.from(table).select(select).in("id", batch)),
   );
-  const map = new Map<string, Record<string, unknown>>();
+  const map = new Map<string, LooseRow>();
   for (const r of results) {
     if (r.error) throw r.error;
-    for (const row of (r.data ?? []) as Record<string, unknown>[])
-      map.set(row["id"] as string, row);
+    for (const row of (r.data ?? []) as LooseRow[]) map.set(row.id as string, row);
   }
   return map;
 }
 
 // Untyped admin client: these queries span many generated table types.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 type Admin = any;
 
 const STAGE_LABEL: Record<string, string> = {
@@ -155,11 +158,11 @@ async function planCandidateAssign(
   for (const r of existingChunks) if (r.error) throw r.error;
   const already = new Set(
     existingChunks
-      .flatMap((r) => (r.data ?? []) as Record<string, unknown>[])
-      .map((r) => r["candidate_profile_id"] as string),
+      .flatMap((r) => (r.data ?? []) as LooseRow[])
+      .map((r) => r.candidate_profile_id as string),
   );
   const names = new Map<string, string>(
-    [...profiles.entries()].map(([id, p]) => [id, (p["full_name"] as string) ?? "Candidate"]),
+    [...profiles.entries()].map(([id, p]) => [id, (p.full_name as string) ?? "Candidate"]),
   );
 
   const rows: PlanRow[] = candidateProfileIds.map((id) => {
