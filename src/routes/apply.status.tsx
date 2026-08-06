@@ -23,6 +23,7 @@ import {
 import { ManageApplication } from "@/components/candidate/manage-application";
 import { CandidateStatePanel } from "@/components/candidate/candidate-state-panel";
 import { TransparencyPanel } from "@/components/candidate/transparency-panel";
+import { ProcessingWindowNote } from "@/components/candidate/candidate-notes";
 import { SUPPORT_EMAIL } from "@/lib/candidate/candidate-transparency";
 
 const searchSchema = z.object({ ref: z.string().optional() });
@@ -310,6 +311,10 @@ function StatusPage() {
               <AlertDescription>{actionMessage}</AlertDescription>
             </Alert>
           )}
+
+          {result.state === "under_review" || result.state === "application_received" ? (
+            <ProcessingWindowNote />
+          ) : null}
 
           <TransparencyPanel company={result.organization_name} />
 
