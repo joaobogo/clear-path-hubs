@@ -62,8 +62,9 @@ function TrustCenterPage() {
       >
         <p className="max-w-3xl rounded-xl border border-[color:var(--brand-navy)]/10 bg-white/70 p-4 text-sm text-[color:var(--brand-navy)]/75">
           This page is our own account of how the system works — not an independent audit or a
-          third-party verification. No certifications are claimed.
+          third-party verification.
         </p>
+
       </EditorialHero>
 
       <PublicSection className="!py-0">
