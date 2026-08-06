@@ -361,6 +361,8 @@ export function scoreCandidate(input: {
   }
 
   // Category breakdown — "unknown" contributes a neutral 0.4 (validate, not zero).
+  // A category with no inputs at all is EXCLUDED from the weighting rather than
+  // credited with a neutral half-score (absent ≠ partially satisfied).
   const must = assessment.filter((a) => a.required);
   const pref = assessment.filter((a) => !a.required);
   const scoreOf = (a: RequirementAssessment) =>
@@ -373,22 +375,37 @@ export function scoreCandidate(input: {
           : 0;
   const must_have_coverage = must.length
     ? must.reduce((s, a) => s + scoreOf(a), 0) / must.length
-    : 1;
+    : 0;
   const preferred_coverage = pref.length
     ? pref.reduce((s, a) => s + scoreOf(a), 0) / pref.length
-    : 0.5; // unknown → neutral
+    : 0;
   const alignedCount = screening_evidence.filter((s) => s.aligned === "aligned").length;
   const misalignedCount = screening_evidence.filter((s) => s.aligned === "misaligned").length;
-  const totalScreening = screening_evidence.length || 1;
-  const screening_alignment =
-    (alignedCount - misalignedCount) / totalScreening / 2 + 0.5; // 0-1
+  const screeningCount = screening_evidence.length;
+  const totalScreening = screeningCount || 1;
+  const screening_alignment = screeningCount
+    ? (alignedCount - misalignedCount) / totalScreening / 2 + 0.5 // 0-1
+    : 0;
 
-  // Weighted score: must-haves dominate.
-  let score01 =
-    must_have_coverage * 0.6 + preferred_coverage * 0.2 + screening_alignment * 0.2;
+  // Weighted score: must-haves dominate. Absent categories drop out and the
+  // remaining weights are renormalised so nothing earns free points.
+  const category_weights = renormaliseWeights({
+    must_have: must.length ? 0.6 : 0,
+    preferred: pref.length ? 0.2 : 0,
+    screening_alignment: screeningCount ? 0.2 : 0,
+  });
+  let score01 = combineCategories(
+    {
+      must_have: must_have_coverage,
+      preferred: preferred_coverage,
+      screening_alignment,
+    },
+    category_weights,
+  );
   if (disqualified) score01 = Math.min(score01, 0.15);
 
   const score = Math.round(score01 * 1000) / 10; // 0.0-100.0
+
 
   // Confidence: based on evidence volume, CV length, and screening completeness.
   const cvTokenBoost = Math.min(1, cv.length / 800);
