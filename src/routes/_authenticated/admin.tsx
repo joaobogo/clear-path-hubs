@@ -110,6 +110,15 @@ const NAV: WorkspaceNavItem[] = [
     hint: "Documents we could not read, with named next actions",
   },
 
+  {
+    to: "/admin/evidence-gaps",
+    label: "Missing evidence",
+    icon: SearchX,
+    group: "Quality",
+    hint: "Why candidates arrived without evidence, and what they were told",
+  },
+
+
   { to: "/admin/messages", label: "Comms", icon: MessageSquare, group: "Comms", hint: "Messages, notifications, copilot" },
 
   {
