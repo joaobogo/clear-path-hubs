@@ -15,7 +15,7 @@ export const getParseReview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ matchId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
-    const { requireStaff } = await import("@/lib/authz.server");
+    const { requireStaff } = await import("@/lib/admin-ops.server");
     await requireStaff(context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { buildParseFields, summarise } = await import("./parse-review.server");
@@ -145,7 +145,7 @@ export const saveFieldReview = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data, context }) => {
-    const { requireStaff } = await import("@/lib/authz.server");
+    const { requireStaff } = await import("@/lib/admin-ops.server");
     await requireStaff(context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
@@ -189,7 +189,7 @@ export const flagPassageMismatch = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data, context }) => {
-    const { requireStaff } = await import("@/lib/authz.server");
+    const { requireStaff } = await import("@/lib/admin-ops.server");
     await requireStaff(context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
