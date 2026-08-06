@@ -57,7 +57,7 @@ function PricingPage() {
       {/* Hero — mirrors taasflow.com/pricing */}
       <EditorialHero
         eyebrow="Plans & Entitlements"
-        title="One platform. Entitlements that scale."
+        title="One platform, Talent Management that scales."
         lead={`Every plan is the full ${PRODUCT_CATEGORY}. What changes is capacity — active roles, agent runs, intelligence and governance.`}
         image={pricingHero}
         imageAlt="A hiring team planning roles together in a light-filled meeting room"
