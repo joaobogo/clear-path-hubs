@@ -38,6 +38,7 @@ import {
  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AlertCircle, MessageSquare, Users } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { RoleBlueprint } from "@/components/product/role-blueprint";
 import { GeneratedBlueprintPanel } from "@/components/positions/generated-blueprint-panel";
 import { RoleLaunchPanel } from "@/components/positions/role-launch-panel";
@@ -52,7 +53,7 @@ import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { RoleProgressTracker } from "@/components/client/role-progress-tracker";
 import { RoleDatedTimeline } from "@/components/client/role-dated-timeline";
 import { DeliveryCommitmentBlock } from "@/components/client/delivery-commitment";
-import { InfoRequestsPanel } from "@/components/client/info-requests";
+import { InfoRequestList } from "@/components/client/info-requests";
 import { buildDeliveryCommitment } from "@/lib/delivery-commitment";
 import { RoleShortlist } from "@/components/client/role-shortlist";
 import { RoleLifecycleTimeline } from "@/components/client/role-lifecycle-timeline";
@@ -310,14 +311,7 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
  // With a confirmed hire on the role, the search view is replaced by what
  // remains: agreed terms, the derived guarantee window, and the outstanding
  // steps. The role stays reachable — messages and history remain open.
- if (handoff.isLoading && orgId) {
-  return (
-   <main className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
-    <HandoffSkeleton />
-   </main>
-  );
- }
- if (orgId && handoff.data) {
+ if (handoff) {
   return (
    <main className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
     <div>
@@ -433,26 +427,10 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
   </div>
 
   {/* Recorded closure — reason, note, date and who closed it. */}
-  {closure.data && <RoleClosureRecord closure={closure.data} />}
+  {closure && <RoleClosureRecord closure={closure} />}
 
   {/* One-screen recap of the finished search. */}
-  {closure.data && !closure.data.paused && (
-   <>
-    {recap.isPending && <RoleRecapSkeleton />}
-    {recap.isError && (
-     <QueryErrorCard
-      title="We couldn't load the recap for this role"
-      error={recap.error}
-      onRetry={() => void recap.refetch()}
-      retrying={recap.isFetching}
-      compact
-     />
-    )}
-    {!recap.isPending && !recap.isError && recap.data && (
-     <RoleRecapPanel recap={recap.data} />
-    )}
-   </>
-  )}
+  {closure && !closure.paused && recap && <RoleRecapPanel recap={recap} />}
 
 
 
@@ -563,7 +541,7 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
       onChanged={() => void refetch()}
     />
     {/* A role is closed with a recorded reason, never by message. */}
-    {orgId && !closure.data && !isArchivedStatus(position.status) && (
+    {orgId && !closure && !isArchivedStatus(position.status) && (
      <CloseRoleDialog
       orgId={orgId}
       positionId={position.id}
@@ -593,9 +571,8 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
  </header>
 
 			<div id="information-needed" className="scroll-mt-24">
-				<InfoRequestsPanel
-					orgId={orgId}
-					positionId={id}
+				<InfoRequestList
+					requests={infoRequests}
 					heading="Information needed to keep sourcing"
 					onAnswered={() => {
 						void refetch();
@@ -624,8 +601,7 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
  <div className="mt-3">
  <RoleDatedTimeline
  timeline={data.timeline}
- isLoading={isLoading}
- error={isError ? error : undefined}
+ isLoading={isFetching && !data.timeline}
  onRetry={() => void refetch()}
  />
  </div>
@@ -635,10 +611,9 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
  {/* Full system workflow — Intake through Hire, derived from real records */}
  <section className="rounded-xl border bg-card px-4 py-4">
  <RoleLifecycleTimeline
- lifecycle={lifecycle.data}
- isLoading={lifecycle.isLoading}
- error={lifecycle.error}
- onRetry={() => void lifecycle.refetch()}
+ lifecycle={lifecycle}
+ isLoading={false}
+ onRetry={() => void refetch()}
  />
  </section>
 
