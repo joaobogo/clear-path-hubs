@@ -40,6 +40,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
+import { toFitPresentation } from "@/lib/client-fit-presentation";
 
 export const Route = createFileRoute("/share/$token")({
   head: () => ({
@@ -314,11 +316,16 @@ function CandidateCard({
           </div>
         </div>
         <div className="text-right">
-          <div className="text-3xl font-semibold tabular-nums">
-            {c.score ?? "—"}
-          </div>
-          <div className="text-xs uppercase tracking-wide text-muted-foreground">
-            {c.fit_label ?? "unrated"} · {c.stage.replace(/_/g, " ")}
+          {/* Band + evidence, never a raw number: shared links are employer-facing. */}
+          <CandidateScoreBadge
+            score={c.score}
+            fitLabel={c.fit_label}
+            evidence={c.evidence_support}
+            unicorn={c.unicorn}
+            className="justify-end"
+          />
+          <div className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">
+            {c.stage.replace(/_/g, " ")}
           </div>
         </div>
       </header>
@@ -468,12 +475,15 @@ function PresentationMode({
         </p>
         <div className="mt-6 inline-flex items-center gap-3 rounded-full border bg-background px-6 py-3">
           <Award className="h-5 w-5 text-primary" />
-          <span className="text-5xl font-semibold tabular-nums">
-            {c.score ?? "—"}
+          <span className="text-2xl font-semibold">
+            {toFitPresentation(c.fit_label, c.score).headline}
           </span>
-          <span className="text-sm uppercase tracking-wide text-muted-foreground">
-            {c.fit_label ?? "unrated"}
-          </span>
+          {c.evidence_support.total > 0 && (
+            <span className="text-sm text-muted-foreground">
+              {c.evidence_support.supported} of {c.evidence_support.total} requirements
+              evidenced
+            </span>
+          )}
         </div>
       </div>
       {c.summary && (
@@ -562,7 +572,8 @@ function CompareMode({
                   : "border-border hover:bg-muted"
               }`}
             >
-              {c.candidate.display_name} · {c.score ?? "—"}
+              {c.candidate.display_name} ·{" "}
+              {toFitPresentation(c.fit_label, c.score).headline}
             </button>
           );
         })}
@@ -597,11 +608,14 @@ function CompareMode({
                 label="Fit"
                 shown={shown}
                 render={(c) => (
-                  <span className="text-lg font-semibold">
-                    {c.score ?? "—"}{" "}
-                    <span className="text-xs font-normal text-muted-foreground">
-                      · {c.fit_label ?? "—"}
-                    </span>
+                  <span className="text-sm font-semibold">
+                    {toFitPresentation(c.fit_label, c.score).headline}
+                    {c.evidence_support.total > 0 && (
+                      <span className="ml-1 text-xs font-normal text-muted-foreground">
+                        · {c.evidence_support.supported}/{c.evidence_support.total}{" "}
+                        evidenced
+                      </span>
+                    )}
                   </span>
                 )}
               />
