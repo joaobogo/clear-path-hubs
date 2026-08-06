@@ -249,24 +249,6 @@ function OutreachPage() {
       </section>
 
       <section className="mt-8 rounded-lg border border-border bg-card p-5">
-        <h2 className="text-lg font-semibold">Channel rules</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {spine?.can_manage
-            ? "Set how often a single person can be contacted on each channel."
-            : "These are your workspace rules. An admin can change them."}
-        </p>
-        <div className="mt-4">
-          {spine?.rules.map((r) => (
-            <RuleRow
-              key={r.channel}
-              rule={r}
-              canManage={!!spine.can_manage}
-              saving={saveRule.isPending}
-              onSave={(next) => saveRule.mutate(next)}
-            />
-          ))}
-        </div>
-      </section>
 
       <section className="mt-8">
         <h2 className="text-lg font-semibold">What outreach produced</h2>
