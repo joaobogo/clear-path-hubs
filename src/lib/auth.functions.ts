@@ -502,15 +502,31 @@ export const resetMemberPassword = createServerFn({ method: "POST" })
   });
 
 // ─────────────────────────────────────────────────────────────
-// QA one-click persona access. Server-gated by ENABLE_QA_PERSONA_ACCESS.
-// Returns a magic-link URL that, when opened, creates a real Supabase session
-// for a real QA user. RLS remains fully enforced.
+// QA one-click persona access.
+//
+// This is a privileged capability: it mints a real magic link for a real
+// account, including a platform_admin persona. It is therefore gated three
+// ways, all of which must hold:
+//   1. Build-time — `import.meta.env.DEV` is statically false in a production
+//      build, so the persona code path is dead-code-eliminated. A misset
+//      runtime env var can no longer open it.
+//   2. Session — `requireSupabaseAuth`, like every other privileged function
+//      in this file. Anonymous callers get no response at all.
+//   3. Role — `assertPlatformAdmin` on the caller's own memberships.
 // ─────────────────────────────────────────────────────────────
 type Persona = {
   key: "platform_admin" | "operations" | "client_admin" | "client_editor" | "client_viewer";
   label: string;
   email: string;
 };
+
+// Statically false in production builds → the persona branches below are
+// removed by the bundler rather than guarded by a runtime string.
+const QA_PERSONAS_BUILD_ALLOWED = import.meta.env.DEV === true;
+
+function qaPersonasEnabled(): boolean {
+  return QA_PERSONAS_BUILD_ALLOWED && process.env.ENABLE_QA_PERSONA_ACCESS === "true";
+}
 
 function qaPersonasConfigured(): Persona[] {
   const raw = process.env.QA_PERSONAS_JSON;
@@ -523,20 +539,26 @@ function qaPersonasConfigured(): Persona[] {
   }
 }
 
-export const getQaPersonaConfig = createServerFn({ method: "GET" }).handler(
-  async (): Promise<{ enabled: boolean; personas: Array<{ key: Persona["key"]; label: string }> }> => {
-    const enabled = process.env.ENABLE_QA_PERSONA_ACCESS === "true";
-    if (!enabled) return { enabled: false, personas: [] };
-    const configured = qaPersonasConfigured();
-    // Never expose email addresses to the client bundle.
-    return {
-      enabled: true,
-      personas: configured.map((p) => ({ key: p.key, label: p.label })),
-    };
-  },
-);
+export const getQaPersonaConfig = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(
+    async ({
+      context,
+    }): Promise<{ enabled: boolean; personas: Array<{ key: Persona["key"]; label: string }> }> => {
+      if (!qaPersonasEnabled()) return { enabled: false, personas: [] };
+      const { supabase, userId } = context;
+      await assertPlatformAdmin(supabase, userId);
+      const configured = qaPersonasConfigured();
+      // Never expose email addresses to the client bundle.
+      return {
+        enabled: true,
+        personas: configured.map((p) => ({ key: p.key, label: p.label })),
+      };
+    },
+  );
 
 export const qaPersonaLogin = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((raw) =>
     z
       .object({
@@ -550,10 +572,12 @@ export const qaPersonaLogin = createServerFn({ method: "POST" })
       })
       .parse(raw),
   )
-  .handler(async ({ data }) => {
-    if (process.env.ENABLE_QA_PERSONA_ACCESS !== "true") {
+  .handler(async ({ data, context }) => {
+    if (!qaPersonasEnabled()) {
       throw new Error("QA persona access is disabled");
     }
+    const { supabase, userId } = context;
+    await assertPlatformAdmin(supabase, userId);
     const persona = qaPersonasConfigured().find((p) => p.key === data.persona);
     if (!persona) throw new Error("Persona not configured");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -566,8 +590,16 @@ export const qaPersonaLogin = createServerFn({ method: "POST" })
     const action_link: string | null =
       link?.properties?.action_link ?? link?.action_link ?? null;
     if (!action_link) throw new Error("Failed to generate persona magic link");
+    await supabaseAdmin.from("audit_events").insert({
+      actor_user_id: userId,
+      entity_type: "auth.users",
+      entity_id: userId,
+      action: "qa.persona_login",
+      after_state: { persona: data.persona },
+    });
     return { action_link };
   });
+
 
 // ─────────────────────────────────────────────────────────────
 // Self-service signup provisioning.
@@ -577,6 +609,38 @@ export const qaPersonaLogin = createServerFn({ method: "POST" })
 // via the public job application flow.
 // Idempotent: safe to re-run; existing memberships/profile are preserved.
 // ─────────────────────────────────────────────────────────────
+// Exact allowlist. A pattern like /^taasflow\.[a-z.]+$/ also matches
+// `taasflow.evil.com`, a domain an attacker can register and receive mail on,
+// so staff detection is a literal string comparison and nothing else.
+const STAFF_EMAIL_DOMAINS = new Set<string>(["taasflow.com"]);
+
+function isStaffEmailDomain(email: string | null): boolean {
+  if (!email) return false;
+  const domain = email.split("@")[1]?.toLowerCase() ?? "";
+  return STAFF_EMAIL_DOMAINS.has(domain);
+}
+
+/**
+ * Read the caller's email and verification state from the auth service, not
+ * from the JWT. `user_metadata.email_verified` is writable by the user via
+ * `auth.updateUser()`, so it is not proof of anything — only
+ * `email_confirmed_at` on the auth record is.
+ */
+async function readVerifiedIdentity(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabaseAdmin: any,
+  userId: string,
+): Promise<{ email: string | null; verified: boolean; fullName: string | null }> {
+  const { data, error } = await supabaseAdmin.auth.admin.getUserById(userId);
+  if (error || !data?.user) return { email: null, verified: false, fullName: null };
+  const user = data.user;
+  return {
+    email: (user.email as string | undefined)?.toLowerCase() ?? null,
+    verified: Boolean(user.email_confirmed_at),
+    fullName: (user.user_metadata?.full_name as string | undefined) ?? null,
+  };
+}
+
 const provisionSelfInput = z.object({
   full_name: z.string().min(1).max(120).optional().nullable(),
   company_name: z.string().min(1).max(200).optional().nullable(),
@@ -598,16 +662,13 @@ export const provisionClientMembershipForSelf = createServerFn({ method: "POST" 
     const { userId, claims } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const email = (claims?.email as string | undefined)?.toLowerCase() ?? null;
-    const emailVerified =
-      (claims?.email_verified as boolean | undefined) ??
-      (claims?.user_metadata as { email_verified?: boolean } | undefined)?.email_verified ??
-      false;
-    const metaName =
-      (claims?.user_metadata as { full_name?: string } | undefined)?.full_name ?? null;
-    const fullName = metaName || (email ? email.split("@")[0] : "New user");
-    const domain = email ? email.split("@")[1] ?? "" : "";
-    const isTaasflowStaff = emailVerified && /^taasflow\.[a-z.]+$/i.test(domain);
+    // Verification and identity come from the auth record, never from claims:
+    // `user_metadata` is user-writable and must not decide privilege.
+    const identity = await readVerifiedIdentity(supabaseAdmin, userId);
+    const email = identity.email ?? (claims?.email as string | undefined)?.toLowerCase() ?? null;
+    const fullName = identity.fullName || (email ? email.split("@")[0] : "New user");
+    const isTaasflowStaff = identity.verified && isStaffEmailDomain(identity.email);
+
 
     // Ensure a profile row exists (harmless, grants no privilege).
     const { data: existingProfile } = await supabaseAdmin
@@ -715,21 +776,21 @@ export const assertVerifiedSession = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     const { userId, claims } = context;
     const c = claims as Record<string, unknown>;
-    const meta = (c.user_metadata as { email_verified?: boolean } | undefined) ?? undefined;
-    const email = (c.email as string | undefined)?.toLowerCase() ?? null;
     const provider =
       ((c.app_metadata as { provider?: string } | undefined)?.provider as string | undefined) ??
       "email";
-    const verified =
-      Boolean(c.email_confirmed_at) ||
-      (c.email_verified as boolean | undefined) === true ||
-      meta?.email_verified === true;
 
-    if (!verified) {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // Verification is read from the auth record's `email_confirmed_at`.
+    // `user_metadata.email_verified` is writable by the user through
+    // `auth.updateUser()` and is never treated as proof.
+    const identity = await readVerifiedIdentity(supabaseAdmin, userId);
+    const email = identity.email ?? (c.email as string | undefined)?.toLowerCase() ?? null;
+
+    if (!identity.verified) {
       return { verified: false as const, provider, active: false as const };
     }
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: profile } = await supabaseAdmin
       .from("profiles")
       .select("id, status")
@@ -745,7 +806,7 @@ export const assertVerifiedSession = createServerFn({ method: "POST" })
         .insert({
           auth_user_id: userId,
           email: email ?? `${userId}@unknown.local`,
-          full_name: (c.user_metadata as { full_name?: string } | undefined)?.full_name ?? null,
+          full_name: identity.fullName,
           status: "active",
         })
         .select("status")
