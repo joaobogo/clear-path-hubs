@@ -161,12 +161,8 @@ export function ModelComparisonTable({ className }: { className?: string }) {
         </table>
       </div>
 
-      <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="max-w-xl text-sm text-[color:var(--brand-navy)]/80">
-          TaaSFlow is not access to profiles. It is the screening work, the
-          written judgement behind it, and the workflow to act on it — for a
-          flat fee.
-        </p>
+      <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-end">
+
         <Link
           to="/pilot"
           className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-md bg-[color:var(--brand-navy)] px-5 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
