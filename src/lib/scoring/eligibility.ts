@@ -76,3 +76,36 @@ export function resolveEligibility(
     excepted_checks: excepted,
   };
 }
+
+/**
+ * Adapter for stored `eligibility_checks` rows, whose `status` uses the
+ * database `eligibility_status` vocabulary rather than the raw check verdicts.
+ * Used by the staff review surface so one resolution rule governs the DB rows
+ * and the in-memory checks.
+ */
+export type EligibilityCheckRow = {
+  qualifier_key: string;
+  qualifier_kind?: string | null;
+  status: string | null;
+};
+
+export function resolveEligibilityFromRows(
+  rows: EligibilityCheckRow[] | null | undefined,
+): EligibilityResolution {
+  const checks: EligibilityCheckInput[] = (rows ?? []).map((r) => ({
+    qualifier_key: r.qualifier_key,
+    qualifier_kind: (r.qualifier_kind === "disqualifier"
+      ? "disqualifier"
+      : "qualifier") as QualifierKind,
+    status:
+      r.status === "not_eligible"
+        ? "failed"
+        : r.status === "excepted"
+          ? "excepted"
+          : r.status === "eligible"
+            ? "passed"
+            : "unknown",
+    has_active_exception: r.status === "excepted",
+  }));
+  return resolveEligibility(checks);
+}

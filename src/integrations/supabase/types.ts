@@ -15528,6 +15528,10 @@ export type Database = {
       }
     }
     Functions: {
+      _authz_probe_insert_allowed: {
+        Args: { _row: string; _table: string; _user: string }
+        Returns: boolean
+      }
       _authz_probe_visible: {
         Args: { _filter: string; _table: string; _user: string }
         Returns: number
@@ -15601,6 +15605,10 @@ export type Database = {
       default_permissions_for_role: {
         Args: { _role: Database["public"]["Enums"]["membership_role"] }
         Returns: Database["public"]["Enums"]["client_permission"][]
+      }
+      evidence_item_in_match: {
+        Args: { _item_id: string; _match_id: string; _org: string }
+        Returns: boolean
       }
       flag_roles_for_reassignment: {
         Args: { _reason: string; _user_id: string }
@@ -15689,6 +15697,10 @@ export type Database = {
         Args: { _position_id: string; _reason: string }
         Returns: number
       }
+      match_in_org: {
+        Args: { _match_id: string; _org: string }
+        Returns: boolean
+      }
       notify_platform_staff: {
         Args: {
           _body: string
@@ -15708,6 +15720,10 @@ export type Database = {
         Returns: Json
       }
       person_for_candidate_profile: { Args: { _cp: string }; Returns: string }
+      position_in_org: {
+        Args: { _org: string; _position_id: string }
+        Returns: boolean
+      }
       public_application_effort: {
         Args: { _position_id: string }
         Returns: Json
@@ -15727,7 +15743,9 @@ export type Database = {
         Returns: string
       }
       role_family_of: { Args: { _title: string }; Returns: string }
+      run_all_authz_tests: { Args: never; Returns: string[] }
       run_authz_tests: { Args: never; Returns: string[] }
+      run_scoring_authz_tests: { Args: never; Returns: string[] }
       score_band: {
         Args: { _score: number }
         Returns: Database["public"]["Enums"]["score_band"]
