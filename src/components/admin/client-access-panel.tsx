@@ -297,51 +297,6 @@ function ClientAccessBody({
         Permissions follow the role. There is no per-permission editing on this tab, and access is
         never assumed on behalf of a client user.
       </p>
-
-      <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Invite a client member</DialogTitle>
-            <DialogDescription>
-              They receive the permissions of the chosen role. The seat limit is enforced on the
-              server.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-3">
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@company.com"
-              aria-label="Email address"
-            />
-            <Select value={inviteRole} onValueChange={setInviteRole}>
-              <SelectTrigger aria-label="Role">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {CLIENT_ROLES.map((r) => (
-                  <SelectItem key={r} value={r}>
-                    {ROLE_LABEL[r]}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setInviteOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              disabled={!/.+@.+\..+/.test(email) || invite.isPending}
-              onClick={() => invite.mutate()}
-              data-qa-action="access-invite-confirm"
-            >
-              {invite.isPending ? "Sending…" : "Send invitation"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </section>
   );
 }
