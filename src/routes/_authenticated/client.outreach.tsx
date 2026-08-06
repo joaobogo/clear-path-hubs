@@ -43,7 +43,6 @@ function pct(v: number | null) {
 
 function OutreachPage() {
   const orgSearch = useClientOrgSearch();
-  const qc = useQueryClient();
   const ctxFn = useServerFn(getClientContext);
   const spineFn = useServerFn(getOutreachSpine);
 
