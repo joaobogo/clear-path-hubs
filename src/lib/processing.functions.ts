@@ -1060,6 +1060,70 @@ export const getAdminMatch = createServerFn({ method: "GET" })
     };
   });
 
+// Large payloads for the candidate workspace tabs that actually render them:
+// score-run results/explanations, the raw CV text and the signed preview URL.
+// Fetched only when such a tab opens, so opening a candidate stays cheap.
+export const getMatchHeavyDetail = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    if (!(await isStaff(context.userId))) throw new Error("forbidden");
+    const supabase = (await getAdmin()) as AnyRow;
+    const { data: m } = await supabase
+      .from("candidate_matches")
+      .select("id,candidate_profile_id")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (!m) return null;
+
+    const [runsRes, evidenceRes, fileRes] = await Promise.all([
+      supabase
+        .from("score_runs")
+        .select(
+          "id,score,confidence,status,fit_label,must_have_coverage,preferred_coverage,contradiction_status,explanation,result,completed_at,engine_version,input_hash",
+        )
+        .eq("candidate_match_id", data.id)
+        .order("completed_at", { ascending: false }),
+      supabase
+        .from("candidate_evidence")
+        .select("id,engine_version,extracted,screening_normalized,raw_text_sample,created_at")
+        .eq("candidate_match_id", data.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabase
+        .from("files")
+        .select(
+          "id,filename,storage_bucket,storage_path,mime_type,size,ocr_used,extracted_text,extraction_completed_at,extraction_attempts",
+        )
+        .eq("candidate_profile_id", m.candidate_profile_id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+    ]);
+
+    const CV_URL_TTL_SECONDS = 300;
+    let cv_signed_url: string | null = null;
+    let cv_url_expires_at: string | null = null;
+    if (fileRes.data) {
+      const signed = await supabase.storage
+        .from(fileRes.data.storage_bucket)
+        .createSignedUrl(fileRes.data.storage_path, CV_URL_TTL_SECONDS);
+      cv_signed_url = signed.data?.signedUrl ?? null;
+      if (cv_signed_url) {
+        cv_url_expires_at = new Date(Date.now() + CV_URL_TTL_SECONDS * 1000).toISOString();
+      }
+    }
+
+    return {
+      runs: runsRes.data ?? [],
+      evidence: evidenceRes.data ?? null,
+      cv: fileRes.data
+        ? { ...fileRes.data, signed_url: cv_signed_url, url_expires_at: cv_url_expires_at }
+        : null,
+    };
+  });
+
 // Download a consolidated evidence record as JSON (staff only).
 export const downloadEvidenceRecord = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
