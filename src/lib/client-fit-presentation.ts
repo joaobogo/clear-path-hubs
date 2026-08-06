@@ -21,11 +21,27 @@ export type FitPresentation = {
   accent: "emerald" | "sky" | "amber" | "slate" | "rose";
 };
 
+/**
+ * The ONE place raw band vocabulary is normalised. Covers all three historic
+ * systems: the engine's fit_label, the DB `score_band` enum, and legacy
+ * presentation words. Anything unmapped falls back to score thresholds, then
+ * to "mixed" — never to an internal label.
+ */
 const RAW_LABEL_MAP: Record<string, FitBand> = {
+  // engine (scoring-engine.server.ts)
+  strong_fit: "strong",
+  worth_considering: "mixed",
+  not_a_fit: "not_recommended",
+  unknown: "mixed",
+  // DB score_band enum
   exceptional: "exceptional",
-  excellent: "exceptional",
   top: "exceptional",
   strong: "strong",
+  consider: "mixed",
+  not_recommended: "not_recommended",
+  unscored: "mixed",
+  // legacy presentation words
+  excellent: "exceptional",
   high: "strong",
   good: "good",
   potential: "good",
@@ -35,10 +51,9 @@ const RAW_LABEL_MAP: Record<string, FitBand> = {
   low: "limited",
   limited: "limited",
   weak: "limited",
-  not_a_fit: "not_recommended",
-  not_recommended: "not_recommended",
   none: "not_recommended",
 };
+
 
 const BAND_TABLE: Record<FitBand, Omit<FitPresentation, "band">> = {
   exceptional: {

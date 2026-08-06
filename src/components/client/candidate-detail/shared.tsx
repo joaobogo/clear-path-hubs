@@ -44,6 +44,7 @@ export function CandidateHeader({
           </h1>
           <CandidateScoreBadge
             score={candidate.score}
+            fitLabel={candidate.fit_label}
             unicorn={candidate.unicorn}
           />
           <Badge variant="outline" className="capitalize">

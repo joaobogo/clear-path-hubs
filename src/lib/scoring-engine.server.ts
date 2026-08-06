@@ -53,11 +53,23 @@ export interface ScoringResult {
     preferred: number;
     screening_alignment: number;
   };
+  /**
+   * Weight actually applied to each category for THIS run. A category with no
+   * inputs (no preferred requirements, no screening answers) gets weight 0 and
+   * the remaining weights are renormalised — absent categories never award
+   * free points.
+   */
+  category_weights: {
+    must_have: number;
+    preferred: number;
+    screening_alignment: number;
+  };
   requirement_assessment: RequirementAssessment[];
   strengths: string[];
   concerns: string[];
   evidence: EvidenceRef[];
   screening_evidence: Array<{
+
     question_id: string;
     question: string;
     normalized_value: string;
@@ -96,14 +108,76 @@ function extractKeywordsFromRequirement(text: string): string[] {
   return out.slice(0, 12);
 }
 
-function findSnippet(cv: string, term: string): { snippet: string; location: string } | null {
-  const idx = cv.toLowerCase().indexOf(term.toLowerCase());
+function escapeRe(s: string) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Whole-term match. Prevents substring false positives such as `java` matching
+ * `javascript`, or `go` matching `google`. Terms containing punctuation
+ * (`node.js`, `c++`, `.net`) still match because only alphanumeric neighbours
+ * are rejected.
+ */
+export function findTermMatches(cv: string, term: string): number[] {
+  const t = term.trim().toLowerCase();
+  if (!t) return [];
+  const re = new RegExp(`(^|[^a-z0-9])${escapeRe(t)}([^a-z0-9]|$)`, "gi");
+  const out: number[] = [];
+  let m: RegExpExecArray | null;
+  const lower = cv.toLowerCase();
+  while ((m = re.exec(lower)) !== null) {
+    out.push(m.index + (m[1]?.length ?? 0));
+    re.lastIndex = m.index + Math.max(1, m[0].length - 1);
+    if (out.length >= 5) break;
+  }
+  return out;
+}
+
+const NEGATION_CUES = [
+  "no experience",
+  "not experienced",
+  "no exposure",
+  "no hands-on",
+  "never used",
+  "never worked",
+  "no knowledge",
+  "not familiar",
+  "unfamiliar with",
+  "without any",
+  "without",
+  "lacks",
+  "lack of",
+  "no formal",
+  "limited to no",
+];
+
+/**
+ * True when the mention at `idx` sits inside a negating clause, e.g.
+ * "no experience with Kubernetes". Only the preceding ~70 characters of the
+ * same sentence are considered, so a later positive mention still counts.
+ */
+export function isNegatedMention(cv: string, idx: number): boolean {
+  const lower = cv.toLowerCase();
+  const sentenceStart = Math.max(
+    lower.lastIndexOf(".", idx - 1) + 1,
+    lower.lastIndexOf("\n", idx - 1) + 1,
+    lower.lastIndexOf(";", idx - 1) + 1,
+    idx - 70,
+    0,
+  );
+  const window = lower.slice(sentenceStart, idx);
+  return NEGATION_CUES.some((cue) => window.includes(cue));
+}
+
+function findSnippet(cv: string, term: string, at?: number): { snippet: string; location: string } | null {
+  const idx = at ?? cv.toLowerCase().indexOf(term.toLowerCase());
   if (idx === -1) return null;
   const start = Math.max(0, idx - 80);
   const end = Math.min(cv.length, idx + term.length + 80);
   const snippet = cv.slice(start, end).replace(/\s+/g, " ").trim();
   return { snippet, location: `cv:${start}-${end}` };
 }
+
 
 function fnv1a(input: string): string {
   let h = 0x811c9dc5;
@@ -167,6 +241,40 @@ function isDisqualifying(a: ScreeningAnswer): boolean {
   if (cond.operator === "max" && typeof v === "number" && typeof cond.value === "number") return v > cond.value;
   return false;
 }
+export type CategoryWeights = {
+  must_have: number;
+  preferred: number;
+  screening_alignment: number;
+};
+
+/** Scale a weight set so the present (non-zero) weights sum to exactly 1. */
+export function renormaliseWeights(w: CategoryWeights): CategoryWeights {
+  const total = w.must_have + w.preferred + w.screening_alignment;
+  if (total <= 0) return { must_have: 1, preferred: 0, screening_alignment: 0 };
+  const round = (x: number) => Math.round((x / total) * 10000) / 10000;
+  return {
+    must_have: round(w.must_have),
+    preferred: round(w.preferred),
+    screening_alignment: round(w.screening_alignment),
+  };
+}
+
+/**
+ * The single canonical combination step. Both the engine and the service-layer
+ * reconciliation call this, so a stored run can always be reproduced from its
+ * category_breakdown + category_weights.
+ */
+export function combineCategories(
+  breakdown: CategoryWeights,
+  weights: CategoryWeights,
+): number {
+  return (
+    breakdown.must_have * weights.must_have +
+    breakdown.preferred * weights.preferred +
+    breakdown.screening_alignment * weights.screening_alignment
+  );
+}
+
 
 // ---------- main entry ----------
 
@@ -185,7 +293,6 @@ export function scoreCandidate(input: {
     keywords: r.keywords?.length ? r.keywords : extractKeywordsFromRequirement(r.text),
   }));
 
-  const cvLower = cv.toLowerCase();
   const cvTokens = new Set(tokenize(cv));
   // "Insufficient parse" signal — CV is too short/garbled to draw negative conclusions.
   // Missing keywords in this regime map to `unknown` (validate), never irrational zero.
@@ -194,12 +301,17 @@ export function scoreCandidate(input: {
   const evidence: EvidenceRef[] = [];
   const assessment: RequirementAssessment[] = requirements.map((r) => {
     const matched: string[] = [];
+    const negated: string[] = [];
     const localEvidence: EvidenceRef[] = [];
     for (const kw of r.keywords) {
       const k = kw.toLowerCase();
-      if (cvTokens.has(k) || cvLower.includes(k)) {
-        matched.push(kw);
-        const sn = findSnippet(cv, k);
+      const hits = findTermMatches(cv, k);
+      if (hits.length === 0) continue;
+      const affirmative = hits.filter((idx) => !isNegatedMention(cv, idx));
+      if (affirmative.length === 0) {
+        // Every mention is inside a negating clause ("no experience with X").
+        negated.push(kw);
+        const sn = findSnippet(cv, k, hits[0]);
         if (sn) {
           localEvidence.push({
             requirement_id: r.id,
@@ -210,11 +322,28 @@ export function scoreCandidate(input: {
             location: sn.location,
           });
         }
+        continue;
+      }
+      matched.push(kw);
+      const sn = findSnippet(cv, k, affirmative[0]);
+      if (sn) {
+        localEvidence.push({
+          requirement_id: r.id,
+          requirement_text: r.text,
+          source: "cv",
+          matched_terms: [kw],
+          snippet: sn.snippet,
+          location: sn.location,
+        });
       }
     }
     let status: RequirementAssessment["status"];
     let needs_validation = false;
-    if (matched.length === 0) {
+    if (matched.length === 0 && negated.length > 0) {
+      // The CV explicitly denies the requirement — that is contradicting
+      // evidence, not merely absent evidence.
+      status = "contradicted";
+    } else if (matched.length === 0) {
       // If the CV is too thin OR the requirement is one of many with no matches,
       // treat as UNKNOWN (needs validation) rather than a hard MISSING zero.
       if (cvIsThin) {
@@ -224,6 +353,7 @@ export function scoreCandidate(input: {
         status = "missing";
       }
     } else if (matched.length >= Math.max(2, Math.ceil(r.keywords.length * 0.6))) {
+
       status = "met";
     } else {
       status = "partial";
@@ -265,6 +395,8 @@ export function scoreCandidate(input: {
   }
 
   // Category breakdown — "unknown" contributes a neutral 0.4 (validate, not zero).
+  // A category with no inputs at all is EXCLUDED from the weighting rather than
+  // credited with a neutral half-score (absent ≠ partially satisfied).
   const must = assessment.filter((a) => a.required);
   const pref = assessment.filter((a) => !a.required);
   const scoreOf = (a: RequirementAssessment) =>
@@ -277,22 +409,37 @@ export function scoreCandidate(input: {
           : 0;
   const must_have_coverage = must.length
     ? must.reduce((s, a) => s + scoreOf(a), 0) / must.length
-    : 1;
+    : 0;
   const preferred_coverage = pref.length
     ? pref.reduce((s, a) => s + scoreOf(a), 0) / pref.length
-    : 0.5; // unknown → neutral
+    : 0;
   const alignedCount = screening_evidence.filter((s) => s.aligned === "aligned").length;
   const misalignedCount = screening_evidence.filter((s) => s.aligned === "misaligned").length;
-  const totalScreening = screening_evidence.length || 1;
-  const screening_alignment =
-    (alignedCount - misalignedCount) / totalScreening / 2 + 0.5; // 0-1
+  const screeningCount = screening_evidence.length;
+  const totalScreening = screeningCount || 1;
+  const screening_alignment = screeningCount
+    ? (alignedCount - misalignedCount) / totalScreening / 2 + 0.5 // 0-1
+    : 0;
 
-  // Weighted score: must-haves dominate.
-  let score01 =
-    must_have_coverage * 0.6 + preferred_coverage * 0.2 + screening_alignment * 0.2;
+  // Weighted score: must-haves dominate. Absent categories drop out and the
+  // remaining weights are renormalised so nothing earns free points.
+  const category_weights = renormaliseWeights({
+    must_have: must.length ? 0.6 : 0,
+    preferred: pref.length ? 0.2 : 0,
+    screening_alignment: screeningCount ? 0.2 : 0,
+  });
+  let score01 = combineCategories(
+    {
+      must_have: must_have_coverage,
+      preferred: preferred_coverage,
+      screening_alignment,
+    },
+    category_weights,
+  );
   if (disqualified) score01 = Math.min(score01, 0.15);
 
   const score = Math.round(score01 * 1000) / 10; // 0.0-100.0
+
 
   // Confidence: based on evidence volume, CV length, and screening completeness.
   const cvTokenBoost = Math.min(1, cv.length / 800);
@@ -347,6 +494,8 @@ export function scoreCandidate(input: {
       preferred: Math.round(preferred_coverage * 10000) / 10000,
       screening_alignment: Math.round(screening_alignment * 10000) / 10000,
     },
+    category_weights,
+
     requirement_assessment: assessment,
     strengths,
     concerns,

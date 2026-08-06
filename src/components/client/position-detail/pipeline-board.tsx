@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Users } from "lucide-react";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
-import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { type MatchStage } from "@/lib/client-match-stage";
 import { KANBAN_COLUMNS, STAGE_GRAPH, STAGE_LABELS } from "./constants";
 
@@ -117,15 +116,12 @@ export function PipelineBoard({
                       <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs">
                         <CandidateScoreBadge
                           score={m.score_runs?.score ?? null}
+                          fitLabel={m.score_runs?.fit_label ?? null}
                           unicorn={
                             (m.score_runs?.score ?? 0) >= 95 || m.stage === "hired"
                           }
                         />
-                        {(m.score_runs?.fit_label || m.score_runs?.score != null) && (
-                          <span className="text-muted-foreground">
-                            {toFitPresentation(m.score_runs?.fit_label, m.score_runs?.score).headline}
-                          </span>
-                        )}
+
                       </div>
 
                       {canEdit && allowed.length > 0 && (

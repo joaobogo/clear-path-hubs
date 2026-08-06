@@ -22,6 +22,7 @@
 
 import {
   ENGINE_VERSION,
+  combineCategories,
   scoreCandidate,
   type RequirementInput,
   type ScreeningAnswer,
@@ -156,10 +157,8 @@ function reconcile(result: ScoringResult): {
   computed: number;
   applied_caps: Array<{ reason: string; cap: number; before: number }>;
 } {
-  const raw01 =
-    result.category_breakdown.must_have * 0.6 +
-    result.category_breakdown.preferred * 0.2 +
-    result.category_breakdown.screening_alignment * 0.2;
+  // Use the run's own weights so absent categories stay excluded.
+  const raw01 = combineCategories(result.category_breakdown, result.category_weights);
   const applied_caps: Array<{ reason: string; cap: number; before: number }> = [];
   let capped01 = raw01;
   if (result.contradiction_status === "disqualifying_answer") {
@@ -169,6 +168,25 @@ function reconcile(result: ScoringResult): {
   const computed = Math.round(capped01 * 1000) / 10;
   return { reconciled: Math.abs(computed - result.score) < 0.15, computed, applied_caps };
 }
+
+/**
+ * The approved rubric version that governs this position, if any. Stamped onto
+ * every run so a score can always be traced back to the criteria that produced
+ * it (findings: runs with a NULL rubric_version_id are unauditable).
+ */
+async function resolveRubricVersionId(s: Any, positionId: string): Promise<string | null> {
+  const { data } = await s
+    .from("rubric_versions")
+    .select("id,version_number,status,approved_at")
+    .eq("position_id", positionId)
+    .eq("status", "approved")
+    .is("superseded_at", null)
+    .order("version_number", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return data?.id ?? null;
+}
+
 
 async function acquireLock(s: Any, matchId: string, trace_id: string): Promise<boolean> {
   // Atomic "acquire" — transition the state to `scoring` only if not already there.
@@ -308,9 +326,11 @@ export async function executeScoring(
       reused = true;
     } else {
       const explanation = buildExplanation(raw, rec.applied_caps);
+      const rubricVersionId = await resolveRubricVersionId(s, ctx.match.position_id);
       const enrichedResult = {
         ...raw,
         blueprint_version: SCORING_BLUEPRINT_VERSION,
+        rubric_version_id: rubricVersionId,
         applied_caps: rec.applied_caps,
         reconciliation: { computed: rec.computed, declared: raw.score, ok: true },
         actor_user_id: opts.actor_user_id ?? null,
@@ -332,6 +352,7 @@ export async function executeScoring(
         candidate_submission_id: ctx.match.application_id,
         organization_id: ctx.match.organization_id,
         blueprint_version: SCORING_BLUEPRINT_VERSION,
+        rubric_version_id: rubricVersionId,
         // ── Math (raw / cap / final) ───────────────────────────────────────
         raw_score: rec.computed,
         applied_cap: raw.score,
@@ -348,8 +369,10 @@ export async function executeScoring(
           must_have: raw.category_breakdown.must_have,
           preferred: raw.category_breakdown.preferred,
           screening_alignment: raw.category_breakdown.screening_alignment,
+          category_weights: raw.category_weights,
           requirement_assessment: raw.requirement_assessment,
         } as unknown as Json,
+
         started_at: new Date().toISOString(),
         completed_at: new Date().toISOString(),
         trace_id,
