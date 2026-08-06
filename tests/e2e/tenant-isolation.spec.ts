@@ -49,6 +49,39 @@ function idem(label: string): string {
   return `qa-tenant-${label}-${Date.now()}${Math.floor(Math.random() * 10000)}`;
 }
 
+/**
+ * A prospect with a company name AND its own corporate email domain. The
+ * handlers treat a shared corporate domain as a candidate tenant match, so each
+ * independent test tenant needs its own domain — otherwise the domain rule
+ * (correctly) fires and masks the case under test. All addresses stay inside
+ * the qa.taasflow.test mailbox that teardown sweeps.
+ */
+function prospect(): { companyName: string; email: string; domain: string; stamp: string } {
+  const base = uniqueProspect();
+  const domain = `t${base.stamp}.qa.taasflow.test`;
+  return {
+    companyName: base.companyName,
+    email: `qa.intake+${base.stamp}@${domain}`,
+    domain,
+    stamp: base.stamp,
+  };
+}
+
+/** An account that exists but owns no workspace — the account_exists arrangement. */
+async function createOrphanAccount(password: string): Promise<string> {
+  const email = prospect().email;
+  const res = await postPublic<{ ok?: boolean; error?: string }>("/api/public/intake-account", {
+    mode: "create",
+    email,
+    password,
+    firstName: "Existing",
+    lastName: "Account",
+  });
+  expect(res.status, JSON.stringify(res.body)).toBe(200);
+  return email;
+}
+
+
 /** Minimal-but-valid /api/public/intake payload. */
 function intakePayload(over: {
   companyName: string;
