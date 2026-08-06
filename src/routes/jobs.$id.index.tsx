@@ -350,6 +350,9 @@ function JobDetail() {
     queryKey: ["public-position", id],
     queryFn: () => getPublicPosition({ data: { id } }),
   });
+  useEffect(() => {
+    track("job_viewed", { position_id: id, device: deviceBucket(window.innerWidth) });
+  }, [id]);
   if (loaderData.closed) {
     return (
       <ClosedRole closure={loaderData.closed} alternatives={loaderData.alternatives ?? []} />
