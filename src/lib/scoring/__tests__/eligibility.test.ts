@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolveEligibility } from "../eligibility";
+import { resolveEligibility, resolveEligibilityFromRows } from "../eligibility";
 import { deriveRecommendation } from "../recommendation";
 
 describe("resolveEligibility", () => {
@@ -41,6 +41,47 @@ describe("resolveEligibility", () => {
       { qualifier_key: "b", qualifier_kind: "disqualifier", status: "failed" },
     ]);
     expect(r.status).toBe("not_eligible");
+  });
+});
+
+describe("resolveEligibilityFromRows (stored eligibility_checks rows)", () => {
+  it("maps stored statuses used by the staff review surface", () => {
+    expect(
+      resolveEligibilityFromRows([
+        { qualifier_key: "license", qualifier_kind: "qualifier", status: "eligible" },
+      ]).status,
+    ).toBe("eligible");
+
+    expect(
+      resolveEligibilityFromRows([
+        { qualifier_key: "work_auth", qualifier_kind: "disqualifier", status: "not_eligible" },
+      ]).status,
+    ).toBe("not_eligible");
+
+    expect(
+      resolveEligibilityFromRows([
+        { qualifier_key: "license", qualifier_kind: "qualifier", status: "needs_validation" },
+      ]).status,
+    ).toBe("needs_validation");
+
+    expect(
+      resolveEligibilityFromRows([
+        { qualifier_key: "work_auth", qualifier_kind: "disqualifier", status: "excepted" },
+      ]).status,
+    ).toBe("excepted");
+  });
+
+  it("treats not_evaluated as undecided, never as a pass", () => {
+    const r = resolveEligibilityFromRows([
+      { qualifier_key: "license", qualifier_kind: "qualifier", status: "not_evaluated" },
+    ]);
+    expect(r.status).toBe("needs_validation");
+    expect(r.unknown_checks).toHaveLength(1);
+  });
+
+  it("no stored checks resolves to eligible", () => {
+    expect(resolveEligibilityFromRows([]).status).toBe("eligible");
+    expect(resolveEligibilityFromRows(null).status).toBe("eligible");
   });
 });
 
