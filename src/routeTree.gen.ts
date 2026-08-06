@@ -135,6 +135,7 @@ import { Route as AuthenticatedAdminPublishRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminPositionsRouteImport } from './routes/_authenticated/admin.positions'
 import { Route as AuthenticatedAdminPendingLeadsRouteImport } from './routes/_authenticated/admin.pending-leads'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin.payments'
+import { Route as AuthenticatedAdminParseFailuresRouteImport } from './routes/_authenticated/admin.parse-failures'
 import { Route as AuthenticatedAdminOperationsRouteImport } from './routes/_authenticated/admin.operations'
 import { Route as AuthenticatedAdminNotificationsRouteImport } from './routes/_authenticated/admin.notifications'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
@@ -857,6 +858,12 @@ const AuthenticatedAdminPaymentsRoute =
     path: '/payments',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminParseFailuresRoute =
+  AuthenticatedAdminParseFailuresRouteImport.update({
+    id: '/parse-failures',
+    path: '/parse-failures',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminOperationsRoute =
   AuthenticatedAdminOperationsRouteImport.update({
     id: '/operations',
@@ -1284,6 +1291,7 @@ export interface FileRoutesByFullPath {
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
+  '/admin/parse-failures': typeof AuthenticatedAdminParseFailuresRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/pending-leads': typeof AuthenticatedAdminPendingLeadsRoute
   '/admin/positions': typeof AuthenticatedAdminPositionsRouteWithChildren
@@ -1463,6 +1471,7 @@ export interface FileRoutesByTo {
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/admin/operations': typeof AuthenticatedAdminOperationsRoute
+  '/admin/parse-failures': typeof AuthenticatedAdminParseFailuresRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/pending-leads': typeof AuthenticatedAdminPendingLeadsRoute
   '/admin/publish': typeof AuthenticatedAdminPublishRoute
@@ -1646,6 +1655,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
   '/_authenticated/admin/operations': typeof AuthenticatedAdminOperationsRoute
+  '/_authenticated/admin/parse-failures': typeof AuthenticatedAdminParseFailuresRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/_authenticated/admin/pending-leads': typeof AuthenticatedAdminPendingLeadsRoute
   '/_authenticated/admin/positions': typeof AuthenticatedAdminPositionsRouteWithChildren
@@ -1833,6 +1843,7 @@ export interface FileRouteTypes {
     | '/admin/messages'
     | '/admin/notifications'
     | '/admin/operations'
+    | '/admin/parse-failures'
     | '/admin/payments'
     | '/admin/pending-leads'
     | '/admin/positions'
@@ -2012,6 +2023,7 @@ export interface FileRouteTypes {
     | '/admin/messages'
     | '/admin/notifications'
     | '/admin/operations'
+    | '/admin/parse-failures'
     | '/admin/payments'
     | '/admin/pending-leads'
     | '/admin/publish'
@@ -2194,6 +2206,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/notifications'
     | '/_authenticated/admin/operations'
+    | '/_authenticated/admin/parse-failures'
     | '/_authenticated/admin/payments'
     | '/_authenticated/admin/pending-leads'
     | '/_authenticated/admin/positions'
@@ -3274,6 +3287,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPaymentsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/parse-failures': {
+      id: '/_authenticated/admin/parse-failures'
+      path: '/parse-failures'
+      fullPath: '/admin/parse-failures'
+      preLoaderRoute: typeof AuthenticatedAdminParseFailuresRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/operations': {
       id: '/_authenticated/admin/operations'
       path: '/operations'
@@ -3776,6 +3796,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminNotificationsRoute: typeof AuthenticatedAdminNotificationsRoute
   AuthenticatedAdminOperationsRoute: typeof AuthenticatedAdminOperationsRoute
+  AuthenticatedAdminParseFailuresRoute: typeof AuthenticatedAdminParseFailuresRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
   AuthenticatedAdminPendingLeadsRoute: typeof AuthenticatedAdminPendingLeadsRoute
   AuthenticatedAdminPositionsRoute: typeof AuthenticatedAdminPositionsRouteWithChildren
@@ -3815,6 +3836,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
   AuthenticatedAdminNotificationsRoute: AuthenticatedAdminNotificationsRoute,
   AuthenticatedAdminOperationsRoute: AuthenticatedAdminOperationsRoute,
+  AuthenticatedAdminParseFailuresRoute: AuthenticatedAdminParseFailuresRoute,
   AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
   AuthenticatedAdminPendingLeadsRoute: AuthenticatedAdminPendingLeadsRoute,
   AuthenticatedAdminPositionsRoute:
