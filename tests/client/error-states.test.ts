@@ -56,7 +56,11 @@ describe("client routes: error, loading and empty are mutually exclusive", () =>
     describe(file, () => {
       it("renders a shared error surface for failed loads", () => {
         const usesSharedError =
-          src.includes("QueryErrorCard") || src.includes("QueryView") || src.includes("useQueryState");
+          src.includes("QueryErrorCard") ||
+          src.includes("QueryView") ||
+          src.includes("useQueryState") ||
+          // The onboarding wizard uses the shared client ErrorState surface.
+          src.includes("<ErrorState");
         expect(
           usesSharedError,
           `${file} fetches data but never renders QueryErrorCard/QueryView/useQueryState`,
@@ -71,7 +75,10 @@ describe("client routes: error, loading and empty are mutually exclusive", () =>
 
       it("does not use a toast as its only error surface", () => {
         const toastOnly =
-          /toast\.error/.test(src) && !src.includes("QueryErrorCard") && !src.includes("QueryView");
+          /toast\.error/.test(src) &&
+          !src.includes("QueryErrorCard") &&
+          !src.includes("QueryView") &&
+          !src.includes("<ErrorState");
         expect(toastOnly, `${file} reports load failures only through a toast`).toBe(false);
       });
     });
