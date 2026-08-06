@@ -6,7 +6,6 @@ import {
   PublicSection,
   CtaSection,
 } from "@/components/marketing/site-shell";
-import { FoundersStrip } from "@/components/marketing/founders-strip";
 import {
   PRICE_PILOT_DISPLAY,
   PRICE_MULTI_DISPLAY,
@@ -454,21 +453,6 @@ function TrustPage() {
             review as part of onboarding.
           </p>
 
-        </PublicPage>
-      </PublicSection></div>
-
-      {/* FOUNDERS */}
-      <div id="founders"><PublicSection className="py-12">
-        <PublicPage>
-          <SectionHeader
-            icon={Users}
-            eyebrow="Founder credibility"
-            title="Built by operators who ran hiring at scale."
-            lede=""
-          />
-          <div className="mt-6">
-            <FoundersStrip />
-          </div>
         </PublicPage>
       </PublicSection></div>
 
