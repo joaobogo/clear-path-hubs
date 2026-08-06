@@ -327,7 +327,6 @@ export function PlanPanel({
                             {plan.interval === "year" ? " / year" : " / month"}
                           </span>
                         </div>
-                        <div className="text-xs text-muted-foreground">{plan.allowance}</div>
                         {!isCurrent && (
                           <Button
                             size="sm"
