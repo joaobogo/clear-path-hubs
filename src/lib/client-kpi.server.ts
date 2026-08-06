@@ -17,6 +17,7 @@ import {
   type InterviewQuestion,
   type FitPresentation,
 } from "@/lib/client-fit-presentation";
+import { clientReviewStatement } from "@/lib/scoring/human-adjustment";
 import {
   buildEvidenceCard,
   type EvidenceCard,
