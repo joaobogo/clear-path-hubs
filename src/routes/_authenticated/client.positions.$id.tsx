@@ -70,6 +70,17 @@ import {
   RoleRecapSkeleton,
 } from "@/components/client/role-recap";
 
+/**
+ * One payload for the whole role. The server returns the role, its pipeline,
+ * timeline, lifecycle, closure, recap and open information requests together,
+ * so the page has a single loading state and a single retry.
+ */
+const positionDetailQuery = (orgId: string, positionId: string) =>
+ queryOptions({
+  queryKey: ["client-position", orgId, positionId],
+  queryFn: () => getClientPositionDetail({ data: { orgId, positionId } }),
+ });
+
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  head: () => ({
  meta: [
@@ -77,6 +88,22 @@ export const Route = createFileRoute("/_authenticated/client/positions/$id")({
  { name: "robots", content: "noindex" },
  ],
  }),
+ // Prefetch the primary payload before first paint. The workspace context is
+ // already in cache from the /client layout loader, so this is one request.
+ loader: async ({ context, params, location }) => {
+  const org = (location.search as { org?: string } | undefined)?.org ?? null;
+  const ctx = await context.queryClient.ensureQueryData({
+   queryKey: ["client-context", org],
+   queryFn: () => getClientContext({ data: org ? { orgId: org } : {} }),
+  });
+  const orgId = (ctx as { active?: { organization_id?: string } } | null)?.active
+   ?.organization_id;
+  if (!orgId) return;
+  await context.queryClient.ensureQueryData(positionDetailQuery(orgId, params.id));
+ },
+ // Fast navigations never flash a skeleton; slow ones get the real layout.
+ pendingMs: 150,
+ pendingComponent: PositionDetailPending,
  notFoundComponent: () => <div className="p-8">Position not found.</div>,
  errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.positions.$id.tsx"),
  component: PositionDetailPage,
