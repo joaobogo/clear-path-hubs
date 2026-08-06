@@ -7,6 +7,8 @@ import { useEffect, useMemo, useState } from "react";
 import { getClientContext, getClientOverview } from "@/lib/client.functions";
 import { listPendingPaymentRoles } from "@/lib/booking.functions";
 import { PaymentGateBanner } from "@/components/client/payment-gate-banner";
+import { listRolesNeedingDetails } from "@/lib/position-readiness.functions";
+import { RoleDetailsNeededBanner } from "@/components/client/role-details-needed-banner";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { CandidateCard } from "@/components/client/candidate-card";
@@ -106,6 +108,15 @@ function OverviewPage() {
     enabled: !!orgId,
   });
   const pendingRoles = pendingRolesData?.roles ?? [];
+
+  // Roles that can't be approved yet because the brief is missing details.
+  const rolesNeedingDetailsFn = useServerFn(listRolesNeedingDetails);
+  const { data: incompleteData } = useQuery({
+    queryKey: ["client", "roles-needing-details", orgId],
+    queryFn: () => rolesNeedingDetailsFn({ data: { orgId } }),
+    enabled: !!orgId,
+  });
+  const rolesNeedingDetails = incompleteData?.roles ?? [];
 
   useEffect(() => {
     const onRefresh = () => refetch();
@@ -213,6 +224,10 @@ function OverviewPage() {
           </button>
         </div>
       )}
+
+      {/* Blocking gaps come first — before onboarding, health, or the queue */}
+      <RoleDetailsNeededBanner roles={rolesNeedingDetails} />
+
 
       {showOnboarding ? (
         <EmptyWelcome canSubmit={canSubmit} />

@@ -10,7 +10,7 @@
  * device) so the whole thing is a phone number and a click.
  */
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { CalendarCheck, Clock, Loader2 } from "lucide-react";
 import { MEETING_TYPES, resolveMeetingType } from "@/config/booking";
@@ -143,6 +143,8 @@ function BookPage() {
   const [slots, setSlots] = useState<Slot[] | null>(null);
   const [slotsError, setSlotsError] = useState<string | null>(null);
   const [booked, setBooked] = useState<Meeting | null>(null);
+  const [hasWorkspace, setHasWorkspace] = useState(false);
+  const navigate = useNavigate();
   const [cancelled, setCancelled] = useState(false);
 
   // Browser-only state: resolve after mount so SSR and hydration agree.
@@ -175,6 +177,15 @@ function BookPage() {
           email: profile?.email ?? user.email ?? next.email ?? "",
           phone: profile?.phone ?? next.phone ?? "",
         };
+
+        // A client seat means we can hand them straight to their dashboard.
+        const { data: membership } = await supabase
+          .from("memberships")
+          .select("id")
+          .eq("user_id", user.id)
+          .limit(1)
+          .maybeSingle();
+        if (active && membership) setHasWorkspace(true);
       }
 
       if (!active) return;
@@ -188,6 +199,20 @@ function BookPage() {
       active = false;
     };
   }, []);
+
+  /**
+   * A signed-in client who just booked belongs in their dashboard, not on a
+   * confirmation page. The call details are already in their email and on the
+   * dashboard, so we hand them straight over.
+   */
+  useEffect(() => {
+    if (step !== "done" || !booked || !hasWorkspace) return;
+    const t = window.setTimeout(() => {
+      void navigate({ to: "/client" });
+    }, 1500);
+    return () => window.clearTimeout(t);
+  }, [step, booked, hasWorkspace, navigate]);
+
 
   const zones = useMemo(() => [...new Set<string>([tz, ...TIMEZONE_CHOICES])], [tz]);
 
