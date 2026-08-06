@@ -516,6 +516,7 @@ function normScreeningAnswers(raw: unknown): ClientCandidateDTO["screening_answe
  * never select different columns.
  */
 export const CLIENT_CANDIDATE_SELECT = `id, stage, delivered_at, position_id, application_id, candidate_profile_id,
+         score_stale, score_stale_reasons, score_stale_at, rescore_queued_at,
          candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, compensation_preferences, updated_at),
          positions(id, title, location, work_model, requirements, preferred_requirements, compensation, updated_at),
          applications(id, source, applied_at, created_at),
