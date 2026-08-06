@@ -177,3 +177,47 @@ export const endSupportSession = createServerFn({ method: "POST" })
     });
     return { ok: true };
   });
+
+/**
+ * Every live support session the caller owns, newest first.
+ *
+ * Drives the persistent banner: staff should never be able to forget they still
+ * hold access to a customer workspace, whichever screen they wandered off to.
+ */
+export const listMySupportSessions = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertPlatformStaff(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin
+      .from("support_sessions")
+      .select("id, organization_id, reason, mode, trace_id, started_at, expires_at")
+      .eq("actor_user_id", context.userId)
+      .is("ended_at", null)
+      .order("started_at", { ascending: false })
+      .limit(5);
+    if (error) throw error;
+    const rows = data ?? [];
+    const orgIds = [...new Set(rows.map((r) => r.organization_id).filter(Boolean))] as string[];
+    const names = new Map<string, string>();
+    if (orgIds.length > 0) {
+      const { data: orgs } = await supabaseAdmin
+        .from("organizations")
+        .select("id, name")
+        .in("id", orgIds);
+      for (const o of orgs ?? []) names.set(o.id as string, (o.name as string) ?? "Client");
+    }
+    return rows.map((r) => ({
+      id: r.id as string,
+      organization_id: (r.organization_id as string | null) ?? null,
+      organization_name: r.organization_id
+        ? names.get(r.organization_id as string) ?? "Client workspace"
+        : "Client workspace",
+      reason: (r.reason as string | null) ?? null,
+      mode: (r.mode as string | null) ?? "read_only",
+      /** Short quotable reference used in the banner and the audit trail. */
+      session_ref: ((r.trace_id as string | null) ?? (r.id as string)).slice(0, 8),
+      started_at: r.started_at as string,
+      expires_at: (r.expires_at as string | null) ?? null,
+    }));
+  });
