@@ -1,4 +1,5 @@
 import {
+  FileWarning,
   makeRouteErrorComponent,
   makeRouteNotFoundComponent,
 } from "@/components/workspace/route-states";
@@ -99,6 +100,14 @@ const NAV: WorkspaceNavItem[] = [
     icon: ClipboardCheck,
     group: "Quality",
     hint: "Scoring review, orphans, business rules, QA",
+  },
+
+  {
+    to: "/admin/parse-failures",
+    label: "Unreadable docs",
+    icon: FileWarning,
+    group: "Quality",
+    hint: "Documents we could not read, with named next actions",
   },
 
   { to: "/admin/messages", label: "Comms", icon: MessageSquare, group: "Comms", hint: "Messages, notifications, copilot" },
