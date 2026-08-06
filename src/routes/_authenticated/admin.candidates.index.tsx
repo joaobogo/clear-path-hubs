@@ -653,7 +653,10 @@ function CandidatesPage() {
                     </span>
                   </td>
                   <td className="px-3 py-2 text-right tabular-nums">
-                    {score == null ? "—" : Math.round(Number(score))}
+                    <span className="inline-flex items-center justify-end gap-1">
+                      {score == null ? "—" : Math.round(Number(score))}
+                      {score != null && <ScoreStalenessChip freshness={freshnessFromRow(m)} compact />}
+                    </span>
                   </td>
                   <td className="px-3 py-2">
                     <Badge
@@ -739,10 +742,11 @@ function CandidatesPage() {
                     {m.org_name} · {m.position_title}
                   </div>
                 </div>
-                <div className="text-right text-sm font-semibold tabular-nums">
+                <div className="flex shrink-0 items-center gap-1 text-right text-sm font-semibold tabular-nums">
                   {m.final_score ?? m.score == null
                     ? "—"
                     : Math.round(Number(m.final_score ?? m.score))}
+                  <ScoreStalenessChip freshness={freshnessFromRow(m)} compact />
                 </div>
               </div>
               <div className="mt-2 flex flex-wrap gap-1.5 text-xs">
