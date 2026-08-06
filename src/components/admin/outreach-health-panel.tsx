@@ -27,7 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle, Pause, Play, RefreshCw } from "lucide-react";
+import { AlertTriangle, RefreshCw } from "lucide-react";
 
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
@@ -82,7 +82,6 @@ export function OutreachHealthPanel() {
   const [includeTest, setIncludeTest] = useState(false);
   const [detail, setDetail] = useState<"none" | "bounces" | "opt_outs">("none");
   const fetchHealth = useServerFn(getOutreachHealth);
-  const toggleChannel = useServerFn(setOutreachChannelEnabled);
   const queryClient = useQueryClient();
 
   const query = useQuery({
@@ -90,19 +89,12 @@ export function OutreachHealthPanel() {
     queryFn: () => fetchHealth({ data: { include_test: includeTest } }),
   });
 
-  const pause = useMutation({
-    mutationFn: (vars: { organization_id: string; channel: string; enabled: boolean }) =>
-      toggleChannel({ data: vars as never }),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["admin", "outreach-health", includeTest] }),
-  });
-
   const header = (
     <div className="flex flex-wrap items-center justify-between gap-3">
       <div>
         <h2 className="text-lg font-semibold">Outreach health</h2>
         <p className="text-sm text-muted-foreground">
-          Deliverability and opt-out trend per channel, plus current rule limits.
+          Deliverability and opt-out trend per channel.
         </p>
       </div>
       <div className="flex items-center gap-2">
