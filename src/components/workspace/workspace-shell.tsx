@@ -35,6 +35,9 @@ export type WorkspaceNavItem = {
   hint?: string;
   /** Only show when the viewer is a platform administrator, not general staff. */
   requiresPlatformAdmin?: boolean;
+  /** Render visually subordinate to the primary entries (smaller, quieter). */
+  subdued?: boolean;
+
 };
 
 
