@@ -364,7 +364,11 @@ export function PlanPanel({
                       <div className="text-sm font-medium">{plan.label}</div>
                       <div className="text-xs text-muted-foreground">{plan.summary}</div>
                       <div className="mt-2 text-sm">{money(plan.amountUsd)}</div>
-                      <div className="text-xs text-muted-foreground">{plan.allowance}</div>
+                      {plan.validForDays ? (
+                        <div className="text-xs text-muted-foreground">
+                          Valid {plan.validForDays} days
+                        </div>
+                      ) : null}
                       <Button
                         size="sm"
                         variant="outline"
