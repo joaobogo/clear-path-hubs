@@ -140,31 +140,23 @@ export async function loadExceptionBoard(admin: Admin): Promise<ExceptionBoard> 
   const select =
     "id, application_id, position_id, organization_id, processing_state, candidate_profiles(full_name), positions(id, title, organization_id, organizations(name))";
 
-  if (applicationIds.length) {
-    const res = await s
-      .from("candidate_matches")
-      .select(select)
-      .in("application_id", Array.from(new Set(applicationIds)));
-    if (res.error) throw new Error(res.error.message);
-    for (const m of (res.data ?? []) as Any[]) {
-      if (m.application_id) matchByApplication.set(m.application_id, m);
-      matchById.set(m.id, m);
-    }
+  // Both context reads hit the same table on disjoint key sets — run together.
+  const [byApplicationRes, byIdRes] = await Promise.all([
+    applicationIds.length
+      ? s.from("candidate_matches").select(select).in("application_id", Array.from(new Set(applicationIds)))
+      : Promise.resolve({ data: [] as Any[], error: null }),
+    directMatchIds.length
+      ? s.from("candidate_matches").select(select).in("id", Array.from(new Set(directMatchIds)))
+      : Promise.resolve({ data: [] as Any[], error: null }),
+  ]);
+  if (byApplicationRes.error) throw new Error(byApplicationRes.error.message);
+  if (byIdRes.error) throw new Error(byIdRes.error.message);
+  for (const m of (byApplicationRes.data ?? []) as Any[]) {
+    if (m.application_id) matchByApplication.set(m.application_id, m);
+    matchById.set(m.id, m);
   }
-  if (directMatchIds.length) {
-    const res = await s
-      .from("candidate_matches")
-      .select(select)
-      .in("id", Array.from(new Set(directMatchIds)));
-    if (res.error) throw new Error(res.error.message);
-    for (const m of (res.data ?? []) as Any[]) matchById.set(m.id, m);
-  }
+  for (const m of (byIdRes.data ?? []) as Any[]) matchById.set(m.id, m);
 
-  const orphansRes = await s
-    .from("scoring_orphans")
-    .select("id", { count: "exact", head: true })
-    .is("resolved_at", null);
-  const scoringOrphans = Number(orphansRes.count ?? 0);
 
   const shape = (job: Any): ExceptionRow => {
     const match =
