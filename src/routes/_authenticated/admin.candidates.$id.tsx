@@ -75,6 +75,7 @@ import {
 import { CandidateHistoryTimeline } from "@/components/admin/candidate-history-timeline";
 import { CandidateNextActionBar } from "@/components/admin/candidate-next-action-bar";
 import { ContactStatusBadges } from "@/components/admin/contact-status-badges";
+import { Row } from "@/components/admin/candidate-detail/primitives";
 
 // Secondary tabs are code-split: first paint pays only for the profile view.
 const TAB_MODULE = () => import("@/components/admin/candidate-detail/tabs");

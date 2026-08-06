@@ -83,62 +83,13 @@ import { CandidateNextActionBar } from "@/components/admin/candidate-next-action
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
 
-function safeNode(v: unknown): React.ReactNode {
-  if (v == null || v === "") return null;
-  if (typeof v === "string" || typeof v === "number" || typeof v === "boolean") return String(v);
-  if (React.isValidElement(v)) return v;
-  if (Array.isArray(v)) {
-    const parts = v.map((x) => (typeof x === "string" || typeof x === "number" ? String(x) : null)).filter(Boolean);
-    return parts.length ? parts.join(", ") : null;
-  }
-  if (typeof v === "object") {
-    const keys = Object.keys(v as object);
-    if (keys.length === 0) return null;
-    const compact = keys
-      .map((k) => {
-        const val = (v as Record<string, unknown>)[k];
-        if (val == null || val === "") return null;
-        if (typeof val === "string" || typeof val === "number" || typeof val === "boolean") return `${k}: ${val}`;
-        return null;
-      })
-      .filter(Boolean);
-    return compact.length ? compact.join(" · ") : null;
-  }
-  return null;
-}
+import {
+  safeNode,
+  toReqText,
+  cleanLine,
+  Row,
+} from "@/components/admin/candidate-detail/primitives";
 
-function toReqText(v: unknown): string {
-  if (v == null) return "—";
-  if (typeof v === "string") {
-    const t = v.trim();
-    if (!t || t === "[object Object]") return "—";
-    return t;
-  }
-  if (typeof v === "number" || typeof v === "boolean") return String(v);
-  if (Array.isArray(v)) return v.map(toReqText).filter((s) => s && s !== "—").join(", ") || "—";
-  if (typeof v === "object") {
-    const o = v as Record<string, unknown>;
-    const cand = o.text ?? o.label ?? o.name ?? o.requirement ?? o.requirement_text ?? o.title;
-    if (typeof cand === "string" && cand.trim() && cand.trim() !== "[object Object]") return cand.trim();
-    return "—";
-  }
-  return "—";
-}
-
-function cleanLine(s: string): string {
-  return s.replace(/\[object Object\]/g, "requirement").trim();
-}
-
-
-function Row({ label, v }: { label: string; v: React.ReactNode }) {
-  const safe = safeNode(v);
-  return (
-    <>
-      <dt className="text-xs uppercase tracking-wide text-muted-foreground">{label}</dt>
-      <dd>{safe ?? <span className="text-muted-foreground">—</span>}</dd>
-    </>
-  );
-}
 
 // ── CV & parsed ────────────────────────────────────────────────────────────
 export function CvTab({ cv, matchId, cp, insights }: { cv: Any; matchId: string; cp: Any; insights: Any }) {
