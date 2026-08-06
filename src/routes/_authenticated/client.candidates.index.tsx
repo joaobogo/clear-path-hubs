@@ -1,5 +1,5 @@
 import { clientStageLabel } from "@/lib/client-stage-labels";
-import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { SurfaceState } from "@/components/ds/surface-state";
@@ -110,6 +110,7 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/_authenticated/client/candidates/")({
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.candidates.index.tsx"),
+  notFoundComponent: makeRouteNotFoundComponent("client"),
  validateSearch: zodValidator(searchSchema),
  head: () => ({
  meta: [

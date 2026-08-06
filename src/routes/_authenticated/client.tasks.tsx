@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
@@ -55,6 +55,7 @@ import {
 
 export const Route = createFileRoute("/_authenticated/client/tasks")({
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.tasks.tsx"),
+  notFoundComponent: makeRouteNotFoundComponent("client"),
   validateSearch: (search: Record<string, unknown>) => ({
     view: typeof search.view === "string" ? search.view : undefined,
   }),

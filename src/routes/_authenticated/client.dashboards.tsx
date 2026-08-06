@@ -6,7 +6,7 @@
  * costs, and how to get it — no teasing, no half-loaded charts.
  */
 import { useMemo, useState } from "react";
-import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -56,6 +56,7 @@ import {
 
 export const Route = createFileRoute("/_authenticated/client/dashboards")({
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.dashboards.tsx"),
+  notFoundComponent: makeRouteNotFoundComponent("client"),
   head: () => ({
     meta: [
       { title: "Your dashboards — build the view you actually use | TaaSFlow" },

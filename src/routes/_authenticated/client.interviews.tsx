@@ -1,5 +1,5 @@
 import { formatZonedTime } from "@/lib/time/zone-label";
-import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { proposalErrorMessage } from "@/lib/interview-proposal";
@@ -74,6 +74,7 @@ import {
 
 export const Route = createFileRoute("/_authenticated/client/interviews")({
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.interviews.tsx"),
+  notFoundComponent: makeRouteNotFoundComponent("client"),
  head: () => ({
  meta: [
  { title: "Interviews · Client workspace" },
