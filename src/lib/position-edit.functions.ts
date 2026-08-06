@@ -123,6 +123,7 @@ export type PositionEditInitial = {
 
   // Step 3 — Compensation
   currency: string;
+  budget_period: string;
   budget_min: string;
   budget_max: string;
   compensation: string;
@@ -231,6 +232,7 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
       additional_requirements: asStr(ctx.additional_requirements),
 
       currency: asStr(comp.currency) || "USD",
+      budget_period: asStr(comp.budget_period) || "year",
       budget_min: asStr(comp.budget_min),
       budget_max: asStr(comp.budget_max),
       compensation: asStr(comp.summary) || asStr(comp.text) || asStr(comp.note),
@@ -302,6 +304,7 @@ const saveInput = z.object({
   additional_requirements: z.string().max(4000).default(""),
 
   currency: z.string().trim().max(8).default("USD"),
+  budget_period: z.enum(["year", "month", "hour"]).default("year"),
   budget_min: z.string().trim().max(20).default(""),
   budget_max: z.string().trim().max(20).default(""),
   compensation: z.string().trim().max(2000).default(""),
@@ -392,6 +395,7 @@ export const savePositionEdit = createServerFn({ method: "POST" })
         summary: data.compensation || null,
         urgency: data.hiring_urgency || null,
         currency: data.currency || null,
+        budget_period: data.budget_period || null,
         budget_min: data.budget_min || null,
         budget_max: data.budget_max || null,
       },
