@@ -17,6 +17,7 @@ import {
  SPONSORSHIP_LABELS,
 } from "@/lib/express-intake-schema";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
+import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 
 import { confirmRoleBlueprint } from "@/lib/client.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
@@ -729,7 +730,6 @@ function PositionDetailPage() {
                                 <div className="text-xs text-muted-foreground truncate">
                                   {m.candidate_profiles?.headline ??
                                     m.candidate_profiles?.location ??
-                                    data.title ??
                                     ""}
                                 </div>
                                 <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs">
