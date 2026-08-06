@@ -518,3 +518,59 @@ export const requestCandidateInformation = createServerFn({ method: "POST" })
     }
     return { ok: true as const, notified };
   });
+
+// ─── Human overrides that reach the client (Prompt 10) ───────────────────────
+
+const verdictInput = z.object({
+  match_id: z.string().uuid(),
+  reason: z.string().trim().min(8).max(1000),
+  verdicts: z
+    .array(
+      z.object({
+        requirement_id: z.string().min(1).max(200),
+        verdict: z.enum(["met", "not_met", "not_applicable"]),
+        reason: z.string().trim().min(8).max(1000),
+      }),
+    )
+    .min(1)
+    .max(50),
+});
+
+/**
+ * Record reviewer verdicts on requirements. Produces a NEW score run flagged
+ * `evaluation_method = 'human_adjusted'` with the overriding user and reason
+ * recorded — a completed run is never mutated.
+ */
+export const submitHumanAdjustment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => verdictInput.parse(i))
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const { createHumanAdjustedRun } = await import("./scoring/human-adjusted-run.server");
+    return createHumanAdjustedRun({
+      matchId: data.match_id,
+      verdicts: data.verdicts,
+      reason: data.reason,
+      actorUserId: context.userId,
+    });
+  });
+
+/** Machine-derived vs human-verified criteria for the current run. */
+export const getHumanVerification = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ match_id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const { data: run } = await s
+      .from("score_runs")
+      .select("id,evaluation_method,result,final_score,score,fit_label,completed_at")
+      .eq("candidate_match_id", data.match_id)
+      .eq("status", "completed")
+      .order("completed_at", { ascending: false, nullsFirst: false })
+      .limit(1)
+      .maybeSingle();
+    if (!run) return null;
+    const { summariseRunVerification } = await import("./scoring/human-adjusted-run.server");
+    return { run_id: run.id, ...summariseRunVerification(run) };
+  });
