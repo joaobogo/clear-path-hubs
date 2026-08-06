@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
@@ -33,6 +33,7 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/_authenticated/client/positions/")({
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.positions.index.tsx"),
+  notFoundComponent: makeRouteNotFoundComponent("client"),
  validateSearch: zodValidator(searchSchema),
  head: () => ({
  meta: [

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
@@ -18,6 +18,7 @@ import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
 
 export const Route = createFileRoute("/_authenticated/client/conversations/")({
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.conversations.index.tsx"),
+  notFoundComponent: makeRouteNotFoundComponent("client"),
   head: () => ({
     meta: [
       { title: "Conversations · Client workspace" },

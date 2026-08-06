@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -28,6 +28,7 @@ import { useQueryState } from "@/hooks/use-query-state";
 
 export const Route = createFileRoute("/_authenticated/client/shares/")({
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.shares.index.tsx"),
+  notFoundComponent: makeRouteNotFoundComponent("client"),
   head: () => ({
     meta: [
       { title: "Shared shortlists · TaaSFlow" },
