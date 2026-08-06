@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { getAdminMatch, applyReviewDecision } from "@/lib/processing.functions";
 import { getReviewQueueIds } from "@/lib/admin-ops.functions";
 import { EvidenceCompletenessGate } from "@/components/admin/evidence-completeness-gate";
+import { CvPreviewPane } from "@/components/admin/cv-preview-pane";
+import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
 import { RejectReasonDialog } from "@/components/admin/reject-reason-dialog";
 import { getEvidenceCompleteness } from "@/lib/evidence/completeness.functions";
 import { Button } from "@/components/ui/button";
@@ -21,7 +23,8 @@ import {
   ChevronRight,
   ExternalLink,
   Keyboard,
-  FileText,
+  AlertTriangle,
+  Circle,
 } from "lucide-react";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -214,9 +217,22 @@ function ReviewScreen() {
         </div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           {score != null && (
-            <Badge variant="secondary" className="tabular-nums">
-              score {score}
-            </Badge>
+            <span className="inline-flex items-center gap-1">
+              <Badge variant="secondary" className="tabular-nums">
+                score {score}
+              </Badge>
+              {/* Staff should never weigh a score without knowing what it was
+                  measured against. */}
+              <ScoreStalenessChip
+                freshness={freshnessFromRow({
+                  scored_at: currentRun?.completed_at ?? null,
+                  scored_input_hash: currentRun?.input_hash ?? null,
+                  scored_engine_version: currentRun?.engine_version ?? null,
+                  profile_updated_at: m.candidate_profiles?.updated_at ?? null,
+                  brief_updated_at: m.positions?.updated_at ?? null,
+                })}
+              />
+            </span>
           )}
           {currentRun?.must_have_coverage != null && (
             <span className="tabular-nums">
@@ -271,35 +287,13 @@ function ReviewScreen() {
           <EvidenceCompletenessGate matchId={matchId} showSubmit={false} />
         </div>
 
-        {/* CV preview inline — no download round trip */}
-        <section className="flex min-h-0 flex-col overflow-hidden rounded-lg border bg-card">
-          <div className="flex items-center justify-between border-b px-3 py-2">
-            <h2 className="flex items-center gap-1.5 text-sm font-semibold">
-              <FileText className="h-3.5 w-3.5" /> CV
-            </h2>
-            {cv?.signed_url && (
-              <a
-                href={cv.signed_url}
-                target="_blank"
-                rel="noreferrer"
-                className="text-xs text-primary hover:underline"
-              >
-                Open in new tab
-              </a>
-            )}
-          </div>
-          {cv?.signed_url ? (
-            <iframe
-              src={`${cv.signed_url}#view=FitH`}
-              title={`CV for ${m.candidate_profiles?.full_name ?? "candidate"}`}
-              className="min-h-0 flex-1 w-full bg-muted"
-            />
-          ) : (
-            <div className="flex flex-1 items-center justify-center p-6 text-center text-xs text-muted-foreground">
-              No CV on file for this application.
-            </div>
-          )}
-        </section>
+        {/* CV preview owns its own signed-link lifetime. */}
+        <CvPreviewPane
+          matchId={matchId}
+          candidateName={m.candidate_profiles?.full_name ?? "candidate"}
+          initialUrl={cv?.signed_url ?? null}
+          initialExpiresAt={cv?.url_expires_at ?? null}
+        />
 
         {/* Requirements as stated by the client */}
         <aside className="min-h-0 overflow-y-auto rounded-lg border bg-card p-4">
@@ -320,6 +314,29 @@ function ReviewScreen() {
           )}
         </aside>
       </div>
+
+      {/* Blockers stated out loud. A disabled button with a tooltip is not an
+          explanation — the reviewer needs to see what is missing. */}
+      {approvalBlocked && (
+        <div className="rounded-lg border taas-bd-warning taas-bg-warning-soft p-3">
+          <div className="flex items-center gap-2 text-sm font-semibold">
+            <AlertTriangle className="h-4 w-4 taas-tx-warning" aria-hidden />
+            Approval is blocked until these have evidence
+          </div>
+          <ul className="mt-2 space-y-1">
+            {blockingLabels.map((label) => (
+              <li key={label} className="flex items-start gap-2 text-xs">
+                <Circle className="mt-0.5 h-3 w-3 shrink-0 taas-tx-warning" aria-hidden />
+                <span>{label}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Add the evidence in the checklist above, or hold the candidate instead.
+            Hold and reject stay available.
+          </p>
+        </div>
+      )}
 
       {/* Decision bar */}
       <footer className="flex flex-wrap items-center gap-3 rounded-lg border bg-card p-3">

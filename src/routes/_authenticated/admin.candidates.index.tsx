@@ -1,5 +1,9 @@
 import { createFileRoute, Link, stripSearchParams } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  makeRouteErrorComponent,
+  makeRouteNotFoundComponent,
+} from "@/components/workspace/route-states";
+import { useQuery, useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, useEffect, useMemo } from "react";
 import { z } from "zod";
@@ -42,6 +46,7 @@ import {
   DuplicateCandidatesPanel,
 } from "@/components/admin/duplicate-candidates-panel";
 import { ExportControl } from "@/components/admin/export-control";
+import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
@@ -77,9 +82,45 @@ const EMPTY_DEFAULTS = Object.fromEntries(FILTER_KEYS.map((k) => [k, ""]));
 
 const SEARCH_DEFAULTS = { ...(EMPTY_DEFAULTS as Record<string, string>), sort: "updated_desc", page: 1 };
 
+/**
+ * The one place the URL is turned into a query for the candidate index. Shared by
+ * the route loader and the component so both always read the same cache entry.
+ */
+function buildFilters(search: SearchState) {
+  return {
+      q: search.q || undefined,
+      organization_id: search.organization_id || undefined,
+      position_id: search.position_id || undefined,
+      stage: search.stage || undefined,
+      admin_status: search.admin_status || undefined,
+      processing_state: search.processing_state || undefined,
+      client_visibility: search.client_visibility || undefined,
+      eligibility_status: search.eligibility_status || undefined,
+      score_band: search.score_band || undefined,
+      confidence: search.confidence || undefined,
+      contact_released: search.contact_released || undefined,
+      critical: search.critical || undefined,
+      country: search.country || undefined,
+      source: search.source || undefined,
+      rejection_reason: search.rejection_reason || undefined,
+      date_from: search.date_from || undefined,
+      date_to: search.date_to ? `${search.date_to}T23:59:59Z` : undefined,
+      sort: search.sort as never,
+      limit: PAGE_SIZE,
+      offset: Math.max(0, (search.page - 1) * PAGE_SIZE),
+  };
+}
+
 export const Route = createFileRoute("/_authenticated/admin/candidates/")({
   validateSearch: zodValidator(searchSchema),
   search: { middlewares: [stripSearchParams(SEARCH_DEFAULTS)] },
+  // Only the fields the query reads, so unrelated URL params never refetch.
+  loaderDeps: ({ search }) => ({ filters: buildFilters(search) }),
+  loader: ({ context, deps }) =>
+    context.queryClient.ensureQueryData({
+      queryKey: ["candidate-index", deps.filters],
+      queryFn: () => searchCandidateIndex({ data: deps.filters }),
+    }),
   head: () => ({
     meta: [
       { title: "Candidate database · TaaSFlow admin" },
@@ -87,6 +128,11 @@ export const Route = createFileRoute("/_authenticated/admin/candidates/")({
     ],
   }),
   component: CandidatesPage,
+  errorComponent: makeRouteErrorComponent(
+    "admin",
+    "src/routes/_authenticated/admin.candidates.index.tsx",
+  ),
+  notFoundComponent: makeRouteNotFoundComponent("admin"),
 });
 
 const PAGE_SIZE = 50;
@@ -173,38 +219,16 @@ function CandidatesPage() {
   const [confirm, setConfirm] = useState<null | "visible" | "hidden">(null);
   const [showDuplicates, setShowDuplicates] = useState(false);
 
-  const filters = useMemo(
-    () => ({
-      q: search.q || undefined,
-      organization_id: search.organization_id || undefined,
-      position_id: search.position_id || undefined,
-      stage: search.stage || undefined,
-      admin_status: search.admin_status || undefined,
-      processing_state: search.processing_state || undefined,
-      client_visibility: search.client_visibility || undefined,
-      eligibility_status: search.eligibility_status || undefined,
-      score_band: search.score_band || undefined,
-      confidence: search.confidence || undefined,
-      contact_released: search.contact_released || undefined,
-      critical: search.critical || undefined,
-      country: search.country || undefined,
-      source: search.source || undefined,
-      rejection_reason: search.rejection_reason || undefined,
-      date_from: search.date_from || undefined,
-      date_to: search.date_to ? `${search.date_to}T23:59:59Z` : undefined,
-      sort: search.sort as never,
-      limit: PAGE_SIZE,
-      offset: Math.max(0, (search.page - 1) * PAGE_SIZE),
-    }),
-    [search],
-  );
+  const filters = useMemo(() => buildFilters(search), [search]);
 
+  // Primary read matches every other admin desk: primed in the loader, read
+  // with suspense, so the page never flickers through a bare loading state.
   const {
     data,
     isFetching,
     isError: searchFailed,
     refetch: refetchSearch,
-  } = useQuery({
+  } = useSuspenseQuery({
     queryKey: ["candidate-index", filters],
     queryFn: () => searchFn({ data: filters }),
   });
@@ -629,7 +653,10 @@ function CandidatesPage() {
                     </span>
                   </td>
                   <td className="px-3 py-2 text-right tabular-nums">
-                    {score == null ? "—" : Math.round(Number(score))}
+                    <span className="inline-flex items-center justify-end gap-1">
+                      {score == null ? "—" : Math.round(Number(score))}
+                      {score != null && <ScoreStalenessChip freshness={freshnessFromRow(m)} compact />}
+                    </span>
                   </td>
                   <td className="px-3 py-2">
                     <Badge
@@ -715,10 +742,11 @@ function CandidatesPage() {
                     {m.org_name} · {m.position_title}
                   </div>
                 </div>
-                <div className="text-right text-sm font-semibold tabular-nums">
+                <div className="flex shrink-0 items-center gap-1 text-right text-sm font-semibold tabular-nums">
                   {m.final_score ?? m.score == null
                     ? "—"
                     : Math.round(Number(m.final_score ?? m.score))}
+                  <ScoreStalenessChip freshness={freshnessFromRow(m)} compact />
                 </div>
               </div>
               <div className="mt-2 flex flex-wrap gap-1.5 text-xs">
