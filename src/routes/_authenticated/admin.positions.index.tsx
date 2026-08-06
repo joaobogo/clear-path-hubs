@@ -194,6 +194,19 @@ function PositionsPage() {
               : listQuery.isLoading
               ? "Loading positions…"
               : `${total.toLocaleString()} position${total === 1 ? "" : "s"} across all clients`}
+            {!listQuery.isLoading && !listQuery.isError && hiddenTest > 0 && (
+              <>
+                {" · "}
+                <button
+                  type="button"
+                  className="underline underline-offset-2"
+                  onClick={() => setSearch({ show_test: true, page: 1 })}
+                >
+                  {hiddenTest.toLocaleString()} hidden as test/internal — show all
+                </button>
+              </>
+            )}
+
             {activeFilters > 0 && (
               <>
                 {" · "}
