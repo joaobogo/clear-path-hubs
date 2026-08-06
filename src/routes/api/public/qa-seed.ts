@@ -842,6 +842,7 @@ async function handle(request: Request): Promise<Response> {
     prefix?: string;
     company_name?: string;
     email_pattern?: string;
+    organization_id?: string;
   } = {};
   try {
     body = (await request.json()) as typeof body;
