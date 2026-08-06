@@ -156,10 +156,8 @@ function reconcile(result: ScoringResult): {
   computed: number;
   applied_caps: Array<{ reason: string; cap: number; before: number }>;
 } {
-  const raw01 =
-    result.category_breakdown.must_have * 0.6 +
-    result.category_breakdown.preferred * 0.2 +
-    result.category_breakdown.screening_alignment * 0.2;
+  // Use the run's own weights so absent categories stay excluded.
+  const raw01 = combineCategories(result.category_breakdown, result.category_weights);
   const applied_caps: Array<{ reason: string; cap: number; before: number }> = [];
   let capped01 = raw01;
   if (result.contradiction_status === "disqualifying_answer") {
@@ -169,6 +167,25 @@ function reconcile(result: ScoringResult): {
   const computed = Math.round(capped01 * 1000) / 10;
   return { reconciled: Math.abs(computed - result.score) < 0.15, computed, applied_caps };
 }
+
+/**
+ * The approved rubric version that governs this position, if any. Stamped onto
+ * every run so a score can always be traced back to the criteria that produced
+ * it (findings: runs with a NULL rubric_version_id are unauditable).
+ */
+async function resolveRubricVersionId(s: Any, positionId: string): Promise<string | null> {
+  const { data } = await s
+    .from("rubric_versions")
+    .select("id,version_number,status,approved_at")
+    .eq("position_id", positionId)
+    .eq("status", "approved")
+    .is("superseded_at", null)
+    .order("version_number", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return data?.id ?? null;
+}
+
 
 async function acquireLock(s: Any, matchId: string, trace_id: string): Promise<boolean> {
   // Atomic "acquire" — transition the state to `scoring` only if not already there.
