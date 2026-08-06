@@ -81,8 +81,8 @@ const VOLUME_BANDS = [
     band: "Enterprise — 50+ or continuous hiring",
     price: PRICE_SUB_ENTERPRISE_DISPLAY,
     cadence: "Cadence agreed per business unit",
-    agentCapacity: "Programme-scale agent capacity",
-    fit: "Programme hiring where volume shifts by quarter.",
+    agentCapacity: "Enterprise-scale agent capacity",
+    fit: "Continuous hiring where volume shifts by quarter.",
   },
 ];
 
