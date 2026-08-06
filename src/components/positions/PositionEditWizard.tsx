@@ -290,6 +290,7 @@ export function PositionEditWizard({
           responsibilities: state.responsibilities,
           additional_requirements: state.additional_requirements,
           currency: state.currency.trim() || "USD",
+          budget_period: (state.budget_period || "year") as "year" | "month" | "hour",
           budget_min: state.budget_min.trim(),
           budget_max: state.budget_max.trim(),
           compensation: state.compensation.trim(),
