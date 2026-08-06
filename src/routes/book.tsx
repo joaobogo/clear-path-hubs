@@ -366,6 +366,7 @@ function BookPage() {
   }
 
   return (
+    <>
     <main className="mx-auto max-w-3xl px-6 py-14">
       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
         {meeting.durationLabel} · {meeting.name}

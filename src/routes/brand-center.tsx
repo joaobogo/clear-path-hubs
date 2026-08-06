@@ -127,6 +127,7 @@ function BrandCenter() {
   }
 
   return (
+    <>
     <main
       data-brand-print={printMode ? "1" : undefined}
       className="mx-auto max-w-6xl px-5 pb-24 sm:px-8"
