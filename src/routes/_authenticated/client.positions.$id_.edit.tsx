@@ -1,5 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
-import { createFileRoute, notFound, useRouter } from "@tanstack/react-router";
+import { createFileRoute, notFound, redirect, useRouter } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { PositionEditWizard } from "@/components/positions/PositionEditWizard";
 import { getPositionForEdit } from "@/lib/position-edit.functions";
@@ -9,10 +9,21 @@ export const Route = createFileRoute("/_authenticated/client/positions/$id_/edit
   step: search.step ? Number(search.step) : undefined,
  }),
  loader: async ({ context, params }) => {
- const d = await context.queryClient.ensureQueryData({
- queryKey: ["client-position-edit", params.id],
- queryFn: () => getPositionForEdit({ data: { id: params.id } }),
- });
+ let d;
+ try {
+  d = await context.queryClient.ensureQueryData({
+   queryKey: ["client-position-edit", params.id],
+   queryFn: () => getPositionForEdit({ data: { id: params.id } }),
+  });
+ } catch (e) {
+  // A seat without edit rights should still be able to open its own role:
+  // fall back to the read-only role page instead of a permission wall.
+  const msg = e instanceof Error ? e.message.replace(/^Error: /, "") : "";
+  if (msg.includes("forbidden")) {
+   throw redirect({ to: "/client/positions/$id", params: { id: params.id } });
+  }
+  throw e;
+ }
  if (!d) throw notFound();
  return d;
  },

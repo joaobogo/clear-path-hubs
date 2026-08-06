@@ -27,14 +27,25 @@ async function assertCanEdit(userId: string, positionId: string) {
     .eq("id", positionId)
     .maybeSingle();
   if (!pos) throw new Error("position_not_found");
+  // Membership is read directly rather than through is_org_editor(): that RPC
+  // also requires the organization to be un-archived, which turned an ordinary
+  // "open my own live role" click into a permission wall. Platform staff and
+  // any active client_admin / client_editor seat may edit.
+  const { data: membership, error: memberError } = await s
+    .from("memberships")
+    .select("role")
+    .eq("user_id", userId)
+    .eq("organization_id", pos.organization_id)
+    .eq("status", "active")
+    .maybeSingle();
+  if (memberError) throw new Error(memberError.message);
+  const role = (membership as { role?: string } | null)?.role ?? null;
+  if (role === "platform_admin" || role === "operations") return pos;
+  if (role === "client_admin" || role === "client_editor") return pos;
   const { data: staff } = await s.rpc("is_platform_staff", { _user: userId });
   if (staff === true) return pos;
-  const { data: editor } = await s.rpc("is_org_editor", {
-    _user: userId,
-    _org: pos.organization_id,
-  });
-  if (editor !== true) throw new Error("forbidden");
-  return pos;
+  throw new Error("forbidden");
+
 }
 
 async function writeAudit(opts: {

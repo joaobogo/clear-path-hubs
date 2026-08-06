@@ -553,9 +553,8 @@ function PositionCard({ p }: { p: Row }) {
  ];
  return (
  <Link
- to="/client/positions/$id/edit"
+ to="/client/positions/$id"
  params={{ id: p.id }}
- search={{ step: undefined }}
  className="group flex flex-col gap-3 rounded-xl border bg-card p-5 transition-all hover:border-primary hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
  >
  <div className="flex items-start justify-between gap-3">
@@ -643,9 +642,8 @@ function CompactList({ rows }: { rows: Row[] }) {
  >
  <td className="px-4 py-2">
  <Link
- to="/client/positions/$id/edit"
+ to="/client/positions/$id"
  params={{ id: p.id }}
- search={{ step: undefined }}
  className="font-medium hover:underline"
  >
  {p.title}
