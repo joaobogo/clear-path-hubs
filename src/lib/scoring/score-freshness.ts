@@ -24,13 +24,24 @@ export type FreshnessInput = {
   /** Engine version that produced the run, and the one running today. */
   scored_engine_version?: string | null;
   current_engine_version?: string | null;
+  /**
+   * Calibration set that produced the run, and the one in force today. A
+   * calibration change alters what the same evidence is worth, so a score
+   * computed under an older calibration is stale even if nothing else moved.
+   */
+  scored_calibration_version?: string | null;
+  current_calibration_version?: string | null;
+  /** When the approved criteria (rubric version) for the role last changed. */
+  criteria_updated_at?: string | Date | null;
 };
 
 export type StaleReasonCode =
   | "profile_changed"
   | "brief_changed"
   | "inputs_changed"
-  | "engine_changed";
+  | "engine_changed"
+  | "calibration_changed"
+  | "criteria_changed";
 
 export type StaleReason = {
   code: StaleReasonCode;
@@ -95,6 +106,23 @@ export function assessFreshness(input: FreshnessInput): Freshness {
     reasons.push({
       code: "inputs_changed",
       label: "The inputs behind this result are no longer the current ones.",
+    });
+  }
+
+  const criteria = time(input.criteria_updated_at);
+  if (criteria !== null && criteria > scored) {
+    reasons.push({
+      code: "criteria_changed",
+      label: "The scoring criteria for this role changed after this was assessed.",
+    });
+  }
+
+  const scoredCal = str(input.scored_calibration_version);
+  const currentCal = str(input.current_calibration_version);
+  if (scoredCal && currentCal && scoredCal !== currentCal) {
+    reasons.push({
+      code: "calibration_changed",
+      label: "The way requirements are weighted changed after this was assessed.",
     });
   }
 
