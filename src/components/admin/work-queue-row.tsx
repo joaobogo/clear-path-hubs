@@ -12,7 +12,7 @@ import { ArrowRight, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { claimWorkQueueItem } from "@/lib/admin-ops.functions";
-import type { QueueItem, QueueTarget } from "@/lib/admin-ops.server";
+import type { QueueItem, QueueTarget } from "@/lib/admin-ops-types";
 
 function initials(name: string): string {
   const parts = name.trim().split(/\s+/).slice(0, 2);
