@@ -355,6 +355,7 @@ export function buildIntelligence(
           ? {
               label: "We are behind commitment",
               detail: `The shortlist is landing ${daysLabel(value - promise)} later than committed. Your delivery lead should have raised this — ask for the plan.`,
+              link: { label: "Open roles", to: "/client/positions" },
             }
           : null,
       link: { label: "Open roles", to: "/client/positions" },
