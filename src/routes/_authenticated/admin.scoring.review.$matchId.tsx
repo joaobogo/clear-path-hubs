@@ -12,6 +12,7 @@ import {
   requestCandidateInformation,
 } from "@/lib/scoring-review.functions";
 import { applyReviewDecision } from "@/lib/processing.functions";
+import { HumanVerificationPanel } from "@/components/admin/human-verification-panel";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminScoreNumber } from "@/components/admin/admin-score-number";
