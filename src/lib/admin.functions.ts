@@ -535,6 +535,8 @@ export const listPositions = createServerFn({ method: "GET" })
           .default("updated_desc"),
         page: z.number().int().min(1).max(200).optional().default(1),
         page_size: z.number().int().min(5).max(100).optional().default(25),
+        /** Explicit per-request override of the "hide test/internal records" default. */
+        include_test: z.boolean().optional(),
       })
       .parse(i ?? {}),
   )
@@ -544,8 +546,12 @@ export const listPositions = createServerFn({ method: "GET" })
     const { resolveShowTestRecordsForUser, loadTestScope, excludeTestOrgs } = await import(
       "./admin-test-scope.server"
     );
-    const showTest = await resolveShowTestRecordsForUser(s, context.userId);
+    const showTest =
+      data.include_test === true
+        ? true
+        : await resolveShowTestRecordsForUser(s, context.userId);
     const scope = await loadTestScope(s, showTest);
+
 
     // Base query with count for pagination.
     let base = s
