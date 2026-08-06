@@ -1,6 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { SCREENING_MAX_QUESTIONS, SCREENING_MAX_REQUIRED } from "@/lib/screening-limits";
+import {
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  rateLimitResponse,
+  rateLimited,
+} from "@/lib/public-api/rate-limit";
 
 // ---------- Canonical intake payload contract ----------
 const workModel = z.enum(["remote", "hybrid", "onsite"]);
