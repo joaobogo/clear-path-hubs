@@ -182,3 +182,96 @@ export function rescoreOffer(freshness: Freshness): {
     action_label: "Show the updated assessment",
   };
 }
+
+// ───────────────────────────────────────────────────────────────────────────────
+// Stored staleness (Prompt 9)
+//
+// Timestamp inference above answers "might this have moved?". The database
+// invalidation triggers answer "this did move, and here is what changed".
+// Stored reasons always win, and they are what the nightly reconciliation and
+// every staff surface read.
+// ───────────────────────────────────────────────────────────────────────────────
+
+export type StoredStaleness = {
+  score_stale?: boolean | null;
+  score_stale_reasons?: string[] | null;
+  score_stale_at?: string | null;
+  rescore_queued_at?: string | null;
+};
+
+const STORED_LABELS: Record<string, string> = {
+  requirements_changed: "The role's requirements changed after this was assessed.",
+  screening_changed: "The screening questions for this role changed after this was assessed.",
+  rubric_superseded: "The approved scoring criteria for this role were replaced.",
+  new_cv: "The candidate attached a newer CV after this was assessed.",
+};
+
+export function storedStaleReasons(stored: StoredStaleness | null | undefined): StaleReason[] {
+  const codes = Array.isArray(stored?.score_stale_reasons) ? stored!.score_stale_reasons! : [];
+  return codes
+    .filter((c): c is string => typeof c === "string" && c.trim() !== "")
+    .map((code) => ({
+      code: code as StaleReasonCode,
+      label: STORED_LABELS[code] ?? "Something behind this assessment changed.",
+    }));
+}
+
+/**
+ * Merges the recorded staleness flag on the match with the inferred assessment.
+ * A recorded flag is authoritative: it means an invalidation actually fired.
+ */
+export function mergeStoredStaleness(
+  freshness: Freshness,
+  stored: StoredStaleness | null | undefined,
+): Freshness {
+  if (!stored?.score_stale) return freshness;
+  const seen = new Set(freshness.reasons.map((r) => r.code));
+  const reasons = [
+    ...freshness.reasons,
+    ...storedStaleReasons(stored).filter((r) => !seen.has(r.code)),
+  ];
+  return {
+    state: "stale",
+    reasons,
+    summary:
+      reasons.length === 1
+        ? reasons[0]!.label
+        : `${reasons.length} things changed after this was assessed.`,
+    offer_rescore: true,
+  };
+}
+
+export type RecheckState = {
+  /** True when the visible band must be presented as provisional. */
+  rechecking: boolean;
+  /** Short label for badges: never a number, never a silent omission. */
+  label: string;
+  /** One line clients can read. */
+  detail: string;
+  /** True once a rescore has actually been queued. */
+  queued: boolean;
+};
+
+/**
+ * Client-facing framing. A stale score is never shown as current and the
+ * candidate is never hidden: the band renders with a "being re-checked" state
+ * while the rescore is queued.
+ */
+export function recheckState(
+  freshness: Freshness | null | undefined,
+  stored?: StoredStaleness | null,
+): RecheckState {
+  const stale = stored?.score_stale === true || freshness?.state === "stale";
+  if (!stale) {
+    return { rechecking: false, label: "", detail: "", queued: false };
+  }
+  const queued = Boolean(stored?.rescore_queued_at);
+  return {
+    rechecking: true,
+    label: "Being re-checked",
+    detail: queued
+      ? "The role or the candidate's evidence changed, so we're reassessing this fit. The earlier assessment stays visible until the new one is ready."
+      : "The role or the candidate's evidence changed after this assessment. A reassessment is on its way.",
+    queued,
+  };
+}
