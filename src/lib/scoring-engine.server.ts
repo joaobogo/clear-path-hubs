@@ -145,7 +145,11 @@ function escapeRe(s: string) {
  * (`node.js`, `c++`, `.net`) still match because only alphanumeric neighbours
  * are rejected.
  */
-export function findTermMatches(cv: string, term: string): number[] {
+export function findTermMatches(
+  cv: string,
+  term: string,
+  maxHits: number = DEFAULT_CALIBRATION.max_term_hits,
+): number[] {
   const t = term.trim().toLowerCase();
   if (!t) return [];
   const re = new RegExp(`(^|[^a-z0-9])${escapeRe(t)}([^a-z0-9]|$)`, "gi");
@@ -155,7 +159,7 @@ export function findTermMatches(cv: string, term: string): number[] {
   while ((m = re.exec(lower)) !== null) {
     out.push(m.index + (m[1]?.length ?? 0));
     re.lastIndex = m.index + Math.max(1, m[0].length - 1);
-    if (out.length >= 5) break;
+    if (out.length >= maxHits) break;
   }
   return out;
 }
@@ -165,7 +169,6 @@ export function findTermMatches(cv: string, term: string): number[] {
  * "no" appears constantly in prose ("no downtime, shipped Kubernetes").
  */
 const SHORT_RANGE_NEGATORS = ["no", "not", "never", "without", "nor", "zero"];
-const SHORT_RANGE_WINDOW = 25;
 
 const NEGATION_CUES = [
   "no experience",
@@ -190,13 +193,17 @@ const NEGATION_CUES = [
  * "no experience with Kubernetes". Only the preceding ~70 characters of the
  * same sentence are considered, so a later positive mention still counts.
  */
-export function isNegatedMention(cv: string, idx: number): boolean {
+export function isNegatedMention(
+  cv: string,
+  idx: number,
+  cal: EngineCalibration = DEFAULT_CALIBRATION,
+): boolean {
   const lower = cv.toLowerCase();
   const sentenceStart = Math.max(
     lower.lastIndexOf(".", idx - 1) + 1,
     lower.lastIndexOf("\n", idx - 1) + 1,
     lower.lastIndexOf(";", idx - 1) + 1,
-    idx - 70,
+    idx - cal.negation_sentence_window,
     0,
   );
   let window = lower.slice(sentenceStart, idx);
@@ -209,17 +216,22 @@ export function isNegatedMention(cv: string, idx: number): boolean {
   if (NEGATION_CUES.some((cue) => window.includes(cue))) return true;
   // Bare negators ("no Kubernetes", "never touched Terraform") need proximity,
   // checked on word boundaries so "nor" never fires inside "normalise".
-  const near = window.slice(Math.max(0, window.length - SHORT_RANGE_WINDOW));
+  const near = window.slice(Math.max(0, window.length - cal.negation_bare_window));
   return SHORT_RANGE_NEGATORS.some((n) =>
     new RegExp(`(^|[^a-z0-9])${n}([^a-z0-9]|$)`).test(near),
   );
 }
 
-function findSnippet(cv: string, term: string, at?: number): { snippet: string; location: string } | null {
+function findSnippet(
+  cv: string,
+  term: string,
+  at: number | undefined,
+  radius: number,
+): { snippet: string; location: string } | null {
   const idx = at ?? cv.toLowerCase().indexOf(term.toLowerCase());
   if (idx === -1) return null;
-  const start = Math.max(0, idx - 80);
-  const end = Math.min(cv.length, idx + term.length + 80);
+  const start = Math.max(0, idx - radius);
+  const end = Math.min(cv.length, idx + term.length + radius);
   const snippet = cv.slice(start, end).replace(/\s+/g, " ").trim();
   return { snippet, location: `cv:${start}-${end}` };
 }
@@ -370,7 +382,7 @@ export function scoreCandidate(input: {
       let hits: number[] = [];
       let matchedForm = k;
       for (const form of surfaceForms) {
-        const formHits = findTermMatches(cv, form);
+        const formHits = findTermMatches(cv, form, cal.max_term_hits);
         if (formHits.length > 0) {
           hits = formHits;
           matchedForm = form;
@@ -378,11 +390,11 @@ export function scoreCandidate(input: {
         }
       }
       if (hits.length === 0) continue;
-      const affirmative = hits.filter((idx) => !isNegatedMention(cv, idx));
+      const affirmative = hits.filter((idx) => !isNegatedMention(cv, idx, cal));
       if (affirmative.length === 0) {
         // Every mention is inside a negating clause ("no experience with X").
         negated.push(kw);
-        const sn = findSnippet(cv, matchedForm, hits[0]);
+        const sn = findSnippet(cv, matchedForm, hits[0], cal.snippet_radius_chars);
         if (sn) {
           localEvidence.push({
             requirement_id: r.id,
@@ -396,7 +408,7 @@ export function scoreCandidate(input: {
         continue;
       }
       matched.push(kw);
-      const sn = findSnippet(cv, matchedForm, affirmative[0]);
+      const sn = findSnippet(cv, matchedForm, affirmative[0], cal.snippet_radius_chars);
       if (sn) {
         localEvidence.push({
           requirement_id: r.id,
@@ -438,14 +450,14 @@ export function scoreCandidate(input: {
     } else {
       status = "partial";
     }
-    evidence.push(...localEvidence.slice(0, 2));
+    evidence.push(...localEvidence.slice(0, cal.max_evidence_per_requirement));
     return {
       id: r.id,
       text: r.text,
       required: r.required,
       status,
       matched_terms: matched,
-      evidence: localEvidence.slice(0, 2),
+      evidence: localEvidence.slice(0, cal.max_evidence_per_requirement),
       needs_validation,
     };
   });
@@ -554,24 +566,39 @@ export function scoreCandidate(input: {
 
 
   // Confidence: based on evidence volume, CV length, and screening completeness.
-  const cvTokenBoost = Math.min(1, cv.length / 800);
-  const evidenceBoost = Math.min(1, evidence.length / Math.max(3, requirements.length));
-  const screeningBoost = totalScreening ? alignedCount / totalScreening : 0.5;
+  const cw = cal.confidence_weights;
+  const cvTokenBoost = Math.min(1, cv.length / cal.confidence_cv_length_target);
+  const evidenceBoost = Math.min(
+    1,
+    evidence.length / Math.max(cal.confidence_evidence_floor, requirements.length),
+  );
+  const screeningBoost = screeningCount
+    ? alignedCount / totalScreening
+    : cal.confidence_no_screening_default;
+  const confidenceWeightTotal = cw.cv_length + cw.evidence_volume + cw.screening || 1;
   const overall_confidence =
-    Math.round(((cvTokenBoost * 0.4 + evidenceBoost * 0.4 + screeningBoost * 0.2)) * 100) / 100;
+    Math.round(
+      ((cvTokenBoost * cw.cv_length +
+        evidenceBoost * cw.evidence_volume +
+        screeningBoost * cw.screening) /
+        confidenceWeightTotal) *
+        100,
+    ) / 100;
 
   // Weighted evidence confidence: per requirement, how decided its status is,
   // averaged inside each category and weighted by that category's live weight.
   // "unknown" contributes nothing — an undecided requirement is the whole point
   // of this signal.
   const decidedness = (a: RequirementAssessment): number =>
-    a.status === "met" || a.status === "contradicted"
-      ? 1
-      : a.status === "missing"
-        ? 0.8
-        : a.status === "partial"
-          ? 0.6
-          : 0;
+    a.status === "met"
+      ? cal.decidedness.met
+      : a.status === "contradicted"
+        ? cal.decidedness.contradicted
+        : a.status === "missing"
+          ? cal.decidedness.missing
+          : a.status === "partial"
+            ? cal.decidedness.partial
+            : cal.decidedness.unknown;
   const avgDecided = (rows: RequirementAssessment[]): number =>
     rows.length ? rows.reduce((t, a) => t + decidedness(a), 0) / rows.length : 0;
   const mustRows = assessment.filter((a) => a.required);
@@ -596,7 +623,7 @@ export function scoreCandidate(input: {
   const canonicalBand = classifyBand(score);
   const fit_label: ScoringResult["fit_label"] = disqualified
     ? "not_a_fit"
-    : cv.trim().length < 60
+    : cv.trim().length < cal.unreadable_cv_chars
       ? "unknown"
       : bandToFitLabel(canonicalBand) === "strong_fit" &&
           must_have_coverage < cal.strong_fit.min_must_have_coverage
@@ -622,7 +649,7 @@ export function scoreCandidate(input: {
   if (contradiction_status !== "none") {
     concerns.unshift(`Screening/CV contradiction (${contradiction_status.replace(/_/g, " ")}).`);
   }
-  if (cv.trim().length < 60) {
+  if (cv.trim().length < cal.unreadable_cv_chars) {
     concerns.push("CV text could not be extracted with confidence.");
   }
 
