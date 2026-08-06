@@ -220,7 +220,7 @@ function ApprovalsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `tasks-${view}-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `approvals-${view}-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -318,7 +318,7 @@ function ApprovalsPage() {
 
       {tasks.isError ? (
         <QueryErrorCard
-          title="We couldn't load your tasks"
+          title="We couldn't load your approvals"
           error={tasks.error}
           onRetry={() => tasks.refetch()}
           retrying={tasks.isFetching}
@@ -401,7 +401,7 @@ function BulkReassign({ onApply }: { onApply: (v: string | null) => void }) {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Reassign selected tasks</DialogTitle>
+          <DialogTitle>Reassign selected approvals</DialogTitle>
         </DialogHeader>
         <Label className="text-xs">Assignee user ID (UUID)</Label>
         <Input
