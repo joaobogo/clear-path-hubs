@@ -8,11 +8,10 @@
  */
 import { Fragment, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
   getOutreachHealth,
-  setOutreachChannelEnabled,
 } from "@/lib/admin-outreach-health.functions";
 import {
   BOUNCE_MIN_SENDS,
@@ -82,7 +81,6 @@ export function OutreachHealthPanel() {
   const [includeTest, setIncludeTest] = useState(false);
   const [detail, setDetail] = useState<"none" | "bounces" | "opt_outs">("none");
   const fetchHealth = useServerFn(getOutreachHealth);
-  const queryClient = useQueryClient();
 
   const query = useQuery({
     queryKey: ["admin", "outreach-health", includeTest],
