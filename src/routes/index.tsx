@@ -59,7 +59,6 @@ import { HiddenCostOfWaiting } from "@/components/marketing/hidden-cost-of-waiti
 import { WhySwitchMatrix } from "@/components/marketing/why-switch-matrix";
 import { ProofSystem } from "@/components/marketing/proof-system";
 import { PageConnections } from "@/components/marketing/page-connections";
-import { FoundersStrip } from "@/components/marketing/founders-strip";
 import { FgvEndorsement } from "@/components/marketing/fgv-endorsement";
 import { DecisionWorkspacePreview } from "@/components/marketing/product-preview/decision-workspace-preview";
 import { RiskProof } from "@/components/marketing/risk-proof";
@@ -1637,13 +1636,6 @@ function Home() {
           <div className="mt-10">
             <AudienceSelector />
           </div>
-        </PublicPage>
-      </PublicSection>
-
-      {/* 8b — FOUNDER PREVIEW (early trust marker) */}
-      <PublicSection>
-        <PublicPage>
-          <FoundersStrip />
         </PublicPage>
       </PublicSection>
 

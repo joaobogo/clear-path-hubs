@@ -14,7 +14,6 @@ import {
   applicationReference,
 } from "@/lib/candidate/response-commitment";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ReachOutLinkedIn } from "@/components/candidate/reach-out-linkedin";
 
 export const Route = createFileRoute("/apply/received/$applicationId")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -98,7 +97,6 @@ function ReceivedError() {
           </Button>
         </div>
       </div>
-      <ReachOutLinkedIn className="mt-6" />
     </FormShell>
   );
 }
@@ -214,8 +212,7 @@ function Received() {
           <CandidateStatePanel state="application_received" />
         </div>
 
-        <ReachOutLinkedIn className="mt-6" />
-
+  
         <div className="mt-6">
           <TransparencyPanel company={data.organization_name} />
         </div>
