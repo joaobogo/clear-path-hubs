@@ -390,15 +390,44 @@ async function execPositionPause(admin: Admin, row: PlanRow) {
   if (error) throw new Error(error.message);
 }
 
+export type ExecuteOptions = {
+  /** Retry a specific subset (typically the failures of an earlier batch). */
+  onlyIds?: string[];
+  /** Resume position in the plan's ordered eligible rows. Defaults to 0. */
+  cursor?: number;
+  /** Rows to process in this call. Bounded by BULK_EXEC_BATCH. */
+  batchSize?: number;
+};
+
+type StoredProgress = {
+  cursor: number;
+  processed: number;
+  total: number;
+  succeeded: number;
+  failed: number;
+  results: ExecItemResult[];
+  only_ids?: string[] | null;
+};
+
+/**
+ * Executes ONE bounded batch of a plan and returns a cursor for the next one.
+ *
+ * Why batching with a cursor rather than one long request: a 2,000 record run in
+ * a single call has no observable progress, and any failure mid-way leaves the
+ * operator unable to tell what committed. Here each batch commits its own rows,
+ * writes its cursor and per-record outcomes onto the plan, and hands back
+ * `next_cursor`. If a batch dies (timeout, transport error), the caller resumes
+ * from the stored cursor and no committed row is redone.
+ */
 export async function executePlan(
   admin: Admin,
   actorUserId: string,
   planId: string,
-  onlyIds?: string[],
+  options: ExecuteOptions = {},
 ): Promise<ExecResult> {
   const { data: plan, error } = await admin
     .from("bulk_action_plans")
-    .select("id, actor_user_id, kind, params, rows, expires_at")
+    .select("id, actor_user_id, kind, params, rows, expires_at, result")
     .eq("id", planId)
     .maybeSingle();
   if (error) throw new Error(error.message);
@@ -409,12 +438,29 @@ export async function executePlan(
 
   const params = plan.params as BulkParams;
   const allRows = (plan.rows as PlanRow[]) ?? [];
-  const only = onlyIds && onlyIds.length > 0 ? new Set(onlyIds) : null;
-  // Only records the operator saw counted as eligible can be written.
+  const only = options.onlyIds && options.onlyIds.length > 0 ? new Set(options.onlyIds) : null;
+  // Only records the operator saw counted as eligible can be written. The order
+  // comes from the stored plan, so a cursor means the same thing on every call.
   const targets = allRows.filter((r) => r.eligible && (!only || only.has(r.id)));
+  const total = targets.length;
 
-  const results: ExecResult["results"] = [];
-  for (const row of targets) {
+  const stored = (plan.result ?? null) as StoredProgress | null;
+  const sameRun =
+    stored != null &&
+    JSON.stringify(stored.only_ids ?? null) === JSON.stringify(only ? Array.from(only) : null);
+  // A resume with no explicit cursor picks up where the stored progress stopped.
+  const cursor = Math.max(
+    0,
+    Math.min(total, options.cursor ?? (sameRun ? stored!.cursor : 0)),
+  );
+  const batchSize = Math.max(1, Math.min(options.batchSize ?? BULK_EXEC_BATCH, BULK_EXEC_BATCH));
+  const batch = targets.slice(cursor, cursor + batchSize);
+
+  const priorResults: ExecItemResult[] =
+    sameRun && cursor > 0 ? (stored!.results ?? []).slice(0, cursor) : [];
+
+  const results: ExecItemResult[] = [];
+  for (const row of batch) {
     try {
       if (params.kind === "candidate_stage") await execStage(admin, row, params.to_stage, actorUserId);
       else if (params.kind === "candidate_assign") await execAssign(admin, row, params.position_id);
@@ -434,31 +480,63 @@ export async function executePlan(
 
   const succeeded = results.filter((r) => r.ok).length;
   const failed = results.length - succeeded;
+  const runResults = [...priorResults, ...results];
+  const nextCursor = cursor + results.length;
+  const done = nextCursor >= total;
 
+  const progress: StoredProgress = {
+    cursor: nextCursor,
+    processed: runResults.length,
+    total,
+    succeeded: runResults.filter((r) => r.ok).length,
+    failed: runResults.filter((r) => !r.ok).length,
+    results: runResults,
+    only_ids: only ? Array.from(only) : null,
+  };
+
+  // Persist progress before returning: if the client never sees this response,
+  // the next call still resumes from here instead of replaying committed rows.
   await admin
     .from("bulk_action_plans")
     .update({
-      executed_at: new Date().toISOString(),
-      result: { attempted: results.length, succeeded, failed, results },
+      ...(done ? { executed_at: new Date().toISOString() } : {}),
+      result: progress,
     } as never)
     .eq("id", planId);
 
+  // One audit row per batch, so a resumed run leaves a readable trail.
   await admin.from("audit_events").insert({
     actor_user_id: actorUserId,
     action: `bulk.${params.kind}`,
     entity_type: params.kind === "position_pause" ? "position" : "candidate_match",
-    entity_id: targets[0]?.id ?? null,
+    entity_id: batch[0]?.id ?? null,
     metadata: {
       plan_id: planId,
+      batch_from: cursor,
+      batch_to: nextCursor,
+      total,
       attempted: results.length,
       succeeded,
       failed,
+      done,
       skipped: allRows.filter((r) => !r.eligible).length,
       retry_only: only ? Array.from(only) : null,
     },
   } as never);
 
-  return { plan_id: planId, attempted: results.length, succeeded, failed, results };
+  return {
+    plan_id: planId,
+    cursor,
+    next_cursor: done ? null : nextCursor,
+    total,
+    processed: runResults.length,
+    done,
+    attempted: results.length,
+    succeeded,
+    failed,
+    results,
+    failures_so_far: runResults.filter((r) => !r.ok),
+  };
 }
 
 export { BULK_STAGES };
