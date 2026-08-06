@@ -60,6 +60,21 @@ const RAW_LABEL_MAP: Record<string, FitBand> = {
   none: "not_recommended",
 };
 
+/**
+ * Canonical band key → client-facing fit band. Keeps the existing client
+ * vocabulary while the numbers behind it live in one place.
+ */
+const CANONICAL_TO_FIT_BAND: Record<ScoreBandKey, FitBand> = {
+  exceptional: "exceptional",
+  top: "exceptional",
+  strong: "strong",
+  consider: "mixed",
+  not_recommended: "not_recommended",
+  unscored: "mixed",
+};
+
+
+
 
 const BAND_TABLE: Record<FitBand, Omit<FitPresentation, "band">> = {
   exceptional: {
