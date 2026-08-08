@@ -44,13 +44,13 @@ export const SIBLING_BRANDS: Record<SiblingBrandId, SiblingBrand> = {
   atlasflow: {
     id: "atlasflow",
     name: "AtlasFlow",
-    url: "https://atlasflowco.com",
+    url: "https://atlasflowapp.com",
     owns: "International market expansion and entry",
   },
   neuronflow: {
     id: "neuronflow",
     name: "NeuronFlow",
-    url: "https://neuroflowapp.com",
+    url: "https://neuronflowco.com",
     owns: "AI agents and workflow automation",
   },
   fgv: {
