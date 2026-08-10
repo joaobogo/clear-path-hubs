@@ -126,42 +126,36 @@ async function cleanupQAData(): Promise<{ deleted: Record<string, number> }> {
     counts.positions_found = posIds.length;
 
     if (posIds.length > 0) {
-      const { count: mc } = await sb
-        .from("candidate_matches")
-        .delete({ count: "exact" })
-        .in("position_id", posIds);
-      counts.matches_deleted = mc ?? 0;
-
-      const { count: ac } = await sb
-        .from("applications")
-        .delete({ count: "exact" })
-        .in("position_id", posIds);
-      counts.applications_deleted = ac ?? 0;
-
-      const { count: sc } = await sb
-        .from("screening_questions")
-        .delete({ count: "exact" })
-        .in("position_id", posIds);
-      counts.screening_deleted = sc ?? 0;
-
-      const { count: pc } = await sb
-        .from("positions")
-        .delete({ count: "exact" })
-        .in("id", posIds);
-      counts.positions_deleted = pc ?? 0;
+      // candidate_stage_history / score_runs / rubric_versions are append-only,
+      // so plain deletes can never remove fixture applications or positions.
+      // qa_purge_test_organizations is the service-role-only escape hatch and
+      // refuses to touch anything not flagged is_test_record.
+      const { data: purge, error: purgeError } = await sb.rpc("qa_purge_test_organizations", {
+        _names: [QA_ORG_NAME, QA_OTHER_ORG_NAME],
+      });
+      if (purgeError) {
+        (counts as Record<string, unknown>)["purge_error_message"] = purgeError.message;
+      } else {
+        const result = (purge ?? {}) as { positions_deleted?: number; organizations_deleted?: number };
+        counts.positions_deleted = result.positions_deleted ?? 0;
+        counts.organizations_deleted = result.organizations_deleted ?? 0;
+      }
     }
 
+    // Fallback for orgs that had no positions: the purge above already removed
+    // memberships and the org itself when it ran.
     const { count: memc } = await sb
       .from("memberships")
       .delete({ count: "exact" })
       .in("organization_id", orgIds);
     counts.memberships_deleted = memc ?? 0;
 
-    const { count: oc } = await sb
+    const { count: oc, error: oe } = await sb
       .from("organizations")
       .delete({ count: "exact" })
       .in("id", orgIds);
-    counts.organizations_deleted = oc ?? 0;
+    counts.organizations_deleted = (counts.organizations_deleted ?? 0) + (oc ?? 0);
+    if (oe) (counts as Record<string, unknown>)["organizations_error_message"] = oe.message;
   }
 
   // Delete QA auth users (cascades profiles, candidate_profiles, applications, matches)
