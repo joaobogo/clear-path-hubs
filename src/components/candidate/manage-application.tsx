@@ -28,6 +28,7 @@ export function ManageApplication({
   onUpdated,
   updateFn,
   deleteFn,
+  exportFn,
 }: {
   credentials: Credentials;
   details: CandidateEditableDetails;
@@ -54,6 +55,8 @@ export function ManageApplication({
   const [note, setNote] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [deleteMessage, setDeleteMessage] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
+  const [exportMessage, setExportMessage] = useState<string | null>(null);
 
   const save = async () => {
     setError(null);
@@ -99,6 +102,20 @@ export function ManageApplication({
       setError("Something went wrong on our end. Nothing was lost — try again in a moment.");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const requestExport = async () => {
+    setExporting(true);
+    try {
+      const res = await exportFn({ data: { ...credentials } });
+      setExportMessage(res.message);
+    } catch {
+      setExportMessage(
+        "We couldn't log that request. Please email privacy@taasflow.com and we'll handle it by hand.",
+      );
+    } finally {
+      setExporting(false);
     }
   };
 
