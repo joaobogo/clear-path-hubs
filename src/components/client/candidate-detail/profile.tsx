@@ -300,9 +300,16 @@ export const LinksPanel = memo(function LinksPanel({
             )}
           </li>
         ))}
-        <li className="pt-1">
-          <DownloadCvButton matchId={candidate.match_id} />
-        </li>
+        {candidate.contact_released ? (
+          <li className="pt-1">
+            <DownloadCvButton matchId={candidate.match_id} />
+          </li>
+        ) : (
+          <li className="pt-1 text-xs text-muted-foreground">
+            CV available once contact details are released.
+          </li>
+        )}
+
       </ul>
     </div>
   );
