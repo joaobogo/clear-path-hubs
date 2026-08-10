@@ -336,7 +336,61 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       })),
     },
   ];
+
+  return annotateWithSlaBreaches(queues, opts.includeTest ?? false);
 }
+
+/**
+ * Overlay live commitment breaches onto the queues so the worst promise is the
+ * first thing an operator sees. Severity = whole days past the moment the
+ * commitment was first missed; acknowledged breaches stop escalating.
+ */
+async function annotateWithSlaBreaches(
+  queues: WorkQueue[],
+  includeTest: boolean,
+): Promise<WorkQueue[]> {
+  const s = await admin();
+  const { loadSlaBreaches } = await import("./admin-sla-breach.server");
+  let worstByPosition = new Map<string, { metric_label: string; days_over: number }>();
+  try {
+    const list = await loadSlaBreaches(s, { includeTest });
+    for (const r of list.rows) {
+      if (r.acknowledged) continue;
+      const current = worstByPosition.get(r.position_id);
+      if (!current || r.days_over > current.days_over) {
+        worstByPosition.set(r.position_id, {
+          metric_label: r.metric_label,
+          days_over: r.days_over,
+        });
+      }
+    }
+  } catch {
+    // A breach read failure must not blank the queues; rows simply render
+    // without the escalation badge.
+    worstByPosition = new Map();
+  }
+  if (worstByPosition.size === 0) return queues;
+
+  return queues.map((q) => {
+    const items = q.items.map((it) => {
+      const positionId = it.claim?.kind === "position" ? it.claim.id : null;
+      const breach = positionId ? (worstByPosition.get(positionId) ?? null) : null;
+      return breach
+        ? { ...it, sla_breach: breach, tone: "danger" as const }
+        : { ...it, sla_breach: null };
+    });
+    items.sort((a, b) => {
+      const ad = a.sla_breach?.days_over ?? -1;
+      const bd = b.sla_breach?.days_over ?? -1;
+      if (ad !== bd) return bd - ad;
+      const at = a.waiting_since ? new Date(a.waiting_since).getTime() : Infinity;
+      const bt = b.waiting_since ? new Date(b.waiting_since).getTime() : Infinity;
+      return at - bt;
+    });
+    return { ...q, items };
+  });
+}
+
 
 export type PaymentsOpsPanel = {
   paid: Array<{
