@@ -57,15 +57,17 @@ export function FormShell({
             /* Visible on phones too: a candidate who cannot see how much is
                left is the candidate who stops mid-way. */
             <div className="flex min-w-0 items-center gap-2 sm:gap-3" aria-live="polite">
-              <span className="truncate text-xs font-medium text-[color:var(--brand-navy)]/80">
-
+              {/* On phones the step is already stated at the top of the form and
+                  a full-width bar sits under this header, so the inline copy
+                  would only crowd the row. */}
+              <span className="hidden truncate text-xs font-medium text-[color:var(--brand-navy)]/80 sm:inline">
                 {progress.label ?? `Step ${progress.step} of ${progress.total}`}
               </span>
               {/* Status that must survive being missed — a toast would be gone
                   before a candidate on a phone finished reading it. */}
               {progress.note}
               <div
-                className="h-1.5 w-16 shrink-0 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/10 sm:w-40"
+                className="hidden h-1.5 w-16 shrink-0 overflow-hidden rounded-full bg-[color:var(--brand-navy)]/10 sm:block sm:w-40"
                 role="progressbar"
                 aria-label={progress.label ?? `Step ${progress.step} of ${progress.total}`}
                 aria-valuetext={progress.label ?? `Step ${progress.step} of ${progress.total}`}
@@ -82,10 +84,11 @@ export function FormShell({
           )}
           <a
             href={exitTo}
-            className="rounded-md px-2.5 py-1.5 text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            className="shrink-0 whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
           >
             {exitLabel}
           </a>
+
         </div>
         {progress && (
           <div
