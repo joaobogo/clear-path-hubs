@@ -304,7 +304,34 @@ function HeroH1({
   );
 }
 
+/**
+ * Vertical-specific editorial band for the hero variants whose composition is
+ * diagram-led. Every industry slug has a commissioned image in the registry;
+ * this keeps the imagery promise true across all six variants without
+ * rewriting their layouts.
+ */
+function HeroImageBand({ ctx }: { ctx: Ctx }) {
+  const { entry } = ctx;
+  const heroImage = getIndustryHeroImage(entry.slug);
+  if (!heroImage) return null;
+  return (
+    <figure className="relative mt-10 overflow-hidden rounded-3xl border border-[color:var(--brand-navy)]/10 bg-[color:var(--brand-mist)]/40 shadow-[0_30px_90px_-45px_rgba(10,20,50,0.45)]">
+      <div className="relative aspect-[16/10] w-full sm:aspect-[21/8]">
+        <HeroPicture
+          src={heroImage.src}
+          alt={heroImage.alt}
+          width={heroImage.width}
+          height={heroImage.height}
+          style={{ objectPosition: heroImage.focal ?? "50% 40%" }}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      </div>
+    </figure>
+  );
+}
+
 /** 1. Systems & Capability — asymmetric technical field with a capability map. */
+
 function HeroSystemsCapability({ ctx }: { ctx: Ctx }) {
   const { entry, config } = ctx;
   const capabilities = [
