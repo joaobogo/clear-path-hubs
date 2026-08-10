@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { Link } from "@tanstack/react-router";
 import {
   Sparkles,
@@ -57,7 +58,7 @@ export function RediscoveryCard({
       toast.success("Added to pool");
       qc.invalidateQueries({ queryKey: ["talent-pool"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
   const removeFromActive = useMutation({
     mutationFn: (poolId: string) =>
@@ -72,7 +73,7 @@ export function RediscoveryCard({
       toast.success("Removed from pool");
       qc.invalidateQueries({ queryKey: ["talent-pool"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
   const gff = useMutation({
     mutationFn: () =>
@@ -91,7 +92,7 @@ export function RediscoveryCard({
       );
       qc.invalidateQueries({ queryKey: ["talent-pool"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const stageLabel = candidate.last_stage?.replace(/_/g, " ") ?? "—";

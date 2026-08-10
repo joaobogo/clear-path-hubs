@@ -40,6 +40,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 
 export type SavedViewsBarProps = {
   surface: SavedViewSurface;
@@ -151,7 +152,7 @@ export function SavedViewsBar({
       setShared(false);
       invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const rename = useMutation({
@@ -162,7 +163,7 @@ export function SavedViewsBar({
       setRenaming(null);
       invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const toggleShare = useMutation({
@@ -178,7 +179,7 @@ export function SavedViewsBar({
       toast.success(v.is_shared ? "View is now private" : "View shared with the team");
       invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const toggleDefault = useMutation({
@@ -188,7 +189,7 @@ export function SavedViewsBar({
       toast.success(v.is_default ? "Default cleared" : `"${v.name}" is now your default`);
       invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const remove = useMutation({
@@ -197,7 +198,7 @@ export function SavedViewsBar({
       toast.success("View deleted");
       invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const active = rows.find((v) => filtersMatch(v.filters, currentFilters));

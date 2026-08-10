@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -77,7 +78,7 @@ export function OverviewTab({
       setDirty(false);
       await qc.invalidateQueries({ queryKey: ["admin-position", position.id] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const set = <K extends keyof typeof form>(k: K, val: (typeof form)[K]) => {

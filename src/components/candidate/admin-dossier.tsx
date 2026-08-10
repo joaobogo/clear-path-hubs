@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import {
   getCandidateDossier,
   addCandidateNote,
@@ -82,7 +83,7 @@ export function AdminDossier({ matchId }: { matchId: string }) {
       toast.success("Note saved");
       qc.invalidateQueries({ queryKey: key });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const delNote = useMutation({
@@ -91,7 +92,7 @@ export function AdminDossier({ matchId }: { matchId: string }) {
       toast.success("Note deleted");
       qc.invalidateQueries({ queryKey: key });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const { confirm, confirmDialog } = useConfirmAction();
@@ -104,7 +105,7 @@ export function AdminDossier({ matchId }: { matchId: string }) {
       qc.invalidateQueries({ queryKey: key });
       qc.invalidateQueries({ queryKey: ["admin-candidate", matchId] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   if (isPending || !data) {

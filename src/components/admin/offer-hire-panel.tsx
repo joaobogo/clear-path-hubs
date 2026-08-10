@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -129,7 +130,7 @@ export function PositionOfferTrackingPanel({ positionId }: { positionId: string 
       setNotes("");
       invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const setStart = useMutation({
@@ -140,7 +141,7 @@ export function PositionOfferTrackingPanel({ positionId }: { positionId: string 
       setStartFor(null);
       invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const closePosition = useMutation({
@@ -152,7 +153,7 @@ export function PositionOfferTrackingPanel({ positionId }: { positionId: string 
       setCloseNote("");
       invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const data = query.data;

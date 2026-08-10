@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import {
   getMyContext,
   updateMyConsent,
@@ -87,7 +88,7 @@ function SettingsPage() {
         track("notification_prefs_saved");
         toast.success("Preferences saved.");
         qc.invalidateQueries({ queryKey: ["me-context"] });
-      } else toast.error(r.message);
+      } else toastError(r);
     },
   });
 

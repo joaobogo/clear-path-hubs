@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { getPositionBottleneck } from "@/lib/admin-position-bottleneck.functions";
 import { addInternalNote } from "@/lib/admin-workbench.functions";
 import { MIN_COMPARABLE_ROLES } from "@/lib/position-bottleneck";
@@ -56,7 +57,7 @@ export function PositionBottleneckCard({
       setNoteOpen(false);
       void qc.invalidateQueries({ queryKey: ["internal-notes"] });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not save the note"),
+    onError: (e) => toastError(e, { fallback: "Could not save the note" }),
   });
 
   const data = query.data;

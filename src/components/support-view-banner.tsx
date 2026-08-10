@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { useSupportView } from "@/lib/support-view";
 import { endSupportSession } from "@/lib/support.functions";
 
@@ -47,7 +48,7 @@ export function SupportViewBanner() {
       navigate({ to: "/admin" });
     },
     onError: (e: unknown) =>
-      toast.error(e instanceof Error ? e.message : "Could not end the session"),
+      toastError(e, { fallback: "Could not end the session" }),
   });
   if (!support.active) return null;
   const color =

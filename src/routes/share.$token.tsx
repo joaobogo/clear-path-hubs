@@ -20,6 +20,7 @@ import {
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import {
   addShareComment,
   getShortlistShareByToken,
@@ -742,7 +743,7 @@ function CommentsPanel({
       setBody("");
       onSubmitted();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const nameById = useMemo(() => {

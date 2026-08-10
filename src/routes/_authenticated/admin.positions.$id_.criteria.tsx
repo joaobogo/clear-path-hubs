@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { Plus, Trash2, Lock } from "lucide-react";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { Badge } from "@/components/ui/badge";
@@ -113,7 +114,7 @@ function CriteriaPage() {
       toast.success("Draft saved");
       void queryClient.invalidateQueries({ queryKey });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const publishMutation = useMutation({
@@ -122,7 +123,7 @@ function CriteriaPage() {
       toast.success("Criteria version published — it is now immutable");
       void queryClient.invalidateQueries({ queryKey });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   function update(index: number, patch: Partial<CriterionDraft>) {

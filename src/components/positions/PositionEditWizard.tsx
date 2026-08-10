@@ -10,6 +10,7 @@ import {
   countRequired,
 } from "@/lib/screening-limits";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useBlocker, useNavigate } from "@tanstack/react-router";
@@ -326,7 +327,7 @@ export function PositionEditWizard({
       await Promise.all(invalidateKeys.map((k) => qc.invalidateQueries({ queryKey: k })));
       navigate({ to: returnTo });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Save failed"),
+    onError: (e) => toastError(e, { fallback: "Save failed" }),
   });
 
   const progress = useMemo(() => Math.round(((step - 1) / (STEPS.length - 1)) * 100), [step]);

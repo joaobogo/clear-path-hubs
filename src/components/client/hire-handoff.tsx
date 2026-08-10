@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { CalendarCheck, CheckCircle2, Circle, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -86,7 +87,7 @@ export function HireHandoffPanel({
       void qc.invalidateQueries({ queryKey });
     },
     onError: (e: unknown) =>
-      toast.error(e instanceof Error ? e.message : "That did not save. Please try again."),
+      toastError(e, { fallback: "That did not save. Please try again." }),
   });
 
   if (isLoading) return <HandoffSkeleton />;

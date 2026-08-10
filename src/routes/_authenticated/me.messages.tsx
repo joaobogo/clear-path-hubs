@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { listMyMessages, sendMyMessage } from "@/lib/candidate.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -79,7 +80,7 @@ function MyMessages() {
  qc.invalidateQueries({ queryKey: ["me-messages"] });
  } else toast.error(r.message ?? "Failed to send");
  },
- onError: (e: Error) => toast.error(e.message.replace(/^Error: /, "")),
+ onError: (e: Error) => toastError(e),
  });
 
  return (

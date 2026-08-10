@@ -24,6 +24,7 @@ import { RecordActivityTab } from "@/components/admin/record-activity-tab";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import {
   getPosition,
   updatePosition,
@@ -153,7 +154,7 @@ export function RequirementsEditor({
       toast.success(`${title} saved · trace ${r.trace_id}`);
       await qc.invalidateQueries({ queryKey: ["admin-position", positionId] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   return (
@@ -253,7 +254,7 @@ export function ScreeningEditor({ positionId, questions }: { positionId: string;
       toast.success(`Saved ${r.count} question${r.count === 1 ? "" : "s"} · trace ${r.trace_id}`);
       await qc.invalidateQueries({ queryKey: ["admin-position", positionId] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const add = () =>

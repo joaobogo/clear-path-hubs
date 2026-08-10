@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { Plus } from "lucide-react";
 import { createPool } from "@/lib/talent-pool.functions";
 import { Button } from "@/components/ui/button";
@@ -39,7 +40,7 @@ export function CreatePoolDialog({
       setDescription("");
       onCreated(r.id);
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
   return (
     <Dialog open={open} onOpenChange={setOpen}>

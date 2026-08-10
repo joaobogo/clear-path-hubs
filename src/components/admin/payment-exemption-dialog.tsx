@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { ShieldCheck } from "lucide-react";
 
 /**
@@ -41,7 +42,7 @@ export function PaymentExemptionDialog({
       setReason("");
       queryClient.invalidateQueries();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   if (paymentStatus === "exempt") {

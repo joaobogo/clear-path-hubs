@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { AlertTriangle, EyeOff, ExternalLink, ShieldAlert, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -73,7 +74,7 @@ export function DataHealthExceptionsPanel() {
       setNote("");
       setPreview(res as PreviewState);
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const applyMut = useMutation({
@@ -92,7 +93,7 @@ export function DataHealthExceptionsPanel() {
       setPreview(null);
       void qc.invalidateQueries({ queryKey: ["data-health-exceptions"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const hideMut = useMutation({
@@ -102,7 +103,7 @@ export function DataHealthExceptionsPanel() {
       toast.success("Hidden from the client workspace.");
       void qc.invalidateQueries({ queryKey: ["data-health-exceptions"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const rows = useMemo(() => query.data?.rows ?? [], [query.data]);

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { readTeamsActionLink, consumeTeamsActionLink } from "@/lib/teams.functions";
 import { clientAction } from "@/lib/client-decisions.functions";
 
@@ -66,7 +67,7 @@ function TeamsActPage() {
       toast.success("Decision recorded.");
       navigate({ to: "/client" });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not record that."),
+    onError: (e) => toastError(e, { fallback: "Could not record that." }),
   });
 
   if (isLoading) {

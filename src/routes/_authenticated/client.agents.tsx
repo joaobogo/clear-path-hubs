@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { useState } from "react";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { getClientContext } from "@/lib/client-context.functions";
@@ -99,7 +100,7 @@ function AgentControlPage() {
       );
       invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const pause = useMutation({
@@ -109,7 +110,7 @@ function AgentControlPage() {
       toast.success(r.paused_at ? "Paused. Queued work stopped." : "Resumed.");
       invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   if (ctxQuery.isError) {

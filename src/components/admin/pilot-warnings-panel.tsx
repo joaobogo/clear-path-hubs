@@ -13,6 +13,7 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -53,7 +54,7 @@ export function PilotWarningsPanel({ organizationId = null, hideWhenEmpty, limit
       setReason("");
       toast.success("Pilot exception granted.");
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not grant the exception."),
+    onError: (e) => toastError(e, { fallback: "Could not grant the exception." }),
   });
 
   const rows = q.data ?? [];

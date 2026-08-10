@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/dialog";
 import { Check, Minus, ShieldCheck, UserPlus } from "lucide-react";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 
 const ROLE_LABEL: Record<string, string> = {
   client_admin: "Owner",
@@ -72,7 +73,7 @@ export function ClientAccessPanel({ organizationId }: { organizationId: string }
       setEmail("");
       await refresh();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const changeRole = useMutation({
@@ -88,7 +89,7 @@ export function ClientAccessPanel({ organizationId }: { organizationId: string }
       toast.success("Role updated");
       await refresh();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const revoke = useMutation({
@@ -100,14 +101,14 @@ export function ClientAccessPanel({ organizationId }: { organizationId: string }
       toast.success(v.reason === "seat_released" ? "Seat released" : "Access revoked");
       await refresh();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const resend = useMutation({
     mutationFn: (userId: string) =>
       resendClientInvitation({ data: { orgId: organizationId, userId } }),
     onSuccess: () => toast.success("Invitation resent"),
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const d = q.data;

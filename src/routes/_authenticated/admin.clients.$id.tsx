@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { RecordActivityTab } from "@/components/admin/record-activity-tab";
 import {
   getClient,
@@ -392,7 +393,7 @@ function CompanyTab({ org }: { org: any }) {
       await qc.invalidateQueries({ queryKey: ["admin-client", org.id] });
       await qc.invalidateQueries({ queryKey: ["admin-clients"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   return (
@@ -676,7 +677,7 @@ function SettingsTab({ org }: { org: any }) {
       await qc.invalidateQueries({ queryKey: ["admin-clients"] });
       router.invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const restore = useMutation({
@@ -687,7 +688,7 @@ function SettingsTab({ org }: { org: any }) {
       await qc.invalidateQueries({ queryKey: ["admin-clients"] });
       router.invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   return (
@@ -869,7 +870,7 @@ function NotesTab({ org }: { org: any }) {
       toast.success("Notes saved");
       await qc.invalidateQueries({ queryKey: ["admin-client", org.id] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const dirty = (text ?? "") !== (org.internal_notes ?? "");

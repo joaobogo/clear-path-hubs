@@ -10,6 +10,7 @@ import { useMemo, useState } from "react";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import {
   listRoleMemory,
   createRoleMemory,
@@ -97,7 +98,7 @@ export function RoleMemoryPanel({
       await invalidate();
       toast.success("Memory saved. Handoff-safe.");
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const update = useMutation({
@@ -114,7 +115,7 @@ export function RoleMemoryPanel({
     onSuccess: async () => {
       await invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const remove = useMutation({
@@ -123,7 +124,7 @@ export function RoleMemoryPanel({
       await invalidate();
       toast.success("Memory removed");
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const grouped = useMemo(() => {

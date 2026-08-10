@@ -11,6 +11,7 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import {
   getRecruiterWorkload,
   listOwnedOpenPositions,
@@ -225,7 +226,7 @@ function OwnedPositions({ owner, includeTest }: { owner: string; includeTest: bo
       void queryClient.invalidateQueries({ queryKey: ["admin", "recruiter-workload"] });
       void queryClient.invalidateQueries({ queryKey: ["admin", "workload-positions"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const rows = list.data ?? [];

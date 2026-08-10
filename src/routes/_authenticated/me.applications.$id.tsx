@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import {
   getMyApplication,
   respondToInfoRequest,
@@ -159,10 +160,10 @@ function TrackPage() {
         toast.success("Application withdrawn.");
         refresh();
       } else {
-        toast.error(r.message);
+        toastError(r);
       }
     },
-    onError: (e: Error) => toast.error(e.message.replace(/^Error: /, "")),
+    onError: (e: Error) => toastError(e),
   });
 
   const respond = useMutation({
@@ -174,10 +175,10 @@ function TrackPage() {
         setReplies((prev) => ({ ...prev, [vars.requestId]: "" }));
         refresh();
       } else {
-        toast.error(r.message);
+        toastError(r);
       }
     },
-    onError: (e: Error) => toast.error(e.message.replace(/^Error: /, "")),
+    onError: (e: Error) => toastError(e),
   });
 
   const action = data.pending_action;

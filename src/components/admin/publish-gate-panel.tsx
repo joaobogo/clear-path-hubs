@@ -15,6 +15,7 @@ import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { PaymentExemptionDialog } from "@/components/admin/payment-exemption-dialog";
 import { CheckCircle2, Lock, PencilLine } from "lucide-react";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { useScopedIncludeTest } from "@/lib/admin-scope";
 
 function fmtDate(iso: string | null) {
@@ -74,7 +75,7 @@ export function PublishGatePanel({ includeTest: explicit }: { includeTest?: bool
       toast.success("Role published. The change is audited.");
       await qc.invalidateQueries({ queryKey: ["publish-gate-queue"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
     onSettled: () => setBusy(null),
   });
 

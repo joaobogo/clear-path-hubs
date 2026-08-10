@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import {
   getIntegrationStrip,
   drainIntegrationQueue,
@@ -58,7 +59,7 @@ export function IntegrationHealthStrip({ onRunChecks }: { onRunChecks?: () => vo
       await qc.invalidateQueries({ queryKey: ["integration-health"] });
     },
     onError: (e) =>
-      toast.error(e instanceof Error ? e.message : "The queue could not be drained."),
+      toastError(e, { fallback: "The queue could not be drained." }),
   });
 
   const chips = strip.data?.chips ?? [];

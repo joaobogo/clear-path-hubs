@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { Award, Sparkles } from "lucide-react";
 import {
   Dialog,
@@ -69,7 +70,7 @@ export function TagSilverMedalistDialog({
       qc.invalidateQueries({ queryKey: ["memory-by-match", matchId] });
       onOpenChange(false);
     },
-    onError: (e: Error) => toast.error(e.message.replace(/^Error: /, "")),
+    onError: (e: Error) => toastError(e),
   });
 
   return (

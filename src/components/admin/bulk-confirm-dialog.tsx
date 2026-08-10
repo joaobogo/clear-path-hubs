@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { AlertTriangle, ArrowRight, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 
 type PreviewInput =
   | { kind: "candidate_stage"; match_ids: string[]; to_stage: BulkStage }
@@ -138,7 +139,7 @@ export function BulkConfirmDialog({ request, onClose, onCommitted }: BulkConfirm
     },
     onError: async (e: Error) => {
       setProgress(null);
-      toast.error(e.message);
+      toastError(e);
       // Rows that did commit before the stall are real changes: refresh.
       await qc.invalidateQueries();
     },

@@ -10,6 +10,7 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import {
   assignIntakeOwner,
   getIntakeAging,
@@ -107,7 +108,7 @@ export function IntakeAgingTable({ includeTest: explicit }: { includeTest?: bool
       toast.success("Owner updated");
       invalidate();
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not assign the owner"),
+    onError: (e) => toastError(e, { fallback: "Could not assign the owner" }),
   });
 
   const proceeding = useMutation({
@@ -119,7 +120,7 @@ export function IntakeAgingTable({ includeTest: explicit }: { includeTest?: bool
       setReason("");
       invalidate();
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not update the intake"),
+    onError: (e) => toastError(e, { fallback: "Could not update the intake" }),
   });
 
   const convert = useMutation({
@@ -130,7 +131,7 @@ export function IntakeAgingTable({ includeTest: explicit }: { includeTest?: bool
       );
       invalidate();
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not convert the intake"),
+    onError: (e) => toastError(e, { fallback: "Could not convert the intake" }),
   });
 
   const rows = query.data?.rows ?? [];

@@ -2,6 +2,7 @@ import { memo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { CalendarClock, User2, ArrowRight, RotateCcw, AlertTriangle } from "lucide-react";
 import {
   transitionHire,
@@ -46,7 +47,7 @@ function HireCardImpl({
       qc.invalidateQueries({ queryKey: ["hires-report", orgId] });
       onChanged();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const salary = formatSalary(hire);

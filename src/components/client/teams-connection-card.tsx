@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -69,7 +70,7 @@ export function TeamsConnectionCard({
       toast.success("Teams connection saved");
       await qc.invalidateQueries({ queryKey: ["teams-connection", orgId] });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not save"),
+    onError: (e) => toastError(e, { fallback: "Could not save" }),
   });
 
   const drop = useMutation({
@@ -86,7 +87,7 @@ export function TeamsConnectionCard({
       r?.ok
         ? toast.success("Test message posted to your channel")
         : toast.error(`Not delivered — ${r?.reason ?? "unknown reason"}`),
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not send test"),
+    onError: (e) => toastError(e, { fallback: "Could not send test" }),
   });
 
   if (isLoading) {

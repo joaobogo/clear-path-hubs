@@ -16,6 +16,7 @@
  */
 import { useState } from "react";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { CalendarDays, MessageSquare, Phone, Loader2, Check, Clock, Mail } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 
@@ -260,7 +261,7 @@ function CallForm({
       formEl.reset();
       onSuccess?.();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong.");
+      toastError(err, { fallback: "Something went wrong." });
     } finally {
       setPending(false);
     }
@@ -417,7 +418,7 @@ function MessageForm({
       (e.currentTarget as HTMLFormElement).reset();
       onSuccess?.();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong.");
+      toastError(err, { fallback: "Something went wrong." });
     } finally {
       setPending(false);
     }

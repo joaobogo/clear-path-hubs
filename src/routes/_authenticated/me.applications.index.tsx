@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import {
  listMyApplications,
  withdrawApplication,
@@ -74,10 +75,10 @@ function MyApplicationsPage() {
  toast.success("Application withdrawn.");
  qc.invalidateQueries({ queryKey: ["me-applications"] });
  } else {
- toast.error(r.message);
+ toastError(r);
  }
  },
- onError: (e: Error) => toast.error(e.message.replace(/^Error: /, "")),
+ onError: (e: Error) => toastError(e),
  });
 
  const apps = current.applications;

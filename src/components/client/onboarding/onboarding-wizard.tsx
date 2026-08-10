@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -263,7 +264,7 @@ function WorkspaceStep({ state, onDone, saveForLater }: BodyProps) {
       toast.success("Workspace confirmed.");
       await onDone();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   if (!state.is_admin) {
@@ -385,7 +386,7 @@ function RoleStep({ state, onDone, back, saveForLater }: BodyProps) {
       toast.success("Role saved.");
       await onDone();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   return (
@@ -522,7 +523,7 @@ function RequirementsStep({ state, onDone, back, saveForLater, goTo }: BodyProps
       toast.success("Requirements saved.");
       await onDone();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   if (!pos) return <NoRoleYet goTo={goTo} />;
@@ -597,7 +598,7 @@ function BlueprintStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
       else toast.info("The compiler is already working on this role.");
       await onDone({ advance: false });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const accept = useMutation({
@@ -611,7 +612,7 @@ function BlueprintStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
       toast.success("Blueprint confirmed.");
       await onDone();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   if (!pos) return <NoRoleYet goTo={goTo} />;
@@ -701,7 +702,7 @@ function WeightsStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
       toast.success("Scoring weights saved.");
       await onDone();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   if (!pos) return <NoRoleYet goTo={goTo} />;
@@ -734,7 +735,7 @@ function AgentsStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
       toast.success(`Operating level set to ${INTENSITY_PRESETS[choice].label}.`);
       await onDone({ confirm: true });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   if (!pos) return <NoRoleYet goTo={goTo} />;
@@ -812,7 +813,7 @@ function OversightStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
       toast.success("Oversight gates saved.");
       await onDone();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   if (!pos) return <NoRoleYet goTo={goTo} />;
@@ -938,7 +939,7 @@ function RunStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
       else toast.info("A run is already in progress for this role.");
       await onDone();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   if (!pos) return <NoRoleYet goTo={goTo} />;

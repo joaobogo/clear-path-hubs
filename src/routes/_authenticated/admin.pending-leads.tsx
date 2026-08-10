@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from \"@/lib/toast-error\";
 import { CalendarClock, Copy, Loader2 } from "lucide-react";
 import {
   approveStartWithoutPayment,
@@ -52,7 +53,7 @@ function PendingLeadsPage() {
   const approveMutation = useMutation({
     mutationFn: (vars: { positionId: string; reason: string }) => approve({ data: vars }),
     onSuccess: async (result) => {
-      if (!result.ok) return toast.error(result.message);
+      if (!result.ok) return toastError(result);
       toast.success("Start approved. The role can publish without payment.");
       await refresh();
     },
