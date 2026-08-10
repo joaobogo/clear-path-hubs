@@ -90,6 +90,21 @@ function ReviewScreen() {
     staleTime: 60_000,
   });
 
+  // A teammate deciding on this same candidate, or the queue ahead of it
+  // changing, must land here without a manual reload — this desk is where the
+  // irreversible calls get made.
+  useRouteRealtime({
+    scope: "admin-review",
+    orgId: null,
+    staffAllOrgs: true,
+    invalidateKeys: [
+      ["admin-candidate", matchId],
+      ["admin-review-queue-ids"],
+      ["admin-work-queues"],
+    ],
+  });
+
+
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
   const [rejectOpen, setRejectOpen] = useState(false);
