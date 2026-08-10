@@ -122,11 +122,17 @@ export function ProcessingExceptionsBoard({ className }: { className?: string })
           </p>
         </div>
         <div className="flex items-center gap-2">
+          {board && board.excluded_test > 0 ? (
+            <Badge variant="outline" className="text-xs font-normal">
+              {board.excluded_test} test record{board.excluded_test === 1 ? "" : "s"} hidden
+            </Badge>
+          ) : null}
           {board ? (
             <Badge variant="outline" className="text-xs font-normal">
               {board.scoring_orphans} scoring orphan{board.scoring_orphans === 1 ? "" : "s"}
             </Badge>
           ) : null}
+
           <Button
             size="sm"
             variant="outline"
