@@ -904,6 +904,7 @@ export const sendMyMessage = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const supabase = context.supabase as AnyRow;
     const { error } = await supabase.from("messages").insert({
+      thread_id: context.userId,
       sender_user_id: context.userId,
       body: data.body,
       recipient_context: { audience: "taasflow_ops", from: "candidate" },
@@ -976,6 +977,7 @@ export const requestCorrection = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const supabase = context.supabase as AnyRow;
     const { error } = await supabase.from("messages").insert({
+      thread_id: context.userId,
       sender_user_id: context.userId,
       body: `[Data correction request]\n${data.note}`,
       recipient_context: { audience: "taasflow_ops", from: "candidate", kind: "correction_request" },

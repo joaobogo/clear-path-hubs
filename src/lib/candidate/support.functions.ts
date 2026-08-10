@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { SUPPORT_BODY_MAX, SUPPORT_CATEGORIES, supportCategoryLabel } from "./support";
+import { buildSupportMessage, SUPPORT_BODY_MAX, SUPPORT_CATEGORIES } from "./support";
 
 type AnyRow = {
   from: (table: string) => any;
@@ -26,20 +26,15 @@ export const submitSupportRequest = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => inputSchema.parse(input))
   .handler(async ({ context, data }) => {
     const supabase = context.supabase as unknown as AnyRow;
-    const header = `Support request — ${supportCategoryLabel(data.category)}${
-      data.reference ? ` (ref ${data.reference})` : ""
-    }`;
-    const { error } = await supabase.from("messages").insert({
-      sender_user_id: context.userId,
-      body: `${header}\n\n${data.body}`,
-      recipient_context: {
-        audience: "taasflow_ops",
-        from: "candidate",
-        kind: "support_request",
+    const { error } = await supabase.from("messages").insert(
+      buildSupportMessage({
+        userId: context.userId,
         category: data.category,
+        body: data.body,
         reference: data.reference ?? null,
-      },
-    });
+      }),
+    );
+
     if (error) return { ok: false as const, message: error.message };
 
     try {
@@ -74,6 +69,7 @@ export const requestMyDataExport = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const supabase = context.supabase as unknown as AnyRow;
     const { error } = await supabase.from("messages").insert({
+      thread_id: context.userId,
       sender_user_id: context.userId,
       body: `Data export request${data.note ? `\n\n${data.note}` : ""}`,
       recipient_context: {

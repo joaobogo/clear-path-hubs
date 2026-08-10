@@ -2,15 +2,22 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { listAllConversations } from "@/lib/conversations.functions";
+import { listCandidateSupportRequests } from "@/lib/admin.functions";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, MessageSquare, User } from "lucide-react";
+import { Briefcase, LifeBuoy, MessageSquare, User } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/messages")({
   loader: ({ context }) =>
-    context.queryClient.ensureQueryData({
-      queryKey: ["admin-conversations"],
-      queryFn: () => listAllConversations(),
-    }),
+    Promise.all([
+      context.queryClient.ensureQueryData({
+        queryKey: ["admin-conversations"],
+        queryFn: () => listAllConversations(),
+      }),
+      context.queryClient.ensureQueryData({
+        queryKey: ["admin-candidate-support"],
+        queryFn: () => listCandidateSupportRequests(),
+      }),
+    ]),
   head: () => ({
     meta: [
       { title: "Conversations · TaaSFlow admin" },
@@ -29,6 +36,10 @@ function AdminConversationsPage() {
   const { data } = useSuspenseQuery({
     queryKey: ["admin-conversations"],
     queryFn: () => listAllConversations(),
+  });
+  const { data: support } = useSuspenseQuery({
+    queryKey: ["admin-candidate-support"],
+    queryFn: () => listCandidateSupportRequests(),
   });
 
   return (
@@ -78,6 +89,53 @@ function AdminConversationsPage() {
           })}
         </ul>
       )}
+
+      <section className="space-y-3">
+        <header>
+          <h2 className="text-lg font-semibold tracking-tight">Candidate support</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Requests sent by candidates. These sit outside client workspaces — reply by email using
+            the address on the request.
+          </p>
+        </header>
+
+        {support.items.length === 0 ? (
+          <div className="rounded-lg border bg-card px-5 py-10 text-center">
+            <LifeBuoy className="mx-auto h-6 w-6 text-muted-foreground" />
+            <p className="mt-2 text-sm text-muted-foreground">No candidate support requests.</p>
+          </div>
+        ) : (
+          <ul className="divide-y rounded-lg border bg-card">
+            {support.items.map((r) => (
+              <li key={r.id} className="flex items-start gap-3 px-5 py-4">
+                <LifeBuoy className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="truncate text-sm font-medium">{r.candidate_name}</span>
+                    {r.category ? <Badge variant="secondary">{r.category}</Badge> : null}
+                    {r.reference ? (
+                      <Badge variant="outline">ref {r.reference}</Badge>
+                    ) : null}
+                    {r.unread ? <Badge>New</Badge> : null}
+                  </div>
+                  {r.candidate_email ? (
+                    <a
+                      href={`mailto:${r.candidate_email}`}
+                      className="mt-0.5 block truncate text-xs text-muted-foreground underline"
+                    >
+                      {r.candidate_email}
+                    </a>
+                  ) : null}
+                  <p className="mt-1 whitespace-pre-line text-sm text-muted-foreground">{r.body}</p>
+                </div>
+                <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                  {relTime(r.created_at)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </main>
   );
 }

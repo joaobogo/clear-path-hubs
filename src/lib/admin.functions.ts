@@ -1215,6 +1215,54 @@ export const listAdminMessages = createServerFn({ method: "GET" })
     return { threads };
   });
 
+/**
+ * Candidate support requests. These have no organisation and no conversation —
+ * the thread id is the candidate's own user id — so they never show up in the
+ * client conversation list and need their own ops queue.
+ */
+export const listCandidateSupportRequests = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const { data: rows } = await s
+      .from("messages")
+      .select("id,thread_id,sender_user_id,body,created_at,read_at,recipient_context")
+      .is("conversation_id", null)
+      .contains("recipient_context", { audience: "taasflow_ops" })
+      .order("created_at", { ascending: false })
+      .limit(200);
+
+    const messages = ((rows ?? []) as AnyRow[]).filter((m) => m.sender_user_id === m.thread_id);
+    if (messages.length === 0) return { items: [] as AnyRow[] };
+
+    const userIds = Array.from(new Set(messages.map((m) => m.thread_id)));
+    const { data: profiles } = await s
+      .from("candidate_profiles")
+      .select("user_id,full_name,email")
+      .in("user_id", userIds);
+    const byUser = new Map((profiles ?? []).map((p: AnyRow) => [p.user_id, p]));
+
+    const items = messages.map((m) => {
+      const ctx = (m.recipient_context ?? {}) as AnyRow;
+      const p = byUser.get(m.thread_id) as AnyRow | undefined;
+      return {
+        id: m.id as string,
+        candidate_user_id: m.thread_id as string,
+        candidate_name: (p?.full_name as string | undefined) ?? "Candidate",
+        candidate_email: (p?.email as string | undefined) ?? null,
+        kind: (ctx.kind as string | undefined) ?? "message",
+        category: (ctx.category as string | undefined) ?? null,
+        reference: (ctx.reference as string | undefined) ?? null,
+        body: m.body as string,
+        created_at: m.created_at as string,
+        unread: !m.read_at,
+      };
+    });
+    return { items };
+  });
+
+
 
 
 const matchVisInput = z.object({
