@@ -141,6 +141,12 @@ export const EMPLOYER_VIEW_FIELDS: EmployerViewField[] = [
   // process
   { key: "stage", group: "process", label: "Current stage" },
   { key: "delivered_at", group: "process", label: "Date you were shared with the employer" },
+  {
+    key: "contact_released",
+    group: "process",
+    label: "Whether the employer may see your contact details and CV file",
+  },
+
   { key: "stage_entered_at", group: "process", label: "Date you entered the current stage" },
   { key: "last_updated", group: "process", label: "Date the record was last updated" },
   {
