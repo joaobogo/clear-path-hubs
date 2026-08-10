@@ -16,11 +16,17 @@
  *  - excepted uses the same fit thresholds as eligible.
  */
 
+import { bandRange } from "./bands";
 import { classifyConfidence } from "./status-taxonomy";
 import type {
   EligibilityStatus,
   RecommendationStatus,
 } from "./status-taxonomy";
+
+/** Thresholds derived from the canonical band table — never re-typed here. */
+const TOP_BAND_MIN = bandRange("top").min;
+const STRONG_BAND_MIN = bandRange("strong").min;
+const CONSIDER_BAND_MIN = bandRange("consider").min;
 
 export function deriveRecommendation(input: {
   eligibility: EligibilityStatus;
@@ -28,6 +34,7 @@ export function deriveRecommendation(input: {
   evidence_confidence: number | null;
 }): { status: RecommendationStatus; reason: string } {
   const { eligibility, fit_score, evidence_confidence } = input;
+
 
   if (eligibility === "not_eligible") {
     return {
@@ -57,13 +64,13 @@ export function deriveRecommendation(input: {
 
   const conf = classifyConfidence(evidence_confidence);
 
-  if (fit_score >= 85 && (conf === "high" || conf === "medium")) {
+  if (fit_score >= TOP_BAND_MIN && (conf === "high" || conf === "medium")) {
     return {
       status: "shortlist",
       reason: "Top-band fit with sufficient evidence.",
     };
   }
-  if (fit_score >= 70) {
+  if (fit_score >= STRONG_BAND_MIN) {
     if (conf === "high" || conf === "medium") {
       return {
         status: "shortlist",
@@ -75,7 +82,7 @@ export function deriveRecommendation(input: {
       reason: "Strong score, but evidence confidence is limited.",
     };
   }
-  if (fit_score >= 50) {
+  if (fit_score >= CONSIDER_BAND_MIN) {
     return {
       status: "review",
       reason: "Consider-band fit — review manually before deciding.",
