@@ -5,6 +5,7 @@ import {
   findPlan,
   entitlementExpiry,
 } from "@/lib/payments-catalog";
+import { PUBLIC_BODY_LIMITS } from "@/lib/public-api/rate-limit";
 
 type Outcome = "paid" | "refunded" | "pending" | "unpaid";
 
@@ -260,6 +261,10 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const declared = Number(request.headers.get("content-length") ?? "");
+        if (Number.isFinite(declared) && declared > PUBLIC_BODY_LIMITS.webhook) {
+          return Response.json({ received: true, ignored: "payload too large" }, { status: 413 });
+        }
         const rawEnv = new URL(request.url).searchParams.get("env");
         if (rawEnv !== "sandbox" && rawEnv !== "live") {
           console.error("payments webhook: invalid env", rawEnv);
