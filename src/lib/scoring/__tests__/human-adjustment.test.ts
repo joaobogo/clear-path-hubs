@@ -104,9 +104,13 @@ describe("recomputeAdjustedScore", () => {
       calibration: DEFAULT_CALIBRATION,
       carriedCaps: [{ reason: "unparsed_cv: no text", cap: 0.3 }],
     });
-    expect(out.applied_cap).toBe(0.3);
+    // Reported on the 0-100 scale, matching raw_score/final_score and the
+    // score_runs.applied_cap column the value is persisted to.
+    expect(out.applied_cap).toBe(30);
+    expect(out.final_score).toBeLessThanOrEqual(out.applied_cap!);
     expect(out.cap_reason).toContain("unparsed_cv");
     expect(out.raw_score).toBeGreaterThan(out.final_score);
+
   });
 });
 

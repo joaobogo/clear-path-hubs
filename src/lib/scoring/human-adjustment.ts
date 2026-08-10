@@ -228,11 +228,15 @@ export function recomputeAdjustedScore(input: {
     raw_score,
     final_score,
     // Null, never a mirror of raw_score, when no ceiling was in force.
+    // Reported on the same 0-100 scale as raw_score/final_score, because this
+    // value is persisted to score_runs.applied_cap, which the database checks
+    // with `final_score <= applied_cap`. Caps are authored 0-1 in calibration.
     applied_cap: applied_caps.length
-      ? applied_caps[applied_caps.length - 1]!.cap
+      ? Math.round(Math.min(...applied_caps.map((c) => c.cap)) * 1000) / 10
       : null,
     applied_caps,
     cap_reason: applied_caps.length ? applied_caps.map((c) => c.reason).join(" | ") : null,
+
     must_have_coverage: Math.round(must_have_coverage * 10000) / 10000,
     preferred_coverage: Math.round(preferred_coverage * 10000) / 10000,
     fit_label,
