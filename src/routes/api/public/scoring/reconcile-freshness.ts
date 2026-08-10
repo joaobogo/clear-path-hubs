@@ -1,5 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
+import {
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  consumeRateLimit,
+  newTraceId,
+  rateLimitResponse,
+} from "@/lib/public-api/rate-limit";
 
 /**
  * Nightly score-freshness reconciliation. Queues a rescore for every match whose
@@ -17,6 +24,9 @@ export const Route = createFileRoute("/api/public/scoring/reconcile-freshness")(
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const cronDecision = consumeRateLimit("cron_invoke", clientIp(request), PUBLIC_RATE_LIMITS.cron_invoke);
+        if (cronDecision.limited) return rateLimitResponse(newTraceId("cron_invoke"), cronDecision);
+
         const provided =
           request.headers.get("apikey") ??
           request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ??

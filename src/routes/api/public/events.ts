@@ -1,4 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  consumeRateLimit,
+  newTraceId,
+} from "@/lib/public-api/rate-limit";
 
 /**
  * Public analytics beacon sink. Accepts `navigator.sendBeacon` payloads from
@@ -12,6 +18,12 @@ export const Route = createFileRoute("/api/public/events")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const decision = consumeRateLimit(
+          "analytics_beacon",
+          clientIp(request),
+          PUBLIC_RATE_LIMITS.analytics_beacon,
+        );
+        if (decision.limited) return new Response(null, { status: 429 });
         try {
           // Cap payload at 8 KB. Anything larger is dropped silently.
           const text = await request.text();

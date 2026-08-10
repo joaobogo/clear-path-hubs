@@ -106,6 +106,10 @@ export const PUBLIC_RATE_LIMITS = {
   public_status_read: { max: 40, windowMs: 60_000 },
   /** Calendar file download for one booking. */
   booking_ics: { max: 20, windowMs: 60_000 },
+  /** Anonymous analytics beacons. Generous: one page view fires several. */
+  analytics_beacon: { max: 120, windowMs: 60_000 },
+  /** Key-gated scheduler endpoints. Caps brute force against the key. */
+  cron_invoke: { max: 30, windowMs: 60_000 },
 } as const;
 
 /** Byte ceilings per public endpoint, sized to the largest legitimate payload. */

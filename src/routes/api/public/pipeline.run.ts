@@ -13,6 +13,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { readJsonWithLimit } from "@/lib/public-api/body-limit";
 import { PUBLIC_BODY_LIMITS } from "@/lib/public-api/rate-limit";
+import {
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  consumeRateLimit,
+  newTraceId,
+  rateLimitResponse,
+} from "@/lib/public-api/rate-limit";
 
 const schema = z.union([
   z.object({ match_id: z.string().uuid(), force: z.boolean().optional() }),
@@ -24,6 +31,9 @@ export const Route = createFileRoute("/api/public/pipeline/run")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const cronDecision = consumeRateLimit("cron_invoke", clientIp(request), PUBLIC_RATE_LIMITS.cron_invoke);
+        if (cronDecision.limited) return rateLimitResponse(newTraceId("cron_invoke"), cronDecision);
+
         const expected = process.env.SUPABASE_PUBLISHABLE_KEY;
         const provided = request.headers.get("apikey") ?? "";
         if (!expected || provided !== expected) {

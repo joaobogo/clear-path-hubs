@@ -1,4 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  consumeRateLimit,
+  newTraceId,
+  rateLimitResponse,
+} from "@/lib/public-api/rate-limit";
 
 /**
  * Interview reminders (24h and 1h) plus no-show flagging. Called by the
@@ -9,6 +16,9 @@ export const Route = createFileRoute("/api/public/candidate/interview-reminders"
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const cronDecision = consumeRateLimit("cron_invoke", clientIp(request), PUBLIC_RATE_LIMITS.cron_invoke);
+        if (cronDecision.limited) return rateLimitResponse(newTraceId("cron_invoke"), cronDecision);
+
         const apiKey =
           request.headers.get("apikey") ??
           request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ??
