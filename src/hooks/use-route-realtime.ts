@@ -102,7 +102,7 @@ export function useRouteRealtime(opts: {
 			if (burst) clearTimeout(burst);
 			supabase.removeChannel(channel);
 		};
-	}, [enabled, orgId, positionId, scope, qc]);
+	}, [enabled, orgId, positionId, scope, staffAllOrgs, qc]);
 
 	return { updatedAt, acknowledge };
 }
