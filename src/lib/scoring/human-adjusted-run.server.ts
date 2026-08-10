@@ -191,9 +191,16 @@ export async function createHumanAdjustedRun(opts: {
     ...(adj.cap_reason ? [`caps: ${adj.cap_reason}`] : []),
   ].join(" · ");
 
+  // A human-adjusted run has the same machine inputs but a different verdict
+  // set, so it must not collide with `score_runs_active_input_key` (one active
+  // completed run per identical match+input+rubric). Stamp a derived hash.
+  const runId = crypto.randomUUID();
+  const humanInputHash = `${base.input_hash ?? "none"}+human:${runId.slice(0, 8)}`;
+
   const { data: run, error: insErr } = await s
     .from("score_runs")
     .insert({
+      id: runId,
       candidate_match_id: opts.matchId,
       position_id: match.position_id,
       application_id: match.application_id,
