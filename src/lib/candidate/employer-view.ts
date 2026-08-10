@@ -87,6 +87,19 @@ export const EMPLOYER_VIEW_FIELDS: EmployerViewField[] = [
   { key: "fit", group: "role_fit", label: "Fit band for this role" },
   { key: "fit_label", group: "role_fit", label: "Fit band label" },
   {
+    key: "explanation",
+    group: "role_fit",
+    label: "Why the fit band came out the way it did",
+    note: "Employers see the requirements assessed and the passages from your application that supported each one — never a bare adjective.",
+  },
+  {
+    key: "human_review",
+    group: "role_fit",
+    label: "Whether a person reviewed the assessment by hand",
+    note: "Employers see the fact of the review and how many requirements were verified by a person — never the reviewer's internal note.",
+  },
+
+  {
     key: "score",
     group: "role_fit",
     label: "Numeric rating behind the fit band",
@@ -141,6 +154,12 @@ export const EMPLOYER_VIEW_FIELDS: EmployerViewField[] = [
   // process
   { key: "stage", group: "process", label: "Current stage" },
   { key: "delivered_at", group: "process", label: "Date you were shared with the employer" },
+  {
+    key: "contact_released",
+    group: "process",
+    label: "Whether the employer may see your contact details and CV file",
+  },
+
   { key: "stage_entered_at", group: "process", label: "Date you entered the current stage" },
   { key: "last_updated", group: "process", label: "Date the record was last updated" },
   {

@@ -105,7 +105,7 @@ export const getClientCandidates = createServerFn({ method: "GET" })
     let q = context.supabase
       .from("candidate_matches")
       .select(
-        `id, stage, delivered_at, position_id, application_id, candidate_profile_id,
+        `id, stage, delivered_at, position_id, application_id, candidate_profile_id, contact_released_at,
          candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, updated_at),
          positions(id, title, updated_at),
          score_runs:approved_score_run_id (fit_label, fit_band, result, requirement_coverage, evidence, completed_at, engine_version, input_hash)`,

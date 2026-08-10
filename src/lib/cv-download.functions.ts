@@ -11,9 +11,11 @@ const SIGNED_URL_TTL_SECONDS = 300; // short-lived: 5 minutes
  *  - platform staff (platform_admin / operations): always allowed
  *  - client org members: only after the candidate has been approved and
  *    published to that client (client_visibility = visible AND
- *    canonical_state = published_to_client) AND the member holds the
+ *    canonical_state = published_to_client), the candidate's contact details
+ *    have been released (contact_released_at), AND the member holds the
  *    view_candidates permission for that organization
  *  - the candidate themselves: their own document, always
+
  *
  * The signed link expires in 5 minutes; no permanent public URL is ever issued.
  */
@@ -39,13 +41,14 @@ export const getCandidateCvDownload = createServerFn({ method: "POST" })
     const { data: match, error: mErr } = await supabaseAdmin
       .from("candidate_matches")
       .select(
-        "id, candidate_profile_id, organization_id, client_visibility, canonical_state",
+        "id, candidate_profile_id, organization_id, client_visibility, canonical_state, contact_released_at",
       )
       .eq("id", matchId)
       .maybeSingle();
     if (mErr || !match) throw new Error("Not found");
 
     const orgId = match.organization_id as string | null;
+
 
     // 1. Platform staff.
     const { data: staffRow } = await supabaseAdmin
@@ -73,12 +76,18 @@ export const getCandidateCvDownload = createServerFn({ method: "POST" })
       }
     }
 
-    // 3. Client org member — only for approved + published candidates.
+    // 3. Client org member — only for approved + published candidates whose
+    //    contact details have been released. The raw CV carries the candidate's
+    //    email and phone, so it sits behind the *contact release* gate, not just
+    //    the visibility gate — same condition the `cvs_org_visible_read` storage
+    //    policy enforces at the database level.
     if (!authorized && orgId) {
       const released =
         match.client_visibility === "visible" &&
-        match.canonical_state === "published_to_client";
+        match.canonical_state === "published_to_client" &&
+        Boolean(match.contact_released_at);
       if (released) {
+
         const { data: allowed } = await supabase.rpc("has_client_permission", {
           _user: userId,
           _org: orgId,

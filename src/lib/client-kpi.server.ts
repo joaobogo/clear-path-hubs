@@ -244,10 +244,17 @@ export type ClientCandidateDTO = {
   match_id: string;
   stage: MatchStage;
   delivered_at: string | null;
+  /**
+   * Whether an admin has released this candidate's contact details to the
+   * employer. The raw CV carries email and phone, so CV download/preview is
+   * offered only when this is true — the server re-checks it regardless.
+   */
+  contact_released: boolean;
   /** When this candidate entered its current stage — powers the age badge. */
   stage_entered_at: string | null;
   last_updated: string | null;
   position: { id: string; title: string } | null;
+
   /**
    * True for a standout candidate: an approved score inside the top configured
    * band, or an actual hire. The threshold comes from the band configuration —
@@ -540,7 +547,7 @@ function normScreeningAnswers(raw: unknown): ClientCandidateDTO["screening_answe
  * detail view and the candidate's "what employers see" preview so the two can
  * never select different columns.
  */
-export const CLIENT_CANDIDATE_SELECT = `id, stage, delivered_at, position_id, application_id, candidate_profile_id,
+export const CLIENT_CANDIDATE_SELECT = `id, stage, delivered_at, position_id, application_id, candidate_profile_id, contact_released_at,
          score_stale, score_stale_reasons, score_stale_at, rescore_queued_at,
          candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, compensation_preferences, updated_at),
          positions(id, title, location, work_model, requirements, preferred_requirements, compensation, updated_at),
@@ -703,6 +710,8 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     match_id: row.id,
     stage: row.stage,
     delivered_at: row.delivered_at ?? null,
+    contact_released: Boolean(row.contact_released_at),
+
     stage_entered_at:
       row.stage === "delivered"
         ? (row.delivered_at ?? row.updated_at ?? null)
