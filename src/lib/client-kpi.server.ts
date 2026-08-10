@@ -244,10 +244,17 @@ export type ClientCandidateDTO = {
   match_id: string;
   stage: MatchStage;
   delivered_at: string | null;
+  /**
+   * Whether an admin has released this candidate's contact details to the
+   * employer. The raw CV carries email and phone, so CV download/preview is
+   * offered only when this is true — the server re-checks it regardless.
+   */
+  contact_released: boolean;
   /** When this candidate entered its current stage — powers the age badge. */
   stage_entered_at: string | null;
   last_updated: string | null;
   position: { id: string; title: string } | null;
+
   /**
    * True for a standout candidate: an approved score inside the top configured
    * band, or an actual hire. The threshold comes from the band configuration —
