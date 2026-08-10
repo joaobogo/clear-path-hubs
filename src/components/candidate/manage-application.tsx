@@ -36,6 +36,10 @@ export function ManageApplication({
   deleteFn: (args: {
     data: Record<string, unknown>;
   }) => Promise<{ ok: boolean; message: string }>;
+  exportFn: (args: {
+    data: Record<string, unknown>;
+  }) => Promise<{ ok: boolean; message: string }>;
+
 }) {
   const [open, setOpen] = useState(false);
   const [fullName, setFullName] = useState(details.full_name ?? "");
