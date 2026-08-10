@@ -650,13 +650,25 @@ export const submitApplication = createServerFn({ method: "POST" })
       if (orphanUpload) {
         try {
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          // Terminal on purpose. No application row exists behind this file, so
+          // no worker can ever consume it — writing it `queued` would leave a
+          // phantom job sitting in the queue forever. It is recorded as a
+          // failure with a reason so the exception board and the evidence-gaps
+          // alert below are the (human) path back.
           await supabaseAdmin.from("processing_jobs").insert({
             entity_type: "file",
             entity_id: orphanUpload.fileId,
             job_type: "parse",
-            status: "queued",
+            status: "failed",
+            attempts: 1,
+            error_code: "orphan_upload_no_application",
+            error_message:
+              "CV stored but the application row was never created, so there is nothing to parse against. Needs manual recovery.",
             trace_id,
+            started_at: new Date().toISOString(),
+            completed_at: new Date().toISOString(),
           });
+
         } catch (jobErr) {
           console.error("[submitApplication] orphan parse enqueue failed", trace_id, jobErr);
         }

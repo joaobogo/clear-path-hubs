@@ -352,7 +352,24 @@ export async function retryProcessingJob(
         };
       throw new Error(ins.error.message);
     }
+
+    // The canonical job now owns the work. Close the original so it does not
+    // keep sitting `queued` (no worker consumes its type) and re-appear on the
+    // board as a stuck job on every later pass.
+    if (job.status === "queued") {
+      await s
+        .from("processing_jobs")
+        .update({
+          status: "cancelled",
+          error_code: "superseded_by_retry",
+          error_message: `Retried as a parse_and_score job for application ${applicationId}.`,
+          completed_at: new Date().toISOString(),
+        })
+        .eq("id", jobId)
+        .eq("status", "queued");
+    }
   }
+
 
   await writeAudit(s, {
     action: RETRY_ACTION,

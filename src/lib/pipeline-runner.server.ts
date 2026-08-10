@@ -535,7 +535,12 @@ export async function forceManualReview(matchId: string, reason: string): Promis
 // Drain queued/stuck matches. Used by cron + fire-and-forget.
 export async function drainQueue(
   opts: { limit?: number } = {},
-): Promise<{ processed: number; results: PipelineOutcome[]; jobs: ApplicationJobOutcome[] }> {
+): Promise<{
+  processed: number;
+  results: PipelineOutcome[];
+  jobs: ApplicationJobOutcome[];
+  reaped: { job_id: string; job_type: string; entity_type: string }[];
+}> {
   const s = await getAdmin();
   const limit = Math.min(Math.max(opts.limit ?? 5, 1), 25);
   const staleBefore = new Date(Date.now() - 15 * 60 * 1000).toISOString();
@@ -557,8 +562,61 @@ export async function drainQueue(
     // Force through stuck non-queued rows.
     results.push(await runPipelineForMatch(r.id, { force: r.processing_state !== "queued" }));
   }
-  return { processed: results.length + jobs.length, results, jobs };
+
+  // 3. Close out anything queued that this worker structurally cannot consume,
+  //    whatever wrote it. Without this, a job of an unhandled type (or one
+  //    aimed at an entity the worker does not read) stays `queued` forever and
+  //    silently ages off the 7-day exception board.
+  const reaped = await reapUnconsumableJobs();
+  return { processed: results.length + jobs.length, results, jobs, reaped };
 }
+
+/** Queued rows older than this with no possible consumer are closed out. */
+const JOB_ORPHAN_MS = 30 * 60_000;
+
+/**
+ * Terminate queued jobs the worker cannot claim.
+ *
+ * `drainApplicationJobs` only consumes (job_type='parse_and_score',
+ * entity_type='application'). Any other queued combination has no consumer, so
+ * it is cancelled with `no_worker` rather than left pending indefinitely — the
+ * exception board then shows a job with a stated reason instead of a phantom
+ * queue entry. Kept generous (30 minutes) so a newly added worker/job type is
+ * never raced.
+ */
+export async function reapUnconsumableJobs(): Promise<
+  { job_id: string; job_type: string; entity_type: string }[]
+> {
+  const s = await getAdmin();
+  const before = new Date(Date.now() - JOB_ORPHAN_MS).toISOString();
+  const { data } = await (s as Any)
+    .from("processing_jobs")
+    .select("id,job_type,entity_type")
+    .eq("status", "queued")
+    .lt("created_at", before)
+    .or("job_type.neq.parse_and_score,entity_type.neq.application")
+    .limit(50);
+
+  const reaped: { job_id: string; job_type: string; entity_type: string }[] = [];
+  for (const row of (data ?? []) as Any[]) {
+    const { data: closed } = await (s as Any)
+      .from("processing_jobs")
+      .update({
+        status: "cancelled",
+        error_code: "no_worker",
+        error_message: `No worker consumes ${row.job_type} jobs for ${row.entity_type} entities; closed after ${JOB_ORPHAN_MS / 60000} minutes queued.`,
+        completed_at: new Date().toISOString(),
+      })
+      .eq("id", row.id)
+      .eq("status", "queued")
+      .select("id")
+      .maybeSingle();
+    if (closed) reaped.push({ job_id: row.id, job_type: row.job_type, entity_type: row.entity_type });
+  }
+  return reaped;
+}
+
+
 
 // ---------------------------------------------------------------------------
 // parse_and_score job worker
