@@ -64,13 +64,13 @@ export function deriveRecommendation(input: {
 
   const conf = classifyConfidence(evidence_confidence);
 
-  if (fit_score >= 85 && (conf === "high" || conf === "medium")) {
+  if (fit_score >= TOP_BAND_MIN && (conf === "high" || conf === "medium")) {
     return {
       status: "shortlist",
       reason: "Top-band fit with sufficient evidence.",
     };
   }
-  if (fit_score >= 70) {
+  if (fit_score >= STRONG_BAND_MIN) {
     if (conf === "high" || conf === "medium") {
       return {
         status: "shortlist",
@@ -82,7 +82,7 @@ export function deriveRecommendation(input: {
       reason: "Strong score, but evidence confidence is limited.",
     };
   }
-  if (fit_score >= 50) {
+  if (fit_score >= CONSIDER_BAND_MIN) {
     return {
       status: "review",
       reason: "Consider-band fit — review manually before deciding.",
