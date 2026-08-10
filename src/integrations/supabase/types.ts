@@ -15738,6 +15738,7 @@ export type Database = {
           position_id: string
         }[]
       }
+      public_position_posting: { Args: { _id: string }; Returns: Json }
       purge_expired_intake_drafts: { Args: never; Returns: number }
       resolve_talent_person: {
         Args: {
