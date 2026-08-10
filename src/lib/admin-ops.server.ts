@@ -191,7 +191,7 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
   const positionClaim = (id: unknown): QueueClaim =>
     typeof id === "string" && id ? { kind: "position" as const, id } : null;
 
-  return [
+  const queues: WorkQueue[] = [
     {
       key: "intakes_aging",
       label: "Intakes awaiting action",
