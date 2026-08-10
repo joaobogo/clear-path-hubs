@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { SUPPORT_BODY_MAX, SUPPORT_CATEGORIES, supportCategoryLabel } from "./support";
+import { buildSupportMessage, SUPPORT_BODY_MAX, SUPPORT_CATEGORIES } from "./support";
 
 type AnyRow = {
   from: (table: string) => any;
@@ -69,6 +69,7 @@ export const requestMyDataExport = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const supabase = context.supabase as unknown as AnyRow;
     const { error } = await supabase.from("messages").insert({
+      thread_id: context.userId,
       sender_user_id: context.userId,
       body: `Data export request${data.note ? `\n\n${data.note}` : ""}`,
       recipient_context: {
