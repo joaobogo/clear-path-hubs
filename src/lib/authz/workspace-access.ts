@@ -115,7 +115,10 @@ export async function readWorkspaceAccess(
     isMember,
     isAdmin: role === "client_admin" || role === "platform_admin" || role === "operations" || isStaff,
     canWrite: isStaff || (isMember && role !== "client_viewer"),
-    canManageTeam: isStaff || role === "client_admin" || role === "client_editor",
+    // Team and invitations are Admin-only, matching AREA_ROLES.team and the
+    // published role card ("an editor cannot manage the team").
+    canManageTeam: isStaff || role === "client_admin",
+
   };
 }
 
