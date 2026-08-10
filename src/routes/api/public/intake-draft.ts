@@ -42,12 +42,18 @@ const bodySchema = z.discriminatedUnion("action", [
   }),
 ]);
 
+/**
+ * Dedicated signing key for anonymous draft cookies. Purpose-scoped on
+ * purpose: reusing LOVABLE_API_KEY or the service-role key as an HMAC key
+ * mixes an unrelated credential into this surface, and a hardcoded fallback
+ * would make the tokens forgeable by anyone reading the repo. Fail closed.
+ */
 function draftSecret(): string {
-  return (
-    process.env["LOVABLE_API_KEY"] ||
-    process.env["SUPABASE_SERVICE_ROLE_KEY"] ||
-    "taasflow-intake-draft"
-  );
+  const secret = process.env["INTAKE_DRAFT_SECRET"];
+  if (!secret || secret.length < 32) {
+    throw new Error("INTAKE_DRAFT_SECRET is not configured");
+  }
+  return secret;
 }
 
 function sign(raw: string): string {
