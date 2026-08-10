@@ -22,6 +22,7 @@ import { Route as SitemapRouteImport } from './routes/sitemap'
 import { Route as SecurityRouteImport } from './routes/security'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as QaErrorProbeRouteImport } from './routes/qa-error-probe'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PlatformRouteImport } from './routes/platform'
@@ -267,6 +268,11 @@ const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QaErrorProbeRoute = QaErrorProbeRouteImport.update({
+  id: '/qa-error-probe',
+  path: '/qa-error-probe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -1299,6 +1305,7 @@ export interface FileRoutesByFullPath {
   '/platform': typeof PlatformRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/qa-error-probe': typeof QaErrorProbeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/security': typeof SecurityRoute
@@ -1494,6 +1501,7 @@ export interface FileRoutesByTo {
   '/platform': typeof PlatformRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/qa-error-probe': typeof QaErrorProbeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/security': typeof SecurityRoute
@@ -1681,6 +1689,7 @@ export interface FileRoutesById {
   '/platform': typeof PlatformRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/qa-error-probe': typeof QaErrorProbeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/security': typeof SecurityRoute
@@ -1878,6 +1887,7 @@ export interface FileRouteTypes {
     | '/platform'
     | '/pricing'
     | '/privacy'
+    | '/qa-error-probe'
     | '/reset-password'
     | '/robots.txt'
     | '/security'
@@ -2073,6 +2083,7 @@ export interface FileRouteTypes {
     | '/platform'
     | '/pricing'
     | '/privacy'
+    | '/qa-error-probe'
     | '/reset-password'
     | '/robots.txt'
     | '/security'
@@ -2259,6 +2270,7 @@ export interface FileRouteTypes {
     | '/platform'
     | '/pricing'
     | '/privacy'
+    | '/qa-error-probe'
     | '/reset-password'
     | '/robots.txt'
     | '/security'
@@ -2456,6 +2468,7 @@ export interface RootRouteChildren {
   PlatformRoute: typeof PlatformRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
+  QaErrorProbeRoute: typeof QaErrorProbeRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SecurityRoute: typeof SecurityRoute
@@ -2613,6 +2626,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/qa-error-probe': {
+      id: '/qa-error-probe'
+      path: '/qa-error-probe'
+      fullPath: '/qa-error-probe'
+      preLoaderRoute: typeof QaErrorProbeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -4259,6 +4279,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlatformRoute: PlatformRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
+  QaErrorProbeRoute: QaErrorProbeRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SecurityRoute: SecurityRoute,
