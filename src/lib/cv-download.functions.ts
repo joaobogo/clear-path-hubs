@@ -74,12 +74,18 @@ export const getCandidateCvDownload = createServerFn({ method: "POST" })
       }
     }
 
-    // 3. Client org member — only for approved + published candidates.
+    // 3. Client org member — only for approved + published candidates whose
+    //    contact details have been released. The raw CV carries the candidate's
+    //    email and phone, so it sits behind the *contact release* gate, not just
+    //    the visibility gate — same condition the `cvs_org_visible_read` storage
+    //    policy enforces at the database level.
     if (!authorized && orgId) {
       const released =
         match.client_visibility === "visible" &&
-        match.canonical_state === "published_to_client";
+        match.canonical_state === "published_to_client" &&
+        Boolean(match.contact_released_at);
       if (released) {
+
         const { data: allowed } = await supabase.rpc("has_client_permission", {
           _user: userId,
           _org: orgId,
