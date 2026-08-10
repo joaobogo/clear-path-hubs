@@ -535,7 +535,12 @@ export async function forceManualReview(matchId: string, reason: string): Promis
 // Drain queued/stuck matches. Used by cron + fire-and-forget.
 export async function drainQueue(
   opts: { limit?: number } = {},
-): Promise<{ processed: number; results: PipelineOutcome[]; jobs: ApplicationJobOutcome[] }> {
+): Promise<{
+  processed: number;
+  results: PipelineOutcome[];
+  jobs: ApplicationJobOutcome[];
+  reaped: { job_id: string; job_type: string; entity_type: string }[];
+}> {
   const s = await getAdmin();
   const limit = Math.min(Math.max(opts.limit ?? 5, 1), 25);
   const staleBefore = new Date(Date.now() - 15 * 60 * 1000).toISOString();
