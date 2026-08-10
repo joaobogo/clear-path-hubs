@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
-const processLeadEvent = vi.fn(async () => undefined);
+const processLeadEvent = vi.fn(async (_event: unknown) => undefined);
 vi.mock("../lead-pipeline.server", () => ({ processLeadEvent }));
 
 import { alertPartialIntake } from "../partial-intake-alert.server";
