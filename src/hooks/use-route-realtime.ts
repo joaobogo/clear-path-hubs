@@ -26,9 +26,23 @@ export function useRouteRealtime(opts: {
 	/** Optional single position to narrow match events to. */
 	positionId?: string | null;
 	enabled?: boolean;
+	/**
+	 * Staff desks work across every tenant, so they have no `orgId` to filter
+	 * on. Set this to subscribe unfiltered — RLS still decides which rows the
+	 * socket is allowed to deliver, so a client session cannot use this to see
+	 * another tenant's changes.
+	 */
+	staffAllOrgs?: boolean;
 }) {
 	const qc = useQueryClient();
-	const { scope, orgId, invalidateKeys, positionId, enabled = true } = opts;
+	const {
+		scope,
+		orgId,
+		invalidateKeys,
+		positionId,
+		enabled = true,
+		staffAllOrgs = false,
+	} = opts;
 	const [updatedAt, setUpdatedAt] = useState<number | null>(null);
 	const keysRef = useRef(invalidateKeys);
 	keysRef.current = invalidateKeys;
@@ -36,7 +50,8 @@ export function useRouteRealtime(opts: {
 	const acknowledge = useCallback(() => setUpdatedAt(null), []);
 
 	useEffect(() => {
-		if (!enabled || !orgId) return;
+		if (!enabled) return;
+		if (!orgId && !staffAllOrgs) return;
 
 		let burst: ReturnType<typeof setTimeout> | null = null;
 		const onRemoteChange = () => {
@@ -52,7 +67,10 @@ export function useRouteRealtime(opts: {
 
 		const matchFilter = positionId
 			? `position_id=eq.${positionId}`
-			: `organization_id=eq.${orgId}`;
+			: orgId
+				? `organization_id=eq.${orgId}`
+				: undefined;
+
 
 		const channel = supabase
 			.channel(`route:${scope}:${positionId ?? orgId}`)
