@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
+import { PRICE_SUB_BRONZE_USD } from "@/config/pricing-core";
 /** Agency benchmark used in the cost comparison. Contingency fees typically
  *  run 20–25% of first-year salary; we quote the midpoint and show the math. */
 const AGENCY_FEE_PCT = 22;
