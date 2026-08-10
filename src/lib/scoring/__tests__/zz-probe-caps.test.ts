@@ -5,6 +5,19 @@ import { DEFAULT_CALIBRATION as C } from "@/lib/scoring/engine-calibration";
 const reqs = (n: number, kw: string[]) =>
   Array.from({ length: n }, (_, i) => ({ id: `r${i}`, text: `req ${i} ${kw[i] ?? kw[0]}`, required: true, keywords: [kw[i] ?? kw[0]!] }));
 
+const richCv = `
+Chief pilot and operations lead. Managed dispatch rosters, crew scheduling, fatigue
+risk management, safety audits, maintenance coordination, fuel planning, weather
+briefings, regulatory filings, budget forecasting, vendor negotiation, contract
+renewals, incident investigation, simulator training, checkride preparation,
+ground handling oversight, catering logistics, deicing procedures, ramp safety,
+noise abatement, customer recovery, irregular operations, gate assignment,
+turnaround optimisation, baggage reconciliation, hazardous materials handling,
+typescript automation scripts for reporting dashboards, postgres data warehouse
+queries, tableau visualisation, stakeholder communication, union relations,
+recruitment pipelines, onboarding curriculum, mentorship programmes, quality
+assurance reviews, continuous improvement kaizen workshops, procurement policy.
+`;
 const perfectCv = `
 Senior engineer with deep experience in typescript, postgres, kubernetes and terraform.
 Led payments platform migration, ran hiring loops, owned SLOs. ${"Detailed delivery narrative. ".repeat(40)}
@@ -23,11 +36,12 @@ describe("hard ceilings probe", () => {
 
   it("must-have miss floors the score", () => {
     const r = scoreCandidate({
-      cv_text: perfectCv,
+      cv_text: richCv,
       requirements: [
-        { id: "a", text: "aviation dispatch certification", required: true, keywords: ["aviation dispatch"] },
-        { id: "b", text: "part 121 operations", required: true, keywords: ["part 121"] },
-        { id: "c", text: "typescript", required: true, keywords: ["typescript"] },
+        { id: "a", text: "medical device sterilisation", required: true, keywords: ["sterilisation"] },
+        { id: "b", text: "iso 13485 auditing", required: true, keywords: ["iso 13485"] },
+        { id: "c", text: "clinical trial monitoring", required: true, keywords: ["clinical trial"] },
+        { id: "d", text: "typescript", required: true, keywords: ["typescript"] },
       ],
       screening: [],
     } as any);
