@@ -92,7 +92,6 @@ import { Route as ApiPublicIntakeRouteImport } from './routes/api/public/intake'
 import { Route as ApiPublicExpressIntakeRouteImport } from './routes/api/public/express-intake'
 import { Route as ApiPublicEventsRouteImport } from './routes/api/public/events'
 import { Route as ApiPublicContactRouteImport } from './routes/api/public/contact'
-import { Route as ApiPublicBootstrapAdminRouteImport } from './routes/api/public/bootstrap-admin'
 import { Route as ApiPublicBlueprintRunRouteImport } from './routes/api/public/blueprint-run'
 import { Route as AuthenticatedMeSettingsRouteImport } from './routes/_authenticated/me.settings'
 import { Route as AuthenticatedMeProfileRouteImport } from './routes/_authenticated/me.profile'
@@ -621,11 +620,6 @@ const ApiPublicEventsRoute = ApiPublicEventsRouteImport.update({
 const ApiPublicContactRoute = ApiPublicContactRouteImport.update({
   id: '/api/public/contact',
   path: '/api/public/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicBootstrapAdminRoute = ApiPublicBootstrapAdminRouteImport.update({
-  id: '/api/public/bootstrap-admin',
-  path: '/api/public/bootstrap-admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicBlueprintRunRoute = ApiPublicBlueprintRunRouteImport.update({
@@ -1408,7 +1402,6 @@ export interface FileRoutesByFullPath {
   '/me/profile': typeof AuthenticatedMeProfileRoute
   '/me/settings': typeof AuthenticatedMeSettingsRoute
   '/api/public/blueprint-run': typeof ApiPublicBlueprintRunRoute
-  '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/api/public/events': typeof ApiPublicEventsRoute
   '/api/public/express-intake': typeof ApiPublicExpressIntakeRoute
@@ -1594,7 +1587,6 @@ export interface FileRoutesByTo {
   '/me/profile': typeof AuthenticatedMeProfileRoute
   '/me/settings': typeof AuthenticatedMeSettingsRoute
   '/api/public/blueprint-run': typeof ApiPublicBlueprintRunRoute
-  '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/api/public/events': typeof ApiPublicEventsRoute
   '/api/public/express-intake': typeof ApiPublicExpressIntakeRoute
@@ -1792,7 +1784,6 @@ export interface FileRoutesById {
   '/_authenticated/me/profile': typeof AuthenticatedMeProfileRoute
   '/_authenticated/me/settings': typeof AuthenticatedMeSettingsRoute
   '/api/public/blueprint-run': typeof ApiPublicBlueprintRunRoute
-  '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/api/public/events': typeof ApiPublicEventsRoute
   '/api/public/express-intake': typeof ApiPublicExpressIntakeRoute
@@ -1990,7 +1981,6 @@ export interface FileRouteTypes {
     | '/me/profile'
     | '/me/settings'
     | '/api/public/blueprint-run'
-    | '/api/public/bootstrap-admin'
     | '/api/public/contact'
     | '/api/public/events'
     | '/api/public/express-intake'
@@ -2176,7 +2166,6 @@ export interface FileRouteTypes {
     | '/me/profile'
     | '/me/settings'
     | '/api/public/blueprint-run'
-    | '/api/public/bootstrap-admin'
     | '/api/public/contact'
     | '/api/public/events'
     | '/api/public/express-intake'
@@ -2373,7 +2362,6 @@ export interface FileRouteTypes {
     | '/_authenticated/me/profile'
     | '/_authenticated/me/settings'
     | '/api/public/blueprint-run'
-    | '/api/public/bootstrap-admin'
     | '/api/public/contact'
     | '/api/public/events'
     | '/api/public/express-intake'
@@ -2501,7 +2489,6 @@ export interface RootRouteChildren {
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicBlueprintRunRoute: typeof ApiPublicBlueprintRunRoute
-  ApiPublicBootstrapAdminRoute: typeof ApiPublicBootstrapAdminRoute
   ApiPublicContactRoute: typeof ApiPublicContactRoute
   ApiPublicEventsRoute: typeof ApiPublicEventsRoute
   ApiPublicExpressIntakeRoute: typeof ApiPublicExpressIntakeRoute
@@ -3116,13 +3103,6 @@ declare module '@tanstack/react-router' {
       path: '/api/public/contact'
       fullPath: '/api/public/contact'
       preLoaderRoute: typeof ApiPublicContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/bootstrap-admin': {
-      id: '/api/public/bootstrap-admin'
-      path: '/api/public/bootstrap-admin'
-      fullPath: '/api/public/bootstrap-admin'
-      preLoaderRoute: typeof ApiPublicBootstrapAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/blueprint-run': {
@@ -4313,7 +4293,6 @@ const rootRouteChildren: RootRouteChildren = {
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicBlueprintRunRoute: ApiPublicBlueprintRunRoute,
-  ApiPublicBootstrapAdminRoute: ApiPublicBootstrapAdminRoute,
   ApiPublicContactRoute: ApiPublicContactRoute,
   ApiPublicEventsRoute: ApiPublicEventsRoute,
   ApiPublicExpressIntakeRoute: ApiPublicExpressIntakeRoute,

@@ -609,16 +609,13 @@ export const qaPersonaLogin = createServerFn({ method: "POST" })
 // via the public job application flow.
 // Idempotent: safe to re-run; existing memberships/profile are preserved.
 // ─────────────────────────────────────────────────────────────
-// Exact allowlist. A pattern like /^taasflow\.[a-z.]+$/ also matches
-// `taasflow.evil.com`, a domain an attacker can register and receive mail on,
-// so staff detection is a literal string comparison and nothing else.
-const STAFF_EMAIL_DOMAINS = new Set<string>(["taasflow.com"]);
+// There is deliberately NO staff email-domain allowlist here.
+// platform_admin / operations are granted ONLY through the audited staff
+// invite flow in /admin/team, which creates an `invited` membership that the
+// invitee then activates by signing in. Domain-based auto-grants are unsafe:
+// anyone able to receive mail at (or spoof a signup on) the domain would gain
+// full platform staff access with no audited approval step. Do not re-add.
 
-function isStaffEmailDomain(email: string | null): boolean {
-  if (!email) return false;
-  const domain = email.split("@")[1]?.toLowerCase() ?? "";
-  return STAFF_EMAIL_DOMAINS.has(domain);
-}
 
 /**
  * Read the caller's email and verification state from the auth service, not
@@ -647,14 +644,12 @@ const provisionSelfInput = z.object({
 });
 
 // Self-provisioning is intentionally restricted. It NEVER creates a new
-// workspace for a stranger. It only:
-//   1. Activates any pending `invited` memberships when the invitee signs
-//      in for the first time.
-//   2. Attaches verified @taasflow.* staff to the canonical TaaSFlow
-//      Platform org as platform_admin.
+// workspace for a stranger, and it NEVER grants a platform role. It only
+// activates pending `invited` memberships when the invitee signs in for the
+// first time — including staff invites issued from /admin/team.
 //
-// A user with no invitation and no staff email lands on /access-denied.
-// Client and admin access are never granted by public self-signup.
+// A user with no invitation lands on /access-denied, regardless of email
+// domain. Client and staff access are never granted by public self-signup.
 export const provisionClientMembershipForSelf = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw) => provisionSelfInput.parse(raw))
@@ -667,7 +662,6 @@ export const provisionClientMembershipForSelf = createServerFn({ method: "POST" 
     const identity = await readVerifiedIdentity(supabaseAdmin, userId);
     const email = identity.email ?? (claims?.email as string | undefined)?.toLowerCase() ?? null;
     const fullName = identity.fullName || (email ? email.split("@")[0] : "New user");
-    const isTaasflowStaff = identity.verified && isStaffEmailDomain(identity.email);
 
 
     // Ensure a profile row exists (harmless, grants no privilege).
@@ -719,43 +713,10 @@ export const provisionClientMembershipForSelf = createServerFn({ method: "POST" 
       return { ok: true, provisioned: true as const, reason: "invitation" as const };
     }
 
-    // Verified TaaSFlow staff → platform_admin on the platform org.
-    if (isTaasflowStaff) {
-      const { data: platformOrg } = await supabaseAdmin
-        .from("organizations")
-        .select("id")
-        .eq("name", "TaaSFlow Platform")
-        .maybeSingle();
-      let orgId = platformOrg?.id as string | undefined;
-      if (!orgId) {
-        const { data: newPlatform, error: newPErr } = await supabaseAdmin
-          .from("organizations")
-          .insert({ name: "TaaSFlow Platform", status: "active" })
-          .select("id")
-          .single();
-        if (newPErr) throw newPErr;
-        orgId = newPlatform.id as string;
-      }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error: memErr } = await (supabaseAdmin as any)
-        .from("memberships")
-        .upsert(
-          { user_id: userId, organization_id: orgId, role: "platform_admin", status: "active" },
-          { onConflict: "user_id,organization_id,role" },
-        );
-      if (memErr) throw memErr;
-      await supabaseAdmin.from("audit_events").insert({
-        actor_user_id: userId,
-        organization_id: orgId,
-        entity_type: "organizations",
-        entity_id: orgId,
-        action: "self.staff_provision_platform_admin",
-        after_state: { email },
-      });
-      return { ok: true, provisioned: true as const, reason: "staff" as const };
-    }
-
-    // No invitation, not staff, not a candidate: grant nothing.
+    // No invitation → no access. Staff roles (platform_admin / operations) are
+    // never self-granted here; they arrive as an `invited` membership created by
+    // an existing platform staff member in /admin/team and are activated by the
+    // invitation branch above, leaving an audit trail on both sides.
     return { ok: true, provisioned: false as const, reason: "no_grant" as const };
   });
 
