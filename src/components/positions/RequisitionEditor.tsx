@@ -3,6 +3,7 @@
 // controlled rescore. Saves independently of the intake wizard content.
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
@@ -145,7 +146,7 @@ export function RequisitionEditor({
       );
       await qc.invalidateQueries({ queryKey: ["requisition-meta", positionId] });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Save failed"),
+    onError: (e) => toastError(e, { fallback: "Save failed" }),
   });
 
   const rescoreMutation = useMutation({
@@ -154,7 +155,7 @@ export function RequisitionEditor({
       toast.success(`Rescore event recorded for ${res.candidates_affected} candidate(s)`);
       await qc.invalidateQueries({ queryKey: ["requisition-meta", positionId] });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not start rescore"),
+    onError: (e) => toastError(e, { fallback: "Could not start rescore" }),
   });
 
   if (isLoading || !form || !meta) {

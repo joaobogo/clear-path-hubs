@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { CalendarClock, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -151,7 +152,7 @@ function ResponseDateDialog({ orgId, hire }: { orgId: string; hire: HireRecordDT
       void qc.invalidateQueries({ queryKey: ["hires", orgId] });
       void qc.invalidateQueries({ queryKey: ["client-context"] });
     },
-    onError: (e: Error) => toast.error(e.message || "Couldn't save the date"),
+    onError: (e: Error) => toastError(e, { fallback: "Couldn't save the date" }),
   });
 
   return (

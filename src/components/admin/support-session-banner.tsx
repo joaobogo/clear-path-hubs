@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { ShieldAlert, Clock, Building2 } from "lucide-react";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { endSupportSession, listMySupportSessions } from "@/lib/support.functions";
 
 /** Minutes:seconds left, recomputed every second. */
@@ -50,7 +51,7 @@ function SessionRow({
       onEnded();
     },
     onError: (e: unknown) =>
-      toast.error(e instanceof Error ? e.message : "Could not end the session"),
+      toastError(e, { fallback: "Could not end the session" }),
   });
 
   return (

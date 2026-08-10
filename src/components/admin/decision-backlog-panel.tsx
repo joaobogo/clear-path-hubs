@@ -10,6 +10,7 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   getDecisionBacklog,
   logOfflineClientDecision,
@@ -78,7 +79,7 @@ export function DecisionBacklogPanel({
       toast.success("Follow-up sent to the client");
       void qc.invalidateQueries({ queryKey });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not send the follow-up"),
+    onError: (e) => toastError(e, { fallback: "Could not send the follow-up" }),
   });
 
   const record = useMutation({
@@ -93,7 +94,7 @@ export function DecisionBacklogPanel({
       setOpenFor(null);
       void qc.invalidateQueries({ queryKey });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not record the decision"),
+    onError: (e) => toastError(e, { fallback: "Could not record the decision" }),
   });
 
   const rows = query.data?.rows ?? [];

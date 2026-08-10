@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { Award, ArrowRight, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -49,7 +50,7 @@ export function ResurfacePanel({
       toast.success("Re-engagement logged");
       qc.invalidateQueries({ queryKey: ["talent-memory"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const [revealed, setRevealed] = useState<Set<string>>(new Set());

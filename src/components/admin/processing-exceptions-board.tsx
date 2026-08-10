@@ -9,6 +9,7 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   getProcessingExceptions,
   markProcessingJobPermanentlyFailed,
@@ -92,7 +93,7 @@ export function ProcessingExceptionsBoard({ className }: { className?: string })
       setReason("");
       await invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const board = query.data;

@@ -10,6 +10,7 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   claimScoringReview,
   listReviewTriage,
@@ -72,7 +73,7 @@ export function ReviewTriageList({
       toast.success("Review claimed — it is hidden from other reviewers");
       invalidate();
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not claim this review"),
+    onError: (e) => toastError(e, { fallback: "Could not claim this review" }),
   });
 
   const release = useMutation({
@@ -81,7 +82,7 @@ export function ReviewTriageList({
       toast.success("Claim released");
       invalidate();
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not release the claim"),
+    onError: (e) => toastError(e, { fallback: "Could not release the claim" }),
   });
 
   const releaseStale = useMutation({
@@ -94,7 +95,7 @@ export function ReviewTriageList({
       );
       invalidate();
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not release stale claims"),
+    onError: (e) => toastError(e, { fallback: "Could not release stale claims" }),
   });
 
   if (list.isError) {

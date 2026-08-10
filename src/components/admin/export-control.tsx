@@ -23,6 +23,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   getExportDownloadUrl,
   listMyExports,
@@ -84,13 +85,13 @@ export function ExportControl({ scope }: { scope: ExportScope }) {
       toast.success(`Export requested — job ${res.job_id.slice(0, 8)}`);
       void qc.invalidateQueries({ queryKey: ["my-exports"] });
     },
-    onError: (e: Error) => toast.error(e.message || "Could not request the export."),
+    onError: (e: Error) => toastError(e, { fallback: "Could not request the export." }),
   });
 
   const retry = useMutation({
     mutationFn: (jobId: string) => retryFn({ data: { job_id: jobId } }),
     onSettled: () => void qc.invalidateQueries({ queryKey: ["my-exports"] }),
-    onError: (e: Error) => toast.error(e.message || "Retry failed."),
+    onError: (e: Error) => toastError(e, { fallback: "Retry failed." }),
   });
 
   const download = useMutation({
@@ -98,7 +99,7 @@ export function ExportControl({ scope }: { scope: ExportScope }) {
     onSuccess: (res) => {
       window.open(res.url, "_blank", "noopener,noreferrer");
     },
-    onError: (e: Error) => toast.error(e.message || "Could not open the file."),
+    onError: (e: Error) => toastError(e, { fallback: "Could not open the file." }),
   });
 
   const rows = history.data ?? [];

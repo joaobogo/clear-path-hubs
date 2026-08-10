@@ -9,6 +9,7 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   getPositionsNeedingAttention,
   listPositionOwnerOptions,
@@ -77,7 +78,7 @@ export function PositionsAttentionQueue({ includeTest }: { includeTest: boolean 
       toast.success("Marked reviewed — hidden until tomorrow (UTC)");
       void invalidate();
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not save the review"),
+    onError: (e) => toastError(e, { fallback: "Could not save the review" }),
   });
 
   const ownerMutation = useMutation({
@@ -87,7 +88,7 @@ export function PositionsAttentionQueue({ includeTest }: { includeTest: boolean 
       toast.success("Owner updated");
       void invalidate();
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not reassign the owner"),
+    onError: (e) => toastError(e, { fallback: "Could not reassign the owner" }),
   });
 
   const data = queue.data;

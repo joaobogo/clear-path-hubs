@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { getStripe, getStripeEnvironment } from "@/lib/stripe";
 import {
   getPlanState,
@@ -145,7 +146,7 @@ export function PlanPanel({
       );
       refresh();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const cancel = useMutation({
@@ -162,7 +163,7 @@ export function PlanPanel({
       );
       refresh();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const resume = useMutation({
@@ -175,7 +176,7 @@ export function PlanPanel({
       toast.success("Your plan will keep running.");
       refresh();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const sub = state.data?.subscription ?? null;

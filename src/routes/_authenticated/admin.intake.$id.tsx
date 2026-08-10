@@ -4,6 +4,7 @@ import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-q
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   getIntakeSubmission,
   convertIntakeToPosition,
@@ -67,7 +68,7 @@ function IntakeDetail() {
       );
       navigate({ to: "/admin/positions/$id", params: { id: res.position_id } });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Conversion failed."),
+    onError: (e) => toastError(e, { fallback: "Conversion failed." }),
   });
   const rejectM = useMutation({
     mutationFn: () => reject({ data: { id, reason } }),
@@ -76,7 +77,7 @@ function IntakeDetail() {
       toast.success("Intake rejected.");
       setReason("");
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Reject failed."),
+    onError: (e) => toastError(e, { fallback: "Reject failed." }),
   });
   const clarifyM = useMutation({
     mutationFn: () => clarify({ data: { id, note } }),
@@ -85,7 +86,7 @@ function IntakeDetail() {
       toast.success("Clarification requested.");
       setNote("");
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to send."),
+    onError: (e) => toastError(e, { fallback: "Failed to send." }),
   });
 
   if (!data) {

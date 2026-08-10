@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   listDeliveryFailureQueue,
   releaseNotificationRecipient,
@@ -79,7 +80,7 @@ export function DeliveryFailuresPanel() {
       }
       void invalidate();
     },
-    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Retry failed"),
+    onError: (e: unknown) => toastError(e, { fallback: "Retry failed" }),
   });
 
   const suppressMut = useMutation({
@@ -94,7 +95,7 @@ export function DeliveryFailuresPanel() {
       setSuppressReason("");
       void invalidate();
     },
-    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Could not suppress"),
+    onError: (e: unknown) => toastError(e, { fallback: "Could not suppress" }),
   });
 
   const releaseMut = useMutation({
@@ -103,7 +104,7 @@ export function DeliveryFailuresPanel() {
       toast.success("Suppression lifted.");
       void invalidate();
     },
-    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Could not lift"),
+    onError: (e: unknown) => toastError(e, { fallback: "Could not lift" }),
   });
 
   const items = (query.data?.items ?? []) as Item[];

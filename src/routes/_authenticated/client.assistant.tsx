@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { Bot, Send, RotateCcw, Sparkles, ShieldCheck } from "lucide-react";
 import {
   askAssistant,
@@ -97,7 +98,7 @@ function AssistantPage() {
       setInput("");
       setTimeout(() => composerRef.current?.focus(), 30);
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const reset = useMutation({
@@ -108,7 +109,7 @@ function AssistantPage() {
       toast.success("Started a new conversation");
       setTimeout(() => composerRef.current?.focus(), 30);
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   // Optimistic user echo
@@ -167,7 +168,7 @@ function AssistantPage() {
         setDismissedActions((s) => new Set(s).add(action.action_id));
       }
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Action failed");
+      toastError(e, { fallback: "Action failed" });
     } finally {
       setRunningActionId(null);
     }

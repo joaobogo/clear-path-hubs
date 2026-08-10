@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   listMyCvVersions,
   listMyCvApplications,
@@ -95,7 +96,7 @@ function CvPage() {
         );
       }
     },
-    onError: (e: Error) => toast.error(e.message.replace(/^Error: /, "")),
+    onError: (e: Error) => toastError(e),
   });
 
   const applyScope = useMutation({
@@ -103,7 +104,7 @@ function CvPage() {
       applyFn({ data: vars }),
     onSuccess: (r) => {
       if (!r.ok) {
-        toast.error(r.message);
+        toastError(r);
         return;
       }
       const names = r.updated.map((u) => u.role_title).join(", ");

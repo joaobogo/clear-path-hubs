@@ -11,6 +11,7 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   approveApprovalItem,
   bulkApproveApprovals,
@@ -220,7 +221,7 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
       setSelected({});
       invalidate();
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Approval failed."),
+    onError: (e) => toastError(e, { fallback: "Approval failed." }),
     onSettled: () => setBusyId(null),
   });
 
@@ -234,7 +235,7 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
       setSelected({});
       invalidate();
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Decline failed."),
+    onError: (e) => toastError(e, { fallback: "Decline failed." }),
     onSettled: () => setBusyId(null),
   });
 
@@ -254,7 +255,7 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
       setSelected({});
       invalidate();
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Bulk approve failed."),
+    onError: (e) => toastError(e, { fallback: "Bulk approve failed." }),
   });
 
   const allItems = useMemo(

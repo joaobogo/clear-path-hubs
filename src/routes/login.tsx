@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { z } from "zod";
 import { Eye, EyeOff } from "lucide-react";
 import {
@@ -311,7 +312,7 @@ function LoginPage() {
       const { action_link } = await runPersona({ data: { persona: key } });
       window.location.href = action_link;
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Persona login failed");
+      toastError(err, { fallback: "Persona login failed" });
       setLoading(false);
     }
   };

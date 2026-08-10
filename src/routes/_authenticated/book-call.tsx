@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { CalendarClock, Check, ExternalLink, Loader2, PhoneCall } from "lucide-react";
 import {
   cancelDiscoveryCall,
@@ -123,7 +124,7 @@ function BookCallPage() {
     },
     onSuccess: async (result) => {
       if (!result.ok) {
-        toast.error(result.message);
+        toastError(result);
         return;
       }
       const host = embedRef.current;

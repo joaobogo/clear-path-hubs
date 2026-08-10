@@ -11,6 +11,7 @@ import { useRouteRealtime } from "@/hooks/use-route-realtime";
 import { z } from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   searchCandidateIndex,
   listCandidateCountries,
@@ -299,7 +300,7 @@ function CandidatesPage() {
       setSelected([]);
       qc.invalidateQueries({ queryKey: ["candidate-index"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const allChecked = rows.length > 0 && selected.length === rows.length;

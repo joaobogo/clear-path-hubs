@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   Archive,
   ArchiveRestore,
@@ -59,7 +60,7 @@ export function MemorySheet({
       toast.success("Updated");
       qc.invalidateQueries({ queryKey: ["talent-memory"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const reengage = useMutation({

@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { AlertTriangle, Clock, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -63,7 +64,7 @@ export function StageAgingPanel({ positionId }: { positionId: string }) {
       void qc.invalidateQueries({ queryKey: ["admin-position", positionId] });
     },
     onError: (e: unknown) =>
-      toast.error(e instanceof Error ? e.message : "Could not move the candidate."),
+      toastError(e, { fallback: "Could not move the candidate." }),
   });
 
   const rows = useMemo(() => {

@@ -2,6 +2,7 @@ import { Fragment, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { acknowledgeBreach } from "@/lib/admin-sla-breach.functions";
 import type { SlaBreachList, SlaBreachRow } from "@/lib/admin-sla-breach.server";
 import { Badge } from "@/components/ui/badge";
@@ -85,7 +86,7 @@ export function SlaBreachPanel({ data, isLoading, isError, error, onRetry, query
       setNote("");
       void queryClient.invalidateQueries({ queryKey });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const exportCsv = () => {

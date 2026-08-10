@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   listClients,
 } from "@/lib/admin.functions";
@@ -123,7 +124,7 @@ function CreateUserPanel({ organizationId }: { organizationId: string | null }) 
       qc.invalidateQueries({ queryKey: ["org-team"] });
       qc.invalidateQueries({ queryKey: ["platform-staff"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   return (
@@ -258,7 +259,7 @@ function OrgTeamList({ organizationId }: { organizationId: string }) {
         toast.success(msg);
         qc.invalidateQueries({ queryKey: ["org-team", organizationId] });
       },
-      onError: (e: Error) => toast.error(e.message),
+      onError: (e: Error) => toastError(e),
     });
 
   const deact = mut((i: { membership_id: string }) => runDeact({ data: i }), "Deactivated");
@@ -271,7 +272,7 @@ function OrgTeamList({ organizationId }: { organizationId: string }) {
     mutationFn: (i: { auth_user_id: string; email: string }) =>
       runReset({ data: { auth_user_id: i.auth_user_id } }).then((r) => ({ ...r, email: i.email })),
     onSuccess: (r) => setResetShown({ email: r.email, password: r.temporary_password }),
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   return (

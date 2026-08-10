@@ -10,6 +10,7 @@ import {
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { getClientContext } from "@/lib/client-context.functions";
 import { getClientPositionDetail } from "@/lib/client-positions.functions";
 import { moveMatchStage } from "@/lib/client-decisions.functions";
@@ -160,7 +161,7 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
       void refetch();
     },
     onError: (e: unknown) =>
-      toast.error(e instanceof Error ? e.message : "We couldn't record that. Please try again."),
+      toastError(e, { fallback: "We couldn't record that. Please try again." }),
   });
 
   const move = useMutation({

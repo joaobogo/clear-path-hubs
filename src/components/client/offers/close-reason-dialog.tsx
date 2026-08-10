@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   transitionHire,
   CLOSE_REASON_LABEL,
@@ -61,7 +62,7 @@ export function CloseReasonDialog({
       toast.success(`Marked as ${HIRE_STATUS_LABEL[target]}`);
       onSaved();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   return (

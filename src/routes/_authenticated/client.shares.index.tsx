@@ -13,6 +13,7 @@ import {
   Clock,
 } from "lucide-react";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   listShortlistShares,
   revokeShortlistShare,
@@ -70,7 +71,7 @@ function SharesPage() {
       toast.success("Share link revoked");
       qc.invalidateQueries({ queryKey: ["shares-list", orgId] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   return (

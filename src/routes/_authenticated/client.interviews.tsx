@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   listClientInterviews,
   listSchedulableCandidates,
@@ -185,7 +186,7 @@ function InterviewsPage() {
       invalidate();
       setDetail(null);
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const confirmMut = useMutation({
@@ -197,7 +198,7 @@ function InterviewsPage() {
     },
     onError: (e: Error) => {
       if (e.message === "scheduled_in_past") toast.error("Choose a future time.");
-      else toast.error(e.message);
+      else toastError(e);
     },
   });
 
@@ -208,7 +209,7 @@ function InterviewsPage() {
       invalidate();
       setDetail(null);
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const completeMut = useMutation({
@@ -219,7 +220,7 @@ function InterviewsPage() {
       invalidate();
       setDetail(null);
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   return (

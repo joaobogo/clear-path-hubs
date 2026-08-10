@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { createShortlistShare, type ShareMode } from "@/lib/shares.functions";
 
 type Props = {
@@ -71,7 +72,7 @@ export function ShareShortlistDialog({
       setResult({ token: r.token, expires_at: r.expires_at });
       toast.success("Share link ready");
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const shareUrl = result
