@@ -138,7 +138,7 @@ describe("admin CSV export", () => {
     expect(res.status).toBe("completed");
     expect(captured.limit).toBe(EXPORT_ROW_CAP);
 
-    const dataRows = captured.csv.split("\n").filter((l) => l.startsWith("m"));
+    const dataRows = captured.csv.split("\n").filter((l) => /^m\d/.test(l));
     expect(dataRows).toHaveLength(EXPORT_ROW_CAP);
     expect(captured.csv).toContain(`# Rows: ${EXPORT_ROW_CAP} (capped at ${EXPORT_ROW_CAP} of ${EXPORT_ROW_CAP + 4321})`);
     expect(captured.update["row_count"]).toBe(EXPORT_ROW_CAP);
