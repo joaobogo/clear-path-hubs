@@ -194,11 +194,15 @@ export const FitHero = memo(function FitHero({
   candidate: ClientCandidateDTO;
 }) {
   const fit = candidate.fit;
-  const score = candidate.score;
   const ring = accentToRing(fit.accent);
   const bg = accentToSoftBg(fit.accent);
   const dashArray = 251.2; // 2π·40
-  const dashOffset = score != null ? dashArray * (1 - score / 100) : dashArray;
+  // The ring encodes the fit band, not the internal number — a percentage arc
+  // would leak engine precision onto an employer surface.
+  const BAND_FILL: Record<string, number> = {
+    exceptional: 1, strong: 0.8, good: 0.6, mixed: 0.4, limited: 0.2, not_recommended: 0.08,
+  };
+  const dashOffset = dashArray * (1 - (BAND_FILL[fit.band] ?? 0.4));
 
   return (
     <section
@@ -231,7 +235,7 @@ export const FitHero = memo(function FitHero({
             </p>
           )}
         </div>
-        {score != null && (
+        {candidate.fit_label != null && (
           <div className="flex items-center gap-4">
             <div
               role="img"

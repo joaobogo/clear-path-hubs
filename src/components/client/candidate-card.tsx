@@ -60,11 +60,14 @@ function stageLabel(s: Stage): string {
 
 export function CandidateCard({
   candidate,
+  orgId: orgIdProp,
   compareSelected,
   compareDisabled,
   onToggleCompare,
 }: {
   candidate: ClientCandidateDTO;
+  /** Active workspace id. Falls back to the ?org search param when omitted. */
+  orgId?: string | null;
   compareSelected?: boolean;
   compareDisabled?: boolean;
   onToggleCompare?: (id: string) => void;
@@ -79,7 +82,9 @@ export function CandidateCard({
   const gaps = rationale.gaps;
   const chips = React.useMemo(() => fitChips(c), [c]);
 
-  const orgId = search.org ?? null;
+  // Decision actions need the workspace id. The ?org param is only present when
+  // a multi-workspace user is switching, so fall back to the active workspace.
+  const orgId = orgIdProp ?? search.org ?? null;
 
   return (
     <div
