@@ -163,7 +163,7 @@ describe("calibration desk outcome funnel", () => {
 
   it("reports structured decline reasons", async () => {
     const desk = await loadCalibrationDesk(fakeAdmin(fixture) as never, {});
-    expect(desk.decline_reasons[0]).toMatchObject({ reason_code: "skills_gap", count: 1, share: 1 });
+    expect(desk.decline_reasons[0]).toMatchObject({ code: "skills_gap", count: 1, share: 1 });
   });
 
   it("includes test organisations only when explicitly asked", async () => {
