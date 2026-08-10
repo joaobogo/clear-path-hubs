@@ -11,9 +11,11 @@ const SIGNED_URL_TTL_SECONDS = 300; // short-lived: 5 minutes
  *  - platform staff (platform_admin / operations): always allowed
  *  - client org members: only after the candidate has been approved and
  *    published to that client (client_visibility = visible AND
- *    canonical_state = published_to_client) AND the member holds the
+ *    canonical_state = published_to_client), the candidate's contact details
+ *    have been released (contact_released_at), AND the member holds the
  *    view_candidates permission for that organization
  *  - the candidate themselves: their own document, always
+
  *
  * The signed link expires in 5 minutes; no permanent public URL is ever issued.
  */
