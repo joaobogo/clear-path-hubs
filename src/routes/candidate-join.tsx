@@ -65,7 +65,7 @@ const STEPS = [
 const AFTER = [
   "You get an application confirmation with a reference ID.",
   "Structured status updates appear in your dashboard as the review progresses.",
-  "For briefs you rank on, we ask consent before sending your details to the client.",
+  "For briefs you go forward on, we ask consent before sending your details to the client.",
   "You can pause, edit or delete your profile at any time.",
 ];
 
