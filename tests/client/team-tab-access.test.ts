@@ -32,7 +32,7 @@ describe("team tab access", () => {
   });
 
   it("lets platform staff through in support view", () => {
-    expect(flagsFor("platform_admin").canManageTeam).toBe(true);
+    expect(flagsFor("platform_admin", true).canManageTeam).toBe(true);
     expect(canAccessArea("operations", "team")).toBe(true);
   });
 
