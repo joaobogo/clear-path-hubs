@@ -3,10 +3,13 @@ import { LegalPage } from "@/components/marketing/legal-page";
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 
-const FALLBACK_TITLE = "Terms of Service";
-const FALLBACK_DESCRIPTION =
+// Exported because automatic code splitting moves the route component into its
+// own chunk, which then imports these bindings back from this module. A plain
+// `const` here compiles to a missing export and breaks hydration app-wide.
+export const FALLBACK_TITLE = "Terms of Service";
+export const FALLBACK_DESCRIPTION =
   "Terms of Service governing the use of TaaSFlow.";
-const EXTRA_NOTE =
+export const EXTRA_NOTE =
   "TaaSFlow runs on a managed Postgres database, authentication and file storage operated by Supabase, with application hosting, CDN and WAF services on Cloudflare's edge network. Payments are processed by Stripe. The full sub-processor register is published in section 6 of our Privacy Notice. This wording is pending review by TaaSFlow's legal counsel.";
 
 export const Route = createFileRoute("/terms")({
