@@ -49,6 +49,7 @@ function fakeClient(opts: {
         };
       }
       if (table === "audit_events") return { insert: async () => ({ error: null }) };
+      if (table === "v_admin_candidate_index") return { select: () => viewQuery() };
       // organizations / positions / intake_submissions reads from the test-scope
       // helper: no test orgs in this fixture.
       return {
