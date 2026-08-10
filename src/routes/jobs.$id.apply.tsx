@@ -229,6 +229,13 @@ function ApplyPage() {
   // public applicant staring at a half-rendered step 1.
   useEffect(() => {
     let alive = true;
+    // Never gate the form on this probe. A slow or offline auth call must not
+    // leave an applicant staring at a step that never becomes interactive, so
+    // we fall back to "not signed in" — the correct assumption for a public
+    // application — after a short wait.
+    const fallback = setTimeout(() => {
+      if (alive) setSignedIn((current) => (current === null ? false : current));
+    }, 4000);
     (async () => {
       const { supabase } = await import("@/integrations/supabase/client");
       const { data } = await supabase.auth.getSession();
@@ -243,6 +250,7 @@ function ApplyPage() {
     });
     return () => {
       alive = false;
+      clearTimeout(fallback);
     };
   }, []);
 
