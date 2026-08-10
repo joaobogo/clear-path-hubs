@@ -6,6 +6,8 @@ import {
 import { useQuery, useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, useEffect, useMemo } from "react";
+import { useRouteRealtime } from "@/hooks/use-route-realtime";
+
 import { z } from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { toast } from "sonner";
