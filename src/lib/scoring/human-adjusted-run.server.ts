@@ -238,11 +238,22 @@ export async function createHumanAdjustedRun(opts: {
       must_have_coverage: adj.must_have_coverage,
       preferred_coverage: adj.preferred_coverage,
       contradiction_status: base.contradiction_status,
-      input_hash: base.input_hash,
+      input_hash: humanInputHash,
     })
     .select("id")
     .single();
   if (insErr || !run) throw new Error(insErr?.message ?? "human_adjusted_insert_failed");
+
+  // The machine run stays readable, but it is no longer the active one.
+  await s
+    .from("score_runs")
+    .update({
+      superseded_at: now,
+      superseded_by_run_id: run.id,
+      superseded_reason: "human_adjusted",
+    })
+    .eq("id", base.id)
+    .is("superseded_at", null);
 
   await s
     .from("candidate_matches")
