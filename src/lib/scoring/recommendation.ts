@@ -23,12 +23,18 @@ import type {
   RecommendationStatus,
 } from "./status-taxonomy";
 
+/** Thresholds derived from the canonical band table — never re-typed here. */
+const TOP_BAND_MIN = bandRange("top").min;
+const STRONG_BAND_MIN = bandRange("strong").min;
+const CONSIDER_BAND_MIN = bandRange("consider").min;
+
 export function deriveRecommendation(input: {
   eligibility: EligibilityStatus;
   fit_score: number | null;
   evidence_confidence: number | null;
 }): { status: RecommendationStatus; reason: string } {
   const { eligibility, fit_score, evidence_confidence } = input;
+
 
   if (eligibility === "not_eligible") {
     return {
