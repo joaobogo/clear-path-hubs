@@ -3,7 +3,7 @@ import { LegalPage } from "@/components/marketing/legal-page";
 import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 
-const entry = getPage("terms");
+export const entry = getPage("terms");
 
 export const Route = createFileRoute("/terms")({
   head: () =>
