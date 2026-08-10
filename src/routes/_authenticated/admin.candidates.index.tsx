@@ -237,6 +237,17 @@ function CandidatesPage() {
 
   const filters = useMemo(() => buildFilters(search), [search]);
 
+  // Staff work across every tenant, so this desk subscribes unfiltered (RLS
+  // still gates delivery). A teammate moving a candidate elsewhere refreshes
+  // this queue in place instead of leaving a reviewer acting on stale rows.
+  useRouteRealtime({
+    scope: "admin-candidate-index",
+    orgId: search.organization_id || null,
+    staffAllOrgs: true,
+    invalidateKeys: [["candidate-index"], ["admin-work-queues"]],
+  });
+
+
   // Primary read matches every other admin desk: primed in the loader, read
   // with suspense, so the page never flickers through a bare loading state.
   const {
