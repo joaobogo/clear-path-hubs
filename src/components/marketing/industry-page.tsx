@@ -393,6 +393,7 @@ function HeroSystemsCapability({ ctx }: { ctx: Ctx }) {
             </aside>
           ) : null}
         </div>
+        <HeroImageBand ctx={ctx} />
       </PublicPage>
     </PublicSection>
   );
@@ -536,6 +537,7 @@ function HeroRiskJudgment({ ctx }: { ctx: Ctx }) {
             </div>
           </aside>
         </div>
+        <HeroImageBand ctx={ctx} />
       </PublicPage>
     </PublicSection>
   );
@@ -586,6 +588,7 @@ function HeroOperationsDelivery({ ctx }: { ctx: Ctx }) {
             <FlowNode label="Outcome evidenced" value={flowOutcome} />
           </div>
         </div>
+        <HeroImageBand ctx={ctx} />
       </PublicPage>
     </PublicSection>
   );
@@ -724,6 +727,7 @@ function HeroExpertiseGrowth({ ctx }: { ctx: Ctx }) {
             </aside>
           ) : null}
         </div>
+        <HeroImageBand ctx={ctx} />
       </PublicPage>
     </PublicSection>
   );
