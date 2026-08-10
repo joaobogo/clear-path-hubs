@@ -152,7 +152,7 @@ export function OnboardingWizard({ orgId }: { orgId?: string }) {
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
+    <div id="ob-wizard" className="grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
       <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
         <SequenceProgress
           complete={state.complete}
