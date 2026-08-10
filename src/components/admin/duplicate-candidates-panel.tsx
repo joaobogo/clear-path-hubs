@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -141,7 +142,7 @@ function PairRow({ pair }: { pair: DuplicatePair }) {
       setNote("");
       invalidate();
     },
-    onError: (e: Error) => toast.error(e.message || "Merge failed"),
+    onError: (e: Error) => toastError(e, { fallback: "Merge failed" }),
   });
 
   const distinct = useMutation({
@@ -159,7 +160,7 @@ function PairRow({ pair }: { pair: DuplicatePair }) {
       setNote("");
       invalidate();
     },
-    onError: (e: Error) => toast.error(e.message || "Could not save"),
+    onError: (e: Error) => toastError(e, { fallback: "Could not save" }),
   });
 
   const busy = merge.isPending || distinct.isPending;

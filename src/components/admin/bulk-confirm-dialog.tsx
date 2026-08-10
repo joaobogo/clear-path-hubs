@@ -56,7 +56,7 @@ export function BulkConfirmDialog({ request, onClose, onCommitted }: BulkConfirm
     mutationFn: (input: PreviewInput) => previewFn({ data: input }),
     onSuccess: (p: BulkPreview) => setPreview(p),
     onError: (e: Error) => {
-      toast.error(e.message || "Couldn't build the preview");
+      toastError(e, { fallback: "Couldn't build the preview" });
       onClose();
     },
   });

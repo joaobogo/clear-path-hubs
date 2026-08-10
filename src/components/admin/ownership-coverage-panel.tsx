@@ -11,6 +11,7 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   getCoverageQueue,
   listOwnershipStaff,
@@ -143,7 +144,7 @@ function CoverageRowView({ row, staff }: { row: Row; staff: Staff[] }) {
       void qc.invalidateQueries({ queryKey: ["admin", "coverage-queue"] });
       void qc.invalidateQueries({ queryKey: ["admin", "recruiter-workload"] });
     },
-    onError: (e: Error) => toast.error(e.message || "Couldn't update ownership"),
+    onError: (e: Error) => toastError(e, { fallback: "Couldn't update ownership" }),
   });
 
   const dirty =
@@ -279,7 +280,7 @@ function BulkReassign({ staff, includeTest }: { staff: Staff[]; includeTest: boo
   const prev = useMutation({
     mutationFn: () => previewFn({ data: payload }),
     onSuccess: (p) => setPreview(p),
-    onError: (e: Error) => toast.error(e.message || "Couldn't build preview"),
+    onError: (e: Error) => toastError(e, { fallback: "Couldn't build preview" }),
   });
 
   const apply = useMutation({
@@ -293,7 +294,7 @@ function BulkReassign({ staff, includeTest }: { staff: Staff[]; includeTest: boo
       void qc.invalidateQueries({ queryKey: ["admin", "coverage-queue"] });
       void qc.invalidateQueries({ queryKey: ["admin", "recruiter-workload"] });
     },
-    onError: (e: Error) => toast.error(e.message || "Reassignment failed"),
+    onError: (e: Error) => toastError(e, { fallback: "Reassignment failed" }),
   });
 
   const ready = from !== "" && to !== "" && from !== to;
