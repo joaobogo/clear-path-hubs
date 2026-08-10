@@ -13,6 +13,18 @@ import {
   REASON_LABELS,
 } from "@/lib/talent-memory.functions";
 
+/**
+ * Employer surfaces never show a raw number. Requirement overlap is expressed
+ * as a qualitative band, consistent with fit bands elsewhere.
+ */
+function overlapLabel(score: number): string {
+  if (score >= 80) return "Strong requirement overlap";
+  if (score >= 55) return "Good requirement overlap";
+  if (score >= 30) return "Partial requirement overlap";
+  return "Some requirement overlap";
+}
+
+
 export function ResurfacePanel({
   orgId,
   positionId,
@@ -85,8 +97,9 @@ export function ResurfacePanel({
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="font-medium">{m.candidate.display_name}</p>
                     <Badge variant="outline" className="text-[10px]">
-                      {s.match_score}% overlap
+                      {overlapLabel(s.match_score)}
                     </Badge>
+
                     <Badge variant="secondary" className="text-[10px]">
                       {REASON_LABELS[m.reason_category]}
                     </Badge>
