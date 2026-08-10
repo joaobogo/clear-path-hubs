@@ -43,9 +43,9 @@ const PROMISES = [
       "Every application has a live status: submitted, in review, shortlisted, interview, decision. No silent rejections.",
   },
   {
-    title: "You see how you were scored",
+    title: "You see how you were reviewed",
     body:
-      "On briefs you consent to, you can download the evidence used to rank you — requirement by requirement.",
+      "On briefs you consent to, you can download the evidence behind your application review — requirement by requirement.",
   },
   {
     title: "You keep control of your data",
@@ -64,13 +64,13 @@ const JOURNEY = [
     step: "02",
     title: "Structured review",
     body:
-      "Your CV is parsed for evidence against the brief's rubric. A human reviewer confirms the ranking before it reaches the client.",
+      "Your CV is read for evidence against what the role asks for. A person reviews that screening before anything reaches the client.",
   },
   {
     step: "03",
     title: "Consent before introduction",
     body:
-      "If you rank, we ask before sending your details. You see the client and full brief first.",
+      "If you go forward, we ask before sending your details. You see the client and full brief first.",
   },
   {
     step: "04",
