@@ -196,9 +196,26 @@ export function ManageApplication({
       <h3 className="text-base font-semibold">Your data</h3>
       <p className="mt-1 text-sm text-muted-foreground">
         We hold your CV, answers and contact details to review this application. Only our review
-        team and the employer for this role can see them. You can ask us to delete everything —
-        we'll action it within 30 days and confirm by email.
+        team and the employer for this role can see them. You can ask for a copy of everything we
+        hold, or ask us to delete it — both are logged requests we action within 30 days and confirm
+        by email.
       </p>
+
+      {exportMessage ? (
+        <Alert className="mt-4">
+          <AlertDescription>{exportMessage}</AlertDescription>
+        </Alert>
+      ) : (
+        <div className="mt-4">
+          <Button variant="outline" onClick={requestExport} disabled={exporting}>
+            {exporting ? "Logging your request…" : "Request a copy of my data"}
+          </Button>
+          <p className="mt-2 text-xs text-muted-foreground">
+            This opens a tracked request — we check it's really you, then email your file. Nothing
+            downloads instantly.
+          </p>
+        </div>
+      )}
 
       {deleteMessage ? (
         <Alert className="mt-4">
@@ -228,6 +245,7 @@ export function ManageApplication({
           Request deletion of my data
         </Button>
       )}
+
     </section>
   );
 }
