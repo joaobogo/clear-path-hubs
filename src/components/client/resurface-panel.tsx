@@ -85,8 +85,9 @@ export function ResurfacePanel({
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="font-medium">{m.candidate.display_name}</p>
                     <Badge variant="outline" className="text-[10px]">
-                      {s.match_score}% overlap
+                      {overlapLabel(s.match_score)}
                     </Badge>
+
                     <Badge variant="secondary" className="text-[10px]">
                       {REASON_LABELS[m.reason_category]}
                     </Badge>
