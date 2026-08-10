@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
+import { readJsonWithLimit } from "@/lib/public-api/body-limit";
 import {
+  PUBLIC_BODY_LIMITS,
   PUBLIC_RATE_LIMITS,
   clientIp,
   consumeRateLimit,
@@ -39,13 +41,11 @@ export const Route = createFileRoute("/api/public/scoring/reconcile-freshness")(
           });
         }
 
-        let body: unknown = {};
-        try {
-          body = await request.json();
-        } catch {
-          /* empty body is valid */
+        const read = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.pipeline_run);
+        if (!read.ok) {
+          return Response.json({ ok: false, error: read.error, ...read.detail }, { status: read.status });
         }
-        const parsed = schema.safeParse(body ?? {});
+        const parsed = schema.safeParse(read.body ?? {});
         if (!parsed.success) {
           return new Response(
             JSON.stringify({ ok: false, error: "bad_request", detail: parsed.error.flatten() }),
