@@ -132,8 +132,15 @@ export function CandidateHeader({
             </a>
           </Button>
         )}
-        <DownloadCvButton matchId={candidate.match_id} mode="preview" />
-        <DownloadCvButton matchId={candidate.match_id} />
+        {/* The raw CV carries email and phone: offered only once contact is
+            released. The server enforces the same rule independently. */}
+        {candidate.contact_released && (
+          <>
+            <DownloadCvButton matchId={candidate.match_id} mode="preview" />
+            <DownloadCvButton matchId={candidate.match_id} />
+          </>
+        )}
+
 
         {readOnly && (
           <Badge variant="secondary" className="hidden sm:inline-flex">
