@@ -184,7 +184,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     let detail = supabase
       .from("positions")
       .select(
-        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,compensation_visibility,primary_timezone,timezone_overlap_hours,work_authorization,intake_context,published_at,openings,status",
+        "id,title,department,location,work_model,employment_type,seniority,description,requirements,preferred_requirements,compensation,compensation_visibility,primary_timezone,timezone_overlap_hours,work_authorization,published_at,openings,status",
       )
       .eq("id", data.id)
       .in("status", ["active", "paused"])
@@ -221,8 +221,16 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     )("public_position_employer", { _id: data.id });
     const employer = (employerRow ?? null) as { name?: string; logo_url?: string | null } | null;
 
-    const ctx = (pos as { intake_context?: Record<string, unknown> }).intake_context ?? {};
-    const posting = (ctx.posting ?? {}) as Record<string, string>;
+    // Only the public `posting` subtree of intake_context is exposed, via a
+    // definer lookup. anon has no column grant on intake_context itself, which
+    // also carries internal hiring notes.
+    const { data: postingRow } = await (
+      supabase.rpc as unknown as (
+        fn: string,
+        args: Record<string, unknown>,
+      ) => Promise<{ data: unknown; error: unknown }>
+    )("public_position_posting", { _id: data.id });
+    const posting = ((postingRow ?? {}) as Record<string, unknown>) as Record<string, string>;
     const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
     const deadline = str(posting.application_deadline);
     const deadlinePassed = deadline ? new Date(`${deadline}T23:59:59`) < new Date() : false;
@@ -287,7 +295,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       accepting_applications:
         (pos as { status?: string }).status === "active" && !deadlinePassed,
       company_intro: str(posting.company_intro),
-      responsibilities: str((ctx as Record<string, unknown>).responsibilities),
+      responsibilities: str(posting.responsibilities),
       benefits: str(posting.benefits),
       languages: str(posting.languages),
       travel: str(posting.travel),
