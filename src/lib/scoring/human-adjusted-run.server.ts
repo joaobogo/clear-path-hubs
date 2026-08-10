@@ -244,8 +244,9 @@ export async function createHumanAdjustedRun(opts: {
     .single();
   if (insErr || !run) throw new Error(insErr?.message ?? "human_adjusted_insert_failed");
 
-  // The machine run stays readable, but it is no longer the active one.
-  await s
+  // The machine run stays readable, but it is no longer the active one. A
+  // failure here is not fatal to the adjustment, but it must not stay silent.
+  const { error: supErr } = await s
     .from("score_runs")
     .update({
       superseded_at: now,
@@ -254,6 +255,9 @@ export async function createHumanAdjustedRun(opts: {
     })
     .eq("id", base.id)
     .is("superseded_at", null);
+  if (supErr) {
+    console.error("[human-adjusted-run] could not supersede base run", base.id, supErr.message);
+  }
 
   await s
     .from("candidate_matches")
