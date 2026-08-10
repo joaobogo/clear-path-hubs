@@ -34,6 +34,13 @@ export type QueueItem = {
   tone: "default" | "warning" | "danger";
   owner: QueueOwner;
   claim: QueueClaim;
+  /**
+   * Set when the governing position has a live, unacknowledged commitment
+   * breach. Derived from `position_commitments` against real pipeline rows —
+   * never a forecast. Rows carrying one sort to the top of their queue.
+   */
+  sla_breach?: { metric_label: string; days_over: number } | null;
+
 };
 
 /** The fixed set of "see all" desks, kept as literals for the same reason. */
