@@ -191,9 +191,16 @@ export async function createHumanAdjustedRun(opts: {
     ...(adj.cap_reason ? [`caps: ${adj.cap_reason}`] : []),
   ].join(" · ");
 
+  // A human-adjusted run has the same machine inputs but a different verdict
+  // set, so it must not collide with `score_runs_active_input_key` (one active
+  // completed run per identical match+input+rubric). Stamp a derived hash.
+  const runId = crypto.randomUUID();
+  const humanInputHash = `${base.input_hash ?? "none"}+human:${runId.slice(0, 8)}`;
+
   const { data: run, error: insErr } = await s
     .from("score_runs")
     .insert({
+      id: runId,
       candidate_match_id: opts.matchId,
       position_id: match.position_id,
       application_id: match.application_id,
@@ -231,11 +238,26 @@ export async function createHumanAdjustedRun(opts: {
       must_have_coverage: adj.must_have_coverage,
       preferred_coverage: adj.preferred_coverage,
       contradiction_status: base.contradiction_status,
-      input_hash: base.input_hash,
+      input_hash: humanInputHash,
     })
     .select("id")
     .single();
   if (insErr || !run) throw new Error(insErr?.message ?? "human_adjusted_insert_failed");
+
+  // The machine run stays readable, but it is no longer the active one. A
+  // failure here is not fatal to the adjustment, but it must not stay silent.
+  const { error: supErr } = await s
+    .from("score_runs")
+    .update({
+      superseded_at: now,
+      superseded_by_run_id: run.id,
+      superseded_reason: "human_adjusted",
+    })
+    .eq("id", base.id)
+    .is("superseded_at", null);
+  if (supErr) {
+    console.error("[human-adjusted-run] could not supersede base run", base.id, supErr.message);
+  }
 
   await s
     .from("candidate_matches")
