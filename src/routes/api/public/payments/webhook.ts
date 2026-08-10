@@ -5,7 +5,14 @@ import {
   findPlan,
   entitlementExpiry,
 } from "@/lib/payments-catalog";
-import { PUBLIC_BODY_LIMITS } from "@/lib/public-api/rate-limit";
+import {
+  PUBLIC_BODY_LIMITS,
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  consumeRateLimit,
+  newTraceId,
+  rateLimitResponse,
+} from "@/lib/public-api/rate-limit";
 
 type Outcome = "paid" | "refunded" | "pending" | "unpaid";
 
@@ -261,6 +268,9 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const hookDecision = consumeRateLimit("cron_invoke", clientIp(request), PUBLIC_RATE_LIMITS.cron_invoke);
+        if (hookDecision.limited) return rateLimitResponse(newTraceId("cron_invoke"), hookDecision);
+
         const declared = Number(request.headers.get("content-length") ?? "");
         if (Number.isFinite(declared) && declared > PUBLIC_BODY_LIMITS.webhook) {
           return Response.json({ received: true, ignored: "payload too large" }, { status: 413 });
