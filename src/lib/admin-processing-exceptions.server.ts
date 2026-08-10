@@ -65,6 +65,8 @@ export type ExceptionBoard = {
   active: ExceptionRow[];
   permanent: ExceptionRow[];
   scoring_orphans: number;
+  /** Rows hidden because they belong to a test/QA organization or position. */
+  excluded_test: number;
   rules: {
     attempt_ceiling: number;
     stuck_queued_minutes: number;
@@ -92,6 +94,12 @@ function classify(job: Any): ExceptionReason[] {
  * staff member closed with a written reason and stay listed as history.
  */
 export async function loadExceptionBoard(admin: Admin): Promise<ExceptionBoard> {
+  // QA fixtures generate real processing jobs, so this board — the one place
+  // that answers "is the pipeline healthy?" — must not count them. The single
+  // per-user "Show test records" preference decides, same as every other admin
+  // rollup, so the numbers here agree with the rest of the console.
+  const { loadTestScope } = await import("./admin-test-scope.server");
+  const scope = await loadTestScope(admin as never);
   const s = admin as never as { from: (t: string) => Any };
   const since = new Date(Date.now() - EXCEPTION_WINDOW_DAYS * 86400_000).toISOString();
 
@@ -203,12 +211,29 @@ export async function loadExceptionBoard(admin: Admin): Promise<ExceptionBoard> 
     };
   };
 
+  // A job whose owning position or organization is flagged is a test artifact.
+  // Jobs we cannot attribute to either are kept: silently dropping unattributed
+  // failures would hide the exact class of bug this board exists to surface.
+  const testOrgs = new Set(scope.orgIds);
+  const testPositions = new Set(scope.positionIds);
+  const isTestRow = (r: ExceptionRow) =>
+    (r.position_id !== null && testPositions.has(r.position_id)) ||
+    (r.organization_id !== null && testOrgs.has(r.organization_id));
+
+  const activeShaped = activeRows.map(shape);
+  const permanentShaped = permanentRows.map(shape);
+  const active = activeShaped.filter((r) => !isTestRow(r));
+  const permanent = permanentShaped.filter((r) => !isTestRow(r));
+  const excludedTest =
+    activeShaped.length - active.length + (permanentShaped.length - permanent.length);
+
   return {
     generated_at: new Date().toISOString(),
     window_days: EXCEPTION_WINDOW_DAYS,
-    active: activeRows.map(shape),
-    permanent: permanentRows.map(shape),
+    active,
+    permanent,
     scoring_orphans: scoringOrphans,
+    excluded_test: excludedTest,
     rules: {
       attempt_ceiling: JOB_ATTEMPT_CEILING,
       stuck_queued_minutes: STUCK_QUEUED_MINUTES,
