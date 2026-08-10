@@ -108,7 +108,7 @@ export const getClientCandidates = createServerFn({ method: "GET" })
         `id, stage, delivered_at, position_id, application_id, candidate_profile_id,
          candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, updated_at),
          positions(id, title, updated_at),
-         score_runs:approved_score_run_id (score, fit_label, explanation, result, requirement_coverage, evidence, completed_at, engine_version, input_hash)`,
+         score_runs:approved_score_run_id (fit_label, fit_band, result, requirement_coverage, evidence, completed_at, engine_version, input_hash)`,
       )
       .eq("organization_id", data.orgId)
       .eq("client_visibility", "visible");
@@ -143,7 +143,6 @@ export const getClientCandidates = createServerFn({ method: "GET" })
         return true;
       });
     }
-    if (data.minScore != null) dtos = dtos.filter((d) => (d.score ?? 0) >= data.minScore!);
     if (data.fitBand) dtos = dtos.filter((d) => d.fit_label === data.fitBand);
     if (data.location) {
       const needle = data.location.toLowerCase();
