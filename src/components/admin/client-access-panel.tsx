@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/dialog";
 import { Check, Minus, ShieldCheck, UserPlus } from "lucide-react";
 import { toast } from "sonner";
-import { toastError } from \"@/lib/toast-error\";
+import { toastError } from "@/lib/toast-error";
 
 const ROLE_LABEL: Record<string, string> = {
   client_admin: "Owner",

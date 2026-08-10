@@ -11,7 +11,7 @@ import { useRouteRealtime } from "@/hooks/use-route-realtime";
 import { z } from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { toast } from "sonner";
-import { toastError } from \"@/lib/toast-error\";
+import { toastError } from "@/lib/toast-error";
 import {
   searchCandidateIndex,
   listCandidateCountries,

@@ -14,7 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { toastError } from \"@/lib/toast-error\";
+import { toastError } from "@/lib/toast-error";
 import { ShieldCheck } from "lucide-react";
 
 /**

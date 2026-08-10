@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { AlertTriangle, ArrowRight, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { toastError } from \"@/lib/toast-error\";
+import { toastError } from "@/lib/toast-error";
 
 type PreviewInput =
   | { kind: "candidate_stage"; match_ids: string[]; to_stage: BulkStage }

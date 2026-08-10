@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { toastError } from \"@/lib/toast-error\";
+import { toastError } from "@/lib/toast-error";
 import {
   getCandidateDossier,
   addCandidateNote,

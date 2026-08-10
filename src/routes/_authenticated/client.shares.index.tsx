@@ -13,7 +13,7 @@ import {
   Clock,
 } from "lucide-react";
 import { toast } from "sonner";
-import { toastError } from \"@/lib/toast-error\";
+import { toastError } from "@/lib/toast-error";
 import {
   listShortlistShares,
   revokeShortlistShare,

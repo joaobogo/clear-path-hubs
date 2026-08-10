@@ -20,7 +20,7 @@ import {
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
-import { toastError } from \"@/lib/toast-error\";
+import { toastError } from "@/lib/toast-error";
 import {
   addShareComment,
   getShortlistShareByToken,

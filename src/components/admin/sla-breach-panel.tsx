@@ -2,7 +2,7 @@ import { Fragment, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { toastError } from \"@/lib/toast-error\";
+import { toastError } from "@/lib/toast-error";
 import { acknowledgeBreach } from "@/lib/admin-sla-breach.functions";
 import type { SlaBreachList, SlaBreachRow } from "@/lib/admin-sla-breach.server";
 import { Badge } from "@/components/ui/badge";

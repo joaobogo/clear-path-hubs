@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { toastError } from \"@/lib/toast-error\";
+import { toastError } from "@/lib/toast-error";
 import { Plus, Trash2, Lock } from "lucide-react";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { Badge } from "@/components/ui/badge";

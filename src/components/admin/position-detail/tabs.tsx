@@ -24,7 +24,7 @@ import { RecordActivityTab } from "@/components/admin/record-activity-tab";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { toastError } from \"@/lib/toast-error\";
+import { toastError } from "@/lib/toast-error";
 import {
   getPosition,
   updatePosition,

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { toast } from "sonner";
-import { toastError } from \"@/lib/toast-error\";
+import { toastError } from "@/lib/toast-error";
 import { readTeamsActionLink, consumeTeamsActionLink } from "@/lib/teams.functions";
 import { clientAction } from "@/lib/client-decisions.functions";
 

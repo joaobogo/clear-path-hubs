@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { toastError } from \"@/lib/toast-error\";
+import { toastError } from "@/lib/toast-error";
 import { BellRing } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { nudgeOffer, type HireRecordDTO } from "@/lib/hires.functions";

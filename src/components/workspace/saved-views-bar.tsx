@@ -40,7 +40,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
-import { toastError } from \"@/lib/toast-error\";
+import { toastError } from "@/lib/toast-error";
 
 export type SavedViewsBarProps = {
   surface: SavedViewSurface;

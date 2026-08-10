@@ -10,7 +10,7 @@ import {
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { toastError } from \"@/lib/toast-error\";
+import { toastError } from "@/lib/toast-error";
 import { getClientContext } from "@/lib/client-context.functions";
 import { getClientPositionDetail } from "@/lib/client-positions.functions";
 import { moveMatchStage } from "@/lib/client-decisions.functions";

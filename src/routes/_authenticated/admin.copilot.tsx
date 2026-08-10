@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
-import { toastError } from \"@/lib/toast-error\";
+import { toastError } from "@/lib/toast-error";
 import { Bot, Send, RotateCcw, User2, Wrench, ExternalLink, Sparkles, ShieldCheck } from "lucide-react";
 import {
   askCopilot,
