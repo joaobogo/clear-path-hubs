@@ -235,7 +235,7 @@ export const FitHero = memo(function FitHero({
             </p>
           )}
         </div>
-        {score != null && (
+        {candidate.fit_label != null && (
           <div className="flex items-center gap-4">
             <div
               role="img"
