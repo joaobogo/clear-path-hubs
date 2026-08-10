@@ -163,8 +163,15 @@ export const respondToInterview = createServerFn({ method: "POST" })
                 : { status: "scheduled" as never, confirmed_at: now }),
             }
           : {
-              status: (iv as AnyRow).status === "requested" ? "scheduling" : (iv as AnyRow).status,
+              // Declining or asking for a new time un-books whatever was held:
+              // the candidate must never keep seeing a confirmed interview they
+              // just said no to.
+              scheduled_at: null as never,
+              confirmed_at: null as never,
+              status:
+                (iv as AnyRow).status === "completed" ? (iv as AnyRow).status : ("scheduling" as never),
             }),
+
       })
       .eq("id", data.interviewId);
 
