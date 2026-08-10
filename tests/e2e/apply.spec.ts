@@ -100,7 +100,7 @@ test.describe("candidate apply flow", () => {
     // Step 2 — CV upload (required)
     await expect(page.locator("#cv")).toBeVisible();
     await page.locator("#cv").setInputFiles(pdfFile());
-    await expect(page.getByText(/Attached:/i)).toBeVisible();
+    await expect(page.getByText(/ready to send/i)).toBeVisible();
     await continueBtn(page).click();
 
     // Step 3 — screening
@@ -251,7 +251,7 @@ test.describe("candidate apply flow", () => {
 
     // Replacing it with an unlocked copy recovers.
     await page.locator("#cv").setInputFiles(pdfFile());
-    await expect(page.getByText(/Attached:/i)).toBeVisible();
+    await expect(page.getByText(/ready to send/i)).toBeVisible();
   });
 
   test("accepts a Unicode filename, as the UI promises", async ({ page, context }) => {
@@ -267,7 +267,7 @@ test.describe("candidate apply flow", () => {
       mimeType: "application/pdf",
       buffer: PDF_BYTES,
     });
-    await expect(page.getByText(/Attached:/i)).toBeVisible();
+    await expect(page.getByText(/ready to send/i)).toBeVisible();
     await continueBtn(page).click();
     await answerScreening(page);
     await continueBtn(page).click();
@@ -297,7 +297,7 @@ test.describe("candidate apply flow", () => {
     // Walk to step 3 so screening answers are part of the draft too.
     await continueBtn(page).click();
     await page.locator("#cv").setInputFiles(pdfFile());
-    await expect(page.getByText(/Attached:/i)).toBeVisible();
+    await expect(page.getByText(/ready to send/i)).toBeVisible();
     await page.locator("#cover_letter").fill("Half-finished cover letter.");
     await continueBtn(page).click();
     await answerScreening(page);
@@ -310,7 +310,7 @@ test.describe("candidate apply flow", () => {
     await continueBtn(page).click();
     await expect(page.locator("#cover_letter")).toHaveValue("Half-finished cover letter.");
     // CV must be re-attached — we never persist file bytes.
-    await expect(page.getByText(/Attached:/i)).toHaveCount(0);
+    await expect(page.getByText(/ready to send/i)).toHaveCount(0);
   });
 
   test("a failed submit always surfaces an error and never hangs on a spinner", async ({
@@ -328,7 +328,7 @@ test.describe("candidate apply flow", () => {
     await fillDetails(page, email, fullName);
     await continueBtn(page).click();
     await page.locator("#cv").setInputFiles(pdfFile());
-    await expect(page.getByText(/Attached:/i)).toBeVisible();
+    await expect(page.getByText(/ready to send/i)).toBeVisible();
     await continueBtn(page).click();
     await answerScreening(page);
     await continueBtn(page).click();
