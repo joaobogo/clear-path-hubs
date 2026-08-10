@@ -70,3 +70,25 @@ describe("hard ceilings probe", () => {
     expect(r.score).toBeLessThanOrEqual(C.disqualified_cap * 100);
   });
 });
+
+describe("floor cap visibility", () => {
+  it("clamps and records when preferred/screening would otherwise carry a weak core", () => {
+    const r = scoreCandidate({
+      cv_text: richCv,
+      requirements: [
+        { id: "m1", text: "sterilisation", required: true, keywords: ["sterilisation"] },
+        { id: "m2", text: "iso 13485", required: true, keywords: ["iso 13485"] },
+        { id: "m3", text: "clinical trial", required: true, keywords: ["clinical trial"] },
+        { id: "m4", text: "dispatch rosters", required: true, keywords: ["dispatch rosters"] },
+        { id: "p1", text: "fatigue risk management", required: false, keywords: ["fatigue risk management"] },
+        { id: "p2", text: "fuel planning", required: false, keywords: ["fuel planning"] },
+      ],
+      screening: [{ question_id: "q1", question: "Willing to relocate?", required: true, answer_type: "boolean", value: true, disqualifying_condition: null }],
+    } as any);
+    console.log("floorcap:", JSON.stringify({ raw: r.raw_score, score: r.score, mhc: r.must_have_coverage, caps: r.applied_caps, label: r.fit_label }));
+    expect(r.must_have_coverage).toBeLessThan(C.must_have_floor);
+    expect(r.raw_score).toBeGreaterThan(C.must_have_floor_cap * 100);
+    expect(r.applied_caps.map((c) => c.reason).join()).toContain("must_have_floor");
+    expect(r.score).toBe(C.must_have_floor_cap * 100);
+  });
+});
