@@ -39,13 +39,14 @@ export const getCandidateCvDownload = createServerFn({ method: "POST" })
     const { data: match, error: mErr } = await supabaseAdmin
       .from("candidate_matches")
       .select(
-        "id, candidate_profile_id, organization_id, client_visibility, canonical_state",
+        "id, candidate_profile_id, organization_id, client_visibility, canonical_state, contact_released_at",
       )
       .eq("id", matchId)
       .maybeSingle();
     if (mErr || !match) throw new Error("Not found");
 
     const orgId = match.organization_id as string | null;
+
 
     // 1. Platform staff.
     const { data: staffRow } = await supabaseAdmin
