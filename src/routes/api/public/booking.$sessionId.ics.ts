@@ -8,6 +8,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { formatZonedTime, resolveRecipientZone } from "@/lib/time/zone-label";
+import {
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  consumeRateLimit,
+  newTraceId,
+  rateLimitResponse,
+} from "@/lib/public-api/rate-limit";
 
 const paramsSchema = z.object({ sessionId: z.string().uuid() });
 
@@ -24,7 +31,10 @@ function esc(value: string): string {
 export const Route = createFileRoute("/api/public/booking/$sessionId/ics")({
   server: {
     handlers: {
-      GET: async ({ params }) => {
+      GET: async ({ params, request }) => {
+        const decision = consumeRateLimit("booking_ics", clientIp(request), PUBLIC_RATE_LIMITS.booking_ics);
+        if (decision.limited) return rateLimitResponse(newTraceId("booking_ics"), decision);
+
         const parsed = paramsSchema.safeParse(params);
         if (!parsed.success) return new Response("Not found", { status: 404 });
 

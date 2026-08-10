@@ -7,6 +7,13 @@
  * therefore locked to the project's anon key.
  */
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  consumeRateLimit,
+  newTraceId,
+  rateLimitResponse,
+} from "@/lib/public-api/rate-limit";
 
 /** How far ahead we look for calls that still need a reminder. */
 const REMINDER_WINDOW_MINUTES = 24 * 60;
@@ -22,6 +29,9 @@ export const Route = createFileRoute("/api/public/booking/reminders")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const cronDecision = consumeRateLimit("cron_invoke", clientIp(request), PUBLIC_RATE_LIMITS.cron_invoke);
+        if (cronDecision.limited) return rateLimitResponse(newTraceId("cron_invoke"), cronDecision);
+
         // The caller must present the project's publishable key.
         const provided =
           request.headers.get("apikey") ??

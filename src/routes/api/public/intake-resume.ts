@@ -4,6 +4,13 @@ import {
   hashToken,
   isWellFormedToken,
 } from "@/routes/api/public/intake-draft";
+import {
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  consumeRateLimit,
+  newTraceId,
+  rateLimitResponse,
+} from "@/lib/public-api/rate-limit";
 
 /**
  * Resume link from the email. It re-establishes the httpOnly draft cookie on
@@ -13,6 +20,9 @@ export const Route = createFileRoute("/api/public/intake-resume")({
   server: {
     handlers: {
       GET: async ({ request }) => {
+        const decision = consumeRateLimit("intake_draft", clientIp(request), PUBLIC_RATE_LIMITS.intake_draft);
+        if (decision.limited) return rateLimitResponse(newTraceId("intake_draft"), decision);
+
         const url = new URL(request.url);
         const token = url.searchParams.get("token");
         if (!isWellFormedToken(token)) {

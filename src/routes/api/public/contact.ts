@@ -10,6 +10,8 @@ import {
   withRateLimitHeaders,
 } from "@/lib/public-api/rate-limit";
 import { auditConflict, auditRateLimited, emailDomain } from "@/lib/public-api/outcome-audit";
+import { readJsonWithLimit } from "@/lib/public-api/body-limit";
+import { PUBLIC_BODY_LIMITS } from "@/lib/public-api/rate-limit";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(120),
@@ -60,15 +62,14 @@ export const Route = createFileRoute("/api/public/contact")({
         const response = await (async (): Promise<Response> => {
 
 
-        let body: unknown;
-        try {
-          body = await request.json();
-        } catch {
+        const read = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.contact);
+        if (!read.ok) {
           return Response.json(
-            { ok: false, trace_id: traceId, error: "invalid_json" },
-            { status: 400 },
+            { ok: false, trace_id: traceId, error: read.error, ...read.detail },
+            { status: read.status },
           );
         }
+        const body: unknown = read.body;
         const parsed = contactSchema.safeParse(body);
         if (!parsed.success) {
           return Response.json(

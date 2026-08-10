@@ -3,6 +3,15 @@
 // action=cleanup removes all QA fixtures. Never enable without QA_SEED_TOKEN set.
 
 import { createFileRoute } from "@tanstack/react-router";
+import { readJsonWithLimit } from "@/lib/public-api/body-limit";
+import {
+  PUBLIC_BODY_LIMITS,
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  consumeRateLimit,
+  newTraceId,
+  rateLimitResponse,
+} from "@/lib/public-api/rate-limit";
 
 const QA_EMAILS = {
   platform_admin: "qa.admin@qa.taasflow.test",
@@ -828,6 +837,9 @@ async function cleanupCandidateE2E(emailPattern: string): Promise<{ deleted: Rec
 
 
 async function handle(request: Request): Promise<Response> {
+  const cronDecision = consumeRateLimit("cron_invoke", clientIp(request), PUBLIC_RATE_LIMITS.cron_invoke);
+  if (cronDecision.limited) return rateLimitResponse(newTraceId("cron_invoke"), cronDecision);
+
   const token = request.headers.get("x-qa-token");
   const expected = process.env.QA_SEED_TOKEN;
   if (!expected) return new Response("QA_SEED_TOKEN not configured", { status: 500 });
@@ -845,7 +857,11 @@ async function handle(request: Request): Promise<Response> {
     organization_id?: string;
   } = {};
   try {
-    body = (await request.json()) as typeof body;
+    const read = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.qa_seed);
+    if (!read.ok) {
+      return Response.json({ ok: false, error: read.error, ...read.detail }, { status: read.status });
+    }
+    body = read.body as typeof body;
   } catch {
     body = {};
   }

@@ -7,6 +7,7 @@ import {
   loadPublicStatus,
   withdrawByReference,
 } from "./candidate/apply-status.server";
+import { throttlePublicFn } from "@/lib/public-api/server-fn-guard";
 
 export type { PublicApplicationStatus, PublicInfoRequest } from "./candidate/apply-status.server";
 
@@ -26,12 +27,21 @@ export const infoResponseSchema = statusLookupSchema.extend({
 
 export const lookupApplicationStatus = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => statusLookupSchema.parse(input))
-  .handler(({ data }) => loadPublicStatus(data.reference, data.email));
+  .handler(({ data }) => {
+    throttlePublicFn("apply_lookup");
+    return loadPublicStatus(data.reference, data.email);
+  });
 
 export const withdrawMyApplication = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => statusLookupSchema.parse(input))
-  .handler(({ data }) => withdrawByReference(data.reference, data.email));
+  .handler(({ data }) => {
+    throttlePublicFn("candidate_write");
+    return withdrawByReference(data.reference, data.email);
+  });
 
 export const respondToInfoRequest = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => infoResponseSchema.parse(input))
-  .handler(({ data }) => answerInfoRequestByReference(data));
+  .handler(({ data }) => {
+    throttlePublicFn("candidate_write");
+    return answerInfoRequestByReference(data);
+  });

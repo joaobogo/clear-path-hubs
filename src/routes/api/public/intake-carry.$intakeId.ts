@@ -1,5 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { buildCarryForward } from "@/lib/intake-carry";
+import {
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  consumeRateLimit,
+  newTraceId,
+  rateLimitResponse,
+} from "@/lib/public-api/rate-limit";
 
 /**
  * Company profile defaults for a second (or third) role, looked up by the
@@ -12,7 +19,14 @@ import { buildCarryForward } from "@/lib/intake-carry";
 export const Route = createFileRoute("/api/public/intake-carry/$intakeId")({
   server: {
     handlers: {
-      GET: async ({ params }) => {
+      GET: async ({ params, request }) => {
+        const decision = consumeRateLimit(
+          "public_status_read",
+          clientIp(request),
+          PUBLIC_RATE_LIMITS.public_status_read,
+        );
+        if (decision.limited) return rateLimitResponse(newTraceId("public_status_read"), decision);
+
         const intakeId = params.intakeId;
         if (!/^[0-9a-f-]{36}$/i.test(intakeId)) {
           return Response.json({ ok: false, error: "invalid_id" }, { status: 400 });

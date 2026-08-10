@@ -16,6 +16,7 @@ import {
   type LeadUrgency,
   type LeadVolume,
 } from "@/lib/marketing/lead-routing";
+import { throttlePublicFn } from "@/lib/public-api/server-fn-guard";
 
 const InquiryInput = z.object({
   kind: z.enum(["call", "message", "enquiry", "estimate", "briefing", "exit"]),
@@ -43,6 +44,7 @@ const empty = (v: string | undefined) => (v && v.length > 0 ? v : null);
 export const submitInquiry = createServerFn({ method: "POST" })
   .inputValidator((raw) => InquiryInput.parse(raw))
   .handler(async ({ data }) => {
+    throttlePublicFn("inquiry_submit");
     // Honeypot triggered — silently succeed to avoid tipping off bots.
     if (data.website && data.website.length > 0) {
       return { ok: true, id: null as string | null, prefillToken: null as string | null };
@@ -140,6 +142,7 @@ export const submitInquiry = createServerFn({ method: "POST" })
 export const getLeadPrefill = createServerFn({ method: "POST" })
   .inputValidator((raw) => z.object({ token: z.string().uuid() }).parse(raw))
   .handler(async ({ data }) => {
+    throttlePublicFn("lead_prefill");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row } = await supabaseAdmin
       .from("marketing_inquiries")

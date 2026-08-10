@@ -5,6 +5,7 @@ import {
   type CandidateFunnelContext,
   type CandidateFunnelEvent,
 } from "./funnel-events";
+import { throttlePublicFn } from "../public-api/server-fn-guard";
 
 const contextSchema = z
   .object({
@@ -32,6 +33,7 @@ const inputSchema = z.object({
 export const trackCandidateEvent = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => inputSchema.parse(input))
   .handler(async ({ data }) => {
+    throttlePublicFn("candidate_event");
     try {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       await supabaseAdmin.from("audit_events").insert({

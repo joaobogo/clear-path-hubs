@@ -11,6 +11,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { z } from "zod";
+import { PUBLIC_BODY_LIMITS } from "@/lib/public-api/rate-limit";
+import {
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  consumeRateLimit,
+  newTraceId,
+  rateLimitResponse,
+} from "@/lib/public-api/rate-limit";
 
 const MAX_SKEW_SECONDS = 300;
 
@@ -102,8 +110,18 @@ export const Route = createFileRoute("/api/public/booking/calendly-webhook")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const hookDecision = consumeRateLimit("cron_invoke", clientIp(request), PUBLIC_RATE_LIMITS.cron_invoke);
+        if (hookDecision.limited) return rateLimitResponse(newTraceId("cron_invoke"), hookDecision);
+
         const signingKey = process.env["CALENDLY_WEBHOOK_SIGNING_KEY"];
+        const declared = Number(request.headers.get("content-length") ?? "");
+        if (Number.isFinite(declared) && declared > PUBLIC_BODY_LIMITS.webhook) {
+          return Response.json({ ok: false, error: "payload_too_large" }, { status: 413 });
+        }
         const raw = await request.text();
+        if (new TextEncoder().encode(raw).byteLength > PUBLIC_BODY_LIMITS.webhook) {
+          return Response.json({ ok: false, error: "payload_too_large" }, { status: 413 });
+        }
 
         if (!signingKey) {
           console.error("calendly webhook received but no signing key is configured");

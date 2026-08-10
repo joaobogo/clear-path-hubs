@@ -11,6 +11,8 @@ import {
   withRateLimitHeaders,
 } from "@/lib/public-api/rate-limit";
 import { auditConflict, auditRateLimited, emailDomain } from "@/lib/public-api/outcome-audit";
+import { readJsonWithLimit } from "@/lib/public-api/body-limit";
+import { PUBLIC_BODY_LIMITS } from "@/lib/public-api/rate-limit";
 
 /**
  * Inline account creation for the intake flow. The visitor never leaves the
@@ -61,9 +63,16 @@ export const Route = createFileRoute("/api/public/intake-account")({
         }
 
         const response = await (async (): Promise<Response> => {
+        const read = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.intake_account);
+        if (!read.ok) {
+          return Response.json(
+            { ok: false, trace_id: traceId, error: read.error, ...read.detail },
+            { status: read.status },
+          );
+        }
         let parsed;
         try {
-          parsed = bodySchema.parse(await request.json());
+          parsed = bodySchema.parse(read.body);
         } catch (e: any) {
           const message = e?.issues?.[0]?.message ?? "Check the details you entered.";
           return Response.json({ ok: false, error: "invalid_input", message }, { status: 400 });
