@@ -146,13 +146,35 @@
 /* Apply flow on a phone: one column, and every control big enough to hit
    reliably with a thumb (44px minimum per WCAG target size). */
 @media (max-width: 640px) {
-  [data-apply-form] input,
+  [data-apply-form] input:not([type="checkbox"]):not([type="radio"]),
   [data-apply-form] select,
-  [data-apply-form] button,
+  [data-apply-form] button:not([role="checkbox"]):not([role="radio"]),
   [data-apply-form] [role="combobox"] {
     min-height: 44px;
   }
   [data-apply-form] textarea {
     min-height: 88px;
   }
+  /* Checkboxes and radios keep their square shape; the surrounding label
+     carries the 44px tap area instead of stretching the control. */
+  [data-apply-form] :is(
+    [data-slot="checkbox"],
+    [data-slot="radio-group-item"],
+    [role="checkbox"],
+    [role="radio"],
+    input[type="checkbox"],
+    input[type="radio"]
+  ) {
+    height: 1.25rem;
+    width: 1.25rem;
+    min-height: 1.25rem;
+    min-width: 1.25rem;
+  }
+  [data-apply-form] label:has(:is([role="checkbox"], [role="radio"], input[type="checkbox"], input[type="radio"])),
+  [data-apply-form] :is([role="checkbox"], [role="radio"], input[type="checkbox"], input[type="radio"]) + label {
+    min-height: 44px;
+    display: flex;
+    align-items: flex-start;
+  }
 }
+
