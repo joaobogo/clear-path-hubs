@@ -29,8 +29,6 @@ export interface CandidatesFiltersState {
   sort: string;
   view: "cards" | "list" | "compare";
   filter: "all" | "top" | "interview_pipeline";
-  minScore: string;
-  maxScore: string;
 }
 
 export function CandidatesFiltersPanel({
@@ -75,8 +73,6 @@ export function CandidatesFiltersPanel({
             sort: search.sort,
             view: search.view,
             filter: search.filter,
-            minScore: search.minScore,
-            maxScore: search.maxScore,
           }}
           onApply={onApplySavedView}
           canShare={ctxRole === "client_admin"}

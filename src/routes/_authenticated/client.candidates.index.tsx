@@ -51,11 +51,14 @@ const searchSchema = z.object({
  filter: fallback(z.enum(["all", "top", "interview_pipeline"]), "all").default("all"),
  // Comma-separated match IDs for shareable comparison links.
  compare: fallback(z.string(), "").default(""),
- // Score range filter (0–100). Empty string = unbounded on that end.
- minScore: fallback(z.string(), "").default(""),
- maxScore: fallback(z.string(), "").default(""),
 });
 
+
+// Fit-band ordering for the "Highest approved fit" sort. Employer surfaces have
+// no numeric rating to sort on — the band is the contract.
+const BAND_RANK: Record<string, number> = {
+  exceptional: 5, strong: 4, good: 3, mixed: 2, limited: 1, not_recommended: 0,
+};
 
 const RoutePending = makeWorkspacePending({ shape: "rows", kpis: true, width: "7xl" });
 export const Route = createFileRoute("/_authenticated/client/candidates/")({
@@ -147,7 +150,6 @@ function CandidatesPage() {
  // Canonical KPI drill-through — mirrors client-kpi.server predicates.
  if (search.filter === "top") {
  if (c.fit.band !== "exceptional" && c.fit.band !== "strong") return false;
- if (c.score == null) return false;
  } else if (search.filter === "interview_pipeline") {
  if (c.stage !== "interview_process" && c.stage !== "offer") return false;
  }
@@ -175,14 +177,6 @@ function CandidatesPage() {
   if (search.minExp) {
    const min = Number(search.minExp);
    if (!Number.isNaN(min) && (c.candidate.years_experience ?? -1) < min) return false;
-  }
-  const min = search.minScore === "" ? null : Number(search.minScore);
-  const max = search.maxScore === "" ? null : Number(search.maxScore);
-  if (min != null && !Number.isNaN(min)) {
-   if (c.score == null || c.score < min) return false;
-  }
-  if (max != null && !Number.isNaN(max)) {
-   if (c.score == null || c.score > max) return false;
   }
  if (loc && !(c.candidate.location ?? "").toLowerCase().includes(loc)) return false;
  if (q) {
@@ -212,7 +206,8 @@ function CandidatesPage() {
  rows.sort((a, b) => {
  switch (search.sort) {
  case "score":
- return (b.score ?? -1) - (a.score ?? -1);
+ // Employer surfaces order by fit band, never by the internal number.
+ return BAND_RANK[b.fit.band] - BAND_RANK[a.fit.band];
  case "must": {
  const av = a.coverage.must_total
  ? a.coverage.must_met / a.coverage.must_total
@@ -239,14 +234,14 @@ function CandidatesPage() {
  }
  });
  return rows;
- }, [rowsRaw, search.q, search.location, search.stage, search.fit, search.critical, search.review, search.availability, search.minExp, search.sort, search.filter, search.minScore, search.maxScore]);
+ }, [rowsRaw, search.q, search.location, search.stage, search.fit, search.critical, search.review, search.availability, search.minExp, search.sort, search.filter]);
 
  // Bounded pagination — clamp render to a fixed page size so no unbounded lists ship.
  const PAGE_SIZE = 24;
  const [page, setPage] = useState(1);
  useEffect(() => {
  setPage(1);
- }, [search.q, search.position, search.stage, search.fit, search.location, search.sort, search.filter, search.minScore, search.maxScore, orgId]);
+ }, [search.q, search.position, search.stage, search.fit, search.location, search.sort, search.filter, orgId]);
  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
  const currentPage = Math.min(page, totalPages);
  const paged = filtered.slice(
@@ -362,8 +357,6 @@ function CandidatesPage() {
  availability: "all",
  minExp: "",
  location: "",
- minScore: "",
- maxScore: "",
  filter: "all",
  } as never,
  });
@@ -482,6 +475,7 @@ function CandidatesPage() {
  <CandidateCard
  key={c.match_id}
  candidate={c}
+ orgId={orgId ?? null}
  compareSelected={compareIds.includes(c.match_id)}
  compareDisabled={compareIds.length >= 4}
  onToggleCompare={(id) => toggleCompare(setCompareIds, id)}
