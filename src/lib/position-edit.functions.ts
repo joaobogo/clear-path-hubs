@@ -15,6 +15,7 @@ import {
 type AnyRow = any;
 
 import { assertWorkspaceAccess, assertWorkspaceWrite } from "@/lib/authz/workspace-access";
+import { normalizeSeniority } from "@/lib/position-seniority";
 
 async function getAdmin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -208,7 +209,8 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
       location: p.location ?? "",
       work_model: (p.work_model ?? "") as PositionEditInitial["work_model"],
       employment_type: (p.employment_type ?? "") as PositionEditInitial["employment_type"],
-      seniority: p.seniority ?? "",
+      // Stored briefs use mixed casing; the picker only matches its own labels.
+      seniority: normalizeSeniority(p.seniority),
       headcount: typeof p.openings === "number" ? p.openings : "",
       description: p.description ?? "",
 
