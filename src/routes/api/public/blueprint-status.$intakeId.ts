@@ -1,4 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  consumeRateLimit,
+  newTraceId,
+  rateLimitResponse,
+} from "@/lib/public-api/rate-limit";
 
 /**
  * Real preparation status for an express intake. Returns only what the
@@ -7,7 +14,15 @@ import { createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/api/public/blueprint-status/$intakeId")({
   server: {
     handlers: {
-      GET: async ({ params }) => {
+      GET: async ({ params, request }) => {
+        const traceId = newTraceId("public_status_read");
+        const decision = consumeRateLimit(
+          "public_status_read",
+          clientIp(request),
+          PUBLIC_RATE_LIMITS.public_status_read,
+        );
+        if (decision.limited) return rateLimitResponse(traceId, decision);
+
         const intakeId = params.intakeId;
         if (!/^[0-9a-f-]{36}$/i.test(intakeId)) {
           return Response.json({ ok: false, error: "invalid_id" }, { status: 400 });

@@ -1,9 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  consumeRateLimit,
+  newTraceId,
+  rateLimitResponse,
+} from "@/lib/public-api/rate-limit";
 
 export const Route = createFileRoute("/api/public/intake-status/$id")({
   server: {
     handlers: {
-      GET: async ({ params }) => {
+      GET: async ({ params, request }) => {
+        const traceId = newTraceId("public_status_read");
+        const decision = consumeRateLimit(
+          "public_status_read",
+          clientIp(request),
+          PUBLIC_RATE_LIMITS.public_status_read,
+        );
+        if (decision.limited) return rateLimitResponse(traceId, decision);
+
         const id = params.id;
         if (!id || !/^[0-9a-f-]{8,}$/i.test(id)) {
           return Response.json({ ok: false, error: "invalid_id" }, { status: 400 });

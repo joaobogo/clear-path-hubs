@@ -11,6 +11,8 @@
 
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
+import { readJsonWithLimit } from "@/lib/public-api/body-limit";
+import { PUBLIC_BODY_LIMITS } from "@/lib/public-api/rate-limit";
 
 const schema = z.union([
   z.object({ match_id: z.string().uuid(), force: z.boolean().optional() }),
@@ -29,9 +31,11 @@ export const Route = createFileRoute("/api/public/pipeline/run")({
             status: 401, headers: { "Content-Type": "application/json" },
           });
         }
-        let body: unknown = {};
-        try { body = await request.json(); } catch { /* allow empty */ }
-        const parsed = schema.safeParse(body);
+        const read = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.pipeline_run);
+        if (!read.ok) {
+          return Response.json({ ok: false, error: read.error, ...read.detail }, { status: read.status });
+        }
+        const parsed = schema.safeParse(read.body ?? {});
         if (!parsed.success) {
           return new Response(JSON.stringify({ ok: false, error: "bad_request", detail: parsed.error.flatten() }), {
             status: 400, headers: { "Content-Type": "application/json" },

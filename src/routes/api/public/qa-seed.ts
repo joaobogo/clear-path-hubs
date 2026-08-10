@@ -3,6 +3,8 @@
 // action=cleanup removes all QA fixtures. Never enable without QA_SEED_TOKEN set.
 
 import { createFileRoute } from "@tanstack/react-router";
+import { readJsonWithLimit } from "@/lib/public-api/body-limit";
+import { PUBLIC_BODY_LIMITS } from "@/lib/public-api/rate-limit";
 
 const QA_EMAILS = {
   platform_admin: "qa.admin@qa.taasflow.test",
@@ -845,7 +847,11 @@ async function handle(request: Request): Promise<Response> {
     organization_id?: string;
   } = {};
   try {
-    body = (await request.json()) as typeof body;
+    const read = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.qa_seed);
+    if (!read.ok) {
+      return Response.json({ ok: false, error: read.error, ...read.detail }, { status: read.status });
+    }
+    body = read.body as typeof body;
   } catch {
     body = {};
   }
