@@ -28,6 +28,7 @@ export function ManageApplication({
   onUpdated,
   updateFn,
   deleteFn,
+  exportFn,
 }: {
   credentials: Credentials;
   details: CandidateEditableDetails;
@@ -36,6 +37,10 @@ export function ManageApplication({
   deleteFn: (args: {
     data: Record<string, unknown>;
   }) => Promise<{ ok: boolean; message: string }>;
+  exportFn: (args: {
+    data: Record<string, unknown>;
+  }) => Promise<{ ok: boolean; message: string }>;
+
 }) {
   const [open, setOpen] = useState(false);
   const [fullName, setFullName] = useState(details.full_name ?? "");
@@ -50,6 +55,8 @@ export function ManageApplication({
   const [note, setNote] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [deleteMessage, setDeleteMessage] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
+  const [exportMessage, setExportMessage] = useState<string | null>(null);
 
   const save = async () => {
     setError(null);
@@ -95,6 +102,20 @@ export function ManageApplication({
       setError("Something went wrong on our end. Nothing was lost — try again in a moment.");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const requestExport = async () => {
+    setExporting(true);
+    try {
+      const res = await exportFn({ data: { ...credentials } });
+      setExportMessage(res.message);
+    } catch {
+      setExportMessage(
+        "We couldn't log that request. Please email privacy@taasflow.com and we'll handle it by hand.",
+      );
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -196,9 +217,26 @@ export function ManageApplication({
       <h3 className="text-base font-semibold">Your data</h3>
       <p className="mt-1 text-sm text-muted-foreground">
         We hold your CV, answers and contact details to review this application. Only our review
-        team and the employer for this role can see them. You can ask us to delete everything —
-        we'll action it within 30 days and confirm by email.
+        team and the employer for this role can see them. You can ask for a copy of everything we
+        hold, or ask us to delete it — both are logged requests we action within 30 days and confirm
+        by email.
       </p>
+
+      {exportMessage ? (
+        <Alert className="mt-4">
+          <AlertDescription>{exportMessage}</AlertDescription>
+        </Alert>
+      ) : (
+        <div className="mt-4">
+          <Button variant="outline" onClick={requestExport} disabled={exporting}>
+            {exporting ? "Logging your request…" : "Request a copy of my data"}
+          </Button>
+          <p className="mt-2 text-xs text-muted-foreground">
+            This opens a tracked request — we check it's really you, then email your file. Nothing
+            downloads instantly.
+          </p>
+        </div>
+      )}
 
       {deleteMessage ? (
         <Alert className="mt-4">
@@ -228,6 +266,7 @@ export function ManageApplication({
           Request deletion of my data
         </Button>
       )}
+
     </section>
   );
 }

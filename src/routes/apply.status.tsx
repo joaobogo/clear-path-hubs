@@ -17,6 +17,7 @@ import {
 import {
   getMyApplicationDetails,
   requestMyDataDeletion,
+  requestMyDataExport,
   updateMyApplication,
   type CandidateEditableDetails,
 } from "@/lib/candidate-self-service.functions";
@@ -355,6 +356,7 @@ function StatusPage() {
           }}
           updateFn={updateMyApplication}
           deleteFn={requestMyDataDeletion}
+          exportFn={requestMyDataExport}
         />
       )}
     </FormShell>

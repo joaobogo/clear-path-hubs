@@ -339,3 +339,98 @@ export const requestMyDataDeletion = createServerFn({ method: "POST" })
       };
     },
   );
+
+export const exportRequestSchema = statusLookupSchema.extend({
+  note: z.string().trim().max(1000).optional(),
+});
+
+export type DataRequestResult = {
+  ok: boolean;
+  already_open?: boolean;
+  reference_code?: string;
+  due_at?: string;
+  message: string;
+};
+
+/**
+ * Ask for a copy of your data. This is a logged request with a due date —
+ * never an instant download, because we verify identity by hand first.
+ */
+export const requestMyDataExport = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => exportRequestSchema.parse(input))
+  .handler(async ({ data }): Promise<DataRequestResult> => {
+    throttlePublicFn("candidate_write");
+    const app = await verifyApplication(data.reference, data.email);
+    if (!app) return { ok: false, message: "We couldn't match that reference and email." };
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: existing } = await supabaseAdmin
+      .from("data_subject_requests")
+      .select("id,reference_code,due_at")
+      .eq("subject_email", app.email)
+      .eq("request_type", "export")
+      .in("status", ["received", "verifying", "in_progress"])
+      .limit(1)
+      .maybeSingle();
+    if (existing)
+      return {
+        ok: true,
+        already_open: true,
+        reference_code: existing.reference_code as string,
+        due_at: (existing.due_at as string) ?? undefined,
+        message:
+          "You already have a copy request open with us. We'll email your file when it's ready — no need to ask again.",
+      };
+
+    const referenceCode = `DSR-EXP-${data.reference.toUpperCase()}-${Date.now()
+      .toString(36)
+      .toUpperCase()}`;
+
+    const { data: created, error } = await supabaseAdmin
+      .from("data_subject_requests")
+      .insert({
+        request_type: "export",
+        reference_code: referenceCode,
+        subject_email: app.email,
+        candidate_profile_id: app.candidate_profile_id,
+        status: "received",
+        details: {
+          reference: data.reference,
+          application_id: app.id,
+          note: data.note || null,
+          channel: "status_page",
+        } as never,
+      })
+      .select("id,reference_code,due_at")
+      .single();
+
+    if (error || !created) {
+      console.error("[requestMyDataExport]", error?.message);
+      return {
+        ok: false,
+        message:
+          "We couldn't log that request. Please email privacy@taasflow.com and we'll handle it by hand.",
+      };
+    }
+
+    await supabaseAdmin.from("audit_events").insert({
+      actor_user_id: null,
+      action: "data_subject_request.created",
+      entity_type: "applications",
+      entity_id: app.id,
+      organization_id: app.organization_id,
+      after_state: {
+        request_type: "export",
+        channel: "status_page",
+        reference_code: created.reference_code,
+      } as never,
+    });
+
+    return {
+      ok: true,
+      reference_code: created.reference_code as string,
+      due_at: (created.due_at as string) ?? undefined,
+      message: `Request logged as ${created.reference_code}. We verify it's you, then email your file — within 30 days, usually much sooner.`,
+    };
+  });
