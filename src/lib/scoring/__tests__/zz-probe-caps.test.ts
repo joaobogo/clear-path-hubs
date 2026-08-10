@@ -78,8 +78,7 @@ describe("floor cap visibility", () => {
       requirements: [
         { id: "m1", text: "sterilisation", required: true, keywords: ["sterilisation"] },
         { id: "m2", text: "iso 13485", required: true, keywords: ["iso 13485"] },
-        { id: "m3", text: "clinical trial", required: true, keywords: ["clinical trial"] },
-        { id: "m4", text: "dispatch rosters", required: true, keywords: ["dispatch rosters"] },
+        { id: "m3", text: "dispatch rosters", required: true, keywords: ["dispatch rosters"] },
         { id: "p1", text: "fatigue risk management", required: false, keywords: ["fatigue risk management"] },
         { id: "p2", text: "fuel planning", required: false, keywords: ["fuel planning"] },
       ],
