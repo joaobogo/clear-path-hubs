@@ -38,7 +38,6 @@ describe("hard ceilings: unparsed CV, dealbreaker and must-have floor", () => {
       requirements: reqs(3, ["typescript", "postgres", "kubernetes"]),
       screening: [],
     } as any);
-    console.log("unparsed:", JSON.stringify({ raw: r.raw_score, score: r.score, caps: r.applied_caps, label: r.fit_label }));
     expect(r.score).toBeLessThanOrEqual(C.unparsed_cv_cap * 100);
   });
 
@@ -53,7 +52,6 @@ describe("hard ceilings: unparsed CV, dealbreaker and must-have floor", () => {
       ],
       screening: [],
     } as any);
-    console.log("floor:", JSON.stringify({ raw: r.raw_score, score: r.score, mhc: r.must_have_coverage, caps: r.applied_caps, label: r.fit_label }));
     expect(r.must_have_coverage).toBeLessThan(C.must_have_floor);
     expect(r.score).toBeLessThanOrEqual(C.must_have_floor_cap * 100);
   });
@@ -64,7 +62,6 @@ describe("hard ceilings: unparsed CV, dealbreaker and must-have floor", () => {
       requirements: reqs(3, ["typescript", "postgres", "kubernetes"]),
       screening: [{ question_id: "q1", question: "Do you have the right to work?", required: true, answer_type: "boolean", value: false, disqualifying_condition: { operator: "equals", value: false } }],
     } as any);
-    console.log("dq:", JSON.stringify({ raw: r.raw_score, score: r.score, caps: r.applied_caps, label: r.fit_label }));
     expect(r.score).toBeLessThanOrEqual(C.disqualified_cap * 100);
   });
 
@@ -74,7 +71,6 @@ describe("hard ceilings: unparsed CV, dealbreaker and must-have floor", () => {
       requirements: [{ id: "a", text: "aviation dispatch", required: true, keywords: ["aviation dispatch"] }],
       screening: [{ question_id: "q1", question: "Right to work?", required: true, answer_type: "boolean", value: false, disqualifying_condition: { operator: "equals", value: false } }],
     } as any);
-    console.log("stacked:", JSON.stringify({ raw: r.raw_score, score: r.score, caps: r.applied_caps }));
     expect(r.score).toBeLessThanOrEqual(C.disqualified_cap * 100);
   });
 });
@@ -92,7 +88,6 @@ describe("floor cap visibility", () => {
       ],
       screening: [{ question_id: "q1", question: "Willing to relocate?", required: true, answer_type: "boolean", value: true, disqualifying_condition: null }],
     } as any);
-    console.log("floorcap:", JSON.stringify({ raw: r.raw_score, score: r.score, mhc: r.must_have_coverage, caps: r.applied_caps, label: r.fit_label }));
     expect(r.must_have_coverage).toBeLessThan(C.must_have_floor);
     expect(r.raw_score).toBeGreaterThan(C.must_have_floor_cap * 100);
     expect(r.applied_caps.map((c) => c.reason).join()).toContain("must_have_floor");
