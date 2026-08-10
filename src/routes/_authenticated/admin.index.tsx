@@ -8,6 +8,7 @@ import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { PortfolioHealthTable } from "@/components/admin/portfolio-health-table";
 import { DecisionBacklogPanel } from "@/components/admin/decision-backlog-panel";
 import { OfferHireRollupPanel } from "@/components/admin/offer-hire-panel";
+import { SlaBreachStrip } from "@/components/admin/sla-breach-strip";
 import { WorkQueueRow } from "@/components/admin/work-queue-row";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -116,8 +117,11 @@ function Overview() {
         </Button>
       </header>
 
+      <SlaBreachStrip includeTest={showTest} />
+
       {/* Portfolio health first: which accounts are in trouble, not totals. */}
       <PortfolioHealthTable includeTest={showTest} />
+
 
       <DecisionBacklogPanel includeTest={showTest} showClientColumn />
 

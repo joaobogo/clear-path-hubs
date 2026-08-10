@@ -113,12 +113,23 @@ export function WorkQueueRow({ item }: { item: QueueItem }) {
   return (
     <li className="group flex items-center gap-3 px-4 py-2.5">
       <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-medium">{item.title}</div>
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="truncate text-sm font-medium">{item.title}</span>
+          {item.sla_breach ? (
+            <span
+              className="shrink-0 rounded border border-destructive/40 bg-destructive/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-destructive"
+              title={`${item.sla_breach.metric_label} promise missed ${item.sla_breach.days_over} day${item.sla_breach.days_over === 1 ? "" : "s"} ago`}
+            >
+              SLA +{item.sla_breach.days_over}d
+            </span>
+          ) : null}
+        </div>
         <div className="truncate text-xs text-muted-foreground">
           {item.subtitle}
           {item.meta ? ` · ${item.meta}` : ""}
         </div>
       </div>
+
       <OwnerCell item={item} />
       <span className={`shrink-0 tabular-nums text-xs ${toneClass(item.tone)}`} title="Waiting">
         {waited(item.waiting_since)}
