@@ -905,6 +905,30 @@ export type Database = {
           },
         ]
       }
+      authz_test_reports: {
+        Row: {
+          created_at: string
+          id: string
+          line: string
+          ordinal: number
+          suite: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          line: string
+          ordinal: number
+          suite: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          line?: string
+          ordinal?: number
+          suite?: string
+        }
+        Relationships: []
+      }
       booking_sessions: {
         Row: {
           additional_context: string | null
@@ -15532,6 +15556,10 @@ export type Database = {
         Args: { _row: string; _table: string; _user: string }
         Returns: boolean
       }
+      _authz_probe_update_count: {
+        Args: { _filter: string; _table: string; _user: string }
+        Returns: number
+      }
       _authz_probe_visible: {
         Args: { _filter: string; _table: string; _user: string }
         Returns: number
@@ -15755,6 +15783,7 @@ export type Database = {
       role_family_of: { Args: { _title: string }; Returns: string }
       run_all_authz_tests: { Args: never; Returns: string[] }
       run_authz_tests: { Args: never; Returns: string[] }
+      run_collaborator_role_tests: { Args: never; Returns: string[] }
       run_scoring_authz_tests: { Args: never; Returns: string[] }
       score_band: {
         Args: { _score: number }
