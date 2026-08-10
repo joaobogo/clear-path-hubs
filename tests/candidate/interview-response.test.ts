@@ -185,7 +185,8 @@ describe(".ics generation", () => {
   it("escapes semicolons, commas and newlines in text fields", () => {
     expect(ics).toContain("LOCATION:12 King St\\, London\\; floor 3");
     expect(ics).toContain("Video call\\nBring nothing.");
-    expect(ics).not.toMatch(/DESCRIPTION:[^\r\n]*[^\\]\n/);
+    // No raw newline survives inside a property value.
+    expect(ics.split("\r\n").every((l) => !l.includes("\n"))).toBe(true);
   });
 
   it("carries a stable domain-qualified UID and a 30 minute reminder", () => {
@@ -204,7 +205,10 @@ describe(".ics generation", () => {
     });
     expect(out).not.toContain("LOCATION:");
     expect(out).not.toContain("URL:");
-    expect(out).not.toContain("DESCRIPTION:Interview");
+    // The only DESCRIPTION is the alarm reminder, not an event description.
+    expect(out.split("\r\n").filter((l) => l.startsWith("DESCRIPTION:"))).toEqual([
+      "DESCRIPTION:Interview reminder",
+    ]);
   });
 
   it("folds long lines to 75 octets with a leading space on continuations", () => {
