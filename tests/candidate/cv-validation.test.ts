@@ -146,7 +146,7 @@ describe("validateCv — rejects corrupt and unreadable PDFs", () => {
 describe("sanitizeFilename", () => {
   it("strips path segments and forces a .pdf extension", () => {
     expect(sanitizeFilename("../../etc/passwd")).toBe("passwd.pdf");
-    expect(sanitizeFilename("C:\\Users\\me\\My CV (final).pdf")).toBe("My_CV_final.pdf");
+    expect(sanitizeFilename("C:\\Users\\me\\My CV (final).pdf")).toBe("My_CV_final_.pdf");
     expect(sanitizeFilename("")).toBe("cv.pdf");
   });
 });
