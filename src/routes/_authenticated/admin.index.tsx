@@ -116,8 +116,11 @@ function Overview() {
         </Button>
       </header>
 
+      <SlaBreachStrip includeTest={showTest} />
+
       {/* Portfolio health first: which accounts are in trouble, not totals. */}
       <PortfolioHealthTable includeTest={showTest} />
+
 
       <DecisionBacklogPanel includeTest={showTest} showClientColumn />
 
