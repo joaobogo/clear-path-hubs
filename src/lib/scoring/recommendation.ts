@@ -16,6 +16,7 @@
  *  - excepted uses the same fit thresholds as eligible.
  */
 
+import { bandRange } from "./bands";
 import { classifyConfidence } from "./status-taxonomy";
 import type {
   EligibilityStatus,
