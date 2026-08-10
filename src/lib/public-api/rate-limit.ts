@@ -98,6 +98,28 @@ export const PUBLIC_RATE_LIMITS = {
   intake_account: { max: 8, windowMs: 60_000 },
   /** Writes a CRM submission row and calls an external CRM. */
   crm_submission: { max: 5, windowMs: 60_000 },
+  /** Kicks off a paid blueprint model run for one intake. */
+  blueprint_run: { max: 10, windowMs: 60_000 },
+  /** Anonymous draft load/save, and the emailed resume link. */
+  intake_draft: { max: 30, windowMs: 60_000 },
+  /** Status polling by id. Throttled against id enumeration. */
+  public_status_read: { max: 40, windowMs: 60_000 },
+  /** Calendar file download for one booking. */
+  booking_ics: { max: 20, windowMs: 60_000 },
+} as const;
+
+/** Byte ceilings per public endpoint, sized to the largest legitimate payload. */
+export const PUBLIC_BODY_LIMITS = {
+  contact: 32_768,
+  intake: 512_000,
+  express_intake: 512_000,
+  intake_account: 8_192,
+  intake_draft: 512_000,
+  crm_submission: 131_072,
+  blueprint_run: 4_096,
+  pipeline_run: 4_096,
+  qa_seed: 65_536,
+  webhook: 262_144,
 } as const;
 
 /**

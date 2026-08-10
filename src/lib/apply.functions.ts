@@ -6,6 +6,7 @@ import { z } from "zod";
 import { applySchema, composeLocation, type ApplyInput } from "./apply-schema";
 import { normalizeCompletionSeconds } from "./jobs/apply-effort";
 import type { ExistingApplicationSummary } from "./candidate/existing-application.server";
+import { throttlePublicFn } from "@/lib/public-api/server-fn-guard";
 
 
 export type SubmitApplicationResult =
@@ -55,6 +56,7 @@ function ref6(id: string): string {
 export const submitApplication = createServerFn({ method: "POST" })
   .inputValidator((input: unknown): ApplyInput => applySchema.parse(input))
   .handler(async ({ data }): Promise<SubmitApplicationResult> => {
+    throttlePublicFn("apply_submit");
     const trace_id = crypto.randomUUID();
     // Set the moment the candidate's document is stored. Its presence in the
     // catch below is what separates "nothing reached us" from "we have their CV
@@ -708,6 +710,7 @@ export const getApplicationReceipt = createServerFn({ method: "GET" })
     return z.object({ id: z.string().uuid() }).parse(input);
   })
   .handler(async ({ data }) => {
+    throttlePublicFn("apply_lookup");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: app, error } = await supabaseAdmin
       .from("applications")
@@ -752,6 +755,7 @@ export const replaceApplicationCv = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data }) => {
+    throttlePublicFn("apply_cv_replace");
     try {
       const { replaceCvForApplication } = await import("./candidate/cv-replace.server");
       return await replaceCvForApplication(data);

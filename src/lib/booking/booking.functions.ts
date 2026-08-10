@@ -9,6 +9,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { resolveMeetingType } from "@/config/booking";
 import { bookingIntakeSchema } from "@/lib/booking/booking-schema";
+import { throttlePublicFn } from "@/lib/public-api/server-fn-guard";
 
 const attributionSchema = z.record(z.string(), z.string().nullable()).default({});
 
@@ -31,6 +32,7 @@ function environment(): "production" | "preview" {
 export const submitBookingIntake = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => submitSchema.parse(input))
   .handler(async ({ data }) => {
+    throttlePublicFn("booking_write");
     if (data.honeypot && data.honeypot.trim().length > 0) {
       // Silent success for bots: nothing stored, nothing synced.
       return { sessionId: null as string | null, qualificationScore: 0 };
@@ -106,6 +108,7 @@ const confirmSchema = z.object({
 export const confirmBookingScheduled = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => confirmSchema.parse(input))
   .handler(async ({ data }) => {
+    throttlePublicFn("booking_write");
     const { applyBookingStatus, syncBookingStatusToCrm, findBookingSession } = await import(
       "@/lib/booking/booking.server"
     );
@@ -142,6 +145,7 @@ const statusSchema = z.object({ sessionId: z.string().uuid() });
 export const getBookingConfirmation = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => statusSchema.parse(input))
   .handler(async ({ data }) => {
+    throttlePublicFn("booking_read");
     const { findBookingSession } = await import("@/lib/booking/booking.server");
     const row = await findBookingSession({ sessionId: data.sessionId });
     if (!row) return null;
@@ -171,6 +175,7 @@ const slotsSchema = z.object({
 export const listBookingSlots = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => slotsSchema.parse(input ?? {}))
   .handler(async ({ data }) => {
+    throttlePublicFn("booking_read");
     const { loadAvailability } = await import("@/lib/booking/native-scheduling.server");
     const availability = await loadAvailability({ excludeSessionId: data.sessionId ?? null });
     return {
@@ -194,6 +199,7 @@ const bookSchema = z.object({
 export const bookBookingSlot = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => bookSchema.parse(input))
   .handler(async ({ data }) => {
+    throttlePublicFn("booking_write");
     const { bookSlot } = await import("@/lib/booking/native-scheduling.server");
     const result = await bookSlot(data);
     if (!result.ok) return { ok: false as const, reason: result.reason };
@@ -243,6 +249,7 @@ const cancelSchema = z.object({ sessionId: z.string().uuid() });
 export const cancelBookingSlot = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => cancelSchema.parse(input))
   .handler(async ({ data }) => {
+    throttlePublicFn("booking_write");
     const { cancelBooking } = await import("@/lib/booking/native-scheduling.server");
     const result = await cancelBooking(data.sessionId);
     if (!result.ok) return { ok: false as const, reason: result.reason };

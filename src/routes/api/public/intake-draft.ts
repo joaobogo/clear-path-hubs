@@ -7,6 +7,15 @@ import {
   MAX_INTAKE_DRAFT_BYTES,
   stripNeverPersisted,
 } from "@/lib/intake-draft-shared";
+import { readJsonWithLimit } from "@/lib/public-api/body-limit";
+import {
+  PUBLIC_BODY_LIMITS,
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  consumeRateLimit,
+  newTraceId,
+  rateLimitResponse,
+} from "@/lib/public-api/rate-limit";
 
 /**
  * Anonymous intake drafts.
@@ -97,9 +106,20 @@ export const Route = createFileRoute("/api/public/intake-draft")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const traceId = newTraceId("intake_draft");
+        const decision = consumeRateLimit("intake_draft", clientIp(request), PUBLIC_RATE_LIMITS.intake_draft);
+        if (decision.limited) return rateLimitResponse(traceId, decision);
+
+        const read = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.intake_draft);
+        if (!read.ok) {
+          return Response.json(
+            { ok: false, trace_id: traceId, error: read.error, ...read.detail },
+            { status: read.status },
+          );
+        }
         let parsed: z.infer<typeof bodySchema>;
         try {
-          parsed = bodySchema.parse(await request.json());
+          parsed = bodySchema.parse(read.body);
         } catch {
           return json({ ok: false, error: "invalid_request" }, { status: 400 });
         }

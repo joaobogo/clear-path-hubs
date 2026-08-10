@@ -11,6 +11,8 @@ import {
   withRateLimitHeaders,
 } from "@/lib/public-api/rate-limit";
 import { auditConflict, auditRateLimited } from "@/lib/public-api/outcome-audit";
+import { readJsonWithLimit } from "@/lib/public-api/body-limit";
+import { PUBLIC_BODY_LIMITS } from "@/lib/public-api/rate-limit";
 
 // ---------- Canonical intake payload contract ----------
 const workModel = z.enum(["remote", "hybrid", "onsite"]);
@@ -176,12 +178,14 @@ export const Route = createFileRoute("/api/public/intake")({
         const response = await (async (): Promise<Response> => {
 
 
-        let body: unknown;
-        try {
-          body = await request.json();
-        } catch {
-          return Response.json({ ok: false, trace_id: traceId, error: "invalid_json" }, { status: 400 });
+        const read = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.intake);
+        if (!read.ok) {
+          return Response.json(
+            { ok: false, trace_id: traceId, error: read.error, ...read.detail },
+            { status: read.status },
+          );
         }
+        const body: unknown = read.body;
 
 
         const parsed = intakePayloadSchema.safeParse(body);

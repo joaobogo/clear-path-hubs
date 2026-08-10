@@ -1,5 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
+import { readJsonWithLimit } from "@/lib/public-api/body-limit";
+import {
+  PUBLIC_BODY_LIMITS,
+  PUBLIC_RATE_LIMITS,
+  clientIp,
+  consumeRateLimit,
+  newTraceId,
+  rateLimitResponse,
+} from "@/lib/public-api/rate-limit";
 
 /**
  * Runs (or retries) the Role Blueprint preparation for one express intake.
@@ -15,13 +24,18 @@ export const Route = createFileRoute("/api/public/blueprint-run")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        let raw: unknown;
-        try {
-          raw = await request.json();
-        } catch {
-          return Response.json({ ok: false, error: "invalid_json" }, { status: 400 });
+        const traceId = newTraceId("blueprint_run");
+        const decision = consumeRateLimit("blueprint_run", clientIp(request), PUBLIC_RATE_LIMITS.blueprint_run);
+        if (decision.limited) return rateLimitResponse(traceId, decision);
+
+        const read = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.blueprint_run);
+        if (!read.ok) {
+          return Response.json(
+            { ok: false, trace_id: traceId, error: read.error, ...read.detail },
+            { status: read.status },
+          );
         }
-        const parsed = bodySchema.safeParse(raw);
+        const parsed = bodySchema.safeParse(read.body);
         if (!parsed.success) return Response.json({ ok: false, error: "invalid_request" }, { status: 400 });
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

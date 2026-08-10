@@ -8,6 +8,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { statusLookupSchema } from "./apply-status.functions";
+import { throttlePublicFn } from "@/lib/public-api/server-fn-guard";
 
 const POSITION_OPEN_STATUSES = ["active", "approved", "paused"];
 
@@ -96,6 +97,7 @@ export type CandidateEditableDetails = {
 export const getMyApplicationDetails = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => statusLookupSchema.parse(input))
   .handler(async ({ data }): Promise<CandidateEditableDetails | null> => {
+    throttlePublicFn("apply_lookup");
     const app = await verifyApplication(data.reference, data.email);
     if (!app) return null;
     const editable = isEditable(app);
@@ -140,6 +142,7 @@ function b64ToBytes(b64: string): Uint8Array {
 export const updateMyApplication = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => candidateUpdateSchema.parse(input))
   .handler(async ({ data }): Promise<CandidateUpdateResult> => {
+    throttlePublicFn("candidate_write");
     const app = await verifyApplication(data.reference, data.email);
     if (!app) return { ok: false, code: "not_found", message: "We couldn't match that reference and email." };
     if (!isEditable(app))
@@ -260,6 +263,7 @@ export const requestMyDataDeletion = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => deletionRequestSchema.parse(input))
   .handler(
     async ({ data }): Promise<{ ok: boolean; already_open?: boolean; message: string }> => {
+      throttlePublicFn("candidate_write");
       const app = await verifyApplication(data.reference, data.email);
       if (!app)
         return { ok: false, message: "We couldn't match that reference and email." };
