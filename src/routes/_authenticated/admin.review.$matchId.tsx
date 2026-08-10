@@ -3,6 +3,8 @@ import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/component
 import { useSuspenseQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouteRealtime } from "@/hooks/use-route-realtime";
+
 import { toast } from "sonner";
 import { getAdminMatch, applyReviewDecision } from "@/lib/processing.functions";
 import { getReviewQueueIds } from "@/lib/admin-ops.functions";
