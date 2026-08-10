@@ -6,6 +6,8 @@ import {
 import { useQuery, useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, useEffect, useMemo } from "react";
+import { useRouteRealtime } from "@/hooks/use-route-realtime";
+
 import { z } from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { toast } from "sonner";
@@ -236,6 +238,17 @@ function CandidatesPage() {
   const [showDuplicates, setShowDuplicates] = useState(false);
 
   const filters = useMemo(() => buildFilters(search), [search]);
+
+  // Staff work across every tenant, so this desk subscribes unfiltered (RLS
+  // still gates delivery). A teammate moving a candidate elsewhere refreshes
+  // this queue in place instead of leaving a reviewer acting on stale rows.
+  useRouteRealtime({
+    scope: "admin-candidate-index",
+    orgId: search.organization_id || null,
+    staffAllOrgs: true,
+    invalidateKeys: [["candidate-index"], ["admin-work-queues"]],
+  });
+
 
   // Primary read matches every other admin desk: primed in the loader, read
   // with suspense, so the page never flickers through a bare loading state.

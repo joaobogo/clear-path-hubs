@@ -75,8 +75,16 @@ const ADMIN_REFRESH_KEYS = [
   ["pipeline-health"],
   ["publish-queue"],
   ["admin-messages"],
+  // The decision desks read under their own keys. Without these listed here a
+  // staff notification refreshed the counters while the queue a reviewer is
+  // actually looking at stayed on stale rows until a manual reload.
+  ["candidate-index"],
+  ["admin-work-queues"],
+  ["admin-review-queue-ids"],
+  ["admin-candidate"],
   NOTIFICATIONS_QUERY_KEY,
 ] as const;
+
 
 function AdminLayout() {
   const { staffAccess, testScope } = Route.useRouteContext();
