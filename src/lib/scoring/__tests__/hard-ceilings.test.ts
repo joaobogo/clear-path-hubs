@@ -1,3 +1,11 @@
+// Hard-ceiling regression gate.
+//
+// These caps are the difference between a low score and a *claim* the platform
+// cannot support. A CV we could not read must never present as a confident
+// composite, a dealbreaker answer must dominate, and a role whose core is
+// unproven must not read as better than a partial fit. Caps are authored 0-1 in
+// calibration and reported 0-100 on the run, so the scale conversion is asserted
+// here too.
 import { describe, expect, it } from "vitest";
 import { scoreCandidate } from "@/lib/scoring-engine.server";
 import { DEFAULT_CALIBRATION as C } from "@/lib/scoring/engine-calibration";
@@ -23,7 +31,7 @@ Senior engineer with deep experience in typescript, postgres, kubernetes and ter
 Led payments platform migration, ran hiring loops, owned SLOs. ${"Detailed delivery narrative. ".repeat(40)}
 `;
 
-describe("hard ceilings probe", () => {
+describe("hard ceilings: unparsed CV, dealbreaker and must-have floor", () => {
   it("unparsed CV cannot beat the cap even with perfect requirement text", () => {
     const r = scoreCandidate({
       cv_text: "typescript postgres",  // < unreadable_cv_chars (60)
