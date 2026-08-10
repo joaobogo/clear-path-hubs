@@ -710,6 +710,8 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     match_id: row.id,
     stage: row.stage,
     delivered_at: row.delivered_at ?? null,
+    contact_released: Boolean(row.contact_released_at),
+
     stage_entered_at:
       row.stage === "delivered"
         ? (row.delivered_at ?? row.updated_at ?? null)
