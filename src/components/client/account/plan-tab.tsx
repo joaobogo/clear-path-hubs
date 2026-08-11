@@ -126,6 +126,34 @@ export function PlanTab() {
     document.getElementById("plan-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  // Seat context arrives from a blocked invite or reactivation on the team tab,
+  // so the numbers behind the prompt are the same numbers shown here.
+  const search = useSearch({ from: "/_authenticated/client/account" });
+  const seatCtx: SeatUpgradeContext = {
+    ...(search.seatsUsed !== undefined ? { seatsUsed: search.seatsUsed } : {}),
+    ...(search.seatLimit !== undefined ? { seatLimit: search.seatLimit } : {}),
+    ...(search.seatsPending !== undefined ? { seatsPending: search.seatsPending } : {}),
+    ...(search.seatsNeeded !== undefined ? { seatsNeeded: search.seatsNeeded } : {}),
+  };
+  const showSeatContext = hasSeatContext(seatCtx);
+  const shortfall = seatShortfall(seatCtx);
+
+  const seatNoteFor = (productId: string) => {
+    if (!showSeatContext) return { note: null as string | null, resolves: false };
+    const total = planTotalSeats(productId);
+    if (total === null)
+      return { note: "Seats scoped with you — we set them when the plan is agreed.", resolves: false };
+    const resolves = planResolvesSeatNeed(total, seatCtx);
+    const used = seatCtx.seatsUsed;
+    const free = typeof used === "number" ? Math.max(0, total - used) : null;
+    const note = resolves
+      ? `${total} seats — frees ${free ?? seatCtx.seatsNeeded} seat${(free ?? 1) === 1 ? "" : "s"} straight after the switch.`
+      : `${total} seats — still ${Math.max(1, (seatCtx.seatsNeeded ?? 1) - (free ?? 0))} short of what you need.`;
+    return { note, resolves };
+  };
+
+
+
 
   return (
     <div className="space-y-8">
