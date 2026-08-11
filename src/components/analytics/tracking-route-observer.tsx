@@ -38,9 +38,6 @@ function roleType(path: string) {
 export function TrackingRouteObserver() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const href = useRouterState({ select: (s) => s.location.href });
-  const routerStatus = useRouterState({ select: (s) => s.status });
-  const statusRef = useRef(routerStatus);
-  statusRef.current = routerStatus;
   const lastPath = useRef<string | null>(null);
 
 
