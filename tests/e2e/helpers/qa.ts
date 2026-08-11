@@ -281,9 +281,9 @@ export async function waitForReactMount(page: Page, selector: string): Promise<v
  * board. This cookie is the token-guarded opt-in that lets the suite drive the
  * real listing/apply UI against the fixture.
  */
-export async function allowTestFixtures(context: {
-  addCookies: (c: Array<Record<string, unknown>>) => Promise<void>;
-}): Promise<void> {
+export async function allowTestFixtures(
+  context: Pick<BrowserContext, "addCookies">,
+): Promise<void> {
   await context.addCookies([
     { name: "qa_e2e", value: token(), url: BASE_URL },
   ]);
