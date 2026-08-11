@@ -100,7 +100,7 @@ export function SlaScorecard({
   title?: string;
 }) {
   const fn = useServerFn(getSlaPerformance);
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["client", "sla", orgId, positionId ?? null],
     queryFn: () => fn({ data: { orgId: orgId!, ...(positionId ? { positionId } : {}) } }),
     enabled: !!orgId,
@@ -110,7 +110,24 @@ export function SlaScorecard({
   if (isLoading) {
     return <div className="h-32 animate-pulse rounded-lg border bg-muted/40" aria-hidden />;
   }
+  // A read failure is stated, not hidden: silently dropping the card would read
+  // as "no commitments to report".
+  if (isError) {
+    return (
+      <section aria-labelledby="sla-heading" className="rounded-lg border bg-card p-4">
+        <h2 id="sla-heading" className="flex items-center gap-2 text-sm font-semibold">
+          <Target className="h-4 w-4 text-primary" />
+          {title}
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          We couldn't load your commitment tracking just now. Nothing has changed — this is a
+          loading problem on our side.
+        </p>
+      </section>
+    );
+  }
   if (!data || data.roles.length === 0) return null;
+
 
   const { summary, roles } = data;
   const avg = summary.averageVarianceDays;
