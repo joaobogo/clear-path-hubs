@@ -59,6 +59,8 @@ import {
 import { ErrorState } from "@/components/client/states";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { getWorkspaceSeatUsage } from "@/lib/collaborator-team.functions";
+import { seatAwareErrorMessage, seatLimitMessage } from "@/lib/seat-limit";
+import { Link } from "@tanstack/react-router";
 import { TeamActivityPanel } from "@/components/client/team-activity-panel";
 
 
