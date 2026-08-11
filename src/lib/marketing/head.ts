@@ -53,7 +53,7 @@ export function clampTitle(text: string, max = MAX_TITLE): string {
     if (head.length <= max && head.length > best.length) best = head;
   }
   // Guard against a stub like "2026" winning over real words.
-  if (best.length >= 20) return best;
+  if (best.length >= 16) return best;
 
   const cut = clean.slice(0, max - 1);
   const lastSpace = cut.lastIndexOf(" ");
