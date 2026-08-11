@@ -670,7 +670,7 @@ function MemberRow({
  {canMutate && !isSelf ? (
  <DropdownMenu>
  <DropdownMenuTrigger asChild>
- <Button variant="ghost" size="icon" aria-label={`Member actions for ${name}`} className="min-h-11 min-w-11" disabled={busy}>
+ <Button ref={memberMenuTriggerRef} variant="ghost" size="icon" aria-label={`Member actions for ${name}`} className="min-h-11 min-w-11" disabled={busy}>
  <MoreHorizontal className="h-4 w-4" />
  </Button>
  </DropdownMenuTrigger>
