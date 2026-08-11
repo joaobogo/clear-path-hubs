@@ -56,3 +56,32 @@ BEGIN
   END IF;
   RAISE INFO 'authorization test suite: no fixture residue';
 END $$;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Persist this run so seat enforcement coverage is verifiable after the fact:
+--   suite 'authz_matrix' — every check in the full suite
+--   suite 'seat_cap'     — the seat-limit / seat-permission slice
+-- Read back with:
+--   SELECT * FROM public.authz_test_report_summary;
+--   SELECT ordinal, line FROM public.authz_test_reports
+--    WHERE suite = 'seat_cap' ORDER BY ordinal;
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT * FROM public.record_authz_test_run();
+
+DO $$
+DECLARE seat_checks int; seat_failures int;
+BEGIN
+  SELECT count(*), count(*) FILTER (WHERE line LIKE 'FAIL%')
+    INTO seat_checks, seat_failures
+    FROM public.authz_test_reports WHERE suite = 'seat_cap';
+  IF seat_checks = 0 THEN
+    RAISE EXCEPTION 'seat cap coverage missing: no seat_cap rows recorded';
+  END IF;
+  IF seat_failures > 0 THEN
+    RAISE EXCEPTION 'seat cap coverage: % check(s) failed', seat_failures;
+  END IF;
+  RAISE INFO 'seat cap coverage: % check(s) recorded, all passed', seat_checks;
+END $$;
+
+SELECT ordinal, line FROM public.authz_test_reports
+ WHERE suite = 'seat_cap' ORDER BY ordinal;
