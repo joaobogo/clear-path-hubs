@@ -30,7 +30,7 @@ export const Route = createFileRoute("/industries_/$slug/briefing")({
     // human-readable form, so a briefing is only ever indexable at one URL.
     if (isLegacyIndustrySlug(params.slug)) {
       throw redirect({
-        to: "/industries_/$slug/briefing",
+        to: "/industries/$slug/briefing",
         params: { slug: INDUSTRY_SLUG_ALIASES[params.slug] },
         statusCode: 301,
       });

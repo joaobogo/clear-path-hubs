@@ -1,5 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 
 export function slugifyHeading(input: string): string {
   return String(input)
