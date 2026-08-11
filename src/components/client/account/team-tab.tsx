@@ -613,45 +613,61 @@ function MemberRow({
  );
 }
 
-function InviteDialog({ orgId }: { orgId: string }) {
- const [open, setOpen] = useState(false);
- const [email, setEmail] = useState("");
- const [role, setRole] = useState<ClientRoleId>("client_editor");
- const [failure, setFailure] = useState<string | null>(null);
- const qc = useQueryClient();
- const inviteFn = useServerFn(inviteClientMember);
- const invite = useMutation({
- mutationFn: () => inviteFn({ data: { orgId, email: email.trim(), role } }),
- onSuccess: () => {
- toast.success("Invitation sent");
- setEmail("");
- setFailure(null);
- setOpen(false);
- qc.invalidateQueries({ queryKey: ["client-team", orgId] });
- qc.invalidateQueries({ queryKey: ["client-team-seats", orgId] });
- },
- onError: (e: Error) =>
- setFailure(e.message.replace(/^Error: /, "") || "We couldn't send that invitation."),
- });
+function InviteDialog({
+  orgId,
+  seatsFull,
+  usage,
+}: {
+  orgId: string;
+  seatsFull: boolean;
+  usage: { seatsUsed: number; seatLimit: number | null };
+}) {
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState<ClientRoleId>("client_editor");
+  const [failure, setFailure] = useState<string | null>(null);
+  const qc = useQueryClient();
+  const inviteFn = useServerFn(inviteClientMember);
+  const invite = useMutation({
+  mutationFn: () => inviteFn({ data: { orgId, email: email.trim(), role } }),
+  onSuccess: () => {
+  toast.success("Invitation sent");
+  setEmail("");
+  setFailure(null);
+  setOpen(false);
+  qc.invalidateQueries({ queryKey: ["client-team", orgId] });
+  qc.invalidateQueries({ queryKey: ["client-team-seats", orgId] });
+  },
+  // A seat refusal can come from the friendly server check or straight from
+  // the database guard — both are turned into the same client-safe sentence.
+  onError: (e: Error) =>
+  setFailure(seatAwareErrorMessage(e, usage, "We couldn't send that invitation.")),
+  });
 
- // The email format is checked here as well as on the server so the reason is
- // never a generic failure.
- const emailLooksValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
+  // The email format is checked here as well as on the server so the reason is
+  // never a generic failure.
+  const emailLooksValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
 
- return (
- <Dialog
- open={open}
- onOpenChange={(next) => {
- setOpen(next);
- if (!next) setFailure(null);
- }}
- >
- <DialogTrigger asChild>
- <Button size="sm" className="min-h-11">
- <UserPlus className="mr-1.5 h-4 w-4" />
- Invite team member
- </Button>
- </DialogTrigger>
+  return (
+  <Dialog
+  open={open}
+  onOpenChange={(next) => {
+  setOpen(next);
+  if (!next) setFailure(null);
+  }}
+  >
+  <DialogTrigger asChild>
+  <Button
+  size="sm"
+  className="min-h-11"
+  disabled={seatsFull}
+  title={seatsFull ? seatLimitMessage(usage) : undefined}
+  >
+  <UserPlus className="mr-1.5 h-4 w-4" />
+  {seatsFull ? "No seats available" : "Invite team member"}
+  </Button>
+  </DialogTrigger>
+
  <DialogContent>
  <DialogHeader>
  <DialogTitle>Invite team member</DialogTitle>
