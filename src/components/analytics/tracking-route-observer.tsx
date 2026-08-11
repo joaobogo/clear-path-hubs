@@ -89,13 +89,19 @@ export function TrackingRouteObserver() {
     let done = false;
     let observer: MutationObserver | null = null;
     let timer = 0;
+    let poll = 0;
 
-    const dispatch = () => {
-      if (done) return;
-      done = true;
+    const stop = () => {
       observer?.disconnect();
       window.clearTimeout(timer);
+      window.clearInterval(poll);
       window.removeEventListener("pagehide", dispatch);
+    };
+
+    function dispatch() {
+      if (done) return;
+      done = true;
+      stop();
 
       const base = {
         page_path: pathname,
@@ -107,7 +113,7 @@ export function TrackingRouteObserver() {
       trackPageView(base);
       const evt = routeEvent(pathname);
       if (evt) trackEvent(evt, base);
-    };
+    }
 
     observer = new MutationObserver(() => {
       if (document.title !== titleAtNav) dispatch();
@@ -122,23 +128,19 @@ export function TrackingRouteObserver() {
     // router has settled there is no further title coming, so report then.
     // The hard cap bounds the wait on a slow route chunk.
     const started = Date.now();
-    const poll = window.setInterval(() => {
+    poll = window.setInterval(() => {
       if (document.title !== titleAtNav) return dispatch();
       if (statusRef.current === "idle" && Date.now() - started > 400) dispatch();
     }, 100);
     timer = window.setTimeout(dispatch, 4000);
     // Never lose the view if the visitor leaves while the title is pending.
     window.addEventListener("pagehide", dispatch);
-    const clearPoll = () => window.clearInterval(poll);
-    cleanups.push(clearPoll);
-
 
     return () => {
       done = true;
-      observer?.disconnect();
-      window.clearTimeout(timer);
-      window.removeEventListener("pagehide", dispatch);
+      stop();
     };
+
 
   }, [pathname, href]);
 
