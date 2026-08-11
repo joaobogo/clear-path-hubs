@@ -105,7 +105,7 @@ export function marketingHead(
   entry: ContentEntry | undefined,
   path: string,
   fallback?: { title: string; description: string },
-  options?: { breadcrumbs?: BreadcrumbItem[] },
+  options?: { breadcrumbs?: BreadcrumbItem[]; image?: string },
 ) {
   // Page-specific title/description always win. og:* is only a fallback so a
   // generic share string can never become the page <title>.
@@ -119,6 +119,8 @@ export function marketingHead(
       "AI Hiring Intelligence Platform — agents run the search, evidence backs every score, and ranked candidates land in a live Decision Workspace.",
   );
   const url = `${CANONICAL_ORIGIN}${path}`;
+  // Only the page's own hero/cover becomes its share image; no placeholder.
+  const image = absoluteShareImage(options?.image);
   return {
     meta: [
       { title },
@@ -127,10 +129,17 @@ export function marketingHead(
       { property: "og:description", content: description },
       { property: "og:url", content: url },
       { property: "og:type", content: entry?.meta["og:type"] || "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:card", content: image ? "summary_large_image" : "summary" },
       { name: "twitter:title", content: title },
       { name: "twitter:description", content: description },
+      ...(image
+        ? [
+            { property: "og:image", content: image },
+            { name: "twitter:image", content: image },
+          ]
+        : []),
     ],
+
     links: [{ rel: "canonical", href: url }],
     ...(options?.breadcrumbs?.length
       ? { scripts: [breadcrumbScript(options.breadcrumbs)] }
