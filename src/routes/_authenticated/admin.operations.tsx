@@ -271,8 +271,13 @@ function OperationsPage() {
 
       <Tabs defaultValue="pipeline">
         <TabsList>
-          <TabsTrigger value="pipeline">Pipeline incidents ({grouped.length})</TabsTrigger>
-          <TabsTrigger value="delivery">Delivery failures ({deliveryItems.length})</TabsTrigger>
+          <TabsTrigger value="pipeline">
+            Pipeline incidents ({opsQuery.isError || opsQuery.isPending ? "—" : grouped.length})
+          </TabsTrigger>
+          <TabsTrigger value="delivery">
+            Delivery failures (
+            {deliveryQuery.isError || deliveryQuery.isPending ? "—" : deliveryItems.length})
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="pipeline" className="mt-4 space-y-3">
