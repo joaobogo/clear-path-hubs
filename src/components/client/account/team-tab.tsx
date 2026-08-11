@@ -701,21 +701,49 @@ function MemberRow({
   </DialogHeader>
   <div className="space-y-3">
   <p className="text-sm font-medium">To free a seat, change one of these:</p>
-  <ul className="space-y-2 text-sm text-muted-foreground">
+  <ul className="space-y-3 text-sm text-muted-foreground">
   <li className="flex gap-2">
   <Mail className="mt-0.5 h-4 w-4 shrink-0" />
-  <span>
+  <div className="min-w-0 space-y-1.5">
+  <span className="block">
   {usage.pendingInvites && usage.pendingInvites > 0
   ? `Cancel one of the ${usage.pendingInvites} pending invitation${usage.pendingInvites === 1 ? "" : "s"} — an invitation holds a seat before it is accepted.`
   : "Cancel a pending invitation — invitations hold a seat before they are accepted."}
   </span>
+  {!!usage.pendingInvites && usage.pendingInvites > 0 && (
+  <Button
+  size="sm"
+  variant="outline"
+  data-testid="reactivate-blocked-cancel-invite"
+  onClick={() => {
+  setSeatBlock(false);
+  revealTeamTarget('li[data-member-status="invited"]');
+  }}
+  >
+  Cancel a pending invitation
+  </Button>
+  )}
+  </div>
   </li>
   <li className="flex gap-2">
   <Shield className="mt-0.5 h-4 w-4 shrink-0" />
-  <span>
+  <div className="min-w-0 space-y-1.5">
+  <span className="block">
   Suspend an active teammate who no longer needs access. Suspended
   members keep their history but stop using a seat.
   </span>
+  <Button
+  size="sm"
+  variant="outline"
+  data-testid="reactivate-blocked-open-team"
+  onClick={() => {
+  setSeatBlock(false);
+  revealTeamTarget("#team-members");
+  }}
+  >
+  Go to the team list
+  </Button>
+  </div>
   </li>
   <li className="flex gap-2">
   <UserMinus className="mt-0.5 h-4 w-4 shrink-0" />
@@ -737,9 +765,9 @@ function MemberRow({
   <Button variant="ghost" onClick={() => setSeatBlock(false)}>
   Close
   </Button>
-  <Button asChild variant="outline">
+  <Button asChild variant="outline" data-testid="reactivate-blocked-upgrade">
   <Link to="/client/account" search={{ tab: "plan" }}>
-  Review your plan
+  Start a seat upgrade
   </Link>
   </Button>
   <Button asChild>
@@ -748,6 +776,7 @@ function MemberRow({
   </Link>
   </Button>
   </DialogFooter>
+
   </DialogContent>
   </Dialog>
  </div>
