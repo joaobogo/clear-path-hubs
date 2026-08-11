@@ -1,13 +1,9 @@
 /**
  * TaaSFlow tracking pixels.
  *
- * CONSENT: region-based gate driven by the admin policy in
- * `public.tracking_policy` (edited at /admin/tracking). Only trackers the admin
- * marks strictly necessary may initialise before an affirmative choice — and an
- * essential GA4 runs cookieless (Consent Mode "denied") until consent. When
- * prior opt-in is required everywhere, no region is exempt; otherwise the gate
- * applies to the EU/EEA/UK/CH and other regions default to permitted.
- * Nothing initialises at all until the policy has been read.
+ * CONSENT: every tag boots on the first page view for all visitors (owner
+ * decision). GA4 is initialised with Consent Mode granted for analytics
+ * storage; advertising signals stay denied.
  *
  * Single source of truth for every third-party tag. All injection happens on
  * the client after hydration. Every function is wrapped so a blocked or
@@ -17,12 +13,7 @@
  * Dormant until their env var is set: Meta, LinkedIn, Clarity, Hotjar.
  */
 
-import {
-  isAllowed,
-  isTrackerAllowed,
-  isTrackingPolicyLoaded,
-  type ConsentCategory,
-} from "./consent";
+import { type ConsentCategory } from "./consent";
 
 
 
@@ -102,7 +93,7 @@ function injectScript(
 function initGA4() {
   if (loaded.has("ga4") || !GA_ID) return;
   loaded.add("ga4");
-  const granted = isAllowed("analytics");
+  const granted = true;
   window.dataLayer = window.dataLayer || [];
   // gtag.js only processes dataLayer entries that are real `arguments`
   // objects — pushing a plain array is silently ignored and nothing is sent.
@@ -133,7 +124,7 @@ function initGA4() {
 /** Upgrades GA4 from cookieless to full measurement once analytics is allowed. */
 function syncGA4Consent() {
   if (!loaded.has("ga4") || !window.gtag) return;
-  const granted = isAllowed("analytics");
+  const granted = true;
   window.gtag("consent", "update", {
     analytics_storage: granted ? "granted" : "denied",
     ad_storage: "denied",
@@ -355,16 +346,12 @@ function send(name: string, payload: Record<string, unknown>) {
   // cookieless or full. Session-recording tools stay consent-gated.
   window.gtag?.("event", name, payload);
   window.dataLayer?.push({ event: name, ...payload });
-  if (isAllowed("analytics")) {
-    window.clarity?.("event", name);
-    window.hj?.("event", name);
-  }
+  window.clarity?.("event", name);
+  window.hj?.("event", name);
 
-  if (isAllowed("marketing")) {
-    const metaName = META_EVENT_MAP[name];
-    if (metaName) window.fbq?.("track", metaName, payload);
-    window.lintrk?.("track", { conversion_id: name });
-  }
+  const metaName = META_EVENT_MAP[name];
+  if (metaName) window.fbq?.("track", metaName, payload);
+  window.lintrk?.("track", { conversion_id: name });
 }
 
 export function trackEvent(name: string, params: Record<string, unknown> = {}) {
