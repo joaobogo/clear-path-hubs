@@ -173,6 +173,26 @@ export function PlanTab() {
         </p>
       </div>
 
+      {showSeatContext && (
+        <div
+          data-testid="seat-shortfall-banner"
+          className="rounded-lg border taas-bd-warning px-4 py-3"
+        >
+          <p className="text-sm font-medium">
+            {shortfall > 0
+              ? `You need ${shortfall} more seat${shortfall === 1 ? "" : "s"} than your plan allows`
+              : "Seat check for the action you tried"}
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">{seatContextSummary(seatCtx)}</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Each plan below shows the seats it includes and whether it clears that gap the moment
+            it starts. Cancelling a pending invitation frees a seat without changing plan.
+          </p>
+        </div>
+      )}
+
+
+
       {ctxState.isError ? (
         <QueryErrorCard error={ctxState.error} onRetry={ctxState.retry} retrying={ctxState.retrying} />
       ) : isLoading || !orgId ? (
