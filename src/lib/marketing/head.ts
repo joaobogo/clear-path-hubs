@@ -28,6 +28,44 @@ export function clampDescription(text: string, max = MAX_DESCRIPTION): string {
   return `${base}…`;
 }
 
+/** Longest <title> Google renders in full on desktop and mobile SERPs. */
+const MAX_TITLE = 59;
+
+/**
+ * Keep a page title inside the SERP-visible length without mangling the
+ * headline.
+ *
+ * Content titles are authored as headlines, so many carry a subtitle after a
+ * colon, dash or pipe. Dropping the trailing segment reads as a deliberate
+ * title, which a mid-word ellipsis never does — so segment splitting is tried
+ * first and word-boundary trimming is only the last resort. The page's own
+ * <h1> comes from `meta.h1` and is untouched.
+ */
+export function clampTitle(text: string, max = MAX_TITLE): string {
+  const clean = text.replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+
+  // Longest leading segment that still fits, e.g.
+  // "Cost-Per-Hire Calculator: How to Find …" -> "Cost-Per-Hire Calculator".
+  let best = "";
+  for (const match of clean.matchAll(/\s*[:|–—]\s*/g)) {
+    const head = clean.slice(0, match.index).trim();
+    if (head.length <= max && head.length > best.length) best = head;
+  }
+  // Guard against a stub like "2026" winning over real words.
+  if (best.length >= 20) return best;
+
+  const cut = clean.slice(0, max - 1);
+  const lastSpace = cut.lastIndexOf(" ");
+  const base = (lastSpace > max * 0.5 ? cut.slice(0, lastSpace) : cut).replace(
+    /[\s,;:|–—-]+$/,
+    "",
+  );
+  return `${base}…`;
+}
+
+
+
 export type BreadcrumbItem = { name: string; path: string };
 
 /**
