@@ -323,29 +323,34 @@ export function TeamTab() {
  )}
  {visible.length === 1 && (
  <ul className="mt-6 divide-y border-t text-left">
- {visible.map((m: AnyRow) => (
- <MemberRow
- key={m.user_id}
- orgId={orgId!}
- member={m}
- canMutate={!!canMutate}
- selfId={selfId}
- />
- ))}
- </ul>
- )}
- </div>
- ) : (
- <ul className="divide-y">
- {visible.map((m: AnyRow) => (
- <MemberRow
- key={m.user_id}
- orgId={orgId!}
- member={m}
- canMutate={!!canMutate}
- selfId={selfId}
- />
- ))}
+  {visible.map((m: AnyRow) => (
+  <MemberRow
+  key={m.user_id}
+  orgId={orgId!}
+  member={m}
+  canMutate={!!canMutate}
+  selfId={selfId}
+  seatsFull={seatsFull}
+  usage={seatUsage}
+  />
+  ))}
+  </ul>
+  )}
+  </div>
+  ) : (
+  <ul className="divide-y">
+  {visible.map((m: AnyRow) => (
+  <MemberRow
+  key={m.user_id}
+  orgId={orgId!}
+  member={m}
+  canMutate={!!canMutate}
+  selfId={selfId}
+  seatsFull={seatsFull}
+  usage={seatUsage}
+  />
+  ))}
+
  </ul>
  )}
  </section>
