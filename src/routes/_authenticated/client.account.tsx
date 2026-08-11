@@ -27,6 +27,7 @@ import { TeamTab } from "@/components/client/account/team-tab";
 import { PlanTab } from "@/components/client/account/plan-tab";
 import { NotificationsTab } from "@/components/client/account/notifications-tab";
 import { BrandingTab } from "@/components/client/account/branding-tab";
+import { parseSeatUpgradeSearch, type SeatUpgradeSearch } from "@/lib/seat-upgrade";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
