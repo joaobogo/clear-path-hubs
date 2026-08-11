@@ -204,40 +204,75 @@ export function TeamTab() {
  );
  }
 
- const seatsUsed = seats?.seatsUsed ?? counts.total;
- const seatLimit = seats?.seatLimit ?? null;
+  const seatsUsed = seats?.seatsUsed ?? counts.total;
+  const seatLimit = seats?.seatLimit ?? null;
+  // Only claim the workspace is full when the server actually said so. If seat
+  // usage failed to load we let the attempt through and rely on the server
+  // refusal, rather than blocking an admin who still has seats.
+  const seatsFull = !!seats && seats.seatsLeft <= 0;
+  const seatUsage = { seatsUsed, seatLimit };
 
- return (
- <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 space-y-6">
- {/* Header */}
- <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
- <div className="min-w-0">
- <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
- Team
- </div>
- <h1 className="mt-1 truncate text-2xl font-semibold tracking-tight">
- {orgName ?? "Your workspace"}
- </h1>
- {seatsIsError ? (
- <p className="mt-1 text-sm text-destructive">Seat usage failed to load.</p>
- ) : (
- <p className="mt-1 text-sm text-muted-foreground">
- {seatLimit === null
- ? `${counts.total} member${counts.total === 1 ? "" : "s"}`
- : `${seatsUsed} of ${seatLimit} seat${seatLimit === 1 ? "" : "s"} in use`}
- {counts.invited > 0 && ` · ${counts.invited} pending`}
- </p>
- )}
- </div>
- {canMutate && orgId && <InviteDialog orgId={orgId} />}
- </header>
+  return (
+  <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 space-y-6">
+  {/* Header */}
+  <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+  <div className="min-w-0">
+  <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+  Team
+  </div>
+  <h1 className="mt-1 truncate text-2xl font-semibold tracking-tight">
+  {orgName ?? "Your workspace"}
+  </h1>
+  {seatsIsError ? (
+  <p className="mt-1 text-sm text-destructive">Seat usage failed to load.</p>
+  ) : (
+  <p className="mt-1 text-sm text-muted-foreground">
+  {seatLimit === null
+  ? `${counts.total} member${counts.total === 1 ? "" : "s"}`
+  : `${seatsUsed} of ${seatLimit} seat${seatLimit === 1 ? "" : "s"} in use`}
+  {counts.invited > 0 && ` · ${counts.invited} pending`}
+  </p>
+  )}
+  </div>
+  {canMutate && orgId && <InviteDialog orgId={orgId} seatsFull={seatsFull} usage={seatUsage} />}
+  </header>
 
- {readOnly && (
- <div className="flex items-center gap-2 rounded-lg border taas-bd-warning taas-bg-warning-solid/[0.05] px-3 py-2 text-sm">
- <Info className="h-4 w-4 shrink-0 taas-fg-warning" />
- <span>You are viewing as an administrator — team changes are disabled.</span>
- </div>
- )}
+  {readOnly && (
+  <div className="flex items-center gap-2 rounded-lg border taas-bd-warning taas-bg-warning-solid/[0.05] px-3 py-2 text-sm">
+  <Info className="h-4 w-4 shrink-0 taas-fg-warning" />
+  <span>You are viewing as an administrator — team changes are disabled.</span>
+  </div>
+  )}
+
+  {/* Seats full: say so before the admin fills in a form that cannot succeed,
+      and give them the way forward instead of a dead end. */}
+  {seatsFull && !readOnly && (
+  <div
+  data-testid="seat-limit-prompt"
+  className="rounded-lg border taas-bd-warning taas-bg-warning-solid/[0.05] px-4 py-3"
+  >
+  <div className="flex items-start gap-2">
+  <Users className="mt-0.5 h-4 w-4 shrink-0 taas-fg-warning" />
+  <div className="min-w-0 space-y-2">
+  <p className="text-sm font-medium">Every seat on your plan is in use</p>
+  <p className="text-sm text-muted-foreground">{seatLimitMessage(seatUsage)}</p>
+  <div className="flex flex-wrap gap-2 pt-0.5">
+  <Button asChild size="sm">
+  <Link to="/client/account" search={{ tab: "plan" }}>
+  Review your plan
+  </Link>
+  </Button>
+  <Button asChild size="sm" variant="outline">
+  <Link to="/book-call" search={{ position: undefined }}>
+  Talk to us about seats
+  </Link>
+  </Button>
+  </div>
+  </div>
+  </div>
+  </div>
+  )}
+
 
  {seatsIsError && (
  <QueryErrorCard
