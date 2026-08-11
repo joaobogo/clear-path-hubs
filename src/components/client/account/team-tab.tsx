@@ -325,7 +325,7 @@ export function TeamTab() {
  onRetry={() => void refetch()}
  />
  ) : (
- <section className="rounded-xl border bg-card">
+ <section id="team-members" className="scroll-mt-24 rounded-xl border bg-card transition-colors data-[highlight=true]:ring-2 data-[highlight=true]:ring-primary/40">
  {isLoading && visible.length === 0 ? (
  <div className="divide-y" aria-hidden>
  {[0, 1, 2].map((i) => (
@@ -452,7 +452,23 @@ function RoleIcon({ role }: { role: ClientRoleId }) {
  return <Shield className="h-3.5 w-3.5 text-muted-foreground" />;
 }
 
+/**
+ * Scroll the team list (or the first pending invitation) into view and flash it,
+ * so a dialog's advice lands on the exact row the admin has to change.
+ */
+function revealTeamTarget(selector: string) {
+  if (typeof document === "undefined") return;
+  requestAnimationFrame(() => {
+    const el = document.querySelector<HTMLElement>(selector);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.setAttribute("data-highlight", "true");
+    window.setTimeout(() => el.removeAttribute("data-highlight"), 2200);
+  });
+}
+
 function initials(name: string | null | undefined, email: string | null | undefined): string {
+
  const base = (name && name.trim()) || (email && email.split("@")[0]) || "?";
  const parts = base.split(/\s+/).slice(0, 2);
  return parts.map((p) => p.charAt(0).toUpperCase()).join("") || "?";
@@ -544,7 +560,12 @@ function MemberRow({
  changeRole.isPending || changeStatus.isPending || remove.isPending || resend.isPending;
 
  return (
- <li className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 p-4 sm:grid-cols-[auto_minmax(0,1fr)_auto_auto]">
+ <li
+ id={`team-member-${member.user_id}`}
+ data-member-status={status}
+ className="grid scroll-mt-24 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 p-4 transition-colors sm:grid-cols-[auto_minmax(0,1fr)_auto_auto] data-[highlight=true]:bg-primary/5"
+ >
+
  <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
  {initials(member.profiles?.full_name, email)}
  </div>
@@ -696,21 +717,49 @@ function MemberRow({
   </DialogHeader>
   <div className="space-y-3">
   <p className="text-sm font-medium">To free a seat, change one of these:</p>
-  <ul className="space-y-2 text-sm text-muted-foreground">
+  <ul className="space-y-3 text-sm text-muted-foreground">
   <li className="flex gap-2">
   <Mail className="mt-0.5 h-4 w-4 shrink-0" />
-  <span>
+  <div className="min-w-0 space-y-1.5">
+  <span className="block">
   {usage.pendingInvites && usage.pendingInvites > 0
   ? `Cancel one of the ${usage.pendingInvites} pending invitation${usage.pendingInvites === 1 ? "" : "s"} — an invitation holds a seat before it is accepted.`
   : "Cancel a pending invitation — invitations hold a seat before they are accepted."}
   </span>
+  {!!usage.pendingInvites && usage.pendingInvites > 0 && (
+  <Button
+  size="sm"
+  variant="outline"
+  data-testid="reactivate-blocked-cancel-invite"
+  onClick={() => {
+  setSeatBlock(false);
+  revealTeamTarget('li[data-member-status="invited"]');
+  }}
+  >
+  Cancel a pending invitation
+  </Button>
+  )}
+  </div>
   </li>
   <li className="flex gap-2">
   <Shield className="mt-0.5 h-4 w-4 shrink-0" />
-  <span>
+  <div className="min-w-0 space-y-1.5">
+  <span className="block">
   Suspend an active teammate who no longer needs access. Suspended
   members keep their history but stop using a seat.
   </span>
+  <Button
+  size="sm"
+  variant="outline"
+  data-testid="reactivate-blocked-open-team"
+  onClick={() => {
+  setSeatBlock(false);
+  revealTeamTarget("#team-members");
+  }}
+  >
+  Go to the team list
+  </Button>
+  </div>
   </li>
   <li className="flex gap-2">
   <UserMinus className="mt-0.5 h-4 w-4 shrink-0" />
@@ -732,9 +781,9 @@ function MemberRow({
   <Button variant="ghost" onClick={() => setSeatBlock(false)}>
   Close
   </Button>
-  <Button asChild variant="outline">
+  <Button asChild variant="outline" data-testid="reactivate-blocked-upgrade">
   <Link to="/client/account" search={{ tab: "plan" }}>
-  Review your plan
+  Start a seat upgrade
   </Link>
   </Button>
   <Button asChild>
@@ -743,6 +792,7 @@ function MemberRow({
   </Link>
   </Button>
   </DialogFooter>
+
   </DialogContent>
   </Dialog>
  </div>
