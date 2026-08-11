@@ -116,6 +116,10 @@
   --brand-font-display: "Space Grotesk", "IBM Plex Sans", ui-sans-serif, sans-serif;
   --brand-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo,
     Consolas, monospace;
+  /* Body alias — long-form article copy asks for --brand-font-body. */
+  --brand-font-body: var(--brand-font-sans);
+  /* Serif: pull-quotes and editorial pull-outs on industry pages only. */
+  --brand-font-serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
 
   /* ============================================================
    * Semantic --taas-* token layer (canonical brand API)
