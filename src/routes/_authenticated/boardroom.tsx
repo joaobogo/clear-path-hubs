@@ -92,6 +92,9 @@ function BoardroomPage() {
   }>;
 
   const isLoading = overviewQ.isPending && !!resolvedOrgId;
+  // Kept distinct from "empty" everywhere below: a failed read must never be
+  // presented as a workspace with no roles or no candidates.
+  const loadFailed = overviewQ.isError || contextQ.isError;
 
   const positions = whatsNext.slice(0, 6).map((p) => ({
     title: p.title,
