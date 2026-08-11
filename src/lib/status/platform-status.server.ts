@@ -181,6 +181,8 @@ export async function measurePlatformStatus(): Promise<PlatformStatus> {
     workspace,
     roles,
     candidateData,
+    fileStorage,
+    realtime,
     agents,
     scoring,
     integrations,
