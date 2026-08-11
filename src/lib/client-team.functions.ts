@@ -293,6 +293,11 @@ export const setClientMemberStatus = createServerFn({ method: "POST" })
       if (activeAdmins.length === 0)
         throw new Error("You need at least one active Admin — promote someone else first.");
     }
+    // Reactivating a suspended teammate consumes a seat just like an
+    // invitation does. Without this the database trigger still refuses, but the
+    // client would read raw `seat_limit_exceeded` trigger text.
+    if (data.status === "active") await assertSeatAvailable(data.orgId);
+
     const { error } = await context.supabase
       .from("memberships")
       .update({ status: data.status })
