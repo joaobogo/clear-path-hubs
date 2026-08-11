@@ -325,7 +325,7 @@ export function TeamTab() {
  onRetry={() => void refetch()}
  />
  ) : (
- <section className="rounded-xl border bg-card">
+ <section id="team-members" className="scroll-mt-24 rounded-xl border bg-card transition-colors data-[highlight=true]:ring-2 data-[highlight=true]:ring-primary/40">
  {isLoading && visible.length === 0 ? (
  <div className="divide-y" aria-hidden>
  {[0, 1, 2].map((i) => (
