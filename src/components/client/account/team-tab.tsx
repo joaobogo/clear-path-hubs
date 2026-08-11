@@ -680,17 +680,10 @@ function MemberRow({
  )}
   {status === "suspended" && (
   // Reactivating spends a seat, so it is refused when the plan is full.
-  // Keep the item clickable and explain the block in a dialog instead of
-  // greying it out with no reason.
+  // Always ask the server: it returns the structured reason code and the
+  // real counts, so the explainer never guesses from cached numbers.
   <DropdownMenuItem
-  onSelect={(e) => {
-  if (seatsFull) {
-  e.preventDefault();
-  setSeatBlock(true);
-  return;
-  }
-  changeStatus.mutate("active");
-  }}
+  onSelect={() => changeStatus.mutate("active")}
   >
   <ShieldCheck className="mr-2 h-4 w-4" />
   {seatsFull ? "Reactivate — no seats left" : "Reactivate"}
