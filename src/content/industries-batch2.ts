@@ -35,7 +35,7 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     hero: {
       title: "Applied AI hiring, calibrated between research, engineering and platform.",
       subtitle:
-        "TaaSFlow separates researchers, applied scientists, ML engineers and platform builders — with rubrics tuned to what each role actually ships: papers, benchmarks, production models or MLOps foundations.",
+        "Researchers, applied scientists, ML engineers and platform builders, scored on what each one actually ships.",
     },
     challenges: [
       { title: "Research vs production drift", body: "Publications and Kaggle badges do not equal production ML. Rubrics score each track on the outcomes it actually owned — inference latency, training pipelines, evaluation harnesses or published research." },
@@ -96,7 +96,7 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     hero: {
       title: "FinTech hiring, tuned to regulated product delivery.",
       subtitle:
-        "TaaSFlow gives fintech leaders a workspace for engineering, product, risk, compliance and commercial hires — with rubrics that separate greenfield product from regulated payments-infrastructure work.",
+        "Engineering, product, risk and commercial hires, with greenfield product kept separate from regulated payments work.",
     },
     challenges: [
       { title: "Regulated-product experience", body: "Shipping in an EMI, bank or PI is different from unregulated SaaS. Rubrics capture licensing regime, control frameworks and audit context." },
@@ -662,7 +662,7 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     meta: { title: "Pharmaceuticals hiring — TaaSFlow", description: "Ranked shortlists for clinical, regulatory, medical affairs, R&D and commercial pharma roles." },
     hero: {
       title: "Pharma hiring, tuned per therapeutic area and phase.",
-      subtitle: "Discovery, clinical, regulatory, medical affairs and commercial — each scored on the therapeutic area, phase and regulatory pathway their remit demands.",
+      subtitle: "Discovery, clinical, regulatory and commercial hires, scored on therapeutic area, phase and pathway.",
     },
     challenges: [
       { title: "Therapeutic-area depth", body: "Oncology, immunology, CNS, rare disease and cardiometabolic each demand distinct evidence. TA captured at intake." },
@@ -710,7 +710,7 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     meta: { title: "Biotech hiring — TaaSFlow", description: "Ranked shortlists for discovery science, translational, CMC, clinical and platform biotech roles." },
     hero: {
       title: "Biotech hiring, calibrated per modality and platform.",
-      subtitle: "Small molecule, biologics, cell & gene therapy, mRNA and synthetic biology — each scored on the modality and platform evidence their remit demands.",
+      subtitle: "Small molecule, biologics, cell and gene, mRNA and synbio hires, scored on modality evidence.",
     },
     challenges: [
       { title: "Modality fluency", body: "Modality is non-transferable. Rubrics separate small molecule, biologics, cell/gene, mRNA and synbio in scoring." },
@@ -976,7 +976,7 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     meta: { title: "Customer Success hiring — TaaSFlow", description: "Ranked shortlists for CSMs, AMs, renewal and CS-operations roles across SMB, mid-market and enterprise." },
     hero: {
       title: "Customer Success hiring, calibrated per segment and motion.",
-      subtitle: "SMB high-volume CSMs, mid-market hybrid AMs and enterprise strategic CSMs each demand different evidence. Segment, ARR under management and renewal outcomes captured explicitly.",
+      subtitle: "SMB, mid-market and enterprise CSM hires, with segment, ARR and renewal outcomes captured explicitly.",
     },
     challenges: [
       { title: "Segment fit", body: "SMB, mid-market and enterprise CS look nothing alike. Rubrics separate them and never merge scoring." },
@@ -1125,8 +1125,8 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
     aliases: ["Auto", "EV", "OEM", "Tier-1 Suppliers"],
     meta: { title: "Automotive hiring — TaaSFlow", description: "Ranked shortlists for OEM, Tier-1, EV and automotive-software roles across engineering, manufacturing and quality." },
     hero: {
-      title: "Automotive hiring, tuned per OEM vs supplier and ICE vs EV.",
-      subtitle: "Vehicle engineering, powertrain, ADAS, software-defined vehicle, manufacturing and quality — each scored with the platform, plant and standard evidence their remit demands.",
+      title: "Automotive hiring, tuned per OEM, supplier and powertrain.",
+      subtitle: "Vehicle engineering, ADAS, software-defined vehicle and quality hires, scored on platform and plant evidence.",
     },
     challenges: [
       { title: "OEM vs Tier-1 fluency", body: "OEM programme discipline and Tier-1 delivery cadence reward different signal — captured at intake." },

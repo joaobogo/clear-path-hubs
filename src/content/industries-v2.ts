@@ -63,7 +63,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Engineering, product and infrastructure hiring, on one transparent workflow.",
       subtitle:
-        "One workspace for every engineering, product, cloud and IT search — with role-specific rubrics, technical evidence extracted from the CV, and a reviewed shortlist.",
+        "One workspace for every engineering, product and IT search, with technical evidence pulled straight from the CV.",
     },
     challenges: [
       { title: "Signal is buried in the CV", body: "Great engineers describe impact in prose, not keywords. The rubric extracts architecture calls, systems owned and scale handled." },
@@ -149,7 +149,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Talent for SaaS teams who live and breathe recurring revenue.",
       subtitle:
-        "Hire people who genuinely understand recurring-revenue mechanics — from PLG activation to enterprise expansion — with evidence tied to what they actually did.",
+        "Hire people who understand recurring revenue, with evidence tied to what they actually did.",
     },
     challenges: [
       { title: "SaaS titles hide very different jobs", body: "A CSM at a self-serve tool is a different job to one at an enterprise platform. The rubric follows your motion, not the title." },
@@ -228,7 +228,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Data hires you can actually evaluate before the interview.",
       subtitle:
-        "A rubric per data role — pipelines, analytics engineering, BI, science, ML, governance — with evidence of modelling, tooling and business outcomes each candidate has delivered.",
+        "A rubric per data role, with evidence of the modelling, tooling and outcomes each candidate delivered.",
     },
     challenges: [
       { title: "The data stack keeps changing", body: "Warehouses, orchestration, BI and ML tools shift constantly. The rubric rebuilds per search to reflect your actual stack." },
@@ -316,7 +316,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Security hiring that actually verifies the security part.",
       subtitle:
-        "Role-specific rubrics per security domain — offensive, defensive, cloud, GRC and application — with evidence captured from the CV before shortlist reaches you.",
+        "Rubrics per security domain, with evidence captured from the CV before the shortlist reaches you.",
     },
     challenges: [
       { title: "Certifications aren't the same as capability", body: "Certifications are a floor, not a ceiling. Scoring runs on incidents handled, controls implemented and tooling owned — not certificates alone." },
@@ -406,7 +406,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Finance hiring with rubrics tuned per function and regulatory context.",
       subtitle:
-        "A workspace for every finance hire — from FP&A analyst to VP-level banker — with function-specific rubrics and evidence of the regulatory environments each candidate actually worked in.",
+        "A workspace for every finance hire, with rubrics per function and evidence of the regulatory environments worked in.",
     },
     challenges: [
       { title: "Function-specific signal", body: "Banking, FP&A, treasury, investment, risk and compliance each need a different rubric. We build one per requisition." },
@@ -491,7 +491,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Accounting hiring, calibrated per standard, cycle and qualification.",
       subtitle:
-        "TaaSFlow gives audit partners and finance controllers a workspace for every hire — audit, tax, controllership, statutory reporting, bookkeeping leadership — with rubrics tuned to the standards, cycles and qualifications the role actually requires.",
+        "Audit, tax and controllership hires, scored on the standards, cycles and qualifications the role really needs.",
     },
     challenges: [
       { title: "Standards and framework fit", body: "IFRS, US GAAP, local statutory work and public-company reporting each require distinct evidence. The rubric captures the frameworks actually applied, not just listed." },
@@ -570,9 +570,9 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
         "Structured sourcing for carriers, brokers, MGAs and reinsurers: underwriting, claims, actuarial, broking, compliance and operations. Ranked shortlists with line-of-business evidence.",
     },
     hero: {
-      title: "Insurance hiring, calibrated per line of business, channel and regulatory context.",
+      title: "Insurance hiring, calibrated per line, channel and regulator.",
       subtitle:
-        "TaaSFlow gives insurance leaders a workspace for every hire — underwriting, claims, actuarial, broking, compliance and operations — with rubrics tuned to the line of business, distribution channel and regulator.",
+        "Underwriting, claims, actuarial and broking hires, scored on line of business, channel and regulator.",
     },
     challenges: [
       { title: "Line-of-business precision", body: "P&C, life, specialty and reinsurance each need distinct signal. Our rubric captures the lines and products actually handled instead of generic 'insurance experience'." },
@@ -656,7 +656,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "PE hiring, from deal team to portfolio operators.",
       subtitle:
-        "TaaSFlow gives partners and talent leads a workspace for every search — fund-side investment roles and portfolio-company leadership hires — with rubrics tuned per mandate.",
+        "Fund-side investment roles and portfolio leadership hires, each with a rubric tuned to the mandate.",
     },
     challenges: [
       { title: "Deal and sector evidence", body: "PE CVs need to show the deals actually worked on and the sector depth behind them. Our rubric extracts deal roles, cheque sizes and sector coverage — not just firm names." },
@@ -731,7 +731,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Healthcare hiring, calibrated per setting, specialty and licensing context.",
       subtitle:
-        "TaaSFlow gives healthcare leaders a workspace for every hire — clinical, operational, technical — with rubrics tuned to the care setting, specialty, systems and licensing the role actually requires.",
+        "Clinical, operational and technical hires, scored on care setting, specialty, systems and licensing.",
     },
     challenges: [
       { title: "Setting and specialty fit", body: "Acute, ambulatory, primary care, behavioural health and health-tech each need distinct evidence. Our rubric captures the settings and specialties the candidate has worked in — not generic 'healthcare experience'." },
@@ -812,9 +812,9 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
         "Structured sourcing for law firms and in-house legal teams. Ranked shortlists with practice-area, jurisdiction and bar-admission evidence extracted directly from the CV.",
     },
     hero: {
-      title: "Legal hiring with evidence tied to practice area, jurisdiction and bar admission.",
+      title: "Legal hiring with evidence tied to practice, jurisdiction and admission.",
       subtitle:
-        "TaaSFlow gives general counsel and law firm leaders a workspace for every legal search — rubrics tuned per practice area, jurisdiction, bar admission and level, with a human-reviewed shortlist.",
+        "Rubrics per practice area, jurisdiction, admission and level, with every shortlist reviewed by a recruiter.",
     },
     challenges: [
       { title: "Practice-area precision", body: "Legal CVs blur across practice groups. The rubric captures the specific matters, deal types and jurisdictions worked on so shortlists match the mandate — not the label." },
@@ -894,9 +894,9 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
         "Structured sourcing for public agencies, government contractors and civic-tech teams. Ranked shortlists with evidence of programme, policy, procurement and delivery experience.",
     },
     hero: {
-      title: "Public sector hiring with evidence tied to programme, procurement and policy.",
+      title: "Public sector hiring, evidenced by programme and procurement work.",
       subtitle:
-        "TaaSFlow gives agency and contractor leaders a workspace for every hire — programme, policy, delivery, technology — with rubrics tuned to the programme context, procurement environment and outcome.",
+        "Programme, policy, delivery and technology hires, scored on programme context and procurement environment.",
     },
     challenges: [
       { title: "Programme and mission context", body: "Public sector CVs often blur across programmes. Our rubric captures the specific programmes, missions and outcomes the candidate contributed to." },
@@ -980,7 +980,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Nonprofit hiring, calibrated per mission and programme.",
       subtitle:
-        "TaaSFlow gives nonprofit leaders a workspace for every hire — programme, development, operations — with rubrics tuned to mission fit and delivery evidence.",
+        "Programme, development and operations hires, scored on mission fit and delivery evidence.",
     },
     challenges: [
       { title: "Mission and programme fit", body: "Nonprofit CVs need to show real programme contribution, not just cause alignment. Our rubric extracts the programmes owned, outcomes measured and communities served." },
@@ -1055,7 +1055,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Sales hiring, calibrated per motion, segment and quota reality.",
       subtitle:
-        "TaaSFlow gives revenue leaders a workspace for every sales hire — AE, AM, SDR, SE, sales leadership — with rubrics tuned to motion, deal size, segment, product type and measurable quota evidence.",
+        "AE, AM, SDR and leadership hires, scored on motion, segment, deal size and quota evidence.",
     },
     challenges: [
       { title: "Motion and deal-size fit", body: "Transactional, mid-market and enterprise motions reward different skills. The rubric captures actual cycle length, ACV and buying committees the candidate has worked with." },
@@ -1130,7 +1130,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Marketing hiring, tuned per channel, funnel stage and audience.",
       subtitle:
-        "TaaSFlow gives marketing leaders a workspace for every hire — demand, performance, brand, content, lifecycle, operations — with rubrics tuned per channel, funnel stage, audience and budget scope.",
+        "Demand, brand, content and lifecycle hires, scored per channel, funnel stage and budget scope.",
     },
     challenges: [
       { title: "Channel and stack fit", body: "Paid, SEO, content, lifecycle and events reward different signal. The rubric captures the channels actually owned and results measured, not the list of tools mentioned." },
@@ -1206,7 +1206,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Media hiring, calibrated per format, audience and revenue model.",
       subtitle:
-        "TaaSFlow gives media leaders a workspace for every hire — editorial, production, distribution, monetisation, creative operations — with rubrics tuned per format, audience and revenue model.",
+        "Editorial, production, distribution and monetisation hires, scored per format, audience and revenue model.",
     },
     challenges: [
       { title: "Format and craft fit", body: "Editorial, video, audio, social and live formats each require distinct craft evidence. The rubric captures the formats actually produced and the audiences reached." },
@@ -1285,7 +1285,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "People-team hiring, calibrated per function and organisation stage.",
       subtitle:
-        "TaaSFlow gives CPOs and HR leaders a workspace for every people hire — TA, HRBP, comp & ben, L&D, people ops, HR leadership — with rubrics tuned per function and organisation stage.",
+        "TA, HRBP, reward, L&D and people ops hires, scored per function and company stage.",
     },
     challenges: [
       { title: "Function-specific evidence", body: "Recruiting, HRBP, comp & ben, DEI, L&D and people ops each need distinct signal. The rubric captures the specific function and scope the candidate actually owned." },
@@ -1360,7 +1360,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "A delivery layer for staffing agencies, RPO and search firms.",
       subtitle:
-        "TaaSFlow gives staffing firms a workspace per client mandate — structured intake, role-specific scoring, evidence extracted from the CV — so recruiters spend their time on client conversations, not shortlisting. Complements the Staffing Partnership programme rather than duplicating it.",
+        "A workspace per client mandate, so your recruiters spend their time on clients, not shortlisting.",
     },
     challenges: [
       { title: "Recruiter capacity", body: "Every recruiter has a ceiling on active searches. Our workspace absorbs the intake, scoring and ranking work so recruiters run more mandates without dropping quality." },
@@ -1438,7 +1438,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Extend your delivery capacity without diluting your standard.",
       subtitle:
-        "TaaSFlow helps consulting firms and advisory practices scale delivery: structured intake per engagement type, rubrics per practice and level, and evidence of the outcomes each candidate has actually delivered.",
+        "Structured intake per engagement, rubrics per practice and level, and evidence of outcomes delivered.",
     },
     challenges: [
       { title: "Every engagement type wants a different profile", body: "Strategy, operations, technology and change work each favour different backgrounds. Rubrics are calibrated per practice so the shortlist matches the engagement, not just the title." },
@@ -1517,7 +1517,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Construction hiring, tuned per project type, delivery method and location.",
       subtitle:
-        "TaaSFlow gives construction leaders a workspace for every hire — field, project, preconstruction, commercial and safety — with rubrics tuned to project type, delivery method, trade scope and location dependency.",
+        "Field, project, preconstruction, commercial and safety hires, scored on project type, delivery method and trade scope.",
     },
     challenges: [
       { title: "Project-type fit", body: "Commercial, industrial, infrastructure and residential each demand different signal. The rubric captures the project types the candidate has actually delivered." },
@@ -1595,9 +1595,9 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
         "Structured sourcing for owners, developers, operators and real-estate services firms. Ranked shortlists with evidence of asset class, market, lifecycle stage and CRE experience.",
     },
     hero: {
-      title: "Real estate hiring, calibrated per asset class, market and lifecycle stage.",
+      title: "Real estate hiring, calibrated per asset class and market.",
       subtitle:
-        "TaaSFlow gives real-estate leaders a workspace for every hire — investment, development, operations, asset management, brokerage and facilities — with rubrics tuned per asset class and lifecycle stage.",
+        "Investment, development, operations and brokerage hires, scored per asset class and lifecycle stage.",
     },
     challenges: [
       { title: "Asset-class precision", body: "Office, industrial, multifamily, retail and specialty each need distinct signal. The rubric captures the asset classes actually worked on and portfolio scale." },
@@ -1677,7 +1677,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Manufacturing hiring, calibrated per product, process and plant scale.",
       subtitle:
-        "TaaSFlow gives manufacturing leaders a workspace for every hire — engineering, operations, quality, maintenance, supply chain and plant leadership — with rubrics tuned to product type, process and plant scale.",
+        "Engineering, operations, quality and plant leadership hires, scored on product type, process and plant scale.",
     },
     challenges: [
       { title: "Product and process fit", body: "Discrete, process, high-mix / low-volume and high-volume manufacturing each need distinct signal. Product type and process are captured in intake." },
@@ -1760,9 +1760,9 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
         "Structured sourcing for hotels, restaurants, F&B groups and event operators. Ranked shortlists with evidence of property type, service level, event format and multi-location operations.",
     },
     hero: {
-      title: "Hospitality and events hiring, calibrated per property, format and service level.",
+      title: "Hospitality and events hiring, calibrated per property and format.",
       subtitle:
-        "TaaSFlow gives hospitality and events leaders a workspace for every hire — property leadership, F&B, guest experience, events, multi-location operations — with rubrics tuned to property type, service level, event format and seasonality.",
+        "Property leadership, F&B, guest experience and events hires, scored on property type, service level and seasonality.",
     },
     challenges: [
       { title: "Property, segment and format fit", body: "Luxury, lifestyle, select-service, F&B-led and events operations each need distinct signal. Property/format is captured explicitly." },
@@ -1842,7 +1842,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Retail hiring, calibrated per format, category and channel mix.",
       subtitle:
-        "TaaSFlow gives retail leaders a workspace for every hire — store operations, ecommerce, merchandising, buying and multi-location leadership — with rubrics tuned to format, category, channel mix and location dependency.",
+        "Store operations, ecommerce, merchandising and buying hires, scored on format, category and channel mix.",
     },
     challenges: [
       { title: "Format and channel fit", body: "Big-box, specialty, luxury, off-price and DTC formats each need distinct signal. Format is captured explicitly in intake." },
@@ -1917,7 +1917,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "Logistics hiring, calibrated per network, mode and function.",
       subtitle:
-        "TaaSFlow gives logistics and supply chain leaders a workspace for every hire — warehousing, transportation, procurement, planning, distribution and operations leadership — with rubrics tuned to network scale, modal mix and operating model.",
+        "Warehousing, transport, procurement and planning hires, scored on network scale, modal mix and operating model.",
     },
     challenges: [
       { title: "Function-specific evidence", body: "Warehousing, transportation, procurement and planning are distinct disciplines. Each gets its own rubric so shortlists match the function." },
@@ -1995,7 +1995,7 @@ export const INDUSTRY_ENTRIES: IndustryEntry[] = [
     hero: {
       title: "E-commerce hiring, tuned per channel and category.",
       subtitle:
-        "TaaSFlow gives e-commerce leaders a workspace for every hire — merchandising, growth, ops, retention — with rubrics tuned per channel, category and brand stage.",
+        "Merchandising, growth, ops and retention hires, scored per channel, category and brand stage.",
     },
     challenges: [
       { title: "Channel and marketplace fit", body: "DTC store, marketplaces, wholesale and retail media each require distinct evidence. Our rubric captures the channels actually owned and the results measured." },
