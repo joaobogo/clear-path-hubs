@@ -624,13 +624,14 @@ function MemberRow({
  </DropdownMenuItem>
  )}
   {status === "suspended" && (
-  // Reactivating spends a seat, so it is refused when the plan is full —
-  // say so up front rather than after the click.
+  // Reactivating spends a seat, so it is refused when the plan is full.
+  // Keep the item clickable and explain the block in a dialog instead of
+  // greying it out with no reason.
   <DropdownMenuItem
-  disabled={seatsFull}
-  onSelect={() => {
+  onSelect={(e) => {
   if (seatsFull) {
-  toast.error(seatLimitMessage(usage));
+  e.preventDefault();
+  setSeatBlock(true);
   return;
   }
   changeStatus.mutate("active");
