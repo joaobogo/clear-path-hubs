@@ -326,9 +326,11 @@ function SlidePositions({
 function SlideShortlist({
   candidates,
   isLoading,
+  loadFailed,
 }: {
   candidates: { rank: number; name: string; score: number; note: string }[];
   isLoading?: boolean;
+  loadFailed?: boolean;
 }) {
   return (
     <div>
@@ -338,11 +340,17 @@ function SlideShortlist({
       </h2>
       {isLoading ? (
         <SlideNote>Loading your shortlist…</SlideNote>
+      ) : loadFailed ? (
+        <SlideNote>
+          We couldn't load your shortlist. This is a loading problem on our side — it does
+          not mean no candidates have been released.
+        </SlideNote>
       ) : candidates.length === 0 ? (
         <SlideNote>
           No candidates released to this workspace yet. Approved candidates appear
           here in rank order with the evidence behind each score.
         </SlideNote>
+
       ) : (
         <div className="mt-10 space-y-4">
           {candidates.map((c) => (
