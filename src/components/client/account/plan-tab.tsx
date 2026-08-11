@@ -4,7 +4,15 @@
  * there is no second set of numbers anywhere.
  */
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useSearch } from "@tanstack/react-router";
+import {
+  hasSeatContext,
+  planResolvesSeatNeed,
+  planTotalSeats,
+  seatContextSummary,
+  seatShortfall,
+  type SeatUpgradeContext,
+} from "@/lib/seat-upgrade";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getClientContext } from "@/lib/client-context.functions";
@@ -37,6 +45,8 @@ function PlanCard({
   detail,
   onSelect,
   actionLabel,
+  seatNote,
+  resolvesSeats,
 }: {
   label: string;
   price: string;
@@ -44,6 +54,9 @@ function PlanCard({
   detail: string | null;
   onSelect: (() => void) | null;
   actionLabel: string;
+  /** Seat maths for this plan, shown only when arriving from a seat block. */
+  seatNote?: string | null;
+  resolvesSeats?: boolean;
 }) {
   const body = (
     <>
@@ -56,6 +69,14 @@ function PlanCard({
       <CardContent className="space-y-2 text-sm text-muted-foreground">
         <p>{summary}</p>
         {detail ? <p className="text-xs">{detail}</p> : null}
+        {seatNote ? (
+          <p
+            data-testid="plan-seat-note"
+            className={`text-xs ${resolvesSeats ? "taas-fg-success" : "taas-fg-warning"}`}
+          >
+            {seatNote}
+          </p>
+        ) : null}
       </CardContent>
     </>
   );
@@ -113,6 +134,34 @@ export function PlanTab() {
     document.getElementById("plan-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  // Seat context arrives from a blocked invite or reactivation on the team tab,
+  // so the numbers behind the prompt are the same numbers shown here.
+  const search = useSearch({ from: "/_authenticated/client/account" });
+  const seatCtx: SeatUpgradeContext = {
+    ...(search.seatsUsed !== undefined ? { seatsUsed: search.seatsUsed } : {}),
+    ...(search.seatLimit !== undefined ? { seatLimit: search.seatLimit } : {}),
+    ...(search.seatsPending !== undefined ? { seatsPending: search.seatsPending } : {}),
+    ...(search.seatsNeeded !== undefined ? { seatsNeeded: search.seatsNeeded } : {}),
+  };
+  const showSeatContext = hasSeatContext(seatCtx);
+  const shortfall = seatShortfall(seatCtx);
+
+  const seatNoteFor = (productId: string) => {
+    if (!showSeatContext) return { note: null as string | null, resolves: false };
+    const total = planTotalSeats(productId);
+    if (total === null)
+      return { note: "Seats scoped with you — we set them when the plan is agreed.", resolves: false };
+    const resolves = planResolvesSeatNeed(total, seatCtx);
+    const used = seatCtx.seatsUsed;
+    const free = typeof used === "number" ? Math.max(0, total - used) : null;
+    const note = resolves
+      ? `${total} seats — frees ${free ?? seatCtx.seatsNeeded} seat${(free ?? 1) === 1 ? "" : "s"} straight after the switch.`
+      : `${total} seats — still ${Math.max(1, (seatCtx.seatsNeeded ?? 1) - (free ?? 0))} short of what you need.`;
+    return { note, resolves };
+  };
+
+
+
 
   return (
     <div className="space-y-8">
@@ -123,6 +172,26 @@ export function PlanTab() {
           our public pricing page. {TURNAROUND_LABEL} applies to every plan.
         </p>
       </div>
+
+      {showSeatContext && (
+        <div
+          data-testid="seat-shortfall-banner"
+          className="rounded-lg border taas-bd-warning px-4 py-3"
+        >
+          <p className="text-sm font-medium">
+            {shortfall > 0
+              ? `You need ${shortfall} more seat${shortfall === 1 ? "" : "s"} than your plan allows`
+              : "Seat check for the action you tried"}
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">{seatContextSummary(seatCtx)}</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Each plan below shows the seats it includes and whether it clears that gap the moment
+            it starts. Cancelling a pending invitation frees a seat without changing plan.
+          </p>
+        </div>
+      )}
+
+
 
       {ctxState.isError ? (
         <QueryErrorCard error={ctxState.error} onRetry={ctxState.retry} retrying={ctxState.retrying} />
@@ -150,34 +219,44 @@ export function PlanTab() {
       <section className="space-y-3">
         <h2 className="text-sm font-semibold">One-off packages</h2>
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          {packages.map((plan) => (
-            <PlanCard
-              key={plan.priceId}
-              label={plan.label}
-              price={money(plan.amountUsd)}
-              summary={plan.summary}
-              detail={plan.validForDays ? `Valid ${plan.validForDays} days` : null}
-              onSelect={canPick ? () => pick(plan.priceId) : null}
-              actionLabel="Buy this package"
-            />
-          ))}
+          {packages.map((plan) => {
+            const seat = seatNoteFor(plan.productId);
+            return (
+              <PlanCard
+                key={plan.priceId}
+                label={plan.label}
+                price={money(plan.amountUsd)}
+                summary={plan.summary}
+                detail={plan.validForDays ? `Valid ${plan.validForDays} days` : null}
+                onSelect={canPick ? () => pick(plan.priceId) : null}
+                actionLabel="Buy this package"
+                seatNote={seat.note}
+                resolvesSeats={seat.resolves}
+              />
+            );
+          })}
         </div>
       </section>
 
       <section className="space-y-3">
         <h2 className="text-sm font-semibold">Subscriptions</h2>
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          {subscriptions.map((plan) => (
-            <PlanCard
-              key={plan.priceId}
-              label={plan.label}
-              price={`${money(plan.amountUsd)}/${plan.interval === "year" ? "yr" : "mo"}`}
-              summary={plan.summary}
-              detail="Cancel any time — it runs to the end of the period"
-              onSelect={canPick ? () => pick(plan.priceId) : null}
-              actionLabel="Switch to this plan"
-            />
-          ))}
+          {subscriptions.map((plan) => {
+            const seat = seatNoteFor(plan.productId);
+            return (
+              <PlanCard
+                key={plan.priceId}
+                label={plan.label}
+                price={`${money(plan.amountUsd)}/${plan.interval === "year" ? "yr" : "mo"}`}
+                summary={plan.summary}
+                detail="Cancel any time — it runs to the end of the period"
+                onSelect={canPick ? () => pick(plan.priceId) : null}
+                actionLabel="Switch to this plan"
+                seatNote={seat.note}
+                resolvesSeats={seat.resolves}
+              />
+            );
+          })}
         </div>
 
       </section>

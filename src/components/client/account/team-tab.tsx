@@ -70,6 +70,7 @@ import {
   type SeatRemedyId,
   type SeatUsage,
 } from "@/lib/seat-limit";
+import { seatUpgradeSearch } from "@/lib/seat-upgrade";
 
 import { Link } from "@tanstack/react-router";
 import { TeamActivityPanel } from "@/components/client/team-activity-panel";
@@ -309,7 +310,7 @@ export function TeamTab() {
   <p className="text-sm text-muted-foreground">{seatLimitMessage(seatUsage)}</p>
   <div className="flex flex-wrap gap-2 pt-0.5">
   <Button asChild size="sm">
-  <Link to="/client/account" search={{ tab: "plan" }}>
+  <Link to="/client/account" search={{ tab: "plan", ...seatUpgradeSearch(seatUsage, 1) }}>
   Review your plan
   </Link>
   </Button>
@@ -889,7 +890,9 @@ function MemberRow({
  <Link
  ref={upgradeLinkRef}
  to="/client/account"
- search={{ tab: "plan" }}
+ // Reactivation needs exactly one seat, and the counts come from the server's
+ // own measurement so the plan tab quotes the same numbers.
+ search={{ tab: "plan", ...seatUpgradeSearch(seatBlock?.usage, 1) }}
  aria-label="Start a seat upgrade on the plan tab"
  >
  Start a seat upgrade
