@@ -471,7 +471,7 @@ function MemberRow({
  canMutate: boolean;
  selfId?: string | null;
  seatsFull: boolean;
- usage: { seatsUsed: number; seatLimit: number | null };
+ usage: { seatsUsed: number; seatLimit: number | null; pendingInvites?: number };
 }) {
  const qc = useQueryClient();
  const roleFn = useServerFn(updateClientMemberRole);
