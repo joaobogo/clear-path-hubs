@@ -520,7 +520,11 @@ function MemberRow({
  const statusFn = useServerFn(setClientMemberStatus);
  const removeFn = useServerFn(removeClientMember);
  const resendFn = useServerFn(resendClientInvitation);
-  const [confirmRemove, setConfirmRemove] = useState(false);
+ const [confirmRemove, setConfirmRemove] = useState(false);
+ // Cancelling a pending invitation is the fastest way to free a seat, which also
+ // makes it the easiest to click by accident — especially right after the seat
+ // explainer flashes the row. It gets its own confirmation step.
+ const [confirmCancelInvite, setConfirmCancelInvite] = useState(false);
  // Reactivation is the one action a client can be refused for reasons they
  // cannot see in the row itself, so it gets an explanation panel rather than a
  // toast that vanishes.
