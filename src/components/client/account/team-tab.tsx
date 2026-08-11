@@ -59,7 +59,15 @@ import {
 import { ErrorState } from "@/components/client/states";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { getWorkspaceSeatUsage } from "@/lib/collaborator-team.functions";
-import { isSeatLimitError, seatAwareErrorMessage, seatLimitMessage } from "@/lib/seat-limit";
+import {
+  isSeatLimitError,
+  seatAwareErrorMessage,
+  seatFreeRemedies,
+  seatLimitMessage,
+  type SeatRemedyId,
+  type SeatUsage,
+} from "@/lib/seat-limit";
+
 import { Link } from "@tanstack/react-router";
 import { TeamActivityPanel } from "@/components/client/team-activity-panel";
 
@@ -164,11 +172,13 @@ export function TeamTab() {
  [rows],
  );
  const counts = useMemo(() => {
- const c = { total: 0, admin: 0, invited: 0 };
- for (const r of visible) {
- c.total += 1;
- if (r.role === "client_admin") c.admin += 1;
- if (r.status === "invited") c.invited += 1;
+  const c = { total: 0, admin: 0, invited: 0, active: 0 };
+  for (const r of visible) {
+  c.total += 1;
+  if (r.role === "client_admin") c.admin += 1;
+  if (r.status === "invited") c.invited += 1;
+  if (r.status === "active") c.active += 1;
+
  }
  return c;
  }, [visible]);
@@ -210,7 +220,12 @@ export function TeamTab() {
   // usage failed to load we let the attempt through and rely on the server
   // refusal, rather than blocking an admin who still has seats.
   const seatsFull = !!seats && seats.seatsLeft <= 0;
-  const seatUsage = { seatsUsed, seatLimit, pendingInvites: counts.invited };
+  const seatUsage = {
+     seatsUsed,
+     seatLimit,
+     pendingInvites: counts.invited,
+     activeMembers: counts.active,
+   };
   const seatsLeft = seats?.seatsLeft ?? null;
   const seatPct =
     seatLimit && seatLimit > 0 ? Math.min(100, Math.round((seatsUsed / seatLimit) * 100)) : null;
@@ -446,6 +461,14 @@ function RoleLegend() {
 }
 
 
+/** Icon per seat remedy, so the list stays visual without duplicating copy. */
+const REMEDY_ICON: Record<SeatRemedyId, typeof Mail> = {
+  cancel_invite: Mail,
+  suspend_active: Shield,
+  remove_member: UserMinus,
+  add_seats: Users,
+};
+
 function RoleIcon({ role }: { role: ClientRoleId }) {
  if (role === "client_admin") return <ShieldCheck className="h-3.5 w-3.5 text-primary" />;
  if (role === "client_editor") return <UserCog className="h-3.5 w-3.5 taas-fg-info" />;
@@ -487,7 +510,7 @@ function MemberRow({
  canMutate: boolean;
  selfId?: string | null;
  seatsFull: boolean;
- usage: { seatsUsed: number; seatLimit: number | null; pendingInvites?: number };
+ usage: SeatUsage;
 }) {
  const qc = useQueryClient();
  const roleFn = useServerFn(updateClientMemberRole);
@@ -717,66 +740,42 @@ function MemberRow({
   </DialogHeader>
   <div className="space-y-3">
   <p className="text-sm font-medium">To free a seat, change one of these:</p>
-  <ul className="space-y-3 text-sm text-muted-foreground">
-  <li className="flex gap-2">
-  <Mail className="mt-0.5 h-4 w-4 shrink-0" />
+  <ul className="space-y-3 text-sm text-muted-foreground" data-testid="reactivate-blocked-remedies">
+  {seatFreeRemedies(usage).map((remedy) => {
+  const Icon = REMEDY_ICON[remedy.id];
+  return (
+  <li key={remedy.id} className="flex gap-2" data-remedy={remedy.id}>
+  <Icon className="mt-0.5 h-4 w-4 shrink-0" />
   <div className="min-w-0 space-y-1.5">
-  <span className="block">
-  {usage.pendingInvites && usage.pendingInvites > 0
-  ? `Cancel one of the ${usage.pendingInvites} pending invitation${usage.pendingInvites === 1 ? "" : "s"} — an invitation holds a seat before it is accepted.`
-  : "Cancel a pending invitation — invitations hold a seat before they are accepted."}
-  </span>
-  {!!usage.pendingInvites && usage.pendingInvites > 0 && (
+  <span className="block">{remedy.text}</span>
+  {remedy.actionLabel && (remedy.id === "cancel_invite" || remedy.id === "suspend_active") && (
   <Button
   size="sm"
   variant="outline"
-  data-testid="reactivate-blocked-cancel-invite"
+  data-testid={
+  remedy.id === "cancel_invite"
+  ? "reactivate-blocked-cancel-invite"
+  : "reactivate-blocked-open-team"
+  }
   onClick={() => {
   setSeatBlock(false);
-  revealTeamTarget('li[data-member-status="invited"]');
+  revealTeamTarget(
+  remedy.id === "cancel_invite"
+  ? 'li[data-member-status="invited"]'
+  : "#team-members",
+  );
   }}
   >
-  Cancel a pending invitation
+  {remedy.actionLabel}
   </Button>
   )}
   </div>
   </li>
-  <li className="flex gap-2">
-  <Shield className="mt-0.5 h-4 w-4 shrink-0" />
-  <div className="min-w-0 space-y-1.5">
-  <span className="block">
-  Suspend an active teammate who no longer needs access. Suspended
-  members keep their history but stop using a seat.
-  </span>
-  <Button
-  size="sm"
-  variant="outline"
-  data-testid="reactivate-blocked-open-team"
-  onClick={() => {
-  setSeatBlock(false);
-  revealTeamTarget("#team-members");
-  }}
-  >
-  Go to the team list
-  </Button>
-  </div>
-  </li>
-  <li className="flex gap-2">
-  <UserMinus className="mt-0.5 h-4 w-4 shrink-0" />
-  <span>
-  Remove someone from the workspace. Their account is not deleted and
-  they can be invited back later.
-  </span>
-  </li>
-  <li className="flex gap-2">
-  <Users className="mt-0.5 h-4 w-4 shrink-0" />
-  <span>
-  Or add seats to your plan — seat counts are set by us, so this is a
-  quick conversation rather than a self-serve toggle.
-  </span>
-  </li>
+  );
+  })}
   </ul>
   </div>
+
   <DialogFooter>
   <Button variant="ghost" onClick={() => setSeatBlock(false)}>
   Close
@@ -807,7 +806,7 @@ function InviteDialog({
 }: {
   orgId: string;
   seatsFull: boolean;
-  usage: { seatsUsed: number; seatLimit: number | null; pendingInvites?: number };
+  usage: SeatUsage;
 }) {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");

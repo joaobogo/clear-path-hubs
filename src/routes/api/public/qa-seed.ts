@@ -97,6 +97,123 @@ async function ensureUser(
   return data.user.id as string;
 }
 
+/** Mailboxes used only by the seat-cap scenarios. */
+const SEAT_SCENARIO_EMAILS = {
+  suspended: "qa.seat.suspended@qa.taasflow.test",
+  invited: "qa.seat.invited@qa.taasflow.test",
+  extra: "qa.seat.extra@qa.taasflow.test",
+} as const;
+
+/**
+ * Puts the QA workspace into a "no seats left" state so the reactivation
+ * refusal can be exercised through the real UI.
+ *
+ * `pending_invites` and `extra_active` shape which remedies the dialog should
+ * offer: an invitation that can be cancelled, a teammate that can be
+ * suspended, or neither. The seat limit is derived from real seat holders
+ * afterwards so `seatsLeft` lands on exactly zero.
+ */
+async function seatScenario(opts: {
+  pendingInvites?: number;
+  extraActive?: boolean;
+  /** When true the cap stays wide open, so reactivation is allowed to succeed. */
+  freeSeats?: boolean;
+}): Promise<{
+  organization_id: string;
+  seat_limit: number;
+  seats_used: number;
+  suspended_user_id: string;
+  invited_user_id: string | null;
+}> {
+  const sb = await loadAdmin();
+  const { data: org, error: orgErr } = await sb
+    .from("organizations")
+    .select("id")
+    .eq("name", QA_ORG_NAME)
+    .single();
+  if (orgErr) throw new Error(`seat_scenario needs the QA org seeded first: ${orgErr.message}`);
+  const orgId = org.id as string;
+
+  // Start from a clean slate: scenario memberships removed and the cap wide
+  // open, so inserting the fixtures can never trip the seat guard.
+  const scenarioIds: string[] = [];
+  for (const [label, email] of Object.entries(SEAT_SCENARIO_EMAILS)) {
+    const uid = await ensureUser(sb, assertQaMailbox(email, "seat_scenario"), QA_PASSWORD);
+    // The team list renders names from profiles, so a membership without one
+    // shows as an anonymous "Team member" and no test can target it.
+    await sb.from("profiles").upsert(
+      { auth_user_id: uid, email, full_name: `QA seat ${label}`, status: "active" },
+      { onConflict: "auth_user_id" },
+    );
+    scenarioIds.push(uid);
+  }
+  await sb.from("memberships").delete().eq("organization_id", orgId).in("user_id", scenarioIds);
+  await sb.from("organizations").update({ client_seat_limit: 20 }).eq("id", orgId);
+
+  const suspendedId = scenarioIds[0]!;
+  const invitedId = scenarioIds[1]!;
+  const extraId = scenarioIds[2]!;
+
+  const rows: Array<Record<string, unknown>> = [
+    { user_id: suspendedId, organization_id: orgId, role: "client_viewer", status: "suspended" },
+  ];
+  if ((opts.pendingInvites ?? 0) > 0) {
+    rows.push({ user_id: invitedId, organization_id: orgId, role: "client_viewer", status: "invited" });
+  }
+  if (opts.extraActive) {
+    rows.push({ user_id: extraId, organization_id: orgId, role: "client_viewer", status: "active" });
+  }
+  const { error: memErr } = await sb.from("memberships").insert(rows);
+  if (memErr) throw memErr;
+
+  // Seat holders = active + invited on seat-bearing roles. readSeatUsage adds
+  // an owner seat on top of client_seat_limit, so limit = holders - 1 fills it.
+  const { data: holders, error: holdErr } = await sb
+    .from("memberships")
+    .select("id")
+    .eq("organization_id", orgId)
+    .in("role", ["client_admin", "client_editor", "client_viewer"])
+    .in("status", ["active", "invited"]);
+  if (holdErr) throw holdErr;
+  const seatsUsed = (holders ?? []).length;
+  const recruiterSeats = opts.freeSeats ? seatsUsed + 4 : Math.max(0, seatsUsed - 1);
+  const { error: capErr } = await sb
+    .from("organizations")
+    .update({ client_seat_limit: recruiterSeats })
+    .eq("id", orgId);
+  if (capErr) throw capErr;
+
+  return {
+    organization_id: orgId,
+    seat_limit: recruiterSeats + 1,
+    seats_used: seatsUsed,
+    suspended_user_id: suspendedId,
+    invited_user_id: (opts.pendingInvites ?? 0) > 0 ? invitedId : null,
+  };
+}
+
+/** Restores the QA workspace after a seat scenario. */
+async function seatScenarioReset(): Promise<{ organization_id: string | null }> {
+  const sb = await loadAdmin();
+  const { data: org } = await sb
+    .from("organizations")
+    .select("id")
+    .eq("name", QA_ORG_NAME)
+    .maybeSingle();
+  if (!org) return { organization_id: null };
+  const orgId = org.id as string;
+  const ids: string[] = [];
+  for (const email of Object.values(SEAT_SCENARIO_EMAILS)) {
+    const id = await findUserIdByEmail(sb, email);
+    if (id) ids.push(id);
+  }
+  if (ids.length) {
+    await sb.from("memberships").delete().eq("organization_id", orgId).in("user_id", ids);
+  }
+  await sb.from("organizations").update({ client_seat_limit: 3 }).eq("id", orgId);
+  return { organization_id: orgId };
+}
+
 async function cleanupQAData(): Promise<{ deleted: Record<string, number> }> {
   const sb = await loadAdmin();
   const counts: Record<string, number> = {};
@@ -846,6 +963,9 @@ async function handle(request: Request): Promise<Response> {
 
   let body: {
     action?: string;
+    pending_invites?: number;
+    extra_active?: boolean;
+    free_seats?: boolean;
     email?: string;
     user_id?: string;
     position_id?: string;
@@ -972,6 +1092,18 @@ async function handle(request: Request): Promise<Response> {
       return Response.json({ ok: true, action, ...res });
     }
 
+    if (action === "seat_scenario") {
+      const res = await seatScenario({
+        pendingInvites: Number(body.pending_invites ?? 0),
+        extraActive: Boolean(body.extra_active ?? false),
+        freeSeats: Boolean(body.free_seats ?? false),
+      });
+      return Response.json({ ok: true, action, ...res });
+    }
+    if (action === "seat_scenario_reset") {
+      const res = await seatScenarioReset();
+      return Response.json({ ok: true, action, ...res });
+    }
     if (action === "status") {
       const sb = await loadAdmin();
       const { count } = await sb
