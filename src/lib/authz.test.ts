@@ -50,8 +50,8 @@ describe("default seat permissions", () => {
     ]);
   });
 
-  it("caps recruiter seats at three", () => {
-    expect(MAX_CLIENT_SEAT_LIMIT).toBe(3);
+  it("allows up to 50 recruiter seats for enterprise plans", () => {
+    expect(MAX_CLIENT_SEAT_LIMIT).toBe(50);
   });
 });
 
