@@ -548,7 +548,12 @@ async function lookupCandidateApplication(email: string) {
   const { data: matches } = appIds.length
     ? await sb
         .from("candidate_matches")
-        .select("id,application_id,organization_id,position_id,processing_state,stage,admin_status,client_visibility,total_score,score_band")
+        // Score lives on score_runs, not here — selecting total_score/score_band
+        // made this query error and silently return [] for every suite.
+        .select(
+          "id,application_id,organization_id,position_id,processing_state,stage,admin_status,client_visibility,current_score_run_id,approved_score_run_id,score_stale",
+        )
+
         .in("application_id", appIds)
     : { data: [] };
   const { data: jobs } = appIds.length
