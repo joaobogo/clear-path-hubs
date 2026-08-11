@@ -25,6 +25,8 @@ import {
   type EvaluationWeights,
 } from "@/lib/requisition-schema";
 import { assertWorkspaceAccess, readWorkspaceAccess } from "@/lib/authz/workspace-access";
+import { isPaymentSatisfied } from "@/lib/publish-gate";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Db = any;
@@ -361,7 +363,9 @@ export const getOnboardingState = createServerFn({ method: "GET" })
 
     const confirmed = draft.confirmed ?? {};
     const complete: OnboardingStepId[] = [];
-    const paid = ["paid", "exempt"].includes(position?.payment_status ?? "unpaid");
+    // Covered-by-plan counts as paid — see PAID_PAYMENT_STATES.
+    const paid = isPaymentSatisfied(position?.payment_status ?? "unpaid");
+
 
     if (orgRow?.name && confirmed.workspace) complete.push("workspace");
     if (position && position.title.trim().length > 1) complete.push("role");
