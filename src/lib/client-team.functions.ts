@@ -6,7 +6,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
 import { computeRoleLaunchState } from "@/lib/role-launch.server";
-import { assertSeatAvailable } from "@/lib/client-team-seats.server";
+import { assertSeatAvailable, evaluateSeatBlock } from "@/lib/client-team-seats.server";
 import { DECLINE_REASONS } from "@/lib/client-decision-reasons";
 import {
   DEAL_BREAKER_REASON_CODES,
@@ -294,9 +294,14 @@ export const setClientMemberStatus = createServerFn({ method: "POST" })
         throw new Error("You need at least one active Admin — promote someone else first.");
     }
     // Reactivating a suspended teammate consumes a seat just like an
-    // invitation does. Without this the database trigger still refuses, but the
-    // client would read raw `seat_limit_exceeded` trigger text.
-    if (data.status === "active") await assertSeatAvailable(data.orgId);
+    // invitation does. Instead of throwing (which forces the UI to string-match
+    // trigger text and quote its own cached counts), return a structured reason
+    // code with the counts the server measured. The database guard is still the
+    // real boundary behind this.
+    if (data.status === "active") {
+      const seatBlock = await evaluateSeatBlock(data.orgId);
+      if (seatBlock) return { ok: false as const, seatBlock };
+    }
 
     const { error } = await context.supabase
       .from("memberships")
@@ -304,7 +309,7 @@ export const setClientMemberStatus = createServerFn({ method: "POST" })
       .eq("organization_id", data.orgId)
       .eq("user_id", data.userId);
     if (error) throw new Error(error.message);
-    return { ok: true };
+    return { ok: true as const };
   });
 
 export const removeClientMember = createServerFn({ method: "POST" })
