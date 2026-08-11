@@ -292,7 +292,7 @@ export function initializeTrackers() {
 function trackerForUri(uri: string): string {
   if (/google-analytics|googletagmanager/.test(uri)) return "ga4";
   if (/apollo\.io/.test(uri)) return "apollo";
-  if (/b2bjsstore|liadm|usbrowserspeed/.test(uri)) return "rb2b";
+  if (/b2bjsstore|ddwl4m2hdecbv|liadm|usbrowserspeed/.test(uri)) return "rb2b";
   if (/facebook|fbcdn/.test(uri)) return "meta";
   if (/licdn/.test(uri)) return "linkedin";
   if (/clarity\.ms/.test(uri)) return "clarity";
