@@ -227,31 +227,27 @@ export async function measurePlatformStatus(): Promise<PlatformStatus> {
     // Live updates — a real connection handshake with the realtime service.
     (async (): Promise<ServiceStatus> => {
       const run = await timed(async () => {
-        const res = await fetch(
-          `${url.replace(/^http/, "http")}/realtime/v1/websocket?apikey=${encodeURIComponent(publishableKey)}&vsn=1.0.0`,
-          {
-            headers: {
-              Upgrade: "websocket",
-              Connection: "Upgrade",
-              "Sec-WebSocket-Version": "13",
-              "Sec-WebSocket-Key": "dGhlIHNhbXBsZSBub25jZQ==",
-            },
-          },
-        );
-        // In the Worker runtime an accepted upgrade arrives as 101 with a
-        // socket attached; close it immediately so the probe leaves nothing open.
-        const socket = (res as unknown as { webSocket?: { accept(): void; close(): void } }).webSocket;
-        if (socket) {
-          try {
-            socket.accept();
-            socket.close();
-          } catch {
-            /* nothing to clean up */
-          }
+        const wsUrl = `${url.replace(/^http/, "ws")}/realtime/v1/websocket?apikey=${encodeURIComponent(
+          publishableKey,
+        )}&vsn=1.0.0`;
+        // A real connection, opened and closed. Both runtimes we deploy to
+        // expose the standard WebSocket client.
+        const WS = (globalThis as unknown as { WebSocket?: typeof WebSocket }).WebSocket;
+        if (!WS) throw new Error("no websocket client");
+        const socket = new WS(wsUrl);
+        await new Promise<void>((resolve, reject) => {
+          socket.addEventListener("open", () => resolve(), { once: true });
+          socket.addEventListener("error", () => reject(new Error("closed")), { once: true });
+          socket.addEventListener("close", () => reject(new Error("closed")), { once: true });
+        });
+        try {
+          socket.close();
+        } catch {
+          /* nothing to clean up */
         }
-        if (res.status !== 101) throw new Error("no upgrade");
         return true;
       }, 5_000);
+
       if (!run.ok) {
         return serviceRow("realtime", "major_outage", "The check did not complete.", true, WINDOW_NOW);
       }
