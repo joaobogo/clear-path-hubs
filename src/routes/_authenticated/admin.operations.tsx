@@ -529,10 +529,30 @@ function OperationsPage() {
         </TabsContent>
 
         <TabsContent value="delivery" className="mt-4">
-          {deliveryItems.length === 0 ? (
+          {deliveryQuery.isError ? (
+            <div className="rounded-lg border bg-card px-5 py-10 text-sm text-muted-foreground text-center">
+              We couldn't load delivery failures. This is a read failure, not proof that every
+              message went out.
+              <div className="mt-3">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={deliveryQuery.isFetching}
+                  onClick={() => void deliveryQuery.refetch()}
+                >
+                  {deliveryQuery.isFetching ? "Retrying…" : "Try again"}
+                </Button>
+              </div>
+            </div>
+          ) : deliveryQuery.isPending ? (
+            <div className="rounded-lg border bg-card px-5 py-10 text-sm text-muted-foreground text-center">
+              Loading delivery failures…
+            </div>
+          ) : deliveryItems.length === 0 ? (
             <div className="rounded-lg border bg-card px-5 py-10 text-sm text-muted-foreground text-center">
               No delivery issues.
             </div>
+
           ) : (
             <div className="border rounded-lg overflow-hidden bg-card">
               <table className="w-full text-sm">
