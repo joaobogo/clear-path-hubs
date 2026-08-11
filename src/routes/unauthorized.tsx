@@ -1,16 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteShell } from "@/components/marketing/site-shell";
 
+const UNAUTHORIZED_TITLE = "Unauthorized — TaaSFlow";
+const UNAUTHORIZED_DESCRIPTION =
+  "You need to sign in to access this page. Return to the sign-in screen or head back home.";
+
 export const Route = createFileRoute("/unauthorized")({
   head: () => ({
     meta: [
-      { title: "Unauthorized — TaaSFlow" },
-      { name: "robots", content: "noindex" },
-      {
-        name: "description",
-        content:
-          "You need to sign in to access this page. Return to the sign-in screen or head back home.",
-      },
+      { title: UNAUTHORIZED_TITLE },
+      // Utility page: noindex, but share tags are still explicit so the
+      // homepage metadata never stands in for it.
+      { name: "robots", content: "noindex,nofollow" },
+      { name: "description", content: UNAUTHORIZED_DESCRIPTION },
+      { property: "og:title", content: UNAUTHORIZED_TITLE },
+      { property: "og:description", content: UNAUTHORIZED_DESCRIPTION },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: UnauthorizedPage,

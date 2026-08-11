@@ -87,7 +87,9 @@ export const Route = createFileRoute("/sitemap")({
         property: "og:description",
         content: "Every public page on TaaSFlow, grouped by section.",
       },
+      { property: "og:type", content: "website" },
       { property: "og:url", content: canonicalUrl("/sitemap") },
+      { name: "twitter:card", content: "summary" },
     ],
     links: [
       { rel: "canonical", href: canonicalUrl("/sitemap") },

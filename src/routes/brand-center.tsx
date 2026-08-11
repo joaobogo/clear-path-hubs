@@ -35,7 +35,7 @@ import { SiteFooter } from "@/components/marketing/site-shell";
 const CANONICAL = canonicalUrl("/brand-center");
 const TITLE = "TaaSFlow Brand Center — logos, messaging, assets";
 const DESCRIPTION =
-  "Official TaaSFlow brand center: approved positioning and messaging, logo rules, colour and type tokens, and exact-dimension social, presentation and document assets ready to download.";
+  "Approved TaaSFlow positioning and messaging, logo rules, colour and type tokens, plus exact-dimension social and document assets to download.";
 
 export const Route = createFileRoute("/brand-center")({
   head: () => ({
