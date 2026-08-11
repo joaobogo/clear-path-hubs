@@ -890,7 +890,9 @@ function MemberRow({
  <Link
  ref={upgradeLinkRef}
  to="/client/account"
- search={{ tab: "plan" }}
+ // Reactivation needs exactly one seat, and the counts come from the server's
+ // own measurement so the plan tab quotes the same numbers.
+ search={{ tab: "plan", ...seatUpgradeSearch(seatBlock?.usage, 1) }}
  aria-label="Start a seat upgrade on the plan tab"
  >
  Start a seat upgrade
