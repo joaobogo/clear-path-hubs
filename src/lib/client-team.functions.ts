@@ -6,6 +6,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
 import { computeRoleLaunchState } from "@/lib/role-launch.server";
+import { assertSeatAvailable } from "@/lib/client-team-seats.server";
 import { DECLINE_REASONS } from "@/lib/client-decision-reasons";
 import {
   DEAL_BREAKER_REASON_CODES,
@@ -125,31 +126,8 @@ export const inviteClientMember = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    // Seat cap is enforced here, server-side: the owner seat plus the
-    // organization's recruiter seat limit. Invited seats are already reserved,
-    // so a pending invitation counts against the cap.
-    const [{ data: capOrg }, { data: capSeats }] = await Promise.all([
-      supabaseAdmin
-        .from("organizations")
-        .select("client_seat_limit")
-        .eq("id", data.orgId)
-        .maybeSingle(),
-      supabaseAdmin
-        .from("memberships")
-        .select("id, status")
-        .eq("organization_id", data.orgId)
-        .in("role", ["client_admin", "client_editor", "client_viewer"])
-        .in("status", ["active", "invited"]),
-    ]);
-    const recruiterSeats =
-      (capOrg as { client_seat_limit?: number | null } | null)?.client_seat_limit ?? 3;
-    const seatLimit = recruiterSeats + 1;
-    const seatsUsed = ((capSeats as { id: string }[] | null) ?? []).length;
-    if (seatsUsed >= seatLimit) {
-      throw new Error(
-        `Seat limit reached — your plan includes ${seatLimit} seats and all ${seatsUsed} are in use (pending invitations hold a seat). Remove a teammate to free a seat, or message your recruiter to raise the limit.`,
-      );
-    }
+    await assertSeatAvailable(data.orgId);
+
 
     // Resolve the person first: if they are already on this team we say so
     // without sending them another email.
@@ -315,6 +293,11 @@ export const setClientMemberStatus = createServerFn({ method: "POST" })
       if (activeAdmins.length === 0)
         throw new Error("You need at least one active Admin — promote someone else first.");
     }
+    // Reactivating a suspended teammate consumes a seat just like an
+    // invitation does. Without this the database trigger still refuses, but the
+    // client would read raw `seat_limit_exceeded` trigger text.
+    if (data.status === "active") await assertSeatAvailable(data.orgId);
+
     const { error } = await context.supabase
       .from("memberships")
       .update({ status: data.status })

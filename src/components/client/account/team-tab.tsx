@@ -59,6 +59,8 @@ import {
 import { ErrorState } from "@/components/client/states";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { getWorkspaceSeatUsage } from "@/lib/collaborator-team.functions";
+import { seatAwareErrorMessage, seatLimitMessage } from "@/lib/seat-limit";
+import { Link } from "@tanstack/react-router";
 import { TeamActivityPanel } from "@/components/client/team-activity-panel";
 
 
@@ -202,40 +204,75 @@ export function TeamTab() {
  );
  }
 
- const seatsUsed = seats?.seatsUsed ?? counts.total;
- const seatLimit = seats?.seatLimit ?? null;
+  const seatsUsed = seats?.seatsUsed ?? counts.total;
+  const seatLimit = seats?.seatLimit ?? null;
+  // Only claim the workspace is full when the server actually said so. If seat
+  // usage failed to load we let the attempt through and rely on the server
+  // refusal, rather than blocking an admin who still has seats.
+  const seatsFull = !!seats && seats.seatsLeft <= 0;
+  const seatUsage = { seatsUsed, seatLimit };
 
- return (
- <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 space-y-6">
- {/* Header */}
- <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
- <div className="min-w-0">
- <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
- Team
- </div>
- <h1 className="mt-1 truncate text-2xl font-semibold tracking-tight">
- {orgName ?? "Your workspace"}
- </h1>
- {seatsIsError ? (
- <p className="mt-1 text-sm text-destructive">Seat usage failed to load.</p>
- ) : (
- <p className="mt-1 text-sm text-muted-foreground">
- {seatLimit === null
- ? `${counts.total} member${counts.total === 1 ? "" : "s"}`
- : `${seatsUsed} of ${seatLimit} seat${seatLimit === 1 ? "" : "s"} in use`}
- {counts.invited > 0 && ` · ${counts.invited} pending`}
- </p>
- )}
- </div>
- {canMutate && orgId && <InviteDialog orgId={orgId} />}
- </header>
+  return (
+  <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 space-y-6">
+  {/* Header */}
+  <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+  <div className="min-w-0">
+  <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+  Team
+  </div>
+  <h1 className="mt-1 truncate text-2xl font-semibold tracking-tight">
+  {orgName ?? "Your workspace"}
+  </h1>
+  {seatsIsError ? (
+  <p className="mt-1 text-sm text-destructive">Seat usage failed to load.</p>
+  ) : (
+  <p className="mt-1 text-sm text-muted-foreground">
+  {seatLimit === null
+  ? `${counts.total} member${counts.total === 1 ? "" : "s"}`
+  : `${seatsUsed} of ${seatLimit} seat${seatLimit === 1 ? "" : "s"} in use`}
+  {counts.invited > 0 && ` · ${counts.invited} pending`}
+  </p>
+  )}
+  </div>
+  {canMutate && orgId && <InviteDialog orgId={orgId} seatsFull={seatsFull} usage={seatUsage} />}
+  </header>
 
- {readOnly && (
- <div className="flex items-center gap-2 rounded-lg border taas-bd-warning taas-bg-warning-solid/[0.05] px-3 py-2 text-sm">
- <Info className="h-4 w-4 shrink-0 taas-fg-warning" />
- <span>You are viewing as an administrator — team changes are disabled.</span>
- </div>
- )}
+  {readOnly && (
+  <div className="flex items-center gap-2 rounded-lg border taas-bd-warning taas-bg-warning-solid/[0.05] px-3 py-2 text-sm">
+  <Info className="h-4 w-4 shrink-0 taas-fg-warning" />
+  <span>You are viewing as an administrator — team changes are disabled.</span>
+  </div>
+  )}
+
+  {/* Seats full: say so before the admin fills in a form that cannot succeed,
+      and give them the way forward instead of a dead end. */}
+  {seatsFull && !readOnly && (
+  <div
+  data-testid="seat-limit-prompt"
+  className="rounded-lg border taas-bd-warning taas-bg-warning-solid/[0.05] px-4 py-3"
+  >
+  <div className="flex items-start gap-2">
+  <Users className="mt-0.5 h-4 w-4 shrink-0 taas-fg-warning" />
+  <div className="min-w-0 space-y-2">
+  <p className="text-sm font-medium">Every seat on your plan is in use</p>
+  <p className="text-sm text-muted-foreground">{seatLimitMessage(seatUsage)}</p>
+  <div className="flex flex-wrap gap-2 pt-0.5">
+  <Button asChild size="sm">
+  <Link to="/client/account" search={{ tab: "plan" }}>
+  Review your plan
+  </Link>
+  </Button>
+  <Button asChild size="sm" variant="outline">
+  <Link to="/book-call" search={{ position: undefined }}>
+  Talk to us about seats
+  </Link>
+  </Button>
+  </div>
+  </div>
+  </div>
+  </div>
+  )}
+
 
  {seatsIsError && (
  <QueryErrorCard
@@ -281,34 +318,39 @@ export function TeamTab() {
  </p>
  {canMutate && orgId && (
  <div className="mt-4 flex justify-center">
- <InviteDialog orgId={orgId} />
+ <InviteDialog orgId={orgId} seatsFull={seatsFull} usage={seatUsage} />
  </div>
  )}
  {visible.length === 1 && (
  <ul className="mt-6 divide-y border-t text-left">
- {visible.map((m: AnyRow) => (
- <MemberRow
- key={m.user_id}
- orgId={orgId!}
- member={m}
- canMutate={!!canMutate}
- selfId={selfId}
- />
- ))}
- </ul>
- )}
- </div>
- ) : (
- <ul className="divide-y">
- {visible.map((m: AnyRow) => (
- <MemberRow
- key={m.user_id}
- orgId={orgId!}
- member={m}
- canMutate={!!canMutate}
- selfId={selfId}
- />
- ))}
+  {visible.map((m: AnyRow) => (
+  <MemberRow
+  key={m.user_id}
+  orgId={orgId!}
+  member={m}
+  canMutate={!!canMutate}
+  selfId={selfId}
+  seatsFull={seatsFull}
+  usage={seatUsage}
+  />
+  ))}
+  </ul>
+  )}
+  </div>
+  ) : (
+  <ul className="divide-y">
+  {visible.map((m: AnyRow) => (
+  <MemberRow
+  key={m.user_id}
+  orgId={orgId!}
+  member={m}
+  canMutate={!!canMutate}
+  selfId={selfId}
+  seatsFull={seatsFull}
+  usage={seatUsage}
+  />
+  ))}
+
  </ul>
  )}
  </section>
@@ -388,11 +430,15 @@ function MemberRow({
  member,
  canMutate,
  selfId,
+ seatsFull,
+ usage,
 }: {
  orgId: string;
  member: AnyRow;
  canMutate: boolean;
  selfId?: string | null;
+ seatsFull: boolean;
+ usage: { seatsUsed: number; seatLimit: number | null };
 }) {
  const qc = useQueryClient();
  const roleFn = useServerFn(updateClientMemberRole);
@@ -401,9 +447,13 @@ function MemberRow({
  const resendFn = useServerFn(resendClientInvitation);
  const [confirmRemove, setConfirmRemove] = useState(false);
 
- const invalidate = () => qc.invalidateQueries({ queryKey: ["client-team", orgId] });
- const handleErr = (e: unknown) =>
- toast.error((e instanceof Error ? e.message : String(e)).replace(/^Error: /, ""));
+ const invalidate = () => {
+ qc.invalidateQueries({ queryKey: ["client-team", orgId] });
+ qc.invalidateQueries({ queryKey: ["client-team-seats", orgId] });
+ };
+ // Reactivation consumes a seat, so this can surface the database guard's
+ // `seat_limit_exceeded`. Translate before it reaches a client.
+ const handleErr = (e: unknown) => toast.error(seatAwareErrorMessage(e, usage));
 
  const changeRole = useMutation({
  mutationFn: (role: ClientRoleId) =>
@@ -423,6 +473,7 @@ function MemberRow({
  },
  onError: handleErr,
  });
+
  const remove = useMutation({
  mutationFn: () => removeFn({ data: { orgId, userId: member.user_id } }),
  onSuccess: () => {
@@ -527,11 +578,24 @@ function MemberRow({
  <Shield className="mr-2 h-4 w-4" /> Suspend access
  </DropdownMenuItem>
  )}
- {status === "suspended" && (
- <DropdownMenuItem onSelect={() => changeStatus.mutate("active")}>
- <ShieldCheck className="mr-2 h-4 w-4" /> Reactivate
- </DropdownMenuItem>
- )}
+  {status === "suspended" && (
+  // Reactivating spends a seat, so it is refused when the plan is full —
+  // say so up front rather than after the click.
+  <DropdownMenuItem
+  disabled={seatsFull}
+  onSelect={() => {
+  if (seatsFull) {
+  toast.error(seatLimitMessage(usage));
+  return;
+  }
+  changeStatus.mutate("active");
+  }}
+  >
+  <ShieldCheck className="mr-2 h-4 w-4" />
+  {seatsFull ? "Reactivate — no seats left" : "Reactivate"}
+  </DropdownMenuItem>
+  )}
+
  <DropdownMenuSeparator />
  <DropdownMenuItem
  onSelect={(e) => {
@@ -576,45 +640,61 @@ function MemberRow({
  );
 }
 
-function InviteDialog({ orgId }: { orgId: string }) {
- const [open, setOpen] = useState(false);
- const [email, setEmail] = useState("");
- const [role, setRole] = useState<ClientRoleId>("client_editor");
- const [failure, setFailure] = useState<string | null>(null);
- const qc = useQueryClient();
- const inviteFn = useServerFn(inviteClientMember);
- const invite = useMutation({
- mutationFn: () => inviteFn({ data: { orgId, email: email.trim(), role } }),
- onSuccess: () => {
- toast.success("Invitation sent");
- setEmail("");
- setFailure(null);
- setOpen(false);
- qc.invalidateQueries({ queryKey: ["client-team", orgId] });
- qc.invalidateQueries({ queryKey: ["client-team-seats", orgId] });
- },
- onError: (e: Error) =>
- setFailure(e.message.replace(/^Error: /, "") || "We couldn't send that invitation."),
- });
+function InviteDialog({
+  orgId,
+  seatsFull,
+  usage,
+}: {
+  orgId: string;
+  seatsFull: boolean;
+  usage: { seatsUsed: number; seatLimit: number | null };
+}) {
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState<ClientRoleId>("client_editor");
+  const [failure, setFailure] = useState<string | null>(null);
+  const qc = useQueryClient();
+  const inviteFn = useServerFn(inviteClientMember);
+  const invite = useMutation({
+  mutationFn: () => inviteFn({ data: { orgId, email: email.trim(), role } }),
+  onSuccess: () => {
+  toast.success("Invitation sent");
+  setEmail("");
+  setFailure(null);
+  setOpen(false);
+  qc.invalidateQueries({ queryKey: ["client-team", orgId] });
+  qc.invalidateQueries({ queryKey: ["client-team-seats", orgId] });
+  },
+  // A seat refusal can come from the friendly server check or straight from
+  // the database guard — both are turned into the same client-safe sentence.
+  onError: (e: Error) =>
+  setFailure(seatAwareErrorMessage(e, usage, "We couldn't send that invitation.")),
+  });
 
- // The email format is checked here as well as on the server so the reason is
- // never a generic failure.
- const emailLooksValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
+  // The email format is checked here as well as on the server so the reason is
+  // never a generic failure.
+  const emailLooksValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
 
- return (
- <Dialog
- open={open}
- onOpenChange={(next) => {
- setOpen(next);
- if (!next) setFailure(null);
- }}
- >
- <DialogTrigger asChild>
- <Button size="sm" className="min-h-11">
- <UserPlus className="mr-1.5 h-4 w-4" />
- Invite team member
- </Button>
- </DialogTrigger>
+  return (
+  <Dialog
+  open={open}
+  onOpenChange={(next) => {
+  setOpen(next);
+  if (!next) setFailure(null);
+  }}
+  >
+  <DialogTrigger asChild>
+  <Button
+  size="sm"
+  className="min-h-11"
+  disabled={seatsFull}
+  title={seatsFull ? seatLimitMessage(usage) : undefined}
+  >
+  <UserPlus className="mr-1.5 h-4 w-4" />
+  {seatsFull ? "No seats available" : "Invite team member"}
+  </Button>
+  </DialogTrigger>
+
  <DialogContent>
  <DialogHeader>
  <DialogTitle>Invite team member</DialogTitle>
