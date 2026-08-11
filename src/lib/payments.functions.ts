@@ -10,6 +10,17 @@ import { POSITION_PUBLISH_PRICE_ID } from "@/lib/payments-catalog";
 
 type CheckoutResult = { clientSecret: string } | { error: string };
 
+/**
+ * `environment` arrives from the browser, so it is validated against the union
+ * rather than trusted from the TypeScript annotation (types are erased at
+ * runtime). Anything other than "sandbox" or "live" is rejected here instead of
+ * reaching createStripeClient and surfacing an env-var error to the user.
+ */
+const parseStripeEnv = (value: unknown): StripeEnv => {
+  if (value === "sandbox" || value === "live") return value;
+  throw new Error("Invalid payment environment");
+};
+
 export type CheckoutStatus =
   | {
       state: "paid";
@@ -89,7 +100,7 @@ export const createPositionCheckoutSession = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { positionId: string; returnUrl: string; environment: StripeEnv }) => {
     if (!isUuid(data.positionId)) throw new Error("Invalid position");
-    return data;
+    return { ...data, environment: parseStripeEnv(data.environment) };
   })
   .handler(async ({ data, context }): Promise<CheckoutResult> => {
     const { supabase, userId } = context;
@@ -186,7 +197,7 @@ export const getCheckoutSessionStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { sessionId: string; environment: StripeEnv }) => {
     if (!/^cs_[a-zA-Z0-9_]+$/.test(data.sessionId)) throw new Error("Invalid session");
-    return data;
+    return { ...data, environment: parseStripeEnv(data.environment) };
   })
   .handler(async ({ data, context }): Promise<CheckoutStatus> => {
     try {
