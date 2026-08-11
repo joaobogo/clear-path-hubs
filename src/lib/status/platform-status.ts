@@ -138,6 +138,18 @@ export const SERVICES: readonly ServiceDefinition[] = [
     measured_by: "A live read of candidate records at page load.",
   },
   {
+    key: "file_storage",
+    name: "File storage",
+    covers: "Uploading CVs and downloading candidate documents.",
+    measured_by: "A live check of the private document store at page load.",
+  },
+  {
+    key: "realtime",
+    name: "Live updates",
+    covers: "Queues, dashboards and messages updating without a refresh.",
+    measured_by: "A live connection to the live-updates service at page load.",
+  },
+  {
     key: "scoring",
     name: "Scoring",
     covers: "Evidence-backed scoring runs against role requirements.",
