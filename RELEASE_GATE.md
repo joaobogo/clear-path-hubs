@@ -67,7 +67,8 @@ above, they extend it.
 | Typecheck | Pass | `bunx tsgo --noEmit`, 1,273 files, 0 errors (incl. `tests/**` after 15 fixes) |
 | Security scan | Pass | 0 error-level findings; 2 accepted WARNs (RLS helper executability, see §4 of `reports/release/final-certification.md`) |
 | Tenant isolation | Pass | `tests/tenant-isolation.spec.ts` 11/11 |
-| Authorization matrix | Pass | `run_all_authz_tests()` 30/30 across 22 tables |
+| Authorization matrix | Pass | `run_all_authz_tests()` 32/32 across 22 tables; recorded to `authz_test_reports` (suite `authz_matrix`) |
+| Seat-cap enforcement | Pass | 5/5 seat checks recorded to `authz_test_reports` (suite `seat_cap`) via `record_authz_test_run()`; readable in `authz_test_report_summary` |
 | Scoring regression | Pass | `golden-scores.test.ts` v1.2.0, 0.00% drift |
 | Public vocabulary | Pass | `scripts/check-public-vocabulary.mjs` exit 0; 5/5 |
 | Mobile 375px | Pass | `tests/client/mobile-375.test.ts` 15/15 + live render across 9 routes |
