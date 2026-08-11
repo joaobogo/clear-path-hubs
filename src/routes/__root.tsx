@@ -53,8 +53,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:site_name", content: "TaaSFlow" },
-      { property: "og:image", content: "https://taasflow.com/og-image.png" },
-      { name: "twitter:image", content: "https://taasflow.com/og-image.png" },
+      // No sitewide og:image here: a root-level image is concatenated into
+      // every match and can win over a page's own hero/cover. Routes that
+      // render a meaningful hero set og:image/twitter:image in their own
+      // head(); hosting supplies the preview for the rest.
+
     ],
     links: [
       { rel: "stylesheet", href: appCss },

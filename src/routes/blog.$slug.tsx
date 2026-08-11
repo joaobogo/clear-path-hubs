@@ -35,6 +35,11 @@ export const Route = createFileRoute("/blog/$slug")({
       };
     }
     const patched = { ...entry, meta: { ...entry.meta, "og:type": "article" } };
+    // Same rule the page body uses: legacy taasflow.com asset URLs aren't
+    // served here, so they must not be shared as a cover either.
+    const rawHero = (entry.meta as Record<string, string | undefined>)["og:image"];
+    const cover =
+      rawHero && !rawHero.startsWith("https://taasflow.com/assets") ? rawHero : undefined;
     return marketingHead(
       patched,
       `/blog/${params.slug}`,
@@ -43,6 +48,7 @@ export const Route = createFileRoute("/blog/$slug")({
         description: "TaaSFlow blog article.",
       },
       {
+        image: cover,
         breadcrumbs: [
           { name: "Blog", path: "/blog" },
           {
@@ -52,6 +58,7 @@ export const Route = createFileRoute("/blog/$slug")({
         ],
       },
     );
+
   },
   component: BlogPost,
   notFoundComponent: () => (

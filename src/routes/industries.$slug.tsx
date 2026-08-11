@@ -5,6 +5,7 @@ import { ContentPage } from "@/components/marketing/content-page";
 import { IndustryPage } from "@/components/marketing/industry-page";
 import { getIndustry } from "@/lib/marketing/content";
 import { getIndustryEntry } from "@/content/industries-v2";
+import { getIndustryHeroImage } from "@/content/industry-hero-images";
 import { marketingHead } from "@/lib/marketing/head";
 import {
   INDUSTRY_SLUG_ALIASES,
@@ -35,6 +36,8 @@ export const Route = createFileRoute("/industries/$slug")({
   },
   head: ({ params, loaderData }) => {
     const v2 = loaderData?.v2;
+    // The vertical hero rendered on the page is also its share image.
+    const hero = getIndustryHeroImage(toInternalSlug(params.slug))?.src;
     if (v2) {
       // Wrap the v2 data in the shape marketingHead expects.
       return marketingHead(
@@ -52,6 +55,7 @@ export const Route = createFileRoute("/industries/$slug")({
         `/industries/${params.slug}`,
         { title: v2.meta.title, description: v2.meta.description },
         {
+          image: hero,
           breadcrumbs: [
             { name: "Industries", path: "/industries" },
             { name: v2.name ?? params.slug, path: `/industries/${params.slug}` },
@@ -69,11 +73,17 @@ export const Route = createFileRoute("/industries/$slug")({
         ],
       };
     }
-    return marketingHead(loaderData.legacy, `/industries/${params.slug}`, {
-      title: `${params.slug} — TaaSFlow`,
-      description: "Industry-focused subscription recruiting.",
-    });
+    return marketingHead(
+      loaderData.legacy,
+      `/industries/${params.slug}`,
+      {
+        title: `${params.slug} — TaaSFlow`,
+        description: "Industry-focused subscription recruiting.",
+      },
+      { image: hero },
+    );
   },
+
   component: IndustryDetail,
   notFoundComponent: () => (
     <SiteShell>
