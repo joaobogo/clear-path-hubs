@@ -5,7 +5,7 @@
  * only ever touches rows it created itself (QA_* names / @qa.taasflow.test
  * mailboxes). No production row is read or written by this suite.
  */
-import { expect, type Page } from "@playwright/test";
+import { expect, type BrowserContext, type Page } from "@playwright/test";
 
 export const BASE_URL = process.env["E2E_BASE_URL"] ?? "http://localhost:8080";
 export const QA_PASSWORD = "QaTest!Phase11";

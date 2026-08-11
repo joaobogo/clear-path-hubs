@@ -33,7 +33,7 @@ function makeDb() {
     from(table: string) {
       const filters: Record<string, string> = {};
       const builder = {
-        select: () => builder,
+        select: (_columns?: string) => builder,
         eq: (col: string, val: string) => {
           filters[col] = val;
           return builder;
@@ -69,7 +69,7 @@ vi.mock("@/integrations/supabase/client.server", () => ({
     from(table: string) {
       const filters: Record<string, string> = {};
       const builder = {
-        select: () => builder,
+        select: (_columns?: string) => builder,
         eq: (col: string, val: string) => {
           filters[col] = val;
           return builder;
