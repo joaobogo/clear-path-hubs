@@ -5,6 +5,7 @@ import { ContentPage } from "@/components/marketing/content-page";
 import { IndustryPage } from "@/components/marketing/industry-page";
 import { getIndustry } from "@/lib/marketing/content";
 import { getIndustryEntry } from "@/content/industries-v2";
+import { getIndustryHeroImage } from "@/content/industry-hero-images";
 import { marketingHead } from "@/lib/marketing/head";
 import {
   INDUSTRY_SLUG_ALIASES,
