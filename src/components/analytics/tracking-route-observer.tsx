@@ -74,20 +74,26 @@ export function TrackingRouteObserver() {
     const previous = lastPath.current;
     lastPath.current = pathname;
 
-    // `page_location` is built from the router's own location rather than
-    // window.location: on an SPA navigation this effect runs before the
-    // history entry is committed, so window.location.href would still be the
-    // previous page. `document.title` is written by the head manager in a
-    // later effect, so the dispatch waits two frames for it to settle —
-    // otherwise every event carries the previous page's title.
-    const location = new URL(href, window.location.origin).href;
+    // The head manager writes the new <title> a few milliseconds after this
+    // effect runs, so a dispatch on this tick would stamp every event with the
+    // previous page's title. Wait until the title actually belongs to this
+    // route (observed, with a short cap so a route that reuses a title still
+    // reports), then read the URL live — it is committed by then.
+    const titleAtNav = document.title;
+    let done = false;
+    let observer: MutationObserver | null = null;
+    let timer = 0;
 
-    let frame = 0;
     const dispatch = () => {
+      if (done) return;
+      done = true;
+      observer?.disconnect();
+      window.clearTimeout(timer);
+
       const base = {
         page_path: pathname,
         page_title: document.title,
-        page_location: location,
+        page_location: new URL(href, window.location.origin).href,
         role_type: roleType(pathname),
         referrer: previous ?? document.referrer ?? "",
       };
@@ -96,11 +102,23 @@ export function TrackingRouteObserver() {
       if (evt) trackEvent(evt, base);
     };
 
-    frame = window.requestAnimationFrame(() => {
-      frame = window.requestAnimationFrame(dispatch);
-    });
-    return () => window.cancelAnimationFrame(frame);
+    const titleEl = document.querySelector("title");
+    if (titleEl) {
+      observer = new MutationObserver(() => {
+        if (document.title !== titleAtNav) dispatch();
+      });
+      observer.observe(titleEl, { childList: true, characterData: true, subtree: true });
+    }
+    // Cap: fires the event even when the route keeps the same title.
+    timer = window.setTimeout(dispatch, 400);
+
+    return () => {
+      done = true;
+      observer?.disconnect();
+      window.clearTimeout(timer);
+    };
   }, [pathname, href]);
+
 
   return null;
 }
