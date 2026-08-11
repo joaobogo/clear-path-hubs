@@ -74,11 +74,13 @@ export function TrackingRouteObserver() {
     const previous = lastPath.current;
     lastPath.current = pathname;
 
-    // The head manager writes the new <title> a few milliseconds after this
-    // effect runs, so a dispatch on this tick would stamp every event with the
-    // previous page's title. Wait until the title actually belongs to this
-    // route (observed, with a short cap so a route that reuses a title still
-    // reports), then read the URL live — it is committed by then.
+    // The head manager writes the new title a few frames after this effect
+    // runs, so dispatching on this tick would stamp every event with the
+    // previous page's title. Wait until the title belongs to this route, then
+    // read the URL live — it is committed by then.
+    //
+    // The head manager REPLACES the <title> element rather than editing its
+    // text, so the observer must watch document.head, not the current node.
     const titleAtNav = document.title;
     let done = false;
     let observer: MutationObserver | null = null;
@@ -89,6 +91,7 @@ export function TrackingRouteObserver() {
       done = true;
       observer?.disconnect();
       window.clearTimeout(timer);
+      window.removeEventListener("pagehide", dispatch);
 
       const base = {
         page_path: pathname,
@@ -102,21 +105,28 @@ export function TrackingRouteObserver() {
       if (evt) trackEvent(evt, base);
     };
 
-    const titleEl = document.querySelector("title");
-    if (titleEl) {
-      observer = new MutationObserver(() => {
-        if (document.title !== titleAtNav) dispatch();
-      });
-      observer.observe(titleEl, { childList: true, characterData: true, subtree: true });
-    }
-    // Cap: fires the event even when the route keeps the same title.
-    timer = window.setTimeout(dispatch, 400);
+    observer = new MutationObserver(() => {
+      if (document.title !== titleAtNav) dispatch();
+    });
+    observer.observe(document.head, {
+      subtree: true,
+      childList: true,
+      characterData: true,
+    });
+
+    // Cap: still reports when a route deliberately keeps the same title, and
+    // bounds the wait on a slow route chunk.
+    timer = window.setTimeout(dispatch, 1500);
+    // Never lose the view if the visitor leaves while the title is pending.
+    window.addEventListener("pagehide", dispatch);
 
     return () => {
       done = true;
       observer?.disconnect();
       window.clearTimeout(timer);
+      window.removeEventListener("pagehide", dispatch);
     };
+
   }, [pathname, href]);
 
 
