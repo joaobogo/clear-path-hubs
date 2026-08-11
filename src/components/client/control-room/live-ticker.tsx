@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getLiveFeed, type LiveEvent } from "@/lib/control-room.functions";
 import { shortAgo } from "@/lib/control-room-shared";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const KIND_DOT: Record<string, string> = {
   candidate: "bg-sky-500",
