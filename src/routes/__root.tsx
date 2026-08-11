@@ -20,6 +20,12 @@ import { TrackingRouteObserver } from "@/components/analytics/tracking-route-obs
 import { ConsentBanner } from "@/components/analytics/consent-banner";
 import { BookingCtaRouter } from "@/components/marketing/booking-cta-router";
 
+/** Brand webfonts. Attached after first paint — see the inline script in head(). */
+const FONT_CSS_HREF =
+  "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap";
+
+
+
 function NotFoundComponent() {
   return <PublicNotFound />;
 }
