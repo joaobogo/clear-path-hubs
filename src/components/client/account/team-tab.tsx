@@ -70,6 +70,7 @@ import {
   type SeatRemedyId,
   type SeatUsage,
 } from "@/lib/seat-limit";
+import { seatUpgradeSearch } from "@/lib/seat-upgrade";
 
 import { Link } from "@tanstack/react-router";
 import { TeamActivityPanel } from "@/components/client/team-activity-panel";
