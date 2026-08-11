@@ -168,8 +168,8 @@ function initApollo() {
 /* --------------------------------------------------------------- RB2B --- */
 
 function initRB2B() {
-  // Injected here rather than from the document head: RB2B performs visitor
-  // identification, which requires marketing consent before it may run.
+  // Loads on every page view, before any consent choice, so visitor
+  // identification starts on the first pageview.
   if (loaded.has("rb2b") || !RB2B_ID) return;
   loaded.add("rb2b");
   injectScript("rb2b", {
