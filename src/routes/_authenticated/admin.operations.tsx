@@ -104,17 +104,20 @@ function OperationsPage() {
     queryFn: () => getPipelineHealth(),
   });
   const listOps = useServerFn(getOperationsIncidents);
-  const { data: ops } = useQuery({
+  const opsQuery = useQuery({
     queryKey: ["admin", "operations-incidents"],
     queryFn: () => listOps(),
     refetchOnWindowFocus: true,
   });
+  const ops = opsQuery.data;
   const listDelivery = useServerFn(listDeliveryFailures);
-  const { data: delivery } = useQuery({
+  const deliveryQuery = useQuery({
     queryKey: ["admin", "delivery-failures"],
     queryFn: () => listDelivery(),
     refetchOnWindowFocus: true,
   });
+  const delivery = deliveryQuery.data;
+
 
   const [feedback, setFeedback] = useState<string | null>(null);
   const [query, setQuery] = useState("");
