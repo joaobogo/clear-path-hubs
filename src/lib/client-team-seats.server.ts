@@ -26,8 +26,8 @@ export async function readSeatUsage(
       .from("memberships")
       .select("id")
       .eq("organization_id", orgId)
-      .in("role", SEAT_ROLES as unknown as string[])
-      .in("status", SEAT_STATUSES as unknown as string[]),
+      .in("role", [...SEAT_ROLES])
+      .in("status", [...SEAT_STATUSES]),
   ]);
   const recruiterSeats =
     (org as { client_seat_limit?: number | null } | null)?.client_seat_limit ?? 3;

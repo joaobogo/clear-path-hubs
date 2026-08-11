@@ -6,6 +6,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
 import { computeRoleLaunchState } from "@/lib/role-launch.server";
+import { assertSeatAvailable } from "@/lib/client-team-seats.server";
 import { DECLINE_REASONS } from "@/lib/client-decision-reasons";
 import {
   DEAL_BREAKER_REASON_CODES,
