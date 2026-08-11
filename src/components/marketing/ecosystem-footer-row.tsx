@@ -38,6 +38,26 @@ export function isConversionPath(pathname: string): boolean {
   );
 }
 
+/**
+ * Conversion paths where a contextual cross-sell is still allowed because the
+ * module deflects visitors we cannot serve rather than competing with the CTA.
+ * /pricing is the one case: a single-role buyer should learn a subscription is
+ * the wrong shape before paying for it. The footer sibling row stays suppressed.
+ */
+const CROSS_SELL_EXEMPT_PATHS: readonly string[] = ["/pricing"];
+
+export function allowsCrossSell(pathname: string): boolean {
+  if (
+    CROSS_SELL_EXEMPT_PATHS.some(
+      (p) => pathname === p || pathname.startsWith(`${p}/`),
+    )
+  ) {
+    return true;
+  }
+  return !isConversionPath(pathname);
+}
+
+
 export function EcosystemFooterRow() {
   const pathname = useRouterState({
     select: (s) => s.location.pathname,
