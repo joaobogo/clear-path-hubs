@@ -3121,7 +3121,7 @@ function ExpressIntakePage() {
               />
             )}
             {!brief.complete && (
-              <div className="rounded-lg border border-[color:var(--brand-amber,#b45309)]/30 bg-[color:var(--brand-navy)]/4 p-4">
+              <div className="rounded-lg border border-[color:var(--brand-amber)]/30 bg-[color:var(--brand-navy)]/4 p-4">
                 <p className="text-sm font-semibold">
                   This brief is incomplete — you can still submit it.
                 </p>

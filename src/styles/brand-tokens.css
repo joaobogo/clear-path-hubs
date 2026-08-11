@@ -34,6 +34,20 @@
   --brand-chrome-minimise: #ffbd2e;
   --brand-chrome-expand:   #27c93f;
 
+  /* Mist — the quiet section background that alternates with paper across the
+     marketing pages. 66 component usages referenced this before it existed,
+     which silently dropped those backgrounds. Sits between paper and sky. */
+  --brand-mist:        oklch(0.957 0.009 245);
+  /* Brass accents for editorial eyebrow labels ("Signal ·", "Evidence ·").
+     Gold is tuned for small text on white/mist (AA); sand is its counterpart
+     for the same labels sitting on navy. */
+  --brand-gold:        oklch(0.53 0.10 75);
+  --brand-sand:        oklch(0.86 0.06 80);
+  /* Amber caution outline used by the intake wizard (was an inline #b45309). */
+  --brand-amber:       oklch(0.53 0.14 55);
+
+
+
   /* Status (dashboard-compatible; mirrors src/styles.css names)
      Lightness is tuned so each hue clears WCAG AA (4.5:1) as text on both
      white and its own *-soft tint — these tokens are used for status text,
@@ -102,6 +116,10 @@
   --brand-font-display: "Space Grotesk", "IBM Plex Sans", ui-sans-serif, sans-serif;
   --brand-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo,
     Consolas, monospace;
+  /* Body alias — long-form article copy asks for --brand-font-body. */
+  --brand-font-body: var(--brand-font-sans);
+  /* Serif: pull-quotes and editorial pull-outs on industry pages only. */
+  --brand-font-serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
 
   /* ============================================================
    * Semantic --taas-* token layer (canonical brand API)
@@ -292,9 +310,16 @@
   --brand-sky-dark:    oklch(0.16 0.030 262);
   --brand-ink:         oklch(0.98 0.005 245);
   --brand-paper:       oklch(0.14 0.030 262);
+  /* Mist inverts with paper — otherwise "quiet" sections turn into bright
+     near-white bands on a dark page. Brass accents lighten to stay legible. */
+  --brand-mist:        oklch(0.185 0.030 262);
+  --brand-gold:        oklch(0.80 0.09 78);
+  --brand-sand:        oklch(0.86 0.06 80);
+  --brand-amber:       oklch(0.75 0.13 60);
   --brand-gradient-hero: linear-gradient(180deg, oklch(0.14 0.030 262) 0%, oklch(0.11 0.030 262) 100%);
   --brand-gradient-cta:  linear-gradient(135deg, oklch(0.60 0.19 258) 0%, oklch(0.55 0.19 285) 100%);
 }
+
 
 /* ─── Focus visibility (global) ─── */
 :where(a, button, [role="button"], input, select, textarea, [tabindex]):focus-visible {
