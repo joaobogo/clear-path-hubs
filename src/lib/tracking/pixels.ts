@@ -266,9 +266,13 @@ export function initializeTrackers() {
     });
   }
 
-  // Nothing initialises until the admin-configured policy is known: on a first
-  // visit that means one tick after hydration, on a repeat visit the cached
-  // policy answers immediately.
+  // RB2B fires on every page view, independent of the consent policy: it is
+  // treated as strictly necessary B2B firmographic identification here.
+  safe(initRB2B);
+
+  // Nothing else initialises until the admin-configured policy is known: on a
+  // first visit that means one tick after hydration, on a repeat visit the
+  // cached policy answers immediately.
   if (!isTrackingPolicyLoaded()) return;
 
   for (const key of Object.keys(INITIALISERS) as TrackerKey[]) {
