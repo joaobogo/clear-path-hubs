@@ -50,7 +50,7 @@ export const Route = createFileRoute("/industries_/$slug/briefing")({
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
         { property: "og:url", content: url },
-        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:card", content: "summary" },
         { name: "twitter:title", content: title },
         { name: "twitter:description", content: description },
       ],
