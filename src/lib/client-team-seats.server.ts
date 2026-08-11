@@ -6,6 +6,7 @@
 // every seat-consuming path (new invitation, reactivating a suspended
 // teammate) refuses identically instead of one path leaking trigger text.
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { seatBlockCode, type SeatBlock } from "@/lib/seat-limit";
 
 /** Roles that occupy a workspace seat. Candidates and staff never do. */
 const SEAT_ROLES = ["client_admin", "client_editor", "client_viewer"] as const;
@@ -50,4 +51,33 @@ export async function assertSeatAvailable(orgId: string): Promise<void> {
       `Seat limit reached — your plan includes ${seatLimit} seats and all ${seatsUsed} are in use (pending invitations hold a seat). Remove a teammate to free a seat, or talk to us about adding seats.`,
     );
   }
+}
+
+/**
+ * Structured seat check for paths that should explain the refusal rather than
+ * throw a sentence at it (reactivating a suspended teammate). Returns null when
+ * a seat is free. The database guard still refuses independently; this only
+ * decides what the client is told.
+ */
+export async function evaluateSeatBlock(
+  orgId: string,
+): Promise<SeatBlock | null> {
+  const [{ seatLimit, seatsUsed }, { data: rows }] = await Promise.all([
+    readSeatUsage(orgId),
+    supabaseAdmin
+      .from("memberships")
+      .select("status")
+      .eq("organization_id", orgId)
+      .in("role", [...SEAT_ROLES])
+      .in("status", [...SEAT_STATUSES]),
+  ]);
+  if (seatsUsed < seatLimit) return null;
+  const statuses = ((rows as { status: string }[] | null) ?? []).map((r) => r.status);
+  const usage = {
+    seatLimit,
+    seatsUsed,
+    pendingInvites: statuses.filter((s) => s === "invited").length,
+    activeMembers: statuses.filter((s) => s === "active").length,
+  };
+  return { code: seatBlockCode(usage), usage };
 }
