@@ -1,5 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "include": ["tests/**/*.ts", "tests/**/*.tsx"],
-  "compilerOptions": { "types": ["vite/client", "node"], "noEmit": true }
-}
