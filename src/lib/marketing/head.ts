@@ -63,7 +63,20 @@ export function clampTitle(text: string, max = MAX_TITLE): string {
   );
   return `${base}…`;
 }
-
+/**
+ * Absolute https URL for a share image.
+ *
+ * Social crawlers never resolve relative paths, and bundled hero assets are
+ * emitted as root-relative paths (`/assets/…`). Anything that isn't a real
+ * https URL after prefixing is dropped rather than shared as a broken preview.
+ */
+export function absoluteShareImage(src: string | undefined): string | undefined {
+  if (!src) return undefined;
+  const url = src.startsWith("http")
+    ? src
+    : `${CANONICAL_ORIGIN}${src.startsWith("/") ? src : `/${src}`}`;
+  return url.startsWith("https://") ? url : undefined;
+}
 
 
 export type BreadcrumbItem = { name: string; path: string };
