@@ -585,8 +585,13 @@ function MemberRow({
  const remove = useMutation({
  mutationFn: () => removeFn({ data: { orgId, userId: member.user_id } }),
  onSuccess: () => {
- toast.success("Member removed");
+ toast.success(
+ (member.status as MemberStatus) === "invited"
+ ? "Invitation cancelled — that seat is free again"
+ : "Member removed",
+ );
  setConfirmRemove(false);
+ setConfirmCancelInvite(false);
  invalidate();
  },
  onError: handleErr,
