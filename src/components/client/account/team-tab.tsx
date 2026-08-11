@@ -478,7 +478,11 @@ function MemberRow({
  const statusFn = useServerFn(setClientMemberStatus);
  const removeFn = useServerFn(removeClientMember);
  const resendFn = useServerFn(resendClientInvitation);
- const [confirmRemove, setConfirmRemove] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState(false);
+ // Reactivation is the one action a client can be refused for reasons they
+ // cannot see in the row itself, so it gets an explanation panel rather than a
+ // toast that vanishes.
+ const [seatBlock, setSeatBlock] = useState(false);
 
  const invalidate = () => {
  qc.invalidateQueries({ queryKey: ["client-team", orgId] });
@@ -487,6 +491,14 @@ function MemberRow({
  // Reactivation consumes a seat, so this can surface the database guard's
  // `seat_limit_exceeded`. Translate before it reaches a client.
  const handleErr = (e: unknown) => toast.error(seatAwareErrorMessage(e, usage));
+ // Same translation, but a seat refusal opens the explainer instead.
+ const handleSeatAction = (e: unknown) => {
+ if (isSeatLimitError(e)) {
+ setSeatBlock(true);
+ return;
+ }
+ toast.error(seatAwareErrorMessage(e, usage));
+ };
 
  const changeRole = useMutation({
  mutationFn: (role: ClientRoleId) =>
