@@ -28,7 +28,7 @@ const STAKEHOLDERS: Stakeholder[] = [
     title: "One portfolio. Same standard across every requisition.",
     icon: Briefcase,
     headline:
-      "Every open role runs the same intake, sourcing, evidence review, and ranked delivery — so standards travel across teams instead of resetting per requisition.",
+      "Every role runs the same intake, sourcing and evidence review, so standards travel across teams.",
     priorities: [
       "Consistent scoring rubric across role families",
       "Requisition portfolio at a glance",
@@ -68,7 +68,7 @@ const STAKEHOLDERS: Stakeholder[] = [
     title: "Flat subscription. Predictable spend. No contingency surprise.",
     icon: Calculator,
     headline:
-      "Recruiting cost becomes a line item you can plan. No per-hire success fees, no post-close surprise from an agency invoice.",
+      "Recruiting becomes a line item you can plan. No success fees, no surprise agency invoice.",
     priorities: [
       "Predictable monthly cost, published packages",
       "Cost per hire visible against actual placements",
@@ -88,7 +88,7 @@ const STAKEHOLDERS: Stakeholder[] = [
     title: "One vendor. Clear scope. Auditable decisions.",
     icon: ShieldCheck,
     headline:
-      "Replace a fragmented panel of agencies with one accountable vendor. Every candidate decision is recorded with the reason, visible to your team.",
+      "One accountable vendor instead of an agency panel. Every decision recorded with its reason.",
     priorities: [
       "Single MSA covers all searches",
       "Tenant isolation and role-based access",
