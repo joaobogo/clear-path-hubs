@@ -1,0 +1,31 @@
+-- Error-level findings: 'positions_candidate_applied_read' and
+-- 'organizations_candidate_applied_read' granted any candidate who applied FULL-ROW
+-- SELECT on the position and the client org. RLS is row-level only, so that exposed
+-- positions.blueprint / evaluation_weights / compensation / intake_context / jd_text and
+-- organizations.internal_notes / primary_contact_email / phone / billing fields.
+--
+-- Column-level GRANTs are NOT a usable fix here: grants are per-role, and the same
+-- 'authenticated' role also serves client users and platform staff who legitimately read
+-- those columns via organizations_read / positions_read.
+--
+-- Candidate-facing surfaces do not need these policies: every candidate read of position
+-- or employer data goes through server functions using the service-role client with an
+-- explicit safe column list (candidate/employer-view.functions.ts, jobs.functions.ts,
+-- apply.functions.ts), and the public job board is served by positions_public_read plus
+-- the public_position_* definer functions.
+--
+-- Dropping them also closes a side effect: retryBlueprintAnalysis authorizes on the
+-- caller's own client, so an applied candidate previously passed that visibility check.
+--
+-- Rollback:
+--   CREATE POLICY "positions_candidate_applied_read" ON public.positions FOR SELECT TO authenticated
+--   USING (is_active_user(auth.uid()) AND EXISTS (SELECT 1 FROM applications a
+--     JOIN candidate_profiles cp ON cp.id = a.candidate_profile_id
+--     WHERE a.position_id = positions.id AND cp.user_id = auth.uid()));
+--   CREATE POLICY "organizations_candidate_applied_read" ON public.organizations FOR SELECT TO authenticated
+--   USING (is_active_user(auth.uid()) AND EXISTS (SELECT 1 FROM positions p
+--     JOIN applications a ON a.position_id = p.id
+--     JOIN candidate_profiles cp ON cp.id = a.candidate_profile_id
+--     WHERE p.organization_id = organizations.id AND cp.user_id = auth.uid()));
+DROP POLICY IF EXISTS "positions_candidate_applied_read" ON public.positions;
+DROP POLICY IF EXISTS "organizations_candidate_applied_read" ON public.organizations;
