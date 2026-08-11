@@ -1,5 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 
 export function slugifyHeading(input: string): string {
   return String(input)
@@ -22,13 +23,23 @@ function headingText(children: unknown): string {
 // Rewrite legacy source links so anchors and CTAs stay same-origin.
 function rewriteHref(href?: string): string | undefined {
   if (!href) return href;
-  if (href.startsWith("https://taasflow.com")) {
-    return href.replace("https://taasflow.com", "") || "/";
+  let out = href;
+  if (out.startsWith("https://taasflow.com")) {
+    out = out.replace("https://taasflow.com", "") || "/";
   }
-  if (href.startsWith("https://sourcing-suite-ai.lovable.app")) {
-    return href.replace("https://sourcing-suite-ai.lovable.app", "") || "/";
+  if (out.startsWith("https://sourcing-suite-ai.lovable.app")) {
+    out = out.replace("https://sourcing-suite-ai.lovable.app", "") || "/";
   }
-  return href;
+  // Legacy authored copy links straight at the old short industry slugs and at
+  // /industries/compare, which was never built. Point both at their live
+  // canonical targets so no rendered link relies on a 301 or a soft 404.
+  if (out === "/industries/compare") return "/industries";
+  const industry = /^\/industries\/([^/?#]+)(.*)$/.exec(out);
+  if (industry) {
+    const canonical = toPublicSlug(industry[1] === "non-profit" ? "nonprofit" : industry[1]);
+    return `/industries/${canonical}${industry[2]}`;
+  }
+  return out;
 }
 
 /**

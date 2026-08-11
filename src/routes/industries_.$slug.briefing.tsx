@@ -10,17 +10,32 @@
  */
 import { CANONICAL_ORIGIN } from "@/lib/canonical-origin";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { Printer } from "lucide-react";
 
 import { getIndustryEntry, type IndustryEntry } from "@/content/industries-v2";
 
-import { toInternalSlug } from "@/lib/marketing/industry-slug-aliases";
+import {
+  INDUSTRY_SLUG_ALIASES,
+  isLegacyIndustrySlug,
+  toInternalSlug,
+} from "@/lib/marketing/industry-slug-aliases";
 import { breadcrumbScript, clampDescription } from "@/lib/marketing/head";
 import { Button } from "@/components/ui/button";
 
 
 export const Route = createFileRoute("/industries_/$slug/briefing")({
+  beforeLoad: ({ params }) => {
+    // Mirror the industry page: legacy short slugs 301 to the canonical
+    // human-readable form, so a briefing is only ever indexable at one URL.
+    if (isLegacyIndustrySlug(params.slug)) {
+      throw redirect({
+        to: "/industries/$slug/briefing",
+        params: { slug: INDUSTRY_SLUG_ALIASES[params.slug] },
+        statusCode: 301,
+      });
+    }
+  },
   loader: ({ params }) => {
     const entry = getIndustryEntry(toInternalSlug(params.slug));
     if (!entry) throw notFound();

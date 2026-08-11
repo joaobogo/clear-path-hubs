@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Search, ArrowRight, CheckCircle2, Sparkles, Award } from "lucide-react";
 import { INDUSTRY_ENTRIES, type IndustryEntry } from "@/content/industries-v2";
+import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 
 export type ExplorerCategory =
   | "Technology & Digital"
@@ -280,7 +281,7 @@ function IndustryDetail({
         </div>
         <Link
           to="/industries/$slug"
-          params={{ slug: entry.slug }}
+          params={{ slug: toPublicSlug(entry.slug) }}
           className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[color:var(--brand-navy)] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[color:var(--brand-ocean)]"
         >
           Open industry page
