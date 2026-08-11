@@ -15,6 +15,7 @@ import {
   BLOG_METADATA,
 } from "@/lib/marketing/blog-manifest";
 import { isPublishedBlogSlug, listAllBlogRows } from "@/lib/marketing/blog-catalog";
+import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: ({ params }) => {
@@ -320,7 +321,7 @@ function BlogPost() {
                     <li key={ind.slug}>
                       <Link
                         to="/industries/$slug"
-                        params={{ slug: ind.slug }}
+                        params={{ slug: toPublicSlug(ind.slug) }}
                         className="group flex h-full flex-col rounded-xl border border-border/60 bg-card p-5 transition hover:border-primary/40 hover:shadow-sm"
                       >
                         <span className="text-sm font-semibold group-hover:text-primary">

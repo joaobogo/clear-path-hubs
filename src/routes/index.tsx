@@ -61,6 +61,7 @@ import { PageConnections } from "@/components/marketing/page-connections";
 import { FgvEndorsement } from "@/components/marketing/fgv-endorsement";
 import { DecisionWorkspacePreview } from "@/components/marketing/product-preview/decision-workspace-preview";
 import { RiskProof } from "@/components/marketing/risk-proof";
+import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 
 // Homepage metadata is authored inline (guardrail: the legacy JSON content entry
 // contains unapproved "14 days" and totals claims). The content bundle is
@@ -1654,7 +1655,7 @@ function Home() {
                 <li key={ind.slug} className="min-w-0">
                   <Link
                     to="/industries/$slug"
-                    params={{ slug: ind.slug }}
+                    params={{ slug: toPublicSlug(ind.slug) }}
                     className="group flex h-full flex-col rounded-2xl border border-[color:var(--brand-navy)]/12 bg-white p-5 shadow-[var(--brand-shadow-sm)] transition-shadow hover:shadow-[var(--brand-shadow-lg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
                   >
                     <div className="flex items-center gap-2">

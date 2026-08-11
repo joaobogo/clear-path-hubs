@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { INDUSTRY_ENTRIES } from "@/content/industries-v2";
+import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 
 /**
  * Site-wide SEO internal-link hub. Rendered above the footer on every
@@ -154,7 +155,7 @@ export function InternalLinkHub() {
                 <li key={e.slug}>
                   <Link
                     to="/industries/$slug"
-                    params={{ slug: e.slug }}
+                    params={{ slug: toPublicSlug(e.slug) }}
                     className="inline-flex min-h-11 items-center text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)]"
                   >
                     {e.name}
