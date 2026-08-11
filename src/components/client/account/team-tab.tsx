@@ -544,7 +544,12 @@ function MemberRow({
  changeRole.isPending || changeStatus.isPending || remove.isPending || resend.isPending;
 
  return (
- <li className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 p-4 sm:grid-cols-[auto_minmax(0,1fr)_auto_auto]">
+ <li
+ id={`team-member-${member.user_id}`}
+ data-member-status={status}
+ className="grid scroll-mt-24 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 p-4 transition-colors sm:grid-cols-[auto_minmax(0,1fr)_auto_auto] data-[highlight=true]:bg-primary/5"
+ >
+
  <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
  {initials(member.profiles?.full_name, email)}
  </div>
