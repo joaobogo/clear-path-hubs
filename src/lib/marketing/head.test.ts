@@ -59,7 +59,23 @@ describe("marketingHead", () => {
     expect(byProp("og:title")!.content).toBe(title);
     expect(byProp("og:description")!.content).toBe(byName("description")!.content);
     expect(byProp("og:type")!.content).toBe("article");
+    expect(byName("twitter:card")!.content).toBe("summary");
+  });
+
+  it("promotes a hero image to an absolute og:image/twitter:image pair", () => {
+    const head = marketingHead(entry, "/blog/salary-trends-2026", undefined, {
+      image: "/assets/hero-abc123.jpg",
+    });
+    const byName = (name: string) =>
+      head.meta.find((m) => "name" in m && m.name === name) as { content: string } | undefined;
+    const byProp = (prop: string) =>
+      head.meta.find((m) => "property" in m && m.property === prop) as
+        | { content: string }
+        | undefined;
+    expect(byProp("og:image")!.content).toBe("https://taasflow.com/assets/hero-abc123.jpg");
+    expect(byName("twitter:image")!.content).toBe(byProp("og:image")!.content);
     expect(byName("twitter:card")!.content).toBe("summary_large_image");
+
     expect(head.links[0]!.href).toContain("/blog/salary-trends-2026");
   });
 });
