@@ -55,7 +55,10 @@ export const Route = createFileRoute("/_authenticated/client/account")({
     ({
       tab: parseTab(search.tab),
       ...(typeof search.org === "string" ? { org: search.org } : {}),
-    }) as { tab: AccountTab; org?: string },
+      // Seat position carried in from a blocked invite/reactivation so the plan
+      // tab can say exactly what an upgrade resolves.
+      ...parseSeatUpgradeSearch(search),
+    }) as { tab: AccountTab; org?: string } & SeatUpgradeSearch,
   head: () => ({
     meta: [
       { title: "Account · TaaSFlow client workspace" },
