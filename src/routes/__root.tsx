@@ -57,14 +57,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
+        // Loaded with media="print" so it never blocks first paint, then
+        // promoted to media="all" by the inline script below. Headings/body
+        // already declare font-display: swap fallbacks, so text paints
+        // immediately with the system stack and reflows once the webfont lands.
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap",
+        media: "print",
+        id: "taasflow-webfonts",
       },
     ],
     scripts: [
       // RB2B visitor identification used to boot from here. It now loads from
       // src/lib/tracking/pixels.ts so it only runs once the visitor has given
       // marketing consent.
+      {
+        children:
+          "(function(){var l=document.getElementById('taasflow-webfonts');if(!l)return;var a=function(){l.media='all'};if(l.sheet){a()}else{l.addEventListener('load',a);setTimeout(a,3000)}})();",
+      },
+
 
       {
         type: "application/ld+json",
