@@ -59,7 +59,7 @@ import {
 import { ErrorState } from "@/components/client/states";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { getWorkspaceSeatUsage } from "@/lib/collaborator-team.functions";
-import { seatAwareErrorMessage, seatLimitMessage } from "@/lib/seat-limit";
+import { isSeatLimitError, seatAwareErrorMessage, seatLimitMessage } from "@/lib/seat-limit";
 import { Link } from "@tanstack/react-router";
 import { TeamActivityPanel } from "@/components/client/team-activity-panel";
 
@@ -210,7 +210,7 @@ export function TeamTab() {
   // usage failed to load we let the attempt through and rely on the server
   // refusal, rather than blocking an admin who still has seats.
   const seatsFull = !!seats && seats.seatsLeft <= 0;
-  const seatUsage = { seatsUsed, seatLimit };
+  const seatUsage = { seatsUsed, seatLimit, pendingInvites: counts.invited };
   const seatsLeft = seats?.seatsLeft ?? null;
   const seatPct =
     seatLimit && seatLimit > 0 ? Math.min(100, Math.round((seatsUsed / seatLimit) * 100)) : null;
@@ -471,14 +471,18 @@ function MemberRow({
  canMutate: boolean;
  selfId?: string | null;
  seatsFull: boolean;
- usage: { seatsUsed: number; seatLimit: number | null };
+ usage: { seatsUsed: number; seatLimit: number | null; pendingInvites?: number };
 }) {
  const qc = useQueryClient();
  const roleFn = useServerFn(updateClientMemberRole);
  const statusFn = useServerFn(setClientMemberStatus);
  const removeFn = useServerFn(removeClientMember);
  const resendFn = useServerFn(resendClientInvitation);
- const [confirmRemove, setConfirmRemove] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState(false);
+ // Reactivation is the one action a client can be refused for reasons they
+ // cannot see in the row itself, so it gets an explanation panel rather than a
+ // toast that vanishes.
+ const [seatBlock, setSeatBlock] = useState(false);
 
  const invalidate = () => {
  qc.invalidateQueries({ queryKey: ["client-team", orgId] });
@@ -487,6 +491,14 @@ function MemberRow({
  // Reactivation consumes a seat, so this can surface the database guard's
  // `seat_limit_exceeded`. Translate before it reaches a client.
  const handleErr = (e: unknown) => toast.error(seatAwareErrorMessage(e, usage));
+ // Same translation, but a seat refusal opens the explainer instead.
+ const handleSeatAction = (e: unknown) => {
+ if (isSeatLimitError(e)) {
+ setSeatBlock(true);
+ return;
+ }
+ toast.error(seatAwareErrorMessage(e, usage));
+ };
 
  const changeRole = useMutation({
  mutationFn: (role: ClientRoleId) =>
@@ -504,7 +516,7 @@ function MemberRow({
  toast.success(s === "active" ? "Member reactivated" : "Member suspended");
  invalidate();
  },
- onError: handleErr,
+  onError: handleSeatAction,
  });
 
  const remove = useMutation({
@@ -612,13 +624,14 @@ function MemberRow({
  </DropdownMenuItem>
  )}
   {status === "suspended" && (
-  // Reactivating spends a seat, so it is refused when the plan is full —
-  // say so up front rather than after the click.
+  // Reactivating spends a seat, so it is refused when the plan is full.
+  // Keep the item clickable and explain the block in a dialog instead of
+  // greying it out with no reason.
   <DropdownMenuItem
-  disabled={seatsFull}
-  onSelect={() => {
+  onSelect={(e) => {
   if (seatsFull) {
-  toast.error(seatLimitMessage(usage));
+  e.preventDefault();
+  setSeatBlock(true);
   return;
   }
   changeStatus.mutate("active");
@@ -667,7 +680,71 @@ function MemberRow({
  </Button>
  </DialogFooter>
  </DialogContent>
- </Dialog>
+  </Dialog>
+
+  {/* Why reactivation is blocked, and what to change to free a seat. */}
+  <Dialog open={seatBlock} onOpenChange={setSeatBlock}>
+  <DialogContent data-testid="reactivate-blocked-dialog">
+  <DialogHeader>
+  <DialogTitle>Can't reactivate {name} yet</DialogTitle>
+  <DialogDescription>
+  A reactivated teammate takes a seat, and your workspace has none free
+  {usage.seatLimit !== null
+  ? ` — ${usage.seatsUsed} of ${usage.seatLimit} seats are in use.`
+  : "."}
+  </DialogDescription>
+  </DialogHeader>
+  <div className="space-y-3">
+  <p className="text-sm font-medium">To free a seat, change one of these:</p>
+  <ul className="space-y-2 text-sm text-muted-foreground">
+  <li className="flex gap-2">
+  <Mail className="mt-0.5 h-4 w-4 shrink-0" />
+  <span>
+  {usage.pendingInvites && usage.pendingInvites > 0
+  ? `Cancel one of the ${usage.pendingInvites} pending invitation${usage.pendingInvites === 1 ? "" : "s"} — an invitation holds a seat before it is accepted.`
+  : "Cancel a pending invitation — invitations hold a seat before they are accepted."}
+  </span>
+  </li>
+  <li className="flex gap-2">
+  <Shield className="mt-0.5 h-4 w-4 shrink-0" />
+  <span>
+  Suspend an active teammate who no longer needs access. Suspended
+  members keep their history but stop using a seat.
+  </span>
+  </li>
+  <li className="flex gap-2">
+  <UserMinus className="mt-0.5 h-4 w-4 shrink-0" />
+  <span>
+  Remove someone from the workspace. Their account is not deleted and
+  they can be invited back later.
+  </span>
+  </li>
+  <li className="flex gap-2">
+  <Users className="mt-0.5 h-4 w-4 shrink-0" />
+  <span>
+  Or add seats to your plan — seat counts are set by us, so this is a
+  quick conversation rather than a self-serve toggle.
+  </span>
+  </li>
+  </ul>
+  </div>
+  <DialogFooter>
+  <Button variant="ghost" onClick={() => setSeatBlock(false)}>
+  Close
+  </Button>
+  <Button asChild variant="outline">
+  <Link to="/client/account" search={{ tab: "plan" }}>
+  Review your plan
+  </Link>
+  </Button>
+  <Button asChild>
+  <Link to="/book-call" search={{ position: undefined }}>
+  Talk to us about seats
+  </Link>
+  </Button>
+  </DialogFooter>
+  </DialogContent>
+  </Dialog>
  </div>
  </li>
  );
@@ -680,7 +757,7 @@ function InviteDialog({
 }: {
   orgId: string;
   seatsFull: boolean;
-  usage: { seatsUsed: number; seatLimit: number | null };
+  usage: { seatsUsed: number; seatLimit: number | null; pendingInvites?: number };
 }) {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
