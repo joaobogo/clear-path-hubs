@@ -37,6 +37,8 @@ function PlanCard({
   detail,
   onSelect,
   actionLabel,
+  seatNote,
+  resolvesSeats,
 }: {
   label: string;
   price: string;
@@ -44,6 +46,9 @@ function PlanCard({
   detail: string | null;
   onSelect: (() => void) | null;
   actionLabel: string;
+  /** Seat maths for this plan, shown only when arriving from a seat block. */
+  seatNote?: string | null;
+  resolvesSeats?: boolean;
 }) {
   const body = (
     <>
