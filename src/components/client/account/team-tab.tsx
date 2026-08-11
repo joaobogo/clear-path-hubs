@@ -680,7 +680,71 @@ function MemberRow({
  </Button>
  </DialogFooter>
  </DialogContent>
- </Dialog>
+  </Dialog>
+
+  {/* Why reactivation is blocked, and what to change to free a seat. */}
+  <Dialog open={seatBlock} onOpenChange={setSeatBlock}>
+  <DialogContent data-testid="reactivate-blocked-dialog">
+  <DialogHeader>
+  <DialogTitle>Can't reactivate {name} yet</DialogTitle>
+  <DialogDescription>
+  A reactivated teammate takes a seat, and your workspace has none free
+  {usage.seatLimit !== null
+  ? ` — ${usage.seatsUsed} of ${usage.seatLimit} seats are in use.`
+  : "."}
+  </DialogDescription>
+  </DialogHeader>
+  <div className="space-y-3">
+  <p className="text-sm font-medium">To free a seat, change one of these:</p>
+  <ul className="space-y-2 text-sm text-muted-foreground">
+  <li className="flex gap-2">
+  <Mail className="mt-0.5 h-4 w-4 shrink-0" />
+  <span>
+  {usage.pendingInvites && usage.pendingInvites > 0
+  ? `Cancel one of the ${usage.pendingInvites} pending invitation${usage.pendingInvites === 1 ? "" : "s"} — an invitation holds a seat before it is accepted.`
+  : "Cancel a pending invitation — invitations hold a seat before they are accepted."}
+  </span>
+  </li>
+  <li className="flex gap-2">
+  <Shield className="mt-0.5 h-4 w-4 shrink-0" />
+  <span>
+  Suspend an active teammate who no longer needs access. Suspended
+  members keep their history but stop using a seat.
+  </span>
+  </li>
+  <li className="flex gap-2">
+  <UserMinus className="mt-0.5 h-4 w-4 shrink-0" />
+  <span>
+  Remove someone from the workspace. Their account is not deleted and
+  they can be invited back later.
+  </span>
+  </li>
+  <li className="flex gap-2">
+  <Users className="mt-0.5 h-4 w-4 shrink-0" />
+  <span>
+  Or add seats to your plan — seat counts are set by us, so this is a
+  quick conversation rather than a self-serve toggle.
+  </span>
+  </li>
+  </ul>
+  </div>
+  <DialogFooter>
+  <Button variant="ghost" onClick={() => setSeatBlock(false)}>
+  Close
+  </Button>
+  <Button asChild variant="outline">
+  <Link to="/client/account" search={{ tab: "plan" }}>
+  Review your plan
+  </Link>
+  </Button>
+  <Button asChild>
+  <Link to="/book-call" search={{ position: undefined }}>
+  Talk to us about seats
+  </Link>
+  </Button>
+  </DialogFooter>
+  </DialogContent>
+  </Dialog>
  </div>
  </li>
  );
