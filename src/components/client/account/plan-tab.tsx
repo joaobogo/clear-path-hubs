@@ -61,6 +61,14 @@ function PlanCard({
       <CardContent className="space-y-2 text-sm text-muted-foreground">
         <p>{summary}</p>
         {detail ? <p className="text-xs">{detail}</p> : null}
+        {seatNote ? (
+          <p
+            data-testid="plan-seat-note"
+            className={`text-xs ${resolvesSeats ? "taas-fg-success" : "taas-fg-warning"}`}
+          >
+            {seatNote}
+          </p>
+        ) : null}
       </CardContent>
     </>
   );
