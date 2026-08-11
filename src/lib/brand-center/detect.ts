@@ -133,7 +133,8 @@ export function detectBrand(input: {
 export const ACTIVE_DETECTION: BrandDetection = detectBrand({
   configName: "TaaSFlow",
   logoFiles: ["logo-on-white.png", "logo-on-blue.png", "icon-white.png"],
-  hostname: null,
+  // Counted only when the code really is running on a verified brand host.
+  hostname: typeof window === "undefined" ? null : window.location.hostname,
   explicitBrandId: "taasflow",
 });
 
