@@ -266,30 +266,19 @@ export function initializeTrackers() {
     });
   }
 
-  // RB2B fires on every page view, independent of the consent policy: it is
-  // treated as strictly necessary B2B firmographic identification here.
-  safe(initRB2B);
-
-  // Nothing else initialises until the admin-configured policy is known: on a
-  // first visit that means one tick after hydration, on a repeat visit the
-  // cached policy answers immediately.
-  if (!isTrackingPolicyLoaded()) return;
-
+  // Every tag boots on the first page view, independent of the consent
+  // policy: owner decision — tracking must work for all visitors.
   for (const key of Object.keys(INITIALISERS) as TrackerKey[]) {
-    if (key === "rb2b") continue; // already started above
-    // Only trackers on the admin's strictly-necessary list may run before an
-    // affirmative choice. Essential GA4 runs cookieless until consent.
-    if (!isTrackerAllowed(key, TRACKER_CATEGORY[key])) continue;
     safe(INITIALISERS[key]);
   }
 
-
-  // Reflect the current choice onto an already-loaded GA4 instance.
+  // Keep GA4's consent signals aligned with the current state.
   safe(syncGA4Consent);
 
   // Any view raised during hydration (a direct page load always raises one)
   // was queued because no tracker existed yet — report it now.
   safe(flushPendingEvents);
+
 }
 
 
