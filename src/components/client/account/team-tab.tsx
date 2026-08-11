@@ -680,7 +680,7 @@ function InviteDialog({
 }: {
   orgId: string;
   seatsFull: boolean;
-  usage: { seatsUsed: number; seatLimit: number | null };
+  usage: { seatsUsed: number; seatLimit: number | null; pendingInvites?: number };
 }) {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
