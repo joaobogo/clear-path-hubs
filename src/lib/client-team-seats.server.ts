@@ -81,3 +81,39 @@ export async function evaluateSeatBlock(
   };
   return { code: seatBlockCode(usage), usage };
 }
+
+/**
+ * Audit trail for a refused reactivation.
+ *
+ * A seat refusal is a governance event: the admin was told no, and later
+ * ("why couldn't we add them back in August?") someone has to see which seat
+ * condition caused it, not just that a limit existed. Stored with the reason
+ * code plus the counts measured at the moment of refusal, since those change.
+ *
+ * Best-effort: a missing audit row must never turn a clean refusal into an
+ * error the admin has to interpret.
+ */
+export async function recordSeatBlockAudit(args: {
+  orgId: string;
+  actorUserId: string;
+  targetUserId: string;
+  block: SeatBlock;
+}): Promise<void> {
+  const { usage } = args.block;
+  const { error } = await supabaseAdmin.from("audit_events").insert({
+    organization_id: args.orgId,
+    actor_user_id: args.actorUserId,
+    entity_type: "membership",
+    entity_id: args.targetUserId,
+    action: "member_reactivation_blocked_seat_limit",
+    after_state: {
+      reason_code: args.block.code,
+      seat_limit: usage.seatLimit ?? null,
+      seats_used: usage.seatsUsed ?? null,
+      pending_invites: usage.pendingInvites ?? null,
+      active_members: usage.activeMembers ?? null,
+      attempted_status: "active",
+    },
+  });
+  if (error) console.error("[recordSeatBlockAudit]", error.message);
+}
