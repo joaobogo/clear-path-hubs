@@ -219,34 +219,44 @@ export function PlanTab() {
       <section className="space-y-3">
         <h2 className="text-sm font-semibold">One-off packages</h2>
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          {packages.map((plan) => (
-            <PlanCard
-              key={plan.priceId}
-              label={plan.label}
-              price={money(plan.amountUsd)}
-              summary={plan.summary}
-              detail={plan.validForDays ? `Valid ${plan.validForDays} days` : null}
-              onSelect={canPick ? () => pick(plan.priceId) : null}
-              actionLabel="Buy this package"
-            />
-          ))}
+          {packages.map((plan) => {
+            const seat = seatNoteFor(plan.productId);
+            return (
+              <PlanCard
+                key={plan.priceId}
+                label={plan.label}
+                price={money(plan.amountUsd)}
+                summary={plan.summary}
+                detail={plan.validForDays ? `Valid ${plan.validForDays} days` : null}
+                onSelect={canPick ? () => pick(plan.priceId) : null}
+                actionLabel="Buy this package"
+                seatNote={seat.note}
+                resolvesSeats={seat.resolves}
+              />
+            );
+          })}
         </div>
       </section>
 
       <section className="space-y-3">
         <h2 className="text-sm font-semibold">Subscriptions</h2>
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          {subscriptions.map((plan) => (
-            <PlanCard
-              key={plan.priceId}
-              label={plan.label}
-              price={`${money(plan.amountUsd)}/${plan.interval === "year" ? "yr" : "mo"}`}
-              summary={plan.summary}
-              detail="Cancel any time — it runs to the end of the period"
-              onSelect={canPick ? () => pick(plan.priceId) : null}
-              actionLabel="Switch to this plan"
-            />
-          ))}
+          {subscriptions.map((plan) => {
+            const seat = seatNoteFor(plan.productId);
+            return (
+              <PlanCard
+                key={plan.priceId}
+                label={plan.label}
+                price={`${money(plan.amountUsd)}/${plan.interval === "year" ? "yr" : "mo"}`}
+                summary={plan.summary}
+                detail="Cancel any time — it runs to the end of the period"
+                onSelect={canPick ? () => pick(plan.priceId) : null}
+                actionLabel="Switch to this plan"
+                seatNote={seat.note}
+                resolvesSeats={seat.resolves}
+              />
+            );
+          })}
         </div>
 
       </section>
