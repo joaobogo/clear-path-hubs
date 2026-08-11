@@ -430,11 +430,15 @@ function MemberRow({
  member,
  canMutate,
  selfId,
+ seatsFull,
+ usage,
 }: {
  orgId: string;
  member: AnyRow;
  canMutate: boolean;
  selfId?: string | null;
+ seatsFull: boolean;
+ usage: { seatsUsed: number; seatLimit: number | null };
 }) {
  const qc = useQueryClient();
  const roleFn = useServerFn(updateClientMemberRole);
@@ -443,9 +447,13 @@ function MemberRow({
  const resendFn = useServerFn(resendClientInvitation);
  const [confirmRemove, setConfirmRemove] = useState(false);
 
- const invalidate = () => qc.invalidateQueries({ queryKey: ["client-team", orgId] });
- const handleErr = (e: unknown) =>
- toast.error((e instanceof Error ? e.message : String(e)).replace(/^Error: /, ""));
+ const invalidate = () => {
+ qc.invalidateQueries({ queryKey: ["client-team", orgId] });
+ qc.invalidateQueries({ queryKey: ["client-team-seats", orgId] });
+ };
+ // Reactivation consumes a seat, so this can surface the database guard's
+ // `seat_limit_exceeded`. Translate before it reaches a client.
+ const handleErr = (e: unknown) => toast.error(seatAwareErrorMessage(e, usage));
 
  const changeRole = useMutation({
  mutationFn: (role: ClientRoleId) =>
@@ -465,6 +473,7 @@ function MemberRow({
  },
  onError: handleErr,
  });
+
  const remove = useMutation({
  mutationFn: () => removeFn({ data: { orgId, userId: member.user_id } }),
  onSuccess: () => {
