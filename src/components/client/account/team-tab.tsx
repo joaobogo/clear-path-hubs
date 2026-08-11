@@ -533,6 +533,9 @@ function MemberRow({
  // link when this workspace has no in-page remedy to offer.
  const firstRemedyActionRef = useRef<HTMLButtonElement | null>(null);
  const upgradeLinkRef = useRef<HTMLAnchorElement | null>(null);
+ // The refusal is raised from the row menu, so closing it should hand focus back
+ // to that trigger rather than to the top of the roster.
+ const memberMenuTriggerRef = useRef<HTMLButtonElement | null>(null);
 
  const invalidate = () => {
  qc.invalidateQueries({ queryKey: ["client-team", orgId] });
@@ -667,7 +670,7 @@ function MemberRow({
  {canMutate && !isSelf ? (
  <DropdownMenu>
  <DropdownMenuTrigger asChild>
- <Button variant="ghost" size="icon" aria-label={`Member actions for ${name}`} className="min-h-11 min-w-11" disabled={busy}>
+ <Button ref={memberMenuTriggerRef} variant="ghost" size="icon" aria-label={`Member actions for ${name}`} className="min-h-11 min-w-11" disabled={busy}>
  <MoreHorizontal className="h-4 w-4" />
  </Button>
  </DropdownMenuTrigger>
@@ -737,83 +740,115 @@ function MemberRow({
   </Dialog>
 
   {/* Why reactivation is blocked, and what to change to free a seat. */}
-  <Dialog open={!!seatBlock} onOpenChange={(open) => !open && setSeatBlock(null)}>
-  <DialogContent
-  data-testid="reactivate-blocked-dialog"
-  data-seat-block-code={seatBlock?.code}
-  onOpenAutoFocus={(event) => {
-  const target = firstRemedyActionRef.current ?? upgradeLinkRef.current;
-  if (!target) return;
-  event.preventDefault();
-  target.focus();
-  }}
-  >
-  <DialogHeader>
-  <DialogTitle>Can't reactivate {name} yet</DialogTitle>
-  <DialogDescription>
-  {seatBlock ? seatBlockReason(seatBlock) : null}
-  </DialogDescription>
-  </DialogHeader>
-  <div className="space-y-3">
-  <p className="text-sm font-medium">To free a seat, change one of these:</p>
-  <ul className="space-y-3 text-sm text-muted-foreground" data-testid="reactivate-blocked-remedies">
-  {(() => {
-  const remedies = seatFreeRemedies(seatBlock?.usage ?? usage);
-  const firstActionable = remedies.find(
-  (r) => r.actionLabel && (r.id === "cancel_invite" || r.id === "suspend_active"),
-  )?.id;
-  return remedies.map((remedy) => {
-  const Icon = REMEDY_ICON[remedy.id];
-  return (
-  <li key={remedy.id} className="flex gap-2" data-remedy={remedy.id}>
-  <Icon className="mt-0.5 h-4 w-4 shrink-0" />
-  <div className="min-w-0 space-y-1.5">
-  <span className="block">{remedy.text}</span>
-  {remedy.actionLabel && (remedy.id === "cancel_invite" || remedy.id === "suspend_active") && (
-  <Button
-  size="sm"
-  variant="outline"
-  ref={remedy.id === firstActionable ? firstRemedyActionRef : undefined}
-  data-testid={
-  remedy.id === "cancel_invite"
-  ? "reactivate-blocked-cancel-invite"
-  : "reactivate-blocked-open-team"
-  }
-  onClick={() => {
-  setSeatBlock(null);
-  revealTeamTarget(
-  remedy.id === "cancel_invite"
-  ? 'li[data-member-status="invited"]'
-  : "#team-members",
-  );
-  }}
-  >
-  {remedy.actionLabel}
-  </Button>
-  )}
-  </div>
-  </li>
-  );
-  });
-  })()}
-  </ul>
-  </div>
+ <Dialog open={!!seatBlock} onOpenChange={(open) => !open && setSeatBlock(null)}>
+ <DialogContent
+ data-testid="reactivate-blocked-dialog"
+ data-seat-block-code={seatBlock?.code}
+ aria-labelledby="reactivate-blocked-title"
+ aria-describedby="reactivate-blocked-reason"
+ onOpenAutoFocus={(event) => {
+ const target = firstRemedyActionRef.current ?? upgradeLinkRef.current;
+ if (!target) return;
+ event.preventDefault();
+ target.focus();
+ }}
+ onCloseAutoFocus={(event) => {
+ const trigger = memberMenuTriggerRef.current;
+ if (!trigger) return;
+ event.preventDefault();
+ trigger.focus();
+ }}
+ >
+ <DialogHeader>
+ <DialogTitle id="reactivate-blocked-title">Can't reactivate {name} yet</DialogTitle>
+ <DialogDescription id="reactivate-blocked-reason">
+ {seatBlock ? seatBlockReason(seatBlock) : null}
+ </DialogDescription>
+ </DialogHeader>
+ <div className="space-y-3">
+ <p className="text-sm font-medium" id="reactivate-blocked-remedies-label">
+ To free a seat, change one of these:
+ </p>
+ <ul
+ className="space-y-3 text-sm text-muted-foreground"
+ data-testid="reactivate-blocked-remedies"
+ aria-labelledby="reactivate-blocked-remedies-label"
+ >
+ {(() => {
+ const remedies = seatFreeRemedies(seatBlock?.usage ?? usage);
+ const firstActionable = remedies.find(
+ (r) => r.actionLabel && (r.id === "cancel_invite" || r.id === "suspend_active"),
+ )?.id;
+ return remedies.map((remedy) => {
+ const Icon = REMEDY_ICON[remedy.id];
+ return (
+ <li key={remedy.id} className="flex gap-2" data-remedy={remedy.id}>
+ <Icon className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+ <div className="min-w-0 space-y-1.5">
+ <span className="block">{remedy.text}</span>
+ {remedy.actionLabel && (remedy.id === "cancel_invite" || remedy.id === "suspend_active") && (
+ <Button
+ size="sm"
+ variant="outline"
+ ref={remedy.id === firstActionable ? firstRemedyActionRef : undefined}
+ aria-label={
+ remedy.id === "cancel_invite"
+ ? "Go to the pending invitation to cancel it and free a seat"
+ : `Go to the team list to suspend or remove a teammate and free a seat for ${name}`
+ }
+ data-testid={
+ remedy.id === "cancel_invite"
+ ? "reactivate-blocked-cancel-invite"
+ : "reactivate-blocked-open-team"
+ }
+ onClick={() => {
+ setSeatBlock(null);
+ revealTeamTarget(
+ remedy.id === "cancel_invite"
+ ? 'li[data-member-status="invited"]'
+ : "#team-members",
+ );
+ }}
+ >
+ {remedy.actionLabel}
+ </Button>
+ )}
+ </div>
+ </li>
+ );
+ });
+ })()}
+ </ul>
+ </div>
 
-  <DialogFooter>
-  <Button variant="ghost" onClick={() => setSeatBlock(null)}>
-  Close
-  </Button>
-  <Button asChild variant="outline" data-testid="reactivate-blocked-upgrade">
-  <Link ref={upgradeLinkRef} to="/client/account" search={{ tab: "plan" }}>
-  Start a seat upgrade
-  </Link>
-  </Button>
-  <Button asChild>
-  <Link to="/book-call" search={{ position: undefined }}>
-  Talk to us about seats
-  </Link>
-  </Button>
-  </DialogFooter>
+ <DialogFooter>
+ <Button
+ variant="ghost"
+ aria-label={`Close without reactivating ${name}`}
+ onClick={() => setSeatBlock(null)}
+ >
+ Close
+ </Button>
+ <Button asChild variant="outline" data-testid="reactivate-blocked-upgrade">
+ <Link
+ ref={upgradeLinkRef}
+ to="/client/account"
+ search={{ tab: "plan" }}
+ aria-label="Start a seat upgrade on the plan tab"
+ >
+ Start a seat upgrade
+ </Link>
+ </Button>
+ <Button asChild>
+ <Link
+ to="/book-call"
+ search={{ position: undefined }}
+ aria-label="Book a call to talk to us about adding seats"
+ >
+ Talk to us about seats
+ </Link>
+ </Button>
+ </DialogFooter>
 
   </DialogContent>
   </Dialog>
