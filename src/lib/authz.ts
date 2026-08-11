@@ -86,7 +86,12 @@ export const DEFAULT_PERMISSIONS_FOR_ROLE: Record<ClientRole, ClientPermission[]
 
 /** Owner seat + this many recruiter seats. Overridable per organization by staff. */
 export const DEFAULT_CLIENT_SEAT_LIMIT = 3;
-export const MAX_CLIENT_SEAT_LIMIT = 3;
+/**
+ * Maximum recruiter seats a staff member can assign to a single organization.
+ * Must match the database CHECK constraint on `organizations.client_seat_limit`.
+ * High enough to accommodate every published plan tier (Gold = 10, Enterprise = 20+).
+ */
+export const MAX_CLIENT_SEAT_LIMIT = 50;
 
 export function hasClientPermission(
   permissions: readonly string[] | null | undefined,
