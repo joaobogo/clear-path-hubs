@@ -6,7 +6,11 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
 import { computeRoleLaunchState } from "@/lib/role-launch.server";
-import { assertSeatAvailable, evaluateSeatBlock } from "@/lib/client-team-seats.server";
+import {
+  assertSeatAvailable,
+  evaluateSeatBlock,
+  recordSeatBlockAudit,
+} from "@/lib/client-team-seats.server";
 import { DECLINE_REASONS } from "@/lib/client-decision-reasons";
 import {
   DEAL_BREAKER_REASON_CODES,
@@ -300,7 +304,16 @@ export const setClientMemberStatus = createServerFn({ method: "POST" })
     // real boundary behind this.
     if (data.status === "active") {
       const seatBlock = await evaluateSeatBlock(data.orgId);
-      if (seatBlock) return { ok: false as const, seatBlock };
+      if (seatBlock) {
+        // Record which seat condition refused this, before answering.
+        await recordSeatBlockAudit({
+          orgId: data.orgId,
+          actorUserId: context.userId,
+          targetUserId: data.userId,
+          block: seatBlock,
+        });
+        return { ok: false as const, seatBlock };
+      }
     }
 
     const { error } = await context.supabase
