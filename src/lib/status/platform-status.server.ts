@@ -181,6 +181,8 @@ export async function measurePlatformStatus(): Promise<PlatformStatus> {
     workspace,
     roles,
     candidateData,
+    fileStorage,
+    realtime,
     agents,
     scoring,
     integrations,
@@ -207,6 +209,52 @@ export async function measurePlatformStatus(): Promise<PlatformStatus> {
     probeRead(supabaseAdmin, "organizations", "workspace"),
     probeRead(supabaseAdmin, "positions", "roles"),
     probeRead(supabaseAdmin, "candidate_matches", "candidate_data"),
+
+    // File storage — a live check that the private document store answers.
+    (async (): Promise<ServiceStatus> => {
+      const run = await timed(async () => {
+        const { error } = await supabaseAdmin.storage.from("cvs").list("", { limit: 1 });
+        if (error) throw error;
+        return true;
+      });
+      if (!run.ok) {
+        return serviceRow("file_storage", "major_outage", "The check did not complete.", true, WINDOW_NOW);
+      }
+      const verdict = statusFromProbe({ ok: true, ms: run.ms });
+      return serviceRow("file_storage", verdict.status, verdict.detail, true, WINDOW_NOW);
+    })(),
+
+    // Live updates — a real connection handshake with the realtime service.
+    (async (): Promise<ServiceStatus> => {
+      const run = await timed(async () => {
+        const wsUrl = `${url.replace(/^http/, "ws")}/realtime/v1/websocket?apikey=${encodeURIComponent(
+          publishableKey,
+        )}&vsn=1.0.0`;
+        // A real connection, opened and closed. Both runtimes we deploy to
+        // expose the standard WebSocket client.
+        const WS = (globalThis as unknown as { WebSocket?: typeof WebSocket }).WebSocket;
+        if (!WS) throw new Error("no websocket client");
+        const socket = new WS(wsUrl);
+        await new Promise<void>((resolve, reject) => {
+          socket.addEventListener("open", () => resolve(), { once: true });
+          socket.addEventListener("error", () => reject(new Error("closed")), { once: true });
+          socket.addEventListener("close", () => reject(new Error("closed")), { once: true });
+        });
+        try {
+          socket.close();
+        } catch {
+          /* nothing to clean up */
+        }
+        return true;
+      }, 5_000);
+
+      if (!run.ok) {
+        return serviceRow("realtime", "major_outage", "The check did not complete.", true, WINDOW_NOW);
+      }
+      const verdict = statusFromProbe({ ok: true, ms: run.ms });
+      return serviceRow("realtime", verdict.status, verdict.detail, true, WINDOW_NOW);
+    })(),
+
 
     // Agent processing — outcomes of background work in the last day.
     (async (): Promise<ServiceStatus> => {
@@ -402,6 +450,8 @@ export async function measurePlatformStatus(): Promise<PlatformStatus> {
     roles,
     agents,
     candidateData,
+    fileStorage,
+    realtime,
     scoring,
     integrations,
     notifications,
