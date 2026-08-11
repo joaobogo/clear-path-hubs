@@ -69,6 +69,82 @@ export interface ChangelogRelease {
 
 export const CHANGELOG_RELEASES: ChangelogRelease[] = [
   {
+    date: "2026-08-11",
+    version: "2026.08.1",
+    title: "Launch hardening: consent, tenant boundaries, and broken links",
+    summary:
+      "A stability and privacy pass ahead of launch. Every item below was verified against the running product, not planned.",
+    entries: [
+      {
+        id: "consent-gated-tracking",
+        category: "Improved",
+        area: "Security & Trust",
+        summary: "Analytics and advertising pixels load only after you accept them.",
+        impact:
+          "Nothing is loaded before a choice is made, and if the consent setting cannot be read the trackers stay off rather than defaulting on.",
+        availability: "Live on every public page.",
+        docHref: "/security",
+        docLabel: "Trust Center",
+      },
+      {
+        id: "cross-tenant-write-binding",
+        category: "Security",
+        area: "Security & Trust",
+        summary:
+          "Client decisions and hire records are bound in the database to the organisation that owns the candidate.",
+        impact:
+          "A decision or hire can only ever be written against a candidate your organisation actually has access to. The check runs in the database, not in the interface.",
+        availability: "Applied platform-wide.",
+      },
+      {
+        id: "candidate-read-scoping",
+        category: "Security",
+        area: "Candidate Experience",
+        summary: "Candidate-facing reads return an explicit list of fields instead of whole rows.",
+        impact:
+          "When you look up a role you applied to, you see the role and its employer — never internal notes, review history or other applicants' data.",
+        availability: "Live for all candidate accounts.",
+      },
+      {
+        id: "orphan-cv-processing",
+        category: "Fixed",
+        area: "Candidate Experience",
+        summary: "An abandoned CV upload no longer holds up the processing queue.",
+        impact:
+          "If someone uploads a CV and leaves before submitting, the file is cleared from the queue instead of blocking the applications behind it.",
+        availability: "Live for every role.",
+      },
+      {
+        id: "sitemap-broken-links",
+        category: "Fixed",
+        area: "Platform",
+        summary: "Removed 232 links to pages that were never published.",
+        impact:
+          "Search results and internal links now point only at pages that exist. The site index is built from published content rather than files on disk.",
+        availability: "Live on the public site.",
+      },
+      {
+        id: "payment-environment-validation",
+        category: "Security",
+        area: "Platform",
+        summary: "Checkout requests validate which payment environment they name.",
+        impact:
+          "A request can no longer ask for a payment environment that was not offered to it.",
+        availability: "Applied to every checkout path.",
+      },
+      {
+        id: "phone-layouts",
+        category: "Improved",
+        area: "Decision Workspace",
+        summary: "Phone layouts reworked down to a 375px screen.",
+        impact:
+          "Candidate tables stack instead of overflowing, and buttons meet a 44px tap target across the client workspace.",
+        availability: "Live on all public and client-workspace pages.",
+      },
+    ],
+  },
+  {
+
     date: "2026-08-04",
     version: "2026.08.0",
     title: "Measured status, tiered notifications, and configurable verticals",
