@@ -276,6 +276,7 @@ export function initializeTrackers() {
   if (!isTrackingPolicyLoaded()) return;
 
   for (const key of Object.keys(INITIALISERS) as TrackerKey[]) {
+    if (key === "rb2b") continue; // already started above
     // Only trackers on the admin's strictly-necessary list may run before an
     // affirmative choice. Essential GA4 runs cookieless until consent.
     if (!isTrackerAllowed(key, TRACKER_CATEGORY[key])) continue;
