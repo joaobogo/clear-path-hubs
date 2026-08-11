@@ -280,7 +280,12 @@ export function initializeTrackers() {
 
   // Reflect the current choice onto an already-loaded GA4 instance.
   safe(syncGA4Consent);
+
+  // Any view raised during hydration (a direct page load always raises one)
+  // was queued because no tracker existed yet — report it now.
+  safe(flushPendingEvents);
 }
+
 
 
 function trackerForUri(uri: string): string {
@@ -330,6 +335,43 @@ const META_EVENT_MAP: Record<string, string> = {
 
 const recent = new Map<string, number>();
 
+/**
+ * Events raised before any tracker booted. On a direct page load the first
+ * page_view is dispatched during hydration, while the admin tracking policy is
+ * still in flight, so GA4 does not exist yet and `send_page_view: false` means
+ * nothing else reports that view. Hold those events here and flush them once
+ * initialisation completes; drop them if no tracker is ever allowed.
+ */
+const pending: Array<{ name: string; payload: Record<string, unknown> }> = [];
+let flushed = false;
+
+/** Called from initializeTrackers once the policy is known. */
+function flushPendingEvents() {
+  flushed = true;
+  const queued = pending.splice(0, pending.length);
+  // No GA4 (declined and not strictly necessary) — the queue is dropped, never
+  // replayed to a tracker the visitor did not allow.
+  if (!window.gtag) return;
+  for (const { name, payload } of queued) send(name, payload);
+}
+
+function send(name: string, payload: Record<string, unknown>) {
+  // GA4 always receives the event; Consent Mode decides whether it is
+  // cookieless or full. Session-recording tools stay consent-gated.
+  window.gtag?.("event", name, payload);
+  window.dataLayer?.push({ event: name, ...payload });
+  if (isAllowed("analytics")) {
+    window.clarity?.("event", name);
+    window.hj?.("event", name);
+  }
+
+  if (isAllowed("marketing")) {
+    const metaName = META_EVENT_MAP[name];
+    if (metaName) window.fbq?.("track", metaName, payload);
+    window.lintrk?.("track", { conversion_id: name });
+  }
+}
+
 export function trackEvent(name: string, params: Record<string, unknown> = {}) {
   if (typeof window === "undefined") return;
   // GA4 accepts events pre-consent because it runs cookieless in that state.
@@ -343,22 +385,15 @@ export function trackEvent(name: string, params: Record<string, unknown> = {}) {
     recent.set(key, now);
     if (recent.size > 200) recent.clear();
 
-    // GA4 always receives the event; Consent Mode decides whether it is
-    // cookieless or full. Session-recording tools stay consent-gated.
-    window.gtag?.("event", name, payload);
-    window.dataLayer?.push({ event: name, ...payload });
-    if (isAllowed("analytics")) {
-      window.clarity?.("event", name);
-      window.hj?.("event", name);
+    if (!flushed && !window.gtag) {
+      if (pending.length < 50) pending.push({ name, payload });
+      return;
     }
 
-    if (isAllowed("marketing")) {
-      const metaName = META_EVENT_MAP[name];
-      if (metaName) window.fbq?.("track", metaName, payload);
-      window.lintrk?.("track", { conversion_id: name });
-    }
+    send(name, payload);
   });
 }
+
 
 export function trackPageView(params: Record<string, unknown>) {
   // Single dispatch — trackEvent already fans out to GA4 and every other tag,

@@ -71,9 +71,11 @@ export function TrackingRouteObserver() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    // lastPath holds the last path actually reported, not merely seen: a
+    // remounted effect (React's development double-invoke on mount) must still
+    // report the landing view its cancelled first run never got to send.
     if (lastPath.current === pathname) return;
     const previous = lastPath.current;
-    lastPath.current = pathname;
 
     // The head manager writes the new title a few frames after this effect
     // runs, so dispatching on this tick would stamp every event with the
@@ -99,6 +101,8 @@ export function TrackingRouteObserver() {
       if (done) return;
       done = true;
       stop();
+      if (lastPath.current === pathname) return;
+      lastPath.current = pathname;
 
       const base = {
         page_path: pathname,
@@ -111,6 +115,7 @@ export function TrackingRouteObserver() {
       const evt = routeEvent(pathname);
       if (evt) trackEvent(evt, base);
     }
+
 
     observer = new MutationObserver(() => {
       if (document.title !== titleAtNav) dispatch();
