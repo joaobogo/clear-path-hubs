@@ -516,7 +516,7 @@ function MemberRow({
  toast.success(s === "active" ? "Member reactivated" : "Member suspended");
  invalidate();
  },
- onError: handleErr,
+  onError: handleSeatAction,
  });
 
  const remove = useMutation({
