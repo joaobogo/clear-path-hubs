@@ -37,7 +37,9 @@ function roleType(path: string) {
  */
 export function TrackingRouteObserver() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const href = useRouterState({ select: (s) => s.location.href });
   const lastPath = useRef<string | null>(null);
+
 
   useEffect(() => {
     let cancelled = false;
@@ -73,18 +75,73 @@ export function TrackingRouteObserver() {
     const previous = lastPath.current;
     lastPath.current = pathname;
 
-    const base = {
-      page_path: pathname,
-      page_title: document.title,
-      page_location: window.location.href,
-      role_type: roleType(pathname),
-      referrer: previous ?? document.referrer ?? "",
+    // The head manager writes the new title a few frames after this effect
+    // runs, so dispatching on this tick would stamp every event with the
+    // previous page's title. Wait until the title belongs to this route, then
+    // read the URL live — it is committed by then.
+    //
+    // The head manager REPLACES the <title> element rather than editing its
+    // text, so the observer must watch document.head, not the current node.
+    const titleAtNav = document.title;
+    let done = false;
+    let observer: MutationObserver | null = null;
+    let timer = 0;
+    let poll = 0;
+
+    const stop = () => {
+      observer?.disconnect();
+      window.clearTimeout(timer);
+      window.clearInterval(poll);
+      window.removeEventListener("pagehide", dispatch);
     };
 
-    trackPageView(base);
-    const evt = routeEvent(pathname);
-    if (evt) trackEvent(evt, base);
-  }, [pathname]);
+    function dispatch() {
+      if (done) return;
+      done = true;
+      stop();
+
+      const base = {
+        page_path: pathname,
+        page_title: document.title,
+        page_location: new URL(href, window.location.origin).href,
+        role_type: roleType(pathname),
+        referrer: previous ?? document.referrer ?? "",
+      };
+      trackPageView(base);
+      const evt = routeEvent(pathname);
+      if (evt) trackEvent(evt, base);
+    }
+
+    observer = new MutationObserver(() => {
+      if (document.title !== titleAtNav) dispatch();
+    });
+    observer.observe(document.head, {
+      subtree: true,
+      childList: true,
+      characterData: true,
+    });
+
+    // Cap for a route that deliberately keeps the same title: nothing further
+    // is coming, and reading the (unchanged) title then is still correct. Kept
+    // generous because a route whose head resolves after its data — the job
+    // board, for one — can settle its title later than the router goes idle.
+    poll = window.setInterval(() => {
+      if (document.title !== titleAtNav) dispatch();
+    }, 100);
+    timer = window.setTimeout(dispatch, 2500);
+
+    // Never lose the view if the visitor leaves while the title is pending.
+    window.addEventListener("pagehide", dispatch);
+
+    return () => {
+      done = true;
+      stop();
+    };
+
+
+  }, [pathname, href]);
+
 
   return null;
 }
+
