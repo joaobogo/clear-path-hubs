@@ -25,6 +25,8 @@ import {
   type EvaluationWeights,
 } from "@/lib/requisition-schema";
 import { assertWorkspaceAccess, readWorkspaceAccess } from "@/lib/authz/workspace-access";
+import { isPaymentSatisfied } from "@/lib/publish-gate";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Db = any;
