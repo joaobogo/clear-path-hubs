@@ -12,7 +12,7 @@
  * mismatch is meant to withhold the signal, not to be silenced.
  */
 
-import type { FgvBrandId } from "./detect-types";
+import type { FgvBrandId } from "./detect";
 
 export interface ApprovedLogo {
   file: string;

@@ -6,6 +6,8 @@
  * independent agreeing signals; anything less halts asset generation.
  */
 
+import { brandFromApprovedLogos } from "./approved-logos";
+
 export const FGV_BRAND_IDS = [
   "fgv",
   "omniflow",
@@ -77,8 +79,9 @@ export function detectBrand(input: {
     signals.push({
       source: "approved-logo",
       value: `${input.logoFiles.length} master logo files in src/assets/brand/`,
-      // Master logos live in this project and carry the TaaSFlow wordmark.
-      brandId: normalize(input.configName),
+      // Resolved from the pinned approved-master registry, NOT from the brand
+      // config — otherwise this signal could never disagree with the config.
+      brandId: brandFromApprovedLogos(input.logoFiles),
       note: "Approved master wordmark + symbol present and unmodified",
     });
   }
