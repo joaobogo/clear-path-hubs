@@ -45,7 +45,6 @@ import {
   SiteShell,
 } from "@/components/marketing/site-shell";
 
-import { getPage } from "@/lib/marketing/content";
 import { marketingHead } from "@/lib/marketing/head";
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
 import { ModelComparisonTable } from "@/components/marketing/model-comparison-table";
