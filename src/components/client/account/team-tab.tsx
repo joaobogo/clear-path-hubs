@@ -578,11 +578,24 @@ function MemberRow({
  <Shield className="mr-2 h-4 w-4" /> Suspend access
  </DropdownMenuItem>
  )}
- {status === "suspended" && (
- <DropdownMenuItem onSelect={() => changeStatus.mutate("active")}>
- <ShieldCheck className="mr-2 h-4 w-4" /> Reactivate
- </DropdownMenuItem>
- )}
+  {status === "suspended" && (
+  // Reactivating spends a seat, so it is refused when the plan is full —
+  // say so up front rather than after the click.
+  <DropdownMenuItem
+  disabled={seatsFull}
+  onSelect={() => {
+  if (seatsFull) {
+  toast.error(seatLimitMessage(usage));
+  return;
+  }
+  changeStatus.mutate("active");
+  }}
+  >
+  <ShieldCheck className="mr-2 h-4 w-4" />
+  {seatsFull ? "Reactivate — no seats left" : "Reactivate"}
+  </DropdownMenuItem>
+  )}
+
  <DropdownMenuSeparator />
  <DropdownMenuItem
  onSelect={(e) => {
