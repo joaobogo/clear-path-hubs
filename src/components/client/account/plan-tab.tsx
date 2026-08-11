@@ -4,7 +4,15 @@
  * there is no second set of numbers anywhere.
  */
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useSearch } from "@tanstack/react-router";
+import {
+  hasSeatContext,
+  planResolvesSeatNeed,
+  planTotalSeats,
+  seatContextSummary,
+  seatShortfall,
+  type SeatUpgradeContext,
+} from "@/lib/seat-upgrade";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getClientContext } from "@/lib/client-context.functions";
