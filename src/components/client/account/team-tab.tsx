@@ -309,7 +309,7 @@ export function TeamTab() {
   <p className="text-sm text-muted-foreground">{seatLimitMessage(seatUsage)}</p>
   <div className="flex flex-wrap gap-2 pt-0.5">
   <Button asChild size="sm">
-  <Link to="/client/account" search={{ tab: "plan" }}>
+  <Link to="/client/account" search={{ tab: "plan", ...seatUpgradeSearch(seatUsage, 1) }}>
   Review your plan
   </Link>
   </Button>
