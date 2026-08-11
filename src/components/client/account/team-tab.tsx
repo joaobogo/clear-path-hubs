@@ -533,6 +533,9 @@ function MemberRow({
  // link when this workspace has no in-page remedy to offer.
  const firstRemedyActionRef = useRef<HTMLButtonElement | null>(null);
  const upgradeLinkRef = useRef<HTMLAnchorElement | null>(null);
+ // The refusal is raised from the row menu, so closing it should hand focus back
+ // to that trigger rather than to the top of the roster.
+ const memberMenuTriggerRef = useRef<HTMLButtonElement | null>(null);
 
  const invalidate = () => {
  qc.invalidateQueries({ queryKey: ["client-team", orgId] });
