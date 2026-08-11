@@ -24,6 +24,8 @@ import retailHero from "@/assets/industry-retail-hero.jpg";
 import energyHero from "@/assets/industry-energy-hero.jpg";
 import legalHero from "@/assets/industry-legal-hero.jpg";
 import constructionHero from "@/assets/industry-construction-hero.jpg";
+import logisticsHero from "@/assets/industry-logistics-hero.jpg";
+import renewableEnergyHero from "@/assets/industry-renewable-energy-hero.jpg";
 
 export type IndustryHeroImage = {
   src: string;
@@ -110,6 +112,20 @@ export const INDUSTRY_HERO_IMAGES: Record<string, IndustryHeroImage> = {
     width: 1600,
     height: 900,
     alt: "Construction project manager and superintendent reviewing rolled drawings on a mid-rise commercial jobsite at sunrise — representative of Construction hiring at TaaSFlow.",
+    focal: "50% 45%",
+  },
+  logistics: {
+    src: logisticsHero,
+    width: 1600,
+    height: 912,
+    alt: "Logistics operations manager on an elevated walkway reviewing a tablet above a freight distribution floor as forklifts move pallets in hazy morning light — representative of Logistics & Supply Chain hiring at TaaSFlow.",
+    focal: "50% 40%",
+  },
+  "renewable-energy": {
+    src: renewableEnergyHero,
+    width: 1600,
+    height: 912,
+    alt: "Field engineer in high-visibility gear inspecting a solar inverter cabinet at the edge of a photovoltaic array at golden hour, wind turbines faint on the horizon — representative of Renewable Energy hiring at TaaSFlow.",
     focal: "50% 45%",
   },
 };
