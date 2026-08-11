@@ -318,7 +318,7 @@ export function TeamTab() {
  </p>
  {canMutate && orgId && (
  <div className="mt-4 flex justify-center">
- <InviteDialog orgId={orgId} />
+ <InviteDialog orgId={orgId} seatsFull={seatsFull} usage={seatUsage} />
  </div>
  )}
  {visible.length === 1 && (
