@@ -113,7 +113,11 @@ export const approveStartWithoutPayment = createServerFn({ method: "POST" })
     const { error } = await supabaseAdmin
       .from("positions")
       .update({
-        payment_status: "covered",
+        // `exempt`, not `covered`: this is a staff goodwill start, not a role
+        // paid for by a plan allowance. `covered` roles are paused when the
+        // subscription ends, which must never happen to a goodwill start.
+        payment_status: "exempt",
+
         start_approved_by: context.userId,
         start_approved_at: new Date().toISOString(),
         start_approval_reason: data.reason.trim().slice(0, 500),
