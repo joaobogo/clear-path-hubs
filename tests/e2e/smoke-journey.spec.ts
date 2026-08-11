@@ -90,10 +90,12 @@ test.describe("launch smoke journey", () => {
     await page.locator("#phone").fill("+351912345678");
     await page.locator("#country").fill("Portugal");
     await page.locator("#city").fill("Lisbon");
-    // Supplying a password is what creates the candidate account — this is the
-    // product's only candidate sign-up surface.
+    // Account creation is opt-in behind a checkbox, and supplying a password is
+    // what creates it — this is the product's only candidate sign-up surface.
+    await page.getByRole("checkbox", { name: /create a candidate account/i }).click();
     await page.locator("#password").fill(QA_PASSWORD);
     await page.locator("#password2").fill(QA_PASSWORD);
+
     await continueBtn(page).click();
 
     await expect(page.locator("#cv")).toBeVisible();
