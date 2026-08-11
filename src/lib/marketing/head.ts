@@ -96,8 +96,9 @@ export function marketingHead(
 ) {
   // Page-specific title/description always win. og:* is only a fallback so a
   // generic share string can never become the page <title>.
-  const title =
-    entry?.meta.title || entry?.meta["og:title"] || fallback?.title || "TaaSFlow";
+  const title = clampTitle(
+    entry?.meta.title || entry?.meta["og:title"] || fallback?.title || "TaaSFlow",
+  );
   const description = clampDescription(
     entry?.meta.description ||
       entry?.meta["og:description"] ||
