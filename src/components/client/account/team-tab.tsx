@@ -210,7 +210,7 @@ export function TeamTab() {
   // usage failed to load we let the attempt through and rely on the server
   // refusal, rather than blocking an admin who still has seats.
   const seatsFull = !!seats && seats.seatsLeft <= 0;
-  const seatUsage = { seatsUsed, seatLimit };
+  const seatUsage = { seatsUsed, seatLimit, pendingInvites: counts.invited };
   const seatsLeft = seats?.seatsLeft ?? null;
   const seatPct =
     seatLimit && seatLimit > 0 ? Math.min(100, Math.round((seatsUsed / seatLimit) * 100)) : null;
