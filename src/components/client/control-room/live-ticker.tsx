@@ -27,7 +27,7 @@ export function LiveTicker({ orgId }: { orgId: string }) {
   const [freshIds, setFreshIds] = useState<Set<string>>(new Set());
   const seen = useRef<Set<string>>(new Set());
 
-  const { data, isPending } = useQuery({
+  const { data, isPending, isError, refetch, isFetching } = useQuery({
     queryKey: ["live-feed", orgId],
     queryFn: () => feedFn({ data: { organization_id: orgId } }),
     refetchInterval: 120_000,
