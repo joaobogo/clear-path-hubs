@@ -520,7 +520,11 @@ function MemberRow({
  const statusFn = useServerFn(setClientMemberStatus);
  const removeFn = useServerFn(removeClientMember);
  const resendFn = useServerFn(resendClientInvitation);
-  const [confirmRemove, setConfirmRemove] = useState(false);
+ const [confirmRemove, setConfirmRemove] = useState(false);
+ // Cancelling a pending invitation is the fastest way to free a seat, which also
+ // makes it the easiest to click by accident — especially right after the seat
+ // explainer flashes the row. It gets its own confirmation step.
+ const [confirmCancelInvite, setConfirmCancelInvite] = useState(false);
  // Reactivation is the one action a client can be refused for reasons they
  // cannot see in the row itself, so it gets an explanation panel rather than a
  // toast that vanishes.
@@ -581,8 +585,13 @@ function MemberRow({
  const remove = useMutation({
  mutationFn: () => removeFn({ data: { orgId, userId: member.user_id } }),
  onSuccess: () => {
- toast.success("Member removed");
+ toast.success(
+ (member.status as MemberStatus) === "invited"
+ ? "Invitation cancelled — that seat is free again"
+ : "Member removed",
+ );
  setConfirmRemove(false);
+ setConfirmCancelInvite(false);
  invalidate();
  },
  onError: handleErr,
@@ -700,6 +709,18 @@ function MemberRow({
   )}
 
  <DropdownMenuSeparator />
+ {status === "invited" ? (
+ <DropdownMenuItem
+ data-testid="cancel-invite-menu-item"
+ onSelect={(e) => {
+ e.preventDefault();
+ setConfirmCancelInvite(true);
+ }}
+ className="text-destructive focus:text-destructive"
+ >
+ <UserMinus className="mr-2 h-4 w-4" /> Cancel invitation
+ </DropdownMenuItem>
+ ) : (
  <DropdownMenuItem
  onSelect={(e) => {
  e.preventDefault();
@@ -709,6 +730,7 @@ function MemberRow({
  >
  <UserMinus className="mr-2 h-4 w-4" /> Remove from workspace
  </DropdownMenuItem>
+ )}
  </DropdownMenuContent>
  </DropdownMenu>
  ) : (
@@ -738,6 +760,40 @@ function MemberRow({
  </DialogFooter>
  </DialogContent>
   </Dialog>
+
+  {/* Cancelling a pending invitation frees a seat and cannot be undone, so it
+      asks first — the destructive confirm is never the default focus. */}
+ <Dialog open={confirmCancelInvite} onOpenChange={setConfirmCancelInvite}>
+ <DialogContent data-testid="cancel-invite-confirm-dialog">
+ <DialogHeader>
+ <DialogTitle>Cancel the invitation for {email ?? name}?</DialogTitle>
+ <DialogDescription>
+ Their invitation link stops working and the seat it holds is freed straight
+ away. You can invite them again later, which will use a seat again.
+ </DialogDescription>
+ </DialogHeader>
+ <DialogFooter>
+ <Button
+ variant="ghost"
+ data-testid="cancel-invite-keep"
+ aria-label="Keep the invitation and close this dialog"
+ onClick={() => setConfirmCancelInvite(false)}
+ >
+ Keep the invitation
+ </Button>
+ <Button
+ variant="destructive"
+ data-testid="cancel-invite-confirm"
+ onClick={() => remove.mutate()}
+ disabled={remove.isPending}
+ aria-label={`Cancel the invitation for ${email ?? name} and free a seat`}
+ >
+ {remove.isPending ? "Cancelling…" : "Cancel invitation"}
+ </Button>
+ </DialogFooter>
+ </DialogContent>
+ </Dialog>
+
 
   {/* Why reactivation is blocked, and what to change to free a seat. */}
  <Dialog open={!!seatBlock} onOpenChange={(open) => !open && setSeatBlock(null)}>
