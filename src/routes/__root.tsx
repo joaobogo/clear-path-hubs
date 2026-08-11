@@ -20,6 +20,12 @@ import { TrackingRouteObserver } from "@/components/analytics/tracking-route-obs
 import { ConsentBanner } from "@/components/analytics/consent-banner";
 import { BookingCtaRouter } from "@/components/marketing/booking-cta-router";
 
+/** Brand webfonts. Attached after first paint — see the inline script in head(). */
+const FONT_CSS_HREF =
+  "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap";
+
+
+
 function NotFoundComponent() {
   return <PublicNotFound />;
 }
@@ -57,14 +63,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap",
+        // Warm the webfont CSS without blocking the parser. The stylesheet
+        // itself is attached by the inline script below (outside React's head
+        // management, which would otherwise reset any attribute we flip).
+        rel: "preload",
+        as: "style",
+        href: FONT_CSS_HREF,
       },
     ],
     scripts: [
       // RB2B visitor identification used to boot from here. It now loads from
       // src/lib/tracking/pixels.ts so it only runs once the visitor has given
       // marketing consent.
+      {
+        // Attaches the Google Fonts stylesheet after first paint. Headings and
+        // body text declare fallbacks with font-display: swap, so text (the LCP
+        // element on the homepage) paints immediately instead of waiting on a
+        // third-party CSS round trip.
+        children: `(function(){if(document.getElementById('taasflow-webfonts'))return;var l=document.createElement('link');l.id='taasflow-webfonts';l.rel='stylesheet';l.href=${JSON.stringify(FONT_CSS_HREF)};document.head.appendChild(l);})();`,
+      },
+
+
 
       {
         type: "application/ld+json",
