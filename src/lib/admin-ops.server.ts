@@ -60,13 +60,14 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       scope,
     ),
 
-    // 2 — paid or exempt roles still waiting on platform setup.
+    // 2 — paid, exempt or plan-covered roles still waiting on platform setup.
     excludeTestOrgs(
       s
         .from("positions")
         .select("id,title,status,payment_status,owner_user_id,created_at,organizations(name)", { count: "exact" })
         .in("status", ["submitted", "needs_clarification"])
-        .in("payment_status", ["paid", "exempt"])
+        .in("payment_status", [...PAID_PAYMENT_STATES]),
+
         .order("created_at", { ascending: true })
         .limit(8),
       scope,
