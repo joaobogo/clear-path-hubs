@@ -78,6 +78,8 @@ export const SERVICE_KEYS = [
   "roles",
   "agents",
   "candidate_data",
+  "file_storage",
+  "realtime",
   "scoring",
   "integrations",
   "notifications",
