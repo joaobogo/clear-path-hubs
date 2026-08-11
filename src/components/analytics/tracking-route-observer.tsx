@@ -37,6 +37,7 @@ function roleType(path: string) {
  */
 export function TrackingRouteObserver() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const href = useRouterState({ select: (s) => s.location.href });
   const lastPath = useRef<string | null>(null);
 
   useEffect(() => {
@@ -73,18 +74,34 @@ export function TrackingRouteObserver() {
     const previous = lastPath.current;
     lastPath.current = pathname;
 
-    const base = {
-      page_path: pathname,
-      page_title: document.title,
-      page_location: window.location.href,
-      role_type: roleType(pathname),
-      referrer: previous ?? document.referrer ?? "",
+    // `page_location` is built from the router's own location rather than
+    // window.location: on an SPA navigation this effect runs before the
+    // history entry is committed, so window.location.href would still be the
+    // previous page. `document.title` is written by the head manager in a
+    // later effect, so the dispatch waits two frames for it to settle —
+    // otherwise every event carries the previous page's title.
+    const location = new URL(href, window.location.origin).href;
+
+    let frame = 0;
+    const dispatch = () => {
+      const base = {
+        page_path: pathname,
+        page_title: document.title,
+        page_location: location,
+        role_type: roleType(pathname),
+        referrer: previous ?? document.referrer ?? "",
+      };
+      trackPageView(base);
+      const evt = routeEvent(pathname);
+      if (evt) trackEvent(evt, base);
     };
 
-    trackPageView(base);
-    const evt = routeEvent(pathname);
-    if (evt) trackEvent(evt, base);
-  }, [pathname]);
+    frame = window.requestAnimationFrame(() => {
+      frame = window.requestAnimationFrame(dispatch);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [pathname, href]);
 
   return null;
 }
+
