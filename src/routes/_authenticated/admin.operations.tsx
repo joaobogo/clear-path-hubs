@@ -306,10 +306,30 @@ function OperationsPage() {
             </div>
           </div>
 
-          {filtered.length === 0 ? (
+          {opsQuery.isError ? (
+            <div className="rounded-lg border bg-card px-5 py-10 text-sm text-muted-foreground text-center">
+              We couldn't load the incident list. Treat this as unknown, not as a clean board —
+              incidents may exist that we can't show.
+              <div className="mt-3">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={opsQuery.isFetching}
+                  onClick={() => void opsQuery.refetch()}
+                >
+                  {opsQuery.isFetching ? "Retrying…" : "Try again"}
+                </Button>
+              </div>
+            </div>
+          ) : opsQuery.isPending ? (
+            <div className="rounded-lg border bg-card px-5 py-10 text-sm text-muted-foreground text-center">
+              Loading incidents…
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="rounded-lg border bg-card px-5 py-10 text-sm text-muted-foreground text-center">
               No incidents match this filter.
             </div>
+
           ) : (
             <div className="rounded-lg border bg-card overflow-hidden">
               <table className="w-full text-sm">
