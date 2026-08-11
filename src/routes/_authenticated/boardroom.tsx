@@ -113,8 +113,9 @@ function BoardroomPage() {
   const slides = useMemo(
     () => [
       { key: "intro", render: () => <SlideIntro orgName={orgName} /> },
-      { key: "positions", render: () => <SlidePositions positions={positions} kpis={kpis} isLoading={isLoading} /> },
-      { key: "shortlist", render: () => <SlideShortlist candidates={candidates} isLoading={isLoading} /> },
+      { key: "positions", render: () => <SlidePositions positions={positions} kpis={kpis} isLoading={isLoading} loadFailed={loadFailed} /> },
+      { key: "shortlist", render: () => <SlideShortlist candidates={candidates} isLoading={isLoading} loadFailed={loadFailed} /> },
+
       { key: "economics", render: () => <SlideEconomics /> },
       { key: "industry", render: () => <SlideIndustry /> },
       { key: "next", render: () => <SlideNext /> },
