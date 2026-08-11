@@ -34,6 +34,20 @@
   --brand-chrome-minimise: #ffbd2e;
   --brand-chrome-expand:   #27c93f;
 
+  /* Mist — the quiet section background that alternates with paper across the
+     marketing pages. 66 component usages referenced this before it existed,
+     which silently dropped those backgrounds. Sits between paper and sky. */
+  --brand-mist:        oklch(0.957 0.009 245);
+  /* Brass accents for editorial eyebrow labels ("Signal ·", "Evidence ·").
+     Gold is tuned for small text on white/mist (AA); sand is its counterpart
+     for the same labels sitting on navy. */
+  --brand-gold:        oklch(0.53 0.10 75);
+  --brand-sand:        oklch(0.86 0.06 80);
+  /* Amber caution outline used by the intake wizard (was an inline #b45309). */
+  --brand-amber:       oklch(0.53 0.14 55);
+
+
+
   /* Status (dashboard-compatible; mirrors src/styles.css names)
      Lightness is tuned so each hue clears WCAG AA (4.5:1) as text on both
      white and its own *-soft tint — these tokens are used for status text,
