@@ -709,6 +709,18 @@ function MemberRow({
   )}
 
  <DropdownMenuSeparator />
+ {status === "invited" ? (
+ <DropdownMenuItem
+ data-testid="cancel-invite-menu-item"
+ onSelect={(e) => {
+ e.preventDefault();
+ setConfirmCancelInvite(true);
+ }}
+ className="text-destructive focus:text-destructive"
+ >
+ <UserMinus className="mr-2 h-4 w-4" /> Cancel invitation
+ </DropdownMenuItem>
+ ) : (
  <DropdownMenuItem
  onSelect={(e) => {
  e.preventDefault();
@@ -718,6 +730,7 @@ function MemberRow({
  >
  <UserMinus className="mr-2 h-4 w-4" /> Remove from workspace
  </DropdownMenuItem>
+ )}
  </DropdownMenuContent>
  </DropdownMenu>
  ) : (
