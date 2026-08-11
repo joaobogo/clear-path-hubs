@@ -93,6 +93,28 @@ export const DEFAULT_CLIENT_SEAT_LIMIT = 3;
  */
 export const MAX_CLIENT_SEAT_LIMIT = 50;
 
+/**
+ * Per-tier recruiter-seat counts (excluding the owner seat).
+ *
+ * When a plan is purchased, staff set `organizations.client_seat_limit` to the
+ * value here. The database CHECK constraint allows 0–50; Enterprise is "scoped"
+ * and set manually during procurement.
+ *
+ * Keep in sync with `src/config/pricing-entitlements.ts` → `workspace_seats`.
+ */
+export const PLAN_SEAT_LIMITS: Record<string, number> = {
+  // One-off packages
+  pilot: 1,
+  multi: 3,
+  sprint: 5,
+  enterprise: 10, // floor; staff can raise above this for scoped deals
+  // Subscriptions
+  bronze: 3,
+  silver: 5,
+  gold: 10,
+  // enterprise subscription uses the same entry above
+};
+
 export function hasClientPermission(
   permissions: readonly string[] | null | undefined,
   permission: ClientPermission,
