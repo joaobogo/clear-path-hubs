@@ -60,8 +60,11 @@ import { ErrorState } from "@/components/client/states";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { getWorkspaceSeatUsage } from "@/lib/collaborator-team.functions";
 import {
+  isSeatBlocked,
   isSeatLimitError,
   seatAwareErrorMessage,
+  seatBlockReason,
+  type SeatBlock,
   seatFreeRemedies,
   seatLimitMessage,
   type SeatRemedyId,
@@ -521,7 +524,9 @@ function MemberRow({
  // Reactivation is the one action a client can be refused for reasons they
  // cannot see in the row itself, so it gets an explanation panel rather than a
  // toast that vanishes.
- const [seatBlock, setSeatBlock] = useState(false);
+ // Holds the server's structured refusal (reason code + the counts it measured)
+ // so the explainer is deterministic instead of inferred from cached numbers.
+ const [seatBlock, setSeatBlock] = useState<SeatBlock | null>(null);
 
  const invalidate = () => {
  qc.invalidateQueries({ queryKey: ["client-team", orgId] });
@@ -533,7 +538,8 @@ function MemberRow({
  // Same translation, but a seat refusal opens the explainer instead.
  const handleSeatAction = (e: unknown) => {
  if (isSeatLimitError(e)) {
- setSeatBlock(true);
+ // Legacy path: the database guard refused before the structured check ran.
+ setSeatBlock({ code: "seat_limit_reached", usage });
  return;
  }
  toast.error(seatAwareErrorMessage(e, usage));
@@ -551,7 +557,12 @@ function MemberRow({
  const changeStatus = useMutation({
  mutationFn: (status: "active" | "suspended") =>
  statusFn({ data: { orgId, userId: member.user_id, status } }),
- onSuccess: (_, s) => {
+ onSuccess: (result, s) => {
+ if (isSeatBlocked(result)) {
+ setSeatBlock(result.seatBlock);
+ invalidate();
+ return;
+ }
  toast.success(s === "active" ? "Member reactivated" : "Member suspended");
  invalidate();
  },
@@ -669,17 +680,10 @@ function MemberRow({
  )}
   {status === "suspended" && (
   // Reactivating spends a seat, so it is refused when the plan is full.
-  // Keep the item clickable and explain the block in a dialog instead of
-  // greying it out with no reason.
+  // Always ask the server: it returns the structured reason code and the
+  // real counts, so the explainer never guesses from cached numbers.
   <DropdownMenuItem
-  onSelect={(e) => {
-  if (seatsFull) {
-  e.preventDefault();
-  setSeatBlock(true);
-  return;
-  }
-  changeStatus.mutate("active");
-  }}
+  onSelect={() => changeStatus.mutate("active")}
   >
   <ShieldCheck className="mr-2 h-4 w-4" />
   {seatsFull ? "Reactivate — no seats left" : "Reactivate"}
@@ -727,21 +731,18 @@ function MemberRow({
   </Dialog>
 
   {/* Why reactivation is blocked, and what to change to free a seat. */}
-  <Dialog open={seatBlock} onOpenChange={setSeatBlock}>
-  <DialogContent data-testid="reactivate-blocked-dialog">
+  <Dialog open={!!seatBlock} onOpenChange={(open) => !open && setSeatBlock(null)}>
+  <DialogContent data-testid="reactivate-blocked-dialog" data-seat-block-code={seatBlock?.code}>
   <DialogHeader>
   <DialogTitle>Can't reactivate {name} yet</DialogTitle>
   <DialogDescription>
-  A reactivated teammate takes a seat, and your workspace has none free
-  {usage.seatLimit !== null
-  ? ` — ${usage.seatsUsed} of ${usage.seatLimit} seats are in use.`
-  : "."}
+  {seatBlock ? seatBlockReason(seatBlock) : null}
   </DialogDescription>
   </DialogHeader>
   <div className="space-y-3">
   <p className="text-sm font-medium">To free a seat, change one of these:</p>
   <ul className="space-y-3 text-sm text-muted-foreground" data-testid="reactivate-blocked-remedies">
-  {seatFreeRemedies(usage).map((remedy) => {
+  {seatFreeRemedies(seatBlock?.usage ?? usage).map((remedy) => {
   const Icon = REMEDY_ICON[remedy.id];
   return (
   <li key={remedy.id} className="flex gap-2" data-remedy={remedy.id}>
@@ -758,7 +759,7 @@ function MemberRow({
   : "reactivate-blocked-open-team"
   }
   onClick={() => {
-  setSeatBlock(false);
+  setSeatBlock(null);
   revealTeamTarget(
   remedy.id === "cancel_invite"
   ? 'li[data-member-status="invited"]'
@@ -777,7 +778,7 @@ function MemberRow({
   </div>
 
   <DialogFooter>
-  <Button variant="ghost" onClick={() => setSeatBlock(false)}>
+  <Button variant="ghost" onClick={() => setSeatBlock(null)}>
   Close
   </Button>
   <Button asChild variant="outline" data-testid="reactivate-blocked-upgrade">

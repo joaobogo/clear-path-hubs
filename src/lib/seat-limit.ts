@@ -135,3 +135,61 @@ export function seatFreeRemedies(usage: SeatUsage = {}): SeatRemedy[] {
 
   return remedies;
 }
+
+/**
+ * Structured seat refusal.
+ *
+ * A thrown message is fine for a toast but useless for deciding *which*
+ * explainer to render: the UI has to string-match, and it only knows the seat
+ * counts it happened to have cached. So every seat-consuming server function
+ * returns this shape instead of throwing, and the dialog renders from the
+ * reason code plus the server's own counts.
+ */
+export type SeatBlockCode =
+  /** Pending invitations are holding seats — cancelling one frees a seat now. */
+  | "pending_invites_hold_seats"
+  /** Every seat belongs to an active member — someone has to be suspended or removed. */
+  | "all_seats_active"
+  /** Seats are full but the composition could not be read; generic advice only. */
+  | "seat_limit_reached";
+
+export type SeatBlock = {
+  code: SeatBlockCode;
+  /** The counts the server saw, so the dialog never quotes stale cached numbers. */
+  usage: SeatUsage;
+};
+
+/** Result shape of a seat-consuming server function. */
+export type SeatActionResult = { ok: true } | { ok: false; seatBlock: SeatBlock };
+
+/** Narrows a server-function result to a structured refusal. */
+export function isSeatBlocked(
+  result: unknown,
+): result is { ok: false; seatBlock: SeatBlock } {
+  if (!result || typeof result !== "object") return false;
+  const r = result as { ok?: unknown; seatBlock?: unknown };
+  return r.ok === false && !!r.seatBlock && typeof r.seatBlock === "object";
+}
+
+/** Derives the reason code from the seat composition the server measured. */
+export function seatBlockCode(usage: SeatUsage): SeatBlockCode {
+  if (typeof usage.pendingInvites !== "number") return "seat_limit_reached";
+  return usage.pendingInvites > 0 ? "pending_invites_hold_seats" : "all_seats_active";
+}
+
+/** One-line reason shown under the dialog title, chosen by reason code. */
+export function seatBlockReason(block: SeatBlock): string {
+  const { usage } = block;
+  const counts =
+    typeof usage.seatLimit === "number" && usage.seatLimit > 0
+      ? `${usage.seatsUsed ?? usage.seatLimit} of ${usage.seatLimit} seats are in use`
+      : "every seat on your plan is in use";
+  switch (block.code) {
+    case "pending_invites_hold_seats":
+      return `A reactivated teammate takes a seat, and ${counts} — ${usage.pendingInvites} pending invitation${usage.pendingInvites === 1 ? "" : "s"} still hold${usage.pendingInvites === 1 ? "s" : ""} a seat.`;
+    case "all_seats_active":
+      return `A reactivated teammate takes a seat, and ${counts} — every one belongs to an active teammate.`;
+    default:
+      return `A reactivated teammate takes a seat, and your workspace has none free — ${counts}.`;
+  }
+}
