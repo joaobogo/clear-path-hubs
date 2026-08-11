@@ -13740,6 +13740,16 @@ export type Database = {
           },
         ]
       }
+      authz_test_report_summary: {
+        Row: {
+          checks: number | null
+          failed: number | null
+          last_run_at: string | null
+          passed: number | null
+          suite: string | null
+        }
+        Relationships: []
+      }
       candidate_evidence_client: {
         Row: {
           candidate_match_id: string | null
@@ -15769,6 +15779,14 @@ export type Database = {
       public_position_posting: { Args: { _id: string }; Returns: Json }
       purge_expired_intake_drafts: { Args: never; Returns: number }
       qa_purge_test_organizations: { Args: { _names: string[] }; Returns: Json }
+      record_authz_test_run: {
+        Args: never
+        Returns: {
+          checks: number
+          failures: number
+          suite: string
+        }[]
+      }
       resolve_talent_person: {
         Args: {
           _auth_user_id?: string
