@@ -24,6 +24,8 @@ import retailHero from "@/assets/industry-retail-hero.jpg";
 import energyHero from "@/assets/industry-energy-hero.jpg";
 import legalHero from "@/assets/industry-legal-hero.jpg";
 import constructionHero from "@/assets/industry-construction-hero.jpg";
+import logisticsHero from "@/assets/industry-logistics-hero.jpg";
+import renewableEnergyHero from "@/assets/industry-renewable-energy-hero.jpg";
 
 export type IndustryHeroImage = {
   src: string;
