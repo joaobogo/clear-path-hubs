@@ -104,17 +104,20 @@ function OperationsPage() {
     queryFn: () => getPipelineHealth(),
   });
   const listOps = useServerFn(getOperationsIncidents);
-  const { data: ops } = useQuery({
+  const opsQuery = useQuery({
     queryKey: ["admin", "operations-incidents"],
     queryFn: () => listOps(),
     refetchOnWindowFocus: true,
   });
+  const ops = opsQuery.data;
   const listDelivery = useServerFn(listDeliveryFailures);
-  const { data: delivery } = useQuery({
+  const deliveryQuery = useQuery({
     queryKey: ["admin", "delivery-failures"],
     queryFn: () => listDelivery(),
     refetchOnWindowFocus: true,
   });
+  const delivery = deliveryQuery.data;
+
 
   const [feedback, setFeedback] = useState<string | null>(null);
   const [query, setQuery] = useState("");
@@ -268,8 +271,13 @@ function OperationsPage() {
 
       <Tabs defaultValue="pipeline">
         <TabsList>
-          <TabsTrigger value="pipeline">Pipeline incidents ({grouped.length})</TabsTrigger>
-          <TabsTrigger value="delivery">Delivery failures ({deliveryItems.length})</TabsTrigger>
+          <TabsTrigger value="pipeline">
+            Pipeline incidents ({opsQuery.isError || opsQuery.isPending ? "—" : grouped.length})
+          </TabsTrigger>
+          <TabsTrigger value="delivery">
+            Delivery failures (
+            {deliveryQuery.isError || deliveryQuery.isPending ? "—" : deliveryItems.length})
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="pipeline" className="mt-4 space-y-3">
@@ -303,10 +311,30 @@ function OperationsPage() {
             </div>
           </div>
 
-          {filtered.length === 0 ? (
+          {opsQuery.isError ? (
+            <div className="rounded-lg border bg-card px-5 py-10 text-sm text-muted-foreground text-center">
+              We couldn't load the incident list. Treat this as unknown, not as a clean board —
+              incidents may exist that we can't show.
+              <div className="mt-3">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={opsQuery.isFetching}
+                  onClick={() => void opsQuery.refetch()}
+                >
+                  {opsQuery.isFetching ? "Retrying…" : "Try again"}
+                </Button>
+              </div>
+            </div>
+          ) : opsQuery.isPending ? (
+            <div className="rounded-lg border bg-card px-5 py-10 text-sm text-muted-foreground text-center">
+              Loading incidents…
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="rounded-lg border bg-card px-5 py-10 text-sm text-muted-foreground text-center">
               No incidents match this filter.
             </div>
+
           ) : (
             <div className="rounded-lg border bg-card overflow-hidden">
               <table className="w-full text-sm">
@@ -506,10 +534,30 @@ function OperationsPage() {
         </TabsContent>
 
         <TabsContent value="delivery" className="mt-4">
-          {deliveryItems.length === 0 ? (
+          {deliveryQuery.isError ? (
+            <div className="rounded-lg border bg-card px-5 py-10 text-sm text-muted-foreground text-center">
+              We couldn't load delivery failures. This is a read failure, not proof that every
+              message went out.
+              <div className="mt-3">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={deliveryQuery.isFetching}
+                  onClick={() => void deliveryQuery.refetch()}
+                >
+                  {deliveryQuery.isFetching ? "Retrying…" : "Try again"}
+                </Button>
+              </div>
+            </div>
+          ) : deliveryQuery.isPending ? (
+            <div className="rounded-lg border bg-card px-5 py-10 text-sm text-muted-foreground text-center">
+              Loading delivery failures…
+            </div>
+          ) : deliveryItems.length === 0 ? (
             <div className="rounded-lg border bg-card px-5 py-10 text-sm text-muted-foreground text-center">
               No delivery issues.
             </div>
+
           ) : (
             <div className="border rounded-lg overflow-hidden bg-card">
               <table className="w-full text-sm">

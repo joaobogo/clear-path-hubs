@@ -92,6 +92,9 @@ function BoardroomPage() {
   }>;
 
   const isLoading = overviewQ.isPending && !!resolvedOrgId;
+  // Kept distinct from "empty" everywhere below: a failed read must never be
+  // presented as a workspace with no roles or no candidates.
+  const loadFailed = overviewQ.isError || contextQ.isError;
 
   const positions = whatsNext.slice(0, 6).map((p) => ({
     title: p.title,
@@ -110,8 +113,9 @@ function BoardroomPage() {
   const slides = useMemo(
     () => [
       { key: "intro", render: () => <SlideIntro orgName={orgName} /> },
-      { key: "positions", render: () => <SlidePositions positions={positions} kpis={kpis} isLoading={isLoading} /> },
-      { key: "shortlist", render: () => <SlideShortlist candidates={candidates} isLoading={isLoading} /> },
+      { key: "positions", render: () => <SlidePositions positions={positions} kpis={kpis} isLoading={isLoading} loadFailed={loadFailed} /> },
+      { key: "shortlist", render: () => <SlideShortlist candidates={candidates} isLoading={isLoading} loadFailed={loadFailed} /> },
+
       { key: "economics", render: () => <SlideEconomics /> },
       { key: "industry", render: () => <SlideIndustry /> },
       { key: "next", render: () => <SlideNext /> },
@@ -264,10 +268,12 @@ function SlidePositions({
   positions,
   kpis,
   isLoading,
+  loadFailed,
 }: {
   positions: { title: string; status: string; pending: number }[];
   kpis?: { active_positions?: number; delivered_this_month?: number; time_to_shortlist_days?: number };
   isLoading?: boolean;
+  loadFailed?: boolean;
 }) {
   return (
     <div>
@@ -276,17 +282,23 @@ function SlidePositions({
         The searches running right now.
       </h2>
       <div className="mt-8 grid gap-6 sm:grid-cols-3">
-        <Stat label="Active roles" value={kpis?.active_positions ?? positions.length} />
-        <Stat label="Delivered this month" value={kpis?.delivered_this_month ?? "—"} />
-        <Stat label="Days to shortlist" value={kpis?.time_to_shortlist_days ?? "—"} />
+        <Stat label="Active roles" value={loadFailed ? "—" : (kpis?.active_positions ?? positions.length)} />
+        <Stat label="Delivered this month" value={loadFailed ? "—" : (kpis?.delivered_this_month ?? "—")} />
+        <Stat label="Days to shortlist" value={loadFailed ? "—" : (kpis?.time_to_shortlist_days ?? "—")} />
       </div>
       {isLoading ? (
         <SlideNote>Loading your roles…</SlideNote>
+      ) : loadFailed ? (
+        <SlideNote>
+          We couldn't load your roles. This is a loading problem on our side — it does not
+          mean the workspace is empty.
+        </SlideNote>
       ) : positions.length === 0 ? (
         <SlideNote>
           No active roles in this workspace yet. Once a role goes live, it appears
           here with its review count.
         </SlideNote>
+
       ) : (
         <ul className="mt-10 space-y-3">
           {positions.map((p) => (
@@ -314,9 +326,11 @@ function SlidePositions({
 function SlideShortlist({
   candidates,
   isLoading,
+  loadFailed,
 }: {
   candidates: { rank: number; name: string; score: number; note: string }[];
   isLoading?: boolean;
+  loadFailed?: boolean;
 }) {
   return (
     <div>
@@ -326,11 +340,17 @@ function SlideShortlist({
       </h2>
       {isLoading ? (
         <SlideNote>Loading your shortlist…</SlideNote>
+      ) : loadFailed ? (
+        <SlideNote>
+          We couldn't load your shortlist. This is a loading problem on our side — it does
+          not mean no candidates have been released.
+        </SlideNote>
       ) : candidates.length === 0 ? (
         <SlideNote>
           No candidates released to this workspace yet. Approved candidates appear
           here in rank order with the evidence behind each score.
         </SlideNote>
+
       ) : (
         <div className="mt-10 space-y-4">
           {candidates.map((c) => (

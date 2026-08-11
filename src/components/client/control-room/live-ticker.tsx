@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getLiveFeed, type LiveEvent } from "@/lib/control-room.functions";
 import { shortAgo } from "@/lib/control-room-shared";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const KIND_DOT: Record<string, string> = {
   candidate: "bg-sky-500",
@@ -27,7 +28,7 @@ export function LiveTicker({ orgId }: { orgId: string }) {
   const [freshIds, setFreshIds] = useState<Set<string>>(new Set());
   const seen = useRef<Set<string>>(new Set());
 
-  const { data, isPending } = useQuery({
+  const { data, isPending, isError, refetch, isFetching } = useQuery({
     queryKey: ["live-feed", orgId],
     queryFn: () => feedFn({ data: { organization_id: orgId } }),
     refetchInterval: 120_000,
@@ -83,11 +84,24 @@ export function LiveTicker({ orgId }: { orgId: string }) {
         <span className="text-xs text-muted-foreground">Updates as it happens</span>
       </div>
 
-      {!data?.length ? (
+      {isError ? (
+        // A failed read is never shown as "nothing moved" — that reads as an
+        // all-clear the data doesn't support.
+        <div className="mt-3 space-y-2">
+          <p className="text-sm text-muted-foreground">
+            We couldn't load recent movement. This is a loading problem on our side, not
+            a quiet day — activity may have happened that we can't show yet.
+          </p>
+          <Button size="sm" variant="outline" disabled={isFetching} onClick={() => void refetch()}>
+            {isFetching ? "Retrying…" : "Try again"}
+          </Button>
+        </div>
+      ) : !data?.length ? (
         <p className="mt-3 text-sm text-muted-foreground">
           Nothing has moved yet today. When a candidate arrives, a stage changes
           or an interview is booked, it will show here.
         </p>
+
       ) : (
         <ul aria-live="polite" className="mt-3 space-y-2">
           {data.map((e: LiveEvent) => (

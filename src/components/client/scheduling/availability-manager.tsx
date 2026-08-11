@@ -101,10 +101,15 @@ export function AvailabilityManager({
             Your interview availability
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            {saved.length === 0
-              ? "Set your windows once — candidates then pick from them, no back-and-forth."
-              : `Candidates choose from these windows (${query.data?.timezone ?? "UTC"}).`}
+            {query.isError
+              ? "We couldn't load your saved windows. This is a loading problem, not an empty schedule — reload before you change anything."
+              : query.isPending
+                ? "Loading your saved windows…"
+                : saved.length === 0
+                  ? "Set your windows once — candidates then pick from them, no back-and-forth."
+                  : `Candidates choose from these windows (${query.data?.timezone ?? "UTC"}).`}
           </p>
+
           {saved.length > 0 ? (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {saved.map((w, i) => (
@@ -116,8 +121,12 @@ export function AvailabilityManager({
           ) : null}
         </div>
         {!readOnly ? (
-          <Button variant={saved.length === 0 ? "default" : "outline"} onClick={() => setOpen(true)}>
-            {saved.length === 0 ? "Set availability" : "Edit windows"}
+          <Button
+            variant={saved.length === 0 ? "default" : "outline"}
+            disabled={query.isError || query.isPending}
+            onClick={() => setOpen(true)}
+          >
+            {query.isError ? "Unavailable" : saved.length === 0 ? "Set availability" : "Edit windows"}
           </Button>
         ) : null}
       </div>
