@@ -13,6 +13,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { CalendarCheck, Clock, Loader2 } from "lucide-react";
+import { canonicalUrl } from "@/lib/canonical-origin";
 import { MEETING_TYPES, resolveMeetingType } from "@/config/booking";
 import { TIMEZONE_CHOICES } from "@/config/scheduler";
 import {
@@ -48,20 +49,22 @@ export const Route = createFileRoute("/book")({
   }),
   head: () => ({
     meta: [
-      { title: "Book a hiring call — one screen, real times | TaaSFlow" },
+      { title: "Book a hiring call — real times | TaaSFlow" },
       {
         name: "description",
         content:
           "Name, email, phone and a live slot from our calendar — all on one screen. Your confirmation arrives straight away.",
       },
-      { property: "og:title", content: "Book a hiring call — one screen, real times | TaaSFlow" },
+      { property: "og:title", content: "Book a hiring call — real times | TaaSFlow" },
       {
         property: "og:description",
         content: "Give us four details and pick a real time in our calendar.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: canonicalUrl("/book") },
       { name: "twitter:card", content: "summary" },
     ],
+    links: [{ rel: "canonical", href: canonicalUrl("/book") }],
   }),
   component: BookPage,
 });

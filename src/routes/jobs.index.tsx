@@ -49,7 +49,7 @@ export const Route = createFileRoute("/jobs/")({
       {
         name: "description",
         content:
-          "Browse the roles currently open through TaaSFlow. Every application gets a structured screening against what the role asks for — apply in minutes, no account needed.",
+          "Browse roles open through TaaSFlow. Every application gets a structured screening against what the role asks for — apply in minutes, no account needed.",
       },
       { property: "og:title", content: "Open roles — TaaSFlow" },
       {

@@ -20,13 +20,23 @@ const searchSchema = z.object({
   reason: z.enum(["membership", "organization", "permission"]).optional(),
 });
 
+const ACCESS_DENIED_DESCRIPTION =
+  "This workspace or action isn't available to your account. Contact your administrator or sign in with a different account.";
+
 export const Route = createFileRoute("/access-denied")({
   ssr: false,
   validateSearch: searchSchema,
   head: () => ({
     meta: [
       { title: "Access denied — TaaSFlow" },
-      { name: "robots", content: "noindex" },
+      // Utility page: kept out of search, but the share/preview tags are still
+      // filled in so a pasted link never falls back to the homepage metadata.
+      { name: "robots", content: "noindex,nofollow" },
+      { name: "description", content: ACCESS_DENIED_DESCRIPTION },
+      { property: "og:title", content: "Access denied — TaaSFlow" },
+      { property: "og:description", content: ACCESS_DENIED_DESCRIPTION },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: AccessDeniedPage,

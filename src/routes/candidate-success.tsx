@@ -9,7 +9,7 @@ import {
 } from "@/components/marketing/site-shell";
 
 const CANONICAL = canonicalUrl("/candidate-success");
-const TITLE = "Candidate Success — how the TaaSFlow process works | TaaSFlow";
+const TITLE = "Candidate Success — how our process works | TaaSFlow";
 const DESC =
   "How TaaSFlow supports candidates from application to decision: transparent scoring, structured feedback, and a dashboard that tracks every step.";
 

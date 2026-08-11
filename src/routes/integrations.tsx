@@ -26,7 +26,7 @@ import {
 export const Route = createFileRoute("/integrations")({
   head: () =>
     marketingHead(undefined, "/integrations", {
-      title: "Integrations — connections TaaSFlow supports today | TaaSFlow",
+      title: "Integrations TaaSFlow supports today | TaaSFlow",
       description:
         "Every TaaSFlow integration with its purpose, connection method, data exchanged, permissions and current availability. Planned connections are labelled as planned, never as available.",
     }),
