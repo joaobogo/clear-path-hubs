@@ -15,6 +15,28 @@ import { WORDS_TO_AVOID } from "@/lib/brand-center/messaging";
 import * as T from "@/lib/brand-center/templates";
 
 describe("brand detection", () => {
+  it("does not let the approved-logo signal echo a wrong brand config", () => {
+    const d = detectBrand({
+      configName: "OmniFlow",
+      logoFiles: ["logo-on-white.png", "icon-white.png"],
+      hostname: null,
+      explicitBrandId: null,
+    });
+    // TaaSFlow masters vs an OmniFlow config must surface as a conflict.
+    expect(d.status).toBe("ambiguous");
+    expect(d.brandId).toBeNull();
+  });
+
+  it("withholds the logo signal for unknown master files", () => {
+    const d = detectBrand({
+      configName: "TaaSFlow",
+      logoFiles: ["some-other-logo.png"],
+      hostname: null,
+      explicitBrandId: null,
+    });
+    expect(d.status).toBe("unresolved");
+  });
+
   it("verifies taasflow from two agreeing signals", () => {
     expect(ACTIVE_DETECTION.status).toBe("verified");
     expect(ACTIVE_DETECTION.brandId).toBe("taasflow");
