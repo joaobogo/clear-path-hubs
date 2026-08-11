@@ -42,12 +42,16 @@ export function isSeatLimitError(error: unknown): boolean {
  */
 export function seatLimitMessage(usage?: { seatsUsed?: number; seatLimit?: number | null }): string {
   const limit = usage?.seatLimit;
+  const used = usage?.seatsUsed;
   const scope =
     typeof limit === "number" && limit > 0
-      ? `all ${limit} seat${limit === 1 ? "" : "s"} on your plan are in use`
+      ? typeof used === "number"
+        ? `all ${limit} seat${limit === 1 ? "" : "s"} on your plan are in use (${used} of ${limit})`
+        : `all ${limit} seat${limit === 1 ? "" : "s"} on your plan are in use`
       : "every seat on your plan is in use";
   return `Your workspace is at its seat limit — ${scope}. A pending invitation holds a seat, so cancelling one frees it up. To add more seats, talk to us about your plan.`;
 }
+
 
 /** Maps any error from a seat-consuming action to copy safe to show a client. */
 export function seatAwareErrorMessage(

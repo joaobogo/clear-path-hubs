@@ -211,6 +211,9 @@ export function TeamTab() {
   // refusal, rather than blocking an admin who still has seats.
   const seatsFull = !!seats && seats.seatsLeft <= 0;
   const seatUsage = { seatsUsed, seatLimit };
+  const seatsLeft = seats?.seatsLeft ?? null;
+  const seatPct =
+    seatLimit && seatLimit > 0 ? Math.min(100, Math.round((seatsUsed / seatLimit) * 100)) : null;
 
   return (
   <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 space-y-6">
@@ -237,6 +240,31 @@ export function TeamTab() {
   {canMutate && orgId && <InviteDialog orgId={orgId} seatsFull={seatsFull} usage={seatUsage} />}
   </header>
 
+  {/* Exact seat position on the current plan, so the numbers behind any
+      upgrade prompt are visible before an admin hits the cap. */}
+  {seatLimit !== null && !seatsIsError && (
+  <div data-testid="seat-usage-meter" className="rounded-lg border bg-card px-4 py-3">
+  <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+  <p className="text-sm font-medium">Seats on your plan</p>
+  <p className="text-sm text-muted-foreground">
+  <span className="font-medium text-foreground">{seatsUsed}</span> of {seatLimit} used
+  {seatsLeft !== null &&
+  ` · ${seatsLeft} ${seatsLeft === 1 ? "seat" : "seats"} available`}
+  {counts.invited > 0 &&
+  ` · ${counts.invited} pending invitation${counts.invited === 1 ? "" : "s"} holding a seat`}
+  </p>
+  </div>
+  {seatPct !== null && (
+  <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+  <div
+  className={`h-full rounded-full ${seatsFull ? "taas-bg-warning-solid" : "bg-primary"}`}
+  style={{ width: `${seatPct}%` }}
+  />
+  </div>
+  )}
+  </div>
+  )}
+
   {readOnly && (
   <div className="flex items-center gap-2 rounded-lg border taas-bd-warning taas-bg-warning-solid/[0.05] px-3 py-2 text-sm">
   <Info className="h-4 w-4 shrink-0 taas-fg-warning" />
@@ -254,7 +282,12 @@ export function TeamTab() {
   <div className="flex items-start gap-2">
   <Users className="mt-0.5 h-4 w-4 shrink-0 taas-fg-warning" />
   <div className="min-w-0 space-y-2">
-  <p className="text-sm font-medium">Every seat on your plan is in use</p>
+  <p className="text-sm font-medium">
+  {seatLimit === null
+  ? "Every seat on your plan is in use"
+  : `All ${seatLimit} seat${seatLimit === 1 ? "" : "s"} on your plan are in use — ${seatsUsed} of ${seatLimit}`}
+  </p>
+
   <p className="text-sm text-muted-foreground">{seatLimitMessage(seatUsage)}</p>
   <div className="flex flex-wrap gap-2 pt-0.5">
   <Button asChild size="sm">
