@@ -20,6 +20,9 @@ const searchSchema = z.object({
   reason: z.enum(["membership", "organization", "permission"]).optional(),
 });
 
+const ACCESS_DENIED_DESCRIPTION =
+  "This workspace or action isn't available to your account. Contact your administrator or sign in with a different account.";
+
 export const Route = createFileRoute("/access-denied")({
   ssr: false,
   validateSearch: searchSchema,
