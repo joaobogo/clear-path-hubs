@@ -452,7 +452,23 @@ function RoleIcon({ role }: { role: ClientRoleId }) {
  return <Shield className="h-3.5 w-3.5 text-muted-foreground" />;
 }
 
+/**
+ * Scroll the team list (or the first pending invitation) into view and flash it,
+ * so a dialog's advice lands on the exact row the admin has to change.
+ */
+function revealTeamTarget(selector: string) {
+  if (typeof document === "undefined") return;
+  requestAnimationFrame(() => {
+    const el = document.querySelector<HTMLElement>(selector);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.setAttribute("data-highlight", "true");
+    window.setTimeout(() => el.removeAttribute("data-highlight"), 2200);
+  });
+}
+
 function initials(name: string | null | undefined, email: string | null | undefined): string {
+
  const base = (name && name.trim()) || (email && email.split("@")[0]) || "?";
  const parts = base.split(/\s+/).slice(0, 2);
  return parts.map((p) => p.charAt(0).toUpperCase()).join("") || "?";
