@@ -761,6 +761,40 @@ function MemberRow({
  </DialogContent>
   </Dialog>
 
+  {/* Cancelling a pending invitation frees a seat and cannot be undone, so it
+      asks first — the destructive confirm is never the default focus. */}
+ <Dialog open={confirmCancelInvite} onOpenChange={setConfirmCancelInvite}>
+ <DialogContent data-testid="cancel-invite-confirm-dialog">
+ <DialogHeader>
+ <DialogTitle>Cancel the invitation for {email ?? name}?</DialogTitle>
+ <DialogDescription>
+ Their invitation link stops working and the seat it holds is freed straight
+ away. You can invite them again later, which will use a seat again.
+ </DialogDescription>
+ </DialogHeader>
+ <DialogFooter>
+ <Button
+ variant="ghost"
+ data-testid="cancel-invite-keep"
+ aria-label="Keep the invitation and close this dialog"
+ onClick={() => setConfirmCancelInvite(false)}
+ >
+ Keep the invitation
+ </Button>
+ <Button
+ variant="destructive"
+ data-testid="cancel-invite-confirm"
+ onClick={() => remove.mutate()}
+ disabled={remove.isPending}
+ aria-label={`Cancel the invitation for ${email ?? name} and free a seat`}
+ >
+ {remove.isPending ? "Cancelling…" : "Cancel invitation"}
+ </Button>
+ </DialogFooter>
+ </DialogContent>
+ </Dialog>
+
+
   {/* Why reactivation is blocked, and what to change to free a seat. */}
  <Dialog open={!!seatBlock} onOpenChange={(open) => !open && setSeatBlock(null)}>
  <DialogContent
