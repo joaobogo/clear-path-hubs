@@ -44,6 +44,11 @@ export function TrackingRouteObserver() {
   useEffect(() => {
     let cancelled = false;
 
+    // Boot immediately so consent-independent tags (RB2B) fire on the very
+    // first pageview, even if the policy fetch is slow or fails.
+    initializeTrackers();
+
+
     // The admin-configured policy decides which trackers count as strictly
     // necessary. Until it lands, no script initialises at all.
     void fetchTrackingPolicy()

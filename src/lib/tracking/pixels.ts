@@ -168,8 +168,8 @@ function initApollo() {
 /* --------------------------------------------------------------- RB2B --- */
 
 function initRB2B() {
-  // Injected here rather than from the document head: RB2B performs visitor
-  // identification, which requires marketing consent before it may run.
+  // Loads on every page view, before any consent choice, so visitor
+  // identification starts on the first pageview.
   if (loaded.has("rb2b") || !RB2B_ID) return;
   loaded.add("rb2b");
   injectScript("rb2b", {
@@ -266,12 +266,17 @@ export function initializeTrackers() {
     });
   }
 
-  // Nothing initialises until the admin-configured policy is known: on a first
-  // visit that means one tick after hydration, on a repeat visit the cached
-  // policy answers immediately.
+  // RB2B fires on every page view, independent of the consent policy: it is
+  // treated as strictly necessary B2B firmographic identification here.
+  safe(initRB2B);
+
+  // Nothing else initialises until the admin-configured policy is known: on a
+  // first visit that means one tick after hydration, on a repeat visit the
+  // cached policy answers immediately.
   if (!isTrackingPolicyLoaded()) return;
 
   for (const key of Object.keys(INITIALISERS) as TrackerKey[]) {
+    if (key === "rb2b") continue; // already started above
     // Only trackers on the admin's strictly-necessary list may run before an
     // affirmative choice. Essential GA4 runs cookieless until consent.
     if (!isTrackerAllowed(key, TRACKER_CATEGORY[key])) continue;
