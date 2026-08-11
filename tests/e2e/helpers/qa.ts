@@ -41,7 +41,9 @@ type QaAction =
   | "cleanup_candidate_e2e"
   | "lookup_booking"
   | "cleanup_booking_e2e"
-  | "lookup_tenant";
+  | "lookup_tenant"
+  | "seat_scenario"
+  | "seat_scenario_reset";
 
 function token(): string {
   const value = process.env["QA_SEED_TOKEN"];
@@ -65,6 +67,28 @@ export async function qaSeed<T = Record<string, unknown>>(
 
 export const seedFixtures = () => qaSeed<SeedResult>("seed");
 export const cleanupFixtures = () => qaSeed("cleanup");
+
+/**
+ * Fills every seat in the QA workspace and leaves a suspended teammate to
+ * reactivate. `pendingInvites`/`extraActive` decide which remedies the blocked
+ * dialog should be able to offer.
+ */
+export const seedSeatScenario = (
+  opts: { pendingInvites?: number; extraActive?: boolean; freeSeats?: boolean } = {},
+) =>
+  qaSeed<{
+    organization_id: string;
+    seat_limit: number;
+    seats_used: number;
+    suspended_user_id: string;
+    invited_user_id: string | null;
+  }>("seat_scenario", {
+    pending_invites: opts.pendingInvites ?? 0,
+    extra_active: opts.extraActive ?? false,
+    free_seats: opts.freeSeats ?? false,
+  });
+
+export const resetSeatScenario = () => qaSeed("seat_scenario_reset");
 /** Removes every org/intake/account this suite created through the real UI. */
 export const cleanupIntakeArtifacts = (prefix = INTAKE_ORG_PREFIX) =>
   qaSeed<{ deleted: Record<string, number> }>("cleanup_intake_e2e", { prefix });

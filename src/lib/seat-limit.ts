@@ -66,3 +66,72 @@ export function seatAwareErrorMessage(
   );
   return raw.trim() || fallback;
 }
+
+/** What the UI knows about seat consumption when it has to explain a refusal. */
+export type SeatUsage = {
+  seatsUsed?: number;
+  seatLimit?: number | null;
+  /** Invitations sent but not accepted — each one holds a seat. */
+  pendingInvites?: number;
+  /** Seat-holding members currently active, including the admin reading this. */
+  activeMembers?: number;
+};
+
+export type SeatRemedyId = "cancel_invite" | "suspend_active" | "remove_member" | "add_seats";
+
+export type SeatRemedy = {
+  id: SeatRemedyId;
+  /** Sentence shown in the blocked-reactivation dialog. */
+  text: string;
+  /** Present only when the remedy has something to point the admin at. */
+  actionLabel?: string;
+};
+
+/**
+ * The remedies that can actually free a seat for this workspace, in the order
+ * they are offered.
+ *
+ * Scenario-dependent, because advice a workspace cannot act on is worse than
+ * no advice: with no pending invitation there is none to cancel, and with the
+ * admin as the only active member there is nobody to suspend. Unknown counts
+ * (seat usage failed to load) fall back to the generic wording rather than
+ * dropping the remedy.
+ */
+export function seatFreeRemedies(usage: SeatUsage = {}): SeatRemedy[] {
+  const remedies: SeatRemedy[] = [];
+  const pending = usage.pendingInvites;
+  const active = usage.activeMembers;
+
+  if (pending === undefined) {
+    remedies.push({
+      id: "cancel_invite",
+      text: "Cancel a pending invitation — invitations hold a seat before they are accepted.",
+    });
+  } else if (pending > 0) {
+    remedies.push({
+      id: "cancel_invite",
+      text: `Cancel one of the ${pending} pending invitation${pending === 1 ? "" : "s"} — an invitation holds a seat before it is accepted.`,
+      actionLabel: "Cancel a pending invitation",
+    });
+  }
+
+  if (active === undefined || active > 1) {
+    remedies.push({
+      id: "suspend_active",
+      text: "Suspend an active teammate who no longer needs access. Suspended members keep their history but stop using a seat.",
+      actionLabel: "Go to the team list",
+    });
+  }
+
+  remedies.push({
+    id: "remove_member",
+    text: "Remove someone from the workspace. Their account is not deleted and they can be invited back later.",
+  });
+
+  remedies.push({
+    id: "add_seats",
+    text: "Or add seats to your plan — seat counts are set by us, so this is a quick conversation rather than a self-serve toggle.",
+  });
+
+  return remedies;
+}
