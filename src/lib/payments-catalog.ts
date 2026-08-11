@@ -58,7 +58,7 @@ export type PlanOffer = {
 export const PLAN_CATALOGUE: readonly PlanOffer[] = [
   {
     priceId: POSITION_PUBLISH_PRICE_ID,
-    productId: "pilot_role",
+    productId: "pilot",
     label: "Pilot",
     kind: "package",
     amountUsd: PRICE_PILOT_USD,
