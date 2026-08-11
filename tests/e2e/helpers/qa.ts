@@ -5,7 +5,7 @@
  * only ever touches rows it created itself (QA_* names / @qa.taasflow.test
  * mailboxes). No production row is read or written by this suite.
  */
-import { expect, type Page } from "@playwright/test";
+import { expect, type BrowserContext, type Page } from "@playwright/test";
 
 export const BASE_URL = process.env["E2E_BASE_URL"] ?? "http://localhost:8080";
 export const QA_PASSWORD = "QaTest!Phase11";
@@ -281,9 +281,9 @@ export async function waitForReactMount(page: Page, selector: string): Promise<v
  * board. This cookie is the token-guarded opt-in that lets the suite drive the
  * real listing/apply UI against the fixture.
  */
-export async function allowTestFixtures(context: {
-  addCookies: (c: Array<Record<string, unknown>>) => Promise<void>;
-}): Promise<void> {
+export async function allowTestFixtures(
+  context: Pick<BrowserContext, "addCookies">,
+): Promise<void> {
   await context.addCookies([
     { name: "qa_e2e", value: token(), url: BASE_URL },
   ]);
