@@ -124,15 +124,15 @@ export function TrackingRouteObserver() {
       characterData: true,
     });
 
-    // Fallback for a route that deliberately keeps the same title: once the
-    // router has settled there is no further title coming, so report then.
-    // The hard cap bounds the wait on a slow route chunk.
-    const started = Date.now();
+    // Cap for a route that deliberately keeps the same title: nothing further
+    // is coming, and reading the (unchanged) title then is still correct. Kept
+    // generous because a route whose head resolves after its data — the job
+    // board, for one — can settle its title later than the router goes idle.
     poll = window.setInterval(() => {
-      if (document.title !== titleAtNav) return dispatch();
-      if (statusRef.current === "idle" && Date.now() - started > 400) dispatch();
+      if (document.title !== titleAtNav) dispatch();
     }, 100);
-    timer = window.setTimeout(dispatch, 4000);
+    timer = window.setTimeout(dispatch, 2500);
+
     // Never lose the view if the visitor leaves while the title is pending.
     window.addEventListener("pagehide", dispatch);
 
