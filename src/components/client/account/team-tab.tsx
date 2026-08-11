@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { getClientContext } from "@/lib/client-context.functions";
@@ -527,6 +527,12 @@ function MemberRow({
  // Holds the server's structured refusal (reason code + the counts it measured)
  // so the explainer is deterministic instead of inferred from cached numbers.
  const [seatBlock, setSeatBlock] = useState<SeatBlock | null>(null);
+ // Radix traps focus and restores it on close; what it cannot know is which
+ // control is the useful first stop. Send focus to the first remedy that has an
+ // action (cancel an invite, open the team list) and fall back to the upgrade
+ // link when this workspace has no in-page remedy to offer.
+ const firstRemedyActionRef = useRef<HTMLButtonElement | null>(null);
+ const upgradeLinkRef = useRef<HTMLAnchorElement | null>(null);
 
  const invalidate = () => {
  qc.invalidateQueries({ queryKey: ["client-team", orgId] });
@@ -732,7 +738,16 @@ function MemberRow({
 
   {/* Why reactivation is blocked, and what to change to free a seat. */}
   <Dialog open={!!seatBlock} onOpenChange={(open) => !open && setSeatBlock(null)}>
-  <DialogContent data-testid="reactivate-blocked-dialog" data-seat-block-code={seatBlock?.code}>
+  <DialogContent
+  data-testid="reactivate-blocked-dialog"
+  data-seat-block-code={seatBlock?.code}
+  onOpenAutoFocus={(event) => {
+  const target = firstRemedyActionRef.current ?? upgradeLinkRef.current;
+  if (!target) return;
+  event.preventDefault();
+  target.focus();
+  }}
+  >
   <DialogHeader>
   <DialogTitle>Can't reactivate {name} yet</DialogTitle>
   <DialogDescription>
@@ -742,7 +757,12 @@ function MemberRow({
   <div className="space-y-3">
   <p className="text-sm font-medium">To free a seat, change one of these:</p>
   <ul className="space-y-3 text-sm text-muted-foreground" data-testid="reactivate-blocked-remedies">
-  {seatFreeRemedies(seatBlock?.usage ?? usage).map((remedy) => {
+  {(() => {
+  const remedies = seatFreeRemedies(seatBlock?.usage ?? usage);
+  const firstActionable = remedies.find(
+  (r) => r.actionLabel && (r.id === "cancel_invite" || r.id === "suspend_active"),
+  )?.id;
+  return remedies.map((remedy) => {
   const Icon = REMEDY_ICON[remedy.id];
   return (
   <li key={remedy.id} className="flex gap-2" data-remedy={remedy.id}>
@@ -753,6 +773,7 @@ function MemberRow({
   <Button
   size="sm"
   variant="outline"
+  ref={remedy.id === firstActionable ? firstRemedyActionRef : undefined}
   data-testid={
   remedy.id === "cancel_invite"
   ? "reactivate-blocked-cancel-invite"
@@ -773,7 +794,8 @@ function MemberRow({
   </div>
   </li>
   );
-  })}
+  });
+  })()}
   </ul>
   </div>
 
@@ -782,7 +804,7 @@ function MemberRow({
   Close
   </Button>
   <Button asChild variant="outline" data-testid="reactivate-blocked-upgrade">
-  <Link to="/client/account" search={{ tab: "plan" }}>
+  <Link ref={upgradeLinkRef} to="/client/account" search={{ tab: "plan" }}>
   Start a seat upgrade
   </Link>
   </Button>
