@@ -121,8 +121,12 @@ export function AvailabilityManager({
           ) : null}
         </div>
         {!readOnly ? (
-          <Button variant={saved.length === 0 ? "default" : "outline"} onClick={() => setOpen(true)}>
-            {saved.length === 0 ? "Set availability" : "Edit windows"}
+          <Button
+            variant={saved.length === 0 ? "default" : "outline"}
+            disabled={query.isError || query.isPending}
+            onClick={() => setOpen(true)}
+          >
+            {query.isError ? "Unavailable" : saved.length === 0 ? "Set availability" : "Edit windows"}
           </Button>
         ) : null}
       </div>
