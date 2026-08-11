@@ -280,7 +280,12 @@ export function initializeTrackers() {
 
   // Reflect the current choice onto an already-loaded GA4 instance.
   safe(syncGA4Consent);
+
+  // Any view raised during hydration (a direct page load always raises one)
+  // was queued because no tracker existed yet — report it now.
+  safe(flushPendingEvents);
 }
+
 
 
 function trackerForUri(uri: string): string {
