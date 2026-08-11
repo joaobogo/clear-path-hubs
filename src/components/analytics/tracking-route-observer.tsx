@@ -84,7 +84,6 @@ export function TrackingRouteObserver() {
     //
     // The head manager REPLACES the <title> element rather than editing its
     // text, so the observer must watch document.head, not the current node.
-    console.log("[obs] effect", pathname);
     const titleAtNav = document.title;
     let done = false;
     let observer: MutationObserver | null = null;
@@ -112,7 +111,6 @@ export function TrackingRouteObserver() {
         role_type: roleType(pathname),
         referrer: previous ?? document.referrer ?? "",
       };
-      console.log("[obs] dispatch", JSON.stringify(base));
       trackPageView(base);
       const evt = routeEvent(pathname);
       if (evt) trackEvent(evt, base);
