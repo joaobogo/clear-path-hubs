@@ -62,9 +62,11 @@ import { FgvEndorsement } from "@/components/marketing/fgv-endorsement";
 import { DecisionWorkspacePreview } from "@/components/marketing/product-preview/decision-workspace-preview";
 import { RiskProof } from "@/components/marketing/risk-proof";
 
-// Homepage metadata is authored inline (guardrail: legacy JSON entry contains
-// unapproved "14 days" and totals claims). Do not pass the legacy entry here.
-void getPage;
+// Homepage metadata is authored inline (guardrail: the legacy JSON content entry
+// contains unapproved "14 days" and totals claims). The content bundle is
+// deliberately NOT imported here — importing it pulls every blog/industry
+// markdown file into the homepage chunk (~890 KiB) and delays hydration.
+
 
 export const Route = createFileRoute("/")({
   head: () =>
