@@ -193,6 +193,13 @@ export type ServiceStatus = {
   measured: boolean;
   /** The window the measurement covers, in words. */
   window: string;
+  /**
+   * True only when the measurement describes right now — a live probe taken in
+   * this request. Windowed measurements (a failure ratio over the last day or
+   * week) describe history, not the present, and must never raise an in-product
+   * alarm on their own.
+   */
+  covers_now?: boolean;
   /** Set when a published maintenance window is in force for this service. */
   maintenance_note: string | null;
 };
@@ -279,6 +286,12 @@ export function statusFromProbe(input: {
 }
 
 /**
+ * Smallest sample that can carry a claim about background work. Below this a
+ * single failure would swing the band, so nothing is claimed at all.
+ */
+export const MIN_OUTCOME_SAMPLE = 10;
+
+/**
  * Failure-ratio bands for measured background work. Bands are stated in the
  * page copy so the reader knows what "degraded" means here.
  */
@@ -293,6 +306,13 @@ export function statusFromFailureRatio(input: {
       status: "unknown",
       measured: false,
       detail: `No ${input.noun} ran in the ${input.window}, so there is nothing to measure.`,
+    };
+  }
+  if (input.total < MIN_OUTCOME_SAMPLE) {
+    return {
+      status: "unknown",
+      measured: false,
+      detail: `Too few ${input.noun} ran in the ${input.window} to claim a status.`,
     };
   }
   const ratio = input.failed / input.total;
@@ -322,18 +342,52 @@ export type DegradedNotice = {
 
 /**
  * Turns measured platform status into the one in-product line that tells a
- * signed-in user whether to wait or to act. Only disruption and maintenance
- * are surfaced; an unmeasured service is not an alarm.
+ * signed-in user whether to wait or to act.
+ *
+ * The bar for showing anything is deliberately high, because a false alarm
+ * costs more trust than a slow page:
+ *  - a published incident or maintenance window that is open right now, or
+ *  - a service whose measurement describes right now (`covers_now`) and came
+ *    back disrupted.
+ *
+ * A failure ratio over the last day or week is history, not an incident: it
+ * belongs on the status page and never raises this banner by itself. An
+ * unmeasured service is never an alarm, and "no data yet" is never a warning.
  */
 export function degradedNotice(status: PlatformStatus | undefined | null): DegradedNotice {
-  if (!status) return { show: false, status: "unknown", title: "", body: "", affected: [] };
+  const hidden: DegradedNotice = {
+    show: false,
+    status: "unknown",
+    title: "",
+    body: "",
+    affected: [],
+  };
+  if (!status) return hidden;
 
-  const disrupted = status.services.filter((s) => isDisrupted(s.status));
+  const publishedNow =
+    status.active_incidents.length > 0 ||
+    status.maintenance.some((m) => m.state !== "scheduled" && !m.resolved_at);
+
+  const live = status.services.filter((s) => s.covers_now === true);
+  const disrupted = live.filter((s) => isDisrupted(s.status));
   const maintaining = status.services.filter((s) => s.status === "maintenance");
 
-  if (disrupted.length === 0 && maintaining.length === 0) {
-    return { show: false, status: "operational", title: "", body: "", affected: [] };
+  if (!publishedNow && disrupted.length === 0 && maintaining.length === 0) {
+    return { ...hidden, status: "operational" };
   }
+  if (publishedNow && disrupted.length === 0 && maintaining.length === 0) {
+    const notice = status.active_incidents[0] ?? status.maintenance[0]!;
+    return {
+      show: true,
+      status: notice.kind === "maintenance" ? "maintenance" : notice.severity,
+      title: notice.title,
+      body: notice.summary,
+      affected: notice.services
+        .map((key) => status.services.find((s) => s.key === key)?.name)
+        .filter((n): n is string => Boolean(n)),
+    };
+  }
+
 
   const affected = [...disrupted, ...maintaining].map((s) => s.name);
   const worst = worstStatus([...disrupted, ...maintaining].map((s) => s.status));

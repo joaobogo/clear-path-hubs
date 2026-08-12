@@ -72,6 +72,8 @@ function serviceRow(
     detail,
     measured,
     window,
+    // Only a probe taken in this request describes the present moment.
+    covers_now: measured && window === WINDOW_NOW,
     maintenance_note: null,
   };
 }
