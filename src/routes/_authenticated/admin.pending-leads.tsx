@@ -16,6 +16,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
+import { PAYMENTS_ENABLED } from "@/config/commerce";
+
 
 export const Route = createFileRoute("/_authenticated/admin/pending-leads")({
   head: () => ({
@@ -172,10 +174,13 @@ function PendingLeadsPage() {
                 ) : null}
 
                 <div className="flex flex-wrap items-center gap-2">
-                  <Button size="sm" variant="outline" onClick={() => copyPaymentLink(lead.positionId)}>
-                    <Copy className="mr-2 h-4 w-4" aria-hidden />
-                    Copy payment link
-                  </Button>
+                  {PAYMENTS_ENABLED ? (
+                    <Button size="sm" variant="outline" onClick={() => copyPaymentLink(lead.positionId)}>
+                      <Copy className="mr-2 h-4 w-4" aria-hidden />
+                      Copy payment link
+                    </Button>
+                  ) : null}
+
                   <Button asChild size="sm" variant="ghost">
                     <Link to="/admin/positions/$id" params={{ id: lead.positionId }}>
                       Open role
