@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { AlertTriangle } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import type { IncompleteRole } from "@/lib/position-readiness.functions";
 
 /**
- * First thing a client sees when a role they submitted can't be approved yet.
- * Names the role and the exact missing details — no "incomplete" with no detail.
+ * Optional polish, not a blocker. Intake stays light on purpose: anything still
+ * open is something we go over together on the call. This names the details so
+ * a client who wants to fill them in now can, and nothing waits on them.
  */
 export function RoleDetailsNeededBanner({ roles }: { roles: IncompleteRole[] }) {
   if (roles.length === 0) return null;
@@ -12,16 +13,17 @@ export function RoleDetailsNeededBanner({ roles }: { roles: IncompleteRole[] }) 
   return (
     <div
       data-testid="role-details-needed"
-      className="rounded-xl border border-amber-500/40 bg-amber-500/8 p-4"
+      className="rounded-xl border border-border bg-muted/40 p-4"
     >
       <p className="flex items-center gap-2 text-sm font-semibold">
-        <AlertTriangle className="h-4 w-4 text-amber-600" aria-hidden />
+        <Sparkles className="h-4 w-4 text-primary" aria-hidden />
         {roles.length === 1
-          ? "One role needs a few more details before we can approve it"
-          : `${roles.length} roles need a few more details before we can approve them`}
+          ? "One role can be sharpened with a few optional details"
+          : `${roles.length} roles can be sharpened with a few optional details`}
       </p>
       <p className="mt-1 text-sm text-muted-foreground">
-        Sourcing starts as soon as these are in. Everything else in your workspace is ready to use.
+        Nothing is blocked — your workspace is live and sourcing is already moving. Add these now if
+        you like, or we go over them together on the call.
       </p>
 
       <ul className="mt-4 space-y-3">
@@ -31,7 +33,7 @@ export function RoleDetailsNeededBanner({ roles }: { roles: IncompleteRole[] }) 
               <div className="min-w-0">
                 <p className="text-sm font-medium">{role.title}</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Still missing:{" "}
+                  Optional to add:{" "}
                   {role.gaps.slice(0, 4).map((g) => g.label).join(", ")}
                   {role.gaps.length > 4 ? ` and ${role.gaps.length - 4} more` : ""}.
                 </p>
@@ -40,9 +42,9 @@ export function RoleDetailsNeededBanner({ roles }: { roles: IncompleteRole[] }) 
                 to="/client/positions/$id/edit"
                 params={{ id: role.positionId }}
                 search={{ step: role.gaps[0]?.step }}
-                className="shrink-0 whitespace-nowrap rounded-md bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground"
+                className="shrink-0 whitespace-nowrap rounded-md border border-border bg-card px-3 py-1.5 text-sm font-semibold hover:bg-muted"
               >
-                Complete the brief
+                Add details
               </Link>
             </div>
           </li>

@@ -18,7 +18,7 @@ export type IncompleteRole = {
 type AnyRow = any;
 
 /**
- * Roles that cannot be approved yet because the brief is missing details.
+ * Roles whose brief could use optional extra detail. Advisory only.
  * RLS scopes this to the caller's workspaces; the org filter narrows further.
  */
 export const listRolesNeedingDetails = createServerFn({ method: "POST" })
