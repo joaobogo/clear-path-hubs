@@ -107,6 +107,7 @@ import { submitToCrm } from "@/lib/crm/submit-form";
 import { trackEvent } from "@/lib/tracking/pixels";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
+import { PAYMENTS_ENABLED } from "@/config/commerce";
 import { Check, CheckCircle2, Eye, EyeOff, FileText, Loader2, Upload, X } from "lucide-react";
 import { IntakeReviewPanel } from "@/components/intake/review-panel";
 import { buildIntakeReview } from "@/lib/intake-review";
@@ -1407,7 +1408,7 @@ function ExpressIntakePage() {
     }
   };
 
-  const submit = async (intent: "pay" | "call" = "pay") => {
+  const submit = async (intent: "pay" | "call" = PAYMENTS_ENABLED ? "pay" : "call") => {
     // Blank rows the client added and never filled in are dropped, not sent.
     const submittedStages = state.interviewStages.filter(
       (s) => (s.name ?? "").trim().length > 0,
@@ -1673,10 +1674,10 @@ function ExpressIntakePage() {
         if (signedIn && body.positionId) {
           // Role stays a draft either way — payment (or a conversation) comes next.
           trackEvent("intake_path_chosen", { flow: "express_onboarding", path: intent });
-          if (intent === "call") {
-            navigate({ to: "/book-call", search: { position: body.positionId } });
-          } else {
+          if (PAYMENTS_ENABLED && intent === "pay") {
             navigate({ to: "/checkout", search: { position: body.positionId } });
+          } else {
+            navigate({ to: "/book-call", search: { position: body.positionId } });
           }
           return;
         }
@@ -3142,15 +3143,30 @@ function ExpressIntakePage() {
               <ol className="mt-2 space-y-1 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
                 <li>1. Your account and workspace are created — free.</li>
                 <li>2. We review the role and confirm we can deliver it.</li>
-                <li>
-                  3. Only then do you pay the ${PRICE_PILOT_USD} one-time pilot fee. The pilot window starts
-                  when the search goes live.
-                </li>
+                {PAYMENTS_ENABLED ? (
+                  <li>
+                    3. Only then do you pay the ${PRICE_PILOT_USD} one-time pilot fee. The pilot window starts
+                    when the search goes live.
+                  </li>
+                ) : (
+                  <li>
+                    3. You pick a time on the next screen. We agree the plan on the call, then the search goes live.
+                  </li>
+                )}
               </ol>
               <p className="mt-2 text-sm leading-relaxed text-[color:var(--brand-navy)]/75">
-                One active role, any industry, anywhere in the world, no placement fees.{" "}
-                {PILOT_ONE_PER_COMPANY} First candidate activity usually begins within 3–5 days after
-                go-live.
+                {PAYMENTS_ENABLED ? (
+                  <>
+                    One active role, any industry, anywhere in the world, no placement fees.{" "}
+                    {PILOT_ONE_PER_COMPANY} First candidate activity usually begins within 3–5 days after
+                    go-live.
+                  </>
+                ) : (
+                  <>
+                    One active role, any industry, anywhere in the world. Your workspace opens immediately.
+                    First candidate activity usually begins within 3–5 days after we agree the plan on the call.
+                  </>
+                )}
               </p>
             </div>
 
@@ -3166,11 +3182,22 @@ function ExpressIntakePage() {
                 *
               </span>
               <label htmlFor="pilot-acknowledgement" className="text-sm leading-relaxed">
-                I understand there is no charge today, and that the ${PRICE_PILOT_USD} one-time
-                pilot is billed only after my account is created and the role is accepted. The pilot
-                can be used once per company, for one position — a second sign-up or a new email does
-                not create a new pilot. Separate locations, franchises and subsidiaries are reviewed
-                case by case.
+                {PAYMENTS_ENABLED ? (
+                  <>
+                    I understand there is no charge today, and that the ${PRICE_PILOT_USD} one-time
+                    pilot is billed only after my account is created and the role is accepted. The pilot
+                    can be used once per company, for one position — a second sign-up or a new email does
+                    not create a new pilot. Separate locations, franchises and subsidiaries are reviewed
+                    case by case.
+                  </>
+                ) : (
+                  <>
+                    I understand there is no charge today, that my workspace opens immediately, and that we
+                    agree the plan on the call before the search goes live. This initial role can be started
+                    once per company — a second sign-up or a new email does not create a new start. Separate
+                    locations, franchises and subsidiaries are reviewed case by case.
+                  </>
+                )}
               </label>
 
             </div>
@@ -3257,36 +3284,59 @@ function ExpressIntakePage() {
             )}
 
             <div className="rounded-xl border border-[color:var(--brand-navy)]/12 p-4">
-              <p className="text-sm font-semibold">Choose how you'd like to start</p>
+              <p className="text-sm font-semibold">
+                {PAYMENTS_ENABLED ? "Choose how you'd like to start" : "Create your workspace and pick a time"}
+              </p>
               <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
-                Both create your workspace and analyse the role. One publishes today; the other
-                keeps it saved until we've spoken.
+                {PAYMENTS_ENABLED
+                  ? "Both create your workspace and analyse the role. One publishes today; the other keeps it saved until we've spoken."
+                  : "Your workspace opens immediately. We agree the plan on the call and activate the search once you're ready."}
               </p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <Button
-                  type="button"
-                  onClick={() => void submit("pay")}
-                  disabled={submitting || review.missing.length > 0 || dupBlockers.length > 0}
-                  className="min-h-12 w-full"
-                >
-                  {submitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-                      Creating your workspace…
-                    </>
-                  ) : (
-                    "Start now — pay and publish"
-                  )}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => void submit("call")}
-                  disabled={submitting || review.missing.length > 0 || dupBlockers.length > 0}
-                  className="min-h-12 w-full"
-                >
-                  Book a call first
-                </Button>
+                {PAYMENTS_ENABLED ? (
+                  <>
+                    <Button
+                      type="button"
+                      onClick={() => void submit("pay")}
+                      disabled={submitting || review.missing.length > 0 || dupBlockers.length > 0}
+                      className="min-h-12 w-full"
+                    >
+                      {submitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+                          Creating your workspace…
+                        </>
+                      ) : (
+                        "Start now — pay and publish"
+                      )}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => void submit("call")}
+                      disabled={submitting || review.missing.length > 0 || dupBlockers.length > 0}
+                      className="min-h-12 w-full"
+                    >
+                      Book a call first
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    type="button"
+                    onClick={() => void submit("call")}
+                    disabled={submitting || review.missing.length > 0 || dupBlockers.length > 0}
+                    className="min-h-12 w-full"
+                  >
+                    {submitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+                        Creating your workspace…
+                      </>
+                    ) : (
+                      "Create my workspace and pick a time"
+                    )}
+                  </Button>
+                )}
               </div>
               {review.missing.length > 0 && (
                 <p className="mt-3 text-sm text-[color:var(--brand-navy)]/75" role="status">
@@ -3299,8 +3349,9 @@ function ExpressIntakePage() {
                 </p>
               )}
               <p className="mt-3 text-sm text-[color:var(--brand-navy)]/70">
-                Booking a call still opens your workspace straight away. The role stays saved with
-                payment pending until we agree the plan.
+                {PAYMENTS_ENABLED
+                  ? "Booking a call still opens your workspace straight away. The role stays saved with payment pending until we agree the plan."
+                  : "The role is saved in your workspace straight away. We confirm the plan on the call before anything goes live."}
               </p>
             </div>
             <ul className="grid gap-2 pt-1 text-sm text-[color:var(--brand-navy)]/70 sm:grid-cols-3">
