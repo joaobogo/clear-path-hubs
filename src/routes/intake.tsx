@@ -108,6 +108,7 @@ import { trackEvent } from "@/lib/tracking/pixels";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { PAYMENTS_ENABLED } from "@/config/commerce";
+import { Check, CheckCircle2, Eye, EyeOff, FileText, Loader2, Upload, X } from "lucide-react";
 import { IntakeReviewPanel } from "@/components/intake/review-panel";
 import { buildIntakeReview } from "@/lib/intake-review";
 import { CARRY_NOTICE, type CarryForward } from "@/lib/intake-carry";
