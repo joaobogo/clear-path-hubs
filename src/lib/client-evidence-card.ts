@@ -28,6 +28,9 @@ export type ClientEvidenceRow = {
   source_location: unknown;
 };
 
+import { dropRequirementEcho } from "@/lib/client/card-assessment-state";
+
+
 export type EvidenceBullet = {
   id: string;
   /** The requirement this evidence addresses, in the client's words. */
@@ -165,12 +168,22 @@ export function buildEvidenceCard(
 
   const bullets: EvidenceBullet[] = ordered
     .slice(0, EVIDENCE_BULLET_TARGET)
-    .map(([key, row]) => ({
-      id: row.id,
-      requirement: labelBySlug.get(slug(key)) ?? humanise(key),
-      claim: truncate(clean(row.interpretation) || clean(row.factual_quote)),
-      where: formatEvidenceLocation(row),
-    }));
+    .map(([key, row]) => {
+      const requirement = labelBySlug.get(slug(key)) ?? humanise(key);
+      // "requirement — the proof", never the requirement twice. Only the
+      // recruiter's written reading may be shown here: raw CV slices can carry
+      // contact details, which clients see only at interview stage with
+      // consent. When the reading just restates the criterion there is no
+      // distinct proof to add, so the line stands alone with its source
+      // attribution rather than repeating itself.
+      const claim = dropRequirementEcho(requirement, truncate(clean(row.interpretation)));
+      return {
+        id: row.id,
+        requirement,
+        claim,
+        where: formatEvidenceLocation(row),
+      };
+    });
 
   return {
     bullets,
