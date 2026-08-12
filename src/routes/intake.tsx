@@ -107,7 +107,7 @@ import { submitToCrm } from "@/lib/crm/submit-form";
 import { trackEvent } from "@/lib/tracking/pixels";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
-import { Check, CheckCircle2, Eye, EyeOff, FileText, Loader2, Upload, X } from "lucide-react";
+import { PAYMENTS_ENABLED } from "@/config/commerce";
 import { IntakeReviewPanel } from "@/components/intake/review-panel";
 import { buildIntakeReview } from "@/lib/intake-review";
 import { CARRY_NOTICE, type CarryForward } from "@/lib/intake-carry";
@@ -1407,7 +1407,7 @@ function ExpressIntakePage() {
     }
   };
 
-  const submit = async (intent: "pay" | "call" = "pay") => {
+  const submit = async (intent: "pay" | "call" = PAYMENTS_ENABLED ? "pay" : "call") => {
     // Blank rows the client added and never filled in are dropped, not sent.
     const submittedStages = state.interviewStages.filter(
       (s) => (s.name ?? "").trim().length > 0,
