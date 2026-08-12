@@ -30,7 +30,8 @@ export const UNREADABLE_JD_EXT = new Set(["doc"]);
 export const JD_ACCEPT_ATTR = ".pdf,.docx,.txt,.rtf";
 export const JD_ACCEPT_LABEL = "PDF, DOCX, TXT or RTF, up to 10 MB";
 
-export const MIN_JD_TEXT = 80;
+/** No length floor on pasted JD text — any text (or a file) is enough. */
+export const MIN_JD_TEXT = 1;
 export const MIN_ACCOUNT_PASSWORD = 8;
 
 /** Role-brief minimums. Enforced identically on the client and the server. */
@@ -681,7 +682,7 @@ export const expressIntakeSchema = z
     (v) => (v.jobDescriptionText ?? "").trim().length >= MIN_JD_TEXT || !!v.jobDescriptionFile,
     {
       path: ["jobDescriptionText"],
-      message: `Upload a job description file or paste at least ${MIN_JD_TEXT} characters`,
+      message: "Upload a job description file or paste the description",
     },
   )
   // Compensation is optional, but half a range is worse than none: it looks

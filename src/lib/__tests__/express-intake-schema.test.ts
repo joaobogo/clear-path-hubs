@@ -57,9 +57,12 @@ describe("expressIntakeSchema", () => {
     expect(r.success).toBe(false);
   });
 
-  it("requires a job description file or enough pasted text", () => {
-    const short = expressIntakeSchema.safeParse({ ...valid, jobDescriptionText: "too short" });
-    expect(short.success).toBe(false);
+  it("requires a job description file or some pasted text (no length floor)", () => {
+    const empty = expressIntakeSchema.safeParse({ ...valid, jobDescriptionText: "" });
+    expect(empty.success).toBe(false);
+
+    const short = expressIntakeSchema.safeParse({ ...valid, jobDescriptionText: "Sales role" });
+    expect(short.success).toBe(true);
 
     const withFile = expressIntakeSchema.safeParse({
       ...valid,
