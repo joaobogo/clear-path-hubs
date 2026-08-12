@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Clock3, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PAYMENTS_ENABLED } from "@/config/commerce";
+
 
 type Props = {
   positionId: string;
@@ -15,7 +17,9 @@ type Props = {
  * Says so plainly — no apology, no nagging.
  */
 export function PaymentGateBanner({ positionId, positionTitle, paymentStatus, callStart }: Props) {
+  if (!PAYMENTS_ENABLED) return null;
   if (["paid", "exempt", "covered", "refunded"].includes(paymentStatus)) return null;
+
 
   const callLabel = callStart
     ? new Intl.DateTimeFormat("en-GB", {
