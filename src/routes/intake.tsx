@@ -1674,10 +1674,10 @@ function ExpressIntakePage() {
         if (signedIn && body.positionId) {
           // Role stays a draft either way — payment (or a conversation) comes next.
           trackEvent("intake_path_chosen", { flow: "express_onboarding", path: intent });
-          if (intent === "call") {
-            navigate({ to: "/book-call", search: { position: body.positionId } });
-          } else {
+          if (PAYMENTS_ENABLED && intent === "pay") {
             navigate({ to: "/checkout", search: { position: body.positionId } });
+          } else {
+            navigate({ to: "/book-call", search: { position: body.positionId } });
           }
           return;
         }
