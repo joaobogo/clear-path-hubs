@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -7,6 +7,7 @@ import { useAllowanceForPosition } from "@/lib/plans.functions";
 import { POSITION_PUBLISH_OFFER } from "@/lib/payments-catalog";
 import { PositionCheckout } from "@/components/payments/position-checkout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { paymentsEnabled } from "@/config/commerce";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -34,6 +35,12 @@ export const Route = createFileRoute("/_authenticated/checkout")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
+  // Temporary redirect until Stripe go-live.
+  beforeLoad: ({ search }) => {
+    if (!paymentsEnabled()) {
+      throw redirect({ to: "/book-call", search: { position: search.position } });
+    }
+  },
   component: CheckoutPage,
 });
 
