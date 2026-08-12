@@ -6,6 +6,7 @@
  * removed in global teardown.
  */
 import { expect, test, type Page } from "@playwright/test";
+import { PAYMENTS_ENABLED } from "@/config/commerce";
 import {
   collectConsoleErrors,
   lookupIntake,
@@ -18,6 +19,15 @@ const JD_TEXT =
   "We are hiring a Clinical Operations Manager to run our trial sites end to end. " +
   "You will own site readiness, monitoring cadence, vendor performance and inspection " +
   "readiness across three regions, working closely with data management and quality.";
+
+/**
+ * The primary submit label depends on the commerce flag: with payments off the
+ * review step offers a single "create workspace and pick a time" action, so the
+ * spec resolves the label from the flag instead of hardcoding the pay copy.
+ */
+const PRIMARY_SUBMIT = PAYMENTS_ENABLED
+  ? /start now — pay and publish/i
+  : /create my workspace and pick a time/i;
 
 async function fillCompany(page: Page, companyName: string, website = "northwindhealth.com") {
   await page.getByLabel("Company name").fill(companyName);
@@ -75,7 +85,7 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await waitForHydration(page);
 
     // ── Required-field validation on an empty form ───────────────────────────
-    await page.getByRole("button", { name: /start now — pay and publish/i }).click();
+    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
     await expect(page.getByText("Enter your company name")).toBeVisible();
     await expect(page.getByText("Enter your company website")).toBeVisible();
     await expect(page.getByText("Enter your first name")).toBeVisible();
@@ -87,29 +97,29 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
 
     // ── Website format validation ────────────────────────────────────────────
     await fillCompany(page, companyName, "not a website");
-    await page.getByRole("button", { name: /start now — pay and publish/i }).click();
+    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
     await expect(page.getByText("Enter a valid website")).toBeVisible();
     await fillCompany(page, companyName, "northwindhealth.com");
-    await page.getByRole("button", { name: /start now — pay and publish/i }).click();
+    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
     await expect(page.getByText("Enter a valid website")).toHaveCount(0);
 
     // ── Contact step ─────────────────────────────────────────────────────────
     await fillYou(page, email);
-    await page.getByRole("button", { name: /start now — pay and publish/i }).click();
+    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
     await expect(page.getByText("Enter your first name")).toHaveCount(0);
     await expect(page.getByText("Enter a valid work email")).toHaveCount(0);
 
     // ── Account step: min length + confirm match ──────────────────────────────
     await fillPasswords(page, "short");
-    await page.getByRole("button", { name: /start now — pay and publish/i }).click();
+    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
     await expect(page.getByText(/at least 8 characters/i).first()).toBeVisible();
 
     await fillPasswords(page, "QaTest!Phase11", "QaTest!Different");
-    await page.getByRole("button", { name: /start now — pay and publish/i }).click();
+    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
     await expect(page.getByText(/passwords must match/i)).toBeVisible();
 
     await fillPasswords(page, "QaTest!Phase11");
-    await page.getByRole("button", { name: /start now — pay and publish/i }).click();
+    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
     await expect(page.getByText(/passwords must match/i)).toHaveCount(0);
 
     // An existing client must be able to reach a real sign-in path from here.
@@ -126,13 +136,13 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     // ── Role step: a job description is required in some form, and typed text
     //    must clear the 80-character minimum ────────────────────────────────
     await fillRole(page, false);
-    await page.getByRole("button", { name: /start now — pay and publish/i }).click();
+    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
     await expect(page.getByText(/at least 80 characters/i)).toBeVisible();
     await page.locator("#jd-text").fill("too short to be a job description");
-    await page.getByRole("button", { name: /start now — pay and publish/i }).click();
+    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
     await expect(page.getByText(/at least 80 characters/i)).toBeVisible();
     await page.locator("#jd-text").fill(JD_TEXT);
-    await page.getByRole("button", { name: /start now — pay and publish/i }).click();
+    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
     await expect(page.getByText(/at least 80 characters/i)).toHaveCount(0);
 
     // ── Review: skipped optional fields must not read "Not provided" ──────────
@@ -182,7 +192,7 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
   test("no horizontal overflow at 390px", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/intake", { waitUntil: "domcontentloaded" });
-    await page.getByRole("button", { name: /start now — pay and publish/i }).click();
+    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
@@ -190,6 +200,9 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
   });
 
   test('submit path "Book a call first" creates account, org and intake', async ({ page }) => {
+    // The secondary "Book a call first" button only exists alongside the pay
+    // action, so this case is scoped to the payments-on configuration.
+    test.skip(!PAYMENTS_ENABLED, "secondary call button only renders when payments are on");
     const errors = collectConsoleErrors(page);
     const { companyName, email } = uniqueProspect();
 
@@ -205,7 +218,9 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await fillBrief(page);
     await acceptTerms(page);
 
-    await page.getByRole("button", { name: /book a call first/i }).click();
+    await page
+      .getByRole("button", { name: PAYMENTS_ENABLED ? /book a call first/i : PRIMARY_SUBMIT })
+      .click();
 
     await expect
       .poll(() => new URL(page.url()).pathname, { timeout: 60_000 })
@@ -224,7 +239,7 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     expect(meaningfulConsoleErrors(errors)).toEqual([]);
   });
 
-  test('submit path "Start now — pay and publish" degrades gracefully', async ({ page }) => {
+  test("primary submit path lands on a live destination, never a dead end", async ({ page }) => {
     const errors = collectConsoleErrors(page);
     const { companyName, email } = uniqueProspect();
 
@@ -240,18 +255,29 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await fillBrief(page);
     await acceptTerms(page);
 
-    await page.getByRole("button", { name: /start now — pay and publish/i }).click();
+    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
 
     await expect
       .poll(() => new URL(page.url()).pathname, { timeout: 60_000 })
-      .toMatch(/^\/(checkout|intake\/confirmation)/);
+      .toMatch(
+        PAYMENTS_ENABLED
+          ? /^\/(checkout|intake\/confirmation)/
+          : /^\/(book-call|book|intake\/confirmation)/,
+      );
 
-    // The checkout stub must explain itself rather than crash or dead-end.
     await expect(page.getByRole("heading").first()).toBeVisible();
     const body = (await page.locator("body").innerText()).toLowerCase();
     expect(body.length).toBeGreaterThan(80);
     expect(body).not.toContain("something went wrong");
     expect(body).not.toContain("unexpected application error");
+    if (!PAYMENTS_ENABLED) {
+      // Payments-off: no money vocabulary and no card field anywhere on the
+      // destination the submitter actually reaches.
+      for (const word of ["checkout", "payment", "pay now", "card number"]) {
+        expect(body, `"${word}" must not appear with payments off`).not.toContain(word);
+      }
+      expect(await page.locator('input[name*="card" i], iframe[src*="stripe" i]').count()).toBe(0);
+    }
 
     const state = await lookupIntake(companyName, email);
     expect(state.organization).not.toBeNull();
@@ -260,3 +286,4 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     expect(meaningfulConsoleErrors(errors)).toEqual([]);
   });
 });
+
