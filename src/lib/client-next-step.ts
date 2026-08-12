@@ -18,12 +18,28 @@ export type NextStep = {
   withinHours: number | null;
 };
 
-const STEPS: Record<MatchStage, NextStep> = {
+const STEPS: Record<string, NextStep> = {
+  new: {
+    headline: "We're finishing the review before this profile reaches you.",
+    owner: "taasflow",
+    withinHours: 24,
+  },
+  reviewing: {
+    headline: "Waiting on your review — advance, hold or decline whenever you're ready.",
+    owner: "client",
+    withinHours: null,
+  },
+  archived: {
+    headline: "Archived — no further action needed.",
+    owner: "client",
+    withinHours: null,
+  },
   delivered: {
     headline: "Waiting on your review — advance, hold or decline whenever you're ready.",
     owner: "client",
     withinHours: null,
   },
+
   shortlisted: {
     headline: "We'll propose interview slots",
     owner: "taasflow",
@@ -51,8 +67,14 @@ const STEPS: Record<MatchStage, NextStep> = {
   },
 };
 
+const FALLBACK_STEP: NextStep = {
+  headline: "We're reviewing this profile and will come back to you.",
+  owner: "taasflow",
+  withinHours: 24,
+};
+
 export function nextStepForStage(stage: MatchStage): NextStep {
-  return STEPS[stage];
+  return STEPS[stage as string] ?? FALLBACK_STEP;
 }
 
 /** "within 24h" / "within 2 days" — plain wording for a commitment window. */
