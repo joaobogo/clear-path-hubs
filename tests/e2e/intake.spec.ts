@@ -199,10 +199,10 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     expect(overflow).toBeLessThanOrEqual(2);
   });
 
-  // The "Book a call first" secondary button only exists alongside the pay
-  // action, so this case is scoped to the payments-on configuration.
-  test.skip(!PAYMENTS_ENABLED, "secondary call button only renders when payments are on");
   test('submit path "Book a call first" creates account, org and intake', async ({ page }) => {
+    // The secondary "Book a call first" button only exists alongside the pay
+    // action, so this case is scoped to the payments-on configuration.
+    test.skip(!PAYMENTS_ENABLED, "secondary call button only renders when payments are on");
     const errors = collectConsoleErrors(page);
     const { companyName, email } = uniqueProspect();
 
