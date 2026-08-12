@@ -11,6 +11,7 @@ import { getClientContext } from "@/lib/client-context.functions";
 import { getClientOverview } from "@/lib/client-overview.functions";
 import { getClientPositions } from "@/lib/client-positions.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
+import { orgGate, panelState, useStuckAfter } from "@/lib/client/panel-gate";
 import { VisibilityNote } from "@/components/client/visibility-note";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -85,19 +86,21 @@ function CandidatesPage() {
  const positionsFn = useServerFn(getClientPositions);
  const orgSearch = useClientOrgSearch();
 
- const { data: ctx } = useQuery({
- queryKey: ["client-context", orgSearch ?? null],
- queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
- });
- const orgId = ctx?.active?.organization_id;
- const isSupportView = !!ctx?.isStaff && !!orgSearch;
+  const ctxQuery = useQuery({
+    queryKey: ["client-context", orgSearch ?? null],
+    queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
+  });
+  const ctx = ctxQuery.data;
+  const orgId = ctx?.active?.organization_id;
+  const isSupportView = !!ctx?.isStaff && !!orgSearch;
 
- const { data: overview, isFetching: kpisLoading } = useQuery({
- queryKey: ["client-overview", orgId],
- queryFn: () => overviewFn({ data: { orgId: orgId! } }),
- enabled: !!orgId,
- placeholderData: (prev) => prev,
- });
+  const overviewQuery = useQuery({
+    queryKey: ["client-overview", orgId],
+    queryFn: () => overviewFn({ data: { orgId: orgId! } }),
+    enabled: !!orgId,
+    placeholderData: (prev) => prev,
+  });
+  const { data: overview, isFetching: kpisLoading } = overviewQuery;
 
  const { data: positions = [] } = useQuery({
  queryKey: ["client-positions-filter", orgId],
@@ -127,6 +130,35 @@ function CandidatesPage() {
  window.addEventListener("client:refresh", onRefresh);
  return () => window.removeEventListener("client:refresh", onRefresh);
  }, [refetch]);
+
+ // The workspace lookup gates the list and the KPI tiles. If it fails, both
+ // must show a reason and a Retry — never a skeleton and never a zeroed tile.
+ const gate = orgGate(ctxQuery, orgId);
+ const hasRows = (rowsRaw as ClientCandidateDTO[]).length > 0;
+ const listStuck = useStuckAfter(!hasRows && !gate.failed && !isError);
+ const listPanel = panelState({
+ gate,
+ hasData: hasRows,
+ isFetching: isFetching || isLoading,
+ isError,
+ error: rowsError,
+ stuck: listStuck,
+ });
+ const kpiStuck = useStuckAfter(!overview && !gate.failed && !overviewQuery.isError);
+ const kpiPanel = panelState({
+ gate,
+ hasData: overview !== undefined,
+ isFetching: kpisLoading,
+ isError: overviewQuery.isError,
+ error: overviewQuery.error,
+ stuck: kpiStuck,
+ });
+ const retryAll = () => {
+ if (gate.failed) gate.retry();
+ void refetch();
+ void overviewQuery.refetch();
+ };
+
 
  // Availability values are derived from the authorized set only — never a fixed
  // list, so the filter can't hint at candidates the client cannot see.
@@ -401,7 +433,16 @@ function CandidatesPage() {
  </div>
  </header>
 
- <HiringSnapshot overview={overview} kpisLoading={kpisLoading} orgSearch={orgSearch} />
+ <HiringSnapshot
+ overview={overview}
+ kpisLoading={kpiPanel.loading}
+ isError={kpiPanel.isError}
+ error={kpiPanel.error}
+ onRetry={retryAll}
+ retrying={kpisLoading || gate.retrying}
+ orgSearch={orgSearch}
+ />
+
 
  {/* Action required */}
  {overview?.action_required && overview.action_required.length > 0 && (
@@ -442,18 +483,18 @@ function CandidatesPage() {
  />
 
  {/* Results — loading, failure and "none approved yet" are distinct states */}
- {isLoading && (rowsRaw as ClientCandidateDTO[]).length === 0 ? (
+ {listPanel.loading ? (
  <div className="grid gap-3 md:grid-cols-2">
  {Array.from({ length: 4 }).map((_, i) => (
  <Skeleton key={i} className="h-52 rounded-xl" />
  ))}
  </div>
- ) : isError && (rowsRaw as ClientCandidateDTO[]).length === 0 ? (
+ ) : listPanel.isError ? (
  <QueryErrorCard
- title="We couldn't load your candidates"
- error={rowsError}
- onRetry={() => refetch()}
- retrying={isFetching}
+ title={gate.noWorkspace ? "No workspace is attached to this account" : "We couldn't load your candidates"}
+ error={listPanel.error}
+ onRetry={retryAll}
+ retrying={isFetching || gate.retrying}
  />
  ) : filtered.length === 0 ? (
  <CandidatesEmptyState
