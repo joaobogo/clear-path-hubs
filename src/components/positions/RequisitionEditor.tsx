@@ -322,10 +322,14 @@ export function RequisitionEditor({
             <Label className="text-xs">Internal reference ID</Label>
             <Input
               value={form.reference_code}
-              placeholder="e.g. REQ-2026-014"
-              onChange={(e) => set("reference_code", e.target.value)}
+              placeholder="Generated automatically"
+              readOnly
+              disabled
+              aria-readonly="true"
             />
-            <p className="text-xs text-muted-foreground">Unique per client — blocks duplicate requisitions.</p>
+            <p className="text-xs text-muted-foreground">
+              Generated for you, unique per client. Nothing to fill in.
+            </p>
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">Responsible admin</Label>
