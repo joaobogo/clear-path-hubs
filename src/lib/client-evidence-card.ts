@@ -173,13 +173,14 @@ export function buildEvidenceCard(
       // "requirement — the proof", never the requirement twice. Only the
       // recruiter's written reading may be shown here: raw CV slices can carry
       // contact details, which clients see only at interview stage with
-      // consent. When the reading just restates the criterion, say plainly
-      // that it is evidenced instead of printing the requirement again.
-      const proof = dropRequirementEcho(requirement, truncate(clean(row.interpretation)));
+      // consent. When the reading just restates the criterion there is no
+      // distinct proof to add, so the line stands alone with its source
+      // attribution rather than repeating itself.
+      const claim = dropRequirementEcho(requirement, truncate(clean(row.interpretation)));
       return {
         id: row.id,
         requirement,
-        claim: proof || "Evidenced in the CV",
+        claim,
         where: formatEvidenceLocation(row),
       };
     });
