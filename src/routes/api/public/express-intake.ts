@@ -513,7 +513,9 @@ export const Route = createFileRoute("/api/public/express-intake")({
                 note: (data.compensationNote ?? "").trim() || null,
                 source: "client_intake",
               }
-            : null;
+            // The column is NOT NULL; "nothing said yet" is an empty record,
+            // never a null that would reject the whole submission.
+            : {};
         const brief = briefCompleteness({
           location: locationText,
           workModel: data.workModel ?? "",
