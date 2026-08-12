@@ -3202,7 +3202,7 @@ function ExpressIntakePage() {
                   </>
                 ) : (
                   <>
-                    I understand there is no charge today, that my workspace opens immediately, and that we
+                    I understand this is free to start today, that my workspace opens immediately, and that we
                     agree the plan on the call before the search goes live. This initial role can be started
                     once per company — a second sign-up or a new email does not create a new start. Separate
                     locations, franchises and subsidiaries are reviewed case by case.
