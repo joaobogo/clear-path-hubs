@@ -1,5 +1,6 @@
 /**
- * What a role still needs before we can approve it and start sourcing.
+ * Optional details that would sharpen a role brief. Never a blocker: sourcing
+ * runs regardless and anything open is covered on the call.
  *
  * Pure and shared: the same list drives the dashboard banner, the role page,
  * and anything else that has to tell a client exactly what is missing. Each
@@ -44,7 +45,7 @@ function hasNumber(v: unknown): boolean {
   return Number.isFinite(n) && n > 0;
 }
 
-/** The gaps blocking approval, in the order a client should fix them. */
+/** Optional gaps, in the order a client would most usefully fill them. */
 export function roleGaps(p: ReadinessInput): RoleGap[] {
   const gaps: RoleGap[] = [];
 
