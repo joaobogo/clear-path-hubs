@@ -97,18 +97,27 @@ async function buildInsights(args: {
 }): Promise<{ insights: CandidateInsights | null; insights_error: string | null }> {
   const pos = args.position;
   if (!pos) return { insights: null, insights_error: "no_position" };
+  // Requirements are stored either as plain strings ("5+ years of React") or as
+  // objects. Both shapes must produce a requirement here, otherwise a role with
+  // string requirements silently reports "no_requirements" and no evidence is
+  // ever written up for its candidates.
+  const reqText = (r: Any): string =>
+    typeof r === "string"
+      ? r.trim()
+      : String(r?.text ?? r?.requirement ?? r?.title ?? r?.label ?? r?.name ?? "").trim();
   const reqs = [
     ...(Array.isArray(pos.requirements) ? pos.requirements : []).map((r: Any, i: number) => ({
-      id: String(r?.id ?? `must-${i}`),
-      text: String(r?.text ?? r?.requirement ?? r?.title ?? "").trim(),
+      id: String((typeof r === "string" ? null : r?.id) ?? `must-${i}`),
+      text: reqText(r),
       required: true,
     })),
     ...(Array.isArray(pos.preferred_requirements) ? pos.preferred_requirements : []).map((r: Any, i: number) => ({
-      id: String(r?.id ?? `pref-${i}`),
-      text: String(r?.text ?? r?.requirement ?? r?.title ?? "").trim(),
+      id: String((typeof r === "string" ? null : r?.id) ?? `pref-${i}`),
+      text: reqText(r),
       required: false,
     })),
   ].filter((r) => r.text);
+
   if (reqs.length === 0) return { insights: null, insights_error: "no_requirements" };
 
   const screening = args.screening.map((s) => ({
