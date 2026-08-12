@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import type { ComponentType } from "react";
 
-const WORK_QUEUES_KEY = ["admin", "work-queues"] as const;
+export const WORK_QUEUES_KEY = ["admin", "work-queues"] as const;
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   // The layout resolved the scope in beforeLoad, so the prefetch primes exactly

@@ -45,7 +45,7 @@ const searchSchema = z.object({
 });
 
 
-const RoutePending = makeWorkspacePending({ shape: "cards", kpis: false, width: "7xl" });
+export const RoutePending = makeWorkspacePending({ shape: "cards", kpis: false, width: "7xl" });
 export const Route = createFileRoute("/_authenticated/client/talent-memory")({
 	pendingMs: 150,
 	pendingComponent: RoutePending,

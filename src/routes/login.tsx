@@ -72,7 +72,7 @@ export const Route = createFileRoute("/login")({
  * Never show a blank screen on /login. While the route resolves — or if it
  * fails outright — render the same shell with a working recovery path.
  */
-function LoginFallback() {
+export function LoginFallback() {
   return (
     <FormShell exitTo="/" exitLabel="Exit" width="sm">
       <Card className="w-full space-y-3 p-6">

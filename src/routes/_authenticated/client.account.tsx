@@ -47,7 +47,7 @@ export const ACCOUNT_TABS = [
 
 export type AccountTab = (typeof ACCOUNT_TABS)[number]["key"];
 
-function parseTab(value: unknown): AccountTab {
+export function parseTab(value: unknown): AccountTab {
   return ACCOUNT_TABS.some((t) => t.key === value) ? (value as AccountTab) : "workspace";
 }
 
