@@ -128,19 +128,6 @@ function BookCallPage() {
       // A failed request row must never block someone from picking a time.
       if (!result.ok) toastError(result);
       navigate({ to: "/book", search: { cta: "in-app" } });
-      return;
-      const host = embedRef.current;
-      const mounted = host
-        ? await mountCalendlyInline({ parentElement: host, url: CALENDLY_BOOKING_URL })
-        : ({ ok: false, reason: "unsupported" } as const);
-      if (mounted.ok) {
-        setEmbedState("ready");
-        host?.scrollIntoView({ behavior: "smooth", block: "start" });
-        return;
-      }
-      // Inline blocked — never pretend it worked; offer the real link instead.
-      setEmbedState("unavailable");
-      toast.error("The scheduler couldn't load here. Use the direct booking link below.");
     },
     onError: () => toast.error("We couldn't start your booking. Please try again."),
   });
