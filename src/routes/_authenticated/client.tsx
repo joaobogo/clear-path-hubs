@@ -106,19 +106,174 @@ export const Route = createFileRoute("/_authenticated/client")({
 
 type NavDef = WorkspaceNavItem & { everyone: boolean };
 
-// Part 9 subtraction, then hierarchy: four primary entries carry the decision
-// job (see what needs you, work a role, judge a candidate, approve). Everything
-// else is a subordinate "More" group. URLs are unchanged — this is hierarchy
-// only, so nothing became unreachable.
+// Five primary destinations (Overview, Roles, Candidates, Messages, Account)
+// carry the whole client job; everything else is demoted into "More" or into
+// tabs inside those pages (see CLIENT_SECTION_GROUPS). Nothing was deleted and
+// no URL changed — demotion only, so every bookmark still resolves.
 const TABS: NavDef[] = [
 	{ to: "/client", label: "Overview", icon: LayoutDashboard, exact: true, everyone: true, hint: "What needs you today" },
 	{ to: "/client/positions", label: "Roles", icon: Briefcase, everyone: true, hint: "Roles, interviews, offers, approvals" },
-	{ to: "/client/candidates", label: "Candidates", icon: Users, everyone: true, hint: "Shortlist, talent pool, shared links" },
+	{ to: "/client/candidates", label: "Candidates", icon: Users, everyone: true, hint: "Shortlist, talent pool, talent memory, shared links" },
 	{ to: "/client/conversations", label: "Messages", icon: MessageSquare, everyone: true, hint: "Threads, inbox, all messages" },
-	{ to: "/client/account", label: "Account", icon: Building2, everyone: true, hint: "Team, plan, settings, setup" },
+	{ to: "/client/account", label: "Account", icon: Building2, everyone: false, hint: "Team, plan, settings, setup" },
 	{ to: "/client/intelligence", label: "Insights", icon: Gauge, everyone: true, group: "More", subdued: true, hint: "Questions, dashboards, reporting, your data" },
 	{ to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true, group: "More", subdued: true, hint: "Assistant, agents, outreach, tasks" },
-]
+];
+
+
+// Manage-only areas are gated by path, not by whether they appear in the rail —
+// several of them are now tabs inside the Account section.
+const MANAGE_ONLY_LABELS: Record<string, string> = {
+	"/client/account": "Account",
+	"/client/team": "Team",
+	"/client/plan": "Plan & billing",
+	"/client/settings": "Settings",
+};
+const MANAGE_ONLY_PATHS = Object.keys(MANAGE_ONLY_LABELS);
+
+function ClientLayout() {
+ const ctx = Route.useLoaderData();
+ const search = Route.useSearch();
+ const pathname = useRouterState({ select: (st) => st.location.pathname });
+ const getCtx = useServerFn(getClientContext);
+ const {
+ data,
+ isError: ctxIsError,
+ error: ctxError,
+ isFetching: ctxIsFetching,
+ refetch: refetchCtx,
+ } = useQuery({
+ queryKey: ["client-context", search.org ?? null],
+ queryFn: () => getCtx({ data: search.org ? { orgId: search.org } : {} }),
+ initialData: ctx,
+ });
+
+ // Realtime + focus + interval fallback is owned by ClientCoordinator below,
+ // which subscribes exactly once to `notifications` for this user. Do not add
+ // per-table channels here — Realtime is only enabled on `notifications`,
+ // `notification_events`, and `messages`, and duplicate subscriptions on
+ // `candidate_matches` (previously here) were silently no-ops.
+
+ const active = data?.active;
+
+ const staffMembershipsElsewhere =
+ (data?.isStaff ?? false) &&
+ active != null &&
+ !data!.organizations.some((o: { id: string }) => o.id === active.organization_id);
+
+ const permissionPreview: PermissionPreview =
+ (search.preview as PermissionPreview | undefined) ?? "client_admin";
+
+  // Staff access to a client workspace is allowed on arrival — opening it from
+  // the admin client list is the sanctioned path. Access is recorded, not
+  // gated: this opens (or reuses) a read-only support session for the audit
+  // trail and never blocks the view if recording fails.
+ 	const activeSupportSession = useQuery({
+ 		queryKey: ["active-support-session", active?.organization_id ?? null],
+ 		queryFn: () =>
+ 			ensureSupportSession({
+ 				data: {
+ 					organization_id: active!.organization_id,
+ 					permission_preview: permissionPreview,
+ 				},
+ 			}),
+ 		enabled: staffMembershipsElsewhere && !!active?.organization_id,
+ 		refetchInterval: 60_000,
+ 	});
+ 	const supportSession = activeSupportSession.data?.session ?? null;
+ 	const supportSessionId = supportSession?.id ?? null;
+ 	const supportSessionRef =
+ 		((supportSession as { trace_id?: string | null } | null)?.trace_id ?? null) ||
+ 		(supportSessionId ? supportSessionId.slice(0, 8) : null);
+ 	const supportSessionExpiresAt =
+ 		(supportSession as { expires_at?: string | null } | null)?.expires_at ?? null;
+
+
+ const supportView: SupportViewState = useMemo(
+ () => ({
+ active: staffMembershipsElsewhere,
+ organizationId: active?.organization_id ?? null,
+ organizationName: active?.name ?? null,
+ mode: "read_only",
+ readOnly: staffMembershipsElsewhere,
+ permissionPreview,
+ sessionId: supportSessionId,
+ sessionRef: supportSessionRef,
+ sessionExpiresAt: supportSessionExpiresAt,
+ }),
+ [
+ staffMembershipsElsewhere,
+ active,
+ permissionPreview,
+ supportSessionId,
+ supportSessionRef,
+ supportSessionExpiresAt,
+ ],
+ );
+
+ const effectiveRole = staffMembershipsElsewhere
+ ? permissionPreview
+ : active?.role ?? "client_viewer";
+ const canManage =
+ effectiveRole === "client_admin" ||
+ effectiveRole === "platform_admin" ||
+ effectiveRole === "operations";
+
+ if (ctxIsError) {
+ return (
+ <div className="mx-auto max-w-3xl p-8">
+ <QueryErrorCard
+ title="We couldn't load your workspace"
+ error={ctxError}
+ onRetry={() => refetchCtx()}
+ retrying={ctxIsFetching}
+ />
+ </div>
+ );
+ }
+
+ if (!active) {
+ return (
+ <div className="mx-auto max-w-3xl p-8">
+ <EmptyState
+ title="No client workspace yet"
+ description="Your account isn't linked to a client organization, so there's nothing to show here yet."
+ whatAppearsHere="Once you're added to a workspace, your roles, shortlists, interviews, and offers appear here."
+ action={{ label: "Submit a role", to: "/intake" }}
+ >
+ <p className="mt-4 text-xs text-muted-foreground">
+ Already part of a team? Ask the person who set up your workspace to invite
+ your email address.
+ </p>
+ </EmptyState>
+ </div>
+ );
+ }
+
+
+
+
+ const deniedTab = MANAGE_ONLY_PATHS.find(
+ (path) => pathname === path || pathname.startsWith(path + "/"),
+ );
+ const permissionDenied = !canManage && !!deniedTab;
+
+ const navItems: WorkspaceNavItem[] = TABS.filter((t) => t.everyone || canManage).map(
+ ({ everyone: _e, ...rest }) => rest,
+ );
+ const linkSearch = supportView.active
+ ? { org: active.organization_id, preview: permissionPreview }
+ : undefined;
+
+ const topBanner = (
+ <>
+ <SupportViewBanner />
+ {supportView.active && (
+ <div className="border-b bg-muted/40 px-4 py-1.5 text-xs">
+ <div className="mx-auto flex max-w-6xl items-center gap-3">
+ <span className="text-muted-foreground">Preview permission level:</span>
+ {(
+ ["client_admin", "client_editor", "client_viewer"] as PermissionPreview[]
  ).map((p) => (
  <Link
  key={p}
