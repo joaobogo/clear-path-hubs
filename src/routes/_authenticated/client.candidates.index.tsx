@@ -27,7 +27,7 @@ import { ShareShortlistDialog } from "@/components/client/share-shortlist-dialog
 import { Share2 } from "lucide-react";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
-import { STAGE_OPTIONS, FIT_OPTIONS } from "@/components/client/candidates/constants";
+import { STAGE_OPTIONS, FIT_OPTIONS, CRITICAL_OPTIONS, REVIEW_OPTIONS } from "@/components/client/candidates/constants";
 import { HiringSnapshot } from "@/components/client/candidates/hiring-snapshot";
 import { CandidatesFiltersPanel } from "@/components/client/candidates/filters-panel";
 import { CandidatesEmptyState } from "@/components/client/candidates/candidates-empty-state";
@@ -39,7 +39,8 @@ const searchSchema = z.object({
  stage: fallback(z.string(), "all").default("all"),
  fit: fallback(z.string(), "all").default("all"),
  critical: fallback(z.string(), "all").default("all"),
- review: fallback(z.string(), "all").default("all"),
+ // Default view is "needs my decision first" — awaiting-review candidates.
+ review: fallback(z.string(), "awaiting").default("awaiting"),
  availability: fallback(z.string(), "all").default("all"),
  minExp: fallback(z.string(), "").default(""),
  location: fallback(z.string(), "").default(""),
@@ -361,11 +362,11 @@ function CandidatesPage() {
  },
  search.critical !== "all" && {
  key: "critical",
- label: undefined,
+ label: CRITICAL_OPTIONS.find((o) => o.key === search.critical)?.label,
  },
  search.review !== "all" && {
  key: "review",
- label: undefined,
+ label: REVIEW_OPTIONS.find((o) => o.key === search.review)?.label,
  },
  search.availability !== "all" && {
  key: "availability",
@@ -392,6 +393,21 @@ function CandidatesPage() {
  filter: "all",
  } as never,
  });
+
+ // If the decision-first default hides everything, fall back to all candidates
+ // once — a client should never land on an empty list when rows exist.
+ const relaxed = useRef(false);
+ useEffect(() => {
+ if (relaxed.current) return;
+ if (search.review !== "awaiting") { relaxed.current = true; return; }
+ const rows = rowsRaw as ClientCandidateDTO[];
+ if (rows.length === 0) return;
+ relaxed.current = true;
+ if (!rows.some((c) => c.stage === "delivered")) {
+ navigate({ search: { ...search, review: "all" } as never, replace: true });
+ }
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, [rowsRaw]);
 
  return (
  <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8">
@@ -480,6 +496,8 @@ function CandidatesPage() {
   orgId={orgId}
   ctxRole={ctx?.active?.role}
   onApplySavedView={(f) => navigate({ search: { ...search, ...f } as never, replace: true })}
+  resultCount={filtered.length}
+  totalCount={(rowsRaw as ClientCandidateDTO[]).length}
  />
 
  {/* Results — loading, failure and "none approved yet" are distinct states */}
