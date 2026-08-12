@@ -182,7 +182,7 @@ function toDTO(row: AnyRow, candidate: AnyRow | null, position: AnyRow | null): 
     candidate: candidate
       ? {
           id: candidate.id as string,
-          name: (candidate.display_name as string) ?? "Candidate",
+          name: (candidate.full_name as string) ?? "Candidate",
           email: (candidate.email as string) ?? null,
         }
       : null,
@@ -229,7 +229,7 @@ export const listClientInterviews = createServerFn({ method: "POST" })
     const [matchesRes, positionsRes] = await Promise.all([
       context.supabase
         .from("candidate_matches")
-        .select("id, candidate_profile_id, candidate_profiles:candidate_profile_id(id, display_name, email, availability)")
+        .select("id, candidate_profile_id, candidate_profiles:candidate_profile_id(id, full_name, email, availability)")
         .in("id", matchIds),
       context.supabase
         .from("positions")
@@ -692,7 +692,7 @@ export const listSchedulableCandidates = createServerFn({ method: "POST" })
     const { data: rows, error } = await context.supabase
       .from("candidate_matches")
       .select(
-        "id, position_id, stage, client_visibility, candidate_profile_id, candidate_profiles:candidate_profile_id(id, display_name, email), positions:position_id(id, title)",
+        "id, position_id, stage, client_visibility, candidate_profile_id, candidate_profiles:candidate_profile_id(id, full_name, email), positions:position_id(id, title)",
       )
       .eq("organization_id", data.orgId)
       .eq("client_visibility", "visible")
@@ -710,7 +710,7 @@ export const listSchedulableCandidates = createServerFn({ method: "POST" })
     const candidates: SchedulableCandidate[] = list.map((r) => ({
       match_id: r.id as string,
       candidate_id: (r.candidate_profiles?.id as string) ?? r.candidate_profile_id,
-      candidate_name: (r.candidate_profiles?.display_name as string) ?? "Candidate",
+      candidate_name: (r.candidate_profiles?.full_name as string) ?? "Candidate",
       candidate_email: (r.candidate_profiles?.email as string) ?? null,
       position_id: (r.positions?.id as string) ?? r.position_id,
       position_title: (r.positions?.title as string) ?? "Position",

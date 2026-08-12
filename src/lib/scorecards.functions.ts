@@ -56,7 +56,7 @@ export const getScorecardContext = createServerFn({ method: "POST" })
       .from("interviews")
       .select(
         sel(
-          "id, candidate_match_id, organization_id, position_id, status, scheduled_at, candidate_matches:candidate_match_id(candidate_profiles:candidate_profile_id(display_name, full_name)), positions:position_id(title, requirements, preferred_requirements)",
+          "id, candidate_match_id, organization_id, position_id, status, scheduled_at, candidate_matches:candidate_match_id(candidate_profiles:candidate_profile_id(full_name)), positions:position_id(title, requirements, preferred_requirements)",
         ),
       )
       .eq("id", data.interviewId)
@@ -92,7 +92,7 @@ export const getScorecardContext = createServerFn({ method: "POST" })
     return {
       interview_id: row.id,
       candidate_match_id: row.candidate_match_id,
-      candidate_name: cp?.display_name ?? cp?.full_name ?? "Candidate",
+      candidate_name: cp?.full_name ?? cp?.full_name ?? "Candidate",
       position_title: row.positions?.title ?? "Position",
       scheduled_at: row.scheduled_at ?? null,
       status: row.status,

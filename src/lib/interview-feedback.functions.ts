@@ -71,7 +71,7 @@ function normNextStep(v: unknown): FeedbackNextStep | null {
 
 function nameOf(match: AnyRow): string {
   const cp = match?.candidate_profiles ?? null;
-  return cp?.display_name ?? cp?.full_name ?? "Candidate";
+  return cp?.full_name ?? "Candidate";
 }
 
 /**
@@ -91,7 +91,7 @@ export const listInterviewsAwaitingFeedback = createServerFn({ method: "POST" })
       .from("interviews")
       .select(
         sel(
-          "id, candidate_match_id, position_id, status, scheduled_at, completed_at, interview_type, candidate_matches:candidate_match_id(candidate_profiles:candidate_profile_id(display_name, full_name)), positions:position_id(title)",
+          "id, candidate_match_id, position_id, status, scheduled_at, completed_at, interview_type, candidate_matches:candidate_match_id(candidate_profiles:candidate_profile_id(full_name)), positions:position_id(title)",
         ),
       )
       .eq("organization_id", data.orgId)
@@ -154,7 +154,7 @@ export const getMatchFeedback = createServerFn({ method: "POST" })
         .from("interviews")
         .select(
           sel(
-            "id, candidate_match_id, position_id, status, scheduled_at, completed_at, interview_type, candidate_matches:candidate_match_id(candidate_profiles:candidate_profile_id(display_name, full_name)), positions:position_id(title)",
+            "id, candidate_match_id, position_id, status, scheduled_at, completed_at, interview_type, candidate_matches:candidate_match_id(candidate_profiles:candidate_profile_id(full_name)), positions:position_id(title)",
           ),
         )
         .eq("organization_id", data.orgId)
