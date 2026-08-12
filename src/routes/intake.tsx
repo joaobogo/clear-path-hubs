@@ -2761,11 +2761,6 @@ function ExpressIntakePage() {
               </p>
             )}
 
-            <FieldExamples
-              field="deal_breakers"
-              roleTitle={state.roleTitle}
-              onUse={(text) => useDealBreakerExample(text)}
-            />
           </fieldset>
 
           <fieldset className="space-y-3" data-field="interviewStages">
