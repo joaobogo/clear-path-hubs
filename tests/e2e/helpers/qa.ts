@@ -363,6 +363,32 @@ export async function waitForHydration(page: Page): Promise<void> {
   await expect(hide).toBeVisible();
 }
 
+/**
+ * Waits until the intake wizard's first step is interactive.
+ *
+ * The summary toggle used by {@link waitForHydration} only exists on the final
+ * review step, so the wizard needs a step-1 proof of hydration: the password
+ * visibility toggle is pure client state, so a response to it means handlers
+ * are attached. The toggle is restored afterwards so the test starts from the
+ * same state it found.
+ */
+export async function waitForIntakeHydration(page: Page): Promise<void> {
+  const passwordField = page.locator("#account-password");
+  const showPassword = page.getByRole("button", { name: /show password/i }).first();
+  const hidePassword = page.getByRole("button", { name: /hide password/i }).first();
+  await expect
+    .poll(
+      async () => {
+        await showPassword.click({ timeout: 2_000 }).catch(() => undefined);
+        return await passwordField.getAttribute("type").catch(() => null);
+      },
+      { timeout: 45_000, intervals: [250, 500, 1_000] },
+    )
+    .toBe("text");
+  await hidePassword.click();
+  await expect(passwordField).toHaveAttribute("type", "password");
+}
+
 /** Collects console errors so a test can assert a clean run. */
 export function collectConsoleErrors(page: Page): string[] {
   const errors: string[] = [];

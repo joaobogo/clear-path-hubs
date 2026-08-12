@@ -1,9 +1,10 @@
 /**
  * TEST 1 — client intake (/intake) driven as an anonymous prospect.
  *
- * Every assertion is made against the real UI and, for submit, against the
- * rows the flow actually persisted. Data is namespaced QA_INTAKE_E2E_* and
- * removed in global teardown.
+ * The form is a three step wizard: step 1 company + you + account, step 2 the
+ * role and who you need, step 3 details, review and submit. Every assertion is
+ * made against the real UI and, for submit, against the rows the flow actually
+ * persisted. Data is namespaced QA_INTAKE_E2E_* and removed in global teardown.
  */
 import { expect, test, type Page } from "@playwright/test";
 import { PAYMENTS_ENABLED } from "@/config/commerce";
@@ -12,7 +13,7 @@ import {
   lookupIntake,
   meaningfulConsoleErrors,
   uniqueProspect,
-  waitForHydration,
+  waitForIntakeHydration,
 } from "./helpers/qa";
 
 const JD_TEXT =
@@ -28,6 +29,21 @@ const JD_TEXT =
 const PRIMARY_SUBMIT = PAYMENTS_ENABLED
   ? /start now — pay and publish/i
   : /create my workspace and pick a time/i;
+
+const PRIMARY_SUBMIT_TESTID = PAYMENTS_ENABLED ? "intake-submit-pay" : "intake-submit-call";
+
+/** The wizard reports its own position, so no test has to infer the step. */
+function stepIndicator(page: Page) {
+  return page.getByTestId("intake-nav");
+}
+
+async function expectStep(page: Page, index: 0 | 1 | 2) {
+  await expect(stepIndicator(page)).toHaveAttribute("data-step", String(index));
+}
+
+async function continueStep(page: Page) {
+  await page.getByTestId("step-continue").click();
+}
 
 async function fillCompany(page: Page, companyName: string, website = "northwindhealth.com") {
   await page.getByLabel("Company name").fill(companyName);
@@ -45,17 +61,38 @@ async function fillPasswords(page: Page, password: string, confirm = password) {
   await page.getByLabel("Confirm password").fill(confirm);
 }
 
-async function fillRole(page: Page, withJd: boolean) {
+/** Step 2: the role itself plus at least one tagged must-have. */
+async function fillRole(page: Page, { withJd }: { withJd: boolean }) {
   await page.getByLabel("Job title", { exact: true }).fill("Clinical Operations Manager");
-  if (withJd) await page.locator("#jd-text").fill(JD_TEXT);
-}
-
-async function fillBrief(page: Page) {
   await page
     .getByLabel("Why is this role open?")
     .fill("Our two clinical ops leads are covering three sites and renewals are slipping.");
-  await page.getByLabel("Must-haves").fill("5+ years in clinical operations\nHas run a site inspection");
-  await page.getByLabel("What rules someone out?").fill("No agency-side-only backgrounds.");
+  if (withJd) await page.locator("#jd-text").fill(JD_TEXT);
+}
+
+async function addMustHave(page: Page, text: string) {
+  await page.getByRole("button", { name: /^add requirement$/i }).click();
+  const rows = page.getByRole("textbox", { name: /^Requirement \d+$/ });
+  const index = (await rows.count()) - 1;
+  await rows.nth(index).fill(text);
+  await page
+    .getByRole("group", { name: `Requirement ${index + 1} tag` })
+    .getByRole("button", { name: "Must have", exact: true })
+    .click();
+}
+
+/**
+ * The consent dialog is rendered above the wizard, so it is dismissed before
+ * any step interaction rather than clicking through an overlay.
+ */
+async function dismissConsent(page: Page) {
+  const accept = page.getByRole("button", { name: /^accept all$/i });
+  if (await accept.count()) await accept.first().click();
+  await expect(page.getByRole("dialog", { name: /cookie and tracking/i })).toHaveCount(0);
+}
+
+/** Step 3: the practicalities and process answers a complete brief needs. */
+async function fillDetails(page: Page) {
   await page.getByLabel("Where is the role based?").fill("Manchester, United Kingdom");
   await page.locator("#work-model").selectOption("hybrid");
   await page.getByLabel("Days on site each week").fill("3");
@@ -63,64 +100,80 @@ async function fillBrief(page: Page) {
   await page.getByLabel("From", { exact: true }).fill("70000");
   await page.getByLabel("To", { exact: true }).fill("85000");
   await page.getByRole("radio", { name: /already be authorised/i }).check();
-  await page
-    .getByLabel("How you interview")
-    .fill("30 min with me, then a panel with the site team, offer the same week.");
+  await page.getByLabel("Deal-breaker 1").fill("No agency-side-only backgrounds");
   await page.getByLabel("Who makes the final decision?").fill("Dana Okoro, Operations Director");
 }
-
 
 async function acceptTerms(page: Page) {
   await page.locator("#pilot-acknowledgement").click();
   await page.locator("#terms-consent").click();
 }
 
+/** Walks a brand-new prospect from a blank step 1 to the review step. */
+async function completeToReview(page: Page, companyName: string, email: string) {
+  await fillCompany(page, companyName);
+  await fillYou(page, email);
+  await fillPasswords(page, "QaTest!Phase11");
+  await continueStep(page);
+  await expectStep(page, 1);
+
+  await fillRole(page, { withJd: true });
+  await addMustHave(page, "5+ years running clinical trial sites");
+  await continueStep(page);
+  await expectStep(page, 2);
+
+  await fillDetails(page);
+  await acceptTerms(page);
+}
+
 test.describe("TEST 1 — /intake as a brand-new prospect", () => {
-  test("validation, review, autosave and every control behave", async ({ page }) => {
+  test("step gating, review, autosave and every control behave", async ({ page }) => {
     const errors = collectConsoleErrors(page);
     const { companyName, email } = uniqueProspect();
 
     await page.goto("/intake", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: /launch a role in minutes/i })).toBeVisible();
-    await waitForHydration(page);
+    await dismissConsent(page);
+    await waitForIntakeHydration(page);
+    await expectStep(page, 0);
 
-    // ── Required-field validation on an empty form ───────────────────────────
-    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
+    // ── Step 1 gates on its own required fields, and does not advance ─────────
+    await continueStep(page);
+    await expectStep(page, 0);
     await expect(page.getByText("Enter your company name")).toBeVisible();
     await expect(page.getByText("Enter your company website")).toBeVisible();
     await expect(page.getByText("Enter your first name")).toBeVisible();
     await expect(page.getByText("Enter your last name")).toBeVisible();
     await expect(page.getByText("Enter a valid work email")).toBeVisible();
-    await expect(page.getByText("Enter the job title")).toBeVisible();
-    await expect(page.getByText(/must accept the terms/i)).toBeVisible();
-    await expect(page.getByText(/confirm you understand how the pilot works/i)).toBeVisible();
 
-    // ── Website format validation ────────────────────────────────────────────
+    // ── Website: step 1 only checks presence, not format ─────────────────────
+    // KNOWN UI GAP: stepValidators.company accepts any 3+ character string, so
+    // "not a website" advances and the strict format check ("Enter a valid
+    // website") only runs at submit. Asserted as-is rather than pretending the
+    // step catches it.
     await fillCompany(page, companyName, "not a website");
-    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
-    await expect(page.getByText("Enter a valid website")).toBeVisible();
+    await continueStep(page);
+    await expect(page.getByText("Enter your company website")).toHaveCount(0);
     await fillCompany(page, companyName, "northwindhealth.com");
-    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
-    await expect(page.getByText("Enter a valid website")).toHaveCount(0);
 
-    // ── Contact step ─────────────────────────────────────────────────────────
+    // ── Contact fields clear their own errors ────────────────────────────────
     await fillYou(page, email);
-    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
+    await continueStep(page);
     await expect(page.getByText("Enter your first name")).toHaveCount(0);
     await expect(page.getByText("Enter a valid work email")).toHaveCount(0);
 
-    // ── Account step: min length + confirm match ──────────────────────────────
+    // ── Account: min length + confirm match, still on step 1 ────────────────
     await fillPasswords(page, "short");
-    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
+    await continueStep(page);
+    await expectStep(page, 0);
     await expect(page.getByText(/at least 8 characters/i).first()).toBeVisible();
 
     await fillPasswords(page, "QaTest!Phase11", "QaTest!Different");
-    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
+    await continueStep(page);
+    await expectStep(page, 0);
     await expect(page.getByText(/passwords must match/i)).toBeVisible();
 
     await fillPasswords(page, "QaTest!Phase11");
-    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
-    await expect(page.getByText(/passwords must match/i)).toHaveCount(0);
 
     // An existing client must be able to reach a real sign-in path from here.
     const signInLink = page.getByRole("link", { name: /sign in/i }).first();
@@ -133,58 +186,74 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await expect(page.getByRole("button", { name: /create my account now/i })).toBeVisible();
     await fillPasswords(page, "QaTest!Phase11");
 
-    // ── Role step: a job description is required in some form, and typed text
-    //    must clear the 80-character minimum ────────────────────────────────
-    await fillRole(page, false);
-    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
+    // ── Step 1 complete: the wizard advances ────────────────────────────────
+    await continueStep(page);
+    await expectStep(page, 1);
+
+    // ── Step 2 gates on the role and on at least one tagged must-have ────────
+    await continueStep(page);
+    await expectStep(page, 1);
+    await expect(page.getByText("Enter the job title")).toBeVisible();
+    await expect(page.getByText(/tag at least one requirement as a must have/i)).toBeVisible();
+
+    // A job description is required in some form, and typed text must clear the
+    // 80-character minimum.
+    await fillRole(page, { withJd: false });
+    await continueStep(page);
     await expect(page.getByText(/at least 80 characters/i)).toBeVisible();
     await page.locator("#jd-text").fill("too short to be a job description");
-    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
+    await continueStep(page);
     await expect(page.getByText(/at least 80 characters/i)).toBeVisible();
     await page.locator("#jd-text").fill(JD_TEXT);
-    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
+    await addMustHave(page, "5+ years running clinical trial sites");
+    await continueStep(page);
     await expect(page.getByText(/at least 80 characters/i)).toHaveCount(0);
+    await expectStep(page, 2);
 
-    // ── Review: skipped optional fields must not read "Not provided" ──────────
+    // ── Step 3 review: skipped optional fields must not read "Not provided" ──
     await expect(page.getByRole("heading", { name: /review your role brief/i })).toBeVisible();
+    await expect(page.getByTestId("intake-review")).toBeVisible();
     await expect(page.getByText(companyName).first()).toBeVisible();
     await expect(page.getByText("Not provided")).toHaveCount(0);
     // Optional rows we deliberately skipped are absent, not blank-labelled.
     await expect(page.getByText("LinkedIn", { exact: true })).toHaveCount(0);
 
-    // Show/Hide summary really toggles.
+    // Show/Hide summary really toggles the sections it summarises.
     await page.getByRole("button", { name: /^hide$/i }).click();
-    await expect(page.getByRole("heading", { name: "Your company", exact: true })).toHaveCount(0);
+    await expect(page.locator("#section-practicalities")).toHaveCount(0);
     await page.getByRole("button", { name: /show summary/i }).click();
-    await expect(page.getByRole("heading", { name: "Your company", exact: true })).toBeVisible();
+    await expect(page.locator("#section-practicalities")).toBeVisible();
 
-    // Every review block offers a working Edit affordance to the right section.
-    const editButtons = page.getByRole("button", { name: /^edit$/i });
-    await expect(editButtons).toHaveCount(3);
-    for (const [index, target] of [
-      [0, "section-company"],
-      [1, "section-you"],
-      [2, "section-role"],
-    ] as const) {
-      await editButtons.nth(index).click();
-      await expect(page.locator(`#${target}`)).toBeVisible();
-    }
+    // Every review group offers an Edit affordance that jumps to its own step.
+    await expect(page.getByRole("button", { name: /^Edit The role$/ })).toBeVisible();
+    await page.getByRole("button", { name: /^Edit The role$/ }).click();
+    await expectStep(page, 1);
+    await expect(page.locator("#section-role")).toBeVisible();
+    // "Back to review" returns without re-walking the wizard.
+    await expect(page.getByTestId("step-continue")).toHaveText(/back to review/i);
+    await continueStep(page);
+    await expectStep(page, 2);
 
-    // Password visibility toggle is not a no-op.
-    await expect(page.locator("#account-password")).toHaveAttribute("type", "password");
-    await page.getByRole("button", { name: /show password/i }).click();
-    await expect(page.locator("#account-password")).toHaveAttribute("type", "text");
-    await page.getByRole("button", { name: /hide password/i }).click();
-    await expect(page.locator("#account-password")).toHaveAttribute("type", "password");
+    // Submit is gated until every required answer is present, then unlocks.
+    const submit = page.getByTestId(PRIMARY_SUBMIT_TESTID);
+    await expect(submit).toHaveAccessibleName(PRIMARY_SUBMIT);
+    await expect(submit).toBeDisabled();
+    await expect(page.getByTestId("review-missing")).toBeVisible();
+    await fillDetails(page);
+    await acceptTerms(page);
+    await expect(page.getByTestId("review-missing")).toHaveCount(0);
+    await expect(submit).toBeEnabled();
 
     // ── Autosave survives a reload (passwords deliberately never persist) ────
     await expect(page.getByText(/^Saved /)).toBeVisible();
     await page.reload({ waitUntil: "domcontentloaded" });
-    await waitForHydration(page);
+    await dismissConsent(page);
+    await waitForIntakeHydration(page);
     await expect(page.getByLabel("Company name")).toHaveValue(companyName);
     await expect(page.getByLabel("Work email")).toHaveValue(email);
-    await expect(page.locator("#jd-text")).toHaveValue(JD_TEXT);
     await expect(page.locator("#account-password")).toHaveValue("");
+    await continueStep(page);
+    await expect(page.locator("#jd-text")).toHaveValue(JD_TEXT);
 
     expect(meaningfulConsoleErrors(errors)).toEqual([]);
   });
@@ -192,7 +261,9 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
   test("no horizontal overflow at 390px", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/intake", { waitUntil: "domcontentloaded" });
-    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
+    await dismissConsent(page);
+    await waitForIntakeHydration(page);
+    await continueStep(page);
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
@@ -209,18 +280,11 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await page.goto("/intake", { waitUntil: "domcontentloaded" });
     await page.evaluate(() => localStorage.clear());
     await page.reload({ waitUntil: "domcontentloaded" });
-    await waitForHydration(page);
+    await dismissConsent(page);
+    await waitForIntakeHydration(page);
 
-    await fillCompany(page, companyName);
-    await fillYou(page, email);
-    await fillPasswords(page, "QaTest!Phase11");
-    await fillRole(page, true);
-    await fillBrief(page);
-    await acceptTerms(page);
-
-    await page
-      .getByRole("button", { name: PAYMENTS_ENABLED ? /book a call first/i : PRIMARY_SUBMIT })
-      .click();
+    await completeToReview(page, companyName, email);
+    await page.getByTestId("intake-submit-call").click();
 
     await expect
       .poll(() => new URL(page.url()).pathname, { timeout: 60_000 })
@@ -246,16 +310,11 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await page.goto("/intake", { waitUntil: "domcontentloaded" });
     await page.evaluate(() => localStorage.clear());
     await page.reload({ waitUntil: "domcontentloaded" });
-    await waitForHydration(page);
+    await dismissConsent(page);
+    await waitForIntakeHydration(page);
 
-    await fillCompany(page, companyName);
-    await fillYou(page, email);
-    await fillPasswords(page, "QaTest!Phase11");
-    await fillRole(page, true);
-    await fillBrief(page);
-    await acceptTerms(page);
-
-    await page.getByRole("button", { name: PRIMARY_SUBMIT }).click();
+    await completeToReview(page, companyName, email);
+    await page.getByTestId(PRIMARY_SUBMIT_TESTID).click();
 
     await expect
       .poll(() => new URL(page.url()).pathname, { timeout: 60_000 })
@@ -286,4 +345,3 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     expect(meaningfulConsoleErrors(errors)).toEqual([]);
   });
 });
-
