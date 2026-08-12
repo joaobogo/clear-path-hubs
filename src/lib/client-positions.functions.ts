@@ -187,7 +187,10 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
 
     // Recent activity — sanitized safe audit trail for this position.
     // Filter out internal admin_note / scoring_weight / score_run.* actions.
-    const { data: rawActivity } = await context.supabase
+    // audit_events is staff-only under RLS, so read it with the admin client
+    // after the workspace check above and keep the org/position/action filters.
+    const { supabaseAdmin: auditDb } = await import("@/integrations/supabase/client.server");
+    const { data: rawActivity } = await (auditDb as AnyRow)
       .from("audit_events")
       .select("id, action, created_at, actor_user_id")
       .eq("organization_id", data.orgId)
