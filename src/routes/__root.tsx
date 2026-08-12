@@ -145,6 +145,15 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style={{ display: "none" }}
+            alt=""
+            src="https://px.ads.linkedin.com/collect/?pid=10685401&fmt=gif"
+          />
+        </noscript>
         <Scripts />
       </body>
     </html>
