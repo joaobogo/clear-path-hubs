@@ -191,9 +191,12 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await expect(page.getByRole("button", { name: /create my account now/i })).toBeVisible();
     await fillPasswords(page, "QaTest!Phase11");
 
-    // ── Step 1 complete: the wizard advances ────────────────────────────────
+    // ── Step 1 complete: the wizard advances and its errors are gone ─────────
     await continueStep(page);
     await expectStep(page, 1);
+    await expect(page.getByText("Enter your first name")).toHaveCount(0);
+    await expect(page.getByText("Enter a valid work email")).toHaveCount(0);
+
 
 
     // ── Step 2 gates on the role and on at least one tagged must-have ────────
