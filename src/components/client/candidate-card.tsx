@@ -179,7 +179,7 @@ export function CandidateCard({
                 />
                 <span className="min-w-0">
                   <span className="font-medium text-foreground">{b.requirement}</span>
-                  <span className="text-muted-foreground"> — {b.claim}</span>
+                  {b.claim && <span className="text-muted-foreground"> — {b.claim}</span>}
                   <span className="ml-1 text-[10px] text-muted-foreground/80">[{b.where}]</span>
                 </span>
               </li>
