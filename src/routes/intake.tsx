@@ -1303,17 +1303,6 @@ function ExpressIntakePage() {
     });
   };
 
-  /** An example lands in the first empty line, or appends a new one. */
-  const useDealBreakerExample = (text: string) => {
-    setState((s) => {
-      const next = [...s.dealBreakerList];
-      const slot = next.findIndex((l) => l.trim().length === 0);
-      if (slot >= 0) next[slot] = text;
-      else if (next.length < MAX_DEAL_BREAKERS) next.push(text);
-      else return s;
-      return { ...s, dealBreakerList: next };
-    });
-  };
 
   const useExample = (key: "dealBreakers" | "interviewProcess", text: string) => {
 
