@@ -2591,7 +2591,7 @@ function ExpressIntakePage() {
                 label="Bonus structure" carried={isCarried("bonusStructure")}
                 error={errors.bonusStructure}
                 required={req["bonusStructure"]}
-                hint="Only what you would actually pay."
+                hint="Only what you would actually offer."
               >
                 <Input
                   value={state.bonusStructure}
