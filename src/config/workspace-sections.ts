@@ -16,6 +16,7 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
       { to: "/client/positions", label: "Roles" },
       { to: "/client/interviews", label: "Interviews" },
       { to: "/client/offers", label: "Offers" },
+      { to: "/client/approvals", label: "Approvals" },
     ],
   },
   {
@@ -29,31 +30,12 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
     ],
   },
   {
-    id: "insights",
-    label: "Insights",
+    id: "messages",
+    label: "Messages",
     tabs: [
-      { to: "/client/intelligence", label: "Hiring Intelligence" },
-      { to: "/client/analytics", label: "Questions" },
-      { to: "/client/dashboards", label: "Dashboards" },
-      { to: "/client/data", label: "Your data" },
-    ],
-  },
-  {
-    id: "reporting",
-    label: "Reporting",
-    tabs: [
-      { to: "/client/executive", label: "Executive" },
-      { to: "/client/portfolio", label: "Portfolio" },
-    ],
-  },
-
-  {
-    id: "automation",
-    label: "Assistant",
-    tabs: [
-      { to: "/client/assistant", label: "Assistant" },
-      { to: "/client/agents", label: "Agents" },
-      { to: "/client/outreach", label: "Outreach" },
+      { to: "/client/conversations", label: "Threads" },
+      { to: "/client/inbox", label: "Inbox" },
+      { to: "/client/messages", label: "All messages" },
     ],
   },
   {
@@ -61,6 +43,32 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
     label: "Account",
     tabs: [
       { to: "/client/account", label: "Account" },
+      { to: "/client/team", label: "Team" },
+      { to: "/client/plan", label: "Plan & billing" },
+      { to: "/client/settings", label: "Settings" },
+      { to: "/client/onboarding", label: "Setup" },
+    ],
+  },
+  {
+    id: "insights",
+    label: "Insights",
+    tabs: [
+      { to: "/client/intelligence", label: "Hiring Intelligence" },
+      { to: "/client/analytics", label: "Questions" },
+      { to: "/client/dashboards", label: "Dashboards" },
+      { to: "/client/data", label: "Your data" },
+      { to: "/client/executive", label: "Executive" },
+      { to: "/client/portfolio", label: "Portfolio" },
+    ],
+  },
+  {
+    id: "automation",
+    label: "Assistant",
+    tabs: [
+      { to: "/client/assistant", label: "Assistant" },
+      { to: "/client/agents", label: "Agents" },
+      { to: "/client/outreach", label: "Outreach" },
+      { to: "/client/tasks", label: "Tasks" },
     ],
   },
 ];

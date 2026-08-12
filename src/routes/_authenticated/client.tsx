@@ -36,17 +36,10 @@ import {
  Briefcase,
  Users,
  MessageSquare,
- UserCog,
  Building2,
-	Settings,
-	Award,
-	Database,
 	Bot,
-	CheckSquare,
 	Gauge,
  	Plus,
- 	Send,
- 	CreditCard,
 } from "lucide-react";
 import {
  WorkspaceShell,
@@ -106,21 +99,18 @@ export const Route = createFileRoute("/_authenticated/client")({
 
 type NavDef = WorkspaceNavItem & { everyone: boolean };
 
-// Part 9 subtraction, then hierarchy: four primary entries carry the decision
-// job (see what needs you, work a role, judge a candidate, approve). Everything
-// else is a subordinate "More" group. URLs are unchanged — this is hierarchy
-// only, so nothing became unreachable.
+// Five primary destinations (Overview, Roles, Candidates, Messages, Account)
+// carry the whole client job; everything else is demoted into "More" or into
+// tabs inside those pages (see CLIENT_SECTION_GROUPS). Nothing was deleted and
+// no URL changed — demotion only, so every bookmark still resolves.
 const TABS: NavDef[] = [
 	{ to: "/client", label: "Overview", icon: LayoutDashboard, exact: true, everyone: true, hint: "What needs you today" },
-	{ to: "/client/positions", label: "Roles", icon: Briefcase, everyone: true, hint: "Roles, interviews, offers" },
-	{ to: "/client/candidates", label: "Candidates", icon: Users, everyone: true, hint: "Shortlist, talent pool, shared links" },
-	{ to: "/client/approvals", label: "Approvals", icon: CheckSquare, everyone: true, hint: "Decisions waiting on you" },
-	{ to: "/client/conversations", label: "Messages", icon: MessageSquare, everyone: true, group: "More", subdued: true, hint: "One thread per role and candidate" },
-	{ to: "/client/intelligence", label: "Insights", icon: Gauge, everyone: true, group: "More", subdued: true, hint: "Questions, dashboards, your data" },
-	{ to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true, group: "More", subdued: true, hint: "Assistant, agents, outreach" },
-	{ to: "/client/talent-memory", label: "Talent memory", icon: Award, everyone: true, group: "More", subdued: true, hint: "People we already know" },
-	{ to: "/client/onboarding", label: "Setup", icon: Settings, everyone: false, group: "More", subdued: true, hint: "Configure your hiring system" },
-	{ to: "/client/account", label: "Account", icon: Building2, everyone: false, group: "More", subdued: true, hint: "Team, plan, settings" },
+	{ to: "/client/positions", label: "Roles", icon: Briefcase, everyone: true, hint: "Roles, interviews, offers, approvals" },
+	{ to: "/client/candidates", label: "Candidates", icon: Users, everyone: true, hint: "Shortlist, talent pool, talent memory, shared links" },
+	{ to: "/client/conversations", label: "Messages", icon: MessageSquare, everyone: true, hint: "Threads, inbox, all messages" },
+	{ to: "/client/account", label: "Account", icon: Building2, everyone: false, hint: "Team, plan, settings, setup" },
+	{ to: "/client/intelligence", label: "Insights", icon: Gauge, everyone: true, group: "More", subdued: true, hint: "Questions, dashboards, reporting, your data" },
+	{ to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true, group: "More", subdued: true, hint: "Assistant, agents, outreach, tasks" },
 ];
 
 
