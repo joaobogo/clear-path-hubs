@@ -217,25 +217,14 @@ function OverviewPage() {
           >
             <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
           </Button>
-          {canSubmit && (
-            <Link to="/intake">
-              <Button size="sm" className="min-h-11">
-                <span className="hidden sm:inline">Submit a new position</span>
-                <span className="sm:hidden">New role</span>
-                <ArrowRight className="ml-1.5 h-4 w-4" />
-              </Button>
-            </Link>
-          )}
+          {/* "Create role" already lives in the top bar — one label, one button,
+              one place. No second primary action here. */}
         </div>
       </header>
 
       {/* Is the system working, and is what I'm looking at current? */}
       <SystemHealthStrip organizationId={orgId} />
 
-      {/* Everything still waiting on you, overdue work first. */}
-      <div className="mt-4">
-        <OpenItemsStrip orgId={orgId} />
-      </div>
 
 
       {/* One aggregate signal for the four independent panels on this page. */}
@@ -286,7 +275,24 @@ function OverviewPage() {
           )}
 
 
-          {/* 1 · HIRING HEALTH — one sentence, three figures, above the queue */}
+          {/* 1 · WHAT NEEDS ME RIGHT NOW — the one decision block, first */}
+          <DecisionQueue
+            rows={queue}
+            meta={(data as Any)?.decision_queue_meta ?? null}
+            loading={overviewPanel.loading}
+            isError={overviewPanel.isError}
+            onRetry={retryAll}
+            orgId={orgId ?? null}
+            orgSearch={orgSearch ?? null}
+          />
+
+          {/* Anything else still waiting on you, overdue first */}
+          <OpenItemsStrip orgId={orgId} />
+
+          {/* Missing brief details block sourcing — answerable in place */}
+          <InfoRequestsPanel orgId={orgId} onAnswered={() => refetch()} />
+
+          {/* 2 · PROGRESS — one sentence, three figures */}
           <HiringHealthLine
             notCurrent={pipelineNotCurrent}
             notCurrentReason={readiness.reasonFor("Pipeline overview")}
@@ -309,19 +315,6 @@ function OverviewPage() {
             org={orgSearch ?? null}
           />
 
-          {/* 2 · WHAT NEEDS ME TODAY — the only thing on the first screen */}
-          <DecisionQueue
-            rows={queue}
-            meta={(data as Any)?.decision_queue_meta ?? null}
-            loading={overviewPanel.loading}
-            isError={overviewPanel.isError}
-            onRetry={retryAll}
-            orgId={orgId ?? null}
-            orgSearch={orgSearch ?? null}
-          />
-
-          {/* Missing brief details block sourcing — answerable in place */}
-          <InfoRequestsPanel orgId={orgId} onAnswered={() => refetch()} />
 
           {/* This week — recorded events only, identical to the weekly email */}
           {orgId && <WeeklyUpdateCard orgId={orgId} />}
