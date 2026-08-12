@@ -9,8 +9,8 @@
  * the client after hydration. Every function is wrapped so a blocked or
  * failing tag can never break the app.
  *
- * Live: GA4, Apollo website tracker, RB2B (Retention.com).
- * Dormant until their env var is set: Meta, LinkedIn, Clarity, Hotjar.
+ * Live: GA4, Apollo website tracker, RB2B (Retention.com), LinkedIn Insight Tag.
+ * Dormant until their env var is set: Meta, Clarity, Hotjar.
  */
 
 import { type ConsentCategory } from "./consent";
