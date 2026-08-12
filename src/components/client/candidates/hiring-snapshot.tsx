@@ -1,8 +1,17 @@
 import { SnapshotTile } from "@/components/client/candidates/snapshot-tile";
+import { QueryErrorCard } from "@/components/client/query-error";
 
+/**
+ * Six figures, and never a lie: if the numbers didn't load, the tiles say so
+ * and offer a Retry instead of holding a skeleton or showing a hopeful zero.
+ */
 export function HiringSnapshot({
   overview,
   kpisLoading,
+  isError = false,
+  error,
+  onRetry,
+  retrying = false,
   orgSearch,
 }: {
   overview: {
@@ -16,58 +25,50 @@ export function HiringSnapshot({
     };
   } | undefined;
   kpisLoading: boolean;
+  isError?: boolean;
+  error?: unknown;
+  onRetry?: () => void;
+  retrying?: boolean;
   orgSearch: string | undefined;
 }) {
+  if (isError) {
+    return (
+      <section aria-label="Hiring snapshot" className="mb-6">
+        <QueryErrorCard
+          compact
+          title="We couldn't load your pipeline figures"
+          error={error}
+          onRetry={onRetry}
+          retrying={retrying}
+        />
+      </section>
+    );
+  }
+
+  const kpis = overview?.kpis;
+  const tiles = [
+    { label: "Delivered", value: kpis?.delivered, filter: undefined },
+    { label: "Top matches", value: kpis?.top, filter: { fit: "strong" } },
+    { label: "Shortlisted", value: kpis?.shortlisted, filter: { stage: "shortlisted" } },
+    { label: "Interviewing", value: kpis?.interviewing, filter: { stage: "interview_process" } },
+    { label: "Offers", value: kpis?.offers, filter: { stage: "offer" } },
+    { label: "Hires", value: kpis?.hires, filter: { stage: "hired" } },
+  ] as const;
+
   return (
     <section aria-label="Hiring snapshot" className="mb-6">
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-        <SnapshotTile
-          label="Delivered"
-          value={overview?.kpis.delivered}
-          loading={kpisLoading && !overview}
-          to="/client/candidates"
-          org={orgSearch}
-        />
-        <SnapshotTile
-          label="Top matches"
-          value={overview?.kpis.top}
-          loading={kpisLoading && !overview}
-          to="/client/candidates"
-          filter={{ fit: "strong" }}
-          org={orgSearch}
-        />
-        <SnapshotTile
-          label="Shortlisted"
-          value={overview?.kpis.shortlisted}
-          loading={kpisLoading && !overview}
-          to="/client/candidates"
-          filter={{ stage: "shortlisted" }}
-          org={orgSearch}
-        />
-        <SnapshotTile
-          label="Interviewing"
-          value={overview?.kpis.interviewing}
-          loading={kpisLoading && !overview}
-          to="/client/candidates"
-          filter={{ stage: "interview_process" }}
-          org={orgSearch}
-        />
-        <SnapshotTile
-          label="Offers"
-          value={overview?.kpis.offers}
-          loading={kpisLoading && !overview}
-          to="/client/candidates"
-          filter={{ stage: "offer" }}
-          org={orgSearch}
-        />
-        <SnapshotTile
-          label="Hires"
-          value={overview?.kpis.hires}
-          loading={kpisLoading && !overview}
-          to="/client/candidates"
-          filter={{ stage: "hired" }}
-          org={orgSearch}
-        />
+        {tiles.map((tile) => (
+          <SnapshotTile
+            key={tile.label}
+            label={tile.label}
+            value={tile.value}
+            loading={kpisLoading && !overview}
+            to="/client/candidates"
+            filter={tile.filter as Record<string, string> | undefined}
+            org={orgSearch}
+          />
+        ))}
       </div>
     </section>
   );

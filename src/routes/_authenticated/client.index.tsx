@@ -14,6 +14,7 @@ import { RoleDetailsNeededBanner } from "@/components/client/role-details-needed
 import { QueryErrorCard } from "@/components/client/query-error";
 import { DegradedPanelsBanner, NotCurrentChip } from "@/components/client/degraded-banner";
 import { panelReadiness, panelSignal } from "@/lib/panel-readiness";
+import { orgGate, panelState, useStuckAfter } from "@/lib/client/panel-gate";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { VisibilityNote } from "@/components/client/visibility-note";
@@ -120,6 +121,25 @@ function OverviewPage() {
     return () => window.removeEventListener("client:refresh", onRefresh);
   }, [refetch]);
 
+  // The workspace lookup gates every panel below. If it fails, or resolves to
+  // no workspace, the dependent queries stay disabled forever — so the gate is
+  // reported as a panel failure instead of leaving skeletons on screen.
+  const gate = orgGate(ctxQuery, orgId);
+  const overviewStuck = useStuckAfter(!data && !gate.failed);
+  const overviewPanel = panelState({
+    gate,
+    hasData: data !== undefined,
+    isFetching,
+    isError,
+    error,
+    stuck: overviewStuck,
+  });
+  const retryAll = () => {
+    if (gate.failed) gate.retry();
+    void refetch();
+  };
+
+
   // One readiness summary for the four independent queries on this page.
   const readiness = panelReadiness([
     panelSignal("Workspace access", ctxQuery),
@@ -220,14 +240,15 @@ function OverviewPage() {
       {/* One aggregate signal for the four independent panels on this page. */}
       <DegradedPanelsBanner retrying={readiness.retrying} panels={readiness.signals} />
 
-      {isError && !data && (
+      {overviewPanel.isError && (
         <QueryErrorCard
-          title="We couldn't load your overview"
-          error={error}
-          onRetry={() => refetch()}
-          retrying={isFetching}
+          title={gate.noWorkspace ? "No workspace is attached to this account" : "We couldn't load your overview"}
+          error={overviewPanel.error}
+          onRetry={retryAll}
+          retrying={isFetching || gate.retrying}
         />
       )}
+
       {isError && data && (
         <div className="flex items-center gap-3 rounded-lg border taas-bd-warning taas-bg-warning-soft px-4 py-3 text-sm">
           <AlertTriangle className="h-4 w-4 taas-fg-warning" />
@@ -269,9 +290,9 @@ function OverviewPage() {
             notCurrent={pipelineNotCurrent}
             notCurrentReason={readiness.reasonFor("Pipeline overview")}
             health={data?.hiring_health ?? null}
-            loading={!data && isFetching}
-            isError={isError && !data}
-            onRetry={() => refetch()}
+            loading={overviewPanel.loading}
+            isError={overviewPanel.isError}
+            onRetry={retryAll}
             canSubmit={canSubmit}
             org={orgSearch ?? null}
           />
@@ -281,9 +302,9 @@ function OverviewPage() {
           <NextMilestones
             rows={((data as Any)?.next_milestones ?? null) as MilestoneRow[] | null}
             totalRoles={roles.length}
-            loading={!data && isFetching}
-            isError={(isError && !data) || Boolean((data as Any)?.next_milestones_failed)}
-            onRetry={() => refetch()}
+            loading={overviewPanel.loading}
+            isError={overviewPanel.isError || Boolean((data as Any)?.next_milestones_failed)}
+            onRetry={retryAll}
             org={orgSearch ?? null}
           />
 
@@ -291,12 +312,13 @@ function OverviewPage() {
           <DecisionQueue
             rows={queue}
             meta={(data as Any)?.decision_queue_meta ?? null}
-            loading={!data && isFetching}
-            isError={isError && !data}
-            onRetry={() => refetch()}
+            loading={overviewPanel.loading}
+            isError={overviewPanel.isError}
+            onRetry={retryAll}
             orgId={orgId ?? null}
             orgSearch={orgSearch ?? null}
           />
+
           {/* Missing brief details block sourcing — answerable in place */}
           <InfoRequestsPanel orgId={orgId} onAnswered={() => refetch()} />
 
@@ -352,19 +374,20 @@ function OverviewPage() {
           </div>
 
           {/* 2 · ROLE STATUS — plain language, real dates, honest risk */}
-          <RoleStatusList roles={visibleRoles} loading={!data && isFetching} compact={compact} />
+          <RoleStatusList roles={visibleRoles} loading={overviewPanel.loading} compact={compact} />
 
           {/* 3 · CANDIDATES WAITING ON YOU */}
           <CandidatesReleasedSection
             orgSearch={orgSearch ?? null}
             selectedRole={selectedRole}
             data={data}
-            isFetching={isFetching}
-            isError={isError}
-            error={error}
-            refetch={refetch}
+            isFetching={overviewPanel.loading}
+            isError={overviewPanel.isError}
+            error={overviewPanel.error ?? error}
+            refetch={retryAll}
             latest={latest}
           />
+
 
           {/* 4 · PROMISE VS ACTUAL */}
           <SlaScorecard orgId={orgId} positionId={selectedRole || undefined} />
