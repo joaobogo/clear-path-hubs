@@ -236,8 +236,17 @@ export const listClientInterviews = createServerFn({ method: "POST" })
         .select("id, title, reference_code")
         .in("id", positionIds),
     ]);
+    // Employer roles hold no RLS read on candidate_profiles, so the embed comes
+    // back null and every card would degrade to "Candidate". Fill the already
+    // authorized rows through the shared hydration helper (no contact fields).
+    const { hydrateClientCandidateProfiles } = await import(
+      "@/lib/client-candidate-hydrate.server"
+    );
+    const hydratedMatches = await hydrateClientCandidateProfiles(
+      (matchesRes.data as AnyRow[]) ?? [],
+    );
     const matchMap = new Map<string, AnyRow>();
-    for (const m of ((matchesRes.data as AnyRow[]) ?? [])) {
+    for (const m of hydratedMatches) {
       const cp = (m as AnyRow).candidate_profiles;
       matchMap.set(m.id as string, cp ?? null);
     }
@@ -698,7 +707,10 @@ export const listSchedulableCandidates = createServerFn({ method: "POST" })
       .eq("client_visibility", "visible")
       .in("stage", ["delivered", "shortlisted", "interview_process"]);
     if (error) throw new Error(error.message);
-    const list = (rows as AnyRow[]) ?? [];
+    const { hydrateClientCandidateProfiles: hydrateSchedulable } = await import(
+      "@/lib/client-candidate-hydrate.server"
+    );
+    const list = await hydrateSchedulable((rows as AnyRow[]) ?? []);
 
     const { data: active } = await context.supabase
       .from("interviews")

@@ -58,3 +58,31 @@ export async function hydrateClientCandidateProfiles<T extends AnyRow>(
     return { ...r, candidate_profiles: { ...profile, ...(r.candidate_profiles ?? {}) } };
   }) as T[];
 }
+
+/**
+ * Match id → candidate display name, for surfaces that only hold interview /
+ * scorecard rows. Same authorization story as `hydrateClientCandidateProfiles`:
+ * visibility was already decided by `candidate_matches` RLS, so only rows the
+ * caller can read are resolved, and no contact fields are returned.
+ */
+export async function resolveMatchCandidateNames(
+  supabase: AnyRow,
+  orgId: string,
+  matchIds: string[],
+): Promise<Map<string, string>> {
+  const out = new Map<string, string>();
+  const ids = Array.from(new Set(matchIds.filter(Boolean)));
+  if (ids.length === 0) return out;
+  const { data: matches } = await supabase
+    .from("candidate_matches")
+    .select("id, candidate_profile_id")
+    .eq("organization_id", orgId)
+    .in("id", ids);
+  const rows = ((matches as AnyRow[]) ?? []).map((m) => ({ ...m, candidate_profiles: null }));
+  const hydrated = await hydrateClientCandidateProfiles(rows);
+  for (const r of hydrated) {
+    const name = r?.candidate_profiles?.full_name;
+    if (name) out.set(String(r.id), String(name));
+  }
+  return out;
+}
