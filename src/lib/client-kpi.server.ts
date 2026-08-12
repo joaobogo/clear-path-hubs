@@ -71,6 +71,8 @@ export type KpiRow = {
   stage_entered_at: string | null;
   /** Recorded date the client's decision is due by, when one is stored. */
   client_decision_due_at: string | null;
+  /** The client's recorded decision, or null/"pending" when none was made. */
+  recommendation: string | null;
 };
 
 
@@ -108,7 +110,7 @@ export async function loadKpiRows(
     .from("candidate_matches")
     .select(
       `id, candidate_profile_id, position_id, stage, approved_score_run_id, delivered_at,
-       client_decision_due_at,
+       client_decision_due_at, recommendation,
        score_runs:approved_score_run_id (fit_label, fit_band)`,
     )
     .eq("organization_id", orgId)
@@ -182,6 +184,7 @@ export async function loadKpiRows(
     stage_entered_at: stageEnteredAt.get(m.id) ?? m.delivered_at ?? null,
 
     client_decision_due_at: m.client_decision_due_at ?? null,
+    recommendation: m.recommendation ?? null,
     interview_needs_confirmation: unconfirmedInterviews.has(m.id),
   }));
 }
@@ -202,6 +205,16 @@ export function isInInterview(r: KpiRow): boolean {
   );
 }
 
+/**
+ * One definition of "waiting on the client": delivered to the workspace with no
+ * decision recorded yet. The Overview queue uses the same rule, so the count
+ * and the list can never disagree.
+ */
+export function isAwaitingClientDecision(r: KpiRow): boolean {
+  return r.delivered_at != null && (r.recommendation == null || r.recommendation === "pending");
+}
+
+
 /** Earliest non-null timestamp in a list. */
 function oldest(values: Array<string | null | undefined>): string | null {
   return values.filter((v): v is string => Boolean(v)).sort()[0] ?? null;
@@ -215,12 +228,14 @@ export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
     interviewing: rows.filter(isInInterview).length,
     interview_scheduled: rows.filter((r) => r.interview_scheduled).length,
     interviews_to_confirm: rows.filter((r) => r.interview_needs_confirmation).length,
-    awaiting_decision: rows.filter((r) => r.stage === "delivered").length,
+    awaiting_decision: rows.filter(isAwaitingClientDecision).length,
     offers: rows.filter((r) => r.stage === "offer").length,
     hires: rows.filter((r) => r.stage === "hired").length,
     active_positions: activePositions,
     oldest_awaiting_decision_at: oldest(
-      rows.filter((r) => r.stage === "delivered").map((r) => r.delivered_at ?? r.stage_entered_at),
+      rows
+        .filter(isAwaitingClientDecision)
+        .map((r) => r.delivered_at ?? r.stage_entered_at),
     ),
     oldest_interview_to_confirm_at: oldest(
       rows

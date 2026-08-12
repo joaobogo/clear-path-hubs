@@ -21,6 +21,7 @@ import {
   loadClientEvidenceItems,
   toClientCandidateDTO,
   TOP_FIT_LABELS,
+  isAwaitingClientDecision,
   type MatchStage,
   type KpiRow,
 } from "@/lib/client-kpi.server";
@@ -244,7 +245,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
         offerStartedAt: dates.offer,
       });
 
-      const awaiting = posRows.filter((r) => r.stage === "delivered");
+      const awaiting = posRows.filter(isAwaitingClientDecision);
       const toConfirm = posRows.filter((r) => r.interview_needs_confirmation);
       const commitment = commitmentByPosition.get(p.id as string);
       const promisedShortlistBy =
@@ -315,8 +316,17 @@ export const getClientOverview = createServerFn({ method: "GET" })
     // the recruiting team. Each item carries the role, what it concerns, its
     // recorded due date and when the wait started; ordering, deduping and
     // overdue grouping happen in the pure module.
+    // Awaiting a decision means the same thing here as it does in the health
+    // strip: delivered to this workspace and no decision recorded yet. Anything
+    // else would let two panels contradict each other on the same screen.
+    const awaitingDecision = (r: (typeof rows)[number]) =>
+      r.delivered_at != null && (r.recommendation == null || r.recommendation === "pending");
     const queueRows = rows.filter(
-      (r) => r.stage === "delivered" || r.interview_needs_confirmation || r.stage === "offer",
+      (r) =>
+        r.stage === "delivered" ||
+        r.interview_needs_confirmation ||
+        r.stage === "offer" ||
+        awaitingDecision(r),
     );
     const queueNames = new Map<string, string>();
     if (queueRows.length > 0) {
@@ -534,7 +544,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
         ...computeNextMilestone({
           position_id: pid,
           title: p.title as string,
-          awaiting_review: posRows.filter((r) => r.stage === "delivered").length,
+          awaiting_review: posRows.filter(isAwaitingClientDecision).length,
           has_offer: posRows.some((r) => r.stage === "offer"),
           has_interview: posRows.some((r) => r.interview_active || r.stage === "interview_process"),
           promised_shortlist_by: promised != null ? new Date(promised).toISOString() : null,
