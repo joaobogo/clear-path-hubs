@@ -18,7 +18,7 @@ export type NextStep = {
   withinHours: number | null;
 };
 
-const STEPS: Partial<Record<MatchStage, NextStep>> = {
+const STEPS: Record<string, NextStep> = {
   new: {
     headline: "We're finishing the review before this profile reaches you.",
     owner: "taasflow",
