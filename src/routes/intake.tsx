@@ -3315,6 +3315,7 @@ function ExpressIntakePage() {
                   <>
                     <Button
                       type="button"
+                      data-testid="intake-submit-pay"
                       onClick={() => void submit("pay")}
                       disabled={submitting || review.missing.length > 0 || dupBlockers.length > 0}
                       className="min-h-12 w-full"
@@ -3331,6 +3332,7 @@ function ExpressIntakePage() {
                     <Button
                       type="button"
                       variant="outline"
+                      data-testid="intake-submit-call"
                       onClick={() => void submit("call")}
                       disabled={submitting || review.missing.length > 0 || dupBlockers.length > 0}
                       className="min-h-12 w-full"
@@ -3341,6 +3343,7 @@ function ExpressIntakePage() {
                 ) : (
                   <Button
                     type="button"
+                    data-testid="intake-submit-call"
                     onClick={() => void submit("call")}
                     disabled={submitting || review.missing.length > 0 || dupBlockers.length > 0}
                     className="min-h-12 w-full"
@@ -3386,9 +3389,14 @@ function ExpressIntakePage() {
         )}
 
         {/* Step navigation. Back never validates; Continue does. */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--brand-navy)]/12 pt-5">
+        <div
+          data-testid="intake-nav"
+          data-step={String(stepIndex)}
+          className="flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--brand-navy)]/12 pt-5"
+        >
           <Button
             type="button"
+            data-testid="step-back"
             variant="ghost"
             onClick={goBack}
             disabled={stepIndex === 0 || submitting}
@@ -3400,6 +3408,7 @@ function ExpressIntakePage() {
             {!currentStep.required && stepIndex < INTAKE_STEPS.length - 1 && (
               <button
                 type="button"
+                data-testid="step-skip"
                 className="text-sm underline text-[color:var(--brand-navy)]/70"
                 onClick={() => goNext(true)}
               >
@@ -3407,7 +3416,12 @@ function ExpressIntakePage() {
               </button>
             )}
             {stepIndex < INTAKE_STEPS.length - 1 && (
-              <Button type="button" onClick={() => goNext()} className="min-h-11">
+              <Button
+                type="button"
+                data-testid="step-continue"
+                onClick={() => goNext()}
+                className="min-h-11"
+              >
                 {returnToReview ? "Back to review" : "Continue"}
               </Button>
             )}
