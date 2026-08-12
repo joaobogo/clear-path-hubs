@@ -36,17 +36,10 @@ import {
  Briefcase,
  Users,
  MessageSquare,
- UserCog,
  Building2,
-	Settings,
-	Award,
-	Database,
 	Bot,
-	CheckSquare,
 	Gauge,
  	Plus,
- 	Send,
- 	CreditCard,
 } from "lucide-react";
 import {
  WorkspaceShell,
