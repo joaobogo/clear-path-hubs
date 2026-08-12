@@ -1669,7 +1669,7 @@ function ExpressIntakePage() {
           if (PAYMENTS_ENABLED && intent === "pay") {
             navigate({ to: "/checkout", search: { position: body.positionId } });
           } else {
-            navigate({ to: "/book-call", search: { position: body.positionId } });
+            navigate({ to: "/book", search: { cta: "intake" } });
           }
           return;
         }
