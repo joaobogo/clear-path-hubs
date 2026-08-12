@@ -585,7 +585,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-9 gap-2 px-2"
+                className="h-11 gap-2 px-2 sm:h-9"
                 aria-label="Account menu"
               >
                 <span

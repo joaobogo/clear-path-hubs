@@ -221,7 +221,7 @@ export function JumpNav({ items }: { items: Array<{ id: string; label: string }>
           <li key={it.id}>
             <a
               href={`#${it.id}`}
-              className="inline-flex items-center rounded-md px-2.5 py-1.5 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="inline-flex min-h-11 items-center rounded-md px-3 py-1.5 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:min-h-0 sm:px-2.5"
             >
               {it.label}
             </a>
