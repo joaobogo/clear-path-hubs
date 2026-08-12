@@ -48,11 +48,11 @@ async function loadPosition(supabase: Any, positionId: string): Promise<{ id: st
 async function displayName(supabase: Any, userId: string): Promise<string> {
   const { data } = await supabase
     .from("profiles")
-    .select("display_name, email")
-    .eq("user_id", userId)
+    .select("full_name, email")
+    .eq("auth_user_id", userId)
     .maybeSingle();
   const d = data as Any;
-  if (d?.display_name) return String(d.display_name);
+  if (d?.full_name) return String(d.full_name);
   if (d?.email) return String(d.email).split("@")[0];
   return "Team member";
 }
