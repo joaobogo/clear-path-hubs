@@ -170,15 +170,12 @@ export function buildEvidenceCard(
     .slice(0, EVIDENCE_BULLET_TARGET)
     .map(([key, row]) => {
       const requirement = labelBySlug.get(slug(key)) ?? humanise(key);
-      // "requirement — the proof", never the requirement twice. Prefer the
-      // recruiter's reading; if it only restates the criterion, fall back to
-      // the quote, and if that echoes too, say plainly that it is evidenced
-      // rather than printing the requirement a second time.
-      const candidates = [clean(row.interpretation), clean(row.factual_quote)];
-      const proof =
-        candidates
-          .map((text) => dropRequirementEcho(requirement, truncate(text)))
-          .find((text) => text.trim() !== "") ?? "";
+      // "requirement — the proof", never the requirement twice. Only the
+      // recruiter's written reading may be shown here: raw CV slices can carry
+      // contact details, which clients see only at interview stage with
+      // consent. When the reading just restates the criterion, say plainly
+      // that it is evidenced instead of printing the requirement again.
+      const proof = dropRequirementEcho(requirement, truncate(clean(row.interpretation)));
       return {
         id: row.id,
         requirement,
