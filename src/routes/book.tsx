@@ -14,6 +14,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { CalendarCheck, Clock, Loader2 } from "lucide-react";
 import { canonicalUrl } from "@/lib/canonical-origin";
+import { PAYMENTS_ENABLED } from "@/config/commerce";
 import { MEETING_TYPES, resolveMeetingType } from "@/config/booking";
 import { TIMEZONE_CHOICES } from "@/config/scheduler";
 import {
@@ -210,6 +211,9 @@ function BookPage() {
    * dashboard, so we hand them straight over.
    */
   useEffect(() => {
+    // With payments off, the confirmation carries the handoff button instead of
+    // yanking them away before they read it.
+    if (!PAYMENTS_ENABLED) return;
     if (step !== "done" || !booked || !hasWorkspace) return;
     const t = window.setTimeout(() => {
       void navigate({ to: "/client" });
