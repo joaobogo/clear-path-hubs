@@ -84,15 +84,36 @@ export function ConsentBanner() {
     if (open) firstControl.current?.focus({ preventScroll: true });
   }, [open, details]);
 
-  // Keep the floating scheduling badge from covering the choice controls.
+  // The bar owns the bottom strip while it is visible, so the workspace shell
+  // and any floating action get pushed up by exactly its measured height.
+  // (See `html[data-consent-open]` rules in brand-tokens.css.)
+  const barRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const root = document.documentElement;
-    if (open) root.setAttribute("data-consent-open", "true");
-    else root.removeAttribute("data-consent-open");
-    return () => root.removeAttribute("data-consent-open");
-  }, [open]);
+    if (!open) {
+      root.removeAttribute("data-consent-open");
+      root.style.removeProperty("--consent-bar-h");
+      return;
+    }
+    root.setAttribute("data-consent-open", "true");
+    const measure = () => {
+      const h = barRef.current?.offsetHeight ?? 0;
+      root.style.setProperty("--consent-bar-h", `${h}px`);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (barRef.current) ro.observe(barRef.current);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+      root.removeAttribute("data-consent-open");
+      root.style.removeProperty("--consent-bar-h");
+    };
+  }, [open, details, slimLayout]);
 
   if (!open) return null;
+
 
   const close = () => {
     setOpen(false);
