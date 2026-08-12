@@ -124,10 +124,11 @@ function BookCallPage() {
       return result;
     },
     onSuccess: async (result) => {
-      if (!result.ok) {
-        toastError(result);
-        return;
-      }
+      // The native scheduler on /book is the single source of real availability.
+      // A failed request row must never block someone from picking a time.
+      if (!result.ok) toastError(result);
+      navigate({ to: "/book", search: { cta: "in-app" } });
+      return;
       const host = embedRef.current;
       const mounted = host
         ? await mountCalendlyInline({ parentElement: host, url: CALENDLY_BOOKING_URL })
