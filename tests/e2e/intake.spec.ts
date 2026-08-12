@@ -99,7 +99,9 @@ async function fillDetails(page: Page) {
   await page.locator("#currency").selectOption("GBP");
   await page.getByLabel("From", { exact: true }).fill("70000");
   await page.getByLabel("To", { exact: true }).fill("85000");
-  await page.getByRole("radio", { name: /already be authorised/i }).check();
+  await page
+    .getByRole("radio", { name: /^No — candidates must already be authorised to work here/ })
+    .check();
   await page.getByLabel("Deal-breaker 1").fill("No agency-side-only backgrounds");
   await page.getByLabel("Who makes the final decision?").fill("Dana Okoro, Operations Director");
 }
@@ -263,7 +265,6 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await page.goto("/intake", { waitUntil: "domcontentloaded" });
     await dismissConsent(page);
     await waitForIntakeHydration(page);
-    await continueStep(page);
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
