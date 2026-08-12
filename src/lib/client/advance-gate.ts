@@ -1,14 +1,9 @@
 /**
- * Advancement gate — a candidate may not be advanced towards an interview or
- * an offer while the role brief is still incomplete.
+ * Advancement advisory — an incomplete role brief no longer blocks anything.
  *
- * The reason is not bureaucratic: an interview run against a brief nobody
- * agreed produces criteria the client never stated and evidence we cannot
- * defend. The same readiness list that blocks approval blocks advancement.
- *
- * Pure module: the server enforces it and the UI reads it to disable the
- * control *before* the click, with the missing fields named and a deep link
- * into the exact wizard step.
+ * Intake stays deliberately light: whatever is still missing is something we
+ * go over together on the call. This module still names the missing fields so
+ * the UI can nudge, but `blocked` is always false.
  */
 
 import { roleGaps, type ReadinessInput, type RoleGap } from "@/lib/position-readiness";
@@ -41,7 +36,8 @@ export function evaluateAdvanceGate(input: {
   const missing = roleGaps(input.position);
   if (missing.length === 0) return { blocked: false, missing: [], message: null, step: null };
   return {
-    blocked: true,
+    // Advisory only — never blocks. We cover the gaps on the call.
+    blocked: false,
     missing,
     step: missing[0]!.step,
     message: gateMessage(missing),
@@ -54,7 +50,7 @@ export function gateMessage(missing: RoleGap[]): string {
     names.length === 1
       ? names[0]
       : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
-  return `The role brief still needs ${list}. Add it before advancing this candidate, so the interview runs against criteria you agreed.`;
+  return `The role brief still needs ${list}. Add it whenever suits you — we can also go over it together on the call.`;
 }
 
 /** Error thrown by server functions, and its wire format. */
