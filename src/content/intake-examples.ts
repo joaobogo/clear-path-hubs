@@ -9,7 +9,6 @@
 export type IntakeExampleField =
   | "must_haves"
   | "deal_breakers"
-  | "why_open"
   | "interview_process";
 
 export type JobFamily =
@@ -71,11 +70,6 @@ const GENERIC: FieldExamples = {
     "Needs more than eight weeks' notice — the gap is already hurting us",
     "No one currently at our two closest competitors",
   ],
-  why_open: [
-    "The person who held this left in March. Since then two people have been covering it badly and things are slipping.",
-    "We grew 40% last year and the team is now the bottleneck. This hire takes half the workload off my plate.",
-    "This is a new function. Nobody owns it today, which is exactly the problem.",
-  ],
   interview_process: [
     "1. 30 min call with me. 2. 60 min with the team they'd work with. 3. Short task, discussed live. Offer within a week.",
     "1. 45 min with me. 2. Half-day on site meeting the wider team. Decision the same week — we do not drag this out.",
@@ -94,10 +88,6 @@ const BY_FAMILY: Record<Exclude<JobFamily, "generic">, FieldExamples> = {
       "Cannot cover the occasional weekend escalation",
       "No experience with unionised teams",
     ],
-    why_open: [
-      "Our two ops leads are covering three sites. This hire owns one site so they can stop firefighting.",
-      "We are opening a fourth location in the autumn and nobody has capacity to stand it up.",
-    ],
     interview_process: [
       "1. 30 min with me. 2. Site walkaround with the shift leads. 3. 45 min with the MD. Offer same week.",
       "1. 30 min call. 2. Half-day on site, including one shift handover. Decision within two days.",
@@ -113,10 +103,6 @@ const BY_FAMILY: Record<Exclude<JobFamily, "generic">, FieldExamples> = {
       "Only ever worked inbound — we have very few inbound leads",
       "Non-compete that covers our core market",
       "Has never sold a deal above $50k",
-    ],
-    why_open: [
-      "Two reps left within a quarter and pipeline coverage dropped below 2x. We need the territory covered before renewals.",
-      "We have proven the motion with founders selling. This hire is the first person whose whole job is selling it.",
     ],
     interview_process: [
       "1. 30 min with me. 2. Live discovery call role-play with a real prospect profile. 3. 30 min with the CEO. Offer within a week.",
@@ -134,10 +120,6 @@ const BY_FAMILY: Record<Exclude<JobFamily, "generic">, FieldExamples> = {
       "Cannot overlap at least four hours with UTC+1",
       "No experience with cloud infrastructure at all",
     ],
-    why_open: [
-      "Our two engineers are spending most of their week on support. This hire takes the platform work so the roadmap moves again.",
-      "We built the first version with contractors. This is the first permanent engineer who will own it.",
-    ],
     interview_process: [
       "1. 30 min with me. 2. 90 min pairing on a real bug from our backlog, paid. 3. 30 min with the founders. Offer within a week.",
       "1. 30 min screen. 2. System design conversation, no whiteboard puzzles. 3. Team chat. Decision in three days.",
@@ -153,10 +135,6 @@ const BY_FAMILY: Record<Exclude<JobFamily, "generic">, FieldExamples> = {
       "Audit practice only, never in-house",
       "Cannot be in the office for month-end week",
       "No experience with multi-currency consolidation",
-    ],
-    why_open: [
-      "Our controller left in February. I have been closing the books myself and it is not sustainable.",
-      "We raised in January and reporting expectations changed overnight. Nobody here owns board reporting.",
     ],
     interview_process: [
       "1. 30 min with me. 2. 60 min technical conversation with our external accountants. 3. 30 min with the CEO. Offer within a week.",
@@ -174,10 +152,6 @@ const BY_FAMILY: Record<Exclude<JobFamily, "generic">, FieldExamples> = {
       "Cannot work any weekend shifts — the rota does not allow it",
       "No experience with our patient group",
     ],
-    why_open: [
-      "We are covering three shifts a week with agency staff. This hire replaces that spend with someone permanent.",
-      "A new service line opens in September and the rota does not currently cover it.",
-    ],
     interview_process: [
       "1. 20 min call with the ward lead. 2. Clinical scenario conversation with two colleagues. 3. Compliance and registration checks. Offer within a week.",
       "1. 30 min screen. 2. Half shift shadowing so both sides know what they are getting. Decision in two days.",
@@ -193,10 +167,6 @@ const BY_FAMILY: Record<Exclude<JobFamily, "generic">, FieldExamples> = {
       "Cannot work weekends or peak season",
       "Only corporate or head-office experience, never on property",
       "No experience with our service level (luxury versus limited service)",
-    ],
-    why_open: [
-      "Our GM left before the summer season. The assistant manager is covering and we are losing guest scores.",
-      "We are opening a second property in spring and need someone who has done a pre-opening before.",
     ],
     interview_process: [
       "1. 20 min call with me. 2. Property walkthrough with the head of ops. 3. Trial shift, paid. Offer same week.",

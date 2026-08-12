@@ -21,7 +21,6 @@ const source = {
   work_authorization: { rule: "must_have_right_to_work", sponsorship_available: false },
   intake_context: {
     team: "Sales",
-    why_open: "Growth",
     onsite_days: 3,
     deal_breaker_list: ["No agency-only background"],
     interview_stages: [{ name: "Intro call", ownerName: "Ana", ownerEmail: "ANA@x.com" }],

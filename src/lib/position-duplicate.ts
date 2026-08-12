@@ -109,7 +109,6 @@ export function buildDuplicateDraft(
   // than retype it, and the form makes them confirm or change it.
   put("roleTitle", str(position.title));
   put("team", str(ctx["team"]));
-  put("whyOpen", str(ctx["why_open"]));
   put("jobDescriptionText", str(position.description));
 
   // Requirements keep their tags — that is the whole point of copying them.

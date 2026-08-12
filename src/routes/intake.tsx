@@ -168,7 +168,6 @@ type FormState = {
   roleTitle: string;
   team: string;
   jobDescriptionText: string;
-  whyOpen: string;
   mustHaves: string;
   niceToHaves: string;
   trainable: string;
@@ -226,7 +225,6 @@ const EMPTY: FormState = {
   roleTitle: "",
   team: "",
   jobDescriptionText: "",
-  whyOpen: "",
   mustHaves: "",
   niceToHaves: "",
   trainable: "",
@@ -454,7 +452,6 @@ function ExpressIntakePage() {
       snapshot: {
         roleTitle: state.roleTitle,
         team: state.team,
-        whyOpen: state.whyOpen,
         jobDescriptionText: state.jobDescriptionText,
         jdFilename: jdFile ? jdFile.filename : null,
         requirements: state.requirements.map((r) => ({ text: r.text, tag: String(r.tag) })),
@@ -632,7 +629,6 @@ function ExpressIntakePage() {
     if (key === "role") {
       const res = stepValidators.role.safeParse({
         roleTitle: state.roleTitle,
-        whyOpen: state.whyOpen,
       });
       if (!res.success) {
         for (const issue of res.error.issues) {
@@ -1319,7 +1315,7 @@ function ExpressIntakePage() {
     });
   };
 
-  const useExample = (key: "whyOpen" | "dealBreakers" | "interviewProcess", text: string) => {
+  const useExample = (key: "dealBreakers" | "interviewProcess", text: string) => {
 
     setState((s) => {
       const current = (s[key] ?? "").trim();
@@ -1441,7 +1437,6 @@ function ExpressIntakePage() {
       jobDescriptionFile: jdFile
         ? { filename: jdFile.filename, mime: jdFile.mime, base64: jdFile.base64 }
         : null,
-      whyOpen: state.whyOpen,
       ...requirementsToLines(state.requirements),
       requirements: state.requirements,
       manyMustHavesConfirmed: state.manyMustHavesConfirmed,
@@ -2255,24 +2250,6 @@ function ExpressIntakePage() {
               </p>
             )}
           </div>
-          <Field
-            label="Why is this role open?"
-            error={errors.whyOpen}
-            required={req["whyOpen"]}
-            hint="Growth, a replacement, a new function — and what changes once it is filled."
-          >
-            <Textarea
-              value={state.whyOpen}
-              onChange={(e) => set("whyOpen", e.target.value)}
-              rows={3}
-              placeholder="Our two clinical ops leads are covering three sites. This hire owns one site so they can stop firefighting."
-            />
-          </Field>
-          <FieldExamples
-            field="why_open"
-            roleTitle={state.roleTitle}
-            onUse={(text) => useExample("whyOpen", text)}
-          />
         </Section>
         )}
 
