@@ -4,7 +4,6 @@ import { buildIntakeReview, type IntakeReviewSnapshot } from "../intake-review";
 const EMPTY: IntakeReviewSnapshot = {
   roleTitle: "",
   team: "",
-  whyOpen: "",
   jobDescriptionText: "",
   jdFilename: null,
   requirements: [],
@@ -41,7 +40,6 @@ describe("intake review", () => {
       snapshot: {
         ...EMPTY,
         roleTitle: "Head of Ops",
-        whyOpen: "Growth",
         requirements: [{ text: "Warehouse ops", tag: "must_have" }],
         location: "Lisbon",
         companyName: "Acme",
@@ -49,9 +47,9 @@ describe("intake review", () => {
       required: {},
     });
     const fields = r.groups.flatMap((g) => g.rows.map((row) => row.field));
-    expect(fields).toEqual(["companyName", "roleTitle", "whyOpen", "mustHaves", "location"]);
+    expect(fields).toEqual(["companyName", "roleTitle", "mustHaves", "location"]);
     expect(r.groups.map((g) => g.step)).toEqual([0, 1, 2]);
-    expect(r.answeredCount).toBe(5);
+    expect(r.answeredCount).toBe(4);
   });
 
   it("omits skipped optional fields rather than showing empty rows", () => {
@@ -67,10 +65,10 @@ describe("intake review", () => {
   it("names missing required fields with the step to jump to", () => {
     const r = buildIntakeReview({
       snapshot: { ...EMPTY, roleTitle: "Head of Ops" },
-      required: { roleTitle: true, whyOpen: true, companyName: true, team: false },
+      required: { roleTitle: true, companyName: true, team: false },
     });
-    expect(r.missing.map((m) => m.field)).toEqual(["companyName", "whyOpen"]);
-    expect(r.missing[1]).toMatchObject({ step: 1, focusLabel: "Why is this role open?" });
+    expect(r.missing.map((m) => m.field)).toEqual(["companyName"]);
+    expect(r.missing[0]).toMatchObject({ step: 0, focusLabel: "Company name" });
   });
 
   it("counts ticks, files and secrets as answered without showing them", () => {

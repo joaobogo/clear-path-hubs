@@ -59,7 +59,6 @@ export type CarryableField = (typeof CARRYABLE_FIELDS)[number];
 export const ROLE_SPECIFIC_FIELDS = [
   "roleTitle",
   "team",
-  "whyOpen",
   "jobDescriptionText",
   "requirements",
   "dealBreakerList",

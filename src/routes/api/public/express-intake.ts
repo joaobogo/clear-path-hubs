@@ -578,7 +578,6 @@ export const Route = createFileRoute("/api/public/express-intake")({
             },
             target_start_date: (data.targetStartDate ?? "").trim() || null,
             intake_context: {
-              why_open: data.whyOpen.trim(),
               team: (data.team ?? "").trim() || null,
               deal_breakers: dealBreakersText || null,
               deal_breaker_list: dealbreakerLines,
@@ -702,7 +701,6 @@ export const Route = createFileRoute("/api/public/express-intake")({
               pilotReason,
               jobDescriptionChars: (data.jobDescriptionText ?? "").length,
               brief: {
-                whyOpen: data.whyOpen,
                 team: (data.team ?? "").trim(),
                 mustHaves,
                 niceToHaves,

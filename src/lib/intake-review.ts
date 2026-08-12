@@ -20,7 +20,6 @@ export type IntakeReviewSnapshot = {
   // Role
   roleTitle: string;
   team: string;
-  whyOpen: string;
   jobDescriptionText: string;
   jdFilename: string | null;
   // People
@@ -95,7 +94,6 @@ export type IntakeReview = {
 const FIELD_META: Record<string, { label: string; step: number; focusLabel: string | null }> = {
   roleTitle: { label: "Job title", step: 1, focusLabel: "Job title" },
   team: { label: "Team", step: 1, focusLabel: "Team" },
-  whyOpen: { label: "Why it is open", step: 1, focusLabel: "Why is this role open?" },
   jobDescriptionText: { label: "Job description", step: 1, focusLabel: null },
   requirements: { label: "What you need", step: 1, focusLabel: null },
   mustHaves: { label: "Must have", step: 1, focusLabel: null },
@@ -169,7 +167,6 @@ export function buildIntakeReview(input: {
   const candidates: Array<IntakeReviewRow | null> = [
     row("roleTitle", s.roleTitle),
     row("team", s.team),
-    row("whyOpen", s.whyOpen),
     row(
       "jobDescriptionText",
       s.jdFilename ? s.jdFilename : s.jobDescriptionText.trim().slice(0, 400),

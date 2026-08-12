@@ -28,7 +28,6 @@ const valid = {
   confirmPassword: "correct-horse",
   roleTitle: "Front Office Manager",
   jobDescriptionText: "x".repeat(MIN_JD_TEXT),
-  whyOpen: "Our front office lead left in March and no one owns the guest experience.",
   mustHaves: "5+ years front office\nOpera PMS",
   trainable: "Our loyalty programme",
   dealBreakers: "No one who cannot work weekend shifts.",
@@ -102,8 +101,7 @@ describe("role brief", () => {
     expect(expressIntakeSchema.safeParse({ ...valid, mustHaves: "" }).success).toBe(false);
   });
 
-  it("requires why the role is open, and lets deal-breakers be finished later", () => {
-    expect(expressIntakeSchema.safeParse({ ...valid, whyOpen: "growth" }).success).toBe(false);
+  it("lets deal-breakers be finished later", () => {
     expect(expressIntakeSchema.safeParse({ ...valid, dealBreakers: "" }).success).toBe(true);
   });
 

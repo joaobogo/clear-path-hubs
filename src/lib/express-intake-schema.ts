@@ -34,7 +34,6 @@ export const MIN_JD_TEXT = 80;
 export const MIN_ACCOUNT_PASSWORD = 8;
 
 /** Role-brief minimums. Enforced identically on the client and the server. */
-export const MIN_WHY_OPEN = 40;
 export const MIN_MUST_HAVES = 1;
 /**
  * Above six must-haves a shortlist stops being a shortlist. We do not block
@@ -531,11 +530,6 @@ export const expressIntakeSchema = z
     team: z.string().trim().max(160).optional().or(z.literal("")),
     jobDescriptionText: z.string().trim().max(60000).optional().or(z.literal("")),
     jobDescriptionFile: jdFileSchema.optional().nullable(),
-    whyOpen: z
-      .string()
-      .trim()
-      .min(MIN_WHY_OPEN, `Tell us in a sentence or two why this role is open (at least ${MIN_WHY_OPEN} characters)`)
-      .max(2000),
 
     // ─── Step 2: who you need ─────────────────────────────────────────────
     mustHaves: z
@@ -826,7 +820,6 @@ export const STEP_FIELDS: Record<IntakeStepKey, string[]> = {
   role: [
     "roleTitle",
     "team",
-    "whyOpen",
     "jobDescriptionText",
     "requirements",
     "mustHaves",
@@ -877,11 +870,6 @@ export const stepValidators = {
   }),
   role: z.object({
     roleTitle: z.string().trim().min(2, "Enter the job title").max(160),
-    whyOpen: z
-      .string()
-      .trim()
-      .min(MIN_WHY_OPEN, `Tell us in a sentence or two why this role is open (at least ${MIN_WHY_OPEN} characters)`)
-      .max(2000),
   }),
   people: z.object({
     mustHaves: z
@@ -910,7 +898,6 @@ export const ALWAYS_REQUIRED_INTAKE_FIELDS = [
   "lastName",
   "workEmail",
   "roleTitle",
-  "whyOpen",
   "requirements",
   "sponsorshipAvailable",
   "consent",
