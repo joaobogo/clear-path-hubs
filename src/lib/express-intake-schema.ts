@@ -682,7 +682,7 @@ export const expressIntakeSchema = z
     (v) => (v.jobDescriptionText ?? "").trim().length >= MIN_JD_TEXT || !!v.jobDescriptionFile,
     {
       path: ["jobDescriptionText"],
-      message: `Upload a job description file or paste at least ${MIN_JD_TEXT} characters`,
+      message: "Upload a job description file or paste the description",
     },
   )
   // Compensation is optional, but half a range is worse than none: it looks

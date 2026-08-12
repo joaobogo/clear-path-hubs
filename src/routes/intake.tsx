@@ -639,8 +639,8 @@ function ExpressIntakePage() {
       const jd = state.jobDescriptionText.trim();
       if (!jdFile && jd.length < MIN_JD_TEXT) {
         next.jobDescriptionText = jd.length
-          ? `Paste at least ${MIN_JD_TEXT} characters or upload the job description file`
-          : `Upload a job description file or paste at least ${MIN_JD_TEXT} characters`;
+          ? "Paste the job description or upload the file"
+          : "Upload a job description file or paste the description";
       }
     }
     if (key === "role") {
@@ -1515,7 +1515,7 @@ function ExpressIntakePage() {
       // other field was still empty.
       const jdTyped = (state.jobDescriptionText ?? "").trim();
       if (!jdFile && jdTyped.length > 0 && jdTyped.length < MIN_JD_TEXT) {
-        next.jobDescriptionText = `Paste at least ${MIN_JD_TEXT} characters or upload the job description file`;
+        next.jobDescriptionText = "Paste the job description or upload the file";
       }
       // Same for the two brief rules that live in object-level refines.
       if (
