@@ -37,6 +37,7 @@ import {
   SUBSCRIPTION_PLAN_LABELS,
   ENTITLEMENT_POLICY,
 } from "@/config/pricing-entitlements";
+import { PAYMENTS_ENABLED } from "@/config/commerce";
 
 export const Route = createFileRoute("/pricing")({
   head: () =>
