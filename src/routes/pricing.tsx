@@ -159,8 +159,9 @@ function PricingPage() {
                 <span className="font-semibold text-[color:var(--brand-navy)]">
                   {SUBSCRIPTION_ANNUAL_DISCOUNT_LABEL}
                 </span>{" "}
-                — applied at subscription checkout or on your invoice. Monthly
-                prices are shown above.
+                {PAYMENTS_ENABLED
+                  ? "— applied at subscription checkout or on your invoice. Monthly prices are shown above."
+                  : "— applied to your subscription when we agree the plan on the call. Monthly prices are shown above."}
               </p>
             </>
           )}
