@@ -1751,16 +1751,26 @@ function ExpressIntakePage() {
           </div>
         )}
 
-        <div className="rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/4 p-4">
-
-          <p className="text-sm font-semibold">
-            No payment today. Nothing is charged to start.
-          </p>
-          <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
-            Create your workspace and share the role first. You only pay once your account is created
-            and we've accepted the role — and you can walk away before that at no cost.
-          </p>
-        </div>
+        {PAYMENTS_ENABLED ? (
+          <div className="rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/4 p-4">
+            <p className="text-sm font-semibold">
+              No payment today. Nothing is charged to start.
+            </p>
+            <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
+              Create your workspace and share the role first. You only pay once your account is created
+              and we've accepted the role — and you can walk away before that at no cost.
+            </p>
+          </div>
+        ) : (
+          <div className="rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/4 p-4">
+            <p className="text-sm font-semibold">
+              Free to start. Your workspace opens right away.
+            </p>
+            <p className="mt-1 text-sm text-[color:var(--brand-navy)]/70">
+              Create your account, share the role, then pick a time. We agree the plan together on the call.
+            </p>
+          </div>
+        )}
 
         {draftNotice && (
           <div
