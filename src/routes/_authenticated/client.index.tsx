@@ -47,6 +47,8 @@ import { SinceLastVisit, RecentMessages } from "@/components/client/overview/act
 import { EmptyWelcome } from "@/components/client/overview/section-primitives";
 import { CandidatesReleasedSection } from "@/components/client/overview/candidates-released-section";
 import { relTime } from "@/components/client/overview/utils";
+import { PAYMENTS_ENABLED } from "@/config/commerce";
+
 
 
 const RoutePending = makeWorkspacePending({ shape: "kpis", kpis: true, width: "7xl" });
@@ -98,9 +100,10 @@ function OverviewPage() {
   const pendingRolesQuery = useQuery({
     queryKey: ["client", "pending-payment-roles", orgId],
     queryFn: () => pendingRolesFn({ data: { orgId } }),
-    enabled: !!orgId,
+    enabled: !!orgId && PAYMENTS_ENABLED,
   });
   const pendingRoles = pendingRolesQuery.data?.roles ?? [];
+
 
   // Roles that can't be approved yet because the brief is missing details.
   const rolesNeedingDetailsFn = useServerFn(listRolesNeedingDetails);
@@ -121,9 +124,10 @@ function OverviewPage() {
   const readiness = panelReadiness([
     panelSignal("Workspace access", ctxQuery),
     panelSignal("Pipeline overview", overviewQuery),
-    panelSignal("Roles awaiting payment", pendingRolesQuery),
+    ...(PAYMENTS_ENABLED ? [panelSignal("Roles awaiting payment", pendingRolesQuery)] : []),
     panelSignal("Roles missing details", incompleteQuery),
   ]);
+
   const pipelineNotCurrent = readiness.isNotCurrent("Pipeline overview");
 
   const kpis = data?.kpis;
@@ -245,7 +249,7 @@ function OverviewPage() {
       ) : (
         <>
           {/* 0 · Roles that can't publish yet — stated plainly, never nagging */}
-          {pendingRoles.length > 0 && (
+          {PAYMENTS_ENABLED && pendingRoles.length > 0 && (
             <div className="space-y-3">
               {pendingRoles.map((r) => (
                 <PaymentGateBanner
@@ -258,6 +262,7 @@ function OverviewPage() {
               ))}
             </div>
           )}
+
 
           {/* 1 · HIRING HEALTH — one sentence, three figures, above the queue */}
           <HiringHealthLine
