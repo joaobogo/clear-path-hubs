@@ -10,6 +10,7 @@ import { UndoWindow } from "@/components/client/undo-window";
 import { fitChips } from "@/lib/client-evidence-bullets";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { buildShortlistRationale } from "@/lib/client-rationale";
+import { deriveCardAssessment } from "@/lib/client/card-assessment-state";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type { FitPresentation } from "@/lib/client-fit-presentation";
 
@@ -81,6 +82,18 @@ export function CandidateCard({
   const bullets = evidenceCard.bullets;
   const gaps = rationale.gaps;
   const chips = React.useMemo(() => fitChips(c), [c]);
+  // Exactly one assessment state per card: settled, re-checking, or pending.
+  const assessment = React.useMemo(
+    () =>
+      deriveCardAssessment({
+        fitLabel: c.fit_label,
+        score: c.score,
+        evidenceBullets: bullets.length,
+        support: c.evidence_support ?? null,
+        freshness: c.freshness ?? null,
+      }),
+    [c.fit_label, c.score, bullets.length, c.evidence_support, c.freshness],
+  );
 
   // Decision actions need the workspace id. The ?org param is only present when
   // a multi-workspace user is switching, so fall back to the active workspace.
@@ -104,21 +117,34 @@ export function CandidateCard({
         </label>
       )}
 
-      {/* Identity — full name, current role, approved score and unicorn marker */}
+      {/* Identity — full name, and exactly ONE assessment state */}
       <div className="min-w-0 pr-24">
         <div className="flex items-center gap-2 flex-wrap">
           <h3 className="font-semibold text-base truncate">{c.candidate.display_name}</h3>
-          <CandidateScoreBadge
-            score={c.score}
-            fitLabel={c.fit_label}
-            evidence={c.evidence_support}
-            rechecking={c.freshness?.state === "stale"}
-            unicorn={c.unicorn}
-          />
-          <span className={`text-[11px] font-medium rounded-full px-2 py-0.5 border ${accent.chip}`}>
-            {evidenceCard.summaryInProgress ? "Summary in progress" : rationale.summary}
-          </span>
+          {assessment.state === "settled" ? (
+            <>
+              <CandidateScoreBadge
+                score={c.score}
+                fitLabel={c.fit_label}
+                evidence={c.evidence_support}
+                unicorn={c.unicorn}
+              />
+              {assessment.thin && (
+                <span className="text-[11px] font-medium rounded-full border border-border bg-muted px-2 py-0.5 text-muted-foreground">
+                  Limited evidence so far
+                </span>
+              )}
+            </>
+          ) : (
+            <span
+              className="text-[11px] font-medium rounded-full border border-border bg-muted px-2 py-0.5 text-muted-foreground"
+              title={assessment.note}
+            >
+              {assessment.state === "rechecking" ? "Being re-checked" : "Screening in progress"}
+            </span>
+          )}
         </div>
+        <p className="mt-1 text-xs text-muted-foreground">{assessment.note}</p>
         {(c.candidate.headline || c.candidate.current_role) && (
           <p className="text-sm text-foreground/80 mt-0.5 line-clamp-1">
             {c.candidate.headline ??
@@ -133,14 +159,17 @@ export function CandidateCard({
       </div>
 
 
-      {/* Why we shortlisted — one bullet per requirement, each attributed */}
-      <div className="mt-4">
-        <div className="flex items-baseline justify-between gap-2">
-          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-            Evidence against your requirements
+
+      {/* Why we shortlisted — one bullet per requirement, each attributed.
+          When there is no write-up yet, the single state line above already
+          says so; a second sentence here would only repeat it. */}
+      {bullets.length > 0 && (
+        <div className="mt-4">
+          <div className="flex items-baseline justify-between gap-2">
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              Evidence against your requirements
+            </div>
           </div>
-        </div>
-        {bullets.length > 0 ? (
           <ul className="mt-2 space-y-1.5">
             {bullets.map((b) => (
               <li key={b.id} className="flex gap-2 text-xs leading-snug">
@@ -156,17 +185,15 @@ export function CandidateCard({
               </li>
             ))}
           </ul>
-        ) : (
-          <p className="mt-2 text-xs text-muted-foreground">
-            Verified evidence for your requirements is still being written up.
-          </p>
-        )}
+
         {gaps.length > 0 && (
           <p className="mt-2 text-xs text-warning-foreground line-clamp-2">
             Not evidenced yet: {gaps.slice(0, 2).map((g) => g.requirement).join(", ")}
           </p>
-        )}
-      </div>
+          )}
+        </div>
+      )}
+
 
       {/* Practical fit: availability, location, compensation */}
       {chips.length > 0 && (

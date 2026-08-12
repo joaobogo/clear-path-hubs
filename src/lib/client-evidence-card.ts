@@ -28,6 +28,9 @@ export type ClientEvidenceRow = {
   source_location: unknown;
 };
 
+import { dropRequirementEcho } from "@/lib/client/card-assessment-state";
+
+
 export type EvidenceBullet = {
   id: string;
   /** The requirement this evidence addresses, in the client's words. */
@@ -165,12 +168,24 @@ export function buildEvidenceCard(
 
   const bullets: EvidenceBullet[] = ordered
     .slice(0, EVIDENCE_BULLET_TARGET)
-    .map(([key, row]) => ({
-      id: row.id,
-      requirement: labelBySlug.get(slug(key)) ?? humanise(key),
-      claim: truncate(clean(row.interpretation) || clean(row.factual_quote)),
-      where: formatEvidenceLocation(row),
-    }));
+    .map(([key, row]) => {
+      const requirement = labelBySlug.get(slug(key)) ?? humanise(key);
+      // "requirement — the proof", never the requirement twice. Prefer the
+      // recruiter's reading; if it only restates the criterion, fall back to
+      // the quote, and if that echoes too, say plainly that it is evidenced
+      // rather than printing the requirement a second time.
+      const candidates = [clean(row.interpretation), clean(row.factual_quote)];
+      const proof =
+        candidates
+          .map((text) => dropRequirementEcho(requirement, truncate(text)))
+          .find((text) => text.trim() !== "") ?? "";
+      return {
+        id: row.id,
+        requirement,
+        claim: proof || "Evidenced in the CV",
+        where: formatEvidenceLocation(row),
+      };
+    });
 
   return {
     bullets,
