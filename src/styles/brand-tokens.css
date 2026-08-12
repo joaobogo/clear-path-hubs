@@ -480,3 +480,16 @@ html[data-consent-open="true"] #workspace-main > div {
 html[data-consent-open="true"] [data-consent-offset] {
   margin-bottom: var(--consent-bar-h, 4.5rem);
 }
+
+/* Phone tap targets: a 16px checkbox stays visually small but gets a 44px
+   invisible hit area so it can be hit with a thumb. */
+@utility touch-target {
+  position: relative;
+  @media (max-width: 639px) {
+    &::after {
+      content: "";
+      position: absolute;
+      inset: -14px;
+    }
+  }
+}
