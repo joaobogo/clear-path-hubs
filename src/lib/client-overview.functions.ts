@@ -590,7 +590,10 @@ export const getClientOverview = createServerFn({ method: "GET" })
       "position.activated",
       "position.paused",
     ];
-    const { data: events } = await context.supabase
+    // audit_events is staff-only under RLS; read the whitelisted client-facing
+    // actions with the admin client, still scoped to this organization.
+    const { supabaseAdmin: auditDb } = await import("@/integrations/supabase/client.server");
+    const { data: events } = await (auditDb as AnyRow)
       .from("audit_events")
       .select("id, action, entity_type, created_at")
       .eq("organization_id", data.orgId)

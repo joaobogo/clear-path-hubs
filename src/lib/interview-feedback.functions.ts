@@ -51,8 +51,19 @@ export type SubmittedFeedback = {
 const RECOMMENDATIONS = ["advance", "hold", "decline"] as const;
 const NEXT_STEPS = ["another_interview", "make_offer", "stop_here"] as const;
 
+/**
+ * The scorecard table stores the five-point interview vocabulary
+ * (strong_yes … strong_no). The client feedback form speaks in three
+ * outcomes. Translate both ways at the boundary.
+ */
+function encodeRecommendation(v: FeedbackRecommendation): string {
+  return v === "advance" ? "yes" : v === "decline" ? "no" : "no_decision";
+}
 function normRecommendation(v: unknown): FeedbackRecommendation {
-  return v === "advance" || v === "hold" || v === "decline" ? v : "hold";
+  if (v === "advance" || v === "hold" || v === "decline") return v;
+  if (v === "strong_yes" || v === "yes") return "advance";
+  if (v === "no" || v === "strong_no") return "decline";
+  return "hold";
 }
 function normNextStep(v: unknown): FeedbackNextStep | null {
   return v === "another_interview" || v === "make_offer" || v === "stop_here" ? v : null;
@@ -273,7 +284,7 @@ export const submitInterviewFeedback = createServerFn({ method: "POST" })
         reviewer_user_id: context.userId,
         reviewer_name: (profile as AnyRow)?.full_name ?? null,
         criteria: [],
-        recommendation: data.recommendation,
+        recommendation: encodeRecommendation(data.recommendation),
         next_step: data.nextStep,
         strengths,
         concerns,
