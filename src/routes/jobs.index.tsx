@@ -19,7 +19,7 @@ import { X } from "lucide-react";
 import { SiteShell } from "@/components/marketing/site-shell";
 import { buildJobSlug } from "@/lib/marketing/job-slug";
 
-const positionsQuery = queryOptions({
+export const positionsQuery = queryOptions({
   queryKey: ["public-positions"],
   queryFn: () => listPublicPositions(),
 });

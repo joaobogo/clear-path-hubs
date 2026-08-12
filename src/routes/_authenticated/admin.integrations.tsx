@@ -16,7 +16,7 @@ import {
   type IntegrationCheckRow,
 } from "@/lib/integration-health.functions";
 
-const healthQuery = {
+export const healthQuery = {
   queryKey: ["integration-health"] as const,
   queryFn: () => getIntegrationHealth(),
 };

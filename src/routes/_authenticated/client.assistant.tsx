@@ -30,7 +30,7 @@ import {
   SUGGESTED,
 } from "@/components/client/assistant/message-parts";
 
-const RoutePending = makeWorkspacePending({ shape: "rows", width: "7xl" });
+export const RoutePending = makeWorkspacePending({ shape: "rows", width: "7xl" });
 
 export const Route = createFileRoute("/_authenticated/client/assistant")({
 	pendingMs: 150,

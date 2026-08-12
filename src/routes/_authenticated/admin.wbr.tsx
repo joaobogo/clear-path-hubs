@@ -25,9 +25,9 @@ import {
   RefreshCw,
 } from "lucide-react";
 
-const DAY = 86_400_000;
+export const DAY = 86_400_000;
 
-function mondayOf(date: Date): string {
+export function mondayOf(date: Date): string {
   const midnight = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
   const daysFromMon = (new Date(midnight).getUTCDay() + 6) % 7;
   return new Date(midnight - daysFromMon * DAY).toISOString().slice(0, 10);

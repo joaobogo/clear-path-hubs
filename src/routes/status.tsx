@@ -24,7 +24,7 @@ import {
   type StatusNotice,
 } from "@/lib/status/platform-status";
 
-const statusQuery = queryOptions({
+export const statusQuery = queryOptions({
   queryKey: ["platform-status", "page"],
   queryFn: () => getPlatformStatus(),
   staleTime: 30_000,

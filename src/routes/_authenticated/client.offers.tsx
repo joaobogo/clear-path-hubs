@@ -29,7 +29,7 @@ import { Kpi } from "@/components/client/offers/kpi";
 import { OffersEmptyState } from "@/components/client/offers/offers-empty-state";
 import { StalledOffersPanel } from "@/components/client/offers/stalled-offers-panel";
 
-const RoutePending = makeWorkspacePending({ shape: "board", kpis: false, width: "7xl" });
+export const RoutePending = makeWorkspacePending({ shape: "board", kpis: false, width: "7xl" });
 export const Route = createFileRoute("/_authenticated/client/offers")({
 	pendingMs: 150,
 	pendingComponent: RoutePending,

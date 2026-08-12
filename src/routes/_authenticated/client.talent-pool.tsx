@@ -43,7 +43,7 @@ const searchSchema = z.object({
   silver: fallback(z.boolean(), false).default(false),
 });
 
-const RoutePending = makeWorkspacePending({ shape: "cards", width: "7xl" });
+export const RoutePending = makeWorkspacePending({ shape: "cards", width: "7xl" });
 
 export const Route = createFileRoute("/_authenticated/client/talent-pool")({
 	pendingMs: 150,

@@ -245,7 +245,7 @@ const RAW_GROUPS: Array<{
   },
 ];
 
-const GROUPS: Group[] = RAW_GROUPS.map((g) => ({
+export const GROUPS: Group[] = RAW_GROUPS.map((g) => ({
   ...g,
   items: g.items.map((it) => ({ ...it, id: `${g.id}--${slug(it.q)}` })),
 }));

@@ -14,7 +14,7 @@ import {
   saveTrackingPolicy,
 } from "@/lib/tracking/policy.functions";
 
-const policyQuery = {
+export const policyQuery = {
   queryKey: ["tracking-policy"] as const,
   queryFn: () => fetchTrackingPolicy(),
 };
