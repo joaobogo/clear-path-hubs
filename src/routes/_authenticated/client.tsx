@@ -52,7 +52,6 @@ import {
  WorkspaceShell,
  type WorkspaceNavItem,
 } from "@/components/workspace/workspace-shell";
-import { ClientBrandHeader } from "@/components/client/client-brand-header";
 import { SectionTabs } from "@/components/workspace/section-tabs";
 import { CLIENT_SECTION_GROUPS } from "@/config/workspace-sections";
 import { OrgSwitcher } from "@/components/workspace/org-switcher";
@@ -306,40 +305,31 @@ function ClientLayout() {
  return (
  <SupportViewContext.Provider value={supportView}>
  <ClientCoordinator />
-   <WorkspaceShell
- role="client"
- contextKicker="Workspace"
- contextLabel={active.name}
- contextSubLabel={`${effectiveRole.replace(/_/g, " ")}${supportView.active ? " · support view" : ""}`}
- navItems={navItems}
- linkSearch={linkSearch}
- topBanner={topBanner}
- primaryAction={
-   canManage && !supportView.readOnly
-     ? { label: "Create role", shortLabel: "New role", to: "/intake", icon: Plus }
-     : undefined
- }
- aboveNav={
- data && data.organizations.length > 1 ? (
- <OrgSwitcher
- activeOrgId={active.organization_id}
- organizations={data.organizations}
- />
- ) : undefined
- }
- >
-      <div className="mb-4">
-        <ClientBrandHeader
-          name={active.name}
-          displayName={active.brand_display_name ?? null}
-          logoUrl={active.logo_url ?? null}
-          primaryColor={active.brand_primary_color ?? null}
-          accentColor={active.brand_accent_color ?? null}
-          parentName={active.parent_name ?? null}
-          role={effectiveRole}
-          supportView={supportView.active}
-        />
-      </div>
+    <WorkspaceShell
+  role="client"
+  contextKicker="Workspace"
+  contextLabel={active.name}
+  contextSubLabel={`${effectiveRole.replace(/_/g, " ")}${supportView.active ? " · support view" : ""}`}
+  accountLabel={data?.onboarding?.display_name?.trim() || "My account"}
+  accountSubLabel={`${effectiveRole.replace(/_/g, " ")}${supportView.active ? " · support view" : ""}`}
+  navItems={navItems}
+  linkSearch={linkSearch}
+  topBanner={topBanner}
+  primaryAction={
+    canManage && !supportView.readOnly
+      ? { label: "Create role", shortLabel: "New role", to: "/intake", icon: Plus }
+      : undefined
+  }
+  aboveNav={
+  data && data.organizations.length > 1 ? (
+  <OrgSwitcher
+  activeOrgId={active.organization_id}
+  organizations={data.organizations}
+  />
+  ) : undefined
+  }
+  >
+      {/* The sidebar is the single primary identity: no workspace card here. */}
       {permissionDenied ? (
         <PermissionDenied
           description={`${MANAGE_ONLY_LABELS[deniedTab!] ?? "This area"} is limited to workspace admins, so we're not showing it to you.`}

@@ -66,6 +66,14 @@ export type WorkspaceShellProps = {
   contextSubLabel?: string;
   /** Small pill above contextLabel ("Workspace", "Admin", "Signed in as"). */
   contextKicker?: string;
+  /**
+   * The account chip names the *person*, not the workspace — the sidebar
+   * already carries workspace identity, and repeating it in the top bar is
+   * the duplication that makes a screen look unedited.
+   */
+  accountLabel?: string;
+  /** Small line under accountLabel in the account menu (role, email). */
+  accountSubLabel?: string;
   navItems: WorkspaceNavItem[];
   /** Optional slot rendered above nav (e.g. org switcher, support banner). */
   aboveNav?: ReactNode;
@@ -293,6 +301,8 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
     contextLabel,
     contextSubLabel,
     contextKicker,
+    accountLabel,
+    accountSubLabel,
     navItems,
     aboveNav,
     topBanner,
@@ -488,6 +498,11 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
             <Menu className="h-4 w-4" />
           </button>
           <nav aria-label="Breadcrumb" className="min-w-0 flex-1">
+            {/* On phones the sidebar is hidden, so this is the one place the
+                workspace is named. On desktop the sidebar owns it. */}
+            <div className="truncate text-[11px] text-muted-foreground md:hidden">
+              {contextLabel}
+            </div>
             <ol className="flex min-w-0 items-center gap-1.5 text-sm">
               {crumbs.length === 0 ? (
                 <li className="truncate font-medium">{contextLabel}</li>
@@ -577,19 +592,19 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
                   aria-hidden
                   className="grid h-7 w-7 place-items-center rounded-full bg-primary/10 text-xs font-semibold text-primary"
                 >
-                  {contextLabel.slice(0, 1).toUpperCase()}
+                  {(accountLabel ?? contextLabel).slice(0, 1).toUpperCase()}
                 </span>
                 <span className="hidden max-w-[140px] truncate text-sm md:inline">
-                  {contextLabel}
+                  {accountLabel ?? contextLabel}
                 </span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel className="truncate">
-                {contextLabel}
-                {contextSubLabel && (
+                {accountLabel ?? contextLabel}
+                {(accountSubLabel ?? contextSubLabel) && (
                   <div className="truncate text-xs font-normal text-muted-foreground">
-                    {contextSubLabel}
+                    {accountSubLabel ?? contextSubLabel}
                   </div>
                 )}
               </DropdownMenuLabel>

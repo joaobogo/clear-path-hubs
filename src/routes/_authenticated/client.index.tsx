@@ -195,14 +195,15 @@ function OverviewPage() {
 
   return (
     <main className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8 space-y-8">
-      <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:flex sm:flex-wrap sm:justify-between">
+      <header className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-            Client workspace
-          </div>
-          <h1 className="mt-1 truncate text-2xl sm:text-3xl font-semibold tracking-tight">
-            {ctx?.active?.name ?? "Your organization"}
+          {/* The workspace is named once, in the sidebar. This is the page. */}
+          <h1 className="truncate text-2xl sm:text-3xl font-semibold tracking-tight">
+            Overview
           </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            What is waiting on your decision, and what we do next.
+          </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <DensityToggle density={density} onChange={setDensity} />
