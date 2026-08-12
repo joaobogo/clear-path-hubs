@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { X } from "lucide-react";
 import {
   clearConsent,
   requiresPriorOptIn,
@@ -80,19 +81,42 @@ export function ConsentBanner() {
     };
   }, []);
 
+  const slim = !optIn && !details && !forced;
+
   useEffect(() => {
     if (open) firstControl.current?.focus({ preventScroll: true });
   }, [open, details]);
 
-  // Keep the floating scheduling badge from covering the choice controls.
+  // The bar owns the bottom strip while it is visible, so the workspace shell
+  // and any floating action get pushed up by exactly its measured height.
+  // (See `html[data-consent-open]` rules in brand-tokens.css.)
+  const barRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const root = document.documentElement;
-    if (open) root.setAttribute("data-consent-open", "true");
-    else root.removeAttribute("data-consent-open");
-    return () => root.removeAttribute("data-consent-open");
-  }, [open]);
+    if (!open) {
+      root.removeAttribute("data-consent-open");
+      root.style.removeProperty("--consent-bar-h");
+      return;
+    }
+    root.setAttribute("data-consent-open", "true");
+    const measure = () => {
+      const h = barRef.current?.offsetHeight ?? 0;
+      root.style.setProperty("--consent-bar-h", `${h}px`);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (barRef.current) ro.observe(barRef.current);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+      root.removeAttribute("data-consent-open");
+      root.style.removeProperty("--consent-bar-h");
+    };
+  }, [open, details, slim]);
 
   if (!open) return null;
+
 
   const close = () => {
     setOpen(false);
@@ -120,24 +144,23 @@ export function ConsentBanner() {
     close();
   };
 
-  const slim = !optIn && !details && !forced;
-
   return (
     <div
+      ref={barRef}
       role="dialog"
       aria-modal="false"
       aria-label="Cookie and tracking preferences"
-      className="fixed inset-x-0 bottom-0 z-[70] border-t border-border bg-background/98 px-4 pt-4 shadow-[var(--brand-shadow-xl)] backdrop-blur pb-[calc(1rem+env(safe-area-inset-bottom))] md:px-6 md:pt-6 md:pb-[calc(1.5rem+env(safe-area-inset-bottom))]"
+      className="fixed inset-x-0 bottom-0 z-[70] border-t border-border bg-background/98 px-3 pt-2.5 shadow-[var(--brand-shadow-xl)] backdrop-blur pb-[calc(0.625rem+env(safe-area-inset-bottom))] md:px-6 md:pt-3 md:pb-[calc(0.75rem+env(safe-area-inset-bottom))]"
     >
-      <div className="mx-auto flex w-full max-w-[var(--brand-public-width)] flex-col gap-4 md:flex-row md:items-start md:justify-between">
-        <div className="max-w-2xl space-y-2">
-          <p className="text-sm font-semibold text-foreground">
+      <div className="mx-auto flex w-full max-w-[var(--brand-public-width)] flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-6">
+        <div className="min-w-0 max-w-3xl space-y-1 pr-8 md:pr-0">
+          <p className="text-xs font-semibold text-foreground">
             {slim ? "We use cookies" : "Your choice about tracking"}
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs leading-snug text-muted-foreground">
             {slim
-              ? "We use analytics and business tools to understand how the site is used. You can turn optional tracking off at any time."
-              : "Only strictly necessary measurement runs before you choose. Optional analytics and advertising tools wait for your consent."}{" "}
+              ? "We use analytics and business tools to understand how the site is used. Turn optional tracking off at any time."
+              : "Only strictly necessary measurement runs before you choose."}{" "}
             <a href="/privacy" className="underline">
               Privacy policy
             </a>
@@ -183,7 +206,7 @@ export function ConsentBanner() {
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 md:justify-end [&>button]:min-h-11 md:[&>button]:min-h-8">
+        <div className="flex shrink-0 flex-wrap items-center gap-2 md:justify-end [&>button]:min-h-9 md:[&>button]:min-h-8">
           {slim ? (
             <>
               <Button
@@ -231,6 +254,17 @@ export function ConsentBanner() {
           )}
         </div>
       </div>
+
+      {/* Always dismissible: hides the bar without changing any tracking
+          decision, so it can never sit on top of the primary action row. */}
+      <button
+        type="button"
+        onClick={close}
+        aria-label="Hide tracking notice"
+        className="absolute right-2 top-2 rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground md:right-3"
+      >
+        <X className="h-4 w-4" />
+      </button>
     </div>
   );
 }

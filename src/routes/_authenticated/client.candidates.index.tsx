@@ -595,7 +595,7 @@ function CandidatesPage() {
   />
 
   {selectedCandidates.length > 0 && (
-   <div className="fixed bottom-24 right-6 z-40">
+   <div className="fixed bottom-24 right-6 z-40" data-consent-offset>
     <Button
      size="lg"
      className="shadow-lg"
