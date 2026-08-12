@@ -496,6 +496,19 @@ function BookPage() {
               </p>
             ) : null}
 
+            {!PAYMENTS_ENABLED && hasWorkspace ? (
+              <div className="rounded-lg border bg-muted/40 p-4" data-testid="booking-handoff">
+                <p className="font-medium text-foreground">What happens on the call</p>
+                <p className="mt-1 text-muted-foreground">
+                  We walk through your role, agree the plan together, and set the search live. Your
+                  workspace is already open — nothing to pay to get started.
+                </p>
+                <Button className="mt-3" onClick={() => void navigate({ to: "/client" })}>
+                  Go to my dashboard
+                </Button>
+              </div>
+            ) : null}
+
             <div className="flex flex-wrap gap-2">
               <Button variant="outline" onClick={() => void onStartReschedule()} disabled={pending}>
                 Reschedule
@@ -515,6 +528,7 @@ function BookPage() {
                 </Button>
               ) : null}
             </div>
+
 
             <div className="border-t pt-4 text-muted-foreground">
               <p className="font-medium text-foreground">On the call</p>
