@@ -227,11 +227,12 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     // Optional rows we deliberately skipped are absent, not blank-labelled.
     await expect(page.getByText("LinkedIn", { exact: true })).toHaveCount(0);
 
-    // Show/Hide summary really toggles the sections it summarises.
+    // Show/Hide really toggles the review summary itself.
     await page.getByRole("button", { name: /^hide$/i }).click();
-    await expect(page.locator("#section-practicalities")).toHaveCount(0);
+    await expect(page.getByTestId("intake-review")).toHaveCount(0);
     await page.getByRole("button", { name: /show summary/i }).click();
-    await expect(page.locator("#section-practicalities")).toBeVisible();
+    await expect(page.getByTestId("intake-review")).toBeVisible();
+
 
     // Every review group offers an Edit affordance that jumps to its own step.
     await expect(page.getByRole("button", { name: /^Edit The role$/ })).toBeVisible();
