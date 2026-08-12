@@ -66,7 +66,7 @@ export function RecentMessages({ messages }: { messages: Any[] }) {
         />
         <Link
           to="/client/conversations"
-          className="text-sm font-medium text-primary hover:underline"
+          className="inline-flex min-h-11 items-center px-1 text-sm font-medium text-primary hover:underline sm:min-h-0 sm:px-0"
         >
           View
         </Link>
