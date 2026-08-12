@@ -2240,9 +2240,10 @@ function ExpressIntakePage() {
               />
               {!jdFile && (
                 <p className="mt-1 text-xs text-[color:var(--brand-navy)]/75">
-                  {jdChars}/{MIN_JD_TEXT} characters minimum when you don't upload a file.
+                  Paste the job description, or upload the file instead.
                 </p>
               )}
+
             </div>
             {errors.jobDescriptionText && (
               <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
