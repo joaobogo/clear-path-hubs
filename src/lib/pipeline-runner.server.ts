@@ -381,13 +381,12 @@ export async function runPipelineForMatch(matchId: string, opts: { force?: boole
     steps.push({ step: "enrich", ok: true });
 
     // ─── SCORE (delegated to canonical service) ──────────────────────────────
+    // No `force` here on purpose: an active run with identical inputs is unique
+    // per match at DB level, so re-running the same inputs must reuse it.
     const scoring = await executeScoring(matchId, {
       trace_id, reason: "auto_pipeline",
-      // A forced run is an explicit "assess this again": it must produce a new
-      // run rather than hand back the previous one, otherwise the assessment
-      // keeps the old timestamp and still reads as out of date.
-      force: opts.force === true,
     });
+
 
     if (!scoring.ok) {
       // service already recorded processing_jobs + state; just surface here.
