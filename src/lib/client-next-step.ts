@@ -67,8 +67,14 @@ const STEPS: Record<string, NextStep> = {
   },
 };
 
+const FALLBACK_STEP: NextStep = {
+  headline: "We're reviewing this profile and will come back to you.",
+  owner: "taasflow",
+  withinHours: 24,
+};
+
 export function nextStepForStage(stage: MatchStage): NextStep {
-  return STEPS[stage];
+  return STEPS[stage as string] ?? FALLBACK_STEP;
 }
 
 /** "within 24h" / "within 2 days" — plain wording for a commitment window. */
