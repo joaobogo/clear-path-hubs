@@ -199,6 +199,9 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     expect(overflow).toBeLessThanOrEqual(2);
   });
 
+  // The "Book a call first" secondary button only exists alongside the pay
+  // action, so this case is scoped to the payments-on configuration.
+  test.skip(!PAYMENTS_ENABLED, "secondary call button only renders when payments are on");
   test('submit path "Book a call first" creates account, org and intake', async ({ page }) => {
     const errors = collectConsoleErrors(page);
     const { companyName, email } = uniqueProspect();
@@ -215,7 +218,9 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await fillBrief(page);
     await acceptTerms(page);
 
-    await page.getByRole("button", { name: /book a call first/i }).click();
+    await page
+      .getByRole("button", { name: PAYMENTS_ENABLED ? /book a call first/i : PRIMARY_SUBMIT })
+      .click();
 
     await expect
       .poll(() => new URL(page.url()).pathname, { timeout: 60_000 })
@@ -234,7 +239,7 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     expect(meaningfulConsoleErrors(errors)).toEqual([]);
   });
 
-  test('submit path "Start now — pay and publish" degrades gracefully', async ({ page }) => {
+  test("primary submit path lands on a live destination, never a dead end", async ({ page }) => {
     const errors = collectConsoleErrors(page);
     const { companyName, email } = uniqueProspect();
 
@@ -254,14 +259,25 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
 
     await expect
       .poll(() => new URL(page.url()).pathname, { timeout: 60_000 })
-      .toMatch(/^\/(checkout|intake\/confirmation)/);
+      .toMatch(
+        PAYMENTS_ENABLED
+          ? /^\/(checkout|intake\/confirmation)/
+          : /^\/(book-call|book|intake\/confirmation)/,
+      );
 
-    // The checkout stub must explain itself rather than crash or dead-end.
     await expect(page.getByRole("heading").first()).toBeVisible();
     const body = (await page.locator("body").innerText()).toLowerCase();
     expect(body.length).toBeGreaterThan(80);
     expect(body).not.toContain("something went wrong");
     expect(body).not.toContain("unexpected application error");
+    if (!PAYMENTS_ENABLED) {
+      // Payments-off: no money vocabulary and no card field anywhere on the
+      // destination the submitter actually reaches.
+      for (const word of ["checkout", "payment", "pay now", "card number"]) {
+        expect(body, `"${word}" must not appear with payments off`).not.toContain(word);
+      }
+      expect(await page.locator('input[name*="card" i], iframe[src*="stripe" i]').count()).toBe(0);
+    }
 
     const state = await lookupIntake(companyName, email);
     expect(state.organization).not.toBeNull();
@@ -270,3 +286,4 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     expect(meaningfulConsoleErrors(errors)).toEqual([]);
   });
 });
+
