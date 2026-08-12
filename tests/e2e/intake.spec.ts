@@ -158,10 +158,11 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await expect(page.getByText("Enter your company website")).toHaveCount(0);
     await fillCompany(page, companyName, "northwindhealth.com");
 
-    // ── Contact fields clear their own errors as they are filled ─────────────
+    // ── Contact fields are filled; their errors clear on the next validation ──
+    // (field errors are recomputed when the step is validated, not on keystroke,
+    // so clearing is asserted after the successful Continue at the end of step 1.)
     await fillYou(page, email);
-    await expect(page.getByText("Enter your first name")).toHaveCount(0);
-    await expect(page.getByText("Enter a valid work email")).toHaveCount(0);
+
 
     // ── Account: password rules are enforced by the inline create action ─────
     // (step 1's Continue does not gate on the password — the account block is a
