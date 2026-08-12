@@ -1068,12 +1068,20 @@ function ExpressIntakePage() {
       const body = await res.json();
       if (!res.ok || !body?.ok) {
         if (body?.error === "account_exists") {
+          // A recognised client is not an error: point them at sign-in and keep
+          // every answer exactly where it is.
           setEmailStatus({ kind: "exists", message: body.message });
           setSignInMode(true);
+          toast.info(
+            body?.message ??
+              "That email already has an account. Sign in below — nothing you've typed is lost.",
+          );
+          return;
         }
         toast.error(body?.message ?? "We couldn't create your account. Please try again.");
         return;
       }
+
       const { error } = await supabase.auth.signInWithPassword({ email, password: state.password });
       if (error) {
         toast.error("Account created, but we couldn't sign you in. Try signing in below.");

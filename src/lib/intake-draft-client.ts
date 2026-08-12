@@ -38,13 +38,30 @@ async function postDraft(body: Record<string, unknown>) {
 export async function fetchIntakeDraft(authed: boolean): Promise<Loaded> {
   if (authed) {
     const r = await loadIntakeDraft();
-    return {
+    const loaded: Loaded = {
       status: r.status,
       payload: r.payload as Record<string, unknown> | null,
       lastStep: r.lastStep ?? 0,
       savedAt: r.updatedAt ?? null,
     };
+    if (loaded.status === "restored" && loaded.payload) return loaded;
+    // The account has no draft yet, which is exactly what happens after a
+    // full-page Google return: adopt whatever was typed anonymously and write
+    // it onto the account so nothing is lost.
+    try {
+      const anon = await postDraft({ action: "load" });
+      if (anon["status"] === "restored" && anon["payload"]) {
+        const payload = anon["payload"] as Record<string, unknown>;
+        const lastStep = Number(anon["lastStep"] ?? 0);
+        const saved = await persistIntakeDraft(true, payload, lastStep);
+        return { status: "restored", payload, lastStep, savedAt: saved.savedAt };
+      }
+    } catch {
+      /* no anonymous draft to adopt — the account draft stands */
+    }
+    return loaded;
   }
+
   const r = await postDraft({ action: "load" });
   return {
     status: (r["status"] ?? "empty") as IntakeDraftStatus,
