@@ -139,12 +139,13 @@ export function RoleShortlist({
             const atCap = !isSelected && selected.length >= ROLE_COMPARE_MAX;
             return (
               <div key={c.match_id} className="relative">
-                <label className="mb-1.5 flex items-center gap-2 text-xs text-muted-foreground">
+                <label className="mb-1.5 flex min-h-11 items-center gap-2 text-xs text-muted-foreground sm:min-h-0">
                   <Checkbox
                     checked={isSelected}
                     disabled={atCap}
                     onCheckedChange={() => toggle(c.match_id)}
                     aria-label={`Select ${c.candidate.display_name} to compare`}
+                    className="touch-target"
                   />
                   {atCap ? `Compare limit is ${ROLE_COMPARE_MAX}` : "Compare"}
                 </label>

@@ -261,7 +261,7 @@ export function ConsentBanner() {
         type="button"
         onClick={close}
         aria-label="Hide tracking notice"
-        className="absolute right-2 top-2 rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground md:right-3"
+        className="absolute right-1 top-1 flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground md:right-2 md:top-2 md:h-8 md:w-8"
       >
         <X className="h-4 w-4" />
       </button>

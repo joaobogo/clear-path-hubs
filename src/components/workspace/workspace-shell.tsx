@@ -492,7 +492,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
-            className="rounded-md p-2 text-muted-foreground hover:bg-muted md:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:bg-muted md:hidden"
             aria-label="Open navigation"
           >
             <Menu className="h-4 w-4" />
@@ -549,7 +549,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
           </button>
           <button
             type="button"
-            className="rounded-md p-2 text-muted-foreground hover:bg-muted md:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:bg-muted md:hidden"
             onClick={() => setSearchOpen(true)}
             aria-label="Open global search"
           >

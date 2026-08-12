@@ -83,7 +83,7 @@ export function SectionTabs({
               search={search as never}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "whitespace-nowrap rounded-t-md border-b-2 px-3 py-2 text-sm font-medium outline-none transition-colors",
+                "inline-flex min-h-11 items-center whitespace-nowrap rounded-t-md border-b-2 px-3 py-2 text-sm font-medium outline-none transition-colors sm:min-h-0",
                 "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
                 active
                   ? "border-primary text-foreground"

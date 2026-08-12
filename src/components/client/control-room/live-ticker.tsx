@@ -119,7 +119,7 @@ export function LiveTicker({ orgId }: { orgId: string }) {
                   KIND_DOT[e.kind] ?? KIND_DOT.other,
                 )}
               />
-              <span className="truncate">
+              <span className="min-w-0 truncate">
                 {e.sentence}
                 {e.role_title ? (
                   <span className="text-muted-foreground"> · {e.role_title}</span>

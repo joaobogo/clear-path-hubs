@@ -98,7 +98,7 @@ export function NotificationBell() {
         <Button
           variant="ghost"
           size="icon"
-          className="relative"
+          className="relative h-11 w-11 sm:h-9 sm:w-9"
           aria-label={
             unread > 0
               ? `Notifications, ${unread} unread${needsAttention > 0 ? `, ${needsAttention} need attention` : ""}`

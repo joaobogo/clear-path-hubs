@@ -42,7 +42,7 @@ export function PipelineBoard({
         </div>
       </div>
       <div
-        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3"
+        className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6"
         role="list"
         aria-label="Candidate pipeline"
       >
@@ -53,7 +53,7 @@ export function PipelineBoard({
               key={col.key}
               role="listitem"
               aria-label={`${col.label} column, ${byStage[col.key].length} candidates`}
-              className={`rounded-lg p-2 min-h-[280px] transition-colors ${
+              className={`rounded-lg p-2 transition-colors sm:min-h-[280px] ${
                 isDropTarget
                   ? "bg-primary/10 ring-2 ring-primary"
                   : "bg-muted/40"
@@ -105,7 +105,7 @@ export function PipelineBoard({
                       <Link
                         to="/client/candidates/$id"
                         params={{ id: m.id }}
-                        className="block text-sm font-medium hover:underline"
+                        className="block min-h-11 py-1.5 text-sm font-medium hover:underline sm:min-h-0 sm:py-0"
                       >
                         {m.candidate_profiles?.full_name ?? "Candidate"}
                       </Link>

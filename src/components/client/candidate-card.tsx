@@ -112,6 +112,7 @@ export function CandidateCard({
             disabled={compareDisabled && !compareSelected}
             onCheckedChange={() => onToggleCompare(c.match_id)}
             aria-label={`Compare ${c.candidate.display_name}`}
+            className="touch-target"
           />
           Compare
         </label>
