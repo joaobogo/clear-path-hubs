@@ -12,6 +12,7 @@ import {
   requestDiscoveryCall,
 } from "@/lib/booking.functions";
 import { DEFAULT_MEETING_TYPE, MEETING_TYPES } from "@/config/booking";
+import { PAYMENTS_ENABLED } from "@/config/commerce";
 import { mountCalendlyInline, onCalendlyEvent } from "@/lib/calendly";
 import { submitToCrm } from "@/lib/crm/submit-form";
 import { Button } from "@/components/ui/button";
@@ -25,13 +26,13 @@ export const Route = createFileRoute("/_authenticated/book-call")({
   }),
   head: () => ({
     meta: [
-      { title: "Book a call — talk before you pay | TaaSFlow" },
+      { title: "Book a call — pick a time that suits you | TaaSFlow" },
       {
         name: "description",
         content:
-          "Pick a time to talk through your role with our team. Your workspace opens straight away and payment stays pending until we agree the plan.",
+          "Pick a time to talk through your role with our team. Your workspace opens straight away and we agree the plan together on the call.",
       },
-      { property: "og:title", content: "Book a call — talk before you pay | TaaSFlow" },
+      { property: "og:title", content: "Book a call — pick a time that suits you | TaaSFlow" },
       {
         property: "og:description",
         content: "Choose a real time in our diary and start using your workspace immediately.",
@@ -160,7 +161,8 @@ function BookCallPage() {
       <h1 className="text-2xl font-semibold tracking-tight">Talk it through first</h1>
       <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
         Book a 30-minute call in our live diary. Your workspace is already open — the role stays
-        saved as a draft with payment pending until we agree the plan together.
+        saved as a draft{PAYMENTS_ENABLED ? " with payment pending" : ""} until we agree the plan
+        together.
       </p>
 
       {stateQuery.isLoading ? (
@@ -186,18 +188,22 @@ function BookCallPage() {
               <p className="font-medium text-foreground">What happens next</p>
               <p>We review your brief before the call, so we arrive with a plan, not questions.</p>
               <p>
-                After the call you either pay and go live, or we approve the start and invoice you.
+                {PAYMENTS_ENABLED
+                  ? "After the call you either pay and go live, or we approve the start and invoice you."
+                  : "On the call we agree the plan and set the search live. Your workspace is open in the meantime."}
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button onClick={() => navigate({ to: "/client" })}>Go to your workspace</Button>
+              <Button onClick={() => navigate({ to: "/client" })}>
+                {PAYMENTS_ENABLED ? "Go to your workspace" : "Go to my dashboard"}
+              </Button>
               <Button variant="outline" asChild>
                 <a href={CALENDLY_BOOKING_URL} target="_blank" rel="noopener noreferrer">
                   Change your time
                   <ExternalLink className="ml-2 h-4 w-4" aria-hidden />
                 </a>
               </Button>
-              {role ? (
+              {PAYMENTS_ENABLED && role ? (
                 <Button
                   variant="outline"
                   onClick={() => navigate({ to: "/checkout", search: { position: role.id } })}
