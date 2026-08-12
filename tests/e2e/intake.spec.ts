@@ -158,22 +158,24 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await expect(page.getByText("Enter your company website")).toHaveCount(0);
     await fillCompany(page, companyName, "northwindhealth.com");
 
-    // ── Contact fields clear their own errors ────────────────────────────────
+    // ── Contact fields clear their own errors as they are filled ─────────────
     await fillYou(page, email);
-    await continueStep(page);
     await expect(page.getByText("Enter your first name")).toHaveCount(0);
     await expect(page.getByText("Enter a valid work email")).toHaveCount(0);
 
-    // ── Account: min length + confirm match, still on step 1 ────────────────
+    // ── Account: password rules are enforced by the inline create action ─────
+    // (step 1's Continue does not gate on the password — the account block is a
+    // separate inline action, so its rules surface on "Create my account now".)
+    const createAccount = page.getByRole("button", { name: /create my account now/i });
     await fillPasswords(page, "short");
-    await continueStep(page);
+    await createAccount.click();
     await expectStep(page, 0);
     await expect(page.getByText(/at least 8 characters/i).first()).toBeVisible();
 
     await fillPasswords(page, "QaTest!Phase11", "QaTest!Different");
-    await continueStep(page);
+    await createAccount.click();
     await expectStep(page, 0);
-    await expect(page.getByText(/passwords must match/i)).toBeVisible();
+    await expect(page.getByText(/passwords don't match yet/i).first()).toBeVisible();
 
     await fillPasswords(page, "QaTest!Phase11");
 
@@ -191,6 +193,7 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     // ── Step 1 complete: the wizard advances ────────────────────────────────
     await continueStep(page);
     await expectStep(page, 1);
+
 
     // ── Step 2 gates on the role and on at least one tagged must-have ────────
     await continueStep(page);
