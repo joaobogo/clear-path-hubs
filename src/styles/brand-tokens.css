@@ -468,3 +468,15 @@
 html[data-consent-open="true"] .calendly-badge-widget {
   display: none !important;
 }
+
+/* While the consent bar is visible it must never overlap interactive content:
+   the workspace content gets extra bottom padding and anything opting in with
+   [data-consent-offset] (floating trays, sticky action bars) is pushed up by
+   the bar's measured height. */
+html[data-consent-open="true"] #workspace-main > div {
+  padding-bottom: calc(var(--consent-bar-h, 4.5rem) + 1.5rem);
+}
+
+html[data-consent-open="true"] [data-consent-offset] {
+  margin-bottom: var(--consent-bar-h, 4.5rem);
+}

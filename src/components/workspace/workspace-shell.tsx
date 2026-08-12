@@ -642,6 +642,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
 
         {primaryAction && (
           <div
+            data-consent-offset
             className="sticky bottom-0 z-30 border-t bg-background/95 px-4 py-3 backdrop-blur md:hidden"
             style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
           >
