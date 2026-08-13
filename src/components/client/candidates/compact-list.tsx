@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { clientStageLabel } from "@/lib/client-stage-labels";
 import { CandidateCard } from "@/components/client/candidate-card";
-import { DownloadCvButton } from "@/components/download-cv-button";
+import { DownloadCvButton, DownloadLatestCvLink } from "@/components/download-cv-button";
 import { UnicornBadge } from "@/components/client/candidate-score-badge";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 
