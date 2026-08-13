@@ -551,10 +551,11 @@ function CaseStudiesPage() {
         {/* Policy note */}
         <section className="mt-16 rounded-2xl border border-border/60 bg-muted/20 p-6 text-sm text-[color:var(--brand-navy)]/80 md:p-8">
           Metrics reflect aggregate delivery performance across representative
-          TaaSFlow engagements in each vertical. Testimonials are attributed to
-          the role and organization type; named case studies with written
-          client approval are added individually as each client signs off on
-          attribution.
+          TaaSFlow engagements in each vertical, not the reported results of a
+          single named client. We publish no testimonial a client has not
+          written and approved for attribution; named case studies are added
+          individually as each client signs off.
+
         </section>
 
         {/* CTA */}
