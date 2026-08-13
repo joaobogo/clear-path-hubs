@@ -474,12 +474,16 @@ html[data-consent-open="true"] .calendly-badge-widget {
   display: none !important;
 }
 
-/* While the consent bar is visible it must never overlap interactive content:
-   the workspace content gets extra bottom padding and anything opting in with
-   [data-consent-offset] (floating trays, sticky action bars) is pushed up by
-   the bar's measured height. */
+/* While the consent bar is visible it must never overlap interactive content.
+   The bar itself sits at z-55; sticky action bars and floating trays sit at
+   z-60, so the action always wins the stacking order. On top of that the
+   scroll container gains bottom padding (nothing can be scrolled under the
+   bar) and anything marked [data-consent-offset] is pushed up by the bar's
+   measured height. */
+html[data-consent-open="true"] #workspace-main,
 html[data-consent-open="true"] #workspace-main > div {
   padding-bottom: calc(var(--consent-bar-h, 4.5rem) + 1.5rem);
+  scroll-padding-bottom: calc(var(--consent-bar-h, 4.5rem) + 1.5rem);
 }
 
 html[data-consent-open="true"] [data-consent-offset] {
