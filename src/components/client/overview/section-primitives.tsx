@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SurfaceState } from "@/components/ds/surface-state";
+import { resolveFirstRunState } from "@/lib/empty-states/empty-state-catalogue";
 
 export function SectionHeader({
   id,
@@ -42,19 +44,13 @@ export function EmptyBlock({ text }: { text: string }) {
 
 export function EmptyWelcome({ canSubmit }: { canSubmit: boolean }) {
   return (
-    <section className="rounded-xl border bg-card p-6 sm:p-8">
-      <h2 className="text-xl font-semibold tracking-tight">Welcome to your workspace</h2>
-      <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
-        Submit your first role and this page becomes a single list of decisions waiting on you —
-        candidates to review, interviews to confirm, offers to close.
-      </p>
-      {canSubmit && (
-        <Link to="/intake" className="mt-4 inline-block">
-          <Button size="sm" className="min-h-11">
-            Submit a role <ArrowRight className="ml-1.5 h-4 w-4" />
-          </Button>
-        </Link>
-      )}
-    </section>
+    <SurfaceState
+      content={{
+        ...resolveFirstRunState(),
+        action: canSubmit ? resolveFirstRunState().action : undefined,
+        secondaryAction: canSubmit ? resolveFirstRunState().secondaryAction : undefined,
+      }}
+    />
   );
 }
+
