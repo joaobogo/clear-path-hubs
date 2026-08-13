@@ -5,6 +5,8 @@ import {
   CalendarClock,
   ExternalLink,
   Linkedin,
+  Lock as LockIcon,
+
   MapPin,
 } from "lucide-react";
 import { DownloadCvButton, DownloadLatestCvLink } from "@/components/download-cv-button";
@@ -134,13 +136,20 @@ export function CandidateHeader({
         )}
         {/* The raw CV carries email and phone: offered only once contact is
             released. The server enforces the same rule independently. */}
-        {candidate.contact_released && (
+        {candidate.contact_released ? (
           <>
             <DownloadCvButton matchId={candidate.match_id} mode="preview" />
             <DownloadCvButton matchId={candidate.match_id} />
             <DownloadLatestCvLink matchId={candidate.match_id} />
           </>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 rounded-md border border-dashed px-2.5 py-1.5 text-xs text-muted-foreground">
+            <LockIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            CV, email and phone unlock once contact release is agreed — use
+            &ldquo;Request contact details&rdquo;.
+          </span>
         )}
+
 
 
         {readOnly && (

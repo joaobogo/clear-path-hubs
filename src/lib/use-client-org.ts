@@ -35,3 +35,18 @@ export function useResolvedClientOrgId(): string | undefined {
   });
   return fromSearch ?? ctx.data?.active?.organization_id ?? undefined;
 }
+
+/**
+ * Membership role in the active workspace. Surfaces use this to explain
+ * read-only state to Viewers instead of showing controls the server rejects.
+ */
+export function useClientRole(): string | undefined {
+  const orgId = useClientOrgSearch();
+  const ctxFn = useServerFn(getClientContext);
+  const ctx = useQuery({
+    queryKey: ["client-context", orgId ?? null],
+    queryFn: () => ctxFn({ data: orgId ? { orgId } : {} }),
+    staleTime: 60_000,
+  });
+  return ctx.data?.active?.role ?? undefined;
+}

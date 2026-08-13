@@ -1,5 +1,8 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { ViewerReadOnlyNotice } from "@/components/client/states";
+
 import { useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -309,15 +312,25 @@ function CandidateDetailPage() {
  <main className="mx-auto max-w-3xl px-6 py-12">
  <BackLink />
  <div className="mt-4 rounded-lg border bg-card p-8 text-center">
- <h1 className="text-lg font-semibold">Candidate unavailable</h1>
+ <h1 className="text-lg font-semibold">Candidate not shared with you yet</h1>
  <p className="mt-2 text-sm text-muted-foreground">
- This candidate is no longer visible in your workspace. They may have been
- withdrawn, or you may be viewing a different client account.
+ This profile isn't in your workspace. Either TaaSFlow hasn't approved them
+ for one of your roles yet, they were withdrawn, or you're signed in to a
+ different client account.
  </p>
+ <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+ <Button asChild size="sm">
+ <Link to="/client/candidates">See your candidates</Link>
+ </Button>
+ <Button asChild size="sm" variant="outline">
+ <Link to="/client/conversations">Ask your recruiter</Link>
+ </Button>
+ </div>
  </div>
  </main>
  );
  }
+
 
  const { candidate, interviews, decisions } = data as {
  candidate: import("@/lib/client-kpi.server").ClientCandidateDTO;
@@ -375,6 +388,14 @@ function CandidateDetailPage() {
  read-only preview.
  </div>
  )}
+
+ {isViewer && !support.readOnly && (
+ <ViewerReadOnlyNotice
+ className="mt-4"
+ area="deciding on this candidate"
+ />
+ )}
+
 
  <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
  {/* MAIN COLUMN */}

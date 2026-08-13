@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { ViewerReadOnlyNotice } from "@/components/client/states";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import {
   Sparkles,
@@ -186,6 +187,10 @@ function TalentPoolPage() {
           {resultsIsError ? "— candidates" : `${results?.total ?? 0} candidates`}
         </div>
       </header>
+
+      {readOnly ? (
+        <ViewerReadOnlyNotice className="mt-5" area="saving pools and tagging candidates" />
+      ) : null}
 
       <div className="mt-6">
         <RoleFitPanel orgId={orgId} />

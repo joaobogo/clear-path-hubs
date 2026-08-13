@@ -113,7 +113,41 @@ export function PermissionDenied({
   );
 }
 
+/**
+ * Shown on any surface where the signed-in person's role can read but not act.
+ * A disabled or absent button on its own reads as a bug, so we always name the
+ * role, what it can't do here, and how to get the access.
+ */
+export function ViewerReadOnlyNotice({
+  area,
+  className,
+}: {
+  /** What is read-only on this surface, in the user's words. */
+  area: string;
+  className?: string;
+}) {
+  return (
+    <div
+      role="status"
+      className={cn(
+        "flex flex-wrap items-center gap-x-2 gap-y-1 rounded-md border border-dashed bg-muted/40 px-3 py-2 text-xs text-muted-foreground",
+        className,
+      )}
+    >
+      <Lock className="h-3.5 w-3.5 shrink-0" aria-hidden />
+      <span>
+        Your role is <strong className="font-medium text-foreground">Viewer</strong>, so{" "}
+        {area} is read-only. Everything here stays up to date.
+      </span>
+      <Link to="/client/team" className="font-medium text-foreground underline">
+        Ask an admin for access
+      </Link>
+    </div>
+  );
+}
+
 export function NoWorkspaceState() {
+
   return (
     <EmptyState
       icon={Building2}

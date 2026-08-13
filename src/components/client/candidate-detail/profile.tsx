@@ -316,9 +316,13 @@ export const LinksPanel = memo(function LinksPanel({
           </>
         ) : (
           <li className="pt-1 text-xs text-muted-foreground">
-            CV available once contact details are released.
+            CV, email and phone stay withheld until contact release is agreed.
+            Use &ldquo;Request contact details&rdquo; in the actions above and we
+            will ask the candidate.
           </li>
         )}
+
+
 
       </ul>
     </div>
