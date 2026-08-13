@@ -21,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { GlobalSearchDialog } from "@/components/workspace/global-search-dialog";
 import { cn } from "@/lib/utils";
+import { useCrumbLabel } from "@/lib/workspace/crumb-label";
 
 export type WorkspaceNavItem = {
   to: string;
