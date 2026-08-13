@@ -221,6 +221,7 @@ const STATUS_RANK: Record<RequirementStatus, number> = {
 export function buildRequirementRows(
   position: { requirements?: unknown; preferred_requirements?: unknown } | null,
   coverage: unknown,
+  evidenceItems?: RequirementEvidenceRow[] | null,
 ): RequirementRow[] {
   const rows: RequirementRow[] = [];
   const cov = (coverage ?? {}) as AnyRow;
@@ -268,24 +269,55 @@ export function buildRequirementRows(
   stash(cov.missing, "not_evidenced");
   stash(cov.contradicted, "contradicted");
 
-  const push = (
-    declared: unknown,
-    importance: "must_have" | "preferred",
-  ) => {
+  // Verified evidence is keyed on the requirement text it was extracted for
+  // (`rubric_criterion_key`). It fills the verdict for string-form requirements,
+  // which never appear in the run's coverage map.
+  const evIndex = new Map<
+    string,
+    { status: RequirementStatus; evidence: Array<{ source: string | null; snippet: string }> }
+  >();
+  for (const item of evidenceItems ?? []) {
+    const key = String(item?.rubric_criterion_key ?? "").toLowerCase().trim();
+    if (!key) continue;
+    const status = normStatus(item?.result ?? item?.match_type);
+    const snippet = String(item?.factual_quote ?? item?.interpretation ?? "").trim();
+    const entry = evIndex.get(key) ?? { status, evidence: [] };
+    if (STATUS_RANK[status] > STATUS_RANK[entry.status]) entry.status = status;
+    if (snippet && entry.evidence.length < 3) {
+      entry.evidence.push({ source: item?.source_kind ?? null, snippet });
+    }
+    evIndex.set(key, entry);
+  }
+
+  const push = (declared: unknown, importance: "must_have" | "preferred") => {
     if (!Array.isArray(declared)) return;
-    declared.forEach((raw: AnyRow, i: number) => {
+    declared.forEach((raw: AnyRow) => {
       const label =
         typeof raw === "string" ? raw : raw?.label ?? raw?.text ?? raw?.name ?? null;
       if (!label) return;
       const key = String(label).toLowerCase().trim();
       const found = covIndex.get(key);
+      const fromEvidence = evIndex.get(key);
+      const declaredImportance =
+        typeof raw === "object" && raw !== null && typeof raw.importance === "string"
+          ? raw.importance === "preferred"
+            ? "preferred"
+            : "must_have"
+          : importance;
+      const status = found?.status ?? fromEvidence?.status ?? "not_evidenced";
+      const evidence =
+        found?.evidence && found.evidence.length > 0
+          ? found.evidence
+          : (fromEvidence?.evidence ?? []);
       rows.push({
-        id: `${importance}-${i}`,
+        // Stable slug: identity follows the requirement text, not its position
+        // in the array, so string-form requirements keep a durable id.
+        id: `${declaredImportance === "preferred" ? "pref" : "must"}-${requirementSlug(String(label))}`,
         label: String(label),
-        importance,
-        status: found?.status ?? "not_evidenced",
+        importance: declaredImportance,
+        status,
         explanation: found?.explanation ?? null,
-        evidence: found?.evidence ?? [],
+        evidence,
       });
       covIndex.delete(key);
     });
@@ -298,7 +330,7 @@ export function buildRequirementRows(
   if (rows.length === 0) {
     for (const [, v] of covIndex) {
       rows.push({
-        id: `run-${rows.length}`,
+        id: `run-${requirementSlug(String(v.label))}`,
         label: v.label,
         importance: "must_have",
         status: v.status,
