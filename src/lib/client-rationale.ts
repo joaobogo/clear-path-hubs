@@ -191,7 +191,7 @@ export function buildShortlistRationale(
   const counted = lines.filter((l) => l.verdict !== "not_applicable");
   const summary =
     counted.length === 0
-      ? "Your requirements are still being mapped for this candidate."
+      ? "0 of 0 requirements evidenced"
       : `${evidenced.length} of ${counted.length} of your requirements evidenced`;
 
   return { lines, evidenced, gaps, summary };
