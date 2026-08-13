@@ -137,14 +137,15 @@ export function resolveNoRolesState(signals: {
     return {
       id: "roles.pending-setup",
       icon: "roles",
-      tone: "attention",
-      title: "No live roles yet",
-      why: `${pendingSetup} role${pendingSetup === 1 ? " is" : "s are"} still in setup, so nothing is live.`,
-      expected: NEEDS_ATTENTION,
-      populates: "Finishing setup — requirements, blueprint and billing — publishes the role.",
-      activity: "No searching happens while a role is unpublished.",
-      action: { label: "Finish setup", to: "/client/onboarding" },
-      secondaryAction: { label: "See roles in setup", to: "/client/positions" },
+      tone: "waiting",
+      title: "Role submitted — setting up now",
+      why: `${pendingSetup} role${pendingSetup === 1 ? " is" : "s are"} in setup, so nothing is live yet.`,
+      expected: EXPECTED_PROCESSING,
+      populates: "Once the blueprint is approved and the role is published, the search begins and candidates land here.",
+      activity: "Your team is confirming the role blueprint and requirements.",
+      eta: "Most roles go live within 1 business day of submission.",
+      action: { label: "See what's in setup", to: "/client/positions" },
+      secondaryAction: { label: "Message your team", to: "/client/conversations" },
     };
   }
 
@@ -164,6 +165,24 @@ export function resolveNoRolesState(signals: {
     secondaryAction: hasAnyRole ? undefined : { label: "Guided setup", to: "/client/onboarding" },
   };
 }
+
+/** Honest first-run state for a brand-new workspace. */
+export function resolveFirstRunState(): SurfaceStateContent {
+  return {
+    id: "first-run",
+    icon: "roles",
+    tone: "expected",
+    title: "Your workspace is ready",
+    why: "Submit a role and this page becomes your command center — decisions, candidates, and next steps in one place.",
+    expected: EXPECTED_NEW,
+    populates: "Your first role opens the blueprint, discovery, and candidate pipeline.",
+    activity: "Nothing is running yet.",
+    eta: "After submission, roles typically go live within 1 business day.",
+    action: { label: "Add your first role", to: "/intake" },
+    secondaryAction: { label: "Guided setup", to: "/client/onboarding" },
+  };
+}
+
 
 /* ----------------------------------------------------------- 2. candidates */
 
