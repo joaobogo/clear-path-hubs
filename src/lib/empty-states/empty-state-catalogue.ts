@@ -137,14 +137,15 @@ export function resolveNoRolesState(signals: {
     return {
       id: "roles.pending-setup",
       icon: "roles",
-      tone: "attention",
-      title: "No live roles yet",
-      why: `${pendingSetup} role${pendingSetup === 1 ? " is" : "s are"} still in setup, so nothing is live.`,
-      expected: NEEDS_ATTENTION,
-      populates: "Finishing setup — requirements, blueprint and billing — publishes the role.",
-      activity: "No searching happens while a role is unpublished.",
-      action: { label: "Finish setup", to: "/client/onboarding" },
-      secondaryAction: { label: "See roles in setup", to: "/client/positions" },
+      tone: "waiting",
+      title: "Role submitted — setting up now",
+      why: `${pendingSetup} role${pendingSetup === 1 ? " is" : "s are"} in setup, so nothing is live yet.`,
+      expected: EXPECTED_PROCESSING,
+      populates: "Once the blueprint is approved and the role is published, the search begins and candidates land here.",
+      activity: "Your team is confirming the role blueprint and requirements.",
+      eta: "Most roles go live within 1 business day of submission.",
+      action: { label: "See what's in setup", to: "/client/positions" },
+      secondaryAction: { label: "Message your team", to: "/client/conversations" },
     };
   }
 
@@ -165,11 +166,31 @@ export function resolveNoRolesState(signals: {
   };
 }
 
+/** Honest first-run state for a brand-new workspace. */
+export function resolveFirstRunState(): SurfaceStateContent {
+  return {
+    id: "first-run",
+    icon: "roles",
+    tone: "expected",
+    title: "Your workspace is ready",
+    why: "Submit a role and this page becomes your command center — decisions, candidates, and next steps in one place.",
+    expected: EXPECTED_NEW,
+    populates: "Your first role opens the blueprint, discovery, and candidate pipeline.",
+    activity: "Nothing is running yet.",
+    eta: "After submission, roles typically go live within 1 business day.",
+    action: { label: "Add your first role", to: "/intake" },
+    secondaryAction: { label: "Guided setup", to: "/client/onboarding" },
+  };
+}
+
+
 /* ----------------------------------------------------------- 2. candidates */
 
 export function resolveNoCandidatesState(signals: {
   /** Live roles in the workspace. */
   activeRoles: number;
+  /** Roles in setup but not yet live. */
+  rolesInSetup: number;
   /** Discovery/sourcing has been started for at least one role. */
   discoveryStarted: boolean;
   /** Candidates currently being processed or scored (not yet approved). */
@@ -177,7 +198,22 @@ export function resolveNoCandidatesState(signals: {
   /** Discovery finished but produced nobody above the bar. */
   runsCompleted: number;
 }): SurfaceStateContent {
-  const { activeRoles, discoveryStarted, inProcessing, runsCompleted } = signals;
+  const { activeRoles, rolesInSetup, discoveryStarted, inProcessing, runsCompleted } = signals;
+
+  if (activeRoles === 0 && rolesInSetup > 0) {
+    return {
+      id: "candidates.role-in-setup",
+      icon: "candidates",
+      tone: "waiting",
+      title: "Candidates are on the way",
+      why: `${rolesInSetup} role${rolesInSetup === 1 ? " is" : "s are"} in setup. Sourcing starts once the role is published.`,
+      expected: EXPECTED_PROCESSING,
+      populates: "Approved candidates appear here after the role goes live and the first search runs.",
+      activity: "The role blueprint is being finalized before searching begins.",
+      eta: "Expect the first candidates within 24–48 hours of the role going live.",
+      action: { label: "See role progress", to: "/client/positions" },
+    };
+  }
 
   if (activeRoles === 0) {
     return {
@@ -199,9 +235,9 @@ export function resolveNoCandidatesState(signals: {
       icon: "candidates",
       tone: "attention",
       title: "The search hasn't started yet",
-      why: "Your role is set up, but the search hasn't been started for it.",
+      why: "Your role is live, but the search hasn't been started for it.",
       expected: NEEDS_ATTENTION,
-      populates: "Starting the search puts our sourcing and evidence agents to work on this role.",
+      populates: "Starting the search puts our sourcing and evidence review to work on this role.",
       activity: "Nothing is searching for this role yet.",
       action: { label: "Start the search", to: "/client/positions" },
     };
@@ -246,9 +282,11 @@ export function resolveNoCandidatesState(signals: {
     expected: EXPECTED_PROCESSING,
     populates: "Approved candidates appear here with their evidence and fit.",
     activity: "Discovery and review are in progress.",
+    eta: "First candidates usually arrive within 24–48 hours of a search starting.",
     action: { label: "See role progress", to: "/client/positions" },
   };
 }
+
 
 /* ------------------------------------------------------------- 3. evidence */
 
@@ -426,8 +464,11 @@ export function resolveNoIntegrationsState(signals: {
 
 /* ------------------------------------------------------------- 7. messages */
 
-export function resolveNoMessagesState(signals: { activeRoles: number }): SurfaceStateContent {
-  if (signals.activeRoles === 0) {
+export function resolveNoMessagesState(signals: {
+  activeRoles: number;
+  rolesInSetup: number;
+}): SurfaceStateContent {
+  if (signals.activeRoles === 0 && signals.rolesInSetup === 0) {
     return {
       id: "messages.no-roles",
       icon: "messages",
@@ -438,6 +479,20 @@ export function resolveNoMessagesState(signals: { activeRoles: number }): Surfac
       populates: "Adding a role opens its thread; every message about it stays there and mirrors to email.",
       activity: NOTHING_RUNNING,
       action: { label: "Add a role", to: "/intake" },
+    };
+  }
+  if (signals.rolesInSetup > 0 && signals.activeRoles === 0) {
+    return {
+      id: "messages.role-in-setup",
+      icon: "messages",
+      tone: "waiting",
+      title: "Your role thread opens once it goes live",
+      why: `${signals.rolesInSetup} role${signals.rolesInSetup === 1 ? "" : "s"} ${signals.rolesInSetup === 1 ? "is" : "are"} in setup. The conversation thread starts once the role is published.`,
+      expected: EXPECTED_PROCESSING,
+      populates: "Every role and every candidate gets its own thread, mirrored to your email.",
+      activity: "Nothing to message about yet — the role is still being set up.",
+      eta: "Threads appear once the role is live.",
+      action: { label: "See role progress", to: "/client/positions" },
     };
   }
   return {
@@ -453,6 +508,7 @@ export function resolveNoMessagesState(signals: { activeRoles: number }): Surfac
     secondaryAction: { label: "See candidates", to: "/client/candidates" },
   };
 }
+
 
 /* ------------------------------------------------------------ 8. approvals */
 

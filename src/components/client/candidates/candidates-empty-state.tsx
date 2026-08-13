@@ -30,6 +30,7 @@ export function CandidatesEmptyState({
     <SurfaceState
       content={resolveNoCandidatesState({
         activeRoles: signals?.activeRoles ?? 0,
+        rolesInSetup: signals?.rolesInSetup ?? 0,
         discoveryStarted: signals?.discoveryStarted ?? false,
         inProcessing: signals?.inProcessing ?? 0,
         runsCompleted: signals?.runsCompleted ?? 0,
