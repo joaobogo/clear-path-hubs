@@ -220,12 +220,17 @@ export const getCandidateJourney = createServerFn({ method: "GET" })
 
     // Ranked — every completed score run
     for (const r of (runs ?? []) as Any[]) {
+      // Band from the run's own score, so the timeline can't caption a number
+      // with a band written under different cut-offs.
+      const band =
+        r.final_score != null ? classifyBand(Number(r.final_score)) : (r.fit_band ?? null);
       const label =
-        r.fit_band != null
-          ? `Score ${r.final_score ?? "—"} · ${r.fit_band}`
-          : r.final_score != null
-            ? `Score ${r.final_score}`
+        r.final_score != null
+          ? `Score ${r.final_score}${band ? ` · ${String(band).replace(/_/g, " ")}` : ""}`
+          : band != null
+            ? String(band).replace(/_/g, " ")
             : null;
+
       push("ranked", r.completed_at, label);
     }
 
