@@ -11,27 +11,33 @@ function ScoreCell({ c }: { c: ClientCandidateDTO }) {
   }
   const tone =
     c.score >= 95
-      ? "border-primary/30 bg-primary/10 text-primary"
+      ? { text: "text-primary", bar: "bg-primary", track: "bg-primary/15" }
       : c.score >= 85
-        ? "border-success/30 bg-success/10 text-success"
+        ? { text: "text-success", bar: "bg-success", track: "bg-success/15" }
         : c.score >= 70
-          ? "border-info/30 bg-info/10 text-info"
+          ? { text: "text-info", bar: "bg-info", track: "bg-info/15" }
           : c.score >= 50
-            ? "border-warning/30 bg-warning/10 text-warning-strong"
-            : "border-border bg-muted text-muted-foreground";
+            ? { text: "text-warning-strong", bar: "bg-warning", track: "bg-warning/20" }
+            : { text: "text-muted-foreground", bar: "bg-muted-foreground/50", track: "bg-muted" };
   return (
-    <span className="inline-flex items-center gap-1.5">
-      <span
-        className={`inline-flex items-baseline gap-0.5 rounded-full border px-2 py-0.5 text-sm font-semibold tabular-nums ${tone}`}
-        title="Fit score out of 100"
-      >
-        {c.score}
-        <span className="text-[10px] font-normal opacity-70">/100</span>
-      </span>
-      {c.score >= 95 && <UnicornBadge />}
-    </span>
+    <div className="min-w-[104px]" title="Fit score out of 100">
+      <div className="flex items-center gap-2 whitespace-nowrap">
+        <span className={`text-lg font-semibold leading-none tabular-nums ${tone.text}`}>
+          {c.score}
+        </span>
+        <span className="text-[11px] leading-none text-muted-foreground">/100</span>
+        {c.score >= 95 && <UnicornBadge />}
+      </div>
+      <div className={`mt-1.5 h-1 w-full overflow-hidden rounded-full ${tone.track}`}>
+        <div
+          className={`h-full rounded-full ${tone.bar}`}
+          style={{ width: `${Math.max(2, Math.min(100, c.score))}%` }}
+        />
+      </div>
+    </div>
   );
 }
+
 
 export function CompactList({
   rows,
