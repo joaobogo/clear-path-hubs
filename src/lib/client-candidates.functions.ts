@@ -7,6 +7,8 @@ import { z } from "zod";
 import { CLIENT_PERMISSIONS, type ClientPermission } from "@/lib/authz";
 import { computeRoleLaunchState } from "@/lib/role-launch.server";
 import { DECLINE_REASONS } from "@/lib/client-decision-reasons";
+import { classifyBand } from "@/lib/scoring/bands";
+
 import {
   DEAL_BREAKER_REASON_CODES,
   normalizeDealBreakers,
@@ -136,12 +138,18 @@ export const getClientCandidates = createServerFn({ method: "GET" })
         if (data.filter === "not_moving_forward") return d.stage === "not_moving_forward";
         if (data.filter === "interview")
           return d.stage === "interview_process" || d.stage === "offer";
+        // "Top" matches the Overview tile and the card band: derived from the
+        // run's score, with the stored label only as a fallback.
         if (data.filter === "top")
-          return d.fit_label != null && (TOP_FIT_LABELS as readonly string[]).includes(d.fit_label);
+          return d.score != null
+            ? (TOP_FIT_LABELS as readonly string[]).includes(classifyBand(d.score))
+            : d.fit_label != null && (TOP_FIT_LABELS as readonly string[]).includes(d.fit_label);
         return true;
       });
     }
-    if (data.fitBand) dtos = dtos.filter((d) => d.fit_label === data.fitBand);
+    // Chip filter speaks the client-facing band shown on the card.
+    if (data.fitBand) dtos = dtos.filter((d) => d.fit.band === data.fitBand || d.fit_label === data.fitBand);
+
     if (data.location) {
       const needle = data.location.toLowerCase();
       dtos = dtos.filter((d) => (d.candidate.location ?? "").toLowerCase().includes(needle));

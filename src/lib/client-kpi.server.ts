@@ -5,6 +5,8 @@
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
 import { isUnicornMatch, classifyBand } from "@/lib/scoring/bands";
+import { cleanQuote } from "@/lib/evidence/quote-hygiene";
+
 import {
   buildRequirementRows,
   summariseCoverage,
@@ -227,18 +229,21 @@ export async function loadKpiRows(
 
 
 /**
- * A "strongest candidate": an approved assessment whose stored label or band
- * sits in the top group, or — when only a number was stored — whose score
- * classifies into `strong` or better through the canonical band table.
+ * A "strongest candidate": the approved run's SCORE classifies into `strong` or
+ * better through the canonical band table. Stored label/band strings are only
+ * consulted for runs that never recorded a number — some historical runs carry
+ * labels written under older cut-offs, and trusting them first let the tile
+ * disagree with the band shown on the candidate card.
  */
 export function isTopMatch(r: KpiRow): boolean {
   if (r.approved_score_run_id == null) return false;
   const words = TOP_FIT_LABELS as readonly string[];
+  if (r.approved_score != null) return words.includes(classifyBand(r.approved_score));
   if (r.approved_fit_label != null && words.includes(r.approved_fit_label)) return true;
   if (r.approved_fit_band != null && words.includes(r.approved_fit_band)) return true;
-  if (r.approved_score != null) return words.includes(classifyBand(r.approved_score));
   return false;
 }
+
 
 
 export function isInInterview(r: KpiRow): boolean {
@@ -660,14 +665,20 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
       ? String(runConcerns[0])
       : null);
 
+  // Contact release is a separate permission, so every quote goes through the
+  // same hygiene pass as the criteria rows before it leaves the server.
   const evidence: Array<{ label: string; snippet: string }> = Array.isArray(
     run?.evidence,
   )
-    ? run.evidence.slice(0, 8).map((e: AnyRow) => ({
-        label: String(e.label ?? e.type ?? "Evidence"),
-        snippet: String(e.snippet ?? e.value ?? ""),
-      }))
+    ? run.evidence
+        .slice(0, 8)
+        .map((e: AnyRow) => ({
+          label: String(e.label ?? e.type ?? "Evidence"),
+          snippet: cleanQuote(String(e.snippet ?? e.value ?? "")),
+        }))
+        .filter((e: { snippet: string }) => e.snippet.length > 0)
     : [];
+
 
   const experience = normExperience(cp.experience);
   const currentRole = experience[0]?.title ?? null;
@@ -718,7 +729,13 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     workAuth,
   });
 
-  const fit = toFitPresentation(run?.fit_label ?? run?.fit_band ?? null, null);
+  // Band, number, coverage and freshness all come off THIS run. Passing the
+  // run's score keeps the headline in step with the figure rendered below it.
+  const fit = toFitPresentation(
+    run?.fit_label ?? run?.fit_band ?? null,
+    run?.score != null ? Number(run.score) : null,
+  );
+
 
   const roleComp = normCompensationRange(pos?.compensation);
   const candExpect = normCandidateExpectation(cp.compensation_preferences);
@@ -786,11 +803,15 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
         : (row.updated_at ?? row.delivered_at ?? null),
     last_updated: run?.completed_at ?? row.updated_at ?? row.delivered_at ?? null,
     position: pos ? { id: pos.id, title: pos.title } : null,
+    // Band comes from this run's score through the one band table. The stored
+    // `fit_band` string uses the engine's label vocabulary, not band keys, so
+    // feeding it here silently failed the top-band test.
     unicorn: isUnicornMatch({
       score: run?.score != null ? Number(run.score) : null,
-      band: (run?.fit_band ?? null) as never,
+      band: run?.score != null ? classifyBand(Number(run.score)) : null,
       hired: row.stage === "hired",
     }),
+
     freshness: mergeStoredStaleness(
       assessFreshness({
         scored_at: run?.completed_at ?? null,

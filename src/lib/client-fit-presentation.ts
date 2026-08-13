@@ -119,23 +119,30 @@ const BAND_TABLE: Record<FitBand, Omit<FitPresentation, "band">> = {
 /**
  * Normalise a raw fit label + numeric score into the Client-facing fit band.
  * Never surfaces internal labels ("not_a_fit", "manual_review_required", …).
+ *
+ * The SCORE decides the band. Stored `fit_label` / `fit_band` strings are only
+ * a fallback for runs that never recorded a number: historical runs were
+ * written with older cut-offs (a 73 stored as `worth_considering`, a 50 stored
+ * as `not_a_fit`), so trusting the string first made the headline contradict
+ * the number shown next to it on the same card.
  */
 export function toFitPresentation(
   rawLabel: string | null | undefined,
   score: number | null | undefined,
 ): FitPresentation {
   let band: FitBand | null = null;
-  if (rawLabel) {
+  if (typeof score === "number" && Number.isFinite(score)) {
+    // Derives from the ONE band table, never local cut-offs or stored strings.
+    band = CANONICAL_TO_FIT_BAND[classifyBand(score)] ?? null;
+  }
+  if (!band && rawLabel) {
     const key = rawLabel.toLowerCase().replace(/[^a-z_]/g, "");
     band = RAW_LABEL_MAP[key] ?? null;
-  }
-  if (!band && typeof score === "number") {
-    // Numeric fallback derives from the ONE band table, never local cut-offs.
-    band = CANONICAL_TO_FIT_BAND[classifyBand(score)] ?? null;
   }
   band ??= "mixed";
   return { band, ...BAND_TABLE[band] };
 }
+
 
 // ── Requirement rows ─────────────────────────────────────────────────────────
 
