@@ -56,7 +56,10 @@ export function PipelineBoard({
             <div
               key={col.key}
               role="listitem"
+              data-testid="pipeline-column"
+              data-stage={col.key}
               aria-label={`${col.label} column, ${byStage[col.key].length} candidates`}
+
               className={`rounded-lg p-2 transition-colors sm:min-h-[280px] ${
                 isDropTarget
                   ? "bg-primary/10 ring-2 ring-primary"
@@ -96,7 +99,11 @@ export function PipelineBoard({
                   return (
                     <div
                       key={m.id}
+                      data-testid="pipeline-card"
+                      data-match-id={m.id}
+                      data-stage={from}
                       draggable={canEdit && !movePending}
+
                       onDragStart={(e) => {
                         e.dataTransfer.setData("text/match-id", m.id);
                         e.dataTransfer.setData("text/from-stage", from);

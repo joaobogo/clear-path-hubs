@@ -9,7 +9,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { PipelineBoard } from "@/components/client/position-detail/pipeline-board";
-import { KANBAN_COLUMNS, STAGE_GRAPH } from "@/components/client/position-detail/constants";
+import { groupRowsByStage, isAllowedTransition } from "./board-grouping";
 import { DeclineReasonDialog } from "@/components/client/decline-reason-dialog";
 import { useStageMove } from "@/lib/client/use-stage-move";
 import type { MatchStage } from "@/lib/client-match-stage";
@@ -63,17 +63,15 @@ export function CandidatesBoardView({
   });
 
   const boardRows = rows.map(toBoardRow);
-  const byStage: Record<string, AnyRow[]> = {};
-  for (const col of KANBAN_COLUMNS) byStage[col.key] = [];
-  for (const m of boardRows) if (byStage[m.stage]) byStage[m.stage].push(m);
+  const { byStage } = groupRowsByStage(boardRows);
 
   const attemptMove = (matchId: string, from: MatchStage, to: MatchStage) => {
     if (from === to) return;
-    const allowed = STAGE_GRAPH[from] ?? [];
-    if (!allowed.includes(to)) {
+    if (!isAllowedTransition(from, to)) {
       toast.error(`Cannot move from ${from.replace("_", " ")} to ${to.replace("_", " ")}.`);
       return;
     }
+
     if (to === "not_moving_forward") {
       const m = rows.find((r) => r.match_id === matchId);
       setDeclining({ matchId, name: m?.candidate.display_name ?? null });
