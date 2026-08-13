@@ -72,7 +72,7 @@ export function ResurfacePanel({
       <header className="mb-3 flex items-start justify-between gap-3">
         <div>
           <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.08em]">
-            <Award className="h-4 w-4 text-amber-500" aria-hidden />
+            <Award className="h-4 w-4 text-warning" aria-hidden />
             From your talent memory
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -105,7 +105,7 @@ export function ResurfacePanel({
                       {REASON_LABELS[m.reason_category]}
                     </Badge>
                     {m.consent_status === "granted" && (
-                      <Badge className="border-emerald-300/60 bg-emerald-100/60 text-emerald-900 dark:bg-emerald-500/10 dark:text-emerald-200 text-[10px]">
+                      <Badge className="border-success/60 bg-success/60 text-success text-[10px]">
                         consent granted
                       </Badge>
                     )}

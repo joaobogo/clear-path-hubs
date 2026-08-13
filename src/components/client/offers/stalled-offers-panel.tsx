@@ -15,9 +15,9 @@ export function StalledOffersPanel({
 }) {
   if (stalled.length === 0) return null;
   return (
-    <section className="mt-6 rounded-xl border border-amber-300/70 bg-amber-50/60 p-4 dark:bg-amber-950/20">
+    <section className="mt-6 rounded-xl border border-warning/70 bg-warning/60 p-4">
       <h2 className="flex items-center gap-2 text-sm font-semibold">
-        <AlertTriangle className="h-4 w-4 text-amber-600" aria-hidden />
+        <AlertTriangle className="h-4 w-4 text-warning" aria-hidden />
         {stalled.length} offer{stalled.length === 1 ? "" : "s"} stalled over{" "}
         {STALL_HOURS}h
       </h2>

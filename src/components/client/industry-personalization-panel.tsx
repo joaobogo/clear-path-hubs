@@ -17,16 +17,16 @@ import { resolveIndustryProfile } from "@/config/industry-profiles";
 import { BadgeCheck, ClipboardList, Compass, FileCheck2, ChevronDown } from "lucide-react";
 
 const ACCENT_BG: Record<string, string> = {
-  sunset:   "from-amber-50 to-orange-50/40 border-amber-200/60",
-  clinical: "from-sky-50 to-cyan-50/40 border-sky-200/60",
-  trading:  "from-slate-50 to-blue-50/40 border-slate-200/60",
-  code:     "from-violet-50 to-fuchsia-50/40 border-violet-200/60",
-  commerce: "from-rose-50 to-pink-50/40 border-rose-200/60",
-  steel:    "from-zinc-50 to-slate-100/40 border-zinc-200/60",
-  gavel:    "from-stone-50 to-amber-50/30 border-stone-200/60",
-  chalk:    "from-emerald-50 to-teal-50/40 border-emerald-200/60",
-  route:    "from-indigo-50 to-sky-50/40 border-indigo-200/60",
-  grid:     "from-lime-50 to-emerald-50/40 border-lime-200/60",
+  sunset:   "from-warning to-warning/40 border-warning/60",
+  clinical: "from-info to-info/40 border-info/60",
+  trading:  "from-muted to-info/40 border-muted-foreground/60",
+  code:     "from-primary to-primary/40 border-primary/60",
+  commerce: "from-destructive to-destructive/40 border-destructive/60",
+  steel:    "from-muted to-muted/40 border-muted-foreground/60",
+  gavel:    "from-muted to-warning/30 border-muted-foreground/60",
+  chalk:    "from-success to-success/40 border-success/60",
+  route:    "from-info to-info/40 border-info/60",
+  grid:     "from-success to-success/40 border-success/60",
   neutral:  "from-muted/40 to-muted/10 border-border",
 };
 

@@ -64,7 +64,7 @@ function HireCardImpl({
       </div>
 
       {isStalled(hire) && (
-        <p className="mt-1.5 inline-flex items-center gap-1 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-900 dark:bg-amber-950/50 dark:text-amber-200">
+        <p className="mt-1.5 inline-flex items-center gap-1 rounded bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-warning">
           <AlertTriangle className="h-3 w-3" /> {stallLabel(hire)}
         </p>
       )}

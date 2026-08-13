@@ -72,10 +72,10 @@ export const AGENT_RAIL_QUERY_KEY = ["agent-activity-rail"] as const;
  */
 
 const STATUS_STYLE: Record<RailStatus, string> = {
-  done: "border-emerald-600/30 text-emerald-700",
-  in_progress: "border-sky-600/30 text-sky-700",
+  done: "border-success/30 text-success",
+  in_progress: "border-info/30 text-info",
   needs_you: "border-primary/40 text-primary",
-  blocked: "border-amber-600/40 text-amber-700",
+  blocked: "border-warning/40 text-warning",
   failed: "border-destructive/50 text-destructive",
   stopped: "border-muted-foreground/40 text-muted-foreground",
 };

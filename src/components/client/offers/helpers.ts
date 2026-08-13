@@ -34,13 +34,13 @@ export const COLUMN_ICON: Record<HireStatus, React.ComponentType<{ className?: s
 };
 
 export const COLUMN_TONE: Record<HireStatus, string> = {
-  offer_drafted: "border-slate-300 bg-slate-50 dark:bg-slate-900/40",
-  offer_sent: "border-blue-300/60 bg-blue-50/60 dark:bg-blue-950/30",
-  offer_negotiating: "border-violet-300/60 bg-violet-50/60 dark:bg-violet-950/30",
-  offer_accepted: "border-emerald-300/60 bg-emerald-50/60 dark:bg-emerald-950/30",
-  offer_declined: "border-amber-300/60 bg-amber-50/60 dark:bg-amber-950/30",
+  offer_drafted: "border-muted-foreground/30 bg-muted/10",
+  offer_sent: "border-info/60 bg-info/60",
+  offer_negotiating: "border-primary/60 bg-primary/60",
+  offer_accepted: "border-success/60 bg-success/60",
+  offer_declined: "border-warning/60 bg-warning/60",
   hire_confirmed: "border-primary/40 bg-primary/5",
-  closed_lost: "border-rose-300/60 bg-rose-50/60 dark:bg-rose-950/30",
+  closed_lost: "border-destructive/60 bg-destructive/60",
 };
 
 export const NEXT_STEPS: Record<HireStatus, HireStatus[]> = {

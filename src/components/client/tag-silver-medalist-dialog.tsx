@@ -78,7 +78,7 @@ export function TagSilverMedalistDialog({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Award className="h-4 w-4 text-amber-500" aria-hidden />
+            <Award className="h-4 w-4 text-warning" aria-hidden />
             Add to talent memory
           </DialogTitle>
           <DialogDescription>
@@ -171,7 +171,7 @@ export function SilverMedalistBadge({
   });
   if (!data) return null;
   return (
-    <Badge className="gap-1 border-amber-300/60 bg-amber-100/60 text-amber-900 dark:bg-amber-500/10 dark:text-amber-200">
+    <Badge className="gap-1 border-warning/60 bg-warning/60 text-warning">
       <Award className="h-3 w-3" aria-hidden />
       Silver medalist
     </Badge>

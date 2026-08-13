@@ -42,11 +42,11 @@ export const SYSTEM_HEALTH_QUERY_KEY = ["system-health"] as const;
  */
 
 const STATE_STYLE: Record<HealthState, string> = {
-  operational: "border-emerald-600/30 text-emerald-700",
-  processing: "border-sky-600/30 text-sky-700",
+  operational: "border-success/30 text-success",
+  processing: "border-info/30 text-info",
   waiting_approval: "border-primary/40 text-primary",
-  delayed: "border-amber-600/40 text-amber-700",
-  degraded: "border-amber-700/50 text-amber-800",
+  delayed: "border-warning/40 text-warning",
+  degraded: "border-warning/50 text-warning",
   action_required: "border-destructive/50 text-destructive",
   unknown: "border-muted-foreground/30 text-muted-foreground",
   unavailable: "border-muted-foreground/30 text-muted-foreground",

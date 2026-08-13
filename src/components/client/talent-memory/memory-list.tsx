@@ -41,7 +41,7 @@ export function MemoryCard({
           {memory.status === "archived" ? (
             <Badge variant="outline" className="text-[10px]">archived</Badge>
           ) : (
-            <Badge className="border-amber-300/60 bg-amber-100/60 text-amber-900 dark:bg-amber-500/10 dark:text-amber-200 text-[10px]">
+            <Badge className="border-warning/60 bg-warning/60 text-warning text-[10px]">
               silver
             </Badge>
           )}

@@ -131,7 +131,7 @@ export function ApprovalRowItem({
                 task.priority === "urgent"
                   ? "bg-destructive/10 text-destructive"
                   : task.priority === "high"
-                    ? "bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                    ? "bg-warning/10 text-warning"
                     : "bg-muted"
               }`}
             >

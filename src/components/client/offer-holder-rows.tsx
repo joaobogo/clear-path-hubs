@@ -36,8 +36,8 @@ import { ErrorState } from "@/components/client/states";
 
 const HOLDER_TONE: Record<OfferHolder, string> = {
   you: "border-primary/40 bg-primary/10 text-foreground",
-  candidate: "border-blue-300/60 bg-blue-50 text-foreground dark:bg-blue-950/30",
-  taasflow: "border-slate-300/70 bg-muted text-foreground",
+  candidate: "border-info/60 bg-info/10 text-foreground",
+  taasflow: "border-muted-foreground/70 bg-muted text-foreground",
   none: "border-border bg-muted/60 text-muted-foreground",
 };
 
@@ -93,7 +93,7 @@ export function OfferHolderRows({
           <li
             key={h.id}
             className={`rounded-lg border bg-card p-3 ${
-              row.needs_attention ? "border-amber-400/70" : ""
+              row.needs_attention ? "border-warning/70" : ""
             }`}
           >
             <div className="flex flex-wrap items-start justify-between gap-3">
@@ -119,11 +119,11 @@ export function OfferHolderRows({
 
             <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
               {row.needs_attention ? (
-                <AlertTriangle className="h-3.5 w-3.5 text-amber-600" aria-hidden />
+                <AlertTriangle className="h-3.5 w-3.5 text-warning" aria-hidden />
               ) : (
                 <CalendarClock className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
               )}
-              <span className={row.needs_attention ? "font-medium text-amber-700 dark:text-amber-400" : "text-muted-foreground"}>
+              <span className={row.needs_attention ? "font-medium text-warning" : "text-muted-foreground"}>
                 {h.expected_response_date
                   ? `${fmtDate(h.expected_response_date)} — ${row.response.label}`
                   : row.response.label}
