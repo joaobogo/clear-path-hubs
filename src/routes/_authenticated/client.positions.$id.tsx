@@ -13,13 +13,12 @@ import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import { getClientContext } from "@/lib/client-context.functions";
 import { getClientPositionDetail } from "@/lib/client-positions.functions";
-import { moveMatchStage } from "@/lib/client-decisions.functions";
 import { type MatchStage } from "@/lib/client-match-stage";
 import {
   TIMEZONE_BAND_LABELS,
   SPONSORSHIP_LABELS,
 } from "@/lib/express-intake-schema";
-import { readAdvanceGateError } from "@/lib/client/advance-gate";
+import { useStageMove } from "@/lib/client/use-stage-move";
 import { DeclineReasonDialog } from "@/components/client/decline-reason-dialog";
 
 import { confirmRoleBlueprint } from "@/lib/client-positions.functions";
@@ -36,7 +35,6 @@ import { RoleClosureRecord } from "@/components/client/close-role-dialog";
 import { RoleRecapPanel } from "@/components/client/role-recap";
 import { useRouteRealtime } from "@/hooks/use-route-realtime";
 import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
-import { readStaleStateError } from "@/lib/decision-concurrency";
 
 import { PositionDetailPending } from "@/components/client/position-detail/pending";
 import { QueryErrorCard } from "@/components/client/query-error";
@@ -126,7 +124,6 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
   const { id } = Route.useParams();
   const orgSearchParam = useClientOrgSearch();
   const qc = useQueryClient();
-  const moveFn = useServerFn(moveMatchStage);
   const support = useSupportView();
   const queryKey = ["client-position", orgId, id];
   // One request for the primary payload: role, pipeline, timeline, lifecycle,
@@ -168,71 +165,17 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
       toastError(e, { fallback: "We couldn't record that. Please try again." }),
   });
 
-  const move = useMutation({
-    mutationFn: (v: { matchId: string; toStage: MatchStage; reason?: string; reasonCode?: string }) =>
-      moveFn({
-        data: {
-          orgId: orgId!,
-          matchId: v.matchId,
-          toStage: v.toStage,
-          // The stage this candidate was on when the operator grabbed the card.
-          // If they have already moved, the server refuses the change.
-          expectedStage:
-            ((qc.getQueryData<AnyRow>(queryKey)?.matches as AnyRow[] | undefined) ?? []).find(
-              (m: AnyRow) => m.id === v.matchId,
-            )?.stage as string | undefined,
-          reason: v.reason,
-          reasonCode: v.reasonCode,
-        },
-      }),
-    onMutate: async (v) => {
-      await qc.cancelQueries({ queryKey });
-      const snapshot = qc.getQueryData<AnyRow>(queryKey);
-      qc.setQueryData<AnyRow>(queryKey, (prev: AnyRow) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          matches: prev.matches.map((m: AnyRow) =>
-            m.id === v.matchId ? { ...m, stage: v.toStage } : m,
-          ),
-        };
-      });
-      return { snapshot };
-    },
-    onError: (e: Error, _v, ctx) => {
-      if (ctx?.snapshot) qc.setQueryData(queryKey, ctx.snapshot);
-      // Someone else already moved this candidate: block the action, restore the
-      // board and explain what changed rather than reporting a failed save.
-      const stale = readStaleStateError(e);
-      if (stale) {
-        void refetch();
-        toast.error("This candidate already moved", { description: stale.message, duration: 12_000 });
-        return;
-      }
-      const raw = e.message.replace(/^Error: /, "");
-      const gate = readAdvanceGateError(raw);
-      const msg = gate
-        ? gate
-        : raw.startsWith("invalid_transition")
-        ? "That move is not allowed for this stage."
-        : raw === "reason_required"
-        ? "A reason is required to mark a candidate as not moving forward."
-        : raw === "SUPPORT_VIEW_READ_ONLY"
-        ? "Unavailable while viewing this workspace in read-only support mode."
-        : raw === "forbidden"
-        ? "You do not have permission to move candidates."
-        : raw === "match_not_visible"
-        ? "This candidate is no longer available."
-        : raw;
-      toast.error(msg);
-    },
-    onSuccess: () => {
-      toast.success("Stage updated");
-      qc.invalidateQueries({ queryKey: ["client-overview", orgId] });
-      qc.invalidateQueries({ queryKey: ["client-positions", orgId] });
-      qc.invalidateQueries({ queryKey: ["client-candidates", orgId] });
-    },
-    onSettled: () => qc.invalidateQueries({ queryKey }),
+  // The one client-side stage-move path, shared with the Candidates board.
+  const move = useStageMove({
+    orgId,
+    queryKey,
+    getMatches: (cached: AnyRow) => (cached?.matches as AnyRow[] | undefined) ?? [],
+    refetch,
+    invalidateKeys: [
+      ["client-overview", orgId],
+      ["client-positions", orgId],
+      ["client-candidates", orgId],
+    ],
   });
 
   // Published before any early return / throw so hook order stays stable.
