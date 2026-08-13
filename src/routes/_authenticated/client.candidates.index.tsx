@@ -44,7 +44,7 @@ const searchSchema = z.object({
  availability: fallback(z.string(), "all").default("all"),
  minExp: fallback(z.string(), "").default(""),
  location: fallback(z.string(), "").default(""),
- sort: fallback(z.string(), "recent").default("recent"),
+ sort: fallback(z.string(), "score").default("score"),
  view: fallback(z.enum(["cards", "list", "compare"]), "cards").default("cards"),
  org: fallback(z.string().uuid().optional(), undefined),
  // Canonical KPI drill-through key. Mirrors client-kpi.server predicates:
@@ -238,9 +238,13 @@ function CandidatesPage() {
  };
  rows.sort((a, b) => {
  switch (search.sort) {
- case "score":
- // Employer surfaces order by fit band, never by the internal number.
- return BAND_RANK[b.fit.band] - BAND_RANK[a.fit.band];
+        case "score": {
+          // Best score first; unscored candidates fall to the bottom, ordered by band.
+          const as = a.score ?? -1;
+          const bs = b.score ?? -1;
+          if (bs !== as) return bs - as;
+          return (BAND_RANK[b.fit.band] ?? 0) - (BAND_RANK[a.fit.band] ?? 0);
+        }
  case "must": {
  const av = a.coverage.must_total
  ? a.coverage.must_met / a.coverage.must_total

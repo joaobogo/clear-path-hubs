@@ -103,13 +103,22 @@ export function CandidatesFiltersPanel({
           </SelectContent>
         </Select>
         <Select value={search.stage} onValueChange={(v) => setF({ stage: v })}>
-          <SelectTrigger className="md:w-48" aria-label="Stage"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="md:w-44" aria-label="Stage"><SelectValue /></SelectTrigger>
           <SelectContent>
             {STAGE_OPTIONS.map((o) => (
               <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
             ))}
           </SelectContent>
         </Select>
+        <Select value={search.sort} onValueChange={(v) => setF({ sort: v })}>
+          <SelectTrigger className="md:w-44" aria-label="Sort"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            {SORT_OPTIONS.map((o) => (
+              <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
 
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
@@ -190,16 +199,6 @@ export function CandidatesFiltersPanel({
                 onChange={(e) => setF({ location: e.target.value })}
                 aria-label="Filter by location"
               />
-            </FilterField>
-            <FilterField label="Sort">
-              <Select value={search.sort} onValueChange={(v) => setF({ sort: v })}>
-                <SelectTrigger aria-label="Sort"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {SORT_OPTIONS.map((o) => (
-                    <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </FilterField>
             <Button className="w-full" size="sm" onClick={() => setOpen(false)}>Done</Button>
           </PopoverContent>

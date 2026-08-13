@@ -567,7 +567,7 @@ export const CLIENT_CANDIDATE_SELECT = `id, stage, delivered_at, position_id, ap
          candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, compensation_preferences, updated_at),
          positions(id, title, location, work_model, requirements, preferred_requirements, compensation, updated_at),
          applications(id, source, applied_at, created_at),
-         score_runs:approved_score_run_id (fit_label, fit_band, result, evidence, requirement_coverage, completed_at, engine_version, evaluation_method, input_hash, blueprint_version, contradiction_status, must_have_coverage, preferred_coverage)`;
+         score_runs:approved_score_run_id (score, fit_label, fit_band, result, evidence, requirement_coverage, completed_at, engine_version, evaluation_method, input_hash, blueprint_version, contradiction_status, must_have_coverage, preferred_coverage)`;
 
 
 /** Lowest score inside the strongest configured band. Single source of truth. */
@@ -734,7 +734,11 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
         : (row.updated_at ?? row.delivered_at ?? null),
     last_updated: run?.completed_at ?? row.updated_at ?? row.delivered_at ?? null,
     position: pos ? { id: pos.id, title: pos.title } : null,
-    unicorn: isUnicornMatch({ band: (run?.fit_band ?? null) as never, hired: row.stage === "hired" }),
+    unicorn: isUnicornMatch({
+      score: run?.score != null ? Number(run.score) : null,
+      band: (run?.fit_band ?? null) as never,
+      hired: row.stage === "hired",
+    }),
     freshness: mergeStoredStaleness(
       assessFreshness({
         scored_at: run?.completed_at ?? null,
@@ -774,9 +778,9 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
       current_company: currentCompany,
       links,
     },
-    // Employer surfaces never receive the internal numeric rating: the band is
-    // the contract, and the column is not even granted to client roles.
-    score: null,
+    // Employers see the 0-100 fit score alongside the band so ranking is
+    // obvious at a glance. 95+ is the unicorn threshold.
+    score: typeof run?.score === "number" ? Math.round(run.score) : run?.score != null ? Math.round(Number(run.score)) : null,
     fit_label: run?.fit_label ?? run?.fit_band ?? null,
     fit,
     // The engine's own explanation string carries a raw n/100 figure, which is
