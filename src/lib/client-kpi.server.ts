@@ -4,7 +4,7 @@
 //
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
-import { isUnicornMatch } from "@/lib/scoring/bands";
+import { isUnicornMatch, classifyBand } from "@/lib/scoring/bands";
 import {
   buildRequirementRows,
   summariseCoverage,
@@ -48,7 +48,21 @@ export type MatchStage =
   | "hired"
   | "not_moving_forward";
 
-export const TOP_FIT_LABELS = ["excellent", "strong"] as const;
+/**
+ * Every stored word that means "top of the pile", across both vocabularies in
+ * play: the engine's `fit_label` (`strong_fit`) and the canonical band keys
+ * (`exceptional` / `top` / `strong`). The historical list here was
+ * `["excellent","strong"]`, which no writer ever produces — so the "Strongest
+ * candidates" figure counted zero forever. Band thresholds stay in
+ * `scoring/bands.ts`; this is only the label vocabulary.
+ */
+export const TOP_FIT_LABELS = [
+  "strong_fit",
+  "exceptional",
+  "top",
+  "strong",
+  "excellent",
+] as const;
 
 export type KpiRow = {
   id: string;
@@ -59,6 +73,8 @@ export type KpiRow = {
   delivered_at: string | null;
   approved_score: number | null;
   approved_fit_label: string | null;
+  /** Stored band key of the approved run, when the writer recorded one. */
+  approved_fit_band: string | null;
   interview_active: boolean;
   interview_scheduled: boolean;
   /** An interview exists that still needs the client to confirm a time. */
@@ -111,7 +127,7 @@ export async function loadKpiRows(
     .select(
       `id, candidate_profile_id, position_id, stage, approved_score_run_id, delivered_at,
        client_decision_due_at, recommendation,
-       score_runs:approved_score_run_id (fit_label, fit_band)`,
+       score_runs:approved_score_run_id (score, fit_label, fit_band)`,
     )
     .eq("organization_id", orgId)
     .eq("client_visibility", "visible");
@@ -175,8 +191,9 @@ export async function loadKpiRows(
     stage: m.stage,
     approved_score_run_id: m.approved_score_run_id,
     delivered_at: m.delivered_at,
-    approved_score: null,
+    approved_score: m.score_runs?.score != null ? Number(m.score_runs.score) : null,
     approved_fit_label: m.score_runs?.fit_label ?? null,
+    approved_fit_band: m.score_runs?.fit_band ?? null,
     interview_active: activeInterviews.has(m.id),
     interview_scheduled: scheduledInterviews.has(m.id),
     next_interview_at: nextInterviewAt.get(m.id) ?? null,
@@ -189,13 +206,20 @@ export async function loadKpiRows(
   }));
 }
 
+/**
+ * A "strongest candidate": an approved assessment whose stored label or band
+ * sits in the top group, or — when only a number was stored — whose score
+ * classifies into `strong` or better through the canonical band table.
+ */
 export function isTopMatch(r: KpiRow): boolean {
-  return (
-    r.approved_score_run_id != null &&
-    r.approved_fit_label != null &&
-    (TOP_FIT_LABELS as readonly string[]).includes(r.approved_fit_label)
-  );
+  if (r.approved_score_run_id == null) return false;
+  const words = TOP_FIT_LABELS as readonly string[];
+  if (r.approved_fit_label != null && words.includes(r.approved_fit_label)) return true;
+  if (r.approved_fit_band != null && words.includes(r.approved_fit_band)) return true;
+  if (r.approved_score != null) return words.includes(classifyBand(r.approved_score));
+  return false;
 }
+
 
 export function isInInterview(r: KpiRow): boolean {
   return (

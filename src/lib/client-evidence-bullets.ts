@@ -1,5 +1,5 @@
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
-import { cleanQuote } from "@/lib/evidence/quote-hygiene";
+import { cleanQuote, cleanFieldValue } from "@/lib/evidence/quote-hygiene";
 
 export type EvidenceBullet = {
   /** The role requirement this evidence answers. */
@@ -12,6 +12,18 @@ export type EvidenceBullet = {
 
 function clean(s: string | null | undefined): string {
   return cleanQuote(s);
+}
+
+/**
+ * A quote, or — when hygiene's minimum length would erase a genuinely short
+ * one ("CKA certified 2024") — the scrubbed value itself, provided it still
+ * reads as a phrase rather than slice debris.
+ */
+function cleanDetail(s: string | null | undefined): string {
+  const quoted = cleanQuote(s);
+  if (quoted) return quoted;
+  const short = cleanFieldValue(s);
+  return short.length >= 12 && short.includes(" ") ? short : "";
 }
 
 function truncate(s: string, max = 130): string {
@@ -38,14 +50,14 @@ export function selectEvidenceBullets(
   const fromRequirements = c.requirement_rows
     .filter((r) => r.status === "met" || r.status === "partial")
     .map((r) => {
-      const snippet = clean(r.evidence.find((e) => clean(e.snippet))?.snippet);
-      const detail = snippet || clean(r.explanation);
+      const snippet = cleanDetail(r.evidence.find((e) => cleanDetail(e.snippet))?.snippet);
+      const detail = snippet || cleanDetail(r.explanation);
       return { row: r, detail };
     })
     .filter((x) => x.detail.length > 0)
     .sort((a, b) => rank(a.row) - rank(b.row))
     .map<EvidenceBullet>((x) => ({
-      requirement: clean(x.row.label),
+      requirement: cleanFieldValue(x.row.label),
       detail: truncate(x.detail),
       strength: x.row.status === "met" ? "verified" : "partial",
     }));
@@ -57,8 +69,8 @@ export function selectEvidenceBullets(
   if (bullets.length < limit) {
     for (const e of c.evidence) {
       if (bullets.length >= limit) break;
-      const detail = clean(e.snippet);
-      const requirement = clean(e.label);
+      const detail = cleanDetail(e.snippet);
+      const requirement = cleanFieldValue(e.label);
       if (!detail || !requirement) continue;
       if (bullets.some((b) => b.requirement.toLowerCase() === requirement.toLowerCase())) continue;
       bullets.push({ requirement, detail: truncate(detail), strength: "verified" });
@@ -68,7 +80,7 @@ export function selectEvidenceBullets(
   if (bullets.length < limit) {
     for (const s of c.strengths) {
       if (bullets.length >= limit) break;
-      const detail = clean(s);
+      const detail = cleanDetail(s);
       if (!detail) continue;
       if (bullets.some((b) => b.detail.toLowerCase() === detail.toLowerCase())) continue;
       bullets.push({ requirement: "Strength", detail: truncate(detail), strength: "partial" });
@@ -89,7 +101,7 @@ export function unevidencedMustHaves(
         r.importance === "must_have" &&
         (r.status === "not_evidenced" || r.status === "contradicted"),
     )
-    .map((r) => clean(r.label))
+    .map((r) => cleanFieldValue(r.label))
     .filter(Boolean)
     .slice(0, limit);
 }
@@ -100,19 +112,21 @@ export type FitChip = { label: string; value: string; tone: "good" | "watch" | "
 export function fitChips(c: ClientCandidateDTO): FitChip[] {
   const chips: FitChip[] = [];
 
-  const availability = clean(c.candidate.availability);
+  const availability = cleanFieldValue(c.candidate.availability);
   if (availability) {
     chips.push({ label: "Available", value: availability, tone: "neutral" });
   }
 
-  const location = clean(c.candidate.location);
+  const location = cleanFieldValue(c.candidate.location);
   if (location) {
-    const value = c.candidate.timezone ? `${location} · ${clean(c.candidate.timezone)}` : location;
+    const value = c.candidate.timezone
+      ? `${location} · ${cleanFieldValue(c.candidate.timezone)}`
+      : location;
     chips.push({ label: "Based in", value, tone: "neutral" });
   }
 
   const comp = c.compensation_alignment;
-  const expectation = clean(comp.candidate_expectation);
+  const expectation = cleanFieldValue(comp.candidate_expectation);
   if (comp.verdict !== "unknown" || expectation) {
     const value =
       comp.verdict === "aligned"

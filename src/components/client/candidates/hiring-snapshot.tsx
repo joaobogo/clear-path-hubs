@@ -46,13 +46,30 @@ export function HiringSnapshot({
   }
 
   const kpis = overview?.kpis;
+  // A tile never holds a skeleton once the figures arrived, and never invents a
+  // zero when they didn't: a missing figure reads as a dash plus a short reason.
   const tiles = [
-    { label: "Delivered", value: kpis?.delivered, filter: undefined },
-    { label: "Strongest candidates", value: kpis?.top, filter: { fit: "strong" } },
-    { label: "Shortlisted", value: kpis?.shortlisted, filter: { stage: "shortlisted" } },
-    { label: "Interviewing", value: kpis?.interviewing, filter: { stage: "interview_process" } },
-    { label: "Offers", value: kpis?.offers, filter: { stage: "offer" } },
-    { label: "Hires", value: kpis?.hires, filter: { stage: "hired" } },
+    { label: "Delivered", value: kpis?.delivered, filter: undefined, hint: "None delivered yet" },
+    {
+      label: "Strongest candidates",
+      value: kpis?.top,
+      filter: { fit: "strong" },
+      hint: "No strong fits yet",
+    },
+    {
+      label: "Shortlisted",
+      value: kpis?.shortlisted,
+      filter: { stage: "shortlisted" },
+      hint: "Nothing shortlisted",
+    },
+    {
+      label: "Interviewing",
+      value: kpis?.interviewing,
+      filter: { stage: "interview_process" },
+      hint: "No interviews yet",
+    },
+    { label: "Offers", value: kpis?.offers, filter: { stage: "offer" }, hint: "No offers out" },
+    { label: "Hires", value: kpis?.hires, filter: { stage: "hired" }, hint: "No hires yet" },
   ] as const;
 
   return (
@@ -67,9 +84,11 @@ export function HiringSnapshot({
             to="/client/candidates"
             filter={tile.filter as Record<string, string> | undefined}
             org={orgSearch}
+            emptyHint={tile.hint}
           />
         ))}
       </div>
     </section>
   );
 }
+
