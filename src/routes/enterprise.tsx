@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { marketingHead } from "@/lib/marketing/head";
+import { marketingHead, serviceScript } from "@/lib/marketing/head";
 import { SiteShell, PublicPage, PublicSection, CtaSection } from "@/components/marketing/site-shell";
 import { EnterpriseStakeholderSelector } from "@/components/marketing/enterprise-stakeholder-selector";
 import {
@@ -38,6 +38,20 @@ export const Route = createFileRoute("/enterprise")({
       title: "Enterprise Hiring Intelligence | TaaSFlow",
       description:
         "The AI Hiring Intelligence Platform for teams hiring at scale: ranked, evidence-backed shortlists, governance controls and audit trails in one workspace.",
+    }, {
+      breadcrumbs: [
+        { name: "Home", path: "/" },
+        { name: "Enterprise", path: "/enterprise" },
+      ],
+      scripts: [
+        serviceScript({
+          name: "TaaSFlow for enterprise hiring teams",
+          description:
+            "Recruiting infrastructure for teams running many roles at once: recruiting agents, multichannel outreach, evidence-backed scoring, governance controls and audit trails in one workspace.",
+          path: "/enterprise",
+          serviceType: "Recruiting",
+        }),
+      ],
     }),
   component: EnterprisePage,
 });
