@@ -110,6 +110,30 @@ export function ReviewTriageList({
     onError: (e) => toastError(e, { fallback: "Could not release stale claims" }),
   });
 
+  // Ordered exactly as rendered (blocking first) so keyboard indexes match.
+  const ordered = useMemo(() => {
+    const rows = list.data?.rows ?? [];
+    return [...rows.filter((r) => r.blocking), ...rows.filter((r) => !r.blocking)];
+  }, [list.data]);
+
+  const openReview = useCallback(
+    (index: number) => {
+      const row = ordered[index];
+      if (!row) return;
+      void navigate({
+        to: "/admin/scoring/review/$matchId",
+        params: { matchId: row.match_id },
+        search: { queue, q, sort, page },
+      });
+    },
+    [ordered, navigate, queue, q, sort, page],
+  );
+  const kb = useQueueKeyboard({
+    count: ordered.length,
+    onPrimary: openReview,
+    onOpen: openReview,
+  });
+
   if (list.isError) {
     return (
       <ErrorState
@@ -135,9 +159,21 @@ export function ReviewTriageList({
   }
 
   const data = list.data!;
-  const blocking = data.rows.filter((r) => r.blocking);
-  const standard = data.rows.filter((r) => !r.blocking);
+  const blocking = ordered.filter((r) => r.blocking);
+  const standard = ordered.filter((r) => !r.blocking);
   const pages = Math.max(1, Math.ceil(data.total / pageSize));
+  const activeFilters = q.trim() ? [`Search: ${q.trim()}`] : [];
+  const variant = resolveQueueVariant({
+    isError: false,
+    rowCount: data.rows.length,
+    activeFilters,
+  });
+
+  const busyId = claim.isPending
+    ? (claim.variables ?? null)
+    : release.isPending
+      ? (release.variables ?? null)
+      : null;
 
   return (
     <div className="space-y-4">
@@ -165,24 +201,29 @@ export function ReviewTriageList({
         </Button>
       </div>
 
-      {data.rows.length === 0 ? (
-        <Card className="p-10 text-center text-sm text-muted-foreground">Review queue clear.</Card>
+      {variant ? (
+        <SurfaceState
+          content={resolveQueueState({
+            variant,
+            queueLabel: "Scoring review",
+            populates:
+              "A row appears when a candidate has been scored and needs a human decision before a client can see them.",
+            activeFilters,
+          })}
+        />
       ) : (
         <>
+          <QueueShortcuts />
           <Group
             title="Blocking a client deliverable"
-            hint="The position has an open commitment due within 3 days."
+            hint="The role has an open commitment due within 3 days."
             tone="danger"
             rows={blocking}
+            startIndex={0}
+            kb={kb}
             onClaim={(id) => claim.mutate(id)}
             onRelease={(id) => release.mutate(id)}
-            busyId={
-              claim.isPending
-                ? (claim.variables ?? null)
-                : release.isPending
-                  ? (release.variables ?? null)
-                  : null
-            }
+            busyId={busyId}
             queue={queue}
             q={q}
             sort={sort}
@@ -193,15 +234,11 @@ export function ReviewTriageList({
             hint="No commitment due in the next 3 days."
             tone="default"
             rows={standard}
+            startIndex={blocking.length}
+            kb={kb}
             onClaim={(id) => claim.mutate(id)}
             onRelease={(id) => release.mutate(id)}
-            busyId={
-              claim.isPending
-                ? (claim.variables ?? null)
-                : release.isPending
-                  ? (release.variables ?? null)
-                  : null
-            }
+            busyId={busyId}
             queue={queue}
             q={q}
             sort={sort}
@@ -209,6 +246,7 @@ export function ReviewTriageList({
           />
         </>
       )}
+
 
       {pages > 1 ? (
         <div className="flex items-center justify-between text-sm">
