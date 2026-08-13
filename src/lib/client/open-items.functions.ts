@@ -27,13 +27,17 @@ export const getClientOpenItems = createServerFn({ method: "GET" })
         .eq("status", "open")
         .order("created_at", { ascending: true })
         .limit(50),
+      // Same rule as isAwaitingClientDecision: delivered, still at `delivered`,
+      // and no client_decisions row recorded.
       s
         .from("candidate_matches")
-        .select("id, position_id, stage, client_decision_due_at, delivered_at")
+        .select("id, position_id, stage, client_decision_due_at, delivered_at, client_decisions(id)")
         .eq("organization_id", data.orgId)
         .eq("client_visibility", "visible")
         .eq("stage", "delivered")
+        .not("delivered_at", "is", null)
         .limit(200),
+
       s
         .from("interviews")
         .select("id, candidate_match_id, position_id, completed_at, status")
