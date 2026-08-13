@@ -27,6 +27,11 @@ import { useRouteRealtime } from "@/hooks/use-route-realtime";
 import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
 import { readStaleStateError } from "@/lib/decision-concurrency";
 import { useClientOrgSearch } from "@/lib/use-client-org";
+import {
+  ACTION_TIMEOUT_MESSAGE,
+  isActionTimeout,
+  withActionTimeout,
+} from "@/lib/client/action-timeout";
 
 import { BackLink, CandidateHeader, JumpNav, SectionCard } from "@/components/client/candidate-detail/shared";
 import { ScoreFreshnessNote } from "@/components/client/score-freshness-note";
