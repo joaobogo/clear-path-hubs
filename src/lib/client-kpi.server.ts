@@ -313,6 +313,13 @@ export type ClientCandidateDTO = {
   stage: MatchStage;
   delivered_at: string | null;
   /**
+   * An interview exists for this candidate (requested, scheduling, scheduled or
+   * completed). The "Interviewing" KPI counts these regardless of stage, so the
+   * list must be able to as well — filtering on stage alone made the tile and
+   * its drill-through disagree.
+   */
+  interview_active: boolean;
+  /**
    * Whether an admin has released this candidate's contact details to the
    * employer. The raw CV carries email and phone, so CV download/preview is
    * offered only when this is true — the server re-checks it regardless.
@@ -795,6 +802,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     match_id: row.id,
     stage: row.stage,
     delivered_at: row.delivered_at ?? null,
+    interview_active: Boolean(row.interview_active),
     contact_released: Boolean(row.contact_released_at),
 
     stage_entered_at:
