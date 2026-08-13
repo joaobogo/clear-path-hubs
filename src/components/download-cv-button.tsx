@@ -191,12 +191,18 @@ export function DownloadLatestCvLink({
         {state === "loading"
           ? "Preparing…"
           : state === "error"
-            ? "Retry download"
+            ? failure?.retryable
+              ? "Retry download"
+              : label
             : state === "done"
               ? "Downloaded"
               : label}
       </button>
-      {error && <span className="text-[11px] text-destructive">{error}</span>}
+      {failure && (
+        <span role="alert" className="text-[11px] text-destructive" data-qa="cv-download-error">
+          {failure.message} <span className="text-muted-foreground">{failure.hint}</span>
+        </span>
+      )}
     </span>
   );
 }
