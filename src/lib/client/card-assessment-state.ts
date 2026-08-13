@@ -61,6 +61,17 @@ export function deriveCardAssessment(input: CardAssessmentInput): CardAssessment
     return { state: "settled", thin: bullets < THIN_EVIDENCE_BELOW, note };
   }
 
+  // A band exists but no evidence bullets are written up yet. When the view
+  // supplies the requirement count, say "0 of N evidenced" openly — never a
+  // vague "still being mapped" message.
+  if (hasBand && input.support && input.support.total > 0) {
+    return {
+      state: "settled",
+      thin: true,
+      note: `${input.support.supported} of ${input.support.total} of your requirements evidenced`,
+    };
+  }
+
   return {
     state: "pending",
     note: hasBand
