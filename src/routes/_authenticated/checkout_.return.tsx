@@ -91,7 +91,7 @@ function CheckoutReturnPage() {
             <Skeleton className="h-8 w-64" />
             <Skeleton className="h-40 w-full rounded-xl" />
           </div>
-        ) : !data ? (
+        ) : statusQuery.isError || !data ? (
           <Card>
             <CardContent className="space-y-4 py-10 text-center text-sm text-muted-foreground">
               <p>
