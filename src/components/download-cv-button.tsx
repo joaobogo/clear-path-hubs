@@ -57,21 +57,18 @@ function useCvDownload(matchId: string, mode: Mode) {
       }
       setState("done");
       resetTimer.current = setTimeout(() => setState("idle"), 2500);
-    } catch (e: any) {
+    } catch (e: unknown) {
       tab?.close();
-      const raw = String(e?.message ?? "");
-      const message = /no cv/i.test(raw)
-        ? "No CV on file yet"
-        : /not found|unauthor/i.test(raw)
-          ? "This CV is not available to you yet"
-          : raw || `Could not ${preview ? "open" : "download"} the CV`;
+      const f = describeCvDownloadFailure(e);
       setState("error");
-      setError(message);
-      toast.error(message);
+      setFailure(f);
+      toast.error(f.message, { description: f.hint });
     }
   }
 
-  return { state, error, run, preview };
+  // Every run asks the server again for the candidate's current CV file and a
+  // brand-new signed link, so "Retry" always pulls the latest file in storage.
+  return { state, failure, attempts, run, preview };
 }
 
 export function DownloadCvButton({
