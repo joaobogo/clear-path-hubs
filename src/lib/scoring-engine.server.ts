@@ -10,6 +10,7 @@ import {
 } from "./scoring/engine-calibration";
 
 import { ENGINE_VERSION } from "./scoring/engine-version";
+import { cleanQuote } from "./evidence/quote-hygiene";
 import { bandToFitLabel, classifyBand } from "./scoring/bands";
 import { computeFit } from "./scoring/fit-math";
 import { expandTerm } from "./scoring/term-synonyms";
