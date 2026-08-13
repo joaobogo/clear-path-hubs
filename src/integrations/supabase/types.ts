@@ -3821,6 +3821,27 @@ export type Database = {
         }
         Relationships: []
       }
+      demo_pipeline_fix_backup_20260813: {
+        Row: {
+          captured_at: string
+          kind: string
+          payload: Json
+          row_id: string
+        }
+        Insert: {
+          captured_at?: string
+          kind: string
+          payload: Json
+          row_id: string
+        }
+        Update: {
+          captured_at?: string
+          kind?: string
+          payload?: Json
+          row_id?: string
+        }
+        Relationships: []
+      }
       duplicate_person_decisions: {
         Row: {
           created_at: string
