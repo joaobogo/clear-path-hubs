@@ -137,6 +137,19 @@ async function runTool(supabase: AnyRow, name: string, args: Record<string, unkn
   }
 }
 
+/**
+ * The copilot tables are already staff-only under RLS, so a client or candidate
+ * caller would fail on the first write. Asserting first turns that indirect
+ * failure into an explicit, auditable 403 — and makes the guard visible to the
+ * admin-surface coverage test instead of implied by a policy elsewhere.
+ */
+async function requireCopilotStaff(context: { userId: string; supabase: AnyRow }) {
+  const { data } = await context.supabase.rpc("is_platform_staff", {
+    _user: context.userId,
+  });
+  if (data !== true) throw new Error("forbidden");
+}
+
 async function ensureConversation(supabase: AnyRow, userId: string): Promise<string> {
   const { data: existing } = await supabase
     .from("admin_copilot_conversations")
@@ -159,6 +172,7 @@ async function ensureConversation(supabase: AnyRow, userId: string): Promise<str
 export const getCopilotState = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    await requireCopilotStaff(context as never);
     const conversationId = await ensureConversation(context.supabase, context.userId);
     const { data: rows, error } = await context.supabase
       .from("admin_copilot_messages")
@@ -172,6 +186,7 @@ export const getCopilotState = createServerFn({ method: "POST" })
 export const resetCopilot = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    await requireCopilotStaff(context as never);
     await context.supabase
       .from("admin_copilot_conversations")
       .update({ archived_at: new Date().toISOString() } as never)
@@ -187,6 +202,7 @@ export const askCopilot = createServerFn({ method: "POST" })
     z.object({ message: z.string().trim().min(1).max(4000) }).parse(input),
   )
   .handler(async ({ context, data }) => {
+    await requireCopilotStaff(context as never);
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("Copilot unavailable: LOVABLE_API_KEY missing");
 

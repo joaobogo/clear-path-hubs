@@ -15848,6 +15848,7 @@ export type Database = {
       run_authz_tests: { Args: never; Returns: string[] }
       run_collaborator_role_tests: { Args: never; Returns: string[] }
       run_scoring_authz_tests: { Args: never; Returns: string[] }
+      run_tenant_isolation_proof: { Args: never; Returns: string[] }
       score_band: {
         Args: { _score: number }
         Returns: Database["public"]["Enums"]["score_band"]
