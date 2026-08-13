@@ -351,13 +351,17 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
   const groups = query.data?.groups ?? [];
   if (groups.length === 0) {
     return (
-      <Card>
-        <CardContent className="py-10 text-center text-sm text-muted-foreground">
-          No approvals pending.
-        </CardContent>
-      </Card>
+      <SurfaceState
+        content={resolveQueueState({
+          variant: "empty",
+          queueLabel: "Approvals",
+          populates:
+            "A row appears whenever something needs a decision before a client can see it: candidate visibility, contact release, a shortlist share, or publishing a role.",
+        })}
+      />
     );
   }
+
 
   return (
     <div className="space-y-4" data-hydrated="ready">
