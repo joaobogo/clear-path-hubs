@@ -122,7 +122,9 @@ export function PositionCard({ p }: { p: Row }) {
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="font-semibold truncate group-hover:text-primary">
+          {/* A role title is the one thing a client scans for: it wraps in full
+              rather than being cut off mid-word. */}
+          <h3 className="font-semibold text-balance break-words group-hover:text-primary">
             {p.title}
           </h3>
           <div className="mt-1 text-xs text-muted-foreground truncate">

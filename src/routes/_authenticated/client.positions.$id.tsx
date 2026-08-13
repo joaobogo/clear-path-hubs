@@ -49,6 +49,7 @@ import { HiringProcessSection } from "@/components/client/position-detail/hiring
 import { ActivitySection } from "@/components/client/position-detail/activity-section";
 import { RoleStatusSection } from "@/components/client/position-detail/role-status-section";
 import { EvidencePanels } from "@/components/client/position-detail/evidence-panels";
+import { RoleStoryPanel } from "@/components/client/position-detail/role-story";
 
 /**
  * One payload for the whole role. The server returns the role, its pipeline,
@@ -121,6 +122,7 @@ function PositionDetailPage() {
 
 function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
   const { id } = Route.useParams();
+  const orgSearchParam = useClientOrgSearch();
   const qc = useQueryClient();
   const moveFn = useServerFn(moveMatchStage);
   const support = useSupportView();
@@ -385,6 +387,12 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
         lifecycle={lifecycle}
         onRetry={() => void refetch()}
       />
+
+      {/* The story of this search: requirement coverage across the shortlist,
+          the fit spread of everyone delivered, and the next milestone. */}
+      {data.story && (
+        <RoleStoryPanel story={data.story} positionId={id} org={orgSearchParam} />
+      )}
 
       {/* What we committed to at launch — promise, actual, variance */}
       <SlaScorecard orgId={orgId} positionId={id} title="What we committed to for this role" />
