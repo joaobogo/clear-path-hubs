@@ -220,7 +220,8 @@ export function AccountOperatingSummary({
       >
         <PanelState query={delivery} skeletonRows={4}>
           {(() => {
-            const d = delivery.data!;
+            const d = delivery.data;
+            if (!d) return null;
             return (
           <div className="grid gap-2 sm:grid-cols-2">
             <button
