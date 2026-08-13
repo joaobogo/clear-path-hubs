@@ -59,7 +59,10 @@ describe("marketingHead", () => {
     expect(byProp("og:title")!.content).toBe(title);
     expect(byProp("og:description")!.content).toBe(byName("description")!.content);
     expect(byProp("og:type")!.content).toBe("article");
-    expect(byName("twitter:card")!.content).toBe("summary");
+    // Every marketing page ships a share image (page hero or the branded default),
+    // so the card type is always the large-image variant.
+    expect(byName("twitter:card")!.content).toBe("summary_large_image");
+    expect(byProp("og:image")!.content).toMatch(/^https:\/\/taasflow\.com\//);
   });
 
   it("promotes a hero image to an absolute og:image/twitter:image pair", () => {
