@@ -168,6 +168,7 @@ function IntakeQuality() {
         />
       ) : (
         <div className="space-y-6">
+          <QueueShortcuts />
           {groups.map((group) => (
             <Card key={group.cause_code}>
               <CardHeader className="space-y-2">
@@ -176,12 +177,12 @@ function IntakeQuality() {
                   <Badge variant="secondary">{group.items.length} affected</Badge>
                   <Badge variant="outline">{OWNER_LABEL[group.owner]}</Badge>
                   {group.our_fault && (
-                    <Badge variant="outline" className="text-[color:var(--brand-danger)]">
+                    <Badge variant="outline" className="text-destructive">
                       Ours to fix
                     </Badge>
                   )}
                   {group.misinformed && (
-                    <Badge variant="outline" className="text-[color:var(--brand-danger)]">
+                    <Badge variant="outline" className="text-destructive">
                       Candidate message hid the cause
                     </Badge>
                   )}
@@ -189,35 +190,45 @@ function IntakeQuality() {
                 <p className="text-sm text-muted-foreground">{group.cause}</p>
                 <p className="text-sm font-medium">Next action: {group.next_action}</p>
               </CardHeader>
-              <CardContent className="space-y-1 text-sm">
-                {group.items.slice(0, 25).map((item) => (
-                  <div
-                    key={item.key}
-                    className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b py-1.5 last:border-b-0"
-                  >
-                    <span className="font-medium">{item.candidate_name ?? "Unnamed candidate"}</span>
-                    {item.reference && (
-                      <span className="text-xs text-muted-foreground">Ref {item.reference}</span>
-                    )}
-                    <span className="text-xs text-muted-foreground">
-                      {item.position_title ?? "No role attached"}
-                      {item.client_name ? ` · ${item.client_name}` : ""}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      Since {item.first_seen.slice(0, 10)}
-                    </span>
-                    <span className="ml-auto flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">
-                        {item.source === "parse_failure" ? "Parse" : "Evidence"}
-                      </Badge>
-                      {item.link_path && (
-                        <Button asChild size="sm" variant="outline">
-                          <Link to={item.link_path}>Open candidate</Link>
-                        </Button>
+              <CardContent className="space-y-1 text-sm" {...kb.listProps}>
+                {group.items.slice(0, 25).map((item) => {
+                  const index = visibleItems.findIndex((i) => i.key === item.key);
+                  const rowProps = kb.rowProps(index);
+                  return (
+                    <div
+                      key={item.key}
+                      {...rowProps}
+                      ref={rowProps.ref as (node: HTMLDivElement | null) => void}
+                      className={`flex flex-wrap items-center gap-x-3 gap-y-1 border-b px-2 py-1.5 last:border-b-0 ${QUEUE_ROW_ACTIVE_CLASS}`}
+                    >
+                      <span className="font-medium">{item.candidate_name ?? "Unnamed candidate"}</span>
+                      {item.reference && (
+                        <span className="text-xs text-muted-foreground">Ref {item.reference}</span>
                       )}
-                    </span>
-                  </div>
-                ))}
+                      <span className="text-xs text-muted-foreground">
+                        {item.position_title ?? "No role attached"}
+                        {item.client_name ? ` · ${item.client_name}` : ""}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        Since {item.first_seen.slice(0, 10)}
+                      </span>
+                      <span className="ml-auto flex items-center gap-2">
+                        <Badge variant="outline" className="text-xs">
+                          {item.source === "parse_failure" ? "Parse" : "Evidence"}
+                        </Badge>
+                        {item.link_path ? (
+                          <Button asChild size="sm">
+                            <Link to={item.link_path}>Open candidate</Link>
+                          </Button>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">
+                            No record to open — this row came from an intake with no candidate saved.
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                  );
+                })}
                 {group.items.length > 25 && (
                   <p className="pt-2 text-xs text-muted-foreground">
                     Showing the 25 oldest of {group.items.length}.
@@ -227,6 +238,7 @@ function IntakeQuality() {
             </Card>
           ))}
         </div>
+
       )}
     </div>
   );
