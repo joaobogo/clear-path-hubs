@@ -154,6 +154,7 @@ export const EMPLOYER_VIEW_FIELDS: EmployerViewField[] = [
   // process
   { key: "stage", group: "process", label: "Current stage" },
   { key: "delivered_at", group: "process", label: "Date you were shared with the employer" },
+  { key: "interview_active", group: "process", label: "Whether an interview has been requested or held" },
   {
     key: "contact_released",
     group: "process",

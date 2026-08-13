@@ -24,6 +24,7 @@ import { QueryErrorCard } from "@/components/client/query-error";
 import { ShareShortlistDialog } from "@/components/client/share-shortlist-dialog";
 import { Share2 } from "lucide-react";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
+import { filterAndSortCandidates } from "@/lib/client-candidate-list-filter";
 import { UNICORN_SCORE } from "@/lib/scoring/bands";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
 import { STAGE_OPTIONS, FIT_OPTIONS, CRITICAL_OPTIONS, REVIEW_OPTIONS } from "@/components/client/candidates/constants";
@@ -60,11 +61,6 @@ const searchSchema = z.object({
 });
 
 
-// Fit-band ordering for the "Highest approved fit" sort. Employer surfaces have
-// no numeric rating to sort on — the band is the contract.
-const BAND_RANK: Record<string, number> = {
-  exceptional: 5, strong: 4, good: 3, mixed: 2, limited: 1, not_recommended: 0,
-};
 
 const RoutePending = makeWorkspacePending({ shape: "rows", kpis: true, width: "7xl" });
 export const Route = createFileRoute("/_authenticated/client/candidates/")({
@@ -179,111 +175,20 @@ function CandidatesPage() {
  [rowsRaw],
  );
 
- // Client-side filter + sort applied to the sanitized DTOs.
- const filtered = useMemo(() => {
- const q = search.q.trim().toLowerCase();
- const loc = search.location.trim().toLowerCase();
- const rows = (rowsRaw as ClientCandidateDTO[]).filter((c) => {
- // Canonical KPI drill-through — mirrors client-kpi.server predicates.
- if (search.filter === "top") {
- if (c.fit.band !== "exceptional" && c.fit.band !== "strong") return false;
- } else if (search.filter === "interview_pipeline") {
- if (c.stage !== "interview_process" && c.stage !== "offer") return false;
- }
- if (search.unicorn === "1" && !c.unicorn) return false;
-  if (search.stage !== "all" && c.stage !== search.stage) return false;
-  if (search.fit !== "all" && c.fit.band !== search.fit) return false;
-  if (search.critical !== "all") {
-   const missingEvidence = c.requirement_rows.some(
-    (r) => r.importance === "must_have" && r.status === "not_evidenced",
-   );
-   const gaps = c.coverage.must_total > 0 && c.coverage.must_met < c.coverage.must_total;
-   if (search.critical === "met" && (gaps || missingEvidence)) return false;
-   if (search.critical === "gaps" && !gaps) return false;
-   if (search.critical === "missing_evidence" && !missingEvidence) return false;
-  }
-  if (search.review !== "all") {
-   const group =
-    c.stage === "delivered"
-     ? "awaiting"
-     : c.stage === "hired" || c.stage === "not_moving_forward"
-       ? "closed"
-       : "in_progress";
-   if (group !== search.review) return false;
-  }
-  if (search.availability !== "all" && (c.candidate.availability ?? "") !== search.availability) return false;
-  if (search.minExp) {
-   const min = Number(search.minExp);
-   if (!Number.isNaN(min) && (c.candidate.years_experience ?? -1) < min) return false;
-  }
- if (loc && !(c.candidate.location ?? "").toLowerCase().includes(loc)) return false;
- if (q) {
- const hay = [
- c.candidate.display_name,
- c.candidate.headline,
- c.candidate.location,
- c.position?.title,
- ...c.skills,
- ]
- .filter(Boolean)
- .join(" ")
- .toLowerCase();
- if (!hay.includes(q)) return false;
- }
- return true;
- });
-
- const stageOrder: Record<ClientCandidateDTO["stage"], number> = {
- delivered: 0,
- shortlisted: 1,
- interview_process: 2,
- offer: 3,
- hired: 4,
- not_moving_forward: 5,
- };
- rows.sort((a, b) => {
- switch (search.sort) {
-        case "score": {
-          // Best score first; unscored candidates fall to the bottom, ordered by band.
-          const as = a.score ?? -1;
-          const bs = b.score ?? -1;
-          if (bs !== as) return bs - as;
-          return (BAND_RANK[b.fit.band] ?? 0) - (BAND_RANK[a.fit.band] ?? 0);
-        }
- case "must": {
- const av = a.coverage.must_total
- ? a.coverage.must_met / a.coverage.must_total
- : 0;
- const bv = b.coverage.must_total
- ? b.coverage.must_met / b.coverage.must_total
- : 0;
- return bv - av;
- }
- case "stage":
- return stageOrder[a.stage] - stageOrder[b.stage];
- case "name":
- return a.candidate.display_name.localeCompare(b.candidate.display_name);
- case "recent":
- default: {
- // Prioritise delivered (action required), then most recent.
- const ap = a.stage === "delivered" ? 0 : 1;
- const bp = b.stage === "delivered" ? 0 : 1;
- if (ap !== bp) return ap - bp;
- const at = a.delivered_at ? new Date(a.delivered_at).getTime() : 0;
- const bt = b.delivered_at ? new Date(b.delivered_at).getTime() : 0;
- return bt - at;
- }
- }
- });
- return rows;
- }, [rowsRaw, search.q, search.location, search.stage, search.fit, search.critical, search.review, search.availability, search.minExp, search.sort, search.filter, search.unicorn]);
+ // Client-side filter + sort applied to the sanitized DTOs. The predicates
+ // live in one tested module so the chips and the KPI drill-throughs cannot
+ // drift from the tile definitions.
+ const filtered = useMemo(
+  () => filterAndSortCandidates(rowsRaw as ClientCandidateDTO[], search),
+  [rowsRaw, search],
+ );
 
  // Bounded pagination — clamp render to a fixed page size so no unbounded lists ship.
  const PAGE_SIZE = 24;
  const [page, setPage] = useState(1);
  useEffect(() => {
  setPage(1);
- }, [search.q, search.position, search.stage, search.fit, search.location, search.sort, search.filter, search.unicorn, orgId]);
+ }, [search.q, search.position, search.stage, search.fit, search.critical, search.review, search.availability, search.minExp, search.location, search.sort, search.filter, search.unicorn, orgId]);
  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
  const currentPage = Math.min(page, totalPages);
  const paged = filtered.slice(
