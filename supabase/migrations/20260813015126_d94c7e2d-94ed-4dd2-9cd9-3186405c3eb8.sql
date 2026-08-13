@@ -1,0 +1,1 @@
+GRANT SELECT (score) ON public.score_runs TO authenticated;
