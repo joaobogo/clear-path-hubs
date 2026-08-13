@@ -403,18 +403,6 @@ function clean(params: Record<string, unknown> = {}) {
   return out;
 }
 
-const META_EVENT_MAP: Record<string, string> = {
-  page_view: "PageView",
-  view_job_board: "ViewContent",
-  view_job: "ViewContent",
-  application_started: "InitiateCheckout",
-  cv_selected: "AddPaymentInfo",
-  application_submitted: "SubmitApplication",
-  contact_form_submitted: "Contact",
-  candidate_signup_started: "CompleteRegistration",
-  candidate_account_invited: "CompleteRegistration",
-};
-
 const recent = new Map<string, number>();
 
 /**
