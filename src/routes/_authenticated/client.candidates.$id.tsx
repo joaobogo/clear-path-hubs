@@ -265,6 +265,13 @@ function CandidateDetailPage() {
  } else setDialogAction(k);
  };
 
+  // Breadcrumb label must be published before any early return so the hook
+  // order stays stable across loading, error and loaded renders.
+  useDetailCrumb(
+    (data as { candidate?: { candidate?: { display_name?: string } } } | null | undefined)
+      ?.candidate?.candidate?.display_name,
+  );
+
   // Error first, always: a failed load must never read as a missing candidate.
   if (ctxQuery.isError) {
     return (
@@ -317,7 +324,6 @@ function CandidateDetailPage() {
  interviews: AnyRow[];
  decisions: AnyRow[];
  };
- useDetailCrumb(candidate?.candidate?.display_name as string | undefined);
  const isViewer = ctx?.active?.role === "client_viewer";
  const readOnly = support.readOnly || isViewer;
  const actions = ACTIONS_BY_STAGE[candidate.stage] ?? { primary: null, more: [] };
