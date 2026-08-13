@@ -512,21 +512,19 @@ function CandidatesPage() {
  </section>
  )}
 
- <CandidatesFiltersPanel
-  search={search}
-  setF={setF}
-  positions={positions as Array<{ id: string; title: string }>}
-  availabilityOptions={availabilityOptions}
-  activeFilters={activeFilters}
-  clearFilters={clearFilters}
-  compareCheck={compareCheck}
-  setCompareOpen={setCompareOpen}
-  orgId={orgId}
-  ctxRole={ctx?.active?.role}
-  onApplySavedView={(f) => navigate({ search: { ...search, ...f } as never, replace: true })}
-  resultCount={filtered.length}
-  totalCount={(rowsRaw as ClientCandidateDTO[]).length}
- />
+  <CandidatesFiltersPanel
+   search={search}
+   setF={setF}
+   positions={positions as Array<{ id: string; title: string }>}
+   availabilityOptions={availabilityOptions}
+   activeFilters={activeFilters}
+   clearFilters={clearFilters}
+   orgId={orgId}
+   ctxRole={ctx?.active?.role}
+   onApplySavedView={(f) => navigate({ search: { ...search, ...f } as never, replace: true })}
+   resultCount={filtered.length}
+   totalCount={(rowsRaw as ClientCandidateDTO[]).length}
+  />
 
  {/* Results — loading, failure and "none approved yet" are distinct states */}
  {listPanel.loading ? (
@@ -537,39 +535,26 @@ function CandidatesPage() {
  </div>
  ) : listPanel.isError ? (
  <QueryErrorCard
- title={gate.noWorkspace ? "No workspace is attached to this account" : "We couldn't load your candidates"}
- error={listPanel.error}
- onRetry={retryAll}
- retrying={isFetching || gate.retrying}
- />
- ) : filtered.length === 0 ? (
- <CandidatesEmptyState
-            hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0}
-            activeFilters={activeFilters}
-            onClear={clearFilters}
-            orgId={orgId}
-          />
- ) : search.view === "list" ? (
- <CompactList
- rows={paged}
- orgSearch={orgSearch}
- compareIds={compareIds}
- onToggleCompare={(id) => toggleCompare(setCompareIds, id)}
- />
- ) : (
- <div className="grid gap-4 md:grid-cols-2">
- {paged.map((c) => (
- <CandidateCard
- key={c.match_id}
- candidate={c}
- orgId={orgId ?? null}
- compareSelected={compareIds.includes(c.match_id)}
- compareDisabled={compareIds.length >= 4}
- onToggleCompare={(id) => toggleCompare(setCompareIds, id)}
- />
- ))}
- </div>
- )}
+  title={gate.noWorkspace ? "No workspace is attached to this account" : "We couldn't load your candidates"}
+  error={listPanel.error}
+  onRetry={retryAll}
+  retrying={isFetching || gate.retrying}
+  />
+  ) : filtered.length === 0 ? (
+  <CandidatesEmptyState
+             hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0}
+             activeFilters={activeFilters}
+             onClear={clearFilters}
+             orgId={orgId}
+           />
+  ) : (
+           <CompactList
+             rows={paged}
+             orgSearch={orgSearch}
+             compareIds={compareIds}
+             onToggleCompare={(id) => toggleCompare(setCompareIds, id)}
+           />
+  )}
 
  {/* Bounded pagination */}
  {filtered.length > PAGE_SIZE && (

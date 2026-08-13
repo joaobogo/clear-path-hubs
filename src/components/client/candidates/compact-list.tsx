@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { clientStageLabel } from "@/lib/client-stage-labels";
 import { CandidateCard } from "@/components/client/candidate-card";
-import { DownloadCvButton, DownloadLatestCvLink } from "@/components/download-cv-button";
+import { DownloadCvButton } from "@/components/download-cv-button";
 import { ReviewTimelineStrip } from "@/components/client/candidates/review-timeline";
 import { UnicornBadge } from "@/components/client/candidate-score-badge";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
+
 
 function ScoreCell({ c }: { c: ClientCandidateDTO }) {
   if (c.score == null) {
@@ -132,19 +133,17 @@ export function CompactList({
                   <ReviewTimelineStrip timeline={c.review_timeline} />
                 </td>
                 <td className="py-2 px-3 text-right whitespace-nowrap">
-                  <div className="flex flex-col items-end gap-0.5">
-                    <DownloadCvButton matchId={c.match_id} size="sm" variant="ghost" label="CV" />
-                    <DownloadLatestCvLink matchId={c.match_id} label="Latest CV" />
-                  </div>
+                  <DownloadCvButton matchId={c.match_id} size="sm" variant="ghost" label="CV" />
                 </td>
                 <td className="py-2 px-3 text-right">
                   <Link
                     to="/client/candidates/$id"
                     params={{ id: c.match_id }}
                     search={orgSearch ? { org: orgSearch } : undefined}
-                    className="text-primary hover:underline text-sm"
+                    className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
                   >
-                    Open →
+                    Open
+                    <span aria-hidden>→</span>
                   </Link>
                 </td>
               </tr>
