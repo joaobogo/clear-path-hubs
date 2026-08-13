@@ -182,8 +182,7 @@ function CandidatesPage() {
  const rows = (rowsRaw as ClientCandidateDTO[]).filter((c) => {
  // Canonical KPI drill-through — mirrors client-kpi.server predicates.
  if (search.filter === "top") {
- if (c.fit.band !== "exceptional" && c.fit.band !== "top" && c.fit.band !== "strong")
- return false;
+ if (c.fit.band !== "exceptional" && c.fit.band !== "strong") return false;
  } else if (search.filter === "interview_pipeline") {
  if (c.stage !== "interview_process" && c.stage !== "offer") return false;
  }
