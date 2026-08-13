@@ -465,11 +465,73 @@ export function trackEvent(name: string, params: Record<string, unknown> = {}) {
 }
 
 
+/**
+ * SPA navigations: several tags only measure a view at document load, so a
+ * client-side route change needs an explicit nudge per provider on top of the
+ * canonical `page_view` event.
+ */
+let firstViewReported = false;
+
+function notifyRouteChange(params: Record<string, unknown>) {
+  // The landing view is already measured by the head-boot snippets; only
+  // subsequent client-side navigations need the manual nudge.
+  if (!firstViewReported) {
+    firstViewReported = true;
+    return;
+  }
+  const path = String(params.page_path ?? "");
+  const location = String(params.page_location ?? "");
+  const title = String(params.page_title ?? "");
+
+  // GA4: keep every subsequent event attributed to the new page.
+  safe(() =>
+    window.gtag?.("set", {
+      page_path: path,
+      page_location: location,
+      page_title: title,
+    }),
+  );
+
+  // Apollo: re-runs its page visit capture for the new URL.
+  safe(() => window.trackingFunctions?.onLoad?.({ appId: APOLLO_ID }));
+
+  // RB2B: re-trigger identification for the new page.
+  safe(() => {
+    const r = window.reb2b as
+      | (Record<string, unknown> & { push?: (a: unknown) => void })
+      | undefined;
+    if (!r) return;
+    if (typeof r.identify === "function") (r.identify as () => void)();
+    else if (Array.isArray(r)) (r as unknown[]).push(["identify"]);
+    else r.push?.(["identify"]);
+  });
+
+  // LinkedIn Insight Tag only reports on script load, so reload it per route.
+  safe(() => {
+    if (!LINKEDIN_ID || !window.lintrk) return;
+    document
+      .querySelectorAll('script[data-tracker-reload="linkedin"]')
+      .forEach((el) => el.remove());
+    const s = document.createElement("script");
+    s.setAttribute("data-tracker-reload", "linkedin");
+    s.async = true;
+    s.setAttribute("data-tracker", "linkedin");
+    s.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+    document.head.appendChild(s);
+  });
+
+  // Session-recording tools track virtual page changes explicitly.
+  safe(() => window.hj?.("stateChange", location || path));
+  safe(() => window.clarity?.("set", "page_path", path));
+}
+
 export function trackPageView(params: Record<string, unknown>) {
   // Single dispatch — trackEvent already fans out to GA4 and every other tag,
   // with duplicate suppression on (name + page_path).
   trackEvent("page_view", params);
+  if (typeof window !== "undefined") notifyRouteChange(params);
 }
+
 
 
 /**
