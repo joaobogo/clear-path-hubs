@@ -90,7 +90,9 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       scope,
     ),
 
-    // 4 — shared with the client, no decision recorded yet.
+    // 4 — shared with the client, no decision recorded yet. The page is read
+    // wide enough that the count below is the true total, not the page size:
+    // a count taken from a short page under-reports the queue.
     excludeTestOrgs(
       s
         .from("candidate_matches")
@@ -102,9 +104,10 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
         .in("stage", ["delivered", "shortlisted", "reviewing"])
         .lt("updated_at", ISO(3 * DAY))
         .order("updated_at", { ascending: true })
-        .limit(20),
+        .limit(1000),
       scope,
     ),
+
 
     // 5 — interviews requested, or happening in the next 48h.
     excludeTestOrgs(

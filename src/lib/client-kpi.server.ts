@@ -90,7 +90,10 @@ export type KpiRow = {
   client_decision_due_at: string | null;
   /** The client's recorded decision, or null/"pending" when none was made. */
   recommendation: string | null;
+  /** True when a `client_decisions` row exists for this match. */
+  client_decided: boolean;
 };
+
 
 
 
@@ -141,6 +144,10 @@ export async function loadKpiRows(
   const nextInterviewAt = new Map<string, string>();
   const interviewRequestedAt = new Map<string, string>();
   const stageEnteredAt = new Map<string, string>();
+  // A recorded client decision is what closes "waiting on you" — never the
+  // internal admin recommendation.
+  const decidedMatches = new Set<string>();
+
 
   if (matchIds.length > 0) {
     const { data: ivs } = await supabase
@@ -183,6 +190,16 @@ export async function loadKpiRows(
       const prev = stageEnteredAt.get(h.candidate_match_id);
       if (!prev || at > prev) stageEnteredAt.set(h.candidate_match_id, at);
     }
+
+    // Recorded client decisions — the only thing that clears a delivered
+    // candidate out of "waiting on your decision".
+    const { data: decisions } = await supabase
+      .from("client_decisions")
+      .select("candidate_match_id")
+      .in("candidate_match_id", matchIds);
+    for (const d of ((decisions as AnyRow[]) ?? [])) {
+      if (d.candidate_match_id) decidedMatches.add(d.candidate_match_id as string);
+    }
   }
 
   return (matches as AnyRow[]).map((m) => ({
@@ -203,9 +220,11 @@ export async function loadKpiRows(
 
     client_decision_due_at: m.client_decision_due_at ?? null,
     recommendation: m.recommendation ?? null,
+    client_decided: decidedMatches.has(m.id),
     interview_needs_confirmation: unconfirmedInterviews.has(m.id),
   }));
 }
+
 
 /**
  * A "strongest candidate": an approved assessment whose stored label or band
@@ -231,13 +250,17 @@ export function isInInterview(r: KpiRow): boolean {
 }
 
 /**
- * One definition of "waiting on the client": delivered to the workspace with no
- * decision recorded yet. The Overview queue uses the same rule, so the count
- * and the list can never disagree.
+ * One definition of "waiting on the client": still sitting at `delivered` with
+ * no `client_decisions` row recorded. The Overview queue, the "Your open items"
+ * strip and the admin "Client decisions overdue" queue apply the same rule, so
+ * the count and the lists can never disagree. The internal `recommendation`
+ * column is our own recommendation, not the client's answer, so it is not used
+ * here.
  */
 export function isAwaitingClientDecision(r: KpiRow): boolean {
-  return r.delivered_at != null && (r.recommendation == null || r.recommendation === "pending");
+  return r.delivered_at != null && r.stage === "delivered" && !r.client_decided;
 }
+
 
 
 /** Earliest non-null timestamp in a list. */

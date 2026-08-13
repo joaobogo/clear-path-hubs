@@ -502,11 +502,17 @@ export const getMyDashboard = createServerFn({ method: "GET" })
         .select("current_cv_file_id")
         .eq("id", cpId)
         .maybeSingle(),
+      // A candidate's thread is keyed by their own user id (see sendMyMessage),
+      // so unread means: in my thread, not written by me, never read. The old
+      // `recipient_context->>candidate_user_id` filter matched a key no writer
+      // sets, so this tile read 0 while /me/messages showed unread replies.
       supabase
         .from("messages")
         .select("id", { count: "exact", head: true })
-        .eq("recipient_context->>candidate_user_id", context.userId)
+        .eq("thread_id", context.userId)
+        .neq("sender_user_id", context.userId)
         .is("read_at", null),
+
     ]);
 
     const { data: matches } = await supabase
@@ -885,13 +891,13 @@ export const listMyMessages = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const supabase = context.supabase as AnyRow;
+    // Same predicate as the unread tile: my thread, both directions.
     const { data, error } = await supabase
       .from("messages")
       .select("id,thread_id,sender_user_id,body,created_at,read_at,recipient_context")
-      .or(
-        `sender_user_id.eq.${context.userId},recipient_context->>candidate_user_id.eq.${context.userId}`,
-      )
+      .eq("thread_id", context.userId)
       .order("created_at", { ascending: true });
+
     if (error) throw new Error(error.message);
     return { messages: (data ?? []) as AnyRow[] };
   });
