@@ -120,14 +120,30 @@ export const getClientCandidates = createServerFn({ method: "GET" })
     const rows = await hydrateClientCandidateProfiles(rawRows as AnyRow[]);
 
     // Verified, shareable evidence for the shortlist cards.
-    const evidenceByMatch = await loadClientEvidenceItems(
-      context.supabase,
-      ((rows as AnyRow[]) ?? []).map((r) => r.id as string),
-    );
+    const matchIds = ((rows as AnyRow[]) ?? []).map((r) => r.id as string);
+    const evidenceByMatch = await loadClientEvidenceItems(context.supabase, matchIds);
+
+    // Active interviews, same definition as the "Interviewing" KPI tile, so the
+    // list can agree with the tile even before the stage is moved.
+    const activeInterviews = new Set<string>();
+    if (matchIds.length > 0) {
+      const { data: ivs } = await context.supabase
+        .from("interviews")
+        .select("candidate_match_id")
+        .in("candidate_match_id", matchIds)
+        .in("status", ["requested", "scheduling", "scheduled", "completed"]);
+      for (const iv of ((ivs as AnyRow[]) ?? [])) {
+        if (iv.candidate_match_id) activeInterviews.add(iv.candidate_match_id as string);
+      }
+    }
 
     // Map to sanitized client-safe DTOs first — filters below operate on those.
     let dtos = ((rows as AnyRow[]) ?? []).map((r) =>
-      toClientCandidateDTO({ ...r, evidence_items: evidenceByMatch.get(r.id as string) ?? [] }),
+      toClientCandidateDTO({
+        ...r,
+        interview_active: activeInterviews.has(r.id as string),
+        evidence_items: evidenceByMatch.get(r.id as string) ?? [],
+      }),
     );
 
     if (data.filter && data.filter !== "all") {
@@ -137,7 +153,7 @@ export const getClientCandidates = createServerFn({ method: "GET" })
         if (data.filter === "hired") return d.stage === "hired";
         if (data.filter === "not_moving_forward") return d.stage === "not_moving_forward";
         if (data.filter === "interview")
-          return d.stage === "interview_process" || d.stage === "offer";
+          return d.interview_active || d.stage === "interview_process" || d.stage === "offer";
         // "Top" matches the Overview tile and the card band: derived from the
         // run's score, with the stored label only as a fallback.
         if (data.filter === "top")
