@@ -54,6 +54,8 @@ export function ReviewTriageList({
   onPageChange: (page: number) => void;
 }) {
   const qc = useQueryClient();
+  const navigate = useNavigate();
+
   const queryKey = ["review-triage", queue, q, sort, page] as const;
   const list = useQuery<Triage>({
     queryKey,
