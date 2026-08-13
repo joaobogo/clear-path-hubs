@@ -77,4 +77,22 @@ describe("buildEvidenceCard", () => {
     expect(buildEvidenceCard([]).bullets).toEqual([]);
     expect(buildEvidenceCard(null).summaryInProgress).toBe(true);
   });
+
+  it("drops bullets that only repeat the requirement", () => {
+    const rows = [
+      row({ id: "a", rubric_criterion_key: "strong_sql", interpretation: "Strong SQL" }),
+      row({ id: "b", rubric_criterion_key: "strong_sql", interpretation: "strong  sql" }),
+      row({
+        id: "c",
+        rubric_criterion_key: "team_leadership",
+        interpretation: "Team leadership: led a team of nine",
+      }),
+    ];
+    const card = buildEvidenceCard(rows, [
+      { label: "Strong SQL", importance: "must_have" },
+      { label: "Team leadership", importance: "preferred" },
+    ]);
+    expect(card.bullets.map((b) => b.requirement)).toEqual(["Team leadership"]);
+    expect(card.bullets.every((b) => b.claim !== b.requirement)).toBe(true);
+  });
 });

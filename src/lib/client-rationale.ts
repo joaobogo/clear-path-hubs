@@ -24,6 +24,8 @@ export type RationaleLine = {
   verdictLabel: string;
   /** The claim itself — quoted or paraphrased from the record. Null when nothing is evidenced. */
   claim: string | null;
+  /** True when a claim was found but only repeats the requirement; no quote is rendered. */
+  underReview: boolean;
   /** Attribution for the claim; empty when there is nothing to attribute. */
   sources: ClaimSource[];
 };
@@ -46,6 +48,18 @@ function clean(s: unknown): string {
 function truncate(s: string, max = 160): string {
   const t = clean(s);
   return t.length <= max ? t : `${t.slice(0, max - 1).trimEnd()}…`;
+}
+
+/** Normalise text for comparison, ignoring case, punctuation and spacing. */
+function norm(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+/** A claim that only restates the requirement is not evidence. */
+function isClaimEcho(requirement: string, claim: string): boolean {
+  const req = norm(requirement);
+  const cl = norm(claim);
+  return !req || !cl || cl === req;
 }
 
 /**
@@ -144,13 +158,20 @@ export function buildShortlistRationale(
       sources.add("Recruiter notes");
     }
 
+    const requirementLabel = clean(r.label);
+    const underReview = Boolean(claim) && isClaimEcho(requirementLabel, claim);
+    if (underReview) {
+      claim = "";
+    }
+
     return {
       id: r.id,
-      requirement: clean(r.label),
+      requirement: requirementLabel,
       importance: r.importance,
       verdict,
       verdictLabel: VERDICT_LABEL[verdict],
       claim: claim ? truncate(claim) : null,
+      underReview,
       sources: claim ? [...sources] : [],
     };
   };
