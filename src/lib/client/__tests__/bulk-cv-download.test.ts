@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { describeCvDownloadFailure } from "@/lib/cv-download-error";
 import { bulkErrorMessage, safeCvFilename, zipFilename } from "@/lib/client/bulk-cv-download";
 
 describe("safeCvFilename", () => {
