@@ -129,7 +129,7 @@ export const SERVICES: readonly ServiceDefinition[] = [
     key: "agents",
     name: "Agent processing",
     covers: "Background work: CV processing, enrichment and pipeline runs.",
-    measured_by: "Outcomes of processing work in the last 24 hours.",
+    measured_by: "Background work still waiting or in progress at page load.",
   },
   {
     key: "candidate_data",
