@@ -12,7 +12,6 @@ import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import { QueryErrorCard } from "@/components/client/query-error";
 import {
   PortfolioSnapshot,
-  PositionCard,
   CompactList,
   EmptyState,
   type Row,
@@ -286,20 +285,6 @@ function PositionsPage() {
           content={resolveFilteredEmptyState(activeChips.map((c) => c.label))}
           onAction={clearAll}
         />
- ) : view === "cards" ? (
- <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
- {filtered.map((p) => (
- <PositionCard key={p.id} p={p} />
- ))}
- {isFetching &&
- rows.length === 0 &&
- Array.from({ length: 3 }).map((_, i) => (
- <div
- key={i}
- className="h-56 animate-pulse rounded-xl border bg-muted/40"
- />
- ))}
- </div>
  ) : (
  <CompactList rows={filtered} />
  )}
