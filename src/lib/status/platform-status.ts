@@ -129,7 +129,7 @@ export const SERVICES: readonly ServiceDefinition[] = [
     key: "agents",
     name: "Agent processing",
     covers: "Background work: CV processing, enrichment and pipeline runs.",
-    measured_by: "Outcomes of processing work in the last 24 hours.",
+    measured_by: "Background work still waiting or in progress at page load.",
   },
   {
     key: "candidate_data",
@@ -290,6 +290,53 @@ export function statusFromProbe(input: {
  * single failure would swing the band, so nothing is claimed at all.
  */
 export const MIN_OUTCOME_SAMPLE = 10;
+
+/**
+ * How long background work may sit unfinished before it counts as behind.
+ * Below these, waiting is normal operation, not a disruption.
+ */
+export const BACKLOG_QUEUED_MINUTES = 10;
+export const BACKLOG_RUNNING_MINUTES = 20;
+/** Enough overdue work at once that more than one person is affected. */
+export const BACKLOG_PARTIAL_OUTAGE_COUNT = 10;
+
+/**
+ * Live backlog bands for background work.
+ *
+ * Only work that is unfinished *right now* and already past its threshold can
+ * lower this status. Completed, failed and cancelled rows are history: they
+ * describe what happened, never what a reader is waiting on, so they can never
+ * raise a degradation here. No pending work at all is the healthy case, and it
+ * is a genuine measurement rather than an absence of one.
+ */
+export function statusFromBacklog(input: {
+  /** Unfinished runs, whatever their age. */
+  pending: number;
+  /** Unfinished runs already past their threshold. */
+  overdue: number;
+  /** Age of the oldest overdue run, in whole minutes. */
+  oldestOverdueMinutes: number;
+}): { status: StatusLevel; detail: string; measured: boolean } {
+  const { pending, overdue, oldestOverdueMinutes } = input;
+  if (overdue <= 0) {
+    const detail =
+      pending > 0
+        ? `${pending} ${pending === 1 ? "run is" : "runs are"} in progress and none is behind.`
+        : "No background work is waiting.";
+    return { status: "operational", measured: true, detail };
+  }
+  const line = `${overdue} of ${pending} ${pending === 1 ? "run" : "runs"} in progress ${
+    overdue === 1 ? "has" : "have"
+  } been waiting longer than expected — the oldest for ${oldestOverdueMinutes} ${
+    oldestOverdueMinutes === 1 ? "minute" : "minutes"
+  }.`;
+  return {
+    status: overdue >= BACKLOG_PARTIAL_OUTAGE_COUNT ? "partial_outage" : "degraded_performance",
+    measured: true,
+    detail: line,
+  };
+}
+
 
 /**
  * Failure-ratio bands for measured background work. Bands are stated in the
