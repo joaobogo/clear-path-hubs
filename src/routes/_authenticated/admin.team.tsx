@@ -252,7 +252,8 @@ function OrgTeamList({ organizationId }: { organizationId: string }) {
     queryFn: () => runList({ data: { organization_id: organizationId } }),
   });
 
-  const mut = <T,>(fn: (input: T) => Promise<unknown>, msg: string) =>
+  // Named as a hook: it is called unconditionally in component body order.
+  const useMut = <T,>(fn: (input: T) => Promise<unknown>, msg: string) =>
     useMutation({
       mutationFn: (i: T) => fn(i),
       onSuccess: () => {
@@ -262,9 +263,9 @@ function OrgTeamList({ organizationId }: { organizationId: string }) {
       onError: (e: Error) => toastError(e),
     });
 
-  const deact = mut((i: { membership_id: string }) => runDeact({ data: i }), "Deactivated");
-  const react = mut((i: { membership_id: string }) => runReact({ data: i }), "Reactivated");
-  const rem = mut((i: { membership_id: string }) => runRemove({ data: i }), "Removed");
+  const deact = useMut((i: { membership_id: string }) => runDeact({ data: i }), "Deactivated");
+  const react = useMut((i: { membership_id: string }) => runReact({ data: i }), "Reactivated");
+  const rem = useMut((i: { membership_id: string }) => runRemove({ data: i }), "Removed");
 
   const { confirm, confirmDialog } = useConfirmAction();
   const [resetShown, setResetShown] = useState<{ email: string; password: string } | null>(null);

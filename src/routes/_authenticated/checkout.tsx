@@ -48,10 +48,10 @@ function CheckoutPage() {
   const { position } = Route.useSearch();
   const navigate = useNavigate();
   const loadContext = useServerFn(getPositionCheckoutContext);
-  const useAllowanceFn = useServerFn(useAllowanceForPosition);
+  const applyAllowanceFn = useServerFn(useAllowanceForPosition);
 
   const useAllowance = useMutation({
-    mutationFn: () => useAllowanceFn({ data: { positionId: position as string } }),
+    mutationFn: () => applyAllowanceFn({ data: { positionId: position as string } }),
     onSuccess: (result) => {
       if (!result.ok) {
         toast.error(
