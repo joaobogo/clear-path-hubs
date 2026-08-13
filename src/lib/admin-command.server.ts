@@ -1,11 +1,11 @@
 /**
-import { attachMemberProfiles } from "@/lib/membership-profiles.server";
  * Admin command centre — server-only aggregation.
  *
  * Every number here is a real count from a real query, and every row carries
  * the identifiers needed to deep-link to the record that produced it. No
  * derived "trends", no sampled estimates.
  */
+import { attachMemberProfiles } from "@/lib/membership-profiles.server";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;

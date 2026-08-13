@@ -1,5 +1,4 @@
 /**
-import { attachMemberProfiles } from "@/lib/membership-profiles.server";
  * Server-only work behind personalised dashboards.
  *
  * Two responsibilities:
@@ -8,6 +7,7 @@ import { attachMemberProfiles } from "@/lib/membership-profiles.server";
  *  2. Loading each block from the records that already exist. Blocks return
  *     null when there is genuinely nothing yet; they never invent a zero.
  */
+import { attachMemberProfiles } from "@/lib/membership-profiles.server";
 import { findPlan } from "@/lib/payments-catalog";
 import {
   type BlockData,
