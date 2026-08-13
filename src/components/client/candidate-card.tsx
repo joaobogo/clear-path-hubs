@@ -9,6 +9,7 @@ import { NextStepNote } from "@/components/client/next-step-note";
 import { UndoWindow } from "@/components/client/undo-window";
 import { fitChips } from "@/lib/client-evidence-bullets";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
+import { EvidencedScore } from "@/components/client/score-ring";
 import { buildShortlistRationale } from "@/lib/client-rationale";
 import { deriveCardAssessment } from "@/lib/client/card-assessment-state";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
@@ -95,6 +96,10 @@ export function CandidateCard({
     [c.fit_label, c.score, bullets.length, c.evidence_support, c.freshness],
   );
 
+  // The figure only renders through the evidenced-number contract.
+  const evidencedFit =
+    c.explanation?.kind === "explained" ? (c.explanation.number ?? null) : null;
+
   // Decision actions need the workspace id. The ?org param is only present when
   // a multi-workspace user is switching, so fall back to the active workspace.
   const orgId = orgIdProp ?? search.org ?? null;
@@ -125,7 +130,6 @@ export function CandidateCard({
           {assessment.state === "settled" ? (
             <>
               <CandidateScoreBadge
-                score={c.score}
                 fitLabel={c.fit_label}
                 evidence={c.evidence_support}
                 unicorn={c.unicorn}
@@ -158,6 +162,17 @@ export function CandidateCard({
           <p className="text-xs text-muted-foreground mt-1 truncate">For {c.position.title}</p>
         )}
       </div>
+
+      {/* The figure, with the criteria behind it, the method and a way in. */}
+      {assessment.state === "settled" && evidencedFit && (
+        <EvidencedScore
+          number={evidencedFit}
+          accent={c.fit.accent}
+          matchId={c.match_id}
+          org={search.org ?? null}
+          className="mt-3 rounded-lg border bg-muted/30 p-3"
+        />
+      )}
 
 
 

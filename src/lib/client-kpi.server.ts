@@ -701,8 +701,9 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const clientExplanation = buildScoreExplanation({
     audience: "client",
     method: (run as AnyRow)?.evaluation_method ?? null,
+    score: run?.score != null ? Math.round(Number(run.score)) : null,
     bandLabel: fit.headline,
-    evidencePath: { kind: "route", to: `/client/candidates/${row.id}` },
+    evidencePath: { kind: "route", to: `/client/candidates/${row.id}#sec-coverage` },
     criteria: requirement_rows.map((r) => ({
       label: r.label,
       importance: r.importance === "must_have" ? "must_have" : "preferred",

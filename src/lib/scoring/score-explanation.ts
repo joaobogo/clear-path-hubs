@@ -160,8 +160,11 @@ export function buildScoreExplanation(input: {
   }
 
   const summary = criteriaSummary(explained);
+  // Employers see the figure too — but only ever as an evidenced number, with
+  // its criteria line, its method and a path to the evidence. Candidates never
+  // receive a figure at all.
   const number =
-    input.audience === "staff"
+    input.audience !== "candidate"
       ? evidencedNumber({
           value: input.score ?? null,
           label: "Fit",
