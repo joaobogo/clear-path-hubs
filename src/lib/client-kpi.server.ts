@@ -5,6 +5,8 @@
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
 import { isUnicornMatch, classifyBand } from "@/lib/scoring/bands";
+import { cleanQuote } from "@/lib/evidence/quote-hygiene";
+
 import {
   buildRequirementRows,
   summariseCoverage,
