@@ -79,6 +79,22 @@ function TeamPage() {
                 {c.name}
               </button>
             ))}
+            {clients.isPending && !clients.data ? (
+              <p className="px-2 py-1.5 text-sm text-muted-foreground" aria-busy="true">
+                Loading organizations…
+              </p>
+            ) : clients.isError && !clients.data ? (
+              <div className="space-y-2 px-2 py-1.5">
+                <p className="text-sm text-muted-foreground">Couldn't load organizations.</p>
+                <Button size="sm" variant="outline" onClick={() => void clients.refetch()}>
+                  Try again
+                </Button>
+              </div>
+            ) : (clients.data?.items ?? []).length === 0 ? (
+              <p className="px-2 py-1.5 text-sm text-muted-foreground">
+                No client organizations yet.
+              </p>
+            ) : null}
           </div>
         </Card>
 
@@ -358,13 +374,28 @@ function OrgTeamList({ organizationId }: { organizationId: string }) {
                 </td>
               </tr>
             ))}
-            {(q.data ?? []).length === 0 && (
+            {q.isPending && !q.data ? (
               <tr>
-                <td colSpan={5} className="py-12 text-center text-muted-foreground">
-                  No members yet.
+                <td colSpan={5} className="py-10 text-center text-muted-foreground" aria-busy="true">
+                  Loading team members…
                 </td>
               </tr>
-            )}
+            ) : q.isError && !q.data ? (
+              <tr>
+                <td colSpan={5} className="space-y-3 py-10 text-center text-muted-foreground">
+                  <p>We couldn't load this team. Nobody's access changed.</p>
+                  <Button size="sm" variant="outline" onClick={() => void q.refetch()}>
+                    Try again
+                  </Button>
+                </td>
+              </tr>
+            ) : (q.data ?? []).length === 0 ? (
+              <tr>
+                <td colSpan={5} className="py-12 text-center text-muted-foreground">
+                  No members yet. Create a client user above to give someone access.
+                </td>
+              </tr>
+            ) : null}
           </tbody>
         </table>
       </div>

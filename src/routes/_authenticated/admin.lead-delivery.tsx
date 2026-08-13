@@ -45,10 +45,11 @@ function LeadDeliveryPage() {
   const queryClient = useQueryClient();
   const queryKey = ["admin-lead-delivery", onlyFailed] as const;
 
-  const { data, isLoading } = useQuery({
+  const deliveryQuery = useQuery({
     queryKey,
     queryFn: () => listLeadNotifications({ data: { onlyFailed, limit: 100 } }),
   });
+  const { data, isLoading } = deliveryQuery;
 
   const retry = useMutation({
     mutationFn: (id: string) => retryLeadNotificationFn({ data: { id } }),
@@ -127,8 +128,19 @@ function LeadDeliveryPage() {
           <CardTitle className="text-base">Delivery record</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          {isLoading ? (
-            <p className="p-6 text-sm text-muted-foreground">Loading delivery record…</p>
+          {isLoading && !data ? (
+            <p className="p-6 text-sm text-muted-foreground" aria-busy="true">
+              Loading delivery record…
+            </p>
+          ) : deliveryQuery.isError && !data ? (
+            <div className="space-y-3 p-6 text-sm text-muted-foreground">
+              <p>
+                We couldn't load the delivery record. This is a read problem — no lead was lost.
+              </p>
+              <Button size="sm" variant="outline" onClick={() => void deliveryQuery.refetch()}>
+                Try again
+              </Button>
+            </div>
           ) : items.length === 0 ? (
             <p className="p-6 text-sm text-muted-foreground">
               {onlyFailed

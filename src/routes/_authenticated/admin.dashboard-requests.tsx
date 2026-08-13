@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { QueryState } from "@/components/ds";
 
 export const Route = createFileRoute("/_authenticated/admin/dashboard-requests")({
   head: () => ({
@@ -56,7 +57,7 @@ function DashboardRequestsPage() {
   const queryClient = useQueryClient();
   const [quotes, setQuotes] = useState<Record<string, string>>({});
 
-  const { data, isLoading } = useQuery({
+  const query = useQuery({
     queryKey: ["staff-dashboard-desk"],
     queryFn: () => deskFn(),
   });
@@ -94,20 +95,24 @@ function DashboardRequestsPage() {
     },
   });
 
-  if (isLoading || !data) {
-    return (
-      <div className="mx-auto w-full max-w-5xl space-y-4 p-6">
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-32 w-full" />
-        <Skeleton className="h-32 w-full" />
-      </div>
-    );
-  }
-
-  const open = data.requests.filter((r) => ["new", "quoted", "agreed"].includes(r.status));
-  const closed = data.requests.filter((r) => !["new", "quoted", "agreed"].includes(r.status));
-
   return (
+    <QueryState
+      query={query}
+      tone="admin"
+      surface="admin/dashboard-requests"
+      isEmpty={() => false}
+      skeleton={
+        <div className="mx-auto w-full max-w-5xl space-y-4 p-6">
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-32 w-full" />
+          <Skeleton className="h-32 w-full" />
+        </div>
+      }
+    >
+      {(data) => {
+        const open = data.requests.filter((r) => ["new", "quoted", "agreed"].includes(r.status));
+        const closed = data.requests.filter((r) => !["new", "quoted", "agreed"].includes(r.status));
+        return (
     <div className="mx-auto w-full max-w-5xl space-y-6 p-6">
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold tracking-tight">Dashboards desk</h1>
@@ -275,5 +280,8 @@ function DashboardRequestsPage() {
         </section>
       )}
     </div>
+        );
+      }}
+    </QueryState>
   );
 }

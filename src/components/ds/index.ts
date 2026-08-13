@@ -12,6 +12,7 @@ export { ErrorState } from "./error-state";
 export { PermissionState, SuccessState } from "./state-views";
 export { ComponentErrorBoundary } from "./component-error-boundary";
 export { QueryState, type QueryStateProps } from "./query-state";
+export { resolveQueryPhase, type QueryPhase } from "./query-phase";
 export { SurfaceState, SurfaceLoading } from "./surface-state";
 export { Skeleton, TableSkeleton, KpiRowSkeleton } from "./loading-skeleton";
 export {

@@ -6,6 +6,7 @@ import { listAdminPayments } from "@/lib/admin-payments.functions";
 import { getPaymentsOps } from "@/lib/admin-ops.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -56,10 +57,11 @@ function AdminPaymentsPage() {
   const [filter, setFilter] = useState<Filter>("all");
   const load = useServerFn(listAdminPayments);
 
-  const { data, isLoading, error } = useQuery({
+  const paymentsQuery = useQuery({
     queryKey: ["admin-payments", filter],
     queryFn: () => load({ data: { filter } }),
   });
+  const { data, isLoading, error } = paymentsQuery;
 
   return (
     <div className="space-y-6 p-6">
@@ -98,9 +100,15 @@ function AdminPaymentsPage() {
               ))}
             </div>
           ) : error ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">
-              You don't have access to the payments ledger. Ask a platform admin.
-            </p>
+            <div className="space-y-3 py-8 text-center text-sm text-muted-foreground">
+              <p>
+                We couldn't load the ledger. If this keeps happening you may not have access —
+                ask a platform admin.
+              </p>
+              <Button variant="outline" size="sm" onClick={() => void paymentsQuery.refetch()}>
+                Try again
+              </Button>
+            </div>
           ) : !data?.rows.length ? (
             <p className="py-8 text-center text-sm text-muted-foreground">
               No payments match this filter yet. Paid roles appear here the moment the provider
@@ -163,22 +171,38 @@ function AdminPaymentsPage() {
 // Real records only: confirmed charges, roles stuck before payment, live pilots.
 function OpsPanel() {
   const loadOps = useServerFn(getPaymentsOps);
-  const { data, isLoading, error } = useQuery({
+  const opsQuery = useQuery({
     queryKey: ["admin-payments-ops"],
     queryFn: () => loadOps(),
     staleTime: 60_000,
   });
+  const { data, isLoading, error } = opsQuery;
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return (
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid gap-4 lg:grid-cols-3" aria-busy="true">
         {Array.from({ length: 3 }).map((_, i) => (
           <Skeleton key={i} className="h-56 w-full" />
         ))}
       </div>
     );
   }
-  if (error || !data) return null;
+  if (!data) {
+    return (
+      <Card>
+        <CardContent className="space-y-3 py-8 text-center text-sm text-muted-foreground">
+          <p>
+            {error
+              ? "We couldn't load payment operations. The ledger below is unaffected."
+              : "Payment operations aren't available right now."}
+          </p>
+          <Button variant="outline" size="sm" onClick={() => void opsQuery.refetch()}>
+            Try again
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const totals = Object.entries(data.totals.paid_cents_by_currency);
 

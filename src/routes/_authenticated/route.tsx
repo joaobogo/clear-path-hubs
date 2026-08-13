@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 
 /**
  * Protected-route gate.
@@ -28,5 +29,7 @@ export const Route = createFileRoute("/_authenticated")({
     }
     return { user: data.user };
   },
+  errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/route.tsx"),
+  notFoundComponent: makeRouteNotFoundComponent("client"),
   component: () => <Outlet />,
 });

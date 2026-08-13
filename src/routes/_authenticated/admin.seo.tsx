@@ -93,8 +93,10 @@ function SeoPage() {
       <section className="rounded-xl border bg-card p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-sm font-semibold">Google Search Console</h2>
-          {state.isLoading ? (
+          {state.isLoading && !data ? (
             <Badge variant="secondary">Checking…</Badge>
+          ) : state.isError && !data ? (
+            <Badge variant="destructive">Check failed</Badge>
           ) : data?.connected ? (
             <Badge variant="secondary">Connection linked</Badge>
           ) : (
@@ -107,6 +109,11 @@ function SeoPage() {
           that covers this site.
         </p>
 
+        {state.isError && !data ? (
+          <p className="mt-3 text-sm text-muted-foreground">
+            We couldn't check the Search Console connection. Use Recheck to try again.
+          </p>
+        ) : null}
         {data?.error ? (
           <p className="mt-3 text-sm text-destructive">{data.error}</p>
         ) : null}

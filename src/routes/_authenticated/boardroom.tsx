@@ -1,3 +1,4 @@
+import { useStuckAfter } from "@/lib/client/panel-gate";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -91,10 +92,14 @@ function BoardroomPage() {
     strengths?: string[];
   }>;
 
-  const isLoading = overviewQ.isPending && !!resolvedOrgId;
+  const pendingRead = overviewQ.isPending && !!resolvedOrgId;
+  // A slide must never sit on "Loading…" forever: after a bounded wait we
+  // present it as a failed read, which already has honest copy below.
+  const stuck = useStuckAfter(pendingRead);
+  const isLoading = pendingRead && !stuck;
   // Kept distinct from "empty" everywhere below: a failed read must never be
   // presented as a workspace with no roles or no candidates.
-  const loadFailed = overviewQ.isError || contextQ.isError;
+  const loadFailed = overviewQ.isError || contextQ.isError || stuck;
 
   const positions = whatsNext.slice(0, 6).map((p) => ({
     title: p.title,

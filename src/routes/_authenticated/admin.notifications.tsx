@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { listDeliveryFailures } from "@/lib/notifications.functions";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { QueryState } from "@/components/ds";
 import { DeliveryFailuresPanel } from "@/components/admin/delivery-failures-panel";
 
 export const Route = createFileRoute("/_authenticated/admin/notifications")({
@@ -24,21 +25,13 @@ export const Route = createFileRoute("/_authenticated/admin/notifications")({
 function NotificationsPage() {
   const list = useServerFn(listDeliveryFailures);
 
-  const { data, isLoading } = useQuery({
+  const query = useQuery({
     queryKey: ["admin", "delivery-failures"],
     queryFn: () => list(),
     refetchOnWindowFocus: true,
   });
 
-  const counts = (data?.counts ?? {}) as Record<string, number>;
-  const email = data?.email as { configured: boolean; reason?: string | null } | undefined;
-
-  const summary = [
-    { label: "Emails sent (7d)", value: counts["email:sent"] ?? counts["email:delivered"] ?? 0 },
-    { label: "Email failures (7d)", value: counts["email:failed"] ?? 0 },
-    { label: "Suppressed (7d)", value: counts["email:suppressed"] ?? 0 },
-    { label: "In-app delivered (7d)", value: counts["in_app:delivered"] ?? 0 },
-  ];
+  const email = query.data?.email as { configured: boolean; reason?: string | null } | undefined;
 
   return (
     <main className="p-6 md:p-8 max-w-6xl">
@@ -60,16 +53,39 @@ function NotificationsPage() {
         </Card>
       ) : null}
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {isLoading
-          ? [0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-20 w-full" />)
-          : summary.map((s) => (
-              <Card key={s.label} className="p-4">
-                <div className="text-2xl font-semibold tabular-nums">{s.value}</div>
-                <div className="text-xs text-muted-foreground">{s.label}</div>
-              </Card>
+      <QueryState
+        query={query}
+        tone="admin"
+        surface="admin/notifications"
+        isEmpty={() => false}
+        skeleton={
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[0, 1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-20 w-full" />
             ))}
-      </div>
+          </div>
+        }
+      >
+        {(data) => {
+          const counts = (data.counts ?? {}) as Record<string, number>;
+          const summary = [
+            { label: "Emails sent (7d)", value: counts["email:sent"] ?? counts["email:delivered"] ?? 0 },
+            { label: "Email failures (7d)", value: counts["email:failed"] ?? 0 },
+            { label: "Suppressed (7d)", value: counts["email:suppressed"] ?? 0 },
+            { label: "In-app delivered (7d)", value: counts["in_app:delivered"] ?? 0 },
+          ];
+          return (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {summary.map((s) => (
+                <Card key={s.label} className="p-4">
+                  <div className="text-2xl font-semibold tabular-nums">{s.value}</div>
+                  <div className="text-xs text-muted-foreground">{s.label}</div>
+                </Card>
+              ))}
+            </div>
+          );
+        }}
+      </QueryState>
 
       <DeliveryFailuresPanel />
     </main>

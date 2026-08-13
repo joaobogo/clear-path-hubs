@@ -191,8 +191,20 @@ function CopilotPage() {
       </header>
 
       <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto rounded-xl border bg-card/50 p-4 sm:p-6">
-        {state.isPending ? (
-          <p className="text-sm text-muted-foreground">Loading history…</p>
+        {state.isPending && !state.data ? (
+          <p className="text-sm text-muted-foreground" aria-busy="true">
+            Loading history…
+          </p>
+        ) : state.isError && !state.data ? (
+          <div className="space-y-3 text-sm text-muted-foreground">
+            <p>
+              We couldn't load this conversation. Nothing was lost — it's still saved on our
+              side.
+            </p>
+            <Button size="sm" variant="outline" onClick={() => void state.refetch()}>
+              Try again
+            </Button>
+          </div>
         ) : messages.length === 0 ? (
           <EmptyState onPick={(t) => setInput(t)} />
         ) : (
