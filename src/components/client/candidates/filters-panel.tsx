@@ -191,16 +191,6 @@ export function CandidatesFiltersPanel({
                 aria-label="Filter by location"
               />
             </FilterField>
-            <FilterField label="Sort">
-              <Select value={search.sort} onValueChange={(v) => setF({ sort: v })}>
-                <SelectTrigger aria-label="Sort"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {SORT_OPTIONS.map((o) => (
-                    <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FilterField>
             <Button className="w-full" size="sm" onClick={() => setOpen(false)}>Done</Button>
           </PopoverContent>
         </Popover>
