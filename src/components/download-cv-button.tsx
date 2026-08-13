@@ -125,7 +125,29 @@ export function DownloadCvButton({
       <span aria-live="polite" className="sr-only">
         {state === "loading" ? "Preparing CV download" : state === "done" ? "CV ready" : ""}
       </span>
-      {error && <span className="text-[11px] text-destructive max-w-[16rem]">{error}</span>}
+      {failure && (
+        <span
+          role="alert"
+          className="flex max-w-[18rem] flex-col gap-1 rounded-md border border-destructive/40 bg-destructive/5 px-2 py-1.5"
+          data-qa="cv-download-error"
+        >
+          <span className="text-[11px] font-medium text-destructive">{failure.message}</span>
+          <span className="text-[11px] text-muted-foreground">{failure.hint}</span>
+          {failure.retryable && (
+            <button
+              type="button"
+              onClick={run}
+              disabled={state === "loading"}
+              data-qa-action="retry-cv-download"
+              className="inline-flex w-fit items-center gap-1 text-[11px] font-medium text-primary underline-offset-2 hover:underline disabled:opacity-70"
+            >
+              <RotateCcw className="h-3 w-3" aria-hidden />
+              Retry download
+              {attempts > 1 ? ` (attempt ${attempts + 1})` : ""}
+            </button>
+          )}
+        </span>
+      )}
     </span>
   );
 }
