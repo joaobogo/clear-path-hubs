@@ -4,6 +4,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { readWorkspaceAccess } from "@/lib/authz/workspace-access";
+import { classifyBand } from "@/lib/scoring/bands";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
