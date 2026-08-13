@@ -734,7 +734,11 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
         : (row.updated_at ?? row.delivered_at ?? null),
     last_updated: run?.completed_at ?? row.updated_at ?? row.delivered_at ?? null,
     position: pos ? { id: pos.id, title: pos.title } : null,
-    unicorn: isUnicornMatch({ band: (run?.fit_band ?? null) as never, hired: row.stage === "hired" }),
+    unicorn: isUnicornMatch({
+      score: run?.score != null ? Number(run.score) : null,
+      band: (run?.fit_band ?? null) as never,
+      hired: row.stage === "hired",
+    }),
     freshness: mergeStoredStaleness(
       assessFreshness({
         scored_at: run?.completed_at ?? null,
