@@ -125,7 +125,6 @@ export function CandidateCard({
           {assessment.state === "settled" ? (
             <>
               <CandidateScoreBadge
-                score={c.score}
                 fitLabel={c.fit_label}
                 evidence={c.evidence_support}
                 unicorn={c.unicorn}
