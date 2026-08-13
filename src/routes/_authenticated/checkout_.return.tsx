@@ -54,7 +54,7 @@ function CheckoutReturnPage() {
   const navigate = useNavigate();
   const verify = useServerFn(getCheckoutSessionStatus);
 
-  const { data, isLoading } = useQuery({
+  const statusQuery = useQuery({
     queryKey: ["checkout-status", sessionId],
     queryFn: () => verify({ data: { sessionId: sessionId as string, environment: getStripeEnvironment() } }),
     enabled: Boolean(sessionId),
@@ -64,6 +64,7 @@ function CheckoutReturnPage() {
       return state === "processing" || state === "open" ? 4000 : false;
     },
   });
+  const { data, isLoading } = statusQuery;
 
   // Confirmed payment: don't make them click. Straight into the workspace.
   useEffect(() => {
@@ -85,11 +86,23 @@ function CheckoutReturnPage() {
               list.
             </CardContent>
           </Card>
-        ) : isLoading || !data ? (
-          <div className="space-y-4">
+        ) : isLoading && !data ? (
+          <div className="space-y-4" aria-busy="true">
             <Skeleton className="h-8 w-64" />
             <Skeleton className="h-40 w-full rounded-xl" />
           </div>
+        ) : !data ? (
+          <Card>
+            <CardContent className="space-y-4 py-10 text-center text-sm text-muted-foreground">
+              <p>
+                We couldn't check your payment just now. Nothing is lost — your receipt is the
+                record, and this page can try again.
+              </p>
+              <Button variant="outline" onClick={() => void statusQuery.refetch()}>
+                Try again
+              </Button>
+            </CardContent>
+          </Card>
         ) : data.state === "paid" ? (
           <Card>
             <CardHeader>

@@ -43,10 +43,11 @@ function TeamsActPage() {
   const act = useServerFn(clientAction);
   const consume = useServerFn(consumeTeamsActionLink);
 
-  const { data, isLoading } = useQuery({
+  const linkQuery = useQuery({
     queryKey: ["teams-action", token],
     queryFn: () => read({ data: { token } }),
   });
+  const { data, isLoading } = linkQuery;
 
   const confirm = useMutation({
     mutationFn: async () => {
@@ -70,8 +71,26 @@ function TeamsActPage() {
     onError: (e) => toastError(e, { fallback: "Could not record that." }),
   });
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return <Shell>Checking this link…</Shell>;
+  }
+
+  if (linkQuery.isError && !data) {
+    return (
+      <Shell>
+        <p className="text-sm text-muted-foreground">
+          We couldn't check this link just now. Nothing has been recorded yet.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => void linkQuery.refetch()}>
+            Try again
+          </Button>
+          <Button asChild>
+            <Link to="/client">Open your workspace</Link>
+          </Button>
+        </div>
+      </Shell>
+    );
   }
 
   if (!data || data.status !== "ready") {

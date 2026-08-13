@@ -71,11 +71,12 @@ function CheckoutPage() {
     onError: () => toast.error("We couldn't apply your plan to this role."),
   });
 
-  const { data, isLoading } = useQuery({
+  const contextQuery = useQuery({
     queryKey: ["checkout-context", position],
     queryFn: () => loadContext({ data: { positionId: position as string } }),
     enabled: Boolean(position),
   });
+  const { data, isLoading } = contextQuery;
 
   const returnUrl =
     typeof window !== "undefined"
@@ -104,12 +105,24 @@ function CheckoutPage() {
                 </div>
               </CardContent>
             </Card>
-          ) : isLoading ? (
-            <Skeleton className="h-[520px] w-full rounded-xl" />
+          ) : isLoading && !data ? (
+            <Skeleton className="h-[520px] w-full rounded-xl" aria-busy="true" />
+          ) : contextQuery.isError && !data ? (
+            <Card>
+              <CardContent className="space-y-4 py-10 text-center text-sm text-muted-foreground">
+                <p>We couldn't load this role just now. Your draft is safe.</p>
+                <Button variant="outline" onClick={() => void contextQuery.refetch()}>
+                  Try again
+                </Button>
+              </CardContent>
+            </Card>
           ) : !data?.ok ? (
             <Card>
-              <CardContent className="py-10 text-center text-sm text-muted-foreground">
-                We couldn't find that role in your workspace.
+              <CardContent className="space-y-4 py-10 text-center text-sm text-muted-foreground">
+                <p>We couldn't find that role in your workspace.</p>
+                <Button variant="outline" onClick={() => navigate({ to: "/client/positions" })}>
+                  Back to your roles
+                </Button>
               </CardContent>
             </Card>
           ) : ["paid", "exempt", "covered"].includes(String(data.position.paymentStatus)) ? (

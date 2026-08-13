@@ -153,8 +153,17 @@ function BookCallPage() {
         together.
       </p>
 
-      {stateQuery.isLoading ? (
-        <Skeleton className="mt-8 h-72 w-full rounded-xl" />
+      {stateQuery.isLoading && !stateQuery.data ? (
+        <Skeleton className="mt-8 h-72 w-full rounded-xl" aria-busy="true" />
+      ) : stateQuery.isError && !stateQuery.data ? (
+        <Card className="mt-8">
+          <CardContent className="space-y-4 py-10 text-center text-sm text-muted-foreground">
+            <p>We couldn't load your booking details. Nothing you did was lost.</p>
+            <Button variant="outline" onClick={() => void stateQuery.refetch()}>
+              Try again
+            </Button>
+          </CardContent>
+        </Card>
       ) : booked ? (
         <Card className="mt-8">
           <CardHeader>
