@@ -79,7 +79,7 @@ export function DownloadCvButton({
   label,
   mode = "download",
 }: Props) {
-  const { state, error, run, preview } = useCvDownload(matchId, mode);
+  const { state, failure, attempts, run, preview } = useCvDownload(matchId, mode);
   const base = label ?? (preview ? "Preview CV" : "Download CV");
   const text =
     state === "loading"
@@ -87,7 +87,11 @@ export function DownloadCvButton({
         ? "Opening…"
         : "Preparing…"
       : state === "error"
-        ? "Retry"
+        ? failure?.retryable
+          ? preview
+            ? "Retry preview"
+            : "Retry download"
+          : base
         : state === "done" && !preview
           ? "Downloaded"
           : base;
