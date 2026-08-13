@@ -169,12 +169,49 @@ type AnyRow = any;
 
 function normStatus(raw: unknown): RequirementStatus {
   const s = String(raw ?? "").toLowerCase();
-  if (["met", "matched", "covered", "yes", "true"].includes(s)) return "met";
+  if (["met", "matched", "covered", "yes", "true", "strong", "supported"].includes(s))
+    return "met";
   if (["partial", "partially", "partially_met", "weak"].includes(s)) return "partial";
-  if (["contradicted", "conflict", "conflicts"].includes(s)) return "contradicted";
+  if (["contradicted", "conflict", "conflicts", "contradiction"].includes(s))
+    return "contradicted";
   if (["not_applicable", "na", "n/a"].includes(s)) return "not_applicable";
   return "not_evidenced";
 }
+
+/**
+ * Stable, human-independent identity for a requirement written as free text.
+ * The same requirement text always yields the same row id, so selections and
+ * comparisons survive re-ordering of the position's requirement array.
+ */
+export function requirementSlug(text: string): string {
+  return (
+    String(text)
+      .toLowerCase()
+      .normalize("NFKD")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 60) || "requirement"
+  );
+}
+
+/** Verified evidence rows keyed by the requirement text they were extracted for. */
+export type RequirementEvidenceRow = {
+  rubric_criterion_key?: string | null;
+  result?: string | null;
+  match_type?: string | null;
+  factual_quote?: string | null;
+  interpretation?: string | null;
+  source_kind?: string | null;
+  source_location?: string | null;
+};
+
+const STATUS_RANK: Record<RequirementStatus, number> = {
+  met: 4,
+  partial: 3,
+  contradicted: 2,
+  not_evidenced: 1,
+  not_applicable: 0,
+};
 
 /**
  * Merge the position's declared requirements with the score-run coverage map.
