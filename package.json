@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "check:vocabulary": "node scripts/check-public-vocabulary.mjs",
+    "check:vocabulary": "node scripts/check-public-vocabulary.mjs && node scripts/check-client-vocabulary.mjs",
+    "check:vocabulary:client": "node scripts/check-client-vocabulary.mjs",
     "prebuild": "npm run check:vocabulary",
     "prebuild:dev": "npm run check:vocabulary",
     "test": "vitest run"
