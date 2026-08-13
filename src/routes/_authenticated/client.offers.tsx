@@ -19,6 +19,7 @@ import { isStalled, byStallDesc } from "@/lib/offer-stall";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { SkeletonBoard } from "@/components/client/states";
 import { QueryErrorCard } from "@/components/client/query-error";
+import { ViewerReadOnlyNotice } from "@/components/client/states";
 import { Badge } from "@/components/ui/badge";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
 import { useRouteRealtime } from "@/hooks/use-route-realtime";
@@ -127,6 +128,10 @@ function OffersPage() {
           </p>
         </div>
       </header>
+
+      {readOnly ? (
+        <ViewerReadOnlyNotice className="mt-5" area="moving offers and confirming hires" />
+      ) : null}
 
       {/* KPI strip */}
       {reportQuery.isError ? (

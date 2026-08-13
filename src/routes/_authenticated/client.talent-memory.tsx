@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { ViewerReadOnlyNotice } from "@/components/client/states";
 import { Award, Search, Users } from "lucide-react";
 import {
   listSilverMedalists,
@@ -152,6 +153,10 @@ function TalentMemoryPage() {
           {listIsError ? "— entries" : `${memories.length} entries`}
         </div>
       </header>
+
+      {readOnly ? (
+        <ViewerReadOnlyNotice className="mt-5" area="editing talent memory" />
+      ) : null}
 
       {/* Filters */}
       <div className="mt-6 flex flex-wrap items-center gap-2">

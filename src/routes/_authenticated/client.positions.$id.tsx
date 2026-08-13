@@ -40,6 +40,7 @@ import { readStaleStateError } from "@/lib/decision-concurrency";
 
 import { PositionDetailPending } from "@/components/client/position-detail/pending";
 import { QueryErrorCard } from "@/components/client/query-error";
+import { ViewerReadOnlyNotice } from "@/components/client/states";
 import { KANBAN_COLUMNS, STAGE_GRAPH, STAGE_LABELS } from "@/components/client/position-detail/constants";
 import { SummaryTile } from "@/components/client/position-detail/summary-tile";
 import { PipelineBoard } from "@/components/client/position-detail/pipeline-board";
@@ -357,6 +358,10 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
         </Link>
         <LiveUpdatedChip updatedAt={live.updatedAt} />
       </div>
+
+      {!canEdit && !support.readOnly ? (
+        <ViewerReadOnlyNotice area="editing this role and deciding on candidates" />
+      ) : null}
 
       {/* Recorded closure — reason, note, date and who closed it. */}
       {closure && <RoleClosureRecord closure={closure} />}

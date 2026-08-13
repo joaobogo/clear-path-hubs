@@ -31,10 +31,10 @@ import {
   InterviewFeedbackQueue,
 } from "@/components/client/interview-feedback-form";
 import type { FeedbackQueueItem } from "@/lib/interview-feedback.functions";
-import { useResolvedClientOrgId } from "@/lib/use-client-org";
+import { useResolvedClientOrgId, useClientRole } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { PageHeader, PageBody, PageShell } from "@/components/ds";
-import { EmptyState, SkeletonCards } from "@/components/client/states";
+import { EmptyState, SkeletonCards, ViewerReadOnlyNotice } from "@/components/client/states";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { Button } from "@/components/ui/button";
 import { CalendarClock, Plus } from "lucide-react";
@@ -63,7 +63,9 @@ export const Route = createFileRoute("/_authenticated/client/interviews")({
 function InterviewsPage() {
   const org = useResolvedClientOrgId();
   const support = useSupportView();
-  const readOnly = support.readOnly || support.permissionPreview === "client_viewer";
+  const role = useClientRole();
+  const isViewer = role === "client_viewer" || support.permissionPreview === "client_viewer";
+  const readOnly = support.readOnly || isViewer;
   const qc = useQueryClient();
   const listFn = useServerFn(listClientInterviews);
   const candidatesFn = useServerFn(listSchedulableCandidates);
@@ -240,6 +242,9 @@ function InterviewsPage() {
         }
       />
       <PageBody>
+        {isViewer && !support.readOnly && (
+          <ViewerReadOnlyNotice area="requesting and rescheduling interviews" />
+        )}
         {org ? <InterviewFeedbackQueue orgId={org} readOnly={readOnly} /> : null}
 
         {org ? <AvailabilityManager orgId={org} readOnly={readOnly} /> : null}
