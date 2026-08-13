@@ -1,4 +1,3 @@
-import { clientStageLabel } from "@/lib/client-stage-labels";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -15,7 +14,6 @@ import { orgGate, panelState, useStuckAfter } from "@/lib/client/panel-gate";
 import { VisibilityNote } from "@/components/client/visibility-note";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CandidateCard } from "@/components/client/candidate-card";
 import { CompareTray, CompareSheet } from "@/components/client/candidate-comparison";
 import {
   compareEligibility,
@@ -512,64 +510,49 @@ function CandidatesPage() {
  </section>
  )}
 
- <CandidatesFiltersPanel
-  search={search}
-  setF={setF}
-  positions={positions as Array<{ id: string; title: string }>}
-  availabilityOptions={availabilityOptions}
-  activeFilters={activeFilters}
-  clearFilters={clearFilters}
-  compareCheck={compareCheck}
-  setCompareOpen={setCompareOpen}
-  orgId={orgId}
-  ctxRole={ctx?.active?.role}
-  onApplySavedView={(f) => navigate({ search: { ...search, ...f } as never, replace: true })}
-  resultCount={filtered.length}
-  totalCount={(rowsRaw as ClientCandidateDTO[]).length}
- />
+  <CandidatesFiltersPanel
+   search={search}
+   setF={setF}
+   positions={positions as Array<{ id: string; title: string }>}
+   availabilityOptions={availabilityOptions}
+   activeFilters={activeFilters}
+   clearFilters={clearFilters}
+   orgId={orgId}
+   ctxRole={ctx?.active?.role}
+   onApplySavedView={(f) => navigate({ search: { ...search, ...f } as never, replace: true })}
+   resultCount={filtered.length}
+   totalCount={(rowsRaw as ClientCandidateDTO[]).length}
+  />
 
  {/* Results — loading, failure and "none approved yet" are distinct states */}
- {listPanel.loading ? (
- <div className="grid gap-3 md:grid-cols-2">
- {Array.from({ length: 4 }).map((_, i) => (
- <Skeleton key={i} className="h-52 rounded-xl" />
- ))}
- </div>
+  {listPanel.loading ? (
+  <div className="rounded-xl border bg-card p-4 space-y-3">
+   {Array.from({ length: 6 }).map((_, i) => (
+    <Skeleton key={i} className="h-12 w-full rounded-lg" />
+   ))}
+  </div>
  ) : listPanel.isError ? (
  <QueryErrorCard
- title={gate.noWorkspace ? "No workspace is attached to this account" : "We couldn't load your candidates"}
- error={listPanel.error}
- onRetry={retryAll}
- retrying={isFetching || gate.retrying}
- />
- ) : filtered.length === 0 ? (
- <CandidatesEmptyState
-            hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0}
-            activeFilters={activeFilters}
-            onClear={clearFilters}
-            orgId={orgId}
-          />
- ) : search.view === "list" ? (
- <CompactList
- rows={paged}
- orgSearch={orgSearch}
- compareIds={compareIds}
- onToggleCompare={(id) => toggleCompare(setCompareIds, id)}
- />
- ) : (
- <div className="grid gap-4 md:grid-cols-2">
- {paged.map((c) => (
- <CandidateCard
- key={c.match_id}
- candidate={c}
- orgId={orgId ?? null}
- compareSelected={compareIds.includes(c.match_id)}
- compareDisabled={compareIds.length >= 4}
- onToggleCompare={(id) => toggleCompare(setCompareIds, id)}
- />
- ))}
- </div>
- )}
+  title={gate.noWorkspace ? "No workspace is attached to this account" : "We couldn't load your candidates"}
+  error={listPanel.error}
+  onRetry={retryAll}
+  retrying={isFetching || gate.retrying}
+  />
+  ) : filtered.length === 0 ? (
+  <CandidatesEmptyState
+             hasCandidates={(rowsRaw as ClientCandidateDTO[]).length > 0}
+             activeFilters={activeFilters}
+             onClear={clearFilters}
+             orgId={orgId}
+           />
+  ) : (
+           <CompactList
+             rows={paged}
+             orgSearch={orgSearch}
+             compareIds={compareIds}
+             onToggleCompare={(id) => toggleCompare(setCompareIds, id)}
+           />
+  )}
 
  {/* Bounded pagination */}
  {filtered.length > PAGE_SIZE && (

@@ -54,8 +54,6 @@ export function CandidatesFiltersPanel({
   availabilityOptions,
   activeFilters,
   clearFilters,
-  compareCheck,
-  setCompareOpen,
   orgId,
   ctxRole,
   onApplySavedView,
@@ -68,8 +66,6 @@ export function CandidatesFiltersPanel({
   availabilityOptions: string[];
   activeFilters: { key: string; label: string }[];
   clearFilters: () => void;
-  compareCheck: { ok: boolean; reason?: string | null };
-  setCompareOpen: (v: boolean) => void;
   orgId: string | undefined;
   ctxRole: string | undefined;
   onApplySavedView: (f: Record<string, unknown>) => void;
@@ -225,31 +221,7 @@ export function CandidatesFiltersPanel({
           </PopoverContent>
         </Popover>
 
-        <div className="inline-flex h-12 shrink-0 items-center self-start rounded-md border p-0.5 sm:h-10 md:self-auto">
-          <button
-            onClick={() => setF({ view: "cards" })}
-            className={`h-full min-w-11 whitespace-nowrap px-3 text-xs rounded sm:min-w-0 sm:px-2.5 ${search.view === "cards" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
-            aria-pressed={search.view === "cards"}
-          >
-            Cards
-          </button>
-          <button
-            onClick={() => setF({ view: "list" })}
-            className={`h-full min-w-11 whitespace-nowrap px-3 text-xs rounded sm:min-w-0 sm:px-2.5 ${search.view === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
-            aria-pressed={search.view === "list"}
-          >
-            List
-          </button>
-          <button
-            onClick={() => { setF({ view: "compare" }); setCompareOpen(true); }}
-            disabled={!compareCheck.ok}
-            title={compareCheck.reason ?? undefined}
-            className={`h-full min-w-11 whitespace-nowrap px-3 text-xs rounded sm:min-w-0 sm:px-2.5 disabled:opacity-40 ${search.view === "compare" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
-            aria-pressed={search.view === "compare"}
-          >
-            Side by side
-          </button>
-        </div>
+        {/* View is always list — no card/side-by-side toggle */}
       </div>
 
       {/* Result count · active filter chips · saved views */}
