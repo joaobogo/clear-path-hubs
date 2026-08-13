@@ -25,10 +25,10 @@ const PAGES = [
  * src/lib/tracking/pixels.ts, chosen so it cannot appear anywhere else.
  */
 const REQUIRED_MARKERS: Record<string, string> = {
-  ga4: "window.__tfGa4",
-  apollo: "window.__tfApollo",
+  ga4: "window.__tfGa4=1",
+  apollo: "window.__tfApollo=1",
   rb2b: "ddwl4m2hdecbv.cloudfront.net/b/",
-  linkedin: "window.__tfLi",
+  linkedin: "window.__tfLi=1",
 };
 
 /** Configured only when its env var is set — never more than once when present. */
