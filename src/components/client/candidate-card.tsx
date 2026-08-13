@@ -9,6 +9,7 @@ import { NextStepNote } from "@/components/client/next-step-note";
 import { UndoWindow } from "@/components/client/undo-window";
 import { fitChips } from "@/lib/client-evidence-bullets";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
+import { EvidencedScore } from "@/components/client/score-ring";
 import { buildShortlistRationale } from "@/lib/client-rationale";
 import { deriveCardAssessment } from "@/lib/client/card-assessment-state";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
@@ -94,6 +95,10 @@ export function CandidateCard({
       }),
     [c.fit_label, c.score, bullets.length, c.evidence_support, c.freshness],
   );
+
+  // The figure only renders through the evidenced-number contract.
+  const evidencedFit =
+    c.explanation?.kind === "explained" ? (c.explanation.number ?? null) : null;
 
   // Decision actions need the workspace id. The ?org param is only present when
   // a multi-workspace user is switching, so fall back to the active workspace.
