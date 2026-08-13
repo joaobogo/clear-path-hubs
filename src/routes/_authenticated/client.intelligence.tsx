@@ -7,7 +7,7 @@ import {
   getHiringIntelligence,
   getIntelligencePositions,
 } from "@/lib/intelligence/hiring-intelligence.functions";
-import { useClientOrgSearch } from "@/lib/use-client-org";
+import { useResolvedClientOrgId } from "@/lib/use-client-org";
 import { MetricCard, MetricCardSkeleton } from "@/components/intelligence/metric-card";
 import {
   BestPracticeList,
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/_authenticated/client/intelligence")({
 const WINDOWS = [30, 60, 90, 180];
 
 function IntelligencePage() {
-  const orgId = useClientOrgSearch();
+  const orgId = useResolvedClientOrgId();
   const [days, setDays] = useState(90);
   const [positionId, setPositionId] = useState("all");
 
