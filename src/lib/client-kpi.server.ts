@@ -774,9 +774,9 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
       current_company: currentCompany,
       links,
     },
-    // Employer surfaces never receive the internal numeric rating: the band is
-    // the contract, and the column is not even granted to client roles.
-    score: null,
+    // Employers see the 0-100 fit score alongside the band so ranking is
+    // obvious at a glance. 95+ is the unicorn threshold.
+    score: typeof run?.score === "number" ? Math.round(run.score) : run?.score != null ? Math.round(Number(run.score)) : null,
     fit_label: run?.fit_label ?? run?.fit_band ?? null,
     fit,
     // The engine's own explanation string carries a raw n/100 figure, which is
