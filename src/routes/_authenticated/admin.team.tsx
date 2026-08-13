@@ -79,6 +79,22 @@ function TeamPage() {
                 {c.name}
               </button>
             ))}
+            {clients.isPending && !clients.data ? (
+              <p className="px-2 py-1.5 text-sm text-muted-foreground" aria-busy="true">
+                Loading organizations…
+              </p>
+            ) : clients.isError && !clients.data ? (
+              <div className="space-y-2 px-2 py-1.5">
+                <p className="text-sm text-muted-foreground">Couldn't load organizations.</p>
+                <Button size="sm" variant="outline" onClick={() => void clients.refetch()}>
+                  Try again
+                </Button>
+              </div>
+            ) : (clients.data?.items ?? []).length === 0 ? (
+              <p className="px-2 py-1.5 text-sm text-muted-foreground">
+                No client organizations yet.
+              </p>
+            ) : null}
           </div>
         </Card>
 
