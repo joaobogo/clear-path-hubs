@@ -98,10 +98,35 @@ export const getClientTeam = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin
       .from("memberships")
-      .select("user_id, role, status, created_at, profiles:user_id(full_name, email)")
+      .select("user_id, role, status, created_at")
       .eq("organization_id", data.orgId);
     if (error) throw new Error(error.message);
-    return (rows as AnyRow[]) ?? [];
+
+    // memberships.user_id points at the auth user, so profiles are resolved in a
+    // second read instead of a PostgREST embed (there is no FK between them).
+    const memberships = (rows as AnyRow[]) ?? [];
+    const userIds = Array.from(
+      new Set(memberships.map((r) => r.user_id).filter(Boolean) as string[]),
+    );
+    const profileByUser = new Map<string, { full_name: string | null; email: string | null }>();
+    if (userIds.length > 0) {
+      const { data: profileRows } = await supabaseAdmin
+        .from("profiles")
+        .select("auth_user_id, full_name, email")
+        .in("auth_user_id", userIds);
+      for (const p of (profileRows as AnyRow[]) ?? []) {
+        if (p.auth_user_id)
+          profileByUser.set(p.auth_user_id as string, {
+            full_name: (p.full_name as string | null) ?? null,
+            email: (p.email as string | null) ?? null,
+          });
+      }
+    }
+
+    return memberships.map((r) => ({
+      ...r,
+      profiles: profileByUser.get(r.user_id as string) ?? null,
+    })) as AnyRow[];
   });
 
 export const inviteClientMember = createServerFn({ method: "POST" })

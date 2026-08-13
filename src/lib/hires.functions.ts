@@ -3,6 +3,7 @@
 // Every mutation is org-scoped through RLS + assertEditor, writes an audit
 // event, and relies on DB triggers (tg_hire_records_lifecycle) to enforce the
 // state machine and stamp lifecycle timestamps.
+import { attachMemberProfiles } from "@/lib/membership-profiles.server";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
@@ -729,11 +730,12 @@ export const listOfferOwners = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const { data: members, error } = await context.supabase
       .from("memberships")
-      .select("user_id, role, profiles:user_id(full_name, email)")
+      .select("user_id, role")
       .eq("organization_id", data.orgId)
       .eq("status", "active");
     if (error) throw new Error(error.message);
-    const owners = (members ?? []).map((m: AnyRow) => ({
+    const withProfiles = await attachMemberProfiles(context.supabase, (members ?? []) as AnyRow[]);
+    const owners = withProfiles.map((m: AnyRow) => ({
       user_id: m.user_id as string,
       role: m.role as string,
       name:

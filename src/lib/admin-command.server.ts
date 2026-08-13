@@ -5,6 +5,7 @@
  * the identifiers needed to deep-link to the record that produced it. No
  * derived "trends", no sampled estimates.
  */
+import { attachMemberProfiles } from "@/lib/membership-profiles.server";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -120,7 +121,7 @@ export async function loadFilterOptions() {
       .limit(500),
     s
       .from("memberships")
-      .select("user_id,role,profiles:user_id(full_name,email)")
+      .select("user_id,role")
       .in("role", ["platform_admin", "operations"])
       .eq("status", "active")
       .limit(200),
@@ -128,7 +129,8 @@ export async function loadFilterOptions() {
 
   const seen = new Set<string>();
   const ownerList: { id: string; name: string }[] = [];
-  for (const m of (owners ?? []) as AnyRow[]) {
+  const ownersWithProfiles = await attachMemberProfiles(s, owners as AnyRow[]);
+  for (const m of ownersWithProfiles) {
     if (!m.user_id || seen.has(m.user_id)) continue;
     seen.add(m.user_id);
     ownerList.push({

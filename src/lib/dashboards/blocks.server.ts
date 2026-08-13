@@ -7,6 +7,7 @@
  *  2. Loading each block from the records that already exist. Blocks return
  *     null when there is genuinely nothing yet; they never invent a zero.
  */
+import { attachMemberProfiles } from "@/lib/membership-profiles.server";
 import { findPlan } from "@/lib/payments-catalog";
 import {
   type BlockData,
@@ -338,7 +339,7 @@ async function teamActivity(sb: AnySupabase, org: string): Promise<BlockData | n
   const [{ data: members }, { data: history }] = await Promise.all([
     sb
       .from("memberships")
-      .select("user_id, role, profiles:user_id(full_name, email)")
+      .select("user_id, role")
       .eq("organization_id", org)
       .eq("status", "active"),
     sb
@@ -347,7 +348,7 @@ async function teamActivity(sb: AnySupabase, org: string): Promise<BlockData | n
       .eq("organization_id", org)
       .gte("created_at", since),
   ]);
-  const memberRows = (members ?? []) as Array<Record<string, any>>;
+  const memberRows = await attachMemberProfiles(sb, (members ?? []) as Array<Record<string, any>>);
   if (memberRows.length === 0) return null;
   const counts = new Map<string, number>();
   for (const h of (history ?? []) as Array<Record<string, any>>) {
