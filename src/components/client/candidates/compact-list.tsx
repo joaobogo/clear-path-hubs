@@ -20,12 +20,11 @@ function ScoreCell({ c }: { c: ClientCandidateDTO }) {
             ? { text: "text-warning-strong", bar: "bg-warning", track: "bg-warning/20" }
             : { text: "text-muted-foreground", bar: "bg-muted-foreground/50", track: "bg-muted" };
   return (
-    <div className="min-w-[104px]" title="Fit score out of 100">
+    <div className="min-w-[104px]" title="Fit score">
       <div className="flex items-center gap-2 whitespace-nowrap">
         <span className={`text-lg font-semibold leading-none tabular-nums ${tone.text}`}>
           {c.score}
         </span>
-        <span className="text-[11px] leading-none text-muted-foreground">/100</span>
         {c.score >= 95 && <UnicornBadge />}
       </div>
       <div className={`mt-1.5 h-1 w-full overflow-hidden rounded-full ${tone.track}`}>
@@ -36,6 +35,7 @@ function ScoreCell({ c }: { c: ClientCandidateDTO }) {
       </div>
     </div>
   );
+
 }
 
 

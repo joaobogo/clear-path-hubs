@@ -81,7 +81,7 @@ export function ScoreDisplay({
           color,
           boxShadow: `inset 0 0 0 1px color-mix(in oklch, ${color} 30%, transparent)`,
         }}
-        aria-label={`${displayLabel}: ${rounded} out of 100`}
+        aria-label={`${displayLabel}: ${rounded}`}
       >
         <span
           aria-hidden
@@ -107,7 +107,7 @@ export function ScoreDisplay({
           aria-valuenow={pct}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label={`${displayLabel}: ${rounded} out of 100`}
+          aria-label={`${displayLabel}: ${rounded}`}
           className="relative h-1.5 w-full overflow-hidden rounded-full bg-muted"
         >
           <span
@@ -129,8 +129,9 @@ export function ScoreDisplay({
   return (
     <div
       className={cn("inline-flex items-center gap-3", className)}
-      aria-label={`${displayLabel}: ${rounded} out of 100`}
+      aria-label={`${displayLabel}: ${rounded}`}
     >
+
       <svg width={dims} height={dims} viewBox={`0 0 ${dims} ${dims}`} aria-hidden>
         <circle
           cx={dims / 2}
