@@ -891,13 +891,13 @@ export const listMyMessages = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const supabase = context.supabase as AnyRow;
+    // Same predicate as the unread tile: my thread, both directions.
     const { data, error } = await supabase
       .from("messages")
       .select("id,thread_id,sender_user_id,body,created_at,read_at,recipient_context")
-      .or(
-        `sender_user_id.eq.${context.userId},recipient_context->>candidate_user_id.eq.${context.userId}`,
-      )
+      .eq("thread_id", context.userId)
       .order("created_at", { ascending: true });
+
     if (error) throw new Error(error.message);
     return { messages: (data ?? []) as AnyRow[] };
   });
