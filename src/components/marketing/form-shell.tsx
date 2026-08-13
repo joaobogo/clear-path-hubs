@@ -141,9 +141,9 @@ export function FormShell({
             © {new Date().getFullYear()} TaaSFlow — part of {FGV.name}
           </span>
           <nav aria-label="Form legal" className="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <Link to="/privacy" className="hover:text-[color:var(--brand-navy)]">Privacy</Link>
-            <Link to="/terms" className="hover:text-[color:var(--brand-navy)]">Terms</Link>
-            <a href="mailto:hello@taasflow.com" className="hover:text-[color:var(--brand-navy)]">
+            <Link to="/privacy" className="inline-flex min-h-6 items-center py-1 hover:text-[color:var(--brand-navy)]">Privacy</Link>
+            <Link to="/terms" className="inline-flex min-h-6 items-center py-1 hover:text-[color:var(--brand-navy)]">Terms</Link>
+            <a href="mailto:hello@taasflow.com" className="inline-flex min-h-6 items-center py-1 hover:text-[color:var(--brand-navy)]">
               hello@taasflow.com
             </a>
           </nav>
