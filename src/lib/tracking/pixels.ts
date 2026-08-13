@@ -63,6 +63,73 @@ declare global {
   }
 }
 
+/**
+ * Inline snippets rendered into the server-rendered `<head>` (see
+ * `src/routes/__root.tsx`) so every tag starts while the document parses —
+ * before hydration, before the router settles, on the very first pageview of
+ * any page, including a hard load of a deep link.
+ *
+ * These are plain strings: the module stays SSR-safe (no browser globals at
+ * module scope). Each snippet stamps `data-tracker` on the script it injects
+ * so the client-side initialisers below can detect it and never double-load.
+ */
+export const HEAD_BOOT_SNIPPETS: { key: TrackerKey; children: string }[] = [
+  // GA4: define dataLayer/gtag and consent state before gtag.js arrives, so no
+  // early event is lost. Page views are dispatched manually on route change.
+  ...(GA_ID
+    ? [
+        {
+          key: "ga4" as TrackerKey,
+          children: `(function(id){if(window.__tfGa4)return;window.__tfGa4=1;window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments)};gtag('consent','default',{analytics_storage:'granted',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('js',new Date());gtag('config',id,{send_page_view:false,anonymize_ip:true});var s=document.createElement('script');s.async=true;s.setAttribute('data-tracker','ga4');s.src='https://www.googletagmanager.com/gtag/js?id='+id;document.head.appendChild(s);})(${JSON.stringify(GA_ID)});`,
+        },
+      ]
+    : []),
+  // Apollo website tracker: load and call onLoad as soon as the IIFE lands.
+  ...(APOLLO_ID
+    ? [
+        {
+          key: "apollo" as TrackerKey,
+          children: `(function(appId){if(window.__tfApollo)return;window.__tfApollo=1;var s=document.createElement('script');s.async=true;s.setAttribute('data-tracker','apollo');s.src='https://assets.apollo.io/micro/website-tracker/tracker.iife.js?nocache='+Math.random().toString(36).slice(2);document.head.appendChild(s);var t=Date.now();var p=setInterval(function(){try{if(window.trackingFunctions&&window.trackingFunctions.onLoad){clearInterval(p);window.trackingFunctions.onLoad({appId:appId});}else if(Date.now()-t>15000){clearInterval(p);}}catch(e){clearInterval(p);}},250);})(${JSON.stringify(APOLLO_ID)});`,
+        },
+      ]
+    : []),
+  // RB2B visitor identification.
+  ...(RB2B_ID
+    ? [
+        {
+          key: "rb2b" as TrackerKey,
+          children: `!function(key){if(window.reb2b)return;window.reb2b={loaded:true};var s=document.createElement("script");s.async=true;s.setAttribute("data-tracker","rb2b");s.src="https://ddwl4m2hdecbv.cloudfront.net/b/"+key+"/"+key+".js.gz";var f=document.getElementsByTagName("script")[0];f.parentNode.insertBefore(s,f);}(${JSON.stringify(RB2B_ID)});`,
+        },
+      ]
+    : []),
+  // LinkedIn Insight Tag.
+  ...(LINKEDIN_ID
+    ? [
+        {
+          key: "linkedin" as TrackerKey,
+          children: `(function(pid){if(window.__tfLi)return;window.__tfLi=1;window._linkedin_partner_id=pid;window._linkedin_data_partner_ids=window._linkedin_data_partner_ids||[];window._linkedin_data_partner_ids.push(pid);if(!window.lintrk){window.lintrk=function(a,b){window.lintrk.q.push([a,b])};window.lintrk.q=[]}var s=document.createElement('script');s.async=true;s.setAttribute('data-tracker','linkedin');s.src='https://snap.licdn.com/li.lms-analytics/insight.min.js';document.head.appendChild(s);})(${JSON.stringify(LINKEDIN_ID)});`,
+        },
+      ]
+    : []),
+  // Meta pixel — only when its env var is set.
+  ...(META_ID
+    ? [
+        {
+          key: "meta" as TrackerKey,
+          children: `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.setAttribute('data-tracker','meta');t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init',${JSON.stringify(META_ID)});fbq('track','PageView');`,
+        },
+      ]
+    : []),
+];
+
+/** True when a tag's script is already in the document (head snippet ran). */
+function alreadyInDocument(key: TrackerKey): boolean {
+  return (
+    typeof document !== "undefined" &&
+    !!document.querySelector(`script[data-tracker="${key}"]`)
+  );
+}
+
 const safe = (fn: () => void) => {
   try {
     fn();
