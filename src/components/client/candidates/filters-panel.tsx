@@ -35,7 +35,7 @@ export interface CandidatesFiltersState {
   minExp: string;
   location: string;
   sort: string;
-  view: "cards" | "list" | "compare";
+  view: "cards" | "list" | "compare" | "board";
   filter: "all" | "top" | "interview_pipeline";
   /** "1" = show only unicorn candidates (95+ or an outcome-verified top hire). */
   unicorn: string;
