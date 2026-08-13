@@ -37,20 +37,24 @@ export function stripContactLines(raw: string): string {
     .join(" ");
 }
 
+/** Drop a mid-word opening token left by a character-offset slice. */
+function dropOpeningFragment(text: string): string {
+  const out = text.trim();
+  if (!/^[a-z]/.test(out)) return out;
+  const nextWord = out.indexOf(" ");
+  if (nextWord > 0 && nextWord < 24 && out.length - nextWord >= 30) {
+    return out.slice(nextWord + 1).trim();
+  }
+  return out;
+}
+
 /** Drop a leading partial sentence when a usable sentence follows. */
 function snapStart(text: string): string {
-  let out = text.trim();
+  const out = text.trim();
   const firstBoundary = out.search(/[.!?]\s+[A-Z0-9]/);
   if (firstBoundary !== -1) {
     const candidate = out.slice(firstBoundary + 1).trim();
-    if (candidate.length >= 60) out = candidate;
-  }
-  if (/^[a-z]/.test(out)) {
-    // Still opening mid-word: the first token is slice debris, drop it.
-    const nextWord = out.indexOf(" ");
-    if (nextWord > 0 && nextWord < 24 && out.length - nextWord >= 30) {
-      out = out.slice(nextWord + 1).trim();
-    }
+    if (candidate.length >= 60) return candidate;
   }
   return out;
 }
@@ -96,7 +100,7 @@ export function cleanQuote(raw: string | null | undefined): string {
   if (!raw) return "";
   const collapsed = stripContactLines(String(raw)).replace(/\s+/g, " ").trim();
   if (!collapsed) return "";
-  const base = stripLeadingJunk(collapsed);
+  const base = dropOpeningFragment(stripLeadingJunk(collapsed));
   const trimmedStart = snapStart(base);
   // Never let hygiene reduce a quote to a stub: keep the fuller start instead.
   const started = snapEnd(trimmedStart).length >= 40 ? trimmedStart : base;
