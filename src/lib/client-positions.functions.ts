@@ -398,6 +398,40 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       return new Date(base + Number(c.first_shortlist_days) * 86_400_000).toISOString();
     })();
 
+    // ── The role story ──────────────────────────────────────────────────────
+    // Requirement coverage across the shortlist, the fit spread of everyone
+    // delivered, and the next milestone. Each figure is derived from the same
+    // requirement rows the candidate cards use, so a client can click from a
+    // segment straight to the quote behind it.
+    const storyEvidence = await loadClientEvidenceItems(context.supabase, matchIdList).catch(
+      () => new Map<string, AnyRow[]>(),
+    );
+    const storyCandidates: StoryCandidate[] = ((matches as AnyRow[]) ?? []).map((m) => {
+      const run = (m.score_runs ?? null) as AnyRow;
+      return {
+        match_id: String(m.id),
+        name: (m.candidate_profiles?.full_name as string | null) ?? null,
+        stage: String(m.stage),
+        score: run?.score == null ? null : Number(run.score),
+        requirement_rows: buildRequirementRows(
+          {
+            requirements: position.requirements,
+            preferred_requirements: position.preferred_requirements,
+          },
+          run?.requirement_coverage ?? null,
+          (storyEvidence.get(String(m.id)) as AnyRow[] | undefined) ?? null,
+        ),
+      };
+    });
+    const story = buildRoleStory({
+      status: String(position.status),
+      candidates: storyCandidates,
+      nextInterviewAt,
+      firstShortlistExpectedAt,
+      openings,
+      hires,
+    });
+
     // ── Companion payloads, one round trip ──────────────────────────────────
     // Lifecycle, handoff, closure, recap and open information requests all read
     // from this same role. Fetching them here means the detail page renders one
