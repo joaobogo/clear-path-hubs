@@ -3,13 +3,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { MessageSquareWarning, SearchX } from "lucide-react";
+import { useCallback, useState } from "react";
+import { MessageSquareWarning } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { listEvidenceGaps } from "@/lib/evidence-gaps/evidence-gaps.functions";
 import { OWNER_LABEL, TOLD_LABEL } from "@/lib/evidence-gaps/gap-reasons";
+import { SurfaceState } from "@/components/ds/surface-state";
+import { resolveQueueState, resolveQueueVariant } from "@/lib/empty-states/queue-states";
+import { QueueShortcuts } from "@/components/admin/queue-shortcuts";
+import { QUEUE_ROW_ACTIVE_CLASS, useQueueKeyboard } from "@/lib/admin/queue-keyboard";
 
 export const Route = createFileRoute("/_authenticated/admin/evidence-gaps")({
   head: () => ({
@@ -35,7 +38,7 @@ type Any = any;
 
 function toldTone(told: string) {
   if (told === "specific") return "text-muted-foreground";
-  return "text-[color:var(--brand-danger)]";
+  return "text-destructive";
 }
 
 function EvidenceGaps() {
@@ -51,6 +54,32 @@ function EvidenceGaps() {
 
   const data = query.data as Any;
   const rows: Any[] = data?.rows ?? [];
+
+  // Enter toggles the row's detail — the single primary action here is
+  // "understand this gap", not a write.
+  const toggleDetail = useCallback(
+    (index: number) => {
+      const row = rows[index];
+      if (!row) return;
+      setOpenRow((prev) => (prev === row.key ? null : row.key));
+    },
+    [rows],
+  );
+  const kb = useQueueKeyboard({
+    count: rows.length,
+    onPrimary: toggleDetail,
+    onOpen: (index) => {
+      const path = rows[index]?.link_path;
+      if (path) window.location.assign(path);
+    },
+  });
+
+  const variant = resolveQueueVariant({
+    isError: query.isError,
+    rowCount: rows.length,
+    activeFilters: [],
+  });
+
 
   return (
     <div className="space-y-8 p-6">
