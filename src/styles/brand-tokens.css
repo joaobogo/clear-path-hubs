@@ -183,6 +183,11 @@
   --taas-status-info-foreground:    oklch(0.99 0.005 245);
   --taas-status-info-soft:          oklch(0.955 0.04 245);
   --taas-status-neutral:            oklch(0.55 0.02 262);
+  /* Readable text-on-soft variants (AA on *-soft backgrounds) */
+  --taas-status-success-strong: color-mix(in oklab, var(--taas-status-success) 88%, black);
+  --taas-status-warning-strong: color-mix(in oklab, var(--taas-status-warning) 72%, black);
+  --taas-status-danger-strong:  color-mix(in oklab, var(--taas-status-danger) 92%, black);
+  --taas-status-info-strong:    color-mix(in oklab, var(--taas-status-info) 92%, black);
   --taas-status-neutral-soft:       oklch(0.955 0.006 247);
 
   /* Typography scale */
