@@ -5,8 +5,12 @@
  * (position has an open client commitment due within 3 days). Claims hide a
  * review from every other reviewer; stale claims (>2h) are ignored and can be
  * released in bulk.
+ *
+ * One primary action per row — "Open review". Claiming is a secondary control,
+ * and rows keep the keyboard path (j/k/Enter/o) shared by every admin queue.
  */
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useCallback, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -19,12 +23,20 @@ import {
 } from "@/lib/scoring-review-triage.functions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { ErrorState } from "@/components/ds";
+import { SurfaceState } from "@/components/ds/surface-state";
+import { resolveQueueState, resolveQueueVariant } from "@/lib/empty-states/queue-states";
+import { QueueShortcuts } from "@/components/admin/queue-shortcuts";
+import {
+  QUEUE_ROW_ACTIVE_CLASS,
+  useQueueKeyboard,
+  type QueueKeyboard,
+} from "@/lib/admin/queue-keyboard";
 import { AlertTriangle, Clock, Loader2, Lock, TimerReset } from "lucide-react";
 
 type Triage = Awaited<ReturnType<typeof listReviewTriage>>;
 type Row = Triage["rows"][number];
+
 
 export function ReviewTriageList({
   queue,
@@ -42,6 +54,8 @@ export function ReviewTriageList({
   onPageChange: (page: number) => void;
 }) {
   const qc = useQueryClient();
+  const navigate = useNavigate();
+
   const queryKey = ["review-triage", queue, q, sort, page] as const;
   const list = useQuery<Triage>({
     queryKey,
@@ -98,6 +112,30 @@ export function ReviewTriageList({
     onError: (e) => toastError(e, { fallback: "Could not release stale claims" }),
   });
 
+  // Ordered exactly as rendered (blocking first) so keyboard indexes match.
+  const ordered = useMemo(() => {
+    const rows = list.data?.rows ?? [];
+    return [...rows.filter((r) => r.blocking), ...rows.filter((r) => !r.blocking)];
+  }, [list.data]);
+
+  const openReview = useCallback(
+    (index: number) => {
+      const row = ordered[index];
+      if (!row) return;
+      void navigate({
+        to: "/admin/scoring/review/$matchId",
+        params: { matchId: row.match_id },
+        search: { queue, q, sort, page },
+      });
+    },
+    [ordered, navigate, queue, q, sort, page],
+  );
+  const kb = useQueueKeyboard({
+    count: ordered.length,
+    onPrimary: openReview,
+    onOpen: openReview,
+  });
+
   if (list.isError) {
     return (
       <ErrorState
@@ -123,9 +161,21 @@ export function ReviewTriageList({
   }
 
   const data = list.data!;
-  const blocking = data.rows.filter((r) => r.blocking);
-  const standard = data.rows.filter((r) => !r.blocking);
+  const blocking = ordered.filter((r) => r.blocking);
+  const standard = ordered.filter((r) => !r.blocking);
   const pages = Math.max(1, Math.ceil(data.total / pageSize));
+  const activeFilters = q.trim() ? [`Search: ${q.trim()}`] : [];
+  const variant = resolveQueueVariant({
+    isError: false,
+    rowCount: data.rows.length,
+    activeFilters,
+  });
+
+  const busyId = claim.isPending
+    ? (claim.variables ?? null)
+    : release.isPending
+      ? (release.variables ?? null)
+      : null;
 
   return (
     <div className="space-y-4">
@@ -153,24 +203,29 @@ export function ReviewTriageList({
         </Button>
       </div>
 
-      {data.rows.length === 0 ? (
-        <Card className="p-10 text-center text-sm text-muted-foreground">Review queue clear.</Card>
+      {variant ? (
+        <SurfaceState
+          content={resolveQueueState({
+            variant,
+            queueLabel: "Scoring review",
+            populates:
+              "A row appears when a candidate has been scored and needs a human decision before a client can see them.",
+            activeFilters,
+          })}
+        />
       ) : (
         <>
+          <QueueShortcuts />
           <Group
             title="Blocking a client deliverable"
-            hint="The position has an open commitment due within 3 days."
+            hint="The role has an open commitment due within 3 days."
             tone="danger"
             rows={blocking}
+            startIndex={0}
+            kb={kb}
             onClaim={(id) => claim.mutate(id)}
             onRelease={(id) => release.mutate(id)}
-            busyId={
-              claim.isPending
-                ? (claim.variables ?? null)
-                : release.isPending
-                  ? (release.variables ?? null)
-                  : null
-            }
+            busyId={busyId}
             queue={queue}
             q={q}
             sort={sort}
@@ -181,15 +236,11 @@ export function ReviewTriageList({
             hint="No commitment due in the next 3 days."
             tone="default"
             rows={standard}
+            startIndex={blocking.length}
+            kb={kb}
             onClaim={(id) => claim.mutate(id)}
             onRelease={(id) => release.mutate(id)}
-            busyId={
-              claim.isPending
-                ? (claim.variables ?? null)
-                : release.isPending
-                  ? (release.variables ?? null)
-                  : null
-            }
+            busyId={busyId}
             queue={queue}
             q={q}
             sort={sort}
@@ -197,6 +248,7 @@ export function ReviewTriageList({
           />
         </>
       )}
+
 
       {pages > 1 ? (
         <div className="flex items-center justify-between text-sm">
@@ -230,6 +282,8 @@ function Group({
   hint,
   tone,
   rows,
+  startIndex,
+  kb,
   onClaim,
   onRelease,
   busyId,
@@ -242,6 +296,9 @@ function Group({
   hint: string;
   tone: "danger" | "default";
   rows: Row[];
+  /** Offset of this group inside the keyboard-ordered row list. */
+  startIndex: number;
+  kb: QueueKeyboard;
   onClaim: (matchId: string) => void;
   onRelease: (matchId: string) => void;
   busyId: string | null;
@@ -259,13 +316,18 @@ function Group({
         </h2>
         <p className="text-xs text-muted-foreground">{hint}</p>
       </header>
-      <ul className="space-y-2">
-        {rows.map((r) => (
+      <ul className="space-y-2" {...kb.listProps}>
+        {rows.map((r, i) => {
+          const rowKb = kb.rowProps(startIndex + i);
+          return (
           <li
             key={r.match_id}
-            className={`rounded-lg border bg-card px-4 py-3 ${
+            {...rowKb}
+            ref={rowKb.ref as (node: HTMLLIElement | null) => void}
+            className={`rounded-lg border bg-card px-4 py-3 ${QUEUE_ROW_ACTIVE_CLASS} ${
               tone === "danger" ? "border-destructive/40" : ""
             }`}
+
           >
             <div className="flex flex-wrap items-center gap-3">
               <div className="min-w-0 flex-1">
@@ -348,7 +410,9 @@ function Group({
               </div>
             </div>
           </li>
-        ))}
+          );
+        })}
+
       </ul>
     </section>
   );

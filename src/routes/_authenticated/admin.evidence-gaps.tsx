@@ -3,13 +3,18 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { MessageSquareWarning, SearchX } from "lucide-react";
+import { useCallback, useState } from "react";
+import { MessageSquareWarning } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { listEvidenceGaps } from "@/lib/evidence-gaps/evidence-gaps.functions";
+
 import { OWNER_LABEL, TOLD_LABEL } from "@/lib/evidence-gaps/gap-reasons";
+import { SurfaceState } from "@/components/ds/surface-state";
+import { resolveQueueState, resolveQueueVariant } from "@/lib/empty-states/queue-states";
+import { QueueShortcuts } from "@/components/admin/queue-shortcuts";
+import { QUEUE_ROW_ACTIVE_CLASS, useQueueKeyboard } from "@/lib/admin/queue-keyboard";
 
 export const Route = createFileRoute("/_authenticated/admin/evidence-gaps")({
   head: () => ({
@@ -35,7 +40,7 @@ type Any = any;
 
 function toldTone(told: string) {
   if (told === "specific") return "text-muted-foreground";
-  return "text-[color:var(--brand-danger)]";
+  return "text-destructive";
 }
 
 function EvidenceGaps() {
@@ -52,6 +57,32 @@ function EvidenceGaps() {
   const data = query.data as Any;
   const rows: Any[] = data?.rows ?? [];
 
+  // Enter toggles the row's detail — the single primary action here is
+  // "understand this gap", not a write.
+  const toggleDetail = useCallback(
+    (index: number) => {
+      const row = rows[index];
+      if (!row) return;
+      setOpenRow((prev) => (prev === row.key ? null : row.key));
+    },
+    [rows],
+  );
+  const kb = useQueueKeyboard({
+    count: rows.length,
+    onPrimary: toggleDetail,
+    onOpen: (index) => {
+      const path = rows[index]?.link_path;
+      if (path) window.location.assign(path);
+    },
+  });
+
+  const variant = resolveQueueVariant({
+    isError: query.isError,
+    rowCount: rows.length,
+    activeFilters: [],
+  });
+
+
   return (
     <div className="space-y-8 p-6">
       <header className="space-y-2">
@@ -64,15 +95,18 @@ function EvidenceGaps() {
 
       {query.isLoading ? <p className="text-sm text-muted-foreground">Reading the records…</p> : null}
 
-      {query.isError ? (
-        <Alert variant="destructive">
-          <AlertTitle>We could not read the ledger</AlertTitle>
-          <AlertDescription>
-            {(query.error as Error)?.message ?? "Unknown error"} — this is a failure to load, not an
-            empty result.
-          </AlertDescription>
-        </Alert>
+      {variant === "error" ? (
+        <SurfaceState
+          content={resolveQueueState({
+            variant: "error",
+            queueLabel: "Evidence gaps",
+            populates: "A row appears for every candidate we hold no evidence for.",
+            errorMessage: (query.error as Error)?.message ?? null,
+          })}
+          onAction={() => void query.refetch()}
+        />
       ) : null}
+
 
       {data ? (
         <>
@@ -123,84 +157,97 @@ function EvidenceGaps() {
           <section className="space-y-3">
             <h2 className="text-sm font-medium">Every affected candidate</h2>
             {rows.length === 0 ? (
-              <div className="flex items-center gap-3 rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
-                <SearchX className="h-4 w-4" />
-                Every candidate who reached us has evidence recorded.
-              </div>
+              <SurfaceState
+                content={resolveQueueState({
+                  variant: "empty",
+                  queueLabel: "Evidence gaps",
+                  populates:
+                    "A row appears when a candidate reaches us but no evidence is recorded — usually because one of our steps did not finish.",
+                })}
+              />
             ) : (
-              <ul className="divide-y rounded-lg border bg-card">
-                {rows.map((row: Any) => {
-                  const open = openRow === row.key;
-                  return (
-                    <li key={row.key} className="px-4 py-3">
-                      <div className="flex flex-wrap items-start justify-between gap-3">
-                        <div className="min-w-0 space-y-1">
-                          <p className="truncate text-sm font-medium">
-                            {row.candidate_name ?? row.candidate_email ?? "Unnamed candidate"}
-                            {row.reference ? (
-                              <span className="ml-2 font-mono text-xs text-muted-foreground">
-                                {row.reference}
-                              </span>
-                            ) : null}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {row.position_title ?? "No role attached"}
-                            {" · "}
-                            {new Date(row.first_seen).toLocaleDateString()}
-                            {row.upload_attempts > 1
-                              ? ` · ${row.upload_attempts} upload attempts`
-                              : ""}
-                          </p>
-                          <p className="text-sm">{row.reason.label}</p>
-                        </div>
-                        <div className="flex shrink-0 items-center gap-2">
-                          <Badge variant="outline">{OWNER_LABEL[row.reason.owner as "recruiter"]}</Badge>
-                          {row.reason.ourFault ? <Badge variant="destructive">Ours</Badge> : null}
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => setOpenRow(open ? null : row.key)}
-                          >
-                            {open ? "Hide" : "Detail"}
-                          </Button>
-                        </div>
+              <>
+                <QueueShortcuts />
+                <ul className="divide-y rounded-lg border bg-card" {...kb.listProps}>
+                  {rows.map((row: Any, index: number) => {
+                    const open = openRow === row.key;
+                    const rowProps = kb.rowProps(index);
+                    return (
+                      <li
+                        key={row.key}
+                        {...rowProps}
+                        ref={rowProps.ref as (node: HTMLLIElement | null) => void}
+                        className={`px-4 py-3 ${QUEUE_ROW_ACTIVE_CLASS}`}
+                      >
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div className="min-w-0 space-y-1">
+                            <p className="truncate text-sm font-medium">
+                              {row.candidate_name ?? row.candidate_email ?? "Unnamed candidate"}
+                              {row.reference ? (
+                                <span className="ml-2 font-mono text-xs text-muted-foreground">
+                                  {row.reference}
+                                </span>
+                              ) : null}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {row.position_title ?? "No role attached"}
+                              {" · "}
+                              {new Date(row.first_seen).toLocaleDateString()}
+                              {row.upload_attempts > 1
+                                ? ` · ${row.upload_attempts} upload attempts`
+                                : ""}
+                            </p>
+                            <p className="text-sm">{row.reason.label}</p>
+                          </div>
+                          <div className="flex shrink-0 items-center gap-2">
+                            <Badge variant="outline">
+                              {OWNER_LABEL[row.reason.owner as "recruiter"]}
+                            </Badge>
+                            {row.reason.ourFault ? <Badge variant="destructive">Ours</Badge> : null}
+                            <Button size="sm" onClick={() => setOpenRow(open ? null : row.key)}>
+                              {open ? "Hide detail" : "Why"}
+                            </Button>
+                          </div>
+
                       </div>
 
-                      {open ? (
-                        <div className="mt-3 space-y-3 rounded-md bg-muted/40 p-4 text-sm">
-                          <p>
-                            <span className="font-medium">What happened: </span>
-                            {row.reason.cause}
-                          </p>
-                          <p>
-                            <span className="font-medium">Next action: </span>
-                            {row.reason.nextAction}
-                          </p>
-                          <p className={toldTone(row.reason.candidateWasTold)}>
-                            <span className="font-medium">
-                              {TOLD_LABEL[row.reason.candidateWasTold as "nothing"]}:{" "}
-                            </span>
-                            {row.reason.candidateSaw ?? "No message was shown."}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {row.filename ? `Document on file: ${row.filename}. ` : ""}
-                            {row.candidate_email ? `Contact: ${row.candidate_email}.` : ""}
-                          </p>
-                          {row.link_path ? (
-                            <Link
-                              to={row.link_path}
-                              className="inline-block text-xs underline underline-offset-4"
-                            >
-                              Open the record
-                            </Link>
-                          ) : null}
-                        </div>
-                      ) : null}
-                    </li>
-                  );
-                })}
-              </ul>
+                        {open ? (
+                          <div className="mt-3 space-y-3 rounded-md bg-muted/40 p-4 text-sm">
+                            <p>
+                              <span className="font-medium">What happened: </span>
+                              {row.reason.cause}
+                            </p>
+                            <p>
+                              <span className="font-medium">Next action: </span>
+                              {row.reason.nextAction}
+                            </p>
+                            <p className={toldTone(row.reason.candidateWasTold)}>
+                              <span className="font-medium">
+                                {TOLD_LABEL[row.reason.candidateWasTold as "nothing"]}:{" "}
+                              </span>
+                              {row.reason.candidateSaw ?? "No message was shown."}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {row.filename ? `Document on file: ${row.filename}. ` : ""}
+                              {row.candidate_email ? `Contact: ${row.candidate_email}.` : ""}
+                            </p>
+                            {row.link_path ? (
+                              <Link
+                                to={row.link_path}
+                                className="inline-block text-xs underline underline-offset-4"
+                              >
+                                Open the record
+                              </Link>
+                            ) : null}
+                          </div>
+                        ) : null}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </>
             )}
+
           </section>
         </>
       ) : null}

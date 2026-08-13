@@ -3,7 +3,7 @@ import { classifyBand } from "@/lib/scoring/bands";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { getPublishDeskGroups, setMatchClientVisibility } from "@/lib/admin.functions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,12 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle, Ban, CheckCircle2, Eye, Pause, ExternalLink } from "lucide-react";
 import { PublishGatePanel } from "@/components/admin/publish-gate-panel";
+import { QueueShortcuts } from "@/components/admin/queue-shortcuts";
+import { BlockedReason } from "@/components/admin/blocked-reason";
+import { SurfaceState } from "@/components/ds/surface-state";
+import { resolveQueueState, resolveQueueVariant } from "@/lib/empty-states/queue-states";
+import { QUEUE_ROW_ACTIVE_CLASS, useQueueKeyboard } from "@/lib/admin/queue-keyboard";
+
 
 export const Route = createFileRoute("/_authenticated/admin/publish")({
   loader: ({ context }) =>
@@ -77,6 +83,14 @@ function Check({ ok, label }: { ok: boolean; label: string }) {
   );
 }
 
+const POPULATES: Record<GroupId, string> = {
+  needs_review: "A row appears once a candidate has been scored and is waiting for an admin decision.",
+  blocked: "A row appears when processing fails, a provider blocks us, or a CV needs OCR.",
+  ready: "A row appears once every readiness check passes and an admin has approved the candidate.",
+  published: "A row appears the moment you publish a candidate to a client workspace.",
+  held: "A row appears when a candidate is paused pending clarification.",
+};
+
 function PublishDesk() {
   const qc = useQueryClient();
   const { data } = useSuspenseQuery({
@@ -113,6 +127,38 @@ function PublishDesk() {
       return name.includes(q) || title.includes(q) || org.includes(q);
     });
   }, [buckets, group, query]);
+
+  // Enter runs the row's single primary action: publish, unpublish, or nothing
+  // when the row is blocked (the reason is already visible in the row).
+  const runPrimary = useCallback(
+    (index: number) => {
+      const r = rows[index];
+      if (!r || publishMut.isPending) return;
+      const rd = readinessOf(r);
+      if (r.client_visibility === "visible") {
+        publishMut.mutate({ match_id: r.id, visibility: "hidden" });
+      } else if (rd.canPublish) {
+        publishMut.mutate({ match_id: r.id, visibility: "visible" });
+      }
+    },
+    [rows, publishMut],
+  );
+  const openRecord = useCallback(
+    (index: number) => {
+      const r = rows[index];
+      if (r) window.location.assign(`/admin/candidates/${r.id}`);
+    },
+    [rows],
+  );
+  const kb = useQueueKeyboard({ count: rows.length, onPrimary: runPrimary, onOpen: openRecord });
+
+  const activeGroup = GROUPS.find((g) => g.id === group)!;
+  const activeFilters = query.trim() ? [`Search: ${query.trim()}`] : [];
+  const variant = resolveQueueVariant({
+    isError: false,
+    rowCount: rows.length,
+    activeFilters,
+  });
 
   return (
     <main className="mx-auto max-w-[1600px] space-y-6 px-6 py-6">
@@ -163,37 +209,52 @@ function PublishDesk() {
       </div>
 
       <div className="rounded-lg border bg-card">
-        <div className="flex items-center justify-between gap-4 border-b px-4 py-2.5">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b px-4 py-2.5">
           <h2 className="text-sm font-semibold">
-            {GROUPS.find((g) => g.id === group)?.label}
+            {activeGroup.label}
             <span className="ml-2 text-xs font-normal text-muted-foreground">
               ({rows.length} of {(buckets[group] ?? []).length})
             </span>
           </h2>
-          <Input
-            placeholder="Filter by candidate, position, or client…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="h-8 max-w-xs"
-          />
+          <div className="flex items-center gap-3">
+            <QueueShortcuts className="hidden xl:flex" />
+            <Input
+              ref={kb.filterRef}
+              placeholder="Filter by candidate, role, or client…"
+              aria-label="Filter this queue"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="h-8 max-w-xs"
+            />
+          </div>
         </div>
 
-        {rows.length === 0 ? (
-          <p className="p-10 text-center text-sm text-muted-foreground">Nothing here right now.</p>
+        {variant ? (
+          <div className="p-6">
+            <SurfaceState
+              content={resolveQueueState({
+                variant,
+                queueLabel: activeGroup.label,
+                populates: POPULATES[group],
+                activeFilters,
+              })}
+              onAction={variant === "filtered" ? () => setQuery("") : undefined}
+            />
+          </div>
         ) : (
           <table className="w-full text-sm">
             <thead className="bg-muted/40 text-left text-xs uppercase text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 font-medium">Candidate</th>
-                <th className="px-3 py-2 font-medium">Client · Position</th>
+                <th className="px-3 py-2 font-medium">Client · Role</th>
                 <th className="px-3 py-2 font-medium tabular-nums">Score</th>
                 <th className="px-3 py-2 font-medium">Readiness</th>
                 <th className="px-3 py-2 font-medium">Review · Publication</th>
-                <th className="px-3 py-2 font-medium text-right">Actions</th>
+                <th className="px-3 py-2 font-medium text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
-              {rows.map((r) => {
+            <tbody className="divide-y" {...kb.listProps}>
+              {rows.map((r, index) => {
                 const run = r.score_runs;
                 const rd = readinessOf(r);
                 const orgId = r.positions?.organizations?.id as string | undefined;
@@ -201,8 +262,14 @@ function PublishDesk() {
                   ? `/client/candidates/${r.id}?org=${encodeURIComponent(orgId)}&preview=client_admin`
                   : `/admin/candidates/${r.id}`;
                 const isPublished = r.client_visibility === "visible";
+                const rowKb = kb.rowProps(index);
                 return (
-                  <tr key={r.id} className="hover:bg-muted/30 align-top">
+                  <tr
+                    key={r.id}
+                    {...rowKb}
+                    ref={rowKb.ref as (node: HTMLTableRowElement | null) => void}
+                    className={"align-top hover:bg-muted/30 " + QUEUE_ROW_ACTIVE_CLASS}
+                  >
                     <td className="px-3 py-2">
                       <div className="font-medium">{r.candidate_profiles?.full_name ?? "—"}</div>
                       <div className="text-[10px] text-muted-foreground">
@@ -242,13 +309,6 @@ function PublishDesk() {
                         <Check ok={rd.adminApproved} label="Approved" />
                         <Check ok={rd.orgOk} label="Binding" />
                       </div>
-                      {rd.blockedReasons.length > 0 && (
-                        <ul className="mt-1.5 space-y-0.5 text-[10px] text-destructive">
-                          {rd.blockedReasons.map((reason: string) => (
-                            <li key={reason}>• {reason}</li>
-                          ))}
-                        </ul>
-                      )}
                     </td>
                     <td className="px-3 py-2 text-xs">
                       <Badge variant="outline" className="mr-1">{r.admin_status}</Badge>
@@ -259,71 +319,67 @@ function PublishDesk() {
                         {r.updated_at ? new Date(r.updated_at).toLocaleString() : "—"}
                       </div>
                     </td>
-                    <td className="px-3 py-2 text-right">
-                      <div className="flex flex-col items-end gap-1.5">
-                        {rd.canPublish && !isPublished && (
-                          <>
-                            <a
-                              href={previewHref}
-                              className="inline-flex items-center gap-1 rounded-md border border-primary/40 bg-primary/5 px-2 py-1 text-xs font-medium text-primary hover:bg-primary/10"
-                              data-qa-action="preview-as-client"
-                            >
-                              <Eye className="h-3 w-3" /> Preview as client
-                            </a>
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              className="h-7"
-                              disabled={publishMut.isPending}
-                              onClick={() =>
-                                publishMut.mutate({ match_id: r.id, visibility: "visible" })
-                              }
-                              data-qa-action="publish"
-                            >
-                              Publish
-                            </Button>
-                          </>
-                        )}
-                        {isPublished && (
-                          <>
-                            <a
-                              href={previewHref}
-                              className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
-                            >
-                              <ExternalLink className="h-3 w-3" /> View live
-                            </a>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-7"
-                              disabled={publishMut.isPending}
-                              onClick={() =>
-                                publishMut.mutate({ match_id: r.id, visibility: "hidden" })
-                              }
-                            >
-                              Unpublish
-                            </Button>
-                          </>
-                        )}
-                        {!rd.canPublish && !isPublished && (
+                    <td className="px-3 py-2">
+                      <div className="flex flex-col items-stretch gap-1.5 text-right">
+                        {/* Exactly one primary action per row. */}
+                        {isPublished ? (
                           <Button
                             size="sm"
-                            variant="ghost"
+                            variant="secondary"
                             className="h-7"
-                            disabled
-                            title={rd.blockedReasons.join(" · ") || "Not ready"}
+                            disabled={publishMut.isPending}
+                            onClick={() => publishMut.mutate({ match_id: r.id, visibility: "hidden" })}
+                            data-qa-action="unpublish"
                           >
-                            Publish
+                            Unpublish
                           </Button>
+                        ) : rd.canPublish ? (
+                          <Button
+                            size="sm"
+                            className="h-7"
+                            disabled={publishMut.isPending}
+                            onClick={() => publishMut.mutate({ match_id: r.id, visibility: "visible" })}
+                            data-qa-action="publish"
+                          >
+                            Publish to client
+                          </Button>
+                        ) : (
+                          <BlockedReason
+                            reasons={
+                              rd.blockedReasons.length > 0
+                                ? rd.blockedReasons
+                                : ["Readiness checks have not all passed yet."]
+                            }
+                            resolve={{
+                              to: "/admin/candidates/$id",
+                              params: { id: r.id },
+                              label: "Open the record to clear this",
+                            }}
+                          />
                         )}
-                        <Link
-                          to="/admin/candidates/$id"
-                          params={{ id: r.id }}
-                          className="text-[11px] text-muted-foreground hover:text-primary hover:underline"
-                          data-qa-action="open-workspace"
-                        >
-                          Open workspace →
-                        </Link>
+
+                        <div className="flex items-center justify-end gap-3 text-[11px]">
+                          <a
+                            href={previewHref}
+                            className="inline-flex items-center gap-1 text-primary hover:underline"
+                            data-qa-action={isPublished ? "view-live" : "preview-as-client"}
+                          >
+                            {isPublished ? (
+                              <ExternalLink className="h-3 w-3" />
+                            ) : (
+                              <Eye className="h-3 w-3" />
+                            )}
+                            {isPublished ? "View live" : "Preview as client"}
+                          </a>
+                          <Link
+                            to="/admin/candidates/$id"
+                            params={{ id: r.id }}
+                            className="text-muted-foreground hover:text-primary hover:underline"
+                            data-qa-action="open-workspace"
+                          >
+                            Open record →
+                          </Link>
+                        </div>
                       </div>
                     </td>
                   </tr>
@@ -334,13 +390,17 @@ function PublishDesk() {
         )}
       </div>
 
-      <p className="text-xs text-muted-foreground">
-        Prefer full search? Use{" "}
-        <Link to="/admin/candidates" className="text-primary hover:underline">
-          /admin/candidates
-        </Link>{" "}
-        — every workspace opens the same route as here.
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <QueueShortcuts className="xl:hidden" />
+        <p className="text-xs text-muted-foreground">
+          Prefer full search? Use{" "}
+          <Link to="/admin/candidates" className="text-primary hover:underline">
+            /admin/candidates
+          </Link>{" "}
+          — every workspace opens the same route as here.
+        </p>
+      </div>
     </main>
   );
 }
+

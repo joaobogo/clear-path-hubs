@@ -33,6 +33,16 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle, Check, Loader2, RefreshCw, X } from "lucide-react";
 import { useScopedIncludeTest } from "@/lib/admin-scope";
+import { BlockedReason } from "@/components/admin/blocked-reason";
+import { QueueShortcuts } from "@/components/admin/queue-shortcuts";
+import { SurfaceState } from "@/components/ds/surface-state";
+import { resolveQueueState } from "@/lib/empty-states/queue-states";
+import {
+  QUEUE_ROW_ACTIVE_CLASS,
+  useQueueKeyboard,
+  type QueueKeyboard,
+} from "@/lib/admin/queue-keyboard";
+
 
 function TierBadge({ days }: { days: number }) {
   const tier = ageTier(days);
@@ -40,7 +50,7 @@ function TierBadge({ days }: { days: number }) {
     tier === "overdue"
       ? "border-destructive/40 bg-destructive/10 text-destructive"
       : tier === "watch"
-        ? "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+        ? "border-warning/40 bg-warning/10 text-warning-strong"
         : "border-border bg-muted text-muted-foreground";
   return (
     <span className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${cls}`}>
@@ -101,6 +111,7 @@ function Row({
   onApprove,
   onDecline,
   busy,
+  rowProps,
 }: {
   item: ApprovalItem;
   selected: boolean;
@@ -108,11 +119,17 @@ function Row({
   onApprove: () => void;
   onDecline: (reason: string) => void;
   busy: boolean;
+  rowProps: ReturnType<QueueKeyboard["rowProps"]>;
 }) {
   const [declining, setDeclining] = useState(false);
   const blocked = item.blockers.length > 0;
   return (
-    <li className="border-b border-border/70 px-4 py-3 last:border-0">
+    <li
+      {...rowProps}
+      ref={rowProps.ref as (node: HTMLLIElement | null) => void}
+      className={`border-b border-border/70 px-4 py-3 last:border-0 ${QUEUE_ROW_ACTIVE_CLASS}`}
+    >
+
       <div className="flex flex-wrap items-start gap-3">
         <input
           type="checkbox"
@@ -137,26 +154,39 @@ function Row({
             {new Date(item.requested_at).toLocaleString()}
           </p>
           {blocked ? (
-            <p className="flex items-start gap-1 text-xs text-destructive">
-              <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
-              <span>{item.blockers.join(" · ")}</span>
-            </p>
+            <BlockedReason
+              className="mt-1"
+              reasons={item.blockers}
+              {...(item.link ? { resolve: { to: item.link, label: "Open the record to clear this" } } : {})}
+            />
           ) : null}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {item.link ? (
-            <Button size="sm" variant="outline" asChild>
-              <Link to={item.link}>Open record</Link>
-            </Button>
-          ) : null}
-          <Button size="sm" onClick={onApprove} disabled={blocked || busy}>
-            {busy ? (
-              <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-            ) : (
-              <Check className="mr-1 h-3 w-3" />
-            )}
-            Approve
-          </Button>
+          {/* One primary action per row: approve when it can be approved,
+              otherwise the route that clears the blocker. */}
+          {blocked ? (
+            item.link ? (
+              <Button size="sm" asChild>
+                <Link to={item.link}>Open record</Link>
+              </Button>
+            ) : null
+          ) : (
+            <>
+              <Button size="sm" onClick={onApprove} disabled={busy}>
+                {busy ? (
+                  <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                ) : (
+                  <Check className="mr-1 h-3 w-3" />
+                )}
+                Approve
+              </Button>
+              {item.link ? (
+                <Button size="sm" variant="outline" asChild>
+                  <Link to={item.link}>Open record</Link>
+                </Button>
+              ) : null}
+            </>
+          )}
           <Button
             size="sm"
             variant="ghost"
@@ -167,6 +197,7 @@ function Row({
             Decline
           </Button>
         </div>
+
       </div>
       {declining ? (
         <DeclineForm
@@ -268,6 +299,23 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
   );
   const canBulk = bulkEligible(selectedItems) && selectedItems[0]?.kind === "candidate_visible";
 
+  // allItems is flattened in render order, so keyboard indexes line up.
+  const kb = useQueueKeyboard({
+    count: allItems.length,
+    onPrimary: (index) => {
+      const item = allItems[index];
+      if (!item || item.blockers.length > 0 || busyId) return;
+      setBusyId(item.id);
+      approve.mutate(item);
+    },
+    onOpen: (index) => {
+      const link = allItems[index]?.link;
+      if (link) window.location.assign(link);
+    },
+  });
+
+
+
   if (query.isLoading) {
     return (
       <div className="space-y-3">
@@ -303,13 +351,17 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
   const groups = query.data?.groups ?? [];
   if (groups.length === 0) {
     return (
-      <Card>
-        <CardContent className="py-10 text-center text-sm text-muted-foreground">
-          No approvals pending.
-        </CardContent>
-      </Card>
+      <SurfaceState
+        content={resolveQueueState({
+          variant: "empty",
+          queueLabel: "Approvals",
+          populates:
+            "A row appears whenever something needs a decision before a client can see it: candidate visibility, contact release, a shortlist share, or publishing a role.",
+        })}
+      />
     );
   }
+
 
   return (
     <div className="space-y-4" data-hydrated="ready">
@@ -334,10 +386,12 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
       </div>
       {selectedItems.length > 1 && !canBulk ? (
         <p className="text-xs text-muted-foreground">
-          Bulk approve only works inside a single position and a single approval type, and only for
-          rows with no blockers.
+          Bulk approve only works inside a single role and a single approval type, and only for rows
+          with no blockers.
         </p>
       ) : null}
+
+      <QueueShortcuts />
 
       {groups.map((group) => (
         <Card key={group.kind}>
@@ -351,13 +405,15 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
             <p className="text-xs text-muted-foreground">{group.blurb}</p>
           </CardHeader>
           <CardContent className="px-0 pb-0">
-            <ul className="divide-y divide-border/70">
+            <ul className="divide-y divide-border/70" {...kb.listProps}>
               {group.items.map((item) => (
                 <Row
                   key={item.id}
                   item={item}
+                  rowProps={kb.rowProps(allItems.findIndex((i) => i.id === item.id))}
                   selected={!!selected[item.id]}
                   onToggle={(checked) =>
+
                     setSelected((prev) => ({ ...prev, [item.id]: checked }))
                   }
                   busy={busyId === item.id}
