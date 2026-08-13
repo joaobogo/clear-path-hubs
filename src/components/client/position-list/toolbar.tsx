@@ -169,28 +169,6 @@ export function FilterBar({
           <SelectItem value="title">Title (A–Z)</SelectItem>
         </SelectContent>
       </Select>
-      <div className="ml-auto inline-flex rounded-md border bg-background p-0.5">
-        <Button
-          variant={view === "cards" ? "secondary" : "ghost"}
-          size="sm"
-          className="h-8 px-2"
-          aria-label="Card view"
-          aria-pressed={view === "cards"}
-          onClick={() => setSearch({ view: "cards" })}
-        >
-          <LayoutGrid className="h-4 w-4" />
-        </Button>
-        <Button
-          variant={view === "list" ? "secondary" : "ghost"}
-          size="sm"
-          className="h-8 px-2"
-          aria-label="List view"
-          aria-pressed={view === "list"}
-          onClick={() => setSearch({ view: "list" })}
-        >
-          <List className="h-4 w-4" />
-        </Button>
-      </div>
     </div>
   );
 }
