@@ -16,7 +16,7 @@
 import { toFitPresentation, type FitPresentation } from "@/lib/client-fit-presentation";
 
 type Props = {
-  /** Internal numeric score — used only to derive the band, never displayed. */
+  /** Fit score, 0-100. Shown to employers next to the band. */
   score: number | null | undefined;
   /** Raw engine/DB band label when available; takes precedence over score. */
   fitLabel?: string | null;
