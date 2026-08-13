@@ -72,9 +72,9 @@ function OutreachPage() {
 
   if (ctxState.isLoading) {
     return (
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
         <SkeletonCards />
-      </main>
+      </div>
     );
   }
 
@@ -88,14 +88,14 @@ function OutreachPage() {
 
   if (!orgId || spineState.isLoading) {
     return (
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
         <SkeletonCards />
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
           Outreach
@@ -264,6 +264,6 @@ function OutreachPage() {
           </ul>
         </section>
       )}
-    </main>
+    </div>
   );
 }

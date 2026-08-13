@@ -90,20 +90,20 @@ function DataAdvantagePage() {
 
   if (advantageState.isError) {
     return (
-      <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:py-8">
+      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:py-8">
         <QueryErrorCard
           error={advantageState.error}
           onRetry={advantageState.retry}
           retrying={advantageState.retrying}
         />
-      </main>
+      </div>
     );
   }
 
   const growth = data?.growth_this_month;
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:py-8">
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:py-8">
       <header>
         <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight sm:text-3xl">
           <Database className="h-6 w-6 text-primary" aria-hidden />
@@ -276,6 +276,6 @@ function DataAdvantagePage() {
           </p>
         )}
       </section>
-    </main>
+    </div>
   );
 }

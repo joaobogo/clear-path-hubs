@@ -45,7 +45,7 @@ export const Route = createFileRoute("/_authenticated/me/profile")({
       queryFn: () => getMyContext(),
     }),
   errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.profile.tsx"),
-  notFoundComponent: () => <main className="p-8">Not found.</main>,
+  notFoundComponent: () => <div className="p-8">Not found.</div>,
   component: ProfilePage,
 });
 
@@ -131,16 +131,16 @@ function ProfilePage() {
 
   if (!p && isFetching)
     return (
-      <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-4" aria-hidden>
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-4" aria-hidden>
         <div className="h-8 w-1/2 animate-pulse rounded bg-muted" />
         <div className="h-32 animate-pulse rounded-lg bg-muted" />
         <div className="h-32 animate-pulse rounded-lg bg-muted" />
         <div className="h-32 animate-pulse rounded-lg bg-muted" />
-      </main>
+      </div>
     );
 
   return (
-    <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
       <header className="mb-6">
         <h1 className="text-2xl font-semibold">Your profile</h1>
         <p className="text-sm text-muted-foreground">
@@ -599,6 +599,6 @@ function ProfilePage() {
           }}
         />
       </div>
-    </main>
+    </div>
   );
 }

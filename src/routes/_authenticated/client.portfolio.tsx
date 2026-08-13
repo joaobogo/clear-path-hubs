@@ -75,14 +75,14 @@ function PortfolioPage() {
 
   if (ctxQuery.isError) {
     return (
-      <main className="mx-auto max-w-6xl px-4 sm:px-6 py-6 sm:py-8">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-6 sm:py-8">
         <QueryErrorCard
           title="We couldn't load your workspace"
           error={ctxQuery.error}
           onRetry={() => ctxQuery.refetch()}
           retrying={ctxQuery.isFetching}
         />
-      </main>
+      </div>
     );
   }
 
@@ -91,7 +91,7 @@ function PortfolioPage() {
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
       <header>
         <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           Enterprise view
@@ -256,7 +256,7 @@ function PortfolioPage() {
           </section>
         </>
       )}
-    </main>
+    </div>
   );
 }
 

@@ -31,14 +31,14 @@ export const Route = createFileRoute("/_authenticated/me/cv")({
       queryFn: () => listMyCvVersions(),
     }),
   pendingComponent: () => (
-    <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-4" aria-hidden>
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-4" aria-hidden>
       <div className="h-8 w-1/2 animate-pulse rounded bg-muted" />
       <div className="h-28 animate-pulse rounded-lg bg-muted" />
       <div className="h-40 animate-pulse rounded-lg bg-muted" />
-    </main>
+    </div>
   ),
   errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.cv.tsx"),
-  notFoundComponent: () => <main className="p-8">Not found.</main>,
+  notFoundComponent: () => <div className="p-8">Not found.</div>,
   component: CvPage,
 });
 
@@ -182,7 +182,7 @@ function CvPage() {
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-6">
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-6">
       <header>
         <h1 className="text-2xl font-semibold">Your CV</h1>
         <p className="text-sm text-muted-foreground">
@@ -439,6 +439,6 @@ function CvPage() {
           We keep every version. Nothing a hiring team has already reviewed is ever deleted.
         </p>
       </section>
-    </main>
+    </div>
   );
 }

@@ -38,7 +38,7 @@ export const Route = createFileRoute("/_authenticated/me/settings")({
       queryFn: () => getMyContext(),
     }),
   errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.settings.tsx"),
-  notFoundComponent: () => <main className="p-8">Not found.</main>,
+  notFoundComponent: () => <div className="p-8">Not found.</div>,
   component: SettingsPage,
 });
 
@@ -136,7 +136,7 @@ function SettingsPage() {
   });
 
   return (
-    <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-6">
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-6">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">Privacy &amp; settings</h1>
@@ -297,6 +297,6 @@ function SettingsPage() {
         </Button>
       </section>
       {confirmDialog}
-    </main>
+    </div>
   );
 }

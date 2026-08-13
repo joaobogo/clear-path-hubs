@@ -75,7 +75,7 @@ function SharesPage() {
   });
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-8">
+    <div className="mx-auto max-w-5xl px-6 py-8">
       <header className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">
@@ -257,7 +257,7 @@ function SharesPage() {
         </div>
       )}
       {confirmDialog}
-    </main>
+    </div>
   );
 }
 

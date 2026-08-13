@@ -278,7 +278,7 @@ function CandidateDetailPage() {
   // Error first, always: a failed load must never read as a missing candidate.
   if (ctxQuery.isError) {
     return (
-      <main className="mx-auto max-w-3xl px-6 py-10">
+      <div className="mx-auto max-w-3xl px-6 py-10">
         <BackLink />
         <QueryErrorCard
           className="mt-4"
@@ -287,12 +287,12 @@ function CandidateDetailPage() {
           onRetry={() => void ctxQuery.refetch()}
           retrying={ctxQuery.isFetching}
         />
-      </main>
+      </div>
     );
   }
   if (detailError) {
     return (
-      <main className="mx-auto max-w-3xl px-6 py-10">
+      <div className="mx-auto max-w-3xl px-6 py-10">
         <BackLink />
         <QueryErrorCard
           className="mt-4"
@@ -301,7 +301,7 @@ function CandidateDetailPage() {
           onRetry={() => void detailQuery.refetch()}
           retrying={detailQuery.isFetching}
         />
-      </main>
+      </div>
     );
   }
   if (!orgId || detailPending || (data === undefined && detailFetching)) {
@@ -309,7 +309,7 @@ function CandidateDetailPage() {
   }
  if (data === null || !data?.candidate) {
  return (
- <main className="mx-auto max-w-3xl px-6 py-12">
+ <div className="mx-auto max-w-3xl px-6 py-12">
  <BackLink />
  <div className="mt-4 rounded-lg border bg-card p-8 text-center">
  <h1 className="text-lg font-semibold">Candidate not shared with you yet</h1>
@@ -327,7 +327,7 @@ function CandidateDetailPage() {
  </Button>
  </div>
  </div>
- </main>
+ </div>
  );
  }
 
@@ -347,7 +347,7 @@ function CandidateDetailPage() {
   .join(" for ");
 
  return (
- <main className="mx-auto max-w-7xl px-4 pb-28 pt-6 sm:px-6 lg:pb-8 lg:pt-8">
+ <div className="mx-auto max-w-7xl px-4 pb-28 pt-6 sm:px-6 lg:pb-8 lg:pt-8">
  <div className="flex items-center justify-between gap-3">
  <BackLink />
  <LiveUpdatedChip updatedAt={live.updatedAt} />
@@ -547,6 +547,6 @@ function CandidateDetailPage() {
         }}
       />
 
-    </main>
+    </div>
   );
 }
