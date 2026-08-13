@@ -72,9 +72,11 @@ import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 export const Route = createFileRoute("/")({
   head: () =>
     marketingHead(undefined, "/", {
-      title: `TaaSFlow | ${PRODUCT_CATEGORY}`,
-      description:
-        `${PRODUCT_CATEGORY}. ${SYSTEM_CLAIM} Ranked candidates in a live ${MODULES.workspace} — no placement fees.`,
+      title: `TaaSFlow | ${BRAND_DESCRIPTOR}`,
+      description: `${BRAND_ONE_LINER} ${SYSTEM_CLAIM} Ranked candidates in a live ${MODULES.workspace} — no placement fees.`,
+      // Every Q&A visible on this page, so answer engines quote the page's own
+      // text rather than paraphrasing it.
+      scripts: [faqScript([...HOMEPAGE_FAQ, ...STRAIGHT_ANSWERS_FAQ])],
     }),
 
   component: Home,
