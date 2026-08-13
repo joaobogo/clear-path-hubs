@@ -96,9 +96,11 @@ export function cleanQuote(raw: string | null | undefined): string {
   if (!raw) return "";
   const collapsed = stripContactLines(String(raw)).replace(/\s+/g, " ").trim();
   if (!collapsed) return "";
-  const snapped = snapToSentences(stripLeadingJunk(collapsed));
-  // Never let hygiene reduce a quote to a stub: fall back to the collapsed text.
-  const out = snapped.length >= 40 ? snapped : stripLeadingJunk(collapsed);
-  return capAtWord(out).trim();
+  const base = stripLeadingJunk(collapsed);
+  const trimmedStart = snapStart(base);
+  // Never let hygiene reduce a quote to a stub: keep the fuller start instead.
+  const started = snapEnd(trimmedStart).length >= 40 ? trimmedStart : base;
+  return capAtWord(snapEnd(started)).trim();
+
 }
 
