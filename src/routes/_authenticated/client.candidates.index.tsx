@@ -525,12 +525,12 @@ function CandidatesPage() {
   />
 
  {/* Results — loading, failure and "none approved yet" are distinct states */}
- {listPanel.loading ? (
- <div className="grid gap-3 md:grid-cols-2">
- {Array.from({ length: 4 }).map((_, i) => (
- <Skeleton key={i} className="h-52 rounded-xl" />
- ))}
- </div>
+  {listPanel.loading ? (
+  <div className="rounded-xl border bg-card p-4 space-y-3">
+   {Array.from({ length: 6 }).map((_, i) => (
+    <Skeleton key={i} className="h-12 w-full rounded-lg" />
+   ))}
+  </div>
  ) : listPanel.isError ? (
  <QueryErrorCard
   title={gate.noWorkspace ? "No workspace is attached to this account" : "We couldn't load your candidates"}
