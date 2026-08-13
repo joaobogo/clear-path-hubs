@@ -7,7 +7,7 @@ import {
   Linkedin,
   MapPin,
 } from "lucide-react";
-import { DownloadCvButton } from "@/components/download-cv-button";
+import { DownloadCvButton, DownloadLatestCvLink } from "@/components/download-cv-button";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { VisibilityNote } from "@/components/client/visibility-note";
 import { Button } from "@/components/ui/button";
