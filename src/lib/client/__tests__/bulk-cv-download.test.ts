@@ -21,12 +21,29 @@ describe("safeCvFilename", () => {
 describe("bulkErrorMessage", () => {
   it("maps known failures to plain language", () => {
     expect(bulkErrorMessage(new Error("No CV on file"))).toBe("No CV on file yet");
-    expect(bulkErrorMessage(new Error("Not found"))).toBe("CV not available to you yet");
-    expect(bulkErrorMessage(new Error("Failed to fetch"))).toBe("Network error — retry");
+    expect(bulkErrorMessage(new Error("Not found"))).toBe("This CV is not available to you yet");
+    expect(bulkErrorMessage(new Error("Failed to fetch"))).toBe(
+      "Network problem while fetching the CV",
+    );
   });
 
   it("never returns an empty message", () => {
-    expect(bulkErrorMessage(undefined)).toBe("Could not download this CV");
+    expect(bulkErrorMessage(undefined)).toBe("Could not download the CV");
+  });
+});
+
+describe("describeCvDownloadFailure", () => {
+  it("marks permanent problems as not retryable", () => {
+    expect(describeCvDownloadFailure(new Error("No CV on file")).retryable).toBe(false);
+    expect(describeCvDownloadFailure(new Error("Unauthorized")).retryable).toBe(false);
+  });
+
+  it("marks transient problems as retryable and always gives a hint", () => {
+    for (const raw of ["Failed to fetch", "File missing", "signed url expired", "boom"]) {
+      const f = describeCvDownloadFailure(new Error(raw));
+      expect(f.retryable).toBe(true);
+      expect(f.hint.length).toBeGreaterThan(0);
+    }
   });
 });
 
