@@ -7,6 +7,7 @@ import { ErrorState } from "./error-state";
 import { EmptyState } from "./empty-state";
 import { PermissionState } from "./state-views";
 import { useOnline } from "@/hooks/use-online";
+import { useStuckAfter, STUCK_ERROR } from "@/lib/client/panel-gate";
 
 export interface QueryStateProps<T> {
   /** TanStack Query-ish result. Only these fields are read. */
@@ -58,6 +59,20 @@ export function QueryState<T>({
   const online = useOnline();
   const pending = query.isPending ?? query.isLoading ?? false;
   const hasData = query.data !== undefined;
+  // Backstop: a skeleton is never terminal. If the first read is still pending
+  // after a bounded wait, treat it as a failure with a reason and a Retry.
+  const stuck = useStuckAfter(pending && !hasData);
+
+  if (stuck) {
+    return (
+      <ErrorState
+        className={className}
+        title="This took longer than expected"
+        description={STUCK_ERROR.message}
+        onRetry={query.refetch ? () => query.refetch?.() : undefined}
+      />
+    );
+  }
 
   // Initial load: layout-matched skeleton, never a bare spinner.
   if (pending && !hasData) {
