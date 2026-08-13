@@ -17,6 +17,7 @@ import { PublicNotFound, PublicErrorState } from "@/components/marketing/site-sh
 import { captureFirstTouch } from "@/lib/crm/attribution";
 import { OfflineBanner } from "@/components/offline-banner";
 import { TrackingRouteObserver } from "@/components/analytics/tracking-route-observer";
+import { RB2B_ID } from "@/lib/tracking/pixels";
 import { ConsentBanner } from "@/components/analytics/consent-banner";
 import { BookingCtaRouter } from "@/components/marketing/booking-cta-router";
 
