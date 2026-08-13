@@ -21,7 +21,7 @@ import { PublicPage, PublicSection } from "@/components/marketing/site-shell";
  * 6. Human vs AI    — humans decide, AI structures — the boundary is explicit.
  */
 
-const ITEMS: {
+export const ITEMS: {
   icon: React.ComponentType<{ className?: string }>;
   question: string;
   answer: string;
