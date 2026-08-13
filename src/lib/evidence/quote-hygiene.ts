@@ -19,50 +19,67 @@ function hasContactDetail(line: string): boolean {
   return phoneCandidate.replace(/\D/g, "").length >= 7;
 }
 
-/** Drop whole lines that contain an email, phone number or URL. */
+/**
+ * Drop whole lines that contain an email, phone number or URL, plus the tiny
+ * leftover fragments a mid-word slice leaves behind (e.g. "m" from an email).
+ */
 export function stripContactLines(raw: string): string {
   return raw
-    .split(/\r?\n|(?:\s\u2022\s)|(?:\s\|\s)/)
-    .filter((line) => line.trim() && !hasContactDetail(line))
+    .split(/\r?\n|(?:\s*\u2022\s*)|(?:\s*\|\s*)/)
+    .map((line) => line.trim())
+    .filter((line, i, all) => {
+      if (!line) return false;
+      if (hasContactDetail(line)) return false;
+      // A 1-3 char opening fragment is slice debris, not a sentence.
+      if (i < all.length - 1 && line.length <= 3) return false;
+      return true;
+    })
     .join(" ");
 }
 
 /**
- * Snap a slice to sentence boundaries: drop a leading partial sentence and a
- * trailing partial one when a complete sentence remains.
+ * Snap to sentence boundaries: drop a leading partial sentence and a trailing
+ * partial one, as long as a usable sentence remains.
  */
 function snapToSentences(text: string): string {
   let out = text.trim();
   const firstBoundary = out.search(/[.!?]\s+[A-Z0-9]/);
-  if (firstBoundary !== -1 && firstBoundary < out.length - 20) {
+  if (firstBoundary !== -1) {
     const candidate = out.slice(firstBoundary + 1).trim();
-    if (candidate.length >= 40) out = candidate;
-  } else if (/^[a-z]/.test(out)) {
-    // Started mid-word/mid-sentence with no later boundary: snap to next word.
+    if (candidate.length >= 60) out = candidate;
+  }
+  if (/^[a-z]/.test(out)) {
+    // Still opening mid-word: skip forward to the next whole word.
     const nextWord = out.indexOf(" ");
-    if (nextWord > 0 && nextWord < 24) out = out.slice(nextWord + 1).trim();
+    if (nextWord > 0 && nextWord < 24 && out.length - nextWord >= 60) {
+      out = out.slice(nextWord + 1).trim();
+    }
   }
   const lastBoundary = Math.max(out.lastIndexOf("."), out.lastIndexOf("!"), out.lastIndexOf("?"));
-  if (lastBoundary >= 40) out = out.slice(0, lastBoundary + 1);
+  if (lastBoundary >= 60) out = out.slice(0, lastBoundary + 1);
   return out.trim();
 }
 
+function capAtWord(text: string): string {
+  if (text.length <= QUOTE_MAX_CHARS) return text;
+  const cut = text.slice(0, QUOTE_MAX_CHARS);
+  const boundary = Math.max(cut.lastIndexOf("."), cut.lastIndexOf("!"), cut.lastIndexOf("?"));
+  if (boundary >= 60) return cut.slice(0, boundary + 1);
+  const space = cut.lastIndexOf(" ");
+  return `${(space > 0 ? cut.slice(0, space) : cut).trim()}…`;
+}
+
 /**
- * Clean an evidence quote: remove contact lines, snap to sentence boundaries
+ * Clean an evidence quote: remove contact details, snap to sentence boundaries
  * and trim to ~240 characters without cutting a word in half.
  */
 export function cleanQuote(raw: string | null | undefined): string {
   if (!raw) return "";
   const collapsed = stripContactLines(String(raw)).replace(/\s+/g, " ").trim();
   if (!collapsed) return "";
-  let out = snapToSentences(collapsed) || collapsed;
-  if (out.length > QUOTE_MAX_CHARS) {
-    const cut = out.slice(0, QUOTE_MAX_CHARS);
-    const boundary = Math.max(cut.lastIndexOf("."), cut.lastIndexOf("!"), cut.lastIndexOf("?"));
-    out =
-      boundary >= 60
-        ? cut.slice(0, boundary + 1)
-        : `${cut.slice(0, cut.lastIndexOf(" ") > 0 ? cut.lastIndexOf(" ") : QUOTE_MAX_CHARS).trim()}…`;
-  }
-  return out.trim();
+  const snapped = snapToSentences(collapsed);
+  // Never let hygiene reduce a quote to a stub: fall back to the collapsed text.
+  const out = snapped.length >= 40 ? snapped : collapsed;
+  return capAtWord(out).trim();
 }
+
