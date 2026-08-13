@@ -87,8 +87,9 @@ export function ConsentBanner() {
     if (open) firstControl.current?.focus({ preventScroll: true });
   }, [open, details]);
 
-  // The bar owns the bottom strip while it is visible, so the workspace shell
-  // and any floating action get pushed up by exactly its measured height.
+  // The bar sits *below* the workspace action layer (z-55 vs z-60) and never
+  // covers it: while visible it publishes its measured height, so the scroll
+  // container gains bottom padding and sticky action bars are pushed up.
   // (See `html[data-consent-open]` rules in brand-tokens.css.)
   const barRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -150,7 +151,7 @@ export function ConsentBanner() {
       role="dialog"
       aria-modal="false"
       aria-label="Cookie and tracking preferences"
-      className="fixed inset-x-0 bottom-0 z-[70] border-t border-border bg-background/98 px-3 pt-2.5 shadow-[var(--brand-shadow-xl)] backdrop-blur pb-[calc(0.625rem+env(safe-area-inset-bottom))] md:px-6 md:pt-3 md:pb-[calc(0.75rem+env(safe-area-inset-bottom))]"
+      className="fixed inset-x-0 bottom-0 z-[55] border-t border-border bg-background/98 px-3 pt-2.5 shadow-[var(--brand-shadow-xl)] backdrop-blur pb-[calc(0.625rem+env(safe-area-inset-bottom))] md:px-6 md:pt-3 md:pb-[calc(0.75rem+env(safe-area-inset-bottom))]"
     >
       <div className="mx-auto flex w-full max-w-[var(--brand-public-width)] flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-6">
         <div className="min-w-0 max-w-3xl space-y-1 pr-8 md:pr-0">
