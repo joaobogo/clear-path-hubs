@@ -211,41 +211,43 @@ function EvidenceGaps() {
 
                       </div>
 
-                      {open ? (
-                        <div className="mt-3 space-y-3 rounded-md bg-muted/40 p-4 text-sm">
-                          <p>
-                            <span className="font-medium">What happened: </span>
-                            {row.reason.cause}
-                          </p>
-                          <p>
-                            <span className="font-medium">Next action: </span>
-                            {row.reason.nextAction}
-                          </p>
-                          <p className={toldTone(row.reason.candidateWasTold)}>
-                            <span className="font-medium">
-                              {TOLD_LABEL[row.reason.candidateWasTold as "nothing"]}:{" "}
-                            </span>
-                            {row.reason.candidateSaw ?? "No message was shown."}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {row.filename ? `Document on file: ${row.filename}. ` : ""}
-                            {row.candidate_email ? `Contact: ${row.candidate_email}.` : ""}
-                          </p>
-                          {row.link_path ? (
-                            <Link
-                              to={row.link_path}
-                              className="inline-block text-xs underline underline-offset-4"
-                            >
-                              Open the record
-                            </Link>
-                          ) : null}
-                        </div>
-                      ) : null}
-                    </li>
-                  );
-                })}
-              </ul>
+                        {open ? (
+                          <div className="mt-3 space-y-3 rounded-md bg-muted/40 p-4 text-sm">
+                            <p>
+                              <span className="font-medium">What happened: </span>
+                              {row.reason.cause}
+                            </p>
+                            <p>
+                              <span className="font-medium">Next action: </span>
+                              {row.reason.nextAction}
+                            </p>
+                            <p className={toldTone(row.reason.candidateWasTold)}>
+                              <span className="font-medium">
+                                {TOLD_LABEL[row.reason.candidateWasTold as "nothing"]}:{" "}
+                              </span>
+                              {row.reason.candidateSaw ?? "No message was shown."}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {row.filename ? `Document on file: ${row.filename}. ` : ""}
+                              {row.candidate_email ? `Contact: ${row.candidate_email}.` : ""}
+                            </p>
+                            {row.link_path ? (
+                              <Link
+                                to={row.link_path}
+                                className="inline-block text-xs underline underline-offset-4"
+                              >
+                                Open the record
+                              </Link>
+                            ) : null}
+                          </div>
+                        ) : null}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </>
             )}
+
           </section>
         </>
       ) : null}
