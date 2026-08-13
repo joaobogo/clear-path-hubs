@@ -210,7 +210,7 @@ function PositionWorkspace() {
   };
 
   return (
-    <main className="mx-auto max-w-7xl space-y-6 px-6 py-6">
+    <div className="mx-auto max-w-7xl space-y-6 px-6 py-6">
       <header className="space-y-3">
         {(p.organizations?.id ?? p.organization_id) ? (
           <Link
@@ -373,7 +373,7 @@ function PositionWorkspace() {
         {tab === "settings" && <SettingsTab position={p} onDone={invalidate} />}
         </Suspense>
       </section>
-    </main>
+    </div>
   );
 }
 

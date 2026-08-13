@@ -59,7 +59,7 @@ function MyDayPage() {
   const day = data as MyDay | undefined;
 
   return (
-    <main className="p-6 md:p-8 max-w-5xl">
+    <div className="p-6 md:p-8 max-w-5xl">
       <header className="mb-6">
         <h1 className="text-2xl font-semibold">My day</h1>
         <p className="text-sm text-muted-foreground max-w-2xl">
@@ -147,6 +147,6 @@ function MyDayPage() {
           </p>
         </>
       )}
-    </main>
+    </div>
   );
 }

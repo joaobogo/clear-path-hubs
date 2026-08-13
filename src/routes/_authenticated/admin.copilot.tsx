@@ -169,7 +169,7 @@ function CopilotPage() {
   };
 
   return (
-    <main className="mx-auto flex h-[calc(100vh-var(--workspace-header-h,72px))] max-w-4xl flex-col px-4 sm:px-6">
+    <div className="mx-auto flex h-[calc(100vh-var(--workspace-header-h,72px))] max-w-4xl flex-col px-4 sm:px-6">
       <header className="flex flex-wrap items-end justify-between gap-3 py-4 sm:py-5">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -253,7 +253,7 @@ function CopilotPage() {
           </Button>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
 

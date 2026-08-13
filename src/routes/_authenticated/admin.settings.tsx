@@ -101,7 +101,7 @@ function SettingsPage() {
   );
 
   return (
-    <main className="mx-auto max-w-[1400px] px-6 py-8 space-y-6">
+    <div className="mx-auto max-w-[1400px] px-6 py-8 space-y-6">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -172,6 +172,6 @@ function SettingsPage() {
         Any control that would appear in this UI but not persist or audit its change is a
         blocker. If you see one in the app that is not listed here, treat it as a bug.
       </p>
-    </main>
+    </div>
   );
 }

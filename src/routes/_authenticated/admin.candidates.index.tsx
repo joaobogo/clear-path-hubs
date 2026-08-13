@@ -465,7 +465,7 @@ function CandidatesPage() {
   );
 
   return (
-    <main className="mx-auto max-w-[1600px] px-6 py-8">
+    <div className="mx-auto max-w-[1600px] px-6 py-8">
       <header className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Candidate database</h1>
@@ -880,7 +880,7 @@ function CandidatesPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </main>
+    </div>
   );
 }
 
