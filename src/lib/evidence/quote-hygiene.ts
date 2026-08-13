@@ -21,11 +21,16 @@ function hasContactDetail(line: string): boolean {
   return phoneCandidate.replace(/\D/g, "").length >= 7;
 }
 
-/** Remove individual tokens that carry an address, domain or phone number. */
+const PHONE_RE_GLOBAL = /\+?\d[\d\s().-]{6,}\d/g;
+
+/** Remove every address, domain and phone number from a line of text. */
 function scrubContactTokens(line: string): string {
   return line
+    // Spaced phone numbers ("+55 11 5555 0119") span several tokens.
+    .replace(PHONE_RE_GLOBAL, (match) => (match.replace(/\D/g, "").length >= 7 ? " " : match))
     .split(/\s+/)
     .filter((token) => {
+      // Catches truncated addresses ("rui@demo.") that a full email regex misses.
       if (token.includes("@") || URL_RE.test(token)) return false;
       return token.replace(/\D/g, "").length < 7;
     })
@@ -42,7 +47,7 @@ function scrubContactTokens(line: string): string {
 export function stripContactLines(raw: string): string {
   return raw
     .split(/\r?\n|(?:\s*[\u2022\u00b7]\s*)|(?:\s*\|\s*)/)
-    .map((line) => (hasContactDetail(line) ? scrubContactTokens(line) : line.trim()))
+    .map((line) => scrubContactTokens(line))
     .filter((line, i, all) => {
       if (!line) return false;
       // A 1-3 char opening fragment is slice debris, not a sentence.
