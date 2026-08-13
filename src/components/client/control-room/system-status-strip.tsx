@@ -66,7 +66,7 @@ export function SystemStatusStrip({ orgId }: { orgId: string }) {
             className={cn(
               "h-4 w-4",
               s.running_total > 0
-                ? "text-emerald-600 dark:text-emerald-400"
+                ? "text-success"
                 : "text-muted-foreground",
             )}
             aria-hidden
@@ -82,7 +82,7 @@ export function SystemStatusStrip({ orgId }: { orgId: string }) {
         </span>
 
         {s.retrying_total > 0 && (
-          <span className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
+          <span className="flex items-center gap-1.5 text-warning-strong">
             <RotateCw className="h-3.5 w-3.5" aria-hidden />
             {s.retrying_total} retrying
           </span>
@@ -132,8 +132,8 @@ export function SystemStatusStrip({ orgId }: { orgId: string }) {
                   aria-hidden
                   className={cn(
                     "h-1.5 w-1.5 rounded-full",
-                    copy.tone === "ok" && "bg-emerald-500",
-                    copy.tone === "warn" && "bg-amber-500",
+                    copy.tone === "ok" && "bg-success",
+                    copy.tone === "warn" && "bg-warning",
                     copy.tone === "bad" && "bg-destructive",
                     copy.tone === "idle" && "bg-muted-foreground/40",
                   )}

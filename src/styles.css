@@ -81,6 +81,10 @@
   --color-info-foreground: var(--info-foreground);
   --color-info-soft: var(--info-soft);
   --color-danger-soft: var(--danger-soft);
+  --color-success-strong: var(--success-strong);
+  --color-warning-strong: var(--warning-strong);
+  --color-danger-strong: var(--danger-strong);
+  --color-info-strong: var(--info-strong);
 }
 
 :root {
@@ -128,6 +132,10 @@
   --info-foreground: var(--taas-status-info-foreground);
   --info-soft: var(--taas-status-info-soft);
   --danger-soft: var(--taas-status-danger-soft);
+  --success-strong: var(--taas-status-success-strong);
+  --warning-strong: var(--taas-status-warning-strong);
+  --danger-strong: var(--taas-status-danger-strong);
+  --info-strong: var(--taas-status-info-strong);
   /* Page + layout tokens */
   --page-max-w: 1400px;
   --page-gutter: 1.5rem;
@@ -184,6 +192,10 @@
   --info-foreground: oklch(0.16 0.03 240);
   --info-soft: oklch(0.24 0.06 240);
   --danger-soft: oklch(0.26 0.06 27);
+  --success-strong: oklch(0.80 0.14 152);
+  --warning-strong: oklch(0.88 0.13 78);
+  --danger-strong: oklch(0.72 0.18 27);
+  --info-strong: oklch(0.80 0.11 240);
 }
 
 @layer base {

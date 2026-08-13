@@ -972,7 +972,7 @@ function RunStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
       </dl>
 
       {blockers.length > 0 ? (
-        <div className="space-y-3 rounded-lg border border-amber-500/40 bg-amber-500/5 p-4">
+        <div className="space-y-3 rounded-lg border border-warning/40 bg-warning/5 p-4">
           <p className="text-sm font-medium">Before the first search</p>
           <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
             {blockers.map((b) => (

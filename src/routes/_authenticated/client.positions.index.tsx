@@ -215,15 +215,15 @@ function PositionsPage() {
  <header className="mb-6 flex flex-wrap items-end justify-between gap-3">
  <div className="min-w-0">
  <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
- Positions
+ Roles
  </h1>
  <p className="text-sm text-muted-foreground mt-1">
- Live hiring projects TaaSFlow is running for your team.
+ Roles we are actively hiring for with you.
  </p>
  </div>
  <div className="text-xs text-muted-foreground text-right">
  <div>
- {rows.length} position{rows.length === 1 ? "" : "s"}
+ {rows.length} role{rows.length === 1 ? "" : "s"}
  {status !== "active" ? ` in ${STATUS_TABS.find((t) => t.key === status)?.label.toLowerCase()}` : ""}
  </div>
  {lastUpdated && (

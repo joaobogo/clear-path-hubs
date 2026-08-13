@@ -141,7 +141,7 @@ export function BottlenecksCard({ rows }: { rows: ExecutiveReport["bottlenecks"]
     sev === "crit"
       ? "border-destructive/40 bg-destructive/5"
       : sev === "warn"
-        ? "border-amber-500/40 bg-amber-500/5"
+        ? "border-warning/40 bg-warning/5"
         : "border-border bg-card/40";
   return (
     <Card>
@@ -258,7 +258,7 @@ export function TimeInStageCard({ rows }: { rows: ExecutiveReport["time_in_stage
                 </div>
                 <div className="h-1.5 overflow-hidden rounded-full bg-muted">
                   <div
-                    className={`h-full ${r.p90_days > 14 ? "bg-destructive" : r.p90_days > 7 ? "bg-amber-500" : "bg-primary"}`}
+                    className={`h-full ${r.p90_days > 14 ? "bg-destructive" : r.p90_days > 7 ? "bg-warning" : "bg-primary"}`}
                     style={{ width: `${(r.p90_days / maxP90) * 100}%` }}
                   />
                 </div>

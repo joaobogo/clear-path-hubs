@@ -37,14 +37,14 @@ export function DegradedModeBanner({ className }: { className?: string }) {
         "flex flex-col gap-2 rounded-lg border px-4 py-3 sm:flex-row sm:items-start sm:gap-3",
         maintenance
           ? "border-[color:var(--brand-navy)]/15 bg-[color:var(--brand-navy)]/[0.04]"
-          : "border-amber-500/30 bg-amber-500/[0.07]",
+          : "border-warning/30 bg-warning/[0.07]",
         className,
       )}
     >
       <Icon
         className={cn(
           "mt-0.5 h-4 w-4 shrink-0",
-          maintenance ? "text-[color:var(--brand-navy)]/70" : "text-amber-700",
+          maintenance ? "text-[color:var(--brand-navy)]/70" : "text-warning-strong",
         )}
         aria-hidden
       />

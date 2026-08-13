@@ -66,9 +66,9 @@ export function AgentCardView({
         className={
           "mt-4 text-sm font-medium " +
           (paused
-            ? "text-amber-600 dark:text-amber-400"
+            ? "text-warning-strong"
             : agent.enabled
-              ? "text-emerald-600 dark:text-emerald-400"
+              ? "text-success"
               : "text-muted-foreground")
         }
       >

@@ -64,9 +64,9 @@ export function Avatar({ role }: { role: "user" | "assistant" | "system" }) {
 
 export function ConfidenceBadge({ level }: { level: "high" | "medium" | "low" | "none" }) {
   const styles: Record<string, string> = {
-    high: "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
-    medium: "border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400",
-    low: "border-orange-500/30 bg-orange-500/10 text-orange-700 dark:text-orange-400",
+    high: "border-success/30 bg-success/10 text-success",
+    medium: "border-warning/30 bg-warning/10 text-warning-strong",
+    low: "border-warning/30 bg-warning/10 text-warning-strong",
     none: "border-muted-foreground/30 bg-muted text-muted-foreground",
   };
   const labels: Record<string, string> = {

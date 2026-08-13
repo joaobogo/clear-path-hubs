@@ -16,19 +16,23 @@ import { useState } from "react";
 import { resolveIndustryProfile } from "@/config/industry-profiles";
 import { BadgeCheck, ClipboardList, Compass, FileCheck2, ChevronDown } from "lucide-react";
 
+/* One accent colour across the workspace: industry variants differ in copy and
+   iconography, not in hue. Keeps the surface calm and on-brand. */
+const ACCENT_SURFACE = "from-primary/[0.06] to-transparent border-border";
 const ACCENT_BG: Record<string, string> = {
-  sunset:   "from-amber-50 to-orange-50/40 border-amber-200/60",
-  clinical: "from-sky-50 to-cyan-50/40 border-sky-200/60",
-  trading:  "from-slate-50 to-blue-50/40 border-slate-200/60",
-  code:     "from-violet-50 to-fuchsia-50/40 border-violet-200/60",
-  commerce: "from-rose-50 to-pink-50/40 border-rose-200/60",
-  steel:    "from-zinc-50 to-slate-100/40 border-zinc-200/60",
-  gavel:    "from-stone-50 to-amber-50/30 border-stone-200/60",
-  chalk:    "from-emerald-50 to-teal-50/40 border-emerald-200/60",
-  route:    "from-indigo-50 to-sky-50/40 border-indigo-200/60",
-  grid:     "from-lime-50 to-emerald-50/40 border-lime-200/60",
-  neutral:  "from-muted/40 to-muted/10 border-border",
+  sunset: ACCENT_SURFACE,
+  clinical: ACCENT_SURFACE,
+  trading: ACCENT_SURFACE,
+  code: ACCENT_SURFACE,
+  commerce: ACCENT_SURFACE,
+  steel: ACCENT_SURFACE,
+  gavel: ACCENT_SURFACE,
+  chalk: ACCENT_SURFACE,
+  route: ACCENT_SURFACE,
+  grid: ACCENT_SURFACE,
+  neutral: ACCENT_SURFACE,
 };
+
 
 type Props = {
   industry: string | null;
@@ -90,7 +94,7 @@ export function IndustryPersonalizationPanel({ industry }: Props) {
             {profile.strapline}
           </p>
         </div>
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-current/20 bg-white/70 px-2.5 py-1 text-[11px] font-medium text-foreground/80">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-current/20 bg-card/70 px-2.5 py-1 text-[11px] font-medium text-foreground/80">
           <BadgeCheck className="h-3 w-3" aria-hidden />
           Rubric preset applied
         </span>
@@ -107,13 +111,13 @@ export function IndustryPersonalizationPanel({ industry }: Props) {
           return (
             <div
               key={s.id}
-              className="rounded-lg border border-border/60 bg-white/70"
+              className="rounded-lg border border-border/60 bg-card/70"
             >
               <button
                 type="button"
                 aria-expanded={isOpen}
                 onClick={() => setOpen(isOpen ? null : s.id)}
-                className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left text-sm font-medium hover:bg-white"
+                className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left text-sm font-medium hover:bg-muted/50"
               >
                 <span className="inline-flex items-center gap-2">
                   <Icon className="h-4 w-4 text-muted-foreground" aria-hidden />
