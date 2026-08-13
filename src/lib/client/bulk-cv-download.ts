@@ -1,6 +1,6 @@
 import { describeCvDownloadFailure } from "@/lib/cv-download-error";
 import { useCallback, useRef, useState } from "react";
-import { getCandidateCvDownload } from "@/lib/cv-download.functions";
+import { fetchCvDownloadLink } from "@/lib/cv-download-cache";
 
 /**
  * Bulk "download the latest CV" for many candidates as one ZIP.
@@ -95,8 +95,9 @@ export function useBulkCvDownload() {
           const target = targets[cursor++];
           patch(target.matchId, { state: "running", error: undefined });
           try {
-            const res = await getCandidateCvDownload({
-              data: { matchId: target.matchId, disposition: "attachment" },
+            const res = await fetchCvDownloadLink({
+              matchId: target.matchId,
+              disposition: "attachment",
             });
             const response = await fetch(res.url);
             if (!response.ok) throw new Error(`Storage responded ${response.status}`);

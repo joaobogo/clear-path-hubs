@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { getCandidateCvDownload } from "@/lib/cv-download.functions";
+import { fetchCvDownloadLink, invalidateCvLink } from "@/lib/cv-download-cache";
 import { describeCvDownloadFailure, type CvDownloadFailure } from "@/lib/cv-download-error";
 import { AlertCircle, Check, Download, Eye, Loader2, RotateCcw } from "lucide-react";
 
@@ -29,8 +29,12 @@ function useCvDownload(matchId: string, mode: Mode) {
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const preview = mode === "preview";
 
-  async function run() {
+  async function run(opts?: { fresh?: boolean }) {
     if (state === "loading") return;
+    // A retry (or a click after a failure) always asks for a brand-new link;
+    // ordinary repeat clicks reuse the cached one while it is still valid.
+    const fresh = opts?.fresh ?? state === "error";
+    if (fresh) invalidateCvLink(matchId);
     setState("loading");
     setFailure(null);
     setAttempts((n) => n + 1);
@@ -39,8 +43,10 @@ function useCvDownload(matchId: string, mode: Mode) {
     // open() as a blocked popup.
     const tab = preview ? window.open("", "_blank", "noopener,noreferrer") : null;
     try {
-      const res = await getCandidateCvDownload({
-        data: { matchId, disposition: preview ? "inline" : "attachment" },
+      const res = await fetchCvDownloadLink({
+        matchId,
+        disposition: preview ? "inline" : "attachment",
+        fresh,
       });
       if (preview) {
         if (tab) tab.location.href = res.url;
@@ -59,6 +65,7 @@ function useCvDownload(matchId: string, mode: Mode) {
       resetTimer.current = setTimeout(() => setState("idle"), 2500);
     } catch (e: unknown) {
       tab?.close();
+      invalidateCvLink(matchId);
       const f = describeCvDownloadFailure(e);
       setState("error");
       setFailure(f);
@@ -66,9 +73,10 @@ function useCvDownload(matchId: string, mode: Mode) {
     }
   }
 
-  // Every run asks the server again for the candidate's current CV file and a
-  // brand-new signed link, so "Retry" always pulls the latest file in storage.
-  return { state, failure, attempts, run, preview };
+  // Retries bypass the cache, so "Retry" always pulls the candidate's current
+  // file in storage with a brand-new signed link.
+  const retry = () => run({ fresh: true });
+  return { state, failure, attempts, run: () => run(), retry, preview };
 }
 
 export function DownloadCvButton({
@@ -79,7 +87,7 @@ export function DownloadCvButton({
   label,
   mode = "download",
 }: Props) {
-  const { state, failure, attempts, run, preview } = useCvDownload(matchId, mode);
+  const { state, failure, attempts, run, retry, preview } = useCvDownload(matchId, mode);
   const base = label ?? (preview ? "Preview CV" : "Download CV");
   const text =
     state === "loading"
@@ -136,7 +144,7 @@ export function DownloadCvButton({
           {failure.retryable && (
             <button
               type="button"
-              onClick={run}
+              onClick={retry}
               disabled={state === "loading"}
               data-qa-action="retry-cv-download"
               className="inline-flex w-fit items-center gap-1 text-[11px] font-medium text-primary underline-offset-2 hover:underline disabled:opacity-70"
