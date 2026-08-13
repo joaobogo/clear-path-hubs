@@ -190,6 +190,16 @@ export async function loadKpiRows(
       const prev = stageEnteredAt.get(h.candidate_match_id);
       if (!prev || at > prev) stageEnteredAt.set(h.candidate_match_id, at);
     }
+
+    // Recorded client decisions — the only thing that clears a delivered
+    // candidate out of "waiting on your decision".
+    const { data: decisions } = await supabase
+      .from("client_decisions")
+      .select("candidate_match_id")
+      .in("candidate_match_id", matchIds);
+    for (const d of ((decisions as AnyRow[]) ?? [])) {
+      if (d.candidate_match_id) decidedMatches.add(d.candidate_match_id as string);
+    }
   }
 
   return (matches as AnyRow[]).map((m) => ({
@@ -210,9 +220,11 @@ export async function loadKpiRows(
 
     client_decision_due_at: m.client_decision_due_at ?? null,
     recommendation: m.recommendation ?? null,
+    client_decided: decidedMatches.has(m.id),
     interview_needs_confirmation: unconfirmedInterviews.has(m.id),
   }));
 }
+
 
 /**
  * A "strongest candidate": an approved assessment whose stored label or band
