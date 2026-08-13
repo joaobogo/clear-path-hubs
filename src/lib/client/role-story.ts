@@ -12,7 +12,7 @@
 
 import type { RequirementRow, RequirementStatus } from "@/lib/client-fit-presentation";
 import { SCORE_BAND_BOUNDARIES, bandRange, classifyBand, type ScoreBandKey } from "@/lib/scoring/bands";
-import { scoreBand } from "@/config/scoring-bands";
+import { bandByKey } from "@/config/scoring-bands";
 
 /** One assessed candidate, reduced to what the story needs. */
 export type StoryCandidate = {
@@ -196,7 +196,7 @@ export function buildDistribution(candidates: StoryCandidate[]): DistributionBlo
     const range = bandRange(b.key);
     return {
       key: b.key,
-      label: scoreBand(range.min).shortLabel,
+      label: bandByKey(b.key).shortLabel,
       min: range.min,
       max: range.max,
       count: counts.get(b.key) ?? 0,
