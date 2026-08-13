@@ -232,8 +232,10 @@ function findSnippet(
   if (idx === -1) return null;
   const start = Math.max(0, idx - radius);
   const end = Math.min(cv.length, idx + term.length + radius);
-  const snippet = cv.slice(start, end).replace(/\s+/g, " ").trim();
+  const snippet = cleanQuote(cv.slice(start, end));
+  if (!snippet) return null;
   return { snippet, location: `cv:${start}-${end}` };
+
 }
 
 
