@@ -61,7 +61,7 @@ export function UnicornBadge({ className = "" }: { className?: string }) {
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary ${className}`}
-      title="Unicorn — top-tier fit, confirmed by a hire"
+      title="Unicorn — fit score of 95 or higher"
     >
       <span aria-hidden>🦄</span>
       Unicorn
