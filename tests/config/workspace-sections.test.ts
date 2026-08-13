@@ -28,17 +28,39 @@ describe("workspace section config", () => {
   });
 
   it("lists each tab route in exactly one section group", () => {
+    // A tab's identity is path + search: two tabs may share a pathname when
+    // search params tell them apart (Shortlist vs ?view=board).
+    const key = (t: { to: string; search?: Record<string, string> }) =>
+      t.search ? `${t.to}?${new URLSearchParams(t.search).toString()}` : t.to;
     for (const groups of [ADMIN_SECTION_GROUPS, CLIENT_SECTION_GROUPS]) {
       const seen = new Map<string, string[]>();
       for (const group of groups) {
         for (const tab of group.tabs) {
-          seen.set(tab.to, [...(seen.get(tab.to) ?? []), group.id]);
+          seen.set(key(tab), [...(seen.get(key(tab)) ?? []), group.id]);
         }
       }
       const duplicated = [...seen.entries()].filter(([, ids]) => ids.length > 1);
       expect(duplicated).toEqual([]);
     }
   });
+
+  it("keeps same-path tabs distinguishable by search params", () => {
+    for (const groups of [ADMIN_SECTION_GROUPS, CLIENT_SECTION_GROUPS]) {
+      for (const group of groups) {
+        const byPath = new Map<string, number>();
+        for (const tab of group.tabs) byPath.set(tab.to, (byPath.get(tab.to) ?? 0) + 1);
+        for (const [to, count] of byPath) {
+          if (count < 2) continue;
+          const withSearch = group.tabs.filter(
+            (t) => t.to === to && t.search && Object.keys(t.search).length > 0,
+          );
+          // All but one variant must carry search, or two tabs would both match.
+          expect(withSearch.length, `${to} needs search on ${count - 1} variants`).toBe(count - 1);
+        }
+      }
+    }
+  });
+
 
   it("points every admin nav item at a real route inside its own section group", () => {
     for (const item of ADMIN_NAV) {
