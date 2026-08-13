@@ -19,7 +19,8 @@ import { type ConsentCategory } from "./consent";
 
 const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || "G-HJ2ECKCNK4";
 const APOLLO_ID = import.meta.env.VITE_APOLLO_APP_ID || "6981f9ca9255870019505836";
-const RB2B_ID = import.meta.env.VITE_RB2B_ID || "1N5W0H7RVEO5";
+/** Exported so the root document head can boot RB2B before hydration. */
+export const RB2B_ID = import.meta.env.VITE_RB2B_ID || "1N5W0H7RVEO5";
 const META_ID = import.meta.env.VITE_META_PIXEL_ID || "";
 const LINKEDIN_ID = import.meta.env.VITE_LINKEDIN_PARTNER_ID || "10685401";
 const CLARITY_ID = import.meta.env.VITE_CLARITY_ID || "";
