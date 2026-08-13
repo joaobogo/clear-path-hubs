@@ -795,11 +795,15 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
         : (row.updated_at ?? row.delivered_at ?? null),
     last_updated: run?.completed_at ?? row.updated_at ?? row.delivered_at ?? null,
     position: pos ? { id: pos.id, title: pos.title } : null,
+    // Band comes from this run's score through the one band table. The stored
+    // `fit_band` string uses the engine's label vocabulary, not band keys, so
+    // feeding it here silently failed the top-band test.
     unicorn: isUnicornMatch({
       score: run?.score != null ? Number(run.score) : null,
-      band: (run?.fit_band ?? null) as never,
+      band: run?.score != null ? classifyBand(Number(run.score)) : null,
       hired: row.stage === "hired",
     }),
+
     freshness: mergeStoredStaleness(
       assessFreshness({
         scored_at: run?.completed_at ?? null,
