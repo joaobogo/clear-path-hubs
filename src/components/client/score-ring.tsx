@@ -91,8 +91,9 @@ export function EvidencedScore({
       <ScoreRing value={number.value} label={number.label} accent={accent} />
       <div className="min-w-0 text-xs">
         <p className="font-medium text-foreground">
-          {number.label} {Math.round(number.value)} out of 100
+          {number.label} {Math.round(number.value)}
         </p>
+
         <p className="mt-0.5 text-muted-foreground line-clamp-2">{number.criteria_summary}</p>
         <p className="mt-0.5 text-[11px] text-muted-foreground/80">{number.method_label}</p>
         {number.caveat && (
