@@ -67,7 +67,7 @@ export function CompactList({
         ))}
       </div>
       {/* Desktop: table */}
-      <div className="hidden md:block overflow-x-auto rounded-xl border bg-card">
+      <div className="hidden min-w-0 max-w-full md:block overflow-x-auto rounded-xl border bg-card">
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
             <tr>
@@ -77,10 +77,10 @@ export function CompactList({
               <th className="text-left py-2 px-3">Score</th>
               <th className="text-left py-2 px-3">Fit</th>
               <th className="text-left py-2 px-3">Must-haves</th>
-              <th className="text-left py-2 px-3">Experience</th>
-              <th className="text-left py-2 px-3">Location</th>
+              <th className="hidden text-left py-2 px-3 lg:table-cell">Experience</th>
+              <th className="hidden text-left py-2 px-3 lg:table-cell">Location</th>
               <th className="text-left py-2 px-3">Stage</th>
-              <th className="text-left py-2 px-3">Review</th>
+              <th className="hidden text-left py-2 px-3 lg:table-cell">Review</th>
               <th className="text-right py-2 px-3">CV</th>
               <th className="text-right py-2 px-3">Action</th>
             </tr>
@@ -124,12 +124,12 @@ export function CompactList({
                 <td className="py-2 px-3 tabular-nums">
                   {c.coverage.must_met}/{c.coverage.must_total || "—"}
                 </td>
-                <td className="py-2 px-3 text-muted-foreground tabular-nums">
+                <td className="hidden py-2 px-3 text-muted-foreground tabular-nums lg:table-cell">
                   {c.candidate.years_experience != null ? `${c.candidate.years_experience} yrs` : "—"}
                 </td>
-                <td className="py-2 px-3 text-muted-foreground">{c.candidate.location ?? "—"}</td>
+                <td className="hidden py-2 px-3 text-muted-foreground lg:table-cell">{c.candidate.location ?? "—"}</td>
                 <td className="py-2 px-3 text-muted-foreground">{clientStageLabel(c.stage)}</td>
-                <td className="py-2 px-3">
+                <td className="hidden py-2 px-3 lg:table-cell">
                   <ReviewTimelineStrip timeline={c.review_timeline} />
                 </td>
                 <td className="py-2 px-3 text-right whitespace-nowrap">

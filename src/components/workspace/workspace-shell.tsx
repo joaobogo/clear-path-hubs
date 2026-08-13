@@ -542,7 +542,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
 
           <button
             type="button"
-            className="hidden h-9 items-center gap-2 rounded-md border bg-card px-3 text-xs text-muted-foreground shadow-sm hover:text-foreground md:inline-flex"
+            className="hidden h-9 shrink-0 items-center gap-2 whitespace-nowrap rounded-md border bg-card px-3 text-xs text-muted-foreground shadow-sm hover:text-foreground lg:inline-flex"
             onClick={() => setSearchOpen(true)}
             aria-label="Open global search"
             aria-keyshortcuts="Meta+K Control+K"
@@ -555,7 +555,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
           </button>
           <button
             type="button"
-            className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:bg-muted md:hidden"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted lg:hidden"
             onClick={() => setSearchOpen(true)}
             aria-label="Open global search"
           >
@@ -566,16 +566,18 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
             <Link
               to={primaryAction.to}
               search={primaryAction.search ? (primaryAction.search as never) : undefined}
-              className="hidden h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground shadow-sm hover:opacity-90 md:inline-flex"
+              className="hidden h-9 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground shadow-sm hover:opacity-90 md:inline-flex"
+              aria-label={primaryAction.label}
+              title={primaryAction.label}
             >
-              {primaryAction.icon && <primaryAction.icon className="h-4 w-4" />}
-              <span>{primaryAction.label}</span>
+              {primaryAction.icon && <primaryAction.icon className="h-4 w-4 shrink-0" />}
+              <span className="hidden lg:inline">{primaryAction.label}</span>
             </Link>
           )}
 
           <a
             href="/faq"
-            className="hidden rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground md:inline-flex"
+            className="hidden shrink-0 rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground md:inline-flex"
             aria-label="Help"
             title="Help & documentation"
           >
@@ -591,7 +593,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-11 gap-2 px-2 sm:h-9"
+                className="h-11 shrink-0 gap-2 px-2 sm:h-9"
                 aria-label="Account menu"
               >
                 <span
@@ -600,7 +602,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
                 >
                   {(accountLabel ?? contextLabel).slice(0, 1).toUpperCase()}
                 </span>
-                <span className="hidden max-w-[140px] truncate text-sm md:inline">
+                <span className="hidden max-w-[140px] truncate text-sm lg:inline">
                   {accountLabel ?? contextLabel}
                 </span>
               </Button>

@@ -262,7 +262,7 @@ export function CandidatesFiltersPanel({
           <Button
             size="sm"
             variant={search.view === "board" ? "ghost" : "secondary"}
-            className="h-7 px-2 text-xs"
+            className="h-11 min-w-11 px-3 text-xs sm:h-7 sm:min-w-0 sm:px-2"
             aria-pressed={search.view !== "board"}
             onClick={() => setF({ view: "list" } as never)}
           >
@@ -271,7 +271,7 @@ export function CandidatesFiltersPanel({
           <Button
             size="sm"
             variant={search.view === "board" ? "secondary" : "ghost"}
-            className="h-7 px-2 text-xs"
+            className="h-11 min-w-11 px-3 text-xs sm:h-7 sm:min-w-0 sm:px-2"
             aria-pressed={search.view === "board"}
             onClick={() => setF({ view: "board" } as never)}
           >
