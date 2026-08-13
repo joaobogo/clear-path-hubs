@@ -19,6 +19,12 @@ export type SectionTab = {
    * staff without that capability so a visible tab never leads to a 403 page.
    */
   requiresPlatformAdmin?: boolean;
+  /**
+   * Search params that define this tab. Two tabs may share a pathname and be
+   * told apart by these (e.g. Shortlist vs `?view=board`). Merged on top of the
+   * shell's `linkSearch`, so the org param still travels.
+   */
+  search?: Record<string, string>;
 };
 export type SectionGroup = { id: string; label: string; tabs: SectionTab[] };
 
@@ -35,11 +41,39 @@ export function filterSectionGroups(
     .filter((group) => group.tabs.length > 0);
 }
 
-function isActive(pathname: string, tab: SectionTab) {
+function pathMatches(pathname: string, tab: SectionTab) {
   return tab.exact
     ? pathname === tab.to
     : pathname === tab.to || pathname.startsWith(tab.to + "/");
 }
+
+function isActive(pathname: string, tab: SectionTab) {
+  return pathMatches(pathname, tab);
+}
+
+/**
+ * Exactly one tab highlighted, even when several share a pathname: the winner
+ * is the path match with the most search keys satisfied by the current URL. A
+ * search-less tab (Shortlist) loses to a search tab (Board) whenever that
+ * tab's params are present, and wins otherwise.
+ */
+export function activeTab(
+  pathname: string,
+  tabs: SectionTab[],
+  current?: Record<string, unknown>,
+): SectionTab | null {
+  let best: { tab: SectionTab; score: number } | null = null;
+  for (const tab of tabs) {
+    if (!pathMatches(pathname, tab)) continue;
+    const keys = Object.entries(tab.search ?? {});
+    const satisfied = keys.every(([k, v]) => String(current?.[k] ?? "") === v);
+    if (!satisfied) continue;
+    const score = keys.length;
+    if (!best || score > best.score) best = { tab, score };
+  }
+  return best?.tab ?? null;
+}
+
 
 export function findSectionGroup(
   pathname: string,
