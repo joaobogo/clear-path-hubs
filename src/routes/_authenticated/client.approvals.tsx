@@ -139,6 +139,12 @@ function ApprovalsPage() {
       toastError(e, { fallback: "We couldn't bulk complete. Nothing was saved — please try again." }),
   });
 
+  // Any bulk write in flight locks the whole bar: two overlapping bulk writes
+  // on the same selection would race, and the second would report success
+  // against a selection the first already changed.
+  const bulkBusy =
+    bulkComplete.isPending || bulkDueDate.isPending || bulkReassign.isPending;
+
   const rows = useMemo(() => tasks.data ?? [], [tasks.data]);
   const overdueCount = useMemo(
     () =>
