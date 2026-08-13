@@ -2,6 +2,7 @@ import * as React from "react";
 import { Link, useSearch } from "@tanstack/react-router";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { DownloadLatestCvLink } from "@/components/download-cv-button";
 import { AgeBadge } from "@/components/client/age-badge";
 import { formatDaysInStage } from "@/lib/time-age";
 import { DecisionBar } from "@/components/client/decision-bar";
