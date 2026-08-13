@@ -2,6 +2,7 @@ import * as React from "react";
 import { Link, useSearch } from "@tanstack/react-router";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { DownloadLatestCvLink } from "@/components/download-cv-button";
 import { AgeBadge } from "@/components/client/age-badge";
 import { formatDaysInStage } from "@/lib/time-age";
 import { DecisionBar } from "@/components/client/decision-bar";
@@ -262,6 +263,13 @@ export function CandidateCard({
           />
         )}
       </div>
+
+      {/* One-click CV, only once contact details are released. */}
+      {c.contact_released && (
+        <div className="mt-2">
+          <DownloadLatestCvLink matchId={c.match_id} />
+        </div>
+      )}
 
       {/* Every decision is reversible for a short window, visibly. */}
       <div className="mt-3">
