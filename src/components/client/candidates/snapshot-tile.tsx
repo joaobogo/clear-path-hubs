@@ -8,6 +8,7 @@ export function SnapshotTile({
   to,
   filter,
   org,
+  emptyHint = "No figure yet",
 }: {
   label: string;
   value: number | undefined;
@@ -15,8 +16,11 @@ export function SnapshotTile({
   to: string;
   filter?: Record<string, string>;
   org?: string;
+  /** Shown instead of a number when the figure isn't available. Never a zero. */
+  emptyHint?: string;
 }) {
   const searchObj = { ...(filter ?? {}), ...(org ? { org } : {}) };
+  const missing = !loading && (value === undefined || value === null);
   return (
     <Link
       to={to as never}
@@ -27,6 +31,8 @@ export function SnapshotTile({
       <div className="text-2xl font-semibold tabular-nums mt-1 min-h-[2rem]">
         {loading ? <Skeleton className="h-7 w-10" /> : (value ?? "—")}
       </div>
+      {missing && <div className="text-[10px] text-muted-foreground">{emptyHint}</div>}
     </Link>
   );
 }
+
