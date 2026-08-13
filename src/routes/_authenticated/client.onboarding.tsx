@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_authenticated/client/onboarding")({
       {
         property: "og:description",
         content:
-          "Ten guided steps that configure your hiring system, from workspace to first run.",
+          "Ten guided steps that configure your hiring system, from workspace to first search.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -601,7 +601,7 @@ function CandidatesPage() {
      className="shadow-lg"
      onClick={() => setShareOpen(true)}
      disabled={crossPosition}
-     title={crossPosition ? "Select candidates from the same position to share" : undefined}
+     title={crossPosition ? "Select candidates from the same role to share" : undefined}
     >
      <Share2 className="mr-2 h-4 w-4" />
      Share shortlist ({selectedCandidates.length})

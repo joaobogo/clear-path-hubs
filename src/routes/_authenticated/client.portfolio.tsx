@@ -132,8 +132,8 @@ function PortfolioPage() {
         <>
           {/* KPI tiles */}
           <section className="grid gap-3 sm:grid-cols-4">
-            <Tile label="Open positions" value={data.totals.open_positions} />
-            <Tile label="Filled positions" value={data.totals.filled_positions} />
+            <Tile label="Open roles" value={data.totals.open_positions} />
+            <Tile label="Filled roles" value={data.totals.filled_positions} />
             <Tile label="Candidates in flight" value={data.totals.candidates_in_flight} />
             <Tile label="Hires" value={data.totals.hires} />
           </section>

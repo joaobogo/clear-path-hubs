@@ -139,7 +139,7 @@ export function FilterBar({
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Search title, location, skills…"
           className="pl-9"
-          aria-label="Search positions"
+          aria-label="Search roles"
         />
       </div>
       <Select
@@ -159,7 +159,7 @@ export function FilterBar({
         </SelectContent>
       </Select>
       <Select value={sort} onValueChange={(v) => setSearch({ sort: v })}>
-        <SelectTrigger className="w-[180px]" aria-label="Sort positions">
+        <SelectTrigger className="w-[180px]" aria-label="Sort roles">
           <SelectValue placeholder="Sort" />
         </SelectTrigger>
         <SelectContent>

@@ -58,11 +58,11 @@ export interface SurfaceStateContent {
   secondaryAction?: SurfaceAction;
 }
 
-const EXPECTED_NEW = "Expected — nothing has run here yet.";
+const EXPECTED_NEW = "Expected — nothing has happened here yet.";
 const EXPECTED_PROCESSING = "Expected — work is in progress.";
 const EXPECTED_QUIET = "Expected — there is nothing outstanding.";
 const NEEDS_ATTENTION = "Not expected — this needs a decision from someone.";
-const NOTHING_RUNNING = "Nothing is running for this area right now.";
+const NOTHING_RUNNING = "Nothing is happening in this area right now.";
 
 /** Shared state for "filters removed every result" — never a false zero. */
 export function resolveFilteredEmptyState(filters: string[]): SurfaceStateContent {
@@ -77,7 +77,7 @@ export function resolveFilteredEmptyState(filters: string[]): SurfaceStateConten
         : "Your current filters exclude every record.",
     expected: "Expected — records exist, the view is just narrow.",
     populates: "Clearing or widening a filter brings the existing records back.",
-    activity: "No search or processing is running — this is a display filter only.",
+    activity: "Nothing is searching — this is a display filter only.",
     action: { label: "Clear filters" },
   };
 }
@@ -142,7 +142,7 @@ export function resolveNoRolesState(signals: {
       why: `${pendingSetup} role${pendingSetup === 1 ? " is" : "s are"} still in setup, so nothing is live.`,
       expected: NEEDS_ATTENTION,
       populates: "Finishing setup — requirements, blueprint and billing — publishes the role.",
-      activity: "No sourcing runs while a role is unpublished.",
+      activity: "No searching happens while a role is unpublished.",
       action: { label: "Finish setup", to: "/client/onboarding" },
       secondaryAction: { label: "See roles in setup", to: "/client/positions" },
     };
@@ -185,9 +185,9 @@ export function resolveNoCandidatesState(signals: {
       icon: "candidates",
       tone: "expected",
       title: "No candidates — no live role to search against",
-      why: "Candidate discovery runs per role, and you have no live role yet.",
+      why: "We search per role, and you have no live role yet.",
       expected: EXPECTED_NEW,
-      populates: "Publishing a role starts discovery, and approved matches land here.",
+      populates: "Publishing a role starts the search, and approved candidates land here.",
       activity: NOTHING_RUNNING,
       action: { label: "Add a role", to: "/intake" },
     };
@@ -198,12 +198,12 @@ export function resolveNoCandidatesState(signals: {
       id: "candidates.not-started",
       icon: "candidates",
       tone: "attention",
-      title: "Discovery hasn't started yet",
-      why: "Your role is set up, but no sourcing run has been started for it.",
+      title: "The search hasn't started yet",
+      why: "Your role is set up, but the search hasn't been started for it.",
       expected: NEEDS_ATTENTION,
-      populates: "Starting the run puts the discovery and evidence agents to work on this role.",
-      activity: "No agent is running for this role.",
-      action: { label: "Start the run", to: "/client/positions" },
+      populates: "Starting the search puts our sourcing and evidence agents to work on this role.",
+      activity: "Nothing is searching for this role yet.",
+      action: { label: "Start the search", to: "/client/positions" },
     };
   }
 
@@ -212,11 +212,11 @@ export function resolveNoCandidatesState(signals: {
       id: "candidates.processing",
       icon: "candidates",
       tone: "waiting",
-      title: "Candidates are being processed",
-      why: `${inProcessing} application${inProcessing === 1 ? " is" : "s are"} in evidence extraction and scoring, so none are ready to review.`,
+      title: "Candidates are being reviewed",
+      why: `${inProcessing} application${inProcessing === 1 ? " is" : "s are"} still being read and assessed, so none are ready for you yet.`,
       expected: EXPECTED_PROCESSING,
-      populates: "Each candidate appears once evidence is extracted, scored and approved for you.",
-      activity: "Evidence extraction and scoring are running now.",
+      populates: "Each candidate appears once their CV is read, assessed and approved for you.",
+      activity: "We are reading CVs and assessing them now.",
       eta: "Most CVs finish within a few minutes of upload.",
       action: { label: "See role progress", to: "/client/positions" },
     };
@@ -227,11 +227,11 @@ export function resolveNoCandidatesState(signals: {
       id: "candidates.no-qualifiers",
       icon: "candidates",
       tone: "attention",
-      title: "Discovery finished without qualifying candidates",
-      why: "The run completed, but nobody cleared the requirements in your blueprint.",
+      title: "The search finished with nobody qualified",
+      why: "The search finished, but nobody cleared your must-have requirements.",
       expected: NEEDS_ATTENTION,
       populates: "Widening must-haves, location or compensation usually reopens the pool.",
-      activity: "No further sourcing is running until the criteria change.",
+      activity: "No further searching until the requirements change.",
       action: { label: "Adjust requirements", to: "/client/positions" },
       secondaryAction: { label: "Talk to your team", to: "/client/conversations" },
     };
@@ -244,7 +244,7 @@ export function resolveNoCandidatesState(signals: {
     title: "No candidates approved for you yet",
     why: "Discovery is underway; candidates stay hidden until they are reviewed and approved for your workspace.",
     expected: EXPECTED_PROCESSING,
-    populates: "Approved matches appear here with evidence and a score.",
+    populates: "Approved candidates appear here with their evidence and fit.",
     activity: "Discovery and review are in progress.",
     action: { label: "See role progress", to: "/client/positions" },
   };
@@ -326,7 +326,7 @@ export function resolveNoAgentRunsState(signals: {
       title: "No agent activity yet",
       why: "Agents work on roles, and there is no live role in this workspace.",
       expected: EXPECTED_NEW,
-      populates: "Publishing a role triggers blueprint, discovery, evidence and scoring runs — each logged here.",
+      populates: "Publishing a role starts the setup, search, evidence and assessment work — each step logged here.",
       activity: NOTHING_RUNNING,
       action: { label: "Add a role", to: "/intake" },
     };
@@ -336,22 +336,22 @@ export function resolveNoAgentRunsState(signals: {
       id: "agents.running",
       icon: "agents",
       tone: "waiting",
-      title: "No completed runs yet",
-      why: `${signals.running} run${signals.running === 1 ? " is" : "s are"} in progress and nothing has finished.`,
+      title: "Nothing has finished yet",
+      why: `${signals.running} step${signals.running === 1 ? " is" : "s are"} in progress and nothing has finished.`,
       expected: EXPECTED_PROCESSING,
-      populates: "Each run posts its result here — actor, action, role and outcome — as it completes.",
-      activity: "Agent runs are executing now.",
+      populates: "Every step posts its result here — who, what, which role and the outcome.",
+      activity: "Work is happening now.",
     };
   }
   return {
     id: "agents.idle",
     icon: "agents",
     tone: "attention",
-    title: "No completed agent runs",
-    why: "Your roles are live but no run has been started or finished for them.",
+    title: "No agent activity finished yet",
+    why: "Your roles are live but no work has been started for them.",
     expected: NEEDS_ATTENTION,
-    populates: "Starting a run — or raising the agent level — creates the activity record here.",
-    activity: "No agent is running right now.",
+    populates: "Starting a search — or raising the agent level — creates activity here.",
+    activity: "Nothing is running right now.",
     action: { label: "Review agent settings", to: "/client/agents" },
   };
 }

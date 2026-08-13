@@ -187,7 +187,7 @@ export function CompactList({ rows }: { rows: Row[] }) {
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
-              <th className="px-4 py-2 text-left">Position</th>
+              <th className="px-4 py-2 text-left">Role</th>
               <th className="px-3 py-2 text-left">Status</th>
               <th className="px-3 py-2 text-left">Location</th>
               <th className="px-3 py-2 text-right">Delivered</th>

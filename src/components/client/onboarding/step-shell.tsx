@@ -315,7 +315,7 @@ export function WeightEditor({
         )}
       >
         {total === 100
-          ? "Weights add up to 100%. Every score run records these exact numbers."
+          ? "Weights add up to 100%. Every assessment records these exact numbers."
           : `Weights add up to ${total}%. They will be balanced to 100% when you save.`}
       </p>
     </div>

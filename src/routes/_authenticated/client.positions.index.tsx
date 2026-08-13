@@ -45,7 +45,7 @@ export const Route = createFileRoute("/_authenticated/client/positions/")({
  validateSearch: zodValidator(searchSchema),
  head: () => ({
  meta: [
- { title: "Positions · Client workspace" },
+ { title: "Roles · Client workspace" },
  { name: "robots", content: "noindex" },
  ],
  }),
@@ -270,7 +270,7 @@ function PositionsPage() {
    />
  ) : isError ? (
    <QueryErrorCard
-     title="We couldn't load your positions"
+     title="We couldn't load your roles"
      error={error}
      onRetry={() => refetch()}
      retrying={isFetching}

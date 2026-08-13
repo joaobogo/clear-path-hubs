@@ -623,7 +623,7 @@ function BlueprintStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
         <div className="space-y-4 rounded-lg border border-border/70 p-4">
           <p className="text-sm text-muted-foreground">
             Nothing compiled yet. The system reads your requirements and the job description,
-            then proposes a rubric and a sourcing plan for you to check.
+            then proposes the requirements and a sourcing plan for you to check.
           </p>
           <Button type="button" onClick={() => compile.mutate()} disabled={compile.isPending}>
             {compile.isPending && <Loader2 className="mr-2 size-4 animate-spin" aria-hidden />}
@@ -935,8 +935,8 @@ function RunStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
   const start = useMutation({
     mutationFn: () => retry({ data: { positionId: pos!.id } }),
     onSuccess: async (res) => {
-      if (res?.ok) toast.success("The first run has started.");
-      else toast.info("A run is already in progress for this role.");
+      if (res?.ok) toast.success("The first search has started.");
+      else toast.info("A search is already in progress for this role.");
       await onDone();
     },
     onError: (e: Error) => toastError(e),
@@ -973,7 +973,7 @@ function RunStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
 
       {blockers.length > 0 ? (
         <div className="space-y-3 rounded-lg border border-amber-500/40 bg-amber-500/5 p-4">
-          <p className="text-sm font-medium">Before the first run</p>
+          <p className="text-sm font-medium">Before the first search</p>
           <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
             {blockers.map((b) => (
               <li key={b}>{b}</li>
@@ -1000,7 +1000,7 @@ function RunStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
         onContinue={() => start.mutate()}
         saving={start.isPending}
         continueDisabled={blockers.length > 0}
-        continueLabel="Start the first run"
+        continueLabel="Start the first search"
         onSave={saveForLater}
       />
     </div>
@@ -1085,7 +1085,7 @@ function EntryStep({ state, onDone, back, goTo }: BodyProps) {
             onEdit={() => goTo("systems")}
           />
           <ReviewRow
-            label="First run"
+            label="First search"
             value={state.complete.includes("run") ? "Started" : "Not started"}
             done={state.complete.includes("run")}
             onEdit={() => goTo("run")}

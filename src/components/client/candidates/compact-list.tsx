@@ -35,7 +35,7 @@ export function CompactList({
             <tr>
               <th className="w-8 py-2 px-3"></th>
               <th className="text-left py-2 px-3">Candidate</th>
-              <th className="text-left py-2 px-3">Position</th>
+              <th className="text-left py-2 px-3">Role</th>
               <th className="text-left py-2 px-3">Fit</th>
               <th className="text-left py-2 px-3">Must-haves</th>
               <th className="text-left py-2 px-3">Location</th>
