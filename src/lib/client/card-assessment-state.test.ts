@@ -36,6 +36,28 @@ describe("deriveCardAssessment", () => {
   it("is pending with no band", () => {
     expect(deriveCardAssessment({ evidenceBullets: 0 }).state).toBe("pending");
   });
+
+  it("shows 0 of N evidenced instead of a mapping message when the band is present but no bullets are written", () => {
+    const a = deriveCardAssessment({
+      fitLabel: "strong",
+      score: 88,
+      evidenceBullets: 0,
+      support: { supported: 0, total: 6 },
+    });
+    expect(a.state).toBe("settled");
+    expect(a.thin).toBe(true);
+    expect(a.note).toBe("0 of 6 of your requirements evidenced");
+  });
+
+  it("still re-checks stale candidates without evidence even when support is provided", () => {
+    const a = deriveCardAssessment({
+      fitLabel: "strong",
+      evidenceBullets: 0,
+      support: { supported: 0, total: 6 },
+      freshness: stale,
+    });
+    expect(a.state).toBe("rechecking");
+  });
 });
 
 describe("dropRequirementEcho", () => {
