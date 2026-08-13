@@ -1,5 +1,13 @@
 import { CANONICAL_ORIGIN } from "@/lib/canonical-origin";
 import type { ContentEntry } from "@/lib/marketing/content";
+import { BRAND_ONE_LINER } from "@/config/product-language";
+
+/**
+ * Branded 1200x630 share card, served from the canonical domain. Every route
+ * falls back to this so no page can inherit a preview-host image from the
+ * platform's automatic screenshot.
+ */
+export const DEFAULT_SHARE_IMAGE = "/og-image.png";
 
 // Canonical production origin. Preview subdomains must not
 // compete with the primary domain in search — its canonical URLs point
@@ -164,11 +172,13 @@ export function marketingHead(
     entry?.meta.description ||
       entry?.meta["og:description"] ||
       fallback?.description ||
-      "AI Hiring Intelligence Platform — agents run the search, evidence backs every score, and ranked candidates land in a live Decision Workspace.",
+      BRAND_ONE_LINER,
   );
   const url = `${CANONICAL_ORIGIN}${path}`;
-  // Only the page's own hero/cover becomes its share image; no placeholder.
-  const image = absoluteShareImage(options?.image);
+  // The page's own hero/cover wins; otherwise the branded card on this domain.
+  // Never a preview-host URL, and never an empty share preview.
+  const image =
+    absoluteShareImage(options?.image) ?? absoluteShareImage(DEFAULT_SHARE_IMAGE);
   const scripts = [
     ...(options?.breadcrumbs?.length ? [breadcrumbScript(options.breadcrumbs)] : []),
     ...(options?.scripts ?? []),
@@ -181,7 +191,7 @@ export function marketingHead(
       { property: "og:description", content: description },
       { property: "og:url", content: url },
       { property: "og:type", content: entry?.meta["og:type"] || "website" },
-      { name: "twitter:card", content: image ? "summary_large_image" : "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: title },
       { name: "twitter:description", content: description },
       ...(image

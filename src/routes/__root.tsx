@@ -10,6 +10,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { FGV } from "@/config/ecosystem";
+import { BRAND_ONE_LINER, PRODUCT_CATEGORY } from "@/config/product-language";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
@@ -105,8 +106,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               name: "TaaSFlow",
               url: "https://taasflow.com",
               logo: "https://taasflow.com/og-image.png",
-              description:
-                "TAASFlow is a software-enabled recruiting system — ATS, recruiting agents, multichannel outreach, and curated talent data delivered as a subscription, not a traditional agency.",
+              image: "https://taasflow.com/og-image.png",
+              description: BRAND_ONE_LINER,
+              sameAs: ["https://www.linkedin.com/company/taasflow"],
               parentOrganization: {
                 "@type": "Organization",
                 name: FGV.name,
@@ -118,11 +120,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               "@id": "https://taasflow.com/#software",
               name: "TaaSFlow",
               applicationCategory: "BusinessApplication",
-              applicationSubCategory: "AI Hiring Intelligence Platform",
+              applicationSubCategory: PRODUCT_CATEGORY,
               operatingSystem: "Web",
               url: "https://taasflow.com/platform",
-              description:
-                "AI Hiring Intelligence Platform — Intake Engine, Blueprint Compiler, Agent Layer, Evidence Graph, Scoring Engine and Decision Workspace in one governed system.",
+              description: `${BRAND_ONE_LINER} Intake Engine, Blueprint Compiler, Agent Layer, Evidence Graph, Scoring Engine and Decision Workspace in one governed system.`,
               publisher: { "@id": "https://taasflow.com/#organization" },
             },
             {

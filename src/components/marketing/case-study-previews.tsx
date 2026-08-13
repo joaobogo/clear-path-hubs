@@ -28,6 +28,13 @@ export function CaseStudyPreviews({
           {title}
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-[color:var(--brand-navy)]/80">{intro}</p>
+        {/* Keeps this band consistent with the proof pledge: industry-level
+            outcomes are published anonymised; client names only with written
+            approval. */}
+        <p className="mt-2 text-xs leading-relaxed text-[color:var(--brand-navy)]/70">
+          Engagements are shown anonymised by industry and company type. Client
+          names appear only with written approval.
+        </p>
       </div>
 
       <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

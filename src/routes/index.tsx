@@ -1,7 +1,7 @@
 import * as React from "react";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { HeroDecisionWorkspace } from "@/components/home/hero-decision-workspace";
-import { PRODUCT_CATEGORY, SYSTEM_CLAIM, MODULES } from "@/config/product-language";
+import { PRODUCT_CATEGORY, SYSTEM_CLAIM, MODULES, BRAND_ONE_LINER, BRAND_DESCRIPTOR } from "@/config/product-language";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Activity,
@@ -45,7 +45,7 @@ import {
   SiteShell,
 } from "@/components/marketing/site-shell";
 
-import { marketingHead } from "@/lib/marketing/head";
+import { marketingHead, faqScript } from "@/lib/marketing/head";
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
 import { ModelComparisonTable } from "@/components/marketing/model-comparison-table";
 import { CaseStudyPreviews } from "@/components/marketing/case-study-previews";
@@ -53,7 +53,7 @@ import { OperatingSystem } from "@/components/marketing/operating-system";
 import { WorkspaceTour } from "@/components/marketing/workspace-tour";
 import { AudienceSelector } from "@/components/marketing/audience-selector";
 import { TrustStrip } from "@/components/marketing/trust-strip";
-import { StraightAnswers } from "@/components/marketing/straight-answers";
+import { StraightAnswers, STRAIGHT_ANSWERS_FAQ } from "@/components/marketing/straight-answers";
 import { HiddenCostOfWaiting } from "@/components/marketing/hidden-cost-of-waiting";
 import { WhySwitchMatrix } from "@/components/marketing/why-switch-matrix";
 import { ProofSystem } from "@/components/marketing/proof-system";
@@ -71,11 +71,19 @@ import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 
 export const Route = createFileRoute("/")({
   head: () =>
-    marketingHead(undefined, "/", {
-      title: `TaaSFlow | ${PRODUCT_CATEGORY}`,
-      description:
-        `${PRODUCT_CATEGORY}. ${SYSTEM_CLAIM} Ranked candidates in a live ${MODULES.workspace} — no placement fees.`,
-    }),
+    marketingHead(
+      undefined,
+      "/",
+      {
+        title: `TaaSFlow | ${BRAND_DESCRIPTOR}`,
+        description: `${BRAND_ONE_LINER} ${SYSTEM_CLAIM} Ranked candidates in a live ${MODULES.workspace} — no placement fees.`,
+      },
+      {
+        // Every Q&A visible on this page, so answer engines quote the page's
+        // own text rather than paraphrasing it.
+        scripts: [faqScript([...HOMEPAGE_FAQ, ...STRAIGHT_ANSWERS_FAQ])],
+      },
+    ),
 
   component: Home,
 });
@@ -256,7 +264,7 @@ const AGENCY_COMPARE = [
 const HOMEPAGE_FAQ = [
   {
     q: "What is TaaSFlow?",
-    a: "TaasFlow is an on-demand Talent Management SaaS platform delivered on flexible commercial terms. A recruiter runs sourcing and evaluation for your roles inside a live workspace your team can see at any time.",
+    a: "TaaSFlow is an on-demand Talent Management SaaS platform delivered on flexible commercial terms. A recruiter runs sourcing and evaluation for your roles inside a live workspace your team can see at any time.",
   },
   {
     q: "How is TaaSFlow different from a recruiting agency?",
@@ -1347,7 +1355,7 @@ function Home() {
                 Human first, AI enabled
               </p>
               <p className="max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
-                TaasFlow is a complete Talent Management solution capable of
+                TaaSFlow is a complete Talent Management solution capable of
                 running continuous sourcing, creating live talent pipelines
                 — supported by full ATS functionality.
               </p>

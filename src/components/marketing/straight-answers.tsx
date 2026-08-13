@@ -21,7 +21,7 @@ import { PublicPage, PublicSection } from "@/components/marketing/site-shell";
  * 6. Human vs AI    — humans decide, AI structures — the boundary is explicit.
  */
 
-const ITEMS: {
+export const ITEMS: {
   icon: React.ComponentType<{ className?: string }>;
   question: string;
   answer: string;
@@ -133,3 +133,12 @@ export function StraightAnswers() {
     </PublicSection>
   );
 }
+
+/**
+ * The same six Q&As this section renders, shaped for FAQPage JSON-LD. Built
+ * from ITEMS so the structured data can never drift from the visible text.
+ */
+export const STRAIGHT_ANSWERS_FAQ = ITEMS.map((it) => ({
+  q: it.question,
+  a: `${it.answer} ${it.detail}`,
+}));

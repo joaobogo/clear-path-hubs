@@ -2235,7 +2235,7 @@
     {
       "source_route": "/partnerships/staffing",
       "section_order": 5,
-      "heading": "TaasFlow",
+      "heading": "TaaSFlow",
       "heading_level": 3,
       "purpose": "INFERRED_FROM_HEADING",
       "copy_source": "src/content/pages/partnerships-staffing.json",
@@ -3455,7 +3455,7 @@
     {
       "source_route": "/about",
       "section_order": 5,
-      "heading": "Why TAASFlow exists",
+      "heading": "Why TaaSFlow exists",
       "heading_level": 3,
       "purpose": "INFERRED_FROM_HEADING",
       "copy_source": "src/content/pages/about.json",

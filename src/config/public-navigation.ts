@@ -205,8 +205,10 @@ export const FOOTER_GROUPS: NavGroup[] = [
 ];
 
 
+// Canonical brand boilerplate — same one-liner used in title tags, meta
+// descriptions and Organization schema, reused verbatim network-wide.
 export const FOOTER_DESCRIPTION =
-  "TaaSFlow is an AI Hiring Intelligence Platform. Agents run the search, evidence backs every score, and ranked candidates land in a live Decision Workspace for one flat fee.";
+  "TaaSFlow is recruiting subscription and hiring infrastructure, powered by AI hiring intelligence. Agents run the search, evidence backs every score, and ranked candidates land in a live Decision Workspace for one flat fee.";
 
 export const SOCIAL_LINKS = [
   { href: "https://www.linkedin.com/company/taasflow", label: "LinkedIn" },
