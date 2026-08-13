@@ -171,22 +171,38 @@ function AdminPaymentsPage() {
 // Real records only: confirmed charges, roles stuck before payment, live pilots.
 function OpsPanel() {
   const loadOps = useServerFn(getPaymentsOps);
-  const paymentsQuery = useQuery({
+  const opsQuery = useQuery({
     queryKey: ["admin-payments-ops"],
     queryFn: () => loadOps(),
     staleTime: 60_000,
   });
+  const { data, isLoading, error } = opsQuery;
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return (
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid gap-4 lg:grid-cols-3" aria-busy="true">
         {Array.from({ length: 3 }).map((_, i) => (
           <Skeleton key={i} className="h-56 w-full" />
         ))}
       </div>
     );
   }
-  if (error || !data) return null;
+  if (!data) {
+    return (
+      <Card>
+        <CardContent className="space-y-3 py-8 text-center text-sm text-muted-foreground">
+          <p>
+            {error
+              ? "We couldn't load payment operations. The ledger below is unaffected."
+              : "Payment operations aren't available right now."}
+          </p>
+          <Button variant="outline" size="sm" onClick={() => void opsQuery.refetch()}>
+            Try again
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const totals = Object.entries(data.totals.paid_cents_by_currency);
 
