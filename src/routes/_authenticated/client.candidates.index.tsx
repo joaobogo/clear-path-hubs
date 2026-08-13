@@ -44,7 +44,7 @@ const searchSchema = z.object({
  availability: fallback(z.string(), "all").default("all"),
  minExp: fallback(z.string(), "").default(""),
  location: fallback(z.string(), "").default(""),
- sort: fallback(z.string(), "recent").default("recent"),
+ sort: fallback(z.string(), "score").default("score"),
  view: fallback(z.enum(["cards", "list", "compare"]), "cards").default("cards"),
  org: fallback(z.string().uuid().optional(), undefined),
  // Canonical KPI drill-through key. Mirrors client-kpi.server predicates:
