@@ -1,3 +1,4 @@
+import { describeCvDownloadFailure } from "@/lib/cv-download-error";
 import { useCallback, useRef, useState } from "react";
 import { getCandidateCvDownload } from "@/lib/cv-download.functions";
 
