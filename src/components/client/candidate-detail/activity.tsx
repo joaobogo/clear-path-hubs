@@ -231,7 +231,7 @@ export function TalentMemoryAction({
     <div className="rounded-xl border bg-card p-4 shadow-sm">
       <div className="mb-2 flex items-center justify-between gap-2">
         <h2 className="flex items-center gap-1.5 text-sm font-semibold uppercase tracking-[0.08em]">
-          <Award className="h-4 w-4 text-warning" aria-hidden />
+          <Award className="h-4 w-4 text-warning-strong" aria-hidden />
           Talent memory
         </h2>
         <SilverMedalistBadge orgId={orgId} matchId={matchId} />

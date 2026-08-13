@@ -72,7 +72,7 @@ export function ResurfacePanel({
       <header className="mb-3 flex items-start justify-between gap-3">
         <div>
           <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.08em]">
-            <Award className="h-4 w-4 text-warning" aria-hidden />
+            <Award className="h-4 w-4 text-warning-strong" aria-hidden />
             From your talent memory
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">

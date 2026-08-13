@@ -119,11 +119,11 @@ export function OfferHolderRows({
 
             <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
               {row.needs_attention ? (
-                <AlertTriangle className="h-3.5 w-3.5 text-warning" aria-hidden />
+                <AlertTriangle className="h-3.5 w-3.5 text-warning-strong" aria-hidden />
               ) : (
                 <CalendarClock className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
               )}
-              <span className={row.needs_attention ? "font-medium text-warning" : "text-muted-foreground"}>
+              <span className={row.needs_attention ? "font-medium text-warning-strong" : "text-muted-foreground"}>
                 {h.expected_response_date
                   ? `${fmtDate(h.expected_response_date)} — ${row.response.label}`
                   : row.response.label}

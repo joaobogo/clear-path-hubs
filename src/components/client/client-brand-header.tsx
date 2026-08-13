@@ -114,7 +114,7 @@ export function ClientBrandHeader({
             {supportView ? (
               <>
                 <span aria-hidden> · </span>
-                <span className="text-warning">support view</span>
+                <span className="text-warning-strong">support view</span>
               </>
             ) : null}
           </div>

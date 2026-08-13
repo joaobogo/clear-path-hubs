@@ -40,7 +40,7 @@ export function AgentActivityList({
           <li key={row.id} className="flex items-start gap-3 p-4">
             <span className="mt-0.5">
               {row.outcome === "blocked" ? (
-                <Ban className="h-4 w-4 text-warning" aria-hidden />
+                <Ban className="h-4 w-4 text-warning-strong" aria-hidden />
               ) : row.outcome === "failed" ? (
                 <CircleSlash
                   className="h-4 w-4 text-destructive"

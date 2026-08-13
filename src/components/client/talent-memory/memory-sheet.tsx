@@ -93,7 +93,7 @@ export function MemorySheet({
           <>
             <SheetHeader>
               <SheetTitle className="flex items-center gap-2">
-                <Award className="h-4 w-4 text-warning" />
+                <Award className="h-4 w-4 text-warning-strong" />
                 {m.candidate.display_name}
               </SheetTitle>
             </SheetHeader>

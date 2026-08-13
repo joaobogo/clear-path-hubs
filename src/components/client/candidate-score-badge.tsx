@@ -52,7 +52,7 @@ type Props = {
 const ACCENT_CLASSES: Record<FitPresentation["accent"], string> = {
   emerald: "border-success/30 bg-success/10 text-success",
   sky: "border-info/30 bg-info/10 text-info",
-  amber: "border-warning/30 bg-warning/10 text-warning",
+  amber: "border-warning/30 bg-warning/10 text-warning-strong",
   slate: "border-border bg-muted text-muted-foreground",
   rose: "border-destructive/30 bg-destructive/10 text-destructive",
 };

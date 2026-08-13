@@ -75,7 +75,7 @@ const STATUS_STYLE: Record<RailStatus, string> = {
   done: "border-success/30 text-success",
   in_progress: "border-info/30 text-info",
   needs_you: "border-primary/40 text-primary",
-  blocked: "border-warning/40 text-warning",
+  blocked: "border-warning/40 text-warning-strong",
   failed: "border-destructive/50 text-destructive",
   stopped: "border-muted-foreground/40 text-muted-foreground",
 };

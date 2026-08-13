@@ -116,7 +116,7 @@ export function RediscoveryCard({
         </div>
         <div className="flex flex-shrink-0 flex-wrap gap-1">
           {candidate.is_silver && (
-            <Badge className="border-warning/60 bg-warning/60 text-warning text-[10px]">
+            <Badge className="border-warning/60 bg-warning/60 text-warning-strong text-[10px]">
               <Star className="mr-0.5 h-2.5 w-2.5" /> silver
             </Badge>
           )}

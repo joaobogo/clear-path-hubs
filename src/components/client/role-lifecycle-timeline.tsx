@@ -43,7 +43,7 @@ const STATE_ICON: Record<LifecycleState, typeof Check> = {
 const STATE_DOT: Record<LifecycleState, string> = {
   completed: "border-primary/40 bg-primary/10 text-primary",
   active: "border-primary bg-primary/15 text-primary",
-  waiting: "border-warning/50 bg-warning/10 text-warning",
+  waiting: "border-warning/50 bg-warning/10 text-warning-strong",
   blocked: "border-destructive/50 bg-destructive/10 text-destructive",
   skipped: "border-border bg-muted text-muted-foreground",
   failed: "border-destructive/60 bg-destructive/10 text-destructive",
@@ -170,7 +170,7 @@ function StageRow({
           {stage.owner} · {times}
         </p>
         {(stage.pendingApprovals.length > 0 || stage.blockers.length > 0) && !open && (
-          <p className="mt-1 text-xs font-medium text-warning">
+          <p className="mt-1 text-xs font-medium text-warning-strong">
             {[...stage.blockers, ...stage.pendingApprovals][0]}
           </p>
         )}

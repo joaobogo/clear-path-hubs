@@ -139,7 +139,7 @@ function TalentMemoryPage() {
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-            <Award className="h-6 w-6 text-warning" aria-hidden />
+            <Award className="h-6 w-6 text-warning-strong" aria-hidden />
             Talent memory
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">

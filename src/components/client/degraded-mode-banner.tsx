@@ -44,7 +44,7 @@ export function DegradedModeBanner({ className }: { className?: string }) {
       <Icon
         className={cn(
           "mt-0.5 h-4 w-4 shrink-0",
-          maintenance ? "text-[color:var(--brand-navy)]/70" : "text-warning",
+          maintenance ? "text-[color:var(--brand-navy)]/70" : "text-warning-strong",
         )}
         aria-hidden
       />

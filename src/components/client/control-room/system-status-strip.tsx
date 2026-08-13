@@ -82,7 +82,7 @@ export function SystemStatusStrip({ orgId }: { orgId: string }) {
         </span>
 
         {s.retrying_total > 0 && (
-          <span className="flex items-center gap-1.5 text-warning">
+          <span className="flex items-center gap-1.5 text-warning-strong">
             <RotateCw className="h-3.5 w-3.5" aria-hidden />
             {s.retrying_total} retrying
           </span>
