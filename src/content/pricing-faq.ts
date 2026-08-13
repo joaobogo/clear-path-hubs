@@ -1,4 +1,4 @@
-export const PRICING_FAQ: { q: string; a: string }[] = [] = [
+export const PRICING_FAQ: { q: string; a: string }[] = [
   {
     q: "How does subscription recruiting differ from an agency?",
     a: "An agency charges a percentage of first-year salary once a candidate is placed. TaaSFlow charges a flat monthly fee for the search itself — the Agent Layer, the sourcing, the evaluation, the Decision Workspace. Every candidate the platform surfaces stays in your workspace whether they get hired or not.",
