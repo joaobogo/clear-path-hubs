@@ -189,6 +189,8 @@ export function resolveFirstRunState(): SurfaceStateContent {
 export function resolveNoCandidatesState(signals: {
   /** Live roles in the workspace. */
   activeRoles: number;
+  /** Roles in setup but not yet live. */
+  rolesInSetup: number;
   /** Discovery/sourcing has been started for at least one role. */
   discoveryStarted: boolean;
   /** Candidates currently being processed or scored (not yet approved). */
@@ -196,7 +198,22 @@ export function resolveNoCandidatesState(signals: {
   /** Discovery finished but produced nobody above the bar. */
   runsCompleted: number;
 }): SurfaceStateContent {
-  const { activeRoles, discoveryStarted, inProcessing, runsCompleted } = signals;
+  const { activeRoles, rolesInSetup, discoveryStarted, inProcessing, runsCompleted } = signals;
+
+  if (activeRoles === 0 && rolesInSetup > 0) {
+    return {
+      id: "candidates.role-in-setup",
+      icon: "candidates",
+      tone: "waiting",
+      title: "Candidates are on the way",
+      why: `${rolesInSetup} role${rolesInSetup === 1 ? " is" : "s are"} in setup. Sourcing starts once the role is published.`,
+      expected: EXPECTED_PROCESSING,
+      populates: "Approved candidates appear here after the role goes live and the first search runs.",
+      activity: "The role blueprint is being finalized before searching begins.",
+      eta: "Expect the first candidates within 24–48 hours of the role going live.",
+      action: { label: "See role progress", to: "/client/positions" },
+    };
+  }
 
   if (activeRoles === 0) {
     return {
@@ -218,9 +235,9 @@ export function resolveNoCandidatesState(signals: {
       icon: "candidates",
       tone: "attention",
       title: "The search hasn't started yet",
-      why: "Your role is set up, but the search hasn't been started for it.",
+      why: "Your role is live, but the search hasn't been started for it.",
       expected: NEEDS_ATTENTION,
-      populates: "Starting the search puts our sourcing and evidence agents to work on this role.",
+      populates: "Starting the search puts our sourcing and evidence review to work on this role.",
       activity: "Nothing is searching for this role yet.",
       action: { label: "Start the search", to: "/client/positions" },
     };
@@ -265,9 +282,11 @@ export function resolveNoCandidatesState(signals: {
     expected: EXPECTED_PROCESSING,
     populates: "Approved candidates appear here with their evidence and fit.",
     activity: "Discovery and review are in progress.",
+    eta: "First candidates usually arrive within 24–48 hours of a search starting.",
     action: { label: "See role progress", to: "/client/positions" },
   };
 }
+
 
 /* ------------------------------------------------------------- 3. evidence */
 
