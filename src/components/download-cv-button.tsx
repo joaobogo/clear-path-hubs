@@ -165,9 +165,9 @@ export function DownloadLatestCvLink({
   className?: string;
   label?: string;
 }) {
-  const { state, error, run } = useCvDownload(matchId, "download");
+  const { state, failure, run } = useCvDownload(matchId, "download");
   return (
-    <span className={`inline-flex items-center gap-1.5 ${className ?? ""}`}>
+    <span className={`inline-flex flex-wrap items-center gap-1.5 ${className ?? ""}`}>
       <button
         type="button"
         onClick={run}
