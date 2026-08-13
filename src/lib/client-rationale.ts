@@ -50,6 +50,18 @@ function truncate(s: string, max = 160): string {
   return t.length <= max ? t : `${t.slice(0, max - 1).trimEnd()}…`;
 }
 
+/** Normalise text for comparison, ignoring case, punctuation and spacing. */
+function norm(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+/** A claim that only restates the requirement is not evidence. */
+function isClaimEcho(requirement: string, claim: string): boolean {
+  const req = norm(requirement);
+  const cl = norm(claim);
+  return !req || !cl || cl === req || cl.startsWith(`${req} `);
+}
+
 /**
  * Map whatever the record labelled a source as onto the four things a client
  * recognises. Unknown provenance is attributed to recruiter notes rather than
