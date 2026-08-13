@@ -49,7 +49,7 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
     <SectionCard
       title="Score breakdown"
       icon={<Gauge className="h-4 w-4" />}
-      description="Why this candidate ranks where they do: the evidence behind each requirement, the rubric criteria, and the reasons that moved the score."
+      description="Why this candidate ranks where they do: the evidence behind each requirement, how each scoring criterion landed, and the reasons that moved the score."
     >
       {/* Headline: the figure, its band and the method that produced it. */}
       <div className="flex flex-wrap items-end justify-between gap-3 rounded-lg border bg-muted/30 p-3">
@@ -117,10 +117,10 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
         ))}
       </div>
 
-      {/* Rubric criteria with weights, only when the run stored them. */}
+      {/* Scoring criteria with weights, only when the run stored them. */}
       {b.rubric.length > 0 && (
         <div className="mt-5">
-          <h3 className="text-sm font-semibold">Rubric criteria</h3>
+          <h3 className="text-sm font-semibold">Scoring criteria</h3>
           <p className="mt-0.5 text-xs text-muted-foreground">
             How each criterion scored, and how much it counts toward the total.
           </p>
