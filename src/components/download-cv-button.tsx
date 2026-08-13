@@ -32,7 +32,8 @@ function useCvDownload(matchId: string, mode: Mode) {
   async function run() {
     if (state === "loading") return;
     setState("loading");
-    setError(null);
+    setFailure(null);
+    setAttempts((n) => n + 1);
     if (resetTimer.current) clearTimeout(resetTimer.current);
     // Pop the tab synchronously so the browser does not treat the post-await
     // open() as a blocked popup.
