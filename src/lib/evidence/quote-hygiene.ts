@@ -7,6 +7,8 @@
  */
 
 export const QUOTE_MAX_CHARS = 240;
+/** Below this, a slice is a fragment rather than a readable quote. */
+export const QUOTE_MIN_CHARS = 24;
 
 const EMAIL_RE = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i;
 const URL_RE = /(https?:\/\/|www\.)\S+|\b[a-z0-9-]+\.(com|net|org|io|dev|co|ai)(\/\S*)?\b/i;
@@ -104,7 +106,11 @@ export function cleanQuote(raw: string | null | undefined): string {
   const trimmedStart = snapStart(base);
   // Never let hygiene reduce a quote to a stub: keep the fuller start instead.
   const started = snapEnd(trimmedStart).length >= 40 ? trimmedStart : base;
-  return capAtWord(snapEnd(started)).trim();
+  let out = capAtWord(snapEnd(started)).trim();
+  if (out.length < QUOTE_MIN_CHARS) return "";
+  // A quote that still opens mid-sentence is marked as a continuation.
+  if (/^[a-z]/.test(out)) out = `…${out}`;
+  return out;
 
 }
 
