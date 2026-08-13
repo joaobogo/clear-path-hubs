@@ -56,7 +56,13 @@ function snapToSentences(text: string): string {
     }
   }
   const lastBoundary = Math.max(out.lastIndexOf("."), out.lastIndexOf("!"), out.lastIndexOf("?"));
-  if (lastBoundary >= 40) out = out.slice(0, lastBoundary + 1);
+  if (lastBoundary >= 25) {
+    out = out.slice(0, lastBoundary + 1);
+  } else {
+    // No sentence end: drop the trailing partial word so the quote reads whole.
+    const lastSpace = out.lastIndexOf(" ");
+    if (lastSpace >= 25) out = `${out.slice(0, lastSpace).trim()}…`;
+  }
   return out.trim();
 }
 
