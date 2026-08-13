@@ -2,7 +2,9 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { getCandidateCvDownload } from "@/lib/cv-download.functions";
-import { AlertCircle, Check, Download, Eye, Loader2 } from "lucide-react";
+import { describeCvDownloadFailure, type CvDownloadFailure } from "@/lib/cv-download-error";
+import { AlertCircle, Check, Download, Eye, Loader2, RotateCcw } from "lucide-react";
+
 
 type Mode = "download" | "preview";
 
