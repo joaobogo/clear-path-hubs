@@ -61,7 +61,7 @@ describe("buildShortlistRationale", () => {
     expect(r.lines[0]!.verdict).toBe("gap");
   });
 
-  it("strips leading echoes from otherwise valid claims", () => {
+  it("keeps a claim that is longer than the requirement, even if it starts with it", () => {
     const r = buildShortlistRationale({
       requirement_rows: [
         requirementRow({
@@ -71,7 +71,7 @@ describe("buildShortlistRationale", () => {
       screening_answers: [],
       evidence: [],
     });
-    expect(r.lines[0]!.claim).toBe("Built a reporting warehouse in Postgres");
+    expect(r.lines[0]!.claim).toBe("Strong SQL: built a reporting warehouse in Postgres");
     expect(r.lines[0]!.underReview).toBe(false);
   });
 
