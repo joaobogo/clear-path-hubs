@@ -1,4 +1,5 @@
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
+import { cleanQuote } from "@/lib/evidence/quote-hygiene";
 
 export type EvidenceBullet = {
   /** The role requirement this evidence answers. */
@@ -10,7 +11,7 @@ export type EvidenceBullet = {
 };
 
 function clean(s: string | null | undefined): string {
-  return (s ?? "").replace(/\s+/g, " ").trim();
+  return cleanQuote(s);
 }
 
 function truncate(s: string, max = 130): string {

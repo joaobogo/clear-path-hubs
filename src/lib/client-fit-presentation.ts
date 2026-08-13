@@ -8,6 +8,7 @@
 // Thresholds are not defined in this file. Any score → band decision defers to
 // src/lib/scoring/bands.ts.
 
+import { cleanQuote } from "@/lib/evidence/quote-hygiene";
 import { classifyBand, type ScoreBandKey } from "@/lib/scoring/bands";
 
 
@@ -255,7 +256,7 @@ export function buildRequirementRows(
                   .slice(0, 3)
                   .map((e: AnyRow) => ({
                     source: e?.source ?? e?.section ?? null,
-                    snippet: String(e?.snippet ?? e?.text ?? e?.value ?? ""),
+                    snippet: cleanQuote(String(e?.snippet ?? e?.text ?? e?.value ?? "")),
                   }))
                   .filter((e: AnyRow) => e.snippet)
               : [],
@@ -280,7 +281,7 @@ export function buildRequirementRows(
     const key = String(item?.rubric_criterion_key ?? "").toLowerCase().trim();
     if (!key) continue;
     const status = normStatus(item?.result ?? item?.match_type);
-    const snippet = String(item?.factual_quote ?? item?.interpretation ?? "").trim();
+    const snippet = cleanQuote(String(item?.factual_quote ?? item?.interpretation ?? ""));
     const entry = evIndex.get(key) ?? { status, evidence: [] };
     if (STATUS_RANK[status] > STATUS_RANK[entry.status]) entry.status = status;
     if (snippet && entry.evidence.length < 3) {

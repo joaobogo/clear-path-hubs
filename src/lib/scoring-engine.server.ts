@@ -10,6 +10,7 @@ import {
 } from "./scoring/engine-calibration";
 
 import { ENGINE_VERSION } from "./scoring/engine-version";
+import { cleanQuote } from "./evidence/quote-hygiene";
 import { bandToFitLabel, classifyBand } from "./scoring/bands";
 import { computeFit } from "./scoring/fit-math";
 import { expandTerm } from "./scoring/term-synonyms";
@@ -232,8 +233,10 @@ function findSnippet(
   if (idx === -1) return null;
   const start = Math.max(0, idx - radius);
   const end = Math.min(cv.length, idx + term.length + radius);
-  const snippet = cv.slice(start, end).replace(/\s+/g, " ").trim();
+  const snippet = cleanQuote(cv.slice(start, end));
+  if (!snippet) return null;
   return { snippet, location: `cv:${start}-${end}` };
+
 }
 
 
