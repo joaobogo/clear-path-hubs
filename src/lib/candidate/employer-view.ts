@@ -168,6 +168,12 @@ export const EMPLOYER_VIEW_FIELDS: EmployerViewField[] = [
     label:
       "Whether your assessment still matches your current profile and the role's current brief",
   },
+  {
+    key: "review_timeline",
+    group: "process",
+    label: "Where your application stands: CV read, scored, reviewed, shared",
+    note: "Only steps that actually completed are shown as done.",
+  },
   { key: "source_trace", group: "process", label: "How you reached this role, and your application reference" },
   {
     key: "audit_trail",
