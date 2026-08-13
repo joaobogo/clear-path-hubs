@@ -48,7 +48,21 @@ export type MatchStage =
   | "hired"
   | "not_moving_forward";
 
-export const TOP_FIT_LABELS = ["excellent", "strong"] as const;
+/**
+ * Every stored word that means "top of the pile", across both vocabularies in
+ * play: the engine's `fit_label` (`strong_fit`) and the canonical band keys
+ * (`exceptional` / `top` / `strong`). The historical list here was
+ * `["excellent","strong"]`, which no writer ever produces — so the "Strongest
+ * candidates" figure counted zero forever. Band thresholds stay in
+ * `scoring/bands.ts`; this is only the label vocabulary.
+ */
+export const TOP_FIT_LABELS = [
+  "strong_fit",
+  "exceptional",
+  "top",
+  "strong",
+  "excellent",
+] as const;
 
 export type KpiRow = {
   id: string;
