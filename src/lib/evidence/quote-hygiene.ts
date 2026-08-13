@@ -111,7 +111,9 @@ function snapEnd(text: string): string {
 
 /** Remove leading punctuation/digit debris left by an offset slice. */
 function stripLeadingJunk(text: string): string {
-  let out = text.replace(/^[^A-Za-z]+/, "").trim();
+  // Digits open real quotes ("5+ years Kubernetes"), so only punctuation and
+  // whitespace count as slice debris.
+  let out = text.replace(/^[^A-Za-z0-9]+/, "").trim();
   const firstSpace = out.indexOf(" ");
   if (firstSpace > 0 && firstSpace <= 2 && out.length - firstSpace >= 40) {
     out = out.slice(firstSpace + 1).trim();
