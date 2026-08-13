@@ -4,7 +4,13 @@
 // against the KPI definitions in client-kpi.server.ts. Every criterion is
 // URL-driven, so this function is the single answer to "does the list agree
 // with the chips and the tile that linked here?".
-import { BAND_RANK, type ClientCandidateDTO } from "@/lib/client-fit-presentation";
+import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
+
+// Fit-band ordering for the "Highest approved fit" sort. Employer surfaces have
+// no numeric rating to sort on — the band is the contract.
+export const BAND_RANK: Record<string, number> = {
+  exceptional: 5, strong: 4, good: 3, mixed: 2, limited: 1, not_recommended: 0,
+};
 
 export type CandidateListCriteria = {
   q: string;
@@ -63,7 +69,7 @@ export function filterCandidates(
     if (s.fit !== "all" && c.fit.band !== s.fit) return false;
     if (s.critical !== "all") {
       const missingEvidence = c.requirement_rows.some(
-        (r) => r.importance === "must_have" && r.status === "not_evidenced",
+        (r: ClientCandidateDTO["requirement_rows"][number]) => r.importance === "must_have" && r.status === "not_evidenced",
       );
       const gaps = c.coverage.must_total > 0 && c.coverage.must_met < c.coverage.must_total;
       if (s.critical === "met" && (gaps || missingEvidence)) return false;
