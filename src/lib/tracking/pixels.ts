@@ -14,6 +14,7 @@
  */
 
 import { type ConsentCategory } from "./consent";
+import { resolveConversion } from "./conversion-map";
 
 
 
@@ -403,18 +404,6 @@ function clean(params: Record<string, unknown> = {}) {
   return out;
 }
 
-const META_EVENT_MAP: Record<string, string> = {
-  page_view: "PageView",
-  view_job_board: "ViewContent",
-  view_job: "ViewContent",
-  application_started: "InitiateCheckout",
-  cv_selected: "AddPaymentInfo",
-  application_submitted: "SubmitApplication",
-  contact_form_submitted: "Contact",
-  candidate_signup_started: "CompleteRegistration",
-  candidate_account_invited: "CompleteRegistration",
-};
-
 const recent = new Map<string, number>();
 
 /**
@@ -438,16 +427,19 @@ function flushPendingEvents() {
 }
 
 function send(name: string, payload: Record<string, unknown>) {
+  // Each provider gets its own event name and property shape — see
+  // src/lib/tracking/conversion-map.ts for the canonical mapping table.
+  const mapped = resolveConversion(name, payload);
+
   // GA4 always receives the event; Consent Mode decides whether it is
   // cookieless or full. Session-recording tools stay consent-gated.
-  window.gtag?.("event", name, payload);
-  window.dataLayer?.push({ event: name, ...payload });
-  window.clarity?.("event", name);
-  window.hj?.("event", name);
+  window.gtag?.("event", mapped.ga4Event, payload);
+  window.dataLayer?.push({ event: mapped.ga4Event, ...payload });
+  window.clarity?.("event", mapped.label);
+  window.hj?.("event", mapped.label);
 
-  const metaName = META_EVENT_MAP[name];
-  if (metaName) window.fbq?.("track", metaName, payload);
-  window.lintrk?.("track", { conversion_id: name });
+  if (mapped.meta) window.fbq?.("track", mapped.meta.event, mapped.meta.params);
+  if (mapped.linkedin) window.lintrk?.("track", mapped.linkedin);
 }
 
 export function trackEvent(name: string, params: Record<string, unknown> = {}) {
@@ -480,6 +472,11 @@ export function trackPageView(params: Record<string, unknown>) {
 }
 
 
+/**
+ * @deprecated Prefer `trackCtaClick` from `@/lib/tracking/conversions`, which
+ * names the CTA location and destination explicitly. Kept as a thin alias so
+ * existing call sites keep reporting the same canonical `cta_click` event.
+ */
 export function trackCtaClick(cta: string, params: Record<string, unknown> = {}) {
   trackEvent("cta_click", { cta, ...params });
 }

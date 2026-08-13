@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { BOOKING_ROUTE, LEGACY_BOOKING_PATHS } from "@/config/booking";
-import { trackCtaClick } from "@/lib/tracking/pixels";
+import { trackCtaClick } from "@/lib/tracking/conversions";
 
 /** Text that should always land on the TaaSFlow scheduler, wherever it appears. */
 const BOOKING_LABEL = /^(book (a|your) (call|consultation|demo)|talk to sales|request a demo)\b/i;
@@ -58,7 +58,7 @@ export function BookingCtaRouter() {
       const hit = ctaTarget(target);
       if (!hit) return;
       event.preventDefault();
-      trackCtaClick("book_a_call", { page_path: window.location.pathname });
+      trackCtaClick("book_a_call", { ctaLocation: "booking_cta_router", destination: "/book" });
       void router.navigate({ to: hit.to, search: { cta: hit.label } as never });
     }
 
