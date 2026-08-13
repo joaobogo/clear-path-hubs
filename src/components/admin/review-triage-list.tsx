@@ -282,6 +282,8 @@ function Group({
   hint,
   tone,
   rows,
+  startIndex,
+  kb,
   onClaim,
   onRelease,
   busyId,
@@ -294,6 +296,9 @@ function Group({
   hint: string;
   tone: "danger" | "default";
   rows: Row[];
+  /** Offset of this group inside the keyboard-ordered row list. */
+  startIndex: number;
+  kb: QueueKeyboard;
   onClaim: (matchId: string) => void;
   onRelease: (matchId: string) => void;
   busyId: string | null;
@@ -311,13 +316,18 @@ function Group({
         </h2>
         <p className="text-xs text-muted-foreground">{hint}</p>
       </header>
-      <ul className="space-y-2">
-        {rows.map((r) => (
+      <ul className="space-y-2" {...kb.listProps}>
+        {rows.map((r, i) => {
+          const rowKb = kb.rowProps(startIndex + i);
+          return (
           <li
             key={r.match_id}
-            className={`rounded-lg border bg-card px-4 py-3 ${
+            {...rowKb}
+            ref={rowKb.ref as (node: HTMLLIElement | null) => void}
+            className={`rounded-lg border bg-card px-4 py-3 ${QUEUE_ROW_ACTIVE_CLASS} ${
               tone === "danger" ? "border-destructive/40" : ""
             }`}
+
           >
             <div className="flex flex-wrap items-center gap-3">
               <div className="min-w-0 flex-1">
