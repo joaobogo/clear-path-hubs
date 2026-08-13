@@ -721,7 +721,13 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     workAuth,
   });
 
-  const fit = toFitPresentation(run?.fit_label ?? run?.fit_band ?? null, null);
+  // Band, number, coverage and freshness all come off THIS run. Passing the
+  // run's score keeps the headline in step with the figure rendered below it.
+  const fit = toFitPresentation(
+    run?.fit_label ?? run?.fit_band ?? null,
+    run?.score != null ? Number(run.score) : null,
+  );
+
 
   const roleComp = normCompensationRange(pos?.compensation);
   const candExpect = normCandidateExpectation(cp.compensation_preferences);
