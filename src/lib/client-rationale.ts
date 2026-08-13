@@ -158,13 +158,20 @@ export function buildShortlistRationale(
       sources.add("Recruiter notes");
     }
 
+    const requirementLabel = clean(r.label);
+    const underReview = Boolean(claim) && isClaimEcho(requirementLabel, claim);
+    if (underReview) {
+      claim = "";
+    }
+
     return {
       id: r.id,
-      requirement: clean(r.label),
+      requirement: requirementLabel,
       importance: r.importance,
       verdict,
       verdictLabel: VERDICT_LABEL[verdict],
       claim: claim ? truncate(claim) : null,
+      underReview,
       sources: claim ? [...sources] : [],
     };
   };
