@@ -93,15 +93,18 @@ function EvidenceGaps() {
 
       {query.isLoading ? <p className="text-sm text-muted-foreground">Reading the records…</p> : null}
 
-      {query.isError ? (
-        <Alert variant="destructive">
-          <AlertTitle>We could not read the ledger</AlertTitle>
-          <AlertDescription>
-            {(query.error as Error)?.message ?? "Unknown error"} — this is a failure to load, not an
-            empty result.
-          </AlertDescription>
-        </Alert>
+      {variant === "error" ? (
+        <SurfaceState
+          content={resolveQueueState({
+            variant: "error",
+            queueLabel: "Evidence gaps",
+            populates: "A row appears for every candidate we hold no evidence for.",
+            errorMessage: (query.error as Error)?.message ?? null,
+          })}
+          onAction={() => void query.refetch()}
+        />
       ) : null}
+
 
       {data ? (
         <>
