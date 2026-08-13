@@ -369,7 +369,7 @@ function PermissionCell({ m, perm }: { m: AccessMember; perm: ClientPermission }
           aria-label="allowed"
         />
       ) : (
-        <Minus className="mx-auto h-4 w-4 text-muted-foreground/50" aria-label="not allowed" />
+        <Minus className="mx-auto h-4 w-4 text-muted-foreground" aria-label="not allowed" />
       )}
     </td>
   );
