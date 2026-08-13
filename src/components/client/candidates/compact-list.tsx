@@ -127,7 +127,10 @@ export function CompactList({
                 <td className="py-2 px-3 text-muted-foreground">{c.candidate.location ?? "—"}</td>
                 <td className="py-2 px-3 text-muted-foreground">{clientStageLabel(c.stage)}</td>
                 <td className="py-2 px-3 text-right whitespace-nowrap">
-                  <DownloadCvButton matchId={c.match_id} size="sm" variant="ghost" label="CV" />
+                  <div className="flex flex-col items-end gap-0.5">
+                    <DownloadCvButton matchId={c.match_id} size="sm" variant="ghost" label="CV" />
+                    <DownloadLatestCvLink matchId={c.match_id} label="Latest CV" />
+                  </div>
                 </td>
                 <td className="py-2 px-3 text-right">
                   <Link
