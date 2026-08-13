@@ -172,11 +172,13 @@ export function marketingHead(
     entry?.meta.description ||
       entry?.meta["og:description"] ||
       fallback?.description ||
-      "AI Hiring Intelligence Platform — agents run the search, evidence backs every score, and ranked candidates land in a live Decision Workspace.",
+      BRAND_ONE_LINER,
   );
   const url = `${CANONICAL_ORIGIN}${path}`;
-  // Only the page's own hero/cover becomes its share image; no placeholder.
-  const image = absoluteShareImage(options?.image);
+  // The page's own hero/cover wins; otherwise the branded card on this domain.
+  // Never a preview-host URL, and never an empty share preview.
+  const image =
+    absoluteShareImage(options?.image) ?? absoluteShareImage(DEFAULT_SHARE_IMAGE);
   const scripts = [
     ...(options?.breadcrumbs?.length ? [breadcrumbScript(options.breadcrumbs)] : []),
     ...(options?.scripts ?? []),
