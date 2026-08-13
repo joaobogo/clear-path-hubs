@@ -62,7 +62,9 @@ export function QueryState<T>({
   const hasData = query.data !== undefined;
   // Backstop: a skeleton is never terminal. If the first read is still pending
   // after a bounded wait, treat it as a failure with a reason and a Retry.
-  const stuck = useStuckAfter(pending && !hasData);
+  // Timed from "no data", not from "pending": a query gated off by
+  // `enabled: false` is never pending, and must still not wait forever.
+  const stuck = useStuckAfter(!hasData && !query.isError);
   const phase = resolveQueryPhase({
     pending,
     hasData,

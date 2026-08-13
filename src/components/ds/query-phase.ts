@@ -32,9 +32,10 @@ export function resolveQueryPhase(input: {
   if (!hasData) {
     if (stuck) return "stuck";
     if (isError) return "error";
-    if (pending) return "loading";
-    // Settled, no error, no data: nothing will arrive on its own.
-    return "stuck";
+    // Settled with no data and no error means a gate hasn't enabled the read
+    // yet. That still shows a skeleton — but the stuck backstop above is timed
+    // from "no data", not from "pending", so it can never wait forever.
+    return "loading";
   }
 
   if (empty) return hasFilters ? "filtered-empty" : "empty";

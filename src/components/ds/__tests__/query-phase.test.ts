@@ -8,8 +8,10 @@ describe("resolveQueryPhase", () => {
 
   it("never leaves loading as a terminal state", () => {
     expect(resolveQueryPhase({ pending: true, hasData: false, stuck: true })).toBe("stuck");
-    // Settled with neither data nor an error (a gate that never enabled the query).
-    expect(resolveQueryPhase({ pending: false, hasData: false })).toBe("stuck");
+    // A gate that never enabled the query still shows a skeleton, and the
+    // stuck backstop is timed from "no data" so it trips there too.
+    expect(resolveQueryPhase({ pending: false, hasData: false })).toBe("loading");
+    expect(resolveQueryPhase({ pending: false, hasData: false, stuck: true })).toBe("stuck");
   });
 
   it("reports a failed first read as an error", () => {
