@@ -90,6 +90,16 @@ export function CandidateScoreBadge({
     "This assessment is being re-checked because the role details or the candidate's CV changed after it was produced.";
   return (
     <span className={`inline-flex flex-wrap items-center gap-1.5 ${className}`}>
+      {score != null && (
+        <span
+          className={`inline-flex items-baseline gap-0.5 rounded-full border px-2 py-0.5 text-[12px] font-semibold tabular-nums ${fit ? ACCENT_CLASSES[fit.accent] : "border-border bg-muted text-muted-foreground"} ${rechecking ? "opacity-70" : ""}`}
+          title="Fit score out of 100"
+          aria-label={`Fit score ${Math.round(score)} out of 100`}
+        >
+          {Math.round(score)}
+          <span className="text-[10px] font-normal opacity-70">/100</span>
+        </span>
+      )}
       {fit && (
         <span
           className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${ACCENT_CLASSES[fit.accent]} ${rechecking ? "opacity-70" : ""}`}
