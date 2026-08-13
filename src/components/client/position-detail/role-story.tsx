@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, CalendarClock } from "lucide-react";
 import type { RoleStory } from "@/lib/client/role-story";
+import { toFitPresentation } from "@/lib/client-fit-presentation";
+import { FIT_OPTIONS } from "@/components/client/candidates/constants";
 
 /**
  * The story of the search, in three figures: requirement coverage across the
@@ -162,7 +164,15 @@ export function RoleStoryPanel({
               <>
                 <p className="mt-2 text-sm text-foreground/90">{distribution.takeaway}</p>
                 <ul className="mt-3 space-y-2">
-                  {distribution.bands.map((b) => {
+                  {distribution.bands.map((raw) => {
+                    // The candidate list filters on the client-facing fit
+                    // vocabulary, so a segment only links when it maps onto a
+                    // filter the list actually offers.
+                    const mapped = toFitPresentation(raw.key, null).band;
+                    const b = {
+                      ...raw,
+                      filter: FIT_OPTIONS.some((o) => o.key === mapped) ? mapped : null,
+                    };
                     const width = `${(b.count / Math.max(1, distribution.scored)) * 100}%`;
                     return (
                       <li key={b.key} className="flex items-center gap-3">
@@ -181,10 +191,10 @@ export function RoleStoryPanel({
                             />
                           )}
                         </span>
-                        {b.count > 0 ? (
+                        {b.count > 0 && b.filter ? (
                           <Link
                             to="/client/candidates"
-                            search={candidatesSearch({ fit: b.key })}
+                            search={candidatesSearch({ fit: b.filter })}
                             className="w-6 shrink-0 text-right text-xs font-semibold tabular-nums text-primary hover:underline"
                           >
                             {b.count}
