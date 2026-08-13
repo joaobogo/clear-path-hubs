@@ -319,6 +319,13 @@ function StudyCard({ study }: { study: Study }) {
           </div>
         ))}
       </div>
+      {study.representative !== false && (
+        <p className="border-b border-border/60 bg-background px-5 pb-4 text-center text-[11px] leading-relaxed text-[color:var(--brand-navy)]/70">
+          Representative delivery figures for this vertical — not the reported
+          results of one named client.
+        </p>
+      )}
+
 
       {/* Situation + roles needed */}
       <div className="grid gap-6 p-6 md:grid-cols-2 md:p-8">
