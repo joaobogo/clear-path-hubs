@@ -98,9 +98,13 @@ export function SectionTabs({
   linkSearch?: Record<string, string | undefined>;
 }) {
   const pathname = useRouterState({ select: (st) => st.location.pathname });
+  const currentSearch = useRouterState({ select: (st) => st.location.search }) as
+    | Record<string, unknown>
+    | undefined;
   const group = findSectionGroup(pathname, groups);
   if (!group || group.tabs.length < 2) return null;
-  const search = linkSearch && Object.keys(linkSearch).length > 0 ? linkSearch : undefined;
+  const base = linkSearch && Object.keys(linkSearch).length > 0 ? linkSearch : undefined;
+  const current = activeTab(pathname, group.tabs, currentSearch);
 
   return (
     <div className="mb-5 border-b border-border">
@@ -109,13 +113,17 @@ export function SectionTabs({
         className="-mb-px flex flex-wrap items-center gap-1 overflow-x-auto"
       >
         {group.tabs.map((tab) => {
-          const active = isActive(pathname, tab);
+          const active = current === tab;
+          // Tab-defining params merge on top of the shell params (org survives).
+          const search =
+            tab.search || base ? { ...(base ?? {}), ...(tab.search ?? {}) } : undefined;
           return (
             <Link
-              key={tab.to}
+              key={`${tab.to}${tab.search ? `?${new URLSearchParams(tab.search).toString()}` : ""}`}
               to={tab.to}
               search={search as never}
               aria-current={active ? "page" : undefined}
+
               className={cn(
                 "inline-flex min-h-11 items-center whitespace-nowrap rounded-t-md border-b-2 px-3 py-2 text-sm font-medium outline-none transition-colors sm:min-h-0",
                 "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background",
