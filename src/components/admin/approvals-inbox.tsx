@@ -50,7 +50,7 @@ function TierBadge({ days }: { days: number }) {
     tier === "overdue"
       ? "border-destructive/40 bg-destructive/10 text-destructive"
       : tier === "watch"
-        ? "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+        ? "border-warning/40 bg-warning/10 text-warning-strong"
         : "border-border bg-muted text-muted-foreground";
   return (
     <span className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${cls}`}>
