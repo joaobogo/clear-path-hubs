@@ -90,7 +90,7 @@ export function IndustryPersonalizationPanel({ industry }: Props) {
             {profile.strapline}
           </p>
         </div>
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-current/20 bg-white/70 px-2.5 py-1 text-[11px] font-medium text-foreground/80">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-current/20 bg-card/70 px-2.5 py-1 text-[11px] font-medium text-foreground/80">
           <BadgeCheck className="h-3 w-3" aria-hidden />
           Rubric preset applied
         </span>
@@ -107,13 +107,13 @@ export function IndustryPersonalizationPanel({ industry }: Props) {
           return (
             <div
               key={s.id}
-              className="rounded-lg border border-border/60 bg-white/70"
+              className="rounded-lg border border-border/60 bg-card/70"
             >
               <button
                 type="button"
                 aria-expanded={isOpen}
                 onClick={() => setOpen(isOpen ? null : s.id)}
-                className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left text-sm font-medium hover:bg-white"
+                className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left text-sm font-medium hover:bg-muted/50"
               >
                 <span className="inline-flex items-center gap-2">
                   <Icon className="h-4 w-4 text-muted-foreground" aria-hidden />
