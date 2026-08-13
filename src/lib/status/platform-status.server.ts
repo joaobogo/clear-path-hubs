@@ -264,7 +264,7 @@ export async function measurePlatformStatus(): Promise<PlatformStatus> {
         const cutoff = since(24);
         const { data, error } = await supabaseAdmin
           .from("processing_jobs")
-          .select("status")
+          .select("status, error_message")
           .gte("created_at", cutoff)
           .limit(5_000);
         if (error) throw error;
@@ -273,8 +273,16 @@ export async function measurePlatformStatus(): Promise<PlatformStatus> {
       if (!run.ok || !run.value) {
         return serviceRow("agents", "unknown", NOT_MEASURED_DETAIL, false, WINDOW_24H);
       }
-      const rows = run.value as { status: string }[];
-      const settled = rows.filter((r) => r.status === "completed" || r.status === "failed");
+      const rows = run.value as { status: string; error_message: string | null }[];
+      // A run that stopped because equivalent, up-to-date work already existed
+      // did not fail: the outcome the run existed to produce is present.
+      const superseded = (r: { error_message: string | null }) => {
+        const m = (r.error_message ?? "").toLowerCase();
+        return m.includes("score_runs_active_input_key") || m.startsWith("superseded");
+      };
+      const settled = rows.filter(
+        (r) => (r.status === "completed" || r.status === "failed") && !superseded(r),
+      );
       const verdict = statusFromFailureRatio({
         total: settled.length,
         failed: settled.filter((r) => r.status === "failed").length,
@@ -285,6 +293,7 @@ export async function measurePlatformStatus(): Promise<PlatformStatus> {
       const queueLine = stillQueued > 0 ? ` ${stillQueued} still in progress.` : "";
       return serviceRow("agents", verdict.status, verdict.detail + queueLine, verdict.measured, WINDOW_24H);
     })(),
+
 
     // Scoring — outcomes of scoring runs in the last day.
     (async (): Promise<ServiceStatus> => {
