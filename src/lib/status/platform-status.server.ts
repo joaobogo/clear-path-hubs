@@ -258,41 +258,49 @@ export async function measurePlatformStatus(): Promise<PlatformStatus> {
     })(),
 
 
-    // Agent processing — outcomes of background work in the last day.
+    // Agent processing — what is unfinished right now.
+    //
+    // Deliberately not a failure ratio over the last day: a run that failed or
+    // was cancelled hours ago is history and cannot be what a reader is waiting
+    // on, so it must never raise a live warning. Only work still queued or
+    // running, and already past its threshold, counts as behind.
     (async (): Promise<ServiceStatus> => {
       const run = await timed(async () => {
-        const cutoff = since(24);
         const { data, error } = await supabaseAdmin
           .from("processing_jobs")
-          .select("status, error_message")
-          .gte("created_at", cutoff)
+          .select("status, created_at, started_at")
+          .in("status", ["queued", "running"])
           .limit(5_000);
         if (error) throw error;
         return data ?? [];
       });
       if (!run.ok || !run.value) {
-        return serviceRow("agents", "unknown", NOT_MEASURED_DETAIL, false, WINDOW_24H);
+        return serviceRow("agents", "unknown", NOT_MEASURED_DETAIL, false, WINDOW_NOW);
       }
-      const rows = run.value as { status: string; error_message: string | null }[];
-      // A run that stopped because equivalent, up-to-date work already existed
-      // did not fail: the outcome the run existed to produce is present.
-      const superseded = (r: { error_message: string | null }) => {
-        const m = (r.error_message ?? "").toLowerCase();
-        return m.includes("score_runs_active_input_key") || m.startsWith("superseded");
-      };
-      const settled = rows.filter(
-        (r) => (r.status === "completed" || r.status === "failed") && !superseded(r),
-      );
-      const verdict = statusFromFailureRatio({
-        total: settled.length,
-        failed: settled.filter((r) => r.status === "failed").length,
-        noun: "processing runs",
-        window: WINDOW_24H,
+      const rows = run.value as {
+        status: string;
+        created_at: string | null;
+        started_at: string | null;
+      }[];
+      const now = Date.now();
+      const minutesSince = (iso: string | null): number =>
+        iso ? Math.floor((now - new Date(iso).getTime()) / 60_000) : 0;
+
+      const ages = rows.map((r) => {
+        const running = r.status === "running";
+        const waited = minutesSince(running ? (r.started_at ?? r.created_at) : r.created_at);
+        const threshold = running ? BACKLOG_RUNNING_MINUTES : BACKLOG_QUEUED_MINUTES;
+        return { waited, overdue: waited > threshold };
       });
-      const stillQueued = rows.filter((r) => r.status === "queued" || r.status === "running").length;
-      const queueLine = stillQueued > 0 ? ` ${stillQueued} still in progress.` : "";
-      return serviceRow("agents", verdict.status, verdict.detail + queueLine, verdict.measured, WINDOW_24H);
+      const overdue = ages.filter((a) => a.overdue);
+      const verdict = statusFromBacklog({
+        pending: rows.length,
+        overdue: overdue.length,
+        oldestOverdueMinutes: overdue.reduce((max, a) => Math.max(max, a.waited), 0),
+      });
+      return serviceRow("agents", verdict.status, verdict.detail, verdict.measured, WINDOW_NOW);
     })(),
+
 
 
     // Scoring — outcomes of scoring runs in the last day.
