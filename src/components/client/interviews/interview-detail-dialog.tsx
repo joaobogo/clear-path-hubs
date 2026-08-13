@@ -199,7 +199,7 @@ export function InterviewDetailDialog({
               {interview.candidate_submission_id ? (
                 <div>Application: <span className="font-mono">{interview.candidate_submission_id}</span></div>
               ) : null}
-              <div>Position: <span className="font-mono">{interview.position_id}</span></div>
+              <div>Role: <span className="font-mono">{interview.position_id}</span></div>
             </div>
           </div>
         ) : null}

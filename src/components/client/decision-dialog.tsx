@@ -95,7 +95,7 @@ const CONFIG: Record<DecisionActionKey, Config> = {
   submit_feedback: {
     title: "Add feedback",
     description:
-      "Structured feedback helps us send you better matches for this role. It is shared with the TaaSFlow team, not the candidate.",
+      "Structured feedback helps us send you stronger candidates for this role. It is shared with the TaaSFlow team, not the candidate.",
     confirmLabel: "Save feedback",
     notePlaceholder: "What stood out, and what would you change?",
     noteRequired: true,

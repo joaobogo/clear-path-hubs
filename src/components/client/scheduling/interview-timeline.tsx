@@ -186,7 +186,7 @@ function TimelineItem({
   const Icon = m.icon;
   const slots = liveSlots(iv.proposed_times, iv.availability_expires_at);
   const when = dualZone(iv.scheduled_at, iv.timezone, viewerTz);
-  const title = `Interview — ${iv.position?.title ?? "Position"}`;
+  const title = `Interview — ${iv.position?.title ?? "Role"}`;
   // Action labels name the candidate and role so they stay unambiguous for
   // screen readers and stable as Playwright selectors.
   const subject = `${iv.candidate?.name ?? "candidate"} for ${iv.position?.title ?? "this role"}`;
@@ -224,7 +224,7 @@ function TimelineItem({
         >
           <span className="font-medium">{iv.candidate?.name ?? "Candidate"}</span>
           <span className="mx-1.5 text-muted-foreground">·</span>
-          <span className="text-muted-foreground">{iv.position?.title ?? "Position"}</span>
+          <span className="text-muted-foreground">{iv.position?.title ?? "Role"}</span>
         </button>
 
         <div className="mt-2 space-y-1 text-sm">

@@ -193,14 +193,14 @@ export function CompareSheet({
 
         {!positionSafe ? (
           <div className="mt-4 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm">
-            {eligibility.reason ?? "Comparison is only available for candidates on the same position."}
+            {eligibility.reason ?? "Comparison is only available for candidates on the same role."}
           </div>
         ) : (
           <>
             <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
               <div className="min-w-0 text-xs text-muted-foreground">
                 {positionTitle && (
-                  <>Position: <span className="font-medium text-foreground">{positionTitle}</span> · {candidates.length} candidates</>
+                  <>Role: <span className="font-medium text-foreground">{positionTitle}</span> · {candidates.length} candidates</>
                 )}
               </div>
               <div className="flex items-center gap-2 print:hidden">
@@ -229,13 +229,13 @@ export function CompareSheet({
                 className="mt-3 rounded-lg border border-warning/40 bg-warning/10 p-3 text-sm"
               >
                 <div className="font-medium text-warning-foreground">
-                  Mismatched requirement versions
+                  Requirements changed between reviews
                 </div>
                 <p className="mt-1 text-foreground/90">{guard.warning}</p>
                 <ul className="mt-2 space-y-0.5 text-xs text-muted-foreground">
                   {candidates.map((c) => (
                     <li key={c.match_id}>
-                      {c.candidate.display_name} — assessed on {rubricVersion(c)}
+                      {c.candidate.display_name} — reviewed against {rubricVersion(c)}
                     </li>
                   ))}
                 </ul>

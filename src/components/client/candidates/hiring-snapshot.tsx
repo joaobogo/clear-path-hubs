@@ -48,7 +48,7 @@ export function HiringSnapshot({
   const kpis = overview?.kpis;
   const tiles = [
     { label: "Delivered", value: kpis?.delivered, filter: undefined },
-    { label: "Top matches", value: kpis?.top, filter: { fit: "strong" } },
+    { label: "Strongest candidates", value: kpis?.top, filter: { fit: "strong" } },
     { label: "Shortlisted", value: kpis?.shortlisted, filter: { stage: "shortlisted" } },
     { label: "Interviewing", value: kpis?.interviewing, filter: { stage: "interview_process" } },
     { label: "Offers", value: kpis?.offers, filter: { stage: "offer" } },

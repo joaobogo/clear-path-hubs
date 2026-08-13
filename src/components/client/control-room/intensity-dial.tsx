@@ -54,7 +54,7 @@ export function IntensityDial({
     onSuccess: (row) => {
       qc.invalidateQueries({ queryKey: ["role-controls", orgId] });
       toast.success(
-        `${row.title} is now on ${INTENSITY_PRESETS[row.intensity as Intensity].label.toLowerCase()}. It takes effect on the next run.`,
+        `${row.title} is now on ${INTENSITY_PRESETS[row.intensity as Intensity].label.toLowerCase()}. It takes effect on the next search.`,
       );
       setPending(null);
     },

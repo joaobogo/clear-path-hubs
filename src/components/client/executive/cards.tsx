@@ -108,7 +108,7 @@ export function RegionCard({ rows }: { rows: ExecutiveReport["open_by_region"] }
       </CardHeader>
       <CardContent>
         {rows.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No positions yet.</p>
+          <p className="text-sm text-muted-foreground">No roles yet.</p>
         ) : (
           <ul className="space-y-2">
             {rows.slice(0, 12).map((r) => (
@@ -341,7 +341,7 @@ export function FooterLine({ generated_at }: { generated_at: string }) {
     <p className="text-xs text-muted-foreground">
       Generated {new Date(generated_at).toLocaleString()} · Numbers are live from your
       workspace. See <Link to="/client/offers" className="underline">Offers</Link>,{" "}
-      <Link to="/client/positions" className="underline">Positions</Link>, and{" "}
+      <Link to="/client/positions" className="underline">Roles</Link>, and{" "}
       <Link to="/client/candidates" className="underline">Candidates</Link> for drill-through.
     </p>
   );

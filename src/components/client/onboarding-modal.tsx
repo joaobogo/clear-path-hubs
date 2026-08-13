@@ -83,11 +83,11 @@ export function ClientOnboardingModal({
 
   const roleCopy: Record<Role, string> = {
     client_admin:
-      "As Client admin you can invite teammates, submit new positions, approve offers, and configure workspace settings.",
+      "As Client admin you can invite teammates, submit new roles, approve offers, and configure workspace settings.",
     client_editor:
       "As Client editor you can move candidates through your pipeline, schedule interviews, and message TaaSFlow.",
     client_viewer:
-      "As Client viewer you can review positions and candidates. Actions that change state are hidden — ask an admin for edit access if you need more.",
+      "As Client viewer you can review roles and candidates. Anything that changes a role is hidden — ask an admin for edit access if you need more.",
   };
 
   const steps: Array<{ title: string; body: React.ReactNode }> = [
@@ -127,7 +127,7 @@ export function ClientOnboardingModal({
           <NavItem
             icon={<Users className="h-4 w-4" />}
             title="Candidates"
-            body="Only candidates delivered for your positions — never a global pool."
+            body="Only candidates delivered for your roles — never a global pool."
           />
           <NavItem
             icon={<MessageSquare className="h-4 w-4" />}
@@ -146,7 +146,7 @@ export function ClientOnboardingModal({
       title: "How candidates are delivered",
       body: (
         <ol className="list-decimal space-y-2 pl-5 text-sm text-muted-foreground">
-          <li>TaaSFlow sources and vets candidates against your position brief.</li>
+          <li>TaaSFlow sources and vets candidates against your role brief.</li>
           <li>Only candidates cleared by our review appear in your workspace.</li>
           <li>
             Each delivered candidate ships with a role-specific score, evidence, and a

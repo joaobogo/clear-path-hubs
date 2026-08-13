@@ -195,7 +195,7 @@ export function ApprovalRowItem({
               rows={4}
               value={evidence}
               onChange={(e) => setEvidence(e.target.value)}
-              placeholder="e.g. Approved rubric v3 — signed off by hiring manager on the 2pm call."
+              placeholder="e.g. Approved the requirements — signed off by the hiring manager on the 2pm call."
             />
             <p className="text-xs text-muted-foreground">
               This is recorded on the task's activity history and stays traceable.

@@ -49,7 +49,7 @@ export function HiringProcessSection({
           body={
             openings > 1
               ? `Multiple hires — ${hiresTotal} of ${openings} filled.`
-              : "Position closes once the first hire is confirmed."
+              : "The role closes once the first hire is confirmed."
           }
           done={hiresTotal >= openings}
         />

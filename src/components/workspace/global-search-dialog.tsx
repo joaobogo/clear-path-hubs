@@ -153,8 +153,8 @@ export function GlobalSearchDialog({
       <CommandInput
         placeholder={
           scope === "admin"
-            ? "Search clients, positions, candidates, messages…"
-            : "Search positions, candidates, messages…"
+            ? "Search clients, roles, candidates, messages…"
+            : "Search roles, candidates, messages…"
         }
         value={q}
         onValueChange={setQ}

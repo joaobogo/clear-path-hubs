@@ -64,7 +64,7 @@ const positionDetailQuery = (orgId: string, positionId: string) =>
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
   head: () => ({
     meta: [
-      { title: "Position · Client workspace" },
+      { title: "Role · Client workspace" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -84,7 +84,7 @@ export const Route = createFileRoute("/_authenticated/client/positions/$id")({
   // Fast navigations never flash a skeleton; slow ones get the real layout.
   pendingMs: 150,
   pendingComponent: PositionDetailPending,
-  notFoundComponent: () => <div className="p-8">Position not found.</div>,
+  notFoundComponent: () => <div className="p-8">Role not found.</div>,
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.positions.$id.tsx"),
   component: PositionDetailPage,
 });

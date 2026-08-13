@@ -289,7 +289,7 @@ function WorkspaceSnapshot({ orgId }: { orgId: string }) {
             </p>
           </div>
           <Button asChild variant="ghost" size="sm">
-            <Link to="/client/positions">Open positions</Link>
+            <Link to="/client/positions">Open roles</Link>
           </Button>
         </div>
         {positionsState.isError ? (
