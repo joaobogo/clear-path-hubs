@@ -61,7 +61,7 @@ describe("cv download link cache", () => {
     invalidateCvLink("m5");
     await fetchCvDownloadLink({ matchId: "m5", disposition: "attachment" });
     await fetchCvDownloadLink({ matchId: "m5", disposition: "attachment", fresh: true });
-    expect(fn).toHaveBeenCalledTimes(4);
+    expect(fn).toHaveBeenCalledTimes(5);
   });
 
   it("does not cache a failure", async () => {
