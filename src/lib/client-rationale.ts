@@ -24,6 +24,8 @@ export type RationaleLine = {
   verdictLabel: string;
   /** The claim itself — quoted or paraphrased from the record. Null when nothing is evidenced. */
   claim: string | null;
+  /** True when a claim was found but only repeats the requirement; no quote is rendered. */
+  underReview: boolean;
   /** Attribution for the claim; empty when there is nothing to attribute. */
   sources: ClaimSource[];
 };
