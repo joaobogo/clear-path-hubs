@@ -139,11 +139,25 @@ function CriteriaPage() {
     );
   }
 
-  if (query.isLoading) {
+  if (query.isLoading && !query.data) {
     return (
-      <div className="space-y-4 p-6">
+      <div className="space-y-4 p-6" aria-busy="true">
         <Skeleton className="h-8 w-72" />
         <Skeleton className="h-40 w-full" />
+      </div>
+    );
+  }
+
+  if (query.isError && !query.data) {
+    return (
+      <div className="space-y-4 p-6">
+        <h1 className="text-2xl font-semibold tracking-tight">Scoring criteria</h1>
+        <p className="text-sm text-muted-foreground">
+          We couldn't load the criteria for this role. Nothing was changed.
+        </p>
+        <Button variant="outline" onClick={() => void query.refetch()}>
+          Try again
+        </Button>
       </div>
     );
   }
