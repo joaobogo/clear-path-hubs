@@ -3,6 +3,7 @@
 // Every mutation is org-scoped through RLS + assertEditor, writes an audit
 // event, and relies on DB triggers (tg_hire_records_lifecycle) to enforce the
 // state machine and stamp lifecycle timestamps.
+import { attachMemberProfiles } from "@/lib/membership-profiles.server";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
@@ -112,7 +113,6 @@ export interface HireRecordDTO {
   updated_at: string;
   applied_at: string | null;
   /** Agreed response date. Null means none was agreed — never inferred. */
-import { attachMemberProfiles } from "@/lib/membership-profiles.server";
   expected_response_date: string | null;
   expected_response_set_at: string | null;
 }
