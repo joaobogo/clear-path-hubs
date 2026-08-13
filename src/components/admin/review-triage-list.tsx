@@ -410,7 +410,9 @@ function Group({
               </div>
             </div>
           </li>
-        ))}
+          );
+        })}
+
       </ul>
     </section>
   );
