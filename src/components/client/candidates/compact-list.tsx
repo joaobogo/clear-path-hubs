@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { clientStageLabel } from "@/lib/client-stage-labels";
 import { CandidateCard } from "@/components/client/candidate-card";
 import { DownloadCvButton, DownloadLatestCvLink } from "@/components/download-cv-button";
+import { ReviewTimelineStrip } from "@/components/client/candidates/review-timeline";
 import { UnicornBadge } from "@/components/client/candidate-score-badge";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 
@@ -78,6 +79,7 @@ export function CompactList({
               <th className="text-left py-2 px-3">Experience</th>
               <th className="text-left py-2 px-3">Location</th>
               <th className="text-left py-2 px-3">Stage</th>
+              <th className="text-left py-2 px-3">Review</th>
               <th className="text-right py-2 px-3">CV</th>
               <th className="text-right py-2 px-3">Action</th>
             </tr>
@@ -126,6 +128,9 @@ export function CompactList({
                 </td>
                 <td className="py-2 px-3 text-muted-foreground">{c.candidate.location ?? "—"}</td>
                 <td className="py-2 px-3 text-muted-foreground">{clientStageLabel(c.stage)}</td>
+                <td className="py-2 px-3">
+                  <ReviewTimelineStrip timeline={c.review_timeline} />
+                </td>
                 <td className="py-2 px-3 text-right whitespace-nowrap">
                   <div className="flex flex-col items-end gap-0.5">
                     <DownloadCvButton matchId={c.match_id} size="sm" variant="ghost" label="CV" />

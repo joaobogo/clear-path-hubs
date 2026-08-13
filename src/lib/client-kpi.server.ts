@@ -35,6 +35,7 @@ import {
 import { assessFreshness, mergeStoredStaleness, type Freshness } from "@/lib/scoring/score-freshness";
 import { CALIBRATION_VERSION } from "@/lib/scoring/engine-calibration";
 import { ENGINE_VERSION } from "@/lib/scoring/engine-version";
+import { buildReviewTimeline, type ReviewTimeline } from "@/lib/client/review-timeline";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -386,6 +387,8 @@ export type ClientCandidateDTO = {
   }>;
   /** Verified, shareable evidence bullets for the shortlist card. */
   evidence_card: EvidenceCard;
+  /** Compact review timeline: CV read → scored → reviewed → shared. */
+  review_timeline: ReviewTimeline;
   evaluation: {
     engine_version: string | null;
     blueprint_version: string | null;
@@ -587,6 +590,7 @@ function normScreeningAnswers(raw: unknown): ClientCandidateDTO["screening_answe
  * never select different columns.
  */
 export const CLIENT_CANDIDATE_SELECT = `id, stage, delivered_at, position_id, application_id, candidate_profile_id, contact_released_at,
+         canonical_state, processing_state, processing_updated_at, submitted_to_client_at,
          score_stale, score_stale_reasons, score_stale_at, rescore_queued_at,
          candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, compensation_preferences, updated_at),
          positions(id, title, location, work_model, requirements, preferred_requirements, compensation, updated_at),
@@ -854,6 +858,19 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     },
     source_trace,
     audit_trail,
+    review_timeline: buildReviewTimeline({
+      processing_state: (row as AnyRow).processing_state ?? null,
+      canonical_state: (row as AnyRow).canonical_state ?? null,
+      applied_at: source_trace.applied_at,
+      processing_updated_at: (row as AnyRow).processing_updated_at ?? null,
+      scored_at: run?.completed_at ?? null,
+      human_reviewed:
+        (run as AnyRow)?.evaluation_method === "human_adjusted" ||
+        Boolean((run?.result as AnyRow | null)?.human_adjustment),
+      published_at:
+        row.delivered_at ?? (row as AnyRow).submitted_to_client_at ?? null,
+      stage: row.stage ?? null,
+    }),
     evidence_card: buildEvidenceCard(
       (row as AnyRow).evidence_items as ClientEvidenceRow[] | null,
       requirement_rows.map((r) => ({ label: r.label, importance: r.importance })),
