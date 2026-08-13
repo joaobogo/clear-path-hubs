@@ -36,6 +36,11 @@ export function stripContactLines(raw: string): string {
       if (i < all.length - 1 && line.length <= 3) return false;
       return true;
     })
+    .join(" ")
+    // Belt and braces: a truncated address ("rui@demo.") can survive line
+    // filtering, so scrub any remaining token that carries "@" or a domain.
+    .split(/\s+/)
+    .filter((token) => !token.includes("@") && !URL_RE.test(token))
     .join(" ");
 }
 
