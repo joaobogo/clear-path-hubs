@@ -176,14 +176,20 @@ export function buildEvidenceCard(
       // consent. When the reading just restates the criterion there is no
       // distinct proof to add, so the line stands alone with its source
       // attribution rather than repeating itself.
-      const claim = dropRequirementEcho(requirement, truncate(clean(row.interpretation)));
+      let claim = dropRequirementEcho(requirement, truncate(clean(row.interpretation)));
+      // Catch readings that are only the requirement (case/whitespace-insensitive).
+      const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+      if (!claim || norm(claim) === norm(requirement)) {
+        claim = "";
+      }
       return {
         id: row.id,
         requirement,
         claim,
         where: formatEvidenceLocation(row),
       };
-    });
+    })
+    .filter((b) => b.claim);
 
   return {
     bullets,
