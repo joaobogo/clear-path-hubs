@@ -1077,6 +1077,68 @@ async function handle(request: Request): Promise<Response> {
       return Response.json({ ok: true, action, organizations, memberships });
     }
 
+    /**
+     * Read-only trail for the full-journey walkthrough: what the handoff
+     * actually recorded. A UI assertion alone cannot tell whether the audit
+     * event and the notification were written, and those two are what the
+     * business relies on later (activity feeds, digests, disputes).
+     * Scoped to one organisation and never mutates anything.
+     */
+    if (action === "journey_trail") {
+      if (!body.organization_id) {
+        return Response.json({ ok: false, error: "organization_id required" }, { status: 400 });
+      }
+      const sb = await loadAdmin();
+      const org = body.organization_id;
+      const [audit, events, notifs, position, match] = await Promise.all([
+        sb
+          .from("audit_events")
+          .select("id, event_type, entity_type, entity_id, position_id, created_at, actor_user_id")
+          .eq("organization_id", org)
+          .order("created_at", { ascending: true })
+          .limit(500),
+        sb
+          .from("notification_events")
+          .select("id, event_type, organization_id, position_id, application_id, created_at")
+          .eq("organization_id", org)
+          .order("created_at", { ascending: true })
+          .limit(500),
+        sb
+          .from("notifications")
+          .select("id, event_type, audience, recipient_user_id, title, created_at")
+          .eq("organization_id", org)
+          .order("created_at", { ascending: true })
+          .limit(500),
+        body.position_id
+          ? sb
+              .from("positions")
+              .select("id, title, status, visibility, reference_code")
+              .eq("id", body.position_id)
+              .maybeSingle()
+          : Promise.resolve({ data: null }),
+        body.match_id
+          ? sb
+              .from("candidate_matches")
+              .select(
+                "id, stage, admin_status, client_visibility, processing_state, total_score, score_band, contact_released_at",
+              )
+              .eq("id", body.match_id)
+              .maybeSingle()
+          : Promise.resolve({ data: null }),
+      ]);
+      return Response.json({
+        ok: true,
+        action,
+        audit_events: audit.data ?? [],
+        notification_events: events.data ?? [],
+        notifications: notifs.data ?? [],
+        position: position.data ?? null,
+        match: match.data ?? null,
+      });
+    }
+
+
+
     if (action === "lookup_candidate_application") {
       if (!body.email) return Response.json({ ok: false, error: "email required" }, { status: 400 });
       const res = await lookupCandidateApplication(body.email);
