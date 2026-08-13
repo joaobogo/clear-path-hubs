@@ -77,14 +77,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
     scripts: [
-      // RB2B visitor identification boots here, in the server-rendered head,
-      // so it runs while the document parses — before hydration and with no
-      // consent gate (owner decision: identification must fire on the very
-      // first pageview for every visitor). src/lib/tracking/pixels.ts keeps a
-      // client-side fallback and skips this tag when it is already present.
-      {
-        children: `!function(key){if(window.reb2b)return;window.reb2b={loaded:true};var s=document.createElement("script");s.async=true;s.setAttribute("data-tracker","rb2b");s.src="https://ddwl4m2hdecbv.cloudfront.net/b/"+key+"/"+key+".js.gz";var f=document.getElementsByTagName("script")[0];f.parentNode.insertBefore(s,f);}(${JSON.stringify(RB2B_ID)});`,
-      },
+      // Every tracking tag (GA4, Apollo, RB2B, LinkedIn, Meta when configured)
+      // boots here, in the server-rendered head, so each one runs while the
+      // document parses — on the first load of any page, before hydration and
+      // with no consent gate (owner decision: tracking must fire for every
+      // visitor). src/lib/tracking/pixels.ts keeps a client-side fallback and
+      // skips any tag already present, so nothing double-loads.
+      ...HEAD_BOOT_SNIPPETS.map((s) => ({ children: s.children })),
       {
         // Attaches the Google Fonts stylesheet after first paint. Headings and
         // body text declare fallbacks with font-display: swap, so text (the LCP
