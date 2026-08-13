@@ -10,6 +10,7 @@
  * Server rules are NOT restated here: the transition matrix and the advance
  * gate stay on the server, and this hook only translates their errors.
  */
+import { useRef } from "react";
 import { useMutation, useQueryClient, type QueryKey } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
