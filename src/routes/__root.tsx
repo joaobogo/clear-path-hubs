@@ -17,6 +17,7 @@ import { PublicNotFound, PublicErrorState } from "@/components/marketing/site-sh
 import { captureFirstTouch } from "@/lib/crm/attribution";
 import { OfflineBanner } from "@/components/offline-banner";
 import { TrackingRouteObserver } from "@/components/analytics/tracking-route-observer";
+import { RB2B_ID } from "@/lib/tracking/pixels";
 import { ConsentBanner } from "@/components/analytics/consent-banner";
 import { BookingCtaRouter } from "@/components/marketing/booking-cta-router";
 
@@ -75,9 +76,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
     scripts: [
-      // RB2B visitor identification used to boot from here. It now loads from
-      // src/lib/tracking/pixels.ts so it only runs once the visitor has given
-      // marketing consent.
+      // RB2B visitor identification boots here, in the server-rendered head,
+      // so it runs while the document parses — before hydration and with no
+      // consent gate (owner decision: identification must fire on the very
+      // first pageview for every visitor). src/lib/tracking/pixels.ts keeps a
+      // client-side fallback and skips this tag when it is already present.
+      {
+        children: `!function(key){if(window.reb2b)return;window.reb2b={loaded:true};var s=document.createElement("script");s.async=true;s.setAttribute("data-tracker","rb2b");s.src="https://ddwl4m2hdecbv.cloudfront.net/b/"+key+"/"+key+".js.gz";var f=document.getElementsByTagName("script")[0];f.parentNode.insertBefore(s,f);}(${JSON.stringify(RB2B_ID)});`,
+      },
       {
         // Attaches the Google Fonts stylesheet after first paint. Headings and
         // body text declare fallbacks with font-display: swap, so text (the LCP
