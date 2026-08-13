@@ -32,6 +32,7 @@ import { CandidatesFiltersPanel } from "@/components/client/candidates/filters-p
 import { CandidatesEmptyState } from "@/components/client/candidates/candidates-empty-state";
 import { CompactList } from "@/components/client/candidates/compact-list";
 import { BulkCvDownloadButton } from "@/components/client/candidates/bulk-cv-download";
+import { CandidatesBoardView } from "@/components/client/candidates/board-view";
 
 const searchSchema = z.object({
  q: fallback(z.string(), "").default(""),
@@ -45,7 +46,7 @@ const searchSchema = z.object({
  minExp: fallback(z.string(), "").default(""),
  location: fallback(z.string(), "").default(""),
  sort: fallback(z.string(), "score").default("score"),
- view: fallback(z.enum(["cards", "list", "compare"]), "cards").default("cards"),
+ view: fallback(z.enum(["cards", "list", "compare", "board"]), "cards").default("cards"),
  org: fallback(z.string().uuid().optional(), undefined),
  // Canonical KPI drill-through key. Mirrors client-kpi.server predicates:
  // "top" → isTopMatch (band ∈ exceptional|top|strong)
@@ -363,6 +364,15 @@ function CandidatesPage() {
  const setF = (patch: Partial<typeof search>) =>
  navigate({ search: { ...search, ...patch } as never });
 
+ // Board edit rights mirror the role board exactly: viewers get a read-only
+ // board, and support mode never mutates a client's pipeline.
+ const boardCanEdit =
+  !isSupportView &&
+  (ctx?.active?.role === "client_admin" ||
+   ctx?.active?.role === "client_editor" ||
+   ctx?.active?.role === "platform_admin" ||
+   ctx?.active?.role === "operations");
+
  const activeFilters = [
  search.position && {
  key: "position",
@@ -545,17 +555,26 @@ function CandidatesPage() {
              onClear={clearFilters}
              orgId={orgId}
            />
-  ) : (
-           <CompactList
-             rows={paged}
-             orgSearch={orgSearch}
-             compareIds={compareIds}
-             onToggleCompare={(id) => toggleCompare(setCompareIds, id)}
-           />
-  )}
+   ) : search.view === "board" && orgId ? (
+            /* Same rows, same filters — only the presentation changes. */
+            <CandidatesBoardView
+              rows={filtered as ClientCandidateDTO[]}
+              orgId={orgId}
+              queryKey={["client-candidates", orgId, search.position]}
+              canEdit={boardCanEdit}
+              refetch={refetch}
+            />
+   ) : (
+            <CompactList
+              rows={paged}
+              orgSearch={orgSearch}
+              compareIds={compareIds}
+              onToggleCompare={(id) => toggleCompare(setCompareIds, id)}
+            />
+   )}
 
  {/* Bounded pagination */}
- {filtered.length > PAGE_SIZE && (
+ {search.view !== "board" && filtered.length > PAGE_SIZE && (
  <nav
  aria-label="Candidates pagination"
  className="mt-4 flex items-center justify-between gap-3 text-sm"

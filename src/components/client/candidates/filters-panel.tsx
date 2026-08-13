@@ -35,7 +35,7 @@ export interface CandidatesFiltersState {
   minExp: string;
   location: string;
   sort: string;
-  view: "cards" | "list" | "compare";
+  view: "cards" | "list" | "compare" | "board";
   filter: "all" | "top" | "interview_pipeline";
   /** "1" = show only unicorn candidates (95+ or an outcome-verified top hire). */
   unicorn: string;
@@ -256,6 +256,28 @@ export function CandidatesFiltersPanel({
         {activeFilters.length > 0 && (
           <Button size="sm" variant="ghost" onClick={clearFilters}>Clear all</Button>
         )}
+        {/* List / Board is a view of the same result set — it only writes the
+            search param, so the choice is deep-linkable and survives back. */}
+        <div className="inline-flex rounded-md border p-0.5" role="group" aria-label="Result view">
+          <Button
+            size="sm"
+            variant={search.view === "board" ? "ghost" : "secondary"}
+            className="h-7 px-2 text-xs"
+            aria-pressed={search.view !== "board"}
+            onClick={() => setF({ view: "list" } as never)}
+          >
+            List
+          </Button>
+          <Button
+            size="sm"
+            variant={search.view === "board" ? "secondary" : "ghost"}
+            className="h-7 px-2 text-xs"
+            aria-pressed={search.view === "board"}
+            onClick={() => setF({ view: "board" } as never)}
+          >
+            Board
+          </Button>
+        </div>
         <div className="ml-auto">
           <SavedViewsBar
             surface="client_candidates"
