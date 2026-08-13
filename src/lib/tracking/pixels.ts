@@ -426,16 +426,19 @@ function flushPendingEvents() {
 }
 
 function send(name: string, payload: Record<string, unknown>) {
+  // Each provider gets its own event name and property shape — see
+  // src/lib/tracking/conversion-map.ts for the canonical mapping table.
+  const mapped = resolveConversion(name, payload);
+
   // GA4 always receives the event; Consent Mode decides whether it is
   // cookieless or full. Session-recording tools stay consent-gated.
-  window.gtag?.("event", name, payload);
-  window.dataLayer?.push({ event: name, ...payload });
-  window.clarity?.("event", name);
-  window.hj?.("event", name);
+  window.gtag?.("event", mapped.ga4Event, payload);
+  window.dataLayer?.push({ event: mapped.ga4Event, ...payload });
+  window.clarity?.("event", mapped.label);
+  window.hj?.("event", mapped.label);
 
-  const metaName = META_EVENT_MAP[name];
-  if (metaName) window.fbq?.("track", metaName, payload);
-  window.lintrk?.("track", { conversion_id: name });
+  if (mapped.meta) window.fbq?.("track", mapped.meta.event, mapped.meta.params);
+  if (mapped.linkedin) window.lintrk?.("track", mapped.linkedin);
 }
 
 export function trackEvent(name: string, params: Record<string, unknown> = {}) {
