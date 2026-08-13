@@ -258,7 +258,7 @@ export function TimeInStageCard({ rows }: { rows: ExecutiveReport["time_in_stage
                 </div>
                 <div className="h-1.5 overflow-hidden rounded-full bg-muted">
                   <div
-                    className={`h-full ${r.p90_days > 14 ? "bg-destructive" : r.p90_days > 7 ? "bg-warning/10" : "bg-primary"}`}
+                    className={`h-full ${r.p90_days > 14 ? "bg-destructive" : r.p90_days > 7 ? "bg-warning" : "bg-primary"}`}
                     style={{ width: `${(r.p90_days / maxP90) * 100}%` }}
                   />
                 </div>

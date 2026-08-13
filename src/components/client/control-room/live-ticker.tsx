@@ -8,10 +8,10 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const KIND_DOT: Record<string, string> = {
-  candidate: "bg-info/10",
-  stage: "bg-primary/10",
-  reply: "bg-success/10",
-  interview: "bg-warning/10",
+  candidate: "bg-info",
+  stage: "bg-primary",
+  reply: "bg-success",
+  interview: "bg-warning",
   offer: "bg-primary",
   role: "bg-muted-foreground/60",
   other: "bg-muted-foreground/40",

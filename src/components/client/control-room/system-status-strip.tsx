@@ -132,8 +132,8 @@ export function SystemStatusStrip({ orgId }: { orgId: string }) {
                   aria-hidden
                   className={cn(
                     "h-1.5 w-1.5 rounded-full",
-                    copy.tone === "ok" && "bg-success/10",
-                    copy.tone === "warn" && "bg-warning/10",
+                    copy.tone === "ok" && "bg-success",
+                    copy.tone === "warn" && "bg-warning",
                     copy.tone === "bad" && "bg-destructive",
                     copy.tone === "idle" && "bg-muted-foreground/40",
                   )}

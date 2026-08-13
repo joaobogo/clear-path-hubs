@@ -34,7 +34,7 @@ export const COLUMN_ICON: Record<HireStatus, React.ComponentType<{ className?: s
 };
 
 export const COLUMN_TONE: Record<HireStatus, string> = {
-  offer_drafted: "border-muted-foreground/30 bg-muted/10",
+  offer_drafted: "border-border bg-muted",
   offer_sent: "border-info/60 bg-info/60",
   offer_negotiating: "border-primary/60 bg-primary/60",
   offer_accepted: "border-success/60 bg-success/60",
