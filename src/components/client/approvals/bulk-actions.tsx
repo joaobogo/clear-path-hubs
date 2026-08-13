@@ -11,13 +11,19 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-export function BulkDueDate({ onApply }: { onApply: (v: string | null) => void }) {
+export function BulkDueDate({
+  onApply,
+  disabled,
+}: {
+  onApply: (v: string | null) => void;
+  disabled?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const [val, setVal] = useState("");
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline">
+        <Button size="sm" variant="outline" disabled={disabled}>
           Change due date
         </Button>
       </DialogTrigger>
@@ -51,13 +57,19 @@ export function BulkDueDate({ onApply }: { onApply: (v: string | null) => void }
   );
 }
 
-export function BulkReassign({ onApply }: { onApply: (v: string | null) => void }) {
+export function BulkReassign({
+  onApply,
+  disabled,
+}: {
+  onApply: (v: string | null) => void;
+  disabled?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const [val, setVal] = useState("");
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline">
+        <Button size="sm" variant="outline" disabled={disabled}>
           Reassign
         </Button>
       </DialogTrigger>

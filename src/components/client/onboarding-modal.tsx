@@ -14,6 +14,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
+import { toastError } from "@/lib/toast-error";
 import {
   Briefcase,
   Users,
@@ -79,6 +80,10 @@ export function ClientOnboardingModal({
       await qc.invalidateQueries({ queryKey: ["client-context"] });
       setOpen(false);
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't finish. Nothing was saved — please try again." }),
   });
 
   const roleCopy: Record<Role, string> = {

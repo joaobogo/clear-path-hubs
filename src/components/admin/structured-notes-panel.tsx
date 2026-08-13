@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
+import { toastError } from "@/lib/toast-error";
 
 type Props = {
   targetKind: NoteTargetKind;
@@ -67,6 +68,10 @@ export function StructuredNotesPanel({ targetKind, targetId, title = "Recruiter 
       setShareable(false);
       await qc.invalidateQueries({ queryKey });
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't add. Nothing was saved — please try again." }),
   });
 
   const editMutation = useMutation({
@@ -85,6 +90,10 @@ export function StructuredNotesPanel({ targetKind, targetId, title = "Recruiter 
       setEditBody("");
       await qc.invalidateQueries({ queryKey });
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't edit. Nothing was saved — please try again." }),
   });
 
   const notes = (notesQuery.data?.notes ?? []) as StructuredNote[];

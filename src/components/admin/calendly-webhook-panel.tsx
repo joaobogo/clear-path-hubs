@@ -9,6 +9,7 @@ import {
   removeCalendlyWebhook,
 } from "@/lib/booking/calendly-webhooks.functions";
 import { PanelState } from "@/components/admin/panel-state";
+import { toastError } from "@/lib/toast-error";
 
 const QUERY_KEY = ["calendly-webhook-status"] as const;
 
@@ -31,11 +32,19 @@ export function CalendlyWebhookPanel() {
   const provision = useMutation({
     mutationFn: async () => await provisionFn(),
     onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEY }),
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't provision. Nothing was saved — please try again." }),
   });
 
   const remove = useMutation({
     mutationFn: async (uri: string) => await removeFn({ data: { uri } }),
     onSuccess: () => qc.invalidateQueries({ queryKey: QUERY_KEY }),
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't remove. Nothing was saved — please try again." }),
   });
 
   const ours = data?.subscriptions.filter((s) => s.isOurs) ?? [];

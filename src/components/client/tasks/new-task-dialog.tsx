@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toastError } from "@/lib/toast-error";
 import {
   Dialog,
   DialogContent,
@@ -69,6 +70,10 @@ export function NewTaskDialog({
       setReminder("none");
       onCreated();
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: Error) =>
+      toastError(e, { fallback: "We couldn't submit. Nothing was saved — please try again." }),
   });
 
   return (

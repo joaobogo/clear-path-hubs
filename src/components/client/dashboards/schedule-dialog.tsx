@@ -21,6 +21,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { toastError } from "@/lib/toast-error";
 import {
   Select,
   SelectContent,
@@ -65,6 +66,10 @@ export function ScheduleDialog({ orgId, dashboardId }: { orgId: string; dashboar
       setRecipients("");
       queryClient.invalidateQueries({ queryKey: ["dashboard-deliveries", orgId] });
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't create. Nothing was saved — please try again." }),
   });
 
   const stop = useMutation({
@@ -73,6 +78,10 @@ export function ScheduleDialog({ orgId, dashboardId }: { orgId: string; dashboar
       toast.success("Schedule stopped.");
       queryClient.invalidateQueries({ queryKey: ["dashboard-deliveries", orgId] });
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't stop. Nothing was saved — please try again." }),
   });
 
   return (

@@ -79,6 +79,10 @@ export function TeamsConnectionCard({
       toast.success("Teams disconnected");
       await qc.invalidateQueries({ queryKey: ["teams-connection", orgId] });
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't drop. Nothing was saved — please try again." }),
   });
 
   const test = useMutation({

@@ -34,6 +34,7 @@ import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
 import { ApprovalRowItem } from "@/components/client/approvals/approval-row";
 import { NewApprovalDialog } from "@/components/client/approvals/new-approval-dialog";
 import { BulkDueDate, BulkReassign } from "@/components/client/approvals/bulk-actions";
+import { toastError } from "@/lib/toast-error";
 
 
 const RoutePending = makeWorkspacePending({ shape: "rows", kpis: false, width: "6xl" });
@@ -115,16 +116,34 @@ function ApprovalsPage() {
     mutationFn: (assignee: string | null) =>
       bulkFn({ data: { ids: Array.from(selected), assignee_user_id: assignee } }),
     onSuccess: invalidate,
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't bulk reassign. Nothing was saved — please try again." }),
   });
   const bulkDueDate = useMutation({
     mutationFn: (due: string | null) =>
       bulkFn({ data: { ids: Array.from(selected), due_at: due } }),
     onSuccess: invalidate,
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't bulk due date. Nothing was saved — please try again." }),
   });
   const bulkComplete = useMutation({
     mutationFn: () => bulkFn({ data: { ids: Array.from(selected), status: "done" } }),
     onSuccess: invalidate,
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't bulk complete. Nothing was saved — please try again." }),
   });
+
+  // Any bulk write in flight locks the whole bar: two overlapping bulk writes
+  // on the same selection would race, and the second would report success
+  // against a selection the first already changed.
+  const bulkBusy =
+    bulkComplete.isPending || bulkDueDate.isPending || bulkReassign.isPending;
 
   const rows = useMemo(() => tasks.data ?? [], [tasks.data]);
   const overdueCount = useMemo(
@@ -269,12 +288,22 @@ function ApprovalsPage() {
         {selected.size > 0 && (
           <div className="flex flex-wrap items-center gap-2 rounded-md border bg-muted/40 px-2 py-1 text-xs">
             <span className="font-medium">{selected.size} selected</span>
-            <Button size="sm" variant="outline" onClick={() => bulkComplete.mutate()}>
-              Mark complete
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => bulkComplete.mutate()}
+              disabled={bulkBusy}
+            >
+              {bulkComplete.isPending ? "Marking complete…" : "Mark complete"}
             </Button>
-            <BulkDueDate onApply={(v) => bulkDueDate.mutate(v)} />
-            <BulkReassign onApply={(v) => bulkReassign.mutate(v)} />
-            <Button size="sm" variant="ghost" onClick={() => setSelected(new Set())}>
+            <BulkDueDate onApply={(v) => bulkDueDate.mutate(v)} disabled={bulkBusy} />
+            <BulkReassign onApply={(v) => bulkReassign.mutate(v)} disabled={bulkBusy} />
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setSelected(new Set())}
+              disabled={bulkBusy}
+            >
               Clear
             </Button>
           </div>

@@ -138,6 +138,10 @@ function BookCallPage() {
       toast.success("Call request cancelled.");
       await queryClient.invalidateQueries({ queryKey: ["booking-state"] });
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't cancel. Nothing was saved — please try again." }),
   });
 
   const booked = stateQuery.data?.call ?? null;

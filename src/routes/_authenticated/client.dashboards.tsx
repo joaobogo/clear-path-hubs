@@ -34,6 +34,7 @@ import { DegradedPanelsBanner, NotCurrentChip } from "@/components/client/degrad
 import { panelReadiness, panelSignal } from "@/lib/panel-readiness";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { toastError } from "@/lib/toast-error";
 
 export const Route = createFileRoute("/_authenticated/client/dashboards")({
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.dashboards.tsx"),
@@ -119,6 +120,10 @@ function DashboardsPage() {
       setActiveId(res.id);
       queryClient.invalidateQueries({ queryKey: ["dashboard-workspace", orgId] });
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't save. Nothing was saved — please try again." }),
   });
 
   if (ctxQuery.isError) {
