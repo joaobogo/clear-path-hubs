@@ -1,3 +1,4 @@
+import { CvDownloadAudit } from "@/components/cv-download-audit";
 /**
  * Secondary tabs of the admin candidate workspace.
  *
