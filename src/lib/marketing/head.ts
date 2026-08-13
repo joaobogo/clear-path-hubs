@@ -101,11 +101,59 @@ export function breadcrumbScript(items: BreadcrumbItem[]) {
   };
 }
 
+/**
+ * FAQPage JSON-LD. Only ever built from Q&As that are visible on the page —
+ * the caller passes the same array it renders.
+ */
+export function faqScript(items: { q: string; a: string }[]) {
+  return {
+    type: "application/ld+json",
+    children: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: items.map((item) => ({
+        "@type": "Question",
+        name: item.q,
+        acceptedAnswer: { "@type": "Answer", text: item.a },
+      })),
+    }),
+  };
+}
+
+/**
+ * Service JSON-LD for a page describing one concrete offer. Fields the site
+ * does not state (price, area served specifics) are omitted, never guessed.
+ */
+export function serviceScript(input: {
+  name: string;
+  description: string;
+  path: string;
+  serviceType?: string;
+}) {
+  return {
+    type: "application/ld+json",
+    children: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Service",
+      name: input.name,
+      description: input.description,
+      url: `${CANONICAL_ORIGIN}${input.path}`,
+      ...(input.serviceType ? { serviceType: input.serviceType } : {}),
+      provider: { "@id": "https://taasflow.com/#organization" },
+    }),
+  };
+}
+
 export function marketingHead(
   entry: ContentEntry | undefined,
   path: string,
   fallback?: { title: string; description: string },
-  options?: { breadcrumbs?: BreadcrumbItem[]; image?: string },
+  options?: {
+    breadcrumbs?: BreadcrumbItem[];
+    image?: string;
+    /** Extra JSON-LD blocks (Service, FAQPage, …) for this page only. */
+    scripts?: { type: string; children: string }[];
+  },
 ) {
   // Page-specific title/description always win. og:* is only a fallback so a
   // generic share string can never become the page <title>.
@@ -121,6 +169,10 @@ export function marketingHead(
   const url = `${CANONICAL_ORIGIN}${path}`;
   // Only the page's own hero/cover becomes its share image; no placeholder.
   const image = absoluteShareImage(options?.image);
+  const scripts = [
+    ...(options?.breadcrumbs?.length ? [breadcrumbScript(options.breadcrumbs)] : []),
+    ...(options?.scripts ?? []),
+  ];
   return {
     meta: [
       { title },
@@ -141,8 +193,7 @@ export function marketingHead(
     ],
 
     links: [{ rel: "canonical", href: url }],
-    ...(options?.breadcrumbs?.length
-      ? { scripts: [breadcrumbScript(options.breadcrumbs)] }
-      : {}),
+    ...(scripts.length ? { scripts } : {}),
   };
 }
+
