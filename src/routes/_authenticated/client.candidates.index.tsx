@@ -364,6 +364,15 @@ function CandidatesPage() {
  const setF = (patch: Partial<typeof search>) =>
  navigate({ search: { ...search, ...patch } as never });
 
+ // Board edit rights mirror the role board exactly: viewers get a read-only
+ // board, and support mode never mutates a client's pipeline.
+ const boardCanEdit =
+  !isSupportView &&
+  (ctx?.active?.role === "client_admin" ||
+   ctx?.active?.role === "client_editor" ||
+   ctx?.active?.role === "platform_admin" ||
+   ctx?.active?.role === "operations");
+
  const activeFilters = [
  search.position && {
  key: "position",
