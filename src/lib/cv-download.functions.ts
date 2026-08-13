@@ -143,6 +143,24 @@ export const getCandidateCvDownload = createServerFn({ method: "POST" })
       throw new Error(signed.error?.message ?? "Could not create download link");
     }
 
+    // Audit trail: who fetched which candidate's CV, when, and from which side.
+    // Written after the link is issued so a failed signing never leaves a false record.
+    await supabaseAdmin.from("audit_events").insert({
+      actor_user_id: userId,
+      organization_id: orgId,
+      entity_type: "candidate_matches",
+      entity_id: matchId,
+      action: "cv.download",
+      after_state: {
+        audience,
+        disposition,
+        filename,
+        file_id: fileId,
+        candidate_profile_id: match.candidate_profile_id,
+        candidate_name: profile?.full_name ?? null,
+      },
+    });
+
     return {
       url: signed.data.signedUrl,
       filename,

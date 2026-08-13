@@ -1,3 +1,4 @@
+import { CvDownloadAudit } from "@/components/cv-download-audit";
 /**
  * Secondary tabs of the admin candidate workspace.
  *
@@ -987,6 +988,10 @@ export function ActivityAuditTab({
     <div className="space-y-4">
       {/* The audited record changes, paginated so the whole history is reachable. */}
       <RecordActivityTab entity="candidate" id={matchId} title="Record audit" />
+
+      {/* Every signed CV link issued for this candidate: who, when, which side. */}
+      <CvDownloadAudit matchId={matchId} title="CV download audit trail" limit={50} />
+
 
     <div className="rounded-lg border bg-card">
       <div className="border-b px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
