@@ -175,7 +175,7 @@ function DesignSystemGallery() {
           </Section>
 
           {/* ────────── KPI cards ────────── */}
-          <Section title="KPI cards">
+          <Section title="KPI cards" description="Static example values for layout review only — this gallery is not wired to any query. Real dashboards read every figure from the database.">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <KpiCard label="Open positions" value={12} hint="+3 vs last week" icon={<Sparkles className="h-4 w-4" />} />
               <KpiCard label="Applications" value={287} hint="Rolling 30 days" drillTo="/admin/candidates" />
