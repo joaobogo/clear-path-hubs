@@ -97,7 +97,26 @@ const GENERIC_CONFIRM_MESSAGE =
 function LoginPage() {
   const navigate = useNavigate();
   const { redirect } = Route.useSearch();
-  const qa = Route.useLoaderData();
+  const [qa, setQa] = useState<{
+    enabled: boolean;
+    personas: Array<{ key: Persona; label: string }>;
+  }>(QA_DISABLED);
+  const loadQa = useServerFn(getQaPersonaConfig);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const cfg = await loadQa();
+        if (!cancelled) setQa(cfg);
+      } catch {
+        /* QA personas are optional — stay disabled */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const runPersona = useServerFn(qaPersonaLogin);
   const runSession = useServerFn(getSessionContext);
   const runProvision = useServerFn(provisionClientMembershipForSelf);
