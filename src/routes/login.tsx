@@ -77,7 +77,7 @@ export function LoginFallback() {
         <Button variant="outline" className="w-full" onClick={() => window.location.reload()}>
           Reload
         </Button>
-        <Link to="/" className="block text-xs text-muted-foreground hover:underline">
+        <Link to="/" className="inline-flex min-h-11 items-center text-xs text-muted-foreground hover:underline">
           ← Back home
         </Link>
       </Card>
@@ -525,7 +525,7 @@ function LoginPage() {
           )}
 
 
-          <Link to="/" className="block text-xs text-muted-foreground hover:underline">
+          <Link to="/" className="inline-flex min-h-11 items-center text-xs text-muted-foreground hover:underline">
             ← Back home
           </Link>
         </Card>
