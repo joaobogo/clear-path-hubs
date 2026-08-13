@@ -21,7 +21,7 @@ Run date: 2026-08-13 (UTC). Measurement only — nothing was fixed in this pass.
 | 4 | Admin candidates | `/admin/candidates` | UNVERIFIED (gate ok) | Real (21 profiles, 46 score runs) | Yes (42 buttons, 0 dead) | Yes | UNVERIFIED |
 | 5 | Admin candidate detail | `/admin/candidates/$id` | UNVERIFIED (gate ok) | Real (evidence + score runs present) | Yes (30 buttons, 0 dead) | Yes | UNVERIFIED |
 | 6 | Publish desk | `/admin/publish` | UNVERIFIED (gate ok) | **Empty of publishable work — 0 positions in `open` status** | Yes (12 buttons, 0 dead) | Yes | UNVERIFIED |
-| 7 | Client overview | `/client` | UNVERIFIED (gate ok) | Real (demo KPIs: 10 visible, 4 shortlisted, 2 interview, 1 offer, 1 hire) | Yes (52 buttons, 0 dead) | UNVERIFIED |
+| 7 | Client overview | `/client` | UNVERIFIED (gate ok) | Real (demo KPIs: 10 visible, 4 shortlisted, 2 interview, 1 offer, 1 hire) | Yes (52 buttons, 0 dead) | Yes | UNVERIFIED |
 | 8 | Client roles | `/client/positions` | UNVERIFIED (gate ok) | Real (1 demo role) | Yes (14 buttons, 0 dead) | Yes | UNVERIFIED |
 | 9 | Client candidates | `/client/candidates` | UNVERIFIED (gate ok) | Real (10 demo candidates) | Yes (40 buttons, 0 dead) | Yes | UNVERIFIED |
 | 10 | Client candidate detail | `/client/candidates/$id` | UNVERIFIED (gate ok) | Real (score breakdown + CV per candidate) | Yes (37 buttons, 0 dead) | Yes | UNVERIFIED |
