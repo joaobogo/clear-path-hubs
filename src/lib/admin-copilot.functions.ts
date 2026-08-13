@@ -137,6 +137,19 @@ async function runTool(supabase: AnyRow, name: string, args: Record<string, unkn
   }
 }
 
+/**
+ * The copilot tables are already staff-only under RLS, so a client or candidate
+ * caller would fail on the first write. Asserting first turns that indirect
+ * failure into an explicit, auditable 403 — and makes the guard visible to the
+ * admin-surface coverage test instead of implied by a policy elsewhere.
+ */
+async function requireCopilotStaff(context: { userId: string; supabase: AnyRow }) {
+  const { data } = await context.supabase.rpc("is_platform_staff", {
+    _user: context.userId,
+  });
+  if (data !== true) throw new Error("forbidden");
+}
+
 async function ensureConversation(supabase: AnyRow, userId: string): Promise<string> {
   const { data: existing } = await supabase
     .from("admin_copilot_conversations")
