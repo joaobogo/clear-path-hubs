@@ -11,6 +11,7 @@
  * value that looks like an email or phone number.
  */
 import { trackEvent } from "@/lib/tracking/pixels";
+import { trackFormSubmit } from "@/lib/tracking/conversions";
 import { BRAND_DOMAIN, BRAND_KEY, getJourneyId } from "@/lib/crm/attribution";
 
 export const FGV_EVENTS = {
@@ -112,6 +113,14 @@ export function trackConfirmedConversion(args: {
     service_interest: args.serviceInterest,
     destination_brand: args.destinationBrand,
     submission_id: args.submissionId,
+  });
+  // Same moment, canonical conversion name: GA4 generate_lead, Meta Lead,
+  // LinkedIn conversion id. Mapping lives in conversion-map.ts.
+  trackFormSubmit({
+    formId: args.formType,
+    formType: args.formType,
+    submissionId: args.submissionId,
+    extra: { service_interest: args.serviceInterest, destination_brand: args.destinationBrand },
   });
 }
 

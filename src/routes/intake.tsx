@@ -105,6 +105,7 @@ import {
 } from "@/lib/intake-draft-shared";
 import { submitToCrm } from "@/lib/crm/submit-form";
 import { trackEvent } from "@/lib/tracking/pixels";
+import { trackDashboardSignup } from "@/lib/tracking/conversions";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { PAYMENTS_ENABLED } from "@/config/commerce";
@@ -1087,6 +1088,7 @@ function ExpressIntakePage() {
       setAuthed(true);
       setAccountEmail(email);
       trackEvent("account_created_from_intake", { flow: "express_onboarding" });
+      trackDashboardSignup({ method: "email_password", plan: "express_onboarding" });
       toast.success("Account created. Everything you've typed is saved to it.");
       continueAfterAccount();
     } catch {
@@ -1617,7 +1619,10 @@ function ExpressIntakePage() {
         flow: "express_onboarding",
         pilot_eligible: body.pilotEligible !== false,
       });
-      if (body.accountCreated) trackEvent("account_created_from_intake", { flow: "express_onboarding" });
+      if (body.accountCreated) {
+        trackEvent("account_created_from_intake", { flow: "express_onboarding" });
+        trackDashboardSignup({ method: "email_password", plan: "express_onboarding" });
+      }
       else trackEvent("existing_account_detected", { flow: "express_onboarding" });
       if (body.pilotEligible === false)
         trackEvent("pilot_ineligible", { reason: String(body.pilotReason ?? "unknown") });
