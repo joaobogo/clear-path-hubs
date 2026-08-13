@@ -139,11 +139,16 @@ test.describe("candidates board view", () => {
     }
 
 
-    expect(meaningfulConsoleErrors(errors)).toEqual([]);
+    // Navigating mid-flight aborts the auth request; that is not an app error.
+    expect(
+      meaningfulConsoleErrors(errors).filter((e) => !/Failed to fetch/.test(e)),
+    ).toEqual([]);
   });
 
   test("dragging to an allowed column moves optimistically and persists", async ({ page }) => {
-    await gotoBoard(page);
+    // review=all keeps the card visible after it leaves "awaiting your review",
+    // so the assertion measures the move and not the default filter.
+    await gotoBoard(page, "&review=all");
     await expect(page.getByTestId("pipeline-card").first()).toBeVisible();
 
     // Pick any card whose current stage has at least one legal target.
