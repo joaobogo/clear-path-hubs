@@ -159,6 +159,11 @@ function injectScript(
 /* ---------------------------------------------------------------- GA4 --- */
 
 function initGA4() {
+  // Already booted by the server-rendered head snippet — never double-load.
+  if (alreadyInDocument("ga4")) {
+    loaded.add("ga4");
+    return;
+  }
   if (loaded.has("ga4") || !GA_ID) return;
   loaded.add("ga4");
   const granted = true;
@@ -208,6 +213,11 @@ function syncGA4Consent() {
 /* ------------------------------------------------------------- Apollo --- */
 
 function initApollo() {
+  // Already booted by the server-rendered head snippet — never double-load.
+  if (alreadyInDocument("apollo")) {
+    loaded.add("apollo");
+    return;
+  }
   if (loaded.has("apollo") || !APOLLO_ID) return;
   loaded.add("apollo");
   injectScript("apollo", {
@@ -227,6 +237,11 @@ function initApollo() {
 /* --------------------------------------------------------------- RB2B --- */
 
 function initRB2B() {
+  // Already booted by the server-rendered head snippet — never double-load.
+  if (alreadyInDocument("rb2b")) {
+    loaded.add("rb2b");
+    return;
+  }
   // Primary boot is the inline snippet in the server-rendered head, so
   // identification starts while the document parses, before hydration and
   // before any consent choice. This is the fallback for anything the head
@@ -245,6 +260,11 @@ function initRB2B() {
 /* --------------------------------------------------- dormant trackers --- */
 
 function initMeta() {
+  // Already booted by the server-rendered head snippet — never double-load.
+  if (alreadyInDocument("meta")) {
+    loaded.add("meta");
+    return;
+  }
   if (loaded.has("meta") || !META_ID) return;
   loaded.add("meta");
   injectScript("meta", {
@@ -253,6 +273,11 @@ function initMeta() {
 }
 
 function initLinkedIn() {
+  // Already booted by the server-rendered head snippet — never double-load.
+  if (alreadyInDocument("linkedin")) {
+    loaded.add("linkedin");
+    return;
+  }
   if (loaded.has("linkedin") || !LINKEDIN_ID) return;
   loaded.add("linkedin");
   window._linkedin_partner_id = LINKEDIN_ID;
