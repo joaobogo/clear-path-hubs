@@ -56,8 +56,18 @@ function snapToSentences(text: string): string {
     }
   }
   const lastBoundary = Math.max(out.lastIndexOf("."), out.lastIndexOf("!"), out.lastIndexOf("?"));
-  if (lastBoundary >= 60) out = out.slice(0, lastBoundary + 1);
+  if (lastBoundary >= 40) out = out.slice(0, lastBoundary + 1);
   return out.trim();
+}
+
+/** Remove leading punctuation/digit debris left by an offset slice. */
+function stripLeadingJunk(text: string): string {
+  let out = text.replace(/^[^A-Za-z]+/, "").trim();
+  const firstSpace = out.indexOf(" ");
+  if (firstSpace > 0 && firstSpace <= 2 && out.length - firstSpace >= 40) {
+    out = out.slice(firstSpace + 1).trim();
+  }
+  return out;
 }
 
 function capAtWord(text: string): string {
@@ -77,9 +87,9 @@ export function cleanQuote(raw: string | null | undefined): string {
   if (!raw) return "";
   const collapsed = stripContactLines(String(raw)).replace(/\s+/g, " ").trim();
   if (!collapsed) return "";
-  const snapped = snapToSentences(collapsed);
+  const snapped = snapToSentences(stripLeadingJunk(collapsed));
   // Never let hygiene reduce a quote to a stub: fall back to the collapsed text.
-  const out = snapped.length >= 40 ? snapped : collapsed;
+  const out = snapped.length >= 40 ? snapped : stripLeadingJunk(collapsed);
   return capAtWord(out).trim();
 }
 
