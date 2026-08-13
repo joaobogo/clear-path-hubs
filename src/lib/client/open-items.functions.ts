@@ -49,7 +49,10 @@ export const getClientOpenItems = createServerFn({ method: "GET" })
     ]);
 
     const requests = (requestsRes.data as AnyRow[]) ?? [];
-    const matches = (matchesRes.data as AnyRow[]) ?? [];
+    const matches = ((matchesRes.data as AnyRow[]) ?? []).filter(
+      (m) => !((m.client_decisions as AnyRow[]) ?? []).length,
+    );
+
     const interviews = (interviewsRes.data as AnyRow[]) ?? [];
 
     // Interviews with feedback already recorded are not owed anything.
