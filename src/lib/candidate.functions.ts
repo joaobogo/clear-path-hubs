@@ -502,11 +502,17 @@ export const getMyDashboard = createServerFn({ method: "GET" })
         .select("current_cv_file_id")
         .eq("id", cpId)
         .maybeSingle(),
+      // A candidate's thread is keyed by their own user id (see sendMyMessage),
+      // so unread means: in my thread, not written by me, never read. The old
+      // `recipient_context->>candidate_user_id` filter matched a key no writer
+      // sets, so this tile read 0 while /me/messages showed unread replies.
       supabase
         .from("messages")
         .select("id", { count: "exact", head: true })
-        .eq("recipient_context->>candidate_user_id", context.userId)
+        .eq("thread_id", context.userId)
+        .neq("sender_user_id", context.userId)
         .is("read_at", null),
+
     ]);
 
     const { data: matches } = await supabase
