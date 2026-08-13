@@ -129,7 +129,8 @@ export async function loadFilterOptions() {
 
   const seen = new Set<string>();
   const ownerList: { id: string; name: string }[] = [];
-  for (const m of (owners ?? []) as AnyRow[]) {
+  const ownersWithProfiles = await attachMemberProfiles(s, owners as AnyRow[]);
+  for (const m of ownersWithProfiles) {
     if (!m.user_id || seen.has(m.user_id)) continue;
     seen.add(m.user_id);
     ownerList.push({

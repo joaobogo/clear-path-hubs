@@ -734,7 +734,8 @@ export const listOfferOwners = createServerFn({ method: "POST" })
       .eq("organization_id", data.orgId)
       .eq("status", "active");
     if (error) throw new Error(error.message);
-    const owners = (members ?? []).map((m: AnyRow) => ({
+    const withProfiles = await attachMemberProfiles(context.supabase, (members ?? []) as AnyRow[]);
+    const owners = withProfiles.map((m: AnyRow) => ({
       user_id: m.user_id as string,
       role: m.role as string,
       name:

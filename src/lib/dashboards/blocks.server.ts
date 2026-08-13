@@ -348,7 +348,7 @@ async function teamActivity(sb: AnySupabase, org: string): Promise<BlockData | n
       .eq("organization_id", org)
       .gte("created_at", since),
   ]);
-  const memberRows = (members ?? []) as Array<Record<string, any>>;
+  const memberRows = await attachMemberProfiles(sb, (members ?? []) as Array<Record<string, any>>);
   if (memberRows.length === 0) return null;
   const counts = new Map<string, number>();
   for (const h of (history ?? []) as Array<Record<string, any>>) {

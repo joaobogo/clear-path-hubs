@@ -98,7 +98,9 @@ export const getClientTeamActivity = createServerFn({ method: "GET" })
       (((positionsRes.data ?? [])[0] as AnyRow | undefined)?.created_at as string | undefined) ??
       null;
 
-    const rows = ((membersRes.data ?? []) as AnyRow[]).slice(0, 50);
+    const rows = (
+      await attachMemberProfiles(context.supabase, (membersRes.data ?? []) as AnyRow[])
+    ).slice(0, 50);
 
     // Last sign-in is only available through the auth admin API.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
