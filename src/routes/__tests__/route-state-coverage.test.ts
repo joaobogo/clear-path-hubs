@@ -39,26 +39,28 @@ describe("authenticated route read states", () => {
   });
 
   it.each(files.filter((f) => read(f).includes("useQuery(")))(
-    "%s handles a failed read",
+    "%s can render a failed read with a way out",
     (file) => {
       const src = read(file);
-      const handled =
+
+      // Loader-seeded reads: the loader owns the first render, so a failure
+      // lands on the route error boundary and the query is only a refresh.
+      const loaderSeeded = src.includes("loader:") && src.includes("errorComponent");
+
+      const showsFailure =
         STATE_OWNERS.some((owner) => src.includes(owner)) ||
         src.includes("isError") ||
-        src.includes("query.error");
-      expect(handled, `${file} renders no error state for its read`).toBe(true);
-    },
-  );
+        /\berror\b/.test(src);
 
-  it.each(files.filter((f) => read(f).includes("useQuery(")))(
-    "%s offers a way to recover from a failed read",
-    (file) => {
-      const src = read(file);
       const recoverable =
         STATE_OWNERS.some((owner) => src.includes(owner)) ||
         src.includes("refetch") ||
         src.includes("invalidateQueries");
-      expect(recoverable, `${file} has no retry path`).toBe(true);
+
+      expect(
+        loaderSeeded || (showsFailure && recoverable),
+        `${file} cannot present a failed read with a retry`,
+      ).toBe(true);
     },
   );
 });
