@@ -90,36 +90,17 @@ export function assessFreshness(input: FreshnessInput): Freshness {
 
   const reasons: StaleReason[] = [];
 
-  const profile = time(input.profile_updated_at);
-  if (profile !== null && profile > scored) {
-    reasons.push({
-      code: "profile_changed",
-      label: "The candidate's profile or evidence changed after this was assessed.",
-    });
-  }
-
-  const brief = time(input.brief_updated_at);
-  if (brief !== null && brief > scored) {
-    reasons.push({
-      code: "brief_changed",
-      label: "The role brief changed after this was assessed.",
-    });
-  }
-
+  // A bare row timestamp is NOT evidence that anything relevant moved: editing
+  // an unrelated field on the role (or touching a profile) bumps updated_at
+  // without changing a single scoring input. Staleness therefore comes from two
+  // sources only: the recorded score_stale flag (see mergeStoredStaleness) and
+  // an actual fingerprint/version difference against the run below.
   const scoredHash = str(input.scored_input_hash);
   const currentHash = str(input.current_input_hash);
   if (scoredHash && currentHash && scoredHash !== currentHash) {
     reasons.push({
       code: "inputs_changed",
       label: "The inputs behind this result are no longer the current ones.",
-    });
-  }
-
-  const criteria = time(input.criteria_updated_at);
-  if (criteria !== null && criteria > scored) {
-    reasons.push({
-      code: "criteria_changed",
-      label: "The scoring criteria for this role changed after this was assessed.",
     });
   }
 
