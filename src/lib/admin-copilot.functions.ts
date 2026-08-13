@@ -172,6 +172,7 @@ async function ensureConversation(supabase: AnyRow, userId: string): Promise<str
 export const getCopilotState = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    await requireCopilotStaff(context as never);
     const conversationId = await ensureConversation(context.supabase, context.userId);
     const { data: rows, error } = await context.supabase
       .from("admin_copilot_messages")
@@ -185,6 +186,7 @@ export const getCopilotState = createServerFn({ method: "POST" })
 export const resetCopilot = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    await requireCopilotStaff(context as never);
     await context.supabase
       .from("admin_copilot_conversations")
       .update({ archived_at: new Date().toISOString() } as never)
@@ -200,6 +202,7 @@ export const askCopilot = createServerFn({ method: "POST" })
     z.object({ message: z.string().trim().min(1).max(4000) }).parse(input),
   )
   .handler(async ({ context, data }) => {
+    await requireCopilotStaff(context as never);
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("Copilot unavailable: LOVABLE_API_KEY missing");
 
