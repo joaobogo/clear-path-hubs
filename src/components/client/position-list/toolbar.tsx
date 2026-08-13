@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, List, Search, AlertCircle } from "lucide-react";
+import { Search, AlertCircle } from "lucide-react";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import type { Row } from "@/components/client/position-list/position-cards";
 

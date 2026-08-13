@@ -12,7 +12,6 @@ import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import { QueryErrorCard } from "@/components/client/query-error";
 import {
   PortfolioSnapshot,
-  PositionCard,
   CompactList,
   EmptyState,
   type Row,
