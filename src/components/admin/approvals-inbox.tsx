@@ -111,6 +111,7 @@ function Row({
   onApprove,
   onDecline,
   busy,
+  rowProps,
 }: {
   item: ApprovalItem;
   selected: boolean;
@@ -118,11 +119,17 @@ function Row({
   onApprove: () => void;
   onDecline: (reason: string) => void;
   busy: boolean;
+  rowProps: ReturnType<QueueKeyboard["rowProps"]>;
 }) {
   const [declining, setDeclining] = useState(false);
   const blocked = item.blockers.length > 0;
   return (
-    <li className="border-b border-border/70 px-4 py-3 last:border-0">
+    <li
+      {...rowProps}
+      ref={rowProps.ref as (node: HTMLLIElement | null) => void}
+      className={`border-b border-border/70 px-4 py-3 last:border-0 ${QUEUE_ROW_ACTIVE_CLASS}`}
+    >
+
       <div className="flex flex-wrap items-start gap-3">
         <input
           type="checkbox"
