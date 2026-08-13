@@ -25,7 +25,7 @@ function hasContactDetail(line: string): boolean {
  */
 export function stripContactLines(raw: string): string {
   return raw
-    .split(/\r?\n|(?:\s*\u2022\s*)|(?:\s*\|\s*)/)
+    .split(/\r?\n|(?:\s*[\u2022\u00b7]\s*)|(?:\s*\|\s*)/)
     .map((line) => line.trim())
     .filter((line, i, all) => {
       if (!line) return false;
@@ -46,9 +46,9 @@ function snapStart(text: string): string {
     if (candidate.length >= 60) out = candidate;
   }
   if (/^[a-z]/.test(out)) {
-    // Still opening mid-word: skip forward to the next whole word.
+    // Still opening mid-word: the first token is slice debris, drop it.
     const nextWord = out.indexOf(" ");
-    if (nextWord > 0 && nextWord < 24 && out.length - nextWord >= 60) {
+    if (nextWord > 0 && nextWord < 24 && out.length - nextWord >= 30) {
       out = out.slice(nextWord + 1).trim();
     }
   }
