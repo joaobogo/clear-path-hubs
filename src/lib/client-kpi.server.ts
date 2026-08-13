@@ -663,14 +663,20 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
       ? String(runConcerns[0])
       : null);
 
+  // Contact release is a separate permission, so every quote goes through the
+  // same hygiene pass as the criteria rows before it leaves the server.
   const evidence: Array<{ label: string; snippet: string }> = Array.isArray(
     run?.evidence,
   )
-    ? run.evidence.slice(0, 8).map((e: AnyRow) => ({
-        label: String(e.label ?? e.type ?? "Evidence"),
-        snippet: String(e.snippet ?? e.value ?? ""),
-      }))
+    ? run.evidence
+        .slice(0, 8)
+        .map((e: AnyRow) => ({
+          label: String(e.label ?? e.type ?? "Evidence"),
+          snippet: cleanQuote(String(e.snippet ?? e.value ?? "")),
+        }))
+        .filter((e: { snippet: string }) => e.snippet.length > 0)
     : [];
+
 
   const experience = normExperience(cp.experience);
   const currentRole = experience[0]?.title ?? null;
