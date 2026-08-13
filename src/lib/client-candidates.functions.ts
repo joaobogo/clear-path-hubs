@@ -234,8 +234,13 @@ export const getClientCandidate = createServerFn({ method: "GET" })
     const evidenceItems =
       (await loadClientEvidenceItems(context.supabase, [data.matchId])).get(data.matchId) ?? [];
 
+    const ACTIVE_INTERVIEW_STATUSES = ["requested", "scheduling", "scheduled", "completed"];
     const matchWithAnswers = {
       ...(hydratedMatch as AnyRow),
+      // Same definition as the list and the "Interviewing" KPI tile.
+      interview_active: ((interviews as AnyRow[]) ?? []).some((iv) =>
+        ACTIVE_INTERVIEW_STATUSES.includes(String(iv.status)),
+      ),
       evidence_items: evidenceItems,
       application_answers: answers,
       audit_events: ((auditRes as AnyRow).data as AnyRow[]) ?? [],
