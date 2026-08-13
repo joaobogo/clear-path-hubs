@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { marketingHead } from "@/lib/marketing/head";
+import { marketingHead, faqScript, serviceScript } from "@/lib/marketing/head";
 import { PRODUCT_CATEGORY } from "@/config/product-language";
 import {
   SiteShell,
@@ -45,6 +45,21 @@ export const Route = createFileRoute("/pricing")({
       title: "Pricing & Plan Entitlements | TaaSFlow Platform",
       description:
         `TaaSFlow platform plans from ${PRICE_PILOT_DISPLAY}: active roles under management, agent capacity, Hiring Intelligence, Evidence Graph, governance and support — compared side by side.`,
+    }, {
+      breadcrumbs: [
+        { name: "Home", path: "/" },
+        { name: "Pricing", path: "/pricing" },
+      ],
+      scripts: [
+        serviceScript({
+          name: "TaaSFlow subscription recruiting",
+          description:
+            "Software-enabled recruiting delivered as a subscription: ATS, recruiting agents, multichannel outreach and curated talent data for one flat monthly fee per active role, with no placement fees.",
+          path: "/pricing",
+          serviceType: "Recruiting",
+        }),
+        faqScript(FAQ),
+      ],
     }),
   component: PricingPage,
 });
