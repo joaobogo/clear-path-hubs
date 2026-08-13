@@ -449,7 +449,7 @@ function CandidatesPage() {
  )}
 
  {/* Header */}
- <header className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4 mb-6">
+ <header className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
  <div className="min-w-0">
  <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">Candidates</h1>
  <p className="text-sm text-muted-foreground mt-1">
@@ -457,7 +457,7 @@ function CandidatesPage() {
  </p>
  <VisibilityNote className="mt-2" />
  </div>
- <div className="flex flex-col items-end gap-2 shrink-0">
+ <div className="flex flex-col items-stretch gap-2 sm:shrink-0 sm:items-end">
  <Button
  size="sm"
  onClick={() => setCompareOpen(true)}
@@ -472,7 +472,7 @@ function CandidatesPage() {
   targets={cvTargets}
   label={`Download ${cvTargets.length} CV${cvTargets.length === 1 ? "" : "s"} (ZIP)`}
  />
- <div className="text-right text-xs text-muted-foreground">
+ <div className="text-xs text-muted-foreground sm:text-right">
  <div>
  <span className="tabular-nums text-foreground font-medium">{filtered.length}</span> of{" "}
  {(rowsRaw as ClientCandidateDTO[]).length} shown

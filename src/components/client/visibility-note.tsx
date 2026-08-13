@@ -38,7 +38,7 @@ export function VisibilityNote({
   const trigger = (
     <button
       type="button"
-      className="underline underline-offset-2 decoration-dotted hover:text-foreground transition-colors"
+      className="whitespace-nowrap underline underline-offset-2 decoration-dotted hover:text-foreground transition-colors"
     >
       What you can see
     </button>
@@ -79,7 +79,7 @@ export function VisibilityNote({
 
   return (
     <p
-      className={`text-xs text-muted-foreground flex items-center gap-1.5 ${className}`}
+      className={`text-xs text-muted-foreground flex flex-wrap items-center gap-x-1.5 gap-y-1 ${className}`}
     >
       <Lock className="h-3 w-3 shrink-0" />
       <span>
