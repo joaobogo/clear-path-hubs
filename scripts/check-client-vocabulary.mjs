@@ -83,7 +83,7 @@ const RULES = [
   {
     id: "processing-state",
     pattern:
-      /\bprocessing\b|\bin processing\b|\bprocessing state\b|\bstate machine\b|\bpayload\b|\bupsert\w*\b|\bingest(ion|ed|ing)?\b/i,
+      /\bprocessing\b|\bbeing processed\b|\bin processing\b|\bprocessing state\b|\bstate machine\b|\bpayload\b|\bupsert\w*\b|\bingest(ion|ed|ing)?\b/i,
     use: "being reviewed / under review",
   },
 ];
@@ -119,7 +119,13 @@ function copyStrings(source) {
     if (ALLOW_MARKER.test(line)) return;
     const literals = line.match(/"[^"\n]{4,}"|'[^'\n]{4,}'|`[^`\n]{4,}`/g) ?? [];
     for (const raw of literals) {
-      const text = raw.slice(1, -1);
+      // Inside a template literal, `${expr}` is code — keep only any copy
+      // strings written inside the expression.
+      const text = raw
+        .slice(1, -1)
+        .replace(/\$\{([^}]*)\}/g, (_m, expr) =>
+          (expr.match(/"[^"]*"|'[^']*'/g) ?? []).map((q) => ` ${q.slice(1, -1)} `).join(" "),
+        );
       if (!/\s/.test(text)) continue; // identifier / path / class token
       if (/^[a-z0-9:_\-/ .]+$/.test(text) && !/[.?!]/.test(text)) continue;
       if (/^[-a-z0-9 :_/[\]()]+$/i.test(text) && /^[a-z-]+ /.test(text) && !/[.?!]/.test(text) && /(\bflex\b|\btext-|\bgrid\b|\bmt-|\bpx-|\brounded)/.test(text)) continue;
