@@ -158,6 +158,17 @@ export function CandidateCard({
         )}
       </div>
 
+      {/* The figure, with the criteria behind it, the method and a way in. */}
+      {assessment.state === "settled" && evidencedFit && (
+        <EvidencedScore
+          number={evidencedFit}
+          accent={c.fit.accent}
+          matchId={c.match_id}
+          org={search.org ?? null}
+          className="mt-3 rounded-lg border bg-muted/30 p-3"
+        />
+      )}
+
 
 
       {/* Why we shortlisted — one bullet per requirement, each attributed.
