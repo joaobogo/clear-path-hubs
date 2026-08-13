@@ -137,26 +137,39 @@ function Row({
             {new Date(item.requested_at).toLocaleString()}
           </p>
           {blocked ? (
-            <p className="flex items-start gap-1 text-xs text-destructive">
-              <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
-              <span>{item.blockers.join(" · ")}</span>
-            </p>
+            <BlockedReason
+              className="mt-1"
+              reasons={item.blockers}
+              {...(item.link ? { resolve: { to: item.link, label: "Open the record to clear this" } } : {})}
+            />
           ) : null}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {item.link ? (
-            <Button size="sm" variant="outline" asChild>
-              <Link to={item.link}>Open record</Link>
-            </Button>
-          ) : null}
-          <Button size="sm" onClick={onApprove} disabled={blocked || busy}>
-            {busy ? (
-              <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-            ) : (
-              <Check className="mr-1 h-3 w-3" />
-            )}
-            Approve
-          </Button>
+          {/* One primary action per row: approve when it can be approved,
+              otherwise the route that clears the blocker. */}
+          {blocked ? (
+            item.link ? (
+              <Button size="sm" asChild>
+                <Link to={item.link}>Open record</Link>
+              </Button>
+            ) : null
+          ) : (
+            <>
+              <Button size="sm" onClick={onApprove} disabled={busy}>
+                {busy ? (
+                  <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                ) : (
+                  <Check className="mr-1 h-3 w-3" />
+                )}
+                Approve
+              </Button>
+              {item.link ? (
+                <Button size="sm" variant="outline" asChild>
+                  <Link to={item.link}>Open record</Link>
+                </Button>
+              ) : null}
+            </>
+          )}
           <Button
             size="sm"
             variant="ghost"
@@ -167,6 +180,7 @@ function Row({
             Decline
           </Button>
         </div>
+
       </div>
       {declining ? (
         <DeclineForm
