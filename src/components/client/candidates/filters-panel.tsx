@@ -205,17 +205,17 @@ export function CandidatesFiltersPanel({
           </PopoverContent>
         </Popover>
 
-        <div className="inline-flex h-10 shrink-0 items-center self-start rounded-md border p-0.5 md:self-auto">
+        <div className="inline-flex h-12 shrink-0 items-center self-start rounded-md border p-0.5 sm:h-10 md:self-auto">
           <button
             onClick={() => setF({ view: "cards" })}
-            className={`h-full whitespace-nowrap px-2.5 text-xs rounded ${search.view === "cards" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+            className={`h-full min-w-11 whitespace-nowrap px-3 text-xs rounded sm:min-w-0 sm:px-2.5 ${search.view === "cards" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
             aria-pressed={search.view === "cards"}
           >
             Cards
           </button>
           <button
             onClick={() => setF({ view: "list" })}
-            className={`h-full whitespace-nowrap px-2.5 text-xs rounded ${search.view === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+            className={`h-full min-w-11 whitespace-nowrap px-3 text-xs rounded sm:min-w-0 sm:px-2.5 ${search.view === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
             aria-pressed={search.view === "list"}
           >
             List
@@ -224,7 +224,7 @@ export function CandidatesFiltersPanel({
             onClick={() => { setF({ view: "compare" }); setCompareOpen(true); }}
             disabled={!compareCheck.ok}
             title={compareCheck.reason ?? undefined}
-            className={`h-full whitespace-nowrap px-2.5 text-xs rounded disabled:opacity-40 ${search.view === "compare" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+            className={`h-full min-w-11 whitespace-nowrap px-3 text-xs rounded sm:min-w-0 sm:px-2.5 disabled:opacity-40 ${search.view === "compare" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
             aria-pressed={search.view === "compare"}
           >
             Side by side
