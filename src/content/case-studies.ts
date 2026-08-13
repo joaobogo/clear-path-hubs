@@ -67,11 +67,6 @@ export const CASE_STUDIES: CaseStudy[] = [
     outcome:
       "After sign-off, parallel intake ran across all 6 properties on a shared, location-scored candidate pool. All 42 roles closed by Day 84 with zero missed pre-opening dates, and 91% of placements were still in seat 12 months later.",
     outcomeHighlight: "0 missed pre-opening dates across 6 sites",
-    testimonial: {
-      quote: "TaaSFlow ran six pre-openings in parallel without a single missed calendar. We stopped reading CVs — we read evidence.",
-      author: "Group Talent Director",
-      role: "European hospitality group",
-    },
   },
   {
     slug: "finance-mid-market-pe",
@@ -98,11 +93,6 @@ export const CASE_STUDIES: CaseStudy[] = [
     outcome:
       "Deal-experience evidence scoring and reference validation were built into the shortlist gate. The IC signed its first offer by Day 21 and had the full investment team plus operating partners in seat by Day 84.",
     outcomeHighlight: "Full team + operating partners in seat in 12 weeks",
-    testimonial: {
-      quote: "The shortlists were dense with deal evidence, not resumes. Our IC could go straight to reference conversations by week two.",
-      author: "Founding Partner",
-      role: "Mid-market PE fund",
-    },
   },
   {
     slug: "healthcare-clinical-network",
@@ -129,11 +119,6 @@ export const CASE_STUDIES: CaseStudy[] = [
     outcome:
       "Every shortlisted candidate had board certifications, licensure, and patient-outcome evidence verified before the client opened a profile. 8 of 11 sites were fully staffed at leadership level by Day 30; all 11 were live by Day 120.",
     outcomeHighlight: "100% credential pass rate before shortlist, every time",
-    testimonial: {
-      quote: "Every shortlisted candidate had verified credentials before we spoke to them. That alone gave us back six weeks per hire.",
-      author: "Chief People Officer",
-      role: "Specialty clinic network",
-    },
   },
   {
     slug: "tech-series-c-platform",
@@ -160,11 +145,6 @@ export const CASE_STUDIES: CaseStudy[] = [
     outcome:
       "Skill-graph evidence scoring on real project artifacts (PRs, RFCs, portfolios) fed structured, standardized panels across regions. 12 offers were signed by Day 42, and all 27 seats were closed by Day 90.",
     outcomeHighlight: "3.2x faster interview-to-offer than their prior baseline",
-    testimonial: {
-      quote: "The candidate loop finally felt like engineering — evidence in, decisions out. We stopped debating vibes and started debating trade-offs.",
-      author: "VP of Engineering",
-      role: "Series C infra company",
-    },
   },
   {
     slug: "consumer-dtc-scaleup",
@@ -191,11 +171,6 @@ export const CASE_STUDIES: CaseStudy[] = [
     outcome:
       "Every senior shortlist required documented category ownership, margin, and channel results at comparable scale. Retail leadership was in seat by Day 45, and 4 new markets were operational within 9 months.",
     outcomeHighlight: "Cost-per-hire down 42% vs. their prior agency",
-    testimonial: {
-      quote: "We halved our cost per senior hire and doubled offer acceptance. The shortlists actually understood our margin model.",
-      author: "Chief Executive Officer",
-      role: "DTC consumer brand",
-    },
   },
   {
     slug: "industrial-energy-transition",
@@ -222,10 +197,5 @@ export const CASE_STUDIES: CaseStudy[] = [
     outcome:
       "Safety records, EPC delivery track record, and commissioning experience were mandatory shortlist gates. 18 senior seats were filled by Day 60, and all 31 roles across 9 sites were closed by Day 150.",
     outcomeHighlight: "9 sites staffed across 3 continents in 5 months",
-    testimonial: {
-      quote: "The shortlist gate for safety and EPC delivery experience is what won us the confidence of our board.",
-      author: "Group HR Director",
-      role: "Industrial energy group",
-    },
   },
 ];

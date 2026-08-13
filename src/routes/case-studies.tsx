@@ -319,6 +319,13 @@ function StudyCard({ study }: { study: Study }) {
           </div>
         ))}
       </div>
+      {study.representative !== false && (
+        <p className="border-b border-border/60 bg-background px-5 pb-4 text-center text-[11px] leading-relaxed text-[color:var(--brand-navy)]/70">
+          Representative delivery figures for this vertical — not the reported
+          results of one named client.
+        </p>
+      )}
+
 
       {/* Situation + roles needed */}
       <div className="grid gap-6 p-6 md:grid-cols-2 md:p-8">
@@ -358,8 +365,8 @@ function StudyCard({ study }: { study: Study }) {
         </ol>
       </div>
 
-      {/* Outcome + testimonial */}
-      <div className={`grid gap-6 border-t border-border/60 bg-muted/20 p-6 md:p-8 ${study.testimonial ? "md:grid-cols-[1.4fr_1fr]" : ""}`}>
+      {/* Outcome + testimonial (only rendered when a real, approved quote exists) */}
+      <div className="grid gap-6 border-t border-border/60 bg-muted/20 p-6 md:grid-cols-[1.4fr_1fr] md:p-8">
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--brand-navy)]/80">
             Outcome — what happened after they paid
@@ -367,7 +374,7 @@ function StudyCard({ study }: { study: Study }) {
           <p className="mt-1 text-sm font-semibold text-[color:var(--brand-navy)]">{study.outcomeHighlight}</p>
           <p className="mt-2 text-sm leading-relaxed">{study.outcome}</p>
         </div>
-        {study.testimonial && (
+        {study.testimonial ? (
           <figure className="rounded-2xl border border-border/60 bg-background p-5">
             <Quote className="h-5 w-5 text-[color:var(--brand-ocean-text)]" aria-hidden />
             <blockquote className="mt-2 text-sm italic leading-relaxed">
@@ -379,8 +386,18 @@ function StudyCard({ study }: { study: Study }) {
               {study.testimonial.role}
             </figcaption>
           </figure>
+        ) : (
+          <figure className="rounded-2xl border border-dashed border-border/60 bg-background/60 p-5">
+            <Quote className="h-5 w-5 text-[color:var(--brand-navy)]/40" aria-hidden />
+            <figcaption className="mt-2 text-xs leading-relaxed text-[color:var(--brand-navy)]/70">
+              No published quote for this engagement. We only publish
+              testimonials a client has written and approved for attribution —
+              references are available on request.
+            </figcaption>
+          </figure>
         )}
       </div>
+
     </article>
   );
 }
@@ -534,10 +551,11 @@ function CaseStudiesPage() {
         {/* Policy note */}
         <section className="mt-16 rounded-2xl border border-border/60 bg-muted/20 p-6 text-sm text-[color:var(--brand-navy)]/80 md:p-8">
           Metrics reflect aggregate delivery performance across representative
-          TaaSFlow engagements in each vertical. Testimonials are attributed to
-          the role and organization type; named case studies with written
-          client approval are added individually as each client signs off on
-          attribution.
+          TaaSFlow engagements in each vertical, not the reported results of a
+          single named client. We publish no testimonial a client has not
+          written and approved for attribution; named case studies are added
+          individually as each client signs off.
+
         </section>
 
         {/* CTA */}
