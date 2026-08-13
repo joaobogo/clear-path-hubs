@@ -480,9 +480,11 @@ html[data-consent-open="true"] .calendly-badge-widget {
    scroll container gains bottom padding (nothing can be scrolled under the
    bar) and anything marked [data-consent-offset] is pushed up by the bar's
    measured height. */
-html[data-consent-open="true"] #workspace-main,
 html[data-consent-open="true"] #workspace-main > div {
   padding-bottom: calc(var(--consent-bar-h, 4.5rem) + 1.5rem);
+}
+
+html[data-consent-open="true"] #workspace-main {
   scroll-padding-bottom: calc(var(--consent-bar-h, 4.5rem) + 1.5rem);
 }
 
