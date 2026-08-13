@@ -124,11 +124,20 @@ test.describe("candidates board view", () => {
       );
     expect(perColumn.reduce((a, b) => a + b, 0)).toBe(total);
 
-    // Same query, narrower filter: the board must track the list exactly.
-    await gotoBoard(page, "&fit=unicorn");
+    // Same query, narrower filter: the board must track the list exactly. A
+    // filter that removes everything must reuse the list's empty state instead
+    // of rendering six empty columns.
+    await page.goto("/client/candidates?view=board&fit=strong", { waitUntil: "domcontentloaded" });
+    await expect(page.getByTestId("candidates-result-count")).toBeVisible({ timeout: 30_000 });
     const filtered = await listCount(page);
     expect(filtered).toBeLessThanOrEqual(total);
-    await expect(page.getByTestId("pipeline-card")).toHaveCount(filtered);
+    if (filtered === 0) {
+      await expect(page.getByRole("heading", { name: /no results match these filters/i })).toBeVisible();
+      await expect(page.getByTestId("pipeline-card")).toHaveCount(0);
+    } else {
+      await expect(page.getByTestId("pipeline-card")).toHaveCount(filtered);
+    }
+
 
     expect(meaningfulConsoleErrors(errors)).toEqual([]);
   });
