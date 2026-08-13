@@ -160,10 +160,13 @@ function initApollo() {
 /* --------------------------------------------------------------- RB2B --- */
 
 function initRB2B() {
-  // Loads on every page view, before any consent choice, so visitor
-  // identification starts on the first pageview.
+  // Primary boot is the inline snippet in the server-rendered head, so
+  // identification starts while the document parses, before hydration and
+  // before any consent choice. This is the fallback for anything the head
+  // snippet missed; it never double-loads.
   if (loaded.has("rb2b") || !RB2B_ID) return;
   loaded.add("rb2b");
+  if (typeof window !== "undefined" && window.reb2b) return;
   injectScript("rb2b", {
     // Current RB2B snippet (CloudFront delivery).
     text: `!function(key){if(window.reb2b)return;window.reb2b={loaded:true};var s=document.createElement("script");s.async=true;s.setAttribute("data-tracker","rb2b");s.src="https://ddwl4m2hdecbv.cloudfront.net/b/"+key+"/"+key+".js.gz";var first=document.getElementsByTagName("script")[0];first.parentNode.insertBefore(s,first);}("${RB2B_ID}");`,
