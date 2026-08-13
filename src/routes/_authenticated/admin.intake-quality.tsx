@@ -91,6 +91,26 @@ function IntakeQuality() {
     activeFilters,
   });
 
+  // Rows are rendered group by group, capped at 25 each, so the keyboard order
+  // is the same flattening.
+  const visibleItems = useMemo(
+    () => groups.flatMap((g) => g.items.slice(0, 25)),
+    [groups],
+  );
+  const openItem = useCallback(
+    (index: number) => {
+      const path = visibleItems[index]?.link_path;
+      if (path) window.location.assign(path);
+    },
+    [visibleItems],
+  );
+  const kb = useQueueKeyboard({
+    count: visibleItems.length,
+    onPrimary: openItem,
+    onOpen: openItem,
+  });
+
+
   return (
     <div className="space-y-8 p-6">
       <header className="space-y-2">
