@@ -7,7 +7,9 @@ import { useCallback, useState } from "react";
 import { MessageSquareWarning } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { listEvidenceGaps } from "@/lib/evidence-gaps/evidence-gaps.functions";
+
 import { OWNER_LABEL, TOLD_LABEL } from "@/lib/evidence-gaps/gap-reasons";
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveQueueState, resolveQueueVariant } from "@/lib/empty-states/queue-states";
