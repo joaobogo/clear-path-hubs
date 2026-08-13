@@ -32,6 +32,7 @@ import { CandidatesFiltersPanel } from "@/components/client/candidates/filters-p
 import { CandidatesEmptyState } from "@/components/client/candidates/candidates-empty-state";
 import { CompactList } from "@/components/client/candidates/compact-list";
 import { BulkCvDownloadButton } from "@/components/client/candidates/bulk-cv-download";
+import { CandidatesBoardView } from "@/components/client/candidates/board-view";
 
 const searchSchema = z.object({
  q: fallback(z.string(), "").default(""),
@@ -45,7 +46,7 @@ const searchSchema = z.object({
  minExp: fallback(z.string(), "").default(""),
  location: fallback(z.string(), "").default(""),
  sort: fallback(z.string(), "score").default("score"),
- view: fallback(z.enum(["cards", "list", "compare"]), "cards").default("cards"),
+ view: fallback(z.enum(["cards", "list", "compare", "board"]), "cards").default("cards"),
  org: fallback(z.string().uuid().optional(), undefined),
  // Canonical KPI drill-through key. Mirrors client-kpi.server predicates:
  // "top" → isTopMatch (band ∈ exceptional|top|strong)
