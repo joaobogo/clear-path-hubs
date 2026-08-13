@@ -464,8 +464,11 @@ export function resolveNoIntegrationsState(signals: {
 
 /* ------------------------------------------------------------- 7. messages */
 
-export function resolveNoMessagesState(signals: { activeRoles: number }): SurfaceStateContent {
-  if (signals.activeRoles === 0) {
+export function resolveNoMessagesState(signals: {
+  activeRoles: number;
+  rolesInSetup: number;
+}): SurfaceStateContent {
+  if (signals.activeRoles === 0 && signals.rolesInSetup === 0) {
     return {
       id: "messages.no-roles",
       icon: "messages",
@@ -476,6 +479,20 @@ export function resolveNoMessagesState(signals: { activeRoles: number }): Surfac
       populates: "Adding a role opens its thread; every message about it stays there and mirrors to email.",
       activity: NOTHING_RUNNING,
       action: { label: "Add a role", to: "/intake" },
+    };
+  }
+  if (signals.rolesInSetup > 0 && signals.activeRoles === 0) {
+    return {
+      id: "messages.role-in-setup",
+      icon: "messages",
+      tone: "waiting",
+      title: "Your role thread opens once it goes live",
+      why: `${signals.rolesInSetup} role${signals.rolesInSetup === 1 ? "" : "s"} ${signals.rolesInSetup === 1 ? "is" : "are"} in setup. The conversation thread starts once the role is published.`,
+      expected: EXPECTED_PROCESSING,
+      populates: "Every role and every candidate gets its own thread, mirrored to your email.",
+      activity: "Nothing to message about yet — the role is still being set up.",
+      eta: "Threads appear once the role is live.",
+      action: { label: "See role progress", to: "/client/positions" },
     };
   }
   return {
@@ -491,6 +508,7 @@ export function resolveNoMessagesState(signals: { activeRoles: number }): Surfac
     secondaryAction: { label: "See candidates", to: "/client/candidates" },
   };
 }
+
 
 /* ------------------------------------------------------------ 8. approvals */
 
