@@ -25,6 +25,7 @@ const GUARD = new RegExp(
     "assertPlatformStaff",
     "assertPlatformAdmin",
     "staffAdmin\\(",
+    "assertStaff\\(",
     "is_platform_staff",
     "is_platform_admin",
   ].join("|"),
@@ -38,6 +39,18 @@ function walk(dir: string, out: string[] = []): string[] {
   }
   return out;
 }
+
+/**
+ * Exceptions, each justified. These are not staff-only data reads: the row set
+ * is scoped to the caller by RLS (author or recipient), so a client or
+ * candidate calling them can only ever touch their own rows.
+ */
+const SELF_SCOPED_BY_RLS = new Set([
+  // internal_notes DELETE policy: is_platform_staff() AND author_user_id = auth.uid()
+  "src/lib/admin-workbench.functions.ts :: deleteInternalNote",
+  // notifications UPDATE is filtered to recipient_user_id = caller
+  "src/lib/admin-workbench.functions.ts :: resolveNotification",
+]);
 
 /** Files whose surface is the staff/admin console. */
 const ADMIN_SURFACE = /(admin|agent-ops|wbr)/i;
@@ -65,7 +78,9 @@ describe("admin surface authorization coverage", () => {
     const offenders: string[] = [];
     for (const file of files) {
       for (const name of unguardedExports(file)) {
-        offenders.push(`${file.replace(process.cwd() + "/", "")} :: ${name}`);
+        const id = `${file.replace(process.cwd() + "/", "")} :: ${name}`;
+        if (SELF_SCOPED_BY_RLS.has(id)) continue;
+        offenders.push(id);
       }
     }
     expect(offenders).toEqual([]);
