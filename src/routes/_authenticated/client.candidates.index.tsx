@@ -238,9 +238,13 @@ function CandidatesPage() {
  };
  rows.sort((a, b) => {
  switch (search.sort) {
- case "score":
- // Employer surfaces order by fit band, never by the internal number.
- return BAND_RANK[b.fit.band] - BAND_RANK[a.fit.band];
+        case "score": {
+          // Best score first; unscored candidates fall to the bottom, ordered by band.
+          const as = a.score ?? -1;
+          const bs = b.score ?? -1;
+          if (bs !== as) return bs - as;
+          return (BAND_RANK[b.fit.band] ?? 0) - (BAND_RANK[a.fit.band] ?? 0);
+        }
  case "must": {
  const av = a.coverage.must_total
  ? a.coverage.must_met / a.coverage.must_total
