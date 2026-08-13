@@ -240,7 +240,8 @@ function PendingLeadsPage() {
             </Card>
           ))}
         </div>
-      )}
+        )}
+      </QueryState>
     </div>
   );
 }
