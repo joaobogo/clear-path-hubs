@@ -36,6 +36,7 @@ import {
 
 import { BackLink, CandidateHeader, JumpNav, SectionCard } from "@/components/client/candidate-detail/shared";
 import { ScoreFreshnessNote } from "@/components/client/score-freshness-note";
+import { ScoreBreakdown } from "@/components/client/candidate-detail/score-breakdown";
 import {
   EvaluationProvenance,
   FitHero,
@@ -375,6 +376,7 @@ function CandidateDetailPage() {
           <JumpNav
             items={[
               { id: "sec-fit", label: "Summary" },
+              { id: "sec-breakdown", label: "Score breakdown" },
               { id: "sec-why", label: "Why shortlisted" },
               { id: "sec-coverage", label: "Requirements" },
               { id: "sec-strengths", label: "Strengths" },
@@ -393,6 +395,9 @@ function CandidateDetailPage() {
               orgId={orgId ?? null}
               matchId={id}
             />
+          </div>
+          <div id="sec-breakdown" className="scroll-mt-24">
+            <ScoreBreakdown candidate={candidate} />
           </div>
           <EvaluationProvenance candidate={candidate} />
           <div id="sec-why" className="scroll-mt-24"><WhyWeShortlisted candidate={candidate} /></div>
