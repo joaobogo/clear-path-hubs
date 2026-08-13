@@ -25,6 +25,11 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import { createShortlistShare, type ShareMode } from "@/lib/shares.functions";
+import {
+  ACTION_TIMEOUT_MESSAGE,
+  isActionTimeout,
+  withActionTimeout,
+} from "@/lib/client/action-timeout";
 
 type Props = {
   open: boolean;
@@ -56,6 +61,7 @@ export function ShareShortlistDialog({
   const create = useServerFn(createShortlistShare);
   const mutation = useMutation({
     mutationFn: () =>
+      withActionTimeout(() =>
       create({
         data: {
           orgId,
@@ -68,11 +74,18 @@ export function ShareShortlistDialog({
           expiresInDays,
         },
       }),
+      ),
     onSuccess: (r) => {
       setResult({ token: r.token, expires_at: r.expires_at });
       toast.success("Share link ready");
     },
-    onError: (e: Error) => toastError(e),
+    onError: (e: Error) => {
+      if (isActionTimeout(e)) {
+        toast.error(ACTION_TIMEOUT_MESSAGE);
+        return;
+      }
+      toastError(e);
+    },
   });
 
   const shareUrl = result
@@ -104,6 +117,15 @@ export function ShareShortlistDialog({
 
         {!result ? (
           <div className="space-y-4">
+            {mutation.isError && (
+              <div
+                role="alert"
+                className="rounded-md border taas-bd-warning taas-bg-warning-soft px-3 py-2 text-sm"
+              >
+                <span className="font-medium">The link was not created.</span> Nothing was shared —
+                use Try again below.
+              </div>
+            )}
             <div className="rounded-md border bg-muted/40 px-3 py-2 text-sm">
               {matchIds.length} candidate{matchIds.length === 1 ? "" : "s"}{" "}
               selected
@@ -234,7 +256,7 @@ export function ShareShortlistDialog({
                 {mutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Create share link
+                {mutation.isError ? "Try again" : "Create share link"}
               </Button>
             </>
           ) : (

@@ -6,6 +6,11 @@ import { RefreshCw, History } from "lucide-react";
 import { requestScoreRefresh } from "@/lib/client/score-refresh.functions";
 import type { Freshness } from "@/lib/scoring/score-freshness";
 import { Button } from "@/components/ui/button";
+import {
+  ACTION_TIMEOUT_MESSAGE,
+  isActionTimeout,
+  withActionTimeout,
+} from "@/lib/client/action-timeout";
 
 /**
  * Says out loud when a fit assessment is about facts that have since moved, why
@@ -23,13 +28,21 @@ export function ScoreFreshnessNote({
 }) {
   const ask = useServerFn(requestScoreRefresh);
   const [asked, setAsked] = useState(false);
+  const [failed, setFailed] = useState<string | null>(null);
   const request = useMutation({
-    mutationFn: () => ask({ data: { orgId: orgId!, matchId } }),
+    mutationFn: () => withActionTimeout(() => ask({ data: { orgId: orgId!, matchId } })),
+    onMutate: () => setFailed(null),
     onSuccess: () => {
       setAsked(true);
       toast.success("We'll reassess this candidate against the current brief.");
     },
-    onError: () => toast.error("We couldn't send that request. Please try again."),
+    onError: (e: Error) => {
+      const message = isActionTimeout(e)
+        ? ACTION_TIMEOUT_MESSAGE
+        : "We couldn't send that request.";
+      setFailed(message);
+      toast.error(message);
+    },
   });
 
   if (!freshness || freshness.state === "current") return null;
@@ -61,8 +74,19 @@ export function ScoreFreshnessNote({
               onClick={() => request.mutate()}
             >
               <RefreshCw className="h-3 w-3" aria-hidden />
-              {asked ? "Reassessment requested" : request.isPending ? "Requesting…" : "Ask us to reassess"}
+              {asked
+                ? "Reassessment requested"
+                : request.isPending
+                  ? "Requesting…"
+                  : failed
+                    ? "Try again"
+                    : "Ask us to reassess"}
             </Button>
+          )}
+          {failed && !asked && (
+            <p role="alert" className="text-xs taas-fg-warning">
+              {failed} Nothing was lost — try again.
+            </p>
           )}
         </div>
       </div>

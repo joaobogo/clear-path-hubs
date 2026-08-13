@@ -21,6 +21,11 @@ import {
 } from "@/lib/client-deal-breakers";
 import type { MatchStage } from "@/lib/client-kpi.server";
 import { confirmationLine } from "@/lib/client-next-step";
+import {
+  ACTION_TIMEOUT_MESSAGE,
+  isActionTimeout,
+  withActionTimeout,
+} from "@/lib/client/action-timeout";
 
 /** Where each decision lands the candidate, so we can promise what follows. */
 const RESULT_STAGE: Partial<Record<DecisionActionKey, MatchStage>> = {
@@ -175,7 +180,7 @@ export function DecisionBar({
     const landing = RESULT_STAGE[payload.action];
     if (landing) setOptimistic(landing);
     try {
-      await act({ data: { orgId, matchId, ...payload } });
+      await withActionTimeout(() => act({ data: { orgId, matchId, ...payload } }));
       setDialog(null);
       setSettled(done);
       toast.success(`${done} — ${candidateName}`, {
@@ -188,12 +193,17 @@ export function DecisionBar({
       // Visible revert: the card returns to the stage it was in before.
       setOptimistic(null);
       setSettled(null);
-      const msg = e instanceof Error ? e.message : "";
-      toast.error(
-        msg.includes("reason")
-          ? "Pick a reason so we can act on it."
-          : "That did not save — try again",
-      );
+      const msg = e instanceof Error ? e.message.replace(/^Error:\s*/, "") : "";
+      if (msg.includes("reason")) {
+        toast.error("Pick a reason so we can act on it.");
+        return;
+      }
+      // Never a dead end: the same decision can be fired again from the toast.
+      toast.error(isActionTimeout(e) ? ACTION_TIMEOUT_MESSAGE : "That did not save", {
+        description: isActionTimeout(e) ? undefined : msg || undefined,
+        duration: UNDO_TOAST_MS,
+        action: { label: "Retry", onClick: () => void run(payload, done) },
+      });
     } finally {
       setPending(null);
     }
