@@ -45,8 +45,8 @@ describe("deriveCardAssessment", () => {
       support: { supported: 0, total: 6 },
     });
     expect(a.state).toBe("settled");
-    expect(a.thin).toBe(true);
-    expect(a.note).toBe("0 of 6 of your requirements evidenced");
+    expect(a.state === "settled" && a.thin).toBe(true);
+    expect(a.state === "settled" && a.note).toBe("0 of 6 of your requirements evidenced");
   });
 
   it("still re-checks stale candidates without evidence even when support is provided", () => {
