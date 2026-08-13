@@ -140,21 +140,28 @@ function OffersPage() {
           />
         </section>
       ) : (
+        (() => {
+          // While the report is in flight, a literal 0 reads as "no offers" and
+          // contradicts the board underneath. Show an em dash until it lands.
+          const pendingReport = reportQuery.isPending || !report;
+          const num = (v: number | null | undefined) =>
+            pendingReport ? "—" : (v ?? 0);
+          return (
         <section className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Kpi
             label="Open offers"
-            value={report?.totals.open_offers ?? 0}
+            value={num(report?.totals.open_offers)}
             hint="Drafted, sent, or accepted"
           />
           <Kpi
             label="Hires confirmed"
-            value={report?.totals.hires_confirmed ?? 0}
+            value={num(report?.totals.hires_confirmed)}
             hint="Last 180 days"
           />
           <Kpi
             label="Acceptance rate"
             value={
-              report?.totals.acceptance_rate == null
+              pendingReport || report?.totals.acceptance_rate == null
                 ? "—"
                 : `${Math.round(report.totals.acceptance_rate * 100)}%`
             }
@@ -163,7 +170,7 @@ function OffersPage() {
           <Kpi
             label="Avg time to hire"
             value={
-              report?.totals.avg_days_to_hire == null
+              pendingReport || report?.totals.avg_days_to_hire == null
                 ? "—"
                 : `${Math.round(report.totals.avg_days_to_hire)}d`
             }
@@ -174,7 +181,10 @@ function OffersPage() {
             }
           />
         </section>
+          );
+        })()
       )}
+
 
       {/* Who owes what — one row per offer, holder derived from events */}
       <section className="mt-6">
