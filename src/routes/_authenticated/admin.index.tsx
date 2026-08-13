@@ -143,7 +143,7 @@ function Overview() {
               </div>
               <div
                 className={`mt-1 text-2xl font-semibold tabular-nums ${
-                  q.count === 0 ? "text-muted-foreground/50" : ""
+                  q.count === 0 ? "text-muted-foreground" : ""
                 }`}
               >
                 {q.count}

@@ -90,7 +90,7 @@ function IntegrationHealthPage() {
   const untested = data.integrations.filter((i) => !i.latest).length;
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-8 space-y-6">
+    <div className="mx-auto max-w-5xl px-6 py-8 space-y-6">
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">Integration health</h1>
@@ -247,6 +247,6 @@ function IntegrationHealthPage() {
         booking page and read recent delivery events. No customer is charged, contacted or
         created.
       </p>
-    </main>
+    </div>
   );
 }

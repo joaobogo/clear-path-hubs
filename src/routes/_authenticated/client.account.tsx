@@ -115,26 +115,26 @@ function AccountPage() {
 
   if (ctxQuery.isError) {
     return (
-      <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
         <QueryErrorCard
           error={ctxQuery.error}
           onRetry={() => ctxQuery.refetch()}
           retrying={ctxQuery.isFetching}
         />
-      </main>
+      </div>
     );
   }
 
   if (!orgId) {
     return (
-      <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
         <SkeletonStats tiles={4} />
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6">
       <header className="min-w-0">
         <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
           Account
@@ -187,7 +187,7 @@ function AccountPage() {
       {tab === "plan" && <PlanTab />}
       {tab === "notifications" && <NotificationsTab />}
       {tab === "branding" && <BrandingTab />}
-    </main>
+    </div>
   );
 }
 

@@ -34,7 +34,7 @@ function NotificationsPage() {
   const email = query.data?.email as { configured: boolean; reason?: string | null } | undefined;
 
   return (
-    <main className="p-6 md:p-8 max-w-6xl">
+    <div className="p-6 md:p-8 max-w-6xl">
       <header className="mb-6">
         <h1 className="text-2xl font-semibold">Delivery health</h1>
         <p className="text-sm text-muted-foreground max-w-2xl">
@@ -88,6 +88,6 @@ function NotificationsPage() {
       </QueryState>
 
       <DeliveryFailuresPanel />
-    </main>
+    </div>
   );
 }

@@ -146,7 +146,7 @@ function AgentControlPage() {
   const busy = toggle.isPending || pause.isPending;
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
           Agent control
@@ -211,6 +211,6 @@ function AgentControlPage() {
 
         <AgentActivityList activityState={activityState} activity={activity} />
       </section>
-    </main>
+    </div>
   );
 }

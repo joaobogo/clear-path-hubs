@@ -161,7 +161,7 @@ function PublishDesk() {
   });
 
   return (
-    <main className="mx-auto max-w-[1600px] space-y-6 px-6 py-6">
+    <div className="mx-auto max-w-[1600px] space-y-6 px-6 py-6">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">Publish desk</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -400,7 +400,7 @@ function PublishDesk() {
           — every workspace opens the same route as here.
         </p>
       </div>
-    </main>
+    </div>
   );
 }
 

@@ -52,7 +52,7 @@ export const Route = createFileRoute("/_authenticated/me/applications/$id")({
       queryFn: () => getMyApplication({ data: { id: params.id } }),
     }),
   pendingComponent: () => (
-    <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-4">
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8 space-y-4">
       <div className="h-8 w-2/3 animate-pulse rounded bg-muted" />
       <div className="h-4 w-3/4 animate-pulse rounded bg-muted" />
       <div className="h-32 animate-pulse rounded-lg bg-muted" />
@@ -61,11 +61,11 @@ export const Route = createFileRoute("/_authenticated/me/applications/$id")({
         <div className="h-10 animate-pulse rounded bg-muted" />
         <div className="h-10 animate-pulse rounded bg-muted" />
       </div>
-    </main>
+    </div>
   ),
   errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.applications.$id.tsx"),
   notFoundComponent: () => (
-    <main className="p-8">This application isn&apos;t available.</main>
+    <div className="p-8">This application isn&apos;t available.</div>
   ),
   component: TrackPage,
 });
@@ -188,7 +188,7 @@ function TrackPage() {
   const answeredRequests = data.info_requests.filter((r) => r.status !== "open");
 
   return (
-    <main className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
       <Link
         to="/me/applications"
         className="text-sm text-muted-foreground hover:text-foreground"
@@ -500,6 +500,6 @@ function TrackPage() {
       </div>
 
       {confirmDialog}
-    </main>
+    </div>
   );
 }

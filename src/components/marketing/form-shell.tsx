@@ -49,7 +49,7 @@ export function FormShell({
           <Link
             to="/"
             aria-label="TaaSFlow — Home"
-            className="inline-flex shrink-0 items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
           >
             <img src={brand.logos.primary} alt="TaaSFlow" width={116} height={28} className="h-7 w-auto max-w-none shrink-0" />
           </Link>
@@ -84,7 +84,7 @@ export function FormShell({
           )}
           <a
             href={exitTo}
-            className="shrink-0 whitespace-nowrap rounded-md px-2.5 py-1.5 text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
+            className="inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-md px-3 py-2 text-sm text-[color:var(--brand-navy)]/80 hover:text-[color:var(--brand-navy)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand-focus-ring)]"
           >
             {exitLabel}
           </a>
@@ -141,9 +141,9 @@ export function FormShell({
             © {new Date().getFullYear()} TaaSFlow — part of {FGV.name}
           </span>
           <nav aria-label="Form legal" className="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <Link to="/privacy" className="hover:text-[color:var(--brand-navy)]">Privacy</Link>
-            <Link to="/terms" className="hover:text-[color:var(--brand-navy)]">Terms</Link>
-            <a href="mailto:hello@taasflow.com" className="hover:text-[color:var(--brand-navy)]">
+            <Link to="/privacy" className="inline-flex min-h-6 items-center py-1 hover:text-[color:var(--brand-navy)]">Privacy</Link>
+            <Link to="/terms" className="inline-flex min-h-6 items-center py-1 hover:text-[color:var(--brand-navy)]">Terms</Link>
+            <a href="mailto:hello@taasflow.com" className="inline-flex min-h-6 items-center py-1 hover:text-[color:var(--brand-navy)]">
               hello@taasflow.com
             </a>
           </nav>

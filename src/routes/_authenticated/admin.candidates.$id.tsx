@@ -176,7 +176,7 @@ function CandidateWorkspace() {
   };
 
   return (
-    <main className="mx-auto max-w-[1600px] px-6 py-6 space-y-6">
+    <div className="mx-auto max-w-[1600px] px-6 py-6 space-y-6">
       <WorkspaceHeader m={m} cp={cp} pos={pos} currentRun={currentRun} />
 
       <CandidateNextActionBar matchId={id} onNavigateTab={(t) => setTab(t as TabId)} />
@@ -293,6 +293,6 @@ function CandidateWorkspace() {
           onSetTab={setTab}
         />
       </div>
-    </main>
+    </div>
   );
 }

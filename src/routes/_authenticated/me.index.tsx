@@ -130,7 +130,7 @@ function MeHome() {
   );
 
   return (
-    <main className="mx-auto max-w-5xl px-4 sm:px-6 py-8 space-y-6">
+    <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8 space-y-6">
       {/* Reassuring hero */}
       <header className="rounded-2xl border bg-gradient-to-br from-primary/5 via-card to-card p-6 sm:p-8 motion-surface">
         <p className="text-xs uppercase tracking-wider text-muted-foreground">
@@ -301,7 +301,7 @@ function MeHome() {
           .
         </p>
       </section>
-    </main>
+    </div>
   );
 }
 
