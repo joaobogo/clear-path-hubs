@@ -115,7 +115,7 @@ export function CompareTray({
 }) {
   if (selected.length === 0) return null;
   return (
-    <div data-consent-offset className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 rounded-xl border bg-card shadow-lg px-4 py-3 flex items-center gap-3 max-w-[calc(100vw-2rem)]">
+    <div data-consent-offset className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[60] rounded-xl border bg-card shadow-lg px-4 py-3 flex items-center gap-3 max-w-[calc(100vw-2rem)]">
       <div className="text-sm">
         <span className="font-medium">{selected.length} selected</span>
         <span className="hidden sm:inline text-muted-foreground ml-2">

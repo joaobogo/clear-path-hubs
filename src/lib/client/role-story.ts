@@ -163,7 +163,13 @@ export function buildCoverage(candidates: StoryCandidate[]): CoverageBlock {
       weakest && weakest.missing > 0
         ? ` Weakest evidence: ${weakest.label} — missing for ${weakest.missing} of ${pool.length}.`
         : " Every requirement has at least partial evidence on this list.";
-    takeaway = `${met} of ${checks} requirement checks are fully evidenced (${pct}%).${gap}`;
+    // Two figures, because the candidate cards count partial as support: a
+    // low "fully evidenced" number next to "10 of 10 supported" would read as
+    // a contradiction without the partial count beside it.
+    const supported = met + partial;
+    takeaway =
+      `${met} of ${checks} requirement checks carry a direct quote (${pct}%), ` +
+      `${supported} of ${checks} have at least related evidence.${gap}`;
   }
 
   return {

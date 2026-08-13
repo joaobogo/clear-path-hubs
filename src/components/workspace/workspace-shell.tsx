@@ -21,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { GlobalSearchDialog } from "@/components/workspace/global-search-dialog";
 import { cn } from "@/lib/utils";
+import { useCrumbLabel } from "@/lib/workspace/crumb-label";
 
 export type WorkspaceNavItem = {
   to: string;
@@ -120,6 +121,7 @@ function useSidebarState() {
 function buildBreadcrumbs(
   pathname: string,
   navItems: WorkspaceNavItem[],
+  detailLabel?: string | null,
 ): { label: string; to?: string }[] {
   // Sort by longest match so /admin/positions wins over /admin.
   const sorted = [...navItems].sort((a, b) => b.to.length - a.to.length);
@@ -132,8 +134,11 @@ function buildBreadcrumbs(
   const tail = pathname.slice(section.to.length).split("/").filter(Boolean);
   const last = tail[tail.length - 1];
   if (!last) return [{ label: section.label }];
+  // A detail page publishes the record's own name; only fall back to the raw
+  // segment (a uuid, which reads as gibberish) when nothing was published.
   const readable =
-    last.length > 24 ? last.slice(0, 6) + "…" + last.slice(-4) : last.replace(/[-_]/g, " ");
+    detailLabel ??
+    (last.length > 24 ? last.slice(0, 6) + "…" + last.slice(-4) : last.replace(/[-_]/g, " "));
   return [
     { label: section.label, to: section.to },
     { label: readable },
@@ -314,7 +319,8 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
   } = props;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { collapsed, toggle, mobileOpen, setMobileOpen } = useSidebarState();
-  const crumbs = buildBreadcrumbs(pathname, navItems);
+  const detailLabel = useCrumbLabel();
+  const crumbs = buildBreadcrumbs(pathname, navItems, detailLabel);
   const currentPage = crumbs[crumbs.length - 1]?.label ?? "";
   const [searchOpen, setSearchOpen] = useState(false);
   const [railHover, setRailHover] = useState(false);

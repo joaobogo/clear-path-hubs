@@ -125,7 +125,8 @@ export function RoleStoryPanel({
                         )}
                       </span>
                       <span className="text-xs tabular-nums text-muted-foreground">
-                        {r.met} of {coverage.shortlist_size} evidenced
+                        {r.met} of {coverage.shortlist_size} quoted
+                        {r.partial > 0 ? `, ${r.partial} related` : ""}
                       </span>
                     </div>
                     <div className="mt-1.5">

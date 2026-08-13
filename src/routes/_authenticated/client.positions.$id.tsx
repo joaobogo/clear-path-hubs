@@ -50,6 +50,7 @@ import { ActivitySection } from "@/components/client/position-detail/activity-se
 import { RoleStatusSection } from "@/components/client/position-detail/role-status-section";
 import { EvidencePanels } from "@/components/client/position-detail/evidence-panels";
 import { RoleStoryPanel } from "@/components/client/position-detail/role-story";
+import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 
 /**
  * One payload for the whole role. The server returns the role, its pipeline,
@@ -245,6 +246,7 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
       ctx?.active?.role === "operations");
 
   const { position, matches, activity, summary } = data;
+  useDetailCrumb(position?.title as string | undefined);
   const launch = (data as { launch?: RoleLaunchState }).launch;
 
   // ── Handoff after a hire ────────────────────────────────────────────────────
@@ -258,6 +260,10 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
         orgId={orgId}
         positionId={id}
         canEdit={canEdit}
+        // The search is closed, but its record still belongs to the client:
+        // coverage, the fit spread we delivered, and what remains.
+        story={data.story ?? null}
+        org={orgSearchParam}
       />
     );
   }

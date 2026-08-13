@@ -27,6 +27,7 @@ import { useRouteRealtime } from "@/hooks/use-route-realtime";
 import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
 import { readStaleStateError } from "@/lib/decision-concurrency";
 import { useClientOrgSearch } from "@/lib/use-client-org";
+import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import {
   ACTION_TIMEOUT_MESSAGE,
   isActionTimeout,
@@ -315,6 +316,7 @@ function CandidateDetailPage() {
  interviews: AnyRow[];
  decisions: AnyRow[];
  };
+ useDetailCrumb(candidate?.candidate?.display_name as string | undefined);
  const isViewer = ctx?.active?.role === "client_viewer";
  const readOnly = support.readOnly || isViewer;
  const actions = ACTIONS_BY_STAGE[candidate.stage] ?? { primary: null, more: [] };
