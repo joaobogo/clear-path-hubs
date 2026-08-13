@@ -14,6 +14,18 @@ function clean(s: string | null | undefined): string {
   return cleanQuote(s);
 }
 
+/**
+ * A quote, or — when hygiene's minimum length would erase a genuinely short
+ * one ("CKA certified 2024") — the scrubbed value itself, provided it still
+ * reads as a phrase rather than slice debris.
+ */
+function cleanDetail(s: string | null | undefined): string {
+  const quoted = cleanQuote(s);
+  if (quoted) return quoted;
+  const short = cleanFieldValue(s);
+  return short.length >= 12 && short.includes(" ") ? short : "";
+}
+
 function truncate(s: string, max = 130): string {
   const t = clean(s);
   if (t.length <= max) return t;
@@ -38,8 +50,8 @@ export function selectEvidenceBullets(
   const fromRequirements = c.requirement_rows
     .filter((r) => r.status === "met" || r.status === "partial")
     .map((r) => {
-      const snippet = clean(r.evidence.find((e) => clean(e.snippet))?.snippet);
-      const detail = snippet || clean(r.explanation);
+      const snippet = cleanDetail(r.evidence.find((e) => cleanDetail(e.snippet))?.snippet);
+      const detail = snippet || cleanDetail(r.explanation);
       return { row: r, detail };
     })
     .filter((x) => x.detail.length > 0)
@@ -57,7 +69,7 @@ export function selectEvidenceBullets(
   if (bullets.length < limit) {
     for (const e of c.evidence) {
       if (bullets.length >= limit) break;
-      const detail = clean(e.snippet);
+      const detail = cleanDetail(e.snippet);
       const requirement = cleanFieldValue(e.label);
       if (!detail || !requirement) continue;
       if (bullets.some((b) => b.requirement.toLowerCase() === requirement.toLowerCase())) continue;
@@ -68,7 +80,7 @@ export function selectEvidenceBullets(
   if (bullets.length < limit) {
     for (const s of c.strengths) {
       if (bullets.length >= limit) break;
-      const detail = clean(s);
+      const detail = cleanDetail(s);
       if (!detail) continue;
       if (bullets.some((b) => b.detail.toLowerCase() === detail.toLowerCase())) continue;
       bullets.push({ requirement: "Strength", detail: truncate(detail), strength: "partial" });
