@@ -1,7 +1,7 @@
 import * as React from "react";
 import { PRICE_PILOT_USD } from "@/config/pricing-core";
 import { HeroDecisionWorkspace } from "@/components/home/hero-decision-workspace";
-import { PRODUCT_CATEGORY, SYSTEM_CLAIM, MODULES } from "@/config/product-language";
+import { PRODUCT_CATEGORY, SYSTEM_CLAIM, MODULES, BRAND_ONE_LINER, BRAND_DESCRIPTOR } from "@/config/product-language";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Activity,
@@ -45,7 +45,7 @@ import {
   SiteShell,
 } from "@/components/marketing/site-shell";
 
-import { marketingHead } from "@/lib/marketing/head";
+import { marketingHead, faqScript } from "@/lib/marketing/head";
 import { AgencyComparator } from "@/components/marketing/agency-comparator";
 import { ModelComparisonTable } from "@/components/marketing/model-comparison-table";
 import { CaseStudyPreviews } from "@/components/marketing/case-study-previews";
@@ -53,7 +53,7 @@ import { OperatingSystem } from "@/components/marketing/operating-system";
 import { WorkspaceTour } from "@/components/marketing/workspace-tour";
 import { AudienceSelector } from "@/components/marketing/audience-selector";
 import { TrustStrip } from "@/components/marketing/trust-strip";
-import { StraightAnswers } from "@/components/marketing/straight-answers";
+import { StraightAnswers, STRAIGHT_ANSWERS_FAQ } from "@/components/marketing/straight-answers";
 import { HiddenCostOfWaiting } from "@/components/marketing/hidden-cost-of-waiting";
 import { WhySwitchMatrix } from "@/components/marketing/why-switch-matrix";
 import { ProofSystem } from "@/components/marketing/proof-system";
