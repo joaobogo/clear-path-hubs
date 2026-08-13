@@ -14,6 +14,7 @@ import {
   Linkedin,
   MessageSquare,
 } from "lucide-react";
+import { CvDownloadAudit } from "@/components/cv-download-audit";
 import { DownloadCvButton } from "@/components/download-cv-button";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
