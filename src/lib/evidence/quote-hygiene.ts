@@ -21,27 +21,37 @@ function hasContactDetail(line: string): boolean {
   return phoneCandidate.replace(/\D/g, "").length >= 7;
 }
 
+/** Remove individual tokens that carry an address, domain or phone number. */
+function scrubContactTokens(line: string): string {
+  return line
+    .split(/\s+/)
+    .filter((token) => {
+      if (token.includes("@") || URL_RE.test(token)) return false;
+      return token.replace(/\D/g, "").length < 7;
+    })
+    .join(" ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 /**
- * Drop whole lines that contain an email, phone number or URL, plus the tiny
- * leftover fragments a mid-word slice leaves behind (e.g. "m" from an email).
+ * Remove every email, phone number and URL. A contact-only line is dropped
+ * whole; a line that mixes contact details with prose keeps the prose. Tiny
+ * leftover fragments a mid-word slice leaves behind are dropped too.
  */
 export function stripContactLines(raw: string): string {
   return raw
     .split(/\r?\n|(?:\s*[\u2022\u00b7]\s*)|(?:\s*\|\s*)/)
-    .map((line) => line.trim())
+    .map((line) => (hasContactDetail(line) ? scrubContactTokens(line) : line.trim()))
     .filter((line, i, all) => {
       if (!line) return false;
-      if (hasContactDetail(line)) return false;
       // A 1-3 char opening fragment is slice debris, not a sentence.
       if (i < all.length - 1 && line.length <= 3) return false;
       return true;
     })
     .join(" ")
-    // Belt and braces: a truncated address ("rui@demo.") can survive line
-    // filtering, so scrub any remaining token that carries "@" or a domain.
-    .split(/\s+/)
-    .filter((token) => !token.includes("@") && !URL_RE.test(token))
-    .join(" ");
+    .replace(/\s{2,}/g, " ")
+    .trim();
 }
 
 /** Drop a mid-word opening token left by a character-offset slice. */
