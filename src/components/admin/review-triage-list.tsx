@@ -5,8 +5,12 @@
  * (position has an open client commitment due within 3 days). Claims hide a
  * review from every other reviewer; stale claims (>2h) are ignored and can be
  * released in bulk.
+ *
+ * One primary action per row — "Open review". Claiming is a secondary control,
+ * and rows keep the keyboard path (j/k/Enter/o) shared by every admin queue.
  */
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useCallback, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -19,12 +23,20 @@ import {
 } from "@/lib/scoring-review-triage.functions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { ErrorState } from "@/components/ds";
+import { SurfaceState } from "@/components/ds/surface-state";
+import { resolveQueueState, resolveQueueVariant } from "@/lib/empty-states/queue-states";
+import { QueueShortcuts } from "@/components/admin/queue-shortcuts";
+import {
+  QUEUE_ROW_ACTIVE_CLASS,
+  useQueueKeyboard,
+  type QueueKeyboard,
+} from "@/lib/admin/queue-keyboard";
 import { AlertTriangle, Clock, Loader2, Lock, TimerReset } from "lucide-react";
 
 type Triage = Awaited<ReturnType<typeof listReviewTriage>>;
 type Row = Triage["rows"][number];
+
 
 export function ReviewTriageList({
   queue,
