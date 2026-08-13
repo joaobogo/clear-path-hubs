@@ -26,6 +26,7 @@ import { QueryErrorCard } from "@/components/client/query-error";
 import { ShareShortlistDialog } from "@/components/client/share-shortlist-dialog";
 import { Share2 } from "lucide-react";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
+import { UNICORN_SCORE } from "@/lib/scoring/bands";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
 import { STAGE_OPTIONS, FIT_OPTIONS, CRITICAL_OPTIONS, REVIEW_OPTIONS } from "@/components/client/candidates/constants";
 import { HiringSnapshot } from "@/components/client/candidates/hiring-snapshot";

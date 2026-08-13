@@ -13,7 +13,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal, Sparkles, X } from "lucide-react";
+import { UNICORN_SCORE } from "@/lib/scoring/bands";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import {
   STAGE_OPTIONS,
@@ -36,11 +37,15 @@ export interface CandidatesFiltersState {
   sort: string;
   view: "cards" | "list" | "compare";
   filter: "all" | "top" | "interview_pipeline";
+  /** "1" = show only unicorn candidates (95+ or an outcome-verified top hire). */
+  unicorn: string;
 }
 
 /** Filters that live behind the single "Filters" button. */
 const ADVANCED_KEYS = ["fit", "critical", "review", "availability", "minExp", "location"] as const;
 const RESET_TO_ALL = new Set(["stage", "fit", "critical", "review", "availability"]);
+/** Chips that are toggles, not values: removing them means "off". */
+const RESET_TO_OFF = new Set(["unicorn"]);
 
 export function CandidatesFiltersPanel({
   search,
@@ -119,6 +124,22 @@ export function CandidatesFiltersPanel({
           </SelectContent>
         </Select>
 
+
+        {/* One tap to the strongest candidates — no manual sorting. */}
+        <button
+          type="button"
+          onClick={() => setF({ unicorn: search.unicorn === "1" ? "0" : "1" })}
+          aria-pressed={search.unicorn === "1"}
+          title={`Show only candidates scoring ${UNICORN_SCORE} or above`}
+          className={`inline-flex h-12 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-md border px-3 text-xs font-medium transition-colors sm:h-10 ${
+            search.unicorn === "1"
+              ? "border-primary bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Sparkles className="h-3.5 w-3.5" aria-hidden />
+          Unicorn only ({UNICORN_SCORE}+)
+        </button>
 
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
@@ -244,7 +265,15 @@ export function CandidatesFiltersPanel({
           >
             {f.label}
             <button
-              onClick={() => setF({ [f.key]: RESET_TO_ALL.has(f.key) ? "all" : "" } as never)}
+              onClick={() =>
+                setF({
+                  [f.key]: RESET_TO_OFF.has(f.key)
+                    ? "0"
+                    : RESET_TO_ALL.has(f.key)
+                      ? "all"
+                      : "",
+                } as never)
+              }
               className="text-muted-foreground hover:text-foreground"
               aria-label={`Remove ${f.label}`}
             >
@@ -272,6 +301,7 @@ export function CandidatesFiltersPanel({
               sort: search.sort,
               view: search.view,
               filter: search.filter,
+              unicorn: search.unicorn,
             }}
             onApply={onApplySavedView}
             canShare={ctxRole === "client_admin"}
