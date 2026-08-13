@@ -35,6 +35,8 @@ function scrubContactTokens(line: string): string {
       return token.replace(/\D/g, "").length < 7;
     })
     .join(" ")
+    // Tidy brackets left empty by a scrubbed value, e.g. "Porto ( )".
+    .replace(/\(\s*\)/g, "")
     .replace(/\s{2,}/g, " ")
     .trim();
 }
