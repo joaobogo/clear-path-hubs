@@ -144,6 +144,10 @@ export async function loadKpiRows(
   const nextInterviewAt = new Map<string, string>();
   const interviewRequestedAt = new Map<string, string>();
   const stageEnteredAt = new Map<string, string>();
+  // A recorded client decision is what closes "waiting on you" — never the
+  // internal admin recommendation.
+  const decidedMatches = new Set<string>();
+
 
   if (matchIds.length > 0) {
     const { data: ivs } = await supabase
