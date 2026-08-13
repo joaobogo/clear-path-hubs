@@ -59,7 +59,7 @@ function norm(s: string): string {
 function isClaimEcho(requirement: string, claim: string): boolean {
   const req = norm(requirement);
   const cl = norm(claim);
-  return !req || !cl || cl === req || cl.startsWith(`${req} `);
+  return !req || !cl || cl === req;
 }
 
 /**
