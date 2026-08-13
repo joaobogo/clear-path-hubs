@@ -653,6 +653,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const requirement_rows = buildRequirementRows(
     pos ? { requirements: pos.requirements, preferred_requirements: pos.preferred_requirements } : null,
     coverage,
+    ((row as AnyRow).evidence_items as AnyRow[] | null) ?? null,
   );
   const coverageSummary = summariseCoverage(requirement_rows);
 
