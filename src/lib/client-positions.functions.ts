@@ -179,7 +179,7 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       .select(
         `id, stage, admin_status, delivered_at, approved_score_run_id, candidate_profile_id,
          candidate_profiles(id, full_name, headline, location),
-         score_runs:approved_score_run_id (score, fit_label, explanation)`,
+         score_runs:approved_score_run_id (score, fit_label, fit_band, explanation, requirement_coverage)`,
       )
       .eq("organization_id", data.orgId)
       .eq("position_id", data.positionId)
@@ -479,6 +479,7 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       launch,
       timeline,
       first_shortlist_expected_at: firstShortlistExpectedAt,
+      story,
       commitment: (commitment as AnyRow | null)
         ? {
             position_id: String((commitment as AnyRow)['position_id']),
