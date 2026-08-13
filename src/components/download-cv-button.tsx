@@ -2,7 +2,9 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { getCandidateCvDownload } from "@/lib/cv-download.functions";
-import { AlertCircle, Check, Download, Eye, Loader2 } from "lucide-react";
+import { describeCvDownloadFailure, type CvDownloadFailure } from "@/lib/cv-download-error";
+import { AlertCircle, Check, Download, Eye, Loader2, RotateCcw } from "lucide-react";
+
 
 type Mode = "download" | "preview";
 
@@ -22,14 +24,16 @@ type Props = {
  */
 function useCvDownload(matchId: string, mode: Mode) {
   const [state, setState] = useState<"idle" | "loading" | "done" | "error">("idle");
-  const [error, setError] = useState<string | null>(null);
+  const [failure, setFailure] = useState<CvDownloadFailure | null>(null);
+  const [attempts, setAttempts] = useState(0);
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const preview = mode === "preview";
 
   async function run() {
     if (state === "loading") return;
     setState("loading");
-    setError(null);
+    setFailure(null);
+    setAttempts((n) => n + 1);
     if (resetTimer.current) clearTimeout(resetTimer.current);
     // Pop the tab synchronously so the browser does not treat the post-await
     // open() as a blocked popup.
@@ -53,21 +57,18 @@ function useCvDownload(matchId: string, mode: Mode) {
       }
       setState("done");
       resetTimer.current = setTimeout(() => setState("idle"), 2500);
-    } catch (e: any) {
+    } catch (e: unknown) {
       tab?.close();
-      const raw = String(e?.message ?? "");
-      const message = /no cv/i.test(raw)
-        ? "No CV on file yet"
-        : /not found|unauthor/i.test(raw)
-          ? "This CV is not available to you yet"
-          : raw || `Could not ${preview ? "open" : "download"} the CV`;
+      const f = describeCvDownloadFailure(e);
       setState("error");
-      setError(message);
-      toast.error(message);
+      setFailure(f);
+      toast.error(f.message, { description: f.hint });
     }
   }
 
-  return { state, error, run, preview };
+  // Every run asks the server again for the candidate's current CV file and a
+  // brand-new signed link, so "Retry" always pulls the latest file in storage.
+  return { state, failure, attempts, run, preview };
 }
 
 export function DownloadCvButton({
@@ -78,7 +79,7 @@ export function DownloadCvButton({
   label,
   mode = "download",
 }: Props) {
-  const { state, error, run, preview } = useCvDownload(matchId, mode);
+  const { state, failure, attempts, run, preview } = useCvDownload(matchId, mode);
   const base = label ?? (preview ? "Preview CV" : "Download CV");
   const text =
     state === "loading"
@@ -86,7 +87,11 @@ export function DownloadCvButton({
         ? "Opening…"
         : "Preparing…"
       : state === "error"
-        ? "Retry"
+        ? failure?.retryable
+          ? preview
+            ? "Retry preview"
+            : "Retry download"
+          : base
         : state === "done" && !preview
           ? "Downloaded"
           : base;
@@ -120,7 +125,29 @@ export function DownloadCvButton({
       <span aria-live="polite" className="sr-only">
         {state === "loading" ? "Preparing CV download" : state === "done" ? "CV ready" : ""}
       </span>
-      {error && <span className="text-[11px] text-destructive max-w-[16rem]">{error}</span>}
+      {failure && (
+        <span
+          role="alert"
+          className="flex max-w-[18rem] flex-col gap-1 rounded-md border border-destructive/40 bg-destructive/5 px-2 py-1.5"
+          data-qa="cv-download-error"
+        >
+          <span className="text-[11px] font-medium text-destructive">{failure.message}</span>
+          <span className="text-[11px] text-muted-foreground">{failure.hint}</span>
+          {failure.retryable && (
+            <button
+              type="button"
+              onClick={run}
+              disabled={state === "loading"}
+              data-qa-action="retry-cv-download"
+              className="inline-flex w-fit items-center gap-1 text-[11px] font-medium text-primary underline-offset-2 hover:underline disabled:opacity-70"
+            >
+              <RotateCcw className="h-3 w-3" aria-hidden />
+              Retry download
+              {attempts > 1 ? ` (attempt ${attempts + 1})` : ""}
+            </button>
+          )}
+        </span>
+      )}
     </span>
   );
 }
@@ -138,9 +165,9 @@ export function DownloadLatestCvLink({
   className?: string;
   label?: string;
 }) {
-  const { state, error, run } = useCvDownload(matchId, "download");
+  const { state, failure, run } = useCvDownload(matchId, "download");
   return (
-    <span className={`inline-flex items-center gap-1.5 ${className ?? ""}`}>
+    <span className={`inline-flex flex-wrap items-center gap-1.5 ${className ?? ""}`}>
       <button
         type="button"
         onClick={run}
@@ -164,12 +191,18 @@ export function DownloadLatestCvLink({
         {state === "loading"
           ? "Preparing…"
           : state === "error"
-            ? "Retry download"
+            ? failure?.retryable
+              ? "Retry download"
+              : label
             : state === "done"
               ? "Downloaded"
               : label}
       </button>
-      {error && <span className="text-[11px] text-destructive">{error}</span>}
+      {failure && (
+        <span role="alert" className="text-[11px] text-destructive" data-qa="cv-download-error">
+          {failure.message} <span className="text-muted-foreground">{failure.hint}</span>
+        </span>
+      )}
     </span>
   );
 }

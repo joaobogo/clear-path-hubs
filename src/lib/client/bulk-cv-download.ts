@@ -1,3 +1,4 @@
+import { describeCvDownloadFailure } from "@/lib/cv-download-error";
 import { useCallback, useRef, useState } from "react";
 import { getCandidateCvDownload } from "@/lib/cv-download.functions";
 
@@ -28,11 +29,7 @@ const CONCURRENCY = 3;
 
 /** Human message for a failed row — never a raw stack or storage path. */
 export function bulkErrorMessage(raw: unknown): string {
-  const text = String((raw as { message?: string })?.message ?? raw ?? "");
-  if (/no cv/i.test(text)) return "No CV on file yet";
-  if (/not found|unauthor|permission/i.test(text)) return "CV not available to you yet";
-  if (/failed to fetch|network/i.test(text)) return "Network error — retry";
-  return text || "Could not download this CV";
+  return describeCvDownloadFailure(raw).message;
 }
 
 /** Turn a display name into a safe, readable file name inside the archive. */
