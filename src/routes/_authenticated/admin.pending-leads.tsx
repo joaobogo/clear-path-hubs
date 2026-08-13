@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { QueryState } from "@/components/ds";
 import { Input } from "@/components/ui/input";
 import { PAYMENTS_ENABLED } from "@/config/commerce";
 
@@ -45,7 +46,7 @@ function PendingLeadsPage() {
   const outcome = useServerFn(markCallOutcome);
   const [reasons, setReasons] = useState<Record<string, string>>({});
 
-  const { data, isLoading } = useQuery({
+  const query = useQuery({
     queryKey: ["admin-pending-leads"],
     queryFn: () => load(),
   });
@@ -89,7 +90,6 @@ function PendingLeadsPage() {
     }
   };
 
-  const leads = data?.leads ?? [];
 
   return (
     <div className="space-y-6">
@@ -100,17 +100,23 @@ function PendingLeadsPage() {
         </p>
       </div>
 
-      {isLoading ? (
-        <Skeleton className="h-64 w-full rounded-xl" />
-      ) : leads.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-sm text-muted-foreground">
-            Nothing pending. Every role in the system is paid, covered or exempt.
-          </CardContent>
-        </Card>
-      ) : (
+      <QueryState
+        query={query}
+        tone="admin"
+        surface="admin/pending-leads"
+        isEmpty={(d) => d.leads.length === 0}
+        skeleton={<Skeleton className="h-64 w-full rounded-xl" />}
+        empty={
+          <Card>
+            <CardContent className="py-12 text-center text-sm text-muted-foreground">
+              Nothing pending. Every role in the system is paid, covered or exempt.
+            </CardContent>
+          </Card>
+        }
+      >
+        {(data) => (
         <div className="space-y-4">
-          {leads.map((lead) => (
+          {data.leads.map((lead) => (
             <Card key={lead.positionId}>
               <CardHeader className="pb-3">
                 <div className="flex flex-wrap items-start justify-between gap-3">
