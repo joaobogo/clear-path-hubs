@@ -1,5 +1,13 @@
 import { CANONICAL_ORIGIN } from "@/lib/canonical-origin";
 import type { ContentEntry } from "@/lib/marketing/content";
+import { BRAND_ONE_LINER } from "@/config/product-language";
+
+/**
+ * Branded 1200x630 share card, served from the canonical domain. Every route
+ * falls back to this so no page can inherit a preview-host image from the
+ * platform's automatic screenshot.
+ */
+export const DEFAULT_SHARE_IMAGE = "/og-image.png";
 
 // Canonical production origin. Preview subdomains must not
 // compete with the primary domain in search — its canonical URLs point

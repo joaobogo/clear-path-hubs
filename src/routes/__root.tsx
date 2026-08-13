@@ -106,7 +106,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               url: "https://taasflow.com",
               logo: "https://taasflow.com/og-image.png",
               description:
-                "TAASFlow is a software-enabled recruiting system — ATS, recruiting agents, multichannel outreach, and curated talent data delivered as a subscription, not a traditional agency.",
+                "TaaSFlow is a software-enabled recruiting system — ATS, recruiting agents, multichannel outreach, and curated talent data delivered as a subscription, not a traditional agency.",
               parentOrganization: {
                 "@type": "Organization",
                 name: FGV.name,

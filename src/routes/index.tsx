@@ -256,7 +256,7 @@ const AGENCY_COMPARE = [
 const HOMEPAGE_FAQ = [
   {
     q: "What is TaaSFlow?",
-    a: "TaasFlow is an on-demand Talent Management SaaS platform delivered on flexible commercial terms. A recruiter runs sourcing and evaluation for your roles inside a live workspace your team can see at any time.",
+    a: "TaaSFlow is an on-demand Talent Management SaaS platform delivered on flexible commercial terms. A recruiter runs sourcing and evaluation for your roles inside a live workspace your team can see at any time.",
   },
   {
     q: "How is TaaSFlow different from a recruiting agency?",
@@ -1347,7 +1347,7 @@ function Home() {
                 Human first, AI enabled
               </p>
               <p className="max-w-xl text-base text-[color:var(--brand-navy)]/80 sm:text-lg">
-                TaasFlow is a complete Talent Management solution capable of
+                TaaSFlow is a complete Talent Management solution capable of
                 running continuous sourcing, creating live talent pipelines
                 — supported by full ATS functionality.
               </p>

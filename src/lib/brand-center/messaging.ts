@@ -2,7 +2,7 @@
  * Brand Center — TaaSFlow strategy, messaging and voice.
  *
  * Sourced from the approved positioning in this project: the FGV brand core
- * for TAASFlow, `src/content/pages/*`, the live homepage, and
+ * for TaaSFlow, `src/content/pages/*`, the live homepage, and
  * `src/config/pricing-core.ts`. No claim, metric, client or certification is
  * introduced here that is not already approved in the project.
  */
@@ -11,7 +11,7 @@ export const IDENTITY = {
   brandId: "taasflow",
   name: "TaaSFlow",
   legalNote:
-    "Use “TaaSFlow” in running copy. Capitalisation is fixed: capital T, lower a, lower a, capital S, capital F. Never “TaasFlow”, “TAASflow” or “Taas Flow”.",
+    "Use “TaaSFlow” in running copy. Capitalisation is fixed: capital T, lower a, lower a, capital S, capital F. Never “TaaSFlow”, “TAASflow” or “Taas Flow”.",
   category: "Recruiting subscription, ATS/workspace, and Talent as a Service.",
   promise: "Your whole hiring stack, all in one.",
   tagline: "ATS + recruiting + outreach.",

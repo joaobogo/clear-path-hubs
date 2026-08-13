@@ -104,7 +104,7 @@ export function ModelComparisonTable({ className }: { className?: string }) {
               </div>
               <div className="rounded-xl bg-[color:var(--brand-navy)]/[0.04] p-3">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--brand-navy)]">
-                  TaasFlow Platform
+                  TaaSFlow Platform
                 </p>
                 <p className="mt-0.5 font-medium text-[color:var(--brand-navy)]">
                   {r.taasflow}
@@ -120,7 +120,7 @@ export function ModelComparisonTable({ className }: { className?: string }) {
 
           <caption className="sr-only">
             Comparison of contingency agencies, internal sourcing tools and
-            TaasFlow Platform
+            TaaSFlow Platform
           </caption>
           <thead>
             <tr className="border-b border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-navy)]/[0.03]">
@@ -134,7 +134,7 @@ export function ModelComparisonTable({ className }: { className?: string }) {
                 Sourcing tools &amp; job boards
               </th>
               <th scope="col" className={`${COL_HEAD} text-[color:var(--brand-navy)]`}>
-                TaasFlow Platform
+                TaaSFlow Platform
               </th>
             </tr>
           </thead>
