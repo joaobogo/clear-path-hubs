@@ -37,11 +37,8 @@ export function stripContactLines(raw: string): string {
     .join(" ");
 }
 
-/**
- * Snap to sentence boundaries: drop a leading partial sentence and a trailing
- * partial one, as long as a usable sentence remains.
- */
-function snapToSentences(text: string): string {
+/** Drop a leading partial sentence when a usable sentence follows. */
+function snapStart(text: string): string {
   let out = text.trim();
   const firstBoundary = out.search(/[.!?]\s+[A-Z0-9]/);
   if (firstBoundary !== -1) {
@@ -55,16 +52,22 @@ function snapToSentences(text: string): string {
       out = out.slice(nextWord + 1).trim();
     }
   }
+  return out;
+}
+
+/** Drop a trailing partial sentence, or at least a trailing partial word. */
+function snapEnd(text: string): string {
+  let out = text.trim();
   const lastBoundary = Math.max(out.lastIndexOf("."), out.lastIndexOf("!"), out.lastIndexOf("?"));
   if (lastBoundary >= 25) {
     out = out.slice(0, lastBoundary + 1);
   } else {
-    // No sentence end: drop the trailing partial word so the quote reads whole.
     const lastSpace = out.lastIndexOf(" ");
     if (lastSpace >= 25) out = `${out.slice(0, lastSpace).trim()}…`;
   }
   return out.trim();
 }
+
 
 /** Remove leading punctuation/digit debris left by an offset slice. */
 function stripLeadingJunk(text: string): string {
