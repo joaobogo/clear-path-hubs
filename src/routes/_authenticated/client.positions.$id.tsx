@@ -234,6 +234,9 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
     onSettled: () => qc.invalidateQueries({ queryKey }),
   });
 
+  // Published before any early return / throw so hook order stays stable.
+  useDetailCrumb((data as { position?: { title?: string } } | undefined)?.position?.title);
+
   // Load failures raise to the route errorComponent; a missing role is a 404.
   if (!data) throw notFound();
   if (!data.position) throw notFound();
@@ -246,7 +249,6 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
       ctx?.active?.role === "operations");
 
   const { position, matches, activity, summary } = data;
-  useDetailCrumb(position?.title as string | undefined);
   const launch = (data as { launch?: RoleLaunchState }).launch;
 
   // ── Handoff after a hire ────────────────────────────────────────────────────

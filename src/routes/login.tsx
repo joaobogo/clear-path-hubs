@@ -41,15 +41,9 @@ type Persona =
 export const Route = createFileRoute("/login")({
   validateSearch: searchSchema,
   ssr: false,
-  // The QA persona list is a convenience, never a dependency: if the call
-  // fails the sign-in form must still render.
-  loader: async () => {
-    try {
-      return await getQaPersonaConfig();
-    } catch {
-      return QA_DISABLED;
-    }
-  },
+  // No loader here on purpose. The QA persona list is a convenience and is
+  // fetched from the component after mount, so a slow or unauthorised call can
+  // never hold the sign-in form behind a pending state.
   head: () => ({
     meta: [
       { title: "Sign in — TaaSFlow" },
@@ -103,7 +97,26 @@ const GENERIC_CONFIRM_MESSAGE =
 function LoginPage() {
   const navigate = useNavigate();
   const { redirect } = Route.useSearch();
-  const qa = Route.useLoaderData();
+  const [qa, setQa] = useState<{
+    enabled: boolean;
+    personas: Array<{ key: Persona; label: string }>;
+  }>(QA_DISABLED);
+  const loadQa = useServerFn(getQaPersonaConfig);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const cfg = await loadQa();
+        if (!cancelled) setQa(cfg);
+      } catch {
+        /* QA personas are optional — stay disabled */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const runPersona = useServerFn(qaPersonaLogin);
   const runSession = useServerFn(getSessionContext);
   const runProvision = useServerFn(provisionClientMembershipForSelf);

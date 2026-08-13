@@ -31,7 +31,7 @@ import {
   InterviewFeedbackQueue,
 } from "@/components/client/interview-feedback-form";
 import type { FeedbackQueueItem } from "@/lib/interview-feedback.functions";
-import { useClientOrgSearch } from "@/lib/use-client-org";
+import { useResolvedClientOrgId } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { PageHeader, PageBody, PageShell } from "@/components/ds";
 import { EmptyState, SkeletonCards } from "@/components/client/states";
@@ -61,7 +61,7 @@ export const Route = createFileRoute("/_authenticated/client/interviews")({
 });
 
 function InterviewsPage() {
-  const org = useClientOrgSearch();
+  const org = useResolvedClientOrgId();
   const support = useSupportView();
   const readOnly = support.readOnly || support.permissionPreview === "client_viewer";
   const qc = useQueryClient();
