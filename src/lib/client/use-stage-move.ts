@@ -56,6 +56,12 @@ export function useStageMove({
 }: UseStageMoveOptions) {
   const qc = useQueryClient();
   const moveFn = useServerFn(moveMatchStage);
+  /**
+   * The stage the card sat on when the operator grabbed it, captured in
+   * `onMutate` BEFORE the optimistic write. Reading it inside `mutationFn`
+   * would read our own optimistic value back and make every move look stale.
+   */
+  const expectedStages = useRef(new Map<string, string | undefined>());
 
   return useMutation({
     mutationFn: (v: StageMoveVars) =>
@@ -64,11 +70,8 @@ export function useStageMove({
           orgId,
           matchId: v.matchId,
           toStage: v.toStage,
-          // The stage this candidate was on when the operator grabbed the card.
-          // If they have already moved, the server refuses the change.
-          expectedStage: getMatches(qc.getQueryData<AnyRow>(queryKey) ?? undefined)?.find(
-            (m: AnyRow) => m.id === v.matchId,
-          )?.stage as string | undefined,
+          // If the candidate has already moved elsewhere, the server refuses.
+          expectedStage: expectedStages.current.get(v.matchId),
           reason: v.reason,
           reasonCode: v.reasonCode,
         },
@@ -76,6 +79,12 @@ export function useStageMove({
     onMutate: async (v) => {
       await qc.cancelQueries({ queryKey });
       const snapshot = qc.getQueryData<AnyRow>(queryKey);
+      expectedStages.current.set(
+        v.matchId,
+        getMatches(snapshot ?? undefined)?.find((m: AnyRow) => m.id === v.matchId)?.stage as
+          | string
+          | undefined,
+      );
       qc.setQueryData<AnyRow>(queryKey, (prev: AnyRow) => {
         if (!prev) return prev;
         const rows = getMatches(prev) ?? [];
@@ -83,6 +92,7 @@ export function useStageMove({
       });
       return { snapshot };
     },
+
     onError: (e: Error, _v, ctx) => {
       if (ctx?.snapshot) qc.setQueryData(queryKey, ctx.snapshot);
       // Someone else already moved this candidate: block the action, restore the
