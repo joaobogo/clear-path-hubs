@@ -189,20 +189,20 @@ export function TeamTab() {
 
  if (ctxIsError) {
  return (
- <main className="mx-auto max-w-3xl px-6 py-10">
+ <div className="mx-auto max-w-3xl px-6 py-10">
  <QueryErrorCard
  title="We couldn't load your workspace"
  error={ctxError}
  onRetry={() => refetchCtx()}
  retrying={ctxIsFetching}
  />
- </main>
+ </div>
  );
  }
 
  if (!isAdmin) {
  return (
- <main className="mx-auto max-w-3xl px-6 py-10 space-y-6">
+ <div className="mx-auto max-w-3xl px-6 py-10 space-y-6">
  <div className="rounded-xl border bg-card p-8 text-center">
  <div className="mx-auto grid h-11 w-11 place-items-center rounded-full bg-muted text-muted-foreground">
  <Users className="h-5 w-5" />
@@ -214,7 +214,7 @@ export function TeamTab() {
  </p>
  </div>
  <RoleLegend />
- </main>
+ </div>
  );
  }
 
@@ -235,7 +235,7 @@ export function TeamTab() {
     seatLimit && seatLimit > 0 ? Math.min(100, Math.round((seatsUsed / seatLimit) * 100)) : null;
 
   return (
-  <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 space-y-6">
+  <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 space-y-6">
   {/* Header */}
   <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
   <div className="min-w-0">
@@ -411,7 +411,7 @@ export function TeamTab() {
  <RoleLegend />
 
  {isAdmin && <TeamActivityPanel orgId={orgId ?? null} />}
- </main>
+ </div>
  );
 
 }

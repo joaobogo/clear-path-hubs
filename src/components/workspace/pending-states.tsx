@@ -124,7 +124,7 @@ export function makeWorkspacePending(opts: {
 		opts.width === "5xl" ? "max-w-5xl" : opts.width === "6xl" ? "max-w-6xl" : "max-w-7xl";
 	return function WorkspacePending() {
 		return (
-			<main className={`mx-auto ${max} px-4 sm:px-6 py-6 sm:py-8 space-y-6`}>
+			<div className={`mx-auto ${max} px-4 sm:px-6 py-6 sm:py-8 space-y-6`}>
 				<HeaderBlock />
 				{opts.kpis ? <KpiGrid /> : null}
 				{opts.shape === "kpis" ? <Rows rows={opts.rows ?? 4} /> : null}
@@ -132,7 +132,7 @@ export function makeWorkspacePending(opts: {
 				{opts.shape === "cards" ? <Cards /> : null}
 				{opts.shape === "board" ? <Board /> : null}
 				{opts.shape === "detail" ? <DetailBody /> : null}
-			</main>
+			</div>
 		);
 	};
 }

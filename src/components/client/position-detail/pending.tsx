@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
  */
 export function PositionDetailPending() {
   return (
-    <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
       <Skeleton className="h-4 w-28" />
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 space-y-2">
@@ -30,6 +30,6 @@ export function PositionDetailPending() {
           <Skeleton key={i} className="h-[280px] w-full rounded-lg" />
         ))}
       </div>
-    </main>
+    </div>
   );
 }

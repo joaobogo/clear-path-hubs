@@ -49,7 +49,7 @@ export function PositionHandoffView({
     .join(" · ");
 
   return (
-    <main className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+    <div className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
       <div>
         <Link to="/client/positions" className="text-sm text-muted-foreground hover:underline">
           ← All roles
@@ -72,6 +72,6 @@ export function PositionHandoffView({
         positionTitle={position.title}
         canPost={canEdit}
       />
-    </main>
+    </div>
   );
 }
