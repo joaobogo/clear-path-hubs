@@ -546,17 +546,26 @@ function CandidatesPage() {
              onClear={clearFilters}
              orgId={orgId}
            />
-  ) : (
-           <CompactList
-             rows={paged}
-             orgSearch={orgSearch}
-             compareIds={compareIds}
-             onToggleCompare={(id) => toggleCompare(setCompareIds, id)}
-           />
-  )}
+   ) : search.view === "board" && orgId ? (
+            /* Same rows, same filters — only the presentation changes. */
+            <CandidatesBoardView
+              rows={filtered as ClientCandidateDTO[]}
+              orgId={orgId}
+              queryKey={["client-candidates", orgId, search.position]}
+              canEdit={boardCanEdit}
+              refetch={refetch}
+            />
+   ) : (
+            <CompactList
+              rows={paged}
+              orgSearch={orgSearch}
+              compareIds={compareIds}
+              onToggleCompare={(id) => toggleCompare(setCompareIds, id)}
+            />
+   )}
 
  {/* Bounded pagination */}
- {filtered.length > PAGE_SIZE && (
+ {search.view !== "board" && filtered.length > PAGE_SIZE && (
  <nav
  aria-label="Candidates pagination"
  className="mt-4 flex items-center justify-between gap-3 text-sm"
