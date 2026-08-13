@@ -275,7 +275,8 @@ export function AccountOperatingSummary({
       >
         <PanelState query={engagement} skeletonRows={2}>
           {(() => {
-            const e = engagement.data!;
+            const e = engagement.data;
+            if (!e) return null;
             return (
           <div className="space-y-2">
             <div className="rounded-md border p-3 text-sm">
