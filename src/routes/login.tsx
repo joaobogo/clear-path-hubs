@@ -41,15 +41,9 @@ type Persona =
 export const Route = createFileRoute("/login")({
   validateSearch: searchSchema,
   ssr: false,
-  // The QA persona list is a convenience, never a dependency: if the call
-  // fails the sign-in form must still render.
-  loader: async () => {
-    try {
-      return await getQaPersonaConfig();
-    } catch {
-      return QA_DISABLED;
-    }
-  },
+  // No loader here on purpose. The QA persona list is a convenience and is
+  // fetched from the component after mount, so a slow or unauthorised call can
+  // never hold the sign-in form behind a pending state.
   head: () => ({
     meta: [
       { title: "Sign in — TaaSFlow" },
