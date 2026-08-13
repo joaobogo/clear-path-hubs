@@ -142,7 +142,8 @@ export function AccountOperatingSummary({
       >
         <PanelState query={commercial}>
           {(() => {
-            const c = commercial.data!;
+            const c = commercial.data;
+            if (!c) return null;
             return (
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2 text-sm">
@@ -219,7 +220,8 @@ export function AccountOperatingSummary({
       >
         <PanelState query={delivery} skeletonRows={4}>
           {(() => {
-            const d = delivery.data!;
+            const d = delivery.data;
+            if (!d) return null;
             return (
           <div className="grid gap-2 sm:grid-cols-2">
             <button
@@ -273,7 +275,8 @@ export function AccountOperatingSummary({
       >
         <PanelState query={engagement} skeletonRows={2}>
           {(() => {
-            const e = engagement.data!;
+            const e = engagement.data;
+            if (!e) return null;
             return (
           <div className="space-y-2">
             <div className="rounded-md border p-3 text-sm">
