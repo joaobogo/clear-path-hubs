@@ -386,10 +386,12 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
       </div>
       {selectedItems.length > 1 && !canBulk ? (
         <p className="text-xs text-muted-foreground">
-          Bulk approve only works inside a single position and a single approval type, and only for
-          rows with no blockers.
+          Bulk approve only works inside a single role and a single approval type, and only for rows
+          with no blockers.
         </p>
       ) : null}
+
+      <QueueShortcuts />
 
       {groups.map((group) => (
         <Card key={group.kind}>
@@ -403,13 +405,15 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
             <p className="text-xs text-muted-foreground">{group.blurb}</p>
           </CardHeader>
           <CardContent className="px-0 pb-0">
-            <ul className="divide-y divide-border/70">
+            <ul className="divide-y divide-border/70" {...kb.listProps}>
               {group.items.map((item) => (
                 <Row
                   key={item.id}
                   item={item}
+                  rowProps={kb.rowProps(allItems.findIndex((i) => i.id === item.id))}
                   selected={!!selected[item.id]}
                   onToggle={(checked) =>
+
                     setSelected((prev) => ({ ...prev, [item.id]: checked }))
                   }
                   busy={busyId === item.id}
