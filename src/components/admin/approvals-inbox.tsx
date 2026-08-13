@@ -299,6 +299,23 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
   );
   const canBulk = bulkEligible(selectedItems) && selectedItems[0]?.kind === "candidate_visible";
 
+  // allItems is flattened in render order, so keyboard indexes line up.
+  const kb = useQueueKeyboard({
+    count: allItems.length,
+    onPrimary: (index) => {
+      const item = allItems[index];
+      if (!item || item.blockers.length > 0 || busyId) return;
+      setBusyId(item.id);
+      approve.mutate(item);
+    },
+    onOpen: (index) => {
+      const link = allItems[index]?.link;
+      if (link) window.location.assign(link);
+    },
+  });
+
+
+
   if (query.isLoading) {
     return (
       <div className="space-y-3">
