@@ -82,7 +82,11 @@ describe("buildEvidenceCard", () => {
     const rows = [
       row({ id: "a", rubric_criterion_key: "strong_sql", interpretation: "Strong SQL" }),
       row({ id: "b", rubric_criterion_key: "strong_sql", interpretation: "strong  sql" }),
-      row({ id: "c", rubric_criterion_key: "team_lead", interpretation: "Team leadership: led a team of nine" }),
+      row({
+        id: "c",
+        rubric_criterion_key: "team_leadership",
+        interpretation: "Team leadership: led a team of nine",
+      }),
     ];
     const card = buildEvidenceCard(rows, [
       { label: "Strong SQL", importance: "must_have" },
