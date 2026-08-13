@@ -24,7 +24,8 @@ type Props = {
  */
 function useCvDownload(matchId: string, mode: Mode) {
   const [state, setState] = useState<"idle" | "loading" | "done" | "error">("idle");
-  const [error, setError] = useState<string | null>(null);
+  const [failure, setFailure] = useState<CvDownloadFailure | null>(null);
+  const [attempts, setAttempts] = useState(0);
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const preview = mode === "preview";
 
