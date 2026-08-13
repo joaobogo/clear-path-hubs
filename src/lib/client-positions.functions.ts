@@ -45,6 +45,8 @@ import {
   evaluateAdvanceGate,
 } from "@/lib/client/advance-gate";
 import { assessFreshness, type Freshness } from "@/lib/scoring/score-freshness";
+import { buildRequirementRows } from "@/lib/client-fit-presentation";
+import { buildRoleStory, type StoryCandidate } from "@/lib/client/role-story";
 
 import {
   type AnyRow,
