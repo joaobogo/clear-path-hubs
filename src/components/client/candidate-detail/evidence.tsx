@@ -305,6 +305,10 @@ export const WhyWeShortlisted = memo(function WhyWeShortlisted({
             </div>
             {l.claim ? (
               <p className="mt-1 text-sm text-muted-foreground">{l.claim}</p>
+            ) : l.underReview ? (
+              <p className="mt-1 text-sm text-muted-foreground italic">
+                Evidence under review
+              </p>
             ) : (
               <p className="mt-1 text-sm text-muted-foreground italic">
                 No evidence captured for this yet — we will not claim it.
