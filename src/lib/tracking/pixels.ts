@@ -426,20 +426,95 @@ function flushPendingEvents() {
   for (const { name, payload } of queued) send(name, payload);
 }
 
+/* ------------------------------------------------- session event log --- */
+
+/** One tracked event, as it was fanned out to each provider. */
+export type TrackedEventRecord = {
+  /** Monotonic id within the session. */
+  seq: number;
+  at: string;
+  /** Canonical event name, e.g. `page_view`, `form_submit`. */
+  name: string;
+  payload: Record<string, unknown>;
+  ga4Event: string;
+  label: string;
+  metaEvent: string | null;
+  linkedinConversionId: string | null;
+  /** Which providers were actually reachable when the event fired. */
+  delivered: string[];
+  /** True while the event sits in the pre-boot queue. */
+  queued: boolean;
+};
+
+const EVENT_LOG_LIMIT = 200;
+const eventLog: TrackedEventRecord[] = [];
+let eventSeq = 0;
+const logListeners = new Set<() => void>();
+
+function recordEvent(record: Omit<TrackedEventRecord, "seq" | "at">) {
+  eventLog.push({ seq: ++eventSeq, at: new Date().toISOString(), ...record });
+  if (eventLog.length > EVENT_LOG_LIMIT) eventLog.splice(0, eventLog.length - EVENT_LOG_LIMIT);
+  logListeners.forEach((l) => {
+    try {
+      l();
+    } catch {
+      /* a broken listener must never break tracking */
+    }
+  });
+}
+
+/** Snapshot of every event tracked during this page session (newest last). */
+export function getTrackedEvents(): TrackedEventRecord[] {
+  return eventLog.slice();
+}
+
+/** Subscribe to event-log changes. Returns an unsubscribe function. */
+export function subscribeTrackedEvents(listener: () => void): () => void {
+  logListeners.add(listener);
+  return () => logListeners.delete(listener);
+}
+
+/** Clears the in-memory diagnostics log (does not affect the providers). */
+export function clearTrackedEvents() {
+  eventLog.length = 0;
+  logListeners.forEach((l) => l());
+}
+
 function send(name: string, payload: Record<string, unknown>) {
   // Each provider gets its own event name and property shape — see
   // src/lib/tracking/conversion-map.ts for the canonical mapping table.
   const mapped = resolveConversion(name, payload);
+  const delivered: string[] = [];
 
   // GA4 always receives the event; Consent Mode decides whether it is
   // cookieless or full. Session-recording tools stay consent-gated.
+  if (window.gtag) delivered.push("ga4");
   window.gtag?.("event", mapped.ga4Event, payload);
   window.dataLayer?.push({ event: mapped.ga4Event, ...payload });
+  if (window.clarity) delivered.push("clarity");
   window.clarity?.("event", mapped.label);
+  if (window.hj) delivered.push("hotjar");
   window.hj?.("event", mapped.label);
 
-  if (mapped.meta) window.fbq?.("track", mapped.meta.event, mapped.meta.params);
-  if (mapped.linkedin) window.lintrk?.("track", mapped.linkedin);
+  if (mapped.meta) {
+    if (window.fbq) delivered.push("meta");
+    window.fbq?.("track", mapped.meta.event, mapped.meta.params);
+  }
+  if (mapped.linkedin) {
+    if (window.lintrk) delivered.push("linkedin");
+    window.lintrk?.("track", mapped.linkedin);
+  }
+
+  recordEvent({
+    name,
+    payload,
+    ga4Event: mapped.ga4Event,
+    label: mapped.label,
+    metaEvent: mapped.meta?.event ?? null,
+    linkedinConversionId: mapped.linkedin ? String(mapped.linkedin) : null,
+    delivered,
+    queued: false,
+  });
 }
 
 export function trackEvent(name: string, params: Record<string, unknown> = {}) {
@@ -456,13 +531,27 @@ export function trackEvent(name: string, params: Record<string, unknown> = {}) {
     if (recent.size > 200) recent.clear();
 
     if (!flushed && !window.gtag) {
-      if (pending.length < 50) pending.push({ name, payload });
+      if (pending.length < 50) {
+        pending.push({ name, payload });
+        const mapped = resolveConversion(name, payload);
+        recordEvent({
+          name,
+          payload,
+          ga4Event: mapped.ga4Event,
+          label: mapped.label,
+          metaEvent: mapped.meta?.event ?? null,
+          linkedinConversionId: mapped.linkedin ? String(mapped.linkedin) : null,
+          delivered: [],
+          queued: true,
+        });
+      }
       return;
     }
 
     send(name, payload);
   });
 }
+
 
 
 /**

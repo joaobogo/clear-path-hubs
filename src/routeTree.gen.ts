@@ -62,6 +62,7 @@ import { Route as PartnershipsStaffingRouteImport } from './routes/partnerships.
 import { Route as IntakeConfirmationRouteImport } from './routes/intake_.confirmation'
 import { Route as IndustriesNonProfitRouteImport } from './routes/industries.non-profit'
 import { Route as IndustriesSlugRouteImport } from './routes/industries.$slug'
+import { Route as DevTrackingRouteImport } from './routes/dev.tracking'
 import { Route as DevIndustryCoverageRouteImport } from './routes/dev.industry-coverage'
 import { Route as DevCatalogueRouteImport } from './routes/dev.catalogue'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
@@ -466,6 +467,11 @@ const IndustriesNonProfitRoute = IndustriesNonProfitRouteImport.update({
 const IndustriesSlugRoute = IndustriesSlugRouteImport.update({
   id: '/industries/$slug',
   path: '/industries/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevTrackingRoute = DevTrackingRouteImport.update({
+  id: '/dev/tracking',
+  path: '/dev/tracking',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DevIndustryCoverageRoute = DevIndustryCoverageRouteImport.update({
@@ -1324,6 +1330,7 @@ export interface FileRoutesByFullPath {
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/dev/industry-coverage': typeof DevIndustryCoverageRoute
+  '/dev/tracking': typeof DevTrackingRoute
   '/industries/$slug': typeof IndustriesSlugRoute
   '/industries/non-profit': typeof IndustriesNonProfitRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
@@ -1516,6 +1523,7 @@ export interface FileRoutesByTo {
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/dev/industry-coverage': typeof DevIndustryCoverageRoute
+  '/dev/tracking': typeof DevTrackingRoute
   '/industries/$slug': typeof IndustriesSlugRoute
   '/industries/non-profit': typeof IndustriesNonProfitRoute
   '/intake/confirmation': typeof IntakeConfirmationRoute
@@ -1706,6 +1714,7 @@ export interface FileRoutesById {
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
   '/dev/industry-coverage': typeof DevIndustryCoverageRoute
+  '/dev/tracking': typeof DevTrackingRoute
   '/industries/$slug': typeof IndustriesSlugRoute
   '/industries/non-profit': typeof IndustriesNonProfitRoute
   '/intake_/confirmation': typeof IntakeConfirmationRoute
@@ -1903,6 +1912,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/dev/catalogue'
     | '/dev/industry-coverage'
+    | '/dev/tracking'
     | '/industries/$slug'
     | '/industries/non-profit'
     | '/intake/confirmation'
@@ -2095,6 +2105,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/dev/catalogue'
     | '/dev/industry-coverage'
+    | '/dev/tracking'
     | '/industries/$slug'
     | '/industries/non-profit'
     | '/intake/confirmation'
@@ -2284,6 +2295,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/dev/catalogue'
     | '/dev/industry-coverage'
+    | '/dev/tracking'
     | '/industries/$slug'
     | '/industries/non-profit'
     | '/intake_/confirmation'
@@ -2475,6 +2487,7 @@ export interface RootRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
   DevCatalogueRoute: typeof DevCatalogueRoute
   DevIndustryCoverageRoute: typeof DevIndustryCoverageRoute
+  DevTrackingRoute: typeof DevTrackingRoute
   IndustriesSlugRoute: typeof IndustriesSlugRoute
   IndustriesNonProfitRoute: typeof IndustriesNonProfitRoute
   IntakeConfirmationRoute: typeof IntakeConfirmationRoute
@@ -2893,6 +2906,13 @@ declare module '@tanstack/react-router' {
       path: '/industries/$slug'
       fullPath: '/industries/$slug'
       preLoaderRoute: typeof IndustriesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/tracking': {
+      id: '/dev/tracking'
+      path: '/dev/tracking'
+      fullPath: '/dev/tracking'
+      preLoaderRoute: typeof DevTrackingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dev/industry-coverage': {
@@ -4279,6 +4299,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogSlugRoute: BlogSlugRoute,
   DevCatalogueRoute: DevCatalogueRoute,
   DevIndustryCoverageRoute: DevIndustryCoverageRoute,
+  DevTrackingRoute: DevTrackingRoute,
   IndustriesSlugRoute: IndustriesSlugRoute,
   IndustriesNonProfitRoute: IndustriesNonProfitRoute,
   IntakeConfirmationRoute: IntakeConfirmationRoute,
