@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { requestCustomDashboard } from "@/lib/dashboards.functions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { toastError } from "@/lib/toast-error";
 import {
   Dialog,
   DialogContent,
@@ -30,6 +31,10 @@ export function RequestDialog({ orgId }: { orgId: string }) {
       setDescription("");
       queryClient.invalidateQueries({ queryKey: ["dashboard-workspace", orgId] });
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't submit. Nothing was saved — please try again." }),
   });
 
   return (

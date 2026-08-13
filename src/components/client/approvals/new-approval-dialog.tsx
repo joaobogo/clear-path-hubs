@@ -28,6 +28,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
+import { toastError } from "@/lib/toast-error";
 
 export function NewApprovalDialog({
   orgId,
@@ -72,6 +73,10 @@ export function NewApprovalDialog({
       setReminder("none");
       onCreated();
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: Error) =>
+      toastError(e, { fallback: "We couldn't submit. Nothing was saved — please try again." }),
   });
 
   return (

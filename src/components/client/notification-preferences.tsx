@@ -27,6 +27,7 @@ import {
   getClientNotificationPreferences,
   updateClientNotificationPreference,
 } from "@/lib/notification-prefs.functions";
+import { toastError } from "@/lib/toast-error";
 import {
   NOTIFICATION_EVENTS,
   defaultPreferences,
@@ -60,6 +61,10 @@ export function NotificationPreferences({
   const save = useMutation({
     mutationFn: (vars: { key: PreferenceKey; mode: DeliveryMode }) =>
       updateFn({ data: { orgId, ...vars } }),
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't save. Nothing was saved — please try again." }),
   });
 
   const usingDefaults = state.data?.usingDefaults ?? false;

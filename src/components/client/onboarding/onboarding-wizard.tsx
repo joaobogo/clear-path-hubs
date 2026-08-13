@@ -97,6 +97,10 @@ export function OnboardingWizard({ orgId }: { orgId?: string }) {
       await confirmStep({ data: { organization_id: state.organization_id, step: id } });
     },
     onSuccess: invalidate,
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't mark confirmed. Nothing was saved — please try again." }),
   });
 
   const stepIndex = ONBOARDING_STEPS.findIndex((s) => s.id === active);
@@ -1023,6 +1027,10 @@ function EntryStep({ state, onDone, back, goTo }: BodyProps) {
           : { to: "/client" },
       );
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't finish. Nothing was saved — please try again." }),
   });
 
   return (

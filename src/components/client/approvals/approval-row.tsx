@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { CheckCircle2, Circle, Trash2, Clock, ShieldAlert } from "lucide-react";
 import { relTime } from "./utils";
+import { toastError } from "@/lib/toast-error";
 
 export function ApprovalRowItem({
   task,
@@ -46,14 +47,26 @@ export function ApprovalRowItem({
       setEvidenceOpen(false);
       onChange();
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't complete. Nothing was saved — please try again." }),
   });
   const reopen = useMutation({
     mutationFn: () => update({ data: { id: task.id, status: "open" } }),
     onSuccess: onChange,
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't reopen. Nothing was saved — please try again." }),
   });
   const remove = useMutation({
     mutationFn: () => del({ data: { id: task.id } }),
     onSuccess: onChange,
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't remove. Nothing was saved — please try again." }),
   });
 
   const overdue =

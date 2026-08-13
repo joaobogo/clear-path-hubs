@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { TRACKER_CATEGORY } from "@/lib/tracking/pixels";
 import { setTrackingPolicy } from "@/lib/tracking/consent";
+import { toastError } from "@/lib/toast-error";
 import {
   fetchTrackingPolicy,
   saveTrackingPolicy,
@@ -79,6 +80,10 @@ function TrackingPolicyPage() {
       setSaved(true);
       window.setTimeout(() => setSaved(false), 4000);
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't that action. Nothing was saved — please try again." }),
   });
 
   const dirty =

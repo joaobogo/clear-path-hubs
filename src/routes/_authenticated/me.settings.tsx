@@ -90,6 +90,10 @@ function SettingsPage() {
         qc.invalidateQueries({ queryKey: ["me-context"] });
       } else toastError(r);
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't save consent. Nothing was saved — please try again." }),
   });
 
   const submitCorrection = useMutation({
@@ -100,6 +104,10 @@ function SettingsPage() {
         setCorrection("");
       } else toast.error(r.message ?? "Failed");
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't submit correction. Nothing was saved — please try again." }),
   });
 
   const requestExport = useMutation({
@@ -121,6 +129,10 @@ function SettingsPage() {
         setDeleteReason("");
       } else toast.error("Failed");
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't request delete. Nothing was saved — please try again." }),
   });
 
   return (

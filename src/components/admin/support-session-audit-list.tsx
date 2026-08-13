@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import { toastError } from "@/lib/toast-error";
 
 const PERIODS = [
   { days: 1, label: "24 hours" },
@@ -43,6 +44,10 @@ export function SupportSessionAuditList() {
       await qc.invalidateQueries({ queryKey: ["support-audit"] });
       await qc.invalidateQueries({ queryKey: ["admin-support"] });
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't end. Nothing was saved — please try again." }),
   });
 
   return (

@@ -69,6 +69,10 @@ export function MemorySheet({
       toast.success("Re-engagement logged");
       qc.invalidateQueries({ queryKey: ["talent-memory"] });
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't reengage. Nothing was saved — please try again." }),
   });
 
   const m = data?.memory;

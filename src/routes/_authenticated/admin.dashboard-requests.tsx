@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { QueryState } from "@/components/ds";
+import { toastError } from "@/lib/toast-error";
 
 export const Route = createFileRoute("/_authenticated/admin/dashboard-requests")({
   head: () => ({
@@ -76,6 +77,10 @@ function DashboardRequestsPage() {
       toast.success("Updated.");
       refresh();
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't outcome. Nothing was saved — please try again." }),
   });
 
   const revoke = useMutation({
@@ -84,6 +89,10 @@ function DashboardRequestsPage() {
       toast.success("Access revoked.");
       refresh();
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't revoke. Nothing was saved — please try again." }),
   });
 
   const grantAgain = useMutation({
@@ -93,6 +102,10 @@ function DashboardRequestsPage() {
       toast.success("Access granted.");
       refresh();
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't grant again. Nothing was saved — please try again." }),
   });
 
   return (

@@ -69,6 +69,10 @@ function PendingLeadsPage() {
       toast.success("Lead closed.");
       await refresh();
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't close. Nothing was saved — please try again." }),
   });
 
   const outcomeMutation = useMutation({
@@ -78,6 +82,10 @@ function PendingLeadsPage() {
       toast.success("Call updated.");
       await refresh();
     },
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't outcome. Nothing was saved — please try again." }),
   });
 
   const copyPaymentLink = async (positionId: string) => {

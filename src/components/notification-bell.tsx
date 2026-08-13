@@ -29,6 +29,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { staggerStyle, useArrivals, useJustChanged } from "@/lib/motion/use-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { toastError } from "@/lib/toast-error";
 
 export const NOTIFICATIONS_QUERY_KEY = ["notifications", "mine"] as const;
 
@@ -60,10 +61,18 @@ export function NotificationBell() {
   const markMutation = useMutation({
     mutationFn: (ids?: string[]) => mark({ data: { ids } }),
     onSuccess: invalidate,
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't mark. Nothing was saved — please try again." }),
   });
   const dismissMutation = useMutation({
     mutationFn: (ids: string[]) => dismiss({ data: { ids } }),
     onSuccess: invalidate,
+  
+    // Failure must be visible: a silent rejection reads as success.
+    onError: (e: unknown) =>
+      toastError(e, { fallback: "We couldn't dismiss. Nothing was saved — please try again." }),
   });
 
   const items = (data?.items ?? []) as NotificationRecord[];
