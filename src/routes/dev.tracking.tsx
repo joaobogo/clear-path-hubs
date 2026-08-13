@@ -156,7 +156,7 @@ function TrackingDiagnostics() {
                       {TRACKER_LABELS[tracker.key] ?? tracker.key}
                     </td>
                     <td className="px-4 py-2">
-                      <StatusBadge variant={STATUS_TONE[tracker.status]}>
+                      <StatusBadge tone={STATUS_TONE[tracker.status]}>
                         {STATUS_LABEL[tracker.status]}
                       </StatusBadge>
                     </td>
@@ -187,9 +187,9 @@ function TrackingDiagnostics() {
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-mono text-sm font-medium">{event.name}</span>
                     {event.queued ? (
-                      <StatusBadge variant="warning">Queued</StatusBadge>
+                      <StatusBadge tone="warning">Queued</StatusBadge>
                     ) : (
-                      <StatusBadge variant={event.delivered.length ? "success" : "danger"}>
+                      <StatusBadge tone={event.delivered.length ? "success" : "danger"}>
                         {event.delivered.length ? event.delivered.join(", ") : "no provider ready"}
                       </StatusBadge>
                     )}
