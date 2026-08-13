@@ -470,7 +470,15 @@ export function trackEvent(name: string, params: Record<string, unknown> = {}) {
  * client-side route change needs an explicit nudge per provider on top of the
  * canonical `page_view` event.
  */
+let firstViewReported = false;
+
 function notifyRouteChange(params: Record<string, unknown>) {
+  // The landing view is already measured by the head-boot snippets; only
+  // subsequent client-side navigations need the manual nudge.
+  if (!firstViewReported) {
+    firstViewReported = true;
+    return;
+  }
   const path = String(params.page_path ?? "");
   const location = String(params.page_location ?? "");
   const title = String(params.page_title ?? "");
@@ -501,7 +509,11 @@ function notifyRouteChange(params: Record<string, unknown>) {
   // LinkedIn Insight Tag only reports on script load, so reload it per route.
   safe(() => {
     if (!LINKEDIN_ID || !window.lintrk) return;
+    document
+      .querySelectorAll('script[data-tracker-reload="linkedin"]')
+      .forEach((el) => el.remove());
     const s = document.createElement("script");
+    s.setAttribute("data-tracker-reload", "linkedin");
     s.async = true;
     s.setAttribute("data-tracker", "linkedin");
     s.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
