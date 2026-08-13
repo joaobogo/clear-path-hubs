@@ -1,4 +1,5 @@
 /**
+import { attachMemberProfiles } from "@/lib/membership-profiles.server";
  * Server-only work behind personalised dashboards.
  *
  * Two responsibilities:
@@ -338,7 +339,7 @@ async function teamActivity(sb: AnySupabase, org: string): Promise<BlockData | n
   const [{ data: members }, { data: history }] = await Promise.all([
     sb
       .from("memberships")
-      .select("user_id, role, profiles:user_id(full_name, email)")
+      .select("user_id, role")
       .eq("organization_id", org)
       .eq("status", "active"),
     sb

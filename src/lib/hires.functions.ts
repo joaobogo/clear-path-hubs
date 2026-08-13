@@ -1,4 +1,5 @@
 // Offer & hire lifecycle server functions.
+import { attachMemberProfiles } from "@/lib/membership-profiles.server";
 //
 // Every mutation is org-scoped through RLS + assertEditor, writes an audit
 // event, and relies on DB triggers (tg_hire_records_lifecycle) to enforce the
@@ -729,7 +730,7 @@ export const listOfferOwners = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const { data: members, error } = await context.supabase
       .from("memberships")
-      .select("user_id, role, profiles:user_id(full_name, email)")
+      .select("user_id, role")
       .eq("organization_id", data.orgId)
       .eq("status", "active");
     if (error) throw new Error(error.message);

@@ -1,4 +1,5 @@
 /**
+import { attachMemberProfiles } from "@/lib/membership-profiles.server";
  * Admin command centre — server-only aggregation.
  *
  * Every number here is a real count from a real query, and every row carries
@@ -120,7 +121,7 @@ export async function loadFilterOptions() {
       .limit(500),
     s
       .from("memberships")
-      .select("user_id,role,profiles:user_id(full_name,email)")
+      .select("user_id,role")
       .in("role", ["platform_admin", "operations"])
       .eq("status", "active")
       .limit(200),

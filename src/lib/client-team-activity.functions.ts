@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { attachMemberProfiles } from "@/lib/membership-profiles.server";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { assertWorkspaceTeamAccess } from "@/lib/authz/workspace-access";
@@ -49,7 +50,7 @@ export const getClientTeamActivity = createServerFn({ method: "GET" })
     const [membersRes, decisionsRes, interviewsRes, positionsRes, openRes] = await Promise.all([
       context.supabase
         .from("memberships")
-        .select("user_id, role, status, profiles:user_id(full_name, email)")
+        .select("user_id, role, status")
         .eq("organization_id", data.orgId)
         .neq("status", "removed"),
       context.supabase
