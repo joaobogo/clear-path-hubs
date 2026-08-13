@@ -2,7 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { useQueries } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { QueueShortcuts } from "@/components/admin/queue-shortcuts";
+import { QUEUE_ROW_ACTIVE_CLASS, useQueueKeyboard } from "@/lib/admin/queue-keyboard";
+
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
