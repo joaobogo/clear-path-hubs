@@ -51,6 +51,9 @@ const searchSchema = z.object({
  // "top" → isTopMatch (band ∈ exceptional|top|strong)
  // "interview_pipeline" → isInInterview (stage ∈ interview_process|offer OR active interview)
  filter: fallback(z.enum(["all", "top", "interview_pipeline"]), "all").default("all"),
+ // Unicorn-only shortcut: candidates at or above the top of the scale (95+),
+ // or a confirmed hire out of the top tier. Rule lives in scoring/bands.ts.
+ unicorn: fallback(z.string(), "0").default("0"),
  // Comma-separated match IDs for shareable comparison links.
  compare: fallback(z.string(), "").default(""),
 });
@@ -186,6 +189,7 @@ function CandidatesPage() {
  } else if (search.filter === "interview_pipeline") {
  if (c.stage !== "interview_process" && c.stage !== "offer") return false;
  }
+ if (search.unicorn === "1" && !c.unicorn) return false;
   if (search.stage !== "all" && c.stage !== search.stage) return false;
   if (search.fit !== "all" && c.fit.band !== search.fit) return false;
   if (search.critical !== "all") {
@@ -271,14 +275,14 @@ function CandidatesPage() {
  }
  });
  return rows;
- }, [rowsRaw, search.q, search.location, search.stage, search.fit, search.critical, search.review, search.availability, search.minExp, search.sort, search.filter]);
+ }, [rowsRaw, search.q, search.location, search.stage, search.fit, search.critical, search.review, search.availability, search.minExp, search.sort, search.filter, search.unicorn]);
 
  // Bounded pagination — clamp render to a fixed page size so no unbounded lists ship.
  const PAGE_SIZE = 24;
  const [page, setPage] = useState(1);
  useEffect(() => {
  setPage(1);
- }, [search.q, search.position, search.stage, search.fit, search.location, search.sort, search.filter, orgId]);
+ }, [search.q, search.position, search.stage, search.fit, search.location, search.sort, search.filter, search.unicorn, orgId]);
  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
  const currentPage = Math.min(page, totalPages);
  const paged = filtered.slice(
@@ -379,6 +383,7 @@ function CandidatesPage() {
  search.minExp && { key: "minExp", label: `${search.minExp}+ years experience` },
  search.location && { key: "location", label: `Location: ${search.location}` },
  search.q && { key: "q", label: `Search: ${search.q}` },
+ search.unicorn === "1" && { key: "unicorn", label: `Unicorn only (${UNICORN_SCORE}+)` },
  ].filter(Boolean) as { key: string; label: string }[];
 
  const clearFilters = () =>
@@ -395,6 +400,7 @@ function CandidatesPage() {
  minExp: "",
  location: "",
  filter: "all",
+ unicorn: "0",
  } as never,
  });
 
