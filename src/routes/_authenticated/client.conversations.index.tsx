@@ -148,7 +148,10 @@ function ConversationsPage() {
         <SkeletonRows rows={5} />
       ) : items.length === 0 ? (
         <SurfaceState
-          content={resolveNoMessagesState({ activeRoles: signals?.activeRoles ?? 0 })}
+          content={resolveNoMessagesState({
+            activeRoles: signals?.activeRoles ?? 0,
+            rolesInSetup: signals?.rolesInSetup ?? 0,
+          })}
         />
       ) : (
         <ul className="divide-y rounded-lg border bg-card">
