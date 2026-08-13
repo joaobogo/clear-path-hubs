@@ -3797,6 +3797,30 @@ export type Database = {
           },
         ]
       }
+      demo_fill_backup_20260813: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          payload: Json
+          row_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          payload: Json
+          row_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          payload?: Json
+          row_id?: string
+        }
+        Relationships: []
+      }
       duplicate_person_decisions: {
         Row: {
           created_at: string
