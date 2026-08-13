@@ -58,7 +58,7 @@ function dropOpeningFragment(text: string): string {
 /** Drop a leading partial sentence when a usable sentence follows. */
 function snapStart(text: string): string {
   const out = text.trim();
-  const firstBoundary = out.search(/[.!?]\s+[A-Z0-9]/);
+  const firstBoundary = out.search(/[.!?]\s+[A-Z]/);
   if (firstBoundary !== -1) {
     const candidate = out.slice(firstBoundary + 1).trim();
     if (candidate.length >= 60) return candidate;
@@ -66,10 +66,22 @@ function snapStart(text: string): string {
   return out;
 }
 
+/**
+ * Index of the last sentence-ending punctuation, ignoring dots inside tokens
+ * like "Node.js" or "3.5" (a real ending is followed by space or end of text).
+ */
+function lastSentenceEnd(text: string): number {
+  let idx = -1;
+  const re = /[.!?](?=\s|$)/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) idx = m.index;
+  return idx;
+}
+
 /** Drop a trailing partial sentence, or at least a trailing partial word. */
 function snapEnd(text: string): string {
   let out = text.trim();
-  const lastBoundary = Math.max(out.lastIndexOf("."), out.lastIndexOf("!"), out.lastIndexOf("?"));
+  const lastBoundary = lastSentenceEnd(out);
   if (lastBoundary >= 25) {
     out = out.slice(0, lastBoundary + 1);
   } else {
@@ -93,7 +105,7 @@ function stripLeadingJunk(text: string): string {
 function capAtWord(text: string): string {
   if (text.length <= QUOTE_MAX_CHARS) return text;
   const cut = text.slice(0, QUOTE_MAX_CHARS);
-  const boundary = Math.max(cut.lastIndexOf("."), cut.lastIndexOf("!"), cut.lastIndexOf("?"));
+  const boundary = lastSentenceEnd(cut);
   if (boundary >= 60) return cut.slice(0, boundary + 1);
   const space = cut.lastIndexOf(" ");
   return `${(space > 0 ? cut.slice(0, space) : cut).trim()}…`;
