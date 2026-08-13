@@ -4,7 +4,7 @@
 //
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
-import { isUnicornMatch } from "@/lib/scoring/bands";
+import { isUnicornMatch, classifyBand } from "@/lib/scoring/bands";
 import {
   buildRequirementRows,
   summariseCoverage,
@@ -127,7 +127,7 @@ export async function loadKpiRows(
     .select(
       `id, candidate_profile_id, position_id, stage, approved_score_run_id, delivered_at,
        client_decision_due_at, recommendation,
-       score_runs:approved_score_run_id (fit_label, fit_band)`,
+       score_runs:approved_score_run_id (score, fit_label, fit_band)`,
     )
     .eq("organization_id", orgId)
     .eq("client_visibility", "visible");
@@ -191,8 +191,9 @@ export async function loadKpiRows(
     stage: m.stage,
     approved_score_run_id: m.approved_score_run_id,
     delivered_at: m.delivered_at,
-    approved_score: null,
+    approved_score: m.score_runs?.score != null ? Number(m.score_runs.score) : null,
     approved_fit_label: m.score_runs?.fit_label ?? null,
+    approved_fit_band: m.score_runs?.fit_band ?? null,
     interview_active: activeInterviews.has(m.id),
     interview_scheduled: scheduledInterviews.has(m.id),
     next_interview_at: nextInterviewAt.get(m.id) ?? null,
