@@ -73,6 +73,8 @@ export type KpiRow = {
   delivered_at: string | null;
   approved_score: number | null;
   approved_fit_label: string | null;
+  /** Stored band key of the approved run, when the writer recorded one. */
+  approved_fit_band: string | null;
   interview_active: boolean;
   interview_scheduled: boolean;
   /** An interview exists that still needs the client to confirm a time. */
