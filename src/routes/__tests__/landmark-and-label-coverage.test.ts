@@ -62,11 +62,11 @@ describe("icon-only buttons have accessible names", () => {
         if (entry.isDirectory()) walk(rel);
         else if (entry.name.endsWith(".tsx")) {
           const src = readFileSync(join(process.cwd(), rel), "utf8");
-          for (const m of src.matchAll(/<Button\b[^>]*size="icon"[^>]*>/g)) {
-            const tag = m[0];
-            const after = src.slice(m.index! + tag.length, m.index! + tag.length + 400);
-            const labelled =
-              /aria-label|title=|aria-labelledby/.test(tag) || /sr-only/.test(after);
+          for (const m of src.matchAll(/<Button\b[^>]*?size="icon"/g)) {
+            // Arrow functions inside props contain ">", so scan a window
+            // covering the rest of the tag plus its children.
+            const window = src.slice(m.index!, m.index! + 600);
+            const labelled = /aria-label|title=|aria-labelledby|sr-only/.test(window);
             if (!labelled) offenders.push(`${rel}:${src.slice(0, m.index).split("\n").length}`);
           }
         }
