@@ -33,6 +33,7 @@ import { HiringSnapshot } from "@/components/client/candidates/hiring-snapshot";
 import { CandidatesFiltersPanel } from "@/components/client/candidates/filters-panel";
 import { CandidatesEmptyState } from "@/components/client/candidates/candidates-empty-state";
 import { CompactList } from "@/components/client/candidates/compact-list";
+import { BulkCvDownloadButton } from "@/components/client/candidates/bulk-cv-download";
 
 const searchSchema = z.object({
  q: fallback(z.string(), "").default(""),
@@ -348,6 +349,16 @@ function CandidatesPage() {
  [compareIds, rowsRaw],
  );
 
+ // Bulk CV download targets — selection first, else the filtered list. Only
+ // candidates whose contact details are released can have a downloadable CV.
+ const cvTargets = useMemo(() => {
+  const pool =
+   selectedCandidates.length > 0 ? selectedCandidates : (filtered as ClientCandidateDTO[]);
+  return pool
+   .filter((c) => c.contact_released)
+   .map((c) => ({ matchId: c.match_id, name: c.candidate.display_name }));
+ }, [selectedCandidates, filtered]);
+
  const compareCheck = compareEligibility(selectedCandidates);
  const crossPosition = !compareCheck.ok && selectedCandidates.length >= 2;
 
@@ -447,6 +458,12 @@ function CandidatesPage() {
  >
  Compare {selectedCandidates.length > 0 ? `${selectedCandidates.length} ` : ""}side by side
  </Button>
+ {/* Bulk CV download: the ticked candidates when any are selected, else
+  every candidate currently shown whose CV has been released. */}
+ <BulkCvDownloadButton
+  targets={cvTargets}
+  label={`Download ${cvTargets.length} CV${cvTargets.length === 1 ? "" : "s"} (ZIP)`}
+ />
  <div className="text-right text-xs text-muted-foreground">
  <div>
  <span className="tabular-nums text-foreground font-medium">{filtered.length}</span> of{" "}
