@@ -227,18 +227,21 @@ export async function loadKpiRows(
 
 
 /**
- * A "strongest candidate": an approved assessment whose stored label or band
- * sits in the top group, or — when only a number was stored — whose score
- * classifies into `strong` or better through the canonical band table.
+ * A "strongest candidate": the approved run's SCORE classifies into `strong` or
+ * better through the canonical band table. Stored label/band strings are only
+ * consulted for runs that never recorded a number — some historical runs carry
+ * labels written under older cut-offs, and trusting them first let the tile
+ * disagree with the band shown on the candidate card.
  */
 export function isTopMatch(r: KpiRow): boolean {
   if (r.approved_score_run_id == null) return false;
   const words = TOP_FIT_LABELS as readonly string[];
+  if (r.approved_score != null) return words.includes(classifyBand(r.approved_score));
   if (r.approved_fit_label != null && words.includes(r.approved_fit_label)) return true;
   if (r.approved_fit_band != null && words.includes(r.approved_fit_band)) return true;
-  if (r.approved_score != null) return words.includes(classifyBand(r.approved_score));
   return false;
 }
+
 
 
 export function isInInterview(r: KpiRow): boolean {
