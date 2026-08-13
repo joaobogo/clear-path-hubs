@@ -14,6 +14,7 @@
  */
 
 import { type ConsentCategory } from "./consent";
+import { resolveConversion } from "./conversion-map";
 
 
 
@@ -471,6 +472,11 @@ export function trackPageView(params: Record<string, unknown>) {
 }
 
 
+/**
+ * @deprecated Prefer `trackCtaClick` from `@/lib/tracking/conversions`, which
+ * names the CTA location and destination explicitly. Kept as a thin alias so
+ * existing call sites keep reporting the same canonical `cta_click` event.
+ */
 export function trackCtaClick(cta: string, params: Record<string, unknown> = {}) {
   trackEvent("cta_click", { cta, ...params });
 }
