@@ -24,6 +24,9 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
     label: "Candidates",
     tabs: [
       { to: "/client/candidates", label: "Shortlist" },
+      // Same route, same query — the board is a view, told apart by search.
+      { to: "/client/candidates", label: "Board", search: { view: "board" } },
+
       { to: "/client/talent-pool", label: "Talent pool" },
       { to: "/client/talent-memory", label: "Talent memory" },
       { to: "/client/shares", label: "Shared links" },
