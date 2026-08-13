@@ -138,6 +138,7 @@ export function CandidateHeader({
           <>
             <DownloadCvButton matchId={candidate.match_id} mode="preview" />
             <DownloadCvButton matchId={candidate.match_id} />
+            <DownloadLatestCvLink matchId={candidate.match_id} />
           </>
         )}
 
