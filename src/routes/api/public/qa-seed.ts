@@ -974,6 +974,7 @@ async function handle(request: Request): Promise<Response> {
     company_name?: string;
     email_pattern?: string;
     organization_id?: string;
+    match_id?: string;
   } = {};
   try {
     const read = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.qa_seed);
