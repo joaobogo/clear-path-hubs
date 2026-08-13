@@ -263,6 +263,13 @@ export function CandidateCard({
         )}
       </div>
 
+      {/* One-click CV, only once contact details are released. */}
+      {c.contact_released && (
+        <div className="mt-2">
+          <DownloadLatestCvLink matchId={c.match_id} />
+        </div>
+      )}
+
       {/* Every decision is reversible for a short window, visibly. */}
       <div className="mt-3">
         <UndoWindow orgId={orgId} matchId={c.match_id} candidateName={c.candidate.display_name} />
