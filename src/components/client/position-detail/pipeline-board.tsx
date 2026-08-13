@@ -23,6 +23,8 @@ export function PipelineBoard({
   setDragOver,
   movePending,
   attemptMove,
+  showRole,
+  emptyHint,
 }: {
   matches: AnyRow[];
   byStage: Record<string, AnyRow[]>;
@@ -31,6 +33,8 @@ export function PipelineBoard({
   setDragOver: (updater: MatchStage | null | ((c: MatchStage | null) => MatchStage | null)) => void;
   movePending: boolean;
   attemptMove: (matchId: string, from: MatchStage, to: MatchStage) => void;
+  showRole?: boolean;
+  emptyHint?: string;
 }) {
   return (
     <section aria-label="Pipeline">
@@ -114,6 +118,11 @@ export function PipelineBoard({
                           m.candidate_profiles?.location ??
                           ""}
                       </div>
+                      {showRole && (
+                        <div className="text-xs font-medium text-primary truncate mt-1">
+                          {m.position?.title ?? m.positions?.title ?? "Role"}
+                        </div>
+                      )}
                       <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs">
                         <CandidateScoreBadge
                           score={m.score_runs?.score ?? null}
@@ -160,7 +169,7 @@ export function PipelineBoard({
                 })}
                 {byStage[col.key].length === 0 && (
                   <div className="text-xs text-muted-foreground px-1 py-4 text-center">
-                    Empty
+                    {emptyHint ?? "Empty"}
                   </div>
                 )}
               </div>
