@@ -150,3 +150,15 @@ export function cleanQuote(raw: string | null | undefined): string {
 
 }
 
+
+/**
+ * Clean a short field value — a requirement label, availability, location.
+ *
+ * These are not CV slices: they never open mid-sentence and are legitimately
+ * shorter than a quote, so only contact scrubbing and whitespace tidying
+ * apply. Running them through `cleanQuote` erases them via the minimum length.
+ */
+export function cleanFieldValue(raw: string | null | undefined): string {
+  if (!raw) return "";
+  return scrubContactTokens(String(raw).replace(/\s+/g, " ")).trim();
+}

@@ -1,5 +1,5 @@
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
-import { cleanQuote } from "@/lib/evidence/quote-hygiene";
+import { cleanQuote, cleanFieldValue } from "@/lib/evidence/quote-hygiene";
 
 export type EvidenceBullet = {
   /** The role requirement this evidence answers. */
@@ -45,7 +45,7 @@ export function selectEvidenceBullets(
     .filter((x) => x.detail.length > 0)
     .sort((a, b) => rank(a.row) - rank(b.row))
     .map<EvidenceBullet>((x) => ({
-      requirement: clean(x.row.label),
+      requirement: cleanFieldValue(x.row.label),
       detail: truncate(x.detail),
       strength: x.row.status === "met" ? "verified" : "partial",
     }));
@@ -58,7 +58,7 @@ export function selectEvidenceBullets(
     for (const e of c.evidence) {
       if (bullets.length >= limit) break;
       const detail = clean(e.snippet);
-      const requirement = clean(e.label);
+      const requirement = cleanFieldValue(e.label);
       if (!detail || !requirement) continue;
       if (bullets.some((b) => b.requirement.toLowerCase() === requirement.toLowerCase())) continue;
       bullets.push({ requirement, detail: truncate(detail), strength: "verified" });
@@ -89,7 +89,7 @@ export function unevidencedMustHaves(
         r.importance === "must_have" &&
         (r.status === "not_evidenced" || r.status === "contradicted"),
     )
-    .map((r) => clean(r.label))
+    .map((r) => cleanFieldValue(r.label))
     .filter(Boolean)
     .slice(0, limit);
 }
@@ -100,19 +100,21 @@ export type FitChip = { label: string; value: string; tone: "good" | "watch" | "
 export function fitChips(c: ClientCandidateDTO): FitChip[] {
   const chips: FitChip[] = [];
 
-  const availability = clean(c.candidate.availability);
+  const availability = cleanFieldValue(c.candidate.availability);
   if (availability) {
     chips.push({ label: "Available", value: availability, tone: "neutral" });
   }
 
-  const location = clean(c.candidate.location);
+  const location = cleanFieldValue(c.candidate.location);
   if (location) {
-    const value = c.candidate.timezone ? `${location} · ${clean(c.candidate.timezone)}` : location;
+    const value = c.candidate.timezone
+      ? `${location} · ${cleanFieldValue(c.candidate.timezone)}`
+      : location;
     chips.push({ label: "Based in", value, tone: "neutral" });
   }
 
   const comp = c.compensation_alignment;
-  const expectation = clean(comp.candidate_expectation);
+  const expectation = cleanFieldValue(comp.candidate_expectation);
   if (comp.verdict !== "unknown" || expectation) {
     const value =
       comp.verdict === "aligned"
