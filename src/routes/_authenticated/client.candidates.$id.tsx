@@ -141,6 +141,7 @@ function CandidateDetailPage() {
 
  const act = useMutation({
  mutationFn: (p: DecisionPayload) =>
+ withActionTimeout(() =>
  actionFn({
  data: {
  orgId: orgId!,
@@ -154,6 +155,21 @@ function CandidateDetailPage() {
  signals: p.signals,
  },
  }),
+ ),
+ // Paint the new stage the moment the button is pressed, and keep the
+ // previous view so a failure can be painted back.
+ onMutate: (p: DecisionPayload) => {
+ const key = ["client-candidate", orgId, id];
+ const previous = qc.getQueryData<AnyRow>(key);
+ const to = RESULT_STAGE[p.action as ActionKey];
+ if (previous?.candidate && to) {
+ qc.setQueryData(key, {
+ ...previous,
+ candidate: { ...previous.candidate, stage: to },
+ });
+ }
+ return { previous };
+ },
  onSuccess: () => {
  const back = stageBeforeRef.current;
  toast.success("Recorded — the TaaSFlow team has been notified.", {
@@ -185,7 +201,9 @@ function CandidateDetailPage() {
  qc.invalidateQueries({ queryKey: ["client-candidates", orgId] });
  },
  onSettled: () => setPendingKey(null),
- onError: (e: Error) => {
+ onError: (e: Error, p, context) => {
+ // Visible revert: the panel returns to the stage it was in.
+ if (context?.previous) qc.setQueryData(["client-candidate", orgId, id], context.previous);
  const stale = readStaleStateError(e);
  if (stale) {
  setDialogAction(null);
@@ -194,11 +212,24 @@ function CandidateDetailPage() {
  return;
  }
  const msg = e.message.replace(/^Error: /, "");
- toast.error(
- /reason/i.test(msg) ? "Pick a reason so we can act on it." : "That did not save — try again",
- );
+ if (/reason/i.test(msg)) {
+ toast.error("Pick a reason so we can act on it.");
+ return;
+ }
+ toast.error(isActionTimeout(e) ? ACTION_TIMEOUT_MESSAGE : "That did not save", {
+ description: isActionTimeout(e) ? undefined : msg || undefined,
+ duration: 12_000,
+ action: {
+ label: "Retry",
+ onClick: () => {
+ setPendingKey(p.action as ActionKey);
+ act.mutate(p);
+ },
  },
  });
+ },
+ });
+
 
 
  // Advance-type moves go through in one click; anything needing a "why"
