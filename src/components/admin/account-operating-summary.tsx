@@ -142,7 +142,8 @@ export function AccountOperatingSummary({
       >
         <PanelState query={commercial}>
           {(() => {
-            const c = commercial.data!;
+            const c = commercial.data;
+            if (!c) return null;
             return (
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2 text-sm">
