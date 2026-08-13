@@ -250,13 +250,17 @@ export function isInInterview(r: KpiRow): boolean {
 }
 
 /**
- * One definition of "waiting on the client": delivered to the workspace with no
- * decision recorded yet. The Overview queue uses the same rule, so the count
- * and the list can never disagree.
+ * One definition of "waiting on the client": still sitting at `delivered` with
+ * no `client_decisions` row recorded. The Overview queue, the "Your open items"
+ * strip and the admin "Client decisions overdue" queue apply the same rule, so
+ * the count and the lists can never disagree. The internal `recommendation`
+ * column is our own recommendation, not the client's answer, so it is not used
+ * here.
  */
 export function isAwaitingClientDecision(r: KpiRow): boolean {
-  return r.delivered_at != null && (r.recommendation == null || r.recommendation === "pending");
+  return r.delivered_at != null && r.stage === "delivered" && !r.client_decided;
 }
+
 
 
 /** Earliest non-null timestamp in a list. */
