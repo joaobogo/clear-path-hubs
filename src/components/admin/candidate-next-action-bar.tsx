@@ -140,14 +140,27 @@ export function CandidateNextActionBar({
 
   const payload = query.data;
 
-  const a = payload!.action;
+  // The bar renders while the query is still loading and for records whose
+  // next action cannot be resolved yet (e.g. a CV that never parsed). Both
+  // cases arrive as a payload without `action`, so bail out to the panel
+  // states instead of dereferencing it.
+  if (!payload?.action) {
+    return (
+      <PanelState query={query} isEmpty empty={<PanelEmpty title="No action required" />}>
+        <></>
+      </PanelState>
+    );
+  }
+
+  const a = payload.action;
   const wait = waitingFor(a.waiting_since);
-  const task = payload!.step_task;
+  const task = payload.step_task;
   const isBlocked = Boolean(task?.blocking);
   const noAction = a.action.kind === "none";
 
   return (
-    <PanelState query={query} isEmpty={!payload} empty={<PanelEmpty title="No action required" />}>
+    <PanelState query={query} isEmpty={false} empty={<PanelEmpty title="No action required" />}>
+
     <section
       data-qa="next-action-bar"
       data-qa-step={a.step}
