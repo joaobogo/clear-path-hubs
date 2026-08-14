@@ -1422,6 +1422,75 @@ async function handle(request: Request): Promise<Response> {
       });
     }
 
+    /**
+     * Read-only truth for the client Messages / Team / Settings surfaces:
+     * every conversation + message for one org, the settings columns the
+     * account tabs write, notification preference rows, and the membership
+     * roster. Lets the spec assert persistence against the database instead of
+     * trusting a toast. Never mutates.
+     */
+    if (action === "client_comms_truth") {
+      if (!body.organization_id) {
+        return Response.json({ ok: false, error: "organization_id required" }, { status: 400 });
+      }
+      const sb = await loadAdmin();
+      const orgId = String(body.organization_id);
+      const { data: convos, error: cErr } = await sb
+        .from("conversations")
+        .select("id, organization_id, scope, subject, last_message_at, position_id, candidate_match_id")
+        .eq("organization_id", orgId)
+        .order("last_message_at", { ascending: false });
+      if (cErr) throw cErr;
+      const convoIds = ((convos ?? []) as Array<{ id: string }>).map((c) => c.id);
+      const messages = convoIds.length
+        ? (
+            await sb
+              .from("messages")
+              .select("id, conversation_id, body, sender_user_id, created_at")
+              .in("conversation_id", convoIds)
+              .order("created_at", { ascending: true })
+          ).data ?? []
+        : [];
+      const [org, prefs, members] = await Promise.all([
+        sb
+          .from("organizations")
+          .select(
+            "id, name, website, industry, headquarters, phone, brand_display_name, brand_primary_color, brand_accent_color, client_seat_limit",
+          )
+          .eq("id", orgId)
+          .maybeSingle(),
+        sb.from("client_notification_preferences").select("*").eq("organization_id", orgId),
+        sb
+          .from("memberships")
+          .select("id, user_id, role, status, created_at, expires_at")
+          .eq("organization_id", orgId)
+          .order("created_at", { ascending: true }),
+      ]);
+      const memberIds = ((members.data ?? []) as Array<{ user_id: string | null }>)
+        .map((m) => m.user_id)
+        .filter((v): v is string => Boolean(v));
+      const profiles = memberIds.length
+        ? (
+            await sb
+              .from("profiles")
+              .select("auth_user_id, email, full_name, timezone")
+              .in("auth_user_id", memberIds)
+          ).data ?? []
+        : [];
+      return Response.json({
+        ok: true,
+        action,
+        conversations: convos ?? [],
+        profiles,
+        messages,
+        organization: org.data ?? null,
+        notification_preferences: prefs.data ?? [],
+        memberships: members.data ?? [],
+      });
+    }
+
+
+
     if (action === "pipeline_snapshot") {
 
       if (!body.match_id) {
