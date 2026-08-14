@@ -159,15 +159,20 @@ export const setRoleIntensity = createServerFn({ method: "POST" })
       }
     }
 
-    const { data: row, error } = await supabase
-      .from("positions")
-      .update({ intensity: data.intensity })
-      .eq("id", data.position_id)
-      .eq("organization_id", data.organization_id)
-      .select("id, title, status, intensity")
-      .maybeSingle();
+    // Pace is an operating preference, not a content edit, so it must be
+    // changeable after a role goes live. The row-level write policy only allows
+    // edits while a role is still in draft/review, so the change goes through an
+    // audited routine that checks the caller's workspace role itself.
+    const { data: rows, error } = await supabase.rpc("set_position_intensity", {
+      _org: data.organization_id,
+      _position: data.position_id,
+      _intensity: data.intensity,
+    });
 
-    if (error) throw error;
+    if (error) throw new Error(error.message);
+    const row = (Array.isArray(rows) ? rows[0] : rows) as
+      | { id: string; title: string; status: string; intensity: string | null }
+      | undefined;
     if (!row) throw new Error("We could not find that role in this workspace.");
 
     return {
@@ -175,5 +180,5 @@ export const setRoleIntensity = createServerFn({ method: "POST" })
       title: row.title,
       status: row.status,
       intensity: row.intensity ?? "standard",
-    };
+    } as RoleControl;
   });

@@ -15855,6 +15855,19 @@ export type Database = {
       }
       scoring_readiness: { Args: { _match_id: string }; Returns: Json }
       screening_question_prohibited: { Args: { _q: string }; Returns: boolean }
+      set_position_intensity: {
+        Args: {
+          _intensity: Database["public"]["Enums"]["role_intensity"]
+          _org: string
+          _position: string
+        }
+        Returns: {
+          id: string
+          intensity: Database["public"]["Enums"]["role_intensity"]
+          status: Database["public"]["Enums"]["position_status"]
+          title: string
+        }[]
+      }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
       write_back_closed_search: {
