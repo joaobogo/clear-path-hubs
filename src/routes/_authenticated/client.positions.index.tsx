@@ -17,7 +17,6 @@ import {
   type Row,
 } from "@/components/client/position-list/position-cards";
 import {
-  STATUS_TABS,
   ActionRequiredBanner,
   StatusTabs,
   FilterBar,
@@ -282,7 +281,7 @@ function PositionsPage() {
  <EmptyState
           status={status}
           hasAnyRole={allRows.length > 0}
-          pendingSetup={allRows.filter((r) => r.status === "draft").length}
+          pendingSetup={statusCounts.draft}
         />
  ) : filtered.length === 0 ? (
  <SurfaceState
