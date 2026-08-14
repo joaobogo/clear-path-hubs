@@ -579,13 +579,54 @@ export const getClientOverview = createServerFn({ method: "GET" })
       await hydrateClientCandidateProfiles(latestMatches as AnyRow[])
     ).map(toClientCandidateDTO);
 
-    // Recent messages (last 3).
+    // Recent messages (last 3). Attributed to the real sender: labelling a
+    // client's own message "TaaSFlow" made the panel read as if we wrote it.
     const { data: recentMessages } = await context.supabase
       .from("messages")
       .select("id, body, created_at, sender_user_id, thread_id")
       .eq("thread_id", data.orgId)
       .order("created_at", { ascending: false })
       .limit(3);
+    const recentMessageRows = (recentMessages as AnyRow[]) ?? [];
+    let senderLabels: Record<string, string> = {};
+    if (recentMessageRows.length > 0) {
+      const senderIds = [
+        ...new Set(
+          recentMessageRows
+            .map((m) => (m.sender_user_id as string | null) ?? null)
+            .filter((v): v is string => !!v),
+        ),
+      ];
+      if (senderIds.length > 0) {
+        // Teammates' and staff profiles are not all readable under the caller's
+        // RLS, so names are resolved privileged — names only, nothing else.
+        const { supabaseAdmin: nameDb } = await import("@/integrations/supabase/client.server");
+        const { data: senderProfiles } = await (nameDb as AnyRow)
+          .from("profiles")
+          .select("auth_user_id, full_name, email")
+          .in("auth_user_id", senderIds);
+        for (const p of (senderProfiles as AnyRow[] | undefined) ?? []) {
+          const id = p.auth_user_id as string;
+          senderLabels[id] =
+            ((p.full_name as string | null) ?? null) ||
+            ((p.email as string | null) ?? null) ||
+            "Teammate";
+        }
+      }
+    }
+    const recent_messages = recentMessageRows.map((m) => {
+      const sid = (m.sender_user_id as string | null) ?? null;
+      return {
+        ...m,
+        sender_name: !sid
+          ? "TaaSFlow"
+          : sid === context.userId
+            ? "You"
+            : (senderLabels[sid] ?? "Teammate"),
+        mine: sid === context.userId,
+      };
+    });
+
 
     // "What changed" — filter to client-relevant events only (never internal
     // processing chatter). Whitelist the actions we surface.
@@ -629,7 +670,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
       next_milestones,
       next_milestones_failed,
       latest_candidates,
-      recent_messages: (recentMessages as AnyRow[]) ?? [],
+      recent_messages,
       recent_activity: (events as AnyRow[]) ?? [],
       last_updated,
     };

@@ -230,7 +230,7 @@ export async function dispatchEmails(
           "No verified sender domain is configured, so no email was sent. The in-app notification was still delivered.";
       } else {
         try {
-          const res = await sendViaProvider({
+          const res = await sendWithRetries({
             to: address,
             subject: n.title,
             html: renderEmail({
@@ -242,9 +242,16 @@ export async function dispatchEmails(
             idempotencyKey: `${n.id}:email`,
             senderDomain: cfg.senderDomain!,
           });
-          status = res.ok ? "provider_accepted" : "failed";
-          errorCode = res.ok ? null : res.code;
-          errorMessage = res.ok ? null : res.message;
+          if (res.ok) {
+            status = "provider_accepted";
+          } else {
+            // A recipient the provider refuses to email is blocked, not a
+            // failure of ours: reporting it as "we could not send" invites a
+            // pointless retry and reads as a platform fault.
+            status = isBlockedRecipientCode(res.code) ? "suppressed" : "failed";
+            errorCode = res.code;
+            errorMessage = res.message;
+          }
         } catch (e) {
           status = "failed";
           errorCode = "provider_exception";
@@ -311,6 +318,51 @@ async function sendViaProvider(args: {
     };
   }
 }
+
+/** Provider verdicts that mean "this recipient is blocked", not "we failed". */
+export function isBlockedRecipientCode(code: string | null | undefined): boolean {
+  if (!code) return false;
+  return [
+    "recipient_suppressed",
+    "complaint_not_liftable",
+    "undeliverable_domain",
+    "unreachable_mx",
+  ].includes(code);
+}
+
+/** Codes worth another attempt: throttling, provider hiccups, network blips. */
+function isTransientCode(code: string | null | undefined): boolean {
+  if (!code) return false;
+  if (code === "provider_exception" || code === "rate_limited") return true;
+  const m = /^provider_(\d{3})$/.exec(code);
+  if (!m) return false;
+  const status = Number(m[1]);
+  return status === 408 || status === 429 || status >= 500;
+}
+
+/**
+ * Send with bounded retries. A transient provider error used to surface to the
+ * user as "Email not delivered" on the first blip; now we only report failure
+ * once the retries are exhausted.
+ */
+async function sendWithRetries(
+  args: Parameters<typeof sendViaProvider>[0],
+  attempts = 3,
+): Promise<Awaited<ReturnType<typeof sendViaProvider>>> {
+  let last: Awaited<ReturnType<typeof sendViaProvider>> = {
+    ok: false,
+    code: "provider_exception",
+    message: "No attempt was made.",
+  };
+  for (let i = 0; i < attempts; i += 1) {
+    last = await sendViaProvider(args);
+    if (last.ok || !isTransientCode(last.code)) return last;
+    if (i < attempts - 1) await new Promise((r) => setTimeout(r, 500 * (i + 1)));
+  }
+  return last;
+}
+
+
 
 /** Re-attempt a single failed delivery. Idempotent by notification+channel. */
 export async function retryDelivery(admin: Admin, deliveryId: string) {
