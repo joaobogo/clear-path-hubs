@@ -7,6 +7,7 @@ import {
   loginAs,
   meaningfulConsoleErrors,
   pipelineSnapshot,
+  replaceCv,
   runPipelineForMatch,
   seedFixtures,
   uniqueApplicant,
@@ -243,18 +244,13 @@ test.describe("cv parsing and scoring pipeline", () => {
       })
       .not.toMatch(/parsing|scoring|enriching|queued/);
 
-    // Replacing the CV with a readable one repairs the record end to end.
-    const good = textPdf(CV_BODIES[0]!.lines);
-    await page.goto(`/admin/candidates/${broken.matchId}?tab=cv`, {
-      waitUntil: "domcontentloaded",
-    });
-    const fileInput = page.locator('input[type="file"]').first();
-    await expect(fileInput).toBeAttached({ timeout: 30_000 });
-    await fileInput.setInputFiles({
-      name: "qa-pipeline-repaired.pdf",
-      mimeType: "application/pdf",
-      buffer: good,
-    });
+    // A readable replacement CV (what a candidate re-upload produces) plus the
+    // same admin repair action must carry the record all the way to scored.
+    await replaceCv(broken.matchId, textPdf(CV_BODIES[0]!.lines).toString("base64"));
+    await page.reload({ waitUntil: "domcontentloaded" });
+    const repairAgain = page.locator('[data-qa-action="primary-repair-processing"]');
+    await expect(repairAgain).toBeVisible({ timeout: 30_000 });
+    await repairAgain.click();
 
     await expect
       .poll(async () => (await pipelineSnapshot(broken.matchId)).match.processing_state, {
