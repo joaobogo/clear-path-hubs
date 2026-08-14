@@ -1231,6 +1231,58 @@ async function handle(request: Request): Promise<Response> {
     // the private bucket, so the parse → score pipeline has something to chew on.
     // `cv_base64` decides the outcome: a text-layer PDF scores, a corrupt one
     // fails. Nothing here bypasses the pipeline itself.
+    // Mirrors a candidate re-uploading a readable CV: a new file row becomes the
+    // application's CV. Match state is deliberately untouched, so the admin
+    // repair action is what re-triggers processing.
+    if (action === "replace_cv") {
+      if (!body.match_id || !body.cv_base64) {
+        return Response.json({ ok: false, error: "match_id, cv_base64 required" }, { status: 400 });
+      }
+      const sb = await loadAdmin();
+      const { data: match, error: mErr } = await sb
+        .from("candidate_matches")
+        .select("id, application_id, candidate_profile_id")
+        .eq("id", body.match_id)
+        .single();
+      if (mErr) throw mErr;
+
+      const bytes = Uint8Array.from(atob(body.cv_base64), (c) => c.charCodeAt(0));
+      const filename = body.cv_filename ?? "qa-pipeline-replacement.pdf";
+      const storagePath = `candidate/${match.candidate_profile_id}/${crypto.randomUUID()}-${filename}`;
+      const up = await sb.storage
+        .from("cvs")
+        .upload(storagePath, bytes, { contentType: "application/pdf", upsert: false });
+      if (up.error) throw up.error;
+
+      const { data: fileRow, error: fileErr } = await sb
+        .from("files")
+        .insert({
+          candidate_profile_id: match.candidate_profile_id,
+          storage_bucket: "cvs",
+          storage_path: storagePath,
+          filename,
+          mime_type: "application/pdf",
+          size: bytes.length,
+          file_status: "ready",
+          parse_state: "queued",
+          upload_source: "candidate_application",
+        })
+        .select("id")
+        .single();
+      if (fileErr) throw fileErr;
+
+      await sb
+        .from("applications")
+        .update({ cv_file_id: fileRow.id })
+        .eq("id", match.application_id as string);
+      await sb
+        .from("candidate_profiles")
+        .update({ current_cv_file_id: fileRow.id })
+        .eq("id", match.candidate_profile_id as string);
+
+      return Response.json({ ok: true, action, file_id: fileRow.id });
+    }
+
     if (action === "create_cv_application") {
       if (!body.email || !body.position_id || !body.cv_base64) {
         return Response.json(
