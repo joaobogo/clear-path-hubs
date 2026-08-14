@@ -111,10 +111,16 @@ export function ActionRail({
   // Context-aware primary action — one at a time, following readiness order.
   let primary: { label: string; qa: string; onClick: () => void; disabled?: boolean };
   if (needsRepair) {
+    // A broken record's next step is repair, not reading evidence that does not
+    // exist yet — so the retry is the primary button, never buried in overflow.
     primary = {
-      label: "Review evidence",
-      qa: "primary-review-evidence",
-      onClick: () => onSetTab("evidence"),
+      label: m.processing_state === "ocr_required" ? "Run OCR / repair" : "Repair processing",
+      qa: "primary-repair-processing",
+      disabled: !!busy,
+      onClick: () =>
+        m.processing_state === "ocr_required"
+          ? onSetTab("cv")
+          : void onRun("retry parse", () => retryParse({ data: { match_id: m.id } })),
     };
   } else if (scored && !approved) {
     primary = {
