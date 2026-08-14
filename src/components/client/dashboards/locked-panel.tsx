@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BLOCK_LIST } from "@/lib/dashboards/blocks";
 import { RequestDialog } from "@/components/client/dashboards/request-dialog";
+import { formatEnumLabel } from "@/lib/human-labels";
 
 export function LockedPanel({
   reason,
@@ -43,7 +44,7 @@ export function LockedPanel({
           </div>
           {openRequest && (
             <p className="text-sm text-muted-foreground">
-              Your request is with us — status: {openRequest.status}.
+              Your request is with us — status: {formatEnumLabel(openRequest.status)}.
             </p>
           )}
         </CardContent>

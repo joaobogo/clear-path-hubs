@@ -22,6 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
+import { formatEnumLabel } from "@/lib/human-labels";
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -129,7 +130,7 @@ export function RediscoveryCard({
       </div>
 
       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-        {candidate.seniority && <span>{candidate.seniority}</span>}
+        {candidate.seniority && <span>{formatEnumLabel(candidate.seniority)}</span>}
         {candidate.location && (
           <span className="inline-flex items-center gap-0.5">
             <MapPin className="h-3 w-3" /> {candidate.location}
