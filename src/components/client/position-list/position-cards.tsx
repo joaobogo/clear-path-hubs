@@ -25,6 +25,8 @@ export type Row = {
     shortlisted: number;
     interviewing: number;
     interview_scheduled: number;
+    /** Real count of candidates sitting at the offer stage for this role. */
+    offers: number;
     hires: number;
     active_positions: number;
   };
