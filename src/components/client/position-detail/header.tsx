@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { PositionLifecycleMenu } from "@/components/positions/position-lifecycle-menu";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { CloseRoleDialog } from "@/components/client/close-role-dialog";
+import { formatEnumLabel } from "@/lib/human-labels";
 import { normalizeDealBreakers } from "@/lib/client-deal-breakers";
 import { type ClientRoleStatus, clientRoleStatusLabel } from "@/lib/client-role-status";
 import { isArchivedStatus } from "@/lib/role-closure";
