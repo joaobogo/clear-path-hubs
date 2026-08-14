@@ -181,16 +181,29 @@ export const moveMatchStage = createServerFn({ method: "POST" })
     }
 
     if (data.toStage === "interview_process" && from !== "interview_process") {
-      await context.supabase.from("interviews").insert({
-        candidate_match_id: data.matchId,
-        organization_id: data.orgId,
-        position_id: match.position_id as string,
-        candidate_submission_id: (match.application_id as string) ?? null,
-        status: "requested",
-        requested_at: new Date().toISOString(),
-        created_by: context.userId,
-      });
+      // Same one-open-interview rule as clientAction: a drag-and-drop retry
+      // must not create a second requested interview.
+      const { data: openInterview } = await context.supabase
+        .from("interviews")
+        .select("id")
+        .eq("candidate_match_id", data.matchId)
+        .eq("organization_id", data.orgId)
+        .in("status", ["requested", "scheduling", "scheduled"])
+        .limit(1)
+        .maybeSingle();
+      if (!openInterview) {
+        await context.supabase.from("interviews").insert({
+          candidate_match_id: data.matchId,
+          organization_id: data.orgId,
+          position_id: match.position_id as string,
+          candidate_submission_id: (match.application_id as string) ?? null,
+          status: "requested",
+          requested_at: new Date().toISOString(),
+          created_by: context.userId,
+        });
+      }
     }
+
 
     await writeAudit(context.supabase, {
       actor: context.userId,
