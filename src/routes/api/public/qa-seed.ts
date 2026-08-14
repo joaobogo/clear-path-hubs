@@ -1353,7 +1353,6 @@ async function handle(request: Request): Promise<Response> {
         .insert({
           candidate_profile_id: cpId,
           position_id: body.position_id,
-          organization_id: pos.organization_id,
           source: "web",
           status: "submitted",
           cv_file_id: fileRow.id,
