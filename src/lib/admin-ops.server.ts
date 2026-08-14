@@ -190,10 +190,15 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       ownerName.set(pr.auth_user_id, pr.full_name || pr.email || "Unknown staff");
     }
   }
+  // An owner id with no profile row is a stale pointer (deleted account, old
+  // seed). Showing "Unknown staff" would both assert a person who does not
+  // exist and hide the Claim action, leaving the row unassignable — so an
+  // unresolvable owner reads as unassigned and stays claimable.
   const owner = (id: unknown): QueueOwner =>
-    typeof id === "string" && id
-      ? { user_id: id, name: ownerName.get(id) ?? "Unknown staff" }
+    typeof id === "string" && id && ownerName.has(id)
+      ? { user_id: id, name: ownerName.get(id)! }
       : null;
+
   const positionClaim = (id: unknown): QueueClaim =>
     typeof id === "string" && id ? { kind: "position" as const, id } : null;
 
