@@ -19,6 +19,8 @@ import {
   runPipelineDrain,
   seedFixtures,
   uniqueApplicant,
+  loginAs,
+  QA_PASSWORD,
   type SeedResult,
 } from "./helpers/qa";
 
@@ -345,7 +347,109 @@ test.describe("candidate apply flow", () => {
     const created = await lookupCandidate(email);
     expect(created.applications).toHaveLength(0);
   });
+
+  test("every required detail field refuses to advance with a clear error", async ({
+    page,
+    context,
+  }) => {
+    await allowTestFixtures(context);
+    const errors = collectConsoleErrors(page);
+    await openWizard(page);
+
+    // Empty step 1: one error per required field, and no navigation.
+    await continueBtn(page).click();
+    await expect(page.locator("#cv")).toHaveCount(0);
+    for (const id of ["full_name", "email", "phone", "country", "city"]) {
+      await expect(page.locator(`[data-field="${id}"]`).locator("..")).toContainText(/\S/);
+    }
+    await expect(page.getByTestId("apply-step-error")).toBeVisible();
+
+    // A malformed email is named specifically, not swallowed by a generic banner.
+    await page.locator("#full_name").fill("Ada Lovelace");
+    await page.locator("#email").fill("not-an-email");
+    await page.locator("#phone").fill("+351912345678");
+    await page.locator("#country").fill("Portugal");
+    await page.locator("#city").fill("Lisbon");
+    await continueBtn(page).click();
+    await expect(page.getByText(/valid email/i).first()).toBeVisible();
+    await expect(page.locator("#cv")).toHaveCount(0);
+
+    // Fixing it advances; the CV step is required in turn.
+    await page.locator("#email").fill(uniqueApplicant().email);
+    await continueBtn(page).click();
+    await expect(page.locator("#cv")).toBeVisible();
+    await continueBtn(page).click();
+    await expect(page.locator("#cv")).toBeVisible();
+
+    expect(meaningfulConsoleErrors(errors)).toEqual([]);
+  });
+
+  test("a double-clicked submit creates exactly one application, visible on the candidate's own dashboard", async ({
+    page,
+    context,
+  }) => {
+    test.setTimeout(240_000);
+    await allowTestFixtures(context);
+    const errors = collectConsoleErrors(page);
+    const { email, fullName } = uniqueApplicant();
+
+    await openWizard(page);
+    await fillDetails(page, email, fullName);
+    // Anonymous applicants set a password inline, which is how they can later
+    // sign in and see this application on their own dashboard.
+    await page.getByRole("checkbox", { name: /create a candidate account/i }).click();
+    await page.locator("#password").fill(QA_PASSWORD);
+    await page.locator("#password2").fill(QA_PASSWORD);
+    await continueBtn(page).click();
+    await page.locator("#cv").setInputFiles(pdfFile());
+    await expect(page.getByText(/ready to send/i)).toBeVisible();
+    await continueBtn(page).click();
+    await answerScreening(page);
+    await continueBtn(page).click();
+    await page.getByRole("checkbox", { name: /i agree to the terms/i }).click();
+    await continueBtn(page).click();
+
+    // Two fast clicks: the second must be a no-op, not a second application.
+    // Two clicks dispatched on the same element in one tick — the impatient
+    // double-tap. A positional second click is not used on purpose: once the
+    // page starts navigating it would land on whatever moved under the cursor.
+    await page.getByTestId("apply-submit").evaluate((el) => {
+      (el as HTMLButtonElement).click();
+      (el as HTMLButtonElement).click();
+    });
+
+    await expect
+      .poll(() => new URL(page.url()).pathname, { timeout: 120_000 })
+      .toContain("/apply/received/");
+    // Explicit confirmation, with the reference the candidate can quote.
+    await expect(page.getByText(/reference/i).first()).toBeVisible();
+
+    const created = await lookupCandidate(email);
+    expect(created.applications).toHaveLength(1);
+    const application = created.applications[0]!;
+    expect(application.position_id).toBe(fixtures.position_id);
+    expect(created.candidate_profile).not.toBeNull();
+    expect(created.matches).toHaveLength(1);
+    expect(created.matches[0]!.application_id).toBe(application.id);
+
+    // The candidate reaches their own dashboard. The wizard already signs a new
+    // account in, so only sign in explicitly when that session is missing.
+    await page.goto("/me/applications", { waitUntil: "domcontentloaded" });
+    if (/\/login|\/auth/.test(new URL(page.url()).pathname)) {
+      await loginAs(page, "candidate", email, QA_PASSWORD);
+      await page.goto("/me/applications", { waitUntil: "domcontentloaded" });
+    }
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    // The application the wizard just created is listed for its owner.
+    await expect(page.getByText(/application/i).first()).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator(`a[href*="/me/applications/${application.id}"]`).first()).toBeVisible({
+      timeout: 30_000,
+    });
+
+    expect(meaningfulConsoleErrors(errors)).toEqual([]);
+  });
 });
+
 
 test.afterAll(async () => {
   const { deleted } = await cleanupApplyArtifacts();

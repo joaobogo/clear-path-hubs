@@ -1296,3 +1296,47 @@ unpublished-role exclusion, exact-UUID Apply routing, and the search/empty-state
 path. Three of the four specs pass consistently; the two that touch the search
 box are timing-sensitive against the dev server's cookie banner and still flake
 in the harness even though the behaviour verifies clean when driven manually.
+
+## Pass 4 — Candidate application flow and CV upload (2026-08-14)
+
+Scope: `/jobs/$id/apply` (5-step wizard), CV upload + storage, screening answers,
+submission, `/apply/received/$id`, `/me/applications`. Driven as a real applicant
+with Playwright; every claim cross-checked against the database and the private
+`cvs` bucket. Suite: `tests/e2e/apply.spec.ts` (9 specs).
+
+| # | Check | Result |
+|---|-------|--------|
+| 1 | Every required detail field blocks Continue with its own inline error; malformed email named specifically; fixing it advances | PASS |
+| 1b | Inline account: password length + mismatch errors; passwords never persisted in the draft | PASS |
+| 2 | CV upload accepts PDF (incl. Unicode filenames), shows determinate progress then a confirmed "ready to send" state | PASS |
+| 2b | Rejects with a clear, candidate-safe message: DOCX, oversized (>10 MB), password-protected, corrupt, disguised types; Continue stays on step 2 | PASS |
+| 2c | File verifiably in storage: `files` row (mime `application/pdf`, exact byte size) + object present in the private bucket at that path | PASS |
+| 3 | Screening answers persist as `application_answers` rows bound to the new application | PASS |
+| 4 | Submission creates the application linked to the exact `position_id`, org and candidate profile, plus the tenant `candidate_match`; reference shown on an explicit confirmation page | PASS |
+| 4b | Application appears on the candidate's own `/me/applications` dashboard, linked by its real id | PASS |
+| 5 | Double-tapped submit creates exactly one application | PASS |
+| 5c | Draft restore after reload returns text answers; CV must be re-attached (bytes are never persisted) | PASS |
+| 5b | Failed submit shows a named error, re-enables the button, does not navigate, and writes nothing partial | PASS |
+| 6 | Console errors across the whole flow: none from app code | PASS |
+| 7 | Staff in-app notification for a new application | **FAIL — open** |
+
+### Scope note — PDF only
+The standing product rule is PDF-only CVs across UI, backend, storage and
+processing (`ALLOWED_CV_EXT`/`ALLOWED_CV_MIME`, `validateCv`). DOCX is therefore
+verified as a *rejection* with an actionable message ("That is a Word document.
+Please use Save as PDF…"), not as an accepted type. Accepting DOCX would need a
+deliberate change to parsing and storage as well, so it was not made here.
+
+### Open defect
+- **A new application raises no staff in-app notification.** The
+  `application_received` event row and the candidate's own notification are
+  created, but the admin-audience fan-out produced zero `notifications` rows for
+  an anonymous applicant, so nothing lands in the staff bell. Reproduced by
+  `apply.spec.ts:176`. Email/Teams lead alerts still fire, so the application is
+  not lost — but the in-app queue signal is missing. Needs a fix in the
+  admin-audience fan-out in `src/lib/notifications.functions.ts`.
+
+### Coverage added
+`tests/e2e/apply.spec.ts` — required-field validation with per-field errors, and
+double-tap submit proven to create exactly one application that the candidate can
+then see on their own dashboard.
