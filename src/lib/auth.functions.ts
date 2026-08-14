@@ -279,6 +279,15 @@ export const createClientWorkspace = createServerFn({ method: "POST" })
       .eq("name_normalized", normalized)
       .maybeSingle();
     let orgId = existingOrg?.id as string | undefined;
+    // The contact details typed here are what staff expect to see on the client
+    // record and in the clients list afterwards, so they are stored on the
+    // organization too — not only on the primary user's profile.
+    const contactPatch = {
+      primary_contact_name: data.primary_contact_name.trim(),
+      primary_contact_email: data.primary_contact_email,
+      phone: data.phone?.trim() || null,
+      internal_notes: data.notes?.trim() || null,
+    };
     if (!orgId) {
       const { data: newOrg, error } = await supabaseAdmin
         .from("organizations")
@@ -288,11 +297,29 @@ export const createClientWorkspace = createServerFn({ method: "POST" })
           industry: data.industry ?? null,
           headquarters: data.headquarters ?? null,
           status: "active",
+          ...contactPatch,
         })
         .select("id")
         .single();
       if (error) throw error;
       orgId = newOrg.id as string;
+    } else {
+      // Existing organization: fill blanks only, never overwrite curated data.
+      const { data: current } = await supabaseAdmin
+        .from("organizations")
+        .select("primary_contact_name,primary_contact_email,phone,website,industry,headquarters")
+        .eq("id", orgId)
+        .maybeSingle();
+      const fill: Record<string, string | null> = {};
+      if (!current?.primary_contact_name) fill['primary_contact_name'] = contactPatch.primary_contact_name;
+      if (!current?.primary_contact_email) fill['primary_contact_email'] = contactPatch.primary_contact_email;
+      if (!current?.phone && contactPatch.phone) fill['phone'] = contactPatch.phone;
+      if (!current?.website && data.website) fill['website'] = data.website;
+      if (!current?.industry && data.industry) fill['industry'] = data.industry;
+      if (!current?.headquarters && data.headquarters) fill['headquarters'] = data.headquarters;
+      if (Object.keys(fill).length > 0) {
+        await supabaseAdmin.from("organizations").update(fill as never).eq("id", orgId);
+      }
     }
 
     // Delegate user + membership creation to the primary path (dedups by email).
