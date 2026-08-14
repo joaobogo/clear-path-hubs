@@ -34,6 +34,7 @@ import {
   trailHas,
   uniqueApplicant,
   uniqueProspect,
+  waitForReactMount,
   type JourneyTrail,
   type SeedResult,
 } from "./helpers/qa";
