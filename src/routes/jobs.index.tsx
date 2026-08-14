@@ -118,8 +118,6 @@ function JobsPage() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: "/jobs/" });
 
-  const q = search.q.slice(0, 120);
-  const location = search.location.slice(0, 120);
   const workModel = search.work;
   const employment = search.type;
   const seniority = search.level;
@@ -138,6 +136,35 @@ function JobsPage() {
         ({ ...prev, page: typeof v === "function" ? v(prev.page) : v }) as never,
       replace: true,
     });
+
+  // Text filters keep their own state and write to the URL on a short debounce.
+  // Writing on every keystroke raced the router: fast typing fired several
+  // replace-navigations in the same tick and the last ones were dropped, so the
+  // box showed "Sales" while the URL — and therefore the filtering — stayed empty.
+  const [qText, setQText] = useState(search.q);
+  const [locationText, setLocationText] = useState(search.location);
+  const q = qText.slice(0, 120);
+  const location = locationText.slice(0, 120);
+
+  // Keep the inputs honest when the URL changes from outside typing
+  // (chip removal, Clear all, Back/Forward, a shared link).
+  useEffect(() => {
+    setQText(search.q);
+  }, [search.q]);
+  useEffect(() => {
+    setLocationText(search.location);
+  }, [search.location]);
+
+  useEffect(() => {
+    if (search.q === qText && search.location === locationText) return;
+    const t = setTimeout(() => {
+      setParam({ q: qText, location: locationText, page: 1 });
+    }, 250);
+    return () => { clearTimeout(t); };
+    // setParam is stable enough for this effect: it only closes over navigate.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [qText, locationText, search.q, search.location]);
+
 
   const seniorityOptions = useMemo(() => {
     const s = new Set<string>();
