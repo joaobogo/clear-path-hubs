@@ -207,13 +207,8 @@ export function InterviewDetailDialog({
                 <p className="whitespace-pre-wrap">{interview.feedback}</p>
               </DetailRow>
             ) : null}
-            <div className="rounded-md border bg-muted/40 p-3 text-xs text-muted-foreground">
-              <div>Interview ID: <span className="font-mono">{interview.id}</span></div>
-              {interview.candidate_submission_id ? (
-                <div>Application: <span className="font-mono">{interview.candidate_submission_id}</span></div>
-              ) : null}
-              <div>Role: <span className="font-mono">{interview.position_id}</span></div>
-            </div>
+            {/* Internal identifiers are deliberately not rendered: clients
+              * never need a UUID, and showing one reads as a leak. */}
           </div>
         ) : null}
 
