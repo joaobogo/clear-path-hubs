@@ -8,6 +8,7 @@ import {
   BadgeAlert,
 } from "lucide-react";
 import type { HireStatus } from "@/lib/hires.functions";
+import { formatSalaryLine } from "@/lib/money";
 
 // Pure, board-shape data shared by the offers route and its row/column
 // components. Kept here (rather than duplicated per-component) so the
@@ -70,13 +71,11 @@ export function nextStepLabel(to: HireStatus): string {
   }
 }
 
+/** Salary line for an offer card. Delegates to the one shared money utility. */
 export function formatSalary(hire: {
   salary_amount: number | null;
   salary_currency: string | null;
   salary_period: string | null;
 }): string | null {
-  if (hire.salary_amount == null) return null;
-  return `${hire.salary_currency ?? ""} ${new Intl.NumberFormat().format(
-    hire.salary_amount,
-  )}${hire.salary_period ? `/${hire.salary_period}` : ""}`.trim();
+  return formatSalaryLine(hire);
 }

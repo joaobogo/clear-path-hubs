@@ -7,6 +7,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { isOpenRoleStatus, isFilledRole } from "@/lib/client-role-open";
+import { laneFor } from "@/lib/client-pipeline-lane";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -72,8 +74,10 @@ export type ExecutiveReport = {
     hires_90d: number;
     hires_ytd: number;
     open_offers: number;
-    open_offer_value_cents: number | null;
-    avg_salary_cents: number | null;
+    /** MAJOR units (whole euros/dollars), as stored in hire_records. */
+    open_offer_value: number | null;
+    /** MAJOR units. */
+    avg_salary: number | null;
     salary_currency: string | null;
     projected_hires_next_30d: number;
   };
@@ -99,21 +103,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       .select("id, department, location, status")
       .eq("organization_id", orgId);
     const posRows: AnyRow[] = positions ?? [];
-    const openStatuses = new Set(["active", "approved", "submitted", "under_review"]);
 
-    // Open by region
-    const regionMap = new Map<string, { open: number; filled: number; total: number }>();
-    for (const p of posRows) {
-      const region = normalizeRegion(p.location);
-      const bucket = regionMap.get(region) ?? { open: 0, filled: 0, total: 0 };
-      bucket.total += 1;
-      if (openStatuses.has(String(p.status))) bucket.open += 1;
-      if (String(p.status) === "filled") bucket.filled += 1;
-      regionMap.set(region, bucket);
-    }
-    const open_by_region = Array.from(regionMap.entries())
-      .map(([region, v]) => ({ region, ...v }))
-      .sort((a, b) => b.open - a.open || b.total - a.total);
 
     // ── Matches (pipeline by BU, time-in-stage, blocked) ──────────────────
     const { data: matches } = await s
@@ -124,6 +114,30 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       .eq("organization_id", orgId);
     const matchRows: AnyRow[] = matches ?? [];
     const posById = new Map<string, AnyRow>(posRows.map((p) => [p.id, p]));
+
+    // Open / filled by region, using the shared role derivations so this strip
+    // agrees with Overview, the Roles list and the KPI tiles. A role counts as
+    // filled once its pipeline holds a hire, not only when someone manually
+    // flipped the position status.
+    const hiredPositionIds = new Set<string>(
+      matchRows
+        .filter((m) => laneFor({ stage: String(m.stage) }) === "hired")
+        .map((m) => String(m.position_id)),
+    );
+    const regionMap = new Map<string, { open: number; filled: number; total: number }>();
+    for (const p of posRows) {
+      const region = normalizeRegion(p.location);
+      const bucket = regionMap.get(region) ?? { open: 0, filled: 0, total: 0 };
+      bucket.total += 1;
+      if (isOpenRoleStatus(p.status)) bucket.open += 1;
+      if (isFilledRole({ id: String(p.id), status: p.status }, hiredPositionIds)) {
+        bucket.filled += 1;
+      }
+      regionMap.set(region, bucket);
+    }
+    const open_by_region = Array.from(regionMap.entries())
+      .map(([region, v]) => ({ region, ...v }))
+      .sort((a, b) => b.open - a.open || b.total - a.total);
 
     // Pipeline by business unit (department)
     const buMap = new Map<
@@ -155,7 +169,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     for (const p of posRows) {
       const bu = (p.department as string | null)?.trim() || "Unassigned";
       const v = ensureBu(bu);
-      if (openStatuses.has(String(p.status))) v.open_roles.add(p.id);
+      if (isOpenRoleStatus(p.status)) v.open_roles.add(p.id);
     }
     for (const m of matchRows) {
       const p = posById.get(m.position_id);
@@ -386,8 +400,10 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       hires_90d,
       hires_ytd,
       open_offers: openOfferRows.length,
-      open_offer_value_cents: sumSalary(openOfferRows),
-      avg_salary_cents: avgSalary(referenceSet),
+      // hire_records.salary_amount is stored in MAJOR units — pass it through
+      // untouched and let the shared money formatter render it.
+      open_offer_value: sumSalary(openOfferRows),
+      avg_salary: avgSalary(referenceSet),
       salary_currency: currencyOf(referenceSet) ?? currencyOf(openOfferRows),
       projected_hires_next_30d,
     };

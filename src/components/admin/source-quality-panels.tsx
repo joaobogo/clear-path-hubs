@@ -7,6 +7,7 @@
  * the underlying rows carry spend, and there are no recommendations here.
  */
 import { Fragment, useState } from "react";
+import { formatMoneyFromCents } from "@/lib/money";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -120,7 +121,7 @@ function QualityTable({
                   </td>
                   {data.totals.has_spend && (
                     <td className="px-3 py-2.5 text-right tabular-nums text-muted-foreground">
-                      {c.has_spend ? `$${Math.round(c.spend_cents / 100).toLocaleString()}` : "—"}
+                      {c.has_spend ? formatMoneyFromCents(c.spend_cents, "USD") : "—"}
                     </td>
                   )}
                 </tr>

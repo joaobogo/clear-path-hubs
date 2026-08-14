@@ -15,23 +15,11 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import type { ExecutiveReport } from "@/lib/executive.functions";
+// Money renders through the one shared formatter; salary_amount is MAJOR units.
+import { formatMoneyMajor } from "@/lib/money";
 
 // ── Finance strip ─────────────────────────────────────────────────────────
 
-function fmtMoney(cents: number | null, currency: string | null): string {
-  if (cents == null) return "—";
-  const cur = currency || "USD";
-  const value = cents / 100;
-  try {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: cur,
-      maximumFractionDigits: 0,
-    }).format(value);
-  } catch {
-    return `${cur} ${Math.round(value).toLocaleString()}`;
-  }
-}
 
 export function FinanceStrip({
   fin,
@@ -49,12 +37,12 @@ export function FinanceStrip({
     { label: "Open offers", value: String(fin.open_offers), icon: DollarSign },
     {
       label: "Open offer value",
-      value: fmtMoney(fin.open_offer_value_cents, fin.salary_currency),
+      value: formatMoneyMajor(fin.open_offer_value, fin.salary_currency),
       icon: DollarSign,
     },
     {
       label: "Avg salary (offered)",
-      value: fmtMoney(fin.avg_salary_cents, fin.salary_currency),
+      value: formatMoneyMajor(fin.avg_salary, fin.salary_currency),
       icon: DollarSign,
     },
     {

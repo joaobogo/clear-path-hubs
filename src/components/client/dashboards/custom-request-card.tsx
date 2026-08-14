@@ -1,4 +1,5 @@
 import { LayoutDashboard } from "lucide-react";
+import { formatMoneyFromCents } from "@/lib/money";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RequestDialog } from "@/components/client/dashboards/request-dialog";
 
@@ -37,10 +38,10 @@ export function CustomRequestCard({
               <>
                 {" · "}Quoted{" "}
                 <span className="font-medium">
-                  {(openRequest.quoteAmountCents / 100).toLocaleString("en-GB", {
-                    style: "currency",
-                    currency: openRequest.quoteCurrency.toUpperCase(),
-                  })}
+                  {formatMoneyFromCents(
+                    openRequest.quoteAmountCents,
+                    openRequest.quoteCurrency,
+                  )}
                 </span>
               </>
             )}
