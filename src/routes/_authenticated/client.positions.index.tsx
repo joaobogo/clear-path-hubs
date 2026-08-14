@@ -277,7 +277,11 @@ function PositionsPage() {
      onRetry={() => refetch()}
      retrying={isFetching}
    />
- ) : rows.length === 0 && !isFetching ? (
+ ) : !hasRoleData ? (
+   // Never flash an empty state mid-load: skeletons hold the layout until the
+   // roles list has actually resolved once.
+   <WorkspaceRowsSkeleton rows={5} />
+ ) : rows.length === 0 ? (
  <EmptyState
           status={status}
           hasAnyRole={allRows.length > 0}
