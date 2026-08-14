@@ -106,11 +106,15 @@ function CandidateDetailPage() {
  const ctx = ctxQuery.data;
  const orgId = ctx?.active?.organization_id;
 
- const detailQuery = useQuery({
- queryKey: ["client-candidate", orgId, id],
- queryFn: () => detailFn({ data: { orgId: orgId!, matchId: id } }),
- enabled: !!orgId,
+  const detailQuery = useQuery({
+    // Staff preview reads the same sanitized payload, but may open a candidate
+    // that is not published to this client yet.
+    queryKey: ["client-candidate", orgId, id, support.active ? "preview" : "live"],
+    queryFn: () =>
+      detailFn({ data: { orgId: orgId!, matchId: id, ...(support.active ? { preview: true } : {}) } }),
+    enabled: !!orgId,
   });
+
   const data = detailQuery.data;
   const detailPending = detailQuery.isPending;
   const detailFetching = detailQuery.isFetching;

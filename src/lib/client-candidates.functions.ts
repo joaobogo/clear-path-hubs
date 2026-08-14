@@ -176,21 +176,32 @@ export const getClientCandidates = createServerFn({ method: "GET" })
 
 export const getClientCandidate = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { orgId: string; matchId: string }) =>
-    z.object({ orgId: z.string().uuid(), matchId: z.string().uuid() }).parse(input),
+  .inputValidator((input: { orgId: string; matchId: string; preview?: boolean }) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        matchId: z.string().uuid(),
+        preview: z.boolean().optional(),
+      })
+      .parse(input),
   )
   .handler(async ({ context, data }) => {
-    await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
-    const { data: match, error } = await context.supabase
+    const access = await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
+    // Staff previewing a candidate before publish must see the exact sanitized
+    // DTO the client will get. Clients themselves never escape the visibility
+    // filter — that gate is what keeps unpublished work internal.
+    const staffPreview = data.preview === true && access.isStaff;
+    let query = context.supabase
       .from("candidate_matches")
       .select(CLIENT_CANDIDATE_SELECT)
 
       .eq("organization_id", data.orgId)
-      .eq("id", data.matchId)
-      .eq("client_visibility", "visible")
-      .maybeSingle();
+      .eq("id", data.matchId);
+    if (!staffPreview) query = query.eq("client_visibility", "visible");
+    const { data: match, error } = await query.maybeSingle();
     if (error) throw new Error(error.message);
     if (!match) return null;
+
     const [hydratedMatch] = await hydrateClientCandidateProfiles([match as AnyRow]);
 
     const applicationId = (match as AnyRow).application_id;
