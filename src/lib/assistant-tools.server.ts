@@ -350,11 +350,13 @@ export async function roleBlockers(
 
   const posQ = supabase
     .from("positions")
-    .select("id, title, status, updated_at, requirements, published_at")
+    .select("id, title, status, updated_at, published_at, payment_status, approved_at, description, employment_type, work_model, seniority, location")
     .eq("organization_id", orgId)
     .neq("status", "archived");
   if (positionId) posQ.eq("id", positionId);
   const { data: positions } = await posQ;
+
+  const { evaluatePublishGate } = await import("./publish-gate");
 
   const posIds = (positions ?? []).map((p: any) => p.id);
   const { data: matches } = posIds.length
@@ -367,6 +369,20 @@ export async function roleBlockers(
   const results = (positions ?? []).map((p: any) => {
     const rows = (matches ?? []).filter((m: any) => m.position_id === p.id);
     const blockers: string[] = [];
+    const gateInput = {
+      status: p.status,
+      payment_status: p.payment_status,
+      approved_at: p.approved_at,
+      published_at: p.published_at,
+      title: p.title,
+      description: p.description,
+      employment_type: p.employment_type,
+      work_model: p.work_model,
+      seniority: p.seniority,
+      location: p.location,
+    };
+    const gateBlockers = evaluatePublishGate(gateInput);
+
     const stalled = rows.filter((r: any) =>
       ["cv_unreadable", "hydration_failed", "insights_failed", "scoring_failed"].includes(
         r.processing_error_code ?? "",
@@ -376,11 +392,11 @@ export async function roleBlockers(
       (r: any) => r.admin_status === "pending" && r.client_visibility !== "visible",
     );
     const noApps = rows.length === 0;
-    const noReqs = !Array.isArray(p.requirements) || p.requirements.length === 0;
-    const notPublished = !p.published_at && p.status !== "active";
 
-    if (noReqs) blockers.push("Requirements list is empty");
-    if (notPublished) blockers.push("Position is not published/active yet");
+    if (gateBlockers.includes("payment_unpaid")) blockers.push("Payment incomplete");
+    if (gateBlockers.includes("missing_description") || gateBlockers.includes("missing_title")) 
+      blockers.push("Missing required fields");
+    if (gateBlockers.includes("not_approved")) blockers.push("Not approved");
     if (noApps) blockers.push("No applications received yet");
     if (stalled.length) blockers.push(`${stalled.length} candidate(s) awaiting data refresh`);
     if (pendingAdmin.length)
