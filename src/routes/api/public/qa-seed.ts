@@ -1234,6 +1234,20 @@ async function handle(request: Request): Promise<Response> {
       const { data: existingCp } = await sb.from("candidate_profiles").select("id").eq("user_id", body.user_id).maybeSingle();
       let cpId = existingCp?.id as string | undefined;
       if (!cpId) {
+        // Re-seeding mints a new auth user for the same QA mailbox, so an older
+        // profile can still hold the email (unique). Relink it instead of
+        // colliding on candidate_profiles_email_uniq.
+        const { data: byEmail } = await sb
+          .from("candidate_profiles")
+          .select("id")
+          .ilike("email", body.email as string)
+          .maybeSingle();
+        if (byEmail?.id) {
+          cpId = byEmail.id as string;
+          await sb.from("candidate_profiles").update({ user_id: body.user_id }).eq("id", cpId);
+        }
+      }
+      if (!cpId) {
         const { data: cpRow, error: cpErr } = await sb.from("candidate_profiles")
           .insert({ user_id: body.user_id, full_name: body.full_name ?? "QA Candidate", email: body.email, consent: { terms: true, privacy: true } })
           .select("id").single();
