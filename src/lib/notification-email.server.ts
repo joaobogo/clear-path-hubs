@@ -230,7 +230,7 @@ export async function dispatchEmails(
           "No verified sender domain is configured, so no email was sent. The in-app notification was still delivered.";
       } else {
         try {
-          const res = await sendViaProvider({
+          const res = await sendWithRetries({
             to: address,
             subject: n.title,
             html: renderEmail({
@@ -242,9 +242,16 @@ export async function dispatchEmails(
             idempotencyKey: `${n.id}:email`,
             senderDomain: cfg.senderDomain!,
           });
-          status = res.ok ? "provider_accepted" : "failed";
-          errorCode = res.ok ? null : res.code;
-          errorMessage = res.ok ? null : res.message;
+          if (res.ok) {
+            status = "provider_accepted";
+          } else {
+            // A recipient the provider refuses to email is blocked, not a
+            // failure of ours: reporting it as "we could not send" invites a
+            // pointless retry and reads as a platform fault.
+            status = isBlockedRecipientCode(res.code) ? "suppressed" : "failed";
+            errorCode = res.code;
+            errorMessage = res.message;
+          }
         } catch (e) {
           status = "failed";
           errorCode = "provider_exception";
