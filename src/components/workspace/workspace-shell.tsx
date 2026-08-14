@@ -577,9 +577,11 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
 
           <a
             href="/faq"
+            target="_blank"
+            rel="noopener noreferrer"
             className="hidden shrink-0 rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground md:inline-flex"
-            aria-label="Help"
-            title="Help & documentation"
+            aria-label="Help (opens in a new tab)"
+            title="Help & documentation (opens in a new tab)"
           >
             <HelpCircle className="h-4 w-4" />
           </a>
