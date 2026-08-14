@@ -135,11 +135,6 @@ test("scored candidates can be approved, then reach the publish desk ready queue
   page,
 }) => {
   const errors = collectConsoleErrors(page);
-  page.on("console", (m) => { if (m.type() === "error") console.log("[console]", m.text().slice(0, 500)); });
-  page.on("pageerror", (e) => console.log("[pageerror]", String(e).slice(0, 800)));
-  page.on("response", async (r) => {
-    if (r.status() >= 400) console.log("[net]", r.status(), r.url(), (await r.text().catch(() => "")).slice(0, 600));
-  });
   await loginAs(page, "admin", fixtures.users["platform_admin"]!.email, QA_PASSWORD);
 
   for (const c of candidates) {
