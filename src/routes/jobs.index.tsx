@@ -237,16 +237,17 @@ function JobsPage() {
             <Input
               aria-label="Search roles"
               placeholder="Search roles, skills, companies…"
-              value={q}
-              onChange={(e) => { setParam({ q: e.target.value, page: 1 }); }}
+              value={qText}
+              onChange={(e) => { setQText(e.target.value); }}
             />
           </div>
           <Input
             aria-label="Location"
             placeholder="Location (city, country, remote)"
-            value={location}
-            onChange={(e) => { setParam({ location: e.target.value, page: 1 }); }}
+            value={locationText}
+            onChange={(e) => { setLocationText(e.target.value); }}
           />
+
           <Select
             value={workModel}
             onValueChange={(v) => { setParam({ work: v, page: 1 }); }}
