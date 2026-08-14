@@ -6,6 +6,7 @@
  * costs, and how to get it — no teasing, no half-loaded charts.
  */
 import { useMemo, useState } from "react";
+import { formatEnumLabel } from "@/lib/human-labels";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
