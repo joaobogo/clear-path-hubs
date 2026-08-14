@@ -193,7 +193,11 @@ export function ActionRail({
             onClick={primary.onClick}
             data-qa-action={primary.qa}
           >
-            {busy === "approve" ? "Approving…" : primary.label}
+            {busy === "approve"
+              ? "Approving…"
+              : busy === "retry parse"
+                ? "Repairing…"
+                : primary.label}
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
