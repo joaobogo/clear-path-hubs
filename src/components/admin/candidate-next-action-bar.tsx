@@ -80,7 +80,7 @@ export function CandidateNextActionBar({
   const perform = useMutation({
     mutationFn: async () => {
       const action = query.data?.action;
-      if (!action) return;
+      if (!action?.action) return;
       if (action.action.kind === "navigate") {
         onNavigateTab(action.action.tab);
         return;
@@ -106,7 +106,7 @@ export function CandidateNextActionBar({
   const reassign = useMutation({
     mutationFn: async () => {
       const action = query.data?.action;
-      if (!action) return;
+      if (!action?.action) return;
       const followUp = action.action.kind === "follow_up" ? action.action : null;
       return reassignFn({
         data: {
@@ -144,7 +144,10 @@ export function CandidateNextActionBar({
   // next action cannot be resolved yet (e.g. a CV that never parsed). Both
   // cases arrive as a payload without `action`, so bail out to the panel
   // states instead of dereferencing it.
-  if (!payload?.action) {
+  // A payload can arrive without `action`, or with `action` but no resolved
+  // inner directive (older rows, partial serialisation). Both are treated as
+  // "nothing to do" rather than dereferenced.
+  if (!payload?.action?.action) {
     return (
       <PanelState query={query} isEmpty empty={<PanelEmpty title="No action required" />}>
         <></>
@@ -156,7 +159,7 @@ export function CandidateNextActionBar({
   const wait = waitingFor(a.waiting_since);
   const task = payload.step_task;
   const isBlocked = Boolean(task?.blocking);
-  const noAction = a.action.kind === "none";
+  const noAction = a.action?.kind === "none";
 
   return (
     <PanelState query={query} isEmpty={false} empty={<PanelEmpty title="No action required" />}>

@@ -23,6 +23,8 @@ import {
   actorLabel,
   actorOptions,
   matchesFilter,
+  normalizeFocusEventId,
+  normalizeHistoryEvents,
   permalinkFor,
   type HistoryEvent,
   type HistorySource,
@@ -58,7 +60,13 @@ export function CandidateHistoryTimeline({
   const [action, setAction] = useState("all");
   const [visible, setVisible] = useState(HISTORY_PAGE_SIZE);
 
-  const events = query.data?.events ?? [];
+  // One malformed row must never blank the record page: every entry is
+  // repaired (and flagged) before anything reads its fields.
+  const events = useMemo(
+    () => normalizeHistoryEvents(query.data?.events),
+    [query.data?.events],
+  );
+  const focusId = normalizeFocusEventId(focusEventId);
   const actors = useMemo(() => actorOptions(events), [events]);
   const actions = useMemo(() => actionOptions(events), [events]);
   const filtered = useMemo(
@@ -66,9 +74,7 @@ export function CandidateHistoryTimeline({
     [events, actor, action],
   );
 
-  const focused = focusEventId
-    ? (events.find((e) => e.id === focusEventId) ?? null)
-    : null;
+  const focused = focusId ? (events.find((e) => e.id === focusId) ?? null) : null;
   const shown = filtered.slice(0, visible);
 
   const copyPermalink = async (event: HistoryEvent) => {
@@ -170,7 +176,7 @@ export function CandidateHistoryTimeline({
           </span>
         </div>
 
-        {focusEventId && (
+        {focusId && (
           <div className="border-b bg-muted/40 px-4 py-2 text-xs">
             {focused ? (
               <>
@@ -200,7 +206,7 @@ export function CandidateHistoryTimeline({
         ) : (
           <ol className="divide-y">
             {shown.map((e) => {
-              const isFocus = e.id === focusEventId;
+              const isFocus = e.id === focusId;
               return (
                 <li
                   key={e.id}
@@ -210,9 +216,17 @@ export function CandidateHistoryTimeline({
                   }
                 >
                   <div className="flex flex-wrap items-center gap-2">
-                    <Badge className={"text-[10px] " + SOURCE_TONE[e.source]} variant="secondary">
-                      {SOURCE_LABEL[e.source]}
+                    <Badge
+                      className={"text-[10px] " + (SOURCE_TONE[e.source] ?? "bg-muted text-muted-foreground")}
+                      variant="secondary"
+                    >
+                      {SOURCE_LABEL[e.source] ?? "Recorded event"}
                     </Badge>
+                    {e.malformed && (
+                      <Badge variant="outline" className="text-[10px]" title="This entry was recorded with missing fields.">
+                        Incomplete entry
+                      </Badge>
+                    )}
                     <span className="text-sm font-medium">{e.action_label}</span>
                     <span className="text-xs text-muted-foreground">{when(e.at)}</span>
                     <span className="text-xs text-muted-foreground">
@@ -231,9 +245,9 @@ export function CandidateHistoryTimeline({
                     </Button>
                   </div>
 
-                  {e.changes.length > 0 && (
+                  {(e.changes ?? []).length > 0 && (
                     <ul className="mt-2 space-y-0.5 text-xs">
-                      {e.changes.map((c) => (
+                      {(e.changes ?? []).map((c) => (
                         <li key={c.field} className="flex flex-wrap gap-1">
                           <span className="font-mono text-[11px] text-muted-foreground">
                             {c.field}
@@ -254,9 +268,9 @@ export function CandidateHistoryTimeline({
                     </p>
                   )}
 
-                  {e.context.length > 0 && (
+                  {(e.context ?? []).length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-muted-foreground">
-                      {e.context.map((c) => (
+                      {(e.context ?? []).map((c) => (
                         <span key={c.field} className="font-mono">
                           {c.field}: {c.after}
                         </span>
@@ -265,7 +279,7 @@ export function CandidateHistoryTimeline({
                   )}
 
                   <div className="mt-1 font-mono text-[10px] text-muted-foreground">
-                    {SOURCE_TABLE[e.source]}
+                    {SOURCE_TABLE[e.source] ?? "audit_events"}
                     {e.trace_id ? ` · trace ${e.trace_id}` : ""}
                   </div>
                 </li>
