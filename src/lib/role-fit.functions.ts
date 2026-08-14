@@ -4,6 +4,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { seniorityFromYears } from "@/lib/candidate-seniority";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -200,7 +201,7 @@ export const getRoleFitFromPool = createServerFn({ method: "POST" })
 
     const { data: profileRows } = await supabase
       .from("candidate_profiles")
-      .select("id, full_name, headline, location, seniority, skills")
+      .select("id, full_name, headline, location, years_experience, skills")
       .in("id", candidateIds);
     const profiles = new Map<string, AnyRow>();
     for (const p of (profileRows as AnyRow[]) ?? []) profiles.set(p.id, p);
@@ -234,7 +235,8 @@ export const getRoleFitFromPool = createServerFn({ method: "POST" })
       if (!p) continue;
       const roll = rolled.get(id)!;
       const skills = toSkills(p.skills);
-      const haystack = norm([...skills, p.headline ?? "", p.seniority ?? ""].join(" "));
+      const seniorityBand = seniorityFromYears(p.years_experience);
+      const haystack = norm([...skills, p.headline ?? "", seniorityBand ?? ""].join(" "));
 
       const matchedRequirements = reqNorm
         .filter((r) => haystack.includes(r.n) || skills.some((s) => norm(s).includes(r.n)))
@@ -247,8 +249,8 @@ export const getRoleFitFromPool = createServerFn({ method: "POST" })
           label: `Evidence for ${matchedRequirements.length} of ${reqNorm.length} requirement${reqNorm.length === 1 ? "" : "s"}: ${matchedRequirements.slice(0, 3).join(", ")}`,
         });
       }
-      if (pos.seniority && p.seniority && norm(pos.seniority) === norm(p.seniority)) {
-        reasons.push({ kind: "seniority", label: `Same seniority as the role (${p.seniority})` });
+      if (pos.seniority && seniorityBand && norm(pos.seniority) === norm(seniorityBand)) {
+        reasons.push({ kind: "seniority", label: `Same seniority as the role (${seniorityBand})` });
       }
       if (locationMatch(pos.location, p.location)) {
         reasons.push({ kind: "location", label: `Already located in ${p.location}` });
@@ -275,7 +277,7 @@ export const getRoleFitFromPool = createServerFn({ method: "POST" })
         display_name: displayName(p),
         headline: p.headline ?? null,
         location: p.location ?? null,
-        seniority: p.seniority ?? null,
+        seniority: seniorityBand,
         screened_at: roll.screened_at,
         screened_for_title: titles.get(roll.screened_for ?? "") ?? null,
         furthest_stage: stageLabel,

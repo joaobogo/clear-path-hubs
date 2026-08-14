@@ -76,11 +76,11 @@ export async function loadRecordAudit(
   if (actorIds.length > 0) {
     const { data: profiles } = await db
       .from("profiles")
-      .select("user_id, full_name, email")
-      .in("user_id", actorIds);
+      .select("auth_user_id, full_name, email")
+      .in("auth_user_id", actorIds);
     for (const p of (profiles ?? []) as Row[]) {
       names.set(
-        p.user_id as string,
+        p.auth_user_id as string,
         (p.full_name as string | null) || (p.email as string | null) || "Unknown user",
       );
     }

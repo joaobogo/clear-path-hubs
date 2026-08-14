@@ -3,6 +3,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { compareSeniority, seniorityFromYears } from "@/lib/candidate-seniority";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -454,7 +455,7 @@ export const searchRediscovery = createServerFn({ method: "POST" })
     // 2) Fetch candidate profiles.
     const { data: profiles, error: pErr } = await context.supabase
       .from("candidate_profiles")
-      .select(sel("id, full_name, email, headline, location, seniority, skills"))
+      .select(sel("id, full_name, email, headline, location, years_experience, skills"))
       .in("id", cpIds);
     if (pErr) throw new Error(pErr.message);
     const profMap = new Map<string, AnyRow>();
@@ -544,7 +545,8 @@ export const searchRediscovery = createServerFn({ method: "POST" })
       if (skillFilter.length && !skillFilter.every((s) => skillsNorm.includes(s))) continue;
       if (geoFilter && !String((p as AnyRow).location ?? "").toLowerCase().includes(geoFilter))
         continue;
-      if (sen && String((p as AnyRow).seniority ?? "").toLowerCase() !== sen) continue;
+      const band = seniorityFromYears((p as AnyRow).years_experience);
+      if (sen && String(band ?? "").toLowerCase() !== sen) continue;
       const dn = displayName(p);
       const headline = (p as AnyRow).headline ?? null;
       if (term) {
@@ -557,7 +559,7 @@ export const searchRediscovery = createServerFn({ method: "POST" })
         display_name: dn,
         email_masked: maskEmail((p as AnyRow).email),
         headline,
-        seniority: (p as AnyRow).seniority ?? null,
+        seniority: band,
         location: (p as AnyRow).location ?? null,
         skills,
         last_stage: (roll.last.stage as string) ?? null,
@@ -592,7 +594,7 @@ export const getRediscoveryFacets = createServerFn({ method: "GET" })
         .limit(5000),
       context.supabase
         .from("candidate_profiles")
-        .select("seniority, location")
+        .select("years_experience, location")
         .limit(5000),
       context.supabase
         .from("positions")
@@ -605,14 +607,18 @@ export const getRediscoveryFacets = createServerFn({ method: "GET" })
       new Set(((matches as AnyRow[]) ?? []).map((m) => m.stage).filter(Boolean)),
     ) as string[];
     const seniorities = Array.from(
-      new Set(((profiles as AnyRow[]) ?? []).map((p) => p.seniority).filter(Boolean)),
+      new Set(
+        ((profiles as AnyRow[]) ?? [])
+          .map((p) => seniorityFromYears(p.years_experience))
+          .filter(Boolean),
+      ),
     ) as string[];
     const locations = Array.from(
       new Set(((profiles as AnyRow[]) ?? []).map((p) => p.location).filter(Boolean)),
     ) as string[];
     return {
       stages: stages.sort(),
-      seniorities: seniorities.sort(),
+      seniorities: seniorities.sort(compareSeniority),
       locations: locations.sort().slice(0, 100),
       positions: ((positions as AnyRow[]) ?? []).map((p) => ({
         id: p.id as string,

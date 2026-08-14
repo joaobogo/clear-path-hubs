@@ -85,10 +85,10 @@ export const getHiringIntelligence = createServerFn({ method: "POST" })
       supabase
         .from("score_runs")
         .select(
-          "id, position_id, candidate_match_id, score, final_score, status, fit_band, must_have_coverage, preferred_coverage, requirement_coverage, evidence_confidence, completed_at, created_at",
+          "id, position_id, candidate_match_id, score, final_score, status, fit_band, must_have_coverage, preferred_coverage, requirement_coverage, evidence_confidence, completed_at, started_at",
         )
         .eq("organization_id", data.organization_id)
-        .gte("created_at", priorFromISO),
+        .gte("started_at", priorFromISO),
     )).data as Row[]) ?? [];
 
     // ── Evidence items ───────────────────────────────────────────────────
@@ -127,7 +127,7 @@ export const getHiringIntelligence = createServerFn({ method: "POST" })
     const interviews = ((await scoped<any>(
       supabase
         .from("interviews")
-        .select("id, position_id, status, created_at, scheduled_start")
+        .select("id, position_id, status, created_at, scheduled_at")
         .eq("organization_id", data.organization_id),
     )).data as Row[]) ?? [];
 

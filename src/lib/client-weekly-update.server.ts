@@ -73,9 +73,12 @@ export async function buildWeeklyUpdate(
         .order("completed_at", { ascending: true }),
 
       // Client decisions that stuck (a reversed decision is not a decision).
+      // Decisions hang off the match, so the role comes through that join.
       client
         .from("client_decisions")
-        .select("id, position_id, decision, created_at, reversed_at, positions(title)")
+        .select(
+          "id, decision, created_at, reversed_at, candidate_matches(position_id, positions(title))",
+        )
         .eq("organization_id", orgId)
         .is("reversed_at", null)
         .gte("created_at", startIso)
@@ -92,7 +95,7 @@ export async function buildWeeklyUpdate(
       // Open information requests — the other thing that blocks a role.
       client
         .from("position_info_requests")
-        .select("id, position_id, field_key, created_at, positions(title)")
+        .select("id, position_id, brief_field, created_at, positions(title)")
         .eq("organization_id", orgId)
         .eq("status", "open"),
 
@@ -110,9 +113,14 @@ export async function buildWeeklyUpdate(
   const titleById = new Map<string, string>();
   for (const p of positions) titleById.set(p.id as string, (p.title as string) ?? "Role");
 
-  const titleOf = (r: Row): string | undefined =>
-    ((r.positions as Row | null)?.title as string | undefined) ??
-    titleById.get(r.position_id as string);
+  const titleOf = (r: Row): string | undefined => {
+    const nested = (r.candidate_matches as Row | null) ?? null;
+    return (
+      ((r.positions as Row | null)?.title as string | undefined) ??
+      ((nested?.positions as Row | null)?.title as string | undefined) ??
+      titleById.get((r.position_id ?? nested?.position_id) as string)
+    );
+  };
 
   const delivered = (deliveredRes.data ?? []) as Row[];
   const held = (interviewsRes.data ?? []) as Row[];

@@ -142,7 +142,10 @@ export async function loadAttentionQueue(
       .select("position_id, created_at")
       .in("position_id", ids)
       .order("created_at", { ascending: false }),
-    a.from("client_decisions").select("position_id, created_at").in("position_id", ids),
+    a
+      .from("client_decisions")
+      .select("created_at, candidate_matches!inner(position_id)")
+      .in("candidate_matches.position_id", ids),
   ]);
 
   for (const r of [matchRes, orgRes, ownerRes, moveRes, decisionRes]) {
@@ -211,8 +214,9 @@ export async function loadAttentionQueue(
     b.lastMovementAt = bump(b.lastMovementAt, h['created_at'] ?? null);
   }
   for (const d of (decisionRes.data ?? []) as Array<Record<string, any>>) {
-    if (!d['position_id']) continue;
-    const b = bucket(String(d['position_id']));
+    const pid = d['candidate_matches']?.['position_id'] ?? d['position_id'];
+    if (!pid) continue;
+    const b = bucket(String(pid));
     b.lastDecisionAt = bump(b.lastDecisionAt, d['created_at'] ?? null);
   }
 

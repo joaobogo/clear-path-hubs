@@ -1163,7 +1163,7 @@ export const downloadEvidenceRecord = createServerFn({ method: "POST" })
         .maybeSingle(),
       supabase
         .from("audit_events")
-        .select("id,event_type,payload,actor_user_id,created_at")
+        .select("id,action,after_state,actor_user_id,created_at")
         .eq("entity_type", "candidate_match")
         .eq("entity_id", data.id)
         .order("created_at", { ascending: false })

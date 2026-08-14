@@ -43,8 +43,8 @@ export async function summarizeClientPortfolio(
 ): Promise<CopilotToolResult> {
   let q = supabase
     .from("organizations")
-    .select("id, name, kind, created_at")
-    .eq("kind", "client")
+    .select("id, name, status, created_at")
+    .neq("status", "archived")
     .order("created_at", { ascending: false })
     .limit(25);
   if (orgId) q = q.eq("id", orgId);
@@ -109,8 +109,10 @@ export async function summarizeCandidateHistory(
   if (!cand) return { data: { error: "candidate_not_found" }, citations: [] };
   const { data: matches } = await supabase
     .from("candidate_matches")
-    .select("id, stage, score, position_id, organization_id, created_at, positions(title), organizations(name)")
-    .eq("candidate_id", candidateId)
+    .select(
+      "id, stage, recommendation, position_id, organization_id, created_at, positions(title), organizations(name)",
+    )
+    .eq("candidate_profile_id", candidateId)
     .order("created_at", { ascending: false })
     .limit(20);
   const list = (matches ?? []) as any[];
@@ -125,7 +127,7 @@ export async function summarizeCandidateHistory(
       matches: list.map((m) => ({
         match_id: m.id,
         stage: m.stage,
-        score: m.score,
+        recommendation: m.recommendation,
         role: m.positions?.title,
         client: m.organizations?.name,
         created_at: m.created_at,
@@ -247,7 +249,9 @@ export async function rediscoveryCandidates(
   // Look at talent_memory rows flagged good_for_future or previously strong.
   let q = supabase
     .from("talent_memory")
-    .select("id, candidate_id, tags, notes, updated_at, candidate_profiles(full_name, headline)")
+    .select(
+      "id, candidate_profile_id, reason_category, reason_notes, status, updated_at, candidate_profiles(full_name, headline)",
+    )
     .order("updated_at", { ascending: false })
     .limit(20);
   const { data } = await q;
@@ -256,17 +260,17 @@ export async function rediscoveryCandidates(
     data: {
       candidates: rows.map((r) => ({
         talent_memory_id: r.id,
-        candidate_id: r.candidate_id,
+        candidate_id: r.candidate_profile_id,
         name: r.candidate_profiles?.full_name,
         headline: r.candidate_profiles?.headline,
-        tags: r.tags,
-        notes: r.notes,
+        tags: [r.reason_category, r.status].filter(Boolean),
+        notes: r.reason_notes,
       })),
       scoped_to_position: positionId,
     },
     citations: rows.map((r) => ({
       kind: "candidate",
-      id: r.candidate_id,
+      id: r.candidate_profile_id,
       label: r.candidate_profiles?.full_name ?? "Candidate",
     })),
   };
