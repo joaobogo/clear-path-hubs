@@ -35,7 +35,7 @@ let fixtures: SeedResult;
 async function settle(page: Page): Promise<void> {
   await page.waitForLoadState("networkidle").catch(() => undefined);
   await expect
-    .poll(async () => await page.locator("main, table, h1").count(), {
+    .poll(async () => await page.locator("main, table, h1, form").count(), {
       timeout: 45_000,
       intervals: [250, 500, 1_000],
     })

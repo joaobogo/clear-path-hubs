@@ -32,7 +32,7 @@ const ROWS: Row[] = [
   { area: "Account", control: "Change email (verified)", status: "functional",
     location: "/client/account · /me/profile", to: "/client/account", persistence: "auth.users via Supabase Auth", audit: "auth logs" },
   { area: "Account", control: "Password reset", status: "functional",
-    location: "/reset-password", to: "/reset-password", persistence: "auth.users via Supabase Auth", audit: "auth logs" },
+    location: "/login → Forgot password?", to: "/login", persistence: "auth.users via Supabase Auth", audit: "auth logs" },
   { area: "Account", control: "Name and phone", status: "functional",
     location: "/me/profile", to: "/me/profile", persistence: "profiles.full_name / phone", audit: "audit_events" },
   { area: "Account", control: "Data export / deletion request", status: "functional",
