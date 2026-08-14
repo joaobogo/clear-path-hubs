@@ -42,6 +42,13 @@ export function queryErrorMessage(error: unknown): string {
   if (lower.includes("timeout") || lower.includes("timed out")) {
     return "The request took too long and was stopped.";
   }
+  // Raw database/driver text is never client-safe: log it, show a plain line.
+  const technical =
+    /column .* does not exist|relation .* does not exist|syntax error|postgres|pgrst|schema cache|violates .* constraint|function .* does not exist|invalid input syntax|\bselect\b .*\bfrom\b/i;
+  if (technical.test(message)) {
+    if (typeof console !== "undefined") console.error("[query-error]", message);
+    return "We couldn't load this. Try again, or contact support if it keeps happening.";
+  }
   // Keep it short — never dump a stack or a giant payload into the UI.
   return message.length > 240 ? `${message.slice(0, 237)}…` : message;
 }
