@@ -3,6 +3,7 @@ import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/component
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
+import { z } from "zod";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import { listAllConversations, getConversation } from "@/lib/conversations.functions";
