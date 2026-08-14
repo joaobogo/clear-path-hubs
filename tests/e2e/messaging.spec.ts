@@ -11,6 +11,7 @@ import {
   loginAs,
   meaningfulConsoleErrors,
   QA_PASSWORD,
+  qaSeed,
   seedFixtures,
   type SeedResult,
 } from "./helpers/qa";
@@ -19,6 +20,15 @@ let fixtures: SeedResult;
 
 test.beforeAll(async () => {
   fixtures = await seedFixtures();
+  // The candidate persona needs a real application: the candidate portal is
+  // gated on a linked candidate_profile.
+  const candidate = fixtures.users["candidate"]!;
+  await qaSeed("create_application", {
+    user_id: candidate.id,
+    email: candidate.email,
+    full_name: "QA Candidate",
+    position_id: fixtures.position_id,
+  });
 });
 
 test.describe("messaging", () => {
@@ -62,7 +72,8 @@ test.describe("messaging", () => {
     const errors = collectConsoleErrors(page);
     await loginAs(page, "client", fixtures.users["client_admin"]!.email, QA_PASSWORD);
     await page.goto("/client/conversations", { waitUntil: "domcontentloaded" });
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    // A first-run tour can own the accessibility tree, so assert on the region.
+    await expect(page.getByRole("main", { name: /messages/i })).toBeVisible();
     const text = await page.locator("body").innerText();
     expect(text).not.toContain(fixtures.other_org_id);
     expect(meaningfulConsoleErrors(errors)).toEqual([]);
