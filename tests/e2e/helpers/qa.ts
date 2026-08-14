@@ -791,6 +791,7 @@ export type JourneyTrail = {
     status: string;
     visibility: string;
     reference_code: string | null;
+    payment_status: string | null;
   } | null;
   match: {
     id: string;

@@ -1470,3 +1470,34 @@ Northwind Talent (Demo): 10 matches, 10 client-visible, 3 shortlisted, stage spr
 ### Test status
 - Unit: 1150/1150 passing (`exports.masking` timed out once under parallel load, passes in isolation — flaky, not a defect).
 - E2E: 2 known blockers remain on the staff "Approve score" evidence gate (`publish-desk.spec.ts`, `client-candidates-kanban.spec.ts`) — carried over from Pass 9/10, unchanged by this pass.
+
+## Pass 15 — Journey A/B/C verification (in progress)
+
+Fixed this pass (product/tooling defects found by Journey A):
+- **QA teardown left an undeletable workspace behind.** `cleanup_intake_e2e`'s
+  position delete cascaded into append-only tables (`position_versions`,
+  `score_runs`, stage history) whose guard triggers refuse the cascade. The
+  delete failed silently (count 0, error swallowed), the organization survived,
+  and it kept its email domain reserved — so *every* later intake on that domain
+  returned `409 organization_exists`. Cleanup now routes through the audited
+  `hard_delete_position` RPC, falls back to any platform-staff actor, and reports
+  per-table errors instead of reporting 0.
+- **Journey A had no payment step.** An intake-created role is unpaid, so the
+  publish gate correctly held it at `under_review`. The walkthrough now clears it
+  the honest way — the staff "Grant payment exemption" dialog with a written,
+  audited reason — and `journey_trail` reports `payment_status` so the step is
+  asserted against the database.
+
+Journey A status: steps 1–3 PASS (intake persisted, converted to position,
+activated through the real lifecycle transitions).
+
+Open, next up:
+- Step 4 (public board) FAILs: the assertion still matches the seeded fixture
+  title (`clinical operations manager`) rather than the title the intake
+  produced. Assertion defect, not a product defect — confirm the role is
+  reachable by reference code before changing it.
+- Step 5 (candidate apply) never rendered `[data-hydrated="ready"]` at
+  `/jobs/<id>/apply`; needs triage on whether the role is public/visible at that
+  point or the apply route genuinely fails to hydrate.
+- Journeys B (failure paths) and C (refresh resilience + 375px mobile) not yet
+  run this pass.

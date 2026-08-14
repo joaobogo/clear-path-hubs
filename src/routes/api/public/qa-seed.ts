@@ -485,9 +485,12 @@ async function seedQAData(): Promise<{
  * organizations named with the QA prefix, their positions and intakes, and the
  * auth accounts on the qa.taasflow.test mailbox. Never matches real data.
  */
-async function cleanupIntakeE2E(prefix: string): Promise<{ deleted: Record<string, number> }> {
+async function cleanupIntakeE2E(
+  prefix: string,
+): Promise<{ deleted: Record<string, number>; errors: Record<string, string> }> {
   const sb = await loadAdmin();
   const counts: Record<string, number> = {};
+  const errors: Record<string, string> = {};
   const safePrefix = prefix.startsWith("QA_") ? prefix : "QA_INTAKE_E2E_";
 
   const { data: orgs } = await sb.from("organizations").select("id").ilike("name", `${safePrefix}%`);
@@ -498,15 +501,40 @@ async function cleanupIntakeE2E(prefix: string): Promise<{ deleted: Record<strin
     const { data: posRows } = await sb.from("positions").select("id").in("organization_id", orgIds);
     const posIds = (posRows ?? []).map((p: { id: string }) => p.id);
     if (posIds.length > 0) {
-      await sb.from("candidate_matches").delete().in("position_id", posIds);
-      await sb.from("applications").delete().in("position_id", posIds);
-      await sb.from("screening_questions").delete().in("position_id", posIds);
-      await sb.from("position_commitments").delete().in("position_id", posIds);
-      const { count: pc } = await sb
-        .from("positions")
-        .delete({ count: "exact" })
-        .in("id", posIds);
-      counts.positions_deleted = pc ?? 0;
+      // Positions cascade into append-only children (position_versions,
+      // score_runs, stage history), whose guard triggers reject the cascade — a
+      // plain delete leaves the row behind, which keeps the organization (and
+      // therefore its email domain) alive and 409s "organization_exists" on
+      // every later intake run. hard_delete_position unwinds them properly.
+      // The QA admin account may already have been torn down by an earlier
+      // cleanup, so fall back to any platform staff user for the RPC's actor check.
+      let actorId = await findUserIdByEmail(sb, QA_EMAILS.platform_admin);
+      if (!actorId) {
+        const { data: staffRole } = await sb
+          .from("user_roles")
+          .select("user_id")
+          .eq("role", "admin")
+          .limit(1)
+          .maybeSingle();
+        actorId = (staffRole as { user_id: string } | null)?.user_id ?? null;
+      }
+      let deleted = 0;
+      for (const positionId of posIds) {
+        if (!actorId) break;
+        const { error } = await sb.rpc("hard_delete_position", {
+          _position_id: positionId,
+          _actor_user_id: actorId,
+          _reason: "qa cleanup",
+        });
+        if (error) {
+          errors.positions = error.message;
+        } else {
+          deleted += 1;
+        }
+      }
+      counts.positions_deleted = deleted;
+      if (!actorId) errors.positions = "qa platform_admin user missing";
+      if (deleted < posIds.length) counts.positions_delete_failed = posIds.length - deleted;
     }
     const { count: ic } = await sb
       .from("intake_submissions")
@@ -514,11 +542,18 @@ async function cleanupIntakeE2E(prefix: string): Promise<{ deleted: Record<strin
       .in("organization_id", orgIds);
     counts.intakes_deleted = ic ?? 0;
     await sb.from("memberships").delete().in("organization_id", orgIds);
-    const { count: oc } = await sb
+    await sb.from("talent_memory_events").delete().in("organization_id", orgIds);
+    await sb.from("talent_memory").delete().in("organization_id", orgIds);
+    await sb.from("candidate_matches").delete().in("organization_id", orgIds);
+    const { count: oc, error: orgErr } = await sb
       .from("organizations")
       .delete({ count: "exact" })
       .in("id", orgIds);
     counts.organizations_deleted = oc ?? 0;
+    if (orgErr) {
+      counts.organizations_delete_failed = orgIds.length;
+      errors.organizations = orgErr.message;
+    }
   }
 
   // Intakes that never reached an organization (submit failed mid-way).
@@ -560,7 +595,7 @@ async function cleanupIntakeE2E(prefix: string): Promise<{ deleted: Record<strin
     .ilike("email", "qa.intake+%qa.taasflow.test");
   counts.profiles_deleted = profs ?? 0;
 
-  return { deleted: counts };
+  return { deleted: counts, errors };
 }
 
 /** Reads back what a real submit persisted, so tests assert on the database. */
@@ -1150,7 +1185,7 @@ async function handle(request: Request): Promise<Response> {
         body.position_id
           ? sb
               .from("positions")
-              .select("id, title, status, visibility, reference_code")
+              .select("id, title, status, visibility, reference_code, payment_status")
               .eq("id", body.position_id)
               .maybeSingle()
           : Promise.resolve({ data: null, error: null }),
