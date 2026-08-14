@@ -36,11 +36,15 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
     id: "messages",
     label: "Messages",
     tabs: [
-      { to: "/client/conversations", label: "Threads" },
-      { to: "/client/inbox", label: "Inbox" },
-      { to: "/client/messages", label: "All messages" },
+      { to: "/client/conversations", label: "All messages" },
+      // Same screen, told apart by search: unread-only is the "inbox" view.
+      // The old /client/inbox and /client/messages paths still redirect here,
+      // so notification links keep working, but they are no longer tabs —
+      // as tabs they pointed at the same content and looked broken.
+      { to: "/client/conversations", label: "Inbox", search: { box: "unread" } },
     ],
   },
+
   {
     id: "account",
     label: "Account",
