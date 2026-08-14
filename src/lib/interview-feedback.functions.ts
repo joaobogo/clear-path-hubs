@@ -71,7 +71,16 @@ function normNextStep(v: unknown): FeedbackNextStep | null {
 
 function nameOf(match: AnyRow): string {
   const cp = match?.candidate_profiles ?? null;
-  return cp?.full_name ?? "Candidate";
+  return (cp?.full_name as string) || "Candidate";
+}
+
+/**
+ * An interview happened at its scheduled time. `completed_at` is only an
+ * administrative stamp and can disagree with the meeting time, which is how a
+ * future meeting once surfaced in the feedback queue as already held.
+ */
+function happenedAt(iv: AnyRow): string | null {
+  return (iv.scheduled_at as string | null) ?? null;
 }
 
 /**
@@ -101,7 +110,7 @@ export const listInterviewsAwaitingFeedback = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
 
     const list = ((rows as AnyRow[] | null) ?? []).filter((iv) => {
-      const happened = (iv.completed_at as string | null) ?? (iv.scheduled_at as string | null);
+      const happened = happenedAt(iv);
       return !!happened && happened < nowIso;
     });
     if (list.length === 0) return [];
@@ -119,7 +128,7 @@ export const listInterviewsAwaitingFeedback = createServerFn({ method: "POST" })
     return list
       .filter((iv) => !done.has(iv.id as string))
       .map((iv) => {
-        const happened = (iv.completed_at as string | null) ?? (iv.scheduled_at as string | null);
+        const happened = happenedAt(iv);
         return {
           interview_id: iv.id as string,
           candidate_match_id: iv.candidate_match_id as string,
@@ -188,11 +197,11 @@ export const getMatchFeedback = createServerFn({ method: "POST" })
 
       const pending: FeedbackQueueItem[] = ((ivs as AnyRow[] | null) ?? [])
         .filter((iv) => {
-          const happened = (iv.completed_at as string | null) ?? (iv.scheduled_at as string | null);
+          const happened = happenedAt(iv);
           return !!happened && happened < nowIso && !done.has(iv.id as string);
         })
         .map((iv) => {
-          const happened = (iv.completed_at as string | null) ?? (iv.scheduled_at as string | null);
+          const happened = happenedAt(iv);
           return {
             interview_id: iv.id as string,
             candidate_match_id: iv.candidate_match_id as string,
