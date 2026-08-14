@@ -282,8 +282,9 @@ function CandidatesPage() {
  const activeFilters = [
  search.position && {
  key: "position",
- label: `Position: ${
- (positions as Array<{ id: string; title: string }>).find((p) => p.id === search.position)?.title ?? search.position.slice(0, 8)
+ // While the role list is still loading we say "this role" — never a UUID.
+ label: `Role: ${
+ (positions as Array<{ id: string; title: string }>).find((p) => p.id === search.position)?.title ?? "this role"
  }`,
  },
  search.stage !== "all" && {
