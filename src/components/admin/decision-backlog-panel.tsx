@@ -165,8 +165,9 @@ export function DecisionBacklogPanel({
             {organizationId
               ? "No candidates waiting on this client"
               : "No candidates waiting on a client decision"}
-            <TestScopeEmptyNote />
           </p>
+          {/* TestScopeEmptyNote renders its own <p>, so it stays a sibling. */}
+          <TestScopeEmptyNote />
           <p className="mt-1 text-xs text-muted-foreground">
             Submitted candidates appear here until a decision is recorded.
           </p>

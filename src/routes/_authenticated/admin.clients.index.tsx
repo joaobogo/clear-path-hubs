@@ -69,7 +69,9 @@ const searchSchema = z.object({
   status: fallback(z.string(), "").default(""),
   industry: fallback(z.string(), "").default(""),
   sort: fallback(z.string(), "activity_desc").default("activity_desc"),
-  archived: fallback(z.enum(["0", "1"]), "0").default("0"),
+  // The router round-trips "1" as the number 1, so coerce before matching the
+  // enum — otherwise the flag silently falls back and the checkbox never sticks.
+  archived: fallback(z.coerce.string().pipe(z.enum(["0", "1"])), "0").default("0"),
   page: fallback(z.number().int(), 1).default(1),
   page_size: fallback(z.number().int(), 25).default(25),
 });

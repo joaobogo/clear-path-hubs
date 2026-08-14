@@ -1,5 +1,5 @@
 // Lifecycle action bar for the position workspace (extracted from the route).
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -108,17 +108,17 @@ export function LifecycleBar({ position, onDone }: { position: Any; onDone: () =
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {secondary.map((b, i) => (
-              <>
-                {i > 0 && b.key === "archive" && <DropdownMenuSeparator key={`sep-${i}`} />}
+              // Keyed fragment: a bare <> here triggers React's missing-key warning.
+              <Fragment key={b.key}>
+                {i > 0 && b.key === "archive" && <DropdownMenuSeparator />}
                 <DropdownMenuItem
-                  key={b.key}
                   onClick={b.onClick}
                   data-qa-action={`position-${b.key}`}
                   className={b.key === "archive" ? "text-destructive" : undefined}
                 >
                   {b.label}
                 </DropdownMenuItem>
-              </>
+              </Fragment>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
