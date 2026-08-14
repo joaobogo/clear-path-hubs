@@ -81,6 +81,10 @@ test("search and filters narrow the board, and a miss shows a clean empty state"
   page,
 }) => {
   await page.goto("/jobs", { waitUntil: "domcontentloaded" });
+  // The cookie choice is modal on first visit; a visitor answers it before
+  // touching the filters, so the test does the same.
+  const accept = page.getByRole("button", { name: "Accept all" });
+  if (await accept.count()) await accept.first().click();
   const cards = page.locator("ul li a[href^='/jobs/']");
   await expect(cards.first()).toBeVisible();
   const total = await cards.count();
@@ -92,6 +96,7 @@ test("search and filters narrow the board, and a miss shows a clean empty state"
   await box.click();
   await box.type("zzzznotarole", { delay: 40 });
   await expect(page).toHaveURL(/q=zzzznotarole/);
+
   await expect(box).toHaveValue("zzzznotarole");
   await expect(page.getByRole("heading", { name: "No roles match your filters" })).toBeVisible();
 
