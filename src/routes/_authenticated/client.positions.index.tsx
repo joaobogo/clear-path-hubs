@@ -82,25 +82,26 @@ function PositionsPage() {
  });
  const ctx = ctxQuery.data;
  const orgId = ctx?.active?.organization_id;
- const {
- data: rows = [],
- refetch,
- isFetching,
- isError,
- error,
- } = useQuery<Row[]>({
- queryKey: ["client-positions", orgId, status],
- queryFn: () =>
-     listFn({ data: { orgId: orgId!, status } }) as unknown as Promise<Row[]>,
-    enabled: !!orgId,
-  });
-  // Honest empty-state signals: do any roles exist at all, and how many are
-  // still in setup? Only fetched when this view has nothing to show.
-  const { data: allRows = [] } = useQuery<Row[]>({
+  // One fetch of every role in the workspace: tab filtering and the tab
+  // counters come from the same list, so the counters always add up and no
+  // status can be missing from every tab.
+  const {
+    data: allRows = [],
+    refetch,
+    isFetching,
+    isError,
+    error,
+  } = useQuery<Row[]>({
     queryKey: ["client-positions", orgId, "all"],
     queryFn: () => listFn({ data: { orgId: orgId! } }) as unknown as Promise<Row[]>,
-    enabled: !!orgId && rows.length === 0,
+    enabled: !!orgId,
   });
+  const statusCounts = useMemo(() => countRolesByTab(allRows), [allRows]);
+  const rows = useMemo(
+    () => allRows.filter((p) => roleStatusTab(p.status) === status),
+    [allRows, status],
+  );
+
  useEffect(() => {
  const onRefresh = () => refetch();
  window.addEventListener("client:refresh", onRefresh);
