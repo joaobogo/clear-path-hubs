@@ -2644,38 +2644,7 @@ function ExpressIntakePage() {
           </div>
 
 
-          <fieldset className="space-y-2">
-            <legend className="text-sm font-medium">
-              Work authorisation
-              <span className="ml-2 text-xs font-normal text-[color:var(--brand-navy)]/60">
-                Optional
-              </span>
-            </legend>
-            {WORK_AUTHORIZATION_OPTIONS.map((opt) => (
-              <label
-                key={opt.value}
-                className="flex cursor-pointer items-start gap-3 rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3"
-              >
-                <input
-                  type="radio"
-                  name="work-authorization"
-                  value={opt.value}
-                  checked={state.workAuthorization === opt.value}
-                  onChange={() => set("workAuthorization", opt.value)}
-                  className="mt-1"
-                />
-                <span className="text-sm leading-relaxed">
-                  <span className="font-medium">{opt.label}</span>
-                  <span className="block text-xs text-[color:var(--brand-navy)]/75">{opt.hint}</span>
-                </span>
-              </label>
-            ))}
-            {errors.workAuthorization && (
-              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
-                {errors.workAuthorization}
-              </p>
-            )}
-          </fieldset>
+
 
           <Field
             label="Ideal start date"
