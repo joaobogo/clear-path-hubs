@@ -80,14 +80,25 @@ test("Apply opens the wizard for the exact role that was clicked", async ({ page
 test("search and filters narrow the board, and a miss shows a clean empty state", async ({
   page,
 }) => {
+  // Answer the cookie choice up front: it is modal on a first visit and would
+  // otherwise swallow the keystrokes this test sends to the search box.
+  await page.addInitScript(() => {
+    window.localStorage.setItem(
+      "taasflow_consent_v1",
+      JSON.stringify({
+        analytics: true,
+        marketing: true,
+        decidedAt: new Date().toISOString(),
+        version: 1,
+        method: "accept_all",
+      }),
+    );
+  });
   await page.goto("/jobs", { waitUntil: "domcontentloaded" });
-  // The cookie choice is modal on first visit; a visitor answers it before
-  // touching the filters, so the test does the same.
-  const accept = page.getByRole("button", { name: "Accept all" });
-  if (await accept.count()) await accept.first().click();
   const cards = page.locator("ul li a[href^='/jobs/']");
   await expect(cards.first()).toBeVisible();
   const total = await cards.count();
+
 
   const box = page.getByLabel("Search roles");
   // Typed character by character: the URL write is debounced, and every
