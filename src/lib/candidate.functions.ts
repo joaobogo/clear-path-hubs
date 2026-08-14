@@ -68,24 +68,44 @@ export const getMyContext = createServerFn({ method: "GET" })
       .maybeSingle();
 
     // Auto-claim: unclaimed profile matching this email.
-    if (!cp && email) {
-      const { data: claimable } = await supabase
-        .from("candidate_profiles")
-        .select("id,user_id")
-        .ilike("email", email)
-        .is("user_id", null)
-        .maybeSingle();
-      if (claimable) {
-        const { data: claimed } = await supabase
+    //
+    // RLS on candidate_profiles only exposes rows where user_id = auth.uid(),
+    // so an unclaimed row (user_id IS NULL) is invisible to the very user who
+    // needs to claim it. The lookup and the link therefore run with the admin
+    // client, gated on the auth record's verified email — never on a claim in
+    // the token — so nobody can claim a stranger's profile by typing their
+    // address. After linking we re-read through RLS as the user.
+    if (!cp) {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId);
+      const verifiedEmail = authUser?.user?.email_confirmed_at
+        ? authUser.user.email?.toLowerCase()
+        : null;
+      if (verifiedEmail) {
+        const { data: claimable } = await supabaseAdmin
           .from("candidate_profiles")
-          .update({ user_id: userId })
-          .eq("id", claimable.id)
+          .select("id")
+          .ilike("email", verifiedEmail)
           .is("user_id", null)
-          .select(PROFILE_COLS)
+          .order("created_at", { ascending: true })
+          .limit(1)
           .maybeSingle();
-        cp = claimed ?? cp;
+        if (claimable) {
+          await supabaseAdmin
+            .from("candidate_profiles")
+            .update({ user_id: userId })
+            .eq("id", (claimable as { id: string }).id)
+            .is("user_id", null);
+          const { data: claimed } = await supabase
+            .from("candidate_profiles")
+            .select(PROFILE_COLS)
+            .eq("user_id", userId)
+            .maybeSingle();
+          cp = claimed ?? cp;
+        }
       }
     }
+
 
     // Seat detection: a client or staff seat must never be pushed into the
     // candidate job-seeker funnel when no candidate profile exists.
