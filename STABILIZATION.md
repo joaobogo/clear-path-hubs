@@ -1340,3 +1340,57 @@ deliberate change to parsing and storage as well, so it was not made here.
 `tests/e2e/apply.spec.ts` — required-field validation with per-field errors, and
 double-tap submit proven to create exactly one application that the candidate can
 then see on their own dashboard.
+
+---
+
+# Pass 6 — Admin Overview / Work Inbox (2026-08-14)
+
+Scope: `/admin` (Work queue) only. Driven in a real browser as a seeded
+platform admin (`qa.admin@qa.taasflow.test`), every result confirmed with SQL
+against the database rather than the rendered number alone.
+
+## Element-by-element checklist
+
+| # | Element | Backend result confirmed | Verdict |
+|---|---------|--------------------------|---------|
+| 1 | Work queue count strip (Intakes 0 / Unpaid 8 / Setup 2 / Awaiting decision 2 / Client decisions 0 / Interviews 0 / Blocked 1) | Each tile equals its `loadWorkQueues` SQL count | PASS |
+| 2 | Count tile → `#queue-*` anchor | Scrolls to the matching section, URL gains the hash | PASS |
+| 3 | "Refresh" (work queue) | Re-issues the queue server fns (6 calls observed) | PASS |
+| 4 | Queue row title → `/admin/positions/$id` | Every href resolves to the exact record, page renders | PASS |
+| 5 | Queue row account → `/admin/clients/$id` | Resolves to `?tab=overview` for that org | PASS |
+| 6 | Queue row "Claim" | `positions.owner_user_id` updated to the acting admin, `updated_at` advanced, ownership audit written | PASS |
+| 7 | SLA strip "Open SLA desk" / "Open role" | Navigates to the commitment desk and the named role | PASS |
+| 8 | Portfolio health "Refresh" | Re-issues the panel server fn (3 calls) | PASS |
+| 9 | Portfolio health sortable headers (Health, No subs, Oldest, Subs 7d, Awaiting client, Quiet) | Re-sorts in place, no refetch loop | PASS |
+| 10 | Awaiting client decision "Refresh" | Re-issues the backlog server fn | PASS |
+| 11 | "Nudge" | Inserted `notification_events` row (`approval_needed`) for the exact match | PASS |
+| 12 | "Nudge" inside the 48h window | Disabled with the next-available timestamp in the tooltip — honest, not dead | PASS |
+| 13 | "Log decision" → form → "Record" | Inserted `client_decisions` (+ audit event) with `recorded_by_staff`, row then dropped out of the backlog | PASS |
+| 14 | "Thread" | Opens/creates the candidate thread for that org + match | PASS |
+| 15 | Offers and hires tiles (Offers 2 / Accepted 1 / Hires 1 / Guarantees 0) | Matches `hire_records` rollup; "Accepted" counts `offer_accepted` + `hire_confirmed` | PASS |
+| 16 | Upcoming start dates list | Real `hire_records.start_date` row | PASS |
+| 17 | "Test records shown" toggle | Persists per user, banner appears, all panels re-scope | PASS |
+| 18 | Loading / empty states | All panels resolve; no spinner outlives its query | PASS |
+
+Console: zero application errors. The only console/network noise is the
+third-party Apollo intent pixel returning 400 — external, unrelated to this page.
+
+## Fix applied (this scope)
+
+- `src/lib/admin-ops.server.ts` — a queue row whose `owner_user_id` has no
+  `profiles` row was labelled "Unknown staff", which both asserted a person who
+  does not exist and hid the "Claim" action, leaving the row permanently
+  unassignable. An unresolvable owner is now treated as unassigned, so the row
+  stays claimable. Two live rows were affected (`Clinical Operations Manager`,
+  `Customer Success`).
+
+## Cleanup
+
+The offline decision recorded during the gate was inserted against a
+test-organisation fixture match and removed afterwards; no client-facing
+record was altered.
+
+## Verdict
+
+Admin Overview: PASS. Dead buttons 0, local-state-only actions 0, fabricated
+counts 0, stuck loaders 0.
