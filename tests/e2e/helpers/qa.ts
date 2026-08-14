@@ -35,6 +35,8 @@ type QaAction =
   | "cleanup"
   | "status"
   | "create_application"
+  | "create_cv_application"
+  | "pipeline_snapshot"
   | "cleanup_intake_e2e"
   | "lookup_intake"
   | "lookup_candidate_application"
@@ -312,6 +314,78 @@ export async function allowTestFixtures(
     { name: "qa_e2e", value: token(), url: BASE_URL },
   ]);
 }
+
+/** Runs the pipeline for one match and returns the runner outcome. */
+export async function runPipelineForMatch(
+  matchId: string,
+  opts: { force?: boolean } = {},
+): Promise<{ ok: boolean; outcome?: { final_state: string; trace_id: string; steps: Array<{ step: string; ok: boolean; note?: string }> } }> {
+  const key = process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
+  if (!key) throw new Error("SUPABASE_PUBLISHABLE_KEY is not set in the environment");
+  const res = await fetch(`${BASE_URL}/api/public/pipeline/run`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", apikey: key },
+    body: JSON.stringify({ match_id: matchId, ...(opts.force ? { force: true } : {}) }),
+  });
+  const text = await res.text();
+  if (!res.ok) throw new Error(`pipeline run failed (${res.status}): ${text}`);
+  return JSON.parse(text);
+}
+
+export type PipelineSnapshot = {
+  ok: boolean;
+  match: {
+    id: string;
+    application_id: string;
+    processing_state: string;
+    processing_error_code: string | null;
+    processing_error_message: string | null;
+    canonical_state: string | null;
+    total_score: number | null;
+    score_band: string | null;
+    current_score_run_id: string | null;
+    admin_status: string;
+    client_visibility: string;
+  };
+  file: {
+    id: string;
+    filename: string;
+    parse_state: string | null;
+    parse_error_code: string | null;
+    parse_error: string | null;
+    extraction_attempts: number | null;
+    parser: string | null;
+  } | null;
+  score_runs: Array<{ id: string; status: string; total_score: number | null; score_band: string | null }>;
+  evidence_items: Array<{ id: string; requirement_key: string | null; verdict: string | null }>;
+  jobs: Array<{ id: string; job_type: string; status: string; error_code: string | null }>;
+};
+
+/** The pipeline's persisted truth for one match: state, file, score, evidence. */
+export const pipelineSnapshot = (matchId: string) =>
+  qaSeed<PipelineSnapshot>("pipeline_snapshot", { match_id: matchId });
+
+/** Creates an application that owns a real CV object, ready for the pipeline. */
+export const createCvApplication = (args: {
+  positionId: string;
+  email: string;
+  fullName: string;
+  cvBase64: string;
+  cvFilename?: string;
+}) =>
+  qaSeed<{
+    ok: boolean;
+    application_id: string;
+    candidate_profile_id: string;
+    candidate_match_id: string;
+    file_id: string;
+  }>("create_cv_application", {
+    position_id: args.positionId,
+    email: args.email,
+    full_name: args.fullName,
+    cv_base64: args.cvBase64,
+    cv_filename: args.cvFilename,
+  });
 
 /** Kicks the pipeline worker so the suite does not wait on the 2-minute cron. */
 export async function runPipelineDrain(): Promise<void> {
