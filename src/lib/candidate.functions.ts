@@ -909,15 +909,54 @@ export const sendMyMessage = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     const supabase = context.supabase as AnyRow;
-    const { error } = await supabase.from("messages").insert({
-      thread_id: context.userId,
-      sender_user_id: context.userId,
-      body: data.body,
-      recipient_context: { audience: "taasflow_ops", from: "candidate" },
-    });
+    const { data: row, error } = await supabase
+      .from("messages")
+      .insert({
+        thread_id: context.userId,
+        sender_user_id: context.userId,
+        body: data.body,
+        recipient_context: { audience: "taasflow_ops", from: "candidate" },
+      })
+      .select("id")
+      .maybeSingle();
     if (error) return { ok: false, message: error.message };
+
+    // Without this the message landed in the ops queue but never rang the staff
+    // bell, so a candidate question could sit unseen indefinitely.
+    try {
+      const { emitEventFromServer } = await import("./notifications.functions");
+      await emitEventFromServer({
+        event: "message_sent",
+        scope: `candidate-message:${(row?.id as string | undefined) ?? context.userId}`,
+        actor_user_id: context.userId,
+        link_path: "/admin/messages",
+      });
+    } catch (e) {
+      console.error("[sendMyMessage] notify failed", e);
+    }
     return { ok: true };
   });
+
+/**
+ * Marks replies in the candidate's own thread as read. Nothing else ever wrote
+ * `read_at` for these rows, so the unread badge on the candidate home never
+ * cleared. Scoped by thread_id = caller, and only for messages the caller did
+ * not write.
+ */
+export const markMyMessagesRead = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("messages")
+      .update({ read_at: new Date().toISOString() })
+      .eq("thread_id", context.userId)
+      .neq("sender_user_id", context.userId)
+      .is("read_at", null);
+    if (error) return { ok: false as const, message: error.message };
+    return { ok: true as const };
+  });
+
 
 // ─── Privacy / consent ──────────────────────────────────────────────────────
 

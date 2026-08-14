@@ -1234,6 +1234,20 @@ async function handle(request: Request): Promise<Response> {
       const { data: existingCp } = await sb.from("candidate_profiles").select("id").eq("user_id", body.user_id).maybeSingle();
       let cpId = existingCp?.id as string | undefined;
       if (!cpId) {
+        // Re-seeding mints a new auth user for the same QA mailbox, so an older
+        // profile can still hold the email (unique). Relink it instead of
+        // colliding on candidate_profiles_email_uniq.
+        const { data: byEmail } = await sb
+          .from("candidate_profiles")
+          .select("id")
+          .ilike("email", body.email as string)
+          .maybeSingle();
+        if (byEmail?.id) {
+          cpId = byEmail.id as string;
+          await sb.from("candidate_profiles").update({ user_id: body.user_id }).eq("id", cpId);
+        }
+      }
+      if (!cpId) {
         const { data: cpRow, error: cpErr } = await sb.from("candidate_profiles")
           .insert({ user_id: body.user_id, full_name: body.full_name ?? "QA Candidate", email: body.email, consent: { terms: true, privacy: true } })
           .select("id").single();
@@ -1245,13 +1259,13 @@ async function handle(request: Request): Promise<Response> {
       if (posErr) throw posErr;
       // Application
       const { data: appRow, error: appErr } = await sb.from("applications")
-        .insert({ candidate_profile_id: cpId, position_id: body.position_id, source: "web", status: "received" })
+        .insert({ candidate_profile_id: cpId, position_id: body.position_id, source: "web", status: "submitted" })
         .select("id").single();
       if (appErr) throw appErr;
       const appId = appRow.id as string;
       // Match
       const { data: matchRow, error: mErr } = await sb.from("candidate_matches")
-        .insert({ application_id: appId, candidate_profile_id: cpId, position_id: body.position_id, organization_id: posRow.organization_id, stage: "sourced", processing_state: "queued", admin_status: "pending", client_visibility: "hidden" })
+        .insert({ application_id: appId, candidate_profile_id: cpId, position_id: body.position_id, organization_id: posRow.organization_id, stage: "new", processing_state: "queued", admin_status: "pending", client_visibility: "hidden" })
         .select("id").single();
       if (mErr) throw mErr;
       return Response.json({ ok: true, action, application_id: appId, candidate_profile_id: cpId, candidate_match_id: matchRow.id });

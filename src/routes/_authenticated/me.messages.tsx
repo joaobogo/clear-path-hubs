@@ -5,7 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
-import { listMyMessages, sendMyMessage } from "@/lib/candidate.functions";
+import { listMyMessages, markMyMessagesRead, sendMyMessage } from "@/lib/candidate.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -40,6 +40,8 @@ function MyMessages() {
  const initial = Route.useLoaderData();
  const listFn = useServerFn(listMyMessages);
  const sendFn = useServerFn(sendMyMessage);
+ const markReadFn = useServerFn(markMyMessagesRead);
+
  const qc = useQueryClient();
  const endRef = useRef<HTMLDivElement>(null);
  const [body, setBody] = useState("");
@@ -54,6 +56,25 @@ function MyMessages() {
  queryFn: () => listFn(),
  initialData: initial,
  });
+
+ // Opening the thread clears the unread badge on the candidate home.
+ const unreadIds = (data.messages as AnyRow[])
+ .filter((m) => !m.read_at && m.sender_user_id !== selfId)
+ .map((m) => m.id as string)
+ .join(",");
+ useEffect(() => {
+ if (!selfId || !unreadIds) return;
+ void markReadFn()
+ .then(() => {
+ qc.invalidateQueries({ queryKey: ["me-messages"] });
+ qc.invalidateQueries({ queryKey: ["me-dashboard"] });
+ })
+ .catch(() => {
+ // Read receipts are best-effort; never block the thread on them.
+ });
+ }, [selfId, unreadIds, markReadFn, qc]);
+
+
 
  useEffect(() => {
  if (!selfId) return;
@@ -88,7 +109,7 @@ function MyMessages() {
  <header className="mb-4">
  <h1 className="text-2xl font-semibold">Messages</h1>
  <p className="text-sm text-muted-foreground">
- Direct line to the TaaSFlow team about your applications.
+ Direct line to the TaaSFlow team about your applications. We reply here or by email.
  </p>
  </header>
 
@@ -97,8 +118,8 @@ function MyMessages() {
  <div className="text-center text-sm text-muted-foreground py-12">
  <div className="font-medium mb-1">No messages yet</div>
  <p>
- Have a question about your applications? Send us a note and we&apos;ll
- get back to you here.
+ Have a question about your applications? Send us a note and the
+ TaaSFlow team will come back to you.
  </p>
  </div>
  )}
