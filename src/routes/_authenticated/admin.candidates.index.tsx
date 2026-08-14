@@ -234,6 +234,22 @@ function CandidatesPage() {
 
   const [q, setQ] = useState(search.q ?? "");
   useEffect(() => setQ(search.q ?? ""), [search.q]);
+  // Debounced sync so typing filters without needing Enter — the same behaviour
+  // as the clients/positions desks. Submitting the form still applies instantly.
+  const searchQ = search.q ?? "";
+  useEffect(() => {
+    // Depend on the primitive only: the search object gets a new identity on
+    // every render, which would clear the timer before it ever fires.
+    const t = setTimeout(() => {
+      if (q !== searchQ) {
+        navigate({
+          search: (s: Record<string, unknown>) => ({ ...s, q, page: 1 }),
+          replace: true,
+        });
+      }
+    }, 300);
+    return () => clearTimeout(t);
+  }, [q, searchQ, navigate]);
   const [selected, setSelected] = useState<string[]>([]);
   const [confirm, setConfirm] = useState<null | "visible" | "hidden">(null);
   const [showDuplicates, setShowDuplicates] = useState(false);
