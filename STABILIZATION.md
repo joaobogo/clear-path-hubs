@@ -1131,3 +1131,45 @@ Post-login landing: `http://localhost:8080/me`
   - [ ] UNVERIFIED — button: "Hide tracking notice" — expected: client-side (navigation, view state, filtering)
 - console:
   - `error: Failed to load resource: the server responded with a status of 400 ()`
+
+---
+
+# Stabilization pass 1 — Authentication (scope: auth only)
+
+Method: Playwright against the dev server, QA personas seeded via the token-guarded QA seed route. Per role: login → landing → mid-session refresh → logout → protected-route retry after logout, with console capture throughout.
+
+## Checklist
+
+| # | Item | Result |
+|---|---|---|
+| 1a | Admin login lands on own dashboard (`/admin`, h1 "Work queue") | PASS |
+| 1b | Client login lands on own dashboard (`/client?org=…`, h1 "Overview") | PASS |
+| 1c | Candidate login lands on own dashboard (`/me`, h1 "Hi …, we've got you.") | PASS (was BLOCKER — fixed this pass) |
+| 1d | Session survives refresh for all three roles (same URL, same content) | PASS |
+| 1e | Logout control reachable for all three roles (Account menu → Sign out) | PASS (was FAIL for candidate — no shell rendered) |
+| 1f | Logout clears session (0 `*-auth-token` keys in localStorage) | PASS |
+| 1g | Protected route after logout redirects to `/login?redirect=…` | PASS |
+| 2 | Signup creates the correct role/records; anonymous applicant is linked to the right candidate record on first sign-in | PASS (fixed this pass) |
+| 3a | Wrong credentials show "Email or password is incorrect." — no blank screen, no crash | PASS |
+| 3b | Empty fields blocked by field validation, no submit, no crash | PASS |
+| 3c | Duplicate signup handled with a clear message (generic confirm message, no account enumeration) | PASS |
+| 4 | Password reset end to end: "Forgot password?" on `/login` → email → `/reset-password` sets a new password; invalid/expired token shows "This reset link is invalid or has expired." with a re-request action | PASS |
+| 5 | Demo account (`demo@taasflow.com`) logs in reliably every time | NOT VERIFIED — password not available to the test harness (see below) |
+| 6 | Zero app-origin console errors on auth surfaces (`/login`, `/reset-password`, all three landings, refresh) | PASS |
+
+Overall: **PASS on items 1-4 and 6. Item 5 unverified**, so the gate is not fully closed.
+
+## Fix applied (auth scope only)
+
+`src/lib/candidate.functions.ts` — `getMyContext` profile auto-claim. The claim lookup ran through the user's RLS client, but the only SELECT policy on `candidate_profiles` is `user_id = auth.uid()`, so an unclaimed row (`user_id IS NULL`) was invisible to the very user entitled to claim it. Every candidate who applied before creating an account therefore landed on the "we couldn't find a candidate profile" screen with no portal, no navigation and no sign-out. The lookup and link now run with the admin client, gated on the auth record's `email_confirmed_at` verified address (never on a token claim), then re-read through RLS as the user. Consequence: `/me`, `/me/applications`, `/me/profile`, `/me/cv`, `/me/messages`, `/me/settings` all render, closing the six BLOCKER rows recorded in the first inventory pass.
+
+## Observations (not fixed — outside auth scope or non-defect)
+
+- `[LOW]` `/login?redirect=…` logs a one-off React hydration warning during the logout bounce. It does not reproduce on a direct load of the same URL; the route is `ssr: false` and the tree re-renders correctly. Dev-mode transition artifact.
+- `[LOW]` A React "state update on an unmounted component" warning appeared once on the same logout transition.
+- `[LOW]` Every page (public and authenticated) logs one HTTP 400 from the third-party Apollo intent pixel. External vendor call, no app impact.
+- Authenticated routes need several seconds in dev before content paints; assertions must wait for a heading rather than `domcontentloaded`.
+
+## Blocking item for full sign-off
+
+Item 5 needs the demo login. The E2E suite already reads `DEMO_CLIENT_EMAIL` / `DEMO_CLIENT_PASSWORD` and skips when absent, and those values are not in this environment, so demo login reliability could not be exercised. Backend state for `demo@taasflow.com` was verified as healthy: active `client_admin` membership on the populated "Northwind Talent (Demo)" workspace.
