@@ -643,6 +643,13 @@ export const markInterviewCompleted = createServerFn({ method: "POST" })
     if (prev.status !== "scheduled") {
       throw new Error(`invalid_transition:${prev.status}->completed`);
     }
+    // A meeting that has not started cannot be completed. Without this guard a
+    // future interview could be stamped completed and then read as "already
+    // happened" everywhere downstream.
+    if (!prev.scheduled_at || new Date(prev.scheduled_at).getTime() > Date.now()) {
+      throw new Error("interview_not_started");
+    }
+
     const { error } = await context.supabase
       .from("interviews")
       .update({
