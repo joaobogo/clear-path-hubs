@@ -31,6 +31,7 @@ import {
   type PipelineStatusInput,
 } from "@/lib/client-pipeline-language";
 import { computeRoleProgress } from "@/lib/client-role-progress";
+import { countLanes } from "@/lib/client-pipeline-lane";
 import { computeClientRoleStatus } from "@/lib/client-role-status";
 import { computeRoleRisk } from "@/lib/client-role-risk";
 import { computeHiringHealth } from "@/lib/client-hiring-health";
@@ -135,15 +136,17 @@ export function pipelineLanguageInput(rows: KpiRow[], status: string): PipelineS
       .map((r) => r.next_interview_at)
       .filter((v): v is string => Boolean(v))
       .sort()[0] ?? null;
+  // Stage-shaped figures come from the canonical lane derivation.
+  const { counts } = countLanes(rows);
   return {
     status,
-    awaitingReview: rows.filter((r) => r.stage === "delivered").length,
-    shortlisted: rows.filter((r) => r.stage === "shortlisted").length,
+    awaitingReview: counts.delivered,
+    shortlisted: counts.shortlisted,
     interviewsToConfirm: rows.filter((r) => r.interview_needs_confirmation).length,
     interviewsScheduled: scheduled.length,
     nextInterviewAt,
-    offers: rows.filter((r) => r.stage === "offer").length,
-    hires: rows.filter((r) => r.stage === "hired").length,
+    offers: counts.offer,
+    hires: counts.hired,
     totalCandidates: rows.length,
   };
 }

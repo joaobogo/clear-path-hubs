@@ -9,6 +9,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { computeSeatCount } from "@/lib/client-seats";
 import {
   assertPlatformStaff,
   assertOrgMember,
@@ -337,15 +338,20 @@ export const getSeatUsage = createServerFn({ method: "GET" })
       .eq("organization_id", data.organization_id)
       .in("role", ["client_admin", "client_editor", "client_viewer"])
       .in("status", ["active", "invited"]);
-    const seats = (rows ?? []) as { role: string }[];
+    const seats = (rows ?? []) as { role: string; status: string }[];
     const owners = seats.filter((s) => s.role === "client_admin").length;
     const recruiters = seats.length - owners;
-    const limit = (org as { client_seat_limit?: number } | null)?.client_seat_limit ?? 3;
+    // Shared seat derivation — same totals as the Account page and team tab.
+    const count = computeSeatCount(
+      seats,
+      (org as { client_seat_limit?: number } | null)?.client_seat_limit ?? null,
+    );
     return {
-      seat_limit: limit,
+      seat_limit: count.seatLimit,
+      seats_used: count.seatsUsed,
       owner_seats: owners,
       recruiter_seats: recruiters,
-      seats_remaining: Math.max(0, limit + 1 - seats.length),
+      seats_remaining: count.seatsLeft,
     };
   });
 

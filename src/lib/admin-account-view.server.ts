@@ -7,6 +7,7 @@
  *   - delivery    → positions, candidate_matches, decision backlog, SLA breaches
  *   - engagement  → audit_events (client_update.sent), support_sessions
  */
+import { computeSeatCount } from "@/lib/client-seats";
 import {
   ACCOUNT_OPEN_POSITION_STATUSES,
   ACCOUNT_TERMINAL_MATCH_STAGES,
@@ -47,7 +48,7 @@ export async function loadAccountCommercial(
       .limit(1),
     a
       .from("memberships")
-      .select("id, status")
+      .select("id, role, status")
       .eq("organization_id", organizationId)
       .in("role", [...CLIENT_ROLES])
       .neq("status", "removed"),
@@ -67,12 +68,13 @@ export async function loadAccountCommercial(
   const sub = ((subRes.data ?? [])[0] ?? null) as Any;
   const ent = ((entRes.data ?? [])[0] ?? null) as Any;
   const pay = ((payRes.data ?? [])[0] ?? null) as Any;
-  const seats = (seatRes.data ?? []) as Array<{ status: string }>;
+  const seats = (seatRes.data ?? []) as Array<{ role: string; status: string }>;
 
-  const seatLimitBase = Number(org?.client_seat_limit ?? 3);
-  // Owner seat plus recruiter seats; invited seats are already reserved.
-  const seatsUsed = seats.filter((s) => s.status === "active" || s.status === "invited").length;
-  const seatsLimit = seatLimitBase + 1;
+  // Shared seat derivation — staff see exactly what the client sees.
+  const { seatLimit: seatsLimit, seatsUsed } = computeSeatCount(
+    seats,
+    org?.client_seat_limit ?? null,
+  );
 
   return {
     organization_id: organizationId,

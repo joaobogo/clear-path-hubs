@@ -31,6 +31,7 @@ import {
   type PipelineStatusInput,
 } from "@/lib/client-pipeline-language";
 import { computeRoleProgress } from "@/lib/client-role-progress";
+import { countLanes } from "@/lib/client-pipeline-lane";
 import { computeClientRoleStatus } from "@/lib/client-role-status";
 import { computeRoleRisk } from "@/lib/client-role-risk";
 import { computeHiringHealth } from "@/lib/client-hiring-health";
@@ -293,11 +294,11 @@ export const getClientOverview = createServerFn({ method: "GET" })
         stage_caption: progress.caption,
         client_status: computeClientRoleStatus({
           status: p.status as string,
-          hires: posRows.filter((r) => r.stage === "hired").length,
-          offers: posRows.filter((r) => r.stage === "offer").length,
-          interviewing: posRows.filter((r) => r.interview_active || r.stage === "interview_process")
-            .length,
-          shortlisted: posRows.filter((r) => r.stage === "shortlisted").length,
+          // Canonical lane counts — identical to the Roles list and role page.
+          hires: countLanes(posRows).counts.hired,
+          offers: countLanes(posRows).counts.offer,
+          interviewing: countLanes(posRows).counts.interview_process,
+          shortlisted: countLanes(posRows).counts.shortlisted,
           delivered: awaiting.length,
         }),
         last_movement_at: lastMovementAt,

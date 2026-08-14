@@ -5,6 +5,7 @@
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
 import { isUnicornMatch, classifyBand } from "@/lib/scoring/bands";
+import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
 import { cleanQuote } from "@/lib/evidence/quote-hygiene";
 
 import {
@@ -246,12 +247,12 @@ export function isTopMatch(r: KpiRow): boolean {
 
 
 
+/**
+ * "In the interview lane" — delegated to the canonical lane derivation so this
+ * tile can never disagree with the Kanban column that shows the same people.
+ */
 export function isInInterview(r: KpiRow): boolean {
-  return (
-    r.stage === "interview_process" ||
-    r.stage === "offer" ||
-    r.interview_active
-  );
+  return isInLane(r, "interview_process");
 }
 
 /**
@@ -274,16 +275,19 @@ function oldest(values: Array<string | null | undefined>): string | null {
 }
 
 export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
+  // Every stage-shaped count comes from the one lane derivation, so the tiles,
+  // the board columns and the per-role roll-ups are literally the same numbers.
+  const { counts } = countLanes(rows);
   return {
     delivered: new Set(rows.map((r) => r.candidate_profile_id)).size,
     top: rows.filter(isTopMatch).length,
-    shortlisted: rows.filter((r) => r.stage === "shortlisted").length,
-    interviewing: rows.filter(isInInterview).length,
+    shortlisted: counts.shortlisted,
+    interviewing: counts.interview_process,
     interview_scheduled: rows.filter((r) => r.interview_scheduled).length,
     interviews_to_confirm: rows.filter((r) => r.interview_needs_confirmation).length,
     awaiting_decision: rows.filter(isAwaitingClientDecision).length,
-    offers: rows.filter((r) => r.stage === "offer").length,
-    hires: rows.filter((r) => r.stage === "hired").length,
+    offers: counts.offer,
+    hires: counts.hired,
     active_positions: activePositions,
     oldest_awaiting_decision_at: oldest(
       rows
@@ -296,10 +300,11 @@ export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
         .map((r) => r.interview_requested_at ?? r.stage_entered_at),
     ),
     oldest_offer_at: oldest(
-      rows.filter((r) => r.stage === "offer").map((r) => r.stage_entered_at),
+      rowsInLane(rows, "offer").map((r) => r.stage_entered_at),
     ),
   };
 }
+
 
 
 /**
