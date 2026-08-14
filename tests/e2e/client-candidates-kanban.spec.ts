@@ -101,8 +101,12 @@ async function approveAndPublish(page: Page, matchId: string) {
     .poll(async () => (await pipelineSnapshot(matchId)).match.admin_status, { timeout: 40_000 })
     .toBe("approved");
 
+  // Approval reshapes the rail; reload so the next step is read from the server.
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await settle(page);
   const publish = page.locator('[data-qa-action="publish-to-client"]').first();
-  await expect(publish).toBeVisible({ timeout: 20_000 });
+  await expect(publish).toBeVisible({ timeout: 30_000 });
+
   await publish.click();
   await expect
     .poll(async () => (await pipelineSnapshot(matchId)).match.client_visibility, {
