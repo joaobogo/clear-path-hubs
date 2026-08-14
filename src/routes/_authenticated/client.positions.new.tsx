@@ -11,6 +11,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { getClientContext } from "@/lib/client-context.functions";
 import { createWorkspacePosition } from "@/lib/client-positions.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
+import { QueryErrorCard } from "@/components/client/query-error";
+import { toastError } from "@/lib/toast-error";
 
 /**
  * In-app role creation. A signed-in workspace never sees the public signup
