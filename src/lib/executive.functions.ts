@@ -115,6 +115,30 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     const matchRows: AnyRow[] = matches ?? [];
     const posById = new Map<string, AnyRow>(posRows.map((p) => [p.id, p]));
 
+    // Open / filled by region, using the shared role derivations so this strip
+    // agrees with Overview, the Roles list and the KPI tiles. A role counts as
+    // filled once its pipeline holds a hire, not only when someone manually
+    // flipped the position status.
+    const hiredPositionIds = new Set<string>(
+      matchRows
+        .filter((m) => laneFor({ stage: String(m.stage) }) === "hired")
+        .map((m) => String(m.position_id)),
+    );
+    const regionMap = new Map<string, { open: number; filled: number; total: number }>();
+    for (const p of posRows) {
+      const region = normalizeRegion(p.location);
+      const bucket = regionMap.get(region) ?? { open: 0, filled: 0, total: 0 };
+      bucket.total += 1;
+      if (isOpenRoleStatus(p.status)) bucket.open += 1;
+      if (isFilledRole({ id: String(p.id), status: p.status }, hiredPositionIds)) {
+        bucket.filled += 1;
+      }
+      regionMap.set(region, bucket);
+    }
+    const open_by_region = Array.from(regionMap.entries())
+      .map(([region, v]) => ({ region, ...v }))
+      .sort((a, b) => b.open - a.open || b.total - a.total);
+
     // Pipeline by business unit (department)
     const buMap = new Map<
       string,
