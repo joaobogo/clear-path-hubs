@@ -189,7 +189,6 @@ function PositionsPage() {
   return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
-        <NewRoleDialog clients={filters.data?.clients ?? []} />
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Positions</h1>
           <p className="text-sm text-muted-foreground">
