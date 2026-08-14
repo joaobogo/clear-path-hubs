@@ -231,6 +231,7 @@ function PositionsPage() {
             )}
           </p>
         </div>
+        <NewRoleDialog clients={filters.data?.clients ?? []} />
       </header>
 
       {/* Tabs: the whole book vs today's stalling roles. */}
