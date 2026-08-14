@@ -62,6 +62,7 @@ export function normaliseDeliveryStatus(status: string | null | undefined): Deli
   switch ((status ?? "").toLowerCase()) {
     case "sent":
     case "delivered":
+    case "provider_accepted":
       return "sent";
     case "queued":
     case "pending":
