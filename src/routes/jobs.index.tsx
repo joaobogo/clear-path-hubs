@@ -3,7 +3,7 @@ import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/component
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { listPublicPositions } from "@/lib/jobs.functions";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
