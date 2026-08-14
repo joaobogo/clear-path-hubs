@@ -2589,35 +2589,21 @@ function ExpressIntakePage() {
               )}
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Field
-                label="Bonus structure" carried={isCarried("bonusStructure")}
-                error={errors.bonusStructure}
-                required={req["bonusStructure"]}
-                hint="Only what you would actually offer."
+            <Field label="Equity" carried={isCarried("equity")} htmlFor="comp-equity" required={req["equity"]}>
+              <select
+                id="comp-equity"
+                value={state.equity}
+                onChange={(e) => set("equity", e.target.value)}
+                className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
               >
-                <Input
-                  value={state.bonusStructure}
-                  onChange={(e) => set("bonusStructure", e.target.value)}
-                  placeholder="10% annual, paid on company and personal targets"
-                />
-              </Field>
-              <Field label="Equity" carried={isCarried("equity")} htmlFor="comp-equity" required={req["equity"]}>
-                <select
-                  id="comp-equity"
-                  value={state.equity}
-                  onChange={(e) => set("equity", e.target.value)}
-                  className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
-                >
-                  <option value="">Not stated</option>
-                  {COMP_EQUITY.map((k) => (
-                    <option key={k} value={k}>
-                      {COMP_EQUITY_LABELS[k]}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-            </div>
+                <option value="">Not stated</option>
+                {COMP_EQUITY.map((k) => (
+                  <option key={k} value={k}>
+                    {COMP_EQUITY_LABELS[k]}
+                  </option>
+                ))}
+              </select>
+            </Field>
 
             <label className="flex cursor-pointer items-start gap-3 text-sm">
               <input
@@ -2633,14 +2619,15 @@ function ExpressIntakePage() {
               label="Anything else about the package"
               error={errors.compensationNote}
               required={req["compensationNote"]}
-              hint="Shift premium, relocation, or where exactly you have room."
+              hint="Bonus, relocation, shift premium, or where exactly you have room."
             >
               <Input
                 value={state.compensationNote}
                 onChange={(e) => set("compensationNote", e.target.value)}
-                placeholder="Can stretch to 90k for someone exceptional"
+                placeholder="10% annual bonus; can stretch to 90k for someone exceptional"
               />
             </Field>
+
           </div>
 
 
