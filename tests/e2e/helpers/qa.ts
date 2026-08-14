@@ -47,7 +47,8 @@ type QaAction =
   | "lookup_tenant"
   | "seat_scenario"
   | "seat_scenario_reset"
-  | "client_kpi_truth";
+  | "client_kpi_truth"
+  | "client_comms_truth";
 
 function token(): string {
   const value = process.env["QA_SEED_TOKEN"];
@@ -68,6 +69,38 @@ export async function qaSeed<T = Record<string, unknown>>(
   if (!res.ok) throw new Error(`qa-seed ${action} failed (${res.status}): ${text}`);
   return JSON.parse(text) as T;
 }
+
+export type ClientCommsTruth = {
+  ok: boolean;
+  conversations: Array<{
+    id: string;
+    organization_id: string;
+    scope: string;
+    subject: string;
+    last_message_at: string;
+  }>;
+  messages: Array<{
+    id: string;
+    conversation_id: string;
+    body: string;
+    sender_user_id: string | null;
+    created_at: string;
+  }>;
+  organization: Record<string, unknown> | null;
+  notification_preferences: Array<Record<string, unknown>>;
+  memberships: Array<{
+    id: string;
+    user_id: string | null;
+    role: string;
+    status: string;
+    created_at: string;
+  }>;
+  profiles: Array<{ auth_user_id: string; email: string | null; full_name: string | null; timezone: string | null }>;
+};
+
+/** Read-only DB truth behind client Messages / Team / Settings. */
+export const clientCommsTruth = (organizationId: string) =>
+  qaSeed<ClientCommsTruth>("client_comms_truth", { organization_id: organizationId });
 
 export const seedFixtures = () => qaSeed<SeedResult>("seed");
 export const cleanupFixtures = () => qaSeed("cleanup");
