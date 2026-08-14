@@ -162,44 +162,55 @@ export async function matchesNeedingReview(
   const { data } = await supabase
     .from("candidate_matches")
     .select(
-      "id, stage, admin_status, client_visibility, updated_at, position_id, positions(title), candidate_profiles(full_name)",
+      "id, updated_at, admin_status, client_visibility, processing_state, processing_error_code, positions(title, status), candidate_profiles(full_name), approved_run:score_runs!candidate_matches_approved_score_run_id_fkey(id, status, evidence, contradiction_status), current_run:score_runs!candidate_matches_current_score_run_id_fkey(id, status, score, fit_label, contradiction_status)",
     )
     .eq("organization_id", orgId)
-    .in("stage", ["new", "screening", "shortlist", "interview", "offer"])
     .order("updated_at", { ascending: false })
-    .limit(50);
+    .limit(100);
 
-  const items = (data ?? []).map((r: any) => {
-    let reason: string | null = null;
-    if (r.admin_status === "pending" && r.client_visibility !== "visible") {
-      reason = "In system validation — not yet visible in your workspace";
-    } else if (r.client_visibility === "visible" && r.stage === "new") {
-      reason = "Ready for you to review and move to screening";
-    } else if (r.stage === "shortlist") {
-      reason = "On shortlist — schedule interview or advance";
-    } else if (r.stage === "interview") {
-      reason = "Interview stage — record outcome";
-    } else if (r.stage === "offer") {
-      reason = "Offer open — capture decision";
-    }
-    if (!reason) return null;
-    citations.push({
-      kind: "match",
-      id: r.id,
-      label: `${r.candidate_profiles?.full_name ?? "Match"} — ${r.positions?.title ?? ""}`,
-      href: `/client/candidates/${r.id}`,
-    });
-    return {
-      match_id: r.id,
-      stage: r.stage,
-      admin_status: r.admin_status,
-      visibility: r.client_visibility,
-      reason,
-      candidate_name: r.candidate_profiles?.full_name,
-      position_title: r.positions?.title,
-      updated_at: r.updated_at,
-    };
-  }).filter(Boolean);
+  const items = (data ?? [])
+    .map((r: any) => {
+      const approved = r.approved_run;
+      const current = r.current_run;
+      const FATAL_STATES = ["failed", "provider_blocked", "ocr_required"];
+
+      const hasCurrentScore = current?.status === "completed" && current?.score != null;
+      const hasApprovedRun = !!approved && approved.status === "completed";
+      const adminApproved = r.admin_status === "approved";
+      const evidenceArr = Array.isArray(approved?.evidence) ? approved.evidence : [];
+      const evidenceOk = hasApprovedRun && evidenceArr.length > 0;
+      const contradictionStatus = approved?.contradiction_status ?? current?.contradiction_status ?? "none";
+      const contradictionOk = ["none", "resolved", "cleared"].includes(contradictionStatus);
+      const isFatal = FATAL_STATES.includes(r.processing_state);
+
+      const canPublish = adminApproved && hasApprovedRun && evidenceOk && contradictionOk && !isFatal && r.positions?.status !== "archived";
+
+      if (r.client_visibility === "visible") return null;
+
+      let reason: string | null = null;
+      if (isFatal) reason = "Blocked by processing error";
+      else if (canPublish) reason = "Ready to publish to client";
+      else if (hasCurrentScore && !adminApproved) reason = "Scored, awaiting admin approval";
+      else if (r.admin_status === "on_hold") reason = "On hold pending clarification";
+      else reason = "Awaiting scoring or system validation";
+
+      citations.push({
+        kind: "match",
+        id: r.id,
+        label: `${r.candidate_profiles?.full_name ?? "Match"} — ${r.positions?.title ?? ""}`,
+        href: `/client/candidates/${r.id}`,
+      });
+      return {
+        match_id: r.id,
+        candidate_name: r.candidate_profiles?.full_name,
+        position_title: r.positions?.title,
+        status: r.admin_status,
+        reason,
+        can_publish: canPublish,
+        updated_at: r.updated_at,
+      };
+    })
+    .filter(Boolean);
 
   return { data: { pending_reviews: items, count: items.length }, citations };
 }
@@ -350,11 +361,13 @@ export async function roleBlockers(
 
   const posQ = supabase
     .from("positions")
-    .select("id, title, status, updated_at, requirements, published_at")
+    .select("id, title, status, updated_at, published_at, payment_status, approved_at, description, employment_type, work_model, seniority, location")
     .eq("organization_id", orgId)
     .neq("status", "archived");
   if (positionId) posQ.eq("id", positionId);
   const { data: positions } = await posQ;
+
+  const { evaluatePublishGate } = await import("./publish-gate");
 
   const posIds = (positions ?? []).map((p: any) => p.id);
   const { data: matches } = posIds.length
@@ -367,6 +380,20 @@ export async function roleBlockers(
   const results = (positions ?? []).map((p: any) => {
     const rows = (matches ?? []).filter((m: any) => m.position_id === p.id);
     const blockers: string[] = [];
+    const gateInput = {
+      status: p.status,
+      payment_status: p.payment_status,
+      approved_at: p.approved_at,
+      published_at: p.published_at,
+      title: p.title,
+      description: p.description,
+      employment_type: p.employment_type,
+      work_model: p.work_model,
+      seniority: p.seniority,
+      location: p.location,
+    };
+    const gateBlockers = evaluatePublishGate(gateInput);
+
     const stalled = rows.filter((r: any) =>
       ["cv_unreadable", "hydration_failed", "insights_failed", "scoring_failed"].includes(
         r.processing_error_code ?? "",
@@ -376,11 +403,11 @@ export async function roleBlockers(
       (r: any) => r.admin_status === "pending" && r.client_visibility !== "visible",
     );
     const noApps = rows.length === 0;
-    const noReqs = !Array.isArray(p.requirements) || p.requirements.length === 0;
-    const notPublished = !p.published_at && p.status !== "active";
 
-    if (noReqs) blockers.push("Requirements list is empty");
-    if (notPublished) blockers.push("Position is not published/active yet");
+    if (gateBlockers.includes("payment_unpaid")) blockers.push("Payment incomplete");
+    if (gateBlockers.includes("missing_description") || gateBlockers.includes("missing_title")) 
+      blockers.push("Missing required fields");
+    if (gateBlockers.includes("not_approved")) blockers.push("Not approved");
     if (noApps) blockers.push("No applications received yet");
     if (stalled.length) blockers.push(`${stalled.length} candidate(s) awaiting data refresh`);
     if (pendingAdmin.length)
