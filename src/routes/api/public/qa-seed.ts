@@ -1451,6 +1451,76 @@ async function handle(request: Request): Promise<Response> {
       });
     }
 
+    /**
+     * Read-only KPI truth for one organisation, computed from the raw rows the
+     * client dashboard reads. A UI assertion alone cannot tell whether a tile
+     * is honest, so the spec compares each tile against these numbers.
+     * Never mutates anything.
+     */
+    if (action === "client_kpi_truth") {
+      if (!body.organization_id) {
+        return Response.json({ ok: false, error: "organization_id required" }, { status: 400 });
+      }
+      const sb = await loadAdmin();
+      const orgId = String(body.organization_id);
+      const { data: positions, error: pErr } = await sb
+        .from("positions")
+        .select("id, title, status")
+        .eq("organization_id", orgId);
+      if (pErr) throw pErr;
+      const { data: matches, error: mErr } = await sb
+        .from("candidate_matches")
+        .select("id, candidate_profile_id, position_id, stage, client_visibility, delivered_at")
+        .eq("organization_id", orgId);
+      if (mErr) throw mErr;
+      type M = {
+        id: string;
+        candidate_profile_id: string;
+        position_id: string;
+        stage: string;
+        client_visibility: string;
+        delivered_at: string | null;
+      };
+      const visible = ((matches ?? []) as M[]).filter((m) => m.client_visibility === "visible");
+      let interviewing = 0;
+      if (visible.length > 0) {
+        const { data: ivs } = await sb
+          .from("interviews")
+          .select("candidate_match_id, status")
+          .in("candidate_match_id", visible.map((m) => m.id))
+          .in("status", ["requested", "scheduling", "scheduled", "completed"]);
+        interviewing = new Set(
+          ((ivs ?? []) as Array<{ candidate_match_id: string }>).map((i) => i.candidate_match_id),
+        ).size;
+      }
+      const pos = (positions ?? []) as Array<{ id: string; title: string; status: string }>;
+      const deliveredByPosition = new Map<string, Set<string>>();
+      for (const m of visible) {
+        if (!deliveredByPosition.has(m.position_id)) deliveredByPosition.set(m.position_id, new Set());
+        deliveredByPosition.get(m.position_id)!.add(m.candidate_profile_id);
+      }
+      const openPositions = pos.filter((p) => p.status === "active" || p.status === "approved");
+      return Response.json({
+        ok: true,
+        action,
+        positions: pos.map((p) => ({
+          ...p,
+          delivered: deliveredByPosition.get(p.id)?.size ?? 0,
+        })),
+        roles_without_shortlist: openPositions.filter(
+          (p) => !visible.some((m) => m.position_id === p.id && m.delivered_at != null),
+        ).length,
+        active_positions: pos.filter((p) => p.status === "active" || p.status === "approved").length,
+        visible_matches: visible.length,
+        delivered: new Set(visible.map((m) => m.candidate_profile_id)).size,
+        shortlisted: visible.filter((m) => m.stage === "shortlisted").length,
+        interviewing,
+        offers: visible.filter((m) => m.stage === "offer").length,
+        hires: visible.filter((m) => m.stage === "hired").length,
+      });
+    }
+
+
     if (action === "create_application") {
       if (!body.user_id || !body.email || !body.position_id) {
         return Response.json({ ok: false, error: "user_id, email, position_id required" }, { status: 400 });

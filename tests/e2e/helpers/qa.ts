@@ -46,7 +46,8 @@ type QaAction =
   | "cleanup_booking_e2e"
   | "lookup_tenant"
   | "seat_scenario"
-  | "seat_scenario_reset";
+  | "seat_scenario_reset"
+  | "client_kpi_truth";
 
 function token(): string {
   const value = process.env["QA_SEED_TOKEN"];
@@ -542,6 +543,26 @@ export type TenantSnapshot = {
  * access. Assertions must never rely on the API response alone: the security
  * property is about what is persisted.
  */
+export type ClientKpiTruth = {
+  ok: boolean;
+  positions: Array<{ id: string; title: string; status: string; delivered: number }>;
+  roles_without_shortlist: number;
+  active_positions: number;
+  visible_matches: number;
+  delivered: number;
+  shortlisted: number;
+  interviewing: number;
+  offers: number;
+  hires: number;
+};
+
+/**
+ * KPI truth for one workspace, computed from the raw rows the dashboard reads.
+ * Tiles are only honest if they equal these numbers.
+ */
+export const clientKpiTruth = (organizationId: string) =>
+  qaSeed<ClientKpiTruth>("client_kpi_truth", { organization_id: organizationId });
+
 export const lookupTenant = (args: { companyName?: string; organizationId?: string }) =>
   qaSeed<TenantSnapshot>("lookup_tenant", {
     company_name: args.companyName,
