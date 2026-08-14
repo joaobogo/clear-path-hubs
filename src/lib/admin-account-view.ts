@@ -7,6 +7,7 @@
  */
 
 /** Position statuses that count as live delivery work (same as portfolio health). */
+import { formatMoneyFromCents } from "@/lib/money";
 export const ACCOUNT_OPEN_POSITION_STATUSES = [
   "submitted",
   "under_review",
@@ -64,16 +65,9 @@ export type AccountEngagement = {
   generated_at: string;
 };
 
+/** @deprecated Use `formatMoneyFromCents` from `@/lib/money` directly. */
 export function formatMoney(cents: number, currency: string): string {
-  try {
-    return new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency: currency.toUpperCase(),
-      maximumFractionDigits: 0,
-    }).format(cents / 100);
-  } catch {
-    return `${(cents / 100).toFixed(0)} ${currency.toUpperCase()}`;
-  }
+  return formatMoneyFromCents(cents, currency);
 }
 
 export function formatWhen(iso: string | null): string {
