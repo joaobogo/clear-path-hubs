@@ -120,7 +120,10 @@ function CandidateWorkspace() {
     queryFn: () => getAdminMatch({ data: { id, heavy: false } }),
   });
 
-  const { event: focusEventId, tab: urlTab } = Route.useSearch();
+  const { event: rawEvent, tab: urlTab } = Route.useSearch();
+  // Some links produce `?tab=profile&event=` with no value; a blank param means
+  // "no focused event" and must never be treated as an event id.
+  const focusEventId = normalizeFocusEventId(rawEvent);
   // The tab lives in the URL so deep links and back/forward keep working.
   const tab: TabId = focusEventId && urlTab === "profile" ? "history" : urlTab;
   const setTab = (next: TabId) =>
@@ -179,7 +182,9 @@ function CandidateWorkspace() {
     <div className="mx-auto max-w-[1600px] px-6 py-6 space-y-6">
       <WorkspaceHeader m={m} cp={cp} pos={pos} currentRun={currentRun} />
 
-      <CandidateNextActionBar matchId={id} onNavigateTab={(t) => setTab(t as TabId)} />
+      <ComponentErrorBoundary boundary="admin.candidate.next-action" tone="staff">
+        <CandidateNextActionBar matchId={id} onNavigateTab={(t) => setTab(t as TabId)} />
+      </ComponentErrorBoundary>
 
       {/* Mirrors the database's contact decision. Explains, never gates. */}
       <ContactStatusBadges organizationId={m.organization_id} candidateProfileId={cp?.id} />
@@ -271,13 +276,19 @@ function CandidateWorkspace() {
                 {tab === "screening" && <ScreeningTab result={currentResult} evidence={evidence} />}
                 {tab === "history" && (
                   <div className="space-y-4">
-                    <CandidateHistoryTimeline matchId={id} focusEventId={focusEventId || null} />
-                    <HistoryTab runs={runs} jobs={jobs} decisions={decisions} />
+                    <ComponentErrorBoundary boundary="admin.candidate.history-timeline" tone="staff">
+                      <CandidateHistoryTimeline matchId={id} focusEventId={focusEventId} />
+                    </ComponentErrorBoundary>
+                    <ComponentErrorBoundary boundary="admin.candidate.history-runs" tone="staff">
+                      <HistoryTab runs={runs} jobs={jobs} decisions={decisions} />
+                    </ComponentErrorBoundary>
                   </div>
                 )}
                 {tab === "preview" && <PreviewTab matchId={id} />}
                 {tab === "activity" && (
-                  <ActivityAuditTab matchId={id} positionId={pos?.id} decisions={decisions} />
+                  <ComponentErrorBoundary boundary="admin.candidate.activity" tone="staff">
+                    <ActivityAuditTab matchId={id} positionId={pos?.id} decisions={decisions} />
+                  </ComponentErrorBoundary>
                 )}
               </Suspense>
             )}
