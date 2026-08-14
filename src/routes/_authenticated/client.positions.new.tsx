@@ -62,6 +62,21 @@ function NewRolePage() {
 
   const valid = !!orgId && title.trim().length >= 2;
 
+  // A failed workspace read must not look like an empty form that silently
+  // refuses to submit: show the shared failure surface with a way out.
+  if (ctxQuery.isError) {
+    return (
+      <div className="mx-auto w-full max-w-xl p-6">
+        <QueryErrorCard
+          title="We couldn't open the role form"
+          error={ctxQuery.error}
+          onRetry={() => ctxQuery.refetch()}
+          retrying={ctxQuery.isFetching}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto w-full max-w-xl p-6">
       <Card>
