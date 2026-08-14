@@ -1933,30 +1933,37 @@ function ExpressIntakePage() {
               autoComplete="organization"
             />
           </Field>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field
-              label="Company website" carried={isCarried("companyWebsite")}
-              error={errors.companyWebsite}
-              required={req["companyWebsite"]}
-              hint="We read only your public pages."
-            >
-              <Input
-                value={state.companyWebsite}
-                onChange={(e) => set("companyWebsite", e.target.value)}
-                placeholder="northwindhealth.com"
-                autoComplete="url"
-                inputMode="url"
-              />
-            </Field>
-            <Field label="Company LinkedIn" carried={isCarried("companyLinkedin")} error={errors.companyLinkedin} required={req["companyLinkedin"]}>
-              <Input
-                value={state.companyLinkedin}
-                onChange={(e) => set("companyLinkedin", e.target.value)}
-                placeholder="linkedin.com/company/northwind"
-                inputMode="url"
-              />
-            </Field>
-          </div>
+          <Field
+            label="Company website" carried={isCarried("companyWebsite")}
+            error={errors.companyWebsite}
+            required={req["companyWebsite"]}
+            hint="We read only your public pages."
+          >
+            <Input
+              value={state.companyWebsite}
+              onChange={(e) => set("companyWebsite", e.target.value)}
+              placeholder="northwindhealth.com"
+              autoComplete="url"
+              inputMode="url"
+            />
+          </Field>
+          <details className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white px-4 py-3">
+            <summary className="cursor-pointer text-sm font-medium">
+              Add company LinkedIn{" "}
+              <span className="font-normal text-[color:var(--brand-navy)]/60">— optional</span>
+            </summary>
+            <div className="mt-3">
+              <Field label="Company LinkedIn" carried={isCarried("companyLinkedin")} error={errors.companyLinkedin} required={req["companyLinkedin"]}>
+                <Input
+                  value={state.companyLinkedin}
+                  onChange={(e) => set("companyLinkedin", e.target.value)}
+                  placeholder="linkedin.com/company/northwind"
+                  inputMode="url"
+                />
+              </Field>
+            </div>
+          </details>
+
         </Section>
 
         <Section id="section-you" title="You" step={1}>
@@ -1984,37 +1991,44 @@ function ExpressIntakePage() {
               autoComplete="organization-title"
             />
           </Field>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Work email" carried={isCarried("workEmail")} error={errors.workEmail} required={req["workEmail"]}>
-              <Input
-                type="email"
-                value={state.workEmail}
-                onChange={(e) => {
-                  set("workEmail", e.target.value);
-                  setEmailStatus({ kind: "idle" });
-                }}
-                onBlur={() => void checkEmail()}
-                autoComplete="email"
-                inputMode="email"
-              />
-            </Field>
-            <Field label="Phone" carried={isCarried("phone")} error={errors.phone} required={req["phone"]}>
-              <Input
-                value={state.phone}
-                onChange={(e) => set("phone", e.target.value)}
-                autoComplete="tel"
-                inputMode="tel"
-              />
-            </Field>
-          </div>
-          <Field label="Your LinkedIn" carried={isCarried("contactLinkedin")} error={errors.contactLinkedin} required={req["contactLinkedin"]}>
+          <Field label="Work email" carried={isCarried("workEmail")} error={errors.workEmail} required={req["workEmail"]}>
             <Input
-              value={state.contactLinkedin}
-              onChange={(e) => set("contactLinkedin", e.target.value)}
-              placeholder="linkedin.com/in/yourname"
-              inputMode="url"
+              type="email"
+              value={state.workEmail}
+              onChange={(e) => {
+                set("workEmail", e.target.value);
+                setEmailStatus({ kind: "idle" });
+              }}
+              onBlur={() => void checkEmail()}
+              autoComplete="email"
+              inputMode="email"
             />
           </Field>
+          <details className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white px-4 py-3">
+            <summary className="cursor-pointer text-sm font-medium">
+              Add phone and LinkedIn{" "}
+              <span className="font-normal text-[color:var(--brand-navy)]/60">— optional</span>
+            </summary>
+            <div className="mt-3 grid gap-4 sm:grid-cols-2">
+              <Field label="Phone" carried={isCarried("phone")} error={errors.phone} required={req["phone"]}>
+                <Input
+                  value={state.phone}
+                  onChange={(e) => set("phone", e.target.value)}
+                  autoComplete="tel"
+                  inputMode="tel"
+                />
+              </Field>
+              <Field label="Your LinkedIn" carried={isCarried("contactLinkedin")} error={errors.contactLinkedin} required={req["contactLinkedin"]}>
+                <Input
+                  value={state.contactLinkedin}
+                  onChange={(e) => set("contactLinkedin", e.target.value)}
+                  placeholder="linkedin.com/in/yourname"
+                  inputMode="url"
+                />
+              </Field>
+            </div>
+          </details>
+
         </Section>
 
         <div id="account-step">
@@ -2458,7 +2472,16 @@ function ExpressIntakePage() {
                   name="sponsorship-available"
                   value={opt.value}
                   checked={state.sponsorshipAvailable === opt.value}
-                  onChange={() => set("sponsorshipAvailable", opt.value)}
+                  onChange={() =>
+                    setState((s) => ({
+                      ...s,
+                      sponsorshipAvailable: opt.value,
+                      // Work authorisation is the same answer in other words,
+                      // so it is derived rather than asked twice.
+                      workAuthorization:
+                        opt.value === "yes" ? "will_sponsor" : "already_authorized",
+                    }))
+                  }
                   className="mt-1"
                 />
                 <span className="text-sm leading-relaxed">
@@ -2589,35 +2612,21 @@ function ExpressIntakePage() {
               )}
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Field
-                label="Bonus structure" carried={isCarried("bonusStructure")}
-                error={errors.bonusStructure}
-                required={req["bonusStructure"]}
-                hint="Only what you would actually offer."
+            <Field label="Equity" carried={isCarried("equity")} htmlFor="comp-equity" required={req["equity"]}>
+              <select
+                id="comp-equity"
+                value={state.equity}
+                onChange={(e) => set("equity", e.target.value)}
+                className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
               >
-                <Input
-                  value={state.bonusStructure}
-                  onChange={(e) => set("bonusStructure", e.target.value)}
-                  placeholder="10% annual, paid on company and personal targets"
-                />
-              </Field>
-              <Field label="Equity" carried={isCarried("equity")} htmlFor="comp-equity" required={req["equity"]}>
-                <select
-                  id="comp-equity"
-                  value={state.equity}
-                  onChange={(e) => set("equity", e.target.value)}
-                  className="flex h-11 w-full rounded-md border border-[color:var(--brand-navy)]/20 bg-white px-3 text-sm"
-                >
-                  <option value="">Not stated</option>
-                  {COMP_EQUITY.map((k) => (
-                    <option key={k} value={k}>
-                      {COMP_EQUITY_LABELS[k]}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-            </div>
+                <option value="">Not stated</option>
+                {COMP_EQUITY.map((k) => (
+                  <option key={k} value={k}>
+                    {COMP_EQUITY_LABELS[k]}
+                  </option>
+                ))}
+              </select>
+            </Field>
 
             <label className="flex cursor-pointer items-start gap-3 text-sm">
               <input
@@ -2633,49 +2642,19 @@ function ExpressIntakePage() {
               label="Anything else about the package"
               error={errors.compensationNote}
               required={req["compensationNote"]}
-              hint="Shift premium, relocation, or where exactly you have room."
+              hint="Bonus, relocation, shift premium, or where exactly you have room."
             >
               <Input
                 value={state.compensationNote}
                 onChange={(e) => set("compensationNote", e.target.value)}
-                placeholder="Can stretch to 90k for someone exceptional"
+                placeholder="10% annual bonus; can stretch to 90k for someone exceptional"
               />
             </Field>
+
           </div>
 
 
-          <fieldset className="space-y-2">
-            <legend className="text-sm font-medium">
-              Work authorisation
-              <span className="ml-2 text-xs font-normal text-[color:var(--brand-navy)]/60">
-                Optional
-              </span>
-            </legend>
-            {WORK_AUTHORIZATION_OPTIONS.map((opt) => (
-              <label
-                key={opt.value}
-                className="flex cursor-pointer items-start gap-3 rounded-lg border border-[color:var(--brand-navy)]/15 bg-white p-3"
-              >
-                <input
-                  type="radio"
-                  name="work-authorization"
-                  value={opt.value}
-                  checked={state.workAuthorization === opt.value}
-                  onChange={() => set("workAuthorization", opt.value)}
-                  className="mt-1"
-                />
-                <span className="text-sm leading-relaxed">
-                  <span className="font-medium">{opt.label}</span>
-                  <span className="block text-xs text-[color:var(--brand-navy)]/75">{opt.hint}</span>
-                </span>
-              </label>
-            ))}
-            {errors.workAuthorization && (
-              <p data-field-error="true" className="text-sm text-[color:var(--brand-danger)]">
-                {errors.workAuthorization}
-              </p>
-            )}
-          </fieldset>
+
 
           <Field
             label="Ideal start date"
