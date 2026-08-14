@@ -246,28 +246,39 @@ test.describe("full journey walkthrough", () => {
     await page.goto(`/admin/positions/${positionId}`, { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading").first()).toBeVisible({ timeout: 60_000 });
 
-    // The lifecycle bar surfaces exactly one legal forward move at a time, so
-    // walk it until the role is active rather than assuming a single click.
+    // The lifecycle bar exposes exactly one legal forward move per status, so
+    // the walk follows the product's own transition map (submitted → review →
+    // approved → active) and waits for React to attach before each click.
+    const NEXT_ACTION: Record<string, string> = {
+      draft: "submit",
+      submitted: "start_review",
+      under_review: "approve",
+      needs_clarification: "approve",
+      approved: "activate",
+    };
     let lifecycleError = "";
-    for (let i = 0; i < 6; i++) {
-      const current = (await journeyTrail({ organizationId: orgId, positionId: positionId! }))
-        .position?.status;
+    for (let i = 0; i < 8; i++) {
+      const current =
+        (await journeyTrail({ organizationId: orgId, positionId: positionId! })).position?.status ??
+        "";
       if (current === "active") break;
-      // The lifecycle bar tags its primary action, so the walk follows the
-      // product's own legal next move instead of guessing a label.
-      const forward = page.locator("[data-qa-action^='position-']").first();
-      if (!(await forward.count())) break;
-      const which = await forward.getAttribute("data-qa-action");
-      if (which === "position-actions-menu") break;
-      await forward.click();
-      // A refused transition shows a toast; capture it for the report.
+      const key = NEXT_ACTION[current];
+      if (!key) {
+        lifecycleError = `no forward move from status ${current}`;
+        break;
+      }
+      const selector = `[data-qa-action='position-${key}']`;
+      await waitForReactMount(page, selector);
+      await page.locator(selector).first().click();
+      // A refused transition surfaces as an error toast; keep it for the report.
+      await page.waitForTimeout(3_000);
       const failure = page.locator("[data-sonner-toast][data-type='error']");
       if (await failure.count()) {
         lifecycleError = (await failure.first().innerText().catch(() => "")) || lifecycleError;
       }
-      await page.waitForTimeout(3_000);
       await page.reload({ waitUntil: "domcontentloaded" });
     }
+
     const activated = await journeyTrail({ organizationId: orgId, positionId: positionId! });
     expect(activated.position?.status, `position is active (${lifecycleError})`).toBe("active");
     await checkTrail(
