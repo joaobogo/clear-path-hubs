@@ -29,10 +29,15 @@ type Row = {
 // there are no orphaned controls that appear to save but do nothing.
 const ROWS: Row[] = [
   // Account
-  { area: "Account", control: "Change email / password", status: "functional",
-    location: "/client/account", to: "/client/account", persistence: "auth.users via Supabase Auth", audit: "auth logs" },
-  { area: "Account", control: "Display name", status: "functional",
-    location: "/client/account", to: "/client/account", persistence: "profiles.full_name", audit: "audit_events" },
+  { area: "Account", control: "Change email (verified)", status: "functional",
+    location: "/client/account · /me/profile", to: "/client/account", persistence: "auth.users via Supabase Auth", audit: "auth logs" },
+  { area: "Account", control: "Password reset", status: "functional",
+    location: "/reset-password", to: "/reset-password", persistence: "auth.users via Supabase Auth", audit: "auth logs" },
+  { area: "Account", control: "Name and phone", status: "functional",
+    location: "/me/profile", to: "/me/profile", persistence: "profiles.full_name / phone", audit: "audit_events" },
+  { area: "Account", control: "Data export / deletion request", status: "functional",
+    location: "/me/settings", to: "/me/settings", persistence: "data_subject_requests", audit: "audit_events" },
+
 
   // Notifications
   { area: "Notifications", control: "Per-event email toggles", status: "functional",
