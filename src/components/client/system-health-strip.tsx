@@ -81,7 +81,27 @@ function StateChip({ state, className }: { state: HealthState; className?: strin
 
 function SignalActions({ signal }: { signal: HealthSignal }) {
   const queryClient = useQueryClient();
+  const [checking, setChecking] = useState(false);
   if (signal.actions.length === 0) return null;
+
+  // "Check again" used to look inert: it fired an invalidate and gave no
+  // feedback. Now it shows progress and reports the outcome.
+  const recheck = async () => {
+    if (checking) return;
+    setChecking(true);
+    try {
+      await queryClient.refetchQueries({ queryKey: SYSTEM_HEALTH_QUERY_KEY });
+      toast.success("Checked again", {
+        description: "This panel now shows the latest reading.",
+      });
+    } catch {
+      toast.error("We could not check again", {
+        description: "Nothing changed — please try once more in a moment.",
+      });
+    } finally {
+      setChecking(false);
+    }
+  };
   return (
     <div className="flex flex-wrap gap-2">
       {signal.actions.map((key: HealthActionKey) =>
@@ -90,10 +110,15 @@ function SignalActions({ signal }: { signal: HealthSignal }) {
             key={key}
             size="sm"
             variant="outline"
-            onClick={() => queryClient.invalidateQueries({ queryKey: SYSTEM_HEALTH_QUERY_KEY })}
+            onClick={recheck}
+            disabled={checking}
+            aria-busy={checking}
           >
-            <RefreshCw className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
-            {ACTION_LABEL[key]}
+            <RefreshCw
+              className={cn("mr-1.5 h-3.5 w-3.5", checking && "animate-spin")}
+              aria-hidden="true"
+            />
+            {checking ? "Checking…" : ACTION_LABEL[key]}
           </Button>
         ) : (
           <Button key={key} size="sm" variant="outline" asChild>
