@@ -179,11 +179,17 @@ export const globalSearch = createServerFn({ method: "POST" })
     {
       // Two-step: find matching candidate_profile ids, then look up matches
       // scoped correctly. Keeps embedding simple and RLS-friendly.
-      const { data: profiles, error: pErr } = await supabase
+      // Candidate profiles are not readable through client RLS (names are
+      // released per client+job), so searching them with the caller's client
+      // returned nothing. Resolve the name index with the privileged client
+      // and use the ids ONLY to intersect matches the caller can already see
+      // below — tenant isolation still comes from the RLS-scoped match query.
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: profiles, error: pErr } = await supabaseAdmin
         .from("candidate_profiles")
         .select("id, full_name, email, headline")
         .or(`full_name.ilike.${like},email.ilike.${like},headline.ilike.${like}`)
-        .limit(20);
+        .limit(50);
       if (pErr) throw new Error(pErr.message);
       const profileIds = ((profiles as AnyRow[]) ?? []).map((p) => p.id);
       const profileById = new Map<string, AnyRow>(
