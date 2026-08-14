@@ -86,7 +86,7 @@ const isSubmitted = (stage: string | null) =>
 const isAccepted = (stage: string | null) =>
   !!stage && (ACCEPTED_STAGES as readonly string[]).includes(stage);
 const isHired = (row: { stage: string | null; hire_status: string | null; hired_at: string | null }) =>
-  row.stage === "hired" || row.hire_status === "hired" || !!row.hired_at;
+  row.stage === "hired" || row.hire_status === "hire_confirmed" || !!row.hired_at;
 
 export function aggregateSourceQuality(rows: SourceAttributionRow[]): SourceQuality {
   const byChannel = new Map<string, SourceAttributionRow[]>();

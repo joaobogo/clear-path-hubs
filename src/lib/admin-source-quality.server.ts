@@ -86,7 +86,7 @@ export async function loadPositionSourceQuality(
         "Unnamed candidate",
       stage: row.stage,
       submitted: !!row.stage && submittedStages.has(row.stage),
-      hired: row.stage === "hired" || row.hire_status === "hired" || !!row.hired_at,
+      hired: row.stage === "hired" || row.hire_status === "hire_confirmed" || !!row.hired_at,
     });
     candidates_by_channel[channel] = list;
   }
