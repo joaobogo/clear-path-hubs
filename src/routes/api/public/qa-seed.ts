@@ -1091,13 +1091,25 @@ async function handle(request: Request): Promise<Response> {
       }
       const sb = await loadAdmin();
       const org = body.organization_id;
-      const [audit, events, notifs, position, match] = await Promise.all([
+      // Some writers record an entity without an organisation (public intake
+      // runs before the workspace exists), so the trail is the union of the
+      // org-scoped rows and anything pointing at this position or match.
+      const entityIds = [body.position_id, body.match_id].filter(Boolean) as string[];
+      const [audit, auditByEntity, events, notifs, position, match] = await Promise.all([
         sb
           .from("audit_events")
-          .select("id, event_type, entity_type, entity_id, position_id, created_at, actor_user_id")
+          .select("id, action, entity_type, entity_id, created_at, actor_user_id, trace_id")
           .eq("organization_id", org)
           .order("created_at", { ascending: true })
           .limit(500),
+        entityIds.length > 0
+          ? sb
+              .from("audit_events")
+              .select("id, action, entity_type, entity_id, created_at, actor_user_id, trace_id")
+              .in("entity_id", entityIds)
+              .order("created_at", { ascending: true })
+              .limit(500)
+          : Promise.resolve({ data: [], error: null }),
         sb
           .from("notification_events")
           .select("id, event_type, organization_id, position_id, application_id, created_at")
@@ -1116,7 +1128,7 @@ async function handle(request: Request): Promise<Response> {
               .select("id, title, status, visibility, reference_code")
               .eq("id", body.position_id)
               .maybeSingle()
-          : Promise.resolve({ data: null }),
+          : Promise.resolve({ data: null, error: null }),
         body.match_id
           ? sb
               .from("candidate_matches")
@@ -1125,12 +1137,27 @@ async function handle(request: Request): Promise<Response> {
               )
               .eq("id", body.match_id)
               .maybeSingle()
-          : Promise.resolve({ data: null }),
+          : Promise.resolve({ data: null, error: null }),
       ]);
+      // A silent query error would read as "no audit trail", which is exactly
+      // the failure this endpoint exists to detect — surface it instead.
+      const firstError =
+        audit.error ?? auditByEntity.error ?? events.error ?? notifs.error ?? null;
+      if (firstError) {
+        return Response.json({ ok: false, error: firstError.message }, { status: 500 });
+      }
+      type AuditRow = { id: string; action: string };
+      const merged = new Map<string, AuditRow>();
+      for (const row of [
+        ...((audit.data ?? []) as AuditRow[]),
+        ...((auditByEntity.data ?? []) as AuditRow[]),
+      ]) {
+        merged.set(row.id, row);
+      }
       return Response.json({
         ok: true,
         action,
-        audit_events: audit.data ?? [],
+        audit_events: Array.from(merged.values()),
         notification_events: events.data ?? [],
         notifications: notifs.data ?? [],
         position: position.data ?? null,
