@@ -1933,30 +1933,37 @@ function ExpressIntakePage() {
               autoComplete="organization"
             />
           </Field>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field
-              label="Company website" carried={isCarried("companyWebsite")}
-              error={errors.companyWebsite}
-              required={req["companyWebsite"]}
-              hint="We read only your public pages."
-            >
-              <Input
-                value={state.companyWebsite}
-                onChange={(e) => set("companyWebsite", e.target.value)}
-                placeholder="northwindhealth.com"
-                autoComplete="url"
-                inputMode="url"
-              />
-            </Field>
-            <Field label="Company LinkedIn" carried={isCarried("companyLinkedin")} error={errors.companyLinkedin} required={req["companyLinkedin"]}>
-              <Input
-                value={state.companyLinkedin}
-                onChange={(e) => set("companyLinkedin", e.target.value)}
-                placeholder="linkedin.com/company/northwind"
-                inputMode="url"
-              />
-            </Field>
-          </div>
+          <Field
+            label="Company website" carried={isCarried("companyWebsite")}
+            error={errors.companyWebsite}
+            required={req["companyWebsite"]}
+            hint="We read only your public pages."
+          >
+            <Input
+              value={state.companyWebsite}
+              onChange={(e) => set("companyWebsite", e.target.value)}
+              placeholder="northwindhealth.com"
+              autoComplete="url"
+              inputMode="url"
+            />
+          </Field>
+          <details className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white px-4 py-3">
+            <summary className="cursor-pointer text-sm font-medium">
+              Add company LinkedIn{" "}
+              <span className="font-normal text-[color:var(--brand-navy)]/60">— optional</span>
+            </summary>
+            <div className="mt-3">
+              <Field label="Company LinkedIn" carried={isCarried("companyLinkedin")} error={errors.companyLinkedin} required={req["companyLinkedin"]}>
+                <Input
+                  value={state.companyLinkedin}
+                  onChange={(e) => set("companyLinkedin", e.target.value)}
+                  placeholder="linkedin.com/company/northwind"
+                  inputMode="url"
+                />
+              </Field>
+            </div>
+          </details>
+
         </Section>
 
         <Section id="section-you" title="You" step={1}>
