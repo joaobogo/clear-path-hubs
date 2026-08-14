@@ -652,3 +652,79 @@ function PositionsPage() {
 
   );
 }
+
+/**
+ * Staff-side role creation. Intake stays the primary path; this covers roles
+ * taken over the phone. It creates a draft and drops the admin straight into
+ * the same edit wizard clients use, so nothing goes live unreviewed.
+ */
+function NewRoleDialog({ clients }: { clients: { id: string; name: string }[] }) {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [orgId, setOrgId] = useState("");
+  const [title, setTitle] = useState("");
+  const create = useMutation({
+    mutationFn: (input: { organization_id: string; title: string }) =>
+      createPositionForClient({ data: input }),
+    onSuccess: (res) => {
+      toast.success("Draft role created");
+      setOpen(false);
+      setTitle("");
+      void router.navigate({
+        to: "/admin/positions/$id/edit",
+        params: { id: res.position.id as string },
+      });
+    },
+    onError: (e: unknown) => toast.error((e as Error).message),
+  });
+  const valid = !!orgId && title.trim().length >= 2;
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button data-qa-action="new-position">+ New role</Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>New role</DialogTitle>
+          <DialogDescription>
+            Creates a draft for this client and opens the edit wizard. It stays off
+            the job board until it passes the publish gate.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-3">
+          <Select value={orgId} onValueChange={setOrgId}>
+            <SelectTrigger aria-label="Client for the new role" data-qa-action="new-position-client">
+              <SelectValue placeholder="Select client" />
+            </SelectTrigger>
+            <SelectContent>
+              {clients.map((c) => (
+                <SelectItem key={c.id} value={c.id}>
+                  {c.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Role title"
+            aria-label="Role title"
+            data-qa-action="new-position-title"
+          />
+        </div>
+        <DialogFooter>
+          <Button variant="ghost" onClick={() => setOpen(false)} disabled={create.isPending}>
+            Cancel
+          </Button>
+          <Button
+            disabled={!valid || create.isPending}
+            onClick={() => create.mutate({ organization_id: orgId, title: title.trim() })}
+            data-qa-action="new-position-submit"
+          >
+            {create.isPending ? "Creating…" : "Create draft"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
