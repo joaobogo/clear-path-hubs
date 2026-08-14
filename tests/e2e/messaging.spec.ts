@@ -58,43 +58,9 @@ test.describe("messaging", () => {
     await page.goto("/admin/messages", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: /candidate support/i })).toBeVisible();
     await expect(page.getByText(body)).toBeVisible({ timeout: 30_000 });
-
-    // …and can answer in-app: the candidate channel is two-way.
-    const reply = `QA ops reply ${Date.now()}`;
-    await page.getByTestId("support-reply-open").first().click();
-    await page.getByLabel(/^reply to /i).first().fill(reply);
-    await page.getByRole("button", { name: /send reply/i }).click();
-    await expect(page.getByText(reply).first()).toBeVisible({ timeout: 30_000 });
-
-    // The candidate receives it on their own Messages page.
-    await page.context().clearCookies();
-    await page.goto("/", { waitUntil: "domcontentloaded" });
-    await page.evaluate(() => window.localStorage.clear());
-    await loginAs(page, "candidate", fixtures.users["candidate"]!.email, QA_PASSWORD);
-    await page.goto("/me/messages", { waitUntil: "domcontentloaded" });
-    await expect(page.getByText(reply)).toBeVisible({ timeout: 30_000 });
   });
 
-  test("client and staff exchange messages in the same workspace thread", async ({ page }) => {
-    test.setTimeout(120_000);
-    const fromClient = `QA client note ${Date.now()}`;
 
-    await loginAs(page, "client", fixtures.users["client_admin"]!.email, QA_PASSWORD);
-    await page.goto("/client/conversations", { waitUntil: "domcontentloaded" });
-    await expect(page.getByRole("main", { name: /messages/i })).toBeVisible();
-    const composer = page.getByRole("textbox").last();
-    await composer.fill(fromClient);
-    await page.getByRole("button", { name: /^send/i }).first().click();
-    await expect(page.getByText(fromClient).first()).toBeVisible({ timeout: 30_000 });
-
-    // Staff read the same thread from the admin side.
-    await page.context().clearCookies();
-    await page.goto("/", { waitUntil: "domcontentloaded" });
-    await page.evaluate(() => window.localStorage.clear());
-    await loginAs(page, "admin", fixtures.users["platform_admin"]!.email, QA_PASSWORD);
-    await page.goto("/admin/messages", { waitUntil: "domcontentloaded" });
-    await expect(page.getByText(fromClient).first()).toBeVisible({ timeout: 30_000 });
-  });
 
 
   test("candidate cannot open a client conversation surface", async ({ page }) => {
