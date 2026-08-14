@@ -1,7 +1,6 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import {
-  queryOptions,
   useMutation,
   useQuery,
   useQueryClient,
@@ -12,7 +11,6 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import { getClientContext } from "@/lib/client-context.functions";
-import { getClientPositionDetail } from "@/lib/client-positions.functions";
 import { type MatchStage } from "@/lib/client-match-stage";
 import {
   TIMEZONE_BAND_LABELS,
@@ -50,17 +48,8 @@ import { RoleStatusSection } from "@/components/client/position-detail/role-stat
 import { EvidencePanels } from "@/components/client/position-detail/evidence-panels";
 import { RoleStoryPanel } from "@/components/client/position-detail/role-story";
 import { useDetailCrumb } from "@/lib/workspace/crumb-label";
+import { positionDetailQuery } from "@/lib/client-position-detail-query";
 
-/**
- * One payload for the whole role. The server returns the role, its pipeline,
- * timeline, lifecycle, closure, recap and open information requests together,
- * so the page has a single loading state and a single retry.
- */
-const positionDetailQuery = (orgId: string, positionId: string) =>
-  queryOptions({
-    queryKey: ["client-position", orgId, positionId],
-    queryFn: () => getClientPositionDetail({ data: { orgId, positionId } }),
-  });
 
 export const Route = createFileRoute("/_authenticated/client/positions/$id")({
   head: () => ({
