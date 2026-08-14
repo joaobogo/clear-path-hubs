@@ -30,6 +30,7 @@ import {
   type PipelineStatusInput,
 } from "@/lib/client-pipeline-language";
 import { computeRoleProgress } from "@/lib/client-role-progress";
+import { countLanes } from "@/lib/client-pipeline-lane";
 import { computeClientRoleStatus } from "@/lib/client-role-status";
 import { statusesForRoleTab } from "@/lib/client-role-status-tabs";
 import { computeRoleRisk } from "@/lib/client-role-risk";
@@ -225,22 +226,26 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       .filter((a) => SAFE_ACTION_PREFIXES.some((p) => String(a.action ?? "").startsWith(p)))
       .slice(0, 10);
 
-    // Pipeline counts (visible only, matches server truth).
+    // Pipeline counts — the canonical KPI rows for THIS role, run through the
+    // one lane derivation. The role page used to count raw stages on its own
+    // query, which is how it could say "0 hired" beside "1 hire confirmed".
+    const roleKpiRows = (await loadKpiRows(context.supabase, data.orgId)).filter(
+      (r) => r.position_id === data.positionId,
+    );
+    const roleKpis = computeKpis(roleKpiRows, 0);
+    const laneCounts = countLanes(roleKpiRows).counts;
     const stageCounts: Record<string, number> = {
-      delivered: 0,
-      shortlisted: 0,
-      interview_process: 0,
-      offer: 0,
-      hired: 0,
-      not_moving_forward: 0,
+      delivered: laneCounts.delivered,
+      shortlisted: laneCounts.shortlisted,
+      interview_process: laneCounts.interview_process,
+      offer: laneCounts.offer,
+      hired: laneCounts.hired,
+      not_moving_forward: laneCounts.not_moving_forward,
     };
-    for (const m of (matches as AnyRow[]) ?? []) {
-      const s = String(m.stage);
-      if (s in stageCounts) stageCounts[s]! += 1;
-    }
     const openings = Math.max(1, Number(position.openings ?? 1));
     const hires = stageCounts.hired ?? 0;
     const remaining = Math.max(0, openings - hires);
+
 
     // Interview state for the plain-language status line.
     const matchIdList = ((matches as AnyRow[]) ?? []).map((m) => m.id as string);
@@ -267,17 +272,11 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       interviewsToConfirm = confirmSet.size;
       interviewsScheduled = scheduledSet.size;
     }
-    const pipelineLine = buildPipelineStatusLine({
-      status: String(position.status),
-      awaitingReview: stageCounts.delivered ?? 0,
-      shortlisted: stageCounts.shortlisted ?? 0,
-      interviewsToConfirm,
-      interviewsScheduled,
-      nextInterviewAt,
-      offers: stageCounts.offer ?? 0,
-      hires,
-      totalCandidates: ((matches as AnyRow[]) ?? []).length,
-    });
+    // Same vocabulary mapper the Roles list and Overview use, fed the same
+    // canonical rows — one sentence, one set of numbers.
+    const pipelineLine = buildPipelineStatusLine(
+      pipelineLanguageInput(roleKpiRows, String(position.status)),
+    );
 
     const positionStageDates = (
       await loadRoleStageDates(context.supabase, data.orgId, [data.positionId])
@@ -504,6 +503,7 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
           }
         : null,
       commitment_contact_name: commitmentContactName,
+      kpis: roleKpis,
       summary: {
         openings,
         hires,

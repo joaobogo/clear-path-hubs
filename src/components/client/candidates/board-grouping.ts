@@ -7,18 +7,25 @@
  */
 import { KANBAN_COLUMNS, STAGE_GRAPH } from "@/components/client/position-detail/constants";
 import type { MatchStage } from "@/lib/client-match-stage";
+import { laneFor } from "@/lib/client-pipeline-lane";
 
 export type StageBuckets<T> = Record<string, T[]>;
 
-/** Rows that carry a stage the board has no column for (never rendered). */
-export function groupRowsByStage<T extends { stage: string }>(
+/**
+ * Rows that carry a stage the board has no column for (never rendered).
+ *
+ * Placement uses the canonical lane derivation, not the raw stage, so a column
+ * count can never disagree with the KPI tile that counts the same people.
+ */
+export function groupRowsByStage<T extends { stage: string; interview_active?: boolean | null }>(
   rows: T[],
 ): { byStage: StageBuckets<T>; unplaced: T[] } {
   const byStage: StageBuckets<T> = {};
   for (const col of KANBAN_COLUMNS) byStage[col.key] = [];
   const unplaced: T[] = [];
   for (const row of rows) {
-    const bucket = byStage[row.stage];
+    const lane = laneFor(row);
+    const bucket = lane ? byStage[lane] : undefined;
     if (bucket) bucket.push(row);
     else unplaced.push(row);
   }

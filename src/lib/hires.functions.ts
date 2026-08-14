@@ -7,6 +7,7 @@ import { attachMemberProfiles } from "@/lib/membership-profiles.server";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -590,11 +591,12 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     };
     const scoped = list.filter(inWindow);
 
-    const openOffers = scoped.filter((r) =>
-      ["offer_drafted", "offer_sent", "offer_negotiating", "offer_accepted"].includes(
-        r.status,
-      ),
-    ).length;
+    // Open offers and confirmed hires are pipeline facts, not report facts:
+    // they come from the canonical KPI service so this strip can never
+    // contradict the board underneath it, the Roles list, or the Candidates
+    // page. The report window only shapes the timing metrics below.
+    const canonical = computeKpis(await loadKpiRows(context.supabase, data.orgId), 0);
+    const openOffers = canonical.offers;
     const hires = scoped.filter((r) => r.status === "hire_confirmed");
     const declined = scoped.filter((r) => r.status === "offer_declined");
     const closedLost = scoped.filter((r) => r.status === "closed_lost").length;
@@ -707,7 +709,8 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     const report: TimeToHireReport = {
       totals: {
         open_offers: openOffers,
-        hires_confirmed: hires.length,
+        // Canonical hire count (pipeline truth), not the windowed report slice.
+        hires_confirmed: canonical.hires,
         closed_lost: closedLost,
         acceptance_rate: acceptanceRate,
         avg_days_to_hire: avg(daysHired),

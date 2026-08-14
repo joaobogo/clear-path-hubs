@@ -7,12 +7,7 @@
 // teammate) refuses identically instead of one path leaking trigger text.
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { seatBlockCode, type SeatBlock } from "@/lib/seat-limit";
-
-/** Roles that occupy a workspace seat. Candidates and staff never do. */
-const SEAT_ROLES = ["client_admin", "client_editor", "client_viewer"] as const;
-
-/** Statuses that hold a seat. `invited` reserves one; `suspended` releases it. */
-const SEAT_STATUSES = ["active", "invited"] as const;
+import { SEAT_ROLES, SEAT_STATUSES, computeSeatCount } from "@/lib/client-seats";
 
 export async function readSeatUsage(
   orgId: string,
@@ -25,18 +20,18 @@ export async function readSeatUsage(
       .maybeSingle(),
     supabaseAdmin
       .from("memberships")
-      .select("id")
+      .select("id, role, status")
       .eq("organization_id", orgId)
       .in("role", [...SEAT_ROLES])
       .in("status", [...SEAT_STATUSES]),
   ]);
-  const recruiterSeats =
-    (org as { client_seat_limit?: number | null } | null)?.client_seat_limit ?? 3;
-  // The owner seat sits on top of the recruiter allowance, matching the
-  // database guard's `recruiter seats + 1`.
-  const seatLimit = recruiterSeats + 1;
-  const seatsUsed = ((rows as { id: string }[] | null) ?? []).length;
-  return { seatLimit, seatsUsed, seatsLeft: Math.max(0, seatLimit - seatsUsed) };
+  // One shared derivation (`client-seats.ts`) — the Account page, the authz
+  // endpoint and this helper must never produce different seat totals.
+  const { seatLimit, seatsUsed, seatsLeft } = computeSeatCount(
+    ((rows as { role: string; status: string }[] | null) ?? []),
+    (org as { client_seat_limit?: number | null } | null)?.client_seat_limit ?? null,
+  );
+  return { seatLimit, seatsUsed, seatsLeft };
 }
 
 /**

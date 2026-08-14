@@ -7,6 +7,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { computeSeatCount } from "@/lib/client-seats";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -116,7 +117,7 @@ export const getAccountOverview = createServerFn({ method: "GET" })
       await Promise.all([
         supabase
           .from("memberships")
-          .select("user_id, status")
+          .select("user_id, role, status")
           .eq("organization_id", data.orgId),
         supabase
           .from("positions")
@@ -129,9 +130,12 @@ export const getAccountOverview = createServerFn({ method: "GET" })
       ]);
 
     const memberRows = (members as AnyRow[]) ?? [];
-    const activeSeats = memberRows.filter((m) => m.status === "active").length;
-    const invitedSeats = memberRows.filter((m) => m.status === "invited").length;
-    const limit = Number(o.client_seat_limit ?? 0);
+    // Shared seat derivation: seat-holding roles only, owner seat included, so
+    // Account and Team & roles can never print different seat totals.
+    const seatCount = computeSeatCount(memberRows, o.client_seat_limit as number | null);
+    const activeSeats = seatCount.activeMembers;
+    const invitedSeats = seatCount.pendingInvites;
+    const limit = seatCount.seatLimit;
 
     const positionRows = (positions as AnyRow[]) ?? [];
     const rolesOpen = positionRows.filter((p) =>
@@ -139,7 +143,9 @@ export const getAccountOverview = createServerFn({ method: "GET" })
     ).length;
 
     const hireRows = ((hires as AnyRow[]) ?? []).filter(
-      (h) => h.status === "hired" || Boolean(h.hired_at),
+      // `hire_confirmed` is the stored enum value; the old `"hired"` compare
+      // never matched and left this list dependent on a stamp alone.
+      (h) => h.status === "hire_confirmed" || Boolean(h.hired_at),
     );
     const now = new Date();
     const nowIso = now.toISOString();
@@ -187,7 +193,7 @@ export const getAccountOverview = createServerFn({ method: "GET" })
         limit,
         active: activeSeats,
         invited: invitedSeats,
-        remaining: Math.max(0, limit - activeSeats - invitedSeats),
+        remaining: seatCount.seatsLeft,
       },
       hires: {
         total: hireRows.length,
