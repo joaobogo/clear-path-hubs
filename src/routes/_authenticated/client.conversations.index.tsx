@@ -157,6 +157,22 @@ function ConversationsPage() {
         />
       ) : isLoading && !data ? (
         <SkeletonRows rows={5} />
+      ) : items.length === 0 && box === "unread" && (data?.items?.length ?? 0) > 0 ? (
+        // Threads exist, just nothing unread — say so instead of the
+        // "you have no messages" state, which would read as a bug here.
+        <div className="rounded-lg border bg-card p-8 text-center">
+          <p className="text-sm font-medium">You're all caught up</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Nothing unread. Switch to All messages to see every thread.
+          </p>
+          <Link
+            to="/client/conversations"
+            search={orgSearch ? { org: orgSearch } : undefined}
+            className="mt-3 inline-block text-sm font-medium text-primary hover:underline"
+          >
+            All messages
+          </Link>
+        </div>
       ) : items.length === 0 ? (
         <SurfaceState
           content={resolveNoMessagesState({
@@ -164,6 +180,7 @@ function ConversationsPage() {
             rolesInSetup: signals?.rolesInSetup ?? 0,
           })}
         />
+
       ) : (
         <ul className="divide-y rounded-lg border bg-card">
           {items.map((c) => {
