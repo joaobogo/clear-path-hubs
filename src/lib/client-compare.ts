@@ -13,6 +13,8 @@ export type CompareCell = {
   /** Evidence snippet revealed on hover — never a score or engine internal. */
   evidence: string | null;
   source: string | null;
+  /** True when the evidence is a verbatim quote from this candidate's record. */
+  verbatim?: boolean;
 };
 
 export type CompareMatrixRow = {
