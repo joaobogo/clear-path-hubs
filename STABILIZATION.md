@@ -1442,3 +1442,31 @@ Checklist:
 Verified: `tests/e2e/messaging.spec.ts` (3/3), `tests/authz` + unit (41/41), typecheck clean.
 Open: the staff→candidate reply UI and the client↔staff thread are verified manually;
 their Playwright coverage is selector-fragile and still to be stabilised.
+
+## Pass 14 — Data integrity across all dashboards
+
+### 1. Mock / hardcoded / placeholder sweep (91 authenticated routes + ~370 imported modules)
+| Finding | Location | Action |
+| --- | --- | --- |
+| "57 verticals mapped" — unverifiable stat shown to clients as fact | `src/routes/_authenticated/boardroom.tsx:447` | Removed the number; copy now states the rubric adapts per vertical |
+| Invented fallback count `?? 2` in deal-breaker prompt | `src/components/client/decision-bar.tsx:285` | Changed to `?? 0` so no fabricated history can ever render |
+| Randomised skeleton bar width | `src/components/ui/sidebar.tsx:643` | Kept — decorative loading shimmer, not data |
+| `Math.random()` in `*.functions.ts` / `*.server.ts` | ~25 files | Kept — trace/idempotency IDs, never rendered |
+| `mockData` / `sampleData` / `fakeData` / "John Doe" / "Acme" / Lorem | none | No instances outside `admin.design-system.tsx` typography specimen |
+
+### 2. Root-cause data defect found and fixed (migration)
+`is_test_record` was nullable with no default; 11 of ~20 positions (and equivalents on organizations, applications, candidate_matches and related tables) held `NULL`. Every filter written as `.eq("is_test_record", false)` — admin attention queue, admin outreach health, candidate profile nudges, candidate outcome SLA — silently dropped **all real rows**. Migration backfilled `NULL → false`, set `DEFAULT false` and `NOT NULL` on every such column. Reversible (drop default, allow NULL).
+
+### 3. Cross-view consistency (10/10 demo matches, incl. the 3 sampled)
+Single source of truth confirmed: admin views read `candidate_matches.current_score_run_id`, client views read `approved_score_run_id`; client visibility is gated by exactly one column (`client_visibility`).
+- Ana Ribeiro 79 strong_fit · offer — current == approved pointer
+- Beatriz Costa 88 strong_fit · hired — current == approved pointer
+- Carla Nunes 66 worth_considering · interview_process — current == approved pointer
+- 10/10 matches: `pointers_match = true`, `missing_approved = false`, score status `completed`. No divergent score between admin lists, candidate record, publish desk, client Kanban.
+
+### 4. KPI recheck against live data
+Northwind Talent (Demo): 10 matches, 10 client-visible, 3 shortlisted, stage spread across shortlisted / interview_process / offer / hired / not_moving_forward. Platform: 3 active positions, 15 published matches. All tiles trace to server functions with skeleton/empty/error states; no invented `?? N` numeric fallbacks remain.
+
+### Test status
+- Unit: 1150/1150 passing (`exports.masking` timed out once under parallel load, passes in isolation — flaky, not a defect).
+- E2E: 2 known blockers remain on the staff "Approve score" evidence gate (`publish-desk.spec.ts`, `client-candidates-kanban.spec.ts`) — carried over from Pass 9/10, unchanged by this pass.
