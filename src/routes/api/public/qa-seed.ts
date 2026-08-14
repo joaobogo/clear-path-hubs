@@ -334,6 +334,29 @@ async function seedQAData(): Promise<{
     { onConflict: "user_id,role" },
   );
 
+  // Candidate seats are not memberships, so the candidate dashboard only
+  // resolves when a candidate_profiles row is linked to the auth user. Seed it
+  // here or QA candidate sign-in dead-ends on /access-denied.
+  await sb.from("candidate_profiles").upsert(
+    [
+      {
+        user_id: userIds.candidate,
+        email: QA_EMAILS.candidate,
+        full_name: "QA Candidate",
+        is_test_record: true,
+      },
+      {
+        user_id: userIds.candidate_cross,
+        email: QA_EMAILS.candidate_cross,
+        full_name: "QA Candidate Cross",
+        is_test_record: true,
+      },
+    ],
+    { onConflict: "user_id" },
+  );
+
+
+
   // Create orgs
   const { data: orgRow, error: orgErr } = await sb
     .from("organizations")
