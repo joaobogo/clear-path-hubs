@@ -47,7 +47,12 @@ export interface NormalizedError {
   status?: number;
 }
 
-const RAW_LEAK = /(supabase|postgrest|pgrst|jwt|sql|relation ".*"|stack|at .*\(.*:\d+:\d+\)|\{"|\[object)/i;
+// Raw database/provider text must never reach a user. Beyond driver names, this
+// also catches Postgres permission and constraint prose ("new row violates
+// row-level security policy for table ...", "permission denied", "duplicate key
+// value", "column x does not exist"), which reads as a system leak, not guidance.
+const RAW_LEAK =
+  /(supabase|postgrest|pgrst|jwt|sql|relation ".*"|stack|at .*\(.*:\d+:\d+\)|\{"|\[object|row-level security|violates|permission denied|duplicate key|constraint|column .* does not exist|for table ")/i;
 
 export function newCorrelationId(): string {
   const rand =

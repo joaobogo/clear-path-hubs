@@ -309,6 +309,7 @@ export const globalSearch = createServerFn({ method: "POST" })
         .from("tasks")
         .select("id, title, status, task_type, organization_id, due_at, blocking")
         .ilike("title", like)
+        .is("deleted_at", null)
         .neq("status", "cancelled")
         .order("updated_at", { ascending: false })
         .limit(LIMIT);

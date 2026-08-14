@@ -11,6 +11,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { getClientContext } from "@/lib/client-context.functions";
 import { createWorkspacePosition } from "@/lib/client-positions.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
+import { QueryErrorCard } from "@/components/client/query-error";
+import { toastError } from "@/lib/toast-error";
 
 /**
  * In-app role creation. A signed-in workspace never sees the public signup
@@ -54,13 +56,28 @@ function NewRolePage() {
         search: { step: undefined },
       });
     },
+    // Never leak database prose: toastError keeps human messages and swaps
+    // raw Postgres/RLS text for guidance plus a private log reference.
     onError: (e: unknown) =>
-      toast.error(
-        (e as Error).message?.replace(/^Error:\s*/, "") || "We could not create the role",
-      ),
+      toastError(e, { fallback: "We couldn't create the role. Nothing was saved — please try again." }),
   });
 
   const valid = !!orgId && title.trim().length >= 2;
+
+  // A failed workspace read must not look like an empty form that silently
+  // refuses to submit: show the shared failure surface with a way out.
+  if (ctxQuery.isError) {
+    return (
+      <div className="mx-auto w-full max-w-xl p-6">
+        <QueryErrorCard
+          title="We couldn't open the role form"
+          error={ctxQuery.error}
+          onRetry={() => ctxQuery.refetch()}
+          retrying={ctxQuery.isFetching}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto w-full max-w-xl p-6">
