@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -55,6 +55,10 @@ function relTime(iso: string) {
 
 function ConversationsPage() {
   const orgSearch = useClientOrgSearch();
+  // `?box=unread` is what the "Inbox" tab means: same thread list, unread only.
+  const box = (useSearch({ strict: false }) as { box?: string })?.box === "unread"
+    ? "unread"
+    : "all";
   const ctxFn = useServerFn(getClientContext);
   const listFn = useServerFn(listConversations);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["key"]>("all");
@@ -80,6 +84,7 @@ function ConversationsPage() {
   const items = useMemo(() => {
     const needle = q.trim().toLowerCase();
     return (data?.items ?? []).filter((c) => {
+      if (box === "unread" && c.unread <= 0) return false;
       if (filter !== "all" && c.scope !== filter) return false;
       if (!needle) return true;
       return (
@@ -88,18 +93,24 @@ function ConversationsPage() {
         (c.last_body ?? "").toLowerCase().includes(needle)
       );
     });
-  }, [data, filter, q]);
+  }, [data, box, filter, q]);
+  const unreadCount = (data?.items ?? []).filter((c) => c.unread > 0).length;
+
 
   return (
     <div className="space-y-5">
       <header>
         <h1 className="flex items-center gap-2 text-2xl font-semibold">
-          <MessageSquare className="h-6 w-6 text-primary" /> Conversations
+          <MessageSquare className="h-6 w-6 text-primary" />
+          {box === "unread" ? "Inbox" : "Conversations"}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          One thread per role and per candidate. Everything is mirrored to email.
+          {box === "unread"
+            ? `Threads with something new for you${unreadCount ? ` — ${unreadCount} unread` : ""}.`
+            : "One thread per role and per candidate. Everything is mirrored to email."}
         </p>
       </header>
+
 
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex rounded-md border p-0.5">
@@ -146,6 +157,22 @@ function ConversationsPage() {
         />
       ) : isLoading && !data ? (
         <SkeletonRows rows={5} />
+      ) : items.length === 0 && box === "unread" && (data?.items?.length ?? 0) > 0 ? (
+        // Threads exist, just nothing unread — say so instead of the
+        // "you have no messages" state, which would read as a bug here.
+        <div className="rounded-lg border bg-card p-8 text-center">
+          <p className="text-sm font-medium">You're all caught up</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Nothing unread. Switch to All messages to see every thread.
+          </p>
+          <Link
+            to="/client/conversations"
+            search={orgSearch ? { org: orgSearch } : undefined}
+            className="mt-3 inline-block text-sm font-medium text-primary hover:underline"
+          >
+            All messages
+          </Link>
+        </div>
       ) : items.length === 0 ? (
         <SurfaceState
           content={resolveNoMessagesState({
@@ -153,6 +180,7 @@ function ConversationsPage() {
             rolesInSetup: signals?.rolesInSetup ?? 0,
           })}
         />
+
       ) : (
         <ul className="divide-y rounded-lg border bg-card">
           {items.map((c) => {

@@ -31,6 +31,7 @@ import {
 } from "@/lib/client-pipeline-language";
 import { computeRoleProgress } from "@/lib/client-role-progress";
 import { computeClientRoleStatus } from "@/lib/client-role-status";
+import { statusesForRoleTab } from "@/lib/client-role-status-tabs";
 import { computeRoleRisk } from "@/lib/client-role-risk";
 import { computeHiringHealth } from "@/lib/client-hiring-health";
 import { buildQueue, type QueueItem } from "@/lib/client-decision-queue";
@@ -84,6 +85,9 @@ export const getClientPositions = createServerFn({ method: "GET" })
     z
       .object({
         orgId: z.string().uuid(),
+        // Tab key, not a raw DB status: expanded below so intermediate
+        // statuses (submitted, under_review, needs_clarification, approved)
+        // can never fall outside every tab.
         status: z.enum(["active", "draft", "paused", "closed"]).optional(),
       })
       .parse(input),
@@ -91,11 +95,21 @@ export const getClientPositions = createServerFn({ method: "GET" })
   .handler(async ({ context, data }) => {
     await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
     // "Archived" keeps closed roles readable: filled, closed and archived.
-    const statusFilter = (data.status === "closed"
-      ? (["filled", "closed", "archived"] as const)
-      : data.status
-        ? ([data.status] as const)
-        : (["active", "draft", "paused", "filled", "closed", "archived"] as const)) as unknown as string[];
+    const ALL_STATUSES = [
+      "draft",
+      "submitted",
+      "under_review",
+      "needs_clarification",
+      "approved",
+      "active",
+      "paused",
+      "filled",
+      "closed",
+      "archived",
+    ];
+    const statusFilter: string[] = data.status
+      ? statusesForRoleTab(data.status)
+      : ALL_STATUSES;
     const { data: positions, error } = await context.supabase
       .from("positions")
       .select(

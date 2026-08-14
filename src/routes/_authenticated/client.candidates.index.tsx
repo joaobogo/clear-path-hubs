@@ -41,8 +41,9 @@ const searchSchema = z.object({
  stage: fallback(z.string(), "all").default("all"),
  fit: fallback(z.string(), "all").default("all"),
  critical: fallback(z.string(), "all").default("all"),
- // Default view is "needs my decision first" — awaiting-review candidates.
- review: fallback(z.string(), "awaiting").default("awaiting"),
+ // Unfiltered by default: a filtered-by-default list made "All candidates"
+ // links look broken. "Awaiting your review" is one click away as a chip.
+ review: fallback(z.string(), "all").default("all"),
  availability: fallback(z.string(), "all").default("all"),
  minExp: fallback(z.string(), "").default(""),
  location: fallback(z.string(), "").default(""),
