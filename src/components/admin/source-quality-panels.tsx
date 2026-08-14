@@ -6,7 +6,7 @@
  * a channel with 3 candidates never shows a percentage. Cost is shown only when
  * the underlying rows carry spend, and there are no recommendations here.
  */
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -76,8 +76,11 @@ function QualityTable({
             const expandable = !!list && list.length > 0;
             const isOpen = open === c.channel;
             return (
-              <>
-                <tr key={c.channel} className="hover:bg-muted/30">
+              // The key belongs on the fragment: each channel renders a row plus
+              // an optional expanded row, so keying the inner <tr> left the list
+              // itself unkeyed and React warned on every render.
+              <Fragment key={c.channel}>
+                <tr className="hover:bg-muted/30">
                   <td className="px-4 py-2.5">
                     {expandable ? (
                       <button
@@ -122,7 +125,7 @@ function QualityTable({
                   )}
                 </tr>
                 {isOpen && list && (
-                  <tr key={`${c.channel}-candidates`} className="bg-muted/30">
+                  <tr className="bg-muted/30">
                     <td colSpan={data.totals.has_spend ? 9 : 8} className="px-4 py-3">
                       <p className="mb-2 text-xs text-muted-foreground">
                         {list.length} candidate{list.length === 1 ? "" : "s"} attributed to{" "}
@@ -151,7 +154,7 @@ function QualityTable({
                     </td>
                   </tr>
                 )}
-              </>
+              </Fragment>
             );
           })}
           <tr className="border-t-2 bg-muted/20 font-medium">
