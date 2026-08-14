@@ -1265,7 +1265,7 @@ async function handle(request: Request): Promise<Response> {
       const appId = appRow.id as string;
       // Match
       const { data: matchRow, error: mErr } = await sb.from("candidate_matches")
-        .insert({ application_id: appId, candidate_profile_id: cpId, position_id: body.position_id, organization_id: posRow.organization_id, stage: "sourced", processing_state: "queued", admin_status: "pending", client_visibility: "hidden" })
+        .insert({ application_id: appId, candidate_profile_id: cpId, position_id: body.position_id, organization_id: posRow.organization_id, stage: "new", processing_state: "queued", admin_status: "pending", client_visibility: "hidden" })
         .select("id").single();
       if (mErr) throw mErr;
       return Response.json({ ok: true, action, application_id: appId, candidate_profile_id: cpId, candidate_match_id: matchRow.id });
