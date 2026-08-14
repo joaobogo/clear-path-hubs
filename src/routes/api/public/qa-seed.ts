@@ -1259,7 +1259,7 @@ async function handle(request: Request): Promise<Response> {
       if (posErr) throw posErr;
       // Application
       const { data: appRow, error: appErr } = await sb.from("applications")
-        .insert({ candidate_profile_id: cpId, position_id: body.position_id, source: "web", status: "received" })
+        .insert({ candidate_profile_id: cpId, position_id: body.position_id, source: "web", status: "submitted" })
         .select("id").single();
       if (appErr) throw appErr;
       const appId = appRow.id as string;
