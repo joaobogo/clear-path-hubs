@@ -153,6 +153,9 @@ function CandidateDetailPage() {
  const nextStepAfterRef = useRef<string | null>(null);
  const undoFn = useServerFn(undoClientDecision);
 
+ // Exact cache key of the detail query. Optimistic writes and rollbacks must
+ // use it verbatim — a shorter key writes a phantom entry nothing reads.
+ const detailKey = ["client-candidate", orgId, id, support.active ? "preview" : "live"] as const;
  const act = useMutation({
  mutationFn: (p: DecisionPayload) =>
  withActionTimeout(() =>
@@ -161,9 +164,11 @@ function CandidateDetailPage() {
  orgId: orgId!,
  matchId: id,
  action: p.action,
- // Stage the operator was looking at. If the candidate has already
- // moved, the server refuses instead of applying a stale decision.
- expectedStage: data?.candidate?.stage,
+ // Stage the operator was looking at, captured before the optimistic
+ // paint (same rule as the board's stage move). Reading the cache
+ // here would read our own optimistic value back and make every
+ // decision look like a conflict.
+ expectedStage: stageBeforeRef.current ?? undefined,
  feedback: p.feedback,
  reasonCode: p.reasonCode,
  signals: p.signals,
@@ -172,12 +177,12 @@ function CandidateDetailPage() {
  ),
  // Paint the new stage the moment the button is pressed, and keep the
  // previous view so a failure can be painted back.
- onMutate: (p: DecisionPayload) => {
- const key = ["client-candidate", orgId, id];
- const previous = qc.getQueryData<AnyRow>(key);
+ onMutate: async (p: DecisionPayload) => {
+ await qc.cancelQueries({ queryKey: detailKey });
+ const previous = qc.getQueryData<AnyRow>(detailKey);
  const to = RESULT_STAGE[p.action as ActionKey];
  if (previous?.candidate && to) {
- qc.setQueryData(key, {
+ qc.setQueryData(detailKey, {
  ...previous,
  candidate: { ...previous.candidate, stage: to },
  });
@@ -217,7 +222,7 @@ function CandidateDetailPage() {
  onSettled: () => setPendingKey(null),
  onError: (e: Error, p, context) => {
  // Visible revert: the panel returns to the stage it was in.
- if (context?.previous) qc.setQueryData(["client-candidate", orgId, id], context.previous);
+ if (context?.previous) qc.setQueryData(detailKey, context.previous);
  const stale = readStaleStateError(e);
  if (stale) {
  setDialogAction(null);

@@ -287,12 +287,19 @@ export const updateClientMemberRole = createServerFn({ method: "POST" })
       adminIds.delete(data.userId);
       if (adminIds.size === 0) throw new Error("You need at least one Admin — promote someone else first.");
     }
-    const { error } = await context.supabase
+    // Confirm the write actually landed. Row-level rules can silently match no
+    // rows, and reporting "Role updated" for a write that never happened is
+    // worse than an error.
+    const { data: updated, error } = await context.supabase
       .from("memberships")
       .update({ role: data.role })
       .eq("organization_id", data.orgId)
-      .eq("user_id", data.userId);
+      .eq("user_id", data.userId)
+      .select("user_id, role");
     if (error) throw new Error(error.message);
+    if (!((updated as AnyRow[]) ?? []).length) {
+      throw new Error("We could not update that member's role. Refresh and try again.");
+    }
     return { ok: true };
   });
 
@@ -341,12 +348,16 @@ export const setClientMemberStatus = createServerFn({ method: "POST" })
       }
     }
 
-    const { error } = await context.supabase
+    const { data: updated, error } = await context.supabase
       .from("memberships")
       .update({ status: data.status })
       .eq("organization_id", data.orgId)
-      .eq("user_id", data.userId);
+      .eq("user_id", data.userId)
+      .select("user_id");
     if (error) throw new Error(error.message);
+    if (!((updated as AnyRow[]) ?? []).length) {
+      throw new Error("We could not update that member. Refresh and try again.");
+    }
     return { ok: true as const };
   });
 
@@ -370,12 +381,16 @@ export const removeClientMember = createServerFn({ method: "POST" })
     if (others.length === 0)
       throw new Error("You need at least one workspace admin before removing this member.");
     // Soft-remove: preserves auth user + audit trail.
-    const { error } = await context.supabase
+    const { data: removed, error } = await context.supabase
       .from("memberships")
       .update({ status: "removed" })
       .eq("organization_id", data.orgId)
-      .eq("user_id", data.userId);
+      .eq("user_id", data.userId)
+      .select("user_id");
     if (error) throw new Error(error.message);
+    if (!((removed as AnyRow[]) ?? []).length) {
+      throw new Error("We could not remove that member. Refresh and try again.");
+    }
     try {
       const { emitEventFromServer } = await import("./notifications.functions");
       await emitEventFromServer({
