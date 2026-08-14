@@ -127,10 +127,28 @@ export async function emitEventFromServer(args: {
     }
     recipients = buckets;
   }
-
-
+  // An explicit recipient list must obey the same rule as the fanout: never
+  // notify the person who performed the action.
+  if (args.actor_user_id) {
+    recipients = recipients.filter((r) => r.user_id !== args.actor_user_id);
+  }
 
   if (recipients.length === 0) return { event_id: eventId, delivered: 0 };
+
+  // Messages are attributed to the human who wrote them, never to a generic
+  // "TaaSFlow" label, so the bell matches what the thread shows.
+  let actorName: string | null = null;
+  if (args.event === "message_sent" && args.actor_user_id) {
+    const { data: actorProfile } = await supabaseAdmin
+      .from("profiles")
+      .select("full_name, email")
+      .eq("auth_user_id", args.actor_user_id)
+      .maybeSingle();
+    actorName =
+      ((actorProfile?.full_name as string | null) ?? null) ||
+      ((actorProfile?.email as string | null) ?? null) ||
+      null;
+  }
 
   // Build rows with audience-safe copy
   const rows = recipients
@@ -143,7 +161,7 @@ export async function emitEventFromServer(args: {
         audience: r.audience,
         organization_id: args.organization_id ?? null,
         event_type: args.event,
-        title: copy.title,
+        title: actorName ? `New message from ${actorName}` : copy.title,
         body: copy.body ?? null,
         link_path: r.link_path ?? args.link_path ?? null,
         // Point every notification at the exact record it is about.
