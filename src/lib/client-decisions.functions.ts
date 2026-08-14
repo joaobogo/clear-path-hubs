@@ -535,7 +535,15 @@ export const clientAction = createServerFn({ method: "POST" })
     }
 
     const nextStage = ACTION_TO_STAGE[data.action];
-    if (nextStage && match.stage !== nextStage) {
+    // Double-submit guard: a second click on a stage-moving action (the button
+    // stayed enabled, the request was retried, two tabs were open) must not
+    // write a second decision, interview or notification. The first click
+    // already moved the stage, so an action that asks for the stage the
+    // candidate is already in is a no-op, reported honestly as success.
+    if (nextStage && match.stage === nextStage) {
+      return { ok: true, trace_id: trace, noop: true as const };
+    }
+    if (nextStage) {
       const allowed = STAGE_GRAPH[match.stage as MatchStage] ?? [];
       if (!allowed.includes(nextStage)) {
         throw new Error(`invalid_transition:${match.stage}->${nextStage}`);
@@ -549,16 +557,30 @@ export const clientAction = createServerFn({ method: "POST" })
     }
 
     if (data.action === "request_interview") {
-      await context.supabase.from("interviews").insert({
-        candidate_match_id: data.matchId,
-        organization_id: data.orgId,
-        position_id: match.position_id as string,
-        candidate_submission_id: (match.application_id as string) ?? null,
-        status: "requested",
-        requested_at: new Date().toISOString(),
-        created_by: context.userId,
-      });
+      // One open interview per candidate. Without this, a retried request adds
+      // a second "requested" row and the scheduling queue shows the same
+      // interview twice.
+      const { data: openInterview } = await context.supabase
+        .from("interviews")
+        .select("id")
+        .eq("candidate_match_id", data.matchId)
+        .eq("organization_id", data.orgId)
+        .in("status", ["requested", "scheduling", "scheduled"])
+        .limit(1)
+        .maybeSingle();
+      if (!openInterview) {
+        await context.supabase.from("interviews").insert({
+          candidate_match_id: data.matchId,
+          organization_id: data.orgId,
+          position_id: match.position_id as string,
+          candidate_submission_id: (match.application_id as string) ?? null,
+          status: "requested",
+          requested_at: new Date().toISOString(),
+          created_by: context.userId,
+        });
+      }
     }
+
 
     // Persist a decision that mirrors the client's intent.
     const decisionMap = {
