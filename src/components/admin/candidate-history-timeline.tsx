@@ -23,6 +23,8 @@ import {
   actorLabel,
   actorOptions,
   matchesFilter,
+  normalizeFocusEventId,
+  normalizeHistoryEvents,
   permalinkFor,
   type HistoryEvent,
   type HistorySource,
