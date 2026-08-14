@@ -278,6 +278,13 @@ test.describe("full journey walkthrough", () => {
     );
 
     // ── 4. Job appears on the public board ────────────────────────────────
+    // Active is not the same as listed: the board only shows public roles, so
+    // the walkthrough publishes the way an admin would.
+    const publish = page.locator("[data-qa-action='position-publish']");
+    if (await publish.count()) {
+      await publish.first().click();
+      await page.waitForTimeout(3_000);
+    }
     const publicOk = await (async () => {
       await page.goto(`/jobs/${positionId}`, { waitUntil: "domcontentloaded" });
       return page
