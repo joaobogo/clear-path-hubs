@@ -1,0 +1,1 @@
+DELETE FROM public.positions WHERE id IN ('06b2100a-40d9-48e1-9361-29b3578397d7','cc5da97c-77af-4b46-ba62-a6e53ac2a2a1','b5d5739c-2c93-4815-9aba-28cc023c7473');
