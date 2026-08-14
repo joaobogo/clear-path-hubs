@@ -1,5 +1,7 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { StructuredNotesPanel } from "@/components/admin/structured-notes-panel";
+import { ComponentErrorBoundary } from "@/components/ds/component-error-boundary";
+import { normalizeFocusEventId } from "@/lib/candidate-history";
 import { createFileRoute, notFound, useNavigate, useRouter } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
