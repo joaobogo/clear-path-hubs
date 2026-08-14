@@ -1422,3 +1422,23 @@ Defects fixed this pass:
 
 No dead settings found on `/me/settings`; every button on the five pages performs
 a backend-confirmed action with feedback.
+
+## Pass 13 — Messaging and notifications (all roles)
+
+Checklist:
+1. Role pairs deliver both ways — PASS. candidate→ops and ops→candidate now share one
+   thread; staff reply in-app from Admin › Messages ("Reply in app"). Previously the
+   candidate channel was one-way (email only). client↔staff runs on conversations.
+2. No cross-account leakage — PASS. RLS verified: candidates read only `thread_id = auth.uid()`
+   with `conversation_id IS NULL`; org members read only conversations in their org;
+   inserts require `sender_user_id = auth.uid()` plus staff or org-editor membership.
+   The unreachable legacy `client-messages.functions.ts` endpoints were removed.
+3. Notifications fire on key events — PASS. Pipeline terminal states now emit
+   `candidate_processing_completed` / `cv_parse_failed` (previously silent). Intake,
+   application, publish, client decision and message events emit with record links.
+4. Read state and unread counts — PASS. Actors no longer notify themselves, and a
+   message never notifies the audience that wrote it, so badges stop inflating.
+
+Verified: `tests/e2e/messaging.spec.ts` (3/3), `tests/authz` + unit (41/41), typecheck clean.
+Open: the staff→candidate reply UI and the client↔staff thread are verified manually;
+their Playwright coverage is selector-fragile and still to be stabilised.
