@@ -57,6 +57,25 @@ function MyMessages() {
  initialData: initial,
  });
 
+ // Opening the thread clears the unread badge on the candidate home.
+ const unreadIds = (data.messages as AnyRow[])
+ .filter((m) => !m.read_at && m.sender_user_id !== selfId)
+ .map((m) => m.id as string)
+ .join(",");
+ useEffect(() => {
+ if (!selfId || !unreadIds) return;
+ void markReadFn()
+ .then(() => {
+ qc.invalidateQueries({ queryKey: ["me-messages"] });
+ qc.invalidateQueries({ queryKey: ["candidate-home"] });
+ })
+ .catch(() => {
+ // Read receipts are best-effort; never block the thread on them.
+ });
+ }, [selfId, unreadIds, markReadFn, qc]);
+
+
+
  useEffect(() => {
  if (!selfId) return;
  const channel = supabase
