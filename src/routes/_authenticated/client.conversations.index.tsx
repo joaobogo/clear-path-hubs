@@ -101,12 +101,16 @@ function ConversationsPage() {
     <div className="space-y-5">
       <header>
         <h1 className="flex items-center gap-2 text-2xl font-semibold">
-          <MessageSquare className="h-6 w-6 text-primary" /> Conversations
+          <MessageSquare className="h-6 w-6 text-primary" />
+          {box === "unread" ? "Inbox" : "Conversations"}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          One thread per role and per candidate. Everything is mirrored to email.
+          {box === "unread"
+            ? `Threads with something new for you${unreadCount ? ` — ${unreadCount} unread` : ""}.`
+            : "One thread per role and per candidate. Everything is mirrored to email."}
         </p>
       </header>
+
 
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex rounded-md border p-0.5">
