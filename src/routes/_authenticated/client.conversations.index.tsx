@@ -55,6 +55,10 @@ function relTime(iso: string) {
 
 function ConversationsPage() {
   const orgSearch = useClientOrgSearch();
+  // `?box=unread` is what the "Inbox" tab means: same thread list, unread only.
+  const box = (useSearch({ strict: false }) as { box?: string })?.box === "unread"
+    ? "unread"
+    : "all";
   const ctxFn = useServerFn(getClientContext);
   const listFn = useServerFn(listConversations);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["key"]>("all");
@@ -80,6 +84,7 @@ function ConversationsPage() {
   const items = useMemo(() => {
     const needle = q.trim().toLowerCase();
     return (data?.items ?? []).filter((c) => {
+      if (box === "unread" && c.unread <= 0) return false;
       if (filter !== "all" && c.scope !== filter) return false;
       if (!needle) return true;
       return (
@@ -88,7 +93,9 @@ function ConversationsPage() {
         (c.last_body ?? "").toLowerCase().includes(needle)
       );
     });
-  }, [data, filter, q]);
+  }, [data, box, filter, q]);
+  const unreadCount = (data?.items ?? []).filter((c) => c.unread > 0).length;
+
 
   return (
     <div className="space-y-5">
