@@ -997,6 +997,54 @@ export const setPositionStatus = createServerFn({ method: "POST" })
 
   });
 
+// Staff-created role. Intake is still the primary path; this exists so ops can
+// open a role on a client's behalf (phone/email intake) without asking the
+// client to fill the wizard. It creates a DRAFT only — the same publish gate
+// applies before it can reach the job board.
+export const createPositionForClient = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        organization_id: z.string().uuid(),
+        title: z.string().trim().min(2).max(200),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const trace_id = traceId();
+    const s = await getAdmin();
+    const { data: org } = await s
+      .from("organizations")
+      .select("id,name")
+      .eq("id", data.organization_id)
+      .maybeSingle();
+    if (!org) throw new Error("organization_not_found");
+    const { data: created, error } = await s
+      .from("positions")
+      .insert({
+        organization_id: data.organization_id,
+        title: data.title,
+        status: "draft",
+        visibility: "private",
+        created_by: context.userId,
+      })
+      .select("id,title,status,organization_id")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    await writeAudit({
+      actor: context.userId,
+      action: "position.create",
+      entity_type: "position",
+      entity_id: created.id,
+      organization_id: data.organization_id,
+      after: created,
+      trace_id,
+    });
+    return { ok: true as const, trace_id, position: created };
+  });
+
 const visibilityInput = z.object({
   id: z.string().uuid(),
   visibility: z.enum(["public", "private", "internal"]),
