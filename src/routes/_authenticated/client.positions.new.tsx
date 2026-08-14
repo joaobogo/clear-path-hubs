@@ -56,10 +56,10 @@ function NewRolePage() {
         search: { step: undefined },
       });
     },
+    // Never leak database prose: toastError keeps human messages and swaps
+    // raw Postgres/RLS text for guidance plus a private log reference.
     onError: (e: unknown) =>
-      toast.error(
-        (e as Error).message?.replace(/^Error:\s*/, "") || "We could not create the role",
-      ),
+      toastError(e, { fallback: "We couldn't create the role. Nothing was saved — please try again." }),
   });
 
   const valid = !!orgId && title.trim().length >= 2;
