@@ -55,6 +55,7 @@ export const Route = createFileRoute("/_authenticated/client/positions/")({
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveFilteredEmptyState } from "@/lib/empty-states/empty-state-catalogue";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
+import { countRolesByTab, roleStatusTab, roleStatusTabLabel } from "@/lib/client-role-status-tabs";
 
 function PositionsPage() {
  const { status, q, location, view, sort, shortlist } = Route.useSearch();
@@ -226,7 +227,7 @@ function PositionsPage() {
  <div className="text-xs text-muted-foreground text-right">
  <div>
  {rows.length} role{rows.length === 1 ? "" : "s"}
- {status !== "active" ? ` in ${STATUS_TABS.find((t) => t.key === status)?.label.toLowerCase()}` : ""}
+ {status !== "active" ? ` in ${roleStatusTabLabel(status).toLowerCase()}` : ""}
  </div>
  {lastUpdated && (
  <div>Last updated {formatRelative(lastUpdated)}</div>
@@ -238,7 +239,7 @@ function PositionsPage() {
 
  <ActionRequiredBanner actionItems={actionItems} />
 
-  <StatusTabs status={status} setSearch={setSearch} />
+  <StatusTabs status={status} setSearch={setSearch} counts={statusCounts} />
 
   <FilterBar
     orgId={orgId}
