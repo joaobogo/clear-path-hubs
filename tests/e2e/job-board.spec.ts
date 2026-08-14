@@ -106,10 +106,10 @@ test("search and filters narrow the board, and a miss shows a clean empty state"
   // a query the board had not applied).
   await box.click();
   await box.type("zzzznotarole", { delay: 40 });
-  await expect(page).toHaveURL(/q=zzzznotarole/);
-
   await expect(box).toHaveValue("zzzznotarole");
   await expect(page.getByRole("heading", { name: "No roles match your filters" })).toBeVisible();
+  await expect(page).toHaveURL(/q=zzzznotarole/);
+
 
   await page.getByRole("button", { name: "Clear filters" }).click();
   await expect(box).toHaveValue("");
