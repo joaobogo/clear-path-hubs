@@ -40,6 +40,8 @@ function MyMessages() {
  const initial = Route.useLoaderData();
  const listFn = useServerFn(listMyMessages);
  const sendFn = useServerFn(sendMyMessage);
+ const markReadFn = useServerFn(markMyMessagesRead);
+
  const qc = useQueryClient();
  const endRef = useRef<HTMLDivElement>(null);
  const [body, setBody] = useState("");
