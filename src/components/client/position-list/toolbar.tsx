@@ -12,13 +12,11 @@ import { Button } from "@/components/ui/button";
 import { Search, AlertCircle } from "lucide-react";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import type { Row } from "@/components/client/position-list/position-cards";
+import { ROLE_STATUS_TABS } from "@/lib/client-role-status-tabs";
 
-export const STATUS_TABS = [
-  { key: "active", label: "Active" },
-  { key: "draft", label: "Under review" },
-  { key: "paused", label: "Paused" },
-  { key: "closed", label: "Archived" },
-] as const;
+// Canonical tab set + status mapping lives in one module so no role status can
+// fall between tabs. Re-exported here for existing importers.
+export const STATUS_TABS = ROLE_STATUS_TABS;
 
 export function ActionRequiredBanner({ actionItems }: { actionItems: Row[] }) {
   if (actionItems.length === 0) return null;
@@ -61,9 +59,11 @@ export function ActionRequiredBanner({ actionItems }: { actionItems: Row[] }) {
 export function StatusTabs({
   status,
   setSearch,
+  counts,
 }: {
   status: string;
   setSearch: (patch: Record<string, string>) => void;
+  counts?: Record<string, number>;
 }) {
   return (
     <div className="mb-3 flex flex-wrap items-center gap-1 border-b">
@@ -79,6 +79,11 @@ export function StatusTabs({
           }`}
         >
           {t.label}
+          {counts ? (
+            <span className="ml-1.5 text-xs text-muted-foreground">
+              ({counts[t.key] ?? 0})
+            </span>
+          ) : null}
         </button>
       ))}
     </div>
