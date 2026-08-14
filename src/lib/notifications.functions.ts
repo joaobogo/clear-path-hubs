@@ -69,7 +69,27 @@ export async function emitEventFromServer(args: {
     // Auto-fanout to org viewers (client audience) + platform staff (admin audience)
     const buckets: Array<{ user_id: string; audience: Audience; link_path?: string }> = [];
     const seen = new Set<string>();
+    // Nobody is told about their own action: a self-notification is noise and
+    // it inflated the unread badge of whoever just clicked the button.
+    const actorId = args.actor_user_id ?? null;
+    // A message never notifies the side that wrote it — staff writing into a
+    // client thread must not raise "New client message" for the staff bell,
+    // and a client teammate must not raise "New message from TaaSFlow".
+    let suppressed: Audience | null = null;
+    if (args.event === "message_sent" && actorId) {
+      const { data: actorRoles } = await supabaseAdmin
+        .from("memberships")
+        .select("role")
+        .eq("user_id", actorId)
+        .eq("status", "active");
+      const roles = (actorRoles ?? []).map((r) => r.role as string);
+      if (roles.some((r) => r === "platform_admin" || r === "operations")) suppressed = "admin";
+      else if (roles.some((r) => r.startsWith("client_"))) suppressed = "client";
+      else suppressed = "candidate";
+    }
     const push = (user_id: string, audience: Audience) => {
+      if (actorId && user_id === actorId) return;
+      if (suppressed && audience === suppressed) return;
       const k = `${user_id}:${audience}`;
       if (seen.has(k)) return;
       seen.add(k);
@@ -107,6 +127,8 @@ export async function emitEventFromServer(args: {
     }
     recipients = buckets;
   }
+
+
 
   if (recipients.length === 0) return { event_id: eventId, delivered: 0 };
 

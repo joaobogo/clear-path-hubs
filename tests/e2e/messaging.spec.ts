@@ -60,6 +60,9 @@ test.describe("messaging", () => {
     await expect(page.getByText(body)).toBeVisible({ timeout: 30_000 });
   });
 
+
+
+
   test("candidate cannot open a client conversation surface", async ({ page }) => {
     await loginAs(page, "candidate", fixtures.users["candidate"]!.email, QA_PASSWORD);
     await page.goto("/client/conversations", { waitUntil: "domcontentloaded" });
