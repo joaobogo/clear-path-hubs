@@ -1173,3 +1173,94 @@ Overall: **PASS on items 1-4 and 6. Item 5 unverified**, so the gate is not full
 ## Blocking item for full sign-off
 
 Item 5 needs the demo login. The E2E suite already reads `DEMO_CLIENT_EMAIL` / `DEMO_CLIENT_PASSWORD` and skips when absent, and those values are not in this environment, so demo login reliability could not be exercised. Backend state for `demo@taasflow.com` was verified as healthy: active `client_admin` membership on the populated "Northwind Talent (Demo)" workspace.
+
+---
+
+# Stabilization pass 2 — Route protection and role isolation (scope: authorization only)
+
+Method: Playwright direct-URL probes per role (waiting for a settled `h1`, not just DOM ready) plus raw PostgREST reads with each role's real access token, and service-role reads for ground truth. QA personas: `platform_admin`, `client_admin`, `client_viewer`, `other_client_admin`, `candidate`, `candidate_cross` across two organizations (`QA_TESTCO_E2E`, `QA_OTHERCO_E2E`).
+
+## 1. Direct-URL probes (25 forbidden attempts, all blocked cleanly)
+
+| # | Actor | Target URL | Result | Verdict |
+|---|-------|-----------|--------|---------|
+| 1 | logged out | `/admin` | `→ /login?redirect=%2Fadmin` | PASS |
+| 2 | logged out | `/admin/candidates` | `→ /login?redirect=…` | PASS |
+| 3 | logged out | `/client` | `→ /login?redirect=%2Fclient` | PASS |
+| 4 | logged out | `/me` | `→ /login?redirect=%2Fme` | PASS |
+| 5 | client_admin | `/admin` | `→ /access-denied?reason=permission` | PASS |
+| 6 | client_admin | `/admin/candidates` | `→ /access-denied?reason=permission` | PASS |
+| 7 | client_admin | `/admin/publish` | `→ /access-denied?reason=permission` | PASS |
+| 8 | client_admin | `/admin/clients` | `→ /access-denied?reason=permission` | PASS |
+| 9 | client_admin | `/admin/payments` | `→ /access-denied?reason=permission` | PASS |
+| 10 | client_admin | `/me` | Renders the honest "client seat, no candidate profile" screen with a link to account settings — no candidate data, no crash | PASS |
+| 11 | client_admin | `/client?org=<other org>` | `→ /access-denied?reason=organization` | PASS |
+| 12 | candidate | `/admin` | `→ /access-denied?reason=permission` | PASS |
+| 13 | candidate | `/admin/candidates` | `→ /access-denied?reason=permission` | PASS |
+| 14 | candidate | `/admin/publish` | `→ /access-denied?reason=permission` | PASS |
+| 15 | candidate | `/admin/clients` | `→ /access-denied?reason=permission` | PASS |
+| 16 | candidate | `/admin/payments` | `→ /access-denied?reason=permission` | PASS |
+| 17 | candidate | `/client` | `→ /access-denied?reason=membership` | PASS |
+| 18 | candidate | `/client/candidates` | `→ /access-denied?reason=membership` | PASS |
+| 19 | candidate | `/client?org=<any org>` | `→ /access-denied?reason=membership` | PASS |
+| 20 | other_client_admin | `/client?org=<QA_TESTCO org>` | `→ /access-denied?reason=organization` | PASS |
+| 21 | other_client_admin | `/admin` | `→ /access-denied?reason=permission` | PASS |
+
+Blank pages: 0. Crashes: 0. Every rejection landed on an intentional screen with a next action; no denial destroyed a valid session.
+
+Gate structure confirmed: `_authenticated/route.tsx` (`ssr: false`, `getUser()` → `/login`), `_authenticated/admin.tsx` (`getStaffAccess()`, fails closed to `/access-denied?reason=permission`), `_authenticated/client.tsx` (loader resolves membership; unresolved `?org=` → `reason=organization`, no membership at all → `reason=membership`), `_authenticated/me.tsx` (renders a seat-appropriate screen rather than candidate data).
+
+## 2. Backend / RLS cross-account reads (24 attempts with real user tokens)
+
+| # | Actor | Query | Rows returned | Verdict |
+|---|-------|-------|---------------|---------|
+| 1 | client_admin | positions of a foreign org | 0 | PASS |
+| 2 | client_admin | unfiltered `positions` | own org rows + public job-board rows only, 0 private foreign rows | PASS |
+| 3 | client_admin | foreign `organizations` row | 0 | PASS |
+| 4 | client_admin | all `candidate_profiles` | 0 | PASS |
+| 5 | client_admin | all `messages` | 0 | PASS |
+| 6 | client_admin | `memberships` of a foreign org | 0 | PASS |
+| 7 | client_admin | `payments` | 0 | PASS |
+| 8 | client_admin | `candidate_matches` | 0 | PASS |
+| 9 | client_admin | `candidate_evidence` | 0 | PASS |
+| 10 | client_admin | `user_roles` | 0 | PASS |
+| 11 | candidate | other candidates' profiles | 0 | PASS |
+| 12 | candidate | all `applications` | 0 | PASS |
+| 13 | candidate | all `messages` | 0 | PASS |
+| 14 | candidate | `score_runs` | 0 | PASS |
+| 15 | candidate | `organizations` | 0 | PASS |
+| 16 | candidate | `memberships` | 0 | PASS |
+| 17 | candidate | `interviews` | 0 | PASS |
+| 18 | candidate | `files` | 0 | PASS |
+| 19 | candidate | `audit_events` | 0 | PASS |
+| 20 | candidate | `user_roles` | 1 — own row only, verified against own uid | PASS |
+| 21 | candidate | direct storage GET of another candidate's CV object | 400/`not_found` | PASS |
+| 22 | client_admin | direct storage GET of a CV object by path | 400/`not_found` | PASS |
+| 23 | anon (logged out) | `candidate_profiles` | 401 `42501` (no grant) | PASS |
+| 24 | anon (logged out) | `messages` | 401 `42501` (no grant) | PASS |
+
+Notes on the two reads that are non-zero by design:
+- Public job board: `positions_public_read` / `positions_authenticated_read` expose only `visibility = 'public' AND status = 'active'`. `select=*` as anon is rejected 401, so anon is limited to the granted safe-column subset. Foreign rows visible to a client are exactly the published job-board rows any visitor can see.
+- `user_roles` returns the caller's own row only (`user_id = auth.uid()`); a different user's role row is invisible, and roles remain in their own table read through `has_role`.
+
+Permission leaks = 0. Tenant leaks = 0. Proven server-side at the PostgREST/RLS layer, not merely hidden in the UI.
+
+## 3. Navigation isolation
+
+Rendered nav per role, read from the DOM:
+- client_admin: Overview, Roles, Candidates, Messages, Account, Insights, Assistant — no admin entries.
+- candidate: Home, Applications, Profile, CV, Messages, Privacy — no admin or client entries.
+- logged out: footer only (Privacy, Terms, contact) — no app nav.
+
+No role rendered another role's navigation items. PASS.
+
+## Console
+
+No app-origin errors on any settled page, denied or allowed. Remaining noise, unchanged from pass 1 and out of authorization scope:
+- `[LOW]` Transient dev-mode React hydration warning and a "state update on an unmounted component" warning that appear only during a redirect transition (route is `ssr: false`, tree re-renders correctly); not reproducible on a direct load of the same URL.
+- `[LOW]` One `TypeError: Failed to fetch` from a backend request aborted mid-navigation by the access-denied redirect.
+- `[LOW]` One HTTP 400 per page from the third-party Apollo intent pixel.
+
+## Verdict
+
+Route protection and role isolation: **PASS**. 21 forbidden URL attempts and 24 forbidden data reads, all blocked cleanly; 0 blank pages, 0 crashes, 0 permission leaks, 0 tenant leaks, 0 nav leaks, 0 app-origin console errors. No code changes were required in this pass.
