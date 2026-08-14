@@ -247,6 +247,25 @@ test.describe("full journey walkthrough", () => {
     await page.goto(`/admin/positions/${positionId}`, { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading").first()).toBeVisible({ timeout: 60_000 });
 
+    // An intake-created role is unpaid, and the publish gate refuses to activate
+    // it. Staff clear that the honest way: an audited exemption with a written
+    // reason, which is the same control used for pilot roles in production.
+    const exemptTrigger = page.getByRole("button", { name: /grant payment exemption/i });
+    if (await exemptTrigger.count()) {
+      await exemptTrigger.first().click();
+      await page.getByRole("textbox").last().fill("QA journey walkthrough — free pilot role.");
+      await page.getByRole("button", { name: /^grant exemption$/i }).click();
+      await expect
+        .poll(
+          async () =>
+            (await journeyTrail({ organizationId: orgId, positionId: positionId! })).position
+              ?.payment_status ?? "",
+          { timeout: 60_000, intervals: [1_000, 2_000] },
+        )
+        .toBe("exempt");
+      await page.reload({ waitUntil: "domcontentloaded" });
+    }
+
     // The lifecycle bar exposes exactly one legal forward move per status, so
     // the walk follows the product's own transition map (submitted → review →
     // approved → active) and waits for React to attach before each click.
