@@ -18,7 +18,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Briefcase, ExternalLink, LifeBuoy, MessageSquare, User } from "lucide-react";
 
 
+const searchSchema = z.object({
+  conversationId: z.string().uuid().optional(),
+});
+
 export const Route = createFileRoute("/_authenticated/admin/messages")({
+  validateSearch: searchSchema,
   loader: ({ context }) =>
     Promise.all([
       context.queryClient.ensureQueryData({
