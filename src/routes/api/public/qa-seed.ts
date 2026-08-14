@@ -1438,7 +1438,7 @@ async function handle(request: Request): Promise<Response> {
       ]);
 
       // Score truth lives on the immutable score run, never on the match row.
-      const current = (runs.data ?? []).find((r) => r.id === match.current_score_run_id) ?? null;
+      const current = (runs.data ?? []).find((r: { id: string }) => r.id === match.current_score_run_id) ?? null;
       return Response.json({
         ok: true,
         action,
