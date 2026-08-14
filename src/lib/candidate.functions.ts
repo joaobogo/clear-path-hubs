@@ -877,6 +877,11 @@ export const replaceMyCv = createServerFn({ method: "POST" })
         size: bytes.length,
         checksum: v.sha256 ?? null,
         file_status: "ready",
+        // Without this the replaced CV sat with no parse state at all: the
+        // reader never picked it up, and data health read it as "never
+        // parsed". Queueing here is what actually re-triggers parsing.
+        parse_state: "queued",
+        upload_source: "candidate_cv_replacement",
       })
       .select("id")
       .single();

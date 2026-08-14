@@ -48,7 +48,8 @@ type QaAction =
   | "seat_scenario"
   | "seat_scenario_reset"
   | "client_kpi_truth"
-  | "client_comms_truth";
+  | "client_comms_truth"
+  | "candidate_truth";
 
 function token(): string {
   const value = process.env["QA_SEED_TOKEN"];
@@ -101,6 +102,51 @@ export type ClientCommsTruth = {
 /** Read-only DB truth behind client Messages / Team / Settings. */
 export const clientCommsTruth = (organizationId: string) =>
   qaSeed<ClientCommsTruth>("client_comms_truth", { organization_id: organizationId });
+
+export type CandidateTruth = {
+  ok: boolean;
+  profile: Record<string, unknown> | null;
+  applications: Array<{
+    id: string;
+    position_id: string;
+    status: string;
+    withdrawn_at: string | null;
+    cv_file_id: string | null;
+  }>;
+  matches: Array<{
+    id: string;
+    application_id: string;
+    stage: string;
+    admin_status: string;
+    client_visibility: string;
+    processing_state: string;
+  }>;
+  files: Array<{
+    id: string;
+    filename: string;
+    parse_state: string | null;
+    upload_source: string | null;
+    created_at: string;
+  }>;
+  messages: Array<{
+    id: string;
+    thread_id: string | null;
+    body: string;
+    sender_user_id: string | null;
+    read_at: string | null;
+    created_at: string;
+  }>;
+};
+
+/**
+ * Read-only DB truth behind the candidate portal: the profile row the editor
+ * writes, every application + match (candidate-safe status is derived from
+ * these), the CV file versions with their parse state, and the candidate's own
+ * message thread. Never mutates.
+ */
+export const candidateTruth = (email: string) =>
+  qaSeed<CandidateTruth>("candidate_truth", { email });
+
 
 export const seedFixtures = () => qaSeed<SeedResult>("seed");
 export const cleanupFixtures = () => qaSeed("cleanup");
@@ -577,6 +623,24 @@ export async function loginAs(
   await expect
     .poll(() => new URL(page.url()).pathname, { timeout: 30_000 })
     .not.toMatch(/login/);
+  await dismissWelcomeTour(page);
+}
+
+/**
+ * The first-visit welcome tour renders as a modal dialog, which swallows every
+ * click behind it. Dismissing it once after sign-in is what a real first-time
+ * user does, and it stops specs from failing on an overlay instead of the
+ * behaviour under test.
+ */
+export async function dismissWelcomeTour(page: Page): Promise<void> {
+  const skip = page.getByRole("button", { name: /skip tour/i });
+  try {
+    await skip.waitFor({ state: "visible", timeout: 4_000 });
+    await skip.click();
+    await expect(skip).toBeHidden({ timeout: 10_000 });
+  } catch {
+    // No tour for this persona, or it was already dismissed — nothing to do.
+  }
 }
 
 // ─────────────────────────────────────────────────────────────
