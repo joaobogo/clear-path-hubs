@@ -52,8 +52,14 @@ function useCvDownload(matchId: string, mode: Mode) {
         fresh,
       });
       if (preview) {
-        if (tab) tab.location.href = res.url;
-        else window.open(res.url, "_blank", "noopener,noreferrer");
+        if (tab) {
+          try {
+            tab.opener = null;
+          } catch {
+            /* cross-origin guard: nothing to clear */
+          }
+          tab.location.replace(res.url);
+        } else window.open(res.url, "_blank", "noopener,noreferrer");
       } else {
         // Signed URL carries Content-Disposition: attachment via the `download` option.
         const a = document.createElement("a");
