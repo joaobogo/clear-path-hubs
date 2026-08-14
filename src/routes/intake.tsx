@@ -3376,8 +3376,9 @@ function ExpressIntakePage() {
               <button
                 type="button"
                 data-testid="step-skip"
-                className="text-sm underline text-[color:var(--brand-navy)]/70"
+                className="text-sm underline text-[color:var(--brand-navy)]/70 disabled:opacity-50"
                 onClick={() => goNext(true)}
+                disabled={draftPhase === "restoring" || submitting}
               >
                 Finish this later
               </button>
@@ -3387,6 +3388,10 @@ function ExpressIntakePage() {
                 type="button"
                 data-testid="step-continue"
                 onClick={() => goNext()}
+                // While the saved draft is still being restored the form state is
+                // not yet the client's own answers, so a click here would either
+                // validate empty values or have its errors wiped by the restore.
+                disabled={draftPhase === "restoring" || submitting}
                 className="min-h-11"
               >
                 {returnToReview ? "Back to review" : "Continue"}

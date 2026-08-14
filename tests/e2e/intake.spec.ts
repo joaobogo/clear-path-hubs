@@ -258,12 +258,20 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await expect(page.getByText(/^Saved /)).toBeVisible();
     await page.reload({ waitUntil: "domcontentloaded" });
     await dismissConsent(page);
+    // The draft restores the client to the step they left off on, so the reload
+    // lands back on the review step rather than at the top of the wizard.
+    await expectStep(page, 2);
+    await expect(page.getByTestId("intake-review")).toBeVisible();
+    // Walking back proves the earlier steps kept every answer.
+    await page.getByTestId("step-back").click();
+    await expectStep(page, 1);
+    await expect(page.locator("#jd-text")).toHaveValue(JD_TEXT);
+    await page.getByTestId("step-back").click();
+    await expectStep(page, 0);
     await waitForIntakeHydration(page);
     await expect(page.getByLabel("Company name")).toHaveValue(companyName);
     await expect(page.getByLabel("Work email")).toHaveValue(email);
     await expect(page.locator("#account-password")).toHaveValue("");
-    await continueStep(page);
-    await expect(page.locator("#jd-text")).toHaveValue(JD_TEXT);
 
     expect(meaningfulConsoleErrors(errors)).toEqual([]);
   });
@@ -352,5 +360,94 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     expect(state.intake_submission).not.toBeNull();
 
     expect(meaningfulConsoleErrors(errors)).toEqual([]);
+  });
+  test("controls stay inert until the saved draft has been restored", async ({ page }) => {
+    const errors = collectConsoleErrors(page);
+    await page.goto("/intake", { waitUntil: "domcontentloaded" });
+    await dismissConsent(page);
+    // While the draft lookup is in flight the wizard must not accept a click:
+    // an early Continue would validate values that are not the client's yet and
+    // the restore would wipe the errors it produced — a silent dead click.
+    const restoring = page.getByTestId("draft-status").filter({ hasText: /restoring|preparing/i });
+    if (await restoring.count()) {
+      await expect(page.getByTestId("step-continue")).toBeDisabled();
+    }
+    await waitForIntakeHydration(page);
+    await expect(page.getByTestId("step-continue")).toBeEnabled();
+    // …and once enabled it reports the real problems rather than doing nothing.
+    await continueStep(page);
+    await expectStep(page, 0);
+    await expect(page.getByText("Enter your company name")).toBeVisible();
+    expect(meaningfulConsoleErrors(errors)).toEqual([]);
+  });
+
+  test("double-click submit sends one request and never duplicates the intake", async ({ page }) => {
+    const errors = collectConsoleErrors(page);
+    const { companyName, email } = uniqueProspect();
+    const posts: string[] = [];
+    page.on("request", (req) => {
+      if (req.method() === "POST" && req.url().includes("/api/public/express-intake")) {
+        posts.push(req.url());
+      }
+    });
+
+    await page.goto("/intake", { waitUntil: "domcontentloaded" });
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await dismissConsent(page);
+    await waitForIntakeHydration(page);
+    await completeToReview(page, companyName, email);
+
+    const submit = page.getByTestId(PRIMARY_SUBMIT_TESTID);
+    await expect(submit).toBeEnabled();
+    await submit.click();
+    // The second click lands while the first request is still open.
+    await submit.click({ force: true, timeout: 5_000 }).catch(() => undefined);
+    await expect
+      .poll(() => new URL(page.url()).pathname, { timeout: 60_000 })
+      .toMatch(/^\/(checkout|book-call|book|intake\/confirmation)/);
+
+    expect(posts.length, "only one submission leaves the browser").toBe(1);
+    const state = await lookupIntake(companyName, email);
+    expect(state.intake_submission).not.toBeNull();
+    const intakeId = state.intake_submission?.id;
+
+    // Refreshing the destination must not resubmit or crash, and the replayed
+    // idempotency key must resolve to the very same intake.
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("heading").first()).toBeVisible();
+    const after = await lookupIntake(companyName, email);
+    expect(after.intake_submission?.id).toBe(intakeId);
+    expect(posts.length).toBe(1);
+
+    expect(meaningfulConsoleErrors(errors)).toEqual([]);
+  });
+
+  test("a network failure shows a retryable error and loses nothing", async ({ page }) => {
+    const { companyName, email } = uniqueProspect();
+    await page.goto("/intake", { waitUntil: "domcontentloaded" });
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await dismissConsent(page);
+    await waitForIntakeHydration(page);
+    await completeToReview(page, companyName, email);
+
+    // First attempt fails at the network layer.
+    await page.route("**/api/public/express-intake", (route) => route.abort("failed"));
+    await page.getByTestId(PRIMARY_SUBMIT_TESTID).click();
+    await expect(page.getByText(/please retry/i).first()).toBeVisible({ timeout: 30_000 });
+    // Nothing was lost: the answers are still on screen and nothing persisted.
+    await expect(page.getByTestId("intake-review")).toBeVisible();
+    const failed = await lookupIntake(companyName, email);
+    expect(failed.intake_submission, "nothing persisted on a failed attempt").toBeNull();
+
+    // Retry succeeds against the real endpoint.
+    await page.unroute("**/api/public/express-intake");
+    await page.getByTestId(PRIMARY_SUBMIT_TESTID).click();
+    await expect
+      .poll(() => new URL(page.url()).pathname, { timeout: 60_000 })
+      .toMatch(/^\/(checkout|book-call|book|intake\/confirmation)/);
+    const ok = await lookupIntake(companyName, email);
+    expect(ok.intake_submission, "the retry persisted the intake").not.toBeNull();
   });
 });

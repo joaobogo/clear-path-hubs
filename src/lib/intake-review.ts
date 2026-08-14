@@ -133,7 +133,13 @@ const FIELD_META: Record<string, { label: string; step: number; focusLabel: stri
   pilotAcknowledgement: { label: "Pilot acknowledgement", step: 0, focusLabel: null },
 };
 
-const GROUP_TITLES = ["The role", "Who you need", "Practicalities", "Process and your details"];
+/**
+ * One title per wizard step, indexed by step number. These must stay aligned
+ * with INTAKE_STEPS: the group's index is the step its Edit action jumps to, so
+ * a stale extra title silently mislabels every group and sends "Edit the role"
+ * to the wrong step.
+ */
+const GROUP_TITLES = ["You and your company", "The role", "Details and confirm"];
 
 function row(field: string, value: string): IntakeReviewRow | null {
   const meta = FIELD_META[field];
