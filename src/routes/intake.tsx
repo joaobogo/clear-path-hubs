@@ -946,7 +946,7 @@ function ExpressIntakePage() {
       }
 
       try {
-        const remote = await fetchIntakeDraft(signedIn);
+        const remote = await fetchIntakeDraft(signedIn, signedIn ? accountEmailRef.current : null);
         if (cancelled) return;
         if (remote.status === "restored" && remote.payload) {
           applyDraftPayload(remote.payload);

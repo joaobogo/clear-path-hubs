@@ -35,7 +35,10 @@ async function postDraft(body: Record<string, unknown>) {
 }
 
 /** Loads the draft that belongs to this visitor — account first, token otherwise. */
-export async function fetchIntakeDraft(authed: boolean): Promise<Loaded> {
+export async function fetchIntakeDraft(
+  authed: boolean,
+  accountEmail?: string | null,
+): Promise<Loaded> {
   if (authed) {
     const r = await loadIntakeDraft();
     const loaded: Loaded = {
@@ -52,6 +55,12 @@ export async function fetchIntakeDraft(authed: boolean): Promise<Loaded> {
       const anon = await postDraft({ action: "load" });
       if (anon["status"] === "restored" && anon["payload"]) {
         const payload = anon["payload"] as Record<string, unknown>;
+        // A browser can be shared. Only adopt anonymous typing when it clearly
+        // belongs to this account, so one person's brief can never surface
+        // pre-filled inside somebody else's wizard.
+        const typedEmail = String(payload["workEmail"] ?? "").trim().toLowerCase();
+        const mine = (accountEmail ?? "").trim().toLowerCase();
+        if (typedEmail && (!mine || typedEmail !== mine)) return loaded;
         const lastStep = Number(anon["lastStep"] ?? 0);
         const saved = await persistIntakeDraft(true, payload, lastStep);
         return { status: "restored", payload, lastStep, savedAt: saved.savedAt };
