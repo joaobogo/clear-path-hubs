@@ -838,6 +838,7 @@ function ExpressIntakePage() {
     }, 6000);
     void (async () => {
       let signedIn = false;
+      let signedInEmail: string | null = null;
       try {
         const { data: sess } = await supabase.auth.getSession();
         if (sess?.session) {
@@ -845,6 +846,7 @@ function ExpressIntakePage() {
           const user = data?.user;
           if (user?.email) {
             signedIn = true;
+            signedInEmail = user.email;
             // This wizard also creates the account, so it is for visitors only.
             // Someone who already belongs to a workspace gets the in-app role
             // creation flow instead of a signup screen they cannot complete.
@@ -946,7 +948,7 @@ function ExpressIntakePage() {
       }
 
       try {
-        const remote = await fetchIntakeDraft(signedIn, signedIn ? accountEmailRef.current : null);
+        const remote = await fetchIntakeDraft(signedIn, signedInEmail);
         if (cancelled) return;
         if (remote.status === "restored" && remote.payload) {
           applyDraftPayload(remote.payload);
