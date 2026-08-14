@@ -563,3 +563,48 @@ export const confirmRoleBlueprint = createServerFn({ method: "POST" })
     });
     return { ok: true as const, confirmed_at: (after as AnyRow)?.blueprint_confirmed_at as string };
   });
+
+/**
+ * In-app role creation for a signed-in workspace. The public intake wizard is
+ * for visitors who have no account yet; a client admin who already has a
+ * workspace gets a draft in THIS organization and goes straight to the edit
+ * wizard. Draft state therefore lives on the position row, scoped by
+ * organization — it can never be read by another user or workspace.
+ */
+export const createWorkspacePosition = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orgId: string; title: string }) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        title: z.string().trim().min(2, "Give the role a title").max(200),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    await assertEditor(context.supabase, context.userId, data.orgId);
+    const trace_id = crypto.randomUUID();
+    const { data: created, error } = await context.supabase
+      .from("positions")
+      .insert({
+        organization_id: data.orgId,
+        title: data.title,
+        status: "draft",
+        visibility: "private",
+        created_by: context.userId,
+      } as never)
+      .select("id, title, status")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!created) throw new Error("Could not create the role");
+    await writeAudit(context.supabase, {
+      actor: context.userId,
+      action: "client.position.create",
+      entity_type: "positions",
+      entity_id: (created as AnyRow).id as string,
+      organization_id: data.orgId,
+      after: created,
+      trace_id,
+    });
+    return { ok: true as const, id: (created as AnyRow).id as string, trace_id };
+  });
