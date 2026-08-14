@@ -1,16 +1,17 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
-import { listAllConversations } from "@/lib/conversations.functions";
+import { listAllConversations, getConversation } from "@/lib/conversations.functions";
 import {
   getCandidateSupportThread,
   listCandidateSupportRequests,
   replyToCandidateSupport,
 } from "@/lib/admin.functions";
+import { ConversationThread } from "@/components/comms/conversation-thread";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
