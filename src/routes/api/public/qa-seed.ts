@@ -1494,10 +1494,22 @@ async function handle(request: Request): Promise<Response> {
         ).size;
       }
       const pos = (positions ?? []) as Array<{ id: string; title: string; status: string }>;
+      const deliveredByPosition = new Map<string, Set<string>>();
+      for (const m of visible) {
+        if (!deliveredByPosition.has(m.position_id)) deliveredByPosition.set(m.position_id, new Set());
+        deliveredByPosition.get(m.position_id)!.add(m.candidate_profile_id);
+      }
+      const openPositions = pos.filter((p) => p.status === "active" || p.status === "approved");
       return Response.json({
         ok: true,
         action,
-        positions: pos,
+        positions: pos.map((p) => ({
+          ...p,
+          delivered: deliveredByPosition.get(p.id)?.size ?? 0,
+        })),
+        roles_without_shortlist: openPositions.filter(
+          (p) => !visible.some((m) => m.position_id === p.id && m.delivered_at != null),
+        ).length,
         active_positions: pos.filter((p) => p.status === "active" || p.status === "approved").length,
         visible_matches: visible.length,
         delivered: new Set(visible.map((m) => m.candidate_profile_id)).size,

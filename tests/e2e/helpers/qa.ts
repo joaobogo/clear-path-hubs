@@ -545,7 +545,8 @@ export type TenantSnapshot = {
  */
 export type ClientKpiTruth = {
   ok: boolean;
-  positions: Array<{ id: string; title: string; status: string }>;
+  positions: Array<{ id: string; title: string; status: string; delivered: number }>;
+  roles_without_shortlist: number;
   active_positions: number;
   visible_matches: number;
   delivered: number;
