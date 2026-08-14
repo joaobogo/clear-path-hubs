@@ -7,7 +7,7 @@ import {
   getClientInsights,
   getInsightsPositions,
 } from "@/lib/insights.functions";
-import { useClientOrgSearch } from "@/lib/use-client-org";
+import { useResolvedClientOrgId } from "@/lib/use-client-org";
 import {
   Select,
   SelectContent,
@@ -54,7 +54,10 @@ function AnalyticsPage() {
   // finished chart immediately instead.
   const reducedMotion = usePrefersReducedMotion();
   const chartAnim = { isAnimationActive: !reducedMotion, animationDuration: 280 } as const;
-  const orgId = useClientOrgSearch();
+  // The Insights tabs are reachable straight from the sidebar, without ?org= in
+  // the URL. Reading only the search param made this tab claim "no workspace
+  // selected" while every sibling tab rendered the workspace fine.
+  const orgId = useResolvedClientOrgId();
   const [window, setWindow] = useState(90);
   const [positionId, setPositionId] = useState<string>("all");
 
