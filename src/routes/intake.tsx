@@ -845,6 +845,27 @@ function ExpressIntakePage() {
           const user = data?.user;
           if (user?.email) {
             signedIn = true;
+            // This wizard also creates the account, so it is for visitors only.
+            // Someone who already belongs to a workspace gets the in-app role
+            // creation flow instead of a signup screen they cannot complete.
+            try {
+              const { data: rows } = await supabase
+                .from("memberships")
+                .select("organization_id, role")
+                .eq("user_id", user.id)
+                .eq("status", "active")
+                .limit(5);
+              const workspace = (rows ?? []).find((r) =>
+                String(r.role ?? "").startsWith("client_"),
+              );
+              if (workspace && !cancelled) {
+                clearTimeout(safety);
+                void navigate({ to: "/client/positions/new", replace: true });
+                return;
+              }
+            } catch {
+              /* membership lookup failed — fall through to the normal form */
+            }
             if (!cancelled) {
               setAuthed(true);
               setAccountEmail(user.email);
