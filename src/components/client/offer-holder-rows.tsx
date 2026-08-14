@@ -5,6 +5,7 @@
  * offer. Nothing is estimated: no acceptance odds, no negotiation advice, no
  * pay benchmarks, and no compensation figure the client did not enter.
  */
+import { formatCalendarDate } from "@/lib/calendar-date";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -42,9 +43,7 @@ const HOLDER_TONE: Record<OfferHolder, string> = {
 };
 
 function fmtDate(iso: string): string {
-  const d = new Date(`${iso.slice(0, 10)}T12:00:00Z`);
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+  return formatCalendarDate(iso, iso);
 }
 
 export function OfferHolderRows({

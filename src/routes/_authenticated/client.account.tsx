@@ -7,6 +7,7 @@
  * team CRUD and the read-only subscription card were deleted rather than
  * kept alongside the real forms.
  */
+import { formatCalendarDate } from "@/lib/calendar-date";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -88,14 +89,7 @@ export const Route = createFileRoute("/_authenticated/client/account")({
 });
 
 function fmtDate(iso: string | null | undefined): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString(undefined, {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+  return formatCalendarDate(iso, "");
 }
 
 function AccountPage() {

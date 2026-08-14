@@ -1,3 +1,4 @@
+import { formatCalendarDate } from "@/lib/calendar-date";
 import { useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -28,14 +29,7 @@ import { getPositionHandoff, setHandoffStep } from "@/lib/hire-handoff.functions
 
 function fmtDate(iso: string | null): string | null {
   if (!iso) return null;
-  const d = new Date(iso.length <= 10 ? `${iso}T00:00:00Z` : iso);
-  if (Number.isNaN(d.getTime())) return null;
-  return d.toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  });
+  return formatCalendarDate(iso, "") || null;
 }
 
 export function HandoffSkeleton() {
