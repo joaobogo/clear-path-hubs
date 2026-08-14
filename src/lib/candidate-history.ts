@@ -87,16 +87,75 @@ export type HistoryFilter = {
   action: string; // "all" | `${source}` | `${source}:${action}`
 };
 
-export function matchesFilter(event: HistoryEvent, filter: HistoryFilter): boolean {
-  if (filter.actor !== "all") {
-    if (filter.actor === "system") {
+/**
+ * Repairs one raw timeline entry so a single malformed row can never crash the
+ * record page. Returns null only when the entry is not an object at all.
+ * `malformed` is set when required fields were missing, so the UI can flag the
+ * entry instead of silently hiding recorded history.
+ */
+export function normalizeHistoryEvent(
+  raw: unknown,
+  index = 0,
+): (HistoryEvent & { malformed: boolean }) | null {
+  if (!raw || typeof raw !== "object") return null;
+  const r = raw as Partial<HistoryEvent> & Record<string, unknown>;
+  const known = HISTORY_SOURCES.includes(r.source as HistorySource);
+  const source = (known ? r.source : "audit_event") as HistorySource;
+  const action = typeof r.action === "string" && r.action ? r.action : "";
+  const malformed = !r.id || !action || !known;
+  return {
+    id: typeof r.id === "string" && r.id ? r.id : `unknown:${index}`,
+    source,
+    at: typeof r.at === "string" ? r.at : "",
+    action: action || "unknown",
+    action_label:
+      typeof r.action_label === "string" && r.action_label
+        ? r.action_label
+        : action || "Unrecognised entry",
+    actor_user_id: (r.actor_user_id as string | null) ?? null,
+    actor_name: (r.actor_name as string | null) ?? null,
+    actor_role: (r.actor_role as string | null) ?? null,
+    reason: (r.reason as string | null) ?? null,
+    changes: Array.isArray(r.changes) ? (r.changes as HistoryFieldChange[]) : [],
+    trace_id: (r.trace_id as string | null) ?? null,
+    context: Array.isArray(r.context) ? (r.context as HistoryFieldChange[]) : [],
+    malformed,
+  };
+}
+
+/** Repairs a whole timeline payload; unusable entries are dropped. */
+export function normalizeHistoryEvents(
+  raw: unknown,
+): Array<HistoryEvent & { malformed: boolean }> {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((e, i) => normalizeHistoryEvent(e, i))
+    .filter((e): e is HistoryEvent & { malformed: boolean } => e !== null);
+}
+
+/** Trims the `?event=` permalink param; empty/blank means "no focus". */
+export function normalizeFocusEventId(raw: unknown): string | null {
+  if (typeof raw !== "string") return null;
+  const trimmed = raw.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
+
+export function matchesFilter(
+  event: HistoryEvent | undefined | null,
+  filter: Partial<HistoryFilter> | undefined | null,
+): boolean {
+  if (!event) return false;
+  const actorFilter = filter?.actor ?? "all";
+  const actionFilter = filter?.action ?? "all";
+  if (actorFilter !== "all") {
+    if (actorFilter === "system") {
       if (event.actor_user_id) return false;
-    } else if (event.actor_user_id !== filter.actor) {
+    } else if (event.actor_user_id !== actorFilter) {
       return false;
     }
   }
-  if (filter.action !== "all") {
-    const [source, action] = filter.action.split(":");
+  if (actionFilter !== "all") {
+    const [source, action] = actionFilter.split(":");
     if (event.source !== source) return false;
     if (action && event.action !== action) return false;
   }
