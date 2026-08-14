@@ -34,10 +34,21 @@ export function CandidatesReleasedSection({
         action={
           <Link
             to="/client/candidates"
+            // Labelled "All candidates", so it must land on the unfiltered list.
+            // It used to inherit the overview's role focus and the list's
+            // "Awaiting your review" default, showing a filtered view under an
+            // "all" label. Search is an explicit object, so nothing carries over.
             search={
               {
                 ...(orgSearch ? { org: orgSearch } : {}),
-                ...(selectedRole ? { position: selectedRole } : {}),
+                position: "",
+                review: "all",
+                stage: "all",
+                fit: "all",
+                critical: "all",
+                filter: "all",
+                unicorn: "0",
+                q: "",
               } as never
             }
             className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-primary hover:underline sm:min-h-0"
