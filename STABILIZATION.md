@@ -1394,3 +1394,31 @@ record was altered.
 
 Admin Overview: PASS. Dead buttons 0, local-state-only actions 0, fabricated
 counts 0, stuck loaders 0.
+
+## Pass 12 — Candidate portal: Applications, Profile, CV, Messages, Settings
+
+Gate spec: `tests/e2e/candidate-portal.spec.ts` (6/6 pass, serial, real UI + DB truth).
+Truth probe: `candidate_truth` in `src/routes/api/public/qa-seed.ts` (read-only:
+profile, applications, matches, CV files, own message thread).
+
+| # | Check | Result |
+|---|-------|--------|
+| 1 | Applications list shows the candidate's real applications; count matches DB; only the six candidate-safe statuses; no internal vocabulary (admin_status, client_visibility, processing_state, fit band) | PASS |
+| 2 | Profile editing saves, persists to `candidate_profiles`, and reads back after reload | PASS |
+| 3 | CV replacement uploads, stores a new version, and re-queues parsing | PASS (defect fixed) |
+| 4 | Messages send, persist, and expose exactly one thread — the candidate's own `user_id` | PASS |
+| 5 | Settings change, persist, take effect after reload, and revert | PASS |
+| 6 | Admin action on the match (archive off position via `/admin/candidates/$id`) is reflected in the candidate's status | PASS |
+| 7 | Zero meaningful console errors on all five pages | PASS |
+
+Defects fixed this pass:
+- **CV replacement never re-triggered parsing.** `replaceMyCv` inserted the new
+  `files` row with no `parse_state`, so the reader never picked it up and data
+  health read it as "never parsed". Now inserted as `parse_state: "queued"` with
+  `upload_source: "candidate_cv_replacement"`.
+- **E2E welcome-tour blocker (carried from Pass 11).** The first-visit tour modal
+  swallowed every click after sign-in. `loginAs` now dismisses it via the new
+  `dismissWelcomeTour` helper.
+
+No dead settings found on `/me/settings`; every button on the five pages performs
+a backend-confirmed action with feedback.
