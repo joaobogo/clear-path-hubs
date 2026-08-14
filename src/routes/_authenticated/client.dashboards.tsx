@@ -182,7 +182,7 @@ function DashboardsPage() {
 
       {!allowed ? (
         <LockedPanel
-          reason={workspace.entitlement.reason}
+          reason={formatEnumLabel(workspace.entitlement.reason)}
           openRequest={workspace.openRequest}
           orgId={orgId!}
           canRequest={canEdit}

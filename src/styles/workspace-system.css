@@ -165,7 +165,7 @@
     content: attr(data-label);
     font-size: var(--taas-text-caption);
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
     color: var(--taas-text-tertiary);
   }

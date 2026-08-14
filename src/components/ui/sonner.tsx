@@ -6,6 +6,10 @@ const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       className="toaster group"
+      // Toasts are transient confirmations, not banners: they auto-dismiss
+      // after 5s (errors get a little longer) and stay manually dismissable.
+      duration={5000}
+      closeButton
       toastOptions={{
         classNames: {
           toast:

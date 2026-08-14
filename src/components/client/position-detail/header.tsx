@@ -60,11 +60,11 @@ export function PositionHeader({
         </div>
         <div className="mt-1 text-sm text-muted-foreground">
           {[
-            position.department,
-            position.location,
-            position.work_model,
-            position.employment_type,
-            position.seniority,
+            position.department ?? undefined,
+            position.location ?? undefined,
+            formatEnumLabel(position.work_model) || undefined,
+            formatEnumLabel(position.employment_type) || undefined,
+            formatEnumLabel(position.seniority) || undefined,
           ]
             .filter(Boolean)
             .join(" · ")}
