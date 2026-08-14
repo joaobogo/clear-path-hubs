@@ -64,9 +64,8 @@ async function fillPasswords(page: Page, password: string, confirm = password) {
 /** Step 2: the role itself plus at least one tagged must-have. */
 async function fillRole(page: Page, { withJd }: { withJd: boolean }) {
   await page.getByLabel("Job title", { exact: true }).fill("Clinical Operations Manager");
-  await page
-    .getByLabel("Why is this role open?")
-    .fill("Our two clinical ops leads are covering three sites and renewals are slipping.");
+  // "Why is this role open?" was intentionally removed from intake — the brief
+  // no longer asks prospects for it, so the wizard has no such field.
   if (withJd) await page.locator("#jd-text").fill(JD_TEXT);
 }
 
