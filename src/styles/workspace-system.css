@@ -165,7 +165,7 @@
     content: attr(data-label);
     font-size: var(--taas-text-caption);
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
     color: var(--taas-text-tertiary);
   }
@@ -194,7 +194,7 @@
   overflow-x: auto;
 }
 [data-workspace-role] :where(h1, h2, h3, p, td, th, li, dd, dt) {
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 /* ─── Motion: explains state, never decorates ──────────────── */

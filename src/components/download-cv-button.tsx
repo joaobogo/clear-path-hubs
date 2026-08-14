@@ -41,7 +41,10 @@ function useCvDownload(matchId: string, mode: Mode) {
     if (resetTimer.current) clearTimeout(resetTimer.current);
     // Pop the tab synchronously so the browser does not treat the post-await
     // open() as a blocked popup.
-    const tab = preview ? window.open("", "_blank", "noopener,noreferrer") : null;
+    // `noopener` makes window.open() return null, which used to leave a stray
+    // about:blank tab behind and open a second one. Keep the handle, then drop
+    // the opener reference ourselves once we navigate it.
+    const tab = preview ? window.open("", "_blank") : null;
     try {
       const res = await fetchCvDownloadLink({
         matchId,
@@ -49,8 +52,14 @@ function useCvDownload(matchId: string, mode: Mode) {
         fresh,
       });
       if (preview) {
-        if (tab) tab.location.href = res.url;
-        else window.open(res.url, "_blank", "noopener,noreferrer");
+        if (tab) {
+          try {
+            tab.opener = null;
+          } catch {
+            /* cross-origin guard: nothing to clear */
+          }
+          tab.location.replace(res.url);
+        } else window.open(res.url, "_blank", "noopener,noreferrer");
       } else {
         // Signed URL carries Content-Disposition: attachment via the `download` option.
         const a = document.createElement("a");

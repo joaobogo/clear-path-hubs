@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { PositionLifecycleMenu } from "@/components/positions/position-lifecycle-menu";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { CloseRoleDialog } from "@/components/client/close-role-dialog";
+import { formatEnumLabel } from "@/lib/human-labels";
 import { normalizeDealBreakers } from "@/lib/client-deal-breakers";
 import { type ClientRoleStatus, clientRoleStatusLabel } from "@/lib/client-role-status";
 import { isArchivedStatus } from "@/lib/role-closure";
@@ -60,11 +61,11 @@ export function PositionHeader({
         </div>
         <div className="mt-1 text-sm text-muted-foreground">
           {[
-            position.department,
-            position.location,
-            position.work_model,
-            position.employment_type,
-            position.seniority,
+            position.department ?? undefined,
+            position.location ?? undefined,
+            formatEnumLabel(position.work_model) || undefined,
+            formatEnumLabel(position.employment_type) || undefined,
+            formatEnumLabel(position.seniority) || undefined,
           ]
             .filter(Boolean)
             .join(" · ")}

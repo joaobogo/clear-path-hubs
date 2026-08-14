@@ -2,6 +2,7 @@ import { LayoutDashboard } from "lucide-react";
 import { formatMoneyFromCents } from "@/lib/money";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RequestDialog } from "@/components/client/dashboards/request-dialog";
+import { formatEnumLabel } from "@/lib/human-labels";
 
 export function CustomRequestCard({
   orgId,
@@ -33,7 +34,7 @@ export function CustomRequestCard({
         <CardContent className="space-y-2 text-sm">
           <p className="text-muted-foreground">"{openRequest.description}"</p>
           <p>
-            Status: <span className="font-medium">{openRequest.status}</span>
+            Status: <span className="font-medium">{formatEnumLabel(openRequest.status)}</span>
             {openRequest.quoteAmountCents != null && (
               <>
                 {" · "}Quoted{" "}

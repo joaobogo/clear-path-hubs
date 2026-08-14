@@ -13,6 +13,8 @@ export type CompareCell = {
   /** Evidence snippet revealed on hover — never a score or engine internal. */
   evidence: string | null;
   source: string | null;
+  /** True when the evidence is a verbatim quote from this candidate's record. */
+  verbatim?: boolean;
 };
 
 export type CompareMatrixRow = {
@@ -64,10 +66,29 @@ export function buildCompareMatrix(candidates: ClientCandidateDTO[]): CompareMat
       return {
         match_id: c.match_id,
         status: toStatus(row?.status),
+        // Evidence must be this candidate's own words. Explanations can be a
+        // shared template, so they are only a fallback and get de-duplicated
+        // below — never repeat one candidate's text across the row.
         evidence: ev ? ev.snippet.trim() : (row?.explanation?.trim() || null),
         source: ev?.source ?? null,
+        verbatim: !!ev,
       };
     });
+
+    // If the fallback explanation is identical across candidates it carries no
+    // comparative information: show "no evidence" instead of duplicating it.
+    const fallbackTexts = cells
+      .filter((x) => !x.verbatim && x.evidence)
+      .map((x) => x.evidence as string);
+    if (fallbackTexts.length > 1) {
+      const counts = new Map<string, number>();
+      for (const t of fallbackTexts) counts.set(t, (counts.get(t) ?? 0) + 1);
+      for (const cell of cells) {
+        if (!cell.verbatim && cell.evidence && (counts.get(cell.evidence) ?? 0) > 1) {
+          cell.evidence = null;
+        }
+      }
+    }
     return {
       key,
       label: meta.label,

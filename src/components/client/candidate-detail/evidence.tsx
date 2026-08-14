@@ -119,11 +119,7 @@ export const EvaluationProvenance = memo(function EvaluationProvenance({
         >
           How this score was built
         </h3>
-        {ev.engine_version && (
-          <Badge variant="secondary" className="ml-auto font-mono text-[10px]">
-            {ev.engine_version}
-          </Badge>
-        )}
+        {/* Engine/run identifiers are internal provenance, not client copy. */}
       </div>
       <p className="mt-1 text-xs text-muted-foreground">
         Every category is grounded in verbatim CV evidence and screening

@@ -53,7 +53,7 @@ export const Route = createFileRoute("/_authenticated/client/positions/")({
 
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveFilteredEmptyState } from "@/lib/empty-states/empty-state-catalogue";
-import { makeWorkspacePending } from "@/components/workspace/pending-states";
+import { makeWorkspacePending, WorkspaceRowsSkeleton } from "@/components/workspace/pending-states";
 import { countRolesByTab, roleStatusTab, roleStatusTabLabel } from "@/lib/client-role-status-tabs";
 
 function PositionsPage() {
@@ -85,17 +85,21 @@ function PositionsPage() {
   // One fetch of every role in the workspace: tab filtering and the tab
   // counters come from the same list, so the counters always add up and no
   // status can be missing from every tab.
-  const {
-    data: allRows = [],
-    refetch,
-    isFetching,
-    isError,
-    error,
-  } = useQuery<Row[]>({
+  const listQuery = useQuery<Row[]>({
     queryKey: ["client-positions", orgId, "all"],
     queryFn: () => listFn({ data: { orgId: orgId! } }) as unknown as Promise<Row[]>,
     enabled: !!orgId,
+    // Cached between navigations so returning to Roles renders instantly
+    // instead of replaying a multi-second skeleton.
+    staleTime: 60_000,
+    gcTime: 10 * 60_000,
+    placeholderData: (prev) => prev,
   });
+  const { refetch, isFetching, isError, error } = listQuery;
+  const allRows = listQuery.data ?? [];
+  // "Resolved once" — not "not fetching". Until this is true the page shows
+  // skeletons, never "No results match these filters".
+  const hasRoleData = !!listQuery.data && !!orgId;
   const statusCounts = useMemo(() => countRolesByTab(allRows), [allRows]);
   const rows = useMemo(
     () => allRows.filter((p) => roleStatusTab(p.status) === status),
@@ -277,7 +281,11 @@ function PositionsPage() {
      onRetry={() => refetch()}
      retrying={isFetching}
    />
- ) : rows.length === 0 && !isFetching ? (
+ ) : !hasRoleData ? (
+   // Never flash an empty state mid-load: skeletons hold the layout until the
+   // roles list has actually resolved once.
+   <WorkspaceRowsSkeleton rows={5} />
+ ) : rows.length === 0 ? (
  <EmptyState
           status={status}
           hasAnyRole={allRows.length > 0}

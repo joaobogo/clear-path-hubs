@@ -48,6 +48,7 @@ export function NotificationBell() {
   const dismiss = useServerFn(dismissNotifications);
   const qc = useQueryClient();
   const [filter, setFilter] = useState<Filter>("all");
+  const [open, setOpen] = useState(false);
 
   const { data, isPending, isError, refetch, isFetching } = useQuery({
     queryKey: NOTIFICATIONS_QUERY_KEY,
@@ -102,11 +103,19 @@ export function NotificationBell() {
   });
 
   return (
-    <Popover>
+    // Controlled so the panel always opens on the FIRST click: an overlay that
+    // is still tearing down (search dialog, menu) used to swallow the initial
+    // pointer event and leave the trigger closed.
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
           size="icon"
+          onPointerDown={(e) => {
+            e.stopPropagation();
+            setOpen((v) => !v);
+          }}
+          onClick={(e) => e.preventDefault()}
           className="relative h-11 w-11 sm:h-9 sm:w-9"
           aria-label={
             unread > 0
