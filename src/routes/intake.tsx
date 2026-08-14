@@ -1187,10 +1187,10 @@ function ExpressIntakePage() {
         if (json.ok && Array.isArray(json.suggestions) && json.suggestions.length > 0) {
           setSuggestions({ kind: "ready", items: json.suggestions });
         } else {
-          setSuggestions({ kind: "failed" });
+          setSuggestions({ kind: "idle" });
         }
       } catch {
-        setSuggestions({ kind: "failed" });
+        setSuggestions({ kind: "idle" });
       }
     },
     [],
