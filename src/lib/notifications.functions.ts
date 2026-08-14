@@ -332,6 +332,9 @@ export const listMyNotifications = createServerFn({ method: "GET" })
           "notification_id",
           rows.map((r) => r.id),
         )
+        // Only the email channel is user-visible here; the in_app row is always
+        // "delivered" and used to mask a real email failure (and vice versa).
+        .eq("channel", "email")
         .order("created_at", { ascending: true });
       for (const d of deliveries ?? []) {
         const state = normaliseDeliveryStatus(d.status as string | null);
