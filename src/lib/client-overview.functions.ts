@@ -670,7 +670,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
       next_milestones,
       next_milestones_failed,
       latest_candidates,
-      recent_messages: (recentMessages as AnyRow[]) ?? [],
+      recent_messages,
       recent_activity: (events as AnyRow[]) ?? [],
       last_updated,
     };
