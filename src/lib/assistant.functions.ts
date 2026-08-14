@@ -487,9 +487,17 @@ export const askAssistant = createServerFn({ method: "POST" })
           break;
         }
         if (res.status === 402) {
-          finalContent = "This workspace is out of AI credits. Add credits to keep using the assistant.";
+          // A dead end here is worse than the outage: explain what ran out and
+          // what unblocks it, and point at the two things that still work.
+          finalContent =
+            "The AI allowance for this workspace is used up, so I can't reason over your data right now.\n\n" +
+            "AI credits pay for the model that reads your roles, candidates and evidence to answer in plain language. " +
+            "Your data, scores and pipeline are unaffected — only the conversational layer pauses.\n\n" +
+            "To lift it: open Account → Plan & billing to raise the allowance, or message your TaaSFlow contact in Messages and we'll top it up. " +
+            "Meanwhile, Insights → Questions and the Candidates board answer the same questions from the same records without AI.";
           break;
         }
+
         finalContent = `Assistant error (${res.status}): ${body.slice(0, 160)}`;
         break;
       }
