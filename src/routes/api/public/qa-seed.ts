@@ -998,6 +998,8 @@ async function handle(request: Request): Promise<Response> {
     email_pattern?: string;
     organization_id?: string;
     match_id?: string;
+    cv_base64?: string;
+    cv_filename?: string;
   } = {};
   try {
     const read = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.qa_seed);
