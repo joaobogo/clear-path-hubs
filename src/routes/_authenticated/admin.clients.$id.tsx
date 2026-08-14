@@ -979,15 +979,21 @@ function MessagesTab({ orgId }: { orgId: string }) {
             <h2 className="font-semibold">Messages</h2>
             <p className="mt-1 text-muted-foreground">
               Client conversations live inside the workspace so context, candidates, and
-              positions stay linked. Open the workspace to read or reply.
+              positions stay linked. You can read and reply to all client threads from the
+              global Comms center.
             </p>
-            <Link
-              to="/client"
-              search={{ org: orgId, preview: "client_admin" }}
-              className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-3"
+              asChild
             >
-              Open messages in workspace <ExternalLink className="h-3.5 w-3.5" />
-            </Link>
+              <Link
+                to="/admin/messages"
+              >
+                Open Comms center <MessagesSquare className="ml-2 h-3.5 w-3.5" />
+              </Link>
+            </Button>
           </div>
         </div>
       </div>

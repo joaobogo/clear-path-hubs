@@ -114,7 +114,12 @@ async function assertCanPost(supabase: Row, userId: string, orgId: string): Prom
     .gt("expires_at", new Date().toISOString())
     .limit(1)
     .maybeSingle();
-  if (!interactive) throw new Error("SUPPORT_VIEW_READ_ONLY");
+  if (!interactive) {
+    const { data: isStaff } = await supabase.rpc("is_platform_staff", { _user: userId });
+    if (!isStaff) throw new Error("SUPPORT_VIEW_READ_ONLY");
+    // Staff can always post, even without an interactive session, as long as
+    // they are in the admin Comms view (which uses this same function).
+  }
 }
 
 /** Membership role -> the words a client should read next to a name. */
