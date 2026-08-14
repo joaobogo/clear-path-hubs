@@ -160,15 +160,17 @@ function PositionsPage() {
  offers: 0,
  hires: 0,
  };
- for (const p of rows) {
- if (["active", "approved"].includes(p.status)) acc.active += 1;
- acc.delivered += p.kpis.delivered;
- acc.shortlisted += p.kpis.shortlisted;
- acc.interviewing += p.kpis.interviewing;
- acc.hires += p.kpis.hires;
- // offers are folded into interviewing on server; keep 0 unless we get a
- // dedicated count later.
- }
+      for (const p of rows) {
+      if (["active", "approved"].includes(p.status)) acc.active += 1;
+      acc.delivered += p.kpis.delivered;
+      acc.shortlisted += p.kpis.shortlisted;
+      acc.interviewing += p.kpis.interviewing;
+      acc.hires += p.kpis.hires;
+      // The server already returns a real per-role offer count from the same
+      // KPI pass as the others; the tile used to sit at a hardcoded 0, so a
+      // role with an offer out still showed "Offers 0".
+      acc.offers += p.kpis.offers;
+      }
  return acc;
  }, [rows]);
 
