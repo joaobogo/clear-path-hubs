@@ -186,6 +186,7 @@ import { Route as ApiPublicBookingCalendlyWebhookRouteImport } from './routes/ap
 import { Route as ApiPublicBlueprintStatusIntakeIdRouteImport } from './routes/api/public/blueprint-status.$intakeId'
 import { Route as AuthenticatedTeamsActTokenRouteImport } from './routes/_authenticated/teams.act.$token'
 import { Route as AuthenticatedMeApplicationsIdRouteImport } from './routes/_authenticated/me.applications.$id'
+import { Route as AuthenticatedClientPositionsNewRouteImport } from './routes/_authenticated/client.positions.new'
 import { Route as AuthenticatedClientPositionsIdRouteImport } from './routes/_authenticated/client.positions.$id'
 import { Route as AuthenticatedClientConversationsConversationIdRouteImport } from './routes/_authenticated/client.conversations.$conversationId'
 import { Route as AuthenticatedClientCandidatesIdRouteImport } from './routes/_authenticated/client.candidates.$id'
@@ -1167,6 +1168,12 @@ const AuthenticatedMeApplicationsIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedMeApplicationsRoute,
   } as any)
+const AuthenticatedClientPositionsNewRoute =
+  AuthenticatedClientPositionsNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedClientPositionsRoute,
+  } as any)
 const AuthenticatedClientPositionsIdRoute =
   AuthenticatedClientPositionsIdRouteImport.update({
     id: '/$id',
@@ -1437,6 +1444,7 @@ export interface FileRoutesByFullPath {
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
+  '/client/positions/new': typeof AuthenticatedClientPositionsNewRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
@@ -1623,6 +1631,7 @@ export interface FileRoutesByTo {
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
+  '/client/positions/new': typeof AuthenticatedClientPositionsNewRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
@@ -1821,6 +1830,7 @@ export interface FileRoutesById {
   '/_authenticated/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/_authenticated/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
   '/_authenticated/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
+  '/_authenticated/client/positions/new': typeof AuthenticatedClientPositionsNewRoute
   '/_authenticated/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/_authenticated/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
@@ -2019,6 +2029,7 @@ export interface FileRouteTypes {
     | '/client/candidates/$id'
     | '/client/conversations/$conversationId'
     | '/client/positions/$id'
+    | '/client/positions/new'
     | '/me/applications/$id'
     | '/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
@@ -2205,6 +2216,7 @@ export interface FileRouteTypes {
     | '/client/candidates/$id'
     | '/client/conversations/$conversationId'
     | '/client/positions/$id'
+    | '/client/positions/new'
     | '/me/applications/$id'
     | '/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
@@ -2402,6 +2414,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/candidates/$id'
     | '/_authenticated/client/conversations/$conversationId'
     | '/_authenticated/client/positions/$id'
+    | '/_authenticated/client/positions/new'
     | '/_authenticated/me/applications/$id'
     | '/_authenticated/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
@@ -3776,6 +3789,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMeApplicationsIdRouteImport
       parentRoute: typeof AuthenticatedMeApplicationsRoute
     }
+    '/_authenticated/client/positions/new': {
+      id: '/_authenticated/client/positions/new'
+      path: '/new'
+      fullPath: '/client/positions/new'
+      preLoaderRoute: typeof AuthenticatedClientPositionsNewRouteImport
+      parentRoute: typeof AuthenticatedClientPositionsRoute
+    }
     '/_authenticated/client/positions/$id': {
       id: '/_authenticated/client/positions/$id'
       path: '/$id'
@@ -4097,6 +4117,7 @@ const AuthenticatedClientCandidatesRouteWithChildren =
 
 interface AuthenticatedClientPositionsRouteChildren {
   AuthenticatedClientPositionsIdRoute: typeof AuthenticatedClientPositionsIdRoute
+  AuthenticatedClientPositionsNewRoute: typeof AuthenticatedClientPositionsNewRoute
   AuthenticatedClientPositionsIndexRoute: typeof AuthenticatedClientPositionsIndexRoute
   AuthenticatedClientPositionsIdEditRoute: typeof AuthenticatedClientPositionsIdEditRoute
 }
@@ -4104,6 +4125,7 @@ interface AuthenticatedClientPositionsRouteChildren {
 const AuthenticatedClientPositionsRouteChildren: AuthenticatedClientPositionsRouteChildren =
   {
     AuthenticatedClientPositionsIdRoute: AuthenticatedClientPositionsIdRoute,
+    AuthenticatedClientPositionsNewRoute: AuthenticatedClientPositionsNewRoute,
     AuthenticatedClientPositionsIndexRoute:
       AuthenticatedClientPositionsIndexRoute,
     AuthenticatedClientPositionsIdEditRoute:

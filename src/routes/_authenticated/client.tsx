@@ -307,7 +307,7 @@ function ClientLayout() {
   topBanner={topBanner}
   primaryAction={
     canManage && !supportView.readOnly
-      ? { label: "Create role", shortLabel: "New role", to: "/intake", icon: Plus }
+      ? { label: "Create role", shortLabel: "New role", to: "/client/positions/new", icon: Plus }
       : undefined
   }
   aboveNav={

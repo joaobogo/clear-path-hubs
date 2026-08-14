@@ -838,6 +838,7 @@ function ExpressIntakePage() {
     }, 6000);
     void (async () => {
       let signedIn = false;
+      let signedInEmail: string | null = null;
       try {
         const { data: sess } = await supabase.auth.getSession();
         if (sess?.session) {
@@ -845,6 +846,28 @@ function ExpressIntakePage() {
           const user = data?.user;
           if (user?.email) {
             signedIn = true;
+            signedInEmail = user.email;
+            // This wizard also creates the account, so it is for visitors only.
+            // Someone who already belongs to a workspace gets the in-app role
+            // creation flow instead of a signup screen they cannot complete.
+            try {
+              const { data: rows } = await supabase
+                .from("memberships")
+                .select("organization_id, role")
+                .eq("user_id", user.id)
+                .eq("status", "active")
+                .limit(5);
+              const workspace = (rows ?? []).find((r) =>
+                String(r.role ?? "").startsWith("client_"),
+              );
+              if (workspace && !cancelled) {
+                clearTimeout(safety);
+                void navigate({ to: "/client/positions/new", replace: true });
+                return;
+              }
+            } catch {
+              /* membership lookup failed — fall through to the normal form */
+            }
             if (!cancelled) {
               setAuthed(true);
               setAccountEmail(user.email);
@@ -925,7 +948,7 @@ function ExpressIntakePage() {
       }
 
       try {
-        const remote = await fetchIntakeDraft(signedIn);
+        const remote = await fetchIntakeDraft(signedIn, signedInEmail);
         if (cancelled) return;
         if (remote.status === "restored" && remote.payload) {
           applyDraftPayload(remote.payload);
@@ -1187,10 +1210,10 @@ function ExpressIntakePage() {
         if (json.ok && Array.isArray(json.suggestions) && json.suggestions.length > 0) {
           setSuggestions({ kind: "ready", items: json.suggestions });
         } else {
-          setSuggestions({ kind: "failed" });
+          setSuggestions({ kind: "idle" });
         }
       } catch {
-        setSuggestions({ kind: "failed" });
+        setSuggestions({ kind: "idle" });
       }
     },
     [],
