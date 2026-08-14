@@ -471,7 +471,7 @@ export type Database = {
           cv_file_id: string | null
           expires_at: string | null
           id: string
-          is_test_record: boolean | null
+          is_test_record: boolean
           last_candidate_edit_at: string | null
           legacy_source_id: string | null
           legacy_source_system: string | null
@@ -511,7 +511,7 @@ export type Database = {
           cv_file_id?: string | null
           expires_at?: string | null
           id?: string
-          is_test_record?: boolean | null
+          is_test_record?: boolean
           last_candidate_edit_at?: string | null
           legacy_source_id?: string | null
           legacy_source_system?: string | null
@@ -551,7 +551,7 @@ export type Database = {
           cv_file_id?: string | null
           expires_at?: string | null
           id?: string
-          is_test_record?: boolean | null
+          is_test_record?: boolean
           last_candidate_edit_at?: string | null
           legacy_source_id?: string | null
           legacy_source_system?: string | null
@@ -1844,7 +1844,7 @@ export type Database = {
           expires_at: string | null
           id: string
           integrity_status: Database["public"]["Enums"]["integrity_status"]
-          is_test_record: boolean | null
+          is_test_record: boolean
           last_processing_trace_id: string | null
           legacy_source_id: string | null
           legacy_source_system: string | null
@@ -1895,7 +1895,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           integrity_status?: Database["public"]["Enums"]["integrity_status"]
-          is_test_record?: boolean | null
+          is_test_record?: boolean
           last_processing_trace_id?: string | null
           legacy_source_id?: string | null
           legacy_source_system?: string | null
@@ -1946,7 +1946,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           integrity_status?: Database["public"]["Enums"]["integrity_status"]
-          is_test_record?: boolean | null
+          is_test_record?: boolean
           last_processing_trace_id?: string | null
           legacy_source_id?: string | null
           legacy_source_system?: string | null
@@ -2291,7 +2291,7 @@ export type Database = {
           gap_nudge_last_at: string | null
           headline: string | null
           id: string
-          is_test_record: boolean | null
+          is_test_record: boolean
           languages: Json
           legacy_source_id: string | null
           legacy_source_system: string | null
@@ -2336,7 +2336,7 @@ export type Database = {
           gap_nudge_last_at?: string | null
           headline?: string | null
           id?: string
-          is_test_record?: boolean | null
+          is_test_record?: boolean
           languages?: Json
           legacy_source_id?: string | null
           legacy_source_system?: string | null
@@ -2381,7 +2381,7 @@ export type Database = {
           gap_nudge_last_at?: string | null
           headline?: string | null
           id?: string
-          is_test_record?: boolean | null
+          is_test_record?: boolean
           languages?: Json
           legacy_source_id?: string | null
           legacy_source_system?: string | null
@@ -4488,7 +4488,7 @@ export type Database = {
           file_status: Database["public"]["Enums"]["file_status"]
           filename: string
           id: string
-          is_test_record: boolean | null
+          is_test_record: boolean
           legacy_source_id: string | null
           legacy_source_system: string | null
           legacy_source_table: string | null
@@ -4526,7 +4526,7 @@ export type Database = {
           file_status?: Database["public"]["Enums"]["file_status"]
           filename: string
           id?: string
-          is_test_record?: boolean | null
+          is_test_record?: boolean
           legacy_source_id?: string | null
           legacy_source_system?: string | null
           legacy_source_table?: string | null
@@ -4564,7 +4564,7 @@ export type Database = {
           file_status?: Database["public"]["Enums"]["file_status"]
           filename?: string
           id?: string
-          is_test_record?: boolean | null
+          is_test_record?: boolean
           legacy_source_id?: string | null
           legacy_source_system?: string | null
           legacy_source_table?: string | null
@@ -6812,7 +6812,7 @@ export type Database = {
           expires_at: string | null
           id: string
           is_master_admin: boolean
-          is_test_record: boolean | null
+          is_test_record: boolean
           legacy_source_id: string | null
           legacy_source_system: string | null
           legacy_source_table: string | null
@@ -6835,7 +6835,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_master_admin?: boolean
-          is_test_record?: boolean | null
+          is_test_record?: boolean
           legacy_source_id?: string | null
           legacy_source_system?: string | null
           legacy_source_table?: string | null
@@ -6858,7 +6858,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_master_admin?: boolean
-          is_test_record?: boolean | null
+          is_test_record?: boolean
           legacy_source_id?: string | null
           legacy_source_system?: string | null
           legacy_source_table?: string | null
@@ -7706,7 +7706,7 @@ export type Database = {
           id: string
           industry: string | null
           internal_notes: string | null
-          is_test_record: boolean | null
+          is_test_record: boolean
           last_client_update_sent_at: string | null
           legacy_source_id: string | null
           legacy_source_system: string | null
@@ -7761,7 +7761,7 @@ export type Database = {
           id?: string
           industry?: string | null
           internal_notes?: string | null
-          is_test_record?: boolean | null
+          is_test_record?: boolean
           last_client_update_sent_at?: string | null
           legacy_source_id?: string | null
           legacy_source_system?: string | null
@@ -7816,7 +7816,7 @@ export type Database = {
           id?: string
           industry?: string | null
           internal_notes?: string | null
-          is_test_record?: boolean | null
+          is_test_record?: boolean
           last_client_update_sent_at?: string | null
           legacy_source_id?: string | null
           legacy_source_system?: string | null
@@ -9428,7 +9428,7 @@ export type Database = {
           id: string
           intake_context: Json
           intensity: Database["public"]["Enums"]["role_intensity"]
-          is_test_record: boolean | null
+          is_test_record: boolean
           jd_file_name: string | null
           jd_file_path: string | null
           jd_file_size: number | null
@@ -9519,7 +9519,7 @@ export type Database = {
           id?: string
           intake_context?: Json
           intensity?: Database["public"]["Enums"]["role_intensity"]
-          is_test_record?: boolean | null
+          is_test_record?: boolean
           jd_file_name?: string | null
           jd_file_path?: string | null
           jd_file_size?: number | null
@@ -9610,7 +9610,7 @@ export type Database = {
           id?: string
           intake_context?: Json
           intensity?: Database["public"]["Enums"]["role_intensity"]
-          is_test_record?: boolean | null
+          is_test_record?: boolean
           jd_file_name?: string | null
           jd_file_path?: string | null
           jd_file_size?: number | null
@@ -9749,7 +9749,7 @@ export type Database = {
           expires_at: string | null
           full_name: string | null
           id: string
-          is_test_record: boolean | null
+          is_test_record: boolean
           legacy_source_id: string | null
           legacy_source_system: string | null
           legacy_source_table: string | null
@@ -9776,7 +9776,7 @@ export type Database = {
           expires_at?: string | null
           full_name?: string | null
           id?: string
-          is_test_record?: boolean | null
+          is_test_record?: boolean
           legacy_source_id?: string | null
           legacy_source_system?: string | null
           legacy_source_table?: string | null
@@ -9803,7 +9803,7 @@ export type Database = {
           expires_at?: string | null
           full_name?: string | null
           id?: string
-          is_test_record?: boolean | null
+          is_test_record?: boolean
           legacy_source_id?: string | null
           legacy_source_system?: string | null
           legacy_source_table?: string | null

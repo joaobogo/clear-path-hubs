@@ -444,7 +444,7 @@ function SlideIndustry() {
         ))}
       </div>
       <p className="mt-6 text-sm text-white/60">
-        57 verticals mapped. Each carries a scoring rubric tuned to what "good" looks like there.
+        Each vertical carries a scoring rubric tuned to what "good" looks like there.
       </p>
     </div>
   );

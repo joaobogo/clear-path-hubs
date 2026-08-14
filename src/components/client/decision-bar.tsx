@@ -282,7 +282,7 @@ export function DecisionBar({
             <div className="rounded-lg border border-warning/30 bg-warning/10 p-3">
               <p className="text-sm font-semibold">{DEAL_BREAKER_PROMPT_TITLE}</p>
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                {dealBreakerPromptBody(declineQuery.data?.otherDeclineCount ?? 2)}
+                {dealBreakerPromptBody(declineQuery.data?.otherDeclineCount ?? 0)}
               </p>
               <div className="mt-2 flex flex-wrap items-center gap-3">
                 <Button asChild size="sm" variant="outline">
