@@ -1397,7 +1397,7 @@ async function handle(request: Request): Promise<Response> {
       const { data: match, error: mErr } = await sb
         .from("candidate_matches")
         .select(
-          "id, application_id, processing_state, processing_error_code, processing_error_message, processing_updated_at, canonical_state, total_score, score_band, current_score_run_id, admin_status, client_visibility",
+          "id, application_id, processing_state, processing_error_code, processing_error_message, processing_updated_at, canonical_state, current_score_run_id, admin_status, client_visibility",
         )
         .eq("id", body.match_id)
         .maybeSingle();
@@ -1437,10 +1437,13 @@ async function handle(request: Request): Promise<Response> {
           .order("created_at", { ascending: false }),
       ]);
 
+      // Score truth lives on the immutable score run, never on the match row.
+      const current = (runs.data ?? []).find((r) => r.id === match.current_score_run_id) ?? null;
       return Response.json({
         ok: true,
         action,
         match,
+        score: current ? { total_score: current.total_score, score_band: current.score_band } : null,
         file: file.data ?? null,
         score_runs: runs.data ?? [],
         evidence_items: evidence.data ?? [],

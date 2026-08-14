@@ -167,7 +167,7 @@ test.describe("cv parsing and scoring pipeline", () => {
     for (const c of created) {
       const before = await pipelineSnapshot(c.matchId);
       expect(before.match.processing_state).toBe("queued");
-      expect(before.match.total_score).toBeNull();
+      expect(before.score).toBeNull();
     }
 
     // 2. Run the pipeline through the same endpoint cron uses.
@@ -187,8 +187,8 @@ test.describe("cv parsing and scoring pipeline", () => {
       expect(snap.file?.parser).toBe("pdf");
       expect(snap.score_runs.length, `${c.label} score runs`).toBeGreaterThan(0);
       expect(snap.match.current_score_run_id, `${c.label} current score run`).toBeTruthy();
-      expect(typeof snap.match.total_score, `${c.label} total score`).toBe("number");
-      expect(snap.match.score_band, `${c.label} band`).toBeTruthy();
+      expect(typeof snap.score?.total_score, `${c.label} total score`).toBe("number");
+      expect(snap.score?.score_band, `${c.label} band`).toBeTruthy();
       expect(snap.evidence_items.length, `${c.label} evidence items`).toBeGreaterThan(0);
     }
 
@@ -197,7 +197,7 @@ test.describe("cv parsing and scoring pipeline", () => {
     const first = created[0]!;
     await openAdminRecord(page, first.matchId);
     const snap = await pipelineSnapshot(first.matchId);
-    await expect(page.getByText(String(snap.match.total_score)).first()).toBeVisible({
+    await expect(page.getByText(String(snap.score?.total_score)).first()).toBeVisible({
       timeout: 30_000,
     });
     await page.goto(`/admin/candidates/${first.matchId}/evidence`, {
@@ -224,7 +224,7 @@ test.describe("cv parsing and scoring pipeline", () => {
       failed.match.processing_state,
     );
     expect(failed.match.processing_error_message).toBeTruthy();
-    expect(failed.match.total_score).toBeNull();
+    expect(failed.score).toBeNull();
 
     // The admin sees that state, and the repair action is reachable.
     await loginAs(page, "admin", fixtures.users.platform_admin.email, QA_PASSWORD);
@@ -260,7 +260,7 @@ test.describe("cv parsing and scoring pipeline", () => {
 
     const repaired = await pipelineSnapshot(broken.matchId);
     expect(repaired.file?.parse_state).toBe("parsed");
-    expect(typeof repaired.match.total_score).toBe("number");
+    expect(typeof repaired.score?.total_score).toBe("number");
     expect(repaired.evidence_items.length).toBeGreaterThan(0);
 
     expect(meaningfulConsoleErrors(errors)).toEqual([]);

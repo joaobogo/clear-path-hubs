@@ -342,12 +342,11 @@ export type PipelineSnapshot = {
     processing_error_code: string | null;
     processing_error_message: string | null;
     canonical_state: string | null;
-    total_score: number | null;
-    score_band: string | null;
     current_score_run_id: string | null;
     admin_status: string;
     client_visibility: string;
   };
+  score: { total_score: number | null; score_band: string | null } | null;
   file: {
     id: string;
     filename: string;
