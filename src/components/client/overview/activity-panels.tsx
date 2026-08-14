@@ -78,7 +78,9 @@ export function RecentMessages({ messages }: { messages: Any[] }) {
           {messages.slice(0, 4).map((m) => (
             <li key={m.id} className="py-2.5 first:pt-0 last:pb-0">
               <div className="flex items-baseline justify-between gap-2">
-                <span className="text-xs font-medium text-muted-foreground">TaaSFlow</span>
+                <span className="text-xs font-medium text-muted-foreground">
+                  {(m.sender_name as string | undefined) ?? "TaaSFlow"}
+                </span>
                 <span className="shrink-0 text-xs text-muted-foreground">
                   {relTime(m.created_at)}
                 </span>
