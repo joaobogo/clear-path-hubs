@@ -15,7 +15,7 @@ import { ConversationThread } from "@/components/comms/conversation-thread";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Briefcase, LifeBuoy, MessageSquare, User } from "lucide-react";
+import { Briefcase, ExternalLink, LifeBuoy, MessageSquare, User } from "lucide-react";
 
 
 export const Route = createFileRoute("/_authenticated/admin/messages")({
@@ -45,6 +45,8 @@ export const Route = createFileRoute("/_authenticated/admin/messages")({
 });
 
 function AdminConversationsPage() {
+  const navigate = useNavigate();
+  const search = Route.useSearch() as { conversationId?: string };
   const { data } = useSuspenseQuery({
     queryKey: ["admin-conversations"],
     queryFn: () => listAllConversations(),
@@ -54,53 +56,101 @@ function AdminConversationsPage() {
     queryFn: () => listCandidateSupportRequests(),
   });
 
+  const selectedId = search.conversationId;
+  const selected = selectedId ? data.items.find((i) => i.id === selectedId) : null;
+
   return (
-    <div className="mx-auto max-w-4xl space-y-6 px-6 py-8">
+    <div className="mx-auto max-w-6xl space-y-8 px-6 py-8">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">Conversations</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {data.items.length} {data.items.length === 1 ? "thread" : "threads"} across all clients —
-          one per account, role, and candidate. Open a thread to reply inside the client workspace.
+          one per account, role, and candidate.
         </p>
       </header>
 
-      {data.items.length === 0 ? (
-        <div className="rounded-lg border bg-card px-5 py-14 text-center">
-          <MessageSquare className="mx-auto h-6 w-6 text-muted-foreground" />
-          <p className="mt-2 text-sm text-muted-foreground">No conversations yet.</p>
+      <div className="grid gap-6 lg:grid-cols-12">
+        <div className={selectedId ? "hidden lg:block lg:col-span-4" : "lg:col-span-12"}>
+          {data.items.length === 0 ? (
+            <div className="rounded-lg border bg-card px-5 py-14 text-center">
+              <MessageSquare className="mx-auto h-6 w-6 text-muted-foreground" />
+              <p className="mt-2 text-sm text-muted-foreground">No conversations yet.</p>
+            </div>
+          ) : (
+            <ul className="divide-y rounded-lg border bg-card overflow-hidden">
+              {data.items.map((t) => {
+                const Icon =
+                  t.scope === "position" ? Briefcase : t.scope === "candidate" ? User : MessageSquare;
+                const isActive = selectedId === t.id;
+                return (
+                  <li key={t.id}>
+                    <button
+                      type="button"
+                      onClick={() => navigate({ search: { conversationId: t.id } })}
+                      className={`flex w-full items-start gap-3 px-5 py-4 text-left transition-colors ${
+                        isActive ? "bg-muted" : "hover:bg-muted/50"
+                      }`}
+                    >
+                      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="truncate text-sm font-medium">{t.organization_name}</span>
+                          <Badge variant="secondary" className="max-w-[120px] truncate">{t.subject}</Badge>
+                        </div>
+                        <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">
+                          {t.last_body ?? "No messages yet"}
+                        </p>
+                      </div>
+                      <span className="shrink-0 text-[10px] tabular-nums text-muted-foreground">
+                        {relTime(t.last_message_at)}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
-      ) : (
-        <ul className="divide-y rounded-lg border bg-card">
-          {data.items.map((t) => {
-            const Icon =
-              t.scope === "position" ? Briefcase : t.scope === "candidate" ? User : MessageSquare;
-            return (
-              <li key={t.id}>
+
+        {selectedId && (
+          <div className="lg:col-span-8 space-y-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2 min-w-0">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="lg:hidden" 
+                  onClick={() => navigate({ search: { conversationId: undefined } })}
+                >
+                  ← Back
+                </Button>
+                <div className="min-w-0">
+                  <h3 className="font-medium text-sm truncate">{selected?.organization_name}</h3>
+                  <p className="text-xs text-muted-foreground truncate">{selected?.subject}</p>
+                </div>
+              </div>
+              <Button variant="outline" size="sm" asChild>
                 <Link
                   to="/client/conversations/$conversationId"
-                  params={{ conversationId: t.id }}
-                  search={{ org: t.organization_id }}
-                  className="flex items-start gap-3 px-5 py-4 transition-colors hover:bg-muted/50"
+                  params={{ conversationId: selectedId }}
+                  search={{ org: selected?.organization_id ?? "" }}
                 >
-                  <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="truncate text-sm font-medium">{t.organization_name}</span>
-                      <Badge variant="secondary">{t.subject}</Badge>
-                    </div>
-                    <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
-                      {t.last_body ?? "No messages yet"}
-                    </p>
-                  </div>
-                  <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
-                    {relTime(t.last_message_at)}
-                  </span>
+                  <ExternalLink className="mr-2 h-3.5 w-3.5" />
+                  Open Workspace
                 </Link>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+              </Button>
+            </div>
+            
+            <ConversationThread 
+              conversationId={selectedId} 
+              heightClass="h-[600px]"
+              className="border shadow-sm"
+            />
+          </div>
+        )}
+      </div>
+
+      <div className="h-px bg-border my-8" />
 
       <section className="space-y-3">
         <header>
