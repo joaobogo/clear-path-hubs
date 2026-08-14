@@ -1984,37 +1984,44 @@ function ExpressIntakePage() {
               autoComplete="organization-title"
             />
           </Field>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Work email" carried={isCarried("workEmail")} error={errors.workEmail} required={req["workEmail"]}>
-              <Input
-                type="email"
-                value={state.workEmail}
-                onChange={(e) => {
-                  set("workEmail", e.target.value);
-                  setEmailStatus({ kind: "idle" });
-                }}
-                onBlur={() => void checkEmail()}
-                autoComplete="email"
-                inputMode="email"
-              />
-            </Field>
-            <Field label="Phone" carried={isCarried("phone")} error={errors.phone} required={req["phone"]}>
-              <Input
-                value={state.phone}
-                onChange={(e) => set("phone", e.target.value)}
-                autoComplete="tel"
-                inputMode="tel"
-              />
-            </Field>
-          </div>
-          <Field label="Your LinkedIn" carried={isCarried("contactLinkedin")} error={errors.contactLinkedin} required={req["contactLinkedin"]}>
+          <Field label="Work email" carried={isCarried("workEmail")} error={errors.workEmail} required={req["workEmail"]}>
             <Input
-              value={state.contactLinkedin}
-              onChange={(e) => set("contactLinkedin", e.target.value)}
-              placeholder="linkedin.com/in/yourname"
-              inputMode="url"
+              type="email"
+              value={state.workEmail}
+              onChange={(e) => {
+                set("workEmail", e.target.value);
+                setEmailStatus({ kind: "idle" });
+              }}
+              onBlur={() => void checkEmail()}
+              autoComplete="email"
+              inputMode="email"
             />
           </Field>
+          <details className="rounded-lg border border-[color:var(--brand-navy)]/12 bg-white px-4 py-3">
+            <summary className="cursor-pointer text-sm font-medium">
+              Add phone and LinkedIn{" "}
+              <span className="font-normal text-[color:var(--brand-navy)]/60">— optional</span>
+            </summary>
+            <div className="mt-3 grid gap-4 sm:grid-cols-2">
+              <Field label="Phone" carried={isCarried("phone")} error={errors.phone} required={req["phone"]}>
+                <Input
+                  value={state.phone}
+                  onChange={(e) => set("phone", e.target.value)}
+                  autoComplete="tel"
+                  inputMode="tel"
+                />
+              </Field>
+              <Field label="Your LinkedIn" carried={isCarried("contactLinkedin")} error={errors.contactLinkedin} required={req["contactLinkedin"]}>
+                <Input
+                  value={state.contactLinkedin}
+                  onChange={(e) => set("contactLinkedin", e.target.value)}
+                  placeholder="linkedin.com/in/yourname"
+                  inputMode="url"
+                />
+              </Field>
+            </div>
+          </details>
+
         </Section>
 
         <div id="account-step">
