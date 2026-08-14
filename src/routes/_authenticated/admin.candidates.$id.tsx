@@ -184,7 +184,7 @@ function CandidateWorkspace() {
     <div className="mx-auto max-w-[1600px] px-6 py-6 space-y-6">
       <WorkspaceHeader m={m} cp={cp} pos={pos} currentRun={currentRun} />
 
-      <ComponentErrorBoundary boundary="admin.candidate.next-action" tone="staff">
+      <ComponentErrorBoundary boundary="admin.candidate.next-action" tone="admin">
         <CandidateNextActionBar matchId={id} onNavigateTab={(t) => setTab(t as TabId)} />
       </ComponentErrorBoundary>
 
@@ -278,17 +278,17 @@ function CandidateWorkspace() {
                 {tab === "screening" && <ScreeningTab result={currentResult} evidence={evidence} />}
                 {tab === "history" && (
                   <div className="space-y-4">
-                    <ComponentErrorBoundary boundary="admin.candidate.history-timeline" tone="staff">
+                    <ComponentErrorBoundary boundary="admin.candidate.history-timeline" tone="admin">
                       <CandidateHistoryTimeline matchId={id} focusEventId={focusEventId} />
                     </ComponentErrorBoundary>
-                    <ComponentErrorBoundary boundary="admin.candidate.history-runs" tone="staff">
+                    <ComponentErrorBoundary boundary="admin.candidate.history-runs" tone="admin">
                       <HistoryTab runs={runs} jobs={jobs} decisions={decisions} />
                     </ComponentErrorBoundary>
                   </div>
                 )}
                 {tab === "preview" && <PreviewTab matchId={id} />}
                 {tab === "activity" && (
-                  <ComponentErrorBoundary boundary="admin.candidate.activity" tone="staff">
+                  <ComponentErrorBoundary boundary="admin.candidate.activity" tone="admin">
                     <ActivityAuditTab matchId={id} positionId={pos?.id} decisions={decisions} />
                   </ComponentErrorBoundary>
                 )}
