@@ -538,3 +538,73 @@ export async function postPublic<T = Record<string, unknown>>(
   }
   return { status: res.status, body: body as T };
 }
+
+// ─────────────────────────────────────────────────────────────
+// Full-journey trail
+// ─────────────────────────────────────────────────────────────
+
+export type JourneyTrail = {
+  ok: boolean;
+  audit_events: Array<{
+    id: string;
+    action: string;
+    entity_type: string | null;
+    entity_id: string | null;
+    created_at: string;
+  }>;
+  notification_events: Array<{ id: string; event_type: string; created_at: string }>;
+  notifications: Array<{
+    id: string;
+    event_type: string;
+    audience: string;
+    title: string | null;
+    created_at: string;
+  }>;
+  position: {
+    id: string;
+    title: string;
+    status: string;
+    visibility: string;
+    reference_code: string | null;
+  } | null;
+  match: {
+    id: string;
+    stage: string;
+    admin_status: string | null;
+    client_visibility: string;
+    processing_state: string;
+    total_score: number | null;
+    score_band: string | null;
+    contact_released_at: string | null;
+  } | null;
+};
+
+/**
+ * Reads the audit + notification trail a handoff actually wrote. The UI can
+ * look right while the records the business depends on later are missing, so
+ * every journey step asserts against this rather than the screen alone.
+ */
+export const journeyTrail = (args: {
+  organizationId: string;
+  positionId?: string;
+  matchId?: string;
+}) =>
+  qaSeed<JourneyTrail>("journey_trail", {
+    organization_id: args.organizationId,
+    position_id: args.positionId,
+    match_id: args.matchId,
+  });
+
+/** True when any audit row or notification matches one of the given patterns. */
+export function trailHas(
+  trail: JourneyTrail,
+  patterns: RegExp[],
+): { audit: boolean; notification: boolean } {
+  const hit = (v: string | null | undefined) => !!v && patterns.some((p) => p.test(v));
+  return {
+    audit: trail.audit_events.some((e) => hit(e.action)),
+    notification:
+      trail.notifications.some((n) => hit(n.event_type)) ||
+      trail.notification_events.some((n) => hit(n.event_type)),
+  };
+}

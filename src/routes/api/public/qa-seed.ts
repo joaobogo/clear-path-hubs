@@ -974,6 +974,7 @@ async function handle(request: Request): Promise<Response> {
     company_name?: string;
     email_pattern?: string;
     organization_id?: string;
+    match_id?: string;
   } = {};
   try {
     const read = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.qa_seed);
@@ -1076,6 +1077,95 @@ async function handle(request: Request): Promise<Response> {
       }
       return Response.json({ ok: true, action, organizations, memberships });
     }
+
+    /**
+     * Read-only trail for the full-journey walkthrough: what the handoff
+     * actually recorded. A UI assertion alone cannot tell whether the audit
+     * event and the notification were written, and those two are what the
+     * business relies on later (activity feeds, digests, disputes).
+     * Scoped to one organisation and never mutates anything.
+     */
+    if (action === "journey_trail") {
+      if (!body.organization_id) {
+        return Response.json({ ok: false, error: "organization_id required" }, { status: 400 });
+      }
+      const sb = await loadAdmin();
+      const org = body.organization_id;
+      // Some writers record an entity without an organisation (public intake
+      // runs before the workspace exists), so the trail is the union of the
+      // org-scoped rows and anything pointing at this position or match.
+      const entityIds = [body.position_id, body.match_id].filter(Boolean) as string[];
+      const [audit, auditByEntity, events, notifs, position, match] = await Promise.all([
+        sb
+          .from("audit_events")
+          .select("id, action, entity_type, entity_id, created_at, actor_user_id, trace_id")
+          .eq("organization_id", org)
+          .order("created_at", { ascending: true })
+          .limit(500),
+        entityIds.length > 0
+          ? sb
+              .from("audit_events")
+              .select("id, action, entity_type, entity_id, created_at, actor_user_id, trace_id")
+              .in("entity_id", entityIds)
+              .order("created_at", { ascending: true })
+              .limit(500)
+          : Promise.resolve({ data: [], error: null }),
+        sb
+          .from("notification_events")
+          .select("id, event_type, organization_id, position_id, application_id, created_at")
+          .eq("organization_id", org)
+          .order("created_at", { ascending: true })
+          .limit(500),
+        sb
+          .from("notifications")
+          .select("id, event_type, audience, recipient_user_id, title, created_at")
+          .eq("organization_id", org)
+          .order("created_at", { ascending: true })
+          .limit(500),
+        body.position_id
+          ? sb
+              .from("positions")
+              .select("id, title, status, visibility, reference_code")
+              .eq("id", body.position_id)
+              .maybeSingle()
+          : Promise.resolve({ data: null, error: null }),
+        body.match_id
+          ? sb
+              .from("candidate_matches")
+              .select(
+                "id, stage, admin_status, client_visibility, processing_state, total_score, score_band, contact_released_at",
+              )
+              .eq("id", body.match_id)
+              .maybeSingle()
+          : Promise.resolve({ data: null, error: null }),
+      ]);
+      // A silent query error would read as "no audit trail", which is exactly
+      // the failure this endpoint exists to detect — surface it instead.
+      const firstError =
+        audit.error ?? auditByEntity.error ?? events.error ?? notifs.error ?? null;
+      if (firstError) {
+        return Response.json({ ok: false, error: firstError.message }, { status: 500 });
+      }
+      type AuditRow = { id: string; action: string };
+      const merged = new Map<string, AuditRow>();
+      for (const row of [
+        ...((audit.data ?? []) as AuditRow[]),
+        ...((auditByEntity.data ?? []) as AuditRow[]),
+      ]) {
+        merged.set(row.id, row);
+      }
+      return Response.json({
+        ok: true,
+        action,
+        audit_events: Array.from(merged.values()),
+        notification_events: events.data ?? [],
+        notifications: notifs.data ?? [],
+        position: position.data ?? null,
+        match: match.data ?? null,
+      });
+    }
+
+
 
     if (action === "lookup_candidate_application") {
       if (!body.email) return Response.json({ ok: false, error: "email required" }, { status: 400 });
