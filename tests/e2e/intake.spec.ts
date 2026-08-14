@@ -64,9 +64,8 @@ async function fillPasswords(page: Page, password: string, confirm = password) {
 /** Step 2: the role itself plus at least one tagged must-have. */
 async function fillRole(page: Page, { withJd }: { withJd: boolean }) {
   await page.getByLabel("Job title", { exact: true }).fill("Clinical Operations Manager");
-  await page
-    .getByLabel("Why is this role open?")
-    .fill("Our two clinical ops leads are covering three sites and renewals are slipping.");
+  // "Why is this role open?" was intentionally removed from intake — the brief
+  // no longer asks prospects for it, so the wizard has no such field.
   if (withJd) await page.locator("#jd-text").fill(JD_TEXT);
 }
 
@@ -205,18 +204,19 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await expect(page.getByText("Enter the job title")).toBeVisible();
     await expect(page.getByText(/tag at least one requirement as a must have/i)).toBeVisible();
 
-    // A job description is required in some form, and typed text must clear the
-    // 80-character minimum.
+    // A job description is required in some form. There is no longer a
+    // character minimum on the pasted text — any real description is accepted.
     await fillRole(page, { withJd: false });
     await continueStep(page);
-    await expect(page.getByText(/at least 80 characters/i)).toBeVisible();
-    await page.locator("#jd-text").fill("too short to be a job description");
-    await continueStep(page);
-    await expect(page.getByText(/at least 80 characters/i)).toBeVisible();
+    await expect(
+      page.getByText(/upload a job description file or paste the description/i),
+    ).toBeVisible();
     await page.locator("#jd-text").fill(JD_TEXT);
     await addMustHave(page, "5+ years running clinical trial sites");
     await continueStep(page);
-    await expect(page.getByText(/at least 80 characters/i)).toHaveCount(0);
+    await expect(
+      page.getByText(/upload a job description file or paste the description/i),
+    ).toHaveCount(0);
     await expectStep(page, 2);
 
     // ── Step 3 review: skipped optional fields must not read "Not provided" ──

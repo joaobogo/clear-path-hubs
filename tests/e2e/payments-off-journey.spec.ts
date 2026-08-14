@@ -124,9 +124,6 @@ test.describe("PAYMENTS-OFF — full employer journey", () => {
     // ── Step 2: the role ────────────────────────────────────────────────────
     await assertClean(page, "intake step 2");
     await page.getByLabel("Job title", { exact: true }).fill("Clinical Operations Manager");
-    await page
-      .getByLabel("Why is this role open?")
-      .fill("Our two clinical ops leads are covering three sites and renewals are slipping.");
     await page.locator("#jd-text").fill(JD_TEXT);
     await addMustHave(page, "5+ years running clinical trial sites");
     await continueStep(page);

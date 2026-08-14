@@ -226,7 +226,7 @@ test.describe("candidate apply flow", () => {
       mimeType: "application/pdf",
       buffer: Buffer.alloc(11 * 1024 * 1024, 0x20),
     });
-    await expect(page.getByText(/larger than 10 ?MB/i).first()).toBeVisible();
+    await expect(page.getByText(/the limit is 10 ?MB/i).first()).toBeVisible();
     await continueBtn(page).click();
     await expect(page.locator("#cv")).toBeVisible();
   });

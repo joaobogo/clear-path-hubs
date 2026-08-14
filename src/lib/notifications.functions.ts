@@ -68,6 +68,13 @@ export async function emitEventFromServer(args: {
   if (recipients.length === 0) {
     // Auto-fanout to org viewers (client audience) + platform staff (admin audience)
     const buckets: Array<{ user_id: string; audience: Audience; link_path?: string }> = [];
+    const seen = new Set<string>();
+    const push = (user_id: string, audience: Audience) => {
+      const k = `${user_id}:${audience}`;
+      if (seen.has(k)) return;
+      seen.add(k);
+      buckets.push({ user_id, audience, link_path: args.link_path });
+    };
 
     if (args.organization_id) {
       const { data: members } = await supabaseAdmin
@@ -78,11 +85,25 @@ export async function emitEventFromServer(args: {
       for (const m of members ?? []) {
         const role = m.role as string;
         if (role.startsWith("client_")) {
-          buckets.push({ user_id: m.user_id as string, audience: "client", link_path: args.link_path });
+          push(m.user_id as string, "client");
         } else if (role === "platform_admin" || role === "operations") {
-          buckets.push({ user_id: m.user_id as string, audience: "admin", link_path: args.link_path });
+          push(m.user_id as string, "admin");
         }
       }
+    }
+
+    // Platform staff are not members of the client workspace, so an org-only
+    // fanout left admin-audience events (a new application, for one) with zero
+    // notifications and nothing in the staff bell. Staff seats are global —
+    // matching public.is_platform_staff — so they are resolved separately.
+    // Only events that actually have admin copy reach them.
+    if (copyFor("admin", args.event)) {
+      const { data: staff } = await supabaseAdmin
+        .from("memberships")
+        .select("user_id")
+        .eq("status", "active")
+        .in("role", ["platform_admin", "operations"]);
+      for (const s of staff ?? []) push(s.user_id as string, "admin");
     }
     recipients = buckets;
   }
