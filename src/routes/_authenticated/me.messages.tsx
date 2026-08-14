@@ -67,7 +67,7 @@ function MyMessages() {
  void markReadFn()
  .then(() => {
  qc.invalidateQueries({ queryKey: ["me-messages"] });
- qc.invalidateQueries({ queryKey: ["candidate-home"] });
+ qc.invalidateQueries({ queryKey: ["me-dashboard"] });
  })
  .catch(() => {
  // Read receipts are best-effort; never block the thread on them.
@@ -109,7 +109,7 @@ function MyMessages() {
  <header className="mb-4">
  <h1 className="text-2xl font-semibold">Messages</h1>
  <p className="text-sm text-muted-foreground">
- Direct line to the TaaSFlow team about your applications.
+ Direct line to the TaaSFlow team about your applications. We reply here or by email.
  </p>
  </header>
 
@@ -118,8 +118,8 @@ function MyMessages() {
  <div className="text-center text-sm text-muted-foreground py-12">
  <div className="font-medium mb-1">No messages yet</div>
  <p>
- Have a question about your applications? Send us a note and we&apos;ll
- get back to you here.
+ Have a question about your applications? Send us a note and the
+ TaaSFlow team will come back to you.
  </p>
  </div>
  )}
