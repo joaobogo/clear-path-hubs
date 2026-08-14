@@ -305,11 +305,27 @@ export const listHires = createServerFn({ method: "POST" })
       );
     }
 
+    // Clients hold no RLS read on candidate_profiles, so the embed above comes
+    // back null for them and every offer degraded to "Candidate". Resolve the
+    // real names through the same already-authorized path the candidate list
+    // uses (visibility was decided by candidate_matches RLS).
+    const { resolveMatchCandidateNames } = await import("@/lib/client-candidate-hydrate.server");
+    const nameByMatch = await resolveMatchCandidateNames(
+      context.supabase,
+      data.orgId,
+      (rows ?? [])
+        .map((r: AnyRow) => r.candidate_match_id)
+        .filter(Boolean) as string[],
+    );
+
     const hires: HireRecordDTO[] = (rows ?? []).map((r: AnyRow) =>
       toDTO({
         ...r,
         position_title: r.positions?.title ?? "Role",
-        candidate_name: r.candidate_profiles?.full_name ?? "Candidate",
+        candidate_name:
+          r.candidate_profiles?.full_name ??
+          (r.candidate_match_id ? nameByMatch.get(String(r.candidate_match_id)) : null) ??
+          "Candidate",
         applied_at: r.applications?.applied_at ?? null,
         owner_name: r.owner_user_id ? ownerMap[r.owner_user_id] ?? null : null,
       }),
@@ -349,11 +365,18 @@ export const getHireByMatch = createServerFn({ method: "POST" })
       const p = prof as AnyRow | null;
       owner_name = p?.full_name || p?.email || null;
     }
+    const { resolveMatchCandidateNames } = await import("@/lib/client-candidate-hydrate.server");
+    const nameByMatch = r.candidate_match_id
+      ? await resolveMatchCandidateNames(context.supabase, data.orgId, [r.candidate_match_id])
+      : new Map<string, string>();
     return {
       hire: toDTO({
         ...r,
         position_title: r.positions?.title ?? "Role",
-        candidate_name: r.candidate_profiles?.full_name ?? "Candidate",
+        candidate_name:
+          r.candidate_profiles?.full_name ??
+          (r.candidate_match_id ? nameByMatch.get(String(r.candidate_match_id)) : null) ??
+          "Candidate",
         applied_at: r.applications?.applied_at ?? null,
         owner_name,
       }),
