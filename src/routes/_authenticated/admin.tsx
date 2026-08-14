@@ -29,7 +29,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
     // layout gate and the server checks can never disagree.
     try {
       const access = await getStaffAccess();
-      if (!access.staff) throw redirect({ to: "/access-denied" });
+      if (!access.staff) throw redirect({ to: "/access-denied", search: { reason: "permission" } });
       // Test-record scope is resolved once here and handed to every desk
       // through route context, so no screen keeps its own copy in the URL or
       // in component state. A failed read falls back to "hidden" — fail closed.
@@ -52,7 +52,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (e && typeof e === "object" && (e as any).isRedirect) throw e;
-      throw redirect({ to: "/access-denied" });
+      throw redirect({ to: "/access-denied", search: { reason: "permission" } });
     }
   },
 

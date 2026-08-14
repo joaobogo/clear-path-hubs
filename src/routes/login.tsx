@@ -234,7 +234,7 @@ function LoginPage() {
       return;
     }
     if (active.length === 0) {
-      navigate({ to: "/access-denied" });
+      navigate({ to: "/access-denied", search: { reason: "membership" } });
       return;
     }
     const clientOrgs = active.filter(

@@ -66,6 +66,21 @@ export const getSessionContext = createServerFn({ method: "GET" })
         .maybeSingle();
       if (candProfile) primary = "candidate";
     }
+    // Applied before creating an account, so the candidate profile exists but
+    // is not linked yet. /me claims it by email on first load, so classify the
+    // caller as a candidate now instead of dead-ending on /access-denied.
+    if (!primary && profile?.email) {
+      const { data: claimable } = await supabase
+        .from("candidate_profiles")
+        .select("id")
+        .ilike("email", profile.email)
+        .is("user_id", null)
+        .maybeSingle();
+      if (claimable) primary = "candidate";
+    }
+    // No membership at all — never a revoked client seat, so the candidate
+    // area is the honest destination. It explains the state and offers jobs.
+    if (!primary && memberships.length === 0) primary = "candidate";
     return {
       user_id: userId,
       email: profile?.email ?? null,

@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -13,8 +12,10 @@ import { supabase } from "@/integrations/supabase/client";
  *  - `organization` — the account is signed in, but is not a member of the
  *                     organization it tried to open (direct URL / stale link).
  *
- * Only the `membership` case signs the user out; being denied one organization
- * must not destroy an otherwise-valid session.
+ * No case signs the user out automatically: a denied route must never destroy
+ * an otherwise-valid session (that logged users out of every area at once).
+ * The `membership` case offers an explicit "Sign out and switch account"
+ * button instead.
  */
 const searchSchema = z.object({
   reason: z.enum(["membership", "organization", "permission"]).optional(),
@@ -59,15 +60,15 @@ const COPY: Record<string, { title: string; body: string }> = {
 
 function AccessDeniedPage() {
   const navigate = useNavigate();
-  const { reason = "membership" } = Route.useSearch();
-  const copy = COPY[reason] ?? COPY.membership;
+  // Unknown/missing reason falls back to the non-destructive copy.
+  const { reason = "permission" } = Route.useSearch();
+  const copy = COPY[reason] ?? COPY.permission;
   const signOut = reason === "membership";
 
-  useEffect(() => {
-    if (!signOut) return;
-    // No membership at all — clear the half-authenticated session.
-    supabase.auth.signOut().catch(() => {});
-  }, [signOut]);
+  async function signOutAndReturn() {
+    await supabase.auth.signOut().catch(() => {});
+    navigate({ to: "/login" });
+  }
 
   return (
     <div className="min-h-dvh flex items-center justify-center bg-background px-4">
@@ -76,13 +77,13 @@ function AccessDeniedPage() {
         <p className="mt-2 text-sm text-muted-foreground">{copy.body}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           {signOut ? (
-            <Link
-              to="/login"
+            <button
+              type="button"
+              onClick={() => void signOutAndReturn()}
               className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90"
-              onClick={() => setTimeout(() => navigate({ to: "/login" }), 0)}
             >
-              Back to sign in
-            </Link>
+              Sign out and use a different account
+            </button>
           ) : (
             <>
               <Link
