@@ -2465,7 +2465,16 @@ function ExpressIntakePage() {
                   name="sponsorship-available"
                   value={opt.value}
                   checked={state.sponsorshipAvailable === opt.value}
-                  onChange={() => set("sponsorshipAvailable", opt.value)}
+                  onChange={() =>
+                    setState((s) => ({
+                      ...s,
+                      sponsorshipAvailable: opt.value,
+                      // Work authorisation is the same answer in other words,
+                      // so it is derived rather than asked twice.
+                      workAuthorization:
+                        opt.value === "yes" ? "will_sponsor" : "already_authorized",
+                    }))
+                  }
                   className="mt-1"
                 />
                 <span className="text-sm leading-relaxed">
