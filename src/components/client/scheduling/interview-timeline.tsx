@@ -8,6 +8,12 @@ import {
   calendarLink,
 } from "@/lib/scheduling";
 import { buildIcs, downloadIcs } from "@/lib/availability";
+import {
+  canJoinInterview,
+  displayInterviewStatus,
+  interviewOccurrence,
+  interviewStatusLabel,
+} from "@/lib/interview-timing";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SlotProposer, type ProposalSubmission } from "./slot-proposer";
@@ -31,24 +37,23 @@ type Marker = {
 };
 
 function marker(iv: InterviewDTO): Marker {
-  switch (iv.status) {
+  switch (displayInterviewStatus(iv)) {
     case "requested":
-      return { dot: "taas-bg-warning-solid", label: "Needs times", icon: Circle };
+      return { dot: "taas-bg-warning-solid", label: interviewStatusLabel(iv), icon: Circle };
     case "scheduling":
-      return { dot: "taas-bg-info-solid", label: "Proposed — awaiting candidate", icon: Clock };
+      return { dot: "taas-bg-info-solid", label: interviewStatusLabel(iv), icon: Clock };
     case "scheduled":
-      return { dot: "taas-bg-success-solid", label: "Confirmed", icon: CheckCircle2 };
+      return { dot: "taas-bg-success-solid", label: interviewStatusLabel(iv), icon: CheckCircle2 };
     case "completed":
-      return { dot: "taas-bg-neutral-solid", label: "Completed", icon: CheckCircle2 };
+      return { dot: "taas-bg-neutral-solid", label: interviewStatusLabel(iv), icon: CheckCircle2 };
     default:
-      return { dot: "taas-bg-danger-solid", label: "Cancelled", icon: XCircle };
+      return { dot: "taas-bg-danger-solid", label: interviewStatusLabel(iv), icon: XCircle };
   }
 }
 
 function anchor(iv: InterviewDTO): number {
   const iso =
     iv.scheduled_at ??
-    iv.completed_at ??
     (iv.proposed_times.length > 0 ? iv.proposed_times[0] : null) ??
     iv.requested_at;
   const t = new Date(iso).getTime();
@@ -56,9 +61,12 @@ function anchor(iv: InterviewDTO): number {
 }
 
 function isPastItem(iv: InterviewDTO): boolean {
-  if (iv.status === "completed" || iv.status === "cancelled") return true;
-  return !!iv.scheduled_at && new Date(iv.scheduled_at).getTime() < Date.now();
+  // Strictly temporal: a meeting in the future has not happened, whatever its
+  // stored status claims. Cancelled meetings sit with the past either way.
+  const occurrence = interviewOccurrence(iv);
+  return occurrence === "happened" || occurrence === "cancelled";
 }
+
 
 /**
  * One timeline: proposed, confirmed and completed interviews on a single axis,
@@ -247,7 +255,7 @@ function TimelineItem({
           ) : (
             <div className="text-muted-foreground">No times sent yet</div>
           )}
-          {iv.meeting_url ? (
+          {iv.meeting_url && (interviewOccurrence(iv) === "upcoming" || canJoinInterview(iv)) ? (
             <a
               href={iv.meeting_url}
               target="_blank"

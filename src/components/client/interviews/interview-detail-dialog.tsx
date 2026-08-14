@@ -24,6 +24,11 @@ import { DetailRow } from "./detail-row";
 import { ProposeForm } from "./propose-form";
 import { ConfirmForm } from "./confirm-form";
 import { detectTimezone, formatWhen, statusBadgeClass } from "./helpers";
+import {
+  displayInterviewStatus,
+  hasInterviewHappened,
+  interviewStatusLabel,
+} from "@/lib/interview-timing";
 
 /**
  * Interview detail dialog — view mode plus the propose / confirm / reschedule /
@@ -70,6 +75,10 @@ export function InterviewDetailDialog({
   const [location, setLocation] = useState<string>(interview.location ?? "");
   const [reason, setReason] = useState<string>("");
   const [feedback, setFeedback] = useState<string>(interview.feedback ?? "");
+  // Card and modal read the same record through the same derivation, so the
+  // words never disagree; a future meeting can never present as completed.
+  const shownStatus = displayInterviewStatus(interview);
+  const happened = hasInterviewHappened(interview);
 
   return (
     <Dialog open onOpenChange={(v) => !v && onClose()}>
@@ -81,8 +90,10 @@ export function InterviewDetailDialog({
             {interview.position?.title ?? "Position"}
           </DialogTitle>
           <DialogDescription>
-            <span className={`mr-2 inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${statusBadgeClass(interview.status)}`}>
-              {interview.status}
+            <span
+              className={`mr-2 inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${statusBadgeClass(shownStatus)}`}
+            >
+              {interviewStatusLabel(interview)}
             </span>
             {interview.interview_type ? (
               <span className="capitalize">{interview.interview_type.replace(/_/g, " ")}</span>
@@ -122,7 +133,9 @@ export function InterviewDetailDialog({
             ) : null}
             <DetailRow icon={<Users2 className="h-4 w-4" />} label="Participants">
               {interview.participants.length === 0 ? (
-                <span className="text-muted-foreground">—</span>
+                <span className="text-muted-foreground">
+                  No interviewers added yet — add them when you confirm the time.
+                </span>
               ) : (
                 <ul className="space-y-1">
                   {interview.participants.map((p, i) => (
@@ -250,25 +263,27 @@ export function InterviewDetailDialog({
         <DialogFooter className="gap-2">
           {mode === "view" && !readOnly ? (
             <>
-              {interview.status === "cancelled" || interview.status === "completed" ? null : (
+              {shownStatus === "cancelled" || shownStatus === "completed" ? null : (
                 <Button variant="outline" onClick={() => setMode("cancel")}>
                   Cancel
                 </Button>
               )}
-              {interview.status === "requested" ? (
+              {shownStatus === "requested" ? (
                 <Button variant="outline" onClick={() => setMode("propose")}>
                   Propose times
                 </Button>
               ) : null}
-              {interview.status === "requested" || interview.status === "scheduling" ? (
+              {shownStatus === "requested" || shownStatus === "scheduling" ? (
                 <Button onClick={() => setMode("confirm")}>Confirm time</Button>
               ) : null}
-              {interview.status === "scheduled" ? (
+              {shownStatus === "scheduled" ? (
                 <>
                   <Button variant="outline" onClick={() => setMode("reschedule")}>
                     Reschedule
                   </Button>
-                  <Button onClick={() => setMode("complete")}>Mark completed</Button>
+                  {happened ? (
+                    <Button onClick={() => setMode("complete")}>Mark completed</Button>
+                  ) : null}
                 </>
               ) : null}
             </>

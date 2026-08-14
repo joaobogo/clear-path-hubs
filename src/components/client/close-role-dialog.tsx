@@ -4,6 +4,7 @@
 // when the write fails, so a role is only ever shown as closed once the server
 // has recorded it.
 
+import { formatCalendarDate } from "@/lib/calendar-date";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -34,10 +35,7 @@ import {
 } from "@/lib/role-closure";
 
 function formatDate(value: string | null): string {
-  if (!value) return "—";
-  const d = new Date(value.length === 10 ? `${value}T00:00:00Z` : value);
-  if (Number.isNaN(d.getTime())) return "—";
-  return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+  return formatCalendarDate(value);
 }
 
 /** Read-only record of a closure, shown once a role has been closed. */

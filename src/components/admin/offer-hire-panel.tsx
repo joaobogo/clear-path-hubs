@@ -1,3 +1,4 @@
+import { formatCalendarDate } from "@/lib/calendar-date";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -43,8 +44,10 @@ import {
   type OfferRow,
 } from "@/lib/offer-hire";
 
+// Calendar dates (start_date and friends) are day-only values; render them in
+// UTC so they never drift a day in negative-offset timezones.
 function fmtDate(iso: string | null): string {
-  return iso ? new Date(iso).toLocaleDateString() : "—";
+  return formatCalendarDate(iso);
 }
 
 function ErrorCard({ onRetry }: { onRetry: () => void }) {

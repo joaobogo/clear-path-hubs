@@ -71,7 +71,43 @@ function normNextStep(v: unknown): FeedbackNextStep | null {
 
 function nameOf(match: AnyRow): string {
   const cp = match?.candidate_profiles ?? null;
-  return cp?.full_name ?? "Candidate";
+  return (cp?.full_name as string) || "Candidate";
+}
+
+/**
+ * An interview happened at its scheduled time. `completed_at` is only an
+ * administrative stamp and can disagree with the meeting time, which is how a
+ * future meeting once surfaced in the feedback queue as already held.
+ */
+function happenedAt(iv: AnyRow): string | null {
+  return (iv.scheduled_at as string | null) ?? null;
+}
+
+/**
+ * Employer roles hold no RLS read on candidate_profiles, so the nested embed
+ * comes back null and every queue row said "Candidate". Resolve names for the
+ * already-authorized matches through the shared hydration helper.
+ */
+async function nameByMatch(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
+  matchIds: string[],
+): Promise<Map<string, string>> {
+  const out = new Map<string, string>();
+  const ids = Array.from(new Set(matchIds.filter(Boolean)));
+  if (ids.length === 0) return out;
+  const { data } = await supabase
+    .from("candidate_matches")
+    .select("id, candidate_profile_id, candidate_profiles:candidate_profile_id(id, full_name)")
+    .in("id", ids);
+  const { hydrateClientCandidateProfiles } = await import(
+    "@/lib/client-candidate-hydrate.server"
+  );
+  for (const m of await hydrateClientCandidateProfiles((data as AnyRow[]) ?? [])) {
+    const name = (m as AnyRow).candidate_profiles?.full_name as string | undefined;
+    if (name) out.set(m.id as string, name);
+  }
+  return out;
 }
 
 /**
@@ -101,7 +137,7 @@ export const listInterviewsAwaitingFeedback = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
 
     const list = ((rows as AnyRow[] | null) ?? []).filter((iv) => {
-      const happened = (iv.completed_at as string | null) ?? (iv.scheduled_at as string | null);
+      const happened = happenedAt(iv);
       return !!happened && happened < nowIso;
     });
     if (list.length === 0) return [];
@@ -116,14 +152,20 @@ export const listInterviewsAwaitingFeedback = createServerFn({ method: "POST" })
       );
     const done = new Set(((cards as AnyRow[] | null) ?? []).map((c) => c.interview_id as string));
 
+    const queueNames = await nameByMatch(
+      context.supabase,
+      list.map((iv) => iv.candidate_match_id as string),
+    );
+
     return list
       .filter((iv) => !done.has(iv.id as string))
       .map((iv) => {
-        const happened = (iv.completed_at as string | null) ?? (iv.scheduled_at as string | null);
+        const happened = happenedAt(iv);
         return {
           interview_id: iv.id as string,
           candidate_match_id: iv.candidate_match_id as string,
-          candidate_name: nameOf(iv.candidate_matches),
+          candidate_name:
+            queueNames.get(iv.candidate_match_id as string) ?? nameOf(iv.candidate_matches),
           position_id: (iv.position_id as string) ?? null,
           position_title: iv.positions?.title ?? "Your role",
           interview_type: (iv.interview_type as string) ?? null,
@@ -186,17 +228,19 @@ export const getMatchFeedback = createServerFn({ method: "POST" })
       }));
       const done = new Set(submitted.map((s) => s.interview_id));
 
+      const matchNames = await nameByMatch(context.supabase, [data.matchId]);
       const pending: FeedbackQueueItem[] = ((ivs as AnyRow[] | null) ?? [])
         .filter((iv) => {
-          const happened = (iv.completed_at as string | null) ?? (iv.scheduled_at as string | null);
+          const happened = happenedAt(iv);
           return !!happened && happened < nowIso && !done.has(iv.id as string);
         })
         .map((iv) => {
-          const happened = (iv.completed_at as string | null) ?? (iv.scheduled_at as string | null);
+          const happened = happenedAt(iv);
           return {
             interview_id: iv.id as string,
             candidate_match_id: iv.candidate_match_id as string,
-            candidate_name: nameOf(iv.candidate_matches),
+            candidate_name:
+              matchNames.get(data.matchId) ?? nameOf(iv.candidate_matches),
             position_id: (iv.position_id as string) ?? null,
             position_title: iv.positions?.title ?? "Your role",
             interview_type: (iv.interview_type as string) ?? null,

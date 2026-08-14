@@ -1,3 +1,4 @@
+import { formatCalendarDate } from "@/lib/calendar-date";
 import { memo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -90,7 +91,7 @@ function HireCardImpl({
               <CalendarClock className="h-3 w-3" /> Start
             </dt>
             <dd className="text-foreground">
-              {new Date(hire.start_date).toLocaleDateString()}
+              {formatCalendarDate(hire.start_date)}
             </dd>
           </div>
         )}
