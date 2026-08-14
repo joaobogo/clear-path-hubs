@@ -37,6 +37,7 @@ type QaAction =
   | "create_application"
   | "create_cv_application"
   | "pipeline_snapshot"
+  | "replace_cv"
   | "cleanup_intake_e2e"
   | "lookup_intake"
   | "lookup_candidate_application"
@@ -385,6 +386,14 @@ export const createCvApplication = (args: {
     full_name: args.fullName,
     cv_base64: args.cvBase64,
     cv_filename: args.cvFilename,
+  });
+
+/** Simulates a candidate re-uploading a readable CV onto an existing match. */
+export const replaceCv = (matchId: string, cvBase64: string, cvFilename?: string) =>
+  qaSeed<{ ok: boolean; file_id: string }>("replace_cv", {
+    match_id: matchId,
+    cv_base64: cvBase64,
+    cv_filename: cvFilename,
   });
 
 /** Kicks the pipeline worker so the suite does not wait on the 2-minute cron. */
