@@ -101,7 +101,13 @@ test("profile edit saves and persists to the database", async ({ page }) => {
     .toBe(phone);
 
   // And it survives a reload — the field is read back, not just local state.
+  // Sections collapse to read mode on load, so reopen Contact before reading.
   await page.reload({ waitUntil: "domcontentloaded" });
+  const reopened = page.locator("section", {
+    has: page.getByRole("heading", { name: /^contact/i }),
+  });
+  await expect(reopened.first()).toBeVisible({ timeout: 30_000 });
+  await reopened.first().getByRole("button", { name: /^(edit|add)$/i }).click();
   await expect(page.locator("#p-phone")).toHaveValue(phone, { timeout: 30_000 });
   expect(meaningfulConsoleErrors(errors)).toEqual([]);
 });
