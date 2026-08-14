@@ -673,6 +673,7 @@ function NewRoleDialog({ clients }: { clients: { id: string; name: string }[] })
       void router.navigate({
         to: "/admin/positions/$id/edit",
         params: { id: res.position.id as string },
+        search: { step: undefined },
       });
     },
     onError: (e: unknown) => toast.error((e as Error).message),
