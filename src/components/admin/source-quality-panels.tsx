@@ -6,7 +6,7 @@
  * a channel with 3 candidates never shows a percentage. Cost is shown only when
  * the underlying rows carry spend, and there are no recommendations here.
  */
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -154,7 +154,7 @@ function QualityTable({
                     </td>
                   </tr>
                 )}
-              </>
+              </Fragment>
             );
           })}
           <tr className="border-t-2 bg-muted/20 font-medium">
