@@ -21,8 +21,8 @@ import {
 } from "@/lib/talent-pool.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
 import { formatEnumLabel } from "@/lib/human-labels";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
