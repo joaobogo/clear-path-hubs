@@ -60,7 +60,13 @@ export function CandidateHistoryTimeline({
   const [action, setAction] = useState("all");
   const [visible, setVisible] = useState(HISTORY_PAGE_SIZE);
 
-  const events = query.data?.events ?? [];
+  // One malformed row must never blank the record page: every entry is
+  // repaired (and flagged) before anything reads its fields.
+  const events = useMemo(
+    () => normalizeHistoryEvents(query.data?.events),
+    [query.data?.events],
+  );
+  const focusId = normalizeFocusEventId(focusEventId);
   const actors = useMemo(() => actorOptions(events), [events]);
   const actions = useMemo(() => actionOptions(events), [events]);
   const filtered = useMemo(
@@ -68,9 +74,7 @@ export function CandidateHistoryTimeline({
     [events, actor, action],
   );
 
-  const focused = focusEventId
-    ? (events.find((e) => e.id === focusEventId) ?? null)
-    : null;
+  const focused = focusId ? (events.find((e) => e.id === focusId) ?? null) : null;
   const shown = filtered.slice(0, visible);
 
   const copyPermalink = async (event: HistoryEvent) => {
