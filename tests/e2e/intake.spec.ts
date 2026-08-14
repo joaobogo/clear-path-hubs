@@ -258,12 +258,20 @@ test.describe("TEST 1 — /intake as a brand-new prospect", () => {
     await expect(page.getByText(/^Saved /)).toBeVisible();
     await page.reload({ waitUntil: "domcontentloaded" });
     await dismissConsent(page);
+    // The draft restores the client to the step they left off on, so the reload
+    // lands back on the review step rather than at the top of the wizard.
+    await expectStep(page, 2);
+    await expect(page.getByTestId("intake-review")).toBeVisible();
+    // Walking back proves the earlier steps kept every answer.
+    await page.getByTestId("step-back").click();
+    await expectStep(page, 1);
+    await expect(page.locator("#jd-text")).toHaveValue(JD_TEXT);
+    await page.getByTestId("step-back").click();
+    await expectStep(page, 0);
     await waitForIntakeHydration(page);
     await expect(page.getByLabel("Company name")).toHaveValue(companyName);
     await expect(page.getByLabel("Work email")).toHaveValue(email);
     await expect(page.locator("#account-password")).toHaveValue("");
-    await continueStep(page);
-    await expect(page.locator("#jd-text")).toHaveValue(JD_TEXT);
 
     expect(meaningfulConsoleErrors(errors)).toEqual([]);
   });
