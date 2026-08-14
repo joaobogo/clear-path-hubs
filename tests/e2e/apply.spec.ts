@@ -397,11 +397,9 @@ test.describe("candidate apply flow", () => {
     await fillDetails(page, email, fullName);
     // Anonymous applicants set a password inline, which is how they can later
     // sign in and see this application on their own dashboard.
-    const pw = page.locator("#password");
-    if (await pw.count()) {
-      await pw.fill(QA_PASSWORD);
-      await page.locator("#password2").fill(QA_PASSWORD);
-    }
+    await page.getByRole("checkbox", { name: /create a candidate account/i }).click();
+    await page.locator("#password").fill(QA_PASSWORD);
+    await page.locator("#password2").fill(QA_PASSWORD);
     await continueBtn(page).click();
     await page.locator("#cv").setInputFiles(pdfFile());
     await expect(page.getByText(/ready to send/i)).toBeVisible();
@@ -434,9 +432,13 @@ test.describe("candidate apply flow", () => {
     expect(created.matches).toHaveLength(1);
     expect(created.matches[0]!.application_id).toBe(application.id);
 
-    // The candidate signs in and sees their own application.
-    await loginAs(page, "candidate", email, QA_PASSWORD);
+    // The candidate reaches their own dashboard. The wizard already signs a new
+    // account in, so only sign in explicitly when that session is missing.
     await page.goto("/me/applications", { waitUntil: "domcontentloaded" });
+    if (/\/login|\/auth/.test(new URL(page.url()).pathname)) {
+      await loginAs(page, "candidate", email, QA_PASSWORD);
+      await page.goto("/me/applications", { waitUntil: "domcontentloaded" });
+    }
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     // The application the wizard just created is listed for its owner.
     await expect(page.getByText(/application/i).first()).toBeVisible({ timeout: 30_000 });
