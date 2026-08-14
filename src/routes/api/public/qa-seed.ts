@@ -1389,7 +1389,41 @@ async function handle(request: Request): Promise<Response> {
 
     // Read-only truth check for the pipeline: what the match, its file, its
     // score run and its evidence actually say after a run.
+    /**
+     * Read-only decision truth for one match: the stage/visibility the client
+     * dashboard renders plus every client_decisions row the admin side reads.
+     * A UI toast cannot prove a decision persisted; this can. Never mutates.
+     */
+    if (action === "match_decisions") {
+      if (!body.match_id) {
+        return Response.json({ ok: false, error: "match_id required" }, { status: 400 });
+      }
+      const sb = await loadAdmin();
+      const [match, decisions] = await Promise.all([
+        sb
+          .from("candidate_matches")
+          .select("id, stage, admin_status, client_visibility, organization_id, position_id")
+          .eq("id", body.match_id)
+          .maybeSingle(),
+        sb
+          .from("client_decisions")
+          .select("id, decision_type, reason_code, reason, feedback, created_at")
+          .eq("candidate_match_id", body.match_id)
+          .order("created_at", { ascending: true }),
+      ]);
+      if (!match.data) {
+        return Response.json({ ok: false, error: "match not found" }, { status: 404 });
+      }
+      return Response.json({
+        ok: true,
+        action,
+        match: match.data,
+        decisions: decisions.data ?? [],
+      });
+    }
+
     if (action === "pipeline_snapshot") {
+
       if (!body.match_id) {
         return Response.json({ ok: false, error: "match_id required" }, { status: 400 });
       }

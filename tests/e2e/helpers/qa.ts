@@ -366,6 +366,31 @@ export type PipelineSnapshot = {
 export const pipelineSnapshot = (matchId: string) =>
   qaSeed<PipelineSnapshot>("pipeline_snapshot", { match_id: matchId });
 
+export type MatchDecisions = {
+  ok: boolean;
+  match: {
+    id: string;
+    stage: string;
+    admin_status: string;
+    client_visibility: string;
+    organization_id: string;
+    position_id: string;
+  };
+  decisions: Array<{
+    id: string;
+    decision_type: string;
+    reason_code: string | null;
+    reason: string | null;
+    feedback: string | null;
+    created_at: string;
+  }>;
+};
+
+/** Persisted decision truth for one match — what the admin side will read. */
+export const matchDecisions = (matchId: string) =>
+  qaSeed<MatchDecisions>("match_decisions", { match_id: matchId });
+
+
 /** Creates an application that owns a real CV object, ready for the pipeline. */
 export const createCvApplication = (args: {
   positionId: string;
