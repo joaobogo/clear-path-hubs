@@ -89,12 +89,21 @@ function HealthPage() {
 
       <section>
         <h2 className="font-semibold mb-2">Backlog by state</h2>
+        <p className="mb-2 text-xs text-muted-foreground">
+          Each tile opens the candidate desk filtered to that processing state.
+        </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {STATE_ORDER.map((st) => {
             const n = data.states[st] ?? 0;
             const bad = ["failed", "provider_blocked", "ocr_required", "manual_review_required"].includes(st);
             return (
-              <div key={st} className="rounded-lg border p-4">
+              <Link
+                key={st}
+                to="/admin/candidates"
+                search={{ processing_state: st }}
+                className="rounded-lg border p-4 text-left transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label={`Open candidates in state ${st.replace(/_/g, " ")} (${n})`}
+              >
                 <div className="text-xs text-muted-foreground">{st.replace(/_/g, " ")}</div>
                 <div
                   className={`text-2xl font-semibold tabular-nums ${
@@ -103,11 +112,12 @@ function HealthPage() {
                 >
                   {n}
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>
       </section>
+
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="rounded-lg border p-4">

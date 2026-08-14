@@ -29,28 +29,47 @@ type Row = {
 // there are no orphaned controls that appear to save but do nothing.
 const ROWS: Row[] = [
   // Account
-  { area: "Account", control: "Change email / password", status: "functional",
-    location: "/me/settings", persistence: "auth.users via Supabase Auth", audit: "auth logs" },
-  { area: "Account", control: "Display name", status: "functional",
-    location: "/me/settings", persistence: "profiles.full_name", audit: "audit_events" },
-  { area: "Account", control: "Sign out everywhere", status: "functional",
-    location: "/me/settings", persistence: "supabase.auth.signOut({ scope: 'global' })", audit: "auth logs" },
+  { area: "Account", control: "Change email (verified)", status: "functional",
+    location: "/client/account · /me/profile", persistence: "auth.users via Supabase Auth", audit: "auth logs" },
+  { area: "Account", control: "Password reset", status: "functional",
+    location: "/login → Forgot password?", to: "/login", persistence: "auth.users via Supabase Auth", audit: "auth logs" },
+  { area: "Account", control: "Name and phone", status: "functional",
+    location: "/me/profile", persistence: "profiles.full_name / phone", audit: "audit_events" },
+  { area: "Account", control: "Data export / deletion request", status: "functional",
+    location: "/me/settings", persistence: "data_subject_requests", audit: "audit_events" },
+
 
   // Notifications
   { area: "Notifications", control: "Per-event email toggles", status: "functional",
     location: "/client/settings (per org)", persistence: "client_notification_preferences", audit: "audit_events" },
   { area: "Notifications", control: "Delivery failure retries", status: "functional",
-    location: "/admin/operations → Delivery failures", persistence: "notification_deliveries", audit: "audit_events" },
+    location: "/admin/health → Operational health", to: "/admin/health", persistence: "notification_deliveries", audit: "audit_events" },
+
+  // Tracking
+  { area: "Tracking", control: "Essential tracker list + prior opt-in rule", status: "functional",
+    location: "/admin/tracking", to: "/admin/tracking", persistence: "tracking_policy", audit: "tracking_policy.updated_by/updated_at",
+    note: "Staff-only write (is_platform_staff); read publicly by the consent banner." },
+  { area: "Tracking", control: "Tag configuration read-out", status: "functional",
+    location: "/admin/health → Tracking configuration", to: "/admin/health", persistence: "environment variables (read-only)", audit: "n/a",
+    note: "Read-only by design: identifiers are deploy-time configuration, not a UI setting." },
+
+  // Business rules
+  { area: "Business rules", control: "Rule overrides (thresholds, gates)", status: "functional",
+    location: "/admin/business-rules", to: "/admin/business-rules", persistence: "business_rules_overrides", audit: "business_rules_audit" },
+
+  // Agents
+  { area: "Agents", control: "Pause / resume agent per workspace", status: "functional",
+    location: "/admin/agent-ops", to: "/admin/agent-ops", persistence: "agent_settings", audit: "audit_events (entity_type='agent_settings')" },
 
   // Team / permissions
   { area: "Team & permissions", control: "Invite / role assignment", status: "functional",
-    location: "/admin/clients/$id → Team", persistence: "memberships (role, status)", audit: "audit_events" },
+    location: "/admin/team", to: "/admin/team", persistence: "memberships (role, status)", audit: "audit_events" },
   { area: "Team & permissions", control: "Deactivate member", status: "functional",
-    location: "/admin/clients/$id → Team", persistence: "memberships.status='inactive'", audit: "audit_events",
+    location: "/admin/team", to: "/admin/team", persistence: "memberships.status='inactive'", audit: "audit_events",
     note: "Revocation is immediate: is_org_member() requires status='active' AND organizations.archived_at IS NULL." },
-  { area: "Team & permissions", control: "Platform staff role edits", status: "functional",
-    location: "user_roles table (Supabase admin only)", persistence: "user_roles", audit: "audit_events",
-    note: "Intentionally not exposed in UI to prevent privilege escalation." },
+  { area: "Team & permissions", control: "Platform staff role grants", status: "functional",
+    location: "/admin/team → invite flow", to: "/admin/team", persistence: "user_roles", audit: "audit_events",
+    note: "Audited invite flow only — never auto-granted from an email domain or a trigger." },
 
   // Templates
   { area: "Templates", control: "Screening question bank", status: "functional",
@@ -63,28 +82,31 @@ const ROWS: Row[] = [
   { area: "Scoring", control: "Blueprint / engine version pin", status: "functional",
     location: "score_runs.blueprint_version / engine_version", persistence: "score_runs (immutable after complete)", audit: "audit_events" },
   { area: "Scoring", control: "Publication readiness gates", status: "functional",
-    location: "/admin/publish", persistence: "candidate_matches.approved_score_run_id + tg_candidate_matches_publish_gate", audit: "audit_events" },
+    location: "/admin/publish", to: "/admin/publish", persistence: "candidate_matches.approved_score_run_id + tg_candidate_matches_publish_gate", audit: "audit_events" },
 
   // Organization defaults
   { area: "Organization defaults", control: "Client profile (name, timezone, industry)", status: "functional",
-    location: "/admin/clients/$id → Overview", persistence: "organizations", audit: "audit_events" },
+    location: "/admin/clients → Overview", to: "/admin/clients", persistence: "organizations", audit: "audit_events" },
   { area: "Organization defaults", control: "Archive organization", status: "functional",
-    location: "/admin/clients/$id → Danger zone", persistence: "organizations.archived_at", audit: "audit_events",
+    location: "/admin/clients → Danger zone", to: "/admin/clients", persistence: "organizations.archived_at", audit: "audit_events",
     note: "Revokes access to all members instantly via is_org_member() guard." },
 
   // Security
   { area: "Security", control: "Support Mode (view-as-client)", status: "functional",
-    location: "/admin/clients/$id → Support Mode", persistence: "support_sessions + support_actions", audit: "audit_events + support_actions",
+    location: "/admin/support", to: "/admin/support", persistence: "support_sessions + support_actions", audit: "audit_events + support_actions",
     note: "Read-only DTOs enforced via assertNotSupportViewReadOnly()." },
   { area: "Security", control: "RLS + tenant isolation", status: "functional",
     location: "policies on every public table", persistence: "pg_policies", audit: "pg_stat_statements" },
 
   // Integrations
+  { area: "Integrations", control: "Integration health & connections", status: "functional",
+    location: "/admin/integrations", to: "/admin/integrations", persistence: "integration_sync_status / integration_health_checks", audit: "audit_events" },
   { area: "Integrations", control: "Lovable AI Gateway (LLM)", status: "functional",
     location: "server-only", persistence: "LOVABLE_API_KEY secret", audit: "provider_usage_events" },
   { area: "Integrations", control: "Storage (private cvs bucket)", status: "functional",
     location: "server-only signed URLs", persistence: "supabase.storage", audit: "audit_events (file access via server fns)" },
 ];
+
 
 const statusStyles: Record<Status, { label: string; icon: React.ComponentType<{ className?: string }>; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   functional: { label: "Functional", icon: CheckCircle2, variant: "secondary" },

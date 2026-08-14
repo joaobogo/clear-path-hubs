@@ -147,13 +147,34 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
         .select(
           "id, processing_state, processing_updated_at, candidate_profiles:candidate_profile_id(full_name)",
         )
-        .in("processing_state", ["queued", "processing", "failed"])
+        // Every non-terminal or blocked processing state. "processing" is NOT a
+        // member of the processing_state enum — sending it made PostgREST reject
+        // the whole request with 22P02, so this bucket silently reported 0
+        // forever and OCR/manual-review/provider-blocked CVs never surfaced.
+        .in("processing_state", [
+          "queued",
+          "parsing",
+          "ocr_required",
+          "enriching",
+          "ready_to_score",
+          "scoring",
+          "manual_review_required",
+          "provider_blocked",
+          "failed",
+        ])
         .lt("processing_updated_at", staleCutoff)
         .order("processing_updated_at", { ascending: false })
         .limit(50),
       scope,
     ),
   ]);
+
+  // Never let a bucket report a false zero: a failed query is an error, not "0".
+  for (const res of [crmRes, jobsRes, deliveriesRes, cvRes]) {
+    if (res.error) throw new Error(res.error.message);
+  }
+
+
 
 
   const issues: HealthIssue[] = [];
