@@ -1310,7 +1310,114 @@ export const listCandidateSupportRequests = createServerFn({ method: "GET" })
     return { items };
   });
 
+/**
+ * The candidate side of a support thread, read by staff. The thread id is the
+ * candidate's own user id; both directions live in the same thread so staff see
+ * their own replies inline.
+ */
+export const getCandidateSupportThread = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z.object({ candidate_user_id: z.string().uuid() }).parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+    const { data: rows, error } = await s
+      .from("messages")
+      .select("id,sender_user_id,body,created_at,read_at")
+      .eq("thread_id", data.candidate_user_id)
+      .is("conversation_id", null)
+      .order("created_at", { ascending: true });
+    if (error) throw new Error(error.message);
+    return {
+      messages: ((rows ?? []) as AnyRow[]).map((m) => ({
+        id: m.id as string,
+        body: m.body as string,
+        created_at: m.created_at as string,
+        from_candidate: m.sender_user_id === data.candidate_user_id,
+      })),
+    };
+  });
 
+/**
+ * Staff reply into a candidate support thread. Until this existed the channel
+ * was one-way: candidates could write in and staff could only answer by email,
+ * so the candidate's own Messages page never showed an answer.
+ */
+export const replyToCandidateSupport = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        candidate_user_id: z.string().uuid(),
+        body: z.string().trim().min(1).max(4000),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const trace_id = traceId();
+    const s = await getAdmin();
+
+    // Only reply to someone who really is a candidate on this platform.
+    const { data: profile } = await s
+      .from("candidate_profiles")
+      .select("id,user_id")
+      .eq("user_id", data.candidate_user_id)
+      .maybeSingle();
+    if (!profile) throw new Error("candidate_not_found");
+
+    const { data: row, error } = await s
+      .from("messages")
+      .insert({
+        thread_id: data.candidate_user_id,
+        sender_user_id: context.userId,
+        body: data.body,
+        recipient_context: { audience: "candidate", from: "taasflow_ops" },
+      })
+      .select("id")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+
+    // Answering clears the "New" badge on the ops queue for this candidate.
+    await s
+      .from("messages")
+      .update({ read_at: new Date().toISOString() })
+      .eq("thread_id", data.candidate_user_id)
+      .eq("sender_user_id", data.candidate_user_id)
+      .is("read_at", null);
+
+    try {
+      const { emitEventFromServer } = await import("./notifications.functions");
+      await emitEventFromServer({
+        event: "message_sent",
+        scope: `candidate-reply:${(row?.id as string | undefined) ?? data.candidate_user_id}`,
+        actor_user_id: context.userId,
+        candidate_profile_id: (profile.id as string) ?? null,
+        recipients: [
+          {
+            user_id: data.candidate_user_id,
+            audience: "candidate",
+            link_path: "/me/messages",
+          },
+        ],
+        link_path: "/me/messages",
+      });
+    } catch (e) {
+      console.error("[replyToCandidateSupport] notify failed", e);
+    }
+
+    await writeAudit({
+      actor: context.userId,
+      action: "candidate.support.replied",
+      entity_type: "candidate_profile",
+      entity_id: profile.id as string,
+      trace_id,
+    });
+
+    return { ok: true as const, trace_id };
+  });
 
 
 const matchVisInput = z.object({

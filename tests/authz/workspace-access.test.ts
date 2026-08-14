@@ -162,7 +162,9 @@ describe("converted server functions route access through the canonical helper",
     "src/lib/client-decisions.functions.ts",
     "src/lib/client-candidates.functions.ts",
     "src/lib/client-positions.functions.ts",
-    "src/lib/client-messages.functions.ts",
+    // client-messages.functions.ts removed: the workspace thread lives in
+    // conversations.functions.ts, those endpoints were unreachable.
+
     "src/lib/client-overview.functions.ts",
     "src/lib/client/open-items.functions.ts",
     "src/lib/client/score-refresh.functions.ts",

@@ -190,9 +190,55 @@ async function countRecentFailures(s: Any, matchId: string): Promise<number> {
   return count ?? 0;
 }
 
+/**
+ * Terminal-state notification. Processing used to finish (or fail) in silence:
+ * nothing ever emitted candidate_processing_completed or cv_parse_failed, so a
+ * failed CV sat in the queue with no bell anywhere. One emit per match per
+ * outcome — idempotency is by (event, scope).
+ */
+async function notifyPipelineOutcome(s: Any, outcome: PipelineOutcome) {
+  const terminal =
+    outcome.final_state === "scored"
+      ? ("candidate_processing_completed" as const)
+      : outcome.final_state === "failed" || outcome.final_state === "manual_review_required"
+        ? ("cv_parse_failed" as const)
+        : null;
+  if (!terminal) return;
+  try {
+    const { data: match } = await s
+      .from("candidate_matches")
+      .select("id, organization_id, position_id, application_id, candidate_profile_id")
+      .eq("id", outcome.match_id)
+      .maybeSingle();
+    const { emitEventFromServer } = await import("./notifications.functions");
+    await emitEventFromServer({
+      event: terminal,
+      scope: `pipeline:${outcome.match_id}:${terminal}`,
+      organization_id: (match?.organization_id as string | null) ?? null,
+      position_id: (match?.position_id as string | null) ?? null,
+      application_id: (match?.application_id as string | null) ?? null,
+      candidate_match_id: outcome.match_id,
+      candidate_profile_id: (match?.candidate_profile_id as string | null) ?? null,
+      link_path: `/admin/candidates/${outcome.match_id}`,
+    });
+  } catch (e) {
+    console.error("[pipeline] outcome notify failed", e);
+  }
+}
+
 // Advisory-lock via checking transient state age: if another runner claimed
 // this match <90s ago, skip to prevent duplicate concurrent work (retry storms).
-export async function runPipelineForMatch(matchId: string, opts: { force?: boolean } = {}): Promise<PipelineOutcome> {
+export async function runPipelineForMatch(
+  matchId: string,
+  opts: { force?: boolean } = {},
+): Promise<PipelineOutcome> {
+  const outcome = await runPipelineForMatchInner(matchId, opts);
+  await notifyPipelineOutcome(await getAdmin(), outcome);
+  return outcome;
+}
+
+async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean } = {}): Promise<PipelineOutcome> {
+
   const s = await getAdmin();
   const trace_id = newTraceId();
   const steps: PipelineOutcome["steps"] = [];
