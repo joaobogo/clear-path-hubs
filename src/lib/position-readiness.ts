@@ -74,3 +74,28 @@ export function roleGaps(p: ReadinessInput): RoleGap[] {
 export function isRoleReady(p: ReadinessInput): boolean {
   return roleGaps(p).length === 0;
 }
+
+/**
+ * Map a `positions` row onto the readiness shape. The brief fields live in
+ * jsonb columns (`requirements`, `compensation`, `intake_context`), so every
+ * caller must go through here rather than selecting columns that don't exist.
+ */
+export function readinessFromPositionRow(raw: Record<string, unknown> | null | undefined): ReadinessInput {
+  if (!raw) return {};
+  const comp = (raw.compensation ?? {}) as Record<string, unknown>;
+  const ctx = (raw.intake_context ?? {}) as Record<string, unknown>;
+  return {
+    title: (raw.title as string) ?? null,
+    description: (raw.description as string) ?? null,
+    location: (raw.location as string) ?? null,
+    work_model: (raw.work_model as string) ?? null,
+    employment_type: (raw.employment_type as string) ?? null,
+    seniority: (raw.seniority as string) ?? null,
+    must_have_skills: Array.isArray(raw.requirements) ? raw.requirements : [],
+    experience: typeof ctx.experience === "string" ? ctx.experience : "",
+    responsibilities: typeof ctx.responsibilities === "string" ? ctx.responsibilities : "",
+    budget_min: (comp.budget_min as number | string | null) ?? null,
+    budget_max: (comp.budget_max as number | string | null) ?? null,
+    currency: (comp.currency as string) ?? null,
+  };
+}

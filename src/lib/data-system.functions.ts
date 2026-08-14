@@ -347,11 +347,11 @@ export const getDataHealth = createServerFn({ method: "GET" })
 
     const { data: files } = await supabase
       .from("files")
-      .select("id, status")
+      .select("id, file_status")
       .limit(20000);
     const fileRows: Db[] = files ?? [];
     const failed = fileRows.filter((f) =>
-      String(f.status ?? "").includes("fail"),
+      String(f.file_status ?? "").includes("fail"),
     ).length;
 
     const { data: newestEvidence } = await supabase

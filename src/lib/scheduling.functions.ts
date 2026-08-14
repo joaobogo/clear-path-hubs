@@ -207,9 +207,9 @@ export const getInterviewHistory = createServerFn({ method: "POST" })
     if (!iv) return { items: [] };
     const { data: rows, error } = await context.supabase
       .from("interview_status_history")
-      .select("id, from_status, to_status, changed_at, reason, scheduled_at")
+      .select("id, from_status, to_status, created_at, reason, scheduled_at")
       .eq("interview_id", data.interviewId)
-      .order("changed_at", { ascending: true });
+      .order("created_at", { ascending: true });
     if (error) throw new Error(error.message);
     return { items: (rows as AnyRow[]) ?? [] };
   });

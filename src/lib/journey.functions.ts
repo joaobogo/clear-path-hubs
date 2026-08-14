@@ -111,7 +111,7 @@ export const getCandidateJourney = createServerFn({ method: "GET" })
     const { data: app } = await supabase
       .from("applications")
       .select(
-        "id, candidate_profile_id, position_id, organization_id, source, source_kind, source_channel, applied_at, withdrawn_at, outreach_sent_at, outreach_replied_at, created_at",
+        "id, candidate_profile_id, position_id, source, source_kind, source_channel, applied_at, withdrawn_at, outreach_sent_at, outreach_replied_at, created_at",
       )
       .eq("id", applicationId!)
       .maybeSingle();

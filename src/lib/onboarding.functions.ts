@@ -292,8 +292,8 @@ export const getOnboardingState = createServerFn({ method: "GET" })
         .limit(10),
       supabase
         .from("integration_health_checks")
-        .select("integration_id, status, checked_at")
-        .order("checked_at", { ascending: false })
+        .select("integration, status, created_at")
+        .order("created_at", { ascending: false })
         .limit(40),
     ]);
 
@@ -353,11 +353,11 @@ export const getOnboardingState = createServerFn({ method: "GET" })
     // Health rows are keyed by integration; keep the newest per integration.
     const integrations: Array<{ id: string; status: string; checked_at: string | null }> = [];
     for (const h of (healthRes.data ?? []) as Db[]) {
-      if (integrations.some((i) => i.id === h.integration_id)) continue;
+      if (integrations.some((i) => i.id === h.integration)) continue;
       integrations.push({
-        id: h.integration_id,
+        id: h.integration,
         status: h.status ?? "not_configured",
-        checked_at: h.checked_at ?? null,
+        checked_at: h.created_at ?? null,
       });
     }
 

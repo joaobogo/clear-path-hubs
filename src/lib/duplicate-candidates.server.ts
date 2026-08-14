@@ -114,9 +114,9 @@ async function hydrateDecisions(s: Row, decisions: Row[]): Promise<DuplicateDeci
   const actorIds = uniq(decisions.map((d) => d["decided_by"] as string | null));
   const names = new Map<string, string>();
   if (actorIds.length) {
-    const res = await s.from("profiles").select("user_id, full_name").in("user_id", actorIds);
+    const res = await s.from("profiles").select("auth_user_id, full_name").in("auth_user_id", actorIds);
     for (const row of (res.data ?? []) as Row[]) {
-      names.set(row["user_id"] as string, (row["full_name"] as string) ?? "");
+      names.set(row["auth_user_id"] as string, (row["full_name"] as string) ?? "");
     }
   }
   return decisions.map((d) => ({

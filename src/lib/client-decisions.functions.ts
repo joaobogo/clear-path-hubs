@@ -46,6 +46,7 @@ import {
   evaluateAdvanceGate,
 } from "@/lib/client/advance-gate";
 import { assessFreshness, type Freshness } from "@/lib/scoring/score-freshness";
+import { readinessFromPositionRow } from "@/lib/position-readiness";
 
 import {
   type AnyRow,
@@ -144,12 +145,15 @@ export const moveMatchStage = createServerFn({ method: "POST" })
       const { data: pos } = await context.supabase
         .from("positions")
         .select(
-          "title, description, location, work_model, employment_type, seniority, must_have_skills, experience, responsibilities, budget_min, budget_max, currency",
+          "title, description, location, work_model, employment_type, seniority, requirements, compensation, intake_context",
         )
         .eq("id", match.position_id as string)
         .eq("organization_id", data.orgId)
         .maybeSingle();
-      const gate = evaluateAdvanceGate({ toStage: data.toStage, position: pos as never });
+      const gate = evaluateAdvanceGate({
+        toStage: data.toStage,
+        position: readinessFromPositionRow(pos as Record<string, unknown> | null),
+      });
       if (gate.blocked) throw advanceGateError(gate.missing);
     }
     const { error } = await context.supabase
