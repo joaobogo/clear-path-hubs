@@ -54,7 +54,7 @@ export function TrackingConfigPanel() {
         ? `analytics ${decision.analytics ? "allowed" : "declined"}, marketing ${
             decision.marketing ? "allowed" : "declined"
           }`
-        : "no decision recorded — only strictly necessary code is running",
+        : "no decision recorded",
     );
   }, []);
 
@@ -63,8 +63,10 @@ export function TrackingConfigPanel() {
       <CardHeader className="pb-2">
         <CardTitle className="text-base">Tracking configuration</CardTitle>
         <p className="text-xs text-muted-foreground">
-          Your consent in this browser: {consent}. Tags with no identifier stay
-          dormant; set the listed variable to activate one.
+          Every configured tag boots on the first page view for all visitors —
+          consent is recorded but does not gate loading. Tags with no identifier
+          stay dormant; set the listed variable to activate one. Consent recorded
+          in this browser: {consent}.
         </p>
       </CardHeader>
       <CardContent className="space-y-2">
@@ -76,7 +78,7 @@ export function TrackingConfigPanel() {
             <div className="min-w-0">
               <p className="text-sm font-medium">{LABEL[r.key] ?? r.key}</p>
               <p className="truncate text-xs text-muted-foreground">
-                {TRACKER_CATEGORY[r.key as keyof typeof TRACKER_CATEGORY]} consent ·{" "}
+                {TRACKER_CATEGORY[r.key as keyof typeof TRACKER_CATEGORY]} category ·{" "}
                 {r.id ? `id ${r.id}` : ENV_VAR[r.key]} · {r.detail}
               </p>
             </div>
