@@ -103,9 +103,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       .select("id, department, location, status")
       .eq("organization_id", orgId);
     const posRows: AnyRow[] = positions ?? [];
-    const open_by_region = Array.from(regionMap.entries())
-      .map(([region, v]) => ({ region, ...v }))
-      .sort((a, b) => b.open - a.open || b.total - a.total);
+
 
     // ── Matches (pipeline by BU, time-in-stage, blocked) ──────────────────
     const { data: matches } = await s
