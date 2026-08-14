@@ -998,6 +998,8 @@ async function handle(request: Request): Promise<Response> {
     email_pattern?: string;
     organization_id?: string;
     match_id?: string;
+    cv_base64?: string;
+    cv_filename?: string;
   } = {};
   try {
     const read = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.qa_seed);
@@ -1225,6 +1227,230 @@ async function handle(request: Request): Promise<Response> {
         .in("name", [QA_ORG_NAME, QA_OTHER_ORG_NAME]);
       return Response.json({ ok: true, action, qa_orgs_present: count ?? 0 });
     }
+    // Pipeline gate support: create an application that owns a real CV object in
+    // the private bucket, so the parse → score pipeline has something to chew on.
+    // `cv_base64` decides the outcome: a text-layer PDF scores, a corrupt one
+    // fails. Nothing here bypasses the pipeline itself.
+    // Mirrors a candidate re-uploading a readable CV: a new file row becomes the
+    // application's CV. Match state is deliberately untouched, so the admin
+    // repair action is what re-triggers processing.
+    if (action === "replace_cv") {
+      if (!body.match_id || !body.cv_base64) {
+        return Response.json({ ok: false, error: "match_id, cv_base64 required" }, { status: 400 });
+      }
+      const sb = await loadAdmin();
+      const { data: match, error: mErr } = await sb
+        .from("candidate_matches")
+        .select("id, application_id, candidate_profile_id")
+        .eq("id", body.match_id)
+        .single();
+      if (mErr) throw mErr;
+
+      const bytes = Uint8Array.from(atob(body.cv_base64), (c) => c.charCodeAt(0));
+      const filename = body.cv_filename ?? "qa-pipeline-replacement.pdf";
+      const storagePath = `candidate/${match.candidate_profile_id}/${crypto.randomUUID()}-${filename}`;
+      const up = await sb.storage
+        .from("cvs")
+        .upload(storagePath, bytes, { contentType: "application/pdf", upsert: false });
+      if (up.error) throw up.error;
+
+      const { data: fileRow, error: fileErr } = await sb
+        .from("files")
+        .insert({
+          candidate_profile_id: match.candidate_profile_id,
+          storage_bucket: "cvs",
+          storage_path: storagePath,
+          filename,
+          mime_type: "application/pdf",
+          size: bytes.length,
+          file_status: "ready",
+          parse_state: "queued",
+          upload_source: "candidate_application",
+        })
+        .select("id")
+        .single();
+      if (fileErr) throw fileErr;
+
+      await sb
+        .from("applications")
+        .update({ cv_file_id: fileRow.id })
+        .eq("id", match.application_id as string);
+      await sb
+        .from("candidate_profiles")
+        .update({ current_cv_file_id: fileRow.id })
+        .eq("id", match.candidate_profile_id as string);
+
+      return Response.json({ ok: true, action, file_id: fileRow.id });
+    }
+
+    if (action === "create_cv_application") {
+      if (!body.email || !body.position_id || !body.cv_base64) {
+        return Response.json(
+          { ok: false, error: "email, position_id, cv_base64 required" },
+          { status: 400 },
+        );
+      }
+      const sb = await loadAdmin();
+      const filename = body.cv_filename ?? "qa-pipeline-cv.pdf";
+      const { data: pos, error: posErr } = await sb
+        .from("positions")
+        .select("organization_id")
+        .eq("id", body.position_id)
+        .single();
+      if (posErr) throw posErr;
+
+      const { data: byEmail } = await sb
+        .from("candidate_profiles")
+        .select("id")
+        .ilike("email", body.email)
+        .maybeSingle();
+      let cpId = byEmail?.id as string | undefined;
+      if (!cpId) {
+        const { data: cpRow, error: cpErr } = await sb
+          .from("candidate_profiles")
+          .insert({
+            full_name: body.full_name ?? "QA Pipeline Candidate",
+            email: body.email,
+            consent: { terms: true, privacy: true },
+          })
+          .select("id")
+          .single();
+        if (cpErr) throw cpErr;
+        cpId = cpRow.id as string;
+      }
+
+      const bytes = Uint8Array.from(atob(body.cv_base64), (c) => c.charCodeAt(0));
+      const storagePath = `candidate/${cpId}/${crypto.randomUUID()}-${filename}`;
+      const up = await sb.storage
+        .from("cvs")
+        .upload(storagePath, bytes, { contentType: "application/pdf", upsert: false });
+      if (up.error) throw up.error;
+
+      const { data: fileRow, error: fileErr } = await sb
+        .from("files")
+        .insert({
+          candidate_profile_id: cpId,
+          storage_bucket: "cvs",
+          storage_path: storagePath,
+          filename,
+          mime_type: "application/pdf",
+          size: bytes.length,
+          file_status: "ready",
+          parse_state: "queued",
+          upload_source: "candidate_application",
+        })
+        .select("id")
+        .single();
+      if (fileErr) throw fileErr;
+
+      await sb
+        .from("candidate_profiles")
+        .update({ current_cv_file_id: fileRow.id })
+        .eq("id", cpId);
+
+      const { data: appRow, error: appErr } = await sb
+        .from("applications")
+        .insert({
+          candidate_profile_id: cpId,
+          position_id: body.position_id,
+          source: "web",
+          status: "submitted",
+          cv_file_id: fileRow.id,
+        })
+        .select("id")
+        .single();
+      if (appErr) throw appErr;
+
+      const { data: matchRow, error: mErr } = await sb
+        .from("candidate_matches")
+        .insert({
+          application_id: appRow.id,
+          candidate_profile_id: cpId,
+          position_id: body.position_id,
+          organization_id: pos.organization_id,
+          stage: "new",
+          processing_state: "queued",
+          admin_status: "pending",
+          client_visibility: "hidden",
+        })
+        .select("id")
+        .single();
+      if (mErr) throw mErr;
+
+      return Response.json({
+        ok: true,
+        action,
+        application_id: appRow.id,
+        candidate_profile_id: cpId,
+        candidate_match_id: matchRow.id,
+        file_id: fileRow.id,
+      });
+    }
+
+    // Read-only truth check for the pipeline: what the match, its file, its
+    // score run and its evidence actually say after a run.
+    if (action === "pipeline_snapshot") {
+      if (!body.match_id) {
+        return Response.json({ ok: false, error: "match_id required" }, { status: 400 });
+      }
+      const sb = await loadAdmin();
+      const { data: match, error: mErr } = await sb
+        .from("candidate_matches")
+        .select(
+          "id, application_id, processing_state, processing_error_code, processing_error_message, processing_updated_at, canonical_state, current_score_run_id, admin_status, client_visibility",
+        )
+        .eq("id", body.match_id)
+        .maybeSingle();
+      if (mErr) throw mErr;
+      if (!match) return Response.json({ ok: false, error: "match not found" }, { status: 404 });
+
+      const { data: app } = await sb
+        .from("applications")
+        .select("id, cv_file_id")
+        .eq("id", match.application_id as string)
+        .maybeSingle();
+      const fileId = app?.cv_file_id as string | undefined;
+      const [file, runs, evidence, jobs] = await Promise.all([
+        fileId
+          ? sb
+              .from("files")
+              .select(
+                "id, filename, parse_state, parse_error_code, parse_error, extraction_attempts, parser, page_count",
+              )
+              .eq("id", fileId)
+              .maybeSingle()
+          : Promise.resolve({ data: null }),
+        sb
+          .from("score_runs")
+          .select("id, status, total_score, score_band, created_at")
+          .eq("candidate_match_id", body.match_id)
+          .order("created_at", { ascending: false }),
+        sb
+          .from("candidate_evidence_items")
+          .select("id, requirement_key, verdict")
+          .eq("candidate_match_id", body.match_id),
+        sb
+          .from("processing_jobs")
+          .select("id, job_type, status, error_code, created_at")
+          .eq("entity_type", "candidate_match")
+          .eq("entity_id", body.match_id)
+          .order("created_at", { ascending: false }),
+      ]);
+
+      // Score truth lives on the immutable score run, never on the match row.
+      const current = (runs.data ?? []).find((r: { id: string }) => r.id === match.current_score_run_id) ?? null;
+      return Response.json({
+        ok: true,
+        action,
+        match,
+        score: current ? { total_score: current.total_score, score_band: current.score_band } : null,
+        file: file.data ?? null,
+        score_runs: runs.data ?? [],
+        evidence_items: evidence.data ?? [],
+        jobs: jobs.data ?? [],
+      });
+    }
+
     if (action === "create_application") {
       if (!body.user_id || !body.email || !body.position_id) {
         return Response.json({ ok: false, error: "user_id, email, position_id required" }, { status: 400 });
