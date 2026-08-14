@@ -1489,6 +1489,79 @@ async function handle(request: Request): Promise<Response> {
       });
     }
 
+    /**
+     * Read-only truth for the candidate portal: the profile row the editor
+     * writes, every application and match behind the candidate-safe status,
+     * the CV versions with their parse state, and the candidate's own thread.
+     * Lets the spec assert persistence and status change against the database
+     * rather than a toast. Never mutates.
+     */
+    if (action === "candidate_truth") {
+      if (!body.email) {
+        return Response.json({ ok: false, error: "email required" }, { status: 400 });
+      }
+      const sb = await loadAdmin();
+      const { data: profile, error: pErr } = await sb
+        .from("candidate_profiles")
+        .select(
+          "id, user_id, full_name, email, phone, location, headline, summary, years_experience, timezone, linkedin_url, portfolio_url, skills, availability, consent, current_cv_file_id",
+        )
+        .ilike("email", String(body.email))
+        .maybeSingle();
+      if (pErr) throw pErr;
+      if (!profile) {
+        return Response.json({
+          ok: true,
+          action,
+          profile: null,
+          applications: [],
+          matches: [],
+          files: [],
+          messages: [],
+        });
+      }
+      const cpId = profile.id as string;
+      const [apps, matches, files] = await Promise.all([
+        sb
+          .from("applications")
+          .select("id, position_id, status, withdrawn_at, cv_file_id, applied_at")
+          .eq("candidate_profile_id", cpId)
+          .order("applied_at", { ascending: false }),
+        sb
+          .from("candidate_matches")
+          .select(
+            "id, application_id, stage, admin_status, client_visibility, processing_state, updated_at",
+          )
+          .eq("candidate_profile_id", cpId),
+        sb
+          .from("files")
+          .select("id, filename, parse_state, upload_source, created_at")
+          .eq("candidate_profile_id", cpId)
+          .order("created_at", { ascending: false }),
+      ]);
+      const userId = profile.user_id as string | null;
+      const messages = userId
+        ? (
+            await sb
+              .from("messages")
+              .select("id, thread_id, body, sender_user_id, read_at, created_at")
+              .eq("thread_id", userId)
+              .order("created_at", { ascending: true })
+          ).data ?? []
+        : [];
+      return Response.json({
+        ok: true,
+        action,
+        profile,
+        applications: apps.data ?? [],
+        matches: matches.data ?? [],
+        files: files.data ?? [],
+        messages,
+      });
+    }
+
+
+
 
 
     if (action === "pipeline_snapshot") {
