@@ -248,19 +248,28 @@ test.describe("full journey walkthrough", () => {
 
     // The lifecycle bar surfaces exactly one legal forward move at a time, so
     // walk it until the role is active rather than assuming a single click.
-    for (let i = 0; i < 5; i++) {
+    let lifecycleError = "";
+    for (let i = 0; i < 6; i++) {
       const current = (await journeyTrail({ organizationId: orgId, positionId: positionId! }))
         .position?.status;
       if (current === "active") break;
-      const forward = page
-        .getByRole("button", { name: /^(approve|activate|start review|submit)$/i })
-        .first();
+      // The lifecycle bar tags its primary action, so the walk follows the
+      // product's own legal next move instead of guessing a label.
+      const forward = page.locator("[data-qa-action^='position-']").first();
       if (!(await forward.count())) break;
+      const which = await forward.getAttribute("data-qa-action");
+      if (which === "position-actions-menu") break;
       await forward.click();
-      await page.waitForTimeout(2_500);
+      // A refused transition shows a toast; capture it for the report.
+      const failure = page.locator("[data-sonner-toast][data-type='error']");
+      if (await failure.count()) {
+        lifecycleError = (await failure.first().innerText().catch(() => "")) || lifecycleError;
+      }
+      await page.waitForTimeout(3_000);
+      await page.reload({ waitUntil: "domcontentloaded" });
     }
     const activated = await journeyTrail({ organizationId: orgId, positionId: positionId! });
-    expect(activated.position?.status, "position is active").toBe("active");
+    expect(activated.position?.status, `position is active (${lifecycleError})`).toBe("active");
     await checkTrail(
       "3. Position activated",
       "PASS",
@@ -347,7 +356,7 @@ test.describe("full journey walkthrough", () => {
     record({
       step: "6. Processing complete",
       ui: processedOk ? "PASS" : "FAIL",
-      audit: processed.audit_events.some((e) => /cv|parse|process/i.test(e.event_type))
+      audit: processed.audit_events.some((e) => /cv|parse|process/i.test(e.action))
         ? "PASS"
         : "FAIL",
       notification: "n/a",
@@ -360,7 +369,7 @@ test.describe("full journey walkthrough", () => {
     record({
       step: "7. Scoring complete",
       ui: scoredOk ? "PASS" : "FAIL",
-      audit: processed.audit_events.some((e) => /scor/i.test(e.event_type)) ? "PASS" : "FAIL",
+      audit: processed.audit_events.some((e) => /scor/i.test(e.action)) ? "PASS" : "FAIL",
       notification: processed.notifications.some((n) => /scor/i.test(n.event_type)) ? "PASS" : "n/a",
       note: `score ${processed.match?.total_score ?? "—"} band ${processed.match?.score_band ?? "—"}`,
     });

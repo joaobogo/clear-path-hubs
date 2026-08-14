@@ -547,10 +547,9 @@ export type JourneyTrail = {
   ok: boolean;
   audit_events: Array<{
     id: string;
-    event_type: string;
+    action: string;
     entity_type: string | null;
     entity_id: string | null;
-    position_id: string | null;
     created_at: string;
   }>;
   notification_events: Array<{ id: string; event_type: string; created_at: string }>;
@@ -603,7 +602,7 @@ export function trailHas(
 ): { audit: boolean; notification: boolean } {
   const hit = (v: string | null | undefined) => !!v && patterns.some((p) => p.test(v));
   return {
-    audit: trail.audit_events.some((e) => hit(e.event_type)),
+    audit: trail.audit_events.some((e) => hit(e.action)),
     notification:
       trail.notifications.some((n) => hit(n.event_type)) ||
       trail.notification_events.some((n) => hit(n.event_type)),
