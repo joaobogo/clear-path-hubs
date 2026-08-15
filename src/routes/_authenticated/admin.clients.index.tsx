@@ -531,13 +531,12 @@ function ClientCard({ row, onArchive }: { row: ClientRow; onArchive: () => void 
           <div className="text-muted-foreground">Activity</div>
         </div>
       </div>
-      <Link
-        to="/admin/clients/$id"
-        params={{ id: r.id }}
+      <a
+        href={`/admin/clients/${r.id}`}
         className="inline-flex w-full items-center justify-center rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
       >
         Open client
-      </Link>
+      </a>
     </div>
   );
 }
