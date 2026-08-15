@@ -221,9 +221,10 @@ export function RoleBlueprint({ position, activity = [] }: RoleBlueprintProps) {
           <FactTile
             icon={<Gauge className="h-4 w-4" />}
             label="Seniority"
-            primary={position.seniority || "Unspecified"}
+            primary={formatEnumLabel(position.seniority) || "Unspecified"}
             secondary={position.department ? String(position.department) : null}
           />
+
         </div>
 
         {/* Scoring rubric preview */}
