@@ -409,8 +409,6 @@ Post-login landing: `http://localhost:8080/admin`
   - [ ] UNVERIFIED — button: "Select all positions on this page" — expected: client-side (navigation, view state, filtering)
   - [ ] UNVERIFIED — button: "Select Senior Full-Stack Engineer" — expected: client-side (navigation, view state, filtering)
   - [ ] UNVERIFIED — button: "Select Structural Engineer" — expected: client-side (navigation, view state, filtering)
-  - [ ] UNVERIFIED — button: "Select Structural Enginer" — expected: client-side (navigation, view state, filtering)
-  - [ ] UNVERIFIED — button: "Select Structual Engineer" — expected: client-side (navigation, view state, filtering)
   - [ ] UNVERIFIED — button: "Select Social Media & Design Specialist" — expected: server call required (mutation/read)
   - [ ] UNVERIFIED — button: "Select Customer Success" — expected: client-side (navigation, view state, filtering)
   - [ ] UNVERIFIED — button: "Manage" — expected: client-side (navigation, view state, filtering)
@@ -430,8 +428,6 @@ Post-login landing: `http://localhost:8080/admin`
   - [ ] UNVERIFIED — toggle: "Select all positions on this page" — expected: server call required (mutation/read)
   - [ ] UNVERIFIED — toggle: "Select Senior Full-Stack Engineer" — expected: server call required (mutation/read)
   - [ ] UNVERIFIED — toggle: "Select Structural Engineer" — expected: server call required (mutation/read)
-  - [ ] UNVERIFIED — toggle: "Select Structural Enginer" — expected: server call required (mutation/read)
-  - [ ] UNVERIFIED — toggle: "Select Structual Engineer" — expected: server call required (mutation/read)
   - [ ] UNVERIFIED — toggle: "Select Social Media & Design Specialist" — expected: server call required (mutation/read)
   - [ ] UNVERIFIED — toggle: "Select Customer Success" — expected: server call required (mutation/read)
 - console:
@@ -596,9 +592,7 @@ Post-login landing: `http://localhost:8080/admin`
   - [ ] UNVERIFIED — button: "Decline all" — expected: client-side (navigation, view state, filtering)
   - [ ] UNVERIFIED — button: "Accept all" — expected: client-side (navigation, view state, filtering)
   - [ ] UNVERIFIED — button: "Hide tracking notice" — expected: client-side (navigation, view state, filtering)
-  - [ ] UNVERIFIED — input: "Select Structual Engineer" — expected: client-side (navigation, view state, filtering)
   - [ ] UNVERIFIED — input: "Select Structural Engineer" — expected: client-side (navigation, view state, filtering)
-  - [ ] UNVERIFIED — input: "Select Structural Enginer" — expected: client-side (navigation, view state, filtering)
   - [ ] UNVERIFIED — toggle: "Show test records across all admin screens" — expected: server call required (mutation/read)
 - console:
   - `error: Failed to load resource: the server responded with a status of 400 ()`
