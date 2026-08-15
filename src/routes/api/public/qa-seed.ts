@@ -490,80 +490,19 @@ async function cleanupQAFeedback(supabase: any, matchId: string) {
   await supabase.from("notification_events").delete().eq("candidate_match_id", matchId).like("payload->>feedback", "QA-FEEDBACK-CHECK%");
 }
 
-export const Route = createFileRoute("/api/public/qa-seed")({
-  server: {
-    handlers: {
-      POST: async ({ request }) => {
-        // ... (existing auth and rate limit code)
-        const trace = newTraceId();
-        const body = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.QA_SEED);
-        const action = body.action as string;
-        const supabase = await loadAdmin();
+async function cleanupQAFeedback(supabase: any, matchId: string) {
+  await supabase
+    .from("client_decisions")
+    .delete()
+    .eq("candidate_match_id", matchId)
+    .like("feedback", "QA-FEEDBACK-CHECK%");
+  await supabase
+    .from("notification_events")
+    .delete()
+    .eq("candidate_match_id", matchId)
+    .like("payload->>feedback", "QA-FEEDBACK-CHECK%");
+}
 
-        if (action === "seed") {
-          const data = await seedQAData();
-          return new Response(JSON.stringify({ ...data, trace }), {
-            headers: { "content-type": "application/json" },
-          });
-        }
-
-        if (action === "cleanup") {
-          const data = await cleanupQAData();
-          return new Response(JSON.stringify({ ...data, trace }), {
-            headers: { "content-type": "application/json" },
-          });
-        }
-
-        if (action === "decline-test-feedback") {
-          const matchId = body.matchId as string;
-          const orgId = body.orgId as string;
-          const feedback = body.feedback || "QA-FEEDBACK-CHECK — disregard";
-          
-          await cleanupQAFeedback(supabase, matchId);
-
-          // Record decision
-          const { error: decErr } = await supabase.from("client_decisions").insert({
-            candidate_match_id: matchId,
-            organization_id: orgId,
-            decision: "not_moving_forward",
-            feedback,
-            reason_code: "other",
-            actor_user_id: body.userId || null,
-          });
-          if (decErr) throw decErr;
-
-          // Emit event for history/activity
-          const { emitEventFromServer } = await import("@/lib/notifications.functions");
-          await emitEventFromServer({
-            event: "client_declined",
-            scope: `qa_decline_${matchId}_${Date.now()}`,
-            organization_id: orgId,
-            candidate_match_id: matchId,
-            payload: { feedback, to: "not_moving_forward" },
-          });
-
-          // Move match stage
-          await supabase.from("candidate_matches").update({ stage: "not_moving_forward" }).eq("id", matchId);
-
-          return new Response(JSON.stringify({ ok: true, trace }), {
-            headers: { "content-type": "application/json" },
-          });
-        }
-
-        if (action === "restore-test-candidate") {
-          const matchId = body.matchId as string;
-          await cleanupQAFeedback(supabase, matchId);
-          await supabase.from("candidate_matches").update({ stage: "delivered" }).eq("id", matchId);
-          return new Response(JSON.stringify({ ok: true, trace }), {
-            headers: { "content-type": "application/json" },
-          });
-        }
-
-        return new Response("Invalid action", { status: 400 });
-      },
-    },
-  },
-});
 /**
  * Removes everything the E2E suite created by driving the real /intake form:
  * auth accounts on the qa.taasflow.test mailbox. Never matches real data.
