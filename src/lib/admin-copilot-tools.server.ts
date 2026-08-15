@@ -149,31 +149,47 @@ export async function summarizeCandidateHistory(
 
 // ─── blocked_roles ─────────────────────────────────────────────────────────
 export async function blockedRoles(supabase: Sb): Promise<CopilotToolResult> {
-  const cutoff = new Date(Date.now() - 14 * 24 * 3600 * 1000).toISOString();
-  const { data } = await supabase
+  // Use the same definition as the Publish desk blockers
+  const { data: positions, error } = await supabase
     .from("positions")
-    .select("id, title, status, organization_id, created_at, organizations(name)")
-    .eq("status", "open")
-    .lt("created_at", cutoff)
-    .limit(40);
-  const rows = (data ?? []) as any[];
-  const posIds = rows.map((r) => r.id);
-  let progressed: Record<string, number> = {};
-  if (posIds.length) {
-    const { data: matches } = await supabase
-      .from("candidate_matches")
-      .select("position_id, stage")
-      .in("position_id", posIds);
-    for (const m of (matches ?? []) as any[]) {
-      if (["shortlist", "interview", "offer"].includes(m.stage)) {
-        progressed[m.position_id] = (progressed[m.position_id] ?? 0) + 1;
-      }
-    }
-  }
-  const blocked = rows.filter((r) => (progressed[r.id] ?? 0) === 0);
+    .select(
+      "id, title, status, visibility, payment_status, approved_at, published_at, created_at, submitted_at, owner_user_id, organization_id, description, employment_type, work_model, seniority, location, requirements, organizations(name)"
+    )
+    .in("status", ["draft", "submitted", "under_review", "needs_clarification", "approved"])
+    .limit(100);
+
+  if (error) throw new Error(error.message);
+
+  const blocked = (positions ?? []).filter((p: any) => {
+    const blockers = evaluatePublishGate({
+      status: p.status,
+      payment_status: p.payment_status,
+      approved_at: p.approved_at,
+      published_at: p.published_at,
+      title: p.title,
+      description: p.description,
+      employment_type: p.employment_type,
+      work_model: p.work_model,
+      seniority: p.seniority,
+      location: p.location,
+      requirements: p.requirements,
+    });
+    // A role is "blocked" if it has blockers, even if just 'not_approved' 
+    // (aligns with what's shown in the desk vs ready to publish)
+    return blockers.length > 0;
+  });
+
   return {
-    data: { blocked_roles: blocked.map((r) => ({ position_id: r.id, title: r.title, client: r.organizations?.name, opened_at: r.created_at })) },
-    citations: blocked.map((r) => ({
+    data: {
+      blocked_roles: blocked.map((r: any) => ({
+        position_id: r.id,
+        title: r.title,
+        client: r.organizations?.name,
+        created_at: r.created_at,
+        status: r.status,
+      })),
+    },
+    citations: blocked.map((r: any) => ({
       kind: "position",
       id: r.id,
       label: r.title,
@@ -182,9 +198,11 @@ export async function blockedRoles(supabase: Sb): Promise<CopilotToolResult> {
   };
 }
 
+
 // ─── stalled_interviews ────────────────────────────────────────────────────
 export async function stalledInterviews(supabase: Sb): Promise<CopilotToolResult> {
-  const cutoff = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
+  // Stalled = in interview stage for more than 5 days without update
+  const cutoff = new Date(Date.now() - 5 * 24 * 3600 * 1000).toISOString();
   const { data } = await supabase
     .from("candidate_matches")
     .select("id, stage, updated_at, candidate_profiles(full_name), positions(title), organizations(name)")
@@ -212,14 +230,14 @@ export async function stalledInterviews(supabase: Sb): Promise<CopilotToolResult
   };
 }
 
+
 // ─── missing_approvals ─────────────────────────────────────────────────────
 export async function missingApprovals(supabase: Sb): Promise<CopilotToolResult> {
-  const cutoff = new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString();
+  // Synchronize with admin-ops.server.ts loadWorkQueues logic
   const { data } = await supabase
     .from("candidate_matches")
     .select("id, stage, updated_at, candidate_profiles(full_name), positions(title), organizations(name)")
     .in("stage", ["shortlist", "interview", "offer"])
-    .lt("updated_at", cutoff)
     .order("updated_at", { ascending: true })
     .limit(40);
   const rows = (data ?? []) as any[];
@@ -242,6 +260,7 @@ export async function missingApprovals(supabase: Sb): Promise<CopilotToolResult>
     })),
   };
 }
+
 
 // ─── rediscovery_candidates ────────────────────────────────────────────────
 export async function rediscoveryCandidates(
