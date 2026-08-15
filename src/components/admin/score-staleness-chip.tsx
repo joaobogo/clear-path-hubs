@@ -90,7 +90,7 @@ export function ScoreStalenessChip({
           {freshness.reasons.length > 0 && (
             <ul className="list-disc pl-4">
               {freshness.reasons.map((r) => (
-                <li key={r.code}>{r.label}</li>
+                <li key={r.code}>{r.detail ?? r.label}</li>
               ))}
             </ul>
           )}

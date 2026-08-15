@@ -51,8 +51,13 @@ export type StaleReasonCode =
 
 export type StaleReason = {
   code: StaleReasonCode;
-  /** Plain sentence a recruiter can read without training. */
+  /** Plain sentence a recruiter can read without training. Never contains internal identifiers. */
   label: string;
+  /**
+   * Exact internal detail (engine/calibration identifiers) for staff surfaces
+   * only. Never rendered in client-facing views.
+   */
+  detail?: string;
 };
 
 export type Freshness = {
@@ -121,7 +126,8 @@ export function assessFreshness(input: FreshnessInput): Freshness {
   if (scoredEngine && currentEngine && scoredEngine !== currentEngine) {
     reasons.push({
       code: "engine_changed",
-      label: `Assessed with engine ${scoredEngine}; the current version is ${currentEngine}.`,
+      label: "Assessed with an earlier scoring version — ask us to reassess.",
+      detail: `Assessed with engine ${scoredEngine}; the current version is ${currentEngine}.`,
     });
   }
 
