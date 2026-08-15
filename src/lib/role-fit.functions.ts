@@ -425,7 +425,7 @@ export const getRoleFitFromPool = createServerFn({ method: "POST" })
       if (matchedRequirements.length) {
         reasons.push({
           kind: "skill",
-          label: `Evidence for ${matchedRequirements.length} of ${reqNorm.length} requirement${reqNorm.length === 1 ? "" : "s"}: ${matchedRequirements.slice(0, 3).join(", ")}`,
+          label: `Evidence for ${matchedRequirements.length} of ${requirements.length} requirement${requirements.length === 1 ? "" : "s"}: ${matchedRequirements.slice(0, 3).join(", ")}`,
         });
       }
       if (pos.seniority && seniorityBand && norm(pos.seniority) === norm(seniorityBand)) {
