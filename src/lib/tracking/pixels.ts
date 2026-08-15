@@ -547,8 +547,8 @@ function notifyRouteChange(params: Record<string, unknown>) {
     }),
   );
 
-  // Apollo: re-runs its page visit capture for the new URL.
-  safe(() => window.trackingFunctions?.onLoad?.({ appId: APOLLO_ID }));
+  // Apollo: re-runs its page visit capture for the new URL (no-op while disabled).
+  if (APOLLO_ID) safe(() => window.trackingFunctions?.onLoad?.({ appId: APOLLO_ID }));
 
   // RB2B: re-trigger identification for the new page.
   safe(() => {
