@@ -305,15 +305,15 @@ function CandidatesPage() {
  [compareIds, rowsRaw],
  );
 
- // Bulk CV download targets — selection first, else the filtered list. Only
- // candidates whose contact details are released can have a downloadable CV.
- const cvTargets = useMemo(() => {
-  const pool =
-   selectedCandidates.length > 0 ? selectedCandidates : (filtered as ClientCandidateDTO[]);
-  return pool
-   .filter((c) => c.contact_released)
-   .map((c) => ({ matchId: c.match_id, name: c.candidate.display_name }));
- }, [selectedCandidates, filtered]);
+  // Bulk CV download targets — selection first, else the filtered list.
+  // We include all candidates the client can see; the backend enforces staged 
+  // redaction (PII stripped) for pre-interview candidates.
+  const cvTargets = useMemo(() => {
+    const pool =
+      selectedCandidates.length > 0 ? selectedCandidates : (filtered as ClientCandidateDTO[]);
+    return pool
+      .map((c) => ({ matchId: c.match_id, name: c.candidate.display_name }));
+  }, [selectedCandidates, filtered]);
 
  const compareCheck = compareEligibility(selectedCandidates);
  const crossPosition = !compareCheck.ok && selectedCandidates.length >= 2;

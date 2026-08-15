@@ -270,12 +270,10 @@ export function CandidateCard({
         <ReviewTimelineStrip timeline={c.review_timeline} showLabels />
       </div>
 
-      {/* One-click CV, only once contact details are released. */}
-      {c.contact_released && (
-        <div className="mt-2">
-          <DownloadLatestCvLink matchId={c.match_id} />
-        </div>
-      )}
+      {/* One-click CV. Staged release: redacted pre-interview, full at interview. */}
+      <div className="mt-2">
+        <DownloadLatestCvLink matchId={c.match_id} />
+      </div>
 
       {/* Every decision is reversible for a short window, visibly. */}
       <div className="mt-3">
