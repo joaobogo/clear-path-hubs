@@ -101,10 +101,19 @@ export function RoleBlueprint({ position, activity = [] }: RoleBlueprintProps) {
   const nice = toLabelList(position.preferred_requirements);
   const dealbreakers = toLabelList(position.dealbreakers);
   const compensation = formatCompensation(position.compensation);
-  const workAuth = Array.isArray(position.work_authorization)
-    ? (position.work_authorization as string[]).join(", ")
-    : (position.work_authorization?.notes ?? null);
+  const rawNotes =
+    typeof position.work_authorization === "string"
+      ? position.work_authorization
+      : (position.work_authorization?.notes ?? null);
+  const cleanNotes =
+    typeof rawNotes === "string" && /TAASFLOW_DEMO_SEED/i.test(rawNotes) ? null : rawNotes;
+  const workAuth =
+    cleanNotes ||
+    (typeof position.work_authorization === "object" && position.work_authorization !== null
+      ? (position.work_authorization.required ?? position.work_authorization.summary ?? null)
+      : null);
   const channels = derivedSourcingChannels(position);
+
   const intakeNotes: string | null =
     position.intake_context?.notes ??
     position.intake_context?.context ??
