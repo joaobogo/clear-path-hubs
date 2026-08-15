@@ -209,11 +209,18 @@ function ConversationsPage() {
                   <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="truncate text-sm font-medium">{c.subject}</span>
+                      <span className="truncate text-sm font-medium">
+                        {view === "history" ? c.last_sender_name || "System" : c.subject}
+                      </span>
                       {c.unread > 0 && <Badge>{c.unread} new</Badge>}
                     </div>
-                    <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
-                      {c.last_sender_name ? `${c.last_sender_name}: ` : ""}
+                    {view === "history" && (
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                        {c.subject}
+                      </p>
+                    )}
+                    <p className={cn("mt-1 text-sm text-muted-foreground", view === "history" ? "" : "line-clamp-2")}>
+                      {view !== "history" && c.last_sender_name ? `${c.last_sender_name}: ` : ""}
                       {c.last_body ?? "No messages yet"}
                     </p>
                   </div>
