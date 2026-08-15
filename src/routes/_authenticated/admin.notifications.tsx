@@ -69,8 +69,8 @@ function NotificationsPage() {
         {(data) => {
           const counts = (data.counts ?? {}) as Record<string, number>;
           const summary = [
-            { label: "Emails sent (7d)", value: counts["email:sent"] ?? counts["email:delivered"] ?? 0 },
-            { label: "Email failures (7d)", value: counts["email:failed"] ?? 0 },
+            { label: "Emails sent (7d)", value: counts["email:provider_accepted"] ?? 0 },
+            { label: "Email failures (7d)", value: (counts["email:failed"] ?? 0) + (counts["email:bounced"] ?? 0) },
             { label: "Suppressed (7d)", value: counts["email:suppressed"] ?? 0 },
             { label: "In-app delivered (7d)", value: counts["in_app:delivered"] ?? 0 },
           ];
