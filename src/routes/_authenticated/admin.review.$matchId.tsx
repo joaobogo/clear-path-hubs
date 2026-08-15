@@ -382,7 +382,7 @@ function ReviewScreen() {
               <p className="text-xs text-muted-foreground">No screening answers recorded.</p>
             ) : (
               <ul className="space-y-4">
-                {answerByQuestion.map((a, i) => (
+                {answerByQuestion.map((a: Any, i: number) => (
                   <li key={i} className="space-y-1">
                     <div className="text-[11px] font-medium leading-tight">
                       {a.dealbreaker && <span className="text-destructive font-bold mr-1">*</span>}
