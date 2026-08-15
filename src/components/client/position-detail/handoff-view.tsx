@@ -4,17 +4,10 @@ import { RoleMessagesPanel } from "@/components/client/role-messages-panel";
 import { RoleStoryPanel } from "@/components/client/position-detail/role-story";
 import { WORK_MODEL_LABELS } from "@/lib/express-intake-schema";
 import type { RoleStory } from "@/lib/client/role-story";
+import { formatEnumLabel } from "@/lib/human-labels";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
-
-const EMPLOYMENT_TYPE_LABELS: Record<string, string> = {
-  full_time: "Full time",
-  part_time: "Part time",
-  contract: "Contract",
-  temporary: "Temporary",
-  internship: "Internship",
-};
 
 /** Raw enum values are never shown to a client; unknown values read as words. */
 function words(value: unknown): string | null {
@@ -41,9 +34,8 @@ export function PositionHandoffView({
     position.department,
     position.location,
     WORK_MODEL_LABELS[position.work_model as keyof typeof WORK_MODEL_LABELS] ??
-      words(position.work_model),
-    EMPLOYMENT_TYPE_LABELS[position.employment_type as string] ??
-      words(position.employment_type),
+      formatEnumLabel(position.work_model),
+    formatEnumLabel(position.employment_type),
   ]
     .filter(Boolean)
     .join(" · ");

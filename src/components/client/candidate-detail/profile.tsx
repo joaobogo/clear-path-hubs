@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { formatPeriod } from "@/lib/format/datetime";
+import { formatEnumLabel } from "@/lib/human-labels";
 import { SectionCard } from "./shared";
 
 export const InterviewGuide = memo(function InterviewGuide({
@@ -241,7 +242,7 @@ export const ProfilePanel = memo(function ProfilePanel({
     ["Years of experience", c.years_experience != null ? `${c.years_experience}` : null],
     ["Current role", c.current_role],
     ["Current company", c.current_company],
-    ["Work authorization", candidate.work_authorization],
+    ["Work authorization", formatEnumLabel(candidate.work_authorization)],
     [
       "Languages",
       candidate.languages.length > 0
