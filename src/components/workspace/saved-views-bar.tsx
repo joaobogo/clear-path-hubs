@@ -41,6 +41,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
+import { plural } from "@/lib/format/plural";
 
 export type SavedViewsBarProps = {
   surface: SavedViewSurface;
@@ -69,11 +70,11 @@ function relative(iso: string | null): string {
   const ms = Date.now() - new Date(iso).getTime();
   const mins = Math.floor(ms / 60000);
   if (mins < 1) return "used just now";
-  if (mins < 60) return `used ${mins}m ago`;
+  if (mins < 60) return `used ${plural(mins, "m")} ago`;
   const hours = Math.floor(mins / 60);
-  if (hours < 24) return `used ${hours}h ago`;
+  if (hours < 24) return `used ${plural(hours, "h")} ago`;
   const days = Math.floor(hours / 24);
-  return `used ${days}d ago`;
+  return `used ${plural(days, "d")} ago`;
 }
 
 export function SavedViewsBar({
