@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { buildRequirementRows } from "../client-fit-presentation";
 import { cleanQuote } from "../evidence/quote-hygiene";
+import { buildCompareMatrix } from "../client-compare";
 
 describe("evidence source integrity", () => {
   const requirement = "Strong SQL and relational data modelling in Postgres";
