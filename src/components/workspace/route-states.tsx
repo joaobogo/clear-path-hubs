@@ -58,11 +58,7 @@ export function makeRouteErrorComponent(tone: AudienceTone, surface: string) {
           <PermissionState
             title={normalized.title}
             description={normalized.description}
-            action={
-              <Button asChild variant="outline" size="sm">
-                <Link to={HOME[tone].to} search={linkSearch as any}>{HOME[tone].label}</Link>
-              </Button>
-            }
+            action={<HomeLink tone={tone} search={linkSearch} />}
           />
         </div>
       );
@@ -76,9 +72,9 @@ export function makeRouteErrorComponent(tone: AudienceTone, surface: string) {
             description={normalized.description}
             traceId={normalized.correlationId}
             action={
-              <Button asChild size="sm">
-                <Link to="/login">Sign in again</Link>
-              </Button>
+              <Link to="/login" className={buttonVariants({ size: "sm" })}>
+                Sign in again
+              </Link>
             }
           />
         </div>
@@ -99,11 +95,7 @@ export function makeRouteErrorComponent(tone: AudienceTone, surface: string) {
                 }
               : undefined
           }
-          action={
-            <Button asChild variant="outline" size="sm">
-              <Link to={HOME[tone].to} search={linkSearch as any}>{HOME[tone].label}</Link>
-            </Button>
-          }
+          action={<HomeLink tone={tone} search={linkSearch} />}
         />
       </div>
     );
@@ -135,11 +127,7 @@ export function makeRouteNotFoundComponent(tone: AudienceTone) {
               : normalized.description
           }
 
-          action={
-            <Button asChild variant="outline" size="sm">
-              <Link to={HOME[tone].to} search={linkSearch as any}>{HOME[tone].label}</Link>
-            </Button>
-          }
+          action={<HomeLink tone={tone} search={linkSearch} />}
         />
       </div>
     );
