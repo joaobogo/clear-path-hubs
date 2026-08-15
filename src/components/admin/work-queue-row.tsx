@@ -109,7 +109,13 @@ function OwnerCell({ item }: { item: QueueItem }) {
   );
 }
 
-export function WorkQueueRow({ item }: { item: QueueItem }) {
+export function WorkQueueRow({
+  item,
+  secondary_badge,
+}: {
+  item: QueueItem;
+  secondary_badge?: { label: string; tone: "default" | "neutral" | "warning" | "danger" } | null;
+}) {
   return (
     <li className="group flex items-center gap-3 px-4 py-2.5">
       <div className="min-w-0 flex-1">
@@ -123,6 +129,19 @@ export function WorkQueueRow({ item }: { item: QueueItem }) {
               SLA +{item.sla_breach.days_over}d
             </span>
           ) : null}
+          {secondary_badge && (
+            <span
+              className={cn(
+                "shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
+                secondary_badge.tone === "default" && "bg-primary/10 text-primary border border-primary/20",
+                secondary_badge.tone === "neutral" && "bg-muted text-muted-foreground border",
+                secondary_badge.tone === "warning" && "bg-warning/10 text-warning-foreground border border-warning/20",
+                secondary_badge.tone === "danger" && "bg-destructive/10 text-destructive border border-destructive/20"
+              )}
+            >
+              {secondary_badge.label}
+            </span>
+          )}
         </div>
         <div className="truncate text-xs text-muted-foreground">
           {item.subtitle}
