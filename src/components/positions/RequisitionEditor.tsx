@@ -55,7 +55,9 @@ const emptyLocation = (): RequisitionLocation => ({
   notes: "",
 });
 
-function seededLocation(openWorldwide: boolean, workModel: StateWorkModel, location: string): RequisitionLocation {
+type WorkModel = "remote" | "hybrid" | "onsite" | "";
+
+function seededLocation(openWorldwide: boolean, workModel: WorkModel, location: string): RequisitionLocation {
   if (openWorldwide) return emptyLocation();
   return {
     ...emptyLocation(),
