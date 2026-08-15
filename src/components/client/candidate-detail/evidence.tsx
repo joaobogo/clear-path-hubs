@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import { buildShortlistRationale } from "@/lib/client-rationale";
+import { buildValidationList } from "@/lib/client/validation-list";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type {
   FitPresentation,
