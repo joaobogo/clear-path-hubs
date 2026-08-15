@@ -64,9 +64,9 @@ describe("Messaging History Integrity", () => {
     // but we can test the logic by mocking the context if needed.
     // However, the function itself is exported and we can call it.
     
-    // We'll call the handler directly to bypass TanStack Start's runtime wrapper in tests
-    // @ts-ignore - access internal handler
-    const result = await getConversation.handler({
+    // We'll call the internal handler directly to bypass TanStack Start's runtime wrapper in tests
+    const { _getConversationHandler } = await import("../conversations.functions");
+    const result = await _getConversationHandler({
       data: { conversationId: convoId },
       context: { 
         supabase: supabaseAdmin,
