@@ -48,8 +48,8 @@ export function humanizeRoleAction(action: string): string {
   // Check direct map
   if (map[action]) return map[action];
 
-  // Try dot-replaced match (for space-cased inputs from older events)
-  const dotAction = action.replace(/\s+/g, ".");
+  // Try space-to-dot normalization (for space-cased inputs from older events)
+  const dotAction = action.trim().replace(/\s+/g, ".");
   if (map[dotAction]) return map[dotAction];
 
   // Try space-replaced match (original logic for snake_case/dotted fallbacks)
