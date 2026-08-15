@@ -106,7 +106,7 @@ export const INTEGRATIONS: Integration[] = [
     category: "agents",
     availability: "available",
     purpose:
-      "Lets an AI assistant such as Claude or ChatGPT read your roles, shortlists and candidate evidence with your own permissions.",
+      "Lets an external AI assistant such as Claude or ChatGPT read your roles, shortlists and candidate evidence with your own permissions.",
     connectionMethod:
       "Model Context Protocol over HTTPS. You add the TaaSFlow server in your assistant, sign in with your TaaSFlow account and approve the connection on a consent screen.",
     dataExchanged:

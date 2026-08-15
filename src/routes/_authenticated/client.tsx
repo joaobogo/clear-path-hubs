@@ -37,7 +37,6 @@ import {
  Users,
  MessageSquare,
  Building2,
-	Bot,
 	Gauge,
  	Plus,
 } from "lucide-react";
@@ -110,7 +109,7 @@ const TABS: NavDef[] = [
 	{ to: "/client/conversations", label: "Messages", icon: MessageSquare, everyone: true, hint: "Threads, inbox, all messages" },
 	{ to: "/client/account", label: "Account", icon: Building2, everyone: false, hint: "Team, plan, settings, setup" },
 	{ to: "/client/intelligence", label: "Insights", icon: Gauge, everyone: true, group: "More", subdued: true, hint: "Questions, dashboards, reporting, your data" },
-	{ to: "/client/assistant", label: "Assistant", icon: Bot, everyone: true, group: "More", subdued: true, hint: "Assistant, agents, outreach, tasks" },
+	
 ];
 
 
