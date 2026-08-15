@@ -241,6 +241,59 @@ function ProfilePage() {
         <EmailChangeCard />
 
         {/* Location and time zone */}
+        {ctx?.seat === "candidate" && (
+          <ProfileSectionCard
+            meta={meta("location")}
+            initial={initial.location}
+            autoOpen={openSection === "location"}
+            focusField={field ?? null}
+            summary={(v) =>
+              v.location || v.timezone ? (
+                <dl className="grid gap-2 sm:grid-cols-2">
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Based in</dt>
+                    <dd>{v.location || "Not added yet."}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Time zone</dt>
+                    <dd>{v.timezone || "Not added yet."}</dd>
+                  </div>
+                </dl>
+              ) : null
+            }
+            fields={({ values, set }) => (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <Label htmlFor="p-location">Location</Label>
+                  <Input
+                    id="p-location"
+                    value={values.location}
+                    onChange={(e) => set({ location: e.target.value })}
+                    placeholder="Lisbon, Portugal"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="p-timezone">Time zone</Label>
+                  <Input
+                    id="p-timezone"
+                    value={values.timezone}
+                    onChange={(e) => set({ timezone: e.target.value })}
+                    placeholder="Europe/Lisbon"
+                  />
+                </div>
+              </div>
+            )}
+            save={async (v) => {
+              const parsed = locationValues.safeParse(v);
+              if (!parsed.success)
+                return {
+                  ok: false,
+                  message: parsed.error.issues[0]?.message ?? "Check these fields.",
+                };
+              return commit("location", parsed.data);
+            }}
+          />
+        )}
         <ProfileSectionCard
           meta={meta("location")}
           initial={initial.location}
