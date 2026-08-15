@@ -77,8 +77,8 @@ export function CompactList({
               <th className="text-left py-2 px-3">Score</th>
               <th className="text-left py-2 px-3">Fit</th>
               <th className="text-left py-2 px-3">Must-haves</th>
-              <th className="hidden text-left py-2 px-3 lg:table-cell">Experience</th>
-              <th className="hidden text-left py-2 px-3 lg:table-cell">Location</th>
+              <th className="hidden text-left py-2 px-3 xl:table-cell">Experience</th>
+              <th className="hidden text-left py-2 px-3 xl:table-cell">Location</th>
               <th className="text-left py-2 px-3">Stage</th>
               <th className="hidden text-left py-2 px-3 lg:table-cell">Review</th>
               <th className="text-right py-2 px-3">CV</th>
