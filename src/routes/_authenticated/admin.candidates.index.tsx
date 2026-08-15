@@ -811,7 +811,7 @@ function CandidatesPage() {
             data-qa-row="candidate-match"
             data-submission-id={m.match_id}
           >
-            <Link to="/admin/candidates/$id" params={{ id: m.match_id }} className="block">
+            <a href={`/admin/candidates/${m.match_id}`} className="block">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <div className="truncate font-medium">{m.full_name ?? "Unnamed candidate"}</div>
