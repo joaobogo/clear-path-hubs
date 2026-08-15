@@ -276,7 +276,7 @@ function PositionsPage() {
 
       {search.tab === "attention" ? (
         <>
-          <OwnershipCoveragePanel includeTest={includeTest} />
+          <OwnershipCoveragePanel includeTest={includeTest} q={search.q} />
           <PositionsAttentionQueue includeTest={includeTest} />
         </>
       ) : (
