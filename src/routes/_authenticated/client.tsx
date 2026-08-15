@@ -272,15 +272,16 @@ function ClientLayout() {
             key={p}
             to={pathname}
             search={{ ...search, preview: p }}
+            replace
             className={`rounded px-2 py-0.5 capitalize ${
- permissionPreview === p
- ? "bg-primary text-primary-foreground"
- : "hover:bg-muted"
- }`}
- >
- {p.replace("client_", "")}
- </Link>
- ))}
+              permissionPreview === p
+                ? "bg-primary text-primary-foreground"
+                : "hover:bg-muted"
+            }`}
+          >
+            {p.replace("client_", "")}
+          </Link>
+        ))}
  </div>
  </div>
  )}
