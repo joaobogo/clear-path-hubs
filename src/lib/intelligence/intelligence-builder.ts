@@ -373,7 +373,7 @@ export function buildIntelligence(
       sample: {
         counted: actual.length,
         expected: records.commitments.length || null,
-        unit: "roles with a commitment",
+        unit: pluralWord(actual.length, "role with a commitment"),
       },
     });
   }
