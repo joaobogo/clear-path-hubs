@@ -603,7 +603,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false })
       .limit(3);
     const recentMessageRows = (recentMessages as AnyRow[]) ?? [];
-    let senderLabels: Record<string, string> = {};
+    const recent_messages = [];
     if (recentMessageRows.length > 0) {
       const senderIds = [
         ...new Set(
@@ -612,35 +612,52 @@ export const getClientOverview = createServerFn({ method: "GET" })
             .filter((v): v is string => !!v),
         ),
       ];
+      const senderMeta = new Map<string, { name: string; isStaff: boolean }>();
       if (senderIds.length > 0) {
-        // Teammates' and staff profiles are not all readable under the caller's
-        // RLS, so names are resolved privileged — names only, nothing else.
         const { supabaseAdmin: nameDb } = await import("@/integrations/supabase/client.server");
-        const { data: senderProfiles } = await (nameDb as AnyRow)
-          .from("profiles")
-          .select("auth_user_id, full_name, email")
-          .in("auth_user_id", senderIds);
+        const [{ data: senderProfiles }, { data: memberships }] = await Promise.all([
+          (nameDb as AnyRow)
+            .from("profiles")
+            .select("auth_user_id, full_name, email")
+            .in("auth_user_id", senderIds),
+          (nameDb as AnyRow)
+            .from("memberships")
+            .select("user_id, role")
+            .in("user_id", senderIds)
+            .eq("status", "active"),
+        ]);
+        
+        const { resolveStaffPersona } = await import("./staff-persona.server");
+        const staffRoles = new Set(["platform_admin", "operations"]);
+
         for (const p of (senderProfiles as AnyRow[] | undefined) ?? []) {
           const id = p.auth_user_id as string;
-          senderLabels[id] =
-            ((p.full_name as string | null) ?? null) ||
-            ((p.email as string | null) ?? null) ||
-            "Teammate";
+          const m = (memberships as AnyRow[] | undefined)?.find(mem => mem.user_id === id);
+          const isStaff = m ? staffRoles.has(m.role) : false;
+          const persona = resolveStaffPersona({
+            name: p.full_name as string | null,
+            email: p.email as string | null,
+            isStaff,
+            maskStatus: true, // Overview card doesn't need (Staff) suffix.
+          });
+          senderMeta.set(id, { name: persona.name, isStaff: persona.isStaff });
         }
       }
+
+      for (const m of recentMessageRows) {
+        const sid = (m.sender_user_id as string | null) ?? null;
+        const meta = sid ? senderMeta.get(sid) : null;
+        recent_messages.push({
+          ...m,
+          sender_name: !sid
+            ? "TaaSFlow team"
+            : sid === context.userId
+              ? "You"
+              : (meta?.name ?? "Teammate"),
+          mine: sid === context.userId,
+        });
+      }
     }
-    const recent_messages = recentMessageRows.map((m) => {
-      const sid = (m.sender_user_id as string | null) ?? null;
-      return {
-        ...m,
-        sender_name: !sid
-          ? "TaaSFlow"
-          : sid === context.userId
-            ? "You"
-            : (senderLabels[sid] ?? "Teammate"),
-        mine: sid === context.userId,
-      };
-    });
 
 
     // "What changed" — filter to client-relevant events only (never internal
