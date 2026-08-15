@@ -1076,7 +1076,7 @@ export function blueprintStageIndex(status: string, position?: {
     finalIdx = Math.max(finalIdx, 3); // "Building the role blueprint"
   } else if (position?.submitted_at) {
     finalIdx = Math.max(finalIdx, 1); // "Reading your job description"
-  } else if (position?.created_at) {
+  } else if (position?.created_at || (position as any)?.id) {
     finalIdx = Math.max(finalIdx, 0); // "Role created"
   }
 
