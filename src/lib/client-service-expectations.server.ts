@@ -1,10 +1,11 @@
 import {
-  type CompletedRoleOutcome,
   type ServiceExpectations,
   type StoredPlan,
   type StoredRoleCommitment,
   buildServiceExpectations,
 } from "@/lib/client-service-expectations";
+import { rollupCommitments } from "@/lib/commitments/canonical";
+import { loadSlaPerformance } from "@/lib/sla-report-load.server";
 
 /**
  * Reads the stored plan and role commitments for one organisation and measures
@@ -92,55 +93,13 @@ export async function buildServiceExpectationsFor(
     interviewSlotsHours: Number(r.interview_slots_hours),
   }));
 
-  let completed: CompletedRoleOutcome[] = [];
-  const commitIds = commitRows.map((r) => r.position_id).filter(Boolean);
+  // Measured performance comes from the one commitments measurement path — the
+  // same numbers the Overview scorecard renders per role.
+  const { roles } = await loadSlaPerformance(client, orgId);
 
-  if (commitIds.length) {
-    const { data: posRows, error: posErr } = await client
-      .from("positions")
-      .select("id, status")
-      .eq("organization_id", orgId)
-      .in("status", COMPLETED_STATUSES)
-      .in("id", commitIds);
-    if (posErr) throw posErr;
-
-    const completedIds = ((posRows ?? []) as Row[]).map((p) => p.id);
-    if (completedIds.length) {
-      const { data: matchRows, error: matchErr } = await client
-        .from("candidate_matches")
-        .select("position_id, delivered_at")
-        .eq("organization_id", orgId)
-        .in("position_id", completedIds)
-        .not("delivered_at", "is", null);
-      if (matchErr) throw matchErr;
-
-      const byPosition = new Map<string, number[]>();
-      for (const m of (matchRows ?? []) as Row[]) {
-        const at = Date.parse(m.delivered_at);
-        if (Number.isNaN(at)) continue;
-        const list = byPosition.get(m.position_id) ?? [];
-        list.push(at);
-        byPosition.set(m.position_id, list);
-      }
-
-      completed = completedIds.map((id) => {
-        const commit = commitRows.find((c) => c.position_id === id)!;
-        const times = (byPosition.get(id) ?? []).sort((a, b) => a - b);
-        const first = times[0];
-        return {
-          positionId: id,
-          promisedShortlistDays: Number(commit.first_shortlist_days),
-          actualShortlistDays:
-            first === undefined ? null : dayDiff(commit.baseline_at, new Date(first).toISOString()),
-          promisedShortlistSize: Number(commit.shortlist_size),
-          actualShortlistSize:
-            first === undefined
-              ? null
-              : times.filter((t) => t - first <= FIRST_SHORTLIST_WINDOW_MS).length,
-        };
-      });
-    }
-  }
-
-  return buildServiceExpectations({ plan, commitments, completed });
+  return buildServiceExpectations({
+    plan,
+    commitments,
+    measured: roles.length ? rollupCommitments(roles) : null,
+  });
 }
