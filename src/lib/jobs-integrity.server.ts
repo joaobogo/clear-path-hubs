@@ -10,7 +10,7 @@ export async function verifyPositionDescriptionIntegrity(positionId: string): Pr
   valid: boolean;
   mismatch?: { found: string; expected: string };
 }> {
-  const admin = await supabaseAdmin();
+  const admin = supabaseAdmin;
 
   const { data: pos, error: posError } = await admin
     .from("positions")
