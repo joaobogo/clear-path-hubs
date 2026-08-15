@@ -4,7 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 /** Publish-gate queue for admin. Staff only; reasons come from the shared gate. */
 export const getPublishGateQueue = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { includeTest?: boolean } | undefined) => data ?? {})
+  .inputValidator((data: { includeTest?: boolean; q?: string } | undefined) => data ?? {})
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: staff } = await supabase.rpc("is_platform_staff", { _user: userId });
@@ -12,5 +12,8 @@ export const getPublishGateQueue = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { loadPublishGateQueue } = await import("./publish-gate.server");
-    return await loadPublishGateQueue(supabaseAdmin, { includeTest: data.includeTest ?? false });
+    return await loadPublishGateQueue(supabaseAdmin, { 
+      includeTest: data.includeTest ?? false,
+      q: data.q 
+    });
   });

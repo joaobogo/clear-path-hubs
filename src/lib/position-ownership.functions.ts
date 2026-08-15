@@ -19,7 +19,11 @@ export const getCoverageQueue = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
     z
-      .object({ include_test: z.boolean().optional(), all: z.boolean().optional() })
+      .object({ 
+        include_test: z.boolean().optional(), 
+        all: z.boolean().optional(),
+        q: z.string().optional() 
+      })
       .parse(i ?? {}),
   )
   .handler(async ({ data, context }) => {
@@ -30,6 +34,7 @@ export const getCoverageQueue = createServerFn({ method: "GET" })
     return loadCoverageQueue(supabaseAdmin as never, {
       includeTest: data.include_test ?? false,
       all: data.all ?? false,
+      q: data.q,
     });
   });
 

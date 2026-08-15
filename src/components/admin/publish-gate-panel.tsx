@@ -54,7 +54,13 @@ function BlockerChip({ blocker, positionId }: { blocker: PublishBlocker; positio
  * the payment check: the only way past it is a real payment or an audited
  * exemption granted through the existing exempt function.
  */
-export function PublishGatePanel({ includeTest: explicit }: { includeTest?: boolean } = {}) {
+export function PublishGatePanel({ 
+  includeTest: explicit,
+  q: qTerm,
+}: { 
+  includeTest?: boolean;
+  q?: string;
+} = {}) {
   const includeTest = useScopedIncludeTest(explicit);
   const qc = useQueryClient();
   const [busy, setBusy] = useState<string | null>(null);
@@ -62,8 +68,8 @@ export function PublishGatePanel({ includeTest: explicit }: { includeTest?: bool
   const publish = useServerFn(setPositionStatus);
 
   const query = useQuery({
-    queryKey: ["publish-gate-queue", includeTest],
-    queryFn: () => fetchQueue({ data: { includeTest } }),
+    queryKey: ["publish-gate-queue", includeTest, explicit, qTerm],
+    queryFn: () => fetchQueue({ data: { includeTest, q: qTerm } }),
   });
 
   const publishMut = useMutation({
