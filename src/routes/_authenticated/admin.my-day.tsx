@@ -6,8 +6,8 @@
  * the client: ordering, overdue days and links all come from the loader.
  */
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { getMyDay } from "@/lib/my-day.functions";
 import type { MyDay, MyDayKind } from "@/lib/my-day.server";
 import { MY_DAY_KIND_LABEL } from "@/lib/my-day.server";
