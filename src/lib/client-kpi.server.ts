@@ -599,7 +599,9 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
     downloaded: "Your team downloaded the CV",
   };
 
-  return rows
+  const safeRows = Array.isArray(rows) ? rows : [];
+
+  return safeRows
     .map((e: AnyRow) => {
       const action = String(e.action ?? "event");
       const before = e.before_state ?? null;
