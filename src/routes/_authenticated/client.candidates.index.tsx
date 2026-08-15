@@ -2,7 +2,9 @@ import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/component
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { loadCompareSelection, saveCompareSelection, clearCompareSelection } from "@/lib/client-compare-store";
+
 import { z } from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { getClientCandidates } from "@/lib/client-candidates.functions";
@@ -197,41 +199,60 @@ function CandidatesPage() {
  currentPage * PAGE_SIZE,
  );
 
- // Comparison state — seed from ?compare= for shareable links.
- const initialCompare = useMemo(
-  () =>
-   (search.compare ?? "")
-    .split(",")
-    .map((s: string) => s.trim())
-    .filter(Boolean),
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  [],
- );
- const [compareIds, setCompareIds] = useState<string[]>(initialCompare);
- const [compareOpen, setCompareOpen] = useState(initialCompare.length >= 2);
- const [shareOpen, setShareOpen] = useState(false);
- const seededDefault = useRef(false);
- useEffect(() => {
-  // Side-by-side is the default way to review a shortlist: pre-select the
-  // shortlist (scoped to the filtered role when there is one) and open the
-  // grid straight away when arriving with ?view=compare or a role filter.
-  if (seededDefault.current) return;
-  const rows = rowsRaw as ClientCandidateDTO[];
-  if (rows.length === 0) return;
-  seededDefault.current = true;
-  if (initialCompare.length > 0) {
-   setCompareOpen(true);
-   return;
-  }
-  const scoped = search.position
-   ? rows.filter((r) => r.position?.id === search.position)
-   : rows;
-  const preset = defaultCompareSelection(scoped);
-  if (preset.length > 0) {
-   setCompareIds(preset);
-   if (search.view === "compare" || !!search.position) setCompareOpen(true);
-  }
- }, [rowsRaw, initialCompare, search.position, search.view]);
+  // Comparison state — seed from ?compare= (highest priority) or local storage.
+  const initialCompare = useMemo(() => {
+    if (search.compare) {
+      return search.compare
+        .split(",")
+        .map((s: string) => s.trim())
+        .filter(Boolean);
+    }
+    return orgId ? loadCompareSelection(orgId) : [];
+  }, [search.compare, orgId]);
+
+  const [compareIds, setCompareIds] = useState<string[]>(initialCompare);
+  const [compareOpen, setCompareOpen] = useState(false); // Controlled by compareIds length/explicit action
+  const [shareOpen, setShareOpen] = useState(false);
+
+  // Sync state to local storage when it changes
+  useEffect(() => {
+    if (orgId) {
+      if (compareIds.length > 0) {
+        saveCompareSelection(orgId, compareIds);
+      } else {
+        clearCompareSelection(orgId);
+      }
+    }
+  }, [compareIds, orgId]);
+
+  const seededDefault = useRef(false);
+  useEffect(() => {
+    // Side-by-side is the default way to review a shortlist: pre-select the
+    // shortlist (scoped to the filtered role when there is one) and open the
+    // grid straight away when arriving with ?view=compare or a role filter.
+    if (seededDefault.current) return;
+    const rows = rowsRaw as ClientCandidateDTO[];
+    if (rows.length === 0) return;
+    seededDefault.current = true;
+
+    // If we have an initial selection (from URL or storage), keep it.
+    if (initialCompare.length > 0) {
+      setCompareIds(initialCompare);
+      if (search.view === "compare" || initialCompare.length >= 2) setCompareOpen(true);
+      return;
+    }
+
+    // Only auto-select if no selection exists.
+    const scoped = search.position
+      ? rows.filter((r) => r.position?.id === search.position)
+      : rows;
+    const preset = defaultCompareSelection(scoped);
+    if (preset.length > 0) {
+      setCompareIds(preset);
+      if (search.view === "compare" || !!search.position) setCompareOpen(true);
+    }
+  }, [rowsRaw, initialCompare, search.position, search.view]);
+
 
 
  useEffect(() => {
