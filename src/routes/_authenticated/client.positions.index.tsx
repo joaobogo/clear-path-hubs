@@ -102,9 +102,10 @@ function PositionsPage() {
   const hasRoleData = !!listQuery.data && !!orgId;
   const statusCounts = useMemo(() => countRolesByTab(allRows), [allRows]);
   const rows = useMemo(
-    () => allRows.filter((p) => roleStatusTab(p.status) === status),
+    () => allRows.filter((p) => roleStatusTab(p.status, p.kpis.hires) === status),
     [allRows, status],
   );
+
 
  useEffect(() => {
  const onRefresh = () => refetch();

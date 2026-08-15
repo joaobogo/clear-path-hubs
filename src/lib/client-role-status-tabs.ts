@@ -34,8 +34,12 @@ const STATUS_TO_TAB: Record<string, RoleStatusTabKey> = {
 
 const warned = new Set<string>();
 
-export function roleStatusTab(status: string | null | undefined): RoleStatusTabKey {
+export function roleStatusTab(status: string | null | undefined, hires = 0): RoleStatusTabKey {
   const key = String(status ?? "").trim();
+  
+  // A filled role (status 'filled') belongs to the Closed/Archived tab.
+  if (key === "filled") return "closed";
+  
   const tab = STATUS_TO_TAB[key];
   if (tab) return tab;
   if (key && !warned.has(key)) {
@@ -46,6 +50,7 @@ export function roleStatusTab(status: string | null | undefined): RoleStatusTabK
   }
   return "draft";
 }
+
 
 /** DB statuses that belong to a tab — used for server-side filtering. */
 export function statusesForRoleTab(tab: string): string[] {
@@ -60,7 +65,7 @@ export function roleStatusTabLabel(tab: string): string {
 
 /** Per-tab counts across every role in the workspace. */
 export function countRolesByTab(
-  rows: Array<{ status: string }>,
+  rows: Array<{ status: string; kpis?: { hires: number } }>,
 ): Record<RoleStatusTabKey, number> {
   const counts: Record<RoleStatusTabKey, number> = {
     active: 0,
@@ -68,6 +73,6 @@ export function countRolesByTab(
     paused: 0,
     closed: 0,
   };
-  for (const r of rows) counts[roleStatusTab(r.status)] += 1;
+  for (const r of rows) counts[roleStatusTab(r.status, r.kpis?.hires)] += 1;
   return counts;
 }

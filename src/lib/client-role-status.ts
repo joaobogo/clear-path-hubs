@@ -65,25 +65,42 @@ const n = (v: number | undefined) => (typeof v === "number" && v > 0 ? v : 0);
 /**
  * One status per role, derived from pipeline reality.
  * Order of precedence: Paused/Closed > Hired > Offer out > Interviewing >
- * Shortlist ready > Sourcing > Setting up. Unmapped internal values that show
- * no pipeline activity render "In progress", never the raw value.
+ * Shortlist ready > Sourcing > Setting up.
+ *
+ * A role is only "Hired" or "Closed" if it has no active pipeline items
+ * (interviews, offers) that contradict the closure narrative.
  */
 export function computeClientRoleStatus(input: ClientRoleStatusInput): ClientRoleStatus {
   const raw = String(input.status ?? "")
     .trim()
     .toLowerCase();
 
-  if (PAUSED.has(raw)) return status("paused");
-  if (CLOSED.has(raw) && !n(input.hires)) return status("closed");
-  if (n(input.hires)) return status("hired");
-  if (CLOSED.has(raw)) return status("closed");
+  const isPaused = PAUSED.has(raw);
+  const isClosed = CLOSED.has(raw);
+  const hasHires = n(input.hires) > 0;
+  const hasOffers = n(input.offers) > 0;
+  const hasInterviews = n(input.interviewing) > 0;
+  const hasShortlist = n(input.shortlisted) > 0 || n(input.delivered) > 0;
 
-  if (n(input.offers)) return status("offer_out");
-  if (n(input.interviewing)) return status("interviewing");
-  if (n(input.shortlisted) || n(input.delivered)) return status("shortlist_ready");
+  // 1. Paused always wins if explicitly set.
+  if (isPaused) return status("paused");
 
-  if (SETTING_UP.has(raw)) return status("setting_up");
+  // 2. A role with active pipeline (Offer/Interview) is NOT Hired or Closed yet,
+  // even if a hire was made, unless the status is explicitly set to a closed state.
+  // But even then, we prefer to show the active milestone if we haven't archived it.
+  if (hasOffers) return status("offer_out");
+  if (hasInterviews) return status("interviewing");
+
+  // 3. If no active high-intent pipeline, check for Hired status.
+  if (hasHires) return status("hired");
+
+  // 4. Closed status wins if no active pipeline and no hires (or explicitly closed).
+  if (isClosed) return status("closed");
+
+  // 5. Active search states.
+  if (hasShortlist) return status("shortlist_ready");
   if (LIVE.has(raw)) return status("sourcing");
+  if (SETTING_UP.has(raw)) return status("setting_up");
 
   return status("in_progress");
 }
