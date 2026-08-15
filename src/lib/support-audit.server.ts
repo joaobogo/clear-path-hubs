@@ -49,13 +49,17 @@ export type SupportAuditSession = {
  */
 export async function sweepExpiredSupportSessions(admin: Admin): Promise<number> {
   const nowIso = new Date().toISOString();
+  // We mark both read_only and interactive sessions.
   const { data, error } = await admin
     .from("support_sessions")
     .update({ ended_at: nowIso, end_reason: "expired" })
     .is("ended_at", null)
     .lt("expires_at", nowIso)
     .select("id");
-  if (error) throw error;
+  if (error) {
+    console.error("[support-audit] sweep failed", error);
+    return 0;
+  }
   return (data ?? []).length;
 }
 

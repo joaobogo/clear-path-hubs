@@ -189,11 +189,15 @@ export const listMySupportSessions = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     await assertPlatformStaff(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { sweepExpiredSupportSessions } = await import("@/lib/support-audit.server");
+    await sweepExpiredSupportSessions(supabaseAdmin);
+
     const { data, error } = await supabaseAdmin
       .from("support_sessions")
       .select("id, organization_id, reason, mode, trace_id, started_at, expires_at")
       .eq("actor_user_id", context.userId)
       .is("ended_at", null)
+      .gt("expires_at", new Date().toISOString())
       .order("started_at", { ascending: false })
       .limit(5);
     if (error) throw error;

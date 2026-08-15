@@ -15870,6 +15870,7 @@ export type Database = {
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      sweep_expired_support_sessions: { Args: never; Returns: undefined }
       write_back_closed_search: {
         Args: { _position_id: string }
         Returns: Json
