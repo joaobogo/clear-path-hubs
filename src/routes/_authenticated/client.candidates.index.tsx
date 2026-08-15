@@ -290,7 +290,7 @@ function CandidatesPage() {
       clearCompareSelection(orgId);
     }
   }, [orgId]);
-  }, []);
+
 
 
  const selectedCandidates = useMemo(
