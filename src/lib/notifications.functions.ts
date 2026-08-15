@@ -312,7 +312,7 @@ export const listMyNotifications = createServerFn({ method: "GET" })
           actorId
             ? actorId === context.userId
               ? "You"
-              : (nameById.get(actorId) ?? "A teammate")
+              : (nameById.get(actorId) || "A teammate")
             : null,
         );
       }

@@ -339,7 +339,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
           queueRows.map((r) => r.id),
         );
       for (const m of await hydrateClientCandidateProfiles(queueMatches as AnyRow[])) {
-        queueNames.set(m.id as string, (m.candidate_profiles?.full_name as string) ?? "Candidate");
+        queueNames.set(m.id as string, (m.candidate_profiles?.full_name as string) || "Candidate");
       }
     }
     const titleByPosition = new Map<string, string>(
