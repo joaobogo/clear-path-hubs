@@ -417,7 +417,9 @@ export const getRequisitionQuality = createServerFn({ method: "GET" })
       responsibilities: typeof ctx.responsibilities === "string" ? ctx.responsibilities : "",
       experience: typeof ctx.experience === "string" ? ctx.experience : "",
       interview_process: typeof ctx.interview_process === "string" ? ctx.interview_process : "",
-      screening_questions: (sqRes.data ?? []) as unknown[],
+      screening_questions: ((sqRes.data ?? []) as AnyRow[]).map((q) => ({
+        id: String(q.id ?? ""),
+      })),
       locations: rowsToLocations(locRes.data as AnyRow[]),
       travel_expectation: p.travel_expectation ?? "",
       primary_timezone: p.primary_timezone ?? "",
