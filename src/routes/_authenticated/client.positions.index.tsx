@@ -55,6 +55,7 @@ import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveFilteredEmptyState } from "@/lib/empty-states/empty-state-catalogue";
 import { makeWorkspacePending, WorkspaceRowsSkeleton } from "@/components/workspace/pending-states";
 import { countRolesByTab, roleStatusTabLabel } from "@/lib/client-role-status-tabs";
+import { plural } from "@/lib/format/plural";
 
 function PositionsPage() {
  const { status, q, location, view, sort, shortlist } = Route.useSearch();
@@ -234,8 +235,8 @@ function PositionsPage() {
  </div>
  <div className="text-xs text-muted-foreground text-right">
  <div>
- {rows.length} role{rows.length === 1 ? "" : "s"}
- {status !== "active" ? ` in ${roleStatusTabLabel(status).toLowerCase()}` : ""}
+  {plural(rows.length, "role")}
+  {status !== "active" ? ` under review` : ""}
  </div>
  {lastUpdated && (
  <div>Last updated {formatRelative(lastUpdated)}</div>

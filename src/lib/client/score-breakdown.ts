@@ -13,6 +13,7 @@
 import { bandRange, classifyBand } from "@/lib/scoring/bands";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type { RequirementRow } from "@/lib/client-fit-presentation";
+import { plural, pluralWord } from "@/lib/format/plural";
 
 export type BreakdownGroup = {
   kind: "must_have" | "preferred";
@@ -70,7 +71,7 @@ function countRows(rows: RequirementRow[]) {
 function mustTakeaway(c: { met: number; partial: number; missing: number; total: number }) {
   if (c.total === 0) return "No must-haves were declared for this role.";
   if (c.missing > 0) {
-    return `${c.met} of ${c.total} must-haves are quoted from evidence; ${c.missing} carry none yet.`;
+    return `${plural(c.met, "must-have")} of ${c.total} are quoted from evidence; ${c.missing} ${pluralWord(c.missing, "carries", "carry")} none yet.`;
   }
   if (c.partial > 0) {
     return `${c.met} of ${c.total} must-haves are quoted directly, ${c.partial} only related.`;

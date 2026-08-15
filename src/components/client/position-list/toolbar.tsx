@@ -13,6 +13,7 @@ import { Search, AlertCircle } from "lucide-react";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import type { Row } from "@/components/client/position-list/position-cards";
 import { ROLE_STATUS_TABS } from "@/lib/client-role-status-tabs";
+import { plural } from "@/lib/format/plural";
 
 // Canonical tab set + status mapping lives in one module so no role status can
 // fall between tabs. Re-exported here for existing importers.
@@ -26,7 +27,7 @@ export function ActionRequiredBanner({ actionItems }: { actionItems: Row[] }) {
         <AlertCircle className="h-4 w-4 taas-fg-warning " />
         <h2 className="text-sm font-semibold">Action required</h2>
         <span className="text-xs text-muted-foreground">
-          {actionItems.length} position{actionItems.length === 1 ? "" : "s"}
+          {plural(actionItems.length, "position")}
         </span>
       </div>
       <ul className="space-y-2">

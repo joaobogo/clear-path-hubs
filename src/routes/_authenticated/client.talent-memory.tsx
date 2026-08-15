@@ -6,6 +6,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { ViewerReadOnlyNotice } from "@/components/client/states";
 import { Award, Search, Users } from "lucide-react";
+import { plural } from "@/lib/format/plural";
 import {
   listSilverMedalists,
   REASON_LABELS,
@@ -150,7 +151,7 @@ function TalentMemoryPage() {
         </div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Users className="h-3.5 w-3.5" />
-          {listIsError ? "— entries" : `${memories.length} entries`}
+          {listIsError ? "— entries" : plural(memories.length, "entry", "entries")}
         </div>
       </header>
 

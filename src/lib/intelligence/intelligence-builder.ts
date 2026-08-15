@@ -23,6 +23,7 @@ import {
   type IntelligenceMetric,
   type MetricPoint,
 } from "./hiring-intelligence";
+import { plural, pluralWord } from "@/lib/format/plural";
 import {
   BEST_PRACTICES,
   deriveRecommendations,
@@ -153,7 +154,7 @@ export function buildIntelligence(
       label: s.label,
       value: counts.get(s.key) ?? 0,
       tone: s.tone,
-      note: `${counts.get(s.key) ?? 0} candidate${(counts.get(s.key) ?? 0) === 1 ? "" : "s"} at this stage right now`,
+      note: `${plural(counts.get(s.key) ?? 0, "candidate")} at this stage right now`,
     }));
     const live = PIPELINE_STAGES.filter((s) => openStages.has(s.key)).reduce(
       (sum, s) => sum + (counts.get(s.key) ?? 0),
@@ -178,12 +179,12 @@ export function buildIntelligence(
       tone: live === 0 ? "bad" : awaiting > 0 ? "warn" : "good",
       comparison: null,
       freshness: fresh(latestAt, STALL_DAYS),
-      explanation: `Counts every candidate released to your workspace, by the stage they sit at now. "In play" excludes hired and not-moving-forward. Based on ${records.matches.length} released candidate${records.matches.length === 1 ? "" : "s"}.`,
+      explanation: `Counts every candidate released to your workspace, by the stage they sit at now. "In play" excludes hired and not-moving-forward. Based on ${plural(records.matches.length, "released candidate")}.`,
       action:
         awaiting > 0
           ? {
               label: `Decide on ${awaiting}`,
-              detail: `${awaiting} candidate${awaiting === 1 ? " is" : "s are"} waiting on your decision. Nothing moves until you act.`,
+              detail: `${plural(awaiting, "candidate")} ${pluralWord(awaiting, "is", "are")} waiting on your decision. Nothing moves until you act.`,
               link: { label: "Open the decision queue", to: "/client" },
             }
           : null,
@@ -241,7 +242,7 @@ export function buildIntelligence(
       status: state.status,
       statusReason: state.reason,
       value: value === null ? null : daysLabel(value),
-      valueNote: value === null ? null : `median across ${current.length} role${current.length === 1 ? "" : "s"}`,
+      valueNote: value === null ? null : `median across ${plural(current.length, "role")}`,
       tone: value === null ? "neutral" : value <= 7 ? "good" : value <= 14 ? "warn" : "bad",
       comparison: { baselineLabel: `previous ${win.days} days`, ...cmp },
       freshness: fresh(latestAt),
@@ -249,7 +250,7 @@ export function buildIntelligence(
         "Measured from the day a role went live to the moment its first candidate was released to you. Roles with no candidate yet are excluded from the median and counted separately below.",
       action: rolesWithoutFirst.length
         ? {
-            label: `${rolesWithoutFirst.length} role${rolesWithoutFirst.length === 1 ? "" : "s"} with nobody yet`,
+            label: `${plural(rolesWithoutFirst.length, "role")} with nobody yet`,
             detail: rolesWithoutFirst
               .slice(0, 3)
               .map((p) => p.title)
@@ -262,7 +263,7 @@ export function buildIntelligence(
       sample: {
         counted: current.length,
         expected: records.positions.length || null,
-        unit: "roles measured",
+        unit: pluralWord(current.length, "role measured"),
       },
     });
   }
@@ -372,7 +373,7 @@ export function buildIntelligence(
       sample: {
         counted: actual.length,
         expected: records.commitments.length || null,
-        unit: "roles with a commitment",
+        unit: pluralWord(actual.length, "role with a commitment"),
       },
     });
   }
@@ -415,7 +416,7 @@ export function buildIntelligence(
       tone: med === null ? "neutral" : med >= 75 ? "good" : med >= 60 ? "warn" : "bad",
       comparison: { baselineLabel: `previous ${win.days} days`, ...cmp },
       freshness: fresh(latestAt),
-      explanation: `Scores come from completed scoring runs against your role's rubric — every point is backed by evidence in the candidate record. Distribution over ${scores.length} run${scores.length === 1 ? "" : "s"} in this window.`,
+      explanation: `Scores come from completed scoring runs against your role's rubric — every point is backed by evidence in the candidate record. Distribution over ${plural(scores.length, "run")} in this window.`,
       action:
         scores.length >= MIN_SAMPLE_DISTRIBUTION && strong === 0
           ? {

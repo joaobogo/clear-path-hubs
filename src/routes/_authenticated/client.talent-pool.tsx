@@ -12,6 +12,7 @@ import {
   Users,
   Star,
 } from "lucide-react";
+import { plural } from "@/lib/format/plural";
 import {
   listPools,
   searchRediscovery,
@@ -184,7 +185,7 @@ function TalentPoolPage() {
         </div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Users className="h-3.5 w-3.5" />
-          {resultsIsError ? "— candidates" : `${results?.total ?? 0} candidates`}
+          {resultsIsError ? "— candidates" : plural(results?.total ?? 0, "candidate")}
         </div>
       </header>
 

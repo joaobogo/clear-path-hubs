@@ -37,6 +37,7 @@ import { CompactList } from "@/components/client/candidates/compact-list";
 import { BulkCvDownloadButton } from "@/components/client/candidates/bulk-cv-download";
 import { CandidatesBoardView } from "@/components/client/candidates/board-view";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { plural } from "@/lib/format/plural";
 
 const searchSchema = z.object({
  q: fallback(z.string(), "").default(""),
@@ -429,7 +430,7 @@ function CandidatesPage() {
   every candidate currently shown whose CV has been released. */}
  <BulkCvDownloadButton
   targets={cvTargets}
-  label={`Download ${cvTargets.length} CV${cvTargets.length === 1 ? "" : "s"} (ZIP)`}
+  label={`Download ${plural(cvTargets.length, "CV", "CVs")} (ZIP)`}
  />
  <div className="text-xs text-muted-foreground sm:text-right">
  <div>
