@@ -118,7 +118,6 @@ import { Route as AuthenticatedClientExecutiveRouteImport } from './routes/_auth
 import { Route as AuthenticatedClientDataRouteImport } from './routes/_authenticated/client.data'
 import { Route as AuthenticatedClientDashboardsRouteImport } from './routes/_authenticated/client.dashboards'
 import { Route as AuthenticatedClientCandidatesRouteImport } from './routes/_authenticated/client.candidates'
-import { Route as AuthenticatedClientAssistantRouteImport } from './routes/_authenticated/client.assistant'
 import { Route as AuthenticatedClientApprovalsRouteImport } from './routes/_authenticated/client.approvals'
 import { Route as AuthenticatedClientAnalyticsRouteImport } from './routes/_authenticated/client.analytics'
 import { Route as AuthenticatedClientAgentsRouteImport } from './routes/_authenticated/client.agents'
@@ -771,12 +770,6 @@ const AuthenticatedClientCandidatesRoute =
     path: '/candidates',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
-const AuthenticatedClientAssistantRoute =
-  AuthenticatedClientAssistantRouteImport.update({
-    id: '/assistant',
-    path: '/assistant',
-    getParentRoute: () => AuthenticatedClientRoute,
-  } as any)
 const AuthenticatedClientApprovalsRoute =
   AuthenticatedClientApprovalsRouteImport.update({
     id: '/approvals',
@@ -1390,7 +1383,6 @@ export interface FileRoutesByFullPath {
   '/client/agents': typeof AuthenticatedClientAgentsRoute
   '/client/analytics': typeof AuthenticatedClientAnalyticsRoute
   '/client/approvals': typeof AuthenticatedClientApprovalsRoute
-  '/client/assistant': typeof AuthenticatedClientAssistantRoute
   '/client/candidates': typeof AuthenticatedClientCandidatesRouteWithChildren
   '/client/dashboards': typeof AuthenticatedClientDashboardsRoute
   '/client/data': typeof AuthenticatedClientDataRoute
@@ -1580,7 +1572,6 @@ export interface FileRoutesByTo {
   '/client/agents': typeof AuthenticatedClientAgentsRoute
   '/client/analytics': typeof AuthenticatedClientAnalyticsRoute
   '/client/approvals': typeof AuthenticatedClientApprovalsRoute
-  '/client/assistant': typeof AuthenticatedClientAssistantRoute
   '/client/dashboards': typeof AuthenticatedClientDashboardsRoute
   '/client/data': typeof AuthenticatedClientDataRoute
   '/client/executive': typeof AuthenticatedClientExecutiveRoute
@@ -1776,7 +1767,6 @@ export interface FileRoutesById {
   '/_authenticated/client/agents': typeof AuthenticatedClientAgentsRoute
   '/_authenticated/client/analytics': typeof AuthenticatedClientAnalyticsRoute
   '/_authenticated/client/approvals': typeof AuthenticatedClientApprovalsRoute
-  '/_authenticated/client/assistant': typeof AuthenticatedClientAssistantRoute
   '/_authenticated/client/candidates': typeof AuthenticatedClientCandidatesRouteWithChildren
   '/_authenticated/client/dashboards': typeof AuthenticatedClientDashboardsRoute
   '/_authenticated/client/data': typeof AuthenticatedClientDataRoute
@@ -1975,7 +1965,6 @@ export interface FileRouteTypes {
     | '/client/agents'
     | '/client/analytics'
     | '/client/approvals'
-    | '/client/assistant'
     | '/client/candidates'
     | '/client/dashboards'
     | '/client/data'
@@ -2165,7 +2154,6 @@ export interface FileRouteTypes {
     | '/client/agents'
     | '/client/analytics'
     | '/client/approvals'
-    | '/client/assistant'
     | '/client/dashboards'
     | '/client/data'
     | '/client/executive'
@@ -2360,7 +2348,6 @@ export interface FileRouteTypes {
     | '/_authenticated/client/agents'
     | '/_authenticated/client/analytics'
     | '/_authenticated/client/approvals'
-    | '/_authenticated/client/assistant'
     | '/_authenticated/client/candidates'
     | '/_authenticated/client/dashboards'
     | '/_authenticated/client/data'
@@ -3313,13 +3300,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientCandidatesRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
-    '/_authenticated/client/assistant': {
-      id: '/_authenticated/client/assistant'
-      path: '/assistant'
-      fullPath: '/client/assistant'
-      preLoaderRoute: typeof AuthenticatedClientAssistantRouteImport
-      parentRoute: typeof AuthenticatedClientRoute
-    }
     '/_authenticated/client/approvals': {
       id: '/_authenticated/client/approvals'
       path: '/approvals'
@@ -4142,7 +4122,6 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientAgentsRoute: typeof AuthenticatedClientAgentsRoute
   AuthenticatedClientAnalyticsRoute: typeof AuthenticatedClientAnalyticsRoute
   AuthenticatedClientApprovalsRoute: typeof AuthenticatedClientApprovalsRoute
-  AuthenticatedClientAssistantRoute: typeof AuthenticatedClientAssistantRoute
   AuthenticatedClientCandidatesRoute: typeof AuthenticatedClientCandidatesRouteWithChildren
   AuthenticatedClientDashboardsRoute: typeof AuthenticatedClientDashboardsRoute
   AuthenticatedClientDataRoute: typeof AuthenticatedClientDataRoute
@@ -4173,7 +4152,6 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
   AuthenticatedClientAgentsRoute: AuthenticatedClientAgentsRoute,
   AuthenticatedClientAnalyticsRoute: AuthenticatedClientAnalyticsRoute,
   AuthenticatedClientApprovalsRoute: AuthenticatedClientApprovalsRoute,
-  AuthenticatedClientAssistantRoute: AuthenticatedClientAssistantRoute,
   AuthenticatedClientCandidatesRoute:
     AuthenticatedClientCandidatesRouteWithChildren,
   AuthenticatedClientDashboardsRoute: AuthenticatedClientDashboardsRoute,
