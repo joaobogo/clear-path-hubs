@@ -640,10 +640,10 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
       return {
         id: String(e.id),
         action: safeAction,
-        entity_type: entity,
+        entity_type: String(e.entity_type ?? "event"),
         actor: normStr(e.actor_user_id),
         at: String(e.created_at ?? new Date().toISOString()),
-        summary,
+        summary: null,
       };
     })
     .filter((e): e is NonNullable<typeof e> => e !== null)
