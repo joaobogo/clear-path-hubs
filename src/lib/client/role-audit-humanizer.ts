@@ -26,7 +26,7 @@ export function humanizeRoleAction(action: string): string {
     
     // Handoff & Memory
     "position.handoff.complete": "Recruitment handoff completed",
-    "position.memory.create": "Recruiter note added", // Should be filtered if internal, but here for coverage
+    "position.memory.create": "Recruiter note added",
     
     // Candidates (when appearing in role trail)
     "candidate_match.publish": "New candidate delivered",
@@ -45,18 +45,18 @@ export function humanizeRoleAction(action: string): string {
     "client_decision.create": "Client decision recorded",
   };
 
-  const normalized = action.trim().replace(/\s+/g, ".");
-  
-  // Check direct map or normalized map
+  // 1. Direct match (e.g. "position.create")
   if (map[action]) return map[action];
-  if (map[normalized]) return map[normalized];
 
-  // Try space-replaced match (original logic for snake_case/dotted fallbacks)
-  const spaceAction = action.replace(/[._]/g, " ");
-  if (map[spaceAction]) return map[spaceAction];
+  // 2. Normalise spaces/underscores to dots (e.g. "position start review" -> "position.start.review")
+  const dotted = action.trim().toLowerCase().replace(/[\s_]+/g, ".");
+  if (map[dotted]) return map[dotted];
 
-  // Fallback to a generic friendly label for unknown events
-  // Never return the raw key
+  // 3. Normalise dots/underscores to spaces (e.g. "position.create" -> "position create")
+  const spaced = action.trim().toLowerCase().replace(/[._]+/g, " ");
+  if (map[spaced]) return map[spaced];
+
+  // 4. Fallback to a generic friendly label for unknown events
   return "Role activity recorded";
 }
 
