@@ -185,8 +185,9 @@ export const getCandidateCvDownload = createServerFn({ method: "POST" })
       action: "cv.download",
       after_state: {
         audience,
-        disposition,
-        filename,
+        disposition: redacted ? "inline" : disposition,
+        filename: redacted ? `${base}_CV_Redacted.txt` : filename,
+        redacted,
         file_id: fileId,
         candidate_profile_id: match.candidate_profile_id,
         candidate_name: profile?.full_name ?? null,
