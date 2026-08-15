@@ -216,14 +216,21 @@ function CandidatesPage() {
 
   // Sync state to local storage when it changes
   useEffect(() => {
-    if (orgId) {
-      if (compareIds.length > 0) {
-        saveCompareSelection(orgId, compareIds);
-      } else {
-        clearCompareSelection(orgId);
-      }
+    if (!orgId) return;
+    
+    // Always sync non-empty selections
+    if (compareIds.length > 0) {
+      saveCompareSelection(orgId, compareIds);
+      return;
     }
-  }, [compareIds, orgId]);
+
+    // Only clear storage if we have data (prevents clearing during initial mount/loading)
+    // AND it wasn't a seeded default we just haven't confirmed yet.
+    const rows = rowsRaw as ClientCandidateDTO[];
+    if (rows && rows.length > 0 && seededDefault.current) {
+      clearCompareSelection(orgId);
+    }
+  }, [compareIds, orgId, rowsRaw]);
 
   const seededDefault = useRef(false);
   useEffect(() => {
@@ -255,16 +262,19 @@ function CandidatesPage() {
 
 
 
- useEffect(() => {
-  // Drop any selection that is no longer client-visible (tenant switch, filter change to hidden rows).
-  setCompareIds((ids) => {
-   const rows = rowsRaw as ClientCandidateDTO[];
-   const next = ids.filter((id) => rows.some((r) => r.match_id === id));
-   // Bail out if unchanged to avoid render loops (rowsRaw default `[]` is a fresh ref each render).
-   if (next.length === ids.length && next.every((v, i) => v === ids[i])) return ids;
-   return next;
-  });
- }, [rowsRaw, orgId]);
+  useEffect(() => {
+    // Drop any selection that is no longer client-visible (tenant switch, filter change to hidden rows).
+    // EXCEPT if we just loaded the page and are initializing from storage/URL.
+    if (!rowsRaw || (rowsRaw as ClientCandidateDTO[]).length === 0 || initialCompare.length > 0) return;
+
+    setCompareIds((ids) => {
+      if (ids.length === 0) return ids;
+      const rows = rowsRaw as ClientCandidateDTO[];
+      const next = ids.filter((id) => rows.some((r) => r.match_id === id));
+      if (next.length === ids.length && next.every((v, i) => v === ids[i])) return ids;
+      return next;
+    });
+  }, [rowsRaw, orgId]);
 
   const toggleCompare = useCallback((id: string) => {
     setCompareIds((prev) => {
@@ -278,7 +288,13 @@ function CandidatesPage() {
   const clearCompare = useCallback(() => {
     setCompareIds([]);
     setCompareOpen(false);
-  }, []);
+    if (orgId) {
+      clearCompareSelection(orgId);
+    }
+    // Also clear from local state to ensure it doesn't re-seed
+    seededDefault.current = true;
+  }, [orgId]);
+
 
 
  const selectedCandidates = useMemo(
@@ -600,13 +616,3 @@ function CandidatesPage() {
  );
 }
 
-function toggleCompare(
- setter: (fn: (prev: string[]) => string[]) => void,
- id: string,
-) {
- setter((prev) => {
- if (prev.includes(id)) return prev.filter((x) => x !== id);
- if (prev.length >= 4) return prev;
- return [...prev, id];
- });
-}
