@@ -85,16 +85,14 @@ export function computeClientRoleStatus(input: ClientRoleStatusInput): ClientRol
   // 1. Paused always wins if explicitly set.
   if (isPaused) return status("paused");
 
-  // 2. A role with active pipeline (Offer/Interview) is NOT Hired or Closed yet,
-  // even if a hire was made, unless the status is explicitly set to a closed state.
-  // But even then, we prefer to show the active milestone if we haven't archived it.
+  // 2. Active milestone wins even if 'closed' or 'hired', to prevent contradictions.
   if (hasOffers) return status("offer_out");
   if (hasInterviews) return status("interviewing");
 
-  // 3. If no active high-intent pipeline, check for Hired status.
+  // 3. Hired only if no active milestone remains.
   if (hasHires) return status("hired");
 
-  // 4. Closed status wins if no active pipeline and no hires (or explicitly closed).
+  // 4. Closed only if no hires and no active pipeline (or explicitly closed and resolved).
   if (isClosed) return status("closed");
 
   // 5. Active search states.
