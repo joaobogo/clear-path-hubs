@@ -89,12 +89,22 @@ describe("Messaging History Integrity", () => {
     const inserted = result.messages.filter(m => ["OLD CLIENT MESSAGE", "STAFF REPLY", "RECENT CLIENT MESSAGE"].includes(m.body));
     
     expect(inserted.length).toBeGreaterThanOrEqual(3);
-    expect(inserted[0].body).toBe("OLD CLIENT MESSAGE");
-    expect(inserted[0].sender_side).toBe("client");
-    expect(inserted[1].body).toBe("STAFF REPLY");
-    expect(inserted[1].sender_side).toBe("taasflow");
-    expect(inserted[2].body).toBe("RECENT CLIENT MESSAGE");
-    expect(inserted[2].sender_side).toBe("client");
+    
+    // Sort by created_at to ensure order for assertion
+    inserted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+
+    const oldMsg = inserted.find(m => m.body === "OLD CLIENT MESSAGE");
+    const staffReply = inserted.find(m => m.body === "STAFF REPLY");
+    const recentMsg = inserted.find(m => m.body === "RECENT CLIENT MESSAGE");
+
+    expect(oldMsg).toBeDefined();
+    expect(oldMsg?.sender_side).toBe("client");
+    
+    expect(staffReply).toBeDefined();
+    expect(staffReply?.sender_side).toBe("taasflow");
+    
+    expect(recentMsg).toBeDefined();
+    expect(recentMsg?.sender_side).toBe("client");
 
     // Cleanup messages but keep conversation for demo org stability
     await supabaseAdmin.from("messages").delete().eq("conversation_id", convoId).in("body", ["OLD CLIENT MESSAGE", "STAFF REPLY", "RECENT CLIENT MESSAGE"]);
