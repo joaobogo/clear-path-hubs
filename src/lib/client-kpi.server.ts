@@ -602,11 +602,9 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
   return rows
     .map((e: AnyRow) => {
       const action = String(e.action ?? "event");
-      const entity = String(e.entity_type ?? "");
       const before = e.before_state ?? null;
       const after = e.after_state ?? null;
 
-      let summary: string | null = null;
       let safeAction: string | null = null;
 
       // Filter out raw system updates and internal taxonomy
@@ -614,7 +612,10 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
 
       // Map stage transitions to friendly labels
       if (after && typeof after === "object" && "stage" in after) {
-        const fromStage = before && typeof before === "object" && "stage" in before ? String((before as AnyRow).stage) : null;
+        const fromStage =
+          before && typeof before === "object" && "stage" in before
+            ? String((before as AnyRow).stage)
+            : null;
         const toStage = String((after as AnyRow).stage);
 
         // Drop no-op transitions
