@@ -371,10 +371,10 @@ export function summariseCoverage(rows: RequirementRow[]): CoverageSummary {
           (r.importance === "must_have" ? 1 : 0.5),
       0,
     ) /
-    rows.reduce(
+    (rows.reduce(
       (acc, r) => acc + (r.importance === "must_have" ? 1 : 0.5),
       0,
-    );
+    ) || 1);
   return {
     must_total: must.length,
     must_met,
