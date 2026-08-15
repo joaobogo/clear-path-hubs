@@ -164,13 +164,12 @@ function AttentionCard({
             {row.title}
           </a>
           <div className="mt-0.5 text-xs text-muted-foreground">
-            <Link
-              to="/admin/clients/$id"
-              params={{ id: row.organization_id }}
+            <a
+              href={`/admin/clients/${row.organization_id}`}
               className="hover:underline"
             >
               {row.organization_name}
-            </Link>
+            </a>
             {" · "}
             {row.days_open} day{row.days_open === 1 ? "" : "s"} open
             {row.is_test_record ? " · test" : ""}
