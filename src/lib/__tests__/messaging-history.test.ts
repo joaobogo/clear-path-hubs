@@ -9,23 +9,31 @@ describe("Messaging History Integrity", () => {
     const clientId = "1fa5f7ca-da0c-4b88-ae73-a87ef20d35be"; // Demo Client Admin
     const staffId = "e60fd0fc-3f4d-4911-b469-c672ca0ca369"; // A staff user
     
-    // Create a new unique conversation for this test
-    const { data: convo, error: cErr } = await supabaseAdmin
+    // Reuse or create conversation. Organization scope is 1:1 with org.
+    let convoId: string;
+    const { data: existing } = await supabaseAdmin
       .from("conversations")
-      .insert({
-        organization_id: orgId,
-        scope: "organization",
-        subject: "History Integrity Test " + Date.now(),
-        created_by: staffId,
-      })
       .select("id")
-      .single();
+      .eq("organization_id", orgId)
+      .eq("scope", "organization")
+      .maybeSingle();
 
-    if (cErr) {
-      console.error("Failed to create conversation:", cErr);
-      throw new Error(`Failed to create conversation: ${cErr.message}`);
+    if (existing) {
+      convoId = existing.id;
+    } else {
+      const { data: convo, error: cErr } = await supabaseAdmin
+        .from("conversations")
+        .insert({
+          organization_id: orgId,
+          scope: "organization",
+          subject: "History Integrity Test",
+          created_by: staffId,
+        })
+        .select("id")
+        .single();
+      if (cErr) throw new Error(`Failed to create conversation: ${cErr.message}`);
+      convoId = convo.id;
     }
-    const convoId = convo.id;
 
     const oldDate = new Date();
     oldDate.setDate(oldDate.getDate() - 5);
@@ -85,8 +93,7 @@ describe("Messaging History Integrity", () => {
     expect(result.messages[2].body).toBe("RECENT CLIENT MESSAGE");
     expect(result.messages[2].sender_side).toBe("client");
 
-    // Cleanup
-    await supabaseAdmin.from("messages").delete().eq("conversation_id", convoId);
-    await supabaseAdmin.from("conversations").delete().eq("id", convoId);
+    // Cleanup messages but keep conversation for demo org stability
+    await supabaseAdmin.from("messages").delete().eq("conversation_id", convoId).in("body", ["OLD CLIENT MESSAGE", "STAFF REPLY", "RECENT CLIENT MESSAGE"]);
   });
 });
