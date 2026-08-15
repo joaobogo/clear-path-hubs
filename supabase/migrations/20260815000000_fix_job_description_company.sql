@@ -3,7 +3,11 @@ UPDATE public.positions
 SET description = REPLACE(description, 'Flow Group Ventures is hiring', 'Northwind Talent is hiring')
 WHERE id = 'ee6d2a82-6122-4026-95e4-45a7821b7b7d';
 
--- Generic fix for any other Northwind Talent positions that might have wrong text
+-- Explicitly name FGV for the FGV role
+UPDATE public.positions
+SET description = REPLACE(description, 'Flow Group Ventures is hiring', 'Flow Group Ventures is hiring')
+WHERE id = '4cf3979b-170e-424d-9afa-d02c9c9565a3';
+
 UPDATE public.positions
 SET description = REPLACE(description, 'Flow Group Ventures is hiring', 'Northwind Talent is hiring')
 WHERE organization_id IN (SELECT id FROM public.organizations WHERE name = 'Northwind Talent (Demo)')
