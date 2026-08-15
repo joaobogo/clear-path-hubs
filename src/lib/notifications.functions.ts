@@ -311,7 +311,7 @@ export const listMyNotifications = createServerFn({ method: "GET" })
         
         const decidedSet = new Set((decidedMatches ?? []).map(d => d.candidate_match_id as string).filter(Boolean));
         const toResolve = openActionables
-          .filter(n => n.entity_type === "candidate_match" && decidedSet.has(n.entity_id))
+          .filter(n => n.entity_type === "candidate_match" && n.entity_id && decidedSet.has(n.entity_id))
           .map(n => n.id);
         
         if (toResolve.length > 0) {
