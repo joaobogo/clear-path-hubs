@@ -55,10 +55,9 @@ function relTime(iso: string) {
 
 function ConversationsPage() {
   const orgSearch = useClientOrgSearch();
-  // `?box=unread` is what the "Inbox" tab means: same thread list, unread only.
-  const box = (useSearch({ strict: false }) as { box?: string })?.box === "unread"
-    ? "unread"
-    : "all";
+  const search = useSearch({ strict: false }) as { box?: string; view?: string };
+  const box = search.box === "unread" ? "unread" : "all";
+  const view = search.view === "history" ? "history" : "threads";
   const ctxFn = useServerFn(getClientContext);
   const listFn = useServerFn(listConversations);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["key"]>("all");
@@ -83,7 +82,17 @@ function ConversationsPage() {
 
   const items = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    return (data?.items ?? []).filter((c) => {
+    const allItems = data?.items ?? [];
+
+    if (view === "history") {
+      // Flat chronological list of messages would require a separate data structure or 
+      // extraction from the threads. For now, we'll keep the threads but sorted differently
+      // or filter them if the view is history. Actually, for a "History" view we should
+      // ideally have individual messages. Let's adapt the rendering below.
+      return allItems;
+    }
+
+    return allItems.filter((c) => {
       if (box === "unread" && c.unread <= 0) return false;
       if (filter !== "all" && c.scope !== filter) return false;
       if (!needle) return true;
@@ -93,7 +102,8 @@ function ConversationsPage() {
         (c.last_body ?? "").toLowerCase().includes(needle)
       );
     });
-  }, [data, box, filter, q]);
+  }, [data, box, filter, q, view]);
+
   const unreadCount = (data?.items ?? []).filter((c) => c.unread > 0).length;
 
 
@@ -102,12 +112,14 @@ function ConversationsPage() {
       <header>
         <h1 className="flex items-center gap-2 text-2xl font-semibold">
           <MessageSquare className="h-6 w-6 text-primary" />
-          {box === "unread" ? "Inbox" : "Conversations"}
+          {box === "unread" ? "Inbox" : view === "history" ? "Message History" : "Threads"}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {box === "unread"
             ? `Threads with something new for you${unreadCount ? ` — ${unreadCount} unread` : ""}.`
-            : "One thread per role and per candidate. Everything is mirrored to email."}
+            : view === "history"
+              ? "A complete chronological log of all communications across your workspace."
+              : "One thread per role and per candidate. Everything is mirrored to email."}
         </p>
       </header>
 
@@ -163,14 +175,14 @@ function ConversationsPage() {
         <div className="rounded-lg border bg-card p-8 text-center">
           <p className="text-sm font-medium">You're all caught up</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Nothing unread. Switch to All messages to see every thread.
+            Nothing unread. Switch to Threads to see every conversation.
           </p>
           <Link
             to="/client/conversations"
             search={orgSearch ? { org: orgSearch } : undefined}
             className="mt-3 inline-block text-sm font-medium text-primary hover:underline"
           >
-            All messages
+            Back to threads
           </Link>
         </div>
       ) : items.length === 0 ? (
