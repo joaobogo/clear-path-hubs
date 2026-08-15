@@ -34,6 +34,6 @@ describe("Intelligence Builder - Agent Runs Consistency", () => {
     const agentMetric = result.metrics.find(m => m.key === "agent_run_outcomes");
     
     // 1 agentRun + 2 feedEvents = 3
-    expect(agentMetric?.sample.counted).toBe(3);
+    expect(agentMetric?.sample?.counted).toBe(3);
   });
 });
