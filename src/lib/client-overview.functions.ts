@@ -446,6 +446,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
       .filter((iv) => !scoredInterviewIds.has(iv.id as string))
       .map((iv) => iv.candidate_match_id as string | null)
       .filter((id): id is string => !!id && !queueNames.has(id));
+    console.log("[dbg] feedbackMatchIds", JSON.stringify(feedbackMatchIds), "queueNames", JSON.stringify(Array.from(queueNames.entries())));
     if (feedbackMatchIds.length > 0) {
       const { data: fbMatches } = await context.supabase
         .from("candidate_matches")
