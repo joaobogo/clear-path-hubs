@@ -75,35 +75,45 @@ export function formatDate(
 export function formatPeriod(period: string | null | undefined, fallback = "Date not confirmed"): string {
   if (!period) return fallback;
 
-  // Normalise dashes so the separator is a single en-dash.
-  const normalised = period
-    .replace(/\s*[-–—]\s*/g, " – ")
-    .replace(/\s+/g, " ")
-    .trim();
+  const trimmed = period.trim();
 
-  // Split into start/end. Be careful not to split the YYYY-MM date inside
-  // either half.
-  const parts = normalised.split(" – ");
+  // Recognise canonical YYYY-MM – YYYY-MM / YYYY-MM – present ranges.
+  // The start/end halves are parsed in UTC so the month is correct regardless
+  // of the display timezone; the formatter then renders in the workspace zone.
+  const ymRange = trimmed.match(
+    /^(\d{4}-\d{2})\s*[–-—]\s*(present|now|current|\d{4}-\d{2})$/i,
+  );
+  if (ymRange) {
+    const start = ymRange[1]!;
+    const endRaw = ymRange[2]!.toLowerCase();
+    const end = endRaw === "present" || endRaw === "now" || endRaw === "current" ? "Present" : endRaw;
+    const startDate = new Date(`${start}-01T00:00:00Z`);
+    const formatted =
+      Number.isNaN(startDate.getTime()) ? start : MONTH_YEAR.format(startDate);
+    if (end === "Present") return `${formatted} – Present`;
+    const endDate = new Date(`${end}-01T00:00:00Z`);
+    const formattedEnd =
+      Number.isNaN(endDate.getTime()) ? end : MONTH_YEAR.format(endDate);
+    return `${formatted} – ${formattedEnd}`;
+  }
+
+  // Split by dash/en-dash/em-dash, then format each part.
+  const parts = trimmed.split(/\s*[–-—]\s*/);
   if (parts.length === 1) {
     const date = toDate(parts[0]);
     return date ? MONTH_YEAR.format(date) : parts[0];
   }
 
-  // If the string contains multiple "–" characters mixed with dates, rebuild
-  // by treating the first and last meaningful parts as the bounds.
-  const first = parts[0].trim();
-  const last = parts[parts.length - 1].trim();
-  const bounds = [first, last];
-
-  const formatted = bounds.map((p) => {
-    const trimmed = p.trim();
-    if (trimmed.toLowerCase() === "present") return "Present";
-    const date = toDate(trimmed);
-    return date ? MONTH_YEAR.format(date) : trimmed;
+  const formatted = parts.map((p) => {
+    const pTrim = p.trim();
+    if (pTrim.toLowerCase() === "present") return "Present";
+    const date = toDate(pTrim);
+    return date ? MONTH_YEAR.format(date) : pTrim;
   });
 
   return formatted.join(" – ");
 }
+
 
 
 /** True when a string looks like a raw ISO-8601 timestamp (guard for tests/lint). */
