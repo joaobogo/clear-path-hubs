@@ -16,6 +16,7 @@
  */
 
 import type { Audience, EventType } from "@/lib/events";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const NOTIFICATION_TIERS = [
   "critical",
@@ -60,7 +61,6 @@ export const TIER_META: Record<NotificationTier, TierMeta> = {
     order: 1,
   },
   important: {
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
     label: "Important update",
     description: "Something changed that affects a decision you own.",
     badgeClass: "bg-secondary text-secondary-foreground",

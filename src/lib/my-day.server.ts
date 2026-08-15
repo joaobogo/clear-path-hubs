@@ -9,6 +9,7 @@
  * ordering, which is "most overdue first".
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 type Admin = SupabaseClient<never, never, never>;
 
@@ -88,7 +89,6 @@ export async function loadMyDay(
       import("./admin-sla-breach.server"),
       import("./admin-decision-backlog.server"),
       import("./admin-attention.server"),
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
     ]);
 
   const [sla, backlog, attention] = await Promise.all([

@@ -13,6 +13,7 @@
 import type { RequirementRow, RequirementStatus } from "@/lib/client-fit-presentation";
 import { SCORE_BAND_BOUNDARIES, bandRange, classifyBand, type ScoreBandKey } from "@/lib/scoring/bands";
 import { bandByKey } from "@/config/scoring-bands";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 /** One assessed candidate, reduced to what the story needs. */
 export type StoryCandidate = {
@@ -119,7 +120,6 @@ export function buildCoverage(candidates: StoryCandidate[]): CoverageBlock {
           id: row.id,
           label: row.label,
           importance: row.importance,
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
           met: 0,
           partial: 0,
           missing: 0,

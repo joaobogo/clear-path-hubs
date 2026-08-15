@@ -30,6 +30,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { staggerStyle, useArrivals, useJustChanged } from "@/lib/motion/use-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toastError } from "@/lib/toast-error";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const NOTIFICATIONS_QUERY_KEY = ["notifications", "mine"] as const;
 
@@ -89,7 +90,6 @@ export function NotificationBell() {
       critical: 0,
       action_required: 0,
       important: 0,
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
       informational: 0,
     };
     for (const g of groups) c[g.tier] += g.unread || 1;
