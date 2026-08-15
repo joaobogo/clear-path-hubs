@@ -564,6 +564,8 @@ export const Route = createFileRoute("/api/public/qa-seed")({
     },
   },
 });
+/**
+ * Removes everything the E2E suite created by driving the real /intake form:
  * auth accounts on the qa.taasflow.test mailbox. Never matches real data.
  */
 async function cleanupIntakeE2E(
