@@ -76,7 +76,7 @@ function displayName(row: AnyRow): string {
   if (full) {
     const parts = full.split(/\s+/);
     if (parts.length >= 2) return `${parts[0]} ${parts[parts.length - 1].slice(0, 1)}.`;
-    return parts[0] ?? "Candidate";
+    return parts[0] || "Candidate";
   }
   if (row?.email) {
     const local = String(row.email).split("@")[0] ?? "";

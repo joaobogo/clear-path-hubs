@@ -103,13 +103,10 @@ function maskEmail(email: string | null | undefined) {
 function displayName(row: AnyRow): string {
   const full = row?.full_name ? String(row.full_name).trim() : "";
   if (full) {
-    const parts = full.split(/\s+/);
-    if (parts.length >= 2) return `${parts[0]} ${parts[parts.length - 1].slice(0, 1)}.`;
-    return parts[0] ?? "Candidate";
+    return full;
   }
   if (row?.email) {
-    const local = String(row.email).split("@")[0] ?? "";
-    return local || "Member";
+    return String(row.email).trim();
   }
   return "Candidate";
 }

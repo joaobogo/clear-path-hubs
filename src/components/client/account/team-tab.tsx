@@ -603,7 +603,7 @@ function MemberRow({
  onError: handleErr,
  });
 
- const name: string = member.profiles?.full_name || member.profiles?.email || "Team member";
+  const name: string = member.profiles?.full_name || member.profiles?.email || "Team member";
  const email: string | null = member.profiles?.email ?? null;
  const status = (member.status as MemberStatus) ?? "active";
  const role = member.role as ClientRoleId;
