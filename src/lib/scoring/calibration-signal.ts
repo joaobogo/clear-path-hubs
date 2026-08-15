@@ -167,7 +167,7 @@ export function computeCalibrationSignal(rows: CalibrationRow[]): CalibrationSig
 
   const coverage_warning =
     withOutcome.length < MIN_OUTCOMES_FOR_CONFIDENCE
-      ? `Only ${withOutcome.length} scored candidate${withOutcome.length === 1 ? "" : "s"} have a downstream outcome recorded (need ${MIN_OUTCOMES_FOR_CONFIDENCE}+ for a reliable read). Treat every figure below as directional, not a verdict on the scoring model.`
+      ? `Only ${withOutcome.length} scored candidate${withOutcome.length === 1 ? "" : "s"} ${withOutcome.length === 1 ? "has" : "have"} a downstream outcome recorded (need ${MIN_OUTCOMES_FOR_CONFIDENCE}+ for a reliable read). Treat every figure below as directional, not a verdict on the scoring model.`
       : null;
 
   return {

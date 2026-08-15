@@ -358,7 +358,7 @@ export function computeCalibrationDesk(rows: DeskRow[]): CalibrationDesk {
     hidden_role_families: families.hidden,
     coverage_warning:
       decided < MIN_OUTCOMES_FOR_CONFIDENCE
-        ? `Only ${decided} scored candidate${decided === 1 ? "" : "s"} have an approval or decline on record (need ${MIN_OUTCOMES_FOR_CONFIDENCE}+ before drift figures mean anything). Read everything below as directional.`
+        ? `Only ${decided} scored candidate${decided === 1 ? "" : "s"} ${decided === 1 ? "has" : "have"} an approval or decline on record (need ${MIN_OUTCOMES_FOR_CONFIDENCE}+ before drift figures mean anything). Read everything below as directional.`
         : null,
   };
 }
