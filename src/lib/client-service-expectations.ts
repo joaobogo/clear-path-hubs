@@ -80,23 +80,6 @@ function plural(n: number, one: string, many = `${one}s`) {
   return n === 1 ? one : many;
 }
 
-/** "8 days", or a range when the account's roles carry different terms. */
-export function spread(values: number[], unit: (n: number) => string): string | null {
-  const clean = values.filter((v) => Number.isFinite(v) && v > 0).sort((a, b) => a - b);
-  if (!clean.length) return null;
-  const min = clean[0]!;
-  const max = clean[clean.length - 1]!;
-  return min === max ? unit(min) : `${min}–${max} ${unit(max).replace(/^\d+\s*/, "")}`;
-}
-
-export function hoursLabel(hours: number): string {
-  if (hours % 24 === 0) {
-    const days = hours / 24;
-    return `${days} working ${plural(days, "day")}`;
-  }
-  return `${hours} ${plural(hours, "hour")}`;
-}
-
 /** Canonical target wording, widened to a range when roles differ. */
 function targetFor(values: number[], one: (n: number) => string): string | null {
   const r = rangeOf(values);
