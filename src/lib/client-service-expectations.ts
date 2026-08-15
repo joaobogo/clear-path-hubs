@@ -15,12 +15,6 @@
  * Pure. No DB access, no network, no clock beyond what is passed in.
  */
 
-/** Below this many completed roles, we say so instead of showing a number. */
-export const MIN_PERFORMANCE_SAMPLE = 2;
-
-/** Shown in place of a performance figure when the sample is too small. */
-export const NOT_ENOUGH_SAMPLE = "Not enough completed roles to show this yet";
-
 /** Shown when a commitment simply is not measurable from account data. */
 export const NOT_MEASURED = "Not measured from your account data";
 
