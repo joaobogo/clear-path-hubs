@@ -14,8 +14,10 @@ import { parseJobDescription } from "@/lib/marketing/job-description";
 import {
   NOT_SPECIFIED,
   RANGE_ON_CALL,
+  resolveWorkArrangement,
   type PublicJobFacts,
 } from "@/lib/jobs/public-facts";
+import { formatLocationLine } from "@/lib/jobs/location-format";
 import {
   APPLY_STEPS,
   EFFORT_DEFAULT,
@@ -610,28 +612,17 @@ function JobDetail() {
                 {pos.openings > 1 ? `${pos.openings} openings` : "1 opening"}
               </p>
 
-              {pos.locations.length > 0 && (
+              {pos.location && (
                 <div className="mt-6 border-t pt-4">
                   <div className="text-xs uppercase tracking-wide text-muted-foreground">
                     Hiring locations
                   </div>
                   <div className="mt-2 flex flex-wrap gap-1.5">
-                    {pos.locations.map((l, i) => {
-                      const titleCase = (s: string) => 
-                        s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-                      const location = [l.city, l.region, l.country]
-                        .filter((p): p is string => !!p)
-                        .map(titleCase)
-                        .join(", ");
-                      
-                      return (
-                        <Badge key={i} variant="secondary" className="font-normal">
-                          {location}
-                          {l.work_model ? ` · ${l.work_model}` : ""}
-                          {l.headcount && l.headcount > 1 ? ` · ${l.headcount} hires` : ""}
-                        </Badge>
-                      );
-                    })}
+                    <Badge variant="secondary" className="font-normal">
+                      {formatLocationLine(pos.location.split(","))}
+                      {pos.work_model ? ` · ${resolveWorkArrangement(pos.work_model, pos.onsite_days, pos.description)}` : ""}
+                      {pos.openings && pos.openings > 1 ? ` · ${pos.openings} openings` : " · 1 opening"}
+                    </Badge>
                   </div>
                 </div>
               )}

@@ -6,6 +6,8 @@ import { getPublicPosition } from "@/lib/jobs.functions";
 import { extractJobUuid } from "@/lib/marketing/job-slug";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { submitApplication } from "@/lib/apply.functions";
+import { resolveWorkArrangement } from "@/lib/jobs/public-facts";
+import { formatLocationLine } from "@/lib/jobs/location-format";
 import {
   APPLY_STEPS,
   APPLY_STEP_LABELS,
@@ -1204,28 +1206,17 @@ function ApplyPage() {
                   PDF only, up to 10 MB. Unicode filenames welcome.
                 </p>
               </div>
-              {pos.locations.length > 0 && (
+              {pos.location && (
                 <div className="rounded-lg border bg-muted/30 p-4">
                   <div className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">
                     Hiring locations
                   </div>
                   <div className="mt-2 flex flex-wrap gap-1.5">
-                    {pos.locations.map((l, i) => {
-                      const titleCase = (s: string) => 
-                        s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-                      const location = [l.city, l.region, l.country]
-                        .filter((p): p is string => !!p)
-                        .map(titleCase)
-                        .join(", ");
-                      
-                      return (
-                        <Badge key={i} variant="secondary" className="font-normal bg-background/50">
-                          {location}
-                          {l.work_model ? ` · ${l.work_model}` : ""}
-                          {l.headcount && l.headcount > 1 ? ` · ${l.headcount} hires` : ""}
-                        </Badge>
-                      );
-                    })}
+                    <Badge variant="secondary" className="font-normal bg-background/50">
+                      {formatLocationLine(pos.location.split(","))}
+                      {pos.work_model ? ` · ${resolveWorkArrangement(pos.work_model, pos.onsite_days, pos.description)}` : ""}
+                      {pos.openings && pos.openings > 1 ? ` · ${pos.openings} openings` : " · 1 opening"}
+                    </Badge>
                   </div>
                 </div>
               )}

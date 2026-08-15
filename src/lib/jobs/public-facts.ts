@@ -1,3 +1,6 @@
+import { extractOnsiteDays } from "./onsite-days";
+import { titleCaseLocation } from "./location-format";
+
 /**
  * The deciding facts on a public job page, derived once and shared by the
  * data layer, the board card and the detail page.
@@ -107,18 +110,23 @@ export function resolveCompensation(
 export function resolveWorkArrangement(
   workModel: string | null | undefined,
   onsiteDays: unknown,
+  description?: string | null,
 ): string {
-  const days = (typeof onsiteDays === 'number') ? onsiteDays : (str(onsiteDays) ? parseInt(str(onsiteDays), 10) : null);
+  const days =
+    (typeof onsiteDays === "number" && Number.isFinite(onsiteDays))
+      ? onsiteDays
+      : str(onsiteDays)
+        ? parseInt(str(onsiteDays), 10)
+        : extractOnsiteDays(description ?? "");
   switch (workModel) {
     case "remote":
       return "Remote";
     case "onsite":
       return "On-site, full time";
     case "hybrid":
-      if (typeof days === "number") {
+      if (typeof days === "number" && !Number.isNaN(days)) {
         return `Hybrid — ${days} ${days === 1 ? "day" : "days"} a week on-site`;
       }
-      if (typeof days === "string") return `Hybrid — ${days} on-site`;
       return "Hybrid — on-site days not specified";
     default:
       return NOT_SPECIFIED;
@@ -131,7 +139,7 @@ export function resolveLocation(
   primaryTimezone: string | null | undefined,
   overlapHours: unknown,
 ): string {
-  const place = str(location);
+  const place = titleCaseLocation(str(location));
   const tz = str(primaryTimezone);
   const overlap = num(overlapHours);
   const parts: string[] = [];
@@ -247,10 +255,15 @@ export function buildPublicJobFacts(input: {
   work_authorization_note?: string | null | undefined;
   employment_type: string | null | undefined;
   published_at: string | null | undefined;
+  description?: string | null;
 }): PublicJobFacts {
   return {
     compensation: resolveCompensation(input.compensation, input.compensation_visibility).line,
-    workArrangement: resolveWorkArrangement(input.work_model, input.onsite_days),
+    workArrangement: resolveWorkArrangement(
+      input.work_model,
+      input.onsite_days,
+      input.description,
+    ),
     location: resolveLocation(
       input.location,
       input.primary_timezone,
