@@ -248,8 +248,9 @@ function SettingsPage() {
       <section className="rounded-lg border bg-card p-5 space-y-3">
         <h2 className="text-sm font-medium">Get a copy of your data</h2>
         <p className="text-xs text-muted-foreground">
-          We&apos;ll email you everything we hold: your profile, your applications, your CV
-          and your consent record. We action export requests within 30 days — we won&apos;t
+          We&apos;ll email you everything we hold: your profile, your consent record
+          {data?.seat === "candidate" && ", and your applications and CV"}.
+          We action export requests within 30 days — we won&apos;t
           promise an instant download we can&apos;t honour.
         </p>
         <Button
