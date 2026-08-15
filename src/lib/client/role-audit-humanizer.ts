@@ -86,4 +86,8 @@ export const CLIENT_SAFE_ROLE_ACTIONS = [
   "message.external.send",
   "message.external.receive",
   "client_decision.create",
+  // Space-cased variants for older events
+  "position create",
+  "position submit",
+  "position start review",
 ];
