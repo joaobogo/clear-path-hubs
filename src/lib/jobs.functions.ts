@@ -149,7 +149,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
           description_preview:
             desc.length > 220 ? desc.slice(0, 217).trimEnd() + "…" : desc,
           openings: (p as { openings?: number }).openings ?? 1,
-          facts: { posted: buildPublicJobFacts({ ...p, employment_type: p.employment_type as any, published_at: p.published_at }).posted },
+          facts: { posted: buildPublicJobFacts({ ...p, employment_type: p.employment_type as any, published_at: p.published_at, description: desc }).posted },
         };
       });
   },
@@ -233,6 +233,8 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       ) => Promise<{ data: unknown; error: unknown }>
     )("public_position_posting", { _id: data.id });
     const posting = ((postingRow ?? {}) as Record<string, unknown>) as Record<string, string>;
+    const rawOnsiteDays = ((postingRow ?? {}) as Record<string, unknown>).onsite_days;
+    const onsite_days = typeof rawOnsiteDays === "number" ? rawOnsiteDays : null;
     const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
     const deadline = str(posting.application_deadline);
     const deadlinePassed = deadline ? new Date(`${deadline}T23:59:59`) < new Date() : false;
@@ -256,6 +258,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       work_authorization_note: str(posting.work_authorization_note) || null,
       employment_type: pos.employment_type,
       published_at: pos.published_at,
+      description: desc,
     });
 
     // How long applying really takes, from this posting's own completed
@@ -290,6 +293,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       compensation_display: comp.display,
       facts,
       apply_effort: applyEffort,
+      onsite_days,
 
 
       published_at: pos.published_at,

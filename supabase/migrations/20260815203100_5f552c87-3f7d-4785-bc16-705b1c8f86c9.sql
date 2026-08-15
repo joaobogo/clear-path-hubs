@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION public.public_position_employer(uuid) TO anon;
