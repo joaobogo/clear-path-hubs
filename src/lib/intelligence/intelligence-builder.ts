@@ -51,7 +51,6 @@ export type IntelligenceRecords = {
   tasks?: Row[];
   /** Outbound outreach touches, current and prior window. */
   outreachTouches?: Row[];
-  feedEvents?: Row[];
   window: { days: number; from: string; priorFrom: string; to: string };
   positionId: string | null;
 };
@@ -967,6 +966,7 @@ export function buildIntelligence(
     scoreRuns: records.scoreRuns,
     evidenceItems: records.evidenceItems,
     agentRuns: records.agentRuns,
+    feedEvents: records.feedEvents,
     signals: {
       tasks: records.tasks ?? [],
       outreachTouches: records.outreachTouches ?? [],
