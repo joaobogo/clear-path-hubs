@@ -19,7 +19,11 @@ import { resolveConversion } from "./conversion-map";
 
 
 const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || "G-HJ2ECKCNK4";
-const APOLLO_ID = import.meta.env.VITE_APOLLO_APP_ID || "6981f9ca9255870019505836";
+// Apollo's website tracker is disabled: the previously hardcoded app id was
+// rejected by their ingest endpoint (HTTP 400 on every page view), so the tag
+// produced nothing but failed requests. It stays dormant until a verified app
+// id is supplied through VITE_APOLLO_APP_ID.
+const APOLLO_ID = import.meta.env.VITE_APOLLO_APP_ID || "";
 /** Exported so the root document head can boot RB2B before hydration. */
 export const RB2B_ID = import.meta.env.VITE_RB2B_ID || "1N5W0H7RVEO5";
 const META_ID = import.meta.env.VITE_META_PIXEL_ID || "";
