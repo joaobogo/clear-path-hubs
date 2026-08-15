@@ -7,13 +7,24 @@
  * stored, its row does not appear — a client should never read a promise here
  * that their contract does not contain.
  *
- * Performance figures sit beside a commitment only when we can measure them
- * from completed roles, and only from two or more. One role is an anecdote, not
- * a track record, so it is suppressed rather than averaged. No figure is ever
- * compared against other clients.
+ * Names, targets and measured results all come from the one canonical
+ * commitments source (`@/lib/commitments/canonical`), which the Overview
+ * scorecard also reads. The two surfaces cannot word the same stored number
+ * differently or report different outcomes for it.
  *
  * Pure. No DB access, no network, no clock beyond what is passed in.
  */
+
+import {
+  COMMITMENT_LABEL,
+  firstCandidatePromise,
+  interviewSlotsPromise,
+  rangeOf,
+  shortlistLabel,
+  shortlistPromise,
+  type CommitmentKey,
+  type CommitmentRollup,
+} from "@/lib/commitments/canonical";
 
 /** Shown when a commitment simply is not measurable from account data. */
 export const NOT_MEASURED = "Not measured from your account data";
@@ -43,21 +54,8 @@ export type StoredRoleCommitment = {
   interviewSlotsHours: number;
 };
 
-/**
- * A role that has finished, with what was promised and what happened.
- * `actual*` is null when the outcome was never recorded — those roles are
- * excluded from the sample rather than counted as a miss.
- */
-export type CompletedRoleOutcome = {
-  positionId: string;
-  promisedShortlistDays: number;
-  actualShortlistDays: number | null;
-  promisedShortlistSize: number;
-  actualShortlistSize: number | null;
-};
-
 export type ExpectationRow = {
-  key: "first_shortlist" | "shortlist_size" | "response_time" | "included_roles" | "plan_term";
+  key: CommitmentKey | "included_roles" | "plan_term";
   /** What the commitment is called, in the client's words. */
   commitment: string;
   /** Exactly what is stored, never rounded up into a claim. */
@@ -99,91 +97,72 @@ export function hoursLabel(hours: number): string {
   return `${hours} ${plural(hours, "hour")}`;
 }
 
-function average(values: number[]): number {
-  return values.reduce((a, b) => a + b, 0) / values.length;
-}
-
-function round1(n: number): string {
-  return Number.isInteger(n) ? String(n) : n.toFixed(1);
-}
-
-/** "delivered in 8 days on your last 2 completed roles", or the honest refusal. */
-export function performanceFor(
-  samples: number[],
-  render: (avg: string, n: number) => string,
-): { performance: string | null; sampleNote: string } {
-  if (samples.length < MIN_PERFORMANCE_SAMPLE) {
-    return {
-      performance: null,
-      sampleNote: NOT_ENOUGH_SAMPLE,
-    };
-  }
-  const n = samples.length;
-  return {
-    performance: render(round1(average(samples)), n),
-    sampleNote: `Measured across your last ${n} completed ${plural(n, "role")}`,
-  };
+/** Canonical target wording, widened to a range when roles differ. */
+function targetFor(values: number[], one: (n: number) => string): string | null {
+  const r = rangeOf(values);
+  if (!r) return null;
+  if (r.min === r.max) return one(r.min);
+  // Keep the canonical sentence, state the spread inside it.
+  return one(r.max).replace(String(r.max), `${r.min}–${r.max}`);
 }
 
 export function buildServiceExpectations(input: {
   plan: StoredPlan | null;
   commitments: StoredRoleCommitment[];
-  completed: CompletedRoleOutcome[];
+  /** Measured outcomes from the shared commitments rollup, when available. */
+  measured?: Record<CommitmentKey, CommitmentRollup> | null;
 }): ServiceExpectations {
-  const { plan, commitments, completed } = input;
+  const { plan, commitments, measured } = input;
   const rows: ExpectationRow[] = [];
 
-  const shortlistDays = spread(
-    commitments.map((c) => Number(c.firstShortlistDays)),
-    (n) => `${n} ${plural(n, "day")}`,
-  );
-  if (shortlistDays) {
-    const samples = completed
-      .map((c) => c.actualShortlistDays)
-      .filter((v): v is number => typeof v === "number" && Number.isFinite(v) && v >= 0);
-    const perf = performanceFor(
-      samples,
-      (avg, n) => `Delivered in ${avg} ${plural(Number(avg), "day")} on your last ${n} completed ${plural(n, "role")}`,
-    );
+  const days = commitments.map((c) => Number(c.firstShortlistDays));
+  const sizes = commitments.map((c) => Number(c.shortlistSize));
+  const hours = commitments.map((c) => Number(c.interviewSlotsHours));
+
+  const result = (key: CommitmentKey) => ({
+    performance: measured?.[key]?.performance ?? null,
+    sampleNote: measured?.[key]?.note ?? NOT_MEASURED,
+  });
+
+  const firstTarget = targetFor(days, firstCandidatePromise);
+  if (firstTarget) {
     rows.push({
-      key: "first_shortlist",
-      commitment: "First shortlist window",
-      promised: `Within ${shortlistDays} of the brief being confirmed`,
-      ...perf,
+      key: "first_candidate",
+      commitment: COMMITMENT_LABEL.first_candidate,
+      promised: firstTarget,
+      ...result("first_candidate"),
     });
   }
 
-  const sizes = spread(
-    commitments.map((c) => Number(c.shortlistSize)),
-    (n) => `${n} ${plural(n, "candidate")}`,
-  );
-  if (sizes) {
-    const samples = completed
-      .map((c) => c.actualShortlistSize)
-      .filter((v): v is number => typeof v === "number" && Number.isFinite(v) && v >= 0);
-    const perf = performanceFor(
-      samples,
-      (avg, n) => `${avg} ${plural(Number(avg), "candidate")} on your last ${n} completed ${plural(n, "role")}`,
-    );
+  const sizeRange = rangeOf(sizes);
+  const dayRange = rangeOf(days);
+  if (sizeRange && dayRange) {
     rows.push({
-      key: "shortlist_size",
-      commitment: "Candidates per shortlist",
-      promised: sizes,
-      ...perf,
+      key: "full_shortlist",
+      commitment:
+        sizeRange.min === sizeRange.max
+          ? shortlistLabel(sizeRange.min)
+          : COMMITMENT_LABEL.full_shortlist,
+      promised:
+        sizeRange.min === sizeRange.max && dayRange.min === dayRange.max
+          ? shortlistPromise(sizeRange.min, dayRange.min)
+          : shortlistPromise(sizeRange.max, dayRange.max)
+              .replace(String(sizeRange.max), `${sizeRange.min}–${sizeRange.max}`)
+              .replace(
+                `within ${dayRange.max}`,
+                `within ${dayRange.min === dayRange.max ? dayRange.max : `${dayRange.min}–${dayRange.max}`}`,
+              ),
+      ...result("full_shortlist"),
     });
   }
 
-  const responseHours = spread(
-    commitments.map((c) => Number(c.interviewSlotsHours)),
-    (n) => hoursLabel(n),
-  );
-  if (responseHours) {
+  const hoursTarget = targetFor(hours, interviewSlotsPromise);
+  if (hoursTarget) {
     rows.push({
-      key: "response_time",
-      commitment: "Interview slots offered within",
-      promised: `${responseHours} of your decision`,
-      performance: null,
-      sampleNote: NOT_MEASURED,
+      key: "interview_slots",
+      commitment: COMMITMENT_LABEL.interview_slots,
+      promised: hoursTarget,
+      ...result("interview_slots"),
     });
   }
 
