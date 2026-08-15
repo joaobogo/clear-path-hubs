@@ -6,7 +6,7 @@
 // supabase client (RLS applies as the caller).
 import { isUnicornMatch, classifyBand } from "@/lib/scoring/bands";
 import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
-import { cleanQuote } from "@/lib/evidence/quote-hygiene";
+import { cleanQuote, isTemplatedEvidence } from "@/lib/evidence/quote-hygiene";
 
 import {
   buildRequirementRows,
