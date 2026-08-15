@@ -231,9 +231,20 @@ export const getAgentPanel = createServerFn({ method: "GET" })
       .select("agent_key, enabled, paused_at, last_action_at, last_action_summary")
       .eq("organization_id", org);
 
+    // Read the same feed the Overview rail and Insights use. If the legacy
+    // agent_activity table is empty, feed events still give us attributable runs.
+    const { data: feed } = await supabase
+      .from("v_activity_feed")
+      .select(
+        "event_id, event_type, occurred_at, position_id, position_title, candidate_match_id, application_id, payload",
+      )
+      .eq("organization_id", org)
+      .gte("occurred_at", since)
+      .limit(5000);
+
     const { data: activity } = await supabase
       .from("agent_activity")
-      .select("agent_key, outcome, occurred_at, sentence")
+      .select("id, agent_key, outcome, occurred_at, sentence")
       .eq("organization_id", org)
       .gte("occurred_at", since)
       .limit(5000);
@@ -244,12 +255,45 @@ export const getAgentPanel = createServerFn({ method: "GET" })
 
     const agents: AgentCard[] = AGENT_REGISTRY.map((def) => {
       const s = byKey.get(def.key);
-      const mine = (activity ?? []).filter((a: Db) => a.agent_key === def.key);
-      const latest = mine
-        .slice()
-        .sort((a: Db, b: Db) => (a.occurred_at < b.occurred_at ? 1 : -1))[0];
+
+      // Feed events attributable to this agent.
+      const feedEvents = (feed ?? []).filter(
+        (a: Db) => eventTypeToAgentKey(a.event_type as string) === def.key,
+      );
+      // Legacy agent_activity rows.
+      const legacyEvents = (activity ?? []).filter(
+        (a: Db) => a.agent_key === def.key,
+      );
+
+      const allEvents = [...feedEvents, ...legacyEvents]
+        .sort(
+          (a: Db, b: Db) =>
+            (new Date(b.occurred_at).getTime() || 0) -
+            (new Date(a.occurred_at).getTime() || 0),
+        );
+      const latest = allEvents[0];
+
+      const latestFeed = feedEvents[0];
+      const produced = feedEvents.filter((a: Db) =>
+        INSIGHTS_AGENT_RUN_TYPES.has(a.event_type as string),
+      ).length;
+      const producedLegacy = legacyEvents.filter(
+        (a: Db) => a.outcome === "acted",
+      ).length;
+      const blocked = legacyEvents.filter(
+        (a: Db) => a.outcome === "blocked",
+      ).length;
+
       const enabled = !!s?.enabled;
       const pausedAt = (s?.paused_at as string | null) ?? null;
+
+      // Prefer the legacy explicit summary, then a generated sentence from the
+      // feed, then a default "Nothing yet." (handled by the UI).
+      const lastSummary =
+        (s?.last_action_summary as string | null) ??
+        (latestFeed ? sentenceFromFeed(latestFeed) : null) ??
+        (latest ? latest.sentence : null) ??
+        null;
 
       return {
         key: def.key,
@@ -268,11 +312,12 @@ export const getAgentPanel = createServerFn({ method: "GET" })
             ? "On and working."
             : `Off. ${def.offConsequence}`,
         last_action_at:
-          (s?.last_action_at as string | null) ?? latest?.occurred_at ?? null,
-        last_action_summary:
-          (s?.last_action_summary as string | null) ?? latest?.sentence ?? null,
-        produced_this_week: mine.filter((a: Db) => a.outcome === "acted").length,
-        blocked_this_week: mine.filter((a: Db) => a.outcome === "blocked").length,
+          (s?.last_action_at as string | null) ??
+          latest?.occurred_at ??
+          null,
+        last_action_summary: lastSummary,
+        produced_this_week: produced + producedLegacy,
+        blocked_this_week: blocked,
       };
     });
 
@@ -283,6 +328,7 @@ export const getAgentPanel = createServerFn({ method: "GET" })
       agents,
     };
   });
+
 
 export type SwitchResult = {
   agent_key: string;
