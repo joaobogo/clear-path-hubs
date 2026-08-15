@@ -413,14 +413,13 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
   return (
     <tr className="hover:bg-muted/30">
       <td className="px-3 py-2.5">
-        <Link
-          to="/admin/clients/$id"
-          params={{ id: r.id }}
+        <a
+          href={`/admin/clients/${r.id}`}
           className="font-medium text-foreground hover:text-primary hover:underline"
           data-qa-action={`open-client-${r.id}`}
         >
           {r.name}
-        </Link>
+        </a>
         <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
           <span>{r.domain ?? "—"}</span>
           {r.industry && <span>· {r.industry}</span>}
