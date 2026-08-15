@@ -289,6 +289,8 @@ function CandidatesPage() {
     if (orgId) {
       clearCompareSelection(orgId);
     }
+    // Also clear from local state to ensure it doesn't re-seed
+    seededDefault.current = true;
   }, [orgId]);
 
 
