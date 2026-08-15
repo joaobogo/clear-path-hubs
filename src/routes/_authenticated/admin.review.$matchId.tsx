@@ -35,6 +35,8 @@ import {
   AlertTriangle,
   Circle,
 } from "lucide-react";
+import { safeNode } from "@/components/admin/candidate-detail/primitives";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -342,7 +344,7 @@ function ReviewScreen() {
       )}
 
       {/* One screen: evidence · CV · requirements */}
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_300px]">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)]">
         {/* Evidence completeness checklist — also gates submission */}
         <div className="min-h-0 overflow-y-auto">
           <EvidenceCompletenessGate matchId={matchId} showSubmit={false} />
@@ -356,7 +358,7 @@ function ReviewScreen() {
           initialExpiresAt={cv?.url_expires_at ?? null}
         />
 
-        {/* Requirements as stated by the client */}
+        {/* Requirements & Screening answers */}
         <aside className="flex min-h-0 flex-col gap-3 overflow-y-auto">
           <section className="rounded-lg border bg-card p-4">
             <h2 className="mb-3 text-sm font-semibold text-primary/80 uppercase tracking-tight">Role requirements</h2>
@@ -389,38 +391,7 @@ function ReviewScreen() {
                       {a.question}
                     </div>
                     <div className="text-xs text-muted-foreground break-words">
-                      {(() => {
-                        const val = a.answer;
-                        if (val == null || val === "" || val === "null") return "—";
-                        
-                        let parsed = val;
-                        try {
-                          if (typeof val === 'string' && (val.startsWith('{') || val.startsWith('['))) {
-                            const p = JSON.parse(val);
-                            if (p && typeof p === 'object' && 'value' in p) {
-                              parsed = p.value;
-                            } else {
-                              parsed = p;
-                            }
-                          }
-                        } catch (e) {}
-
-                        if (typeof parsed === "boolean") return parsed ? "Yes" : "No";
-                        if (typeof parsed === "string" && (parsed.startsWith("http://") || parsed.startsWith("https://"))) {
-                          return (
-                            <a 
-                              href={parsed} 
-                              target="_blank" 
-                              rel="noopener noreferrer" 
-                              className="text-primary hover:underline inline-flex items-center gap-1"
-                            >
-                              Link <ExternalLink className="h-3 w-3" />
-                            </a>
-                          );
-                        }
-                        if (Array.isArray(parsed)) return parsed.join(", ");
-                        return String(parsed);
-                      })()}
+                      {safeNode(a.answer) ?? "—"}
                     </div>
                   </li>
                 ))}
@@ -429,6 +400,7 @@ function ReviewScreen() {
           </section>
         </aside>
       </div>
+
 
       {/* Blockers stated out loud. A disabled button with a tooltip is not an
           explanation — the reviewer needs to see what is missing. */}
