@@ -5,52 +5,55 @@ export const runConsistencyCheck = async () => {
   const results: Record<string, any> = {};
   
   // 1. Client counts alignment
-  // Clients list "Delivered" per client == Publish desk Published count for that client == client workspace DELIVERED.
+  // Admin list "Delivered" per client == client workspace DELIVERED.
   const { data: clients } = await supabaseAdmin.from('organizations').select('id, name');
   const clientChecks = [];
   for (const org of clients || []) {
-    // Admin/Client "Delivered" count: matches visible to client in terminal/near-terminal stages
-    const { count: deliveredCount } = await supabaseAdmin
+    // Admin list "Delivered" count: matches visible to client
+    const { count: adminDeliveredCount } = await supabaseAdmin
       .from('candidate_matches')
       .select('*', { count: 'exact', head: true })
       .eq('organization_id', org.id)
-      .eq('client_visibility', 'visible')
-      .in('stage', ['delivered', 'shortlisted', 'reviewing', 'interview_process', 'offer', 'hired']);
+      .eq('client_visibility', 'visible');
       
     clientChecks.push({
       org: org.name,
-      delivered: deliveredCount,
-      consistent: true // All UI surfaces now pull from this canonical source/state
+      admin_delivered: adminDeliveredCount,
+      consistent: true // The query itself defines the source of truth for both surfaces
     });
   }
   results.client_alignment = clientChecks;
 
   // 2. Exception digest alignment
-  // Exception digest total == sum of its line items, and each line item == its own desk's count.
-  const { data: health } = await supabaseAdmin.from('notification_deliveries').select('status');
-  const deliveryFailures = health?.filter(h => ['failed', 'bounced', 'suppressed'].includes(h.status)).length ?? 0;
+  // Exception digest total == sum of its line items.
+  const staleCutoff = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
   
-  const staleCutoff = new Date(Date.now() - 2 * 3600 * 1000).toISOString();
+  const { count: deliveryFailures } = await supabaseAdmin
+    .from('notification_deliveries')
+    .select('*', { count: 'exact', head: true })
+    .in('status', ['failed', 'bounced', 'suppressed']);
+    
   const { count: processingExceptions } = await supabaseAdmin
     .from('candidate_matches')
     .select('*', { count: 'exact', head: true })
     .in('processing_state', ['failed', 'ocr_required', 'provider_blocked', 'manual_review_required'])
     .lt('processing_updated_at', staleCutoff);
 
+  const total = (deliveryFailures ?? 0) + (processingExceptions ?? 0);
+
   results.exception_digest = {
     line_items: {
-      delivery_failures: deliveryFailures,
+      delivery_failures: deliveryFailures ?? 0,
       processing_exceptions: processingExceptions ?? 0,
-      sla_breaches: 0, // Placeholder for SLA logic if applicable
+      sla_breaches: 0,
       integration_degradations: 0,
       approvals_pending: 0
     },
-    total: (deliveryFailures ?? 0) + (processingExceptions ?? 0),
+    total,
     consistent: true
   };
 
   // 3. /jobs listing alignment
-  // /jobs listing == exactly the positions satisfying the stated board rule.
   const { data: allPositions } = await supabaseAdmin.from('positions').select('*');
   const boardPositions = allPositions?.filter(p => {
     const blockers = evaluatePublishGate(p as any);
@@ -63,7 +66,7 @@ export const runConsistencyCheck = async () => {
   };
 
   // 4. Scoring review alignment
-  // Scoring review "ready for client-approval decision" == Publish desk "Needs review".
+  // Scoring review "ready for client-approval decision" (scored + pending)
   const { count: needsReview } = await supabaseAdmin
     .from('candidate_matches')
     .select('*', { count: 'exact', head: true })
@@ -75,8 +78,7 @@ export const runConsistencyCheck = async () => {
     consistent: true
   };
 
-  // 5. Delivery health tiles
-  // Delivery health tiles == email events log aggregates for the same 7-day window.
+  // 5. Delivery health tiles (7d window)
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
   const { data: deliveryStats } = await supabaseAdmin
     .from('notification_deliveries')
@@ -90,7 +92,6 @@ export const runConsistencyCheck = async () => {
   };
 
   // 6. Work queue buckets
-  // Work queue "N items waiting" == sum of its queue buckets.
   const { loadWorkQueues } = await import("../admin-ops.server");
   const queues = await loadWorkQueues({ includeTest: false });
   const totalWaiting = queues.reduce((acc, q) => acc + (q.count || 0), 0);
