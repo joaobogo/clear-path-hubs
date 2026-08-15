@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { ensureConversation } from "@/lib/conversations.functions";
@@ -33,7 +33,7 @@ export function OpenThreadButton({
   className?: string;
 }) {
   const navigate = useNavigate();
-  const search = (navigate as any).useSearch({ strict: false });
+  const search = useSearch({ strict: false }) as Record<string, any>;
   const preview = search?.preview;
   const orgSearch = useClientOrgSearch() || orgId;
   const ensureFn = useServerFn(ensureConversation);
