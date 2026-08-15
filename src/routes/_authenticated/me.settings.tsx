@@ -267,8 +267,8 @@ function SettingsPage() {
       <section className="rounded-lg border bg-card p-5 space-y-3">
         <h2 className="text-sm font-medium text-destructive">Delete my account</h2>
         <p className="text-xs text-muted-foreground">
-          We&apos;ll confirm by email before removing your data. Withdrawn applications
-          are retained only as required for record-keeping.
+          We&apos;ll confirm by email before removing your data.
+          {data?.seat === "candidate" && " Withdrawn applications are retained only as required for record-keeping."}
         </p>
         <Textarea
           rows={3}
