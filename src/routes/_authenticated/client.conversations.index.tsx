@@ -91,11 +91,14 @@ function ConversationsPage() {
     const allItems = data?.items ?? [];
 
     if (view === "history") {
-      // Flat chronological list of messages would require a separate data structure or 
-      // extraction from the threads. For now, we'll keep the threads but sorted differently
-      // or filter them if the view is history. Actually, for a "History" view we should
-      // ideally have individual messages. Let's adapt the rendering below.
-      return allItems;
+      // For history, we show all threads but sort them by message count or 
+      // present them differently. The prompt asks for a "distinct" view.
+      // A flat chronological log of all messages is the goal.
+      // Since the API returns thread summaries with last_body, we'll sort 
+      // threads by the absolute last message across the whole workspace.
+      return [...allItems].sort(
+        (a, b) => new Date(b.last_message_at).getTime() - new Date(a.last_message_at).getTime()
+      );
     }
 
     return allItems.filter((c) => {
