@@ -215,7 +215,7 @@ export function ReviewTriageList({
         />
       ) : (
         <>
-          <QueueShortcuts />
+          <QueueShortcuts className="mb-4" />
           <Group
             title="Blocking a client deliverable"
             hint="The role has an open commitment due within 3 days."

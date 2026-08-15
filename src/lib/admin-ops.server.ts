@@ -40,14 +40,15 @@ function ageTone(iso: string | null, warnDays: number, dangerDays: number): Queu
 }
 
 /** The operator queues, each with an exact count and one direct action. */
-export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Promise<WorkQueue[]> {
+export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promise<WorkQueue[]> {
+  const opts = raw || {};
   const s = await admin();
   const { loadTestScope, excludeTestOrgs, loadAgingIntakes } = await import(
     "./admin-test-scope.server"
   );
   const scope = await loadTestScope(s, opts.includeTest ?? false);
 
-  const [unpaid, setup, review, delivered, interviews, blocked, aging] = await Promise.all([
+  const [unpaid, setup, review, readyForDecision, delivered, interviews, blocked, aging] = await Promise.all([
     // 1 — submitted roles that have not been paid for (or are stuck mid-checkout).
     excludeTestOrgs(
       s
@@ -91,6 +92,17 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       scope,
     ),
 
+    // 3.5 — ready for client decision (admin already approved).
+    excludeTestOrgs(
+      s
+        .from("candidate_matches")
+        .select("id", { count: "exact" })
+        .eq("admin_status", "approved")
+        .eq("client_visibility", "visible")
+        .in("stage", ["delivered", "shortlisted", "reviewing"]),
+      scope,
+    ),
+
     // 4 — shared with the client, no decision recorded yet. The page is read
     // wide enough that the count below is the true total, not the page size:
     // a count taken from a short page under-reports the queue.
@@ -127,12 +139,11 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
     ),
 
     // 6 — delivery failures that need a retry or a new address.
-    s
-      .from("notification_deliveries")
-      .select("id, status, error_message, updated_at, notifications(title, audience, notification_id)", { count: "exact" })
-      .in("status", ["failed", "bounced", "suppressed"])
-      .order("updated_at", { ascending: false })
-      .limit(8),
+    (async () => {
+      const { loadDeliveryFailures } = await import("./notification-failures.server");
+      const failures = await loadDeliveryFailures(s);
+      return { data: failures.items, count: failures.items.length };
+    })(),
 
     // 6 — real client briefs sitting in the inbox for more than three days.
     loadAgingIntakes(s, { includeTest: opts.includeTest ?? false, olderThanDays: 3, limit: 8 }),
@@ -241,7 +252,7 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       count: setup.count ?? 0,
       action_hint: "Open the role, complete setup, approve it.",
       see_all: { to: "/admin/positions" },
-      items: ((setup.data ?? []) as Any[]).map((p) => ({
+      items: ((setup.data ?? []) as any[]).map((p) => ({
         id: p.id,
         title: p.title,
         subtitle: p.organizations?.name ?? "—",
@@ -253,6 +264,10 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
         claim: positionClaim(p.id),
         tone: ageTone(p.created_at, 1, 3),
       })),
+      secondary_badge: {
+        label: `${readyForDecision.count ?? 0} ready for decision`,
+        tone: (readyForDecision.count ?? 0) > 0 ? "default" : "neutral",
+      },
     },
     {
       key: "review",
@@ -323,13 +338,13 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       count: blocked.count ?? 0,
       action_hint: "Retry the delivery or update the recipient's email.",
       see_all: { to: "/admin/operations" },
-      items: ((blocked.data ?? []) as Any[]).map((d) => ({
+      items: ((blocked.data ?? []) as any[]).map((d) => ({
         id: d.id,
-        title: d.notifications?.title ?? "Delivery failure",
-        subtitle: (d.error_message ?? d.status ?? "").replace(/_/g, " "),
-        meta: d.notifications?.audience ?? null,
-        waiting_since: d.updated_at,
-        target: { kind: "match" as const, id: d.notifications?.notification_id ?? d.notification_id },
+        title: d.title ?? "Delivery failure",
+        subtitle: (d.reasonDetail ?? d.reason ?? "").replace(/_/g, " "),
+        meta: d.audience ?? null,
+        waiting_since: d.lastAttemptAt,
+        target: { kind: "match" as const, id: d.id },
         action_label: "Fix",
         owner: null,
         claim: null,

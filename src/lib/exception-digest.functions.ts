@@ -75,7 +75,8 @@ export const getExceptionDigest = createServerFn({ method: "GET" })
       }),
       settle("delivery_failures", async () => {
         const { loadDeliveryFailures } = await import("./notification-failures.server");
-        return (await loadDeliveryFailures(admin)).items.length;
+        const failures = await loadDeliveryFailures(admin);
+        return failures.items.length;
       }),
     ]);
 

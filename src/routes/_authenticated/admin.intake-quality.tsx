@@ -168,7 +168,7 @@ function IntakeQuality() {
         />
       ) : (
         <div className="space-y-6">
-          <QueueShortcuts />
+          <QueueShortcuts className="mb-4" />
           {groups.map((group) => (
             <Card key={group.cause_code}>
               <CardHeader className="space-y-2">

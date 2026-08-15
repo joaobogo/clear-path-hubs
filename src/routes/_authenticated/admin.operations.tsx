@@ -127,8 +127,8 @@ function OperationsPage() {
   const ops = opsQuery.data;
   const listDelivery = useServerFn(listDeliveryFailures);
   const deliveryQuery = useQuery({
-    queryKey: ["admin", "delivery-failures"],
-    queryFn: () => listDelivery(),
+    queryKey: ["admin", "delivery-failures", "7d"],
+    queryFn: () => listDelivery({ data: { window_days: 7 } }),
     refetchOnWindowFocus: true,
   });
   const delivery = deliveryQuery.data;
@@ -267,7 +267,7 @@ function OperationsPage() {
         <Stat label="Aging in pipeline" value={health.stale} tone={health.stale > 0 ? "warn" : "ok"} />
         <Stat label="Failed jobs" value={jobs.length} tone={jobs.length > 0 ? "warn" : "ok"} />
         <Stat
-          label="Delivery failures"
+          label="Delivery failures (7d)"
           value={deliveryItems.length}
           tone={deliveryItems.length > 0 ? "warn" : "ok"}
         />
@@ -290,7 +290,7 @@ function OperationsPage() {
             Pipeline incidents ({opsQuery.isError || opsQuery.isPending ? "—" : grouped.length})
           </TabsTrigger>
           <TabsTrigger value="delivery">
-            Delivery failures (
+            Delivery failures (7d) (
             {deliveryQuery.isError || deliveryQuery.isPending ? "—" : deliveryItems.length})
           </TabsTrigger>
         </TabsList>

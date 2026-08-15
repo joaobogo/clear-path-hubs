@@ -405,7 +405,8 @@ export const dismissNotifications = createServerFn({ method: "POST" })
 
 export const listDeliveryFailures = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((raw) => z.object({ window_days: z.number().optional().default(7) }).parse(raw))
+  .handler(async ({ data: inputData, context }) => {
     const { data: isStaff } = await context.supabase.rpc("is_platform_staff", { _user: context.userId });
     if (!isStaff) throw new Error("Forbidden");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -422,7 +423,7 @@ export const listDeliveryFailures = createServerFn({ method: "GET" })
       supabaseAdmin
         .from("notification_deliveries")
         .select("status, channel")
-        .gte("created_at", new Date(Date.now() - 7 * 86_400_000).toISOString())
+        .gte("created_at", new Date(Date.now() - (inputData.window_days ?? 7) * 86_400_000).toISOString())
         .limit(2000),
     ]);
     if (failuresRes.error) throw failuresRes.error;
