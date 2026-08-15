@@ -608,13 +608,9 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
       const after = e.after_state ?? null;
 
       let safeAction: string | null = null;
+      const normAction = action.toLowerCase();
 
-      // Filter out raw system updates and internal taxonomy
-      const isInternalUpdate = action.startsWith("UPDATE") || action.includes("|") || action.includes(".");
-      
-      console.log(`[buildAuditTrail] Processing: ${action}`, { hasAfter: !!after, hasStage: after && typeof after === "object" && "stage" in after });
-      
-      // Map stage transitions to friendly labels
+      // 1. Map stage transitions (even if inside UPDATE)
       if (after && typeof after === "object" && "stage" in after) {
         const fromStage =
           before && typeof before === "object" && "stage" in before
@@ -623,30 +619,30 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
         const toStage = String((after as AnyRow).stage);
 
         // Drop no-op transitions
-        if (fromStage === toStage) return null;
-
-        if (toStage === "delivered") safeAction = WHITELIST.delivered;
-        if (toStage === "shortlisted") safeAction = WHITELIST.shortlisted;
-        if (toStage === "offer") safeAction = WHITELIST.offer;
-        if (toStage === "hired") safeAction = WHITELIST.hired;
-      }
-
-      // Map specific action keys (normalized match)
-      const normAction = action.toLowerCase();
-      if (normAction === "interview.scheduled") safeAction = WHITELIST.interview_scheduled;
-      if (normAction === "interview.requested") safeAction = WHITELIST.interview_requested;
-      if (normAction === "interview.completed") safeAction = WHITELIST.interview_completed;
-      if (normAction === "decision.recorded") safeAction = WHITELIST.decided;
-      if (normAction === "profile.viewed" || normAction === "client.candidate.viewed") safeAction = WHITELIST.viewed;
-      if (normAction === "cv.download") {
-        // Only show client-initiated downloads to the client
-        if (after && typeof after === "object" && (after as AnyRow).audience === "client") {
-          safeAction = WHITELIST.downloaded;
+        if (fromStage !== toStage) {
+          if (toStage === "delivered") safeAction = WHITELIST.delivered;
+          else if (toStage === "shortlisted") safeAction = WHITELIST.shortlisted;
+          else if (toStage === "offer") safeAction = WHITELIST.offer;
+          else if (toStage === "hired") safeAction = WHITELIST.hired;
         }
       }
 
-      // If it's an internal update and we didn't map it to a friendly label, drop it
-      if (isInternalUpdate && !safeAction) return null;
+      // 2. Map explicit action keys
+      if (!safeAction) {
+        if (normAction.includes("interview.scheduled")) safeAction = WHITELIST.interview_scheduled;
+        else if (normAction.includes("interview.requested")) safeAction = WHITELIST.interview_requested;
+        else if (normAction.includes("interview.completed")) safeAction = WHITELIST.interview_completed;
+        else if (normAction.includes("decision.recorded")) safeAction = WHITELIST.decided;
+        else if (normAction.includes("viewed")) safeAction = WHITELIST.viewed;
+        else if (normAction.includes("cv.download")) {
+          // Client-initiated downloads only
+          if (after && typeof after === "object" && (after as AnyRow).audience === "client") {
+            safeAction = WHITELIST.downloaded;
+          }
+        }
+      }
+
+      if (!safeAction) return null;
 
       if (!safeAction) return null;
 
