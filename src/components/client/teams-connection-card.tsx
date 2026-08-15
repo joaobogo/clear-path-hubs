@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import {
+import { formatDateTime } from "@/lib/format/datetime";
   getTeamsConnection,
   saveTeamsConnection,
   disconnectTeams,
@@ -110,7 +111,7 @@ export function TeamsConnectionCard({
         {last && (
           <span className="text-xs text-muted-foreground">
             Last post {last.status === "delivered" ? "delivered" : `failed (${last.error_code})`} ·{" "}
-            {new Date(last.created_at as string).toLocaleString()}
+            {formatDateTime(last.created_at as string)}
           </span>
         )}
       </div>

@@ -54,6 +54,7 @@ import {
 import { retryBlueprintAnalysis } from "@/lib/blueprint.functions";
 import { setRoleIntensity } from "@/lib/control-room.functions";
 import { EmptyState, ErrorState, PermissionDenied, SkeletonRows } from "@/components/client/states";
+import { formatDateTime } from "@/lib/format/datetime";
 
 /**
  * First-run sequence — ten steps that configure the hiring system rather than
@@ -173,7 +174,7 @@ export function OnboardingWizard({ orgId }: { orgId?: string }) {
         />
         {state.draft_saved_at && (
           <p className="text-xs text-muted-foreground">
-            Progress saved {new Date(state.draft_saved_at).toLocaleString()}
+            Progress saved {formatDateTime(state.draft_saved_at)}
           </p>
         )}
       </aside>

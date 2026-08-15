@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { formatEnumLabel } from "@/lib/human-labels";
+import { formatDateTime } from "@/lib/format/datetime";
 
 export function BackLink() {
   return (
@@ -116,7 +117,7 @@ export function CandidateHeader({
         </div>
         {candidate.last_updated && (
           <p className="mt-2 text-xs text-muted-foreground">
-            Last updated {new Date(candidate.last_updated).toLocaleString()}
+            Last updated {formatDateTime(candidate.last_updated)}
           </p>
         )}
       </div>

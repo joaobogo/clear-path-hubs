@@ -26,6 +26,7 @@ import { ConfirmForm } from "./confirm-form";
 import { detectTimezone, formatWhen, statusBadgeClass } from "./helpers";
 import {
 import { formatEnumLabel } from "@/lib/human-labels";
+import { formatDateTime } from "@/lib/format/datetime";
   displayInterviewStatus,
   hasInterviewHappened,
   interviewStatusLabel,
@@ -182,7 +183,7 @@ export function InterviewDetailDialog({
                 ) : null}
                 {interview.candidate_response_at ? (
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {new Date(interview.candidate_response_at).toLocaleString()}
+                    {formatDateTime(interview.candidate_response_at)}
                   </p>
                 ) : null}
               </DetailRow>

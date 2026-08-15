@@ -25,6 +25,7 @@ import type {
   RequirementStatus,
 } from "@/lib/client-fit-presentation";
 import { SectionCard, Metric } from "./shared";
+import { formatDateTime } from "@/lib/format/datetime";
 
 export function statusBadge(status: RequirementStatus) {
   switch (status) {
@@ -177,7 +178,7 @@ export const EvaluationProvenance = memo(function EvaluationProvenance({
       {ev.completed_at && (
         <p className="mt-3 text-[11px] text-muted-foreground">
           Evaluation completed{" "}
-          {new Date(ev.completed_at).toLocaleString()}
+          {formatDateTime(ev.completed_at)}
         </p>
       )}
     </section>
