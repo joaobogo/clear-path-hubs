@@ -54,6 +54,7 @@ export function NotificationBell() {
     queryKey: NOTIFICATIONS_QUERY_KEY,
     queryFn: () => list(),
     refetchOnWindowFocus: true,
+    refetchInterval: open ? 30_000 : false, // Auto-resolve stale items while viewing
     staleTime: 15_000,
   });
 
