@@ -587,15 +587,16 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
   if (!Array.isArray(rows)) return [];
 
   const WHITELIST: Record<string, string> = {
-    delivered: "Delivered to your workspace",
+    delivered: "Delivered to you",
     shortlisted: "Shortlisted by your team",
     interview_requested: "Interview requested",
     interview_scheduled: "Interview scheduled",
     interview_completed: "Interview completed",
-    offer: "Offer extended",
+    offer: "Offer made",
     hired: "Hired",
     decided: "Decision recorded",
-    viewed: "Viewed by your team",
+    viewed: "Your team viewed this profile",
+    downloaded: "Your team downloaded the CV",
   };
 
   return rows
@@ -608,18 +609,21 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
       let summary: string | null = null;
       let safeAction: string | null = null;
 
+      // Filter out raw system updates and internal taxonomy
+      if (action.startsWith("UPDATE") || action.includes("|")) return null;
+
       // Map stage transitions to friendly labels
       if (after && typeof after === "object" && "stage" in after) {
-        const stage = String((after as AnyRow).stage);
-        if (stage === "delivered") safeAction = WHITELIST.delivered;
-        if (stage === "shortlisted") safeAction = WHITELIST.shortlisted;
-        if (stage === "offer") safeAction = WHITELIST.offer;
-        if (stage === "hired") safeAction = WHITELIST.hired;
+        const fromStage = before && typeof before === "object" && "stage" in before ? String((before as AnyRow).stage) : null;
+        const toStage = String((after as AnyRow).stage);
 
-        summary =
-          before && typeof before === "object" && "stage" in before
-            ? `${(before as AnyRow).stage} → ${(after as AnyRow).stage}`
-            : `Set to ${(after as AnyRow).stage}`;
+        // Drop no-op transitions
+        if (fromStage === toStage) return null;
+
+        if (toStage === "delivered") safeAction = WHITELIST.delivered;
+        if (toStage === "shortlisted") safeAction = WHITELIST.shortlisted;
+        if (toStage === "offer") safeAction = WHITELIST.offer;
+        if (toStage === "hired") safeAction = WHITELIST.hired;
       }
 
       // Map specific action keys
@@ -628,6 +632,7 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
       if (action === "interview.completed") safeAction = WHITELIST.interview_completed;
       if (action === "decision.recorded") safeAction = WHITELIST.decided;
       if (action === "profile.viewed") safeAction = WHITELIST.viewed;
+      if (action === "cv.download" || action === "Cv.Download") safeAction = WHITELIST.downloaded;
 
       if (!safeAction) return null;
 
