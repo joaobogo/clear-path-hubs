@@ -19,7 +19,10 @@ const HOME: Record<AudienceTone, { to: string; label: string }> = {
 export function makeRouteErrorComponent(tone: AudienceTone, surface: string) {
   return function RouteError({ error, reset }: { error: Error; reset: () => void }) {
     const router = useRouter();
+    const search = useSearch({ strict: false }) as Record<string, string | undefined>;
     const normalized = normalizeError(error, { tone });
+    const linkSearch = search.org ? { org: search.org, preview: search.preview } : undefined;
+
 
     useEffect(() => {
       logTechnical(error, normalized, { surface });
@@ -35,7 +38,7 @@ export function makeRouteErrorComponent(tone: AudienceTone, surface: string) {
             description={normalized.description}
             action={
               <Button asChild variant="outline" size="sm">
-                <Link to={HOME[tone].to}>{HOME[tone].label}</Link>
+                <Link to={HOME[tone].to} search={linkSearch as any}>{HOME[tone].label}</Link>
               </Button>
             }
           />
@@ -76,7 +79,7 @@ export function makeRouteErrorComponent(tone: AudienceTone, surface: string) {
           }
           action={
             <Button asChild variant="outline" size="sm">
-              <Link to={HOME[tone].to}>{HOME[tone].label}</Link>
+              <Link to={HOME[tone].to} search={linkSearch as any}>{HOME[tone].label}</Link>
             </Button>
           }
         />
@@ -92,7 +95,10 @@ export function makeRouteErrorComponent(tone: AudienceTone, surface: string) {
  */
 export function makeRouteNotFoundComponent(tone: AudienceTone) {
   return function RouteNotFound() {
+    const search = useSearch({ strict: false }) as Record<string, string | undefined>;
     const normalized = normalizeError({ status: 404 }, { tone });
+    const linkSearch = search.org ? { org: search.org, preview: search.preview } : undefined;
+
     const params = useParams({ strict: false }) as Record<string, string | undefined>;
     const identifier = Object.values(params ?? {}).find(
       (value) => typeof value === "string" && value.length > 0,
@@ -109,7 +115,7 @@ export function makeRouteNotFoundComponent(tone: AudienceTone) {
 
           action={
             <Button asChild variant="outline" size="sm">
-              <Link to={HOME[tone].to}>{HOME[tone].label}</Link>
+              <Link to={HOME[tone].to} search={linkSearch as any}>{HOME[tone].label}</Link>
             </Button>
           }
         />
