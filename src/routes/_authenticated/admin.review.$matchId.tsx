@@ -35,6 +35,8 @@ import {
   AlertTriangle,
   Circle,
 } from "lucide-react";
+import { safeNode } from "@/components/admin/candidate-detail/primitives";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
