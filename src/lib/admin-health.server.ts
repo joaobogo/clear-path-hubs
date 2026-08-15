@@ -138,9 +138,9 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
     admin
       .from("notification_deliveries")
       .select("id, channel, status, error_message, attempt_count, updated_at")
-      .in("status", ["failed", "bounced"])
+      .in("status", ["failed", "bounced", "suppressed"])
       .order("updated_at", { ascending: false })
-      .limit(50),
+      .limit(100),
     excludeTestOrgs(
       admin
         .from("candidate_matches")
@@ -228,7 +228,7 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
   const counts = {
     webhook: issues.filter((i) => i.kind === "webhook").length,
     processing: issues.filter((i) => i.kind === "processing").length,
-    email: issues.filter((i) => i.kind === "email").length,
+    email: issues.filter((i) => i.kind === "email" && ["failed", "bounced", "suppressed"].includes(i.detail.split(" ")[0])).length,
     cv: issues.filter((i) => i.kind === "cv").length,
   };
 
