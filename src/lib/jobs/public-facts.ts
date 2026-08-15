@@ -168,7 +168,12 @@ export function resolveWorkAuthorisation(
   const countries = Array.isArray(wa.countries)
     ? wa.countries.filter((c): c is string => typeof c === "string" && c.trim().length > 0)
     : [];
-  const where = countries.length > 0 ? countries.join(", ") : "";
+  
+  // Title-case country names to avoid "unites states" issues.
+  const titleCase = (s: string) => 
+    s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+
+  const where = countries.length > 0 ? countries.map(titleCase).join(", ") : "";
 
   if (explicit === true) {
     return where

@@ -610,21 +610,28 @@ function JobDetail() {
                 {pos.openings > 1 ? `${pos.openings} openings` : "1 opening"}
               </p>
 
-
-
               {pos.locations.length > 0 && (
                 <div className="mt-6 border-t pt-4">
                   <div className="text-xs uppercase tracking-wide text-muted-foreground">
                     Hiring locations
                   </div>
                   <div className="mt-2 flex flex-wrap gap-1.5">
-                    {pos.locations.map((l, i) => (
-                      <Badge key={i} variant="secondary" className="font-normal">
-                        {[l.city, l.region, l.country].filter(Boolean).join(", ")}
-                        {l.work_model ? ` · ${l.work_model}` : ""}
-                        {l.headcount && l.headcount > 1 ? ` · ${l.headcount} hires` : ""}
-                      </Badge>
-                    ))}
+                    {pos.locations.map((l, i) => {
+                      const titleCase = (s: string) => 
+                        s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                      const location = [l.city, l.region, l.country]
+                        .filter(Boolean)
+                        .map(titleCase)
+                        .join(", ");
+                      
+                      return (
+                        <Badge key={i} variant="secondary" className="font-normal">
+                          {location}
+                          {l.work_model ? ` · ${l.work_model}` : ""}
+                          {l.headcount && l.headcount > 1 ? ` · ${l.headcount} hires` : ""}
+                        </Badge>
+                      );
+                    })}
                   </div>
                 </div>
               )}
