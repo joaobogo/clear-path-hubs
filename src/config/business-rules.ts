@@ -105,9 +105,9 @@ export interface ScoreBand {
 export const BUSINESS_RULES_DEFAULTS = {
   delivery: {
     /** Canonical first-shortlist promise. Resolves prior "48h / one week / 14 days" conflicts. */
-    firstShortlistLabel: "First ranked shortlist in days",
-    firstShortlistShort: "in days",
-    turnaroundLabel: TURNAROUND_LABEL, // "turnaround in days"
+    firstShortlistLabel: "First ranked shortlist in 5 days",
+    firstShortlistShort: "in 5 days",
+    turnaroundLabel: TURNAROUND_LABEL, // "5-day turnaround"
     recurringCadence: "Weekly refresh after go-live",
     recurringCadenceShort: "weekly",
     responseTime: "We reply to inbound within one business day",

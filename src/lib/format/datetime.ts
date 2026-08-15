@@ -124,6 +124,19 @@ export function formatPeriod(period: string | null | undefined, fallback = "Date
 
 
 
+/** Calendar-day difference between two dates in the workspace timezone. */
+export function calendarDayDiff(a: Date, b: Date): number {
+  const fmt = { timeZone: WORKSPACE_TIMEZONE, year: "numeric", month: "2-digit", day: "2-digit" } as const;
+  const parseLocal = (d: Date) => {
+    const s = new Intl.DateTimeFormat(APP_LOCALE, fmt).format(d);
+    const [day, month, year] = s.split("/");
+    return new Date(Number(year), Number(month) - 1, Number(day));
+  };
+  const A = parseLocal(a);
+  const B = parseLocal(b);
+  return Math.round((A.getTime() - B.getTime()) / 86_400_000);
+}
+
 /** True when a string looks like a raw ISO-8601 timestamp (guard for tests/lint). */
 export function looksLikeIsoTimestamp(value: unknown): boolean {
   return (

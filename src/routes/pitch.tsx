@@ -117,7 +117,7 @@ const ECONOMICS: Array<{
     price: PRICE_PILOT_DISPLAY,
     unit: " one-time",
     fits: PILOT_ROLES_LABEL,
-    line: "Test the model on one critical hire. turnaround in days.",
+    line: "Test the model on one critical hire. 5-day turnaround.",
   },
   {
     tier: "Multi Position",
