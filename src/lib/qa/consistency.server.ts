@@ -15,7 +15,7 @@ export const runConsistencyCheck = async () => {
       .select('*', { count: 'exact', head: true })
       .eq('organization_id', org.id)
       .eq('client_visibility', 'visible')
-      .in('stage', ['delivered', 'shortlisted', 'reviewing', 'interviewing', 'offered', 'hired']);
+      .in('stage', ['delivered', 'shortlisted', 'reviewing', 'interview_process', 'offer', 'hired']);
       
     clientChecks.push({
       org: org.name,
