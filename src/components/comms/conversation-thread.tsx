@@ -326,8 +326,8 @@ export function ConversationThread({
                       </span>
                       <span>{m.sender_role}</span>
                       {m.sender_side === "taasflow" && !m.mine && (
-                        <Badge variant="secondary" className="h-4 px-1.5 text-[10px]">
-                          TaaSFlow
+                        <Badge variant="secondary" className="h-4 px-1.5 text-[10px] bg-[color:var(--brand-navy)]/8 text-[color:var(--brand-navy)] border-[color:var(--brand-navy)]/15 font-semibold">
+                          TaaSFlow team
                         </Badge>
                       )}
                       <span className="tabular-nums">{timeLabel(m.created_at)}</span>

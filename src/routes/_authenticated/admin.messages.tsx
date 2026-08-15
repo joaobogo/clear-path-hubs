@@ -278,7 +278,7 @@ function CandidateSupportReply({
           thread.data!.messages.map((m) => (
             <div key={m.id} className="text-sm">
               <span className="mr-2 text-xs font-medium text-muted-foreground">
-                {m.from_candidate ? candidateName : "TaaSFlow"}
+                {m.from_candidate ? candidateName : "TaaSFlow team"}
               </span>
               <span className="whitespace-pre-line">{m.body}</span>
             </div>
