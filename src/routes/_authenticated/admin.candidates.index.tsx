@@ -687,9 +687,8 @@ function CandidatesPage() {
                     />
                   </td>
                   <td className="min-w-[12rem] px-3 py-2">
-                    <Link
-                      to="/admin/candidates/$id"
-                      params={{ id: m.match_id }}
+                    <a
+                      href={`/admin/candidates/${m.match_id}`}
                       className="block hover:underline"
                     >
                       <div className="flex items-center gap-1.5 font-medium">
@@ -706,17 +705,16 @@ function CandidatesPage() {
                         {m.city ? ` · ${m.city}` : ""}
                         {m.country ? `, ${m.country}` : ""}
                       </div>
-                    </Link>
+                    </a>
                   </td>
                   <td className="min-w-[8rem] px-3 py-2 text-xs">{m.org_name ?? "—"}</td>
                   <td className="min-w-[10rem] px-3 py-2 text-xs">
-                    <Link
-                      to="/admin/positions/$id"
-                      params={{ id: m.position_id }}
+                    <a
+                      href={`/admin/positions/${m.position_id}`}
                       className="hover:underline"
                     >
                       {m.position_title ?? "—"}
-                    </Link>
+                    </a>
                   </td>
                   <td className="px-3 py-2">
                     <span
@@ -774,9 +772,9 @@ function CandidatesPage() {
                   </td>
                   <td className="whitespace-nowrap px-3 py-2 text-right">
                     <Button asChild size="sm" variant="ghost" data-qa-action="open-candidate">
-                      <Link to="/admin/candidates/$id" params={{ id: m.match_id }}>
+                      <a href={`/admin/candidates/${m.match_id}`}>
                         Open <ArrowRight className="ml-1 h-3.5 w-3.5" />
-                      </Link>
+                      </a>
                     </Button>
                   </td>
                 </tr>
@@ -813,7 +811,7 @@ function CandidatesPage() {
             data-qa-row="candidate-match"
             data-submission-id={m.match_id}
           >
-            <Link to="/admin/candidates/$id" params={{ id: m.match_id }} className="block">
+            <a href={`/admin/candidates/${m.match_id}`} className="block">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <div className="truncate font-medium">{m.full_name ?? "Unnamed candidate"}</div>
@@ -846,7 +844,7 @@ function CandidatesPage() {
                   {m.client_visibility === "visible" ? "Published" : "Not published"}
                 </span>
               </div>
-            </Link>
+            </a>
           </li>
         ))}
         {rows.length === 0 && !isFetching && searchFailed && (

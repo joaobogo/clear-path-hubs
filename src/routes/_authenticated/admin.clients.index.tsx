@@ -413,14 +413,13 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
   return (
     <tr className="hover:bg-muted/30">
       <td className="px-3 py-2.5">
-        <Link
-          to="/admin/clients/$id"
-          params={{ id: r.id }}
+        <a
+          href={`/admin/clients/${r.id}`}
           className="font-medium text-foreground hover:text-primary hover:underline"
           data-qa-action={`open-client-${r.id}`}
         >
           {r.name}
-        </Link>
+        </a>
         <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
           <span>{r.domain ?? "—"}</span>
           {r.industry && <span>· {r.industry}</span>}
@@ -479,14 +478,13 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
       <td className="whitespace-nowrap px-3 py-2.5 text-xs text-muted-foreground">{relTime(r.last_activity_at)}</td>
       <td className="px-3 py-2.5 text-right">
         <div className="inline-flex items-center gap-1">
-          <Link
-            to="/admin/clients/$id"
-            params={{ id: r.id }}
+          <a
+            href={`/admin/clients/${r.id}`}
             className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary hover:bg-primary/15"
             data-qa-action={`open-btn-${r.id}`}
           >
             Open
-          </Link>
+          </a>
           <RowOverflowMenu row={r} onArchive={onArchive} />
         </div>
       </td>
@@ -500,13 +498,12 @@ function ClientCard({ row, onArchive }: { row: ClientRow; onArchive: () => void 
     <div className="space-y-2">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <Link
-            to="/admin/clients/$id"
-            params={{ id: r.id }}
+          <a
+            href={`/admin/clients/${r.id}`}
             className="block truncate text-base font-medium hover:text-primary hover:underline"
           >
             {r.name}
-          </Link>
+          </a>
           <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <span>{r.domain ?? "—"}</span>
             {r.industry && <span>· {r.industry}</span>}
@@ -534,13 +531,12 @@ function ClientCard({ row, onArchive }: { row: ClientRow; onArchive: () => void 
           <div className="text-muted-foreground">Activity</div>
         </div>
       </div>
-      <Link
-        to="/admin/clients/$id"
-        params={{ id: r.id }}
+      <a
+        href={`/admin/clients/${r.id}`}
         className="inline-flex w-full items-center justify-center rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
       >
         Open client
-      </Link>
+      </a>
     </div>
   );
 }

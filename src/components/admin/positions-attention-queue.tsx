@@ -157,21 +157,19 @@ function AttentionCard({
     <article className="rounded-lg border bg-card p-4" data-position-id={row.position_id}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <Link
-            to="/admin/positions/$id"
-            params={{ id: row.position_id }}
+          <a
+            href={`/admin/positions/${row.position_id}`}
             className="text-sm font-medium hover:underline"
           >
             {row.title}
-          </Link>
+          </a>
           <div className="mt-0.5 text-xs text-muted-foreground">
-            <Link
-              to="/admin/clients/$id"
-              params={{ id: row.organization_id }}
+            <a
+              href={`/admin/clients/${row.organization_id}`}
               className="hover:underline"
             >
               {row.organization_name}
-            </Link>
+            </a>
             {" · "}
             {row.days_open} day{row.days_open === 1 ? "" : "s"} open
             {row.is_test_record ? " · test" : ""}
@@ -257,9 +255,9 @@ function AttentionCard({
         </Button>
 
         <Button asChild size="sm" variant="secondary" className="ml-auto h-8 text-xs">
-          <Link to="/admin/positions/$id" params={{ id: row.position_id }}>
+          <a href={`/admin/positions/${row.position_id}`}>
             Open <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
-          </Link>
+          </a>
         </Button>
       </div>
     </article>

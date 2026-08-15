@@ -399,13 +399,11 @@ function Group({
                   </Button>
                 )}
                 <Button asChild size="sm" className="h-7 text-xs">
-                  <Link
-                    to="/admin/scoring/review/$matchId"
-                    params={{ matchId: r.match_id }}
-                    search={{ queue, q, sort, page }}
+                  <a
+                    href={`/admin/scoring/review/${r.match_id}?queue=${queue}&q=${q}&sort=${sort}&page=${page}`}
                   >
                     Open review
-                  </Link>
+                  </a>
                 </Button>
               </div>
             </div>
