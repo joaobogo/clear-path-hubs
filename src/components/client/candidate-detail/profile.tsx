@@ -304,7 +304,7 @@ export const LinksPanel = memo(function LinksPanel({
         {candidate.contact_released ? (
           <>
             <li className="pt-1">
-              <DownloadCvButton matchId={candidate.match_id} />
+              <DownloadCvButton matchId={candidate.match_id} mode="download" />
             </li>
             <li className="pt-2">
               <CvDownloadAudit

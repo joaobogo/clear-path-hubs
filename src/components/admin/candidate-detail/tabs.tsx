@@ -248,7 +248,7 @@ export function CvTab({ cv, matchId, cp, insights }: { cv: Any; matchId: string;
                     Open original <ExternalLink className="h-3.5 w-3.5" />
                   </a>
                 )}
-                <DownloadCvButton matchId={matchId} mode="preview" />
+                
                 <DownloadCvButton matchId={matchId} />
 
               </div>

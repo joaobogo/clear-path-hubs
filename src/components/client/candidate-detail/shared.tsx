@@ -138,8 +138,8 @@ export function CandidateHeader({
             released. The server enforces the same rule independently. */}
         {candidate.contact_released ? (
           <>
-            <DownloadCvButton matchId={candidate.match_id} mode="preview" />
-            <DownloadCvButton matchId={candidate.match_id} />
+            
+            <DownloadCvButton matchId={candidate.match_id} mode="download" />
             <DownloadLatestCvLink matchId={candidate.match_id} />
           </>
         ) : (
