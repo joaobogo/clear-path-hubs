@@ -705,4 +705,4 @@ export async function _listMessageHistoryHandler({ data, context }: any): Promis
     });
 
     return { items, total: count ?? 0 };
-  });
+}
