@@ -127,18 +127,33 @@ export const getActivityFeed = createServerFn({ method: "GET" })
 
     const entries = ((rows as AnyRow[]) ?? [])
       .filter((r) => isVisibleActivity(audience, r.event_type as EventType))
-      .slice(0, limit)
-      .map((r) => ({
-        event_id: r.event_id as string,
-        event_type: r.event_type as EventType,
-        label: ACTIVITY_LABELS[r.event_type as EventType] ?? "Update",
-        occurred_at: new Date(r.occurred_at as string).toISOString(),
-        actor_name: (r.actor_name as string) ?? null,
-        position_title: (r.position_title as string) ?? null,
-        position_status: (r.position_status as string) ?? null,
-        organization_id: (r.organization_id as string) ?? null,
-        link_path: linkFor(audience, r),
-      }));
+      .map((r) => {
+        const label = ACTIVITY_LABELS[r.event_type as EventType] ?? "Update";
+        let actorName = (r.actor_name as string) ?? null;
+
+        // Tidy up message events that lack a subject/actor
+        if (r.event_type === "message_sent" && !actorName) {
+          actorName = "TaaSFlow team";
+        }
+
+        return {
+          event_id: r.event_id as string,
+          event_type: r.event_type as EventType,
+          label,
+          occurred_at: new Date(r.occurred_at as string).toISOString(),
+          actor_name: actorName,
+          position_title: (r.position_title as string) ?? null,
+          position_status: (r.position_status as string) ?? null,
+          organization_id: (r.organization_id as string) ?? null,
+          link_path: linkFor(audience, r),
+        };
+      })
+      .filter((e) => {
+        // Exclude events that still have no context/actor and would render as "Message sent · —"
+        if (e.event_type === "message_sent" && !e.actor_name && !e.position_title) return false;
+        return true;
+      })
+      .slice(0, limit);
 
     return { audience, entries, fetched_at: new Date().toISOString() };
   });
