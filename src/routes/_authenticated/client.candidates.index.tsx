@@ -286,6 +286,10 @@ function CandidatesPage() {
   const clearCompare = useCallback(() => {
     setCompareIds([]);
     setCompareOpen(false);
+    if (orgId) {
+      clearCompareSelection(orgId);
+    }
+  }, [orgId]);
   }, []);
 
 
