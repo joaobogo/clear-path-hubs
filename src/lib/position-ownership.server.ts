@@ -197,7 +197,7 @@ export async function loadCoverageQueue(
   admin: Admin,
   opts: { includeTest?: boolean; all?: boolean; q?: string } = {},
 ): Promise<CoverageQueue> {
-  const q = admin
+  let q = admin
     .from("positions")
     .select(
       "id, title, status, organization_id, owner_user_id, owner_assigned_at, backup_owner_user_id, backup_owner_assigned_at, needs_reassignment, reassignment_flagged_at, reassignment_reason",
