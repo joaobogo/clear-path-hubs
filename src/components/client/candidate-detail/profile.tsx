@@ -334,24 +334,15 @@ export const AvailabilityAndComp = memo(function AvailabilityAndComp({
 }: {
   candidate: ClientCandidateDTO;
 }) {
-  const comp = candidate.compensation_alignment;
   const av = candidate.candidate.availability;
   const tz = candidate.candidate.timezone;
   const auth = candidate.work_authorization;
 
-  const verdictTone: Record<typeof comp.verdict, { label: string; className: string }> = {
-    aligned: { label: "In range", className: "taas-bg-success-soft taas-fg-success" },
-    over: { label: "Above range", className: "taas-bg-warning-soft taas-fg-warning" },
-    under: { label: "Below range", className: "taas-bg-info-soft taas-fg-info" },
-    unknown: { label: "Not confirmed", className: "taas-bg-neutral-soft taas-fg-neutral" },
-  };
-  const v = verdictTone[comp.verdict];
-
   return (
     <SectionCard
-      title="Availability & compensation"
+      title="Availability & work authorization"
       icon={<Coins className="h-4 w-4" />}
-      description="How this candidate lines up against the approved role terms."
+      description="Timeline and legal requirements for this candidate."
     >
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="rounded-md border bg-background/40 p-3">
@@ -366,39 +357,6 @@ export const AvailabilityAndComp = memo(function AvailabilityAndComp({
             Work authorization
           </div>
           <div className="mt-1 text-sm font-medium">{auth ?? "Not confirmed"}</div>
-        </div>
-        <div className="rounded-md border bg-background/40 p-3 sm:col-span-2">
-          <div className="flex items-center justify-between gap-2">
-            <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-              Compensation alignment
-            </div>
-            <span
-              className={cn(
-                "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold",
-                v.className,
-              )}
-            >
-              {v.label}
-            </span>
-          </div>
-          <div className="mt-2 grid gap-3 sm:grid-cols-2 text-sm">
-            <div>
-              <div className="text-xs text-muted-foreground">Role range</div>
-              <div className="font-medium">
-                {comp.role_range ?? "Not published"}
-                {comp.cadence && comp.role_range && (
-                  <span className="ml-1 text-xs text-muted-foreground">/ {comp.cadence}</span>
-                )}
-              </div>
-            </div>
-            <div>
-              <div className="text-xs text-muted-foreground">Candidate expectation</div>
-              <div className="font-medium">{comp.candidate_expectation ?? "Not shared"}</div>
-            </div>
-          </div>
-          {comp.note && (
-            <p className="mt-2 text-xs text-muted-foreground">{comp.note}</p>
-          )}
         </div>
       </div>
     </SectionCard>
