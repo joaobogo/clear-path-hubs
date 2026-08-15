@@ -56,6 +56,26 @@ export function safeNode(v: unknown): React.ReactNode {
 
   if (typeof val === "object") {
     const o = val as any;
+
+    // Special case: Work Auth {"visa_required":false,"eu_right_to_work":true}
+    if ("eu_right_to_work" in o || "visa_required" in o) {
+      const parts: string[] = [];
+      if (o.eu_right_to_work === true) parts.push("EU right to work");
+      if (o.visa_required === false) parts.push("no visa required");
+      else if (o.visa_required === true) parts.push("visa required");
+      return parts.join(" · ") || "None stated";
+    }
+
+    // Special case: Availability {"note":"","status":"","notice_weeks":X}
+    if ("status" in o || "notice_weeks" in o || "note" in o) {
+      const parts: string[] = [];
+      if (o.status) parts.push(String(o.status));
+      if (o.notice_weeks != null && o.notice_weeks !== "")
+        parts.push(`${o.notice_weeks} week${Number(o.notice_weeks) === 1 ? "" : "s"} notice`);
+      if (o.note) parts.push(String(o.note));
+      return parts.join(" · ") || "Available";
+    }
+
     const keys = Object.keys(o);
     if (keys.length === 0) return null;
     const compact = keys
