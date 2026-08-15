@@ -222,7 +222,7 @@ function ConversationsPage() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span className="truncate text-sm font-medium">
-                        {view === "history" ? c.last_sender_name || "System" : c.subject}
+                        {view === "history" ? c.last_sender_name || "TaaSFlow team" : c.subject}
                       </span>
                       {c.unread > 0 && <Badge>{c.unread} new</Badge>}
                     </div>

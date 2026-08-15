@@ -155,23 +155,38 @@ async function nameMap(
   const rawRole: Record<string, string | null> = {};
   for (const m of ((mems as Row[]) ?? [])) rawRole[m.user_id as string] = (m.role as string | null) ?? null;
 
+  const { resolveStaffPersona } = await import("./staff-persona.server");
   const out: Record<string, { name: string; staff: boolean; role: string }> = {};
   for (const p of (profiles as Row[]) ?? []) {
     const id = p.auth_user_id as string;
     const staff = staffIds.has(id);
+    const persona = resolveStaffPersona({
+      name: p.full_name as string | null,
+      email: p.email as string | null,
+      isStaff: staff,
+      roleLabel: roleLabel(rawRole[id] ?? null, staff),
+    });
     out[id] = {
-      name: (p.full_name as string | null) ?? (p.email as string | null) ?? "Teammate",
-      staff,
-      role: roleLabel(rawRole[id] ?? null, staff),
+      name: persona.name,
+      staff: persona.isStaff,
+      role: persona.role,
     };
   }
-  for (const id of ids)
-    if (!out[id])
+  for (const id of ids) {
+    if (!out[id]) {
+      const staff = staffIds.has(id);
+      const persona = resolveStaffPersona({
+        name: null,
+        isStaff: staff,
+        roleLabel: roleLabel(rawRole[id] ?? null, staff),
+      });
       out[id] = {
-        name: "Teammate",
-        staff: staffIds.has(id),
-        role: roleLabel(rawRole[id] ?? null, staffIds.has(id)),
+        name: persona.name,
+        staff: persona.isStaff,
+        role: persona.role,
       };
+    }
+  }
   return out;
 }
 
@@ -360,16 +375,24 @@ export const getConversation = createServerFn({ method: "GET" })
 
     const rows = (msgs as Row[]) ?? [];
     const names = await nameMap(rows.map((m) => m.sender_user_id as string));
+    const { resolveStaffPersona } = await import("./staff-persona.server");
+
     const messages: ConversationMessage[] = rows.map((m) => {
       const sid = (m.sender_user_id as string | null) ?? null;
       const meta = sid ? names[sid] : undefined;
+      const persona = resolveStaffPersona({
+        name: sid ? (meta?.name ?? null) : null,
+        isStaff: sid ? (meta?.staff ?? false) : true,
+        roleLabel: sid ? (meta?.role ?? null) : "TaaSFlow team",
+      });
+
       return {
         id: m.id as string,
         body: m.body as string,
         created_at: m.created_at as string,
         sender_user_id: sid,
-        sender_name: sid ? (meta?.name ?? "Teammate") : "TaaSFlow",
-        sender_role: sid ? (meta?.role ?? "Your team") : "TaaSFlow system",
+        sender_name: persona.name,
+        sender_role: persona.role,
         sender_side: !sid ? "system" : meta?.staff ? "taasflow" : "client",
         mine: sid === userId,
         attachments: readAttachments(m.attachments),

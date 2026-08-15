@@ -139,15 +139,27 @@ export async function emitEventFromServer(args: {
   // "TaaSFlow" label, so the bell matches what the thread shows.
   let actorName: string | null = null;
   if (args.event === "message_sent" && args.actor_user_id) {
+    const { resolveStaffPersona } = await import("./staff-persona.server");
     const { data: actorProfile } = await supabaseAdmin
       .from("profiles")
       .select("full_name, email")
       .eq("auth_user_id", args.actor_user_id)
       .maybeSingle();
-    actorName =
-      ((actorProfile?.full_name as string | null) ?? null) ||
-      ((actorProfile?.email as string | null) ?? null) ||
-      null;
+
+    const { data: actorMembership } = await supabaseAdmin
+      .from("memberships")
+      .select("role")
+      .eq("user_id", args.actor_user_id)
+      .eq("status", "active")
+      .maybeSingle();
+
+    const isStaff = actorMembership ? ["platform_admin", "operations"].includes(actorMembership.role) : false;
+    const persona = resolveStaffPersona({
+      name: (actorProfile?.full_name as string | null) ?? null,
+      email: (actorProfile?.email as string | null) ?? null,
+      isStaff,
+    });
+    actorName = persona.name;
   }
 
   // Build rows with audience-safe copy
@@ -299,10 +311,27 @@ export const listMyNotifications = createServerFn({ method: "GET" })
       if (actorIds.length > 0) {
         const { data: profiles } = await context.supabase
           .from("profiles")
-          .select("auth_user_id, full_name")
+          .select("auth_user_id, full_name, email")
           .in("auth_user_id", actorIds);
+
+        const { data: memberships } = await context.supabase
+          .from("memberships")
+          .select("user_id, role")
+          .in("user_id", actorIds)
+          .eq("status", "active");
+
+        const { resolveStaffPersona } = await import("./staff-persona.server");
+        const staffRoles = new Set(["platform_admin", "operations"]);
+
         for (const p of profiles ?? []) {
-          nameById.set(p.auth_user_id as string, (p.full_name as string | null) ?? null);
+          const m = (memberships ?? []).find(mem => mem.user_id === p.auth_user_id);
+          const isStaff = m ? staffRoles.has(m.role) : false;
+          const persona = resolveStaffPersona({
+            name: (p.full_name as string | null) ?? null,
+            email: (p.email as string | null) ?? null,
+            isStaff,
+          });
+          nameById.set(p.auth_user_id as string, persona.name);
         }
       }
       for (const e of events ?? []) {
@@ -312,8 +341,8 @@ export const listMyNotifications = createServerFn({ method: "GET" })
           actorId
             ? actorId === context.userId
               ? "You"
-              : (nameById.get(actorId) || "A teammate")
-            : null,
+              : (nameById.get(actorId) || "TaaSFlow team")
+            : "TaaSFlow team",
         );
       }
     }
