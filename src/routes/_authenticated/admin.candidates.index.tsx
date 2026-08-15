@@ -687,9 +687,8 @@ function CandidatesPage() {
                     />
                   </td>
                   <td className="min-w-[12rem] px-3 py-2">
-                    <Link
-                      to="/admin/candidates/$id"
-                      params={{ id: m.match_id }}
+                    <a
+                      href={`/admin/candidates/${m.match_id}`}
                       className="block hover:underline"
                     >
                       <div className="flex items-center gap-1.5 font-medium">
