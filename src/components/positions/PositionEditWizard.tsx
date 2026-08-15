@@ -1082,7 +1082,25 @@ export function PositionEditWizard({
           {/* STEP 7 — Review */}
           {step === 7 && (
             <div className="space-y-3 text-sm">
-              <JobQualityPanel positionId={state.id} onJumpToStep={setStep} />
+              <JobQualityPanel
+                positionId={state.id}
+                onJumpToStep={setStep}
+                draft={{
+                  title: state.title,
+                  description: state.description,
+                  seniority: state.seniority,
+                  employment_type: state.employment_type,
+                  department: state.department ?? "",
+                  must_have_skills: state.must_have_skills,
+                  nice_to_have_skills: state.nice_to_have_skills,
+                  disqualifier_tags: state.disqualifier_tags,
+                  responsibilities: state.responsibilities,
+                  experience: state.experience,
+                  interview_process: state.interview_process,
+                  target_start_date: state.target_start_date,
+                  headcount: typeof state.headcount === "number" ? state.headcount : null,
+                }}
+              />
 
               <ReviewBlock title="Role">
                 <div>

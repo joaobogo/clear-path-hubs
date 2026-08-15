@@ -405,7 +405,7 @@ export const getRequisitionQuality = createServerFn({ method: "GET" })
         ? v.map((x) => (typeof x === "string" ? x : String((x as AnyRow)?.label ?? ""))).filter(Boolean)
         : [];
 
-    return assessJobQuality({
+    const input = {
       title: p.title ?? "",
       description: p.description ?? "",
       seniority: p.seniority ?? "",
@@ -417,7 +417,9 @@ export const getRequisitionQuality = createServerFn({ method: "GET" })
       responsibilities: typeof ctx.responsibilities === "string" ? ctx.responsibilities : "",
       experience: typeof ctx.experience === "string" ? ctx.experience : "",
       interview_process: typeof ctx.interview_process === "string" ? ctx.interview_process : "",
-      screening_questions: (sqRes.data ?? []) as unknown[],
+      screening_questions: ((sqRes.data ?? []) as AnyRow[]).map((q) => ({
+        id: String(q.id ?? ""),
+      })),
       locations: rowsToLocations(locRes.data as AnyRow[]),
       travel_expectation: p.travel_expectation ?? "",
       primary_timezone: p.primary_timezone ?? "",
@@ -427,5 +429,9 @@ export const getRequisitionQuality = createServerFn({ method: "GET" })
       owner_user_id: p.owner_user_id ?? null,
       reference_code: p.reference_code ?? "",
       compensation_collected: !!p.compensation_collected,
-    });
+    };
+
+    // The assessed input travels back so live editors (the role wizard) can
+    // re-run the same pure assessment against unsaved draft values.
+    return { ...assessJobQuality(input), input };
   });
