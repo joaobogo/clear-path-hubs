@@ -1,3 +1,4 @@
+import { formatEnumLabel } from "@/lib/human-labels";
 import { Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -59,7 +60,7 @@ export function FiltersPopover({
             <SelectContent>
               <SelectItem value="all">Any stage</SelectItem>
               {stages.map((s) => (
-                <SelectItem key={s} value={s}>{s.replace(/_/g, " ")}</SelectItem>
+                <SelectItem key={s} value={s}>{formatEnumLabel(s)}</SelectItem>
               ))}
             </SelectContent>
           </Select>

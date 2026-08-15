@@ -1,3 +1,4 @@
+import { formatEnumLabel } from "@/lib/human-labels";
 import { useMemo, useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -312,7 +313,7 @@ export function CompareSheet({
             >
               {candidates.map((c) => (
                 <div key={c.match_id} className="text-xs capitalize">
-                  {String(c.stage).replace(/_/g, " ")}
+                  {formatEnumLabel(c.stage)}
                 </div>
               ))}
             </ComparisonRow>

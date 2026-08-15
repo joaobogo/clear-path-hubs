@@ -17,6 +17,7 @@ import {
   type PositionHandoff,
 } from "@/lib/hire-handoff";
 import { getPositionHandoff, setHandoffStep } from "@/lib/hire-handoff.functions";
+import { formatEnumLabel } from "@/lib/human-labels";
 
 /**
  * Post-hire handoff view.
@@ -140,7 +141,7 @@ export function HandoffView({
         <Fact
           label="Agreed compensation"
           value={handoff.compensation.label ?? "Not recorded"}
-          {...(handoff.employment_type ? { hint: handoff.employment_type } : {})}
+          {...(handoff.employment_type ? { hint: formatEnumLabel(handoff.employment_type) } : {})}
         />
         <Fact
           label="Replacement guarantee"

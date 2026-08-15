@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format/datetime";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -110,7 +111,7 @@ export function TeamsConnectionCard({
         {last && (
           <span className="text-xs text-muted-foreground">
             Last post {last.status === "delivered" ? "delivered" : `failed (${last.error_code})`} ·{" "}
-            {new Date(last.created_at as string).toLocaleString()}
+            {formatDateTime(last.created_at as string)}
           </span>
         )}
       </div>

@@ -28,6 +28,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Field } from "./field";
+import { formatEnumLabel } from "@/lib/human-labels";
 
 // Owns its own form state; the parent only supplies the target hire and
 // success/close callbacks.
@@ -177,7 +178,7 @@ export function OfferTermsDialog({
                 <SelectItem value="__unassigned__">Unassigned</SelectItem>
                 {(ownersData?.owners ?? []).map((o) => (
                   <SelectItem key={o.user_id} value={o.user_id}>
-                    {o.name} · {o.role.replace(/_/g, " ")}
+                    {o.name} · {formatEnumLabel(o.role)}
                   </SelectItem>
                 ))}
               </SelectContent>

@@ -1,3 +1,5 @@
+import { formatEnumLabel } from "@/lib/human-labels";
+import { formatDateTime } from "@/lib/format/datetime";
 import { useState } from "react";
 import type { InterviewDTO } from "@/lib/interviews.functions";
 import { Button } from "@/components/ui/button";
@@ -96,7 +98,7 @@ export function InterviewDetailDialog({
               {interviewStatusLabel(interview)}
             </span>
             {interview.interview_type ? (
-              <span className="capitalize">{interview.interview_type.replace(/_/g, " ")}</span>
+              <span>{formatEnumLabel(interview.interview_type)}</span>
             ) : null}
           </DialogDescription>
         </DialogHeader>
@@ -175,13 +177,13 @@ export function InterviewDetailDialog({
             ) : null}
             {interview.candidate_response ? (
               <DetailRow icon={<Users2 className="h-4 w-4" />} label="Candidate reply">
-                <p className="capitalize">{interview.candidate_response.replace(/_/g, " ")}</p>
+                <p>{formatEnumLabel(interview.candidate_response)}</p>
                 {interview.candidate_note ? (
                   <p className="mt-1 whitespace-pre-wrap text-muted-foreground">{interview.candidate_note}</p>
                 ) : null}
                 {interview.candidate_response_at ? (
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {new Date(interview.candidate_response_at).toLocaleString()}
+                    {formatDateTime(interview.candidate_response_at)}
                   </p>
                 ) : null}
               </DetailRow>

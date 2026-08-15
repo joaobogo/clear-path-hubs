@@ -1,3 +1,4 @@
+import { formatEnumLabel } from "@/lib/human-labels";
 import { useMemo } from "react";
 import type { InterviewDTO } from "@/lib/interviews.functions";
 import {
@@ -212,7 +213,7 @@ function TimelineItem({
           </span>
           {iv.interview_type ? (
             <Badge variant="outline" className="capitalize font-normal">
-              {iv.interview_type.replace(/_/g, " ")}
+              {formatEnumLabel(iv.interview_type)}
             </Badge>
           ) : null}
           {iv.reschedule_count > 0 ? (

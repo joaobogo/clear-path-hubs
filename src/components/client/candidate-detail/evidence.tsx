@@ -1,3 +1,4 @@
+import { formatEnumLabel } from "@/lib/human-labels";
 import { memo } from "react";
 import {
   BadgeCheck,
@@ -25,6 +26,7 @@ import type {
   RequirementStatus,
 } from "@/lib/client-fit-presentation";
 import { SectionCard, Metric } from "./shared";
+import { formatDateTime } from "@/lib/format/datetime";
 
 export function statusBadge(status: RequirementStatus) {
   switch (status) {
@@ -104,8 +106,7 @@ export const EvaluationProvenance = memo(function EvaluationProvenance({
   const ev = candidate.evaluation;
   const anyValue = ev.category_breakdown.some((c) => c.value != null);
   if (!ev.engine_version && !ev.contradiction && !anyValue) return null;
-  const pretty = (s: string) =>
-    s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  const pretty = (s: string) => formatEnumLabel(s);
   return (
     <section
       aria-labelledby="evaluation-heading"
@@ -177,7 +178,7 @@ export const EvaluationProvenance = memo(function EvaluationProvenance({
       {ev.completed_at && (
         <p className="mt-3 text-[11px] text-muted-foreground">
           Evaluation completed{" "}
-          {new Date(ev.completed_at).toLocaleString()}
+          {formatDateTime(ev.completed_at)}
         </p>
       )}
     </section>

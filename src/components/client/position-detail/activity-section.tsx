@@ -1,4 +1,5 @@
 import { humanizeRoleAction } from "@/lib/client/role-audit-humanizer";
+import { formatDateTime } from "@/lib/format/datetime";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -20,7 +21,7 @@ export function ActivitySection({ activity }: { activity: AnyRow[] }) {
               </span>
               <span className="text-xs text-muted-foreground">
                 {a.created_at
-                  ? new Date(a.created_at).toLocaleString()
+                  ? formatDateTime(a.created_at)
                   : ""}
               </span>
             </li>

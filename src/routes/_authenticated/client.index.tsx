@@ -49,6 +49,7 @@ import { EmptyWelcome } from "@/components/client/overview/section-primitives";
 import { CandidatesReleasedSection } from "@/components/client/overview/candidates-released-section";
 import { relTime } from "@/components/client/overview/utils";
 import { PAYMENTS_ENABLED } from "@/config/commerce";
+import { formatDateTime } from "@/lib/format/datetime";
 
 
 
@@ -399,7 +400,7 @@ function OverviewPage() {
           {data?.last_updated && (
             <p className="pt-2 text-xs text-muted-foreground">
               Last updated {relTime(data.last_updated)} ·{" "}
-              {new Date(data.last_updated).toLocaleString()}
+              {formatDateTime(data.last_updated)}
             </p>
           )}
         </>

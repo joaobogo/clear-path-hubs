@@ -13,6 +13,7 @@ import { ProvenanceFigure } from "@/components/ds/provenance-figure";
 import { Badge } from "@/components/ui/badge";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { useQueryState } from "@/hooks/use-query-state";
+import { formatEnumLabel } from "@/lib/human-labels";
 
 export const Route = createFileRoute("/_authenticated/client/data")({
   head: () => ({
@@ -244,7 +245,7 @@ function DataAdvantagePage() {
                       {r.region}
                     </td>
                     <td data-label="Measure" className="px-4 py-2 text-muted-foreground">
-                      {r.signal_key.replace(/_/g, " ")}
+                      {formatEnumLabel(r.signal_key)}
                     </td>
                     <td data-label="Median" className="px-4 py-2 text-right tabular-nums max-sm:text-left">
                       {r.median_value === null

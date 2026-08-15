@@ -24,6 +24,8 @@ import { Badge } from "@/components/ui/badge";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { WorkspaceRowsSkeleton } from "@/components/workspace/pending-states";
+import { formatEnumLabel } from "@/lib/human-labels";
+import { formatDateTime } from "@/lib/format/datetime";
 
 export function MemorySheet({
   orgId,
@@ -218,10 +220,10 @@ export function MemorySheet({
                     events.map((e) => (
                       <li key={e.id} className="text-xs">
                         <p className="font-medium capitalize">
-                          {e.event_type.replace(/_/g, " ")}
+                          {formatEnumLabel(e.event_type)}
                         </p>
                         <p className="text-muted-foreground">
-                          {new Date(e.created_at).toLocaleString()}
+                          {formatDateTime(e.created_at)}
                           {e.actor_name && <> · {e.actor_name}</>}
                         </p>
                         {e.notes && <p className="mt-0.5">{e.notes}</p>}

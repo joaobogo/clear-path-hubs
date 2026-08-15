@@ -17,6 +17,7 @@ import {
 import type { ExecutiveReport } from "@/lib/executive.functions";
 // Money renders through the one shared formatter; salary_amount is MAJOR units.
 import { formatMoneyMajor } from "@/lib/money";
+import { formatDateTime } from "@/lib/format/datetime";
 
 // ── Finance strip ─────────────────────────────────────────────────────────
 
@@ -327,7 +328,7 @@ export function VelocityCard({
 export function FooterLine({ generated_at }: { generated_at: string }) {
   return (
     <p className="text-xs text-muted-foreground">
-      Generated {new Date(generated_at).toLocaleString()} · Numbers are live from your
+      Generated {formatDateTime(generated_at)} · Numbers are live from your
       workspace. See <Link to="/client/offers" className="underline">Offers</Link>,{" "}
       <Link to="/client/positions" className="underline">Roles</Link>, and{" "}
       <Link to="/client/candidates" className="underline">Candidates</Link> for drill-through.

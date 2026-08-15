@@ -1,3 +1,4 @@
+import { formatEnumLabel } from "@/lib/human-labels";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -54,6 +55,7 @@ import {
 import { retryBlueprintAnalysis } from "@/lib/blueprint.functions";
 import { setRoleIntensity } from "@/lib/control-room.functions";
 import { EmptyState, ErrorState, PermissionDenied, SkeletonRows } from "@/components/client/states";
+import { formatDateTime } from "@/lib/format/datetime";
 
 /**
  * First-run sequence — ten steps that configure the hiring system rather than
@@ -173,7 +175,7 @@ export function OnboardingWizard({ orgId }: { orgId?: string }) {
         />
         {state.draft_saved_at && (
           <p className="text-xs text-muted-foreground">
-            Progress saved {new Date(state.draft_saved_at).toLocaleString()}
+            Progress saved {formatDateTime(state.draft_saved_at)}
           </p>
         )}
       </aside>
@@ -895,7 +897,7 @@ function SystemsStep({ state, onDone, back, saveForLater }: BodyProps) {
         <ul className="divide-y divide-border/60 rounded-lg border border-border/70">
           {state.integrations.map((i) => (
             <li key={i.id} className="flex items-center justify-between gap-4 p-3 text-sm">
-              <span className="font-medium capitalize">{i.id.replace(/_/g, " ")}</span>
+              <span className="font-medium capitalize">{formatEnumLabel(i.id)}</span>
               <span className="text-muted-foreground">
                 {HEALTH_LABEL[i.status] ?? i.status}
                 {i.checked_at ? ` · checked ${new Date(i.checked_at).toLocaleDateString()}` : ""}

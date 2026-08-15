@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { formatEnumLabel } from "@/lib/human-labels";
 
 type Props = {
   name: string;
@@ -110,7 +111,7 @@ export function ClientBrandHeader({
             {label}
           </h1>
           <div className="mt-0.5 text-xs text-muted-foreground">
-            <span className="capitalize">{role.replace(/_/g, " ")}</span>
+            <span>{formatEnumLabel(role)}</span>
             {supportView ? (
               <>
                 <span aria-hidden> · </span>
