@@ -36,8 +36,8 @@ export async function verifyPositionDescriptionIntegrity(positionId: string): Pr
 
   if (otherOrgsError || !otherOrgs) return { valid: true };
 
-  const desc = pos.description.toLowerCase();
-  const expectedName = org.name.toLowerCase();
+  const desc = (pos.description || "").toLowerCase();
+  const expectedName = (org.name || "").toLowerCase();
 
   for (const other of otherOrgs) {
     const otherName = other.name.toLowerCase();
