@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { claimWorkQueueItem } from "@/lib/admin-ops.functions";
 import type { QueueItem, QueueTarget } from "@/lib/admin-ops-types";
+import { cn } from "@/lib/utils";
 
 function initials(name: string): string {
   const parts = name.trim().split(/\s+/).slice(0, 2);
