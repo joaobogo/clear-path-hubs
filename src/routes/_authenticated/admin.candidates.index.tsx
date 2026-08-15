@@ -796,7 +796,7 @@ function CandidatesPage() {
             {rows.length === 0 && !isFetching && !searchFailed && (
               <tr>
                 <td colSpan={11} className="px-3 py-16 text-center text-muted-foreground">
-                  No candidates match your filters.
+                  Nothing matches your filters.
                 </td>
               </tr>
             )}
@@ -860,7 +860,7 @@ function CandidatesPage() {
         )}
         {rows.length === 0 && !isFetching && !searchFailed && (
           <li className="rounded-lg border border-dashed py-16 text-center text-sm text-muted-foreground">
-            No candidates match your filters.
+            Nothing matches your filters.
           </li>
         )}
       </ul>
