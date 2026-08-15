@@ -108,9 +108,10 @@ export function computeRoleRisk(input: RoleRiskInput, now: Date = new Date()): R
     return {
       atRisk: true,
       cause: "interview_unscheduled",
-      reason: `An interview requested ${plural(interviewDays, "day")} ago still has no confirmed time.`,
+      reason: `An interview requested ${honestAge(input.oldestInterviewToConfirmAt, now)} still has no confirmed time.`,
     };
   }
+
 
   // 3 · We promised a shortlist by a date and it hasn't landed.
   if (input.promisedShortlistBy && !input.shortlistDeliveredAt) {
