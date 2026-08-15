@@ -255,9 +255,9 @@ function AttentionCard({
         </Button>
 
         <Button asChild size="sm" variant="secondary" className="ml-auto h-8 text-xs">
-          <Link to="/admin/positions/$id" params={{ id: row.position_id }}>
+          <a href={`/admin/positions/${row.position_id}`}>
             Open <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
-          </Link>
+          </a>
         </Button>
       </div>
     </article>
