@@ -449,13 +449,26 @@ function normStr(v: unknown): string | null {
   return s.length ? s : null;
 }
 
+function normPeriod(
+  start: unknown,
+  end: unknown,
+  rawPeriod: unknown,
+): string | null {
+  const p = normStr(rawPeriod);
+  if (p) return p;
+  const s = normStr(start);
+  let e = normStr(end);
+  if (!s) return null;
+  if (!e || e.toLowerCase() === "present") e = "Present";
+  return `${s} – ${e}`;
+}
+
 function normExperience(raw: unknown): ClientCandidateDTO["experience"] {
   if (!Array.isArray(raw)) return [];
   return raw.slice(0, 8).map((e: AnyRow) => ({
     title: String(e?.title ?? e?.role ?? "Role"),
     company: normStr(e?.company ?? e?.employer),
-    period: normStr(e?.period ?? e?.dates ?? e?.duration ??
-      [e?.start_date, e?.end_date ?? "Present"].filter(Boolean).join(" – ")),
+    period: normPeriod(e?.start ?? e?.start_date, e?.end ?? e?.end_date, e?.period ?? e?.dates ?? e?.duration),
     description: normStr(e?.description ?? e?.summary),
   }));
 }
@@ -472,8 +485,7 @@ function normEducation(raw: unknown): ClientCandidateDTO["education"] {
   return raw.slice(0, 6).map((e: AnyRow) => ({
     degree: normStr(e?.degree ?? e?.qualification ?? e?.title),
     institution: normStr(e?.institution ?? e?.school ?? e?.university),
-    period: normStr(e?.period ?? e?.year ??
-      [e?.start_date, e?.end_date].filter(Boolean).join(" – ")),
+    period: normPeriod(e?.start ?? e?.start_date, e?.end ?? e?.end_date, e?.period ?? e?.year),
   }));
 }
 
