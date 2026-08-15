@@ -96,7 +96,8 @@ export const Route = createFileRoute("/jobs/$id/")({
     }
     const pos = loaderData.position;
     if (!pos) return { meta: [{ title: "TaaSFlow job board" }] };
-    const title = `${pos.title} — ${pos.organization_name} · TaaSFlow`;
+    const employer = pos.organization_name;
+    const title = `${pos.title} — ${employer} · TaaSFlow`;
     const desc = pos.description.replace(/\s+/g, " ").trim().slice(0, 155);
     const canonical = `https://taasflow.com/jobs/${buildJobSlug(pos)}`;
     const image = pos.organization_logo_url;
