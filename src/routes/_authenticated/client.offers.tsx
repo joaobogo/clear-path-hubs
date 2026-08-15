@@ -170,7 +170,11 @@ function OffersPage() {
                 ? "—"
                 : `${Math.round(report.totals.acceptance_rate * 100)}%`
             }
-            hint="Accepted ÷ decided"
+            hint={
+              report?.totals.acceptance_rate == null && !pendingReport
+                ? "Accepted ÷ decided"
+                : "Accepted ÷ decided"
+            }
           />
           <Kpi
             label="Avg time to hire"
