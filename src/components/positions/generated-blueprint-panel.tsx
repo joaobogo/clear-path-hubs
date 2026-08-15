@@ -203,9 +203,11 @@ export function GeneratedBlueprintPanel({
             <span>
               {failed
                 ? "Stopped before completion"
-                : stageIndex > -1
-                  ? `Stage ${stageIndex + 1} of ${BLUEPRINT_STAGES.length}`
-                  : "Queued"}
+                : stageIndex >= BLUEPRINT_STAGES.length
+                  ? "Final stage"
+                  : stageIndex > -1
+                    ? `Stage ${stageIndex + 1} of ${BLUEPRINT_STAGES.length}`
+                    : "Queued"}
             </span>
             <span>No countdown — this updates as each stage completes.</span>
           </div>
