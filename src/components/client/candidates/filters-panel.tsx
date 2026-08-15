@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useDebouncedTextInput } from "@/hooks/use-debounced-text-input";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -73,6 +74,8 @@ export function CandidatesFiltersPanel({
   totalCount?: number;
 }) {
   const [open, setOpen] = useState(false);
+  // Keystrokes stay local; only the applied filter is debounced (see hook docs).
+  const qInput = useDebouncedTextInput(search.q, (q) => setF({ q }));
   const advancedCount = ADVANCED_KEYS.filter((k) => {
     const v = search[k];
     return !!v && v !== "all";
@@ -85,8 +88,8 @@ export function CandidatesFiltersPanel({
         <Input
           className="md:flex-1 md:min-w-[14rem]"
           placeholder="Search by name, skill, role, location…"
-          value={search.q}
-          onChange={(e) => setF({ q: e.target.value })}
+          value={qInput.value}
+          onChange={(e) => qInput.onChange(e.target.value)}
           aria-label="Search candidates"
         />
         <Select
