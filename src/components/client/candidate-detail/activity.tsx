@@ -22,6 +22,8 @@ import {
 } from "@/components/client/tag-silver-medalist-dialog";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { SectionCard } from "./shared";
+import { formatEnumLabel } from "@/lib/human-labels";
+import { formatDateTime } from "@/lib/format/datetime";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -130,9 +132,9 @@ export function ActivitySection({
           <ul className="space-y-1 text-sm">
             {interviews.map((iv) => (
               <li key={iv.id} className="flex items-center justify-between">
-                <span className="capitalize">{String(iv.status).replace(/_/g, " ")}</span>
+                <span>{formatEnumLabel(iv.status)}</span>
                 <span className="text-xs text-muted-foreground">
-                  {iv.scheduled_at ?? iv.requested_at ?? ""}
+                  {formatDateTime(iv.scheduled_at ?? iv.requested_at)}
                 </span>
               </li>
             ))}
@@ -148,9 +150,9 @@ export function ActivitySection({
             {decisions.map((d) => (
               <li key={d.id} className="border-b pb-2 last:border-b-0">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">{DECISION_LABELS[String(d.decision)] ?? String(d.decision).replace(/_/g, " ")}</span>
+                  <span className="font-medium">{DECISION_LABELS[String(d.decision)] ?? formatEnumLabel(d.decision)}</span>
                   <span className="text-xs text-muted-foreground">
-                    {new Date(d.created_at).toLocaleString()}
+                    {formatDateTime(d.created_at)}
                   </span>
                 </div>
                 {d.reason_code && (
@@ -162,7 +164,7 @@ export function ActivitySection({
                   <div className="mt-1 flex flex-wrap gap-1">
                     {(d.details.signals as string[]).map((s) => (
                       <Badge key={s} variant="secondary" className="text-[10px]">
-                        {s.replace(/_/g, " ")}
+                        {formatEnumLabel(s)}
                       </Badge>
                     ))}
                   </div>

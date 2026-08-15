@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
+import { formatEnumLabel } from "@/lib/human-labels";
 
 export function BackLink() {
   return (
@@ -54,7 +55,7 @@ export function CandidateHeader({
             unicorn={candidate.unicorn}
           />
           <Badge variant="outline" className="capitalize">
-            {String(candidate.stage).replace(/_/g, " ")}
+            {formatEnumLabel(candidate.stage)}
           </Badge>
         </div>
         {c.headline && (

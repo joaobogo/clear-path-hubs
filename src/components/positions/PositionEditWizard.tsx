@@ -37,6 +37,7 @@ import { checkRequisitionDuplicate } from "@/lib/requisition.functions";
 import { RequisitionEditor } from "@/components/positions/RequisitionEditor";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { JobPostStep } from "@/components/positions/JobPostStep";
+import { formatEnumLabel } from "@/lib/human-labels";
 
 
 const STEPS = [
@@ -1085,7 +1086,7 @@ export function PositionEditWizard({
 
               <ReviewBlock title="Role">
                 <div>
-                  {state.title || "—"} · {state.work_model || "—"} · {state.employment_type || "—"}
+                  {state.title || "—"} · {formatEnumLabel(state.work_model, "—")} · {formatEnumLabel(state.employment_type, "—")}
                 </div>
                 <div className="text-muted-foreground">
                   {state.seniority || "—"} · Positions: {state.headcount || "—"}

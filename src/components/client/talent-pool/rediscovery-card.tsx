@@ -96,7 +96,7 @@ export function RediscoveryCard({
     onError: (e: Error) => toastError(e),
   });
 
-  const stageLabel = candidate.last_stage?.replace(/_/g, " ") ?? "—";
+  const stageLabel = formatEnumLabel(candidate.last_stage, "—");
   const days = Math.max(
     1,
     Math.round(

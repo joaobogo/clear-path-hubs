@@ -25,6 +25,7 @@ import { ProposeForm } from "./propose-form";
 import { ConfirmForm } from "./confirm-form";
 import { detectTimezone, formatWhen, statusBadgeClass } from "./helpers";
 import {
+import { formatEnumLabel } from "@/lib/human-labels";
   displayInterviewStatus,
   hasInterviewHappened,
   interviewStatusLabel,
@@ -96,7 +97,7 @@ export function InterviewDetailDialog({
               {interviewStatusLabel(interview)}
             </span>
             {interview.interview_type ? (
-              <span className="capitalize">{interview.interview_type.replace(/_/g, " ")}</span>
+              <span>{formatEnumLabel(interview.interview_type)}</span>
             ) : null}
           </DialogDescription>
         </DialogHeader>
@@ -175,7 +176,7 @@ export function InterviewDetailDialog({
             ) : null}
             {interview.candidate_response ? (
               <DetailRow icon={<Users2 className="h-4 w-4" />} label="Candidate reply">
-                <p className="capitalize">{interview.candidate_response.replace(/_/g, " ")}</p>
+                <p>{formatEnumLabel(interview.candidate_response)}</p>
                 {interview.candidate_note ? (
                   <p className="mt-1 whitespace-pre-wrap text-muted-foreground">{interview.candidate_note}</p>
                 ) : null}

@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { SlotProposer, type ProposalSubmission } from "./slot-proposer";
 import { AgeBadge } from "@/components/client/age-badge";
 import {
+import { formatEnumLabel } from "@/lib/human-labels";
   CalendarPlus,
   CheckCircle2,
   Circle,
@@ -212,7 +213,7 @@ function TimelineItem({
           </span>
           {iv.interview_type ? (
             <Badge variant="outline" className="capitalize font-normal">
-              {iv.interview_type.replace(/_/g, " ")}
+              {formatEnumLabel(iv.interview_type)}
             </Badge>
           ) : null}
           {iv.reschedule_count > 0 ? (

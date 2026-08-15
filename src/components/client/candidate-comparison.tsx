@@ -13,6 +13,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
+import { formatEnumLabel } from "@/lib/human-labels";
   buildCompareMatrix,
   compareEligibility,
   rubricGuard,
@@ -312,7 +313,7 @@ export function CompareSheet({
             >
               {candidates.map((c) => (
                 <div key={c.match_id} className="text-xs capitalize">
-                  {String(c.stage).replace(/_/g, " ")}
+                  {formatEnumLabel(c.stage)}
                 </div>
               ))}
             </ComparisonRow>
