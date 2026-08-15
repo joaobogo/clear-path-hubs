@@ -1,0 +1,54 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`buildValidationList > snapshots the three demo profiles 1`] = `
+{
+  "ana": [
+    {
+      "id": "r2",
+      "label": "Fluent written and spoken English",
+      "sentence": "the evidence conflicts; ask the candidate to clarify.",
+      "status": "contradicted",
+      "tone": "warning",
+    },
+    {
+      "id": "r1",
+      "label": "5+ years building production React and TypeScript applications",
+      "sentence": "partially evidenced; confirm depth in the interview.",
+      "status": "partial",
+      "tone": "warning",
+    },
+  ],
+  "miguel": [
+    {
+      "id": "r4",
+      "label": "AWS infrastructure ownership",
+      "sentence": "no supporting evidence found; validate directly.",
+      "status": "not_evidenced",
+      "tone": "warning",
+    },
+    {
+      "id": "r3",
+      "label": "Experience leading a small team",
+      "sentence": "partially evidenced; confirm depth in the interview.",
+      "status": "partial",
+      "tone": "warning",
+    },
+  ],
+  "pedro": [
+    {
+      "id": "r1",
+      "label": "5+ years building production React and TypeScript applications",
+      "sentence": "no supporting evidence found; validate directly.",
+      "status": "not_evidenced",
+      "tone": "warning",
+    },
+    {
+      "id": "r2",
+      "label": "Fluent written and spoken English",
+      "sentence": "partially evidenced; confirm depth in the interview.",
+      "status": "partial",
+      "tone": "warning",
+    },
+  ],
+}
+`;
