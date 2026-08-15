@@ -128,7 +128,7 @@ export function CompactList({
                   {c.candidate.years_experience != null ? `${c.candidate.years_experience} yrs` : "—"}
                 </td>
                 <td className="hidden py-2 px-3 text-muted-foreground lg:table-cell">{c.candidate.location ?? "—"}</td>
-                <td className="py-2 px-3 text-muted-foreground">{clientStageLabel(c.stage)}</td>
+                <td className="py-2 px-3 text-muted-foreground whitespace-nowrap">{clientStageLabel(c.stage)}</td>
                 <td className="hidden py-2 px-3 lg:table-cell">
                   <ReviewTimelineStrip timeline={c.review_timeline} />
                 </td>
