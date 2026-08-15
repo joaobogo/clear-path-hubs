@@ -44,16 +44,26 @@ import {
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const emptyLocation = (): RequisitionLocation => ({
-  country_code: "US",
+  country_code: "",
   region: "",
   city: "",
-  work_model: "onsite",
+  work_model: "remote",
   is_primary: false,
   headcount: null,
   timezone: "",
   onsite_days_per_week: null,
   notes: "",
 });
+
+function seededLocation(openWorldwide: boolean, workModel: StateWorkModel, location: string): RequisitionLocation {
+  if (openWorldwide) return emptyLocation();
+  return {
+    ...emptyLocation(),
+    work_model: workModel || "remote",
+    notes: location || "",
+    is_primary: true,
+  };
+}
 
 type Form = {
   reference_code: string;
