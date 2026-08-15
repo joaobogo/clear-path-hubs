@@ -405,7 +405,7 @@ export const getRequisitionQuality = createServerFn({ method: "GET" })
         ? v.map((x) => (typeof x === "string" ? x : String((x as AnyRow)?.label ?? ""))).filter(Boolean)
         : [];
 
-    return assessJobQuality({
+    const input = {
       title: p.title ?? "",
       description: p.description ?? "",
       seniority: p.seniority ?? "",
@@ -427,5 +427,9 @@ export const getRequisitionQuality = createServerFn({ method: "GET" })
       owner_user_id: p.owner_user_id ?? null,
       reference_code: p.reference_code ?? "",
       compensation_collected: !!p.compensation_collected,
-    });
+    };
+
+    // The assessed input travels back so live editors (the role wizard) can
+    // re-run the same pure assessment against unsaved draft values.
+    return { ...assessJobQuality(input), input };
   });

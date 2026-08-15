@@ -1,11 +1,13 @@
 // Job-quality indicator: names the missing decision-critical information
 // instead of showing an arbitrary completeness percentage.
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { getRequisitionQuality } from "@/lib/requisition.functions";
-import type { QualityGap } from "@/lib/requisition-schema";
+import { assessJobQuality } from "@/lib/requisition-schema";
+import type { QualityGap, QualityInput } from "@/lib/requisition-schema";
 
 const TONE: Record<string, string> = {
   not_scoreable: "border-destructive/40 bg-destructive/5",
@@ -64,11 +66,18 @@ export function JobQualityPanel({
   onJumpToStep,
   compact,
   editTo,
+  draft,
 }: {
   positionId: string;
   onJumpToStep?: (step: number) => void;
   compact?: boolean;
   editTo?: EditTarget;
+  /**
+   * Unsaved draft values from an open editor. When present, the checklist is
+   * recomputed from the same pure assessment against the draft, so a field the
+   * user just set clears its entry without waiting for a save.
+   */
+  draft?: Partial<QualityInput>;
 }) {
   const load = useServerFn(getRequisitionQuality);
   const { data, isLoading } = useQuery({
@@ -76,18 +85,25 @@ export function JobQualityPanel({
     queryFn: () => load({ data: { id: positionId } }),
   });
 
-  if (isLoading || !data) {
+  const view = useMemo(() => {
+    if (!data) return null;
+    if (!draft) return data;
+    const merged = { ...data.input, ...draft } as QualityInput;
+    return { ...assessJobQuality(merged), input: merged };
+  }, [data, draft]);
+
+  if (isLoading || !view) {
     return <p className="text-sm text-muted-foreground">Checking job quality…</p>;
   }
 
   return (
-    <div className={`rounded-md border p-3 ${TONE[data.readiness]}`}>
-      <p className="text-sm font-medium">{data.summary}</p>
+    <div className={`rounded-md border p-3 ${TONE[view.readiness]}`}>
+      <p className="text-sm font-medium">{view.summary}</p>
       {!compact && (
         <div className="mt-3 space-y-3">
-          <GapList title="Blocks accurate scoring" gaps={data.blocking} onJumpToStep={onJumpToStep} editTo={editTo} />
-          <GapList title="Weakens shortlist accuracy" gaps={data.degrades} onJumpToStep={onJumpToStep} editTo={editTo} />
-          <GapList title="Nice to have" gaps={data.optional} onJumpToStep={onJumpToStep} editTo={editTo} />
+          <GapList title="Blocks accurate scoring" gaps={view.blocking} onJumpToStep={onJumpToStep} editTo={editTo} />
+          <GapList title="Weakens shortlist accuracy" gaps={view.degrades} onJumpToStep={onJumpToStep} editTo={editTo} />
+          <GapList title="Nice to have" gaps={view.optional} onJumpToStep={onJumpToStep} editTo={editTo} />
         </div>
       )}
     </div>
