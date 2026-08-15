@@ -141,7 +141,11 @@ export const getRoleFitFromPool = createServerFn({ method: "POST" })
     ];
     const reqNorm = requirements.map((r) => ({ label: r, n: norm(r) })).filter((r) => r.n.length > 1);
 
-    // Every candidate previously screened for this workspace.
+    // Every candidate previously screened for this workspace. The library is the
+    // whole set of screen-recruited people, not excluding those who were already
+    // matched to the picked role — the selected role may be a re-run, a refilled
+    // requisition, or a similar title, and the client wants to see all evidence
+    // they have already paid for.
     const { data: matchRows, error: mErr } = await supabase
       .from("candidate_matches")
       .select("candidate_profile_id, position_id, stage, created_at, delivered_at, updated_at")
@@ -155,7 +159,7 @@ export const getRoleFitFromPool = createServerFn({ method: "POST" })
       screened_at: string;
       screened_for: string | null;
       furthest: string | null;
-      onThisRole: boolean;
+      on_this_role: boolean;
     };
     const rolled = new Map<string, Roll>();
     for (const m of matches) {
@@ -167,7 +171,7 @@ export const getRoleFitFromPool = createServerFn({ method: "POST" })
           screened_at: stamp,
           screened_for: m.position_id,
           furthest: m.stage,
-          onThisRole: m.position_id === data.positionId,
+          on_this_role: m.position_id === data.positionId,
         });
       } else {
         if (stamp < cur.screened_at) {
@@ -175,18 +179,17 @@ export const getRoleFitFromPool = createServerFn({ method: "POST" })
           cur.screened_for = m.position_id;
         }
         if ((STAGE_RANK[m.stage] ?? -1) > (STAGE_RANK[cur.furthest ?? ""] ?? -1)) cur.furthest = m.stage;
-        if (m.position_id === data.positionId) cur.onThisRole = true;
+        if (m.position_id === data.positionId) cur.on_this_role = true;
       }
     }
 
     const libraryIds = Array.from(rolled.keys());
-    const candidateIds = libraryIds.filter((id) => !rolled.get(id)!.onThisRole);
-    if (candidateIds.length === 0) {
+    if (libraryIds.length === 0) {
       return {
         position: { id: pos.id, title: pos.title, location: pos.location, seniority: pos.seniority },
         candidates: [],
         summary: {
-          library_size: libraryIds.length,
+          library_size: 0,
           fitting: 0,
           already_interviewed: 0,
           screenings_reused: 0,
@@ -195,6 +198,7 @@ export const getRoleFitFromPool = createServerFn({ method: "POST" })
         requirements,
       };
     }
+
 
     const { data: profileRows } = await supabase
       .from("candidate_profiles")
