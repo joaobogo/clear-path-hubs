@@ -356,7 +356,7 @@ function ApprovalsPage() {
               expected: "This fills up as approval items in this workspace are closed.",
               populates: "Closed approval items are listed here with who closed them and when.",
               activity: "Nothing has been closed in this inbox so far.",
-              action: { label: "See open items", onClick: () => setView("open") },
+              action: { label: "See all items", to: "/client/approvals" },
             }}
           />
         ) : (
