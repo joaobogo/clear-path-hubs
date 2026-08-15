@@ -263,7 +263,7 @@ function CandidatesPage() {
   useEffect(() => {
     // Drop any selection that is no longer client-visible (tenant switch, filter change to hidden rows).
     // EXCEPT if we just loaded the page and are initializing from storage/URL.
-    if (!rowsRaw || (rowsRaw as ClientCandidateDTO[]).length === 0) return;
+    if (!rowsRaw || (rowsRaw as ClientCandidateDTO[]).length === 0 || initialCompare.length > 0) return;
 
     setCompareIds((ids) => {
       const rows = rowsRaw as ClientCandidateDTO[];
