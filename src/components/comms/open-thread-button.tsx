@@ -55,14 +55,14 @@ export function OpenThreadButton({
           await navigate({
             to: "/client/conversations/$conversationId",
             params: { conversationId: res.id },
-            search: { org: orgSearch },
+            search: { org: orgSearch, preview },
           });
         } catch {
           // If conversation creation fails (e.g. invalid IDs), fall back to
           // the organization's general messages list rather than a dead end.
           await navigate({
             to: "/client/conversations",
-            search: { org: orgSearch },
+            search: { org: orgSearch, preview },
           });
         } finally {
           setBusy(false);
