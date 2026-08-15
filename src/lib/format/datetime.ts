@@ -94,15 +94,16 @@ export function formatPeriod(period: string | null | undefined, fallback = "Date
     const start = ymRange[1]!;
     const endRaw = ymRange[2]!.toLowerCase();
     const end = endRaw === "present" || endRaw === "now" || endRaw === "current" ? "Present" : endRaw;
-    const startDate = new Date(`${start}-01T00:00:00Z`);
+    const startDate = new Date(`${start}-15T00:00:00Z`);
     const formatted =
-      Number.isNaN(startDate.getTime()) ? start : MONTH_YEAR.format(startDate);
+      Number.isNaN(startDate.getTime()) ? start : MONTH_YEAR_UTC.format(startDate);
     if (end === "Present") return `${formatted} – Present`;
-    const endDate = new Date(`${end}-01T00:00:00Z`);
+    const endDate = new Date(`${end}-15T00:00:00Z`);
     const formattedEnd =
-      Number.isNaN(endDate.getTime()) ? end : MONTH_YEAR.format(endDate);
+      Number.isNaN(endDate.getTime()) ? end : MONTH_YEAR_UTC.format(endDate);
     return `${formatted} – ${formattedEnd}`;
   }
+
 
   // Split by dash/en-dash/em-dash, then format each part.
   const parts = trimmed.split(/\s*[–-—]\s*/);
