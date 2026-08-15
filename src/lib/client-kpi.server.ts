@@ -608,9 +608,8 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
       let safeAction: string | null = null;
 
       // Filter out raw system updates and internal taxonomy
-      if (action.includes("|")) return null;
-      if (action.startsWith("UPDATE") && !(after && typeof after === "object" && "stage" in after)) return null;
-
+      const isInternalUpdate = action.startsWith("UPDATE") || action.includes("|") || action.includes(".");
+      
       // Map stage transitions to friendly labels
       if (after && typeof after === "object" && "stage" in after) {
         const fromStage =
@@ -628,13 +627,17 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
         if (toStage === "hired") safeAction = WHITELIST.hired;
       }
 
-      // Map specific action keys
-      if (action === "interview.scheduled") safeAction = WHITELIST.interview_scheduled;
-      if (action === "interview.requested") safeAction = WHITELIST.interview_requested;
-      if (action === "interview.completed") safeAction = WHITELIST.interview_completed;
-      if (action === "decision.recorded") safeAction = WHITELIST.decided;
-      if (action === "profile.viewed") safeAction = WHITELIST.viewed;
-      if (action === "cv.download" || action === "Cv.Download") safeAction = WHITELIST.downloaded;
+      // Map specific action keys (normalized match)
+      const normAction = action.toLowerCase();
+      if (normAction === "interview.scheduled") safeAction = WHITELIST.interview_scheduled;
+      if (normAction === "interview.requested") safeAction = WHITELIST.interview_requested;
+      if (normAction === "interview.completed") safeAction = WHITELIST.interview_completed;
+      if (normAction === "decision.recorded") safeAction = WHITELIST.decided;
+      if (normAction === "profile.viewed" || normAction === "client.candidate.viewed") safeAction = WHITELIST.viewed;
+      if (normAction === "cv.download") safeAction = WHITELIST.downloaded;
+
+      // If it's an internal update and we didn't map it to a friendly label, drop it
+      if (isInternalUpdate && !safeAction) return null;
 
       if (!safeAction) return null;
 
