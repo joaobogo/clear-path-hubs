@@ -48,13 +48,17 @@ export function humanizeRoleAction(action: string): string {
   // 1. Direct match (e.g. "position.create")
   if (map[action]) return map[action];
 
-  // 2. Normalise spaces/underscores to dots (e.g. "position start review" -> "position.start.review")
-  const dotted = action.trim().toLowerCase().replace(/[\s_]+/g, ".");
-  if (map[dotted]) return map[dotted];
+  // 2. Normalise dots/underscores to spaces AND spaces/underscores to dots
+  const normDot = action.trim().toLowerCase().replace(/[\s_]+/g, ".");
+  if (map[normDot]) return map[normDot];
 
-  // 3. Normalise dots/underscores to spaces (e.g. "position.create" -> "position create")
-  const spaced = action.trim().toLowerCase().replace(/[._]+/g, " ");
-  if (map[spaced]) return map[spaced];
+  const normSpace = action.trim().toLowerCase().replace(/[._]+/g, " ");
+  if (map[normSpace]) return map[normSpace];
+
+  // 3. One more try: specific common space-to-dot mappings if needed
+  if (action === "position start review") return map["position.start_review"]!;
+  if (action === "position create") return map["position.create"]!;
+  if (action === "position submit") return map["position.submit"]!;
 
   // 4. Fallback to a generic friendly label for unknown events
   return "Role activity recorded";
