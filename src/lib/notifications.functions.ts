@@ -160,8 +160,7 @@ export async function emitEventFromServer(args: {
     });
     
     if (persona.name) {
-      const roleLabel = isStaff ? " (Staff)" : "";
-      actorName = `${persona.name}${roleLabel}`;
+      actorName = persona.name;
     }
   }
 
