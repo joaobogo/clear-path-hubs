@@ -352,7 +352,7 @@ function ItemRow({
             <time dateTime={item.occurred_at} title={absTime(item.occurred_at)}>
               {relTime(item.occurred_at)}
             </time>
-            {item.candidate && !item.candidate.identified && (
+            {item.candidate && !item.candidate.identified && item.candidate.releaseMeaningful && (
               <>
                 <span aria-hidden="true">·</span>
                 <span>Not yet released to your workspace</span>

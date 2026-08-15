@@ -24,7 +24,7 @@ function item(over: Partial<RailItem> & { id: string }): RailItem {
     status: "done",
     actor: SYSTEM_ACTORS.evidence!,
     role: { id: "role-1", title: "Senior Nurse" },
-    candidate: { match_id: "m1", label: "A candidate", identified: false },
+    candidate: { match_id: "m1", label: "A candidate", identified: false, releaseMeaningful: true },
     occurred_at: new Date(BASE).toISOString(),
     count: 1,
     actions: [],
@@ -72,7 +72,7 @@ describe("collapseItems", () => {
   it("does not merge different candidates or different statuses", () => {
     const out = collapseItems([
       item({ id: "a" }),
-      item({ id: "b", candidate: { match_id: "m2", label: "A candidate", identified: false } }),
+      item({ id: "b", candidate: { match_id: "m2", label: "A candidate", identified: false, releaseMeaningful: true } }),
       item({ id: "c", status: "failed" }),
     ]);
     expect(out).toHaveLength(3);

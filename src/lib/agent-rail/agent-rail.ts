@@ -118,6 +118,11 @@ export type RailCandidateRef = {
    */
   label: string;
   identified: boolean;
+  /**
+   * Whether "Not yet released" is a meaningful state for this event.
+   * False for messages, role updates, etc. where release status doesn't apply.
+   */
+  releaseMeaningful: boolean;
 };
 
 export type RailItem = {
