@@ -29,6 +29,25 @@ import type { ComponentType } from "react";
 export const WORK_QUEUES_KEY = ["admin", "work-queues"] as const;
 
 export const Route = createFileRoute("/_authenticated/admin/")({
+  pendingComponent: () => (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <div className="h-8 w-48 animate-pulse rounded bg-muted" />
+        <div className="h-4 w-96 animate-pulse rounded bg-muted" />
+      </div>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-7">
+        {Array.from({ length: 7 }).map((_, i) => (
+          <div key={i} className="h-20 animate-pulse rounded-lg bg-muted" />
+        ))}
+      </div>
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="h-64 animate-pulse rounded-lg bg-muted" />
+        ))}
+      </div>
+    </div>
+  ),
+
   // The layout resolved the scope in beforeLoad, so the prefetch primes exactly
   // the key the component subscribes to.
   loader: ({ context }) =>

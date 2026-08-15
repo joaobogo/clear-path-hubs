@@ -131,6 +131,18 @@ function buildFilters(search: SearchState) {
 }
 
 export const Route = createFileRoute("/_authenticated/admin/candidates/")({
+  pendingComponent: () => (
+    <div className="space-y-6">
+      <div className="h-8 w-48 animate-pulse rounded bg-muted" />
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="h-10 animate-pulse rounded bg-muted" />
+        ))}
+      </div>
+      <div className="h-[600px] w-full animate-pulse rounded-lg bg-muted" />
+    </div>
+  ),
+
   validateSearch: zodValidator(searchSchema),
   search: { middlewares: [stripSearchParams(SEARCH_DEFAULTS)] },
   // Only the fields the query reads, so unrelated URL params never refetch.
