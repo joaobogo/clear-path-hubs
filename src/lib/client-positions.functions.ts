@@ -214,16 +214,9 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
       .eq("entity_id", data.positionId)
       .order("created_at", { ascending: false })
       .limit(20);
-    const SAFE_ACTION_PREFIXES = [
-      "position.",
-      "candidate_match.stage",
-      "candidate_match.publish",
-      "interview.",
-      "client_decision.",
-      "message.external",
-    ];
+    const { CLIENT_SAFE_ROLE_ACTIONS } = await import("@/lib/client/role-audit-humanizer");
     const activity = ((rawActivity as AnyRow[]) ?? [])
-      .filter((a) => SAFE_ACTION_PREFIXES.some((p) => String(a.action ?? "").startsWith(p)))
+      .filter((a) => CLIENT_SAFE_ROLE_ACTIONS.includes(String(a.action ?? "")))
       .slice(0, 10);
 
     // Pipeline counts — the canonical KPI rows for THIS role, run through the
