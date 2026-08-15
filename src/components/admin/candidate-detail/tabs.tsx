@@ -762,7 +762,7 @@ export function ScreeningTab({ result, evidence }: { result: Any; evidence: Any 
           {llmAnalysis.map((llm, i) => (
             <li key={i} className="rounded-lg border bg-card p-4 text-sm">
               <div className="font-medium">{llm.question}</div>
-              <div className="mt-1 whitespace-pre-wrap text-muted-foreground">{llm.candidate_answer || "—"}</div>
+              <div className="mt-1 whitespace-pre-wrap text-muted-foreground">{safeNode(llm.candidate_answer) || "—"}</div>
               <div className="mt-2 flex items-center gap-2 text-xs">
                 <span className="font-semibold uppercase tracking-wide text-muted-foreground">CV supports:</span>
                 <Badge
