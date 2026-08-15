@@ -212,7 +212,7 @@ export function SavedViewsBar({
             {active ? active.name : "Saved views"}
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-80">
+        <DropdownMenuContent align="end" className="z-[70] w-80">
           {views.isLoading ? (
             <div className="space-y-2 px-2 py-2">
               <Skeleton className="h-4 w-40" />
