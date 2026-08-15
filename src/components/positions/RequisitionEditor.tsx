@@ -88,10 +88,16 @@ export function RequisitionEditor({
   positionId,
   onDirtyChange,
   audience = "admin",
+  openWorldwide = false,
+  workModel = "",
+  location = "",
 }: {
   positionId: string;
   onDirtyChange?: (dirty: boolean) => void;
   audience?: "admin" | "client";
+  openWorldwide?: boolean;
+  workModel?: WorkModel;
+  location?: string;
 }) {
   const qc = useQueryClient();
   const load = useServerFn(getRequisitionMeta);
