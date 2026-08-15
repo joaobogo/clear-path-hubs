@@ -63,10 +63,9 @@ export function TrackingConfigPanel() {
       <CardHeader className="pb-2">
         <CardTitle className="text-base">Tracking configuration</CardTitle>
         <p className="text-xs text-muted-foreground">
-          Every configured tag boots on the first page view for all visitors —
-          consent is recorded but does not gate loading. Tags with no identifier
-          stay dormant; set the listed variable to activate one. Consent recorded
-          in this browser: {consent}.
+          Trackers are only injected once their consent category is granted.
+          GA4 boots restricted and upgrades if allowed. Consent recorded in this
+          browser: {consent}.
         </p>
       </CardHeader>
       <CardContent className="space-y-2">

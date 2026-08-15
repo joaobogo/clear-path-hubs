@@ -16,8 +16,7 @@ import {
  *
  * Regional gate:
  *  - EU/EEA/UK/CH — a prominent choice appears until an affirmative action is
- *    taken. "Accept all" and "Decline all" carry equal weight. Only strictly
- *    necessary tags (cookieless GA4, Apollo, RB2B) run before that.
+ *    taken. "Accept all" and "Decline all" carry equal weight.
  *  - Everywhere else — trackers are permitted by default and a slim, dismissible
  *    notice explains it, with the same controls one click away.
  *
@@ -161,7 +160,7 @@ export function ConsentBanner() {
           <p className="text-xs leading-snug text-muted-foreground">
             {slim
               ? "We use analytics and business tools to understand how the site is used. Turn optional tracking off at any time."
-              : "Only strictly necessary measurement runs before you choose."}{" "}
+              : "Trackers are only injected once their consent category is granted. GA4 boots restricted and upgrades if allowed."}{" "}
             <a href="/privacy" className="underline">
               Privacy policy
             </a>
@@ -175,8 +174,8 @@ export function ConsentBanner() {
                   <span className="font-medium text-foreground">Analytics</span>
                   <span className="block text-muted-foreground">
                     Full Google Analytics measurement plus session quality tools
-                    (Clarity, Hotjar). Declined, Google Analytics still runs
-                    cookieless with no identifiers stored.
+                    (Clarity, Hotjar). Declined, Google Analytics runs
+                    restricted with no identifiers stored.
                   </span>
                 </span>
                 <Switch
@@ -189,7 +188,7 @@ export function ConsentBanner() {
                 <span className="text-sm">
                   <span className="font-medium text-foreground">Marketing</span>
                   <span className="block text-muted-foreground">
-                    Advertising measurement on Meta and LinkedIn.
+                    Advertising measurement on Meta and LinkedIn, plus our business visitor tools (Apollo, RB2B).
                   </span>
                 </span>
                 <Switch
@@ -200,8 +199,7 @@ export function ConsentBanner() {
               </label>
               <p className="text-xs text-muted-foreground">
                 Strictly necessary tooling — sign-in, security, saving this
-                choice, cookieless traffic counts and our business visitor tools
-                (Apollo, RB2B) — always runs and needs no consent.
+                choice, and restricted traffic counts — always runs.
               </p>
             </div>
           )}
