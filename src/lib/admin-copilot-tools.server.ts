@@ -174,10 +174,12 @@ export async function blockedRoles(supabase: Sb): Promise<CopilotToolResult> {
       location: p.location,
       requirements: p.requirements,
     });
-    // A role is "blocked" if it has blockers, even if just 'not_approved' 
-    // (aligns with what's shown in the desk vs ready to publish)
-    return blockers.length > 0;
+    // Align with the "Blocked roles" source of truth (e.g. Publish Gate Desk)
+    // by only including roles with data/payment blockers. 'not_approved' is
+    // a workflow state, not a "blocker" in the desk's terms.
+    return blockers.some((b) => b !== "not_approved");
   });
+
 
   return {
     data: {
