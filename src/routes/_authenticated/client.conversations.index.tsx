@@ -67,6 +67,7 @@ function ConversationsPage() {
   const view = search.view === "history" ? "history" : "threads";
   const ctxFn = useServerFn(getClientContext);
   const listFn = useServerFn(listConversations);
+  const historyFn = useServerFn(listMessageHistory);
   const filter = search.filter || "all";
   const [q, setQ] = useState("");
 
