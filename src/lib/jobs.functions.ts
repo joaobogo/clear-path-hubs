@@ -149,7 +149,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
           description_preview:
             desc.length > 220 ? desc.slice(0, 217).trimEnd() + "…" : desc,
           openings: (p as { openings?: number }).openings ?? 1,
-          facts: { posted: buildPublicJobFacts({ ...p, employment_type: p.employment_type as any }).posted },
+          facts: { posted: buildPublicJobFacts({ ...p, employment_type: p.employment_type as any, published_at: p.published_at }).posted },
         };
       });
   },
