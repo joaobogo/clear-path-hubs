@@ -28,7 +28,11 @@ type Admin = any;
 async function setStage(admin: Admin, positionId: string, stage: Stage, error?: string | null) {
   await admin
     .from("positions")
-    .update({ blueprint_status: stage, blueprint_error: error ?? null })
+    .update({ 
+      blueprint_status: stage, 
+      blueprint_error: error ?? null,
+      updated_at: new Date().toISOString()
+    })
     .eq("id", positionId);
 }
 
