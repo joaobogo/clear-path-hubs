@@ -112,6 +112,22 @@ function ApprovalsPage() {
     enabled: !!orgId,
   });
 
+  // The inbox also carries actions that are not stored tasks — feedback due,
+  // an interview waiting on times, an offer awaiting a response. They come from
+  // the same decision queue Overview reads, so the two screens agree.
+  const overviewFn = useServerFn(getClientOverview);
+  const overview = useQuery({
+    queryKey: ["client-overview", orgId],
+    queryFn: () => overviewFn({ data: { orgId: orgId! } }),
+    enabled: !!orgId,
+  });
+  const derived = useMemo(() => {
+    const queue = ((overview.data as { decision_queue?: QueueRow[] } | undefined)
+      ?.decision_queue ?? []) as QueueRow[];
+    return filterDerived(queue.map(toDerivedApproval), view, taskType);
+  }, [overview.data, view, taskType]);
+
+
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ["client", "approvals", orgId] });
     setSelected(new Set());
