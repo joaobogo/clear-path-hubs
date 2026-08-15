@@ -21,6 +21,7 @@ export async function auditAssistantEvent(
       | "action_proposed"
       | "action_executed"
       | "action_denied"
+      | "action_failed"
       | "gateway_error"
       | "guardrail_missing_data"
       | "guardrail_hallucination";
