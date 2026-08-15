@@ -43,6 +43,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { toFitPresentation } from "@/lib/client-fit-presentation";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/share/$token")({
   head: () => ({
@@ -397,7 +398,7 @@ function CandidateCard({
       <footer className="mt-4 border-t pt-3 text-xs text-muted-foreground">
         Last updated{" "}
         {c.last_updated
-          ? new Date(c.last_updated).toLocaleDateString()
+          ? new Date(c.last_updated).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })
           : "—"}{" "}
         · Stage: {c.stage.replace(/_/g, " ")}
       </footer>
@@ -855,7 +856,7 @@ function CommentsPanel({
                 )}
                 <span className="ml-auto flex items-center gap-1">
                   <Calendar className="h-3 w-3" aria-hidden />
-                  {new Date(c.created_at).toLocaleDateString()}
+                  {new Date(c.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
                 </span>
               </div>
               <p className="mt-1.5 whitespace-pre-line">{c.body}</p>

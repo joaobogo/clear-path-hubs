@@ -1,3 +1,4 @@
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 /**
  * "This week" client update — shared shape for the dashboard card and the
  * weekly email.
@@ -74,7 +75,7 @@ export function totalMovement(update: Pick<WeeklyUpdate, "metrics">): number {
 
 export function formatWindow(update: Pick<WeeklyUpdate, "window_start" | "window_end">): string {
   const fmt = (iso: string) =>
-    new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short" });
+    new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, day: "numeric", month: "short" });
   return `${fmt(update.window_start)} – ${fmt(update.window_end)}`;
 }
 
@@ -82,7 +83,7 @@ export function formatWaitingSince(iso: string | null): string | null {
   if (!iso) return null;
   const t = Date.parse(iso);
   if (Number.isNaN(t)) return null;
-  return `Waiting on you since ${new Date(t).toLocaleDateString(undefined, {
+  return `Waiting on you since ${new Date(t).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
     day: "numeric",
     month: "short",
   })}`;

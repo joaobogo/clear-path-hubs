@@ -3,6 +3,7 @@ import {
   CANDIDATE_STATUS_COPY,
   candidateStatusFromStateKey,
 } from "@/lib/candidate/status-vocabulary";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 /**
  * The single place a candidate is told where they stand: what the state
@@ -60,7 +61,7 @@ export function CandidateStatePanel({
           <div>
             <dt className="text-xs uppercase tracking-wide text-muted-foreground">Interview</dt>
             <dd className="mt-1">
-              {new Date(nextInterviewAt).toLocaleString(undefined, {
+              {new Date(nextInterviewAt).toLocaleString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
                 dateStyle: "medium",
                 timeStyle: "short",
               })}
@@ -71,7 +72,7 @@ export function CandidateStatePanel({
 
       {lastUpdate ? (
         <p className="mt-4 text-xs text-muted-foreground">
-          Last change to your application: {new Date(lastUpdate).toLocaleDateString()}
+          Last change to your application: {new Date(lastUpdate).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
         </p>
       ) : null}
     </section>

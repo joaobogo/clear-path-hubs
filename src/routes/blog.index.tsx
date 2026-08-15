@@ -9,6 +9,7 @@ import {
   BLOG_CATEGORY_SLUGS,
 } from "@/lib/marketing/blog-manifest";
 import { listAllBlogRows } from "@/lib/marketing/blog-catalog";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const entry = getPage("blog");
 
@@ -171,7 +172,7 @@ function BlogIndex() {
               <p className="mt-5 text-xs text-muted-foreground">
                 {featured.readMinutes} min read
                 {featured.publishedAt
-                  ? ` · ${new Date(featured.publishedAt).toLocaleDateString()}`
+                  ? ` · ${new Date(featured.publishedAt).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}`
                   : ""}
               </p>
             </div>
@@ -253,7 +254,7 @@ function BlogIndex() {
                   </p>
                   {p.publishedAt && (
                     <p className="mt-4 text-xs text-muted-foreground">
-                      Published {new Date(p.publishedAt).toLocaleDateString()}
+                      Published {new Date(p.publishedAt).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
                     </p>
                   )}
                 </div>

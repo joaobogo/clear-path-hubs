@@ -16,6 +16,7 @@ import { PilotWarningsPanel } from "@/components/admin/pilot-warnings-panel";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertTriangle, ArrowLeft, CheckCircle2, MessageSquareWarning, XCircle } from "lucide-react";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/admin/intake/$id")({
   loader: ({ context, params }) =>
@@ -199,7 +200,7 @@ function IntakeDetail() {
                   {d.company_name} — {d.role_title}
                 </Link>{" "}
                 <span className="text-muted-foreground">
-                  · {new Date(d.created_at).toLocaleDateString()} · {d.status}
+                  · {new Date(d.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })} · {d.status}
                 </span>
               </li>
             ))}
@@ -376,7 +377,7 @@ function IntakeDetail() {
             {audit.map((a) => (
               <li key={a.id} className="flex items-center gap-3 px-4 py-2 text-xs">
                 <span className="w-24 shrink-0 tabular-nums text-muted-foreground">
-                  {new Date(a.created_at).toLocaleString()}
+                  {new Date(a.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
                 </span>
                 <span className="font-medium capitalize">
                   {String(a.action).replace(/[._]/g, " ")}

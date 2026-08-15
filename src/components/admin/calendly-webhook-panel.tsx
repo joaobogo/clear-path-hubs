@@ -10,6 +10,7 @@ import {
 } from "@/lib/booking/calendly-webhooks.functions";
 import { PanelState } from "@/components/admin/panel-state";
 import { toastError } from "@/lib/toast-error";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const QUERY_KEY = ["calendly-webhook-status"] as const;
 
@@ -170,7 +171,7 @@ export function CalendlyWebhookPanel() {
                 <ul className="mt-2 space-y-1">
                   {data.recentDeliveries.map((d) => (
                     <li key={d.id} className="text-xs text-muted-foreground">
-                      {d.receivedAt ? new Date(d.receivedAt).toLocaleString() : "—"} ·{" "}
+                      {d.receivedAt ? new Date(d.receivedAt).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }) : "—"} ·{" "}
                       <span className="font-mono">{d.eventType}</span> ·{" "}
                       {d.matchedSession ? "matched a booking session" : "no matching session"}
                     </li>

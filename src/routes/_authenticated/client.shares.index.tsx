@@ -26,6 +26,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useConfirmAction } from "@/components/ds";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { useQueryState } from "@/hooks/use-query-state";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/client/shares/")({
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.shares.index.tsx"),
@@ -155,7 +156,7 @@ function SharesPage() {
                       <span className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" aria-hidden />
                         Created{" "}
-                        {new Date(s.created_at).toLocaleDateString()}
+                        {new Date(s.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
                       </span>
                     </div>
                   </div>
@@ -189,7 +190,7 @@ function SharesPage() {
                     label="Last viewed"
                     value={
                       s.last_viewed_at
-                        ? new Date(s.last_viewed_at).toLocaleString(undefined, {
+                        ? new Date(s.last_viewed_at).toLocaleString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
                             dateStyle: "medium",
                             timeStyle: "short",
                           })

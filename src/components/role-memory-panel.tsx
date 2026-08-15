@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/select";
 import { Pin, PinOff, Trash2, NotebookPen, ArrowRightLeft } from "lucide-react";
 import { useConfirmAction } from "@/components/ds";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const KIND_LABEL: Record<RoleMemoryKind, string> = {
   brief: "Brief anchor",
@@ -329,7 +330,7 @@ function MemoryCard({
         )}
         <span className="ml-auto text-xs text-muted-foreground">
           {row.author_display_name ?? "Team member"} ·{" "}
-          {new Date(row.updated_at).toLocaleString(undefined, {
+          {new Date(row.updated_at).toLocaleString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
             dateStyle: "medium",
             timeStyle: "short",
           })}

@@ -229,7 +229,7 @@ export const FitHero = memo(function FitHero({
           )}
           {candidate.last_updated && (
             <p className="mt-2 text-xs text-muted-foreground">
-              Scored {new Date(candidate.last_updated).toLocaleDateString()}
+              Scored {new Date(candidate.last_updated).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
             </p>
           )}
         </div>

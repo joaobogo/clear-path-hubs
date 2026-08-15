@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { ArrowUpRight, Check } from "lucide-react";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 type Queue = Awaited<ReturnType<typeof getPositionsNeedingAttention>>;
 type Row = Queue["rows"][number];
@@ -211,7 +212,7 @@ function AttentionCard({
           <dt className="inline">Last movement </dt>
           <dd className="inline font-medium text-foreground">
             {row.last_movement_at
-              ? new Date(row.last_movement_at).toLocaleDateString()
+              ? new Date(row.last_movement_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })
               : "none yet"}
           </dd>
         </div>

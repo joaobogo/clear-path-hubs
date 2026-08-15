@@ -88,6 +88,7 @@ export async function loadMyDay(
       import("./admin-sla-breach.server"),
       import("./admin-decision-backlog.server"),
       import("./admin-attention.server"),
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
     ]);
 
   const [sla, backlog, attention] = await Promise.all([
@@ -124,7 +125,7 @@ export async function loadMyDay(
       title: `${row.candidate_name} is waiting on a decision`,
       detail:
         row.last_nudge_at
-          ? `Nudged ${new Date(row.last_nudge_at).toLocaleDateString()}`
+          ? `Nudged ${new Date(row.last_nudge_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}`
           : "No nudge sent yet",
       daysOverdue: row.days_waiting,
       positionId: row.position_id,

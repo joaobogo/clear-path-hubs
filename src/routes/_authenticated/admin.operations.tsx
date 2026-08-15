@@ -35,6 +35,7 @@ import { SourceQualityRollupPanel } from "@/components/admin/source-quality-pane
 import { OutreachHealthPanel } from "@/components/admin/outreach-health-panel";
 import { InterviewExceptionsPanel } from "@/components/admin/interview-exceptions-panel";
 import { AlertTriangle, Wifi, Server, User, MoreHorizontal, FileText, Search } from "lucide-react";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/admin/operations")({
   pendingComponent: () => (
@@ -435,7 +436,7 @@ function OperationsPage() {
                         <td className="px-3 py-2 tabular-nums text-sm">{g.attempts}</td>
                         <td className="px-3 py-2 text-[10px] text-muted-foreground">
                           <div>{g.latest.trace_id ?? "—"}</div>
-                          <div>{new Date(g.latest.created_at).toLocaleString()}</div>
+                          <div>{new Date(g.latest.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</div>
                         </td>
                         <td className="px-3 py-2 text-right">
                           <div className="flex items-center justify-end gap-1.5">
@@ -590,7 +591,7 @@ function OperationsPage() {
                   {deliveryItems.map((d) => (
                     <tr key={d.id} className="border-t">
                       <td className="px-4 py-2 text-xs text-muted-foreground">
-                        {new Date(d.updated_at).toLocaleString()}
+                        {new Date(d.updated_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
                       </td>
                       <td className="px-4 py-2 capitalize">{d.notifications?.audience}</td>
                       <td className="px-4 py-2">{d.notifications?.event_type}</td>

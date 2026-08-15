@@ -119,6 +119,7 @@ export function buildCoverage(candidates: StoryCandidate[]): CoverageBlock {
           id: row.id,
           label: row.label,
           importance: row.importance,
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
           met: 0,
           partial: 0,
           missing: 0,
@@ -238,7 +239,7 @@ export function buildMilestone(input: {
   const { status, candidates, nextInterviewAt } = input;
   const at = (iso: string | null) =>
     iso
-      ? new Date(iso).toLocaleDateString(undefined, {
+      ? new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
           weekday: "short",
           day: "numeric",
           month: "short",

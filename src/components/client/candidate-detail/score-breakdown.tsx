@@ -6,6 +6,7 @@ import { buildScoreBreakdown } from "@/lib/client/score-breakdown";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { SectionCard } from "./shared";
 import { RequirementRowView } from "./evidence";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 function CountChip({
   label,
@@ -75,7 +76,7 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
           {b.criteriaSummary && <p className="mt-1">{b.criteriaSummary}</p>}
           {b.scoredAt && (
             <p className="mt-0.5">
-              Scored {new Date(b.scoredAt).toLocaleDateString()}
+              Scored {new Date(b.scoredAt).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
             </p>
           )}
         </div>

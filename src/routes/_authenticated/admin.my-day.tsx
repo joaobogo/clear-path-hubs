@@ -17,6 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState, ErrorState } from "@/components/ds";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { AlarmClock, ArrowRight, Clock, Flag } from "lucide-react";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/admin/my-day")({
   pendingComponent: () => (
@@ -167,7 +168,7 @@ function MyDayPage() {
           </ul>
 
           <p className="mt-6 text-xs text-muted-foreground">
-            Generated {new Date(day.generated_at).toLocaleString()} ·{" "}
+            Generated {new Date(day.generated_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })} ·{" "}
             {day.ownedPositions} owned position
             {day.ownedPositions === 1 ? "" : "s"} checked.
           </p>

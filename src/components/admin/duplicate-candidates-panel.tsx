@@ -28,9 +28,10 @@ import {
   type DuplicatePair,
   type DuplicatePersonSide,
 } from "@/lib/duplicate-candidates";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 function fmtDate(iso: string | null): string {
-  return iso ? new Date(iso).toLocaleDateString() : "—";
+  return iso ? new Date(iso).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE }) : "—";
 }
 
 function useDuplicates() {

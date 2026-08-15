@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatDistanceToNow } from "date-fns";
 import { Download, FileText, Lock, Upload } from "lucide-react";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/me/cv")({
   head: () => ({
@@ -202,7 +203,7 @@ function CvPage() {
               <div className="truncate font-medium">{currentCv.filename}</div>
               <div className="text-xs text-muted-foreground">
                 {fmtSize(currentCv.size)} · uploaded{" "}
-                {new Date(currentCv.created_at).toLocaleDateString()} (
+                {new Date(currentCv.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })} (
                 {formatDistanceToNow(new Date(currentCv.created_at), { addSuffix: true })})
               </div>
             </div>
@@ -316,7 +317,7 @@ function CvPage() {
                             <span className="block text-xs text-muted-foreground">
                               {a.company ?? "Company disclosed after review"}
                               {a.applied_at
-                                ? ` · applied ${new Date(a.applied_at).toLocaleDateString()}`
+                                ? ` · applied ${new Date(a.applied_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}`
                                 : ""}
                             </span>
                             <span className="mt-0.5 block text-xs text-muted-foreground">

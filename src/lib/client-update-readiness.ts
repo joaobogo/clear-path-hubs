@@ -1,3 +1,4 @@
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 /**
  * Client update readiness — shared types and pure helpers.
  *
@@ -53,7 +54,7 @@ export type UpdateReadiness = {
 };
 
 export function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, {
+  return new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
     year: "numeric",
     month: "short",
     day: "numeric",

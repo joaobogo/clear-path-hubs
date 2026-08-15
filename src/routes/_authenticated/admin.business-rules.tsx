@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { ArrowLeft, RefreshCw, RotateCcw, Save, ShieldCheck } from "lucide-react";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const TOP_KEYS = [
   "delivery",
@@ -131,7 +132,7 @@ function BusinessRulesEditor() {
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-xs">{row.key}</span>
                     <span className="text-xs text-muted-foreground">
-                      {row.action} · {new Date(row.created_at).toLocaleString()}
+                      {row.action} · {new Date(row.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
                     </span>
                   </div>
                   {row.note ? (

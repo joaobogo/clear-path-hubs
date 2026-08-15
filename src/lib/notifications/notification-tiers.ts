@@ -60,6 +60,7 @@ export const TIER_META: Record<NotificationTier, TierMeta> = {
     order: 1,
   },
   important: {
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
     label: "Important update",
     description: "Something changed that affects a decision you own.",
     badgeClass: "bg-secondary text-secondary-foreground",
@@ -600,7 +601,7 @@ export function relativeTime(iso: string, now = Date.now()): string {
   if (hours < 24) return `${hours} h ago`;
   const days = Math.round(hours / 24);
   if (days < 7) return `${days} d ago`;
-  return new Date(iso).toLocaleDateString();
+  return new Date(iso).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE });
 }
 
 export function actorLabel(

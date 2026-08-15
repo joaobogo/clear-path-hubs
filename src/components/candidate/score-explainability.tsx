@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, GitCommit, History, ShieldCheck, TrendingDown, TrendingUp } from "lucide-react";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 // Evidence-first score explainability panel.
 //
@@ -188,7 +189,7 @@ export function ScoreExplainability({
                     )}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    {new Date(d.created_at).toLocaleString()}
+                    {new Date(d.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
                   </span>
                 </div>
                 {d.reason && (
@@ -349,11 +350,11 @@ function ScoreDiff({ current, prior }: { current: Any; prior: Any }) {
         <li>
           Evaluated{" "}
           {prior.completed_at
-            ? new Date(prior.completed_at).toLocaleString()
+            ? new Date(prior.completed_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })
             : "—"}{" "}
           →{" "}
           {current.completed_at
-            ? new Date(current.completed_at).toLocaleString()
+            ? new Date(current.completed_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })
             : "—"}
         </li>
         <li className="italic">

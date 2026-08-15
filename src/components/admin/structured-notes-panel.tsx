@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { toastError } from "@/lib/toast-error";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 type Props = {
   targetKind: NoteTargetKind;
@@ -215,7 +216,7 @@ export function StructuredNotesPanel({ targetKind, targetId, title = "Recruiter 
                     ) : null}
                     <span>{n.author_name}</span>
                     <span>·</span>
-                    <span>{new Date(n.created_at).toLocaleString()}</span>
+                    <span>{new Date(n.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</span>
                     {n.edited_at ? <span>· edited</span> : null}
                     {(stillEditable || n.is_mine) && !isEditing ? (
                       <button

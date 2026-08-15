@@ -11,6 +11,7 @@ import {
   verifyTrackers,
   type TrackedEventRecord,
 } from "@/lib/tracking/pixels";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/dev/tracking")({
   component: TrackingDiagnostics,
@@ -81,7 +82,7 @@ function TrackingDiagnostics() {
     );
     setEvents(getTrackedEvents().slice().reverse());
     setBlocked(window._taasflow_tracking?.diagnostics?.slice(-20).reverse() ?? []);
-    setCheckedAt(new Date().toLocaleTimeString());
+    setCheckedAt(new Date().toLocaleTimeString(APP_LOCALE, { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }));
   }, []);
 
   useEffect(() => {
@@ -194,7 +195,7 @@ function TrackingDiagnostics() {
                       </StatusBadge>
                     )}
                     <span className="ml-auto text-xs text-muted-foreground">
-                      {new Date(event.at).toLocaleTimeString()}
+                      {new Date(event.at).toLocaleTimeString(APP_LOCALE, { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
                     </span>
                   </div>
                   <div className="mt-2 grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">

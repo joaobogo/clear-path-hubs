@@ -1,3 +1,4 @@
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 /**
  * What TaaSFlow has actually committed to deliver for one role.
  *
@@ -41,7 +42,7 @@ export type DeliveryCommitment = {
 export function formatCommitmentDate(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
+  return d.toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, weekday: "short", day: "numeric", month: "short" });
 }
 
 /** baseline_at + first_shortlist_days, or null when the inputs aren't usable. */

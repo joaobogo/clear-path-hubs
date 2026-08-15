@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ds";
 import { getRecordAudit, type AuditEntity } from "@/lib/admin-audit.functions";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const PAGE_SIZE = 25;
 
@@ -74,7 +75,7 @@ export function RecordActivityTab({
                 className="text-xs text-muted-foreground"
                 title={new Date(r.created_at).toISOString()}
               >
-                {new Date(r.created_at).toLocaleString()}
+                {new Date(r.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
               </time>
             </div>
             <div className="mt-0.5 text-xs text-muted-foreground">

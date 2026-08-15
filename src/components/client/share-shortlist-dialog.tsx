@@ -30,6 +30,7 @@ import {
   isActionTimeout,
   withActionTimeout,
 } from "@/lib/client/action-timeout";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 type Props = {
   open: boolean;
@@ -210,7 +211,7 @@ export function ShareShortlistDialog({
               <div className="text-sm font-medium">Share link created</div>
               <div className="mt-1 text-xs text-muted-foreground">
                 Expires{" "}
-                {new Date(result.expires_at).toLocaleString(undefined, {
+                {new Date(result.expires_at).toLocaleString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
                   dateStyle: "medium",
                   timeStyle: "short",
                 })}

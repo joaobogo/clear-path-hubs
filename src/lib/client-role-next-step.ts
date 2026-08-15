@@ -1,3 +1,4 @@
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 /**
  * "What happens next" for a whole role, in one line: what happens, who owns it,
  * and the date it is expected by. If we owe the client something we say so; if
@@ -27,12 +28,12 @@ function fmt(iso: string | null | undefined): string | null {
   if (!iso) return null;
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return null;
-  return d.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+  return d.toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, day: "numeric", month: "short" });
 }
 
 function inDays(days: number): string {
   const d = new Date(Date.now() + days * 86_400_000);
-  return d.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+  return d.toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, day: "numeric", month: "short" });
 }
 
 export function roleNextStep(role: RoleNextStepInput, now = new Date()): RoleNextStep {

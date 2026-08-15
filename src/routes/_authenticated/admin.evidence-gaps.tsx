@@ -15,6 +15,7 @@ import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveQueueState, resolveQueueVariant } from "@/lib/empty-states/queue-states";
 import { QueueShortcuts } from "@/components/admin/queue-shortcuts";
 import { QUEUE_ROW_ACTIVE_CLASS, useQueueKeyboard } from "@/lib/admin/queue-keyboard";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/admin/evidence-gaps")({
   head: () => ({
@@ -192,7 +193,7 @@ function EvidenceGaps() {
                             <p className="text-xs text-muted-foreground">
                               {row.position_title ?? "No role attached"}
                               {" · "}
-                              {new Date(row.first_seen).toLocaleDateString()}
+                              {new Date(row.first_seen).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
                               {row.upload_attempts > 1
                                 ? ` · ${row.upload_attempts} upload attempts`
                                 : ""}

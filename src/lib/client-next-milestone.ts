@@ -1,3 +1,4 @@
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 /**
  * "What happens next" for one role — the answer to the question clients
  * currently ask by email.
@@ -54,7 +55,7 @@ export type Milestone = {
 };
 
 export function formatMilestoneDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short" });
+  return new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, day: "numeric", month: "short" });
 }
 
 const NO_DATE_YET = "Date confirmed once sourcing starts";

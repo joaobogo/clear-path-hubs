@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { listTeamsDeliveries } from "@/lib/teams.functions";
 import { Badge } from "@/components/ui/badge";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 /**
  * Staff view of Microsoft Teams delivery: how many workspaces are connected,
@@ -57,7 +58,7 @@ export function TeamsDeliveryPanel() {
                 </div>
               </div>
               <div className="shrink-0 text-xs text-muted-foreground tabular-nums">
-                {new Date(row.created_at as string).toLocaleString()}
+                {new Date(row.created_at as string).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
               </div>
             </li>
           ))}

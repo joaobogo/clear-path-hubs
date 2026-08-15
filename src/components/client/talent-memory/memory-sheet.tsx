@@ -159,7 +159,7 @@ export function MemorySheet({
                     {m.owner_name ?? "Unassigned"}
                   </span>{" "}
                   · Tagged by {m.tagged_by_name ?? "team"} on{" "}
-                  {new Date(m.tagged_at).toLocaleDateString()}
+                  {new Date(m.tagged_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
                 </p>
               </section>
 
@@ -193,7 +193,7 @@ export function MemorySheet({
                           <p className="font-medium">{h.position_title}</p>
                           <p className="text-muted-foreground">
                             {clientStageLabel(h.stage)} ·{" "}
-                            {new Date(h.updated_at).toLocaleDateString()}
+                            {new Date(h.updated_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
                           </p>
                         </div>
                         <Link

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { toastError } from "@/lib/toast-error";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const PERIODS = [
   { days: 1, label: "24 hours" },
@@ -17,7 +18,7 @@ const PERIODS = [
 ] as const;
 
 function fmt(iso: string) {
-  return new Date(iso).toLocaleString();
+  return new Date(iso).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE });
 }
 
 function duration(startIso: string, endIso: string | null) {
