@@ -1,4 +1,4 @@
-import { useEffect, useSyncExternalStore } from "react";
+import { useLayoutEffect, useSyncExternalStore } from "react";
 
 /**
  * Human label for the current detail record.
@@ -6,7 +6,7 @@ import { useEffect, useSyncExternalStore } from "react";
  * The workspace breadcrumb is derived from the URL, and a detail route's last
  * segment is a uuid — which reads as "Ee6d2a…7b7d" to a client. A detail page
  * publishes the name of the thing it is showing here; the shell prefers it over
- * the raw segment and falls back to the URL when nothing is published (loading,
+ * the raw segment and falls back to the URL when nothing was published (loading,
  * error, or a route that never sets it).
  */
 let label: string | null = null;
@@ -40,7 +40,9 @@ export function useCrumbLabel(): string | null {
 
 /** Detail-page side: publish a label for as long as this page is mounted. */
 export function useDetailCrumb(next: string | null | undefined) {
-  useEffect(() => {
+  // Publish synchronously so the workspace breadcrumb updates before the browser
+  // paints, avoiding a flash of the raw uuid segment.
+  useLayoutEffect(() => {
     setCrumbLabel(next?.trim() ? next.trim() : null);
     return () => setCrumbLabel(null);
   }, [next]);
