@@ -102,9 +102,7 @@ function maskEmail(email: string | null | undefined) {
 
 function displayName(row: AnyRow): string {
   const full = row?.full_name ? String(row.full_name).trim() : "";
-  if (full) {
-    return full;
-  }
+  if (full) return full;
   if (row?.email) {
     return String(row.email).trim();
   }
