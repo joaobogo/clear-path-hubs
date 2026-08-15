@@ -236,37 +236,54 @@ function ConversationsPage() {
 
       ) : (
         <ul className="divide-y rounded-lg border bg-card">
-          {items.map((c) => {
-            const Icon =
-              c.scope === "position" ? Briefcase : c.scope === "candidate" ? User : MessageSquare;
+          {items.map((c: any) => {
+            const isHistory = view === "history";
+            const Icon = isHistory
+              ? UserCircle
+              : c.scope === "position"
+                ? Briefcase
+                : c.scope === "candidate"
+                  ? User
+                  : MessageSquare;
+
+            const conversationId = isHistory ? c.conversation_id : c.id;
+            const title = isHistory ? c.sender_name : c.subject;
+            const subtitle = isHistory ? c.subject : c.context_label;
+            const body = isHistory ? c.body : c.last_body;
+            const timestamp = isHistory ? c.created_at : c.last_message_at;
+            const senderName = isHistory ? null : c.last_sender_name;
+
             return (
               <li key={c.id}>
                 <Link
                   to="/client/conversations/$conversationId"
-                  params={{ conversationId: c.id }}
+                  params={{ conversationId }}
                   search={orgSearch ? { org: orgSearch } : undefined}
                   className="flex items-start gap-3 px-5 py-4 transition-colors hover:bg-muted/50"
                 >
                   <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="truncate text-sm font-medium">
-                        {view === "history" ? c.last_sender_name || "TaaSFlow team" : c.subject}
-                      </span>
-                      {c.unread > 0 && <Badge>{c.unread} new</Badge>}
+                      <span className="truncate text-sm font-medium">{title}</span>
+                      {!isHistory && c.unread > 0 && <Badge>{c.unread} new</Badge>}
                     </div>
-                    {view === "history" && (
+                    {subtitle && (
                       <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                        {c.subject}
+                        {subtitle}
                       </p>
                     )}
-                    <p className={cn("mt-1 text-sm text-muted-foreground", view === "history" ? "" : "line-clamp-2")}>
-                      {view !== "history" && c.last_sender_name ? `${c.last_sender_name}: ` : ""}
-                      {c.last_body ?? "No messages yet"}
+                    <p
+                      className={cn(
+                        "mt-1 text-sm text-muted-foreground",
+                        isHistory ? "" : "line-clamp-2",
+                      )}
+                    >
+                      {!isHistory && senderName ? `${senderName}: ` : ""}
+                      {body ?? "No messages yet"}
                     </p>
                   </div>
                   <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
-                    {relTime(c.last_message_at)}
+                    {relTime(timestamp)}
                   </span>
                 </Link>
               </li>
