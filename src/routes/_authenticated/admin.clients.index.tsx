@@ -498,13 +498,12 @@ function ClientCard({ row, onArchive }: { row: ClientRow; onArchive: () => void 
     <div className="space-y-2">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <Link
-            to="/admin/clients/$id"
-            params={{ id: r.id }}
+          <a
+            href={`/admin/clients/${r.id}`}
             className="block truncate text-base font-medium hover:text-primary hover:underline"
           >
             {r.name}
-          </Link>
+          </a>
           <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <span>{r.domain ?? "—"}</span>
             {r.industry && <span>· {r.industry}</span>}
