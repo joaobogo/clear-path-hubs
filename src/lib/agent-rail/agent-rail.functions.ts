@@ -70,13 +70,19 @@ function candidateRef(match: Row | undefined, eventType?: string): RailCandidate
     eventType === "clarification_requested" ||
     !eventType; // Agent activity generic rows
 
+  // The event itself IS the release, so it can never also be tagged as not released.
+  const isReleaseEvent =
+    eventType === "candidate_published" || eventType === "contact_released";
+
   return {
     match_id: match.id as string,
     label: visible && name ? name : "A candidate",
     identified: visible && !!name,
     releaseMeaningful: !releaseMeaningless,
+    isReleaseEvent,
   };
 }
+
 
 export const getAgentActivityRail = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

@@ -45,13 +45,14 @@ export const DECISION_WAIT_DAYS = 3;
 export const INTERVIEW_WAIT_DAYS = 2;
 
 const DAY_MS = 86_400_000;
+const HOUR_MS = 3_600_000;
 
 function daysSince(iso: string | null | undefined, now: Date): number | null {
   if (!iso) return null;
   const t = new Date(iso).getTime();
   if (Number.isNaN(t)) return null;
   // Use a precise difference. If it's less than 24h, it's 0 days.
-  // We subtract 1ms to ensure that if it was exactly 24h ago, it's still 1 day, 
+  // We subtract 1ms to ensure that if it was exactly 24h ago, it's still 1 day,
   // but if it was 23h59m ago, it's 0 days.
   const diffMs = now.getTime() - t;
   return Math.max(0, Math.floor(diffMs / DAY_MS));
@@ -60,6 +61,27 @@ function daysSince(iso: string | null | undefined, now: Date): number | null {
 function plural(n: number, word: string): string {
   return `${n} ${word}${n === 1 ? "" : "s"}`;
 }
+
+/**
+ * Render an age in honest units: hours when < 24h, otherwise whole days.
+ * Never rounds up (e.g. 18 hours stays "18 hours ago", not "2 days ago").
+ */
+function honestAge(iso: string | null | undefined, now: Date): string {
+  if (!iso) return "";
+  const t = new Date(iso).getTime();
+  if (Number.isNaN(t)) return "";
+  const diffMs = now.getTime() - t;
+  const hrs = diffMs / HOUR_MS;
+
+  if (hrs < 24) {
+    const rounded = Math.max(0, Math.round(hrs));
+    return rounded === 0 ? "less than an hour ago" : `${plural(rounded, "hour")} ago`;
+  }
+
+  const days = Math.max(0, Math.round(hrs / 24));
+  return `${plural(days, "day")} ago`;
+}
+
 
 const OK: RoleRisk = { atRisk: false, reason: "", cause: "none" };
 
@@ -86,9 +108,10 @@ export function computeRoleRisk(input: RoleRiskInput, now: Date = new Date()): R
     return {
       atRisk: true,
       cause: "interview_unscheduled",
-      reason: `An interview requested ${plural(interviewDays, "day")} ago still has no confirmed time.`,
+      reason: `An interview requested ${honestAge(input.oldestInterviewToConfirmAt, now)} still has no confirmed time.`,
     };
   }
+
 
   // 3 · We promised a shortlist by a date and it hasn't landed.
   if (input.promisedShortlistBy && !input.shortlistDeliveredAt) {

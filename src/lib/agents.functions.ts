@@ -47,6 +47,98 @@ const AGENT_JOB_TYPES: Record<AgentKey, string[]> = {
   pipeline_watch: ["pipeline_scan", "sla_check"],
 };
 
+// Event types that Insights counts as "agent runs". Keep this in sync with
+// src/lib/intelligence/hiring-intelligence.functions.ts.
+const INSIGHTS_AGENT_RUN_TYPES = new Set([
+  "candidate_stage_changed",
+  "candidate_published",
+  "message_sent",
+  "clarification_requested",
+  "contact_released",
+  "interview_scheduled",
+  "interview_completed",
+]);
+
+// Map business events from the activity feed (v_activity_feed) to the agent that
+// owns them. This lets the agent control page show the same records as the
+// Overview rail and Insights, even when the legacy agent_activity table is empty.
+function eventTypeToAgentKey(eventType: string): AgentKey | null {
+  switch (eventType) {
+    case "candidate_stage_changed":
+    case "client_shortlisted":
+    case "client_approved":
+    case "client_declined":
+      return "pipeline_watch";
+    case "candidate_published":
+    case "contact_released":
+      return "screening";
+    case "message_sent":
+    case "clarification_requested":
+    case "application_received":
+      return "outreach";
+    case "interview_scheduled":
+    case "interview_completed":
+    case "interview_cancelled":
+      return "scheduling";
+    case "position_approved":
+    case "position_published":
+    case "blueprint_compiled":
+      return "market_research";
+    default:
+      return null;
+  }
+}
+
+function sentenceFromFeed(row: Db): string {
+  const type = row.event_type as string;
+  const title = (row.position_title as string | null) ?? "a role";
+  const payload = (row.payload as Record<string, unknown> | null) ?? {};
+
+  switch (type) {
+    case "candidate_stage_changed":
+      return `A candidate moved to ${payload.to ? `"${String(payload.to)}"` : "the next stage"} on ${title}.`;
+    case "client_shortlisted":
+      return `A candidate was shortlisted on ${title}.`;
+    case "client_approved":
+      return `A candidate was approved on ${title}.`;
+    case "client_declined":
+      return `A candidate was declined on ${title}.`;
+    case "candidate_published":
+      return `A candidate passed human review on ${title}.`;
+    case "contact_released":
+      return `Contact details were released for a candidate on ${title}.`;
+    case "message_sent":
+      return `A message was sent on ${title}.`;
+    case "clarification_requested":
+      return `A clarification was requested on ${title}.`;
+    case "application_received":
+      return `An application was received on ${title}.`;
+    case "interview_scheduled":
+      return `An interview was scheduled on ${title}.`;
+    case "interview_completed":
+      return `An interview was completed on ${title}.`;
+    case "interview_cancelled":
+      return `An interview was cancelled on ${title}.`;
+    case "position_approved":
+      return `${title} was approved and opened.`;
+    case "position_published":
+      return `${title} was published.`;
+    case "blueprint_compiled":
+      return `Blueprint compiled for ${title}.`;
+    default:
+      return `Activity recorded on ${title}.`;
+  }
+}
+
+function linkPathFromFeed(row: Db): string | null {
+  if (row.position_id) return `/client/positions/${row.position_id}`;
+  if (row.candidate_match_id) return `/client/candidates/${row.candidate_match_id}`;
+  if (row.application_id) return `/client/positions`; // no dedicated app page
+  return null;
+}
+
+
+
 async function stopAgentWork(supabase: Db, org: string, key: AgentKey) {
   const stopped = { jobs: 0, touches: 0 };
 
@@ -139,9 +231,20 @@ export const getAgentPanel = createServerFn({ method: "GET" })
       .select("agent_key, enabled, paused_at, last_action_at, last_action_summary")
       .eq("organization_id", org);
 
+    // Read the same feed the Overview rail and Insights use. If the legacy
+    // agent_activity table is empty, feed events still give us attributable runs.
+    const { data: feed } = await supabase
+      .from("v_activity_feed")
+      .select(
+        "event_id, event_type, occurred_at, position_id, position_title, candidate_match_id, application_id, payload",
+      )
+      .eq("organization_id", org)
+      .gte("occurred_at", since)
+      .limit(5000);
+
     const { data: activity } = await supabase
       .from("agent_activity")
-      .select("agent_key, outcome, occurred_at, sentence")
+      .select("id, agent_key, outcome, occurred_at, sentence")
       .eq("organization_id", org)
       .gte("occurred_at", since)
       .limit(5000);
@@ -152,12 +255,45 @@ export const getAgentPanel = createServerFn({ method: "GET" })
 
     const agents: AgentCard[] = AGENT_REGISTRY.map((def) => {
       const s = byKey.get(def.key);
-      const mine = (activity ?? []).filter((a: Db) => a.agent_key === def.key);
-      const latest = mine
-        .slice()
-        .sort((a: Db, b: Db) => (a.occurred_at < b.occurred_at ? 1 : -1))[0];
+
+      // Feed events attributable to this agent.
+      const feedEvents = (feed ?? []).filter(
+        (a: Db) => eventTypeToAgentKey(a.event_type as string) === def.key,
+      );
+      // Legacy agent_activity rows.
+      const legacyEvents = (activity ?? []).filter(
+        (a: Db) => a.agent_key === def.key,
+      );
+
+      const allEvents = [...feedEvents, ...legacyEvents]
+        .sort(
+          (a: Db, b: Db) =>
+            (new Date(b.occurred_at).getTime() || 0) -
+            (new Date(a.occurred_at).getTime() || 0),
+        );
+      const latest = allEvents[0];
+
+      const latestFeed = feedEvents[0];
+      const produced = feedEvents.filter((a: Db) =>
+        INSIGHTS_AGENT_RUN_TYPES.has(a.event_type as string),
+      ).length;
+      const producedLegacy = legacyEvents.filter(
+        (a: Db) => a.outcome === "acted",
+      ).length;
+      const blocked = legacyEvents.filter(
+        (a: Db) => a.outcome === "blocked",
+      ).length;
+
       const enabled = !!s?.enabled;
       const pausedAt = (s?.paused_at as string | null) ?? null;
+
+      // Prefer the legacy explicit summary, then a generated sentence from the
+      // feed, then a default "Nothing yet." (handled by the UI).
+      const lastSummary =
+        (s?.last_action_summary as string | null) ??
+        (latestFeed ? sentenceFromFeed(latestFeed) : null) ??
+        (latest ? latest.sentence : null) ??
+        null;
 
       return {
         key: def.key,
@@ -176,11 +312,12 @@ export const getAgentPanel = createServerFn({ method: "GET" })
             ? "On and working."
             : `Off. ${def.offConsequence}`,
         last_action_at:
-          (s?.last_action_at as string | null) ?? latest?.occurred_at ?? null,
-        last_action_summary:
-          (s?.last_action_summary as string | null) ?? latest?.sentence ?? null,
-        produced_this_week: mine.filter((a: Db) => a.outcome === "acted").length,
-        blocked_this_week: mine.filter((a: Db) => a.outcome === "blocked").length,
+          (s?.last_action_at as string | null) ??
+          latest?.occurred_at ??
+          null,
+        last_action_summary: lastSummary,
+        produced_this_week: produced + producedLegacy,
+        blocked_this_week: blocked,
       };
     });
 
@@ -191,6 +328,7 @@ export const getAgentPanel = createServerFn({ method: "GET" })
       agents,
     };
   });
+
 
 export type SwitchResult = {
   agent_key: string;
@@ -331,25 +469,62 @@ export const listAgentActivity = createServerFn({ method: "GET" })
     const { supabase, userId } = context as { supabase: Db; userId: string };
     await assertMember(supabase, userId, data.organization_id);
 
-    let q = supabase
-      .from("agent_activity")
-      .select("id, agent_key, outcome, sentence, reason, link_path, occurred_at")
-      .eq("organization_id", data.organization_id)
-      .order("occurred_at", { ascending: false })
-      .limit(data.limit ?? 100);
-    if (data.agent_key) q = q.eq("agent_key", data.agent_key);
+    const limit = data.limit ?? 100;
 
-    const { data: rows, error } = await q;
-    if (error) throw error;
+    const [feedRes, legacyRes] = await Promise.all([
+      supabase
+        .from("v_activity_feed")
+        .select(
+          "event_id, event_type, occurred_at, position_id, position_title, candidate_match_id, application_id, payload",
+        )
+        .eq("organization_id", data.organization_id)
+        .order("occurred_at", { ascending: false })
+        .limit(limit),
+      supabase
+        .from("agent_activity")
+        .select("id, agent_key, outcome, sentence, reason, link_path, occurred_at")
+        .eq("organization_id", data.organization_id)
+        .order("occurred_at", { ascending: false })
+        .limit(limit),
+    ]);
 
-    return (rows ?? []).map((r: Db) => ({
-      id: r.id,
-      agent_key: r.agent_key,
-      agent_name: agentName(r.agent_key),
-      outcome: r.outcome,
-      sentence: r.sentence,
-      reason: r.reason,
-      link_path: r.link_path,
-      occurred_at: r.occurred_at,
-    }));
+    const feedRows = (feedRes.data ?? []).filter((r: Db) => {
+      const key = eventTypeToAgentKey(r.event_type as string);
+      return data.agent_key ? key === data.agent_key : !!key;
+    });
+
+    const feedActivities: ActivityRow[] = feedRows.map((r: Db) => {
+      const key = eventTypeToAgentKey(r.event_type as string)!;
+      return {
+        id: r.event_id,
+        agent_key: key,
+        agent_name: agentName(key),
+        outcome: "acted",
+        sentence: sentenceFromFeed(r),
+        reason: null,
+        link_path: linkPathFromFeed(r),
+        occurred_at: r.occurred_at,
+      };
+    });
+
+    const legacyActivities: ActivityRow[] = (legacyRes.data ?? [])
+      .filter((r: Db) => (data.agent_key ? r.agent_key === data.agent_key : true))
+      .map((r: Db) => ({
+        id: r.id,
+        agent_key: r.agent_key,
+        agent_name: agentName(r.agent_key),
+        outcome: r.outcome,
+        sentence: r.sentence,
+        reason: r.reason,
+        link_path: r.link_path,
+        occurred_at: r.occurred_at,
+      }));
+
+    return [...feedActivities, ...legacyActivities]
+      .sort(
+        (a, b) =>
+          new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime(),
+      )
+      .slice(0, limit);
   });
+

@@ -123,7 +123,14 @@ export type RailCandidateRef = {
    * False for messages, role updates, etc. where release status doesn't apply.
    */
   releaseMeaningful: boolean;
+  /**
+   * True when the event itself IS the release (e.g. candidate_published,
+   * contact_released). In that case the "Not yet released" tag must be
+   * suppressed because the item already describes the completed release.
+   */
+  isReleaseEvent?: boolean;
 };
+
 
 export type RailItem = {
   id: string;
