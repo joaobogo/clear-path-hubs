@@ -167,7 +167,7 @@ function EvidenceGaps() {
               />
             ) : (
               <>
-                <QueueShortcuts />
+                <QueueShortcuts className="mb-4" />
                 <ul className="divide-y rounded-lg border bg-card" {...kb.listProps}>
                   {rows.map((row: Any, index: number) => {
                     const open = openRow === row.key;

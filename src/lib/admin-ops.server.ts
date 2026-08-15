@@ -40,7 +40,8 @@ function ageTone(iso: string | null, warnDays: number, dangerDays: number): Queu
 }
 
 /** The operator queues, each with an exact count and one direct action. */
-export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Promise<WorkQueue[]> {
+export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promise<WorkQueue[]> {
+  const opts = raw || {};
   const s = await admin();
   const { loadTestScope, excludeTestOrgs, loadAgingIntakes } = await import(
     "./admin-test-scope.server"

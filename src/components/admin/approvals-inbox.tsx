@@ -391,7 +391,7 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
         </p>
       ) : null}
 
-      <QueueShortcuts />
+      <QueueShortcuts className="mb-4" />
 
       {groups.map((group) => (
         <Card key={group.kind}>
