@@ -255,16 +255,19 @@ function CandidatesPage() {
 
 
 
- useEffect(() => {
-  // Drop any selection that is no longer client-visible (tenant switch, filter change to hidden rows).
-  setCompareIds((ids) => {
-   const rows = rowsRaw as ClientCandidateDTO[];
-   const next = ids.filter((id) => rows.some((r) => r.match_id === id));
-   // Bail out if unchanged to avoid render loops (rowsRaw default `[]` is a fresh ref each render).
-   if (next.length === ids.length && next.every((v, i) => v === ids[i])) return ids;
-   return next;
-  });
- }, [rowsRaw, orgId]);
+  useEffect(() => {
+    // Drop any selection that is no longer client-visible (tenant switch, filter change to hidden rows).
+    // EXCEPT if we just loaded the page and are initializing from storage/URL.
+    if (!rowsRaw || (rowsRaw as ClientCandidateDTO[]).length === 0) return;
+
+    setCompareIds((ids) => {
+      const rows = rowsRaw as ClientCandidateDTO[];
+      const next = ids.filter((id) => rows.some((r) => r.match_id === id));
+      // Bail out if unchanged to avoid render loops (rowsRaw default `[]` is a fresh ref each render).
+      if (next.length === ids.length && next.every((v, i) => v === ids[i])) return ids;
+      return next;
+    });
+  }, [rowsRaw, orgId]);
 
   const toggleCompare = useCallback((id: string) => {
     setCompareIds((prev) => {
