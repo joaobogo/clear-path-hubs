@@ -24,6 +24,11 @@ import {
   resolveNotificationPrefs,
 } from "@/lib/candidate/notification-events";
 import { track } from "@/lib/candidate/funnel-events.functions";
+import { EmailChangeCard } from "@/components/account/email-change-card";
+import { PasswordChangeCard } from "@/components/account/password-change-card";
+import { GlobalSignOutCard } from "@/components/account/global-sign-out-card";
+import { StaffProfileCard } from "@/components/account/staff-profile-card";
+
 
 export const Route = createFileRoute("/_authenticated/me/settings")({
   head: () => ({
@@ -147,7 +152,17 @@ function SettingsPage() {
         <SupportRequestSheet />
       </header>
 
+      {data?.seat !== "candidate" && (
+        <>
+          <StaffProfileCard initialName={data?.profile?.full_name ?? ""} />
+          <EmailChangeCard />
+          <PasswordChangeCard />
+          <GlobalSignOutCard />
+        </>
+      )}
+
       {data?.seat === "candidate" && (
+
         <>
           <section className="rounded-lg border bg-card p-5 space-y-4">
             <div>
