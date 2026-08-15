@@ -623,9 +623,12 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     const hires = scoped.filter((r) => r.status === "hire_confirmed");
     const declined = scoped.filter((r) => r.status === "offer_declined");
     const closedLost = scoped.filter((r) => r.status === "closed_lost").length;
-    const decidedOffers = hires.length + declined.length;
-    const acceptanceRate =
-      decidedOffers > 0 ? hires.length / decidedOffers : null;
+    const decidedOffers = scoped.filter((r) => 
+      ["hire_confirmed", "offer_accepted", "offer_declined", "closed_lost"].includes(r.status)
+    ).length;
+    const acceptanceRate = decidedOffers > 0 
+      ? scoped.filter((r) => ["hire_confirmed", "offer_accepted"].includes(r.status)).length / decidedOffers 
+      : null;
 
     const daysHired = hires
       .map((r) => (r.days_to_hire == null ? null : Number(r.days_to_hire)))
