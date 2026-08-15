@@ -223,6 +223,9 @@ function JobsPage() {
               ? "No roles are open through TaaSFlow right now."
               : `${positions.length} live ${positions.length === 1 ? "role" : "roles"} open through TaaSFlow. Apply in minutes — no account needed.`}
           </p>
+          <p className="mt-2 text-sm text-muted-foreground italic">
+            Only active + public roles with a complete description and requirements appear on the board.
+          </p>
           <p className="mt-2 text-sm">
             Already applied?{" "}
             <Link to="/apply/status" className="underline underline-offset-4">
