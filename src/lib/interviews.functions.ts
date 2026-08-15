@@ -13,6 +13,7 @@ import { isValidTimezone } from "./scheduling";
 import { assertProposedSlots, isEmail } from "./interview-proposal";
 import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 import { assertEditor } from "@/lib/client-shared.server";
+import { resolveNotificationsForUser } from "@/lib/notifications-resolver.server";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -565,6 +566,14 @@ export const confirmInterviewTime = createServerFn({ method: "POST" })
     } catch (e) {
       console.error("[confirmInterviewTime] emit failed", trace, e);
     }
+
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await resolveNotificationsForUser(supabaseAdmin, context.userId);
+    } catch (e) {
+      console.error("[confirmInterviewTime] resolver failed", trace, e);
+    }
+
     return { ok: true, trace_id: trace, rescheduled: isReschedule };
   });
 
@@ -620,6 +629,14 @@ export const cancelInterview = createServerFn({ method: "POST" })
     } catch (e) {
       console.error("[cancelInterview] emit failed", trace, e);
     }
+
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await resolveNotificationsForUser(supabaseAdmin, context.userId);
+    } catch (e) {
+      console.error("[cancelInterview] resolver failed", trace, e);
+    }
+
     return { ok: true, trace_id: trace };
 
   });
@@ -681,6 +698,14 @@ export const markInterviewCompleted = createServerFn({ method: "POST" })
     } catch (e) {
       console.error("[markInterviewCompleted] emit failed", trace, e);
     }
+
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await resolveNotificationsForUser(supabaseAdmin, context.userId);
+    } catch (e) {
+      console.error("[markInterviewCompleted] resolver failed", trace, e);
+    }
+
     return { ok: true, trace_id: trace };
 
   });

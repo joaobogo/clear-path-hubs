@@ -38,6 +38,7 @@ import { buildQueue, type QueueItem } from "@/lib/client-decision-queue";
 import { buildOfferRow } from "@/lib/client-offer-holder";
 import { computeNextMilestone } from "@/lib/client-next-milestone";
 import { buildRoleTimeline } from "@/lib/client-role-timeline";
+import { resolveNotificationsForUser } from "@/lib/notifications-resolver.server";
 import { assertWorkspaceAccess, readWorkspaceAccess } from "@/lib/authz/workspace-access";
 import { hydrateClientCandidateProfiles } from "@/lib/client-candidate-hydrate.server";
 import {
@@ -183,6 +184,9 @@ export const moveMatchStage = createServerFn({ method: "POST" })
         reason_code: data.reasonCode ?? null,
       } as never);
     }
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await resolveNotificationsForUser(supabaseAdmin, context.userId);
 
     if (data.toStage === "interview_process" && from !== "interview_process") {
       // Same one-open-interview rule as clientAction: a drag-and-drop retry
@@ -626,6 +630,9 @@ export const clientAction = createServerFn({ method: "POST" })
         actor_user_id: context.userId,
       });
     }
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await resolveNotificationsForUser(supabaseAdmin, context.userId);
 
     await writeAudit(context.supabase, {
       actor: context.userId,

@@ -83,6 +83,8 @@ export type KpiRow = {
   interview_scheduled: boolean;
   /** An interview exists that still needs the client to confirm a time. */
   interview_needs_confirmation: boolean;
+  /** The interview record that needs confirmation, when one exists. */
+  interview_id: string | null;
   /** Soonest confirmed interview time, if one is booked. */
   next_interview_at: string | null;
   /** When the earliest unconfirmed interview was requested. */
@@ -144,6 +146,7 @@ export async function loadKpiRows(
   const activeInterviews = new Set<string>();
   const scheduledInterviews = new Set<string>();
   const unconfirmedInterviews = new Set<string>();
+  const unconfirmedInterviewId = new Map<string, string>();
   const nextInterviewAt = new Map<string, string>();
   const interviewRequestedAt = new Map<string, string>();
   const stageEnteredAt = new Map<string, string>();
@@ -155,7 +158,7 @@ export async function loadKpiRows(
   if (matchIds.length > 0) {
     const { data: ivs } = await supabase
       .from("interviews")
-      .select("candidate_match_id, status, scheduled_at, created_at")
+      .select("id, candidate_match_id, status, scheduled_at, created_at")
       .in("candidate_match_id", matchIds)
       .in("status", ["requested", "scheduling", "scheduled", "completed"]);
     for (const iv of (ivs as AnyRow[]) ?? []) {
@@ -174,6 +177,10 @@ export async function loadKpiRows(
         if (at) {
           const prev = interviewRequestedAt.get(iv.candidate_match_id);
           if (!prev || at < prev) interviewRequestedAt.set(iv.candidate_match_id, at);
+        }
+        // Keep the earliest open interview so deep links point to the right record.
+        if (!unconfirmedInterviewId.has(iv.candidate_match_id)) {
+          unconfirmedInterviewId.set(iv.candidate_match_id, iv.id as string);
         }
       }
     }
@@ -225,6 +232,7 @@ export async function loadKpiRows(
     recommendation: m.recommendation ?? null,
     client_decided: decidedMatches.has(m.id),
     interview_needs_confirmation: unconfirmedInterviews.has(m.id),
+    interview_id: unconfirmedInterviewId.get(m.id) ?? null,
   }));
 }
 

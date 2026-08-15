@@ -305,7 +305,7 @@ export async function sendDecisionNudge(
     candidate_match_id: args.matchId,
     candidate_profile_id: (match["candidate_profile_id"] as string) ?? null,
     actor_user_id: args.actorUserId,
-    link_path: "/client/candidates",
+    link_path: `/client/candidates/${args.matchId}`,
     payload: { reason: "decision_backlog_nudge", note: args.note?.trim() || null },
   });
 

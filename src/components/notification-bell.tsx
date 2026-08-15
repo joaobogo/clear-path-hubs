@@ -153,7 +153,9 @@ export function NotificationBell() {
               <p className="text-xs text-muted-foreground mt-0.5">
                 {needsAttention > 0
                   ? `${needsAttention} ${needsAttention === 1 ? "item needs" : "items need"} your attention.`
-                  : "Nothing is waiting on you."}
+                  : unread > 0
+                    ? `${unread} ${unread === 1 ? "update" : "updates"} for you.`
+                    : "Nothing is waiting on you."}
               </p>
             </div>
             <Button
