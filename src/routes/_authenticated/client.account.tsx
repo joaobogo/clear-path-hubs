@@ -333,7 +333,9 @@ function WorkspaceSnapshot({ orgId }: { orgId: string }) {
                       : ""}
                   </span>
                   <Badge variant="secondary" className="whitespace-nowrap">
-                    {p.kpis?.hired ?? 0} hired
+                    {/* Same source as /client/positions: ClientKpis.hires
+                        (the old `hired` key never existed → always 0). */}
+                    {p.kpis?.hires ?? 0} hired
                   </Badge>
                 </div>
               </li>
