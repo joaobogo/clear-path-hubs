@@ -469,25 +469,62 @@ export const listAgentActivity = createServerFn({ method: "GET" })
     const { supabase, userId } = context as { supabase: Db; userId: string };
     await assertMember(supabase, userId, data.organization_id);
 
-    let q = supabase
-      .from("agent_activity")
-      .select("id, agent_key, outcome, sentence, reason, link_path, occurred_at")
-      .eq("organization_id", data.organization_id)
-      .order("occurred_at", { ascending: false })
-      .limit(data.limit ?? 100);
-    if (data.agent_key) q = q.eq("agent_key", data.agent_key);
+    const limit = data.limit ?? 100;
 
-    const { data: rows, error } = await q;
-    if (error) throw error;
+    const [feedRes, legacyRes] = await Promise.all([
+      supabase
+        .from("v_activity_feed")
+        .select(
+          "event_id, event_type, occurred_at, position_id, position_title, candidate_match_id, application_id, payload",
+        )
+        .eq("organization_id", data.organization_id)
+        .order("occurred_at", { ascending: false })
+        .limit(limit),
+      supabase
+        .from("agent_activity")
+        .select("id, agent_key, outcome, sentence, reason, link_path, occurred_at")
+        .eq("organization_id", data.organization_id)
+        .order("occurred_at", { ascending: false })
+        .limit(limit),
+    ]);
 
-    return (rows ?? []).map((r: Db) => ({
-      id: r.id,
-      agent_key: r.agent_key,
-      agent_name: agentName(r.agent_key),
-      outcome: r.outcome,
-      sentence: r.sentence,
-      reason: r.reason,
-      link_path: r.link_path,
-      occurred_at: r.occurred_at,
-    }));
+    const feedRows = (feedRes.data ?? []).filter((r: Db) => {
+      const key = eventTypeToAgentKey(r.event_type as string);
+      return data.agent_key ? key === data.agent_key : !!key;
+    });
+
+    const feedActivities: ActivityRow[] = feedRows.map((r: Db) => {
+      const key = eventTypeToAgentKey(r.event_type as string)!;
+      return {
+        id: r.event_id,
+        agent_key: key,
+        agent_name: agentName(key),
+        outcome: "acted",
+        sentence: sentenceFromFeed(r),
+        reason: null,
+        link_path: linkPathFromFeed(r),
+        occurred_at: r.occurred_at,
+      };
+    });
+
+    const legacyActivities: ActivityRow[] = (legacyRes.data ?? [])
+      .filter((r: Db) => (data.agent_key ? r.agent_key === data.agent_key : true))
+      .map((r: Db) => ({
+        id: r.id,
+        agent_key: r.agent_key,
+        agent_name: agentName(r.agent_key),
+        outcome: r.outcome,
+        sentence: r.sentence,
+        reason: r.reason,
+        link_path: r.link_path,
+        occurred_at: r.occurred_at,
+      }));
+
+    return [...feedActivities, ...legacyActivities]
+      .sort(
+        (a, b) =>
+          new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime(),
+      )
+      .slice(0, limit);
   });
+
