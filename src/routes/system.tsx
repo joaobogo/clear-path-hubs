@@ -109,7 +109,7 @@ const PILLARS = [
     eyebrow: "Live workspace",
     title: "You watch the pipeline move in real time.",
     body:
-      "Clients see the same board the platform runs on — no weekly PDF, no BCC threads. Kanban, decisions, offers, hire tracking, and the AI assistant all read from one system of record.",
+      "Clients see the same board the platform runs on — no weekly PDF, no BCC threads. Kanban, decisions, offers, hire tracking, and pipeline activity all read from one system of record.",
     bullets: [
       "Kanban + decision cockpit + offers board",
       "Realtime refresh across every surface",
