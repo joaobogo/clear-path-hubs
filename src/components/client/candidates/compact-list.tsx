@@ -124,10 +124,10 @@ export function CompactList({
                 <td className="py-2 px-3 tabular-nums">
                   {c.coverage.must_met}/{c.coverage.must_total || "—"}
                 </td>
-                <td className="hidden py-2 px-3 text-muted-foreground tabular-nums lg:table-cell">
+                <td className="hidden py-2 px-3 text-muted-foreground tabular-nums xl:table-cell">
                   {c.candidate.years_experience != null ? `${c.candidate.years_experience} yrs` : "—"}
                 </td>
-                <td className="hidden py-2 px-3 text-muted-foreground lg:table-cell">{c.candidate.location ?? "—"}</td>
+                <td className="hidden py-2 px-3 text-muted-foreground xl:table-cell">{c.candidate.location ?? "—"}</td>
                 <td className="py-2 px-3 text-muted-foreground whitespace-nowrap">{clientStageLabel(c.stage)}</td>
                 <td className="hidden py-2 px-3 lg:table-cell">
                   <ReviewTimelineStrip timeline={c.review_timeline} />
