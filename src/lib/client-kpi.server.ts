@@ -610,7 +610,9 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
       let safeAction: string | null = null;
 
       // Filter out raw system updates and internal taxonomy
-      const isInternalUpdate = action.startsWith("UPDATE") || action.includes("|");
+      const isInternalUpdate = action.startsWith("UPDATE") || action.includes("|") || action.includes(".");
+      
+      console.log(`[buildAuditTrail] Processing: ${action}`, { hasAfter: !!after, hasStage: after && typeof after === "object" && "stage" in after });
       
       // Map stage transitions to friendly labels
       if (after && typeof after === "object" && "stage" in after) {
