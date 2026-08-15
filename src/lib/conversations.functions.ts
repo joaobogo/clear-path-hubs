@@ -357,87 +357,87 @@ export const getConversation = createServerFn({ method: "GET" })
   });
 
 export async function _getConversationHandler({ data, context }: any) {
-    const { supabase, userId } = context;
-    const { data: convo, error } = await supabase
-      .from("conversations")
-      .select(
-        "id, organization_id, scope, position_id, candidate_match_id, subject, last_message_at",
-      )
-      .eq("id", data.conversationId)
-      .maybeSingle();
-    if (error) throw new Error(error.message);
-    if (!convo) throw new Error("not_found");
-    await assertOrgAccess(supabase, userId, (convo as Row).organization_id as string);
+  const { supabase, userId } = context;
+  const { data: convo, error } = await supabase
+    .from("conversations")
+    .select(
+      "id, organization_id, scope, position_id, candidate_match_id, subject, last_message_at",
+    )
+    .eq("id", data.conversationId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!convo) throw new Error("not_found");
+  await assertOrgAccess(supabase, userId, (convo as Row).organization_id as string);
 
-    const { data: msgs, error: mErr } = await supabase
-      .from("messages")
-      .select("id, body, created_at, sender_user_id, attachments")
-      .eq("conversation_id", data.conversationId)
-      .order("created_at", { ascending: true })
-      .limit(500);
-    if (mErr) throw new Error(mErr.message);
+  const { data: msgs, error: mErr } = await supabase
+    .from("messages")
+    .select("id, body, created_at, sender_user_id, attachments")
+    .eq("conversation_id", data.conversationId)
+    .order("created_at", { ascending: true })
+    .limit(500);
+  if (mErr) throw new Error(mErr.message);
 
-    const rows = (msgs as Row[]) ?? [];
-    const names = await nameMap(rows.map((m) => m.sender_user_id as string));
-    const { resolveStaffPersona } = await import("./staff-persona.server");
+  const rows = (msgs as Row[]) ?? [];
+  const names = await nameMap(rows.map((m) => m.sender_user_id as string));
+  const { resolveStaffPersona } = await import("./staff-persona.server");
 
-    const messages: ConversationMessage[] = rows.map((m) => {
-      const sid = (m.sender_user_id as string | null) ?? null;
-      const meta = sid ? names[sid] : undefined;
-      const persona = resolveStaffPersona({
-        name: sid ? (meta?.name ?? null) : null,
-        isStaff: sid ? (meta?.staff ?? false) : true,
-        roleLabel: sid ? (meta?.role ?? null) : "TaaSFlow team",
-      });
-
-      return {
-        id: m.id as string,
-        body: m.body as string,
-        created_at: m.created_at as string,
-        sender_user_id: sid,
-        sender_name: persona.name,
-        sender_role: persona.role,
-        sender_side: !sid ? "system" : meta?.staff ? "taasflow" : "client",
-        mine: sid === userId,
-        attachments: readAttachments(m.attachments),
-      };
+  const messages: ConversationMessage[] = rows.map((m) => {
+    const sid = (m.sender_user_id as string | null) ?? null;
+    const meta = sid ? names[sid] : undefined;
+    const persona = resolveStaffPersona({
+      name: sid ? (meta?.name ?? null) : null,
+      isStaff: sid ? (meta?.staff ?? false) : true,
+      roleLabel: sid ? (meta?.role ?? null) : "TaaSFlow team",
     });
 
-    let contextLabel: string | null = null;
-    if ((convo as Row).scope === "position" && (convo as Row).position_id) {
-      const { data: p } = await supabase
-        .from("positions")
-        .select("title")
-        .eq("id", (convo as Row).position_id)
-        .maybeSingle();
-      contextLabel = ((p as Row | null)?.title as string | null) ?? "Role";
-    } else if ((convo as Row).scope === "candidate" && (convo as Row).candidate_match_id) {
-      const { data: m } = await supabase
-        .from("candidate_matches")
-        .select("candidate_profiles(full_name), positions(title)")
-        .eq("id", (convo as Row).candidate_match_id)
-        .maybeSingle();
-      const cand = ((m as Row | null)?.candidate_profiles as Row | null)?.full_name as
-        | string
-        | undefined;
-      const role = ((m as Row | null)?.positions as Row | null)?.title as string | undefined;
-      contextLabel = [cand ?? "Candidate", role].filter(Boolean).join(" · ");
-    }
-
     return {
-      conversation: {
-        id: (convo as Row).id as string,
-        organization_id: (convo as Row).organization_id as string,
-        scope: (convo as Row).scope as ConversationScope,
-        position_id: ((convo as Row).position_id as string | null) ?? null,
-        candidate_match_id: ((convo as Row).candidate_match_id as string | null) ?? null,
-        subject: ((convo as Row).subject as string | null) ?? contextLabel ?? "General",
-        context_label: contextLabel,
-        last_message_at: (convo as Row).last_message_at as string,
-      },
-      messages,
+      id: m.id as string,
+      body: m.body as string,
+      created_at: m.created_at as string,
+      sender_user_id: sid,
+      sender_name: persona.name,
+      sender_role: persona.role,
+      sender_side: !sid ? "system" : meta?.staff ? "taasflow" : "client",
+      mine: sid === userId,
+      attachments: readAttachments(m.attachments),
     };
   });
+
+  let contextLabel: string | null = null;
+  if ((convo as Row).scope === "position" && (convo as Row).position_id) {
+    const { data: p } = await supabase
+      .from("positions")
+      .select("title")
+      .eq("id", (convo as Row).position_id)
+      .maybeSingle();
+    contextLabel = ((p as Row | null)?.title as string | null) ?? "Role";
+  } else if ((convo as Row).scope === "candidate" && (convo as Row).candidate_match_id) {
+    const { data: m } = await supabase
+      .from("candidate_matches")
+      .select("candidate_profiles(full_name), positions(title)")
+      .eq("id", (convo as Row).candidate_match_id)
+      .maybeSingle();
+    const cand = ((m as Row | null)?.candidate_profiles as Row | null)?.full_name as
+      | string
+      | undefined;
+    const role = ((m as Row | null)?.positions as Row | null)?.title as string | undefined;
+    contextLabel = [cand ?? "Candidate", role].filter(Boolean).join(" · ");
+  }
+
+  return {
+    conversation: {
+      id: (convo as Row).id as string,
+      organization_id: (convo as Row).organization_id as string,
+      scope: (convo as Row).scope as ConversationScope,
+      position_id: ((convo as Row).position_id as string | null) ?? null,
+      candidate_match_id: ((convo as Row).candidate_match_id as string | null) ?? null,
+      subject: ((convo as Row).subject as string | null) ?? contextLabel ?? "General",
+      context_label: contextLabel,
+      last_message_at: (convo as Row).last_message_at as string,
+    },
+    messages,
+  };
+}
 
 /** Post into a thread. Mirrors to email through the notification pipeline. */
 export const postConversationMessage = createServerFn({ method: "POST" })
