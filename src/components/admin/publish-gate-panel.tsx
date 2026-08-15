@@ -62,8 +62,8 @@ export function PublishGatePanel({ includeTest: explicit }: { includeTest?: bool
   const publish = useServerFn(setPositionStatus);
 
   const query = useQuery({
-    queryKey: ["publish-gate-queue", includeTest],
-    queryFn: () => fetchQueue({ data: { includeTest } }),
+    queryKey: ["publish-gate-queue", includeTest, explicit, qTerm],
+    queryFn: () => fetchQueue({ data: { includeTest, q: qTerm } }),
   });
 
   const publishMut = useMutation({
