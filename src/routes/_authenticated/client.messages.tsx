@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_authenticated/client/messages")({
   beforeLoad: ({ search }) => {
     throw redirect({
       to: "/client/conversations",
-      search: { ...(search as Record<string, unknown>), view: "history" },
+      search: (prev: any) => ({ ...prev, view: "history" }),
       statusCode: 301,
     });
   },
