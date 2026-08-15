@@ -108,7 +108,7 @@ export function resolveWorkArrangement(
   workModel: string | null | undefined,
   onsiteDays: unknown,
 ): string {
-  const days = num(onsiteDays) ?? (str(onsiteDays) ? str(onsiteDays) : null);
+  const days = (typeof onsiteDays === 'number') ? onsiteDays : (str(onsiteDays) ? parseInt(str(onsiteDays), 10) : null);
   switch (workModel) {
     case "remote":
       return "Remote";
@@ -168,7 +168,15 @@ export function resolveWorkAuthorisation(
   const countries = Array.isArray(wa.countries)
     ? wa.countries.filter((c): c is string => typeof c === "string" && c.trim().length > 0)
     : [];
-  const where = countries.length > 0 ? countries.join(", ") : "";
+  
+  // Title-case country names to avoid "unites states" issues.
+  const titleCase = (s: string) => {
+    // Exact match for the mangled "unites states" string.
+    if (s.toLowerCase() === 'unites states') return 'United States';
+    return s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+  };
+
+  const where = countries.length > 0 ? countries.map(titleCase).join(", ") : "";
 
   if (explicit === true) {
     return where

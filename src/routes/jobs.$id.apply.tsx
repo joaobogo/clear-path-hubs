@@ -28,6 +28,7 @@ import {
   fileExt,
 } from "@/lib/apply-schema";
 import { CV_MESSAGES } from "@/lib/cv-validation";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { COVER_NOTE_MAX } from "@/lib/screening-limits";
@@ -1202,7 +1203,32 @@ function ApplyPage() {
                   PDF only, up to 10 MB. Unicode filenames welcome.
                 </p>
               </div>
-              <div>
+              {pos.locations.length > 0 && (
+                <div className="rounded-lg border bg-muted/30 p-4">
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">
+                    Hiring locations
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {pos.locations.map((l, i) => {
+                      const titleCase = (s: string) => 
+                        s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                      const location = [l.city, l.region, l.country]
+                        .filter((p): p is string => !!p)
+                        .map(titleCase)
+                        .join(", ");
+                      
+                      return (
+                        <Badge key={i} variant="secondary" className="font-normal bg-background/50">
+                          {location}
+                          {l.work_model ? ` · ${l.work_model}` : ""}
+                          {l.headcount && l.headcount > 1 ? ` · ${l.headcount} hires` : ""}
+                        </Badge>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+              <div className="mt-4">
                 {/* Rules first, in plain text with no error styling, so nothing
                     arrives as a surprise after a failed attempt. */}
                 <div className="rounded-lg border bg-muted/30 p-3 text-xs text-muted-foreground">
