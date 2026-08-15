@@ -329,7 +329,7 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
         subtitle: (d.error_message ?? d.status ?? "").replace(/_/g, " "),
         meta: d.notifications?.audience ?? null,
         waiting_since: d.updated_at,
-        target: { kind: "match" as const, id: d.notification_id },
+        target: { kind: "match" as const, id: d.notifications?.notification_id ?? d.notification_id },
         action_label: "Fix",
         owner: null,
         claim: null,
