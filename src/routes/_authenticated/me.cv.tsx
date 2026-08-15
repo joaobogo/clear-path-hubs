@@ -206,15 +206,6 @@ function CvPage() {
                 {formatDistanceToNow(new Date(currentCv.created_at), { addSuffix: true })})
               </div>
             </div>
-            <Button
-              variant="outline"
-              className="w-full min-h-11 sm:w-auto"
-              disabled={download.isPending}
-              onClick={() => download.mutate(currentCv.id)}
-              aria-label={`Download ${currentCv.filename}`}
-            >
-              <Download className="h-4 w-4 mr-1" /> Download
-            </Button>
             {scopeQuery.isPending ? (
               <div className="h-4 w-56 animate-pulse rounded bg-muted" aria-hidden />
             ) : scopeQuery.isError ? null : (
@@ -421,15 +412,6 @@ function CvPage() {
                       {formatDistanceToNow(new Date(v.created_at), { addSuffix: true })}
                     </div>
                   </div>
-                  <Button
-                    variant="outline"
-                    className="w-full min-h-11 sm:w-auto"
-                    disabled={download.isPending}
-                    onClick={() => download.mutate(v.id)}
-                    aria-label={`Download ${v.filename}`}
-                  >
-                    <Download className="h-4 w-4 mr-1" /> Download
-                  </Button>
                 </li>
               );
             })}
