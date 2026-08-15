@@ -17,6 +17,7 @@ import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveNoMessagesState } from "@/lib/empty-states/empty-state-catalogue";
 import { useEmptyStateSignals } from "@/hooks/use-empty-state-signals";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
+import { relTime } from "@/components/client/overview/utils";
 
 
 const RoutePending = makeWorkspacePending({ shape: "rows", kpis: false, width: "6xl" });
@@ -51,14 +52,6 @@ const FILTERS = [
   { key: "candidate", label: "Candidates" },
   { key: "organization", label: "Account" },
 ] as const;
-
-function relTime(iso: string) {
-  const diff = Date.now() - new Date(iso).getTime();
-  if (diff < 60_000) return "just now";
-  if (diff < 3_600_000) return `${Math.round(diff / 60_000)}m ago`;
-  if (diff < 86_400_000) return `${Math.round(diff / 3_600_000)}h ago`;
-  return `${Math.round(diff / 86_400_000)}d ago`;
-}
 
 function ConversationsPage() {
   const orgSearch = useClientOrgSearch();
