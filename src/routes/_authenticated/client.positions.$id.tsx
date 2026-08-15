@@ -25,7 +25,7 @@ import { useSupportView } from "@/lib/support-view";
 import { AlertCircle } from "lucide-react";
 import type { RoleLaunchState } from "@/lib/role-launch";
 import { RoleMessagesPanel } from "@/components/client/role-messages-panel";
-import { RoleMemoryPanel } from "@/components/role-memory-panel";
+
 
 import { InfoRequestList } from "@/components/client/info-requests";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
@@ -436,9 +436,6 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
         />
       )}
 
-      <section className="mt-8">
-        <RoleMemoryPanel positionId={position.id} canEdit={true} />
-      </section>
 
       <DeclineReasonDialog
         open={!!declining}

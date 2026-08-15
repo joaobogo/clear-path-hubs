@@ -62,6 +62,14 @@ export const listRoleMemory = createServerFn({ method: "GET" })
   .inputValidator((data) => z.object({ position_id: z.string().uuid() }).parse(data))
   .handler(async ({ data, context }) => {
     const supabase = context.supabase as Any;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // Only TaaSFlow staff see recruiter memory & handoff notes.
+    const { data: isStaff } = await supabaseAdmin.rpc("is_platform_staff", {
+      _user: context.userId,
+    });
+    if (!isStaff) return [];
+
     const { data: rows, error } = await supabase
       .from("role_memory")
       .select(
@@ -90,6 +98,12 @@ export const createRoleMemory = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const supabase = context.supabase as Any;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: isStaff } = await supabaseAdmin.rpc("is_platform_staff", {
+      _user: context.userId,
+    });
+    if (!isStaff) throw new Error("Forbidden: Recruiter memory is staff-only.");
+
     const pos = await loadPosition(supabase, data.position_id);
     const author = await displayName(supabase, context.userId);
     const { data: row, error } = await supabase
@@ -126,6 +140,12 @@ export const updateRoleMemory = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const supabase = context.supabase as Any;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: isStaff } = await supabaseAdmin.rpc("is_platform_staff", {
+      _user: context.userId,
+    });
+    if (!isStaff) throw new Error("Forbidden: Recruiter memory is staff-only.");
+
     const patch: Record<string, unknown> = {};
     if (data.title !== undefined) patch.title = data.title;
     if (data.body !== undefined) patch.body = data.body;
@@ -146,6 +166,12 @@ export const deleteRoleMemory = createServerFn({ method: "POST" })
   .inputValidator((data) => z.object({ id: z.string().uuid() }).parse(data))
   .handler(async ({ data, context }) => {
     const supabase = context.supabase as Any;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: isStaff } = await supabaseAdmin.rpc("is_platform_staff", {
+      _user: context.userId,
+    });
+    if (!isStaff) throw new Error("Forbidden: Recruiter memory is staff-only.");
+
     const { error } = await supabase.from("role_memory").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true } as const;
