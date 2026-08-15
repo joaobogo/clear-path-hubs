@@ -9,7 +9,7 @@ describe("Message History Log", () => {
     const staffId = "e60fd0fc-3f4d-4911-b469-c672ca0ca369"; // A staff user
 
     // Create a few test conversations/messages
-    const { data: convoA } = await supabaseAdmin
+    const { data: convoA, error: errA } = await supabaseAdmin
       .from("conversations")
       .insert({
         organization_id: orgId,
@@ -19,8 +19,9 @@ describe("Message History Log", () => {
       })
       .select("id")
       .single();
+    if (errA) throw new Error(`Failed to create Thread A: ${errA.message}`);
 
-    const { data: convoB } = await supabaseAdmin
+    const { data: convoB, error: errB } = await supabaseAdmin
       .from("conversations")
       .insert({
         organization_id: orgId,
@@ -30,6 +31,7 @@ describe("Message History Log", () => {
       })
       .select("id")
       .single();
+    if (errB) throw new Error(`Failed to create Thread B: ${errB.message}`);
 
     const now = new Date();
     const t1 = new Date(now.getTime() - 10000).toISOString();
