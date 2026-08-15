@@ -48,10 +48,8 @@ export function BulkOpsBar({
 
   return (
     <>
-      <div className="mt-2 flex flex-wrap items-center gap-2 rounded-lg border bg-card px-3 py-2">
-        <span className="text-sm font-medium">
-          {selected} selected
-        </span>
+      <div className="flex flex-wrap items-center gap-2 py-1">
+        <span className="text-xs font-medium text-muted-foreground mr-1">Move to:</span>
         <Select value={stage} onValueChange={(v) => setStage(v as typeof stage)}>
           <SelectTrigger className="h-8 w-44" aria-label="Target stage">
             <SelectValue />

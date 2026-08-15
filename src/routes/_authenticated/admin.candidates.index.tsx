@@ -575,23 +575,27 @@ function CandidatesPage() {
 
       {/* Bulk bar */}
       {selected.length > 0 && (
-        <div className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border bg-card px-3 py-2">
-          <span className="text-sm font-medium">{selected.length} selected</span>
-          <span className="text-xs text-muted-foreground">
-            Publishing only succeeds where an approved score run exists.
-          </span>
-          <div className="ml-auto flex gap-2">
-            <Button size="sm" variant="outline" onClick={() => setSelected([])}>
-              Clear selection
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => setConfirm("hidden")}>
-              Unpublish
-            </Button>
-            <Button size="sm" onClick={() => setConfirm("visible")}>
-              Publish to client
-            </Button>
+        <div className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border bg-card px-3 py-2 shadow-sm">
+          <div className="flex w-full items-center justify-between border-b pb-2">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-primary">{selected.length} selected</span>
+              <span className="text-xs text-muted-foreground">
+                Actions below apply to all selected matches.
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => setSelected([])}>
+                Clear
+              </Button>
+              <Button size="sm" variant="outline" className="h-8 text-xs border-destructive/20 text-destructive hover:bg-destructive/5" onClick={() => setConfirm("hidden")}>
+                Unpublish
+              </Button>
+              <Button size="sm" variant="outline" className="h-8 text-xs border-success/20 text-success hover:bg-success/5" onClick={() => setConfirm("visible")}>
+                Publish
+              </Button>
+            </div>
           </div>
-          <div className="w-full">
+          <div className="w-full pt-1">
             <BulkOpsBar
               matchIds={selected}
               candidateProfileIds={[
