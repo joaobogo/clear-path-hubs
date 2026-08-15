@@ -417,9 +417,9 @@ export const getRoleFitFromPool = createServerFn({ method: "POST" })
       const seniorityBand = seniorityFromYears(p.years_experience);
       const haystack = norm([...skills, p.headline ?? "", seniorityBand ?? ""].join(" "));
 
-      const matchedRequirements = reqNorm
-        .filter((r) => haystack.includes(r.n) || skills.some((s) => norm(s).includes(r.n)))
-        .map((r) => r.label);
+      const matchedRequirements = requirements.filter((r) =>
+        matchesRequirement(r, haystack, skills),
+      );
 
       const reasons: RoleFitReason[] = [];
       if (matchedRequirements.length) {
