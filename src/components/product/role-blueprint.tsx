@@ -15,7 +15,6 @@ type AnyRow = any;
 export interface RoleBlueprintProps {
   position: AnyRow;
   activity?: AnyRow[];
-  version?: string;
 }
 
 const RUBRIC_WEIGHTS = {
@@ -94,7 +93,7 @@ function humanizeBlueprintAction(action: string): string {
   return map[action] ?? action.replace(/[._]/g, " ");
 }
 
-export function RoleBlueprint({ position, activity = [], version = "taasflow-blueprint-v1.0.0" }: RoleBlueprintProps) {
+export function RoleBlueprint({ position, activity = [] }: RoleBlueprintProps) {
   const mustHaves = toLabelList(position.requirements);
   const nice = toLabelList(position.preferred_requirements);
   const dealbreakers = toLabelList(position.dealbreakers);
@@ -147,8 +146,8 @@ export function RoleBlueprint({ position, activity = [], version = "taasflow-blu
             recommendation anchors back to what's on this page.
           </p>
         </div>
-        <div className="text-right text-[11px] text-muted-foreground font-mono">
-          {version}
+        <div className="text-right text-[11px] text-muted-foreground">
+          Kept in sync with your approved brief
         </div>
       </div>
 
@@ -322,9 +321,8 @@ export function RoleBlueprint({ position, activity = [], version = "taasflow-blu
 
         <div className="rounded-lg border bg-muted/30 px-4 py-3 text-xs text-muted-foreground">
           Anchored to this blueprint: every candidate score, shortlist call, and AI recommendation in this
-          workspace references the version <span className="font-mono">{version}</span> shown above.
-          Requesting a change opens a new revision — historical scores remain tied to the version they were
-          computed against.
+          workspace references the approved brief shown above. Requesting a change opens a new revision —
+          earlier assessments stay tied to the brief they were made against.
         </div>
       </div>
     </section>

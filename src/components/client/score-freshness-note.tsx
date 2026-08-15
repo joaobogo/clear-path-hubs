@@ -58,7 +58,7 @@ export function ScoreFreshnessNote({
               : "We cannot confirm when this was last assessed"}
           </p>
           <p className="text-xs text-muted-foreground">{freshness.summary}</p>
-          {freshness.reasons.length > 0 && (
+          {freshness.reasons.length > 1 && (
             <ul className="list-disc pl-4 text-xs text-muted-foreground">
               {freshness.reasons.map((r) => (
                 <li key={r.code}>{r.label}</li>
