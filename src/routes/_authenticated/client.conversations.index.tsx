@@ -61,7 +61,7 @@ function relTime(iso: string) {
 
 function ConversationsPage() {
   const orgSearch = useClientOrgSearch();
-  const search = useSearch({ strict: false }) as { box?: string; view?: string };
+  const search = Route.useSearch();
   const box = search.box === "unread" ? "unread" : "all";
   const view = search.view === "history" ? "history" : "threads";
   const ctxFn = useServerFn(getClientContext);
