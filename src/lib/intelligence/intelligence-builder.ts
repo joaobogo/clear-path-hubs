@@ -51,6 +51,7 @@ export type IntelligenceRecords = {
   tasks?: Row[];
   /** Outbound outreach touches, current and prior window. */
   outreachTouches?: Row[];
+  feedEvents?: Row[];
   window: { days: number; from: string; priorFrom: string; to: string };
   positionId: string | null;
 };
