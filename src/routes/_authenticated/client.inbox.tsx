@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_authenticated/client/inbox")({
   beforeLoad: ({ search }) => {
     throw redirect({
       to: "/client/conversations",
-      search: search as Record<string, unknown>,
+      search: (prev: any) => ({ ...prev, box: "unread" }),
       statusCode: 301,
     });
   },

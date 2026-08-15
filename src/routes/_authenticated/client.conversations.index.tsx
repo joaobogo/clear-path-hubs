@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
+import { z } from "zod";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -22,6 +23,12 @@ const RoutePending = makeWorkspacePending({ shape: "rows", kpis: false, width: "
 export const Route = createFileRoute("/_authenticated/client/conversations/")({
 	pendingMs: 150,
 	pendingComponent: RoutePending,
+  validateSearch: z.object({
+    org: z.string().uuid().optional(),
+    box: z.string().optional(),
+    view: z.string().optional(),
+    filter: z.string().optional(),
+  }),
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.conversations.index.tsx"),
   notFoundComponent: makeRouteNotFoundComponent("client"),
   head: () => ({
@@ -55,13 +62,12 @@ function relTime(iso: string) {
 
 function ConversationsPage() {
   const orgSearch = useClientOrgSearch();
-  // `?box=unread` is what the "Inbox" tab means: same thread list, unread only.
-  const box = (useSearch({ strict: false }) as { box?: string })?.box === "unread"
-    ? "unread"
-    : "all";
+  const search = Route.useSearch();
+  const box = search.box === "unread" ? "unread" : "all";
+  const view = search.view === "history" ? "history" : "threads";
   const ctxFn = useServerFn(getClientContext);
   const listFn = useServerFn(listConversations);
-  const [filter, setFilter] = useState<(typeof FILTERS)[number]["key"]>("all");
+  const filter = search.filter || "all";
   const [q, setQ] = useState("");
 
   const ctxQuery = useQuery({
@@ -83,7 +89,20 @@ function ConversationsPage() {
 
   const items = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    return (data?.items ?? []).filter((c) => {
+    const allItems = data?.items ?? [];
+
+    if (view === "history") {
+      // For history, we show all threads but sort them by message count or 
+      // present them differently. The prompt asks for a "distinct" view.
+      // A flat chronological log of all messages is the goal.
+      // Since the API returns thread summaries with last_body, we'll sort 
+      // threads by the absolute last message across the whole workspace.
+      return [...allItems].sort(
+        (a, b) => new Date(b.last_message_at).getTime() - new Date(a.last_message_at).getTime()
+      );
+    }
+
+    return allItems.filter((c) => {
       if (box === "unread" && c.unread <= 0) return false;
       if (filter !== "all" && c.scope !== filter) return false;
       if (!needle) return true;
@@ -93,7 +112,8 @@ function ConversationsPage() {
         (c.last_body ?? "").toLowerCase().includes(needle)
       );
     });
-  }, [data, box, filter, q]);
+  }, [data, box, filter, q, view]);
+
   const unreadCount = (data?.items ?? []).filter((c) => c.unread > 0).length;
 
 
@@ -102,44 +122,48 @@ function ConversationsPage() {
       <header>
         <h1 className="flex items-center gap-2 text-2xl font-semibold">
           <MessageSquare className="h-6 w-6 text-primary" />
-          {box === "unread" ? "Inbox" : "Conversations"}
+          {box === "unread" ? "Inbox" : view === "history" ? "Message History" : "Threads"}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {box === "unread"
             ? `Threads with something new for you${unreadCount ? ` — ${unreadCount} unread` : ""}.`
-            : "One thread per role and per candidate. Everything is mirrored to email."}
+            : view === "history"
+              ? "A complete chronological log of all communications across your workspace."
+              : "One thread per role and per candidate. Everything is mirrored to email."}
         </p>
       </header>
 
 
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="flex rounded-md border p-0.5">
-          {FILTERS.map((f) => (
-            <button
-              key={f.key}
-              type="button"
-              onClick={() => setFilter(f.key)}
-              className={cn(
-                "rounded px-3 py-1.5 text-sm transition-colors",
-                filter === f.key
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {f.label}
-            </button>
-          ))}
+      {view !== "history" && (
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex rounded-md border p-0.5">
+            {FILTERS.map((f) => (
+              <Link
+                key={f.key}
+                to="/client/conversations"
+                search={(prev: any) => ({ ...prev, filter: f.key })}
+                className={cn(
+                  "rounded px-3 py-1.5 text-sm transition-colors",
+                  filter === f.key
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {f.label}
+              </Link>
+            ))}
+          </div>
+          <div className="relative min-w-[220px] flex-1">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search conversations"
+              className="pl-9"
+            />
+          </div>
         </div>
-        <div className="relative min-w-[220px] flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search conversations"
-            className="pl-9"
-          />
-        </div>
-      </div>
+      )}
 
       {ctxQuery.isError ? (
         <QueryErrorCard
@@ -163,14 +187,14 @@ function ConversationsPage() {
         <div className="rounded-lg border bg-card p-8 text-center">
           <p className="text-sm font-medium">You're all caught up</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Nothing unread. Switch to All messages to see every thread.
+            Nothing unread. Switch to Threads to see every conversation.
           </p>
           <Link
             to="/client/conversations"
             search={orgSearch ? { org: orgSearch } : undefined}
             className="mt-3 inline-block text-sm font-medium text-primary hover:underline"
           >
-            All messages
+            Back to threads
           </Link>
         </div>
       ) : items.length === 0 ? (
@@ -197,11 +221,18 @@ function ConversationsPage() {
                   <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="truncate text-sm font-medium">{c.subject}</span>
+                      <span className="truncate text-sm font-medium">
+                        {view === "history" ? c.last_sender_name || "System" : c.subject}
+                      </span>
                       {c.unread > 0 && <Badge>{c.unread} new</Badge>}
                     </div>
-                    <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
-                      {c.last_sender_name ? `${c.last_sender_name}: ` : ""}
+                    {view === "history" && (
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                        {c.subject}
+                      </p>
+                    )}
+                    <p className={cn("mt-1 text-sm text-muted-foreground", view === "history" ? "" : "line-clamp-2")}>
+                      {view !== "history" && c.last_sender_name ? `${c.last_sender_name}: ` : ""}
                       {c.last_body ?? "No messages yet"}
                     </p>
                   </div>
