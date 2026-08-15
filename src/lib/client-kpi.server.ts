@@ -644,8 +644,6 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
 
       if (!safeAction) return null;
 
-      if (!safeAction) return null;
-
       return {
         id: String(e.id),
         action: safeAction,
