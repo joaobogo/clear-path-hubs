@@ -23,7 +23,7 @@ import {
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { SectionCard } from "./shared";
 import { formatEnumLabel } from "@/lib/human-labels";
-import { formatDateTime } from "@/lib/format/datetime";
+import { formatDateTime, APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;

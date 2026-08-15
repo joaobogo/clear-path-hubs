@@ -45,6 +45,7 @@ import type { ExistingApplicationSummary } from "@/lib/candidate/existing-applic
 import { Loader2 } from "lucide-react";
 import { track } from "@/lib/candidate/funnel-events.functions";
 import { deviceBucket } from "@/lib/candidate/funnel-events";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 
 const EMPTY_FORM = {
@@ -1442,7 +1443,6 @@ function ApplyPage() {
                       : `${questionCount} short ${
                           questionCount === 1 ? "question" : "questions"
                         } from the hiring team.`}
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
                 </p>
               </div>
               {questionCount > 0 && (

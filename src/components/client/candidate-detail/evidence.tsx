@@ -27,7 +27,7 @@ import type {
   RequirementStatus,
 } from "@/lib/client-fit-presentation";
 import { SectionCard, Metric } from "./shared";
-import { formatDateTime } from "@/lib/format/datetime";
+import { formatDateTime, APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export function statusBadge(status: RequirementStatus) {
   switch (status) {
