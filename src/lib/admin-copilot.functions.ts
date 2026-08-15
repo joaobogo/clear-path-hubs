@@ -1,5 +1,5 @@
 // Admin AI Copilot — staff-only orchestrator.
-// Same tool-loop pattern as the client assistant, but:
+// Same tool-loop pattern as the previous assistant, but:
 //   - table set: admin_copilot_conversations / admin_copilot_messages
 //   - RLS enforced staff-only (see migration)
 //   - broader tool catalog (portfolio, client update drafts)
