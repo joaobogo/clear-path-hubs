@@ -150,7 +150,7 @@ function TalentMemoryPage() {
         </div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Users className="h-3.5 w-3.5" />
-          {listIsError ? "— entries" : `${memories.length} entries`}
+          {listIsError ? "— entries" : plural(memories.length, "entry", "entries")}
         </div>
       </header>
 

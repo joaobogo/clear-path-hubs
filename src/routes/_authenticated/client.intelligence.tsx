@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { plural } from "@/lib/format/plural";
 
 export const Route = createFileRoute("/_authenticated/client/intelligence")({
   head: () => ({
@@ -179,7 +180,7 @@ function IntelligencePage() {
                       className="text-xs underline underline-offset-4"
                       onClick={() => all.forEach((r) => restore(r.id))}
                     >
-                      Show {hidden} hidden suggestion{hidden === 1 ? "" : "s"}
+                      Show {plural(hidden, "hidden suggestion")}
                     </button>
                   )}
                 </div>
