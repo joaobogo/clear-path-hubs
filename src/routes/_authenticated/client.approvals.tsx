@@ -339,9 +339,9 @@ function ApprovalsPage() {
           onRetry={() => tasks.refetch()}
           retrying={tasks.isFetching}
         />
-      ) : tasks.isLoading ? (
+      ) : tasks.isLoading || overview.isLoading ? (
         <SkeletonRows rows={4} />
-      ) : rows.length === 0 ? (
+      ) : rows.length === 0 && derived.length === 0 ? (
         <SurfaceState
           content={resolveNoApprovalsState({
             awaitingDecision: signals?.awaitingDecision ?? 0,
@@ -350,6 +350,9 @@ function ApprovalsPage() {
         />
       ) : (
         <ul className="space-y-2">
+          {derived.map((d) => (
+            <DerivedApprovalRow key={d.key} item={d} />
+          ))}
           {rows.map((t) => (
             <ApprovalRowItem
               key={t.id}
@@ -361,6 +364,7 @@ function ApprovalsPage() {
           ))}
         </ul>
       )}
+
     </div>
   );
 }
