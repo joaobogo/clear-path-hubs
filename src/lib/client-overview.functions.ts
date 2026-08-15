@@ -320,14 +320,12 @@ export const getClientOverview = createServerFn({ method: "GET" })
     // Awaiting a decision means the same thing here as it does in the health
     // strip: delivered to this workspace and no decision recorded yet. Anything
     // else would let two panels contradict each other on the same screen.
-    const awaitingDecision = (r: (typeof rows)[number]) =>
-      r.delivered_at != null && (r.recommendation == null || r.recommendation === "pending");
     const queueRows = rows.filter(
       (r) =>
         r.stage === "delivered" ||
         r.interview_needs_confirmation ||
         r.stage === "offer" ||
-        awaitingDecision(r),
+        isAwaitingClientDecision(r),
     );
     const queueNames = new Map<string, string>();
     if (queueRows.length > 0) {
