@@ -134,10 +134,39 @@ export const getCandidateCvDownload = createServerFn({ method: "POST" })
     const filename = `${base}_CV${ext}`;
 
     const bucket = String(file.storage_bucket ?? "cvs");
+    const storagePath = String(file.storage_path);
+
+    // For redacted requests, we serve a text-based version with PII stripped.
+    if (redacted) {
+      const { data: blob, error: bErr } = await supabaseAdmin.storage
+        .from(bucket)
+        .download(storagePath);
+      if (bErr || !blob) throw new Error("File missing");
+      
+      const { redactCv } = await import("./cv-redactor.server");
+      const bytes = new Uint8Array(await blob.arrayBuffer());
+      const redactedText = await redactCv(bytes, file.mime_type as string, file.filename as string);
+      
+      // Return the redacted text as a data URL or a signed URL to a temporary redacted file.
+      // For simplicity and to avoid storage clutter, we return a data URL for small-ish text.
+      // If text is huge, we could serve a specific "redacted" storage path.
+      const dataUrl = `data:text/plain;charset=utf-8,${encodeURIComponent(redactedText)}`;
+      
+      return {
+        url: dataUrl,
+        filename: `${base}_CV_Redacted.txt`,
+        mime: "text/plain",
+        disposition: "inline", // Force inline for redacted text
+        audience,
+        expires_at: new Date(Date.now() + SIGNED_URL_TTL_SECONDS * 1000).toISOString(),
+        isRedacted: true
+      };
+    }
+
     const signed = await supabaseAdmin.storage
       .from(bucket)
       .createSignedUrl(
-        String(file.storage_path),
+        storagePath,
         SIGNED_URL_TTL_SECONDS,
         // `download` sets Content-Disposition: attachment; omit it for inline preview.
         disposition === "attachment" ? { download: filename } : {},
