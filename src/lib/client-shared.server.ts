@@ -200,17 +200,32 @@ export async function assertNotSupportViewReadOnly(supabase: AnyRow, userId: str
   if (isStaff !== true) throw new Error("forbidden");
   // Staff — allow only when an interactive support session is currently open.
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data: interactive } = await supabaseAdmin
+  const now = new Date().toISOString();
+  const { data: interactive, error } = await supabaseAdmin
     .from("support_sessions")
-    .select("id")
+    .select("id, expires_at")
     .eq("actor_user_id", userId)
     .eq("organization_id", orgId)
     .eq("mode", "interactive")
     .is("ended_at", null)
-    .gt("expires_at", new Date().toISOString())
+    .gt("expires_at", now)
     .limit(1)
     .maybeSingle();
-  if (!interactive) throw new Error("SUPPORT_VIEW_READ_ONLY");
+
+  if (error) throw error;
+  if (!interactive) {
+    // Audit log accuracy: if we found a session but it was expired, mark it now.
+    // The pg_cron job handles this eventually, but we ensure consistency on-read.
+    await supabaseAdmin
+      .from("support_sessions")
+      .update({ ended_at: now, end_reason: "expired" })
+      .eq("actor_user_id", userId)
+      .eq("organization_id", orgId)
+      .is("ended_at", null)
+      .lt("expires_at", now);
+
+    throw new Error("SUPPORT_VIEW_READ_ONLY");
+  }
 }
 
 /**
