@@ -195,7 +195,7 @@ async function resolvePeople(
  */
 export async function loadCoverageQueue(
   admin: Admin,
-  opts: { includeTest?: boolean; all?: boolean } = {},
+  opts: { includeTest?: boolean; all?: boolean; q?: string } = {},
 ): Promise<CoverageQueue> {
   const q = admin
     .from("positions")
@@ -208,6 +208,10 @@ export async function loadCoverageQueue(
   const { resolveShowTestRecords } = await import("./admin-test-scope.server");
   const showTest = opts.includeTest === true || (await resolveShowTestRecords());
   if (!showTest) q.eq("is_test_record", false);
+  if (opts.q) {
+    const term = `%${opts.q}%`;
+    q = q.or(`title.ilike.${term},organizations.name.ilike.${term}`);
+  }
 
   const res = await q;
   if (res.error) throw new Error(res.error.message);
