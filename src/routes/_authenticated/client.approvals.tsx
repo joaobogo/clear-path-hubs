@@ -34,7 +34,12 @@ import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
 import { ApprovalRowItem } from "@/components/client/approvals/approval-row";
 import { NewApprovalDialog } from "@/components/client/approvals/new-approval-dialog";
 import { BulkDueDate, BulkReassign } from "@/components/client/approvals/bulk-actions";
+import { DerivedApprovalRow } from "@/components/client/approvals/derived-approval-row";
+import { getClientOverview } from "@/lib/client-overview.functions";
+import type { QueueRow } from "@/lib/client-decision-queue";
+import { toDerivedApproval, filterDerived } from "@/lib/client/derived-approvals";
 import { toastError } from "@/lib/toast-error";
+
 
 
 const RoutePending = makeWorkspacePending({ shape: "rows", kpis: false, width: "6xl" });
