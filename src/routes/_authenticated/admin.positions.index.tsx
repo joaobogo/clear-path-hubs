@@ -59,6 +59,21 @@ const searchSchema = z.object({
 
 
 export const Route = createFileRoute("/_authenticated/admin/positions/")({
+  pendingComponent: () => (
+    <div className="space-y-6">
+      <div className="flex justify-between">
+        <div className="h-8 w-32 animate-pulse rounded bg-muted" />
+        <div className="h-10 w-32 animate-pulse rounded bg-muted" />
+      </div>
+      <div className="h-10 w-48 animate-pulse rounded bg-muted" />
+      <div className="grid grid-cols-1 gap-6">
+        <div className="h-32 animate-pulse rounded-lg bg-muted" />
+        <div className="h-32 animate-pulse rounded-lg bg-muted" />
+      </div>
+      <div className="h-[400px] w-full animate-pulse rounded-lg bg-muted" />
+    </div>
+  ),
+
   validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [

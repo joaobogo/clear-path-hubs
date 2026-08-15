@@ -37,6 +37,21 @@ import { InterviewExceptionsPanel } from "@/components/admin/interview-exception
 import { AlertTriangle, Wifi, Server, User, MoreHorizontal, FileText, Search } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/operations")({
+  pendingComponent: () => (
+    <div className="mx-auto max-w-[1600px] px-6 py-8 space-y-6">
+      <div className="h-8 w-48 animate-pulse rounded bg-muted" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="h-20 animate-pulse rounded-lg bg-muted" />
+        ))}
+      </div>
+      <div className="space-y-4">
+        <div className="h-64 animate-pulse rounded-lg bg-muted" />
+        <div className="h-64 animate-pulse rounded-lg bg-muted" />
+      </div>
+    </div>
+  ),
+
   loader: ({ context }) =>
     context.queryClient.ensureQueryData({
       queryKey: ["pipeline-health"],

@@ -6,8 +6,8 @@
  * the client: ordering, overdue days and links all come from the loader.
  */
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { getMyDay } from "@/lib/my-day.functions";
 import type { MyDay, MyDayKind } from "@/lib/my-day.server";
 import { MY_DAY_KIND_LABEL } from "@/lib/my-day.server";
@@ -19,6 +19,25 @@ import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { AlarmClock, ArrowRight, Clock, Flag } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/my-day")({
+  pendingComponent: () => (
+    <div className="p-6 md:p-8 max-w-5xl space-y-6">
+      <div className="space-y-2">
+        <div className="h-8 w-32 animate-pulse rounded bg-muted" />
+        <div className="h-4 w-96 animate-pulse rounded bg-muted" />
+      </div>
+      <div className="grid grid-cols-3 gap-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-20 animate-pulse rounded bg-muted" />
+        ))}
+      </div>
+      <div className="space-y-3">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="h-20 animate-pulse rounded bg-muted" />
+        ))}
+      </div>
+    </div>
+  ),
+
   head: () => ({
     meta: [
       { title: "My day · TaaSFlow" },
@@ -33,7 +52,13 @@ export const Route = createFileRoute("/_authenticated/admin/my-day")({
     "admin",
     "src/routes/_authenticated/admin.my-day.tsx",
   ),
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData({
+      queryKey: ["admin", "my-day", context.testScope.includeTest],
+      queryFn: () => getMyDay({ data: { include_test: context.testScope.includeTest } }),
+    }),
   component: MyDayPage,
+
 });
 
 const KIND_ICON: Record<MyDayKind, typeof Flag> = {
@@ -49,10 +74,11 @@ const KIND_TONE: Record<MyDayKind, string> = {
 };
 
 function MyDayPage() {
-  const load = useServerFn(getMyDay);
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["admin", "my-day"],
-    queryFn: () => load({ data: {} }),
+  const showTest = useIncludeTestRecords();
+  const { data, isLoading, error, refetch } = useSuspenseQuery({
+    queryKey: ["admin", "my-day", showTest],
+    queryFn: () => getMyDay({ data: { include_test: showTest } }),
+    staleTime: 30_000,
     refetchOnWindowFocus: true,
   });
 
