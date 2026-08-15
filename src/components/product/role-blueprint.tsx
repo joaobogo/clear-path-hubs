@@ -321,9 +321,8 @@ export function RoleBlueprint({ position, activity = [] }: RoleBlueprintProps) {
 
         <div className="rounded-lg border bg-muted/30 px-4 py-3 text-xs text-muted-foreground">
           Anchored to this blueprint: every candidate score, shortlist call, and AI recommendation in this
-          workspace references the version <span className="font-mono">{version}</span> shown above.
-          Requesting a change opens a new revision — historical scores remain tied to the version they were
-          computed against.
+          workspace references the approved brief shown above. Requesting a change opens a new revision —
+          earlier assessments stay tied to the brief they were made against.
         </div>
       </div>
     </section>
