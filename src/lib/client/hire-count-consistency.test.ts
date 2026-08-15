@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { computeKpis, countLanes, type KpiRow } from "@/lib/client-kpi.server";
+import { computeKpis, type KpiRow } from "@/lib/client-kpi.server";
+import { countLanes } from "@/lib/client-pipeline-lane";
 
 /**
  * The hire number must be identical on the three client surfaces that print it:
