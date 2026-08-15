@@ -11,7 +11,6 @@ import {
   Search,
   Users,
   Star,
-  Users,
 } from "lucide-react";
 import { plural } from "@/lib/format/plural";
 import {
