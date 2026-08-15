@@ -96,7 +96,7 @@ function OverviewPage() {
     enabled: !!orgId,
     placeholderData: (prev) => prev,
   });
-  const { data, refetch, isFetching, isError, error } = overviewQuery;
+  const { data, refetch, isFetching, isError, error, dataUpdatedAt } = overviewQuery;
 
   const pendingRolesFn = useServerFn(listPendingPaymentRoles);
   const pendingRolesQuery = useQuery({
@@ -402,12 +402,17 @@ function OverviewPage() {
             </div>
           </section>
 
-          {data?.last_updated && (
+          {dataUpdatedAt ? (
             <p className="pt-2 text-xs text-muted-foreground">
-              Last updated {relTime(data.last_updated)} ·{" "}
-              {formatDateTime(data.last_updated)}
+              {/* This line describes THIS read of the data, so it moves with the
+                  data — it is not the timestamp of the newest record. */}
+              Read {relTime(new Date(dataUpdatedAt).toISOString())} ·{" "}
+              {formatDateTime(new Date(dataUpdatedAt).toISOString())}
+              {data?.last_updated
+                ? ` · newest activity ${formatDateTime(data.last_updated)}`
+                : ""}
             </p>
-          )}
+          ) : null}
         </>
       )}
     </div>
