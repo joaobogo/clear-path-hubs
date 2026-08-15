@@ -103,7 +103,7 @@ export function PositionBottleneckCard({
       {!diagnosed && (
         <p className="flex items-start gap-2 border-b bg-muted/30 px-4 py-3 text-xs text-muted-foreground">
           <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          Only {data.entered_total} candidate{data.entered_total === 1 ? "" : "s"} {data.entered_total === 1 ? "has" : "have"} entered this
+          Only {data.entered_total} {data.entered_total === 1 ? "candidate has" : "candidates have"} entered this
           pipeline. At least {data.threshold} are needed before a stage can be named as the
           bottleneck — the stage figures below are shown as-is.
         </p>

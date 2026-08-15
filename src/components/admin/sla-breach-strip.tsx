@@ -36,7 +36,7 @@ export function SlaBreachStrip({ includeTest }: { includeTest: boolean }) {
           className="flex items-center gap-2 text-sm font-semibold text-destructive"
         >
           <AlertTriangle className="h-4 w-4" />
-          {rows.length} commitment{rows.length === 1 ? "" : "s"} past {rows.length === 1 ? "its" : "their"} promise
+          {rows.length} {rows.length === 1 ? "commitment" : "commitments"} past {rows.length === 1 ? "its" : "their"} promise
         </h2>
         <Link to="/admin/sla" className="text-xs font-medium text-primary hover:underline">
           Open SLA desk
