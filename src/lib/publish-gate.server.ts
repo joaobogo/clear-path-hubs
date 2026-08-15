@@ -14,7 +14,7 @@ import {
 type Any = any;
 
 const SELECT =
-  "id, title, status, visibility, payment_status, approved_at, published_at, created_at, submitted_at, owner_user_id, organization_id, description, employment_type, work_model, seniority, location";
+  "id, title, status, visibility, payment_status, approved_at, published_at, created_at, submitted_at, owner_user_id, organization_id, description, employment_type, work_model, seniority, location, requirements";
 
 /** Statuses where publishing is still the next meaningful step. */
 const UNPUBLISHED_STATUSES = ["draft", "submitted", "under_review", "needs_clarification", "approved"];
@@ -48,6 +48,7 @@ function toGateInput(p: Any): PublishGateInput {
     work_model: p['work_model'] ?? null,
     seniority: p['seniority'] ?? null,
     location: p['location'] ?? null,
+    requirements: p['requirements'] ?? null,
   };
 }
 

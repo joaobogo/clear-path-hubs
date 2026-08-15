@@ -262,7 +262,7 @@ function PositionWorkspace() {
                 Edit position
               </Link>
             </Button>
-            <LifecycleBar position={p} onDone={invalidate} />
+            <LifecycleBar position={p} onDone={invalidate} includeVisibilityCheck={true} />
           </div>
         </div>
         <div className="mt-4">
