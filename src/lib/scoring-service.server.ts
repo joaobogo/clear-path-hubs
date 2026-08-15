@@ -525,21 +525,16 @@ export async function executeScoring(
           organization_id: ctx.match.organization_id,
         },
       };
-      const { data: run, error: runErr } = await s.from("score_runs").insert({
+      const { data: run, error: runErr } = await s.from("score_runs").upsert({
         candidate_match_id: matchId,
-        position_id: ctx.match.position_id, // enforced by trigger
-        // ── Scoring Identity Contract (first-class columns) ────────────────
+        position_id: ctx.match.position_id,
         application_id: ctx.match.application_id,
         candidate_profile_id: ctx.match.candidate_profile_id,
         candidate_submission_id: ctx.match.application_id,
         organization_id: ctx.match.organization_id,
         blueprint_version: SCORING_BLUEPRINT_VERSION,
         rubric_version_id: rubricVersionId,
-        // ── Math (raw / cap / final) ───────────────────────────────────────
-        // Three distinct facts: pre-cap composite, the cap in force (null when
-        // none), and the published number.
         raw_score: raw.raw_score,
-        // Null, not a mirror of raw_score, when nothing clamped this run.
         applied_cap: rec.applied_cap,
         cap_reason: rec.applied_caps.length
           ? rec.applied_caps.map((c) => c.reason).join(" | ")
@@ -547,11 +542,8 @@ export async function executeScoring(
         final_score: raw.score,
         evaluation_method: EVALUATION_METHOD,
         fit_band: raw.fit_label,
-        // ── Legacy mirror columns kept for existing readers ────────────────
         engine_version: ENGINE_VERSION,
         score: raw.score,
-        // Two distinct facts, both persisted: how confident the run is overall,
-        // and how much of the rubric its evidence could actually decide.
         confidence: raw.overall_confidence,
         evidence_confidence: raw.evidence_confidence,
         status: "completed",
@@ -564,7 +556,6 @@ export async function executeScoring(
           category_weights: raw.category_weights,
           requirement_assessment: raw.requirement_assessment,
         } as unknown as Json,
-
         started_at: new Date().toISOString(),
         completed_at: new Date().toISOString(),
         trace_id,
@@ -574,6 +565,9 @@ export async function executeScoring(
         preferred_coverage: raw.preferred_coverage,
         contradiction_status: raw.contradiction_status,
         input_hash: raw.input_hash,
+      }, {
+        onConflict: "candidate_match_id,input_hash,rubric_version_id",
+        ignoreDuplicates: false
       }).select("id").single();
 
       if (runErr || !run) throw new Error(runErr?.message ?? "score_insert_failed");

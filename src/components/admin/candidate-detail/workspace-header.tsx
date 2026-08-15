@@ -112,8 +112,16 @@ function WorkspaceHeader({
       </div>
       {m.processing_error_message && (
         <Alert variant="destructive">
-          <AlertTitle>{m.processing_error_code ?? "Processing error"}</AlertTitle>
-          <AlertDescription>{m.processing_error_message}</AlertDescription>
+          <AlertTitle>
+            {m.processing_error_code === "engine_error" 
+              ? "Hiring Intelligence" 
+              : (m.processing_error_code ?? "Processing error")}
+          </AlertTitle>
+          <AlertDescription>
+            {m.processing_error_message.includes("unique constraint") || m.processing_error_message === "engine_error"
+              ? `The assessment engine encountered a technical collision while analyzing this profile. Reference: ${m.last_processing_trace_id || 'no-trace'}`
+              : m.processing_error_message}
+          </AlertDescription>
         </Alert>
       )}
           {(() => {
