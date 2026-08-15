@@ -216,17 +216,19 @@ function CandidatesPage() {
 
   // Sync state to local storage when it changes
   useEffect(() => {
-    if (orgId) {
-      if (compareIds.length > 0) {
-        saveCompareSelection(orgId, compareIds);
-      } else {
-        // Only clear if we explicitly wanted no selection, 
-        // not during initial mount before data loads.
-        const rows = rowsRaw as ClientCandidateDTO[];
-        if (rows && rows.length > 0) {
-          clearCompareSelection(orgId);
-        }
-      }
+    if (!orgId) return;
+    
+    // Always sync non-empty selections
+    if (compareIds.length > 0) {
+      saveCompareSelection(orgId, compareIds);
+      return;
+    }
+
+    // Only clear storage if we have data (prevents clearing during initial mount/loading)
+    // AND it wasn't a seeded default we just haven't confirmed yet.
+    const rows = rowsRaw as ClientCandidateDTO[];
+    if (rows && rows.length > 0 && seededDefault.current) {
+      clearCompareSelection(orgId);
     }
   }, [compareIds, orgId, rowsRaw]);
 
