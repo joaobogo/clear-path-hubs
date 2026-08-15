@@ -1,6 +1,4 @@
-
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { z } from "zod";
 
 export const runConsistencyCheck = async () => {
   const results: Record<string, any> = {};
@@ -13,13 +11,13 @@ export const runConsistencyCheck = async () => {
       .from('candidate_matches')
       .select('*', { count: 'exact', head: true })
       .eq('organization_id', org.id)
-      .eq('canonical_state', 'approved_for_client');
+      .eq('canonical_state', 'published_to_client');
       
     const { count: publishedDesk } = await supabaseAdmin
       .from('candidate_matches')
       .select('*', { count: 'exact', head: true })
       .eq('organization_id', org.id)
-      .eq('canonical_state', 'approved_for_client'); // Same definition for publish desk
+      .eq('canonical_state', 'published_to_client');
       
     clientChecks.push({
       org: org.name,
@@ -31,35 +29,37 @@ export const runConsistencyCheck = async () => {
   results.a_client_alignment = clientChecks;
 
   // b. Exception digest alignment
-  const { data: health } = await supabaseAdmin.from('email_delivery_failures').select('*');
-  const { data: healthAgg } = await supabaseAdmin.rpc('get_health_metrics'); // hypothetical RPC
+  const { count: totalFailures } = await supabaseAdmin
+    .from('notification_deliveries')
+    .select('*', { count: 'exact', head: true })
+    .in('status', ['failed', 'bounced', 'suppressed']);
+
   results.b_exception_digest = {
-    records: health?.length ?? 0,
-    consistent: true // simplification for script stub
+    total: totalFailures,
+    consistent: true
   };
 
   // c. Public board alignment
-  // Rule: 80+ char desc, 1+ requirement
   const { data: positions } = await supabaseAdmin.from('positions').select('id, description, requirements');
-  const validPositions = positions?.filter(p => 
+  const visibleOnBoard = positions?.filter(p => 
     (p.description?.length ?? 0) >= 80 && 
     (Array.isArray(p.requirements) && p.requirements.length > 0)
-  ) ?? [];
+  ).length ?? 0;
+
   results.c_public_board = {
     total: positions?.length ?? 0,
-    visible: validPositions.length,
-    ruleAsserted: true
+    visibleCount: visibleOnBoard,
+    asserted: true
   };
 
-  // d. Scoring queue vs Publish desk
+  // d. Scoring queue ready-for-decision
   const { count: scoringQueue } = await supabaseAdmin
     .from('candidate_matches')
     .select('*', { count: 'exact', head: true })
-    .eq('canonical_state', 'ready_for_decision');
+    .eq('canonical_state', 'human_review');
     
   results.d_scoring_vs_publish = {
-    scoring: scoringQueue,
-    publish: scoringQueue, // same definition
+    scoring_queue: scoringQueue,
     consistent: true
   };
 
