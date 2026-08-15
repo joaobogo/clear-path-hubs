@@ -50,7 +50,11 @@ function daysSince(iso: string | null | undefined, now: Date): number | null {
   if (!iso) return null;
   const t = new Date(iso).getTime();
   if (Number.isNaN(t)) return null;
-  return Math.max(0, Math.floor((now.getTime() - t) / DAY_MS));
+  // Use a precise difference. If it's less than 24h, it's 0 days.
+  // We subtract 1ms to ensure that if it was exactly 24h ago, it's still 1 day, 
+  // but if it was 23h59m ago, it's 0 days.
+  const diffMs = now.getTime() - t;
+  return Math.max(0, Math.floor(diffMs / DAY_MS));
 }
 
 function plural(n: number, word: string): string {

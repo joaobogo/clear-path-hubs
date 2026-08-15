@@ -43,6 +43,7 @@ export type IntelligenceRecords = {
   scoreRuns: Row[];
   evidenceItems: Row[];
   agentRuns: Row[];
+  feedEvents?: Row[];
   commitments: Row[];
   interviews: Row[];
   marketSignals: Row[];
@@ -666,16 +667,24 @@ export function buildIntelligence(
 
   // ── 8 · Agent run outcomes ─────────────────────────────────────────────
   {
-    const runs = records.agentRuns.filter((r) => inWindow(iso(r.occurred_at), win.from, win.to));
+    const runs = [
+      ...records.agentRuns.filter((r) => inWindow(iso(r.occurred_at), win.from, win.to)),
+      ...(records.feedEvents ?? [])
+        .filter((f) => inWindow(iso(f.occurred_at), win.from, win.to))
+        .map((f) => ({ outcome: "acted", occurred_at: f.occurred_at })),
+    ];
     const byOutcome = new Map<string, number>();
     for (const r of runs) {
       const key = String(r.outcome ?? "unrecorded");
       byOutcome.set(key, (byOutcome.get(key) ?? 0) + 1);
     }
     const failed = (byOutcome.get("failed") ?? 0) + (byOutcome.get("error") ?? 0);
-    const priorCount = records.agentRuns.filter((r) =>
-      inPriorWindow(iso(r.occurred_at), win.priorFrom, win.from),
-    ).length;
+    const priorCount =
+      records.agentRuns.filter((r) => inPriorWindow(iso(r.occurred_at), win.priorFrom, win.from))
+        .length +
+      (records.feedEvents ?? []).filter((f) =>
+        inPriorWindow(iso(f.occurred_at), win.priorFrom, win.from),
+      ).length;
     const cmp = compare(runs.length, priorCount || null, { lowerIsBetter: false, unit: "runs", digits: 0 });
     const latestAt = newest(records.agentRuns, "occurred_at");
     const state = resolveMetricStatus({
