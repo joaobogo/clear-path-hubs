@@ -74,7 +74,7 @@ const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   review: ClipboardCheck,
   client_overdue: Clock,
   interviews: CalendarClock,
-  blocked: AlertOctagon,
+  delivery_failures: AlertOctagon,
 };
 
 function Overview() {

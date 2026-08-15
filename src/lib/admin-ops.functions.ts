@@ -93,8 +93,16 @@ export const getPaymentsOps = createServerFn({ method: "GET" })
 
 export const getReviewQueueIds = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((i: unknown) =>
+    z.object({ include_test: z.boolean().optional() }).parse(i ?? {}),
+  )
+  .handler(async ({ data, context }) => {
     const { requireStaff, loadReviewQueueIds } = await import("./admin-ops.server");
     await requireStaff(context.userId);
-    return { ids: await loadReviewQueueIds() };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { resolveShowTestRecordsForUser } = await import("./admin-test-scope.server");
+    const includeTest =
+      data.include_test ??
+      (await resolveShowTestRecordsForUser(supabaseAdmin as never, context.userId));
+    return { ids: await loadReviewQueueIds({ includeTest }) };
   });

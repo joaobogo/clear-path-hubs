@@ -75,7 +75,8 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       scope,
     ),
 
-    // 3 — scored candidates awaiting an admin decision.
+    // 3 — candidates awaiting decision (scored).
+    // Scoping must exactly match loadReviewQueueIds for counter agreement.
     excludeTestOrgs(
       s
         .from("candidate_matches")
@@ -125,24 +126,13 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       scope,
     ),
 
-    // Bonus — pipeline incidents that stop everything else.
-    excludeTestOrgs(
-      s
-        .from("candidate_matches")
-        .select(
-          "id,processing_state,processing_error_code,processing_updated_at,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(name))",
-          { count: "exact" },
-        )
-        .in("processing_state", [
-          "failed",
-          "provider_blocked",
-          "ocr_required",
-          "manual_review_required",
-        ])
-        .order("processing_updated_at", { ascending: true })
-        .limit(8),
-      scope,
-    ),
+    // 6 — delivery failures that need a retry or a new address.
+    s
+      .from("notification_deliveries")
+      .select("id, status, error_message, updated_at, notifications(title, audience, notification_id)", { count: "exact" })
+      .in("status", ["failed", "bounced", "suppressed"])
+      .order("updated_at", { ascending: false })
+      .limit(8),
 
     // 6 — real client briefs sitting in the inbox for more than three days.
     loadAgingIntakes(s, { includeTest: opts.includeTest ?? false, olderThanDays: 3, limit: 8 }),
@@ -177,8 +167,8 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
   for (const m of overdue) addOwner(m.positions?.owner_user_id);
   for (const iv of (interviews.data ?? []) as Any[])
     addOwner(iv.candidate_matches?.positions?.owner_user_id);
-  for (const m of (blocked.data ?? []) as Any[]) addOwner(m.positions?.owner_user_id);
   for (const i of agingIntakes.items) addOwner(i.owner_user_id);
+
 
   const ownerName = new Map<string, string>();
   if (ownerIds.size) {
@@ -266,10 +256,10 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
     },
     {
       key: "review",
-      label: "Candidates awaiting review",
-      description: "Scored and waiting on an approve or reject decision.",
+      label: "Candidates awaiting decision",
+      description: "Scored candidates awaiting an admin approve, hold, or reject decision.",
       count: review.count ?? 0,
-      action_hint: "Review on one screen: evidence, CV and requirements together.",
+      action_hint: "Review evidence and recorded fit labels to make a decision.",
       see_all: { to: "/admin/candidates" },
       items: ((review.data ?? []) as Any[]).map((m) => ({
         id: m.id,
@@ -327,22 +317,22 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       })),
     },
     {
-      key: "blocked",
-      label: "Blocked in processing",
-      description: "Parse, OCR or provider incidents holding candidates back.",
+      key: "delivery_failures",
+      label: "Delivery failures",
+      description: "Email or message failures that need a retry or a new address.",
       count: blocked.count ?? 0,
-      action_hint: "Retry the step or resolve the incident.",
+      action_hint: "Retry the delivery or update the recipient's email.",
       see_all: { to: "/admin/operations" },
-      items: ((blocked.data ?? []) as Any[]).map((m) => ({
-        id: m.id,
-        title: m.candidate_profiles?.full_name ?? "Candidate",
-        subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
-        meta: (m.processing_error_code ?? m.processing_state ?? "").replace(/_/g, " "),
-        waiting_since: m.processing_updated_at,
-        target: { kind: "match" as const, id: m.id },
+      items: ((blocked.data ?? []) as Any[]).map((d) => ({
+        id: d.id,
+        title: d.notifications?.title ?? "Delivery failure",
+        subtitle: (d.error_message ?? d.status ?? "").replace(/_/g, " "),
+        meta: d.notifications?.audience ?? null,
+        waiting_since: d.updated_at,
+        target: { kind: "match" as const, id: d.notifications?.notification_id ?? d.notification_id },
         action_label: "Fix",
-        owner: owner(m.positions?.owner_user_id),
-        claim: positionClaim(m.positions?.id),
+        owner: null,
+        claim: null,
         tone: "danger" as const,
       })),
     },
@@ -521,15 +511,21 @@ export async function loadPaymentsOpsPanel(): Promise<PaymentsOpsPanel> {
   };
 }
 
-/** Ordered ids of everything awaiting review, so the reviewer never goes back to a list. */
-export async function loadReviewQueueIds(): Promise<string[]> {
+/** Ordered ids of everything awaiting decision, so the reviewer never goes back to a list. */
+export async function loadReviewQueueIds(opts: { includeTest?: boolean } = {}): Promise<string[]> {
   const s = await admin();
-  const { data } = await s
-    .from("candidate_matches")
-    .select("id,updated_at")
-    .eq("admin_status", "pending")
-    .eq("processing_state", "scored")
-    .order("updated_at", { ascending: true })
-    .limit(200);
+  const { loadTestScope, excludeTestOrgs } = await import("./admin-test-scope.server");
+  const scope = await loadTestScope(s, opts.includeTest ?? false);
+
+  const { data } = await excludeTestOrgs(
+    s
+      .from("candidate_matches")
+      .select("id,updated_at")
+      .eq("admin_status", "pending")
+      .eq("processing_state", "scored")
+      .order("updated_at", { ascending: true })
+      .limit(200),
+    scope,
+  );
   return ((data ?? []) as Any[]).map((m) => m.id as string);
 }
