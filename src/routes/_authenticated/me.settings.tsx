@@ -147,99 +147,103 @@ function SettingsPage() {
         <SupportRequestSheet />
       </header>
 
-      <section className="rounded-lg border bg-card p-5 space-y-4">
-        <div>
-          <h2 className="text-sm font-medium">What we email you about</h2>
-          <p className="text-xs text-muted-foreground">
-            Turn off anything you don&apos;t want. Three kinds of message stay on because
-            they are the ones you have to act on — we won&apos;t silently drop those.
-          </p>
-        </div>
+      {data?.seat === "candidate" && (
+        <>
+          <section className="rounded-lg border bg-card p-5 space-y-4">
+            <div>
+              <h2 className="text-sm font-medium">What we email you about</h2>
+              <p className="text-xs text-muted-foreground">
+                Turn off anything you don&apos;t want. Three kinds of message stay on because
+                they are the ones you have to act on — we won&apos;t silently drop those.
+              </p>
+            </div>
 
-        <ul className="divide-y">
-          {CANDIDATE_NOTIFICATION_EVENTS.map((event) => (
-            <li key={event.key} className="flex items-start justify-between gap-4 py-3">
-              <div className="min-w-0">
-                <Label className="text-sm">{event.label}</Label>
-                <p className="text-xs text-muted-foreground">{event.description}</p>
-                {event.required ? (
-                  <p className="mt-1 text-xs font-medium text-muted-foreground">
-                    Always on
-                  </p>
-                ) : null}
+            <ul className="divide-y">
+              {CANDIDATE_NOTIFICATION_EVENTS.map((event) => (
+                <li key={event.key} className="flex items-start justify-between gap-4 py-3">
+                  <div className="min-w-0">
+                    <Label className="text-sm">{event.label}</Label>
+                    <p className="text-xs text-muted-foreground">{event.description}</p>
+                    {event.required ? (
+                      <p className="mt-1 text-xs font-medium text-muted-foreground">
+                        Always on
+                      </p>
+                    ) : null}
+                  </div>
+                  <Switch
+                    checked={event.required ? true : events[event.key] === true}
+                    disabled={event.required}
+                    aria-label={event.label}
+                    onCheckedChange={(v) =>
+                      setEvents((prev) => ({ ...prev, [event.key]: v === true }))
+                    }
+                  />
+                </li>
+              ))}
+            </ul>
+
+            <div className="flex items-start justify-between gap-4 border-t pt-4">
+              <div>
+                <Label className="text-sm">Also send time-sensitive updates by SMS</Label>
+                <p className="text-xs text-muted-foreground">
+                  Interview times and anything with a deadline. Nothing else.
+                </p>
+              </div>
+              <Switch checked={smsNotif} onCheckedChange={setSmsNotif} aria-label="SMS updates" />
+            </div>
+
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <Label className="text-sm">Include me in the TaaSFlow talent network</Label>
+                <p className="text-xs text-muted-foreground">
+                  Let us consider you for roles beyond the ones you applied to.
+                </p>
               </div>
               <Switch
-                checked={event.required ? true : events[event.key] === true}
-                disabled={event.required}
-                aria-label={event.label}
-                onCheckedChange={(v) =>
-                  setEvents((prev) => ({ ...prev, [event.key]: v === true }))
-                }
+                checked={networkOptIn}
+                onCheckedChange={setNetworkOptIn}
+                aria-label="Talent network"
               />
-            </li>
-          ))}
-        </ul>
+            </div>
 
-        <div className="flex items-start justify-between gap-4 border-t pt-4">
-          <div>
-            <Label className="text-sm">Also send time-sensitive updates by SMS</Label>
-            <p className="text-xs text-muted-foreground">
-              Interview times and anything with a deadline. Nothing else.
-            </p>
-          </div>
-          <Switch checked={smsNotif} onCheckedChange={setSmsNotif} aria-label="SMS updates" />
-        </div>
+            <Button
+              className="min-h-11"
+              onClick={() => saveConsent.mutate()}
+              disabled={saveConsent.isPending}
+              aria-busy={saveConsent.isPending || undefined}
+            >
+              {saveConsent.isPending ? "Saving…" : "Save preferences"}
+            </Button>
+          </section>
 
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <Label className="text-sm">Include me in the TaaSFlow talent network</Label>
-            <p className="text-xs text-muted-foreground">
-              Let us consider you for roles beyond the ones you applied to.
-            </p>
-          </div>
-          <Switch
-            checked={networkOptIn}
-            onCheckedChange={setNetworkOptIn}
-            aria-label="Talent network"
+          <AvailabilityBlock
+            availability={data?.profile?.availability ?? null}
+            profileTimezone={data?.profile?.timezone ?? null}
+            onSaved={() => qc.invalidateQueries({ queryKey: ["me-context"] })}
           />
-        </div>
 
-        <Button
-          className="min-h-11"
-          onClick={() => saveConsent.mutate()}
-          disabled={saveConsent.isPending}
-          aria-busy={saveConsent.isPending || undefined}
-        >
-          {saveConsent.isPending ? "Saving…" : "Save preferences"}
-        </Button>
-      </section>
-
-      <AvailabilityBlock
-        availability={data?.profile?.availability ?? null}
-        profileTimezone={data?.profile?.timezone ?? null}
-        onSaved={() => qc.invalidateQueries({ queryKey: ["me-context"] })}
-      />
-
-      <section className="rounded-lg border bg-card p-5 space-y-3">
-        <h2 className="text-sm font-medium">Request a correction</h2>
-        <p className="text-xs text-muted-foreground">
-          Something wrong in your profile or application? Tell us what to fix.
-        </p>
-        <Textarea
-          rows={4}
-          value={correction}
-          onChange={(e) => setCorrection(e.target.value)}
-          placeholder="Please update my location to…"
-        />
-        <Button
-          variant="outline"
-          className="min-h-11"
-          disabled={!correction.trim() || submitCorrection.isPending}
-          onClick={() => submitCorrection.mutate(correction.trim())}
-        >
-          Send request
-        </Button>
-      </section>
+          <section className="rounded-lg border bg-card p-5 space-y-3">
+            <h2 className="text-sm font-medium">Request a correction</h2>
+            <p className="text-xs text-muted-foreground">
+              Something wrong in your profile or application? Tell us what to fix.
+            </p>
+            <Textarea
+              rows={4}
+              value={correction}
+              onChange={(e) => setCorrection(e.target.value)}
+              placeholder="Please update my location to…"
+            />
+            <Button
+              variant="outline"
+              className="min-h-11"
+              disabled={!correction.trim() || submitCorrection.isPending}
+              onClick={() => submitCorrection.mutate(correction.trim())}
+            >
+              Send request
+            </Button>
+          </section>
+        </>
+      )}
 
       <section className="rounded-lg border bg-card p-5 space-y-3">
         <h2 className="text-sm font-medium">Get a copy of your data</h2>
