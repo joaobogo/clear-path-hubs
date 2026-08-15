@@ -99,9 +99,9 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       count("candidate_matches", (q) =>
         q.eq("admin_status", "approved").eq("client_visibility", "hidden"),
       ),
-      // Processing incidents to triage
-      count("candidate_matches", (q) =>
-        q.in("processing_state", ["failed", "provider_blocked", "ocr_required", "manual_review_required"]),
+      // Email/message delivery failures to triage
+      count("notification_deliveries", (q) =>
+        q.in("status", ["failed", "bounced", "suppressed"]),
       ),
       // Client-initiated recompute / feedback in the last 7d
       count("score_decisions", (q) =>
@@ -179,17 +179,12 @@ export const getAdminOverview = createServerFn({ method: "GET" })
         .order("updated_at", { ascending: false })
         .limit(5),
       s
-        .from("candidate_matches")
+        .from("notification_deliveries")
         .select(
-          "id,processing_state,processing_error_code,processing_updated_at,candidate_profiles(full_name),positions(title,organizations(name))",
+          "id,status,error_message,updated_at,notifications(title,audience,recipient_user_id)",
         )
-        .in("processing_state", [
-          "failed",
-          "provider_blocked",
-          "ocr_required",
-          "manual_review_required",
-        ])
-        .order("processing_updated_at", { ascending: false })
+        .in("status", ["failed", "bounced", "suppressed"])
+        .order("updated_at", { ascending: false })
         .limit(6),
       s
         .from("score_decisions")
