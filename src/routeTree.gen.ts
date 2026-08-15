@@ -104,6 +104,7 @@ import { Route as AuthenticatedClientTasksRouteImport } from './routes/_authenti
 import { Route as AuthenticatedClientTalentPoolRouteImport } from './routes/_authenticated/client.talent-pool'
 import { Route as AuthenticatedClientTalentMemoryRouteImport } from './routes/_authenticated/client.talent-memory'
 import { Route as AuthenticatedClientSettingsRouteImport } from './routes/_authenticated/client.settings'
+import { Route as AuthenticatedClientRolesRouteImport } from './routes/_authenticated/client.roles'
 import { Route as AuthenticatedClientPositionsRouteImport } from './routes/_authenticated/client.positions'
 import { Route as AuthenticatedClientPortfolioRouteImport } from './routes/_authenticated/client.portfolio'
 import { Route as AuthenticatedClientPlanRouteImport } from './routes/_authenticated/client.plan'
@@ -686,6 +687,12 @@ const AuthenticatedClientSettingsRoute =
   AuthenticatedClientSettingsRouteImport.update({
     id: '/settings',
     path: '/settings',
+    getParentRoute: () => AuthenticatedClientRoute,
+  } as any)
+const AuthenticatedClientRolesRoute =
+  AuthenticatedClientRolesRouteImport.update({
+    id: '/roles',
+    path: '/roles',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
 const AuthenticatedClientPositionsRoute =
@@ -1397,6 +1404,7 @@ export interface FileRoutesByFullPath {
   '/client/plan': typeof AuthenticatedClientPlanRoute
   '/client/portfolio': typeof AuthenticatedClientPortfolioRoute
   '/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
+  '/client/roles': typeof AuthenticatedClientRolesRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
   '/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
   '/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
@@ -1584,6 +1592,7 @@ export interface FileRoutesByTo {
   '/client/outreach': typeof AuthenticatedClientOutreachRoute
   '/client/plan': typeof AuthenticatedClientPlanRoute
   '/client/portfolio': typeof AuthenticatedClientPortfolioRoute
+  '/client/roles': typeof AuthenticatedClientRolesRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
   '/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
   '/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
@@ -1781,6 +1790,7 @@ export interface FileRoutesById {
   '/_authenticated/client/plan': typeof AuthenticatedClientPlanRoute
   '/_authenticated/client/portfolio': typeof AuthenticatedClientPortfolioRoute
   '/_authenticated/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
+  '/_authenticated/client/roles': typeof AuthenticatedClientRolesRoute
   '/_authenticated/client/settings': typeof AuthenticatedClientSettingsRoute
   '/_authenticated/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
   '/_authenticated/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
@@ -1979,6 +1989,7 @@ export interface FileRouteTypes {
     | '/client/plan'
     | '/client/portfolio'
     | '/client/positions'
+    | '/client/roles'
     | '/client/settings'
     | '/client/talent-memory'
     | '/client/talent-pool'
@@ -2166,6 +2177,7 @@ export interface FileRouteTypes {
     | '/client/outreach'
     | '/client/plan'
     | '/client/portfolio'
+    | '/client/roles'
     | '/client/settings'
     | '/client/talent-memory'
     | '/client/talent-pool'
@@ -2362,6 +2374,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/plan'
     | '/_authenticated/client/portfolio'
     | '/_authenticated/client/positions'
+    | '/_authenticated/client/roles'
     | '/_authenticated/client/settings'
     | '/_authenticated/client/talent-memory'
     | '/_authenticated/client/talent-pool'
@@ -3200,6 +3213,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/client/settings'
       preLoaderRoute: typeof AuthenticatedClientSettingsRouteImport
+      parentRoute: typeof AuthenticatedClientRoute
+    }
+    '/_authenticated/client/roles': {
+      id: '/_authenticated/client/roles'
+      path: '/roles'
+      fullPath: '/client/roles'
+      preLoaderRoute: typeof AuthenticatedClientRolesRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
     '/_authenticated/client/positions': {
@@ -4136,6 +4156,7 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientPlanRoute: typeof AuthenticatedClientPlanRoute
   AuthenticatedClientPortfolioRoute: typeof AuthenticatedClientPortfolioRoute
   AuthenticatedClientPositionsRoute: typeof AuthenticatedClientPositionsRouteWithChildren
+  AuthenticatedClientRolesRoute: typeof AuthenticatedClientRolesRoute
   AuthenticatedClientSettingsRoute: typeof AuthenticatedClientSettingsRoute
   AuthenticatedClientTalentMemoryRoute: typeof AuthenticatedClientTalentMemoryRoute
   AuthenticatedClientTalentPoolRoute: typeof AuthenticatedClientTalentPoolRoute
@@ -4168,6 +4189,7 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
   AuthenticatedClientPortfolioRoute: AuthenticatedClientPortfolioRoute,
   AuthenticatedClientPositionsRoute:
     AuthenticatedClientPositionsRouteWithChildren,
+  AuthenticatedClientRolesRoute: AuthenticatedClientRolesRoute,
   AuthenticatedClientSettingsRoute: AuthenticatedClientSettingsRoute,
   AuthenticatedClientTalentMemoryRoute: AuthenticatedClientTalentMemoryRoute,
   AuthenticatedClientTalentPoolRoute: AuthenticatedClientTalentPoolRoute,
