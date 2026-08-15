@@ -29,6 +29,7 @@ export type ClientEvidenceRow = {
 };
 
 import { dropRequirementEcho } from "@/lib/client/card-assessment-state";
+import { isTemplatedEvidence } from "@/lib/evidence/quote-hygiene";
 
 
 export type EvidenceBullet = {
