@@ -1052,9 +1052,40 @@ export const BLUEPRINT_STAGES = [
 
 export type BlueprintStage = (typeof BLUEPRINT_STAGES)[number]["key"] | "not_started" | "failed";
 
-export function blueprintProgress(status: string): number {
+/**
+ * Maps the position lifecycle state to the build-pipeline widget stage index.
+ * It favors real lifecycle events (creation, submission, review) over a static
+ * default, ensuring the widget is never stuck at "Queued" when progress exists.
+ */
+export function blueprintStageIndex(status: string, position?: {
+  created_at?: string | Date;
+  submitted_at?: string | Date;
+  status?: string;
+}): number {
+  // If the role exists at all, the first stage ("Role created") is complete.
+  if (status === "ready") return BLUEPRINT_STAGES.length;
+  if (status === "failed") return -1;
+
   const idx = BLUEPRINT_STAGES.findIndex((s) => s.key === status);
+  if (idx !== -1) return idx;
+
+  // Derive from position lifecycle if the status field is stale or unset.
+  if (position?.status === "active" || position?.status === "needs_clarification") return BLUEPRINT_STAGES.length;
+  if (position?.status === "under_review") return 3; // "Building the role blueprint"
+  if (position?.submitted_at) return 1; // "Reading your job description"
+  if (position?.created_at) return 0; // "Role created"
+
+  return -1;
+}
+
+export function blueprintProgress(status: string, position?: {
+  created_at?: string | Date;
+  submitted_at?: string | Date;
+  status?: string;
+}): number {
+  if (status === "ready") return 100;
   if (status === "failed") return 100;
+  const idx = blueprintStageIndex(status, position);
   if (idx === -1) return 0;
   return Math.round(((idx + 1) / BLUEPRINT_STAGES.length) * 100);
 }
