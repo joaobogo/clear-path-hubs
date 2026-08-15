@@ -67,7 +67,7 @@ export async function assertPositionPublishable(admin: Any, positionId: string):
 
 export async function loadPublishGateQueue(
   admin: Any,
-  opts: { includeTest?: boolean } = {},
+  opts: { includeTest?: boolean; q?: string } = {},
 ): Promise<{ rows: PublishGateRow[]; total_unpublished: number }> {
   const { loadTestScope } = await import("./admin-test-scope.server");
   const scope = await loadTestScope(admin, opts.includeTest ?? false);
@@ -79,6 +79,10 @@ export async function loadPublishGateQueue(
     .order("created_at", { ascending: true })
     .limit(300);
   if (scope.orgIds.length > 0) q = q.not("organization_id", "in", `(${scope.orgIds.join(",")})`);
+  if (opts.q) {
+    const term = `%${opts.q}%`;
+    q = q.or(`title.ilike.${term},organizations.name.ilike.${term}`);
+  }
 
   const { data, error } = await q;
   if (error) throw new Error(error.message);
