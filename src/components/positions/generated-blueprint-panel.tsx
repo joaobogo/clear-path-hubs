@@ -115,9 +115,9 @@ export function GeneratedBlueprintPanel({
   const positionStatus = position?.status ?? "draft";
   const isDecisionReady = positionStatus === "active" || positionStatus === "closed" || positionStatus === "archived";
 
-  // If the role is decision-ready (active/closed/archived) and the blueprint is ready,
-  // or if it was marked as ready but the role advanced, we don't show the "being built" widget.
-  if (status === "none" || !status || (isDecisionReady && status === "ready")) return null;
+  // If the blueprint is already prepared, or if the role is decision-ready (active/closed/archived),
+  // we don't show the "being built" widget.
+  if (ready || status === "none" || !status || isDecisionReady) return null;
 
   async function handleRetry() {
     if (retrying) return;
