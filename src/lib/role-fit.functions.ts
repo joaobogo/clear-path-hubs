@@ -86,10 +86,7 @@ function toSkills(v: unknown): string[] {
 
 function displayName(row: AnyRow): string {
   const full = row?.full_name ? String(row.full_name).trim() : "";
-  if (full) {
-    const parts = full.split(/\s+/);
-    return parts.length >= 2 ? `${parts[0]} ${parts[parts.length - 1].slice(0, 1)}.` : parts[0];
-  }
+  if (full) return full;
   return "Candidate";
 }
 
