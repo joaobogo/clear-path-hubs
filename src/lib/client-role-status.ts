@@ -1,35 +1,25 @@
 // Plain-English role status — ONE status per role, shared by every client surface.
 //
 // Clients never see internal lifecycle values ("under_review", "approved",
-// "needs_clarification"). They see where the role actually is, derived from the
-// furthest meaningful candidate stage. Paused and Closed always win.
+// "needs_clarification") or candidate stages ("offer", "hired") as the role
+// status. Pipeline activity is used only to prevent a false closure narrative.
 //
 // Pure module: no server imports, safe on both sides.
 
 export const CLIENT_ROLE_STATUSES = [
-  "setting_up",
-  "sourcing",
-  "shortlist_ready",
-  "interviewing",
-  "offer_out",
-  "hired",
+  "active",
+  "under_review",
   "paused",
   "closed",
-  "in_progress",
 ] as const;
 
 export type ClientRoleStatusKey = (typeof CLIENT_ROLE_STATUSES)[number];
 
 export const CLIENT_ROLE_STATUS_LABELS: Record<ClientRoleStatusKey, string> = {
-  setting_up: "Setting up",
-  sourcing: "Sourcing",
-  shortlist_ready: "Shortlist ready for you",
-  interviewing: "Interviewing",
-  offer_out: "Offer out",
-  hired: "Hired",
+  active: "Active",
+  under_review: "Under review",
   paused: "Paused",
   closed: "Closed",
-  in_progress: "In progress",
 };
 
 /** Shown when the status could not be resolved — never defaults to Sourcing. */
@@ -63,12 +53,10 @@ const LIVE = new Set(["active", "approved", "open", "published"]);
 const n = (v: number | undefined) => (typeof v === "number" && v > 0 ? v : 0);
 
 /**
- * One status per role, derived from pipeline reality.
- * Order of precedence: Paused/Closed > Hired > Offer out > Interviewing >
- * Shortlist ready > Sourcing > Setting up.
- *
- * A role is only "Hired" or "Closed" if it has no active pipeline items
- * (interviews, offers) that contradict the closure narrative.
+ * One lifecycle status per role. Candidate stages remain pipeline milestones,
+ * never role statuses. A role can only be Closed when no actionable pipeline
+ * remains; inconsistent closed data therefore stays visibly Active until the
+ * outstanding offers/interviews/decisions are resolved.
  */
 export function computeClientRoleStatus(input: ClientRoleStatusInput): ClientRoleStatus {
   const raw = String(input.status ?? "")
@@ -77,30 +65,17 @@ export function computeClientRoleStatus(input: ClientRoleStatusInput): ClientRol
 
   const isPaused = PAUSED.has(raw);
   const isClosed = CLOSED.has(raw);
-  const hasHires = n(input.hires) > 0;
-  const hasOffers = n(input.offers) > 0;
-  const hasInterviews = n(input.interviewing) > 0;
-  const hasShortlist = n(input.shortlisted) > 0 || n(input.delivered) > 0;
+  const hasActivePipeline =
+    n(input.offers) > 0 ||
+    n(input.interviewing) > 0 ||
+    n(input.shortlisted) > 0 ||
+    n(input.delivered) > 0;
 
-  // 1. Paused always wins if explicitly set.
   if (isPaused) return status("paused");
-
-  // 2. Active milestone wins even if 'closed' or 'hired', to prevent contradictions.
-  if (hasOffers) return status("offer_out");
-  if (hasInterviews) return status("interviewing");
-
-  // 3. Hired only if no active milestone remains.
-  if (hasHires) return status("hired");
-
-  // 4. Closed only if no hires and no active pipeline (or explicitly closed and resolved).
-  if (isClosed) return status("closed");
-
-  // 5. Active search states.
-  if (hasShortlist) return status("shortlist_ready");
-  if (LIVE.has(raw)) return status("sourcing");
-  if (SETTING_UP.has(raw)) return status("setting_up");
-
-  return status("in_progress");
+  if (isClosed && !hasActivePipeline) return status("closed");
+  if (hasActivePipeline || LIVE.has(raw) || isClosed) return status("active");
+  if (SETTING_UP.has(raw)) return status("under_review");
+  return status("under_review");
 }
 
 function status(key: ClientRoleStatusKey): ClientRoleStatus {

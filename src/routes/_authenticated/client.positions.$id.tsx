@@ -188,15 +188,13 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
   // With a confirmed hire on the role, the search view is replaced by what
   // remains: agreed terms, the derived guarantee window, and the outstanding
   // steps. The role stays reachable — messages and history remain open.
-  if (handoff) {
+  if (handoff && data.summary.client_status.key === "closed") {
     return (
       <PositionHandoffView
         position={position}
         orgId={orgId}
         positionId={id}
         canEdit={canEdit}
-        // The search is closed, but its record still belongs to the client:
-        // coverage, the fit spread we delivered, and what remains.
         story={data.story ?? null}
         org={orgSearchParam}
       />

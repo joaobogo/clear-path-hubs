@@ -62,9 +62,7 @@ export function PositionHandoffView({
         <div className="mt-1 text-sm text-muted-foreground">{subtitle}</div>
       </header>
       <HireHandoffPanel orgId={orgId} positionId={positionId} canEdit={canEdit} />
-      {/* The search is closed, but what it produced is still the client's
-          record: requirement coverage, the fit spread we delivered, and the
-          remaining milestone. */}
+      {/* A genuinely closed role keeps its hire record and search evidence. */}
       {story && <RoleStoryPanel story={story} positionId={positionId} org={org} />}
       <RoleMessagesPanel
         orgId={orgId}

@@ -54,7 +54,7 @@ export const Route = createFileRoute("/_authenticated/client/positions/")({
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveFilteredEmptyState } from "@/lib/empty-states/empty-state-catalogue";
 import { makeWorkspacePending, WorkspaceRowsSkeleton } from "@/components/workspace/pending-states";
-import { countRolesByTab, roleStatusTab, roleStatusTabLabel } from "@/lib/client-role-status-tabs";
+import { countRolesByTab, roleStatusTabLabel } from "@/lib/client-role-status-tabs";
 
 function PositionsPage() {
  const { status, q, location, view, sort, shortlist } = Route.useSearch();
@@ -102,7 +102,11 @@ function PositionsPage() {
   const hasRoleData = !!listQuery.data && !!orgId;
   const statusCounts = useMemo(() => countRolesByTab(allRows), [allRows]);
   const rows = useMemo(
-    () => allRows.filter((p) => roleStatusTab(p.status, p.kpis.hires) === status),
+    () => allRows.filter((p) => {
+      const key = p.client_status?.key;
+      const tab = key === "active" ? "active" : key === "paused" ? "paused" : key === "closed" ? "closed" : "draft";
+      return tab === status;
+    }),
     [allRows, status],
   );
 
