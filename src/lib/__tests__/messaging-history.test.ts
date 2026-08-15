@@ -85,13 +85,16 @@ describe("Messaging History Integrity", () => {
       }
     });
 
-    expect(result.messages.length).toBe(3);
-    expect(result.messages[0].body).toBe("OLD CLIENT MESSAGE");
-    expect(result.messages[0].sender_side).toBe("client");
-    expect(result.messages[1].body).toBe("STAFF REPLY");
-    expect(result.messages[1].sender_side).toBe("taasflow");
-    expect(result.messages[2].body).toBe("RECENT CLIENT MESSAGE");
-    expect(result.messages[2].sender_side).toBe("client");
+    // Filter for the exact bodies we just inserted to avoid picking up unrelated messages
+    const inserted = result.messages.filter(m => ["OLD CLIENT MESSAGE", "STAFF REPLY", "RECENT CLIENT MESSAGE"].includes(m.body));
+    
+    expect(inserted.length).toBe(3);
+    expect(inserted[0].body).toBe("OLD CLIENT MESSAGE");
+    expect(inserted[0].sender_side).toBe("client");
+    expect(inserted[1].body).toBe("STAFF REPLY");
+    expect(inserted[1].sender_side).toBe("taasflow");
+    expect(inserted[2].body).toBe("RECENT CLIENT MESSAGE");
+    expect(inserted[2].sender_side).toBe("client");
 
     // Cleanup messages but keep conversation for demo org stability
     await supabaseAdmin.from("messages").delete().eq("conversation_id", convoId).in("body", ["OLD CLIENT MESSAGE", "STAFF REPLY", "RECENT CLIENT MESSAGE"]);
