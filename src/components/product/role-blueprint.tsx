@@ -1,6 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Clock, Shield, MapPin, Coins, Radar, GitBranch, Gauge, FileText } from "lucide-react";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { formatEnumLabel } from "@/lib/human-labels";
+
 
 /**
  * RoleBlueprint — the ATS-grade "source of truth" for a requisition.
@@ -99,10 +101,19 @@ export function RoleBlueprint({ position, activity = [] }: RoleBlueprintProps) {
   const nice = toLabelList(position.preferred_requirements);
   const dealbreakers = toLabelList(position.dealbreakers);
   const compensation = formatCompensation(position.compensation);
-  const workAuth = Array.isArray(position.work_authorization)
-    ? (position.work_authorization as string[]).join(", ")
-    : (position.work_authorization?.notes ?? null);
+  const rawNotes =
+    typeof position.work_authorization === "string"
+      ? position.work_authorization
+      : (position.work_authorization?.notes ?? null);
+  const cleanNotes =
+    typeof rawNotes === "string" && /TAASFLOW_DEMO_SEED/i.test(rawNotes) ? null : rawNotes;
+  const workAuth =
+    cleanNotes ||
+    (typeof position.work_authorization === "object" && position.work_authorization !== null
+      ? (position.work_authorization.required ?? position.work_authorization.summary ?? null)
+      : null);
   const channels = derivedSourcingChannels(position);
+
   const intakeNotes: string | null =
     position.intake_context?.notes ??
     position.intake_context?.context ??
@@ -188,9 +199,14 @@ export function RoleBlueprint({ position, activity = [] }: RoleBlueprintProps) {
           <FactTile
             icon={<MapPin className="h-4 w-4" />}
             label="Location & work model"
-            primary={[position.location, position.work_model].filter(Boolean).join(" · ") || "Not set"}
-            secondary={position.employment_type ? String(position.employment_type) : null}
+            primary={
+              [position.location, formatEnumLabel(position.work_model)]
+                .filter(Boolean)
+                .join(" · ") || "Not set"
+            }
+            secondary={formatEnumLabel(position.employment_type)}
           />
+
           <FactTile
             icon={<Coins className="h-4 w-4" />}
             label="Compensation range"
@@ -205,9 +221,10 @@ export function RoleBlueprint({ position, activity = [] }: RoleBlueprintProps) {
           <FactTile
             icon={<Gauge className="h-4 w-4" />}
             label="Seniority"
-            primary={position.seniority || "Unspecified"}
+            primary={formatEnumLabel(position.seniority) || "Unspecified"}
             secondary={position.department ? String(position.department) : null}
           />
+
         </div>
 
         {/* Scoring rubric preview */}

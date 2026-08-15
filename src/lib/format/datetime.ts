@@ -42,11 +42,18 @@ const MONTH_YEAR = new Intl.DateTimeFormat(APP_LOCALE, {
   timeZone: WORKSPACE_TIMEZONE,
 });
 
+const MONTH_YEAR_UTC = new Intl.DateTimeFormat(APP_LOCALE, {
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
 function toDate(value: string | number | Date | null | undefined): Date | null {
   if (value == null || value === "") return null;
   const date = value instanceof Date ? value : new Date(value);
   return Number.isNaN(date.getTime()) ? null : date;
 }
+
 
 /** "14/08/2026, 22:25:06" — workspace timezone, never a raw ISO string. */
 export function formatDateTime(
@@ -74,23 +81,48 @@ export function formatDate(
  */
 export function formatPeriod(period: string | null | undefined, fallback = "Date not confirmed"): string {
   if (!period) return fallback;
-  
-  // Split by the dash/en-dash/em-dash
-  const parts = period.split(/\s*[–-]\s*/);
+
+  const trimmed = period.trim();
+
+  // Recognise canonical YYYY-MM – YYYY-MM / YYYY-MM – present ranges.
+  // The start/end halves are parsed in UTC so the month is correct regardless
+  // of the display timezone; the formatter then renders in the workspace zone.
+  const ymRange = trimmed.match(
+    /^(\d{4}-\d{2})\s*[–-—]\s*(present|now|current|\d{4}-\d{2})$/i,
+  );
+  if (ymRange) {
+    const start = ymRange[1]!;
+    const endRaw = ymRange[2]!.toLowerCase();
+    const end = endRaw === "present" || endRaw === "now" || endRaw === "current" ? "Present" : endRaw;
+    const startDate = new Date(`${start}-15T00:00:00Z`);
+    const formatted =
+      Number.isNaN(startDate.getTime()) ? start : MONTH_YEAR_UTC.format(startDate);
+    if (end === "Present") return `${formatted} – Present`;
+    const endDate = new Date(`${end}-15T00:00:00Z`);
+    const formattedEnd =
+      Number.isNaN(endDate.getTime()) ? end : MONTH_YEAR_UTC.format(endDate);
+    return `${formatted} – ${formattedEnd}`;
+  }
+
+
+  // Split by dash/en-dash/em-dash, then format each part.
+  const parts = trimmed.split(/\s*[–-—]\s*/);
   if (parts.length === 1) {
     const date = toDate(parts[0]);
     return date ? MONTH_YEAR.format(date) : parts[0];
   }
 
-  const formatted = parts.map(p => {
-    const trimmed = p.trim();
-    if (trimmed.toLowerCase() === "present") return "Present";
-    const date = toDate(trimmed);
-    return date ? MONTH_YEAR.format(date) : trimmed;
+  const formatted = parts.map((p) => {
+    const pTrim = p.trim();
+    if (pTrim.toLowerCase() === "present") return "Present";
+    const date = toDate(pTrim);
+    return date ? MONTH_YEAR.format(date) : pTrim;
   });
 
   return formatted.join(" – ");
 }
+
+
 
 /** True when a string looks like a raw ISO-8601 timestamp (guard for tests/lint). */
 export function looksLikeIsoTimestamp(value: unknown): boolean {

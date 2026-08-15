@@ -507,10 +507,19 @@ function normLanguages(raw: unknown): ClientCandidateDTO["languages"] {
 
 function normWorkAuth(raw: unknown): string | null {
   if (!raw) return null;
-  if (typeof raw === "string") return raw;
+  if (typeof raw === "string") {
+    const clean = raw.trim();
+    if (/TAASFLOW_DEMO_SEED/i.test(clean)) return null;
+    return clean || null;
+  }
   const r = raw as AnyRow;
-  return normStr(r?.status ?? r?.summary ?? r?.value);
+  const notes = normStr(r?.notes);
+  if (notes && /TAASFLOW_DEMO_SEED/i.test(notes)) {
+    return normStr(r?.required ?? r?.summary ?? r?.value) ?? null;
+  }
+  return notes || normStr(r?.required ?? r?.summary ?? r?.value) || null;
 }
+
 
 function formatMoney(v: unknown, currency?: string | null): string | null {
   if (v == null) return null;
