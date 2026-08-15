@@ -620,7 +620,7 @@ function JobDetail() {
                       const titleCase = (s: string) => 
                         s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
                       const location = [l.city, l.region, l.country]
-                        .filter(Boolean)
+                        .filter((p): p is string => !!p)
                         .map(titleCase)
                         .join(", ");
                       
