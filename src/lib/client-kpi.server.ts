@@ -608,7 +608,7 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
       let safeAction: string | null = null;
 
       // Filter out raw system updates and internal taxonomy
-      const isInternalUpdate = action.startsWith("UPDATE") || action.includes("|") || action.includes(".");
+      const isInternalUpdate = action.startsWith("UPDATE") || action.includes("|");
       
       // Map stage transitions to friendly labels
       if (after && typeof after === "object" && "stage" in after) {
@@ -634,7 +634,12 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
       if (normAction === "interview.completed") safeAction = WHITELIST.interview_completed;
       if (normAction === "decision.recorded") safeAction = WHITELIST.decided;
       if (normAction === "profile.viewed" || normAction === "client.candidate.viewed") safeAction = WHITELIST.viewed;
-      if (normAction === "cv.download") safeAction = WHITELIST.downloaded;
+      if (normAction === "cv.download") {
+        // Only show client-initiated downloads to the client
+        if (after && typeof after === "object" && (after as AnyRow).audience === "client") {
+          safeAction = WHITELIST.downloaded;
+        }
+      }
 
       // If it's an internal update and we didn't map it to a friendly label, drop it
       if (isInternalUpdate && !safeAction) return null;
