@@ -95,6 +95,7 @@ function ApprovalsPage() {
     invalidateKeys: [
       ["client", "approvals", orgId],
       ["client-kpis", orgId],
+      ["client-overview", orgId],
     ],
   });
   const signals = useEmptyStateSignals(orgId ?? undefined);
