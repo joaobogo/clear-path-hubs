@@ -705,7 +705,7 @@ function CandidatesPage() {
                         {m.city ? ` · ${m.city}` : ""}
                         {m.country ? `, ${m.country}` : ""}
                       </div>
-                    </Link>
+                    </a>
                   </td>
                   <td className="min-w-[8rem] px-3 py-2 text-xs">{m.org_name ?? "—"}</td>
                   <td className="min-w-[10rem] px-3 py-2 text-xs">
