@@ -9,6 +9,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { isOpenRoleStatus, isFilledRole } from "@/lib/client-role-open";
 import { laneFor } from "@/lib/client-pipeline-lane";
+import { isLiveOffer, qualifiesAsHire } from "@/lib/offer-hire";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;

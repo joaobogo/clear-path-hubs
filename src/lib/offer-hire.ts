@@ -64,11 +64,34 @@ export const CLOSE_REASONS = [
 
 export type CloseReason = (typeof CLOSE_REASONS)[number]["value"];
 
-const LIVE: readonly HireStatus[] = [
+/**
+ * Canonical Offer & Hire state definitions.
+ *
+ * All surfaces (Dashboard, Offers page, Executive, Insights) must use these
+ * predicates to ensure counts reconcile.
+ *
+ * Definitions:
+ * - OPEN: Drafted, sent, negotiating, or accepted but not yet confirmed.
+ *   These are the candidates currently in the offer process.
+ * - DECIDED: The outcome is known (accepted, declined, hired, or lost).
+ *   Used as the denominator for acceptance rates.
+ * - HIRE: The hire is confirmed (hire_confirmed).
+ *   Only these count as hires in finance/reporting.
+ * - ACCEPTED: Candidate said yes (offer_accepted or hire_confirmed).
+ */
+
+const OPEN: readonly HireStatus[] = [
   "offer_drafted",
   "offer_sent",
   "offer_negotiating",
   "offer_accepted",
+];
+
+const DECIDED: readonly HireStatus[] = [
+  "offer_accepted",
+  "offer_declined",
+  "hire_confirmed",
+  "closed_lost",
 ];
 
 /** Statuses that count as an offer having been extended to the candidate. */
@@ -81,7 +104,17 @@ const EXTENDED: readonly HireStatus[] = [
 ];
 
 export function isLiveOffer(status: string): boolean {
-  return LIVE.includes(status as HireStatus);
+  return OPEN.includes(status as HireStatus);
+}
+
+export function isDecidedOffer(status: string): boolean {
+  return DECIDED.includes(status as HireStatus);
+}
+
+export function isAcceptedOffer(status: string): boolean {
+  return (
+    status === "offer_accepted" || status === "hire_confirmed"
+  );
 }
 
 export function isExtendedOffer(status: string): boolean {
