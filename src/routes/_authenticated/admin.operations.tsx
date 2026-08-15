@@ -127,8 +127,8 @@ function OperationsPage() {
   const ops = opsQuery.data;
   const listDelivery = useServerFn(listDeliveryFailures);
   const deliveryQuery = useQuery({
-    queryKey: ["admin", "delivery-failures"],
-    queryFn: () => listDelivery(),
+    queryKey: ["admin", "delivery-failures", "7d"],
+    queryFn: () => listDelivery({ data: { window_days: 7 } }),
     refetchOnWindowFocus: true,
   });
   const delivery = deliveryQuery.data;
