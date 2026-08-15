@@ -101,6 +101,23 @@ export function NotificationBell() {
 
   const needsAttention = counts.critical + counts.action_required;
 
+  // "Emails to your address are blocked / bounced" is an ACCOUNT state, not a
+  // property of each notification. Show it once at the top of the panel instead
+  // of repeating the same warning inside every row.
+  const accountDelivery = useMemo(
+    () =>
+      deliveryNotice(
+        worstDeliveryState(
+          groups.flatMap((g) => g.items.map((n) => n.delivery_state)),
+        ),
+      ),
+    [groups],
+  );
+  const accountLevel =
+    accountDelivery && (accountDelivery.state === "suppressed" || accountDelivery.state === "bounced")
+      ? accountDelivery
+      : null;
+
   const visible = groups.filter((g) => {
     if (filter === "all") return true;
     if (filter === "unread") return g.unread > 0;
@@ -186,6 +203,15 @@ export function NotificationBell() {
             ))}
           </div>
         </div>
+
+        {accountLevel && (
+          <div
+            className={`border-b px-4 py-2 text-[11px] ${deliveryChipClass(accountLevel.tone)}`}
+            role="status"
+          >
+            <span className="font-semibold">{accountLevel.label}.</span> {accountLevel.detail}
+          </div>
+        )}
 
         <ScrollArea className="max-h-[26rem]">
           {isPending ? (
@@ -288,7 +314,13 @@ function NotificationRow({
   const actor = actorLabel(lead.actor_label, null);
   // Worst delivery state in the group: a bounced email must not hide behind a
   // sibling notification that went out fine.
-  const delivery = deliveryNotice(worstDeliveryState(items.map((n) => n.delivery_state)));
+  const rowDeliveryState = worstDeliveryState(items.map((n) => n.delivery_state));
+  // Account-wide states (blocked / bounced address) are reported once in the
+  // panel header; only message-specific failures belong on the row.
+  const delivery =
+    rowDeliveryState === "suppressed" || rowDeliveryState === "bounced"
+      ? null
+      : deliveryNotice(rowDeliveryState);
 
   const body = (
     <div className="flex items-start gap-3 px-4 py-3">

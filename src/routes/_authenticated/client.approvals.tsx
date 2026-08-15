@@ -343,12 +343,31 @@ function ApprovalsPage() {
       ) : tasks.isLoading || overview.isLoading ? (
         <SkeletonRows rows={4} />
       ) : rows.length === 0 && derived.length === 0 ? (
-        <SurfaceState
-          content={resolveNoApprovalsState({
-            awaitingDecision: signals?.awaitingDecision ?? 0,
-            activeRoles: signals?.activeRoles ?? 0,
-          })}
-        />
+        view === "completed" ? (
+          // The generic "nothing needs approval" copy is wrong here: this filter
+          // is about history, not the open queue.
+          <SurfaceState
+            content={{
+              id: "approvals.completed-empty",
+              icon: "approvals",
+              tone: "expected",
+              title: "No completed approval items yet",
+              why: "Only approval items that were created here and then closed appear in this view. Decisions you made directly on a candidate, interview or offer are recorded on those records, not as approval items.",
+              expected: "This fills up as approval items in this workspace are closed.",
+              populates: "Closed approval items are listed here with who closed them and when.",
+              activity: "Nothing has been closed in this inbox so far.",
+              action: { label: "See all items", to: "/client/approvals" },
+            }}
+          />
+        ) : (
+          <SurfaceState
+            content={resolveNoApprovalsState({
+              awaitingDecision: signals?.awaitingDecision ?? 0,
+              activeRoles: signals?.activeRoles ?? 0,
+            })}
+          />
+        )
+
       ) : (
         <ul className="space-y-2">
           {derived.map((d) => (
