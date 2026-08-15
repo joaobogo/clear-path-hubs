@@ -469,27 +469,43 @@ export function resolveNoIntegrationsState(signals: {
 export function resolveNoMessagesState(signals: {
   activeRoles: number;
   rolesInSetup: number;
+  filter?: string;
 }): SurfaceStateContent {
-  if (signals.activeRoles === 0 && signals.rolesInSetup === 0) {
+  const { activeRoles, rolesInSetup, filter } = signals;
+
+  if (filter === "organization") {
+    return {
+      id: "messages.account",
+      icon: "messages",
+      tone: "expected",
+      title: "No account conversations yet",
+      why: "Billing and workspace messages from TaaSFlow will appear here.",
+      expected: EXPECTED_QUIET,
+      populates: "We create an account thread whenever there is a workspace-wide update or support request.",
+      activity: NOTHING_RUNNING,
+    };
+  }
+
+  if (activeRoles === 0 && rolesInSetup === 0) {
     return {
       id: "messages.no-roles",
       icon: "messages",
       tone: "expected",
       title: "No conversations yet",
-      why: "Threads are attached to a role or a candidate, and you have neither yet.",
+      why: "Threads are attached to a role or a candidate.",
       expected: EXPECTED_NEW,
       populates: "Adding a role opens its thread; every message about it stays there and mirrors to email.",
       activity: NOTHING_RUNNING,
       action: { label: "Add a role", to: "/intake" },
     };
   }
-  if (signals.rolesInSetup > 0 && signals.activeRoles === 0) {
+  if (rolesInSetup > 0 && activeRoles === 0) {
     return {
       id: "messages.role-in-setup",
       icon: "messages",
       tone: "waiting",
       title: "Your role thread opens once it goes live",
-      why: `${signals.rolesInSetup} role${signals.rolesInSetup === 1 ? "" : "s"} ${signals.rolesInSetup === 1 ? "is" : "are"} in setup. The conversation thread starts once the role is published.`,
+      why: `${rolesInSetup} role${rolesInSetup === 1 ? "" : "s"} ${rolesInSetup === 1 ? "is" : "are"} in setup. The conversation thread starts once the role is published.`,
       expected: EXPECTED_PROCESSING,
       populates: "Every role and every candidate gets its own thread, mirrored to your email.",
       activity: "Nothing to message about yet — the role is still being set up.",
