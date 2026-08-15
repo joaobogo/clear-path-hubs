@@ -844,7 +844,7 @@ function CandidatesPage() {
                   {m.client_visibility === "visible" ? "Published" : "Not published"}
                 </span>
               </div>
-            </Link>
+            </a>
           </li>
         ))}
         {rows.length === 0 && !isFetching && searchFailed && (
