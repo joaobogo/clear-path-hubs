@@ -1,5 +1,4 @@
 import { describe, it, expect, vi } from "vitest";
-import { getCandidateCvDownload } from "../cv-download.functions";
 
 // Mock the server environment
 vi.mock("@/integrations/supabase/auth-middleware", () => ({
@@ -23,6 +22,8 @@ vi.mock("@/integrations/supabase/client.server", () => ({
 
 describe("CV Redaction Enforcement", () => {
   it("serves redacted text for pre-interview client access", async () => {
+    // Import after mocks
+    const { getCandidateCvDownload } = await import("../cv-download.functions");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     // 1. Mock the match: published but NOT released (pre-interview)
@@ -81,9 +82,14 @@ describe("CV Redaction Enforcement", () => {
       download: vi.fn().mockResolvedValue({ data: new Blob(["Miguel Torres miguel.torres@demo.com +351912000102"]) })
     });
 
-    // We call the handler directly with mocked context
-    const handler = (getCandidateCvDownload as any).handler;
-    const result = await handler({ 
+    // Access the implementation directly
+    const handler = (getCandidateCvDownload as any)._handler;
+    if (!handler) {
+       console.log("Keys available on getCandidateCvDownload:", Object.keys(getCandidateCvDownload));
+    }
+    
+    // TanStack server functions store the handler differently or we might need to invoke it through the instance
+    const result = await (getCandidateCvDownload as any)({
       data: { matchId: "match-123", disposition: "inline" },
       context: { supabase: mockSupabase, userId: "user-456" }
     });
