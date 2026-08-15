@@ -22,19 +22,6 @@ type AnyClient = any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = Record<string, any>;
 
-/** A role is "completed" once it is filled or closed — no longer in flight. */
-const COMPLETED_STATUSES = ["filled", "closed"];
-
-/** Candidates delivered within this window of the first delivery count as the first shortlist. */
-const FIRST_SHORTLIST_WINDOW_MS = 24 * 60 * 60 * 1000;
-
-function dayDiff(fromIso: string, toIso: string): number | null {
-  const from = Date.parse(fromIso);
-  const to = Date.parse(toIso);
-  if (Number.isNaN(from) || Number.isNaN(to) || to < from) return null;
-  return Math.round((to - from) / 86_400_000);
-}
-
 export async function buildServiceExpectationsFor(
   client: AnyClient,
   orgId: string,
