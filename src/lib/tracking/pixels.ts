@@ -9,8 +9,8 @@
  * the client after hydration. Every function is wrapped so a blocked or
  * failing tag can never break the app.
  *
- * Live: GA4, Apollo website tracker, RB2B (Retention.com), LinkedIn Insight Tag.
- * Dormant until their env var is set: Meta, Clarity, Hotjar.
+ * Live: GA4, RB2B (Retention.com), LinkedIn Insight Tag.
+ * Dormant until their env var is set: Apollo, Meta, Clarity, Hotjar.
  */
 
 import { type ConsentCategory, isTrackerAllowed } from "./consent";
@@ -19,7 +19,11 @@ import { resolveConversion } from "./conversion-map";
 
 
 const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || "G-HJ2ECKCNK4";
-const APOLLO_ID = import.meta.env.VITE_APOLLO_APP_ID || "6981f9ca9255870019505836";
+// Apollo's website tracker is disabled: the previously hardcoded app id was
+// rejected by their ingest endpoint (HTTP 400 on every page view), so the tag
+// produced nothing but failed requests. It stays dormant until a verified app
+// id is supplied through VITE_APOLLO_APP_ID.
+const APOLLO_ID = import.meta.env.VITE_APOLLO_APP_ID || "";
 /** Exported so the root document head can boot RB2B before hydration. */
 export const RB2B_ID = import.meta.env.VITE_RB2B_ID || "1N5W0H7RVEO5";
 const META_ID = import.meta.env.VITE_META_PIXEL_ID || "";
@@ -543,8 +547,8 @@ function notifyRouteChange(params: Record<string, unknown>) {
     }),
   );
 
-  // Apollo: re-runs its page visit capture for the new URL.
-  safe(() => window.trackingFunctions?.onLoad?.({ appId: APOLLO_ID }));
+  // Apollo: re-runs its page visit capture for the new URL (no-op while disabled).
+  if (APOLLO_ID) safe(() => window.trackingFunctions?.onLoad?.({ appId: APOLLO_ID }));
 
   // RB2B: re-trigger identification for the new page.
   safe(() => {
