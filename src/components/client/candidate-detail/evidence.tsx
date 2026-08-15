@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import { buildShortlistRationale } from "@/lib/client-rationale";
+import { buildValidationList } from "@/lib/client/validation-list";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type {
   FitPresentation,
@@ -455,11 +456,10 @@ export const WhatNeedsValidation = memo(function WhatNeedsValidation({
 }: {
   candidate: ClientCandidateDTO;
 }) {
-  const concerns = candidate.concerns;
-  const partial = candidate.requirement_rows.filter(
-    (r) => r.status === "partial" || r.status === "not_evidenced" || r.status === "contradicted",
-  );
-  if (concerns.length === 0 && partial.length === 0) return null;
+  // Derived from the same coverage statuses rendered by RequirementCoverage, so
+  // a badge and its validation sentence can never disagree.
+  const items = buildValidationList(candidate.requirement_rows, candidate.concerns);
+  if (items.length === 0) return null;
   return (
     <SectionCard
       title="What needs validation"
@@ -467,22 +467,31 @@ export const WhatNeedsValidation = memo(function WhatNeedsValidation({
       description="Areas to confirm during the interview before a hiring decision."
     >
       <ul className="space-y-2">
-        {concerns.map((c, i) => (
-          <li key={`c-${i}`} className="flex items-start gap-2 rounded-md border taas-bd-warning taas-bg-warning-soft p-3 text-sm">
-            <Info className="mt-0.5 h-4 w-4 shrink-0 taas-fg-warning" aria-hidden />
-            <span>{c}</span>
-          </li>
-        ))}
-        {partial.slice(0, 4).map((r) => (
-          <li key={r.id} className="flex items-start gap-2 rounded-md border taas-bd-warning taas-bg-warning-soft p-3 text-sm">
-            <Info className="mt-0.5 h-4 w-4 shrink-0 taas-fg-warning" aria-hidden />
+        {items.map((item) => (
+          <li
+            key={item.id}
+            className={cn(
+              "flex items-start gap-2 rounded-md border p-3 text-sm",
+              item.tone === "warning"
+                ? "taas-bd-warning taas-bg-warning-soft"
+                : "bg-muted/30",
+            )}
+          >
+            <Info
+              className={cn(
+                "mt-0.5 h-4 w-4 shrink-0",
+                item.tone === "warning" ? "taas-fg-warning" : "text-muted-foreground",
+              )}
+              aria-hidden
+            />
             <span>
-              <strong className="font-medium">{r.label}</strong> —{" "}
-              {r.status === "partial"
-                ? "partially evidenced; confirm depth in the interview."
-                : r.status === "contradicted"
-                ? "the evidence conflicts; ask the candidate to clarify."
-                : "no supporting evidence found; validate directly."}
+              {item.label ? (
+                <>
+                  <strong className="font-medium">{item.label}</strong> — {item.sentence}
+                </>
+              ) : (
+                item.sentence
+              )}
             </span>
           </li>
         ))}
@@ -490,3 +499,4 @@ export const WhatNeedsValidation = memo(function WhatNeedsValidation({
     </SectionCard>
   );
 });
+
