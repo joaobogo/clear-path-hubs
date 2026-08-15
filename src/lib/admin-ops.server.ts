@@ -126,24 +126,13 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       scope,
     ),
 
-    // Bonus — pipeline incidents that stop everything else.
-    excludeTestOrgs(
-      s
-        .from("candidate_matches")
-        .select(
-          "id,processing_state,processing_error_code,processing_updated_at,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(name))",
-          { count: "exact" },
-        )
-        .in("processing_state", [
-          "failed",
-          "provider_blocked",
-          "ocr_required",
-          "manual_review_required",
-        ])
-        .order("processing_updated_at", { ascending: true })
-        .limit(8),
-      scope,
-    ),
+    // 6 — delivery failures that need a retry or a new address.
+    s
+      .from("notification_deliveries")
+      .select("id, status, error_message, updated_at", { count: "exact" })
+      .in("status", ["failed", "bounced", "suppressed"])
+      .order("updated_at", { ascending: false })
+      .limit(8),
 
     // 6 — real client briefs sitting in the inbox for more than three days.
     loadAgingIntakes(s, { includeTest: opts.includeTest ?? false, olderThanDays: 3, limit: 8 }),
