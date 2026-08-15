@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -528,7 +529,7 @@ function PositionsPage() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       {p.counts.action_required > 0 ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-warning/15 px-2 py-0.5 text-xs font-medium text-warning-foreground dark:text-warning-foreground">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-warning/15 px-2 py-0.5 text-xs font-medium text-warning-foreground dark:text-warning-foreground whitespace-nowrap">
                           <AlertCircle className="h-3 w-3" />
                           {p.counts.action_required}
                         </span>
@@ -536,8 +537,12 @@ function PositionsPage() {
                         <span className="text-muted-foreground">—</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground">
-                      {new Date(p.updated_at).toLocaleDateString()}
+                    <td className="whitespace-nowrap px-4 py-3 text-xs text-muted-foreground">
+                      {new Date(p.updated_at).toLocaleDateString(undefined, {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
                     </td>
                     <td className="px-4 py-3 text-right">
                       <Button
