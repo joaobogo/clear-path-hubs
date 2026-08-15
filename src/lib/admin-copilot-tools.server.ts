@@ -3,6 +3,7 @@
 // Never mutates. Drafts are proposals executed via executeAdminCopilotAction.
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { evaluatePublishGate, type PublishBlocker } from "./publish-gate";
 type Sb = any;
 
 export interface Citation {
@@ -11,6 +12,7 @@ export interface Citation {
   label: string;
   href?: string;
 }
+
 export type CopilotAction =
   | {
       kind: "navigate";
