@@ -8,13 +8,14 @@ import { rollupCommitments } from "@/lib/commitments/canonical";
 import { loadSlaPerformance } from "@/lib/sla-report-load.server";
 
 /**
- * Reads the stored plan and role commitments for one organisation and measures
- * performance from completed roles only.
+ * Reads the stored plan and role commitments for one organisation, then reports
+ * performance through the shared commitments measurement path.
  *
  * Everything returned is traceable to a row: `plan_entitlements` /
  * `subscriptions` for the plan, `position_commitments` for the promises, and
- * `candidate_matches.delivered_at` for what actually happened. Nothing is
- * inferred from pricing copy.
+ * `candidate_matches.delivered_at` / `interviews` for what actually happened —
+ * measured by `loadSlaPerformance`, the same function the Overview scorecard
+ * calls. Nothing is inferred from pricing copy.
  */
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
