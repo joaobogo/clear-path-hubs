@@ -1,7 +1,7 @@
 // Structured requisition layer: multi-country locations, evaluation priorities,
 // ownership, compensation permissioning, job-quality gaps, version history and
 // controlled rescore. Saves independently of the intake wizard content.
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
