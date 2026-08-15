@@ -54,7 +54,13 @@ function BlockerChip({ blocker, positionId }: { blocker: PublishBlocker; positio
  * the payment check: the only way past it is a real payment or an audited
  * exemption granted through the existing exempt function.
  */
-export function PublishGatePanel({ includeTest: explicit }: { includeTest?: boolean } = {}) {
+export function PublishGatePanel({ 
+  includeTest: explicit,
+  q: qTerm,
+}: { 
+  includeTest?: boolean;
+  q?: string;
+} = {}) {
   const includeTest = useScopedIncludeTest(explicit);
   const qc = useQueryClient();
   const [busy, setBusy] = useState<string | null>(null);
