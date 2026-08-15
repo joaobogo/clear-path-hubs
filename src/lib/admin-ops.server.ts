@@ -75,7 +75,8 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       scope,
     ),
 
-    // 3 — scored candidates awaiting an admin decision.
+    // 3 — candidates awaiting decision (scored).
+    // Scoping must exactly match loadReviewQueueIds for counter agreement.
     excludeTestOrgs(
       s
         .from("candidate_matches")
@@ -521,15 +522,21 @@ export async function loadPaymentsOpsPanel(): Promise<PaymentsOpsPanel> {
   };
 }
 
-/** Ordered ids of everything awaiting review, so the reviewer never goes back to a list. */
-export async function loadReviewQueueIds(): Promise<string[]> {
+/** Ordered ids of everything awaiting decision, so the reviewer never goes back to a list. */
+export async function loadReviewQueueIds(opts: { includeTest?: boolean } = {}): Promise<string[]> {
   const s = await admin();
-  const { data } = await s
-    .from("candidate_matches")
-    .select("id,updated_at")
-    .eq("admin_status", "pending")
-    .eq("processing_state", "scored")
-    .order("updated_at", { ascending: true })
-    .limit(200);
+  const { loadTestScope, excludeTestOrgs } = await import("./admin-test-scope.server");
+  const scope = await loadTestScope(s, opts.includeTest ?? false);
+
+  const { data } = await excludeTestOrgs(
+    s
+      .from("candidate_matches")
+      .select("id,updated_at")
+      .eq("admin_status", "pending")
+      .eq("processing_state", "scored")
+      .order("updated_at", { ascending: true })
+      .limit(200),
+    scope,
+  );
   return ((data ?? []) as Any[]).map((m) => m.id as string);
 }
