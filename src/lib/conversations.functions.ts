@@ -178,6 +178,7 @@ async function nameMap(
       email: p.email as string | null,
       isStaff: staff,
       roleLabel: roleLabel(rawRole[id] ?? null, staff),
+      maskStatus: staff, // Thread UI adds the badge, so we don't need the (Staff) suffix here.
     });
     out[id] = {
       name: persona.name,
@@ -401,6 +402,7 @@ export async function _getConversationHandler({ data, context }: any) {
       name: sid ? (meta?.name ?? null) : null,
       isStaff: sid ? (meta?.staff ?? false) : true,
       roleLabel: sid ? (meta?.role ?? null) : "TaaSFlow team",
+      maskStatus: true, // Conversation thread renderer adds the "TaaSFlow team" badge separately.
     });
 
     return {

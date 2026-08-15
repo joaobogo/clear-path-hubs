@@ -608,6 +608,9 @@ export function actorLabel(
   actorName: string | null | undefined,
   audience: Audience | string | null | undefined,
 ): string {
-  if (actorName && actorName.trim()) return actorName.trim();
-  return audience === "admin" ? "TaaSFlow system" : "TaaSFlow";
+  const name = actorName?.trim() || "";
+  // Global catch-all: any mention of Master Admin is masked to the team persona.
+  if (name.toLowerCase().includes("master admin")) return "TaaSFlow team (Staff)";
+  if (name) return name;
+  return audience === "admin" ? "TaaSFlow system" : "TaaSFlow team";
 }

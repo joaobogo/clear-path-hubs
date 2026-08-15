@@ -26,8 +26,10 @@ export function resolveStaffPersona(args: {
   email?: string | null;
   isStaff: boolean;
   roleLabel?: string | null;
+  /** When true, avoids leaking staff status suffix. */
+  maskStatus?: boolean;
 }): StaffPersona {
-  const { name, email, isStaff, roleLabel } = args;
+  const { name, email, isStaff, roleLabel, maskStatus } = args;
 
   if (!isStaff) {
     return {
@@ -38,8 +40,14 @@ export function resolveStaffPersona(args: {
   }
 
   // Leak prevention: map internal root/system names to the team persona.
-  const rawName = name || email || "";
-  if (SYSTEM_ACCOUNTS.has(rawName) || !name) {
+  const rawName = (name || email || "").toLowerCase();
+  const isSystem =
+    SYSTEM_ACCOUNTS.has(name || "") ||
+    SYSTEM_ACCOUNTS.has(email || "") ||
+    rawName.includes("admin") ||
+    rawName.includes("system");
+
+  if (isSystem || !name) {
     return {
       name: "TaaSFlow team",
       role: roleLabel || "TaaSFlow team",
@@ -49,7 +57,7 @@ export function resolveStaffPersona(args: {
 
   // Human staff member with a real name.
   return {
-    name: name,
+    name: name + (maskStatus ? "" : " (Staff)"),
     role: roleLabel || "TaaSFlow recruiter",
     isStaff: true,
   };
