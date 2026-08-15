@@ -603,13 +603,3 @@ function CandidatesPage() {
  );
 }
 
-function toggleCompare(
- setter: (fn: (prev: string[]) => string[]) => void,
- id: string,
-) {
- setter((prev) => {
- if (prev.includes(id)) return prev.filter((x) => x !== id);
- if (prev.length >= 4) return prev;
- return [...prev, id];
- });
-}
