@@ -112,6 +112,15 @@ function ReviewScreen() {
   const [rejectOpen, setRejectOpen] = useState(false);
   const noteRef = useRef<HTMLTextAreaElement>(null);
 
+  const answerByQuestion = useMemo(() => {
+    const raw = (data as Any).answers ?? [];
+    return raw.map((a: Any) => ({
+      question: a.screening_questions?.question ?? "Question",
+      dealbreaker: Boolean(a.screening_questions?.dealbreaker),
+      answer: typeof a.answer === "string" ? a.answer : JSON.stringify(a.answer),
+    }));
+  }, [data]);
+
   const m = (data as Any).match;
   const cv = (data as Any).cv;
   const evidence = (data as Any).evidence;
@@ -333,7 +342,7 @@ function ReviewScreen() {
       )}
 
       {/* One screen: evidence · CV · requirements */}
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_260px]">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_300px]">
         {/* Evidence completeness checklist — also gates submission */}
         <div className="min-h-0 overflow-y-auto">
           <EvidenceCompletenessGate matchId={matchId} showSubmit={false} />
@@ -348,22 +357,76 @@ function ReviewScreen() {
         />
 
         {/* Requirements as stated by the client */}
-        <aside className="min-h-0 overflow-y-auto rounded-lg border bg-card p-4">
-          <h2 className="mb-3 text-sm font-semibold">Role requirements</h2>
-          {requirements.length === 0 ? (
-            <p className="text-xs text-muted-foreground">No requirements recorded on this role.</p>
-          ) : (
-            <ul className="space-y-1.5 text-xs">
-              {requirements.map((r, i) => (
-                <li key={i} className="flex gap-1.5">
-                  <span className={r.required ? "text-destructive" : "text-muted-foreground"}>
-                    {r.required ? "*" : "·"}
-                  </span>
-                  <span>{r.text}</span>
-                </li>
-              ))}
-            </ul>
-          )}
+        <aside className="flex min-h-0 flex-col gap-3 overflow-y-auto">
+          <section className="rounded-lg border bg-card p-4">
+            <h2 className="mb-3 text-sm font-semibold text-primary/80 uppercase tracking-tight">Role requirements</h2>
+            {requirements.length === 0 ? (
+              <p className="text-xs text-muted-foreground">No requirements recorded on this role.</p>
+            ) : (
+              <ul className="space-y-2 text-xs">
+                {requirements.map((r, i) => (
+                  <li key={i} className="flex gap-2 leading-relaxed">
+                    <span className={r.required ? "text-destructive font-bold" : "text-muted-foreground"}>
+                      {r.required ? "*" : "·"}
+                    </span>
+                    <span>{r.text}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section className="rounded-lg border bg-card p-4">
+            <h2 className="mb-3 text-sm font-semibold text-primary/80 uppercase tracking-tight">Screening</h2>
+            {answerByQuestion.length === 0 ? (
+              <p className="text-xs text-muted-foreground">No screening answers recorded.</p>
+            ) : (
+              <ul className="space-y-4">
+                {answerByQuestion.map((a: Any, i: number) => (
+                  <li key={i} className="space-y-1">
+                    <div className="text-[11px] font-medium leading-tight">
+                      {a.dealbreaker && <span className="text-destructive font-bold mr-1">*</span>}
+                      {a.question}
+                    </div>
+                    <div className="text-xs text-muted-foreground break-words">
+                      {(() => {
+                        const val = a.answer;
+                        if (val == null || val === "" || val === "null") return "—";
+                        
+                        let parsed = val;
+                        try {
+                          if (typeof val === 'string' && (val.startsWith('{') || val.startsWith('['))) {
+                            const p = JSON.parse(val);
+                            if (p && typeof p === 'object' && 'value' in p) {
+                              parsed = p.value;
+                            } else {
+                              parsed = p;
+                            }
+                          }
+                        } catch (e) {}
+
+                        if (typeof parsed === "boolean") return parsed ? "Yes" : "No";
+                        if (typeof parsed === "string" && (parsed.startsWith("http://") || parsed.startsWith("https://"))) {
+                          return (
+                            <a 
+                              href={parsed} 
+                              target="_blank" 
+                              rel="noopener noreferrer" 
+                              className="text-primary hover:underline inline-flex items-center gap-1"
+                            >
+                              Link <ExternalLink className="h-3 w-3" />
+                            </a>
+                          );
+                        }
+                        if (Array.isArray(parsed)) return parsed.join(", ");
+                        return String(parsed);
+                      })()}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
         </aside>
       </div>
 

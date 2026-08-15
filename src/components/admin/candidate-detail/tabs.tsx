@@ -683,7 +683,46 @@ export function ScreeningTab({ result, evidence }: { result: Any; evidence: Any 
                   <div className="min-w-0">
                     <div className="text-sm font-medium">{s.question}</div>
                     <div className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">
-                      {s.normalized_value || s.answer || "—"}
+                      {(() => {
+                        const val = s.normalized_value || s.answer;
+                        if (val == null || val === "") return "—";
+                        if (typeof val === "boolean") return val ? "Yes" : "No";
+                        if (typeof val === "string" && (val.startsWith("http://") || val.startsWith("https://"))) {
+                          return (
+                            <a 
+                              href={val} 
+                              target="_blank" 
+                              rel="noopener noreferrer" 
+                              className="text-primary hover:underline inline-flex items-center gap-1"
+                            >
+                              {val} <ExternalLink className="h-3 w-3" />
+                            </a>
+                          );
+                        }
+                        if (typeof val === "object") {
+                          // Handle {"value": 4}, {"value": true}, etc.
+                          const obj = val as any;
+                          if (obj && "value" in obj) {
+                            const inner = obj.value;
+                            if (typeof inner === "boolean") return inner ? "Yes" : "No";
+                            if (typeof inner === "string" && (inner.startsWith("http://") || inner.startsWith("https://"))) {
+                              return (
+                                <a 
+                                  href={inner} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer" 
+                                  className="text-primary hover:underline inline-flex items-center gap-1"
+                                >
+                                  {inner} <ExternalLink className="h-3 w-3" />
+                                </a>
+                              );
+                            }
+                            return String(inner);
+                          }
+                          return JSON.stringify(val);
+                        }
+                        return String(val);
+                      })()}
                     </div>
                   </div>
                   <Badge
