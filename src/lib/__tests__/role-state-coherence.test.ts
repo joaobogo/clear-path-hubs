@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { computeClientRoleStatus } from "../client-role-status";
+import { countRolesByTab } from "../client-role-status-tabs";
 
 describe("Role State Coherence", () => {
   it("keeps a role Active when an offer remains open", () => {
@@ -46,5 +47,16 @@ describe("Role State Coherence", () => {
   it("uses lifecycle labels rather than candidate stages", () => {
     expect(computeClientRoleStatus({ status: "active", hires: 1, offers: 1 }).label).toBe("Active");
     expect(computeClientRoleStatus({ status: "under_review" }).label).toBe("Under review");
+  });
+
+  it("archives only roles whose canonical lifecycle is Closed", () => {
+    const counts = countRolesByTab([
+      { client_status: computeClientRoleStatus({ status: "filled", hires: 1 }) },
+      { client_status: computeClientRoleStatus({ status: "filled", hires: 1, offers: 1 }) },
+      { client_status: computeClientRoleStatus({ status: "paused" }) },
+      { client_status: computeClientRoleStatus({ status: "under_review" }) },
+    ]);
+
+    expect(counts).toEqual({ active: 1, draft: 1, paused: 1, closed: 1 });
   });
 });
