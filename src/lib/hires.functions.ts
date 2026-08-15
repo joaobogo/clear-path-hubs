@@ -431,7 +431,9 @@ export const upsertOfferDraft = createServerFn({ method: "POST" })
     await assertEditor(context.supabase, context.userId, data.orgId);
     const match = await loadMatchForHire(context.supabase, data.orgId, data.matchId);
 
+    const { qualifiesAsHire } = await import("./offer-hire");
     const { data: existing } = await context.supabase
+      .from("hire_records")
       .select("id, status, organization_id, candidate_match_id, position_id, candidate_profile_id")
       .eq("candidate_match_id", data.matchId)
       .maybeSingle();
@@ -628,22 +630,21 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     };
     const scoped = list.filter(inWindow);
 
+    const { isLiveOffer, qualifiesAsHire, isDecidedOffer, isAcceptedOffer } = await import("./offer-hire");
+
     // Open offers and confirmed hires are pipeline facts, not report facts:
     // they come from the canonical KPI service so this strip can never
     // contradict the board underneath it, the Roles list, or the Candidates
     // page. The report window only shapes the timing metrics below.
     const canonical = computeKpis(await loadKpiRows(context.supabase, data.orgId), 0);
     const openOffers = canonical.offers;
-    const hires = scoped.filter((r) => r.status === "hire_confirmed");
+    const hires = scoped.filter((r) => qualifiesAsHire(r.status));
     const declined = scoped.filter((r) => r.status === "offer_declined");
     const closedLost = scoped.filter((r) => r.status === "closed_lost").length;
-    const decidedOffers = scoped.filter((r) =>
-      ["hire_confirmed", "offer_accepted", "offer_declined", "closed_lost"].includes(r.status),
-    ).length;
+    const decidedOffers = scoped.filter((r) => isDecidedOffer(r.status)).length;
     const acceptanceRate =
       decidedOffers > 0
-        ? scoped.filter((r) => ["hire_confirmed", "offer_accepted"].includes(r.status)).length /
-          decidedOffers
+        ? Math.round((scoped.filter((r) => isAcceptedOffer(r.status)).length / decidedOffers) * 100)
         : null;
 
     const daysHired = hires

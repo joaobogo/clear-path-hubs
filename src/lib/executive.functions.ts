@@ -351,7 +351,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       .eq("organization_id", orgId);
     const hireRows: AnyRow[] = allHires ?? [];
     const hiresConfirmed = hireRows.filter(
-      (h) => String(h.status) === "hire_confirmed" && h.hired_at,
+      (h) => qualifiesAsHire(String(h.status)) && h.hired_at,
     );
     const hires_30d = hiresConfirmed.filter(
       (h) => new Date(h.hired_at) >= days(30),
@@ -363,7 +363,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       (h) => new Date(h.hired_at) >= yearStart,
     ).length;
     const openOfferRows = offerRows.filter((o) =>
-      ["offer_drafted", "offer_sent", "offer_negotiating"].includes(String(o.status)),
+      isLiveOffer(String(o.status)),
     );
     const currencyOf = (rows: AnyRow[]): string | null => {
       const c = rows.find((r) => r.salary_currency)?.salary_currency;
