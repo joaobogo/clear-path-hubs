@@ -9,6 +9,7 @@ import { trackEvent } from "@/lib/tracking/pixels";
 import {
   BLUEPRINT_STAGES,
   blueprintProgress,
+  blueprintStageIndex,
 } from "@/lib/express-intake-schema";
 import {
   CheckCircle2,
