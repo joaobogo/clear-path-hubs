@@ -819,3 +819,46 @@ export const assertVerifiedSession = createServerFn({ method: "POST" })
 
     return { verified: true as const, provider, active: status === "active", status };
   });
+
+export const updateStaffProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        full_name: z.string().min(1).max(120),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // Get current state for audit
+    const { data: before } = await supabaseAdmin
+      .from("profiles")
+      .select("full_name")
+      .eq("auth_user_id", userId)
+      .maybeSingle();
+
+    const { error } = await supabaseAdmin
+      .from("profiles")
+      .update({
+        full_name: data.full_name,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("auth_user_id", userId);
+
+    if (error) throw error;
+
+    await supabaseAdmin.from("audit_events").insert({
+      actor_user_id: userId,
+      entity_type: "profiles",
+      entity_id: userId,
+      action: "profile.update",
+      before_state: before ? { full_name: before.full_name } : null,
+      after_state: { full_name: data.full_name },
+    });
+
+    return { ok: true };
+  });
+
