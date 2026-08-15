@@ -612,19 +612,13 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
 
       // 1. Map stage transitions (even if inside UPDATE)
       if (after && typeof after === "object" && "stage" in after) {
-        const fromStage =
-          before && typeof before === "object" && "stage" in before
-            ? String((before as AnyRow).stage)
-            : null;
         const toStage = String((after as AnyRow).stage);
-
-        // Drop no-op transitions
-        if (fromStage !== toStage) {
-          if (toStage === "delivered") safeAction = WHITELIST.delivered;
-          else if (toStage === "shortlisted") safeAction = WHITELIST.shortlisted;
-          else if (toStage === "offer") safeAction = WHITELIST.offer;
-          else if (toStage === "hired") safeAction = WHITELIST.hired;
-        }
+        
+        // FOR DEBUG: Always map transitions to confirm visibility
+        if (toStage === "delivered") safeAction = WHITELIST.delivered;
+        else if (toStage === "shortlisted") safeAction = WHITELIST.shortlisted;
+        else if (toStage === "offer") safeAction = WHITELIST.offer;
+        else if (toStage === "hired") safeAction = WHITELIST.hired;
       }
 
       // 2. Map explicit action keys
@@ -635,7 +629,6 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
         else if (normAction.includes("decision.recorded")) safeAction = WHITELIST.decided;
         else if (normAction.includes("viewed")) safeAction = WHITELIST.viewed;
         else if (normAction.includes("cv.download") || normAction.includes("cv_download")) {
-          // Show all downloads in this turn to confirm filtering is the only blocker
           safeAction = WHITELIST.downloaded;
         }
       }
