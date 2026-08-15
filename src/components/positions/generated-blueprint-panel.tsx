@@ -138,7 +138,6 @@ export function GeneratedBlueprintPanel({
   }
 
   const bp = position?.blueprint as AnyRow | null;
-  const ready = status === "ready";
   const failed = status === "failed";
   const stageIndex = BLUEPRINT_STAGES.findIndex((s) => s.key === status);
   const sources: Record<string, string> = (bp?.field_sources ?? {}) as Record<string, string>;
