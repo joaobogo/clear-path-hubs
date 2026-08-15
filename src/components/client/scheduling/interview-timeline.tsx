@@ -1,3 +1,4 @@
+import { formatEnumLabel } from "@/lib/human-labels";
 import { useMemo } from "react";
 import type { InterviewDTO } from "@/lib/interviews.functions";
 import {
@@ -19,7 +20,6 @@ import { Badge } from "@/components/ui/badge";
 import { SlotProposer, type ProposalSubmission } from "./slot-proposer";
 import { AgeBadge } from "@/components/client/age-badge";
 import {
-import { formatEnumLabel } from "@/lib/human-labels";
   CalendarPlus,
   CheckCircle2,
   Circle,

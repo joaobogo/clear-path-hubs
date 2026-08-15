@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/format/datetime";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -10,7 +11,6 @@ import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import {
-import { formatDateTime } from "@/lib/format/datetime";
   getTeamsConnection,
   saveTeamsConnection,
   disconnectTeams,
