@@ -39,11 +39,13 @@ export const Route = createFileRoute("/_authenticated/me/profile")({
     const field = typeof search.field === "string" ? search.field : "";
     return PROFILE_GAP_FIELD_IDS.includes(field) ? { field } : {};
   },
-  loader: ({ context }) =>
-    context.queryClient.ensureQueryData({
+  loader: async ({ context }) => {
+    const ctx = await context.queryClient.ensureQueryData({
       queryKey: ["me-context"],
       queryFn: () => getMyContext(),
-    }),
+    });
+    return ctx;
+  },
   errorComponent: makeRouteErrorComponent("candidate", "src/routes/_authenticated/me.profile.tsx"),
   notFoundComponent: () => <div className="p-8">Not found.</div>,
   component: ProfilePage,
