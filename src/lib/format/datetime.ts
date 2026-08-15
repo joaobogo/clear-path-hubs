@@ -74,15 +74,28 @@ export function formatDate(
  */
 export function formatPeriod(period: string | null | undefined, fallback = "Date not confirmed"): string {
   if (!period) return fallback;
-  
-  // Split by the dash/en-dash/em-dash
-  const parts = period.split(/\s*[–-]\s*/);
+
+  // Normalise dashes so the separator is a single en-dash.
+  const normalised = period
+    .replace(/\s*[-–—]\s*/g, " – ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  // Split into start/end. Be careful not to split the YYYY-MM date inside
+  // either half.
+  const parts = normalised.split(" – ");
   if (parts.length === 1) {
     const date = toDate(parts[0]);
     return date ? MONTH_YEAR.format(date) : parts[0];
   }
 
-  const formatted = parts.map(p => {
+  // If the string contains multiple "–" characters mixed with dates, rebuild
+  // by treating the first and last meaningful parts as the bounds.
+  const first = parts[0].trim();
+  const last = parts[parts.length - 1].trim();
+  const bounds = [first, last];
+
+  const formatted = bounds.map((p) => {
     const trimmed = p.trim();
     if (trimmed.toLowerCase() === "present") return "Present";
     const date = toDate(trimmed);
@@ -91,6 +104,7 @@ export function formatPeriod(period: string | null | undefined, fallback = "Date
 
   return formatted.join(" – ");
 }
+
 
 /** True when a string looks like a raw ISO-8601 timestamp (guard for tests/lint). */
 export function looksLikeIsoTimestamp(value: unknown): boolean {
