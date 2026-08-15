@@ -585,26 +585,63 @@ function normSourceLabel(source: unknown): { label: string | null; channel: stri
 
 function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
   if (!Array.isArray(rows)) return [];
-  return rows.slice(0, 20).map((e: AnyRow) => {
-    const action = String(e.action ?? "event");
-    const entity = String(e.entity_type ?? "");
-    const before = e.before_state ?? null;
-    const after = e.after_state ?? null;
-    let summary: string | null = null;
-    if (after && typeof after === "object" && "stage" in after) {
-      summary = before && typeof before === "object" && "stage" in before
-        ? `${(before as AnyRow).stage} → ${(after as AnyRow).stage}`
-        : `Set to ${(after as AnyRow).stage}`;
-    }
-    return {
-      id: String(e.id),
-      action,
-      entity_type: entity,
-      actor: normStr(e.actor_user_id),
-      at: String(e.created_at ?? new Date().toISOString()),
-      summary,
-    };
-  });
+
+  const WHITELIST: Record<string, string> = {
+    delivered: "Delivered to your workspace",
+    shortlisted: "Shortlisted by your team",
+    interview_requested: "Interview requested",
+    interview_scheduled: "Interview scheduled",
+    interview_completed: "Interview completed",
+    offer: "Offer extended",
+    hired: "Hired",
+    decided: "Decision recorded",
+    viewed: "Viewed by your team",
+  };
+
+  return rows
+    .map((e: AnyRow) => {
+      const action = String(e.action ?? "event");
+      const entity = String(e.entity_type ?? "");
+      const before = e.before_state ?? null;
+      const after = e.after_state ?? null;
+
+      let summary: string | null = null;
+      let safeAction: string | null = null;
+
+      // Map stage transitions to friendly labels
+      if (after && typeof after === "object" && "stage" in after) {
+        const stage = String((after as AnyRow).stage);
+        if (stage === "delivered") safeAction = WHITELIST.delivered;
+        if (stage === "shortlisted") safeAction = WHITELIST.shortlisted;
+        if (stage === "offer") safeAction = WHITELIST.offer;
+        if (stage === "hired") safeAction = WHITELIST.hired;
+
+        summary =
+          before && typeof before === "object" && "stage" in before
+            ? `${(before as AnyRow).stage} → ${(after as AnyRow).stage}`
+            : `Set to ${(after as AnyRow).stage}`;
+      }
+
+      // Map specific action keys
+      if (action === "interview.scheduled") safeAction = WHITELIST.interview_scheduled;
+      if (action === "interview.requested") safeAction = WHITELIST.interview_requested;
+      if (action === "interview.completed") safeAction = WHITELIST.interview_completed;
+      if (action === "decision.recorded") safeAction = WHITELIST.decided;
+      if (action === "profile.viewed") safeAction = WHITELIST.viewed;
+
+      if (!safeAction) return null;
+
+      return {
+        id: String(e.id),
+        action: safeAction,
+        entity_type: entity,
+        actor: normStr(e.actor_user_id),
+        at: String(e.created_at ?? new Date().toISOString()),
+        summary,
+      };
+    })
+    .filter((e): e is NonNullable<typeof e> => e !== null)
+    .slice(0, 20);
 }
 
 
