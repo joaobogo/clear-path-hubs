@@ -14,8 +14,8 @@ export function safeNode(v: unknown): React.ReactNode {
   let val = v;
   if (typeof v === "object" && !React.isValidElement(v) && !Array.isArray(v)) {
     const o = v as Record<string, unknown>;
-    if ("value" in o) val = o.value;
-    else if ("answer" in o && typeof o.answer === "object" && o.answer && "value" in (o.answer as Record<string, unknown>)) {
+    if (o && "value" in o) val = o.value;
+    else if (o && "answer" in o && typeof o.answer === "object" && o.answer && "value" in (o.answer as Record<string, unknown>)) {
       val = (o.answer as Record<string, unknown>).value;
     }
   }
@@ -55,11 +55,12 @@ export function safeNode(v: unknown): React.ReactNode {
   }
 
   if (typeof val === "object") {
-    const keys = Object.keys(val as object);
+    const o = val as Record<string, unknown>;
+    const keys = Object.keys(o);
     if (keys.length === 0) return null;
     const compact = keys
       .map((k) => {
-        const item = (val as Record<string, unknown>)[k];
+        const item = o[k];
         const inner = typeof item === "object" && item && "value" in item ? (item as any).value : item;
         if (inner == null || inner === "") return null;
         if (typeof inner === "string" || typeof inner === "number" || typeof inner === "boolean") {
@@ -72,6 +73,7 @@ export function safeNode(v: unknown): React.ReactNode {
   }
   return null;
 }
+
 
 
 export function toReqText(v: unknown): string {
