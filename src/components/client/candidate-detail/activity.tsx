@@ -180,31 +180,28 @@ export function ActivitySection({
   );
 }
 
-export function AuditTrailSection({
-  candidate,
-}: {
-  candidate: ClientCandidateDTO;
-}) {
+export function AuditTrailSection({ candidate }: { candidate: ClientCandidateDTO }) {
   const rows = candidate.audit_trail;
   if (rows.length === 0) return null;
   return (
     <SectionCard
       title="Audit trail"
       icon={<FileClock className="h-4 w-4" />}
-      description="Every recorded action tied to this candidate on this role."
+      description="Timeline of candidate status and actions."
     >
-      <ol className="space-y-2 text-sm">
+      <ol className="relative ml-2 space-y-6 border-l-2 border-muted pl-4">
         {rows.map((e) => (
-          <li key={e.id} className="flex items-start justify-between gap-3 border-b pb-2 last:border-b-0">
-            <div className="min-w-0">
-              <div className="font-medium capitalize">{e.action.replace(/_/g, " ")}</div>
-              <div className="text-xs text-muted-foreground">
-                {e.entity_type.replace(/_/g, " ")}
-                {e.summary ? ` · ${e.summary}` : ""}
+          <li key={e.id} className="relative">
+            <div className="absolute -left-[1.35rem] mt-1.5 h-2 w-2 rounded-full border border-background bg-muted-foreground/40" />
+            <div className="flex flex-col">
+              <span className="text-sm font-medium leading-none text-foreground">
+                {e.action}
+              </span>
+              <div className="mt-1.5 flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+                <span>{new Date(e.at).toLocaleDateString()}</span>
+                <span>•</span>
+                <span>{new Date(e.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
               </div>
-            </div>
-            <div className="whitespace-nowrap text-xs text-muted-foreground">
-              {new Date(e.at).toLocaleString()}
             </div>
           </li>
         ))}
