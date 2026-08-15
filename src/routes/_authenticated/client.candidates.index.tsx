@@ -215,7 +215,12 @@ function CandidatesPage() {
   const [shareOpen, setShareOpen] = useState(false);
 
   // Sync state to local storage when it changes
+  const isFirstRender = useRef(true);
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     if (orgId) {
       if (compareIds.length > 0) {
         saveCompareSelection(orgId, compareIds);
