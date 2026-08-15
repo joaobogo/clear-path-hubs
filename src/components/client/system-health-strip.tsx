@@ -30,6 +30,8 @@ import {
   type HealthSignal,
   type HealthState,
 } from "@/lib/system-health/system-health";
+import { getPlatformStatus } from "@/lib/status/platform-status.functions";
+import { degradedNotice } from "@/lib/status/platform-status";
 
 export const SYSTEM_HEALTH_QUERY_KEY = ["system-health"] as const;
 
@@ -175,6 +177,18 @@ export function SystemHealthStrip({
     queryFn: () => fetchHealth({ data: { organization_id: organizationId! } }),
   });
 
+  // The degraded-mode banner and this pill must never disagree: both read the
+  // same platform-status measurement, and a degraded platform outranks a local
+  // "operational" reading.
+  const { data: platform } = useQuery({
+    queryKey: ["platform-status", "banner"],
+    queryFn: () => getPlatformStatus(),
+    staleTime: 60_000,
+    refetchInterval: 120_000,
+    retry: false,
+  });
+  const platformNotice = degradedNotice(platform);
+
   const attentionSignals = useMemo(
     () => (data?.signals ?? []).filter((s) => isAttention(s.state)),
     [data],
@@ -228,12 +242,12 @@ export function SystemHealthStrip({
     >
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 py-2.5 sm:gap-3">
         <div className="flex min-w-0 items-center gap-2">
-          <StateChip state={data.overall} />
+          <StateChip state={platformNotice.show ? "degraded" : data.overall} />
           <p
             className="min-w-0 truncate text-xs text-muted-foreground sm:text-sm"
             aria-live="polite"
           >
-            {data.headline}
+            {platformNotice.show ? platformNotice.title : data.headline}
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1">
