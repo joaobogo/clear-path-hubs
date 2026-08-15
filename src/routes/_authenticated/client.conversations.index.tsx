@@ -208,9 +208,9 @@ function ConversationsPage() {
           onRetry={() => refetch()}
           retrying={isFetching}
         />
-      ) : isLoading && !data ? (
+      ) : isLoading && !(view === "history" ? historyData : threadData) ? (
         <SkeletonRows rows={5} />
-      ) : items.length === 0 && box === "unread" && (data?.items?.length ?? 0) > 0 ? (
+      ) : items.length === 0 && box === "unread" && (threadData?.items?.length ?? 0) > 0 ? (
         // Threads exist, just nothing unread — say so instead of the
         // "you have no messages" state, which would read as a bug here.
         <div className="rounded-lg border bg-card p-8 text-center">
