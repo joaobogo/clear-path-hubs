@@ -266,6 +266,20 @@ function CandidatesPage() {
   });
  }, [rowsRaw, orgId]);
 
+  const toggleCompare = useCallback((id: string) => {
+    setCompareIds((prev) => {
+      const isSelected = prev.includes(id);
+      if (isSelected) return prev.filter((i) => i !== id);
+      if (prev.length >= COMPARE_MAX) return prev;
+      return [...prev, id];
+    });
+  }, []);
+
+  const clearCompare = useCallback(() => {
+    setCompareIds([]);
+    setCompareOpen(false);
+  }, []);
+
 
  const selectedCandidates = useMemo(
  () =>
@@ -497,7 +511,7 @@ function CandidatesPage() {
               rows={paged}
               orgSearch={orgSearch}
               compareIds={compareIds}
-              onToggleCompare={(id) => toggleCompare(setCompareIds, id)}
+              onToggleCompare={toggleCompare}
             />
    )}
 
@@ -540,12 +554,13 @@ function CandidatesPage() {
  <div className="mt-3 text-xs text-muted-foreground">Refreshing…</div>
  )}
 
- <CompareTray
- selected={selectedCandidates}
- onClear={() => setCompareIds([])}
- onOpen={() => setCompareOpen(true)}
- disabledReason={compareCheck.ok ? null : compareCheck.reason}
- />
+  <CompareTray
+   selected={selectedCandidates}
+   onClear={clearCompare}
+   onOpen={() => setCompareOpen(true)}
+   disabledReason={compareCheck.ok ? null : compareCheck.reason}
+  />
+
   <CompareSheet
   open={compareOpen && compareCheck.ok}
   onOpenChange={setCompareOpen}
