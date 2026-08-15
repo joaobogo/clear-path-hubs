@@ -160,6 +160,8 @@ export type RequirementRow = {
   status: RequirementStatus;
   explanation: string | null;
   evidence: Array<{ source: string | null; snippet: string }>;
+  /** Context lines that are not direct evidence for this requirement but are safe to show as background. */
+  context: Array<{ source: string | null; snippet: string }>;
 };
 
 export type CoverageSummary = {
