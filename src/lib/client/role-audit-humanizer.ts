@@ -45,12 +45,11 @@ export function humanizeRoleAction(action: string): string {
     "client_decision.create": "Client decision recorded",
   };
 
-  // Check direct map
+  const normalized = action.trim().replace(/\s+/g, ".");
+  
+  // Check direct map or normalized map
   if (map[action]) return map[action];
-
-  // Try space-to-dot normalization (for space-cased inputs from older events)
-  const dotAction = action.trim().replace(/\s+/g, ".");
-  if (map[dotAction]) return map[dotAction];
+  if (map[normalized]) return map[normalized];
 
   // Try space-replaced match (original logic for snake_case/dotted fallbacks)
   const spaceAction = action.replace(/[._]/g, " ");
