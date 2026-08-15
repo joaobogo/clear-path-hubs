@@ -136,19 +136,19 @@ function ConversationsPage() {
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex rounded-md border p-0.5">
           {FILTERS.map((f) => (
-            <button
+            <Link
               key={f.key}
-              type="button"
-              onClick={() => setFilter(f.key)}
+              to="/client/conversations"
+              search={(prev: any) => ({ ...prev, filter: f.key })}
               className={cn(
                 "rounded px-3 py-1.5 text-sm transition-colors",
-                filter === f.key
+                (search.filter || "all") === f.key
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
               {f.label}
-            </button>
+            </Link>
           ))}
         </div>
         <div className="relative min-w-[220px] flex-1">
