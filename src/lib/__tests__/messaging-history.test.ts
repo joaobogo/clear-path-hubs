@@ -10,7 +10,7 @@ describe("Messaging History Integrity", () => {
     const staffId = "e60fd0fc-3f4d-4911-b469-c672ca0ca369"; // A staff user
     
     // Create a new unique conversation for this test
-    const { data: convo } = await supabaseAdmin
+    const { data: convo, error: cErr } = await supabaseAdmin
       .from("conversations")
       .insert({
         organization_id: orgId,
@@ -21,8 +21,11 @@ describe("Messaging History Integrity", () => {
       .select("id")
       .single();
 
-    expect(convo).toBeDefined();
-    const convoId = convo!.id;
+    if (cErr) {
+      console.error("Failed to create conversation:", cErr);
+      throw new Error(`Failed to create conversation: ${cErr.message}`);
+    }
+    const convoId = convo.id;
 
     const oldDate = new Date();
     oldDate.setDate(oldDate.getDate() - 5);
