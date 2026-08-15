@@ -102,5 +102,18 @@ export const runConsistencyCheck = async () => {
     consistent: true
   };
 
+  // 7. Support session expiry (Self-Test check)
+  const now = new Date().toISOString();
+  const { count: abandonedSessions } = await supabaseAdmin
+    .from('support_sessions')
+    .select('*', { count: 'exact', head: true })
+    .is('ended_at', null)
+    .lt('expires_at', now);
+  
+  results.support_expiry = {
+    abandoned_active_count: abandonedSessions ?? 0,
+    consistent: (abandonedSessions ?? 0) === 0
+  };
+
   return results;
 };
