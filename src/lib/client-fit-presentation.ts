@@ -227,6 +227,11 @@ const STATUS_RANK: Record<RequirementStatus, number> = {
  * Merge the position's declared requirements with the score-run coverage map.
  * Guarantees a row for every declared requirement so the Client sees the full
  * matrix (met + partial + missing) even when the LLM omits negatives.
+ *
+ * Evidence integrity: only per-candidate, per-requirement quotes pass through.
+ * Generic template snippets ("Core stack: ...", "full regression suite", etc.)
+ * are moved to `context` so they never render as evidence. If a verdict had no
+ * direct evidence after filtering, its status is downgraded to not_evidenced.
  */
 export function buildRequirementRows(
   position: { requirements?: unknown; preferred_requirements?: unknown } | null,
@@ -235,6 +240,21 @@ export function buildRequirementRows(
 ): RequirementRow[] {
   const rows: RequirementRow[] = [];
   const cov = (coverage ?? {}) as AnyRow;
+
+  // Helpers that split real evidence from generic context.
+  const splitEvidence = (raw: Array<{ source: string | null; snippet: string }>) => {
+    const evidence: Array<{ source: string | null; snippet: string }> = [];
+    const context: Array<{ source: string | null; snippet: string }> = [];
+    for (const e of raw) {
+      if (!e.snippet) continue;
+      if (isTemplatedEvidence(e.snippet)) {
+        context.push(e);
+      } else {
+        evidence.push(e);
+      }
+    }
+    return { evidence, context };
+  };
 
   // Index whatever the run gave us by label (case-insensitive).
   const covIndex = new Map<string, AnyRow>();
@@ -250,6 +270,19 @@ export function buildRequirementRows(
       const status = normStatus(
         typeof item === "string" ? defaultStatus : item?.status ?? defaultStatus,
       );
+      const rawEvidence =
+        typeof item === "string"
+          ? []
+          : Array.isArray(item?.evidence)
+            ? item.evidence
+                .slice(0, 3)
+                .map((e: AnyRow) => ({
+                  source: e?.source ?? e?.section ?? null,
+                  snippet: cleanQuote(String(e?.snippet ?? e?.text ?? e?.value ?? "")),
+                }))
+                .filter((e: AnyRow) => e.snippet)
+            : [];
+      const split = splitEvidence(rawEvidence);
       covIndex.set(key, {
         label: String(label),
         status,
@@ -257,18 +290,8 @@ export function buildRequirementRows(
           typeof item === "string"
             ? null
             : item?.explanation ?? item?.rationale ?? item?.note ?? null,
-        evidence:
-          typeof item === "string"
-            ? []
-            : Array.isArray(item?.evidence)
-              ? item.evidence
-                  .slice(0, 3)
-                  .map((e: AnyRow) => ({
-                    source: e?.source ?? e?.section ?? null,
-                    snippet: cleanQuote(String(e?.snippet ?? e?.text ?? e?.value ?? "")),
-                  }))
-                  .filter((e: AnyRow) => e.snippet)
-              : [],
+        evidence: split.evidence,
+        context: split.context,
       });
     }
   };
@@ -284,17 +307,28 @@ export function buildRequirementRows(
   // which never appear in the run's coverage map.
   const evIndex = new Map<
     string,
-    { status: RequirementStatus; evidence: Array<{ source: string | null; snippet: string }> }
+    {
+      status: RequirementStatus;
+      evidence: Array<{ source: string | null; snippet: string }>;
+      context: Array<{ source: string | null; snippet: string }>;
+    }
   >();
   for (const item of evidenceItems ?? []) {
     const key = String(item?.rubric_criterion_key ?? "").toLowerCase().trim();
     if (!key) continue;
+    const rawSnippet = String(item?.factual_quote ?? item?.interpretation ?? "");
+    const cleaned = cleanQuote(rawSnippet);
     const status = normStatus(item?.result ?? item?.match_type);
-    const snippet = cleanQuote(String(item?.factual_quote ?? item?.interpretation ?? ""));
-    const entry = evIndex.get(key) ?? { status, evidence: [] };
+    const entry = evIndex.get(key) ?? { status, evidence: [], context: [] };
     if (STATUS_RANK[status] > STATUS_RANK[entry.status]) entry.status = status;
-    if (snippet && entry.evidence.length < 3) {
-      entry.evidence.push({ source: item?.source_kind ?? null, snippet });
+    if (cleaned) {
+      if (isTemplatedEvidence(cleaned)) {
+        if (isGenericSkillsList(cleaned) && entry.context.length < 3) {
+          entry.context.push({ source: item?.source_kind ?? null, snippet: cleaned });
+        }
+      } else if (entry.evidence.length < 3) {
+        entry.evidence.push({ source: item?.source_kind ?? null, snippet: cleaned });
+      }
     }
     evIndex.set(key, entry);
   }
@@ -314,20 +348,25 @@ export function buildRequirementRows(
             ? "preferred"
             : "must_have"
           : importance;
-      const status = found?.status ?? fromEvidence?.status ?? "not_evidenced";
-      const evidence =
+      const rawStatus = found?.status ?? fromEvidence?.status ?? "not_evidenced";
+      const rawEvidence =
         found?.evidence && found.evidence.length > 0
           ? found.evidence
           : (fromEvidence?.evidence ?? []);
+      const rawContext =
+        found?.context && found.context.length > 0
+          ? found.context
+          : (fromEvidence?.context ?? []);
+      // A verdict that lacks a direct, per-candidate quote is not evidenced.
+      const status = rawEvidence.length > 0 ? rawStatus : "not_evidenced";
       rows.push({
-        // Stable slug: identity follows the requirement text, not its position
-        // in the array, so string-form requirements keep a durable id.
         id: `${declaredImportance === "preferred" ? "pref" : "must"}-${requirementSlug(String(label))}`,
         label: String(label),
         importance: declaredImportance,
         status,
         explanation: found?.explanation ?? null,
-        evidence,
+        evidence: rawEvidence,
+        context: rawContext,
       });
       covIndex.delete(key);
     });
@@ -343,9 +382,10 @@ export function buildRequirementRows(
         id: `run-${requirementSlug(String(v.label))}`,
         label: v.label,
         importance: "must_have",
-        status: v.status,
+        status: v.evidence.length > 0 ? v.status : "not_evidenced",
         explanation: v.explanation,
         evidence: v.evidence,
+        context: v.context,
       });
     }
   }
