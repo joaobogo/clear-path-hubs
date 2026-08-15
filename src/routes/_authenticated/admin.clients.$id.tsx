@@ -607,10 +607,10 @@ function CandidatesTab({ id }: { id: string }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rows = (data ?? []) as any[];
   return (
-    <div className="rounded-lg border overflow-hidden">
-      <table className="w-full text-sm">
+    <div className="rounded-lg border overflow-x-auto">
+      <table className="w-full min-w-[900px] text-sm">
         <thead className="bg-muted/50 text-left">
-          <tr>
+          <tr className="whitespace-nowrap uppercase text-[10px] tracking-wider text-muted-foreground">
             <th className="px-3 py-2 font-medium">Candidate</th>
             <th className="px-3 py-2 font-medium">Position</th>
             <th className="px-3 py-2 font-medium">Stage</th>
@@ -624,18 +624,18 @@ function CandidatesTab({ id }: { id: string }) {
         <tbody>
           {rows.map((r) => (
             <tr key={r.id} className="border-t hover:bg-muted/30">
-              <td className="px-3 py-2">
+              <td className="whitespace-nowrap px-3 py-2">
                 <Link to="/admin/candidates/$id" params={{ id: r.id }} className="text-primary hover:underline">
                   {r.candidate_profiles?.full_name ?? "—"}
                 </Link>
               </td>
-              <td className="px-3 py-2 text-muted-foreground">{r.positions?.title ?? "—"}</td>
-              <td className="px-3 py-2 capitalize">{r.current_stage ?? "—"}</td>
-              <td className="px-3 py-2 capitalize text-xs">{r.processing_state ?? "—"}</td>
-              <td className="px-3 py-2 tabular-nums">{r.fit_score_final ?? "—"}</td>
-              <td className="px-3 py-2 capitalize">{r.fit_band ?? "—"}</td>
-              <td className="px-3 py-2 capitalize text-xs">{r.admin_status ?? "—"}</td>
-              <td className="px-3 py-2 capitalize text-xs">{r.client_visibility ?? "—"}</td>
+              <td className="min-w-[10rem] px-3 py-2 text-muted-foreground">{r.positions?.title ?? "—"}</td>
+              <td className="whitespace-nowrap px-3 py-2 capitalize">{r.current_stage ?? "—"}</td>
+              <td className="whitespace-nowrap px-3 py-2 capitalize text-xs">{r.processing_state ?? "—"}</td>
+              <td className="whitespace-nowrap px-3 py-2 tabular-nums">{r.fit_score_final ?? "—"}</td>
+              <td className="whitespace-nowrap px-3 py-2 capitalize">{r.fit_band ?? "—"}</td>
+              <td className="whitespace-nowrap px-3 py-2 capitalize text-xs">{r.admin_status ?? "—"}</td>
+              <td className="whitespace-nowrap px-3 py-2 capitalize text-xs">{r.client_visibility ?? "—"}</td>
             </tr>
           ))}
           {rows.length === 0 && (
