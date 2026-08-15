@@ -9,6 +9,12 @@ import { toast } from "sonner";
 
 export function StaffProfileCard({ initialName }: { initialName: string }) {
   const [name, setName] = useState(initialName);
+
+  // Sync state if initialName changes (e.g. after a background query refresh)
+  if (initialName !== "" && name === "" && initialName !== name) {
+    setName(initialName);
+  }
+
   const [saving, setSaving] = useState(false);
   const updateProfile = useServerFn(updateStaffProfile);
   const qc = useQueryClient();

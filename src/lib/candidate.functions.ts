@@ -124,12 +124,26 @@ export const getMyContext = createServerFn({ method: "GET" })
       // Leave seat as candidate; the empty state stays safe either way.
     }
 
+    // For non-candidates, we still want to expose their profile if it exists.
+    // candidate_profiles only holds candidate data. Staff/Clients have rows in public.profiles.
+    let profile = cp ?? null;
+    if (!profile && seat !== "candidate") {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: p } = await supabaseAdmin
+        .from("profiles")
+        .select("id, full_name, email, status, created_at, updated_at")
+        .eq("auth_user_id", userId)
+        .maybeSingle();
+      if (p) profile = p as AnyRow;
+    }
+
     return {
       user_id: userId,
       email: email ?? null,
-      profile: cp ?? null,
+      profile,
       seat,
     };
+
   });
 
 // ─── Applications list + detail ─────────────────────────────────────────────
