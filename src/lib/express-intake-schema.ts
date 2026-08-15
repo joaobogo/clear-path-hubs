@@ -1070,7 +1070,7 @@ export function blueprintStageIndex(status: string, position?: {
   let finalIdx = idx;
 
   // Derive from position lifecycle if the status field is stale or unset.
-  if (position?.status === "active" || position?.status === "needs_clarification") {
+  if (position?.status === "active" || position?.status === "needs_clarification" || position?.status === "approved") {
     finalIdx = Math.max(finalIdx, BLUEPRINT_STAGES.length);
   } else if (position?.status === "under_review") {
     finalIdx = Math.max(finalIdx, 3); // "Building the role blueprint"

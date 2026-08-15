@@ -84,16 +84,35 @@ function derivedSourcingChannels(position: AnyRow): { label: string; note: strin
 }
 
 function humanizeBlueprintAction(action: string): string {
+  const raw = (action ?? "").replace(/[._]/g, " ").toLowerCase().trim();
   const map: Record<string, string> = {
-    "position.submit": "Blueprint submitted for review",
-    "position.status.update": "Status changed",
-    "position.approved": "Blueprint approved",
-    "position.published": "Position published",
-    "position.updated": "Blueprint edited",
-    "position.closed": "Position closed",
-    "position.archived": "Position archived",
+    "position submit": "Blueprint submitted for review",
+    "position status update": "Status changed",
+    "position approve": "Blueprint approved",
+    "position approved": "Blueprint approved",
+    "position published": "Position published",
+    "position update": "Blueprint edited",
+    "position closed": "Position closed",
+    "position archived": "Position archived",
+    "position create": "Role created in your workspace",
+    "position start review": "Review started",
+    "position edit wizard": "Blueprint edited",
+    "position requisition updated": "Requisition updated",
+    "position owner assigned": "Owner assigned",
+    "position backup owner assigned": "Backup owner assigned",
+    "position intensity changed": "Recruiting intensity changed",
+    "position visibility": "Visibility changed",
+    "position flagged for reassignment": "Flagged for reassignment",
+    "payment exemption granted": "Payment exemption granted",
   };
-  return map[action] ?? action.replace(/[._]/g, " ");
+  return map[raw] ?? titleCase(action.replace(/[._]/g, " "));
+}
+
+function titleCase(s: string): string {
+  return s
+    .split(" ")
+    .map((w) => (w ? w[0]!.toUpperCase() + w.slice(1) : ""))
+    .join(" ");
 }
 
 export function RoleBlueprint({ position, activity = [] }: RoleBlueprintProps) {
