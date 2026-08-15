@@ -20,6 +20,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
+import { formatPeriod } from "@/lib/format/datetime";
+import { formatEnumLabel } from "@/lib/human-labels";
 import { SectionCard } from "./shared";
 
 export const InterviewGuide = memo(function InterviewGuide({
@@ -130,7 +132,7 @@ export const ExperienceTimeline = memo(function ExperienceTimeline({
             />
             <div className="text-sm font-medium">{e.title}</div>
             <div className="text-xs text-muted-foreground">
-              {[e.company, e.period || "Date not confirmed"].filter(Boolean).join(" · ")}
+              {[e.company, formatPeriod(e.period)].filter(Boolean).join(" · ")}
             </div>
             {e.description && (
               <p className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">
@@ -198,7 +200,7 @@ export const SkillsAndEducation = memo(function SkillsAndEducation({
                 <li key={i}>
                   <div className="font-medium">{e.degree ?? "Not specified"}</div>
                   <div className="text-xs text-muted-foreground">
-                    {[e.institution, e.period].filter(Boolean).join(" · ") || "Institution not confirmed"}
+                    {[e.institution, formatPeriod(e.period)].filter(Boolean).join(" · ")}
                   </div>
                 </li>
               ))}
@@ -240,7 +242,7 @@ export const ProfilePanel = memo(function ProfilePanel({
     ["Years of experience", c.years_experience != null ? `${c.years_experience}` : null],
     ["Current role", c.current_role],
     ["Current company", c.current_company],
-    ["Work authorization", candidate.work_authorization],
+    ["Work authorization", formatEnumLabel(candidate.work_authorization)],
     [
       "Languages",
       candidate.languages.length > 0

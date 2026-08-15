@@ -140,8 +140,8 @@ export function HandoffView({
         />
         <Fact
           label="Agreed compensation"
-          value={handoff.compensation.label ?? "Not recorded"}
-          {...(handoff.employment_type ? { hint: formatEnumLabel(handoff.employment_type) } : {})}
+          value={handoff.compensation.label || "Not recorded"}
+          {...(handoff.employment_type ? { hint: `${handoff.compensation.period === "monthly" ? "per month" : handoff.compensation.period === "hourly" ? "per hour" : "per year"} / ${formatEnumLabel(handoff.employment_type)}` } : {})}
         />
         <Fact
           label="Replacement guarantee"

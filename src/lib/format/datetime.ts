@@ -28,6 +28,12 @@ const DATE_ONLY = new Intl.DateTimeFormat("pt-BR", {
   timeZone: WORKSPACE_TIMEZONE,
 });
 
+const MONTH_YEAR = new Intl.DateTimeFormat("en-GB", {
+  month: "short",
+  year: "numeric",
+  timeZone: WORKSPACE_TIMEZONE,
+});
+
 function toDate(value: string | number | Date | null | undefined): Date | null {
   if (value == null || value === "") return null;
   const date = value instanceof Date ? value : new Date(value);
@@ -52,6 +58,30 @@ export function formatDate(
   const date = toDate(value);
   if (!date) return fallback;
   return DATE_ONLY.format(date);
+}
+
+/**
+ * Formats a period string (e.g. "2021-05 – 2024-01") into human-friendly
+ * month-year ranges ("May 2021 – Jan 2024").
+ */
+export function formatPeriod(period: string | null | undefined, fallback = "Date not confirmed"): string {
+  if (!period) return fallback;
+  
+  // Split by the dash/en-dash/em-dash
+  const parts = period.split(/\s*[–-]\s*/);
+  if (parts.length === 1) {
+    const date = toDate(parts[0]);
+    return date ? MONTH_YEAR.format(date) : parts[0];
+  }
+
+  const formatted = parts.map(p => {
+    const trimmed = p.trim();
+    if (trimmed.toLowerCase() === "present") return "Present";
+    const date = toDate(trimmed);
+    return date ? MONTH_YEAR.format(date) : trimmed;
+  });
+
+  return formatted.join(" – ");
 }
 
 /** True when a string looks like a raw ISO-8601 timestamp (guard for tests/lint). */
