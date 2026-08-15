@@ -565,9 +565,9 @@ function PositionsPage() {
                         variant="secondary"
                         data-qa-action="open-position"
                       >
-                        <Link to="/admin/positions/$id" params={{ id: p.id }}>
+                        <a href={`/admin/positions/${p.id}`}>
                           Open <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
-                        </Link>
+                        </a>
                       </Button>
                     </td>
                   </tr>
