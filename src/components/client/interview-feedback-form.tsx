@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 import {
   DECLINE_CONCERN_MIN,
   FEEDBACK_NEXT_STEP_LABEL,
@@ -40,7 +41,7 @@ import {
 function whenLabel(iso: string | null): string {
   if (!iso) return "recently";
   try {
-    return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(new Date(iso));
+    return new Intl.DateTimeFormat(APP_LOCALE, { dateStyle: "medium", timeZone: WORKSPACE_TIMEZONE }).format(new Date(iso));
   } catch {
     return "recently";
   }
