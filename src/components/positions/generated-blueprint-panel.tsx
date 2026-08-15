@@ -9,6 +9,7 @@ import { trackEvent } from "@/lib/tracking/pixels";
 import {
   BLUEPRINT_STAGES,
   blueprintProgress,
+  blueprintStageIndex,
 } from "@/lib/express-intake-schema";
 import {
   CheckCircle2,
@@ -116,7 +117,10 @@ export function GeneratedBlueprintPanel({
   const isDecisionReady = positionStatus === "active" || positionStatus === "closed" || positionStatus === "archived";
   const ready = status === "ready";
 
-  // If the blueprint is already prepared, or if the role is decision-ready (active/closed/archived),
+  // If the search is closed, we don't show the builder widget.
+  if (positionStatus === "closed") return null;
+
+  // If the blueprint is already prepared, or if the role is decision-ready (active/archived),
   // we don't show the "being built" widget.
   if (ready || status === "none" || !status || isDecisionReady) return null;
 
@@ -139,7 +143,7 @@ export function GeneratedBlueprintPanel({
 
   const bp = position?.blueprint as AnyRow | null;
   const failed = status === "failed";
-  const stageIndex = BLUEPRINT_STAGES.findIndex((s) => s.key === status);
+  const stageIndex = blueprintStageIndex(status, position);
   const sources: Record<string, string> = (bp?.field_sources ?? {}) as Record<string, string>;
   const confirmedAt = position?.blueprint_confirmed_at as string | null;
 
