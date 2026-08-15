@@ -5,11 +5,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { getClientContext } from "@/lib/client-context.functions";
-import { listConversations } from "@/lib/conversations.functions";
+import { listConversations, listMessageHistory } from "@/lib/conversations.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Briefcase, MessageSquare, Search, User } from "lucide-react";
+import { Briefcase, MessageSquare, Search, User, UserCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SkeletonRows } from "@/components/client/states";
 import { QueryErrorCard } from "@/components/client/query-error";
@@ -67,6 +67,7 @@ function ConversationsPage() {
   const view = search.view === "history" ? "history" : "threads";
   const ctxFn = useServerFn(getClientContext);
   const listFn = useServerFn(listConversations);
+  const historyFn = useServerFn(listMessageHistory);
   const filter = search.filter || "all";
   const [q, setQ] = useState("");
 
@@ -77,28 +78,56 @@ function ConversationsPage() {
   const ctx = ctxQuery.data;
   const orgId = ctx?.active?.organization_id;
 
-    const { data, isLoading, isError, isFetching, error, refetch } = useQuery({
+  const {
+    data: threadData,
+    isLoading: isLoadingThreads,
+    isError: isErrorThreads,
+    isFetching: isFetchingThreads,
+    error: errorThreads,
+    refetch: refetchThreads,
+  } = useQuery({
     queryKey: ["conversations", orgId],
     queryFn: () => listFn({ data: { orgId: orgId! } }),
     enabled: !!orgId,
     placeholderData: (prev) => prev,
   });
+
+  const {
+    data: historyData,
+    isLoading: isLoadingHistory,
+    isError: isErrorHistory,
+    isFetching: isFetchingHistory,
+    error: errorHistory,
+    refetch: refetchHistory,
+  } = useQuery({
+    queryKey: ["conversation-history", orgId],
+    queryFn: () => historyFn({ data: { orgId: orgId!, page: 1, pageSize: 50 } }),
+    enabled: !!orgId && view === "history",
+    placeholderData: (prev) => prev,
+  });
+
+  const isLoading = view === "history" ? isLoadingHistory : isLoadingThreads;
+  const isError = view === "history" ? isErrorHistory : isErrorThreads;
+  const isFetching = view === "history" ? isFetchingHistory : isFetchingThreads;
+  const error = view === "history" ? errorHistory : errorThreads;
+  const refetch = view === "history" ? refetchHistory : refetchThreads;
+
   const signals = useEmptyStateSignals(orgId, {
-    enabled: !isLoading && (data?.items?.length ?? 0) === 0,
+    enabled: !isLoading && (threadData?.items?.length ?? 0) === 0,
   });
 
   const items = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    const allItems = data?.items ?? [];
+    const allItems = threadData?.items ?? [];
 
     if (view === "history") {
-      // For history, we show all threads but sort them by message count or 
-      // present them differently. The prompt asks for a "distinct" view.
-      // A flat chronological log of all messages is the goal.
-      // Since the API returns thread summaries with last_body, we'll sort 
-      // threads by the absolute last message across the whole workspace.
-      return [...allItems].sort(
-        (a, b) => new Date(b.last_message_at).getTime() - new Date(a.last_message_at).getTime()
+      const allHistoryItems = (historyData as any)?.items ?? [];
+      if (!needle) return allHistoryItems;
+      return allHistoryItems.filter(
+        (m: any) =>
+          m.body.toLowerCase().includes(needle) ||
+          m.sender_name.toLowerCase().includes(needle) ||
+          m.subject.toLowerCase().includes(needle),
       );
     }
 
@@ -112,9 +141,9 @@ function ConversationsPage() {
         (c.last_body ?? "").toLowerCase().includes(needle)
       );
     });
-  }, [data, box, filter, q, view]);
+  }, [threadData, historyData, box, filter, q, view]);
 
-  const unreadCount = (data?.items ?? []).filter((c) => c.unread > 0).length;
+  const unreadCount = (threadData?.items ?? []).filter((c) => c.unread > 0).length;
 
 
   return (
@@ -179,9 +208,9 @@ function ConversationsPage() {
           onRetry={() => refetch()}
           retrying={isFetching}
         />
-      ) : isLoading && !data ? (
+      ) : isLoading && !(view === "history" ? historyData : threadData) ? (
         <SkeletonRows rows={5} />
-      ) : items.length === 0 && box === "unread" && (data?.items?.length ?? 0) > 0 ? (
+      ) : items.length === 0 && box === "unread" && (threadData?.items?.length ?? 0) > 0 ? (
         // Threads exist, just nothing unread — say so instead of the
         // "you have no messages" state, which would read as a bug here.
         <div className="rounded-lg border bg-card p-8 text-center">
@@ -207,37 +236,54 @@ function ConversationsPage() {
 
       ) : (
         <ul className="divide-y rounded-lg border bg-card">
-          {items.map((c) => {
-            const Icon =
-              c.scope === "position" ? Briefcase : c.scope === "candidate" ? User : MessageSquare;
+          {items.map((c: any) => {
+            const isHistory = view === "history";
+            const Icon = isHistory
+              ? UserCircle
+              : c.scope === "position"
+                ? Briefcase
+                : c.scope === "candidate"
+                  ? User
+                  : MessageSquare;
+
+            const conversationId = isHistory ? c.conversation_id : c.id;
+            const title = isHistory ? c.sender_name : c.subject;
+            const subtitle = isHistory ? c.subject : c.context_label;
+            const body = isHistory ? c.body : c.last_body;
+            const timestamp = isHistory ? c.created_at : c.last_message_at;
+            const senderName = isHistory ? null : c.last_sender_name;
+
             return (
               <li key={c.id}>
                 <Link
                   to="/client/conversations/$conversationId"
-                  params={{ conversationId: c.id }}
+                  params={{ conversationId }}
                   search={orgSearch ? { org: orgSearch } : undefined}
                   className="flex items-start gap-3 px-5 py-4 transition-colors hover:bg-muted/50"
                 >
                   <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="truncate text-sm font-medium">
-                        {view === "history" ? c.last_sender_name || "TaaSFlow team" : c.subject}
-                      </span>
-                      {c.unread > 0 && <Badge>{c.unread} new</Badge>}
+                      <span className="truncate text-sm font-medium">{title}</span>
+                      {!isHistory && c.unread > 0 && <Badge>{c.unread} new</Badge>}
                     </div>
-                    {view === "history" && (
+                    {subtitle && (
                       <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                        {c.subject}
+                        {subtitle}
                       </p>
                     )}
-                    <p className={cn("mt-1 text-sm text-muted-foreground", view === "history" ? "" : "line-clamp-2")}>
-                      {view !== "history" && c.last_sender_name ? `${c.last_sender_name}: ` : ""}
-                      {c.last_body ?? "No messages yet"}
+                    <p
+                      className={cn(
+                        "mt-1 text-sm text-muted-foreground",
+                        isHistory ? "" : "line-clamp-2",
+                      )}
+                    >
+                      {!isHistory && senderName ? `${senderName}: ` : ""}
+                      {body ?? "No messages yet"}
                     </p>
                   </div>
                   <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
-                    {relTime(c.last_message_at)}
+                    {relTime(timestamp)}
                   </span>
                 </Link>
               </li>
