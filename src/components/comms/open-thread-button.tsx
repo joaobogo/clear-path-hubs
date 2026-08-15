@@ -33,6 +33,8 @@ export function OpenThreadButton({
   className?: string;
 }) {
   const navigate = useNavigate();
+  const search = (navigate as any).useSearch({ strict: false });
+  const preview = search?.preview;
   const orgSearch = useClientOrgSearch() || orgId;
   const ensureFn = useServerFn(ensureConversation);
   const [busy, setBusy] = useState(false);
@@ -53,14 +55,14 @@ export function OpenThreadButton({
           await navigate({
             to: "/client/conversations/$conversationId",
             params: { conversationId: res.id },
-            search: { org: orgSearch },
+            search: { org: orgSearch, preview },
           });
         } catch {
           // If conversation creation fails (e.g. invalid IDs), fall back to
           // the organization's general messages list rather than a dead end.
           await navigate({
             to: "/client/conversations",
-            search: { org: orgSearch },
+            search: { org: orgSearch, preview },
           });
         } finally {
           setBusy(false);

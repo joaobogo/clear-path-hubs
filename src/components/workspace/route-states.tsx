@@ -23,7 +23,6 @@ export function makeRouteErrorComponent(tone: AudienceTone, surface: string) {
     const normalized = normalizeError(error, { tone });
     const linkSearch = search.org ? { org: search.org, preview: search.preview } : undefined;
 
-
     useEffect(() => {
       logTechnical(error, normalized, { surface });
       // eslint-disable-next-line react-hooks/exhaustive-deps
