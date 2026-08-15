@@ -13,10 +13,10 @@ export function safeNode(v: unknown): React.ReactNode {
   // Handle answers stored as { value: X } or { answer: { value: X } }
   let val = v;
   if (typeof v === "object" && !React.isValidElement(v) && !Array.isArray(v)) {
-    const o = v as Record<string, unknown>;
+    const o = v as any;
     if (o && "value" in o) val = o.value;
-    else if (o && "answer" in o && typeof o.answer === "object" && o.answer && "value" in (o.answer as Record<string, unknown>)) {
-      val = (o.answer as Record<string, unknown>).value;
+    else if (o && "answer" in o && typeof o.answer === "object" && o.answer && "value" in (o.answer as any)) {
+      val = (o.answer as any).value;
     }
   }
 
@@ -55,7 +55,7 @@ export function safeNode(v: unknown): React.ReactNode {
   }
 
   if (typeof val === "object") {
-    const o = val as Record<string, unknown>;
+    const o = val as any;
     const keys = Object.keys(o);
     if (keys.length === 0) return null;
     const compact = keys
@@ -74,8 +74,6 @@ export function safeNode(v: unknown): React.ReactNode {
   return null;
 }
 
-
-
 export function toReqText(v: unknown): string {
   if (v == null) return "—";
   if (typeof v === "string") {
@@ -86,7 +84,7 @@ export function toReqText(v: unknown): string {
   if (typeof v === "number" || typeof v === "boolean") return String(v);
   if (Array.isArray(v)) return v.map(toReqText).filter((s) => s && s !== "—").join(", ") || "—";
   if (typeof v === "object") {
-    const o = v as Record<string, unknown>;
+    const o = v as any;
     const cand = o.text ?? o.label ?? o.name ?? o.requirement ?? o.requirement_text ?? o.title;
     if (typeof cand === "string" && cand.trim() && cand.trim() !== "[object Object]") return cand.trim();
     return "—";
@@ -98,7 +96,6 @@ export function cleanLine(s: string): string {
   return s.replace(/\[object Object\]/g, "requirement").trim();
 }
 
-
 export function Row({ label, v }: { label: string; v: React.ReactNode }) {
   const safe = safeNode(v);
   return (
@@ -108,4 +105,3 @@ export function Row({ label, v }: { label: string; v: React.ReactNode }) {
     </>
   );
 }
-
