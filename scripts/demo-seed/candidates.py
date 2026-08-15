@@ -1,4 +1,4 @@
-# Demo candidate definitions. Every field is fictional and marked TAASFLOW_DEMO_SEED.
+# Demo candidate definitions. Every field is fictional.
 
 CANDIDATES = [
     # ---------------- Client Success Manager — EMEA ----------------
