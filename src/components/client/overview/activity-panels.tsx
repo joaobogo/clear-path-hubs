@@ -5,14 +5,18 @@ import { MessageSquare, RefreshCw } from "lucide-react";
 import { SectionHeader } from "./section-primitives";
 import { relTime, formatAction } from "./utils";
 
+import { Skeleton } from "@/components/ui/skeleton";
+
 export function SinceLastVisit({
   events,
   fallback,
   lastSeen,
+  loading,
 }: {
   events: Any[];
   fallback: Any[];
   lastSeen: number | null;
+  loading?: boolean;
 }) {
   const list = events.length ? events : fallback.slice(0, 6);
   const isNew = (e: Any) => lastSeen != null && new Date(e.created_at).getTime() > lastSeen;
@@ -23,7 +27,13 @@ export function SinceLastVisit({
   return (
     <div className="rounded-xl border bg-card p-4 sm:p-5">
       <SectionHeader icon={<RefreshCw className="h-4 w-4" />} title={heading} size="sm" />
-      {list.length === 0 ? (
+      {loading ? (
+        <div className="mt-3 space-y-2.5">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-5 w-full" />
+          ))}
+        </div>
+      ) : list.length === 0 ? (
         <p className="mt-3 text-sm text-muted-foreground">
           Hiring activity will appear here as your searches progress.
         </p>
@@ -55,7 +65,7 @@ export function SinceLastVisit({
   );
 }
 
-export function RecentMessages({ messages }: { messages: Any[] }) {
+export function RecentMessages({ messages, loading }: { messages: Any[]; loading?: boolean }) {
   return (
     <div className="rounded-xl border bg-card p-4 sm:p-5">
       <div className="flex items-center justify-between gap-3">
@@ -71,7 +81,13 @@ export function RecentMessages({ messages }: { messages: Any[] }) {
           View
         </Link>
       </div>
-      {messages.length === 0 ? (
+      {loading ? (
+        <div className="mt-3 space-y-2.5">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-16 w-full" />
+          ))}
+        </div>
+      ) : messages.length === 0 ? (
         <p className="mt-3 text-sm text-muted-foreground">No recent messages.</p>
       ) : (
         <ul className="mt-3 divide-y">

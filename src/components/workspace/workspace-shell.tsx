@@ -529,7 +529,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
                     ) : (
                       <span
                         aria-current="page"
-                        className="truncate font-medium capitalize"
+                        className="truncate font-medium"
                       >
                         {c.label}
                       </span>

@@ -1,7 +1,7 @@
 // Structured requisition layer: multi-country locations, evaluation priorities,
 // ownership, compensation permissioning, job-quality gaps, version history and
 // controlled rescore. Saves independently of the intake wizard content.
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -44,16 +44,28 @@ import {
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const emptyLocation = (): RequisitionLocation => ({
-  country_code: "US",
+  country_code: "",
   region: "",
   city: "",
-  work_model: "onsite",
+  work_model: "remote",
   is_primary: false,
   headcount: null,
   timezone: "",
   onsite_days_per_week: null,
   notes: "",
 });
+
+type WorkModel = "remote" | "hybrid" | "onsite" | "";
+
+function seededLocation(openWorldwide: boolean, workModel: WorkModel, location: string): RequisitionLocation {
+  if (openWorldwide) return emptyLocation();
+  return {
+    ...emptyLocation(),
+    work_model: workModel || "remote",
+    notes: location || "",
+    is_primary: true,
+  };
+}
 
 type Form = {
   reference_code: string;
@@ -76,10 +88,16 @@ export function RequisitionEditor({
   positionId,
   onDirtyChange,
   audience = "admin",
+  openWorldwide = false,
+  workModel = "",
+  location = "",
 }: {
   positionId: string;
   onDirtyChange?: (dirty: boolean) => void;
   audience?: "admin" | "client";
+  openWorldwide?: boolean;
+  workModel?: WorkModel;
+  location?: string;
 }) {
   const qc = useQueryClient();
   const load = useServerFn(getRequisitionMeta);
@@ -93,10 +111,11 @@ export function RequisitionEditor({
 
   const [form, setForm] = useState<Form | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
+  const initialFormRef = useRef<Form | null>(null);
 
   useEffect(() => {
     if (!meta) return;
-    setForm({
+    const next: Form = {
       reference_code: meta.reference_code,
       owner_user_id: meta.owner_user_id,
       travel_expectation: meta.travel_expectation,
@@ -109,15 +128,24 @@ export function RequisitionEditor({
       budget_min: meta.budget_min,
       budget_max: meta.budget_max,
       evaluation_weights: meta.evaluation_weights,
-      locations: meta.locations.length ? meta.locations : [{ ...emptyLocation(), is_primary: true }],
+      locations: meta.locations.length
+        ? meta.locations
+        : [seededLocation(openWorldwide, workModel, location)],
       change_reason: "",
-    });
-  }, [meta]);
+    };
+    setForm(next);
+    if (!initialFormRef.current) {
+      initialFormRef.current = next;
+    }
+  }, [meta, openWorldwide, workModel, location]);
 
-  const baseline = useMemo(() => (meta ? JSON.stringify(meta.locations) + JSON.stringify(meta.evaluation_weights) : ""), [meta]);
   const dirty = useMemo(
-    () => (form ? JSON.stringify(form.locations) + JSON.stringify(form.evaluation_weights) !== baseline : false),
-    [form, baseline],
+    () =>
+      form && initialFormRef.current
+        ? JSON.stringify(form.locations) + JSON.stringify(form.evaluation_weights) !==
+          JSON.stringify(initialFormRef.current.locations) + JSON.stringify(initialFormRef.current.evaluation_weights)
+        : false,
+    [form],
   );
   useEffect(() => onDirtyChange?.(dirty), [dirty, onDirtyChange]);
 

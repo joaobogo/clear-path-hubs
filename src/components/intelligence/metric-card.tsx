@@ -65,6 +65,10 @@ function StatusChip({ status }: { status: MetricStatus }) {
 function ChartBlock({ chart, idPrefix }: { chart: MetricChart; idPrefix: string }) {
   const max = Math.max(1, ...chart.points.map((p) => Math.max(p.value, p.compareValue ?? 0)));
   const tableId = `${idPrefix}-table`;
+  const total = chart.points.reduce((sum, p) => sum + p.value, 0);
+  const heading = chart.valueHeading.toLowerCase() === chart.unit.toLowerCase()
+    ? `${total} ${chart.unit}`
+    : `${chart.valueHeading} across ${chart.unit}`;
   return (
     <figure className="m-0">
       <ul className="space-y-2" aria-describedby={tableId}>
@@ -93,7 +97,7 @@ function ChartBlock({ chart, idPrefix }: { chart: MetricChart; idPrefix: string 
         ))}
       </ul>
       <figcaption className="sr-only">
-        {chart.valueHeading} in {chart.unit}
+        {heading}
       </figcaption>
       <details className="mt-3">
         <summary className="cursor-pointer text-xs text-muted-foreground underline">

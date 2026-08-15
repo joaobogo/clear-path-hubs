@@ -390,10 +390,15 @@ function OverviewPage() {
           {/* 5 · WHAT CHANGED + MESSAGES */}
           <section className="grid gap-4 lg:grid-cols-5">
             <div className="lg:col-span-3">
-              <SinceLastVisit events={sinceLastVisit} fallback={activity} lastSeen={lastSeen} />
+              <SinceLastVisit
+                events={sinceLastVisit}
+                fallback={activity}
+                lastSeen={lastSeen}
+                loading={overviewPanel.loading}
+              />
             </div>
             <div className="lg:col-span-2">
-              <RecentMessages messages={messages} />
+              <RecentMessages messages={messages} loading={overviewPanel.loading} />
             </div>
           </section>
 

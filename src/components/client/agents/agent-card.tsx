@@ -82,7 +82,7 @@ export function AgentCardView({
           </dt>
           <dd className="mt-0.5">
             {agent.last_action_summary ?? "Nothing yet."}
-            {agent.last_action_at && (
+            {agent.last_action_at && agent.last_action_summary && (
               <span className="ml-1 text-muted-foreground">
                 ({ago(agent.last_action_at)})
               </span>
