@@ -178,8 +178,8 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
   for (const m of overdue) addOwner(m.positions?.owner_user_id);
   for (const iv of (interviews.data ?? []) as Any[])
     addOwner(iv.candidate_matches?.positions?.owner_user_id);
-  for (const m of (blocked.data ?? []) as Any[]) addOwner(m.positions?.owner_user_id);
   for (const i of agingIntakes.items) addOwner(i.owner_user_id);
+
 
   const ownerName = new Map<string, string>();
   if (ownerIds.size) {
@@ -328,22 +328,22 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       })),
     },
     {
-      key: "blocked",
-      label: "Blocked in processing",
-      description: "Parse, OCR or provider incidents holding candidates back.",
+      key: "delivery_failures",
+      label: "Delivery failures",
+      description: "Email or message failures that need a retry or a new address.",
       count: blocked.count ?? 0,
-      action_hint: "Retry the step or resolve the incident.",
+      action_hint: "Retry the delivery or update the recipient's email.",
       see_all: { to: "/admin/operations" },
-      items: ((blocked.data ?? []) as Any[]).map((m) => ({
-        id: m.id,
-        title: m.candidate_profiles?.full_name ?? "Candidate",
-        subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
-        meta: (m.processing_error_code ?? m.processing_state ?? "").replace(/_/g, " "),
-        waiting_since: m.processing_updated_at,
-        target: { kind: "match" as const, id: m.id },
+      items: ((blocked.data ?? []) as Any[]).map((d) => ({
+        id: d.id,
+        title: "Delivery failure",
+        subtitle: (d.error_message ?? d.status ?? "").replace(/_/g, " "),
+        meta: null,
+        waiting_since: d.updated_at,
+        target: { kind: "position" as const, id: d.id }, // Target is generic, operations handles it
         action_label: "Fix",
-        owner: owner(m.positions?.owner_user_id),
-        claim: positionClaim(m.positions?.id),
+        owner: null,
+        claim: null,
         tone: "danger" as const,
       })),
     },
