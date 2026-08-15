@@ -10,7 +10,15 @@
 /** Workspace display timezone. */
 export const WORKSPACE_TIMEZONE = "America/Sao_Paulo";
 
-const DATE_TIME = new Intl.DateTimeFormat("pt-BR", {
+/**
+ * The app UI is written in English, so every date fragment is pinned to one
+ * locale. Never pass `undefined` as the locale: that follows the browser
+ * setting and produces mixed-language strings ("1 day overdue (14 de ago.)")
+ * on an otherwise English screen.
+ */
+export const APP_LOCALE = "en-GB";
+
+const DATE_TIME = new Intl.DateTimeFormat(APP_LOCALE, {
   day: "2-digit",
   month: "2-digit",
   year: "numeric",
@@ -21,14 +29,14 @@ const DATE_TIME = new Intl.DateTimeFormat("pt-BR", {
   timeZone: WORKSPACE_TIMEZONE,
 });
 
-const DATE_ONLY = new Intl.DateTimeFormat("pt-BR", {
+const DATE_ONLY = new Intl.DateTimeFormat(APP_LOCALE, {
   day: "2-digit",
   month: "2-digit",
   year: "numeric",
   timeZone: WORKSPACE_TIMEZONE,
 });
 
-const MONTH_YEAR = new Intl.DateTimeFormat("en-GB", {
+const MONTH_YEAR = new Intl.DateTimeFormat(APP_LOCALE, {
   month: "short",
   year: "numeric",
   timeZone: WORKSPACE_TIMEZONE,
