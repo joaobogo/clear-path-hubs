@@ -353,6 +353,10 @@ export const getConversation = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw) => z.object({ conversationId: z.string().uuid() }).parse(raw))
   .handler(async ({ data, context }) => {
+    return _getConversationHandler({ data, context });
+  });
+
+export async function _getConversationHandler({ data, context }: any) {
     const { supabase, userId } = context;
     const { data: convo, error } = await supabase
       .from("conversations")
