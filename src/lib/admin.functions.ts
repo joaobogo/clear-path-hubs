@@ -571,7 +571,10 @@ export const listPositions = createServerFn({ method: "GET" })
     if (data.owner === "__unassigned__") base = base.is("owner_user_id", null);
     else if (data.owner) base = base.eq("owner_user_id", data.owner);
     if (data.location) base = base.ilike("location", `%${data.location}%`);
-    if (data.q) base = base.ilike("title", `%${data.q}%`);
+    if (data.q) {
+      const term = `%${data.q}%`;
+      base = base.or(`title.ilike.${term},organizations.name.ilike.${term}`);
+    }
     if (!showTest) {
       base = excludeTestOrgs(base, scope);
       base = base.or("is_test_record.is.null,is_test_record.eq.false");
@@ -609,7 +612,10 @@ export const listPositions = createServerFn({ method: "GET" })
       if (data.owner === "__unassigned__") all = all.is("owner_user_id", null);
       else if (data.owner) all = all.eq("owner_user_id", data.owner);
       if (data.location) all = all.ilike("location", `%${data.location}%`);
-      if (data.q) all = all.ilike("title", `%${data.q}%`);
+      if (data.q) {
+        const term = `%${data.q}%`;
+        all = all.or(`title.ilike.${term},organizations.name.ilike.${term}`);
+      }
       const { count: allCount } = await all;
       unfilteredTotal = allCount ?? unfilteredTotal;
     }
