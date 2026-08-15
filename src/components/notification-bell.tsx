@@ -55,7 +55,10 @@ export function NotificationBell() {
     queryKey: NOTIFICATIONS_QUERY_KEY,
     queryFn: () => list(),
     refetchOnWindowFocus: true,
-    refetchInterval: open ? 30_000 : false, // Auto-resolve stale items while viewing
+    // The badge has to move on its own: polling only while open meant a new
+    // application sat unseen until someone clicked the bell.
+    refetchInterval: open ? 30_000 : 120_000,
+    refetchIntervalInBackground: false,
     staleTime: 15_000,
   });
 

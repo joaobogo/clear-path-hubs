@@ -64,6 +64,9 @@ export type CopyEntry = { title: string; body?: string };
 
 export const ADMIN_COPY: Partial<Record<EventType, CopyEntry>> = {
   intake_submitted: { title: "New client intake", body: "A new intake is ready for review." },
+  // Without admin copy the staff fanout produced zero rows: copyFor('admin', …)
+  // gated recipient resolution, so anonymous applications never reached the bell.
+  application_received: { title: "New application received", body: "A new application is waiting in the candidate queue." },
   candidate_ready_for_admin_review: { title: "Candidate ready for review", body: "A candidate has completed processing." },
   candidate_processing_completed: { title: "Processing finished", body: "Candidate processing pipeline finished." },
   client_shortlisted: { title: "Client shortlisted a candidate", body: "A client just moved a candidate to shortlist." },
