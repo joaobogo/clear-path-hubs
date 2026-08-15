@@ -92,7 +92,7 @@ function AdminConversationsPage() {
                   <li key={t.id}>
                     <button
                       type="button"
-                      onClick={() => navigate({ search: (prev: any) => ({ ...prev, conversationId: t.id }) })}
+                      onClick={() => navigate({ search: { ...search, conversationId: t.id } })}
                       className={`flex w-full items-start gap-3 px-5 py-4 text-left transition-colors ${
                         isActive ? "bg-muted" : "hover:bg-muted/50"
                       }`}
@@ -126,7 +126,7 @@ function AdminConversationsPage() {
                   variant="ghost" 
                   size="sm" 
                   className="lg:hidden" 
-                  onClick={() => navigate({ search: (prev: any) => ({ ...prev, conversationId: undefined }) })}
+                  onClick={() => navigate({ search: { ...search, conversationId: undefined } })}
                 >
                   ← Back
                 </Button>
