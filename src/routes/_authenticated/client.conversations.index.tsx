@@ -78,28 +78,56 @@ function ConversationsPage() {
   const ctx = ctxQuery.data;
   const orgId = ctx?.active?.organization_id;
 
-    const { data, isLoading, isError, isFetching, error, refetch } = useQuery({
+  const {
+    data: threadData,
+    isLoading: isLoadingThreads,
+    isError: isErrorThreads,
+    isFetching: isFetchingThreads,
+    error: errorThreads,
+    refetch: refetchThreads,
+  } = useQuery({
     queryKey: ["conversations", orgId],
     queryFn: () => listFn({ data: { orgId: orgId! } }),
     enabled: !!orgId,
     placeholderData: (prev) => prev,
   });
+
+  const {
+    data: historyData,
+    isLoading: isLoadingHistory,
+    isError: isErrorHistory,
+    isFetching: isFetchingHistory,
+    error: errorHistory,
+    refetch: refetchHistory,
+  } = useQuery({
+    queryKey: ["conversation-history", orgId],
+    queryFn: () => historyFn({ data: { orgId: orgId!, page: 1, pageSize: 50 } }),
+    enabled: !!orgId && view === "history",
+    placeholderData: (prev) => prev,
+  });
+
+  const isLoading = view === "history" ? isLoadingHistory : isLoadingThreads;
+  const isError = view === "history" ? isErrorHistory : isErrorThreads;
+  const isFetching = view === "history" ? isFetchingHistory : isFetchingThreads;
+  const error = view === "history" ? errorHistory : errorThreads;
+  const refetch = view === "history" ? refetchHistory : refetchThreads;
+
   const signals = useEmptyStateSignals(orgId, {
-    enabled: !isLoading && (data?.items?.length ?? 0) === 0,
+    enabled: !isLoading && (threadData?.items?.length ?? 0) === 0,
   });
 
   const items = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    const allItems = data?.items ?? [];
+    const allItems = threadData?.items ?? [];
 
     if (view === "history") {
-      // For history, we show all threads but sort them by message count or 
-      // present them differently. The prompt asks for a "distinct" view.
-      // A flat chronological log of all messages is the goal.
-      // Since the API returns thread summaries with last_body, we'll sort 
-      // threads by the absolute last message across the whole workspace.
-      return [...allItems].sort(
-        (a, b) => new Date(b.last_message_at).getTime() - new Date(a.last_message_at).getTime()
+      const allHistoryItems = (historyData as any)?.items ?? [];
+      if (!needle) return allHistoryItems;
+      return allHistoryItems.filter(
+        (m: any) =>
+          m.body.toLowerCase().includes(needle) ||
+          m.sender_name.toLowerCase().includes(needle) ||
+          m.subject.toLowerCase().includes(needle),
       );
     }
 
@@ -113,9 +141,9 @@ function ConversationsPage() {
         (c.last_body ?? "").toLowerCase().includes(needle)
       );
     });
-  }, [data, box, filter, q, view]);
+  }, [threadData, historyData, box, filter, q, view]);
 
-  const unreadCount = (data?.items ?? []).filter((c) => c.unread > 0).length;
+  const unreadCount = (threadData?.items ?? []).filter((c) => c.unread > 0).length;
 
 
   return (
