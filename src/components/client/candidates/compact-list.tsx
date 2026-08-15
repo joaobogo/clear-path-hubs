@@ -107,7 +107,7 @@ export function CompactList({
                   >
                     {c.candidate.display_name}
                   </Link>
-                  <div className="text-xs text-muted-foreground truncate max-w-xs">
+                  <div className="text-xs text-muted-foreground truncate max-w-[150px] lg:max-w-xs">
                     {c.candidate.headline ??
                       [c.candidate.current_role, c.candidate.current_company]
                         .filter(Boolean)
