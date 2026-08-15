@@ -111,9 +111,9 @@ export function PublishGatePanel({
           empty={<PanelEmpty title="All roles publishable" />}
         >
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[900px] text-sm">
               <thead className="bg-muted/40 text-left text-xs uppercase text-muted-foreground">
-                <tr>
+                <tr className="whitespace-nowrap">
                   <th className="px-3 py-2 font-medium">Role · Client</th>
                   <th className="px-3 py-2 font-medium">Publish state</th>
                   <th className="px-3 py-2 font-medium">Payment</th>
@@ -126,7 +126,7 @@ export function PublishGatePanel({
               <tbody className="divide-y">
                 {query.data?.rows.map((r) => (
                   <tr key={r.position_id} className="align-top">
-                    <td className="px-3 py-2">
+                    <td className="min-w-[12rem] px-3 py-2">
                       <Link
                         to="/admin/positions/$id"
                         params={{ id: r.position_id }}
@@ -136,8 +136,10 @@ export function PublishGatePanel({
                       </Link>
                       <div className="text-xs text-muted-foreground">{r.organization_name}</div>
                     </td>
-                    <td className="px-3 py-2 text-xs capitalize">{r.status.replace(/_/g, " ")}</td>
-                    <td className="px-3 py-2 text-xs">
+                    <td className="whitespace-nowrap px-3 py-2 text-xs capitalize">
+                      {r.status.replace(/_/g, " ")}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-2 text-xs">
                       <span
                         className={
                           r.payment_satisfied
@@ -161,10 +163,10 @@ export function PublishGatePanel({
                         </div>
                       )}
                     </td>
-                    <td className="px-3 py-2 text-xs text-muted-foreground">
+                    <td className="whitespace-nowrap px-3 py-2 text-xs text-muted-foreground">
                       {r.owner_name ?? (r.owner_user_id ? "Assigned" : "Unassigned")}
                     </td>
-                    <td className="px-3 py-2 text-xs tabular-nums text-muted-foreground">
+                    <td className="whitespace-nowrap px-3 py-2 text-xs tabular-nums text-muted-foreground">
                       {r.can_publish ? fmtDate(r.publish_ready_at) : "Not ready"}
                     </td>
                     <td className="px-3 py-2">

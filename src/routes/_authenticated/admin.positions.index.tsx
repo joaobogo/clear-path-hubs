@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -419,9 +420,9 @@ function PositionsPage() {
       <div className="rounded-lg border bg-card">
         {/* Desktop table */}
         <div className="hidden overflow-x-auto md:block">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[1000px] text-sm">
             <thead className="border-b bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
-              <tr>
+              <tr className="whitespace-nowrap">
                 <th className="w-10 px-4 py-2">
                   <Checkbox
                     aria-label="Select all positions on this page"
@@ -486,7 +487,7 @@ function PositionsPage() {
                         }
                       />
                     </td>
-                    <td className="max-w-[16rem] truncate px-4 py-3 font-medium">
+                    <td className="min-w-[12rem] px-4 py-3 font-medium">
                       <Link
                         to="/admin/positions/$id"
                         params={{ id: p.id }}
@@ -496,7 +497,7 @@ function PositionsPage() {
                         {p.title}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">
+                    <td className="min-w-[10rem] px-4 py-3 text-muted-foreground">
                       {p.organizations ? (
                         <Link
                           to="/admin/clients/$id"
@@ -509,11 +510,11 @@ function PositionsPage() {
                         "—"
                       )}
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">
+                    <td className="min-w-[8rem] px-4 py-3 text-muted-foreground">
                       {p.location ?? "—"}
                     </td>
                     <td className="px-4 py-3">
-                      <Badge className={STATUS_COLOR[p.status] ?? "bg-muted"}>
+                      <Badge className={cn("whitespace-nowrap", STATUS_COLOR[p.status] ?? "bg-muted")}>
                         {p.status.replace(/_/g, " ")}
                       </Badge>
                     </td>
@@ -528,7 +529,7 @@ function PositionsPage() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       {p.counts.action_required > 0 ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-warning/15 px-2 py-0.5 text-xs font-medium text-warning-foreground dark:text-warning-foreground">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-warning/15 px-2 py-0.5 text-xs font-medium text-warning-foreground dark:text-warning-foreground whitespace-nowrap">
                           <AlertCircle className="h-3 w-3" />
                           {p.counts.action_required}
                         </span>
@@ -536,8 +537,12 @@ function PositionsPage() {
                         <span className="text-muted-foreground">—</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground">
-                      {new Date(p.updated_at).toLocaleDateString()}
+                    <td className="whitespace-nowrap px-4 py-3 text-xs text-muted-foreground">
+                      {new Date(p.updated_at).toLocaleDateString(undefined, {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
                     </td>
                     <td className="px-4 py-3 text-right">
                       <Button

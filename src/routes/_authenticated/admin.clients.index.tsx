@@ -297,9 +297,9 @@ function ClientsPage() {
 
       <div className="overflow-hidden rounded-lg border bg-card">
         <div className="hidden md:block">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[1000px] text-sm">
             <thead className="border-b bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
-              <tr>
+              <tr className="whitespace-nowrap">
                 <th className="px-3 py-2.5 font-medium">Company</th>
                 <th className="px-3 py-2.5 font-medium">Primary contact</th>
                 <th className="px-3 py-2.5 font-medium">Status</th>
@@ -438,7 +438,7 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
         )}
       </td>
       <td className="px-3 py-2.5">
-        <Badge variant="outline" className="capitalize">
+        <Badge variant="outline" className="whitespace-nowrap capitalize">
           {r.status}
         </Badge>
         {r.onboarding_status && r.onboarding_status !== "live" && (
@@ -447,11 +447,11 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
           </div>
         )}
       </td>
-      <td className="px-3 py-2.5 tabular-nums">
+      <td className="whitespace-nowrap px-3 py-2.5 tabular-nums">
         <span className="text-foreground">{r.positions_active}</span>
         <span className="text-muted-foreground"> / {r.positions_total}</span>
       </td>
-      <td className="px-3 py-2.5 tabular-nums">{r.candidates_delivered}</td>
+      <td className="whitespace-nowrap px-3 py-2.5 tabular-nums">{r.candidates_delivered}</td>
       <td className="px-3 py-2.5">
         {r.actions_required > 0 ? (
           <span
@@ -465,7 +465,7 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
           <span className="text-xs text-muted-foreground">—</span>
         )}
       </td>
-      <td className="px-3 py-2.5 text-xs text-muted-foreground">{relTime(r.last_activity_at)}</td>
+      <td className="whitespace-nowrap px-3 py-2.5 text-xs text-muted-foreground">{relTime(r.last_activity_at)}</td>
       <td className="px-3 py-2.5 text-right">
         <div className="inline-flex items-center gap-1">
           <Link

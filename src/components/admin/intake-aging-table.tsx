@@ -213,9 +213,9 @@ export function IntakeAgingTable({ includeTest: explicit }: { includeTest?: bool
         }
       >
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[1000px] text-sm">
             <thead className="border-b bg-muted/40 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              <tr>
+              <tr className="whitespace-nowrap">
                 <th className="px-4 py-2">Company / role</th>
                 <th className="px-3 py-2">Submitted</th>
                 <th className="px-3 py-2">Waiting</th>
@@ -231,7 +231,7 @@ export function IntakeAgingTable({ includeTest: explicit }: { includeTest?: bool
                 return (
                   <Fragment key={row.id}>
                     <tr className="align-top hover:bg-muted/30">
-                      <td className="px-4 py-3">
+                      <td className="min-w-[14rem] px-4 py-3">
                         <Link
                           to="/admin/intake/$id"
                           params={{ id: row.id }}
@@ -243,12 +243,16 @@ export function IntakeAgingTable({ includeTest: explicit }: { includeTest?: bool
                           {row.role_title ?? "No role title"}
                         </div>
                       </td>
-                      <td className="px-3 py-3 text-xs tabular-nums text-muted-foreground">
-                        {new Date(row.submitted_at).toLocaleDateString()}
+                      <td className="whitespace-nowrap px-3 py-3 text-xs tabular-nums text-muted-foreground">
+                        {new Date(row.submitted_at).toLocaleDateString(undefined, {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric"
+                        })}
                       </td>
                       <td className="px-3 py-3">
                         <span
-                          className={`inline-flex rounded-md px-2 py-0.5 text-xs font-medium tabular-nums ${tierClass(row.tier)}`}
+                          className={`inline-flex rounded-md px-2 py-0.5 text-xs font-medium tabular-nums whitespace-nowrap ${tierClass(row.tier)}`}
                         >
                           {ageLabel(row.days_waiting)}
                         </span>
@@ -280,16 +284,16 @@ export function IntakeAgingTable({ includeTest: explicit }: { includeTest?: bool
                           </SelectContent>
                         </Select>
                       </td>
-                      <td className="px-3 py-3 text-xs">
+                      <td className="min-w-[10rem] px-3 py-3 text-xs">
                         {closed ? (
-                          <span className="text-muted-foreground">
+                          <span className="text-muted-foreground whitespace-nowrap">
                             Not proceeding
                             {row.close_reason ? ` — ${row.close_reason}` : ""}
                           </span>
                         ) : row.blocking_reason ? (
-                          <span className="text-warning-foreground">{row.blocking_reason}</span>
+                          <span className="text-warning-foreground whitespace-nowrap">{row.blocking_reason}</span>
                         ) : (
-                          <Badge variant="outline">Ready to convert</Badge>
+                          <Badge variant="outline" className="whitespace-nowrap">Ready to convert</Badge>
                         )}
                       </td>
                       <td className="px-3 py-3">
