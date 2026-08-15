@@ -69,25 +69,28 @@ const TOOL_DEFS: AnyRow[] = [
     type: "function",
     function: {
       name: "blocked_roles",
-      description: "Open roles older than 14 days with zero candidates in shortlist/interview/offer.",
+      description: "Roles with data or payment blockers preventing publication to the client workspace.",
       parameters: { type: "object", properties: {}, required: [] },
     },
+
   },
   {
     type: "function",
     function: {
       name: "stalled_interviews",
-      description: "Interviews that have not been updated in the last 7 days.",
+      description: "Interviews in the work queue that have not been updated in 5+ days.",
       parameters: { type: "object", properties: {}, required: [] },
     },
+
   },
   {
     type: "function",
     function: {
       name: "missing_approvals",
-      description: "Matches waiting on a client decision (shortlist/interview/offer) for 3+ days.",
+      description: "Candidates waiting on a client decision (shortlist/interview/offer) in the work queue.",
       parameters: { type: "object", properties: {}, required: [] },
     },
+
   },
   {
     type: "function",
