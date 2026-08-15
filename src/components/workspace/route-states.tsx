@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useRouter, useParams, Link, useSearch } from "@tanstack/react-router";
 import { ErrorState, PermissionState } from "@/components/ds";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { normalizeError, logTechnical, type AudienceTone } from "@/lib/error-taxonomy";
 
 const HOME: Record<AudienceTone, { to: string; label: string }> = {
@@ -10,6 +10,29 @@ const HOME: Record<AudienceTone, { to: string; label: string }> = {
   candidate: { to: "/me", label: "Go to my applications" },
   public: { to: "/", label: "Go home" },
 };
+
+/**
+ * Recovery link rendered as a plain anchor (never a button wrapping a link),
+ * so the very first activation navigates instead of only taking focus.
+ */
+function HomeLink({
+  tone,
+  search,
+}: {
+  tone: AudienceTone;
+  search: Record<string, string | undefined> | undefined;
+}) {
+  return (
+    <Link
+      to={HOME[tone].to}
+      search={search as any}
+      className={buttonVariants({ variant: "outline", size: "sm" })}
+    >
+      {HOME[tone].label}
+    </Link>
+  );
+}
+
 
 /**
  * Section-level route error boundary. Any child route without its own
