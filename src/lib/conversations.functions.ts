@@ -52,6 +52,19 @@ export type ConversationMessage = {
   attachments: MessageAttachment[];
 };
 
+export type HistoricalMessage = {
+  id: string;
+  conversation_id: string;
+  body: string;
+  created_at: string;
+  sender_name: string;
+  sender_role: string;
+  sender_side: "client" | "taasflow" | "system";
+  mine: boolean;
+  subject: string;
+  context_label: string | null;
+};
+
 /** Attachment rows are jsonb; only well-formed entries reach the client. */
 function readAttachments(raw: unknown): MessageAttachment[] {
   if (!Array.isArray(raw)) return [];
