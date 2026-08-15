@@ -95,14 +95,16 @@ function HireCardImpl({
             </dd>
           </div>
         )}
-        <div className="flex items-center justify-between">
-          <dt className="inline-flex items-center gap-1">
-            <User2 className="h-3 w-3" /> Owner
-          </dt>
-          <dd className="truncate text-foreground">
-            {hire.owner_name ?? "Unassigned"}
-          </dd>
-        </div>
+        {hire.owner_name && (
+          <div className="flex items-center justify-between">
+            <dt className="inline-flex items-center gap-1">
+              <User2 className="h-3 w-3" /> Owner
+            </dt>
+            <dd className="truncate text-foreground">
+              {hire.owner_name}
+            </dd>
+          </div>
+        )}
       </dl>
 
       {guaranteeLine(

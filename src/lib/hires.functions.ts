@@ -623,9 +623,14 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     const hires = scoped.filter((r) => r.status === "hire_confirmed");
     const declined = scoped.filter((r) => r.status === "offer_declined");
     const closedLost = scoped.filter((r) => r.status === "closed_lost").length;
-    const decidedOffers = hires.length + declined.length;
+    const decidedOffers = scoped.filter((r) =>
+      ["hire_confirmed", "offer_accepted", "offer_declined", "closed_lost"].includes(r.status),
+    ).length;
     const acceptanceRate =
-      decidedOffers > 0 ? hires.length / decidedOffers : null;
+      decidedOffers > 0
+        ? scoped.filter((r) => ["hire_confirmed", "offer_accepted"].includes(r.status)).length /
+          decidedOffers
+        : null;
 
     const daysHired = hires
       .map((r) => (r.days_to_hire == null ? null : Number(r.days_to_hire)))
@@ -682,6 +687,19 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
       hires: v.hires,
       avg_days_to_hire: avg(v.days),
     }));
+
+    // Ensure "Unassigned" bucket is present if there are confirmed hires with no owner
+    const hasUnassignedHires = scoped.some(r => r.status === 'hire_confirmed' && !r.owner_user_id);
+    if (hasUnassignedHires && !byOwner.some(o => o.owner_user_id === null)) {
+      const unassignedHires = scoped.filter(r => r.status === 'hire_confirmed' && !r.owner_user_id);
+      const unassignedDays = unassignedHires.map(r => r.days_to_hire == null ? null : Number(r.days_to_hire)).filter((n): n is number => n != null);
+      byOwner.push({
+        owner_user_id: null,
+        owner_name: "Unassigned",
+        hires: unassignedHires.length,
+        avg_days_to_hire: avg(unassignedDays),
+      });
+    }
 
     // by position
     const posAgg = new Map<

@@ -170,7 +170,11 @@ function OffersPage() {
                 ? "—"
                 : `${Math.round(report.totals.acceptance_rate * 100)}%`
             }
-            hint="Accepted ÷ decided"
+            hint={
+              report?.totals.acceptance_rate == null && !pendingReport
+                ? "No decided offers yet"
+                : "Accepted ÷ decided"
+            }
           />
           <Kpi
             label="Avg time to hire"
@@ -266,7 +270,7 @@ function OffersPage() {
                 </li>
               ))}
               {report.by_owner.length === 0 && (
-                <li className="text-xs text-muted-foreground">No hires yet.</li>
+                <li className="text-xs text-muted-foreground">Hires by owner: No hires yet.</li>
               )}
             </ul>
           </div>
