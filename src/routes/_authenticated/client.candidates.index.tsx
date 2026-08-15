@@ -270,6 +270,9 @@ function CandidatesPage() {
     setCompareIds((ids) => {
       if (ids.length === 0) return ids;
       const rows = rowsRaw as ClientCandidateDTO[];
+      // If we're loading, don't purge yet.
+      if (!rows || rows.length === 0) return ids;
+
       const next = ids.filter((id) => rows.some((r) => r.match_id === id));
       if (next.length === ids.length && next.every((v, i) => v === ids[i])) return ids;
       return next;
