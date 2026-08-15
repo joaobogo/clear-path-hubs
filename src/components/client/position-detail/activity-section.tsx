@@ -1,4 +1,4 @@
-import { humanizeRoleAction } from "./client/role-audit-humanizer";
+import { humanizeRoleAction } from "@/lib/client/role-audit-humanizer";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
