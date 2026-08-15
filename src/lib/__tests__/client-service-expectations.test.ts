@@ -1,113 +1,90 @@
 import { describe, expect, it } from "vitest";
 import {
-  MIN_PERFORMANCE_SAMPLE,
-  NOT_ENOUGH_SAMPLE,
   buildServiceExpectations,
-  hoursLabel,
-  performanceFor,
-  spread,
-  type CompletedRoleOutcome,
   type StoredRoleCommitment,
 } from "../client-service-expectations";
+import {
+  COMMITMENT_LABEL,
+  NOTHING_DUE_YET,
+  rollupCommitments,
+  type CommitmentKey,
+} from "@/lib/commitments/canonical";
+import type { RoleSla, SlaMetric } from "@/lib/sla";
 
 const commitment = (over: Partial<StoredRoleCommitment> = {}): StoredRoleCommitment => ({
   positionId: "p1",
   firstShortlistDays: 10,
   shortlistSize: 5,
-  interviewSlotsHours: 48,
+  interviewSlotsHours: 24,
   ...over,
 });
 
-const outcome = (over: Partial<CompletedRoleOutcome> = {}): CompletedRoleOutcome => ({
-  positionId: "p1",
-  promisedShortlistDays: 10,
-  actualShortlistDays: 8,
-  promisedShortlistSize: 5,
-  actualShortlistSize: 5,
-  ...over,
-});
+const metric = (key: CommitmentKey, over: Partial<SlaMetric> = {}): SlaMetric =>
+  ({
+    key,
+    label: COMMITMENT_LABEL[key],
+    promise: "promise",
+    state: "met",
+    detail: "detail",
+    varianceValue: -2,
+    varianceUnit: key === "interview_slots" ? "hours" : "days",
+    ...over,
+  }) as SlaMetric;
 
-describe("spread", () => {
-  it("states one value when every role carries the same term", () => {
-    expect(spread([10, 10], (n) => `${n} days`)).toBe("10 days");
-  });
-
-  it("states a range rather than an average when terms differ", () => {
-    expect(spread([8, 14], (n) => `${n} days`)).toBe("8–14 days");
-  });
-
-  it("returns null when nothing usable is stored", () => {
-    expect(spread([], (n) => `${n} days`)).toBeNull();
-    expect(spread([0, -3], (n) => `${n} days`)).toBeNull();
-  });
-});
-
-describe("performanceFor", () => {
-  it("suppresses a figure below two completed roles", () => {
-    const one = performanceFor([8], (a, n) => `${a}/${n}`);
-    expect(one.performance).toBeNull();
-    expect(one.sampleNote).toBe(NOT_ENOUGH_SAMPLE);
-    expect(MIN_PERFORMANCE_SAMPLE).toBe(2);
-  });
-
-  it("shows the figure with its sample size at two or more", () => {
-    const two = performanceFor([8, 10], (avg, n) => `avg ${avg} over ${n}`);
-    expect(two.performance).toBe("avg 9 over 2");
-    expect(two.sampleNote).toBe("Measured across your last 2 completed roles");
-  });
-});
+const role = (metrics: SlaMetric[], id = "p1"): RoleSla =>
+  ({
+    positionId: id,
+    title: "Role",
+    metrics,
+  }) as RoleSla;
 
 describe("buildServiceExpectations", () => {
   it("says the plan is being set up when nothing is stored", () => {
-    const out = buildServiceExpectations({ plan: null, commitments: [], completed: [] });
+    const out = buildServiceExpectations({ plan: null, commitments: [] });
     expect(out.hasPlan).toBe(false);
     expect(out.rows).toEqual([]);
   });
 
-  it("shows only commitments backed by a stored row", () => {
-    const out = buildServiceExpectations({
-      plan: null,
-      commitments: [commitment()],
-      completed: [],
-    });
-    const keys = out.rows.map((r) => r.key);
-    expect(keys).toEqual(["first_shortlist", "shortlist_size", "response_time"]);
-    // Nothing invented for terms the plan does not record.
-    expect(keys).not.toContain("included_roles");
+  it("uses the canonical commitment names and targets", () => {
+    const out = buildServiceExpectations({ plan: null, commitments: [commitment()] });
+    expect(out.rows.map((r) => r.key)).toEqual([
+      "first_candidate",
+      "full_shortlist",
+      "interview_slots",
+    ]);
+    expect(out.rows.find((r) => r.key === "first_candidate")!.commitment).toBe(
+      COMMITMENT_LABEL.first_candidate,
+    );
+    expect(out.rows.find((r) => r.key === "full_shortlist")!.commitment).toBe("Shortlist of 5");
+    // Hours stay hours — never softened into "1 working day".
+    expect(out.rows.find((r) => r.key === "interview_slots")!.promised).toBe(
+      "Interview slots within 24h of a request",
+    );
   });
 
-  it("pairs performance with the promise once two roles are complete", () => {
+  it("states a range when the account's roles carry different terms", () => {
     const out = buildServiceExpectations({
       plan: null,
-      commitments: [commitment(), commitment({ positionId: "p2" })],
-      completed: [outcome(), outcome({ positionId: "p2", actualShortlistDays: 8 })],
+      commitments: [commitment(), commitment({ positionId: "p2", firstShortlistDays: 14 })],
     });
-    const first = out.rows.find((r) => r.key === "first_shortlist")!;
-    expect(first.promised).toContain("10 days");
-    expect(first.performance).toContain("Delivered in 8 days");
-    expect(first.sampleNote).toContain("2 completed roles");
+    expect(out.rows.find((r) => r.key === "first_candidate")!.promised).toContain("10–14");
   });
 
-  it("never averages a single role", () => {
-    const out = buildServiceExpectations({
-      plan: null,
-      commitments: [commitment()],
-      completed: [outcome()],
-    });
-    for (const row of out.rows) expect(row.performance).toBeNull();
-    expect(out.rows[0]!.sampleNote).toBe(NOT_ENOUGH_SAMPLE);
+  it("reports the measured result from the shared rollup, even from one role", () => {
+    const measured = rollupCommitments([
+      role([metric("first_candidate", { state: "met", varianceValue: -5 })]),
+    ]);
+    const out = buildServiceExpectations({ plan: null, commitments: [commitment()], measured });
+    const first = out.rows.find((r) => r.key === "first_candidate")!;
+    expect(first.performance).toContain("Met on 1 of 1 role");
+    expect(first.sampleNote).toContain("1 role");
   });
 
-  it("excludes completed roles with no recorded outcome from the sample", () => {
-    const out = buildServiceExpectations({
-      plan: null,
-      commitments: [commitment()],
-      completed: [
-        outcome(),
-        outcome({ positionId: "p2", actualShortlistDays: null, actualShortlistSize: null }),
-      ],
-    });
-    expect(out.rows.find((r) => r.key === "first_shortlist")!.performance).toBeNull();
+  it("explains why a commitment has no figure yet instead of going silent", () => {
+    const measured = rollupCommitments([role([metric("interview_slots", { state: "pending" })])]);
+    const out = buildServiceExpectations({ plan: null, commitments: [commitment()], measured });
+    expect(out.rows.find((r) => r.key === "interview_slots")!.performance).toBeNull();
+    expect(out.rows.find((r) => r.key === "interview_slots")!.sampleNote).toBe(NOTHING_DUE_YET);
   });
 
   it("reports included roles and term from the stored plan", () => {
@@ -120,7 +97,6 @@ describe("buildServiceExpectations", () => {
         expiresAt: "2026-09-01T00:00:00.000Z",
       },
       commitments: [],
-      completed: [],
     });
     expect(out.planLabel).toBe("Multi Position");
     expect(out.rows.find((r) => r.key === "included_roles")!.promised).toBe("5 roles included");
@@ -132,7 +108,6 @@ describe("buildServiceExpectations", () => {
     const out = buildServiceExpectations({
       plan: { label: "Bronze", rolesTotal: 3, rolesUsed: 1, source: "subscription", expiresAt: null },
       commitments: [],
-      completed: [],
     });
     expect(out.rows.find((r) => r.key === "included_roles")!.promised).toBe(
       "Up to 3 active roles at a time",
@@ -140,10 +115,18 @@ describe("buildServiceExpectations", () => {
   });
 });
 
-describe("hoursLabel", () => {
-  it("speaks in working days when the term divides evenly", () => {
-    expect(hoursLabel(48)).toBe("2 working days");
-    expect(hoursLabel(24)).toBe("1 working day");
-    expect(hoursLabel(36)).toBe("36 hours");
+describe("commitment wording is shared with the Overview scorecard", () => {
+  it("names every commitment identically on both surfaces", () => {
+    const rollup = rollupCommitments([
+      role([metric("first_candidate"), metric("full_shortlist"), metric("interview_slots")]),
+    ]);
+    const out = buildServiceExpectations({
+      plan: null,
+      commitments: [commitment()],
+      measured: rollup,
+    });
+    for (const key of ["first_candidate", "interview_slots"] as CommitmentKey[]) {
+      expect(out.rows.find((r) => r.key === key)!.commitment).toBe(COMMITMENT_LABEL[key]);
+    }
   });
 });
