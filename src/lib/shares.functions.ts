@@ -339,7 +339,7 @@ export const getShortlistShareByToken = createServerFn({ method: "GET" })
         default_mode: share.default_mode as ShareMode,
         allow_comments: share.allow_comments,
         expires_at: share.expires_at,
-        organization_name: share.organizations?.name ?? "TaaSFlow client",
+        organization_name: share.organizations?.name ?? "Hiring Organization",
         position: share.positions
           ? {
               id: share.positions.id,

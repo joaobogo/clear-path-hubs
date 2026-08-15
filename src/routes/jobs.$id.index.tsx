@@ -409,6 +409,10 @@ function JobDetail() {
           <div className="mt-5 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="min-w-0">
               <div className="text-sm font-medium text-primary">{pos.organization_name}</div>
+              <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+                <CalendarDays className="h-3.5 w-3.5" />
+                <span>Posted {pos.facts.posted}</span>
+              </div>
               <h1 className="mt-2 text-3xl font-semibold tracking-tight text-balance md:text-4xl">
                 {pos.title}
               </h1>

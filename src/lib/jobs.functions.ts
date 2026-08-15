@@ -68,6 +68,7 @@ export type PublicPositionSummary = {
   published_at: string | null;
   description_preview: string;
   openings: number;
+  facts: { posted: string };
 };
 
 // Completeness: description must be at least 40 chars, requirements array non-empty.
@@ -140,7 +141,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
           work_model: p.work_model,
           employment_type: p.employment_type,
           seniority: p.seniority,
-          organization_name: employerNames.get(p.id) ?? "TaaSFlow client",
+          organization_name: employerNames.get(p.id) ?? "Hiring Organization",
           compensation_display: comp.display,
           compensation_line: comp.line,
 
@@ -148,6 +149,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
           description_preview:
             desc.length > 220 ? desc.slice(0, 217).trimEnd() + "…" : desc,
           openings: (p as { openings?: number }).openings ?? 1,
+          facts: { posted: buildPublicJobFacts({ ...p, employment_type: p.employment_type as any }).posted },
         };
       });
   },
@@ -321,7 +323,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       })(),
       organization_name: confidential
         ? "Confidential employer"
-        : (employer?.name ?? "TaaSFlow client"),
+        : (employer?.name ?? "Hiring Organization"),
       questions: (questions ?? []).map((q) => ({
         id: q.id,
         question: q.question,
