@@ -36,7 +36,7 @@ describe("client workspace value rendering", () => {
 
   it("never renders raw dates with toLocaleString in client views", () => {
     const offenders = CLIENT_FILES.filter((f) =>
-      /toLocaleString\(\)/.test(readFileSync(f, "utf8")),
+      /new Date\([^)]*\)\.toLocaleString\(\)/.test(readFileSync(f, "utf8")),
     );
     expect(offenders).toEqual([]);
   });

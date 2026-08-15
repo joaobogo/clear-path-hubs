@@ -1,3 +1,4 @@
+import { formatEnumLabel } from "@/lib/human-labels";
 import { memo } from "react";
 import {
   BadgeCheck,
@@ -105,8 +106,7 @@ export const EvaluationProvenance = memo(function EvaluationProvenance({
   const ev = candidate.evaluation;
   const anyValue = ev.category_breakdown.some((c) => c.value != null);
   if (!ev.engine_version && !ev.contradiction && !anyValue) return null;
-  const pretty = (s: string) =>
-    s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  const pretty = (s: string) => formatEnumLabel(s);
   return (
     <section
       aria-labelledby="evaluation-heading"

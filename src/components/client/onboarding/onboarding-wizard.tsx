@@ -1,3 +1,4 @@
+import { formatEnumLabel } from "@/lib/human-labels";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -896,7 +897,7 @@ function SystemsStep({ state, onDone, back, saveForLater }: BodyProps) {
         <ul className="divide-y divide-border/60 rounded-lg border border-border/70">
           {state.integrations.map((i) => (
             <li key={i.id} className="flex items-center justify-between gap-4 p-3 text-sm">
-              <span className="font-medium capitalize">{i.id.replace(/_/g, " ")}</span>
+              <span className="font-medium capitalize">{formatEnumLabel(i.id)}</span>
               <span className="text-muted-foreground">
                 {HEALTH_LABEL[i.status] ?? i.status}
                 {i.checked_at ? ` · checked ${new Date(i.checked_at).toLocaleDateString()}` : ""}
