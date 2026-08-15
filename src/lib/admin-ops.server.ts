@@ -129,7 +129,7 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
     // 6 — delivery failures that need a retry or a new address.
     s
       .from("notification_deliveries")
-      .select("id, status, error_message, updated_at", { count: "exact" })
+      .select("id, status, error_message, updated_at, notifications(title, audience, notification_id)", { count: "exact" })
       .in("status", ["failed", "bounced", "suppressed"])
       .order("updated_at", { ascending: false })
       .limit(8),
@@ -325,11 +325,11 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
       see_all: { to: "/admin/operations" },
       items: ((blocked.data ?? []) as Any[]).map((d) => ({
         id: d.id,
-        title: "Delivery failure",
+        title: d.notifications?.title ?? "Delivery failure",
         subtitle: (d.error_message ?? d.status ?? "").replace(/_/g, " "),
-        meta: null,
+        meta: d.notifications?.audience ?? null,
         waiting_since: d.updated_at,
-        target: { kind: "position" as const, id: d.id }, // Target is generic, operations handles it
+        target: { kind: "match" as const, id: d.notification_id },
         action_label: "Fix",
         owner: null,
         claim: null,
