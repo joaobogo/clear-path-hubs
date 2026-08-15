@@ -203,7 +203,7 @@ export const getRoleFitFromPool = createServerFn({ method: "POST" })
     const { data: profileRows } = await supabase
       .from("candidate_profiles")
       .select("id, full_name, headline, location, years_experience, skills")
-      .in("id", candidateIds);
+      .in("id", libraryIds);
     const profiles = new Map<string, AnyRow>();
     for (const p of (profileRows as AnyRow[]) ?? []) profiles.set(p.id, p);
 
@@ -220,7 +220,7 @@ export const getRoleFitFromPool = createServerFn({ method: "POST" })
       .from("talent_pool_members")
       .select("candidate_profile_id, talent_pools(name)")
       .eq("organization_id", data.orgId)
-      .in("candidate_profile_id", candidateIds);
+      .in("candidate_profile_id", libraryIds);
     const poolNames = new Map<string, string[]>();
     for (const r of (poolRows as AnyRow[]) ?? []) {
       const name = r.talent_pools?.name;
@@ -231,7 +231,7 @@ export const getRoleFitFromPool = createServerFn({ method: "POST" })
     }
 
     const out: RoleFitCandidateDTO[] = [];
-    for (const id of candidateIds) {
+    for (const id of libraryIds) {
       const p = profiles.get(id);
       if (!p) continue;
       const roll = rolled.get(id)!;
