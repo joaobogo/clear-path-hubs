@@ -772,9 +772,9 @@ function CandidatesPage() {
                   </td>
                   <td className="whitespace-nowrap px-3 py-2 text-right">
                     <Button asChild size="sm" variant="ghost" data-qa-action="open-candidate">
-                      <Link to="/admin/candidates/$id" params={{ id: m.match_id }}>
+                      <a href={`/admin/candidates/${m.match_id}`}>
                         Open <ArrowRight className="ml-1 h-3.5 w-3.5" />
-                      </Link>
+                      </a>
                     </Button>
                   </td>
                 </tr>
