@@ -172,7 +172,7 @@ function OffersPage() {
             }
             hint={
               report?.totals.acceptance_rate == null && !pendingReport
-                ? "Accepted ÷ decided"
+                ? "No decided offers yet"
                 : "Accepted ÷ decided"
             }
           />
