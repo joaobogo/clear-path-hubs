@@ -53,8 +53,10 @@ function fmtDate(iso: string | null): string {
 
 export function OwnershipCoveragePanel({
   includeTest: explicit,
+  q: qTerm,
 }: {
   includeTest?: boolean;
+  q?: string;
 }) {
   const includeTest = useScopedIncludeTest(explicit);
   const load = useServerFn(getCoverageQueue);
@@ -66,8 +68,8 @@ export function OwnershipCoveragePanel({
   });
 
   const q = useQuery({
-    queryKey: ["admin", "coverage-queue", includeTest, showAll],
-    queryFn: () => load({ data: { include_test: includeTest, all: showAll } }),
+    queryKey: ["admin", "coverage-queue", includeTest, showAll, qTerm],
+    queryFn: () => load({ data: { include_test: includeTest, all: showAll, q: qTerm } }),
   });
 
   const staff = staffQ.data ?? [];
