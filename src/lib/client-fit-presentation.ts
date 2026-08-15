@@ -8,7 +8,7 @@
 // Thresholds are not defined in this file. Any score → band decision defers to
 // src/lib/scoring/bands.ts.
 
-import { cleanQuote } from "@/lib/evidence/quote-hygiene";
+import { cleanQuote, isTemplatedEvidence, isGenericSkillsList } from "@/lib/evidence/quote-hygiene";
 import { classifyBand, type ScoreBandKey } from "@/lib/scoring/bands";
 
 
