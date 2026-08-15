@@ -67,7 +67,7 @@ export function CompactList({
         ))}
       </div>
       {/* Desktop: table */}
-      <div className="hidden min-w-0 max-w-full md:block overflow-x-auto rounded-xl border bg-card">
+      <div className="hidden min-w-0 max-w-full md:block overflow-hidden rounded-xl border bg-card">
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
             <tr>
@@ -77,8 +77,8 @@ export function CompactList({
               <th className="text-left py-2 px-3">Score</th>
               <th className="text-left py-2 px-3">Fit</th>
               <th className="text-left py-2 px-3">Must-haves</th>
-              <th className="hidden text-left py-2 px-3 lg:table-cell">Experience</th>
-              <th className="hidden text-left py-2 px-3 lg:table-cell">Location</th>
+              <th className="hidden text-left py-2 px-3 xl:table-cell">Experience</th>
+              <th className="hidden text-left py-2 px-3 xl:table-cell">Location</th>
               <th className="text-left py-2 px-3">Stage</th>
               <th className="hidden text-left py-2 px-3 lg:table-cell">Review</th>
               <th className="text-right py-2 px-3">CV</th>
@@ -107,7 +107,7 @@ export function CompactList({
                   >
                     {c.candidate.display_name}
                   </Link>
-                  <div className="text-xs text-muted-foreground truncate max-w-xs">
+                  <div className="text-xs text-muted-foreground truncate max-w-[150px] lg:max-w-xs">
                     {c.candidate.headline ??
                       [c.candidate.current_role, c.candidate.current_company]
                         .filter(Boolean)
@@ -118,17 +118,17 @@ export function CompactList({
                   <ScoreCell c={c} />
                 </td>
                 <td className="py-2 px-3">
-                  <div className="font-medium">{c.fit.headline}</div>
-                  <div className="text-xs text-muted-foreground">{c.fit.recommendation}</div>
+                  <div className="font-medium whitespace-nowrap">{c.fit.headline}</div>
+                  <div className="text-[10px] leading-tight text-muted-foreground max-w-[120px]">{c.fit.recommendation}</div>
                 </td>
                 <td className="py-2 px-3 tabular-nums">
                   {c.coverage.must_met}/{c.coverage.must_total || "—"}
                 </td>
-                <td className="hidden py-2 px-3 text-muted-foreground tabular-nums lg:table-cell">
+                <td className="hidden py-2 px-3 text-muted-foreground tabular-nums xl:table-cell">
                   {c.candidate.years_experience != null ? `${c.candidate.years_experience} yrs` : "—"}
                 </td>
-                <td className="hidden py-2 px-3 text-muted-foreground lg:table-cell">{c.candidate.location ?? "—"}</td>
-                <td className="py-2 px-3 text-muted-foreground">{clientStageLabel(c.stage)}</td>
+                <td className="hidden py-2 px-3 text-muted-foreground xl:table-cell">{c.candidate.location ?? "—"}</td>
+                <td className="py-2 px-3 text-muted-foreground whitespace-nowrap">{clientStageLabel(c.stage)}</td>
                 <td className="hidden py-2 px-3 lg:table-cell">
                   <ReviewTimelineStrip timeline={c.review_timeline} />
                 </td>

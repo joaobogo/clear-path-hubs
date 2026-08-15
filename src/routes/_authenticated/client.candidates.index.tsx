@@ -398,7 +398,7 @@ function CandidatesPage() {
  }, [rowsRaw]);
 
  return (
- <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8">
+ <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-6 sm:py-8">
  {/* Support-mode banner */}
  {isSupportView && (
  <div className="mb-4 rounded-lg border taas-bd-warning taas-bg-warning-soft px-3 py-2 text-xs taas-fg-warning ">
