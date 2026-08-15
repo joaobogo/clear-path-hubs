@@ -372,8 +372,9 @@ export const listClients = createServerFn({ method: "GET" })
           c.candidates_delivered += 1;
 
           // Actions required definition (waiting on client):
-          // 1. Delivered candidates in the initial stage (delivered or null)
-          if (!m.stage || m.stage === "delivered") {
+          // 1. Delivered candidates awaiting a first client decision.
+          // (matching isAwaitingClientDecision in src/lib/client-kpi.server.ts)
+          if (m.stage === "delivered") {
             c.actions_required += 1;
           }
         }
