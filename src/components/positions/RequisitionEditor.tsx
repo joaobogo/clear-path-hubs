@@ -74,9 +74,11 @@ type Form = {
 export function RequisitionEditor({
   positionId,
   onDirtyChange,
+  audience = "admin",
 }: {
   positionId: string;
   onDirtyChange?: (dirty: boolean) => void;
+  audience?: "admin" | "client";
 }) {
   const qc = useQueryClient();
   const load = useServerFn(getRequisitionMeta);
@@ -331,21 +333,23 @@ export function RequisitionEditor({
               Generated for you, unique per client. Nothing to fill in.
             </p>
           </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs">Responsible admin</Label>
-            <Select
-              value={form.owner_user_id ?? "none"}
-              onValueChange={(v) => set("owner_user_id", v === "none" ? null : v)}
-            >
-              <SelectTrigger><SelectValue placeholder="Unassigned" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">Unassigned</SelectItem>
-                {meta.owners.map((o) => (
-                  <SelectItem key={o.id} value={o.id}>{o.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {audience === "admin" && (
+            <div className="space-y-1.5">
+              <Label className="text-xs">Responsible admin</Label>
+              <Select
+                value={form.owner_user_id ?? "none"}
+                onValueChange={(v) => set("owner_user_id", v === "none" ? null : v)}
+              >
+                <SelectTrigger><SelectValue placeholder="Unassigned" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Unassigned</SelectItem>
+                  {meta.owners.map((o) => (
+                    <SelectItem key={o.id} value={o.id}>{o.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div className="space-y-1.5">
             <Label className="text-xs">Travel expectation</Label>
             <Select value={form.travel_expectation || "unset"} onValueChange={(v) => set("travel_expectation", v === "unset" ? "" : v)}>

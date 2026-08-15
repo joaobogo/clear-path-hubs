@@ -136,7 +136,7 @@ export const getRequisitionMeta = createServerFn({ method: "GET" })
       rescore_state: p.rescore_state ?? "current",
       rescore_requested_at: p.rescore_requested_at ?? null,
       can_edit_compensation: isStaff,
-      owners: staffIds.map((id: string) => ({ id, name: nameOf.get(id) ?? "Unknown" })),
+      owners: isStaff ? staffIds.map((id: string) => ({ id, name: nameOf.get(id) ?? "Unknown" })) : [],
       versions: ((verRes.data ?? []) as AnyRow[]).map((r) => ({
         version_number: r.version_number,
         created_at: r.created_at,
@@ -234,7 +234,7 @@ export const saveRequisitionMeta = createServerFn({ method: "POST" })
 
     const patch: AnyRow = {
       reference_code: data.reference_code || null,
-      owner_user_id: data.owner_user_id,
+      owner_user_id: isStaff ? data.owner_user_id : prior?.owner_user_id ?? null,
       travel_expectation: data.travel_expectation || null,
       primary_timezone: data.primary_timezone || null,
       timezone_overlap_hours: data.timezone_overlap_hours,

@@ -376,8 +376,11 @@ export function assessJobQuality(i: QualityInput): {
     add({ id: "timezone", severity: "degrades", label: "Timezone anchor or overlap", why: "Remote hiring across countries fails on collaboration hours more often than on skills.", step: 5 });
   if (!i.headcount)
     add({ id: "headcount", severity: "degrades", label: "Hiring volume", why: "Volume drives pipeline sizing and delivery commitments.", step: 1 });
-  if (!i.owner_user_id)
-    add({ id: "owner", severity: "degrades", label: "Responsible admin", why: "Unowned requisitions stall — nobody is accountable for delivery.", step: 5 });
+  // Unowned requisitions stall — nobody is accountable for delivery.
+  // This is an ops concern, so we only degradation-flag it if we know who the owner should be (staff view).
+  // For the client, we hide this gap entirely to avoid leaking internal assignment needs.
+  if (!i.owner_user_id && i.owner_user_id !== null)
+    add({ id: "owner", severity: "degrades", label: "Responsible admin", why: "Assignment ensures accountability for delivery.", step: 5 });
 
   if (!i.travel_expectation.trim())
     add({ id: "travel", severity: "optional", label: "Travel expectations", why: "Surfacing travel early avoids late-stage drop-off.", step: 5 });
