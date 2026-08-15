@@ -267,7 +267,7 @@ function OperationsPage() {
         <Stat label="Aging in pipeline" value={health.stale} tone={health.stale > 0 ? "warn" : "ok"} />
         <Stat label="Failed jobs" value={jobs.length} tone={jobs.length > 0 ? "warn" : "ok"} />
         <Stat
-          label="Delivery failures"
+          label="Delivery failures (7d)"
           value={deliveryItems.length}
           tone={deliveryItems.length > 0 ? "warn" : "ok"}
         />

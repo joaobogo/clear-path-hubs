@@ -85,7 +85,7 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
           { count: "exact" },
         )
         .eq("admin_status", "pending")
-        .eq("processing_state", "scored")
+        .eq("processing_state", "scored"),
         .order("updated_at", { ascending: true })
         .limit(8),
       scope,
