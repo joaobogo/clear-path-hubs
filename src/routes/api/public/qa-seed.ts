@@ -480,15 +480,6 @@ async function seedQAData(): Promise<{
   };
 }
 
-/**
- * Removes everything the E2E suite created by driving the real /intake form:
- * organizations named with the QA prefix, their positions and intakes, and the
- * decision feedback records.
- */
-async function cleanupQAFeedback(supabase: any, matchId: string) {
-  await supabase.from("client_decisions").delete().eq("candidate_match_id", matchId).like("feedback", "QA-FEEDBACK-CHECK%");
-  await supabase.from("notification_events").delete().eq("candidate_match_id", matchId).like("payload->>feedback", "QA-FEEDBACK-CHECK%");
-}
 
 async function cleanupQAFeedback(supabase: any, matchId: string) {
   await supabase
