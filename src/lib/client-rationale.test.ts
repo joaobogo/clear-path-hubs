@@ -10,6 +10,7 @@ function requirementRow(over: Partial<RequirementRow> = {}): RequirementRow {
     status: over.status ?? "met",
     explanation: over.explanation ?? null,
     evidence: over.evidence ?? [],
+    context: over.context ?? [],
     ...over,
   };
 }
