@@ -65,30 +65,7 @@ function MeLayout() {
  }, []);
  useDashboardRealtime({ userId, audience: "candidate", invalidateKeys: CANDIDATE_REFRESH_KEYS });
 
-  if (!data?.profile) {
-    const seat = data?.seat ?? "candidate";
-    if (seat !== "candidate") {
-      const isStaff = seat === "staff";
-      return (
-        <main className="mx-auto max-w-2xl px-6 py-16">
-          <h1 className="text-2xl font-semibold mb-3">Your account</h1>
-          <p className="text-muted-foreground mb-6">
-            You&apos;re signed in as{" "}
-            <strong>{data?.email ?? "your account"}</strong> on a{" "}
-            {isStaff ? "TaaSFlow team" : "client"} seat, so there&apos;s no
-            candidate profile here. Manage your details in account settings.
-          </p>
-          <div className="flex gap-3">
-            <Link
-              to={isStaff ? "/admin" : "/client/account"}
-              className="px-4 py-2 rounded bg-primary text-primary-foreground text-sm font-medium"
-            >
-              {isStaff ? "Go to admin" : "Account settings"}
-            </Link>
-          </div>
-        </main>
-      );
-    }
+  if (!data?.profile && data?.seat === "candidate") {
     return (
       <main className="mx-auto max-w-2xl px-6 py-16">
         <h1 className="text-2xl font-semibold mb-3">Welcome to TaaSFlow</h1>
@@ -110,16 +87,29 @@ function MeLayout() {
     );
   }
 
- return (
- <WorkspaceShell
- role="candidate"
- contextKicker="Signed in as"
- contextLabel={data.profile.full_name || data.profile.email || "Candidate"}
- contextSubLabel={data.profile.email ?? undefined}
- navItems={NAV}
- >
- <Outlet />
- </WorkspaceShell>
- );
+  const seat = data?.seat ?? "candidate";
+  const nav = NAV.filter((item) => {
+    if (seat !== "candidate") {
+      return ["/me/profile", "/me/settings"].includes(item.to);
+    }
+    return true;
+  });
+
+  const displayName =
+    data?.profile?.full_name ||
+    data?.email?.split("@")[0] ||
+    (seat === "staff" ? "Staff" : "Member");
+
+  return (
+    <WorkspaceShell
+      role="candidate"
+      contextKicker="Signed in as"
+      contextLabel={displayName}
+      contextSubLabel={data?.email ?? undefined}
+      navItems={nav}
+    >
+      <Outlet />
+    </WorkspaceShell>
+  );
 }
 
