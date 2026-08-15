@@ -67,7 +67,7 @@ export function CompactList({
         ))}
       </div>
       {/* Desktop: table */}
-      <div className="hidden min-w-0 max-w-full md:block overflow-x-auto rounded-xl border bg-card">
+      <div className="hidden min-w-0 max-w-full md:block overflow-hidden rounded-xl border bg-card">
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
             <tr>
