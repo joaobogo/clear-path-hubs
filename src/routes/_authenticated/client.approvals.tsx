@@ -171,9 +171,10 @@ function ApprovalsPage() {
     () =>
       rows.filter(
         (t) => t.due_at && new Date(t.due_at) < new Date() && t.status !== "done",
-      ).length,
-    [rows],
+      ).length + derived.filter((d) => d.overdue).length,
+    [rows, derived],
   );
+
 
   const toggleSel = (id: string) => {
     setSelected((s) => {
