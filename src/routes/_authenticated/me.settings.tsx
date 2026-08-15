@@ -287,8 +287,7 @@ function SettingsPage() {
               description:
                 "We'll email you to confirm before anything is removed.",
               impact: [
-                "Open applications are withdrawn",
-                "Your CV and profile are deleted once confirmed",
+                ...(data?.seat === "candidate" ? ["Open applications are withdrawn", "Your CV and profile are deleted once confirmed"] : ["Your profile and account details are deleted once confirmed"]),
                 "Records we must keep by law are retained, minimised",
               ],
               typedConfirmation: "DELETE",
