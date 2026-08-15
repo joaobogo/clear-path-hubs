@@ -1,9 +1,9 @@
 /**
  * TaaSFlow tracking pixels.
  *
- * CONSENT: every tag boots on the first page view for all visitors (owner
- * decision). GA4 is initialised with Consent Mode granted for analytics
- * storage; advertising signals stay denied.
+ * CONSENT: no tag (except GA4 in restricted mode) boots until its consent
+ * category is granted. GA4 is initialized with 'denied' by default and
+ * updated once allowed.
  *
  * Single source of truth for every third-party tag. All injection happens on
  * the client after hydration. Every function is wrapped so a blocked or
@@ -66,58 +66,20 @@ declare global {
 
 /**
  * Inline snippets rendered into the server-rendered `<head>` (see
- * `src/routes/__root.tsx`) so every tag starts while the document parses —
- * before hydration, before the router settles, on the very first pageview of
- * any page, including a hard load of a deep link.
+ * `src/routes/__root.tsx`).
  *
- * These are plain strings: the module stays SSR-safe (no browser globals at
- * module scope). Each snippet stamps `data-tracker` on the script it injects
- * so the client-side initialisers below can detect it and never double-load.
+ * GA4 starts immediately but restricted by Consent Mode v2 (denied by default).
+ * Other trackers (Apollo, RB2B, LinkedIn, Meta) are now injected dynamically
+ * by the client-side initialisers ONLY after consent is granted.
  */
 export const HEAD_BOOT_SNIPPETS: { key: TrackerKey; children: string }[] = [
-  // GA4: define dataLayer/gtag and consent state before gtag.js arrives, so no
-  // early event is lost. Page views are dispatched manually on route change.
+  // GA4: define dataLayer/gtag and consent state before gtag.js arrives.
+  // We initialize with 'denied' to prevent storage before consent.
   ...(GA_ID
     ? [
         {
           key: "ga4" as TrackerKey,
-          children: `(function(id){if(window.__tfGa4)return;window.__tfGa4=1;window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments)};gtag('consent','default',{analytics_storage:'granted',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('js',new Date());gtag('config',id,{send_page_view:false,anonymize_ip:true});var s=document.createElement('script');s.async=true;s.setAttribute('data-tracker','ga4');s.src='https://www.googletagmanager.com/gtag/js?id='+id;document.head.appendChild(s);})(${JSON.stringify(GA_ID)});`,
-        },
-      ]
-    : []),
-  // Apollo website tracker: load and call onLoad as soon as the IIFE lands.
-  ...(APOLLO_ID
-    ? [
-        {
-          key: "apollo" as TrackerKey,
-          children: `(function(appId){if(window.__tfApollo)return;window.__tfApollo=1;var s=document.createElement('script');s.async=true;s.setAttribute('data-tracker','apollo');s.src='https://assets.apollo.io/micro/website-tracker/tracker.iife.js?nocache='+Math.random().toString(36).slice(2);document.head.appendChild(s);var t=Date.now();var p=setInterval(function(){try{if(window.trackingFunctions&&window.trackingFunctions.onLoad){clearInterval(p);window.trackingFunctions.onLoad({appId:appId});}else if(Date.now()-t>15000){clearInterval(p);}}catch(e){clearInterval(p);}},250);})(${JSON.stringify(APOLLO_ID)});`,
-        },
-      ]
-    : []),
-  // RB2B visitor identification.
-  ...(RB2B_ID
-    ? [
-        {
-          key: "rb2b" as TrackerKey,
-          children: `!function(key){if(window.reb2b)return;window.reb2b={loaded:true};var s=document.createElement("script");s.async=true;s.setAttribute("data-tracker","rb2b");s.src="https://ddwl4m2hdecbv.cloudfront.net/b/"+key+"/"+key+".js.gz";var f=document.getElementsByTagName("script")[0];f.parentNode.insertBefore(s,f);}(${JSON.stringify(RB2B_ID)});`,
-        },
-      ]
-    : []),
-  // LinkedIn Insight Tag.
-  ...(LINKEDIN_ID
-    ? [
-        {
-          key: "linkedin" as TrackerKey,
-          children: `(function(pid){if(window.__tfLi)return;window.__tfLi=1;window._linkedin_partner_id=pid;window._linkedin_data_partner_ids=window._linkedin_data_partner_ids||[];window._linkedin_data_partner_ids.push(pid);if(!window.lintrk){window.lintrk=function(a,b){window.lintrk.q.push([a,b])};window.lintrk.q=[]}var s=document.createElement('script');s.async=true;s.setAttribute('data-tracker','linkedin');s.src='https://snap.licdn.com/li.lms-analytics/insight.min.js';document.head.appendChild(s);})(${JSON.stringify(LINKEDIN_ID)});`,
-        },
-      ]
-    : []),
-  // Meta pixel — only when its env var is set.
-  ...(META_ID
-    ? [
-        {
-          key: "meta" as TrackerKey,
-          children: `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.setAttribute('data-tracker','meta');t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init',${JSON.stringify(META_ID)});fbq('track','PageView');`,
+          children: `(function(id){if(window.__tfGa4)return;window.__tfGa4=1;window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments)};gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('js',new Date());gtag('config',id,{send_page_view:false,anonymize_ip:true,client_storage:'none'});var s=document.createElement('script');s.async=true;s.setAttribute('data-tracker','ga4');s.src='https://www.googletagmanager.com/gtag/js?id='+id;document.head.appendChild(s);})(${JSON.stringify(GA_ID)});`,
         },
       ]
     : []),
@@ -160,53 +122,53 @@ function injectScript(
 /* ---------------------------------------------------------------- GA4 --- */
 
 function initGA4() {
-  // Already booted by the server-rendered head snippet — never double-load.
   if (alreadyInDocument("ga4")) {
     loaded.add("ga4");
+    syncGA4Consent();
     return;
   }
   if (loaded.has("ga4") || !GA_ID) return;
   loaded.add("ga4");
-  const granted = true;
+
+  const allowed = isTrackerAllowed("ga4", "analytics");
+
   window.dataLayer = window.dataLayer || [];
-  // gtag.js only processes dataLayer entries that are real `arguments`
-  // objects — pushing a plain array is silently ignored and nothing is sent.
   window.gtag = function gtag() {
     // eslint-disable-next-line prefer-rest-params
     window.dataLayer!.push(arguments);
   };
 
-  // Consent Mode v2. Before an affirmative choice GA4 runs cookieless:
-  // no analytics/ad storage, no advertising signals, aggregate traffic only.
   window.gtag("consent", "default", {
-    analytics_storage: granted ? "granted" : "denied",
+    analytics_storage: allowed ? "granted" : "denied",
     ad_storage: "denied",
     ad_user_data: "denied",
     ad_personalization: "denied",
   });
 
   window.gtag("js", new Date());
-  // SPA: page views are dispatched manually on route change.
   window.gtag("config", GA_ID, {
     send_page_view: false,
     anonymize_ip: true,
-    ...(granted ? {} : { client_storage: "none" }),
+    ...(allowed ? {} : { client_storage: "none" }),
   });
   injectScript("ga4", { src: `https://www.googletagmanager.com/gtag/js?id=${GA_ID}` });
 }
 
 /** Upgrades GA4 from cookieless to full measurement once analytics is allowed. */
 function syncGA4Consent() {
-  if (!loaded.has("ga4") || !window.gtag) return;
-  const granted = true;
+  if (!window.gtag) return;
+  const allowed = isTrackerAllowed("ga4", "analytics");
   window.gtag("consent", "update", {
-    analytics_storage: granted ? "granted" : "denied",
+    analytics_storage: allowed ? "granted" : "denied",
     ad_storage: "denied",
     ad_user_data: "denied",
     ad_personalization: "denied",
   });
-  if (granted) {
-    window.gtag("config", GA_ID, { send_page_view: false, anonymize_ip: true });
+  if (allowed) {
+    window.gtag("config", GA_ID, {
+      send_page_view: false,
+      anonymize_ip: true,
+    });
   }
 }
 
@@ -344,7 +306,6 @@ export function initializeTrackers() {
       verify: verifyTrackers,
     };
 
-    // Attribute CSP blocks to the owning tracker for debugging.
     window.addEventListener("securitypolicyviolation", (e) => {
       diagnostics.push({
         tracker: trackerForUri(e.blockedURI),
@@ -354,19 +315,20 @@ export function initializeTrackers() {
     });
   }
 
-  // Every tag boots on the first page view, independent of the consent
-  // policy: owner decision — tracking must work for all visitors.
+  // GA4 is special: it boots early but restricted.
+  safe(initGA4);
+
+  // Other trackers only boot if explicitly allowed.
   for (const key of Object.keys(INITIALISERS) as TrackerKey[]) {
-    safe(INITIALISERS[key]);
+    if (key === "ga4") continue;
+    const category = TRACKER_CATEGORY[key];
+    if (isTrackerAllowed(key, category)) {
+      safe(INITIALISERS[key]);
+    }
   }
 
-  // Keep GA4's consent signals aligned with the current state.
-  safe(syncGA4Consent);
-
-  // Any view raised during hydration (a direct page load always raises one)
-  // was queued because no tracker existed yet — report it now.
+  // Any view raised during hydration was queued — report it now.
   safe(flushPendingEvents);
-
 }
 
 
@@ -645,6 +607,14 @@ export function verifyTrackers(): Record<TrackerKey, TrackerStatus> {
     ready: boolean,
   ): TrackerStatus => {
     if (!id) return { status: "missing-config", id: null, detail: "env var not set" };
+
+    const category = TRACKER_CATEGORY[key];
+    const allowed = isTrackerAllowed(key, category);
+
+    if (!allowed && key !== "ga4") {
+      return { status: "missing", id, detail: `blocked by ${category} consent` };
+    }
+
     if (ready) return { status: "loaded", id, detail: "global present" };
     if (has(key)) return { status: "pending", id, detail: "script injected, global not ready" };
     return { status: "missing", id, detail: "not injected" };
