@@ -76,8 +76,10 @@ export function resolveFilteredEmptyState(filters: string[]): SurfaceStateConten
         ? `These filters removed every result: ${filters.join(" · ")}.`
         : "No records match that filter.",
     expected: "Expected — records exist, the view is just narrow.",
+    populates: "Clearing or widening a filter brings the existing records back.",
     activity: "Nothing is searching — this is a display filter only.",
     action: { label: "Clear filters" },
+
 
   };
 }
