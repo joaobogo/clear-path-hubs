@@ -267,12 +267,12 @@ function ClientLayout() {
  <span className="text-muted-foreground">Preview permission level:</span>
  {(
  ["client_admin", "client_editor", "client_viewer"] as PermissionPreview[]
- ).map((p) => (
- <Link
- key={p}
- to="/client"
- search={{ org: active.organization_id, preview: p }}
- className={`rounded px-2 py-0.5 capitalize ${
+        ).map((p) => (
+          <Link
+            key={p}
+            to={pathname}
+            search={{ ...search, preview: p }}
+            className={`rounded px-2 py-0.5 capitalize ${
  permissionPreview === p
  ? "bg-primary text-primary-foreground"
  : "hover:bg-muted"
