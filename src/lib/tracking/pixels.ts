@@ -13,7 +13,7 @@
  * Dormant until their env var is set: Meta, Clarity, Hotjar.
  */
 
-import { type ConsentCategory } from "./consent";
+import { type ConsentCategory, isTrackerAllowed } from "./consent";
 import { resolveConversion } from "./conversion-map";
 
 
