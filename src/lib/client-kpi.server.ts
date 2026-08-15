@@ -629,12 +629,15 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
 
       // 2. Map explicit action keys
       if (!safeAction) {
+        // Log normalized action to help identify mismatching keys
+        console.log(`[buildAuditTrail] action="${normAction}"`);
+
         if (normAction.includes("interview.scheduled")) safeAction = WHITELIST.interview_scheduled;
         else if (normAction.includes("interview.requested")) safeAction = WHITELIST.interview_requested;
         else if (normAction.includes("interview.completed")) safeAction = WHITELIST.interview_completed;
         else if (normAction.includes("decision.recorded")) safeAction = WHITELIST.decided;
         else if (normAction.includes("viewed")) safeAction = WHITELIST.viewed;
-        else if (normAction.includes("cv.download")) {
+        else if (normAction.includes("cv.download") || normAction.includes("cv_download")) {
           // Client-initiated downloads only
           if (after && typeof after === "object" && (after as AnyRow).audience === "client") {
             safeAction = WHITELIST.downloaded;
