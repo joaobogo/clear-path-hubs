@@ -111,10 +111,11 @@ export function RequisitionEditor({
 
   const [form, setForm] = useState<Form | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
+  const initialFormRef = useRef<Form | null>(null);
 
   useEffect(() => {
     if (!meta) return;
-    setForm({
+    const next: Form = {
       reference_code: meta.reference_code,
       owner_user_id: meta.owner_user_id,
       travel_expectation: meta.travel_expectation,
@@ -127,15 +128,24 @@ export function RequisitionEditor({
       budget_min: meta.budget_min,
       budget_max: meta.budget_max,
       evaluation_weights: meta.evaluation_weights,
-      locations: meta.locations.length ? meta.locations : [{ ...emptyLocation(), is_primary: true }],
+      locations: meta.locations.length
+        ? meta.locations
+        : [seededLocation(openWorldwide, workModel, location)],
       change_reason: "",
-    });
-  }, [meta]);
+    };
+    setForm(next);
+    if (!initialFormRef.current) {
+      initialFormRef.current = next;
+    }
+  }, [meta, openWorldwide, workModel, location]);
 
-  const baseline = useMemo(() => (meta ? JSON.stringify(meta.locations) + JSON.stringify(meta.evaluation_weights) : ""), [meta]);
   const dirty = useMemo(
-    () => (form ? JSON.stringify(form.locations) + JSON.stringify(form.evaluation_weights) !== baseline : false),
-    [form, baseline],
+    () =>
+      form && initialFormRef.current
+        ? JSON.stringify(form.locations) + JSON.stringify(form.evaluation_weights) !==
+          JSON.stringify(initialFormRef.current.locations) + JSON.stringify(initialFormRef.current.evaluation_weights)
+        : false,
+    [form],
   );
   useEffect(() => onDirtyChange?.(dirty), [dirty, onDirtyChange]);
 
