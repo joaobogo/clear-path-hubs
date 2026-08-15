@@ -727,9 +727,7 @@ export function ScreeningTab({ result, evidence }: { result: Any; evidence: Any 
         <ul className="space-y-2">
           {rawAnswers.map((a, i) => {
             const llm = analysisById.get(String(a.question_id ?? ""));
-            const val = a?.value == null ? "—"
-              : typeof a.value === "string" ? a.value
-              : JSON.stringify(a.value);
+            const val = safeNode(a.value) ?? "—";
             return (
               <li key={i} className="rounded-lg border bg-card p-4">
                 <div className="text-sm font-medium">{a.question}</div>
