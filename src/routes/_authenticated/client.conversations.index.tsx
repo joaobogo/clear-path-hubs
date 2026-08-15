@@ -27,6 +27,7 @@ export const Route = createFileRoute("/_authenticated/client/conversations/")({
     org: z.string().uuid().optional(),
     box: z.string().optional(),
     view: z.string().optional(),
+    filter: z.string().optional(),
   }),
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.conversations.index.tsx"),
   notFoundComponent: makeRouteNotFoundComponent("client"),
@@ -66,7 +67,7 @@ function ConversationsPage() {
   const view = search.view === "history" ? "history" : "threads";
   const ctxFn = useServerFn(getClientContext);
   const listFn = useServerFn(listConversations);
-  const [filter, setFilter] = useState<(typeof FILTERS)[number]["key"]>("all");
+  const filter = search.filter || "all";
   const [q, setQ] = useState("");
 
   const ctxQuery = useQuery({
