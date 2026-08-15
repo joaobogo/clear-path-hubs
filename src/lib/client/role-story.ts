@@ -267,13 +267,19 @@ export function buildMilestone(input: {
       criteria: "Based on the role status.",
     };
   }
-  if (status === "closed" || status === "archived" || (input.hires >= input.openings && input.openings > 0)) {
+  const isClosed = status === "closed" || status === "archived";
+  const isFilled = input.hires >= input.openings && input.openings > 0;
+  const hasActivePipeline = count("offer") > 0 || nextInterviewAt || count("interview_process") > 0;
+
+  // A role is only "Complete" if it's closed/filled AND has no active interviews or offers outstanding.
+  if ((isClosed || isFilled) && !hasActivePipeline) {
     return {
       headline: "This role is complete",
       detail: `${input.hires} of ${input.openings} opening${input.openings === 1 ? "" : "s"} filled.`,
       criteria: "Based on confirmed hires against the openings on this role.",
     };
   }
+
   if (count("offer") > 0) {
     return {
       headline: "Waiting on an offer response",
