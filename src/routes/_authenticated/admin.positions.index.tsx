@@ -503,14 +503,13 @@ function PositionsPage() {
                       />
                     </td>
                     <td className="min-w-[12rem] px-4 py-3 font-medium">
-                      <Link
-                        to="/admin/positions/$id"
-                        params={{ id: p.id }}
+                      <a
+                        href={`/admin/positions/${p.id}`}
                         className="hover:underline"
                         aria-label={`Open ${p.title}`}
                       >
                         {p.title}
-                      </Link>
+                      </a>
                     </td>
                     <td className="min-w-[10rem] px-4 py-3 text-muted-foreground">
                       {p.organizations ? (
