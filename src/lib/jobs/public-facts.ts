@@ -108,7 +108,7 @@ export function resolveWorkArrangement(
   workModel: string | null | undefined,
   onsiteDays: unknown,
 ): string {
-  const days = num(onsiteDays) ?? (str(onsiteDays) ? str(onsiteDays) : null);
+  const days = (typeof onsiteDays === 'number') ? onsiteDays : (str(onsiteDays) ? parseInt(str(onsiteDays), 10) : null);
   switch (workModel) {
     case "remote":
       return "Remote";
