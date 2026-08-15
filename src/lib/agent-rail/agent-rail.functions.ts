@@ -59,14 +59,22 @@ const FEED_EVENTS = [
   "interview_completed",
 ] as const;
 
-function candidateRef(match: Row | undefined): RailCandidateRef | null {
+function candidateRef(match: Row | undefined, eventType?: string): RailCandidateRef | null {
   if (!match) return null;
   const visible = match.client_visibility === "visible";
   const name = (match.candidate_profiles?.full_name as string | null) ?? null;
+
+  // Release is meaningless for messages and role-level events.
+  const releaseMeaningless =
+    eventType === "message_sent" ||
+    eventType === "clarification_requested" ||
+    !eventType; // Agent activity generic rows
+
   return {
     match_id: match.id as string,
     label: visible && name ? name : "A candidate",
     identified: visible && !!name,
+    releaseMeaningful: !releaseMeaningless,
   };
 }
 
@@ -351,7 +359,7 @@ export const getAgentActivityRail = createServerFn({ method: "GET" })
       const match = f.candidate_match_id
         ? matchById.get(f.candidate_match_id as string)
         : undefined;
-      const cand = candidateRef(match);
+      const cand = candidateRef(match, type);
       const role = roleRef(f.position_id as string | null);
       const who = (f.actor_name as string | null) ?? null;
 
