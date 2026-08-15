@@ -27,6 +27,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2, Paperclip, Send, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 function dayLabel(iso: string) {
   const day = new Date(iso).toDateString();
@@ -209,16 +210,35 @@ export function ConversationThread({
    * and the chosen files stay exactly where they are, with a Retry.
    */
   const send = async () => {
+    if (sending) return;
     const bodyCheck = checkMessageBody(body, files.length > 0);
     if (!bodyCheck.ok) {
       setSendError(bodyCheck.error);
       return;
     }
+    // Keep the text/files for restore, but clear the composer immediately so the
+    // view never shows an already-sent message (email fan-out can make the
+    // server response slow, and users were double-sending).
+    const pendingBody = bodyCheck.body;
+    const pendingFiles = files;
     setSending(true);
     setSendError(null);
+    setBody("");
+    setFiles([]);
+    setFileErrors([]);
+    composerRef.current?.focus();
+
+    const restore = (message: string) => {
+      setBody(pendingBody);
+      setFiles(pendingFiles);
+      setSendError(message);
+      toast.error(message);
+      composerRef.current?.focus();
+    };
+
     try {
       const uploaded: MessageAttachment[] = [];
-      for (const file of files) {
+      for (const file of pendingFiles) {
         const target = await targetFn({
           data: {
             conversationId,
@@ -228,7 +248,7 @@ export function ConversationThread({
           },
         });
         if (!target.ok) {
-          setSendError(target.error);
+          restore(target.error);
           return;
         }
         const up = await supabase.storage
@@ -237,7 +257,7 @@ export function ConversationThread({
             contentType: file.type || "application/octet-stream",
           });
         if (up.error) {
-          setSendError(`${file.name} did not upload. Your message is still here — try again.`);
+          restore(`${file.name} did not upload. Your message is still here — try again.`);
           return;
         }
         uploaded.push({
@@ -251,20 +271,17 @@ export function ConversationThread({
       await postFn({
         data: {
           conversationId,
-          body: bodyCheck.body,
+          body: pendingBody,
           ...(uploaded.length > 0 ? { attachments: uploaded } : {}),
         },
       });
 
-      setBody("");
-      setFiles([]);
-      setFileErrors([]);
       qc.invalidateQueries({ queryKey: ["conversation", conversationId] });
       qc.invalidateQueries({ queryKey: ["conversations"] });
       composerRef.current?.focus();
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "";
-      setSendError(
+      restore(
         msg.includes("SUPPORT_VIEW_READ_ONLY")
           ? "Support view is read-only — start an interactive session to reply."
           : msg.includes("forbidden")
