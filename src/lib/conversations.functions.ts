@@ -600,3 +600,105 @@ export const listAllConversations = createServerFn({ method: "GET" })
       })),
     };
   });
+
+/** Flat, chronological log of messages for one client account. */
+export const listMessageHistory = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((raw) =>
+    z
+      .object({
+        orgId: z.string().uuid(),
+        page: z.number().int().min(1).default(1),
+        pageSize: z.number().int().min(1).max(100).default(50),
+      })
+      .parse(raw),
+  )
+  .handler(async ({ data, context }): Promise<{ items: HistoricalMessage[]; total: number }> => {
+    const { supabase, userId } = context;
+    await assertOrgAccess(supabase, userId, data.orgId);
+
+    // Join with conversations to filter by org and get context.
+    const from = (data.page - 1) * data.pageSize;
+    const to = from + data.pageSize - 1;
+
+    const {
+      data: msgs,
+      error,
+      count,
+    } = await supabase
+      .from("messages")
+      .select(
+        "id, conversation_id, body, created_at, sender_user_id, conversations!inner(organization_id, subject, scope, position_id, candidate_match_id)",
+        { count: "exact" },
+      )
+      .eq("conversations.organization_id", data.orgId)
+      .order("created_at", { ascending: false })
+      .range(from, to);
+
+    if (error) throw new Error(error.message);
+    const rows = (msgs as Row[]) ?? [];
+    if (rows.length === 0) return { items: [], total: count ?? 0 };
+
+    const names = await nameMap(rows.map((m) => m.sender_user_id as string));
+    const { resolveStaffPersona } = await import("./staff-persona.server");
+
+    // Collect context data for scoped threads
+    const positionIds = rows.map((r) => r.conversations.position_id).filter(Boolean) as string[];
+    const matchIds = rows.map((r) => r.conversations.candidate_match_id).filter(Boolean) as string[];
+
+    const [{ data: positions }, { data: matches }] = await Promise.all([
+      positionIds.length
+        ? supabase.from("positions").select("id, title").in("id", positionIds)
+        : Promise.resolve({ data: [] as Row[] }),
+      matchIds.length
+        ? supabase
+            .from("candidate_matches")
+            .select("id, position_id, candidate_profiles(full_name), positions(title)")
+            .in("id", matchIds)
+        : Promise.resolve({ data: [] as Row[] }),
+    ]);
+
+    const positionTitle: Record<string, string> = {};
+    for (const p of (positions as Row[]) ?? []) positionTitle[p.id as string] = p.title as string;
+
+    const matchLabel: Record<string, string> = {};
+    for (const m of (matches as Row[]) ?? []) {
+      const cand = (m.candidate_profiles as Row | null)?.full_name as string | undefined;
+      const role = (m.positions as Row | null)?.title as string | undefined;
+      matchLabel[m.id as string] = [cand ?? "Candidate", role].filter(Boolean).join(" · ");
+    }
+
+    const items: HistoricalMessage[] = rows.map((m) => {
+      const sid = (m.sender_user_id as string | null) ?? null;
+      const meta = sid ? names[sid] : undefined;
+      const persona = resolveStaffPersona({
+        name: sid ? (meta?.name ?? null) : null,
+        isStaff: sid ? (meta?.staff ?? false) : true,
+        roleLabel: sid ? (meta?.role ?? null) : "TaaSFlow team",
+      });
+
+      const convo = m.conversations;
+      const scope = convo.scope as ConversationScope;
+      const contextLabel =
+        scope === "position"
+          ? (positionTitle[convo.position_id as string] ?? "Role")
+          : scope === "candidate"
+            ? (matchLabel[convo.candidate_match_id as string] ?? "Candidate")
+            : null;
+
+      return {
+        id: m.id as string,
+        conversation_id: m.conversation_id as string,
+        body: m.body as string,
+        created_at: m.created_at as string,
+        sender_name: persona.name,
+        sender_role: persona.role,
+        sender_side: !sid ? "system" : meta?.staff ? "taasflow" : "client",
+        mine: sid === userId,
+        subject: (convo.subject as string | null) ?? contextLabel ?? "General",
+        context_label: contextLabel,
+      };
+    });
+
+    return { items, total: count ?? 0 };
+  });
