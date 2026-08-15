@@ -18,7 +18,8 @@ export type PublishBlocker =
   | "missing_employment_type"
   | "missing_work_model"
   | "missing_seniority"
-  | "missing_location";
+  | "missing_location"
+  | "missing_requirements";
 
 export const PUBLISH_BLOCKER_LABEL: Record<PublishBlocker, string> = {
   payment_unpaid: "Payment not complete",
@@ -29,6 +30,7 @@ export const PUBLISH_BLOCKER_LABEL: Record<PublishBlocker, string> = {
   missing_work_model: "Work model missing",
   missing_seniority: "Seniority missing",
   missing_location: "Location missing (required unless fully remote)",
+  missing_requirements: "At least one requirement is needed to score candidates",
 };
 
 /** Field on the position edit form that resolves each blocker, when there is one. */
@@ -39,6 +41,7 @@ export const PUBLISH_BLOCKER_FIELD: Partial<Record<PublishBlocker, string>> = {
   missing_work_model: "work_model",
   missing_seniority: "seniority",
   missing_location: "location",
+  missing_requirements: "requirements",
 };
 
 export const PAID_PAYMENT_STATES = ["paid", "exempt", "covered"] as const;
@@ -54,6 +57,7 @@ export type PublishGateInput = {
   work_model: string | null;
   seniority: string | null;
   location: string | null;
+  requirements?: unknown;
 };
 
 export function isPaymentSatisfied(paymentStatus: string | null | undefined): boolean {
@@ -72,6 +76,9 @@ export function evaluatePublishGate(p: PublishGateInput): PublishBlocker[] {
   if (!p.work_model) blockers.push("missing_work_model");
   if (!p.seniority || !p.seniority.trim()) blockers.push("missing_seniority");
   if (p.work_model !== "remote" && !(p.location ?? "").trim()) blockers.push("missing_location");
+
+  const reqs = Array.isArray(p.requirements) ? p.requirements : [];
+  if (reqs.length === 0) blockers.push("missing_requirements");
 
   // Approval is a workflow gate, not a data gate: only mention it once the
   // role is otherwise ready, so the list surfaces the real work first.

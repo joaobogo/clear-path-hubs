@@ -17,7 +17,15 @@ import { setPositionStatus, setPositionVisibility } from "@/lib/admin.functions"
 type Any = any;
 
 // ── Lifecycle action bar (approve / activate / publish / pause / close / archive)
-export function LifecycleBar({ position, onDone }: { position: Any; onDone: () => Promise<void> }) {
+export function LifecycleBar({
+  position,
+  onDone,
+  includeVisibilityCheck,
+}: {
+  position: Any;
+  onDone: () => Promise<void>;
+  includeVisibilityCheck?: boolean;
+}) {
   const statusFn = useServerFn(setPositionStatus);
   const visibilityFn = useServerFn(setPositionVisibility);
   const [busy, setBusy] = useState(false);
@@ -64,8 +72,44 @@ export function LifecycleBar({ position, onDone }: { position: Any; onDone: () =
     primary = { key: "activate", label: "Activate", onClick: () => doStatus("activate", "Activated") };
   } else if (s === "active") {
     primary = isPublic
-      ? { key: "unpublish", label: "Unpublish", variant: "outline", onClick: () => doVis("private", "Removed from job board") }
-      : { key: "publish", label: "Publish", onClick: () => doVis("public", "Live on job board") };
+      ? {
+          key: "unpublish",
+          label: "Unpublish",
+          variant: "outline",
+          onClick: () => doVis("private", "Removed from job board"),
+        }
+      : {
+          key: "publish",
+          label: "Publish",
+          onClick: async () => {
+            if (includeVisibilityCheck) {
+              try {
+                const { evaluatePublishGate } = await import("@/lib/publish-gate");
+                const blockers = evaluatePublishGate({
+                  status: position.status,
+                  payment_status: position.payment_status,
+                  approved_at: position.approved_at,
+                  published_at: position.published_at,
+                  title: position.title,
+                  description: position.description,
+                  employment_type: position.employment_type,
+                  work_model: position.work_model,
+                  seniority: position.seniority,
+                  location: position.location,
+                  requirements: position.requirements,
+                }).filter((b) => b !== "not_approved");
+                if (blockers.length > 0) {
+                  const { publishBlockedMessage } = await import("@/lib/publish-gate");
+                  toast.error(publishBlockedMessage(blockers));
+                  return;
+                }
+              } catch (e) {
+                console.error("Gate check failed", e);
+              }
+            }
+            await doVis("public", "Live on job board");
+          },
+        };
     secondary.push({ key: "pause", label: "Pause", onClick: () => doStatus("pause", "Paused") });
     secondary.push({ key: "mark_filled", label: "Mark filled", onClick: () => doStatus("mark_filled", "Marked filled") });
     secondary.push({ key: "close", label: "Close", onClick: () => doStatus("close", "Closed") });

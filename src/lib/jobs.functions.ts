@@ -125,7 +125,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
       .filter((p) => {
         const desc = (p.description ?? "").trim();
         const reqs = Array.isArray(p.requirements) ? (p.requirements as unknown[]) : [];
-        return desc.length >= MIN_DESC && reqs.length > 0;
+        return desc.length >= 80 && reqs.length > 0;
       })
       .map((p) => {
         const comp = resolveCompensation(
@@ -198,7 +198,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
 
     const desc = (pos.description ?? "").trim();
     const reqs = toReqStrings(pos.requirements);
-    if (desc.length < MIN_DESC || reqs.length === 0) return null;
+    if (desc.length < 80 || reqs.length === 0) return null;
 
     const { data: questions, error: qErr } = await supabase
       .from("screening_questions")

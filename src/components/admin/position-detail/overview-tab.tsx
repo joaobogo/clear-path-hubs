@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ExternalLink } from "lucide-react";
+import { evaluatePublishGate, PUBLISH_BLOCKER_LABEL } from "@/lib/publish-gate";
 import { updatePosition } from "@/lib/admin.functions";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -214,9 +215,40 @@ export function OverviewTab({
           <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Job board
           </h3>
-          <p className="mt-2 text-xs text-muted-foreground">
-            Only <code>active + public</code> positions appear on the board.
-          </p>
+          <div className="mt-2 space-y-2">
+            <p className="text-xs text-muted-foreground">
+              Only <code>active + public</code> positions with a complete description and at least one requirement appear on the board.
+            </p>
+            {position.status === "active" && position.visibility === "public" && (
+              <div className="rounded-md border bg-muted/30 p-2">
+                <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Board Visibility Check</p>
+                {(() => {
+                  const blockers = evaluatePublishGate({
+                    status: position.status,
+                    payment_status: position.payment_status,
+                    approved_at: position.approved_at,
+                    published_at: position.published_at,
+                    title: position.title,
+                    description: position.description,
+                    employment_type: position.employment_type,
+                    work_model: position.work_model,
+                    seniority: position.seniority,
+                    location: position.location,
+                    requirements: position.requirements,
+                  }).filter(b => ["missing_description", "missing_requirements"].includes(b));
+                  
+                  if (blockers.length === 0) {
+                    return <p className="mt-1 text-xs text-green-600 font-medium">✓ Visible on job board</p>;
+                  }
+                  return (
+                    <p className="mt-1 text-xs text-destructive font-medium">
+                      Hidden: {blockers.map(b => PUBLISH_BLOCKER_LABEL[b]).join(", ")}
+                    </p>
+                  );
+                })()}
+              </div>
+            )}
+          </div>
           <Link
             to="/jobs/$id/apply"
             params={{ id: position.id }}
