@@ -1036,7 +1036,7 @@ export function PositionEditWizard({
 
           {/* STEP 5 — Locations, ownership, evaluation priorities */}
           {step === 5 && (
-            <RequisitionEditor positionId={state.id} onDirtyChange={setReqDirty} />
+            <RequisitionEditor positionId={state.id} onDirtyChange={setReqDirty} audience={audience} />
           )}
 
           {/* STEP 6 — Job post personalisation + candidate preview */}
