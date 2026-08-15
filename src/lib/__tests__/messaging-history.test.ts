@@ -25,7 +25,7 @@ describe("Messaging History Integrity", () => {
     const convoId = convo!.id;
 
     const oldDate = new Date();
-    oldDate.setDays(oldDate.getDate() - 5);
+    oldDate.setDate(oldDate.getDate() - 5);
     const oldDateStr = oldDate.toISOString();
 
     const recentDate = new Date();
