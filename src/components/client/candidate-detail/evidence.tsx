@@ -370,16 +370,20 @@ export const RequirementRowView = memo(function RequirementRowView({
             </AccordionTrigger>
             <AccordionContent>
               <ul className="mt-1 space-y-2 border-l-2 border-muted pl-3 text-sm">
-                {row.evidence.map((e, i) => (
-                  <li key={i}>
-                    {e.source && (
-                      <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                        {e.source}
-                      </div>
-                    )}
-                    <div className="text-foreground/90">{e.snippet}</div>
-                  </li>
-                ))}
+                {row.evidence.length > 0 ? (
+                  row.evidence.map((e, i) => (
+                    <li key={i}>
+                      {e.source && (
+                        <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                          {e.source}
+                        </div>
+                      )}
+                      <div className="text-foreground/90">{e.snippet}</div>
+                    </li>
+                  ))
+                ) : (
+                  <li className="text-muted-foreground italic">No direct evidence found</li>
+                )}
               </ul>
             </AccordionContent>
           </AccordionItem>
