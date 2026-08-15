@@ -228,9 +228,15 @@
   /* Long unbreakable strings (URLs, emails, long compound words) should
    * never push the viewport wider on small screens. */
   h1, h2, h3, h4, h5, h6, p, li, a, span {
-    /* `break-word` only breaks words that cannot fit on their own line, so
-     * normal headings and labels wrap at word boundaries at desktop widths. */
+    /* `break-word` only breaks words that cannot fit on their own line.
+     * We exclude table headers and cells from global overflow-wrap to prevent
+     * letter-by-letter vertical wrapping in narrow columns. */
     overflow-wrap: break-word;
+  }
+
+  th, td {
+    overflow-wrap: normal;
+    word-break: normal;
   }
 }
 

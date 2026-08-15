@@ -105,12 +105,12 @@ export function OwnershipCoveragePanel({
         empty={<PanelEmpty className="mt-4" title="All open roles have an active owner" description="Nothing needs reassignment right now." />}
       >
         <div className="mt-4 overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[900px] text-sm">
             <caption className="sr-only">
               Open roles with owner, backup owner and assignment dates
             </caption>
             <thead>
-              <tr className="border-b text-left text-xs text-muted-foreground">
+              <tr className="border-b text-left text-xs uppercase tracking-wide text-muted-foreground whitespace-nowrap">
                 <th scope="col" className="py-2 pr-3 font-medium">Role</th>
                 <th scope="col" className="py-2 pr-3 font-medium">Owner</th>
                 <th scope="col" className="py-2 pr-3 font-medium">Assigned</th>
@@ -154,7 +154,7 @@ function CoverageRowView({ row, staff }: { row: Row; staff: Staff[] }) {
 
   return (
     <tr className="border-b align-top last:border-0">
-      <td className="py-3 pr-3">
+      <td className="min-w-[12rem] py-3 pr-3">
         <Link
           to="/admin/positions/$id"
           params={{ id: row.position_id }}
@@ -163,7 +163,7 @@ function CoverageRowView({ row, staff }: { row: Row; staff: Staff[] }) {
           {row.title}
         </Link>
         <p className="text-xs text-muted-foreground">
-          {row.organization_name ?? "Unknown client"} · {row.status.replace(/_/g, " ")}
+          {row.organization_name ?? "Unknown client"} · <span className="capitalize">{row.status.replace(/_/g, " ")}</span>
         </p>
         {row.needs_reassignment && (
           <Badge variant="outline" className="mt-1 gap-1 border-warning text-warning-foreground">
@@ -173,7 +173,7 @@ function CoverageRowView({ row, staff }: { row: Row; staff: Staff[] }) {
           </Badge>
         )}
       </td>
-      <td className="py-3 pr-3">
+      <td className="whitespace-nowrap py-3 pr-3">
         {row.owner_user_id ? (
           <>
             <span>{row.owner_name}</span>
@@ -185,7 +185,7 @@ function CoverageRowView({ row, staff }: { row: Row; staff: Staff[] }) {
           <span className="text-muted-foreground">No owner</span>
         )}
       </td>
-      <td className="py-3 pr-3 text-muted-foreground">{fmtDate(row.owner_assigned_at)}</td>
+      <td className="whitespace-nowrap py-3 pr-3 text-muted-foreground">{fmtDate(row.owner_assigned_at)}</td>
       <td className="py-3 pr-3">
         {row.backup_owner_user_id ? (
           <>
