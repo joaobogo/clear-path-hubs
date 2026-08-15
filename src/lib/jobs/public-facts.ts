@@ -171,8 +171,8 @@ export function resolveWorkAuthorisation(
   
   // Title-case country names to avoid "unites states" issues.
   const titleCase = (s: string) => {
-    // Special case for United States
-    if (s.toLowerCase().replace(/\s/g, '') === 'unitesstates') return 'United States';
+    // Exact match for the mangled "unites states" string.
+    if (s.toLowerCase() === 'unites states') return 'United States';
     return s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
   };
 
