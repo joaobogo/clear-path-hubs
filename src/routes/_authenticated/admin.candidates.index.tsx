@@ -617,9 +617,9 @@ function CandidatesPage() {
 
       {/* Table */}
       <div className="mt-4 hidden overflow-x-auto rounded-lg border md:block">
-        <table className="w-full text-sm">
+        <table className="w-full min-w-[1200px] text-sm">
           <thead className="bg-muted/50 text-left text-xs uppercase tracking-wide text-muted-foreground">
-            <tr>
+            <tr className="whitespace-nowrap">
               <th className="px-3 py-2">
                 <Checkbox
                   checked={allChecked}
@@ -670,7 +670,7 @@ function CandidatesPage() {
                       aria-label={`Select ${m.full_name ?? "candidate"}`}
                     />
                   </td>
-                  <td className="px-3 py-2">
+                  <td className="min-w-[12rem] px-3 py-2">
                     <Link
                       to="/admin/candidates/$id"
                       params={{ id: m.match_id }}
@@ -692,8 +692,8 @@ function CandidatesPage() {
                       </div>
                     </Link>
                   </td>
-                  <td className="px-3 py-2 text-xs">{m.org_name ?? "—"}</td>
-                  <td className="px-3 py-2 text-xs">
+                  <td className="min-w-[8rem] px-3 py-2 text-xs">{m.org_name ?? "—"}</td>
+                  <td className="min-w-[10rem] px-3 py-2 text-xs">
                     <Link
                       to="/admin/positions/$id"
                       params={{ id: m.position_id }}
