@@ -155,7 +155,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
     const positionsById = new Map<string, AnyRow>(activePositionsList.map((p) => [p.id, p]));
     const positionCounts = new Map<string, number>();
     for (const r of rows) {
-      if (r.stage === "delivered") {
+      if (isAwaitingClientDecision(r)) {
         positionCounts.set(r.position_id, (positionCounts.get(r.position_id) ?? 0) + 1);
       }
     }
