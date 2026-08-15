@@ -1,6 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Clock, Shield, MapPin, Coins, Radar, GitBranch, Gauge, FileText } from "lucide-react";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { formatEnumLabel } from "@/lib/human-labels";
+
 
 /**
  * RoleBlueprint — the ATS-grade "source of truth" for a requisition.
