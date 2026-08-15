@@ -33,8 +33,10 @@ export function OpenThreadButton({
   className?: string;
 }) {
   const navigate = useNavigate();
-  const { preview } = (useNavigate() as any).useSearch({ strict: false });
+  const search = (navigate as any).useSearch({ strict: false });
+  const preview = search?.preview;
   const orgSearch = useClientOrgSearch() || orgId;
+  const ensureFn = useServerFn(ensureConversation);
   const [busy, setBusy] = useState(false);
 
   return (
