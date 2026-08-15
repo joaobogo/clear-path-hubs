@@ -107,7 +107,7 @@ function WorkspaceHeader({
               <ScanText className="mr-2 h-4 w-4" /> Evidence record
             </Link>
           </Button>
-          <DownloadCvButton matchId={m.id} />
+          <DownloadCvButton matchId={m.id} mode="download" />
         </div>
       </div>
       {m.processing_error_message && (

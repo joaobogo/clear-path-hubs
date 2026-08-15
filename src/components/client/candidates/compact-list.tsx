@@ -133,7 +133,7 @@ export function CompactList({
                   <ReviewTimelineStrip timeline={c.review_timeline} />
                 </td>
                 <td className="py-2 px-3 text-right whitespace-nowrap">
-                  <DownloadCvButton matchId={c.match_id} size="sm" variant="ghost" label="CV" />
+                  <DownloadCvButton matchId={c.match_id} size="sm" variant="ghost" label="CV" mode="download" />
                 </td>
                 <td className="py-2 px-3 text-right">
                   <Link
