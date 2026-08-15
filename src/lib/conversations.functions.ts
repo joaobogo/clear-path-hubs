@@ -614,6 +614,10 @@ export const listMessageHistory = createServerFn({ method: "GET" })
       .parse(raw),
   )
   .handler(async ({ data, context }): Promise<{ items: HistoricalMessage[]; total: number }> => {
+    return _listMessageHistoryHandler({ data, context });
+  });
+
+export async function _listMessageHistoryHandler({ data, context }: any): Promise<{ items: HistoricalMessage[]; total: number }> {
     const { supabase, userId } = context;
     await assertOrgAccess(supabase, userId, data.orgId);
 
