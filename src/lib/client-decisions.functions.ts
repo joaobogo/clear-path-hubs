@@ -283,7 +283,7 @@ export const moveMatchStage = createServerFn({ method: "POST" })
         application_id: (match.application_id as string) ?? null,
         candidate_match_id: data.matchId,
         actor_user_id: context.userId,
-        payload: { from, to: data.toStage },
+        payload: { from, to: data.toStage, feedback: data.reason?.trim() || null },
       });
     } catch (emitErr) {
       console.error("[moveMatchStage] emit failed", trace, emitErr);

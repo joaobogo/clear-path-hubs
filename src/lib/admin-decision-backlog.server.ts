@@ -355,6 +355,24 @@ export async function recordOfflineDecision(
   });
   if (error) throw new Error(error.message);
 
+  const sentAt = new Date().toISOString();
+  const { emitEventFromServer } = await import("./notifications.functions");
+  await emitEventFromServer({
+    event: "client_feedback_submitted",
+    scope: `offline_decision:${args.matchId}:${sentAt}`,
+    organization_id: String(match["organization_id"]),
+    position_id: String(match["position_id"]),
+    candidate_match_id: args.matchId,
+    candidate_profile_id: (match["candidate_profile_id"] as string) ?? null,
+    actor_user_id: args.actorUserId,
+    payload: { 
+      decision: args.decision, 
+      feedback: args.note, 
+      received_from: args.receivedFrom,
+      recorded_by_staff: true 
+    },
+  });
+
   const { error: insErr } = await a.from("audit_events").insert({
     actor_user_id: args.actorUserId,
     organization_id: match["organization_id"],

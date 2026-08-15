@@ -480,9 +480,22 @@ async function seedQAData(): Promise<{
   };
 }
 
+
+async function cleanupQAFeedback(supabase: any, matchId: string) {
+  await supabase
+    .from("client_decisions")
+    .delete()
+    .eq("candidate_match_id", matchId)
+    .like("feedback", "QA-FEEDBACK-CHECK%");
+  await supabase
+    .from("notification_events")
+    .delete()
+    .eq("candidate_match_id", matchId)
+    .like("payload->>feedback", "QA-FEEDBACK-CHECK%");
+}
+
 /**
  * Removes everything the E2E suite created by driving the real /intake form:
- * organizations named with the QA prefix, their positions and intakes, and the
  * auth accounts on the qa.taasflow.test mailbox. Never matches real data.
  */
 async function cleanupIntakeE2E(
@@ -1136,6 +1149,52 @@ async function handle(request: Request): Promise<Response> {
         memberships = rows.map((r) => ({ ...r, email: emailByUser.get(r.user_id) ?? null }));
       }
       return Response.json({ ok: true, action, organizations, memberships });
+    }
+
+    if (action === "decline-test-feedback") {
+      if (!body.match_id || !body.organization_id) {
+        return Response.json({ ok: false, error: "match_id and organization_id required" }, { status: 400 });
+      }
+      const sb = await loadAdmin();
+      const feedback = body.cv_base64 || "QA-FEEDBACK-CHECK — disregard"; // reusing cv_base64 as a generic string slot if needed, or just hardcode
+
+      await cleanupQAFeedback(sb, body.match_id);
+
+      // Record decision
+      const { error: decErr } = await sb.from("client_decisions").insert({
+        candidate_match_id: body.match_id,
+        organization_id: body.organization_id,
+        decision: "not_moving_forward",
+        feedback,
+        reason_code: "other",
+        actor_user_id: body.user_id || null,
+      });
+      if (decErr) throw decErr;
+
+      // Emit event for history/activity
+      const { emitEventFromServer } = await import("@/lib/notifications.functions");
+      await emitEventFromServer({
+        event: "client_declined",
+        scope: `qa_decline_${body.match_id}_${Date.now()}`,
+        organization_id: body.organization_id,
+        candidate_match_id: body.match_id,
+        payload: { feedback, to: "not_moving_forward" },
+      });
+
+      // Move match stage
+      await sb.from("candidate_matches").update({ stage: "not_moving_forward" }).eq("id", body.match_id);
+
+      return Response.json({ ok: true, action });
+    }
+
+    if (action === "restore-test-candidate") {
+      if (!body.match_id) {
+        return Response.json({ ok: false, error: "match_id required" }, { status: 400 });
+      }
+      const sb = await loadAdmin();
+      await cleanupQAFeedback(sb, body.match_id);
+      await sb.from("candidate_matches").update({ stage: "delivered" }).eq("id", body.match_id);
+      return Response.json({ ok: true, action });
     }
 
     /**
