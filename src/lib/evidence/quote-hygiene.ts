@@ -162,3 +162,38 @@ export function cleanFieldValue(raw: string | null | undefined): string {
   if (!raw) return "";
   return scrubContactTokens(String(raw).replace(/\s+/g, " ")).trim();
 }
+
+/**
+ * Detect evidence that is a generic template rather than a per-requirement
+ * quote from the candidate's own record. These fragments appear for many
+ * candidates and many unrelated requirements; they must not be rendered as
+ * evidence.
+ */
+const TEMPLATED_PATTERNS = [
+  /core\s+stack\s*:/i,
+  /full\s+regression\s+suite/i,
+  /delivered\s+in\s+phases\s+with\s+no\s+downtime/i,
+  /profile\s+full-stack\s+engineer\s+with\s+\d+\s+years\s+of\s+professional\s+experience/i,
+  /references\s+available\s+on\s+request/i,
+  /languages\s+portuguese\s*\(native\)\s*,\s*english\s*\(c2\)/i,
+  /bsc\s+information\s+systems/i,
+  /instituto\s+superior\s+técnico/i,
+  /selected\s+projects\s+platform\s+rebuild/i,
+];
+
+export function isTemplatedEvidence(raw: string | null | undefined): boolean {
+  if (!raw) return false;
+  const text = String(raw).trim();
+  return TEMPLATED_PATTERNS.some((re) => re.test(text));
+}
+
+/**
+ * Detect a candidate-skill summary line that names a broad stack. A skills list
+ * is not evidence for an unrelated requirement, but it is a legitimate context
+ * line when it is labeled as context.
+ */
+export function isGenericSkillsList(raw: string | null | undefined): boolean {
+  if (!raw) return false;
+  const text = String(raw).trim();
+  return /^core\s+stack\s*:/i.test(text);
+}
