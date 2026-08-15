@@ -1,4 +1,4 @@
-import { humanizeAction } from "./humanize-action";
+import { humanizeRoleAction } from "./client/role-audit-humanizer";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -16,7 +16,7 @@ export function ActivitySection({ activity }: { activity: AnyRow[] }) {
           {activity.map((a: AnyRow) => (
             <li key={a.id} className="py-2 flex items-center justify-between gap-3">
               <span className="text-foreground/90">
-                {humanizeAction(a.action)}
+                {humanizeRoleAction(a.action)}
               </span>
               <span className="text-xs text-muted-foreground">
                 {a.created_at
