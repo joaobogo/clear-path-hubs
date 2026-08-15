@@ -608,7 +608,8 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
       let safeAction: string | null = null;
 
       // Filter out raw system updates and internal taxonomy
-      if (action.startsWith("UPDATE") || action.includes("|")) return null;
+      if (action.includes("|")) return null;
+      if (action.startsWith("UPDATE") && !(after && typeof after === "object" && "stage" in after)) return null;
 
       // Map stage transitions to friendly labels
       if (after && typeof after === "object" && "stage" in after) {
