@@ -383,7 +383,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
           due_at: r.next_interview_at ?? null,
           waiting_since: r.interview_requested_at ?? r.stage_entered_at,
           action: "Confirm a time",
-          to: "/client/interviews",
+          to: r.interview_id ? `/client/interviews?interview=${r.interview_id}` : "/client/interviews",
         };
       }
       if (r.stage === "offer") {
@@ -472,7 +472,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
           : null,
         waiting_since: happenedAt,
         action: "Add feedback",
-        to: "/client/interviews",
+        to: `/client/interviews?interview=${iv.id}&feedback=1`,
       });
     }
 

@@ -14,6 +14,7 @@ const row = (over: Partial<KpiRow> = {}): KpiRow => ({
   interview_active: false,
   interview_scheduled: false,
   interview_needs_confirmation: false,
+  interview_id: null,
   next_interview_at: null,
   interview_requested_at: null,
   stage_entered_at: "2026-01-01T00:00:00Z",

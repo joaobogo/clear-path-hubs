@@ -201,7 +201,7 @@ function TimelineItem({
   const subject = `${iv.candidate?.name ?? "candidate"} for ${iv.position?.title ?? "this role"}`;
 
   return (
-    <div className="relative grid grid-cols-[auto_1fr] gap-3 pb-4">
+    <div id={`interview-${iv.id}`} className="relative grid grid-cols-[auto_1fr] gap-3 pb-4 scroll-mt-24">
       <div className="flex flex-col items-center">
         <span className={`mt-2 h-2.5 w-2.5 rounded-full ${m.dot}`} />
         <span className="mt-1 w-px flex-1 bg-border" />

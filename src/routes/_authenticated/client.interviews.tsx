@@ -1,5 +1,5 @@
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { proposalErrorMessage } from "@/lib/interview-proposal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -22,6 +22,10 @@ import {
   rescheduleInterview,
 } from "@/lib/availability.functions";
 import {
+  listInterviewsAwaitingFeedback,
+  type FeedbackQueueItem,
+} from "@/lib/interview-feedback.functions";
+import {
   AvailabilityManager,
   useAvailability,
 } from "@/components/client/scheduling/availability-manager";
@@ -30,7 +34,6 @@ import {
   InterviewFeedbackDialog,
   InterviewFeedbackQueue,
 } from "@/components/client/interview-feedback-form";
-import type { FeedbackQueueItem } from "@/lib/interview-feedback.functions";
 import { useResolvedClientOrgId, useClientRole } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { PageHeader, PageBody, PageShell } from "@/components/ds";
@@ -51,13 +54,17 @@ export const Route = createFileRoute("/_authenticated/client/interviews")({
 	pendingComponent: RoutePending,
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.interviews.tsx"),
   notFoundComponent: makeRouteNotFoundComponent("client"),
- head: () => ({
- meta: [
- { title: "Interviews · Client workspace" },
- { name: "robots", content: "noindex" },
- ],
- }),
- component: InterviewsPage,
+  validateSearch: (search: Record<string, unknown>) => ({
+    interview: typeof search.interview === "string" ? search.interview : undefined,
+    feedback: typeof search.feedback === "string" ? search.feedback : undefined,
+  }),
+  head: () => ({
+  meta: [
+  { title: "Interviews · Client workspace" },
+  { name: "robots", content: "noindex" },
+  ],
+  }),
+  component: InterviewsPage,
 });
 
 function InterviewsPage() {
@@ -76,6 +83,8 @@ function InterviewsPage() {
   const completeFn = useServerFn(markInterviewCompleted);
   const autoProposeFn = useServerFn(proposeFromAvailability);
   const rescheduleFn = useServerFn(rescheduleInterview);
+  const feedbackListFn = useServerFn(listInterviewsAwaitingFeedback);
+  const search = useSearch({ from: "/_authenticated/client/interviews" });
 
   const [requestOpen, setRequestOpen] = useState(false);
   const [detail, setDetail] = useState<InterviewDTO | null>(null);
@@ -88,6 +97,11 @@ function InterviewsPage() {
   const listQuery = useQuery({
     queryKey: ["client-interviews", org, "all"],
     queryFn: () => listFn({ data: { orgId: org!, status: "all" } }),
+    enabled: !!org,
+  });
+  const feedbackListQuery = useQuery({
+    queryKey: ["interviews-awaiting-feedback", org],
+    queryFn: () => feedbackListFn({ data: { orgId: org! } }),
     enabled: !!org,
   });
   const availability = useAvailability(org);
@@ -132,6 +146,31 @@ function InterviewsPage() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [org]);
+
+  // Deep-link: ?interview=<id> opens that interview; ?feedback=1 also opens the
+  // feedback form for it. We scroll the timeline item into view so the user
+  // lands on the record, not the top of the list.
+  useEffect(() => {
+    const interviewId = search.interview as string | undefined;
+    if (!interviewId || !listQuery.data) return;
+    const iv = interviews.find((i) => i.id === interviewId);
+    if (iv) {
+      setDetail(iv);
+      requestAnimationFrame(() => {
+        const el = document.getElementById(`interview-${interviewId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          el.classList.add("ring-2", "ring-primary", "ring-offset-2");
+          setTimeout(() => el.classList.remove("ring-2", "ring-primary", "ring-offset-2"), 2000);
+        }
+      });
+    }
+    if (search.feedback && feedbackListQuery.data) {
+      const items = (feedbackListQuery.data as FeedbackQueueItem[] | undefined) ?? [];
+      const item = items.find((i) => i.interview_id === interviewId);
+      if (item) setFeedbackFor(item);
+    }
+  }, [search.interview, search.feedback, listQuery.data, feedbackListQuery.data, interviews]);
 
   const requestMut = useMutation({
     mutationFn: (payload: Parameters<typeof requestFn>[0]["data"]) => requestFn({ data: payload }),
