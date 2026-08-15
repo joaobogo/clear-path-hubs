@@ -19,8 +19,3 @@ SET description = REPLACE(description, 'Flow Group Ventures is hiring', 'Our cli
 WHERE organization_id NOT IN (SELECT id FROM public.organizations WHERE name = 'Flow Group Ventures')
   AND organization_id NOT IN (SELECT id FROM public.organizations WHERE name = 'Northwind Talent (Demo)')
   AND description LIKE '%Flow Group Ventures is hiring%';
-
--- Temporarily publish SFE for verification
-UPDATE public.positions
-SET visibility = 'public', published_at = NOW()
-WHERE id = 'ee6d2a82-6122-4026-95e4-45a7821b7b7d';
