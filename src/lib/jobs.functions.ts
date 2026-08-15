@@ -140,7 +140,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
           work_model: p.work_model,
           employment_type: p.employment_type,
           seniority: p.seniority,
-          organization_name: employerNames.get(p.id) ?? "TaaSFlow client",
+          organization_name: employerNames.get(p.id) ?? "Hiring Organization",
           compensation_display: comp.display,
           compensation_line: comp.line,
 
@@ -321,7 +321,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       })(),
       organization_name: confidential
         ? "Confidential employer"
-        : (employer?.name ?? "TaaSFlow client"),
+        : (employer?.name ?? "Hiring Organization"),
       questions: (questions ?? []).map((q) => ({
         id: q.id,
         question: q.question,
