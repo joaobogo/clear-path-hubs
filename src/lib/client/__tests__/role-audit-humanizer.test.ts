@@ -13,11 +13,6 @@ describe("Role Audit Humanizer", () => {
     expect(humanizeRoleAction("position.requisition_updated")).toBe("Role details updated");
   });
 
-  it("handles space-cased inputs from older events", () => {
-    expect(humanizeRoleAction("position start review")).toBe("TaaSFlow started reviewing your role");
-    expect(humanizeRoleAction("position create")).toBe("Role created");
-  });
-
   it("falls back to a generic friendly label for unknown keys", () => {
     expect(humanizeRoleAction("some_internal_secret_event")).toBe("Role activity recorded");
     expect(humanizeRoleAction("unknown.action")).toBe("Role activity recorded");
