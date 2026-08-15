@@ -135,10 +135,9 @@ export async function emitEventFromServer(args: {
 
   if (recipients.length === 0) return { event_id: eventId, delivered: 0 };
 
-  // Messages are attributed to the human who wrote them, never to a generic
-  // "TaaSFlow" label, so the bell matches what the thread shows.
+  // Actor enrichment and identity for the bell.
   let actorName: string | null = null;
-  if (args.event === "message_sent" && args.actor_user_id) {
+  if (args.actor_user_id) {
     const { resolveStaffPersona } = await import("./staff-persona.server");
     const { data: actorProfile } = await supabaseAdmin
       .from("profiles")
@@ -159,7 +158,11 @@ export async function emitEventFromServer(args: {
       email: (actorProfile?.email as string | null) ?? null,
       isStaff,
     });
-    actorName = persona.name;
+    
+    if (persona.name) {
+      const roleLabel = isStaff ? " (Staff)" : "";
+      actorName = `${persona.name}${roleLabel}`;
+    }
   }
 
   // Build rows with audience-safe copy
@@ -173,7 +176,11 @@ export async function emitEventFromServer(args: {
         audience: r.audience,
         organization_id: args.organization_id ?? null,
         event_type: args.event,
-        title: actorName ? `New message from ${actorName}` : copy.title,
+        title: args.event === "approval_needed" && actorName 
+          ? `${actorName}: ${copy.title}` 
+          : actorName && args.event === "message_sent" 
+            ? `New message from ${actorName}` 
+            : copy.title,
         body: copy.body ?? null,
         link_path: r.link_path ?? args.link_path ?? (args.candidate_match_id ? `/client/candidates/${args.candidate_match_id}` : null),
         // Point every notification at the exact record it is about.
@@ -279,6 +286,44 @@ export async function emitEventFromServer(args: {
 export const listMyNotifications = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    
+    // 1. Reconcile actionable notifications before listing.
+    // We check for 'approval_needed' notifications whose entity (candidate_match) 
+    // already has a client decision recorded.
+    const { data: openActionables } = await context.supabase
+      .from("notifications")
+      .select("id, entity_id, entity_type")
+      .eq("recipient_user_id", context.userId)
+      .eq("event_type", "approval_needed")
+      .is("resolved_at", null);
+
+    if (openActionables && openActionables.length > 0) {
+      const matchIds = openActionables
+        .filter(n => n.entity_type === "candidate_match" && n.entity_id)
+        .map(n => n.entity_id as string);
+      
+      if (matchIds.length > 0) {
+        const { data: decidedMatches } = await context.supabase
+          .from("client_decisions")
+          .select("candidate_match_id")
+          .in("candidate_match_id", matchIds);
+        
+        const decidedSet = new Set((decidedMatches ?? []).map(d => d.candidate_match_id));
+        const toResolve = openActionables
+          .filter(n => n.entity_type === "candidate_match" && decidedSet.has(n.entity_id))
+          .map(n => n.id);
+        
+        if (toResolve.length > 0) {
+          const now = new Date().toISOString();
+          await supabaseAdmin
+            .from("notifications")
+            .update({ resolved_at: now, read_at: now } as any)
+            .in("id", toResolve);
+        }
+      }
+    }
+
     const { data, error } = await context.supabase
       .from("notifications")
       .select("id, event_type, audience, title, body, link_path, read_at, resolved_at, entity_type, entity_id, created_at, organization_id, event_id")
