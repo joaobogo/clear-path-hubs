@@ -39,4 +39,28 @@ describe("evidence source integrity", () => {
     // Current implementation returns empty evidence array if none found
     expect(row?.evidence).toHaveLength(0);
   });
+
+  it("ensures compare matrix does not reuse unrelated explanations", () => {
+    const requirementLabel = "Strong SQL";
+    const candidates: any[] = [
+      {
+        match_id: "c1",
+        requirement_rows: [
+          {
+            label: requirementLabel,
+            importance: "must_have",
+            status: "met",
+            evidence: [],
+            explanation: "Generic explanation"
+          }
+        ]
+      }
+    ];
+
+    const matrix = buildCompareMatrix(candidates);
+    const cell = matrix[0].cells[0];
+
+    // Should be null because there's no verbatim evidence
+    expect(cell.evidence).toBeNull();
+  });
 });

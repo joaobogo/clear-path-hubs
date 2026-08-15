@@ -62,31 +62,22 @@ export function buildCompareMatrix(candidates: ClientCandidateDTO[]): CompareMat
           x.importance === meta.importance &&
           x.label.toLowerCase().trim() === meta.label.toLowerCase(),
       );
+      // Only use requirement-specific evidence. Never fall back to general
+      // candidate evidence or engine explanations when no direct quote exists.
       const ev = row?.evidence.find((e) => (e.snippet ?? "").trim().length > 0) ?? null;
       return {
         match_id: c.match_id,
         status: toStatus(row?.status),
-        // Evidence must be this candidate's own words. Explanations can be a
-        // shared template, so they are only a fallback and get de-duplicated
-        // below — never repeat one candidate's text across the row.
-        evidence: ev ? ev.snippet.trim() : (row?.explanation?.trim() || null),
+        evidence: ev ? ev.snippet.trim() : null,
         source: ev?.source ?? null,
         verbatim: !!ev,
       };
     });
 
-    // If the fallback explanation is identical across candidates it carries no
-    // comparative information: show "no evidence" instead of duplicating it.
-    const fallbackTexts = cells
-      .filter((x) => !x.verbatim && x.evidence)
-      .map((x) => x.evidence as string);
-    if (fallbackTexts.length > 1) {
-      const counts = new Map<string, number>();
-      for (const t of fallbackTexts) counts.set(t, (counts.get(t) ?? 0) + 1);
-      for (const cell of cells) {
-        if (!cell.verbatim && cell.evidence && (counts.get(cell.evidence) ?? 0) > 1) {
-          cell.evidence = null;
-        }
+    // Clean up cells that have no evidence.
+    for (const cell of cells) {
+      if (!cell.verbatim) {
+        cell.evidence = null;
       }
     }
     return {
