@@ -263,8 +263,8 @@ export function CandidateHistoryTimeline({
                   )}
 
                   {e.reason && (
-                    <p className="mt-2 rounded-md border-l-2 border-muted bg-muted/30 px-2 py-1 text-xs">
-                      {e.reason}
+                    <p className="mt-2 rounded-md border-l-2 border-muted bg-muted/30 px-2 py-1 text-xs whitespace-pre-wrap">
+                      {e.source === "client_decision" ? `Feedback: ${e.reason}` : e.reason}
                     </p>
                   )}
 

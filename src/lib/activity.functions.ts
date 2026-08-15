@@ -36,6 +36,7 @@ export type ActivityEntry = {
   position_status: string | null;
   organization_id: string | null;
   link_path: string | null;
+  feedback?: string | null;
 };
 
 export type ActivityFeed = {
@@ -113,7 +114,7 @@ export const getActivityFeed = createServerFn({ method: "GET" })
     let q = context.supabase
       .from("v_activity_feed")
       .select(
-        "event_id, event_type, occurred_at, organization_id, position_id, application_id, candidate_match_id, actor_name, position_title, position_status",
+        "event_id, event_type, occurred_at, organization_id, position_id, application_id, candidate_match_id, actor_name, position_title, position_status, notification_events(payload)",
       )
       .order("occurred_at", { ascending: false })
       .limit(window);
@@ -122,7 +123,7 @@ export const getActivityFeed = createServerFn({ method: "GET" })
     if (data.position_id) q = q.eq("position_id", data.position_id);
     if (data.candidate_match_id) q = q.eq("candidate_match_id", data.candidate_match_id);
 
-    const { data: rows, error } = await q.select("*, client_decisions(feedback)");
+    const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
 
     const entries = ((rows as AnyRow[]) ?? [])
@@ -146,6 +147,7 @@ export const getActivityFeed = createServerFn({ method: "GET" })
           position_status: (r.position_status as string) ?? null,
           organization_id: (r.organization_id as string) ?? null,
           link_path: linkFor(audience, r),
+          feedback: (r.notification_events?.payload as Record<string, any>)?.feedback ?? null,
         };
       })
       .filter((e) => {
