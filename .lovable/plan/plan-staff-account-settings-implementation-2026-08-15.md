@@ -1,36 +1,51 @@
 # Plan: Staff Account Settings Implementation
 
-Staff and client members are currently stranded on a bare `/me/settings` page because a route guard in `src/routes/_authenticated/me.tsx` blocks access to anyone without a `candidate_profile`. This plan will relax that guard and adapt the settings/profile pages to work for all authenticated users.
+Implement account management controls (Display Name, Password Change, Global Sign Out) for staff users at `/me/settings`, ensuring full parity with the admin settings registry and audit logging.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> This change allows staff and client members to access the `/me` route subtree. While they won't see candidate-specific data (like CVs or job applications), they will be able to manage their personal profile (name, email, password) using the same UI as candidates.
+> The "Password Change" feature for staff will be implemented using Supabase Auth's `resetPasswordForEmail` flow, directing users to their email to complete the change securely, which matches the existing candidate flow.
 
 ## Proposed Changes
 
-### 1. Route Guard Relaxation
-- Modify `src/routes/_authenticated/me.tsx` to remove the hard redirect for non-candidates.
-- Update the layout to gracefully handle the absence of a `candidate_profile` by showing only relevant navigation items (Home, Profile, Settings) and hiding candidate-specific ones (Applications, CV, Messages).
+### 1. Server-Side Logic
+- **`src/lib/auth.functions.ts`**:
+    - Add `updateStaffProfile` server function to handle `full_name` updates for staff/clients.
+    - Implement audit logging for these profile changes using the `audit_events` table.
+    - Ensure strict `requireSupabaseAuth` middleware usage.
 
-### 2. Profile Page Adaptation
-- Update `src/routes/_authenticated/me.profile.tsx` to fetch data from the base `profiles` table instead of relying solely on `candidate_profiles`.
-- Conditionally hide candidate-specific sections (Work Authorisation, Experience, Skills, Links) if the user is not a candidate.
+### 2. Frontend Components
+- **`src/components/account/password-change-card.tsx`**:
+    - Create a new reusable component to trigger a password reset email via Supabase Auth.
+- **`src/components/account/global-sign-out-card.tsx`**:
+    - Create a new reusable component for "Sign out everywhere" functionality using `supabase.auth.signOut({ scope: 'global' })`.
 
-### 3. Settings Page Adaptation
-- Update `src/routes/_authenticated/me.settings.tsx` to handle the absence of candidate-specific consent fields.
-- Ensure "Delete my account" and "Request my data" remain functional for all users as they pertain to the base `auth.users` / `profiles` records.
+### 3. Route & UI Refinement
+- **`src/routes/_authenticated/me.settings.tsx`**:
+    - Remove the hard block/redirect for staff users.
+    - Implement conditional rendering to show account management cards (Name, Email, Password, Global Sign Out) for staff and client users.
+    - Retain existing candidate-specific "Privacy & Data" settings only for candidates.
+- **`src/routes/_authenticated/me.profile.tsx`**:
+    - Ensure name updates for non-candidates work correctly via the new `updateStaffProfile` function.
 
-### 4. Admin Registry Alignment
-- Update `src/routes/_authenticated/admin.settings.tsx` registry to reflect that these personal settings routes are now fully functional for staff.
+### 4. Verification & Audit
+- Update the admin settings registry in `src/routes/_authenticated/admin.settings.tsx` if needed to confirm full functionality.
+- Verify `audit_events` generation for profile updates.
 
 ## Technical Details
 
-### Security and Authorization
-- The `getMyContext` function in `src/lib/candidate.functions.ts` already returns a `seat` property ("candidate" | "client" | "staff"). We will use this to drive conditional UI.
-- Personal data updates (full name) will target the `profiles` table, which is the canonical source for all user types.
-- Email and password updates leverage Supabase Auth directly via shared components (`EmailChangeCard`).
+### Security
+- Profile updates use `supabaseAdmin` in server functions to ensure RLS-bypassing verified writes for staff who might not have direct RLS permissions on their own profile row.
+- Sign-out and Password reset use client-side Supabase SDK methods for direct session management.
 
-### Database Considerations
-- No schema changes are required as the `profiles` table already exists and serves all authenticated users.
-- RLS on `profiles` already allows users to see and update their own records.
+### Audit Payload
+```json
+{
+  "action": "profile.update",
+  "entity_type": "profiles",
+  "entity_id": "user-uuid",
+  "before_state": { "full_name": "Old Name" },
+  "after_state": { "full_name": "Admin QA-CHECK" }
+}
+```

@@ -30,13 +30,14 @@ type Row = {
 const ROWS: Row[] = [
   // Account
   { area: "Account", control: "Change email (verified)", status: "functional",
-    location: "/client/account · /me/profile", persistence: "auth.users via Supabase Auth", audit: "auth logs" },
+    location: "/me/settings", to: "/me/settings", persistence: "auth.users via Supabase Auth", audit: "auth logs" },
   { area: "Account", control: "Password reset", status: "functional",
-    location: "/login → Forgot password?", to: "/login", persistence: "auth.users via Supabase Auth", audit: "auth logs" },
+    location: "/me/settings", to: "/me/settings", persistence: "auth.users via Supabase Auth", audit: "auth logs" },
   { area: "Account", control: "Name and phone", status: "functional",
-    location: "/me/profile", persistence: "profiles.full_name / phone", audit: "audit_events" },
+    location: "/me/settings", to: "/me/settings", persistence: "profiles.full_name / phone", audit: "audit_events" },
   { area: "Account", control: "Data export / deletion request", status: "functional",
-    location: "/me/settings", persistence: "data_subject_requests", audit: "audit_events" },
+    location: "/me/settings", to: "/me/settings", persistence: "data_subject_requests", audit: "audit_events" },
+
 
 
   // Notifications
