@@ -34,7 +34,12 @@ import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
 import { ApprovalRowItem } from "@/components/client/approvals/approval-row";
 import { NewApprovalDialog } from "@/components/client/approvals/new-approval-dialog";
 import { BulkDueDate, BulkReassign } from "@/components/client/approvals/bulk-actions";
+import { DerivedApprovalRow } from "@/components/client/approvals/derived-approval-row";
+import { getClientOverview } from "@/lib/client-overview.functions";
+import type { QueueRow } from "@/lib/client-decision-queue";
+import { toDerivedApproval, filterDerived } from "@/lib/client/derived-approvals";
 import { toastError } from "@/lib/toast-error";
+
 
 
 const RoutePending = makeWorkspacePending({ shape: "rows", kpis: false, width: "6xl" });
@@ -90,6 +95,7 @@ function ApprovalsPage() {
     invalidateKeys: [
       ["client", "approvals", orgId],
       ["client-kpis", orgId],
+      ["client-overview", orgId],
     ],
   });
   const signals = useEmptyStateSignals(orgId ?? undefined);
@@ -106,6 +112,22 @@ function ApprovalsPage() {
       }),
     enabled: !!orgId,
   });
+
+  // The inbox also carries actions that are not stored tasks — feedback due,
+  // an interview waiting on times, an offer awaiting a response. They come from
+  // the same decision queue Overview reads, so the two screens agree.
+  const overviewFn = useServerFn(getClientOverview);
+  const overview = useQuery({
+    queryKey: ["client-overview", orgId],
+    queryFn: () => overviewFn({ data: { orgId: orgId! } }),
+    enabled: !!orgId,
+  });
+  const derived = useMemo(() => {
+    const queue = ((overview.data as { decision_queue?: QueueRow[] } | undefined)
+      ?.decision_queue ?? []) as QueueRow[];
+    return filterDerived(queue.map(toDerivedApproval), view, taskType);
+  }, [overview.data, view, taskType]);
+
 
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ["client", "approvals", orgId] });
@@ -150,9 +172,10 @@ function ApprovalsPage() {
     () =>
       rows.filter(
         (t) => t.due_at && new Date(t.due_at) < new Date() && t.status !== "done",
-      ).length,
-    [rows],
+      ).length + derived.filter((d) => d.overdue).length,
+    [rows, derived],
   );
+
 
   const toggleSel = (id: string) => {
     setSelected((s) => {
@@ -317,9 +340,9 @@ function ApprovalsPage() {
           onRetry={() => tasks.refetch()}
           retrying={tasks.isFetching}
         />
-      ) : tasks.isLoading ? (
+      ) : tasks.isLoading || overview.isLoading ? (
         <SkeletonRows rows={4} />
-      ) : rows.length === 0 ? (
+      ) : rows.length === 0 && derived.length === 0 ? (
         <SurfaceState
           content={resolveNoApprovalsState({
             awaitingDecision: signals?.awaitingDecision ?? 0,
@@ -328,6 +351,9 @@ function ApprovalsPage() {
         />
       ) : (
         <ul className="space-y-2">
+          {derived.map((d) => (
+            <DerivedApprovalRow key={d.key} item={d} />
+          ))}
           {rows.map((t) => (
             <ApprovalRowItem
               key={t.id}
@@ -339,6 +365,7 @@ function ApprovalsPage() {
           ))}
         </ul>
       )}
+
     </div>
   );
 }
