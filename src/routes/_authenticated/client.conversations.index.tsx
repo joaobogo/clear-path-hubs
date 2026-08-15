@@ -231,6 +231,7 @@ function ConversationsPage() {
           content={resolveNoMessagesState({
             activeRoles: signals?.activeRoles ?? 0,
             rolesInSetup: signals?.rolesInSetup ?? 0,
+            filter: filter,
           })}
         />
 
