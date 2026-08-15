@@ -22,7 +22,7 @@ const inputSchema = z.object({
   position_id: z.string().uuid().optional(),
 });
 
-export const getHiringIntelligence = createServerFn({ method: "POST" })
+export const getHiringIntelligence = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw) => inputSchema.parse(raw))
   .handler(async ({ data, context }) => {
@@ -113,6 +113,24 @@ export const getHiringIntelligence = createServerFn({ method: "POST" })
         .gte("occurred_at", priorFromISO),
     )).data as Row[]) ?? [];
 
+    // ── Feed events (to unify with Overview rail) ────────────────────────
+    const feedEvents = ((await scoped<any>(
+      supabase
+        .from("v_activity_feed")
+        .select("event_id, event_type, occurred_at, position_id, actor_name")
+        .eq("organization_id", data.organization_id)
+        .gte("occurred_at", priorFromISO)
+        .in("event_type", [
+          "candidate_stage_changed",
+          "candidate_published",
+          "message_sent",
+          "clarification_requested",
+          "contact_released",
+          "interview_scheduled",
+          "interview_completed",
+        ])
+    )).data as Row[]) ?? [];
+
     // ── Commitments ──────────────────────────────────────────────────────
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const commitments = ((await scoped<any>(
@@ -167,6 +185,7 @@ export const getHiringIntelligence = createServerFn({ method: "POST" })
       scoreRuns,
       evidenceItems,
       agentRuns,
+      feedEvents,
       commitments,
       interviews,
       marketSignals,

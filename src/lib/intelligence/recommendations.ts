@@ -157,6 +157,7 @@ export function deriveRecommendations(input: {
   scoreRuns: Row[];
   evidenceItems: Row[];
   agentRuns: Row[];
+  feedEvents?: Row[];
   signals: RecommendationSignals;
   window: { days: number; from: string; priorFrom: string; to: string };
   positionId: string | null;
@@ -464,7 +465,12 @@ export function deriveRecommendations(input: {
 
   // ── 8 · Agent runs failing ─────────────────────────────────────────────
   {
-    const failed = input.agentRuns.filter((r) => {
+    const failed = [
+      ...input.agentRuns,
+      ...(input.feedEvents ?? [])
+        .filter((f) => f.event_type === "failed" || f.event_type === "error") // hypothetical if feed carries them
+        .map((f) => ({ outcome: "failed", occurred_at: f.occurred_at })),
+    ].filter((r) => {
       const at = ms(r.occurred_at);
       if (at === null || at < fromMs) return false;
       const o = String(r.outcome ?? "");
