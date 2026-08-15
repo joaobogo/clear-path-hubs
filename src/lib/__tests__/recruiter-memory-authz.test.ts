@@ -14,6 +14,13 @@ vi.mock("@/integrations/supabase/client.server", () => ({
 
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
+// Helper to access the internal handler of a server function
+const getHandler = (fn: any) => {
+  // In TanStack Start v1, the handler is often tucked away or transformed.
+  // We'll try common accessors for testing.
+  return fn.__handler || fn.handler || fn;
+};
+
 describe("Recruiter Memory Authorization", () => {
   const mockContext = {
     userId: "user-123",
@@ -29,7 +36,7 @@ describe("Recruiter Memory Authorization", () => {
     vi.mocked(supabaseAdmin.rpc).mockResolvedValueOnce({ data: false, error: null } as any);
     
     // @ts-ignore
-    const result = await listRoleMemory.handler({ 
+    const result = await listRoleMemory({ 
       data: { position_id: "00000000-0000-0000-0000-000000000000" }, 
       context: mockContext 
     });
@@ -43,7 +50,7 @@ describe("Recruiter Memory Authorization", () => {
     
     await expect(
       // @ts-ignore
-      createRoleMemory.handler({ 
+      createRoleMemory({ 
         data: { position_id: "00000000-0000-0000-0000-000000000000", kind: "handoff", title: "Test", body: "Test" }, 
         context: mockContext 
       })
@@ -55,7 +62,7 @@ describe("Recruiter Memory Authorization", () => {
     
     await expect(
       // @ts-ignore
-      updateRoleMemory.handler({ 
+      updateRoleMemory({ 
         data: { id: "00000000-0000-0000-0000-000000000000", title: "Updated" }, 
         context: mockContext 
       })
@@ -67,7 +74,7 @@ describe("Recruiter Memory Authorization", () => {
     
     await expect(
       // @ts-ignore
-      deleteRoleMemory.handler({ 
+      deleteRoleMemory({ 
         data: { id: "00000000-0000-0000-0000-000000000000" }, 
         context: mockContext 
       })
@@ -89,7 +96,7 @@ describe("Recruiter Memory Authorization", () => {
     };
     
     // @ts-ignore
-    const result = await listRoleMemory.handler({ 
+    const result = await listRoleMemory({ 
       data: { position_id: "00000000-0000-0000-0000-000000000000" }, 
       context: staffContext 
     });
