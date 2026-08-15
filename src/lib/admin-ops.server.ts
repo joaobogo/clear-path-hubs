@@ -266,10 +266,10 @@ export async function loadWorkQueues(opts: { includeTest?: boolean } = {}): Prom
     },
     {
       key: "review",
-      label: "Candidates awaiting review",
-      description: "Scored and waiting on an approve or reject decision.",
+      label: "Candidates awaiting decision",
+      description: "Scored candidates awaiting an admin approve, hold, or reject decision.",
       count: review.count ?? 0,
-      action_hint: "Review on one screen: evidence, CV and requirements together.",
+      action_hint: "Review evidence and recorded fit labels to make a decision.",
       see_all: { to: "/admin/candidates" },
       items: ((review.data ?? []) as Any[]).map((m) => ({
         id: m.id,

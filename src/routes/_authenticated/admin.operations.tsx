@@ -266,12 +266,12 @@ function OperationsPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Stat label="Aging in pipeline" value={health.stale} tone={health.stale > 0 ? "warn" : "ok"} />
         <Stat label="Failed jobs" value={jobs.length} tone={jobs.length > 0 ? "warn" : "ok"} />
-        <Stat label="Provider incidents (7d)" value={health.provider_incidents} />
         <Stat
           label="Delivery failures"
           value={deliveryItems.length}
           tone={deliveryItems.length > 0 ? "warn" : "ok"}
         />
+        <Stat label="Provider incidents (7d)" value={health.provider_incidents} />
       </div>
 
       <ProcessingExceptionsBoard />

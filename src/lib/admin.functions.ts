@@ -75,7 +75,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       new_intakes,
       positions_review,
       new_applications,
-      candidates_review,
+      candidates_review, // Awaiting decision (scored)
       candidates_ready,
       processing_failures,
       client_requests,
@@ -91,7 +91,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       count("candidate_matches", (q) =>
         q.in("processing_state", ["queued", "parsing", "enriching", "ready_to_score", "parsed"]).gte("created_at", dayAgo),
       ),
-      // Scored, awaiting admin decision
+      // Awaiting decision (scored)
       count("candidate_matches", (q) =>
         q.eq("admin_status", "pending").eq("processing_state", "scored"),
       ),
