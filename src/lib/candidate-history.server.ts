@@ -281,7 +281,7 @@ export async function loadCandidateHistory(
       changes: [],
       trace_id: null,
       context: [
-        ...contextFrom(r, ["from_stage", "reason_code"]),
+        ...contextFrom(r, ["from_stage", "reason_code", "feedback"]),
         ...diffStates({}, r["details"]),
       ],
     });

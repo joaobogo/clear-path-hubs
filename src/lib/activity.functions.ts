@@ -122,7 +122,7 @@ export const getActivityFeed = createServerFn({ method: "GET" })
     if (data.position_id) q = q.eq("position_id", data.position_id);
     if (data.candidate_match_id) q = q.eq("candidate_match_id", data.candidate_match_id);
 
-    const { data: rows, error } = await q;
+    const { data: rows, error } = await q.select("*, client_decisions(feedback)");
     if (error) throw new Error(error.message);
 
     const entries = ((rows as AnyRow[]) ?? [])
