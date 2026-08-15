@@ -146,33 +146,42 @@ function ProfilePage() {
       <header className="mb-6">
         <h1 className="text-2xl font-semibold">Your profile</h1>
         <p className="text-sm text-muted-foreground">
-          Edit one section at a time — each saves on its own. Manage your CV in
-          the{" "}
-          <Link to="/me/cv" className="underline">
-            CV tab
-          </Link>
-          .
+          Edit one section at a time — each saves on its own.
+          {ctx?.seat === "candidate" && (
+            <>
+              {" "}
+              Manage your CV in the{" "}
+              <Link to="/me/cv" className="underline">
+                CV tab
+              </Link>
+              .
+            </>
+          )}
         </p>
-        <div className="mt-4">
-          <EmployerPreviewSheet />
-        </div>
+        {ctx?.seat === "candidate" && (
+          <div className="mt-4">
+            <EmployerPreviewSheet />
+          </div>
+        )}
 
-        <div className="mt-4 rounded-lg border bg-card p-4">
-          <div className="flex items-center justify-between text-sm">
-            <span className="font-medium">Profile completeness</span>
-            <span className="text-muted-foreground">{pct}%</span>
+        {ctx?.seat === "candidate" && (
+          <div className="mt-4 rounded-lg border bg-card p-4">
+            <div className="flex items-center justify-between text-sm">
+              <span className="font-medium">Profile completeness</span>
+              <span className="text-muted-foreground">{pct}%</span>
+            </div>
+            <div
+              className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted"
+              role="progressbar"
+              aria-valuenow={pct}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label="Profile completeness"
+            >
+              <div className="h-full bg-primary transition-all" style={{ width: `${pct}%` }} />
+            </div>
           </div>
-          <div
-            className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted"
-            role="progressbar"
-            aria-valuenow={pct}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-label="Profile completeness"
-          >
-            <div className="h-full bg-primary transition-all" style={{ width: `${pct}%` }} />
-          </div>
-        </div>
+        )}
       </header>
 
       <div className="space-y-5">
