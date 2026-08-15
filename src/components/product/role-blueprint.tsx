@@ -199,9 +199,14 @@ export function RoleBlueprint({ position, activity = [] }: RoleBlueprintProps) {
           <FactTile
             icon={<MapPin className="h-4 w-4" />}
             label="Location & work model"
-            primary={[position.location, position.work_model].filter(Boolean).join(" · ") || "Not set"}
-            secondary={position.employment_type ? String(position.employment_type) : null}
+            primary={
+              [position.location, formatEnumLabel(position.work_model)]
+                .filter(Boolean)
+                .join(" · ") || "Not set"
+            }
+            secondary={formatEnumLabel(position.employment_type)}
           />
+
           <FactTile
             icon={<Coins className="h-4 w-4" />}
             label="Compensation range"
