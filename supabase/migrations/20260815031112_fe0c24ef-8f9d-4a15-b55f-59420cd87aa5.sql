@@ -1,0 +1,1 @@
+update positions set blueprint_status = 'ready' where id = 'ee6d2a82-6122-4026-95e4-45a7821b7b7d';

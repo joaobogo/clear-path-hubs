@@ -114,10 +114,11 @@ export function GeneratedBlueprintPanel({
   const status: string = position?.blueprint_status ?? "none";
   const positionStatus = position?.status ?? "draft";
   const isDecisionReady = positionStatus === "active" || positionStatus === "closed" || positionStatus === "archived";
+  const ready = status === "ready";
 
-  // If the role is decision-ready (active/closed/archived) and the blueprint is ready,
-  // or if it was marked as ready but the role advanced, we don't show the "being built" widget.
-  if (status === "none" || !status || (isDecisionReady && status === "ready")) return null;
+  // If the blueprint is already prepared, or if the role is decision-ready (active/closed/archived),
+  // we don't show the "being built" widget.
+  if (ready || status === "none" || !status || isDecisionReady) return null;
 
   async function handleRetry() {
     if (retrying) return;
@@ -137,7 +138,6 @@ export function GeneratedBlueprintPanel({
   }
 
   const bp = position?.blueprint as AnyRow | null;
-  const ready = status === "ready";
   const failed = status === "failed";
   const stageIndex = BLUEPRINT_STAGES.findIndex((s) => s.key === status);
   const sources: Record<string, string> = (bp?.field_sources ?? {}) as Record<string, string>;
