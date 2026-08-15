@@ -89,7 +89,7 @@ function eventTypeToAgentKey(eventType: string): AgentKey | null {
   }
 }
 
-function sentenceFromFeed(row: Row): string {
+function sentenceFromFeed(row: Db): string {
   const type = row.event_type as string;
   const title = (row.position_title as string | null) ?? "a role";
   const payload = (row.payload as Record<string, unknown> | null) ?? {};
@@ -130,12 +130,13 @@ function sentenceFromFeed(row: Row): string {
   }
 }
 
-function linkPathFromFeed(row: Row): string | null {
+function linkPathFromFeed(row: Db): string | null {
   if (row.position_id) return `/client/positions/${row.position_id}`;
   if (row.candidate_match_id) return `/client/candidates/${row.candidate_match_id}`;
   if (row.application_id) return `/client/positions`; // no dedicated app page
   return null;
 }
+
 
 
 async function stopAgentWork(supabase: Db, org: string, key: AgentKey) {
