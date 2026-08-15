@@ -76,26 +76,29 @@ export const getCandidateCvDownload = createServerFn({ method: "POST" })
       }
     }
 
-    // 3. Client org member — only for approved + published candidates whose
-    //    contact details have been released. The raw CV carries the candidate's
-    //    email and phone, so it sits behind the *contact release* gate, not just
-    //    the visibility gate — same condition the `cvs_org_visible_read` storage
-    //    policy enforces at the database level.
+    // 3. Client org member — only for approved + published candidates.
+    //    We enforce a staged release:
+    //    - Pre-interview: Redacted view only (PII stripped).
+    //    - Interview stage + Consent: Full CV access.
+    let redacted = false;
     if (!authorized && orgId) {
-      const released =
+      const isVisible =
         match.client_visibility === "visible" &&
-        match.canonical_state === "published_to_client" &&
-        Boolean(match.contact_released_at);
-      if (released) {
-
+        match.canonical_state === "published_to_client";
+      
+      if (isVisible) {
         const { data: allowed } = await supabase.rpc("has_client_permission", {
           _user: userId,
           _org: orgId,
           _perm: "view_candidates",
         });
+        
         if (allowed === true) {
           authorized = true;
           audience = "client";
+          // Full release requires interview stage AND explicit release timestamp.
+          // The product promise: "released when you advance a candidate to interview".
+          redacted = !match.contact_released_at;
         }
       }
     }
