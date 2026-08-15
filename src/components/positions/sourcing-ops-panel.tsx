@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { useConfirmAction } from "@/components/ds";
 import { Plus, Radar, Trash2 } from "lucide-react";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -184,7 +185,7 @@ export function SourcingOpsPanel({ positionId }: { positionId: string }) {
         <div className="mt-4 flex items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground">
             {data?.plan?.last_reviewed_at
-              ? `Last reviewed ${new Date(data.plan.last_reviewed_at).toLocaleString()}`
+              ? `Last reviewed ${new Date(data.plan.last_reviewed_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}`
               : "Not reviewed yet."}
           </p>
           <Button

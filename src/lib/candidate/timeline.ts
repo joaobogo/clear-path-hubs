@@ -1,3 +1,4 @@
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 /**
  * The candidate-facing timeline.
  *
@@ -114,7 +115,7 @@ export function buildCandidateTimeline(input: TimelineInputs): CandidateTimeline
 
 /** Date in the reader's own time zone. Dates only — no invented precision. */
 export function formatTimelineDate(at: string): string {
-  return new Date(at).toLocaleDateString(undefined, {
+  return new Date(at).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
     day: "numeric",
     month: "long",
     year: "numeric",

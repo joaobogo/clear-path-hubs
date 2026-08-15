@@ -9,6 +9,7 @@ import { listMyMessages, markMyMessagesRead, sendMyMessage } from "@/lib/candida
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/me/messages")({
  head: () => ({
@@ -140,7 +141,7 @@ function MyMessages() {
  mine ? "text-primary-foreground/70" : "text-muted-foreground"
  }`}
  >
- {new Date(m.created_at).toLocaleString()}
+ {new Date(m.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
  </div>
  </div>
  </div>

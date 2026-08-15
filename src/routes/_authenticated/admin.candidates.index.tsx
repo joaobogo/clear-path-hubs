@@ -52,6 +52,7 @@ import { ExportControl } from "@/components/admin/export-control";
 import { FilterDrawer } from "@/components/admin/filter-drawer";
 import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
 import { classifyBand } from "@/lib/scoring/bands";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 /** Dense list label: band + confidence, no bare number (rubric lives on detail). */
 function scoreBandListLabel(m: {
@@ -764,7 +765,7 @@ function CandidatesPage() {
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-2 text-xs text-muted-foreground">
-                    {updated ? updated.toLocaleDateString(undefined, {
+                    {updated ? updated.toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
                       month: "short",
                       day: "numeric",
                       year: "numeric"

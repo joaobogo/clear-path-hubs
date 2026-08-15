@@ -13,6 +13,7 @@
  */
 
 import { candidateParseMessage } from "@/lib/parse-failure/parse-failure-codes";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const NOTHING_NEEDED_LINE = "Nothing needed from you right now.";
 
@@ -119,7 +120,7 @@ export function computePendingAction(input: PendingActionInputs): CandidatePendi
 /** Deadline sentence for an action, or null when the item has no due date. */
 export function pendingActionDeadline(action: CandidatePendingAction): string | null {
   if (!action.dueAt) return null;
-  const when = new Date(action.dueAt).toLocaleDateString(undefined, {
+  const when = new Date(action.dueAt).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
     weekday: "long",
     day: "numeric",
     month: "long",

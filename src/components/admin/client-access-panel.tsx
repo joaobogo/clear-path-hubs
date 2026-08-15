@@ -33,6 +33,7 @@ import {
 import { Check, Minus, ShieldCheck, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const ROLE_LABEL: Record<string, string> = {
   client_admin: "Owner",
@@ -333,7 +334,7 @@ function MemberRow({
         <PermissionCell key={p} m={m} perm={p} />
       ))}
       <td className="px-4 py-3 text-xs text-muted-foreground">
-        {m.last_sign_in_at ? new Date(m.last_sign_in_at).toLocaleString() : "Never signed in"}
+        {m.last_sign_in_at ? new Date(m.last_sign_in_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }) : "Never signed in"}
       </td>
       <td className="px-4 py-3 text-right">
         <div className="inline-flex gap-1.5">

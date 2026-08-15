@@ -26,6 +26,7 @@ import { CandidateStatePanel } from "@/components/candidate/candidate-state-pane
 import { TransparencyPanel } from "@/components/candidate/transparency-panel";
 import { ProcessingWindowNote } from "@/components/candidate/candidate-notes";
 import { SUPPORT_EMAIL } from "@/lib/candidate/candidate-transparency";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const searchSchema = z.object({ ref: z.string().optional() });
 
@@ -203,7 +204,7 @@ function StatusPage() {
               {result.organization_name ? ` · ${result.organization_name}` : ""}
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
-              Applied {new Date(result.applied_at).toLocaleDateString()} · Reference{" "}
+              Applied {new Date(result.applied_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })} · Reference{" "}
               <span className="font-mono">{result.reference}</span>
             </p>
 
@@ -258,8 +259,8 @@ function StatusPage() {
                   <div key={r.id} className="rounded-md border bg-card p-4">
                     <p className="text-sm font-medium">{r.prompt}</p>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      Asked {new Date(r.created_at).toLocaleDateString()}
-                      {r.due_at ? ` · reply by ${new Date(r.due_at).toLocaleDateString()}` : ""}
+                      Asked {new Date(r.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                      {r.due_at ? ` · reply by ${new Date(r.due_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}` : ""}
                     </p>
                     {r.expired ? (
                       <p className="mt-3 text-sm text-muted-foreground">

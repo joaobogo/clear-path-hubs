@@ -59,6 +59,7 @@ import {
   ClipboardCheck,
   KeyRound,
 } from "lucide-react";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const TABS = [
   "overview",
@@ -316,8 +317,8 @@ function OverviewTab({ org, members, positions }: { org: any; members: any[]; po
           <dt>Primary contact</dt><dd className="text-foreground">{org.primary_contact_name ?? "—"}</dd>
           <dt>Contact email</dt><dd className="text-foreground">{org.primary_contact_email ?? "—"}</dd>
           <dt>Phone</dt><dd className="text-foreground">{org.phone ?? "—"}</dd>
-          <dt>Created</dt><dd className="text-foreground">{new Date(org.created_at).toLocaleString()}</dd>
-          <dt>Updated</dt><dd className="text-foreground">{new Date(org.updated_at).toLocaleString()}</dd>
+          <dt>Created</dt><dd className="text-foreground">{new Date(org.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</dd>
+          <dt>Updated</dt><dd className="text-foreground">{new Date(org.updated_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</dd>
         </dl>
       </div>
       <DecisionBacklogPanel organizationId={org.id} className="md:col-span-3" />
@@ -538,7 +539,7 @@ function TeamTab({ members, org }: { members: any[]; org: any }) {
                 <td className="px-3 py-2 capitalize">{m.role}</td>
                 <td className="px-3 py-2 capitalize">{m.status}</td>
                 <td className="px-3 py-2 text-xs text-muted-foreground">
-                  {m.created_at ? new Date(m.created_at).toLocaleDateString() : "—"}
+                  {m.created_at ? new Date(m.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE }) : "—"}
                 </td>
               </tr>
             ))}
@@ -582,7 +583,7 @@ function PositionsTab({ positions }: { positions: any[] }) {
               <td className="px-3 py-2 capitalize">{p.visibility}</td>
               <td className="px-3 py-2 text-muted-foreground">{p.location ?? "—"}</td>
               <td className="px-3 py-2 text-xs text-muted-foreground">
-                {new Date(p.updated_at).toLocaleDateString()}
+                {new Date(p.updated_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
               </td>
             </tr>
           ))}
@@ -700,7 +701,7 @@ function SettingsTab({ org }: { org: any }) {
           {org.archived_at && (
             <>
               <dt>Archived at</dt>
-              <dd className="text-foreground break-all">{new Date(org.archived_at).toLocaleString()}</dd>
+              <dd className="text-foreground break-all">{new Date(org.archived_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</dd>
             </>
           )}
         </dl>
@@ -951,7 +952,7 @@ function DocumentsTab({ id }: { id: string }) {
                 {f.size ? `${(Number(f.size) / 1024).toFixed(0)} KB` : "—"}
               </td>
               <td className="px-3 py-2 text-xs text-muted-foreground">
-                {new Date(f.created_at).toLocaleDateString()}
+                {new Date(f.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
               </td>
             </tr>
           ))}

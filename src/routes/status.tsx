@@ -23,6 +23,7 @@ import {
   type StatusLevel,
   type StatusNotice,
 } from "@/lib/status/platform-status";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const statusQuery = queryOptions({
   queryKey: ["platform-status", "page"],
@@ -103,7 +104,7 @@ function StatusPill({ level }: { level: StatusLevel }) {
 }
 
 function formatTime(iso: string): string {
-  return new Date(iso).toLocaleString(undefined, {
+  return new Date(iso).toLocaleString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -113,7 +114,7 @@ function formatTime(iso: string): string {
 }
 
 function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, {
+  return new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
     year: "numeric",
     month: "long",
     day: "numeric",

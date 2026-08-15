@@ -36,6 +36,7 @@ import { CandidatesEmptyState } from "@/components/client/candidates/candidates-
 import { CompactList } from "@/components/client/candidates/compact-list";
 import { BulkCvDownloadButton } from "@/components/client/candidates/bulk-cv-download";
 import { CandidatesBoardView } from "@/components/client/candidates/board-view";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const searchSchema = z.object({
  q: fallback(z.string(), "").default(""),
@@ -436,7 +437,7 @@ function CandidatesPage() {
  {(rowsRaw as ClientCandidateDTO[]).length} shown
  </div>
  {overview?.last_updated && (
- <div>Updated {new Date(overview.last_updated).toLocaleDateString()}</div>
+ <div>Updated {new Date(overview.last_updated).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}</div>
  )}
  <div>Select {2}–{COMPARE_MAX} candidates on one role</div>
  </div>

@@ -7,6 +7,7 @@ import { listScoringOrphans, resolveScoringOrphan } from "@/lib/scoring.function
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/admin/scoring/orphans")({
   loader: ({ context }) =>
@@ -91,7 +92,7 @@ function OrphansPage() {
                 <div className="flex items-center gap-2">
                   <Badge variant="destructive">{o.reason}</Badge>
                   <span className="text-muted-foreground">
-                    detected {new Date(o.detected_at).toLocaleString()}
+                    detected {new Date(o.detected_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
                   </span>
                 </div>
                 <div className="font-mono text-xs text-muted-foreground">
@@ -158,7 +159,7 @@ function OrphansPage() {
                 <div>
                   <span className="font-medium">{o.reason}</span>{" "}
                   <span className="text-muted-foreground">
-                    · resolved {o.resolved_at && new Date(o.resolved_at).toLocaleString()}
+                    · resolved {o.resolved_at && new Date(o.resolved_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
                   </span>
                   {o.resolution_note && (
                     <div className="text-muted-foreground text-xs mt-0.5">

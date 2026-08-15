@@ -30,6 +30,7 @@ import {
   requestCandidateExport,
   retryExport,
 } from "@/lib/exports.functions";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export type ExportScope = {
   organization_id?: string;
@@ -52,7 +53,7 @@ const STATUS_TONE: Record<string, string> = {
 
 function fmt(value: string | null) {
   if (!value) return "—";
-  return new Date(value).toLocaleString();
+  return new Date(value).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE });
 }
 
 export function ExportControl({ scope }: { scope: ExportScope }) {

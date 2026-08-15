@@ -20,6 +20,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { CANDIDATE_STATUS_NEXT_STEP, CANDIDATE_STATUS_TONE } from "@/lib/candidate-status";
 import { useConfirmAction } from "@/components/ds";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 
 export const Route = createFileRoute("/_authenticated/me/applications/")({
@@ -174,7 +175,7 @@ function MyApplicationsPage() {
  ) : null}
  {a.next_interview_at ? (
  <span className="text-[10px] text-muted-foreground">
- {new Date(a.next_interview_at).toLocaleDateString()}
+ {new Date(a.next_interview_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
  </span>
  ) : null}
  </div>
@@ -186,13 +187,13 @@ function MyApplicationsPage() {
  <div>
  <div className="uppercase tracking-wide">Applied</div>
  <div className="text-foreground text-sm">
- {new Date(a.applied_at).toLocaleDateString()}
+ {new Date(a.applied_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
  </div>
  </div>
  <div>
  <div className="uppercase tracking-wide">Last update</div>
  <div className="text-foreground text-sm">
- {new Date(a.last_update).toLocaleDateString()}
+ {new Date(a.last_update).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
  </div>
  </div>
   <div>

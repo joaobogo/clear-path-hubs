@@ -28,12 +28,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2, Paperclip, Send, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 function dayLabel(iso: string) {
   const day = new Date(iso).toDateString();
   if (day === new Date().toDateString()) return "Today";
   if (day === new Date(Date.now() - 86_400_000).toDateString()) return "Yesterday";
-  return new Date(iso).toLocaleDateString(undefined, {
+  return new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
     weekday: "long",
     month: "short",
     day: "numeric",
@@ -41,7 +42,7 @@ function dayLabel(iso: string) {
 }
 
 function timeLabel(iso: string) {
-  return new Date(iso).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, hour: "2-digit", minute: "2-digit" });
 }
 
 function ThreadSkeleton() {

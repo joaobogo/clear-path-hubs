@@ -32,6 +32,7 @@ import {
 import { AlertTriangle, BellRing, Loader2, RefreshCw } from "lucide-react";
 import { TestScopeEmptyNote } from "@/components/admin/test-records-toggle";
 import { useScopedIncludeTest } from "@/lib/admin-scope";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 type Backlog = Awaited<ReturnType<typeof getDecisionBacklog>>;
 type Row = Backlog["rows"][number];
@@ -40,7 +41,7 @@ const DECISIONS = Object.entries(OFFLINE_DECISION_LABEL) as Array<[string, strin
 
 function fmt(iso: string | null): string {
   if (!iso) return "—";
-  return new Date(iso).toLocaleString();
+  return new Date(iso).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE });
 }
 
 export function DecisionBacklogPanel({

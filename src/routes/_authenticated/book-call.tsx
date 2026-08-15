@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/book-call")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -55,7 +56,7 @@ function localTimeZone() {
 }
 
 function formatFull(iso: string, timeZone: string) {
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(APP_LOCALE, {
     weekday: "long",
     day: "numeric",
     month: "long",

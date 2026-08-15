@@ -93,6 +93,7 @@ import {
   cleanLine,
   Row,
 } from "@/components/admin/candidate-detail/primitives";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 
 // ── CV & parsed ────────────────────────────────────────────────────────────
@@ -269,7 +270,7 @@ export function CvTab({ cv, matchId, cp, insights }: { cv: Any; matchId: string;
             <Row label="Size" v={`${(Number(cv.size ?? 0) / 1024).toFixed(0)} KB`} />
             <Row label="OCR used" v={cv.ocr_used ? "Yes" : "No"} />
             <Row label="Attempts" v={cv.extraction_attempts} />
-            <Row label="Extracted" v={cv.extraction_completed_at ? new Date(cv.extraction_completed_at).toLocaleString() : "—"} />
+            <Row label="Extracted" v={cv.extraction_completed_at ? new Date(cv.extraction_completed_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }) : "—"} />
           </dl>
         </aside>
       </div>
@@ -351,7 +352,7 @@ export function EnrichmentTab({ cp, evidence }: { cp: Any; evidence: Any }) {
         <div className="rounded-lg border bg-muted/30 p-4 lg:col-span-2">
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>Enrichment snapshot · engine {evidence.engine_version}</span>
-            <span>{new Date(evidence.created_at).toLocaleString()}</span>
+            <span>{new Date(evidence.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</span>
           </div>
         </div>
       )}
@@ -552,7 +553,7 @@ export function ScoreTab({
         <div className="flex items-baseline justify-between">
           <h2 className="text-sm font-semibold">Fit score</h2>
           <span className="text-xs text-muted-foreground">
-            engine {currentRun.engine_version} · {currentRun.completed_at ? new Date(currentRun.completed_at).toLocaleString() : "—"}
+            engine {currentRun.engine_version} · {currentRun.completed_at ? new Date(currentRun.completed_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }) : "—"}
           </span>
         </div>
         {/* Staff-only number: always with its confidence and rubric version. */}
@@ -806,7 +807,7 @@ export function HistoryTab({
           {runs.map((r) => (
             <li key={r.id} className="flex items-center justify-between border-b py-1 last:border-0">
               <span className="text-xs">
-                {r.completed_at ? new Date(r.completed_at).toLocaleString() : "—"}{" "}
+                {r.completed_at ? new Date(r.completed_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }) : "—"}{" "}
                 <code className="opacity-60">{r.engine_version}</code>{" "}
                 <span className="ml-1 text-muted-foreground">{r.status}</span>
               </span>
@@ -838,7 +839,7 @@ export function HistoryTab({
                   </span>
                 </span>
                 <span className="text-muted-foreground">
-                  {j.created_at ? new Date(j.created_at).toLocaleString() : ""}
+                  {j.created_at ? new Date(j.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }) : ""}
                 </span>
               </div>
               {j.error_message && (
@@ -861,7 +862,7 @@ export function HistoryTab({
             {decisions.map((d) => (
               <li key={d.id} className="border-b py-1 text-xs last:border-0">
                 <span className="text-muted-foreground">
-                  {new Date(d.created_at).toLocaleString()}{" "}
+                  {new Date(d.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}{" "}
                 </span>
                 · <strong>{d.decision_type}</strong>
                 {d.approved_score != null && (
@@ -1023,7 +1024,7 @@ export function ActivityAuditTab({
                 )}
               </div>
               <div className="shrink-0 text-right text-xs text-muted-foreground">
-                <div>{new Date(e.when).toLocaleString()}</div>
+                <div>{new Date(e.when).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</div>
                 {e.trace && <div className="font-mono text-[10px]">{e.trace}</div>}
               </div>
             </li>

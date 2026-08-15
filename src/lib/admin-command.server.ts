@@ -6,6 +6,7 @@
  * derived "trends", no sampled estimates.
  */
 import { attachMemberProfiles } from "@/lib/membership-profiles.server";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -414,7 +415,7 @@ export async function loadUrgentQueue(f: CommandFilters): Promise<UrgentItem[]> 
         id: `delivery_risk:${p.id}`,
         kind: "delivery_risk",
         title: `No candidates delivered — ${p.title}`,
-        detail: `${p.organizations?.name ?? "—"} · open since ${new Date(p.created_at).toLocaleDateString()}`,
+        detail: `${p.organizations?.name ?? "—"} · open since ${new Date(p.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}`,
         occurred_at: p.created_at,
         severity: "high",
         to: "/admin/positions/$id",

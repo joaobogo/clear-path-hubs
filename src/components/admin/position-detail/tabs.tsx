@@ -77,6 +77,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -555,7 +556,7 @@ export function PipelineTab({ matches, positionId }: { matches: Any[]; positionI
                   {m.score_runs?.score != null ? Math.round(m.score_runs.score) : "—"}
                 </td>
                 <td className="px-3 py-2 text-xs text-muted-foreground">
-                  {m.updated_at ? new Date(m.updated_at).toLocaleDateString() : "—"}
+                  {m.updated_at ? new Date(m.updated_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE }) : "—"}
                 </td>
                 <td className="px-3 py-2 text-right">
                   <Link
@@ -793,7 +794,7 @@ export function AuditTab({ id }: { id: string }) {
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <div className="font-medium">{r.action.replace(/_/g, " ")}</div>
                 <div className="text-xs text-muted-foreground">
-                  {new Date(r.created_at).toLocaleString()}
+                  {new Date(r.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
                 </div>
               </div>
               <div className="mt-0.5 text-xs text-muted-foreground">

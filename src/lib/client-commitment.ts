@@ -1,3 +1,4 @@
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 /**
  * Per-role service commitment: what we promised, what actually happened, and
  * the variance between them. Reported the same way whether we hit it or missed
@@ -27,7 +28,7 @@ export type ShortlistCommitment = {
 };
 
 export function formatCommitmentDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short" });
+  return new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, day: "numeric", month: "short" });
 }
 
 function wholeDays(fromIso: string, toIso: string | number): number {

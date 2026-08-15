@@ -19,6 +19,7 @@ import { NEXT_STEPS, nextStepLabel, formatSalary } from "./helpers";
 import { NudgeButton } from "./nudge-button";
 import { OfferTermsDialog } from "./offer-terms-dialog";
 import { CloseReasonDialog } from "./close-reason-dialog";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 // Single offer/hire card. Owns its own local UI state (edit + close
 // dialogs) so acting on one card doesn't force the whole board to
@@ -81,7 +82,7 @@ function HireCardImpl({
           <dt>{HIRE_STATUS_LABEL[hire.status]}</dt>
           <dd className="text-foreground">
             {stageEnteredAt(hire)
-              ? new Date(stageEnteredAt(hire)!).toLocaleDateString()
+              ? new Date(stageEnteredAt(hire)!).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })
               : "—"}
           </dd>
         </div>

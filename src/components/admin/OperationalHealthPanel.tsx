@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const KIND_LABEL: Record<string, string> = {
   webhook: "Failed webhooks",
@@ -75,7 +76,7 @@ export function OperationalHealthPanel() {
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="secondary">{KIND_LABEL[i.kind]}</Badge>
                   <span className="text-sm font-medium">{i.label}</span>
-                  <span className="text-xs text-muted-foreground">{new Date(i.occurred_at).toLocaleString()}</span>
+                  <span className="text-xs text-muted-foreground">{new Date(i.occurred_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</span>
                   <Button
                     size="sm"
                     variant="outline"

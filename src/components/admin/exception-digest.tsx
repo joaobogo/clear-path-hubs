@@ -15,6 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const DISMISS_KEY = "taasflow:admin:exception-digest:dismissed";
 const REFRESH_MS = 60_000;
@@ -151,7 +152,7 @@ export function ExceptionDigest() {
 
         {q.data ? (
           <p className="border-t px-3 py-2 text-[11px] text-muted-foreground">
-            Updated {new Date(q.data.generated_at).toLocaleTimeString()} · refreshes every minute
+            Updated {new Date(q.data.generated_at).toLocaleTimeString(APP_LOCALE, { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })} · refreshes every minute
             and on navigation
           </p>
         ) : null}

@@ -5,6 +5,7 @@ import {
   getClientTeamActivity,
   type TeamMemberActivity,
 } from "@/lib/client-team-activity.functions";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const ROLE_LABEL: Record<string, string> = {
   client_admin: "Admin",
@@ -16,7 +17,7 @@ function dateLabel(iso: string | null): string {
   if (!iso) return "Never signed in";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "Never signed in";
-  return d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+  return d.toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, day: "numeric", month: "short", year: "numeric" });
 }
 
 function MemberRow({ m }: { m: TeamMemberActivity }) {

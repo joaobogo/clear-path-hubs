@@ -1,3 +1,4 @@
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 const RELATIVE = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 export function relTime(iso: string | null | undefined): string {
   if (!iso) return "";
@@ -9,7 +10,7 @@ export function relTime(iso: string | null | undefined): string {
   if (abs < hr) return RELATIVE.format(Math.round(diff / min), "minute");
   if (abs < day) return RELATIVE.format(Math.round(diff / hr), "hour");
   if (abs < 30 * day) return RELATIVE.format(Math.round(diff / day), "day");
-  return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  return new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, month: "short", day: "numeric" });
 }
 
 export function daysWaiting(iso: string | null | undefined): number | null {

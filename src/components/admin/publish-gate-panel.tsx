@@ -17,10 +17,11 @@ import { CheckCircle2, Lock, PencilLine } from "lucide-react";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import { useScopedIncludeTest } from "@/lib/admin-scope";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 function fmtDate(iso: string | null) {
   if (!iso) return "—";
-  return new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+  return new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, day: "numeric", month: "short", year: "numeric" });
 }
 
 function BlockerChip({ blocker, positionId }: { blocker: PublishBlocker; positionId: string }) {

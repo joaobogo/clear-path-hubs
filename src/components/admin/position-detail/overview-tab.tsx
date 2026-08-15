@@ -19,6 +19,7 @@ import {
 import { ExternalLink } from "lucide-react";
 import { evaluatePublishGate, PUBLISH_BLOCKER_LABEL } from "@/lib/publish-gate";
 import { updatePosition } from "@/lib/admin.functions";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -274,7 +275,7 @@ function Stat({ label, value }: { label: string; value: number }) {
 
 function fmt(v?: string | null) {
   if (!v) return <span className="text-muted-foreground">—</span>;
-  return new Date(v).toLocaleString();
+  return new Date(v).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE });
 }
 
 // ── Requirements / Preferred / Dealbreakers editor (shared) ─────────────────

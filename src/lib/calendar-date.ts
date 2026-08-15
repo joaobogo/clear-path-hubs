@@ -1,7 +1,8 @@
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 /**
  * Calendar dates (start date, renewal date, guarantee window, response date)
  * are stored as Postgres `date` — a day with no time and no zone. Rendering
- * them with `new Date("2026-09-01").toLocaleDateString()` parses UTC midnight
+ * them with `new Date("2026-09-01").toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })` parses UTC midnight
  * and then prints it in the viewer's zone, so every negative-offset viewer saw
  * the day before ("31 Aug" on one page, "1 Sep" on another).
  *

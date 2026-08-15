@@ -13,6 +13,7 @@
 import type { RequirementRow, RequirementStatus } from "@/lib/client-fit-presentation";
 import { SCORE_BAND_BOUNDARIES, bandRange, classifyBand, type ScoreBandKey } from "@/lib/scoring/bands";
 import { bandByKey } from "@/config/scoring-bands";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 /** One assessed candidate, reduced to what the story needs. */
 export type StoryCandidate = {
@@ -238,7 +239,7 @@ export function buildMilestone(input: {
   const { status, candidates, nextInterviewAt } = input;
   const at = (iso: string | null) =>
     iso
-      ? new Date(iso).toLocaleDateString(undefined, {
+      ? new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
           weekday: "short",
           day: "numeric",
           month: "short",

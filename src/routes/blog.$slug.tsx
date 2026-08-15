@@ -16,6 +16,7 @@ import {
 } from "@/lib/marketing/blog-manifest";
 import { isPublishedBlogSlug, listAllBlogRows } from "@/lib/marketing/blog-catalog";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: ({ params }) => {
@@ -223,7 +224,7 @@ function BlogPost() {
                 <>
                   <span>·</span>
                   <time dateTime={published}>
-                    {new Date(published).toLocaleDateString()}
+                    {new Date(published).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
                   </time>
                 </>
               )}

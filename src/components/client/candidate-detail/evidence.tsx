@@ -27,7 +27,7 @@ import type {
   RequirementStatus,
 } from "@/lib/client-fit-presentation";
 import { SectionCard, Metric } from "./shared";
-import { formatDateTime } from "@/lib/format/datetime";
+import { formatDateTime, APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export function statusBadge(status: RequirementStatus) {
   switch (status) {
@@ -229,7 +229,7 @@ export const FitHero = memo(function FitHero({
           )}
           {candidate.last_updated && (
             <p className="mt-2 text-xs text-muted-foreground">
-              Scored {new Date(candidate.last_updated).toLocaleDateString()}
+              Scored {new Date(candidate.last_updated).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
             </p>
           )}
         </div>

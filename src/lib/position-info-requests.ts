@@ -19,6 +19,7 @@
 
 import { MAX_REQUIREMENT_CHARS, MIN_JD_TEXT } from "./express-intake-schema";
 import { MAX_DEAL_BREAKER_CHARS } from "./client-deal-breakers";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export type InfoRequestStatus = "open" | "answered" | "cancelled";
 
@@ -267,7 +268,7 @@ export function daysWaiting(since: string, now: Date = new Date()): number {
 export function waitingSinceLabel(since: string, now: Date = new Date()): string {
   const t = new Date(since);
   if (!Number.isFinite(t.getTime())) return "Waiting on you";
-  const date = t.toLocaleDateString(undefined, { day: "numeric", month: "long" });
+  const date = t.toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, day: "numeric", month: "long" });
   const d = daysWaiting(since, now);
   if (d <= 0) return `Waiting on you since today`;
   return `Waiting on you since ${date} — ${d} ${d === 1 ? "day" : "days"}`;

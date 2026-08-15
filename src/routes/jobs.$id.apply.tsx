@@ -45,6 +45,7 @@ import type { ExistingApplicationSummary } from "@/lib/candidate/existing-applic
 import { Loader2 } from "lucide-react";
 import { track } from "@/lib/candidate/funnel-events.functions";
 import { deviceBucket } from "@/lib/candidate/funnel-events";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 
 const EMPTY_FORM = {
@@ -943,7 +944,7 @@ function ApplyPage() {
               <span className="block">
                 You already started applying for {pos.title}
                 {resume.savedAt
-                  ? ` — saved on this device ${new Date(resume.savedAt).toLocaleString()}`
+                  ? ` — saved on this device ${new Date(resume.savedAt).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}`
                   : ""}
                 . You reached step {resume.step} of {APPLY_STEPS},{" "}
                 {STEP_LABELS[Math.min(resume.step, STEP_LABELS.length) - 1]}.

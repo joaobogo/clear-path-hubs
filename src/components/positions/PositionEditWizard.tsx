@@ -38,6 +38,7 @@ import { RequisitionEditor } from "@/components/positions/RequisitionEditor";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { JobPostStep } from "@/components/positions/JobPostStep";
 import { formatEnumLabel } from "@/lib/human-labels";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 
 const STEPS = [
@@ -362,7 +363,7 @@ export function PositionEditWizard({
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border bg-muted/50 p-3">
           <p className="text-sm">
             An unsaved draft of this job was found
-            {savedAt ? ` from ${new Date(savedAt).toLocaleString()}` : ""}.
+            {savedAt ? ` from ${new Date(savedAt).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}` : ""}.
           </p>
           <div className="flex gap-2">
             <Button

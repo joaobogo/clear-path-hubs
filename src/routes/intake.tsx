@@ -119,6 +119,7 @@ import {
 } from "@/lib/position-duplicate";
 import { getPositionDuplicateDraft } from "@/lib/position-duplicate.functions";
 import { getCompanyCarryForward } from "@/lib/intake-carry.functions";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/intake")({
   /**
@@ -3073,7 +3074,7 @@ function ExpressIntakePage() {
                     <p className="text-sm">
                       The compensation came from a brief more than {COMPENSATION_STALE_DAYS} days old
                       {duplicate.compensationAsOf
-                        ? ` (last set ${new Date(duplicate.compensationAsOf).toLocaleDateString()})`
+                        ? ` (last set ${new Date(duplicate.compensationAsOf).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })})`
                         : ""}
                       . Worth a look before it goes out to candidates.
                     </p>

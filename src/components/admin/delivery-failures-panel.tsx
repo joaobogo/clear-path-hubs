@@ -23,6 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 type Item = {
   key: string;
@@ -46,7 +47,7 @@ type Item = {
 };
 
 function when(iso: string) {
-  return new Date(iso).toLocaleString();
+  return new Date(iso).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE });
 }
 
 export function DeliveryFailuresPanel() {

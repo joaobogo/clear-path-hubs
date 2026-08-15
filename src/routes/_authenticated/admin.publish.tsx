@@ -16,6 +16,7 @@ import { BlockedReason } from "@/components/admin/blocked-reason";
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveQueueState, resolveQueueVariant } from "@/lib/empty-states/queue-states";
 import { QUEUE_ROW_ACTIVE_CLASS, useQueueKeyboard } from "@/lib/admin/queue-keyboard";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 
 export const Route = createFileRoute("/_authenticated/admin/publish")({
@@ -316,7 +317,7 @@ function PublishDesk() {
                         {r.client_visibility}
                       </Badge>
                       <div className="mt-1 text-[10px] text-muted-foreground">
-                        {r.updated_at ? new Date(r.updated_at).toLocaleString() : "—"}
+                        {r.updated_at ? new Date(r.updated_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }) : "—"}
                       </div>
                     </td>
                     <td className="px-3 py-2">

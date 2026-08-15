@@ -8,6 +8,7 @@ import {
   type RoleLaunchState,
 } from "@/lib/role-launch";
 import { CheckCircle2, Circle, Loader2, Radar, TriangleAlert } from "lucide-react";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 /**
  * RoleLaunchPanel — the client's "what is happening with my role" view.
@@ -36,7 +37,7 @@ const STATE_WORD: Record<LaunchStage["state"], string> = {
 
 function when(at: string | null) {
   if (!at) return null;
-  return new Date(at).toLocaleDateString(undefined, {
+  return new Date(at).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
     month: "short",
     day: "numeric",
   });
@@ -186,7 +187,7 @@ function SourcingEngineCard({ launch }: { launch: RoleLaunchState }) {
         </div>
         {m.lastUpdate && (
           <span className="text-xs text-muted-foreground">
-            Last update {new Date(m.lastUpdate).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+            Last update {new Date(m.lastUpdate).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, month: "short", day: "numeric" })}
           </span>
         )}
       </div>

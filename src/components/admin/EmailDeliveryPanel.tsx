@@ -5,6 +5,7 @@ import { listEmailDeliveryEvents } from "@/lib/email-delivery.functions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const FILTERS = [
   { value: "", label: "Everything" },
@@ -105,7 +106,7 @@ export function EmailDeliveryPanel() {
                     {row.eventType.replace(/_/g, " ")}
                   </Badge>
                   <div className="mt-1 text-xs text-muted-foreground">
-                    {new Date(row.timestamp).toLocaleString()}
+                    {new Date(row.timestamp).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
                   </div>
                 </div>
               </li>
@@ -118,7 +119,7 @@ export function EmailDeliveryPanel() {
 
       {data?.available && data.historyStartsAt ? (
         <p className="mt-3 text-xs text-muted-foreground">
-          History available from {new Date(data.historyStartsAt).toLocaleDateString()}. Delivered
+          History available from {new Date(data.historyStartsAt).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}. Delivered
           and opened outcomes are not recorded.
         </p>
       ) : null}

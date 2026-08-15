@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Clock, Shield, MapPin, Coins, Radar, GitBranch, Gauge, FileText } from "lucide-react";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 /**
  * RoleBlueprint — the ATS-grade "source of truth" for a requisition.
@@ -288,7 +289,7 @@ export function RoleBlueprint({ position, activity = [] }: RoleBlueprintProps) {
                     {t.label}
                   </span>
                   <span className="text-xs tabular-nums">
-                    {t.at ? new Date(t.at).toLocaleDateString() : "—"}
+                    {t.at ? new Date(t.at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE }) : "—"}
                   </span>
                 </li>
               ))}
@@ -310,7 +311,7 @@ export function RoleBlueprint({ position, activity = [] }: RoleBlueprintProps) {
                   >
                     <span className="text-foreground/90">{humanizeBlueprintAction(a.action)}</span>
                     <span className="text-xs text-muted-foreground tabular-nums">
-                      {a.created_at ? new Date(a.created_at).toLocaleDateString() : ""}
+                      {a.created_at ? new Date(a.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE }) : ""}
                     </span>
                   </li>
                 ))}

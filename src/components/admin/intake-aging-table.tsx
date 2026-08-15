@@ -37,6 +37,7 @@ import { ArrowRight, Loader2, RefreshCw, Undo2 } from "lucide-react";
 import { TestScopeEmptyNote } from "@/components/admin/test-records-toggle";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { useScopedIncludeTest } from "@/lib/admin-scope";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 type AgingTable = Awaited<ReturnType<typeof getIntakeAging>>;
 type Row = AgingTable["rows"][number];
@@ -244,7 +245,7 @@ export function IntakeAgingTable({ includeTest: explicit }: { includeTest?: bool
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-3 py-3 text-xs tabular-nums text-muted-foreground">
-                        {new Date(row.submitted_at).toLocaleDateString(undefined, {
+                        {new Date(row.submitted_at).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
                           month: "short",
                           day: "numeric",
                           year: "numeric"

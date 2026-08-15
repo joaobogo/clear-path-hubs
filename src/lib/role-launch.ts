@@ -1,3 +1,4 @@
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 /**
  * Role launch state — the client-facing "Role Setup" timeline and
  * "Search Channels" panel.
@@ -136,7 +137,7 @@ export function formatExpected(iso: string | null): string {
   if (!iso) return "Set once your role goes live";
   const d = new Date(iso);
   if (!Number.isFinite(d.getTime())) return "Set once your role goes live";
-  return d.toLocaleDateString(undefined, {
+  return d.toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
     month: "short",
     day: "numeric",
   });

@@ -12,6 +12,7 @@ import { OperationalHealthPanel } from "@/components/admin/OperationalHealthPane
 import { TeamsDeliveryPanel } from "@/components/admin/TeamsDeliveryPanel";
 import { EmailDeliveryPanel } from "@/components/admin/EmailDeliveryPanel";
 import { TrackingConfigPanel } from "@/components/admin/TrackingConfigPanel";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 
 export const Route = createFileRoute("/_authenticated/admin/health")({
@@ -151,7 +152,7 @@ function HealthPage() {
               {(data.failed_jobs as AnyRow[]).map((j) => (
                 <tr key={j.id} className="border-t">
                   <td className="px-3 py-2 text-xs text-muted-foreground">
-                    {new Date(j.created_at).toLocaleString()}
+                    {new Date(j.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
                   </td>
                   <td className="px-3 py-2">{j.job_type}</td>
                   <td className="px-3 py-2">

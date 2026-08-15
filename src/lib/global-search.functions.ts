@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 /**
  * Global workspace search.
@@ -268,7 +269,7 @@ export const globalSearch = createServerFn({ method: "POST" })
         type: "intake" as const,
         id: i.id,
         label: i.role_title || i.company_name || "Intake",
-        context: [i.company_name, new Date(i.created_at).toLocaleDateString()]
+        context: [i.company_name, new Date(i.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })]
           .filter(Boolean)
           .join(" · "),
         state: [
@@ -301,7 +302,7 @@ export const globalSearch = createServerFn({ method: "POST" })
           type: "message",
           id: m.id,
           label: snippet || "Message",
-          context: new Date(m.created_at).toLocaleString(),
+          context: new Date(m.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }),
           href,
           search: scope === "client" ? { org: m.thread_id as string } : undefined,
         };

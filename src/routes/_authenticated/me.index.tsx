@@ -24,6 +24,7 @@ import {
   Sparkles,
   User,
 } from "lucide-react";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/me/")({
   head: () => ({
@@ -265,13 +266,13 @@ function MeHome() {
           title={doc ?? cv ? "CV on file" : "No CV uploaded"}
           body={
             doc
-              ? `${doc.filename} · uploaded ${new Date(doc.uploaded_at).toLocaleDateString()}. ${
+              ? `${doc.filename} · uploaded ${new Date(doc.uploaded_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}. ${
                   doc.received
                     ? "Received and readable."
                     : "We couldn't read this file — please upload a fresh PDF."
                 }`
               : cv
-                ? `Last updated ${new Date(cv.created_at).toLocaleDateString()}. You can replace it any time.`
+                ? `Last updated ${new Date(cv.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}. You can replace it any time.`
                 : "Upload your CV (PDF) so hiring teams can review your experience privately."
           }
           cta={doc ?? cv ? "Manage CV" : "Upload CV"}
