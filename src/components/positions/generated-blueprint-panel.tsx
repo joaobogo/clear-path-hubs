@@ -112,7 +112,12 @@ export function GeneratedBlueprintPanel({
   const retry = useServerFn(retryBlueprintAnalysis);
   const [retrying, setRetrying] = useState(false);
   const status: string = position?.blueprint_status ?? "none";
-  if (status === "none" || !status) return null;
+  const positionStatus = position?.status ?? "draft";
+  const isDecisionReady = positionStatus === "active" || positionStatus === "closed" || positionStatus === "archived";
+
+  // If the role is decision-ready (active/closed/archived) and the blueprint is ready,
+  // or if it was marked as ready but the role advanced, we don't show the "being built" widget.
+  if (status === "none" || !status || (isDecisionReady && status === "ready")) return null;
 
   async function handleRetry() {
     if (retrying) return;

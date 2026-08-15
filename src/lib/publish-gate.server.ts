@@ -69,6 +69,28 @@ export async function loadPublishGateQueue(
   admin: Any,
   opts: { includeTest?: boolean; q?: string } = {},
 ): Promise<{ rows: PublishGateRow[]; total_unpublished: number }> {
+  // Drive the blueprint pipeline for any roles stuck in 'queued' for > 2 minutes
+  // in case the initial trigger or runner missed them.
+  try {
+    const twoMinsAgo = new Date(Date.now() - 120 * 1000).toISOString();
+    const { data: stuck } = await admin
+      .from("positions")
+      .select("id")
+      .eq("blueprint_status", "queued")
+      .lt("updated_at", twoMinsAgo)
+      .limit(5);
+
+    if (stuck && stuck.length > 0) {
+      const { retryBlueprintAnalysis } = await import("./blueprint.functions");
+      // Run sequentially but without awaiting to avoid blocking the UI response
+      stuck.forEach((p: { id: string }) => {
+        retryBlueprintAnalysis({ data: { positionId: p.id } }).catch(console.error);
+      });
+    }
+  } catch (err) {
+    console.error("[publish-gate] stuck recovery failed", err);
+  }
+
   const { loadTestScope } = await import("./admin-test-scope.server");
   const scope = await loadTestScope(admin, opts.includeTest ?? false);
 
