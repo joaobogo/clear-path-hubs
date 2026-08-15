@@ -1067,15 +1067,20 @@ export function blueprintStageIndex(status: string, position?: {
   if (status === "failed") return -1;
 
   const idx = BLUEPRINT_STAGES.findIndex((s) => s.key === status);
-  if (idx !== -1) return idx;
+  let finalIdx = idx;
 
   // Derive from position lifecycle if the status field is stale or unset.
-  if (position?.status === "active" || position?.status === "needs_clarification") return BLUEPRINT_STAGES.length;
-  if (position?.status === "under_review") return 3; // "Building the role blueprint"
-  if (position?.submitted_at) return 1; // "Reading your job description"
-  if (position?.created_at) return 0; // "Role created"
+  if (position?.status === "active" || position?.status === "needs_clarification") {
+    finalIdx = Math.max(finalIdx, BLUEPRINT_STAGES.length);
+  } else if (position?.status === "under_review") {
+    finalIdx = Math.max(finalIdx, 3); // "Building the role blueprint"
+  } else if (position?.submitted_at) {
+    finalIdx = Math.max(finalIdx, 1); // "Reading your job description"
+  } else if (position?.created_at) {
+    finalIdx = Math.max(finalIdx, 0); // "Role created"
+  }
 
-  return -1;
+  return finalIdx;
 }
 
 export function blueprintProgress(status: string, position?: {
