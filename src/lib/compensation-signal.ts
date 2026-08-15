@@ -196,16 +196,16 @@ export function classifyAlignment(
   if (role.currency && cand.currency && role.currency !== cand.currency) return "unknown";
   const lo = role.min ?? -Infinity;
   const hi = role.max ?? role.min ?? Infinity;
-  if (ask < lo * 0.95) return "below_range";
-  if (ask > hi * 1.05) return "above_range";
+  if (ask < lo) return "below_range";
+  if (ask > hi) return "above_range";
   return "in_range";
 }
 
 const ALIGNMENT_NOTE: Record<CompAlignment, string> = {
-  in_range: "The candidate's expectation sits inside the range you set at intake.",
-  above_range: "The candidate is asking above the range you set at intake.",
-  below_range: "The candidate is asking below the range you set at intake.",
-  unknown: "We can't compare yet — one side of the figure isn't on record.",
+  in_range: "In range — Candidate expectation sits inside the approved role range.",
+  above_range: "Above range — The candidate is asking for more than the range set at intake. Review if the gap can be closed by total rewards or negotiation.",
+  below_range: "Below range — The candidate expectation is below the minimum range set for this role.",
+  unknown: "Not comparable yet — one side of the figure isn't on record.",
 };
 
 // ─── Assembly ───────────────────────────────────────────────────────────────
