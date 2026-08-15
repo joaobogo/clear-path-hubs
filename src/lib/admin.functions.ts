@@ -366,11 +366,16 @@ export const listClients = createServerFn({ method: "GET" })
       for (const m of (matches ?? []) as AnyRow[]) {
         const c = stats[m.organization_id];
         if (!c) continue;
-        if (m.client_visibility === "visible") c.candidates_delivered += 1;
-        // Delivered candidates the client has not moved yet are the primary
-        // "waiting on client" signal for the Admin list.
-        if (m.client_visibility === "visible" && (m.client_stage === "delivered" || !m.client_stage)) {
-          c.actions_required += 1;
+        // The Admin list "Delivered" column must match the client workspace:
+        // any record where client_visibility is 'visible'.
+        if (m.client_visibility === "visible") {
+          c.candidates_delivered += 1;
+
+          // Actions required definition (waiting on client):
+          // 1. Delivered candidates in the initial stage (delivered or null)
+          if (!m.stage || m.stage === "delivered") {
+            c.actions_required += 1;
+          }
         }
       }
       for (const a of (activity ?? []) as AnyRow[]) {
