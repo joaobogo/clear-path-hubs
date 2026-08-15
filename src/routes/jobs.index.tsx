@@ -398,9 +398,9 @@ function JobsPage() {
                     <p className="mt-3 overflow-hidden text-ellipsis text-sm text-foreground/80 line-clamp-2">
                       {p.description_preview}
                     </p>
-                    {pos.facts.posted && (
+                    {p.facts.posted && (
                       <p className="mt-2 text-xs text-muted-foreground">
-                        Posted {pos.facts.posted}
+                        Posted {p.facts.posted}
                       </p>
                     )}
                     <div className="mt-4">
