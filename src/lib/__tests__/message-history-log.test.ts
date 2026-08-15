@@ -48,7 +48,8 @@ describe("Message History Log", () => {
     ]);
 
     // Test: Retrieve history as the client
-    const result = await (listMessageHistory as any).handler({
+    const { _listMessageHistoryHandler } = await import("../conversations.functions");
+    const result = await _listMessageHistoryHandler({
       data: { orgId, page: 1, pageSize: 50 },
       context: {
         supabase: supabaseAdmin,
