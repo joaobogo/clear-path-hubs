@@ -709,13 +709,12 @@ function CandidatesPage() {
                   </td>
                   <td className="min-w-[8rem] px-3 py-2 text-xs">{m.org_name ?? "—"}</td>
                   <td className="min-w-[10rem] px-3 py-2 text-xs">
-                    <Link
-                      to="/admin/positions/$id"
-                      params={{ id: m.position_id }}
+                    <a
+                      href={`/admin/positions/${m.position_id}`}
                       className="hover:underline"
                     >
                       {m.position_title ?? "—"}
-                    </Link>
+                    </a>
                   </td>
                   <td className="px-3 py-2">
                     <span
