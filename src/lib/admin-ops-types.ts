@@ -60,4 +60,5 @@ export type WorkQueue = {
   action_hint: string;
   items: QueueItem[];
   see_all?: { to: QueueSeeAll };
+  secondary_badge?: { label: string; tone: "default" | "neutral" | "warning" | "danger" } | null;
 };
