@@ -13,7 +13,7 @@ function item(over: Partial<QueueItem> & { key: string }): QueueItem {
     due_at: null,
     waiting_since: null,
     action: "Review candidate",
-    to: "/client/candidates",
+    to: "/client/candidates/m1",
     ...over,
   };
 }

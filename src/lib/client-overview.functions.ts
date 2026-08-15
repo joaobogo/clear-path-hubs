@@ -406,7 +406,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
         due_at: r.client_decision_due_at ?? null,
         waiting_since: r.delivered_at ?? r.stage_entered_at,
         action: "Review candidate",
-        to: "/client/candidates",
+        to: `/client/candidates/${r.id}`,
       };
     });
 
