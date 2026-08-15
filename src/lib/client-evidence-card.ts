@@ -124,7 +124,9 @@ export function isShareableVerifiedEvidence(row: ClientEvidenceRow): boolean {
   if (match && !SUPPORTING_MATCH_TYPES.has(match)) return false;
   const result = clean(row.result).toLowerCase();
   if (result && !SUPPORTING_RESULTS.has(result)) return false;
-  return Boolean(clean(row.interpretation) || clean(row.factual_quote));
+  const quote = clean(row.factual_quote);
+  if (quote && isTemplatedEvidence(quote)) return false;
+  return Boolean(clean(row.interpretation) || quote);
 }
 
 /**
