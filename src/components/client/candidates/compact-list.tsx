@@ -118,8 +118,8 @@ export function CompactList({
                   <ScoreCell c={c} />
                 </td>
                 <td className="py-2 px-3">
-                  <div className="font-medium">{c.fit.headline}</div>
-                  <div className="text-xs text-muted-foreground">{c.fit.recommendation}</div>
+                  <div className="font-medium whitespace-nowrap">{c.fit.headline}</div>
+                  <div className="text-[10px] leading-tight text-muted-foreground max-w-[120px]">{c.fit.recommendation}</div>
                 </td>
                 <td className="py-2 px-3 tabular-nums">
                   {c.coverage.must_met}/{c.coverage.must_total || "—"}
