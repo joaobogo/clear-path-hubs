@@ -1,6 +1,5 @@
 /**
- * One canonical mapping from a position's DB `status` to the status tab it
- * appears under in the client Roles list.
+ * Tab placement uses the same lifecycle model as the displayed role status.
  *
  * The old tab set only knew four statuses (active/draft/paused/closed), so a
  * role sitting in `under_review`, `submitted`, `needs_clarification` or
@@ -34,12 +33,8 @@ const STATUS_TO_TAB: Record<string, RoleStatusTabKey> = {
 
 const warned = new Set<string>();
 
-export function roleStatusTab(status: string | null | undefined, hires = 0): RoleStatusTabKey {
+export function roleStatusTab(status: string | null | undefined): RoleStatusTabKey {
   const key = String(status ?? "").trim();
-  
-  // A filled role (status 'filled') belongs to the Closed/Archived tab.
-  if (key === "filled") return "closed";
-  
   const tab = STATUS_TO_TAB[key];
   if (tab) return tab;
   if (key && !warned.has(key)) {
@@ -65,7 +60,7 @@ export function roleStatusTabLabel(tab: string): string {
 
 /** Per-tab counts across every role in the workspace. */
 export function countRolesByTab(
-  rows: Array<{ status: string; kpis?: { hires: number } }>,
+  rows: Array<{ client_status?: { key?: string } | null }>,
 ): Record<RoleStatusTabKey, number> {
   const counts: Record<RoleStatusTabKey, number> = {
     active: 0,
@@ -73,6 +68,11 @@ export function countRolesByTab(
     paused: 0,
     closed: 0,
   };
-  for (const r of rows) counts[roleStatusTab(r.status, r.kpis?.hires)] += 1;
+  for (const r of rows) {
+    const key = r.client_status?.key;
+    const tab: RoleStatusTabKey =
+      key === "active" ? "active" : key === "paused" ? "paused" : key === "closed" ? "closed" : "draft";
+    counts[tab] += 1;
+  }
   return counts;
 }

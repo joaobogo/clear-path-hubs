@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { computeClientRoleStatus } from "../client-role-status";
 
 describe("Role State Coherence", () => {
-  it("shows Offer Out even if status is closed but an offer is active", () => {
+  it("keeps a role Active when an offer remains open", () => {
     const status = computeClientRoleStatus({
       status: "closed",
       hires: 1,
@@ -11,10 +11,10 @@ describe("Role State Coherence", () => {
       shortlisted: 0,
       delivered: 0
     });
-    expect(status.key).toBe("offer_out");
+    expect(status.key).toBe("active");
   });
 
-  it("shows Hired for a closed role with a hire and no active pipeline", () => {
+  it("shows Closed for a filled role with a hire and no active pipeline", () => {
     const status = computeClientRoleStatus({
       status: "closed",
       hires: 1,
@@ -23,7 +23,7 @@ describe("Role State Coherence", () => {
       shortlisted: 0,
       delivered: 0
     });
-    expect(status.key).toBe("hired");
+    expect(status.key).toBe("closed");
   });
 
   it("shows Closed for a closed role with no hires and no pipeline", () => {
@@ -36,5 +36,15 @@ describe("Role State Coherence", () => {
       delivered: 0
     });
     expect(status.key).toBe("closed");
+  });
+
+  it("keeps booked interviews and pending decisions out of Archived", () => {
+    expect(computeClientRoleStatus({ status: "filled", hires: 1, interviewing: 2 }).key).toBe("active");
+    expect(computeClientRoleStatus({ status: "closed", hires: 1, delivered: 1 }).key).toBe("active");
+  });
+
+  it("uses lifecycle labels rather than candidate stages", () => {
+    expect(computeClientRoleStatus({ status: "active", hires: 1, offers: 1 }).label).toBe("Active");
+    expect(computeClientRoleStatus({ status: "under_review" }).label).toBe("Under review");
   });
 });

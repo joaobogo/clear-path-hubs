@@ -9,35 +9,34 @@ const label = (i: Parameters<typeof computeClientRoleStatus>[0]) =>
   computeClientRoleStatus(i).label;
 
 describe("computeClientRoleStatus", () => {
-  it("paused and closed always win over pipeline activity", () => {
+  it("paused wins while unresolved work prevents a false closed state", () => {
     expect(label({ status: "paused", offers: 3, interviewing: 2 })).toBe("Paused");
-    expect(label({ status: "archived", shortlisted: 5 })).toBe("Closed");
-    expect(label({ status: "closed", delivered: 2 })).toBe("Closed");
+    expect(label({ status: "archived", shortlisted: 5 })).toBe("Active");
+    expect(label({ status: "closed", delivered: 2 })).toBe("Active");
   });
 
-  it("hired beats offer, interview and shortlist", () => {
-    expect(label({ status: "active", hires: 1, offers: 2, interviewing: 3 })).toBe("Hired");
-    expect(label({ status: "filled", hires: 1 })).toBe("Hired");
+  it("never presents a candidate stage as the role status", () => {
+    expect(label({ status: "active", hires: 1, offers: 2, interviewing: 3 })).toBe("Active");
+    expect(label({ status: "filled", hires: 1 })).toBe("Closed");
   });
 
-  it("derives by furthest meaningful stage", () => {
-    expect(label({ status: "active", offers: 1, interviewing: 4 })).toBe("Offer out");
-    expect(label({ status: "active", interviewing: 1, shortlisted: 4 })).toBe("Interviewing");
-    expect(label({ status: "active", shortlisted: 2 })).toBe("Shortlist ready for you");
-    expect(label({ status: "active", delivered: 3 })).toBe("Shortlist ready for you");
-    expect(label({ status: "active" })).toBe("Sourcing");
+  it("uses Active for every live-search pipeline milestone", () => {
+    expect(label({ status: "active", offers: 1, interviewing: 4 })).toBe("Active");
+    expect(label({ status: "active", interviewing: 1, shortlisted: 4 })).toBe("Active");
+    expect(label({ status: "active", delivered: 3 })).toBe("Active");
+    expect(label({ status: "active" })).toBe("Active");
   });
 
-  it("shows Setting up before the search goes live", () => {
+  it("shows Under review before the search goes live", () => {
     for (const s of ["draft", "submitted", "under_review", "needs_clarification"]) {
-      expect(label({ status: s })).toBe("Setting up");
+      expect(label({ status: s })).toBe("Under review");
     }
   });
 
-  it("renders In progress for unmapped internal values, never the raw value", () => {
-    expect(label({ status: "weird_internal_state" })).toBe("In progress");
-    expect(label({ status: null })).toBe("In progress");
-    expect(label({ status: "" })).toBe("In progress");
+  it("renders Under review for unmapped internal values, never the raw value", () => {
+    expect(label({ status: "weird_internal_state" })).toBe("Under review");
+    expect(label({ status: null })).toBe("Under review");
+    expect(label({ status: "" })).toBe("Under review");
   });
 
   it("falls back to Status unavailable, not Sourcing", () => {

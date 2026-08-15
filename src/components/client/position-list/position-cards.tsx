@@ -282,12 +282,11 @@ export function EmptyState({
 }
 
 export function progressSummary(p: Row): string {
-  const isClosed = p.status === "closed" || p.status === "archived";
-  const hasActivePipeline = p.kpis.offers > 0 || p.kpis.interviewing > 0;
+  const isClosed = p.client_status?.key === "closed";
 
   if (p.status === "draft") return "Under review by TaaSFlow. You will be notified when the search goes live.";
   if (p.status === "paused") return "This search is currently paused.";
-  if (isClosed && !hasActivePipeline) return "This search is closed.";
+  if (isClosed) return "This search is closed.";
 
   const k = p.kpis;
   if (k.hires > 0) return `${k.hires} hire${k.hires === 1 ? "" : "s"} confirmed. Hiring activity remains available.`;
