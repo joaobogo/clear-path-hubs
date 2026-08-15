@@ -224,7 +224,25 @@ const STOP_WORDS = new Set([
   "bursts", "capacity", "capacities", "concurrency", "concurrent", "parallel", "parallelism", "thread",
   "threads", "threading", "async", "asynchronous", "synchronous", "sync", "blocking", "non-blocking",
   "nonblocking", "event-loop", "eventloop", "loop", "loops", "callback", "callbacks", "promise", "promises",
-  "future", "futures", "asyncio", "coroutine", 
+  "future", "futures", "asyncio", "coroutine",
+]);
+
+function requirementTokens(req: string): string[] {
+  return norm(req)
+    .split(/\s+/)
+    .filter((t) => t.length >= 2 && !STOP_WORDS.has(t));
+}
+
+function matchesRequirement(req: string, haystack: string, skills: string[]): boolean {
+  const tokens = requirementTokens(req);
+  if (tokens.length === 0) return false;
+  return tokens.some(
+    (t) =>
+      haystack.includes(t) ||
+      skills.some((s) => norm(s).includes(t) || norm(s) === t),
+  );
+}
+
 
 function labelsFrom(json: unknown): string[] {
   if (!Array.isArray(json)) return [];
