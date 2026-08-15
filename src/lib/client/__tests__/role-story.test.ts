@@ -13,6 +13,7 @@ const req = (
   status,
   explanation: null,
   evidence: [],
+  context: [],
 });
 
 const cand = (over: Partial<StoryCandidate>): StoryCandidate => ({

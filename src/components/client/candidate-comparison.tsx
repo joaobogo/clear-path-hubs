@@ -651,7 +651,7 @@ function RequirementGrid({
                               )}
                             </>
                           ) : (
-                            <p>No evidence recorded for this requirement yet.</p>
+                            <p>No direct evidence found for this requirement.</p>
                           )}
                         </TooltipContent>
                       </Tooltip>

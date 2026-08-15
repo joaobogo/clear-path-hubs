@@ -6,7 +6,7 @@
 // supabase client (RLS applies as the caller).
 import { isUnicornMatch, classifyBand } from "@/lib/scoring/bands";
 import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
-import { cleanQuote } from "@/lib/evidence/quote-hygiene";
+import { cleanQuote, isTemplatedEvidence } from "@/lib/evidence/quote-hygiene";
 
 import {
   buildRequirementRows,
@@ -741,6 +741,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
 
   // Contact release is a separate permission, so every quote goes through the
   // same hygiene pass as the criteria rows before it leaves the server.
+  // Generic template snippets (skills lists, profile summaries) are not evidence.
   const evidence: Array<{ label: string; snippet: string }> = Array.isArray(
     run?.evidence,
   )
@@ -750,7 +751,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
           label: String(e.label ?? e.type ?? "Evidence"),
           snippet: cleanQuote(String(e.snippet ?? e.value ?? "")),
         }))
-        .filter((e: { snippet: string }) => e.snippet.length > 0)
+        .filter((e: { snippet: string }) => e.snippet.length > 0 && !isTemplatedEvidence(e.snippet))
     : [];
 
 

@@ -7,7 +7,7 @@ const row = (
   label: string,
   status: RequirementRow["status"],
   importance: RequirementRow["importance"] = "must_have",
-): RequirementRow => ({ id, label, importance, status, explanation: null, evidence: [] });
+): RequirementRow => ({ id, label, importance, status, explanation: null, evidence: [], context: [] });
 
 // The three demo profiles as rendered on /client/candidates/:id.
 const MIGUEL: RequirementRow[] = [

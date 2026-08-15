@@ -362,16 +362,18 @@ export const RequirementRowView = memo(function RequirementRowView({
           {badge.label}
         </span>
       </div>
-      {row.evidence.length > 0 && (
+      {(row.evidence.length > 0 || row.context.length > 0) && (
         <Accordion type="single" collapsible className="mt-2">
           <AccordionItem value="evidence" className="border-none">
             <AccordionTrigger className="py-1 text-xs text-muted-foreground hover:no-underline">
-              Show evidence ({row.evidence.length})
+              {row.evidence.length > 0
+                ? `Show evidence (${row.evidence.length})`
+                : "Show context"}
             </AccordionTrigger>
             <AccordionContent>
-              <ul className="mt-1 space-y-2 border-l-2 border-muted pl-3 text-sm">
-                {row.evidence.length > 0 ? (
-                  row.evidence.map((e, i) => (
+              {row.evidence.length > 0 && (
+                <ul className="mt-1 space-y-2 border-l-2 border-primary/30 pl-3 text-sm">
+                  {row.evidence.map((e, i) => (
                     <li key={i}>
                       {e.source && (
                         <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
@@ -380,14 +382,41 @@ export const RequirementRowView = memo(function RequirementRowView({
                       )}
                       <div className="text-foreground/90">{e.snippet}</div>
                     </li>
-                  ))
-                ) : (
-                  <li className="text-muted-foreground italic">No direct evidence found</li>
-                )}
-              </ul>
+                  ))}
+                </ul>
+              )}
+              {row.evidence.length === 0 && (
+                <p className="text-sm text-muted-foreground italic">
+                  No direct evidence found for this requirement.
+                </p>
+              )}
+              {row.context.length > 0 && (
+                <div className="mt-3">
+                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                    Candidate context
+                  </div>
+                  <ul className="mt-1 space-y-2 border-l-2 border-muted pl-3 text-sm">
+                    {row.context.map((e, i) => (
+                      <li key={i}>
+                        {e.source && (
+                          <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                            {e.source}
+                          </div>
+                        )}
+                        <div className="text-muted-foreground">{e.snippet}</div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+      )}
+      {row.evidence.length === 0 && row.context.length === 0 && row.status === "not_evidenced" && (
+        <p className="mt-2 text-sm text-muted-foreground italic">
+          No direct evidence found for this requirement.
+        </p>
       )}
     </li>
   );
