@@ -42,11 +42,18 @@ const MONTH_YEAR = new Intl.DateTimeFormat(APP_LOCALE, {
   timeZone: WORKSPACE_TIMEZONE,
 });
 
+const MONTH_YEAR_UTC = new Intl.DateTimeFormat(APP_LOCALE, {
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
 function toDate(value: string | number | Date | null | undefined): Date | null {
   if (value == null || value === "") return null;
   const date = value instanceof Date ? value : new Date(value);
   return Number.isNaN(date.getTime()) ? null : date;
 }
+
 
 /** "14/08/2026, 22:25:06" — workspace timezone, never a raw ISO string. */
 export function formatDateTime(
