@@ -186,7 +186,6 @@ import { Route as ApiPublicBookingCalendlyWebhookRouteImport } from './routes/ap
 import { Route as ApiPublicBlueprintStatusIntakeIdRouteImport } from './routes/api/public/blueprint-status.$intakeId'
 import { Route as AuthenticatedTeamsActTokenRouteImport } from './routes/_authenticated/teams.act.$token'
 import { Route as AuthenticatedMeApplicationsIdRouteImport } from './routes/_authenticated/me.applications.$id'
-import { Route as AuthenticatedClientRolesSplatRouteImport } from './routes/_authenticated/client.roles.$'
 import { Route as AuthenticatedClientPositionsNewRouteImport } from './routes/_authenticated/client.positions.new'
 import { Route as AuthenticatedClientPositionsIdRouteImport } from './routes/_authenticated/client.positions.$id'
 import { Route as AuthenticatedClientConversationsConversationIdRouteImport } from './routes/_authenticated/client.conversations.$conversationId'
@@ -1169,12 +1168,6 @@ const AuthenticatedMeApplicationsIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedMeApplicationsRoute,
   } as any)
-const AuthenticatedClientRolesSplatRoute =
-  AuthenticatedClientRolesSplatRouteImport.update({
-    id: '/$',
-    path: '/$',
-    getParentRoute: () => AuthenticatedClientRolesRoute,
-  } as any)
 const AuthenticatedClientPositionsNewRoute =
   AuthenticatedClientPositionsNewRouteImport.update({
     id: '/new',
@@ -1411,7 +1404,7 @@ export interface FileRoutesByFullPath {
   '/client/plan': typeof AuthenticatedClientPlanRoute
   '/client/portfolio': typeof AuthenticatedClientPortfolioRoute
   '/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
-  '/client/roles': typeof AuthenticatedClientRolesRouteWithChildren
+  '/client/roles': typeof AuthenticatedClientRolesRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
   '/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
   '/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
@@ -1452,7 +1445,6 @@ export interface FileRoutesByFullPath {
   '/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/client/positions/new': typeof AuthenticatedClientPositionsNewRoute
-  '/client/roles/$': typeof AuthenticatedClientRolesSplatRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
@@ -1600,7 +1592,7 @@ export interface FileRoutesByTo {
   '/client/outreach': typeof AuthenticatedClientOutreachRoute
   '/client/plan': typeof AuthenticatedClientPlanRoute
   '/client/portfolio': typeof AuthenticatedClientPortfolioRoute
-  '/client/roles': typeof AuthenticatedClientRolesRouteWithChildren
+  '/client/roles': typeof AuthenticatedClientRolesRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
   '/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
   '/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
@@ -1640,7 +1632,6 @@ export interface FileRoutesByTo {
   '/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/client/positions/new': typeof AuthenticatedClientPositionsNewRoute
-  '/client/roles/$': typeof AuthenticatedClientRolesSplatRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
@@ -1799,7 +1790,7 @@ export interface FileRoutesById {
   '/_authenticated/client/plan': typeof AuthenticatedClientPlanRoute
   '/_authenticated/client/portfolio': typeof AuthenticatedClientPortfolioRoute
   '/_authenticated/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
-  '/_authenticated/client/roles': typeof AuthenticatedClientRolesRouteWithChildren
+  '/_authenticated/client/roles': typeof AuthenticatedClientRolesRoute
   '/_authenticated/client/settings': typeof AuthenticatedClientSettingsRoute
   '/_authenticated/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
   '/_authenticated/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
@@ -1840,7 +1831,6 @@ export interface FileRoutesById {
   '/_authenticated/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
   '/_authenticated/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/_authenticated/client/positions/new': typeof AuthenticatedClientPositionsNewRoute
-  '/_authenticated/client/roles/$': typeof AuthenticatedClientRolesSplatRoute
   '/_authenticated/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
   '/_authenticated/teams/act/$token': typeof AuthenticatedTeamsActTokenRoute
   '/api/public/blueprint-status/$intakeId': typeof ApiPublicBlueprintStatusIntakeIdRoute
@@ -2040,7 +2030,6 @@ export interface FileRouteTypes {
     | '/client/conversations/$conversationId'
     | '/client/positions/$id'
     | '/client/positions/new'
-    | '/client/roles/$'
     | '/me/applications/$id'
     | '/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
@@ -2228,7 +2217,6 @@ export interface FileRouteTypes {
     | '/client/conversations/$conversationId'
     | '/client/positions/$id'
     | '/client/positions/new'
-    | '/client/roles/$'
     | '/me/applications/$id'
     | '/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
@@ -2427,7 +2415,6 @@ export interface FileRouteTypes {
     | '/_authenticated/client/conversations/$conversationId'
     | '/_authenticated/client/positions/$id'
     | '/_authenticated/client/positions/new'
-    | '/_authenticated/client/roles/$'
     | '/_authenticated/me/applications/$id'
     | '/_authenticated/teams/act/$token'
     | '/api/public/blueprint-status/$intakeId'
@@ -3802,13 +3789,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMeApplicationsIdRouteImport
       parentRoute: typeof AuthenticatedMeApplicationsRoute
     }
-    '/_authenticated/client/roles/$': {
-      id: '/_authenticated/client/roles/$'
-      path: '/$'
-      fullPath: '/client/roles/$'
-      preLoaderRoute: typeof AuthenticatedClientRolesSplatRouteImport
-      parentRoute: typeof AuthenticatedClientRolesRoute
-    }
     '/_authenticated/client/positions/new': {
       id: '/_authenticated/client/positions/new'
       path: '/new'
@@ -4157,20 +4137,6 @@ const AuthenticatedClientPositionsRouteWithChildren =
     AuthenticatedClientPositionsRouteChildren,
   )
 
-interface AuthenticatedClientRolesRouteChildren {
-  AuthenticatedClientRolesSplatRoute: typeof AuthenticatedClientRolesSplatRoute
-}
-
-const AuthenticatedClientRolesRouteChildren: AuthenticatedClientRolesRouteChildren =
-  {
-    AuthenticatedClientRolesSplatRoute: AuthenticatedClientRolesSplatRoute,
-  }
-
-const AuthenticatedClientRolesRouteWithChildren =
-  AuthenticatedClientRolesRoute._addFileChildren(
-    AuthenticatedClientRolesRouteChildren,
-  )
-
 interface AuthenticatedClientRouteChildren {
   AuthenticatedClientAccountRoute: typeof AuthenticatedClientAccountRoute
   AuthenticatedClientAgentsRoute: typeof AuthenticatedClientAgentsRoute
@@ -4190,7 +4156,7 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientPlanRoute: typeof AuthenticatedClientPlanRoute
   AuthenticatedClientPortfolioRoute: typeof AuthenticatedClientPortfolioRoute
   AuthenticatedClientPositionsRoute: typeof AuthenticatedClientPositionsRouteWithChildren
-  AuthenticatedClientRolesRoute: typeof AuthenticatedClientRolesRouteWithChildren
+  AuthenticatedClientRolesRoute: typeof AuthenticatedClientRolesRoute
   AuthenticatedClientSettingsRoute: typeof AuthenticatedClientSettingsRoute
   AuthenticatedClientTalentMemoryRoute: typeof AuthenticatedClientTalentMemoryRoute
   AuthenticatedClientTalentPoolRoute: typeof AuthenticatedClientTalentPoolRoute
@@ -4223,7 +4189,7 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
   AuthenticatedClientPortfolioRoute: AuthenticatedClientPortfolioRoute,
   AuthenticatedClientPositionsRoute:
     AuthenticatedClientPositionsRouteWithChildren,
-  AuthenticatedClientRolesRoute: AuthenticatedClientRolesRouteWithChildren,
+  AuthenticatedClientRolesRoute: AuthenticatedClientRolesRoute,
   AuthenticatedClientSettingsRoute: AuthenticatedClientSettingsRoute,
   AuthenticatedClientTalentMemoryRoute: AuthenticatedClientTalentMemoryRoute,
   AuthenticatedClientTalentPoolRoute: AuthenticatedClientTalentPoolRoute,
