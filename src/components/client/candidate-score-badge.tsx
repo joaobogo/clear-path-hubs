@@ -111,7 +111,7 @@ export function CandidateScoreBadge({
 
       {fit && (
         <span
-          className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${ACCENT_CLASSES[fit.accent]} ${rechecking ? "opacity-70" : ""}`}
+          className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium ${ACCENT_CLASSES[fit.accent]} ${rechecking ? "opacity-70" : ""}`}
           title={
             rechecking
               ? `${fit.recommendation} · ${recheckNote}`
@@ -119,7 +119,12 @@ export function CandidateScoreBadge({
                 ? `${fit.recommendation} · ${support}`
                 : fit.recommendation
           }
+          aria-label={`Fit band: ${fit.recommendation}`}
         >
+          <span
+            className={`inline-block size-2 ${BAND_DOT[fit.accent]}`}
+            aria-hidden="true"
+          />
           {fit.headline}
         </span>
       )}
