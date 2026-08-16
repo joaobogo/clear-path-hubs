@@ -151,17 +151,18 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-016 · Org Record Integrity (A16) · MEDIUM
-Scope: /admin/organizations/$id
-Defect: CLIENT USERS 0 with 2 active members; Candidates tab missing stage/score/fit; Documents tab shows 0
-despite parsed CVs.
-Required fix: Fix org-member count query; join candidate latest match for stage/score/fit; count parsed CVs in
-Documents tab.
+TEXTO DO USUÁRIO: "P-003 · Build Pipeline Event-Driven (A3/B2) · BLOCKER
+Scope: src/lib/blueprint-pipeline.server.ts, /client/positions/$id, /admin/positions/$id
+Defect: Pipeline stuck at Stage 1/5 for 17h; advances only on manual actions; client and admin trackers are
+stale.
+Required fix: Make build-tracker stages advance on real events (or explicit failure+retry with a clear retry
+action); keep admin and client views in sync via the same source of truth.
 Acceptance criteria:
-• Open an org with 2 active client members; verify CLIENT USERS 2.
-• Open Candidates tab; verify each candidate shows stage, score, fit band.
-• Open Documents tab; verify parsed CV count matches storage.
-Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
+• Create a role via wizard and wait for event-driven progression.
+• Verify build tracker reaches Blueprint ready (or explicit Failed with retry) without manual staff clicks.
+• Check /client/positions/$id and /admin/positions/$id show the same stage and timestamp.
+• Simulate a downstream failure; verify the tracker shows Failed + a working retry button.
+Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
         }
       >
         {children}
