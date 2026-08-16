@@ -63,7 +63,7 @@ export type SearchResponse = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = Record<string, any>;
 
-import { sanitizeSearchTerm, orIlike, quoteFilterValue } from "./search/postgrest-filter";
+import { sanitizeSearchTerm, orIlike } from "./search/postgrest-filter";
 
 export const globalSearch = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -72,14 +72,6 @@ export const globalSearch = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const term = sanitizeSearchTerm(data.q);
     const like = `%${term}%`;
-    if (!term) {
-      return {
-        scope: data.scope ?? "client",
-        includeTest: false,
-        limit: LIMIT,
-        groups: emptyGroups(),
-      };
-    }
 
     // Resolve caller scope + accessible org IDs from memberships.
     const { data: memberships } = await supabase
@@ -108,6 +100,14 @@ export const globalSearch = createServerFn({ method: "POST" })
 
     // Bounded per-group limits.
     const LIMIT = 6;
+    if (!term) {
+      return {
+        scope: data.scope ?? "client",
+        includeTest: false,
+        limit: LIMIT,
+        groups: emptyGroups(),
+      };
+    }
 
     // Test/QA records follow the one global staff preference; client scope
     // never sees them, whatever the preference says.
