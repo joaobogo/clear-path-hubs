@@ -8,7 +8,7 @@ import {
   getOperationsIncidents,
   resolveIncident,
 } from "@/lib/admin.functions";
-import { listDeliveryFailures } from "@/lib/notifications.functions";
+import { listDeliveryFailures, type DeliveryFailure } from "@/lib/notifications.functions";
 import {
   retryParse,
   retryHydration,
