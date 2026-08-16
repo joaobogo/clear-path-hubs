@@ -155,14 +155,14 @@ const FINDINGS: Finding[] = [
     status: "open",
   },
   {
-    id: "F-013",
-    journey: "UX · Presentation",
-    title: "A11y + responsive audit incomplete (agent bailed before capture)",
-    route: "admin.candidates.$id, client.candidates.$id, /jobs, /me",
-    severity: "P2",
-    repro: "Third audit sub-agent stopped before capturing 375/768/1280 screenshots and running WCAG matrix.",
-    correction: "Rerun with focused Playwright script; check clipped panels, keyboard focus rings, aria-labels on score-band chips, non-color status conveyance.",
-    status: "open",
+    id: "F-014",
+    journey: "1 · Admin overview",
+    title: "Admin /admin work queue crashed repeatedly on inconsistent production data",
+    route: "src/routes/_authenticated/admin.index.tsx, src/components/admin/admin-widget-error-boundary.tsx",
+    severity: "P0",
+    repro: "Load /admin with data edge cases: a hire record with status closed_lost while the candidate match stage is hired, plus draft roles with null locations. The route used useSuspenseQuery and a single failure in any widget killed the entire page.",
+    correction: "Replaced useSuspenseQuery with useQuery in the work queue summary, wrapped every Overview widget (SLA banner, Portfolio health, Awaiting client decision, Offers and hires, Latest activity) in AdminWidgetErrorBoundary, and added a Header skeleton that derives the 'items waiting' count from the same query data as the section lists.",
+    status: "verified",
   },
 ];
 
