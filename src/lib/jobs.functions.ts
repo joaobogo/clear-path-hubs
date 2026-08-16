@@ -150,15 +150,10 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
           (p as { compensation_visibility?: string | null }).compensation_visibility,
         );
         const desc = (p.description ?? "").trim();
-        const primaryLoc = primaryLocationByPosition.get(p.id);
-        const rawLocation = p.location;
-        const augmentedLocation = withCountry(p.location, primaryLoc);
-        const finalLocation = titleCaseLocation(augmentedLocation);
-        console.log(`[listPublicPositions] ${p.id}: raw=${rawLocation}, augmented=${augmentedLocation}, final=${finalLocation}`);
         return {
           id: p.id,
           title: p.title,
-          location: finalLocation,
+          location: titleCaseLocation(withCountry(p.location, primaryLocationByPosition.get(p.id))),
           work_model: p.work_model,
           employment_type: p.employment_type,
           seniority: p.seniority,
