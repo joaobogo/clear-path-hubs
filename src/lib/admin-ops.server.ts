@@ -93,34 +93,22 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     ),
 
     // 3.5 — ready for client decision (admin already approved).
-    excludeTestOrgs(
-      s
-        .from("candidate_matches")
-        .select("id", { count: "exact" })
-        .eq("admin_status", "approved")
-        .eq("client_visibility", "visible")
-        .in("stage", ["delivered", "shortlisted", "reviewing"]),
-      scope,
-    ),
+    // Derived from matches in delivered+ status with no client decision row.
+    (async () => {
+      const { loadDecisionBacklog } = await import("./admin-decision-backlog.server");
+      const backlog = await loadDecisionBacklog(s, { includeTest: opts.includeTest ?? false });
+      return { data: [], count: backlog.rows.length };
+    })(),
 
+    // 4 — shared with the client, no decision recorded yet.
+    // The work-queue "Client decisions overdue" tile uses this.
+    // We slice to 8 for the preview list but the count reflects the whole backlog.
+    (async () => {
+      const { loadDecisionBacklog } = await import("./admin-decision-backlog.server");
+      const backlog = await loadDecisionBacklog(s, { includeTest: opts.includeTest ?? false });
+      return { data: backlog.rows, count: backlog.rows.length };
+    })(),
 
-    // 4 — shared with the client, no decision recorded yet. The page is read
-    // wide enough that the count below is the true total, not the page size:
-    // a count taken from a short page under-reports the queue.
-    excludeTestOrgs(
-      s
-        .from("candidate_matches")
-        .select(
-          "id,updated_at,stage,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(name)),client_decisions(id)",
-          { count: "exact" },
-        )
-        .eq("client_visibility", "visible")
-        .in("stage", ["delivered", "shortlisted", "reviewing"])
-        .lt("updated_at", ISO(3 * DAY))
-        .order("updated_at", { ascending: true })
-        .limit(1000),
-      scope,
-    ),
 
 
     // 5 — interviews requested, or happening in the next 48h.
