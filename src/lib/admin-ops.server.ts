@@ -151,9 +151,8 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
   ]);
 
 
-  const overdue = ((delivered.data ?? []) as Any[]).filter(
-    (m) => !(m.client_decisions ?? []).length,
-  );
+  const overdue = (delivered.data ?? []) as any[];
+
 
   const agingIntakes = aging as {
     items: Array<{
@@ -293,23 +292,24 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     {
       key: "client_overdue",
       label: "Client decisions overdue",
-      description: "Shared with the client three or more days ago, still no decision.",
-      count: overdue.length,
+      description: "Shared with the client, still no decision recorded.",
+      count: delivered.count ?? 0,
       action_hint: "Nudge the client or call it — the candidate is waiting.",
-      see_all: { to: "/admin/messages" },
+      see_all: { to: "/admin/operations" },
       items: overdue.slice(0, 8).map((m) => ({
-        id: m.id,
-        title: m.candidate_profiles?.full_name ?? "Candidate",
-        subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
+        id: m.match_id,
+        title: m.candidate_name ?? "Candidate",
+        subtitle: `${m.position_title ?? "—"} · ${m.client_name ?? "—"}`,
         meta: String(m.stage).replace(/_/g, " "),
-        waiting_since: m.updated_at,
-        target: { kind: "match" as const, id: m.id },
+        waiting_since: m.submitted_at,
+        target: { kind: "match" as const, id: m.match_id },
         action_label: "Chase decision",
-        owner: owner(m.positions?.owner_user_id),
-        claim: positionClaim(m.positions?.id),
-        tone: ageTone(m.updated_at, 5, 8),
+        owner: owner(m.owner_user_id),
+        claim: positionClaim(m.position_id),
+        tone: ageTone(m.submitted_at, 5, 8),
       })),
     },
+
     {
       key: "interviews",
       label: "Interviews to coordinate",
