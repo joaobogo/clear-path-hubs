@@ -151,18 +151,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "-020 · Support View Robustness (A20) · MEDIUM
-Scope: src/routes/_authenticated/admin.platform.support.tsx
-Defect: Read-only session context lost on reload; re-open no-ops; View Client Workspace button does nothing;
-30-min self-close not enforced.
-Required fix: Persist support session context; wire View Client Workspace; enforce 30-min self-close; make
-re-open functional.
+TEXTO DO USUÁRIO: "P-021 · Admin Notification Deep Links (A21/B15) · MEDIUM
+Scope: src/lib/notifications-resolver.server.ts, src/routes/_authenticated/admin.notifications.tsx
+Defect: Admin bell notifications link to /client/... dead ends.
+Required fix: Route every admin notification to an admin surface; route every client notification to a client
+surface.
 Acceptance criteria:
-• Open support view for a client org; reload; verify context is restored.
-• Click View Client Workspace; verify it opens the correct client workspace.
-• Simulate 30-min idle; verify the session self-closes.
-• Re-open a closed support session; verify it loads fresh data.
-Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
+• Trigger a new-client-message notification for an admin.
+• Click the bell notification; verify it opens /admin/messages or the candidate record, not /client.
+• Trigger a client notification; verify it opens a client page.
+Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
         }
       >
         {children}
