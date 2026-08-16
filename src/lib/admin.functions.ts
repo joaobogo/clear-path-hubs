@@ -305,7 +305,11 @@ export const listClients = createServerFn({ method: "GET" })
         "id,name,status,domain,industry,updated_at,archived_at,onboarding_status,dashboard_status,primary_contact_name,primary_contact_email,is_test_record",
       )
       .limit(500);
-    if (data.q) q = q.ilike("name", `%${data.q}%`);
+    if (data.q) {
+      const { ilikePattern } = await import("./search/postgrest-filter");
+      const pattern = ilikePattern(data.q);
+      if (pattern) q = q.ilike("name", pattern);
+    }
     if (data.status) q = q.eq("status", data.status);
     if (data.industry) q = q.eq("industry", data.industry);
     if (!data.include_archived) q = q.is("archived_at", null);
@@ -567,8 +571,9 @@ export const listPositions = createServerFn({ method: "GET" })
     else if (data.owner) base = base.eq("owner_user_id", data.owner);
     if (data.location) base = base.ilike("location", `%${data.location}%`);
     if (data.q) {
-      const term = `%${data.q}%`;
-      base = base.or(`title.ilike.${term},organizations.name.ilike.${term}`);
+      const { buildPositionSearchOr } = await import("./search/postgrest-filter");
+      const searchOr = await buildPositionSearchOr(s as never, data.q);
+      if (searchOr) base = base.or(searchOr);
     }
     if (!showTest) {
       base = excludeTestOrgs(base, scope);
@@ -608,8 +613,9 @@ export const listPositions = createServerFn({ method: "GET" })
       else if (data.owner) all = all.eq("owner_user_id", data.owner);
       if (data.location) all = all.ilike("location", `%${data.location}%`);
       if (data.q) {
-        const term = `%${data.q}%`;
-        all = all.or(`title.ilike.${term},organizations.name.ilike.${term}`);
+        const { buildPositionSearchOr } = await import("./search/postgrest-filter");
+        const searchOr = await buildPositionSearchOr(s as never, data.q);
+        if (searchOr) all = all.or(searchOr);
       }
       const { count: allCount } = await all;
       unfilteredTotal = allCount ?? unfilteredTotal;

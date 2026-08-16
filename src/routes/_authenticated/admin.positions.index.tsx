@@ -14,6 +14,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   Dialog,
   DialogContent,
@@ -293,13 +294,13 @@ function PositionsPage() {
 
       {search.tab === "attention" ? (
         <>
-          <OwnershipCoveragePanel includeTest={includeTest} q={search.q} />
+          <OwnershipCoveragePanel includeTest={includeTest} />
           <PositionsAttentionQueue includeTest={includeTest} />
         </>
       ) : (
       <>
-      <OwnershipCoveragePanel includeTest={includeTest} q={search.q} />
-      <PublishGatePanel includeTest={includeTest} q={search.q} />
+      <OwnershipCoveragePanel includeTest={includeTest} />
+      <PublishGatePanel includeTest={includeTest} />
 
       <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-card p-3">
 
@@ -696,7 +697,7 @@ function NewRoleDialog({ clients }: { clients: { id: string; name: string }[] })
         search: { step: undefined },
       });
     },
-    onError: (e: unknown) => toast.error((e as Error).message),
+    onError: (e: unknown) => toastError(e, { tone: "admin", fallback: "Couldn't create the role" }),
   });
   const valid = !!orgId && title.trim().length >= 2;
   return (

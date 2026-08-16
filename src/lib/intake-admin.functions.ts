@@ -102,9 +102,9 @@ export const listIntakeInbox = createServerFn({ method: "GET" })
     q = excludeTestOrgs(q, scope);
 
     if (data.q) {
-      q = q.or(
-        `company_name.ilike.%${data.q}%,role_title.ilike.%${data.q}%,primary_email.ilike.%${data.q}%`,
-      );
+      const { orIlike } = await import("./search/postgrest-filter");
+      const searchOr = orIlike(["company_name", "role_title", "primary_email"], data.q);
+      if (searchOr) q = q.or(searchOr);
     }
     switch (data.filter) {
       case "pending":

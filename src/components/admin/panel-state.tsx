@@ -13,6 +13,7 @@ import type { ReactNode } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PanelError } from "@/components/admin/panel-error";
 import { cn } from "@/lib/utils";
+import { looksTechnical } from "@/lib/error-taxonomy";
 
 /** The slice of a TanStack Query result a panel needs to be honest. */
 export type PanelQueryState = {
@@ -28,9 +29,16 @@ const FALLBACK_ERROR =
   "We couldn't load this panel. This is a read failure on our side, not an empty result.";
 
 export function panelErrorMessage(error: unknown): string {
-  if (error instanceof Error && error.message.trim()) return `${error.message}`;
-  if (typeof error === "string" && error.trim()) return error;
-  return FALLBACK_ERROR;
+  const raw =
+    error instanceof Error && error.message.trim()
+      ? error.message.trim()
+      : typeof error === "string" && error.trim()
+      ? error.trim()
+      : "";
+  // Backend/query internals (PostgREST logic trees, SQL, stack text) must
+  // never reach the screen — only messages written for a human survive.
+  if (!raw || raw.length > 200 || looksTechnical(raw)) return FALLBACK_ERROR;
+  return raw;
 }
 
 export function PanelSkeleton({ rows = 3, className }: { rows?: number; className?: string }) {
