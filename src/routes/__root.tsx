@@ -151,17 +151,18 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-008 · Client Preview Tab (A8) · HIGH
-Scope: src/routes/_authenticated/admin.candidates.$id.tsx
-Defect: Client Preview tab shows no client-visible data for approved candidates.
-Required fix: Render the true client-facing DTO in the Client Preview tab; reuse the same serializer used by
-/client/candidates/$id.
+TEXTO DO USUÁRIO: "P-009 · Agent Operations Truth (A9/B8) · HIGH
+Scope: src/lib/agent-ops/agent-ops.ts, src/lib/agent-ops/agent-ops.server.ts, /admin/ops/agents, /client/insights
+Defect: KPI tiles show 0 while runs exist; only 1 of 6 agents shown; superseded jobs stay Queued forever; client
+Insights differs from admin.
+Required fix: Unify KPI and list queries; mark superseded jobs explicitly; ensure client Insights and admin Ops
+use the same counts for the same org/window.
 Acceptance criteria:
-• Open an approved, published, live candidate in admin.
-• Click the Client Preview tab.
-• Verify it shows the same score banner, experience, and fit band as the client sees.
-• Open /client/candidates/$id for the same candidate; compare side-by-side.
-Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
+• Run several agent jobs; verify the KPI tile counts match the list length.
+• Supersede a job; verify its status changes to superseded, not stuck Queued.
+• Open /client/insights and verify Completed/Queued counts equal /admin/ops/agents for the same org.
+• Negative test: a job with no latest run must not show a stale technical-collision banner.
+Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
         {children}
