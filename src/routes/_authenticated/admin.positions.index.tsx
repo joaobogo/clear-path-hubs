@@ -293,13 +293,13 @@ function PositionsPage() {
 
       {search.tab === "attention" ? (
         <>
-          <OwnershipCoveragePanel includeTest={includeTest} q={search.q} />
+          <OwnershipCoveragePanel includeTest={includeTest} />
           <PositionsAttentionQueue includeTest={includeTest} />
         </>
       ) : (
       <>
-      <OwnershipCoveragePanel includeTest={includeTest} q={search.q} />
-      <PublishGatePanel includeTest={includeTest} q={search.q} />
+      <OwnershipCoveragePanel includeTest={includeTest} />
+      <PublishGatePanel includeTest={includeTest} />
 
       <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-card p-3">
 
