@@ -151,17 +151,18 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-022 · Small Admin Fixes (A22) · MEDIUM
-Scope: Various admin components
-Defect: Approved timestamp missing; quality panel stale after save; audit pagination flicker; bulk CV export
-missing parent audit event.
-Required fix: Backfill approved_at; refresh quality panel on save; fix pagination key; emit bulk_export audit
-parent event.
+TEXTO DO USUÁRIO: "P-023 · QA Report Close-Out (A23) · HIGH
+Scope: src/routes/_authenticated/admin.qa-report.tsx, src/lib/scoring/*
+Defect: F-006 transactional approve; F-008 disqualifiers write eligibility; F-009 rubric_versions; F-010 unique
+index; F-011 Realtime RLS; F-012 notification RLS; F-013 a11y/responsive.
+Required fix: Implement each F-item and update the QA report register truthfully as each closes.
 Acceptance criteria:
-• Open an approved role; verify Approved timestamp is present.
-• Edit requirements and save; verify quality panel updates without hard reload.
-• Paginate audit events; verify rows match the new header immediately.
-• Bulk export CVs; verify a single bulk_export audit event with count.
+• Approve for client; verify it runs in a transaction and rolls back on error.
+• Submit a dealbreaker answer; verify eligibility_checks record is created with status ineligible.
+• Create a rubric version; verify score_runs.rubric_version_id is populated and review tab shows version.
+• Add duplicate candidate_match; verify unique constraint prevents it.
+• Verify Realtime and notification_events respect RLS.
+• Run a11y/responsive pass at 375/768/1280.
 Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
