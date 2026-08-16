@@ -151,8 +151,18 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "Prompt 2 · Severity: HIGH · Scope: src/lib/intelligence/cv-parser.server.ts
-Defect: Unreadable/No-text-layer PDFs stuck at 3-attempt ceiling. Required Fix: Detect unreadable PDFs (0 characters extracted) early. Show truthful feedback to candidate immediately: “We couldn’t read your file — please upload a text-based PDF or DOCX.” Acceptance Criteria: 1. Upload a “scanned” image-only PDF. 2. Verify immediate UI feedback (don’t wait for 3 backend retries). 3. Verify staff sees “Unreadable PDF” status in candidate list."`
+TEXTO DO USUÁRIO: "Prompt 5 · Severity: HIGH · Scope: src/components/jobs/screening-form.tsx
+Defect: Screening questions don’t enforce dealbreakers or record eligibility correctly (F-008 parity). Required Fix: map screening answers to eligibility_checks table. If a dealbreaker answer is provided, set eligibility_status to ‘ineligible’ and show an honest outcome. Acceptance Criteria: 1. Answer “No” to a mandatory “Do you have 5+ years experience?” dealbreaker. 2. Submit. 3. Verify eligibility_checks record is created with status='ineligible'.
+
+(Full document contains all 10+ prompts for the application flow)
+
+3. Regression Protect-List
+Job board parity (Real employer names, locations).
+Existing published roles remain visible.
+Application audit trail intact.
+Score runs remain immutable.
+4. Final Rejection Contract
+“Reply lacks specific evidence. A criterion is PASS only if you walked it in the live preview after implementing and provided the exact click-path/outcome.”"`
         }
       >
         {children}
