@@ -360,7 +360,7 @@ export async function retryProcessingJob(
       await s
         .from("processing_jobs")
         .update({
-          status: "cancelled",
+          status: "superseded",
           error_code: "superseded_by_retry",
           error_message: `Retried as a parse_and_score job for application ${applicationId}.`,
           completed_at: new Date().toISOString(),
