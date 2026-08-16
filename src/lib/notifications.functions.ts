@@ -483,37 +483,29 @@ export const listDeliveryFailures = createServerFn({ method: "GET" })
     const { data: isStaff } = await context.supabase.rpc("is_platform_staff", { _user: context.userId });
     if (!isStaff) throw new Error("Forbidden");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { loadDeliveryFailures } = await import("./notification-failures.server");
     const { readEmailConfig } = await import("./notification-email.server");
-    const [failuresRes, recentRes] = await Promise.all([
-      supabaseAdmin
-        .from("notification_deliveries")
-        .select(
-          "id, channel, status, error_code, error_message, attempt_count, last_attempt_at, updated_at, notification_id, notifications:notification_id(title, audience, recipient_user_id, event_type)",
-        )
-        .in("status", ["failed", "bounced", "suppressed"])
-        .order("updated_at", { ascending: false })
-        .limit(100),
-      supabaseAdmin
-        .from("notification_deliveries")
-        .select("status, channel")
-        .gte("created_at", new Date(Date.now() - (inputData.window_days ?? 7) * 86_400_000).toISOString())
-        .limit(2000),
-    ]);
-    if (failuresRes.error) throw failuresRes.error;
+
+    // Operations page, exception digest, and notifications panel must all read
+    // the same 7-day windowed ledger so "Delivery failures (7d)" always matches.
+    const failures = await loadDeliveryFailures(supabaseAdmin as never);
 
     const counts: Record<string, number> = {};
-    for (const row of recentRes.data ?? []) {
-      const k = `${row.channel}:${row.status}`;
+    for (const item of failures.items) {
+      const k = `${item.channel}:${item.ledger}:${item.reason}`;
       counts[k] = (counts[k] ?? 0) + 1;
     }
+
     const cfg = readEmailConfig();
     return {
-      items: failuresRes.data ?? [],
+      items: failures.items,
       counts,
+      window_days: failures.windowDays,
       // Never expose keys — only whether a provider is usable and why not.
       email: { configured: cfg.configured, reason: cfg.reason },
     };
   });
+
 
 export const retryFailedDelivery = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
