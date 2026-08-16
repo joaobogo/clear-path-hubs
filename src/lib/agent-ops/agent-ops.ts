@@ -471,6 +471,17 @@ export type AgentRunRow = {
   actions: RunActionKey[];
 };
 
+/** Status of one agent inside the reported window. `idle` is a status too. */
+export type AgentWindowStatus = "running" | "queued" | "failing" | "paused" | "idle";
+
+export const AGENT_WINDOW_STATUS_LABELS: Record<AgentWindowStatus, string> = {
+  running: "Running",
+  queued: "Queued",
+  failing: "Failing",
+  paused: "Paused",
+  idle: "Idle",
+};
+
 export type AgentOpsConsole = {
   generated_at: string;
   counts: Record<RunBucket, number>;
@@ -480,7 +491,11 @@ export type AgentOpsConsole = {
     name: string;
     workspaces_paused: number;
     active: number;
+    queued: number;
+    runs: number;
     failed_24h: number;
+    status: AgentWindowStatus;
   }>;
+
   window_hours: number;
 };
