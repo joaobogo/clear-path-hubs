@@ -151,18 +151,19 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-004 · Interview Slot Proposing (A4/B10) · BLOCKER
-Scope: src/routes/_authenticated/admin.index.tsx, /admin/interviews, /client/interviews
-Defect: Propose-interview-slots only exists on Overview work queue; candidate record shows dead text; SLA
-owner is sometimes a client user; bell CTA lands on candidate list.
-Required fix: Add a Propose slots action on candidate record and client/interviews; clear the 24h SLA breach
-when slots are proposed; ensure SLA owner is always staff.
+TEXTO DO USUÁRIO: "P-005 · Share Links + Talent Memory Audit (A5/B5) · HIGH
+Scope: src/routes/_authenticated/admin.organizations.$id.tsx, /client/memory
+Defect: No admin surface or audit events for client share links and talent memory actions; revoked public URLs
+may still return data.
+Required fix: Add read-only Shares and Talent Memory tabs on org record; emit audit events for
+create/revoke/archive/rediscover; ensure revoked URLs serve nothing.
 Acceptance criteria:
-• Open a candidate at Interview requested stage.
-• Click Propose slots from the candidate record, not just the overview.
-• Submit proposed slots and verify the SLA breach clears on admin and client.
-• Verify the SLA owner column is a staff user, never a client user.
-Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
+• From /client/memory, add a note and create a public share link.
+• Open /admin/organizations/$id and verify Shares and Talent Memory tabs show the actions with timestamps.
+• Revoke the share link and open the public URL in an incognito window; verify it returns 403/404, not the
+document.
+• Check audit events include share_created, share_revoked, memory_added, memory_archived.
+Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
         {children}
