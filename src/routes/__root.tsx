@@ -151,17 +151,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-006 · Recompute / Rescore (A6/B3) · HIGH
-Scope: src/lib/scoring/score-engine.server.ts, /admin/candidates/$id, /client/candidates/$id
-Defect: No Recompute control; 17-item queue unresolvable; engine attribution contradicts itself; client banner
-shows stale engine version.
-Required fix: Recompute must append an immutable score_run with a consistent engine_version, update all
-surfaces, and clear the out-of-date banner.
+TEXTO DO USUÁRIO: "P-007 · Search Sanitization (A7) · HIGH
+Scope: src/lib/search/postgrest-filter.ts, /admin/positions
+Defect: Raw PostgREST logic-tree errors leak to the UI for queries like q=( (invalid syntax).
+Required fix: Sanitize/escape input before building OR filters; wrap construction in try/catch; return clean empty
+state on malformed input.
 Acceptance criteria:
-• Open a candidate with a stale engine version banner.
-• Click Recompute and wait for the run to complete.
-• Verify a new score_run row exists with the new engine_version; old run remains immutable.
-• Verify the client banner disappears and the admin Review tab shows the new run.
+• Go to /admin/positions and search for q=( (invalid syntax.
+• Verify the UI shows No results found, not a technical error.
+• Search for strings containing hyphens, percent signs, and quotes; verify no error.
+• Audit all other admin lists that use the same filter builder and apply the same fix.
 Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
