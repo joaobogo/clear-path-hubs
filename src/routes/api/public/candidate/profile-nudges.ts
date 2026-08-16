@@ -6,10 +6,11 @@ import {
   newTraceId,
   rateLimitResponse,
 } from "@/lib/public-api/rate-limit";
+import { requireCronSecret } from "@/lib/public-api/cron-auth";
 
 /**
  * Bounded profile-completion nudges (max two per candidate, ever). Called by the
- * scheduler with the project's publishable key in the `apikey` header.
+ * scheduler with the server-only CRON_INVOKE_SECRET in the `x-cron-secret` header.
  */
 export const Route = createFileRoute("/api/public/candidate/profile-nudges")({
   server: {
@@ -18,17 +19,8 @@ export const Route = createFileRoute("/api/public/candidate/profile-nudges")({
         const cronDecision = consumeRateLimit("cron_invoke", clientIp(request), PUBLIC_RATE_LIMITS.cron_invoke);
         if (cronDecision.limited) return rateLimitResponse(newTraceId("cron_invoke"), cronDecision);
 
-        const apiKey =
-          request.headers.get("apikey") ??
-          request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ??
-          "";
-        const expected = process.env.SUPABASE_PUBLISHABLE_KEY ?? "";
-        if (!expected || apiKey !== expected) {
-          return new Response(JSON.stringify({ error: "unauthorized" }), {
-            status: 401,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
+        const denied = requireCronSecret(request);
+        if (denied) return denied;
 
         try {
           const { runProfileNudges } = await import("@/lib/candidate/profile-nudges.server");

@@ -1,8 +1,7 @@
 // Public pipeline runner endpoint.
-// Auth: requires the Supabase publishable key in `apikey` header (matches
-// the canonical /api/public/* auth pattern). This is a public URL only so
-// that pg_cron and the fire-and-forget internal caller can reach it — the
-// key gate keeps the outside world out.
+// Auth: requires the server-only CRON_INVOKE_SECRET in the `x-cron-secret`
+// header. The URL is public only so pg_cron and internal callers can reach it;
+// the secret gate keeps the outside world out.
 //
 // Body:
 //   { match_id: uuid }   → run pipeline for that match
@@ -13,6 +12,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { readJsonWithLimit } from "@/lib/public-api/body-limit";
 import { PUBLIC_BODY_LIMITS } from "@/lib/public-api/rate-limit";
+import { requireCronSecret } from "@/lib/public-api/cron-auth";
 import {
   PUBLIC_RATE_LIMITS,
   clientIp,
@@ -34,13 +34,8 @@ export const Route = createFileRoute("/api/public/pipeline/run")({
         const cronDecision = consumeRateLimit("cron_invoke", clientIp(request), PUBLIC_RATE_LIMITS.cron_invoke);
         if (cronDecision.limited) return rateLimitResponse(newTraceId("cron_invoke"), cronDecision);
 
-        const expected = process.env.SUPABASE_PUBLISHABLE_KEY;
-        const provided = request.headers.get("apikey") ?? "";
-        if (!expected || provided !== expected) {
-          return new Response(JSON.stringify({ ok: false, error: "unauthorized" }), {
-            status: 401, headers: { "Content-Type": "application/json" },
-          });
-        }
+        const denied = requireCronSecret(request);
+        if (denied) return denied;
         const read = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.pipeline_run);
         if (!read.ok) {
           return Response.json({ ok: false, error: read.error, ...read.detail }, { status: read.status });
