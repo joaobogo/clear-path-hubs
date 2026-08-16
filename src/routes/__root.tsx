@@ -151,18 +151,29 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "Prompt 5 · Severity: HIGH · Scope: src/components/jobs/screening-form.tsx
-Defect: Screening questions don’t enforce dealbreakers or record eligibility correctly (F-008 parity). Required Fix: map screening answers to eligibility_checks table. If a dealbreaker answer is provided, set eligibility_status to ‘ineligible’ and show an honest outcome. Acceptance Criteria: 1. Answer “No” to a mandatory “Do you have 5+ years experience?” dealbreaker. 2. Submit. 3. Verify eligibility_checks record is created with status='ineligible'.
+TEXTO DO USUÁRIO: "TaaSFlow CLIENT Workspace MVP Remediation Plan
+Status: DRAFT (Awaiting Execution) Last Audit: Rounds 2-3 (2026-08-15) - FAIL Objective: 100% MVP Status (Zero leakage, zero errors, zero broken controls)
 
-(Full document contains all 10+ prompts for the application flow)
-
-3. Regression Protect-List
-Job board parity (Real employer names, locations).
-Existing published roles remain visible.
-Application audit trail intact.
-Score runs remain immutable.
-4. Final Rejection Contract
-“Reply lacks specific evidence. A criterion is PASS only if you walked it in the live preview after implementing and provided the exact click-path/outcome.”"`
+1. Inventory Table
+#	Route / Component	Widget/Control	Prompt #
+1	/client (Overview)	Decision Queue / Action Cards	Prompt 17
+2	/client/positions	Role List / Detail Feed	Prompt 6
+3	/client/positions/new	Wizard (Location, Model, Weights)	Prompt 1
+4	/client/positions/$id	Build Tracker (5 Stages)	Prompt 2
+5	/client/candidates/$id	Score Banner / Engine Version	Prompt 3
+6	/client/candidates/$id	CV Download / Consent Gate	Prompt 4
+7	/client/candidates/$id	Stage Actions (Shortlist, NMF, etc.)	Prompt 9
+8	/client/memory	Talent Memory / Share Links	Prompt 5
+9	/client/messages	Staff Identity / Thread Labels	Prompt 7
+10	/client/insights	Agent Run Truth / Analytics	Prompt 8
+11	/client/interviews	Slot Proposals / Confirmation	Prompt 10
+12	/client/settings	Notification Preferences / Team	Prompt 15
+13	Everywhere	Bell Notifications / Deep Links	Prompt 15
+14	Everywhere	Mobile Responsive Pass (375px)	Prompt 18
+15	Everywhere	Error Boundaries / Loading States	Prompt 18
+2. Fix Prompt Series
+Prompt 1 · Severity: BLOCKER · Scope: /client/positions/new, src/lib/client-pipeline-lane.ts
+Defect: Wizard captures location, model, and weights, but position record arrives empty/defaulted. Required Fix: Ensure the createPosition mutation payload correctly maps all wizard step data to the backend position record. Acceptance Criteria: 1. Create role “Product Designer” in “Lisbon”, “Hybrid”, with specific custom weights. 2. Complete wizard. 3. Verify Role Detail > Settings shows all 3 fields correctly (not “Remote” or 0%)."`
         }
       >
         {children}
