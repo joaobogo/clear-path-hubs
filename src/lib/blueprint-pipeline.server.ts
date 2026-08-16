@@ -171,10 +171,8 @@ async function applyBlueprintToPosition(
   const existingContext = (current?.intake_context ?? {}) as Record<string, unknown>;
 
   // A blueprint has already been applied to this role once, so a person may
-  // have edited these fields since. A retry must never silently overwrite
-  // their work — it only fills what is still empty.
-  const isRerun = Boolean(current?.blueprint_generated_at);
-
+  // have edited these fields since. Generated values are gap-fillers only:
+  // they never replace data a client or staff member already provided.
   const requirements = bp.must_have_skills.map((label) => ({ label, kind: "skill", weight: 1 }));
   const preferred = bp.nice_to_have_skills.map((label) => ({ label }));
   const dealbreakers = bp.dealbreakers.map((label) => ({ label }));
@@ -213,9 +211,10 @@ async function applyBlueprintToPosition(
 
   const patch: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(generated)) {
-    // On a retry, keep whatever a human already put there.
-    if (isRerun && !isEmptyValue((current as Record<string, unknown> | null)?.[key])) continue;
-    if (isEmptyValue(value) && isRerun) continue;
+    const existing = (current as Record<string, unknown> | null)?.[key];
+    // Never overwrite values a human already provided — generated content fills gaps only.
+    if (!isEmptyValue(existing)) continue;
+    if (isEmptyValue(value)) continue;
     patch[key] = value;
   }
 
