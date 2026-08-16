@@ -151,15 +151,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-025 · Client Build Tracker (B2) · BLOCKER
-Scope: /client/positions/$id, src/lib/client-pipeline-lane.ts
-Defect: Build tracker does not progress without staff actions and can freeze mid-pipeline.
-Required fix: Drive tracker stages from the same event source used by admin; surface explicit failure+retry.
+TEXTO DO USUÁRIO: "P-026 · Stale Engine Banner (B3) · HIGH
+Scope: /client/candidates/$id
+Defect: Client banner shows stale engine version (demo-coverage-fill-2026-08-13) after recomputation.
+Required fix: Clear the banner when the latest score_run uses the current engine version; ensure version is
+consistent across client and admin.
 Acceptance criteria:
-• Create a role via client wizard.
-• Verify tracker advances to Blueprint ready without manual admin clicks.
-• If a failure occurs, verify Retry is visible and functional.
-• Compare stage and timestamp with /admin/positions/$id.
+• Open client candidate with stale engine banner.
+• Trigger recompute from admin.
+• Verify banner disappears on client after refresh.
+• Verify engine version matches admin candidate view.
 Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
