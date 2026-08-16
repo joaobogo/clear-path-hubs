@@ -52,7 +52,7 @@ export interface NormalizedError {
 // row-level security policy for table ...", "permission denied", "duplicate key
 // value", "column x does not exist"), which reads as a system leak, not guidance.
 const RAW_LEAK =
-  /(supabase|postgrest|pgrst|jwt|sql|relation ".*"|stack|at .*\(.*:\d+:\d+\)|\{"|\[object|row-level security|violates|permission denied|duplicate key|constraint|column .* does not exist|for table ")/i;
+  /(supabase|postgrest|pgrst|jwt|sql|relation ".*"|stack|at .*\(.*:\d+:\d+\)|\{"|\[object|row-level security|violates|permission denied|duplicate key|constraint|column .* does not exist|for table "|logic tree|failed to parse|\.ilike\.|\.eq\.|\borgs?\b.*\bin\.\(|[a-z_]+_failed:)/i;
 
 export function newCorrelationId(): string {
   const rand =
