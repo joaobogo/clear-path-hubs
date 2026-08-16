@@ -238,6 +238,19 @@
     overflow-wrap: normal;
     word-break: normal;
   }
+
+  /* Visible keyboard focus across all interactive controls. */
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  /* Ensure minimum tap target height on touch devices for native inputs. */
+  @media (pointer: coarse) {
+    button, a, input, select, textarea, [role="tab"], [role="button"] {
+      min-height: 44px;
+    }
+  }
 }
 
 @keyframes dash {
