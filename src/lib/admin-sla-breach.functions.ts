@@ -19,11 +19,6 @@ export const getSlaBreaches = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { loadSlaBreaches } = await import("./admin-sla-breach.server");
     return loadSlaBreaches(supabaseAdmin as never, { includeTest: data.include_test ?? false });
-    const { requireStaff } = await import("./admin-ops.server");
-    await requireStaff(context.userId);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { loadSlaBreaches } = await import("./admin-sla-breach.server");
-    return loadSlaBreaches(supabaseAdmin as never, { includeTest: data.include_test ?? false });
   });
 
 export const acknowledgeBreach = createServerFn({ method: "POST" })
