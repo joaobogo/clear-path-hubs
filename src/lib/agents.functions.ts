@@ -8,6 +8,7 @@ import {
   type AgentKey,
 } from "@/lib/agents/registry";
 import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
+import { stageLabel } from "@/lib/stage-aging";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Db = any;
@@ -96,7 +97,7 @@ function sentenceFromFeed(row: Db): string {
 
   switch (type) {
     case "candidate_stage_changed":
-      return `A candidate moved to ${payload.to ? `"${String(payload.to)}"` : "the next stage"} on ${title}.`;
+      return `A candidate moved to ${payload.to ? stageLabel(String(payload.to)) : "the next stage"} on ${title}.`;
     case "client_shortlisted":
       return `A candidate was shortlisted on ${title}.`;
     case "client_approved":
