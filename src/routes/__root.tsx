@@ -151,18 +151,18 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-018 · Evidence UI Cleanup (A18) · MEDIUM
-Scope: src/components/scoring/score-breakdown.tsx
-Defect: Literal ([object Object]) citations; unrelated quotes; Admin-verified chips while header says none
-human-verified.
-Required fix: Fix citation rendering to stringify objects; validate quote-to-dimension mapping; align verified chip
-with underlying verification state.
+TEXTO DO USUÁRIO: "P-019 · Copy/Label Corrections (A19) · MEDIUM
+Scope: src/lib/human-labels.ts, src/lib/admin-ops.server.ts, src/components/admin/position-actions.tsx
+Defect: Raw toast approval_blocked; unpaid role shows client checkout copy to admin; WORK AUTH raw JSON;
+Your team badge on client actors.
+Required fix: Humanize all toast/label copy; ensure admin actions show admin copy; format intake answers for
+humans; badge client actors correctly.
 Acceptance criteria:
-• Open score breakdown for any scored candidate.
-• Verify citations render as readable text, not [object Object].
-• Verify each quote is under the correct dimension.
-• Verify Admin-verified chip only appears when a human verification record exists.
-Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
+• Trigger approval_blocked; verify toast reads Approval blocked — payment required.
+• Approve an unpaid role as admin; verify copy is admin-facing, not client checkout.
+• Open a candidate with work authorization answer; verify it is human-readable, not JSON.
+• Verify CV trail actor badges distinguish client vs staff.
+Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
         {children}
