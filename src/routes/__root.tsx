@@ -151,24 +151,22 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "PROMPT D — Staff notification fan-out for new applications (FAIL)
+        TEXTO DO USUÁRIO: "PROMPT E — Candidate portal /me shell blockers (re-verify)
 Why it matters
-STABILIZATION.md line 1315, journey item 7: 'Staff in-app notification for a new application' is
-marked FAIL — open.
+STABILIZATION.md lists 6 BLOCKERs where /me, /me/applications, /me/profile, /me/cv, /me/messages
+and /me/settings rendered only the marketing shell. Later work claims these routes are fine — the
+ledger was never re-verified.
 Prompt
-Fix the staff in-app notification fan-out for new applications (STABILIZATION item 7, currently
-FAIL).
-1. Reproduce: submit an application to a demo position and confirm no in-app notification
-reaches the assigned staff/owner.
-2. Fix the fan-out so application_received creates notification rows for the correct recipients
-(position owner + operations), scoped by RLS so no cross-org leakage is possible.
-3. Notifications must deep-link to the specific candidate review, use human-readable labels (no
-snake_case, no raw IDs, no ISO timestamps), and auto-resolve once the underlying decision is
-taken.
-4. Add an e2e test that submits an application and asserts exactly one notification per recipient
-(no duplicates on double submit).
-5. Update STABILIZATION.md item 7 to PASS only with the test output attached.
-Report: files changed, test output, and anything not fixed with the reason."`
+Re-verify the candidate portal blockers recorded in STABILIZATION.md.
+1. With a seeded candidate persona, load /me, /me/applications, /me/profile, /me/cv,
+/me/messages, /me/settings and capture headings, text length, and interactive element counts.
+2. If any route still renders the marketing shell instead of the portal, fix the route/layout
+guard so authenticated candidates always get the portal shell.
+3. Confirm on each route: applications list with real stages, PDF-only CV upload, message
+thread, and personal details editing all work.
+4. Confirm signed-out access redirects to auth rather than showing an empty shell.
+5. Update the BROKEN table in STABILIZATION.md with the evidence (PASS + what you observed), not
+an assumption."`
         }
       >
         {children}
