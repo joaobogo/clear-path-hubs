@@ -151,21 +151,20 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "PROMPT F — Close the 850 UNVERIFIED interactive elements
+        TEXTO DO USUÁRIO: "PROMPT G — Slow first-paint on authenticated routes
 Why it matters
-STABILIZATION.md catalogues 943 interactive elements, of which ~850 are still marked UNVERIFIED.
-The final launch audit cannot pass while the ledger is mostly unverified.
+Observation in STABILIZATION.md: at 2.5s after domcontentloaded every authenticated route was
+still empty; content appeared only after waiting for a heading (up to ~30s in dev).
 Prompt
-Convert the UNVERIFIED backlog in STABILIZATION.md into real verification.
-1. Group the ~850 unverified elements by route family (public, admin, client, candidate) and by
-expected behaviour (client-side vs server call).
-2. Write Playwright coverage that exercises each group's representative flows against the demo
-org, asserting observable outcomes (URL change, row change, toast text, persisted state after
-reload) — not just that a click did not throw.
-3. Mark each ledger line PASS with the test that proves it, or FAIL with the symptom. Do not mark
-anything PASS without evidence.
-4. Report the final tally (PASS / FAIL / remaining UNVERIFIED) and list every remaining FAIL with
-severity so the MVP go/no-go is an honest decision."`
+Fix perceived load time on authenticated routes.
+1. Measure real production-build timings for /admin, /client, /me (not dev cold-compile) and
+report them.
+2. Remove waterfalls: prefetch route data in loaders via ensureQueryData, and avoid a single
+slow query blocking the whole shell.
+3. Every authenticated route renders skeletons immediately — no blank screen while data loads.
+4. Isolate widget failures behind error boundaries so one slow/failing panel never blanks the
+page.
+5. Report before/after numbers per route."`
         }
       >
         {children}
