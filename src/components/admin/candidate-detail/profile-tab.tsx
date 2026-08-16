@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Row } from "@/components/admin/candidate-detail/primitives";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { formatWorkAuthorization } from "@/lib/human-labels";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
