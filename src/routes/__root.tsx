@@ -151,8 +151,20 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "Prompt 4 · Severity: BLOCKER · Scope: src/lib/cv-download.functions.ts, /client/candidates/$id
-Defect: CVs/Contact details available pre-interview via blanket release. Required Fix: Enforce pre-interview redaction in the UI and a server-side check in the download server function. Acceptance Criteria: 1. View a candidate at “Shortlisted” stage who hasn’t been interviewed. 2. Verify contact details are blurred/redacted. 3. Attempt CV download; verify it returns a redacted version or 403 until interview consent is recorded."`
+TEXTO DO USUÁRIO: "Prompt 7 · Severity: HIGH · Scope: src/components/comms/thread-message.tsx, src/lib/staff-persona.server.ts
+Defect: Staff names/hashes visible to client; sender labels inconsistent. Required Fix: Force all staff-originated messages to render with label “TaaSFlow team”. Acceptance Criteria: 1. Send message from Admin (as “João”). 2. View in Client workspace. 3. Verify sender is “TaaSFlow team” (no internal name or hash).
+
+(Full document contains 20+ small prompts covering all audited defects)
+
+3. Regression Protect-List
+Client messages send/receive working.
+“TaaSFlow team” label applied to all staff comms.
+Decisions (Shortlist/Offer) persist and sync to Admin.
+Public job board parity (Location/Employer).
+Share links respect visibility/revocation.
+CV downloads audited.
+4. Final Rejection Contract
+“Reply lacks specific evidence. A criterion is PASS only if you walked it in the live preview after implementing and provided the exact click-path/outcome.”"`
         }
       >
         {children}
