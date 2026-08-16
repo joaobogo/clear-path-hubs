@@ -278,31 +278,17 @@ export async function loadAgentOpsConsole(
   const since = new Date(Date.now() - windowHours * 3_600_000).toISOString();
   const limit = Math.min(Math.max(filters.limit ?? 60, 1), 200);
 
-  let query = s
-    .from("processing_jobs")
-    .select(
-      "id,entity_type,entity_id,job_type,status,attempts,error_code,error_message,trace_id,created_at,started_at,completed_at",
-    )
-    .gte("created_at", since)
-    .order("created_at", { ascending: false })
-    .limit(limit);
-
-  if (filters.bucket && filters.bucket !== "all") {
-    query = query.in("status", BUCKET_STATUSES[filters.bucket]);
-  }
-
-  const [{ data: jobs }, countRows, escalations] = await Promise.all([
-    query,
-    Promise.all(
-      RUN_BUCKETS.map(async (b) => {
-        const { count } = await s
-          .from("processing_jobs")
-          .select("id", { count: "exact", head: true })
-          .gte("created_at", since)
-          .in("status", BUCKET_STATUSES[b]);
-        return [b, count ?? 0] as const;
-      }),
-    ),
+  // One read of the window. Buckets, per-agent rollups and the visible list
+  // are all derived from this same set, so the tiles cannot disagree with it.
+  const [{ data: jobs }, escalations] = await Promise.all([
+    s
+      .from("processing_jobs")
+      .select(
+        "id,entity_type,entity_id,job_type,status,attempts,error_code,error_message,trace_id,created_at,started_at,completed_at",
+      )
+      .gte("created_at", since)
+      .order("created_at", { ascending: false })
+      .limit(1000),
     s
       .from("audit_events")
       .select("trace_id,action")
@@ -321,29 +307,53 @@ export async function loadAgentOpsConsole(
   }
 
   const ctx = await loadContext(rows);
-  let runs: AgentRunRow[] = rows.map((j: Any) => toRow(j, ctx, operator, escalatedTraces));
+  let all: AgentRunRow[] = rows.map((j: Any) => toRow(j, ctx, operator, escalatedTraces));
 
   if (filters.organization_id) {
-    runs = runs.filter((r) => r.organization_id === filters.organization_id);
+    all = all.filter((r) => r.organization_id === filters.organization_id);
   }
 
-  const counts = Object.fromEntries(countRows) as Record<RunBucket, number>;
+  const counts = Object.fromEntries(
+    RUN_BUCKETS.map((b) => [b, all.filter((r) => r.bucket === b).length]),
+  ) as Record<RunBucket, number>;
 
-  const agentKeys = [...new Set(runs.map((r) => r.agent_key).filter(Boolean))] as AgentKey[];
-  const agents = agentKeys.map((key) => ({
-    key,
-    name: agentName(key),
-    workspaces_paused: new Set(
-      runs.filter((r) => r.agent_key === key && r.agent_paused).map((r) => r.organization_id),
-    ).size,
-    active: runs.filter((r) => r.agent_key === key && r.bucket === "active").length,
-    failed_24h: runs.filter(
-      (r) =>
-        r.agent_key === key &&
-        r.bucket === "failed" &&
-        Date.now() - new Date(r.created_at).getTime() < 86_400_000,
-    ).length,
-  }));
+  const runs =
+    filters.bucket && filters.bucket !== "all"
+      ? all.filter((r) => r.bucket === filters.bucket).slice(0, limit)
+      : all.slice(0, limit);
+
+  // Every agent in the registry is reported, including the idle ones. A
+  // missing agent would read as "this agent does not exist".
+  const agents = AGENT_KEYS.map((key) => {
+    const mine = all.filter((r) => r.agent_key === key);
+    const workspaces_paused = new Set(
+      mine.filter((r) => r.agent_paused).map((r) => r.organization_id),
+    ).size;
+    const active = mine.filter((r) => r.bucket === "active").length;
+    const queued = mine.filter((r) => r.bucket === "queued").length;
+    const failed_24h = mine.filter(
+      (r) => r.bucket === "failed" && Date.now() - new Date(r.created_at).getTime() < 86_400_000,
+    ).length;
+    const status: AgentWindowStatus = workspaces_paused
+      ? "paused"
+      : active
+        ? "running"
+        : queued
+          ? "queued"
+          : failed_24h
+            ? "failing"
+            : "idle";
+    return {
+      key,
+      name: agentName(key),
+      workspaces_paused,
+      active,
+      queued,
+      runs: mine.length,
+      failed_24h,
+      status,
+    };
+  });
 
   return {
     generated_at: new Date().toISOString(),
@@ -352,6 +362,8 @@ export async function loadAgentOpsConsole(
     agents,
     window_hours: windowHours,
   };
+}
+
 }
 
 /** One run: resolved inputs, redacted structured output, usage, audit trail. */
