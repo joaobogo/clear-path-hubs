@@ -1,5 +1,6 @@
-import { agentForJobType, agentName } from "@/lib/agents/registry";
-import { runBucket } from "@/lib/agent-ops/agent-ops";
+import { agentName } from "@/lib/agents/registry";
+import { agentForJobType, runBucket } from "@/lib/agent-ops/agent-ops";
+
 
 /**
  * Agent runs for one workspace, read from the same table the internal
