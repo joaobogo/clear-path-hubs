@@ -9,11 +9,12 @@ import {
   newTraceId,
   rateLimitResponse,
 } from "@/lib/public-api/rate-limit";
+import { requireCronSecret } from "@/lib/public-api/cron-auth";
 
 /**
  * Nightly score-freshness reconciliation. Queues a rescore for every match whose
  * score has been invalidated, capped per run, with one audit event per queued job.
- * Auth: the project's publishable key in the `apikey` header (canonical cron pattern).
+ * Auth: the server-only CRON_INVOKE_SECRET in the `x-cron-secret` header.
  */
 const schema = z
   .object({
@@ -29,17 +30,8 @@ export const Route = createFileRoute("/api/public/scoring/reconcile-freshness")(
         const cronDecision = consumeRateLimit("cron_invoke", clientIp(request), PUBLIC_RATE_LIMITS.cron_invoke);
         if (cronDecision.limited) return rateLimitResponse(newTraceId("cron_invoke"), cronDecision);
 
-        const provided =
-          request.headers.get("apikey") ??
-          request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ??
-          "";
-        const expected = process.env.SUPABASE_PUBLISHABLE_KEY ?? "";
-        if (!expected || provided !== expected) {
-          return new Response(JSON.stringify({ ok: false, error: "unauthorized" }), {
-            status: 401,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
+        const denied = requireCronSecret(request);
+        if (denied) return denied;
 
         const read = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.pipeline_run);
         if (!read.ok) {

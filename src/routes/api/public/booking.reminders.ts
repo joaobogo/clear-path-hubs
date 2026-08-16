@@ -4,7 +4,7 @@
  * Sends one reminder per booking in the next REMINDER_WINDOW, then stamps
  * reminder_sent_at so a re-run can't email anyone twice. Lives under
  * /api/public/* because pg_cron calls it from outside the session, and is
- * therefore locked to the project's anon key.
+ * therefore locked to the server-only CRON_INVOKE_SECRET.
  */
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -14,16 +14,10 @@ import {
   newTraceId,
   rateLimitResponse,
 } from "@/lib/public-api/rate-limit";
+import { requireCronSecret } from "@/lib/public-api/cron-auth";
 
 /** How far ahead we look for calls that still need a reminder. */
 const REMINDER_WINDOW_MINUTES = 24 * 60;
-
-function unauthorized(): Response {
-  return new Response(JSON.stringify({ error: "unauthorized" }), {
-    status: 401,
-    headers: { "Content-Type": "application/json" },
-  });
-}
 
 export const Route = createFileRoute("/api/public/booking/reminders")({
   server: {
@@ -32,14 +26,8 @@ export const Route = createFileRoute("/api/public/booking/reminders")({
         const cronDecision = consumeRateLimit("cron_invoke", clientIp(request), PUBLIC_RATE_LIMITS.cron_invoke);
         if (cronDecision.limited) return rateLimitResponse(newTraceId("cron_invoke"), cronDecision);
 
-        // The caller must present the project's publishable key.
-        const provided =
-          request.headers.get("apikey") ??
-          request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ??
-          "";
-        const expected =
-          process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["SUPABASE_ANON_KEY"] ?? "";
-        if (!expected || provided !== expected) return unauthorized();
+        const denied = requireCronSecret(request);
+        if (denied) return denied;
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { sendBookingLifecycleEmail } = await import("@/lib/notification-email.server");
