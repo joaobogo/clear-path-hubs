@@ -151,17 +151,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-002 · Dashboard Recovery (A2) · BLOCKER
-Scope: /admin, src/components/admin/admin-widget-error-boundary.tsx
-Defect: Overview crash-loop with rotating error refs; one failing widget kills the entire page; count tiles disagree
-with list queries.
-Required fix: Wrap every overview widget in a granular error boundary; derive counts from the same query
-used by the corresponding list; isolate refetch loops.
+TEXTO DO USUÁRIO: "P-016 · Org Record Integrity (A16) · MEDIUM
+Scope: /admin/organizations/$id
+Defect: CLIENT USERS 0 with 2 active members; Candidates tab missing stage/score/fit; Documents tab shows 0
+despite parsed CVs.
+Required fix: Fix org-member count query; join candidate latest match for stage/score/fit; count parsed CVs in
+Documents tab.
 Acceptance criteria:
-• Force an exception in the Exception Digest widget data source.
-• Load /admin and verify the rest of the page renders.
-• Verify the work-queue tile count matches the count of rows in the work-queue list.
-• Refresh the page; verify the failed widget shows a local fallback instead of a full-page error.
+• Open an org with 2 active client members; verify CLIENT USERS 2.
+• Open Candidates tab; verify each candidate shows stage, score, fit band.
+• Open Documents tab; verify parsed CV count matches storage.
 Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
