@@ -523,3 +523,6 @@ export const retryFailedDelivery = createServerFn({ method: "POST" })
 export const listEventCatalogue = createServerFn({ method: "GET" }).handler(async () => {
   return { events: EVENT_TYPES };
 });
+
+export type { DeliveryFailure } from "./notification-failures.server";
+
