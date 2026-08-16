@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeader } from "@tanstack/react-start/server";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
-import { withCountry } from "@/lib/jobs/location-format";
+import { titleCaseLocation, withCountry } from "@/lib/jobs/location-format";
 import type { Database } from "@/integrations/supabase/types";
 import { buildPublicJobFacts, resolveCompensation } from "@/lib/jobs/public-facts";
 import { EFFORT_DEFAULT, resolveApplyEffort } from "@/lib/jobs/apply-effort";
