@@ -151,18 +151,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-005 · Share Links + Talent Memory Audit (A5/B5) · HIGH
-Scope: src/routes/_authenticated/admin.organizations.$id.tsx, /client/memory
-Defect: No admin surface or audit events for client share links and talent memory actions; revoked public URLs
-may still return data.
-Required fix: Add read-only Shares and Talent Memory tabs on org record; emit audit events for
-create/revoke/archive/rediscover; ensure revoked URLs serve nothing.
+TEXTO DO USUÁRIO: "P-006 · Recompute / Rescore (A6/B3) · HIGH
+Scope: src/lib/scoring/score-engine.server.ts, /admin/candidates/$id, /client/candidates/$id
+Defect: No Recompute control; 17-item queue unresolvable; engine attribution contradicts itself; client banner
+shows stale engine version.
+Required fix: Recompute must append an immutable score_run with a consistent engine_version, update all
+surfaces, and clear the out-of-date banner.
 Acceptance criteria:
-• From /client/memory, add a note and create a public share link.
-• Open /admin/organizations/$id and verify Shares and Talent Memory tabs show the actions with timestamps.
-• Revoke the share link and open the public URL in an incognito window; verify it returns 403/404, not the
-document.
-• Check audit events include share_created, share_revoked, memory_added, memory_archived.
+• Open a candidate with a stale engine version banner.
+• Click Recompute and wait for the run to complete.
+• Verify a new score_run row exists with the new engine_version; old run remains immutable.
+• Verify the client banner disappears and the admin Review tab shows the new run.
 Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
