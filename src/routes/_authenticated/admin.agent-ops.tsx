@@ -22,7 +22,9 @@ import {
   reassignAgentRunFn,
 } from "@/lib/agent-ops/agent-ops.functions";
 import {
+  AGENT_WINDOW_STATUS_LABELS,
   BUCKET_LABELS,
+
   RUN_BUCKETS,
   type RunActionKey,
   type RunBucket,
@@ -184,7 +186,7 @@ function AgentOpsPage() {
         </p>
       </header>
 
-      <section className="grid grid-cols-2 gap-2 md:grid-cols-5">
+      <section className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-6">
         {RUN_BUCKETS.map((b) => {
           const active = bucket === b;
           return (
@@ -251,18 +253,24 @@ function AgentOpsPage() {
         </Alert>
       ) : null}
 
-      {data?.agents.length ? (
+      {data ? (
         <section className="rounded-lg border border-border bg-card p-4">
-          <h2 className="mb-3 text-sm font-semibold">Agents in this window</h2>
+          <h2 className="mb-3 text-sm font-semibold">
+            All {data.agents.length} agents · last {data.window_hours}h
+          </h2>
           <div className="grid gap-2 md:grid-cols-2">
             {data.agents.map((a) => (
               <div key={a.key} className="flex items-center justify-between rounded-md bg-muted/30 px-3 py-2 text-sm">
                 <span className="font-medium">{a.name}</span>
                 <span className="flex items-center gap-3 text-xs text-muted-foreground tabular-nums">
+                  <Badge variant={a.status === "failing" ? "destructive" : "outline"}>
+                    {AGENT_WINDOW_STATUS_LABELS[a.status]}
+                  </Badge>
+                  <span>{a.runs} runs</span>
                   <span>{a.active} running</span>
                   <span>{a.failed_24h} failed 24h</span>
                   {a.workspaces_paused ? (
-                    <Badge variant="outline">{a.workspaces_paused} paused</Badge>
+                    <span>{a.workspaces_paused} workspace paused</span>
                   ) : null}
                 </span>
               </div>

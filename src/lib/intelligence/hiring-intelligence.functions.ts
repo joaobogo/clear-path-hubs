@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { buildIntelligence, type IntelligenceRecords } from "./intelligence-builder";
+import { loadWorkspaceAgentRuns } from "./workspace-agent-runs.server";
 
 /**
  * Hiring Intelligence read.
@@ -104,14 +105,15 @@ export const getHiringIntelligence = createServerFn({ method: "GET" })
     }
 
     // ── Agent runs ───────────────────────────────────────────────────────
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const agentRuns = ((await scoped<any>(
-      supabase
-        .from("agent_activity")
-        .select("id, agent_key, outcome, position_id, occurred_at, sentence, link_path")
-        .eq("organization_id", data.organization_id)
-        .gte("occurred_at", priorFromISO),
-    )).data as Row[]) ?? [];
+    // The same rows the internal agent-operations console counts: real
+    // `processing_jobs` for this workspace, bucketed by the shared rule. Read
+    // with the service client because processing_jobs is not org-scoped — the
+    // membership check above has already authorised this organisation.
+    const agentRuns = await loadWorkspaceAgentRuns({
+      organizationId: data.organization_id,
+      positionId: data.position_id ?? null,
+      sinceISO: priorFromISO,
+    });
 
     // ── Feed events (to unify with Overview rail) ────────────────────────
     const feedEvents = ((await scoped<any>(

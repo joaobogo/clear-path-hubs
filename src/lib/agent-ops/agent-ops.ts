@@ -56,6 +56,7 @@ export const RUN_BUCKETS = [
   "waiting_approval",
   "failed",
   "completed",
+  "superseded",
 ] as const;
 export type RunBucket = (typeof RUN_BUCKETS)[number];
 
@@ -65,25 +66,71 @@ export const BUCKET_LABELS: Record<RunBucket, string> = {
   waiting_approval: "Waiting approval",
   failed: "Failed runs",
   completed: "Completed runs",
+  superseded: "Superseded / cancelled",
 };
 
-/** Processing states that mean work is currently in flight. */
-const ACTIVE_STATES = ["parsing", "enriching", "scoring"];
-/** Processing states that mean the job finished its work successfully. */
-const COMPLETED_STATES = ["parsed", "ready_to_score", "scored"];
-/** Processing states that mean a person has to act before anything moves. */
+/**
+ * Statuses that reach this layer come from two vocabularies: the
+ * `processing_jobs.status` enum (`queued`, `running`, `completed`, `failed`,
+ * `cancelled`, `superseded`) and the candidate `processing_state` values
+ * (`parsing`, `scored`, `ocr_required`, …). Both are mapped here so counts,
+ * lists and per-agent rollups can never disagree about the same row.
+ */
+const ACTIVE_STATES = [
+  "parsing",
+  "enriching",
+  "scoring",
+  "running",
+  "processing",
+  "in_progress",
+  "started",
+];
+const COMPLETED_STATES = [
+  "parsed",
+  "ready_to_score",
+  "scored",
+  "completed",
+  "complete",
+  "done",
+  "succeeded",
+];
 const APPROVAL_STATES = ["manual_review_required", "ocr_required"];
-/** Processing states that mean the run stopped without producing its output. */
-const FAILED_STATES = ["failed", "provider_blocked"];
+const FAILED_STATES = ["failed", "provider_blocked", "error"];
+/** Terminal states where the run was replaced or deliberately stopped. */
+const SUPERSEDED_STATES = ["superseded", "cancelled", "canceled", "obsolete", "skipped"];
+const QUEUED_STATES = ["queued", "pending", "waiting", "scheduled"];
 
 export function runBucket(status: string | null | undefined): RunBucket {
   const s = String(status ?? "").toLowerCase();
   if (FAILED_STATES.includes(s)) return "failed";
+  if (SUPERSEDED_STATES.includes(s)) return "superseded";
   if (APPROVAL_STATES.includes(s)) return "waiting_approval";
   if (ACTIVE_STATES.includes(s)) return "active";
   if (COMPLETED_STATES.includes(s)) return "completed";
-  return "queued";
+  if (QUEUED_STATES.includes(s)) return "queued";
+  // Unknown vocabulary: never claim it is pending work.
+  return "superseded";
 }
+
+/**
+ * True when a run's stored error is only a "something newer already exists"
+ * collision. These are not operational failures and must never surface as one.
+ */
+export function isSupersededError(
+  errorCode: string | null | undefined,
+  errorMessage: string | null | undefined,
+): boolean {
+  const code = String(errorCode ?? "").toLowerCase();
+  const msg = String(errorMessage ?? "").toLowerCase();
+  if (code.includes("supersed")) return true;
+  return (
+    msg.includes("supersed") ||
+    msg.includes("already existed") ||
+    msg.includes("score_runs_active_input_key") ||
+    (msg.includes("duplicate key") && msg.includes("unique constraint"))
+  );
+}
+
 
 /**
  * A run that claims to be in flight but has not moved for this long is
@@ -424,6 +471,17 @@ export type AgentRunRow = {
   actions: RunActionKey[];
 };
 
+/** Status of one agent inside the reported window. `idle` is a status too. */
+export type AgentWindowStatus = "running" | "queued" | "failing" | "paused" | "idle";
+
+export const AGENT_WINDOW_STATUS_LABELS: Record<AgentWindowStatus, string> = {
+  running: "Running",
+  queued: "Queued",
+  failing: "Failing",
+  paused: "Paused",
+  idle: "Idle",
+};
+
 export type AgentOpsConsole = {
   generated_at: string;
   counts: Record<RunBucket, number>;
@@ -433,7 +491,11 @@ export type AgentOpsConsole = {
     name: string;
     workspaces_paused: number;
     active: number;
+    queued: number;
+    runs: number;
     failed_24h: number;
+    status: AgentWindowStatus;
   }>;
+
   window_hours: number;
 };

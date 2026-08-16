@@ -9,6 +9,7 @@ import { DownloadCvButton } from "@/components/download-cv-button";
 import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
 import { ProcessState } from "@/components/ds/process-state";
 import { candidateProcessStatus } from "@/lib/loading/process-catalogue";
+import { isSupersededError } from "@/lib/agent-ops/agent-ops";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -110,20 +111,29 @@ function WorkspaceHeader({
           <DownloadCvButton matchId={m.id} mode="download" />
         </div>
       </div>
-      {m.processing_error_message && (
-        <Alert variant="destructive">
-          <AlertTitle>
-            {m.processing_error_code === "engine_error" 
-              ? "Hiring Intelligence" 
-              : (m.processing_error_code ?? "Processing error")}
-          </AlertTitle>
-          <AlertDescription>
-            {m.processing_error_message.includes("unique constraint") || m.processing_error_message === "engine_error"
-              ? `The assessment engine encountered a technical collision while analyzing this profile. Reference: ${m.last_processing_trace_id || 'no-trace'}`
-              : m.processing_error_message}
-          </AlertDescription>
-        </Alert>
-      )}
+      {(() => {
+        // The banner may only reflect the LATEST run. A candidate whose newest
+        // run finished (parsed / scored) shows nothing, even if an older
+        // superseded run left an error behind on the record.
+        const state = String(m.processing_state ?? "");
+        const failedNow = state === "failed" || state === "provider_blocked";
+        const needsPerson =
+          state === "manual_review_required" || state === "ocr_required";
+        const message = m.processing_error_message as string | null;
+        if (!message) return null;
+        if (!failedNow && !needsPerson) return null;
+        if (isSupersededError(m.processing_error_code, message)) return null;
+        return (
+          <Alert variant={failedNow ? "destructive" : "default"}>
+            <AlertTitle>
+              {m.processing_error_code === "engine_error"
+                ? "Hiring Intelligence"
+                : (m.processing_error_code ?? "Processing error")}
+            </AlertTitle>
+            <AlertDescription>{message}</AlertDescription>
+          </Alert>
+        );
+      })()}
           {(() => {
         const status = candidateProcessStatus(String(m.processing_state));
         return status && status.phase !== "done" ? (
