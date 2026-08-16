@@ -14,9 +14,8 @@ export const getSlaBreaches = createServerFn({ method: "GET" })
     z.object({ include_test: z.boolean().optional() }).parse(i ?? {}),
   )
   .handler(async ({ data, context }) => {
-    if (process.env["ADMIN_SLA_SIMULATE_ERROR"] === "1") {
-      throw new Error("Simulated SLA widget failure for error-boundary test");
-    }
+    // SIMULATION: force this widget to fail so the per-widget error boundary is exercised.
+    throw new Error("Simulated SLA widget failure for error-boundary test");
     const { requireStaff } = await import("./admin-ops.server");
     await requireStaff(context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
