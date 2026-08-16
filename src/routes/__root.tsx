@@ -151,15 +151,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-017 · Feed/Journey Truthfulness (A17/B9) · MEDIUM
-Scope: src/lib/candidate-history.ts, src/lib/audit.server.ts
-Defect: Message sent events with no actor; System actions labeled as your team; Interviewed stage generated
-from offer decision; duplicated audit rows.
-Required fix: Normalize actor attribution; derive stages from real events only; deduplicate identical audit rows.
+TEXTO DO USUÁRIO: "P-018 · Evidence UI Cleanup (A18) · MEDIUM
+Scope: src/components/scoring/score-breakdown.tsx
+Defect: Literal ([object Object]) citations; unrelated quotes; Admin-verified chips while header says none
+human-verified.
+Required fix: Fix citation rendering to stringify objects; validate quote-to-dimension mapping; align verified chip
+with underlying verification state.
 Acceptance criteria:
-• Open a candidate history; verify every event has a real actor or is labeled System.
-• Verify an offer decision does not create an Interviewed stage event.
-• Refresh the page; verify no duplicate identical rows appear.
+• Open score breakdown for any scored candidate.
+• Verify citations render as readable text, not [object Object].
+• Verify each quote is under the correct dimension.
+• Verify Admin-verified chip only appears when a human verification record exists.
 Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
         }
       >
