@@ -57,6 +57,15 @@ const ACCENT_CLASSES: Record<FitPresentation["accent"], string> = {
   rose: "border-destructive/30 bg-destructive/10 text-destructive",
 };
 
+/** Non-color shape indicator for each band. Must be paired with the band text. */
+const BAND_DOT: Record<FitPresentation["accent"], string> = {
+  emerald: "rounded-full bg-current",
+  sky: "rounded-full bg-current",
+  amber: "rounded-sm bg-current",
+  slate: "rounded-full border border-current bg-transparent",
+  rose: "rounded-none border-b-2 border-current bg-transparent",
+};
+
 export function UnicornBadge({ className = "" }: { className?: string }) {
   return (
     <span
