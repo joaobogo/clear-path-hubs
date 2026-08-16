@@ -151,12 +151,10 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "META-PROMPT 1 — ADMIN DASHBOARD (paste into Lovable)
+TEXTO DO USUÁRIO: "META-PROMPT 2 — CLIENT DASHBOARD (paste into Lovable)
 
-You are not changing product code in this run. Your job in this run is to produce a complete remediation plan document for the ADMIN dashboard (/admin and every route under it) that takes it to 100% MVP status: zero errors, zero broken or dead-end controls, zero data inconsistencies, zero raw internal errors shown to users. A third-party QA audit (Round 3, 2026-08-15) already scored this surface 59/100 — FAIL, and Round 4 will re-run the same mirrored client+admin audit with FRESH random marker names. Your plan is only acceptable if executing it makes every R4 check pass.
-
-STEP 1 — Exhaustive inventory (from the codebase, not from memory)
-... (Plan saved to docs/mvp-fix-plan-admin.md) ...
+You are not changing product code in this run. Produce a complete remediation plan document for the CLIENT workspace (/client and every route under it) that takes it to 100% MVP status: zero errors, zero broken or dead-end controls, zero data inconsistencies, and no internal/staff-only language or data ever visible to clients.
+... (Plan saved to docs/mvp-fix-plan-client.md) ...
 Report: files changed, location of the plan, and the export URL."`
         }
       >
