@@ -151,11 +151,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "META-PROMPT 3 — CANDIDATE APPLICATION FORM (paste into Lovable)
-
-You are not changing product code in this run. Produce a complete remediation plan document for the PUBLIC candidate flow: the job board (/jobs), each public job page, the application form, file upload + parsing pipeline entry, the post-submit experience, and the applicant status page ("Check your application status" / /me). 
-... (Plan saved to docs/mvp-fix-plan-application.md) ...
-Report: files changed, location of the plan, and the export URL."`
+TEXTO DO USUÁRIO: "i need all the last 3 pdfs"`
         }
       >
         {children}
