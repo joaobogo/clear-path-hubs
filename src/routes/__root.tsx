@@ -151,23 +151,20 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "F-008 — Hard disqualifiers cap the score but never persist eligibility.
-Fix in src/lib/scoring-service.server.ts (and scoring-engine.server.ts where the cap is
-applied):
-1. When a disqualifying_answer is detected, upsert an eligibility_checks row for the match:
-kind='disqualifier', status='failed', with the specific question/answer as evidence and the
-score_run_id that produced it.
-2. Set candidate_matches.eligibility_status accordingly in the SAME transaction/RPC as the score
-write — no partial state: if the eligibility write fails, the score run must not commit as
-authoritative.
-3. Make the admin candidate list/filter by eligibility return these candidates, and show a
-non-color indicator + aria-label on the eligibility chip.
-4. Add a unit test: a disqualifying answer produces exactly one eligibility_checks row,
-eligibility_status set, score capped, and re-scoring does not duplicate rows (idempotent
-upsert).
-5. Update /admin/qa-report: F-008 status only becomes 'fixed' after the test passes; include the
-repro used.
-Report: files changed, migration (if any), test output, and anything you could not fix with the
+        TEXTO DO USUÁRIO: "F-009 — rubric_versions is DB-immutable but nothing in the app writes it.
+Ship the writer path:
+1. Add a rubric builder surface under /admin/scoring: create a new rubric version for a position
+(increment version_number, supersede the prior active version, never mutate an existing row).
+2. Every score run must record rubric_version_id. Backfill existing runs with a synthetic 'v0
+legacy' rubric version per position so the publish gate has a valid reference; do not delete or
+rewrite historical runs.
+3. Enforce at the DB level: score_runs.rubric_version_id NOT NULL (after backfill) + FK, and
+keep the immutability trigger.
+4. Publish gate must fail loudly and readably ('Rubric version missing — recompute score')
+instead of silently blocking.
+5. Tests: creating a version supersedes the previous one; a run without a rubric version cannot
+be approved for a client.
+6. Update /admin/qa-report truthfully.Report: files changed, migrations run (with rollback notes), and anything not fixed with the
 reason."`
         }
       >
