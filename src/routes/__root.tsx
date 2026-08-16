@@ -151,22 +151,21 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "PROMPT E — Candidate portal /me shell blockers (re-verify)
+        TEXTO DO USUÁRIO: "PROMPT F — Close the 850 UNVERIFIED interactive elements
 Why it matters
-STABILIZATION.md lists 6 BLOCKERs where /me, /me/applications, /me/profile, /me/cv, /me/messages
-and /me/settings rendered only the marketing shell. Later work claims these routes are fine — the
-ledger was never re-verified.
+STABILIZATION.md catalogues 943 interactive elements, of which ~850 are still marked UNVERIFIED.
+The final launch audit cannot pass while the ledger is mostly unverified.
 Prompt
-Re-verify the candidate portal blockers recorded in STABILIZATION.md.
-1. With a seeded candidate persona, load /me, /me/applications, /me/profile, /me/cv,
-/me/messages, /me/settings and capture headings, text length, and interactive element counts.
-2. If any route still renders the marketing shell instead of the portal, fix the route/layout
-guard so authenticated candidates always get the portal shell.
-3. Confirm on each route: applications list with real stages, PDF-only CV upload, message
-thread, and personal details editing all work.
-4. Confirm signed-out access redirects to auth rather than showing an empty shell.
-5. Update the BROKEN table in STABILIZATION.md with the evidence (PASS + what you observed), not
-an assumption."`
+Convert the UNVERIFIED backlog in STABILIZATION.md into real verification.
+1. Group the ~850 unverified elements by route family (public, admin, client, candidate) and by
+expected behaviour (client-side vs server call).
+2. Write Playwright coverage that exercises each group's representative flows against the demo
+org, asserting observable outcomes (URL change, row change, toast text, persisted state after
+reload) — not just that a click did not throw.
+3. Mark each ledger line PASS with the test that proves it, or FAIL with the symptom. Do not mark
+anything PASS without evidence.
+4. Report the final tally (PASS / FAIL / remaining UNVERIFIED) and list every remaining FAIL with
+severity so the MVP go/no-go is an honest decision."`
         }
       >
         {children}
