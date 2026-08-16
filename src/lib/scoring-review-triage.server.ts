@@ -111,10 +111,8 @@ export async function loadReviewTriage(
   let query = a.from("v_scoring_review_queue").select("*", { count: "exact" });
   if (args.queueColumn) query = query.eq(args.queueColumn, true);
   if (args.q) {
-    const needle = args.q
-      .trim()
-      .toLowerCase()
-      .replace(/[%,()]/g, " ");
+    const { sanitizeSearchTerm } = await import("./search/postgrest-filter");
+    const needle = sanitizeSearchTerm(args.q).toLowerCase();
     if (needle) query = query.ilike("search_text", `%${needle}%`);
   }
   if (hiddenIds.size > 0) {

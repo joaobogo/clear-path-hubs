@@ -118,7 +118,8 @@ export const searchCandidateIndex = createServerFn({ method: "POST" })
       q = q.in("match_id", ids);
     }
     if (data.q) {
-      const needle = data.q.trim().toLowerCase().replace(/[%,()]/g, " ");
+      const { sanitizeSearchTerm } = await import("./search/postgrest-filter");
+      const needle = sanitizeSearchTerm(data.q).toLowerCase();
       if (needle) q = q.ilike("search_text", `%${needle}%`);
     }
 
@@ -443,9 +444,10 @@ export const getCandidateDossier = createServerFn({ method: "POST" })
     let duplicates: AnyRow[] = [];
     if (profile) {
       const orParts: string[] = [];
-      if (profile.email) orParts.push(`email.eq.${profile.email}`);
-      if (profile.phone) orParts.push(`phone.eq.${profile.phone}`);
-      if (profile.full_name) orParts.push(`full_name.eq.${profile.full_name}`);
+      const { eqValue } = await import("./search/postgrest-filter");
+      if (profile.email) orParts.push(`email.eq.${eqValue(String(profile.email))}`);
+      if (profile.phone) orParts.push(`phone.eq.${eqValue(String(profile.phone))}`);
+      if (profile.full_name) orParts.push(`full_name.eq.${eqValue(String(profile.full_name))}`);
       if (orParts.length) {
         const { data: dupes } = await s
           .from("candidate_profiles")

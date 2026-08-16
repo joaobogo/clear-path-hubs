@@ -63,15 +63,19 @@ export type SearchResponse = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = Record<string, any>;
 
-const esc = (v: string) => v.replace(/[%_,]/g, (m) => `\\${m}`);
+import { sanitizeSearchTerm, orIlike, quoteFilterValue } from "./search/postgrest-filter";
 
 export const globalSearch = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw) => globalSearchInput.parse(raw))
   .handler(async ({ data, context }): Promise<SearchResponse> => {
     const { supabase, userId } = context;
-    const term = esc(data.q);
+    const term = sanitizeSearchTerm(data.q);
     const like = `%${term}%`;
+    const likeValue = quoteFilterValue(like);
+    if (!term) {
+      return { scope: "admin", includeTest: false, limit: LIMIT, groups: emptyGroups() } as SearchResponse;
+    }
 
     // Resolve caller scope + accessible org IDs from memberships.
     const { data: memberships } = await supabase
@@ -141,7 +145,7 @@ export const globalSearch = createServerFn({ method: "POST" })
       let query = supabase
         .from("positions")
         .select("id, title, location, status, organization_id, organizations(name)")
-        .or(`title.ilike.${like},location.ilike.${like}`)
+        .or(orIlike(["title", "location"], term)!)
         .order("updated_at", { ascending: false })
         .limit(LIMIT);
       if (scope === "client") query = query.in("organization_id", orgIds);
@@ -189,7 +193,7 @@ export const globalSearch = createServerFn({ method: "POST" })
       const { data: profiles, error: pErr } = await supabaseAdmin
         .from("candidate_profiles")
         .select("id, full_name, email, headline")
-        .or(`full_name.ilike.${like},email.ilike.${like},headline.ilike.${like}`)
+        .or(orIlike(["full_name", "email", "headline"], term)!)
         .limit(50);
       if (pErr) throw new Error(pErr.message);
       const profileIds = ((profiles as AnyRow[]) ?? []).map((p) => p.id);
@@ -254,7 +258,7 @@ export const globalSearch = createServerFn({ method: "POST" })
         .select(
           "id, company_name, role_title, status, lead_status, position_id, organization_id, created_at",
         )
-        .or(`company_name.ilike.${like},role_title.ilike.${like},primary_email.ilike.${like}`)
+        .or(orIlike(["company_name", "role_title", "primary_email"], term)!)
         .order("created_at", { ascending: false })
         .limit(LIMIT);
       if (testScope.orgIds.length) {
