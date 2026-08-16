@@ -2,6 +2,7 @@
 import { Fragment, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { setPositionStatus, setPositionVisibility } from "@/lib/admin.functions";
+import { humanizePublishBlockedMessage } from "@/lib/publish-gate";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
