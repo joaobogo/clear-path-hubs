@@ -151,21 +151,26 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "F-009 — rubric_versions is DB-immutable but nothing in the app writes it.
-Ship the writer path:
-1. Add a rubric builder surface under /admin/scoring: create a new rubric version for a position
-(increment version_number, supersede the prior active version, never mutate an existing row).
-2. Every score run must record rubric_version_id. Backfill existing runs with a synthetic 'v0
-legacy' rubric version per position so the publish gate has a valid reference; do not delete or
-rewrite historical runs.
-3. Enforce at the DB level: score_runs.rubric_version_id NOT NULL (after backfill) + FK, and
-keep the immutability trigger.
-4. Publish gate must fail loudly and readably ('Rubric version missing — recompute score')
-instead of silently blocking.
-5. Tests: creating a version supersedes the previous one; a run without a rubric version cannot
-be approved for a client.
-6. Update /admin/qa-report truthfully.Report: files changed, migrations run (with rollback notes), and anything not fixed with the
-reason."`
+        TEXTO DO USUÁRIO: "PROMPT C — F-007 (P1): semantic evidence engine is still
+unshipped
+Why it matters
+Live scoring is keyword-only. 'microservices, event-driven' scores zero against 'distributed systems'.
+The interim unknown-status floor is in place but the semantic engine is not wired.
+Prompt
+F-007 — Wire semantic evidence extraction into live scoring.
+1. Connect src/lib/scoring/semantic-engine.ts to scoring-service.server.ts behind a feature
+flag, using the Lovable AI Gateway (google/gemini-2.5-flash for extraction, gemini-2.5-pro only
+where reasoning depth is needed).
+2. The LLM step extracts evidence spans from the CV; the deterministic engine still decides the
+score. Never let the model output the final number.
+3. Every requirement resolves to met / unknown / missing, each with a genuine verbatim quote (no
+paraphrase, no fabricated evidence) run through the existing quote hygiene scrubber.
+4. Keep the unknown-status floor for thin CVs and keep needs_validation surfacing to reviewers.
+5. Scores stay immutable: semantic scoring creates a NEW score run; it never edits an existing
+one.
+6. If you cannot ship it fully, keep F-007 'open' in /admin/qa-report and state honestly that the
+interim floor is what is verified.
+Report: files changed, flag name and default, sample before/after on one real demo candidate."`
         }
       >
         {children}
