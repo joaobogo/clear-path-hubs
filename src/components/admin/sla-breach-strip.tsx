@@ -20,9 +20,7 @@ export function SlaBreachStrip({ includeTest }: { includeTest: boolean }) {
 
   if (query.isLoading) return null;
   // SIMULATION: intentionally let this error surface to the widget boundary.
-  if (query.isError && (query.error as Error).message.includes("Simulated SLA widget failure")) {
-    throw query.error;
-  }
+  throw new Error("Simulated SLA widget failure for error-boundary test");
   if (query.isError) return null;
 
   const rows = (query.data?.rows ?? []).filter((r) => !r.acknowledged);
