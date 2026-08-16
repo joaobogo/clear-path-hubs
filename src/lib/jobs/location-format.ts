@@ -21,7 +21,10 @@ export function titleCaseLocation(input: string): string {
     .split(/([,\s]+)/)
     .map((token) => {
       const trimmed = token.trim();
-      if (!trimmed) return token;
+      // Separator runs (", ", " ") are returned untouched so normalised
+      // spacing survives the re-join.
+      if (!trimmed || /^[,\s]+$/.test(token)) return token;
+
       // Keep already-all-caps tokens (acronyms) as-is, e.g. IL, PR, NY.
       if (/^[A-Z]{2,}$/.test(trimmed)) return trimmed;
       // Keep mixed-case acronyms like "São Paulo" mostly intact but title-case
