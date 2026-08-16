@@ -151,16 +151,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-011 · Staff-Only Ownership (A11) · HIGH
-Scope: src/lib/positions.server.ts, /admin/positions/$id/settings
-Defect: Client users appear as position owners and SLA owners; workload widget includes them.
-Required fix: Add a write guard so position owner and SLA owner can only be staff platform_admin/operations
-roles.
+TEXTO DO USUÁRIO: "P-012 · Demo Seed Marker Cleanup (A12/B13) · HIGH
+Scope: src/lib/audit.server.ts, src/lib/scoring/score-approval.server.ts
+Defect: TAASFLOW_DEMO_SEED: strings persist in audit reasons and payment exemption notes.
+Required fix: Create correction audit records that replace the marker with human-readable reasons; add a
+guard preventing the marker from reaching client-visible fields.
 Acceptance criteria:
-• Attempt to set a client user as position owner; verify it is rejected.
-• Verify existing client-owned positions are migrated to a staff owner.
-• Open /admin Overview My Day; verify no client users appear in workload.
-Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
+• Search audit events for TAASFLOW_DEMO_SEED; verify 0 results in client-visible fields.
+• Verify 10 score approvals and the payment exemption reason now have corrected records.
+• Open /client role activity feed; verify no marker strings appear.
+Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
         {children}
