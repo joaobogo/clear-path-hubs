@@ -114,6 +114,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
       .from("position_locations")
       .select("position_id,city,region,country,country_code,is_primary,display_order")
       .in("position_id", (data ?? []).map((p) => p.id));
+    console.log("[listPublicPositions] locations fetched:", (locationRows ?? []).length, "for positions", (data ?? []).length);
     const primaryLocationByPosition = new Map<string, { city?: string | null; country?: string | null; country_code?: string | null }>();
     for (const row of (locationRows ?? []) as { position_id: string; city?: string | null; country?: string | null; country_code?: string | null; is_primary?: boolean }[]) {
       const existing = primaryLocationByPosition.get(row.position_id);
@@ -121,6 +122,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
         primaryLocationByPosition.set(row.position_id, row);
       }
     }
+    console.log("[listPublicPositions] primary map:", Object.fromEntries(primaryLocationByPosition));
 
     // Employer identity comes from a definer lookup: anon has no read access to
     // organizations, and it must stay that way (the client list is private).
