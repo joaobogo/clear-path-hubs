@@ -106,8 +106,8 @@ export function LifecycleBar({
                   requirements: position.requirements,
                 }).filter((b) => b !== "not_approved");
                 if (blockers.length > 0) {
-                  const { publishBlockedMessage } = await import("@/lib/publish-gate");
-                  toast.error(publishBlockedMessage(blockers));
+                  const { publishBlockedMessage, humanizePublishBlockedMessage } = await import("@/lib/publish-gate");
+                  toast.error(humanizePublishBlockedMessage(publishBlockedMessage(blockers)));
                   return;
                 }
               } catch (e) {
