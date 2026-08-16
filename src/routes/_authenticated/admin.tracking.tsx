@@ -45,7 +45,6 @@ type TrackerKey = keyof typeof TRACKER_CATEGORY;
 
 const TRACKERS: Array<{ key: TrackerKey; name: string; what: string }> = [
   { key: "ga4", name: "Google Analytics 4", what: "Traffic and product measurement" },
-  { key: "apollo", name: "Apollo website tracker", what: "Visitor-to-company enrichment" },
   { key: "rb2b", name: "RB2B", what: "Company-level visitor identification" },
   { key: "meta", name: "Meta pixel", what: "Advertising and retargeting" },
   { key: "linkedin", name: "LinkedIn insight tag", what: "Advertising and conversions" },

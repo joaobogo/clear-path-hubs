@@ -75,7 +75,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
     scripts: [
-      // Every tracking tag (GA4, Apollo, RB2B, LinkedIn, Meta when configured)
+      // Every tracking tag (GA4, RB2B, LinkedIn, Meta when configured)
       // boots here, in the server-rendered head, so each one runs while the
       // document parses — on the first load of any page, before hydration and
       // with no consent gate (owner decision: tracking must fire for every

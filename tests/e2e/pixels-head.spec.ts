@@ -26,7 +26,6 @@ const PAGES = [
  */
 const REQUIRED_MARKERS: Record<string, string> = {
   ga4: "window.__tfGa4=1",
-  apollo: "window.__tfApollo=1",
   rb2b: "ddwl4m2hdecbv.cloudfront.net/b/",
   linkedin: "window.__tfLi=1",
 };
@@ -94,7 +93,7 @@ test("hydration does not duplicate any tag in the live DOM", async ({ page }) =>
 
   const counts = await page.evaluate(() => {
     const out: Record<string, number> = {};
-    for (const key of ["ga4", "apollo", "rb2b", "linkedin"]) {
+    for (const key of ["ga4", "rb2b", "linkedin"]) {
       out[key] = document.querySelectorAll(
         `script[data-tracker="${key}"]`,
       ).length;
