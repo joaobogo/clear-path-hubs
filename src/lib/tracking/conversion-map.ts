@@ -38,7 +38,7 @@ type ProviderMapping = {
   meta?: string;
   /** Which canonical payload keys Meta should receive, and under what name. */
   metaParams?: Record<string, string>;
-  /** Apollo/Clarity/Hotjar label (they take a single string). */
+  /** Clarity/Hotjar label (they take a single string). */
   label?: string;
   /** LinkedIn conversion id key; omitted means "do not send to LinkedIn". */
   linkedin?: keyof typeof LINKEDIN_CONVERSION_IDS;
@@ -91,7 +91,7 @@ export const CONVERSION_MAP: Record<string, ProviderMapping> = {
 export type ResolvedConversion = {
   /** Name GA4 and the dataLayer receive. */
   ga4Event: string;
-  /** Single-string label for Apollo / Clarity / Hotjar. */
+  /** Single-string label for Clarity / Hotjar. */
   label: string;
   meta: { event: string; params: Record<string, unknown> } | null;
   linkedin: { conversion_id: string } | null;

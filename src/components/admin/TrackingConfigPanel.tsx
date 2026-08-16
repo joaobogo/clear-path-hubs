@@ -14,7 +14,6 @@ import { readConsent } from "@/lib/tracking/consent";
  */
 const ENV_VAR: Record<string, string> = {
   ga4: "VITE_GA_MEASUREMENT_ID",
-  apollo: "VITE_APOLLO_APP_ID",
   rb2b: "VITE_RB2B_ID",
   meta: "VITE_META_PIXEL_ID",
   linkedin: "VITE_LINKEDIN_PARTNER_ID",
@@ -24,7 +23,6 @@ const ENV_VAR: Record<string, string> = {
 
 const LABEL: Record<string, string> = {
   ga4: "Google Analytics 4",
-  apollo: "Apollo website tracker",
   rb2b: "RB2B visitor identification",
   meta: "Meta pixel",
   linkedin: "LinkedIn insight tag",
