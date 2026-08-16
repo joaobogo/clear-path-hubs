@@ -264,14 +264,15 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       count: review.count ?? 0,
       action_hint: "Review evidence and recorded fit labels to make a decision.",
       see_all: { to: "/admin/candidates" },
+      secondary_badge: {
+        label: `${readyForDecision.count ?? 0} ready for decision`,
+        tone: (readyForDecision.count ?? 0) > 0 ? "default" : "neutral",
+      },
       items: ((review.data ?? []) as Any[]).map((m) => ({
         id: m.id,
         title: m.candidate_profiles?.full_name ?? "Candidate",
         subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
-
         meta: m.score_runs?.score != null ? `score ${Math.round(Number(m.score_runs.score))}` : null,
-
-
         waiting_since: m.updated_at,
         target: { kind: "review" as const, matchId: m.id },
         action_label: "Review",
@@ -280,6 +281,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         tone: ageTone(m.updated_at, 1, 3),
       })),
     },
+
     {
       key: "client_overdue",
       label: "Client decisions overdue",
