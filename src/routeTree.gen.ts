@@ -27,6 +27,7 @@ import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PlatformRouteImport } from './routes/platform'
 import { Route as PitchRouteImport } from './routes/pitch'
 import { Route as PilotRouteImport } from './routes/pilot'
+import { Route as MvpFixPlanRouteImport } from './routes/mvp-fix-plan'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as KnowledgeBaseRouteImport } from './routes/knowledge-base'
@@ -295,6 +296,11 @@ const PitchRoute = PitchRouteImport.update({
 const PilotRoute = PilotRouteImport.update({
   id: '/pilot',
   path: '/pilot',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MvpFixPlanRoute = MvpFixPlanRouteImport.update({
+  id: '/mvp-fix-plan',
+  path: '/mvp-fix-plan',
   getParentRoute: () => rootRouteImport,
 } as any)
 const McpRoute = McpRouteImport.update({
@@ -1313,6 +1319,7 @@ export interface FileRoutesByFullPath {
   '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
+  '/mvp-fix-plan': typeof MvpFixPlanRoute
   '/pilot': typeof PilotRoute
   '/pitch': typeof PitchRoute
   '/platform': typeof PlatformRoute
@@ -1511,6 +1518,7 @@ export interface FileRoutesByTo {
   '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
+  '/mvp-fix-plan': typeof MvpFixPlanRoute
   '/pilot': typeof PilotRoute
   '/pitch': typeof PitchRoute
   '/platform': typeof PlatformRoute
@@ -1701,6 +1709,7 @@ export interface FileRoutesById {
   '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
+  '/mvp-fix-plan': typeof MvpFixPlanRoute
   '/pilot': typeof PilotRoute
   '/pitch': typeof PitchRoute
   '/platform': typeof PlatformRoute
@@ -1901,6 +1910,7 @@ export interface FileRouteTypes {
     | '/knowledge-base'
     | '/login'
     | '/mcp'
+    | '/mvp-fix-plan'
     | '/pilot'
     | '/pitch'
     | '/platform'
@@ -2099,6 +2109,7 @@ export interface FileRouteTypes {
     | '/knowledge-base'
     | '/login'
     | '/mcp'
+    | '/mvp-fix-plan'
     | '/pilot'
     | '/pitch'
     | '/platform'
@@ -2288,6 +2299,7 @@ export interface FileRouteTypes {
     | '/knowledge-base'
     | '/login'
     | '/mcp'
+    | '/mvp-fix-plan'
     | '/pilot'
     | '/pitch'
     | '/platform'
@@ -2488,6 +2500,7 @@ export interface RootRouteChildren {
   KnowledgeBaseRoute: typeof KnowledgeBaseRoute
   LoginRoute: typeof LoginRoute
   McpRoute: typeof McpRoute
+  MvpFixPlanRoute: typeof MvpFixPlanRoute
   PilotRoute: typeof PilotRoute
   PitchRoute: typeof PitchRoute
   PlatformRoute: typeof PlatformRoute
@@ -2687,6 +2700,13 @@ declare module '@tanstack/react-router' {
       path: '/pilot'
       fullPath: '/pilot'
       preLoaderRoute: typeof PilotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mvp-fix-plan': {
+      id: '/mvp-fix-plan'
+      path: '/mvp-fix-plan'
+      fullPath: '/mvp-fix-plan'
+      preLoaderRoute: typeof MvpFixPlanRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mcp': {
@@ -4316,6 +4336,7 @@ const rootRouteChildren: RootRouteChildren = {
   KnowledgeBaseRoute: KnowledgeBaseRoute,
   LoginRoute: LoginRoute,
   McpRoute: McpRoute,
+  MvpFixPlanRoute: MvpFixPlanRoute,
   PilotRoute: PilotRoute,
   PitchRoute: PitchRoute,
   PlatformRoute: PlatformRoute,
