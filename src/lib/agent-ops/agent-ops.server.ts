@@ -18,7 +18,7 @@
  * personal data — free-form payloads pass through `redactStructured`.
  */
 
-import { agentName, type AgentKey } from "@/lib/agents/registry";
+import { AGENT_KEYS, agentName, type AgentKey } from "@/lib/agents/registry";
 import {
   actionsFor,
   agentForJobType,
@@ -33,6 +33,7 @@ import {
   runBucket,
   RUN_BUCKETS,
   type AgentOpsConsole,
+  type AgentWindowStatus,
   type AgentRunRow,
   type RunBucket,
 } from "./agent-ops";
