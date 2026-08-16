@@ -244,7 +244,7 @@ function OperationsPage() {
     return hay.includes(q);
   });
 
-  const deliveryItems = ((delivery?.items ?? []) as unknown) as AnyRow[];
+  const deliveryItems = (delivery?.items ?? []) as DeliveryFailure[];
 
   return (
     <div className="mx-auto max-w-[1600px] px-6 py-8 space-y-6">
