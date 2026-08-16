@@ -133,8 +133,13 @@ export function CompactList({
                   <ReviewTimelineStrip timeline={c.review_timeline} />
                 </td>
                 <td className="py-2 px-3 text-right whitespace-nowrap">
-                  <DownloadCvButton matchId={c.match_id} size="sm" variant="ghost" label="CV" mode="download" />
+                  {c.contact_released ? (
+                    <DownloadCvButton matchId={c.match_id} size="sm" variant="ghost" label="CV" mode="download" />
+                  ) : (
+                    <span className="text-[10px] text-muted-foreground">After interview</span>
+                  )}
                 </td>
+
                 <td className="py-2 px-3 text-right">
                   <Link
                     to="/client/candidates/$id"
