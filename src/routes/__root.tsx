@@ -151,26 +151,24 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "PROMPT C — F-007 (P1): semantic evidence engine is still
-unshipped
+        TEXTO DO USUÁRIO: "PROMPT D — Staff notification fan-out for new applications (FAIL)
 Why it matters
-Live scoring is keyword-only. 'microservices, event-driven' scores zero against 'distributed systems'.
-The interim unknown-status floor is in place but the semantic engine is not wired.
+STABILIZATION.md line 1315, journey item 7: 'Staff in-app notification for a new application' is
+marked FAIL — open.
 Prompt
-F-007 — Wire semantic evidence extraction into live scoring.
-1. Connect src/lib/scoring/semantic-engine.ts to scoring-service.server.ts behind a feature
-flag, using the Lovable AI Gateway (google/gemini-2.5-flash for extraction, gemini-2.5-pro only
-where reasoning depth is needed).
-2. The LLM step extracts evidence spans from the CV; the deterministic engine still decides the
-score. Never let the model output the final number.
-3. Every requirement resolves to met / unknown / missing, each with a genuine verbatim quote (no
-paraphrase, no fabricated evidence) run through the existing quote hygiene scrubber.
-4. Keep the unknown-status floor for thin CVs and keep needs_validation surfacing to reviewers.
-5. Scores stay immutable: semantic scoring creates a NEW score run; it never edits an existing
-one.
-6. If you cannot ship it fully, keep F-007 'open' in /admin/qa-report and state honestly that the
-interim floor is what is verified.
-Report: files changed, flag name and default, sample before/after on one real demo candidate."`
+Fix the staff in-app notification fan-out for new applications (STABILIZATION item 7, currently
+FAIL).
+1. Reproduce: submit an application to a demo position and confirm no in-app notification
+reaches the assigned staff/owner.
+2. Fix the fan-out so application_received creates notification rows for the correct recipients
+(position owner + operations), scoped by RLS so no cross-org leakage is possible.
+3. Notifications must deep-link to the specific candidate review, use human-readable labels (no
+snake_case, no raw IDs, no ISO timestamps), and auto-resolve once the underlying decision is
+taken.
+4. Add an e2e test that submits an application and asserts exactly one notification per recipient
+(no duplicates on double submit).
+5. Update STABILIZATION.md item 7 to PASS only with the test output attached.
+Report: files changed, test output, and anything not fixed with the reason."`
         }
       >
         {children}
