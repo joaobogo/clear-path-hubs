@@ -151,16 +151,18 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-021 · Admin Notification Deep Links (A21/B15) · MEDIUM
-Scope: src/lib/notifications-resolver.server.ts, src/routes/_authenticated/admin.notifications.tsx
-Defect: Admin bell notifications link to /client/... dead ends.
-Required fix: Route every admin notification to an admin surface; route every client notification to a client
-surface.
+TEXTO DO USUÁRIO: "P-022 · Small Admin Fixes (A22) · MEDIUM
+Scope: Various admin components
+Defect: Approved timestamp missing; quality panel stale after save; audit pagination flicker; bulk CV export
+missing parent audit event.
+Required fix: Backfill approved_at; refresh quality panel on save; fix pagination key; emit bulk_export audit
+parent event.
 Acceptance criteria:
-• Trigger a new-client-message notification for an admin.
-• Click the bell notification; verify it opens /admin/messages or the candidate record, not /client.
-• Trigger a client notification; verify it opens a client page.
-Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
+• Open an approved role; verify Approved timestamp is present.
+• Edit requirements and save; verify quality panel updates without hard reload.
+• Paginate audit events; verify rows match the new header immediately.
+• Bulk export CVs; verify a single bulk_export audit event with count.
+Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
         {children}
