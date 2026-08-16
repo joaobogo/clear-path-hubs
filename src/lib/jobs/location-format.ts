@@ -80,8 +80,9 @@ export function withCountry(
   const place = (location ?? "").trim();
   if (!place || !row) return place;
   const city = (row.city ?? "").trim();
-  const code = (row.country ?? row.country_code ?? "").trim().toUpperCase();
-  const country = COUNTRY_NAMES[code];
+  const code = (row.country_code ?? "").trim().toUpperCase();
+  const countryName = (row.country ?? "").trim();
+  const country = COUNTRY_NAMES[code] || countryName;
   if (!city || !country) return place;
   if (!place.toLowerCase().includes(city.toLowerCase())) return place;
   if (place.toLowerCase().includes(country.toLowerCase())) return place;
