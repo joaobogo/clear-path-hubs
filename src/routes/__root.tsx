@@ -151,17 +151,18 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-013 · Pre-Interview Consent Gate (A13/B4) · BLOCKER
-Scope: src/lib/consent/cv-consent-gate.ts, src/lib/cv-download.functions.ts, /client/candidates/$id
-Defect: Pre-interview candidates are fully Released; client downloads CVs before interview.
-Required fix: Block/redact contact details and CV download by default; server-side download endpoint enforces
-consent; per-candidate release/revoke is audited.
+TEXTO DO USUÁRIO: "P-014 · Hire/Offer State Machine (A14/B11) · HIGH
+Scope: src/lib/offer-hire.ts, src/lib/offer-hire.server.ts, /admin/candidates/$id, /client/candidates/$id
+Defect: Hire/offer states are incoherent: Closed lost Candidate declined vs stage hired; KPIs contradict each
+other.
+Required fix: Unify offer/hire outcomes: a closed-lost hire never displays as active; KPIs derive from the same
+source table.
 Acceptance criteria:
-• Open a Shortlisted candidate who has not been interviewed.
-• Verify contact details are blurred and CV download is disabled or redacted.
-• Attempt direct download via API; verify 403 or redacted PDF.
-• Record interview consent; verify details and original CV become available.
-Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
+• Create a hire decision with outcome declined.
+• Verify candidate stage does not show Hired and KPIs count Declined +1, Hires 0.
+• Create an accepted offer; verify Hires +1, Start dates confirmed +1, and Extended count reconciles.
+• Open client view; verify offer state matches the client's actual decision.
+Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
         {children}
