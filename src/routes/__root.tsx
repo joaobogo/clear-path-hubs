@@ -161,7 +161,7 @@ Acceptance criteria:
 • Verify contact details are blurred and CV download is disabled or redacted.
 • Attempt direct download via API; verify 403 or redacted PDF.
 • Record interview consent; verify details and original CV become available.
-Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`,old_content:
+Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
         }
       >
         {children}
