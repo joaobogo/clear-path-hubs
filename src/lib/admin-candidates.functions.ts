@@ -386,7 +386,7 @@ export const getCandidateDossier = createServerFn({ method: "POST" })
     const { data: m } = await s
       .from("candidate_matches")
       .select(
-        "id,application_id,candidate_profile_id,organization_id,position_id,contact_released_at,contact_release_reason,client_visibility,eligibility_status,recommendation,recommendation_reason,integrity_status,evidence_confidence,canonical_state",
+        "id,application_id,candidate_profile_id,organization_id,position_id,stage,contact_released_at,contact_released_by,contact_release_reason,client_visibility,eligibility_status,recommendation,recommendation_reason,integrity_status,evidence_confidence,canonical_state",
       )
       .eq("id", data.match_id)
       .maybeSingle();

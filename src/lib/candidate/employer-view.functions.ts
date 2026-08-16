@@ -6,6 +6,7 @@
  * candidate page, so the two shapes cannot drift.
  */
 import { createServerFn } from "@tanstack/react-start";
+import { cvConsentGate } from "@/lib/consent/cv-consent-gate";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
@@ -32,7 +33,7 @@ export const listMyEmployerPreviews = createServerFn({ method: "GET" })
     const { data, error } = await supabaseAdmin
       .from("candidate_matches")
       .select(
-        `id, delivered_at, contact_released_at,
+        `id, stage, delivered_at, contact_released_at, contact_released_by, contact_release_reason,
          positions:position_id ( title, organizations:organization_id ( name ) )`,
       )
       .in("candidate_profile_id", cpIds)
@@ -47,7 +48,12 @@ export const listMyEmployerPreviews = createServerFn({ method: "GET" })
         role_title: (m.positions?.title as string | undefined) ?? "Role",
         company: (m.positions?.organizations?.name as string | undefined) ?? null,
         shared_at: (m.delivered_at as string | null) ?? null,
-        contact_released: Boolean(m.contact_released_at),
+        contact_released: cvConsentGate({
+          stage: m.stage as string,
+          contact_released_at: m.contact_released_at as string | null,
+          contact_released_by: m.contact_released_by as string | null,
+          contact_release_reason: m.contact_release_reason as string | null,
+        }).open,
       })),
     };
   });
@@ -69,7 +75,7 @@ export const getMyEmployerPreview = createServerFn({ method: "GET" })
 
     const { data: match, error } = await supabaseAdmin
       .from("candidate_matches")
-      .select(`${CLIENT_CANDIDATE_SELECT}, contact_released_at, organization_id, updated_at`)
+      .select(`${CLIENT_CANDIDATE_SELECT}, organization_id, updated_at`)
       .eq("id", data.match_id)
       .eq("client_visibility", "visible")
       .in("candidate_profile_id", cpIds)
@@ -109,7 +115,7 @@ export const getMyEmployerPreview = createServerFn({ method: "GET" })
 
     return {
       dto,
-      contact_released: Boolean(row.contact_released_at),
+      contact_released: dto.contact_released,
     };
 
   });

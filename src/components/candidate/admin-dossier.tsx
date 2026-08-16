@@ -28,6 +28,7 @@ import {
 import { Lock, Unlock, Trash2, Users, AlertTriangle } from "lucide-react";
 import { useConfirmAction } from "@/components/ds";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { cvConsentGate } from "@/lib/consent/cv-consent-gate";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -118,6 +119,13 @@ export function AdminDossier({ matchId }: { matchId: string }) {
 
   const internalNotes = (notes as Any[]).filter((n) => n.visibility === "internal");
   const clientNotes = (notes as Any[]).filter((n) => n.visibility === "client_visible");
+  const gate = cvConsentGate({
+    stage: match.stage,
+    contact_released_at: match.contact_released_at,
+    contact_released_by: match.contact_released_by,
+    contact_release_reason: match.contact_release_reason,
+    has_interview: (interviews as Any[] | undefined)?.length ? true : false,
+  });
   const released = Boolean(match.contact_released_at);
   const published = match.client_visibility === "visible";
   const candidateLabel = (profile?.full_name as string | null) ?? "This candidate";
@@ -156,9 +164,9 @@ export function AdminDossier({ matchId }: { matchId: string }) {
         title="Contact release"
         hint="Publishing shows the profile. Releasing contact details is a separate, audited permission."
         action={
-          <Badge variant={released ? "default" : "outline"} className="gap-1">
-            {released ? <Unlock className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
-            {released ? "Released" : "Withheld"}
+          <Badge variant={gate.open ? "default" : "outline"} className="gap-1">
+            {gate.open ? <Unlock className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
+            {gate.adminLabel}
           </Badge>
         }
       >
@@ -168,6 +176,12 @@ export function AdminDossier({ matchId }: { matchId: string }) {
               Released {new Date(match.contact_released_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
               {match.contact_release_reason ? ` — ${match.contact_release_reason}` : ""}
             </p>
+            {gate.blanket_release && (
+              <p className="text-xs text-muted-foreground">
+                This release has no recorded actor, so it does not satisfy the
+                pre-interview consent policy on its own.
+              </p>
+            )}
             <Button
               variant="outline"
               size="sm"

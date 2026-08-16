@@ -41,7 +41,7 @@ export const getCandidateCvDownload = createServerFn({ method: "POST" })
     const { data: match, error: mErr } = await supabaseAdmin
       .from("candidate_matches")
       .select(
-        "id, candidate_profile_id, organization_id, client_visibility, canonical_state, contact_released_at",
+        "id, candidate_profile_id, organization_id, client_visibility, canonical_state, stage, contact_released_at, contact_released_by, contact_release_reason",
       )
       .eq("id", matchId)
       .maybeSingle();
@@ -76,32 +76,46 @@ export const getCandidateCvDownload = createServerFn({ method: "POST" })
       }
     }
 
-    // 3. Client org member — only for approved + published candidates.
-    //    We enforce a staged release:
-    //    - Pre-interview: Redacted view only (PII stripped).
-    //    - Interview stage + Consent: Full CV access.
-    let redacted = false;
+    // 3. Client org member — approved + published AND past the consent gate.
+    //    Pre-interview candidates are refused here, server-side: hiding the
+    //    button is never the protection.
+    const redacted = false;
     if (!authorized && orgId) {
       const isVisible =
         match.client_visibility === "visible" &&
         match.canonical_state === "published_to_client";
-      
+
       if (isVisible) {
         const { data: allowed } = await supabase.rpc("has_client_permission", {
           _user: userId,
           _org: orgId,
           _perm: "view_candidates",
         });
-        
+
         if (allowed === true) {
-          authorized = true;
           audience = "client";
-          // Full release requires interview stage AND explicit release timestamp.
-          // The product promise: "released when you advance a candidate to interview".
-          redacted = !match.contact_released_at;
+
+          const { count: interviewCount } = await supabaseAdmin
+            .from("interviews")
+            .select("id", { count: "exact", head: true })
+            .eq("candidate_match_id", matchId);
+
+          const { cvConsentGate, CV_GATE_ERROR_MESSAGE } = await import(
+            "@/lib/consent/cv-consent-gate"
+          );
+          const gate = cvConsentGate({
+            stage: match.stage as string,
+            contact_released_at: match.contact_released_at as string | null,
+            contact_released_by: match.contact_released_by as string | null,
+            contact_release_reason: match.contact_release_reason as string | null,
+            has_interview: (interviewCount ?? 0) > 0,
+          });
+          if (!gate.open) throw new Error(CV_GATE_ERROR_MESSAGE);
+          authorized = true;
         }
       }
     }
+
 
     if (!authorized) throw new Error("Not found");
 
