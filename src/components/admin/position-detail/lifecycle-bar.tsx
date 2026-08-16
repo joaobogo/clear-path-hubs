@@ -39,7 +39,12 @@ export function LifecycleBar({
       toast.success(`${label} · trace ${r.trace_id}`);
       await onDone();
     } catch (e) {
-      toast.error((e as Error).message);
+      const msg = (e as Error).message || "";
+      if (msg.startsWith("publish_blocked:")) {
+        toast.error(humanizePublishBlockedMessage(msg));
+      } else {
+        toastError(e);
+      }
     } finally {
       setBusy(false);
     }
