@@ -151,15 +151,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-015 · Delivery Failures Definition (A15) · MEDIUM
-Scope: src/lib/admin-ops.server.ts, /admin, /admin/ops
-Defect: Delivery failures shows 0, 18, and 23 on different surfaces.
-Required fix: Define one canonical 7-day window for delivery failures and use it on every surface.
+TEXTO DO USUÁRIO: "P-017 · Feed/Journey Truthfulness (A17/B9) · MEDIUM
+Scope: src/lib/candidate-history.ts, src/lib/audit.server.ts
+Defect: Message sent events with no actor; System actions labeled as your team; Interviewed stage generated
+from offer decision; duplicated audit rows.
+Required fix: Normalize actor attribution; derive stages from real events only; deduplicate identical audit rows.
 Acceptance criteria:
-• Open /admin, /admin/ops, and any digest email; verify the same 7-day number everywhere.
-• Inject a delivery failure older than 7 days; verify it is not counted.
-• Inject a failure within 7 days; verify all three surfaces increment by 1.
-Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
+• Open a candidate history; verify every event has a real actor or is labeled System.
+• Verify an offer decision does not create an Interviewed stage event.
+• Refresh the page; verify no duplicate identical rows appear.
+Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
         }
       >
         {children}
