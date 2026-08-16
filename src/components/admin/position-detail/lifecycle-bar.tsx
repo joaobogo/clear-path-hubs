@@ -2,6 +2,7 @@
 import { Fragment, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { setPositionStatus, setPositionVisibility } from "@/lib/admin.functions";
+import { humanizePublishBlockedMessage } from "@/lib/publish-gate";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -37,7 +39,12 @@ export function LifecycleBar({
       toast.success(`${label} · trace ${r.trace_id}`);
       await onDone();
     } catch (e) {
-      toast.error((e as Error).message);
+      const msg = (e as Error).message || "";
+      if (msg.startsWith("publish_blocked:")) {
+        toast.error(humanizePublishBlockedMessage(msg));
+      } else {
+        toastError(e);
+      }
     } finally {
       setBusy(false);
     }
@@ -99,8 +106,8 @@ export function LifecycleBar({
                   requirements: position.requirements,
                 }).filter((b) => b !== "not_approved");
                 if (blockers.length > 0) {
-                  const { publishBlockedMessage } = await import("@/lib/publish-gate");
-                  toast.error(publishBlockedMessage(blockers));
+                  const { publishBlockedMessage, humanizePublishBlockedMessage } = await import("@/lib/publish-gate");
+                  toast.error(humanizePublishBlockedMessage(publishBlockedMessage(blockers)));
                   return;
                 }
               } catch (e) {

@@ -29,7 +29,6 @@ export function RecordActivityTab({
   const q = useQuery({
     queryKey: ["record-audit", entity, id, offset],
     queryFn: () => load({ data: { entity, id, limit: PAGE_SIZE, offset } }),
-    placeholderData: (prev) => prev,
   });
 
   if (q.isError) {

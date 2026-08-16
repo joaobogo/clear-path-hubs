@@ -76,3 +76,59 @@ export function formatEnumList(
     .filter((v) => v.length > 0)
     .join(separator);
 }
+
+/**
+ * Render a candidate work-authorisation field for humans.
+ *
+ * The column is polymorphic: it can be a plain string, a note from a position
+ * blueprint, or an object like `{ visa_required: false, right_to_work: true }`.
+ * This collapses the object into a readable line and strips any demo seed markers.
+ */
+export function formatWorkAuthorization(raw: unknown): string | null {
+  if (raw == null) return null;
+  if (typeof raw === "string") {
+    const clean = raw.trim();
+    if (!clean || /TAASFLOW_DEMO_SEED/i.test(clean)) return null;
+    return clean;
+  }
+  const r = raw as Record<string, unknown>;
+  const parts: string[] = [];
+  if (typeof r.visa_required === "boolean") {
+    parts.push(r.visa_required ? "Visa required" : "No visa required");
+  }
+  if (typeof r.right_to_work === "boolean") {
+    parts.push(r.right_to_work ? "Right to work confirmed" : "No right to work");
+  }
+  if (typeof r.eu_citizen === "boolean") {
+    parts.push(r.eu_citizen ? "EU citizen" : "Non-EU citizen");
+  }
+  const note = String(r.notes ?? r.required ?? r.summary ?? r.value ?? r.note ?? "").trim();
+  if (note && !/TAASFLOW_DEMO_SEED/i.test(note)) {
+    parts.push(note);
+  }
+  return parts.length > 0 ? parts.join(" · ") : null;
+}
+
+/**
+ * Extract a human-readable value from a screening answer.
+ *
+ * Answers may be stored as plain strings, numbers, booleans, or wrapped objects
+ * like `{ value: 8 }`. Never render raw JSON to a human.
+ */
+export function formatAnswerValue(raw: unknown): string {
+  if (raw == null || raw === "") return "—";
+  if (typeof raw === "string") return raw;
+  if (typeof raw === "number" || typeof raw === "boolean") return String(raw);
+  if (Array.isArray(raw)) {
+    return raw.map((v) => formatAnswerValue(v)).filter(Boolean).join(", ") || "—";
+  }
+  const r = raw as Record<string, unknown>;
+  if ("value" in r) return formatAnswerValue(r.value);
+  if ("answer" in r) return formatAnswerValue(r.answer);
+  if ("label" in r) return String(r.label);
+  // Fallback: pretty-print object keys that have non-empty values.
+  const entries = Object.entries(r)
+    .filter(([, v]) => v != null && v !== "")
+    .map(([k, v]) => `${formatEnumLabel(k)}: ${formatAnswerValue(v)}`);
+  return entries.length > 0 ? entries.join(" · ") : "—";
+}

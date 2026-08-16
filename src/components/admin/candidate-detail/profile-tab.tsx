@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Row } from "@/components/admin/candidate-detail/primitives";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { formatWorkAuthorization } from "@/lib/human-labels";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -37,7 +38,7 @@ function ProfileTab({
           <Row label="Experience" v={cp?.years_experience != null ? `${cp.years_experience} yrs` : null} />
           <Row label="Phone" v={cp?.phone} />
           <Row label="LinkedIn" v={cp?.linkedin_url && <a href={cp.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Profile ↗</a>} />
-          <Row label="Work auth" v={typeof cp?.work_authorization === "string" ? cp.work_authorization : cp?.work_authorization ? JSON.stringify(cp.work_authorization) : null} />
+          <Row label="Work auth" v={formatWorkAuthorization(cp?.work_authorization)} />
           <Row label="Consent" v={cp?.consent ? "Given" : "Not recorded"} />
         </dl>
         {cp?.summary && (

@@ -96,3 +96,32 @@ export function publishBlockedMessage(blockers: PublishBlocker[]): string {
     ". Resolve these first — publishing is not bypassable."
   );
 }
+
+/**
+ * Convert a `publish_blocked:` error into an admin-facing human message.
+ *
+ * Admins must never see client checkout copy ("Your brief is saved as a draft")
+ * or raw snake_case tokens. The message matches the actual state: the role stays
+ * "under review" / "approved" until payment or an exemption clears.
+ */
+export function humanizePublishBlockedMessage(message: string): string {
+  if (!message.startsWith(PUBLISH_BLOCKED_PREFIX)) return message;
+  const inner = message
+    .slice(PUBLISH_BLOCKED_PREFIX.length)
+    .replace(". Resolve these first — publishing is not bypassable.", "")
+    .trim();
+
+  const hasPayment = inner.includes(PUBLISH_BLOCKER_LABEL.payment_unpaid);
+  const hasRequirements = inner.includes(PUBLISH_BLOCKER_LABEL.missing_requirements);
+
+  if (hasPayment && hasRequirements) {
+    return "Approval blocked: payment or exemption is required, and at least one must-have requirement is needed.";
+  }
+  if (hasPayment) return "Approval blocked: payment or exemption required";
+  if (hasRequirements) return "Can't approve yet — add at least one must-have requirement";
+
+  // Generic fallback for the remaining data blockers.
+  const first = inner.split(";")[0]?.trim();
+  if (!first) return "Can't approve this role yet — resolve the blockers first.";
+  return `Can't approve yet — ${first.charAt(0).toLowerCase() + first.slice(1)}`;
+}

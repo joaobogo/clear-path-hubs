@@ -43,6 +43,7 @@ import {
   Lock,
 } from "lucide-react";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { formatAnswerValue } from "@/lib/human-labels";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -187,7 +188,7 @@ function ReviewWorkspace() {
       (answers as Any[]).map((a) => ({
         question: a.screening_questions?.question ?? "Question",
         dealbreaker: Boolean(a.screening_questions?.dealbreaker),
-        answer: typeof a.answer === "string" ? a.answer : JSON.stringify(a.answer),
+        answer: formatAnswerValue(a.answer),
       })),
     [answers],
   );
