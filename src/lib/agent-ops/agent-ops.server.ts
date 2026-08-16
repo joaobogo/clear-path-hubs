@@ -364,7 +364,7 @@ export async function loadAgentOpsConsole(
   };
 }
 
-}
+
 
 /** One run: resolved inputs, redacted structured output, usage, audit trail. */
 export async function loadAgentRunDetail(operator: Operator, jobId: string) {
