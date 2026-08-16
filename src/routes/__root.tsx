@@ -151,17 +151,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-010 · Cross-Client Contamination (A10/B14) · HIGH
-Scope: src/lib/staff-persona.server.ts, src/lib/ai-briefing.server.ts, /admin/organizations/$id
-Defect: Northwind org shows Flow Group Ventures branding; candidate briefings pitch for the wrong company;
-org contact merges personas.
-Required fix: Correct org records to their own branding; ensure AI briefings use the candidate's target org
-name, never a sibling org.
+TEXTO DO USUÁRIO: "P-011 · Staff-Only Ownership (A11) · HIGH
+Scope: src/lib/positions.server.ts, /admin/positions/$id/settings
+Defect: Client users appear as position owners and SLA owners; workload widget includes them.
+Required fix: Add a write guard so position owner and SLA owner can only be staff platform_admin/operations
+roles.
 Acceptance criteria:
-• Open Northwind candidate briefing; verify it mentions the hiring organization, not Flow Group Ventures.
-• Open Northwind org record; verify website and branding are Northwind's own.
-• As a client user of another org, guess Northwind's candidate ID; verify access denied or empty.
-Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
+• Attempt to set a client user as position owner; verify it is rejected.
+• Verify existing client-owned positions are migrated to a staff owner.
+• Open /admin Overview My Day; verify no client users appear in workload.
+Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
         }
       >
         {children}
