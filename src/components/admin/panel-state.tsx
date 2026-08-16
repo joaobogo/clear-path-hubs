@@ -13,6 +13,7 @@ import type { ReactNode } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PanelError } from "@/components/admin/panel-error";
 import { cn } from "@/lib/utils";
+import { looksTechnical } from "@/lib/error-taxonomy";
 
 /** The slice of a TanStack Query result a panel needs to be honest. */
 export type PanelQueryState = {
