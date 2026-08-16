@@ -14,7 +14,10 @@
  */
 export function titleCaseLocation(input: string): string {
   if (!input) return input;
+  // Raw records often store "Chicago,IL,United States" with no space after the
+  // comma. Normalise separators before casing so the fact reads as a sentence.
   return input
+    .replace(/\s*,\s*/g, ", ")
     .split(/([,\s]+)/)
     .map((token) => {
       const trimmed = token.trim();
