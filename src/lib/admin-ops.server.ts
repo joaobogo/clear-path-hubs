@@ -163,7 +163,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
   for (const p of (unpaid.data ?? []) as Any[]) addOwner(p.owner_user_id);
   for (const p of (setup.data ?? []) as Any[]) addOwner(p.owner_user_id);
   for (const m of (review.data ?? []) as Any[]) addOwner(m.positions?.owner_user_id);
-  for (const m of overdue) addOwner(m.positions?.owner_user_id);
+  for (const m of overdue) addOwner(m.owner_user_id);
   for (const iv of (interviews.data ?? []) as Any[])
     addOwner(iv.candidate_matches?.positions?.owner_user_id);
   for (const i of agingIntakes.items) addOwner(i.owner_user_id);
