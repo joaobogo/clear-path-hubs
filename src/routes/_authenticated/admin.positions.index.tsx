@@ -14,6 +14,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   Dialog,
   DialogContent,
@@ -696,7 +697,7 @@ function NewRoleDialog({ clients }: { clients: { id: string; name: string }[] })
         search: { step: undefined },
       });
     },
-    onError: (e: unknown) => toast.error((e as Error).message),
+    onError: (e: unknown) => toastError(e, { tone: "admin", fallback: "Couldn't create the role" }),
   });
   const valid = !!orgId && title.trim().length >= 2;
   return (
