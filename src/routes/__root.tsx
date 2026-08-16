@@ -151,17 +151,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-019 · Copy/Label Corrections (A19) · MEDIUM
-Scope: src/lib/human-labels.ts, src/lib/admin-ops.server.ts, src/components/admin/position-actions.tsx
-Defect: Raw toast approval_blocked; unpaid role shows client checkout copy to admin; WORK AUTH raw JSON;
-Your team badge on client actors.
-Required fix: Humanize all toast/label copy; ensure admin actions show admin copy; format intake answers for
-humans; badge client actors correctly.
+TEXTO DO USUÁRIO: "-020 · Support View Robustness (A20) · MEDIUM
+Scope: src/routes/_authenticated/admin.platform.support.tsx
+Defect: Read-only session context lost on reload; re-open no-ops; View Client Workspace button does nothing;
+30-min self-close not enforced.
+Required fix: Persist support session context; wire View Client Workspace; enforce 30-min self-close; make
+re-open functional.
 Acceptance criteria:
-• Trigger approval_blocked; verify toast reads Approval blocked — payment required.
-• Approve an unpaid role as admin; verify copy is admin-facing, not client checkout.
-• Open a candidate with work authorization answer; verify it is human-readable, not JSON.
-• Verify CV trail actor badges distinguish client vs staff.
+• Open support view for a client org; reload; verify context is restored.
+• Click View Client Workspace; verify it opens the correct client workspace.
+• Simulate 30-min idle; verify the session self-closes.
+• Re-open a closed support session; verify it loads fresh data.
 Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
