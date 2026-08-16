@@ -151,17 +151,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-009 · Agent Operations Truth (A9/B8) · HIGH
-Scope: src/lib/agent-ops/agent-ops.ts, src/lib/agent-ops/agent-ops.server.ts, /admin/ops/agents, /client/insights
-Defect: KPI tiles show 0 while runs exist; only 1 of 6 agents shown; superseded jobs stay Queued forever; client
-Insights differs from admin.
-Required fix: Unify KPI and list queries; mark superseded jobs explicitly; ensure client Insights and admin Ops
-use the same counts for the same org/window.
+TEXTO DO USUÁRIO: "P-010 · Cross-Client Contamination (A10/B14) · HIGH
+Scope: src/lib/staff-persona.server.ts, src/lib/ai-briefing.server.ts, /admin/organizations/$id
+Defect: Northwind org shows Flow Group Ventures branding; candidate briefings pitch for the wrong company;
+org contact merges personas.
+Required fix: Correct org records to their own branding; ensure AI briefings use the candidate's target org
+name, never a sibling org.
 Acceptance criteria:
-• Run several agent jobs; verify the KPI tile counts match the list length.
-• Supersede a job; verify its status changes to superseded, not stuck Queued.
-• Open /client/insights and verify Completed/Queued counts equal /admin/ops/agents for the same org.
-• Negative test: a job with no latest run must not show a stale technical-collision banner.
+• Open Northwind candidate briefing; verify it mentions the hiring organization, not Flow Group Ventures.
+• Open Northwind org record; verify website and branding are Northwind's own.
+• As a client user of another org, guess Northwind's candidate ID; verify access denied or empty.
 Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
