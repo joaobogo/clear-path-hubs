@@ -209,8 +209,9 @@ export async function loadCoverageQueue(
   const showTest = opts.includeTest === true || (await resolveShowTestRecords());
   if (!showTest) q.eq("is_test_record", false);
   if (opts.q) {
-    const term = `%${opts.q}%`;
-    q = q.or(`title.ilike.${term},organizations.name.ilike.${term}`);
+    const { buildPositionSearchOr } = await import("./search/postgrest-filter");
+    const searchOr = await buildPositionSearchOr(admin as never, opts.q);
+    if (searchOr) q = q.or(searchOr);
   }
 
   const res = await q;

@@ -102,8 +102,9 @@ export async function loadPublishGateQueue(
     .limit(300);
   if (scope.orgIds.length > 0) q = q.not("organization_id", "in", `(${scope.orgIds.join(",")})`);
   if (opts.q) {
-    const term = `%${opts.q}%`;
-    q = q.or(`title.ilike.${term},organizations.name.ilike.${term}`);
+    const { buildPositionSearchOr } = await import("./search/postgrest-filter");
+    const searchOr = await buildPositionSearchOr(admin as never, opts.q);
+    if (searchOr) q = q.or(searchOr);
   }
 
   const { data, error } = await q;
