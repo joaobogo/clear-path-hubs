@@ -151,17 +151,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-007 · Search Sanitization (A7) · HIGH
-Scope: src/lib/search/postgrest-filter.ts, /admin/positions
-Defect: Raw PostgREST logic-tree errors leak to the UI for queries like q=( (invalid syntax).
-Required fix: Sanitize/escape input before building OR filters; wrap construction in try/catch; return clean empty
-state on malformed input.
+TEXTO DO USUÁRIO: "P-008 · Client Preview Tab (A8) · HIGH
+Scope: src/routes/_authenticated/admin.candidates.$id.tsx
+Defect: Client Preview tab shows no client-visible data for approved candidates.
+Required fix: Render the true client-facing DTO in the Client Preview tab; reuse the same serializer used by
+/client/candidates/$id.
 Acceptance criteria:
-• Go to /admin/positions and search for q=( (invalid syntax.
-• Verify the UI shows No results found, not a technical error.
-• Search for strings containing hyphens, percent signs, and quotes; verify no error.
-• Audit all other admin lists that use the same filter builder and apply the same fix.
-Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
+• Open an approved, published, live candidate in admin.
+• Click the Client Preview tab.
+• Verify it shows the same score banner, experience, and fit band as the client sees.
+• Open /client/candidates/$id for the same candidate; compare side-by-side.
+Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
         }
       >
         {children}
