@@ -3,6 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeader } from "@tanstack/react-start/server";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
+import { withCountry } from "@/lib/jobs/location-format";
 import type { Database } from "@/integrations/supabase/types";
 import { buildPublicJobFacts, resolveCompensation } from "@/lib/jobs/public-facts";
 import { EFFORT_DEFAULT, resolveApplyEffort } from "@/lib/jobs/apply-effort";
@@ -251,7 +252,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       compensation_visibility: p.compensation_visibility as string | null,
       work_model: pos.work_model,
       onsite_days: (posting as Record<string, unknown>).onsite_days,
-      location: pos.location,
+      location: withCountry(pos.location, (locs ?? []).find((l) => l.is_primary) ?? (locs ?? [])[0]),
       primary_timezone: p.primary_timezone as string | null,
       timezone_overlap_hours: p.timezone_overlap_hours,
       work_authorization: p.work_authorization,
