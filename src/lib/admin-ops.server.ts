@@ -93,33 +93,22 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     ),
 
     // 3.5 — ready for client decision (admin already approved).
-    excludeTestOrgs(
-      s
-        .from("candidate_matches")
-        .select("id", { count: "exact" })
-        .eq("admin_status", "approved")
-        .eq("client_visibility", "visible")
-        .in("stage", ["delivered", "shortlisted", "reviewing"]),
-      scope,
-    ),
+    // Derived from matches in delivered+ status with no client decision row.
+    (async () => {
+      const { loadDecisionBacklog } = await import("./admin-decision-backlog.server");
+      const backlog = await loadDecisionBacklog(s, { includeTest: opts.includeTest ?? false });
+      return { data: [], count: backlog.rows.length };
+    })(),
 
-    // 4 — shared with the client, no decision recorded yet. The page is read
-    // wide enough that the count below is the true total, not the page size:
-    // a count taken from a short page under-reports the queue.
-    excludeTestOrgs(
-      s
-        .from("candidate_matches")
-        .select(
-          "id,updated_at,stage,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(name)),client_decisions(id)",
-          { count: "exact" },
-        )
-        .eq("client_visibility", "visible")
-        .in("stage", ["delivered", "shortlisted", "reviewing"])
-        .lt("updated_at", ISO(3 * DAY))
-        .order("updated_at", { ascending: true })
-        .limit(1000),
-      scope,
-    ),
+    // 4 — shared with the client, no decision recorded yet.
+    // The work-queue "Client decisions overdue" tile uses this.
+    // We slice to 8 for the preview list but the count reflects the whole backlog.
+    (async () => {
+      const { loadDecisionBacklog } = await import("./admin-decision-backlog.server");
+      const backlog = await loadDecisionBacklog(s, { includeTest: opts.includeTest ?? false });
+      return { data: backlog.rows, count: backlog.rows.length };
+    })(),
+
 
 
     // 5 — interviews requested, or happening in the next 48h.
@@ -150,9 +139,8 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
   ]);
 
 
-  const overdue = ((delivered.data ?? []) as Any[]).filter(
-    (m) => !(m.client_decisions ?? []).length,
-  );
+  const overdue = (delivered.data ?? []) as any[];
+
 
   const agingIntakes = aging as {
     items: Array<{
@@ -175,7 +163,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
   for (const p of (unpaid.data ?? []) as Any[]) addOwner(p.owner_user_id);
   for (const p of (setup.data ?? []) as Any[]) addOwner(p.owner_user_id);
   for (const m of (review.data ?? []) as Any[]) addOwner(m.positions?.owner_user_id);
-  for (const m of overdue) addOwner(m.positions?.owner_user_id);
+  for (const m of overdue) addOwner(m.owner_user_id);
   for (const iv of (interviews.data ?? []) as Any[])
     addOwner(iv.candidate_matches?.positions?.owner_user_id);
   for (const i of agingIntakes.items) addOwner(i.owner_user_id);
@@ -264,10 +252,6 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         claim: positionClaim(p.id),
         tone: ageTone(p.created_at, 1, 3),
       })),
-      secondary_badge: {
-        label: `${readyForDecision.count ?? 0} ready for decision`,
-        tone: (readyForDecision.count ?? 0) > 0 ? "default" : "neutral",
-      },
     },
     {
       key: "review",
@@ -276,6 +260,10 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       count: review.count ?? 0,
       action_hint: "Review evidence and recorded fit labels to make a decision.",
       see_all: { to: "/admin/candidates" },
+      secondary_badge: {
+        label: `${readyForDecision.count ?? 0} ready for decision`,
+        tone: (readyForDecision.count ?? 0) > 0 ? "default" : "neutral",
+      },
       items: ((review.data ?? []) as Any[]).map((m) => ({
         id: m.id,
         title: m.candidate_profiles?.full_name ?? "Candidate",
@@ -289,26 +277,28 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         tone: ageTone(m.updated_at, 1, 3),
       })),
     },
+
     {
       key: "client_overdue",
       label: "Client decisions overdue",
-      description: "Shared with the client three or more days ago, still no decision.",
-      count: overdue.length,
+      description: "Shared with the client, still no decision recorded.",
+      count: delivered.count ?? 0,
       action_hint: "Nudge the client or call it — the candidate is waiting.",
-      see_all: { to: "/admin/messages" },
+      see_all: { to: "/admin/operations" },
       items: overdue.slice(0, 8).map((m) => ({
-        id: m.id,
-        title: m.candidate_profiles?.full_name ?? "Candidate",
-        subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
+        id: m.match_id,
+        title: m.candidate_name ?? "Candidate",
+        subtitle: `${m.position_title ?? "—"} · ${m.client_name ?? "—"}`,
         meta: String(m.stage).replace(/_/g, " "),
-        waiting_since: m.updated_at,
-        target: { kind: "match" as const, id: m.id },
+        waiting_since: m.submitted_at,
+        target: { kind: "match" as const, id: m.match_id },
         action_label: "Chase decision",
-        owner: owner(m.positions?.owner_user_id),
-        claim: positionClaim(m.positions?.id),
-        tone: ageTone(m.updated_at, 5, 8),
+        owner: owner(m.owner_user_id),
+        claim: positionClaim(m.position_id),
+        tone: ageTone(m.submitted_at, 5, 8),
       })),
     },
+
     {
       key: "interviews",
       label: "Interviews to coordinate",

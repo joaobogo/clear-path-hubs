@@ -30,7 +30,9 @@ export class AdminWidgetErrorBoundary extends Component<Props, State> {
 
   retry = () => {
     this.setState({ error: null });
+    // In a real app, this might trigger a QueryClient invalidation
   };
+
 
   render() {
     if (this.state.error) {

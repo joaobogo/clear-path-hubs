@@ -134,6 +134,10 @@ function Overview() {
     await Promise.all([
       qc.invalidateQueries({ queryKey: ["admin"] }),
       qc.invalidateQueries({ queryKey: ACTIVITY_QUERY_KEY }),
+      qc.invalidateQueries({ queryKey: ["admin-portfolio-health"] }),
+      qc.invalidateQueries({ queryKey: ["admin", "decision-backlog"] }),
+      qc.invalidateQueries({ queryKey: ["offer-hire-rollup"] }),
+      qc.invalidateQueries({ queryKey: ["admin", "sla-breaches"] }),
     ]);
     await router.invalidate();
   }
@@ -178,6 +182,7 @@ function Overview() {
     </div>
   );
 }
+
 
 function WorkQueueSummary({ showTest, onRefresh }: { showTest: boolean; onRefresh: () => void }) {
   const { data, isPending, isFetching, error } = useQuery({
