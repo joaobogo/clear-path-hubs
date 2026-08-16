@@ -844,6 +844,17 @@ export const Route = createFileRoute("/api/public/express-intake")({
           console.error("[express-intake] confirmation email failed (non-critical)", err);
         }
 
+        // Start the blueprint pipeline immediately — event-driven progression
+        // means the tracker should advance without a manual admin action.
+        try {
+          const { runBlueprintForPosition } = await import("@/lib/blueprint-pipeline.server");
+          runBlueprintForPosition(positionId).catch((err) => {
+            console.error("[express-intake] blueprint pipeline failed", err);
+          });
+        } catch (err) {
+          console.error("[express-intake] could not import blueprint pipeline", err);
+        }
+
         return Response.json({
           ok: true,
           trace_id: traceId,
@@ -856,14 +867,12 @@ export const Route = createFileRoute("/api/public/express-intake")({
           pilotEligible,
           pilotReason,
           pilotMessage,
-
-          blueprintStatus: "queued",
+          blueprintStatus: "analyzing_jd",
         });
 
-      
-        })();
+      })();
 
-        return withRateLimitHeaders(response, decision, traceId);
+      return withRateLimitHeaders(response, decision, traceId);
       },
     },
   },
