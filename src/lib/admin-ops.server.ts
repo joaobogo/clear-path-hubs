@@ -252,10 +252,6 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         claim: positionClaim(p.id),
         tone: ageTone(p.created_at, 1, 3),
       })),
-      secondary_badge: {
-        label: `${readyForDecision.count ?? 0} ready for decision`,
-        tone: (readyForDecision.count ?? 0) > 0 ? "default" : "neutral",
-      },
     },
     {
       key: "review",
