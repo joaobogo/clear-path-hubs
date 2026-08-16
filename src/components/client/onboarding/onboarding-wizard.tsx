@@ -581,7 +581,7 @@ function RequirementsStep({ state, onDone, back, saveForLater, goTo }: BodyProps
 
 /* ---------------------------------- 4 ---------------------------------- */
 
-const RUNNING_STATES = ["queued", "analyzing_jd", "researching", "compiling"];
+const RUNNING_STATES = ["queued", "analyzing_jd", "researching_company", "drafting_blueprint"];
 
 function BlueprintStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
   const confirm = useServerFn(confirmOnboardingBlueprint);
@@ -596,6 +596,18 @@ function BlueprintStep({ state, onDone, back, saveForLater, goTo }: BodyProps) {
     const t = setInterval(() => void onDone({ advance: false }), 6000);
     return () => clearInterval(t);
   }, [running, onDone]);
+
+  // Auto-start the blueprint when the user reaches this step and it has not
+  // yet been started or has failed. This removes the dependency on a manual
+  // "Compile" click and matches the event-driven public intake flow.
+  useEffect(() => {
+    if (!pos) return;
+    if (running) return;
+    if (status === "not_started" || status === "none" || status === "failed") {
+      const t = setTimeout(() => retry({ data: { positionId: pos.id } }).catch(() => {}), 200);
+      return () => clearTimeout(t);
+    }
+  }, [pos?.id, status, running]);
 
   const compile = useMutation({
     mutationFn: () => retry({ data: { positionId: pos!.id } }),
