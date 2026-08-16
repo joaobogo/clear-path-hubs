@@ -151,17 +151,14 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-014 · Hire/Offer State Machine (A14/B11) · HIGH
-Scope: src/lib/offer-hire.ts, src/lib/offer-hire.server.ts, /admin/candidates/$id, /client/candidates/$id
-Defect: Hire/offer states are incoherent: Closed lost Candidate declined vs stage hired; KPIs contradict each
-other.
-Required fix: Unify offer/hire outcomes: a closed-lost hire never displays as active; KPIs derive from the same
-source table.
+TEXTO DO USUÁRIO: "P-015 · Delivery Failures Definition (A15) · MEDIUM
+Scope: src/lib/admin-ops.server.ts, /admin, /admin/ops
+Defect: Delivery failures shows 0, 18, and 23 on different surfaces.
+Required fix: Define one canonical 7-day window for delivery failures and use it on every surface.
 Acceptance criteria:
-• Create a hire decision with outcome declined.
-• Verify candidate stage does not show Hired and KPIs count Declined +1, Hires 0.
-• Create an accepted offer; verify Hires +1, Start dates confirmed +1, and Extended count reconciles.
-• Open client view; verify offer state matches the client's actual decision.
+• Open /admin, /admin/ops, and any digest email; verify the same 7-day number everywhere.
+• Inject a delivery failure older than 7 days; verify it is not counted.
+• Inject a failure within 7 days; verify all three surfaces increment by 1.
 Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
