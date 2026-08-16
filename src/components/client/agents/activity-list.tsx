@@ -63,7 +63,7 @@ export function AgentActivityList({
                   row.sentence
                 )}
               </p>
-              <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+              <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                 <Badge variant="outline" className="font-normal">
                   {row.agent_name}
                 </Badge>
@@ -72,7 +72,8 @@ export function AgentActivityList({
                   {stamp(row.occurred_at)}
                 </span>
                 {row.reason && <span>Reason: {row.reason}</span>}
-              </p>
+              </div>
+
             </div>
           </li>
         ))
