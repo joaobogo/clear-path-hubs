@@ -107,6 +107,21 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
       .limit(200);
     if (error) throw new Error(error.message);
 
+    // The public list uses the same location-country augmentation as the detail
+    // page so "Curitiba, PR" becomes "Curitiba, PR, Brazil" without the UI
+    // needing to know the structured location table.
+    const { data: locationRows } = await supabase
+      .from("position_locations")
+      .select("position_id,city,region,country,country_code,is_primary,display_order")
+      .in("position_id", (data ?? []).map((p) => p.id));
+    const primaryLocationByPosition = new Map<string, { city?: string | null; country?: string | null; country_code?: string | null }>();
+    for (const row of (locationRows ?? []) as { position_id: string; city?: string | null; country?: string | null; country_code?: string | null; is_primary?: boolean }[]) {
+      const existing = primaryLocationByPosition.get(row.position_id);
+      if (!existing || row.is_primary) {
+        primaryLocationByPosition.set(row.position_id, row);
+      }
+    }
+
     // Employer identity comes from a definer lookup: anon has no read access to
     // organizations, and it must stay that way (the client list is private).
     const employerNames = new Map<string, string>();
