@@ -23,3 +23,40 @@ export const retryBlueprintAnalysis = createServerFn({ method: "POST" })
     const { runBlueprintForPosition } = await import("@/lib/blueprint-pipeline.server");
     return runBlueprintForPosition(data.positionId, { force: true });
   });
+
+/**
+ * Staff-only backfill: drain all blueprint jobs stuck in a non-terminal state
+ * for more than 5 minutes. Used to repair the legacy draft roles that were stuck
+ * at Stage 1/2 before the event-driven pipeline fix.
+ */
+export const backfillStuckBlueprints = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async () => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const admin = supabaseAdmin as any;
+
+    const { data: stuck } = await admin
+      .from("positions")
+      .select("id, blueprint_status, blueprint_attempts")
+      .or("blueprint_status.in.(queued,failed,not_started),blueprint_status.is.null")
+      .lt("updated_at", new Date(Date.now() - 5 * 60 * 1000).toISOString())
+      .limit(50);
+
+    const results: { id: string; ok: boolean; reason?: string }[] = [];
+    for (const row of stuck ?? []) {
+      if ((row.blueprint_attempts ?? 0) >= 5) {
+        results.push({ id: row.id, ok: false, reason: "attempts_exhausted" });
+        continue;
+      }
+      try {
+        const { runBlueprintForPosition } = await import("@/lib/blueprint-pipeline.server");
+        const res = await runBlueprintForPosition(row.id);
+        results.push({ id: row.id, ok: res.ok, reason: res.reason });
+      } catch (err) {
+        results.push({ id: row.id, ok: false, reason: String(err) });
+      }
+    }
+
+    return { ok: true, drained: results.length, results };
+  });
