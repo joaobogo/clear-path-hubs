@@ -888,7 +888,15 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     stage: row.stage,
     delivered_at: row.delivered_at ?? null,
     interview_active: Boolean(row.interview_active),
-    contact_released: Boolean(row.contact_released_at),
+    // Pre-interview consent gate: a bulk release with no recorded actor does
+    // not unlock contact details / CV. Server-enforced in cv-download.functions.
+    contact_released: cvConsentGate({
+      stage: row.stage,
+      contact_released_at: row.contact_released_at ?? null,
+      contact_released_by: row.contact_released_by ?? null,
+      contact_release_reason: row.contact_release_reason ?? null,
+      has_interview: Boolean(row.interview_active) || Boolean(row.interview_scheduled),
+    }).open,
 
     stage_entered_at:
       row.stage === "delivered"
