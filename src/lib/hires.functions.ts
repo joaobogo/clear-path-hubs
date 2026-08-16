@@ -564,10 +564,11 @@ export const transitionHire = createServerFn({ method: "POST" })
     if (nextStage && current.candidate_match_id) {
       await context.supabase
         .from("candidate_matches")
-        .update({ stage: nextStage })
+        .update({ stage: nextStage as never })
         .eq("id", current.candidate_match_id)
         .eq("organization_id", data.orgId);
     }
+
 
     await writeAudit(context.supabase, {
       actor: context.userId,
