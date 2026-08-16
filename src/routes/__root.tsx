@@ -151,8 +151,19 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "Prompt 2 · Severity: BLOCKER · Scope: /admin, src/components/admin/admin-widget-error-boundary.tsx
-Defect: Overview crash-loop and monolithic failure (one widget kills the page). Required Fix: Wrap every widget in a granular Error Boundary; fix the underlying query refetch loop. Acceptance Criteria: 1. Force a failure in the “Exception Digest” widget. 2. Verify the rest of the Overview page renders correctly."`
+TEXTO DO USUÁRIO: "Prompt 7 · Severity: HIGH · Scope: /admin/positions, src/lib/search/postgrest-filter.ts
+Defect: Global search fails with raw PostgREST logic tree errors leaked to UI. Required Fix: Sanitize input strings before passing to PostgREST filters; wrap filter construction in a try/catch that returns a clean empty state. Acceptance Criteria: 1. Search for q=( (invalid syntax). 2. Verify no technical error appears; UI shows “No results found”.
+
+(Full document truncated for brevity, but all 23+ findings from the audit are mapped to individual prompts in the real file)
+
+3. Regression Protect-List
+Client messages visible in /admin/messages with working replies.
+Client-facing sender label “TaaSFlow team” (never “Master Admin”).
+Memory & handoff note create/persist/delete.
+Public job board employer/location/posted-date parity with admin.
+Immutable append-only score runs and audit trails.
+4. Final Rejection Contract
+“Reply lacks specific evidence. A criterion is PASS only if you walked it in the live preview after implementing and provided the exact click-path/outcome.”"`
         }
       >
         {children}
