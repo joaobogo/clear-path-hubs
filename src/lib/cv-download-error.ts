@@ -17,6 +17,13 @@ export type CvDownloadFailure = {
 export function describeCvDownloadFailure(raw: unknown): CvDownloadFailure {
   const text = String((raw as { message?: string })?.message ?? raw ?? "").trim();
 
+  if (/cv_gated_pre_interview/i.test(text)) {
+    return {
+      message: "Available after interview",
+      hint: "This candidate's CV and contact details unlock at the interview stage, or when our team releases them.",
+      retryable: false,
+    };
+  }
   if (/no cv/i.test(text)) {
     return {
       message: "No CV on file yet",
