@@ -353,3 +353,138 @@ export function absoluteUrl(path: string): string {
   const base = (process.env.PUBLIC_SITE_URL || "https://taasflow.com").replace(/\/$/, "");
   return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 }
+
+/**
+ * Runs the blueprint pipeline for a single position, resolving the input data
+ * either from an associated intake submission or directly from the
+ * position + organization + creator profile. This is the canonical entry point
+ * used by the public intake, client onboarding, retry buttons, and backfill jobs.
+ */
+export async function runBlueprintForPosition(
+  positionId: string,
+  opts: { force?: boolean } = {},
+): Promise<{ ok: boolean; reason?: string; status?: string }> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const admin = supabaseAdmin as Admin;
+
+  const { data: position } = await admin
+    .from("positions")
+    .select(
+      "id, title, description, blueprint_status, blueprint_attempts, " +
+        "jd_file_path, jd_file_name, organization_id, created_by",
+    )
+    .eq("id", positionId)
+    .maybeSingle();
+  if (!position) return { ok: false, reason: "position_not_found" };
+
+  const RUNNABLE = ["queued", "failed", "not_started", ""];
+  const status = String(position.blueprint_status ?? "not_started") || "not_started";
+  if (!RUNNABLE.includes(status) && !opts.force) {
+    return { ok: true, status, reason: "already_running" };
+  }
+
+  const attempts = Number(position.blueprint_attempts ?? 0);
+  if (!opts.force && attempts >= 5) {
+    return { ok: false, reason: "attempt_limit_reached", status };
+  }
+
+  // Claim the job so concurrent drains / retries don't duplicate work.
+  const { data: claimed } = await admin
+    .from("positions")
+    .update({
+      blueprint_status: "analyzing_jd",
+      blueprint_error: null,
+      blueprint_attempts: attempts + 1,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", position.id)
+    .or(`blueprint_status.in.(${RUNNABLE.filter(Boolean).join(",")}),blueprint_status.is.null`)
+    .select("id");
+  if (!claimed || claimed.length === 0) {
+    return { ok: true, reason: "already_running" };
+  }
+
+  // Resolve intake data; if none exists, derive from the position owner.
+  const { data: intake } = await admin
+    .from("intake_submissions")
+    .select("id, organization_id, position_id, primary_email, company_name, payload")
+    .eq("position_id", positionId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  let payload: Record<string, unknown> = {};
+  let companyName = "";
+  let companyWebsite = "";
+  let contactEmail = "";
+  let contactName = "";
+  let researchConsent = true;
+  let intakeId: string | null = null;
+
+  if (intake) {
+    payload = (intake.payload ?? {}) as Record<string, unknown>;
+    companyName = intake.company_name ?? "";
+    companyWebsite = typeof payload.companyWebsite === "string" ? payload.companyWebsite : "";
+    contactEmail = intake.primary_email ?? "";
+    contactName = typeof payload.firstName === "string" ? payload.firstName : "";
+    researchConsent = payload.researchConsent !== false;
+    intakeId = intake.id;
+  } else {
+    const { data: org } = await admin
+      .from("organizations")
+      .select("name, website")
+      .eq("id", position.organization_id)
+      .maybeSingle();
+
+    const { data: user, error: userErr } = await admin.auth.admin.getUserById(position.created_by);
+    if (userErr) console.error("[blueprint] getUserById failed", userErr);
+
+    const meta = (user?.user?.user_metadata ?? {}) as Record<string, unknown>;
+    companyName = org?.name ?? "";
+    companyWebsite = org?.website ?? "";
+    contactEmail = user?.user?.email ?? "";
+    contactName =
+      typeof meta.full_name === "string"
+        ? meta.full_name
+        : typeof meta.name === "string"
+          ? meta.name
+          : "";
+    researchConsent = true;
+    intakeId = null;
+  }
+
+  // Download JD file if present.
+  let jdFile: { bytes: Uint8Array; mime: string; filename: string } | null = null;
+  if (position.jd_file_path) {
+    try {
+      const { data: blob, error: dlErr } = await admin.storage
+        .from("job-descriptions")
+        .download(position.jd_file_path);
+      if (!dlErr && blob) {
+        jdFile = {
+          bytes: new Uint8Array(await blob.arrayBuffer()),
+          mime: blob.type || "application/pdf",
+          filename: position.jd_file_name || "job-description.pdf",
+        };
+      }
+    } catch (err) {
+      console.error("[blueprint] jd download failed", err);
+    }
+  }
+
+  return runBlueprintPipeline({
+    positionId: position.id,
+    organizationId: position.organization_id,
+    intakeId,
+    roleTitle: position.title ?? "",
+    companyName,
+    companyWebsite,
+    contactEmail,
+    contactName,
+    researchConsent,
+    jdFile,
+    jdPastedText: position.description ?? "",
+  });
+}
+
+export type { RoleBlueprint, CompanyResearch };
