@@ -583,30 +583,31 @@ function OperationsPage() {
                     <th className="px-4 py-2">Audience</th>
                     <th className="px-4 py-2">Event</th>
                     <th className="px-4 py-2">Channel</th>
-                    <th className="px-4 py-2">Status</th>
-                    <th className="px-4 py-2">Error</th>
+                    <th className="px-4 py-2">Reason</th>
+                    <th className="px-4 py-2">Detail</th>
                   </tr>
                 </thead>
                 <tbody>
                   {deliveryItems.map((d) => (
                     <tr key={d.id} className="border-t">
                       <td className="px-4 py-2 text-xs text-muted-foreground">
-                        {new Date(d.updated_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+                        {new Date(d.lastAttemptAt).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
                       </td>
-                      <td className="px-4 py-2 capitalize">{d.notifications?.audience}</td>
-                      <td className="px-4 py-2">{d.notifications?.event_type}</td>
+                      <td className="px-4 py-2 capitalize">{d.audience}</td>
+                      <td className="px-4 py-2">{d.eventType}</td>
                       <td className="px-4 py-2">{d.channel}</td>
                       <td className="px-4 py-2">
-                        <Badge variant="destructive">{d.status}</Badge>
+                        <Badge variant="destructive">{d.reason}</Badge>
                       </td>
                       <td className="px-4 py-2 text-xs text-muted-foreground truncate max-w-xs">
-                        {d.error_message ?? d.error_code ?? "—"}
+                        {d.reasonDetail ?? "—"}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+
           )}
         </TabsContent>
       </Tabs>
