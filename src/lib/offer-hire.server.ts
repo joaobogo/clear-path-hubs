@@ -256,6 +256,13 @@ async function loadHire(a: { from: (t: string) => Row }, hireId: string): Promis
   return hire;
 }
 
+/** Maps a hire outcome to the candidate stage it implies. */
+function stageForOutcome(outcome: OfferOutcome): string | null {
+  if (outcome === "hire_confirmed" || outcome === "offer_accepted") return "hired";
+  if (outcome === "offer_declined" || outcome === "closed_lost") return "not_moving_forward";
+  return null;
+}
+
 /** Records an offer outcome. Declines and losses require a reason. */
 export async function recordOfferOutcome(
   admin: Admin,
@@ -285,18 +292,30 @@ export async function recordOfferOutcome(
   const upd = await a.from("hire_records").update(patch).eq("id", args.hireId);
   check(upd);
 
+  // Keep the candidate's pipeline stage in lock-step with the hire outcome so
+  // dashboard, role, and portfolio counts always agree on whether the candidate
+  // is still an active hire.
+  const nextStage = stageForOutcome(args.outcome);
+  if (nextStage && hire["candidate_match_id"]) {
+    await a
+      .from("candidate_matches")
+      .update({ stage: nextStage })
+      .eq("id", hire["candidate_match_id"]);
+  }
+
   const audit = await a.from("audit_events").insert({
     entity_type: HIRE_ENTITY,
     entity_id: args.hireId,
     organization_id: hire["organization_id"],
     actor_user_id: args.actorUserId,
     action: `hire.${args.outcome}`,
-    before_state: { status: hire["status"] },
-    after_state: patch,
+    before_state: { status: hire["status"], stage: hire["candidate_match_id"] ? null : undefined },
+    after_state: { ...patch, stage: nextStage },
   });
   check(audit);
   return { ok: true };
 }
+
 
 /** Sets the confirmed start date. The guarantee window is derived from it. */
 export async function setHireStartDate(

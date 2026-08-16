@@ -504,6 +504,12 @@ export const upsertOfferDraft = createServerFn({ method: "POST" })
     return { ok: true, id: created.id, trace_id: trace };
   });
 
+function candidateStageForHireStatus(status: HireStatus): string | null {
+  if (status === "hire_confirmed" || status === "offer_accepted") return "hired";
+  if (status === "offer_declined" || status === "closed_lost") return "not_moving_forward";
+  return null;
+}
+
 export const transitionHire = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(
@@ -552,6 +558,18 @@ export const transitionHire = createServerFn({ method: "POST" })
       .eq("id", data.id);
     if (error) throw new Error(error.message);
 
+    // Sync the candidate match stage so the pipeline board and KPIs stay
+    // coherent with the offer/hire outcome.
+    const nextStage = candidateStageForHireStatus(data.to);
+    if (nextStage && current.candidate_match_id) {
+      await context.supabase
+        .from("candidate_matches")
+        .update({ stage: nextStage as never })
+        .eq("id", current.candidate_match_id)
+        .eq("organization_id", data.orgId);
+    }
+
+
     await writeAudit(context.supabase, {
       actor: context.userId,
       action: `hire.${data.to}`,
@@ -559,11 +577,12 @@ export const transitionHire = createServerFn({ method: "POST" })
       entity_id: data.id,
       organization_id: data.orgId,
       before: { status: current.status },
-      after: patch,
+      after: { ...patch, stage: nextStage },
       trace_id: trace,
     });
     return { ok: true, trace_id: trace };
   });
+
 
 export const assignHireOwner = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

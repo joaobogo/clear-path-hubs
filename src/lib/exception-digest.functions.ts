@@ -34,7 +34,7 @@ export const DIGEST_META: Record<DigestKey, { label: string; to: string }> = {
   processing_exceptions: { label: "Processing exceptions", to: "/admin/operations" },
   integration_degradations: { label: "Integration degradations", to: "/admin/integrations" },
   approvals_pending: { label: "Approvals pending", to: "/admin/approvals" },
-  delivery_failures: { label: "Delivery failures", to: "/admin/notifications" },
+  delivery_failures: { label: "Delivery failures (7d)", to: "/admin/notifications" },
 };
 
 export const getExceptionDigest = createServerFn({ method: "GET" })

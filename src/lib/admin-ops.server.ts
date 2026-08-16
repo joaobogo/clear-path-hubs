@@ -333,9 +333,10 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     },
     {
       key: "delivery_failures",
-      label: "Delivery failures",
-      description: "Email or message failures that need a retry or a new address.",
+      label: "Delivery failures (7d)",
+      description: "Email or message failures in the last 7 days that need a retry or a new address.",
       count: blocked.count ?? 0,
+
       action_hint: "Retry the delivery or update the recipient's email.",
       see_all: { to: "/admin/operations" },
       items: ((blocked.data ?? []) as any[]).map((d) => ({
