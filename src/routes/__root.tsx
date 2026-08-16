@@ -151,18 +151,18 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-023 · QA Report Close-Out (A23) · HIGH
-Scope: src/routes/_authenticated/admin.qa-report.tsx, src/lib/scoring/*
-Defect: F-006 transactional approve; F-008 disqualifiers write eligibility; F-009 rubric_versions; F-010 unique
-index; F-011 Realtime RLS; F-012 notification RLS; F-013 a11y/responsive.
-Required fix: Implement each F-item and update the QA report register truthfully as each closes.
+TEXTO DO USUÁRIO: "Section 2 — Client Dashboard Prompts
+Seed Register B contains 18 findings from the client-side audit.
+P-024 · Wizard Field Persistence (B1) · BLOCKER
+Scope: /client/positions/new, src/lib/client-pipeline-lane.ts
+Defect: Wizard captures location, model, target title, and weights, but the position record arrives
+empty/defaulted.
+Required fix: Ensure createPosition mutation payload maps all wizard step data to the backend position record.
 Acceptance criteria:
-• Approve for client; verify it runs in a transaction and rolls back on error.
-• Submit a dealbreaker answer; verify eligibility_checks record is created with status ineligible.
-• Create a rubric version; verify score_runs.rubric_version_id is populated and review tab shows version.
-• Add duplicate candidate_match; verify unique constraint prevents it.
-• Verify Realtime and notification_events respect RLS.
-• Run a11y/responsive pass at 375/768/1280.
+• Create role Product Designer in Lisbon, Hybrid, with 100% Blueprint weights.
+• Complete wizard.
+• Open Role Detail > Settings and verify all 3 fields are correct, not Remote or 0%.
+• Refresh the page; verify values persist.
 Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
