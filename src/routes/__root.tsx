@@ -151,29 +151,8 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "TaaSFlow CLIENT Workspace MVP Remediation Plan
-Status: DRAFT (Awaiting Execution) Last Audit: Rounds 2-3 (2026-08-15) - FAIL Objective: 100% MVP Status (Zero leakage, zero errors, zero broken controls)
-
-1. Inventory Table
-#	Route / Component	Widget/Control	Prompt #
-1	/client (Overview)	Decision Queue / Action Cards	Prompt 17
-2	/client/positions	Role List / Detail Feed	Prompt 6
-3	/client/positions/new	Wizard (Location, Model, Weights)	Prompt 1
-4	/client/positions/$id	Build Tracker (5 Stages)	Prompt 2
-5	/client/candidates/$id	Score Banner / Engine Version	Prompt 3
-6	/client/candidates/$id	CV Download / Consent Gate	Prompt 4
-7	/client/candidates/$id	Stage Actions (Shortlist, NMF, etc.)	Prompt 9
-8	/client/memory	Talent Memory / Share Links	Prompt 5
-9	/client/messages	Staff Identity / Thread Labels	Prompt 7
-10	/client/insights	Agent Run Truth / Analytics	Prompt 8
-11	/client/interviews	Slot Proposals / Confirmation	Prompt 10
-12	/client/settings	Notification Preferences / Team	Prompt 15
-13	Everywhere	Bell Notifications / Deep Links	Prompt 15
-14	Everywhere	Mobile Responsive Pass (375px)	Prompt 18
-15	Everywhere	Error Boundaries / Loading States	Prompt 18
-2. Fix Prompt Series
-Prompt 1 · Severity: BLOCKER · Scope: /client/positions/new, src/lib/client-pipeline-lane.ts
-Defect: Wizard captures location, model, and weights, but position record arrives empty/defaulted. Required Fix: Ensure the createPosition mutation payload correctly maps all wizard step data to the backend position record. Acceptance Criteria: 1. Create role “Product Designer” in “Lisbon”, “Hybrid”, with specific custom weights. 2. Complete wizard. 3. Verify Role Detail > Settings shows all 3 fields correctly (not “Remote” or 0%)."`
+TEXTO DO USUÁRIO: "Prompt 4 · Severity: BLOCKER · Scope: src/lib/cv-download.functions.ts, /client/candidates/$id
+Defect: CVs/Contact details available pre-interview via blanket release. Required Fix: Enforce pre-interview redaction in the UI and a server-side check in the download server function. Acceptance Criteria: 1. View a candidate at “Shortlisted” stage who hasn’t been interviewed. 2. Verify contact details are blurred/redacted. 3. Attempt CV download; verify it returns a redacted version or 403 until interview consent is recorded."`
         }
       >
         {children}
