@@ -151,20 +151,13 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-        TEXTO DO USUÁRIO: "PROMPT G — Slow first-paint on authenticated routes
-Why it matters
-Observation in STABILIZATION.md: at 2.5s after domcontentloaded every authenticated route was
-still empty; content appeared only after waiting for a heading (up to ~30s in dev).
-Prompt
-Fix perceived load time on authenticated routes.
-1. Measure real production-build timings for /admin, /client, /me (not dev cold-compile) and
-report them.
-2. Remove waterfalls: prefetch route data in loaders via ensureQueryData, and avoid a single
-slow query blocking the whole shell.
-3. Every authenticated route renders skeletons immediately — no blank screen while data loads.
-4. Isolate widget failures behind error boundaries so one slow/failing panel never blanks the
-page.
-5. Report before/after numbers per route."`
+TEXTO DO USUÁRIO: "META-PROMPT 1 — ADMIN DASHBOARD (paste into Lovable)
+
+You are not changing product code in this run. Your job in this run is to produce a complete remediation plan document for the ADMIN dashboard (/admin and every route under it) that takes it to 100% MVP status: zero errors, zero broken or dead-end controls, zero data inconsistencies, zero raw internal errors shown to users. A third-party QA audit (Round 3, 2026-08-15) already scored this surface 59/100 — FAIL, and Round 4 will re-run the same mirrored client+admin audit with FRESH random marker names. Your plan is only acceptable if executing it makes every R4 check pass.
+
+STEP 1 — Exhaustive inventory (from the codebase, not from memory)
+... (Plan saved to docs/mvp-fix-plan-admin.md) ...
+Report: files changed, location of the plan, and the export URL."`
         }
       >
         {children}
