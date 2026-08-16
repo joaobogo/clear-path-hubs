@@ -16023,7 +16023,13 @@ export type Database = {
         | "scheduled"
         | "completed"
         | "cancelled"
-      job_status: "queued" | "running" | "completed" | "failed" | "cancelled"
+      job_status:
+        | "queued"
+        | "running"
+        | "completed"
+        | "failed"
+        | "cancelled"
+        | "superseded"
       match_stage:
         | "new"
         | "reviewing"
@@ -16471,7 +16477,14 @@ export const Constants = {
         "completed",
         "cancelled",
       ],
-      job_status: ["queued", "running", "completed", "failed", "cancelled"],
+      job_status: [
+        "queued",
+        "running",
+        "completed",
+        "failed",
+        "cancelled",
+        "superseded",
+      ],
       match_stage: [
         "new",
         "reviewing",
