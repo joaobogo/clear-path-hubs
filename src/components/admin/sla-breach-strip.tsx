@@ -18,7 +18,12 @@ export function SlaBreachStrip({ includeTest }: { includeTest: boolean }) {
     staleTime: 30_000,
   });
 
-  if (query.isLoading || query.isError) return null;
+  if (query.isLoading) return null;
+  // SIMULATION: intentionally let this error surface to the widget boundary.
+  if (query.isError && (query.error as Error).message.includes("Simulated SLA widget failure")) {
+    throw query.error;
+  }
+  if (query.isError) return null;
 
   const rows = (query.data?.rows ?? []).filter((r) => !r.acknowledged);
   if (rows.length === 0) return null;
