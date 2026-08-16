@@ -18,7 +18,11 @@ export function SlaBreachStrip({ includeTest }: { includeTest: boolean }) {
     staleTime: 30_000,
   });
 
-  if (query.isLoading) return null;
+  if (query.isLoading) {
+    console.log("SlaBreachStrip: loading");
+    return null;
+  }
+  console.log("SlaBreachStrip: about to throw");
   // SIMULATION: intentionally let this error surface to the widget boundary.
   throw new Error("Simulated SLA widget failure for error-boundary test");
   if (query.isError) return null;
