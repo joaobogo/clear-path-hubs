@@ -269,10 +269,12 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         title: m.candidate_profiles?.full_name ?? "Candidate",
         subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
 
-      secondary_badge: {
-        label: `${setup.secondary_badge?.label ?? "0 ready for decision"}`,
-        tone: setup.secondary_badge?.tone ?? "neutral",
-      },
+        meta: m.score_runs?.score != null ? `score ${Math.round(Number(m.score_runs.score))}` : null,
+        secondary_badge: {
+          label: `${setup.secondary_badge?.label ?? "0 ready for decision"}`,
+          tone: setup.secondary_badge?.tone ?? "neutral",
+        },
+
 
         waiting_since: m.updated_at,
         target: { kind: "review" as const, matchId: m.id },
