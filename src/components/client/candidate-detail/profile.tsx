@@ -303,24 +303,26 @@ export const LinksPanel = memo(function LinksPanel({
             )}
           </li>
         ))}
-        <li className="pt-1">
-          <DownloadCvButton matchId={candidate.match_id} mode="download" />
-        </li>
-        {candidate.contact_released && (
-          <li className="pt-2">
-            <CvDownloadAudit
-              matchId={candidate.match_id}
-              title="Who downloaded this CV"
-              limit={15}
-            />
-          </li>
-        )}
-        {!candidate.contact_released && (
+        {candidate.contact_released ? (
+          <>
+            <li className="pt-1">
+              <DownloadCvButton matchId={candidate.match_id} mode="download" />
+            </li>
+            <li className="pt-2">
+              <CvDownloadAudit
+                matchId={candidate.match_id}
+                title="Who downloaded this CV"
+                limit={15}
+              />
+            </li>
+          </>
+        ) : (
           <li className="pt-1 text-xs text-muted-foreground">
-            A redacted text version is available above. Full CV, email and phone 
-            stay withheld until contact release is agreed.
+            CV, email and phone become available after the interview stage, or
+            once our team releases them for this candidate.
           </li>
         )}
+
 
 
 
