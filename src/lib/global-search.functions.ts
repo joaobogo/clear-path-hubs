@@ -72,9 +72,13 @@ export const globalSearch = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const term = sanitizeSearchTerm(data.q);
     const like = `%${term}%`;
-    const likeValue = quoteFilterValue(like);
     if (!term) {
-      return { scope: "admin", includeTest: false, limit: LIMIT, groups: emptyGroups() } as SearchResponse;
+      return {
+        scope: data.scope ?? "client",
+        includeTest: false,
+        limit: LIMIT,
+        groups: emptyGroups(),
+      };
     }
 
     // Resolve caller scope + accessible org IDs from memberships.
