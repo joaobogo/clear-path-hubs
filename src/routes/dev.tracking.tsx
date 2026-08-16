@@ -37,7 +37,6 @@ type TrackerRow = {
 
 const TRACKER_LABELS: Record<string, string> = {
   ga4: "Google Analytics 4",
-  apollo: "Apollo website tracker",
   rb2b: "RB2B (Retention.com)",
   meta: "Meta Pixel",
   linkedin: "LinkedIn Insight Tag",

@@ -10,7 +10,7 @@
  * failing tag can never break the app.
  *
  * Live: GA4, RB2B (Retention.com), LinkedIn Insight Tag.
- * Dormant until their env var is set: Apollo, Meta, Clarity, Hotjar.
+ * Dormant until their env var is set: Meta, Clarity, Hotjar.
  */
 
 import { type ConsentCategory, isTrackerAllowed } from "./consent";
@@ -19,11 +19,6 @@ import { resolveConversion } from "./conversion-map";
 
 
 const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || "G-HJ2ECKCNK4";
-// Apollo's website tracker is disabled: the previously hardcoded app id was
-// rejected by their ingest endpoint (HTTP 400 on every page view), so the tag
-// produced nothing but failed requests. It stays dormant until a verified app
-// id is supplied through VITE_APOLLO_APP_ID.
-const APOLLO_ID = import.meta.env.VITE_APOLLO_APP_ID || "";
 /** Exported so the root document head can boot RB2B before hydration. */
 export const RB2B_ID = import.meta.env.VITE_RB2B_ID || "1N5W0H7RVEO5";
 const META_ID = import.meta.env.VITE_META_PIXEL_ID || "";
@@ -33,7 +28,6 @@ const HOTJAR_ID = import.meta.env.VITE_HOTJAR_ID || "";
 
 type TrackerKey =
   | "ga4"
-  | "apollo"
   | "rb2b"
   | "meta"
   | "linkedin"
@@ -59,7 +53,6 @@ declare global {
     hj?: ((...args: unknown[]) => void) & { q?: unknown[] };
     _hjSettings?: { hjid: number; hjsv: number };
     reb2b?: { loaded?: boolean; invoked?: boolean; SNIPPET_VERSION?: string } | unknown[];
-    trackingFunctions?: { onLoad?: (opts: { appId: string }) => void };
     _taasflow_tracking?: {
       initialized: boolean;
       diagnostics: Array<{ tracker: string; uri: string; at: string }>;
@@ -73,7 +66,7 @@ declare global {
  * `src/routes/__root.tsx`).
  *
  * GA4 starts immediately but restricted by Consent Mode v2 (denied by default).
- * Other trackers (Apollo, RB2B, LinkedIn, Meta) are now injected dynamically
+ * Other trackers (RB2B, LinkedIn, Meta) are now injected dynamically
  * by the client-side initialisers ONLY after consent is granted.
  */
 export const HEAD_BOOT_SNIPPETS: { key: TrackerKey; children: string }[] = [
@@ -177,30 +170,6 @@ function syncGA4Consent() {
 }
 
 
-/* ------------------------------------------------------------- Apollo --- */
-
-function initApollo() {
-  // Already booted by the server-rendered head snippet — never double-load.
-  if (alreadyInDocument("apollo")) {
-    loaded.add("apollo");
-    return;
-  }
-  if (loaded.has("apollo") || !APOLLO_ID) return;
-  loaded.add("apollo");
-  injectScript("apollo", {
-    src: `https://assets.apollo.io/micro/website-tracker/tracker.iife.js?nocache=${Math.random().toString(36).slice(2)}`,
-  });
-  const start = Date.now();
-  const poll = window.setInterval(() => {
-    if (window.trackingFunctions?.onLoad) {
-      window.clearInterval(poll);
-      safe(() => window.trackingFunctions!.onLoad!({ appId: APOLLO_ID }));
-    } else if (Date.now() - start > 15_000) {
-      window.clearInterval(poll);
-    }
-  }, 250);
-}
-
 /* --------------------------------------------------------------- RB2B --- */
 
 function initRB2B() {
@@ -278,7 +247,6 @@ export const TRACKER_CATEGORY: Record<TrackerKey, ConsentCategory> = {
   ga4: "analytics",
   clarity: "analytics",
   hotjar: "analytics",
-  apollo: "marketing",
   rb2b: "marketing",
   meta: "marketing",
   linkedin: "marketing",
@@ -286,7 +254,6 @@ export const TRACKER_CATEGORY: Record<TrackerKey, ConsentCategory> = {
 
 const INITIALISERS: Record<TrackerKey, () => void> = {
   ga4: initGA4,
-  apollo: initApollo,
   rb2b: initRB2B,
   meta: initMeta,
   linkedin: initLinkedIn,
@@ -339,7 +306,6 @@ export function initializeTrackers() {
 
 function trackerForUri(uri: string): string {
   if (/google-analytics|googletagmanager/.test(uri)) return "ga4";
-  if (/apollo\.io/.test(uri)) return "apollo";
   if (/b2bjsstore|ddwl4m2hdecbv|liadm|usbrowserspeed/.test(uri)) return "rb2b";
   if (/facebook|fbcdn/.test(uri)) return "meta";
   if (/licdn/.test(uri)) return "linkedin";
@@ -547,9 +513,6 @@ function notifyRouteChange(params: Record<string, unknown>) {
     }),
   );
 
-  // Apollo: re-runs its page visit capture for the new URL (no-op while disabled).
-  if (APOLLO_ID) safe(() => window.trackingFunctions?.onLoad?.({ appId: APOLLO_ID }));
-
   // RB2B: re-trigger identification for the new page.
   safe(() => {
     const r = window.reb2b as
@@ -627,7 +590,6 @@ export function verifyTrackers(): Record<TrackerKey, TrackerStatus> {
   const w = typeof window === "undefined" ? ({} as Window) : window;
   return {
     ga4: build("ga4", GA_ID, typeof w.gtag === "function"),
-    apollo: build("apollo", APOLLO_ID, !!w.trackingFunctions?.onLoad),
     rb2b: build("rb2b", RB2B_ID, !!w.reb2b),
     meta: build("meta", META_ID, typeof w.fbq === "function"),
     linkedin: build("linkedin", LINKEDIN_ID, typeof w.lintrk === "function"),

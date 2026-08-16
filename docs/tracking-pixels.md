@@ -6,7 +6,6 @@ All tags live in `src/lib/tracking/pixels.ts` and are injected client-side after
 | Tag | Env var | Default ID |
 | --- | --- | --- |
 | GA4 | `VITE_GA_MEASUREMENT_ID` | `G-HJ2ECKCNK4` |
-| Apollo | `VITE_APOLLO_APP_ID` | `6981f9ca9255870019505836` |
 | RB2B | `VITE_RB2B_ID` | `1N5W0H7RVEO5` |
 
 ## Enable by setting the env var

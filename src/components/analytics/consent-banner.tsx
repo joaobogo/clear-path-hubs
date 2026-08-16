@@ -188,7 +188,7 @@ export function ConsentBanner() {
                 <span className="text-sm">
                   <span className="font-medium text-foreground">Marketing</span>
                   <span className="block text-muted-foreground">
-                    Advertising measurement on Meta and LinkedIn, plus our business visitor tools (Apollo, RB2B).
+                    Advertising measurement on Meta and LinkedIn, plus our business visitor tool (RB2B).
                   </span>
                 </span>
                 <Switch
