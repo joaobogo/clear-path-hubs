@@ -151,10 +151,10 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "META-PROMPT 2 — CLIENT DASHBOARD (paste into Lovable)
+TEXTO DO USUÁRIO: "META-PROMPT 3 — CANDIDATE APPLICATION FORM (paste into Lovable)
 
-You are not changing product code in this run. Produce a complete remediation plan document for the CLIENT workspace (/client and every route under it) that takes it to 100% MVP status: zero errors, zero broken or dead-end controls, zero data inconsistencies, and no internal/staff-only language or data ever visible to clients.
-... (Plan saved to docs/mvp-fix-plan-client.md) ...
+You are not changing product code in this run. Produce a complete remediation plan document for the PUBLIC candidate flow: the job board (/jobs), each public job page, the application form, file upload + parsing pipeline entry, the post-submit experience, and the applicant status page ("Check your application status" / /me). 
+... (Plan saved to docs/mvp-fix-plan-application.md) ...
 Report: files changed, location of the plan, and the export URL."`
         }
       >
