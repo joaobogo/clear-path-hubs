@@ -151,20 +151,29 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "Prompt 7 · Severity: HIGH · Scope: src/components/comms/thread-message.tsx, src/lib/staff-persona.server.ts
-Defect: Staff names/hashes visible to client; sender labels inconsistent. Required Fix: Force all staff-originated messages to render with label “TaaSFlow team”. Acceptance Criteria: 1. Send message from Admin (as “João”). 2. View in Client workspace. 3. Verify sender is “TaaSFlow team” (no internal name or hash).
+TEXTO DO USUÁRIO: "TaaSFlow ADMIN Dashboard MVP Remediation Plan
+Status: DRAFT (Awaiting Execution) Last Audit: Round 3 (2026-08-15) - 59/100 FAIL Objective: 100% MVP Status (Zero errors, zero broken controls, zero raw backend leaks)
 
-(Full document contains 20+ small prompts covering all audited defects)
-
-3. Regression Protect-List
-Client messages send/receive working.
-“TaaSFlow team” label applied to all staff comms.
-Decisions (Shortlist/Offer) persist and sync to Admin.
-Public job board parity (Location/Employer).
-Share links respect visibility/revocation.
-CV downloads audited.
-4. Final Rejection Contract
-“Reply lacks specific evidence. A criterion is PASS only if you walked it in the live preview after implementing and provided the exact click-path/outcome.”"`
+1. Inventory Table
+#	Route / Component	Widget/Control	Prompt #
+1	/admin (Overview)	Work Queue Tiles	Prompt 2
+2	/admin (Overview)	Exception Digest	Prompt 15
+3	/admin (Overview)	My Day / Workload	Prompt 11
+4	/admin/intake	Wizard Conversion	Prompt 1
+5	/admin/positions	Global Search / Filters	Prompt 7
+6	/admin/positions/$id	Workspace Tabs (12)	Prompt 8
+7	/admin/candidates/$id	Workspace Tabs (11)	Prompt 8
+8	/admin/candidates/$id	Client Preview Tab	Prompt 8
+9	/admin/quality	Review Center / Sub-tabs	Prompt 6
+10	/admin/ops/agents	Agent KPI / Runs	Prompt 9
+11	/admin/team	Access / Org Records	Prompt 10
+12	/admin/platform/support	Support View Fragility	Prompt 20
+13	Everywhere	Notification Bell	Prompt 21
+14	Everywhere	Audit Events	Prompt 12
+15	Everywhere	Error Boundaries	Prompt 2
+2. Fix Prompt Series
+Prompt 1 · Severity: BLOCKER · Scope: src/lib/blueprint-pipeline.server.ts
+Defect: Client intake wizard data (location, work model, scoring weights) is lost on conversion to a position. Required Fix: Update the convertIntakeToPosition RPC to map all blueprint fields from the intake record to the new position record. Acceptance Criteria: 1. Start intake with “Hybrid” model and “100% Blueprint” weights. 2. Complete conversion. 3. Verify /admin/positions/$id/settings shows “Hybrid” and “100% Blueprint”."`
         }
       >
         {children}
