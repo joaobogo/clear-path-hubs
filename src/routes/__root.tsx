@@ -151,17 +151,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-003 · Build Pipeline Event-Driven (A3/B2) · BLOCKER
-Scope: src/lib/blueprint-pipeline.server.ts, /client/positions/$id, /admin/positions/$id
-Defect: Pipeline stuck at Stage 1/5 for 17h; advances only on manual actions; client and admin trackers are
-stale.
-Required fix: Make build-tracker stages advance on real events (or explicit failure+retry with a clear retry
-action); keep admin and client views in sync via the same source of truth.
+TEXTO DO USUÁRIO: "P-004 · Interview Slot Proposing (A4/B10) · BLOCKER
+Scope: src/routes/_authenticated/admin.index.tsx, /admin/interviews, /client/interviews
+Defect: Propose-interview-slots only exists on Overview work queue; candidate record shows dead text; SLA
+owner is sometimes a client user; bell CTA lands on candidate list.
+Required fix: Add a Propose slots action on candidate record and client/interviews; clear the 24h SLA breach
+when slots are proposed; ensure SLA owner is always staff.
 Acceptance criteria:
-• Create a role via wizard and wait for event-driven progression.
-• Verify build tracker reaches Blueprint ready (or explicit Failed with retry) without manual staff clicks.
-• Check /client/positions/$id and /admin/positions/$id show the same stage and timestamp.
-• Simulate a downstream failure; verify the tracker shows Failed + a working retry button.
+• Open a candidate at Interview requested stage.
+• Click Propose slots from the candidate record, not just the overview.
+• Submit proposed slots and verify the SLA breach clears on admin and client.
+• Verify the SLA owner column is a staff user, never a client user.
 Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
         }
       >
