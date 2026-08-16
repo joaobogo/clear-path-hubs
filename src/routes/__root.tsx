@@ -151,13 +151,24 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "PROMPT 14 — FINAL SELF-VERIFICATION (paste after all fixes; do not skip)
-
-Run this exact checklist against the live preview and return a table (Item | PASS/FAIL | Evidence path). Any FAIL: fix it and re-run before replying. Do not reply with unverified PASSes — the R4 audit will re-execute every line with fresh marker names and mirrored client+admin sessions, and a single dishonest PASS fails the release.
-
-A. Stability: /admin loads clean 10×; every widget isolated; counts consistent. Positions/candidates/clients search works incl. hyphenated and junk input, no raw backend errors anywhere. B. Intake integrity: new wizard role → every field on the admin record; blueprint weights = 100%; build tracker completes unaided; client tracker matches. C. Coordination: propose-slots from candidate record, position record, and notification; SLA breach clears both sides; client confirmation lands back; no client-owned SLAs. D. Visibility: org Shares view (revoked link shown dead), Talent memory view (archived entry shown), all four lifecycle events audited; public revoked URL dead. E. Scoring: Recompute appends runs and clears banners; stale queue drainable to 0; engine labels consistent; no [object Object]; eligibility written on disqualifiers; rubric linked on new runs. F. Client-view: Client preview correct for 3 published candidates; support session survives reload + expires on time; bell links never dead-end. G. Agents: tiles = lists; 6 agents visible; no stuck superseded queue; no stale collision banners; client Insights matches. H. Hygiene: zero wrong-client names on any org's records/briefings; zero TAASFLOW_DEMO_SEED client-visible; staff-only ownership; coherent org contact. I. Consent: pre-interview CV/contact blocked client-side (UI + endpoint) unless individually released; releases/revokes audited. J. Consistency: hire/offer KPIs reconcile; single "Delivery failures" truth; org record counts real; journeys/step-states truthful; approved timestamps present; quality panel live-updates; bulk export parent event logged. K. Copy: no raw codes/JSON/client-checkout copy in admin; pagination никогда shows stale rows. L. Register: /admin/qa-report statuses truthful; F-006/8/9/10/11/12/13 closed as specified. M. Regressions (must all still pass): client messages visible in /admin/messages with reply flow; "TaaSFlow team" sender label; memory notes add/persist/delete; owner assignment + My day; public board employer/location/date parity; score-run immutability; CV download audit trail; payments read-only; audited support sessions; double-click on Send produces exactly one message.
-
-Also state: files changed per area, migrations run, and anything you could NOT fix with the reason — do not silently skip items."`
+        TEXTO DO USUÁRIO: "F-008 — Hard disqualifiers cap the score but never persist eligibility.
+Fix in src/lib/scoring-service.server.ts (and scoring-engine.server.ts where the cap is
+applied):
+1. When a disqualifying_answer is detected, upsert an eligibility_checks row for the match:
+kind='disqualifier', status='failed', with the specific question/answer as evidence and the
+score_run_id that produced it.
+2. Set candidate_matches.eligibility_status accordingly in the SAME transaction/RPC as the score
+write — no partial state: if the eligibility write fails, the score run must not commit as
+authoritative.
+3. Make the admin candidate list/filter by eligibility return these candidates, and show a
+non-color indicator + aria-label on the eligibility chip.
+4. Add a unit test: a disqualifying answer produces exactly one eligibility_checks row,
+eligibility_status set, score capped, and re-scoring does not duplicate rows (idempotent
+upsert).
+5. Update /admin/qa-report: F-008 status only becomes 'fixed' after the test passes; include the
+repro used.
+Report: files changed, migration (if any), test output, and anything you could not fix with the
+reason."`
         }
       >
         {children}
