@@ -95,13 +95,10 @@ async function writeAudit(input: {
 
 // ------------------------------------------------------------------ reads
 
-const BUCKET_STATUSES: Record<RunBucket, string[]> = {
-  active: ["parsing", "enriching", "scoring"],
-  queued: ["queued"],
-  waiting_approval: ["manual_review_required", "ocr_required"],
-  failed: ["failed", "provider_blocked"],
-  completed: ["parsed", "ready_to_score", "scored"],
-};
+// Bucketing is never expressed as a database status list: `runBucket` in
+// agent-ops.ts is the single source of truth, so tiles, the per-agent rollup
+// and the visible list are derived from exactly the same rows.
+
 
 type Context = {
   orgById: Map<string, string>;
