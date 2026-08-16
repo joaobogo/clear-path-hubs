@@ -212,7 +212,7 @@ export const getPublicPosition = createServerFn({ method: "GET" })
 
     const { data: locs } = await supabase
       .from("position_locations")
-      .select("city,region,country,work_model,headcount,is_primary,display_order")
+      .select("city,region,country,country_code,work_model,headcount,is_primary,display_order")
       .eq("position_id", data.id)
       .order("display_order", { ascending: true });
 

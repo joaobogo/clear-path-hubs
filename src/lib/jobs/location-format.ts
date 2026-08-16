@@ -75,12 +75,12 @@ const COUNTRY_NAMES: Record<string, string> = {
  */
 export function withCountry(
   location: string | null | undefined,
-  row: { city?: string | null; country?: string | null } | null | undefined,
+  row: { city?: string | null; country?: string | null; country_code?: string | null } | null | undefined,
 ): string {
   const place = (location ?? "").trim();
   if (!place || !row) return place;
   const city = (row.city ?? "").trim();
-  const code = (row.country ?? "").trim().toUpperCase();
+  const code = (row.country ?? row.country_code ?? "").trim().toUpperCase();
   const country = COUNTRY_NAMES[code];
   if (!city || !country) return place;
   if (!place.toLowerCase().includes(city.toLowerCase())) return place;
