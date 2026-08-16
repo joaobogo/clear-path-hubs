@@ -196,7 +196,7 @@ function CandidateWorkspace() {
           <nav
             role="tablist"
             aria-label="Candidate sections"
-            className="flex flex-wrap gap-1 border-b"
+            className="flex gap-1 overflow-x-auto border-b pb-px sm:flex-wrap"
           >
             {TABS.map((t) => {
               const Icon = t.icon;
@@ -209,7 +209,7 @@ function CandidateWorkspace() {
                   onClick={() => setTab(t.id)}
                   data-qa-action={`candidate-tab-${t.id}`}
                   className={
-                    "inline-flex items-center gap-1.5 rounded-t-md border-b-2 px-3 py-2 text-sm transition " +
+                    "inline-flex flex-shrink-0 items-center gap-1.5 rounded-t-md border-b-2 px-3 py-2 text-sm transition " +
                     (active
                       ? "border-primary text-foreground"
                       : "border-transparent text-muted-foreground hover:text-foreground")
