@@ -44,108 +44,15 @@ export const Route = createFileRoute("/api/public/blueprint-run")({
 
         const { data: intake } = await admin
           .from("intake_submissions")
-          .select("id, organization_id, position_id, primary_email, company_name, role_title, payload")
+          .select("id, position_id")
           .eq("id", parsed.data.intakeId)
           .maybeSingle();
-        if (!intake || !intake.position_id || !intake.organization_id) {
+        if (!intake || !intake.position_id) {
           return Response.json({ ok: false, error: "not_found" }, { status: 404 });
         }
 
-        const { data: position } = await admin
-          .from("positions")
-          .select("id, title, blueprint_status, blueprint_attempts, jd_file_path, jd_file_name, description")
-          .eq("id", intake.position_id)
-          .maybeSingle();
-        if (!position) return Response.json({ ok: false, error: "position_missing" }, { status: 404 });
-
-        // A null/blank status is a role that was never queued — it is runnable,
-        // not "already running". Treating it otherwise wedges retry forever.
-        const RUNNABLE = ["queued", "failed", "not_started"];
-        const currentStatus = String(position.blueprint_status ?? "not_started") || "not_started";
-        if (!RUNNABLE.includes(currentStatus)) {
-          return Response.json({ ok: true, alreadyRunning: true, status: currentStatus });
-        }
-
-        // Hard cap so a known intake id cannot be replayed to burn AI usage.
-        const attempts = Number(position.blueprint_attempts ?? 0);
-        if (attempts >= 5) {
-          return Response.json(
-            { ok: false, error: "attempt_limit_reached", status: position.blueprint_status },
-            { status: 429 },
-          );
-        }
-
-        // Claim the job so a double-tap or a second tab cannot run it twice.
-        const { data: claimed } = await admin
-          .from("positions")
-          .update({
-            blueprint_status: "analyzing_jd",
-            blueprint_error: null,
-            blueprint_attempts: attempts + 1,
-          })
-          .eq("id", position.id)
-          // NULL is not matched by `in(...)`, so the atomic claim has to allow it
-          // explicitly or a never-queued role can never be claimed.
-          .or(`blueprint_status.in.(${RUNNABLE.join(",")}),blueprint_status.is.null`)
-          .select("id");
-        if (!claimed || claimed.length === 0) {
-          return Response.json({ ok: true, alreadyRunning: true });
-        }
-
-
-        const payload = (intake.payload ?? {}) as Record<string, unknown>;
-        const contactFirst = typeof payload.firstName === "string" ? payload.firstName : "";
-        const website = typeof payload.companyWebsite === "string" ? payload.companyWebsite : "";
-        const researchConsent = payload.researchConsent !== false;
-
-        // Pull the stored job description file back out of private storage.
-        let jdFile: { bytes: Uint8Array; mime: string; filename: string } | null = null;
-        if (position.jd_file_path) {
-          const { data: blob, error: dlErr } = await admin.storage
-            .from("job-descriptions")
-            .download(position.jd_file_path);
-          if (!dlErr && blob) {
-            const buf = new Uint8Array(await blob.arrayBuffer());
-            jdFile = {
-              bytes: buf,
-              mime: blob.type || "application/pdf",
-              filename: position.jd_file_name || "job-description.pdf",
-            };
-          }
-        }
-
-        const { runBlueprintPipeline } = await import("@/lib/blueprint-pipeline.server");
-        const result = await runBlueprintPipeline({
-          positionId: position.id,
-          organizationId: intake.organization_id,
-          intakeId: intake.id,
-          roleTitle: position.title ?? intake.role_title,
-          companyName: intake.company_name,
-          companyWebsite: website,
-          contactEmail: intake.primary_email,
-          contactName: contactFirst,
-          researchConsent,
-          jdFile,
-          jdPastedText: position.description ?? "",
-        });
-
-        if (!result.ok) {
-          // The role still exists and is safe — tell the client a human is on it.
-          try {
-            const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
-            const { absoluteUrl } = await import("@/lib/blueprint-pipeline.server");
-            await sendTemplateEmail("blueprint-delayed", intake.primary_email, {
-              idempotencyKey: `blueprint-delayed-${position.id}`,
-              templateData: {
-                contactName: contactFirst,
-                roleTitle: position.title ?? intake.role_title,
-                workspaceUrl: absoluteUrl(`/client/positions/${position.id}`),
-              },
-            });
-          } catch (err) {
-            console.error("[blueprint-run] delayed email failed", err);
-          }
-        }
+        const { runBlueprintForPosition } = await import("@/lib/blueprint-pipeline.server");
+        const result = await runBlueprintForPosition(intake.position_id);
 
         return Response.json({ ok: result.ok, reason: result.reason ?? null });
       },

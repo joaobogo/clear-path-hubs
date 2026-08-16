@@ -94,6 +94,7 @@ import { Route as ApiPublicExpressIntakeRouteImport } from './routes/api/public/
 import { Route as ApiPublicEventsRouteImport } from './routes/api/public/events'
 import { Route as ApiPublicContactRouteImport } from './routes/api/public/contact'
 import { Route as ApiPublicBlueprintRunRouteImport } from './routes/api/public/blueprint-run'
+import { Route as ApiPublicBlueprintDrainRouteImport } from './routes/api/public/blueprint-drain'
 import { Route as AuthenticatedMeSettingsRouteImport } from './routes/_authenticated/me.settings'
 import { Route as AuthenticatedMeProfileRouteImport } from './routes/_authenticated/me.profile'
 import { Route as AuthenticatedMeMessagesRouteImport } from './routes/_authenticated/me.messages'
@@ -632,6 +633,11 @@ const ApiPublicContactRoute = ApiPublicContactRouteImport.update({
 const ApiPublicBlueprintRunRoute = ApiPublicBlueprintRunRouteImport.update({
   id: '/api/public/blueprint-run',
   path: '/api/public/blueprint-run',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicBlueprintDrainRoute = ApiPublicBlueprintDrainRouteImport.update({
+  id: '/api/public/blueprint-drain',
+  path: '/api/public/blueprint-drain',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedMeSettingsRoute = AuthenticatedMeSettingsRouteImport.update({
@@ -1415,6 +1421,7 @@ export interface FileRoutesByFullPath {
   '/me/messages': typeof AuthenticatedMeMessagesRoute
   '/me/profile': typeof AuthenticatedMeProfileRoute
   '/me/settings': typeof AuthenticatedMeSettingsRoute
+  '/api/public/blueprint-drain': typeof ApiPublicBlueprintDrainRoute
   '/api/public/blueprint-run': typeof ApiPublicBlueprintRunRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/api/public/events': typeof ApiPublicEventsRoute
@@ -1602,6 +1609,7 @@ export interface FileRoutesByTo {
   '/me/messages': typeof AuthenticatedMeMessagesRoute
   '/me/profile': typeof AuthenticatedMeProfileRoute
   '/me/settings': typeof AuthenticatedMeSettingsRoute
+  '/api/public/blueprint-drain': typeof ApiPublicBlueprintDrainRoute
   '/api/public/blueprint-run': typeof ApiPublicBlueprintRunRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/api/public/events': typeof ApiPublicEventsRoute
@@ -1801,6 +1809,7 @@ export interface FileRoutesById {
   '/_authenticated/me/messages': typeof AuthenticatedMeMessagesRoute
   '/_authenticated/me/profile': typeof AuthenticatedMeProfileRoute
   '/_authenticated/me/settings': typeof AuthenticatedMeSettingsRoute
+  '/api/public/blueprint-drain': typeof ApiPublicBlueprintDrainRoute
   '/api/public/blueprint-run': typeof ApiPublicBlueprintRunRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/api/public/events': typeof ApiPublicEventsRoute
@@ -2000,6 +2009,7 @@ export interface FileRouteTypes {
     | '/me/messages'
     | '/me/profile'
     | '/me/settings'
+    | '/api/public/blueprint-drain'
     | '/api/public/blueprint-run'
     | '/api/public/contact'
     | '/api/public/events'
@@ -2187,6 +2197,7 @@ export interface FileRouteTypes {
     | '/me/messages'
     | '/me/profile'
     | '/me/settings'
+    | '/api/public/blueprint-drain'
     | '/api/public/blueprint-run'
     | '/api/public/contact'
     | '/api/public/events'
@@ -2385,6 +2396,7 @@ export interface FileRouteTypes {
     | '/_authenticated/me/messages'
     | '/_authenticated/me/profile'
     | '/_authenticated/me/settings'
+    | '/api/public/blueprint-drain'
     | '/api/public/blueprint-run'
     | '/api/public/contact'
     | '/api/public/events'
@@ -2514,6 +2526,7 @@ export interface RootRouteChildren {
   ResourcesIndexRoute: typeof ResourcesIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ApiPublicBlueprintDrainRoute: typeof ApiPublicBlueprintDrainRoute
   ApiPublicBlueprintRunRoute: typeof ApiPublicBlueprintRunRoute
   ApiPublicContactRoute: typeof ApiPublicContactRoute
   ApiPublicEventsRoute: typeof ApiPublicEventsRoute
@@ -3143,6 +3156,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/blueprint-run'
       fullPath: '/api/public/blueprint-run'
       preLoaderRoute: typeof ApiPublicBlueprintRunRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/blueprint-drain': {
+      id: '/api/public/blueprint-drain'
+      path: '/api/public/blueprint-drain'
+      fullPath: '/api/public/blueprint-drain'
+      preLoaderRoute: typeof ApiPublicBlueprintDrainRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/me/settings': {
@@ -4335,6 +4355,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResourcesIndexRoute: ResourcesIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ApiPublicBlueprintDrainRoute: ApiPublicBlueprintDrainRoute,
   ApiPublicBlueprintRunRoute: ApiPublicBlueprintRunRoute,
   ApiPublicContactRoute: ApiPublicContactRoute,
   ApiPublicEventsRoute: ApiPublicEventsRoute,

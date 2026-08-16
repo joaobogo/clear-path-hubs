@@ -378,7 +378,7 @@ export const getOnboardingState = createServerFn({ method: "GET" })
     if (
       position &&
       (position.search_live_at ||
-        ["generated", "ready", "confirmed", "analyzing_jd", "researching", "compiling"].includes(
+        ["ready", "confirmed", "analyzing_jd", "researching_company", "drafting_blueprint"].includes(
           position.blueprint_status,
         ))
     ) {
