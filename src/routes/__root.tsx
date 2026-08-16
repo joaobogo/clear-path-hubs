@@ -151,18 +151,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "Section 2 — Client Dashboard Prompts
-Seed Register B contains 18 findings from the client-side audit.
-P-024 · Wizard Field Persistence (B1) · BLOCKER
-Scope: /client/positions/new, src/lib/client-pipeline-lane.ts
-Defect: Wizard captures location, model, target title, and weights, but the position record arrives
-empty/defaulted.
-Required fix: Ensure createPosition mutation payload maps all wizard step data to the backend position record.
+TEXTO DO USUÁRIO: "P-025 · Client Build Tracker (B2) · BLOCKER
+Scope: /client/positions/$id, src/lib/client-pipeline-lane.ts
+Defect: Build tracker does not progress without staff actions and can freeze mid-pipeline.
+Required fix: Drive tracker stages from the same event source used by admin; surface explicit failure+retry.
 Acceptance criteria:
-• Create role Product Designer in Lisbon, Hybrid, with 100% Blueprint weights.
-• Complete wizard.
-• Open Role Detail > Settings and verify all 3 fields are correct, not Remote or 0%.
-• Refresh the page; verify values persist.
+• Create a role via client wizard.
+• Verify tracker advances to Blueprint ready without manual admin clicks.
+• If a failure occurs, verify Retry is visible and functional.
+• Compare stage and timestamp with /admin/positions/$id.
 Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
