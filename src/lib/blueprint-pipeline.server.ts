@@ -248,7 +248,8 @@ async function applyBlueprintToPosition(
   };
   const mergedContext: Record<string, unknown> = { ...existingContext };
   for (const [key, value] of Object.entries(generatedContext)) {
-    if (isRerun && !isEmptyValue(existingContext[key])) continue;
+    if (!isEmptyValue(existingContext[key])) continue;
+    if (isEmptyValue(value)) continue;
     mergedContext[key] = value;
   }
   patch.intake_context = mergedContext;
