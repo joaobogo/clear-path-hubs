@@ -153,7 +153,7 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
         return {
           id: p.id,
           title: p.title,
-          location: p.location,
+          location: titleCaseLocation(withCountry(p.location, primaryLocationByPosition.get(p.id))),
           work_model: p.work_model,
           employment_type: p.employment_type,
           seniority: p.seniority,
