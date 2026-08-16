@@ -54,10 +54,11 @@ export function AdminScoreNumber({
     return <span className={`text-sm text-muted-foreground ${className}`}>Not scored</span>;
   }
   const meta = `${confidenceLabel(run)} · ${rubricVersionLabel(run)}`;
+  const scoreLabel = `Score ${Math.round(Number(run.score))}`;
   if (size === "lg") {
     return (
-      <div className={`flex flex-wrap items-baseline gap-3 ${className}`}>
-        <div className="text-5xl font-semibold tabular-nums">{Math.round(Number(run.score))}</div>
+      <div className={`flex flex-wrap items-baseline gap-3 ${className}`} aria-label={scoreLabel}>
+        <div className="text-5xl font-semibold tabular-nums" aria-hidden="true">{Math.round(Number(run.score))}</div>
         {run.fit_label && (
           <Badge variant="secondary">{String(run.fit_label).replace(/_/g, " ")}</Badge>
         )}
@@ -66,8 +67,8 @@ export function AdminScoreNumber({
     );
   }
   return (
-    <span className={`inline-flex flex-wrap items-baseline gap-1.5 ${className}`}>
-      <Badge variant="secondary" className="tabular-nums">
+    <span className={`inline-flex flex-wrap items-baseline gap-1.5 ${className}`} aria-label={scoreLabel}>
+      <Badge variant="secondary" className="tabular-nums" aria-hidden="true">
         Score {Math.round(Number(run.score))}
         {run.fit_label && (
           <span className="ml-1 opacity-70">· {String(run.fit_label).replace(/_/g, " ")}</span>
