@@ -118,6 +118,16 @@ export function explainApproveFailure(message: string): ApproveFailure {
     };
   }
 
+  if (raw.startsWith("publish_blocked:evidence_incomplete")) {
+    return {
+      raw,
+      title: "Can't approve yet",
+      detail: "Add at least one piece of evidence for every must-have requirement, or record a written override.",
+      retryable: false,
+      nextStep: "Open the Evidence tab and link evidence for each missing criterion.",
+    };
+  }
+
   if (raw.startsWith("publish_failed:approve_state:")) {
     const reason = raw.slice("publish_failed:approve_state:".length);
     if (reason.startsWith("no_path_from:")) {
