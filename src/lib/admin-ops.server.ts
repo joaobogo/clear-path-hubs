@@ -268,6 +268,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         id: m.id,
         title: m.candidate_profiles?.full_name ?? "Candidate",
         subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
+
         meta: m.score_runs?.score != null ? `score ${Math.round(Number(m.score_runs.score))}` : null,
         waiting_since: m.updated_at,
         target: { kind: "review" as const, matchId: m.id },
