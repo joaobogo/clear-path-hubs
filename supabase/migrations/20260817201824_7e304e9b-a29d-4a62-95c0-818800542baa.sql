@@ -1,0 +1,1 @@
+delete from public.contact_messages where email like 'qa.rl.%@qa.taasflow.test';
