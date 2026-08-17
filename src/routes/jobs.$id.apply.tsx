@@ -1721,10 +1721,13 @@ function ApplyPage() {
             </div>
           )}
 
-          {submitError && (
+          {serverError && (
             <div className="mt-6 rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
               <p className="font-semibold">Submission failed</p>
-              <p>{submitError}</p>
+              <p>{serverError.message}</p>
+              {serverError.trace_id && (
+                <p className="mt-1 text-xs opacity-80">Reference: {serverError.trace_id.slice(0, 8).toUpperCase()}</p>
+              )}
             </div>
           )}
 
