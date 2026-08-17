@@ -96,7 +96,6 @@ const TAB_LABELS: Record<TabKey, { label: string; icon: typeof Building2 }> = {
   messages: { label: "Messages", icon: MessagesSquare },
   notes: { label: "Notes", icon: StickyNote },
   documents: { label: "Documents", icon: FileText },
-  parsed_documents: { label: "Parsed CVs", icon: FileText },
   activity: { label: "Activity", icon: Activity },
   audit: { label: "Audit", icon: ShieldCheck },
   shares: { label: "Shares", icon: ExternalLink },
@@ -929,7 +928,7 @@ function NotesTab({ org }: { org: any }) {
 }
 
 // ── Documents tab ─────────────────────────────────────────────────────────
-function DocumentsTab({ id }: { id: string }) {
+function DocumentsTab({ id, parsedCvCount }: { id: string; parsedCvCount?: number }) {
   const { data } = useSuspenseQuery({
     queryKey: ["admin-client-documents", id],
     queryFn: () => getClientDocuments({ data: { id, limit: 100 } }),
@@ -940,6 +939,7 @@ function DocumentsTab({ id }: { id: string }) {
     <div className="overflow-hidden rounded-lg border bg-card">
       <header className="border-b px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
         Documents linked to this client's candidates ({rows.length})
+        {parsedCvCount !== undefined && ` · Parsed: ${parsedCvCount}`}
       </header>
       <table className="w-full text-sm">
         <thead className="bg-muted/30 text-left text-xs uppercase text-muted-foreground">
