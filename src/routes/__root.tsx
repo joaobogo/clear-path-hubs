@@ -151,15 +151,14 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-036 · Zero Internal Strings Client-Visible (B13) · MEDIUM
-Scope: All /client routes
-Defect: TAASFLOW_DEMO_SEED, pl_... pipeline refs, trace IDs, actor hashes visible.
-Required fix: Audit every client surface; sanitize or hide internal markers.
+TEXTO DO USUÁRIO: "P-037 · Cross-Client Leakage Defense (B14) · HIGH
+Scope: All /client routes, RLS policies
+Defect: Other client's names/branding may appear; guessing IDs returns data.
+Required fix: Harden RLS so every client route returns only rows scoped to the caller's organization_id.
 Acceptance criteria:
-• Search full client DOM for TAASFLOW_DEMO_SEED; verify 0 occurrences.
-• Search for pl_ references; verify 0 occurrences.
-• Search for actor hash strings; verify 0 occurrences.
-• Check error messages; verify no trace IDs are shown to clients.
+• As Client A, attempt to access Client B's position ID; verify denied or empty.
+• Verify no other org branding appears in AI briefings, job board, or messages.
+• Run a direct query against client API with mismatched org; verify 403.
 Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
         }
       >
