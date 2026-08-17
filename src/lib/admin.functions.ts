@@ -184,6 +184,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
           "id,status,error_message,updated_at,notifications(title,audience,recipient_user_id)",
         )
         .in("status", ["failed", "bounced", "suppressed"])
+        .gte("created_at", weekAgo)
         .order("updated_at", { ascending: false })
         .limit(6),
       s

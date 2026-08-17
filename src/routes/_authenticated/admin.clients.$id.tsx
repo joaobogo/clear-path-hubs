@@ -278,7 +278,7 @@ function ClientDetail() {
       )}
       {tab === "documents" && (
         <Block name="documents">
-          <DocumentsTab id={id} parsedCvCount={data.parsed_cv_count} />
+          <DocumentsTab id={id} parsedCvCount={(data as any).parsed_cv_count} />
         </Block>
       )}
       {tab === "activity" && (
