@@ -33,12 +33,9 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just \"done\".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-Two E2E specs have been blocked since Pass 9/10 on the staff \"Approve score\" evidence gate: tests/e2e/publish-desk.spec.ts and tests/e2e/client-candidates-kanban.spec.ts. This is the core admin flow (review score → approve → publish to client), so it must be provably green before launch.
+Verification only — change nothing unless a mismatch is found.
 
-1. Diagnose first: run both specs, and manually walk the same path in preview as platform staff on a Northwind candidate — needs-review candidate → open evidence → Approve score → Publish → candidate becomes visible in the client workspace with the approved score.
-2. Determine whether the blocker is a product defect (the gate wrongly blocks a valid approval, or approval doesn't transition state) or a test defect (selector/fixture). State which, with evidence.
-3. Fix the root cause minimally. If it is the product: do not weaken the publish gate rules (approved_score_run_id + published_to_client + integrity ok stay mandatory) — fix the transition so a valid approval satisfies them.
-4. Verify: both specs green, plus the manual path above confirmed end to end including the client side, and the immutability triggers on score_runs untouched."`;
+As the Northwind demo client, record and compare in one sitting: (a) the Overview "awaiting your review / needs attention" numbers, (b) the Candidates list count for the same filter, (c) the Kanban column totals, (d) what /admin/publish reports as Published for Northwind, and (e) the notification badge count. All five must reconcile to the same underlying rows. If any pair disagrees, identify which read model is wrong, fix only that read path (server-derived, no literals), and re-verify all five together. Log the result in docs/mvp-ledger.md."`;
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
 const FONT_CSS_HREF =
