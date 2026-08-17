@@ -151,7 +151,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "Standing rules apply.
+TEXTO DO USUÁRIO: "Standing rules apply (P-001 through P-051).
 
 DEFECT (proven): Five "Message sent · —" activity events have no actor or context. System stage resets are labeled "Shortlisted by your team". A candidate journey shows "Shortlisted by your team / Interviewed" generated from an OFFER decision. A candidate step banner said "Interview feedback is in and no advance or reject decision has been recorded" one hour after a mere interview REQUEST. Identical audit rows are written twice at the same second. Evidence panels render literal "([object Object])" citations, quotes often unrelated to their dimension, and "Admin-verified" chips while the header says "All criteria are machine-derived — none human-verified yet".
 
@@ -165,6 +165,7 @@ ACCEPTANCE CRITERIA:
 5. Open a score breakdown: no "[object Object]"; each quote sits under the correct dimension; no "Admin-verified" chip without a human verification record.
 
 Covers A17 + A18 + B9 (PDF P-017, P-018, P-032)."`
+
         }
       >
         {children}
