@@ -25,6 +25,8 @@
 import { ENGINE_VERSION, combineCategories, scoreCandidate, } from "./scoring-engine.server";
 import { EVALUATION_METHOD, parseCalibration, resolveCalibration, serialiseCalibration, } from "./scoring/engine-calibration";
 import { buildReplaySnapshot } from "./scoring/replay";
+import { randomUUID } from "crypto";
+
 export const SCORING_BLUEPRINT_VERSION = "taasflow-blueprint-v1.0.0";
 async function getAdmin() {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -432,7 +434,28 @@ export async function executeScoring(matchId, opts = {}) {
                     organization_id: ctx.match.organization_id,
                 },
             };
-            const { data: run, error: runErr } = await s.from("score_runs").upsert({
+            runId = randomUUID();
+            // Supersede any existing active run for this match before inserting the
+            // new one. The partial unique indexes on score_runs only allow one active
+            // completed run per match, so we must flip the old row to inactive first.
+            // The immutability trigger only permits the superseded_at column to change,
+            // so superseded_by_run_id / reason are left null.
+            const { data: activeRuns } = await s
+                .from("score_runs")
+                .select("id")
+                .eq("candidate_match_id", matchId)
+                .eq("status", "completed")
+                .is("superseded_at", null);
+            if (activeRuns && activeRuns.length > 0) {
+                const { error: supErr } = await s
+                    .from("score_runs")
+                    .update({ superseded_at: new Date().toISOString() })
+                    .in("id", activeRuns.map((r) => r.id));
+                if (supErr)
+                    throw new Error(`score_supersede_failed: ${supErr.message}`);
+            }
+            const { data: run, error: runErr } = await s.from("score_runs").insert({
+                id: runId,
                 candidate_match_id: matchId,
                 position_id: ctx.match.position_id,
                 application_id: ctx.match.application_id,
@@ -472,14 +495,11 @@ export async function executeScoring(matchId, opts = {}) {
                 preferred_coverage: raw.preferred_coverage,
                 contradiction_status: raw.contradiction_status,
                 input_hash: raw.input_hash,
-            }, {
-                onConflict: "candidate_match_id,input_hash,rubric_version_id",
-                ignoreDuplicates: false
             }).select("id").single();
             if (runErr || !run)
                 throw new Error(runErr?.message ?? "score_insert_failed");
-            runId = run.id;
         }
+
         await s
             .from("candidate_matches")
             .update({
