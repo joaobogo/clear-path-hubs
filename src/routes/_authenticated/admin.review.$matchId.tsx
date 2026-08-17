@@ -306,7 +306,9 @@ function ReviewScreen() {
                   rescore_queued_at: m.rescore_queued_at ?? null,
                 })}
               />
-
+              <span className="text-[11px] text-muted-foreground">
+                {currentRun?.engine_version ?? "engine unknown"}
+              </span>
             </span>
           )}
           {score != null && (
