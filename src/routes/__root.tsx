@@ -153,18 +153,16 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Standing rules apply.
 
-DEFECT: \"Delivery failures\" shows 0 (Overview work-queue KPI), 18 (exception digest) and 23 (Operations, 7d) simultaneously. Org record shows \"CLIENT USERS 0\" with 2 active members; the org Candidates tab renders stage/score/fit as \"—\" though the data exists; org Documents shows \"(0)\" though 10 parsed candidate CVs exist. Portfolio/role hired counts disagree (covered in P14 — keep consistent).
+DEFECT: Role visibility discrepancies in admin workloads and reports. Archived or closed roles incorrectly appearing in delivery counts. Staff-only metrics including non-staff owners.
 
-REQUIRED FIX: Define one canonical window and query per named metric and use it on every surface; if two surfaces need different windows, they must carry different labels. Fix the org member count query, join the latest candidate match for stage/score/fit on the org Candidates tab, and count parsed CVs on the org Documents tab.
+REQUIRED FIX: Enforce staff-only owner filtering in all canonical delivery and workload queries. Exclude archived positions from delivery metrics and account summaries. Standardize the delivery failure window to 7 days across all surfaces.
 
 ACCEPTANCE CRITERIA:
-1. \"Delivery failures\" shows the same number on the work queue, the exception digest and Operations — or each label states its window explicitly and the numbers match their stated window.
-2. Inject a failure inside the window: every surface increments by 1. Inject one outside the window: none increments.
-3. Org record with 2 active members shows CLIENT USERS 2.
-4. Org Candidates tab shows real stage, score and fit band per candidate.
-5. Org Documents tab lists the parsed CVs with a correct count.
+1. Delivery metrics (open roles, candidates in pipeline) exclude archived positions.
+2. Workload and attention-queue metrics reflect only staff-owned records.
+3. Account operating summary (delivery block) aligns with these rules.
 
-Covers A15 + A16 (PDF P-015, P-016)."`
+Covers A15 + A16 + A17 (PDF P-015, P-016, P-017)."`
         }
       >
         {children}
