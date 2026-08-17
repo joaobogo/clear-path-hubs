@@ -574,10 +574,31 @@ export async function executeScoring(
       runId = run.id;
     }
 
+    // F-008: write eligibility checks for disqualifying answers
+    const disqualifying = raw.screening_evidence.filter(s => s.aligned === "misaligned");
+    if (disqualifying.length > 0) {
+      const checks = disqualifying.map(d => ({
+        candidate_match_id: matchId,
+        organization_id: ctx.match.organization_id,
+        position_id: ctx.match.position_id,
+        qualifier_key: `disq:${d.question_id}`,
+        qualifier_label: d.question,
+        qualifier_kind: "disqualifier",
+        status: "not_eligible",
+        reason: `Disqualifying answer: ${d.normalized_value}`,
+        evidence: { question_id: d.question_id, value: d.normalized_value },
+        updated_at: new Date().toISOString()
+      }));
+      await s.from("eligibility_checks").upsert(checks, { 
+        onConflict: "candidate_match_id,qualifier_key" 
+      });
+    }
+
     await s
       .from("candidate_matches")
       .update({
         current_score_run_id: runId,
+        eligibility_status: disqualifying.length > 0 ? "not_eligible" : "eligible",
         ...(reused ? {} : { evidence_confidence: raw.evidence_confidence }),
       })
       .eq("id", matchId);

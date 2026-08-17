@@ -108,10 +108,10 @@ const FINDINGS: Finding[] = [
     id: "F-008",
     journey: "5 · Disqualifier",
     title: "Hard disqualifiers cap score but never write eligibility_checks / eligibility_status",
-    route: "src/lib/scoring-service.server.ts, src/lib/scoring-engine.server.ts",
+    route: "src/lib/scoring-service.server.ts",
     severity: "P0",
     repro: "Answer a disqualifying screening question. score is capped to 0.15 and fit_label='not_a_fit', but no eligibility_checks row is inserted and candidate_matches.eligibility_status remains untouched — admin filtering by eligibility misses the candidate.",
-    correction: "Extend scoring-service.server.ts to upsert an eligibility_checks row (kind='disqualifier', status='failed') and set candidate_matches.eligibility_status on disqualifying_answer.",
+    correction: "Extended scoring-service.server.ts to upsert an eligibility_checks row (kind='disqualifier', status='failed') and set candidate_matches.eligibility_status on disqualifying_answer.",
     status: "fixed",
   },
   {
