@@ -153,18 +153,19 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
  
 TEXTO DO USUÁRIO: "Standing rules apply.
  
-DEFECT (HIGH, proven): A hire record closed as \"Closed lost — Candidate declined\" leaves the candidate stage stuck at \"hired\". The Offers and hires panel claims \"Offers extended 1 · Accepted 0 · Declined 2 · Hires confirmed 0 · Guarantees active 0 · Start dates confirmed 2 (none started)\" over a table showing 1 extended and 1 closed-lost. Portfolio sourcing reports \"0 hired\" while the role table reports \"1 hired\" for the same period.
+DEFECT (HIGH): /admin/qa-report lists items that gate MVP and are still Open/Unverified: F-006 (score_decisions can commit while the candidate_matches update fails, leaving an approve decision with no publication); F-008 (hard disqualifiers cap the score but never write eligibility_checks or candidate_matches.eligibility_status, so eligibility filtering misses them); F-009 (rubric_versions has DB immutability but no application writer — score_runs.rubric_version_id is null in practice, causing \"rubric unlinked\" and endangering the publish gate); F-010 (unique index on candidate_matches(position_id, candidate_profile_id) may be missing due to a conditional migration); F-011 (Realtime RLS unverified for candidate_matches); F-012 (notification_events RLS lacks a visibility join).
  
-REQUIRED FIX: Make offer/hire outcomes drive candidate stage (a closed-lost hire must not leave the candidate displayed as hired anywhere), and derive every number in the panel from the same records the table shows. One definition of \"hired\" across role, portfolio, dashboard and client views.
+REQUIRED FIX: Implement each as the register itself prescribes — F-006: wrap approve-for-client in a single transactional RPC. F-008: upsert eligibility_checks (kind=disqualifier, status=failed) and set eligibility_status on disqualifying answers. F-009: ship the rubric-version writer so new score runs carry rubric_version_id and the UI shows the linked rubric. F-010: dedupe then create the unique index unconditionally. F-011: verify Realtime respects RLS or subscribe only to client-visible views. F-012: tighten the RLS policy with the visibility join. Update each row's status in /admin/qa-report truthfully — no \"Fixed\" without the change.
  
 ACCEPTANCE CRITERIA:
-1. Record an offer decline: the candidate is no longer displayed as hired on the role pipeline, dashboard, portfolio, or client view.
-2. The Offers and hires panel numbers reconcile exactly with its own table rows.
-3. Record an accepted offer with a start date: Accepted +1, Hires confirmed +1, Start dates confirmed +1, and the role/portfolio hired counts agree.
-4. Portfolio sourcing \"hired\" equals the sum of role-level hired counts.
-5. Client view shows offer state matching the client's actual decision.
+1. Force the publish gate to fail during approve-for-client: no orphaned approve decision remains (demonstrate).
+2. Submit a disqualifying screening answer: an eligibility_checks row exists and eligibility_status is set; the candidate is findable by an \"not eligible\" filter.
+3. A newly created score run carries a non-null rubric_version_id and the header shows the rubric version instead of \"rubric unlinked\".
+4. Attempt a duplicate candidate_match insert: rejected by the database.
+5. Realtime and notification_events respect RLS (state how you verified).
+6. /admin/qa-report reflects the true status of each item.
  
-Covers A14 + B11 (PDF P-014, P-034)."`
+Covers A23 (PDF P-023)."`
         }
       >
         {children}
