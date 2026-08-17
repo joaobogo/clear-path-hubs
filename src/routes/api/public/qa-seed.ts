@@ -4,6 +4,7 @@
 
 import { createFileRoute } from "@tanstack/react-router";
 import { readJsonWithLimit } from "@/lib/public-api/body-limit";
+import { qaEndpointDisabledResponse } from "@/lib/public-api/qa-endpoint-gate";
 import {
   PUBLIC_BODY_LIMITS,
   PUBLIC_RATE_LIMITS,
@@ -1024,6 +1025,10 @@ async function cleanupCandidateE2E(emailPattern: string): Promise<{ deleted: Rec
 
 
 async function handle(request: Request): Promise<Response> {
+  // Hard kill switch: without ENABLE_QA_ENDPOINTS this route does not exist.
+  const disabled = qaEndpointDisabledResponse();
+  if (disabled) return disabled;
+
   const cronDecision = consumeRateLimit("cron_invoke", clientIp(request), PUBLIC_RATE_LIMITS.cron_invoke);
   if (cronDecision.limited) return rateLimitResponse(newTraceId("cron_invoke"), cronDecision);
 
