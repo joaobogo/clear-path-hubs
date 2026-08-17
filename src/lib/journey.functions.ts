@@ -154,15 +154,26 @@ export const getCandidateJourney = createServerFn({ method: "GET" })
       .maybeSingle();
     if (match && !candidateMatchId) candidateMatchId = match.id;
 
-    // Score runs → ranked events
-    const { data: runs } = candidateMatchId
-      ? await supabase
-          .from("score_runs")
-          .select("id, completed_at, final_score, fit_band, status")
-          .eq("candidate_match_id", candidateMatchId)
-          .not("completed_at", "is", null)
-          .order("completed_at", { ascending: true })
-      : { data: [] as Any[] };
+    // Real events for journey synthesis
+    const [{ data: runs }, { data: audits }] = await Promise.all([
+      candidateMatchId
+        ? supabase
+            .from("score_runs")
+            .select("id, completed_at, final_score, fit_band, status")
+            .eq("candidate_match_id", candidateMatchId)
+            .not("completed_at", "is", null)
+            .order("completed_at", { ascending: true })
+        : Promise.resolve({ data: [] as Any[] }),
+      candidateMatchId
+        ? supabase
+            .from("audit_events")
+            .select("action, occurred_at, after_state")
+            .eq("entity_id", candidateMatchId)
+            .eq("entity_type", "candidate_match")
+            .order("occurred_at", { ascending: true })
+        : Promise.resolve({ data: [] as Any[] }),
+    ]);
+
 
     // Hire record → offer/hire
     const { data: hire } = candidateMatchId
@@ -239,16 +250,37 @@ export const getCandidateJourney = createServerFn({ method: "GET" })
     // Delivered
     if (match?.delivered_at) push("delivered", match.delivered_at, "Visible to client");
 
-    // Stage transitions (best-effort from current stage)
-    if (match?.stage === "shortlisted" || match?.stage === "interview_process" || match?.stage === "offer" || match?.stage === "hired") {
-      push("shortlisted", match.updated_at ?? match.delivered_at ?? match.created_at);
+    // P-017: Derive journeys from real audit events where available
+    const auditMap = new Map<string, string>();
+    for (const a of (audits ?? []) as Any[]) {
+      auditMap.set(a.action, a.occurred_at);
     }
-    if (match?.stage === "interview_process" || match?.stage === "offer" || match?.stage === "hired") {
-      push("interviewed", match.updated_at ?? match.created_at);
+
+    // Shortlisted
+    const shortlistedAt = auditMap.get("candidate_match.shortlisted") ?? 
+      (match?.stage === "shortlisted" || match?.stage === "interview_process" || match?.stage === "offer" || match?.stage === "hired" ? match.updated_at : null);
+    if (shortlistedAt) push("shortlisted", shortlistedAt);
+
+    // Interviewing - map distinct interview states
+    const interviewRequestedAt = auditMap.get("interview.requested");
+    const interviewScheduledAt = auditMap.get("interview.scheduled");
+    const interviewCompletedAt = auditMap.get("interview.completed");
+
+    if (interviewRequestedAt) push("interviewed", interviewRequestedAt, "Interview requested");
+    if (interviewScheduledAt) push("interviewed", interviewScheduledAt, "Interview scheduled");
+    if (interviewCompletedAt) push("interviewed", interviewCompletedAt, "Interview completed");
+
+    // Fallback for interviewed stage if no specific audit events found
+    if (!interviewRequestedAt && !interviewScheduledAt && !interviewCompletedAt) {
+      if (match?.stage === "interview_process" || match?.stage === "offer" || match?.stage === "hired") {
+        push("interviewed", match.updated_at ?? match.created_at);
+      }
     }
+
     if (match?.stage === "not_moving_forward") {
       push("passed", match.updated_at ?? match.created_at);
     }
+
 
     // Hire pipeline
     if (hire) {

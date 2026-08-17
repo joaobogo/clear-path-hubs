@@ -136,17 +136,20 @@ export const getActivityFeed = createServerFn({ method: "GET" })
         if (audience === "client") {
           const low = (actorName || "").toLowerCase();
           if (!actorName || low.includes("master admin") || low.includes("system") || low === "taasflow") {
-             actorName = "System";
+            actorName = "System";
           } else if (low === "your team" && r.event_type !== "client_decision.create") {
-             // System-generated changes like "Shortlisted by your team" should be "System"
-             // unless it was a real client decision.
-             actorName = "System";
+            actorName = "System";
           }
         }
 
         // Tidy up message events that lack a subject/actor
         if (r.event_type === "message_sent" && !actorName) {
           actorName = audience === "client" ? "TaaSFlow team" : "System";
+        }
+
+        // Ensure every event has an actor (fallback to System if still null)
+        if (!actorName) {
+          actorName = "System";
         }
 
         return {
@@ -163,8 +166,8 @@ export const getActivityFeed = createServerFn({ method: "GET" })
         };
       })
       .filter((e) => {
-        // Exclude events that still have no context/actor and would render as "Message sent · —"
-        if (e.event_type === "message_sent" && !e.actor_name && !e.position_title) return false;
+        // Exclude events that still have no context and would be redundant/confusing
+        if (e.event_type === "message_sent" && e.actor_name === "System" && !e.position_title) return false;
         return true;
       })
       .slice(0, limit);

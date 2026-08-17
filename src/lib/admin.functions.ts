@@ -37,6 +37,24 @@ export async function writeAudit(opts: {
   trace_id?: string;
 }) {
   const s = await getAdmin();
+  
+  // P-017: Deduplicate identical audit writes within the same second to prevent churn.
+  const now = new Date();
+  const oneSecondAgo = new Date(now.getTime() - 1000).toISOString();
+  
+  const { data: existing } = await s
+    .from("audit_events")
+    .select("id")
+    .eq("actor_user_id", opts.actor)
+    .eq("action", opts.action)
+    .eq("entity_type", opts.entity_type)
+    .eq("entity_id", opts.entity_id)
+    .gte("occurred_at", oneSecondAgo)
+    .limit(1)
+    .maybeSingle();
+
+  if (existing) return;
+
   await s.from("audit_events").insert({
     actor_user_id: opts.actor,
     action: opts.action,
@@ -48,6 +66,7 @@ export async function writeAudit(opts: {
     trace_id: opts.trace_id ?? null,
   });
 }
+
 
 const traceId = () =>
   `ad_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
