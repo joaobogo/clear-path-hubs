@@ -153,21 +153,19 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
  
 TEXTO DO USUÁRIO: "Standing rules apply.
  
-DEFECT (BLOCKER, proven): Proposing interview times exists ONLY as the \"Coordinate\" action on the /admin Overview work queue. When Overview was down, there was no other way to do it: the candidate record shows dead text \"Interview · unscheduled · requested\", the SLA desk offers only \"Acknowledge\", and the notification CTA \"Propose times →\" navigates to the generic /admin/candidates list. Result: an interview request from 14/08 22:25 was still unactioned with an \"Interview slots: 145h vs 24h\" SLA breach, and the audit could not complete the flow at all. Additionally, that SLA breach is owned by a CLIENT user (\"James Cameron (Client)\") — internal commitments must be staff-owned.
+DEFECT (BLOCKER, PII/consent, proven): Contact/CV release is an audited per-candidate flag, but the policy is not enforced. Candidates who are only shortlisted and have never reached interview are fully \"Released\" (via a blanket seeded action), and the client downloaded their CVs repeatedly pre-interview. Hidden buttons are not enough — the download endpoint itself must refuse.
  
-REQUIRED FIX: Add a working \"Propose interview times\" action (same scheduling flow) to: the candidate workspace whenever an unscheduled interview request exists — replacing the dead status text; the position workspace Interviews panel; and the notification CTA, deep-linked to that specific candidate's scheduling flow. Proposing slots must create the slot records, notify the client, move the request out of \"awaiting slot\", and clear the \"Interview slots\" breach and overdue flags on BOTH sides (per the stated definition: the commitment is met when slots are offered). Client confirmation of a slot must land back on the admin side as a scheduled interview. SLA/commitment owners must resolve to staff or \"Unassigned\" — never a client user.
+REQUIRED FIX: Enforce by default: before the interview stage, a candidate's contact details are hidden/redacted and CV download is blocked in the client workspace UNLESS an explicit, individually audited release exists with a recorded reason and actor. Blanket/seeded releases do not qualify — re-gate pre-interview candidates whose only release came from a bulk action. Enforce server-side on the CV/contact endpoints (direct URL or API must return 403/redacted). Keep the admin override (release/revoke) working and audited, and show the gate state on the admin candidate record. Client UI must show an honest state (\"available after interview\"), never a broken download.
  
 ACCEPTANCE CRITERIA:
-1. From the CANDIDATE record of a candidate with a pending interview request, propose 2 future slots. They persist after refresh.
-2. The same action is available and works from the position workspace Interviews panel.
-3. The notification CTA opens the scheduling flow for that exact candidate (not a generic list).
-4. After proposing slots for the oldest pending request, the \"Interview slots\" SLA breach disappears from the SLA desk AND the Overview banner, and the row leaves \"Interviews to coordinate\".
-5. In the client workspace the proposed times are visible and the overdue/waiting flag is gone.
-6. Confirm a slot as the client: the admin side shows the interview as scheduled with the chosen time.
-7. No SLA row or commitment anywhere lists a client user as owner.
-8. All of the above works with /admin Overview closed — nothing depends on that page rendering.
+1. As the client, open a shortlisted candidate who has never been interviewed: contact details are redacted and CV download is unavailable with clear copy.
+2. Hit the CV download endpoint directly for that candidate (copy the URL / call the API): it returns 403 or a redacted file — not the real CV.
+3. A candidate at interview stage, or one with an explicit individual release, IS downloadable; each download still writes to the CV download audit trail.
+4. Admin candidate record shows the gate state (\"Blocked — pre-interview\" vs \"Released by X at Y, reason Z\"); Revoke works and is audited.
+5. List in your reply which candidates were re-gated by this fix.
+6. Offer/hired/interviewed candidates' access is unchanged (no regression).
  
-Covers A4 + B10 + FB-10 (PDF P-004, P-033)."`
+Covers A13 + B4 (PDF P-013, P-027)."`
         }
       >
         {children}
