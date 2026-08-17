@@ -174,6 +174,26 @@ const FINDINGS: Finding[] = [
     correction: "Replaced useSuspenseQuery with useQuery in the work queue summary, wrapped every Overview widget (SLA banner, Portfolio health, Awaiting client decision, Offers and hires, Latest activity) in AdminWidgetErrorBoundary, and added a Header skeleton that derives the 'items waiting' count from the same query data as the section lists.",
     status: "verified",
   },
+  {
+    id: "F-015",
+    journey: "1 · Admin dashboard",
+    title: "Delivery failure metrics inconsistent across surfaces",
+    route: "src/lib/admin.functions.ts, src/lib/notification-failures.server.ts",
+    severity: "P0",
+    repro: "Overview KPI showed 0, while Operations showed 23. Different surfaces used different windows (none vs 7d).",
+    correction: "Standardized on the 7-day canonical window from notification-failures.server.ts for all delivery failure counts.",
+    status: "fixed",
+  },
+  {
+    id: "F-016",
+    journey: "9 · Org workspace",
+    title: "Org Candidates tab missing score/fit data and Documents count incorrect",
+    route: "src/routes/_authenticated/admin.clients.$id.tsx, src/lib/admin.functions.ts",
+    severity: "P1",
+    repro: "Candidates tab rendered stage/score/fit as '—' and Documents tab showed (0) despite data presence.",
+    correction: "Joined score_runs in getClientCandidatesForOrg and implemented parsed_cv_count in getClientDetails.",
+    status: "fixed",
+  },
 ];
 
 const SEV_META: Record<Severity, { color: string; icon: typeof AlertOctagon }> = {
