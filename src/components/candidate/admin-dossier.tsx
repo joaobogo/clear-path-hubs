@@ -29,6 +29,8 @@ import { Lock, Unlock, Trash2, Users, AlertTriangle } from "lucide-react";
 import { useConfirmAction } from "@/components/ds";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 import { cvConsentGate } from "@/lib/consent/cv-consent-gate";
+import { formatAnswerValue } from "@/lib/human-labels";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -286,13 +288,15 @@ export function AdminDossier({ matchId }: { matchId: string }) {
                     )}
                   </div>
                   <p className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">
-                    {typeof a.answer === "string" ? a.answer : JSON.stringify(a.answer)}
+                    {formatAnswerValue(a.answer)}
                   </p>
+
                   {q?.preferred_answer != null && (
                     <p className="mt-1 text-xs text-muted-foreground">
-                      Preferred: {String(q.preferred_answer)}
+                      Preferred: {formatAnswerValue(q.preferred_answer)}
                     </p>
                   )}
+
                 </li>
               );
             })}

@@ -1,4 +1,6 @@
 import { createFileRoute, Link, notFound, useNavigate, useRouter } from "@tanstack/react-router";
+import { formatAnswerValue } from "@/lib/human-labels";
+
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -123,8 +125,9 @@ function ReviewScreen() {
     return raw.map((a: Any) => ({
       question: a.screening_questions?.question ?? "Question",
       dealbreaker: Boolean(a.screening_questions?.dealbreaker),
-      answer: typeof a.answer === "string" ? a.answer : JSON.stringify(a.answer),
+      answer: a.answer,
     }));
+
   }, [data]);
 
   const m = (data as Any).match;
@@ -424,8 +427,9 @@ function ReviewScreen() {
                       {a.question}
                     </div>
                     <div className="text-xs text-muted-foreground break-words">
-                      {safeNode(a.answer) ?? "—"}
+                      {formatAnswerValue(a.answer) ?? "—"}
                     </div>
+
                   </li>
                 ))}
               </ul>

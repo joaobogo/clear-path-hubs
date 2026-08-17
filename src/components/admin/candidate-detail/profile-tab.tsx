@@ -39,7 +39,7 @@ function ProfileTab({
           <Row label="Phone" v={cp?.phone} />
           <Row label="LinkedIn" v={cp?.linkedin_url && <a href={cp.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Profile ↗</a>} />
           <Row label="Work auth" v={formatWorkAuthorization(cp?.work_authorization)} />
-          <Row label="Consent" v={cp?.consent ? "Given" : "Not recorded"} />
+          <Row label="Consent" v={cp?.consent?.terms ? "Given" : "Not recorded"} />
         </dl>
         {cp?.summary && (
           <>

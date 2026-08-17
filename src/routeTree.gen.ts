@@ -68,6 +68,7 @@ import { Route as DevIndustryCoverageRouteImport } from './routes/dev.industry-c
 import { Route as DevCatalogueRouteImport } from './routes/dev.catalogue'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ApplyStatusRouteImport } from './routes/apply.status'
+import { Route as ApplyEligibilityOutcomeRouteImport } from './routes/apply.eligibility-outcome'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedClientRouteImport } from './routes/_authenticated/client'
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
@@ -500,6 +501,11 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
 const ApplyStatusRoute = ApplyStatusRouteImport.update({
   id: '/apply/status',
   path: '/apply/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApplyEligibilityOutcomeRoute = ApplyEligibilityOutcomeRouteImport.update({
+  id: '/apply/eligibility-outcome',
+  path: '/apply/eligibility-outcome',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
@@ -1346,6 +1352,7 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/client': typeof AuthenticatedClientRouteWithChildren
   '/me': typeof AuthenticatedMeRouteWithChildren
+  '/apply/eligibility-outcome': typeof ApplyEligibilityOutcomeRoute
   '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
@@ -1542,6 +1549,7 @@ export interface FileRoutesByTo {
   '/boardroom': typeof AuthenticatedBoardroomRoute
   '/book-call': typeof AuthenticatedBookCallRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
+  '/apply/eligibility-outcome': typeof ApplyEligibilityOutcomeRoute
   '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
@@ -1736,6 +1744,7 @@ export interface FileRoutesById {
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
   '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
+  '/apply/eligibility-outcome': typeof ApplyEligibilityOutcomeRoute
   '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dev/catalogue': typeof DevCatalogueRoute
@@ -1937,6 +1946,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/client'
     | '/me'
+    | '/apply/eligibility-outcome'
     | '/apply/status'
     | '/blog/$slug'
     | '/dev/catalogue'
@@ -2133,6 +2143,7 @@ export interface FileRouteTypes {
     | '/boardroom'
     | '/book-call'
     | '/checkout'
+    | '/apply/eligibility-outcome'
     | '/apply/status'
     | '/blog/$slug'
     | '/dev/catalogue'
@@ -2326,6 +2337,7 @@ export interface FileRouteTypes {
     | '/_authenticated/checkout'
     | '/_authenticated/client'
     | '/_authenticated/me'
+    | '/apply/eligibility-outcome'
     | '/apply/status'
     | '/blog/$slug'
     | '/dev/catalogue'
@@ -2521,6 +2533,7 @@ export interface RootRouteChildren {
   UnauthorizedRoute: typeof UnauthorizedRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  ApplyEligibilityOutcomeRoute: typeof ApplyEligibilityOutcomeRoute
   ApplyStatusRoute: typeof ApplyStatusRoute
   BlogSlugRoute: typeof BlogSlugRoute
   DevCatalogueRoute: typeof DevCatalogueRoute
@@ -2987,6 +3000,13 @@ declare module '@tanstack/react-router' {
       path: '/apply/status'
       fullPath: '/apply/status'
       preLoaderRoute: typeof ApplyStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/apply/eligibility-outcome': {
+      id: '/apply/eligibility-outcome'
+      path: '/apply/eligibility-outcome'
+      fullPath: '/apply/eligibility-outcome'
+      preLoaderRoute: typeof ApplyEligibilityOutcomeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/me': {
@@ -4358,6 +4378,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  ApplyEligibilityOutcomeRoute: ApplyEligibilityOutcomeRoute,
   ApplyStatusRoute: ApplyStatusRoute,
   BlogSlugRoute: BlogSlugRoute,
   DevCatalogueRoute: DevCatalogueRoute,

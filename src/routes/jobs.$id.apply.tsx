@@ -460,7 +460,6 @@ function ApplyPage() {
   ): Record<string, string> => {
     const errs: Record<string, string> = {};
     qs.forEach((q) => {
-      if (!q?.required) return;
       const v = answers[q.id];
       const empty =
         v == null || (typeof v === "string" && v.trim() === "");
@@ -468,6 +467,7 @@ function ApplyPage() {
     });
     return errs;
   };
+
 
   // Per-step validation used to gate Continue.
   const stepIssues = (n: number): Record<string, string> => {
@@ -604,12 +604,12 @@ function ApplyPage() {
           ? v
             ? "Yes"
             : "No"
-          : v == null
-            ? ""
+          : v == null || v === ""
+            ? "—"
             : String(v).trim();
       return { id: q.id, question: q.question, value: text };
-    })
-    .filter((a) => a.value !== "");
+    });
+
 
 
   // Relative, plain-language save marker. Absent until the first real save,
