@@ -544,7 +544,10 @@ export async function runEnrichmentOnly(
       .eq("id", ctx.match.candidate_profile_id).maybeSingle();
     const screening = buildScreening(ctx.answers);
     const { insights, insights_error } = await buildInsights({
-      cvText, position: ctx.position, screening,
+      cvText,
+      position: ctx.position,
+      organizationName: (ctx.match.organizations as any)?.name ?? "the organization",
+      screening,
     });
     await s.from("candidate_evidence").upsert({
       candidate_match_id: matchId,
