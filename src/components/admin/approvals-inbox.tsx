@@ -253,7 +253,7 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
       setSelected({});
       invalidate();
     },
-    onError: (e) => toastError(e, { fallback: "Approval failed." }),
+    onError: (e) => toastError(asAdminApprovalError(e), { tone: "staff", fallback: "Approval failed." }),
     onSettled: () => setBusyId(null),
   });
 
