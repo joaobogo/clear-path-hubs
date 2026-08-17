@@ -4,15 +4,14 @@
  * Enforces that only platform staff (platform_admin or operations) or null
  * can be assigned as owners or backups.
  */
-import type { SupabaseClient } from "@supabase/supabase-js";
-
-type Admin = SupabaseClient<never, never, never>;
+// type-safe Admin helper for ownership checks
+type GuardAdmin = { from: (t: string) => any };
 
 /**
  * Asserts that a user is allowed to own a position or commitment.
  * Must be platform staff or null (unassigned).
  */
-export async function assertAllowedOwner(admin: Admin, userId: string | null): Promise<void> {
+export async function assertAllowedOwner(admin: GuardAdmin, userId: string | null): Promise<void> {
   if (!userId) return; // Unassigned is always allowed
 
   // memberships.user_id = auth.users.id

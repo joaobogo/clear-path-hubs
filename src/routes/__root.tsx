@@ -153,19 +153,18 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
  
 TEXTO DO USUÁRIO: "Standing rules apply.
  
-DEFECT (HIGH, proven): /admin/agent-ops KPI tiles read Active 0 / Queued 0 / Waiting approval 0 / Failed 0 / Completed 0 while \"Show all runs\" renders MANY queued hydrate/parse/score cards, and completed scoring runs exist inside the 72h window. Only 1 of the claimed \"6 agents\" is listed. Superseded 12/08 jobs (\"superseded: an up-to-date scoring run already existed\") sit in Queued forever, and their references power misleading \"The assessment engine encountered a technical collision. Reference: pl_…\" banners on at least 4 candidate profiles whose latest runs are fine. The client Insights page shows the same class of bug (0 agent runs vs a populated feed).
+DEFECT (HIGH, proven): The client user \"James Cameron (Client)\" is recorded as OWNER of the Senior Full-Stack Engineer position: he appears in the STAFF workload table (with 8 active candidates) and as the owner of an SLA commitment. The assignment dropdowns correctly offer staff only, so this came in through data/another path.
  
-REQUIRED FIX: KPI tiles, the per-agent list, and the run list must read from one source and agree under every filter; completed in-window runs must count; all six agents must appear with a status (idle is a status). Move superseded/obsolete jobs to a terminal \"superseded\" state — out of the queue. Candidate \"Hiring Intelligence\" banners must reflect only the LATEST run's state. Client Insights must show the same numbers as admin for the same org/window.
+REQUIRED FIX: Add a write guard so position owner, backup owner, and SLA/commitment owner can only be platform staff (platform_admin/operations) or Unassigned — enforced server-side, not just in the dropdown. Migrate existing client-owned positions/commitments to a staff owner or Unassigned. Staff workload and SLA views must only ever resolve staff.
  
 ACCEPTANCE CRITERIA:
-1. Tiles equal the visible list under: Show all runs, failed-only, and each per-agent filter.
-2. Completed count is greater than 0 when completed runs exist in the window (verify against score history).
-3. All 6 agents are listed with a status.
-4. Zero perpetual queued cards for superseded jobs; the queue holds only genuinely pending/running work.
-5. The candidates that showed \"technical collision / Reference pl_…\" no longer show it (their latest run completed); a candidate whose latest run genuinely failed still shows an error.
-6. Client Insights agent-run count equals admin for the same org and window; run a new job and verify all three surfaces increment together.
+1. Attempt to set a client user as position owner via the API/direct mutation: rejected.
+2. The staff workload table contains only staff users.
+3. No SLA/commitment row anywhere lists a \"(Client)\" user as owner.
+4. Previously client-owned positions now show a staff owner or Unassigned — list them.
+5. Assigning a staff owner still works and is reflected in My day.
  
-Covers A9 + B8 (PDF P-009, P-031)."`
+Covers A11 (PDF P-011)."`
         }
       >
         {children}
