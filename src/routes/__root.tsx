@@ -35,11 +35,11 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just "done".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-/boardroom (live-data presentation mode) inherits only the signed-in check, so any authenticated user — including a candidate — can open it.
+The plan file .lovable/plan/mvp-fix-plan-p-002-p-010-p-037-2026-08-17.md contains "Database Corrective SQL (To be run manually)" that was never applied because the query tool was read-only: fixing the Northwind Talent organization's website and primary contact, and scrubbing the string "Flow Group Ventures" out of existing Northwind candidate briefings (insights narrative and pitch_summary).
 
-1. Add the same staff gate the /admin layout uses (fail closed to /access-denied?reason=permission) to the boardroom route.
-2. Change nothing inside the boardroom page itself.
-3. Verify in preview: platform staff can open it; a client_admin and a candidate both land on /access-denied; no console errors on the denial path."`;
+1. Apply exactly that corrective SQL as a proper migration — same targets, same org id, no widening of scope. Wrap the candidate_evidence update so rows without the JSON paths are skipped safely.
+2. Do not touch any table or org not named in that SQL, and do not modify the insight-generation code (that part already shipped).
+3. Verify: after the migration, open 3 Northwind candidates in BOTH the admin candidate detail and the client (Northwind demo) candidate view — the string "Flow Group Ventures" must not appear anywhere in their briefings, and the org record shows the corrected website/contact. Report the number of evidence rows updated."`;
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
 const FONT_CSS_HREF =
