@@ -586,13 +586,22 @@ export const saveOnboardingRole = createServerFn({ method: "POST" })
       if (error) throw new Error(error.message);
     } else {
       // New roles start as drafts. Publication stays behind the payment gate.
+      const { assertAllowedOwner } = await import("./ownership-guard.server");
+      // If the creating user is not staff, they cannot own the position.
+      let ownerId: string | null = userId;
+      try {
+        await assertAllowedOwner(supabase as any, userId);
+      } catch {
+        ownerId = null; // Client user cannot own, leave unassigned
+      }
+
       const { data: created, error } = await supabase
         .from("positions")
         .insert({
           organization_id: data.organization_id,
           status: "draft",
           created_by: userId,
-          owner_user_id: userId,
+          owner_user_id: ownerId,
           ...patch,
         })
         .select("id")
