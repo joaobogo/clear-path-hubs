@@ -153,19 +153,20 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
  
 TEXTO DO USUÁRIO: "Standing rules apply.
  
-DEFECT (BLOCKER, PII/consent, proven): Contact/CV release is an audited per-candidate flag, but the policy is not enforced. Candidates who are only shortlisted and have never reached interview are fully \"Released\" (via a blanket seeded action), and the client downloaded their CVs repeatedly pre-interview. Hidden buttons are not enough — the download endpoint itself must refuse.
+DEFECT (BLOCKER, proven, real candidate affected): A real applicant uploaded the same CV FOUR times and no application was ever created, and was never told the real reason — your own evidence-gaps page classifies this as \"Ours\" with a communication defect. Separately, unreadable/no-text-layer PDFs (cv_unreadable / empty_text_layer) sit failed at the 3-attempt ceiling for days with no recovery path. Duplicate submissions of the same email+role also produce silent duplicates or nothing.
  
-REQUIRED FIX: Enforce by default: before the interview stage, a candidate's contact details are hidden/redacted and CV download is blocked in the client workspace UNLESS an explicit, individually audited release exists with a recorded reason and actor. Blanket/seeded releases do not qualify — re-gate pre-interview candidates whose only release came from a bulk action. Enforce server-side on the CV/contact endpoints (direct URL or API must return 403/redacted). Keep the admin override (release/revoke) working and audited, and show the gate state on the admin candidate record. Client UI must show an honest state (\"available after interview\"), never a broken download.
+REQUIRED FIX: Make submission a robust state machine: either an application record is created, or the applicant sees a truthful, actionable error AND a staff-visible incident is logged with the trace and the applicant's email. Detect zero-character extraction immediately and tell the applicant honestly (\"we couldn't read your file — upload a text-based PDF or DOCX\"), give staff a working OCR/retry path, and never leave an application permanently stuck. Same email + same role must update the existing application or be rejected with a clear message — never create silent duplicates; flag near-duplicates for staff.
  
 ACCEPTANCE CRITERIA:
-1. As the client, open a shortlisted candidate who has never been interviewed: contact details are redacted and CV download is unavailable with clear copy.
-2. Hit the CV download endpoint directly for that candidate (copy the URL / call the API): it returns 403 or a redacted file — not the real CV.
-3. A candidate at interview stage, or one with an explicit individual release, IS downloadable; each download still writes to the CV download audit trail.
-4. Admin candidate record shows the gate state (\"Blocked — pre-interview\" vs \"Released by X at Y, reason Z\"); Revoke works and is audited.
-5. List in your reply which candidates were re-gated by this fix.
-6. Offer/hired/interviewed candidates' access is unchanged (no regression).
+1. Submit a valid application with a clean text PDF: the application appears in the admin candidate database with every submitted field verbatim, and parse/score kicks off.
+2. Force a failure during record creation (mock it): the applicant sees a truthful error with a support reference, and an incident row appears for staff containing the trace and the applicant email.
+3. Upload an image-only/scanned PDF: the applicant is told immediately and honestly what to do; the record shows \"unreadable\" for staff; staff can trigger OCR/retry and the application then progresses or is explicitly rejected — never stuck.
+4. Apply twice with the same email to the same role: exactly one candidate record exists; the second submission either updates it or is rejected with a clear message.
+5. Double-click submit: exactly one application record.
+6. Refresh mid-form: entered data is restored or the form restarts cleanly — no corrupt half-record.
+7. Attempt to apply to a closed/unpublished role via direct URL: blocked with a clear message.
  
-Covers A13 + B4 (PDF P-013, P-027)."`
+Covers C1 + C2 + C3 + C9 (PDF P-042, P-043, P-044, P-050)."`
         }
       >
         {children}
