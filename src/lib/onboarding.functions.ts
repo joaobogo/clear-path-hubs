@@ -571,9 +571,9 @@ export const saveOnboardingRole = createServerFn({ method: "POST" })
       seniority: data.seniority || null,
       description: data.description || null,
       // P-001: Ensure these fields are explicitly set to null if empty so defaults don't overwrite.
-      requirements: (current as Db)?.requirements ?? [],
-      preferred_requirements: (current as Db)?.preferred_requirements ?? [],
-      dealbreakers: (current as Db)?.dealbreakers ?? [],
+      requirements: (current as any)?.requirements ?? [],
+      preferred_requirements: (current as any)?.preferred_requirements ?? [],
+      dealbreakers: (current as any)?.dealbreakers ?? [],
     };
 
     let positionId = data.position_id ?? null;
@@ -635,7 +635,7 @@ export const saveOnboardingRequirements = createServerFn({ method: "POST" })
       .eq("id", data.position_id)
       .eq("organization_id", data.organization_id)
       .maybeSingle();
-    const ctx = ((current as Db)?.intake_context ?? {}) as Record<string, unknown>;
+    const ctx = ((current as any)?.intake_context ?? {}) as Record<string, unknown>;
 
     const { error } = await supabase
       .from("positions")
