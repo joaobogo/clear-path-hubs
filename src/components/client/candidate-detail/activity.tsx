@@ -201,9 +201,9 @@ export function AuditTrailSection({ candidate }: { candidate: ClientCandidateDTO
               <span className="text-sm font-medium leading-none text-foreground">
                 {humanizeRoleAction(e.action)}
               </span>
-              {e.actor_name && (
+              {e.actor && (
                 <span className="mt-1 text-[11px] text-muted-foreground uppercase tracking-wider">
-                  {actorLabel(e.actor_name, "client")}
+                  {actorLabel(e.actor, "client")}
                 </span>
               )}
               <div className="mt-1.5 flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">

@@ -387,8 +387,8 @@ export const listMyNotifications = createServerFn({ method: "GET" })
           actorId
             ? actorId === context.userId
               ? "You"
-              : (nameById.get(actorId) || (audience === "client" ? "TaaSFlow team" : "TaaSFlow system"))
-            : (audience === "client" ? "TaaSFlow team" : "TaaSFlow system"),
+              : (nameById.get(actorId) || (rows[0]?.audience === "client" ? "TaaSFlow team" : "TaaSFlow system"))
+            : (rows[0]?.audience === "client" ? "TaaSFlow team" : "TaaSFlow system"),
         );
       }
     }

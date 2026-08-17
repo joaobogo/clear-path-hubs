@@ -679,7 +679,7 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
         id: String(e.id),
         action: safeAction,
         entity_type: String(e.entity_type ?? "event"),
-        actor: e.actor_user_id ? "TaaSFlow team" : "System", // Map all staff actor hashes to a generic team persona for clients
+        actor: e.actor_user_id ? "TaaSFlow team" : "System",
         at: String(e.created_at ?? new Date().toISOString()),
         summary: null,
       };
@@ -723,7 +723,6 @@ export const CLIENT_CANDIDATE_SELECT = `id, stage, delivered_at, position_id, ap
 
 
 export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
-  const { actorLabel } = require("./notifications/notification-tiers");
   const cp = row.candidate_profiles ?? {};
   const pos = row.positions ?? null;
   const run = row.score_runs ?? null;
