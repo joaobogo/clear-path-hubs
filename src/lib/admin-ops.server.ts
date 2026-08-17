@@ -50,7 +50,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
   );
   const scope = await loadTestScope(s, opts.includeTest ?? false);
 
-  const [unpaid, setup, review, readyForDecision, delivered, interviews, blocked, aging] = await Promise.all([
+  const [unpaid, setup, review, readyForDecision, delivered, interviews, blocked, aging, stale] = await Promise.all([
     // 1 — submitted roles that have not been paid for (or are stuck mid-checkout).
     excludeTestOrgs(
       s
@@ -139,6 +139,19 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
 
     // 6 — real client briefs sitting in the inbox for more than three days.
     loadAgingIntakes(s, { includeTest: opts.includeTest ?? false, olderThanDays: 3, limit: 8 }),
+    // 7 — P-006: candidates with stale scores.
+    excludeTestOrgs(
+      s
+        .from("candidate_matches")
+        .select(
+          "id,score_stale_at,score_stale_reasons,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(name))",
+          { count: "exact" },
+        )
+        .eq("score_stale", true)
+        .order("score_stale_at", { ascending: true })
+        .limit(8),
+      scope,
+    ),
   ]);
 
 
@@ -170,6 +183,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
   for (const iv of (interviews.data ?? []) as Any[])
     addOwner(iv.candidate_matches?.positions?.owner_user_id);
   for (const i of agingIntakes.items) addOwner(i.owner_user_id);
+  for (const m of (stale.data ?? []) as Any[]) addOwner(m.positions?.owner_user_id);
 
 
   const ownerName = new Map<string, string>();
@@ -343,6 +357,26 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         owner: null,
         claim: null,
         tone: "danger" as const,
+      })),
+    },
+    {
+      key: "score_stale",
+      label: "Stale scores",
+      description: "Candidates whose score inputs changed after assessment.",
+      count: stale.count ?? 0,
+      action_hint: "Recompute scores to clear out-of-date banners.",
+      see_all: { to: "/admin/scoring/review" },
+      items: ((stale.data ?? []) as any[]).map((m) => ({
+        id: m.id,
+        title: m.candidate_profiles?.full_name ?? "Candidate",
+        subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
+        meta: Array.isArray(m.score_stale_reasons) ? m.score_stale_reasons.join(", ") : "Inputs changed",
+        waiting_since: m.score_stale_at,
+        target: { kind: "review" as const, matchId: m.id },
+        action_label: "Recompute",
+        owner: owner(m.positions?.owner_user_id),
+        claim: positionClaim(m.positions?.id),
+        tone: "warning" as const,
       })),
     },
   ];
