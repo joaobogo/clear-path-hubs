@@ -208,6 +208,9 @@ export function computeCost(spendRaw: SpendRecord[], hiresRaw: HireRecord[], w: 
   const toDay = w.toISO.slice(0, 10);
   const spend = spendRaw.filter((s) => s.period_end >= fromDay && s.period_start <= toDay);
   const hires = hiresRaw.filter((h) => inWindow(h.hired_at, w));
+  // Re-filter matches to ensure Portfolio sourcing "hired" equals role-level counts
+  // by using the same source (candidate_matches stage). 
+  // Note: hiresRaw is already pre-filtered for status="hire_confirmed" in the server function.
 
   const currency = spend[0]?.currency ?? "EUR";
   const mixedCurrency = spend.some((s) => s.currency !== currency);

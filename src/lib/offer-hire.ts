@@ -211,15 +211,15 @@ export type OfferTotals = {
 };
 
 export function summarise(rows: readonly OfferRow[]): OfferTotals {
+  // Filters here MUST match theQualifies predicates and outcome labels exactly
+  // so the panel numbers reconcile with its own table rows.
   return {
     extended: rows.filter((r) => isExtendedOffer(r.status)).length,
-    accepted: rows.filter(
-      (r) => r.status === "offer_accepted" || r.status === "hire_confirmed",
-    ).length,
-    declined: rows.filter((r) => r.status === "offer_declined").length,
+    accepted: rows.filter((r) => isAcceptedOffer(r.status)).length,
+    declined: rows.filter((r) => r.status === "offer_declined" || r.status === "closed_lost").length,
     hires_confirmed: rows.filter((r) => qualifiesAsHire(r.status)).length,
-    start_dates_confirmed: rows.filter((r) => r.start_date != null).length,
-    guarantees_active: rows.filter((r) => r.guarantee?.state === "active").length,
+    start_dates_confirmed: rows.filter((r) => r.start_date != null && isAcceptedOffer(r.status)).length,
+    guarantees_active: rows.filter((r) => r.guarantee?.state === "active" && qualifiesAsHire(r.status)).length,
     live: rows.filter((r) => isLiveOffer(r.status)).length,
   };
 }

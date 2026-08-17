@@ -259,7 +259,11 @@ async function loadHire(a: { from: (t: string) => Row }, hireId: string): Promis
 /** Maps a hire outcome to the candidate stage it implies. */
 function stageForOutcome(outcome: OfferOutcome): string | null {
   if (outcome === "hire_confirmed" || outcome === "offer_accepted") return "hired";
+  // A declined offer or a closed-lost outcome (e.g. "Closed lost — Candidate declined")
+  // moves the candidate out of the active pipeline. Sticking at "hired" is a bug.
   if (outcome === "offer_declined" || outcome === "closed_lost") return "not_moving_forward";
+  // Transition back to offer if we were negotiating/sent and somehow moved stage.
+  if (outcome === "offer_sent" || outcome === "offer_negotiating") return "offer";
   return null;
 }
 
