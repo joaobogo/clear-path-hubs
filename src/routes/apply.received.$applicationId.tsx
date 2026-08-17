@@ -143,7 +143,7 @@ function Received() {
           </div>
           <h1 className="mt-4 text-2xl font-semibold">Application received</h1>
           <p className="mt-2 text-muted-foreground">
-            Thanks{data.candidate_name ? `, ${data.candidate_name.split(" ")[0]}` : ""} — your
+            Thanks{data.candidate_first_name ? `, ${data.candidate_first_name}` : ""} — your
             application for{" "}
             <span className="font-medium text-foreground">{data.position_title ?? "this role"}</span>
             {data.organization_name && (
