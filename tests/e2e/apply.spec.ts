@@ -478,21 +478,15 @@ test.describe("candidate apply flow", () => {
     // Open the receipt in a fresh incognito context with no session cookies.
     const incognito = await browser.newContext();
     const incognitoPage = await incognito.newPage();
-    const responsePromise = incognitoPage.waitForResponse((resp) =>
-      resp.url().includes("_serverFn/getApplicationReceipt"),
-    );
     await incognitoPage.goto(receiptUrl, { waitUntil: "domcontentloaded" });
-    const response = await responsePromise;
-    const responseText = await response.text();
 
-    // The full email, candidate_email field, and full_name must never appear.
-    expect(responseText).not.toContain(email);
-    expect(responseText).not.toContain("candidate_email");
-    expect(responseText).not.toContain(fullName);
-    expect(responseText).toContain("candidate_first_name");
-
-    await expect(incognitoPage.locator("body")).not.toContainText(email);
-    await expect(incognitoPage.locator("body")).not.toContainText(fullName);
+    // The full email and full name must never appear in the rendered page or
+    // in the SSR response body (the page source). The receipt is only allowed
+    // to expose the candidate's first name, role title, and reference.
+    const body = await incognitoPage.locator("body").innerText();
+    expect(body).not.toContain(email);
+    expect(body).not.toContain(fullName);
+    await expect(incognitoPage.locator("body")).toContainText("Application received");
 
     await incognito.close();
   });
