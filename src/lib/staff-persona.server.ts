@@ -17,6 +17,7 @@ const SYSTEM_ACCOUNTS = new Set([
   "System",
   "TaaSFlow system",
   "TaaSFlow team",
+  "System / unattributed",
 ]);
 
 /**
@@ -69,7 +70,7 @@ export function resolveStaffPersona(args: {
 
   // Human staff member with a real name.
   return {
-    name: name + (maskStatus ? "" : " (Staff)"),
+    name: maskStatus ? name || "TaaSFlow team" : `${name} (Staff)`,
     role: roleLabel || "TaaSFlow recruiter",
     isStaff: true,
   };

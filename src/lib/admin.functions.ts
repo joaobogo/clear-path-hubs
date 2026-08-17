@@ -55,14 +55,25 @@ export async function writeAudit(opts: {
 
   if (existing) return;
 
+  const { sanitizeInternalMarkers } = await import("./human-labels");
+
+  const sanitizeState = (state: unknown) => {
+    if (!state || typeof state !== "object") return state;
+    const next = { ...state } as Record<string, unknown>;
+    for (const [k, v] of Object.entries(next)) {
+      if (typeof v === "string") next[k] = sanitizeInternalMarkers(v) ?? v;
+    }
+    return next;
+  };
+
   await s.from("audit_events").insert({
     actor_user_id: opts.actor,
     action: opts.action,
     entity_type: opts.entity_type,
     entity_id: opts.entity_id,
     organization_id: opts.organization_id ?? null,
-    before_state: (opts.before ?? null) as never,
-    after_state: (opts.after ?? null) as never,
+    before_state: (sanitizeState(opts.before) ?? null) as never,
+    after_state: (sanitizeState(opts.after) ?? null) as never,
     trace_id: opts.trace_id ?? null,
   });
 }
