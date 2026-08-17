@@ -716,6 +716,11 @@ function ApplyPage() {
         submittingRef.current = false;
         return;
       }
+      if (result.ok && (result as any).warning === "unreadable_file") {
+        toast.warning((result as any).message, { duration: 8000 });
+      } else if (result.ok) {
+        toast.success("Application submitted successfully!");
+      }
       track("apply_submitted", { position_id: id, device: deviceBucket(window.innerWidth) });
       try {
         localStorage.removeItem(draftKey);
