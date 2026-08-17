@@ -494,11 +494,13 @@ export const getClient = createServerFn({ method: "GET" })
     await requireStaff(context.userId);
     const s = await getAdmin();
     const [orgRes, membersRes, positionsRes] = await Promise.all([
-      s.from("organizations").select("*").eq("id", data.id).maybeSingle(),
+      s.from("organizations").select("*, memberships(count), parsed_cv_count:candidate_profiles(count)").eq("id", data.id).maybeSingle(),
       s
         .from("memberships")
         .select("id,role,status,created_at,profiles(auth_user_id,full_name,email)")
         .eq("organization_id", data.id)
+        .in("role", ["client_admin", "client_editor", "client_viewer"])
+        .neq("status", "removed")
         .order("created_at", { ascending: false }),
       s
         .from("positions")
