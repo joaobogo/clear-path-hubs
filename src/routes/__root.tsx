@@ -29,16 +29,16 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - This is a stabilization pass for MVP launch. Fix only what this message names. No redesign, no restyling, no new features, no refactors of working code, no dependency upgrades.
 - Preserve all approved work. If a fix requires touching a shared file, change only the lines needed and state which shared file you touched and why.
-- Exact IDs only, never title/name matching. One canonical write path per mutation. Every success message must be backed by a confirmed backend result — no optimistic "Saved" toasts.
-- After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just "done".
+- Exact IDs only, never title/name matching. One canonical write path per mutation. Every success message must be backed by a confirmed backend result — no optimistic \"Saved\" toasts.
+- After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just \"done\".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-Default admin views still surface QA fixtures and internal workspaces next to real clients: candidates "QA Mobile Tester" and "QA Walkthrough Candidate" appear in /admin/candidates, and org pickers/lists show QA_TESTCO_E2E alongside Northwind Talent (Demo), BRPH, neuronflow, Flow Group Ventures, atlasflow, Bob law.
+Two E2E specs have been blocked since Pass 9/10 on the staff \"Approve score\" evidence gate: tests/e2e/publish-desk.spec.ts and tests/e2e/client-candidates-kanban.spec.ts. This is the core admin flow (review score → approve → publish to client), so it must be provably green before launch.
 
-1. Confirm every QA fixture row (orgs, candidates, positions, matches created by the QA seed) has is_test_record = true; fix any that don't via a migration.
-2. Confirm the existing "Show test records across all admin screens" toggle actually scopes EVERY admin surface, including: /admin/candidates, /admin/clients, /admin/team org pickers, global search results, saved-view counts, and any recruiter-reassignment dropdowns. Fix any surface that ignores it. Default = hidden.
-3. Do NOT delete any rows and do NOT touch the internal-but-real orgs (BRPH, neuronflow, Flow Group Ventures, atlasflow, Bob law) — they are legitimate records; only QA_* fixtures are test records.
-4. Verify with the toggle OFF: no QA_* org or QA-named candidate appears anywhere in the admin UI or its pickers; with the toggle ON they return.";`
+1. Diagnose first: run both specs, and manually walk the same path in preview as platform staff on a Northwind candidate — needs-review candidate → open evidence → Approve score → Publish → candidate becomes visible in the client workspace with the approved score.
+2. Determine whether the blocker is a product defect (the gate wrongly blocks a valid approval, or approval doesn't transition state) or a test defect (selector/fixture). State which, with evidence.
+3. Fix the root cause minimally. If it is the product: do not weaken the publish gate rules (approved_score_run_id + published_to_client + integrity ok stay mandatory) — fix the transition so a valid approval satisfies them.
+4. Verify: both specs green, plus the manual path above confirmed end to end including the client side, and the immutability triggers on score_runs untouched."`;
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
 const FONT_CSS_HREF =
@@ -73,8 +73,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "TaaSFlow" },
       // No sitewide og:image here: a root-level image is concatenated into
       // every match and can win over a page's own hero/cover. Routes that
-      // render a meaningful hero set og:image/twitter:image in their own
-      // head(); hosting supplies the preview for the rest.
+      // render a meaningful hero set og:image/twitter:image in their own head();
+      // hosting supplies the preview for the rest.
 
     ],
     links: [
