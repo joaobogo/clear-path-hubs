@@ -6,6 +6,7 @@ import {
   newTraceId,
   rateLimitResponse,
 } from "@/lib/public-api/rate-limit";
+import { formatEnumLabel } from "@/lib/human-labels";
 
 export const Route = createFileRoute("/api/public/intake-status/$id")({
   server: {
@@ -24,11 +25,11 @@ export const Route = createFileRoute("/api/public/intake-status/$id")({
           return Response.json({ ok: false, error: "invalid_id" }, { status: 400 });
         }
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        // Unauthenticated caller: read only the fields the confirmation screen
+        // renders. No organization_id, no company name, no other tenant data.
         const { data, error } = await supabaseAdmin
           .from("intake_submissions")
-          .select(
-            "id, company_name, role_title, status, workspace_status, requisition_pending, position_id, organization_id, created_at, trace_id",
-          )
+          .select("id, status")
           .eq("id", id)
           .maybeSingle();
         if (error) {
@@ -37,7 +38,14 @@ export const Route = createFileRoute("/api/public/intake-status/$id")({
         if (!data) {
           return Response.json({ ok: false, error: "not_found" }, { status: 404 });
         }
-        return Response.json({ ok: true, intake: data });
+        return Response.json({
+          ok: true,
+          intake: {
+            id: data.id,
+            status: data.status,
+            statusLabel: formatEnumLabel(data.status, "Received"),
+          },
+        });
       },
     },
   },
