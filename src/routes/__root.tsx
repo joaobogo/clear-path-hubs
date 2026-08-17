@@ -38,7 +38,7 @@ demo@taasflow.com (client_admin on Northwind Talent (Demo)) is the account we us
 1. In the live preview, verify the full demo path end to end: sign in as demo@taasflow.com → lands on the Northwind /client overview → Positions, Candidates, a candidate detail, Messages, and Settings all render with data → shortlist one candidate and confirm the backend recorded it → sign out cleanly. (If you don't have the password, say BLOCKED and I'll provide it — do not reset it yourself.)
 2. Wire DEMO_CLIENT_EMAIL / DEMO_CLIENT_PASSWORD into the E2E environment usage that already reads them, so this check runs in the suite going forward.
 3. Add a small idempotent safeguard: on demo sign-in, if the Northwind membership row is missing or inactive, log an incident (do NOT auto-repair silently).
-4. Update docs/mvp-ledger.md item for demo reliability with the evidence."`;`
+4. Update docs/mvp-ledger.md item for demo reliability with the evidence.";`
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
 const FONT_CSS_HREF =
