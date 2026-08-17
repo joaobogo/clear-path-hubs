@@ -562,6 +562,10 @@ export const saveOnboardingRole = createServerFn({ method: "POST" })
       employment_type: data.employment_type || null,
       seniority: data.seniority || null,
       description: data.description || null,
+      // P-001: Ensure these fields are explicitly set to null if empty so defaults don't overwrite.
+      requirements: (current as Db)?.requirements ?? [],
+      preferred_requirements: (current as Db)?.preferred_requirements ?? [],
+      dealbreakers: (current as Db)?.dealbreakers ?? [],
     };
 
     let positionId = data.position_id ?? null;
@@ -628,7 +632,7 @@ export const saveOnboardingRequirements = createServerFn({ method: "POST" })
     const { error } = await supabase
       .from("positions")
       .update({
-        requirements: data.must_haves.map((label) => ({ label, kind: "must_have" })),
+        requirements: data.must_haves.map((label) => ({ label, kind: "must_have", weight: 1 })),
         preferred_requirements: data.nice_to_haves.map((label) => ({ label })),
         dealbreakers: data.dealbreakers.map((label) => ({ label })),
         intake_context: { ...ctx, success_criteria: data.success_criteria },
