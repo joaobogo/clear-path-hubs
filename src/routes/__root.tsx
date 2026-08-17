@@ -153,16 +153,18 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Standing rules apply.
 
-DEFECT: Role visibility discrepancies in admin workloads and reports. Archived or closed roles incorrectly appearing in delivery counts. Staff-only metrics including non-staff owners.
+DEFECT (proven): Five "Message sent · —" activity events have no actor or context. System stage resets are labeled "Shortlisted by your team". A candidate journey shows "Shortlisted by your team / Interviewed" generated from an OFFER decision. A candidate step banner said "Interview feedback is in and no advance or reject decision has been recorded" one hour after a mere interview REQUEST. Identical audit rows are written twice at the same second. Evidence panels render literal "([object Object])" citations, quotes often unrelated to their dimension, and "Admin-verified" chips while the header says "All criteria are machine-derived — none human-verified yet".
 
-REQUIRED FIX: Enforce staff-only owner filtering in all canonical delivery and workload queries. Exclude archived positions from delivery metrics and account summaries. Standardize the delivery failure window to 7 days across all surfaces.
+REQUIRED FIX: Derive journeys and step states from real recorded events only — no synthetic inference. Map interview states honestly: requested → awaiting slots → scheduled → completed → awaiting decision. Ensure every event carries an actor (or System) and context. Stop duplicate audit writes. Fix citation rendering to output real quote + source, bind each quote to its own dimension, and show verification chips only when a human verification record exists.
 
 ACCEPTANCE CRITERIA:
-1. Delivery metrics (open roles, candidates in pipeline) exclude archived positions.
-2. Workload and attention-queue metrics reflect only staff-owned records.
-3. Account operating summary (delivery block) aligns with these rules.
+1. Open the candidate whose journey showed "Interviewed" from an offer: the journey now shows only real events (applied → scored → delivered → shortlisted → interview requested → offer) with correct timestamps.
+2. A candidate with a fresh interview request shows "awaiting slots", not post-interview copy.
+3. Every activity/feed event names an actor or System; no "—" actors.
+4. Trigger a new auditable action: exactly one audit row is written.
+5. Open a score breakdown: no "[object Object]"; each quote sits under the correct dimension; no "Admin-verified" chip without a human verification record.
 
-Covers A15 + A16 + A17 (PDF P-015, P-016, P-017)."`
+Covers A17 + A18 + B9 (PDF P-017, P-018, P-032)."`
         }
       >
         {children}
