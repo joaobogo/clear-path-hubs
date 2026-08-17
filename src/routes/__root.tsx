@@ -151,17 +151,16 @@ function RootShell({ children }: { children: ReactNode }) {
  
  Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
  
- TEXTO DO USUÁRIO: "P-048 · Confirmation + Suppression Truth (C7) · MEDIUM
- Scope: src/lib/events.ts, email templates
- Defect: On-screen confirmation missing; application-received notification absent; sandbox claims email sent
- when suppressed.
- Required fix: Show on-screen confirmation; create application-received notification; in sandbox, show truthful
- suppression banner.
+ TEXTO DO USUÁRIO: "P-049 · Status Page Lookup (C8) · MEDIUM
+ Scope: /me, src/routes/_authenticated/me.tsx
+ Defect: Applicant status page shows internal data or fails for unknown lookups.
+ Required fix: Show only public status (received, under review, etc.); no scores, notes, or other candidates;
+ unknown lookups fail gracefully.
  Acceptance criteria:
- • Submit an application.
- • Verify on-screen confirmation page with role title and reference.
- • Verify /admin candidate record shows application_received event.
- • In sandbox, verify UI banner says Email suppressed in sandbox, not We emailed you.
+ • Open /me and enter a valid application reference.
+ • Verify status is shown without internal scores or notes.
+ • Enter an unknown reference; verify graceful not-found message.
+ • Verify direct URL access works without leaking other applications.
  Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
