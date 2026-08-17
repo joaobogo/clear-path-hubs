@@ -76,6 +76,7 @@ const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   client_overdue: Clock,
   interviews: CalendarClock,
   delivery_failures: AlertOctagon,
+  score_stale: RefreshCw,
 };
 
 function Header({

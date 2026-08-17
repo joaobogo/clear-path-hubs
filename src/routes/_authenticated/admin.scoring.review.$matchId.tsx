@@ -10,6 +10,7 @@ import {
   correctEvidenceItem,
   setEligibilityDecision,
   requestCandidateInformation,
+  recomputeScore,
 } from "@/lib/scoring-review.functions";
 import { applyReviewDecision } from "@/lib/processing.functions";
 import { HumanVerificationPanel } from "@/components/admin/human-verification-panel";
@@ -41,9 +42,11 @@ import {
   History,
   FileText,
   Lock,
+  RefreshCw,
 } from "lucide-react";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 import { formatAnswerValue } from "@/lib/human-labels";
+import { cn } from "@/lib/utils";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -139,6 +142,7 @@ function ReviewWorkspace() {
   const correct = useServerFn(correctEvidenceItem);
   const decideEligibility = useServerFn(setEligibilityDecision);
   const requestInfo = useServerFn(requestCandidateInformation);
+  const recompute = useServerFn(recomputeScore);
   const decide = useServerFn(applyReviewDecision);
 
   // Unsaved-correction guard: any draft blocks accidental navigation away.
@@ -250,6 +254,19 @@ function ReviewWorkspace() {
       await refresh();
     } catch (err) {
       toast.error((err as Error).message || "Could not save the correction.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function runRecompute() {
+    setBusy(true);
+    try {
+      await recompute({ data: { match_id: params.matchId } });
+      toast.success("Score recomputed successfully.");
+      await refresh();
+    } catch (err) {
+      toast.error((err as Error).message || "Recompute failed.");
     } finally {
       setBusy(false);
     }
@@ -431,8 +448,18 @@ function ReviewWorkspace() {
                 <AlertTitle>Job changed after scoring</AlertTitle>
                 <AlertDescription>
                   This job was edited on {new Date(position.updated_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}, after the
-                  current score ran. Recompute before approving.
+                  current score ran.
                 </AlertDescription>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-2 h-7 gap-1.5"
+                  onClick={runRecompute}
+                  disabled={busy}
+                >
+                  <RefreshCw className={cn("size-3.5", busy && "animate-spin")} />
+                  Recompute now
+                </Button>
               </Alert>
             ) : null}
           </Card>

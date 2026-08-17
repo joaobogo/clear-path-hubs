@@ -28,6 +28,8 @@ export type QueueItem = {
   subtitle: string;
   meta: string | null;
   waiting_since: string | null;
+  /** Internal queue key, for context-aware rendering. */
+  key?: string;
   /** Typed destination for the single direct action. */
   target: QueueTarget;
   action_label: string;
@@ -50,7 +52,8 @@ export type QueueSeeAll =
   | "/admin/positions"
   | "/admin/candidates"
   | "/admin/messages"
-  | "/admin/operations";
+  | "/admin/operations"
+  | "/admin/scoring/review";
 
 export type WorkQueue = {
   key: string;

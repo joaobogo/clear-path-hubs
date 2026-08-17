@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useNavigate, useRouter } from "@tanstack/react-router";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -8,6 +8,7 @@ import { useRouteRealtime } from "@/hooks/use-route-realtime";
 import { toast } from "sonner";
 import { getAdminMatch, applyReviewDecision } from "@/lib/processing.functions";
 import { getReviewQueueIds } from "@/lib/admin-ops.functions";
+import { recomputeScore } from "@/lib/scoring-review.functions";
 import { EvidenceCompletenessGate } from "@/components/admin/evidence-completeness-gate";
 import { CvPreviewPane } from "@/components/admin/cv-preview-pane";
 import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
@@ -34,6 +35,7 @@ import {
   Keyboard,
   AlertTriangle,
   Circle,
+  RefreshCw,
 } from "lucide-react";
 import { safeNode } from "@/components/admin/candidate-detail/primitives";
 
@@ -81,8 +83,10 @@ function reqText(r: Any): string {
 function ReviewScreen() {
   const { matchId } = Route.useParams();
   const navigate = useNavigate();
+  const router = useRouter();
   const qc = useQueryClient();
   const decide = useServerFn(applyReviewDecision);
+  const recompute = useServerFn(recomputeScore);
 
   const { data } = useSuspenseQuery({
     queryKey: ["admin-candidate", matchId],
@@ -179,6 +183,21 @@ function ReviewScreen() {
       go(nextId);
     } catch (err) {
       toast.error(err instanceof Error ? err.message.replace(/_/g, " ") : "Decision failed");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function runRecompute() {
+    if (busy) return;
+    setBusy("recompute");
+    try {
+      await recompute({ data: { match_id: matchId } });
+      toast.success("Score recomputed");
+      qc.invalidateQueries({ queryKey: ["admin-candidate", matchId] });
+      await router.invalidate();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Recompute failed");
     } finally {
       setBusy(null);
     }
@@ -287,8 +306,22 @@ function ReviewScreen() {
                   rescore_queued_at: m.rescore_queued_at ?? null,
                 })}
               />
-
+              <span className="text-[11px] text-muted-foreground">
+                {currentRun?.engine_version ?? "engine unknown"}
+              </span>
             </span>
+          )}
+          {score != null && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-7 gap-1 px-2"
+              onClick={runRecompute}
+              disabled={!!busy}
+            >
+              <RefreshCw className={busy === "recompute" ? "mr-1 h-3 w-3 animate-spin" : "mr-1 h-3 w-3"} />
+              Recompute
+            </Button>
           )}
           {currentRun?.must_have_coverage != null && (
             <span className="tabular-nums">

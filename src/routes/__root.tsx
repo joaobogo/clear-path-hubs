@@ -153,9 +153,19 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
  
 TEXTO DO USUÁRIO: "Standing rules apply.
  
-DEFECT (HIGH, trust-critical, proven): The Northwind Talent (Demo) org record has Website = flowgroupventures.com (another client's domain), and the AI candidate briefings for Northwind candidates repeatedly pitch them \"for Flow Group Ventures\"... Northwind's primary contact merges two personas: name \"james cameron\" with email kasprzakjoao@protonmail.com. Any client-visible text naming another client is unacceptable.
+DEFECT (HIGH, proven): Review records display \"Job changed after scoring… Recompute before approving\" but NO recompute/rescore control exists anywhere — not on the review record, not on the candidate Score tab, not in the \"Score changed after job update\" queue (17 items). The queue is unresolvable and the client-facing \"assessed with an out-of-date engine\" banner can never clear. Engine attribution contradicts itself: the review surface shows engine \"demo-coverage-fill-2026-08-13\" while the candidate profile shows \"taasflow-scoring-v1.2.0\" for the SAME 13/08 00:16 run.
  
-REQUIRED FIX: Correct org records to their own real data. Make every briefing/pitch derive the hiring organization from the candidate's actual position→org relation... Covers A10 + B14 (PDF P-010, P-037)."`
+REQUIRED FIX: Add a working Recompute action on the review record and in the stale queue (per-row, plus a bulk action for the queue). Recompute must APPEND a new immutable score run (prior runs untouched), update the current score/fit on every surface, remove the item from the stale queue, and clear the client stale-engine banner. Make engine+version attribution come from the run record itself so every surface shows the same string.
+ 
+ACCEPTANCE CRITERIA:
+1. Open an item in \"Score changed after job update\", press Recompute: a NEW run appears in score history, all prior runs intact, the banner clears, the queue count decrements.
+2. Drain the queue to 0 for current data.
+3. The client workspace no longer shows the stale/out-of-date banner for recomputed candidates.
+4. For one candidate, the engine+version string is identical on the review record, the candidate Score tab, and the client-visible surface.
+5. Manual score override still requires a reason and still never mutates a prior run.
+6. Recompute on a candidate whose job did NOT change also works and appends a run (no special-casing).
+ 
+Covers A6 + B3 (PDF P-006, P-026)."`
         }
       >
         {children}

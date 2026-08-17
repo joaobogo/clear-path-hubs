@@ -77,3 +77,42 @@ export const releaseStaleScoringClaims = createServerFn({ method: "POST" })
     const { releaseStaleClaims } = await import("./scoring-review-triage.server");
     return releaseStaleClaims(supabaseAdmin as never);
   });
+
+export const bulkRecomputeQueue = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ queue: z.string() }).parse(i))
+  .handler(async ({ data, context }) => {
+    const { requireStaff } = await import("./admin-ops.server");
+    await requireStaff(context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { executeScoring } = await import("./scoring-service.server");
+
+    // Get all matches in this specific queue
+    const column =
+      data.queue && REVIEW_QUEUES[data.queue as ReviewQueueId]
+        ? REVIEW_QUEUES[data.queue as ReviewQueueId].column
+        : null;
+    if (!column) throw new Error("Invalid queue");
+
+    const { data: rows } = await supabaseAdmin
+      .from("v_scoring_review_queue")
+      .select("match_id")
+      .eq(column as string, true);
+
+    if (!rows || rows.length === 0) return { recomputed: 0 };
+
+    // Limit to 50 items per bulk action for safety
+    const items = rows.slice(0, 50);
+    const results = await Promise.allSettled(
+      items.map((r) =>
+        executeScoring(r.match_id as string, {
+          force: true,
+          reason: `Bulk recompute from ${data.queue} queue`,
+          actor_user_id: context.userId,
+        }),
+      ),
+    );
+
+    const successful = results.filter((r) => r.status === "fulfilled" && r.value.ok).length;
+    return { recomputed: successful, total: items.length };
+  });
