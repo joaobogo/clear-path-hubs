@@ -20,7 +20,7 @@ Seeded: 2026-08-17. No application code was changed to create this ledger.
 | L-003 | public | Auth error handling: wrong credentials, empty fields, duplicate signup (no account enumeration) | VERIFIED_PASS | STABILIZATION.md pass 1 items 3a–3c | 2026-08-14 |
 | L-004 | public | Password reset end to end, incl. invalid/expired token message + re-request | VERIFIED_PASS | STABILIZATION.md pass 1 item 4 | 2026-08-14 |
 | L-005 | public | Zero app-origin console errors on auth surfaces | VERIFIED_PASS | STABILIZATION.md pass 1 item 6 | 2026-08-14 |
-| L-006 | api | Demo account `demo@taasflow.com` logs in reliably | BLOCKED | STABILIZATION.md pass 1 item 5 — `DEMO_CLIENT_EMAIL`/`DEMO_CLIENT_PASSWORD` absent from this environment; backend membership verified healthy | 2026-08-14 |
+| L-006 | api | Demo account `demo@taasflow.com` logs in reliably | IN_PROGRESS | Implemented idempotent safeguard in `getSessionContext` that logs an incident if the Northwind `client_admin` membership is missing or inactive; wired `tests/e2e/demo-client-walkthrough.spec.ts` to run with `DEMO_CLIENT_EMAIL`/`DEMO_CLIENT_PASSWORD`. Live verification BLOCKED — credentials not present in this environment. | 2026-08-19 |
 | L-007 | admin | Route protection: 25 forbidden direct-URL probes across 6 personas, all blocked cleanly | VERIFIED_PASS | STABILIZATION.md pass 2 §1 | 2026-08-14 |
 | L-008 | api | Cross-account backend/RLS reads: 24 attempts with real user tokens, all denied | VERIFIED_PASS | STABILIZATION.md pass 2 §2 | 2026-08-14 |
 | L-009 | client | Navigation isolation — no role renders another role's nav | VERIFIED_PASS | STABILIZATION.md pass 2 §3 | 2026-08-14 |
