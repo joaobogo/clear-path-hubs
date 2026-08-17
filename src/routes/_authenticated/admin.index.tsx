@@ -250,51 +250,50 @@ function WorkQueueSummary({ showTest, onRefresh }: { showTest: boolean; onRefres
             </section>
           ) : (
             <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-              {active.map((q) => {
-                const Icon = ICONS[q.key] ?? ClipboardCheck;
-                return (
-                  <section
-                    key={q.key}
-                    id={`queue-${q.key}`}
-                    className="scroll-mt-20 rounded-lg border bg-card"
-                  >
-                    <header className="flex items-start justify-between gap-3 border-b px-4 py-3">
-                      <div className="flex items-start gap-2">
-                        <Icon className="mt-0.5 h-4 w-4 text-muted-foreground" />
-                        <div>
-                          <h2 className="text-sm font-semibold">
-                            {q.label}{" "}
-                            <span className="ml-1 tabular-nums text-muted-foreground">{q.count}</span>
-                          </h2>
-                          <p className="text-xs text-muted-foreground">{q.description}</p>
-                        </div>
-                      </div>
-                      {q.see_all && q.count > q.items.length ? (
-                        <Link
-                          to={q.see_all.to}
-                          className="shrink-0 whitespace-nowrap text-xs font-medium text-primary hover:underline"
-                        >
-                          See all {q.count}
-                        </Link>
-                      ) : null}
-                    </header>
-
-                    <ul className="divide-y">
-                      {q.items.map((it) => (
-                        <WorkQueueRow key={it.id} item={it} />
-                      ))}
-                    </ul>
-
-                    <footer className="border-t px-4 py-2 text-[11px] text-muted-foreground">
-                      {q.action_hint}
-                    </footer>
-                  </section>
-                );
-              })}
+              {active.map((q) => (
+                <AdminWidgetErrorBoundary key={q.key} label={q.label}>
+                  <QueueSection q={q} />
+                </AdminWidgetErrorBoundary>
+              ))}
             </div>
           )}
         </>
       )}
     </div>
+  );
+}
+
+function QueueSection({ q }: { q: any }) {
+  const Icon = ICONS[q.key] ?? ClipboardCheck;
+  return (
+    <section id={`queue-${q.key}`} className="scroll-mt-20 rounded-lg border bg-card">
+      <header className="flex items-start justify-between gap-3 border-b px-4 py-3">
+        <div className="flex items-start gap-2">
+          <Icon className="mt-0.5 h-4 w-4 text-muted-foreground" />
+          <div>
+            <h2 className="text-sm font-semibold">
+              {q.label} <span className="ml-1 tabular-nums text-muted-foreground">{q.count}</span>
+            </h2>
+            <p className="text-xs text-muted-foreground">{q.description}</p>
+          </div>
+        </div>
+        {q.see_all && q.count > q.items.length ? (
+          <Link
+            to={q.see_all.to}
+            className="shrink-0 whitespace-nowrap text-xs font-medium text-primary hover:underline"
+          >
+            See all {q.count}
+          </Link>
+        ) : null}
+      </header>
+
+      <ul className="divide-y">
+        {q.items.map((it: any) => (
+          <WorkQueueRow key={it.id} item={it} />
+        ))}
+      </ul>
+
+      <footer className="border-t px-4 py-2 text-[11px] text-muted-foreground">{q.action_hint}</footer>
+    </section>
   );
 }
