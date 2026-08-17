@@ -16,6 +16,7 @@ const SYSTEM_ACCOUNTS = new Set([
   "TaaSFlow",
   "System",
   "TaaSFlow system",
+  "TaaSFlow team",
 ]);
 
 /**
@@ -32,6 +33,15 @@ export function resolveStaffPersona(args: {
   const { name, email, isStaff, roleLabel, maskStatus } = args;
 
   if (!isStaff) {
+    // Teammates should not render as "Master Admin" either if they somehow get that name.
+    const rawName = (name || "").toLowerCase();
+    if (rawName.includes("master admin") || rawName === "system") {
+      return {
+        name: "Teammate",
+        role: roleLabel || "Your team",
+        isStaff: false,
+      };
+    }
     return {
       name: name || email?.split("@")[0] || "Teammate",
       role: roleLabel || "Your team",
@@ -39,18 +49,20 @@ export function resolveStaffPersona(args: {
     };
   }
 
-  // Leak prevention: map internal root/system names to the team persona.
+  // Staff leak prevention: map internal root/system/admin names to the team persona.
   const rawName = (name || email || "").toLowerCase();
   const isSystem =
+    !name ||
     SYSTEM_ACCOUNTS.has(name || "") ||
     SYSTEM_ACCOUNTS.has(email || "") ||
     rawName.includes("admin") ||
-    rawName.includes("system");
+    rawName.includes("system") ||
+    rawName === "taasflow";
 
-  if (isSystem || !name) {
+  if (isSystem) {
     return {
       name: "TaaSFlow team",
-      role: roleLabel || "TaaSFlow team",
+      role: "TaaSFlow team",
       isStaff: true,
     };
   }

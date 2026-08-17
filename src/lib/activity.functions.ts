@@ -132,9 +132,21 @@ export const getActivityFeed = createServerFn({ method: "GET" })
         const label = ACTIVITY_LABELS[r.event_type as EventType] ?? "Update";
         let actorName = (r.actor_name as string) ?? null;
 
+        // F-030: Humanize system/staff actors for clients
+        if (audience === "client") {
+          const low = (actorName || "").toLowerCase();
+          if (!actorName || low.includes("master admin") || low.includes("system") || low === "taasflow") {
+             actorName = "System";
+          } else if (low === "your team" && r.event_type !== "client_decision.create") {
+             // System-generated changes like "Shortlisted by your team" should be "System"
+             // unless it was a real client decision.
+             actorName = "System";
+          }
+        }
+
         // Tidy up message events that lack a subject/actor
         if (r.event_type === "message_sent" && !actorName) {
-          actorName = "TaaSFlow team";
+          actorName = audience === "client" ? "TaaSFlow team" : "System";
         }
 
         return {

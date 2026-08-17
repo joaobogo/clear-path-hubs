@@ -619,15 +619,15 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
 
   const WHITELIST: Record<string, string> = {
     delivered: "Delivered to you",
-    shortlisted: "Shortlisted by your team",
+    shortlisted: "Shortlisted",
     interview_requested: "Interview requested",
     interview_scheduled: "Interview scheduled",
     interview_completed: "Interview completed",
     offer: "Offer made",
     hired: "Hired",
     decided: "Decision recorded",
-    viewed: "Your team viewed this profile",
-    downloaded: "Your team downloaded the CV",
+    viewed: "Viewed by your team",
+    downloaded: "CV downloaded by your team",
   };
 
   const safeRows = Array.isArray(rows) ? rows : [];
@@ -679,7 +679,7 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
         id: String(e.id),
         action: safeAction,
         entity_type: String(e.entity_type ?? "event"),
-        actor: normStr(e.actor_user_id),
+        actor: e.actor_user_id ? "TaaSFlow team" : "System",
         at: String(e.created_at ?? new Date().toISOString()),
         summary: null,
       };
