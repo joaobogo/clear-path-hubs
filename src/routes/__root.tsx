@@ -153,20 +153,18 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
  
 TEXTO DO USUÁRIO: "Standing rules apply.
  
-DEFECT (HIGH, proven): Any keyword in Positions search fails. /admin/positions?q=Engineer returns \"Couldn't load positions\" and the Ownership and Publish-blockers widgets each print the raw backend error: failed to parse logic tree ((title.ilike.%TERM%,organizations.name.ilike.%TERM%)). The OR filter string is malformed and internal query syntax leaks into the UI.
+DEFECT (HIGH, proven): The candidate workspace \"Client preview\" tab shows \"No client-visible data yet. Approve for client to populate the client view.\" for candidates that ARE approved, Published and \"Live for client\". The footer \"View client preview\" button routes to the same broken tab. Admins cannot verify client-facing rendering — which is exactly what they need before sending candidates.
  
-REQUIRED FIX: Fix the OR-filter construction (title OR client name) with proper escaping of user input including hyphens, %, quotes, parentheses, commas. A search failure must render one friendly inline message, never raw query internals, and must not break unrelated widgets on the page. Audit every other admin list that builds filters the same way (candidates, clients, intake, global search) and apply the same fix.
+REQUIRED FIX: Render the real client-facing DTO in the Client preview tab for any published candidate — reusing the same serializer the client route uses, so the preview cannot drift from reality. Include correct handling of released vs redacted contact/CV (per P5). For genuinely unpublished candidates, keep an empty state but with accurate copy (never instruct an admin to approve someone already approved).
  
 ACCEPTANCE CRITERIA:
-1. /admin/positions?q=Engineer returns matching roles.
-2. q with hyphens (e.g. a hyphenated role name) returns the right rows.
-3. q matching a client name returns that client's roles.
-4. q = %$(' returns an empty result set gracefully, no error text.
-5. With any query, the Ownership & coverage and Publish blockers widgets render normally.
-6. No raw \"logic tree\"/PostgREST/SQL text appears anywhere in the UI for any input.
-7. Candidate database and client list searches pass the same four inputs.
+1. Open 3 approved+published+live candidates: Client preview renders their client-facing profile.
+2. Open the same 3 candidates in the real client workspace: the content matches the preview field-for-field (score band, briefing, experience, contact/CV state).
+3. A pre-interview candidate's preview shows redacted contact/CV, matching the client view.
+4. An unpublished candidate shows an empty state whose copy matches its actual state.
+5. The footer \"View client preview\" button lands on a working preview.
  
-Covers A7 (PDF P-007)."`
+Covers A8 (PDF P-008)."`
         }
       >
         {children}
