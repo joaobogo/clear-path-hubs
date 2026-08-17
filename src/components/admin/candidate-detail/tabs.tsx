@@ -946,7 +946,6 @@ export function PreviewTab({ matchId, match: m }: { matchId: string; match?: Any
     </div>
   );
 }
-}
 
 // ── Activity & audit ───────────────────────────────────────────────────────
 export function ActivityAuditTab({
