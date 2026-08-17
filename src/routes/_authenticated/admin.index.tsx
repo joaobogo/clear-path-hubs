@@ -85,7 +85,7 @@ function Header({
   showTest,
   onRefresh,
 }: {
-  total: number;
+  total: number | null;
   isReady: boolean;
   isFetching: boolean;
   showTest: boolean;
@@ -96,7 +96,7 @@ function Header({
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Work queue</h1>
         <p className="mt-1 h-5 text-sm text-muted-foreground">
-          {!isReady ? (
+          {total === null ? (
             <span className="inline-block h-4 w-48 animate-pulse rounded bg-muted" />
           ) : total === 0 ? (
             "Nothing is waiting on the platform team right now."
@@ -193,7 +193,7 @@ function WorkQueueSummary({ showTest, onRefresh }: { showTest: boolean; onRefres
   });
 
   const queues = data?.queues ?? [];
-  const total = queues.reduce((n, q) => n + (typeof q.count === "number" ? q.count : 0), 0);
+  const total = isPending ? null : queues.reduce((n, q) => n + (typeof q.count === "number" ? q.count : 0), 0);
   const active = queues.filter((q) => q.items.length > 0);
   const isReady = !isPending && !error;
 
