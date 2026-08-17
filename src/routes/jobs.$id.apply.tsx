@@ -2,6 +2,7 @@ import { createFileRoute, Link, redirect, useNavigate, notFound } from "@tanstac
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { getPublicPosition } from "@/lib/jobs.functions";
 import { extractJobUuid } from "@/lib/marketing/job-slug";
 import { useIsMobile } from "@/hooks/use-mobile";
