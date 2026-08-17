@@ -151,17 +151,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-034 · Client Offer/Hire Coherence (B11) · HIGH
-Scope: /client/candidates/$id, src/lib/offer-hire.ts
-Defect: Closed-lost hire displays as active/confirmed; offer states mismatch client decisions.
-Required fix: Filter closed-lost offers from active lists; ensure client-visible offer state matches the backend
-decision.
+TEXTO DO USUÁRIO: "P-035 · Remove Responsible Admin from Client Wizard (B12) · MEDIUM
+Scope: /client/positions/new
+Defect: Responsible-admin field exists in client wizard or client role pages.
+Required fix: Remove any responsible-admin field from client-facing wizard and role detail; ensure assignment
+is staff-only.
 Acceptance criteria:
-• Decline an offer as candidate.
-• Open client view; verify it is not listed as confirmed/hired.
-• Accept an offer; verify client shows accepted and start date.
-• Verify KPI counts in client Insights match the state.
-Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
+• Open /client/positions/new.
+• Verify no Responsible admin or Assignee field exists.
+• Open an existing client role; verify no responsible admin is shown.
+Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
         {children}
