@@ -151,16 +151,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-031 · Client Insights Truth (B8) · HIGH
-Scope: /client/insights, src/lib/intelligence/workspace-agent-runs.server.ts
-Defect: Agent-run counts differ from feed items and admin numbers.
-Required fix: Unify count query with the same source used by admin /ops/agents and the client feed.
+TEXTO DO USUÁRIO: "P-033 · Client Interview Loop (B10) · HIGH
+Scope: /client/interviews
+Defect: Request → see proposed slots → confirm → booking visible → overdue flags clear.
+Required fix: Surface proposed slots in client interview page; confirm booking; clear overdue flags on both
+sides.
 Acceptance criteria:
-• Open /client/insights and note KPI counts.
-• Open the agent feed and count items; verify they match KPIs.
-• Open /admin/ops/agents for the same org/window; verify counts match.
-• Run a new agent job; verify all three surfaces increment together.
-Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
+• Request an interview from client.
+• As admin, propose slots; verify client sees them.
+• Client confirms a slot; verify booking visible on both sides.
+• Verify Interview slots 24h SLA breach clears on admin and client.
+Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
         }
       >
         {children}
