@@ -153,18 +153,18 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
  
 TEXTO DO USUÁRIO: "Standing rules apply.
  
-DEFECT (HIGH, proven): The client user \"James Cameron (Client)\" is recorded as OWNER of the Senior Full-Stack Engineer position: he appears in the STAFF workload table (with 8 active candidates) and as the owner of an SLA commitment. The assignment dropdowns correctly offer staff only, so this came in through data/another path.
+DEFECT (HIGH, proven): A hire record closed as \"Closed lost — Candidate declined\" leaves the candidate stage stuck at \"hired\". The Offers and hires panel claims \"Offers extended 1 · Accepted 0 · Declined 2 · Hires confirmed 0 · Guarantees active 0 · Start dates confirmed 2 (none started)\" over a table showing 1 extended and 1 closed-lost. Portfolio sourcing reports \"0 hired\" while the role table reports \"1 hired\" for the same period.
  
-REQUIRED FIX: Add a write guard so position owner, backup owner, and SLA/commitment owner can only be platform staff (platform_admin/operations) or Unassigned — enforced server-side, not just in the dropdown. Migrate existing client-owned positions/commitments to a staff owner or Unassigned. Staff workload and SLA views must only ever resolve staff.
+REQUIRED FIX: Make offer/hire outcomes drive candidate stage (a closed-lost hire must not leave the candidate displayed as hired anywhere), and derive every number in the panel from the same records the table shows. One definition of \"hired\" across role, portfolio, dashboard and client views.
  
 ACCEPTANCE CRITERIA:
-1. Attempt to set a client user as position owner via the API/direct mutation: rejected.
-2. The staff workload table contains only staff users.
-3. No SLA/commitment row anywhere lists a \"(Client)\" user as owner.
-4. Previously client-owned positions now show a staff owner or Unassigned — list them.
-5. Assigning a staff owner still works and is reflected in My day.
+1. Record an offer decline: the candidate is no longer displayed as hired on the role pipeline, dashboard, portfolio, or client view.
+2. The Offers and hires panel numbers reconcile exactly with its own table rows.
+3. Record an accepted offer with a start date: Accepted +1, Hires confirmed +1, Start dates confirmed +1, and the role/portfolio hired counts agree.
+4. Portfolio sourcing \"hired\" equals the sum of role-level hired counts.
+5. Client view shows offer state matching the client's actual decision.
  
-Covers A11 (PDF P-011)."`
+Covers A14 + B11 (PDF P-014, P-034)."`
         }
       >
         {children}

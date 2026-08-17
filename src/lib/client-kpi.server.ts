@@ -296,6 +296,7 @@ export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
     interviews_to_confirm: rows.filter((r) => r.interview_needs_confirmation).length,
     awaiting_decision: rows.filter(isAwaitingClientDecision).length,
     offers: counts.offer,
+    // Unified definition of hired across all surfaces: the stage is 'hired'.
     hires: counts.hired,
     active_positions: activePositions,
     oldest_awaiting_decision_at: oldest(
