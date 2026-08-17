@@ -34,7 +34,7 @@ import {
   useQueueKeyboard,
   type QueueKeyboard,
 } from "@/lib/admin/queue-keyboard";
-import { AlertTriangle, Clock, Loader2, Lock, TimerReset } from "lucide-react";
+import { AlertTriangle, Clock, Loader2, Lock, RefreshCw, TimerReset } from "lucide-react";
 
 type Triage = Awaited<ReturnType<typeof listReviewTriage>>;
 type Row = Triage["rows"][number];
@@ -266,6 +266,7 @@ export function ReviewTriageList({
             onClaim={(id) => claim.mutate(id)}
             onRelease={(id) => release.mutate(id)}
             onRecompute={(id) => recompute.mutate(id)}
+            isRecomputing={recompute.isPending}
             busyId={busyId}
             queue={queue}
             q={q}
@@ -282,6 +283,7 @@ export function ReviewTriageList({
             onClaim={(id) => claim.mutate(id)}
             onRelease={(id) => release.mutate(id)}
             onRecompute={(id) => recompute.mutate(id)}
+            isRecomputing={recompute.isPending}
             busyId={busyId}
             queue={queue}
             q={q}
@@ -334,6 +336,7 @@ function Group({
   sort,
   page,
   onRecompute,
+  isRecomputing,
 }: {
   title: string;
   hint: string;
@@ -350,6 +353,7 @@ function Group({
   sort: string;
   page: number;
   onRecompute: (matchId: string) => void;
+  isRecomputing: boolean;
 }) {
   if (rows.length === 0) return null;
   return (
@@ -436,7 +440,7 @@ function Group({
                     disabled={busyId === r.match_id}
                     onClick={() => onClaim(r.match_id)}
                   >
-                    {busyId === r.match_id && !recompute.isPending ? (
+                    {busyId === r.match_id && !isRecomputing ? (
                       <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
                     ) : null}
                     Claim
@@ -451,7 +455,7 @@ function Group({
                     disabled={busyId === r.match_id}
                     onClick={() => onRecompute(r.match_id)}
                   >
-                    {busyId === r.match_id && recompute.isPending ? (
+                    {busyId === r.match_id && isRecomputing ? (
                       <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
                     ) : (
                       <RefreshCw className="mr-1 h-3.5 w-3.5" />
