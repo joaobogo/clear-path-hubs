@@ -151,17 +151,17 @@ function RootShell({ children }: { children: ReactNode }) {
  
  Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
  
- TEXTO DO USUÁRIO: "P-043 · Unreadable PDF Feedback (C2) · HIGH
- Scope: src/lib/intelligence/cv-parser.server.ts, src/lib/cv-extractor.server.ts
- Defect: Unreadable/no-text-layer PDFs stuck at 3-attempt ceiling for 5 days.
- Required fix: Detect 0-character extraction early; show immediate candidate feedback; provide staff OCR/retry
- path; prevent infinite stuck state.
+ TEXTO DO USUÁRIO: "P-044 · Duplicate Application Handling (C3) · HIGH
+ Scope: src/lib/apply.functions.ts
+ Defect: Same email + same role creates silent duplicates.
+ Required fix: Detect duplicate applications; update existing record if allowed, or reject with a clear message;
+ flag near-duplicates for staff.
  Acceptance criteria:
- • Upload an image-only scanned PDF.
- • Verify immediate UI feedback: We couldn't read your file — please upload a text-based PDF or DOCX.
- • Verify staff candidate list shows Unreadable PDF status.
- • Verify staff can trigger OCR/retry and the application eventually processes or is clearly rejected.
- Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
+ • Apply with email A to role X.
+ • Apply again with the same email and role; verify either update or rejection message.
+ • Verify no second candidate record is created silently.
+ • As staff, verify near-duplicate flag is visible if policy is to flag.
+ Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
         {children}
