@@ -26,7 +26,7 @@ async function requireStaff(userId: string) {
   if (!(await isStaff(userId))) throw new Error("forbidden");
 }
 
-async function writeAudit(opts: {
+export async function writeAudit(opts: {
   actor: string;
   action: string;
   entity_type: string;
