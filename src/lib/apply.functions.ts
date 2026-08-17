@@ -289,7 +289,7 @@ export const submitApplication = createServerFn({ method: "POST" })
       const CLOSED_STATUSES = ["withdrawn", "rejected", "archived"] as const;
       const { data: allPrior, error: appFindErr } = await supabaseAdmin
         .from("applications")
-        .select("id,created_at,status")
+        .select("id,created_at,status,applied_at")
         .eq("candidate_profile_id", candidateProfileId)
         .eq("position_id", data.position_id)
         .order("created_at", { ascending: true });
