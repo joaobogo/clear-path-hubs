@@ -401,11 +401,11 @@ export async function runPipelineForMatch(
   matchId: string,
   opts: { force?: boolean } = {},
 ): Promise<{ ok: boolean; outcome?: { final_state: string; trace_id: string; steps: Array<{ step: string; ok: boolean; note?: string }> } }> {
-  const key = process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
-  if (!key) throw new Error("SUPABASE_PUBLISHABLE_KEY is not set in the environment");
+  const token = process.env["PIPELINE_RUN_TOKEN"];
+  if (!token) throw new Error("PIPELINE_RUN_TOKEN is not set in the environment");
   const res = await fetch(`${BASE_URL}/api/public/pipeline/run`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", apikey: key },
+    headers: { "Content-Type": "application/json", "x-pipeline-run-token": token },
     body: JSON.stringify({ match_id: matchId, ...(opts.force ? { force: true } : {}) }),
   });
   const text = await res.text();
@@ -502,11 +502,11 @@ export const replaceCv = (matchId: string, cvBase64: string, cvFilename?: string
 
 /** Kicks the pipeline worker so the suite does not wait on the 2-minute cron. */
 export async function runPipelineDrain(): Promise<void> {
-  const key = process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
-  if (!key) return;
+  const token = process.env["PIPELINE_RUN_TOKEN"];
+  if (!token) return;
   await fetch(`${BASE_URL}/api/public/pipeline/run`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", apikey: key },
+    headers: { "Content-Type": "application/json", "x-pipeline-run-token": token },
     body: JSON.stringify({ drain: true, limit: 5 }),
   }).catch(() => undefined);
 }

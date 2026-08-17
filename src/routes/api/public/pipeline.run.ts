@@ -1,7 +1,9 @@
 // Public pipeline runner endpoint.
-// Auth: requires the server-only CRON_INVOKE_SECRET in the `x-cron-secret`
-// header. The URL is public only so pg_cron and internal callers can reach it;
-// the secret gate keeps the outside world out.
+// Auth: requires the dedicated server-only PIPELINE_RUN_TOKEN in the
+// `x-pipeline-run-token` header (pg_cron may instead present
+// CRON_INVOKE_SECRET in `x-cron-secret`). The publishable/anon key is never
+// accepted — it ships in the browser bundle. The URL is public only so pg_cron
+// and internal callers can reach it; the secret gate keeps the outside world out.
 //
 // Body:
 //   { match_id: uuid }   → run pipeline for that match
@@ -12,7 +14,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { readJsonWithLimit } from "@/lib/public-api/body-limit";
 import { PUBLIC_BODY_LIMITS } from "@/lib/public-api/rate-limit";
-import { requireCronSecret } from "@/lib/public-api/cron-auth";
+import { requirePipelineRunToken } from "@/lib/public-api/pipeline-run-auth";
 import {
   PUBLIC_RATE_LIMITS,
   clientIp,
@@ -34,7 +36,7 @@ export const Route = createFileRoute("/api/public/pipeline/run")({
         const cronDecision = consumeRateLimit("cron_invoke", clientIp(request), PUBLIC_RATE_LIMITS.cron_invoke);
         if (cronDecision.limited) return rateLimitResponse(newTraceId("cron_invoke"), cronDecision);
 
-        const denied = requireCronSecret(request);
+        const denied = requirePipelineRunToken(request);
         if (denied) return denied;
         const read = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.pipeline_run);
         if (!read.ok) {
