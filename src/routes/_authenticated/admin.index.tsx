@@ -190,6 +190,7 @@ function WorkQueueSummary({ showTest, onRefresh }: { showTest: boolean; onRefres
     queryFn: () => getAdminWorkQueues({ data: { include_test: showTest } }),
     refetchOnWindowFocus: true,
     staleTime: 30_000,
+    placeholderData: (prev) => prev,
   });
 
   const queues = data?.queues ?? [];
