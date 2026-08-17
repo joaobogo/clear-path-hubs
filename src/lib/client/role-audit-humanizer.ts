@@ -17,12 +17,15 @@ export function humanizeRoleAction(action: string): string {
     "position.archived": "Role archived",
     "position.paused": "Role paused",
     "position.resumed": "Role resumed",
+    "position.visibility": "Role visibility updated",
+    "position.visibility.update": "Role visibility updated",
     
     // Updates
     "position.update": "Role details updated",
     "position.edit_wizard": "Role details updated",
     "position.requisition_updated": "Role details updated",
     "position.status.update": "Role status updated",
+    "UPDATE": "Record updated",
     
     // Handoff & Memory
     "position.handoff.complete": "Recruitment handoff completed",
@@ -31,6 +34,7 @@ export function humanizeRoleAction(action: string): string {
     // Candidates (when appearing in role trail)
     "candidate_match.publish": "New candidate delivered",
     "candidate_match.stage.update": "Candidate moved between stages",
+    "candidate.stage.changed": "Candidate status changed",
     
     // Interviews
     "interview.schedule": "Interview scheduled",
@@ -40,6 +44,7 @@ export function humanizeRoleAction(action: string): string {
     // Communication
     "message.external.send": "New message sent",
     "message.external.receive": "New message received",
+    "message_sent": "New message sent",
     
     // Decisions
     "client_decision.create": "Client decision recorded",

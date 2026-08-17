@@ -609,8 +609,23 @@ export function actorLabel(
   audience: Audience | string | null | undefined,
 ): string {
   const name = actorName?.trim() || "";
-  // Global catch-all: any mention of Master Admin is masked to the team persona.
-  if (name.toLowerCase().includes("master admin")) return "TaaSFlow team (Staff)";
-  if (name) return name;
-  return audience === "admin" ? "TaaSFlow system" : "TaaSFlow team";
+  const low = name.toLowerCase();
+
+  // 1. Force all staff variants and internal root names to the persona.
+  if (
+    !name ||
+    low.includes("master admin") ||
+    low.includes("system") ||
+    low === "taasflow" ||
+    (audience === "client" && low.includes("(staff)"))
+  ) {
+    return audience === "client" ? "TaaSFlow team" : "TaaSFlow system";
+  }
+
+  // 2. Map generic "Your team" from staff to the TaaSFlow persona if it somehow leaked.
+  if (audience === "client" && low === "your team") {
+    return "TaaSFlow team";
+  }
+
+  return name;
 }
