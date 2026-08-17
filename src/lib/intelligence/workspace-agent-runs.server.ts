@@ -52,7 +52,7 @@ export async function loadWorkspaceAgentRuns(input: {
 
   const { data } = await supabaseAdmin
     .from("processing_jobs")
-    .select("id, entity_id, job_type, status, created_at, completed_at")
+    .select("id, entity_id, job_type, status, created_at, completed_at, attempts, error_code, error_message")
     .in("entity_id", entityIds)
     .gte("created_at", input.sinceISO)
     .order("created_at", { ascending: false })
@@ -60,11 +60,12 @@ export async function loadWorkspaceAgentRuns(input: {
 
   return ((data as Row[]) ?? []).map((j) => {
     const key = agentForJobType(j.job_type) ?? null;
+    const bucket = runBucket(j.status);
     return {
       id: j.id as string,
       agent_key: key,
       agent_name: key ? agentName(key) : null,
-      outcome: runBucket(j.status),
+      outcome: bucket,
       position_id: positionByMatch.get(j.entity_id as string) ?? (j.entity_id as string) ?? null,
       occurred_at: (j.completed_at as string) ?? (j.created_at as string),
       sentence: null,

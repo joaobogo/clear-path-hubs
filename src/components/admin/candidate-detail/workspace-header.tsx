@@ -112,17 +112,23 @@ function WorkspaceHeader({
         </div>
       </div>
       {(() => {
-        // The banner may only reflect the LATEST run. A candidate whose newest
-        // run finished (parsed / scored) shows nothing, even if an older
-        // superseded run left an error behind on the record.
+        // REQUIRED FIX: Banner reflects only the LATEST run's state.
+        // If the latest run is completed (parsing/scored), we hide the banner.
         const state = String(m.processing_state ?? "");
         const failedNow = state === "failed" || state === "provider_blocked";
-        const needsPerson =
-          state === "manual_review_required" || state === "ocr_required";
+        const needsPerson = state === "manual_review_required" || state === "ocr_required";
         const message = m.processing_error_message as string | null;
+
         if (!message) return null;
         if (!failedNow && !needsPerson) return null;
         if (isSupersededError(m.processing_error_code, message)) return null;
+
+        // "Technical collision" Reference banners (P-009) are often left over from
+        // superseded jobs. We suppress them if the canonical state is advanced.
+        const terminal = m.canonical_state === "hired" || m.canonical_state === "not_moving_forward";
+        const activeOrDone = m.processing_state === "scored" || m.processing_state === "parsed";
+        if (activeOrDone || terminal) return null;
+
         return (
           <Alert variant={failedNow ? "destructive" : "default"}>
             <AlertTitle>

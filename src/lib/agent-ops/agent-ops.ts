@@ -97,7 +97,7 @@ const COMPLETED_STATES = [
 const APPROVAL_STATES = ["manual_review_required", "ocr_required"];
 const FAILED_STATES = ["failed", "provider_blocked", "error"];
 /** Terminal states where the run was replaced or deliberately stopped. */
-const SUPERSEDED_STATES = ["superseded", "cancelled", "canceled", "obsolete", "skipped"];
+const SUPERSEDED_STATES = ["superseded", "cancelled", "canceled", "obsolete", "skipped", "aborted", "replaced"];
 const QUEUED_STATES = ["queued", "pending", "waiting", "scheduled"];
 
 export function runBucket(status: string | null | undefined): RunBucket {
