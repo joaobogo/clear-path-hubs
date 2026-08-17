@@ -151,15 +151,14 @@ function RootShell({ children }: { children: ReactNode }) {
  
  Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
  
- TEXTO DO USUÁRIO: "P-040 · Overview Cards + Real Data (B17) · MEDIUM
- Scope: /client (Overview)
- Defect: Decision queue, N roles can be sharpened, and operational status are inconsistent or static.
- Required fix: Compute overview cards from real records; refresh after client actions.
+ TEXTO DO USUÁRIO: "P-041 · Client Error Boundaries + Mobile (B18) · MEDIUM
+ Scope: All /client components
+ Defect: Full-page crashes from one failing widget; raw backend errors; 375px broken.
+ Required fix: Add widget-level error boundaries; humanize error copy; pass 375px responsive pass.
  Acceptance criteria:
- • Open /client; note decision queue count.
- • Make a decision; verify the queue updates without full reload.
- • Verify roles can be sharpened count matches roles needing more info.
- • Verify operational status reflects the latest pipeline state.
+ • Force one widget to fail; verify the rest of the client page renders.
+ • Trigger a backend error; verify client sees a human message, not raw JSON.
+ • Open /client at 375px width; verify all primary actions are reachable.
  Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
         }
       >
