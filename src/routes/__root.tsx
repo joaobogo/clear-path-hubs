@@ -151,15 +151,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "Scope: /client/candidates/$id, src/lib/cv-download.functions.ts
-Defect: Contact details visible and CV downloadable before interview.
-Required fix: Blur/redact contact details and disable or redact CV download until interview consent is recorded;
-server-side endpoint enforces this.
+TEXTO DO USUÁRIO: "P-028 · Client Talent Memory + Share Links (B5) · HIGH
+Scope: /client/memory, src/lib/client-memory.server.ts
+Defect: Add/edit/archive/rediscover must persist and emit audit events; revoked public URLs must stay dead.
+Required fix: Persist memory operations with timestamps; emit audit events; enforce revocation on share links.
 Acceptance criteria:
-• Open a Shortlisted candidate who has not been interviewed.
-• Verify contact details are redacted.
-• Attempt CV download; verify it returns redacted version or 403.
-• After interview consent, verify full details and CV are available.
+• Add a memory note; verify it persists after refresh.
+• Archive a note; verify it moves to archive and shows archived timestamp.
+• Create and revoke a share link; verify revoked URL returns nothing.
+• Verify /admin/organizations/$id shows the same memory and share history.
 Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
