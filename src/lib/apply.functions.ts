@@ -30,7 +30,9 @@ export type SubmitApplicationResult =
       //  existing → an account already existed for this email; they should sign in
       //  none     → no password supplied, no account created
       account: "created" | "existing" | "none";
+      eligibility?: "eligible" | "not_eligible";
     }
+
 
   | {
       ok: false;
@@ -112,9 +114,10 @@ export const submitApplication = createServerFn({ method: "POST" })
       // 2. Validate screening answers reference this position's questions and cover all required.
       const { data: questions, error: qErr } = await supabaseAdmin
         .from("screening_questions")
-        .select("id,required,answer_type,updated_at")
+        .select("id,question,required,answer_type,dealbreaker,preferred_answer,updated_at")
         .eq("position_id", data.position_id);
       if (qErr) throw qErr;
+
       // Stamp which revision of the question set the candidate actually answered.
       const questionVersion = Math.max(
         1,
@@ -123,25 +126,39 @@ export const submitApplication = createServerFn({ method: "POST" })
         ),
       );
       const qMap = new Map((questions ?? []).map((q) => [q.id, q]));
+      const disqualifyingReasons: string[] = [];
+
       for (const q of questions ?? []) {
-        if (!q.required) continue;
         const a = data.answers.find((x) => x.question_id === q.id);
         const empty =
           a == null ||
           a.value == null ||
           (typeof a.value === "string" && a.value.trim() === "") ||
           (Array.isArray(a.value) && a.value.length === 0);
-        if (empty) {
+
+        if (q.required && empty) {
           return {
             ok: false,
             trace_id,
             code: "answer_required",
-            message: "Please answer the required screening questions.",
+            message: `Please answer the required screening question: "${q.question}"`,
           };
+        }
+
+        // F-008: Check for dealbreaker answers.
+        if (q.dealbreaker && !empty) {
+          const val = a.value;
+          const pref = q.preferred_answer;
+          // For booleans, the dealbreaker is usually answering differently than preferred.
+          if (q.answer_type === "boolean" && pref != null && val !== pref) {
+            disqualifyingReasons.push(q.question);
+          }
         }
       }
       // Drop answers that don't match a question on this position.
       const cleanAnswers = data.answers.filter((a) => qMap.has(a.question_id));
+      const isDisqualified = disqualifyingReasons.length > 0;
+
 
       // 3. Find or create candidate profile by lower(email).
       const emailLower = data.email.trim().toLowerCase();
@@ -536,11 +553,13 @@ export const submitApplication = createServerFn({ method: "POST" })
           candidate_profile_id: candidateProfileId,
           position_id: data.position_id,
           organization_id: pos.organization_id,
-          stage: "new",
-          admin_status: "pending",
+          stage: isDisqualified ? "not_moving_forward" : "new",
+          admin_status: isDisqualified ? "archived" : "pending",
           client_visibility: "hidden",
+          eligibility_status: isDisqualified ? "not_eligible" : "eligible",
           processing_state: "queued",
         })
+
         .select("id")
         .maybeSingle();
       if (cmErr && !String(cmErr.message).toLowerCase().includes("duplicate")) throw cmErr;
@@ -553,6 +572,22 @@ export const submitApplication = createServerFn({ method: "POST" })
           .maybeSingle();
         matchId = existingMatch?.id;
       }
+
+      // F-008: Record eligibility checks for disqualified candidates.
+      if (matchId && isDisqualified) {
+        const checkRows = disqualifyingReasons.map((reason) => ({
+          candidate_match_id: matchId,
+          organization_id: pos.organization_id,
+          qualifier_key: "screening_dealbreaker",
+          qualifier_label: "Screening dealbreaker",
+          qualifier_kind: "disqualifier",
+          status: "not_eligible",
+          reason: `Disqualified by screening question: "${reason}"`,
+          evidence: { question: reason, outcome: "dealbreaker_hit" },
+        }));
+        await supabaseAdmin.from("eligibility_checks").insert(checkRows);
+      }
+
 
       // 10. Enqueue processing job (drain fallback).
       await supabaseAdmin.from("processing_jobs").insert({

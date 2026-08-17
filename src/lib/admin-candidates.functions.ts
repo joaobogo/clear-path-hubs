@@ -397,7 +397,8 @@ export const getCandidateDossier = createServerFn({ method: "POST" })
         s
           .from("candidate_profiles")
           .select(
-            "id,full_name,email,phone,country,region,city,location,linkedin_url,portfolio_url,website_url,created_at,updated_at,current_cv_file_id",
+            "id,full_name,email,phone,country,region,city,location,linkedin_url,portfolio_url,website_url,created_at,updated_at,current_cv_file_id,consent",
+
           )
           .eq("id", m.candidate_profile_id)
           .maybeSingle(),
@@ -413,6 +414,8 @@ export const getCandidateDossier = createServerFn({ method: "POST" })
           .select("id,question_id,answer,created_at,screening_questions(question,answer_type,required,dealbreaker,preferred_answer)")
           .eq("application_id", m.application_id)
           .order("created_at", { ascending: true }),
+
+
         s
           .from("candidate_notes")
           .select("id,body,visibility,author_user_id,created_at")
