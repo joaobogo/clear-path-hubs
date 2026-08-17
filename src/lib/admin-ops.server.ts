@@ -365,13 +365,15 @@ async function annotateWithSlaBreaches(
   let worstByPosition = new Map<string, { metric_label: string; days_over: number }>();
   try {
     const list = await loadSlaBreaches(s, { includeTest });
-    for (const r of list.rows) {
-      if (r.acknowledged) continue;
-      const current = worstByPosition.get(r.position_id);
+    for (const r of (list?.rows ?? [])) {
+      if (!r || r.acknowledged) continue;
+      const posId = r.position_id;
+      if (!posId) continue;
+      const current = worstByPosition.get(posId);
       if (!current || r.days_over > current.days_over) {
-        worstByPosition.set(r.position_id, {
-          metric_label: r.metric_label,
-          days_over: r.days_over,
+        worstByPosition.set(posId, {
+          metric_label: r.metric_label || "SLA",
+          days_over: r.days_over || 0,
         });
       }
     }
