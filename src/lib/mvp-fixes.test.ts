@@ -5,11 +5,11 @@ import { humanizePublishBlockedMessage, PUBLISH_BLOCKED_PREFIX } from "./publish
 describe("MVP Fixes Sanitization (P-012, P-036)", () => {
   it("strips TAASFLOW_DEMO_SEED", () => {
     expect(sanitizeInternalMarkers("TAASFLOW_DEMO_SEED: User reason")).toBe("User reason");
-    expect(sanitizeInternalMarkers("Just a seed TAASFLOW_DEMO_SEED here")).toBe("Just a seed");
+    expect(sanitizeInternalMarkers("Just a seed TAASFLOW_DEMO_SEED here")).toBe("Just a seed here");
   });
 
   it("strips trace IDs", () => {
-    expect(sanitizeInternalMarkers("Trace pl_abcdef1234567890 occurred")).toBe("Trace");
+    expect(sanitizeInternalMarkers("Trace pl_abcdef1234567890 occurred")).toBe("Trace occurred");
     expect(sanitizeInternalMarkers("Support sv_12345678abc session")).toBe("Support session");
   });
 

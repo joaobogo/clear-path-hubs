@@ -62,16 +62,16 @@ export function sanitizeInternalMarkers(value: string | null | undefined): strin
   let s = String(value);
 
   // 1. Demo seed markers
-  s = s.replace(/TAASFLOW_DEMO_SEED:?\s*/gi, "");
+  s = s.replace(/TAASFLOW_DEMO_SEED:?\s*/gi, " ");
 
   // 2. Trace IDs (pl_..., sv_...)
-  s = s.replace(/\b(pl|sv)_[a-z0-9]{8,20}\b/gi, "");
+  s = s.replace(/\b(pl|sv)_[a-z0-9]{8,20}\b/gi, " ");
 
   // 3. UUID-like strings (actor hashes, etc.)
-  s = s.replace(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi, "");
+  s = s.replace(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi, " ");
 
   // 4. Actor hashes/internal markers
-  s = s.replace(/\b[a-z0-9]{32,}\b/gi, "");
+  s = s.replace(/\b[a-z0-9]{32,}\b/gi, " ");
 
   const cleaned = s.replace(/\s+/g, " ").trim();
   return cleaned.length > 0 ? cleaned : null;
