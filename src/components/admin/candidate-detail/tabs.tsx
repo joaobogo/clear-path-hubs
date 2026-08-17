@@ -945,50 +945,7 @@ export function PreviewTab({ matchId, match: m }: { matchId: string; match?: Any
       </div>
     </div>
   );
-    <div className="rounded-lg border-2 border-dashed bg-background p-5">
-      <div className="mb-3 text-xs uppercase tracking-wide text-muted-foreground">
-        Client view — exactly what the client will see
-      </div>
-      <div className="rounded-lg border bg-card p-5">
-        <div className="flex items-baseline justify-between">
-          <div>
-            <h3 className="text-lg font-semibold">{dto.full_name ?? dto.name ?? "Candidate"}</h3>
-            <div className="text-sm text-muted-foreground">
-              {dto.headline ?? ""}{dto.location ? ` · ${dto.location}` : ""}
-            </div>
-          </div>
-          {/* Client preview mirrors the employer surface: band, never a number. */}
-          <CandidateScoreBadge
-            score={dto.score ?? null}
-            fitLabel={dto.fit_label ?? null}
-            evidence={dto.evidence_support ?? null}
-          />
-        </div>
-        {dto.explanation && <p className="mt-3 whitespace-pre-wrap text-sm">{dto.explanation}</p>}
-        {Array.isArray(dto.strengths) && dto.strengths.length > 0 && (
-          <>
-            <h4 className="mt-4 text-xs font-semibold uppercase text-muted-foreground">Strengths</h4>
-            <ul className="mt-1 list-disc pl-5 text-sm">
-              {dto.strengths.map((s: string, i: number) => <li key={i}>{s}</li>)}
-            </ul>
-          </>
-        )}
-        {Array.isArray(dto.evidence) && dto.evidence.length > 0 && (
-          <>
-            <h4 className="mt-4 text-xs font-semibold uppercase text-muted-foreground">Evidence</h4>
-            <ul className="mt-1 space-y-1 text-xs text-muted-foreground">
-              {dto.evidence.slice(0, 8).map((e: Any, i: number) => (
-                <li key={i}>"…{e.snippet}…"</li>
-              ))}
-            </ul>
-          </>
-        )}
-      </div>
-      <p className="mt-3 text-xs text-muted-foreground">
-        This preview always mirrors the sanitized client DTO — never raw admin data.
-      </p>
-    </div>
-  );
+}
 }
 
 // ── Activity & audit ───────────────────────────────────────────────────────
