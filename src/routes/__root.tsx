@@ -151,16 +151,15 @@ function RootShell({ children }: { children: ReactNode }) {
  
  Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
  
- TEXTO DO USUÁRIO: "P-039 · Wizard Robustness (B16) · MEDIUM
- Scope: /client/positions/new
- Defect: Per-step validation missing; refresh loses progress; double-submit creates duplicates; abandoned
- checkout blocks workspace.
- Required fix: Add per-step validation; persist draft; idempotent create; allow resuming abandoned checkout.
+ TEXTO DO USUÁRIO: "P-040 · Overview Cards + Real Data (B17) · MEDIUM
+ Scope: /client (Overview)
+ Defect: Decision queue, N roles can be sharpened, and operational status are inconsistent or static.
+ Required fix: Compute overview cards from real records; refresh after client actions.
  Acceptance criteria:
- • Attempt to proceed without required fields; verify validation message.
- • Refresh mid-wizard; verify it resumes at the same step or offers restart.
- • Double-click submit; verify only one role is created.
- • Abandon checkout; verify workspace remains accessible and role is resumable.
+ • Open /client; note decision queue count.
+ • Make a decision; verify the queue updates without full reload.
+ • Verify roles can be sharpened count matches roles needing more info.
+ • Verify operational status reflects the latest pipeline state.
  Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
         }
       >
