@@ -306,9 +306,9 @@ export const listClients = createServerFn({ method: "GET" })
       )
       .limit(500);
     if (data.q) {
-      const { ilikePattern } = await import("./search/postgrest-filter");
-      const pattern = ilikePattern(data.q);
-      if (pattern) q = q.ilike("name", pattern);
+      const { buildPositionSearchOr } = await import("./search/postgrest-filter");
+      const filter = await buildPositionSearchOr(s, data.q);
+      if (filter) q = q.or(filter);
     }
     if (data.status) q = q.eq("status", data.status);
     if (data.industry) q = q.eq("industry", data.industry);

@@ -153,18 +153,20 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
  
 TEXTO DO USUÁRIO: "Standing rules apply.
  
-DEFECT (HIGH, proven): Clients create shortlist share links and talent-memory entries, but admin has NO surface for either, and the org's 794-event audit trail contains ZERO events for share create/revoke or memory add/archive — the R2 share link (created 21:52, revoked 22:35) and memory entry (tagged 21:56:32, archived 22:33:58) are invisible to staff. Admins cannot answer \"what is shared externally right now?\".
+DEFECT (HIGH, proven): Any keyword in Positions search fails. /admin/positions?q=Engineer returns \"Couldn't load positions\" and the Ownership and Publish-blockers widgets each print the raw backend error: failed to parse logic tree ((title.ilike.%TERM%,organizations.name.ilike.%TERM%)). The OR filter string is malformed and internal query syntax leaks into the UI.
  
-REQUIRED FIX: Emit audit events for the full lifecycle of both features (share: created / accessed via public token / revoked; memory: added / edited / archived / rediscovered) into the same org audit trail, with actor and timestamp. Add read-only admin views on the org record: Shares (name, creator, created at, candidate count, status active/revoked, revoked at/by) and Talent memory (candidate, note, added at, archived at, status). Revoked share URLs must serve nothing.
+REQUIRED FIX: Fix the OR-filter construction (title OR client name) with proper escaping of user input including hyphens, %, quotes, parentheses, commas. A search failure must render one friendly inline message, never raw query internals, and must not break unrelated widgets on the page. Audit every other admin list that builds filters the same way (candidates, clients, intake, global search) and apply the same fix.
  
 ACCEPTANCE CRITERIA:
-1. The org record shows a Shares view listing the existing R2 share link as REVOKED, and a Talent memory view listing the archived R2 entry with its note text and archived timestamp.
-2. As a client, create a share link and a memory entry, then revoke/archive them: all four actions appear in the org audit trail within minutes, correctly attributed, and both admin views reflect the new state.
-3. Open a revoked share's public URL in a clean browser session: no candidate data, 403/404.
-4. Both views are reachable from the org record tabs without knowing a URL.
-5. A share link for a candidate later hidden/unpublished stops serving that candidate.
+1. /admin/positions?q=Engineer returns matching roles.
+2. q with hyphens (e.g. a hyphenated role name) returns the right rows.
+3. q matching a client name returns that client's roles.
+4. q = %$(' returns an empty result set gracefully, no error text.
+5. With any query, the Ownership & coverage and Publish blockers widgets render normally.
+6. No raw \"logic tree\"/PostgREST/SQL text appears anywhere in the UI for any input.
+7. Candidate database and client list searches pass the same four inputs.
  
-Covers A5 + B5 (PDF P-005, P-028)."`
+Covers A7 (PDF P-007)."`
         }
       >
         {children}
