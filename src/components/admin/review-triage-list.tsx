@@ -20,7 +20,9 @@ import {
   listReviewTriage,
   releaseScoringReview,
   releaseStaleScoringClaims,
+  bulkRecomputeQueue,
 } from "@/lib/scoring-review-triage.functions";
+import { recomputeScore } from "@/lib/scoring-review.functions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ds";
@@ -75,6 +77,8 @@ export function ReviewTriageList({
   const claimFn = useServerFn(claimScoringReview);
   const releaseFn = useServerFn(releaseScoringReview);
   const releaseStaleFn = useServerFn(releaseStaleScoringClaims);
+  const recomputeFn = useServerFn(recomputeScore);
+  const bulkRecomputeFn = useServerFn(bulkRecomputeQueue);
 
   const invalidate = () => {
     void qc.invalidateQueries({ queryKey: ["review-triage"] });
@@ -110,6 +114,24 @@ export function ReviewTriageList({
       invalidate();
     },
     onError: (e) => toastError(e, { fallback: "Could not release stale claims" }),
+  });
+
+  const recompute = useMutation({
+    mutationFn: (matchId: string) => recomputeFn({ data: { match_id: matchId } }),
+    onSuccess: () => {
+      toast.success("Score recomputed");
+      invalidate();
+    },
+    onError: (e) => toastError(e, { fallback: "Recompute failed" }),
+  });
+
+  const bulkRecompute = useMutation({
+    mutationFn: () => bulkRecomputeFn({ data: { queue } }),
+    onSuccess: (res) => {
+      toast.success(`Successfully recomputed ${res.recomputed} of ${res.total} candidates`);
+      invalidate();
+    },
+    onError: (e) => toastError(e, { fallback: "Bulk recompute failed" }),
   });
 
   // Ordered exactly as rendered (blocking first) so keyboard indexes match.
@@ -175,7 +197,9 @@ export function ReviewTriageList({
     ? (claim.variables ?? null)
     : release.isPending
       ? (release.variables ?? null)
-      : null;
+      : recompute.isPending
+        ? (recompute.variables ?? null)
+        : null;
 
   return (
     <div className="space-y-4">
@@ -201,6 +225,22 @@ export function ReviewTriageList({
           )}
           Release stale claims{data.stale_claim_count > 0 ? ` (${data.stale_claim_count})` : ""}
         </Button>
+        {queue === "score_stale" && data.total > 0 && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 gap-1.5 text-xs"
+            onClick={() => bulkRecompute.mutate()}
+            disabled={bulkRecompute.isPending}
+          >
+            {bulkRecompute.isPending ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <RefreshCw className="h-3.5 w-3.5" />
+            )}
+            Recompute all in queue (max 50)
+          </Button>
+        )}
       </div>
 
       {variant ? (
@@ -225,6 +265,7 @@ export function ReviewTriageList({
             kb={kb}
             onClaim={(id) => claim.mutate(id)}
             onRelease={(id) => release.mutate(id)}
+            onRecompute={(id) => recompute.mutate(id)}
             busyId={busyId}
             queue={queue}
             q={q}
@@ -240,6 +281,7 @@ export function ReviewTriageList({
             kb={kb}
             onClaim={(id) => claim.mutate(id)}
             onRelease={(id) => release.mutate(id)}
+            onRecompute={(id) => recompute.mutate(id)}
             busyId={busyId}
             queue={queue}
             q={q}
@@ -291,6 +333,7 @@ function Group({
   q,
   sort,
   page,
+  onRecompute,
 }: {
   title: string;
   hint: string;
@@ -306,6 +349,7 @@ function Group({
   q: string;
   sort: string;
   page: number;
+  onRecompute: (matchId: string) => void;
 }) {
   if (rows.length === 0) return null;
   return (
@@ -392,12 +436,30 @@ function Group({
                     disabled={busyId === r.match_id}
                     onClick={() => onClaim(r.match_id)}
                   >
-                    {busyId === r.match_id ? (
+                    {busyId === r.match_id && !recompute.isPending ? (
                       <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
                     ) : null}
                     Claim
                   </Button>
                 )}
+
+                {queue === "score_stale" && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 text-xs"
+                    disabled={busyId === r.match_id}
+                    onClick={() => onRecompute(r.match_id)}
+                  >
+                    {busyId === r.match_id && recompute.isPending ? (
+                      <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <RefreshCw className="mr-1 h-3.5 w-3.5" />
+                    )}
+                    Recompute
+                  </Button>
+                )}
+
                 <Button asChild size="sm" className="h-7 text-xs">
                   <a
                     href={`/admin/scoring/review/${r.match_id}?queue=${queue}&q=${q}&sort=${sort}&page=${page}`}
