@@ -168,9 +168,6 @@ TEXTO DO USUÁRIO: "Session rules for everything that follows. These override an
 10. If something is genuinely impossible in this environment, say so explicitly in the table as FAIL with the reason. Do not silently skip it.
 
 Reply only: \"Locked. In code mode. Ready for P1.\" Nothing else.\"`
- • Never remove validation to stop a failure.
- • Never special-case QA strings, IDs, or the demo org — the next audit uses fresh random names.
- • Never edit or delete existing audit events, score runs, decisions, or client history; corrections are new records."`
         }
       >
         {children}
