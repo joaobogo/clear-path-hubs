@@ -35,12 +35,12 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just "done".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-/api/public/pipeline/run currently accepts any request whose apikey header equals the public publishable key — which ships in every browser bundle, so anyone on the internet can trigger paid AI scoring runs.
+/api/public/qa-seed (destructive cleanup) and /api/public/bootstrap-admin (privilege escalation surface) must be impossible to invoke in production.
 
-1. Introduce a dedicated server-side secret (e.g. PIPELINE_RUN_TOKEN) and require it on this route; reject everything else with 401. Do not reuse the publishable key, QA_SEED_TOKEN, or any client-visible value.
-2. Update every internal caller of this route to send the new secret from server-side code only. List each caller you updated.
-3. Confirm the token never appears in any file that reaches the client bundle.
-4. Verify: a request with the old publishable key gets 401; the internal pipeline path (e.g. new application → scoring) still completes on a test application in the preview; no client dashboard behavior changes."`;
+1. Gate both routes behind an explicit environment flag (e.g. ENABLE_QA_ENDPOINTS) that is unset in production: when unset, return 404 before any token check runs.
+2. Keep them working in preview/dev when the flag is set, since the E2E suite depends on them.
+3. Do not modify what the endpoints do when enabled — only the gate.
+4. Verify: with the flag unset both routes return 404 even with a valid token; with the flag set the E2E seed path still works in preview. Also list for me every env var these routes read, so I can delete QA_SEED_TOKEN from the production environment myself."`;
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
 const FONT_CSS_HREF =
