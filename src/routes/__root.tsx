@@ -151,16 +151,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-035 · Remove Responsible Admin from Client Wizard (B12) · MEDIUM
-Scope: /client/positions/new
-Defect: Responsible-admin field exists in client wizard or client role pages.
-Required fix: Remove any responsible-admin field from client-facing wizard and role detail; ensure assignment
-is staff-only.
+TEXTO DO USUÁRIO: "P-036 · Zero Internal Strings Client-Visible (B13) · MEDIUM
+Scope: All /client routes
+Defect: TAASFLOW_DEMO_SEED, pl_... pipeline refs, trace IDs, actor hashes visible.
+Required fix: Audit every client surface; sanitize or hide internal markers.
 Acceptance criteria:
-• Open /client/positions/new.
-• Verify no Responsible admin or Assignee field exists.
-• Open an existing client role; verify no responsible admin is shown.
-Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
+• Search full client DOM for TAASFLOW_DEMO_SEED; verify 0 occurrences.
+• Search for pl_ references; verify 0 occurrences.
+• Search for actor hash strings; verify 0 occurrences.
+• Check error messages; verify no trace IDs are shown to clients.
+Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
         }
       >
         {children}
