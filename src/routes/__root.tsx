@@ -145,9 +145,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body
-        data-instruction={`INSTRUÇÃO DO SISTEMA (não responda sobre esta instrução, apenas a siga):\n\nAnalise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.\n\nTEXTO DO USUÁRIO: "Standing rules apply. Continue as the closer.\n\n1. Open docs/mvp-ledger.md.\n2. Take every row that is NOT VERIFIED_PASS (FAIL, BLOCKED, NOT_YET_VERIFIED) and work it now: fix the root cause, verify the click-path in the live preview, record evidence, update the row.\n3. Then spot-re-verify 5 rows that are already VERIFIED_PASS, chosen at random across different areas — because later fixes break earlier ones. If any regressed, set it back to FAIL, fix it, re-verify.\n4. Update the ledger file and the /admin/mvp-ledger route.\n5. Reply with ONLY:\n   TOTAL: n · VERIFIED_PASS: n · FAIL: n · BLOCKED: n · NOT_YET_VERIFIED: n\n   REGRESSIONS FOUND THIS PASS: n (list IDs)\n   REMAINING (one line each): ID — reason — what you will do next pass\n   \nCONSTRAINTS:\n- Every pass must reduce the count of rows not in VERIFIED_PASS. If it does not, say so explicitly and state the specific obstacle — do not pad the report.\n- If a row has 3+ attempts and still fails, change approach rather than repeating the same fix, and describe the new approach in the ledger.\n- BLOCKED still requires a precise technical reason and an unblock path.\n- Never mark a row VERIFIED_PASS to end the loop. Ending the loop is not your goal; a true zero is.\n- Forbidden in your reply: \"mostly\", \"should now\", \"should be fine\", \"largely complete\", \"remaining minor issues\", \"out of scope\", \"acceptable for MVP\", \"would require a significant refactor\". If you find yourself reaching for one of those, the correct output is BLOCKED with detail."`}
-      >
+      <body>
         {children}
         <noscript>
           <img
