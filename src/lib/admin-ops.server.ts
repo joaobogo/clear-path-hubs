@@ -34,6 +34,7 @@ const DAY = 24 * HOUR;
 function ageTone(iso: string | null, warnDays: number, dangerDays: number): QueueItem["tone"] {
   if (!iso) return "default";
   const date = new Date(iso);
+  // Robust check for invalid dates to prevent NaN math from crashing the component.
   if (isNaN(date.getTime())) return "default";
   const days = (Date.now() - date.getTime()) / DAY;
   if (days >= dangerDays) return "danger";
@@ -114,6 +115,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
 
 
     // 5 — interviews requested, or happening in the next 48h.
+    // Inner join on positions and organizations to ensure we only count actionable interviews.
     excludeTestOrgs(
       s
         .from("interviews")
@@ -363,13 +365,15 @@ async function annotateWithSlaBreaches(
   let worstByPosition = new Map<string, { metric_label: string; days_over: number }>();
   try {
     const list = await loadSlaBreaches(s, { includeTest });
-    for (const r of list.rows) {
-      if (r.acknowledged) continue;
-      const current = worstByPosition.get(r.position_id);
+    for (const r of (list?.rows ?? [])) {
+      if (!r || r.acknowledged) continue;
+      const posId = r.position_id;
+      if (!posId) continue;
+      const current = worstByPosition.get(posId);
       if (!current || r.days_over > current.days_over) {
-        worstByPosition.set(r.position_id, {
-          metric_label: r.metric_label,
-          days_over: r.days_over,
+        worstByPosition.set(posId, {
+          metric_label: r.metric_label || "SLA",
+          days_over: r.days_over || 0,
         });
       }
     }

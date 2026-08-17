@@ -97,7 +97,7 @@ export async function loadDecisionBacklog(
 
   const [decRes, posRes, orgRes, candRes, notifRes, nudgeRes] = await Promise.all([
     a.from("client_decisions").select("candidate_match_id").in("candidate_match_id", matchIds),
-    a.from("positions").select("id, title, is_test_record").in("id", positionIds),
+    a.from("positions").select("id, title, is_test_record, organization_id").in("id", positionIds),
     a.from("organizations").select("id, name, is_test_record").in("id", orgIds),
     profileIds.length
       ? a.from("candidate_profiles").select("id, full_name").in("id", profileIds)
