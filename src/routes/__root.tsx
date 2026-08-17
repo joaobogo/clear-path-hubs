@@ -151,20 +151,21 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "Standing rules apply (P-001 through P-051).
+TEXTO DO USUÁRIO: "Standing rules apply.
 
-DEFECT (proven): Five "Message sent · —" activity events have no actor or context. System stage resets are labeled "Shortlisted by your team". A candidate journey shows "Shortlisted by your team / Interviewed" generated from an OFFER decision. A candidate step banner said "Interview feedback is in and no advance or reject decision has been recorded" one hour after a mere interview REQUEST. Identical audit rows are written twice at the same second. Evidence panels render literal "([object Object])" citations, quotes often unrelated to their dimension, and "Admin-verified" chips while the header says "All criteria are machine-derived — none human-verified yet".
+DEFECT (proven): Toast shows raw "approval_blocked: at least one requirement is required". Approving an unpaid role shows CLIENT checkout copy to an ADMIN ("Your brief is saved as a draft — finish checkout and it will go live automatically") and misstates the state (the role was under review, not draft). CV download trail badges label CLIENT actors as "Your team" in the admin view. Audit pagination briefly shows the previous page's rows under the new page header.
 
-REQUIRED FIX: Derive journeys and step states from real recorded events only — no synthetic inference. Map interview states honestly: requested → awaiting slots → scheduled → completed → awaiting decision. Ensure every event carries an actor (or System) and context. Stop duplicate audit writes. Fix citation rendering to output real quote + source, bind each quote to its own dimension, and show verification chips only when a human verification record exists.
+REQUIRED FIX: Humanize all toast/error copy (machine codes may appear only as small reference text); give admins admin-appropriate messaging that matches the true record state; badge actors correctly per viewing context (Client vs Staff); show a loading state on pagination instead of stale rows.
 
 ACCEPTANCE CRITERIA:
-1. Open the candidate whose journey showed "Interviewed" from an offer: the journey now shows only real events (applied → scored → delivered → shortlisted → interview requested → offer) with correct timestamps.
-2. A candidate with a fresh interview request shows "awaiting slots", not post-interview copy.
-3. Every activity/feed event names an actor or System; no "—" actors.
-4. Trigger a new auditable action: exactly one audit row is written.
-5. Open a score breakdown: no "[object Object]"; each quote sits under the correct dimension; no "Admin-verified" chip without a human verification record.
+1. Trigger the approval block: the toast reads as human copy naming the actual requirement, no snake_case code.
+2. Approve an unpaid role as admin: the message is admin-facing and states the real state (no client checkout copy, no false "draft").
+3. Admin CV download trail labels client actors as Client and staff as Staff.
+4. Page through audit events: rows always match their header; a loading state appears instead of previous rows.
+5. Scan admin surfaces for any other raw error codes or client-only copy shown to staff and fix them — list what you found.
 
-Covers A17 + A18 + B9 (PDF P-017, P-018, P-032)."`
+Covers A19 + A22(pagination) (PDF P-019, P-022)."`
+
 
         }
       >
