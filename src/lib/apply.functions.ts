@@ -7,6 +7,7 @@ import { applySchema, composeLocation, type ApplyInput } from "./apply-schema";
 import { normalizeCompletionSeconds } from "./jobs/apply-effort";
 import type { ExistingApplicationSummary } from "./candidate/existing-application.server";
 import { throttlePublicFn } from "@/lib/public-api/server-fn-guard";
+import { logApplicationIncident } from "./incident-logger.server";
 
 
 export type SubmitApplicationResult =
@@ -640,13 +641,17 @@ export const submitApplication = createServerFn({ method: "POST" })
         prior_closed: priorClosed,
         account: accountOutcome,
       };
-    } catch (err) {
+    } catch (err: any) {
       console.error("[submitApplication]", trace_id, err);
 
-      // The document is already stored but the application is not. Telling this
-      // person "network error, try again" is false: retrying re-sends a file we
-      // already hold and produces another candidate with no evidence. Raise it
-      // with us instead, and say plainly what we have.
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await logApplicationIncident(supabaseAdmin, {
+        email: data.email,
+        role_id: data.position_id,
+        trace: err.stack || err.message,
+        context: { trace_id, input: { email: data.email, position_id: data.position_id } },
+      });
+
       if (orphanUpload) {
         try {
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
