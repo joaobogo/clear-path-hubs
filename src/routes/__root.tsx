@@ -151,18 +151,36 @@ function RootShell({ children }: { children: ReactNode }) {
  
  Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
  
- TEXTO DO USUÁRIO: "P-050 · Public Form Robustness (C9) · MEDIUM
- Scope: src/components/jobs/application-form.tsx
- Defect: Refresh mid-form loses data; double-click submits twice; wrong file type rejected late; closed roles
- appliable by direct URL.
- Required fix: Persist form state across refresh; debounce submit; reject file type/size before upload; block
- application on closed/unpublished roles.
+ TEXTO DO USUÁRIO: "Section 4 — Final Verification Gate
+ P-051 · Final Verification Gate · BLOCKER
+ Scope: Entire app
+ Defect: Without a single re-walk of every acceptance criterion, regressions slip through.
+ Required fix: Re-run every acceptance criterion from P-001 through P-050 in mirrored client+admin sessions
+ using fresh random marker names. Update the /admin/qa-report register truthfully.
  Acceptance criteria:
- • Fill form, refresh, verify data is restored.
- • Double-click submit; verify only one application record.
- • Upload a 50MB file or non-PDF/DOCX; verify immediate clear rejection before upload.
- • Attempt to apply to a closed role via direct URL; verify application blocked.
- Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
+ • All A1–A23 admin criteria PASS with evidence table.
+ • All B1–B18 client criteria PASS with evidence table.
+ • All C1–C9 application criteria PASS with evidence table.
+ • Zero BLOCKER/HIGH open items in /admin/qa-report.
+ • Score ≥95/100; target 100/100.
+ Regression Protect-List
+ • Job board parity (employer, location, model, posted date) remains intact.
+ • Existing published roles remain visible.
+ • Application audit trail remains append-only.
+ • Score runs remain immutable.
+ • Client messages send/receive working.
+ • TaaSFlow team label applied to all staff comms.
+ • Decisions (Shortlist/Offer/Hire) persist and sync to admin.
+ • Share links respect visibility/revocation.
+ • CV downloads audited and consent-gated.
+ Final Rejection Contract
+ Rejected — walk every acceptance criterion in the live preview and return the evidence table.
+ Guardrails (apply to every prompt)
+ • Fix root causes, never symptoms.
+ • Never hide, delete, or suppress a failing feature to pass a criterion.
+ • Never remove validation to stop a failure.
+ • Never special-case QA strings, IDs, or the demo org — the next audit uses fresh random names.
+ • Never edit or delete existing audit events, score runs, decisions, or client history; corrections are new records."`
         }
       >
         {children}
