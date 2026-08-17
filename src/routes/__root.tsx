@@ -33,12 +33,12 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just "done".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-demo@taasflow.com (client_admin on Northwind Talent (Demo)) is the account we use live with prospects, and it is the one auth check that was never harness-verified (STABILIZATION pass 1, item 5).
+Default admin views still surface QA fixtures and internal workspaces next to real clients: candidates "QA Mobile Tester" and "QA Walkthrough Candidate" appear in /admin/candidates, and org pickers/lists show QA_TESTCO_E2E alongside Northwind Talent (Demo), BRPH, neuronflow, Flow Group Ventures, atlasflow, Bob law.
 
-1. In the live preview, verify the full demo path end to end: sign in as demo@taasflow.com → lands on the Northwind /client overview → Positions, Candidates, a candidate detail, Messages, and Settings all render with data → shortlist one candidate and confirm the backend recorded it → sign out cleanly. (If you don't have the password, say BLOCKED and I'll provide it — do not reset it yourself.)
-2. Wire DEMO_CLIENT_EMAIL / DEMO_CLIENT_PASSWORD into the E2E environment usage that already reads them, so this check runs in the suite going forward.
-3. Add a small idempotent safeguard: on demo sign-in, if the Northwind membership row is missing or inactive, log an incident (do NOT auto-repair silently).
-4. Update docs/mvp-ledger.md item for demo reliability with the evidence.";`
+1. Confirm every QA fixture row (orgs, candidates, positions, matches created by the QA seed) has is_test_record = true; fix any that don't via a migration.
+2. Confirm the existing "Show test records across all admin screens" toggle actually scopes EVERY admin surface, including: /admin/candidates, /admin/clients, /admin/team org pickers, global search results, saved-view counts, and any recruiter-reassignment dropdowns. Fix any surface that ignores it. Default = hidden.
+3. Do NOT delete any rows and do NOT touch the internal-but-real orgs (BRPH, neuronflow, Flow Group Ventures, atlasflow, Bob law) — they are legitimate records; only QA_* fixtures are test records.
+4. Verify with the toggle OFF: no QA_* org or QA-named candidate appears anywhere in the admin UI or its pickers; with the toggle ON they return.";`
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
 const FONT_CSS_HREF =
