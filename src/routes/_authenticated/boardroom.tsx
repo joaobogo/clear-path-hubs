@@ -1,11 +1,12 @@
 import { useStuckAfter } from "@/lib/client/panel-gate";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useRef, useState, useCallback, type ReactNode } from "react";
 import { getClientContext } from "@/lib/client-context.functions";
 import { getClientOverview } from "@/lib/client-overview.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
+import { getStaffAccess } from "@/lib/admin-staff-gate.functions";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeft,
