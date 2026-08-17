@@ -97,7 +97,10 @@ export async function runBlueprintPipeline(input: BlueprintRunInput): Promise<{ 
       research,
     });
     if (!result.ok) {
+      console.error("[runBlueprintPipeline] generate failed", result.reason);
       await setStage(admin, input.positionId, "failed", result.reason);
+      return { ok: false, reason: result.reason };
+    }
       return { ok: false, reason: result.reason };
     }
     const bp = result.blueprint;
