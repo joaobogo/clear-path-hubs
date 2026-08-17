@@ -439,7 +439,7 @@ export const submitApplication = createServerFn({ method: "POST" })
             recordId: fileId,
             positionId: data.position_id,
             linkPath: "/admin/candidates",
-            priority: "medium",
+            priority: "standard",
           });
         } catch (notifyErr) {
           console.error("[submitApplication] unreadable CV lead failed", trace_id, notifyErr);
