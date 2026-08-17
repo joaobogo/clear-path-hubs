@@ -915,7 +915,7 @@ export function PreviewTab({ matchId, match: m }: { matchId: string; match?: Any
 
   return (
     <div className="space-y-6">
-      <Alert variant="info" className="taas-bg-info-soft border-info/20">
+      <Alert className="taas-bg-info-soft border-info/20">
         <Eye className="h-4 w-4 taas-tx-info" />
         <AlertDescription className="text-xs text-info/80">
           This is an exact preview of what the client sees in their workspace.
