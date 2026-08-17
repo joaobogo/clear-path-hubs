@@ -25,6 +25,8 @@
 import { ENGINE_VERSION, combineCategories, scoreCandidate, } from "./scoring-engine.server";
 import { EVALUATION_METHOD, parseCalibration, resolveCalibration, serialiseCalibration, } from "./scoring/engine-calibration";
 import { buildReplaySnapshot } from "./scoring/replay";
+import { randomUUID } from "crypto";
+
 export const SCORING_BLUEPRINT_VERSION = "taasflow-blueprint-v1.0.0";
 async function getAdmin() {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
