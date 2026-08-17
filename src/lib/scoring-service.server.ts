@@ -544,7 +544,7 @@ export async function executeScoring(
         const { error: supErr } = await s
           .from("score_runs")
           .update({ superseded_at: new Date().toISOString() })
-          .in("id", activeRuns.map((r) => r.id));
+          .in("id", activeRuns.map((r: { id: string }) => r.id));
         if (supErr) throw new Error(`score_supersede_failed: ${supErr.message}`);
       }
 
