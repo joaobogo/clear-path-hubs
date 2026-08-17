@@ -151,17 +151,18 @@ function RootShell({ children }: { children: ReactNode }) {
  
  Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
  
- TEXTO DO USUÁRIO: "P-044 · Duplicate Application Handling (C3) · HIGH
- Scope: src/lib/apply.functions.ts
- Defect: Same email + same role creates silent duplicates.
- Required fix: Detect duplicate applications; update existing record if allowed, or reject with a clear message;
- flag near-duplicates for staff.
+ TEXTO DO USUÁRIO: "P-045 · Job Board Parity (C4) · HIGH
+ Scope: /jobs, /jobs/$id, src/lib/jobs/job-board.ts
+ Defect: Board must show real employer name, location, model, employment, seniority, posted date for every
+ published role.
+ Required fix: Derive board cards and detail pages from the same published position record; delist on
+ unpublish/close.
  Acceptance criteria:
- • Apply with email A to role X.
- • Apply again with the same email and role; verify either update or rejection message.
- • Verify no second candidate record is created silently.
- • As staff, verify near-duplicate flag is visible if policy is to flag.
- Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
+ • Open /jobs; verify every card shows employer name, location, model, employment, seniority, posted date.
+ • Open a detail page; verify all fields match the admin position record.
+ • Unpublish a role; verify it disappears from /jobs within cache TTL.
+ • Close a role; verify it is no longer appliable.
+ Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
         }
       >
         {children}
