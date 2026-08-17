@@ -384,7 +384,6 @@ export const submitApplication = createServerFn({ method: "POST" })
           .insert({
             owner_user_id: authUserId,
             candidate_profile_id: candidateProfileId,
-            organization_id: (pos as any).organization_id,
             storage_bucket: "cvs",
             storage_path: storagePath,
             filename: cleanName,
