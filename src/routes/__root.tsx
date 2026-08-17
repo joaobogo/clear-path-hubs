@@ -35,11 +35,11 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just "done".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-getApplicationReceipt behind /apply/received/$applicationId returns candidate_email to anyone holding the application UUID, with no ownership check.
+/api/public/intake-status/$id returns organization_id and company name to unauthenticated callers.
 
-1. Remove candidate_email (and any other PII beyond first name) from the receipt payload for anonymous lookups. The receipt should show: reference code, role title, submitted date, and next-steps copy. If you keep any email display, mask it (j***@domain.com).
-2. Do not change the application submission flow, the confirmation navigation, or the reference code itself.
-3. Verify: submit a test application in preview, open the received URL in a logged-out incognito context, and confirm no full email appears in the page or in the network response body."`;
+1. Reduce the unauthenticated response to only what the intake confirmation screen actually needs to render (status enum + human status label). Remove organization_id and company name from the payload.
+2. Update the confirmation screen if it referenced the removed fields, keeping its layout and copy otherwise identical.
+3. Verify: the intake confirmation page still renders correctly after a fresh test intake, and a raw GET to the endpoint from a logged-out session contains no org id and no company name."`;
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
 const FONT_CSS_HREF =
