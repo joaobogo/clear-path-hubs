@@ -148,12 +148,12 @@ export const globalSearch = createServerFn({ method: "POST" })
     {
       let query = supabase
         .from("positions")
-        .select("id, title, location, status, organization_id, organizations(name)")
+        .select("id, title, location, status, is_test_record, organization_id, organizations(name)")
         .or(orIlike(["title", "location"], term)!)
         .order("updated_at", { ascending: false })
         .limit(LIMIT);
       if (scope === "client") query = query.in("organization_id", orgIds);
-      else query = excludeTestOrgs(query, testScope);
+      else query = excludeTestOrgs(query, testScope).eq("is_test_record", false);
       const { data: positions, error } = await query;
       if (error) throw new Error(error.message);
       groups.positions = ((positions as AnyRow[]) ?? []).map((p) => {
@@ -208,7 +208,7 @@ export const globalSearch = createServerFn({ method: "POST" })
         let mq = supabase
           .from("candidate_matches")
           .select(
-            "id, candidate_profile_id, position_id, organization_id, client_visibility, stage, positions(title), organizations(name)",
+            "id, is_test_record, candidate_profile_id, position_id, organization_id, client_visibility, stage, positions(title), organizations(name)",
           )
           .in("candidate_profile_id", profileIds)
           .order("updated_at", { ascending: false })
@@ -216,7 +216,7 @@ export const globalSearch = createServerFn({ method: "POST" })
         if (scope === "client") {
           mq = mq.in("organization_id", orgIds).eq("client_visibility", "visible");
         } else {
-          mq = excludeTestOrgs(mq, testScope);
+          mq = excludeTestOrgs(mq, testScope).eq("is_test_record", false);
         }
         const { data: matches, error } = await mq;
         if (error) throw new Error(error.message);

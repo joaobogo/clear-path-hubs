@@ -98,11 +98,19 @@ export const searchCandidateIndex = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
+    const { loadTestScope } = await import("./admin-test-scope.server");
+    const scope = await loadTestScope(s);
     const limit = data.limit ?? 50;
     const offset = data.offset ?? 0;
     const sort = SORTS[data.sort ?? "updated_desc"];
 
     let q = s.from("v_admin_candidate_index").select("*", { count: "exact" });
+
+    // The global "Show test records" preference hides QA fixtures from
+    // default admin lists and pickers, so the total matches the visible rows.
+    if (!scope.includeTest) {
+      q = q.eq("is_test_record", false);
+    }
 
     if (data.rejection_reason) {
       // Reason lives on the decision rows, not on the match — resolve the ids
@@ -166,11 +174,17 @@ export const listCandidateCountries = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
-    const { data } = await s
+    const { loadTestScope } = await import("./admin-test-scope.server");
+    const scope = await loadTestScope(s);
+    let q = s
       .from("v_admin_candidate_index")
       .select("country")
       .not("country", "is", null)
       .limit(5000);
+    if (!scope.includeTest) {
+      q = q.eq("is_test_record", false);
+    }
+    const { data } = await q;
     const set = new Set<string>();
     for (const r of (data ?? []) as AnyRow[]) if (r.country) set.add(r.country);
     return [...set].sort();

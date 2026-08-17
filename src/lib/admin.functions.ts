@@ -92,11 +92,22 @@ export const getAdminOverview = createServerFn({ method: "GET" })
     const dayAgo = new Date(Date.now() - 24 * 3600_000).toISOString();
     const weekAgo = new Date(Date.now() - 7 * 86400_000).toISOString();
 
+    const { resolveShowTestRecordsForUser, loadTestScope, excludeTestOrgs, excludeTestPositions } =
+      await import("./admin-test-scope.server");
+    const showTest = await resolveShowTestRecordsForUser(s, context.userId);
+    const scope = await loadTestScope(s, showTest);
+
     const count = async (
       table: string,
       apply: (q: AnyRow) => AnyRow,
+      opts?: { orgCol?: string; positionCol?: string; testFlag?: boolean },
     ): Promise<number> => {
-      const q = apply(s.from(table).select("id", { count: "exact", head: true }));
+      let q = apply(s.from(table).select("id", { count: "exact", head: true }));
+      if (!showTest) {
+        if (opts?.orgCol) q = excludeTestOrgs(q, scope, opts.orgCol);
+        if (opts?.positionCol) q = excludeTestPositions(q, scope, opts.positionCol);
+        if (opts?.testFlag) q = q.eq("is_test_record", false);
+      }
       const { count: c } = await q;
       return c ?? 0;
     };
@@ -114,45 +125,69 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       intake_inbox,
     ] = await Promise.all([
       // Fresh intake submissions (canonical source, not positions)
-      count("intake_submissions", (q) => q.gte("created_at", weekAgo)),
+      count("intake_submissions", (q) => q.gte("created_at", weekAgo), {
+        orgCol: "organization_id",
+      }),
       // Submitted / needs-clarification — anything not yet approved
-      count("positions", (q) => q.in("status", ["submitted", "needs_clarification"])),
+      count("positions", (q) => q.in("status", ["submitted", "needs_clarification"]), {
+        orgCol: "organization_id",
+        testFlag: true,
+      }),
       // Applications landed in the pipeline in the last 24h
-      count("candidate_matches", (q) =>
-        q.in("processing_state", ["queued", "parsing", "enriching", "ready_to_score", "parsed"]).gte("created_at", dayAgo),
+      count(
+        "candidate_matches",
+        (q) =>
+          q
+            .in("processing_state", ["queued", "parsing", "enriching", "ready_to_score", "parsed"])
+            .gte("created_at", dayAgo),
+        { testFlag: true },
       ),
       // Awaiting decision (scored)
-      count("candidate_matches", (q) =>
-        q.eq("admin_status", "pending").eq("processing_state", "scored"),
+      count(
+        "candidate_matches",
+        (q) => q.eq("admin_status", "pending").eq("processing_state", "scored"),
+        { testFlag: true },
       ),
       // Approved but hidden — ready for the Publish Desk
-      count("candidate_matches", (q) =>
-        q.eq("admin_status", "approved").eq("client_visibility", "hidden"),
+      count(
+        "candidate_matches",
+        (q) => q.eq("admin_status", "approved").eq("client_visibility", "hidden"),
+        { testFlag: true },
       ),
-      // Email/message delivery failures to triage (7d canonical)
+      // Email/message delivery failures to triage (7d canonical).
+      // notification_deliveries has no direct org/position; the list is filtered in JS.
       count("notification_deliveries", (q) =>
         q.in("status", ["failed", "bounced", "suppressed"]).gte("created_at", weekAgo),
       ),
-      // Client-initiated recompute / feedback in the last 7d
+      // Client-initiated recompute / feedback in the last 7d.
+      // score_decisions has no direct org/position; the list is filtered in JS.
       count("score_decisions", (q) =>
         q.eq("decision_type", "request_recompute").gte("created_at", weekAgo),
       ),
       // In-flight work older than 24h
-      count("candidate_matches", (q) =>
-        q
-          .in("processing_state", ["queued", "parsing", "enriching", "ready_to_score"])
-          .lt("processing_updated_at", dayAgo),
+      count(
+        "candidate_matches",
+        (q) =>
+          q
+            .in("processing_state", ["queued", "parsing", "enriching", "ready_to_score"])
+            .lt("processing_updated_at", dayAgo),
+        { testFlag: true },
       ),
       // Urgent interview activity: requested awaiting scheduling, or
       // scheduled within the next 48h.
-      count("interviews", (q) =>
-        q.or(
-          `status.eq.requested,and(status.eq.scheduled,scheduled_at.lte.${new Date(Date.now() + 48 * 3600_000).toISOString()})`,
-        ),
+      count(
+        "interviews",
+        (q) =>
+          q.or(
+            `status.eq.requested,and(status.eq.scheduled,scheduled_at.lte.${new Date(Date.now() + 48 * 3600_000).toISOString()})`,
+          ),
+        { orgCol: "organization_id", positionCol: "position_id" },
       ),
       // Intake submissions still needing platform action (not yet converted or resolved)
-      count("intake_submissions", (q) =>
-        q.is("position_id", null).not("status", "in", "(approved,rejected)"),
+      count(
+        "intake_submissions",
+        (q) => q.is("position_id", null).not("status", "in", "(approved,rejected)"),
+        { orgCol: "organization_id" },
       ),
     ]);
 
@@ -171,78 +206,137 @@ export const getAdminOverview = createServerFn({ method: "GET" })
     ] = await Promise.all([
       s
         .from("intake_submissions")
-        .select("id,company_name,role_title,status,workspace_status,requisition_pending,created_at,position_id")
+        .select(
+          "id,company_name,role_title,status,workspace_status,requisition_pending,created_at,position_id,organization_id",
+        )
         .gte("created_at", weekAgo)
         .order("created_at", { ascending: false })
-        .limit(5),
+        .limit(5)
+        .then(async (res: { data: AnyRow[] | null; [key: string]: any }) => {
+          if (showTest) return res;
+          return {
+            ...res,
+            data: (res.data ?? []).filter((r: AnyRow) => !scope.orgIds.includes(r.organization_id)),
+          };
+        }),
       s
         .from("positions")
-        .select("id,title,status,created_at,organizations(name)")
+        .select("id,title,status,created_at,organization_id,is_test_record,organizations(name)")
         .in("status", ["submitted", "needs_clarification"])
+        .eq("is_test_record", false)
         .order("created_at", { ascending: true })
-        .limit(5),
+        .limit(5)
+        .then(async (res: { data: AnyRow[] | null; [key: string]: any }) => {
+          if (showTest) return res;
+          return {
+            ...res,
+            data: (res.data ?? []).filter((r: AnyRow) => !scope.orgIds.includes(r.organization_id)),
+          };
+        }),
       s
         .from("candidate_matches")
         .select(
-          "id,created_at,processing_state,candidate_profiles(full_name),positions(title,organizations(name))",
+          "id,created_at,processing_state,is_test_record,organization_id,position_id,candidate_profiles(full_name),positions(title,organizations(name))",
         )
         .in("processing_state", ["queued", "parsing", "enriching", "ready_to_score", "parsed"])
+        .eq("is_test_record", false)
         .gte("created_at", dayAgo)
         .order("created_at", { ascending: false })
         .limit(5),
       s
         .from("candidate_matches")
         .select(
-          "id,updated_at,candidate_profiles(full_name),positions(title,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score,fit_label)",
+          "id,updated_at,is_test_record,organization_id,position_id,candidate_profiles(full_name),positions(title,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score,fit_label)",
         )
         .eq("processing_state", "scored")
         .eq("admin_status", "pending")
+        .eq("is_test_record", false)
         .order("updated_at", { ascending: false })
         .limit(6),
       s
         .from("candidate_matches")
         .select(
-          "id,updated_at,candidate_profiles(full_name),positions(title,organizations(name))",
+          "id,updated_at,is_test_record,organization_id,position_id,candidate_profiles(full_name),positions(title,organizations(name))",
         )
         .eq("admin_status", "approved")
         .eq("client_visibility", "hidden")
+        .eq("is_test_record", false)
         .order("updated_at", { ascending: false })
         .limit(5),
       s
         .from("notification_deliveries")
         .select(
-          "id,status,error_message,updated_at,notifications(title,audience,recipient_user_id)",
+          "id,status,error_message,updated_at,notifications(title,audience,recipient_user_id,organization_id)",
         )
         .in("status", ["failed", "bounced", "suppressed"])
         .gte("created_at", weekAgo)
         .order("updated_at", { ascending: false })
-        .limit(6),
+        .limit(6)
+        .then(async (res: { data: AnyRow[] | null; [key: string]: any }) => {
+          if (showTest) return res;
+          return {
+            ...res,
+            data: (res.data ?? []).filter((r: AnyRow) => {
+              const orgId = r.notifications?.organization_id as string | null;
+              return !orgId || !scope.orgIds.includes(orgId);
+            }),
+          };
+        }),
       s
         .from("score_decisions")
         .select(
-          "id,decision_type,reason,created_at,candidate_match_id,candidate_matches(candidate_profiles(full_name),positions(title,organizations(name)))",
+          "id,decision_type,reason,created_at,candidate_match_id,candidate_matches!inner(organization_id, position_id, candidate_profiles(full_name),positions(title,organizations(name)))",
         )
         .eq("decision_type", "request_recompute")
         .gte("created_at", weekAgo)
         .order("created_at", { ascending: false })
-        .limit(5),
+        .limit(5)
+        .then(async (res: { data: AnyRow[] | null; [key: string]: any }) => {
+          if (showTest) return res;
+          return {
+            ...res,
+            data: (res.data ?? []).filter((r: AnyRow) => {
+              const m = r.candidate_matches as AnyRow | null;
+              if (!m) return true;
+              return !scope.orgIds.includes(m.organization_id) && !scope.positionIds.includes(m.position_id);
+            }),
+          };
+        }),
       s
         .from("interviews")
         .select(
-          "id,status,scheduled_at,requested_at,candidate_match_id,candidate_matches(candidate_profiles(full_name),positions(title,organizations(name)))",
+          "id,status,scheduled_at,requested_at,organization_id,position_id,candidate_match_id,candidate_matches(candidate_profiles(full_name),positions(title,organizations(name)))",
         )
         .or(
           `status.eq.requested,and(status.eq.scheduled,scheduled_at.lte.${new Date(Date.now() + 48 * 3600_000).toISOString()})`,
         )
         .order("scheduled_at", { ascending: true, nullsFirst: true })
-        .limit(6),
+        .limit(6)
+        .then(async (res: { data: AnyRow[] | null; [key: string]: any }) => {
+          if (showTest) return res;
+          return {
+            ...res,
+            data: (res.data ?? []).filter((r: AnyRow) => {
+              return !scope.orgIds.includes(r.organization_id) && !scope.positionIds.includes(r.position_id);
+            }),
+          };
+        }),
       s
         .from("intake_submissions")
-        .select("id,company_name,role_title,status,workspace_status,requisition_pending,created_at,position_id")
+        .select(
+          "id,company_name,role_title,status,workspace_status,requisition_pending,created_at,position_id,organization_id",
+        )
         .is("position_id", null)
         .not("status", "in", "(approved,rejected)")
         .order("created_at", { ascending: false })
-        .limit(6),
+        .limit(6)
+        .then(async (res: { data: AnyRow[] | null; [key: string]: any }) => {
+          if (showTest) return res;
+          return {
+            ...res,
+            data: (res.data ?? []).filter((r: AnyRow) => !scope.orgIds.includes(r.organization_id)),
+          };
+        }),
       s
         .from("audit_events")
         .select("id,action,entity_type,entity_id,created_at,organization_id")
@@ -256,7 +350,16 @@ export const getAdminOverview = createServerFn({ method: "GET" })
           "UPDATE",
         ])
         .order("created_at", { ascending: false })
-        .limit(10),
+        .limit(10)
+        .then(async (res: { data: AnyRow[] | null; [key: string]: any }) => {
+          if (showTest) return res;
+          return {
+            ...res,
+            data: (res.data ?? []).filter((r: AnyRow) => {
+              return !r.organization_id || !scope.orgIds.includes(r.organization_id);
+            }),
+          };
+        }),
     ]);
 
     return {
@@ -1700,11 +1803,19 @@ export const listOrgOptions = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
-    const { data } = await s
+    const { resolveShowTestRecordsForUser, excludeTestFlag } = await import(
+      "./admin-test-scope.server"
+    );
+    const showTest = await resolveShowTestRecordsForUser(s, context.userId);
+
+    let q = s
       .from("organizations")
       .select("id,name")
       .order("name", { ascending: true })
       .limit(500);
+    if (!showTest) q = excludeTestFlag(q);
+
+    const { data } = await q;
     return (data ?? []) as Array<{ id: string; name: string }>;
   });
 
@@ -1716,12 +1827,22 @@ export const listPositionOptions = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
+    const { resolveShowTestRecordsForUser, loadTestScope, excludeTestOrgs, excludeTestPositions } =
+      await import("./admin-test-scope.server");
+    const showTest = await resolveShowTestRecordsForUser(s, context.userId);
+    const scope = await loadTestScope(s, showTest);
+
     let q = s
       .from("positions")
       .select("id,title,organization_id,organizations(name)")
       .order("updated_at", { ascending: false })
       .limit(500);
     if (data.organization_id) q = q.eq("organization_id", data.organization_id);
+    if (!showTest) {
+      q = excludeTestOrgs(q, scope);
+      q = excludeTestPositions(q, scope);
+    }
+
     const { data: rows } = await q;
     return (rows ?? []) as AnyRow[];
   });
