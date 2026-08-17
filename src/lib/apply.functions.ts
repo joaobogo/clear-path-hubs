@@ -391,8 +391,8 @@ export const submitApplication = createServerFn({ method: "POST" })
       const fileRow = { id: fileId };
 
       // Step 6b: Detect image-only/unreadable PDF immediately.
-      const { validateCvTextLayer } = await import("./cv-extractor.server");
-      const ext = await validateCvTextLayer(bytes);
+      const { extractCvText } = await import("./cv-extractor.server");
+      const ext = await extractCvText(bytes, "application/pdf", cleanName);
       if (ext.needs_ocr) {
         await supabaseAdmin
           .from("files")
