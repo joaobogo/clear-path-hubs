@@ -1,3 +1,4 @@
+import { actorLabel } from "@/lib/notifications/notification-tiers";
 import { humanizeRoleAction } from "@/lib/client/role-audit-humanizer";
 import { formatDateTime } from "@/lib/format/datetime";
 
@@ -15,11 +16,16 @@ export function ActivitySection({ activity }: { activity: AnyRow[] }) {
       ) : (
         <ul className="divide-y text-sm">
           {activity.map((a: AnyRow) => (
-            <li key={a.id} className="py-2 flex items-center justify-between gap-3">
-              <span className="text-foreground/90">
-                {humanizeRoleAction(a.action)}
-              </span>
-              <span className="text-xs text-muted-foreground">
+            <li key={a.id} className="py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-3">
+              <div className="flex flex-col">
+                <span className="text-foreground/90 font-medium">
+                  {humanizeRoleAction(a.action)}
+                </span>
+                <span className="text-[11px] text-muted-foreground uppercase tracking-wider">
+                  {actorLabel(a.actor_name, "client")}
+                </span>
+              </div>
+              <span className="text-xs text-muted-foreground shrink-0">
                 {a.created_at
                   ? formatDateTime(a.created_at)
                   : ""}
