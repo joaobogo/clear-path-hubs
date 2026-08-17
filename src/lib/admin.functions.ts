@@ -350,7 +350,16 @@ export const getAdminOverview = createServerFn({ method: "GET" })
           "UPDATE",
         ])
         .order("created_at", { ascending: false })
-        .limit(10),
+        .limit(10)
+        .then(async (res: { data: AnyRow[] | null; [key: string]: any }) => {
+          if (showTest) return res;
+          return {
+            ...res,
+            data: (res.data ?? []).filter((r: AnyRow) => {
+              return !r.organization_id || !scope.orgIds.includes(r.organization_id);
+            }),
+          };
+        }),
     ]);
 
     return {
