@@ -63,7 +63,13 @@ import {
   MoreHorizontal,
   Milestone,
   ClipboardList,
+  ChevronRight,
+  Info,
 } from "lucide-react";
+import { FitHero, WhyWeShortlisted, RequirementCoverage, WhyThisCandidate, WhatNeedsValidation } from "@/components/client/candidate-detail/evidence";
+import { ExperienceTimeline, SkillsAndEducation, AvailabilityAndComp, ProfilePanel, LinksPanel } from "@/components/client/candidate-detail/profile";
+import { ActivitySection } from "@/components/client/candidate-detail/activity";
+
 import { DownloadCvButton } from "@/components/download-cv-button";
 import { ScoreExplainability } from "@/components/candidate/score-explainability";
 import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
