@@ -390,6 +390,21 @@ export const submitApplication = createServerFn({ method: "POST" })
       orphanUpload = { fileId, candidateProfileId, filename: cleanName, email: emailLower, fullName: data.full_name };
       const fileRow = { id: fileId };
 
+      // Step 6b: Detect image-only/unreadable PDF immediately.
+      const { validateCvTextLayer } = await import("./cv-extractor.server");
+      const ext = await validateCvTextLayer(bytes);
+      if (ext.needs_ocr) {
+        await supabaseAdmin
+          .from("files")
+          .update({
+            parse_state: "review_required",
+            parse_error_code: ext.reason === "cv_unreadable" || ext.chars === 0 ? "cv_unreadable" : "text_layer_missing",
+            parse_error: ext.reason ?? "Unreadable CV — OCR needed.",
+            extracted_text: ext.text || null,
+          })
+          .eq("id", fileId);
+      }
+
 
 
       // Point candidate profile at latest CV.
@@ -632,7 +647,7 @@ export const submitApplication = createServerFn({ method: "POST" })
 
 
 
-      return {
+      const result: SubmitApplicationResult = {
         ok: true,
         application_id: appRow.id,
         reference: ref6(appRow.id),
@@ -641,6 +656,16 @@ export const submitApplication = createServerFn({ method: "POST" })
         prior_closed: priorClosed,
         account: accountOutcome,
       };
+
+      if (ext.needs_ocr) {
+        (result as any).warning = "unreadable_file";
+        (result as any).message =
+          ext.reason === "cv_unreadable" || ext.chars === 0
+            ? "Your application was received, but we couldn't read the text in your PDF. Please ensure it's not a scanned image, or our team will review it manually."
+            : "Your application was received, but we couldn't extract enough text from your PDF. Our team will review it manually.";
+      }
+
+      return result;
     } catch (err: any) {
       console.error("[submitApplication]", trace_id, err);
 
