@@ -225,14 +225,22 @@ function ClientDetail() {
       {/* Each block loads and fails on its own: one broken panel never blanks
           the account view or escalates to the route-level error card. */}
       {tab === "overview" && (
-        <>
+        <div className="space-y-6">
           <Block name="account-operating-summary">
             <AccountOperatingSummary organizationId={org.id} onOpenTab={(t) => setTab(t)} />
           </Block>
+
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <StatCard label="CLIENT USERS" value={activeMemberCount} icon={Users2} />
+            <StatCard label="OPEN POSITIONS" value={positions.filter(p => p.status !== 'archived' && p.status !== 'closed').length} icon={Briefcase} />
+            <StatCard label="PARSED CVS" value={parsedCvCount} icon={FileText} />
+            <StatCard label="TOTAL CANDIDATES" value={org.parsed_cv_count?.[0]?.count ?? 0} icon={UserCheck} />
+          </div>
+
           <Block name="overview">
             <OverviewTab org={org} members={members} positions={positions} />
           </Block>
-        </>
+        </div>
       )}
       {tab === "company" && (
         <Block name="company">
@@ -281,7 +289,7 @@ function ClientDetail() {
       )}
       {tab === "documents" && (
         <Block name="documents">
-          <DocumentsTab id={id} parsedCvCount={(data as any).parsed_cv_count} />
+          <DocumentsTab id={id} parsedCvCount={parsedCvCount} />
         </Block>
       )}
       {tab === "activity" && (
@@ -346,11 +354,14 @@ function OverviewTab({ org, members, positions }: { org: any; members: any[]; po
   );
 }
 
-function StatCard({ label, value }: { label: string; value: number }) {
+function StatCard({ label, value, icon: Icon }: { label: string; value: number; icon?: typeof Users2 }) {
   return (
     <div className="rounded-lg border p-4">
-      <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
-      <div className="mt-1 text-2xl font-semibold tabular-nums">{value}</div>
+      <div className="flex items-center justify-between gap-2">
+        <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{label}</div>
+        {Icon && <Icon className="h-3.5 w-3.5 text-muted-foreground/50" />}
+      </div>
+      <div className="mt-1.5 text-2xl font-semibold tabular-nums tracking-tight">{value}</div>
     </div>
   );
 }
