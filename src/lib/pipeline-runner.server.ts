@@ -317,14 +317,15 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
       cvText = ext.text;
 
       if (ext.needs_ocr) {
+        const isUnreadable = ext.reason === "cv_unreadable" || ext.chars === 0;
         await setFile({
           parse_state: "review_required",
-          parse_error_code: "text_layer_missing",
-          parse_error: ext.reason ?? "Text layer missing — OCR needed.",
+          parse_error_code: isUnreadable ? "cv_unreadable" : "text_layer_missing",
+          parse_error: ext.reason ?? (isUnreadable ? "Unreadable CV — OCR needed." : "Text layer missing — OCR needed."),
         });
         await setState(s, matchId, "ocr_required", {
-          trace_id, code: "cv_unreadable",
-          message: ext.reason ?? "Text layer missing — OCR needed.",
+          trace_id, code: isUnreadable ? "cv_unreadable" : "text_layer_missing",
+          message: ext.reason ?? (isUnreadable ? "Unreadable CV — OCR needed." : "Text layer missing — OCR needed."),
         });
         await recordJob(s, matchId, "parse", "completed", trace_id);
         return { match_id: matchId, trace_id, final_state: "ocr_required", steps: [{ step: "parse", ok: true, note: "ocr_required" }] };
