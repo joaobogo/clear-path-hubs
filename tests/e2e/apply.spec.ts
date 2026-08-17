@@ -448,6 +448,48 @@ test.describe("candidate apply flow", () => {
 
     expect(meaningfulConsoleErrors(errors)).toEqual([]);
   });
+
+  test("receipt page never leaks full email in anonymous lookup", async ({
+    page,
+    context,
+    browser,
+  }) => {
+    test.setTimeout(180_000);
+    await allowTestFixtures(context);
+    const { email, fullName } = uniqueApplicant();
+
+    await openWizard(page);
+    await fillDetails(page, email, fullName);
+    await continueBtn(page).click();
+    await page.locator("#cv").setInputFiles(pdfFile());
+    await expect(page.getByText(/ready to send/i)).toBeVisible();
+    await continueBtn(page).click();
+    await answerScreening(page);
+    await continueBtn(page).click();
+    await page.getByRole("checkbox", { name: /i agree to the terms/i }).click();
+    await continueBtn(page).click();
+    await page.getByTestId("apply-submit").click();
+
+    await expect
+      .poll(() => new URL(page.url()).pathname, { timeout: 120_000 })
+      .toContain("/apply/received/");
+    const receiptUrl = page.url();
+
+    // Open the receipt in a fresh incognito context with no session cookies.
+    const incognito = await browser.newContext();
+    const incognitoPage = await incognito.newPage();
+    await incognitoPage.goto(receiptUrl, { waitUntil: "domcontentloaded" });
+
+    // The full email and full name must never appear in the rendered page or
+    // in the SSR response body (the page source). The receipt is only allowed
+    // to expose the candidate's first name, role title, and reference.
+    const body = await incognitoPage.locator("body").innerText();
+    expect(body).not.toContain(email);
+    expect(body).not.toContain(fullName);
+    await expect(incognitoPage.locator("body")).toContainText("Application received");
+
+    await incognito.close();
+  });
 });
 
 

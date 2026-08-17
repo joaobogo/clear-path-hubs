@@ -35,12 +35,11 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just "done".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-/api/public/qa-seed (destructive cleanup) and /api/public/bootstrap-admin (privilege escalation surface) must be impossible to invoke in production.
+getApplicationReceipt behind /apply/received/$applicationId returns candidate_email to anyone holding the application UUID, with no ownership check.
 
-1. Gate both routes behind an explicit environment flag (e.g. ENABLE_QA_ENDPOINTS) that is unset in production: when unset, return 404 before any token check runs.
-2. Keep them working in preview/dev when the flag is set, since the E2E suite depends on them.
-3. Do not modify what the endpoints do when enabled — only the gate.
-4. Verify: with the flag unset both routes return 404 even with a valid token; with the flag set the E2E seed path still works in preview. Also list for me every env var these routes read, so I can delete QA_SEED_TOKEN from the production environment myself."`;
+1. Remove candidate_email (and any other PII beyond first name) from the receipt payload for anonymous lookups. The receipt should show: reference code, role title, submitted date, and next-steps copy. If you keep any email display, mask it (j***@domain.com).
+2. Do not change the application submission flow, the confirmation navigation, or the reference code itself.
+3. Verify: submit a test application in preview, open the received URL in a logged-out incognito context, and confirm no full email appears in the page or in the network response body."`;
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
 const FONT_CSS_HREF =
