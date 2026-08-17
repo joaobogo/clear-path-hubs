@@ -19,7 +19,9 @@ import {
 } from "@/components/admin/interview-exceptions-panel";
 
 import { Link, useRouter } from "@tanstack/react-router";
-import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSuspenseQuery, useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { PanelState } from "@/components/admin/panel-state";
+
 import { RecordActivityTab } from "@/components/admin/record-activity-tab";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
@@ -776,59 +778,78 @@ function humanizeDiff(before: unknown, after: unknown): string[] {
 }
 
 export function AuditTab({ id }: { id: string }) {
-  const { data } = useSuspenseQuery({
+  const { data, isPending, isFetching, isError, error, refetch } = useQuery({
     queryKey: ["admin-position-audit", id],
     queryFn: () => getPositionActivity({ data: { id, limit: 200 } }),
+    placeholderData: (prev) => prev,
   });
+
   const rows = (data ?? []) as Any[];
+
   return (
-    <div className="overflow-hidden rounded-lg border bg-card">
-      <div className="border-b bg-muted/40 px-4 py-2 text-xs text-muted-foreground">
-        Immutable audit trail — every change to this position, oldest first at the bottom.
-      </div>
-      <ul className="divide-y">
-        {rows.map((r) => {
-          const notes = humanizeDiff(r.before_state, r.after_state);
-          return (
-            <li key={r.id} className="px-4 py-3 text-sm">
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <div className="font-medium">{r.action.replace(/_/g, " ")}</div>
-                <div className="text-xs text-muted-foreground">
-                  {new Date(r.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+    <PanelState
+      query={{ isPending, isLoading: isPending, isError, error, isFetching, refetch }}
+      skeletonRows={8}
+      showLoadingOverlay
+      isEmpty={rows.length === 0}
+      empty={
+        <div className="rounded-lg border bg-card px-4 py-10 text-center text-muted-foreground">
+          No audit events yet.
+        </div>
+      }
+    >
+      <div className="overflow-hidden rounded-lg border bg-card">
+        <div className="border-b bg-muted/40 px-4 py-2 text-xs text-muted-foreground">
+          Immutable audit trail — every change to this position, oldest first at the bottom.
+        </div>
+        <ul className="divide-y">
+          {rows.map((r) => {
+            const notes = humanizeDiff(r.before_state, r.after_state);
+            return (
+              <li key={r.id} className="px-4 py-3 text-sm">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <div className="font-medium">{r.action.replace(/_/g, " ")}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {new Date(r.created_at).toLocaleString(APP_LOCALE, {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                      timeZone: WORKSPACE_TIMEZONE,
+                    })}
+                  </div>
                 </div>
-              </div>
-              <div className="mt-0.5 text-xs text-muted-foreground">
-                Actor{" "}
-                <span className="font-mono">
-                  {r.actor_user_id ? String(r.actor_user_id).slice(0, 8) : "system"}
-                </span>
-                {r.trace_id && (
-                  <>
-                    {" · trace "}
-                    <span className="font-mono">{r.trace_id}</span>
-                  </>
-                )}
-              </div>
-              {notes.length > 0 && (
-                <ul className="mt-2 space-y-0.5 text-xs text-muted-foreground">
-                  {notes.slice(0, 8).map((n, i) => (
-                    <li key={i}>• {n}</li>
-                  ))}
-                  {notes.length > 8 && (
-                    <li className="italic">…and {notes.length - 8} more field changes</li>
+                <div className="mt-0.5 text-xs text-muted-foreground">
+                  Actor{" "}
+                  <span className="font-mono">
+                    {r.actor_user_id ? String(r.actor_user_id).slice(0, 8) : "system"}
+                  </span>
+                  {r.trace_id && (
+                    <>
+                      {" · trace "}
+                      <span className="font-mono">{r.trace_id}</span>
+                    </>
                   )}
-                </ul>
-              )}
-            </li>
-          );
-        })}
-        {rows.length === 0 && (
-          <li className="px-4 py-10 text-center text-muted-foreground">
-            No audit events yet.
-          </li>
-        )}
-      </ul>
-    </div>
+                </div>
+                {notes.length > 0 && (
+                  <ul className="mt-2 space-y-0.5 text-xs text-muted-foreground">
+                    {notes.slice(0, 8).map((n, i) => (
+                      <li key={i}>• {n}</li>
+                    ))}
+                    {notes.length > 8 && (
+                      <li className="italic">…and {notes.length - 8} more field changes</li>
+                    )}
+                  </ul>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </PanelState>
   );
 }
+
 
