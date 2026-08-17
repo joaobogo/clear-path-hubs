@@ -151,15 +151,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-028 · Client Talent Memory + Share Links (B5) · HIGH
-Scope: /client/memory, src/lib/client-memory.server.ts
-Defect: Add/edit/archive/rediscover must persist and emit audit events; revoked public URLs must stay dead.
-Required fix: Persist memory operations with timestamps; emit audit events; enforce revocation on share links.
+TEXTO DO USUÁRIO: "P-029 · Client Activity Feed (B6) · HIGH
+Scope: src/lib/client/role-audit-humanizer.ts
+Defect: Raw event names, actor hashes, Master Admin, System actions attributed to your team, blank actors.
+Required fix: Humanize all event labels; mask internal actor IDs; attribute System actions correctly; never show
+blank actors.
 Acceptance criteria:
-• Add a memory note; verify it persists after refresh.
-• Archive a note; verify it moves to archive and shows archived timestamp.
-• Create and revoke a share link; verify revoked URL returns nothing.
-• Verify /admin/organizations/$id shows the same memory and share history.
+• Open /client/positions/$id activity.
+• Verify no raw event names or actor hashes.
+• Verify a system-generated action is labeled System, not your team.
+• Verify a staff action is labeled TaaSFlow team.
 Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
