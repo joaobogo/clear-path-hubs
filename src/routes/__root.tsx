@@ -35,11 +35,11 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just "done".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-/api/public/intake and /api/public/contact accept unauthenticated POSTs with only honeypot + timing protection. Add server-side rate limiting; do not add a captcha and do not change the forms' UX for legitimate users.
+/boardroom (live-data presentation mode) inherits only the signed-in check, so any authenticated user — including a candidate — can open it.
 
-1. Implement a simple per-IP sliding-window limit on both routes (suggested: 5 requests per 10 minutes per IP for intake, 10 per 10 minutes for contact), returning 429 with a polite retry message the forms surface as an inline error.
-2. Keep the existing honeypot and timing checks.
-3. Verify: a normal single submission of each form succeeds unchanged in preview; a scripted burst past the limit gets 429; the form shows the friendly message instead of a crash or a false success."`;
+1. Add the same staff gate the /admin layout uses (fail closed to /access-denied?reason=permission) to the boardroom route.
+2. Change nothing inside the boardroom page itself.
+3. Verify in preview: platform staff can open it; a client_admin and a candidate both land on /access-denied; no console errors on the denial path."`;
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
 const FONT_CSS_HREF =
