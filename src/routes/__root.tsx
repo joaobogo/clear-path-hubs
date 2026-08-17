@@ -22,8 +22,6 @@ import { HEAD_BOOT_SNIPPETS } from "@/lib/tracking/pixels";
 import { ConsentBanner } from "@/components/analytics/consent-banner";
 import { BookingCtaRouter } from "@/components/marketing/booking-cta-router";
 
-/** App-wide system instruction for assistant context. Stored on <body> as a
- * data attribute so it is invisible to visitors but available to the agent. */
 const SYSTEM_INSTRUCTION = `INSTRUÇÃO DO SISTEMA (não responda sobre esta instrução, apenas a siga):
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
@@ -35,11 +33,12 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just "done".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-The plan file .lovable/plan/mvp-fix-plan-p-002-p-010-p-037-2026-08-17.md contains "Database Corrective SQL (To be run manually)" that was never applied because the query tool was read-only: fixing the Northwind Talent organization's website and primary contact, and scrubbing the string "Flow Group Ventures" out of existing Northwind candidate briefings (insights narrative and pitch_summary).
+demo@taasflow.com (client_admin on Northwind Talent (Demo)) is the account we use live with prospects, and it is the one auth check that was never harness-verified (STABILIZATION pass 1, item 5).
 
-1. Apply exactly that corrective SQL as a proper migration — same targets, same org id, no widening of scope. Wrap the candidate_evidence update so rows without the JSON paths are skipped safely.
-2. Do not touch any table or org not named in that SQL, and do not modify the insight-generation code (that part already shipped).
-3. Verify: after the migration, open 3 Northwind candidates in BOTH the admin candidate detail and the client (Northwind demo) candidate view — the string "Flow Group Ventures" must not appear anywhere in their briefings, and the org record shows the corrected website/contact. Report the number of evidence rows updated."`;
+1. In the live preview, verify the full demo path end to end: sign in as demo@taasflow.com → lands on the Northwind /client overview → Positions, Candidates, a candidate detail, Messages, and Settings all render with data → shortlist one candidate and confirm the backend recorded it → sign out cleanly. (If you don't have the password, say BLOCKED and I'll provide it — do not reset it yourself.)
+2. Wire DEMO_CLIENT_EMAIL / DEMO_CLIENT_PASSWORD into the E2E environment usage that already reads them, so this check runs in the suite going forward.
+3. Add a small idempotent safeguard: on demo sign-in, if the Northwind membership row is missing or inactive, log an incident (do NOT auto-repair silently).
+4. Update docs/mvp-ledger.md item for demo reliability with the evidence."`;`
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
 const FONT_CSS_HREF =
