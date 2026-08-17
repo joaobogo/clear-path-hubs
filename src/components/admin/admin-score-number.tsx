@@ -14,6 +14,7 @@ type RunLike = {
   /** 0-100: how much of the rubric the run's evidence could actually decide. */
   evidence_confidence?: number | null;
   fit_label?: string | null;
+  engine_version?: string | null;
   rubric_version_id?: string | null;
   rubric_versions?: { label?: string | null; version_number?: number | null } | null;
 };
@@ -24,6 +25,10 @@ export function rubricVersionLabel(run: RunLike | null | undefined): string {
     return `${rv.label ?? "rubric"} v${rv.version_number ?? "?"}`;
   }
   return run?.rubric_version_id ? `rubric ${run.rubric_version_id.slice(0, 8)}` : "rubric unlinked";
+}
+
+export function engineVersionLabel(run: RunLike | null | undefined): string {
+  return run?.engine_version ?? "engine unknown";
 }
 
 export function confidenceLabel(run: RunLike | null | undefined): string {
@@ -53,7 +58,7 @@ export function AdminScoreNumber({
   if (run?.score == null) {
     return <span className={`text-sm text-muted-foreground ${className}`}>Not scored</span>;
   }
-  const meta = `${confidenceLabel(run)} · ${rubricVersionLabel(run)}`;
+  const meta = `${confidenceLabel(run)} · ${rubricVersionLabel(run)} · ${engineVersionLabel(run)}`;
   const scoreLabel = `Score ${Math.round(Number(run.score))}`;
   if (size === "lg") {
     return (
