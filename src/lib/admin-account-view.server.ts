@@ -110,7 +110,8 @@ export async function loadAccountDelivery(
   const posRes = await a
     .from("positions")
     .select("id, status")
-    .eq("organization_id", organizationId);
+    .eq("organization_id", organizationId)
+    .not("status", "eq", "archived");
   if (posRes.error) throw new Error(posRes.error.message);
   const positions = (posRes.data ?? []) as Array<{ id: string; status: string }>;
   const openRoles = positions.filter((p) =>
