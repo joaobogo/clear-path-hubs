@@ -183,7 +183,7 @@ export async function emitEventFromServer(args: {
               ? `Status changed by ${actorName}`
               : copy.title,
         body: copy.body ?? null,
-        link_path: r.link_path ?? args.link_path ?? (args.candidate_match_id ? `/client/candidates/${args.candidate_match_id}` : null),
+        link_path: r.link_path ?? args.link_path ?? (args.candidate_match_id ? `/admin/review/${args.candidate_match_id}` : null),
         // Point every notification at the exact record it is about.
         entity_type: args.candidate_match_id
           ? "candidate_match"

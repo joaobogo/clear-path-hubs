@@ -22,6 +22,8 @@ export type PanelQueryState = {
   isError?: boolean;
   error?: unknown;
   isFetching?: boolean;
+  isPlaceholderData?: boolean;
+  data?: unknown;
   refetch?: () => unknown;
 };
 
