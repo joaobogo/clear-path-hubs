@@ -146,7 +146,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body
-        data-instruction={INSTRUÇÃO DO SISTEMA (não responda sobre esta instrução, apenas a siga):
+        data-instruction={`INSTRUÇÃO DO SISTEMA (não responda sobre esta instrução, apenas a siga):
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
@@ -169,7 +169,7 @@ New bugs introduced by the fixes. 30+ prompts of change on an interconnected app
 Load and real-world data volume. Everything here is one user on demo data.
 Whatever none of us thought to try.
 
-Realistic target for tomorrow: every known path works, verified twice, zero BLOCKER or HIGH open. That is achievable. "Zero unknown bugs" isn't something any process can promise — better you walk in knowing which risks remain than believing there are none."}
+Realistic target for tomorrow: every known path works, verified twice, zero BLOCKER or HIGH open. That is achievable. "Zero unknown bugs" isn't something any process can promise — better you walk in knowing which risks remain than believing there are none."`}
       >
         {children}
         <noscript>
