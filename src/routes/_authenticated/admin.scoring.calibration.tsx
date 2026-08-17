@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { CalibrationDesk, SegmentDrift } from "@/lib/scoring/calibration-desk";
 
-const deskQuery = {
+export const deskQuery = {
   queryKey: ["calibration-desk"],
   queryFn: () => getCalibrationDesk({ data: {} }),
 };
