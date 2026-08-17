@@ -151,17 +151,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-029 · Client Activity Feed (B6) · HIGH
-Scope: src/lib/client/role-audit-humanizer.ts
-Defect: Raw event names, actor hashes, Master Admin, System actions attributed to your team, blank actors.
-Required fix: Humanize all event labels; mask internal actor IDs; attribute System actions correctly; never show
-blank actors.
+TEXTO DO USUÁRIO: "P-030 · Staff Persona Masking (B7) · HIGH
+Scope: src/lib/staff-persona.server.ts, src/components/comms/thread-message.tsx
+Defect: Staff names/hashes visible to client; sender labels inconsistent.
+Required fix: Force all staff-originated messages to render as TaaSFlow team in client workspace, thread,
+previews, bell, and email event names.
 Acceptance criteria:
-• Open /client/positions/$id activity.
-• Verify no raw event names or actor hashes.
-• Verify a system-generated action is labeled System, not your team.
-• Verify a staff action is labeled TaaSFlow team.
-Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
+• Send a message from admin as João.
+• Open /client/messages and verify sender is TaaSFlow team.
+• Verify notification bell and email event copy also say TaaSFlow team.
+• Negative test: client-originated message still shows the client's name.
+Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
         }
       >
         {children}
