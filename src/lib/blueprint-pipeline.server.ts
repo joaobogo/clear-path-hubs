@@ -101,8 +101,6 @@ export async function runBlueprintPipeline(input: BlueprintRunInput): Promise<{ 
       await setStage(admin, input.positionId, "failed", result.reason);
       return { ok: false, reason: result.reason };
     }
-      return { ok: false, reason: result.reason };
-    }
     const bp = result.blueprint;
 
     // 4 — Apply to the position so every downstream system (scoring, job board,
