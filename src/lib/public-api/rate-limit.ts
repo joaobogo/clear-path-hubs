@@ -87,11 +87,11 @@ export function rateLimited(scope: string, ip: string, opts: Window): boolean {
 
 /** Budgets chosen per endpoint by what a single call costs us. */
 export const PUBLIC_RATE_LIMITS = {
-  /** Creates an auth user, an org and a position. */
-  intake: { max: 5, windowMs: 60_000 },
-  express_intake: { max: 5, windowMs: 60_000 },
-  /** Writes a message and sends staff alerts. */
-  contact: { max: 5, windowMs: 60_000 },
+  /** Creates an auth user, an org and a position. Sliding 10-minute window. */
+  intake: { max: 5, windowMs: 600_000 },
+  express_intake: { max: 5, windowMs: 600_000 },
+  /** Writes a message and sends staff alerts. Sliding 10-minute window. */
+  contact: { max: 10, windowMs: 600_000 },
   /** Calls a paid LLM with up to 60k characters. Strictest budget here. */
   jd_requirements: { max: 6, windowMs: 60_000 },
   /** Creates an auth user from a public form. */
@@ -162,6 +162,16 @@ export function withRateLimitHeaders(
   return new Response(response.body, { status: response.status, headers });
 }
 
+/**
+ * Polite, human retry copy for a 429 — the forms render this string inline, so
+ * it has to read like a sentence and quote a wait the user can act on.
+ */
+export function politeRetryMessage(retryAfterSeconds: number): string {
+  const minutes = Math.ceil(retryAfterSeconds / 60);
+  const wait = retryAfterSeconds <= 90 ? "a minute" : `${minutes} minutes`;
+  return `We've received a few submissions from your connection already. Please try again in ${wait}.`;
+}
+
 /** Standard 429 body, with budget, trace and retry headers attached. */
 export function rateLimitResponse(traceId: string, decision: RateLimitDecision) {
   return Response.json(
@@ -169,7 +179,7 @@ export function rateLimitResponse(traceId: string, decision: RateLimitDecision) 
       ok: false,
       trace_id: traceId,
       error: "rate_limited",
-      message: "Too many attempts from this connection. Wait a minute and try again.",
+      message: politeRetryMessage(decision.retryAfterSeconds),
       retry_after_seconds: decision.retryAfterSeconds,
     },
     { status: 429, headers: rateLimitHeaders(decision, traceId) },
