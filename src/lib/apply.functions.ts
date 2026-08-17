@@ -560,6 +560,7 @@ export const submitApplication = createServerFn({ method: "POST" })
           processing_state: "queued",
         })
 
+
         .select("id")
         .maybeSingle();
       if (cmErr && !String(cmErr.message).toLowerCase().includes("duplicate")) throw cmErr;
@@ -577,6 +578,7 @@ export const submitApplication = createServerFn({ method: "POST" })
       if (matchId && isDisqualified) {
         const checkRows = disqualifyingReasons.map((reason) => ({
           candidate_match_id: matchId,
+          position_id: data.position_id,
           organization_id: pos.organization_id,
           qualifier_key: "screening_dealbreaker",
           qualifier_label: "Screening dealbreaker",
@@ -586,6 +588,7 @@ export const submitApplication = createServerFn({ method: "POST" })
           evidence: { question: reason, outcome: "dealbreaker_hit" },
         }));
         await supabaseAdmin.from("eligibility_checks").insert(checkRows);
+
       }
 
 

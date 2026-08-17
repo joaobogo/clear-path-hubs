@@ -42,8 +42,9 @@ function EligibilityOutcome() {
             <Link to="/jobs">Browse other roles</Link>
           </Button>
           <Button asChild variant="outline" className="w-full">
-            <Link to="/me/index">View your profile</Link>
+            <Link to="/me/index" preload="intent">View your profile</Link>
           </Button>
+
         </div>
       </div>
 
