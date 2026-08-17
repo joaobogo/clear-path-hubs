@@ -554,7 +554,7 @@ export const submitApplication = createServerFn({ method: "POST" })
           position_id: data.position_id,
           organization_id: pos.organization_id,
           stage: isDisqualified ? "not_moving_forward" : "new",
-          admin_status: isDisqualified ? "archived" : "pending",
+          admin_status: isDisqualified ? "rejected" : "pending",
           client_visibility: "hidden",
           eligibility_status: isDisqualified ? "not_eligible" : "eligible",
           processing_state: "queued",
