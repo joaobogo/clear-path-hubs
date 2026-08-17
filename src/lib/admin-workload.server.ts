@@ -228,12 +228,17 @@ export async function loadWorkloadTable(
   };
 
   // Seed a row for every active staff member so zero-load people stay visible.
+  const staffIds = new Set(staff.map((s) => s.user_id));
   for (const s of staff) makeRow(s.user_id);
 
   for (const p of positions) {
     const pid = String(p['id']);
     const ownerRaw = p['owner_user_id'];
-    const key = typeof ownerRaw === "string" && ownerRaw ? ownerRaw : UNASSIGNED_KEY;
+    // Filter out non-staff owners from the workload table
+    const key =
+      typeof ownerRaw === "string" && ownerRaw && staffIds.has(ownerRaw)
+        ? ownerRaw
+        : UNASSIGNED_KEY;
     const row = makeRow(key);
     const b = bucket(pid);
 
