@@ -377,13 +377,17 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
         ok?: boolean;
         trace_id?: string;
         error?: string;
+        message?: string;
       };
       if (!res.ok || !json.ok) {
         submittedRef.current = false;
         setError(
-          json.error === "validation_failed"
-            ? "Please check the form and try again."
-            : "We couldn't send your message. Please try again.",
+          json.error === "rate_limited"
+            ? json.message ||
+              "We've received a few submissions from your connection already. Please try again shortly."
+            : json.error === "validation_failed"
+              ? "Please check the form and try again."
+              : "We couldn't send your message. Please try again.",
         );
         toast.error("Message failed to send.");
         return;
