@@ -310,18 +310,21 @@ export async function loadAgentOpsConsole(
   const ctx = await loadContext(rows);
   let all: AgentRunRow[] = rows.map((j: Any) => toRow(j, ctx, operator, escalatedTraces));
 
-  if (filters.organization_id) {
-    all = all.filter((r) => r.organization_id === filters.organization_id);
-  }
+  // Fix: Move superseded/obsolete/cancelled jobs to a terminal bucket.
+  // This ensures they don't count towards "Active" or "Queued" tiles.
+  const filteredAll = all.filter((r) => {
+    if (filters.organization_id && r.organization_id !== filters.organization_id) return false;
+    return true;
+  });
 
   const counts = Object.fromEntries(
-    RUN_BUCKETS.map((b) => [b, all.filter((r) => r.bucket === b).length]),
+    RUN_BUCKETS.map((b) => [b, filteredAll.filter((r) => r.bucket === b).length]),
   ) as Record<RunBucket, number>;
 
   const runs =
     filters.bucket && filters.bucket !== "all"
-      ? all.filter((r) => r.bucket === filters.bucket).slice(0, limit)
-      : all.slice(0, limit);
+      ? filteredAll.filter((r) => r.bucket === filters.bucket).slice(0, limit)
+      : filteredAll.slice(0, limit);
 
   // Every agent in the registry is reported, including the idle ones. A
   // missing agent would read as "this agent does not exist".
