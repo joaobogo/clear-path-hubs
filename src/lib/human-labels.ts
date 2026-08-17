@@ -51,14 +51,40 @@ const LABELS: Record<string, string> = {
   no_org: "No workspace selected",
 };
 
+/**
+ * Systemic sanitization for internal markers, trace IDs, and demo seeds.
+ *
+ * P-012/P-036: internal identifiers (pl_..., sv_..., UUIDs in text) and
+ * TAASFLOW_DEMO_SEED markers must never render on client surfaces.
+ */
+export function sanitizeInternalMarkers(value: string | null | undefined): string | null {
+  if (!value) return null;
+  let s = String(value);
+
+  // 1. Demo seed markers
+  s = s.replace(/TAASFLOW_DEMO_SEED:?\s*/gi, "");
+
+  // 2. Trace IDs (pl_..., sv_...)
+  s = s.replace(/\b(pl|sv)_[a-z0-9]{8,20}\b/gi, "");
+
+  // 3. UUID-like strings (actor hashes, etc.)
+  s = s.replace(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi, "");
+
+  // 4. Actor hashes/internal markers
+  s = s.replace(/\b[a-z0-9]{32,}\b/gi, "");
+
+  const cleaned = s.trim();
+  return cleaned.length > 0 ? cleaned : null;
+}
+
 export function formatEnumLabel(
   value: string | null | undefined,
   fallback = "",
 ): string {
   if (value == null) return fallback;
-  const raw = String(value).trim();
-  if (!raw) return fallback;
-  const key = raw.toLowerCase();
+  const sanitized = sanitizeInternalMarkers(String(value));
+  if (!sanitized) return fallback;
+  const key = sanitized.toLowerCase();
   const mapped = LABELS[key];
   if (mapped) return mapped;
   const words = key.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
@@ -87,9 +113,7 @@ export function formatEnumList(
 export function formatWorkAuthorization(raw: unknown): string | null {
   if (raw == null) return null;
   if (typeof raw === "string") {
-    const clean = raw.trim();
-    if (!clean || /TAASFLOW_DEMO_SEED/i.test(clean)) return null;
-    return clean;
+    return sanitizeInternalMarkers(raw);
   }
   const r = raw as Record<string, unknown>;
   const parts: string[] = [];
@@ -103,8 +127,9 @@ export function formatWorkAuthorization(raw: unknown): string | null {
     parts.push(r.eu_citizen ? "EU citizen" : "Non-EU citizen");
   }
   const note = String(r.notes ?? r.required ?? r.summary ?? r.value ?? r.note ?? "").trim();
-  if (note && !/TAASFLOW_DEMO_SEED/i.test(note)) {
-    parts.push(note);
+  const cleanedNote = sanitizeInternalMarkers(note);
+  if (cleanedNote) {
+    parts.push(cleanedNote);
   }
   return parts.length > 0 ? parts.join(" · ") : null;
 }
@@ -117,15 +142,15 @@ export function formatWorkAuthorization(raw: unknown): string | null {
  */
 export function formatAnswerValue(raw: unknown): string {
   if (raw == null || raw === "") return "—";
-  if (typeof raw === "string") return raw;
+  if (typeof raw === "string") return sanitizeInternalMarkers(raw) ?? "—";
   if (typeof raw === "number" || typeof raw === "boolean") return String(raw);
   if (Array.isArray(raw)) {
-    return raw.map((v) => formatAnswerValue(v)).filter(Boolean).join(", ") || "—";
+    return raw.map((v) => formatAnswerValue(v)).filter((v) => v !== "—").join(", ") || "—";
   }
   const r = raw as Record<string, unknown>;
   if ("value" in r) return formatAnswerValue(r.value);
   if ("answer" in r) return formatAnswerValue(r.answer);
-  if ("label" in r) return String(r.label);
+  if ("label" in r) return sanitizeInternalMarkers(String(r.label)) ?? "—";
   // Fallback: pretty-print object keys that have non-empty values.
   const entries = Object.entries(r)
     .filter(([, v]) => v != null && v !== "")

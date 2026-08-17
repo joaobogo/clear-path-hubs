@@ -74,7 +74,13 @@ export function actorLabel(event: HistoryEvent): string {
   const name = event.actor_name ?? systemActorLabel(event.source);
   // P-019: Humanize actors in the admin view. Teammates and external actors label as Client.
   if (event.actor_role === "client") return "Client";
-  if (event.actor_role === "staff" || event.actor_role === "admin") return "Staff";
+  if (
+    event.actor_role === "staff" ||
+    event.actor_role === "admin" ||
+    event.actor_role === "platform_admin" ||
+    event.actor_role === "operations"
+  )
+    return "Staff";
   if (name.includes("(Staff)")) return "Staff";
   if (name === "TaaSFlow team") return "Staff";
   return name;
