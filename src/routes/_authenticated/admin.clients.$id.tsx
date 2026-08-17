@@ -60,6 +60,7 @@ import {
   MessagesSquare,
   ClipboardCheck,
   KeyRound,
+  BadgeCheck,
 } from "lucide-react";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
@@ -1020,7 +1021,6 @@ function MessagesTab({ orgId }: { orgId: string }) {
 
 // ── Shares tab ─────────────────────────────────────────────────────────────
 function SharesTab({ orgId }: { orgId: string }) {
-  const { listShortlistShares } = await import("@/lib/shares.functions");
   const { data } = useSuspenseQuery({
     queryKey: ["admin-client-shares", orgId],
     queryFn: () => listShortlistShares({ data: { orgId } }),
@@ -1054,7 +1054,7 @@ function SharesTab({ orgId }: { orgId: string }) {
               <td className="px-3 py-2 tabular-nums">{s.candidate_count}</td>
               <td className="px-3 py-2">
                 <Badge
-                  variant={s.status === "active" ? "success" : "secondary"}
+                  variant={s.status === "active" ? "default" : "secondary"}
                   className="capitalize"
                 >
                   {s.status}
@@ -1093,7 +1093,6 @@ function SharesTab({ orgId }: { orgId: string }) {
 
 // ── Talent Memory tab ──────────────────────────────────────────────────────
 function TalentMemoryTab({ orgId }: { orgId: string }) {
-  const { listSilverMedalists } = await import("@/lib/talent-memory.functions");
   const { data } = useSuspenseQuery({
     queryKey: ["admin-client-talent-memory", orgId],
     queryFn: () => listSilverMedalists({ data: { orgId, status: "all" } }),
@@ -1128,7 +1127,7 @@ function TalentMemoryTab({ orgId }: { orgId: string }) {
               </td>
               <td className="px-3 py-2">
                 <Badge
-                  variant={m.status === "active" ? "success" : "secondary"}
+                  variant={m.status === "active" ? "default" : "secondary"}
                   className="capitalize"
                 >
                   {m.status}
