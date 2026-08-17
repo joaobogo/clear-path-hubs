@@ -1000,6 +1000,15 @@ function ApplyPage() {
         >
           {step === 1 && (
             <div className="space-y-5" data-hydrated={signedIn === null ? "pending" : "ready"}>
+              {serverError && (
+                <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
+                  <p className="font-semibold">Submission failed</p>
+                  <p>{serverError.message}</p>
+                  {serverError.trace_id && (
+                    <p className="mt-1 text-xs opacity-80">Reference: {serverError.trace_id.slice(0, 8).toUpperCase()}</p>
+                  )}
+                </div>
+              )}
 
               {/* State the cost of applying before it is paid, so nobody
                   starts on a phone without the one file they will need. */}
