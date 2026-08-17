@@ -327,7 +327,7 @@ export const listMyNotifications = createServerFn({ method: "GET" })
 
     const { data, error } = await context.supabase
       .from("notifications")
-      .select("id, event_type, audience, title, body, link_path, read_at, resolved_at, entity_type, entity_id, created_at, organization_id, event_id")
+      .select("id, event_type, audience:audience::text, title, body, link_path, read_at, resolved_at, entity_type, entity_id, created_at, organization_id, event_id")
       .eq("recipient_user_id", context.userId)
       .is("resolved_at", null)
       .order("created_at", { ascending: false })
