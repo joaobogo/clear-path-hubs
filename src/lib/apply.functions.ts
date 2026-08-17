@@ -418,6 +418,32 @@ export const submitApplication = createServerFn({ method: "POST" })
             extracted_text: ext.text || null,
           })
           .eq("id", fileId);
+
+        // Notify staff of unreadable CV immediately.
+        try {
+          const { processLeadEvent } = await import("./leads/lead-pipeline.server");
+          await processLeadEvent({
+            leadType: "candidate_application",
+            sourceId: fileId,
+            source: "unreadable_cv_on_submit",
+            sourcePage: `/jobs/${data.position_id}/apply`,
+            fullName: data.full_name,
+            email: emailLower,
+            facts: [
+              { label: "Issue", value: "Unreadable PDF/Scanned Image" },
+              { label: "Reason", value: ext.reason ?? "unknown" },
+              { label: "Characters extracted", value: String(ext.chars) },
+              { label: "Trace", value: trace_id },
+            ],
+            recordTable: "files",
+            recordId: fileId,
+            positionId: data.position_id,
+            linkPath: "/admin/candidates",
+            priority: "medium",
+          });
+        } catch (notifyErr) {
+          console.error("[submitApplication] unreadable CV lead failed", trace_id, notifyErr);
+        }
       }
 
 
