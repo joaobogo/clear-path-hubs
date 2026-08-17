@@ -73,7 +73,7 @@ export function sanitizeInternalMarkers(value: string | null | undefined): strin
   // 4. Actor hashes/internal markers
   s = s.replace(/\b[a-z0-9]{32,}\b/gi, "");
 
-  const cleaned = s.trim();
+  const cleaned = s.replace(/\s+/g, " ").trim();
   return cleaned.length > 0 ? cleaned : null;
 }
 
