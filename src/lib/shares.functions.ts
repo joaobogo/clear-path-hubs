@@ -5,6 +5,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { toClientCandidateDTO } from "@/lib/client-kpi.server";
+import { writeAudit } from "@/lib/admin.functions";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -136,6 +137,19 @@ export const createShortlistShare = createServerFn({ method: "POST" })
       .single();
     if (insErr) throw new Error(insErr.message);
 
+    await writeAudit({
+      actor: context.userId,
+      action: "shortlist_share.created",
+      entity_type: "shortlist_share",
+      entity_id: (inserted as AnyRow).id,
+      organization_id: data.orgId,
+      after: {
+        title: data.title,
+        candidate_count: data.matchIds.length,
+        expires_at,
+      },
+    });
+
     return {
       id: (inserted as AnyRow).id,
       token: (inserted as AnyRow).token,
@@ -209,6 +223,14 @@ export const revokeShortlistShare = createServerFn({ method: "POST" })
       .eq("id", data.id)
       .eq("organization_id", data.orgId);
     if (error) throw new Error(error.message);
+
+    await writeAudit({
+      actor: context.userId,
+      action: "shortlist_share.revoked",
+      entity_type: "shortlist_share",
+      entity_id: data.id,
+      organization_id: data.orgId,
+    });
     return { ok: true as const };
   });
 
@@ -321,6 +343,19 @@ export const getShortlistShareByToken = createServerFn({ method: "GET" })
           audit_events: [],
         });
       });
+
+    // Audit public access
+    await (supabaseAdmin as AnyRow).from("audit_events").insert({
+      action: "shortlist_share.accessed",
+      entity_type: "shortlist_share",
+      entity_id: share.id,
+      organization_id: share.organization_id,
+      actor_user_id: null, // Public access
+      after_state: {
+        token_preview: data.token.slice(0, 8) + "...",
+        ip_hash: null, // Could add if req available
+      },
+    });
 
     // Fire-and-forget view counter — never let it break the load.
     void supabaseAdmin
