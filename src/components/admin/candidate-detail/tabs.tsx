@@ -879,7 +879,7 @@ export function HistoryTab({
 }
 
 // ── Client preview ─────────────────────────────────────────────────────────
-export function PreviewTab({ matchId }: { matchId: string }) {
+export function PreviewTab({ matchId, match: m }: { matchId: string; match?: Any }) {
   const previewFn = useServerFn(getClientPreview);
   const { data, isLoading, error } = useQuery({
     queryKey: ["client-preview", matchId],
@@ -892,14 +892,59 @@ export function PreviewTab({ matchId }: { matchId: string }) {
         <AlertDescription>Preview failed: {(error as Error).message}</AlertDescription>
       </Alert>
     );
-  if (!data)
+  if (!data) {
+    const isApproved = m?.admin_status === "approved";
+    const isVisible = m?.client_visibility === "visible";
+    
+    let message = "No client-visible data yet. The candidate is still internal.";
+    if (isApproved && !isVisible) {
+      message = "Candidate is approved but Hidden. Publish them to populate the client view.";
+    } else if (isApproved && isVisible) {
+      message = "Generating preview... (the record exists but the DTO failed to assemble)";
+    }
+
     return (
       <div className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
-        No client-visible data yet. Approve for client to populate the client view.
+        {message}
       </div>
     );
-  const dto = data as Any;
+  }
+  const dto = (data as Any).candidate;
+  const interviews = (data as Any).interviews ?? [];
+  const decisions = (data as Any).decisions ?? [];
+
   return (
+    <div className="space-y-6">
+      <Alert variant="info" className="taas-bg-info-soft border-info/20">
+        <Eye className="h-4 w-4 taas-tx-info" />
+        <AlertDescription className="text-xs text-info/80">
+          This is an exact preview of what the client sees in their workspace.
+        </AlertDescription>
+      </Alert>
+
+      <div className="rounded-lg border bg-background p-6 shadow-sm">
+        <FitHero candidate={dto} />
+        <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-12">
+          <div className="space-y-8 lg:col-span-8">
+            <WhyWeShortlisted candidate={dto} />
+            <RequirementCoverage candidate={dto} />
+            <WhyThisCandidate candidate={dto} />
+            <WhatNeedsValidation candidate={dto} />
+            <ExperienceTimeline candidate={dto} />
+            <SkillsAndEducation candidate={dto} />
+          </div>
+          <aside className="space-y-6 lg:col-span-4">
+            <AvailabilityAndComp candidate={dto} />
+            <ProfilePanel candidate={dto} />
+            <LinksPanel candidate={dto} />
+            {interviews.length > 0 && (
+              <ActivitySection interviews={interviews} decisions={decisions} />
+            )}
+          </aside>
+        </div>
+      </div>
+    </div>
+  );
     <div className="rounded-lg border-2 border-dashed bg-background p-5">
       <div className="mb-3 text-xs uppercase tracking-wide text-muted-foreground">
         Client view — exactly what the client will see
