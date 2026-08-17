@@ -84,6 +84,9 @@ export const reassignPositionOwner = createServerFn({ method: "POST" })
     if (pos.error) throw new Error(pos.error.message);
     if (!pos.data) throw new Error("Position not found");
 
+    const { assertAllowedOwner } = await import("./ownership-guard.server");
+    await assertAllowedOwner(supabaseAdmin as never, data.owner_user_id);
+
     const upd = await admin
       .from("positions")
       .update({ owner_user_id: data.owner_user_id })

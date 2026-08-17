@@ -489,14 +489,17 @@ export async function setPositionOwnership(
     backup_owner_user_id: string | null;
   };
 
+  const { assertAllowedOwner } = await import("./ownership-guard.server");
   const patch: Record<string, unknown> = {};
   if (input.ownerUserId !== undefined) {
+    await assertAllowedOwner(admin, input.ownerUserId);
     patch['owner_user_id'] = input.ownerUserId;
     patch['needs_reassignment'] = false;
     patch['reassignment_flagged_at'] = null;
     patch['reassignment_reason'] = null;
   }
   if (input.backupOwnerUserId !== undefined) {
+    await assertAllowedOwner(admin, input.backupOwnerUserId);
     patch['backup_owner_user_id'] = input.backupOwnerUserId;
   }
   if (Object.keys(patch).length === 0) return { ok: true };
