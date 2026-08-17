@@ -3,6 +3,9 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import type { SessionContext, SessionMembership, MembershipRole } from "./roles";
 
+const DEMO_CLIENT_EMAIL = "demo@taasflow.com";
+const NORTHWIND_ORG_ID = "0c86fa1b-94ee-46b8-9a11-a42cee39bfed";
+
 // ─────────────────────────────────────────────────────────────
 // Session context: memberships, role, org identity for the caller.
 // Public (no auth) → returns null so the login page can call it safely.
