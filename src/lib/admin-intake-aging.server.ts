@@ -64,10 +64,10 @@ export async function loadIntakeAging(
     .neq("status", "rejected")
     .order("created_at", { ascending: true });
 
-  if (opts.filter !== "all") {
+  if (opts.filter && opts.filter !== "all") {
     q = q.limit(400);
   } else {
-    q = q.limit(limit);
+    q = q.limit(25);
   }
   q = excludeTestOrgs(q, scope);
 
