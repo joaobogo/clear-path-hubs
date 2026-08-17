@@ -99,9 +99,9 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       count("candidate_matches", (q) =>
         q.eq("admin_status", "approved").eq("client_visibility", "hidden"),
       ),
-      // Email/message delivery failures to triage
+      // Email/message delivery failures to triage (7d canonical)
       count("notification_deliveries", (q) =>
-        q.in("status", ["failed", "bounced", "suppressed"]),
+        q.in("status", ["failed", "bounced", "suppressed"]).gte("created_at", weekAgo),
       ),
       // Client-initiated recompute / feedback in the last 7d
       count("score_decisions", (q) =>
@@ -184,6 +184,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
           "id,status,error_message,updated_at,notifications(title,audience,recipient_user_id)",
         )
         .in("status", ["failed", "bounced", "suppressed"])
+        .gte("created_at", weekAgo)
         .order("updated_at", { ascending: false })
         .limit(6),
       s
@@ -493,11 +494,13 @@ export const getClient = createServerFn({ method: "GET" })
     await requireStaff(context.userId);
     const s = await getAdmin();
     const [orgRes, membersRes, positionsRes] = await Promise.all([
-      s.from("organizations").select("*").eq("id", data.id).maybeSingle(),
+      s.from("organizations").select("*, memberships(count), parsed_cv_count:candidate_profiles(count)").eq("id", data.id).maybeSingle(),
       s
         .from("memberships")
         .select("id,role,status,created_at,profiles(auth_user_id,full_name,email)")
         .eq("organization_id", data.id)
+        .in("role", ["client_admin", "client_editor", "client_viewer"])
+        .neq("status", "removed")
         .order("created_at", { ascending: false }),
       s
         .from("positions")
@@ -1854,7 +1857,7 @@ export const getClientCandidatesForOrg = createServerFn({ method: "GET" })
     const { data: rows } = await s
       .from("candidate_matches")
       .select(
-        "id,stage,processing_state,recommendation,canonical_state,admin_status,client_visibility,updated_at,candidate_profiles(id,full_name,email),positions(id,title)",
+        "id,stage,processing_state,recommendation,canonical_state,admin_status,client_visibility,updated_at,candidate_profiles(id,full_name,email),positions(id,title),score_runs:approved_score_run_id(score,fit_label,fit_band)",
       )
       .eq("organization_id", data.id)
       .order("updated_at", { ascending: false })

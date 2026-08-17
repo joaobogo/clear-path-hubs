@@ -156,6 +156,9 @@ function ClientDetail() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const positions = data.positions as any[];
 
+  const activeMemberCount = org.memberships?.[0]?.count ?? members.length;
+  const parsedCvCount = org.parsed_cv_count?.[0]?.count ?? 0;
+
   const setTab = (t: TabKey) => navigate({ search: { tab: t } });
 
   return (
@@ -222,14 +225,22 @@ function ClientDetail() {
       {/* Each block loads and fails on its own: one broken panel never blanks
           the account view or escalates to the route-level error card. */}
       {tab === "overview" && (
-        <>
+        <div className="space-y-6">
           <Block name="account-operating-summary">
             <AccountOperatingSummary organizationId={org.id} onOpenTab={(t) => setTab(t)} />
           </Block>
+
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <StatCard label="CLIENT USERS" value={activeMemberCount} icon={Users2} />
+            <StatCard label="OPEN POSITIONS" value={positions.filter(p => p.status !== 'archived' && p.status !== 'closed').length} icon={Briefcase} />
+            <StatCard label="PARSED CVS" value={parsedCvCount} icon={FileText} />
+            <StatCard label="TOTAL CANDIDATES" value={org.parsed_cv_count?.[0]?.count ?? 0} icon={UserCheck} />
+          </div>
+
           <Block name="overview">
             <OverviewTab org={org} members={members} positions={positions} />
           </Block>
-        </>
+        </div>
       )}
       {tab === "company" && (
         <Block name="company">
@@ -278,7 +289,7 @@ function ClientDetail() {
       )}
       {tab === "documents" && (
         <Block name="documents">
-          <DocumentsTab id={id} />
+          <DocumentsTab id={id} parsedCvCount={parsedCvCount} />
         </Block>
       )}
       {tab === "activity" && (
@@ -343,11 +354,14 @@ function OverviewTab({ org, members, positions }: { org: any; members: any[]; po
   );
 }
 
-function StatCard({ label, value }: { label: string; value: number }) {
+function StatCard({ label, value, icon: Icon }: { label: string; value: number; icon?: typeof Users2 }) {
   return (
     <div className="rounded-lg border p-4">
-      <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
-      <div className="mt-1 text-2xl font-semibold tabular-nums">{value}</div>
+      <div className="flex items-center justify-between gap-2">
+        <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{label}</div>
+        {Icon && <Icon className="h-3.5 w-3.5 text-muted-foreground/50" />}
+      </div>
+      <div className="mt-1.5 text-2xl font-semibold tabular-nums tracking-tight">{value}</div>
     </div>
   );
 }
@@ -928,7 +942,7 @@ function NotesTab({ org }: { org: any }) {
 }
 
 // ── Documents tab ─────────────────────────────────────────────────────────
-function DocumentsTab({ id }: { id: string }) {
+function DocumentsTab({ id, parsedCvCount }: { id: string; parsedCvCount?: number }) {
   const { data } = useSuspenseQuery({
     queryKey: ["admin-client-documents", id],
     queryFn: () => getClientDocuments({ data: { id, limit: 100 } }),
@@ -939,6 +953,7 @@ function DocumentsTab({ id }: { id: string }) {
     <div className="overflow-hidden rounded-lg border bg-card">
       <header className="border-b px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
         Documents linked to this client's candidates ({rows.length})
+        {parsedCvCount !== undefined && ` · Parsed: ${parsedCvCount}`}
       </header>
       <table className="w-full text-sm">
         <thead className="bg-muted/30 text-left text-xs uppercase text-muted-foreground">

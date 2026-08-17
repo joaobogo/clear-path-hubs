@@ -153,18 +153,16 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Standing rules apply.
 
-DEFECT (HIGH, proven): Screening questions can be defined with dealbreakers, but dealbreaker answers do not record eligibility (see F-008), and submitted answers reach the admin record as raw JSON ({"value":8}, {"visa_required":false,...}) instead of readable values. Consent capture is not clearly displayed.
+DEFECT: Role visibility discrepancies in admin workloads and reports. Archived or closed roles incorrectly appearing in delivery counts. Staff-only metrics including non-staff owners.
 
-REQUIRED FIX: Render screening questions on the public application form, require answers, store them verbatim, and make dealbreaker answers write eligibility (integrating with P15's F-008 work) with an honest applicant-facing outcome. On admin surfaces, format stored answers with human labels — no raw JSON rendered to a human anywhere. Capture and display consent status.
+REQUIRED FIX: Enforce staff-only owner filtering in all canonical delivery and workload queries. Exclude archived positions from delivery metrics and account summaries. Standardize the delivery failure window to 7 days across all surfaces.
 
 ACCEPTANCE CRITERIA:
-1. Apply to a role with screening questions: all questions render and are required.
-2. Answer a dealbreaker negatively: an eligibility record is created with status ineligible, the applicant sees an honest outcome, and the admin record shows the dealbreaker reason.
-3. Open the admin candidate record: every answer is human-readable; no {"value":…} or raw JSON anywhere (check work authorization too).
-4. Consent status is recorded and displayed on the admin record.
-5. All submitted fields appear verbatim on the admin record (name, contact, links, answers).
+1. Delivery metrics (open roles, candidates in pipeline) exclude archived positions.
+2. Workload and attention-queue metrics reflect only staff-owned records.
+3. Account operating summary (delivery block) aligns with these rules.
 
-Covers C5 + C6 (PDF P-046, P-047)."`
+Covers A15 + A16 + A17 (PDF P-015, P-016, P-017)."`
         }
       >
         {children}
