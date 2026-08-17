@@ -1062,25 +1062,23 @@ export function blueprintStageIndex(status: string, position?: {
   submitted_at?: string | Date;
   status?: string;
 }): number {
-  // If the role exists at all, the first stage ("Role created") is complete.
+  // Terminal states.
   if (status === "ready") return BLUEPRINT_STAGES.length;
   if (status === "failed") return -1;
 
+  // Prioritize the reactive blueprint_status if it has reached a specific pipeline stage.
   const idx = BLUEPRINT_STAGES.findIndex((s) => s.key === status);
-  let finalIdx = idx;
+  if (idx !== -1) return idx;
 
-  // Derive from position lifecycle if the status field is stale or unset.
+  // Fallback to position lifecycle for "stale" or "not_started" roles.
+  // Note: We no longer treat 'under_review' (admin action) as a stage 3 trigger,
+  // letting the pipeline report its own progress.
   if (position?.status === "active" || position?.status === "needs_clarification" || position?.status === "approved") {
-    finalIdx = Math.max(finalIdx, BLUEPRINT_STAGES.length);
-  } else if (position?.status === "under_review") {
-    finalIdx = Math.max(finalIdx, 3); // "Building the role blueprint"
-  } else if (position?.submitted_at) {
-    finalIdx = Math.max(finalIdx, 1); // "Reading your job description"
-  } else if (position?.created_at || (position as any)?.id) {
-    finalIdx = Math.max(finalIdx, 0); // "Role created"
+    return BLUEPRINT_STAGES.length;
   }
-
-  return finalIdx;
+  
+  // If the role exists, "Role created" is the baseline.
+  return 0;
 }
 
 export function blueprintProgress(status: string, position?: {

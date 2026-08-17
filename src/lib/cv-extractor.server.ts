@@ -18,6 +18,12 @@ export type ExtractResult = {
   reason?: string;
 };
 
+/** Validates a CV's text layer immediately after upload to detect scanned images. */
+export async function validateCvTextLayer(bytes: Uint8Array): Promise<ExtractResult> {
+  // We assume PDF based on the upload constraints in the app.
+  return extractCvText(bytes, "application/pdf");
+}
+
 function normalize(s: string): string {
   return s
     .replace(/\r\n?/g, "\n")
@@ -48,13 +54,15 @@ export async function extractCvText(bytes: Uint8Array, mime: string, filename?: 
       if (merged.length >= 200) {
         return { text: merged, needs_ocr: false, extractor: "pdf", page_count: totalPages ?? null, chars: merged.length };
       }
+      // If we got exactly zero characters, it's definitely unreadable (scanned/image).
+      // If we got some text but it's very short, it's likely a header-only or bad extract.
       return {
         text: merged,
         needs_ocr: true,
         extractor: "pdf",
         page_count: totalPages ?? null,
         chars: merged.length,
-        reason: merged.length === 0 ? "empty_text_layer" : "text_layer_too_short",
+        reason: merged.length === 0 ? "cv_unreadable" : "text_layer_too_short",
       };
     } catch (e) {
       const msg = (e as Error).message ?? "pdf_parse_failed";

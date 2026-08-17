@@ -160,10 +160,12 @@ export function GeneratedBlueprintPanel({
               {ready || failed ? "Role blueprint" : "Your role is being built"}
             </h2>
             <p className="text-sm text-muted-foreground">
-              {ready
+            {ready
                 ? "Prepared from your job description and public company information. Every answer is editable."
                 : failed
-                  ? "Your role was saved, but TaaSFlow could not finish analyzing the document. Try the analysis again or paste the job description."
+                  ? position?.blueprint_error === "job_description_unreadable" 
+                    ? "TaaSFlow could not read the job description document. Please upload a clear PDF/DOCX or paste the text instead."
+                    : "Your role was saved, but TaaSFlow could not finish analyzing the document. Try the analysis again or paste the job description."
                   : "TaaSFlow is analyzing the job description, completing the role blueprint, calibrating the screening criteria, and preparing the sourcing plan. You can review or edit every detail as soon as the blueprint is ready."}
             </p>
           </div>

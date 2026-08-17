@@ -7,6 +7,7 @@ import { applySchema, composeLocation, type ApplyInput } from "./apply-schema";
 import { normalizeCompletionSeconds } from "./jobs/apply-effort";
 import type { ExistingApplicationSummary } from "./candidate/existing-application.server";
 import { throttlePublicFn } from "@/lib/public-api/server-fn-guard";
+import { logApplicationIncident } from "./incident-logger.server";
 
 
 export type SubmitApplicationResult =
@@ -288,7 +289,7 @@ export const submitApplication = createServerFn({ method: "POST" })
       const CLOSED_STATUSES = ["withdrawn", "rejected", "archived"] as const;
       const { data: allPrior, error: appFindErr } = await supabaseAdmin
         .from("applications")
-        .select("id,created_at,status")
+        .select("id,created_at,status,applied_at")
         .eq("candidate_profile_id", candidateProfileId)
         .eq("position_id", data.position_id)
         .order("created_at", { ascending: true });
@@ -301,18 +302,33 @@ export const submitApplication = createServerFn({ method: "POST" })
       );
 
       if (existingApp) {
-        const { loadExistingApplicationSummary } = await import(
-          "./candidate/existing-application.server"
-        );
-        const existing = await loadExistingApplicationSummary(existingApp.id);
+        // If the duplicate application was submitted very recently (within 5 minutes),
+        // we assume it's a double-click or accidental refresh and return the existing record.
+        const submittedAt = new Date(existingApp.applied_at || (existingApp as any).created_at).getTime();
+        const now = Date.now();
+        const diffMinutes = (now - submittedAt) / 1000 / 60;
+
+        if (diffMinutes < 5) {
+          const { loadExistingApplicationSummary } = await import(
+            "./candidate/existing-application.server"
+          );
+          return {
+            ok: true,
+            application_id: existingApp.id,
+            reference: ref6(existingApp.id),
+            tracking_path: `/apply/received/${existingApp.id}`,
+            deduped: true,
+            existing: await loadExistingApplicationSummary(existingApp.id),
+            account: accountOutcome,
+          };
+        }
+
+        // If it's an older application, we reject the submission with a clear message.
         return {
-          ok: true,
-          application_id: existingApp.id,
-          reference: ref6(existingApp.id),
-          tracking_path: `/apply/received/${existingApp.id}`,
-          deduped: true,
-          existing,
-          account: accountOutcome,
+          ok: false,
+          trace_id,
+          code: "already_applied",
+          message: `You have already applied for the ${pos.title} role. You can check your application status or update your details in your candidate portal.`,
         };
       }
 
@@ -389,12 +405,53 @@ export const submitApplication = createServerFn({ method: "POST" })
       orphanUpload = { fileId, candidateProfileId, filename: cleanName, email: emailLower, fullName: data.full_name };
       const fileRow = { id: fileId };
 
+      // Step 6b: Detect image-only/unreadable PDF immediately.
+      const { extractCvText } = await import("./cv-extractor.server");
+      const ext = await extractCvText(bytes, "application/pdf", cleanName);
+      if (ext.needs_ocr) {
+        await supabaseAdmin
+          .from("files")
+          .update({
+            parse_state: "review_required",
+            parse_error_code: ext.reason === "cv_unreadable" || ext.chars === 0 ? "cv_unreadable" : "text_layer_missing",
+            parse_error: ext.reason ?? "Unreadable CV — OCR needed.",
+            extracted_text: ext.text || null,
+          })
+          .eq("id", fileId);
+
+        // Notify staff of unreadable CV immediately.
+        try {
+          const { processLeadEvent } = await import("./leads/lead-pipeline.server");
+          await processLeadEvent({
+            leadType: "candidate_application",
+            sourceId: fileId,
+            source: "unreadable_cv_on_submit",
+            sourcePage: `/jobs/${data.position_id}/apply`,
+            fullName: data.full_name,
+            email: emailLower,
+            facts: [
+              { label: "Issue", value: "Unreadable PDF/Scanned Image" },
+              { label: "Reason", value: ext.reason ?? "unknown" },
+              { label: "Characters extracted", value: String(ext.chars) },
+              { label: "Trace", value: trace_id },
+            ],
+            recordTable: "files",
+            recordId: fileId,
+            positionId: data.position_id,
+            linkPath: "/admin/candidates",
+            priority: "standard",
+          });
+        } catch (notifyErr) {
+          console.error("[submitApplication] unreadable CV lead failed", trace_id, notifyErr);
+        }
+      }
+
 
 
       // Point candidate profile at latest CV.
       await supabaseAdmin
         .from("candidate_profiles")
-        .update({ current_cv_file_id: fileRow.id })
+        .update({ current_cv_file_id: fileId })
         .eq("id", candidateProfileId);
 
       // 7. Create application (unique active constraint protects against races).
@@ -631,7 +688,7 @@ export const submitApplication = createServerFn({ method: "POST" })
 
 
 
-      return {
+      const result: SubmitApplicationResult = {
         ok: true,
         application_id: appRow.id,
         reference: ref6(appRow.id),
@@ -640,13 +697,27 @@ export const submitApplication = createServerFn({ method: "POST" })
         prior_closed: priorClosed,
         account: accountOutcome,
       };
-    } catch (err) {
+
+      if (ext.needs_ocr) {
+        (result as any).warning = "unreadable_file";
+        (result as any).message =
+          ext.reason === "cv_unreadable" || ext.chars === 0
+            ? "Your application was received, but we couldn't read the text in your PDF. Please ensure it's not a scanned image, or our team will review it manually."
+            : "Your application was received, but we couldn't extract enough text from your PDF. Our team will review it manually.";
+      }
+
+      return result;
+    } catch (err: any) {
       console.error("[submitApplication]", trace_id, err);
 
-      // The document is already stored but the application is not. Telling this
-      // person "network error, try again" is false: retrying re-sends a file we
-      // already hold and produces another candidate with no evidence. Raise it
-      // with us instead, and say plainly what we have.
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await logApplicationIncident(supabaseAdmin, {
+        email: data.email,
+        role_id: data.position_id,
+        trace: err.stack || err.message,
+        context: { trace_id, input: { email: data.email, position_id: data.position_id } },
+      });
+
       if (orphanUpload) {
         try {
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -700,7 +771,7 @@ export const submitApplication = createServerFn({ method: "POST" })
           trace_id,
           code: "submit_incomplete",
           message:
-            "Your CV reached us, but we could not finish creating your application. Our team has been alerted and will pick it up — you do not need to upload it again. If you would rather not wait, email hello@taasflow.com and quote " +
+            "Your CV was received, but we could not finish creating your application. Our team has been alerted and will process it manually — you do not need to upload it again. Reference: " +
             trace_id.slice(0, 8).toUpperCase() +
             ".",
         };

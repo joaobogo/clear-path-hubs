@@ -2,6 +2,7 @@ import { createFileRoute, Link, redirect, useNavigate, notFound } from "@tanstac
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { getPublicPosition } from "@/lib/jobs.functions";
 import { extractJobUuid } from "@/lib/marketing/job-slug";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -710,11 +711,20 @@ function ApplyPage() {
 
       const result = await withTimeout(submitApplication({ data: parsed.data }), 90_000);
       if (!result.ok) {
-        setServerError({ message: result.message, trace_id: result.trace_id });
+        if (result.code === "already_applied") {
+          toast.error(result.message, { duration: 6000 });
+        } else {
+          setServerError({ message: result.message, trace_id: result.trace_id });
+        }
         setPhase("idle");
-      setSubmitting(false);
+        setSubmitting(false);
         submittingRef.current = false;
         return;
+      }
+      if (result.ok && (result as any).warning === "unreadable_file") {
+        toast.warning((result as any).message, { duration: 8000 });
+      } else if (result.ok) {
+        toast.success("Application submitted successfully!");
       }
       track("apply_submitted", { position_id: id, device: deviceBucket(window.innerWidth) });
       try {
@@ -1000,6 +1010,15 @@ function ApplyPage() {
         >
           {step === 1 && (
             <div className="space-y-5" data-hydrated={signedIn === null ? "pending" : "ready"}>
+              {serverError && (
+                <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
+                  <p className="font-semibold">Submission failed</p>
+                  <p>{serverError.message}</p>
+                  {serverError.trace_id && (
+                    <p className="mt-1 text-xs opacity-80">Reference: {serverError.trace_id.slice(0, 8).toUpperCase()}</p>
+                  )}
+                </div>
+              )}
 
               {/* State the cost of applying before it is paid, so nobody
                   starts on a phone without the one file they will need. */}
@@ -1718,6 +1737,16 @@ function ApplyPage() {
               <div className="rounded-md border bg-muted/30 p-4 text-sm text-muted-foreground">
                 Submissions are final. We'll email you when there's a decision or a next step.
               </div>
+            </div>
+          )}
+
+          {serverError && (
+            <div className="mt-6 rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
+              <p className="font-semibold">Submission failed</p>
+              <p>{serverError.message}</p>
+              {serverError.trace_id && (
+                <p className="mt-1 text-xs opacity-80">Reference: {serverError.trace_id.slice(0, 8).toUpperCase()}</p>
+              )}
             </div>
           )}
 
