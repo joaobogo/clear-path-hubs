@@ -118,9 +118,9 @@ export const searchCandidateIndex = createServerFn({ method: "POST" })
       q = q.in("match_id", ids);
     }
     if (data.q) {
-      const { sanitizeSearchTerm } = await import("./search/postgrest-filter");
-      const needle = sanitizeSearchTerm(data.q).toLowerCase();
-      if (needle) q = q.ilike("search_text", `%${needle}%`);
+      const { ilikeValue } = await import("./search/postgrest-filter");
+      const val = ilikeValue(data.q);
+      if (val) q = q.ilike("search_text", val);
     }
 
     if (data.organization_id) q = q.eq("organization_id", data.organization_id);

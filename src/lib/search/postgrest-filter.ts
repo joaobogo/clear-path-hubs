@@ -22,9 +22,12 @@ export function sanitizeSearchTerm(raw: string | null | undefined): string {
     .slice(0, MAX_TERM_LENGTH);
 }
 
-/** Quote a filter value so commas, parens, dots and quotes are literal. */
+/** 
+ * Quote a filter value so commas, parens, dots and quotes are literal. 
+ * PostgREST uses double quotes for values and escapes double quotes with another double quote.
+ */
 export function quoteFilterValue(value: string): string {
-  return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+  return `"${value.replace(/"/g, '""')}"`;
 }
 
 /** `%term%` pattern, already sanitized. Empty string when nothing usable. */

@@ -157,9 +157,9 @@ export const listReviewQueue = createServerFn({ method: "POST" })
     const queue = data.queue as ReviewQueueId | undefined;
     if (queue && REVIEW_QUEUES[queue]) q = q.eq(REVIEW_QUEUES[queue].column, true);
     if (data.q) {
-      const { sanitizeSearchTerm } = await import("./search/postgrest-filter");
-      const needle = sanitizeSearchTerm(data.q).toLowerCase();
-      if (needle) q = q.ilike("search_text", `%${needle}%`);
+      const { ilikeValue } = await import("./search/postgrest-filter");
+      const val = ilikeValue(data.q);
+      if (val) q = q.ilike("search_text", val);
     }
     if (data.organization_id) q = q.eq("organization_id", data.organization_id);
     if (data.position_id) q = q.eq("position_id", data.position_id);

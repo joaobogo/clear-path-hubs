@@ -63,7 +63,7 @@ export type SearchResponse = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = Record<string, any>;
 
-import { sanitizeSearchTerm, orIlike } from "./search/postgrest-filter";
+import { sanitizeSearchTerm, orIlike, ilikeValue } from "./search/postgrest-filter";
 
 export const globalSearch = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -128,7 +128,7 @@ export const globalSearch = createServerFn({ method: "POST" })
       let oq = supabase
         .from("organizations")
         .select("id, name, industry, status, archived_at")
-        .ilike("name", like)
+        .ilike("name", ilikeValue(term)!)
         .order("name")
         .limit(LIMIT);
       oq = excludeTestOrgs(oq, testScope, "id");
@@ -297,7 +297,7 @@ export const globalSearch = createServerFn({ method: "POST" })
       let mq = supabase
         .from("messages")
         .select("id, body, thread_id, created_at")
-        .ilike("body", like)
+        .ilike("body", ilikeValue(term)!)
         .order("created_at", { ascending: false })
         .limit(LIMIT);
       if (scope === "client") mq = mq.in("thread_id", orgIds);
@@ -323,7 +323,7 @@ export const globalSearch = createServerFn({ method: "POST" })
       let tq: any = supabase
         .from("tasks")
         .select("id, title, status, task_type, organization_id, due_at, blocking")
-        .ilike("title", like)
+        .ilike("title", ilikeValue(term)!)
         .is("deleted_at", null)
         .neq("status", "cancelled")
         .order("updated_at", { ascending: false })
