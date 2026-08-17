@@ -302,18 +302,33 @@ export const submitApplication = createServerFn({ method: "POST" })
       );
 
       if (existingApp) {
-        const { loadExistingApplicationSummary } = await import(
-          "./candidate/existing-application.server"
-        );
-        const existing = await loadExistingApplicationSummary(existingApp.id);
+        // If the duplicate application was submitted very recently (within 5 minutes),
+        // we assume it's a double-click or accidental refresh and return the existing record.
+        const submittedAt = new Date(existingApp.applied_at || (existingApp as any).created_at).getTime();
+        const now = Date.now();
+        const diffMinutes = (now - submittedAt) / 1000 / 60;
+
+        if (diffMinutes < 5) {
+          const { loadExistingApplicationSummary } = await import(
+            "./candidate/existing-application.server"
+          );
+          return {
+            ok: true,
+            application_id: existingApp.id,
+            reference: ref6(existingApp.id),
+            tracking_path: `/apply/received/${existingApp.id}`,
+            deduped: true,
+            existing: await loadExistingApplicationSummary(existingApp.id),
+            account: accountOutcome,
+          };
+        }
+
+        // If it's an older application, we reject the submission with a clear message.
         return {
-          ok: true,
-          application_id: existingApp.id,
-          reference: ref6(existingApp.id),
-          tracking_path: `/apply/received/${existingApp.id}`,
-          deduped: true,
-          existing,
-          account: accountOutcome,
+          ok: false,
+          trace_id,
+          code: "already_applied",
+          message: `You have already applied for the ${pos.title} role. You can check your application status or update your details in your candidate portal.`,
         };
       }
 
