@@ -153,18 +153,18 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
 
 TEXTO DO USUÁRIO: "Standing rules apply.
 
-DEFECT (HIGH, proven): Screening questions can be defined with dealbreakers, but dealbreaker answers do not record eligibility (see F-008), and submitted answers reach the admin record as raw JSON ({"value":8}, {"visa_required":false,...}) instead of readable values. Consent capture is not clearly displayed.
+DEFECT: \"Delivery failures\" shows 0 (Overview work-queue KPI), 18 (exception digest) and 23 (Operations, 7d) simultaneously. Org record shows \"CLIENT USERS 0\" with 2 active members; the org Candidates tab renders stage/score/fit as \"—\" though the data exists; org Documents shows \"(0)\" though 10 parsed candidate CVs exist. Portfolio/role hired counts disagree (covered in P14 — keep consistent).
 
-REQUIRED FIX: Render screening questions on the public application form, require answers, store them verbatim, and make dealbreaker answers write eligibility (integrating with P15's F-008 work) with an honest applicant-facing outcome. On admin surfaces, format stored answers with human labels — no raw JSON rendered to a human anywhere. Capture and display consent status.
+REQUIRED FIX: Define one canonical window and query per named metric and use it on every surface; if two surfaces need different windows, they must carry different labels. Fix the org member count query, join the latest candidate match for stage/score/fit on the org Candidates tab, and count parsed CVs on the org Documents tab.
 
 ACCEPTANCE CRITERIA:
-1. Apply to a role with screening questions: all questions render and are required.
-2. Answer a dealbreaker negatively: an eligibility record is created with status ineligible, the applicant sees an honest outcome, and the admin record shows the dealbreaker reason.
-3. Open the admin candidate record: every answer is human-readable; no {"value":…} or raw JSON anywhere (check work authorization too).
-4. Consent status is recorded and displayed on the admin record.
-5. All submitted fields appear verbatim on the admin record (name, contact, links, answers).
+1. \"Delivery failures\" shows the same number on the work queue, the exception digest and Operations — or each label states its window explicitly and the numbers match their stated window.
+2. Inject a failure inside the window: every surface increments by 1. Inject one outside the window: none increments.
+3. Org record with 2 active members shows CLIENT USERS 2.
+4. Org Candidates tab shows real stage, score and fit band per candidate.
+5. Org Documents tab lists the parsed CVs with a correct count.
 
-Covers C5 + C6 (PDF P-046, P-047)."`
+Covers A15 + A16 (PDF P-015, P-016)."`
         }
       >
         {children}

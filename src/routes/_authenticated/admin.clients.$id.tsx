@@ -96,6 +96,7 @@ const TAB_LABELS: Record<TabKey, { label: string; icon: typeof Building2 }> = {
   messages: { label: "Messages", icon: MessagesSquare },
   notes: { label: "Notes", icon: StickyNote },
   documents: { label: "Documents", icon: FileText },
+  parsed_documents: { label: "Parsed CVs", icon: FileText },
   activity: { label: "Activity", icon: Activity },
   audit: { label: "Audit", icon: ShieldCheck },
   shares: { label: "Shares", icon: ExternalLink },
@@ -278,7 +279,7 @@ function ClientDetail() {
       )}
       {tab === "documents" && (
         <Block name="documents">
-          <DocumentsTab id={id} />
+          <DocumentsTab id={id} parsedCvCount={data.parsed_cv_count} />
         </Block>
       )}
       {tab === "activity" && (

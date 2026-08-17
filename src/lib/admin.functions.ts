@@ -99,9 +99,9 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       count("candidate_matches", (q) =>
         q.eq("admin_status", "approved").eq("client_visibility", "hidden"),
       ),
-      // Email/message delivery failures to triage
+      // Email/message delivery failures to triage (7d canonical)
       count("notification_deliveries", (q) =>
-        q.in("status", ["failed", "bounced", "suppressed"]),
+        q.in("status", ["failed", "bounced", "suppressed"]).gte("created_at", weekAgo),
       ),
       // Client-initiated recompute / feedback in the last 7d
       count("score_decisions", (q) =>
