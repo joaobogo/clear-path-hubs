@@ -110,6 +110,7 @@ export const Route = createFileRoute("/_authenticated/admin/positions/$id")({
     const d = await context.queryClient.ensureQueryData({
       queryKey: ["admin-position", params.id],
       queryFn: () => getPosition({ data: { id: params.id } }),
+      staleTime: 0, // Ensure we always fetch the latest data including backfilled timestamps
     });
     if (!d) throw notFound();
     return d;
