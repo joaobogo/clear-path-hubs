@@ -105,7 +105,14 @@ export function publishBlockedMessage(blockers: PublishBlocker[]): string {
  * "under review" / "approved" until payment or an exemption clears.
  */
 export function humanizePublishBlockedMessage(message: string): string {
+  // P-019: the database payment gate raises client checkout copy ("Your brief is
+  // saved as a draft — finish checkout…"). Staff surfaces must read as an admin
+  // sentence instead of client-facing instructions they cannot act on.
+  if (/cannot be published until payment|can't be published until payment/i.test(message)) {
+    return "Approval blocked: payment or exemption required";
+  }
   if (!message.startsWith(PUBLISH_BLOCKED_PREFIX)) return message;
+
   const inner = message
     .slice(PUBLISH_BLOCKED_PREFIX.length)
     .replace(". Resolve these first — publishing is not bypassable.", "")
