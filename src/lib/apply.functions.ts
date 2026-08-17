@@ -384,6 +384,7 @@ export const submitApplication = createServerFn({ method: "POST" })
           .insert({
             owner_user_id: authUserId,
             candidate_profile_id: candidateProfileId,
+            organization_id: pos.organization_id,
             storage_bucket: "cvs",
             storage_path: storagePath,
             filename: cleanName,
@@ -771,7 +772,7 @@ export const submitApplication = createServerFn({ method: "POST" })
           trace_id,
           code: "submit_incomplete",
           message:
-            "Your CV reached us, but we could not finish creating your application. Our team has been alerted and will pick it up — you do not need to upload it again. If you would rather not wait, email hello@taasflow.com and quote " +
+            "Your CV was received, but we could not finish creating your application. Our team has been alerted and will process it manually — you do not need to upload it again. Reference: " +
             trace_id.slice(0, 8).toUpperCase() +
             ".",
         };

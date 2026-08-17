@@ -711,9 +711,13 @@ function ApplyPage() {
 
       const result = await withTimeout(submitApplication({ data: parsed.data }), 90_000);
       if (!result.ok) {
-        setServerError({ message: result.message, trace_id: result.trace_id });
+        if (result.code === "already_applied") {
+          toast.error(result.message, { duration: 6000 });
+        } else {
+          setServerError({ message: result.message, trace_id: result.trace_id });
+        }
         setPhase("idle");
-      setSubmitting(false);
+        setSubmitting(false);
         submittingRef.current = false;
         return;
       }
