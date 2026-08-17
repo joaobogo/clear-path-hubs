@@ -152,7 +152,7 @@ export function WorkQueueRow({
 
       <OwnerCell item={item} />
       <span className={`shrink-0 tabular-nums text-xs ${toneClass(item.tone)}`} title="Waiting">
-        {waited(item.waiting_since)}
+        {item.key === 'score_stale' ? 'Stale' : waited(item.waiting_since)}
       </span>
       <Button asChild size="sm" variant="secondary" className="h-7 shrink-0 text-xs">
         <TargetLink target={item.target}>
