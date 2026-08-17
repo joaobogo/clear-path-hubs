@@ -1854,7 +1854,7 @@ export const getClientCandidatesForOrg = createServerFn({ method: "GET" })
     const { data: rows } = await s
       .from("candidate_matches")
       .select(
-        "id,stage,processing_state,recommendation,canonical_state,admin_status,client_visibility,updated_at,candidate_profiles(id,full_name,email),positions(id,title)",
+        "id,stage,processing_state,recommendation,canonical_state,admin_status,client_visibility,updated_at,candidate_profiles(id,full_name,email),positions(id,title),score_runs:approved_score_run_id(score,fit_label,fit_band)",
       )
       .eq("organization_id", data.id)
       .order("updated_at", { ascending: false })
