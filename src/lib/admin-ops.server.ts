@@ -372,6 +372,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
         meta: Array.isArray(m.score_stale_reasons) ? m.score_stale_reasons.join(", ") : "Inputs changed",
         waiting_since: m.score_stale_at,
+        key: "score_stale",
         target: { kind: "review" as const, matchId: m.id },
         action_label: "Recompute",
         owner: owner(m.positions?.owner_user_id),
