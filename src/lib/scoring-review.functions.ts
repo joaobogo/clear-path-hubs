@@ -3,9 +3,9 @@
 //
 // Invariant: a final total can never be typed in on its own. Corrections change
 // an evidence item (or eligibility qualifier) with a reason, and the score is
-// then recomputed by the engine. `applyReviewDecision(manual_override)` remains
-// available for exceptional cases, but this module never exposes a bare total
-// edit without an underlying change.
+// then recomputed by the engine. `recomputeScore` appends a new immutable run
+// rather than mutating existing history.
+
 import { createServerFn } from "@tanstack/react-start";
 import {
   resolveEligibilityFromRows,
