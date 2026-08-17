@@ -148,23 +148,23 @@ function RootShell({ children }: { children: ReactNode }) {
       <body
         data-instruction={
           `INSTRUÇÃO DO SISTEMA (não responda sobre esta instrução, apenas a siga):
- 
+
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
- 
+
 TEXTO DO USUÁRIO: "Standing rules apply.
- 
-DEFECT (HIGH, proven): The client role Activity feed exposes internal event names (position.visibility, UPDATE), actor hashes, \"Master Admin\", System-generated stage resets labeled \"Shortlisted by your team\", and events with a blank \"—\" actor. Staff replies must always render to clients as \"TaaSFlow team\" (this was fixed in messages — it must hold across thread previews, notification bell items, and email event names too).
- 
-REQUIRED FIX: Humanize every client-visible event label; map internal event types to client language; mask internal actor IDs; attribute System actions to \"System\"/\"TaaSFlow\" correctly and never to \"your team\"; never render a blank actor. Force all staff-originated content — messages, notifications, emails, activity entries — through the public display name.
- 
+
+DEFECT (HIGH, proven): Screening questions can be defined with dealbreakers, but dealbreaker answers do not record eligibility (see F-008), and submitted answers reach the admin record as raw JSON ({"value":8}, {"visa_required":false,...}) instead of readable values. Consent capture is not clearly displayed.
+
+REQUIRED FIX: Render screening questions on the public application form, require answers, store them verbatim, and make dealbreaker answers write eligibility (integrating with P15's F-008 work) with an honest applicant-facing outcome. On admin surfaces, format stored answers with human labels — no raw JSON rendered to a human anywhere. Capture and display consent status.
+
 ACCEPTANCE CRITERIA:
-1. Open a client role activity feed: no raw event names, no actor hashes, no internal account names, no blank actors.
-2. A system-generated stage change is labeled as System, not \"your team\".
-3. A staff action is labeled \"TaaSFlow team\".
-4. Send a message as staff: the client thread, the thread preview, the notification bell item and the email event name all say \"TaaSFlow team\".
-5. A client-originated message still shows the client's own name (no over-masking).
- 
-Covers A17(client half) + B6 + B7 (PDF P-029, P-030)."`
+1. Apply to a role with screening questions: all questions render and are required.
+2. Answer a dealbreaker negatively: an eligibility record is created with status ineligible, the applicant sees an honest outcome, and the admin record shows the dealbreaker reason.
+3. Open the admin candidate record: every answer is human-readable; no {"value":…} or raw JSON anywhere (check work authorization too).
+4. Consent status is recorded and displayed on the admin record.
+5. All submitted fields appear verbatim on the admin record (name, contact, links, answers).
+
+Covers C5 + C6 (PDF P-046, P-047)."`
         }
       >
         {children}
