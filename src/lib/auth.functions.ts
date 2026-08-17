@@ -3,6 +3,9 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import type { SessionContext, SessionMembership, MembershipRole } from "./roles";
 
+const DEMO_CLIENT_EMAIL = "demo@taasflow.com";
+const NORTHWIND_ORG_ID = "0c86fa1b-94ee-46b8-9a11-a42cee39bfed";
+
 // ─────────────────────────────────────────────────────────────
 // Session context: memberships, role, org identity for the caller.
 // Public (no auth) → returns null so the login page can call it safely.
@@ -81,6 +84,40 @@ export const getSessionContext = createServerFn({ method: "GET" })
     // No membership at all — never a revoked client seat, so the candidate
     // area is the honest destination. It explains the state and offers jobs.
     if (!primary && memberships.length === 0) primary = "candidate";
+
+    // Demo-client safeguard: the demo account is used live with prospects, so
+    // any missing or inactive Northwind membership is logged as an incident.
+    // The system never auto-repairs; it only surfaces the failure for staff
+    // investigation. This runs on every authenticated context load because the
+    // membership state may change between requests (idempotent).
+    if (profile?.email === DEMO_CLIENT_EMAIL) {
+      const northwindMembership = memberships.find(
+        (m) => m.organization_id === NORTHWIND_ORG_ID && m.role === "client_admin",
+      );
+      if (!northwindMembership || northwindMembership.status !== "active") {
+        try {
+          const { logApplicationIncident } = await import("./incident-logger.server");
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          await logApplicationIncident(supabaseAdmin, {
+            email: DEMO_CLIENT_EMAIL,
+            role_id: northwindMembership?.membership_id ?? "missing",
+            trace: `Demo sign-in safeguard: Northwind membership is ${!northwindMembership ? "missing" : "inactive"} for ${DEMO_CLIENT_EMAIL}.`,
+            context: {
+              northwind_membership_id: northwindMembership?.membership_id ?? null,
+              northwind_status: northwindMembership?.status ?? null,
+              all_memberships: memberships.map((m) => ({
+                organization_id: m.organization_id,
+                role: m.role,
+                status: m.status,
+              })),
+            },
+          });
+        } catch {
+          // Incident logging is best-effort; never block the sign-in flow.
+        }
+      }
+    }
+
     return {
       user_id: userId,
       email: profile?.email ?? null,
