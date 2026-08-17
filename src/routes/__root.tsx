@@ -153,19 +153,18 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
  
 TEXTO DO USUÁRIO: "Standing rules apply.
  
-DEFECT (HIGH): /admin/qa-report lists items that gate MVP and are still Open/Unverified: F-006 (score_decisions can commit while the candidate_matches update fails, leaving an approve decision with no publication); F-008 (hard disqualifiers cap the score but never write eligibility_checks or candidate_matches.eligibility_status, so eligibility filtering misses them); F-009 (rubric_versions has DB immutability but no application writer — score_runs.rubric_version_id is null in practice, causing \"rubric unlinked\" and endangering the publish gate); F-010 (unique index on candidate_matches(position_id, candidate_profile_id) may be missing due to a conditional migration); F-011 (Realtime RLS unverified for candidate_matches); F-012 (notification_events RLS lacks a visibility join).
+DEFECT (HIGH, proven): The client role Activity feed exposes internal event names (position.visibility, UPDATE), actor hashes, \"Master Admin\", System-generated stage resets labeled \"Shortlisted by your team\", and events with a blank \"—\" actor. Staff replies must always render to clients as \"TaaSFlow team\" (this was fixed in messages — it must hold across thread previews, notification bell items, and email event names too).
  
-REQUIRED FIX: Implement each as the register itself prescribes — F-006: wrap approve-for-client in a single transactional RPC. F-008: upsert eligibility_checks (kind=disqualifier, status=failed) and set eligibility_status on disqualifying answers. F-009: ship the rubric-version writer so new score runs carry rubric_version_id and the UI shows the linked rubric. F-010: dedupe then create the unique index unconditionally. F-011: verify Realtime respects RLS or subscribe only to client-visible views. F-012: tighten the RLS policy with the visibility join. Update each row's status in /admin/qa-report truthfully — no \"Fixed\" without the change.
+REQUIRED FIX: Humanize every client-visible event label; map internal event types to client language; mask internal actor IDs; attribute System actions to \"System\"/\"TaaSFlow\" correctly and never to \"your team\"; never render a blank actor. Force all staff-originated content — messages, notifications, emails, activity entries — through the public display name.
  
 ACCEPTANCE CRITERIA:
-1. Force the publish gate to fail during approve-for-client: no orphaned approve decision remains (demonstrate).
-2. Submit a disqualifying screening answer: an eligibility_checks row exists and eligibility_status is set; the candidate is findable by an \"not eligible\" filter.
-3. A newly created score run carries a non-null rubric_version_id and the header shows the rubric version instead of \"rubric unlinked\".
-4. Attempt a duplicate candidate_match insert: rejected by the database.
-5. Realtime and notification_events respect RLS (state how you verified).
-6. /admin/qa-report reflects the true status of each item.
+1. Open a client role activity feed: no raw event names, no actor hashes, no internal account names, no blank actors.
+2. A system-generated stage change is labeled as System, not \"your team\".
+3. A staff action is labeled \"TaaSFlow team\".
+4. Send a message as staff: the client thread, the thread preview, the notification bell item and the email event name all say \"TaaSFlow team\".
+5. A client-originated message still shows the client's own name (no over-masking).
  
-Covers A23 (PDF P-023)."`
+Covers A17(client half) + B6 + B7 (PDF P-029, P-030)."`
         }
       >
         {children}
