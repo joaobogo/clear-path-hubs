@@ -43,8 +43,14 @@ export function ActivityFeed(props: {
   const fetchFeed = useServerFn(getActivityFeed);
   const { organizationId, positionId, candidateMatchId, limit = 12 } = props;
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: [...ACTIVITY_QUERY_KEY, organizationId ?? null, positionId ?? null, candidateMatchId ?? null, limit],
+  const { data, isLoading, isError, isFetching } = useQuery({
+    queryKey: [
+      ...ACTIVITY_QUERY_KEY,
+      organizationId ?? null,
+      positionId ?? null,
+      candidateMatchId ?? null,
+      limit,
+    ],
     queryFn: () =>
       fetchFeed({
         data: {
@@ -55,7 +61,9 @@ export function ActivityFeed(props: {
         },
       }),
     staleTime: 15_000,
+    placeholderData: (prev) => prev,
   });
+
 
   return (
     <section className={`flex h-full flex-col rounded-xl border bg-card p-5 ${props.className ?? ""}`}>
@@ -81,7 +89,13 @@ export function ActivityFeed(props: {
       ) : !data || data.entries.length === 0 ? (
         <p className="mt-4 text-sm text-muted-foreground">No activity yet.</p>
       ) : (
-        <ol className="mt-3 divide-y">
+        <ol className={`mt-3 divide-y relative transition-opacity ${isFetching && !isLoading ? "opacity-50" : ""}`}>
+          {isFetching && !isLoading && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/20 backdrop-blur-[1px]">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            </div>
+          )}
+
           {data.entries.map((e) => {
             const body = (
               <div className="flex items-start justify-between gap-3 py-2.5">
