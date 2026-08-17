@@ -21,6 +21,8 @@ export async function logApplicationIncident(
         role_id: incident.role_id,
         ...incident.context,
       },
+      status: 'new',
+      created_at: new Date().toISOString()
     });
 
   if (error) {
