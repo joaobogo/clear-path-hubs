@@ -156,6 +156,9 @@ function ClientDetail() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const positions = data.positions as any[];
 
+  const activeMemberCount = org.memberships?.[0]?.count ?? members.length;
+  const parsedCvCount = org.parsed_cv_count?.[0]?.count ?? 0;
+
   const setTab = (t: TabKey) => navigate({ search: { tab: t } });
 
   return (
