@@ -115,7 +115,6 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
 
 
     // 5 — interviews requested, or happening in the next 48h.
-    // Inner join on positions and organizations to ensure we only count actionable interviews.
     excludeTestOrgs(
       s
         .from("interviews")
