@@ -153,19 +153,18 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
  
 TEXTO DO USUÁRIO: "Standing rules apply.
  
-DEFECT (HIGH, proven): Review records display \"Job changed after scoring… Recompute before approving\" but NO recompute/rescore control exists anywhere — not on the review record, not on the candidate Score tab, not in the \"Score changed after job update\" queue (17 items). The queue is unresolvable and the client-facing \"assessed with an out-of-date engine\" banner can never clear. Engine attribution contradicts itself: the review surface shows engine \"demo-coverage-fill-2026-08-13\" while the candidate profile shows \"taasflow-scoring-v1.2.0\" for the SAME 13/08 00:16 run.
+DEFECT (HIGH, proven): Clients create shortlist share links and talent-memory entries, but admin has NO surface for either, and the org's 794-event audit trail contains ZERO events for share create/revoke or memory add/archive — the R2 share link (created 21:52, revoked 22:35) and memory entry (tagged 21:56:32, archived 22:33:58) are invisible to staff. Admins cannot answer \"what is shared externally right now?\".
  
-REQUIRED FIX: Add a working Recompute action on the review record and in the stale queue (per-row, plus a bulk action for the queue). Recompute must APPEND a new immutable score run (prior runs untouched), update the current score/fit on every surface, remove the item from the stale queue, and clear the client stale-engine banner. Make engine+version attribution come from the run record itself so every surface shows the same string.
+REQUIRED FIX: Emit audit events for the full lifecycle of both features (share: created / accessed via public token / revoked; memory: added / edited / archived / rediscovered) into the same org audit trail, with actor and timestamp. Add read-only admin views on the org record: Shares (name, creator, created at, candidate count, status active/revoked, revoked at/by) and Talent memory (candidate, note, added at, archived at, status). Revoked share URLs must serve nothing.
  
 ACCEPTANCE CRITERIA:
-1. Open an item in \"Score changed after job update\", press Recompute: a NEW run appears in score history, all prior runs intact, the banner clears, the queue count decrements.
-2. Drain the queue to 0 for current data.
-3. The client workspace no longer shows the stale/out-of-date banner for recomputed candidates.
-4. For one candidate, the engine+version string is identical on the review record, the candidate Score tab, and the client-visible surface.
-5. Manual score override still requires a reason and still never mutates a prior run.
-6. Recompute on a candidate whose job did NOT change also works and appends a run (no special-casing).
+1. The org record shows a Shares view listing the existing R2 share link as REVOKED, and a Talent memory view listing the archived R2 entry with its note text and archived timestamp.
+2. As a client, create a share link and a memory entry, then revoke/archive them: all four actions appear in the org audit trail within minutes, correctly attributed, and both admin views reflect the new state.
+3. Open a revoked share's public URL in a clean browser session: no candidate data, 403/404.
+4. Both views are reachable from the org record tabs without knowing a URL.
+5. A share link for a candidate later hidden/unpublished stops serving that candidate.
  
-Covers A6 + B3 (PDF P-006, P-026)."`
+Covers A5 + B5 (PDF P-005, P-028)."`
         }
       >
         {children}

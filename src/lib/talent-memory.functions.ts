@@ -3,6 +3,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { writeAudit } from "@/lib/admin.functions";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -287,6 +288,18 @@ export const tagSilverMedalist = createServerFn({ method: "POST" })
       metadata: { reason_category: data.reason_category },
     });
 
+    await writeAudit({
+      actor: context.userId,
+      action: "talent_memory.added",
+      entity_type: "talent_memory",
+      entity_id: (upserted as AnyRow).id,
+      organization_id: data.orgId,
+      after: {
+        candidate_profile_id: (match as AnyRow).candidate_profile_id,
+        reason_category: data.reason_category,
+      },
+    });
+
     return { ok: true, id: (upserted as AnyRow).id };
   });
 
@@ -513,6 +526,15 @@ export const updateSilverMedalist = createServerFn({ method: "POST" })
         })),
       );
     }
+
+    await writeAudit({
+      actor: context.userId,
+      action: "talent_memory.updated",
+      entity_type: "talent_memory",
+      entity_id: data.id,
+      organization_id: data.orgId,
+      after: patch,
+    });
     return { ok: true };
   });
 
@@ -665,6 +687,15 @@ export const noteResurface = createServerFn({ method: "POST" })
       actor_user_id: context.userId,
       position_id: data.position_id,
       metadata: {},
+    });
+
+    await writeAudit({
+      actor: context.userId,
+      action: "talent_memory.rediscovered",
+      entity_type: "talent_memory",
+      entity_id: data.id,
+      organization_id: data.orgId,
+      after: { position_id: data.position_id },
     });
     return { ok: true };
   });

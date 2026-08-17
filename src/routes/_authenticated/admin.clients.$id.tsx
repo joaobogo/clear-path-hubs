@@ -1,3 +1,5 @@
+import { listShortlistShares } from "@/lib/shares.functions";
+import { listSilverMedalists } from "@/lib/talent-memory.functions";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { DecisionBacklogPanel } from "@/components/admin/decision-backlog-panel";
 import { UpdateReadinessPanel } from "@/components/admin/update-readiness-panel";
@@ -58,6 +60,7 @@ import {
   MessagesSquare,
   ClipboardCheck,
   KeyRound,
+  BadgeCheck,
 } from "lucide-react";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
@@ -75,6 +78,8 @@ const TABS = [
   "documents",
   "activity",
   "audit",
+  "shares",
+  "talent_memory",
   "settings",
 ] as const;
 type TabKey = (typeof TABS)[number];
@@ -93,6 +98,8 @@ const TAB_LABELS: Record<TabKey, { label: string; icon: typeof Building2 }> = {
   documents: { label: "Documents", icon: FileText },
   activity: { label: "Activity", icon: Activity },
   audit: { label: "Audit", icon: ShieldCheck },
+  shares: { label: "Shares", icon: ExternalLink },
+  talent_memory: { label: "Talent memory", icon: BadgeCheck },
   settings: { label: "Settings", icon: Settings },
 };
 
@@ -282,6 +289,16 @@ function ClientDetail() {
       {tab === "audit" && (
         <Block name="audit">
           <ActivityTab id={id} audit />
+        </Block>
+      )}
+      {tab === "shares" && (
+        <Block name="shares">
+          <SharesTab orgId={id} />
+        </Block>
+      )}
+      {tab === "talent_memory" && (
+        <Block name="talent_memory">
+          <TalentMemoryTab orgId={id} />
         </Block>
       )}
       {tab === "settings" && (
@@ -999,5 +1016,137 @@ function MessagesTab({ orgId }: { orgId: string }) {
         </div>
       </div>
     </section>
+  );
+}
+
+// ── Shares tab ─────────────────────────────────────────────────────────────
+function SharesTab({ orgId }: { orgId: string }) {
+  const { data } = useSuspenseQuery({
+    queryKey: ["admin-client-shares", orgId],
+    queryFn: () => listShortlistShares({ data: { orgId } }),
+  });
+  const rows = data ?? [];
+
+  return (
+    <div className="overflow-hidden rounded-lg border bg-card">
+      <header className="border-b px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        Shortlist Share Links ({rows.length})
+      </header>
+      <table className="w-full text-sm">
+        <thead className="bg-muted/30 text-left text-xs uppercase text-muted-foreground">
+          <tr>
+            <th className="px-3 py-2 font-medium">Title / Position</th>
+            <th className="px-3 py-2 font-medium">Candidates</th>
+            <th className="px-3 py-2 font-medium">Status</th>
+            <th className="px-3 py-2 font-medium">Created</th>
+            <th className="px-3 py-2 font-medium text-right">Activity</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y">
+          {rows.map((s) => (
+            <tr key={s.id} className="hover:bg-muted/30">
+              <td className="px-3 py-2">
+                <div className="font-medium">{s.title || "Untitled Share"}</div>
+                <div className="text-[10px] text-muted-foreground">
+                  {s.position?.title || "No position linked"}
+                </div>
+              </td>
+              <td className="px-3 py-2 tabular-nums">{s.candidate_count}</td>
+              <td className="px-3 py-2">
+                <Badge
+                  variant={s.status === "active" ? "default" : "secondary"}
+                  className="capitalize"
+                >
+                  {s.status}
+                </Badge>
+                {s.revoked_at && (
+                  <div className="text-[9px] mt-0.5 text-muted-foreground">
+                    Revoked at {new Date(s.revoked_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                  </div>
+                )}
+              </td>
+              <td className="px-3 py-2 text-xs text-muted-foreground">
+                {new Date(s.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+              </td>
+              <td className="px-3 py-2 text-right">
+                <div className="text-xs">{s.view_count} views</div>
+                {s.last_viewed_at && (
+                  <div className="text-[10px] text-muted-foreground">
+                    Last: {new Date(s.last_viewed_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                  </div>
+                )}
+              </td>
+            </tr>
+          ))}
+          {rows.length === 0 && (
+            <tr>
+              <td colSpan={5} className="px-3 py-8 text-center text-muted-foreground">
+                No share links created by this client yet.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ── Talent Memory tab ──────────────────────────────────────────────────────
+function TalentMemoryTab({ orgId }: { orgId: string }) {
+  const { data } = useSuspenseQuery({
+    queryKey: ["admin-client-talent-memory", orgId],
+    queryFn: () => listSilverMedalists({ data: { orgId, status: "all" } }),
+  });
+  const rows = data.memories ?? [];
+
+  return (
+    <div className="overflow-hidden rounded-lg border bg-card">
+      <header className="border-b px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        Talent Memory / Silver Medalists ({rows.length})
+      </header>
+      <table className="w-full text-sm">
+        <thead className="bg-muted/30 text-left text-xs uppercase text-muted-foreground">
+          <tr>
+            <th className="px-3 py-2 font-medium">Candidate</th>
+            <th className="px-3 py-2 font-medium">Note</th>
+            <th className="px-3 py-2 font-medium">Status</th>
+            <th className="px-3 py-2 font-medium">Added</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y">
+          {rows.map((m) => (
+            <tr key={m.id} className="hover:bg-muted/30">
+              <td className="px-3 py-2">
+                <div className="font-medium">{m.candidate.display_name}</div>
+                <div className="text-[10px] text-muted-foreground line-clamp-1">
+                  {m.headline_snapshot || m.role_title_snapshot || "No title recorded"}
+                </div>
+              </td>
+              <td className="px-3 py-2">
+                <div className="text-xs line-clamp-2 max-w-xs">{m.reason_notes || "—"}</div>
+              </td>
+              <td className="px-3 py-2">
+                <Badge
+                  variant={m.status === "active" ? "default" : "secondary"}
+                  className="capitalize"
+                >
+                  {m.status}
+                </Badge>
+              </td>
+              <td className="px-3 py-2 text-xs text-muted-foreground">
+                {new Date(m.tagged_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+              </td>
+            </tr>
+          ))}
+          {rows.length === 0 && (
+            <tr>
+              <td colSpan={4} className="px-3 py-8 text-center text-muted-foreground">
+                No talent memory entries recorded by this client yet.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 }
