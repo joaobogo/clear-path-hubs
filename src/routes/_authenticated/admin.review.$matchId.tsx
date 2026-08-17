@@ -83,7 +83,7 @@ function reqText(r: Any): string {
 function ReviewScreen() {
   const { matchId } = Route.useParams();
   const navigate = useNavigate();
-  const router = Route.useRouter();
+  const router = useRouter();
   const qc = useQueryClient();
   const decide = useServerFn(applyReviewDecision);
   const recompute = useServerFn(recomputeScore);
