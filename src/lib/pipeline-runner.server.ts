@@ -93,6 +93,7 @@ function buildScreening(rows: Any[]): ScreeningAnswer[] {
 async function buildInsights(args: {
   cvText: string;
   position: Any;
+  organizationName: string;
   screening: ScreeningAnswer[];
 }): Promise<{ insights: CandidateInsights | null; insights_error: string | null }> {
   const pos = args.position;
@@ -138,7 +139,12 @@ async function buildInsights(args: {
   try {
     const res = await generateCandidateInsights({
       cv_text: args.cvText,
-      position: { title: pos.title ?? "", description: pos.description ?? null, requirements: reqs },
+      position: {
+        title: pos.title ?? "",
+        description: pos.description ?? null,
+        hiring_organization_name: args.organizationName,
+        requirements: reqs,
+      },
       screening,
     });
     if (res.ok) return { insights: res.data, insights_error: null };
@@ -158,7 +164,7 @@ export type PipelineOutcome = {
 async function loadCtx(s: Any, matchId: string) {
   const { data: match } = await s
     .from("candidate_matches")
-    .select("id,application_id,candidate_profile_id,position_id,organization_id,processing_state,processing_updated_at,current_score_run_id")
+    .select("id,application_id,candidate_profile_id,position_id,organization_id,processing_state,processing_updated_at,current_score_run_id,organizations(name)")
     .eq("id", matchId)
     .maybeSingle();
   if (!match) throw new Error(`match_not_found:${matchId}`);
@@ -382,7 +388,10 @@ async function runPipelineForMatchInner(matchId: string, opts: { force?: boolean
       .maybeSingle();
     const screening = buildScreening(ctx.answers);
     const { insights, insights_error } = await buildInsights({
-      cvText, position: ctx.position, screening,
+      cvText,
+      position: ctx.position,
+      organizationName: (ctx.match.organizations as any)?.name ?? "the organization",
+      screening,
     });
     await s.from("candidate_evidence").upsert({
       candidate_match_id: matchId,

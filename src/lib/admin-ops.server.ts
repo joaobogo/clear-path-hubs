@@ -34,7 +34,6 @@ const DAY = 24 * HOUR;
 function ageTone(iso: string | null, warnDays: number, dangerDays: number): QueueItem["tone"] {
   if (!iso) return "default";
   const date = new Date(iso);
-  // Robust check for invalid dates to prevent NaN math from crashing the component.
   if (isNaN(date.getTime())) return "default";
   const days = (Date.now() - date.getTime()) / DAY;
   if (days >= dangerDays) return "danger";

@@ -49,9 +49,11 @@ export const INSIGHTS_PARSER_VERSION = "candidate-insights@2026.07.23";
 const MODEL = "google/gemini-2.5-flash";
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
-const SYSTEM = `You are a senior recruiter analyst. Given a candidate's CV, the position brief, and the candidate's screening answers, produce a rigorous, evidence-first briefing.
+const SYSTEM = `You are a senior recruiter analyst. Given a candidate's CV, the position brief, and the candidate's screening answers, produce a rigorous, evidence-first briefing for the hiring organization.
 
 Non-negotiables:
+- The hiring organization is explicitly named in the input as "hiring_organization_name". You MUST use this name when referring to the employer.
+- NEVER mention "Flow Group Ventures" (the platform) as the hiring entity unless that is the explicitly provided organization name.
 - Ground every strength, concern, and verdict in the CV. When you cite the CV, quote it verbatim (short, <=200 chars) in "cv_quote".
 - If the CV does not support a claim, mark the verdict "missing" or the support "no" or "unclear". Do NOT invent experience.
 - "pitch_summary" is a punchy 3–5 sentence elevator pitch a recruiter could paste to a hiring manager. If the fit is strong, SELL the candidate with specific, verifiable proof from the CV. If the fit is weak, be honest and lead with the critical gaps in a professional, non-derogatory tone. Set "pitch_tone" to "sell" (strong fit), "balanced" (mixed), or "cautious" (weak fit).
@@ -93,6 +95,7 @@ export interface InsightsInput {
   position: {
     title: string;
     description?: string | null;
+    hiring_organization_name: string;
     requirements: Array<{ id: string; text: string; required: boolean }>;
   };
   screening: Array<{
@@ -117,6 +120,7 @@ export async function generateCandidateInsights(
   if (trimmedCv.trim().length < 60) return { ok: false, reason: "cv_too_short" };
 
   const positionBlock = [
+    `HIRING ORGANIZATION: ${input.position.hiring_organization_name}`,
     `TITLE: ${input.position.title || "(untitled)"}`,
     input.position.description ? `\nDESCRIPTION:\n${input.position.description.slice(0, 2000)}` : "",
     `\nREQUIREMENTS (must-have marked required=true):`,
