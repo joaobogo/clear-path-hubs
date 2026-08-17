@@ -569,7 +569,11 @@ export const listPositions = createServerFn({ method: "GET" })
     if (data.organization_id) base = base.eq("organization_id", data.organization_id);
     if (data.owner === "__unassigned__") base = base.is("owner_user_id", null);
     else if (data.owner) base = base.eq("owner_user_id", data.owner);
-    if (data.location) base = base.ilike("location", `%${data.location}%`);
+    if (data.location) {
+      const { ilikeValue } = await import("./search/postgrest-filter");
+      const val = ilikeValue(data.location);
+      if (val) base = base.ilike("location", val);
+    }
     if (data.q) {
       const { buildPositionSearchOr } = await import("./search/postgrest-filter");
       const searchOr = await buildPositionSearchOr(s as never, data.q);
@@ -611,7 +615,11 @@ export const listPositions = createServerFn({ method: "GET" })
       if (data.organization_id) all = all.eq("organization_id", data.organization_id);
       if (data.owner === "__unassigned__") all = all.is("owner_user_id", null);
       else if (data.owner) all = all.eq("owner_user_id", data.owner);
-      if (data.location) all = all.ilike("location", `%${data.location}%`);
+      if (data.location) {
+        const { ilikeValue } = await import("./search/postgrest-filter");
+        const val = ilikeValue(data.location);
+        if (val) all = all.ilike("location", val);
+      }
       if (data.q) {
         const { buildPositionSearchOr } = await import("./search/postgrest-filter");
         const searchOr = await buildPositionSearchOr(s as never, data.q);
