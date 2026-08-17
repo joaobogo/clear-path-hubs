@@ -97,7 +97,7 @@ export const bulkRecomputeQueue = createServerFn({ method: "POST" })
     const { data: rows } = await supabaseAdmin
       .from("v_scoring_review_queue")
       .select("match_id")
-      .eq(column, true);
+      .eq(column as string, true);
 
     if (!rows || rows.length === 0) return { recomputed: 0 };
 
