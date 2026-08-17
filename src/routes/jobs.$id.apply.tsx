@@ -1721,6 +1721,13 @@ function ApplyPage() {
             </div>
           )}
 
+          {submitError && (
+            <div className="mt-6 rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
+              <p className="font-semibold">Submission failed</p>
+              <p>{submitError}</p>
+            </div>
+          )}
+
           <div
             className={`mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between ${
               step === 5
