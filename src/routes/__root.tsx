@@ -151,16 +151,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-033 · Client Interview Loop (B10) · HIGH
-Scope: /client/interviews
-Defect: Request → see proposed slots → confirm → booking visible → overdue flags clear.
-Required fix: Surface proposed slots in client interview page; confirm booking; clear overdue flags on both
-sides.
+TEXTO DO USUÁRIO: "P-034 · Client Offer/Hire Coherence (B11) · HIGH
+Scope: /client/candidates/$id, src/lib/offer-hire.ts
+Defect: Closed-lost hire displays as active/confirmed; offer states mismatch client decisions.
+Required fix: Filter closed-lost offers from active lists; ensure client-visible offer state matches the backend
+decision.
 Acceptance criteria:
-• Request an interview from client.
-• As admin, propose slots; verify client sees them.
-• Client confirms a slot; verify booking visible on both sides.
-• Verify Interview slots 24h SLA breach clears on admin and client.
+• Decline an offer as candidate.
+• Open client view; verify it is not listed as confirmed/hired.
+• Accept an offer; verify client shows accepted and start date.
+• Verify KPI counts in client Insights match the state.
 Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
         }
       >
