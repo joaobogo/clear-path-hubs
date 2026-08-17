@@ -29,7 +29,9 @@ export function RecordActivityTab({
   const q = useQuery({
     queryKey: ["record-audit", entity, id, offset],
     queryFn: () => load({ data: { entity, id, limit: PAGE_SIZE, offset } }),
+    placeholderData: (prev) => prev,
   });
+
 
   if (q.isError) {
     return (
@@ -64,7 +66,13 @@ export function RecordActivityTab({
         </span>
       </div>
 
-      <ul className="divide-y">
+      <ul className={`divide-y relative transition-opacity ${q.isFetching && !q.isLoading ? "opacity-50" : ""}`}>
+        {q.isFetching && !q.isLoading && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/20 backdrop-blur-[1px]">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          </div>
+        )}
+
         {rows.map((r) => (
           <li key={r.id} className="px-4 py-3 text-sm">
             <div className="flex flex-wrap items-baseline justify-between gap-2">

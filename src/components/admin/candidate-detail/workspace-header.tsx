@@ -75,8 +75,9 @@ function WorkspaceHeader({
             <Badge className={stateTone}>
               {m.processing_state.replace(/_/g, " ")}
             </Badge>
-            <Badge variant="outline">admin: {m.admin_status}</Badge>
-            <Badge variant="outline">visibility: {m.client_visibility}</Badge>
+            <Badge variant="outline" className="font-mono text-[10px] uppercase">admin: {m.admin_status}</Badge>
+            <Badge variant="outline" className="font-mono text-[10px] uppercase">visibility: {m.client_visibility}</Badge>
+
           </div>
           <div className="mt-1 flex flex-wrap gap-2 text-xs text-muted-foreground">
             {cp?.email && <span>{cp.email}</span>}

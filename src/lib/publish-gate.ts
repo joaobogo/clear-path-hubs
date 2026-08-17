@@ -114,14 +114,18 @@ export function humanizePublishBlockedMessage(message: string): string {
   const hasPayment = inner.includes(PUBLISH_BLOCKER_LABEL.payment_unpaid);
   const hasRequirements = inner.includes(PUBLISH_BLOCKER_LABEL.missing_requirements);
 
+  // P-019: Humanize approval blockers for staff; remove snake_case codes and client-only copy.
   if (hasPayment && hasRequirements) {
     return "Approval blocked: payment or exemption is required, and at least one must-have requirement is needed.";
   }
   if (hasPayment) return "Approval blocked: payment or exemption required";
-  if (hasRequirements) return "Can't approve yet — add at least one must-have requirement";
+  if (hasRequirements) return "Approval blocked: add at least one must-have requirement";
 
   // Generic fallback for the remaining data blockers.
   const first = inner.split(";")[0]?.trim();
   if (!first) return "Can't approve this role yet — resolve the blockers first.";
-  return `Can't approve yet — ${first.charAt(0).toLowerCase() + first.slice(1)}`;
+  return `Approval blocked: ${first.toLowerCase()}`;
 }
+
+
+

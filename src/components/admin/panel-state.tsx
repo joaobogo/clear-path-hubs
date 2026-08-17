@@ -80,6 +80,7 @@ export function PanelState({
   empty,
   skeletonRows = 3,
   className,
+  showLoadingOverlay = false,
   children,
 }: {
   query: PanelQueryState;
@@ -88,9 +89,13 @@ export function PanelState({
   empty?: ReactNode;
   skeletonRows?: number;
   className?: string;
+  /** When true, shows an overlay when refetching/loading data while keeping old content visible. */
+  showLoadingOverlay?: boolean;
   children: ReactNode;
 }) {
   const loading = query.isPending ?? query.isLoading ?? false;
+  const fetching = query.isFetching ?? false;
+
 
   if (query.isError) {
     return (
@@ -105,7 +110,20 @@ export function PanelState({
 
   if (loading) return <PanelSkeleton rows={skeletonRows} className={className} />;
 
-  if (isEmpty) return <>{empty ?? <PanelEmpty className={className} />}</>;
+  if (isEmpty && !fetching) return <>{empty ?? <PanelEmpty className={className} />}</>;
 
-  return <>{children}</>;
+  return (
+    <div className={cn("relative", className)}>
+      {showLoadingOverlay && fetching && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/50 backdrop-blur-[1px]">
+          <div className="flex flex-col items-center gap-2">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Refreshing</span>
+          </div>
+        </div>
+      )}
+      {children}
+    </div>
+  );
 }
+
