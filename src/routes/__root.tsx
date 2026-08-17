@@ -151,17 +151,16 @@ function RootShell({ children }: { children: ReactNode }) {
  
  Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
  
- TEXTO DO USUÁRIO: "P-045 · Job Board Parity (C4) · HIGH
- Scope: /jobs, /jobs/$id, src/lib/jobs/job-board.ts
- Defect: Board must show real employer name, location, model, employment, seniority, posted date for every
- published role.
- Required fix: Derive board cards and detail pages from the same published position record; delist on
- unpublish/close.
+ TEXTO DO USUÁRIO: "P-047 · Field Integrity on Admin Record (C6) · MEDIUM
+ Scope: src/lib/apply.functions.ts, src/components/admin/candidate-detail.tsx
+ Defect: Submitted fields arrive as raw JSON or are dropped; consent not displayed.
+ Required fix: Store every application field verbatim; render answers with human-label formatters; display
+ consent status.
  Acceptance criteria:
- • Open /jobs; verify every card shows employer name, location, model, employment, seniority, posted date.
- • Open a detail page; verify all fields match the admin position record.
- • Unpublish a role; verify it disappears from /jobs within cache TTL.
- • Close a role; verify it is no longer appliable.
+ • Submit an application with all fields filled including work authorization.
+ • Open admin candidate record; verify every field is human-readable.
+ • Verify no raw {"value":...} JSON appears anywhere.
+ • Verify consent checkbox is recorded and shown.
  Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
         }
       >
