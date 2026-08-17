@@ -194,6 +194,25 @@ export async function loadCandidateHistory(
     return { actor_user_id: uid, actor_name: actorName.get(uid) ?? "Unknown user" };
   };
 
+  const { sanitizeInternalMarkers } = await import("./human-labels");
+  const diffStates = (before: any, after: any) => {
+    const out: any[] = [];
+    const keys = new Set([...Object.keys(before || {}), ...Object.keys(after || {})]);
+    for (const k of keys) {
+      if (["updated_at", "created_at", "id", "organization_id"].includes(k)) continue;
+      const b = before?.[k];
+      const a = after?.[k];
+      if (JSON.stringify(b) !== JSON.stringify(a)) {
+        out.push({
+          field: k,
+          before: typeof b === "string" ? (sanitizeInternalMarkers(b) ?? "—") : str(b),
+          after: typeof a === "string" ? (sanitizeInternalMarkers(a) ?? "—") : str(a),
+        });
+      }
+    }
+    return out;
+  };
+
   const events: HistoryEvent[] = [];
 
   for (const r of auditRows) {

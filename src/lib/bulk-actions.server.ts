@@ -502,23 +502,18 @@ export async function executePlan(
     } as never)
     .eq("id", planId);
 
-  // One audit row per batch, so a resumed run leaves a readable trail.
+  // P-038: Every batch is audited, with the parent plan id as context.
   await admin.from("audit_events").insert({
     actor_user_id: actorUserId,
     action: `bulk.${params.kind}`,
     entity_type: params.kind === "position_pause" ? "position" : "candidate_match",
-    entity_id: batch[0]?.id ?? null,
-    metadata: {
-      plan_id: planId,
-      batch_from: cursor,
-      batch_to: nextCursor,
+    entity_id: batch[0]?.id ?? planId,
+    trace_id: planId,
+    after_state: {
+      batch_size: batch.length,
+      processed: nextCursor,
       total,
-      attempted: results.length,
-      succeeded,
-      failed,
       done,
-      skipped: allRows.filter((r) => !r.eligible).length,
-      retry_only: only ? Array.from(only) : null,
     },
   } as never);
 

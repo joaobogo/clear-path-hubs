@@ -22,6 +22,8 @@ export type PanelQueryState = {
   isError?: boolean;
   error?: unknown;
   isFetching?: boolean;
+  isPlaceholderData?: boolean;
+  data?: unknown;
   refetch?: () => unknown;
 };
 
@@ -112,13 +114,19 @@ export function PanelState({
 
   if (isEmpty && !fetching) return <>{empty ?? <PanelEmpty className={className} />}</>;
 
+  // P-022: Ensure loading overlay is truly opaque to stale content during data transitions.
+  const isStale = query.isPlaceholderData || (query.isFetching && !query.data);
+  const showOverlay = (showLoadingOverlay && isStale) || (showLoadingOverlay && loading);
+
   return (
     <div className={cn("relative", className)}>
-      {showLoadingOverlay && fetching && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/50 backdrop-blur-[1px]">
+      {showOverlay && (
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center rounded-lg bg-background/80 backdrop-blur-[1px] transition-opacity duration-200">
           <div className="flex flex-col items-center gap-2">
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-            <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Refreshing</span>
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              Refreshing record…
+            </span>
           </div>
         </div>
       )}

@@ -48,8 +48,9 @@ export type SupportAuditSession = {
  * every read — this is what makes expiry automatic rather than a manual step.
  */
 export async function sweepExpiredSupportSessions(admin: Admin): Promise<number> {
-  const nowIso = new Date().toISOString();
-  // We mark both read_only and interactive sessions.
+  const now = new Date();
+  const nowIso = now.toISOString();
+  // P-020: Enforce strict 30m TTL.
   const { data, error } = await admin
     .from("support_sessions")
     .update({ ended_at: nowIso, end_reason: "expired" })
