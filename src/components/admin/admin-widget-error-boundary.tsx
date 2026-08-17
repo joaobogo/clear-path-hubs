@@ -30,7 +30,9 @@ export class AdminWidgetErrorBoundary extends Component<Props, State> {
 
   retry = () => {
     this.setState({ error: null });
-    // In a real app, this might trigger a QueryClient invalidation
+    // In TanStack Start / React Query, this boundary doesn't know which query to refetch,
+    // so we rely on the component inside it being re-mounted or the user clicking global refresh.
+    window.dispatchEvent(new CustomEvent("admin-widget-retry", { detail: { label: this.props.label } }));
   };
 
 

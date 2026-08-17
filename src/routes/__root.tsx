@@ -151,23 +151,21 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "Session rules for everything that follows. These override any default behavior and stay in force until I say otherwise.
+TEXTO DO USUÁRIO: "Standing rules apply.
 
-1. NON-INTERACTIVE. Never ask me a question. Never ask for permission, confirmation, or approval. Never reply with a plan and wait. Never say \"would you like me to\", \"should I\", \"let me know if\". If a decision is ambiguous, choose the option that best satisfies the acceptance criteria, implement it, and note the choice in one line at the end.
-2. CODE MODE ONLY. Never use Visual Edit. Never write prompt text, instructions, or TODO notes into attributes, comments, JSON, or documentation files as a substitute for implementing. Your first action on every prompt is a code change; your last action is the evidence table.
-3. FINISH THE WHOLE PROMPT. Implement every numbered acceptance criterion in one run. Do not stop halfway, do not defer items to \"a follow-up\", do not report partial completion as done.
-4. VERIFY IN THE PREVIEW. After implementing, actually navigate each acceptance criterion in the live preview. A criterion is PASS only if you performed it and observed the expected result. Never mark PASS from reasoning or from reading code.
-5. REPLY FORMAT — exactly this, nothing else:
-   Criterion # | PASS/FAIL | Files changed | Click-path you verified in preview
-   then one line: \"Root cause fixed: <what was actually wrong>\"
-   then, if applicable, one line: \"Decisions I made without asking: <...>\"
-6. ROOT CAUSES ONLY. Never make a criterion pass by hiding, deleting, or disabling the failing feature, by suppressing/swallowing an error, by removing a validation or check, by faking data, or by marking a record resolved without doing the work.
-7. NO TEST-DATA SPECIAL CASING. Never key logic on QA strings (\"BROWSER-TEST\", \"QA\", \"demo\"), specific record IDs, or the demo organization. The next audit uses fresh random names; string-keyed fixes count as fraud and fail the release.
-8. NEVER REWRITE HISTORY. Never edit or delete existing audit events, score runs, decisions, interviews, or client history. Corrections are new records.
-9. NO REGRESSIONS. These currently work and must keep working: client messages visible to staff in /admin/messages with working replies; client-facing sender label \"TaaSFlow team\" (never an internal account name); recruiter Memory & handoff create/persist/delete; owner/backup assignment reflected in My day; public job board employer/location/posted-date parity with admin; immutable append-only score runs and audit trails; per-candidate CV download audit trail; payments ledger read-only; audited support sessions with mandatory reasons; permission matrix on the org Access tab; double-click on Send producing exactly one message.
-10. If something is genuinely impossible in this environment, say so explicitly in the table as FAIL with the reason. Do not silently skip it.
+DEFECT (BLOCKER, proven): /admin (work queue) crashed repeatedly with full-page "Something went wrong" and rotating references (TF-011E0281, TF-A5F4F1E8, TF-999031C1, TF-6D39C474, TF-AF22B811, TF-B0CD574A, TF-D43266AD, TF-32CEFF73) for 45+ minutes. One partial render painted a wrong headline count ("39 items waiting" when the true state was 17). One failing widget takes down the entire page — and this page is the only entry point to interview coordination, so its outage blocked other work entirely. The crash appeared after normal data states existed: a hire record closed as lost while the candidate stage is "hired", draft roles with null location, client-created intake drafts.
 
-Reply only: \"Locked. In code mode. Ready for P1.\" Nothing else.\"`
+REQUIRED FIX: Find and fix the actual query/render error (reproduce against current data, including the closed-lost hire with a hired-stage candidate and roles with null location/work model). Then wrap EVERY Overview widget (SLA banner, Portfolio health, Awaiting client decision, Offers and hires, each work-queue section, Latest activity) in its own error boundary that renders an inline retry card. The headline "N items waiting on you" must be derived from the same queries that populate the sections, and must show a skeleton until real data is ready — never a provisional or stale number.
+
+ACCEPTANCE CRITERIA:
+1. Load /admin 10 times (5 normal reloads, 5 hard reloads): zero full-page errors.
+2. With current data (closed-lost hire, hired-stage candidate, null-location drafts, client intake drafts), every widget renders content or an inline per-widget error card.
+3. The headline count equals the sum of the rendered section counts, every time; it never displays a number that later changes or vanishes.
+4. Force one widget's query to throw (temporarily, in dev): the rest of the page still renders and the failing widget shows a retry card. Remove the simulation afterwards and confirm normal render.
+5. "Interviews to coordinate" rows render and their action opens the coordination flow.
+6. Navigate away and back, and use browser back/forward across 5 admin pages: no crash, counts stable.
+
+Covers A2 (PDF P-002)."`
         }
       >
         {children}

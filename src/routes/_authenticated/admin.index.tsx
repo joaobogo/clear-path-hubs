@@ -85,7 +85,7 @@ function Header({
   showTest,
   onRefresh,
 }: {
-  total: number;
+  total: number | null;
   isReady: boolean;
   isFetching: boolean;
   showTest: boolean;
@@ -96,7 +96,7 @@ function Header({
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Work queue</h1>
         <p className="mt-1 h-5 text-sm text-muted-foreground">
-          {!isReady ? (
+          {total === null ? (
             <span className="inline-block h-4 w-48 animate-pulse rounded bg-muted" />
           ) : total === 0 ? (
             "Nothing is waiting on the platform team right now."
@@ -190,10 +190,11 @@ function WorkQueueSummary({ showTest, onRefresh }: { showTest: boolean; onRefres
     queryFn: () => getAdminWorkQueues({ data: { include_test: showTest } }),
     refetchOnWindowFocus: true,
     staleTime: 30_000,
+    placeholderData: (prev) => prev,
   });
 
   const queues = data?.queues ?? [];
-  const total = queues.reduce((n, q) => n + (typeof q.count === "number" ? q.count : 0), 0);
+  const total = isPending ? null : queues.reduce((n, q) => n + (typeof q.count === "number" ? q.count : 0), 0);
   const active = queues.filter((q) => q.items.length > 0);
   const isReady = !isPending && !error;
 
@@ -250,51 +251,50 @@ function WorkQueueSummary({ showTest, onRefresh }: { showTest: boolean; onRefres
             </section>
           ) : (
             <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-              {active.map((q) => {
-                const Icon = ICONS[q.key] ?? ClipboardCheck;
-                return (
-                  <section
-                    key={q.key}
-                    id={`queue-${q.key}`}
-                    className="scroll-mt-20 rounded-lg border bg-card"
-                  >
-                    <header className="flex items-start justify-between gap-3 border-b px-4 py-3">
-                      <div className="flex items-start gap-2">
-                        <Icon className="mt-0.5 h-4 w-4 text-muted-foreground" />
-                        <div>
-                          <h2 className="text-sm font-semibold">
-                            {q.label}{" "}
-                            <span className="ml-1 tabular-nums text-muted-foreground">{q.count}</span>
-                          </h2>
-                          <p className="text-xs text-muted-foreground">{q.description}</p>
-                        </div>
-                      </div>
-                      {q.see_all && q.count > q.items.length ? (
-                        <Link
-                          to={q.see_all.to}
-                          className="shrink-0 whitespace-nowrap text-xs font-medium text-primary hover:underline"
-                        >
-                          See all {q.count}
-                        </Link>
-                      ) : null}
-                    </header>
-
-                    <ul className="divide-y">
-                      {q.items.map((it) => (
-                        <WorkQueueRow key={it.id} item={it} />
-                      ))}
-                    </ul>
-
-                    <footer className="border-t px-4 py-2 text-[11px] text-muted-foreground">
-                      {q.action_hint}
-                    </footer>
-                  </section>
-                );
-              })}
+              {active.map((q) => (
+                <AdminWidgetErrorBoundary key={q.key} label={q.label}>
+                  <QueueSection q={q} />
+                </AdminWidgetErrorBoundary>
+              ))}
             </div>
           )}
         </>
       )}
     </div>
+  );
+}
+
+function QueueSection({ q }: { q: any }) {
+  const Icon = ICONS[q.key] ?? ClipboardCheck;
+  return (
+    <section id={`queue-${q.key}`} className="scroll-mt-20 rounded-lg border bg-card">
+      <header className="flex items-start justify-between gap-3 border-b px-4 py-3">
+        <div className="flex items-start gap-2">
+          <Icon className="mt-0.5 h-4 w-4 text-muted-foreground" />
+          <div>
+            <h2 className="text-sm font-semibold">
+              {q.label} <span className="ml-1 tabular-nums text-muted-foreground">{q.count}</span>
+            </h2>
+            <p className="text-xs text-muted-foreground">{q.description}</p>
+          </div>
+        </div>
+        {q.see_all && q.count > q.items.length ? (
+          <Link
+            to={q.see_all.to}
+            className="shrink-0 whitespace-nowrap text-xs font-medium text-primary hover:underline"
+          >
+            See all {q.count}
+          </Link>
+        ) : null}
+      </header>
+
+      <ul className="divide-y">
+        {q.items.map((it: any) => (
+          <WorkQueueRow key={it.id} item={it} />
+        ))}
+      </ul>
+
+      <footer className="border-t px-4 py-2 text-[11px] text-muted-foreground">{q.action_hint}</footer>
+    </section>
   );
 }

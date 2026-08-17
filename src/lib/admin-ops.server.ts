@@ -33,7 +33,9 @@ const DAY = 24 * HOUR;
 
 function ageTone(iso: string | null, warnDays: number, dangerDays: number): QueueItem["tone"] {
   if (!iso) return "default";
-  const days = (Date.now() - new Date(iso).getTime()) / DAY;
+  const date = new Date(iso);
+  if (isNaN(date.getTime())) return "default";
+  const days = (Date.now() - date.getTime()) / DAY;
   if (days >= dangerDays) return "danger";
   if (days >= warnDays) return "warning";
   return "default";
@@ -116,7 +118,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       s
         .from("interviews")
         .select(
-          "id,status,requested_at,scheduled_at,candidate_match_id,candidate_matches(candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(name)))",
+          "id,status,requested_at,scheduled_at,candidate_match_id,candidate_matches!inner(candidate_profiles(full_name),positions!inner(id,title,owner_user_id,organizations!inner(name)))",
           { count: "exact" },
         )
         .or(
