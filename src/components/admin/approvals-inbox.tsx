@@ -12,6 +12,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
+import { humanizePublishBlockedMessage } from "@/lib/publish-gate";
 import {
   approveApprovalItem,
   bulkApproveApprovals,
@@ -237,6 +238,14 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
     void qc.invalidateQueries({ queryKey: ["admin", "positions"] });
   };
 
+  // P-019: staff must never read client checkout copy on the approvals desk.
+  const asAdminApprovalError = (e: unknown) => {
+    const raw = e instanceof Error ? e.message.replace(/^Error:\s*/, "") : "";
+    if (!raw) return e;
+    const human = humanizePublishBlockedMessage(raw);
+    return human === raw ? e : new Error(human);
+  };
+
   const approve = useMutation({
     mutationFn: (item: ApprovalItem) =>
       approveFn({
@@ -253,7 +262,7 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
       setSelected({});
       invalidate();
     },
-    onError: (e) => toastError(asAdminApprovalError(e), { tone: "staff", fallback: "Approval failed." }),
+    onError: (e) => toastError(asAdminApprovalError(e), { tone: "admin", fallback: "Approval failed." }),
     onSettled: () => setBusyId(null),
   });
 
@@ -287,7 +296,7 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
       setSelected({});
       invalidate();
     },
-    onError: (e) => toastError(e, { fallback: "Bulk approve failed." }),
+    onError: (e) => toastError(asAdminApprovalError(e), { tone: "admin", fallback: "Bulk approve failed." }),
   });
 
   const allItems = useMemo(
