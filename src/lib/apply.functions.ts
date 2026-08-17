@@ -833,10 +833,12 @@ export const getApplicationReceipt = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     throttlePublicFn("apply_lookup");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // Anonymous lookup keyed only by the application UUID — never return
+    // contact PII here. First name only, for the greeting line.
     const { data: app, error } = await supabaseAdmin
       .from("applications")
       .select(
-        "id,applied_at,positions(title,organizations(name)),candidate_profiles(full_name,email)",
+        "id,applied_at,positions(title,organizations(name)),candidate_profiles(full_name)",
       )
       .eq("id", data.id)
       .maybeSingle();
@@ -847,16 +849,15 @@ export const getApplicationReceipt = createServerFn({ method: "GET" })
     } | null;
     const cp = app.candidate_profiles as unknown as {
       full_name: string;
-      email: string;
     } | null;
+    const firstName = (cp?.full_name ?? "").trim().split(/\s+/)[0] ?? "";
     return {
       id: app.id,
       reference: ref6(app.id),
       applied_at: app.applied_at,
       position_title: pos?.title ?? null,
       organization_name: pos?.organizations?.name ?? null,
-      candidate_name: cp?.full_name ?? null,
-      candidate_email: cp?.email ?? null,
+      candidate_first_name: firstName || null,
     };
   });
 
