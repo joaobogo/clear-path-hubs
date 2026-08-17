@@ -105,7 +105,7 @@ export const bulkRecomputeQueue = createServerFn({ method: "POST" })
     const items = rows.slice(0, 50);
     const results = await Promise.allSettled(
       items.map((r) =>
-        executeScoring(r.match_id, {
+        executeScoring(r.match_id as string, {
           force: true,
           reason: `Bulk recompute from ${data.queue} queue`,
           actor_user_id: context.userId,
