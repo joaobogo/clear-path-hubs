@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { actorLabel } from "@/lib/notifications/notification-tiers";
+import { humanizeRoleAction } from "@/lib/client/role-audit-humanizer";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Award, CalendarClock, ClipboardCheck, FileClock } from "lucide-react";
@@ -197,8 +199,13 @@ export function AuditTrailSection({ candidate }: { candidate: ClientCandidateDTO
             <div className="absolute -left-[1.35rem] mt-1.5 h-2 w-2 rounded-full border border-background bg-muted-foreground/40" />
             <div className="flex flex-col">
               <span className="text-sm font-medium leading-none text-foreground">
-                {e.action}
+                {humanizeRoleAction(e.action)}
               </span>
+              {e.actor_name && (
+                <span className="mt-1 text-[11px] text-muted-foreground uppercase tracking-wider">
+                  {actorLabel(e.actor_name, "client")}
+                </span>
+              )}
               <div className="mt-1.5 flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
                 <span>{new Date(e.at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}</span>
                 <span>•</span>

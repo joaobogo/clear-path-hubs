@@ -179,7 +179,9 @@ export async function emitEventFromServer(args: {
           ? `${actorName}: ${copy.title}` 
           : actorName && args.event === "message_sent" 
             ? `New message from ${actorName}` 
-            : copy.title,
+            : actorName && r.audience === "client" && args.event === "candidate_stage_changed"
+              ? `Status changed by ${actorName}`
+              : copy.title,
         body: copy.body ?? null,
         link_path: r.link_path ?? args.link_path ?? (args.candidate_match_id ? `/client/candidates/${args.candidate_match_id}` : null),
         // Point every notification at the exact record it is about.
@@ -385,8 +387,8 @@ export const listMyNotifications = createServerFn({ method: "GET" })
           actorId
             ? actorId === context.userId
               ? "You"
-              : (nameById.get(actorId) || "TaaSFlow team")
-            : "TaaSFlow team",
+              : (nameById.get(actorId) || (audience === "client" ? "TaaSFlow team" : "TaaSFlow system"))
+            : (audience === "client" ? "TaaSFlow team" : "TaaSFlow system"),
         );
       }
     }
