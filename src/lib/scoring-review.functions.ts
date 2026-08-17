@@ -414,6 +414,22 @@ export const correctEvidenceItem = createServerFn({ method: "POST" })
     return { ok: true as const, item: after as AnyRow, rescored };
   });
 
+/** Recompute the score for a match, appending a new immutable run. */
+export const recomputeScore = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ match_id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const { executeScoring } = await import("./scoring-service.server");
+    const res = await executeScoring(data.match_id, {
+      force: true,
+      reason: "Manual recompute from review center",
+      actor_user_id: context.userId,
+    });
+    if (!res.ok) throw new Error(res.message);
+    return res;
+  });
+
 /** Resolve an eligibility qualifier by hand, with a reason. Always audited. */
 export const setEligibilityDecision = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
