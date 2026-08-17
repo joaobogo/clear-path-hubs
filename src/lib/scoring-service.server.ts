@@ -40,6 +40,8 @@ import {
 } from "./scoring/engine-calibration";
 import { buildReplaySnapshot } from "./scoring/replay";
 import type { Json } from "@/integrations/supabase/types";
+import { randomUUID } from "crypto";
+
 
 export const SCORING_BLUEPRINT_VERSION = "taasflow-blueprint-v1.0.0";
 
