@@ -54,7 +54,9 @@ export function CandidateHistoryTimeline({
   const query = useQuery({
     queryKey: ["candidate-history", matchId],
     queryFn: () => fetchHistory({ data: { match_id: matchId } }),
+    placeholderData: (prev) => prev,
   });
+
 
   const [actor, setActor] = useState("all");
   const [action, setAction] = useState("all");
@@ -90,7 +92,7 @@ export function CandidateHistoryTimeline({
 
 
   return (
-    <PanelState query={query} skeletonRows={5}>
+    <PanelState query={query} skeletonRows={5} showLoadingOverlay>
     <div className="space-y-4">
       <div className="rounded-lg border bg-card">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-2.5">
