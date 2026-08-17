@@ -410,7 +410,7 @@ export const submitApplication = createServerFn({ method: "POST" })
       // Point candidate profile at latest CV.
       await supabaseAdmin
         .from("candidate_profiles")
-        .update({ current_cv_file_id: fileRow.id })
+        .update({ current_cv_file_id: fileId })
         .eq("id", candidateProfileId);
 
       // 7. Create application (unique active constraint protects against races).
