@@ -161,7 +161,8 @@ Acceptance criteria:
 • As admin, propose slots; verify client sees them.
 • Client confirms a slot; verify booking visible on both sides.
 • Verify Interview slots 24h SLA breach clears on admin and client.
-Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`,old_content:
+Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
+        }
       >
         {children}
         <noscript>
