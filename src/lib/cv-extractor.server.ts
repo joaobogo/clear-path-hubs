@@ -18,6 +18,12 @@ export type ExtractResult = {
   reason?: string;
 };
 
+/** Validates a CV's text layer immediately after upload to detect scanned images. */
+export async function validateCvTextLayer(bytes: Uint8Array): Promise<ExtractResult> {
+  // We assume PDF based on the upload constraints in the app.
+  return extractCvText(bytes, "application/pdf");
+}
+
 function normalize(s: string): string {
   return s
     .replace(/\r\n?/g, "\n")
