@@ -147,7 +147,12 @@ function isEmptyValue(v: unknown): boolean {
   if (v === null || v === undefined) return true;
   if (typeof v === "string") return v.trim() === "";
   if (Array.isArray(v)) return v.length === 0;
-  if (typeof v === "object") return Object.keys(v as object).length === 0;
+  if (typeof v === "object") {
+    const keys = Object.keys(v as object);
+    if (keys.length === 0) return true;
+    // For requirement-like objects, if all fields are empty, it's empty.
+    return Object.values(v as object).every((val) => isEmptyValue(val));
+  }
   return false;
 }
 
