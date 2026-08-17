@@ -153,20 +153,9 @@ Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração
  
 TEXTO DO USUÁRIO: "Standing rules apply.
  
-DEFECT (BLOCKER, proven, real candidate affected): A real applicant uploaded the same CV FOUR times and no application was ever created, and was never told the real reason — your own evidence-gaps page classifies this as \"Ours\" with a communication defect. Separately, unreadable/no-text-layer PDFs (cv_unreadable / empty_text_layer) sit failed at the 3-attempt ceiling for days with no recovery path. Duplicate submissions of the same email+role also produce silent duplicates or nothing.
+DEFECT (HIGH, trust-critical, proven): The Northwind Talent (Demo) org record has Website = flowgroupventures.com (another client's domain), and the AI candidate briefings for Northwind candidates repeatedly pitch them \"for Flow Group Ventures\"... Northwind's primary contact merges two personas: name \"james cameron\" with email kasprzakjoao@protonmail.com. Any client-visible text naming another client is unacceptable.
  
-REQUIRED FIX: Make submission a robust state machine: either an application record is created, or the applicant sees a truthful, actionable error AND a staff-visible incident is logged with the trace and the applicant's email. Detect zero-character extraction immediately and tell the applicant honestly (\"we couldn't read your file — upload a text-based PDF or DOCX\"), give staff a working OCR/retry path, and never leave an application permanently stuck. Same email + same role must update the existing application or be rejected with a clear message — never create silent duplicates; flag near-duplicates for staff.
- 
-ACCEPTANCE CRITERIA:
-1. Submit a valid application with a clean text PDF: the application appears in the admin candidate database with every submitted field verbatim, and parse/score kicks off.
-2. Force a failure during record creation (mock it): the applicant sees a truthful error with a support reference, and an incident row appears for staff containing the trace and the applicant email.
-3. Upload an image-only/scanned PDF: the applicant is told immediately and honestly what to do; the record shows \"unreadable\" for staff; staff can trigger OCR/retry and the application then progresses or is explicitly rejected — never stuck.
-4. Apply twice with the same email to the same role: exactly one candidate record exists; the second submission either updates it or is rejected with a clear message.
-5. Double-click submit: exactly one application record.
-6. Refresh mid-form: entered data is restored or the form restarts cleanly — no corrupt half-record.
-7. Attempt to apply to a closed/unpublished role via direct URL: blocked with a clear message.
- 
-Covers C1 + C2 + C3 + C9 (PDF P-042, P-043, P-044, P-050)."`
+REQUIRED FIX: Correct org records to their own real data. Make every briefing/pitch derive the hiring organization from the candidate's actual position→org relation... Covers A10 + B14 (PDF P-010, P-037)."`
         }
       >
         {children}
