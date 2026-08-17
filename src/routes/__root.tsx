@@ -151,16 +151,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P-026 · Stale Engine Banner (B3) · HIGH
-Scope: /client/candidates/$id
-Defect: Client banner shows stale engine version (demo-coverage-fill-2026-08-13) after recomputation.
-Required fix: Clear the banner when the latest score_run uses the current engine version; ensure version is
-consistent across client and admin.
+TEXTO DO USUÁRIO: "Scope: /client/candidates/$id, src/lib/cv-download.functions.ts
+Defect: Contact details visible and CV downloadable before interview.
+Required fix: Blur/redact contact details and disable or redact CV download until interview consent is recorded;
+server-side endpoint enforces this.
 Acceptance criteria:
-• Open client candidate with stale engine banner.
-• Trigger recompute from admin.
-• Verify banner disappears on client after refresh.
-• Verify engine version matches admin candidate view.
+• Open a Shortlisted candidate who has not been interviewed.
+• Verify contact details are redacted.
+• Attempt CV download; verify it returns redacted version or 403.
+• After interview consent, verify full details and CV are available.
 Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
