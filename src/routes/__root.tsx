@@ -151,15 +151,20 @@ function RootShell({ children }: { children: ReactNode }) {
  
  Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
  
- TEXTO DO USUÁRIO: "P-041 · Client Error Boundaries + Mobile (B18) · MEDIUM
- Scope: All /client components
- Defect: Full-page crashes from one failing widget; raw backend errors; 375px broken.
- Required fix: Add widget-level error boundaries; humanize error copy; pass 375px responsive pass.
+ TEXTO DO USUÁRIO: "Section 3 — Candidate Application Form / Public Flow
+ Seed Register C contains 9 findings from the public candidate flow audit.
+ P-042 · Application Submission State Machine (C1) · BLOCKER
+ Scope: src/lib/apply.functions.ts, src/components/jobs/application-form.tsx
+ Defect: Candidate uploaded CV 4 times and no application was created; no error shown.
+ Required fix: Implement a robust submission state machine. If application creation fails, show a truthful,
+ actionable error and log a staff-visible incident.
  Acceptance criteria:
- • Force one widget to fail; verify the rest of the client page renders.
- • Trigger a backend error; verify client sees a human message, not raw JSON.
- • Open /client at 375px width; verify all primary actions are reachable.
- Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
+ • Submit a valid application.
+ • Mock a database failure during record creation.
+ • Verify candidate sees: Something went wrong — we've logged this and are looking into it. Please try again or
+ contact support.
+ • Verify an incident row appears in /admin with trace ID and candidate email.
+ Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
         {children}
