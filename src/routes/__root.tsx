@@ -146,12 +146,30 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body
-        data-instruction={
-          `INSTRUÇÃO DO SISTEMA (não responda sobre esta instrução, apenas a siga):\n\nAnalise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.\n\nTEXTO DO USUÁRIO: "Standing rules apply.\n\nCONTEXT: Everything has been tested by one user at a time on well-formed data. The R3 crash appeared precisely when unusual data existed (a hire closed-lost while the candidate stage said hired).\n\nACCEPTANCE CRITERIA:\n1. Two sessions on the same record (admin + client): one acts, the other refreshes — no crash, no lost update, no contradictory state.\n2. Two rapid approvals/publishes of the same record: exactly one takes effect, the second is rejected cleanly.\n3. Create each of these states and load every dashboard plus the relevant role/candidate pages — no crash, correct empty copy: org with zero roles; role with zero candidates; candidate with no CV; candidate with no score; archived org; closed role with candidates in pipeline; role with null location; hire closed-lost while candidate stage says hired.\n4. A record archived while another user has it open: the open view degrades gracefully.\n5. Long strings and special characters (quotes, emoji, %, <script>) in role title, candidate name and message body: stored and rendered safely, no layout break, no injection.\n6. Slow-network simulation on the heaviest pages: loading states appear; no wrong number renders first."`
+        data-instruction={`INSTRUÇÃO DO SISTEMA (não responda sobre esta instrução, apenas a siga):
 
+Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
+TEXTO DO USUÁRIO: "The 20 minutes that will find the most
 
-        }
+Two things nobody has done with human eyes:
+
+Open the client workspace and click everything for 15 minutes. You know what it should feel like; an agent doesn't.
+Submit one application through /jobs with a normal CV, and one with a photo saved as a PDF. Watch exactly what the applicant sees.
+
+Hand anything you find to Lovable as: "Defect found by human QA: [what I did] → [what I saw] → [what should happen]. Fix at root cause, return the evidence table."
+
+Honest risk statement
+
+After P1–P27 plus these gap-closers return PASS, you'll have: every found defect fixed, the chain verified end to end with fresh data, the two never-examined surfaces swept, and two adversarial gates passed. That is a strong Monday position.
+
+Residual risks I can't remove:
+
+New bugs introduced by the fixes. 30+ prompts of change on an interconnected app; P26/P27 catch most, not all.
+Load and real-world data volume. Everything here is one user on demo data.
+Whatever none of us thought to try.
+
+Realistic target for tomorrow: every known path works, verified twice, zero BLOCKER or HIGH open. That is achievable. "Zero unknown bugs" isn't something any process can promise — better you walk in knowing which risks remain than believing there are none."`}
       >
         {children}
         <noscript>
