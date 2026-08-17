@@ -63,7 +63,13 @@ import {
   MoreHorizontal,
   Milestone,
   ClipboardList,
+  ChevronRight,
+  Info,
 } from "lucide-react";
+import { FitHero, WhyWeShortlisted, RequirementCoverage, WhyThisCandidate, WhatNeedsValidation } from "@/components/client/candidate-detail/evidence";
+import { ExperienceTimeline, SkillsAndEducation, AvailabilityAndComp, ProfilePanel, LinksPanel } from "@/components/client/candidate-detail/profile";
+import { ActivitySection } from "@/components/client/candidate-detail/activity";
+
 import { DownloadCvButton } from "@/components/download-cv-button";
 import { ScoreExplainability } from "@/components/candidate/score-explainability";
 import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
@@ -879,7 +885,7 @@ export function HistoryTab({
 }
 
 // ── Client preview ─────────────────────────────────────────────────────────
-export function PreviewTab({ matchId }: { matchId: string }) {
+export function PreviewTab({ matchId, match: m }: { matchId: string; match?: Any }) {
   const previewFn = useServerFn(getClientPreview);
   const { data, isLoading, error } = useQuery({
     queryKey: ["client-preview", matchId],
@@ -892,56 +898,57 @@ export function PreviewTab({ matchId }: { matchId: string }) {
         <AlertDescription>Preview failed: {(error as Error).message}</AlertDescription>
       </Alert>
     );
-  if (!data)
+  if (!data) {
+    const isApproved = m?.admin_status === "approved";
+    const isVisible = m?.client_visibility === "visible";
+    
+    let message = "No client-visible data yet. The candidate is still internal.";
+    if (isApproved && !isVisible) {
+      message = "Candidate is approved but Hidden. Publish them to populate the client view.";
+    } else if (isApproved && isVisible) {
+      message = "Generating preview... (the record exists but the DTO failed to assemble)";
+    }
+
     return (
       <div className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
-        No client-visible data yet. Approve for client to populate the client view.
+        {message}
       </div>
     );
-  const dto = data as Any;
+  }
+  const dto = (data as Any).candidate;
+  const interviews = (data as Any).interviews ?? [];
+  const decisions = (data as Any).decisions ?? [];
+
   return (
-    <div className="rounded-lg border-2 border-dashed bg-background p-5">
-      <div className="mb-3 text-xs uppercase tracking-wide text-muted-foreground">
-        Client view — exactly what the client will see
-      </div>
-      <div className="rounded-lg border bg-card p-5">
-        <div className="flex items-baseline justify-between">
-          <div>
-            <h3 className="text-lg font-semibold">{dto.full_name ?? dto.name ?? "Candidate"}</h3>
-            <div className="text-sm text-muted-foreground">
-              {dto.headline ?? ""}{dto.location ? ` · ${dto.location}` : ""}
-            </div>
+    <div className="space-y-6">
+      <Alert className="taas-bg-info-soft border-info/20">
+        <Eye className="h-4 w-4 taas-tx-info" />
+        <AlertDescription className="text-xs text-info/80">
+          This is an exact preview of what the client sees in their workspace.
+        </AlertDescription>
+      </Alert>
+
+      <div className="rounded-lg border bg-background p-6 shadow-sm">
+        <FitHero candidate={dto} />
+        <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-12">
+          <div className="space-y-8 lg:col-span-8">
+            <WhyWeShortlisted candidate={dto} />
+            <RequirementCoverage candidate={dto} />
+            <WhyThisCandidate candidate={dto} />
+            <WhatNeedsValidation candidate={dto} />
+            <ExperienceTimeline candidate={dto} />
+            <SkillsAndEducation candidate={dto} />
           </div>
-          {/* Client preview mirrors the employer surface: band, never a number. */}
-          <CandidateScoreBadge
-            score={dto.score ?? null}
-            fitLabel={dto.fit_label ?? null}
-            evidence={dto.evidence_support ?? null}
-          />
+          <aside className="space-y-6 lg:col-span-4">
+            <AvailabilityAndComp candidate={dto} />
+            <ProfilePanel candidate={dto} />
+            <LinksPanel candidate={dto} />
+            {interviews.length > 0 && (
+              <ActivitySection interviews={interviews} decisions={decisions} />
+            )}
+          </aside>
         </div>
-        {dto.explanation && <p className="mt-3 whitespace-pre-wrap text-sm">{dto.explanation}</p>}
-        {Array.isArray(dto.strengths) && dto.strengths.length > 0 && (
-          <>
-            <h4 className="mt-4 text-xs font-semibold uppercase text-muted-foreground">Strengths</h4>
-            <ul className="mt-1 list-disc pl-5 text-sm">
-              {dto.strengths.map((s: string, i: number) => <li key={i}>{s}</li>)}
-            </ul>
-          </>
-        )}
-        {Array.isArray(dto.evidence) && dto.evidence.length > 0 && (
-          <>
-            <h4 className="mt-4 text-xs font-semibold uppercase text-muted-foreground">Evidence</h4>
-            <ul className="mt-1 space-y-1 text-xs text-muted-foreground">
-              {dto.evidence.slice(0, 8).map((e: Any, i: number) => (
-                <li key={i}>"…{e.snippet}…"</li>
-              ))}
-            </ul>
-          </>
-        )}
       </div>
-      <p className="mt-3 text-xs text-muted-foreground">
-        This preview always mirrors the sanitized client DTO — never raw admin data.
-      </p>
     </div>
   );
 }

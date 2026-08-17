@@ -1169,29 +1169,78 @@ export const getPublishQueue = createServerFn({ method: "GET" })
 
 // Sanitized client preview — returns the SAME DTO the real Client view uses,
 // so Admin Preview ≡ Client View by construction. Selects the same columns
-// `getClientCandidate` selects, then passes through `toClientCandidateDTO`.
+// `getClientPreview` selects, then passes through `toClientCandidateDTO`.
 export const getClientPreview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => z.object({ match_id: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
-    const s = await getAdmin();
-    const { data: m } = await s
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: m } = await supabaseAdmin
       .from("candidate_matches")
       .select(
-        "id,stage,delivered_at,current_score_run_id,approved_score_run_id," +
-        "candidate_profiles(full_name,location,headline,availability,skills,experience)," +
-        "positions(id,title,organizations(name))," +
-        "score_runs!candidate_matches_current_score_run_id_fkey(" +
-          "score,fit_label,explanation,result,must_have_coverage,preferred_coverage," +
-          "evidence,requirement_coverage,strengths,concerns" +
-        ")",
+        `id, stage, delivered_at, position_id, application_id, candidate_profile_id, contact_released_at, contact_released_by, contact_release_reason,
+         canonical_state, processing_state, processing_updated_at, submitted_to_client_at,
+         score_stale, score_stale_reasons, score_stale_at, rescore_queued_at,
+         candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, compensation_preferences, updated_at),
+         positions(id, title, location, work_model, requirements, preferred_requirements, compensation, updated_at),
+         applications(id, source, applied_at, created_at),
+         score_runs:approved_score_run_id (score, fit_label, fit_band, result, evidence, requirement_coverage, completed_at, engine_version, evaluation_method, input_hash, blueprint_version, contradiction_status, must_have_coverage, preferred_coverage)`,
       )
       .eq("id", data.match_id)
       .maybeSingle();
     if (!m) return null;
+
+    const applicationId = (m as AnyRow).application_id;
+    const [hydratedMatch] = await (
+      await import("@/lib/client-candidate-hydrate.server")
+    ).hydrateClientCandidateProfiles([m as AnyRow]);
+
+    const [interviewsRes, decisionsRes, answersRes, evidenceRes] = await Promise.all([
+      supabaseAdmin
+        .from("interviews")
+        .select("id, status, requested_at, scheduled_at, completed_at, notes")
+        .eq("candidate_match_id", data.match_id)
+        .order("created_at", { ascending: false }),
+      supabaseAdmin
+        .from("client_decisions")
+        .select("id, decision, feedback, created_at")
+        .eq("candidate_match_id", data.match_id)
+        .order("created_at", { ascending: false }),
+      applicationId
+        ? supabaseAdmin
+            .from("application_answers")
+            .select("id, answer, screening_questions(question, display_order)")
+            .eq("application_id", applicationId)
+        : Promise.resolve({ data: [] as AnyRow[] }),
+      import("./client-kpi.server").then((m) =>
+        m.loadClientEvidenceItems(supabaseAdmin, [data.match_id]),
+      ),
+    ]);
+
+    const answers = ((answersRes as AnyRow).data as AnyRow[]) ?? [];
+    answers.sort(
+      (a, b) =>
+        (a.screening_questions?.display_order ?? 0) - (b.screening_questions?.display_order ?? 0),
+    );
+
+    const ACTIVE_INTERVIEW_STATUSES = ["requested", "scheduling", "scheduled", "completed"];
+    const matchWithAnswers = {
+      ...hydratedMatch,
+      interview_active: ((interviewsRes.data as AnyRow[]) ?? []).some((iv) =>
+        ACTIVE_INTERVIEW_STATUSES.includes(String(iv.status)),
+      ),
+      evidence_items: evidenceRes.get(data.match_id) ?? [],
+      application_answers: answers,
+      audit_events: [], // Admin preview doesn't need full audit list
+    };
+
     const { toClientCandidateDTO } = await import("@/lib/client-kpi.server");
-    return toClientCandidateDTO(m as AnyRow);
+    return {
+      candidate: toClientCandidateDTO(matchWithAnswers as AnyRow),
+      interviews: (interviewsRes.data as AnyRow[]) ?? [],
+      decisions: (decisionsRes.data as AnyRow[]) ?? [],
+    };
   });
 
 

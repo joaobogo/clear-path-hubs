@@ -286,7 +286,7 @@ function CandidateWorkspace() {
                     </ComponentErrorBoundary>
                   </div>
                 )}
-                {tab === "preview" && <PreviewTab matchId={id} />}
+                {tab === "preview" && <PreviewTab matchId={id} match={m} />}
                 {tab === "activity" && (
                   <ComponentErrorBoundary boundary="admin.candidate.activity" tone="admin">
                     <ActivityAuditTab matchId={id} positionId={pos?.id} decisions={decisions} />
