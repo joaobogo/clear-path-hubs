@@ -555,6 +555,14 @@ export const saveOnboardingRole = createServerFn({ method: "POST" })
     const { supabase, userId } = context as { supabase: Db; userId: string };
     await assertCanConfigure(supabase, userId, data.organization_id);
 
+    const { data: current } = data.position_id
+      ? await supabase
+          .from("positions")
+          .select("requirements, preferred_requirements, dealbreakers")
+          .eq("id", data.position_id)
+          .maybeSingle()
+      : { data: null };
+
     const patch = {
       title: data.title,
       location: data.location || null,
