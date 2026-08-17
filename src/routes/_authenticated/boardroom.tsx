@@ -48,6 +48,13 @@ export const Route = createFileRoute("/_authenticated/boardroom")({
       { name: "robots", content: "noindex" },
     ],
   }),
+  beforeLoad: async () => {
+    // Same staff gate the /admin layout uses: fail closed to /access-denied.
+    const access = await getStaffAccess({ data: {} });
+    if (!access.staff) {
+      throw redirect({ to: "/access-denied", search: { reason: "permission" } });
+    }
+  },
   component: BoardroomPage,
 });
 
