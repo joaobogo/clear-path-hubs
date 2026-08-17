@@ -151,20 +151,17 @@ function RootShell({ children }: { children: ReactNode }) {
  
  Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
  
- TEXTO DO USUÁRIO: "Section 3 — Candidate Application Form / Public Flow
- Seed Register C contains 9 findings from the public candidate flow audit.
- P-042 · Application Submission State Machine (C1) · BLOCKER
- Scope: src/lib/apply.functions.ts, src/components/jobs/application-form.tsx
- Defect: Candidate uploaded CV 4 times and no application was created; no error shown.
- Required fix: Implement a robust submission state machine. If application creation fails, show a truthful,
- actionable error and log a staff-visible incident.
+ TEXTO DO USUÁRIO: "P-043 · Unreadable PDF Feedback (C2) · HIGH
+ Scope: src/lib/intelligence/cv-parser.server.ts, src/lib/cv-extractor.server.ts
+ Defect: Unreadable/no-text-layer PDFs stuck at 3-attempt ceiling for 5 days.
+ Required fix: Detect 0-character extraction early; show immediate candidate feedback; provide staff OCR/retry
+ path; prevent infinite stuck state.
  Acceptance criteria:
- • Submit a valid application.
- • Mock a database failure during record creation.
- • Verify candidate sees: Something went wrong — we've logged this and are looking into it. Please try again or
- contact support.
- • Verify an incident row appears in /admin with trace ID and candidate email.
- Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
+ • Upload an image-only scanned PDF.
+ • Verify immediate UI feedback: We couldn't read your file — please upload a text-based PDF or DOCX.
+ • Verify staff candidate list shows Unreadable PDF status.
+ • Verify staff can trigger OCR/retry and the application eventually processes or is clearly rejected.
+ Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview"`
         }
       >
         {children}
