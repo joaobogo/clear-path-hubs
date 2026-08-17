@@ -151,16 +151,17 @@ function RootShell({ children }: { children: ReactNode }) {
  
  Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
  
- TEXTO DO USUÁRIO: "P-049 · Status Page Lookup (C8) · MEDIUM
- Scope: /me, src/routes/_authenticated/me.tsx
- Defect: Applicant status page shows internal data or fails for unknown lookups.
- Required fix: Show only public status (received, under review, etc.); no scores, notes, or other candidates;
- unknown lookups fail gracefully.
+ TEXTO DO USUÁRIO: "P-050 · Public Form Robustness (C9) · MEDIUM
+ Scope: src/components/jobs/application-form.tsx
+ Defect: Refresh mid-form loses data; double-click submits twice; wrong file type rejected late; closed roles
+ appliable by direct URL.
+ Required fix: Persist form state across refresh; debounce submit; reject file type/size before upload; block
+ application on closed/unpublished roles.
  Acceptance criteria:
- • Open /me and enter a valid application reference.
- • Verify status is shown without internal scores or notes.
- • Enter an unknown reference; verify graceful not-found message.
- • Verify direct URL access works without leaking other applications.
+ • Fill form, refresh, verify data is restored.
+ • Double-click submit; verify only one application record.
+ • Upload a 50MB file or non-PDF/DOCX; verify immediate clear rejection before upload.
+ • Attempt to apply to a closed role via direct URL; verify application blocked.
  Reply contract: Return Criterion # | PASS/FAIL | Files changed | Click-path verified in preview."`
         }
       >
