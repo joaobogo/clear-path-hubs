@@ -365,7 +365,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       description: "Candidates whose score inputs changed after assessment.",
       count: stale.count ?? 0,
       action_hint: "Recompute scores to clear out-of-date banners.",
-      see_all: { to: "/admin/scoring/review" },
+      see_all: { to: "/admin/scoring/review" as any },
       items: ((stale.data ?? []) as any[]).map((m) => ({
         id: m.id,
         title: m.candidate_profiles?.full_name ?? "Candidate",
