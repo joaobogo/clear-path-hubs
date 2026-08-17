@@ -44,9 +44,9 @@ export class AdminWidgetErrorBoundary extends Component<Props, State> {
             <AlertTriangle className="mt-0.5 h-4 w-4 text-destructive" />
             <div className="min-w-0">
               <p className="text-sm font-medium text-destructive">{this.props.label} could not load</p>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <div className="mt-1 max-h-24 overflow-auto rounded bg-card/50 p-2 text-[10px] font-mono text-muted-foreground/80">
                 {this.state.error.message || "Something went wrong while loading this panel."}
-              </p>
+              </div>
               <Button
                 variant="outline"
                 size="sm"

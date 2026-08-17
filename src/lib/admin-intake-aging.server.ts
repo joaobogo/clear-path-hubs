@@ -58,11 +58,17 @@ export async function loadIntakeAging(
     .from("intake_submissions")
     .select(
       "id, company_name, role_title, primary_email, organization_id, position_id, status, workspace_status, requisition_pending, owner_user_id, lead_status, lead_close_reason, lead_closed_at, payload, created_at",
+      { count: "exact" },
     )
     .is("position_id", null)
     .neq("status", "rejected")
-    .order("created_at", { ascending: true })
-    .limit(400);
+    .order("created_at", { ascending: true });
+
+  if (opts.filter !== "all") {
+    q = q.limit(400);
+  } else {
+    q = q.limit(limit);
+  }
   q = excludeTestOrgs(q, scope);
 
   const res = await q;
