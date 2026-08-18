@@ -730,6 +730,7 @@ export const submitApplication = createServerFn({ method: "POST" })
       const result: SubmitApplicationResult = {
         ok: true,
         application_id: appRow.id,
+        match_id: matchId,
         reference: ref6(appRow.id),
         tracking_path: `/apply/received/${appRow.id}`,
         deduped: false,
