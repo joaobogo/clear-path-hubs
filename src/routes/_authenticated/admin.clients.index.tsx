@@ -239,14 +239,6 @@ function ClientsPage() {
 
   const [archiveTarget, setArchiveTarget] = useState<ClientRow | null>(null);
 
-  const archive = useMutation({
-    mutationFn: (input: { id: string; confirm_name: string }) =>
-      archiveOrganization({ data: input }),
-    onSuccess: () => {
-      toast.success(`${archiveTarget?.name ?? "Client"} archived`);
-      queryClient.invalidateQueries({ queryKey: ["admin-clients"] });
-    },
-  });
 
   return (
     <div className="space-y-6">
