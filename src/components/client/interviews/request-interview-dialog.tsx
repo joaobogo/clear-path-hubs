@@ -30,6 +30,7 @@ export function RequestInterviewDialog({
   failed,
   fetchCandidates,
   timezone,
+  initialMatchId,
 }: {
   orgId: string;
   onClose: () => void;
@@ -47,12 +48,13 @@ export function RequestInterviewDialog({
   failed: string | null;
   fetchCandidates: () => Promise<{ candidates: SchedulableCandidate[] }>;
   timezone: string;
+  initialMatchId?: string;
 }) {
   const candidatesQ = useQuery({
     queryKey: ["client-schedulable", orgId],
     queryFn: fetchCandidates,
   });
-  const [matchId, setMatchId] = useState<string>("");
+  const [matchId, setMatchId] = useState<string>(initialMatchId ?? "");
   const [candidateError, setCandidateError] = useState<string | null>(null);
   const candidates = candidatesQ.data?.candidates ?? [];
 

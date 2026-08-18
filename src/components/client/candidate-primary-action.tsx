@@ -91,17 +91,25 @@ export function CandidatePrimaryAction({
   const advance = advanceFor(shownStage);
 
   async function runUndo(fromStage: MatchStage) {
+    toast.dismiss();
+    toast.loading("Undoing…");
     try {
       await undo({ data: { orgId, matchId, toStage: fromStage } });
+      toast.dismiss();
       toast.success("Undone");
       await queryClient.invalidateQueries();
     } catch (e) {
+      toast.dismiss();
       const msg = e instanceof Error ? e.message.replace(/^Error:\s*/, "") : "";
       toast.error("Could not undo", { description: msg || undefined });
     }
   }
 
   async function run(action: PrimaryActionKey, done: string) {
+    if (action === "request_interview") {
+      window.location.href = `/client/candidates/${matchId}`;
+      return;
+    }
     setPending(action);
     const fromStage = shownStage;
     const landing = RESULT_STAGE[action];
@@ -112,7 +120,19 @@ export function CandidatePrimaryAction({
       toast.success(`${done} — ${candidateName}`, {
         description: consequenceFor(action),
         duration: UNDO_TOAST_MS,
-        action: { label: "Undo", onClick: () => void runUndo(fromStage) },
+        action: {
+          label: "Undo",
+          onClick: (e) => {
+            const btn = e.currentTarget as HTMLButtonElement;
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = "Undoing…";
+            void runUndo(fromStage).finally(() => {
+              btn.disabled = false;
+              btn.textContent = originalText;
+            });
+          },
+        },
       });
       await queryClient.invalidateQueries();
     } catch (e) {

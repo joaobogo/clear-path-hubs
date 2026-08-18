@@ -87,6 +87,16 @@ export const Route = createFileRoute("/_authenticated/client/candidates/$id")({
  component: CandidateDetailPage,
 });
 
+import {
+  listSchedulableCandidates,
+  requestInterview,
+  type SchedulableCandidate,
+} from "@/lib/interviews.functions";
+import { RequestInterviewDialog } from "@/components/client/interviews/request-interview-dialog";
+import { detectTimezone } from "@/components/client/interviews/helpers";
+import { useAvailability } from "@/components/client/scheduling/availability-manager";
+import { proposalErrorMessage } from "@/lib/interview-proposal";
+
 function CandidateDetailPage() {
  const { id } = Route.useParams();
  const qc = useQueryClient();
@@ -141,7 +151,27 @@ function CandidateDetailPage() {
 
 
 
- const [dialogAction, setDialogAction] = useState<ActionKey | null>(null);
+  const requestInterviewFn = useServerFn(requestInterview);
+  const availability = useAvailability(orgId);
+  const orgTimezone = (availability.data?.timezone as string | null | undefined) || detectTimezone();
+  const [requestFailed, setRequestFailed] = useState<string | null>(null);
+
+  const requestMut = useMutation({
+    mutationFn: (payload: Parameters<typeof requestInterviewFn>[0]["data"]) =>
+      requestInterviewFn({ data: payload }),
+    onSuccess: () => {
+      toast.success("Times proposed — we'll confirm with the candidate");
+      setRequestFailed(null);
+      setDialogAction(null);
+      setPendingKey(null);
+      qc.invalidateQueries({ queryKey: ["client-candidate", orgId, id] });
+      qc.invalidateQueries({ queryKey: ["client-overview", orgId] });
+      qc.invalidateQueries({ queryKey: ["client-interviews", orgId] });
+    },
+    onError: (e: Error) => setRequestFailed(proposalErrorMessage(e.message)),
+  });
+
+  const [dialogAction, setDialogAction] = useState<ActionKey | null>(null);
  // Which action is in flight, so only the pressed button shows a spinner.
  const [pendingKey, setPendingKey] = useState<ActionKey | null>(null);
  // Stage captured at mutate time so the toast's Undo knows where to return to.
@@ -153,69 +183,74 @@ function CandidateDetailPage() {
  // Exact cache key of the detail query. Optimistic writes and rollbacks must
  // use it verbatim — a shorter key writes a phantom entry nothing reads.
  const detailKey = ["client-candidate", orgId, id, support.active ? "preview" : "live"] as const;
- const act = useMutation({
- mutationFn: (p: DecisionPayload) =>
- withActionTimeout(() =>
- actionFn({
- data: {
- orgId: orgId!,
- matchId: id,
- action: p.action,
- // Stage the operator was looking at, captured before the optimistic
- // paint (same rule as the board's stage move). Reading the cache
- // here would read our own optimistic value back and make every
- // decision look like a conflict.
- expectedStage: stageBeforeRef.current ?? undefined,
- feedback: p.feedback,
- reasonCode: p.reasonCode,
- signals: p.signals,
- },
- }),
- ),
- // Paint the new stage the moment the button is pressed, and keep the
- // previous view so a failure can be painted back.
- onMutate: async (p: DecisionPayload) => {
- await qc.cancelQueries({ queryKey: detailKey });
- const previous = qc.getQueryData<AnyRow>(detailKey);
- const to = RESULT_STAGE[p.action as ActionKey];
- if (previous?.candidate && to) {
- qc.setQueryData(detailKey, {
- ...previous,
- candidate: { ...previous.candidate, stage: to },
- });
- }
- return { previous };
- },
- onSuccess: () => {
- const back = stageBeforeRef.current;
- toast.success("Recorded — the TaaSFlow team has been notified.", {
- description: nextStepAfterRef.current ?? undefined,
- duration: 12_000,
- action: back
- ? {
- label: "Undo",
- onClick: () => {
- void (async () => {
- try {
- await undoFn({ data: { orgId: orgId!, matchId: id, toStage: back } });
- toast.success("Decision undone.");
- await qc.invalidateQueries();
- } catch {
- toast.error(
- "That decision can no longer be undone. Your recruiter can reverse it for you.",
- );
- }
- })();
- },
- }
- : undefined,
- });
- setDialogAction(null);
- qc.invalidateQueries({ queryKey: ["client-candidate", orgId, id] });
- qc.invalidateQueries({ queryKey: ["client-overview", orgId] });
- qc.invalidateQueries({ queryKey: ["client-positions", orgId] });
- qc.invalidateQueries({ queryKey: ["client-candidates", orgId] });
- },
+  const act = useMutation({
+    mutationFn: (p: DecisionPayload) =>
+      withActionTimeout(() =>
+        actionFn({
+          data: {
+            orgId: orgId!,
+            matchId: id,
+            action: p.action,
+            expectedStage: stageBeforeRef.current ?? undefined,
+            feedback: p.feedback,
+            reasonCode: p.reasonCode,
+            signals: p.signals,
+          },
+        }),
+      ),
+    onMutate: async (p: DecisionPayload) => {
+      await qc.cancelQueries({ queryKey: detailKey });
+      const previous = qc.getQueryData<AnyRow>(detailKey);
+      const to = RESULT_STAGE[p.action as ActionKey];
+      if (previous?.candidate && to) {
+        qc.setQueryData(detailKey, {
+          ...previous,
+          candidate: { ...previous.candidate, stage: to },
+        });
+      }
+      return { previous };
+    },
+    onSuccess: (res, p) => {
+      const back = stageBeforeRef.current;
+      toast.success(
+        p.action === "request_interview"
+          ? "Times proposed — we'll confirm with the candidate"
+          : "Recorded — the TaaSFlow team has been notified.",
+        {
+          description: nextStepAfterRef.current ?? undefined,
+          duration: 12_000,
+          action: back
+            ? {
+                label: "Undo",
+                onClick: (e) => {
+                  const btn = e.currentTarget as HTMLButtonElement;
+                  const originalText = btn.textContent;
+                  btn.disabled = true;
+                  btn.textContent = "Undoing…";
+                  void (async () => {
+                    try {
+                      await undoFn({ data: { orgId: orgId!, matchId: id, toStage: back } });
+                      toast.success("Decision undone.");
+                      await qc.invalidateQueries();
+                    } catch {
+                      toast.error(
+                        "That decision can no longer be undone. Your recruiter can reverse it for you.",
+                      );
+                      btn.disabled = false;
+                      btn.textContent = originalText;
+                    }
+                  })();
+                },
+              }
+            : undefined,
+        },
+      );
+      setDialogAction(null);
+      qc.invalidateQueries({ queryKey: ["client-candidate", orgId, id] });
+      qc.invalidateQueries({ queryKey: ["client-overview", orgId] });
+      qc.invalidateQueries({ queryKey: ["client-positions", orgId] });
+      qc.invalidateQueries({ queryKey: ["client-candidates", orgId] });
+    },
  onSettled: () => setPendingKey(null),
  onError: (e: Error, p, context) => {
  // Visible revert: the panel returns to the stage it was in.
@@ -250,12 +285,7 @@ function CandidateDetailPage() {
 
  // Advance-type moves go through in one click; anything needing a "why"
  // opens the structured reason picker.
- const NO_REASON_NEEDED = new Set<ActionKey>([
- "shortlist",
- "request_interview",
- "offer",
- "hire",
- ]);
+  const NO_REASON_NEEDED = new Set<ActionKey>(["shortlist", "offer", "hire"]);
  const RESULT_STAGE: Partial<Record<ActionKey, MatchStage>> = {
  shortlist: "shortlisted",
  request_interview: "interview_process",
