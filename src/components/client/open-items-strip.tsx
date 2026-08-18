@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { AlertTriangle, ClipboardList, MessageSquareDashed, Clock } from "lucide-react";
 import { getClientOpenItems } from "@/lib/client/open-items.functions";
+import { withQueryTimeout } from "@/lib/client/query-timeout";
 import { countByKind, dueLabel, type OpenItem, type OpenItemKind } from "@/lib/client/open-items";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,7 +28,7 @@ export function OpenItemsStrip({ orgId }: { orgId: string | null | undefined }) 
   const [expanded, setExpanded] = useState(false);
   const { data, isError } = useQuery({
     queryKey: ["client-open-items", orgId],
-    queryFn: () => fn({ data: { orgId: orgId! } }),
+    queryFn: () => withQueryTimeout(fn({ data: { orgId: orgId! } })),
     enabled: !!orgId,
   });
 
