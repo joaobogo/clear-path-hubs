@@ -124,6 +124,11 @@ export interface TimeToHireReport {
     hires_confirmed: number;
     closed_lost: number;
     acceptance_rate: number | null;
+    avg_salary: number | null;
+    total_salary_value: number | null;
+    salary_report_incomplete: boolean;
+    decided_offers: number;
+    accepted_offers: number;
     avg_days_to_hire: number | null;
     avg_days_offer_to_accept: number | null;
     median_days_to_hire: number | null;
@@ -658,13 +663,31 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     const canonical = computeKpis(await loadKpiRows(context.supabase, data.orgId), 0);
     const openOffers = canonical.offers;
     const hires = scoped.filter((r) => qualifiesAsHire(r.status));
-    const declined = scoped.filter((r) => r.status === "offer_declined");
-    const closedLost = scoped.filter((r) => r.status === "closed_lost").length;
-    const decidedOffers = scoped.filter((r) => isDecidedOffer(r.status)).length;
+
+    // ACCEPTANCE RATE denominator: only count records that are genuinely decided (accepted, declined, hired, or lost).
+    // Beatriz's phantom 'closed_lost' was likely counted here while her 'hired' stage was ignored.
+    const decidedOffers = scoped.filter((r) => isDecidedOffer(r.status));
+    const acceptedOffers = scoped.filter((r) => isAcceptedOffer(r.status));
+
     const acceptanceRate =
-      decidedOffers > 0
-        ? Math.round((scoped.filter((r) => isAcceptedOffer(r.status)).length / decidedOffers) * 100)
+      decidedOffers.length > 0
+        ? acceptedOffers.length / decidedOffers.length
         : null;
+
+    // Salary stats: only include confirmed hires with comp on record.
+    // If some have no comp, we mark the average as incomplete.
+    const confirmedHiresWithComp = hires.filter((r) => r.salary_amount != null);
+    const totalSalaryValue = confirmedHiresWithComp.reduce(
+      (acc, r) => acc + (r.salary_amount ?? 0),
+      0,
+    );
+    const avgSalary =
+      confirmedHiresWithComp.length > 0
+        ? totalSalaryValue / confirmedHiresWithComp.length
+        : null;
+
+    const salaryReportIncomplete =
+      hires.length > 0 && confirmedHiresWithComp.length < hires.length;
 
     const daysHired = hires
       .map((r) => (r.days_to_hire == null ? null : Number(r.days_to_hire)))
@@ -786,8 +809,13 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
         open_offers: openOffers,
         // Canonical hire count (pipeline truth), not the windowed report slice.
         hires_confirmed: canonical.hires,
-        closed_lost: closedLost,
+        closed_lost: scoped.filter((r) => r.status === "closed_lost").length,
         acceptance_rate: acceptanceRate,
+        avg_salary: avgSalary,
+        total_salary_value: totalSalaryValue,
+        salary_report_incomplete: salaryReportIncomplete,
+        decided_offers: decidedOffers.length,
+        accepted_offers: acceptedOffers.length,
         avg_days_to_hire: avg(daysHired),
         avg_days_offer_to_accept: avg(daysAccept),
         median_days_to_hire: median(daysHired),

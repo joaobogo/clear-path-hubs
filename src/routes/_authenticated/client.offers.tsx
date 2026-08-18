@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { HandCoins } from "lucide-react";
+import { formatMoneyMajorCompact } from "@/lib/money";
 import {
   listHires,
   getTimeToHireReport,
@@ -151,45 +152,50 @@ function OffersPage() {
           const pendingReport = reportQuery.isPending || !report;
           const num = (v: number | null | undefined) =>
             pendingReport ? "—" : (v ?? 0);
+          const reportIncomplete = report?.totals?.salary_report_incomplete;
+          const hiresCount = report?.totals?.hires_confirmed;
+          const openCount = report?.totals?.open_offers;
+          const acceptanceRate = report?.totals?.acceptance_rate;
+
           return (
-        <section className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Kpi
-            label="Open offers"
-            value={num(report?.totals.open_offers)}
-            hint="Drafted, sent, or accepted"
-          />
-          <Kpi
-            label="Hires confirmed"
-            value={num(report?.totals.hires_confirmed)}
-            hint="Last 180 days"
-          />
-          <Kpi
-            label="Acceptance rate"
-            value={
-              pendingReport || report?.totals.acceptance_rate == null
-                ? "—"
-                : `${Math.round(report.totals.acceptance_rate * 100)}%`
-            }
-            hint={
-              report?.totals.acceptance_rate == null && !pendingReport
-                ? "No decided offers yet"
-                : "Accepted ÷ decided"
-            }
-          />
-          <Kpi
-            label="Avg time to hire"
-            value={
-              pendingReport || report?.totals.avg_days_to_hire == null
-                ? "—"
-                : `${Math.round(report.totals.avg_days_to_hire)}d`
-            }
-            hint={
-              report?.totals.median_days_to_hire == null
-                ? "Application → signed"
-                : `median ${Math.round(report.totals.median_days_to_hire)}d`
-            }
-          />
-        </section>
+            <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+              <Kpi
+                label="Open offers"
+                value={num(openCount)}
+                hint="Drafted, sent, or accepted"
+              />
+              <Kpi
+                label="Hires confirmed"
+                value={num(hiresCount)}
+                hint="Last 180 days"
+              />
+              <Kpi
+                label="Acceptance rate"
+                value={
+                  pendingReport || acceptanceRate == null
+                    ? "—"
+                    : `${Math.round(acceptanceRate * 100)}%`
+                }
+                hint={
+                  acceptanceRate == null && !pendingReport
+                    ? "No decided offers yet"
+                    : "Accepted ÷ decided"
+                }
+              />
+              <Kpi
+                label="Avg salary"
+                value={
+                  pendingReport || report?.totals.avg_salary == null
+                    ? "—"
+                    : `${formatMoneyMajorCompact(report.totals.avg_salary)}${reportIncomplete ? "*" : ""}`
+                }
+                hint={
+                  reportIncomplete
+                    ? `Incomplete: ${report.totals.accepted_offers} of ${report.totals.hires_confirmed} hires have comp`
+                    : "Confirmed hires average"
+                }
+              />
+            </div>
           );
         })()
       )}
