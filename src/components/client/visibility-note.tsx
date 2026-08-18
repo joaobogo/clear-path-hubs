@@ -10,17 +10,17 @@ const RULES: { title: string; body: string }[] = [
   {
     title: "You can see",
     body:
-      "Role fit, evidence behind every claim, experience, location, availability, notice period and compensation expectations — for candidates your recruiter has approved for this role.",
+      "Role fit, evidence behind every claim, experience, location, availability, notice period, compensation expectations, full name, email, phone, and CV file — for candidates your recruiter has approved and published to this role.",
   },
   {
     title: "You cannot see yet",
     body:
-      "Full name where withheld, email, phone, and CV file. Contact details are released once you advance a candidate to interview and the candidate consents to the introduction.",
+      "Only candidates that have not yet been published to you. Once a candidate is published, their full contact details and CV are available here immediately.",
   },
   {
-    title: "Need them sooner?",
+    title: "Need anything else?",
     body:
-      "Use “Request contact details” on the candidate. Your recruiter releases them after candidate consent — usually same working day.",
+      "Use the actions on each candidate to request an interview, leave feedback, or ask our team a question.",
   },
 ];
 
