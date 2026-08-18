@@ -197,21 +197,6 @@ function OffersPage() {
               />
             </div>
           );
-          <Kpi
-            label="Avg time to hire"
-            value={
-              pendingReport || report?.totals.avg_days_to_hire == null
-                ? "—"
-                : `${Math.round(report.totals.avg_days_to_hire)}d`
-            }
-            hint={
-              report?.totals.median_days_to_hire == null
-                ? "Application → signed"
-                : `median ${Math.round(report.totals.median_days_to_hire)}d`
-            }
-          />
-        </section>
-          );
         })()
       )}
 
