@@ -33,9 +33,12 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just \"done\".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-Verification only — change nothing unless a mismatch is found.
+Journey A (intake → conversion → activation → public board → candidate applies) passed steps 1–3. Two items remain open from Pass 15:
 
-As the Northwind demo client, record and compare in one sitting: (a) the Overview "awaiting your review / needs attention" numbers, (b) the Candidates list count for the same filter, (c) the Kanban column totals, (d) what /admin/publish reports as Published for Northwind, and (e) the notification badge count. All five must reconcile to the same underlying rows. If any pair disagrees, identify which read model is wrong, fix only that read path (server-derived, no literals), and re-verify all five together. Log the result in docs/mvp-ledger.md."`;
+1. Step 4: the public-board assertion still matches the seeded fixture title instead of the intake-produced role. Confirm the intake-created role is reachable on /jobs by its reference code, then fix the assertion to target the intake-produced role by exact id — never by title.
+2. Step 5: /jobs/<id>/apply never rendered [data-hydrated=\"ready\"] in the harness. Triage whether the role was actually public/active at that point (test-order issue) or the apply route genuinely fails to hydrate for intake-created roles. If it is a product defect, fix the hydration; if it is sequencing, fix the test. State which it was.
+3. Verify Journey A green end to end, and record it in docs/mvp-ledger.md."`;
+
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
 const FONT_CSS_HREF =
