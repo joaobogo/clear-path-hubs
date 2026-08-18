@@ -742,6 +742,11 @@ export async function postPublic<T = Record<string, unknown>>(
 ): Promise<PublicApiResult<T>> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   if (opts.accessToken) headers["authorization"] = `Bearer ${opts.accessToken}`;
+  // The suite submits far more public forms in one run than a human would. The
+  // server honours this header only when QA endpoints are explicitly enabled,
+  // so the production throttle is untouched while the suite tests behaviour.
+  const qaToken = process.env["QA_SEED_TOKEN"];
+  if (qaToken) headers["x-qa-token"] = qaToken;
   const res = await fetch(`${BASE_URL}${path}`, {
     method: "POST",
     headers,

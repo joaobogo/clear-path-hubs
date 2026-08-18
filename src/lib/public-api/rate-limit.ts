@@ -154,9 +154,11 @@ export function rateLimitHeaders(
 /** Copies budget + trace headers onto a response built elsewhere. */
 export function withRateLimitHeaders(
   response: Response,
-  decision: RateLimitDecision,
+  // Null when the QA harness bypassed the throttle: there is no budget to report.
+  decision: RateLimitDecision | null,
   traceId?: string,
 ): Response {
+  if (!decision) return response;
   const headers = new Headers(response.headers);
   for (const [k, v] of Object.entries(rateLimitHeaders(decision, traceId))) headers.set(k, v);
   return new Response(response.body, { status: response.status, headers });
@@ -195,7 +197,7 @@ export function conflictResponse(
   traceId: string,
   error: string,
   message: string,
-  decision?: RateLimitDecision,
+  decision?: RateLimitDecision | null,
 ) {
   return Response.json(
     { ok: false, trace_id: traceId, error, message },
@@ -206,4 +208,21 @@ export function conflictResponse(
         : { "x-trace-id": traceId },
     },
   );
+}
+
+/**
+ * True only for the QA end-to-end harness: the server must have QA endpoints
+ * explicitly enabled AND the caller must present the matching QA token. Both
+ * are absent in production, so this can never widen the public budget there.
+ *
+ * It exists because the suite legitimately submits more intakes in one run
+ * than a human ever would, and the throttle is a cost brake — never the
+ * authorization boundary, which each handler still enforces on its own.
+ */
+export function harnessBypassesRateLimit(request: Request): boolean {
+  const raw = process.env["ENABLE_QA_ENDPOINTS"]?.trim().toLowerCase();
+  if (!raw || !["1", "true", "yes", "on", "enabled"].includes(raw)) return false;
+  const expected = process.env["QA_SEED_TOKEN"];
+  if (!expected) return false;
+  return request.headers.get("x-qa-token") === expected;
 }
