@@ -424,18 +424,26 @@ export const RequirementRowView = memo(function RequirementRowView({
 
 export const RequirementCoverage = memo(function RequirementCoverage({
   candidate,
+  withRationale = false,
 }: {
   candidate: ClientCandidateDTO;
+  /** Folds the "why we shortlisted" summary into this single requirement list. */
+  withRationale?: boolean;
 }) {
   const { coverage, requirement_rows } = candidate;
   if (requirement_rows.length === 0) return null;
+  const rationale = withRationale ? buildShortlistRationale(candidate) : null;
   return (
     <SectionCard
       title="Requirement coverage"
       icon={<CheckCircle2 className="h-4 w-4" />}
       description="Every declared role requirement, mapped to the evidence we found."
     >
+      {rationale && rationale.lines.length > 0 && (
+        <p className="mb-3 text-xs text-muted-foreground">{rationale.summary}</p>
+      )}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+
         <Metric label="Must-have met" value={`${coverage.must_met}/${coverage.must_total || "—"}`} tone="emerald" />
         <Metric label="Partially met" value={coverage.must_partial} tone="amber" />
         <Metric label="Not evidenced" value={coverage.must_missing} tone="slate" />

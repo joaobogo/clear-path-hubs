@@ -36,15 +36,16 @@ import {
   withActionTimeout,
 } from "@/lib/client/action-timeout";
 
-import { BackLink, CandidateHeader, CollapsibleSection } from "@/components/client/candidate-detail/shared";
+import { BackLink, CandidateHeader, CollapsibleSection, ContactBlock } from "@/components/client/candidate-detail/shared";
+import { TopSignals } from "@/components/client/candidate-detail/top-signals";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CvDownloadAudit } from "@/components/cv-download-audit";
 import { ScoreFreshnessNote } from "@/components/client/score-freshness-note";
 import { ScoreBreakdown } from "@/components/client/candidate-detail/score-breakdown";
 import {
-  EvaluationProvenance,
   FitHero,
   RequirementCoverage,
   WhyThisCandidate,
-  WhyWeShortlisted,
 } from "@/components/client/candidate-detail/evidence";
 import {
   AvailabilityAndComp,
@@ -57,7 +58,6 @@ import {
 import {
   ActivitySection,
   AuditTrailSection,
-  InterviewFeedbackSection,
   JourneySection,
   TalentMemoryAction,
 } from "@/components/client/candidate-detail/activity";
@@ -384,6 +384,9 @@ function CandidateDetailPage() {
   .filter(Boolean)
   .join(" for ");
 
+ // The verdict only renders when the evidence agrees with it (R1.1 guard).
+ const verdictTrusted = candidate.explanation?.kind !== "evidence_pending";
+
  return (
  <div className="mx-auto max-w-7xl px-4 pb-28 pt-6 sm:px-6 lg:pb-8 lg:pt-8">
  <div className="flex items-center justify-between gap-3">
@@ -391,29 +394,10 @@ function CandidateDetailPage() {
  <LiveUpdatedChip updatedAt={live.updatedAt} />
  </div>
 
- {/* HEADER */}
+ {/* 1 — IDENTITY */}
  <CandidateHeader
  candidate={candidate}
  readOnly={readOnly}
- />
-
- {orgId && (
- <div className="mt-3">
- <OpenThreadButton
- orgId={orgId}
- scope="candidate"
- candidateMatchId={id}
- subject={candidate.candidate.display_name}
- label="Conversation about this candidate"
- />
- </div>
- )}
-
- {/* Closes the loop: what we do next after your decision, and by when. */}
- <NextStepNote
- stage={candidate.stage}
- stageEnteredAt={candidate.stage_entered_at}
- className="mt-4"
  />
 
  {readOnly && support.readOnly && (
@@ -434,123 +418,160 @@ function CandidateDetailPage() {
  />
  )}
 
+ <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-12">
+ <div className="space-y-4 lg:col-span-8">
+ {/* 2 — THE VERDICT */}
+ {verdictTrusted ? (
+ <div id="sec-fit" className="scroll-mt-24 space-y-3">
+ <FitHero candidate={candidate} />
+ <ScoreFreshnessNote
+ freshness={candidate.freshness}
+ orgId={orgId ?? null}
+ matchId={id}
+ />
+ </div>
+ ) : (
+ <div className="rounded-xl border border-dashed bg-muted/30 p-4 text-sm text-muted-foreground">
+ We are still reconciling the evidence for this candidate, so we are not
+ showing a fit verdict yet. The requirement coverage below is what we can
+ stand behind today.
+ </div>
+ )}
 
- <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
- {/* MAIN COLUMN */}
-        <div className="space-y-6 lg:col-span-8">
-          {/* TOP: is this a good fit, and why — nothing else competes here. */}
-          <div id="sec-fit" className="scroll-mt-24 space-y-3">
-            <FitHero candidate={candidate} />
-            {/* Freshness is stated next to the assessment it qualifies, never hidden. */}
-            <ScoreFreshnessNote
-              freshness={candidate.freshness}
-              orgId={orgId ?? null}
-              matchId={id}
-            />
-          </div>
+ {/* 3 — WHY, AND WHAT TO CHECK */}
+ <TopSignals candidate={candidate} />
 
-          {/* Decision facts that change the answer: money and timing, up top. */}
-          <div id="sec-comp" className="scroll-mt-24">
-            {compQuery.isError ? (
-              <QueryErrorCard
-                compact
-                title="We couldn't load compensation figures"
-                error={compQuery.error}
-                onRetry={() => void compQuery.refetch()}
-                retrying={compQuery.isFetching}
-              />
-            ) : (
-              <CompensationPanel signal={compSignal} loading={compPending} />
-            )}
-          </div>
-          <AvailabilityAndComp candidate={candidate} />
+ {/* 4 — CONTACT (one preview, one download) */}
+ <ContactBlock candidate={candidate} />
+ </div>
 
-          {/* What to do next with them. */}
-          <div id="sec-interview" className="scroll-mt-24"><InterviewGuide candidate={candidate} /></div>
+ {/* 5 — DECISION BAR */}
+ <aside className="space-y-4 lg:col-span-4">
+ <ActionArea
+ actions={actions}
+ readOnly={readOnly}
+ pending={act.isPending}
+ pendingKey={pendingKey}
+ onAct={(k) => handleAct(k, candidate.stage)}
+ stage={candidate.stage}
+ matchId={candidate.match_id}
+ subject={actionSubject}
+ />
+ <NextStepNote
+ stage={candidate.stage}
+ stageEnteredAt={candidate.stage_entered_at}
+ />
+ {orgId && (
+ <OpenThreadButton
+ orgId={orgId}
+ scope="candidate"
+ candidateMatchId={id}
+ subject={candidate.candidate.display_name}
+ label="Conversation about this candidate"
+ />
+ )}
+ <TalentMemoryAction
+ orgId={orgId}
+ matchId={candidate.match_id}
+ candidateName={candidate.candidate.display_name}
+ roleTitle={candidate.position?.title ?? null}
+ readOnly={readOnly}
+ />
+ </aside>
+ </div>
 
-          {/* DETAIL — collapsed by default, in order of interest. */}
-          <div className="space-y-3">
-            <h2 className="pt-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              The detail, if you want it
-            </h2>
-            <CollapsibleSection id="sec-coverage" title="Scoring criteria and coverage">
-              <RequirementCoverage candidate={candidate} />
-            </CollapsibleSection>
-            <CollapsibleSection id="sec-breakdown" title="How the score was built">
-              <div className="space-y-4">
-                <ScoreBreakdown candidate={candidate} />
-                <EvaluationProvenance candidate={candidate} />
-              </div>
-            </CollapsibleSection>
-            <CollapsibleSection id="sec-why" title="Why we shortlisted them">
-              <WhyWeShortlisted candidate={candidate} />
-            </CollapsibleSection>
-            <CollapsibleSection id="sec-strengths" title="Strengths in their own evidence">
-              <WhyThisCandidate candidate={candidate} />
-            </CollapsibleSection>
-            <CollapsibleSection id="sec-experience" title="Career experience">
-              <ExperienceTimeline candidate={candidate} />
-            </CollapsibleSection>
-            <CollapsibleSection id="sec-skills" title="Skills, education, and languages">
-              <SkillsAndEducation candidate={candidate} />
-            </CollapsibleSection>
-            {candidate.screening_answers.length > 0 && (
-              <CollapsibleSection title="Screening answers">
-                <dl className="space-y-3 text-sm">
-                  {candidate.screening_answers.map((a, i) => (
-                    <div key={i}>
-                      <dt className="text-xs font-medium text-muted-foreground">
-                        {a.question}
-                      </dt>
-                      <dd className="mt-0.5 whitespace-pre-wrap">{a.answer || "Not provided"}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </CollapsibleSection>
-            )}
-            {orgId ? (
-              <CollapsibleSection id="sec-feedback" title="Interview feedback">
-                <InterviewFeedbackSection orgId={orgId} matchId={id} readOnly={readOnly} />
-              </CollapsibleSection>
-            ) : null}
-            <CollapsibleSection id="sec-activity" title="History and activity">
-              <div className="space-y-6">
-                {(interviews.length > 0 || decisions.length > 0) && (
-                  <ActivitySection interviews={interviews} decisions={decisions} />
-                )}
-                <JourneySection matchId={candidate.match_id} />
-                <AuditTrailSection candidate={candidate} />
-              </div>
-            </CollapsibleSection>
-          </div>
-        </div>
+ {/* BELOW THE FOLD — four tabs, everything else lives inside them. */}
+ <Tabs defaultValue="summary" className="mt-8">
+ <TabsList className="flex w-full flex-wrap justify-start">
+ <TabsTrigger value="summary">Summary &amp; evidence</TabsTrigger>
+ <TabsTrigger value="interview">Interview</TabsTrigger>
+ <TabsTrigger value="cv">CV</TabsTrigger>
+ <TabsTrigger value="activity">Activity</TabsTrigger>
+ </TabsList>
 
+ <TabsContent value="summary" className="mt-4 space-y-4">
+ {/* One requirement list, one total — the shortlist rationale folded in. */}
+ <RequirementCoverage candidate={candidate} withRationale />
+ {/* One score table: breakdown and provenance merged. */}
+ <ScoreBreakdown candidate={candidate} />
+ <WhyThisCandidate candidate={candidate} />
+ {compQuery.isError ? (
+ <QueryErrorCard
+ compact
+ title="We couldn't load compensation figures"
+ error={compQuery.error}
+ onRetry={() => void compQuery.refetch()}
+ retrying={compQuery.isFetching}
+ />
+ ) : (
+ <CompensationPanel signal={compSignal} loading={compPending} />
+ )}
+ <AvailabilityAndComp candidate={candidate} />
+ <ExperienceTimeline candidate={candidate} />
+ <SkillsAndEducation candidate={candidate} />
+ {candidate.screening_answers.length > 0 && (
+ <CollapsibleSection title="Screening answers">
+ <dl className="space-y-3 text-sm">
+ {candidate.screening_answers.map((a, i) => (
+ <div key={i}>
+ <dt className="text-xs font-medium text-muted-foreground">
+ {a.question}
+ </dt>
+ <dd className="mt-0.5 whitespace-pre-wrap">{a.answer || "Not provided"}</dd>
+ </div>
+ ))}
+ </dl>
+ </CollapsibleSection>
+ )}
+ <div className="grid gap-4 sm:grid-cols-2">
+ <ProfilePanel candidate={candidate} />
+ <LinksPanel candidate={candidate} />
+ </div>
+ </TabsContent>
 
-        {/* SIDE PANEL — Decision cockpit (sticky on desktop) */}
-        <aside className="space-y-6 lg:col-span-4">
-          <div className="lg:sticky lg:top-20 space-y-6">
-            <ActionArea
-              actions={actions}
-              readOnly={readOnly}
-              pending={act.isPending}
-              pendingKey={pendingKey}
-              onAct={(k) => handleAct(k, candidate.stage)}
-              stage={candidate.stage}
-              matchId={candidate.match_id}
-              subject={actionSubject}
-            />
-            <TalentMemoryAction
-              orgId={orgId}
-              matchId={candidate.match_id}
-              candidateName={candidate.candidate.display_name}
-              roleTitle={candidate.position?.title ?? null}
-              readOnly={readOnly}
-            />
-            <ProfilePanel candidate={candidate} />
-            <LinksPanel candidate={candidate} />
-          </div>
-        </aside>
-      </div>
+ <TabsContent value="interview" className="mt-4 space-y-4">
+ <InterviewGuide candidate={candidate} />
+ <div className="rounded-xl border bg-card p-4">
+ <h2 className="text-sm font-semibold">Interview feedback</h2>
+ <p className="mt-1 text-sm text-muted-foreground">
+ Feedback is collected and shown in one place, alongside the scheduled
+ interview.
+ </p>
+ <Button asChild variant="outline" size="sm" className="mt-3">
+ <Link to="/client/interviews" search={{ interview: undefined, feedback: undefined }}>Go to interviews →</Link>
+ </Button>
+ </div>
+ </TabsContent>
+
+ <TabsContent value="cv" className="mt-4 space-y-4">
+ <div className="rounded-xl border bg-card p-4">
+ <h2 className="text-sm font-semibold">CV</h2>
+ <p className="mt-1 text-sm text-muted-foreground">
+ {candidate.contact_released
+ ? "Preview or download the CV from the contact block at the top of this page."
+ : "The CV is released as soon as this candidate is published to you."}
+ </p>
+ </div>
+ {candidate.contact_released && (
+ <div className="rounded-xl border bg-card p-4">
+ <CvDownloadAudit
+ matchId={candidate.match_id}
+ title="Who downloaded this CV"
+ limit={15}
+ />
+ </div>
+ )}
+ </TabsContent>
+
+ <TabsContent value="activity" className="mt-4 space-y-4">
+ {(interviews.length > 0 || decisions.length > 0) && (
+ <ActivitySection interviews={interviews} decisions={decisions} />
+ )}
+ <JourneySection matchId={candidate.match_id} />
+ <AuditTrailSection candidate={candidate} />
+ </TabsContent>
+ </Tabs>
+
 
       {/* MOBILE ACTION BAR — visible only on small screens */}
       {!readOnly && actions.primary && candidate.stage !== "hired" && (

@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { CheckCircle2, Gauge, Info, ListChecks, TrendingDown, TrendingUp } from "lucide-react";
+import { CheckCircle2, Gauge, Info, ListChecks, ShieldAlert, TrendingDown, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { buildScoreBreakdown } from "@/lib/client/score-breakdown";
@@ -52,7 +52,22 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
       icon={<Gauge className="h-4 w-4" />}
       description="Why this candidate ranks where they do: the evidence behind each requirement, how each scoring criterion landed, and the reasons that moved the score."
     >
+      {/* Conflicting-signal note lives with the score it qualifies (merged from
+          the old "How this score was built" panel). */}
+      {candidate.evaluation.contradiction && (
+        <div className="mb-3 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm">
+          <div className="flex items-center gap-2 font-medium text-destructive">
+            <ShieldAlert className="h-4 w-4" aria-hidden />
+            Conflicting signals found
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {candidate.evaluation.contradiction} — flagged in evidence review before
+            this candidate was delivered to your workspace.
+          </p>
+        </div>
+      )}
       {/* Headline: the figure, its band and the method that produced it. */}
+
       <div className="flex flex-wrap items-end justify-between gap-3 rounded-lg border bg-muted/30 p-3">
         <div className="flex items-end gap-3">
           <span className="text-3xl font-semibold tabular-nums leading-none">

@@ -283,7 +283,7 @@ export const LinksPanel = memo(function LinksPanel({
   ];
   return (
     <div className="rounded-xl border bg-card p-4">
-      <h2 className="mb-3 text-sm font-semibold">Links &amp; CV</h2>
+      <h2 className="mb-3 text-sm font-semibold">Links</h2>
       <ul className="space-y-2 text-sm">
         {entries.map((e) => (
           <li key={e.label} className="flex items-center gap-2">
@@ -305,29 +305,13 @@ export const LinksPanel = memo(function LinksPanel({
             )}
           </li>
         ))}
-        {candidate.contact_released ? (
-          <>
-            <li className="flex flex-wrap items-center gap-2 pt-1">
-              <CvPreviewDialog
-                matchId={candidate.match_id}
-                candidateName={candidate.candidate.display_name}
-              />
-              <DownloadCvButton matchId={candidate.match_id} mode="download" />
-            </li>
-            <li className="pt-2">
-              <CvDownloadAudit
-                matchId={candidate.match_id}
-                title="Who downloaded this CV"
-                limit={15}
-              />
-            </li>
-          </>
-        ) : (
+        {!candidate.contact_released && (
           <li className="pt-1 text-xs text-muted-foreground">
             Contact details and CV are released as soon as a candidate is
             published to you.
           </li>
         )}
+
 
 
 
