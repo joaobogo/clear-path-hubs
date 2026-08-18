@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Lock, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import {
   Popover,
   PopoverContent,
