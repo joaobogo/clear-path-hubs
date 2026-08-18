@@ -344,102 +344,11 @@ export const getClientOverview = createServerFn({ method: "GET" })
           .sort((a, b) => a - b)
           .map((ms) => new Date(ms).toISOString())[0] ?? null,
     };
-        (iv.completed_at as string | null) ?? (iv.scheduled_at as string | null) ?? null;
-      return !!happened && happened < nowIsoFeedback;
+    const completedList = ((interviewsRes.data as AnyRow[]) ?? []).filter((iv) => {
+      const happened = (iv.completed_at as string | null) ?? (iv.scheduled_at as string | null) ?? null;
+      if (!happened) return false;
+      return new Date(happened).getTime() < nowMs;
     });
-    const scoredInterviewIds = new Set<string>();
-    if (completedList.length > 0) {
-      const { data: cards } = await context.supabase
-        .from("interview_scorecards")
-        .select("interview_id")
-        .in(
-          "interview_id",
-          completedList.map((i) => i.id as string),
-        );
-      for (const c of (cards as AnyRow[]) ?? []) {
-        scoredInterviewIds.add(c.interview_id as string);
-      }
-    }
-    // A feedback item names the person it concerns. Their match is often no
-    // longer in the decision queue (they are past delivery), so resolve those
-    // names explicitly rather than falling back to "Candidate".
-    const feedbackMatchIds = completedList
-      .filter((iv) => !scoredInterviewIds.has(iv.id as string))
-      .map((iv) => iv.candidate_match_id as string | null)
-      .filter((id): id is string => !!id && !queueNames.has(id));
-    if (feedbackMatchIds.length > 0) {
-      const { data: fbMatches } = await context.supabase
-        .from("candidate_matches")
-        .select("id, candidate_profile_id, candidate_profiles(full_name)")
-        .in("id", Array.from(new Set(feedbackMatchIds)));
-      for (const m of await hydrateClientCandidateProfiles(fbMatches as AnyRow[])) {
-        queueNames.set(m.id as string, (m.candidate_profiles?.full_name as string) || "Candidate");
-      }
-    }
-
-    for (const iv of completedList) {
-      if (scoredInterviewIds.has(iv.id as string)) continue;
-      const matchId = iv.candidate_match_id as string | null;
-      const happenedAt =
-        (iv.completed_at as string | null) ?? (iv.scheduled_at as string | null) ?? null;
-      queueItems.push({
-        key: `feedback:${iv.id}`,
-        kind: "feedback",
-        concerns: matchId ? (queueNames.get(matchId) ?? "Candidate") : "Candidate",
-        role_title: titleByPosition.get(iv.position_id as string) ?? "Your role",
-        position_id: (iv.position_id as string) ?? null,
-        subject_id: matchId,
-        due_at: happenedAt
-          ? new Date(new Date(happenedAt).getTime() + 86_400_000).toISOString()
-          : null,
-        waiting_since: happenedAt,
-        action: "Add feedback",
-        to: `/client/interviews?interview=${iv.id}&feedback=1`,
-      });
-    }
-
-    // Missing-information requests from the recruiting team. Each one names the
-    // exact brief field it needs, and leads to the role page where it can be
-    // answered — never a contentless "your recruiter has a question".
-    const { data: infoRequests } = await context.supabase
-      .from("position_info_requests")
-      .select("id, position_id, brief_field, question, created_at")
-      .eq("organization_id", data.orgId)
-      .eq("status", "open")
-      .order("created_at", { ascending: true })
-      .limit(50);
-    for (const r of (infoRequests as AnyRow[]) ?? []) {
-      const field = briefField(r.brief_field as string);
-      const positionId = (r.position_id as string) ?? null;
-      queueItems.push({
-        key: `info:${r.id}`,
-        kind: "info_request",
-        concerns: field ? `${field.label} — needed to keep sourcing` : (r.question as string),
-        role_title: positionId ? (titleByPosition.get(positionId) ?? "Your role") : "Your account",
-        position_id: positionId,
-        subject_id: null,
-        due_at: null,
-        waiting_since: (r.created_at as string) ?? null,
-        action: "Answer",
-        to: positionId ? `/client/positions/${positionId}#information-needed` : "/client/approvals",
-      });
-    }
-
-    // Ordered, deduped and grouped once, on the server, so every surface that
-    // reads this payload sees the same queue.
-    const queueGroups = buildQueue(queueItems);
-    const decision_queue = [...queueGroups.overdue, ...queueGroups.upcoming];
-    const decision_queue_meta = {
-      /** How many candidates, interviews, offers and requests were examined. */
-      checked: rows.length + completedList.length + ((infoRequests as AnyRow[]) ?? []).length,
-      overdue: queueGroups.overdue.length,
-      /** Nearest promised first-shortlist date still ahead of us. */
-      next_expected_at:
-        Array.from(promisedByPosition.values())
-          .filter((ms) => ms > nowMs)
-          .sort((a, b) => a - b)
-          .map((ms) => new Date(ms).toISOString())[0] ?? null,
-    };
 
     // ── What happens next ───────────────────────────────────────────────────
     // One milestone per active role, so "when do I see candidates?" is answered
