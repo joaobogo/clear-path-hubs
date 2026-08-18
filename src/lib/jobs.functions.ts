@@ -252,6 +252,10 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     if (!pos) return null;
 
+    // Organization-level gate: a test/QA/demo org's role is not public.
+    const allowed = await publishableIds(supabase, [pos.id]);
+    if (!allowed.has(pos.id)) return null;
+
     const desc = (pos.description ?? "").trim();
     const reqs = toReqStrings(pos.requirements);
     if (desc.length < 80 || reqs.length === 0) return null;
