@@ -27,6 +27,7 @@ import {
 import {
   buildPipelineStatusLine,
   buildPipelineActionLabel,
+  buildPipelineActionTarget,
   type PipelineStatusInput,
 } from "@/lib/client-pipeline-language";
 import { computeRoleProgress } from "@/lib/client-role-progress";
