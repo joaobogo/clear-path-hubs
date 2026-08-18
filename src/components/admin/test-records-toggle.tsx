@@ -44,7 +44,11 @@ export function TestRecordsToggle() {
     onError: () => toast.error("Could not change the test-record setting."),
   });
 
-  const show = q.data?.show_test_records === true;
+  // Single source of truth: the preference read. Until it resolves, mirror the
+// scope the admin layout already applied server-side so the label on one
+  // screen can never disagree with the label on another in the same session.
+  const show =
+    q.data !== undefined ? q.data.show_test_records === true : contextScope.includeTest;
 
   return (
     <div className="flex items-center gap-2 rounded-md border border-border/60 px-2.5 py-1.5">
