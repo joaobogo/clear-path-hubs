@@ -213,10 +213,22 @@ export async function dispatchEmails(
     } else {
       address = await recipientEmail(admin, n.recipient_user_id);
       const blocked = address ? await isSuppressed(admin, address) : false;
+      const sandboxed = await isSandboxRecipient(admin, {
+        orgId: n.organization_id,
+        address,
+      });
       if (!address) {
         status = "failed";
         errorCode = "no_recipient_address";
         errorMessage = "No email address on file for this user.";
+      } else if (sandboxed) {
+        // QA and demo traffic must never touch a real inbox: bounces from
+        // fabricated addresses land the whole sender on the provider's global
+        // suppression list and take real client email down with them.
+        status = "suppressed";
+        errorCode = "sandboxed_test_recipient";
+        errorMessage =
+          "This is a test or demo workspace, so the email was recorded instead of sent to a real inbox.";
       } else if (blocked) {
         status = "suppressed";
         errorCode = "recipient_suppressed";
