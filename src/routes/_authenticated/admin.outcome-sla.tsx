@@ -65,6 +65,30 @@ function OutcomeSla() {
     onError: (err: Any) => toast.error(err?.message ?? "Could not send the notices."),
   });
 
+  /**
+   * These notices reach real applicants, so the sweep asks first and names how
+   * many people it will write to. Cancel is the safe default.
+   */
+  async function confirmSend() {
+    const due = Number(counts.outcome_not_sent ?? 0);
+    const result = await confirm({
+      title: "Send outstanding outcome notices",
+      object:
+        due === 1
+          ? "1 candidate who was decided but never told"
+          : `${due} candidates who were decided but never told`,
+      description:
+        "Each of them receives the outcome message for their application, immediately. Nobody who was already told is written to again.",
+      impact: [
+        "One outcome message per candidate on this list",
+        "Sent to the address on their application",
+        "Every send is recorded on the audit trail",
+      ],
+      confirmLabel: "Send notices",
+    });
+    if (result.confirmed) send.mutate();
+  }
+
   const data = query.data as Any;
   const rows: Any[] = data?.rows ?? [];
   const counts = data?.counts ?? { outcome_not_sent: 0, overdue: 0 };
