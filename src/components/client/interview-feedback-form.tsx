@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { AlertCircle, CheckCircle2, ClipboardCheck, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, ClipboardCheck, Loader2, MessageSquareText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -354,10 +354,12 @@ export function InterviewFeedbackQueue({
   orgId,
   readOnly = false,
   onOpenFeedback,
+  variant = "list",
 }: {
   orgId: string;
   readOnly?: boolean;
   onOpenFeedback: (item: FeedbackQueueItem) => void;
+  variant?: "list" | "banner";
 }) {
   const listFn = useServerFn(listInterviewsAwaitingFeedback);
   const query = useQuery({
@@ -367,7 +369,7 @@ export function InterviewFeedbackQueue({
   });
   const items = (query.data as FeedbackQueueItem[] | undefined) ?? [];
 
-  if (query.isLoading) return <FormSkeleton />;
+  if (query.isLoading) return variant === "banner" ? <Skeleton className="h-24 w-full rounded-xl" /> : <FormSkeleton />;
 
   if (query.isError) {
     return (
@@ -385,11 +387,46 @@ export function InterviewFeedbackQueue({
   }
 
   if (items.length === 0) {
+    if (variant === "banner") return null;
     return (
       <div className="rounded-lg border border-dashed bg-card p-4 text-sm text-muted-foreground">
         <span className="flex items-center gap-2">
           <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden /> No interviews to review
         </span>
+      </div>
+    );
+  }
+
+  if (variant === "banner") {
+    const first = items[0];
+    const count = items.length;
+    return (
+      <div className="taas-bg-warning-soft taas-bd-warning mb-6 rounded-xl border px-4 py-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className="mt-0.5 rounded-full bg-warning/20 p-1.5 taas-fg-warning">
+              <MessageSquareText className="h-4 w-4" />
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-warning-strong">
+                {count} interview{count === 1 ? "" : "s"} awaiting your feedback
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Review candidates while the conversation is fresh to help the team move faster.
+              </p>
+            </div>
+          </div>
+          <div className="flex shrink-0 gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="taas-bd-warning/40 taas-bg-warning-soft hover:bg-warning/10"
+              onClick={() => onOpenFeedback(first)}
+            >
+              Review {first.candidate_name.split(" ")[0]}
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
