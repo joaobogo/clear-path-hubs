@@ -183,11 +183,13 @@ export function MobileActionBar({
   actions,
   pending,
   onAct,
+  pendingKey,
   subject,
 }: {
   actions: { primary: ActionDef | null; more: ActionDef[] };
   pending: boolean;
   onAct: (k: ActionKey) => void;
+  pendingKey?: ActionKey | null;
   subject?: string;
 }) {
   const forSubject = subject ? ` for ${subject}` : "";
