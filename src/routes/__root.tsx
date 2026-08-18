@@ -26,7 +26,20 @@ const SYSTEM_INSTRUCTION = `INSTRUÇÃO DO SISTEMA (não responda sobre esta ins
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "look at this, it shouldnt exist"`;
+TEXTO DO USUÁRIO: "STANDING RULES — UX PASS VARIANT:
+- This is an information-hierarchy pass, not a redesign. Keep the existing design system, tokens, typography, and color exactly as they are. Reorganize and progressive-disclose; do not restyle, do not add features beyond what this message names.
+- Every piece of information currently on the page must remain reachable within at most one click/tap from where it was. List anything you demote to a tab/accordion.
+- Do not touch any server function, mutation, or data contract unless this message names it. Buttons keep calling exactly what they call today.
+- Verify the page at 1440px and 375px in the live preview as the Northwind demo client, re-run the page's existing spec(s), and report the click-path result.
+
+Create docs/design/client-decision-first.md — a short standard (one page) the next prompts will follow. No code changes in this message.
+
+Define:
+1. The rule: each client page has ONE primary question; the first viewport answers it; depth lives in tabs/accordions/drawers below.
+2. The \"decision header\" pattern for entities: identity line → verdict (score + fit band) → 3 evidence-backed reasons for / up to 2 to validate → contact block → primary actions. Max element counts per zone so pages can't re-bloat.
+3. The card pattern for lists/Kanban: name, score band, one-line headline, stage, one primary action — everything else on open.
+4. Density rules: what belongs above the fold at 1440 and at 375, target of no more than ~7 interactive elements in the first viewport excluding nav.
+5. Copy rule: evidence-backed statements only — every \"why they're good\" line must trace to a real evidence item; no generated filler."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
