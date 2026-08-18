@@ -163,6 +163,15 @@ export const moveMatchStage = createServerFn({ method: "POST" })
       .eq("id", data.matchId)
       .eq("organization_id", data.orgId);
     if (error) throw new Error(error.message);
+    // When leaving a gated stage, retract any unstarted side-artifacts.
+    if (from === "interview_process" && data.toStage !== "interview_process") {
+      await context.supabase
+        .from("interviews")
+        .delete()
+        .eq("candidate_match_id", data.matchId)
+        .eq("organization_id", data.orgId)
+        .eq("status", "requested");
+    }
 
     // Canonical side-effects: mirror clientAction so any transition path
     // (button, drag, keyboard menu) produces identical decision + interview trails.
@@ -356,8 +365,8 @@ export const undoClientDecision = createServerFn({ method: "POST" })
       if (error) throw new Error(error.message);
     }
 
-    // An interview requested by the undone decision must not survive it.
-    if (recent.decision === "request_interview") {
+    // An interview requested by the undone decision (or one that existed while leaving interview_process) must not survive it.
+    if (recent.decision === "request_interview" || (from === "interview_process" && backTo !== "interview_process")) {
       await context.supabase
         .from("interviews")
         .delete()
@@ -574,7 +583,15 @@ export const clientAction = createServerFn({ method: "POST" })
         .update({ stage: nextStage })
         .eq("id", data.matchId)
         .eq("organization_id", data.orgId);
-      if (error) throw new Error(error.message);
+      // When leaving a gated stage, retract any unstarted side-artifacts.
+      if (match.stage === "interview_process" && nextStage !== "interview_process") {
+        await context.supabase
+          .from("interviews")
+          .delete()
+          .eq("candidate_match_id", data.matchId)
+          .eq("organization_id", data.orgId)
+          .eq("status", "requested");
+      }
     }
 
     if (data.action === "request_interview") {
