@@ -19,31 +19,42 @@ type RunLike = {
   rubric_versions?: { label?: string | null; version_number?: number | null } | null;
 };
 
+/**
+ * Recruiter-readable wording. A recruiter should not have to decode "rubric",
+ * "engine version" or a bare confidence decimal — each label says what the fact
+ * means for their decision.
+ */
 export function rubricVersionLabel(run: RunLike | null | undefined): string {
   const rv = run?.rubric_versions ?? null;
   if (rv && (rv.label || rv.version_number != null)) {
-    return `${rv.label ?? "rubric"} v${rv.version_number ?? "?"}`;
+    return `scored against ${rv.label ?? "criteria"} v${rv.version_number ?? "?"}`;
   }
-  return run?.rubric_version_id ? `rubric ${run.rubric_version_id.slice(0, 8)}` : "rubric unlinked";
+  return run?.rubric_version_id
+    ? `scored against criteria set ${run.rubric_version_id.slice(0, 8)}`
+    : "criteria set not recorded";
 }
 
 export function engineVersionLabel(run: RunLike | null | undefined): string {
-  return run?.engine_version ?? "engine unknown";
+  const v = run?.engine_version;
+  if (!v) return "scoring method unknown";
+  const short = v.replace(/^taasflow-scoring-/, "");
+  return `scoring method ${short}`;
 }
 
 export function confidenceLabel(run: RunLike | null | undefined): string {
   const overall =
     run?.confidence == null
-      ? "confidence n/a"
-      : `confidence ${Math.round(Number(run.confidence) * 100)}%`;
-  // Both confidences travel together: overall confidence in the run, and how
-  // much of the rubric its evidence actually decided.
+      ? "how complete the data was: not recorded"
+      : `how complete the data was: ${Math.round(Number(run.confidence) * 100)}%`;
+  // Both facts travel together: how complete the source data was, and how much
+  // of the role's criteria the evidence could actually settle.
   const evidence =
     run?.evidence_confidence == null
       ? null
-      : `evidence ${Math.round(Number(run.evidence_confidence))}%`;
+      : `criteria backed by evidence: ${Math.round(Number(run.evidence_confidence))}%`;
   return evidence ? `${overall} · ${evidence}` : overall;
 }
+
 
 /** Inline staff-only score: number + confidence + rubric version, always together. */
 export function AdminScoreNumber({
