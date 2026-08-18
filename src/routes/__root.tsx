@@ -26,14 +26,7 @@ const SYSTEM_INSTRUCTION = `INSTRUÇÃO DO SISTEMA (não responda sobre esta ins
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
-- This is a stabilization pass for MVP launch. Fix only what this message names. No redesign, no restyling, no new features, no refactors of working code, no dependency upgrades.
-- Preserve all approved work. If a fix requires touching a shared file, change only the lines needed and state which shared file you touched and why.
-- Exact IDs only, never title/name matching. One canonical write path per mutation. Every success message must be backed by a confirmed backend result — no optimistic "Saved" toasts.
-- After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just "done".
-- If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
-
-Measurement only — fix nothing in this message. After the Batch 7 changes, re-run: the tenant-isolation suite, the client kanban/candidate specs, the count-reconciliation check from Prompt 4.4, the mobile 375 test file, and a manual Northwind demo walkthrough (overview → role → candidate → shortlist → message). Update docs/mvp-ledger.md: any regression found gets a FAIL row naming the prompt that introduced it, so we fix forward with full context."`;   
+TEXTO DO USUÁRIO: "sometimes in the client dashboard when i click a button, the next pager starts from the bottom, we need to make sure thats not the case here"`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
