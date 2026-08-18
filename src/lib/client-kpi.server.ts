@@ -137,8 +137,7 @@ export async function loadKpiRows(
     .select(
       `id, candidate_profile_id, position_id, stage, approved_score_run_id, delivered_at,
        client_decision_due_at, recommendation, contact_released_at,
-       score_runs:approved_score_run_id (score, fit_label, fit_band),
-       evidence_items:score_run_evidence(rubric_criterion_key, result, match_type, factual_quote, interpretation, source_kind, source_location)`
+       score_runs:approved_score_run_id (score, fit_label, fit_band)`
     )
     .eq("organization_id", orgId)
     .eq("client_visibility", "visible");
@@ -155,6 +154,7 @@ export async function loadKpiRows(
   // A recorded client decision is what closes "waiting on you" — never the
   // internal admin recommendation.
   const decidedMatches = new Set<string>();
+  let evidenceByMatch = new Map<string, ClientEvidenceRow[]>();
 
 
   if (matchIds.length > 0) {
@@ -212,6 +212,12 @@ export async function loadKpiRows(
     for (const d of ((decisions as AnyRow[]) ?? [])) {
       if (d.candidate_match_id) decidedMatches.add(d.candidate_match_id as string);
     }
+
+    // Client-visible evidence comes from the one canonical read model
+    // (`candidate_evidence_client`), not a nested embed — candidate_matches has
+    // no direct relationship to the evidence tables, so the embed failed the
+    // whole KPI read and every page built on it.
+    evidenceByMatch = await loadClientEvidenceItems(supabase, matchIds);
   }
 
   return (matches as AnyRow[]).map((m) => ({
@@ -236,7 +242,7 @@ export async function loadKpiRows(
     client_decided: decidedMatches.has(m.id),
     interview_needs_confirmation: unconfirmedInterviews.has(m.id),
     interview_id: unconfirmedInterviewId.get(m.id) ?? null,
-    evidence_items: (m.evidence_items as AnyRow[]) ?? [],
+    evidence_items: (evidenceByMatch.get(String(m.id)) as unknown as AnyRow[]) ?? [],
   }));
 }
 
