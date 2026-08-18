@@ -111,9 +111,7 @@ export async function unsuppressRecipient(
     };
   } else {
     try {
-      const { EmailAPIError, getEmailUnsubscribe, setEmailUnsubscribe } = await import(
-        "@lovable.dev/email-js"
-      );
+      const { getEmailUnsubscribe, setEmailUnsubscribe } = await import("@lovable.dev/email-js");
       const current = await getEmailUnsubscribe({ recipient: email, domain }, { apiKey });
       if (current.subscribed) {
         provider = {
