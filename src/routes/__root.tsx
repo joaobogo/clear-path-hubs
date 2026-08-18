@@ -33,13 +33,11 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just \"done\".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-Run the two never-executed journeys and record results per step in docs/mvp-ledger.md:
+tests/e2e/smoke-journey.spec.ts has never completed a full green run; the last failure was the spec not ticking the optional \"Create a candidate account\" checkbox on the apply step (a test defect).
 
-Journey B — failure paths: wrong password, expired reset link, oversized/corrupt/password-protected CV, double-submit, failed payment (sandbox), RLS-denied action, mid-flow network drop on application submit. Every failure must end in a named, human error with a next action — zero blank screens, zero false-success toasts, zero lost data.
-
-Journey C — resilience: hard refresh mid-wizard on intake and on the application (drafts restore per existing rules, CV re-attach expected), refresh on each client dashboard page as the Northwind demo user, and a full 375px pass over /client Overview, Positions, Candidates (list + board), candidate detail, Messages, Settings, plus /admin overview, candidates, publish. No horizontal overflow, no dead controls, tap targets stay ≥44px.
-
-Fix only what fails, minimally, and re-run the failed step after each fix."`;
+1. Fix the spec to tick the checkbox and complete: candidate sign-up → apply → staff approval → client advance → queue management.
+2. If any step fails for a product reason after the spec fix, stop, report the exact step and cause, and fix only that.
+3. Deliver a green run log and mark RELEASE_GATE §6 item 1 resolved in docs/mvp-ledger.md."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
