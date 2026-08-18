@@ -304,3 +304,35 @@ export async function retryDeliveryFailure(
     detail: res.error ?? null,
   };
 }
+
+/**
+ * Clear the blocks on one address and re-attempt the delivery that exposed it.
+ *
+ * This is the single backend path behind both the admin "Remove from
+ * suppression & retry" row action and the recipient-facing "Email blocked"
+ * banner action. It never claims success it did not observe: if the provider's
+ * global list still blocks the address, the retry result says so.
+ */
+export async function unsuppressAndRetry(
+  admin: Admin,
+  args: { email: string; actorUserId: string; ledger?: "notification" | "lead"; id?: string },
+): Promise<{
+  unsuppress: Awaited<ReturnType<typeof import("./notification-suppression.server").unsuppressRecipient>>;
+  retry: { attempted: boolean; ok: boolean; status: string; detail: string | null };
+}> {
+  const { unsuppressRecipient } = await import("./notification-suppression.server");
+  const unsuppress = await unsuppressRecipient(admin, {
+    email: args.email,
+    actorUserId: args.actorUserId,
+  });
+
+  if (!args.ledger || !args.id) {
+    return {
+      unsuppress,
+      retry: { attempted: false, ok: false, status: "not_requested", detail: null },
+    };
+  }
+
+  const res = await retryDeliveryFailure(admin, { ledger: args.ledger, id: args.id });
+  return { unsuppress, retry: { attempted: true, ...res } };
+}
