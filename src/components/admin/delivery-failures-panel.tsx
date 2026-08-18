@@ -9,6 +9,7 @@ import {
   releaseNotificationRecipient,
   retryDeliveryFailureFn,
   suppressNotificationRecipient,
+  unsuppressAndRetryDelivery,
 } from "@/lib/notification-failures.functions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,12 +31,16 @@ type Item = {
   ledger: "notification" | "lead";
   id: string;
   eventType: string;
+  eventLabel: string;
   title: string | null;
   audience: string | null;
   channel: string;
   recipient: string | null;
   reason: string;
   reasonDetail: string | null;
+  reasonLabel: string;
+  reasonSentence: string;
+  canUnsuppress: boolean;
   attempts: number;
   firstAttemptAt: string;
   lastAttemptAt: string;
@@ -55,6 +60,7 @@ export function DeliveryFailuresPanel() {
   const retry = useServerFn(retryDeliveryFailureFn);
   const suppress = useServerFn(suppressNotificationRecipient);
   const release = useServerFn(releaseNotificationRecipient);
+  const unsuppress = useServerFn(unsuppressAndRetryDelivery);
   const qc = useQueryClient();
 
   const [staleTarget, setStaleTarget] = useState<Item | null>(null);
@@ -106,6 +112,34 @@ export function DeliveryFailuresPanel() {
       void invalidate();
     },
     onError: (e: unknown) => toastError(e, { fallback: "Could not lift" }),
+  });
+
+  // One backend path (unsuppressAndRetryDelivery) clears the blocks and
+  // re-attempts the same delivery. Every message below reflects what the
+  // backend actually reported — a provider-level bounce block stays blocked.
+  const unsuppressMut = useMutation({
+    mutationFn: (item: Item) =>
+      unsuppress({
+        data: {
+          email: item.recipient!.split(",")[0]!.trim(),
+          ledger: item.ledger,
+          id: item.id,
+        },
+      }),
+    onSuccess: (res) => {
+      const p = res.unsuppress.provider;
+      if (p.state === "not_liftable" || p.state === "unknown") {
+        toast.error(p.detail);
+      } else if (res.retry.attempted && res.retry.ok) {
+        toast.success("Block lifted and the notification was re-sent.");
+      } else if (res.retry.attempted) {
+        toast.error(res.retry.detail ?? "Block lifted, but the re-send failed again.");
+      } else {
+        toast.success("Block lifted.");
+      }
+      void invalidate();
+    },
+    onError: (e: unknown) => toastError(e, { fallback: "Could not lift the block" }),
   });
 
   const items = (query.data?.items ?? []) as Item[];
@@ -169,7 +203,7 @@ export function DeliveryFailuresPanel() {
               {items.map((item) => (
                 <tr key={item.key} className="border-t align-top">
                   <td className="px-4 py-3">
-                    <div className="font-medium">{item.eventType}</div>
+                    <div className="font-medium">{item.eventLabel}</div>
                     {item.title ? (
                       <div className="text-xs text-muted-foreground">{item.title}</div>
                     ) : null}
@@ -181,11 +215,11 @@ export function DeliveryFailuresPanel() {
                   </td>
                   <td className="px-4 py-3 break-all">{item.recipient ?? "—"}</td>
                   <td className="px-4 py-3">{item.channel}</td>
-                  <td className="px-4 py-3 max-w-[300px]">
-                    <code className="text-xs">{item.reason}</code>
-                    {item.reasonDetail ? (
-                      <div className="text-xs text-muted-foreground mt-1">{item.reasonDetail}</div>
-                    ) : null}
+                  {/* Human sentence only — the raw code and provider payload
+                      stay behind "Copy payload". */}
+                  <td className="px-4 py-3 max-w-[320px]">
+                    <div className="font-medium">{item.reasonLabel}</div>
+                    <div className="text-xs text-muted-foreground mt-1">{item.reasonSentence}</div>
                     {item.staleWarning ? (
                       <div className="text-xs text-amber-600 mt-1">
                         Time-sensitive and over 24h old — re-sending may mislead.
@@ -222,6 +256,16 @@ export function DeliveryFailuresPanel() {
                       {item.relatedPath ? (
                         <Button size="sm" variant="ghost" asChild>
                           <Link to={item.relatedPath as never}>Open record</Link>
+                        </Button>
+                      ) : null}
+                      {item.recipient && item.canUnsuppress ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={unsuppressMut.isPending}
+                          onClick={() => unsuppressMut.mutate(item)}
+                        >
+                          Remove from suppression &amp; retry
                         </Button>
                       ) : null}
                       {item.recipient && item.channel === "email" ? (

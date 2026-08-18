@@ -10,6 +10,8 @@
  * nothing here talks to a provider directly.
  */
 
+import { deliveryReason } from "./notifications/delivery-reasons";
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Admin = any;
 
@@ -32,12 +34,21 @@ export type DeliveryFailure = {
   ledger: "notification" | "lead";
   id: string;
   eventType: string;
+  /** Human event name for the row; the raw enum stays in the payload. */
+  eventLabel: string;
   title: string | null;
   audience: string | null;
   channel: string;
   recipient: string | null;
+  /** Raw provider/enum code — payload only, never row copy. */
   reason: string;
   reasonDetail: string | null;
+  /** Short human chip. */
+  reasonLabel: string;
+  /** The human sentence shown in the row. */
+  reasonSentence: string;
+  /** True when the block can be cleared and the send re-attempted. */
+  canUnsuppress: boolean;
   attempts: number;
   firstAttemptAt: string;
   lastAttemptAt: string;
@@ -47,6 +58,16 @@ export type DeliveryFailure = {
   relatedPath: string | null;
   payloadJson: string;
 };
+
+/** "candidate_ready_for_admin_review" -> "Candidate ready for admin review". */
+export function humaniseEventType(raw: string): string {
+  if (raw.startsWith("lead:")) {
+    return `Lead alert — ${humaniseEventType(raw.slice(5))}`;
+  }
+  const words = raw.replace(/[_-]+/g, " ").trim();
+  if (!words) return "Unknown event";
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
 
 function since(): string {
   return new Date(Date.now() - WINDOW_DAYS * 86_400_000).toISOString();
@@ -132,19 +153,25 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
     const eventType = n?.event_type ?? "unknown";
     const lastAttemptAt = String(r["last_attempt_at"] ?? r["updated_at"]);
     const retry = notificationRetry(status);
+    const rawCode = (r["error_code"] as string | null) ?? null;
+    const human = deliveryReason(rawCode, status);
     return {
       key: `notification:${r["id"]}`,
       ledger: "notification" as const,
       id: String(r["id"]),
       eventType,
+      eventLabel: humaniseEventType(eventType),
       title: n?.title ?? null,
       audience: n?.audience ?? null,
       channel: String(r["channel"]),
       recipient:
         (r["recipient_address"] as string | null) ??
         (n?.recipient_user_id ? (emailByUser.get(n.recipient_user_id) ?? null) : null),
-      reason: (r["error_code"] as string | null) ?? status,
+      reason: rawCode ?? status,
       reasonDetail: (r["error_message"] as string | null) ?? null,
+      reasonLabel: human.label,
+      reasonSentence: human.sentence,
+      canUnsuppress: human.kind === "blocked" && String(r["channel"]) === "email",
       attempts: Number(r["attempt_count"] ?? 1),
       firstAttemptAt: String(r["created_at"]),
       lastAttemptAt,
@@ -177,6 +204,7 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
       id: String(l["id"]),
       ledger: "lead" as const,
       eventType: `lead:${String(l["lead_type"])}`,
+      eventLabel: humaniseEventType(`lead:${String(l["lead_type"])}`),
       title: [l["full_name"], l["company"]].filter(Boolean).join(" · ") || String(l["lead_type"]),
       audience: "internal",
       attempts: Number(l["attempts"] ?? 0),
@@ -207,6 +235,9 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
         recipient: ((l["email_recipients"] as string[] | null) ?? []).join(", ") || null,
         reason: "lead_alert_email_failed",
         reasonDetail: (l["email_detail"] as string | null) ?? null,
+        reasonLabel: deliveryReason("lead_alert_email_failed").label,
+        reasonSentence: deliveryReason("lead_alert_email_failed").sentence,
+        canUnsuppress: false,
         retryable: true,
         retryBlockedReason: null,
         staleWarning: Date.now() - new Date(base.lastAttemptAt).getTime() > STALE_AFTER_MS,
@@ -220,6 +251,9 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
         recipient: "Teams channel",
         reason: "lead_alert_teams_failed",
         reasonDetail: (l["teams_detail"] as string | null) ?? null,
+        reasonLabel: deliveryReason("lead_alert_teams_failed").label,
+        reasonSentence: deliveryReason("lead_alert_teams_failed").sentence,
+        canUnsuppress: false,
         retryable: true,
         retryBlockedReason: null,
         staleWarning: Date.now() - new Date(base.lastAttemptAt).getTime() > STALE_AFTER_MS,
@@ -269,4 +303,36 @@ export async function retryDeliveryFailure(
     status: res.ok ? "sent" : "failed",
     detail: res.error ?? null,
   };
+}
+
+/**
+ * Clear the blocks on one address and re-attempt the delivery that exposed it.
+ *
+ * This is the single backend path behind both the admin "Remove from
+ * suppression & retry" row action and the recipient-facing "Email blocked"
+ * banner action. It never claims success it did not observe: if the provider's
+ * global list still blocks the address, the retry result says so.
+ */
+export async function unsuppressAndRetry(
+  admin: Admin,
+  args: { email: string; actorUserId: string; ledger?: "notification" | "lead"; id?: string },
+): Promise<{
+  unsuppress: Awaited<ReturnType<typeof import("./notification-suppression.server").unsuppressRecipient>>;
+  retry: { attempted: boolean; ok: boolean; status: string; detail: string | null };
+}> {
+  const { unsuppressRecipient } = await import("./notification-suppression.server");
+  const unsuppress = await unsuppressRecipient(admin, {
+    email: args.email,
+    actorUserId: args.actorUserId,
+  });
+
+  if (!args.ledger || !args.id) {
+    return {
+      unsuppress,
+      retry: { attempted: false, ok: false, status: "not_requested", detail: null },
+    };
+  }
+
+  const res = await retryDeliveryFailure(admin, { ledger: args.ledger, id: args.id });
+  return { unsuppress, retry: { attempted: true, ...res } };
 }
