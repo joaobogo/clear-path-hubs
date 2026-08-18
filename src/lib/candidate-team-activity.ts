@@ -9,6 +9,7 @@
  * Recruiter and TaaSFlow staff activity is excluded entirely; this is the
  * client's own team, not a window into how we work the role.
  */
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 export const TEAM_ACTIVITY_KINDS = ["viewed", "commented", "feedback", "decision"] as const;
 export type TeamActivityKind = (typeof TEAM_ACTIVITY_KINDS)[number];
@@ -54,7 +55,8 @@ export function sortActivity(entries: TeamActivityEntry[]): TeamActivityEntry[] 
 
 export function formatActivityTime(iso: string): string {
   const d = new Date(iso);
-  return d.toLocaleString(undefined, {
+  return d.toLocaleString(APP_LOCALE, {
+    timeZone: WORKSPACE_TIMEZONE,
     day: "numeric",
     month: "short",
     hour: "numeric",

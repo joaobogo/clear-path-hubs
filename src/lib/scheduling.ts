@@ -1,4 +1,5 @@
 // Browser-safe scheduling + timezone helpers.
+import { relativeDayLabel } from "@/lib/format/relative-date";
 // Single source of truth for how TaaSFlow renders interview times so no
 // surface can show an ambiguous or invented date.
 
@@ -136,14 +137,16 @@ export function liveSlots(
   return proposed.filter((s) => !isPast(s, -5));
 }
 
-export function relativeDay(iso: string | null | undefined): string {
-  if (!iso) return "";
-  const diff = new Date(iso).getTime() - Date.now();
-  const days = Math.round(diff / 86_400_000);
-  if (days === 0) return "today";
-  if (days === 1) return "tomorrow";
-  if (days === -1) return "yesterday";
-  return days > 0 ? `in ${days} days` : `${Math.abs(days)} days ago`;
+/**
+ * Relative label for an interview, computed in the SAME zone the absolute time
+ * is rendered in, so "(tomorrow)" can never contradict the date beside it.
+ */
+export function relativeDay(
+  iso: string | null | undefined,
+  tz?: string | null,
+  now: Date = new Date(),
+): string {
+  return relativeDayLabel(iso, now, safeZone(tz));
 }
 
 /**

@@ -209,7 +209,7 @@ export function AuditTrailSection({ candidate }: { candidate: ClientCandidateDTO
               <div className="mt-1.5 flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
                 <span>{new Date(e.at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}</span>
                 <span>•</span>
-                <span>{new Date(e.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+                <span>{new Date(e.at).toLocaleTimeString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, hour: "2-digit", minute: "2-digit" })}</span>
               </div>
             </div>
           </li>

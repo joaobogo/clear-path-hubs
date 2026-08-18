@@ -14,6 +14,8 @@
  *  - A missing due date reads "No deadline", never a blank cell.
  */
 
+import { dueDateLabel, isOverdueDate } from "@/lib/format/relative-date";
+
 export type QueueKind = "decision" | "feedback" | "offer" | "info_request" | "interview";
 
 /** Item type as a plain text label — no colour-only or icon-only meaning. */
@@ -74,15 +76,7 @@ function days(from: string | null, nowMs: number): number | null {
 }
 
 export function dueLabel(dueAt: string | null, nowMs: number): string {
-  if (!dueAt) return "No deadline";
-  const t = new Date(dueAt).getTime();
-  if (Number.isNaN(t)) return "No deadline";
-  const diff = Math.round((t - nowMs) / DAY);
-  if (diff < -1) return `${Math.abs(diff)} days overdue`;
-  if (diff === -1) return "1 day overdue";
-  if (diff === 0) return "Due today";
-  if (diff === 1) return "Due tomorrow";
-  return `Due in ${diff} days`;
+  return dueDateLabel(dueAt, new Date(nowMs));
 }
 
 /** One row per subject; the highest-precedence kind wins. */
@@ -114,11 +108,10 @@ export type QueueGroups = {
 export function buildQueue(items: QueueItem[], now: Date = new Date()): QueueGroups {
   const nowMs = now.getTime();
   const rows: QueueRow[] = dedupeQueue(items).map((item) => {
-    const dueMs = item.due_at ? new Date(item.due_at).getTime() : null;
     return {
       ...item,
       type_label: QUEUE_TYPE_LABEL[item.kind],
-      overdue: dueMs != null && !Number.isNaN(dueMs) && dueMs < nowMs,
+      overdue: isOverdueDate(item.due_at, now),
       days_waiting: days(item.waiting_since, nowMs),
       due_label: dueLabel(item.due_at, nowMs),
     };

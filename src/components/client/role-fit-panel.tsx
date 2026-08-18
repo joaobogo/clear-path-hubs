@@ -19,14 +19,10 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Recycle, CalendarClock, MapPin, ArrowUpRight, Layers } from "lucide-react";
+import { agoLabel } from "@/lib/format/relative-date";
 
 function screenedAgo(iso: string): string {
-  const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
-  if (days <= 0) return "today";
-  if (days === 1) return "yesterday";
-  if (days < 30) return `${days} days ago`;
-  const months = Math.round(days / 30);
-  return months < 12 ? `${months} month${months === 1 ? "" : "s"} ago` : `${Math.round(days / 365)}y ago`;
+  return agoLabel(iso);
 }
 
 function fmtDate(iso: string): string {

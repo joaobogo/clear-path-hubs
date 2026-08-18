@@ -1,20 +1,16 @@
+import { calendarDaysSince } from "@/lib/format/relative-date";
+
 // Visible clock helpers — turn timestamps into plain-language age.
 //
 // Clients judge a service by responsiveness, so every queue item and stage
 // carries its age. Pure module: no server imports, safe on both sides.
 
-const DAY_MS = 86_400_000;
-
-function startOfDay(d: Date): number {
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-}
-
 /** Whole calendar days between a timestamp and now. Null when unknown. */
 export function daysSince(iso: string | null | undefined, now: Date = new Date()): number | null {
-  if (!iso) return null;
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return null;
-  const diff = Math.round((startOfDay(now) - startOfDay(d)) / DAY_MS);
+  // Delegates to the one shared calendar-day utility so an age here can never
+  // disagree with the due/overdue labels rendered next to it.
+  const diff = calendarDaysSince(iso, now);
+  if (diff == null) return null;
   return diff < 0 ? 0 : diff;
 }
 

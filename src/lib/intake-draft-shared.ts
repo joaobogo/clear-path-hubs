@@ -6,6 +6,7 @@
  * therefore live on the server — keyed to the account once it exists, and to a
  * private draft token before that — never only in this browser tab.
  */
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 /** How long a draft survives before it expires, in days. */
 export const INTAKE_DRAFT_TTL_DAYS = 30;
@@ -37,7 +38,7 @@ export function savedAtLabel(iso: string, now: Date = new Date()): string {
   if (seconds < 60) return "Saved just now";
   const minutes = Math.round(seconds / 60);
   if (minutes < 60) return `Saved ${minutes} minute${minutes === 1 ? "" : "s"} ago`;
-  return `Saved at ${then.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+  return `Saved at ${then.toLocaleTimeString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, hour: "2-digit", minute: "2-digit" })}`;
 }
 
 /** Fields we never persist, whatever the caller sends. */

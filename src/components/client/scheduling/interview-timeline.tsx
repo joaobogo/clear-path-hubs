@@ -242,7 +242,7 @@ function TimelineItem({
               <div className="inline-flex items-center gap-1.5">
                 <Clock className="h-3.5 w-3.5 text-muted-foreground" />
                 <span className="font-medium">{when.primary}</span>
-                <span className="text-muted-foreground">({relativeDay(iv.scheduled_at)})</span>
+                <span className="text-muted-foreground">({relativeDay(iv.scheduled_at, iv.timezone)})</span>
               </div>
               {when.viewer ? (
                 <div className="text-xs text-muted-foreground">Your time: {when.viewer}</div>
@@ -251,7 +251,7 @@ function TimelineItem({
           ) : slots.length > 0 ? (
             <div className="text-muted-foreground">
               {slots.length} time{slots.length === 1 ? "" : "s"} with the candidate — first option{" "}
-              {relativeDay(slots[0])}
+              {relativeDay(slots[0], iv.timezone)}
             </div>
           ) : (
             <div className="text-muted-foreground">No times sent yet</div>

@@ -17,6 +17,7 @@ import {
   MailOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const ICON: Record<JourneyEventKind, React.ComponentType<{ className?: string }>> = {
   sourced: Send,
@@ -46,7 +47,8 @@ const TONE_CLS: Record<JourneyEvent["tone"], string> = {
 
 function fmt(iso: string) {
   const d = new Date(iso);
-  return d.toLocaleString(undefined, {
+  return d.toLocaleString(APP_LOCALE, {
+    timeZone: WORKSPACE_TIMEZONE,
     month: "short",
     day: "numeric",
     year: "numeric",
