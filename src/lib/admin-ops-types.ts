@@ -22,6 +22,16 @@ export type QueueOwner = { user_id: string; name: string } | null;
 /** What "claim" writes to. Null when the row has no ownable parent record. */
 export type QueueClaim = { kind: "position" | "intake"; id: string } | null;
 
+/**
+ * A labelled pointer used for the queue row's title and subtitle segments, so
+ * the position title and the account name open their own records (P0.1) while
+ * plain segments stay text. Ids are exact record ids, never name matches.
+ */
+export type QueueRef =
+  | { kind: "position"; id: string; label: string }
+  | { kind: "organization"; id: string; label: string }
+  | { kind: "text"; label: string };
+
 export type QueueItem = {
   id: string;
   title: string;
@@ -42,6 +52,10 @@ export type QueueItem = {
    * never a forecast. Rows carrying one sort to the top of their queue.
    */
   sla_breach?: { metric_label: string; days_over: number } | null;
+  /** Linkable version of `title`. Falls back to plain text when absent. */
+  title_ref?: QueueRef | null;
+  /** Linkable segments of `subtitle`, rendered joined by "·". */
+  subtitle_refs?: QueueRef[] | null;
 
 };
 

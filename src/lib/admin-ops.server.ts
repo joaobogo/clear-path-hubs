@@ -208,6 +208,17 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
   const positionClaim = (id: unknown): QueueClaim =>
     typeof id === "string" && id ? { kind: "position" as const, id } : null;
 
+  // Linkable refs for the row title/subtitle. An id we do not have degrades to
+  // plain text rather than rendering a dead link.
+  const posRef = (id: unknown, label: unknown): QueueRef =>
+    typeof id === "string" && id
+      ? { kind: "position", id, label: String(label ?? "Role") }
+      : { kind: "text", label: String(label ?? "—") };
+  const orgRef = (id: unknown, label: unknown): QueueRef =>
+    typeof id === "string" && id
+      ? { kind: "organization", id, label: String(label ?? "Client") }
+      : { kind: "text", label: String(label ?? "—") };
+
   const queues: WorkQueue[] = [
     {
       key: "intakes_aging",
@@ -240,7 +251,9 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       items: ((unpaid.data ?? []) as Any[]).map((p) => ({
         id: p.id,
         title: p.title,
+        title_ref: posRef(p.id, p.title),
         subtitle: p.organizations?.name ?? "—",
+        subtitle_refs: [orgRef(p.organization_id ?? p.organizations?.id, p.organizations?.name)],
         meta: p.payment_status === "pending" ? "checkout started" : "no checkout yet",
         waiting_since: p.updated_at ?? p.created_at,
         target: { kind: "position" as const, id: p.id },
@@ -260,7 +273,9 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       items: ((setup.data ?? []) as any[]).map((p) => ({
         id: p.id,
         title: p.title,
+        title_ref: posRef(p.id, p.title),
         subtitle: p.organizations?.name ?? "—",
+        subtitle_refs: [orgRef(p.organization_id ?? p.organizations?.id, p.organizations?.name)],
         meta: String(p.status).replace(/_/g, " "),
         waiting_since: p.created_at,
         target: { kind: "position" as const, id: p.id },
@@ -285,6 +300,10 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         id: m.id,
         title: m.candidate_profiles?.full_name ?? "Candidate",
         subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
+        subtitle_refs: [
+          posRef(m.positions?.id, m.positions?.title),
+          orgRef(m.positions?.organizations?.id, m.positions?.organizations?.name),
+        ],
         meta: m.score_runs?.score != null ? `score ${Math.round(Number(m.score_runs.score))}` : null,
         waiting_since: m.updated_at,
         target: { kind: "review" as const, matchId: m.id },
@@ -306,6 +325,10 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         id: m.match_id,
         title: m.candidate_name ?? "Candidate",
         subtitle: `${m.position_title ?? "—"} · ${m.client_name ?? "—"}`,
+        subtitle_refs: [
+          posRef(m.position_id, m.position_title),
+          orgRef(m.organization_id, m.client_name),
+        ],
         meta: String(m.stage).replace(/_/g, " "),
         waiting_since: m.submitted_at,
         target: { kind: "match" as const, id: m.match_id },
@@ -329,6 +352,13 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         subtitle: `${iv.candidate_matches?.positions?.title ?? "—"} · ${
           iv.candidate_matches?.positions?.organizations?.name ?? "—"
         }`,
+        subtitle_refs: [
+          posRef(iv.candidate_matches?.positions?.id, iv.candidate_matches?.positions?.title),
+          orgRef(
+            iv.candidate_matches?.positions?.organizations?.id,
+            iv.candidate_matches?.positions?.organizations?.name,
+          ),
+        ],
         meta: iv.status === "requested" ? "awaiting slot" : "scheduled soon",
         waiting_since: iv.scheduled_at ?? iv.requested_at,
         target: { kind: "match" as const, id: iv.candidate_match_id },
@@ -370,6 +400,10 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         id: m.id,
         title: m.candidate_profiles?.full_name ?? "Candidate",
         subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
+        subtitle_refs: [
+          posRef(m.positions?.id, m.positions?.title),
+          orgRef(m.positions?.organizations?.id, m.positions?.organizations?.name),
+        ],
         meta: Array.isArray(m.score_stale_reasons) ? m.score_stale_reasons.join(", ") : "Inputs changed",
         waiting_since: m.score_stale_at,
         key: "score_stale",
