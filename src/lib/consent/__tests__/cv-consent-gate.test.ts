@@ -1,18 +1,26 @@
 import { describe, expect, it } from "vitest";
-import { cvConsentGate, isExplicitAuditedRelease } from "../cv-consent-gate";
+import { cvConsentGate } from "../cv-consent-gate";
 
-describe("pre-interview consent gate", () => {
-  it("blocks a shortlisted candidate whose only release is a blanket one", () => {
+describe("contact release consent gate", () => {
+  it("opens as soon as a release timestamp exists", () => {
+    const gate = cvConsentGate({
+      stage: "shortlisted",
+      contact_released_at: "2026-08-12T23:50:00Z",
+    });
+    expect(gate.open).toBe(true);
+    expect(gate.basis).toBe("published");
+    expect(gate.clientLabel).toBe("Contact details released");
+  });
+
+  it("opens as published even when actor fields are missing", () => {
     const gate = cvConsentGate({
       stage: "shortlisted",
       contact_released_at: "2026-08-12T23:50:00Z",
       contact_released_by: null,
       contact_release_reason: "Delivered to the client for review",
     });
-    expect(gate.open).toBe(false);
-    expect(gate.blanket_release).toBe(true);
-    expect(gate.clientLabel).toBe("Available after interview");
-    expect(gate.adminLabel).toBe("Blocked — pre-interview");
+    expect(gate.open).toBe(true);
+    expect(gate.basis).toBe("published");
   });
 
   it("blocks delivered / new / reviewing candidates with no release", () => {
@@ -37,17 +45,8 @@ describe("pre-interview consent gate", () => {
       contact_release_reason: "Client confirmed interview slot",
     });
     expect(gate.open).toBe(true);
-    expect(gate.basis).toBe("explicit_release");
-  });
-
-  it("treats a release without a reason as non-explicit", () => {
-    expect(
-      isExplicitAuditedRelease({
-        contact_released_at: "2026-08-12T23:50:00Z",
-        contact_released_by: "11111111-1111-1111-1111-111111111111",
-        contact_release_reason: "  ",
-      }),
-    ).toBe(false);
+    expect(gate.basis).toBe("published");
+    expect(gate.adminLabel).toBe("Released — explicit staff release");
   });
 
   it("keeps access for a post-interview rejection", () => {
