@@ -149,7 +149,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body data-system-instruction={SYSTEM_INSTRUCTION}>
+      <body>
         {children}
         <noscript>
           <img
