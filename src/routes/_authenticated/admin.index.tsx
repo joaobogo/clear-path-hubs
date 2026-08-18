@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
@@ -29,7 +31,12 @@ import type { ComponentType } from "react";
 
 export const WORK_QUEUES_KEY = ["admin", "work-queues"] as const;
 
+/** Work queue scope: the whole desk, or only rows the acting admin owns. */
+export type QueueScope = "all" | "mine";
+
 export const Route = createFileRoute("/_authenticated/admin/")({
+  validateSearch: (raw: Record<string, unknown>): { scope?: QueueScope } =>
+    raw["scope"] === "mine" ? { scope: "mine" } : {},
   pendingComponent: () => (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -85,12 +92,14 @@ function Header({
   isFetching,
   showTest,
   onRefresh,
+  scope,
 }: {
   total: number | null;
   isReady: boolean;
   isFetching: boolean;
   showTest: boolean;
   onRefresh: () => void;
+  scope: QueueScope;
 }) {
   return (
     <header className="flex flex-wrap items-end justify-between gap-3">
@@ -102,7 +111,7 @@ function Header({
           ) : total === 0 ? (
             "Nothing is waiting on the platform team right now."
           ) : (
-            `${total} item${total === 1 ? "" : "s"} waiting on you. Every row opens the one action it needs.`
+            `${total} item${total === 1 ? "" : "s"} waiting on ${scope === "mine" ? "you" : "the team"}. Every row opens the one action it needs.`
           )}
         </p>
         <p className="mt-1 text-xs text-muted-foreground">
@@ -110,6 +119,25 @@ function Header({
             ? "Including test and internal organizations."
             : "Test and internal organizations are hidden."}
         </p>
+      </div>
+      <div className="flex items-center gap-2">
+      <div role="group" aria-label="Queue scope" className="flex rounded-md border p-0.5">
+        {(["all", "mine"] as QueueScope[]).map((s) => (
+          <Link
+            key={s}
+            to="/admin"
+            search={s === "mine" ? { scope: "mine" } : {}}
+            replace
+            aria-current={scope === s ? "true" : undefined}
+            className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+              scope === s
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {s === "all" ? "All" : "Mine"}
+          </Link>
+        ))}
       </div>
       <Button
         variant="ghost"
@@ -122,6 +150,7 @@ function Header({
         <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} />
         Refresh
       </Button>
+      </div>
     </header>
   );
 }
@@ -130,6 +159,7 @@ function Overview() {
   const qc = useQueryClient();
   const router = useRouter();
   const showTest = useIncludeTestRecords();
+  const { scope = "all" } = Route.useSearch();
 
   async function refreshAll() {
     await Promise.all([
@@ -146,7 +176,7 @@ function Overview() {
   return (
     <div className="space-y-6">
       <AdminWidgetErrorBoundary label="Work queue summary">
-        <WorkQueueSummary showTest={showTest} onRefresh={refreshAll} />
+        <WorkQueueSummary showTest={showTest} onRefresh={refreshAll} scope={scope} />
       </AdminWidgetErrorBoundary>
 
       <AdminWidgetErrorBoundary label="SLA banner">
@@ -185,7 +215,31 @@ function Overview() {
 }
 
 
-function WorkQueueSummary({ showTest, onRefresh }: { showTest: boolean; onRefresh: () => void }) {
+/** The acting admin's user id, for the "Mine" scope. Presentation-only read. */
+function useActingUserId() {
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(() => {
+    let alive = true;
+    supabase.auth.getUser().then(({ data }) => {
+      if (alive) setUserId(data.user?.id ?? null);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return userId;
+}
+
+function WorkQueueSummary({
+  showTest,
+  onRefresh,
+  scope,
+}: {
+  showTest: boolean;
+  onRefresh: () => void;
+  scope: QueueScope;
+}) {
+  const actingUserId = useActingUserId();
   const { data, isPending, isFetching, error } = useQuery({
     queryKey: [...WORK_QUEUES_KEY, showTest],
     queryFn: () => getAdminWorkQueues({ data: { include_test: showTest } }),
@@ -194,14 +248,24 @@ function WorkQueueSummary({ showTest, onRefresh }: { showTest: boolean; onRefres
     placeholderData: (prev) => prev,
   });
 
-  const queues = data?.queues ?? [];
+  const allQueues = data?.queues ?? [];
+  // "Mine" is a pure client-side filter over the same rows the desk already
+  // loaded: owner ids come straight from the loader, so All arithmetic is
+  // untouched and Mine always reconciles with it.
+  const queues =
+    scope === "mine"
+      ? allQueues.map((q) => {
+          const items = q.items.filter((it) => it.owner?.user_id === actingUserId);
+          return { ...q, items, count: items.length };
+        })
+      : allQueues;
   const total = isPending ? null : queues.reduce((n, q) => n + (typeof q.count === "number" ? q.count : 0), 0);
   const active = queues.filter((q) => q.items.length > 0);
   const isReady = !isPending && !error;
 
   return (
     <div className="space-y-6">
-      <Header total={total} isReady={isReady} isFetching={isFetching} showTest={showTest} onRefresh={onRefresh} />
+      <Header total={total} isReady={isReady} isFetching={isFetching} showTest={showTest} onRefresh={onRefresh} scope={scope} />
 
       {isPending ? (
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-7">
@@ -244,10 +308,22 @@ function WorkQueueSummary({ showTest, onRefresh }: { showTest: boolean; onRefres
           {active.length === 0 ? (
             <section className="rounded-lg border bg-card px-4 py-10 text-center">
               <CheckCircle2 className="mx-auto h-6 w-6 text-success" />
-              <h2 className="mt-3 text-sm font-semibold">Every queue is clear</h2>
+              <h2 className="mt-3 text-sm font-semibold">
+                {scope === "mine" ? "Nothing needs you right now" : "Every queue is clear"}
+              </h2>
               <p className="mx-auto mt-1 max-w-md text-xs text-muted-foreground">
-                No intake, payment, review, decision, interview or processing item is waiting on the
-                platform team.
+                {scope === "mine" ? (
+                  <>
+                    No item on this desk lists you as owner. The rest of the desk is still
+                    waiting —{" "}
+                    <Link to="/admin" search={{}} replace className="font-medium text-primary hover:underline">
+                      switch to All
+                    </Link>{" "}
+                    to see it.
+                  </>
+                ) : (
+                  "No intake, payment, review, decision, interview or processing item is waiting on the platform team."
+                )}
               </p>
             </section>
           ) : (
