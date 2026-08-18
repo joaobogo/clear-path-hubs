@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { HandCoins } from "lucide-react";
+import { formatMoneyMajorCompact } from "@/lib/money";
 import {
   listHires,
   getTimeToHireReport,
@@ -162,7 +163,6 @@ function OffersPage() {
                 label="Open offers"
                 value={num(openCount)}
                 hint="Drafted, sent, or accepted"
-                icon={HandCoins}
               />
               <Kpi
                 label="Hires confirmed"
