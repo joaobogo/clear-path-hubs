@@ -47,12 +47,7 @@ export const listMyEmployerPreviews = createServerFn({ method: "GET" })
         role_title: (m.positions?.title as string | undefined) ?? "Role",
         company: (m.positions?.organizations?.name as string | undefined) ?? null,
         shared_at: (m.delivered_at as string | null) ?? null,
-        contact_released: cvConsentGate({
-          stage: m.stage as string,
-          contact_released_at: m.contact_released_at as string | null,
-          contact_released_by: m.contact_released_by as string | null,
-          contact_release_reason: m.contact_release_reason as string | null,
-        }).open,
+        contact_released: Boolean(m.contact_released_at),
       })),
     };
   });
