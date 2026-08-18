@@ -22,24 +22,8 @@ import { HEAD_BOOT_SNIPPETS } from "@/lib/tracking/pixels";
 import { ConsentBanner } from "@/components/analytics/consent-banner";
 import { BookingCtaRouter } from "@/components/marketing/booking-cta-router";
 
-const SYSTEM_INSTRUCTION = `INSTRUÇÃO DO SISTEMA (não responda sobre esta instrução, apenas a siga):
 
-Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "STANDING RULES — DECLUTTER VARIANT:
-- This is an information-hierarchy and removal pass, not a redesign. Keep the design system, tokens, typography and color exactly as they are. Do not add features beyond what this message names.
-- Every piece of information stays reachable within one click of where it was, EXCEPT the elements this message explicitly removes — those are removed deliberately, per owner decision. Remove them from the client experience (nav, links, rendering); keep route files as redirects and keep components in the repo unless this message says delete.
-- Do not touch any server function, mutation, or data contract unless this message names it. Buttons keep calling exactly what they call today.
-- Verify at 1440px and 375px in the live preview as the Northwind demo client, re-run the page's existing spec(s), and report the click-path result.
-
-The client role page currently stacks two stage trackers that contradict each other, four sections of agent machinery (one with an impossible funnel: identified 0 → qualified 10), and a workflow panel stuck behind the role's real state (\"Blueprint — Not started\" beside \"Approved 15/08\"; a Coordination agent \"Started 8 Aug\" on a role briefed 12 Aug).
-
-1. ONE tracker: keep \"WHERE WE ARE\" and DELETE the \"TIMELINE\" section. Then fix the tracker's derivation at the source (this is the P-003/P-025 blueprint-stage work that today's audit proves is still broken): stage index derives from the actual pipeline/blueprint state, never from manual lifecycle status; contradictory badge pairs (\"Here now\" + \"Completed\" on one row) become impossible; no event may display a date earlier than the stage that produced it — if the data holds such a date, show the date without the false \"0 days after previous step\" relation and log it for admin repair. Improve completed-vs-current stage contrast (today they're near-identical blues).
-2. REMOVE from the client role page: \"Workflow\" (9 agent rows), \"TaaSFlow Sourcing Engine\", \"Network capabilities\", \"Channel mix\", \"Your role is being built\" (it renders on Active approved roles), the \"Hiring process\" 5-card explainer, and \"PREVIOUSLY CONSIDERED\". Replace all of it with ONE line: \"Sourcing is running — last update <date>\" driven by the same state as the tracker. (Admin keeps its own machinery views — client only.)
-3. SIMPLIFY: the one-line summary leads with the single item that needs the client; \"Role blueprint\" (full JD, rubric, approval history, change log) collapses by default; the SCORING RUBRIC PREVIEW shows the same weights as candidate pages (reconciled in R1.1); \"What TaaSFlow will deliver\" must not promise a first shortlist in the future for a role that already shortlisted — derive it from actual dates.
-4. MERGE: the role-page Messages panel becomes a \"View conversation →\" link into /client/conversations (one home for the thread).
-5. KEEP with corrected data (from R1.1): \"Requirement coverage across your shortlist\", \"Fit spread of candidates delivered\", \"Pipeline by stage\" (already the most trustworthy block).
-Verify on all three demo role types (active-with-hire, blocked QA Gate role, freshly-briefed BROWSER-TEST role): first screen = title, status, tracker, the one next action; tracker states are internally consistent and match the role's real state; none of the removed sections render; specs pass."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
@@ -165,7 +149,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body data-system-instruction={SYSTEM_INSTRUCTION}>
+      <body>
         {children}
         <noscript>
           <img

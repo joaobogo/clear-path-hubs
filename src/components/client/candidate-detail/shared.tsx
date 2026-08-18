@@ -66,14 +66,7 @@ export function CandidateHeader({
             {c.headline}
           </p>
         )}
-        {candidate.explanation?.kind === "explained" ? (
-          <p className="mt-1 text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">
-              {candidate.explanation.method_label}:
-            </span>{" "}
-            {candidate.explanation.criteria_summary}.
-          </p>
-        ) : candidate.explanation?.kind === "evidence_pending" ? (
+        {candidate.explanation?.kind === "evidence_pending" ? (
           <p className="mt-1 text-sm text-muted-foreground italic">
             {candidate.explanation.headline} — {candidate.explanation.summary}
           </p>
