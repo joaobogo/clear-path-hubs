@@ -626,8 +626,12 @@ export const getClient = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
-    const [orgRes, membersRes, positionsRes] = await Promise.all([
-      s.from("organizations").select("*, memberships(count), parsed_cv_count:candidate_profiles(count)").eq("id", data.id).maybeSingle(),
+    // NOTE: candidate_profiles has no FK to organizations, so the old embedded
+    // `parsed_cv_count:candidate_profiles(count)` made PostgREST reject the whole
+    // organization read (PGRST200) — which surfaced as "Organization not found"
+    // for every client. Count candidates through candidate_matches instead.
+    const [orgRes, membersRes, positionsRes, candidateCountRes] = await Promise.all([
+      s.from("organizations").select("*, memberships(count)").eq("id", data.id).maybeSingle(),
       s
         .from("memberships")
         .select("id,role,status,created_at,profiles(auth_user_id,full_name,email)")
@@ -642,14 +646,23 @@ export const getClient = createServerFn({ method: "GET" })
         )
         .eq("organization_id", data.id)
         .order("updated_at", { ascending: false }),
+      s
+        .from("candidate_matches")
+        .select("id", { count: "exact", head: true })
+        .eq("organization_id", data.id),
     ]);
+    if (orgRes.error) throw new Error(orgRes.error.message);
     if (!orgRes.data) return null;
     return {
-      organization: orgRes.data,
+      organization: {
+        ...(orgRes.data as AnyRow),
+        parsed_cv_count: [{ count: candidateCountRes.count ?? 0 }],
+      },
       members: (membersRes.data ?? []) as AnyRow[],
       positions: (positionsRes.data ?? []) as AnyRow[],
     };
   });
+
 
 export const listPositions = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
