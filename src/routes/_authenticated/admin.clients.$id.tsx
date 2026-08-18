@@ -122,7 +122,7 @@ export const Route = createFileRoute("/_authenticated/admin/clients/$id")({
     if (!d) throw notFound();
     return d;
   },
-  notFoundComponent: () => <div className="p-8">Organization not found.</div>,
+  notFoundComponent: () => <ClientRecordNotFound />,
   errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.clients.$id.tsx"),
   component: ClientDetail,
 });
