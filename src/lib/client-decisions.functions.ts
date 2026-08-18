@@ -583,7 +583,15 @@ export const clientAction = createServerFn({ method: "POST" })
         .update({ stage: nextStage })
         .eq("id", data.matchId)
         .eq("organization_id", data.orgId);
-      if (error) throw new Error(error.message);
+      // When leaving a gated stage, retract any unstarted side-artifacts.
+      if (match.stage === "interview_process" && nextStage !== "interview_process") {
+        await context.supabase
+          .from("interviews")
+          .delete()
+          .eq("candidate_match_id", data.matchId)
+          .eq("organization_id", data.orgId)
+          .eq("status", "requested");
+      }
     }
 
     if (data.action === "request_interview") {
