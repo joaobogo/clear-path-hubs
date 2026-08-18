@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import { StructuredNotesPanel } from "@/components/admin/structured-notes-panel";
 import { ComponentErrorBoundary } from "@/components/ds/component-error-boundary";
 import { normalizeFocusEventId } from "@/lib/candidate-history";
@@ -149,6 +150,7 @@ function CandidateWorkspace() {
   const cv = (heavy?.cv ?? null) as Any;
   const m = match as Any;
   const cp = m.candidate_profiles as Any;
+  useDetailCrumb(cp?.full_name ?? null);
   const pos = m.positions as Any;
   const currentRun = runs[0] as Any | undefined;
   const currentResult = (currentRun?.result ?? null) as Any | null;

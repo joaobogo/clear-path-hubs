@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import { PaymentExemptionDialog } from "@/components/admin/payment-exemption-dialog";
 import { StructuredNotesPanel } from "@/components/admin/structured-notes-panel";
 import { StageAgingPanel } from "@/components/admin/stage-aging-panel";
@@ -196,6 +197,7 @@ function PositionWorkspace() {
     queryFn: () => getPosition({ data: { id } }),
   });
   const p = data!.position as Any;
+  useDetailCrumb(p?.title ?? null);
   const screening = data!.screening as Any[];
   const matches = data!.matches as Any[];
 
