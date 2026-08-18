@@ -243,12 +243,25 @@ export const listConversations = createServerFn({ method: "GET" })
     for (const r of (reads as Row[]) ?? []) readAt[r.conversation_id as string] = r.last_read_at as string;
 
     const last: Record<string, Row> = {};
-    const unread: Record<string, number> = {};
+    const ownLatest: Record<string, string> = {};
+    const rowsByConvo: Record<string, Row[]> = {};
     for (const m of (msgs as Row[]) ?? []) {
       const cid = m.conversation_id as string;
       if (!last[cid]) last[cid] = m;
-      const seen = readAt[cid];
-      if (m.sender_user_id !== userId && (!seen || new Date(m.created_at) > new Date(seen))) {
+      (rowsByConvo[cid] ??= []).push(m);
+      // Posting is reading: your own message marks everything before it as seen.
+      if (m.sender_user_id === userId && !ownLatest[cid]) ownLatest[cid] = m.created_at as string;
+    }
+
+    const unread: Record<string, number> = {};
+    for (const [cid, list] of Object.entries(rowsByConvo)) {
+      const stamps = [readAt[cid], ownLatest[cid]].filter(Boolean) as string[];
+      const cutoff = stamps.length
+        ? new Date(Math.max(...stamps.map((s) => new Date(s).getTime())))
+        : null;
+      for (const m of list) {
+        if (m.sender_user_id === userId) continue;
+        if (cutoff && new Date(m.created_at as string) <= cutoff) continue;
         unread[cid] = (unread[cid] ?? 0) + 1;
       }
     }
@@ -518,6 +531,16 @@ export const postConversationMessage = createServerFn({ method: "POST" })
       .select("id, body, created_at, sender_user_id, attachments")
       .single();
     if (error) throw new Error(error.message);
+
+    // Posting is reading: keep the poster's unread badge at zero for this thread.
+    await supabase.from("conversation_reads").upsert(
+      {
+        conversation_id: data.conversationId,
+        user_id: userId,
+        last_read_at: ((row as Row).created_at as string) ?? new Date().toISOString(),
+      },
+      { onConflict: "conversation_id,user_id" },
+    );
 
     try {
       const { emitEventFromServer } = await import("./notifications.functions");

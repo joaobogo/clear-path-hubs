@@ -170,10 +170,19 @@ export function SilverMedalistBadge({
     queryFn: () => fn({ data: { orgId, matchId } }),
   });
   if (!data) return null;
+  // The badge states the tag's real status, so it can never claim an active
+  // silver medalist while /client/talent-memory lists the entry as archived.
+  const archived = data.status === "archived";
   return (
-    <Badge className="gap-1 border-warning/60 bg-warning/60 text-warning-strong">
+    <Badge
+      className={
+        archived
+          ? "gap-1 border-border bg-muted text-muted-foreground"
+          : "gap-1 border-warning/60 bg-warning/60 text-warning-strong"
+      }
+    >
       <Award className="h-3 w-3" aria-hidden />
-      Silver medalist
+      {archived ? "Silver medalist · archived" : "Silver medalist"}
     </Badge>
   );
 }

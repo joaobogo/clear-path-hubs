@@ -278,6 +278,27 @@ export const tagSilverMedalist = createServerFn({ method: "POST" })
       .single();
     if (upErr) throw new Error(upErr.message);
 
+    // One tag source: a silver medalist is also "Good for future", so the tag
+    // shows on /client/talent-memory AND /client/talent-pool from one write.
+    {
+      const { ensureGoodForFuturePool } = await import("@/lib/talent-pool-system.server");
+      const poolId = await ensureGoodForFuturePool(
+        context.supabase,
+        context.userId,
+        data.orgId,
+      );
+      const { error: poolErr } = await context.supabase.from("talent_pool_members").upsert(
+        {
+          pool_id: poolId,
+          organization_id: data.orgId,
+          candidate_profile_id: (match as AnyRow).candidate_profile_id,
+          added_by: context.userId,
+        },
+        { onConflict: "pool_id,candidate_profile_id" },
+      );
+      if (poolErr) throw new Error(poolErr.message);
+    }
+
     await context.supabase.from("talent_memory_events").insert({
       talent_memory_id: (upserted as AnyRow).id,
       organization_id: data.orgId,

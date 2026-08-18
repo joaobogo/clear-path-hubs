@@ -9,7 +9,7 @@ import { compareSeniority, seniorityFromYears } from "@/lib/candidate-seniority"
 type AnyRow = any;
 const sel = (s: string): string => s;
 
-const GOOD_FOR_FUTURE_KEY = "good_for_future";
+import { GOOD_FOR_FUTURE_KEY, ensureGoodForFuturePool } from "@/lib/talent-pool-system.server";
 
 export type TalentPoolDTO = {
   id: string;
@@ -100,34 +100,6 @@ function norm(s: string) {
 }
 
 // ─── Ensure "Good for future" system pool exists ─────────────────────────────
-
-async function ensureGoodForFuturePool(
-  supabase: AnyRow,
-  userId: string,
-  orgId: string,
-): Promise<string> {
-  const { data: existing } = await supabase
-    .from("talent_pools")
-    .select("id")
-    .eq("organization_id", orgId)
-    .eq("system_key", GOOD_FOR_FUTURE_KEY)
-    .maybeSingle();
-  if (existing) return (existing as AnyRow).id as string;
-  const { data: created, error } = await supabase
-    .from("talent_pools")
-    .insert({
-      organization_id: orgId,
-      name: "Good for future",
-      description: "Candidates worth revisiting on future roles.",
-      is_system: true,
-      system_key: GOOD_FOR_FUTURE_KEY,
-      created_by: userId,
-    })
-    .select("id")
-    .single();
-  if (error) throw new Error(error.message);
-  return (created as AnyRow).id as string;
-}
 
 // ─── List pools with member counts ───────────────────────────────────────────
 

@@ -2,6 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { clientStageLabel } from "@/lib/client-stage-labels";
+import { sentenceLabel } from "@/lib/format/sentence-label";
 
 /**
  * Global workspace search.
@@ -139,7 +141,7 @@ export const globalSearch = createServerFn({ method: "POST" })
         id: o.id,
         label: o.name,
         context: o.industry ?? undefined,
-        state: o.archived_at ? "archived" : (o.status ?? undefined),
+        state: o.archived_at ? "Archived" : sentenceLabel(o.status),
         href: `/admin/clients/${o.id}`,
       }));
     }
@@ -159,7 +161,7 @@ export const globalSearch = createServerFn({ method: "POST" })
       groups.positions = ((positions as AnyRow[]) ?? []).map((p) => {
         const orgName = p.organizations?.name as string | undefined;
         const context = [orgName, p.location].filter(Boolean).join(" · ");
-        const state = p.status ? String(p.status).replace(/_/g, " ") : undefined;
+        const state = sentenceLabel(p.status);
 
         if (scope === "admin") {
           return {
@@ -229,7 +231,7 @@ export const globalSearch = createServerFn({ method: "POST" })
           const prof = profileById.get(m.candidate_profile_id);
           const label = prof?.full_name || prof?.email || "Candidate";
           const context = [m.positions?.title, m.organizations?.name].filter(Boolean).join(" · ");
-          const state = m.stage ? String(m.stage).replace(/_/g, " ") : undefined;
+          const state = m.stage ? clientStageLabel(m.stage) : undefined;
           if (scope === "admin") {
             list.push({
               type: "candidate",
@@ -281,12 +283,11 @@ export const globalSearch = createServerFn({ method: "POST" })
           .filter(Boolean)
           .join(" · "),
         state: [
-          i.position_id ? "converted" : "not converted",
-          i.lead_status && i.lead_status !== "open" ? i.lead_status : i.status,
+          i.position_id ? "Converted" : "Not converted",
+          sentenceLabel(i.lead_status && i.lead_status !== "open" ? i.lead_status : i.status),
         ]
           .filter(Boolean)
-          .join(" · ")
-          .replace(/_/g, " "),
+          .join(" · "),
         href: "/admin/intake",
       }));
     }
@@ -336,10 +337,10 @@ export const globalSearch = createServerFn({ method: "POST" })
         type: "task" as const,
         id: t.id,
         label: t.title,
-        context: [t.task_type?.replace(/_/g, " "), t.blocking ? "blocking" : null]
+        context: [sentenceLabel(t.task_type), t.blocking ? "Blocking" : null]
           .filter(Boolean)
           .join(" · "),
-        state: t.status ? String(t.status).replace(/_/g, " ") : undefined,
+        state: sentenceLabel(t.status),
         href: scope === "admin" ? "/admin" : "/client/approvals",
         search: scope === "client" ? { org: t.organization_id as string } : undefined,
       }));

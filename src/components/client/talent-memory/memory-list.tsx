@@ -4,11 +4,32 @@ import { Badge } from "@/components/ui/badge";
 import { REASON_LABELS, type TalentMemoryDTO } from "@/lib/talent-memory.functions";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
-export function EmptyState() {
+export function EmptyState({
+  archivedCount = 0,
+  onShowArchived,
+}: {
+  /** Entries that exist but sit outside the current filter. */
+  archivedCount?: number;
+  onShowArchived?: () => void;
+} = {}) {
   return (
     <div className="mx-auto max-w-md rounded-xl border bg-card p-8 text-center">
       <Award className="mx-auto h-8 w-8 text-muted-foreground" aria-hidden />
-      <h2 className="mt-3 font-medium">No silver medalists yet</h2>
+      <h2 className="mt-3 font-medium">
+        {archivedCount > 0 ? "Nothing active in talent memory" : "No silver medalists yet"}
+      </h2>
+      {archivedCount > 0 ? (
+        <p className="mt-1 text-sm text-muted-foreground">
+          {archivedCount === 1
+            ? "1 archived entry is still on file."
+            : `${archivedCount} archived entries are still on file.`}{" "}
+          {onShowArchived ? (
+            <button onClick={onShowArchived} className="text-primary hover:underline">
+              View archived
+            </button>
+          ) : null}
+        </p>
+      ) : null}
       <p className="mt-1 text-sm text-muted-foreground">
         Tag strong candidates who weren&apos;t selected — they&apos;ll resurface
         automatically when you open similar roles.

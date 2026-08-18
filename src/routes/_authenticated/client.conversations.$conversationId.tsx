@@ -10,6 +10,7 @@ import { ConversationThread } from "@/components/comms/conversation-thread";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Briefcase, User } from "lucide-react";
 import { QueryErrorCard } from "@/components/client/query-error";
+import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 
 export const Route = createFileRoute("/_authenticated/client/conversations/$conversationId")({
   errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.conversations.$conversationId.tsx"),
@@ -48,6 +49,8 @@ function ConversationDetail() {
   const isViewer = ctx?.active?.role === "client_viewer";
   const canPost = !support.readOnly && !isViewer;
   const convo = data?.conversation;
+  // Breadcrumb: the thread/role name, never the raw conversation uuid.
+  useDetailCrumb(convo?.subject ?? convo?.context_label ?? null);
 
   return (
     <div className="space-y-4">
