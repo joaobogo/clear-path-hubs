@@ -366,7 +366,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
           .sort((a, b) => a - b)
           .map((ms) => new Date(ms).toISOString())[0] ?? null,
     };
-    const completedList = ((interviewsRes.data as AnyRow[]) ?? []).filter((iv) => {
+    const completedList = completedInterviews.filter((iv) => {
       const happened = (iv.completed_at as string | null) ?? (iv.scheduled_at as string | null) ?? null;
       if (!happened) return false;
       return new Date(happened).getTime() < nowMs;
