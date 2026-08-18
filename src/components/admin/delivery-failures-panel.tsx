@@ -126,12 +126,10 @@ export function DeliveryFailuresPanel() {
     }
   }
 
+  // Every retry re-sends a real notification to a real person, so every retry
+  // confirms first — not only the time-sensitive ones. Cancel is the default.
   function onRetry(item: Item) {
-    if (item.staleWarning) {
-      setStaleTarget(item);
-      return;
-    }
-    retryMut.mutate(item);
+    setStaleTarget(item);
   }
 
   return (
@@ -277,10 +275,16 @@ export function DeliveryFailuresPanel() {
       <Dialog open={!!staleTarget} onOpenChange={(o) => !o && setStaleTarget(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>This notification is time-sensitive</DialogTitle>
+            <DialogTitle>
+              {staleTarget?.staleWarning
+                ? "This notification is time-sensitive"
+                : "Re-send this notification"}
+            </DialogTitle>
             <DialogDescription>
               {staleTarget
-                ? `"${staleTarget.eventType}" first failed on ${when(staleTarget.firstAttemptAt)}. Sending it now may reference something that has already passed. Send anyway?`
+                ? staleTarget.staleWarning
+                  ? `"${staleTarget.eventType}" first failed on ${when(staleTarget.firstAttemptAt)}. Sending it now may reference something that has already passed. Send anyway?`
+                  : `"${staleTarget.eventType}" is sent again to ${staleTarget.recipient ?? "the original recipient"} by ${staleTarget.channel}, immediately.`
                 : null}
             </DialogDescription>
           </DialogHeader>
@@ -295,7 +299,7 @@ export function DeliveryFailuresPanel() {
                 setStaleTarget(null);
               }}
             >
-              Send anyway
+              {staleTarget?.staleWarning ? "Send anyway" : "Send again"}
             </Button>
           </DialogFooter>
         </DialogContent>
