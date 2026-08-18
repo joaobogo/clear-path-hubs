@@ -222,13 +222,35 @@ function ClientLayout() {
  }
 
  if (!active) {
+ // M7: the staff / unlinked-account shell keeps the app header and navigation,
+ // so the only way out isn't the browser Back button.
  return (
+ <WorkspaceShell
+ role="client"
+ contextKicker="Workspace"
+ contextLabel="No workspace"
+ contextSubLabel={data?.isStaff ? "platform staff" : "not linked yet"}
+ accountLabel={data?.onboarding?.display_name?.trim() || "My account"}
+ navItems={
+ data?.isStaff
+ ? [{ to: "/admin/clients", label: "Clients", icon: Building2 } as WorkspaceNavItem]
+ : []
+ }
+ >
  <div className="mx-auto max-w-3xl p-8">
  <EmptyState
  title="No client workspace yet"
- description="Your account isn't linked to a client organization, so there's nothing to show here yet."
+ description={
+ data?.isStaff
+ ? "Your staff account isn't a member of a client organization. Open a client from the admin client list to view their workspace."
+ : "Your account isn't linked to a client organization, so there's nothing to show here yet."
+ }
  whatAppearsHere="Once you're added to a workspace, your roles, shortlists, interviews, and offers appear here."
- action={{ label: "Submit a role", to: "/intake" }}
+ action={
+ data?.isStaff
+ ? { label: "Go to clients", to: "/admin/clients" }
+ : { label: "Submit a role", to: "/intake" }
+ }
  >
  <p className="mt-4 text-xs text-muted-foreground">
  Already part of a team? Ask the person who set up your workspace to invite
@@ -236,8 +258,10 @@ function ClientLayout() {
  </p>
  </EmptyState>
  </div>
+ </WorkspaceShell>
  );
  }
+
 
 
 
