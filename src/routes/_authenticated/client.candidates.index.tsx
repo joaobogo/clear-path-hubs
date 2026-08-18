@@ -13,6 +13,7 @@ import { getClientOverview } from "@/lib/client-overview.functions";
 import { getClientPositions } from "@/lib/client-positions.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { orgGate, panelState, useStuckAfter } from "@/lib/client/panel-gate";
+import { withQueryTimeout } from "@/lib/client/query-timeout";
 import { VisibilityNote } from "@/components/client/visibility-note";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -92,7 +93,7 @@ function CandidatesPage() {
 
   const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
-    queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
+    queryFn: () => withQueryTimeout(ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} })),
   });
   const ctx = ctxQuery.data;
   const orgId = ctx?.active?.organization_id;
@@ -100,7 +101,7 @@ function CandidatesPage() {
 
   const overviewQuery = useQuery({
     queryKey: ["client-overview", orgId],
-    queryFn: () => overviewFn({ data: { orgId: orgId! } }),
+    queryFn: () => withQueryTimeout(overviewFn({ data: { orgId: orgId! } })),
     enabled: !!orgId,
     placeholderData: (prev) => prev,
   });
@@ -122,9 +123,11 @@ function CandidatesPage() {
  } = useQuery({
  queryKey: ["client-candidates", orgId, search.position],
  queryFn: () =>
+ withQueryTimeout(
  listFn({
  data: { orgId: orgId!, positionId: search.position || undefined },
  }),
+ ),
  enabled: !!orgId,
  placeholderData: (prev) => prev,
  });
@@ -510,6 +513,7 @@ function CandidatesPage() {
              activeFilters={activeFilters}
              onClear={clearFilters}
              orgId={orgId}
+             positionId={search.position || undefined}
            />
    ) : search.view === "board" && orgId ? (
             /* Same rows, same filters — only the presentation changes. */
