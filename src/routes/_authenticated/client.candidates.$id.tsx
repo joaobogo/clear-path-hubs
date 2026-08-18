@@ -287,7 +287,7 @@ function CandidateDetailPage() {
 
  // Advance-type moves go through in one click; anything needing a "why"
  // opens the structured reason picker.
-  const NO_REASON_NEEDED = new Set<ActionKey>(["shortlist", "offer", "hire"]);
+  const NO_REASON_NEEDED = new Set<ActionKey>(["shortlist"]);
  const RESULT_STAGE: Partial<Record<ActionKey, MatchStage>> = {
  shortlist: "shortlisted",
  request_interview: "interview_process",

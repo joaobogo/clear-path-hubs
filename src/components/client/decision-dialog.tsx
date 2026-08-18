@@ -113,13 +113,13 @@ const CONFIG: Record<DecisionActionKey, Config> = {
   },
   offer: {
     title: "Extend an offer",
-    description: "We will confirm the offer details with you before anything reaches the candidate.",
+    description: "The TaaSFlow team will prepare the offer documents and confirm the details with you before anything reaches the candidate.",
     confirmLabel: "Extend offer",
     notePlaceholder: "Offer context (optional)",
   },
   hire: {
     title: "Mark as hired",
-    description: "This records the placement and closes the candidate's journey for this role.",
+    description: "This records the placement and notifies the TaaSFlow team to close the candidate's journey for this role.",
     confirmLabel: "Mark hired",
     notePlaceholder: "Start date or notes (optional)",
   },
