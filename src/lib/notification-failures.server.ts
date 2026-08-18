@@ -204,6 +204,7 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
       id: String(l["id"]),
       ledger: "lead" as const,
       eventType: `lead:${String(l["lead_type"])}`,
+      eventLabel: humaniseEventType(`lead:${String(l["lead_type"])}`),
       title: [l["full_name"], l["company"]].filter(Boolean).join(" · ") || String(l["lead_type"]),
       audience: "internal",
       attempts: Number(l["attempts"] ?? 0),
