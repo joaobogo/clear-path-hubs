@@ -7,7 +7,7 @@ import { useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { MessageSquare, ShieldAlert } from "lucide-react";
+import { ShieldAlert } from "lucide-react";
 import { clientAction, undoClientDecision } from "@/lib/client-decisions.functions";
 import { getClientCandidate } from "@/lib/client-candidates.functions";
 import { getClientContext } from "@/lib/client-context.functions";
@@ -22,8 +22,6 @@ import {
   DecisionDialog,
   type DecisionPayload,
 } from "@/components/client/decision-dialog";
-import { InterviewerAssignments } from "@/components/client/interviewer-assignments";
-import { CandidateTeamActivity } from "@/components/client/candidate-team-activity";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
 import { useRouteRealtime } from "@/hooks/use-route-realtime";
@@ -37,14 +35,13 @@ import {
   withActionTimeout,
 } from "@/lib/client/action-timeout";
 
-import { BackLink, CandidateHeader, JumpNav, SectionCard } from "@/components/client/candidate-detail/shared";
+import { BackLink, CandidateHeader, CollapsibleSection } from "@/components/client/candidate-detail/shared";
 import { ScoreFreshnessNote } from "@/components/client/score-freshness-note";
 import { ScoreBreakdown } from "@/components/client/candidate-detail/score-breakdown";
 import {
   EvaluationProvenance,
   FitHero,
   RequirementCoverage,
-  WhatNeedsValidation,
   WhyThisCandidate,
   WhyWeShortlisted,
 } from "@/components/client/candidate-detail/evidence";
@@ -517,21 +514,6 @@ function CandidateDetailPage() {
               roleTitle={candidate.position?.title ?? null}
               readOnly={readOnly}
             />
-            {/* Interviewers never see who else was given access to a candidate. */}
-            {!isViewer && orgId && (
-              <InterviewerAssignments
-                orgId={orgId}
-                matchId={candidate.match_id}
-                readOnly={support.readOnly}
-              />
-            )}
-            {orgId && (
-              <CandidateTeamActivity
-                orgId={orgId}
-                matchId={candidate.match_id}
-                recordView={!support.readOnly}
-              />
-            )}
             <ProfilePanel candidate={candidate} />
             <LinksPanel candidate={candidate} />
           </div>
