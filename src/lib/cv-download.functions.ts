@@ -100,9 +100,6 @@ export const getCandidateCvDownload = createServerFn({ method: "POST" })
             .select("id", { count: "exact", head: true })
             .eq("candidate_match_id", matchId);
 
-          const { cvConsentGate, CV_GATE_ERROR_MESSAGE } = await import(
-            "@/lib/consent/cv-consent-gate"
-          );
           const gate = cvConsentGate({
             stage: match.stage as string,
             contact_released_at: match.contact_released_at as string | null,
@@ -110,7 +107,7 @@ export const getCandidateCvDownload = createServerFn({ method: "POST" })
             contact_release_reason: match.contact_release_reason as string | null,
             has_interview: (interviewCount ?? 0) > 0,
           });
-          if (!gate.open) throw new Error(CV_GATE_ERROR_MESSAGE);
+          if (!gate.open) throw new Error("Contact details and CV are not yet available for this candidate.");
           authorized = true;
         }
       }
