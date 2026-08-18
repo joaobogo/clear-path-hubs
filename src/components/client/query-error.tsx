@@ -70,13 +70,18 @@ export function QueryErrorCard({
   compact?: boolean;
 }) {
   const [localRetrying, setLocalRetrying] = useState(false);
+  // Retry must re-issue the query, and a second failure must not loop the same
+  // line — after one failed retry we say so and point at a person.
+  const [attempts, setAttempts] = useState(0);
   const inFlight = retrying || localRetrying;
+  const repeated = attempts >= 1;
 
   const handleRetry = useCallback(async () => {
     if (!onRetry || inFlight) return;
     setLocalRetrying(true);
     try {
       await onRetry();
+      setAttempts((n) => n + 1);
     } finally {
       setLocalRetrying(false);
     }
@@ -102,9 +107,21 @@ export function QueryErrorCard({
           <p className="mt-1 text-xs text-muted-foreground">
             Nothing is lost — this is a load failure, not an empty result.
           </p>
+          {repeated && (
+            <p className="mt-1 text-xs font-medium text-foreground">
+              This has now failed more than once. Tell your recruiter and we will look at it from our
+              side — retrying again is unlikely to help.
+            </p>
+          )}
           <div className="mt-4 flex flex-wrap items-center gap-2">
             {onRetry && (
-              <Button size="sm" onClick={handleRetry} disabled={inFlight} data-testid="query-error-retry">
+              <Button
+                size="sm"
+                variant={repeated ? "outline" : "default"}
+                onClick={handleRetry}
+                disabled={inFlight}
+                data-testid="query-error-retry"
+              >
                 {inFlight ? (
                   <>
                     <RefreshCw className="mr-1.5 h-3.5 w-3.5 animate-spin" />
@@ -115,7 +132,7 @@ export function QueryErrorCard({
                 )}
               </Button>
             )}
-            <Button asChild size="sm" variant="outline">
+            <Button asChild size="sm" variant={repeated ? "default" : "outline"}>
               <Link to="/client/conversations">Tell your recruiter</Link>
             </Button>
           </div>
