@@ -175,11 +175,16 @@ test.describe("candidate apply flow", () => {
     ).toBeTruthy();
     expect(created.notifications).toBeGreaterThan(0);
 
-    // Draft cleared after a successful submit.
+    // Draft cleared after a successful submit. The idempotency key is NOT a
+    // draft: it deliberately survives so a re-submit from the same browser
+    // cannot create a second application, so it is excluded here.
     const leftoverDrafts = await page.evaluate(() =>
-      Object.keys(window.localStorage).filter((k) => k.includes("apply")),
+      Object.keys(window.localStorage).filter(
+        (k) => k.includes("apply") && !k.includes(".idem."),
+      ),
     );
     expect(leftoverDrafts).toEqual([]);
+
 
     // Pipeline reaches a terminal state and produces a score run.
     await expect
