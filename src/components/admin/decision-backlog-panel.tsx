@@ -41,6 +41,12 @@ type Row = Backlog["rows"][number];
 
 const DECISIONS = Object.entries(OFFLINE_DECISION_LABEL) as Array<[string, string]>;
 
+/** The exact client-facing copy a nudge delivers (CLIENT_COPY.approval_needed). */
+const NUDGE_COPY = CLIENT_COPY["approval_needed"] ?? {
+  title: "Something is waiting on you",
+  body: "A decision is needed before work continues.",
+};
+
 function fmt(iso: string | null): string {
   if (!iso) return "—";
   return new Date(iso).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE });
