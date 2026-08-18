@@ -31,6 +31,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Check, Minus, ShieldCheck, UserPlus } from "lucide-react";
+import { useConfirmAction } from "@/components/ds/confirm-action";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
@@ -209,9 +210,25 @@ function ClientAccessBody({
 }) {
   const totalSeats = d.seat_limit + 1;
   const atCap = d.seats_remaining === 0;
+  const { confirm, confirmDialog } = useConfirmAction();
+
+  /** Resending mails a real invitation, so it asks first and names the person. */
+  async function confirmResend(m: AccessMember) {
+    const who = m.full_name?.trim() || m.email || "this member";
+    const result = await confirm({
+      title: "Resend the invitation",
+      object: m.email ? `${who} · ${m.email}` : who,
+      description:
+        "A fresh invitation email goes out to this address immediately. The previous link stays valid.",
+      impact: ["One invitation email to the address above", "No change to their role or seat"],
+      confirmLabel: "Resend invitation",
+    });
+    if (result.confirmed) resend.mutate(m.user_id);
+  }
 
   return (
     <section className="space-y-5">
+      {confirmDialog}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card p-4">
         <div>
           <div className="text-xs uppercase tracking-wide text-muted-foreground">Seat usage</div>
@@ -270,7 +287,7 @@ function ClientAccessBody({
                     m={m}
                     busy={changeRole.isPending || revoke.isPending}
                     onRole={(role) => changeRole.mutate({ userId: m.user_id, role })}
-                    onResend={() => resend.mutate(m.user_id)}
+                    onResend={() => void confirmResend(m)}
                     onRevoke={() =>
                       revoke.mutate({
                         membershipId: m.membership_id,
