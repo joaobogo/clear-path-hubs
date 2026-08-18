@@ -18,7 +18,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { getClientContext } from "@/lib/client-context.functions";
-import { ensureSupportSession } from "@/lib/support-audit.functions";
+import { getActiveSupportSession } from "@/lib/support-audit.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
 import { useDashboardRealtime } from "@/hooks/use-realtime-refresh";
@@ -156,18 +156,15 @@ function ClientLayout() {
  const permissionPreview: PermissionPreview =
  (search.preview as PermissionPreview | undefined) ?? "client_admin";
 
-  // Staff access to a client workspace is allowed on arrival — opening it from
-  // the admin client list is the sanctioned path. Access is recorded, not
-  // gated: this opens (or reuses) a read-only support session for the audit
-  // trail and never blocks the view if recording fails.
+  // Read-only lookup only. Opening a client workspace never creates a support
+  // session — sessions come exclusively from the explicit form on /admin/support
+  // with its reason. If no session exists the surface is still labelled
+  // read-only, it just has no session reference to show.
  	const activeSupportSession = useQuery({
  		queryKey: ["active-support-session", active?.organization_id ?? null],
  		queryFn: () =>
- 			ensureSupportSession({
- 				data: {
- 					organization_id: active!.organization_id,
- 					permission_preview: permissionPreview,
- 				},
+ 			getActiveSupportSession({
+ 				data: { organization_id: active!.organization_id },
  			}),
  		enabled: staffMembershipsElsewhere && !!active?.organization_id,
  		refetchInterval: 60_000,
