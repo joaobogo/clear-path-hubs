@@ -173,7 +173,7 @@ export function DeliveryFailuresPanel() {
               {items.map((item) => (
                 <tr key={item.key} className="border-t align-top">
                   <td className="px-4 py-3">
-                    <div className="font-medium">{item.eventType}</div>
+                    <div className="font-medium">{item.eventLabel}</div>
                     {item.title ? (
                       <div className="text-xs text-muted-foreground">{item.title}</div>
                     ) : null}
@@ -185,11 +185,11 @@ export function DeliveryFailuresPanel() {
                   </td>
                   <td className="px-4 py-3 break-all">{item.recipient ?? "—"}</td>
                   <td className="px-4 py-3">{item.channel}</td>
-                  <td className="px-4 py-3 max-w-[300px]">
-                    <code className="text-xs">{item.reason}</code>
-                    {item.reasonDetail ? (
-                      <div className="text-xs text-muted-foreground mt-1">{item.reasonDetail}</div>
-                    ) : null}
+                  {/* Human sentence only — the raw code and provider payload
+                      stay behind "Copy payload". */}
+                  <td className="px-4 py-3 max-w-[320px]">
+                    <div className="font-medium">{item.reasonLabel}</div>
+                    <div className="text-xs text-muted-foreground mt-1">{item.reasonSentence}</div>
                     {item.staleWarning ? (
                       <div className="text-xs text-amber-600 mt-1">
                         Time-sensitive and over 24h old — re-sending may mislead.
