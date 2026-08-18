@@ -376,42 +376,21 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
         </section>
       )}
 
-      {/* 4. Pipeline (Kanban) */}
-      <PipelineBoard
-        matches={matches}
-        byStage={byStage}
-        canEdit={canEdit}
-        dragOver={dragOver}
-        setDragOver={setDragOver}
-        movePending={move.isPending}
-        attemptMove={attemptMove}
-      />
-
+      {/* Role blueprint — the source of truth for this role, and where it is edited */}
       <EvidencePanels
         orgId={orgId}
         positionId={id}
-        firstShortlistExpectedAt={data.first_shortlist_expected_at}
-        commitment={data.commitment}
-        commitmentContactName={data.commitment_contact_name}
-        launch={launch}
         position={position}
         activity={activity}
         onConfirmBlueprint={() => confirmBlueprint.mutate()}
         confirmingBlueprint={confirmBlueprint.isPending}
       />
 
-      {/* 7. Hiring process */}
-      <HiringProcessSection
-        mattersCount={matches.length}
-        shortlistedTotal={summary.shortlisted + summary.interviewing + summary.offers + summary.hires}
-        interviewingTotal={summary.interviewing + summary.offers + summary.hires}
-        offersTotal={summary.offers + summary.hires}
-        hiresTotal={summary.hires}
-        openings={summary.openings}
-      />
+      {/* Requirement coverage — collapsed by default to keep this page readable */}
+      {data.story && (
+        <RoleStoryPanel story={data.story} positionId={id} org={orgSearchParam} />
+      )}
 
-      {/* 8. Activity */}
-      <ActivitySection activity={activity} />
 
       {/* 9. Messages — one thread per role */}
       {orgId && (
