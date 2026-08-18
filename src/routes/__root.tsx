@@ -33,13 +33,12 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just \"done\".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-On one Overview screen today: \"WHAT NEEDS YOU · 5 items\" sat directly below \"0 awaiting your decision\"; \"Your open items\" said \"1 feedback\" while /client/interviews said 2 interviews await feedback; Beatriz's overdue feedback was \"4 days overdue\" in the queue and \"3 days overdue\" in the summary card; and the header claimed \"Nothing is blocked\" while a role's own page said \"BLOCKS ACCURATE SCORING · Intake · blocked since 14 Aug\".
+On 17 Aug the client UI showed: \"Wed, 19 Aug 2026 … (tomorrow)\" (it is two days away), \"Mon, 17 Aug 2026 … (yesterday)\" filed under \"Already happened\" (it is today), \"Due today (18 Aug)\", and the same item as 3 and 4 days overdue on one screen. Candidate activity timestamps also render in Portuguese (\"17 de ago. de 2026, 17:01\") inside an otherwise English UI.
 
-1. Build (or designate) ONE server-derived open-items source for the client workspace — the queue items, their counts, their overdue math and the \"awaiting your decision\" number all come from it. The Overview header numbers, \"WHAT NEEDS YOU\", \"Your open items\", /client/interviews' \"waiting on your feedback\" banner and the approvals queue must all read from this one source. No page-local recomputation of the same facts.
-2. \"Nothing is blocked\" must be computed from the same blocked-state the role page uses: if any role is blocked/needs-clarification, the Overview says so with the role name and a link — it must never deny a block another page asserts.
-3. Overdue math comes from one function with one clock (see also R1.6): the same item cannot be 3 and 4 days overdue on one screen.
-4. Do not restructure the Overview layout in this prompt (that is R3.2) — this is purely making the numbers agree.
-5. Verify as the Northwind demo client, all on one load: the awaiting-decision number equals the queue item count of decision items; the feedback count matches /client/interviews; every overdue label for the same item is identical everywhere; the blocked role is surfaced, not denied."`;
+1. Create/designate ONE date-label utility (relative labels: today/tomorrow/yesterday/N days, overdue math, due-date labels) that every client surface uses — interviews, overview queue, approvals, candidate activity. It must compute against the viewer's timezone consistently and never emit a relative label that contradicts the absolute date beside it.
+2. Replace every page-local relative-date/overdue computation with it. The 3-vs-4-days class of bug must become impossible, not just fixed once.
+3. Force the app's date/time formatting locale to en (or the workspace language) explicitly instead of inheriting the browser locale — the \"17 de ago.\" strings must render in English. (Native date-input placeholders like dd/mm/aaaa are a browser artifact — leave those.)
+4. Verify on the demo workspace with the system clock in mind: an interview 2 days out is not \"tomorrow\"; today's date never appears under \"Already happened\" as \"yesterday\"; a single overdue item shows one identical overdue value everywhere; candidate activity timestamps render in English."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
