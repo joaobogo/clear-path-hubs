@@ -76,7 +76,6 @@ import {
 import { seatUpgradeSearch } from "@/lib/seat-upgrade";
 
 import { Link } from "@tanstack/react-router";
-import { TeamActivityPanel } from "@/components/client/team-activity-panel";
 
 
 
@@ -413,7 +412,6 @@ export function TeamTab() {
 
  <RoleLegend />
 
- {isAdmin && <TeamActivityPanel orgId={orgId ?? null} />}
  </div>
  );
 

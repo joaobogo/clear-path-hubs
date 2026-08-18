@@ -32,23 +32,23 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
   {
     id: "messages",
     label: "Messages",
-    tabs: [
-      { to: "/client/conversations", label: "Threads", exact: true },
-      // Same screen, told apart by search: unread-only is the "inbox" view.
-      { to: "/client/conversations", label: "Inbox", search: { box: "unread" } },
-      // Flat chronological list of all messages across all threads.
-      { to: "/client/conversations", label: "All messages", search: { view: "history" } },
-    ],
+    // One thread list. The old Inbox / All messages views are filter chips on
+    // the list itself, so there is no second tab row here.
+    tabs: [{ to: "/client/conversations", label: "Messages" }],
   },
 
   {
     id: "account",
     label: "Account",
+    // ONE tab row for the account area: these are the account page's own
+    // panels, addressed by `?tab=`. The old /client/team, /client/plan and
+    // /client/settings URLs still redirect here, so bookmarks keep working.
     tabs: [
-      { to: "/client/account", label: "Account" },
-      { to: "/client/team", label: "Team" },
-      { to: "/client/plan", label: "Plan & billing" },
-      { to: "/client/settings", label: "Settings" },
+      { to: "/client/account", label: "Workspace" },
+      { to: "/client/account", label: "Team & roles", search: { tab: "team" } },
+      { to: "/client/account", label: "Plan & billing", search: { tab: "plan" } },
+      { to: "/client/account", label: "Notifications", search: { tab: "notifications" } },
+      { to: "/client/account", label: "Branding", search: { tab: "branding" } },
       { to: "/client/onboarding", label: "Setup" },
     ],
   },

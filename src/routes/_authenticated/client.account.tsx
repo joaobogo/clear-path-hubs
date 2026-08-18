@@ -32,7 +32,6 @@ import { parseSeatUpgradeSearch, type SeatUpgradeSearch } from "@/lib/seat-upgra
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Collapsible,
   CollapsibleContent,
@@ -99,7 +98,6 @@ function fmtDate(iso: string | null | undefined): string {
 
 function AccountPage() {
   const { tab } = Route.useSearch();
-  const navigate = Route.useNavigate();
   const ctxFn = useServerFn(getClientContext);
   const orgSearch = useClientOrgSearch();
   const support = useSupportView();
@@ -153,27 +151,6 @@ function AccountPage() {
           <span>You are viewing as an administrator — changes are disabled.</span>
         </div>
       )}
-
-      <Tabs
-        value={tab}
-        onValueChange={(v) =>
-          void navigate({
-            search: (prev: { tab: AccountTab; org?: string }) => ({
-              ...prev,
-              tab: parseTab(v),
-            }),
-          })
-        }
-      >
-        {/* Wraps instead of scrolling sideways on a tablet. */}
-        <TabsList className="flex h-auto flex-wrap justify-start gap-1">
-          {ACCOUNT_TABS.map((t) => (
-            <TabsTrigger key={t.key} value={t.key}>
-              {t.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
 
       {tab === "workspace" && (
         <div className="space-y-8">
