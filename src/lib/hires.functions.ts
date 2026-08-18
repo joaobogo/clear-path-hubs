@@ -655,15 +655,22 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     // they come from the canonical KPI service so this strip can never
     // contradict the board underneath it, the Roles list, or the Candidates
     // page. The report window only shapes the timing metrics below.
+    // Open offers and confirmed hires are pipeline facts, not report facts:
+    // they come from the canonical KPI service so this strip can never
+    // contradict the board underneath it, the Roles list, or the Candidates
+    // page. The report window only shapes the timing metrics below.
     const canonical = computeKpis(await loadKpiRows(context.supabase, data.orgId), 0);
     const openOffers = canonical.offers;
     const hires = scoped.filter((r) => qualifiesAsHire(r.status));
-    const declined = scoped.filter((r) => r.status === "offer_declined");
-    const closedLost = scoped.filter((r) => r.status === "closed_lost").length;
-    const decidedOffers = scoped.filter((r) => isDecidedOffer(r.status)).length;
+    
+    // ACCEPTANCE RATE denominator: only count records that are genuinely decided (accepted, declined, hired, or lost).
+    // Beatriz's phantom 'closed_lost' was likely counted here while her 'hired' stage was ignored.
+    const decidedOffers = scoped.filter((r) => isDecidedOffer(r.status));
+    const acceptedOffers = scoped.filter((r) => isAcceptedOffer(r.status));
+
     const acceptanceRate =
-      decidedOffers > 0
-        ? Math.round((scoped.filter((r) => isAcceptedOffer(r.status)).length / decidedOffers) * 100)
+      decidedOffers.length > 0
+        ? acceptedOffers.length / decidedOffers.length
         : null;
 
     const daysHired = hires
@@ -786,7 +793,7 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
         open_offers: openOffers,
         // Canonical hire count (pipeline truth), not the windowed report slice.
         hires_confirmed: canonical.hires,
-        closed_lost: closedLost,
+        closed_lost: scoped.filter((r) => r.status === "closed_lost").length,
         acceptance_rate: acceptanceRate,
         avg_days_to_hire: avg(daysHired),
         avg_days_offer_to_accept: avg(daysAccept),
