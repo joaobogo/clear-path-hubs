@@ -238,7 +238,7 @@ function RootComponent() {
       <ConsentBanner />
       <BookingCtaRouter />
       <OfflineBanner />
-      <Toaster />
+      <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );
 }
