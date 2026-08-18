@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { InfoRequestsPanel } from "@/components/client/info-requests";
@@ -16,20 +16,9 @@ import { DegradedPanelsBanner, NotCurrentChip } from "@/components/client/degrad
 import { panelReadiness, panelSignal } from "@/lib/panel-readiness";
 import { orgGate, panelState, useStuckAfter } from "@/lib/client/panel-gate";
 import { useClientOrgSearch } from "@/lib/use-client-org";
-import { CandidateCard } from "@/components/client/candidate-card";
 import { VisibilityNote } from "@/components/client/visibility-note";
 import { Button } from "@/components/ui/button";
-import {
-  AlertTriangle,
-  ArrowRight,
-  CheckCircle2,
-  ChevronRight,
-  RefreshCw,
-  Sparkles,
-  ChevronDown,
-  ChevronUp,
-  Settings2,
-} from "lucide-react";
+import { AlertTriangle, ChevronDown, RefreshCw } from "lucide-react";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
 import { DensityToggle } from "@/components/client/density-toggle";
 import { useDensity } from "@/lib/use-density";
@@ -54,7 +43,6 @@ import { CandidatesReleasedSection } from "@/components/client/overview/candidat
 import { relTime } from "@/components/client/overview/utils";
 import { PAYMENTS_ENABLED } from "@/config/commerce";
 import { formatDateTime } from "@/lib/format/datetime";
-import { cn } from "@/lib/utils";
 
 
 
