@@ -361,6 +361,8 @@ export const getClientOverview = createServerFn({ method: "GET" })
         position_id: item.href.split('/').pop()?.split('#')[0] || null, // Best effort extraction
         subject_id: item.subject_id,
         due_at: item.due_at,
+        overdue: item.overdue,
+        due_label: dueLabel(item, nowMs),
         waiting_since: item.waiting_since ?? null,
         action: item.kind === "info_request" ? "Answer" : 
                 item.kind === "pending_decision" ? "Review candidate" :

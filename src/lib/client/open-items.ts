@@ -93,13 +93,14 @@ export function countByKind(items: OpenItem[]): Record<OpenItemKind, number> {
   return out;
 }
 
-export function dueLabel(item: OpenItem, now = Date.now()): string | null {
-  if (!item.due_at) return null;
+export function dueLabel(item: OpenItem, nowMs = Date.now()): string {
+  if (!item.due_at) return "No deadline";
   const t = new Date(item.due_at).getTime();
-  if (!Number.isFinite(t)) return null;
-  const days = Math.round((t - now) / 86_400_000);
-  if (item.overdue) return days <= -1 ? `${Math.abs(days)} day${Math.abs(days) === 1 ? "" : "s"} overdue` : "Overdue";
-  if (days <= 0) return "Due today";
-  if (days === 1) return "Due tomorrow";
-  return `Due in ${days} days`;
+  if (!Number.isFinite(t)) return "No deadline";
+  const diff = Math.round((t - nowMs) / 86_400_000);
+  if (diff < -1) return `${Math.abs(diff)} days overdue`;
+  if (diff === -1) return "1 day overdue";
+  if (diff === 0) return "Due today";
+  if (diff === 1) return "Due tomorrow";
+  return `Due in ${diff} days`;
 }
