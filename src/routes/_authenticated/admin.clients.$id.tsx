@@ -1,4 +1,5 @@
 import { listShortlistShares } from "@/lib/shares.functions";
+import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import { listSilverMedalists } from "@/lib/talent-memory.functions";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { DecisionBacklogPanel } from "@/components/admin/decision-backlog-panel";
@@ -177,6 +178,7 @@ function ClientDetail() {
   if (!data) return null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const org = data.organization as any;
+  useDetailCrumb(org?.name ?? null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const members = data.members as any[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

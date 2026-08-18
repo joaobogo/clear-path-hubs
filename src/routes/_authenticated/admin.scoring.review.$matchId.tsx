@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import { createFileRoute, Link, notFound, useNavigate, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
@@ -138,6 +139,7 @@ function ReviewWorkspace() {
     audit,
     document: doc,
   } = data;
+  useDetailCrumb((profile as Any)?.full_name ?? null);
 
   const correct = useServerFn(correctEvidenceItem);
   const decideEligibility = useServerFn(setEligibilityDecision);

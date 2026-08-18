@@ -12,8 +12,35 @@ import { ArrowRight, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { claimWorkQueueItem } from "@/lib/admin-ops.functions";
-import type { QueueItem, QueueTarget } from "@/lib/admin-ops-types";
+import type { QueueItem, QueueRef, QueueTarget } from "@/lib/admin-ops-types";
 import { cn } from "@/lib/utils";
+
+/** Renders a queue ref as a link to its exact record, or plain text. */
+function RefLabel({ ref: r, className }: { ref: QueueRef; className?: string }) {
+  if (r.kind === "position") {
+    return (
+      <Link
+        to="/admin/positions/$id"
+        params={{ id: r.id }}
+        className={cn("hover:underline", className)}
+      >
+        {r.label}
+      </Link>
+    );
+  }
+  if (r.kind === "organization") {
+    return (
+      <Link
+        to="/admin/clients/$id"
+        params={{ id: r.id }}
+        className={cn("hover:underline", className)}
+      >
+        {r.label}
+      </Link>
+    );
+  }
+  return <span className={className}>{r.label}</span>;
+}
 
 function initials(name: string): string {
   const parts = name.trim().split(/\s+/).slice(0, 2);
@@ -121,7 +148,9 @@ export function WorkQueueRow({
     <li className="group flex items-center gap-3 px-4 py-2.5">
       <div className="min-w-0 flex-1">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="truncate text-sm font-medium">{item.title}</span>
+          <span className="truncate text-sm font-medium">
+            {item.title_ref ? <RefLabel ref={item.title_ref} /> : item.title}
+          </span>
           {item.sla_breach ? (
             <span
               className="shrink-0 rounded border border-destructive/40 bg-destructive/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-destructive"
@@ -145,7 +174,14 @@ export function WorkQueueRow({
           )}
         </div>
         <div className="truncate text-xs text-muted-foreground">
-          {item.subtitle}
+          {item.subtitle_refs?.length
+            ? item.subtitle_refs.map((r, i) => (
+                <span key={`${r.kind}-${i}`}>
+                  {i > 0 ? " · " : ""}
+                  <RefLabel ref={r} />
+                </span>
+              ))
+            : item.subtitle}
           {item.meta ? ` · ${item.meta}` : ""}
         </div>
       </div>

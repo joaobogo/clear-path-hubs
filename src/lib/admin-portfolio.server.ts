@@ -42,6 +42,10 @@ export type PortfolioHealthRow = {
   pending_client_decisions: number;
   days_since_client_visible_activity: number | null;
   is_test_record: boolean;
+  /** Live, unacknowledged commitment breaches for this account (P-x defect 5). */
+  sla_breaches: number;
+  /** Worst breach age in days across those commitments. */
+  worst_sla_days_over: number | null;
   band: HealthBand;
   /** Human-readable reasons the band was assigned. Never colour-only. */
   band_reasons: string[];
@@ -67,6 +71,17 @@ function band(row: Omit<PortfolioHealthRow, "band" | "band_reasons">): {
   const R = HEALTH_RULES;
   const atRisk: string[] = [];
   const watch: string[] = [];
+
+  // A promised commitment that is already missed outranks every other signal:
+  // an account with a live breach can never read Healthy.
+  if (row.sla_breaches > 0) {
+    const days = row.worst_sla_days_over ?? 0;
+    atRisk.push(
+      `${row.sla_breaches} breached commitment${row.sla_breaches === 1 ? "" : "s"}${
+        days > 0 ? `, worst ${days} day${days === 1 ? "" : "s"} over` : ""
+      }`,
+    );
+  }
 
   const staleAge = row.positions_without_submissions > 0 ? row.oldest_open_position_days : null;
   if (staleAge !== null) {
@@ -121,6 +136,24 @@ export async function loadPortfolioHealth(
   );
   if (orgIds.length === 0) {
     return { rows: [], include_test: includeTest, generated_at: new Date().toISOString() };
+  }
+
+  // Live commitment breaches, so the rollup cannot contradict the SLA panel.
+  const slaByOrg = new Map<string, { count: number; worst: number }>();
+  try {
+    const { loadSlaBreaches } = await import("./admin-sla-breach.server");
+    const list = await loadSlaBreaches(supabase as never, { includeTest });
+    for (const r of list?.rows ?? []) {
+      if (!r || r.acknowledged || !r.organization_id) continue;
+      const cur = slaByOrg.get(r.organization_id) ?? { count: 0, worst: 0 };
+      cur.count += 1;
+      cur.worst = Math.max(cur.worst, r.days_over ?? 0);
+      slaByOrg.set(r.organization_id, cur);
+    }
+  } catch {
+    // A breach read failure must not blank the table; bands fall back to the
+    // pipeline signals only.
+    slaByOrg.clear();
   }
 
   const sevenDaysAgo = new Date(Date.now() - 7 * DAY).toISOString();
@@ -211,6 +244,8 @@ export async function loadPortfolioHealth(
       pending_client_decisions: orgMatches.filter((m) => m.stage === "delivered").length,
       days_since_client_visible_activity: daysSince(lastActivity),
       is_test_record: org.is_test_record === true,
+      sla_breaches: slaByOrg.get(org.id as string)?.count ?? 0,
+      worst_sla_days_over: slaByOrg.get(org.id as string)?.worst ?? null,
     };
 
     return { ...base, ...band(base) };

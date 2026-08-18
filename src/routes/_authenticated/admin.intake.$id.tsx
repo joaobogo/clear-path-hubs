@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -98,6 +99,7 @@ function IntakeDetail() {
     );
   }
   const { intake, organization, position, audit, duplicates, completeness } = data;
+  useDetailCrumb(organization?.name ?? position?.title ?? null);
   const payload = intake.payload ?? {};
   const attachments = Array.isArray(payload.attachments) ? payload.attachments : [];
 

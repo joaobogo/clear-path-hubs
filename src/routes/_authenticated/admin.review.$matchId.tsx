@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound, useNavigate, useRouter } from "@tanstack/react-router";
+import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import { formatAnswerValue } from "@/lib/human-labels";
 
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
@@ -131,6 +132,7 @@ function ReviewScreen() {
   }, [data]);
 
   const m = (data as Any).match;
+  useDetailCrumb(m?.candidate_profiles?.full_name ?? null);
   const cv = (data as Any).cv;
   const evidence = (data as Any).evidence;
   const currentRun = ((data as Any).runs ?? []).find((r: Any) => r.id === m.current_score_run_id);

@@ -136,9 +136,10 @@ function buildBreadcrumbs(
   if (!last) return [{ label: section.label }];
   // A detail page publishes the record's own name; only fall back to the raw
   // segment (a uuid, which reads as gibberish) when nothing was published.
-  const readable =
-    detailLabel ??
-    (last.length > 24 ? last.slice(0, 6) + "…" + last.slice(-4) : last.replace(/[-_]/g, " "));
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(last);
+  // A raw uuid is never a label. Until the detail page publishes the record's
+  // own name, fall back to a short human word, not the id.
+  const readable = detailLabel ?? (isUuid ? "Record" : last.replace(/[-_]/g, " "));
   return [
     { label: section.label, to: section.to },
     { label: readable },

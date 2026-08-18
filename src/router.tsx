@@ -4,6 +4,7 @@ import { routerWithQueryClient } from "@tanstack/react-router-with-query";
 import { routeTree } from "./routeTree.gen";
 import { GlobalRouteError } from "./components/global-error";
 import { PublicNotFound } from "./components/marketing/site-shell";
+import { RoutePendingSkeleton } from "./components/workspace/route-pending";
 
 export const getRouter = () => {
   const queryClient = new QueryClient({
@@ -31,6 +32,11 @@ export const getRouter = () => {
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
     defaultErrorComponent: GlobalRouteError,
+    // Stale content from the previous route must never render under a new URL:
+    // show the destination's skeleton the instant navigation starts.
+    defaultPendingComponent: RoutePendingSkeleton,
+    defaultPendingMs: 0,
+    defaultPendingMinMs: 0,
     // Any route without its own 404 surface still gets a designed page.
     defaultNotFoundComponent: PublicNotFound,
   });

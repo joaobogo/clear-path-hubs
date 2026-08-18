@@ -19,7 +19,6 @@ type Row = Health["rows"][number];
 type SortKey =
   | "organization_name"
   | "band"
-  | "plan_label"
   | "open_positions"
   | "positions_without_submissions"
   | "oldest_open_position_days"
@@ -30,7 +29,6 @@ type SortKey =
 const COLUMNS: Array<{ key: SortKey; label: string; numeric: boolean; help?: string }> = [
   { key: "organization_name", label: "Account", numeric: false },
   { key: "band", label: "Health", numeric: false },
-  { key: "plan_label", label: "Plan", numeric: false },
   { key: "open_positions", label: "Open", numeric: true, help: "Open positions" },
   {
     key: "positions_without_submissions",
@@ -95,7 +93,7 @@ export function PortfolioHealthTable({ includeTest }: { includeTest: boolean }) 
     list.sort((a, b) => {
       let cmp: number;
       if (key === "band") cmp = BAND_ORDER[a.band] - BAND_ORDER[b.band];
-      else if (key === "organization_name" || key === "plan_label")
+      else if (key === "organization_name")
         cmp = String(a[key] ?? "").localeCompare(String(b[key] ?? ""));
       else cmp = Number(a[key] ?? -1) - Number(b[key] ?? -1);
       if (cmp === 0) cmp = a.organization_name.localeCompare(b.organization_name);
@@ -209,10 +207,6 @@ export function PortfolioHealthTable({ includeTest }: { includeTest: boolean }) 
                     <span className="ml-2 hidden text-[11px] text-muted-foreground xl:inline">
                       {r.band_reasons[0]}
                     </span>
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-2 text-xs text-muted-foreground">
-                    {r.plan_label ?? "—"}
-                    {r.subscription_state ? ` · ${r.subscription_state}` : ""}
                   </td>
                   <td className="px-3 py-2 text-right tabular-nums">{r.open_positions}</td>
                   <td className="px-3 py-2 text-right tabular-nums">
