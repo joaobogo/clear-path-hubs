@@ -361,6 +361,8 @@ export type ClientCandidateDTO = {
   candidate: {
     full_name: string;
     display_name: string; // full name when known, else the anonymous placeholder
+    email: string | null;
+    phone: string | null;
     location: string | null;
     timezone: string | null;
     headline: string | null;
