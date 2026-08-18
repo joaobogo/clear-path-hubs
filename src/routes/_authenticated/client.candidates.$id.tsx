@@ -561,24 +561,51 @@ function CandidateDetailPage() {
       )}
 
       {/* Every consequential decision is confirmed, reasoned, and logged. */}
-      <DecisionDialog
-        action={dialogAction}
-        open={dialogAction !== null}
-        pending={act.isPending}
-        onOpenChange={(v) => !v && setDialogAction(null)}
-        onConfirm={(payload) => {
-          if (act.isPending) return; // guard against double submission
-          setPendingKey(payload.action);
-          stageBeforeRef.current = candidate.stage;
-          nextStepAfterRef.current =
-            payload.action === "hold"
-              ? "We'll pause outreach and keep them warm until you tell us to move."
-              : RESULT_STAGE[payload.action]
-                ? confirmationLine(RESULT_STAGE[payload.action]!)
-                : null;
-          act.mutate(payload);
-        }}
-      />
+      {dialogAction === "request_interview" && orgId ? (
+        <RequestInterviewDialog
+          orgId={orgId}
+          onClose={() => {
+            setDialogAction(null);
+            setPendingKey(null);
+          }}
+          submitting={requestMut.isPending}
+          failed={requestFailed}
+          timezone={orgTimezone}
+          onSubmit={(payload) => requestMut.mutate(payload)}
+          fetchCandidates={async () => ({
+            candidates: [
+              {
+                match_id: id,
+                candidate_name: candidate.candidate.display_name,
+                position_id: candidate.position_id as string,
+                position_title: candidate.position?.title ?? "Position",
+                has_active_interview: false,
+                availability_preference: candidate.candidate.availability ?? null,
+              },
+            ],
+          })}
+          initialMatchId={id}
+        />
+      ) : (
+        <DecisionDialog
+          action={dialogAction as DecisionActionKey}
+          open={!!dialogAction && dialogAction !== "request_interview"}
+          pending={act.isPending}
+          onOpenChange={(v) => !v && setDialogAction(null)}
+          onConfirm={(payload) => {
+            if (act.isPending) return; // guard against double submission
+            setPendingKey(payload.action as ActionKey);
+            stageBeforeRef.current = candidate.stage;
+            nextStepAfterRef.current =
+              payload.action === "hold"
+                ? "We'll pause outreach and keep them warm until you tell us to move."
+                : RESULT_STAGE[payload.action as ActionKey]
+                  ? confirmationLine(RESULT_STAGE[payload.action as ActionKey]!)
+                  : null;
+            act.mutate(payload as DecisionPayload);
+          }}
+        />
+      )}
 
     </div>
   );
