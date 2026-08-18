@@ -136,8 +136,9 @@ export async function loadKpiRows(
     .from("candidate_matches")
     .select(
       `id, candidate_profile_id, position_id, stage, approved_score_run_id, delivered_at,
-       client_decision_due_at, recommendation,
-       score_runs:approved_score_run_id (score, fit_label, fit_band)`,
+       client_decision_due_at, recommendation, contact_released_at,
+       score_runs:approved_score_run_id (score, fit_label, fit_band),
+       evidence_items:score_run_evidence(rubric_criterion_key, result, match_type, factual_quote, interpretation, source_kind, source_location)`
     )
     .eq("organization_id", orgId)
     .eq("client_visibility", "visible");

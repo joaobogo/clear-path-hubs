@@ -340,25 +340,35 @@ export function buildRequirementRows(
         typeof raw === "string" ? raw : raw?.label ?? raw?.text ?? raw?.name ?? null;
       if (!label) return;
       const key = String(label).toLowerCase().trim();
-      const found = covIndex.get(key);
+      
+      // 1) Try the verified evidence items first — they are the source of truth for direct quotes.
       const fromEvidence = evIndex.get(key);
+      // 2) Fall back to the run's coverage map (engine-generated).
+      const found = covIndex.get(key);
+      
       const declaredImportance =
         typeof raw === "object" && raw !== null && typeof raw.importance === "string"
           ? raw.importance === "preferred"
             ? "preferred"
             : "must_have"
           : importance;
+
       const rawStatus = found?.status ?? fromEvidence?.status ?? "not_evidenced";
+      
+      // Prioritise verified evidence snippets over engine-generated ones.
       const rawEvidence =
-        found?.evidence && found.evidence.length > 0
-          ? found.evidence
-          : (fromEvidence?.evidence ?? []);
+        fromEvidence?.evidence && fromEvidence.evidence.length > 0
+          ? fromEvidence.evidence
+          : (found?.evidence ?? []);
+      
       const rawContext =
-        found?.context && found.context.length > 0
-          ? found.context
-          : (fromEvidence?.context ?? []);
+        fromEvidence?.context && fromEvidence.context.length > 0
+          ? fromEvidence.context
+          : (found?.context ?? []);
+
       // A verdict that lacks a direct, per-candidate quote is not evidenced.
       const status = rawEvidence.length > 0 ? rawStatus : "not_evidenced";
+      
       rows.push({
         id: `${declaredImportance === "preferred" ? "pref" : "must"}-${requirementSlug(String(label))}`,
         label: String(label),
