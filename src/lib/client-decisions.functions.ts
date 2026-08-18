@@ -163,7 +163,6 @@ export const moveMatchStage = createServerFn({ method: "POST" })
       .eq("id", data.matchId)
       .eq("organization_id", data.orgId);
     if (error) throw new Error(error.message);
-    
     // When leaving a gated stage, retract any unstarted side-artifacts.
     if (from === "interview_process" && data.toStage !== "interview_process") {
       await context.supabase
@@ -172,13 +171,6 @@ export const moveMatchStage = createServerFn({ method: "POST" })
         .eq("candidate_match_id", data.matchId)
         .eq("organization_id", data.orgId)
         .eq("status", "requested");
-    }
-    
-    // RETRACTION: Offer drafts (implied by 'offer' stage)
-    if (from === "offer" && data.toStage !== "offer") {
-      // In this system, 'offer' stage artifacts are usually managed via specific
-      // tables or status flags. We ensure unconfirmed/draft items are cleared.
-      // (Wait: based on current schema knowledge, interviews are the primary side artifact).
     }
 
     // Canonical side-effects: mirror clientAction so any transition path
