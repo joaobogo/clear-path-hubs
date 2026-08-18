@@ -13,6 +13,8 @@ const ICON: Record<OpenItemKind, typeof ClipboardList> = {
   info_request: ClipboardList,
   pending_decision: Clock,
   missing_feedback: MessageSquareDashed,
+  offer: ClipboardList,
+  interview: Clock,
 };
 
 /**
