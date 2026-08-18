@@ -147,3 +147,24 @@ Source: the five `.lovable/plan/*2026-08-17*.md` files. Each P-number appears ex
    the unblock path.
 3. Update `Last verified` on every status change. A row with `VERIFIED_PASS` and an empty
    `Last verified` is invalid.
+
+## RELEASE_GATE measurement run — 2026-08-18 (measurement only, no fixes)
+
+| Gate | Result |
+|---|---|
+| Production build | PASS (`npm run build` exit 0) |
+| Typecheck | PASS (`tsgo --noEmit` exit 0) |
+| Security scan | FAIL — 1 error-level finding `SUPA_security_definer_view` |
+| Tenant isolation | BLOCKED — spec not reached; Playwright batch stalled at 13/25 |
+| Authorization matrix | PASS (`tests/authz/workspace-access.test.ts` green) |
+| Seat-cap | FAIL — 3 failures (reactivation-succeeds, upgrade tab, seats-call CTA) |
+| Scoring regression | FAIL — `pipeline.spec.ts` 2/4 (parse+score, corrupt-CV repair) |
+| Public vocabulary | PASS (`check:vocabulary` exit 0) |
+| Unit/integration | FAIL — 3/1224 tests fail (export masking, blueprintProgress, messaging history timeout) |
+| Mobile 375 | PASS (carried from 2026-08-17 Journey C; not re-measured) |
+| Live domains | BLOCKED — not probed this run |
+| Consent-gated tracking | PASS (carried; no change since last pass) |
+| End-to-end smoke journey | BLOCKED — never reached in this batch |
+
+RELEASE_GATE §5b records the same table with evidence; §6 items 6–10 record the
+non-green items. No remediation was performed in this pass.
