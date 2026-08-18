@@ -108,7 +108,23 @@ export function buildJobPostingJsonLd(pos: JobPostingSource, canonicalUrl: strin
   };
 
   if (pos.published_at) jsonLd.datePosted = pos.published_at;
-  if (pos.application_deadline) jsonLd.validThrough = `${pos.application_deadline}T23:59:59`;
+  jsonLd.validThrough = pos.application_deadline
+    ? `${pos.application_deadline}T23:59:59`
+    : defaultValidThrough(pos.published_at);
+  const pay = pos.compensation_public;
+  if (pay && (pay.min !== null || pay.max !== null)) {
+    jsonLd.baseSalary = {
+      "@type": "MonetaryAmount",
+      currency: pay.currency,
+      value: {
+        "@type": "QuantitativeValue",
+        ...(pay.min !== null ? { minValue: pay.min } : {}),
+        ...(pay.max !== null ? { maxValue: pay.max } : {}),
+        ...(pay.min !== null && pay.max === null ? { value: pay.min } : {}),
+        unitText: pay.period,
+      },
+    };
+  }
   if (pos.employment_type && EMPLOYMENT_TYPE[pos.employment_type]) {
     jsonLd.employmentType = EMPLOYMENT_TYPE[pos.employment_type];
   }
