@@ -76,6 +76,36 @@ async function recipientEmail(admin: Admin, userId: string): Promise<string | nu
   return (data?.email as string | undefined) ?? null;
 }
 
+/** Domains that only ever exist in QA fixtures — never real mailboxes. */
+const SANDBOX_ADDRESS_PATTERN = /(\.test|\.invalid|\.example|example\.com|localhost)$/i;
+
+const sandboxOrgCache = new Map<string, boolean>();
+
+/**
+ * True when this recipient belongs to test/demo traffic and must not be emailed
+ * for real. Sends to fabricated addresses hard-bounce, and a hard bounce puts
+ * the address on the provider's global suppression list — which is what took
+ * real notification email down.
+ */
+export async function isSandboxRecipient(
+  admin: Admin,
+  args: { orgId: string | null; address: string | null },
+): Promise<boolean> {
+  const domain = (args.address ?? "").split("@")[1] ?? "";
+  if (domain && SANDBOX_ADDRESS_PATTERN.test(domain)) return true;
+  if (!args.orgId) return false;
+  const cached = sandboxOrgCache.get(args.orgId);
+  if (cached !== undefined) return cached;
+  const { data } = await admin
+    .from("organizations")
+    .select("is_test_record")
+    .eq("id", args.orgId)
+    .maybeSingle();
+  const isTest = data?.is_test_record === true;
+  sandboxOrgCache.set(args.orgId, isTest);
+  return isTest;
+}
+
 export type EmailDecision = "send" | "digest" | "off";
 
 /**
