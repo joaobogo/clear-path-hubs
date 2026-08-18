@@ -1,4 +1,5 @@
 // Plain-language pipeline status lines for client-facing surfaces.
+import { calendarDaysUntil } from "@/lib/format/relative-date";
 //
 // One sentence a busy hiring manager understands, e.g.
 //   "4 candidates shortlisted, 2 awaiting your review, 1 interview Thursday."
@@ -67,7 +68,7 @@ export function describeInterviewDay(
   if (!iso) return null;
   const when = new Date(iso);
   if (Number.isNaN(when.getTime())) return null;
-  const days = Math.round((startOfDay(when) - startOfDay(now)) / 86_400_000);
+  const days = calendarDaysUntil(when, now) ?? 0;
   if (days < 0) return null;
   if (days === 0) return "today";
   if (days === 1) return "tomorrow";

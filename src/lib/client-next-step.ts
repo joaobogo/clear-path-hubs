@@ -9,6 +9,7 @@
 
 import type { MatchStage } from "@/lib/client-kpi.server";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { calendarDaysUntil } from "@/lib/format/relative-date";
 
 export type NextStep = {
   /** Short promise in client language, no internal vocabulary. */
@@ -94,8 +95,7 @@ export function dueAt(stageEnteredAt: string | null, hours: number, now = new Da
 /** "by 14:00 today" / "by tomorrow 09:00" / "by Fri 09:00". */
 export function dueLabel(due: Date, now = new Date()): string {
   const time = due.toLocaleTimeString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, hour: "2-digit", minute: "2-digit" });
-  const day = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-  const dayDiff = Math.round((day(due) - day(now)) / 86_400_000);
+  const dayDiff = calendarDaysUntil(due, now) ?? 0;
   if (dayDiff <= 0) return `by ${time} today`;
   if (dayDiff === 1) return `by tomorrow ${time}`;
   if (dayDiff < 7) return `by ${due.toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, weekday: "short" })} ${time}`;

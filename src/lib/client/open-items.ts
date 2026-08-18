@@ -7,6 +7,8 @@
  * here is invented, and nothing is nagged about twice.
  */
 
+import { dueDateLabel, isOverdueDate } from "@/lib/format/relative-date";
+
 export type OpenItemKind = "info_request" | "pending_decision" | "missing_feedback" | "offer" | "interview";
 
 export type OpenItem = {
@@ -36,9 +38,9 @@ export const OPEN_ITEM_LABEL: Record<OpenItemKind, string> = {
 };
 
 export function isOverdue(due_at: string | null, now = Date.now()): boolean {
-  if (!due_at) return false;
-  const t = new Date(due_at).getTime();
-  return Number.isFinite(t) && t < now;
+  // Calendar-day math from the one shared date utility, so this agrees with
+  // every due label and overdue count elsewhere in the client UI.
+  return isOverdueDate(due_at, new Date(now));
 }
 
 /**
@@ -94,13 +96,5 @@ export function countByKind(items: OpenItem[]): Record<OpenItemKind, number> {
 }
 
 export function dueLabel(item: OpenItem, nowMs = Date.now()): string {
-  if (!item.due_at) return "No deadline";
-  const t = new Date(item.due_at).getTime();
-  if (!Number.isFinite(t)) return "No deadline";
-  const diff = Math.round((t - nowMs) / 86_400_000);
-  if (diff < -1) return `${Math.abs(diff)} days overdue`;
-  if (diff === -1) return "1 day overdue";
-  if (diff === 0) return "Due today";
-  if (diff === 1) return "Due tomorrow";
-  return `Due in ${diff} days`;
+  return dueDateLabel(item.due_at, new Date(nowMs));
 }

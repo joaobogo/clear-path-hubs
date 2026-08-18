@@ -9,6 +9,7 @@
  *  3. Nothing here estimates acceptance odds, advises on negotiation, or
  *     benchmarks pay. It reports recorded facts in plain words.
  */
+import { calendarDaysUntil } from "@/lib/format/relative-date";
 
 export type OfferHolder = "you" | "candidate" | "taasflow" | "none";
 
@@ -143,7 +144,7 @@ export function expectedResponse(
   if (!raw || t === null) {
     return { date: null, label: "No response date agreed", overdue: false, days_late: null };
   }
-  const diff = Math.round((t - now.getTime()) / DAY);
+  const diff = calendarDaysUntil(new Date(t), now) ?? 0;
   if (diff < 0) {
     const late = Math.abs(diff);
     return {

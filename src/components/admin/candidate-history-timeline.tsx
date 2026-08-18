@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { getCandidateHistory } from "@/lib/candidate-history.functions";
 import { PanelState } from "@/components/admin/panel-state";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 import {
   HISTORY_PAGE_SIZE,
   SOURCE_LABEL,
@@ -40,7 +41,7 @@ const SOURCE_TONE: Record<HistorySource, string> = {
 
 function when(iso: string): string {
   const d = new Date(iso);
-  return Number.isNaN(d.valueOf()) ? iso : d.toLocaleString();
+  return Number.isNaN(d.valueOf()) ? iso : d.toLocaleString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE });
 }
 
 export function CandidateHistoryTimeline({

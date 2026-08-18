@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { FileClock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getCvDownloadAudit, type CvDownloadAuditEntry } from "@/lib/cv-download-audit.functions";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const AUDIENCE_LABEL: Record<CvDownloadAuditEntry["audience"], string> = {
   staff: "TaaSFlow team",
@@ -13,7 +14,8 @@ const AUDIENCE_LABEL: Record<CvDownloadAuditEntry["audience"], string> = {
 
 function when(iso: string) {
   const d = new Date(iso);
-  return d.toLocaleString(undefined, {
+  return d.toLocaleString(APP_LOCALE, {
+    timeZone: WORKSPACE_TIMEZONE,
     year: "numeric",
     month: "short",
     day: "numeric",
