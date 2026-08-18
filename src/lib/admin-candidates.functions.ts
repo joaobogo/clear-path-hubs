@@ -501,3 +501,58 @@ export const getCandidateDossier = createServerFn({ method: "POST" })
       duplicates,
     };
   });
+
+// ─── Profile field editing (admin) ───────────────────────────────────────────
+// Minimal inline edit for LinkedIn and location on the candidate detail page.
+// These fields are surfaced to clients, so admin must be able to correct them.
+
+const adminProfileFieldSchema = z.object({
+  candidate_profile_id: z.string().uuid(),
+  linkedin_url: z
+    .string()
+    .trim()
+    .max(400)
+    .optional()
+    .nullable()
+    .refine((v) => !v || /^https?:\/\/\S+\.\S+/.test(v), {
+      message: "Enter a full URL starting with https://",
+    }),
+  location: z.string().trim().max(200).optional().nullable(),
+});
+
+export const updateCandidateProfileField = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => adminProfileFieldSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await requireStaff(context.userId);
+    const s = await getAdmin();
+
+    const patch: Record<string, unknown> = {};
+    if (data.linkedin_url !== undefined) patch.linkedin_url = data.linkedin_url || null;
+    if (data.location !== undefined) patch.location = data.location || null;
+
+    if (Object.keys(patch).length === 0) return { ok: true as const, updated: [] as string[] };
+
+    const { data: before } = await s
+      .from("candidate_profiles")
+      .select("id,linkedin_url,location")
+      .eq("id", data.candidate_profile_id)
+      .maybeSingle();
+
+    const { error } = await s
+      .from("candidate_profiles")
+      .update(patch)
+      .eq("id", data.candidate_profile_id);
+    if (error) throw new Error(error.message);
+
+    await s.from("audit_events").insert({
+      actor_user_id: context.userId,
+      entity_type: "candidate_profiles",
+      entity_id: data.candidate_profile_id,
+      action: "admin_profile_field_edit",
+      before_state: { linkedin_url: before?.linkedin_url ?? null, location: before?.location ?? null } as never,
+      after_state: patch as never,
+    });
+
+    return { ok: true as const, updated: Object.keys(patch) };
+  });

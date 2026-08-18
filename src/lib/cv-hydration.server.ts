@@ -29,6 +29,7 @@ export type StructuredCv = {
   email?: HydrationField;
   phone?: HydrationField;
   location?: HydrationField;
+  linkedin_url?: HydrationField;
   headline?: HydrationField;
   summary?: HydrationField;
   years_of_experience?: HydrationField;
@@ -57,6 +58,7 @@ const SCHEMA_HINT = `{
   "email":     {"value": "string", "confidence": 0..1},
   "phone":     {"value": "string", "confidence": 0..1},
   "location":  {"value": "string", "confidence": 0..1},
+  "linkedin_url": {"value": "string (full https://linkedin.com/in/... URL)", "confidence": 0..1},
   "headline":  {"value": "string", "confidence": 0..1},
   "summary":   {"value": "string (<=600 chars)", "confidence": 0..1},
   "years_of_experience": {"value": number, "confidence": 0..1},
@@ -180,6 +182,12 @@ function heuristicStructure(cvText: string): StructuredCv {
     }
   }
 
+  // LinkedIn: explicit linkedin.com/in/ URL anywhere in the document.
+  const linkedInMatch = text.match(/https?:\/\/(?:www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?/i);
+  if (linkedInMatch) {
+    out.linkedin_url = { value: linkedInMatch[0].trim(), confidence: 0.9, source_snippet: linkedInMatch[0] };
+  }
+
   // Headline: line just after name, short and non-contact.
   if (out.full_name) {
     const idx = firstLines.indexOf(out.full_name.value as string);
@@ -227,7 +235,7 @@ function heuristicStructure(cvText: string): StructuredCv {
 
 const MIN_CONF = 0.55;
 const COLUMN_FIELDS = [
-  "full_name", "phone", "location", "headline",
+  "full_name", "phone", "location", "linkedin_url", "headline",
   "experience", "skills", "languages", "education", "work_authorization",
 ] as const;
 const CONSENT_FIELDS = [

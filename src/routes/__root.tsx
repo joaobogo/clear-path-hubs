@@ -33,14 +33,13 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just \"done\".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-OWNER DECISION — deliberate business-rule change: clients must see a candidate's full contact details (email, phone, location, full name) from the moment the candidate first appears in their workspace, with no extra step. Implement this as contact release at publish time, keeping the admin-approval gate fully intact.
+Candidate profiles shown to clients must include LinkedIn and location alongside contact details — captured at the source, not typed in later by anyone.
 
-1. When a candidate match transitions to published_to_client (client_visibility = visible), set contact_released_at in the SAME transaction as the publish write. Keep the existing publish-gate trigger rules (approved_score_run_id, canonical_state, integrity_status) untouched — candidates stay invisible to clients until admin publishes.
-2. Remove the email/phone/last-name masking from the client candidate DTOs (client-kpi.server.ts and any sibling client read models) for matches where contact_released_at is set — which after step 1 is every published match. Do not change admin or candidate DTOs.
-3. Backfill: migration setting contact_released_at = published timestamp for all currently published matches (Northwind demo included) so the demo shows full profiles immediately.
-4. Keep the files/CV RLS policy keyed on contact_released_at exactly as it is — after step 1 it grants automatically at publish, which is the point.
-5. Update the client-side \"What you can see\" explainer copy to match the new reality, and update the affected regression tests: \"no candidate trace before publish\" stays mandatory; \"approval alone does not release contact\" stays true (release happens at PUBLISH, not approval); the old \"publish does not release contact\" expectation is superseded by this owner decision — note that in RELEASE_GATE.
-6. Verify as the Northwind demo client: every visible candidate shows full name, email, phone, and location with zero client action; as a second-org client and as a candidate, cross-tenant reads still return nothing (re-run the tenant-isolation suite)."`;
+1. Check the canonical candidate profile model for linkedin_url and location fields; add whichever is missing (migration + Zod schema).
+2. Capture: add an optional \"LinkedIn URL\" field to the candidate application details step (validated as a URL, clearly optional) and to the candidate's own /me/profile editor. Do NOT alter any existing field, validation rule, or step order in the apply wizard — it was verified and hardened this week; this is one additive optional field.
+3. Parsing assist: if the CV parser already extracts a LinkedIn URL or location, use it to prefill the profile ONLY when the candidate left the field empty, and mark the value's source. Never fabricate or guess a value.
+4. Surface both fields on the canonical candidate detail (admin and client views) in contact block; when absent, show \"Not provided\" — never a placeholder that looks like data. Admin can edit them from the admin candidate detail.
+5. Verify: submit a test application with a LinkedIn URL → it appears on the admin detail and, once published, on the Northwind client view; submit one without → \"Not provided\" renders and nothing invented appears anywhere."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */

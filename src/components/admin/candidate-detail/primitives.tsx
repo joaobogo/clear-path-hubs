@@ -121,7 +121,7 @@ export function Row({ label, v }: { label: string; v: React.ReactNode }) {
   return (
     <>
       <dt className="text-xs uppercase tracking-wide text-muted-foreground">{label}</dt>
-      <dd>{safe ?? <span className="text-muted-foreground">—</span>}</dd>
+      <dd>{safe ?? <span className="text-muted-foreground">Not provided</span>}</dd>
     </>
   );
 }

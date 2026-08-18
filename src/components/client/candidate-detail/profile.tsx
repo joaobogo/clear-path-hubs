@@ -300,9 +300,7 @@ export const LinksPanel = memo(function LinksPanel({
                 <ExternalLink className="ml-1 inline h-3 w-3" aria-hidden />
               </a>
             ) : (
-              <span className="flex-1 text-muted-foreground">
-                {e.label === "LinkedIn" ? "LinkedIn not provided" : "Not provided"}
-              </span>
+              <span className="flex-1 text-muted-foreground">Not provided</span>
             )}
           </li>
         ))}
