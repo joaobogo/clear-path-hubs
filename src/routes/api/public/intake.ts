@@ -6,6 +6,7 @@ import {
   clientIp,
   conflictResponse,
   consumeRateLimit,
+  harnessBypassesRateLimit,
   newTraceId,
   rateLimitResponse,
   withRateLimitHeaders,
@@ -162,8 +163,10 @@ export const Route = createFileRoute("/api/public/intake")({
       POST: async ({ request }) => {
         const ip = clientIp(request);
         const traceId = newTraceId("intake");
-        const decision = consumeRateLimit("intake", ip, PUBLIC_RATE_LIMITS.intake);
-        if (decision.limited) {
+        const decision = harnessBypassesRateLimit(request)
+          ? null
+          : consumeRateLimit("intake", ip, PUBLIC_RATE_LIMITS.intake);
+        if (decision?.limited) {
           await auditRateLimited({
             scope: "intake",
             traceId,
