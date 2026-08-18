@@ -50,8 +50,14 @@ export const Route = createFileRoute("/_authenticated/boardroom")({
   }),
   beforeLoad: async () => {
     // Same staff gate the /admin layout uses: fail closed to /access-denied.
-    const access = await getStaffAccess();
-    if (!access.staff) {
+    try {
+      const access = await getStaffAccess();
+      if (!access.staff) {
+        throw redirect({ to: "/access-denied", search: { reason: "permission" } });
+      }
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (e && typeof e === "object" && (e as any).isRedirect) throw e;
       throw redirect({ to: "/access-denied", search: { reason: "permission" } });
     }
   },
