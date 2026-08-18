@@ -65,6 +65,26 @@ function ContactStatusBadgesLoaded({ data, className }: { data: ContactStatus; c
   const status = data;
   const blocked = status.verdicts.filter((v) => !v.allowed);
 
+  // One badge per reason, not per channel. Four badges all saying the same
+  // thing ("Email: Already in process", "SMS: Already in process", …) is noise;
+  // a recruiter only needs the reason and which channels it covers.
+  const byReason = new Map<
+    string,
+    { reasonLabel: string; explanation: string; channels: string[] }
+  >();
+  for (const v of blocked) {
+    const key = v.reason ?? "unknown";
+    const entry = byReason.get(key) ?? {
+      reasonLabel: v.reasonLabel ?? BLOCK_LABEL.unknown,
+      explanation: v.explanation ?? BLOCK_EXPLANATION.unknown,
+      channels: [],
+    };
+    entry.channels.push(v.label);
+    byReason.set(key, entry);
+  }
+  const groups = [...byReason.entries()];
+  const allChannelsBlocked = blocked.length === status.verdicts.length;
+
   return (
     <TooltipProvider>
       <div className={`flex flex-wrap items-center gap-2 ${className ?? ""}`}>
@@ -87,16 +107,21 @@ function ContactStatusBadgesLoaded({ data, className }: { data: ContactStatus; c
           </Badge>
         ) : null}
 
-        {blocked.map((v) => (
-          <Tooltip key={v.channel}>
+        {groups.map(([key, g]) => (
+          <Tooltip key={key}>
             <TooltipTrigger asChild>
-              <Badge variant="outline">
-                {v.label}: {v.reasonLabel ?? BLOCK_LABEL.unknown}
+              <Badge variant="outline" className="font-normal">
+                <ShieldQuestion className="mr-1 h-3 w-3" aria-hidden />
+                {g.reasonLabel}
+                <span className="ml-1 text-muted-foreground">
+                  ·{" "}
+                  {allChannelsBlocked && groups.length === 1
+                    ? "all channels"
+                    : g.channels.join(", ")}
+                </span>
               </Badge>
             </TooltipTrigger>
-            <TooltipContent className="max-w-xs">
-              {v.explanation ?? BLOCK_EXPLANATION.unknown}
-            </TooltipContent>
+            <TooltipContent className="max-w-xs">{g.explanation}</TooltipContent>
           </Tooltip>
         ))}
 
@@ -107,3 +132,4 @@ function ContactStatusBadgesLoaded({ data, className }: { data: ContactStatus; c
     </TooltipProvider>
   );
 }
+
