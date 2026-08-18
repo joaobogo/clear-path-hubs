@@ -3,7 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { cvConsentGate } from "@/lib/consent/cv-consent-gate";
 
 
-const SIGNED_URL_TTL_SECONDS = 300; // short-lived: 5 minutes
+const SIGNED_URL_TTL_SECONDS = 3600; // 1 hour - allows for clock skew and long reading sessions
 
 /**
  * Returns a short-lived signed URL for a candidate's current CV.
