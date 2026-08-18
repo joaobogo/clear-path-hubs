@@ -9,7 +9,8 @@ import {
 
   MapPin,
 } from "lucide-react";
-import { DownloadCvButton, DownloadLatestCvLink } from "@/components/download-cv-button";
+import { DownloadCvButton } from "@/components/download-cv-button";
+import { CvPreviewDialog } from "@/components/cv-preview-dialog";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { VisibilityNote } from "@/components/client/visibility-note";
 import { Button } from "@/components/ui/button";
@@ -140,9 +141,11 @@ export function CandidateHeader({
             released. The server enforces the same rule independently. */}
         {candidate.contact_released ? (
           <>
-            
+            <CvPreviewDialog
+              matchId={candidate.match_id}
+              candidateName={c.display_name}
+            />
             <DownloadCvButton matchId={candidate.match_id} mode="download" />
-            <DownloadLatestCvLink matchId={candidate.match_id} />
           </>
         ) : (
           <span className="inline-flex items-center gap-1.5 rounded-md border border-dashed px-2.5 py-1.5 text-xs text-muted-foreground">
