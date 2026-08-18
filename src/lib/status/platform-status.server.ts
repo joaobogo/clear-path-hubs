@@ -378,11 +378,16 @@ export async function measurePlatformStatus(): Promise<PlatformStatus> {
     })(),
 
     // Notifications — delivery outcomes in the last day.
+    //
+    // A blocked recipient is a person who was not informed, so it counts as a
+    // failure here. Counting only completed rows once let this page read
+    // "Operational" while the delivery log held failures from the same window;
+    // one failure in-window can no longer produce an Operational verdict.
     (async (): Promise<ServiceStatus> => {
       const run = await timed(async () => {
         const { data, error } = await supabaseAdmin
           .from("notification_deliveries")
-          .select("status")
+          .select("status, error_code")
           .gte("last_attempt_at", since(24))
           .limit(5_000);
         if (error) throw error;
@@ -391,17 +396,29 @@ export async function measurePlatformStatus(): Promise<PlatformStatus> {
       if (!run.ok || !run.value) {
         return serviceRow("notifications", "unknown", NOT_MEASURED_DETAIL, false, WINDOW_24H);
       }
-      const rows = run.value as { status: string }[];
-      const settled = rows.filter((r) =>
-        ["delivered", "provider_accepted", "failed", "bounced"].includes(r.status),
-      );
+      const rows = run.value as { status: string; error_code: string | null }[];
+      const settled = rows.filter((r) => isSettledDelivery(r.status, r.error_code));
+      const failed = settled.filter((r) => countsAsDeliveryFailure(r.status, r.error_code)).length;
       const verdict = statusFromFailureRatio({
         total: settled.length,
-        failed: settled.filter((r) => r.status === "failed" || r.status === "bounced").length,
+        failed,
         noun: "notification deliveries",
         window: WINDOW_24H,
       });
-      return serviceRow("notifications", verdict.status, verdict.detail, verdict.measured, WINDOW_24H);
+      if (failed === 0) {
+        return serviceRow(
+          "notifications",
+          verdict.status,
+          verdict.detail,
+          verdict.measured,
+          WINDOW_24H,
+        );
+      }
+      const status: StatusLevel = isDisrupted(verdict.status)
+        ? verdict.status
+        : "degraded_performance";
+      const detail = `${failed} of ${settled.length} notification deliveries did not reach their recipient in the ${WINDOW_24H}.`;
+      return serviceRow("notifications", status, detail, true, WINDOW_24H);
     })(),
 
     // Billing — payment and subscription events in the last week.
