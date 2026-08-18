@@ -400,10 +400,7 @@ export const listClients = createServerFn({ method: "GET" })
   .inputValidator((i: unknown) =>
     z
       .object({
-        q: z.string().optional().default(""),
-        status: z.enum(["prospect", "active", "paused", "closed"]).optional(),
-        industry: z.string().optional(),
-        include_archived: z.boolean().optional().default(false),
+        include_test: z.boolean().optional().default(false),
         sort: z
           .enum([
             "activity_desc",
@@ -418,8 +415,6 @@ export const listClients = createServerFn({ method: "GET" })
           ])
           .optional()
           .default("activity_desc"),
-        page: z.number().int().min(1).optional().default(1),
-        page_size: z.number().int().min(10).max(100).optional().default(25),
       })
       .parse(i ?? {}),
   )
@@ -431,22 +426,12 @@ export const listClients = createServerFn({ method: "GET" })
     );
     const showTest = await resolveShowTestRecordsForUser(s, context.userId);
 
-    // Bounded fetch: pull a working set, then compute counts + last activity in memory
-    // and paginate the merged result. Cap protects the endpoint on large tenants.
     let q = s
       .from("organizations")
       .select(
-        "id,name,status,domain,industry,updated_at,archived_at,onboarding_status,dashboard_status,primary_contact_name,primary_contact_email,is_test_record",
+        "id,name,status,domain,industry,updated_at,archived_at,onboarding_status,primary_contact_name,primary_contact_email,is_test_record,is_demo,is_qa,is_internal",
       )
       .limit(500);
-    if (data.q) {
-      const { ilikeValue } = await import("./search/postgrest-filter");
-      const val = ilikeValue(data.q);
-      if (val) q = q.ilike("name", val);
-    }
-    if (data.status) q = q.eq("status", data.status);
-    if (data.industry) q = q.eq("industry", data.industry);
-    if (!data.include_archived) q = q.is("archived_at", null);
     // The global "test records" preference decides here, in Postgres, so the
     // list and the "N organizations" count can never disagree.
     if (!showTest) q = excludeTestFlag(q);
@@ -493,20 +478,13 @@ export const listClients = createServerFn({ method: "GET" })
         if (!c) continue;
         c.positions += 1;
         if (p.status === "active") c.active += 1;
-        // Positions waiting on client approval count as an action.
         if (p.status === "review" || p.status === "pending_approval") c.actions_required += 1;
       }
       for (const m of (matches ?? []) as AnyRow[]) {
         const c = stats[m.organization_id];
         if (!c) continue;
-        // The Admin list "Delivered" column must match the client workspace:
-        // any record where client_visibility is 'visible'.
         if (m.client_visibility === "visible") {
           c.candidates_delivered += 1;
-
-          // Actions required definition (waiting on client):
-          // 1. Delivered candidates awaiting a first client decision.
-          // (matching isAwaitingClientDecision in src/lib/client-kpi.server.ts)
           if (m.stage === "delivered") {
             c.actions_required += 1;
           }
@@ -530,13 +508,11 @@ export const listClients = createServerFn({ method: "GET" })
       };
     });
 
-    // Distinct industry set for the filter dropdown (before pagination).
     const industrySet = new Set<string>();
     for (const r of (rows ?? []) as AnyRow[]) {
       if (r.industry) industrySet.add(String(r.industry));
     }
     const industries: string[] = Array.from(industrySet).sort();
-
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const cmp = (a: any, b: any) => {
@@ -568,17 +544,17 @@ export const listClients = createServerFn({ method: "GET" })
     merged.sort(cmp);
 
     const total = merged.length;
-    const start = (data.page - 1) * data.page_size;
-    const items = merged.slice(start, start + data.page_size);
+    const active_count = merged.filter((r: AnyRow) => !r.archived_at).length;
+    const archived_count = merged.filter((r: AnyRow) => r.archived_at).length;
+    const items = merged;
 
     return {
       items,
       total,
+      active_count,
+      archived_count,
       industries,
       test_records_hidden: !showTest,
-      page: data.page,
-      page_size: data.page_size,
-      page_count: Math.max(1, Math.ceil(total / data.page_size)),
     };
   });
 

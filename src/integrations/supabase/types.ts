@@ -7706,6 +7706,9 @@ export type Database = {
           id: string
           industry: string | null
           internal_notes: string | null
+          is_demo: boolean
+          is_internal: boolean
+          is_qa: boolean
           is_test_record: boolean
           last_client_update_sent_at: string | null
           legacy_source_id: string | null
@@ -7761,6 +7764,9 @@ export type Database = {
           id?: string
           industry?: string | null
           internal_notes?: string | null
+          is_demo?: boolean
+          is_internal?: boolean
+          is_qa?: boolean
           is_test_record?: boolean
           last_client_update_sent_at?: string | null
           legacy_source_id?: string | null
@@ -7816,6 +7822,9 @@ export type Database = {
           id?: string
           industry?: string | null
           internal_notes?: string | null
+          is_demo?: boolean
+          is_internal?: boolean
+          is_qa?: boolean
           is_test_record?: boolean
           last_client_update_sent_at?: string | null
           legacy_source_id?: string | null
