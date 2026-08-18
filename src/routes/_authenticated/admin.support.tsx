@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -30,6 +30,7 @@ function SupportPage() {
   const qc = useQueryClient();
   const { data } = useSuspenseQuery({ queryKey: ["admin-support"], queryFn: () => getSupportOverview() });
   const startFn = useServerFn(startSupportSession);
+  const navigate = useNavigate();
   const [filter, setFilter] = useState("");
   const [reason, setReason] = useState("");
   const [message, setMessage] = useState<string | null>(null);
@@ -41,7 +42,10 @@ function SupportPage() {
       setMessage("Read-only session opened and logged. Opening the client workspace…");
       await qc.invalidateQueries({ queryKey: ["admin-support"] });
       await qc.invalidateQueries({ queryKey: ["support-audit"] });
-      window.open(`/client?org=${orgId}`, "_blank", "noopener");
+      // Same-tab navigation: `window.open(..., "_blank", "noopener")` is blocked
+      // inside the embedded preview, which left the spinner copy on screen with
+      // nothing ever opening.
+      await navigate({ to: "/client", search: { org: orgId } });
     },
     onError: (e: Error) => setMessage(e.message),
   });
