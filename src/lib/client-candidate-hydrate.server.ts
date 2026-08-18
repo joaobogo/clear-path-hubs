@@ -9,16 +9,18 @@
  * the caller is allowed to see that candidate.
  *
  * This helper fills the profile for those already-authorized rows using the
- * privileged client, and never returns contact fields (`email`, `phone`) —
- * contact release stays a separate permission surfaced elsewhere.
+ * privileged client. Contact fields (email, phone) are included because published
+ * matches are contact-released at publish time by the publish handler; the DTO
+ * still verifies `contact_released_at` before surfacing them in
+ * `toClientCandidateDTO`.
  */
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
 
-/** Non-contact profile columns safe to show for an already-visible match. */
+/** Profile columns safe to show for a published match (contact-released at publish). */
 export const SAFE_CANDIDATE_PROFILE_COLUMNS =
-  "id, full_name, headline, location, city, region, country, timezone, availability, " +
+  "id, full_name, email, phone, headline, location, city, region, country, timezone, availability, " +
   "years_experience, summary, experience, skills, education, languages, " +
   "work_authorization, linkedin_url, portfolio_url, website_url, certifications, " +
   "compensation_preferences, current_cv_file_id";
