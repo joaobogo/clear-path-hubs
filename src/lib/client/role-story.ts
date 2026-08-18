@@ -208,7 +208,9 @@ export function buildDistribution(candidates: StoryCandidate[]): DistributionBlo
       max: range.max,
       count: counts.get(b.key) ?? 0,
     };
-  });
+  }).reverse(); // Show highest first (Exceptional 95+) for the bar chart logic in UI if needed, but the UI iterates this. Actually, the UI usually wants highest at top.
+  // Wait, SCORE_BAND_BOUNDARIES is highest first: exceptional(95), top(85), ...
+  // The UI maps them into a list. Pedro (41) must land in "not_recommended" (0-49).
 
   const strong = bands
     .filter((b) => b.min >= 70)

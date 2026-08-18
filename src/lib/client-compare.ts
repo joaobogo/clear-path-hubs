@@ -62,9 +62,10 @@ export function buildCompareMatrix(candidates: ClientCandidateDTO[]): CompareMat
           x.importance === meta.importance &&
           x.label.toLowerCase().trim() === meta.label.toLowerCase(),
       );
-      // Only use requirement-specific evidence. Never fall back to general
-      // candidate evidence or engine explanations when no direct quote exists.
+      
+      // Use the requirement's evidence snippet if available.
       const ev = row?.evidence.find((e) => (e.snippet ?? "").trim().length > 0) ?? null;
+      
       return {
         match_id: c.match_id,
         status: toStatus(row?.status),
@@ -74,12 +75,6 @@ export function buildCompareMatrix(candidates: ClientCandidateDTO[]): CompareMat
       };
     });
 
-    // Clean up cells that have no evidence.
-    for (const cell of cells) {
-      if (!cell.verbatim) {
-        cell.evidence = null;
-      }
-    }
     return {
       key,
       label: meta.label,

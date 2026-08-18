@@ -151,10 +151,10 @@ export function buildScoreExplanation(input: {
       method,
       method_label: label,
       band_label: bandLabel,
-      headline: "Evidence pending",
+      headline: "Assessment being finalised — evidence pending",
       reason: !input.evidencePath
         ? "The supporting evidence is not available on this surface yet."
-        : "No criterion on this assessment carries a quoted piece of evidence yet.",
+        : "No criterion on this assessment carries a verified quote from the record yet.",
       criteria: explained,
     };
   }
