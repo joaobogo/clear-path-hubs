@@ -105,6 +105,13 @@ function LoginPage() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
+      // QA personas are only meaningful for an already-signed-in user; calling
+      // the server function without a session throws an auth error that pollutes
+      // logs even though the catch block swallows it. Only ask when we have a session.
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) return;
       try {
         const cfg = await loadQa();
         if (!cancelled) setQa(cfg);

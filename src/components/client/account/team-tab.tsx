@@ -11,45 +11,48 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
- Dialog,
- DialogContent,
- DialogDescription,
- DialogFooter,
- DialogHeader,
- DialogTitle,
- DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
- DropdownMenu,
- DropdownMenuContent,
- DropdownMenuItem,
- DropdownMenuLabel,
- DropdownMenuSeparator,
- DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
- Select,
- SelectContent,
- SelectItem,
- SelectTrigger,
- SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   AlertCircle,
   CheckCircle2,
-
+  ChevronDown,
   MinusCircle,
-
-
- Info,
- Mail,
- MoreHorizontal,
- Shield,
- ShieldCheck,
- UserCog,
- UserMinus,
- UserPlus,
- Users,
+  Info,
+  Mail,
+  MoreHorizontal,
+  Shield,
+  ShieldCheck,
+  UserCog,
+  UserMinus,
+  UserPlus,
+  Users,
 } from "lucide-react";
 import {
  COLLABORATOR_ROLES,
@@ -422,46 +425,59 @@ export function TeamTab() {
  * listed here is protected by hidden navigation alone.
  */
 function RoleLegend() {
- return (
- <section className="rounded-xl border bg-card/50 p-4">
- <h2 className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
- What each role can do
- </h2>
- <dl className="mt-3 grid gap-5 sm:grid-cols-3">
- {ROLE_IDS.map((r) => {
- const def = COLLABORATOR_ROLES[r];
- return (
- <div key={r} className="min-w-0">
- <dt className="flex items-center gap-1.5 text-sm font-medium">
- <RoleIcon role={r} />
- {def.label}
- </dt>
- <dd className="mt-1 space-y-2 text-xs text-muted-foreground">
- <p>{def.summary}</p>
- <ul className="space-y-1">
- {def.can.map((line) => (
- <li key={line} className="flex gap-1.5">
- <CheckCircle2 className="mt-[1px] h-3 w-3 shrink-0 taas-fg-success" />
- <span>{line}</span>
- </li>
- ))}
- {def.cannot.map((line) => (
- <li key={line} className="flex gap-1.5">
- <MinusCircle className="mt-[1px] h-3 w-3 shrink-0" />
- <span>{line}</span>
- </li>
- ))}
- </ul>
- </dd>
- </div>
- );
- })}
- </dl>
- <p className="mt-4 text-xs text-muted-foreground">
- Nobody outside TaaSFlow sees internal recruiter notes or scoring, whatever their role.
- </p>
- </section>
- );
+  return (
+    <Collapsible className="rounded-xl border bg-card/50" defaultOpen={false}>
+      <CollapsibleTrigger asChild>
+        <button
+          type="button"
+          className="group flex w-full items-center justify-between gap-3 px-4 py-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          <span className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            What each role can do
+          </span>
+          <span className="flex items-center gap-1 text-xs text-muted-foreground">
+            Expand to compare permissions
+            <ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
+          </span>
+        </button>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="border-t px-4 pb-4 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+        <dl className="mt-3 grid gap-5 sm:grid-cols-3">
+          {ROLE_IDS.map((r) => {
+            const def = COLLABORATOR_ROLES[r];
+            return (
+              <div key={r} className="min-w-0">
+                <dt className="flex items-center gap-1.5 text-sm font-medium">
+                  <RoleIcon role={r} />
+                  {def.label}
+                </dt>
+                <dd className="mt-1 space-y-2 text-xs text-muted-foreground">
+                  <p>{def.summary}</p>
+                  <ul className="space-y-1">
+                    {def.can.map((line) => (
+                      <li key={line} className="flex gap-1.5">
+                        <CheckCircle2 className="mt-[1px] h-3 w-3 shrink-0 taas-fg-success" />
+                        <span>{line}</span>
+                      </li>
+                    ))}
+                    {def.cannot.map((line) => (
+                      <li key={line} className="flex gap-1.5">
+                        <MinusCircle className="mt-[1px] h-3 w-3 shrink-0" />
+                        <span>{line}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </dd>
+              </div>
+            );
+          })}
+        </dl>
+        <p className="mt-4 text-xs text-muted-foreground">
+          Nobody outside TaaSFlow sees internal recruiter notes or scoring, whatever their role.
+        </p>
+      </CollapsibleContent>
+    </Collapsible>
+  );
 }
 
 
