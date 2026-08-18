@@ -75,7 +75,7 @@ export function CandidateHeader({
           </p>
         ) : candidate.explanation?.kind === "evidence_pending" ? (
           <p className="mt-1 text-sm text-muted-foreground italic">
-            {candidate.explanation.headline} — {candidate.explanation.reason}
+            {candidate.explanation.headline} — {candidate.explanation.summary}
           </p>
         ) : null}
         {candidate.human_review?.statement && (
