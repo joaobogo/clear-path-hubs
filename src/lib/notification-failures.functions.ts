@@ -71,3 +71,31 @@ export const releaseNotificationRecipient = createServerFn({ method: "POST" })
     const { releaseRecipient } = await import("./notification-suppression.server");
     return releaseRecipient(supabaseAdmin, { email: data.email, actorUserId: context.userId });
   });
+
+/**
+ * Lift the blocks on one address and (optionally) re-attempt the delivery that
+ * exposed them. One canonical path — admin rows and the recipient banner both
+ * call this.
+ */
+export const unsuppressAndRetryDelivery = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((raw: unknown) =>
+    z
+      .object({
+        email: z.string().trim().email(),
+        ledger: z.enum(["notification", "lead"]).optional(),
+        id: z.string().uuid().optional(),
+      })
+      .parse(raw),
+  )
+  .handler(async ({ context, data }) => {
+    await assertStaff(context as never);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { unsuppressAndRetry } = await import("./notification-failures.server");
+    return unsuppressAndRetry(supabaseAdmin, {
+      email: data.email,
+      actorUserId: context.userId,
+      ledger: data.ledger,
+      id: data.id,
+    });
+  });
