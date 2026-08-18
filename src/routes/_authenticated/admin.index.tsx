@@ -109,7 +109,9 @@ function Header({
           {total === null ? (
             <span className="inline-block h-4 w-48 animate-pulse rounded bg-muted" />
           ) : total === 0 ? (
-            "Nothing is waiting on the platform team right now."
+            scope === "mine"
+              ? "Nothing you own is waiting right now."
+              : "Nothing is waiting on the platform team right now."
           ) : (
             `${total} item${total === 1 ? "" : "s"} waiting on ${scope === "mine" ? "you" : "the team"}. Every row opens the one action it needs.`
           )}
