@@ -7,11 +7,13 @@
  * here is invented, and nothing is nagged about twice.
  */
 
-export type OpenItemKind = "info_request" | "pending_decision" | "missing_feedback";
+export type OpenItemKind = "info_request" | "pending_decision" | "missing_feedback" | "offer" | "interview";
 
 export type OpenItem = {
   kind: OpenItemKind;
   id: string;
+  /** Stable identity for the row — used to guarantee one row per subject. */
+  subject_id?: string | null;
   /** What the client reads. */
   label: string;
   /** Extra line: the role, or who asked. */
@@ -21,6 +23,8 @@ export type OpenItem = {
   due_at: string | null;
   /** Derived from due_at. */
   overdue: boolean;
+  /** When the wait started. */
+  waiting_since?: string | null;
 };
 
 export const OPEN_ITEM_LABEL: Record<OpenItemKind, string> = {
