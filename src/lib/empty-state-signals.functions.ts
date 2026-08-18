@@ -31,6 +31,17 @@ export interface EmptyStateSignals {
   connectedIntegrations: number;
   auditEvents: number;
   notifications: number;
+  /**
+   * Sourcing context for the scoped role (only set when positionId is given).
+   * Lets a surface say "sourcing is in progress since <date>" instead of
+   * declaring a search finished from workspace-wide run counts.
+   */
+  sourcing: {
+    stageLabel: string | null;
+    startedAt: string | null;
+    /** No run is queued/running and nothing is processing for this role. */
+    finished: boolean;
+  } | null;
 }
 
 const EMPTY: EmptyStateSignals = {
@@ -48,6 +59,7 @@ const EMPTY: EmptyStateSignals = {
   connectedIntegrations: 0,
   auditEvents: 0,
   notifications: 0,
+  sourcing: null,
 };
 
 async function countRows(
@@ -70,6 +82,12 @@ export const getEmptyStateSignals = createServerFn({ method: "GET" })
     const sb = context.supabase;
     const org = data.orgId;
     const head = { count: "exact" as const, head: true };
+
+    const scopedRuns = () => {
+      let q = sb.from("score_runs").select("id", head).eq("organization_id", org);
+      if (data.positionId) q = q.eq("position_id", data.positionId);
+      return q;
+    };
 
     const scopedMatches = () => {
       let q = sb.from("candidate_matches").select("id", head).eq("organization_id", org);
@@ -100,12 +118,8 @@ export const getEmptyStateSignals = createServerFn({ method: "GET" })
           sb.from("positions").select("id", head).eq("organization_id", org).eq("status", "draft"),
         ),
         countRows(scopedMatches().in("processing_state", ["queued", "parsing", "parsed", "enriching", "ready_to_score", "scoring"])),
-        countRows(
-          sb.from("score_runs").select("id", head).eq("organization_id", org).eq("status", "completed"),
-        ),
-        countRows(
-          sb.from("score_runs").select("id", head).eq("organization_id", org).in("status", ["queued", "running"]),
-        ),
+        countRows(scopedRuns().eq("status", "completed")),
+        countRows(scopedRuns().in("status", ["queued", "running"])),
         countRows(scopedMatches().eq("client_visibility", "visible").eq("stage", "delivered")),
         countRows(scopedMatches().not("delivered_at", "is", null)),
         countRows(sb.from("interviews").select("id", head).eq("organization_id", org)),
@@ -129,6 +143,47 @@ export const getEmptyStateSignals = createServerFn({ method: "GET" })
         countRows(sb.from("notifications").select("id", head).eq("organization_id", org)),
       ]);
 
+      let sourcing: EmptyStateSignals["sourcing"] = null;
+      if (data.positionId) {
+        const [{ data: position }, { data: firstRun }] = await Promise.all([
+          sb
+            .from("positions")
+            .select("status, published_at, approved_at, created_at")
+            .eq("id", data.positionId)
+            .eq("organization_id", org)
+            .maybeSingle(),
+          sb
+            .from("score_runs")
+            .select("started_at, created_at")
+            .eq("organization_id", org)
+            .eq("position_id", data.positionId)
+            .order("created_at", { ascending: true })
+            .limit(1)
+            .maybeSingle(),
+        ]);
+        const startedAt =
+          (firstRun?.started_at as string | null) ??
+          (firstRun?.created_at as string | null) ??
+          (position?.published_at as string | null) ??
+          (position?.approved_at as string | null) ??
+          null;
+        const stageLabel =
+          position?.status === "active"
+            ? runsCompleted > 0 || runsRunning > 0 || inProcessing > 0
+              ? "Sourcing and review"
+              : "Live, sourcing starting"
+            : position?.status === "draft"
+              ? "Role setup"
+              : position
+                ? "Role paused"
+                : null;
+        sourcing = {
+          stageLabel,
+          startedAt,
+          finished: runsRunning === 0 && inProcessing === 0 && runsCompleted > 0,
+        };
+      }
+
       return {
         activeRoles,
         rolesInSetup,
@@ -144,6 +199,7 @@ export const getEmptyStateSignals = createServerFn({ method: "GET" })
         connectedIntegrations,
         auditEvents,
         notifications,
+        sourcing,
       };
     } catch {
       return EMPTY;
