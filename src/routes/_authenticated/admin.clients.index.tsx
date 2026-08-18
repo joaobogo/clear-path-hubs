@@ -1,7 +1,7 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import {
@@ -9,6 +9,7 @@ import {
   archiveOrganization,
   restoreOrganization,
 } from "@/lib/admin.functions";
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { Input } from "@/components/ui/input";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import { Badge } from "@/components/ui/badge";
@@ -64,30 +65,43 @@ type Sort = (typeof SORTS)[number];
 const STATUSES = ["prospect", "active", "paused", "closed"] as const;
 type Status = (typeof STATUSES)[number];
 
+const ORG_TYPES = [
+  { value: "all", label: "All types" },
+  { value: "client", label: "Clients" },
+  { value: "demo", label: "Demos" },
+  { value: "qa", label: "QA" },
+  { value: "internal", label: "Internal" },
+] as const;
+type OrgType = (typeof ORG_TYPES)[number]["value"];
+
+const STATUS_LABEL: Record<Status, string> = {
+  prospect: "Prospect",
+  active: "Active",
+  paused: "Paused",
+  closed: "Closed",
+};
+
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
   status: fallback(z.string(), "").default(""),
   industry: fallback(z.string(), "").default(""),
+  org_type: fallback(z.string(), "all").default("all"),
   sort: fallback(z.string(), "activity_desc").default("activity_desc"),
-  // The router round-trips "1" as the number 1, so coerce before matching the
-  // enum — otherwise the flag silently falls back and the checkbox never sticks.
   archived: fallback(z.coerce.string().pipe(z.enum(["0", "1"])), "0").default("0"),
   page: fallback(z.number().int(), 1).default(1),
   page_size: fallback(z.number().int(), 25).default(25),
 });
 
-// Normalize search-param strings into the exact server input the fn accepts.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function toServerInput(s: any) {
-  return {
-    q: s.q,
-    status: STATUSES.includes(s.status as Status) ? (s.status as Status) : undefined,
-    industry: s.industry ? String(s.industry) : undefined,
-    sort: (SORTS.includes(s.sort as Sort) ? s.sort : "activity_desc") as Sort,
-    include_archived: s.archived === "1",
-    page: Math.max(1, s.page),
-    page_size: Math.max(10, Math.min(100, s.page_size)),
-  };
+function isSort(value: string): value is Sort {
+  return SORTS.includes(value as Sort);
+}
+
+function isOrgType(value: string): value is OrgType {
+  return ORG_TYPES.some((t) => t.value === value);
+}
+
+function isStatus(value: string): value is Status {
+  return STATUSES.includes(value as Status);
 }
 
 export const Route = createFileRoute("/_authenticated/admin/clients/")({
@@ -103,12 +117,6 @@ export const Route = createFileRoute("/_authenticated/admin/clients/")({
   ),
 
   validateSearch: zodValidator(searchSchema),
-  loaderDeps: ({ search }) => search,
-  loader: ({ context, deps }) =>
-    context.queryClient.ensureQueryData({
-      queryKey: ["admin-clients", deps],
-      queryFn: () => listClients({ data: toServerInput(deps) }),
-    }),
   errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.clients.index.tsx"),
   notFoundComponent: () => <div className="p-8">Not found.</div>,
   component: ClientsPage,
@@ -138,6 +146,9 @@ type ClientRow = {
   onboarding_status: string | null;
   primary_contact_name: string | null;
   primary_contact_email: string | null;
+  is_demo: boolean;
+  is_qa: boolean;
+  is_internal: boolean;
   positions_total: number;
   positions_active: number;
   candidates_delivered: number;
@@ -145,23 +156,96 @@ type ClientRow = {
   last_activity_at: string | null;
 };
 
+function orgType(row: ClientRow): string {
+  if (row.is_internal) return "Internal";
+  if (row.is_qa) return "QA";
+  if (row.is_demo) return "Demo";
+  return "Client";
+}
+
 function ClientsPage() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
+  const includeTest = useIncludeTestRecords();
   const [q, setQ] = useState(search.q);
   useEffect(() => setQ(search.q), [search.q]);
 
-  const { data } = useSuspenseQuery({
-    queryKey: ["admin-clients", search],
-    queryFn: () => listClients({ data: toServerInput(search) }),
+  const query = useQuery({
+    queryKey: ["admin-clients", includeTest, search.sort],
+    queryFn: () =>
+      listClients({
+        data: {
+          include_test: includeTest,
+          sort: isSort(search.sort) ? search.sort : "activity_desc",
+        },
+      }),
+    placeholderData: (previous) => previous,
+    staleTime: 60_000,
   });
 
-  const rows = (data.items ?? []) as ClientRow[];
-  const industries = data.industries ?? [];
-  const showingFrom = data.total === 0 ? 0 : (data.page - 1) * data.page_size + 1;
-  const showingTo = Math.min(data.total, data.page * data.page_size);
+  const data = query.data;
+
+  const filtered = useMemo(() => {
+    const raw = (data?.items ?? []) as ClientRow[];
+    let rows = raw;
+
+    const term = search.q.trim().toLowerCase();
+    if (term) {
+      rows = rows.filter((r) =>
+        r.name.toLowerCase().includes(term) ||
+        (r.domain ?? "").toLowerCase().includes(term) ||
+        (r.industry ?? "").toLowerCase().includes(term),
+      );
+    }
+
+    if (search.status && isStatus(search.status)) {
+      rows = rows.filter((r) => r.status === search.status);
+    }
+
+    if (search.industry) {
+      rows = rows.filter((r) => r.industry === search.industry);
+    }
+
+    if (search.archived !== "1") {
+      rows = rows.filter((r) => !r.archived_at);
+    }
+
+    const orgTypeValue = isOrgType(search.org_type) ? search.org_type : "all";
+    if (orgTypeValue !== "all") {
+      rows = rows.filter((r) => {
+        if (orgTypeValue === "client") return !r.is_demo && !r.is_qa && !r.is_internal;
+        if (orgTypeValue === "demo") return r.is_demo;
+        if (orgTypeValue === "qa") return r.is_qa;
+        if (orgTypeValue === "internal") return r.is_internal;
+        return true;
+      });
+    }
+
+    return rows;
+  }, [data, search]);
+
+  const total = filtered.length;
+  const activeCount = data?.active_count ?? 0;
+  const archivedCount = data?.archived_count ?? 0;
+  const page = Math.max(1, search.page);
+  const pageSize = Math.max(10, Math.min(100, search.page_size));
+  const pageCount = Math.max(1, Math.ceil(total / pageSize));
+  const start = (page - 1) * pageSize;
+  const rows = filtered.slice(start, start + pageSize);
+  const showingFrom = total === 0 ? 0 : start + 1;
+  const showingTo = Math.min(total, page * pageSize);
+  const industries = data?.industries ?? [];
 
   const [archiveTarget, setArchiveTarget] = useState<ClientRow | null>(null);
+
+  const archive = useMutation({
+    mutationFn: (input: { id: string; confirm_name: string }) =>
+      archiveOrganization({ data: input }),
+    onSuccess: () => {
+      toast.success(`${archiveTarget?.name ?? "Client"} archived`);
+      queryClient.invalidateQueries({ queryKey: ["admin-clients"] });
+    },
+  });
 
   return (
     <div className="space-y-6">
@@ -169,7 +253,32 @@ function ClientsPage() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Clients</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {data.total} organization{data.total === 1 ? "" : "s"} · showing {showingFrom}–{showingTo}
+            {activeCount} active
+            {archivedCount > 0 ? (
+              <>
+                {" · "}
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate({
+                      search: {
+                        ...search,
+                        archived: search.archived === "1" ? "0" : "1",
+                        page: 1,
+                      },
+                    })
+                  }
+                  className="underline hover:text-foreground"
+                >
+                  {archivedCount} archived
+                </button>
+              </>
+            ) : null}
+            {total > 0 && search.archived === "0" ? (
+              <span>
+                {" · "}showing {showingFrom}–{showingTo}
+              </span>
+            ) : null}
           </p>
         </div>
         <Link
@@ -189,6 +298,7 @@ function ClientsPage() {
           q: search.q ?? "",
           status: search.status ?? "",
           industry: search.industry ?? "",
+          org_type: search.org_type ?? "all",
           sort: search.sort ?? "activity_desc",
           archived: search.archived ?? "0",
         }}
@@ -199,6 +309,7 @@ function ClientsPage() {
               q: f.q ?? "",
               status: f.status ?? "",
               industry: f.industry ?? "",
+              org_type: f.org_type ?? "all",
               sort: f.sort || "activity_desc",
               archived: f.archived === "1" ? "1" : "0",
               page: 1,
@@ -237,8 +348,26 @@ function ClientsPage() {
           <SelectContent>
             <SelectItem value="all">All statuses</SelectItem>
             {STATUSES.map((s) => (
-              <SelectItem key={s} value={s} className="capitalize">
-                {s}
+              <SelectItem key={s} value={s}>
+                {STATUS_LABEL[s]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={search.org_type || "all"}
+          onValueChange={(v) =>
+            navigate({ search: { ...search, org_type: v, page: 1 } })
+          }
+        >
+          <SelectTrigger className="w-36" data-qa-action="clients-filter-type">
+            <SelectValue placeholder="Type" />
+          </SelectTrigger>
+          <SelectContent>
+            {ORG_TYPES.map((t) => (
+              <SelectItem key={t.value} value={t.value}>
+                {t.label}
               </SelectItem>
             ))}
           </SelectContent>
@@ -350,16 +479,16 @@ function ClientsPage() {
           )}
         </ul>
 
-        {data.total > 0 && (
+        {total > 0 && (
           <div className="flex flex-wrap items-center justify-between gap-2 border-t bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
             <div>
-              Page {data.page} of {data.page_count} · {data.total} total
+              Page {page} of {pageCount} · {total} total
             </div>
             <div className="flex items-center gap-2">
               <label className="flex items-center gap-1.5">
                 Rows:
                 <Select
-                  value={String(search.page_size)}
+                  value={String(pageSize)}
                   onValueChange={(v) =>
                     navigate({ search: { ...search, page_size: Number(v), page: 1 } })
                   }
@@ -380,9 +509,9 @@ function ClientsPage() {
                 variant="outline"
                 size="sm"
                 className="h-7 gap-1"
-                disabled={data.page <= 1}
+                disabled={page <= 1}
                 onClick={() =>
-                  navigate({ search: { ...search, page: Math.max(1, data.page - 1) } })
+                  navigate({ search: { ...search, page: Math.max(1, page - 1) } })
                 }
               >
                 <ChevronLeft className="h-3 w-3" /> Prev
@@ -391,9 +520,9 @@ function ClientsPage() {
                 variant="outline"
                 size="sm"
                 className="h-7 gap-1"
-                disabled={data.page >= data.page_count}
+                disabled={page >= pageCount}
                 onClick={() =>
-                  navigate({ search: { ...search, page: Math.min(data.page_count, data.page + 1) } })
+                  navigate({ search: { ...search, page: Math.min(pageCount, page + 1) } })
                 }
               >
                 Next <ChevronRight className="h-3 w-3" />
@@ -448,12 +577,12 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
         )}
       </td>
       <td className="px-3 py-2.5">
-        <Badge variant="outline" className="whitespace-nowrap capitalize">
-          {r.status}
+        <Badge variant="outline" className="whitespace-nowrap">
+          {STATUS_LABEL[r.status as Status] ?? r.status}
         </Badge>
-        {r.onboarding_status && r.onboarding_status !== "live" && (
+        {(r.is_qa || r.is_internal || r.is_demo) && (
           <div className="mt-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
-            {String(r.onboarding_status).replace(/_/g, " ")}
+            {orgType(r)}
           </div>
         )}
       </td>
@@ -507,7 +636,7 @@ function ClientCard({ row, onArchive }: { row: ClientRow; onArchive: () => void 
           <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <span>{r.domain ?? "—"}</span>
             {r.industry && <span>· {r.industry}</span>}
-            <Badge variant="outline" className="capitalize">{r.status}</Badge>
+            <Badge variant="outline">{STATUS_LABEL[r.status as Status] ?? r.status}</Badge>
             {r.archived_at && <Badge variant="secondary" className="text-[10px]">archived</Badge>}
           </div>
         </div>
