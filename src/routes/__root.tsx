@@ -32,12 +32,7 @@ TEXTO DO USUÁRIO: "STANDING RULES — UX PASS VARIANT:
 - Do not touch any server function, mutation, or data contract unless this message names it. Buttons keep calling exactly what they call today.
 - Verify the page at 1440px and 375px in the live preview as the Northwind demo client, re-run the page's existing spec(s), and report the click-path result.
 
-Apply the card pattern from docs/design/client-decision-first.md to the client candidates list rows and Kanban cards.
-
-1. Card/row shows exactly: name, score band chip, one-line headline (title · yrs · location), stage, and ONE primary action (the next sensible decision for that stage). Everything else that's currently on the card moves to the candidate page or a hover/expand.
-2. Do not change the Kanban's drag/stage mutation logic, column definitions, or the filters row beyond visual grouping — filters were just verified.
-3. Keep \"Compare side by side\" and bulk CV download exactly where and how they are.
-4. Verify: drag one Northwind candidate between stages and confirm the backend state change persists after reload; the kanban spec still passes; a 20-candidate column stays readable at 375px with no horizontal scroll."`;
+Declutter the client Overview per the standard. First viewport = the items that need the client's attention (candidates awaiting review, interviews to confirm, messages), each with a one-click path to act, plus the top-line KPIs already served by the overview functions. Move the system-status detail, the Steady/Standard/Aggressive controls, and the role/agent/status filter row behind the existing \"Detail\" toggle or into a secondary section below the fold. No server function changes; the counts must keep reconciling with the candidates page and the admin publish desk (re-check Prompt 4.4's five-way reconciliation after this change). Keep the welcome tour working. Verify at 1440 and 375 as the Northwind demo client."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
