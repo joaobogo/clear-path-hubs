@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { getTestScopeState, setTestScopeState } from "@/lib/test-scope.functions";
+import { useAdminTestScope } from "@/lib/admin-scope";
 
 export const TEST_SCOPE_QUERY_KEY = ["admin", "test-scope"] as const;
 
@@ -28,6 +29,7 @@ export function useTestScopeState() {
 
 export function TestRecordsToggle() {
   const q = useTestScopeState();
+  const contextScope = useAdminTestScope();
   const save = useServerFn(setTestScopeState);
   const queryClient = useQueryClient();
   const router = useRouter();
