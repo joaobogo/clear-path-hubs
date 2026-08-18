@@ -1,9 +1,15 @@
 // Default tab for the candidate workspace: profile + AI briefing.
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Row } from "@/components/admin/candidate-detail/primitives";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 import { formatWorkAuthorization } from "@/lib/human-labels";
+import { updateCandidateProfileField } from "@/lib/admin-candidates.functions";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -22,6 +28,54 @@ function ProfileTab({
   siblings: Any[];
   evidence: Any;
 }) {
+  const qc = useQueryClient();
+  const [editing, setEditing] = useState<Record<string, boolean>>({});
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [saving, setSaving] = useState<Record<string, boolean>>({});
+
+  const invalidate = async () => {
+    await qc.invalidateQueries({ queryKey: ["admin-candidate", m.id] });
+  };
+
+  const startEdit = (field: string, current: string | null) => {
+    setEditing((prev) => ({ ...prev, [field]: true }));
+    setDrafts((prev) => ({ ...prev, [field]: current ?? "" }));
+  };
+
+  const cancelEdit = (field: string) => {
+    setEditing((prev) => ({ ...prev, [field]: false }));
+  };
+
+  const saveField = async (field: "linkedin_url" | "location") => {
+    const value = drafts[field]?.trim() || null;
+    setSaving((prev) => ({ ...prev, [field]: true }));
+    try {
+      const result = await updateCandidateProfileField({
+        data: {
+          candidate_profile_id: cp.id,
+          [field]: value,
+        },
+      });
+      if (result.ok) {
+        toast.success(`${field === "linkedin_url" ? "LinkedIn" : "Location"} saved`);
+        await invalidate();
+      } else {
+        toast.error("Save failed");
+      }
+    } catch (e) {
+      toast.error(`Save failed: ${(e as Error).message}`);
+    } finally {
+      setSaving((prev) => ({ ...prev, [field]: false }));
+      setEditing((prev) => ({ ...prev, [field]: false }));
+    }
+  };
+
+  const linkedInDisplay = cp?.linkedin_url ? (
+    <a href={cp.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+      Profile ↗
+    </a>
+  ) : null;
+
   const insights = evidence?.extracted?.insights as Any | null;
   return (
     <div className="space-y-4">
@@ -32,12 +86,33 @@ function ProfileTab({
         <h2 className="text-sm font-semibold">Candidate profile</h2>
         <dl className="mt-3 grid grid-cols-[9rem_1fr] gap-y-1.5 text-sm">
           <Row label="Headline" v={cp?.headline} />
-          <Row label="Location" v={cp?.location} />
+          <EditableRow
+            label="Location"
+            value={cp?.location}
+            editing={editing.location}
+            saving={saving.location}
+            draft={drafts.location ?? ""}
+            onEdit={() => startEdit("location", cp?.location)}
+            onCancel={() => cancelEdit("location")}
+            onDraftChange={(v) => setDrafts((prev) => ({ ...prev, location: v }))}
+            onSave={() => saveField("location")}
+          />
           <Row label="Timezone" v={cp?.timezone} />
           <Row label="Availability" v={cp?.availability} />
           <Row label="Experience" v={cp?.years_experience != null ? `${cp.years_experience} yrs` : null} />
           <Row label="Phone" v={cp?.phone} />
-          <Row label="LinkedIn" v={cp?.linkedin_url && <a href={cp.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Profile ↗</a>} />
+          <EditableRow
+            label="LinkedIn"
+            value={cp?.linkedin_url}
+            display={linkedInDisplay}
+            editing={editing.linkedin_url}
+            saving={saving.linkedin_url}
+            draft={drafts.linkedin_url ?? ""}
+            onEdit={() => startEdit("linkedin_url", cp?.linkedin_url)}
+            onCancel={() => cancelEdit("linkedin_url")}
+            onDraftChange={(v) => setDrafts((prev) => ({ ...prev, linkedin_url: v }))}
+            onSave={() => saveField("linkedin_url")}
+          />
           <Row label="Work auth" v={formatWorkAuthorization(cp?.work_authorization)} />
           <Row label="Consent" v={cp?.consent?.terms ? "Given" : "Not recorded"} />
         </dl>
@@ -85,6 +160,82 @@ function ProfileTab({
       </div>
       </div>
     </div>
+  );
+}
+
+function EditableRow({
+  label,
+  value,
+  display,
+  editing,
+  saving,
+  draft,
+  onEdit,
+  onCancel,
+  onDraftChange,
+  onSave,
+}: {
+  label: string;
+  value: string | null;
+  display?: React.ReactNode;
+  editing: boolean;
+  saving: boolean;
+  draft: string;
+  onEdit: () => void;
+  onCancel: () => void;
+  onDraftChange: (v: string) => void;
+  onSave: () => void;
+}) {
+  if (!editing) {
+    return (
+      <>
+        <dt className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
+          {label}
+          <button
+            onClick={onEdit}
+            className="text-[10px] text-primary hover:underline"
+            type="button"
+          >
+            Edit
+          </button>
+        </dt>
+        <dd>
+          {display ?? value ?? <span className="text-muted-foreground">Not provided</span>}
+        </dd>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <dt className="text-xs uppercase tracking-wide text-muted-foreground">{label}</dt>
+      <dd className="flex items-center gap-2">
+        <Input
+          value={draft}
+          onChange={(e) => onDraftChange(e.target.value)}
+          placeholder={label === "LinkedIn" ? "https://linkedin.com/in/..." : "City, Country"}
+          className="h-8 text-sm"
+          disabled={saving}
+        />
+        <Button
+          size="sm"
+          className="h-8 px-2 text-xs"
+          onClick={onSave}
+          disabled={saving}
+        >
+          {saving ? "Saving" : "Save"}
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 px-2 text-xs"
+          onClick={onCancel}
+          disabled={saving}
+        >
+          Cancel
+        </Button>
+      </dd>
+    </>
   );
 }
 
@@ -191,4 +342,3 @@ function InsightsBriefing({ insights }: { insights: Any }) {
     </div>
   );
 }
-
