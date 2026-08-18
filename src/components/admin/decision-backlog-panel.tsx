@@ -32,12 +32,20 @@ import {
 import { AlertTriangle, BellRing, Loader2, RefreshCw } from "lucide-react";
 import { TestScopeEmptyNote } from "@/components/admin/test-records-toggle";
 import { useScopedIncludeTest } from "@/lib/admin-scope";
+import { useConfirmAction } from "@/components/ds/confirm-action";
+import { CLIENT_COPY } from "@/lib/events";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 type Backlog = Awaited<ReturnType<typeof getDecisionBacklog>>;
 type Row = Backlog["rows"][number];
 
 const DECISIONS = Object.entries(OFFLINE_DECISION_LABEL) as Array<[string, string]>;
+
+/** The exact client-facing copy a nudge delivers (CLIENT_COPY.approval_needed). */
+const NUDGE_COPY = CLIENT_COPY["approval_needed"] ?? {
+  title: "Something is waiting on you",
+  body: "A decision is needed before work continues.",
+};
 
 function fmt(iso: string | null): string {
   if (!iso) return "—";
@@ -73,6 +81,7 @@ export function DecisionBacklogPanel({
   const nudgeFn = useServerFn(nudgeClientDecision);
   const logFn = useServerFn(logOfflineClientDecision);
   const [openFor, setOpenFor] = useState<string | null>(null);
+  const { confirm, confirmDialog } = useConfirmAction();
 
   const nudge = useMutation({
     mutationFn: (matchId: string) => nudgeFn({ data: { match_id: matchId } }),
@@ -82,6 +91,31 @@ export function DecisionBacklogPanel({
     },
     onError: (e) => toastError(e, { fallback: "Could not send the follow-up" }),
   });
+
+  /**
+   * Nudge leaves the building the moment it is clicked, so it asks first and
+   * shows the recipient plus the exact message. Cancel is the safe default.
+   */
+  async function confirmNudge(r: Row) {
+    const recipients =
+      r.notified.length > 0
+        ? r.notified.map((n) => n.name).join(", ")
+        : "everyone on the client team with decision notifications on";
+    const result = await confirm({
+      title: "Send a follow-up to the client",
+      object: `${recipients} · ${r.client_name}`,
+      description: `They are asked again to decide on ${r.candidate_name} for ${r.position_title}. This is a real notification, sent immediately.`,
+      impact: [
+        `Message title: “${NUDGE_COPY.title}”`,
+        `Message body: “${NUDGE_COPY.body ?? ""}”`,
+        "Links to the candidate in the client workspace",
+        "Only one follow-up per candidate every 48 hours",
+      ],
+      confirmLabel: "Send follow-up",
+    });
+    if (result.confirmed) nudge.mutate(r.match_id);
+  }
+
 
   const record = useMutation({
     mutationFn: (input: {
@@ -269,7 +303,8 @@ export function DecisionBacklogPanel({
                               ? "Send a follow-up through the client's notifications"
                               : `Next follow-up available ${fmt(r.nudge_available_at)}`
                           }
-                          onClick={() => nudge.mutate(r.match_id)}
+                          onClick={() => void confirmNudge(r)}
+                          data-qa-action="nudge-client-decision"
                         >
                           {nudge.isPending && nudge.variables === r.match_id ? (
                             <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -318,6 +353,7 @@ export function DecisionBacklogPanel({
           </table>
         </div>
       )}
+      {confirmDialog}
     </section>
   );
 }
