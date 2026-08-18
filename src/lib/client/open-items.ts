@@ -41,6 +41,36 @@ export function isOverdue(due_at: string | null, now = Date.now()): boolean {
   return Number.isFinite(t) && t < now;
 }
 
+/**
+ * Precedence when the same subject (e.g. candidate) has multiple items.
+ * Lower wins.
+ */
+const KIND_PRECEDENCE: Record<OpenItemKind, number> = {
+  missing_feedback: 0,
+  offer: 1,
+  pending_decision: 2,
+  interview: 3,
+  info_request: 4,
+};
+
+/** One item per subject; the highest-precedence kind wins. */
+export function dedupeOpenItems(items: OpenItem[]): OpenItem[] {
+  const bySubject = new Map<string, OpenItem>();
+  const out: OpenItem[] = [];
+  for (const item of items) {
+    const subject = item.subject_id;
+    if (!subject) {
+      out.push(item);
+      continue;
+    }
+    const existing = bySubject.get(subject);
+    if (!existing || KIND_PRECEDENCE[item.kind] < KIND_PRECEDENCE[existing.kind]) {
+      bySubject.set(subject, item);
+    }
+  }
+  return [...out, ...bySubject.values()];
+}
+
 /** Overdue first, then earliest due date, then the ones with no date. */
 export function sortOpenItems(items: OpenItem[]): OpenItem[] {
   return [...items].sort((a, b) => {
