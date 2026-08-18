@@ -345,15 +345,19 @@ function FormSkeleton() {
 }
 
 /**
- * The review queue: interviews that happened and still need feedback. The
- * prompt lives here, in the work the client already opens.
+ * The review queue: interviews that happened and still need feedback. Each
+ * card surfaces the candidate and role and a single primary action; the full
+ * form is progressive-disclosed in the existing InterviewFeedbackDialog so the
+ * first viewport stays focused on what needs attention.
  */
 export function InterviewFeedbackQueue({
   orgId,
   readOnly = false,
+  onOpenFeedback,
 }: {
   orgId: string;
   readOnly?: boolean;
+  onOpenFeedback: (item: FeedbackQueueItem) => void;
 }) {
   const listFn = useServerFn(listInterviewsAwaitingFeedback);
   const query = useQuery({
@@ -361,12 +365,7 @@ export function InterviewFeedbackQueue({
     queryFn: () => listFn({ data: { orgId } }),
     enabled: !!orgId,
   });
-  const [openId, setOpenId] = useState<string | null>(null);
   const items = (query.data as FeedbackQueueItem[] | undefined) ?? [];
-
-  useEffect(() => {
-    if (items.length > 0 && openId === null) setOpenId(items[0]!.interview_id);
-  }, [items, openId]);
 
   if (query.isLoading) return <FormSkeleton />;
 
@@ -395,8 +394,6 @@ export function InterviewFeedbackQueue({
     );
   }
 
-  const active = items.find((i) => i.interview_id === openId) ?? items[0]!;
-
   return (
     <section className="space-y-3 rounded-lg border bg-card p-4">
       <header className="flex flex-wrap items-center justify-between gap-2">
@@ -411,28 +408,33 @@ export function InterviewFeedbackQueue({
         <Badge variant="outline">Two minutes each</Badge>
       </header>
 
-      {items.length > 1 ? (
-        <div className="flex flex-wrap gap-2">
-          {items.map((i) => (
-            <button
-              key={i.interview_id}
-              type="button"
-              aria-pressed={i.interview_id === active.interview_id}
-              onClick={() => setOpenId(i.interview_id)}
-              className={cn(
-                "rounded-full border px-3 py-1 text-xs",
-                i.interview_id === active.interview_id
-                  ? "border-primary bg-primary/10"
-                  : "hover:bg-muted/60",
-              )}
-            >
-              {i.candidate_name}
-            </button>
-          ))}
-        </div>
-      ) : null}
-
-      <InterviewFeedbackForm orgId={orgId} item={active} readOnly={readOnly} />
+      <ul className="space-y-3">
+        {items.map((item) => (
+          <li
+            key={item.interview_id}
+            className="rounded-md border p-3"
+          >
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-medium">{item.candidate_name}</p>
+                <p className="text-xs text-muted-foreground">
+                  {item.position_title}
+                  {item.interview_type ? ` · ${item.interview_type}` : null}
+                  {" · "}Interviewed {whenLabel(item.happened_at)}
+                </p>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => onOpenFeedback(item)}
+                disabled={readOnly}
+                className="w-full sm:w-auto"
+              >
+                Submit feedback
+              </Button>
+            </div>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
