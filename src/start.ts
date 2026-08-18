@@ -43,7 +43,33 @@ const canonicalHostMiddleware = createMiddleware().server(async ({ next, request
   return next();
 });
 
+/**
+ * Clickjacking defence. /admin and /client carry one-click controls, so no
+ * origin may frame this app.
+ *
+ * The CSP here is deliberately narrow: `frame-ancestors 'none'` only. A full
+ * `default-src`/`script-src` policy is NOT shipped yet because the app loads
+ * third-party tag managers, pixels and Google Fonts at runtime (see
+ * src/lib/tracking/pixels.ts) and several of those inject further scripts of
+ * their own; shipping an unverified allow-list would silently break fonts,
+ * consent-gated tracking or Supabase calls. `frame-ancestors` cannot be set
+ * from a meta tag, needs no allow-list, and cannot break a same-origin load.
+ */
+const securityHeadersMiddleware = createMiddleware().server(async ({ next, request }) => {
+  const response = await next();
+  const res = response as unknown as { headers?: Headers };
+  if (!res.headers || typeof res.headers.set !== "function") return response;
+  // Lovable's own email/webhook routes are not browsed; leave them untouched.
+  if (new URL(request.url).pathname.startsWith("/lovable/")) return response;
+  if (!res.headers.has("content-security-policy")) {
+    res.headers.set("content-security-policy", "frame-ancestors 'none'");
+  }
+  res.headers.set("x-frame-options", "DENY");
+  res.headers.set("permissions-policy", "camera=(), microphone=(), geolocation=()");
+  return response;
+});
+
 export const startInstance = createStart(() => ({
   functionMiddleware: [attachSupabaseAuth],
-  requestMiddleware: [canonicalHostMiddleware, errorMiddleware],
+  requestMiddleware: [canonicalHostMiddleware, securityHeadersMiddleware, errorMiddleware],
 }));
