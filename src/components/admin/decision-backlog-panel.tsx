@@ -81,6 +81,7 @@ export function DecisionBacklogPanel({
   const nudgeFn = useServerFn(nudgeClientDecision);
   const logFn = useServerFn(logOfflineClientDecision);
   const [openFor, setOpenFor] = useState<string | null>(null);
+  const { confirm, confirmDialog } = useConfirmAction();
 
   const nudge = useMutation({
     mutationFn: (matchId: string) => nudgeFn({ data: { match_id: matchId } }),
@@ -90,6 +91,31 @@ export function DecisionBacklogPanel({
     },
     onError: (e) => toastError(e, { fallback: "Could not send the follow-up" }),
   });
+
+  /**
+   * Nudge leaves the building the moment it is clicked, so it asks first and
+   * shows the recipient plus the exact message. Cancel is the safe default.
+   */
+  async function confirmNudge(r: Row) {
+    const recipients =
+      r.notified.length > 0
+        ? r.notified.map((n) => n.name).join(", ")
+        : "everyone on the client team with decision notifications on";
+    const result = await confirm({
+      title: "Send a follow-up to the client",
+      object: `${recipients} · ${r.client_name}`,
+      description: `They are asked again to decide on ${r.candidate_name} for ${r.position_title}. This is a real notification, sent immediately.`,
+      impact: [
+        `Message title: “${NUDGE_COPY.title}”`,
+        `Message body: “${NUDGE_COPY.body ?? ""}”`,
+        "Links to the candidate in the client workspace",
+        "Only one follow-up per candidate every 48 hours",
+      ],
+      confirmLabel: "Send follow-up",
+    });
+    if (result.confirmed) nudge.mutate(r.match_id);
+  }
+
 
   const record = useMutation({
     mutationFn: (input: {
