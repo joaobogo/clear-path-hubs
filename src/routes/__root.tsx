@@ -33,12 +33,22 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just \"done\".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-On the client candidate profile, the STAGE ACTIONS \"Request interview\" button advances the stage and notifies the TaaSFlow team IMMEDIATELY with no confirmation (\"Recorded — the TaaSFlow team has been notified. We'll confirm the time and send calendar invites within 24h\"). The identical action reached from /client/interviews correctly opens the \"Propose interview times\" dialog with Cancel. In production this is calendar invites to a real candidate on one accidental click.
+The client-facing evidence displays are disconnected from the score they sit next to. Concrete evidence from today's audit, all in the Northwind demo workspace:
+- Beatriz Costa (88, \"Exceptional Match\", hired): header says \"Structured criteria check: 0 of 10 criteria evidenced as met\"; \"Requirement coverage\" says \"MUST-HAVE MET 0/6 · Overall coverage 6%\"; the \"Scoring criteria\" panel on the SAME page says \"Must-have coverage · weight 50% → 92%\". 
+- Pedro Matos (41, lowest) shows the identical \"0 of 10 evidenced\" — so an 88 and a 41 display the same evidence, and the 47-point gap is untraceable.
+- The requirement \"5+ years building production React and TypeScript applications\" is marked \"Not evidenced — No direct evidence found\" while the Career experience block on the same page reads \"Vela Insurance · Jun 2020 – Present — React + TypeScript, Node.js…\".
+- The /client/candidates \"MUST-HAVES\" column reads 0/6 for all ten candidates. The comparison grid is ~95% \"Unknown\" (20 of 21 cells). \"Why we shortlisted\" shows a THIRD total (\"2 of 10 evidenced\"). \"What lifts the score\" lists a strength that four lines later is marked as having no evidence, and lists the same must-have twice with conflicting evidence states. The role page shows rubric 60/30/10 while candidate pages show 50/30/20. The fit-spread chart's 0–49 band shows 0 while three candidates score 41–47, so bands total 7 of 10.
 
-1. Make the profile button open the exact same \"Propose interview times\" dialog used on /client/interviews — same component, not a copy. No notification, no stage change, no side effect of any kind until the dialog is confirmed.
-2. Fix the Undo on the resulting toast: it currently does nothing visible for ~40 seconds before reporting \"Decision undone.\" — it must show an immediate pending state (button disabled + \"Undoing…\") and the operation should not take 40 seconds; find out why it does and fix that too.
-3. Sweep the client workspace for any OTHER action that notifies staff or a candidate, or changes a stage, without a confirmation step — list every one you find and give each the same treatment. (The \"Not a fit\" dialog is the reference standard for good confirmation copy — do not touch it.)
-4. Verify as the Northwind demo client: profile \"Request interview\" opens the dialog; Cancel leaves stage and notifications untouched (confirm no notification row was created); confirming behaves exactly as it does from /client/interviews; Undo shows pending state immediately."`;
+Backend context you must respect: admin-side evidence and immutable score_runs were verified healthy in earlier gates (approved_score_run pointers match on all 10 demo matches). So the defect is almost certainly in the CLIENT READ MODELS/DTOs — they are counting evidence from a different source (or an empty join) than the approved score run that produced the number.
+
+PLAN FIRST: trace where each client display gets its data — header criteria check, Requirement coverage, Scoring criteria panel, must-haves column, comparison grid, \"Why we shortlisted\", fit-spread bands — and name the one canonical source (the approved score run's criteria + evidence for that match). Then implement:
+1. Every one of those displays reads from that single source. One requirement = one evidence state everywhere on the page and across pages.
+2. The evidence matcher must surface the evidence that exists: after the fix, Beatriz's React/TypeScript must-have shows its Vela Insurance evidence, and her must-have count is consistent with her 92%/88 — or, if the approved run genuinely holds no per-criterion evidence, the panels must say that honestly instead of asserting 0.
+3. Safety rule (permanent): if a match's approved score run carries zero evidenced criteria, do NOT render the numeric score and fit label as settled — show \"Assessment being finalised — evidence pending\" in their place. The score must never appear beside \"0 evidenced\".
+4. Reconcile the rubric weights: one rubric per role, same weights on the role page and every candidate page.
+5. Fix the fit-spread bands to include the 0–49 band and total the delivered count.
+6. Do NOT touch score computation, score_runs, or any immutable table — this is a read-model and matching fix.
+7. Verify on Beatriz (88), Carla (66), Pedro (41): all evidence totals on each page agree with each other and with the list column and comparison grid; the 88 vs 41 difference is now traceable to visible evidence; fit bands total 10."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
