@@ -23,9 +23,9 @@ export type CvDownloadLink = {
 type Entry = { value: CvDownloadLink; expiresAt: number };
 
 /** Stop reusing a link this long before it actually expires. */
-export const CACHE_SAFETY_MARGIN_MS = 45_000;
+export const CACHE_SAFETY_MARGIN_MS = 120_000;
 /** Fallback lifetime when the server does not report an expiry. */
-export const CACHE_FALLBACK_TTL_MS = 4 * 60_000;
+export const CACHE_FALLBACK_TTL_MS = 15 * 60_000;
 
 const cache = new Map<string, Entry>();
 const inflight = new Map<string, Promise<CvDownloadLink>>();

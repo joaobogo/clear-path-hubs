@@ -175,20 +175,12 @@ export function CvPreviewDialog({
                   <DownloadCvButton matchId={matchId} mode="download" />
                 </div>
               ) : (
-                <object
-                  data={url}
-                  type="application/pdf"
+                <iframe
+                  src={url}
                   title="Candidate CV"
                   className="h-full w-full"
                   onError={() => setRenderFailed(true)}
-                >
-                  <iframe
-                    src={url}
-                    title="Candidate CV"
-                    className="h-full w-full"
-                    onError={() => setRenderFailed(true)}
-                  />
-                </object>
+                />
               )
             ) : null}
           </div>
