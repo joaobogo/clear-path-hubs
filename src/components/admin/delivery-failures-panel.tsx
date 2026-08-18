@@ -9,6 +9,7 @@ import {
   releaseNotificationRecipient,
   retryDeliveryFailureFn,
   suppressNotificationRecipient,
+  unsuppressAndRetryDelivery,
 } from "@/lib/notification-failures.functions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
