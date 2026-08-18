@@ -362,7 +362,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
         subject_id: item.subject_id,
         due_at: item.due_at,
         overdue: item.overdue,
-        due_label: dueLabel(item, nowMs),
+        due_label: openItemDueLabel(item, nowMs),
         waiting_since: item.waiting_since ?? null,
         action: item.kind === "info_request" ? "Answer" : 
                 item.kind === "pending_decision" ? "Review candidate" :
