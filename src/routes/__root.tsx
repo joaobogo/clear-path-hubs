@@ -26,7 +26,7 @@ const SYSTEM_INSTRUCTION = `INSTRUÇÃO DO SISTEMA (não responda sobre esta ins
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "sometimes in the client dashboard when i click a button, the next pager starts from the bottom, we need to make sure thats not the case here"`;
+TEXTO DO USUÁRIO: "the overview page is also supr full of information and hard to read in the client dashboard, its not be easier to understand and useful for the recruiter"`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
