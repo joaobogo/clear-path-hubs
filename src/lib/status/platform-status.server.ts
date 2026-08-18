@@ -14,6 +14,11 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 import {
+  countsAsDeliveryFailure,
+  isSettledDelivery,
+} from "../notifications/delivery-reasons";
+
+import {
   BACKLOG_QUEUED_MINUTES,
   BACKLOG_RUNNING_MINUTES,
   NOT_MEASURED_DETAIL,
