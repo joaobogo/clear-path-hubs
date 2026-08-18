@@ -576,14 +576,14 @@ function CandidateDetailPage() {
             candidates: [
               {
                 match_id: id,
-                candidate_id: candidate.candidate_profile_id,
+                candidate_id: (candidate.candidate as AnyRow).id,
                 candidate_name: candidate.candidate.display_name,
-                candidate_email: null,
-                position_id: candidate.position?.id ?? "",
+                candidate_email: (candidate.candidate as AnyRow).email ?? null,
+                position_id: (candidate.position as AnyRow)?.id ?? "",
                 position_title: candidate.position?.title ?? "Position",
                 stage: candidate.stage,
                 has_active_interview: false,
-                availability_preference: candidate.candidate.availability ?? null,
+                availability_preference: (candidate.candidate as AnyRow).availability ?? null,
               },
             ],
           })}
