@@ -221,11 +221,16 @@ test("the client sees both published candidates, and only their own workspace", 
     await expect(page.getByText(otherOrgName, { exact: false })).toHaveCount(0);
   }
   // The detail view opens by exact id for the real client too.
-  await page.goto(`/client/candidates/${candidates[0]!.matchId}`, {
+  const first = candidates[0]!;
+  await page.goto(`/client/candidates/${first.matchId}`, {
     waitUntil: "domcontentloaded",
   });
   await settle(page);
   await expect(page.getByText("Candidate not found.")).toHaveCount(0);
+
+  // Published candidates now release full contact details automatically.
+  await expect(page.getByText(first.name).first()).toBeVisible();
+  await expect(page.getByText(first.email)).toBeVisible();
   expect(meaningfulConsoleErrors(errors)).toEqual([]);
 });
 
