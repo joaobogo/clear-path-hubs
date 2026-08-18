@@ -31,6 +31,8 @@ export const OPEN_ITEM_LABEL: Record<OpenItemKind, string> = {
   info_request: "Information requests",
   pending_decision: "Decisions waiting",
   missing_feedback: "Feedback missing",
+  offer: "Offer responses",
+  interview: "Interview times",
 };
 
 export function isOverdue(due_at: string | null, now = Date.now()): boolean {
