@@ -14,6 +14,7 @@ export type SubmitApplicationResult =
   | {
       ok: true;
       application_id: string;
+      match_id?: string;
       reference: string; // short human-friendly ref
       tracking_path: string; // route to send the candidate to
       deduped: boolean;
