@@ -244,6 +244,7 @@ function ClientsPage() {
 
   return (
     <div className="space-y-6">
+      <div data-qa-debug={`q=${search.q}|term=${term}|filtered=${filtered.length}`} />
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Clients</h1>
