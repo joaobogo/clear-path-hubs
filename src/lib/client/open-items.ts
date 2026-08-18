@@ -86,6 +86,8 @@ export function countByKind(items: OpenItem[]): Record<OpenItemKind, number> {
     info_request: 0,
     pending_decision: 0,
     missing_feedback: 0,
+    offer: 0,
+    interview: 0,
   };
   for (const i of items) out[i.kind] += 1;
   return out;
