@@ -210,7 +210,14 @@ export function MobileActionBar({
           disabled={pending}
           onClick={() => onAct(actions.primary!.key)}
         >
-          {actions.primary.label}
+          {pendingKey === actions.primary.key ? (
+            <>
+              <Loader2 className="mr-1.5 h-4 w-4 animate-spin" aria-hidden="true" />
+              Saving…
+            </>
+          ) : (
+            actions.primary.label
+          )}
         </Button>
         {decline && (
           <Button
