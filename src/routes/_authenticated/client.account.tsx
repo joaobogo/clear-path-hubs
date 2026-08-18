@@ -33,7 +33,12 @@ import { parseSeatUpgradeSearch, type SeatUpgradeSearch } from "@/lib/seat-upgra
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Briefcase, CalendarClock, CheckCircle2, Info, Users } from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Briefcase, CalendarClock, CheckCircle2, ChevronDown, Info, Users } from "lucide-react";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
