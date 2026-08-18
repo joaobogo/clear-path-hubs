@@ -349,6 +349,10 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       requirements: reqs,
       preferred_requirements: toReqStrings(pos.preferred_requirements),
       compensation_display: comp.display,
+      compensation_public: resolvePublicSalary(
+        pos.compensation,
+        p.compensation_visibility as string | null,
+      ),
       facts,
       apply_effort: applyEffort,
       onsite_days,
