@@ -32,14 +32,20 @@ TEXTO DO USUÁRIO: "STANDING RULES — UX PASS VARIANT:
 - Do not touch any server function, mutation, or data contract unless this message names it. Buttons keep calling exactly what they call today.
 - Verify the page at 1440px and 375px in the live preview as the Northwind demo client, re-run the page's existing spec(s), and report the click-path result.
 
-Create docs/design/client-decision-first.md — a short standard (one page) the next prompts will follow. No code changes in this message.
+Restructure the client candidate detail page (the canonical candidate detail surface — see docs/audit/prompt-38-canonical-candidate-detail.md for the canonical component) to be decision-first per docs/design/client-decision-first.md. A recruiter opening this page must know within five seconds whether this candidate is worth their time and why.
 
-Define:
-1. The rule: each client page has ONE primary question; the first viewport answers it; depth lives in tabs/accordions/drawers below.
-2. The \"decision header\" pattern for entities: identity line → verdict (score + fit band) → 3 evidence-backed reasons for / up to 2 to validate → contact block → primary actions. Max element counts per zone so pages can't re-bloat.
-3. The card pattern for lists/Kanban: name, score band, one-line headline, stage, one primary action — everything else on open.
-4. Density rules: what belongs above the fold at 1440 and at 375, target of no more than ~7 interactive elements in the first viewport excluding nav.
-5. Copy rule: evidence-backed statements only — every \"why they're good\" line must trace to a real evidence item; no generated filler."`;
+FIRST VIEWPORT (no scrolling at 1440; one thumb-scroll max at 375), in this order:
+1. Identity line: full name · current title · years of experience · location.
+2. Verdict: the approved score, big, with its fit band label — the single most prominent element after the name.
+3. Why: the top 3 strengths, each one line, each traceable to a real evidence item (reuse the existing evidence data — do not generate new text). Below them, up to 2 "worth validating" flags from the same evidence set.
+4. Contact block (from Batch 6): email, phone, location, LinkedIn, Preview CV, Download CV.
+5. Decision bar: the existing Shortlist / Request interview / Pass actions, unchanged in behavior — keep src/components/client/decision-bar.tsx calling exactly the same server functions with the same confirmation and idempotency guards.
+
+BELOW, as tabs (keep every existing section, just relocated): Full evidence & score breakdown · Screening answers · CV (full inline) · Activity/history · Notes & feedback. Default tab: Full evidence.
+
+Rules: delete nothing, demote instead, and list what you demoted; no new data fetches beyond what the page already loads (reorder, don't re-query); loading skeleton mirrors the new layout so nothing jumps.
+
+Verify: open 3 Northwind candidates (a strong fit, a mid, a weak) — the verdict and reasons read correctly for each with no scrolling at 1440; all three decision actions still write to the backend (confirm one Shortlist round-trip); the client-candidates-kanban and any candidate-detail specs still pass; 375px shows identity + verdict + first action within one screen."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
