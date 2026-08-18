@@ -30,12 +30,16 @@ type Item = {
   ledger: "notification" | "lead";
   id: string;
   eventType: string;
+  eventLabel: string;
   title: string | null;
   audience: string | null;
   channel: string;
   recipient: string | null;
   reason: string;
   reasonDetail: string | null;
+  reasonLabel: string;
+  reasonSentence: string;
+  canUnsuppress: boolean;
   attempts: number;
   firstAttemptAt: string;
   lastAttemptAt: string;
