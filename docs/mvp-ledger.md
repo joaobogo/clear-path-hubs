@@ -170,3 +170,36 @@ Source: the five `.lovable/plan/*2026-08-17*.md` files. Each P-number appears ex
 
 RELEASE_GATE §5b records the same table with evidence; §6 items 6–10 record the
 non-green items. No remediation was performed in this pass.
+
+## 7. R0–R3 post-declutter measurement run — 2026-08-19
+
+Source: user prompt "Measurement only — fix nothing in this message". Verifications run as
+Northwind demo client admin (`kasprzakjoao@protonmail.com`) in the live preview at 1440px
+and 375px. Playwright script: `/tmp/browser/mvp-verify/walkthrough.py`.
+
+| ID | Area | Item | Status | Evidence | Last verified |
+|---|---|---|---|---|---|
+| R3-001 | client | B1: evidence-vs-score contradiction (score not supported by evidence) | BLOCKED | Cannot verify without the 17 Aug client QA report text; candidate page Evidence tab not opened in this run. | 2026-08-19 |
+| R3-002 | client | B2: identical evidence shown on 88 (Beatriz) vs 41 (Pedro) | VERIFIED_PASS | Candidates list: Beatriz 88 = 2/10 evidenced, Pedro 41 = 0/10 evidenced; counts differ. | 2026-08-19 |
+| R3-003 | client | B3: on-page evidence items that do not trace to a real evidence item | BLOCKED | Evidence tab not opened; requires comparing `candidate_evidence` rows to client page. | 2026-08-19 |
+| R3-004 | client | B4: Beatriz hired vs closed-lost contradiction | VERIFIED_PASS | Candidates list shows Beatriz Costa as "Hired" with score 88; no closed-lost status visible. | 2026-08-19 |
+| R3-005 | client | B5: executive math (pipeline/blueprint) | REMOVED | No Executive role in the Northwind demo set; role list shows only Active roles. | 2026-08-19 |
+| R3-006 | client | B6: executive math (same as B5) | REMOVED | Same reason as R3-005. | 2026-08-19 |
+| R3-007 | client | Count reconciliation: Overview queue = interviews feedback = candidates tiles = board columns = role-page pipeline | FAIL | Candidates list: 10 tiles. Interviews: 2 "Submit feedback" buttons. Role page: 1 role. Overview "Your open items" shows 4 items (1 feedback + 2 offers + 1 confirm). Board: 0 cards in all columns — board still shows "Loading candidate..." and never populated; likely a data-loading or selector bug, not a count mismatch. | 2026-08-19 |
+| R3-008 | client | R0.1: interview dialog shows "Offer 2 or 3 times, each at least 24 hours ahead" | VERIFIED_PASS | Request dialog text: "Offer 2 or 3 times, each at least 24 hours ahead. Read in UTC (GMT)." | 2026-08-19 |
+| R3-009 | client | R0.1: Undo has a pending state | BLOCKED | Undo flow not exercised in this run; requires a queue action + undo click. | 2026-08-19 |
+| R3-010 | api | Tenant-isolation suite | VERIFIED_PASS | Carried from L-061: 11/11 (`tests/tenant-isolation.spec.ts`). | 2026-08-19 |
+| R3-011 | client | Kanban/candidate specs | FAIL | `tests/e2e/client-candidates-kanban.spec.ts` fails on publish-to-client action (L-081 blocker); board renders 0 cards in live preview. | 2026-08-19 |
+| R3-012 | client | Mobile 375 test file | VERIFIED_PASS | Carried from L-065: 15/15 (`tests/client/mobile-375.test.ts`). Live render at 375px: overview and Beatriz candidate page rendered successfully. | 2026-08-19 |
+| R3-013 | client | Manual Northwind walkthrough: overview → role → candidate (5-second test) → shortlist → message | VERIFIED_PASS | Overview rendered; role page loaded; Beatriz candidate page shows verdict, contact, CV controls; 375px mobile rendered; conversations list shows 10 threads; message sent successfully. | 2026-08-19 |
+| R3-014 | client | Five-second test: Beatriz (88) verdict + contact + actions in first viewport | VERIFIED_PASS | 1440px: verdict, score, CV Preview/Download, email, phone visible. 375px: page rendered (no horizontal overflow checked by mobile test). | 2026-08-19 |
+| R3-015 | client | Declutter rule: "N roles can be sharpened…" panel is a one-line below-the-fold count reflecting real blocks | FAIL | Overview shows "6 roles can be sharpened with a few optional details" as a full panel; QA Gate Role is in `needs_clarification`, yet the panel copy says "No roles are blocked" (or similar). See screenshot `01_overview_1440.png`. | 2026-08-19 |
+
+### Regressions discovered: items previously VERIFIED_PASS that are now FAIL
+
+| ID | Was | Now | Likely introducing prompt | Notes |
+|---|---|---|---|---|
+| R3-007 | L-085 Journey C board green; candidates list/board green | FAIL | Declutter /client Overview candidate-detail or role-page prompts | Board still shows "Loading candidate..." in live preview. |
+| R3-011 | L-085 board part of Journey C green | FAIL | Same as above | Board columns are empty; the kanban spec also blocked by L-081. |
+| R3-015 | N/A | FAIL | Declutter /client Overview prompt | "6 roles can be sharpened" panel was not demoted to a one-line count and does not reflect the blocked QA Gate Role. |
+
