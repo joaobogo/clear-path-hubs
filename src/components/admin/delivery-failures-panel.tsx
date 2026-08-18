@@ -112,6 +112,36 @@ export function DeliveryFailuresPanel() {
     onError: (e: unknown) => toastError(e, { fallback: "Could not lift" }),
   });
 
+  // One backend path (unsuppressAndRetryDelivery) clears the blocks and
+  // re-attempts the same delivery. Every message below reflects what the
+  // backend actually reported — a provider-level bounce block stays blocked.
+  const unsuppressMut = useMutation({
+    mutationFn: (item: Item) =>
+      unsuppress({
+        data: {
+          email: item.recipient!.split(",")[0]!.trim(),
+          ledger: item.ledger,
+          id: item.id,
+        },
+      }),
+    onSuccess: (res) => {
+      if (!res.unsuppress.lifted && res.unsuppress.providerBlocked) {
+        toast.error(
+          res.unsuppress.detail ??
+            "The email provider still blocks this address, so nothing was re-sent.",
+        );
+      } else if (res.retry.attempted && res.retry.ok) {
+        toast.success("Block lifted and the notification was re-sent.");
+      } else if (res.retry.attempted) {
+        toast.error(res.retry.detail ?? "Block lifted, but the re-send failed again.");
+      } else {
+        toast.success("Block lifted.");
+      }
+      void invalidate();
+    },
+    onError: (e: unknown) => toastError(e, { fallback: "Could not lift the block" }),
+  });
+
   const items = (query.data?.items ?? []) as Item[];
   const suppressions = query.data?.suppressions ?? [];
   const windowDays = query.data?.windowDays ?? 7;
