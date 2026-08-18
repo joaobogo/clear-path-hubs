@@ -101,20 +101,25 @@ export function CandidateHeader({
               {candidate.position.title}
             </Link>
           )}
+          {(c.current_role || c.current_company) && (
+            <span>
+              {[c.current_role, c.current_company].filter(Boolean).join(" @ ")}
+            </span>
+          )}
+          {c.years_experience != null && (
+            <span>{c.years_experience}+ yrs experience</span>
+          )}
           {c.location && (
             <span className="inline-flex items-center gap-1">
               <MapPin className="h-3.5 w-3.5" aria-hidden />
               {c.location}
             </span>
           )}
-          {c.availability && (
+          {(c.timezone || c.availability) && (
             <span className="inline-flex items-center gap-1">
               <CalendarClock className="h-3.5 w-3.5" aria-hidden />
-              {c.availability}
+              {[c.timezone, c.availability].filter(Boolean).join(" · ")}
             </span>
-          )}
-          {c.years_experience != null && (
-            <span>{c.years_experience}+ yrs experience</span>
           )}
         </div>
         {candidate.last_updated && (
@@ -124,39 +129,6 @@ export function CandidateHeader({
         )}
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        {c.links.linkedin && (
-          <Button asChild variant="outline" size="sm">
-            <a
-              href={c.links.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Open LinkedIn profile for ${c.display_name} (opens in new tab)`}
-            >
-              <Linkedin className="mr-1.5 h-4 w-4" aria-hidden />
-              LinkedIn
-              <ExternalLink className="ml-1 h-3 w-3" aria-hidden />
-            </a>
-          </Button>
-        )}
-        {/* The raw CV carries email and phone: offered only once contact is
-            released. The server enforces the same rule independently. */}
-        {candidate.contact_released ? (
-          <>
-            <CvPreviewDialog
-              matchId={candidate.match_id}
-              candidateName={c.display_name}
-            />
-            <DownloadCvButton matchId={candidate.match_id} mode="download" />
-          </>
-        ) : (
-          <span className="inline-flex items-center gap-1.5 rounded-md border border-dashed px-2.5 py-1.5 text-xs text-muted-foreground">
-            <LockIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            Contact details and CV are released as soon as a candidate is published.
-          </span>
-        )}
-
-
-
         {readOnly && (
           <Badge variant="secondary" className="hidden sm:inline-flex">
             Preview
@@ -167,6 +139,66 @@ export function CandidateHeader({
     </header>
   );
 }
+
+/**
+ * The one contact surface on this page: identity contact details plus exactly
+ * one CV preview and one CV download control.
+ */
+export function ContactBlock({ candidate }: { candidate: ClientCandidateDTO }) {
+  const c = candidate.candidate;
+  const rows: Array<{ label: string; value: React.ReactNode }> = [
+    { label: "Email", value: c.email ? <a className="text-primary hover:underline" href={`mailto:${c.email}`}>{c.email}</a> : null },
+    { label: "Phone", value: c.phone ? <a className="text-primary hover:underline" href={`tel:${c.phone}`}>{c.phone}</a> : null },
+    {
+      label: "LinkedIn",
+      value: c.links.linkedin ? (
+        <a
+          href={c.links.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary hover:underline"
+          aria-label={`Open LinkedIn profile for ${c.display_name} (opens in new tab)`}
+        >
+          <Linkedin className="mr-1 inline h-3.5 w-3.5" aria-hidden />
+          View profile
+          <ExternalLink className="ml-1 inline h-3 w-3" aria-hidden />
+        </a>
+      ) : null,
+    },
+    { label: "Location", value: c.location ?? null },
+  ];
+  return (
+    <section aria-labelledby="contact-heading" className="rounded-xl border bg-card p-4">
+      <h2 id="contact-heading" className="text-sm font-semibold">
+        Contact
+      </h2>
+      <dl className="mt-2 grid gap-x-6 gap-y-1.5 text-sm sm:grid-cols-2">
+        {rows.map((r) => (
+          <div key={r.label} className="grid grid-cols-[5.5rem_1fr] gap-2">
+            <dt className="text-xs text-muted-foreground">{r.label}</dt>
+            <dd className="min-w-0 truncate">
+              {r.value || <span className="text-muted-foreground">Not provided</span>}
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        {candidate.contact_released ? (
+          <>
+            <CvPreviewDialog matchId={candidate.match_id} candidateName={c.display_name} />
+            <DownloadCvButton matchId={candidate.match_id} mode="download" />
+          </>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 rounded-md border border-dashed px-2.5 py-1.5 text-xs text-muted-foreground">
+            <LockIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            Contact details and CV are released as soon as a candidate is published.
+          </span>
+        )}
+      </div>
+    </section>
+  );
+}
+
 
 export function SectionCard({
   title,
