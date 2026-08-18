@@ -29,6 +29,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { ChevronDown } from "lucide-react";
+import {
   savePositionEdit,
   type PositionEditInitial,
   type ScreeningInput,
@@ -839,23 +845,39 @@ export function PositionEditWizard({
                 placeholder="e.g. no restaurant-scale experience"
               />
 
-              <div>
-                <Label className="mb-2 block text-sm">Immediate disqualification criteria</Label>
-                <p className="mb-3 text-xs text-muted-foreground">
-                  Select conditions that automatically disqualify a candidate.
-                </p>
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  {DISQUALIFIER_OPTIONS.map((opt) => (
-                    <label key={opt} className="flex items-center gap-2 text-sm">
-                      <Checkbox
-                        checked={state.disqualifier_tags.includes(opt)}
-                        onCheckedChange={() => toggleIn("disqualifier_tags", opt)}
-                      />
-                      <span>{opt}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
+              {/* Auto-rejection is opt-in: nobody is filtered out by a rule the
+                  client did not deliberately open and choose. */}
+              <Collapsible className="rounded-xl border bg-card/50">
+                <CollapsibleTrigger asChild>
+                  <button
+                    type="button"
+                    className="group flex w-full items-center justify-between gap-3 px-4 py-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    <span className="text-sm font-medium">Add automatic disqualifiers</span>
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                      Optional
+                      <ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
+                    </span>
+                  </button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="border-t px-4 pb-4 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <p className="mb-3 mt-3 text-xs text-muted-foreground">
+                    Anything you tick here rejects candidates automatically — that
+                    decision, and its consequences, stay yours.
+                  </p>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    {DISQUALIFIER_OPTIONS.map((opt) => (
+                      <label key={opt} className="flex items-center gap-2 text-sm">
+                        <Checkbox
+                          checked={state.disqualifier_tags.includes(opt)}
+                          onCheckedChange={() => toggleIn("disqualifier_tags", opt)}
+                        />
+                        <span>{opt}</span>
+                      </label>
+                    ))}
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
 
               <Field label="Interview Process" hint="Number of rounds, format, panel.">
                 <Textarea

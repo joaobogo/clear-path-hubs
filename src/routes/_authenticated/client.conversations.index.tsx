@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { getClientContext } from "@/lib/client-context.functions";
-import { listConversations, listMessageHistory } from "@/lib/conversations.functions";
+import { listConversations } from "@/lib/conversations.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -48,6 +48,7 @@ export const Route = createFileRoute("/_authenticated/client/conversations/")({
 
 const FILTERS = [
   { key: "all", label: "All" },
+  { key: "unread", label: "Unread" },
   { key: "position", label: "Roles" },
   { key: "candidate", label: "Candidates" },
   { key: "organization", label: "Account" },
@@ -56,12 +57,13 @@ const FILTERS = [
 function ConversationsPage() {
   const orgSearch = useClientOrgSearch();
   const search = Route.useSearch();
-  const box = search.box === "unread" ? "unread" : "all";
-  const view = search.view === "history" ? "history" : "threads";
+  // One list. "Inbox" is now the Unread chip; the flat all-messages log was
+  // removed from the client experience — every message still lives in its thread.
+  const box = search.box === "unread" || search.filter === "unread" ? "unread" : "all";
   const ctxFn = useServerFn(getClientContext);
   const listFn = useServerFn(listConversations);
-  const historyFn = useServerFn(listMessageHistory);
-  const filter = search.filter || "all";
+  const rawFilter = search.filter || (box === "unread" ? "unread" : "all");
+  const filter = rawFilter === "unread" ? "all" : rawFilter;
   const [q, setQ] = useState("");
 
   const ctxQuery = useQuery({
@@ -85,25 +87,11 @@ function ConversationsPage() {
     placeholderData: (prev) => prev,
   });
 
-  const {
-    data: historyData,
-    isLoading: isLoadingHistory,
-    isError: isErrorHistory,
-    isFetching: isFetchingHistory,
-    error: errorHistory,
-    refetch: refetchHistory,
-  } = useQuery({
-    queryKey: ["conversation-history", orgId],
-    queryFn: () => historyFn({ data: { orgId: orgId!, page: 1, pageSize: 50 } }),
-    enabled: !!orgId && view === "history",
-    placeholderData: (prev) => prev,
-  });
-
-  const isLoading = view === "history" ? isLoadingHistory : isLoadingThreads;
-  const isError = view === "history" ? isErrorHistory : isErrorThreads;
-  const isFetching = view === "history" ? isFetchingHistory : isFetchingThreads;
-  const error = view === "history" ? errorHistory : errorThreads;
-  const refetch = view === "history" ? refetchHistory : refetchThreads;
+  const isLoading = isLoadingThreads;
+  const isError = isErrorThreads;
+  const isFetching = isFetchingThreads;
+  const error = errorThreads;
+  const refetch = refetchThreads;
 
   const signals = useEmptyStateSignals(orgId, {
     enabled: !isLoading && (threadData?.items?.length ?? 0) === 0,
@@ -112,17 +100,6 @@ function ConversationsPage() {
   const items = useMemo(() => {
     const needle = q.trim().toLowerCase();
     const allItems = threadData?.items ?? [];
-
-    if (view === "history") {
-      const allHistoryItems = (historyData as any)?.items ?? [];
-      if (!needle) return allHistoryItems;
-      return allHistoryItems.filter(
-        (m: any) =>
-          m.body.toLowerCase().includes(needle) ||
-          m.sender_name.toLowerCase().includes(needle) ||
-          m.subject.toLowerCase().includes(needle),
-      );
-    }
 
     return allItems.filter((c) => {
       if (box === "unread" && c.unread <= 0) return false;
@@ -134,7 +111,7 @@ function ConversationsPage() {
         (c.last_body ?? "").toLowerCase().includes(needle)
       );
     });
-  }, [threadData, historyData, box, filter, q, view]);
+  }, [threadData, box, filter, q]);
 
   const unreadCount = (threadData?.items ?? []).filter((c) => c.unread > 0).length;
 
@@ -144,29 +121,25 @@ function ConversationsPage() {
       <header>
         <h1 className="flex items-center gap-2 text-2xl font-semibold">
           <MessageSquare className="h-6 w-6 text-primary" />
-          {box === "unread" ? "Inbox" : view === "history" ? "Message History" : "Threads"}
+          Messages
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {box === "unread"
-            ? `Threads with something new for you${unreadCount ? ` — ${unreadCount} unread` : ""}.`
-            : view === "history"
-              ? "A complete chronological log of all communications across your workspace."
-              : "One thread per role and per candidate. Everything is mirrored to email."}
+          One thread per role and per candidate. Everything is mirrored to email.
+          {unreadCount ? ` ${unreadCount} unread.` : ""}
         </p>
       </header>
 
 
-      {view !== "history" && (
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
           <div className="flex rounded-md border p-0.5">
             {FILTERS.map((f) => (
               <Link
                 key={f.key}
                 to="/client/conversations"
-                search={(prev: any) => ({ ...prev, filter: f.key })}
+                search={(prev: any) => ({ ...prev, filter: f.key, box: undefined })}
                 className={cn(
                   "rounded px-3 py-1.5 text-sm transition-colors",
-                  filter === f.key
+                  rawFilter === f.key
                     ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground hover:text-foreground",
                 )}
@@ -184,8 +157,7 @@ function ConversationsPage() {
               className="pl-9"
             />
           </div>
-        </div>
-      )}
+      </div>
 
       {ctxQuery.isError ? (
         <QueryErrorCard
@@ -201,7 +173,7 @@ function ConversationsPage() {
           onRetry={() => refetch()}
           retrying={isFetching}
         />
-      ) : isLoading && !(view === "history" ? historyData : threadData) ? (
+      ) : isLoading && !threadData ? (
         <SkeletonRows rows={5} />
       ) : items.length === 0 && box === "unread" && (threadData?.items?.length ?? 0) > 0 ? (
         // Threads exist, just nothing unread — say so instead of the
@@ -209,7 +181,7 @@ function ConversationsPage() {
         <div className="rounded-lg border bg-card p-8 text-center">
           <p className="text-sm font-medium">You're all caught up</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Nothing unread. Switch to Threads to see every conversation.
+            Nothing unread. Switch to All to see every conversation.
           </p>
           <Link
             to="/client/conversations"
@@ -231,7 +203,7 @@ function ConversationsPage() {
       ) : (
         <ul className="divide-y rounded-lg border bg-card">
           {items.map((c: any) => {
-            const isHistory = view === "history";
+            const isHistory = false;
             const Icon = isHistory
               ? UserCircle
               : c.scope === "position"

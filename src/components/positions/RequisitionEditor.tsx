@@ -14,6 +14,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { ChevronDown } from "lucide-react";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -349,19 +355,6 @@ export function RequisitionEditor({
       <Card>
         <CardHeader><CardTitle className="text-base">Logistics, reference & ownership</CardTitle></CardHeader>
         <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label className="text-xs">Internal reference ID</Label>
-            <Input
-              value={form.reference_code}
-              placeholder="Generated automatically"
-              readOnly
-              disabled
-              aria-readonly="true"
-            />
-            <p className="text-xs text-muted-foreground">
-              Generated for you, unique per client. Nothing to fill in.
-            </p>
-          </div>
           {audience === "admin" && (
             <div className="space-y-1.5">
               <Label className="text-xs">Responsible admin</Label>
@@ -481,9 +474,24 @@ export function RequisitionEditor({
         </CardContent>
       </Card>
 
-      {/* ---------------- Evaluation priorities ---------------- */}
+      {/* ---------------- Evaluation priorities (advanced) ----------------
+          Defaults are already applied, so a recruiter can pass this screen
+          without learning the weighting model. Opened on demand only. */}
       <Card>
-        <CardHeader><CardTitle className="text-base">Evaluation priorities</CardTitle></CardHeader>
+        <Collapsible>
+          <CollapsibleTrigger asChild>
+            <button
+              type="button"
+              className="group flex w-full items-center justify-between gap-3 px-6 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <span className="text-base font-semibold">Advanced scoring weights</span>
+              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                Defaults applied — open only to change them
+                <ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
+              </span>
+            </button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
         <CardContent className="space-y-4">
           <p className="text-xs text-muted-foreground">
             Adjust what matters most for this role. Each dimension stays between {WEIGHT_MIN}% and {WEIGHT_MAX}% so
@@ -533,6 +541,8 @@ export function RequisitionEditor({
             </div>
           </div>
         </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
       </Card>
 
       {/* ---------------- Version history ---------------- */}
