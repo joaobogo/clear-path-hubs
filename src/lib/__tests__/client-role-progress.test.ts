@@ -26,15 +26,41 @@ describe("computeRoleProgress", () => {
     expect(p.steps[3].enteredAt).toBeNull();
   });
 
-  it("never lets an earlier stage start after a later one", () => {
+  it("shows missing earlier stage dates as unknown rather than borrowing a later one", () => {
     const p = computeRoleProgress({
       status: "active",
       briefedAt: null,
       offerStartedAt: "2026-02-10T00:00:00Z",
     });
     expect(p.currentLabel).toBe("Offer");
-    expect(p.steps[0].enteredAt).toBe("2026-02-10T00:00:00Z");
+    expect(p.steps[0].enteredAt).toBeNull();
+    expect(p.lastUpdateAt).toBe("2026-02-10T00:00:00Z");
   });
+
+  it("flags an out-of-order date and withholds its derived duration", () => {
+    const p = computeRoleProgress({
+      status: "active",
+      briefedAt: "2026-02-12T00:00:00Z",
+      sourcingStartedAt: "2026-02-08T00:00:00Z",
+    });
+    expect(p.anomalies).toContain("sourcing");
+    expect(p.steps[1].dateAnomaly).toBe(true);
+    expect(p.steps[1].daysInStage).toBeNull();
+    // The recorded date is still shown — surfaced, not silently corrected.
+    expect(p.steps[1].enteredAt).toBe("2026-02-08T00:00:00Z");
+  });
+
+  it("gives each stage exactly one state", () => {
+    const p = computeRoleProgress({
+      status: "active",
+      briefedAt: "2026-02-01T00:00:00Z",
+      sourcingStartedAt: "2026-02-03T00:00:00Z",
+    });
+    expect(p.steps.filter((s) => s.state === "current")).toHaveLength(1);
+    expect(p.steps[0].state).toBe("done");
+    expect(p.steps[1].state).toBe("current");
+  });
+
 
   it("freezes paused and closed roles", () => {
     expect(

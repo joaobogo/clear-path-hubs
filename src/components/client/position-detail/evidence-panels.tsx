@@ -33,7 +33,9 @@ export function EvidencePanels({
         confirming={confirmingBlueprint}
       />
 
-      <RoleBlueprint position={position} activity={activity} />
+      {/* Collapsed by default: the full brief is reference, not a first read. */}
+      <RoleBlueprint position={position} activity={activity} defaultOpen={false} />
+
     </>
   );
 }

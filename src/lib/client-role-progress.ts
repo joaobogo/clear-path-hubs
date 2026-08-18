@@ -56,6 +56,12 @@ export type RoleProgressStep = {
   enteredAt: string | null;
   /** Whole days spent in this stage (completed stages) or so far (current). */
   daysInStage: number | null;
+  /**
+   * True when the recorded date is earlier than the stage that produced it.
+   * The date is still shown, but never a derived "N days" relation from it —
+   * a contradiction is surfaced, not silently smoothed over.
+   */
+  dateAnomaly: boolean;
 };
 
 export type RoleProgress = {
@@ -70,7 +76,12 @@ export type RoleProgress = {
   daysInCurrentStage: number | null;
   /** Short caption, e.g. "Screening since 12 Mar · 5 days". */
   caption: string;
+  /** Latest date any stage recorded — the role's real last movement. */
+  lastUpdateAt: string | null;
+  /** Stages whose recorded date contradicts the stage order. */
+  anomalies: RoleProgressStage[];
 };
+
 
 const DAY_MS = 86_400_000;
 
@@ -88,10 +99,6 @@ function wholeDays(from: string | null, to: string | null): number | null {
   return Math.max(0, Math.round((b - a) / DAY_MS));
 }
 
-function earliest(...values: Array<string | null | undefined>): string | null {
-  const list = values.filter((v): v is string => Boolean(v)).sort();
-  return list[0] ?? null;
-}
 
 const MONTHS = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -115,23 +122,18 @@ export function computeRoleProgress(
   const inactive = ["paused", "closed", "archived"].includes(status);
   const isDraft = status === "draft";
 
-  // Each stage inherits the earliest date of any later stage it must precede,
-  // so the tracker never shows a later stage starting before an earlier one.
-  const offerAt = input.offerStartedAt ?? null;
-  const shortlistAt = earliest(input.shortlistStartedAt, offerAt);
-  const screeningAt = earliest(input.screeningStartedAt, shortlistAt);
-  const sourcingAt = earliest(input.sourcingStartedAt, screeningAt);
-  const briefedAt = earliest(input.briefedAt, sourcingAt);
-
+  // Dates are taken exactly as recorded. Nothing is back-filled from a later
+  // stage: an out-of-order date is a data fault to surface, not to smooth over.
   const dates: Record<RoleProgressStage, string | null> = {
-    briefed: briefedAt,
-    sourcing: isDraft ? null : sourcingAt,
-    screening: screeningAt,
-    shortlist: shortlistAt,
-    offer: offerAt,
+    briefed: input.briefedAt ?? null,
+    sourcing: isDraft ? null : (input.sourcingStartedAt ?? null),
+    screening: input.screeningStartedAt ?? null,
+    shortlist: input.shortlistStartedAt ?? null,
+    offer: input.offerStartedAt ?? null,
   };
 
   // Current stage = furthest stage with a real date (draft roles stay on Briefed).
+  // This derives from pipeline/blueprint dates only — never from lifecycle status.
   let currentIndex = 0;
   if (!isDraft) {
     for (let i = ROLE_PROGRESS_STAGES.length - 1; i >= 0; i -= 1) {
@@ -142,26 +144,43 @@ export function computeRoleProgress(
     }
   }
 
+  const anomalies: RoleProgressStage[] = [];
   const steps: RoleProgressStep[] = ROLE_PROGRESS_STAGES.map((key, i) => {
     const enteredAt = i <= currentIndex ? dates[key] : null;
+    // The latest date recorded by any earlier stage. A stage entered before
+    // that is impossible, so its derived durations are withheld.
+    const priorKnown = ROLE_PROGRESS_STAGES.slice(0, i)
+      .map((k) => dates[k])
+      .filter((v): v is string => Boolean(v))
+      .sort()
+      .pop() ?? null;
+    const anomaly =
+      !!enteredAt && !!priorKnown && dayStart(enteredAt) < dayStart(priorKnown);
+    if (anomaly) anomalies.push(key);
     const nextEntered = i < currentIndex ? dates[ROLE_PROGRESS_STAGES[i + 1]] : null;
     const until = i === currentIndex ? now.toISOString() : nextEntered;
+    // Exactly one badge per row: done | current | upcoming, decided by index.
+    const state: "done" | "current" | "upcoming" =
+      i < currentIndex ? "done" : i === currentIndex ? "current" : "upcoming";
     return {
       key,
       label: ROLE_PROGRESS_LABELS[key],
       hint: ROLE_PROGRESS_HINTS[key],
-      state: (i < currentIndex ? "done" : i === currentIndex ? "current" : "upcoming") as
-        | "done"
-        | "current"
-        | "upcoming",
+      state,
       enteredAt,
-      daysInStage: wholeDays(enteredAt, until),
+      daysInStage: anomaly ? null : wholeDays(enteredAt, until),
+      dateAnomaly: anomaly,
     };
   });
 
   const currentLabel = ROLE_PROGRESS_LABELS[ROLE_PROGRESS_STAGES[currentIndex]];
   const currentEnteredAt = dates[ROLE_PROGRESS_STAGES[currentIndex]];
   const since = formatStageDate(currentEnteredAt, now);
+  const lastUpdateAt =
+    ROLE_PROGRESS_STAGES.map((k) => dates[k])
+      .filter((v): v is string => Boolean(v))
+      .sort()
+      .pop() ?? null;
 
   let caption: string;
   if (status === "paused") caption = `Paused at ${currentLabel.toLowerCase()}`;
@@ -184,5 +203,8 @@ export function computeRoleProgress(
     daysInCurrentStage,
     inactive,
     caption,
+    lastUpdateAt,
+    anomalies,
   };
+
 }
