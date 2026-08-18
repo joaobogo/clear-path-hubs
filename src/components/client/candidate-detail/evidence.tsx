@@ -156,7 +156,7 @@ export const EvaluationProvenance = memo(function EvaluationProvenance({
                     {c.label}
                     {c.weight != null && (
                       <span className="ml-2 text-muted-foreground">
-                        · weight {Math.round(c.weight * 100)}%
+                        · weighting {Math.round(c.weight * 100)}%
                       </span>
                     )}
                   </span>

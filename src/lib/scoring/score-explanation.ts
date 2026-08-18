@@ -71,9 +71,10 @@ export type ScoreExplanation =
       method: EvaluationMethod;
       method_label: string;
       band_label: string | null;
-      /** Always "Evidence pending" plus the reason, for direct rendering. */
+      /** Always "Assessment being finalised — evidence pending", for direct rendering. */
       headline: string;
-      reason: string;
+      /** Detailed explanation for why evidence is pending. */
+      summary: string;
       criteria: ExplainedCriterion[];
     };
 
@@ -152,9 +153,9 @@ export function buildScoreExplanation(input: {
       method_label: label,
       band_label: bandLabel,
       headline: "Assessment being finalised — evidence pending",
-      reason: !input.evidencePath
+      summary: !input.evidencePath
         ? "The supporting evidence is not available on this surface yet."
-        : "No criterion on this assessment carries a verified quote from the record yet.",
+        : "The candidate's score is calculated, but our team is currently verifying the evidence snippets and quotes from their background to ensure full accuracy before final delivery.",
       criteria: explained,
     };
   }
