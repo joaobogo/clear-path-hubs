@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useSearch, Link } from "@tanstack/react-router";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { InfoRequestsPanel } from "@/components/client/info-requests";
