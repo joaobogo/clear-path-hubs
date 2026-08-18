@@ -8,7 +8,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { ShieldAlert } from "lucide-react";
-import { clientAction, undoClientDecision } from "@/lib/client-decisions.functions";
+import { clientAction, undoClientDecision, RESULT_STAGE } from "@/lib/client-decisions.functions";
 import { getClientCandidate } from "@/lib/client-candidates.functions";
 import { getClientContext } from "@/lib/client-context.functions";
 import type { MatchStage } from "@/lib/client-kpi.server";
@@ -583,7 +583,9 @@ function CandidateDetailPage() {
                 position_title: candidate.position?.title ?? "Position",
                 stage: candidate.stage,
                 has_active_interview: false,
-                availability_preference: (candidate.candidate as AnyRow).availability ?? null,
+                availability_preference: (candidate.candidate as AnyRow).availability 
+                  ? JSON.parse(JSON.stringify((candidate.candidate as AnyRow).availability)) 
+                  : null,
               },
             ],
           })}
