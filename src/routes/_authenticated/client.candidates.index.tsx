@@ -523,6 +523,7 @@ function CandidatesPage() {
    ) : (
             <CompactList
               rows={paged}
+              orgId={orgId}
               orgSearch={orgSearch}
               compareIds={compareIds}
               onToggleCompare={toggleCompare}

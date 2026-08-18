@@ -32,20 +32,12 @@ TEXTO DO USUÁRIO: "STANDING RULES — UX PASS VARIANT:
 - Do not touch any server function, mutation, or data contract unless this message names it. Buttons keep calling exactly what they call today.
 - Verify the page at 1440px and 375px in the live preview as the Northwind demo client, re-run the page's existing spec(s), and report the click-path result.
 
-Restructure the client candidate detail page (the canonical candidate detail surface — see docs/audit/prompt-38-canonical-candidate-detail.md for the canonical component) to be decision-first per docs/design/client-decision-first.md. A recruiter opening this page must know within five seconds whether this candidate is worth their time and why.
+Apply the card pattern from docs/design/client-decision-first.md to the client candidates list rows and Kanban cards.
 
-FIRST VIEWPORT (no scrolling at 1440; one thumb-scroll max at 375), in this order:
-1. Identity line: full name · current title · years of experience · location.
-2. Verdict: the approved score, big, with its fit band label — the single most prominent element after the name.
-3. Why: the top 3 strengths, each one line, each traceable to a real evidence item (reuse the existing evidence data — do not generate new text). Below them, up to 2 "worth validating" flags from the same evidence set.
-4. Contact block (from Batch 6): email, phone, location, LinkedIn, Preview CV, Download CV.
-5. Decision bar: the existing Shortlist / Request interview / Pass actions, unchanged in behavior — keep src/components/client/decision-bar.tsx calling exactly the same server functions with the same confirmation and idempotency guards.
-
-BELOW, as tabs (keep every existing section, just relocated): Full evidence & score breakdown · Screening answers · CV (full inline) · Activity/history · Notes & feedback. Default tab: Full evidence.
-
-Rules: delete nothing, demote instead, and list what you demoted; no new data fetches beyond what the page already loads (reorder, don't re-query); loading skeleton mirrors the new layout so nothing jumps.
-
-Verify: open 3 Northwind candidates (a strong fit, a mid, a weak) — the verdict and reasons read correctly for each with no scrolling at 1440; all three decision actions still write to the backend (confirm one Shortlist round-trip); the client-candidates-kanban and any candidate-detail specs still pass; 375px shows identity + verdict + first action within one screen."`;
+1. Card/row shows exactly: name, score band chip, one-line headline (title · yrs · location), stage, and ONE primary action (the next sensible decision for that stage). Everything else that's currently on the card moves to the candidate page or a hover/expand.
+2. Do not change the Kanban's drag/stage mutation logic, column definitions, or the filters row beyond visual grouping — filters were just verified.
+3. Keep \"Compare side by side\" and bulk CV download exactly where and how they are.
+4. Verify: drag one Northwind candidate between stages and confirm the backend state change persists after reload; the kanban spec still passes; a 20-candidate column stays readable at 375px with no horizontal scroll."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */

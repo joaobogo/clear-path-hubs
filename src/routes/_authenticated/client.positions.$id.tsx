@@ -290,10 +290,7 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
         orgId={orgId}
         canEdit={canEdit}
         supportReadOnly={support.readOnly}
-        hasClosure={!!closure}
         clientStatus={data?.summary?.client_status}
-        placementLine={placementLine}
-        onRefetch={refetch}
       />
 
       <div id="information-needed" className="scroll-mt-24">

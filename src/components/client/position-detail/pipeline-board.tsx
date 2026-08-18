@@ -15,6 +15,24 @@ import { KANBAN_COLUMNS, STAGE_GRAPH, STAGE_LABELS } from "./constants";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
 
+function cardHeadline(m: AnyRow): string {
+  const title =
+    m.candidate_profiles?.headline ??
+    [m.candidate_profiles?.current_role, m.candidate_profiles?.current_company]
+      .filter(Boolean)
+      .join(" · ");
+  const meta = [
+    m.candidate_profiles?.years_experience != null
+      ? `${m.candidate_profiles.years_experience} yrs`
+      : null,
+    m.candidate_profiles?.location,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+  if (title && meta) return `${title} · ${meta}`;
+  return title || meta || "—";
+}
+
 export function PipelineBoard({
   matches,
   byStage,
@@ -59,35 +77,26 @@ export function PipelineBoard({
               data-testid="pipeline-column"
               data-stage={col.key}
               aria-label={`${col.label} column, ${byStage[col.key].length} candidates`}
-
               className={`rounded-lg p-2 transition-colors sm:min-h-[280px] ${
-                isDropTarget
-                  ? "bg-primary/10 ring-2 ring-primary"
-                  : "bg-muted/40"
+                isDropTarget ? "bg-primary/10 ring-2 ring-primary" : "bg-muted/40"
               }`}
               onDragOver={(e) => {
                 if (!canEdit) return;
                 e.preventDefault();
                 setDragOver(col.key);
               }}
-              onDragLeave={() =>
-                setDragOver((c) => (c === col.key ? null : c))
-              }
+              onDragLeave={() => setDragOver((c) => (c === col.key ? null : c))}
               onDrop={(e) => {
                 e.preventDefault();
                 setDragOver(null);
                 if (!canEdit) return;
                 const matchId = e.dataTransfer.getData("text/match-id");
-                const from = e.dataTransfer.getData(
-                  "text/from-stage",
-                ) as MatchStage;
+                const from = e.dataTransfer.getData("text/from-stage") as MatchStage;
                 if (matchId && from) attemptMove(matchId, from, col.key);
               }}
             >
               <div className="flex items-center justify-between px-1 mb-2">
-                <div className="text-xs font-medium uppercase tracking-wide">
-                  {col.label}
-                </div>
+                <div className="text-xs font-medium uppercase tracking-wide">{col.label}</div>
                 <div className="text-xs text-muted-foreground tabular-nums">
                   {byStage[col.key].length}
                 </div>
@@ -103,7 +112,6 @@ export function PipelineBoard({
                       data-match-id={m.id}
                       data-stage={from}
                       draggable={canEdit && !movePending}
-
                       onDragStart={(e) => {
                         e.dataTransfer.setData("text/match-id", m.id);
                         e.dataTransfer.setData("text/from-stage", from);
@@ -116,21 +124,17 @@ export function PipelineBoard({
                       <Link
                         to="/client/candidates/$id"
                         params={{ id: m.id }}
-                        className="block min-h-11 py-1.5 text-sm font-medium hover:underline sm:min-h-0 sm:py-0"
+                        className="block text-sm font-medium hover:underline"
                       >
                         {m.candidate_profiles?.full_name ?? "Candidate"}
                       </Link>
-                      <div className="text-xs text-muted-foreground truncate">
-                        {m.candidate_profiles?.headline ??
-                          m.candidate_profiles?.location ??
-                          ""}
-                      </div>
+                      <div className="text-xs text-muted-foreground truncate">{cardHeadline(m)}</div>
                       {showRole && (
                         <div className="text-xs font-medium text-primary truncate mt-1">
                           {m.position?.title ?? m.positions?.title ?? "Role"}
                         </div>
                       )}
-                      <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs">
+                      <div className="mt-2 flex flex-wrap items-center gap-1.5">
                         <CandidateScoreBadge
                           score={m.score_runs?.score ?? null}
                           fitLabel={m.score_runs?.fit_label ?? null}
@@ -139,7 +143,6 @@ export function PipelineBoard({
                             hired: m.stage === "hired",
                           })}
                         />
-
                       </div>
 
                       {canEdit && allowed.length > 0 && (
@@ -149,7 +152,7 @@ export function PipelineBoard({
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="h-7 w-full text-xs"
+                                className="h-8 w-full text-xs"
                                 disabled={movePending}
                                 aria-label={`Change stage for ${m.candidate_profiles?.full_name ?? "candidate"}`}
                               >
@@ -160,9 +163,7 @@ export function PipelineBoard({
                               {allowed.map((to) => (
                                 <DropdownMenuItem
                                   key={to}
-                                  onSelect={() =>
-                                    attemptMove(m.id, from, to)
-                                  }
+                                  onSelect={() => attemptMove(m.id, from, to)}
                                 >
                                   {STAGE_LABELS[to]}
                                 </DropdownMenuItem>
