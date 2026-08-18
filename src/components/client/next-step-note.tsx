@@ -43,7 +43,7 @@ export function NextStepNote({
         <span className="font-medium text-foreground">Next: </span>
         {next.sentence}{" "}
         <span className="font-medium text-foreground">
-          {waitingOnClient ? "You" : "TaaSFlow"}
+          {waitingOnClient ? "You" : "Recruiting team"}
         </span>
         {next.due && (
           <>

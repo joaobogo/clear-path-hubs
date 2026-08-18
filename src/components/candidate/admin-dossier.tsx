@@ -178,12 +178,6 @@ export function AdminDossier({ matchId }: { matchId: string }) {
               Released {new Date(match.contact_released_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
               {match.contact_release_reason ? ` — ${match.contact_release_reason}` : ""}
             </p>
-            {gate.blanket_release && (
-              <p className="text-xs text-muted-foreground">
-                This release has no recorded actor, so it does not satisfy the
-                pre-interview consent policy on its own.
-              </p>
-            )}
             <Button
               variant="outline"
               size="sm"

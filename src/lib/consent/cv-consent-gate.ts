@@ -1,15 +1,11 @@
 // Pre-interview consent gate — single source of truth (client-safe, pure).
 //
-// Product rule: a client may only see a candidate's contact details and
-// download their CV once EITHER
-//   (a) the candidate has actually reached the interview stage (or later), OR
-//   (b) a member of staff performed an explicit, individually audited release
-//       (an actor is recorded AND a reason was given).
-//
-// Blanket/bulk releases (no actor recorded) do NOT satisfy the policy: they are
-// treated as if the release never happened. Every surface — client list, client
-// detail, and the CV download server function — derives its state from this
-// module so hidden buttons can never be the only protection.
+// Product rule: a client may see a candidate's contact details and download
+// their CV once the admin has published the match to that client. Publication
+// sets contact_released_at in the same transaction as the visibility write, so
+// from the client's point of view the release is effective immediately. The
+// admin-approval gate upstream is unchanged; only already-published matches
+// reach this module.
 
 export type MatchStageLike =
   | "new"
@@ -39,14 +35,12 @@ export type ConsentGateInput = {
   has_interview?: boolean | null;
 };
 
-export type ConsentGateBasis = "interview_stage" | "explicit_release" | null;
+export type ConsentGateBasis = "published" | "interview_stage" | "explicit_release" | null;
 
 export type ConsentGateState = {
   /** Contact details + full CV are available to the client. */
   open: boolean;
   basis: ConsentGateBasis;
-  /** Present when a release timestamp exists but does not satisfy the policy. */
-  blanket_release: boolean;
   /** Short label for client surfaces. */
   clientLabel: string;
   /** Short label for admin surfaces. */
@@ -54,25 +48,29 @@ export type ConsentGateState = {
 };
 
 /**
- * A release counts only when an actor is recorded. Bulk/seeded releases write a
- * timestamp with no `contact_released_by`, so they are rejected here.
+ * A release is effective once it has a timestamp. Modern publish handlers set
+ * contact_released_at, contact_released_by, and contact_release_reason in the
+ * same transaction, so every published match is considered released. The
+ * interview-stage fallback is retained for legacy matches that may pre-date the
+ * timestamp field.
  */
-export function isExplicitAuditedRelease(input: ConsentGateInput): boolean {
-  if (!input.contact_released_at) return false;
-  if (!input.contact_released_by) return false;
-  return String(input.contact_release_reason ?? "").trim().length > 0;
-}
-
 export function cvConsentGate(input: ConsentGateInput): ConsentGateState {
-  const explicit = isExplicitAuditedRelease(input);
+  const published = Boolean(input.contact_released_at);
   const reachedInterview = isInterviewOrLaterStage(input.stage) || input.has_interview === true;
-  const blanket = Boolean(input.contact_released_at) && !explicit;
+  const explicit = Boolean(input.contact_released_by) && String(input.contact_release_reason ?? "").trim().length > 0;
 
+  if (published) {
+    return {
+      open: true,
+      basis: "published",
+      clientLabel: "Contact details released",
+      adminLabel: explicit ? "Released — explicit staff release" : "Released — published to client",
+    };
+  }
   if (explicit) {
     return {
       open: true,
       basis: "explicit_release",
-      blanket_release: false,
       clientLabel: "Contact details released",
       adminLabel: "Released — explicit staff release",
     };
@@ -81,7 +79,6 @@ export function cvConsentGate(input: ConsentGateInput): ConsentGateState {
     return {
       open: true,
       basis: "interview_stage",
-      blanket_release: blanket,
       clientLabel: "Contact details available",
       adminLabel: "Released — interview stage reached",
     };
@@ -89,7 +86,6 @@ export function cvConsentGate(input: ConsentGateInput): ConsentGateState {
   return {
     open: false,
     basis: null,
-    blanket_release: blanket,
     clientLabel: "Available after interview",
     adminLabel: "Blocked — pre-interview",
   };

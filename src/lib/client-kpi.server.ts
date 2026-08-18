@@ -605,9 +605,9 @@ function normSourceLabel(source: unknown): { label: string | null; channel: stri
   const key = s.toLowerCase();
   const map: Record<string, string> = {
     job_board: "Job board",
-    website: "TaaSFlow job board",
+    website: "Careers site",
     referral: "Referral",
-    outreach: "TaaSFlow outreach",
+    outreach: "Recruiter outreach",
     talent_memory: "Talent memory",
     partner: "Partner network",
     direct: "Direct application",
@@ -681,7 +681,7 @@ function buildAuditTrail(rows: unknown): ClientCandidateDTO["audit_trail"] {
         id: String(e.id),
         action: safeAction,
         entity_type: String(e.entity_type ?? "event"),
-        actor: e.actor_user_id ? "TaaSFlow team" : "System",
+        actor: e.actor_user_id ? "Recruiting team" : "System",
         at: String(e.created_at ?? new Date().toISOString()),
         summary: null,
       };

@@ -138,6 +138,8 @@ Source: the five `.lovable/plan/*2026-08-17*.md` files. Each P-number appears ex
 | P-050 | candidate | Apply form surfaces server-side error messages with a reference ID instead of a generic "Network error" | NOT_YET_VERIFIED | plan `plan-application-submission-hardening-…-2026-08-17.md` | — |
 | L-090 | candidate | Screening dealbreakers write an `eligibility_checks` row (`not_eligible`) + set `candidate_matches.eligibility_status`, and disqualified applicants land on `/apply/eligibility-outcome` | NOT_YET_VERIFIED | plan `plan-screening-and-eligibility-hardening-2026-08-17.md` (no P-number assigned) | — |
 | L-091 | admin | Screening answers humanized in the dossier and review sidebar (no raw JSON); consent status displayed clearly | NOT_YET_VERIFIED | plan `plan-screening-and-eligibility-hardening-2026-08-17.md` | — |
+| L-092 | client | Contact release at publish time: published candidates show full name, email, phone, location and downloadable CV to the client immediately, with the admin-approval gate still upstream | VERIFIED_PASS | Migration `20260818020819` + `setMatchClientVisibility`/`bulkSetClientVisibility` write `contact_released_at`/`by`/`reason` in the same transaction as `client_visibility = visible`; `cvConsentGate` updated to open on `contact_released_at`; Playwright signed-in demo client `demo@taasflow.com` on `/client/candidates/fe0e24c0-b551-4762-b9dd-cc53381beb50` sees email, phone, location, full name and downloads `Beatriz_Costa_CV.pdf` (45,372 bytes) | 2026-08-19 |
+
 
 ## 6. Rules for updating this ledger
 
