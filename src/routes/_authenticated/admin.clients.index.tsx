@@ -166,6 +166,7 @@ function orgType(row: ClientRow): string {
 function ClientsPage() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
+  const queryClient = useQueryClient();
   const includeTest = useIncludeTestRecords();
   const [q, setQ] = useState(search.q);
   useEffect(() => setQ(search.q), [search.q]);
