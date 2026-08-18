@@ -5,7 +5,7 @@
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
 import { isUnicornMatch, classifyBand } from "@/lib/scoring/bands";
-import { cvConsentGate } from "@/lib/consent/cv-consent-gate";
+
 import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
 import { cleanQuote, isTemplatedEvidence } from "@/lib/evidence/quote-hygiene";
 
@@ -361,6 +361,8 @@ export type ClientCandidateDTO = {
   candidate: {
     full_name: string;
     display_name: string; // full name when known, else the anonymous placeholder
+    email: string | null;
+    phone: string | null;
     location: string | null;
     timezone: string | null;
     headline: string | null;
@@ -713,7 +715,7 @@ function normScreeningAnswers(raw: unknown): ClientCandidateDTO["screening_answe
 export const CLIENT_CANDIDATE_SELECT = `id, stage, delivered_at, position_id, application_id, candidate_profile_id, contact_released_at, contact_released_by, contact_release_reason,
          canonical_state, processing_state, processing_updated_at, submitted_to_client_at,
          score_stale, score_stale_reasons, score_stale_at, rescore_queued_at,
-         candidate_profiles(id, full_name, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, compensation_preferences, updated_at),
+         candidate_profiles(id, full_name, email, phone, headline, location, timezone, availability, years_experience, summary, experience, skills, education, languages, work_authorization, linkedin_url, portfolio_url, certifications, compensation_preferences, updated_at),
          positions(id, title, location, work_model, requirements, preferred_requirements, compensation, updated_at),
          applications(id, source, applied_at, created_at),
          score_runs:approved_score_run_id (score, fit_label, fit_band, result, evidence, requirement_coverage, completed_at, engine_version, evaluation_method, input_hash, blueprint_version, contradiction_status, must_have_coverage, preferred_coverage)`;
@@ -885,20 +887,18 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   });
 
 
+  // Contact release is now automatic at publish time. Any match that has
+  // reached the client workspace (client_visibility = 'visible') carries a
+  // contact_released_at timestamp; the client sees full name, email, phone and
+  // CV from that moment with no extra consent step.
+  const released = Boolean(row.contact_released_at);
+
   return {
     match_id: row.id,
     stage: row.stage,
     delivered_at: row.delivered_at ?? null,
     interview_active: Boolean(row.interview_active),
-    // Pre-interview consent gate: a bulk release with no recorded actor does
-    // not unlock contact details / CV. Server-enforced in cv-download.functions.
-    contact_released: cvConsentGate({
-      stage: row.stage,
-      contact_released_at: row.contact_released_at ?? null,
-      contact_released_by: row.contact_released_by ?? null,
-      contact_release_reason: row.contact_release_reason ?? null,
-      has_interview: Boolean(row.interview_active) || Boolean(row.interview_scheduled),
-    }).open,
+    contact_released: released,
 
     stage_entered_at:
       row.stage === "delivered"
@@ -943,6 +943,8 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     candidate: {
       full_name: fullName,
       display_name: displayName,
+      email: released ? (cp.email ?? null) : null,
+      phone: released ? (cp.phone ?? null) : null,
       location: cp.location ?? null,
       timezone: cp.timezone ?? null,
       headline: prettyHeadline,

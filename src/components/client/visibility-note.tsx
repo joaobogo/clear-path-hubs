@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Lock, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -10,17 +10,17 @@ const RULES: { title: string; body: string }[] = [
   {
     title: "You can see",
     body:
-      "Role fit, evidence behind every claim, experience, location, availability, notice period and compensation expectations — for candidates your recruiter has approved for this role.",
+      "Role fit, evidence behind every claim, experience, location, availability, notice period, compensation expectations, full name, email, phone, and CV file — for candidates your recruiter has approved and published to this role.",
   },
   {
     title: "You cannot see yet",
     body:
-      "Full name where withheld, email, phone, and CV file. Contact details are released once you advance a candidate to interview and the candidate consents to the introduction.",
+      "Only candidates that have not yet been published to you. Once a candidate is published, their full contact details and CV are available here immediately.",
   },
   {
-    title: "Need them sooner?",
+    title: "Need anything else?",
     body:
-      "Use “Request contact details” on the candidate. Your recruiter releases them after candidate consent — usually same working day.",
+      "Use the actions on each candidate to request an interview, leave feedback, or ask our team a question.",
   },
 ];
 
@@ -64,10 +64,10 @@ export function VisibilityNote({
       <div
         className={`rounded-lg border bg-muted/40 px-3 py-2 text-xs text-muted-foreground flex items-start gap-2 ${className}`}
       >
-        <Lock className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+        <ShieldCheck className="h-3.5 w-3.5 mt-0.5 shrink-0" />
         <p className="leading-relaxed">
-          Contact details (email, phone, CV file) are released when you advance a
-          candidate to interview and they consent to the introduction.{" "}
+          Full contact details and the CV file are released as soon as a candidate
+          is published to you. No extra step is needed.{" "}
           <Popover>
             <PopoverTrigger asChild>{trigger}</PopoverTrigger>
             {details}
@@ -81,9 +81,9 @@ export function VisibilityNote({
     <p
       className={`text-xs text-muted-foreground flex flex-wrap items-center gap-x-1.5 gap-y-1 ${className}`}
     >
-      <Lock className="h-3 w-3 shrink-0" />
+      <ShieldCheck className="h-3 w-3 shrink-0" />
       <span>
-        Contact details are released at interview stage, with candidate consent.
+        Contact details and CV are available from the moment a candidate is published.
       </span>
       <Popover>
         <PopoverTrigger asChild>{trigger}</PopoverTrigger>

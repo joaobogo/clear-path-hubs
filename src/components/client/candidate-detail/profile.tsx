@@ -236,6 +236,9 @@ export const ProfilePanel = memo(function ProfilePanel({
 }) {
   const c = candidate.candidate;
   const rows: Array<[string, string | null | undefined]> = [
+    ["Full name", c.full_name],
+    ["Email", c.email],
+    ["Phone", c.phone],
     ["Location", c.location],
     ["Timezone", c.timezone],
     ["Availability", c.availability],
@@ -318,8 +321,8 @@ export const LinksPanel = memo(function LinksPanel({
           </>
         ) : (
           <li className="pt-1 text-xs text-muted-foreground">
-            CV, email and phone become available after the interview stage, or
-            once our team releases them for this candidate.
+            Contact details and CV are released as soon as a candidate is
+            published to you.
           </li>
         )}
 

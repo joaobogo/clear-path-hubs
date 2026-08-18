@@ -147,8 +147,7 @@ export function CandidateHeader({
         ) : (
           <span className="inline-flex items-center gap-1.5 rounded-md border border-dashed px-2.5 py-1.5 text-xs text-muted-foreground">
             <LockIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            CV, email and phone become available after the interview stage —
-            use &ldquo;Request contact details&rdquo; to move ahead.
+            Contact details and CV are released as soon as a candidate is published.
           </span>
         )}
 

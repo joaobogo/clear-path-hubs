@@ -1644,11 +1644,19 @@ export const setMatchClientVisibility = createServerFn({ method: "POST" })
       .eq("id", data.match_id)
       .maybeSingle();
     if (!before) throw new Error("match_not_found");
+    const releasePatch =
+      data.visibility === "visible" && before.client_visibility !== "visible"
+        ? {
+            contact_released_at: new Date().toISOString(),
+            contact_released_by: context.userId,
+            contact_release_reason: "Released automatically at publish to client",
+          }
+        : {};
     const { data: after, error } = await s
       .from("candidate_matches")
-      .update({ client_visibility: data.visibility })
+      .update({ client_visibility: data.visibility, ...releasePatch })
       .eq("id", data.match_id)
-      .select("id,client_visibility")
+      .select("id,client_visibility,contact_released_at,contact_released_by,contact_release_reason")
       .maybeSingle();
     if (error) throw new Error(error.message);
     await writeAudit({

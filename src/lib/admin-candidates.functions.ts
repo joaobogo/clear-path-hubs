@@ -229,7 +229,13 @@ export const bulkSetClientVisibility = createServerFn({ method: "POST" })
       }
       const patch =
         data.visibility === "visible"
-          ? { client_visibility: "visible", canonical_state: "published_to_client" }
+          ? {
+              client_visibility: "visible",
+              canonical_state: "published_to_client",
+              contact_released_at: new Date().toISOString(),
+              contact_released_by: context.userId,
+              contact_release_reason: "Released automatically at bulk publish to client",
+            }
           : { client_visibility: "hidden" };
       const { error } = await s.from("candidate_matches").update(patch).eq("id", id);
       if (error) {
