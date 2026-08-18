@@ -33,10 +33,11 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just \"done\".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-1. The \"Invite team member\" form accepts \"not-an-email\" with Send invitation enabled and produces no error, no highlight, no confirmation. Add proper email validation (inline human error, disabled send until valid) and an explicit success state on send.
-2. /client/settings renders a blank white page for 8+ seconds with no error. /client/team correctly redirects to /client/account?tab=team — give /client/settings (and /client/plan if it has the same issue) the same redirect to the matching /client/account tab.
-3. The Northwind demo team roster lists demo@taasflow.com as an Admin member of the client's own team — a taasflow.com address inside the customer roster looks wrong in demos. Give that membership a client-appropriate display identity (e.g. name \"Demo Client Admin\", shown email neutralized or hidden for the demo workspace only) WITHOUT changing the underlying auth account or its login — demo@taasflow.com must keep signing in exactly as before.
-Verify: invalid invite email blocked with a sentence; /client/settings lands on the account tab instantly; the demo roster shows the client-appropriate identity; demo@taasflow.com still signs in."`;
+1. A client notification announced \"Your role is live — Candidates can now apply.\" for a role whose own page says \"Preparing — Your role is not published publicly yet · Role live — Not started\". Find what emits this event and make it fire only when the role's public state is actually live — same source of truth as the role page.
+2. Every client notification must deep-link to the thing it is about — the \"Your role is live\" card offers only \"Clear\". Give each notification type a destination; if a type genuinely has none, it should not be a notification.
+3. The \"Email blocked\" banner tells the client to \"update your address or resubscribe\" but offers no control for either, while the product promises email mirroring elsewhere. Add the action it names (a resubscribe/verify-address control wired to the suppression state) or, if that cannot ship this week, replace the copy with what the client can actually do (\"Contact us and we'll restore email delivery\" with a prefilled message).
+4. Reconcile the badge math: the bell badge showed 1 while the panel showed \"Unread (1) / Important update (3)\" — one counting rule, stated in the UI.
+Verify: publish-state notification only fires on a truly live role (test with the unpublished BROWSER-TEST role); every notification in the demo panel opens a destination; the email-blocked banner has a working action; badge equals the panel's unread count."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
