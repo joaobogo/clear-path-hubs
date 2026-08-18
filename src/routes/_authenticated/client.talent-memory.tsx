@@ -115,6 +115,14 @@ function TalentMemoryPage() {
   });
 
   const memories = data?.memories ?? [];
+  const statusFilter = search.status ?? "active";
+  // When the active list is empty, say whether archived entries exist instead of
+  // implying nothing was ever tagged.
+  const { data: archivedData } = useQuery({
+    queryKey: ["talent-memory-archived-count", orgId],
+    queryFn: () => listFn({ data: { orgId: orgId!, status: "archived" } }),
+    enabled: !!orgId && statusFilter === "active" && !isPending && memories.length === 0,
+  });
   const counts = useMemo(() => {
     const c: Record<string, number> = {};
     for (const m of memories) c[m.reason_category] = (c[m.reason_category] ?? 0) + 1;
@@ -236,7 +244,14 @@ function TalentMemoryPage() {
         ) : isPending ? (
           <SkeletonCards cards={3} />
         ) : memories.length === 0 ? (
-          <EmptyState />
+          <EmptyState
+            archivedCount={statusFilter === "active" ? (archivedData?.memories.length ?? 0) : 0}
+            onShowArchived={() =>
+              navigate({
+                search: (cur: z.infer<typeof searchSchema>) => ({ ...cur, status: "archived" }),
+              })
+            }
+          />
         ) : (
           <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {memories.map((m) => (
