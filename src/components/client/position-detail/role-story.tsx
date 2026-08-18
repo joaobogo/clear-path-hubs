@@ -108,49 +108,60 @@ export function RoleStoryPanel({
                   label="All requirement checks"
                 />
               </div>
-              <div className="mt-3">
-                <Legend />
-              </div>
+              {/* Per-requirement detail is collapsed by default: the bar and
+                  takeaway answer "are we covered?", the dropdown answers "how?" */}
+              <details className="group mt-3 rounded-lg border bg-background/40">
+                <summary className="cursor-pointer list-none px-3 py-2 text-xs font-medium text-primary hover:underline">
+                  <span className="group-open:hidden">
+                    Show requirement-by-requirement detail ({coverage.requirements.length})
+                  </span>
+                  <span className="hidden group-open:inline">Hide detail</span>
+                </summary>
+                <div className="border-t px-3 py-3">
+                  <Legend />
 
-              <ul className="mt-4 space-y-3">
-                {coverage.requirements.map((r) => (
-                  <li key={r.id}>
-                    <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-                      <span className="text-sm font-medium">
-                        {r.label}
-                        {r.importance === "preferred" && (
-                          <span className="ml-2 text-xs font-normal text-muted-foreground">
-                            nice to have
+                  <ul className="mt-4 space-y-3">
+                    {coverage.requirements.map((r) => (
+                      <li key={r.id}>
+                        <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+                          <span className="text-sm font-medium">
+                            {r.label}
+                            {r.importance === "preferred" && (
+                              <span className="ml-2 text-xs font-normal text-muted-foreground">
+                                nice to have
+                              </span>
+                            )}
                           </span>
-                        )}
-                      </span>
-                      <span className="text-xs tabular-nums text-muted-foreground">
-                        {r.met} of {coverage.shortlist_size} quoted
-                        {r.partial > 0 ? `, ${r.partial} related` : ""}
-                      </span>
-                    </div>
-                    <div className="mt-1.5">
-                      <SegmentedBar
-                        met={r.met}
-                        partial={r.partial}
-                        missing={r.missing}
-                        label={r.label}
-                      />
-                    </div>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {r.met > 0
-                        ? `Proven by ${r.met_names.join(", ")}${r.met > r.met_names.length ? " and others" : ""}.`
-                        : r.partial > 0
-                          ? "Related experience only — worth probing at interview."
-                          : "No candidate on this list evidences it yet."}
-                    </p>
-                  </li>
-                ))}
-              </ul>
+                          <span className="text-xs tabular-nums text-muted-foreground">
+                            {r.met} of {coverage.shortlist_size} quoted
+                            {r.partial > 0 ? `, ${r.partial} related` : ""}
+                          </span>
+                        </div>
+                        <div className="mt-1.5">
+                          <SegmentedBar
+                            met={r.met}
+                            partial={r.partial}
+                            missing={r.missing}
+                            label={r.label}
+                          />
+                        </div>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {r.met > 0
+                            ? `Proven by ${r.met_names.join(", ")}${r.met > r.met_names.length ? " and others" : ""}.`
+                            : r.partial > 0
+                              ? "Related experience only — worth probing at interview."
+                              : "No candidate on this list evidences it yet."}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
 
-              <p className="mt-4 border-t pt-3 text-xs text-muted-foreground">
-                {coverage.criteria}
-              </p>
+                  <p className="mt-4 border-t pt-3 text-xs text-muted-foreground">
+                    {coverage.criteria}
+                  </p>
+                </div>
+              </details>
+
             </>
           )}
         </div>
