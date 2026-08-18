@@ -162,3 +162,62 @@ export function buildPipelineActionLabel(
     return `${input.offers} ${plural(input.offers, "offer")} awaiting a response`;
   return null;
 }
+
+/**
+ * Where "Review →" must land so the client can actually fix the thing the
+ * label names — same precedence as the label, so the two can never disagree.
+ *
+ * Every target is an exact-id deep link into an existing client surface:
+ *  - awaiting review  → candidates list, filtered to this role's new arrivals
+ *  - interview to confirm → interviews desk, scrolled to that interview card
+ *  - offer outstanding → candidates list at offer stage for this role
+ */
+export type PipelineActionTarget =
+  | {
+      kind: "review_candidates";
+      to: "/client/candidates";
+      search: { position: string; review: "awaiting"; stage: "delivered" };
+    }
+  | {
+      kind: "confirm_interview";
+      to: "/client/interviews";
+      search: { interview?: string };
+    }
+  | {
+      kind: "offer_response";
+      to: "/client/candidates";
+      search: { position: string; stage: "offer" };
+    };
+
+export function buildPipelineActionTarget(
+  input: Pick<
+    PipelineStatusInput,
+    "status" | "awaitingReview" | "interviewsToConfirm" | "offers"
+  > & {
+    positionId: string;
+    /** Exact interview id that still needs a confirmed time, when known. */
+    interviewToConfirmId?: string | null;
+  },
+): PipelineActionTarget | null {
+  if (["draft", "paused", "closed", "archived"].includes(input.status)) return null;
+  if (input.awaitingReview > 0)
+    return {
+      kind: "review_candidates",
+      to: "/client/candidates",
+      search: { position: input.positionId, review: "awaiting", stage: "delivered" },
+    };
+  if (input.interviewsToConfirm > 0)
+    return {
+      kind: "confirm_interview",
+      to: "/client/interviews",
+      search: input.interviewToConfirmId ? { interview: input.interviewToConfirmId } : {},
+    };
+  if (input.offers > 0)
+    return {
+      kind: "offer_response",
+      to: "/client/candidates",
+      search: { position: input.positionId, stage: "offer" },
+    };
+  return null;
+}
+
