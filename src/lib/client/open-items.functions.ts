@@ -116,7 +116,7 @@ export const getClientOpenItems = createServerFn({ method: "GET" })
         currency: comp.currency ?? null,
       });
 
-      const isBlocked = p.status === "needs_clarification" || gaps.some(g => g.critical);
+      const isBlocked = p.status === "needs_clarification" || gaps.length > 0;
       if (isBlocked) {
         blockedRoles.push({
           position_id: p.id,
