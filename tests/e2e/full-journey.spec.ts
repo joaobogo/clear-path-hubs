@@ -310,32 +310,52 @@ test.describe("full journey walkthrough", () => {
 
     // ── 4. Job appears on the public board ────────────────────────────────
     // Active is not the same as listed: the board only shows public roles, so
-    // the walkthrough publishes the way an admin would.
-    const publish = page.locator("[data-qa-action='position-publish']");
-    if (await publish.count()) {
-      await publish.first().click();
-      await page.waitForTimeout(3_000);
+    // the walkthrough publishes the way an admin would — and waits for the
+    // backend to confirm visibility instead of assuming the click landed.
+    if ((activated.position?.visibility ?? "") !== "public") {
+      await waitForReactMount(page, "[data-qa-action='position-publish']");
+      await page.locator("[data-qa-action='position-publish']").first().click();
     }
-    const publicOk = await (async () => {
-      await page.goto(`/jobs/${positionId}`, { waitUntil: "domcontentloaded" });
-      return page
-        .getByText(/clinical operations manager/i)
-        .first()
-        .isVisible({ timeout: 60_000 })
-        .catch(() => false);
-    })();
+    await expect
+      .poll(
+        async () =>
+          (await journeyTrail({ organizationId: orgId, positionId: positionId! })).position
+            ?.visibility ?? "",
+        { timeout: 90_000, intervals: [2_000, 3_000] },
+      )
+      .toBe("public");
+    const published = await journeyTrail({ organizationId: orgId, positionId: positionId! });
+    const referenceCode = published.position?.reference_code ?? "—";
+
+    // Reachability is asserted by exact position id, never by title: the board
+    // card links to /jobs/<slug-with-id>, and the detail page must resolve.
+    await page.goto("/jobs", { waitUntil: "domcontentloaded" });
+    const boardLink = page.locator(`a[href*="${positionId}"]`).first();
+    const listedOk = await boardLink
+      .waitFor({ state: "attached", timeout: 60_000 })
+      .then(() => true)
+      .catch(() => false);
+    await page.goto(`/jobs/${positionId}`, { waitUntil: "domcontentloaded" });
+    const detailOk = await page
+      .locator(`a[href*="${positionId}/apply"]`)
+      .first()
+      .waitFor({ state: "attached", timeout: 60_000 })
+      .then(() => true)
+      .catch(() => false);
+    const publicOk = listedOk && detailOk;
     record({
       step: "4. Public job board",
       ui: publicOk ? "PASS" : "FAIL",
       audit: "n/a",
       notification: "n/a",
-      note: `reference ${activated.position?.reference_code ?? "—"}`,
+      note: `reference ${referenceCode} · id ${positionId} · listed=${listedOk} detail=${detailOk}`,
     });
-    expect.soft(publicOk, "role is reachable on the public board").toBe(true);
+    expect.soft(publicOk, "role is reachable on the public board by id").toBe(true);
 
     // ── 5. Candidate applies with a PDF CV ────────────────────────────────
     await page.goto(`/jobs/${positionId}/apply`, { waitUntil: "domcontentloaded" });
     await expect(page.locator('[data-hydrated="ready"]')).toBeVisible({ timeout: 120_000 });
+
     await page.locator("#full_name").fill(applicant.fullName);
     await page.locator("#email").fill(applicant.email);
     await page.locator("#phone").fill("+351912345678");
