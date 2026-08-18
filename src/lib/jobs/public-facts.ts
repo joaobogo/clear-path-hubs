@@ -278,3 +278,29 @@ export function buildPublicJobFacts(input: {
     posted: resolvePostedDate(input.published_at),
   };
 }
+
+/**
+ * Structured pay for JobPosting/baseSalary. Same visibility rule as
+ * resolveCompensation: only an explicit `public` may publish numbers, and we
+ * only ever return figures the employer actually stored — never a guess.
+ */
+export function resolvePublicSalary(
+  compensation: unknown,
+  visibility: string | null | undefined,
+): { min: number | null; max: number | null; currency: string; period: string } | null {
+  if (visibility !== "public") return null;
+  const c = (compensation ?? {}) as CompensationJson;
+  const min = num(c.budget_min) ?? num(c.min);
+  const max = num(c.budget_max) ?? num(c.max);
+  if (min === null && max === null) return null;
+  const period = str(c.period).toLowerCase();
+  const unit =
+    period === "hour" || period === "hourly"
+      ? "HOUR"
+      : period === "day" || period === "daily"
+        ? "DAY"
+        : period === "month" || period === "monthly"
+          ? "MONTH"
+          : "YEAR";
+  return { min, max, currency: (str(c.currency) || "USD").toUpperCase(), period: unit };
+}
