@@ -71,9 +71,10 @@ export type ScoreExplanation =
       method: EvaluationMethod;
       method_label: string;
       band_label: string | null;
-      /** Always "Evidence pending" plus the reason, for direct rendering. */
+      /** Always "Assessment being finalised — evidence pending", for direct rendering. */
       headline: string;
-      reason: string;
+      /** Detailed explanation for why evidence is pending. */
+      summary: string;
       criteria: ExplainedCriterion[];
     };
 
