@@ -9,6 +9,7 @@ import {
   clientRoleStatusLabel,
   type ClientRoleStatus,
 } from "@/lib/client-role-status";
+import type { PipelineActionTarget } from "@/lib/client-pipeline-language";
 
 export type Row = {
   id: string;
