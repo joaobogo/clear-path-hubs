@@ -60,6 +60,7 @@ export function DeliveryFailuresPanel() {
   const retry = useServerFn(retryDeliveryFailureFn);
   const suppress = useServerFn(suppressNotificationRecipient);
   const release = useServerFn(releaseNotificationRecipient);
+  const unsuppress = useServerFn(unsuppressAndRetryDelivery);
   const qc = useQueryClient();
 
   const [staleTarget, setStaleTarget] = useState<Item | null>(null);
