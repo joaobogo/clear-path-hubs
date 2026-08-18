@@ -67,7 +67,7 @@ export function orgGate(query: GateQueryLike, orgId: string | undefined): OrgGat
 }
 
 /** Default backstop: generous enough for a cold server function, short enough to not look broken. */
-export const STUCK_AFTER_MS = 15_000;
+export const STUCK_AFTER_MS = 12_000;
 
 /**
  * True once `active` has been continuously true for `ms`. Resets the moment

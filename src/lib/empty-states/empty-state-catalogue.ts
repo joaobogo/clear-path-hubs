@@ -199,8 +199,18 @@ export function resolveNoCandidatesState(signals: {
   inProcessing: number;
   /** Discovery finished but produced nobody above the bar. */
   runsCompleted: number;
+  /** Runs queued or executing right now (for the scoped role when filtered). */
+  runsRunning?: number;
+  /** Sourcing context for a single scoped role. */
+  sourcing?: {
+    stageLabel: string | null;
+    startedAt: string | null;
+    finished: boolean;
+  } | null;
 }): SurfaceStateContent {
   const { activeRoles, rolesInSetup, discoveryStarted, inProcessing, runsCompleted } = signals;
+  const runsRunning = signals.runsRunning ?? 0;
+  const sourcing = signals.sourcing ?? null;
 
   if (activeRoles === 0 && rolesInSetup > 0) {
     return {
@@ -260,7 +270,32 @@ export function resolveNoCandidatesState(signals: {
     };
   }
 
-  if (runsCompleted > 0) {
+  // A search that is still running can never be reported as finished. When we
+  // are scoped to one role we say which stage it is in and since when.
+  if (runsRunning > 0 || (sourcing && !sourcing.finished)) {
+    const since = sourcing?.startedAt
+      ? new Date(sourcing.startedAt).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        })
+      : null;
+    return {
+      id: "candidates.sourcing-in-progress",
+      icon: "candidates",
+      tone: "waiting",
+      title: "Sourcing is still in progress",
+      why: sourcing?.stageLabel
+        ? `Stage: ${sourcing.stageLabel}${since ? ` · started ${since}` : ""}. No candidate has cleared review for you yet.`
+        : "The search is still running, so no candidate has cleared review for you yet.",
+      expected: EXPECTED_PROCESSING,
+      populates: "Candidates appear here as each one is sourced, assessed and approved for you.",
+      activity: "Sourcing and evidence review are running now.",
+      action: { label: "See role progress", to: "/client/positions" },
+    };
+  }
+
+  if (runsCompleted > 0 && runsRunning === 0 && inProcessing === 0 && (!sourcing || sourcing.finished)) {
     return {
       id: "candidates.no-qualifiers",
       icon: "candidates",

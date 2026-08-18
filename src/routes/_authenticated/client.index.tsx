@@ -15,6 +15,7 @@ import { QueryErrorCard } from "@/components/client/query-error";
 import { DegradedPanelsBanner, NotCurrentChip } from "@/components/client/degraded-banner";
 import { panelReadiness, panelSignal } from "@/lib/panel-readiness";
 import { orgGate, panelState, useStuckAfter } from "@/lib/client/panel-gate";
+import { withQueryTimeout } from "@/lib/client/query-timeout";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { VisibilityNote } from "@/components/client/visibility-note";
 import { Button } from "@/components/ui/button";
@@ -76,7 +77,7 @@ function OverviewPage() {
 
   const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
-    queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
+    queryFn: () => withQueryTimeout(ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} })),
   });
   const ctx = ctxQuery.data;
   const orgId = ctx?.active?.organization_id;
@@ -85,7 +86,9 @@ function OverviewPage() {
 
   const overviewQuery = useQuery({
     queryKey: ["client-overview", orgId],
-    queryFn: () => overviewFn({ data: { orgId: orgId! } }),
+    // Bounded: a hung overview read must become an error with Retry, never an
+    // eternal "Loading…" in four sections.
+    queryFn: () => withQueryTimeout(overviewFn({ data: { orgId: orgId! } })),
     enabled: !!orgId,
     placeholderData: (prev) => prev,
   });
@@ -94,7 +97,7 @@ function OverviewPage() {
   const pendingRolesFn = useServerFn(listPendingPaymentRoles);
   const pendingRolesQuery = useQuery({
     queryKey: ["client", "pending-payment-roles", orgId],
-    queryFn: () => pendingRolesFn({ data: { orgId } }),
+    queryFn: () => withQueryTimeout(pendingRolesFn({ data: { orgId } })),
     enabled: !!orgId && PAYMENTS_ENABLED,
   });
   const pendingRoles = pendingRolesQuery.data?.roles ?? [];
@@ -104,7 +107,7 @@ function OverviewPage() {
   const rolesNeedingDetailsFn = useServerFn(listRolesNeedingDetails);
   const incompleteQuery = useQuery({
     queryKey: ["client", "roles-needing-details", orgId],
-    queryFn: () => rolesNeedingDetailsFn({ data: { orgId } }),
+    queryFn: () => withQueryTimeout(rolesNeedingDetailsFn({ data: { orgId } })),
     enabled: !!orgId,
   });
   const rolesNeedingDetails = incompleteQuery.data?.roles ?? [];
@@ -119,7 +122,7 @@ function OverviewPage() {
   // no workspace, the dependent queries stay disabled forever — so the gate is
   // reported as a panel failure instead of leaving skeletons on screen.
   const gate = orgGate(ctxQuery, orgId);
-  const overviewStuck = useStuckAfter(!data && !gate.failed);
+  const overviewStuck = useStuckAfter(!data && !gate.failed && !isError);
   const overviewPanel = panelState({
     gate,
     hasData: data !== undefined,

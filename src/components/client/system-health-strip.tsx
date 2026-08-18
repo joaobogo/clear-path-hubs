@@ -31,7 +31,7 @@ import {
   type HealthState,
 } from "@/lib/system-health/system-health";
 import { getPlatformStatus } from "@/lib/status/platform-status.functions";
-import { degradedNotice } from "@/lib/status/platform-status";
+import { useStableDegradedNotice } from "@/lib/status/use-stable-degraded-notice";
 
 export const SYSTEM_HEALTH_QUERY_KEY = ["system-health"] as const;
 
@@ -187,7 +187,8 @@ export function SystemHealthStrip({
     refetchInterval: 120_000,
     retry: false,
   });
-  const platformNotice = degradedNotice(platform);
+  // Same flap guard as the banner, so the pill and the banner never disagree.
+  const platformNotice = useStableDegradedNotice(platform);
 
   const attentionSignals = useMemo(
     () => (data?.signals ?? []).filter((s) => isAttention(s.state)),

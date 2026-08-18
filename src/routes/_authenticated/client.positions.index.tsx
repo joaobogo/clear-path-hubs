@@ -10,6 +10,7 @@ import { getClientPositions } from "@/lib/client-positions.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import { QueryErrorCard } from "@/components/client/query-error";
+import { withQueryTimeout } from "@/lib/client/query-timeout";
 import {
   PortfolioSnapshot,
   CompactList,
@@ -54,6 +55,7 @@ export const Route = createFileRoute("/_authenticated/client/positions/")({
 import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveFilteredEmptyState } from "@/lib/empty-states/empty-state-catalogue";
 import { makeWorkspacePending, WorkspaceRowsSkeleton } from "@/components/workspace/pending-states";
+import { Skeleton } from "@/components/ui/skeleton";
 import { countRolesByTab, roleStatusTabLabel } from "@/lib/client-role-status-tabs";
 import { plural } from "@/lib/format/plural";
 
@@ -79,7 +81,7 @@ function PositionsPage() {
  const orgSearch = useClientOrgSearch();
  const ctxQuery = useQuery({
  queryKey: ["client-context", orgSearch ?? null],
- queryFn: () => ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} }),
+ queryFn: () => withQueryTimeout(ctxFn({ data: orgSearch ? { orgId: orgSearch } : {} })),
  });
  const ctx = ctxQuery.data;
  const orgId = ctx?.active?.organization_id;
@@ -88,7 +90,8 @@ function PositionsPage() {
   // status can be missing from every tab.
   const listQuery = useQuery<Row[]>({
     queryKey: ["client-positions", orgId, "all"],
-    queryFn: () => listFn({ data: { orgId: orgId! } }) as unknown as Promise<Row[]>,
+    queryFn: () =>
+      withQueryTimeout(listFn({ data: { orgId: orgId! } })) as unknown as Promise<Row[]>,
     enabled: !!orgId,
     // Cached between navigations so returning to Roles renders instantly
     // instead of replaying a multi-second skeleton.
@@ -235,8 +238,16 @@ function PositionsPage() {
  </div>
  <div className="text-xs text-muted-foreground text-right">
  <div>
-  {plural(rows.length, "role")}
-  {status !== "active" ? ` under review` : ""}
+  {hasRoleData ? (
+    <>
+      {plural(rows.length, "role")}
+      {status !== "active" ? ` under review` : ""}
+    </>
+  ) : (
+    /* Never a count before the roles list resolves — a zero here reads as
+       "you have no roles". */
+    <Skeleton className="ml-auto h-3 w-20" />
+  )}
  </div>
  {lastUpdated && (
  <div>Last updated {formatRelative(lastUpdated)}</div>
@@ -244,11 +255,11 @@ function PositionsPage() {
  </div>
  </header>
 
- <PortfolioSnapshot data={portfolio} loading={isFetching && rows.length === 0} />
+ <PortfolioSnapshot data={portfolio} loading={!hasRoleData} />
 
  <ActionRequiredBanner actionItems={actionItems} />
 
-  <StatusTabs status={status} setSearch={setSearch} counts={statusCounts} />
+  <StatusTabs status={status} setSearch={setSearch} counts={hasRoleData ? statusCounts : undefined} />
 
   <FilterBar
     orgId={orgId}
@@ -268,7 +279,9 @@ function PositionsPage() {
   <ActiveChips activeChips={activeChips} clearAll={clearAll} />
 
  <div className="mb-2 text-xs text-muted-foreground" aria-live="polite">
- {isFetching
+ {!hasRoleData
+ ? "Loading your roles…"
+ : isFetching
  ? "Refreshing…"
  : `${filtered.length} result${filtered.length === 1 ? "" : "s"}`}
  </div>
