@@ -55,11 +55,11 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     excludeTestOrgs(
       s
         .from("positions")
-        .select("id,title,status,payment_status,owner_user_id,created_at,updated_at,organizations(name)", {
+        .select("id,title,status,payment_status,owner_user_id,created_at,updated_at,organization_id,organizations(id,name)", {
           count: "exact",
         })
         .in("payment_status", ["unpaid", "pending"])
-        .not("status", "in", "(archived,closed,filled)")
+        .not("status", "in", "(draft,archived,closed,filled)")
         .order("updated_at", { ascending: true })
         .limit(8),
       scope,
@@ -69,7 +69,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     excludeTestOrgs(
       s
         .from("positions")
-        .select("id,title,status,payment_status,owner_user_id,created_at,organizations(name)", { count: "exact" })
+        .select("id,title,status,payment_status,owner_user_id,created_at,organization_id,organizations(id,name)", { count: "exact" })
         .in("status", ["submitted", "needs_clarification"])
         .in("payment_status", [...PAID_PAYMENT_STATES])
         .order("created_at", { ascending: true })
@@ -84,7 +84,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       s
         .from("candidate_matches")
         .select(
-          "id,updated_at,processing_state,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(name)),score_runs!candidate_matches_current_score_run_id_fkey(score)",
+          "id,updated_at,processing_state,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(id,name)),score_runs!candidate_matches_current_score_run_id_fkey(score)",
           { count: "exact" },
         )
         .eq("admin_status", "pending")
@@ -119,7 +119,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       s
         .from("interviews")
         .select(
-          "id,status,requested_at,scheduled_at,candidate_match_id,candidate_matches!inner(candidate_profiles(full_name),positions!inner(id,title,owner_user_id,organizations!inner(name)))",
+          "id,status,requested_at,scheduled_at,candidate_match_id,candidate_matches!inner(candidate_profiles(full_name),positions!inner(id,title,owner_user_id,organizations!inner(id,name)))",
           { count: "exact" },
         )
         .or(
@@ -144,7 +144,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       s
         .from("candidate_matches")
         .select(
-          "id,score_stale_at,score_stale_reasons,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(name))",
+          "id,score_stale_at,score_stale_reasons,candidate_profiles(full_name),positions(id,title,owner_user_id,organizations(id,name))",
           { count: "exact" },
         )
         .eq("score_stale", true)
@@ -490,7 +490,7 @@ export async function loadPaymentsOpsPanel(): Promise<PaymentsOpsPanel> {
       .from("positions")
       .select("id,title,organization_id,payment_status,created_at,updated_at,organizations(name)")
       .in("payment_status", ["unpaid", "pending"])
-      .not("status", "in", "(archived,closed,filled)")
+      .not("status", "in", "(draft,archived,closed,filled)")
       .order("updated_at", { ascending: false })
       .limit(50),
     s
