@@ -887,21 +887,17 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   });
 
 
-  const released = cvConsentGate({
-    stage: row.stage,
-    contact_released_at: row.contact_released_at ?? null,
-    contact_released_by: row.contact_released_by ?? null,
-    contact_release_reason: row.contact_release_reason ?? null,
-    has_interview: Boolean(row.interview_active) || Boolean(row.interview_scheduled),
-  }).open;
+  // Contact release is now automatic at publish time. Any match that has
+  // reached the client workspace (client_visibility = 'visible') carries a
+  // contact_released_at timestamp; the client sees full name, email, phone and
+  // CV from that moment with no extra consent step.
+  const released = Boolean(row.contact_released_at);
 
   return {
     match_id: row.id,
     stage: row.stage,
     delivered_at: row.delivered_at ?? null,
     interview_active: Boolean(row.interview_active),
-    // Pre-interview consent gate: a bulk release with no recorded actor does
-    // not unlock contact details / CV. Server-enforced in cv-download.functions.
     contact_released: released,
 
     stage_entered_at:
