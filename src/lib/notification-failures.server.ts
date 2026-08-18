@@ -151,19 +151,25 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
     const eventType = n?.event_type ?? "unknown";
     const lastAttemptAt = String(r["last_attempt_at"] ?? r["updated_at"]);
     const retry = notificationRetry(status);
+    const rawCode = (r["error_code"] as string | null) ?? null;
+    const human = deliveryReason(rawCode, status);
     return {
       key: `notification:${r["id"]}`,
       ledger: "notification" as const,
       id: String(r["id"]),
       eventType,
+      eventLabel: humaniseEventType(eventType),
       title: n?.title ?? null,
       audience: n?.audience ?? null,
       channel: String(r["channel"]),
       recipient:
         (r["recipient_address"] as string | null) ??
         (n?.recipient_user_id ? (emailByUser.get(n.recipient_user_id) ?? null) : null),
-      reason: (r["error_code"] as string | null) ?? status,
+      reason: rawCode ?? status,
       reasonDetail: (r["error_message"] as string | null) ?? null,
+      reasonLabel: human.label,
+      reasonSentence: human.sentence,
+      canUnsuppress: human.kind === "blocked" && String(r["channel"]) === "email",
       attempts: Number(r["attempt_count"] ?? 1),
       firstAttemptAt: String(r["created_at"]),
       lastAttemptAt,
