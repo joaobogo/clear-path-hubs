@@ -9,6 +9,7 @@ import { AlarmClock, MailWarning } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useConfirmAction } from "@/components/ds/confirm-action";
 import {
   listOutcomeBreaches,
   sendPendingOutcomeNotices,
@@ -46,6 +47,7 @@ function OutcomeSla() {
   const fetchRows = useServerFn(listOutcomeBreaches);
   const sendNotices = useServerFn(sendPendingOutcomeNotices);
   const queryClient = useQueryClient();
+  const { confirm, confirmDialog } = useConfirmAction();
   // One global scope, set on the admin layout.
   const showTest = useIncludeTestRecords();
 
@@ -95,6 +97,7 @@ function OutcomeSla() {
 
   return (
     <div className="space-y-8 p-6">
+      {confirmDialog}
       <header className="space-y-2">
         <h1 className="text-2xl font-semibold tracking-tight">Answers we owe candidates</h1>
         <p className="max-w-2xl text-sm text-muted-foreground">
@@ -106,7 +109,7 @@ function OutcomeSla() {
       </header>
 
       <div className="flex flex-wrap items-center gap-3">
-        <Button size="sm" disabled={send.isPending} onClick={() => send.mutate()}>
+        <Button size="sm" disabled={send.isPending} onClick={() => void confirmSend()}>
           {send.isPending ? "Sending…" : "Send outstanding outcome notices"}
         </Button>
       </div>
