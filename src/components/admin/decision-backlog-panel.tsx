@@ -353,6 +353,7 @@ export function DecisionBacklogPanel({
           </table>
         </div>
       )}
+      {confirmDialog}
     </section>
   );
 }
