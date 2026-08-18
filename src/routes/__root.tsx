@@ -33,12 +33,13 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just \"done\".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-On 17 Aug the client UI showed: \"Wed, 19 Aug 2026 … (tomorrow)\" (it is two days away), \"Mon, 17 Aug 2026 … (yesterday)\" filed under \"Already happened\" (it is today), \"Due today (18 Aug)\", and the same item as 3 and 4 days overdue on one screen. Candidate activity timestamps also render in Portuguese (\"17 de ago. de 2026, 17:01\") inside an otherwise English UI.
-
-1. Create/designate ONE date-label utility (relative labels: today/tomorrow/yesterday/N days, overdue math, due-date labels) that every client surface uses — interviews, overview queue, approvals, candidate activity. It must compute against the viewer's timezone consistently and never emit a relative label that contradicts the absolute date beside it.
-2. Replace every page-local relative-date/overdue computation with it. The 3-vs-4-days class of bug must become impossible, not just fixed once.
-3. Force the app's date/time formatting locale to en (or the workspace language) explicitly instead of inheriting the browser locale — the \"17 de ago.\" strings must render in English. (Native date-input placeholders like dd/mm/aaaa are a browser artifact — leave those.)
-4. Verify on the demo workspace with the system clock in mind: an interview 2 days out is not \"tomorrow\"; today's date never appears under \"Already happened\" as \"yesterday\"; a single overdue item shows one identical overdue value everywhere; candidate activity timestamps render in English."`;
+Five defects on /client/candidates:
+1. The full-screen \"Candidate comparison\" overlay auto-opens on page load with candidates the user never selected (3 pre-selected on first load; 4 different ones after clearing and reloading the board). Fix: selection state must start empty on a fresh navigation and never be restored implicitly; the comparison overlay opens only from an explicit user action. Find where the phantom selection persists (storage/state) and clear it.
+2. The selection bar's \"Clear\" removes ONE candidate per click (3 → 2 → 1). Make it clear the entire selection in one click.
+3. The Filters → Location text input loses every keystroke but the last (typing \"Lisbon\" applies \"Location: n\"). Fix it the same way the jobs-board search was fixed: local state with a debounced write — do not change any other filter's behavior.
+4. Global search (⌘K) matches candidate names only: \"engineer\" returns one position and zero candidates although all ten candidate headlines contain \"Engineer\", and it takes ~12s. Extend candidate matching to title/headline, bring first-result latency to a sane level, and stop leaking raw lowercase statuses (\"active\", \"hired\") in result subtitles — use the same human labels the UI uses.
+5. The CV ZIP button promised \"Download 10 CVs (ZIP)\" and delivered 6, then offered \"Retry 4 failed\" for files that were policy-gated, not failed. Make the button state the number it can actually deliver under current access, report unavailable files as \"not yet available\" (with the reason), and never offer Retry for a policy gate. NOTE: if Batch 6 (contact release at publish) has landed, all 10 should now be downloadable — in that case verify the count reads 10 and the gate messaging is gone entirely.
+Verify each of the five as the Northwind demo client, including a fresh navigation with an empty selection and no overlay."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
