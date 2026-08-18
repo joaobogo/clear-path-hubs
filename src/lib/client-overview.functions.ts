@@ -84,9 +84,31 @@ export const getClientOverview = createServerFn({ method: "GET" })
   .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
     await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
+    const s = context.supabase as AnyRow;
     // 1. Fetch the unified open items and blocked roles.
     const openItemsResponse = await getClientOpenItems({ data: { orgId: data.orgId } });
-    const rows = await loadKpiRows(context.supabase, data.orgId);
+    const rows = await loadKpiRows(s, data.orgId);
+
+    const interviewsRes = await s
+      .from("interviews")
+      .select("id, candidate_match_id, position_id, completed_at, status")
+      .eq("organization_id", data.orgId)
+      .eq("status", "completed")
+      .not("completed_at", "is", null)
+      .order("completed_at", { ascending: true })
+      .limit(100);
+    
+    const completedInterviews = (interviewsRes.data as AnyRow[]) ?? [];
+    const scoredInterviewIds = new Set<string>();
+    if (completedInterviews.length > 0) {
+      const { data: cards } = await s
+        .from("interview_scorecards")
+        .select("interview_id")
+        .in("interview_id", completedInterviews.map(i => i.id));
+      for (const c of (cards as AnyRow[]) ?? []) {
+        scoredInterviewIds.add(c.interview_id as string);
+      }
+    }
 
     const { data: positions, error: positionsError } = await context.supabase
       .from("positions")
