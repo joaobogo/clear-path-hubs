@@ -23,8 +23,6 @@ import {
   COMPARE_MAX,
 } from "@/lib/client-compare";
 import { QueryErrorCard } from "@/components/client/query-error";
-import { ShareShortlistDialog } from "@/components/client/share-shortlist-dialog";
-import { Share2 } from "lucide-react";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { filterAndSortCandidates } from "@/lib/client-candidate-list-filter";
 import { UNICORN_SCORE } from "@/lib/scoring/bands";
@@ -214,7 +212,6 @@ function CandidatesPage() {
 
   const [compareIds, setCompareIds] = useState<string[]>(initialCompare);
   const [compareOpen, setCompareOpen] = useState(false); // Controlled by compareIds length/explicit action
-  const [shareOpen, setShareOpen] = useState(false);
 
   // Sync state to local storage when it changes
   useEffect(() => {
@@ -584,35 +581,6 @@ function CandidatesPage() {
   candidates={selectedCandidates}
   />
 
-  {selectedCandidates.length > 0 && (
-   <div className="fixed bottom-24 right-6 z-40 transition-transform duration-200" data-consent-offset>
-    <Button
-     size="lg"
-     className="shadow-lg"
-     onClick={() => setShareOpen(true)}
-     disabled={crossPosition}
-     title={crossPosition ? "Select candidates from the same role to share" : undefined}
-    >
-     <Share2 className="mr-2 h-4 w-4" />
-     Share shortlist ({selectedCandidates.length})
-    </Button>
-   </div>
-  )}
-
-  {orgId && (
-   <ShareShortlistDialog
-    open={shareOpen}
-    onOpenChange={setShareOpen}
-    orgId={orgId}
-    positionId={selectedCandidates[0]?.position?.id ?? null}
-    matchIds={selectedCandidates.map((c) => c.match_id)}
-    suggestedTitle={
-     selectedCandidates[0]?.position?.title
-      ? `Shortlist — ${selectedCandidates[0].position.title}`
-      : undefined
-    }
-   />
-  )}
  </div>
  );
 }

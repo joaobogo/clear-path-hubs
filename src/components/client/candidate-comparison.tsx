@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Link, useSearch } from "@tanstack/react-router";
-import { Printer, Share2 } from "lucide-react";
+import { Printer } from "lucide-react";
 import { toast } from "sonner";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { VisibilityNote } from "@/components/client/visibility-note";
@@ -168,16 +168,6 @@ export function CompareSheet({
     return vals.every((v) => (v ?? "") === (first ?? ""));
   };
 
-  const handleShare = async () => {
-    const url = new URL(window.location.href);
-    url.searchParams.set("compare", candidates.map((c) => c.match_id).join(","));
-    try {
-      await navigator.clipboard.writeText(url.toString());
-      toast.success("Share link copied", { description: "Same-role view, preserves context." });
-    } catch {
-      toast.error("Could not copy link");
-    }
-  };
 
   const handlePrint = () => window.print();
 
@@ -214,9 +204,6 @@ export function CompareSheet({
                   />
                   Show only differences
                 </label>
-                <Button size="sm" variant="outline" onClick={handleShare}>
-                  <Share2 className="h-3.5 w-3.5 mr-1.5" /> Share
-                </Button>
                 <Button size="sm" variant="outline" onClick={handlePrint}>
                   <Printer className="h-3.5 w-3.5 mr-1.5" /> Export PDF
                 </Button>
