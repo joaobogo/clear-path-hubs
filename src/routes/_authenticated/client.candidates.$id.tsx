@@ -233,10 +233,11 @@ function CandidateDetailPage() {
                       await undoFn({ data: { orgId: orgId!, matchId: id, toStage: back } });
                       toast.success("Decision undone.");
                       await qc.invalidateQueries();
-                    } catch {
-                      toast.error(
-                        "That decision can no longer be undone. Your recruiter can reverse it for you.",
-                      );
+                    } catch (e) {
+                      const msg = e instanceof Error ? e.message.replace(/^Error:\s*/, "") : "";
+                      toast.error("That decision can no longer be undone", {
+                        description: msg || "Your recruiter can reverse it for you.",
+                      });
                       btn.disabled = false;
                       btn.textContent = originalText;
                     }

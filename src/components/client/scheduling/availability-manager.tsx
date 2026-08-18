@@ -78,7 +78,7 @@ export function AvailabilityManager({
         },
       }),
     onSuccess: () => {
-      toast.success("Availability saved — we'll use it for every interview.");
+      toast.success("Availability updated — the TaaSFlow team has been notified.");
       qc.invalidateQueries({ queryKey: ["org-availability"] });
       setOpen(false);
     },
