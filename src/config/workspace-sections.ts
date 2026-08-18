@@ -72,7 +72,7 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
     label: "Command",
     tabs: [
       { to: "/admin", label: "Overview", exact: true },
-      { to: "/admin/my-day", label: "My day" },
+
     ],
   },
   {
