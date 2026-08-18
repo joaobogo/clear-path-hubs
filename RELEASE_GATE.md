@@ -93,6 +93,17 @@ above, they extend it.
    should be deleted from production if E2E only runs against preview.
 4. **Sitemap re-crawl on production** is still owed after the next publish
    (carried from §4).
+6. **Security scan is not green (2026-08-18).** 1 error-level finding:
+   `SUPA_security_definer_view`.
+7. **Seat-cap suite regressed (2026-08-18).** 3 failures across
+   `seat-reactivation.spec.ts` and `seat-reactivation-actions.spec.ts`.
+8. **Scoring/pipeline regression (2026-08-18).** 2 failures in
+   `pipeline.spec.ts` (parse+score of three CVs; corrupt-CV repair path).
+9. **Unit suite has 3 failures (2026-08-18).** CSV export masking,
+   `blueprintProgress` terminal states, messaging-history integrity (timeout).
+10. **Tenant isolation, smoke journey and live-domain checks BLOCKED
+    (2026-08-18).** The single-worker Playwright batch stalled at test 13/25, so
+    those specs were never reached; no domain probe was run.
 5. **Four tracking pixels are configured-but-absent.** Meta, LinkedIn, Clarity
    and Hotjar default to empty IDs and silently never load, while the admin
    panel lists all seven as configurable. Cosmetic, but it reads as installed.
@@ -105,6 +116,7 @@ release decision is an owner action and has not been taken.
 | Role | Name | Date | Decision |
 |---|---|---|---|
 | Engineering verification | Lovable agent | 2026-08-11 | Gates re-run; §6 items 1–5 open |
+| Engineering measurement | Lovable agent | 2026-08-18 | Measurement run only (§5b); build/typecheck/vocabulary/authz PASS, security scan + seat-cap + scoring + unit suite FAIL, tenant isolation + smoke journey + live domains BLOCKED |
 | Product / release owner | _unsigned_ | — | — |
 | Security owner | _unsigned_ | — | — |
 
@@ -112,3 +124,24 @@ To sign off, the release owner records a decision on each §6 item (fix or
 accept-with-reason) and replaces the `_unsigned_` rows above. Do not mark this
 document approved while §6 item 1 is unresolved — the primary user journey is
 the one gate with no passing evidence.
+
+## 5b. Measurement run — 2026-08-18 (no fixes applied)
+
+Measurement only, run against the current tree. Non-green items are stated as
+FAIL or BLOCKED with the observed reason.
+
+| Gate | Result | Evidence (2026-08-18) |
+|---|---|---|
+| Production build | PASS | `npm run build` exit 0; client + server + worker artifacts emitted, built in 3.82s |
+| Typecheck | PASS | `tsgo --noEmit` exit 0, 0 errors |
+| Security scan | FAIL | 7 findings: 1 error-level (`SUPA_security_definer_view`), 6 warn (2 previously ignored by user, rest reviewed/accepted). Error-level finding is not green |
+| Tenant isolation | BLOCKED | Included in the Playwright batch; the run did not reach the spec before the harness window closed (batch stalled after test 13/25) |
+| Authorization matrix | PASS | `vitest run` — `tests/authz/workspace-access.test.ts` green within the 140 passing files |
+| Seat-cap enforcement | FAIL | `seat-reactivation.spec.ts` 3/4 (`reactivation succeeds once a seat is free` FAIL); `seat-reactivation-actions.spec.ts` 3/5 (`upgrade button opens the plan tab`, `seats conversation button points at the call booking page` FAIL) |
+| Scoring regression | FAIL | `pipeline.spec.ts` 2/4: `parses and scores three submitted CVs…` FAIL, `corrupt CV fails visibly…` FAIL; idempotency + no-transient-state PASS |
+| Public vocabulary | PASS | `check:vocabulary` exit 0 — public 5/5 and client 203 files |
+| Unit/integration suite | FAIL | `vitest run` 1221/1224: FAIL `exports.masking.test.ts > masks contact details when the requester chose masking`; FAIL `express-intake-schema.test.ts > blueprintProgress > treats unknown states as no progress…`; FAIL `messaging-history.test.ts > should render all persisted client messages…` (5s timeout) |
+| Mobile 375px | PASS (carried) | No new measurement this run; last observed pass 2026-08-17 Journey C over /client Overview, Positions, Candidates, detail, Messages, Settings — 0 overflow, 0 tap targets <44px |
+| Live domains | BLOCKED | Not measured this run; no outbound domain probe executed |
+| Consent-gated tracking | PASS (carried) | No code change since last pass; fails closed on policy read error |
+| End-to-end smoke journey | BLOCKED | `smoke-journey.spec.ts` never reached in this batch — the Playwright worker stalled at test 13/25 and the run was still in flight when measurement closed |
