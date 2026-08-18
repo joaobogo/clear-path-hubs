@@ -67,7 +67,10 @@ export function TagSilverMedalistDialog({
     onSuccess: () => {
       toast.success("Added to talent memory");
       qc.invalidateQueries({ queryKey: ["talent-memory"] });
+      qc.invalidateQueries({ queryKey: ["talent-memory-archived-count"] });
       qc.invalidateQueries({ queryKey: ["memory-by-match", matchId] });
+      // One tag source: the "Good for future" pool must refresh from this write too.
+      qc.invalidateQueries({ queryKey: ["talent-pool"] });
       onOpenChange(false);
     },
     onError: (e: Error) => toastError(e),
