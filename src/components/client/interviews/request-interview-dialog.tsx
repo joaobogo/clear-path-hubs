@@ -64,7 +64,7 @@ export function RequestInterviewDialog({
         <DialogHeader>
           <DialogTitle>Propose interview times</DialogTitle>
           <DialogDescription>
-            Pick up to three slots and who joins. We confirm one with the candidate — no
+            Offer times and say who joins. We confirm one with the candidate — no
             back-and-forth from your inbox.
           </DialogDescription>
         </DialogHeader>
