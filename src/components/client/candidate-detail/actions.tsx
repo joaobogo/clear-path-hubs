@@ -170,7 +170,7 @@ export function ActionArea({
           className="inline-flex items-center gap-1.5 font-medium text-primary hover:underline"
         >
           <MessageSquare className="h-3.5 w-3.5" />
-          Message TaaSFlow
+          Message team
         </Link>
       </div>
     </div>
