@@ -1,5 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { cvConsentGate } from "@/lib/consent/cv-consent-gate";
+
 
 const SIGNED_URL_TTL_SECONDS = 300; // short-lived: 5 minutes
 
