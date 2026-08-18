@@ -23,7 +23,32 @@ export type JobPostingSource = {
   organization_name: string;
   organization_logo_url: string | null;
   openings: number;
+  /** Structured pay, only when the employer approved publishing it. */
+  compensation_public?: {
+    min: number | null;
+    max: number | null;
+    currency: string;
+    period: string;
+  } | null;
 };
+
+/**
+ * Google requires validThrough. When the employer set no deadline we publish
+ * the window the posting itself honours: applications stay open for 90 days
+ * from the publish date, which is the same horizon the board uses before a
+ * role is treated as stale.
+ */
+const DEFAULT_OPEN_DAYS = 90;
+
+function defaultValidThrough(publishedAt: string | null): string {
+  const base = publishedAt ? new Date(publishedAt) : new Date();
+  const from = Number.isNaN(base.getTime()) ? new Date() : base;
+  const until = new Date(from.getTime() + DEFAULT_OPEN_DAYS * 24 * 60 * 60 * 1000);
+  // Never advertise a window that has already closed.
+  const now = new Date();
+  const safe = until < now ? new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000) : until;
+  return safe.toISOString();
+}
 
 const EMPLOYMENT_TYPE: Record<string, string> = {
   full_time: "FULL_TIME",
@@ -83,7 +108,23 @@ export function buildJobPostingJsonLd(pos: JobPostingSource, canonicalUrl: strin
   };
 
   if (pos.published_at) jsonLd.datePosted = pos.published_at;
-  if (pos.application_deadline) jsonLd.validThrough = `${pos.application_deadline}T23:59:59`;
+  jsonLd.validThrough = pos.application_deadline
+    ? `${pos.application_deadline}T23:59:59`
+    : defaultValidThrough(pos.published_at);
+  const pay = pos.compensation_public;
+  if (pay && (pay.min !== null || pay.max !== null)) {
+    jsonLd.baseSalary = {
+      "@type": "MonetaryAmount",
+      currency: pay.currency,
+      value: {
+        "@type": "QuantitativeValue",
+        ...(pay.min !== null ? { minValue: pay.min } : {}),
+        ...(pay.max !== null ? { maxValue: pay.max } : {}),
+        ...(pay.min !== null && pay.max === null ? { value: pay.min } : {}),
+        unitText: pay.period,
+      },
+    };
+  }
   if (pos.employment_type && EMPLOYMENT_TYPE[pos.employment_type]) {
     jsonLd.employmentType = EMPLOYMENT_TYPE[pos.employment_type];
   }

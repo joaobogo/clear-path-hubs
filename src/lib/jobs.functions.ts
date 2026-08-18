@@ -5,7 +5,11 @@ import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { titleCaseLocation, withCountry } from "@/lib/jobs/location-format";
 import type { Database } from "@/integrations/supabase/types";
-import { buildPublicJobFacts, resolveCompensation } from "@/lib/jobs/public-facts";
+import {
+  buildPublicJobFacts,
+  resolveCompensation,
+  resolvePublicSalary,
+} from "@/lib/jobs/public-facts";
 import { EFFORT_DEFAULT, resolveApplyEffort } from "@/lib/jobs/apply-effort";
 
 
@@ -90,6 +94,41 @@ function toReqStrings(input: unknown): string[] {
     .filter((v): v is string => !!v && v.trim().length > 0);
 }
 
+/**
+ * The organization gate. A role whose owning organization is flagged
+ * test/QA/demo is never publishable, whatever its own visibility and status
+ * say — anon cannot read `organizations`, so the check runs through a definer
+ * lookup that returns ids only. A failed lookup withholds every id: on this
+ * path, silence is the safe answer.
+ */
+async function publishableIds(
+  supabase: ReturnType<typeof publicClient>,
+  ids: string[],
+): Promise<Set<string>> {
+  if (ids.length === 0) return new Set();
+  if (testRecordsVisible()) return new Set(ids);
+  const { data, error } = await (
+    supabase.rpc as unknown as (
+      fn: string,
+      args: Record<string, unknown>,
+    ) => Promise<{ data: unknown; error: { message: string } | null }>
+  )("public_publishable_position_ids", { _ids: ids });
+  if (error) throw new Error(error.message);
+  const rows = (data ?? []) as unknown;
+  const out = new Set<string>();
+  if (Array.isArray(rows)) {
+    for (const r of rows) {
+      if (typeof r === "string") out.add(r);
+      else if (r && typeof r === "object") {
+        const v = (r as Record<string, unknown>)["public_publishable_position_ids"] ??
+          (r as Record<string, unknown>)["id"];
+        if (typeof v === "string") out.add(v);
+      }
+    }
+  }
+  return out;
+}
+
 export const listPublicPositions = createServerFn({ method: "GET" }).handler(
   async (): Promise<PublicPositionSummary[]> => {
     const supabase = publicClient();
@@ -102,10 +141,13 @@ export const listPublicPositions = createServerFn({ method: "GET" }).handler(
       .eq("visibility", "public");
     // QA fixtures never appear on the real board.
     if (!testRecordsVisible()) query = query.or("is_test_record.is.null,is_test_record.eq.false");
-    const { data, error } = await query
+    const { data: allRows, error } = await query
       .order("published_at", { ascending: false, nullsFirst: false })
       .limit(200);
     if (error) throw new Error(error.message);
+
+    const allowed = await publishableIds(supabase, (allRows ?? []).map((p) => p.id));
+    const data = (allRows ?? []).filter((p) => allowed.has(p.id));
 
     // The public list uses the same location-country augmentation as the detail
     // page so "Curitiba, PR" becomes "Curitiba, PR, Brazil" without the UI
@@ -214,6 +256,10 @@ export const getPublicPosition = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     if (!pos) return null;
 
+    // Organization-level gate: a test/QA/demo org's role is not public.
+    const allowed = await publishableIds(supabase, [pos.id]);
+    if (!allowed.has(pos.id)) return null;
+
     const desc = (pos.description ?? "").trim();
     const reqs = toReqStrings(pos.requirements);
     if (desc.length < 80 || reqs.length === 0) return null;
@@ -307,6 +353,10 @@ export const getPublicPosition = createServerFn({ method: "GET" })
       requirements: reqs,
       preferred_requirements: toReqStrings(pos.preferred_requirements),
       compensation_display: comp.display,
+      compensation_public: resolvePublicSalary(
+        pos.compensation,
+        p.compensation_visibility as string | null,
+      ),
       facts,
       apply_effort: applyEffort,
       onsite_days,
