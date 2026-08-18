@@ -258,6 +258,16 @@ export function DeliveryFailuresPanel() {
                           <Link to={item.relatedPath as never}>Open record</Link>
                         </Button>
                       ) : null}
+                      {item.recipient && item.canUnsuppress ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={unsuppressMut.isPending}
+                          onClick={() => unsuppressMut.mutate(item)}
+                        >
+                          Remove from suppression &amp; retry
+                        </Button>
+                      ) : null}
                       {item.recipient && item.channel === "email" ? (
                         <Button
                           size="sm"
