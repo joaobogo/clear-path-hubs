@@ -23,7 +23,7 @@ export type {
   QueueSeeAll,
   WorkQueue,
 } from "./admin-ops-types";
-import type { QueueClaim, QueueItem, QueueOwner, WorkQueue } from "./admin-ops-types";
+import type { QueueClaim, QueueItem, QueueOwner, QueueRef, WorkQueue } from "./admin-ops-types";
 import { PAID_PAYMENT_STATES } from "@/lib/publish-gate";
 
 
