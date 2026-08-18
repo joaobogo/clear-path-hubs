@@ -186,7 +186,7 @@ export function SlotProposer({
       <fieldset disabled={submitting} className="min-w-0">
         <legend className="text-sm font-medium">Times you can offer</legend>
         <p className="mt-0.5 text-xs text-muted-foreground">
-          Pick {MAX_SLOTS} — at least {MIN_SLOTS}, each {MIN_NOTICE_HOURS} hours ahead or more. Read
+          Offer {MIN_SLOTS} or {MAX_SLOTS} times, each at least {MIN_NOTICE_HOURS} hours ahead. Read
           in {zoneLabel(draft.timezone)}.
         </p>
         <div className="mt-2 space-y-2">
