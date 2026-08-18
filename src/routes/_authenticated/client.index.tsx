@@ -283,16 +283,33 @@ function OverviewPage() {
             <InfoRequestsPanel orgId={orgId} onAnswered={() => refetch()} />
 
             {/* 2 · PROGRESS — one sentence, three figures */}
-            <HiringHealthLine
-              notCurrent={pipelineNotCurrent}
-              notCurrentReason={readiness.reasonFor("Pipeline overview")}
-              health={data?.hiring_health ?? null}
-              loading={overviewPanel.loading}
-              isError={overviewPanel.isError}
-              onRetry={retryAll}
-              canSubmit={canSubmit}
-              org={orgSearch ?? null}
-            />
+            <div className="space-y-4">
+              {blockedSummary && (
+                <div 
+                  className="flex items-center justify-between gap-3 rounded-xl border taas-bd-danger taas-bg-danger-soft px-4 py-3 text-sm font-medium"
+                  role="alert"
+                >
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 shrink-0 taas-fg-danger" aria-hidden="true" />
+                    <span>{blockedSummary.label}</span>
+                  </div>
+                  <Button size="sm" variant="outline" asChild className="h-8 border-destructive/20 hover:bg-destructive/10">
+                    <Link to={blockedSummary.href}>Resolve</Link>
+                  </Button>
+                </div>
+              )}
+              
+              <HiringHealthLine
+                notCurrent={pipelineNotCurrent}
+                notCurrentReason={readiness.reasonFor("Pipeline overview")}
+                health={data?.hiring_health ?? null}
+                loading={overviewPanel.loading}
+                isError={overviewPanel.isError}
+                onRetry={retryAll}
+                canSubmit={canSubmit}
+                org={orgSearch ?? null}
+              />
+            </div>
 
             {/* 3 · MESSAGES — direct, one-click responses */}
             <RecentMessages messages={messages} loading={overviewPanel.loading} />
