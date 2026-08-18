@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { AlertTriangle, Wrench, Clock } from "lucide-react";
 
 import { getPlatformStatus } from "@/lib/status/platform-status.functions";
-import { degradedNotice } from "@/lib/status/platform-status";
+import { useStableDegradedNotice } from "@/lib/status/use-stable-degraded-notice";
 import { cn } from "@/lib/utils";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
@@ -24,7 +24,8 @@ export function DegradedModeBanner({ className }: { className?: string }) {
     retry: false,
   });
 
-  const notice = degradedNotice(data);
+  // Flap guard: an alarm only shows once the degraded reading has persisted.
+  const notice = useStableDegradedNotice(data);
   if (!notice.show) return null;
 
   const maintenance = notice.status === "maintenance";
