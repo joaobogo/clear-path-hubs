@@ -30,7 +30,11 @@ function ActionLink({ row }: { row: Row }) {
   const cls = "text-xs font-medium text-primary hover:underline shrink-0";
   if (target?.kind === "confirm_interview") {
     return (
-      <Link to="/client/interviews" search={target.search} className={cls}>
+      <Link
+        to="/client/interviews"
+        search={{ interview: target.search.interview, feedback: undefined }}
+        className={cls}
+      >
         Confirm a time →
       </Link>
     );
