@@ -3,13 +3,15 @@ import {
   ArrowLeft,
   Briefcase,
   CalendarClock,
+  ChevronDown,
   ExternalLink,
   Linkedin,
   Lock as LockIcon,
 
   MapPin,
 } from "lucide-react";
-import { DownloadCvButton, DownloadLatestCvLink } from "@/components/download-cv-button";
+import { DownloadCvButton } from "@/components/download-cv-button";
+import { CvPreviewDialog } from "@/components/cv-preview-dialog";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
 import { VisibilityNote } from "@/components/client/visibility-note";
 import { Button } from "@/components/ui/button";
@@ -140,9 +142,11 @@ export function CandidateHeader({
             released. The server enforces the same rule independently. */}
         {candidate.contact_released ? (
           <>
-            
+            <CvPreviewDialog
+              matchId={candidate.match_id}
+              candidateName={c.display_name}
+            />
             <DownloadCvButton matchId={candidate.match_id} mode="download" />
-            <DownloadLatestCvLink matchId={candidate.match_id} />
           </>
         ) : (
           <span className="inline-flex items-center gap-1.5 rounded-md border border-dashed px-2.5 py-1.5 text-xs text-muted-foreground">
@@ -240,5 +244,45 @@ export function JumpNav({ items }: { items: Array<{ id: string; label: string }>
         ))}
       </ul>
     </nav>
+  );
+}
+
+/**
+ * Collapsed-by-default detail block. The first screen stays high level; the
+ * deep evidence lives behind these dropdowns further down the page.
+ */
+export function CollapsibleSection({
+  id,
+  title,
+  summary,
+  defaultOpen = false,
+  children,
+}: {
+  id?: string;
+  title: string;
+  summary?: string;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <details
+      id={id}
+      open={defaultOpen}
+      className="group scroll-mt-24 rounded-xl border bg-card [&_section]:border-0 [&_section]:bg-transparent [&_section]:p-0"
+    >
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 sm:px-5">
+        <span className="min-w-0">
+          <span className="text-sm font-semibold">{title}</span>
+          {summary && (
+            <span className="ml-2 text-xs text-muted-foreground">{summary}</span>
+          )}
+        </span>
+        <ChevronDown
+          className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"
+          aria-hidden
+        />
+      </summary>
+      <div className="border-t px-4 py-4 sm:px-5">{children}</div>
+    </details>
   );
 }

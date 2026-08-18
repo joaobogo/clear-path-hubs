@@ -7,7 +7,7 @@ import { useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { MessageSquare, ShieldAlert } from "lucide-react";
+import { ShieldAlert } from "lucide-react";
 import { clientAction, undoClientDecision } from "@/lib/client-decisions.functions";
 import { getClientCandidate } from "@/lib/client-candidates.functions";
 import { getClientContext } from "@/lib/client-context.functions";
@@ -22,8 +22,6 @@ import {
   DecisionDialog,
   type DecisionPayload,
 } from "@/components/client/decision-dialog";
-import { InterviewerAssignments } from "@/components/client/interviewer-assignments";
-import { CandidateTeamActivity } from "@/components/client/candidate-team-activity";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
 import { useRouteRealtime } from "@/hooks/use-route-realtime";
@@ -37,14 +35,13 @@ import {
   withActionTimeout,
 } from "@/lib/client/action-timeout";
 
-import { BackLink, CandidateHeader, JumpNav, SectionCard } from "@/components/client/candidate-detail/shared";
+import { BackLink, CandidateHeader, CollapsibleSection } from "@/components/client/candidate-detail/shared";
 import { ScoreFreshnessNote } from "@/components/client/score-freshness-note";
 import { ScoreBreakdown } from "@/components/client/candidate-detail/score-breakdown";
 import {
   EvaluationProvenance,
   FitHero,
   RequirementCoverage,
-  WhatNeedsValidation,
   WhyThisCandidate,
   WhyWeShortlisted,
 } from "@/components/client/candidate-detail/evidence";
@@ -409,20 +406,7 @@ function CandidateDetailPage() {
  <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
  {/* MAIN COLUMN */}
         <div className="space-y-6 lg:col-span-8">
-          <JumpNav
-            items={[
-              { id: "sec-fit", label: "Summary" },
-              { id: "sec-breakdown", label: "Score breakdown" },
-              { id: "sec-why", label: "Why shortlisted" },
-              { id: "sec-coverage", label: "Requirements" },
-              { id: "sec-strengths", label: "Strengths" },
-              { id: "sec-risks", label: "Risks" },
-              { id: "sec-interview", label: "Interview" },
-              { id: "sec-experience", label: "Experience" },
-              { id: "sec-skills", label: "Skills" },
-              { id: "sec-activity", label: "Activity" },
-            ]}
-          />
+          {/* TOP: is this a good fit, and why — nothing else competes here. */}
           <div id="sec-fit" className="scroll-mt-24 space-y-3">
             <FitHero candidate={candidate} />
             {/* Freshness is stated next to the assessment it qualifies, never hidden. */}
@@ -432,15 +416,8 @@ function CandidateDetailPage() {
               matchId={id}
             />
           </div>
-          <div id="sec-breakdown" className="scroll-mt-24">
-            <ScoreBreakdown candidate={candidate} />
-          </div>
-          <EvaluationProvenance candidate={candidate} />
-          <div id="sec-why" className="scroll-mt-24"><WhyWeShortlisted candidate={candidate} /></div>
-          <div id="sec-coverage" className="scroll-mt-24"><RequirementCoverage candidate={candidate} /></div>
-          <div id="sec-strengths" className="scroll-mt-24"><WhyThisCandidate candidate={candidate} /></div>
-          <div id="sec-risks" className="scroll-mt-24"><WhatNeedsValidation candidate={candidate} /></div>
-          <AvailabilityAndComp candidate={candidate} />
+
+          {/* Decision facts that change the answer: money and timing, up top. */}
           <div id="sec-comp" className="scroll-mt-24">
             {compQuery.isError ? (
               <QueryErrorCard
@@ -454,36 +431,68 @@ function CandidateDetailPage() {
               <CompensationPanel signal={compSignal} loading={compPending} />
             )}
           </div>
+          <AvailabilityAndComp candidate={candidate} />
+
+          {/* What to do next with them. */}
           <div id="sec-interview" className="scroll-mt-24"><InterviewGuide candidate={candidate} /></div>
-          {orgId ? (
-            <div id="sec-feedback" className="scroll-mt-24">
-              <InterviewFeedbackSection orgId={orgId} matchId={id} readOnly={readOnly} />
-            </div>
-          ) : null}
-          <div id="sec-experience" className="scroll-mt-24"><ExperienceTimeline candidate={candidate} /></div>
-          <div id="sec-skills" className="scroll-mt-24"><SkillsAndEducation candidate={candidate} /></div>
-          {candidate.screening_answers.length > 0 && (
-            <SectionCard title="Screening answers" icon={<MessageSquare className="h-4 w-4" />}>
-              <dl className="space-y-3 text-sm">
-                {candidate.screening_answers.map((a, i) => (
-                  <div key={i}>
-                    <dt className="text-xs font-medium text-muted-foreground">
-                      {a.question}
-                    </dt>
-                    <dd className="mt-0.5 whitespace-pre-wrap">{a.answer || "Not provided"}</dd>
-                  </div>
-                ))}
-              </dl>
-            </SectionCard>
-          )}
-          <div id="sec-activity" className="scroll-mt-24 space-y-6">
-            {(interviews.length > 0 || decisions.length > 0) && (
-              <ActivitySection interviews={interviews} decisions={decisions} />
+
+          {/* DETAIL — collapsed by default, in order of interest. */}
+          <div className="space-y-3">
+            <h2 className="pt-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              The detail, if you want it
+            </h2>
+            <CollapsibleSection id="sec-coverage" title="Scoring criteria and coverage">
+              <RequirementCoverage candidate={candidate} />
+            </CollapsibleSection>
+            <CollapsibleSection id="sec-breakdown" title="How the score was built">
+              <div className="space-y-4">
+                <ScoreBreakdown candidate={candidate} />
+                <EvaluationProvenance candidate={candidate} />
+              </div>
+            </CollapsibleSection>
+            <CollapsibleSection id="sec-why" title="Why we shortlisted them">
+              <WhyWeShortlisted candidate={candidate} />
+            </CollapsibleSection>
+            <CollapsibleSection id="sec-strengths" title="Strengths in their own evidence">
+              <WhyThisCandidate candidate={candidate} />
+            </CollapsibleSection>
+            <CollapsibleSection id="sec-experience" title="Career experience">
+              <ExperienceTimeline candidate={candidate} />
+            </CollapsibleSection>
+            <CollapsibleSection id="sec-skills" title="Skills, education, and languages">
+              <SkillsAndEducation candidate={candidate} />
+            </CollapsibleSection>
+            {candidate.screening_answers.length > 0 && (
+              <CollapsibleSection title="Screening answers">
+                <dl className="space-y-3 text-sm">
+                  {candidate.screening_answers.map((a, i) => (
+                    <div key={i}>
+                      <dt className="text-xs font-medium text-muted-foreground">
+                        {a.question}
+                      </dt>
+                      <dd className="mt-0.5 whitespace-pre-wrap">{a.answer || "Not provided"}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </CollapsibleSection>
             )}
-            <JourneySection matchId={candidate.match_id} />
-            <AuditTrailSection candidate={candidate} />
+            {orgId ? (
+              <CollapsibleSection id="sec-feedback" title="Interview feedback">
+                <InterviewFeedbackSection orgId={orgId} matchId={id} readOnly={readOnly} />
+              </CollapsibleSection>
+            ) : null}
+            <CollapsibleSection id="sec-activity" title="History and activity">
+              <div className="space-y-6">
+                {(interviews.length > 0 || decisions.length > 0) && (
+                  <ActivitySection interviews={interviews} decisions={decisions} />
+                )}
+                <JourneySection matchId={candidate.match_id} />
+                <AuditTrailSection candidate={candidate} />
+              </div>
+            </CollapsibleSection>
           </div>
         </div>
+
 
         {/* SIDE PANEL — Decision cockpit (sticky on desktop) */}
         <aside className="space-y-6 lg:col-span-4">
@@ -505,21 +514,6 @@ function CandidateDetailPage() {
               roleTitle={candidate.position?.title ?? null}
               readOnly={readOnly}
             />
-            {/* Interviewers never see who else was given access to a candidate. */}
-            {!isViewer && orgId && (
-              <InterviewerAssignments
-                orgId={orgId}
-                matchId={candidate.match_id}
-                readOnly={support.readOnly}
-              />
-            )}
-            {orgId && (
-              <CandidateTeamActivity
-                orgId={orgId}
-                matchId={candidate.match_id}
-                recordView={!support.readOnly}
-              />
-            )}
             <ProfilePanel candidate={candidate} />
             <LinksPanel candidate={candidate} />
           </div>

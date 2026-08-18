@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { CvDownloadAudit } from "@/components/cv-download-audit";
 import { DownloadCvButton } from "@/components/download-cv-button";
+import { CvPreviewDialog } from "@/components/cv-preview-dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -306,7 +307,11 @@ export const LinksPanel = memo(function LinksPanel({
         ))}
         {candidate.contact_released ? (
           <>
-            <li className="pt-1">
+            <li className="flex flex-wrap items-center gap-2 pt-1">
+              <CvPreviewDialog
+                matchId={candidate.match_id}
+                candidateName={candidate.candidate.display_name}
+              />
               <DownloadCvButton matchId={candidate.match_id} mode="download" />
             </li>
             <li className="pt-2">
