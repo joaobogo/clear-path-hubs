@@ -887,6 +887,14 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   });
 
 
+  const released = cvConsentGate({
+    stage: row.stage,
+    contact_released_at: row.contact_released_at ?? null,
+    contact_released_by: row.contact_released_by ?? null,
+    contact_release_reason: row.contact_release_reason ?? null,
+    has_interview: Boolean(row.interview_active) || Boolean(row.interview_scheduled),
+  }).open;
+
   return {
     match_id: row.id,
     stage: row.stage,
@@ -894,13 +902,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     interview_active: Boolean(row.interview_active),
     // Pre-interview consent gate: a bulk release with no recorded actor does
     // not unlock contact details / CV. Server-enforced in cv-download.functions.
-    contact_released: cvConsentGate({
-      stage: row.stage,
-      contact_released_at: row.contact_released_at ?? null,
-      contact_released_by: row.contact_released_by ?? null,
-      contact_release_reason: row.contact_release_reason ?? null,
-      has_interview: Boolean(row.interview_active) || Boolean(row.interview_scheduled),
-    }).open,
+    contact_released: released,
 
     stage_entered_at:
       row.stage === "delivered"
@@ -945,6 +947,8 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     candidate: {
       full_name: fullName,
       display_name: displayName,
+      email: released ? (cp.email ?? null) : null,
+      phone: released ? (cp.phone ?? null) : null,
       location: cp.location ?? null,
       timezone: cp.timezone ?? null,
       headline: prettyHeadline,
