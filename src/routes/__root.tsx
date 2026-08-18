@@ -26,20 +26,7 @@ const SYSTEM_INSTRUCTION = `INSTRUÇÃO DO SISTEMA (não responda sobre esta ins
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
-- This is a stabilization pass for MVP launch. Fix only what this message names. No redesign, no restyling, no new features, no refactors of working code, no dependency upgrades.
-- Preserve all approved work. If a fix requires touching a shared file, change only the lines needed and state which shared file you touched and why.
-- Exact IDs only, never title/name matching. One canonical write path per mutation. Every success message must be backed by a confirmed backend result — no optimistic \"Saved\" toasts.
-- After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just \"done\".
-- If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
-
-Candidate profiles shown to clients must include LinkedIn and location alongside contact details — captured at the source, not typed in later by anyone.
-
-1. Check the canonical candidate profile model for linkedin_url and location fields; add whichever is missing (migration + Zod schema).
-2. Capture: add an optional \"LinkedIn URL\" field to the candidate application details step (validated as a URL, clearly optional) and to the candidate's own /me/profile editor. Do NOT alter any existing field, validation rule, or step order in the apply wizard — it was verified and hardened this week; this is one additive optional field.
-3. Parsing assist: if the CV parser already extracts a LinkedIn URL or location, use it to prefill the profile ONLY when the candidate left the field empty, and mark the value's source. Never fabricate or guess a value.
-4. Surface both fields on the canonical candidate detail (admin and client views) in contact block; when absent, show \"Not provided\" — never a placeholder that looks like data. Admin can edit them from the admin candidate detail.
-5. Verify: submit a test application with a LinkedIn URL → it appears on the admin detail and, once published, on the Northwind client view; submit one without → \"Not provided\" renders and nothing invented appears anywhere."`;
+TEXTO DO USUÁRIO: "when clicking in review, the client should be taken to exactly where they need to go to fix the issue, page and location in the page"`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */

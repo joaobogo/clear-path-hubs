@@ -27,6 +27,7 @@ import {
 import {
   buildPipelineStatusLine,
   buildPipelineActionLabel,
+  buildPipelineActionTarget,
   type PipelineStatusInput,
 } from "@/lib/client-pipeline-language";
 import { computeRoleProgress } from "@/lib/client-role-progress";
@@ -160,6 +161,14 @@ export const getClientPositions = createServerFn({ method: "GET" })
         }),
         next_milestone: nextMilestoneFor(posRows, p.status),
         action_required: buildPipelineActionLabel(language),
+        // Deep-link for "Review →": exact ids, same precedence as the label.
+        action_target: buildPipelineActionTarget({
+          ...language,
+          positionId: String(p.id),
+          interviewToConfirmId:
+            posRows.find((r) => r.interview_needs_confirmation && r.interview_id)
+              ?.interview_id ?? null,
+        }),
       };
     });
   });

@@ -9,6 +9,7 @@ import {
   clientRoleStatusLabel,
   type ClientRoleStatus,
 } from "@/lib/client-role-status";
+import type { PipelineActionTarget } from "@/lib/client-pipeline-language";
 
 export type Row = {
   id: string;
@@ -35,6 +36,8 @@ export type Row = {
   client_status: ClientRoleStatus | null;
   next_milestone: string | null;
   action_required: string | null;
+  /** Exact deep-link for the action above, computed server-side. */
+  action_target?: PipelineActionTarget | null;
 };
 
 export function PortfolioSnapshot({
