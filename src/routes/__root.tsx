@@ -30,7 +30,16 @@ TEXTO DO USUÁRIO: "STANDING RULES — DECLUTTER VARIANT:
 - This is an information-hierarchy and removal pass, not a redesign. Keep the design system, tokens, typography and color exactly as they are. Do not add features beyond what this message names.
 - Every piece of information stays reachable within one click of where it was, EXCEPT the elements this message explicitly removes — those are removed deliberately, per owner decision. Remove them from the client experience (nav, links, rendering); keep route files as redirects and keep components in the repo unless this message says delete.
 - Do not touch any server function, mutation, or data contract unless this message names it. Buttons keep calling exactly what they call today.
-- Verify at 1440px and 375px in the live preview as the Northwind demo client, re-run the page's existing spec(s), and report the click-path result."`;
+- Verify at 1440px and 375px in the live preview as the Northwind demo client, re-run the page's existing spec(s), and report the click-path result.
+
+Restructure /client (Overview) per the audited verdicts:
+1. FIRST VIEWPORT, in order: (a) \"WHAT NEEDS YOU\" — the queue, moved to the top, now the single open-items source from R1.3, with its \"Done\" actions gaining a brief undo; (b) the \"Hiring is on track\" KPI row (numbers now correct per R1.3); (c) \"This week\".
+2. MERGE: \"Your open items\" card into WHAT NEEDS YOU (delete the duplicate card); \"WHAT HAPPENS NEXT\" into \"WHERE YOUR ROLES ARE\" (one roles block); the duplicate status banner + inline strip into ONE inline status line (stable per R1.4).
+3. DEMOTE: the \"N roles can be sharpened…\" panel becomes one line with a count below the fold, and it must reflect real blocks (a blocked role is named, not \"Nothing is blocked\").
+4. REMOVE from this page: the status \"Detail\" telemetry panel; \"Live movement\"; the \"Agent activity\" 47-item feed; \"Recent activity\"; \"Recent messages\"; the agent counters (\"6 of 6 agents on\", \"0 queued\") and \"What you can see\". Keep EXACTLY ONE activity element: a \"Recent activity\" link-out to a single consolidated feed if one exists — otherwise none.
+5. KEEP untouched: \"Our commitments to you\" (the strongest section in the product) and \"How hard we work each role\" (Steady/Standard/Aggressive).
+6. MERGE THE APPROVALS PAGE (owner decision): /client/approvals is the Overview queue verbatim — remove it from nav and redirect it to /client; its Export CSV and New task controls move into the WHAT NEEDS YOU header. Interview-feedback items in the queue deep-link to /client/interviews.
+Verify: fresh load answers \"what needs me?\" in the first viewport at 1440 and within one thumb-scroll at 375; every queue item's action works; /client/approvals redirects; counts still reconcile with /client/interviews and /client/candidates."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
