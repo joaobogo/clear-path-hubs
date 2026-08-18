@@ -238,7 +238,7 @@ export function AvailabilityManager({
             </Button>
             <Button onClick={() => saveMut.mutate()} disabled={saveMut.isPending}>
               <Check className="mr-1.5 h-4 w-4" />
-              {saveMut.isPending ? "Saving…" : "Save availability"}
+              {saveMut.isPending ? "Updating…" : "Update availability"}
             </Button>
           </DialogFooter>
         </DialogContent>
