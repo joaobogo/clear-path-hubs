@@ -19,6 +19,41 @@ import { plural } from "@/lib/format/plural";
 // fall between tabs. Re-exported here for existing importers.
 export const STATUS_TABS = ROLE_STATUS_TABS;
 
+/**
+ * "Review →" must land the client exactly where the fix happens — the right
+ * page and the right spot on it. The server hands us a typed target computed
+ * from the same precedence as the label, so the two can never disagree. When
+ * no target exists (nothing actionable to open) we fall back to the brief.
+ */
+function ActionLink({ row }: { row: Row }) {
+  const target = row.action_target ?? null;
+  const cls = "text-xs font-medium text-primary hover:underline shrink-0";
+  if (target?.kind === "confirm_interview") {
+    return (
+      <Link to="/client/interviews" search={target.search} className={cls}>
+        Confirm a time →
+      </Link>
+    );
+  }
+  if (target?.kind === "review_candidates" || target?.kind === "offer_response") {
+    return (
+      <Link to="/client/candidates" search={target.search} className={cls}>
+        {target.kind === "review_candidates" ? "Review candidates →" : "See the offer →"}
+      </Link>
+    );
+  }
+  return (
+    <Link
+      to="/client/positions/$id/edit"
+      params={{ id: row.id }}
+      search={{ step: undefined }}
+      className={cls}
+    >
+      Review →
+    </Link>
+  );
+}
+
 export function ActionRequiredBanner({ actionItems }: { actionItems: Row[] }) {
   if (actionItems.length === 0) return null;
   return (
@@ -42,20 +77,14 @@ export function ActionRequiredBanner({ actionItems }: { actionItems: Row[] }) {
                 {p.action_required}
               </div>
             </div>
-            <Link
-              to="/client/positions/$id/edit"
-              params={{ id: p.id }}
-              search={{ step: undefined }}
-              className="text-xs font-medium text-primary hover:underline shrink-0"
-            >
-              Review →
-            </Link>
+            <ActionLink row={p} />
           </li>
         ))}
       </ul>
     </section>
   );
 }
+
 
 export function StatusTabs({
   status,
