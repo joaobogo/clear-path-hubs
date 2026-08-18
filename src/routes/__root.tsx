@@ -26,18 +26,7 @@ const SYSTEM_INSTRUCTION = `INSTRUÇÃO DO SISTEMA (não responda sobre esta ins
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
-- This is a stabilization pass for MVP launch. Fix only what this message names. No redesign, no restyling, no new features, no refactors of working code, no dependency upgrades.
-- Preserve all approved work. If a fix requires touching a shared file, change only the lines needed and state which shared file you touched and why.
-- Exact IDs only, never title/name matching. One canonical write path per mutation. Every success message must be backed by a confirmed backend result — no optimistic \"Saved\" toasts.
-- After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just \"done\".
-- If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
-
-1. A client notification announced \"Your role is live — Candidates can now apply.\" for a role whose own page says \"Preparing — Your role is not published publicly yet · Role live — Not started\". Find what emits this event and make it fire only when the role's public state is actually live — same source of truth as the role page.
-2. Every client notification must deep-link to the thing it is about — the \"Your role is live\" card offers only \"Clear\". Give each notification type a destination; if a type genuinely has none, it should not be a notification.
-3. The \"Email blocked\" banner tells the client to \"update your address or resubscribe\" but offers no control for either, while the product promises email mirroring elsewhere. Add the action it names (a resubscribe/verify-address control wired to the suppression state) or, if that cannot ship this week, replace the copy with what the client can actually do (\"Contact us and we'll restore email delivery\" with a prefilled message).
-4. Reconcile the badge math: the bell badge showed 1 while the panel showed \"Unread (1) / Important update (3)\" — one counting rule, stated in the UI.
-Verify: publish-state notification only fires on a truly live role (test with the unpublished BROWSER-TEST role); every notification in the demo panel opens a destination; the email-blocked banner has a working action; badge equals the panel's unread count."`;
+TEXTO DO USUÁRIO: "this is whats hapening in cv preview"`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
