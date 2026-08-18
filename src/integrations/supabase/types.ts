@@ -15819,6 +15819,10 @@ export type Database = {
         }[]
       }
       public_position_posting: { Args: { _id: string }; Returns: Json }
+      public_publishable_position_ids: {
+        Args: { _ids: string[] }
+        Returns: string[]
+      }
       purge_expired_intake_drafts: { Args: never; Returns: number }
       qa_purge_test_organizations: { Args: { _names: string[] }; Returns: Json }
       record_authz_test_run: {
