@@ -561,6 +561,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
       hiring_health,
 
       active_positions: activePositions,
+      blocked_summary,
       new_this_week,
       action_required,
       whats_next,
