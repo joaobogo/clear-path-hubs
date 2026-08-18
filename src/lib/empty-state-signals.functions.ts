@@ -154,16 +154,15 @@ export const getEmptyStateSignals = createServerFn({ method: "GET" })
             .maybeSingle(),
           sb
             .from("score_runs")
-            .select("started_at, created_at")
+            .select("started_at")
             .eq("organization_id", org)
             .eq("position_id", data.positionId)
-            .order("created_at", { ascending: true })
+            .order("started_at", { ascending: true })
             .limit(1)
             .maybeSingle(),
         ]);
         const startedAt =
           (firstRun?.started_at as string | null) ??
-          (firstRun?.created_at as string | null) ??
           (position?.published_at as string | null) ??
           (position?.approved_at as string | null) ??
           null;
