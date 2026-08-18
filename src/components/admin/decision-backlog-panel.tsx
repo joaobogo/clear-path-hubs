@@ -303,7 +303,8 @@ export function DecisionBacklogPanel({
                               ? "Send a follow-up through the client's notifications"
                               : `Next follow-up available ${fmt(r.nudge_available_at)}`
                           }
-                          onClick={() => nudge.mutate(r.match_id)}
+                          onClick={() => void confirmNudge(r)}
+                          data-qa-action="nudge-client-decision"
                         >
                           {nudge.isPending && nudge.variables === r.match_id ? (
                             <Loader2 className="h-3.5 w-3.5 animate-spin" />
