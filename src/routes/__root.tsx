@@ -33,11 +33,13 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just \"done\".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-Journey A (intake → conversion → activation → public board → candidate applies) passed steps 1–3. Two items remain open from Pass 15:
+Run the two never-executed journeys and record results per step in docs/mvp-ledger.md:
 
-1. Step 4: the public-board assertion still matches the seeded fixture title instead of the intake-produced role. Confirm the intake-created role is reachable on /jobs by its reference code, then fix the assertion to target the intake-produced role by exact id — never by title.
-2. Step 5: /jobs/<id>/apply never rendered [data-hydrated=\"ready\"] in the harness. Triage whether the role was actually public/active at that point (test-order issue) or the apply route genuinely fails to hydrate for intake-created roles. If it is a product defect, fix the hydration; if it is sequencing, fix the test. State which it was.
-3. Verify Journey A green end to end, and record it in docs/mvp-ledger.md."`;
+Journey B — failure paths: wrong password, expired reset link, oversized/corrupt/password-protected CV, double-submit, failed payment (sandbox), RLS-denied action, mid-flow network drop on application submit. Every failure must end in a named, human error with a next action — zero blank screens, zero false-success toasts, zero lost data.
+
+Journey C — resilience: hard refresh mid-wizard on intake and on the application (drafts restore per existing rules, CV re-attach expected), refresh on each client dashboard page as the Northwind demo user, and a full 375px pass over /client Overview, Positions, Candidates (list + board), candidate detail, Messages, Settings, plus /admin overview, candidates, publish. No horizontal overflow, no dead controls, tap targets stay ≥44px.
+
+Fix only what fails, minimally, and re-run the failed step after each fix."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
