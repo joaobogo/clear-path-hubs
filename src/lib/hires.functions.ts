@@ -124,6 +124,11 @@ export interface TimeToHireReport {
     hires_confirmed: number;
     closed_lost: number;
     acceptance_rate: number | null;
+    avg_salary: number | null;
+    total_salary_value: number | null;
+    salary_report_incomplete: boolean;
+    decided_offers: number;
+    accepted_offers: number;
     avg_days_to_hire: number | null;
     avg_days_offer_to_accept: number | null;
     median_days_to_hire: number | null;
