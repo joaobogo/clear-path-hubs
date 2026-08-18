@@ -33,15 +33,13 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just \"done\".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-Beatriz Costa is \"Hired / offer accepted / 13 Aug\" on the candidate list, the board, the talent pool, the role page and her own profile — and simultaneously \"CLOSED LOST · Candidate declined · Closed lost 15/08/2026\" on /client/offers. The offers page also reports hires three different ways on one screen (\"HIRES CONFIRMED 1\", a \"HIRE CONFIRMED 0 — Nothing here\" column, \"Hires by owner: No hires yet\", \"ACCEPTANCE RATE 0%\"), and shows a live offer with \"Comp: not on record · owner unassigned\".
+On one Overview screen today: \"WHAT NEEDS YOU · 5 items\" sat directly below \"0 awaiting your decision\"; \"Your open items\" said \"1 feedback\" while /client/interviews said 2 interviews await feedback; Beatriz's overdue feedback was \"4 days overdue\" in the queue and \"3 days overdue\" in the summary card; and the header claimed \"Nothing is blocked\" while a role's own page said \"BLOCKS ACCURATE SCORING · Intake · blocked since 14 Aug\".
 
-The Aug-15 plan file .lovable/plan/plan-reconcile-offer-and-hire-state-machine-2026-08-15.md addressed this state machine — read it first and determine whether it was implemented; today's evidence says the offers page still reads from a divergent source.
-
-1. Make every hire/offer display on /client/offers derive from the same canonical state the rest of the workspace uses (the candidate match stage + hire record) — no page-local offer status that can disagree.
-2. Repair the Northwind data through the canonical write path: Beatriz has ONE record and it says Hired/accepted; delete or supersede whatever produced the \"Closed lost 15/08\" duplicate — find out what wrote it (audit trail) and report the cause so it can't recur.
-3. Fix the page's aggregates to be internally consistent: HIRES CONFIRMED, the HIRED column, \"Hires by owner\" and ACCEPTANCE RATE all computed from the same rows. When an offer has no compensation on record, totals and averages must show \"—\" or \"incomplete (1 of 2 offers has comp)\" — never silently sum a subset (2 offers, value €64,000, average €66,000 is arithmetically impossible and shipped today).
-4. An offer with no compensation or owner should be flagged as incomplete on the card, not rendered as if normal.
-5. Verify as the Northwind demo client: Beatriz shows Hired everywhere including /client/offers; every hire count on the offers page is the same number; the value/average tiles are consistent or honestly marked incomplete."`;
+1. Build (or designate) ONE server-derived open-items source for the client workspace — the queue items, their counts, their overdue math and the \"awaiting your decision\" number all come from it. The Overview header numbers, \"WHAT NEEDS YOU\", \"Your open items\", /client/interviews' \"waiting on your feedback\" banner and the approvals queue must all read from this one source. No page-local recomputation of the same facts.
+2. \"Nothing is blocked\" must be computed from the same blocked-state the role page uses: if any role is blocked/needs-clarification, the Overview says so with the role name and a link — it must never deny a block another page asserts.
+3. Overdue math comes from one function with one clock (see also R1.6): the same item cannot be 3 and 4 days overdue on one screen.
+4. Do not restructure the Overview layout in this prompt (that is R3.2) — this is purely making the numbers agree.
+5. Verify as the Northwind demo client, all on one load: the awaiting-decision number equals the queue item count of decision items; the feedback count matches /client/interviews; every overdue label for the same item is identical everywhere; the blocked role is surfaced, not denied."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
