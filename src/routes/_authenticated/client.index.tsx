@@ -145,6 +145,7 @@ function OverviewPage() {
   const pipelineNotCurrent = readiness.isNotCurrent("Pipeline overview");
 
   const kpis = data?.kpis;
+  const blockedSummary = (data as Any)?.blocked_summary ?? null;
   const roles: Any[] = data?.whats_next ?? [];
   const messages: Any[] = data?.recent_messages ?? [];
   const activity: Any[] = data?.recent_activity ?? [];
