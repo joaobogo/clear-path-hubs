@@ -228,11 +228,6 @@ function OverviewPage() {
         </div>
       </header>
 
-      {/* Is the system working, and is what I'm looking at current? */}
-      <SystemHealthStrip organizationId={orgId} />
-
-
-
       {/* One aggregate signal for the four independent panels on this page. */}
       <DegradedPanelsBanner retrying={readiness.retrying} panels={readiness.signals} />
 
@@ -260,7 +255,6 @@ function OverviewPage() {
       {/* Blocking gaps come first — before onboarding, health, or the queue */}
       <RoleDetailsNeededBanner roles={rolesNeedingDetails} />
 
-
       {showOnboarding ? (
         <EmptyWelcome canSubmit={canSubmit} />
       ) : (
@@ -280,144 +274,164 @@ function OverviewPage() {
             </div>
           )}
 
+          {/* ── FIRST VIEWPORT: what needs your attention now ── */}
+          <div className="space-y-6">
+            {/* 1 · WHAT NEEDS ME RIGHT NOW — the one decision block, first */}
+            <DecisionQueue
+              rows={queue}
+              meta={(data as Any)?.decision_queue_meta ?? null}
+              loading={overviewPanel.loading}
+              isError={overviewPanel.isError}
+              onRetry={retryAll}
+              orgId={orgId ?? null}
+              orgSearch={orgSearch ?? null}
+            />
 
-          {/* 1 · WHAT NEEDS ME RIGHT NOW — the one decision block, first */}
-          <DecisionQueue
-            rows={queue}
-            meta={(data as Any)?.decision_queue_meta ?? null}
-            loading={overviewPanel.loading}
-            isError={overviewPanel.isError}
-            onRetry={retryAll}
-            orgId={orgId ?? null}
-            orgSearch={orgSearch ?? null}
-          />
+            {/* Anything else still waiting on you, overdue first */}
+            <OpenItemsStrip orgId={orgId} />
 
-          {/* Anything else still waiting on you, overdue first */}
-          <OpenItemsStrip orgId={orgId} />
+            {/* Missing brief details block sourcing — answerable in place */}
+            <InfoRequestsPanel orgId={orgId} onAnswered={() => refetch()} />
 
-          {/* Missing brief details block sourcing — answerable in place */}
-          <InfoRequestsPanel orgId={orgId} onAnswered={() => refetch()} />
+            {/* 2 · PROGRESS — one sentence, three figures */}
+            <HiringHealthLine
+              notCurrent={pipelineNotCurrent}
+              notCurrentReason={readiness.reasonFor("Pipeline overview")}
+              health={data?.hiring_health ?? null}
+              loading={overviewPanel.loading}
+              isError={overviewPanel.isError}
+              onRetry={retryAll}
+              canSubmit={canSubmit}
+              org={orgSearch ?? null}
+            />
 
-          {/* 2 · PROGRESS — one sentence, three figures */}
-          <HiringHealthLine
-            notCurrent={pipelineNotCurrent}
-            notCurrentReason={readiness.reasonFor("Pipeline overview")}
-            health={data?.hiring_health ?? null}
-            loading={overviewPanel.loading}
-            isError={overviewPanel.isError}
-            onRetry={retryAll}
-            canSubmit={canSubmit}
-            org={orgSearch ?? null}
-          />
+            {/* 3 · MESSAGES — direct, one-click responses */}
+            <RecentMessages messages={messages} loading={overviewPanel.loading} />
 
-          {/* 3 · WHAT HAPPENS NEXT — one milestone per active role, with dates
-              only where a commitment or recorded due date exists */}
-          <NextMilestones
-            rows={((data as Any)?.next_milestones ?? null) as MilestoneRow[] | null}
-            totalRoles={roles.length}
-            loading={overviewPanel.loading}
-            isError={overviewPanel.isError || Boolean((data as Any)?.next_milestones_failed)}
-            onRetry={retryAll}
-            org={orgSearch ?? null}
-          />
-
-
-          {/* This week — recorded events only, identical to the weekly email */}
-          {orgId && <WeeklyUpdateCard orgId={orgId} />}
-          <VisibilityNote />
-
-          {/* CONTROL ROOM — what is running, what moved, how hard we work */}
-          {orgId && (
-            <div className="space-y-4">
-              <SystemStatusStrip orgId={orgId} />
-              <div className="grid gap-4 lg:grid-cols-2">
-                <LiveTicker orgId={orgId} />
-                <IntensityDial orgId={orgId} canEdit={role === "client_admin"} />
-              </div>
-            </div>
-          )}
-
-          {/* AGENT ACTIVITY — the observable record of work on your roles */}
-          <AgentActivityRail organizationId={orgId} className="max-h-[32rem]" />
-
-          {/* ── Context below the fold ── */}
-          <div className="flex items-center gap-3 pt-2">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-              Where your roles are
-            </span>
-            {pipelineNotCurrent && (
-              <NotCurrentChip reason={readiness.reasonFor("Pipeline overview")} />
-            )}
-            <span className="h-px flex-1 bg-border" />
-            {roles.length > 1 && (
-              <select
-                aria-label="Filter by role"
-                value={selectedRole}
-                onChange={(e) =>
-                  navigate({
-                    search: ((prev: Any) => ({
-                      ...prev,
-                      role: e.target.value || undefined,
-                    })) as never,
-                  })
-                }
-                className="min-h-9 rounded-md border bg-card px-2 text-xs"
-              >
-                <option value="">All roles ({roles.length})</option>
-                {roles.map((r) => (
-                  <option key={r.position_id} value={r.position_id}>
-                    {r.title}
-                  </option>
-                ))}
-              </select>
-            )}
+            {/* 4 · WHAT HAPPENS NEXT — one milestone per active role */}
+            <NextMilestones
+              rows={((data as Any)?.next_milestones ?? null) as MilestoneRow[] | null}
+              totalRoles={roles.length}
+              loading={overviewPanel.loading}
+              isError={overviewPanel.isError || Boolean((data as Any)?.next_milestones_failed)}
+              onRetry={retryAll}
+              org={orgSearch ?? null}
+            />
           </div>
 
-          {/* 2 · ROLE STATUS — plain language, real dates, honest risk */}
-          <RoleStatusList roles={visibleRoles} loading={overviewPanel.loading} compact={compact} />
+          {/* ── BELOW THE FOLD: system detail, controls, filters, context ── */}
+          <Collapsible className="space-y-6">
+            <CollapsibleTrigger asChild>
+              <button
+                type="button"
+                className="group flex w-full items-center justify-between gap-3 rounded-xl border border-dashed bg-muted/30 px-4 py-3 text-left hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                <span className="text-sm font-medium text-foreground">Detail</span>
+                <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                  System status, controls, role filters, and history
+                  <ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
+                </span>
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="space-y-6 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+              {/* Is the system working, and is what I'm looking at current? */}
+              <SystemHealthStrip organizationId={orgId} />
 
-          {/* 3 · CANDIDATES WAITING ON YOU */}
-          <CandidatesReleasedSection
-            orgSearch={orgSearch ?? null}
-            selectedRole={selectedRole}
-            data={data}
-            isFetching={overviewPanel.loading}
-            isError={overviewPanel.isError}
-            error={overviewPanel.error ?? error}
-            refetch={retryAll}
-            latest={latest}
-          />
+              {/* CONTROL ROOM — what is running, what moved, how hard we work */}
+              {orgId && (
+                <div className="space-y-4">
+                  <SystemStatusStrip orgId={orgId} />
+                  <div className="grid gap-4 lg:grid-cols-2">
+                    <LiveTicker orgId={orgId} />
+                    <IntensityDial orgId={orgId} canEdit={role === "client_admin"} />
+                  </div>
+                </div>
+              )}
 
+              {/* AGENT ACTIVITY — the observable record of work on your roles */}
+              <AgentActivityRail organizationId={orgId} className="max-h-[32rem]" />
 
-          {/* 4 · PROMISE VS ACTUAL */}
-          <SlaScorecard orgId={orgId} positionId={selectedRole || undefined} />
+              {/* Role / agent / status filter row */}
+              <div className="flex items-center gap-3 pt-2">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                  Where your roles are
+                </span>
+                {pipelineNotCurrent && (
+                  <NotCurrentChip reason={readiness.reasonFor("Pipeline overview")} />
+                )}
+                <span className="h-px flex-1 bg-border" />
+                {roles.length > 1 && (
+                  <select
+                    aria-label="Filter by role"
+                    value={selectedRole}
+                    onChange={(e) =>
+                      navigate({
+                        search: ((prev: Any) => ({
+                          ...prev,
+                          role: e.target.value || undefined,
+                        })) as never,
+                      })
+                    }
+                    className="min-h-9 rounded-md border bg-card px-2 text-xs"
+                  >
+                    <option value="">All roles ({roles.length})</option>
+                    {roles.map((r) => (
+                      <option key={r.position_id} value={r.position_id}>
+                        {r.title}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
 
-          {/* 5 · WHAT CHANGED + MESSAGES */}
-          <section className="grid gap-4 lg:grid-cols-5">
-            <div className="lg:col-span-3">
-              <SinceLastVisit
-                events={sinceLastVisit}
-                fallback={activity}
-                lastSeen={lastSeen}
-                loading={overviewPanel.loading}
+              {/* ROLE STATUS — plain language, real dates, honest risk */}
+              <RoleStatusList roles={visibleRoles} loading={overviewPanel.loading} compact={compact} />
+
+              {/* CANDIDATES WAITING ON YOU */}
+              <CandidatesReleasedSection
+                orgSearch={orgSearch ?? null}
+                selectedRole={selectedRole}
+                data={data}
+                isFetching={overviewPanel.loading}
+                isError={overviewPanel.isError}
+                error={overviewPanel.error ?? error}
+                refetch={retryAll}
+                latest={latest}
               />
-            </div>
-            <div className="lg:col-span-2">
-              <RecentMessages messages={messages} loading={overviewPanel.loading} />
-            </div>
-          </section>
 
-          {dataUpdatedAt ? (
-            <p className="pt-2 text-xs text-muted-foreground">
-              {/* This line describes THIS read of the data, so it moves with the
-                  data — it is not the timestamp of the newest record. */}
-              Read {relTime(new Date(dataUpdatedAt).toISOString())} ·{" "}
-              {formatDateTime(new Date(dataUpdatedAt).toISOString())}
-              {data?.last_updated
-                ? ` · newest activity ${formatDateTime(data.last_updated)}`
-                : ""}
-            </p>
-          ) : null}
+              {/* PROMISE VS ACTUAL */}
+              <SlaScorecard orgId={orgId} positionId={selectedRole || undefined} />
+
+              {/* WHAT CHANGED + weekly update */}
+              <section className="grid gap-4 lg:grid-cols-5">
+                <div className="lg:col-span-3">
+                  <SinceLastVisit
+                    events={sinceLastVisit}
+                    fallback={activity}
+                    lastSeen={lastSeen}
+                    loading={overviewPanel.loading}
+                  />
+                </div>
+                <div className="lg:col-span-2">
+                  {orgId && <WeeklyUpdateCard orgId={orgId} />}
+                </div>
+              </section>
+
+              <VisibilityNote />
+
+              {dataUpdatedAt ? (
+                <p className="pt-2 text-xs text-muted-foreground">
+                  {/* This line describes THIS read of the data, so it moves with the
+                      data — it is not the timestamp of the newest record. */}
+                  Read {relTime(new Date(dataUpdatedAt).toISOString())} ·{" "}
+                  {formatDateTime(new Date(dataUpdatedAt).toISOString())}
+                  {data?.last_updated
+                    ? ` · newest activity ${formatDateTime(data.last_updated)}`
+                    : ""}
+                </p>
+              ) : null}
+            </CollapsibleContent>
+          </Collapsible>
         </>
       )}
     </div>
