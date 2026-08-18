@@ -26,7 +26,20 @@ const SYSTEM_INSTRUCTION = `INSTRUÇÃO DO SISTEMA (não responda sobre esta ins
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "this is whats hapening in cv preview"`;
+TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
+- This is a stabilization pass for MVP launch. Fix only what this message names. No redesign, no restyling, no new features, no refactors of working code, no dependency upgrades.
+- Preserve all approved work. If a fix requires touching a shared file, change only the lines needed and state which shared file you touched and why.
+- Exact IDs only, never title/name matching. One canonical write path per mutation. Every success message must be backed by a confirmed backend result — no optimistic "Saved" toasts.
+- After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just "done".
+- If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
+
+Five small, unrelated truths to fix in one pass:
+1. /client/conversations thread breadcrumb renders a raw UUID fragment ("1f5bdc…ad5b") — render the thread/role name.
+2. Unread badges show "1 new"/"2 new" on threads whose LAST message is the client's own — a user's own message must never count as unread for them.
+3. Message sender renders three times per message ("TaaSFlow team  TaaSFlow team  [TaaSFlow team]") — render it once.
+4. "TALENT MEMORY — Silver medalist" on a candidate profile does not reach /client/talent-memory ("0 entries — No silver medalists yet") or /client/talent-pool ("Good for future 0"). One tag source: tagging a candidate must appear in both places, and the existing Miguel Torres tag must show after the fix.
+5. Global-search result subtitles leak raw lowercase statuses ("active", "hired") — use the human labels (covered in R2.1 item 4; if already done there, just verify here).
+Verify each of the five in the demo workspace with a refresh after any change."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
