@@ -26,13 +26,14 @@ const SYSTEM_INSTRUCTION = `INSTRUÇÃO DO SISTEMA (não responda sobre esta ins
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "STANDING RULES — UX PASS VARIANT:
-- This is an information-hierarchy pass, not a redesign. Keep the existing design system, tokens, typography, and color exactly as they are. Reorganize and progressive-disclose; do not restyle, do not add features beyond what this message names.
-- Every piece of information currently on the page must remain reachable within at most one click/tap from where it was. List anything you demote to a tab/accordion.
-- Do not touch any server function, mutation, or data contract unless this message names it. Buttons keep calling exactly what they call today.
-- Verify the page at 1440px and 375px in the live preview as the Northwind demo client, re-run the page's existing spec(s), and report the click-path result.
+TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
+- This is a stabilization pass for MVP launch. Fix only what this message names. No redesign, no restyling, no new features, no refactors of working code, no dependency upgrades.
+- Preserve all approved work. If a fix requires touching a shared file, change only the lines needed and state which shared file you touched and why.
+- Exact IDs only, never title/name matching. One canonical write path per mutation. Every success message must be backed by a confirmed backend result — no optimistic "Saved" toasts.
+- After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just "done".
+- If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-Light pass over the remaining client pages — Messages, Interviews, Team, Settings — against docs/design/client-decision-first.md. For each: state the page's one question, count first-viewport interactive elements, and only if a page clearly violates the standard (first screen doesn't answer its question, or is over the density cap), apply the smallest reorganization that fixes it. Pages already clean: touch nothing and say so. No behavior changes anywhere. Verify each touched page at 375px and re-run its spec if one exists."`;
+Measurement only — fix nothing in this message. After the Batch 7 changes, re-run: the tenant-isolation suite, the client kanban/candidate specs, the count-reconciliation check from Prompt 4.4, the mobile 375 test file, and a manual Northwind demo walkthrough (overview → role → candidate → shortlist → message). Update docs/mvp-ledger.md: any regression found gets a FAIL row naming the prompt that introduced it, so we fix forward with full context."`;   
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
