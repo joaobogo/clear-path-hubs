@@ -33,13 +33,15 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just \"done\".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-Five defects on /client/candidates:
-1. The full-screen \"Candidate comparison\" overlay auto-opens on page load with candidates the user never selected (3 pre-selected on first load; 4 different ones after clearing and reloading the board). Fix: selection state must start empty on a fresh navigation and never be restored implicitly; the comparison overlay opens only from an explicit user action. Find where the phantom selection persists (storage/state) and clear it.
-2. The selection bar's \"Clear\" removes ONE candidate per click (3 → 2 → 1). Make it clear the entire selection in one click.
-3. The Filters → Location text input loses every keystroke but the last (typing \"Lisbon\" applies \"Location: n\"). Fix it the same way the jobs-board search was fixed: local state with a debounced write — do not change any other filter's behavior.
-4. Global search (⌘K) matches candidate names only: \"engineer\" returns one position and zero candidates although all ten candidate headlines contain \"Engineer\", and it takes ~12s. Extend candidate matching to title/headline, bring first-result latency to a sane level, and stop leaking raw lowercase statuses (\"active\", \"hired\") in result subtitles — use the same human labels the UI uses.
-5. The CV ZIP button promised \"Download 10 CVs (ZIP)\" and delivered 6, then offered \"Retry 4 failed\" for files that were policy-gated, not failed. Make the button state the number it can actually deliver under current access, report unavailable files as \"not yet available\" (with the reason), and never offer Retry for a policy gate. NOTE: if Batch 6 (contact release at publish) has landed, all 10 should now be downloadable — in that case verify the count reads 10 and the gate messaging is gone entirely.
-Verify each of the five as the Northwind demo client, including a fresh navigation with an empty selection and no overlay."`;
+Six defects:
+1. /client/positions \"Clear all\" is dead: with a Location filter applied, two clicks changed nothing (chip, dropdown and URL param all unchanged). The identical control on /client/candidates works — make this one behave the same.
+2. \"Duplicate this role\" links to /intake?duplicate=<id>, which redirects to an EMPTY new-role dialog — the duplicate payload is dropped. Make duplication prefill the wizard from the source role (all fields it can carry), and route it through the in-app creation flow directly instead of via /intake.
+3. The \"Action required · 2 interviews to confirm · Review →\" banner links to the role EDIT wizard. Point it at the work it names — the interviews awaiting times (deep-link to /client/interviews filtered/anchored to that role).
+4. Wizard Step 3: entering Minimum 200000 / Maximum 50000 silently blocks Continue — no message, no highlight, no scroll. Add the same human validation every other field has (\"Minimum must be less than maximum\").
+5. Wizard Step 5's Compensation summary reads \"No compensation has been collected for this job.\" for values entered on Step 3 (Steps 6 and 7 show them correctly). Make Step 5 read from the same draft state.
+6. Step 7's blocker \"At least one location — Fix in step 5\" is unsatisfiable for a role marked \"Open worldwide (fully remote — anywhere)\" — the same review screen even renders \"GEOGRAPHY — Open worldwide\". Worldwide-remote must satisfy the location requirement.
+Also, two small ones in the same files: the \"At least 1 position\" error persists after the field is corrected — clear errors on valid input; and the unlabeled Department/Location inputs on the wizard need accessible labels/placeholders.
+Verify all of it end to end by editing the existing \"[QA test — ignore] QA Role Aug 17\" draft — do not create another role."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
