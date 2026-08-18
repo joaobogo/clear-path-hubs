@@ -655,14 +655,10 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     // they come from the canonical KPI service so this strip can never
     // contradict the board underneath it, the Roles list, or the Candidates
     // page. The report window only shapes the timing metrics below.
-    // Open offers and confirmed hires are pipeline facts, not report facts:
-    // they come from the canonical KPI service so this strip can never
-    // contradict the board underneath it, the Roles list, or the Candidates
-    // page. The report window only shapes the timing metrics below.
     const canonical = computeKpis(await loadKpiRows(context.supabase, data.orgId), 0);
     const openOffers = canonical.offers;
     const hires = scoped.filter((r) => qualifiesAsHire(r.status));
-    
+
     // ACCEPTANCE RATE denominator: only count records that are genuinely decided (accepted, declined, hired, or lost).
     // Beatriz's phantom 'closed_lost' was likely counted here while her 'hired' stage was ignored.
     const decidedOffers = scoped.filter((r) => isDecidedOffer(r.status));
@@ -672,6 +668,21 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
       decidedOffers.length > 0
         ? acceptedOffers.length / decidedOffers.length
         : null;
+
+    // Salary stats: only include confirmed hires with comp on record.
+    // If some have no comp, we mark the average as incomplete.
+    const confirmedHiresWithComp = hires.filter((r) => r.salary_amount != null);
+    const totalSalaryValue = confirmedHiresWithComp.reduce(
+      (acc, r) => acc + (r.salary_amount ?? 0),
+      0,
+    );
+    const avgSalary =
+      confirmedHiresWithComp.length > 0
+        ? totalSalaryValue / confirmedHiresWithComp.length
+        : null;
+
+    const salaryReportIncomplete =
+      hires.length > 0 && confirmedHiresWithComp.length < hires.length;
 
     const daysHired = hires
       .map((r) => (r.days_to_hire == null ? null : Number(r.days_to_hire)))
@@ -795,6 +806,11 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
         hires_confirmed: canonical.hires,
         closed_lost: scoped.filter((r) => r.status === "closed_lost").length,
         acceptance_rate: acceptanceRate,
+        avg_salary: avgSalary,
+        total_salary_value: totalSalaryValue,
+        salary_report_incomplete: salaryReportIncomplete,
+        decided_offers: decidedOffers.length,
+        accepted_offers: acceptedOffers.length,
         avg_days_to_hire: avg(daysHired),
         avg_days_offer_to_accept: avg(daysAccept),
         median_days_to_hire: median(daysHired),
