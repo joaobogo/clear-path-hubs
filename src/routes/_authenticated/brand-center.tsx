@@ -37,7 +37,7 @@ const TITLE = "TaaSFlow Brand Center — logos, messaging, assets";
 const DESCRIPTION =
   "Approved TaaSFlow positioning and messaging, logo rules, colour and type tokens, plus exact-dimension social and document assets to download.";
 
-export const Route = createFileRoute("/brand-center")({
+export const Route = createFileRoute("/_authenticated/brand-center")({
   head: () => ({
     meta: [
       { title: TITLE },

@@ -44,7 +44,6 @@ import { Route as ChangelogRouteImport } from './routes/changelog'
 import { Route as CaseStudiesRouteImport } from './routes/case-studies'
 import { Route as CandidateSuccessRouteImport } from './routes/candidate-success'
 import { Route as CandidateJoinRouteImport } from './routes/candidate-join'
-import { Route as BrandCenterRouteImport } from './routes/brand-center'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AgentsRouteImport } from './routes/agents'
@@ -72,6 +71,7 @@ import { Route as ApplyEligibilityOutcomeRouteImport } from './routes/apply.elig
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedClientRouteImport } from './routes/_authenticated/client'
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
+import { Route as AuthenticatedBrandCenterRouteImport } from './routes/_authenticated/brand-center'
 import { Route as AuthenticatedBookCallRouteImport } from './routes/_authenticated/book-call'
 import { Route as AuthenticatedBoardroomRouteImport } from './routes/_authenticated/boardroom'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -384,11 +384,6 @@ const CandidateJoinRoute = CandidateJoinRouteImport.update({
   path: '/candidate-join',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BrandCenterRoute = BrandCenterRouteImport.update({
-  id: '/brand-center',
-  path: '/brand-center',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const BookRoute = BookRouteImport.update({
   id: '/book',
   path: '/book',
@@ -523,6 +518,12 @@ const AuthenticatedCheckoutRoute = AuthenticatedCheckoutRouteImport.update({
   path: '/checkout',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedBrandCenterRoute =
+  AuthenticatedBrandCenterRouteImport.update({
+    id: '/brand-center',
+    path: '/brand-center',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedBookCallRoute = AuthenticatedBookCallRouteImport.update({
   id: '/book-call',
   path: '/book-call',
@@ -1308,7 +1309,6 @@ export interface FileRoutesByFullPath {
   '/agents': typeof AgentsRoute
   '/auth': typeof AuthRoute
   '/book': typeof BookRoute
-  '/brand-center': typeof BrandCenterRoute
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
   '/case-studies': typeof CaseStudiesRoute
@@ -1349,6 +1349,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/boardroom': typeof AuthenticatedBoardroomRoute
   '/book-call': typeof AuthenticatedBookCallRoute
+  '/brand-center': typeof AuthenticatedBrandCenterRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/client': typeof AuthenticatedClientRouteWithChildren
   '/me': typeof AuthenticatedMeRouteWithChildren
@@ -1508,7 +1509,6 @@ export interface FileRoutesByTo {
   '/agents': typeof AgentsRoute
   '/auth': typeof AuthRoute
   '/book': typeof BookRoute
-  '/brand-center': typeof BrandCenterRoute
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
   '/case-studies': typeof CaseStudiesRoute
@@ -1548,6 +1548,7 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/boardroom': typeof AuthenticatedBoardroomRoute
   '/book-call': typeof AuthenticatedBookCallRoute
+  '/brand-center': typeof AuthenticatedBrandCenterRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/apply/eligibility-outcome': typeof ApplyEligibilityOutcomeRoute
   '/apply/status': typeof ApplyStatusRoute
@@ -1700,7 +1701,6 @@ export interface FileRoutesById {
   '/agents': typeof AgentsRoute
   '/auth': typeof AuthRoute
   '/book': typeof BookRoute
-  '/brand-center': typeof BrandCenterRoute
   '/candidate-join': typeof CandidateJoinRoute
   '/candidate-success': typeof CandidateSuccessRoute
   '/case-studies': typeof CaseStudiesRoute
@@ -1741,6 +1741,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/boardroom': typeof AuthenticatedBoardroomRoute
   '/_authenticated/book-call': typeof AuthenticatedBookCallRoute
+  '/_authenticated/brand-center': typeof AuthenticatedBrandCenterRoute
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
   '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
@@ -1902,7 +1903,6 @@ export interface FileRouteTypes {
     | '/agents'
     | '/auth'
     | '/book'
-    | '/brand-center'
     | '/candidate-join'
     | '/candidate-success'
     | '/case-studies'
@@ -1943,6 +1943,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/boardroom'
     | '/book-call'
+    | '/brand-center'
     | '/checkout'
     | '/client'
     | '/me'
@@ -2102,7 +2103,6 @@ export interface FileRouteTypes {
     | '/agents'
     | '/auth'
     | '/book'
-    | '/brand-center'
     | '/candidate-join'
     | '/candidate-success'
     | '/case-studies'
@@ -2142,6 +2142,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/boardroom'
     | '/book-call'
+    | '/brand-center'
     | '/checkout'
     | '/apply/eligibility-outcome'
     | '/apply/status'
@@ -2293,7 +2294,6 @@ export interface FileRouteTypes {
     | '/agents'
     | '/auth'
     | '/book'
-    | '/brand-center'
     | '/candidate-join'
     | '/candidate-success'
     | '/case-studies'
@@ -2334,6 +2334,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/boardroom'
     | '/_authenticated/book-call'
+    | '/_authenticated/brand-center'
     | '/_authenticated/checkout'
     | '/_authenticated/client'
     | '/_authenticated/me'
@@ -2495,7 +2496,6 @@ export interface RootRouteChildren {
   AgentsRoute: typeof AgentsRoute
   AuthRoute: typeof AuthRoute
   BookRoute: typeof BookRoute
-  BrandCenterRoute: typeof BrandCenterRoute
   CandidateJoinRoute: typeof CandidateJoinRoute
   CandidateSuccessRoute: typeof CandidateSuccessRoute
   CaseStudiesRoute: typeof CaseStudiesRoute
@@ -2834,13 +2834,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CandidateJoinRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/brand-center': {
-      id: '/brand-center'
-      path: '/brand-center'
-      fullPath: '/brand-center'
-      preLoaderRoute: typeof BrandCenterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/book': {
       id: '/book'
       path: '/book'
@@ -3028,6 +3021,13 @@ declare module '@tanstack/react-router' {
       path: '/checkout'
       fullPath: '/checkout'
       preLoaderRoute: typeof AuthenticatedCheckoutRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/brand-center': {
+      id: '/_authenticated/brand-center'
+      path: '/brand-center'
+      fullPath: '/brand-center'
+      preLoaderRoute: typeof AuthenticatedBrandCenterRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/book-call': {
@@ -4310,6 +4310,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedBoardroomRoute: typeof AuthenticatedBoardroomRoute
   AuthenticatedBookCallRoute: typeof AuthenticatedBookCallRoute
+  AuthenticatedBrandCenterRoute: typeof AuthenticatedBrandCenterRoute
   AuthenticatedCheckoutRoute: typeof AuthenticatedCheckoutRoute
   AuthenticatedClientRoute: typeof AuthenticatedClientRouteWithChildren
   AuthenticatedMeRoute: typeof AuthenticatedMeRouteWithChildren
@@ -4321,6 +4322,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedBoardroomRoute: AuthenticatedBoardroomRoute,
   AuthenticatedBookCallRoute: AuthenticatedBookCallRoute,
+  AuthenticatedBrandCenterRoute: AuthenticatedBrandCenterRoute,
   AuthenticatedCheckoutRoute: AuthenticatedCheckoutRoute,
   AuthenticatedClientRoute: AuthenticatedClientRouteWithChildren,
   AuthenticatedMeRoute: AuthenticatedMeRouteWithChildren,
@@ -4339,7 +4341,6 @@ const rootRouteChildren: RootRouteChildren = {
   AgentsRoute: AgentsRoute,
   AuthRoute: AuthRoute,
   BookRoute: BookRoute,
-  BrandCenterRoute: BrandCenterRoute,
   CandidateJoinRoute: CandidateJoinRoute,
   CandidateSuccessRoute: CandidateSuccessRoute,
   CaseStudiesRoute: CaseStudiesRoute,
