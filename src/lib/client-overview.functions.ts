@@ -120,7 +120,22 @@ export const getClientOverview = createServerFn({ method: "GET" })
       .order("updated_at", { ascending: false });
     const activePositionsList = (positions as AnyRow[]) ?? [];
     const activePositions = activePositionsList.length;
-    const kpis = computeKpis(rows, activePositions);
+    const kpis = {
+      ...computeKpis(rows, activePositions),
+      awaiting_decision: openItemsResponse.items.filter(i => i.kind === 'pending_decision').length,
+      interviews_to_confirm: openItemsResponse.items.filter(i => i.kind === 'interview').length,
+      offers: openItemsResponse.items.filter(i => i.kind === 'offer').length,
+      missing_feedback: openItemsResponse.items.filter(i => i.kind === 'missing_feedback').length,
+    };
+    
+    // Summary of blocked roles for the header
+    const blocksCount = openItemsResponse.blockedRoles.length;
+    const firstBlock = openItemsResponse.blockedRoles[0];
+    const blocked_summary = blocksCount > 0 ? {
+      count: blocksCount,
+      label: `${blocksCount} block${blocksCount === 1 ? '' : 's'} · ${firstBlock.reason} for ${firstBlock.title}`,
+      href: firstBlock.href,
+    } : null;
 
     // ── Hiring health line ──────────────────────────────────────────────────
     // One judgement plus three figures. Every input is a recorded date or a
