@@ -127,11 +127,9 @@ export function DeliveryFailuresPanel() {
         },
       }),
     onSuccess: (res) => {
-      if (!res.unsuppress.lifted && res.unsuppress.providerBlocked) {
-        toast.error(
-          res.unsuppress.detail ??
-            "The email provider still blocks this address, so nothing was re-sent.",
-        );
+      const p = res.unsuppress.provider;
+      if (p.state === "not_liftable" || p.state === "unknown") {
+        toast.error(p.detail);
       } else if (res.retry.attempted && res.retry.ok) {
         toast.success("Block lifted and the notification was re-sent.");
       } else if (res.retry.attempted) {
