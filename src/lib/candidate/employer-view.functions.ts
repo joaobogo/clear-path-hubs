@@ -6,7 +6,6 @@
  * candidate page, so the two shapes cannot drift.
  */
 import { createServerFn } from "@tanstack/react-start";
-import { cvConsentGate } from "@/lib/consent/cv-consent-gate";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
