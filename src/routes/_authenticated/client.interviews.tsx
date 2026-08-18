@@ -284,9 +284,13 @@ function InterviewsPage() {
         {isViewer && !support.readOnly && (
           <ViewerReadOnlyNotice area="requesting and rescheduling interviews" />
         )}
-        {org ? <InterviewFeedbackQueue orgId={org} readOnly={readOnly} /> : null}
-
-        {org ? <AvailabilityManager orgId={org} readOnly={readOnly} /> : null}
+        {org ? (
+          <InterviewFeedbackQueue
+            orgId={org}
+            readOnly={readOnly}
+            onOpenFeedback={(item) => setFeedbackFor(item)}
+          />
+        ) : null}
 
         {listQuery.isLoading ? (
           <SkeletonCards cards={3} />
@@ -354,6 +358,8 @@ function InterviewsPage() {
             }
           />
         )}
+
+        {org ? <AvailabilityManager orgId={org} readOnly={readOnly} /> : null}
       </PageBody>
 
       {requestOpen && org ? (

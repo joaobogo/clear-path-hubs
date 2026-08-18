@@ -32,7 +32,7 @@ TEXTO DO USUÁRIO: "STANDING RULES — UX PASS VARIANT:
 - Do not touch any server function, mutation, or data contract unless this message names it. Buttons keep calling exactly what they call today.
 - Verify the page at 1440px and 375px in the live preview as the Northwind demo client, re-run the page's existing spec(s), and report the click-path result.
 
-Declutter the client Overview per the standard. First viewport = the items that need the client's attention (candidates awaiting review, interviews to confirm, messages), each with a one-click path to act, plus the top-line KPIs already served by the overview functions. Move the system-status detail, the Steady/Standard/Aggressive controls, and the role/agent/status filter row behind the existing \"Detail\" toggle or into a secondary section below the fold. No server function changes; the counts must keep reconciling with the candidates page and the admin publish desk (re-check Prompt 4.4's five-way reconciliation after this change). Keep the welcome tour working. Verify at 1440 and 375 as the Northwind demo client."`;
+Light pass over the remaining client pages — Messages, Interviews, Team, Settings — against docs/design/client-decision-first.md. For each: state the page's one question, count first-viewport interactive elements, and only if a page clearly violates the standard (first screen doesn't answer its question, or is over the density cap), apply the smallest reorganization that fixes it. Pages already clean: touch nothing and say so. No behavior changes anywhere. Verify each touched page at 375px and re-run its spec if one exists."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
