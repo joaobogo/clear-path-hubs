@@ -23,12 +23,10 @@ import { confirmRoleBlueprint } from "@/lib/client-positions.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
 import { AlertCircle } from "lucide-react";
-import type { RoleLaunchState } from "@/lib/role-launch";
 import { RoleMessagesPanel } from "@/components/client/role-messages-panel";
 
 
 import { InfoRequestList } from "@/components/client/info-requests";
-import { SlaScorecard } from "@/components/client/sla-scorecard";
 import { RoleClosureRecord } from "@/components/client/close-role-dialog";
 import { RoleRecapPanel } from "@/components/client/role-recap";
 import { useRouteRealtime } from "@/hooks/use-route-realtime";
@@ -37,13 +35,10 @@ import { LiveUpdatedChip } from "@/components/client/live-updated-chip";
 import { PositionDetailPending } from "@/components/client/position-detail/pending";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { ViewerReadOnlyNotice } from "@/components/client/states";
-import { KANBAN_COLUMNS, STAGE_GRAPH, STAGE_LABELS } from "@/components/client/position-detail/constants";
+import { STAGE_GRAPH } from "@/components/client/position-detail/constants";
 import { SummaryTile } from "@/components/client/position-detail/summary-tile";
-import { PipelineBoard } from "@/components/client/position-detail/pipeline-board";
 import { PositionHeader } from "@/components/client/position-detail/header";
 import { PositionHandoffView } from "@/components/client/position-detail/handoff-view";
-import { HiringProcessSection } from "@/components/client/position-detail/hiring-process-section";
-import { ActivitySection } from "@/components/client/position-detail/activity-section";
 import { RoleStatusSection } from "@/components/client/position-detail/role-status-section";
 import { EvidencePanels } from "@/components/client/position-detail/evidence-panels";
 import { RoleStoryPanel } from "@/components/client/position-detail/role-story";
@@ -117,8 +112,7 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
   const queryKey = ["client-position", orgId, id];
   // One request for the primary payload: role, pipeline, timeline, lifecycle,
   // closure, recap and open information requests.
-  const { data, refetch, isFetching } = useSuspenseQuery(positionDetailQuery(orgId, id));
-  const lifecycle = data?.lifecycle ?? null;
+  const { data, refetch } = useSuspenseQuery(positionDetailQuery(orgId, id));
   const handoff = data?.handoff ?? null;
   const closure = data?.closure ?? null;
   const recap = data?.recap ?? null;
@@ -140,7 +134,6 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
     invalidateKeys: [queryKey, ["client-overview", orgId], ["client-positions", orgId]],
   });
 
-  const [dragOver, setDragOver] = useState<MatchStage | null>(null);
   const [declining, setDeclining] = useState<{ matchId: string; name: string | null } | null>(null);
 
   const confirmBlueprintFn = useServerFn(confirmRoleBlueprint);
@@ -182,7 +175,6 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
       ctx?.active?.role === "operations");
 
   const { position, matches, activity, summary } = data;
-  const launch = (data as { launch?: RoleLaunchState }).launch;
 
   // ── Handoff after a hire ────────────────────────────────────────────────────
   // With a confirmed hire on the role, the search view is replaced by what
@@ -199,13 +191,6 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
         org={orgSearchParam}
       />
     );
-  }
-
-  const byStage: Record<string, AnyRow[]> = {};
-  for (const col of KANBAN_COLUMNS) byStage[col.key] = [];
-  for (const m of matches as AnyRow[]) {
-    const s = m.stage as string;
-    if (byStage[s]) byStage[s].push(m);
   }
 
   const attemptMove = (matchId: string, from: MatchStage, to: MatchStage) => {
