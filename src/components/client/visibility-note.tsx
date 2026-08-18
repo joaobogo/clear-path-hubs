@@ -64,10 +64,10 @@ export function VisibilityNote({
       <div
         className={`rounded-lg border bg-muted/40 px-3 py-2 text-xs text-muted-foreground flex items-start gap-2 ${className}`}
       >
-        <Lock className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+        <ShieldCheck className="h-3.5 w-3.5 mt-0.5 shrink-0" />
         <p className="leading-relaxed">
-          Contact details (email, phone, CV file) are released when you advance a
-          candidate to interview and they consent to the introduction.{" "}
+          Full contact details and the CV file are released as soon as a candidate
+          is published to you. No extra step is needed.{" "}
           <Popover>
             <PopoverTrigger asChild>{trigger}</PopoverTrigger>
             {details}
@@ -81,9 +81,9 @@ export function VisibilityNote({
     <p
       className={`text-xs text-muted-foreground flex flex-wrap items-center gap-x-1.5 gap-y-1 ${className}`}
     >
-      <Lock className="h-3 w-3 shrink-0" />
+      <ShieldCheck className="h-3 w-3 shrink-0" />
       <span>
-        Contact details are released at interview stage, with candidate consent.
+        Contact details and CV are available from the moment a candidate is published.
       </span>
       <Popover>
         <PopoverTrigger asChild>{trigger}</PopoverTrigger>
