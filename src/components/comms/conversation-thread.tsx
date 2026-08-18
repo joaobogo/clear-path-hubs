@@ -342,8 +342,17 @@ export function ConversationThread({
                       <span className="font-medium text-foreground">
                         {m.mine ? "You" : m.sender_name}
                       </span>
-                      <span>{m.sender_role}</span>
-                      {m.sender_side === "taasflow" && !m.mine && (
+                      {/* The name, the role and the staff badge can resolve to the
+                          same words ("TaaSFlow team") — show each label once. */}
+                      {m.sender_role &&
+                        m.sender_role.toLowerCase() !==
+                          (m.mine ? "you" : (m.sender_name ?? "")).toLowerCase() && (
+                          <span>{m.sender_role}</span>
+                        )}
+                      {m.sender_side === "taasflow" &&
+                        !m.mine &&
+                        m.sender_name?.toLowerCase() !== "taasflow team" &&
+                        m.sender_role?.toLowerCase() !== "taasflow team" && (
                         <Badge variant="secondary" className="h-4 px-1.5 text-[10px] bg-[color:var(--brand-navy)]/8 text-[color:var(--brand-navy)] border-[color:var(--brand-navy)]/15 font-semibold">
                           TaaSFlow team
                         </Badge>
