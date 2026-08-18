@@ -232,9 +232,11 @@ export async function loadKpiRows(
 
     client_decision_due_at: m.client_decision_due_at ?? null,
     recommendation: m.recommendation ?? null,
+    contact_released_at: m.contact_released_at ?? null,
     client_decided: decidedMatches.has(m.id),
     interview_needs_confirmation: unconfirmedInterviews.has(m.id),
     interview_id: unconfirmedInterviewId.get(m.id) ?? null,
+    evidence_items: (m.evidence_items as AnyRow[]) ?? [],
   }));
 }
 
