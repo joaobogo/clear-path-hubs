@@ -32,6 +32,8 @@ import {
 import { AlertTriangle, BellRing, Loader2, RefreshCw } from "lucide-react";
 import { TestScopeEmptyNote } from "@/components/admin/test-records-toggle";
 import { useScopedIncludeTest } from "@/lib/admin-scope";
+import { useConfirmAction } from "@/components/ds/confirm-action";
+import { CLIENT_COPY } from "@/lib/events";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 type Backlog = Awaited<ReturnType<typeof getDecisionBacklog>>;
