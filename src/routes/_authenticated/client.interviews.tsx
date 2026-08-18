@@ -358,6 +358,8 @@ function InterviewsPage() {
             }
           />
         )}
+
+        {org ? <AvailabilityManager orgId={org} readOnly={readOnly} /> : null}
       </PageBody>
 
       {requestOpen && org ? (
