@@ -1,8 +1,23 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { isOverdue, sortOpenItems, type OpenItem } from "@/lib/client/open-items";
+import { isOverdue, sortOpenItems, dedupeOpenItems, type OpenItem } from "@/lib/client/open-items";
 import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
+import { loadKpiRows, isAwaitingClientDecision } from "@/lib/client-kpi.server";
+import { buildOfferRow } from "@/lib/client-offer-holder";
+import { roleGaps } from "@/lib/position-readiness";
+
+export type BlockedRole = {
+  position_id: string;
+  title: string;
+  reason: string;
+  href: string;
+};
+
+export type OpenItemsResponse = {
+  items: OpenItem[];
+  blockedRoles: BlockedRole[];
+};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
