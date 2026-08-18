@@ -132,31 +132,21 @@ export async function unsuppressRecipient(
       const message = e instanceof Error ? e.message : String(e);
       const code = (e as { code?: string } | null)?.code ?? null;
       provider =
-        e instanceof EmailAPIErrorShape && code === "complaint_not_liftable"
+        code === "complaint_not_liftable"
           ? {
               state: "not_liftable",
               detail:
                 "This address reported an earlier email as spam. That block is permanent and cannot be lifted.",
             }
-          : code === "complaint_not_liftable"
-            ? {
-                state: "not_liftable",
-                detail:
-                  "This address reported an earlier email as spam. That block is permanent and cannot be lifted.",
-              }
-            : {
-                state: "unknown",
-                detail: `The provider list could not be updated: ${message.slice(0, 200)}`,
-              };
+          : {
+              state: "unknown",
+              detail: `The provider list could not be updated: ${message.slice(0, 200)}`,
+            };
     }
   }
 
   return { email, local: listed ? "lifted" : "not_listed", provider };
 }
-
-// Keeps the instanceof branch above readable without importing the SDK at
-// module scope (it must stay server-side and lazily loaded).
-class EmailAPIErrorShape extends Error {}
 
 export async function listSuppressions(admin: Admin, limit = 100) {
   const { data } = await admin
