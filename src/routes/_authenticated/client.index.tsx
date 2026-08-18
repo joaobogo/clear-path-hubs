@@ -26,6 +26,9 @@ import {
   ChevronRight,
   RefreshCw,
   Sparkles,
+  ChevronDown,
+  ChevronUp,
+  Settings2,
 } from "lucide-react";
 import { SlaScorecard } from "@/components/client/sla-scorecard";
 import { DensityToggle } from "@/components/client/density-toggle";
@@ -39,6 +42,7 @@ import { SystemHealthStrip } from "@/components/client/system-health-strip";
 import { AgentActivityRail } from "@/components/client/agent-activity-rail";
 import { DecisionQueue } from "@/components/client/decision-queue";
 import { OpenItemsStrip } from "@/components/client/open-items-strip";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 import { NextMilestones, type MilestoneRow } from "@/components/client/next-milestones";
 import type { QueueRow } from "@/lib/client-decision-queue";
@@ -50,6 +54,7 @@ import { CandidatesReleasedSection } from "@/components/client/overview/candidat
 import { relTime } from "@/components/client/overview/utils";
 import { PAYMENTS_ENABLED } from "@/config/commerce";
 import { formatDateTime } from "@/lib/format/datetime";
+import { cn } from "@/lib/utils";
 
 
 
