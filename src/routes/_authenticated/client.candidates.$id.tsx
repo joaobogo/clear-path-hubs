@@ -556,6 +556,7 @@ function CandidateDetailPage() {
         <MobileActionBar
           actions={actions}
           pending={act.isPending}
+          pendingKey={pendingKey}
           onAct={(k) => handleAct(k, candidate.stage)}
           subject={actionSubject}
         />
