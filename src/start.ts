@@ -55,18 +55,40 @@ const canonicalHostMiddleware = createMiddleware().server(async ({ next, request
  * consent-gated tracking or Supabase calls. `frame-ancestors` cannot be set
  * from a meta tag, needs no allow-list, and cannot break a same-origin load.
  */
+const SECURITY_HEADERS: Array<[string, string]> = [
+  ["content-security-policy", "frame-ancestors 'none'"],
+  ["x-frame-options", "DENY"],
+  ["permissions-policy", "camera=(), microphone=(), geolocation=()"],
+];
+
 const securityHeadersMiddleware = createMiddleware().server(async ({ next, request }) => {
-  const response = await next();
-  const res = response as unknown as { headers?: Headers };
-  if (!res.headers || typeof res.headers.set !== "function") return response;
+  const result = await next();
   // Lovable's own email/webhook routes are not browsed; leave them untouched.
-  if (new URL(request.url).pathname.startsWith("/lovable/")) return response;
-  if (!res.headers.has("content-security-policy")) {
-    res.headers.set("content-security-policy", "frame-ancestors 'none'");
+  if (new URL(request.url).pathname.startsWith("/lovable/")) return result;
+  const holder = result as unknown as { response?: Response };
+  const response =
+    holder && typeof holder === "object" && holder.response instanceof Response
+      ? holder.response
+      : (result as unknown as Response);
+  if (!(response instanceof Response)) return result;
+  try {
+    for (const [name, value] of SECURITY_HEADERS) response.headers.set(name, value);
+    return result;
+  } catch {
+    // Immutable headers (some runtimes) — rebuild the response instead.
+    const headers = new Headers(response.headers);
+    for (const [name, value] of SECURITY_HEADERS) headers.set(name, value);
+    const rebuilt = new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+    if (holder && typeof holder === "object" && holder.response instanceof Response) {
+      holder.response = rebuilt;
+      return result;
+    }
+    return rebuilt as unknown as typeof result;
   }
-  res.headers.set("x-frame-options", "DENY");
-  res.headers.set("permissions-policy", "camera=(), microphone=(), geolocation=()");
-  return response;
 });
 
 export const startInstance = createStart(() => ({
