@@ -177,9 +177,30 @@ function AccountPage() {
 
       {tab === "workspace" && (
         <div className="space-y-8">
-          <WorkspaceSnapshot orgId={orgId} />
-          <EmailChangeCard />
-          <WorkspaceTab />
+          {/* First viewport answers: "What is the health of my workspace?" */}
+          <WorkspaceKpiTiles orgId={orgId} />
+
+          {/* Everything else is reachable within one click, keeping the first
+              viewport focused on the KPIs and under the density cap. */}
+          <Collapsible className="space-y-8">
+            <CollapsibleTrigger asChild>
+              <button
+                type="button"
+                className="group flex w-full items-center justify-between gap-3 rounded-xl border border-dashed bg-muted/30 px-4 py-3 text-left hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                <span className="text-sm font-medium text-foreground">Workspace details</span>
+                <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                  Roles, email, company profile, timezone, security, account
+                  <ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
+                </span>
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="space-y-8 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+              <WorkspaceRolesAndStarts orgId={orgId} />
+              <EmailChangeCard />
+              <WorkspaceTab />
+            </CollapsibleContent>
+          </Collapsible>
         </div>
       )}
       {tab === "team" && <TeamTab />}
