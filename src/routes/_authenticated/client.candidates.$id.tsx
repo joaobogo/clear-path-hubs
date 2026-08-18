@@ -576,9 +576,12 @@ function CandidateDetailPage() {
             candidates: [
               {
                 match_id: id,
+                candidate_id: candidate.candidate_profile_id,
                 candidate_name: candidate.candidate.display_name,
-                position_id: candidate.position_id as string,
+                candidate_email: null,
+                position_id: candidate.position?.id ?? "",
                 position_title: candidate.position?.title ?? "Position",
+                stage: candidate.stage,
                 has_active_interview: false,
                 availability_preference: candidate.candidate.availability ?? null,
               },
@@ -588,12 +591,12 @@ function CandidateDetailPage() {
         />
       ) : (
         <DecisionDialog
-          action={dialogAction as DecisionActionKey}
+          action={dialogAction as never}
           open={!!dialogAction && dialogAction !== "request_interview"}
           pending={act.isPending}
           onOpenChange={(v) => !v && setDialogAction(null)}
           onConfirm={(payload) => {
-            if (act.isPending) return; // guard against double submission
+            if (act.isPending) return;
             setPendingKey(payload.action as ActionKey);
             stageBeforeRef.current = candidate.stage;
             nextStepAfterRef.current =
