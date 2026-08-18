@@ -373,8 +373,8 @@ export const undoClientDecision = createServerFn({ method: "POST" })
       if (error) throw new Error(error.message);
     }
 
-    // An interview requested by the undone decision must not survive it.
-    if (recent.decision === "request_interview") {
+    // An interview requested by the undone decision (or one that existed while leaving interview_process) must not survive it.
+    if (recent.decision === "request_interview" || (from === "interview_process" && backTo !== "interview_process")) {
       await context.supabase
         .from("interviews")
         .delete()
