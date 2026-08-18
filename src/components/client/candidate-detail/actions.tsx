@@ -183,11 +183,13 @@ export function MobileActionBar({
   actions,
   pending,
   onAct,
+  pendingKey,
   subject,
 }: {
   actions: { primary: ActionDef | null; more: ActionDef[] };
   pending: boolean;
   onAct: (k: ActionKey) => void;
+  pendingKey?: ActionKey | null;
   subject?: string;
 }) {
   const forSubject = subject ? ` for ${subject}` : "";
@@ -208,7 +210,14 @@ export function MobileActionBar({
           disabled={pending}
           onClick={() => onAct(actions.primary!.key)}
         >
-          {actions.primary.label}
+          {pendingKey === actions.primary.key ? (
+            <>
+              <Loader2 className="mr-1.5 h-4 w-4 animate-spin" aria-hidden="true" />
+              Saving…
+            </>
+          ) : (
+            actions.primary.label
+          )}
         </Button>
         {decline && (
           <Button

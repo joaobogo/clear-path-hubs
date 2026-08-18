@@ -26,7 +26,19 @@ const SYSTEM_INSTRUCTION = `INSTRUÇÃO DO SISTEMA (não responda sobre esta ins
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "the overview page is also supr full of information and hard to read in the client dashboard, its not be easier to understand and useful for the recruiter"`;
+TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
+- This is a stabilization pass for MVP launch. Fix only what this message names. No redesign, no restyling, no new features, no refactors of working code, no dependency upgrades.
+- Preserve all approved work. If a fix requires touching a shared file, change only the lines needed and state which shared file you touched and why.
+- Exact IDs only, never title/name matching. One canonical write path per mutation. Every success message must be backed by a confirmed backend result — no optimistic \"Saved\" toasts.
+- After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just \"done\".
+- If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
+
+On the client candidate profile, the STAGE ACTIONS \"Request interview\" button advances the stage and notifies the TaaSFlow team IMMEDIATELY with no confirmation (\"Recorded — the TaaSFlow team has been notified. We'll confirm the time and send calendar invites within 24h\"). The identical action reached from /client/interviews correctly opens the \"Propose interview times\" dialog with Cancel. In production this is calendar invites to a real candidate on one accidental click.
+
+1. Make the profile button open the exact same \"Propose interview times\" dialog used on /client/interviews — same component, not a copy. No notification, no stage change, no side effect of any kind until the dialog is confirmed.
+2. Fix the Undo on the resulting toast: it currently does nothing visible for ~40 seconds before reporting \"Decision undone.\" — it must show an immediate pending state (button disabled + \"Undoing…\") and the operation should not take 40 seconds; find out why it does and fix that too.
+3. Sweep the client workspace for any OTHER action that notifies staff or a candidate, or changes a stage, without a confirmation step — list every one you find and give each the same treatment. (The \"Not a fit\" dialog is the reference standard for good confirmation copy — do not touch it.)
+4. Verify as the Northwind demo client: profile \"Request interview\" opens the dialog; Cancel leaves stage and notifications untouched (confirm no notification row was created); confirming behaves exactly as it does from /client/interviews; Undo shows pending state immediately."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
@@ -226,7 +238,7 @@ function RootComponent() {
       <ConsentBanner />
       <BookingCtaRouter />
       <OfflineBanner />
-      <Toaster />
+      <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );
 }
