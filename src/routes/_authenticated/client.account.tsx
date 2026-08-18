@@ -321,57 +321,12 @@ export function WorkspaceRolesAndStarts({ orgId }: { orgId: string }) {
 
   return (
     <div className="space-y-8">
-      {overviewState.isError ? (
+      {overviewState.isError && (
         <QueryErrorCard
           error={overviewState.error}
           onRetry={overviewState.retry}
           retrying={overviewState.retrying}
         />
-      ) : overview.isLoading && !data ? (
-        <SkeletonStats tiles={4} />
-      ) : (
-        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Tile
-            icon={<Briefcase className="h-4 w-4" />}
-            label="Open roles"
-            value={String(data?.roles_open ?? 0)}
-            note={`${data?.roles_total ?? 0} total in the account`}
-          />
-          <Tile
-            icon={<CheckCircle2 className="h-4 w-4" />}
-            label="Hires closed"
-            value={String(data?.hires.total ?? 0)}
-            note={
-              data?.subscription.billing_period_start
-                ? `${data.hires.this_period} this invoice period`
-                : `${data?.hires.last_90_days ?? 0} in the last 90 days`
-            }
-          />
-          <Tile
-            icon={<Users className="h-4 w-4" />}
-            label="Seats in use"
-            value={`${data?.seats.active ?? 0} / ${data?.seats.limit ?? 0}`}
-            note={
-              (data?.seats.invited ?? 0) > 0
-                ? `${data?.seats.invited} invitation${data?.seats.invited === 1 ? "" : "s"} pending · ${data?.seats.remaining} free`
-                : `${data?.seats.remaining ?? 0} seat${data?.seats.remaining === 1 ? "" : "s"} free`
-            }
-          />
-          <Tile
-            icon={<CalendarClock className="h-4 w-4" />}
-            label="Renews"
-            value={
-              data?.subscription.renewal_date
-                ? fmtDate(data.subscription.renewal_date)
-                : "—"
-            }
-            note={
-              data?.subscription.renewal_date
-                ? `${Math.max(0, data.subscription.days_to_renewal ?? 0)} days away`
-                : "Renewal date not on file"
-            }
-          />
-        </section>
       )}
 
       {/* Roles */}
