@@ -33,11 +33,7 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just \"done\".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-tests/e2e/smoke-journey.spec.ts has never completed a full green run; the last failure was the spec not ticking the optional \"Create a candidate account\" checkbox on the apply step (a test defect).
-
-1. Fix the spec to tick the checkbox and complete: candidate sign-up → apply → staff approval → client advance → queue management.
-2. If any step fails for a product reason after the spec fix, stop, report the exact step and cause, and fix only that.
-3. Deliver a green run log and mark RELEASE_GATE §6 item 1 resolved in docs/mvp-ledger.md."`;
+Re-run the RELEASE_GATE checks against the current tree and produce the final table: production build, typecheck, security scan, tenant isolation suite, authz matrix, seat-cap suite, scoring regression, public vocabulary, mobile 375, live domains, consent-gated tracking, and the end-to-end smoke journey. Update RELEASE_GATE.md §5/§6 and docs/mvp-ledger.md with the results and dates. List every remaining non-green item as FAIL or BLOCKED with reason — no softening language. Do not fix anything in this message; this is the measurement run."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
