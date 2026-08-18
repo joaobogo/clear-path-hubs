@@ -198,7 +198,7 @@ export function RoleStoryPanel({
                         <span className="h-2.5 flex-1 overflow-hidden rounded-full bg-muted">
                           {b.count > 0 && (
                             <span
-                              className={`block h-full ${b.min >= 70 ? "bg-primary" : b.min >= 50 ? "taas-bg-warning" : "bg-muted-foreground/35"}`}
+                              className={`block h-full ${b.min >= 70 ? "bg-primary" : b.min >= 50 ? "taas-bg-warning" : b.min >= 0 ? "bg-muted-foreground/35" : "bg-muted-foreground/10"}`}
                               style={{ width }}
                             />
                           )}
