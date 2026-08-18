@@ -236,6 +236,9 @@ export const ProfilePanel = memo(function ProfilePanel({
 }) {
   const c = candidate.candidate;
   const rows: Array<[string, string | null | undefined]> = [
+    ["Full name", c.full_name],
+    ["Email", c.email],
+    ["Phone", c.phone],
     ["Location", c.location],
     ["Timezone", c.timezone],
     ["Availability", c.availability],
