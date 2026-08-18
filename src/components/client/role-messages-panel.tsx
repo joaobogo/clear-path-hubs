@@ -1,94 +1,39 @@
-import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { ensureConversation } from "@/lib/conversations.functions";
-import { ConversationThread } from "@/components/comms/conversation-thread";
+import { MessageSquare, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 
 /**
- * The role's single client-visible thread, embedded on the role page.
+ * Link-out to the role's conversation.
  *
- * One thread per role: this resolves (or creates) that thread rather than
- * starting a new conversation each visit, so context stays in one place.
+ * The thread itself lives in /client/conversations — one home for every
+ * message, instead of a second inbox embedded in the role page.
  */
 export function RoleMessagesPanel({
-  orgId,
-  positionId,
   positionTitle,
-  canPost = true,
 }: {
-  orgId: string;
-  positionId: string;
+  orgId?: string;
+  positionId?: string;
   positionTitle?: string;
   canPost?: boolean;
 }) {
-  const ensureFn = useServerFn(ensureConversation);
-  const [conversationId, setConversationId] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [attempt, setAttempt] = useState(0);
-
-  useEffect(() => {
-    let live = true;
-    setError(null);
-    ensureFn({
-      data: {
-        orgId,
-        scope: "position" as const,
-        positionId,
-        ...(positionTitle ? { subject: positionTitle.slice(0, 160) } : {}),
-      },
-    })
-      .then((res) => {
-        if (live) setConversationId(res.id);
-      })
-      .catch(() => {
-        if (live) setError("We could not open the thread for this role.");
-      });
-    return () => {
-      live = false;
-    };
-  }, [ensureFn, orgId, positionId, positionTitle, attempt]);
-
   return (
-    <section aria-label="Messages" className="rounded-xl border bg-card p-4">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h2 className="text-lg font-semibold">Messages</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            One thread for this role. Ask for more candidates, request a brief change, or flag
-            urgency — your TaaSFlow team replies here.
-          </p>
-        </div>
-        <Button asChild variant="outline" size="sm">
-          <Link to="/client/conversations">All conversations</Link>
-        </Button>
+    <section
+      aria-label="Messages"
+      className="flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-card px-4 py-3"
+    >
+      <div className="flex min-w-0 items-center gap-2.5">
+        <MessageSquare className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+        <p className="text-sm text-muted-foreground">
+          Questions about {positionTitle ? `“${positionTitle}”` : "this role"}? Your TaaSFlow
+          team replies in the conversation for this role.
+        </p>
       </div>
-
-      <div className="mt-4">
-        {error ? (
-          <div className="rounded-lg border p-6 text-center" role="alert">
-            <p className="text-sm font-medium">{error}</p>
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-3"
-              onClick={() => setAttempt((n) => n + 1)}
-            >
-              Try again
-            </Button>
-          </div>
-        ) : !conversationId ? (
-          <Skeleton className="h-[420px] w-full rounded-lg" />
-        ) : (
-          <ConversationThread
-            conversationId={conversationId}
-            canPost={canPost}
-            heightClass="h-[480px]"
-            emptyPrompt={`No messages yet on ${positionTitle ?? "this role"}. Ask for more candidates, request a change to the brief, or flag urgency.`}
-          />
-        )}
-      </div>
+      <Button asChild variant="outline" size="sm">
+        <Link to="/client/conversations">
+          View conversation
+          <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden />
+        </Link>
+      </Button>
     </section>
   );
 }

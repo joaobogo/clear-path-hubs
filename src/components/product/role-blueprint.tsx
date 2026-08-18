@@ -1,7 +1,14 @@
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Clock, Shield, MapPin, Coins, Radar, GitBranch, Gauge, FileText } from "lucide-react";
+import { CheckCircle2, Clock, Shield, MapPin, Coins, Radar, GitBranch, Gauge, FileText, ChevronDown } from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 import { formatEnumLabel } from "@/lib/human-labels";
+import { DEFAULT_CALIBRATION } from "@/lib/scoring/engine-calibration";
+
 
 
 /**
@@ -18,13 +25,18 @@ type AnyRow = any;
 export interface RoleBlueprintProps {
   position: AnyRow;
   activity?: AnyRow[];
+  /** Client role page keeps the blueprint collapsed by default. */
+  defaultOpen?: boolean;
 }
 
+// Mirrors DEFAULT_CALIBRATION so the preview never disagrees with candidate pages.
 const RUBRIC_WEIGHTS = {
-  must: 60,
-  nice: 30,
-  dealbreakers: 10,
+  must: Math.round(DEFAULT_CALIBRATION.base_weights.must_have * 100),
+  nice: Math.round(DEFAULT_CALIBRATION.base_weights.preferred * 100),
+  screening: Math.round(DEFAULT_CALIBRATION.base_weights.screening_alignment * 100),
 } as const;
+
+
 
 function toLabelList(v: unknown): string[] {
   if (!Array.isArray(v)) return [];
@@ -115,7 +127,7 @@ function titleCase(s: string): string {
     .join(" ");
 }
 
-export function RoleBlueprint({ position, activity = [] }: RoleBlueprintProps) {
+export function RoleBlueprint({ position, activity = [], defaultOpen = true }: RoleBlueprintProps) {
   const mustHaves = toLabelList(position.requirements);
   const nice = toLabelList(position.preferred_requirements);
   const dealbreakers = toLabelList(position.dealbreakers);
@@ -158,8 +170,9 @@ export function RoleBlueprint({ position, activity = [] }: RoleBlueprintProps) {
       className="rounded-xl border bg-card overflow-hidden"
       data-qa="role-blueprint"
     >
+    <Collapsible defaultOpen={defaultOpen}>
       {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-3 border-b bg-muted/30 px-5 py-4">
+      <CollapsibleTrigger className="group flex w-full flex-wrap items-start justify-between gap-3 border-b bg-muted/30 px-5 py-4 text-left">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <FileText className="h-4 w-4 text-muted-foreground" />
@@ -173,16 +186,18 @@ export function RoleBlueprint({ position, activity = [] }: RoleBlueprintProps) {
             )}
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            The single source of truth for this role. Every candidate score, shortlist decision, and AI
-            recommendation anchors back to what's on this page.
+            Full brief, scoring rubric, approval history and change log.
           </p>
         </div>
-        <div className="text-right text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-2 text-right text-[11px] text-muted-foreground">
           Kept in sync with your approved brief
+          <ChevronDown className="h-4 w-4 shrink-0 transition-transform group-data-[state=open]:rotate-180" />
         </div>
-      </div>
+      </CollapsibleTrigger>
 
+      <CollapsibleContent>
       <div className="p-5 space-y-6">
+
         {/* Description */}
         {position.description ? (
           <div>
@@ -246,7 +261,7 @@ export function RoleBlueprint({ position, activity = [] }: RoleBlueprintProps) {
 
         </div>
 
-        {/* Scoring rubric preview */}
+        {/* Scoring rubric preview — the same weighting candidate pages show */}
         <div>
           <SectionLabel>Scoring rubric preview</SectionLabel>
           <p className="text-xs text-muted-foreground mb-2">
@@ -267,14 +282,24 @@ export function RoleBlueprint({ position, activity = [] }: RoleBlueprintProps) {
               tone="nice"
             />
             <RubricRow
+              label="Screening alignment"
+              count={null}
+              weight={RUBRIC_WEIGHTS.screening}
+              tone="nice"
+            />
+            <RubricRow
               label="Dealbreaker checks"
               count={dealbreakers.length}
-              weight={RUBRIC_WEIGHTS.dealbreakers}
+              weight={null}
               tone="deal"
               last
             />
           </div>
+          <p className="mt-2 text-[11px] text-muted-foreground">
+            Dealbreakers are not weighted — they are pass/fail gates that cap a score outright.
+          </p>
         </div>
+
 
         {/* Talent signals planned */}
         <div>
@@ -362,7 +387,10 @@ export function RoleBlueprint({ position, activity = [] }: RoleBlueprintProps) {
           earlier assessments stay tied to the brief they were made against.
         </div>
       </div>
+      </CollapsibleContent>
+    </Collapsible>
     </section>
+
   );
 }
 
@@ -443,8 +471,8 @@ function RubricRow({
   last,
 }: {
   label: string;
-  count: number;
-  weight: number;
+  count: number | null;
+  weight: number | null;
   tone: "must" | "nice" | "deal";
   last?: boolean;
 }) {
@@ -459,15 +487,20 @@ function RubricRow({
       <div className="min-w-0 flex-1">
         <div className="text-sm font-medium">{label}</div>
         <div className="text-xs text-muted-foreground">
-          {count} {count === 1 ? "line" : "lines"} in blueprint
+          {count == null
+            ? "Screening answers against your brief"
+            : `${count} ${count === 1 ? "line" : "lines"} in blueprint`}
         </div>
       </div>
       <div className="w-32">
         <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-          <div className={`h-full ${bar}`} style={{ width: `${weight}%` }} />
+          <div className={`h-full ${bar}`} style={{ width: `${weight ?? 0}%` }} />
         </div>
       </div>
-      <div className="w-12 text-right text-sm font-semibold tabular-nums">{weight}%</div>
+      <div className="w-12 text-right text-sm font-semibold tabular-nums">
+        {weight == null ? "Gate" : `${weight}%`}
+      </div>
     </div>
   );
 }
+
