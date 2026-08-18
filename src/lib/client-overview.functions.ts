@@ -84,6 +84,8 @@ export const getClientOverview = createServerFn({ method: "GET" })
   .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
     await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
+    // 1. Fetch the unified open items and blocked roles.
+    const openItemsResponse = await getClientOpenItems({ data: { orgId: data.orgId } });
     const rows = await loadKpiRows(context.supabase, data.orgId);
 
     const { data: positions, error: positionsError } = await context.supabase
