@@ -33,7 +33,14 @@ TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
 - After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just \"done\".
 - If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
 
-Re-run the RELEASE_GATE checks against the current tree and produce the final table: production build, typecheck, security scan, tenant isolation suite, authz matrix, seat-cap suite, scoring regression, public vocabulary, mobile 375, live domains, consent-gated tracking, and the end-to-end smoke journey. Update RELEASE_GATE.md §5/§6 and docs/mvp-ledger.md with the results and dates. List every remaining non-green item as FAIL or BLOCKED with reason — no softening language. Do not fix anything in this message; this is the measurement run."`;
+OWNER DECISION — deliberate business-rule change: clients must see a candidate's full contact details (email, phone, location, full name) from the moment the candidate first appears in their workspace, with no extra step. Implement this as contact release at publish time, keeping the admin-approval gate fully intact.
+
+1. When a candidate match transitions to published_to_client (client_visibility = visible), set contact_released_at in the SAME transaction as the publish write. Keep the existing publish-gate trigger rules (approved_score_run_id, canonical_state, integrity_status) untouched — candidates stay invisible to clients until admin publishes.
+2. Remove the email/phone/last-name masking from the client candidate DTOs (client-kpi.server.ts and any sibling client read models) for matches where contact_released_at is set — which after step 1 is every published match. Do not change admin or candidate DTOs.
+3. Backfill: migration setting contact_released_at = published timestamp for all currently published matches (Northwind demo included) so the demo shows full profiles immediately.
+4. Keep the files/CV RLS policy keyed on contact_released_at exactly as it is — after step 1 it grants automatically at publish, which is the point.
+5. Update the client-side \"What you can see\" explainer copy to match the new reality, and update the affected regression tests: \"no candidate trace before publish\" stays mandatory; \"approval alone does not release contact\" stays true (release happens at PUBLISH, not approval); the old \"publish does not release contact\" expectation is superseded by this owner decision — note that in RELEASE_GATE.
+6. Verify as the Northwind demo client: every visible candidate shows full name, email, phone, and location with zero client action; as a second-org client and as a candidate, cross-tenant reads still return nothing (re-run the tenant-isolation suite)."`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
