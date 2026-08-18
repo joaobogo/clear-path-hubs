@@ -32,12 +32,21 @@ export type DeliveryFailure = {
   ledger: "notification" | "lead";
   id: string;
   eventType: string;
+  /** Human event name for the row; the raw enum stays in the payload. */
+  eventLabel: string;
   title: string | null;
   audience: string | null;
   channel: string;
   recipient: string | null;
+  /** Raw provider/enum code — payload only, never row copy. */
   reason: string;
   reasonDetail: string | null;
+  /** Short human chip. */
+  reasonLabel: string;
+  /** The human sentence shown in the row. */
+  reasonSentence: string;
+  /** True when the block can be cleared and the send re-attempted. */
+  canUnsuppress: boolean;
   attempts: number;
   firstAttemptAt: string;
   lastAttemptAt: string;
@@ -47,6 +56,16 @@ export type DeliveryFailure = {
   relatedPath: string | null;
   payloadJson: string;
 };
+
+/** "candidate_ready_for_admin_review" -> "Candidate ready for admin review". */
+export function humaniseEventType(raw: string): string {
+  if (raw.startsWith("lead:")) {
+    return `Lead alert — ${humaniseEventType(raw.slice(5))}`;
+  }
+  const words = raw.replace(/[_-]+/g, " ").trim();
+  if (!words) return "Unknown event";
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
 
 function since(): string {
   return new Date(Date.now() - WINDOW_DAYS * 86_400_000).toISOString();
