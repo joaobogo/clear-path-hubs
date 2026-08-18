@@ -128,6 +128,32 @@ export const Route = createFileRoute("/_authenticated/admin/clients/$id")({
 });
 
 /**
+ * A genuinely bad client id gets a branded, styled state with the id that was
+ * attempted and a way back — not a bare unstyled line of text.
+ */
+function ClientRecordNotFound() {
+  const { id } = Route.useParams();
+  return (
+    <div className="mx-auto max-w-xl p-8">
+      <div className="rounded-lg border border-border bg-card p-6 text-card-foreground">
+        <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+          <Building2 className="h-4 w-4" aria-hidden="true" />
+          Client record
+        </div>
+        <h1 className="mt-3 text-xl font-semibold">We couldn&apos;t find this client</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          No organization exists for the record you opened. It may have been merged or deleted.
+        </p>
+        <p className="mt-2 break-all font-mono text-xs text-muted-foreground">{id}</p>
+        <Button asChild className="mt-5">
+          <Link to="/admin/clients">Back to clients</Link>
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+/**
  * One independently loading, independently failing account block. The suspense
  * fallback keeps the tab shell visible while a block resolves; the boundary
  * keeps a thrown loader error inside the block.
