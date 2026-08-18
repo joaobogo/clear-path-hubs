@@ -66,11 +66,12 @@ const STATUSES = ["prospect", "active", "paused", "closed"] as const;
 type Status = (typeof STATUSES)[number];
 
 const ORG_TYPES = [
+  { value: "client_demo", label: "Clients + Demos" },
   { value: "all", label: "All types" },
-  { value: "client", label: "Clients" },
-  { value: "demo", label: "Demos" },
-  { value: "qa", label: "QA" },
-  { value: "internal", label: "Internal" },
+  { value: "client", label: "Clients only" },
+  { value: "demo", label: "Demos only" },
+  { value: "qa", label: "QA only" },
+  { value: "internal", label: "Internal only" },
 ] as const;
 type OrgType = (typeof ORG_TYPES)[number]["value"];
 
@@ -85,9 +86,9 @@ const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
   status: fallback(z.string(), "").default(""),
   industry: fallback(z.string(), "").default(""),
-  org_type: fallback(z.string(), "all").default("all"),
+  org_type: fallback(z.string(), "client_demo").default("client_demo"),
   sort: fallback(z.string(), "activity_desc").default("activity_desc"),
-  archived: fallback(z.coerce.string().pipe(z.enum(["0", "1"])), "0").default("0"),
+  archived: fallback(z.enum(["0", "1"]), "0").default("0"),
   page: fallback(z.number().int(), 1).default(1),
   page_size: fallback(z.number().int(), 25).default(25),
 });
@@ -211,9 +212,10 @@ function ClientsPage() {
       rows = rows.filter((r) => !r.archived_at);
     }
 
-    const orgTypeValue = isOrgType(search.org_type) ? search.org_type : "all";
+    const orgTypeValue = isOrgType(search.org_type) ? search.org_type : "client_demo";
     if (orgTypeValue !== "all") {
       rows = rows.filter((r) => {
+        if (orgTypeValue === "client_demo") return !r.is_qa && !r.is_internal;
         if (orgTypeValue === "client") return !r.is_demo && !r.is_qa && !r.is_internal;
         if (orgTypeValue === "demo") return r.is_demo;
         if (orgTypeValue === "qa") return r.is_qa;
@@ -242,6 +244,7 @@ function ClientsPage() {
 
   return (
     <div className="space-y-6">
+      <div data-qa-debug={`q=${search.q}|filtered=${filtered.length}`} />
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Clients</h1>
@@ -291,7 +294,7 @@ function ClientsPage() {
           q: search.q ?? "",
           status: search.status ?? "",
           industry: search.industry ?? "",
-          org_type: search.org_type ?? "all",
+          org_type: search.org_type ?? "client_demo",
           sort: search.sort ?? "activity_desc",
           archived: search.archived ?? "0",
         }}
@@ -302,7 +305,7 @@ function ClientsPage() {
               q: f.q ?? "",
               status: f.status ?? "",
               industry: f.industry ?? "",
-              org_type: f.org_type ?? "all",
+              org_type: f.org_type ?? "client_demo",
               sort: f.sort || "activity_desc",
               archived: f.archived === "1" ? "1" : "0",
               page: 1,
@@ -349,7 +352,7 @@ function ClientsPage() {
         </Select>
 
         <Select
-          value={search.org_type || "all"}
+          value={search.org_type || "client_demo"}
           onValueChange={(v) =>
             navigate({ search: { ...search, org_type: v, page: 1 } })
           }
