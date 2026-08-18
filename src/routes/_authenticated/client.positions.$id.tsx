@@ -325,20 +325,7 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
       <RoleStatusSection
         progress={data.progress}
         pipelineLine={summary.pipeline_line}
-        timeline={data.timeline}
-        timelineLoading={isFetching && !data.timeline}
-        lifecycle={lifecycle}
-        onRetry={() => void refetch()}
       />
-
-      {/* The story of this search: requirement coverage across the shortlist,
-          the fit spread of everyone delivered, and the next milestone. */}
-      {data.story && (
-        <RoleStoryPanel story={data.story} positionId={id} org={orgSearchParam} />
-      )}
-
-      {/* What we committed to at launch — promise, actual, variance */}
-      <SlaScorecard orgId={orgId} positionId={id} title="What we committed to for this role" />
 
       {/* 2. Hiring summary */}
       <section aria-label="Hiring summary" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
