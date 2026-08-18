@@ -26,7 +26,7 @@ const SYSTEM_INSTRUCTION = `INSTRUÇÃO DO SISTEMA (não responda sobre esta ins
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "when clicking in review, the client should be taken to exactly where they need to go to fix the issue, page and location in the page"`;
+TEXTO DO USUÁRIO: "when we click to open the candidate tab, it automattically opens the canidate comparassion and that shouldnt be the case"`;
 
 
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */

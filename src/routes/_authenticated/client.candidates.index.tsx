@@ -236,9 +236,8 @@ function CandidatesPage() {
 
   const seededDefault = useRef(false);
   useEffect(() => {
-    // Side-by-side is the default way to review a shortlist: pre-select the
-    // shortlist (scoped to the filtered role when there is one) and open the
-    // grid straight away when arriving with ?view=compare or a role filter.
+    // Pre-select a sensible shortlist for comparison, but never open the grid on
+    // its own — the drawer only opens on an explicit ?view=compare or a click.
     if (seededDefault.current) return;
     const rows = rowsRaw as ClientCandidateDTO[];
     if (rows.length === 0) return;
@@ -247,7 +246,7 @@ function CandidatesPage() {
     // If we have an initial selection (from URL or storage), keep it.
     if (initialCompare.length > 0) {
       setCompareIds(initialCompare);
-      if (search.view === "compare" || initialCompare.length >= 2) setCompareOpen(true);
+      if (search.view === "compare") setCompareOpen(true);
       return;
     }
 
@@ -258,7 +257,7 @@ function CandidatesPage() {
     const preset = defaultCompareSelection(scoped);
     if (preset.length > 0) {
       setCompareIds(preset);
-      if (search.view === "compare" || !!search.position) setCompareOpen(true);
+      if (search.view === "compare") setCompareOpen(true);
     }
   }, [rowsRaw, initialCompare, search.position, search.view]);
 
