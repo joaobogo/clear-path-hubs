@@ -514,7 +514,7 @@ function CandidateDetailPage() {
  </aside>
  </div>
 
- {/* BELOW THE FOLD — four tabs, everything else lives inside them. */}
+ {/* BELOW THE FOLD — three tabs, everything else lives inside them. */}
  <Tabs defaultValue="summary" className="mt-8">
   <TabsList className="flex w-full flex-wrap justify-start">
   <TabsTrigger value="summary">Summary &amp; evidence</TabsTrigger>
@@ -575,10 +575,9 @@ function CandidateDetailPage() {
  <Link to="/client/interviews" search={{ interview: undefined, feedback: undefined }}>Go to interviews →</Link>
  </Button>
  </div>
- </TabsContent>
+  </TabsContent>
 
-
- <TabsContent value="activity" className="mt-4 space-y-4">
+  <TabsContent value="activity" className="mt-4 space-y-4">
  {(interviews.length > 0 || decisions.length > 0) && (
  <ActivitySection interviews={interviews} decisions={decisions} />
  )}
