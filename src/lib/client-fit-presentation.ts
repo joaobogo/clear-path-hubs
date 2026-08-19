@@ -436,9 +436,6 @@ export function summariseCoverage(rows: RequirementRow[]): CoverageSummary {
   const partial = (r: RequirementRow) => r.status === "partial" || (r.status === "met" && r.evidence.length === 0);
   const missing = (r: RequirementRow) =>
     r.status === "not_evidenced" || r.status === "contradicted";
-  const partial = (r: RequirementRow) => r.status === "partial" || (r.status === "met" && r.evidence.length === 0);
-  const missing = (r: RequirementRow) =>
-    r.status === "not_evidenced" || r.status === "contradicted";
 
   const must_met = must.filter(met).length;
   const must_partial = must.filter(partial).length;
