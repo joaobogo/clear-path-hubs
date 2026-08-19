@@ -99,7 +99,6 @@ const TAB_LABELS: Record<TabKey, { label: string; icon: typeof Building2 }> = {
   notes: { label: "Notes", icon: StickyNote },
   documents: { label: "Documents", icon: FileText },
   activity: { label: "Activity", icon: Activity },
-  audit: { label: "Audit", icon: ShieldCheck },
   shares: { label: "Shares", icon: ExternalLink },
   talent_memory: { label: "Talent memory", icon: BadgeCheck },
   settings: { label: "Settings", icon: Settings },
