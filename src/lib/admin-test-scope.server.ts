@@ -210,5 +210,7 @@ export async function resolveShowTestRecordsForCaller(s: Any): Promise<boolean> 
 
 /** `is_test_record` is nullable, so "not true" needs both branches. */
 export function excludeTestFlag(query: Any): Any {
+  // If is_test_record is NULL or false, it's a real record.
+  // We explicitly check for true to exclude only confirmed test records.
   return query.or("is_test_record.is.null,is_test_record.eq.false");
 }

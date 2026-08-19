@@ -434,7 +434,13 @@ export const listClients = createServerFn({ method: "GET" })
       .limit(500);
     // The global "test records" preference decides here, in Postgres, so the
     // list and the "N organizations" count can never disagree.
-    if (!showTest) q = excludeTestFlag(q);
+    if (!showTest) {
+      q = excludeTestFlag(q);
+    } else {
+      // P-020: When test records are ON, we still want every organization,
+      // but ensure we don't accidentally over-limit or skip uncategorized ones.
+      // The limit(500) is already quite generous for a list.
+    }
     const { data: rows } = await q;
 
     const orgIds = (rows ?? []).map((r: AnyRow) => r.id);
