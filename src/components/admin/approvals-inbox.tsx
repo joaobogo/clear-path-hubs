@@ -174,7 +174,14 @@ function Row({
             ) : null
           ) : (
             <>
-              <Button size="sm" onClick={onApprove} disabled={busy}>
+              <Button
+                size="sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onApprove();
+                }}
+                disabled={busy}
+              >
                 {busy ? (
                   <Loader2 className="mr-1 h-3 w-3 animate-spin" />
                 ) : (
@@ -192,7 +199,10 @@ function Row({
           <Button
             size="sm"
             variant="ghost"
-            onClick={() => setDeclining((v) => !v)}
+            onClick={(e) => {
+              e.preventDefault();
+              setDeclining((v) => !v);
+            }}
             disabled={busy}
           >
             <X className="mr-1 h-3 w-3" />
@@ -307,7 +317,7 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
     () => allItems.filter((i) => selected[i.id]),
     [allItems, selected],
   );
-  const canBulk = bulkEligible(selectedItems) && selectedItems[0]?.kind === "candidate_visible";
+  const canBulk = selectedItems.length > 0 && bulkEligible(selectedItems) && selectedItems[0]?.kind === "candidate_visible";
 
   // allItems is flattened in render order, so keyboard indexes line up.
   const kb = useQueueKeyboard({
@@ -384,7 +394,15 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
           size="sm"
           className="ml-auto"
           disabled={!canBulk || bulk.isPending}
-          onClick={() => bulk.mutate(selectedItems)}
+          onClick={() => {
+            if (
+              !window.confirm(
+                `Bulk approve ${selectedItems.length} items? This is a real notification, sent immediately.`
+              )
+            )
+              return;
+            bulk.mutate(selectedItems);
+          }}
         >
           {bulk.isPending ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : null}
           Bulk approve
@@ -428,6 +446,12 @@ export function ApprovalsInbox({ includeTest: explicit }: { includeTest?: boolea
                   }
                   busy={busyId === item.id}
                   onApprove={() => {
+                    if (
+                      !window.confirm(
+                        `Approve "${item.target_label}"? This is a real notification, sent immediately.`
+                      )
+                    )
+                      return;
                     setBusyId(item.id);
                     approve.mutate(item);
                   }}
