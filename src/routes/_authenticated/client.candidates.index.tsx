@@ -483,34 +483,6 @@ function CandidatesPage() {
       totalCount={(rowsRaw as ClientCandidateDTO[]).length}
     />
   )}
- <li key={i} className="py-2 flex items-center justify-between gap-3">
- <span className="text-sm text-foreground/90 truncate">{a.label}</span>
-  <Link
-  to={a.label.toLowerCase().includes("offer") ? "/client/candidates" : "/client/interviews"}
-  search={(a.label.toLowerCase().includes("offer") ? { stage: "offer", org: orgSearch } : { filter: "interview", org: orgSearch }) as never}
-  className="text-xs font-medium text-primary hover:underline shrink-0"
-  >
- Open →
- </Link>
- </li>
- ))}
- </ul>
- </section>
- )}
-
-  <CandidatesFiltersPanel
-   search={search}
-   setF={setF}
-   positions={positions as Array<{ id: string; title: string }>}
-   availabilityOptions={availabilityOptions}
-   activeFilters={activeFilters}
-   clearFilters={clearFilters}
-   orgId={orgId}
-   ctxRole={ctx?.active?.role}
-   onApplySavedView={(f) => navigate({ search: { ...search, ...f } as never, replace: true })}
-   resultCount={filtered.length}
-   totalCount={(rowsRaw as ClientCandidateDTO[]).length}
-  />
 
  {/* Results — loading, failure and "none approved yet" are distinct states */}
   {listPanel.loading ? (
