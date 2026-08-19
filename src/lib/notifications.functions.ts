@@ -182,7 +182,12 @@ export async function emitEventFromServer(args: {
             : actorName && r.audience === "client" && args.event === "candidate_stage_changed"
               ? `Status changed by ${actorName}`
               : copy.title,
-        body: copy.body ?? null,
+        // A clarification request is worthless without the question itself, so
+        // the typed question travels as the notification body.
+        body:
+          typeof args.payload?.["note"] === "string" && (args.payload["note"] as string).trim()
+            ? (args.payload["note"] as string).trim()
+            : copy.body ?? null,
         link_path: r.link_path ?? args.link_path ?? (args.candidate_match_id ? `/admin/review/${args.candidate_match_id}` : null),
         // Point every notification at the exact record it is about.
         entity_type: args.candidate_match_id

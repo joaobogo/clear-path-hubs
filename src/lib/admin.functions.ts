@@ -1085,7 +1085,7 @@ export const setPositionStatus = createServerFn({ method: "POST" })
       entity_id: data.id,
       organization_id: before.organization_id,
       before: { status: before.status, visibility: before.visibility },
-      after,
+      after: { ...(after ?? {}), reason: data.reason ?? null },
       trace_id,
     });
     // Emit lifecycle events so Client + Admin dashboards refresh in real time.
@@ -1109,7 +1109,7 @@ export const setPositionStatus = createServerFn({ method: "POST" })
           // Actor is server-derived from the authenticated session, never from the request payload.
           actor_user_id: context.userId,
           link_path: `/client/positions/${data.id}`,
-          payload: { title: before.title ?? null },
+          payload: { title: before.title ?? null, note: data.reason ?? null },
         });
       } catch (e) {
         console.error("[setPositionStatus] emit failed", trace_id, e);
