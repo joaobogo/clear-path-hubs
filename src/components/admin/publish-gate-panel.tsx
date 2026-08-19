@@ -73,6 +73,7 @@ export function PublishGatePanel({
   const includeTest = useScopedIncludeTest(explicit);
   const qc = useQueryClient();
   const [busy, setBusy] = useState<string | null>(null);
+  const [confirmRow, setConfirmRow] = useState<any | null>(null);
   const fetchQueue = useServerFn(getPublishGateQueue);
   const publish = useServerFn(setPositionStatus);
 
