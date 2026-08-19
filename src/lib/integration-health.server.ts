@@ -91,7 +91,7 @@ async function checkStripe(): Promise<CheckResult> {
       ...base,
       status: "failed",
       summary: `Payments API call failed in ${env} mode.`,
-      error_code: "stripe_api_error",
+      error_code: "payments_api_error",
       error_detail: truncate(message),
       remediation:
         "Check the payments connection is still linked and, for live mode, that go-live is complete. The message above is the provider's own error — fix the cause it names, then re-run.",
@@ -110,7 +110,7 @@ async function checkStripe(): Promise<CheckResult> {
       : `Payments reachable in ${env} mode with an active catalog.`,
     ...(noCatalog
       ? {
-          error_code: "stripe_catalog_empty",
+          error_code: "payments_catalog_empty",
           error_detail: `active products: ${counts.products}, active prices: ${counts.prices}`,
           remediation: "Create the plan products and prices before sending anyone to checkout.",
         }
