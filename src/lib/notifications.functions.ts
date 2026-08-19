@@ -539,9 +539,12 @@ export const listDeliveryFailures = createServerFn({ method: "GET" })
       return {
         items: [],
         counts: {},
+        summary: null,
+        volume: { emailSent: 0, inAppDelivered: 0 },
         window_days: 7,
         email: { configured: cfg.configured, reason: cfg.reason },
       };
+
     }
   });
 
