@@ -290,6 +290,9 @@ export async function recordOfferOutcome(
   }
 
   const patch: Row = { status: args.outcome };
+  if (args.outcome === "hire_confirmed") {
+    patch["hired_at"] = new Date().toISOString();
+  }
   if (args.closeReason) patch["close_reason"] = args.closeReason;
   if (args.notes !== undefined) patch["close_reason_notes"] = args.notes || null;
 
