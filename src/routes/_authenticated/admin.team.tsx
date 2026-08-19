@@ -42,9 +42,10 @@ export const Route = createFileRoute("/_authenticated/admin/team")({
 function TeamPage() {
   const { org } = Route.useSearch();
   const navigate = Route.useNavigate();
+  const includeTest = useIncludeTestRecords();
   const clients = useQuery({
-    queryKey: ["admin-clients", ""],
-    queryFn: () => listClients({ data: { q: "" } }),
+    queryKey: ["admin-clients", includeTest, ""],
+    queryFn: () => listClients({ data: { q: "", include_test: includeTest } }),
   });
 
   return (
