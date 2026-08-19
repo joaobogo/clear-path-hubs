@@ -452,9 +452,9 @@ export const RequirementCoverage = memo(function RequirementCoverage({
       <div className="mt-4">
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span>Overall coverage</span>
-          <span className="tabular-nums">{coverage.overall_pct}%</span>
+          <span className="tabular-nums">Running...</span>
         </div>
-        <Progress value={coverage.overall_pct} className="mt-1" />
+        <Progress value={0} className="mt-1" />
       </div>
       <Separator className="my-4" />
       <ul className="space-y-2">
