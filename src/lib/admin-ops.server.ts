@@ -27,6 +27,7 @@ import type { QueueClaim, QueueItem, QueueOwner, QueueRef, WorkQueue } from "./a
 import { INTAKE_AGING_TIER_DAYS } from "@/lib/intake-aging";
 import { PAID_PAYMENT_STATES } from "@/lib/publish-gate";
 import { deliveryReason } from "./notifications/delivery-reasons";
+import { qualifiesAsHire } from "./offer-hire";
 
 
 const ISO = (ms: number) => new Date(Date.now() - ms).toISOString();
