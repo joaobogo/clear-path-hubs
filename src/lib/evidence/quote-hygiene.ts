@@ -10,10 +10,10 @@ export const QUOTE_MAX_CHARS = 240;
 /** Below this, a slice is a fragment rather than a readable quote. */
 export const QUOTE_MIN_CHARS = 24;
 
-const EMAIL_RE = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi;
-const URL_RE = /(https?:\/\/|www\.)\S+|\b[a-z0-9-]+\.(com|net|org|io|dev|co|ai)(\/\S*)?\b/gi;
+const EMAIL_RE = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i;
+const URL_RE = /(https?:\/\/|www\.)\S+|\b[a-z0-9-]+\.(com|net|org|io|dev|co|ai)(\/\S*)?\b/i;
 // 7+ digits once separators are ignored, incl. +44 (0) 7... forms.
-const PHONE_RE = /(?:\+?\d[\d\s().-]{6,}\d)/g;
+const PHONE_RE = /(?:\+?\d[\d\s().-]{6,}\d)/;
 
 function hasContactDetail(line: string): boolean {
   if (EMAIL_RE.test(line) || URL_RE.test(line)) return true;
@@ -64,12 +64,10 @@ export function stripContactLines(raw: string): string {
 /** Drop a mid-word opening token left by a character-offset slice. */
 function dropOpeningFragment(text: string): string {
   const out = text.trim();
-  // If the slice starts mid-word (lowercase), drop the first partial token.
-  if (/^[a-z]/.test(out)) {
-    const nextSpace = out.indexOf(" ");
-    if (nextSpace > 0 && out.length - nextSpace >= 12) {
-      return out.slice(nextSpace + 1).trim();
-    }
+  if (!/^[a-z]/.test(out)) return out;
+  const nextWord = out.indexOf(" ");
+  if (nextWord > 0 && nextWord < 24 && out.length - nextWord >= 30) {
+    return out.slice(nextWord + 1).trim();
   }
   return out;
 }
@@ -77,20 +75,10 @@ function dropOpeningFragment(text: string): string {
 /** Drop a leading partial sentence when a usable sentence follows. */
 function snapStart(text: string): string {
   const out = text.trim();
-  // If the very first token starts with a lowercase letter, the slice opened
-  // mid-word. Expand back to the start of the next sentence if possible, or
-  // at least to the next word boundary, adding a leading ellipsis.
-  const midWord = /^[a-z]/.test(out);
-  const firstSentence = out.search(/[.!?]\s+[A-Z]/);
-  if (firstSentence !== -1 && firstSentence < 60) {
-    const candidate = out.slice(firstSentence + 2).trim();
-    if (candidate.length >= 30) return candidate;
-  }
-  if (midWord) {
-    const firstSpace = out.indexOf(" ");
-    if (firstSpace > 0 && out.length - firstSpace >= 12) {
-      return out.slice(firstSpace + 1).trim();
-    }
+  const firstBoundary = out.search(/[.!?]\s+[A-Z]/);
+  if (firstBoundary !== -1) {
+    const candidate = out.slice(firstBoundary + 1).trim();
+    if (candidate.length >= 60) return candidate;
   }
   return out;
 }
@@ -110,18 +98,12 @@ function lastSentenceEnd(text: string): number {
 /** Drop a trailing partial sentence, or at least a trailing partial word. */
 function snapEnd(text: string): string {
   let out = text.trim();
-  // First: strip any trailing partial word. If the text ends with a lowercase
-  // letter that is immediately followed by non-space in the original, the
-  // slice ended mid-word. Trim to the previous word boundary and append an
-  // ellipsis.
-  const lastSpace = out.lastIndexOf(" ");
-  if (lastSpace >= 25 && !/[.!?]$/.test(out)) {
-    out = `${out.slice(0, lastSpace).trim()}…`;
-  }
-  // Then: prefer a full sentence ending.
   const lastBoundary = lastSentenceEnd(out);
   if (lastBoundary >= 25) {
     out = out.slice(0, lastBoundary + 1);
+  } else {
+    const lastSpace = out.lastIndexOf(" ");
+    if (lastSpace >= 25) out = `${out.slice(0, lastSpace).trim()}…`;
   }
   return out.trim();
 }
@@ -151,32 +133,144 @@ function capAtWord(text: string): string {
 /**
  * Clean an evidence quote: remove contact details, snap to sentence boundaries
  * and trim to ~240 characters without cutting a word in half.
+ *
+ * NOTE: this is the STABLE version used by the scoring engine. Any change here
+ * moves the golden-score regression gate. For UI rendering, use `renderQuote`.
  */
 export function cleanQuote(raw: string | null | undefined): string {
   if (!raw) return "";
   if (isTemplatedEvidence(raw)) return "";
-
-  // 1. PII scrub: remove emails, phones, URLs no matter where the slice falls.
-  const scrubbed = stripContactLines(String(raw)).replace(/\s+/g, " ").trim();
-  if (!scrubbed) return "";
-
-  // 2. Strip leading punctuation and mid-word opening fragments.
-  const base = dropOpeningFragment(stripLeadingJunk(scrubbed));
-
-  // 3. Snap to the next sentence boundary if we open mid-sentence.
+  const collapsed = stripContactLines(String(raw)).replace(/\s+/g, " ").trim();
+  if (!collapsed) return "";
+  const base = dropOpeningFragment(stripLeadingJunk(collapsed));
   const trimmedStart = snapStart(base);
-
-  // 4. Trim the end to a sentence boundary or at least a word boundary
-  //    so we never end mid-word.
-  const ended = snapEnd(trimmedStart);
-
-  // 5. Never let hygiene reduce a quote to a stub: keep the fuller start if we lost too much.
-  const started = ended.length >= 40 ? trimmedStart : base;
-
+  // Never let hygiene reduce a quote to a stub: keep the fuller start instead.
+  const started = snapEnd(trimmedStart).length >= 40 ? trimmedStart : base;
   let out = capAtWord(snapEnd(started)).trim();
   if (out.length < QUOTE_MIN_CHARS) return "";
+  // A quote that still opens mid-sentence is marked as a continuation.
+  if (/^[a-z]/.test(out)) out = `…${out}`;
+  return out;
+}
 
-  // 6. Final safety: if a fragment somehow opened mid-word, mark it as a continuation.
+// ---------------------------------------------------------------------------
+// renderQuote — client/admin UI rendering only. Aggressive PII + boundary snap.
+// ---------------------------------------------------------------------------
+
+const RENDER_EMAIL_RE = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi;
+const RENDER_URL_RE = /(https?:\/\/|www\.)\S+|\b[a-z0-9-]+\.(com|net|org|io|dev|co|ai)(\/\S*)?\b/gi;
+const RENDER_PHONE_RE = /(?:\+?\d[\d\s().-]{6,}\d)/g;
+const RENDER_PHONE_RE_GLOBAL = /\+?\d[\d\s().-]{6,}\d/g;
+
+function scrubRenderContactTokens(line: string): string {
+  return line
+    .replace(RENDER_PHONE_RE_GLOBAL, (match) => (match.replace(/\D/g, "").length >= 7 ? " " : match))
+    .split(/\s+/)
+    .filter((token) => {
+      if (token.includes("@") || RENDER_URL_RE.test(token)) return false;
+      return token.replace(/\D/g, "").length < 7;
+    })
+    .join(" ")
+    .replace(/\(\s*\)/g, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+function stripRenderContactLines(raw: string): string {
+  return raw
+    .split(/\r?\n|(?:\s*[\u2022\u00b7]\s*)|(?:\s*\|\s*)/)
+    .map((line) => scrubRenderContactTokens(line))
+    .filter((line, i, all) => {
+      if (!line) return false;
+      if (i < all.length - 1 && line.length <= 3) return false;
+      return true;
+    })
+    .join(" ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+function renderDropOpeningFragment(text: string): string {
+  const out = text.trim();
+  if (!/^[a-z]/.test(out)) return out;
+  const nextSpace = out.indexOf(" ");
+  if (nextSpace > 0 && out.length - nextSpace >= 12) {
+    return out.slice(nextSpace + 1).trim();
+  }
+  return out;
+}
+
+function renderSnapStart(text: string): string {
+  const out = text.trim();
+  const midWord = /^[a-z]/.test(out);
+  const firstSentence = out.search(/[.!?]\s+[A-Z]/);
+  if (firstSentence !== -1 && firstSentence < 60) {
+    const candidate = out.slice(firstSentence + 2).trim();
+    if (candidate.length >= 30) return candidate;
+  }
+  if (midWord) {
+    const firstSpace = out.indexOf(" ");
+    if (firstSpace > 0 && out.length - firstSpace >= 12) {
+      return out.slice(firstSpace + 1).trim();
+    }
+  }
+  return out;
+}
+
+function renderSnapEnd(text: string): string {
+  let out = text.trim();
+  const lastSpace = out.lastIndexOf(" ");
+  if (lastSpace >= 25 && !/[.!?]$/.test(out)) {
+    out = `${out.slice(0, lastSpace).trim()}…`;
+  }
+  const lastBoundary = lastSentenceEnd(out);
+  if (lastBoundary >= 25) {
+    out = out.slice(0, lastBoundary + 1);
+  }
+  return out.trim();
+}
+
+function renderStripLeadingJunk(text: string): string {
+  let out = text.replace(/^[^A-Za-z0-9]+/, "").trim();
+  const firstSpace = out.indexOf(" ");
+  if (firstSpace > 0 && firstSpace <= 2 && out.length - firstSpace >= 40) {
+    out = out.slice(firstSpace + 1).trim();
+  }
+  return out;
+}
+
+function renderCapAtWord(text: string): string {
+  if (text.length <= QUOTE_MAX_CHARS) return text;
+  const cut = text.slice(0, QUOTE_MAX_CHARS);
+  const boundary = lastSentenceEnd(cut);
+  if (boundary >= 60) return cut.slice(0, boundary + 1);
+  const space = cut.lastIndexOf(" ");
+  return `${(space > 0 ? cut.slice(0, space) : cut).trim()}…`;
+}
+
+/**
+ * Render a quote for the client/admin UI.
+ *
+ * Differences from `cleanQuote` (the scoring-engine stable version):
+ *   - PII regexes are global and run repeatedly.
+ *   - Always snaps to sentence/word boundaries; never opens or ends mid-word.
+ *   - Adds leading/trailing ellipses when the slice falls mid-sentence.
+ *
+ * Use this for any component that renders a CV-derived evidence snippet.
+ */
+export function renderQuote(raw: string | null | undefined): string {
+  if (!raw) return "";
+  if (isTemplatedEvidence(raw)) return "";
+
+  const scrubbed = stripRenderContactLines(String(raw)).replace(/\s+/g, " ").trim();
+  if (!scrubbed) return "";
+
+  const base = renderDropOpeningFragment(renderStripLeadingJunk(scrubbed));
+  const trimmedStart = renderSnapStart(base);
+  const ended = renderSnapEnd(trimmedStart);
+  const started = ended.length >= 40 ? trimmedStart : base;
+  let out = renderCapAtWord(renderSnapEnd(started)).trim();
+  if (out.length < QUOTE_MIN_CHARS) return "";
   if (/^[a-z]/.test(out)) out = `…${out}`;
   return out;
 }
@@ -185,7 +279,7 @@ export function cleanQuote(raw: string | null | undefined): string {
 /** Humanize evidence sources. */
 export function humanizeSource(source: string | null | undefined): string {
   if (!source) return "Direct observation";
-  
+
   // D1: Handle character offsets if passed as source string (safety fallback)
   if (source.includes('"location":')) {
     try {
@@ -193,7 +287,7 @@ export function humanizeSource(source: string | null | undefined): string {
       if (loc.location) return humanizeSource(loc.location);
     } catch { /* fallback to default parsing */ }
   }
-  
+
   // D1: Render CV location as human-readable string
   // Matches cv:134-299
   const cvMatch = source.match(/^cv:(\d+)-(\d+)$/i);
@@ -249,8 +343,8 @@ const TEMPLATED_PATTERNS = [
   /beatriz\s+costa/i,
   /om\s+·\s+\+\d+/i,
   /\.costa@demo/i,
-  /om\s*·\s*\+\d+[\d\s().-]+\d+\s*Profile/i,
-  /\.costa@demo\.taasflow\.com\s*·\s*\+\d+[\d\s().-]+\d+/i,
+  /om\s*·\s*\+\d+[\d\s().-]+\d\s*Profile/i,
+  /\.costa@demo\.taasflow\.com\s*·\s*\+\d+[\d\s().-]+\d/i,
 ];
 
 export function isTemplatedEvidence(raw: string | null | undefined): boolean {
