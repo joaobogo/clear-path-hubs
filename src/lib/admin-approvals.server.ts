@@ -220,7 +220,7 @@ export async function loadApprovals(
       org_name: orgNameOf(m),
       position_id: (m.position_id as string) ?? null,
       position_title: ((m.positions as Any)?.title as string) ?? null,
-      requester_name: actorId ? (actorNames.get(actorId) ?? null) : null,
+      requester_name: actor ? (actor.isStaff ? `${actor.name} (Staff)` : actor.name) : "the client workspace",
       requested_at: (m.updated_at ?? m.created_at) as string,
       age_days: ageDays((m.updated_at ?? m.created_at) as string, now),
       match_ids: [m.id as string],
