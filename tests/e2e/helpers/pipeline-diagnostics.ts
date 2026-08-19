@@ -8,12 +8,13 @@
  * red run explains itself.
  */
 import { test, type Page, type Response } from "@playwright/test";
-import { pipelineSnapshot, type PipelineSnapshot } from "./qa";
+import { pipelineSnapshot, simulateOcrCompletion, type PipelineSnapshot } from "./qa";
 
 const OCR_REMEDY =
   "The CV had no usable text layer, so extraction asked for OCR. Fixtures must upload a " +
   "text-layer PDF (tests/e2e/fixtures/text-layer-cv.ts); a scan-only PDF cannot progress " +
-  "without an OCR runner.";
+  "without an OCR runner. Call resolveOcrGate(matchId) to simulate the OCR result in " +
+  "test mode so review and publication stay reachable.";
 
 /** Compact one-line summary of where a match actually is. */
 export function summarizeSnapshot(snap: PipelineSnapshot): string {
@@ -139,4 +140,41 @@ export async function attachApiFailures(log: ApiFailureLog, label: string): Prom
       contentType: "text/plain",
     })
     .catch(() => undefined);
+}
+
+/**
+ * Clears the OCR gate in test mode.
+ *
+ * With no OCR runner in the suite, a match parked on `ocr_required` blocks admin
+ * review and client publication for the rest of the journey. When (and only
+ * when) the match is actually stuck there, this asks the QA endpoint to write an
+ * OCR result onto the canonical file and re-run the real enrich + score steps.
+ * A match that is already progressing is left untouched.
+ *
+ * Returns the state the match is in afterwards.
+ */
+export async function resolveOcrGate(matchId: string, label = "ocr-gate"): Promise<string> {
+  let snap: PipelineSnapshot | null = null;
+  try {
+    snap = await pipelineSnapshot(matchId);
+  } catch (err) {
+    console.log(`[pipeline:${label}] snapshot read failed: ${String(err)}`);
+    return "unknown";
+  }
+  const state = snap.match.processing_state;
+  if (state !== "ocr_required") return state;
+
+  console.log(`[pipeline:${label}] ${matchId} parked on ocr_required — simulating OCR completion`);
+  const res = await simulateOcrCompletion(matchId);
+  console.log(
+    `[pipeline:${label}] ${matchId} simulated OCR (${res.simulated_ocr_chars} chars) → ${res.final_state}`,
+  );
+  await test
+    .info()
+    .attach(`simulated-ocr-${matchId}.json`, {
+      body: JSON.stringify(res, null, 2),
+      contentType: "application/json",
+    })
+    .catch(() => undefined);
+  return res.final_state;
 }
