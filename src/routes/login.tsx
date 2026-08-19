@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
+import { FieldError } from "@/components/ui/field-error";
+import { collectErrors, emailText, requiredText } from "@/lib/form-validation";
 import { z } from "zod";
 import { Eye, EyeOff } from "lucide-react";
 import {
@@ -414,14 +416,14 @@ function LoginPage() {
                 </span>
                 <span className="h-px flex-1 bg-border" />
               </div>
-              <form onSubmit={onSignIn} className="space-y-3">
+              <form noValidate onSubmit={onSignIn} className="space-y-3">
               <div className="space-y-1.5">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
                   autoComplete="email"
-                  required
+                  aria-invalid={!!fieldErrors.email}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -433,8 +435,7 @@ function LoginPage() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     autoComplete="current-password"
-                    required
-                    minLength={8}
+                    aria-invalid={!!fieldErrors.password}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pr-10"
@@ -481,13 +482,13 @@ function LoginPage() {
               </form>
             </div>
           ) : mode === "forgot" ? (
-            <form onSubmit={onForgot} className="space-y-3">
+            <form noValidate onSubmit={onForgot} className="space-y-3">
               <div className="space-y-1.5">
                 <Label htmlFor="femail">Email</Label>
                 <Input
                   id="femail"
                   type="email"
-                  required
+                  aria-invalid={!!fieldErrors.email}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -504,13 +505,13 @@ function LoginPage() {
               </button>
             </form>
           ) : (
-            <form onSubmit={onResendConfirmation} className="space-y-3">
+            <form noValidate onSubmit={onResendConfirmation} className="space-y-3">
               <div className="space-y-1.5">
                 <Label htmlFor="cemail">Email</Label>
                 <Input
                   id="cemail"
                   type="email"
-                  required
+                  aria-invalid={!!fieldErrors.email}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />

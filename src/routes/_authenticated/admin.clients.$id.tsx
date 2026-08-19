@@ -15,6 +15,8 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
+import { FieldError } from "@/components/ui/field-error";
+import { requiredText } from "@/lib/form-validation";
 import { RecordActivityTab } from "@/components/admin/record-activity-tab";
 import {
   getClient,
@@ -449,9 +451,13 @@ function CompanyTab({ org }: { org: any }) {
 
   return (
     <form
+      noValidate
       className="grid gap-4 max-w-2xl"
       onSubmit={(e) => {
         e.preventDefault();
+        const message = requiredText(form.name);
+        setNameError(message);
+        if (message) return;
         if (dirty && !disabled) m.mutate();
       }}
     >
@@ -461,7 +467,13 @@ function CompanyTab({ org }: { org: any }) {
         </div>
       )}
       <Field label="Company name">
-        <Input value={form.name} disabled={disabled} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+        <Input
+          value={form.name}
+          disabled={disabled}
+          aria-invalid={!!nameError}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+        />
+        <FieldError message={nameError} />
       </Field>
       <div className="grid gap-4 md:grid-cols-2">
         <Field label="Website">

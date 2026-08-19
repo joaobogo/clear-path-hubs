@@ -320,6 +320,7 @@ function ClientsPage() {
       />
 
       <form
+        noValidate
         onSubmit={(e) => {
           e.preventDefault();
           navigate({ search: { ...search, q, page: 1 } });

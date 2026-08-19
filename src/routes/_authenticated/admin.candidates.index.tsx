@@ -350,6 +350,7 @@ function CandidatesPage() {
   const filterControls = (
     <>
           <form
+            noValidate
             className="col-span-2"
             onSubmit={(e) => {
               e.preventDefault();
