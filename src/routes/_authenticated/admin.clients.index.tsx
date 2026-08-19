@@ -106,6 +106,23 @@ function isStatus(value: string): value is Status {
 }
 
 export const Route = createFileRoute("/_authenticated/admin/clients/")({
+  validateSearch: zodValidator(searchSchema),
+  loader: async ({ context, search }) => {
+    const clients = await context.queryClient.ensureQueryData({
+      queryKey: ["admin-clients", search],
+      queryFn: () =>
+        getClientRegistry({
+          data: {
+            search: search.q,
+            includeArchived: search.archived === "1",
+            sort: search.sort as any,
+            orgType: search.org_type as any,
+            status: search.status as any,
+          },
+        }),
+    });
+    return { clients };
+  },
   pendingComponent: () => (
     <div className="space-y-6">
       <div className="flex justify-between">
@@ -116,8 +133,6 @@ export const Route = createFileRoute("/_authenticated/admin/clients/")({
       <div className="h-[400px] w-full animate-pulse rounded-lg bg-muted" />
     </div>
   ),
-
-  validateSearch: zodValidator(searchSchema),
   errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.clients.index.tsx"),
   notFoundComponent: () => <div className="p-8">Not found.</div>,
   component: ClientsPage,
