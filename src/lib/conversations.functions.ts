@@ -365,7 +365,8 @@ export const ensureConversation = createServerFn({ method: "POST" })
         candidate_match_id: data.scope === "candidate" ? data.candidateMatchId! : null,
         subject: data.subject ?? (data.scope === "organization" ? "General" : null),
         created_by: userId,
-        last_message_at: null, // Explicitly null until first message
+        last_message_at: undefined, // Explicitly undefined (null in DB) until first message
+
       })
       .select("id")
       .single();
@@ -535,6 +536,13 @@ export const postConversationMessage = createServerFn({ method: "POST" })
       .select("id, body, created_at, sender_user_id, attachments")
       .single();
     if (error) throw new Error(error.message);
+
+    // Update the conversation's last_message_at stamp.
+    await supabase
+      .from("conversations")
+      .update({ last_message_at: (row as Row).created_at })
+      .eq("id", data.conversationId);
+
 
     // Posting is reading: keep the poster's unread badge at zero for this thread.
     await supabase.from("conversation_reads").upsert(
