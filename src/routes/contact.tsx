@@ -350,7 +350,9 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
       pageContext: getPageContext() as unknown as Record<string, unknown>,
     };
 
-    if (payload.name.length < 1 || payload.name.length > 120) {
+    const next: Record<string, string> = {};
+    setError(null);
+
       next.name = "Please enter your name.";
     }
     if (!payload.email) {
