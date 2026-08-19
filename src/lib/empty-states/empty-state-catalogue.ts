@@ -146,7 +146,7 @@ export function resolveNoRolesState(signals: {
       populates: "Once the blueprint is approved and the role is published, the search begins and candidates land here.",
       activity: "Your team is confirming the role blueprint and requirements.",
       eta: "Most roles go live within 1 business day of submission.",
-      action: { label: "See what's in setup", to: "/client/positions" },
+      action: { label: "See what's in setup", to: "/client/positions", search: { status: "draft" } },
       secondaryAction: { label: "Message your team", to: "/client/conversations" },
     };
   }
