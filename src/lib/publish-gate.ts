@@ -82,7 +82,10 @@ export function evaluatePublishGate(p: PublishGateInput): PublishBlocker[] {
 
   // Approval is a workflow gate, not a data gate: only mention it once the
   // role is otherwise ready, so the list surfaces the real work first.
-  if (!p.published_at && !p.approved_at && blockers.length === 0) blockers.push("not_approved");
+  // C6: Explicitly include 'not_approved' if neither published nor approved.
+  if (!p.published_at && !p.approved_at && blockers.length === 0) {
+    blockers.push("not_approved");
+  }
 
   return blockers;
 }

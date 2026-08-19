@@ -118,7 +118,8 @@ export async function loadAccountDelivery(
     (ACCOUNT_OPEN_POSITION_STATUSES as readonly string[]).includes(p.status) || p.status === "active"
   ).length;
   // Unified definition of filled roles (C7)
-  const filledRoles = positions.filter((p) => p.status === "filled").length;
+  // We count both 'filled' and 'hired' matches to ensure hiring numbers are accurate.
+  const filledRoles = positions.filter((p) => p.status === "filled" || p.status === "hired").length;
 
   const matchRes = await a
     .from("candidate_matches")

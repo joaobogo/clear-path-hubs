@@ -5,6 +5,7 @@
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
 import { isUnicornMatch, classifyBand, bandToFitLabel } from "@/lib/scoring/bands";
+import { displayScore } from "@/config/scoring-bands";
 
 import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
 import { cleanQuote, isTemplatedEvidence, isCandidateHeadline } from "@/lib/evidence/quote-hygiene";
@@ -259,7 +260,9 @@ export function isTopMatch(r: KpiRow): boolean {
   const words = TOP_FIT_LABELS as readonly string[];
   if (r.approved_score != null) {
     const band = classifyBand(r.approved_score);
-    return band === "exceptional" || band === "top";
+    // C9: Strong fit (70+) counts as 'top' for the "Strongest candidates" tile
+    // to match the client-facing presentation logic.
+    return band === "exceptional" || band === "top" || band === "strong";
   }
   if (r.approved_fit_label != null && words.includes(r.approved_fit_label)) return true;
   if (r.approved_fit_band != null && words.includes(r.approved_fit_band)) return true;
@@ -310,7 +313,8 @@ export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
     awaiting_decision: rows.filter(isAwaitingClientDecision).length,
     offers: counts.offer,
     // Unified definition of hired across all surfaces: the stage is 'hired'.
-    hires: counts.hired,
+    // We include 'filled' for historical parity where the stage was recorded differently.
+    hires: (counts.hired || 0) + ((counts as any).filled || 0),
     active_positions: activePositions,
     oldest_awaiting_decision_at: oldest(
       rows
@@ -976,7 +980,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     // candidate property already assigned above
     // Employers see the 0-100 fit score alongside the band so ranking is
     // obvious at a glance. 95+ is the unicorn threshold.
-    score: run?.score != null ? Number(run.score) : null,
+    score: run?.score != null ? displayScore(Number(run.score)) : null,
     fit_label: run?.fit_label ?? run?.fit_band ?? null,
     fit,
     summary: (run?.result as AnyRow)?.fit_rationale ?? (run?.result as AnyRow)?.summary ?? null,

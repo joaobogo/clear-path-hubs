@@ -13,6 +13,7 @@
  */
 
 import { classifyScoreBand, SCORE_BAND_DEFS } from "@/config/scoring-bands";
+import { APP_LOCALE } from "@/lib/format/datetime";
 
 export const DAY_MS = 86_400_000;
 
