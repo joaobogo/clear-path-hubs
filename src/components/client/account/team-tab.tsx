@@ -242,8 +242,9 @@ export function TeamTab() {
   <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
   <div className="min-w-0">
   <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-  Team
+  Workspace access
   </div>
+
   <h1 className="mt-1 truncate text-2xl font-semibold tracking-tight">
   {orgName ?? "Your workspace"}
   </h1>

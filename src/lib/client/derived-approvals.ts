@@ -40,7 +40,7 @@ export function toDerivedApproval(row: QueueRow): DerivedApproval {
   return {
     key: row.key,
     kind: row.kind,
-    title: row.type_label ? `${row.type_label} — ${row.concerns}` : row.concerns,
+    title: row.type_label && row.concerns ? `${row.type_label} — ${row.concerns}` : (row.concerns || row.type_label || "Approval request"),
     type_label: row.type_label || QUEUE_TYPE_LABEL[row.kind] || "",
     task_type: KIND_TASK_TYPE[row.kind],
     role_title: row.role_title,

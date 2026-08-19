@@ -98,7 +98,7 @@ export const Route = createFileRoute("/_authenticated/client")({
 
 type NavDef = WorkspaceNavItem & { everyone: boolean };
 
-// Five primary destinations (Overview, Roles, Candidates, Messages, Account)
+// Four primary destinations (Overview, Roles, Candidates, Messages, Account)
 // carry the whole client job; everything else is demoted into "More" or into
 // tabs inside those pages (see CLIENT_SECTION_GROUPS). Nothing was deleted and
 // no URL changed — demotion only, so every bookmark still resolves.
@@ -108,9 +108,8 @@ const TABS: NavDef[] = [
 	{ to: "/client/candidates", label: "Candidates", icon: Users, everyone: true, hint: "Shortlist, talent pool, talent memory" },
 	{ to: "/client/conversations", label: "Messages", icon: MessageSquare, everyone: true, hint: "Threads, inbox, all messages" },
 	{ to: "/client/account", label: "Account", icon: Building2, everyone: false, hint: "Team, plan, settings" },
-	// { to: "/client/intelligence", label: "Insights", icon: Gauge, everyone: true, group: "More", subdued: true, hint: "Questions, dashboards, reporting, your data" },
-	
 ];
+
 
 
 // Manage-only areas are gated by path, not by whether they appear in the rail —
