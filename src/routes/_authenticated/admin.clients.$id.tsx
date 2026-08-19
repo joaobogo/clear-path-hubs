@@ -744,6 +744,7 @@ function SettingsTab({ org }: { org: any }) {
 
   return (
     <section className="space-y-4">
+      <TestRecordToggle org={org} />
       <div className="rounded-lg border p-4 text-sm">
         <div className="font-medium">Identifiers</div>
         <dl className="mt-2 grid grid-cols-2 gap-x-6 gap-y-1 text-muted-foreground font-mono text-xs">
