@@ -304,8 +304,9 @@ export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
     top: rows.filter(isTopMatch).length,
     shortlisted: counts.shortlisted,
     interviewing: counts.interview_process,
-    interview_scheduled: rows.filter((r) => r.interview_scheduled).length,
-    interviews_to_confirm: rows.filter((r) => r.interview_needs_confirmation).length,
+    interview_scheduled: rows.filter((r) => r.stage === "interview_process" && r.interview_scheduled).length,
+    interviews_to_confirm: rows.filter((r) => r.stage === "interview_process" && r.interview_needs_confirmation).length,
+
     awaiting_decision: rows.filter(isAwaitingClientDecision).length,
     offers: counts.offer,
     // Unified definition of hired across all surfaces: the stage is 'hired'.

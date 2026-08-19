@@ -130,7 +130,7 @@ export const brandingSchema = z.object({
 
 /** Map canonical rows onto the client-language vocabulary. */
 export function pipelineLanguageInput(rows: KpiRow[], status: string): PipelineStatusInput {
-  const scheduled = rows.filter((r) => r.interview_scheduled);
+  const scheduled = rows.filter((r) => r.stage === "interview_process" && r.interview_scheduled);
   const nextInterviewAt =
     scheduled
       .map((r) => r.next_interview_at)
@@ -156,7 +156,7 @@ export function nextMilestoneFor(rows: KpiRow[], status: string): string | null 
   if (status === "paused") return "Position paused";
   if (status === "closed" || status === "archived") return null;
   if (rows.some((r) => r.stage === "offer")) return "Offer response";
-  if (rows.some((r) => r.interview_active || r.stage === "interview_process"))
+  if (rows.some((r) => r.stage === "interview_process"))
     return "Interview outcome";
   if (rows.some((r) => r.stage === "shortlisted")) return "Interview requests";
   if (rows.length > 0) return "Review new candidates";
