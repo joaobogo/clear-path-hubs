@@ -28,7 +28,7 @@ function AuthPage() {
       }
 
       try {
-        const session = await ctx({ data: {} });
+        const session = await ctx();
         if (!mounted) return;
         navigate({ to: landingPathForRole(session.primary_role), replace: true });
       } catch {
@@ -49,3 +49,4 @@ function AuthPage() {
   if (checking) return <PublicLoading label="Redirecting" />;
   return null;
 }
+
