@@ -12,10 +12,22 @@ function row(p: Partial<RequirementRow> & { label: string }): RequirementRow {
     importance: p.importance ?? "must_have",
     status: p.status ?? "met",
     explanation: p.explanation ?? null,
-    evidence: (p.evidence ?? []).map(e => ({ label: e.label || "Evidence", snippet: e.snippet, source: e.source ?? null })),
+    evidence: (p.evidence ?? []).map(e => ({ 
+      label: (e as any).label || "Evidence", 
+      snippet: e.snippet, 
+      source: (e as any).source ?? null 
+    })),
     interpretation: p.interpretation ?? null,
-    contradictions: (p.contradictions ?? []).map(e => ({ label: e.label || "Contradiction", snippet: e.snippet, source: e.source ?? null })),
-    context: (p.context ?? []).map(e => ({ label: e.label || "Context", snippet: e.snippet, source: e.source ?? null })),
+    contradictions: (p.contradictions ?? []).map(e => ({ 
+      label: (e as any).label || "Contradiction", 
+      snippet: e.snippet, 
+      source: (e as any).source ?? null 
+    })),
+    context: (p.context ?? []).map(e => ({ 
+      label: (e as any).label || "Context", 
+      snippet: e.snippet, 
+      source: (e as any).source ?? null 
+    })),
   } as RequirementRow;
 }
 
@@ -47,12 +59,12 @@ describe("shortlist rationale", () => {
       requirement_rows: [
         row({
           label: "Kubernetes",
-          evidence: [{ label: "Evidence", source: "resume", snippet: "Ran 40-node EKS clusters" }],
+          evidence: [{ label: "Evidence", source: "resume", snippet: "Ran 40-node EKS clusters" } as any],
         }),
         row({
           label: "Team leadership",
           status: "partial",
-          evidence: [{ label: "Evidence", source: "reference check with former VP", snippet: "Led a team of six" }],
+          evidence: [{ label: "Evidence", source: "reference check with former VP", snippet: "Led a team of six" } as any],
         }),
       ],
     });
@@ -108,7 +120,7 @@ describe("shortlist rationale", () => {
     const r = buildShortlistRationale({
       ...base,
       requirement_rows: [
-        row({ label: "A", evidence: [{ label: "Evidence", source: "cv", snippet: "yes" }] }),
+        row({ label: "A", evidence: [{ label: "Evidence", source: "cv", snippet: "yes" } as any] }),
         row({ label: "B", status: "not_applicable" }),
       ],
     });

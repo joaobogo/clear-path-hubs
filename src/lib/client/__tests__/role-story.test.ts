@@ -14,6 +14,8 @@ const req = (
   explanation: null,
   evidence: [],
   context: [],
+  interpretation: null,
+  contradictions: []
 });
 
 const cand = (over: Partial<StoryCandidate>): StoryCandidate => ({
