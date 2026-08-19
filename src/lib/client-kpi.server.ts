@@ -789,7 +789,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
         .slice(0, 8)
         .map((e: AnyRow) => ({
           label: String(e.label ?? e.type ?? "Evidence"),
-          snippet: cleanQuote(String(e.snippet ?? e.value ?? "")),
+          snippet: renderQuote(String(e.snippet ?? e.value ?? "")),
         }))
         .filter((e: { snippet: string }) => e.snippet.length > 0 && !isTemplatedEvidence(e.snippet) && !isCandidateHeadline(e.snippet))
     : [];

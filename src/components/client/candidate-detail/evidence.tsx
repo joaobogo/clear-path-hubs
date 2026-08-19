@@ -9,7 +9,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { humanizeSource, cleanQuote } from "@/lib/evidence/quote-hygiene";
+import { humanizeSource, renderQuote } from "@/lib/evidence/quote-hygiene";
 
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
@@ -386,7 +386,7 @@ export const RequirementRowView = memo(function RequirementRowView({
                         )}
                         <span className="text-[10px] taas-fg-success font-medium">Verified</span>
                       </div>
-                      <div className="text-foreground/90">{cleanQuote(e.snippet)}</div>
+                      <div className="text-foreground/90">{renderQuote(e.snippet)}</div>
                     </li>
                   ))}
                 </ul>
@@ -409,7 +409,7 @@ export const RequirementRowView = memo(function RequirementRowView({
                             {humanizeSource(e.source)}
                           </div>
                         )}
-                        <div className="text-muted-foreground">{cleanQuote(e.snippet)}</div>
+                        <div className="text-muted-foreground">{renderQuote(e.snippet)}</div>
                       </li>
                     ))}
                   </ul>

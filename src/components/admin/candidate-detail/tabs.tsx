@@ -34,7 +34,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminScoreNumber } from "@/components/admin/admin-score-number";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
-import { cleanQuote } from "@/lib/evidence/quote-hygiene";
+import { renderQuote } from "@/lib/evidence/quote-hygiene";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -464,7 +464,7 @@ export function EvidenceTab({
               {(r.evidence ?? []).length > 0 && (
                 <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
                   {(r.evidence as Any[]).map((e, j) => {
-                    const safe = cleanQuote(e.snippet);
+                    const safe = renderQuote(e.snippet);
                     if (!safe) return null;
                     return (
                       <li key={j}>
@@ -519,7 +519,7 @@ export function EvidenceTab({
                   {v.cv_quote && (
                     <div className="mt-1 border-l-2 border-primary/30 pl-2 text-xs italic text-muted-foreground">
                       {(() => {
-                        const safe = cleanQuote(v.cv_quote);
+                        const safe = renderQuote(v.cv_quote);
                         if (!safe) return null;
                         return (
                           <>
