@@ -127,27 +127,30 @@ export const globalSearch = createServerFn({ method: "POST" })
 
     // Clients — admin only.
     if (scope === "admin") {
-      let oq = supabase
-        .from("organizations")
-        .select("id, name, industry, status, archived_at")
-        .or(`name.ilike.${ilikeValue(term)},industry.ilike.${ilikeValue(term)}`)
-        .order("name")
-        .limit(LIMIT);
-      
-      // B4: Ensure test organizations are excluded unless explicitly requested
-      if (!includeTest) {
-        oq = excludeTestOrgs(oq, testScope, "id");
+      const orFilter = orIlike(["name", "industry"], term);
+      if (orFilter) {
+        let oq = supabase
+          .from("organizations")
+          .select("id, name, industry, status, archived_at")
+          .or(orFilter)
+          .order("name")
+          .limit(LIMIT);
+        
+        // B4: Ensure test organizations are excluded unless explicitly requested
+        if (!includeTest) {
+          oq = excludeTestOrgs(oq, testScope, "id");
+        }
+        const { data: orgs, error } = await oq;
+        if (error) throw new Error(error.message);
+        groups.clients = ((orgs as AnyRow[]) ?? []).map((o) => ({
+          type: "client",
+          id: o.id,
+          label: o.name,
+          context: o.industry ?? undefined,
+          state: o.archived_at ? "Archived" : sentenceLabel(o.status),
+          href: `/admin/clients/${o.id}`,
+        }));
       }
-      const { data: orgs, error } = await oq;
-      if (error) throw new Error(error.message);
-      groups.clients = ((orgs as AnyRow[]) ?? []).map((o) => ({
-        type: "client",
-        id: o.id,
-        label: o.name,
-        context: o.industry ?? undefined,
-        state: o.archived_at ? "Archived" : sentenceLabel(o.status),
-        href: `/admin/clients/${o.id}`,
-      }));
     }
 
     // Positions.
