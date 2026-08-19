@@ -56,10 +56,11 @@ function statusTone(status: string) {
 
 function AdminPaymentsPage() {
   const [filter, setFilter] = useState<Filter>("all");
+  const includeTest = useIncludeTestRecords();
   const load = useServerFn(listAdminPayments);
 
   const paymentsQuery = useQuery({
-    queryKey: ["admin-payments", filter],
+    queryKey: ["admin-payments", includeTest, filter],
     queryFn: () => load({ data: { filter } }),
   });
   const { data, isLoading, error } = paymentsQuery;
