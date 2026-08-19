@@ -115,8 +115,9 @@ export async function loadAccountDelivery(
   if (posRes.error) throw new Error(posRes.error.message);
   const positions = (posRes.data ?? []) as Array<{ id: string; status: string }>;
   const openRoles = positions.filter((p) =>
-    (ACCOUNT_OPEN_POSITION_STATUSES as readonly string[]).includes(p.status),
+    (ACCOUNT_OPEN_POSITION_STATUSES as readonly string[]).includes(p.status) || p.status === "active"
   ).length;
+  // Unified definition of filled roles (C7)
   const filledRoles = positions.filter((p) => p.status === "filled").length;
 
   const matchRes = await a

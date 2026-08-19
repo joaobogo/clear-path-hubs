@@ -185,6 +185,7 @@ function ClientDetail() {
   const positions = data.positions as any[];
 
   const activeMemberCount = members.filter(m => m.status === "active" && ["client_admin", "client_editor", "client_viewer"].includes(m.role)).length;
+  // C10 reconcile: count matches count in the documents tab.
   const parsedCvCount = org.parsed_cv_count?.[0]?.count ?? 0;
 
   const setTab = (t: TabKey) => navigate({ search: { tab: t } });
@@ -341,9 +342,9 @@ function ClientDetail() {
 function OverviewTab({ org }: { org: any }) {
   return (
     <section className="grid gap-4 md:grid-cols-3">
-      {/* Visual duplicate KPI tiles removed — row A and B reconciled into AccountOperatingSummary. */}
+      {/* Visual duplicate KPI tiles removed (C1) — reconciled into AccountOperatingSummary. */}
       <div className="md:col-span-3 rounded-lg border p-4 text-sm">
-        <div className="font-medium mb-2">Organization at a glance</div>
+        <div className="font-medium mb-2 text-xs uppercase tracking-wide text-muted-foreground">Organization at a glance</div>
         <dl className="grid grid-cols-2 gap-x-6 gap-y-1 text-muted-foreground">
           <dt>Name</dt><dd className="text-foreground">{org.name}</dd>
           <dt>Status</dt><dd className="text-foreground capitalize">{org.status}</dd>

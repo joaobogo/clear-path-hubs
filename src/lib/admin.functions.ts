@@ -552,6 +552,7 @@ export const listClients = createServerFn({ method: "GET" })
     merged.sort(cmp);
 
     const total = merged.length;
+    // C5: active/archived counts derived from the table's own query to ensure consistency.
     const active_count = merged.filter((r: AnyRow) => !r.archived_at).length;
     const archived_count = merged.filter((r: AnyRow) => r.archived_at).length;
     const items = merged;
