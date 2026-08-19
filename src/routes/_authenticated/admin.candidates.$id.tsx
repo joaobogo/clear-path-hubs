@@ -22,6 +22,7 @@ import {
   Activity as ActivityIcon,
   Milestone,
   ClipboardList,
+  CheckCircle2,
 } from "lucide-react";
 import { AdminDossier } from "@/components/candidate/admin-dossier";
 import { CandidateHistoryTimeline } from "@/components/admin/candidate-history-timeline";
