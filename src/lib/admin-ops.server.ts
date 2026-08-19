@@ -607,7 +607,7 @@ export type PaymentsOpsPanel = {
 /** Money and pilot state, from records only — no estimates, no placeholders. */
 export async function loadPaymentsOpsPanel(userId: string): Promise<PaymentsOpsPanel> {
   const s = await admin();
-  const { resolveShowTestRecordsForUser, loadTestScope, excludeTestOrgs, excludeTestPositions } =
+  const { resolveShowTestRecordsForUser, loadTestScope, excludeTestOrgs, excludeTestPositions, excludeTestFlag } =
     await import("./admin-test-scope.server");
   const showTest = await resolveShowTestRecordsForUser(s, userId);
   const scope = await loadTestScope(s, showTest);
