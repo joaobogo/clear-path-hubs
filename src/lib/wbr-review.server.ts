@@ -135,7 +135,7 @@ async function hires(ctx: Ctx, from: string, to: string) {
     "id,hired_at,position_id,candidate_profiles(full_name),positions(title,organizations(name))",
     (q) =>
       q
-        .eq("status", "hire_confirmed" as const)
+        .eq("status", "hire_confirmed")
         .gte("hired_at", from)
         .lt("hired_at", to)
         .order("hired_at"),
