@@ -195,7 +195,6 @@ function OverviewPage() {
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8 space-y-8" data-density={density}>
       <header className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
         <div className="min-w-0">
-          {/* The workspace is named once, in the sidebar. This is the page. */}
           <h1 className="truncate text-2xl sm:text-3xl font-semibold tracking-tight">
             Overview
           </h1>
@@ -203,7 +202,7 @@ function OverviewPage() {
             What is waiting on your decision, and what we do next.
           </p>
         </div>
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
           <DensityToggle density={density} onChange={setDensity} />
           <Button
             variant="ghost"
@@ -215,10 +214,12 @@ function OverviewPage() {
           >
             <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
           </Button>
-          {/* "Create role" already lives in the top bar — one label, one button,
-              one place. No second primary action here. */}
+          <Button variant="outline" size="sm" onClick={() => navigate({ to: "/client/approvals" })}>
+            Approvals
+          </Button>
         </div>
       </header>
+
 
       {/* One aggregate signal for the four independent panels on this page. */}
       <DegradedPanelsBanner retrying={readiness.retrying} panels={readiness.signals} />

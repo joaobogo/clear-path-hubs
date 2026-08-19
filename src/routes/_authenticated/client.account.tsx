@@ -44,11 +44,11 @@ type AnyRow = any;
 
 export const ACCOUNT_TABS = [
   { key: "workspace", label: "Workspace" },
-  { key: "team", label: "Team & roles" },
+  { key: "team", label: "Team" },
   { key: "plan", label: "Plan & billing" },
   { key: "notifications", label: "Notifications" },
-  { key: "branding", label: "Branding" },
 ] as const;
+
 
 export type AccountTab = (typeof ACCOUNT_TABS)[number]["key"];
 
@@ -183,7 +183,7 @@ function AccountPage() {
       {tab === "team" && <TeamTab />}
       {tab === "plan" && <PlanTab />}
       {tab === "notifications" && <NotificationsTab />}
-      {tab === "branding" && <BrandingTab />}
+
     </div>
   );
 }
