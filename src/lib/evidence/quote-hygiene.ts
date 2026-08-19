@@ -136,6 +136,7 @@ function capAtWord(text: string): string {
  */
 export function cleanQuote(raw: string | null | undefined): string {
   if (!raw) return "";
+  if (isTemplatedEvidence(raw)) return "";
   const collapsed = stripContactLines(String(raw)).replace(/\s+/g, " ").trim();
   if (!collapsed) return "";
   const base = dropOpeningFragment(stripLeadingJunk(collapsed));
@@ -184,6 +185,10 @@ const TEMPLATED_PATTERNS = [
   /^inês\s+lopes\s+senior\s+full-stack\s+engineer/i,
   /^pedro\s+fernandes\s+full-stack\s+engineer/i,
   /beatriz\s+costa/i,
+  /om\s+·\s+\+\d+/i,
+  /\.costa@demo/i,
+  /om\s*·\s*\+\d+[\d\s().-]+\d+\s*Profile/i,
+  /\.costa@demo\.taasflow\.com\s*·\s*\+\d+[\d\s().-]+\d+/i,
 ];
 
 export function isTemplatedEvidence(raw: string | null | undefined): boolean {

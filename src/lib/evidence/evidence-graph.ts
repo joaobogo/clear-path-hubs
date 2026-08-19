@@ -12,6 +12,8 @@
  * (must-have 0.6, preferred 0.2, screening 0.2 — scoring-engine.server.ts:292).
  */
 
+import { cleanQuote } from "./quote-hygiene";
+
 /** Status credit used by the scoring engine (scoring-engine.server.ts:270-277). */
 export const STATUS_CREDIT: Record<RequirementStatus, number> = {
   met: 1,
@@ -205,24 +207,42 @@ export function buildEvidenceChain(input: {
 
     const sources: EvidenceSource[] = [];
     for (const e of (r.evidence ?? []) as Any[]) {
-      const quote = asText(e?.snippet).trim();
+      const rawQuote = asText(e?.snippet).trim();
+      const quote = cleanQuote(rawQuote);
       if (!quote) continue;
+      
+      const rawLoc = asText(e?.location) || null;
+      const location = rawLoc ? rawLoc.replace(/^cv:(\d+)-(\d+)$/, 'CV · characters $1–$2') : null;
+
       sources.push({
         kind: asText(e?.source) || "cv",
-        location: asText(e?.location) || null,
+        location,
         quote,
       });
     }
-    const cvQuote = asText(verdict?.cv_quote).trim();
-    if (cvQuote && !sources.some((s) => s.quote === cvQuote))
-      sources.push({ kind: "cv", location: null, quote: cvQuote });
-    const itemQuote = asText(item?.source_passage ?? item?.factual_quote).trim();
-    if (itemQuote && !sources.some((s) => s.quote === itemQuote))
+    const rawCvQuote = asText(verdict?.cv_quote).trim();
+    const cvQuote = cleanQuote(rawCvQuote);
+    if (cvQuote && !sources.some((s) => s.quote === cvQuote)) {
+      const rawLoc = asText(verdict?.location) || null;
+      const location = rawLoc ? rawLoc.replace(/^cv:(\d+)-(\d+)$/, 'CV · characters $1–$2') : null;
+      sources.push({ kind: "cv", location, quote: cvQuote });
+    }
+    const rawItemQuote = asText(item?.source_passage ?? item?.factual_quote).trim();
+    const itemQuote = cleanQuote(rawItemQuote);
+    if (itemQuote && !sources.some((s) => s.quote === itemQuote)) {
+      const rawLoc = item?.source_location 
+        ? (typeof item.source_location === 'object' 
+            ? (item.source_location.label ?? item.source_location.page ?? (item.source_location.location ? String(item.source_location.location) : JSON.stringify(item.source_location))) 
+            : String(item.source_location)) 
+        : null;
+      const location = rawLoc ? rawLoc.replace(/^cv:(\d+)-(\d+)$/, 'CV · characters $1–$2') : null;
+      
       sources.push({
         kind: asText(item?.source_kind) || "cv",
-        location: item?.source_location ? (typeof item.source_location === 'object' ? (item.source_location.label ?? item.source_location.page ?? JSON.stringify(item.source_location)) : String(item.source_location)) : null,
+        location,
         quote: itemQuote,
       });
+    }
 
     const interpretation =
       asText(verdict?.rationale).trim() ||
