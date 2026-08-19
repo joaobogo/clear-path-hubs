@@ -372,12 +372,20 @@ function OfflineDecisionForm({
   const [decision, setDecision] = useState<string>("shortlist");
   const [receivedFrom, setReceivedFrom] = useState("");
   const [note, setNote] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   return (
     <form
-      className="grid gap-3 md:grid-cols-[12rem_14rem_1fr_auto] md:items-end"
+      noValidate
+      className="grid gap-3 md:grid-cols-[12rem_14rem_1fr_auto] md:items-start"
       onSubmit={(e) => {
         e.preventDefault();
+        const next = collectErrors({
+          received_from: minLengthText(receivedFrom, 2),
+          note: minLengthText(note, 3),
+        });
+        setErrors(next);
+        if (Object.keys(next).length > 0) return;
         onSubmit({ decision, note: note.trim(), received_from: receivedFrom.trim() });
       }}
     >
@@ -408,9 +416,9 @@ function OfflineDecisionForm({
           onChange={(e) => setReceivedFrom(e.target.value)}
           placeholder="Name at the client"
           className="h-8 text-xs"
-          required
-          minLength={2}
+          aria-invalid={!!errors.received_from}
         />
+        <FieldError message={errors.received_from} />
       </div>
       <div className="grid gap-1.5">
         <Label htmlFor="offline-note" className="text-xs">
@@ -423,9 +431,9 @@ function OfflineDecisionForm({
           placeholder="Phone call on 12 Mar — client confirmed shortlist"
           className="min-h-[2rem] text-xs"
           rows={2}
-          required
-          minLength={3}
+          aria-invalid={!!errors.note}
         />
+        <FieldError message={errors.note} />
       </div>
       <div className="flex items-center gap-2">
         <Button type="submit" size="sm" className="h-8 text-xs" disabled={busy}>
