@@ -147,6 +147,7 @@ test.describe("launch smoke journey", () => {
     expect(application.cv_file_id).toBeTruthy();
     expect(created.matches).toHaveLength(1);
     const matchId = created.matches[0]!.id;
+    trackedMatchId = matchId;
 
     // ── 2. Candidate signs in and sees their application ──────────────────
     await loginAs(page, "candidate", email, QA_PASSWORD);
