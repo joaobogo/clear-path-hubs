@@ -138,7 +138,7 @@ export function PortfolioHealthTable({ includeTest }: { includeTest: boolean }) 
               Accounts appear here as soon as they have an open position.
             </p>
             <Button asChild size="sm" variant="secondary" className="mt-3 h-7 text-xs">
-              <Link to="/admin/clients_new">Add a client account</Link>
+              <Link to="/admin/clients/new">Add a client account</Link>
             </Button>
           </div>
         }

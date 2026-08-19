@@ -142,7 +142,8 @@ export function DeliveryFailuresPanel() {
     onError: (e: unknown) => toastError(e, { fallback: "Could not lift the block" }),
   });
 
-  const items = (query.data?.items ?? []) as Item[];
+  const [limit, setLimit] = useState(8);
+  const items = ((query.data?.items ?? []) as Item[]).slice(0, limit);
   const summary = query.data?.summary ?? {
     total: items.length,
     retryable: items.filter((i) => i.retryable).length,
@@ -226,7 +227,7 @@ export function DeliveryFailuresPanel() {
           />
         }
       >
-        <div className="border rounded-lg overflow-x-auto max-h-[400px]">
+        <div className="border rounded-lg overflow-x-auto max-h-[480px]">
           <table className="w-full text-sm min-w-[980px]">
             <thead className="bg-muted/50 text-left">
               <tr>
@@ -327,6 +328,13 @@ export function DeliveryFailuresPanel() {
             </tbody>
           </table>
         </div>
+        {(query.data?.items?.length ?? 0) > limit && (
+          <div className="p-3 border-t bg-muted/20 text-center">
+            <Button variant="link" size="sm" onClick={() => setLimit(1000)}>
+              See all {query.data?.items?.length} failures
+            </Button>
+          </div>
+        )}
       </PanelState>
 
       {suppressions.length > 0 ? (

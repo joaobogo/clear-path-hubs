@@ -157,7 +157,6 @@ import { Route as AuthenticatedAdminDecisionBacklogRouteImport } from './routes/
 import { Route as AuthenticatedAdminDataHealthRouteImport } from './routes/_authenticated/admin.data-health'
 import { Route as AuthenticatedAdminDashboardRequestsRouteImport } from './routes/_authenticated/admin.dashboard-requests'
 import { Route as AuthenticatedAdminCopilotRouteImport } from './routes/_authenticated/admin.copilot'
-import { Route as AuthenticatedAdminClients_newRouteImport } from './routes/_authenticated/admin.clients_new'
 import { Route as AuthenticatedAdminClientsRouteImport } from './routes/_authenticated/admin.clients'
 import { Route as AuthenticatedAdminCandidatesRouteImport } from './routes/_authenticated/admin.candidates'
 import { Route as AuthenticatedAdminBusinessRulesRouteImport } from './routes/_authenticated/admin.business-rules'
@@ -199,6 +198,7 @@ import { Route as AuthenticatedAdminScoringCalibrationRouteImport } from './rout
 import { Route as AuthenticatedAdminReviewMatchIdRouteImport } from './routes/_authenticated/admin.review.$matchId'
 import { Route as AuthenticatedAdminPositionsIdRouteImport } from './routes/_authenticated/admin.positions.$id'
 import { Route as AuthenticatedAdminIntakeIdRouteImport } from './routes/_authenticated/admin.intake.$id'
+import { Route as AuthenticatedAdminClientsNewRouteImport } from './routes/_authenticated/admin.clients.new'
 import { Route as AuthenticatedAdminClientsIdRouteImport } from './routes/_authenticated/admin.clients.$id'
 import { Route as AuthenticatedAdminCandidatesIdRouteImport } from './routes/_authenticated/admin.candidates.$id'
 import { Route as AuthenticatedAdminScoringReviewIndexRouteImport } from './routes/_authenticated/admin.scoring.review.index'
@@ -1002,12 +1002,6 @@ const AuthenticatedAdminCopilotRoute =
     path: '/copilot',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminClients_newRoute =
-  AuthenticatedAdminClients_newRouteImport.update({
-    id: '/clients_new',
-    path: '/clients_new',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
 const AuthenticatedAdminClientsRoute =
   AuthenticatedAdminClientsRouteImport.update({
     id: '/clients',
@@ -1248,6 +1242,12 @@ const AuthenticatedAdminIntakeIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedAdminIntakeRoute,
   } as any)
+const AuthenticatedAdminClientsNewRoute =
+  AuthenticatedAdminClientsNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedAdminClientsRoute,
+  } as any)
 const AuthenticatedAdminClientsIdRoute =
   AuthenticatedAdminClientsIdRouteImport.update({
     id: '/$id',
@@ -1383,7 +1383,6 @@ export interface FileRoutesByFullPath {
   '/admin/business-rules': typeof AuthenticatedAdminBusinessRulesRoute
   '/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
   '/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
-  '/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/admin/copilot': typeof AuthenticatedAdminCopilotRoute
   '/admin/dashboard-requests': typeof AuthenticatedAdminDashboardRequestsRoute
   '/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
@@ -1466,6 +1465,7 @@ export interface FileRoutesByFullPath {
   '/jobs/$id/': typeof JobsIdIndexRoute
   '/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
   '/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
+  '/admin/clients/new': typeof AuthenticatedAdminClientsNewRoute
   '/admin/intake/$id': typeof AuthenticatedAdminIntakeIdRoute
   '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
   '/admin/review/$matchId': typeof AuthenticatedAdminReviewMatchIdRoute
@@ -1579,7 +1579,6 @@ export interface FileRoutesByTo {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/agent-ops': typeof AuthenticatedAdminAgentOpsRoute
   '/admin/business-rules': typeof AuthenticatedAdminBusinessRulesRoute
-  '/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/admin/copilot': typeof AuthenticatedAdminCopilotRoute
   '/admin/dashboard-requests': typeof AuthenticatedAdminDashboardRequestsRoute
   '/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
@@ -1656,6 +1655,7 @@ export interface FileRoutesByTo {
   '/jobs/$id': typeof JobsIdIndexRoute
   '/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
   '/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
+  '/admin/clients/new': typeof AuthenticatedAdminClientsNewRoute
   '/admin/intake/$id': typeof AuthenticatedAdminIntakeIdRoute
   '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
   '/admin/review/$matchId': typeof AuthenticatedAdminReviewMatchIdRoute
@@ -1776,7 +1776,6 @@ export interface FileRoutesById {
   '/_authenticated/admin/business-rules': typeof AuthenticatedAdminBusinessRulesRoute
   '/_authenticated/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
   '/_authenticated/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
-  '/_authenticated/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/_authenticated/admin/copilot': typeof AuthenticatedAdminCopilotRoute
   '/_authenticated/admin/dashboard-requests': typeof AuthenticatedAdminDashboardRequestsRoute
   '/_authenticated/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
@@ -1859,6 +1858,7 @@ export interface FileRoutesById {
   '/jobs/$id/': typeof JobsIdIndexRoute
   '/_authenticated/admin/candidates/$id': typeof AuthenticatedAdminCandidatesIdRoute
   '/_authenticated/admin/clients/$id': typeof AuthenticatedAdminClientsIdRoute
+  '/_authenticated/admin/clients/new': typeof AuthenticatedAdminClientsNewRoute
   '/_authenticated/admin/intake/$id': typeof AuthenticatedAdminIntakeIdRoute
   '/_authenticated/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
   '/_authenticated/admin/review/$matchId': typeof AuthenticatedAdminReviewMatchIdRoute
@@ -1979,7 +1979,6 @@ export interface FileRouteTypes {
     | '/admin/business-rules'
     | '/admin/candidates'
     | '/admin/clients'
-    | '/admin/clients_new'
     | '/admin/copilot'
     | '/admin/dashboard-requests'
     | '/admin/data-health'
@@ -2062,6 +2061,7 @@ export interface FileRouteTypes {
     | '/jobs/$id/'
     | '/admin/candidates/$id'
     | '/admin/clients/$id'
+    | '/admin/clients/new'
     | '/admin/intake/$id'
     | '/admin/positions/$id'
     | '/admin/review/$matchId'
@@ -2175,7 +2175,6 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/admin/agent-ops'
     | '/admin/business-rules'
-    | '/admin/clients_new'
     | '/admin/copilot'
     | '/admin/dashboard-requests'
     | '/admin/data-health'
@@ -2252,6 +2251,7 @@ export interface FileRouteTypes {
     | '/jobs/$id'
     | '/admin/candidates/$id'
     | '/admin/clients/$id'
+    | '/admin/clients/new'
     | '/admin/intake/$id'
     | '/admin/positions/$id'
     | '/admin/review/$matchId'
@@ -2371,7 +2371,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/business-rules'
     | '/_authenticated/admin/candidates'
     | '/_authenticated/admin/clients'
-    | '/_authenticated/admin/clients_new'
     | '/_authenticated/admin/copilot'
     | '/_authenticated/admin/dashboard-requests'
     | '/_authenticated/admin/data-health'
@@ -2454,6 +2453,7 @@ export interface FileRouteTypes {
     | '/jobs/$id/'
     | '/_authenticated/admin/candidates/$id'
     | '/_authenticated/admin/clients/$id'
+    | '/_authenticated/admin/clients/new'
     | '/_authenticated/admin/intake/$id'
     | '/_authenticated/admin/positions/$id'
     | '/_authenticated/admin/review/$matchId'
@@ -3636,13 +3636,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCopilotRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/clients_new': {
-      id: '/_authenticated/admin/clients_new'
-      path: '/clients_new'
-      fullPath: '/admin/clients_new'
-      preLoaderRoute: typeof AuthenticatedAdminClients_newRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
     '/_authenticated/admin/clients': {
       id: '/_authenticated/admin/clients'
       path: '/clients'
@@ -3930,6 +3923,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIntakeIdRouteImport
       parentRoute: typeof AuthenticatedAdminIntakeRoute
     }
+    '/_authenticated/admin/clients/new': {
+      id: '/_authenticated/admin/clients/new'
+      path: '/new'
+      fullPath: '/admin/clients/new'
+      preLoaderRoute: typeof AuthenticatedAdminClientsNewRouteImport
+      parentRoute: typeof AuthenticatedAdminClientsRoute
+    }
     '/_authenticated/admin/clients/$id': {
       id: '/_authenticated/admin/clients/$id'
       path: '/$id'
@@ -4028,12 +4028,14 @@ const AuthenticatedAdminCandidatesRouteWithChildren =
 
 interface AuthenticatedAdminClientsRouteChildren {
   AuthenticatedAdminClientsIdRoute: typeof AuthenticatedAdminClientsIdRoute
+  AuthenticatedAdminClientsNewRoute: typeof AuthenticatedAdminClientsNewRoute
   AuthenticatedAdminClientsIndexRoute: typeof AuthenticatedAdminClientsIndexRoute
 }
 
 const AuthenticatedAdminClientsRouteChildren: AuthenticatedAdminClientsRouteChildren =
   {
     AuthenticatedAdminClientsIdRoute: AuthenticatedAdminClientsIdRoute,
+    AuthenticatedAdminClientsNewRoute: AuthenticatedAdminClientsNewRoute,
     AuthenticatedAdminClientsIndexRoute: AuthenticatedAdminClientsIndexRoute,
   }
 
@@ -4086,7 +4088,6 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminBusinessRulesRoute: typeof AuthenticatedAdminBusinessRulesRoute
   AuthenticatedAdminCandidatesRoute: typeof AuthenticatedAdminCandidatesRouteWithChildren
   AuthenticatedAdminClientsRoute: typeof AuthenticatedAdminClientsRouteWithChildren
-  AuthenticatedAdminClients_newRoute: typeof AuthenticatedAdminClients_newRoute
   AuthenticatedAdminCopilotRoute: typeof AuthenticatedAdminCopilotRoute
   AuthenticatedAdminDashboardRequestsRoute: typeof AuthenticatedAdminDashboardRequestsRoute
   AuthenticatedAdminDataHealthRoute: typeof AuthenticatedAdminDataHealthRoute
@@ -4130,7 +4131,6 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCandidatesRoute:
     AuthenticatedAdminCandidatesRouteWithChildren,
   AuthenticatedAdminClientsRoute: AuthenticatedAdminClientsRouteWithChildren,
-  AuthenticatedAdminClients_newRoute: AuthenticatedAdminClients_newRoute,
   AuthenticatedAdminCopilotRoute: AuthenticatedAdminCopilotRoute,
   AuthenticatedAdminDashboardRequestsRoute:
     AuthenticatedAdminDashboardRequestsRoute,

@@ -62,15 +62,9 @@ function toneClass(tone: QueueItem["tone"]) {
   return "text-muted-foreground";
 }
 
+import { formatRelative } from "@/lib/format/datetime";
 function waited(iso: string | null | undefined): string {
-  if (!iso) return "—";
-  const m = Math.round((Date.now() - new Date(iso).getTime()) / 60_000);
-  if (m < 60) return `${Math.max(m, 1)} min`;
-  const h = Math.round(m / 60);
-  if (h < 48) return `${h}h`;
-  const d = Math.round(h / 24);
-  if (d < 30) return `${d}d`;
-  return `${Math.round(d / 30)} mo`;
+  return formatRelative(iso);
 }
 
 function TargetLink({ target, children }: { target: QueueTarget; children: React.ReactNode }) {
@@ -148,6 +142,7 @@ function OwnerCell({ item }: { item: QueueItem }) {
   );
 }
 
+import { pluralize } from "@/lib/format/datetime";
 export function WorkQueueRow({
   item,
   secondary_badge,
@@ -175,7 +170,7 @@ export function WorkQueueRow({
           {item.sla_breach ? (
             <span
               className="shrink-0 rounded border border-destructive/40 bg-destructive/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-destructive"
-              title={`${item.sla_breach.metric_label} promise missed ${item.sla_breach.days_over} day${item.sla_breach.days_over === 1 ? "" : "s"} ago`}
+              title={`${item.sla_breach.metric_label} promise missed ${pluralize(item.sla_breach.days_over, "day")} ago`}
             >
               SLA +{item.sla_breach.days_over}d
             </span>
@@ -212,10 +207,7 @@ export function WorkQueueRow({
                 <Badge
                   variant="outline"
                   className={cn(
-                    "h-4 px-1 text-[9px] font-semibold uppercase leading-none",
-                    item.meta === "checkout started"
-                      ? "border-warning/40 bg-warning/10 text-warning-foreground"
-                      : "border-muted-foreground/30 bg-muted text-muted-foreground",
+                    "h-4 px-1 text-[9px] font-semibold uppercase leading-none border-primary/20 bg-primary/10 text-primary",
                   )}
                 >
                   {item.meta}

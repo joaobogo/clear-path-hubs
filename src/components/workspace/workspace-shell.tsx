@@ -604,11 +604,20 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
                 </span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel className="truncate">
-                {accountLabel ?? contextLabel}
+            <DropdownMenuContent align="end" className="w-64">
+              <DropdownMenuLabel className="flex flex-col gap-0.5">
+                <div className="flex items-center gap-2 truncate">
+                  <span className="truncate font-semibold">
+                    {accountLabel ?? contextLabel}
+                  </span>
+                  {role && (
+                    <span className="shrink-0 rounded-full border bg-muted/50 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                      {role === "admin" ? "Staff" : role === "client" ? "Client" : "Candidate"}
+                    </span>
+                  )}
+                </div>
                 {(accountSubLabel ?? contextSubLabel) && (
-                  <div className="truncate text-xs font-normal text-muted-foreground">
+                  <div className="truncate text-[11px] font-normal text-muted-foreground">
                     {accountSubLabel ?? contextSubLabel}
                   </div>
                 )}

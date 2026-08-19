@@ -18,17 +18,7 @@ export const WORKSPACE_TIMEZONE = "America/Sao_Paulo";
  */
 export const APP_LOCALE = "en-GB";
 
-const DATE_TIME = new Intl.DateTimeFormat(APP_LOCALE, {
-  day: "2-digit",
-  month: "2-digit",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-  second: "2-digit",
-  hour12: false,
-  timeZone: WORKSPACE_TIMEZONE,
-});
-
+/** F4: Standardised on 05 Aug 2026 */
 const DATE_ONLY = new Intl.DateTimeFormat(APP_LOCALE, {
   day: "2-digit",
   month: "short",
@@ -36,17 +26,18 @@ const DATE_ONLY = new Intl.DateTimeFormat(APP_LOCALE, {
   timeZone: WORKSPACE_TIMEZONE,
 });
 
-
-
-const MONTH_YEAR = new Intl.DateTimeFormat(APP_LOCALE, {
+/** Standardised date-time for audit logs and lists. */
+const DATE_TIME = new Intl.DateTimeFormat(APP_LOCALE, {
   day: "2-digit",
   month: "short",
   year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
   timeZone: WORKSPACE_TIMEZONE,
 });
 
 const MONTH_YEAR_UTC = new Intl.DateTimeFormat(APP_LOCALE, {
-  day: "2-digit",
   month: "short",
   year: "numeric",
   timeZone: "UTC",
@@ -58,8 +49,7 @@ function toDate(value: string | number | Date | null | undefined): Date | null {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-
-/** "14/08/2026, 22:25:06" — workspace timezone, never a raw ISO string. */
+/** "14 Aug 2026, 22:25" — workspace timezone, never a raw ISO string. */
 export function formatDateTime(
   value: string | number | Date | null | undefined,
   fallback = "",
@@ -69,7 +59,7 @@ export function formatDateTime(
   return DATE_TIME.format(date);
 }
 
-/** "14/08/2026" */
+/** "14 Aug 2026" */
 export function formatDate(
   value: string | number | Date | null | undefined,
   fallback = "",
@@ -77,6 +67,40 @@ export function formatDate(
   const date = toDate(value);
   if (!date) return fallback;
   return DATE_ONLY.format(date);
+}
+
+/** F7: clarify "1m" as "1 min" or "1 mo" */
+export function formatRelative(iso: string | null | undefined): string {
+  if (!iso) return "—";
+  const ms = Date.now() - new Date(iso).getTime();
+  const m = Math.round(ms / 60_000);
+  if (m < 1) return "now";
+  if (m < 60) return `${m} min`;
+  const h = Math.round(m / 60);
+  if (h < 24) return `${h}h`;
+  // Over 24h, return the absolute date per F4
+  return formatDate(iso);
+}
+
+/** F6: format numbers with commas */
+export function formatNumber(value: number): string {
+  return new Intl.NumberFormat(APP_LOCALE).format(value);
+}
+
+/** G3: Title case helper */
+export function toTitleCase(s: string | null | undefined): string {
+  if (!s) return "—";
+  return s
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+/** Pluralization helper for G2 */
+export function pluralize(count: number, singular: string, plural?: string): string {
+  if (count === 1) return `1 ${singular}`;
+  return `${formatNumber(count)} ${plural || singular + "s"}`;
 }
 
 /**
@@ -87,10 +111,6 @@ export function formatPeriod(period: string | null | undefined, fallback = "Date
   if (!period) return fallback;
 
   const trimmed = period.trim();
-
-  // Recognise canonical YYYY-MM – YYYY-MM / YYYY-MM – present ranges.
-  // The start/end halves are parsed in UTC so the month is correct regardless
-  // of the display timezone; the formatter then renders in the workspace zone.
   const ymRange = trimmed.match(
     /^(\d{4}-\d{2})\s*[–-—]\s*(present|now|current|\d{4}-\d{2})$/i,
   );
@@ -108,25 +128,21 @@ export function formatPeriod(period: string | null | undefined, fallback = "Date
     return `${formatted} – ${formattedEnd}`;
   }
 
-
-  // Split by dash/en-dash/em-dash, then format each part.
   const parts = trimmed.split(/\s*[–-—]\s*/);
   if (parts.length === 1) {
     const date = toDate(parts[0]);
-    return date ? MONTH_YEAR.format(date) : parts[0];
+    return date ? DATE_ONLY.format(date) : parts[0];
   }
 
   const formatted = parts.map((p) => {
     const pTrim = p.trim();
     if (pTrim.toLowerCase() === "present") return "Present";
     const date = toDate(pTrim);
-    return date ? MONTH_YEAR.format(date) : pTrim;
+    return date ? DATE_ONLY.format(date) : pTrim;
   });
 
   return formatted.join(" – ");
 }
-
-
 
 /** Calendar-day difference between two dates in the workspace timezone. */
 export function calendarDayDiff(a: Date, b: Date): number {
@@ -141,7 +157,6 @@ export function calendarDayDiff(a: Date, b: Date): number {
   return Math.round((A.getTime() - B.getTime()) / 86_400_000);
 }
 
-/** True when a string looks like a raw ISO-8601 timestamp (guard for tests/lint). */
 export function looksLikeIsoTimestamp(value: unknown): boolean {
   return (
     typeof value === "string" &&
