@@ -146,9 +146,9 @@ export function EvidenceGraph({
         <span>{meta.total} requirements</span>
         <span>{meta.verified} with verified quotes</span>
         <span>{meta.missing} with no evidence</span>
-        <span>{meta.conflicting} conflicting</span>
-        <span>{meta.userConfirmed} reviewer-confirmed</span>
-        <span>{meta.interpretationOnly} interpretation only</span>
+        {meta.conflicting > 0 && <span>{meta.conflicting} conflicting</span>}
+        {meta.userConfirmed > 0 && <span>{meta.userConfirmed} reviewer-confirmed</span>}
+        {meta.interpretationOnly > 0 && <span>{meta.interpretationOnly} interpretation only</span>}
       </div>
 
       <div className="grid gap-0 lg:grid-cols-[minmax(0,17rem)_minmax(0,1fr)]">
