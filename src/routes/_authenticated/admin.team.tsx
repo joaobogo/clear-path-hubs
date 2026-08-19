@@ -5,6 +5,8 @@ import { useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
+import { FieldError } from "@/components/ui/field-error";
+import { collectErrors, emailText, requiredText } from "@/lib/form-validation";
 import {
   listClients,
 } from "@/lib/admin.functions";
@@ -151,9 +153,16 @@ function CreateUserPanel({ organizationId }: { organizationId: string | null }) 
         is shown once — copy it before leaving this screen.
       </p>
       <form
+        noValidate
         className="mt-4 grid gap-3 md:grid-cols-2"
         onSubmit={(e) => {
           e.preventDefault();
+          const next = collectErrors({
+            full_name: requiredText(fullName),
+            email: emailText(email),
+          });
+          setErrors(next);
+          if (Object.keys(next).length > 0) return;
           mut.mutate({
             email,
             full_name: fullName,
@@ -164,12 +173,25 @@ function CreateUserPanel({ organizationId }: { organizationId: string | null }) 
         }}
       >
         <div className="space-y-1.5">
-          <Label>Full name</Label>
-          <Input required value={fullName} onChange={(e) => setFullName(e.target.value)} />
+          <Label htmlFor="new-user-name">Full name</Label>
+          <Input
+            id="new-user-name"
+            aria-invalid={!!errors.full_name}
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+          />
+          <FieldError message={errors.full_name} />
         </div>
         <div className="space-y-1.5">
-          <Label>Email</Label>
-          <Input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Label htmlFor="new-user-email">Email</Label>
+          <Input
+            id="new-user-email"
+            type="email"
+            aria-invalid={!!errors.email}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <FieldError message={errors.email} />
         </div>
         <div className="space-y-1.5">
           <Label>Role</Label>
