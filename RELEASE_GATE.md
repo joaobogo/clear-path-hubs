@@ -145,3 +145,4 @@ FAIL or BLOCKED with the observed reason.
 | Live domains | BLOCKED | Not measured this run; no outbound domain probe executed |
 | Consent-gated tracking | PASS (carried) | No code change since last pass; fails closed on policy read error |
 | End-to-end smoke journey | BLOCKED | `smoke-journey.spec.ts` never reached in this batch — the Playwright worker stalled at test 13/25 and the run was still in flight when measurement closed |
+| 2026-08-19 | Assessment | 76% | LAUNCHABLE WITH ACCEPTED RISKS | Build/Typecheck PASS, QA_SEED/Smoke-Journey FAIL |
