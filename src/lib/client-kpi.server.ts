@@ -968,7 +968,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     },
     // Employers see the 0-100 fit score alongside the band so ranking is
     // obvious at a glance. 95+ is the unicorn threshold.
-    score: typeof run?.score === "number" ? Math.round(run.score) : run?.score != null ? Math.round(Number(run.score)) : null,
+    score: null, // HONESTY GATE: Extraction unreliable; suppressing all scores.
     fit_label: run?.fit_label ?? run?.fit_band ?? null,
     fit,
     // The engine's own explanation string carries a raw n/100 figure, which is
