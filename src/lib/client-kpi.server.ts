@@ -257,7 +257,13 @@ export async function loadKpiRows(
 export function isTopMatch(r: KpiRow): boolean {
   if (r.approved_score_run_id == null) return false;
   const words = TOP_FIT_LABELS as readonly string[];
-  if (r.approved_score != null) return words.includes(classifyBand(r.approved_score));
+export function isTopMatch(r: KpiRow): boolean {
+  if (r.approved_score_run_id == null) return false;
+  const words = TOP_FIT_LABELS as readonly string[];
+  if (r.approved_score != null) {
+    const band = classifyBand(r.approved_score);
+    return band === "exceptional" || band === "top";
+  }
   if (r.approved_fit_label != null && words.includes(r.approved_fit_label)) return true;
   if (r.approved_fit_band != null && words.includes(r.approved_fit_band)) return true;
   return false;
