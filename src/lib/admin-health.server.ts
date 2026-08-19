@@ -132,12 +132,11 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
       .lt("created_at", staleCutoff)
       .order("created_at", { ascending: false })
       .limit(50),
-    admin
-      .from("notification_deliveries")
-      .select("id, channel, status, error_message, attempt_count, updated_at")
-      .in("status", ["failed", "bounced", "suppressed"])
-      .order("updated_at", { ascending: false })
-      .limit(100),
+    (async () => {
+      const { loadDeliveryFailures } = await import("./notification-failures.server");
+      const failures = await loadDeliveryFailures(admin);
+      return { data: failures.items, error: null };
+    })(),
     excludeTestOrgs(
       admin
         .from("candidate_matches")
