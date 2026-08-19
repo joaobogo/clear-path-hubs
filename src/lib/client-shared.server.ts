@@ -1,7 +1,8 @@
 // Server-only helpers, schemas and constants for the client workspace service.
 // The `*.functions.ts` wrappers must stay thin (imports + createServerFn only),
 // so every helper, constant and query builder lives here.
-import { createServerFn } from "@tanstack/react-start";
+// Removed createServerFn import to avoid circular dependency and manifest errors.
+// Server functions must be declared in thin *.functions.ts wrappers.
 import { briefField } from "@/lib/position-info-requests";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
