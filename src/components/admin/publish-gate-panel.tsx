@@ -13,7 +13,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { PaymentExemptionDialog } from "@/components/admin/payment-exemption-dialog";
-import { CheckCircle2, Lock, PencilLine } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { CheckCircle2, Lock, PencilLine, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import { useScopedIncludeTest } from "@/lib/admin-scope";
