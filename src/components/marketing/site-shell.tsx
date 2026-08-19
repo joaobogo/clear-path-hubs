@@ -729,8 +729,9 @@ export function PublicNotFound() {
               Page not found
             </h1>
             <p className="mt-4 text-base text-[color:var(--brand-navy)]/80">
-              The page you were looking for doesn't exist or has moved. Try one of these instead.
+              The page you were looking for doesn't exist or has moved.
             </p>
+
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link
                 to="/"

@@ -1,4 +1,4 @@
-import { formatEnumLabel } from "@/lib/human-labels";
+import { formatEnumLabel, sanitizeInternalMarkers } from "@/lib/human-labels";
 import { memo } from "react";
 import {
   BadgeCheck,
@@ -9,6 +9,8 @@ import {
   XCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { humanizeSource } from "@/lib/evidence/quote-hygiene";
+
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -378,7 +380,8 @@ export const RequirementRowView = memo(function RequirementRowView({
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         {e.source && (
                           <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                            {e.source}
+                            {humanizeSource(e.source)}
+
                           </div>
                         )}
                         <span className="text-[10px] taas-fg-success font-medium">Verified</span>
@@ -403,7 +406,7 @@ export const RequirementRowView = memo(function RequirementRowView({
                       <li key={i}>
                         {e.source && (
                           <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                            {e.source}
+                            {humanizeSource(e.source)}
                           </div>
                         )}
                         <div className="text-muted-foreground">{e.snippet}</div>

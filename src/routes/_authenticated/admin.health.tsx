@@ -3,6 +3,10 @@ import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/component
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
+import { toast } from "sonner";
+import { humanizeCode } from "@/lib/humanize-codes";
+import { sanitizeInternalMarkers } from "@/lib/human-labels";
+
 import { getPipelineHealth } from "@/lib/admin.functions";
 import { advanceProcessing, retryParse } from "@/lib/processing.functions";
 import { Button } from "@/components/ui/button";
@@ -156,12 +160,27 @@ function HealthPage() {
                   </td>
                   <td className="px-3 py-2">{j.job_type}</td>
                   <td className="px-3 py-2">
-                    <Badge variant="destructive">{j.error_code ?? "error"}</Badge>{" "}
-                    <span className="text-xs text-muted-foreground">{j.error_message}</span>
+                    <Badge variant="destructive">{humanizeCode(j.error_code ?? "error")}</Badge>{" "}
+                    <span className="text-xs text-muted-foreground">
+                      {j.error_message?.includes("unique or exclusion constraint")
+                        ? "Record already exists (duplicate key)."
+                        : sanitizeInternalMarkers(j.error_message)}
+                    </span>
                   </td>
                   <td className="px-3 py-2 text-xs font-mono text-muted-foreground">
-                    {j.trace_id}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 px-1 text-[10px]"
+                      onClick={() => {
+                        navigator.clipboard.writeText(j.trace_id);
+                        toast.success("Trace ID copied");
+                      }}
+                    >
+                      {j.trace_id?.slice(0, 8)}…
+                    </Button>
                   </td>
+
                   <td className="px-3 py-2 space-x-1">
                     <Button
                       size="sm"

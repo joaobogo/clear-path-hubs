@@ -51,7 +51,12 @@ const DICTIONARY: Record<string, string> = {
   held: "Held",
   pending: "Pending",
   scored: "Scored",
+
+  // D5: Additional error codes
+  position_screening_limit_exceeded: "Screening limit reached",
+  match_not_found: "Candidate record not found",
 };
+
 
 /**
  * Humanize a code or enum value.
