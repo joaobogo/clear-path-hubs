@@ -303,12 +303,11 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         label: `${readyForDecision.count ?? 0} ready for decision`,
         tone: (readyForDecision.count ?? 0) > 0 ? "default" : "neutral",
       },
-      items: ((review.data ?? []) as Any[]).map((m) => ({
+      items: ((review.data ?? []) as Any[]).slice(0, PREVIEW_LIMIT).map((m) => ({
         id: m.id,
         title: m.candidate_profiles?.full_name ?? "Candidate",
         title_ref: posRef(m.positions?.id, m.positions?.title),
         subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
-        subtitle_ref: orgRef(m.positions?.organizations?.id, m.positions?.organizations?.name),
         subtitle_refs: [
           posRef(m.positions?.id, m.positions?.title),
           orgRef(m.positions?.organizations?.id, m.positions?.organizations?.name),
@@ -335,7 +334,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         title: m.candidate_name ?? "Candidate",
         title_ref: posRef(m.position_id, m.position_title),
         subtitle: `${m.position_title ?? "—"} · ${m.client_name ?? "—"}`,
-        subtitle_ref: orgRef(m.organization_id, m.client_name),
+        
         subtitle_refs: [
           posRef(m.position_id, m.position_title),
           orgRef(m.organization_id, m.client_name),
@@ -364,10 +363,6 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         subtitle: `${iv.candidate_matches?.positions?.title ?? "—"} · ${
           iv.candidate_matches?.positions?.organizations?.name ?? "—"
         }`,
-        subtitle_ref: orgRef(
-          iv.candidate_matches?.positions?.organizations?.id,
-          iv.candidate_matches?.positions?.organizations?.name,
-        ),
         subtitle_refs: [
           posRef(iv.candidate_matches?.positions?.id, iv.candidate_matches?.positions?.title),
           orgRef(
@@ -392,7 +387,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
 
       action_hint: "Retry the delivery or update the recipient's email.",
       see_all: { to: "/admin/operations" },
-      items: ((blocked.data ?? []) as any[]).map((d) => ({
+      items: ((blocked.data ?? []) as any[]).slice(0, PREVIEW_LIMIT).map((d) => ({
         id: d.id,
         title: d.title ?? "Delivery failure",
         subtitle: deliveryReason(d.reason, d.status).sentence,
@@ -417,7 +412,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         title: m.candidate_profiles?.full_name ?? "Candidate",
         title_ref: posRef(m.positions?.id, m.positions?.title),
         subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
-        subtitle_ref: orgRef(m.positions?.organizations?.id, m.positions?.organizations?.name),
+        
         subtitle_refs: [
           posRef(m.positions?.id, m.positions?.title),
           orgRef(m.positions?.organizations?.id, m.positions?.organizations?.name),
