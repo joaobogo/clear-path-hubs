@@ -316,16 +316,6 @@ function OverviewPage() {
 
             {/* 3 · MESSAGES — direct, one-click responses */}
             <RecentMessages messages={messages} loading={overviewPanel.loading} />
-
-            {/* 4 · WHAT HAPPENS NEXT — one milestone per active role */}
-            <NextMilestones
-              rows={((data as Any)?.next_milestones ?? null) as MilestoneRow[] | null}
-              totalRoles={roles.length}
-              loading={overviewPanel.loading}
-              isError={overviewPanel.isError || Boolean((data as Any)?.next_milestones_failed)}
-              onRetry={retryAll}
-              org={orgSearch ?? null}
-            />
           </div>
 
           {/* ── BELOW THE FOLD: system detail, controls, filters, context ── */}
