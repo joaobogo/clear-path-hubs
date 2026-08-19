@@ -106,6 +106,7 @@ export function CompactList({
                     fitLabel={c.fit_label}
                     evidence={c.evidence_support}
                     unicorn={c.unicorn}
+                    hideEvidenceChip
                   />
                 </td>
                 <td className="py-3 px-3 text-muted-foreground align-middle whitespace-nowrap">

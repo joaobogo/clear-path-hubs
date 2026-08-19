@@ -86,6 +86,7 @@ export function filterCandidates(
     if (q) {
       const hay = [
         c.candidate.display_name,
+        c.candidate.email,
         c.candidate.headline,
         c.candidate.location,
         c.position?.title,

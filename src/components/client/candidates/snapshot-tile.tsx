@@ -29,7 +29,7 @@ export function SnapshotTile({
     >
       <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="text-2xl font-semibold tabular-nums mt-1 min-h-[2rem]">
-        {loading ? <Skeleton className="h-7 w-10" /> : (value ?? "—")}
+        {loading ? <div className="h-7 w-10" /> : (value ?? "—")}
       </div>
       {missing && <div className="text-[10px] text-muted-foreground">{emptyHint}</div>}
     </Link>

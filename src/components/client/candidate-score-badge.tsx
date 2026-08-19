@@ -46,6 +46,7 @@ type Props = {
   evidencePending?: boolean;
   unicorn?: boolean;
   className?: string;
+  hideEvidenceChip?: boolean;
 };
 
 
@@ -87,12 +88,13 @@ export function CandidateScoreBadge({
   evidencePending = false,
   unicorn = false,
   className = "",
+  hideEvidenceChip = false,
 }: Props) {
   const hasBand = fitLabel != null || score != null;
   if (!hasBand && !unicorn) return null;
   const fit = hasBand ? toFitPresentation(fitLabel, score) : null;
   const support =
-    evidence && evidence.total > 0
+    evidence && evidence.total > 0 && !hideEvidenceChip
       ? `${evidence.supported}/${evidence.total} evidenced`
       : null;
   const recheckNote =

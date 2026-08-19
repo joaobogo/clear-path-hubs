@@ -142,6 +142,7 @@ export function PipelineBoard({
                             score: m.score_runs?.score ?? null,
                             hired: m.stage === "hired",
                           })}
+                          hideEvidenceChip
                         />
                       </div>
 

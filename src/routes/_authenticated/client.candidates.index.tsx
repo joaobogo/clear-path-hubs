@@ -407,91 +407,92 @@ function CandidatesPage() {
  </div>
  )}
 
- {/* Header */}
- <header className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
- <div className="min-w-0">
- <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">Candidates</h1>
- <p className="text-sm text-muted-foreground mt-1">
- Review, compare, and progress the candidates delivered for your open roles.
- </p>
- <VisibilityNote className="mt-2" />
- </div>
- <div className="flex flex-col items-stretch gap-2 sm:shrink-0 sm:items-end">
- <Button
- size="sm"
- onClick={() => setCompareOpen(true)}
- disabled={!compareCheck.ok}
- title={compareCheck.reason ?? undefined}
- >
- Compare {selectedCandidates.length > 0 ? `${selectedCandidates.length} ` : ""}side by side
- </Button>
- {/* Bulk CV download: the ticked candidates when any are selected, else
-  every candidate currently shown whose CV has been released. */}
- <BulkCvDownloadButton
-  targets={cvTargets}
-  label={`Download ${plural(cvTargets.length, "CV", "CVs")} (ZIP)`}
- />
- <div className="text-xs text-muted-foreground sm:text-right">
- <div>
- <span className="tabular-nums text-foreground font-medium">{filtered.length}</span> of{" "}
- {(rowsRaw as ClientCandidateDTO[]).length} shown
- </div>
- {overview?.last_updated && (
- <div>Updated {new Date(overview.last_updated).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}</div>
- )}
- <div>Select {2}–{COMPARE_MAX} candidates on one role</div>
- </div>
- </div>
- </header>
+  {/* Header */}
+  <header className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+    <div className="min-w-0">
+      <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">Candidates</h1>
+      <p className="text-sm text-muted-foreground mt-1">
+        Review, compare, and progress the candidates delivered for your open roles.
+      </p>
+      <VisibilityNote className="mt-2" />
+    </div>
+    <div className="flex flex-col items-stretch gap-2 sm:shrink-0 sm:items-end">
+      <Button
+        size="sm"
+        onClick={() => setCompareOpen(true)}
+        disabled={!compareCheck.ok}
+        title={compareCheck.reason ?? undefined}
+      >
+        Compare {selectedCandidates.length > 0 ? `${selectedCandidates.length} ` : ""}side by side
+      </Button>
+      {/* Bulk CV download: the ticked candidates when any are selected, else
+      every candidate currently shown whose CV has been released. */}
+      <BulkCvDownloadButton
+        targets={cvTargets}
+        label={`Download ${plural(cvTargets.length, "CV", "CVs")} (ZIP)`}
+      />
+      <div className="text-xs text-muted-foreground sm:text-right">
+        <div>
+          <span className="tabular-nums text-foreground font-medium">{filtered.length}</span> of{" "}
+          {(rowsRaw as ClientCandidateDTO[]).length} shown
+        </div>
+        {overview?.last_updated && (
+          <div>Updated {new Date(overview.last_updated).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}</div>
+        )}
+        <div>Select {2}–{COMPARE_MAX} candidates on one role</div>
+      </div>
+    </div>
+  </header>
 
- <HiringSnapshot
- overview={overview}
- kpisLoading={kpiPanel.loading}
- isError={kpiPanel.isError}
- error={kpiPanel.error}
- onRetry={retryAll}
- retrying={kpisLoading || gate.retrying}
- orgSearch={orgSearch}
- />
-
-
- {/* Action required */}
- {overview?.action_required && overview.action_required.length > 0 && (
- <section aria-label="Action required" className="mb-6 rounded-xl border bg-card p-4">
- <div className="flex items-center justify-between mb-2">
- <h2 className="text-sm font-semibold">Action required</h2>
- <span className="text-xs text-muted-foreground">{overview.action_required.length} pending</span>
- </div>
- <ul className="divide-y">
- {overview.action_required.slice(0, 5).map((a, i) => (
- <li key={i} className="py-2 flex items-center justify-between gap-3">
- <span className="text-sm text-foreground/90 truncate">{a.label}</span>
-  <Link
-  to={a.label.toLowerCase().includes("offer") ? "/client/candidates" : "/client/interviews"}
-  search={(a.label.toLowerCase().includes("offer") ? { stage: "offer", org: orgSearch } : { filter: "interview", org: orgSearch }) as never}
-  className="text-xs font-medium text-primary hover:underline shrink-0"
-  >
- Open →
- </Link>
- </li>
- ))}
- </ul>
- </section>
- )}
-
-  <CandidatesFiltersPanel
-   search={search}
-   setF={setF}
-   positions={positions as Array<{ id: string; title: string }>}
-   availabilityOptions={availabilityOptions}
-   activeFilters={activeFilters}
-   clearFilters={clearFilters}
-   orgId={orgId}
-   ctxRole={ctx?.active?.role}
-   onApplySavedView={(f) => navigate({ search: { ...search, ...f } as never, replace: true })}
-   resultCount={filtered.length}
-   totalCount={(rowsRaw as ClientCandidateDTO[]).length}
+  <HiringSnapshot
+    overview={overview}
+    kpisLoading={kpiPanel.loading}
+    isError={kpiPanel.isError}
+    error={kpiPanel.error}
+    onRetry={retryAll}
+    retrying={kpisLoading || gate.retrying}
+    orgSearch={orgSearch}
   />
+
+  {/* List controls */}
+  <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+    <div className="flex items-center gap-2">
+      <div className="inline-flex rounded-md border p-0.5" role="group" aria-label="Result view">
+        <Button
+          size="sm"
+          variant={search.view === "board" ? "ghost" : "secondary"}
+          className="h-9 px-3 text-xs"
+          onClick={() => setF({ view: "list" } as never)}
+        >
+          List
+        </Button>
+        <Button
+          size="sm"
+          variant={search.view === "board" ? "secondary" : "ghost"}
+          className="h-9 px-3 text-xs"
+          onClick={() => setF({ view: "board" } as never)}
+        >
+          Board
+        </Button>
+      </div>
+    </div>
+  </div>
+
+  {search.view !== "board" && (
+    <CandidatesFiltersPanel
+      search={search}
+      setF={setF}
+      positions={positions}
+      availabilityOptions={availabilityOptions}
+      activeFilters={activeFilters}
+      clearFilters={clearFilters}
+      orgId={orgId}
+      ctxRole={ctx?.active?.role}
+      onApplySavedView={(f) => navigate({ search: { ...search, ...f } as never })}
+      resultCount={filtered.length}
+      totalCount={(rowsRaw as ClientCandidateDTO[]).length}
+    />
+  )}
 
  {/* Results — loading, failure and "none approved yet" are distinct states */}
   {listPanel.loading ? (
@@ -573,12 +574,6 @@ function CandidatesPage() {
  <div className="mt-3 text-xs text-muted-foreground">Refreshing…</div>
  )}
 
-  <CompareTray
-   selected={selectedCandidates}
-   onClear={clearCompare}
-   onOpen={() => setCompareOpen(true)}
-   disabledReason={compareCheck.ok ? null : compareCheck.reason}
-  />
 
   <CompareSheet
   open={compareOpen && compareCheck.ok}
