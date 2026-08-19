@@ -159,12 +159,16 @@ export function buildCoverage(candidates: StoryCandidate[]): CoverageBlock {
     const weakest = [...requirements]
       .filter((r) => r.importance === "must_have" || requirements.every((x) => x.importance === "preferred"))
       .sort((a, b) => b.missing - a.missing)[0];
-    const pct = Math.round((met / checks) * 100);
     // Two figures, because the candidate cards count partial as support: a
     // low "fully evidenced" number next to "10 of 10 supported" would read as
     // a contradiction without the partial count beside it.
     const supported = met + partial;
-    takeaway = `${supported} of ${checks} requirement checks (${met} evidenced, ${partial} partial) are supported by direct evidence from the shortlist's CVs and screening answers.`;
+    // Naming the weakest requirement makes the number actionable.
+    const gap =
+      weakest && weakest.missing > 0
+        ? ` The widest gap is ${weakest.label}, unevidenced for ${weakest.missing} of the ${weakest.assessed} candidate${weakest.assessed === 1 ? "" : "s"} checked.`
+        : "";
+    takeaway = `${supported} of ${checks} requirement checks (${met} evidenced, ${partial} partial) are supported by direct evidence from the shortlist's CVs and screening answers.${gap}`;
   }
 
   return {
@@ -216,7 +220,7 @@ export function buildDistribution(candidates: StoryCandidate[]): DistributionBlo
   const strongPct = Math.round((strong / Math.max(1, scored)) * 100);
   const takeaway = scored > 0
     ? `${strong} of ${scored} delivered candidates score 70 or above (Strong Match), which is where we recommend a conversation.`
-    : "No candidates delivered yet.";
+    : "No scored candidates yet — the spread appears with the first assessed candidate.";
 
   return { delivered: candidates.length, scored, bands, criteria, takeaway };
 }
