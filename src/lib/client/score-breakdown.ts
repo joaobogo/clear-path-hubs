@@ -71,7 +71,7 @@ function countRows(rows: RequirementRow[]) {
 function mustTakeaway(c: { met: number; partial: number; missing: number; total: number }) {
   if (c.total === 0) return "No must-haves were declared for this role.";
   if (c.missing > 0) {
-    return `${plural(c.met, "must-have")} of ${c.total} are quoted from evidence; ${c.missing} ${pluralWord(c.missing, "carries", "carry")} none yet.`;
+    return `${plural(c.met, "must-have")} of ${c.total} are quoted from evidence; ${c.partial > 0 ? `${c.partial} are partial, ` : ""}${c.missing} ${pluralWord(c.missing, "carries", "carry")} none yet.`;
   }
   if (c.partial > 0) {
     return `${c.met} of ${c.total} must-haves are quoted directly, ${c.partial} only related.`;
@@ -79,19 +79,21 @@ function mustTakeaway(c: { met: number; partial: number; missing: number; total:
   return `All ${c.total} must-haves are quoted directly from the CV or screening answers.`;
 }
 
-function preferredTakeaway(c: { met: number; total: number }) {
+function preferredTakeaway(c: { met: number; partial: number; total: number }) {
   if (c.total === 0) return "No preferred requirements were declared for this role.";
-  if (c.met === 0) return `None of the ${c.total} preferred requirements are evidenced yet.`;
-  return `${c.met} of ${c.total} preferred requirements add to the ranking.`;
+  const evidenced = c.met + c.partial;
+  if (evidenced === 0) return `None of the ${c.total} preferred requirements are evidenced yet.`;
+  return `${evidenced} of ${c.total} preferred requirements add to the ranking.`;
 }
 
 export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdown {
   const rows = candidate.requirement_rows ?? [];
-  const must = rows.filter((r) => r.importance === "must_have");
-  const preferred = rows.filter((r) => r.importance !== "must_have");
+  const must = rows.filter((r: RequirementRow) => r.importance === "must_have");
+  const preferred = rows.filter((r: RequirementRow) => r.importance !== "must_have");
 
   const mustCounts = { ...countRows(must), total: must.length };
   const prefCounts = { ...countRows(preferred), total: preferred.length };
+
 
   const groups: BreakdownGroup[] = [
     {
@@ -114,32 +116,64 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
 
   const reasons: BreakdownReason[] = [];
   // Strongest evidenced must-haves lead, because they decide the ranking.
+  // We use the requirement ID to ensure mutual exclusivity.
+  const reasonsByRequirement = new Map<string, BreakdownReason>();
+  
   must
-    .filter((r) => r.status === "met")
+    .filter((r: RequirementRow) => r.status === "met")
     .slice(0, 3)
-    .forEach((r, i) =>
-      reasons.push({
-        id: `must-met-${r.id ?? i}`,
+    .forEach((r: RequirementRow, i: number) => {
+      const id = r.id || `must-met-${i}`;
+      reasonsByRequirement.set(id, {
+        id,
         tone: "positive",
         text: `Meets the must-have "${r.label}", quoted from ${
           r.evidence?.[0]?.source ?? "the application"
         }.`,
-      }),
-    );
-  (candidate.strengths ?? []).slice(0, 3).forEach((s, i) =>
+      });
+    });
+
+  (candidate.strengths ?? []).slice(0, 3).forEach((s: string, i: number) =>
     reasons.push({ id: `strength-${i}`, tone: "positive", text: s }),
   );
+
   must
-    .filter((r) => r.status === "not_evidenced" || r.status === "contradicted")
+    .filter((r: RequirementRow) => r.status === "not_evidenced" || r.status === "contradicted")
     .slice(0, 3)
-    .forEach((r, i) =>
-      reasons.push({
-        id: `must-gap-${r.id ?? i}`,
-        tone: "watch",
-        text: `No evidence yet for the must-have "${r.label}" — this holds the score down.`,
-      }),
-    );
-  (candidate.concerns ?? []).slice(0, 3).forEach((c, i) =>
+    .forEach((r: RequirementRow, i: number) => {
+      const id = r.id || `must-gap-${i}`;
+      // Deduplicate: if it's already in the positive list (which shouldn't happen 
+      // with clean data, but we gate it here), or if it's already recorded.
+      if (!reasonsByRequirement.has(id)) {
+        reasonsByRequirement.set(id, {
+          id,
+          tone: "watch",
+          text: `No evidence yet for the must-have "${r.label}" — this holds the score down.`,
+        });
+      }
+    });
+
+  // Also handle partials in the watch list if they are critical must-haves
+  must
+    .filter((r: RequirementRow) => r.status === "partial")
+    .slice(0, 2)
+    .forEach((r: RequirementRow, i: number) => {
+      const id = r.id || `must-partial-${i}`;
+      if (!reasonsByRequirement.has(id)) {
+        reasonsByRequirement.set(id, {
+          id,
+          tone: "watch",
+          text: `Only partial evidence for required: ${r.label}`,
+        });
+      }
+    });
+
+  // Convert the map to the reasons list
+  for (const reason of reasonsByRequirement.values()) {
+    reasons.push(reason);
+  }
+
+  (candidate.concerns ?? []).slice(0, 3).forEach((c: string, i: number) =>
     reasons.push({ id: `concern-${i}`, tone: "watch", text: c }),
   );
   if (candidate.main_consideration) {

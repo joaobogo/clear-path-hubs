@@ -2,8 +2,9 @@ import { memo } from "react";
 import { CheckCircle2, Gauge, Info, ListChecks, ShieldAlert, TrendingDown, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { buildScoreBreakdown } from "@/lib/client/score-breakdown";
+import { buildScoreBreakdown, type BreakdownGroup, type BreakdownReason } from "@/lib/client/score-breakdown";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
+import type { RequirementRow } from "@/lib/client-fit-presentation";
 import { SectionCard } from "./shared";
 import { RequirementRowView } from "./evidence";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
@@ -43,8 +44,8 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
   const b = buildScoreBreakdown(candidate);
   if (b.empty) return null;
 
-  const positives = b.reasons.filter((r) => r.tone === "positive");
-  const watch = b.reasons.filter((r) => r.tone === "watch");
+  const positives = b.reasons.filter((r: BreakdownReason) => r.tone === "positive");
+  const watch = b.reasons.filter((r: BreakdownReason) => r.tone === "watch");
 
   return (
     <SectionCard
@@ -99,7 +100,7 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
 
       {/* Must-have vs preferred evidence, kept apart because they weigh differently. */}
       <div className="mt-4 space-y-4">
-        {b.groups.map((g) => (
+        {b.groups.map((g: BreakdownGroup) => (
           <div key={g.kind}>
             <div className="flex flex-wrap items-center gap-2">
               <h3 className="flex items-center gap-1.5 text-sm font-semibold">
@@ -107,7 +108,7 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
                 {g.title}
               </h3>
               <span className="text-xs tabular-nums text-muted-foreground">
-                {g.met} of {g.total} evidenced
+                {g.met + g.partial} of {g.total} evidenced
               </span>
               {g.total > 0 && (
                 <span className="flex flex-wrap gap-1.5">
@@ -124,7 +125,7 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
             <p className="mt-1 text-xs text-muted-foreground">{g.takeaway}</p>
             {g.rows.length > 0 && (
               <ul className="mt-2 space-y-2">
-                {g.rows.map((row) => (
+                {g.rows.map((row: RequirementRow) => (
                   <RequirementRowView key={row.id} row={row} />
                 ))}
               </ul>
@@ -146,7 +147,7 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
             </h3>
             {positives.length > 0 ? (
               <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
-                {positives.map((r) => (
+                {positives.map((r: BreakdownReason) => (
                   <li key={r.id} className="flex gap-2">
                     <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 taas-fg-success" aria-hidden />
                     <span>{r.text}</span>
@@ -166,7 +167,7 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
             </h3>
             {watch.length > 0 ? (
               <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
-                {watch.map((r) => (
+                {watch.map((r: BreakdownReason) => (
                   <li key={r.id} className="flex gap-2">
                     <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
                     <span>{r.text}</span>

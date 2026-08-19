@@ -110,8 +110,12 @@ export function criteriaSummary(criteria: ExplainedCriterion[]): string {
   const evidenced = criteria.filter((c) => c.evidenced);
   if (evidenced.length === 0) return "";
   const musts = evidenced.filter((c) => c.importance === "must_have");
-  const met = evidenced.filter((c) => c.verdict === "met").length;
-  const head = `${met} of ${criteria.length} criteria evidenced as met`;
+  
+  // Pick one canonical denominator: criteria.length
+  const total = criteria.length;
+  const evidencedTotal = evidenced.length;
+  
+  const head = `${evidencedTotal} of ${total} of your requirements evidenced`;
   const named = evidenced
     .slice(0, 3)
     .map((c) => `${c.label} — ${c.verdict_label.toLowerCase()}`)
