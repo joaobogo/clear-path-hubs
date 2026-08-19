@@ -110,7 +110,7 @@ function BrandCenter() {
 
   if (detection.status !== "verified") {
     return (
-      <main className="mx-auto max-w-2xl px-6 py-24">
+      <div className="mx-auto max-w-2xl px-6 py-24">
         <h1 className="text-2xl font-semibold">Brand detection halted</h1>
         <p className="mt-3 text-muted-foreground">
           Asset generation stops until exactly one brand is confirmed by at least two agreeing signals.
@@ -122,13 +122,13 @@ function BrandCenter() {
             </li>
           ))}
         </ul>
-      </main>
+      </div>
     );
   }
 
   return (
     <>
-    <main
+    <div
       data-brand-print={printMode ? "1" : undefined}
       className="mx-auto max-w-6xl px-5 pb-24 sm:px-8"
     >
@@ -735,7 +735,7 @@ function BrandCenter() {
           </Section>
         </div>
       </div>
-    </main>
+    </div>
     <SiteFooter />
     </>
   );
