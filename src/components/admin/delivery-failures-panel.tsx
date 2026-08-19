@@ -176,6 +176,34 @@ export function DeliveryFailuresPanel() {
         </p>
       </header>
 
+      {/* A suppressed address is not a backlog: every new notification to it
+          fails the moment it is sent, so the row count climbs with normal
+          console use. Retrying cannot clear it — releasing the address can. */}
+      {blockedAddresses.length > 0 ? (
+        <div className="mb-4 rounded-lg border border-amber-500/40 bg-amber-500/5 p-3">
+          <div className="text-sm font-medium">
+            {blockedAddresses.length} blocked address
+            {blockedAddresses.length === 1 ? "" : "es"} are generating these failures
+          </div>
+          <p className="mt-1 max-w-2xl text-xs text-muted-foreground">
+            {summary.blockedDeliveries} of {summary.total} rows below come from addresses on a
+            suppression list. Every further notification to them fails on send, so retrying will
+            not clear the list — release the address first, or the count keeps growing.
+          </p>
+          <ul className="mt-2 space-y-1 text-xs">
+            {blockedAddresses.slice(0, 5).map((a) => (
+              <li key={a.address} className="flex items-center justify-between gap-3">
+                <span className="break-all font-medium">{a.address}</span>
+                <span className="shrink-0 text-muted-foreground tabular-nums">
+                  {a.deliveries} blocked send{a.deliveries === 1 ? "" : "s"}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+
       <PanelState
         query={query}
         isEmpty={items.length === 0}
