@@ -2495,5 +2495,19 @@ export const resolveIncident = createServerFn({ method: "POST" })
       before,
       after: { status: "cancelled", note: data.note ?? null },
     });
+    // Record incident resolution as activity.
+    try {
+      const { emitEventFromServer } = await import("./notifications.functions");
+      await emitEventFromServer({
+        event: "position_updated",
+        scope: `${before.id}:resolve:${new Date().getTime()}`,
+        entity_id: before.entity_id,
+        entity_type: before.entity_type,
+        actor_user_id: context.userId,
+        payload: { note: `Incident resolved: ${data.note ?? "No note provided"}` },
+      });
+    } catch (e) {
+      console.error("[resolveIncident] activity emit failed", e);
+    }
     return { ok: true };
   });
