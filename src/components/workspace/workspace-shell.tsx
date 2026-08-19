@@ -330,6 +330,12 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
   const railCollapsed = collapsed && !railHover;
 
 
+  const [isMac, setIsMac] = useState(false);
+
+  useEffect(() => {
+    setIsMac(typeof navigator !== "undefined" && /Mac|iPod|iPhone|iPad/.test(navigator.platform));
+  }, []);
+
   // Cmd/Ctrl-K opens search from anywhere.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
