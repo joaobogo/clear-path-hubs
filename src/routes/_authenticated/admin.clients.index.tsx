@@ -525,7 +525,7 @@ function ClientsPage() {
       </div>
 
       {total > 0 && (
-          <div className="flex flex-wrap items-center justify-between gap-2 border-t bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
             <div>
               Page {page} of {pageCount} · {total} total
             </div>
