@@ -425,8 +425,9 @@ export function buildRequirementRows(
 export function summariseCoverage(rows: RequirementRow[]): CoverageSummary {
   const must = rows.filter((r) => r.importance === "must_have");
   const pref = rows.filter((r) => r.importance === "preferred");
-  const met = (r: RequirementRow) => r.status === "met";
-  const partial = (r: RequirementRow) => r.status === "partial";
+  // HONESTY GATE (B5/B6): A requirement is only met if it has real evidence.
+  const met = (r: RequirementRow) => r.status === "met" && r.evidence.length > 0;
+  const partial = (r: RequirementRow) => r.status === "partial" || (r.status ===Met && r.evidence.length === 0);
   const missing = (r: RequirementRow) =>
     r.status === "not_evidenced" || r.status === "contradicted";
 
