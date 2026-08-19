@@ -240,8 +240,8 @@ function ClientsPage() {
   }, [data, search]);
 
   const total = filtered.length;
-  const activeCount = data?.active_count ?? 0;
-  const archivedCount = data?.archived_count ?? 0;
+  const activeCount = filtered.filter(r => !r.archived_at).length;
+  const archivedCount = filtered.filter(r => !!r.archived_at).length;
   const page = Math.max(1, search.page);
   const pageSize = Math.max(10, Math.min(100, search.page_size));
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
