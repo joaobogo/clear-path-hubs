@@ -74,8 +74,9 @@ export function IntensityDial({
     return (
       <section className="rounded-lg border border-border bg-card p-5">
         <h2 className="flex items-center gap-2 text-sm font-semibold">
-          <Gauge className="h-4 w-4" aria-hidden /> Hiring intensity
+          <Gauge className="h-4 w-4" aria-hidden /> Search intensity
         </h2>
+
         <p className="mt-2 text-sm text-muted-foreground">
           Once a role is live you can set its pace here.
         </p>
@@ -87,8 +88,9 @@ export function IntensityDial({
     <section className="rounded-lg border border-border bg-card p-5">
       <div className="flex items-baseline justify-between gap-4">
         <h2 className="flex items-center gap-2 text-sm font-semibold">
-          <Gauge className="h-4 w-4" aria-hidden /> Hiring intensity
+          <Gauge className="h-4 w-4" aria-hidden /> Search intensity
         </h2>
+
         <p className="text-xs text-muted-foreground">
           Changes take effect on the next run.
         </p>

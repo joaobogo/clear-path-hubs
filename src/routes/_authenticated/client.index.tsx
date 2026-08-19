@@ -196,11 +196,12 @@ function OverviewPage() {
       <header className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
         <div className="min-w-0">
           <h1 className="truncate text-2xl sm:text-3xl font-semibold tracking-tight">
-            Overview
+            {data?.org?.name ?? "Overview"}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            What is waiting on your decision, and what we do next.
+            What needs you, and what we do next.
           </p>
+
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-2">
           <DensityToggle density={density} onChange={setDensity} />
@@ -214,9 +215,14 @@ function OverviewPage() {
           >
             <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
           </Button>
-          <Button variant="outline" size="sm" onClick={() => navigate({ to: "/client/approvals", search: (prev: any) => prev } as any)}>
-            Approvals
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate({ to: "/client/candidates", search: (prev: any) => ({ ...prev, stage: "delivered" }) } as any)}
+          >
+            Review candidates
           </Button>
+
         </div>
       </header>
 
@@ -311,19 +317,8 @@ function OverviewPage() {
                 </div>
               )}
 
-              {rolesNeedingDetails.length > 0 && (
-                <Collapsible className="space-y-3">
-                  <CollapsibleTrigger asChild>
-                    <button className="flex w-full items-center justify-between rounded-lg border border-dashed px-4 py-2 text-xs font-medium text-muted-foreground hover:bg-muted/50">
-                      <span>{rolesNeedingDetails.length} roles can be sharpened with a few optional details</span>
-                      <ChevronDown className="h-3.5 w-3.5 transition-transform group-data-[state=open]:rotate-180" />
-                    </button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <OpenItemsStrip orgId={orgId} />
-                  </CollapsibleContent>
-                </Collapsible>
-              )}
+              {/* 2 · PROMETIDO VS REALIDADE (removido para evitar redundância com queue e saúde) */}
+
             </div>
           </div>
 

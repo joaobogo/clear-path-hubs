@@ -67,6 +67,7 @@ const RAW_LABEL_MAP: Record<string, FitBand> = {
   none: "not_recommended",
 };
 
+
 /**
  * Canonical band key → client-facing fit band. Keeps the existing client
  * vocabulary while the numbers behind it live in one place.
@@ -86,7 +87,7 @@ const CANONICAL_TO_FIT_BAND: Record<ScoreBandKey, FitBand> = {
 const BAND_TABLE: Record<FitBand, Omit<FitPresentation, "band">> = {
   exceptional: {
     headline: "Exceptional Match",
-    recommendation: "Prioritise for interview",
+    recommendation: "Prioritize for interview",
     tone: "confident",
     accent: "emerald",
   },
@@ -115,12 +116,13 @@ const BAND_TABLE: Record<FitBand, Omit<FitPresentation, "band">> = {
     accent: "amber",
   },
   not_recommended: {
-    headline: "Not Recommended",
+    headline: "Not recommended",
     recommendation: "Requirements not evidenced",
     tone: "dissuade",
     accent: "slate",
   },
 };
+
 
 /**
  * Normalise a raw fit label + numeric score into the Client-facing fit band.
@@ -383,7 +385,7 @@ export function buildRequirementRows(
       // A verdict that lacks a direct, per-candidate quote is not evidenced.
       // HONESTY GATE: If we have zero evidence, we must not claim it is missing
       // until the extraction bug is resolved.
-      const status = rawEvidence.length > 0 ? rawStatus : "not_evidenced";
+      const status = rawEvidence.length > 0 || rawStatus === "not_evidenced" ? rawStatus : "not_evidenced";
       
       rows.push({
         id: `${declaredImportance === "preferred" ? "pref" : "must"}-${requirementSlug(String(label))}`,

@@ -31,17 +31,18 @@ const LABELS: Record<string, string> = {
   // Role / workflow status
   draft: "Draft",
   under_review: "Under review",
-  in_review: "In review",
-  pending_review: "Pending review",
+  in_review: "Under review",
+  pending_review: "Under review",
   awaiting_payment: "Awaiting payment",
   active: "Active",
-  approved: "Approved",
+  approved: "Active",
   paused: "Paused",
-  on_hold: "On hold",
+  on_hold: "Paused",
   filled: "Filled",
   closed: "Closed",
-  cancelled: "Cancelled",
+  cancelled: "Closed",
   archived: "Archived",
+
 
   // Entitlement / access
   not_entitled: "Not included in your plan",
@@ -55,7 +56,15 @@ const LABELS: Record<string, string> = {
   requisition: "Role",
   job: "Role",
   record: "Candidate",
+  delivered: "New — awaiting your review",
+  shortlisted: "Shortlisted",
+  interview_process: "Interview process",
+  offer: "Offer",
+  hired: "Hired",
+  not_moving_forward: "Not moving forward",
+  consent_pending: "Consent pending",
 };
+
 
 /**
  * Systemic sanitization for internal markers, trace IDs, and demo seeds.
