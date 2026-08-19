@@ -7,7 +7,7 @@
 import { isUnicornMatch, classifyBand } from "@/lib/scoring/bands";
 
 import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
-import { cleanQuote, isTemplatedEvidence } from "@/lib/evidence/quote-hygiene";
+import { cleanQuote, isTemplatedEvidence, isCandidateHeadline } from "@/lib/evidence/quote-hygiene";
 
 import {
   buildRequirementRows,
