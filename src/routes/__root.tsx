@@ -166,21 +166,22 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "PROMPT 2 — /api/public/qa-seed: close it AND clean up after it
+TEXTO DO USUÁRIO: "PROMPT 3 — Read the E2E smoke failures instead of accepting them
 
-You listed /api/public/qa-seed accessibility in production as a blocking item and then classified it as an accepted risk. It is not a risk. It is very likely the mechanism by which engineering test fixtures ended up inside a paying client's workspace.
+You reported \"E2E smoke journey test failures\" and classified them as an accepted risk. Failing smoke tests on core journeys are not a risk profile — they are the defect list.
 
-Do three things, in order, and report on each.
+For every failing E2E journey, report: the journey name, the exact assertion that failed, the user-facing symptom a real person would see, and whether it corresponds to a known open defect.
 
-1. Establish the blast radius. Enumerate every record any public seed or QA endpoint can create, and every record currently in the database that was created by one. Include at minimum: organizations, positions, candidate submissions, conversation threads, share links, notifications. Report counts per table. Name every endpoint that can write without authentication — do not stop at qa-seed.
+I expect at least these to be among them, because they were all reproduced by hand in a browser:
 
-2. Close the hole. Make every seed/QA endpoint refuse to run when NODE_ENV is production, and additionally require an environment-gated secret. Prove it: paste the request and the response showing a 404 or 403 in a production build. A route that merely checks a header is not enough — show the environment gate.
+Requesting an interview replaces the page with a \"Something went wrong\" panel whose \"Try again\" button does nothing
+Approving a requisition on /admin/approvals does nothing at all
+Searching the candidate database returns zero results for records that are visibly present
+Creating a role succeeds and the role then cannot be found in the Roles list
 
-3. Clean up. Closing the endpoint does not delete what it already created. Write and run a reversible migration that removes or hard-flags the existing fixtures so they are invisible on every client-facing surface. Confirmed fixtures visible to the Northwind client today: BROWSER-TEST-R2 Position, BROWSER-TEST-R3 Position, BROWSER-TEST-R2 Admin Position, QA Gate Role 86485, [QA test — ignore] QA Role Aug 17, [QA test — ignore] QA Role Aug 17 v2, Senior back end, three BROWSER-TEST-R3 share link (QA) entries, and conversation threads containing History Integrity Test 1786782275114 and BROWSER-TEST-R3 admin reply … automated QA re-audit, please disregard. Admin-side: QA_TESTCO_E2E, QA_OTHERCO_E2E, QA_GATE7_686096, QA Mobile Tester, QA Walkthrough Candidate, Quinn Receipt Tester, and 11 QA LinkedIn / No LinkedIn Applicant submissions.
+If your smoke suite is passing on any of those four, the suite is not asserting what it claims to. Show me the assertion for each.
 
-Then answer directly: why did the \"Show test records across all admin screens\" toggle not hide these? The toggle exists and is wired; the fixtures appear regardless. Either the fixtures are not flagged as test records, or the toggle does not filter these tables. Say which, and fix it.
-
-Separately: a client currently has no way to delete, archive, pause or cancel a role they created. There is no such control anywhere in the client UI. That is why the workspace accumulates. Add one."`}
+Then make the smoke suite a hard release gate: no green build ships while any smoke journey fails. Update RELEASE_GATE.md accordingly and remove \"accepted risk\" as an available disposition for a failing core journey."`}
         </div>
         <Scripts />
       </body>
