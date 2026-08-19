@@ -207,6 +207,8 @@ export function isGenericSkillsList(raw: string | null | undefined): boolean {
  * a term overlap between the requirement label and the quote.
  */
 export function isRelevantEvidence(quote: string, requirement: string): boolean {
+  if (isCandidateHeadline(quote)) return false;
+
   const q = quote.toLowerCase();
   const r = requirement.toLowerCase();
 
