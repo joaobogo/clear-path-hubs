@@ -477,26 +477,119 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
 }: {
   candidate: ClientCandidateDTO;
 }) {
-  if (candidate.strengths.length === 0) return null;
+  const rationale = buildShortlistRationale(candidate);
+  const roleTitle = candidate.position?.title ?? null;
+  const evidenced = rationale.evidenced;
+  const gaps = rationale.gaps;
+  const strengths = candidate.strengths ?? [];
+  if (evidenced.length === 0 && strengths.length === 0 && gaps.length === 0) return null;
+
+  const bandLine = candidate.fit?.label
+    ? `${candidate.fit.label}${candidate.score != null ? ` · ${candidate.score}/100` : ""}`
+    : null;
+
   return (
     <SectionCard
-      title="Why this candidate"
+      title={roleTitle ? `Why this candidate for ${roleTitle}` : "Why this candidate"}
       icon={<Sparkles className="h-4 w-4" />}
-      description="The strongest verified reasons to consider this candidate for the role."
+      description="Each of your requirements, what the candidate showed for it, and where that came from."
     >
-      <ul className="grid gap-3 sm:grid-cols-2">
-        {candidate.strengths.map((s, i) => (
-          <li key={i} className="rounded-md border taas-bd-success taas-bg-success-soft p-3">
-            <div className="flex items-start gap-2">
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 taas-fg-success" aria-hidden />
-              <span className="text-sm">{s}</span>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+        {bandLine && (
+          <Badge variant="secondary" className="text-[11px]">
+            {bandLine}
+          </Badge>
+        )}
+        <span>{rationale.summary}</span>
+      </div>
+
+      {candidate.summary && (
+        <p className="mt-3 text-sm text-foreground/90">
+          {sanitizeInternalMarkers(candidate.summary)}
+        </p>
+      )}
+
+      {evidenced.length > 0 && (
+        <ul className="mt-4 space-y-3">
+          {evidenced.map((line) => (
+            <li
+              key={line.id}
+              className={cn(
+                "rounded-md border p-3",
+                line.verdict === "met"
+                  ? "taas-bd-success taas-bg-success-soft"
+                  : "taas-bd-warning taas-bg-warning-soft",
+              )}
+            >
+              <div className="flex items-start gap-2">
+                <CheckCircle2
+                  className={cn(
+                    "mt-0.5 h-4 w-4 shrink-0",
+                    line.verdict === "met" ? "taas-fg-success" : "taas-fg-warning",
+                  )}
+                  aria-hidden
+                />
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-medium">{line.requirement}</span>
+                    <Badge variant="outline" className="text-[10px] uppercase tracking-wide">
+                      {line.importance === "must_have" ? "Must-have" : "Preferred"}
+                    </Badge>
+                    <span className="text-[11px] text-muted-foreground">{line.verdictLabel}</span>
+                  </div>
+                  {line.claim && !line.underReview && (
+                    <p className="mt-1 text-sm text-foreground/90">“{line.claim}”</p>
+                  )}
+                  {line.underReview && (
+                    <p className="mt-1 text-sm italic text-muted-foreground">
+                      Confirmed with the candidate; a direct quote is still being pulled.
+                    </p>
+                  )}
+                  {line.sources.length > 0 && (
+                    <div className="mt-1 text-[11px] uppercase tracking-wide text-muted-foreground">
+                      {line.sources.join(" · ")}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {strengths.length > 0 && (
+        <div className="mt-4">
+          <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
+            Beyond your requirements
+          </div>
+          <ul className="mt-2 grid gap-2 sm:grid-cols-2">
+            {strengths.map((s, i) => (
+              <li key={i} className="rounded-md border bg-muted/30 p-3 text-sm">
+                {sanitizeInternalMarkers(s)}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {gaps.length > 0 && (
+        <div className="mt-4">
+          <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
+            Not evidenced yet
+          </div>
+          <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
+            {gaps.map((line) => (
+              <li key={line.id}>
+                {line.requirement} — worth confirming in the interview.
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </SectionCard>
   );
 });
+
 
 export const WhatNeedsValidation = memo(function WhatNeedsValidation({
   candidate,
