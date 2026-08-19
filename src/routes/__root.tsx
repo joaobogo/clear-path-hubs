@@ -143,14 +143,23 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "Good news: the raw error codes in toasts are gone. Retry on /admin/operations now says "Re-enqueued for the existing worker." — clean sentence, no code. That's a real fix.
+TEXTO DO USUÁRIO: "With \\"Test records hidden\\" active and the page freshly loaded, these still show QA fixtures:
 
-But trace IDs have appeared in success toasts on the position workspace:
-  "Under review · trace ad_1qbhgb1wmt0970zu"
-  "Approved · trace ad_hyl6g40qmt098k9c"
-  "Clarification requested · trace ad_w8pcqvjfmt09p08o"
+/admin/team — the \\"Client organizations\\" scope picker lists QA_TESTCO_E2E, QA_OTHERCO_E2E,
+QA_GATE7_686096 and TaaSFlow Platform. It also lists a staff member literally named
+\\"QA platform_admin\\".
 
-Please drop the trace from toasts. If support needs it, put a "Copy reference" affordance on the record's audit tab instead of in a message that disappears in four seconds."`}
+/admin/support — the \\"Open a workspace\\" picker lists all 15 organizations including
+QA_GATE7_686096, QA_OTHERCO_E2E and QA_TESTCO_E2E, all with status \\"active\\".
+
+/admin/payments — the Pilots block lists the same three QA orgs, and \\"Abandoned before
+payment\\" shows Rehearsal Hotels 489631.
+
+Please apply the same org filter these pickers use everywhere the toggle applies.
+
+For reference, /admin/candidates already gets this right — its client dropdown correctly
+drops QA_GATE7_686096 when the toggle is off, and the list itself goes from 31 to 23
+submissions. Copy that.\"`}
         </div>
 
         <Scripts />

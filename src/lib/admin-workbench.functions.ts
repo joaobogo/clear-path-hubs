@@ -200,8 +200,16 @@ export const getSupportOverview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const admin = await staffAdmin(context as never);
+    const { resolveShowTestRecordsForUser, excludeTestFlag } = await import(
+      "./admin-test-scope.server"
+    );
+    const showTest = await resolveShowTestRecordsForUser(admin, context.userId);
+
+    let orgsQuery = admin.from("organizations").select("id, name, status").order("name").limit(300);
+    if (!showTest) orgsQuery = excludeTestFlag(orgsQuery);
+
     const [orgsRes, sessionsRes, actionsRes] = await Promise.all([
-      admin.from("organizations").select("id, name, status").order("name").limit(300),
+      orgsQuery,
       admin
         .from("support_sessions")
         .select("id, organization_id, actor_user_id, actor_role, mode, reason, started_at, ended_at, end_reason")

@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { getSupportOverview } from "@/lib/admin-workbench.functions";
 import { startSupportSession } from "@/lib/support.functions";
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +15,10 @@ import { SupportSessionAuditList } from "@/components/admin/support-session-audi
 
 export const Route = createFileRoute("/_authenticated/admin/support")({
   loader: ({ context }) =>
-    context.queryClient.ensureQueryData({ queryKey: ["admin-support"], queryFn: () => getSupportOverview() }),
+    context.queryClient.ensureQueryData({
+      queryKey: ["admin-support", context.testScope?.includeTest ?? false],
+      queryFn: () => getSupportOverview(),
+    }),
   head: () => ({
     meta: [
       { title: "Support view · TaaSFlow admin" },
@@ -28,7 +32,11 @@ export const Route = createFileRoute("/_authenticated/admin/support")({
 
 function SupportPage() {
   const qc = useQueryClient();
-  const { data } = useSuspenseQuery({ queryKey: ["admin-support"], queryFn: () => getSupportOverview() });
+  const includeTest = useIncludeTestRecords();
+  const { data } = useSuspenseQuery({
+    queryKey: ["admin-support", includeTest],
+    queryFn: () => getSupportOverview(),
+  });
   const startFn = useServerFn(startSupportSession);
   const navigate = useNavigate();
   const [filter, setFilter] = useState("");

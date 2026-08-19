@@ -428,7 +428,8 @@ export const listClients = createServerFn({ method: "GET" })
     const { resolveShowTestRecordsForUser, excludeTestFlag } = await import(
       "./admin-test-scope.server"
     );
-    const showTest = await resolveShowTestRecordsForUser(s, context.userId);
+    const showTest =
+      data.include_test ?? (await resolveShowTestRecordsForUser(s, context.userId));
 
     let q = s
       .from("organizations")
@@ -439,11 +440,9 @@ export const listClients = createServerFn({ method: "GET" })
     // The previous 500 limit could cause missing results if there are many test/archived records.
     q = q.limit(2000);
     // C4: ensure organizations with active roles are always included in the active list.
-    // P-020: if include_test is false, we filter them at the DB level to reduce payload.
-    // If we're looking for a specific name, we widen the query to include test records
-    // but the client-side still applies the user's global toggle.
-    if (!data.include_test) {
-      q = q.eq("is_test_record", false);
+    // P-020: respect the global test-records toggle; if it's off, hide test/internal orgs.
+    if (!showTest) {
+      q = excludeTestFlag(q);
     }
     const { data: rows } = await q;
 

@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listAdminPayments } from "@/lib/admin-payments.functions";
 import { getPaymentsOps } from "@/lib/admin-ops.functions";
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -55,10 +56,11 @@ function statusTone(status: string) {
 
 function AdminPaymentsPage() {
   const [filter, setFilter] = useState<Filter>("all");
+  const includeTest = useIncludeTestRecords();
   const load = useServerFn(listAdminPayments);
 
   const paymentsQuery = useQuery({
-    queryKey: ["admin-payments", filter],
+    queryKey: ["admin-payments", includeTest, filter],
     queryFn: () => load({ data: { filter } }),
   });
   const { data, isLoading, error } = paymentsQuery;
@@ -170,9 +172,10 @@ function AdminPaymentsPage() {
 // ── Payments & pilot operations panel ──────────────────────────────────────
 // Real records only: confirmed charges, roles stuck before payment, live pilots.
 function OpsPanel() {
+  const includeTest = useIncludeTestRecords();
   const loadOps = useServerFn(getPaymentsOps);
   const opsQuery = useQuery({
-    queryKey: ["admin-payments-ops"],
+    queryKey: ["admin-payments-ops", includeTest],
     queryFn: () => loadOps(),
     staleTime: 60_000,
   });

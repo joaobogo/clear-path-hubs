@@ -30,6 +30,12 @@ export const listAdminPayments = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     await assertStaff(supabase, userId);
 
+    const { resolveShowTestRecordsForUser, loadTestScope, excludeTestOrgs } = await import(
+      "./admin-test-scope.server"
+    );
+    const showTest = await resolveShowTestRecordsForUser(supabase, userId);
+    const scope = await loadTestScope(supabase, showTest);
+
     let query = supabase
       .from("payments")
       .select(
@@ -41,6 +47,8 @@ export const listAdminPayments = createServerFn({ method: "POST" })
     if (data.filter === "refunded") query = query.eq("status", "refunded");
     else if (data.filter === "paid") query = query.eq("status", "paid");
     else if (data.filter === "failed") query = query.in("status", ["unpaid", "pending"]);
+
+    if (!showTest) query = excludeTestOrgs(query, scope);
 
     const { data: rows, error } = await query;
     if (error) throw new Error(error.message);
