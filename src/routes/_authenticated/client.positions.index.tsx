@@ -56,7 +56,7 @@ import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveFilteredEmptyState } from "@/lib/empty-states/empty-state-catalogue";
 import { makeWorkspacePending, WorkspaceRowsSkeleton } from "@/components/workspace/pending-states";
 import { Skeleton } from "@/components/ui/skeleton";
-import { countRolesByTab, roleStatusTabLabel } from "@/lib/client-role-status-tabs";
+import { countRolesByTab, roleStatusTabLabel, roleStatusTab } from "@/lib/client-role-status-tabs";
 import { plural } from "@/lib/format/plural";
 
 function PositionsPage() {
