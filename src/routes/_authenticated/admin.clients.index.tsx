@@ -391,7 +391,7 @@ function ClientsPage() {
               <SelectValue placeholder="Type" />
             </SelectTrigger>
             <SelectContent>
-              {ORG_TYPES.map((t) => (
+              {visibleOrgTypes.map((t) => (
                 <SelectItem key={t.value} value={t.value}>
                   {t.label}
                 </SelectItem>
