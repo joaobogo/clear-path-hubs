@@ -345,14 +345,10 @@ function ClientDetail() {
 }
 
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function OverviewTab({ org, members, positions }: { org: any; members: any[]; positions: any[] }) {
-  const active = positions.filter((p) => p.status === "active").length;
+function OverviewTab({ org }: { org: any }) {
   return (
     <section className="grid gap-4 md:grid-cols-3">
-      <StatCard label="Positions" value={positions.length} />
-      <StatCard label="Active positions" value={active} />
-      <StatCard label="Client users" value={members.length} />
+      {/* Visual duplicate KPI tiles removed — row A and B reconciled into AccountOperatingSummary. */}
       <div className="md:col-span-3 rounded-lg border p-4 text-sm">
         <div className="font-medium mb-2">Organization at a glance</div>
         <dl className="grid grid-cols-2 gap-x-6 gap-y-1 text-muted-foreground">
