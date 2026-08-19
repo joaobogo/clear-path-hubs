@@ -327,7 +327,7 @@ function CandidateDetailPage() {
   useDetailCrumb(
     (data as { candidate?: { candidate?: { display_name?: string } } } | null | undefined)
       ?.candidate?.candidate?.display_name,
-    "Candidate",
+    { label: "Candidate" },
   );
 
   // Error first, always: a failed load must never read as a missing candidate.
@@ -490,10 +490,10 @@ function CandidateDetailPage() {
               requestMut.mutate(payload);
             }}
             fetchCandidates={async () => {
-              const matches = await listSchedulableCandidates({ data: { orgId: orgId! } });
-              return matches as SchedulableCandidate[];
+              const res = await listSchedulableCandidates({ data: { orgId: orgId! } });
+              return res as { candidates: SchedulableCandidate[] };
             }}
-            initialCandidateId={candidate.candidate.id}
+            initialMatchId={candidate.match_id}
           />
         )}
 
