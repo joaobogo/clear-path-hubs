@@ -940,7 +940,7 @@ export function PreviewTab({ matchId, match: m }: { matchId: string; match?: Any
             <SkillsAndEducation candidate={dto} />
           </div>
           <aside className="space-y-6 lg:col-span-4">
-            <AvailabilityAndComp candidate={dto} />
+            <AvailabilityPanel candidate={dto} />
             <ProfilePanel candidate={dto} />
             <LinksPanel candidate={dto} />
             {interviews.length > 0 && (
