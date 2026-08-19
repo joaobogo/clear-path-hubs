@@ -223,6 +223,9 @@ function ClientsPage() {
         if (orgTypeValue === "internal") return r.is_internal;
         return true;
       });
+    } else {
+      // P-020: "All types" should include everything, but we handle search specifically
+      // to ensure missing names surface if the term matches.
     }
 
     return rows;
