@@ -29,6 +29,8 @@ import {
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 import { toastError } from "@/lib/toast-error";
+import { FieldError } from "@/components/ui/field-error";
+import { FORM_MESSAGES } from "@/lib/form-validation";
 
 export function NewApprovalDialog({
   orgId,
@@ -39,6 +41,7 @@ export function NewApprovalDialog({
 }) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
+  const [titleError, setTitleError] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<"low" | "normal" | "high" | "urgent">(
     "normal",
@@ -94,6 +97,7 @@ export function NewApprovalDialog({
           noValidate
           onSubmit={(e) => {
             e.preventDefault();
+            setTitleError(title.trim() ? null : FORM_MESSAGES.required);
             if (title.trim()) submit.mutate();
           }}
           className="space-y-3"
@@ -104,10 +108,11 @@ export function NewApprovalDialog({
               id="task-title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              required
               maxLength={240}
+              aria-invalid={!!titleError}
               placeholder="e.g. Review shortlist for Head of Sales"
             />
+            <FieldError message={titleError} />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="task-desc">Context (optional)</Label>

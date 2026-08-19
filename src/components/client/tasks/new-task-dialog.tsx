@@ -39,6 +39,7 @@ export function NewTaskDialog({
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [titleError, setTitleError] = useState<string | null>(null);
   const [priority, setPriority] = useState<"low" | "normal" | "high" | "urgent">(
     "normal",
   );
