@@ -133,7 +133,7 @@ export function RoleStoryPanel({
                             )}
                           </span>
                           <span className="text-xs tabular-nums text-muted-foreground">
-                            Evidence extraction running
+                            {r.met + r.partial}/{r.assessed} evidenced
                           </span>
                         </div>
                         <div className="mt-1.5">
@@ -145,7 +145,7 @@ export function RoleStoryPanel({
                           />
                         </div>
                         <p className="mt-1 text-xs text-muted-foreground">
-                          Evidence extraction is still running for this role.
+                          {r.met} fully evidenced, {r.partial} partially evidenced.
                         </p>
                       </li>
                     ))}

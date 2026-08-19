@@ -973,7 +973,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     // candidate property already assigned above
     // Employers see the 0-100 fit score alongside the band so ranking is
     // obvious at a glance. 95+ is the unicorn threshold.
-    score: null, // HONESTY GATE: Extraction unreliable; suppressing all scores.
+    score: run?.score != null ? Number(run.score) : null,
     fit_label: run?.fit_label ?? run?.fit_band ?? null,
     fit,
     // The engine's own explanation string carries a raw n/100 figure, which is
@@ -1049,7 +1049,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
       completed_at: run?.completed_at ?? null,
       method: normalizeEvaluationMethod((run as AnyRow)?.evaluation_method),
       method_label: clientMethodLabel((run as AnyRow)?.evaluation_method),
-      category_breakdown: [], // HONESTY GATE: Suppressed until extraction is fixed.
+      category_breakdown: Array.isArray((run?.result as AnyRow)?.category_scores) ? (run.result as AnyRow).category_scores : [],
     },
   };
 }

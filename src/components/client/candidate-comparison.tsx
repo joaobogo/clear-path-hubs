@@ -706,7 +706,7 @@ function RelativeStrengthBoard({ candidates }: { candidates: ClientCandidateDTO[
     {
       key: "strengths",
       label: "Verified strengths",
-      values: candidates.map((c) => c.strengths.length),
+      values: candidates.map((c) => c.evidence_support.supported),
       format: (n) => `${n}`,
     },
     {
