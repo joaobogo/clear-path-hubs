@@ -173,7 +173,7 @@ export const getClientOpenItems = createServerFn({ method: "GET" })
         kind: "missing_feedback",
         id: i.id,
         subject_id: i.candidate_match_id,
-        label: "Interview feedback not recorded yet",
+        label: "Give interview feedback",
         context: roleLine(i.position_id),
         href: `/client/candidates/${i.candidate_match_id}`,
         due_at: due,
@@ -209,6 +209,7 @@ export const getClientOpenItems = createServerFn({ method: "GET" })
         id: r.id,
         subject_id: r.id,
         label: "Confirm an interview time",
+
         context: roleLine(r.position_id),
         href: r.interview_id ? `/client/interviews?interview=${r.interview_id}` : "/client/interviews",
         due_at: due,

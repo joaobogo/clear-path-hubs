@@ -20,12 +20,13 @@ export type QueueKind = "decision" | "feedback" | "offer" | "info_request" | "in
 
 /** Item type as a plain text label — no colour-only or icon-only meaning. */
 export const QUEUE_TYPE_LABEL: Record<QueueKind, string> = {
-  decision: "Candidate review",
-  feedback: "Interview feedback",
+  decision: "Review candidate",
+  feedback: "Give feedback",
   offer: "Offer response",
-  info_request: "Information request",
-  interview: "Interview time",
+  info_request: "Answer request",
+  interview: "Confirm time",
 };
+
 
 /**
  * Collapse precedence when the same subject produces more than one item.

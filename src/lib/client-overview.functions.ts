@@ -191,10 +191,10 @@ export const getClientOverview = createServerFn({ method: "GET" })
     const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
     const new_this_week = rows.filter(
       (r) =>
-        r.stage === "delivered" &&
         r.delivered_at != null &&
         new Date(r.delivered_at).getTime() >= sevenDaysAgo,
     ).length;
+
 
     // ── Detail Accordion ────────────────────────────────────────────────────
     // Internal system instrumentation (System status, agent controls, activity)
@@ -239,9 +239,10 @@ export const getClientOverview = createServerFn({ method: "GET" })
       const posRows = rowsByPosition.get(p.id) ?? [];
       let next = "Awaiting first candidates";
       if (posRows.some((r) => r.stage === "offer")) next = "Offer response";
-      else if (posRows.some((r) => r.interview_active || r.stage === "interview_process"))
+      else if (posRows.some((r) => r.stage === "interview_process"))
         next = "Interview outcome";
       else if (posRows.some((r) => r.stage === "shortlisted")) next = "Interview requests";
+
       else if (posRows.some((r) => r.stage === "delivered")) next = "Review new candidates";
 
       const dates = overviewStageDates.get(p.id as string) ?? {
@@ -338,15 +339,16 @@ export const getClientOverview = createServerFn({ method: "GET" })
         due_label: openItemDueLabel(item, nowMs),
         waiting_since: item.waiting_since ?? null,
         action: item.kind === "info_request" ? "Answer" : 
-                item.kind === "pending_decision" ? "Review candidate" :
-                item.kind === "missing_feedback" ? "Give feedback" :
-                item.kind === "offer" ? "View offer" : "View",
+                item.kind === "pending_decision" ? "Review" :
+                item.kind === "missing_feedback" ? "Feedback" :
+                item.kind === "offer" ? "View" : "Confirm",
+
         to: item.href,
       };
     });
 
     const queueGroups = buildQueue(queueItems);
-    const decision_queue = [...queueGroups.overdue, ...queueGroups.upcoming];
+    const decision_queue = [...queueGroups.overdue, ...queueGroups.upcoming].slice(0, 10);
     const decision_queue_meta = {
       checked: openItemsResponse.items.length,
       overdue: queueGroups.overdue.length,
@@ -404,7 +406,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
           title: p.title as string,
           awaiting_review: posRows.filter(isAwaitingClientDecision).length,
           has_offer: posRows.some((r) => r.stage === "offer"),
-          has_interview: posRows.some((r) => r.interview_active || r.stage === "interview_process"),
+          has_interview: posRows.some((r) => r.stage === "interview_process"),
           promised_shortlist_by: promised != null ? new Date(promised).toISOString() : null,
           shortlist_delivered_at:
             posRows

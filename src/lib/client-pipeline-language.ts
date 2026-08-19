@@ -121,7 +121,8 @@ export function buildPipelineStatusLine(
   }
   if (input.interviewsToConfirm > 0) {
     parts.push(
-      `${input.interviewsToConfirm} ${plural(input.interviewsToConfirm, "interview")} to confirm`,
+    `${input.interviewsToConfirm} ${plural(input.interviewsToConfirm, "interview")} to confirm`,
+
     );
   }
   if (input.interviewsScheduled > 0) {
@@ -158,9 +159,9 @@ export function buildPipelineActionLabel(
   if (input.awaitingReview > 0)
     return `${input.awaitingReview} awaiting your review`;
   if (input.interviewsToConfirm > 0)
-    return `${input.interviewsToConfirm} ${plural(input.interviewsToConfirm, "interview")} to confirm`;
+    return `${input.interviewsToConfirm} to confirm`;
   if (input.offers > 0)
-    return `${input.offers} ${plural(input.offers, "offer")} awaiting a response`;
+    return `${input.offers} offer${input.offers === 1 ? "" : "s"} awaiting response`;
   return null;
 }
 
@@ -221,4 +222,5 @@ export function buildPipelineActionTarget(
     };
   return null;
 }
+
 

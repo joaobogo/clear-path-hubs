@@ -9,9 +9,10 @@
  * Shortlisted column, so the tile said 4 and the column said 2 for identical
  * data.
  *
- * Rule: the stored `stage` decides the lane, except that a candidate still at
- * `delivered`/`shortlisted` who already has a live interview belongs in the
- * interview lane — that is what the client sees happening.
+ * Rule: the stored `stage` decides the lane. A candidate in `delivered` or
+ * `shortlisted` who already has a live interview is STILL shown in those
+ * stages — the interview is a milestone within the stage, not a lane move.
+
  */
 import type { MatchStage } from "@/lib/client-match-stage";
 
@@ -46,11 +47,9 @@ function isLane(value: string): value is PipelineLane {
 export function laneFor(row: LaneRow): PipelineLane | null {
   const stage = String(row.stage);
   if (!isLane(stage)) return null;
-  if ((stage === "delivered" || stage === "shortlisted") && row.interview_active) {
-    return "interview_process";
-  }
   return stage;
 }
+
 
 export function isInLane(row: LaneRow, lane: PipelineLane): boolean {
   return laneFor(row) === lane;
