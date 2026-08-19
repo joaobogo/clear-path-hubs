@@ -288,6 +288,7 @@ function ClientsPage() {
         >
           + New client
         </Link>
+
       </header>
 
       {/* Filters live in the URL, so any view here can be named, saved and shared. */}
@@ -444,12 +445,13 @@ function ClientsPage() {
                 <th className="px-3 py-2.5 font-medium">Company</th>
                 <th className="px-3 py-2.5 font-medium">Primary contact</th>
                 <th className="px-3 py-2.5 font-medium">Status</th>
-                <th className="px-3 py-2.5 font-medium tabular-nums">Active positions</th>
-                <th className="px-3 py-2.5 font-medium tabular-nums">Delivered</th>
-                <th className="px-3 py-2.5 font-medium">Last activity</th>
+                <th className="px-3 py-2.5 font-medium tabular-nums text-right">Active positions</th>
+                <th className="px-3 py-2.5 font-medium tabular-nums text-right">Delivered</th>
+                <th className="px-3 py-2.5 font-medium text-right">Last activity</th>
                 <th className="px-3 py-2.5 font-medium text-right">Open</th>
               </tr>
             </thead>
+
             <tbody className="divide-y">
               {rows.map((r) => (
                 <ClientRowView key={r.id} row={r} onArchive={() => setArchiveTarget(r)} />

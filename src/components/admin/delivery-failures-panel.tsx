@@ -186,7 +186,7 @@ export function DeliveryFailuresPanel() {
           />
         }
       >
-        <div className="border rounded-lg overflow-x-auto">
+        <div className="border rounded-lg overflow-x-auto max-h-[400px]">
           <table className="w-full text-sm min-w-[980px]">
             <thead className="bg-muted/50 text-left">
               <tr>
