@@ -43,7 +43,7 @@ export interface CandidatesFiltersState {
 }
 
 /** Filters that live behind the single "Filters" button. */
-const ADVANCED_KEYS = ["fit", "critical", "review", "availability", "minExp", "location"] as const;
+const ADVANCED_KEYS = ["fit", "availability", "minExp", "location"] as const;
 const RESET_TO_ALL = new Set(["stage", "fit", "critical", "review", "availability"]);
 /** Chips that are toggles, not values: removing them means "off". */
 const RESET_TO_OFF = new Set(["unicorn"]);
@@ -164,26 +164,6 @@ export function CandidatesFiltersPanel({
                 <SelectTrigger aria-label="Fit"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {FIT_OPTIONS.map((o) => (
-                    <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FilterField>
-            <FilterField label="Critical requirements">
-              <Select value={search.critical} onValueChange={(v) => setF({ critical: v })}>
-                <SelectTrigger aria-label="Critical requirements"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {CRITICAL_OPTIONS.map((o) => (
-                    <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FilterField>
-            <FilterField label="Review status">
-              <Select value={search.review} onValueChange={(v) => setF({ review: v })}>
-                <SelectTrigger aria-label="Review status"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {REVIEW_OPTIONS.map((o) => (
                     <SelectItem key={o.key} value={o.key}>{o.label}</SelectItem>
                   ))}
                 </SelectContent>
