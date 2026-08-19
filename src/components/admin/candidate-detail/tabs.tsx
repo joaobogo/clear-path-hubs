@@ -34,7 +34,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminScoreNumber } from "@/components/admin/admin-score-number";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
-import { Textarea } from "@/components/ui/textarea";
+import { renderQuote } from "@/lib/evidence/quote-hygiene";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -463,16 +463,20 @@ export function EvidenceTab({
               </div>
               {(r.evidence ?? []).length > 0 && (
                 <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
-                  {(r.evidence as Any[]).map((e, j) => (
-                    <li key={j}>
-                      "…{e.snippet}…"{" "}
-                      <code className="opacity-60">
-                        {typeof e.location === 'string' 
-                          ? e.location.replace(/^cv:(\d+)-(\d+)$/, 'CV · characters $1–$2') 
-                          : (e.source ?? "")}
-                      </code>
-                    </li>
-                  ))}
+                  {(r.evidence as Any[]).map((e, j) => {
+                    const safe = renderQuote(e.snippet);
+                    if (!safe) return null;
+                    return (
+                      <li key={j}>
+                        "{safe}"{" "}
+                        <code className="opacity-60">
+                          {typeof e.location === 'string'
+                            ? e.location.replace(/^cv:(\d+)-(\d+)$/, 'CV · characters $1–$2')
+                            : (e.source ?? "")}
+                        </code>
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
               {r.snippet && (
@@ -514,12 +518,20 @@ export function EvidenceTab({
                   )}
                   {v.cv_quote && (
                     <div className="mt-1 border-l-2 border-primary/30 pl-2 text-xs italic text-muted-foreground">
-                      "{v.cv_quote}"
-                      {v.location && (
-                        <span className="ml-2 not-italic opacity-60">
-                          · {typeof v.location === 'string' ? v.location.replace(/^cv:(\d+)-(\d+)$/, 'CV · characters $1–$2') : 'CV'}
-                        </span>
-                      )}
+                      {(() => {
+                        const safe = renderQuote(v.cv_quote);
+                        if (!safe) return null;
+                        return (
+                          <>
+                            "{safe}"
+                            {v.location && (
+                              <span className="ml-2 not-italic opacity-60">
+                                · {typeof v.location === 'string' ? v.location.replace(/^cv:(\d+)-(\d+)$/, 'CV · characters $1–$2') : 'CV'}
+                              </span>
+                            )}
+                          </>
+                        );
+                      })()}
                     </div>
                   )}
                 </li>
