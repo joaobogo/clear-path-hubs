@@ -133,7 +133,11 @@ export const globalSearch = createServerFn({ method: "POST" })
         .or(`name.ilike.${ilikeValue(term)},industry.ilike.${ilikeValue(term)}`)
         .order("name")
         .limit(LIMIT);
-      oq = excludeTestOrgs(oq, testScope, "id");
+      
+      // B2: Ensure test organizations are excluded unless explicitly requested
+      if (!includeTest) {
+        oq = excludeTestOrgs(oq, testScope, "id");
+      }
       const { data: orgs, error } = await oq;
       if (error) throw new Error(error.message);
       groups.clients = ((orgs as AnyRow[]) ?? []).map((o) => ({

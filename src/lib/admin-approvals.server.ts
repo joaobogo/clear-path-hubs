@@ -61,16 +61,25 @@ async function resolvePeople(admin: Admin, ids: (string | null)[]) {
 async function resolveLastActors(admin: Admin, entityType: string, ids: string[]) {
   const map = new Map<string, string>();
   if (ids.length === 0) return map;
+  
+  // Resolve actors (staff or client users) who last touched these records.
   const res = await admin
     .from("audit_events")
-    .select("entity_id, actor_user_id, created_at")
+    .select("entity_id, actor_user_id, created_at, profiles(full_name, role)")
     .eq("entity_type", entityType)
     .in("entity_id", ids)
     .order("created_at", { ascending: false })
     .limit(2000);
-  for (const r of (res.data ?? []) as Any[]) {
-    const id = r.entity_id as string;
-    if (!map.has(id) && r.actor_user_id) map.set(id, r.actor_user_id as string);
+
+  const seen = new Set<string>();
+  for (const row of (res.data ?? []) as any[]) {
+    const id = row.entity_id as string;
+    if (seen.has(id)) continue;
+    seen.add(id);
+    
+    const actorName = row.profiles?.full_name ?? "the client workspace";
+    const isStaff = row.profiles?.role === "platform_admin" || row.profiles?.role === "operations";
+    map.set(id, isStaff ? `${actorName} (Staff)` : actorName);
   }
   return map;
 }

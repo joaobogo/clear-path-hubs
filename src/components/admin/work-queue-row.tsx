@@ -34,7 +34,7 @@ function RefLabel({ ref: r, className }: { ref: QueueRef; className?: string }) 
       <Link
         to="/admin/clients/$id"
         params={{ id: r.id }}
-        className={cn("hover:underline", className)}
+        className={cn("hover:underline font-medium text-foreground", className)}
       >
         {r.label}
       </Link>
@@ -211,8 +211,8 @@ export function WorkQueueRow({
       </div>
 
       <OwnerCell item={item} />
-      <span className={`shrink-0 tabular-nums text-xs ${toneClass(item.tone)}`} title="Waiting">
-        {item.key === 'score_stale' ? 'Stale' : (waited(item.waiting_since) === '1m' ? '1 min' : waited(item.waiting_since))}
+      <span className={cn("shrink-0 tabular-nums text-xs", toneClass(item.tone))} title="Waiting">
+        {item.key === 'score_stale' ? 'Stale' : waited(item.waiting_since)}
       </span>
       <Button asChild size="sm" variant="secondary" className="h-7 shrink-0 text-xs">
         <TargetLink target={item.target}>

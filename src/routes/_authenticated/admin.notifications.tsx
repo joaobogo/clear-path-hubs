@@ -33,15 +33,19 @@ function NotificationsPage() {
 
   const email = query.data?.email as { configured: boolean; reason?: string | null } | undefined;
 
-  const counts = (query.data?.counts ?? {}) as Record<string, number>;
+  // Reconcile counts from the returned items to ensure "Delivery failures (7d)" is accurate.
+  const items = (query.data?.items ?? []) as any[];
+  const failureCount = items.length;
+  const suppressedCount = items.filter(i => i.reason === 'suppressed').length;
+  
   const summary = [
-    { label: "Emails sent (7d)", value: counts["email:provider_accepted"] ?? 0 },
+    { label: "Emails sent (7d)", value: (query.data?.counts as any)?.["email:notification:provider_accepted"] ?? 0 },
     {
       label: "Email failures (7d)",
-      value: (counts["email:failed"] ?? 0) + (counts["email:bounced"] ?? 0),
+      value: failureCount,
     },
-    { label: "Suppressed (7d)", value: counts["email:suppressed"] ?? 0 },
-    { label: "In-app delivered (7d)", value: counts["in_app:delivered"] ?? 0 },
+    { label: "Suppressed (7d)", value: suppressedCount },
+    { label: "In-app delivered (7d)", value: (query.data?.counts as any)?.["in_app:delivered"] ?? 0 },
   ];
 
   return (
