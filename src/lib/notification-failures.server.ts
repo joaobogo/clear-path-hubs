@@ -284,6 +284,25 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
         staleWarning: Date.now() - new Date(base.lastAttemptAt).getTime() > STALE_AFTER_MS,
       });
     }
+    if (l["email_status"] === "suppressed") {
+      // Visible, but never counted as a failure and never retryable: releasing
+      // the address is the only thing that clears it.
+      leadItems.push({
+        ...base,
+        key: `lead:${l["id"]}:email-suppressed`,
+        channel: "email",
+        recipient: ((l["email_recipients"] as string[] | null) ?? []).join(", ") || null,
+        reason: "recipient_suppressed",
+        reasonDetail: (l["email_detail"] as string | null) ?? null,
+        reasonLabel: deliveryReason("recipient_suppressed").label,
+        reasonSentence: deliveryReason("recipient_suppressed").sentence,
+        canUnsuppress: true,
+        retryable: false,
+        retryBlockedReason:
+          "Not sent because the recipient is on the suppression list. Release the address to resume sending.",
+        staleWarning: false,
+      });
+    }
     if (l["teams_status"] === "failed") {
       leadItems.push({
         ...base,
