@@ -437,6 +437,12 @@ export const listClients = createServerFn({ method: "GET" })
     // The previous 500 limit could cause missing results if there are many test/archived records.
     q = q.limit(2000);
     // C4: ensure organizations with active roles are always included in the active list.
+    // P-020: if include_test is false, we filter them at the DB level to reduce payload.
+    // If we're looking for a specific name, we widen the query to include test records
+    // but the client-side still applies the user's global toggle.
+    if (!data.include_test) {
+      q = q.eq("is_test_record", false);
+    }
     const { data: rows } = await q;
 
     const orgIds = (rows ?? []).map((r: AnyRow) => r.id);
