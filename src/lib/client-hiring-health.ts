@@ -92,8 +92,6 @@ export function computeHiringHealth(input: HiringHealthInput): HiringHealth {
   }
 
   if (input.behindScheduleRoles > 0) {
-
-  if (input.behindScheduleRoles > 0) {
     const n = input.behindScheduleRoles;
     return {
       sentence: `${count(n)} ${plural(n, "role is", "roles are")} behind schedule.`,
