@@ -362,7 +362,7 @@ export type DecisionResult = {
   approved: string[];
 };
 
-/** Publishes one match through the canonical gate + RPC path. */
+/** Publishes one match through the canonical gate + RPC path. Internal use only. */
 async function publishMatch(admin: Admin, matchId: string, actorUserId: string, reason: string | null) {
   const { data: m, error } = await admin
     .from("candidate_matches")

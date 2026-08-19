@@ -162,7 +162,11 @@ export function WorkQueueRow({
           <span className="truncate text-sm font-medium">
             <TargetLink target={item.target}>
               {item.title_ref ? (
-                <RefLabel ref={item.title_ref} className="text-foreground hover:underline" />
+                <RefLabel
+                  ref={item.title_ref}
+                  className="text-foreground hover:underline"
+                  suppressLink
+                />
               ) : (
                 <span className="hover:underline">{item.title}</span>
               )}

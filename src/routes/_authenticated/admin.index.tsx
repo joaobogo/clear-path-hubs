@@ -370,7 +370,18 @@ function QueueSection({ q }: { q: any }) {
 
       <ul className="divide-y">
         {q.items.map((it: any) => (
-          <WorkQueueRow key={it.id} item={it} />
+          <WorkQueueRow
+            key={it.id}
+            item={it}
+            secondary_badge={
+              q.key === "approvals" && it.meta
+                ? {
+                    label: it.meta,
+                    tone: it.meta.includes("Contact") ? "warning" : "default",
+                  }
+                : null
+            }
+          />
         ))}
       </ul>
 
