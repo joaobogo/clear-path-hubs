@@ -88,8 +88,8 @@ function preferredTakeaway(c: { met: number; partial: number; total: number }) {
 
 export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdown {
   const rows = candidate.requirement_rows ?? [];
-  const must = rows.filter((r) => r.importance === "must_have");
-  const preferred = rows.filter((r) => r.importance !== "must_have");
+  const must = rows.filter((r: RequirementRow) => r.importance === "must_have");
+  const preferred = rows.filter((r: RequirementRow) => r.importance !== "must_have");
 
   const mustCounts = { ...countRows(must), total: must.length };
   const prefCounts = { ...countRows(preferred), total: preferred.length };
@@ -120,9 +120,9 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
   const reasonsByRequirement = new Map<string, BreakdownReason>();
   
   must
-    .filter((r) => r.status === "met")
+    .filter((r: RequirementRow) => r.status === "met")
     .slice(0, 3)
-    .forEach((r, i) => {
+    .forEach((r: RequirementRow, i: number) => {
       const id = r.id || `must-met-${i}`;
       reasonsByRequirement.set(id, {
         id,
@@ -133,14 +133,14 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
       });
     });
 
-  (candidate.strengths ?? []).slice(0, 3).forEach((s, i) =>
+  (candidate.strengths ?? []).slice(0, 3).forEach((s: string, i: number) =>
     reasons.push({ id: `strength-${i}`, tone: "positive", text: s }),
   );
 
   must
-    .filter((r) => r.status === "not_evidenced" || r.status === "contradicted")
+    .filter((r: RequirementRow) => r.status === "not_evidenced" || r.status === "contradicted")
     .slice(0, 3)
-    .forEach((r, i) => {
+    .forEach((r: RequirementRow, i: number) => {
       const id = r.id || `must-gap-${i}`;
       // Deduplicate: if it's already in the positive list (which shouldn't happen 
       // with clean data, but we gate it here), or if it's already recorded.
@@ -155,9 +155,9 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
 
   // Also handle partials in the watch list if they are critical must-haves
   must
-    .filter((r) => r.status === "partial")
+    .filter((r: RequirementRow) => r.status === "partial")
     .slice(0, 2)
-    .forEach((r, i) => {
+    .forEach((r: RequirementRow, i: number) => {
       const id = r.id || `must-partial-${i}`;
       if (!reasonsByRequirement.has(id)) {
         reasonsByRequirement.set(id, {
@@ -173,7 +173,7 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
     reasons.push(reason);
   }
 
-  (candidate.concerns ?? []).slice(0, 3).forEach((c, i) =>
+  (candidate.concerns ?? []).slice(0, 3).forEach((c: string, i: number) =>
     reasons.push({ id: `concern-${i}`, tone: "watch", text: c }),
   );
   if (candidate.main_consideration) {
