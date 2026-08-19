@@ -70,8 +70,7 @@ export function countRolesByTab(
   };
   for (const r of rows) {
     const key = r.client_status?.key;
-    const tab: RoleStatusTabKey =
-      key === "active" ? "active" : key === "paused" ? "paused" : key === "closed" ? "closed" : "draft";
+    const tab: RoleStatusTabKey = roleStatusTab(key);
     counts[tab] += 1;
   }
   return counts;

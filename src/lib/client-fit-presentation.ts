@@ -387,6 +387,8 @@ export function buildRequirementRows(
       // until the extraction bug is resolved.
       const status = rawEvidence.length > 0 || rawStatus === "not_evidenced" ? rawStatus : "not_evidenced";
       
+      const extractionStatusLabel = status === "not_evidenced" ? "Evidence extraction is still running" : null;
+      
       rows.push({
         id: `${declaredImportance === "preferred" ? "pref" : "must"}-${requirementSlug(String(label))}`,
         label: String(label),
