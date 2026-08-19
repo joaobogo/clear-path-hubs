@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
+import { FieldError } from "@/components/ui/field-error";
+import { collectErrors, emailText, requiredText } from "@/lib/form-validation";
 
 export const Route = createFileRoute("/_authenticated/admin/clients_new")({
   ssr: false,
