@@ -98,7 +98,7 @@
       "fit_label": "not_a_fit",
       "applied_caps": [],
       "must_have_coverage": 0,
-      "evidence_confidence": 100,
+      "evidence_confidence": 0,
       "overall_confidence": 0.48,
       "evaluation_method": "deterministic",
       "input_hash": "376ecc79-274"
@@ -126,7 +126,7 @@
       "fit_label": "not_a_fit",
       "applied_caps": [],
       "must_have_coverage": 0,
-      "evidence_confidence": 100,
+      "evidence_confidence": 0,
       "overall_confidence": 0.48,
       "evaluation_method": "deterministic",
       "input_hash": "3011aea1-277"
@@ -154,7 +154,7 @@
       "fit_label": "not_a_fit",
       "applied_caps": [],
       "must_have_coverage": 0,
-      "evidence_confidence": 100,
+      "evidence_confidence": 0,
       "overall_confidence": 0.48,
       "evaluation_method": "deterministic",
       "input_hash": "6a102af8-283"
@@ -168,7 +168,7 @@
       "fit_label": "not_a_fit",
       "applied_caps": [],
       "must_have_coverage": 0,
-      "evidence_confidence": 80,
+      "evidence_confidence": 0,
       "overall_confidence": 0.35,
       "evaluation_method": "deterministic",
       "input_hash": "b63410da-275"
@@ -210,7 +210,7 @@
       "fit_label": "not_a_fit",
       "applied_caps": [],
       "must_have_coverage": 0,
-      "evidence_confidence": 80,
+      "evidence_confidence": 0,
       "overall_confidence": 0.35,
       "evaluation_method": "deterministic",
       "input_hash": "70cf88fe-26c"
@@ -238,7 +238,7 @@
       "fit_label": "not_a_fit",
       "applied_caps": [],
       "must_have_coverage": 0,
-      "evidence_confidence": 80,
+      "evidence_confidence": 0,
       "overall_confidence": 0.35,
       "evaluation_method": "deterministic",
       "input_hash": "981ccfa3-26f"
@@ -252,7 +252,7 @@
       "fit_label": "not_a_fit",
       "applied_caps": [],
       "must_have_coverage": 0,
-      "evidence_confidence": 80,
+      "evidence_confidence": 0,
       "overall_confidence": 0.35,
       "evaluation_method": "deterministic",
       "input_hash": "20f3503e-27c"
@@ -322,7 +322,7 @@
       "fit_label": "worth_considering",
       "applied_caps": [],
       "must_have_coverage": 0.5,
-      "evidence_confidence": 60,
+      "evidence_confidence": 100,
       "overall_confidence": 0.49,
       "evaluation_method": "deterministic",
       "input_hash": "ab8c3c17-2ac"
@@ -364,7 +364,7 @@
       "fit_label": "not_a_fit",
       "applied_caps": [],
       "must_have_coverage": 0,
-      "evidence_confidence": 100,
+      "evidence_confidence": 0,
       "overall_confidence": 0.48,
       "evaluation_method": "deterministic",
       "input_hash": "4e330cb1-280"
@@ -378,7 +378,7 @@
       "fit_label": "not_a_fit",
       "applied_caps": [],
       "must_have_coverage": 0,
-      "evidence_confidence": 100,
+      "evidence_confidence": 0,
       "overall_confidence": 0.48,
       "evaluation_method": "deterministic",
       "input_hash": "d8c0e1cf-282"
@@ -448,7 +448,7 @@
       "fit_label": "not_a_fit",
       "applied_caps": [],
       "must_have_coverage": 0,
-      "evidence_confidence": 80,
+      "evidence_confidence": 0,
       "overall_confidence": 0.35,
       "evaluation_method": "deterministic",
       "input_hash": "88949e01-272"
@@ -476,7 +476,7 @@
       "fit_label": "not_a_fit",
       "applied_caps": [],
       "must_have_coverage": 0,
-      "evidence_confidence": 80,
+      "evidence_confidence": 0,
       "overall_confidence": 0.35,
       "evaluation_method": "deterministic",
       "input_hash": "75c768d9-278"
@@ -490,7 +490,7 @@
       "fit_label": "not_a_fit",
       "applied_caps": [],
       "must_have_coverage": 0,
-      "evidence_confidence": 80,
+      "evidence_confidence": 0,
       "overall_confidence": 0.35,
       "evaluation_method": "deterministic",
       "input_hash": "1e6580c4-286"
@@ -504,7 +504,7 @@
       "fit_label": "not_a_fit",
       "applied_caps": [],
       "must_have_coverage": 0,
-      "evidence_confidence": 80,
+      "evidence_confidence": 0,
       "overall_confidence": 0.35,
       "evaluation_method": "deterministic",
       "input_hash": "5b5819fd-270"
@@ -518,7 +518,7 @@
       "fit_label": "not_a_fit",
       "applied_caps": [],
       "must_have_coverage": 0,
-      "evidence_confidence": 80,
+      "evidence_confidence": 0,
       "overall_confidence": 0.35,
       "evaluation_method": "deterministic",
       "input_hash": "38856a00-26a"
@@ -546,7 +546,7 @@
       "fit_label": "not_a_fit",
       "applied_caps": [],
       "must_have_coverage": 0,
-      "evidence_confidence": 100,
+      "evidence_confidence": 0,
       "overall_confidence": 0.48,
       "evaluation_method": "deterministic",
       "input_hash": "2ee64dc4-27f"
@@ -560,7 +560,7 @@
       "fit_label": "not_a_fit",
       "applied_caps": [],
       "must_have_coverage": 0,
-      "evidence_confidence": 100,
+      "evidence_confidence": 0,
       "overall_confidence": 0.48,
       "evaluation_method": "deterministic",
       "input_hash": "1b136dde-26f"
