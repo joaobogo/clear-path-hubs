@@ -1,9 +1,13 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { supabase } from "@/integrations/supabase/client";
 import { ChevronRight, ChevronDown, Loader2, Menu, Linkedin, Mail } from "lucide-react";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 import { InternalLinkHub } from "@/components/marketing/internal-link-hub";
 import { ProductionLink } from "@/components/marketing/production-link";
+import { getSessionContext } from "@/lib/auth.functions";
+import { landingPathForRole } from "@/lib/roles";
 
 import { brand } from "@/config/brand";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
