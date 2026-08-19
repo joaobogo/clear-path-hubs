@@ -21,7 +21,7 @@ const STATE_STYLE: Record<
   degraded: { label: "Needs attention", variant: "secondary", dot: "bg-amber-500" },
   failing: { label: "Failing", variant: "destructive", dot: "bg-destructive" },
   not_configured: { label: "Not configured", variant: "outline", dot: "bg-muted-foreground" },
-  unknown: { label: "Never tested", variant: "outline", dot: "bg-muted-foreground" },
+  unknown: { label: "Not checked", variant: "outline", dot: "bg-muted-foreground" },
 };
 
 function ago(iso: string | null) {
