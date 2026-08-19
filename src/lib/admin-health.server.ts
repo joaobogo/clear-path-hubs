@@ -118,7 +118,7 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
   const { loadTestScope, excludeTestOrgs } = await import("./admin-test-scope.server");
   const scope = await loadTestScope(admin, opts.includeTest ?? false);
 
-  const [crmRes, jobsRes, deliveriesRes, cvRes, orphansRes] = await Promise.all([
+  const [crmRes, jobsRes, deliveriesRes, cvRes] = await Promise.all([
     admin
       .from("crm_submission_queue")
       .select("id, status, attempts, last_error, created_at, source_form_id")
@@ -160,18 +160,13 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
         .limit(50),
       scope,
     ),
-    admin
-      .from("scoring_orphans")
-      .select("id", { count: "exact", head: true })
-      .is("resolved_at", null),
   ]);
 
   // Never let a bucket report a false zero: a failed query is an error, not "0".
-  for (const res of [crmRes, jobsRes, deliveriesRes, cvRes, orphansRes]) {
+  for (const res of [crmRes, jobsRes, deliveriesRes, cvRes]) {
     if (res.error) throw new Error(res.error.message);
   }
 
-  const scoringOrphans = Number(orphansRes.count ?? 0);
 
 
 
