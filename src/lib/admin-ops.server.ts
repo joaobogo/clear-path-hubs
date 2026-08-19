@@ -643,7 +643,6 @@ export async function loadPaymentsOpsPanel(userId: string): Promise<PaymentsOpsP
         .not("pilot_status", "is", null)
         .order("pilot_started_at", { ascending: false })
         .limit(50),
-      scope,
     ),
   ]);
 
