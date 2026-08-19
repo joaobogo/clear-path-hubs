@@ -830,6 +830,50 @@ function SettingsTab({ org }: { org: any }) {
   );
 }
 
+function TestRecordToggle({ org }: { org: any }) {
+  const qc = useQueryClient();
+  const m = useMutation({
+    mutationFn: (isTest: boolean) =>
+      updateOrganization({
+        data: {
+          id: org.id,
+          patch: { is_test_record: isTest },
+        },
+      }),
+    onSuccess: (res) => {
+      toast.success(res.organization.is_test_record ? "Flagged as test record" : "Flag removed");
+      qc.invalidateQueries({ queryKey: ["admin-client", org.id] });
+      qc.invalidateQueries({ queryKey: ["admin-clients"] });
+    },
+    onError: (e: Error) => toastError(e),
+  });
+
+  return (
+    <div className="rounded-lg border p-4 text-sm">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <div className="font-medium">Test Record</div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Test records are hidden from standard admin rollups by default. 
+            Enable this for QA, internal, or rehearsal accounts.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant={org.is_test_record ? "default" : "outline"}
+            size="sm"
+            disabled={m.isPending}
+            onClick={() => m.mutate(!org.is_test_record)}
+          >
+            {org.is_test_record ? "Flagged: Test" : "Flag as Test"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 // ── Contacts tab ──────────────────────────────────────────────────────────
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function ContactsTab({ org, members }: { org: any; members: any[] }) {
