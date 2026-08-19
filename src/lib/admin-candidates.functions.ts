@@ -130,7 +130,7 @@ export const searchCandidateIndex = createServerFn({ method: "POST" })
       const val = ilikeValue(data.q);
       if (val) {
         // Multi-column search across name, email, organization and full index.
-        // B3: Ensure every query is quoted safely and matches the view columns.
+        // B2: Ensure every query is quoted safely and matches the view columns.
         q = q.or(
           `full_name.ilike.${val},email.ilike.${val},org_name.ilike.${val},search_vector.ilike.${val}`
         );

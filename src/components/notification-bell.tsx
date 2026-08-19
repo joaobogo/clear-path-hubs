@@ -143,7 +143,10 @@ export function NotificationBell() {
             e.stopPropagation();
             setOpen((v) => !v);
           }}
-          onClick={(e) => e.preventDefault()}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
           className="relative h-11 w-11 sm:h-9 sm:w-9"
           aria-label={
             badgeCount > 0

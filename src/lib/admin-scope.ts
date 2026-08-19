@@ -11,7 +11,9 @@
  * panel rendered outside the admin layout degrades to "test records hidden"
  * instead of throwing.
  */
+import { useEffect, useState } from "react";
 import { useMatches } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
 
 const ADMIN_ROUTE_ID = "/_authenticated/admin";
 
@@ -45,4 +47,19 @@ export function useIncludeTestRecords(): boolean {
 export function useScopedIncludeTest(explicit?: boolean): boolean {
   const scope = useAdminTestScope();
   return explicit ?? scope.includeTest;
+}
+
+/** The acting admin's user id, for the "Mine" scope. Presentation-only read. */
+export function useActingUserId() {
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(() => {
+    let alive = true;
+    supabase.auth.getUser().then(({ data }) => {
+      if (alive) setUserId(data.user?.id ?? null);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return userId;
 }

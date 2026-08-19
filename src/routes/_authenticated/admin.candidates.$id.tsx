@@ -129,6 +129,8 @@ function CandidateWorkspace() {
   const focusEventId = normalizeFocusEventId(rawEvent);
   // The tab lives in the URL so deep links and back/forward keep working.
   const tab: TabId = focusEventId && urlTab === "profile" ? "history" : urlTab;
+  
+  // B3/B8: Standardize navigation to use router push; ensure it replaces history to avoid backlog.
   const setTab = (next: TabId) =>
     void navigate({
       to: "/admin/candidates/$id",

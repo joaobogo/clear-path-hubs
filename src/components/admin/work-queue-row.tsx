@@ -17,8 +17,16 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
 /** Renders a queue ref as a link to its exact record, or plain text. */
-function RefLabel({ ref: r, className }: { ref: QueueRef; className?: string }) {
-  if (r.kind === "position") {
+function RefLabel({
+  ref: r,
+  className,
+  suppressLink = false,
+}: {
+  ref: QueueRef;
+  className?: string;
+  suppressLink?: boolean;
+}) {
+  if (r.kind === "position" && !suppressLink) {
     return (
       <Link
         to="/admin/positions/$id"
@@ -29,7 +37,7 @@ function RefLabel({ ref: r, className }: { ref: QueueRef; className?: string }) 
       </Link>
     );
   }
-  if (r.kind === "organization") {
+  if (r.kind === "organization" && !suppressLink) {
     return (
       <Link
         to="/admin/clients/$id"
@@ -152,7 +160,13 @@ export function WorkQueueRow({
       <div className="min-w-0 flex-1">
         <div className="flex min-w-0 items-center gap-2">
           <span className="truncate text-sm font-medium">
-            {item.title_ref ? <RefLabel ref={item.title_ref} /> : item.title}
+            <TargetLink target={item.target}>
+              {item.title_ref ? (
+                <RefLabel ref={item.title_ref} className="text-foreground hover:underline" />
+              ) : (
+                <span className="hover:underline">{item.title}</span>
+              )}
+            </TargetLink>
           </span>
           {item.sla_breach ? (
             <span

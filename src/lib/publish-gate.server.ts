@@ -21,6 +21,7 @@ const UNPUBLISHED_STATUSES = ["draft", "submitted", "under_review", "needs_clari
 
 export type PublishGateRow = {
   position_id: string;
+  match_id: string;
   title: string;
   organization_id: string;
   organization_name: string;
@@ -34,6 +35,7 @@ export type PublishGateRow = {
   blockers: PublishBlocker[];
   can_publish: boolean;
   is_test_record: boolean;
+  client_visibility: "visible" | "hidden";
 };
 
 function toGateInput(p: Any): PublishGateInput {
@@ -127,6 +129,7 @@ export async function loadPublishGateQueue(
     const hard = blockers.filter((b) => b !== "not_approved");
     return {
       position_id: p['id'],
+      match_id: p['id'],
       title: p['title'] ?? "Untitled role",
       organization_id: p['organization_id'],
       organization_name: p['organizations']?.name ?? "Unknown client",
@@ -140,6 +143,7 @@ export async function loadPublishGateQueue(
       blockers,
       can_publish: blockers.length === 0,
       is_test_record: Boolean(p['organizations']?.is_test_record),
+      client_visibility: p['visibility'] === "visible" ? "visible" : "hidden",
     };
   });
 

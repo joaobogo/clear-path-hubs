@@ -139,7 +139,7 @@ export async function runInterviewReminders(limit = 200): Promise<ReminderSweepR
             _event_type: "approval_needed",
             _title: "Interview slot passed with no outcome",
             _body: `${cp?.full_name ?? "A candidate"} — ${pos?.title ?? "role"}. Nobody marked it complete or cancelled. Confirm what happened and offer a rebooking.`,
-            _link_path: `/admin/interviews`,
+            _link_path: `/admin/candidates/${match?.id}?tab=journey`,
           });
         }
         result.no_shows += 1;
