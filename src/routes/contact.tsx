@@ -301,9 +301,17 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
   const [marketingConsent, setMarketingConsent] = useState(false);
   /** Required privacy-notice acknowledgement. Never defaulted to true. */
   const [privacyAcknowledged, setPrivacyAcknowledged] = useState(false);
+  /** Inline, per-field validation messages. */
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   /** Inline, control-scoped error for the required consent checkbox. */
   const [consentError, setConsentError] = useState<string | null>(null);
   const submittedRef = useRef(false);
+
+  const nameFieldId = `name-${topic}`;
+  const emailFieldId = `email-${topic}`;
+  const messageFieldId = `message-${topic}`;
+  const privacyFieldId = `privacy-${topic}`;
+  const consentFieldId = `consent-${topic}`;
 
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
