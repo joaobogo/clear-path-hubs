@@ -83,13 +83,14 @@ export async function loadSlaBreaches(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const a = admin as unknown as { from: (t: string) => any };
 
-  const commitRes = await a
+  let commitQuery = a
     .from("position_commitments")
     .select(
       "id, position_id, organization_id, first_shortlist_days, shortlist_size, interview_slots_hours, baseline_at",
     );
   if (opts.organizationId) commitQuery = commitQuery.eq("organization_id", opts.organizationId);
   const commitRes = await commitQuery;
+  if (commitRes.error) throw new Error(commitRes.error.message);
   const commitments = (commitRes.data ?? []) as Array<Record<string, unknown>>;
   if (commitments.length === 0) {
     return { rows: [], commitments_monitored: 0, generated_at: new Date().toISOString() };
