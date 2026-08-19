@@ -73,8 +73,8 @@ const RAW_LABEL_MAP: Record<string, FitBand> = {
  */
 const CANONICAL_TO_FIT_BAND: Record<ScoreBandKey, FitBand> = {
   exceptional: "exceptional",
-  top: "exceptional",
-  strong: "strong",
+  top: "strong",
+  strong: "good",
   consider: "mixed",
   not_recommended: "not_recommended",
   unscored: "mixed",
