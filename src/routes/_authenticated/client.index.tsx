@@ -192,7 +192,7 @@ function OverviewPage() {
   const showOnboarding = !!kpis && kpis.active_positions === 0 && kpis.delivered === 0;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8 space-y-8">
+    <div className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8 space-y-8" data-density={density}>
       <header className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
         <div className="min-w-0">
           {/* The workspace is named once, in the sidebar. This is the page. */}

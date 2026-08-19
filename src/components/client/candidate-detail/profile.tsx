@@ -243,7 +243,7 @@ export const ProfilePanel = memo(function ProfilePanel({
     ["Years of experience", c.years_experience != null ? `${c.years_experience}` : null],
     ["Current role", c.current_role],
     ["Current company", c.current_company],
-    ["Work authorization", formatEnumLabel(candidate.work_authorization)],
+    
     [
       "Languages",
       candidate.languages.length > 0

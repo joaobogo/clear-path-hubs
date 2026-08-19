@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { makeWorkspacePending } from "@/components/workspace/pending-states";
-import { EmptyState, MemoryCard } from "@/components/client/talent-memory/memory-list";
+import { EmptyState, MemoryCard, CONSENT_LABELS } from "@/components/client/talent-memory/memory-list";
 import { MemorySheet } from "@/components/client/talent-memory/memory-sheet";
 
 const searchSchema = z.object({
