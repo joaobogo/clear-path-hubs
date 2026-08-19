@@ -258,12 +258,7 @@ function ClientDetail() {
             <AccountOperatingSummary organizationId={org.id} onOpenTab={(t) => setTab(t)} />
           </Block>
 
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <StatCard label="CLIENT USERS" value={activeMemberCount} icon={Users2} />
-            <StatCard label="OPEN POSITIONS" value={positions.filter(p => p.status !== 'archived' && p.status !== 'closed').length} icon={Briefcase} />
-            <StatCard label="PARSED CVS" value={parsedCvCount} icon={FileText} />
-            <StatCard label="TOTAL CANDIDATES" value={org.parsed_cv_count?.[0]?.count ?? 0} icon={UserCheck} />
-          </div>
+          {/* Duplicate KPI row removed: now only AccountOperatingSummary and Detailed OverviewTab remain. */}
 
           <Block name="overview">
             <OverviewTab org={org} members={members} positions={positions} />
