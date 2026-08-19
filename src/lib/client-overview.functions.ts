@@ -131,7 +131,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
 
     const { data: positions, error: positionsError } = await context.supabase
       .from("positions")
-      .select("id, title, status, updated_at, created_at, organization_id, organizations(name)")
+      .select("id, title, status, updated_at, created_at, organization_id, organizations(name), openings")
 
       .eq("organization_id", data.orgId)
       // Active work only: a closed or on-hold role must leave every count and
@@ -155,7 +155,11 @@ export const getClientOverview = createServerFn({ method: "GET" })
 
 
     
-    // Summary of blocked roles for the header
+    // Summary of activity for the header
+    const totalOpenings = activePositionsList.reduce((acc, p) => acc + (Number(p.openings) || 1), 0);
+    const totalFilled = kpis.hires;
+    const activity_summary = `Open roles ${activePositions} / ${totalFilled} filled`;
+
     const blocksCount = openItemsResponse.blockedRoles.length;
     const firstBlock = openItemsResponse.blockedRoles[0];
     const blocked_summary = blocksCount > 0 ? {
