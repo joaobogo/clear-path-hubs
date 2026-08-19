@@ -320,11 +320,6 @@ function ClientDetail() {
           <ActivityTab id={id} />
         </Block>
       )}
-      {tab === "audit" && (
-        <Block name="audit">
-          <ActivityTab id={id} audit />
-        </Block>
-      )}
       {tab === "shares" && (
         <Block name="shares">
           <SharesTab orgId={id} />
