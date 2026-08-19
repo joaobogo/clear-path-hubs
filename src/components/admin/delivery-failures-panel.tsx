@@ -1,11 +1,14 @@
 import { useMemo, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import {
-  listDeliveryFailureQueue,
+  DELIVERY_FAILURES_QUERY_KEY,
+  useDeliveryFailures,
+} from "@/lib/admin/use-delivery-failures";
+import {
   releaseNotificationRecipient,
   retryDeliveryFailureFn,
   suppressNotificationRecipient,
@@ -142,20 +145,34 @@ export function DeliveryFailuresPanel() {
 
   const [limit, setLimit] = useState(8);
   const items = ((query.data?.items ?? []) as Item[]).slice(0, limit);
-  const summary = query.data?.summary ?? {
+  type BlockedAddress = {
+    address: string;
+    deliveries: number;
+    lastAttemptAt: string;
+    sentence: string;
+  };
+  type Suppression = {
+    id: string;
+    email: string;
+    reason: string | null;
+    source: string;
+    created_at: string;
+  };
+  const summary = (query.data?.summary ?? {
     total: items.length,
     retryable: items.filter((i) => i.retryable).length,
     blockedNotSent: 0,
     blockedDeliveries: 0,
-    blockedAddresses: [] as Array<{
-      address: string;
-      deliveries: number;
-      lastAttemptAt: string;
-      sentence: string;
-    }>,
+    blockedAddresses: [],
+  }) as {
+    total: number;
+    retryable: number;
+    blockedNotSent: number;
+    blockedDeliveries: number;
+    blockedAddresses: BlockedAddress[];
   };
   const blockedAddresses = summary.blockedAddresses;
-  const suppressions = query.data?.suppressions ?? [];
+  const suppressions = (query.data?.suppressions ?? []) as Suppression[];
   const windowDays = query.data?.windowDays ?? 7;
 
   const firstRecipientEmail = useMemo(() => {
