@@ -90,23 +90,39 @@ function NewRolePage() {
               : "Creates a draft in your workspace and opens the role wizard."}
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="new-role-title">Role title</Label>
-            <Input
-              id="new-role-title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Senior Backend Engineer"
-              autoFocus
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && valid && !create.isPending) {
-                  create.mutate({ orgId: orgId!, title: title.trim() });
-                }
-              }}
-              data-qa-action="client-new-role-title"
-            />
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="new-role-title">Role title</Label>
+              <Input
+                id="new-role-title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Senior Backend Engineer"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && valid && !create.isPending) {
+                    create.mutate({ orgId: orgId!, title: title.trim() });
+                  }
+                }}
+                data-qa-action="client-new-role-title"
+              />
+            </div>
           </div>
+
+          <div className="space-y-3 rounded-lg border bg-muted/40 p-4">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Essential for launch</h4>
+            <ul className="grid grid-cols-1 gap-2 text-xs text-foreground/80 sm:grid-cols-2">
+              <li className="flex items-center gap-2">• Seniority</li>
+              <li className="flex items-center gap-2">• Work arrangement</li>
+              <li className="flex items-center gap-2">• Location or remote</li>
+              <li className="flex items-center gap-2">• 3–5 Must-have skills</li>
+              <li className="flex items-center gap-2">• Salary band</li>
+              <li className="flex items-center gap-2">• Job description</li>
+            </ul>
+            <p className="mt-2 text-[11px] text-muted-foreground italic">You can enrich the brief with advanced details after these 7 essentials.</p>
+          </div>
+
           <div className="flex items-center justify-end gap-2">
             <Button
               variant="ghost"
