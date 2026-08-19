@@ -219,8 +219,8 @@ export function buildDistribution(candidates: StoryCandidate[]): DistributionBlo
 
   const strongPct = Math.round((strong / Math.max(1, scored)) * 100);
   const takeaway = scored > 0
-    ? `${strong} of ${scored} delivered candidates score 70 or above, which is where we recommend a conversation.`
-    : distribution.scored > 0 ? `${strong} of ${scored} delivered candidates score 70 or above (Strong Match), which is where we recommend a conversation.` : "No candidates delivered yet.";
+    ? `${strong} of ${scored} delivered candidates score 70 or above (Strong Match), which is where we recommend a conversation.`
+    : "No candidates delivered yet.";
 
   return { delivered: candidates.length, scored, bands, criteria, takeaway };
 }
