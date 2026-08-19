@@ -34,7 +34,7 @@ export const Route = createFileRoute("/_authenticated/admin/integrations")({
 });
 
 const LABELS: Record<IntegrationId, { name: string; what: string }> = {
-  stripe: { name: "Payments (Stripe)", what: "Checkout, plan catalog, receipts" },
+  stripe: { name: "Payments", what: "Checkout, plan catalog, receipts" },
   attio: { name: "CRM (Attio)", what: "Lead capture from every public form" },
   calendly: { name: "Booking (Calendly)", what: "Every 'Book a call' button" },
   email: { name: "Email deliverability", what: "Notifications, receipts, digests" },

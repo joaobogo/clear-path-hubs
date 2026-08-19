@@ -57,7 +57,7 @@ type Def = {
 };
 
 const DEFS: Def[] = [
-  { key: "stripe", name: "Payments (Stripe)", expectedMinutes: 24 * 60, syncKeys: ["stripe"], queue: null },
+  { key: "stripe", name: "Payments", expectedMinutes: 24 * 60, syncKeys: ["stripe"], queue: null },
   { key: "attio", name: "CRM (Attio)", expectedMinutes: 6 * 60, syncKeys: ["attio", "crm"], queue: "crm" },
   { key: "calendly", name: "Booking (Calendly)", expectedMinutes: 6 * 60, syncKeys: ["calendly"], queue: null },
   { key: "email", name: "Email delivery", expectedMinutes: 24 * 60, syncKeys: ["email"], queue: "processing" },
