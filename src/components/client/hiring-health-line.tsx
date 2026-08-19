@@ -36,6 +36,7 @@ function figureTarget(key: HiringHealthFigureKey, org?: string | null): FigureTa
 
 export function HiringHealthLine({
   health,
+  activitySummary,
   notCurrent = false,
   notCurrentReason,
   loading,
@@ -46,6 +47,7 @@ export function HiringHealthLine({
   className,
 }: {
   health: HiringHealth | null | undefined;
+  activitySummary?: string | null;
   /** Underlying query failed or is out of date — never show confident figures. */
   notCurrent?: boolean;
   notCurrentReason?: string | null;
@@ -150,14 +152,21 @@ export function HiringHealthLine({
         className,
       )}
     >
-      <p className="flex items-center gap-2 text-base font-semibold sm:text-lg" aria-live="polite">
-        {attention ? (
-          <AlertTriangle className="h-4 w-4 shrink-0 taas-fg-warning" aria-hidden="true" />
-        ) : (
-          <CheckCircle2 className="h-4 w-4 shrink-0 text-success" aria-hidden="true" />
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        <p className="flex items-center gap-2 text-base font-semibold sm:text-lg" aria-live="polite">
+          {attention ? (
+            <AlertTriangle className="h-4 w-4 shrink-0 taas-fg-warning" aria-hidden="true" />
+          ) : (
+            <CheckCircle2 className="h-4 w-4 shrink-0 text-success" aria-hidden="true" />
+          )}
+          {health.sentence}
+        </p>
+        {activitySummary && (
+          <span className="text-xs font-medium text-muted-foreground">
+            {activitySummary}
+          </span>
         )}
-        {health.sentence}
-      </p>
+      </div>
       <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
         {health.figures.map((f) => {
           const target = figureTarget(f.key, org);

@@ -131,7 +131,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
 
     const { data: positions, error: positionsError } = await context.supabase
       .from("positions")
-      .select("id, title, status, updated_at, created_at, organization_id, organizations(name)")
+      .select("id, title, status, updated_at, created_at, organization_id, organizations(name), openings")
 
       .eq("organization_id", data.orgId)
       // Active work only: a closed or on-hold role must leave every count and
@@ -142,17 +142,24 @@ export const getClientOverview = createServerFn({ method: "GET" })
     const activePositions = activePositionsList.length;
 
     // Reconciliation (B4/B3): ensure KPI counts use the same positions we just loaded
+    // and derive hires from stage counts for consistency across surfaces.
+    const { counts: laneCounts } = countLanes(rows);
     const kpis = {
       ...computeKpis(rows, activePositions),
       awaiting_decision: openItemsResponse.items.filter(i => i.kind === 'pending_decision').length,
       interviews_to_confirm: openItemsResponse.items.filter(i => i.kind === 'interview').length,
       offers: openItemsResponse.items.filter(i => i.kind === 'offer').length,
+      hires: laneCounts.hired,
       missing_feedback: openItemsResponse.items.filter(i => i.kind === 'missing_feedback').length,
     };
 
 
     
-    // Summary of blocked roles for the header
+    // Summary of activity for the header
+    const totalOpenings = activePositionsList.reduce((acc, p) => acc + (Number(p.openings) || 1), 0);
+    const totalFilled = kpis.hires;
+    const activity_summary = `Open roles ${activePositions} / ${totalFilled} filled`;
+
     const blocksCount = openItemsResponse.blockedRoles.length;
     const firstBlock = openItemsResponse.blockedRoles[0];
     const blocked_summary = blocksCount > 0 ? {
@@ -564,6 +571,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
 
 
       active_positions: activePositions,
+      activity_summary,
       blocked_summary,
       new_this_week,
       whats_next,

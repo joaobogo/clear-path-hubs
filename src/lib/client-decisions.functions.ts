@@ -157,12 +157,40 @@ export const moveMatchStage = createServerFn({ method: "POST" })
       });
       if (gate.blocked) throw advanceGateError(gate.missing);
     }
-    const { error } = await context.supabase
+    const { error: updateError } = await context.supabase
       .from("candidate_matches")
       .update({ stage: data.toStage })
       .eq("id", data.matchId)
       .eq("organization_id", data.orgId);
-    if (error) throw new Error(error.message);
+    if (updateError) throw new Error(updateError.message);
+
+    // B4/HIRE reconciliation: When moving to 'hired', ensure a hire_record exists.
+    // The client workspace moves the stage, but the rollup reads hire_records.
+    if (data.toStage === "hired") {
+      const { data: existingHire } = await context.supabase
+        .from("hire_records")
+        .select("id, status")
+        .eq("candidate_match_id", data.matchId)
+        .maybeSingle();
+
+      if (!existingHire) {
+        // Create a default 'hire_confirmed' record to satisfy reporting rollup.
+        await context.supabase.from("hire_records").insert({
+          candidate_match_id: data.matchId,
+          organization_id: data.orgId,
+          position_id: match.position_id,
+          candidate_profile_id: match.candidate_profile_id,
+          status: "hire_confirmed",
+          hired_at: new Date().toISOString(),
+        } as never);
+      } else if (existingHire.status !== "hire_confirmed") {
+        // Promote existing offer/draft to confirmed hire.
+        await context.supabase
+          .from("hire_records")
+          .update({ status: "hire_confirmed", hired_at: new Date().toISOString() } as never)
+          .eq("id", existingHire.id);
+      }
+    }
     // When leaving a gated stage, retract any unstarted side-artifacts.
     if (from === "interview_process" && data.toStage !== "interview_process") {
       await context.supabase

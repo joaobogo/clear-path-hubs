@@ -157,6 +157,13 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
 
   const overdue = (delivered.data ?? []) as any[];
 
+  // 11. Reconciliation: Identify hired candidates to ensure rollup agreement.
+  const hiredCount = (await s
+    .from("candidate_matches")
+    .select("id", { count: "exact", head: true })
+    .eq("stage", "hired")
+    .not("delivered_at", "is", null)).count ?? 0;
+
 
   const agingIntakes = aging as {
     items: Array<{
@@ -413,6 +420,15 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         claim: positionClaim(m.positions?.id),
         tone: "warning" as const,
       })),
+    },
+    {
+      key: "hires_pending",
+      label: "Hires confirmed (Total)",
+      description: "Candidates currently in the 'hired' stage across the portfolio.",
+      count: hiredCount,
+      action_hint: "View confirmed hires and start dates.",
+      see_all: { to: "/admin/candidates" },
+      items: [], // Summary tile only
     },
   ];
 
