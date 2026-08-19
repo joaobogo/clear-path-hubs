@@ -7,6 +7,7 @@ const base = {
   rolesWithoutShortlist: 1,
   overdueDecisions: 0,
   behindScheduleRoles: 0,
+  blocks: 0,
 };
 
 describe("computeHiringHealth", () => {
@@ -17,21 +18,27 @@ describe("computeHiringHealth", () => {
     expect(h.tone).toBe("on_track");
   });
 
-  it("puts overdue decisions ahead of behind-schedule roles", () => {
+  it("puts blocks and overdue decisions ahead of behind-schedule roles", () => {
     const h = computeHiringHealth({ ...base, overdueDecisions: 2, behindScheduleRoles: 1 });
-    expect(h.sentence).toBe("Two decisions are overdue.");
+    expect(h.sentence).toBe("Two things need you.");
     expect(h.reason).toBe("overdue_decisions");
   });
 
-  it("reports behind-schedule roles when no decision is overdue", () => {
+  it("groups blocks and overdue decisions into 'things need you'", () => {
+    const h = computeHiringHealth({ ...base, overdueDecisions: 1, blocks: 2 });
+    expect(h.sentence).toBe("Three things need you.");
+    expect(h.reason).toBe("blocks");
+  });
+
+  it("reports behind-schedule roles when no decision is overdue or blocked", () => {
     const h = computeHiringHealth({ ...base, behindScheduleRoles: 1 });
     expect(h.sentence).toBe("One role is behind schedule.");
     expect(h.reason).toBe("behind_schedule");
   });
 
-  it("uses singular wording for one overdue decision", () => {
+  it("uses singular wording for one thing needing attention", () => {
     expect(computeHiringHealth({ ...base, overdueDecisions: 1 }).sentence).toBe(
-      "One decision is overdue.",
+      "One thing needs you.",
     );
   });
 
