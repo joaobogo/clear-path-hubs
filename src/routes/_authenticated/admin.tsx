@@ -97,9 +97,11 @@ const ADMIN_REFRESH_KEYS = [
 function AdminLayout() {
   const { staffAccess, testScope } = Route.useRouteContext();
   // Nav comes from the same predicate the gate and the server functions use.
-  const navItems = staffAccess.platformAdmin
+  const navItems = (staffAccess.platformAdmin
     ? ADMIN_NAV
-    : ADMIN_NAV.filter((item) => !item.requiresPlatformAdmin);
+    : ADMIN_NAV.filter((item) => !item.requiresPlatformAdmin)).filter(
+    (item) => item.to !== "/admin/approvals",
+  );
   // Tabs come from the same capabilities, so no desk is offered whose data
   // calls would 403.
   const sectionGroups = filterSectionGroups(ADMIN_SECTION_GROUPS, {
