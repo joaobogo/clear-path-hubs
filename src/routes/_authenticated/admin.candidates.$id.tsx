@@ -3,7 +3,7 @@ import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import { StructuredNotesPanel } from "@/components/admin/structured-notes-panel";
 import { ComponentErrorBoundary } from "@/components/ds/component-error-boundary";
 import { normalizeFocusEventId } from "@/lib/candidate-history";
-import { createFileRoute, notFound, useNavigate, useRouter } from "@tanstack/react-router";
+import { createFileRoute, notFound, useNavigate, useRouter, Link } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useSuspenseQuery, useQuery, useQueryClient } from "@tanstack/react-query";
