@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { isQaFixtureTitle } from "./client/test-record-filter";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
   MAX_ATTACHMENTS_PER_MESSAGE,
@@ -166,7 +167,8 @@ async function nameMap(
       .map((m) => m.user_id as string),
   );
   const rawRole: Record<string, string | null> = {};
-  for (const m of ((mems as Row[]) ?? [])) rawRole[m.user_id as string] = (m.role as string | null) ?? null;
+  for (const m of (mems as Row[]) ?? [])
+    rawRole[m.user_id as string] = (m.role as string | null) ?? null;
 
   const { resolveStaffPersona } = await import("./staff-persona.server");
   const out: Record<string, { name: string; staff: boolean; role: string }> = {};
@@ -242,7 +244,8 @@ export const listConversations = createServerFn({ method: "GET" })
     ]);
 
     const readAt: Record<string, string> = {};
-    for (const r of (reads as Row[]) ?? []) readAt[r.conversation_id as string] = r.last_read_at as string;
+    for (const r of (reads as Row[]) ?? [])
+      readAt[r.conversation_id as string] = r.last_read_at as string;
 
     const last: Record<string, Row> = {};
     const ownLatest: Record<string, string> = {};
@@ -275,25 +278,50 @@ export const listConversations = createServerFn({ method: "GET" })
     const matchIds = rows.map((r) => r.candidate_match_id).filter(Boolean) as string[];
     const [{ data: positions }, { data: matches }] = await Promise.all([
       positionIds.length
-        ? supabase.from("positions").select("id, title").in("id", positionIds)
+        ? supabase.from("positions").select("id, title, is_test_record").in("id", positionIds)
         : Promise.resolve({ data: [] as Row[] }),
       matchIds.length
         ? supabase
             .from("candidate_matches")
-            .select("id, position_id, candidate_profiles(full_name), positions(title)")
+            .select(
+              "id, position_id, is_test_record, candidate_profiles(full_name), positions(title, is_test_record)",
+            )
             .in("id", matchIds)
         : Promise.resolve({ data: [] as Row[] }),
     ]);
     const positionTitle: Record<string, string> = {};
-    for (const p of (positions as Row[]) ?? []) positionTitle[p.id as string] = p.title as string;
+    // QA fixtures must never surface in a client inbox, so anything flagged as
+    // a test record (or still carrying a QA marker in its title) is dropped
+    // along with the thread that points at it.
+    const qaPositionIds = new Set<string>();
+    const qaMatchIds = new Set<string>();
+    for (const p of (positions as Row[]) ?? []) {
+      positionTitle[p.id as string] = p.title as string;
+      if (p.is_test_record === true || isQaFixtureTitle(p.title)) qaPositionIds.add(p.id as string);
+    }
     const matchLabel: Record<string, string> = {};
     for (const m of (matches as Row[]) ?? []) {
       const cand = (m.candidate_profiles as Row | null)?.full_name as string | undefined;
       const role = (m.positions as Row | null)?.title as string | undefined;
       matchLabel[m.id as string] = [cand ?? "Candidate", role].filter(Boolean).join(" · ");
+      if (
+        m.is_test_record === true ||
+        (m.positions as Row | null)?.is_test_record === true ||
+        isQaFixtureTitle(role) ||
+        isQaFixtureTitle(cand)
+      )
+        qaMatchIds.add(m.id as string);
     }
 
-    const items: ConversationSummary[] = rows.map((c) => {
+    const visibleRows = rows.filter((c) => {
+      if (c.position_id && qaPositionIds.has(c.position_id as string)) return false;
+      if (c.candidate_match_id && qaMatchIds.has(c.candidate_match_id as string)) return false;
+      if (isQaFixtureTitle(c.subject)) return false;
+      const body = last[c.id as string]?.body;
+      return !isQaFixtureTitle(body);
+    });
+
+    const items: ConversationSummary[] = visibleRows.map((c) => {
       const lastMsg = last[c.id as string];
       const scope = c.scope as ConversationScope;
       const contextLabel =
@@ -366,7 +394,6 @@ export const ensureConversation = createServerFn({ method: "POST" })
         subject: data.subject ?? (data.scope === "organization" ? "General" : null),
         created_by: userId,
         last_message_at: undefined, // Explicitly undefined (null in DB) until first message
-
       })
       .select("id")
       .single();
@@ -392,9 +419,7 @@ export async function _getConversationHandler({ data, context }: any) {
   const { supabase, userId } = context;
   const { data: convo, error } = await supabase
     .from("conversations")
-    .select(
-      "id, organization_id, scope, position_id, candidate_match_id, subject, last_message_at",
-    )
+    .select("id, organization_id, scope, position_id, candidate_match_id, subject, last_message_at")
     .eq("id", data.conversationId)
     .maybeSingle();
   if (error) throw new Error(error.message);
@@ -543,7 +568,6 @@ export const postConversationMessage = createServerFn({ method: "POST" })
       .update({ last_message_at: (row as Row).created_at })
       .eq("id", data.conversationId);
 
-
     // Posting is reading: keep the poster's unread badge at zero for this thread.
     await supabase.from("conversation_reads").upsert(
       {
@@ -656,92 +680,95 @@ export const listMessageHistory = createServerFn({ method: "GET" })
     return _listMessageHistoryHandler({ data, context });
   });
 
-export async function _listMessageHistoryHandler({ data, context }: any): Promise<{ items: HistoricalMessage[]; total: number }> {
-    const { supabase, userId } = context;
-    await assertOrgAccess(supabase, userId, data.orgId);
+export async function _listMessageHistoryHandler({
+  data,
+  context,
+}: any): Promise<{ items: HistoricalMessage[]; total: number }> {
+  const { supabase, userId } = context;
+  await assertOrgAccess(supabase, userId, data.orgId);
 
-    // Join with conversations to filter by org and get context.
-    const from = (data.page - 1) * data.pageSize;
-    const to = from + data.pageSize - 1;
+  // Join with conversations to filter by org and get context.
+  const from = (data.page - 1) * data.pageSize;
+  const to = from + data.pageSize - 1;
 
-    const {
-      data: msgs,
-      error,
-      count,
-    } = await supabase
-      .from("messages")
-      .select(
-        "id, conversation_id, body, created_at, sender_user_id, conversations!inner(organization_id, subject, scope, position_id, candidate_match_id)",
-        { count: "exact" },
-      )
-      .eq("conversations.organization_id", data.orgId)
-      .order("created_at", { ascending: false })
-      .range(from, to);
+  const {
+    data: msgs,
+    error,
+    count,
+  } = await supabase
+    .from("messages")
+    .select(
+      "id, conversation_id, body, created_at, sender_user_id, conversations!inner(organization_id, subject, scope, position_id, candidate_match_id)",
+      { count: "exact" },
+    )
+    .eq("conversations.organization_id", data.orgId)
+    .order("created_at", { ascending: false })
+    .range(from, to);
 
-    if (error) throw new Error(error.message);
-    const rows = (msgs as Row[]) ?? [];
-    if (rows.length === 0) return { items: [], total: count ?? 0 };
+  if (error) throw new Error(error.message);
+  const rows = (msgs as Row[]) ?? [];
+  if (rows.length === 0) return { items: [], total: count ?? 0 };
 
-    const names = await nameMap(rows.map((m) => m.sender_user_id as string));
-    const { resolveStaffPersona } = await import("./staff-persona.server");
+  const names = await nameMap(rows.map((m) => m.sender_user_id as string));
+  const { resolveStaffPersona } = await import("./staff-persona.server");
 
-    // Collect context data for scoped threads
-    const positionIds = rows.map((r) => r.conversations.position_id).filter(Boolean) as string[];
-    const matchIds = rows.map((r) => r.conversations.candidate_match_id).filter(Boolean) as string[];
+  // Collect context data for scoped threads
+  const positionIds = rows.map((r) => r.conversations.position_id).filter(Boolean) as string[];
+  const matchIds = rows.map((r) => r.conversations.candidate_match_id).filter(Boolean) as string[];
 
-    const [{ data: positions }, { data: matches }] = await Promise.all([
-      positionIds.length
-        ? supabase.from("positions").select("id, title").in("id", positionIds)
-        : Promise.resolve({ data: [] as Row[] }),
-      matchIds.length
-        ? supabase
-            .from("candidate_matches")
-            .select("id, position_id, candidate_profiles(full_name), positions(title)")
-            .in("id", matchIds)
-        : Promise.resolve({ data: [] as Row[] }),
-    ]);
+  const [{ data: positions }, { data: matches }] = await Promise.all([
+    positionIds.length
+      ? supabase.from("positions").select("id, title").in("id", positionIds)
+      : Promise.resolve({ data: [] as Row[] }),
+    matchIds.length
+      ? supabase
+          .from("candidate_matches")
+          .select("id, position_id, candidate_profiles(full_name), positions(title)")
+          .in("id", matchIds)
+      : Promise.resolve({ data: [] as Row[] }),
+  ]);
 
-    const positionTitle: Record<string, string> = {};
-    for (const p of (positions as Row[]) ?? []) positionTitle[p.id as string] = p.title as string;
+  const positionTitle: Record<string, string> = {};
+  for (const p of (positions as Row[]) ?? []) positionTitle[p.id as string] = p.title as string;
 
-    const matchLabel: Record<string, string> = {};
-    for (const m of (matches as Row[]) ?? []) {
-      const cand = (m.candidate_profiles as Row | null)?.full_name as string | undefined;
-      const role = (m.positions as Row | null)?.title as string | undefined;
-      matchLabel[m.id as string] = [cand ?? "Candidate", role].filter(Boolean).join(" · ");
-    }
+  const matchLabel: Record<string, string> = {};
+  for (const m of (matches as Row[]) ?? []) {
+    const cand = (m.candidate_profiles as Row | null)?.full_name as string | undefined;
+    const role = (m.positions as Row | null)?.title as string | undefined;
+    matchLabel[m.id as string] = [cand ?? "Candidate", role].filter(Boolean).join(" · ");
+  }
 
-    const items: HistoricalMessage[] = rows.map((m) => {
-      const sid = (m.sender_user_id as string | null) ?? null;
-      const meta = sid ? names[sid] : undefined;
-      const persona = resolveStaffPersona({
-        name: sid ? (meta?.name ?? null) : null,
-        isStaff: sid ? (meta?.staff ?? false) : true,
-        roleLabel: sid ? (meta?.role ?? null) : "TaaSFlow team",
-      });
-
-      const convo = m.conversations;
-      const scope = convo.scope as ConversationScope;
-      const contextLabel =
-        scope === "position"
-          ? (positionTitle[convo.position_id as string] ?? "Role")
-          : scope === "candidate"
-            ? (matchLabel[convo.candidate_match_id as string] ?? "Candidate")
-            : null;
-
-      return {
-        id: m.id as string,
-        conversation_id: m.conversation_id as string,
-        body: m.body as string,
-        created_at: m.created_at as string,
-        sender_name: persona.name,
-        sender_role: persona.role,
-        sender_side: !sid ? "system" : meta?.staff ? "taasflow" : "client",
-        mine: sid === userId,
-        subject: (convo.subject as string | null) ?? contextLabel ?? "General",
-        context_label: contextLabel,
-      };
+  const items: HistoricalMessage[] = rows.map((m) => {
+    const sid = (m.sender_user_id as string | null) ?? null;
+    const meta = sid ? names[sid] : undefined;
+    const persona = resolveStaffPersona({
+      name: sid ? (meta?.name ?? null) : null,
+      isStaff: sid ? (meta?.staff ?? false) : true,
+      roleLabel: sid ? (meta?.role ?? null) : "TaaSFlow team",
     });
 
-    return { items, total: count ?? 0 };
+    const convo = m.conversations;
+    const scope = convo.scope as ConversationScope;
+    const contextLabel =
+      scope === "position"
+        ? (positionTitle[convo.position_id as string] ?? "Role")
+        : scope === "candidate"
+          ? (matchLabel[convo.candidate_match_id as string] ?? "Candidate")
+          : null;
+
+    return {
+      id: m.id as string,
+      conversation_id: m.conversation_id as string,
+      body: m.body as string,
+      created_at: m.created_at as string,
+      sender_name: persona.name,
+      sender_role: persona.role,
+      sender_side: !sid ? "system" : meta?.staff ? "taasflow" : "client",
+      mine: sid === userId,
+      subject: (convo.subject as string | null) ?? contextLabel ?? "General",
+      context_label: contextLabel,
+    };
+  });
+
+  return { items, total: count ?? 0 };
 }

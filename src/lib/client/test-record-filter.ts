@@ -13,8 +13,11 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyQuery = any;
 
+/** PostgREST `.or()` predicate meaning "not a QA fixture row". */
+export const NOT_TEST_RECORD = "is_test_record.is.null,is_test_record.eq.false";
+
 export function excludeTestRecords<T>(query: T): T {
-  return (query as AnyQuery).or("is_test_record.is.null,is_test_record.eq.false") as T;
+  return (query as AnyQuery).or(NOT_TEST_RECORD) as T;
 }
 
 /**

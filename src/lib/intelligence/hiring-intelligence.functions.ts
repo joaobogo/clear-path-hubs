@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { buildIntelligence, type IntelligenceRecords } from "./intelligence-builder";
 import { loadWorkspaceAgentRuns } from "./workspace-agent-runs.server";
+import { NOT_TEST_RECORD } from "@/lib/client/test-record-filter";
 
 /**
  * Hiring Intelligence read.
@@ -52,7 +53,8 @@ export const getHiringIntelligence = createServerFn({ method: "GET" })
     let posQ = supabase
       .from("positions")
       .select("id, title, status, created_at, approved_at, published_at, closed_at, updated_at")
-      .eq("organization_id", data.organization_id);
+      .eq("organization_id", data.organization_id)
+      .or(NOT_TEST_RECORD);
     if (data.position_id) posQ = posQ.eq("id", data.position_id);
     const positions = ((await posQ).data as Row[]) ?? [];
 
@@ -65,7 +67,8 @@ export const getHiringIntelligence = createServerFn({ method: "GET" })
           "id, position_id, stage, canonical_state, client_visibility, eligibility_status, created_at, updated_at, delivered_at, approved_score_run_id, current_score_run_id, evidence_confidence",
         )
         .eq("organization_id", data.organization_id)
-        .eq("client_visibility", "visible"),
+        .eq("client_visibility", "visible")
+        .or(NOT_TEST_RECORD),
     )).data as Row[]) ?? [];
 
     const matchIds = matches.map((m) => m.id);
@@ -213,6 +216,7 @@ export const getIntelligencePositions = createServerFn({ method: "POST" })
       .from("positions")
       .select("id, title, status")
       .eq("organization_id", data.organization_id)
+      .or(NOT_TEST_RECORD)
       .order("title");
     return {
       positions: ((pos as Row[]) ?? []).map((p) => ({
