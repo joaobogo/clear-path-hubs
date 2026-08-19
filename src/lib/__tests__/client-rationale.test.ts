@@ -1,18 +1,34 @@
 import { describe, it, expect } from "vitest";
 import { buildShortlistRationale, normaliseSource } from "@/lib/client-rationale";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
+import type { RequirementRow } from "@/lib/client-fit-presentation";
 
 type Row = ClientCandidateDTO["requirement_rows"][number];
 
-function row(p: Partial<Row> & { label: string }): Row {
+function row(p: Partial<RequirementRow> & { label: string }): RequirementRow {
   return {
     id: p.id ?? p.label,
     label: p.label,
     importance: p.importance ?? "must_have",
     status: p.status ?? "met",
     explanation: p.explanation ?? null,
-    evidence: p.evidence ?? [],
-  } as Row;
+    evidence: (p.evidence ?? []).map(e => ({ 
+      label: (e as any).label || "Evidence", 
+      snippet: e.snippet, 
+      source: (e as any).source ?? null 
+    })),
+    interpretation: p.interpretation ?? null,
+    contradictions: (p.contradictions ?? []).map(e => ({ 
+      label: (e as any).label || "Contradiction", 
+      snippet: e.snippet, 
+      source: (e as any).source ?? null 
+    })),
+    context: (p.context ?? []).map(e => ({ 
+      label: (e as any).label || "Context", 
+      snippet: e.snippet, 
+      source: (e as any).source ?? null 
+    })),
+  } as RequirementRow;
 }
 
 const base = {
@@ -43,12 +59,12 @@ describe("shortlist rationale", () => {
       requirement_rows: [
         row({
           label: "Kubernetes",
-          evidence: [{ source: "resume", snippet: "Ran 40-node EKS clusters" }],
+          evidence: [{ label: "Evidence", source: "resume", snippet: "Ran 40-node EKS clusters" } as any],
         }),
         row({
           label: "Team leadership",
           status: "partial",
-          evidence: [{ source: "reference check with former VP", snippet: "Led a team of six" }],
+          evidence: [{ label: "Evidence", source: "reference check with former VP", snippet: "Led a team of six" } as any],
         }),
       ],
     });
@@ -104,7 +120,7 @@ describe("shortlist rationale", () => {
     const r = buildShortlistRationale({
       ...base,
       requirement_rows: [
-        row({ label: "A", evidence: [{ source: "cv", snippet: "yes" }] }),
+        row({ label: "A", evidence: [{ label: "Evidence", source: "cv", snippet: "yes" } as any] }),
         row({ label: "B", status: "not_applicable" }),
       ],
     });

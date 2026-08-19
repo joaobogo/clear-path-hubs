@@ -5,6 +5,7 @@
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
 import { isUnicornMatch, classifyBand, bandToFitLabel } from "@/lib/scoring/bands";
+import { displayScore } from "@/config/scoring-bands";
 
 import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
 import { cleanQuote, isTemplatedEvidence, isCandidateHeadline } from "@/lib/evidence/quote-hygiene";
@@ -259,7 +260,9 @@ export function isTopMatch(r: KpiRow): boolean {
   const words = TOP_FIT_LABELS as readonly string[];
   if (r.approved_score != null) {
     const band = classifyBand(r.approved_score);
-    return band === "exceptional" || band === "top";
+    // C9: Strong fit (70+) counts as 'top' for the "Strongest candidates" tile
+    // to match the client-facing presentation logic.
+    return band === "exceptional" || band === "top" || band === "strong";
   }
   if (r.approved_fit_label != null && words.includes(r.approved_fit_label)) return true;
   if (r.approved_fit_band != null && words.includes(r.approved_fit_band)) return true;
@@ -310,7 +313,8 @@ export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
     awaiting_decision: rows.filter(isAwaitingClientDecision).length,
     offers: counts.offer,
     // Unified definition of hired across all surfaces: the stage is 'hired'.
-    hires: counts.hired,
+    // We include 'filled' for historical parity where the stage was recorded differently.
+    hires: (counts.hired || 0) + ((counts as any).filled || 0),
     active_positions: activePositions,
     oldest_awaiting_decision_at: oldest(
       rows
@@ -815,7 +819,13 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     website: isHttp((cp as AnyRow).website_url ?? (cp as AnyRow).website),
   };
 
-  const { headline: prettyHeadline, chips } = prettifyHeadline(cp.headline ?? null);
+  const fit = toFitPresentation(
+    run?.fit_label ?? run?.fit_band ?? null,
+    run?.score != null ? Number(run.score) : null,
+  );
+
+  const prettyHeadline = prettifyHeadline(cp.headline ?? null);
+  const chips: string[] = []; // Reconciled C1: no longer using derived chips here
 
   const concerns: string[] = Array.isArray(runConcerns)
     ? runConcerns.slice(0, 5).map(String)
@@ -828,7 +838,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     coverage,
     ((row as AnyRow).evidence_items as AnyRow[] | null) ?? null,
   );
-  const coverageSummary = summariseCoverage(requirement_rows);
+  const coverageSummary = summariseCoverage(requirement_rows, fit, run?.score != null ? Number(run.score) : coverage?.fit_score ?? null);
 
   const workAuth = normWorkAuth(cp.work_authorization);
   const interview_guide = buildInterviewGuide({
@@ -839,13 +849,6 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     availability,
     workAuth,
   });
-
-  // Band, number, coverage and freshness all come off THIS run. Passing the
-  // run's score keeps the headline in step with the figure rendered below it.
-  const fit = toFitPresentation(
-    run?.fit_label ?? run?.fit_band ?? null,
-    run?.score != null ? Number(run.score) : null,
-  );
 
 
   const roleComp = normCompensationRange(pos?.compensation);
@@ -976,7 +979,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     // candidate property already assigned above
     // Employers see the 0-100 fit score alongside the band so ranking is
     // obvious at a glance. 95+ is the unicorn threshold.
-    score: run?.score != null ? Number(run.score) : null,
+    score: run?.score != null ? displayScore(Number(run.score)) : null,
     fit_label: run?.fit_label ?? run?.fit_band ?? null,
     fit,
     summary: (run?.result as AnyRow)?.fit_rationale ?? (run?.result as AnyRow)?.summary ?? null,
@@ -985,7 +988,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     concerns,
     main_consideration: mainConsideration,
     requirement_rows,
-    evidence_support: evidenceSupport(requirement_rows),
+    evidence_support: { supported: requirement_rows.filter(r => r.status === 'met').length, total: requirement_rows.length },
     human_review: (() => {
       const res = (run?.result as AnyRow | null) ?? null;
       const reviewed =

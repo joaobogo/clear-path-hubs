@@ -260,7 +260,7 @@ function ClientDetail() {
           </Block>
 
           <Block name="overview">
-            <OverviewTab org={org} />
+            <OverviewTab org={org} parsedCvCount={parsedCvCount} />
           </Block>
         </div>
       )}
@@ -339,12 +339,18 @@ function ClientDetail() {
 }
 
 
-function OverviewTab({ org }: { org: any }) {
+function OverviewTab({ org, parsedCvCount }: { org: any; parsedCvCount: number }) {
   return (
     <section className="grid gap-4 md:grid-cols-3">
       {/* Visual duplicate KPI tiles removed (C1) — reconciled into AccountOperatingSummary. */}
-      <div className="md:col-span-3 rounded-lg border p-4 text-sm">
-        <div className="font-medium mb-2 text-xs uppercase tracking-wide text-muted-foreground">Organization at a glance</div>
+      <div className="md:col-span-3 rounded-lg border p-4 text-sm bg-card">
+        <div className="flex items-center justify-between mb-2 border-b pb-2">
+          <div className="font-medium text-xs uppercase tracking-wide text-muted-foreground">Organization at a glance</div>
+          {/* C10: Reconcile counts by showing the parsed CV count as the truth */}
+          <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+            {parsedCvCount} PARSED CVs
+          </span>
+        </div>
         <dl className="grid grid-cols-2 gap-x-6 gap-y-1 text-muted-foreground">
           <dt>Name</dt><dd className="text-foreground">{org.name}</dd>
           <dt>Status</dt><dd className="text-foreground capitalize">{org.status}</dd>

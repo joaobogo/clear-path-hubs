@@ -1406,12 +1406,13 @@ export const getPipelineHealth = createServerFn({ method: "GET" })
     }
 
     // Recent failed jobs (C8: Unified failed job count/query)
+    // We include both 'failed' and 'stuck_queued' to reconcile counts across views.
     const { data: failedJobs } = await s
       .from("processing_jobs")
       .select("id,job_type,error_code,error_message,trace_id,created_at,entity_id")
       .in("status", ["failed", "stuck_queued"])
       .order("created_at", { ascending: false })
-      .limit(50);
+      .limit(100);
 
     // Provider errors (last 7d)
     const weekAgo = new Date(Date.now() - 7 * 86400_000).toISOString();
@@ -1996,9 +1997,10 @@ export const getClientActivity = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
     const s = await getAdmin();
+    // Reconcile client details (C10): Unified audit view
     const { data: rows } = await s
       .from("audit_events")
-      .select("id,action,entity_type,entity_id,created_at,actor_user_id,trace_id")
+      .select("id,action,entity_type,entity_id,created_at,actor_user_id,trace_id,payload")
       .eq("organization_id", data.id)
       .order("created_at", { ascending: false })
       .limit(data.limit);

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildShortlistRationale, type RationaleLine } from "./client-rationale";
+import { buildShortlistRationale } from "./client-rationale";
 import type { RequirementRow } from "./client-fit-presentation";
 
 function requirementRow(over: Partial<RequirementRow> = {}): RequirementRow {
@@ -9,21 +9,35 @@ function requirementRow(over: Partial<RequirementRow> = {}): RequirementRow {
     importance: over.importance ?? "must_have",
     status: over.status ?? "met",
     explanation: over.explanation ?? null,
-    evidence: over.evidence ?? [],
-    context: over.context ?? [],
+    evidence: (over.evidence ?? []).map(e => ({
+      label: (e as any).label || "Evidence",
+      snippet: e.snippet,
+      source: (e as any).source ?? null
+    })),
+    interpretation: over.interpretation ?? null,
+    contradictions: (over.contradictions ?? []).map(e => ({
+      label: (e as any).label || "Contradiction",
+      snippet: e.snippet,
+      source: (e as any).source ?? null
+    })),
+    context: (over.context ?? []).map(e => ({
+      label: (e as any).label || "Context",
+      snippet: e.snippet,
+      source: (e as any).source ?? null
+    })),
     ...over,
   };
 }
 
 function evidenceSnippet(snippet: string, source = "cv") {
-  return { snippet, source, confidence: 0.8 };
+  return { snippet, source, confidence: 0.8, label: "Evidence" };
 }
 
 describe("buildShortlistRationale", () => {
   it("renders a normal claim as evidence", () => {
     const r = buildShortlistRationale({
       requirement_rows: [
-        requirementRow({ evidence: [evidenceSnippet("Five years on Postgres at scale")] }),
+        requirementRow({ evidence: [evidenceSnippet("Five years on Postgres at scale") as any] }),
       ],
       screening_answers: [],
       evidence: [],
@@ -35,11 +49,11 @@ describe("buildShortlistRationale", () => {
   it("marks a claim that only repeats the requirement as under review", () => {
     const r = buildShortlistRationale({
       requirement_rows: [
-        requirementRow({ evidence: [evidenceSnippet("Strong SQL")] }),
+        requirementRow({ evidence: [evidenceSnippet("Strong SQL") as any] }),
         requirementRow({
           id: "r2",
           label: "Team leadership",
-          evidence: [evidenceSnippet("team leadership")],
+          evidence: [evidenceSnippet("team leadership") as any],
         }),
       ],
       screening_answers: [],
@@ -66,7 +80,7 @@ describe("buildShortlistRationale", () => {
     const r = buildShortlistRationale({
       requirement_rows: [
         requirementRow({
-          evidence: [evidenceSnippet("Strong SQL: built a reporting warehouse in Postgres")],
+          evidence: [evidenceSnippet("Strong SQL: built a reporting warehouse in Postgres") as any],
         }),
       ],
       screening_answers: [],
@@ -101,11 +115,11 @@ describe("buildShortlistRationale summary", () => {
   it("counts under-review lines as not evidenced", () => {
     const r = buildShortlistRationale({
       requirement_rows: [
-        requirementRow({ evidence: [evidenceSnippet("Strong SQL")] }),
+        requirementRow({ evidence: [evidenceSnippet("Strong SQL") as any] }),
         requirementRow({
           id: "r2",
           label: "Team leadership",
-          evidence: [evidenceSnippet("Led a team of nine")],
+          evidence: [evidenceSnippet("Led a team of nine") as any],
         }),
       ],
       screening_answers: [],

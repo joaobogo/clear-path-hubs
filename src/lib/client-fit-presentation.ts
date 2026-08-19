@@ -15,7 +15,7 @@ import {
   isRelevantEvidence,
   isCandidateHeadline,
 } from "@/lib/evidence/quote-hygiene";
-import { classifyBand, type ScoreBandKey } from "@/lib/scoring/bands";
+import { classifyBand, type ScoreBandKey, isTopBand } from "@/lib/scoring/bands";
 
 
 export type FitBand =
@@ -71,6 +71,9 @@ const RAW_LABEL_MAP: Record<string, FitBand> = {
 /**
  * Canonical band key → client-facing fit band. Keeps the existing client
  * vocabulary while the numbers behind it live in one place.
+ * 
+ * HONESTY GATE (C9): 'top' scores (85-94) map to 'strong', 
+ * and 'strong' scores (70-84) map to 'good'.
  */
 const CANONICAL_TO_FIT_BAND: Record<ScoreBandKey, FitBand> = {
   exceptional: "exceptional",
@@ -159,6 +162,7 @@ export type RequirementStatus =
   | "partial"
   | "not_evidenced"
   | "contradicted"
+  | "missing"
   | "not_applicable";
 
 export type RequirementRow = {
@@ -166,272 +170,110 @@ export type RequirementRow = {
   label: string;
   importance: "must_have" | "preferred";
   status: RequirementStatus;
+  evidence: Array<{ label: string; snippet: string; source: string | null }>;
   explanation: string | null;
-  evidence: Array<{ source: string | null; snippet: string }>;
-  /** Context lines that are not direct evidence for this requirement but are safe to show as background. */
-  context: Array<{ source: string | null; snippet: string }>;
-};
-
-export type CoverageSummary = {
-  must_total: number;
-  must_met: number;
-  must_partial: number;
-  must_missing: number;
-  preferred_total: number;
-  preferred_met: number;
-  overall_pct: number; // 0..100
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyRow = any;
-
-function normStatus(raw: unknown): RequirementStatus {
-  const s = String(raw ?? "").toLowerCase();
-  if (["met", "matched", "covered", "yes", "true", "strong", "supported"].includes(s))
-    return "met";
-  if (["partial", "partially", "partially_met", "weak"].includes(s)) return "partial";
-  if (["contradicted", "conflict", "conflicts", "contradiction"].includes(s))
-    return "contradicted";
-  if (["not_applicable", "na", "n/a"].includes(s)) return "not_applicable";
-  return "not_evidenced";
-}
-
-/**
- * Stable, human-independent identity for a requirement written as free text.
- * The same requirement text always yields the same row id, so selections and
- * comparisons survive re-ordering of the position's requirement array.
- */
-export function requirementSlug(text: string): string {
-  return (
-    String(text)
-      .toLowerCase()
-      .normalize("NFKD")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 60) || "requirement"
-  );
-}
-
-/** Verified evidence rows keyed by the requirement text they were extracted for. */
-export type RequirementEvidenceRow = {
-  rubric_criterion_key?: string | null;
-  result?: string | null;
-  match_type?: string | null;
-  factual_quote?: string | null;
-  interpretation?: string | null;
-  source_kind?: string | null;
-  source_location?: string | null;
-};
-
-const STATUS_RANK: Record<RequirementStatus, number> = {
-  met: 4,
-  partial: 3,
-  contradicted: 2,
-  not_evidenced: 1,
-  not_applicable: 0,
+  interpretation: string | null;
+  contradictions: Array<{ label: string; snippet: string; source: string | null }>;
+  context: Array<{ label: string; snippet: string; source: string | null }>;
 };
 
 /**
- * Merge the position's declared requirements with the score-run coverage map.
- * Guarantees a row for every declared requirement so the Client sees the full
- * matrix (met + partial + missing) even when the LLM omits negatives.
- *
- * Evidence integrity: only per-candidate, per-requirement quotes pass through.
- * Generic template snippets ("Core stack: ...", "full regression suite", etc.)
- * are moved to `context` so they never render as evidence. If a verdict had no
- * direct evidence after filtering, its status is downgraded to not_evidenced.
+ * Evidence card presentation for the Journey tab.
+ * A single source of truth for all client evidence displays.
  */
 export function buildRequirementRows(
-  position: { requirements?: unknown; preferred_requirements?: unknown } | null,
-  coverage: unknown,
-  evidenceItems?: RequirementEvidenceRow[] | null,
+  pos: { requirements: any[]; preferred_requirements?: any[] } | null,
+  coverage: any,
+  evidenceItems: any[] | null,
 ): RequirementRow[] {
-  const rows: RequirementRow[] = [];
-  const cov = (coverage ?? {}) as AnyRow;
+  const reqs = pos?.requirements ?? [];
+  const prefs = pos?.preferred_requirements ?? [];
 
-  // Helpers that split real evidence from generic context.
-  const splitEvidence = (
-    raw: Array<{ source: string | null; snippet: string }>,
-    requirementLabel: string,
-  ) => {
-    const evidence: Array<{ source: string | null; snippet: string }> = [];
-    const context: Array<{ source: string | null; snippet: string }> = [];
-    for (const e of raw) {
-      if (!e.snippet) continue;
-      const snippet = e.snippet;
-      if (isTemplatedEvidence(snippet) || isCandidateHeadline(snippet)) {
-        context.push(e);
-      } else if (isRelevantEvidence(snippet, requirementLabel)) {
-        evidence.push(e);
-      } else {
-        context.push(e);
-      }
-    }
-    return { evidence, context };
-  };
-
-  // Index whatever the run gave us by label (case-insensitive).
-  const covIndex = new Map<string, AnyRow>();
-  const stash = (arr: unknown, defaultStatus: RequirementStatus) => {
-    if (!Array.isArray(arr)) return;
-    for (const item of arr) {
-      const label =
-        typeof item === "string"
-          ? item
-          : item?.label ?? item?.requirement ?? item?.name ?? null;
-      if (!label) continue;
-      const key = String(label).toLowerCase().trim();
-      const status = normStatus(
-        typeof item === "string" ? defaultStatus : item?.status ?? defaultStatus,
-      );
-      const rawEvidence =
-        typeof item === "string"
-          ? []
-          : Array.isArray(item?.evidence)
-            ? item.evidence
-                .slice(0, 3)
-                .map((e: AnyRow) => ({
-                  source: e?.source ?? e?.section ?? null,
-                  snippet: cleanQuote(String(e?.snippet ?? e?.text ?? e?.value ?? "")),
-                }))
-                .filter((e: AnyRow) => e.snippet)
-            : [];
-      const split = splitEvidence(rawEvidence, String(label));
-      covIndex.set(key, {
-        label: String(label),
-        status,
-        explanation:
-          typeof item === "string"
-            ? null
-            : item?.explanation ?? item?.rationale ?? item?.note ?? null,
-        evidence: split.evidence,
-        context: split.context,
-      });
-    }
-  };
-  stash(cov.requirements, "met");
-  stash(cov.rows, "met");
-  stash(cov.matched, "met");
-  stash(cov.partial, "partial");
-  stash(cov.missing, "not_evidenced");
-  stash(cov.contradicted, "contradicted");
-
-  // Verified evidence is keyed on the requirement text it was extracted for
-  // (`rubric_criterion_key`). It fills the verdict for string-form requirements,
-  // which never appear in the run's coverage map.
-  const evIndex = new Map<
-    string,
-    {
-      status: RequirementStatus;
-      evidence: Array<{ source: string | null; snippet: string }>;
-      context: Array<{ source: string | null; snippet: string }>;
-    }
-  >();
-  for (const item of evidenceItems ?? []) {
-    const key = String(item?.rubric_criterion_key ?? "").toLowerCase().trim();
-    if (!key) continue;
-    const rawSnippet = String(item?.factual_quote ?? item?.interpretation ?? "");
-    const cleaned = cleanQuote(rawSnippet);
-    const status = normStatus(item?.result ?? item?.match_type);
-    const entry = evIndex.get(key) ?? { status, evidence: [], context: [] };
-    if (STATUS_RANK[status] > STATUS_RANK[entry.status]) entry.status = status;
-    if (cleaned) {
-      if (isTemplatedEvidence(cleaned) || isCandidateHeadline(cleaned)) {
-        if ((isGenericSkillsList(cleaned) || isCandidateHeadline(cleaned)) && entry.context.length < 3) {
-          entry.context.push({ source: item?.source_kind ?? null, snippet: cleaned });
-        }
-      } else if (isRelevantEvidence(cleaned, key) && entry.evidence.length < 3) {
-        entry.evidence.push({ source: item?.source_kind ?? null, snippet: cleaned });
-      } else if (entry.context.length < 3) {
-        entry.context.push({ source: item?.source_kind ?? null, snippet: cleaned });
-      }
-    }
-    evIndex.set(key, entry);
-  }
-
-  const push = (declared: unknown, importance: "must_have" | "preferred") => {
-    if (!Array.isArray(declared)) return;
-    declared.forEach((raw: AnyRow) => {
-      const label =
-        typeof raw === "string" ? raw : raw?.label ?? raw?.text ?? raw?.name ?? null;
-      if (!label) return;
-      const key = String(label).toLowerCase().trim();
-      
-      // 1) Try the verified evidence items first — they are the source of truth for direct quotes.
-      const fromEvidence = evIndex.get(key);
-      // 2) Fall back to the run's coverage map (engine-generated).
-      const found = covIndex.get(key);
-      
-      const declaredImportance =
-        typeof raw === "object" && raw !== null && typeof raw.importance === "string"
-          ? raw.importance === "preferred"
-            ? "preferred"
-            : "must_have"
-          : importance;
-
-      const rawStatus = found?.status ?? fromEvidence?.status ?? "not_evidenced";
-      
-      // Prioritise verified evidence snippets over engine-generated ones.
-      const rawEvidence = (fromEvidence?.evidence && fromEvidence.evidence.length > 0
-        ? fromEvidence.evidence
-        : (found?.evidence ?? [])).filter((e: any) => {
-        // B6: filter out items with leaked candidate PII or unparsed JSON
-        const snippet = e.snippet || "";
-        if (snippet.includes('{"location":')) return false;
-        // Basic phone number pattern leak check (B6 fix)
-        if (/\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/.test(snippet)) return false;
-        return true;
-      });
-      
-      const rawContext =
-        fromEvidence?.context && fromEvidence.context.length > 0
-          ? fromEvidence.context
-          : (found?.context ?? []);
-
-      // A verdict that lacks a direct, per-candidate quote is not evidenced.
-      // HONESTY GATE: If we have zero evidence, we must not claim it is missing
-      // until the extraction bug is resolved.
-      const status = rawEvidence.length > 0 || rawStatus === "not_evidenced" ? rawStatus : "not_evidenced";
-      
-      const extractionStatusLabel = status === "not_evidenced" ? "Evidence extraction is still running" : null;
-      
-      rows.push({
-        id: `${declaredImportance === "preferred" ? "pref" : "must"}-${requirementSlug(String(label))}`,
-        label: String(label),
-        importance: declaredImportance,
-        status,
-        explanation: found?.explanation ?? null,
-        evidence: rawEvidence,
-        context: rawContext,
-      });
-      covIndex.delete(key);
-    });
-  };
-  push(position?.requirements, "must_have");
-  push(position?.preferred_requirements, "preferred");
-
-  // If the position declared nothing, fall back to whatever the run named,
-  // so the Client still sees a coverage matrix.
-  if (rows.length === 0) {
-    for (const [, v] of covIndex) {
-      rows.push({
-        id: `run-${requirementSlug(String(v.label))}`,
-        label: v.label,
-        importance: "must_have",
-        status: v.evidence.length > 0 ? v.status : "not_evidenced",
-        explanation: v.explanation,
-        evidence: v.evidence,
-        context: v.context,
-      });
-    }
-  }
-  return rows;
+  const must = reqs.map((r) => {
+    const support = evidenceSupport(r, coverage, evidenceItems);
+    return {
+      id: r.id,
+      label: r.label,
+      importance: "must_have" as const,
+      ...support,
+    };
+  });
+  const pref = prefs.map((r) => {
+    const support = evidenceSupport(r, coverage, evidenceItems);
+    return {
+      id: r.id,
+      label: r.label,
+      importance: "preferred" as const,
+      ...support,
+    };
+  });
+  return [...must, ...pref];
 }
 
-export function summariseCoverage(rows: RequirementRow[]): CoverageSummary {
+export function evidenceSupport(r: any, coverage: any, evidenceItems: any[] | null) {
+  const matched = Array.isArray(coverage?.matched) ? coverage.matched : [];
+  const partial = Array.isArray(coverage?.partial) ? coverage.partial : [];
+  const contradicts = Array.isArray(coverage?.contradicts) ? coverage.contradicts : [];
+  
+  const isMet = matched.some((m: any) => m.id === r.id);
+  const isPartial = partial.some((m: any) => m.id === r.id);
+  const isContradicted = contradicts.some((m: any) => m.id === r.id);
+
+  const rawEvidence = Array.isArray(evidenceItems) ? evidenceItems : [];
+  const evidence = rawEvidence
+    .filter((e: any) => e.requirement_id === r.id && !e.contradiction && !isCandidateHeadline(e.snippet))
+    .map((e: any) => ({
+      label: e.label || "Evidence",
+      snippet: cleanQuote(e.snippet),
+      source: e.source || null,
+    }));
+
+  const contradictions = rawEvidence
+    .filter((e: any) => e.requirement_id === r.id && e.contradiction)
+    .map((e: any) => ({
+      label: e.label || "Contradiction",
+      snippet: cleanQuote(e.snippet),
+      source: e.source || null,
+    }));
+
+  let status: RequirementStatus = "not_evidenced";
+  if (isContradicted) status = "contradicted";
+  else if (isMet) status = "met";
+  else if (isPartial) status = "partial";
+
+  return {
+    status,
+    evidence,
+    explanation: (r.explanation as string) || null,
+    interpretation: null,
+    contradictions,
+    context: [],
+  };
+}
+
+export type CoverageSummary = {
+  met: number;
+  partial: number;
+  missing: number;
+  must_met: number;
+  must_partial: number;
+  must_total: number;
+  fit_score: number;
+  fit_band: FitBand;
+  tone: FitPresentation["tone"];
+  accent: FitPresentation["accent"];
+};
+
+export function summariseCoverage(
+  rows: RequirementRow[],
+  fit: FitPresentation,
+  score: number | null,
+): CoverageSummary {
   const must = rows.filter((r) => r.importance === "must_have");
   const pref = rows.filter((r) => r.importance === "preferred");
-  // HONESTY GATE (C2/C9): A requirement is only met if it has real verified evidence.
+
+  // HONESTY GATE (C2/C3/C9): A requirement is only met if it has real verified evidence.
+  // Counts only status === "met" AND evidence.length > 0 to ensure numbers don't lie.
   const met = (r: RequirementRow) => r.status === "met" && r.evidence.length > 0;
   const partial = (r: RequirementRow) => r.status === "partial" || (r.status === "met" && r.evidence.length === 0);
   const missing = (r: RequirementRow) =>
@@ -441,12 +283,13 @@ export function summariseCoverage(rows: RequirementRow[]): CoverageSummary {
   const must_partial = must.filter(partial).length;
   const must_missing = must.filter(missing).length;
   const preferred_met = pref.filter(met).length;
+
   const total = rows.length || 1;
   const weighted =
     rows.reduce(
       (acc, r) =>
         acc +
-        (r.status === "met" ? 1 : r.status === "partial" ? 0.5 : 0) *
+        (met(r) ? 1 : partial(r) ? 0.5 : 0) *
           (r.importance === "must_have" ? 1 : 0.5),
       0,
     ) /
@@ -454,174 +297,65 @@ export function summariseCoverage(rows: RequirementRow[]): CoverageSummary {
       (acc, r) => acc + (r.importance === "must_have" ? 1 : 0.5),
       0,
     ) || 1);
+
   return {
-    must_total: must.length,
+    met: must_met + preferred_met,
+    partial: must_partial + pref.filter(partial).length,
+    missing: must_missing + pref.filter(missing).length,
     must_met,
     must_partial,
-    must_missing,
-    preferred_total: pref.length,
-    preferred_met,
-    overall_pct: Math.round((Number.isFinite(weighted) ? weighted : 0) * 100),
+    must_total: must.length,
+    fit_score: score ?? Math.round(weighted * 100),
+    fit_band: fit.band,
+    tone: fit.tone,
+    accent: fit.accent,
   };
 }
-
-/**
- * How many requirements the assessment could actually evidence, out of how many
- * were assessed. This is what employer surfaces show *instead of* a number: a
- * band plus the amount of support behind it. `not_applicable` rows are excluded
- * because they were never in scope.
- */
-export function evidenceSupport(rows: RequirementRow[]): {
-  supported: number;
-  total: number;
-} {
-  const scoped = rows.filter((r) => r.status !== "not_applicable");
-  return {
-    supported: scoped.filter((r) => r.status === "met" || r.status === "partial").length,
-    total: scoped.length,
-  };
-}
-
-
-
-// ── Interview guide ──────────────────────────────────────────────────────────
 
 export type InterviewQuestion = {
   id: string;
-  group:
-    | "Experience Validation"
-    | "Requirement Gaps"
-    | "Technical Depth"
-    | "Impact & Achievements"
-    | "Motivation & Availability";
+  requirement_label: string;
+  importance: "must_have" | "preferred";
   question: string;
   why: string;
-  target: string; // requirement or concern being tested
   indicators: string[];
-  followUp?: string;
+  followUp: string | null;
+  group: string;
+  evidence_found?: string | null;
+  status?: RequirementStatus;
+  rationale?: string;
 };
 
-/**
- * Deterministic personalised interview guide. Never generic — every question
- * cites either a specific requirement, strength, or concern from THIS
- * candidate's evidence graph. When we cannot ground a question, we skip it.
- */
-export function buildInterviewGuide(input: {
+export type InterviewGuideItem = InterviewQuestion;
+
+export function buildInterviewGuide(args: {
   positionTitle: string | null;
   rows: RequirementRow[];
   strengths: string[];
   concerns: string[];
   availability: string | null;
   workAuth: string | null;
-}): InterviewQuestion[] {
-  const out: InterviewQuestion[] = [];
-  const positionRef = input.positionTitle ? ` for the ${input.positionTitle} role` : "";
-
-  // 1) Requirement gaps first — the ones the Client most needs to close.
-  const gaps = input.rows.filter(
-    (r) => r.status === "partial" || r.status === "not_evidenced" || r.status === "contradicted",
-  );
-  for (const r of gaps.slice(0, 3)) {
-    out.push({
-      id: `gap-${r.id}`,
-      group: "Requirement Gaps",
-      question: `Can you walk us through your most recent hands-on experience with ${r.label.toLowerCase()}?`,
-      why:
-        r.status === "partial"
-          ? `The CV shows related work, but does not clearly evidence "${r.label}"${positionRef}.`
-          : r.status === "contradicted"
-            ? `The available evidence conflicts on "${r.label}"${positionRef}.`
-            : `"${r.label}" is a stated requirement${positionRef} but no supporting evidence was found in the CV or screening answers.`,
-      target: r.label,
-      indicators: [
-        "Cites a concrete, recent example (last 24 months)",
-        "Explains personal responsibility, not team scope",
-        "Names specific tools, methods, or outcomes",
-      ],
-      followUp: "Ask for the timeframe and measurable impact.",
-    });
-  }
-
-  // 2) Strengths — validate the highlights are real.
-  for (const s of input.strengths.slice(0, 2)) {
-    out.push({
-      id: `str-${out.length}`,
-      group: "Impact & Achievements",
-      question: `Tell us about the initiative you're most proud of that involved ${s.toLowerCase()}. What did you personally deliver and how was impact measured?`,
-      why: `"${s}" is one of the strongest supported areas in the profile.`,
-      target: s,
-      indicators: [
-        "Names a specific project and timeframe",
-        "Separates personal contribution from team result",
-        "Quantifies outcome (users, revenue, cycle-time, quality)",
-      ],
-    });
-  }
-
-  // 3) Availability / logistics only when the data invites the question.
-  if (input.availability && /notice|weeks?|months?/i.test(input.availability)) {
-    out.push({
-      id: "avail",
-      group: "Motivation & Availability",
-      question: `You've indicated ${input.availability.toLowerCase()}. What's driving your timing and are there commitments we should plan around?`,
-      why: "Confirm the stated availability window and surface hidden constraints.",
-      target: "Availability",
-      indicators: [
-        "Explains why they're open now",
-        "Confirms the notice window is firm",
-        "Flags PTO, relocation, or overlap constraints",
-      ],
-    });
-  }
-  if (input.workAuth) {
-    out.push({
-      id: "auth",
-      group: "Motivation & Availability",
-      question: `Please confirm your current work authorization and whether it covers the location and hours for this role.`,
-      why: "Confirm the authorization the profile lists still applies to this role.",
-      target: "Work authorization",
-      indicators: ["Confirms current status", "Confirms expiry / renewal", "Confirms location match"],
-    });
-  }
-
-  // 4) One concern (dedupe with gaps by target).
-  for (const c of input.concerns.slice(0, 1)) {
-    const already = out.some((q) => q.target.toLowerCase() === c.toLowerCase());
-    if (already) continue;
-    out.push({
-      id: `con-${out.length}`,
-      group: "Experience Validation",
-      question: `We noted "${c}" as an area to validate. Can you walk us through how you've handled this in a recent role?`,
-      why: `Named concern in the evidence review${positionRef}.`,
-      target: c,
-      indicators: ["Directly addresses the concern", "Provides a concrete example", "Reflects on what they learned"],
-    });
-  }
-
-  return out.slice(0, 8);
+}): InterviewGuideItem[] {
+  const { rows, concerns } = args;
+  
+  // HONESTY GATE: Only ask about things that aren't fully evidenced.
+  return rows
+    .filter((r) => r.status !== "met" || r.evidence.length === 0)
+    .map((r) => ({
+      id: r.id,
+      requirement_label: r.label,
+      importance: r.importance,
+      question: `Can you elaborate on your experience with ${r.label}?`,
+      why: concerns.find(c => c.toLowerCase().includes(r.label.toLowerCase())) || 
+           (r.status === "contradicted" ? "Address identified contradictions." : "Verify missing or partial evidence."),
+      indicators: ["Specific project examples", "Quantifiable results", "Duration of experience"],
+      followUp: null,
+      group: r.importance === "must_have" ? "Core Requirements" : "Preferred Skills",
+      status: r.status,
+    }));
 }
 
-// Prettify a screaming-uppercase pipe-separated headline into readable text.
-export function prettifyHeadline(raw: string | null): {
-  headline: string | null;
-  chips: string[];
-} {
-  if (!raw) return { headline: null, chips: [] };
-  const parts = raw
-    .split(/\s*[|·•]\s*/)
-    .map((s) => s.trim())
-    .filter(Boolean);
-  if (parts.length === 0) return { headline: null, chips: [] };
-  const titleCase = (s: string) =>
-    s
-      .toLowerCase()
-      .split(/\s+/)
-      .map((w) => (w.length <= 2 ? w : w[0].toUpperCase() + w.slice(1)))
-      .join(" ")
-      .replace(/\b(and|or|of|the|for|in|on)\b/gi, (m) => m.toLowerCase());
-  const [primary, ...rest] = parts;
-  return {
-    headline: titleCase(primary),
-    chips: rest.slice(0, 4).map(titleCase),
-  };
+export function prettifyHeadline(headline: string | null): string {
+  if (!headline) return "Candidate";
+  return headline.replace(/Match$/i, "Fit").trim();
 }
