@@ -592,7 +592,7 @@ export const listSchedulableCandidates = createServerFn({ method: "POST" })
         .select("id, position_id, stage, client_visibility, candidate_profile_id, candidate_profiles:candidate_profile_id(id, full_name, email), positions:position_id(id, title)")
         .eq("organization_id", data.orgId)
         .eq("client_visibility", "visible")
-        .in("stage", ["delivered", "shortlisted", "interview_process", "offer", "hired", "closed_lost"]);
+        .in("stage", ["delivered", "shortlisted", "interview_process", "offer", "hired"]);
     if (error)
         throw new Error(error.message);
     const { hydrateClientCandidateProfiles: hydrateSchedulable } = await import("@/lib/client-candidate-hydrate.server");

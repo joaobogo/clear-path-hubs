@@ -14,6 +14,8 @@ import { assertProposedSlots, isEmail } from "./interview-proposal";
 import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 import { assertEditor } from "@/lib/client-shared.server";
 import { resolveNotificationsForUser } from "@/lib/notifications-resolver.server";
+import type { CandidateMatchStage } from "@/integrations/supabase/types";
+
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -264,7 +266,7 @@ export const listClientInterviews = createServerFn({ method: "POST" })
 
     return {
       interviews: list.map((r) => {
-        const match = hydratedMatches.find((m) => m.id === r.candidate_match_id);
+        const match = hydratedMatches.find((m: any) => m.id === r.candidate_match_id);
         return toDTO(
           r,
           match ? { ...matchMap.get(r.candidate_match_id), stage: match.stage } : null,
@@ -272,6 +274,7 @@ export const listClientInterviews = createServerFn({ method: "POST" })
         );
       }),
     };
+
 
   });
 
@@ -765,7 +768,7 @@ export const listSchedulableCandidates = createServerFn({ method: "POST" })
       .in("status", ["requested", "scheduling", "scheduled"]);
     const activeSet = new Set((active as AnyRow[] | null)?.map((r) => r.candidate_match_id) ?? []);
 
-    const candidates: SchedulableCandidate[] = list.map((r) => ({
+    const candidates: SchedulableCandidate[] = list.map((r: any) => ({
       match_id: r.id as string,
       candidate_id: (r.candidate_profiles?.id as string) ?? r.candidate_profile_id,
       candidate_name: (r.candidate_profiles?.full_name as string) ?? "Candidate",
@@ -776,5 +779,6 @@ export const listSchedulableCandidates = createServerFn({ method: "POST" })
       has_active_interview: activeSet.has(r.id as string),
       availability_preference: parseStoredPreference(r.candidate_profiles?.availability),
     }));
+
     return { candidates };
   });
