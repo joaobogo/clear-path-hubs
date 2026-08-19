@@ -102,6 +102,15 @@ export function computeHiringHealth(input: HiringHealthInput): HiringHealth {
     };
   }
 
+  if (input.blocks > 0) {
+    return {
+      sentence: "Hiring is currently blocked.",
+      tone: "attention",
+      reason: "blocks",
+      figures,
+    };
+  }
+
 
   if (input.behindScheduleRoles > 0) {
     const n = input.behindScheduleRoles;

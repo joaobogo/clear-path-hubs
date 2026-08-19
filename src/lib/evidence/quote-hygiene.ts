@@ -213,6 +213,9 @@ export function isRelevantEvidence(quote: string, requirement: string): boolean 
   const q = quote.toLowerCase();
   const r = requirement.toLowerCase();
 
+  // Literal substring match check (T5/T6 fix)
+  if (q.includes(r) || r.includes(q)) return true;
+
   // 1. Exact phrase/term match is the gold standard.
   const stopWords = ["and", "with", "for", "the", "experience", "exposure", "familiarity", "similar", "production", "features", "product", "engineer", "stack", "focused", "professional", "beatriz", "costa", "sofia", "marques", "inês", "lopes", "pedro", "fernandes"];
   const terms = r
