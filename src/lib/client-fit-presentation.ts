@@ -177,6 +177,34 @@ export type RequirementRow = {
   context: Array<{ label: string; snippet: string; source: string | null }>;
 };
 
+/** "5+ years building web apps" -> "5-years-building-web-apps" */
+function slugifyRequirement(label: string): string {
+  return label
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+type NormalisedRequirement = { id: string; label: string; explanation: string | null };
+
+/**
+ * Requirements reach this file in two shapes: the modern object form and the
+ * older plain-string form still stored on many positions. Both must produce a
+ * row with a stable id and a readable label.
+ */
+function normaliseRequirement(raw: any, importance: "must" | "pref", index: number): NormalisedRequirement {
+  const label =
+    typeof raw === "string"
+      ? raw
+      : (raw?.label ?? raw?.text ?? raw?.requirement ?? raw?.name ?? "").toString();
+  const slug = slugifyRequirement(label) || `requirement-${index + 1}`;
+  return {
+    id: typeof raw === "string" || !raw?.id ? `${importance}-${slug}` : String(raw.id),
+    label: label || `Requirement ${index + 1}`,
+    explanation: typeof raw === "string" ? null : (raw?.explanation ?? null),
+  };
+}
+
 /**
  * Evidence card presentation for the Journey tab.
  * A single source of truth for all client evidence displays.
@@ -189,52 +217,76 @@ export function buildRequirementRows(
   const reqs = pos?.requirements ?? [];
   const prefs = pos?.preferred_requirements ?? [];
 
-  const must = reqs.map((r) => {
-    const support = evidenceSupport(r, coverage, evidenceItems);
-    return {
-      id: r.id,
-      label: r.label,
-      importance: "must_have" as const,
-      ...support,
-    };
+  const must = reqs.map((raw, i) => {
+    const r = normaliseRequirement(raw, "must", i);
+    return { ...r, importance: "must_have" as const, ...evidenceSupport(r, coverage, evidenceItems) };
   });
-  const pref = prefs.map((r) => {
-    const support = evidenceSupport(r, coverage, evidenceItems);
-    return {
-      id: r.id,
-      label: r.label,
-      importance: "preferred" as const,
-      ...support,
-    };
+  const pref = prefs.map((raw, i) => {
+    const r = normaliseRequirement(raw, "pref", i);
+    return { ...r, importance: "preferred" as const, ...evidenceSupport(r, coverage, evidenceItems) };
   });
   return [...must, ...pref];
 }
 
-export function evidenceSupport(r: any, coverage: any, evidenceItems: any[] | null) {
+/** Does this evidence item belong to this requirement? Ids or labels may match. */
+function evidenceMatchesRequirement(e: any, r: { id: string; label: string }): boolean {
+  const label = r.label.trim().toLowerCase();
+  const keys = [e?.requirement_id, e?.rubric_criterion_key, e?.criterion_key, e?.requirement, e?.label];
+  return keys.some((k) => {
+    if (typeof k !== "string") return false;
+    const v = k.trim().toLowerCase();
+    return v === r.id.toLowerCase() || v === label;
+  });
+}
+
+function evidenceSnippet(e: any): string {
+  return String(e?.snippet ?? e?.factual_quote ?? e?.quote ?? e?.text ?? "");
+}
+
+export function evidenceSupport(
+  r: { id: string; label: string; explanation?: string | null },
+  coverage: any,
+  evidenceItems: any[] | null,
+) {
   const matched = Array.isArray(coverage?.matched) ? coverage.matched : [];
   const partial = Array.isArray(coverage?.partial) ? coverage.partial : [];
   const contradicts = Array.isArray(coverage?.contradicts) ? coverage.contradicts : [];
-  
-  const isMet = matched.some((m: any) => m.id === r.id);
-  const isPartial = partial.some((m: any) => m.id === r.id);
-  const isContradicted = contradicts.some((m: any) => m.id === r.id);
+  const listed = Array.isArray(coverage?.requirements) ? coverage.requirements : [];
+
+  const sameRequirement = (m: any) =>
+    m?.id === r.id || String(m?.label ?? "").trim().toLowerCase() === r.label.trim().toLowerCase();
+
+  const declared = listed.find(sameRequirement);
+  let isMet = matched.some(sameRequirement) || declared?.status === "met";
+  let isPartial = partial.some(sameRequirement) || declared?.status === "partial";
+  const isContradicted = contradicts.some(sameRequirement) || declared?.status === "contradicted";
 
   const rawEvidence = Array.isArray(evidenceItems) ? evidenceItems : [];
-  const evidence = rawEvidence
-    .filter((e: any) => e.requirement_id === r.id && !e.contradiction && !isCandidateHeadline(e.snippet))
+  const mine = rawEvidence.filter((e: any) => evidenceMatchesRequirement(e, r));
+
+  const evidence = mine
+    .filter((e: any) => !e.contradiction && !isCandidateHeadline(evidenceSnippet(e)))
     .map((e: any) => ({
       label: e.label || "Evidence",
-      snippet: cleanQuote(e.snippet),
-      source: e.source || null,
-    }));
+      snippet: cleanQuote(evidenceSnippet(e)),
+      source: e.source || e.source_kind || null,
+    }))
+    .filter((e) => e.snippet.length > 0);
 
-  const contradictions = rawEvidence
-    .filter((e: any) => e.requirement_id === r.id && e.contradiction)
+  const contradictions = mine
+    .filter((e: any) => e.contradiction)
     .map((e: any) => ({
       label: e.label || "Contradiction",
-      snippet: cleanQuote(e.snippet),
-      source: e.source || null,
+      snippet: cleanQuote(evidenceSnippet(e)),
+      source: e.source || e.source_kind || null,
     }));
+
+  // With no coverage record, the candidate's own evidence decides the status.
+  if (!declared && !isMet && !isPartial && !isContradicted && mine.length > 0) {
+    const results = mine.map((e: any) => String(e.result ?? "").toLowerCase());
+    if (results.some((v) => v === "strong" || v === "met" || v === "full")) isMet = true;
+    else if (results.some((v) => v === "partial" || v === "weak")) isPartial = true;
+  }
 
   let status: RequirementStatus = "not_evidenced";
   if (isContradicted) status = "contradicted";
