@@ -430,8 +430,10 @@ export const listClients = createServerFn({ method: "GET" })
       .from("organizations")
       .select(
         "id,name,status,domain,industry,updated_at,archived_at,onboarding_status,primary_contact_name,primary_contact_email,is_test_record,is_demo,is_qa,is_internal",
-      )
-      .limit(500);
+      );
+    // P-020: Increase limit to ensure all organizations are captured before client-side filtering.
+    // The previous 500 limit could cause missing results if there are many test/archived records.
+    q = q.limit(2000);
     // The global "test records" preference decides here, in Postgres, so the
     // list and the "N organizations" count can never disagree.
     if (!showTest) {
