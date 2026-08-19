@@ -10,6 +10,7 @@ import { z } from "zod";
 import { isOpenRoleStatus, isFilledRole } from "@/lib/client-role-open";
 import { laneFor } from "@/lib/client-pipeline-lane";
 import { isLiveOffer, qualifiesAsHire } from "@/lib/offer-hire";
+import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -345,26 +346,35 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     });
 
     // ── Finance summary ───────────────────────────────────────────────────
-    const { data: allHires } = await s
+    // Unified hire definition: any candidate whose stage is 'hired' in the
+    // canonical pipeline derivation. Executive, Account, Positions and Candidates
+    // now all read the same KpiRow predicates.
+    const kpiRows = await loadKpiRows(s, orgId);
+    const kpis = computeKpis(kpiRows, 0);
+
+    // Filter hires by window using their confirmed hired_at timestamp
+    const hiredMatches = kpiRows.filter(r => r.stage === 'hired' && r.stage_entered_at);
+    
+    const hires_30d = hiredMatches.filter(
+      (h) => new Date(h.stage_entered_at!) >= days(30),
+    ).length;
+    const hires_90d = hiredMatches.filter(
+      (h) => new Date(h.stage_entered_at!) >= days(90),
+    ).length;
+    const hires_ytd = hiredMatches.filter(
+      (h) => new Date(h.stage_entered_at!) >= yearStart,
+    ).length;
+
+    const { data: allOffers } = await s
       .from("hire_records")
-      .select("status, salary_amount, salary_currency, hired_at, sent_at")
+      .select("status, salary_amount, salary_currency, sent_at")
       .eq("organization_id", orgId);
-    const hireRows: AnyRow[] = allHires ?? [];
-    const hiresConfirmed = hireRows.filter(
-      (h) => qualifiesAsHire(String(h.status)) && h.hired_at,
-    );
-    const hires_30d = hiresConfirmed.filter(
-      (h) => new Date(h.hired_at) >= days(30),
-    ).length;
-    const hires_90d = hiresConfirmed.filter(
-      (h) => new Date(h.hired_at) >= days(90),
-    ).length;
-    const hires_ytd = hiresConfirmed.filter(
-      (h) => new Date(h.hired_at) >= yearStart,
-    ).length;
-    const openOfferRows = offerRows.filter((o) =>
+    const hireRows: AnyRow[] = allOffers ?? [];
+    
+    const openOfferRows = hireRows.filter((o) =>
       isLiveOffer(String(o.status)),
     );
+
     const currencyOf = (rows: AnyRow[]): string | null => {
       const c = rows.find((r) => r.salary_currency)?.salary_currency;
       return (c as string) ?? null;
@@ -384,29 +394,21 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       return Math.round(vals.reduce((s, v) => s + v, 0) / vals.length);
     };
 
-    const referenceSet = hiresConfirmed.length ? hiresConfirmed : hireRows;
     const projectedRate =
       delivery_velocity.slice(-4).reduce((s, w) => s + w.delivered, 0) / 4;
-    const historicalHires30d =
-      hireRows.filter((h) => h.hired_at && new Date(h.hired_at) >= days(30))
-        .length;
-    // conservative projection: recent pace, capped by open offer count
-    const projected_hires_next_30d = Math.min(
-      openOfferRows.length,
-      Math.max(historicalHires30d, Math.round(projectedRate / 6)),
-    );
-
+    
     const finance_summary = {
       hires_30d,
       hires_90d,
       hires_ytd,
       open_offers: openOfferRows.length,
-      // hire_records.salary_amount is stored in MAJOR units — pass it through
-      // untouched and let the shared money formatter render it.
       open_offer_value: sumSalary(openOfferRows),
-      avg_salary: avgSalary(referenceSet),
-      salary_currency: currencyOf(referenceSet) ?? currencyOf(openOfferRows),
-      projected_hires_next_30d,
+      avg_salary: avgSalary(hireRows),
+      salary_currency: currencyOf(hireRows),
+      projected_hires_next_30d: Math.min(
+        openOfferRows.length,
+        Math.max(hires_30d, Math.round(projectedRate / 6)),
+      ),
     };
 
     return {
