@@ -133,7 +133,7 @@ async function hires(ctx: Ctx, from: string, to: string) {
     ctx,
     "hire_records",
     "id,hired_at,position_id,candidate_profiles(full_name),positions(title,organizations(name))",
-    (q) => q.gte("hired_at", from).lt("hired_at", to).order("hired_at"),
+    (q) => q.eq("status", "hire_confirmed").gte("hired_at", from).lt("hired_at", to).order("hired_at"),
   );
 }
 
