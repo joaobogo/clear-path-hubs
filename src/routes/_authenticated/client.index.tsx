@@ -289,7 +289,6 @@ function OverviewPage() {
             {/* Missing brief details block sourcing — answerable in place */}
             <InfoRequestsPanel orgId={orgId} onAnswered={() => refetch()} />
 
-            {/* 2 · PROGRESS — one sentence, three figures */}
             <div className="space-y-4">
               <HiringHealthLine
                 notCurrent={pipelineNotCurrent}
@@ -316,11 +315,9 @@ function OverviewPage() {
                   </Button>
                 </div>
               )}
-
-              {/* 2 · PROMETIDO VS REALIDADE (removido para evitar redundância com queue e saúde) */}
-
             </div>
           </div>
+
 
           {/* ── BELOW THE FOLD: system detail, controls, filters, context ── */}
           <Collapsible className="space-y-6">
@@ -339,6 +336,7 @@ function OverviewPage() {
             <CollapsibleContent className="space-y-6 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
               {/* PROMISE VS ACTUAL */}
               <SlaScorecard orgId={orgId} positionId={selectedRole || undefined} />
+
 
               {/* Role / agent / status filter row */}
               <div className="flex items-center gap-3 pt-2">
@@ -408,10 +406,9 @@ function OverviewPage() {
 
               {dataUpdatedAt ? (
                 <p className="pt-2 text-xs text-muted-foreground">
-                  {/* This line describes THIS read of the data, so it moves with the
-                      data — it is not the timestamp of the newest record. */}
                   Read {relTime(new Date(dataUpdatedAt).toISOString())} ·{" "}
                   {formatDateTime(new Date(dataUpdatedAt).toISOString())}
+
                   {data?.last_updated
                     ? ` · newest activity ${formatDateTime(data.last_updated)}`
                     : ""}

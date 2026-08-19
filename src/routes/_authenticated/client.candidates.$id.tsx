@@ -52,9 +52,9 @@ import {
   ExperienceTimeline,
   InterviewGuide,
   LinksPanel,
-  ProfilePanel,
   SkillsAndEducation,
 } from "@/components/client/candidate-detail/profile";
+
 
 import {
   ActivitySection,
@@ -563,10 +563,10 @@ function CandidateDetailPage() {
  </dl>
  </CollapsibleSection>
  )}
- <div className="grid gap-4 sm:grid-cols-2">
- <ProfilePanel candidate={candidate} />
- <LinksPanel candidate={candidate} />
- </div>
+  <div className="grid gap-4 sm:grid-cols-2">
+    <LinksPanel candidate={candidate} />
+  </div>
+
  </TabsContent>
 
  <TabsContent value="interview" className="mt-4 space-y-4">
