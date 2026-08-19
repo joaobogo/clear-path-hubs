@@ -64,10 +64,12 @@ export function stripContactLines(raw: string): string {
 /** Drop a mid-word opening token left by a character-offset slice. */
 function dropOpeningFragment(text: string): string {
   const out = text.trim();
-  if (!/^[a-z]/.test(out)) return out;
-  const nextWord = out.indexOf(" ");
-  if (nextWord > 0 && nextWord < 24 && out.length - nextWord >= 30) {
-    return out.slice(nextWord + 1).trim();
+  // If the slice starts mid-word (lowercase), drop the first partial token.
+  if (/^[a-z]/.test(out)) {
+    const nextSpace = out.indexOf(" ");
+    if (nextSpace > 0 && out.length - nextSpace >= 12) {
+      return out.slice(nextSpace + 1).trim();
+    }
   }
   return out;
 }
@@ -75,10 +77,20 @@ function dropOpeningFragment(text: string): string {
 /** Drop a leading partial sentence when a usable sentence follows. */
 function snapStart(text: string): string {
   const out = text.trim();
-  const firstBoundary = out.search(/[.!?]\s+[A-Z]/);
-  if (firstBoundary !== -1) {
-    const candidate = out.slice(firstBoundary + 1).trim();
-    if (candidate.length >= 60) return candidate;
+  // If the very first token starts with a lowercase letter, the slice opened
+  // mid-word. Expand back to the start of the next sentence if possible, or
+  // at least to the next word boundary, adding a leading ellipsis.
+  const midWord = /^[a-z]/.test(out);
+  const firstSentence = out.search(/[.!?]\s+[A-Z]/);
+  if (firstSentence !== -1 && firstSentence < 60) {
+    const candidate = out.slice(firstSentence + 2).trim();
+    if (candidate.length >= 30) return candidate;
+  }
+  if (midWord) {
+    const firstSpace = out.indexOf(" ");
+    if (firstSpace > 0 && out.length - firstSpace >= 12) {
+      return out.slice(firstSpace + 1).trim();
+    }
   }
   return out;
 }
