@@ -91,6 +91,15 @@ function NewClientPage() {
       </div>
 
       <div className="mx-auto max-w-3xl px-6 pb-8 space-y-6">
+        <NewClientPageContent
+          result={result}
+          form={form}
+          setForm={setForm}
+          errors={errors}
+          setErrors={setErrors}
+          mut={mut}
+          navigate={navigate}
+        />
       </div>
     </div>
   );

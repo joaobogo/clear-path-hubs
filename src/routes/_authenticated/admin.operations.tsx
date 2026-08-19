@@ -135,7 +135,6 @@ function OperationsPage() {
   });
   const delivery = deliveryQuery.data;
 
-
   const [feedback, setFeedback] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string>("all");

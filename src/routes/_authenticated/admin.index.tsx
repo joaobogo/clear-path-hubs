@@ -196,7 +196,7 @@ function Overview() {
       </AdminWidgetErrorBoundary>
 
       <AdminWidgetErrorBoundary label="Awaiting client decision">
-        <DecisionBacklogPanel includeTest={showTest} showClientColumn />
+        <DecisionBacklogPanel includeTest={showTest} showClientColumn limit={8} />
       </AdminWidgetErrorBoundary>
 
       <AdminWidgetErrorBoundary label="Offers and hires">
