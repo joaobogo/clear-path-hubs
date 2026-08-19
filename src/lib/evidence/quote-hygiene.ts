@@ -155,18 +155,30 @@ function capAtWord(text: string): string {
 export function cleanQuote(raw: string | null | undefined): string {
   if (!raw) return "";
   if (isTemplatedEvidence(raw)) return "";
-  const collapsed = stripContactLines(String(raw)).replace(/\s+/g, " ").trim();
-  if (!collapsed) return "";
-  const base = dropOpeningFragment(stripLeadingJunk(collapsed));
+
+  // 1. PII scrub: remove emails, phones, URLs no matter where the slice falls.
+  const scrubbed = stripContactLines(String(raw)).replace(/\s+/g, " ").trim();
+  if (!scrubbed) return "";
+
+  // 2. Strip leading punctuation and mid-word opening fragments.
+  const base = dropOpeningFragment(stripLeadingJunk(scrubbed));
+
+  // 3. Snap to the next sentence boundary if we open mid-sentence.
   const trimmedStart = snapStart(base);
-  // Never let hygiene reduce a quote to a stub: keep the fuller start instead.
-  const started = snapEnd(trimmedStart).length >= 40 ? trimmedStart : base;
+
+  // 4. Trim the end to a sentence boundary or at least a word boundary
+  //    so we never end mid-word.
+  const ended = snapEnd(trimmedStart);
+
+  // 5. Never let hygiene reduce a quote to a stub: keep the fuller start if we lost too much.
+  const started = ended.length >= 40 ? trimmedStart : base;
+
   let out = capAtWord(snapEnd(started)).trim();
   if (out.length < QUOTE_MIN_CHARS) return "";
-  // A quote that still opens mid-sentence is marked as a continuation.
+
+  // 6. Final safety: if a fragment somehow opened mid-word, mark it as a continuation.
   if (/^[a-z]/.test(out)) out = `…${out}`;
   return out;
-
 }
 
 
