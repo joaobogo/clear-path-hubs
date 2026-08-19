@@ -257,9 +257,6 @@ export async function loadKpiRows(
 export function isTopMatch(r: KpiRow): boolean {
   if (r.approved_score_run_id == null) return false;
   const words = TOP_FIT_LABELS as readonly string[];
-export function isTopMatch(r: KpiRow): boolean {
-  if (r.approved_score_run_id == null) return false;
-  const words = TOP_FIT_LABELS as readonly string[];
   if (r.approved_score != null) {
     const band = classifyBand(r.approved_score);
     return band === "exceptional" || band === "top";
