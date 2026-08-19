@@ -80,7 +80,6 @@ const TABS = [
   "notes",
   "documents",
   "activity",
-  "audit",
   "shares",
   "talent_memory",
   "settings",
