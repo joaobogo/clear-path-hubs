@@ -323,7 +323,7 @@ function OverviewPage() {
             </div>
 
             {/* 3 · MESSAGES — direct, one-click responses */}
-            <RecentMessages messages={messages} loading={overviewPanel.loading} />
+            {/* RecentMessages removed as duplicate of Sidebar functionality in declutter pass */}
           </div>
 
           {/* ── BELOW THE FOLD: system detail, controls, filters, context ── */}

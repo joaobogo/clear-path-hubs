@@ -216,7 +216,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
       action_required.push({
         type: "offer_pending",
         label: `${offerCount} offer${offerCount === 1 ? "" : "s"} awaiting response`,
-        href: `/client/candidates?filter=interview`,
+        href: `/client/offers`,
         count: offerCount,
       });
     }

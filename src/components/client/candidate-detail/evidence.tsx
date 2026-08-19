@@ -111,7 +111,7 @@ export const EvaluationProvenance = memo(function EvaluationProvenance({
   return (
     <section
       aria-labelledby="evaluation-heading"
-      className="rounded-xl border bg-card p-5"
+      className="hidden rounded-xl border bg-card p-5"
     >
       <div className="flex flex-wrap items-center gap-2">
         <BadgeCheck className="h-4 w-4 text-muted-foreground" aria-hidden />
@@ -233,7 +233,7 @@ export const FitHero = memo(function FitHero({
             </p>
           )}
         </div>
-        {candidate.fit_label != null && (
+        {false && candidate.fit_label != null && (
           <div className="flex items-center gap-4">
             <div
               role="img"

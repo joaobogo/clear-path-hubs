@@ -31,7 +31,7 @@ const DATE_TIME = new Intl.DateTimeFormat(APP_LOCALE, {
 
 const DATE_ONLY = new Intl.DateTimeFormat(APP_LOCALE, {
   day: "2-digit",
-  month: "2-digit",
+  month: "short",
   year: "numeric",
   timeZone: WORKSPACE_TIMEZONE,
 });

@@ -134,7 +134,7 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
       </div>
 
       {/* Scoring criteria with weights, only when the run stored them. */}
-      {b.rubric.length > 0 && (
+      {false && b.rubric.length > 0 && (
         <div className="mt-5">
           <h3 className="text-sm font-semibold">Scoring criteria</h3>
           <p className="mt-0.5 text-xs text-muted-foreground">
