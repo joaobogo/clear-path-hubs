@@ -335,7 +335,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       description: "Shared with the client, still no decision recorded.",
       count: delivered.count ?? 0,
       action_hint: "Nudge the client or call it — the candidate is waiting.",
-      see_all: { to: "/admin/decision-backlog" as any },
+      see_all: { to: "/admin/decision-backlog" },
       items: overdue.slice(0, 8).map((m) => ({
         id: m.match_id,
         title: m.candidate_name ?? "Candidate",
