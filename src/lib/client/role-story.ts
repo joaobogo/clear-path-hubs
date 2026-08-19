@@ -160,15 +160,11 @@ export function buildCoverage(candidates: StoryCandidate[]): CoverageBlock {
       .filter((r) => r.importance === "must_have" || requirements.every((x) => x.importance === "preferred"))
       .sort((a, b) => b.missing - a.missing)[0];
     const pct = Math.round((met / checks) * 100);
-    const gap =
-      weakest && weakest.missing > 0
-        ? ` Weakest evidence: ${weakest.label} — missing for ${weakest.missing} of ${pool.length}.`
-        : " Every requirement has at least partial evidence on this list.";
     // Two figures, because the candidate cards count partial as support: a
     // low "fully evidenced" number next to "10 of 10 supported" would read as
     // a contradiction without the partial count beside it.
     const supported = met + partial;
-    takeaway = `${supported} of ${checks} requirement checks (${met} evidenced, ${partial} partial) are supported by direct quotes from the shortlist's CVs and screening answers.`;
+    takeaway = `${supported} of ${checks} requirement checks (${met} evidenced, ${partial} partial) are supported by direct evidence from the CVs and screening answers.`;
   }
 
   return {
