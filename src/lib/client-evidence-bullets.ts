@@ -1,5 +1,5 @@
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
-import { cleanQuote, cleanFieldValue, isCandidateHeadline } from "@/lib/evidence/quote-hygiene";
+import { cleanQuote, cleanFieldValue, isCandidateHeadline } from "./evidence/quote-hygiene";
 
 export type EvidenceBullet = {
   /** The role requirement this evidence answers. */
