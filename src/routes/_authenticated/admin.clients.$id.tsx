@@ -258,15 +258,10 @@ function ClientDetail() {
             <AccountOperatingSummary organizationId={org.id} onOpenTab={(t) => setTab(t)} />
           </Block>
 
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <StatCard label="CLIENT USERS" value={activeMemberCount} icon={Users2} />
-            <StatCard label="OPEN POSITIONS" value={positions.filter(p => p.status !== 'archived' && p.status !== 'closed').length} icon={Briefcase} />
-            <StatCard label="PARSED CVS" value={parsedCvCount} icon={FileText} />
-            <StatCard label="TOTAL CANDIDATES" value={org.parsed_cv_count?.[0]?.count ?? 0} icon={UserCheck} />
-          </div>
+          {/* Duplicate KPI row removed: now only AccountOperatingSummary and Detailed OverviewTab remain. */}
 
           <Block name="overview">
-            <OverviewTab org={org} members={members} positions={positions} />
+            <OverviewTab org={org} />
           </Block>
         </div>
       )}
@@ -350,14 +345,10 @@ function ClientDetail() {
 }
 
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function OverviewTab({ org, members, positions }: { org: any; members: any[]; positions: any[] }) {
-  const active = positions.filter((p) => p.status === "active").length;
+function OverviewTab({ org }: { org: any }) {
   return (
     <section className="grid gap-4 md:grid-cols-3">
-      <StatCard label="Positions" value={positions.length} />
-      <StatCard label="Active positions" value={active} />
-      <StatCard label="Client users" value={members.length} />
+      {/* Visual duplicate KPI tiles removed — row A and B reconciled into AccountOperatingSummary. */}
       <div className="md:col-span-3 rounded-lg border p-4 text-sm">
         <div className="font-medium mb-2">Organization at a glance</div>
         <dl className="grid grid-cols-2 gap-x-6 gap-y-1 text-muted-foreground">
