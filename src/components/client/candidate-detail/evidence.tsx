@@ -484,8 +484,8 @@ export const WhyThisCandidate = memo(function WhyThisCandidate({
   const strengths = candidate.strengths ?? [];
   if (evidenced.length === 0 && strengths.length === 0 && gaps.length === 0) return null;
 
-  const bandLine = candidate.fit?.label
-    ? `${candidate.fit.label}${candidate.score != null ? ` · ${candidate.score}/100` : ""}`
+  const bandLine = candidate.fit?.headline
+    ? `${candidate.fit.headline}${candidate.score != null ? ` · ${candidate.score}/100` : ""}`
     : null;
 
   return (
