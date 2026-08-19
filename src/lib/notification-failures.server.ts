@@ -143,7 +143,7 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
       deliveries: deliveriesRes.error,
       leads: leadsRes.error,
     });
-    return { items: [], suppressions: [], windowDays: WINDOW_DAYS };
+    return { items: [], summary: EMPTY_SUMMARY, suppressions: [], windowDays: WINDOW_DAYS };
   }
 
   const rows = (deliveriesRes.data ?? []) as Array<Record<string, unknown>>;
