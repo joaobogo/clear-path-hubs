@@ -243,6 +243,14 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
 
   const queues: WorkQueue[] = [
     {
+      key: "approvals",
+      label: "Approvals",
+      description: "Pending client-visible actions: candidate shares, contact releases, or new roles.",
+      count: 0, // Will be backfilled by annotateWithApprovals
+      action_hint: "Approve to notify the client, or decline with a reason.",
+      items: [],
+    },
+    {
       key: "intakes_aging",
       label: "Intakes awaiting action",
       description: "Client briefs awaiting conversion to positions.",
@@ -470,7 +478,44 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     },
   ];
 
-  return annotateWithSlaBreaches(queues, opts.includeTest ?? false);
+  const withSla = await annotateWithSlaBreaches(queues, opts.includeTest ?? false);
+  return annotateWithApprovals(withSla, opts.includeTest ?? false);
+}
+
+/**
+ * Overlay the approvals inbox onto the Work Queue.
+ */
+async function annotateWithApprovals(
+  queues: WorkQueue[],
+  includeTest: boolean,
+): Promise<WorkQueue[]> {
+  const s = await admin();
+  const { loadApprovals } = await import("./admin-approvals.server");
+  
+  const inbox = await loadApprovals(s, { includeTest });
+  const allItems = (inbox.groups ?? []).flatMap((g) => g.items);
+  
+  return queues.map((q) => {
+    if (q.key !== "approvals") return q;
+    
+    return {
+      ...q,
+      count: inbox.total,
+      items: allItems.slice(0, 8).map((it) => ({
+        id: it.id,
+        title: it.target_label,
+        subtitle: `${it.context_label}${it.org_name ? ` · ${it.org_name}` : ""}`,
+        subtitle_refs: [],
+        meta: it.requester_name,
+        waiting_since: it.requested_at,
+        target: { kind: "match" as const, id: it.match_ids[0] || it.id },
+        action_label: "Review",
+        owner: null,
+        claim: null,
+        tone: "default" as const,
+      })),
+    };
+  }).filter(q => q.key !== 'approvals' || (q.count ?? 0) > 0);
 }
 
 /**
