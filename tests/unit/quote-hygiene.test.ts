@@ -24,9 +24,9 @@ describe("quote hygiene", () => {
 
   it("snaps to a sentence start when a full sentence follows", () => {
     const out = cleanQuote(
-      "ature flags and a full regression suite. Delivered in phases with no downtime. Data and reporting — designed the reporting schema and the query layer used by every dashboard.",
+      "ature flags and staged rollouts. Migrated the billing service to Postgres with zero downtime. Data and reporting — designed the reporting schema and the query layer used by every dashboard.",
     );
-    expect(out.startsWith("Delivered in phases")).toBe(true);
+    expect(out.startsWith("Migrated the billing service")).toBe(true);
   });
 
   it("marks an unavoidable mid-sentence opening as a continuation", () => {
