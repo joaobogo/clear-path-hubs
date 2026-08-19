@@ -87,10 +87,16 @@ export function JobQualityPanel({
 
   const view = useMemo(() => {
     if (!data) return null;
-    if (!draft) return data;
     const merged = { ...data.input, ...draft } as QualityInput;
+    
+    // Ensure open_worldwide from the position object is considered if not in draft
+    if (draft?.open_worldwide === undefined && (data.input as any).open_worldwide !== undefined) {
+      merged.open_worldwide = (data.input as any).open_worldwide;
+    }
+
     return { ...assessJobQuality(merged), input: merged };
   }, [data, draft]);
+
 
   if (isLoading || !view) {
     return <p className="text-sm text-muted-foreground">Checking job quality…</p>;
