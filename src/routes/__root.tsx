@@ -166,38 +166,21 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "PROMPT 1 — BLOCKER RE-TEST (run this first)
+TEXTO DO USUÁRIO: "PROMPT 2 — /api/public/qa-seed: close it AND clean up after it
 
-You previously reported a readiness score of 76% (\"Launchable with Accepted Risks\") after a visual stabilization pass. An independent browser audit found blockers that do not appear in your changelog. Do not re-run the visual work. Do not self-assess. Re-test only the list below, in a real browser, and report a verdict per item.
+You listed /api/public/qa-seed accessibility in production as a blocking item and then classified it as an accepted risk. It is not a risk. It is very likely the mechanism by which engineering test fixtures ended up inside a paying client's workspace.
 
-Rules:
+Do three things, in order, and report on each.
 
-FIXED requires that you performed the action and observed the expected result, then refreshed and observed it again. A success toast that does not survive a refresh is STILL BROKEN.
-STILL BROKEN requires the exact text or number you observed.
-\"Should be fixed\", \"typecheck passes\", \"the code looks correct\" are not verdicts. Click the thing.
-For every STILL BROKEN item, give the file and the one-line fix.
-Client console — https://taasflow.com/client
-Open any candidate at \"Shortlisted by your team\" and press Request interview. Prior result: the whole page was replaced by \"Something went wrong / Nothing was changed. Please try again. / Reference: TF-BA777138\", and \"Try again\" did nothing. Reproduced on Miguel Torres and Sofia Marques.
-Create a role from the in-app + Create role button, complete the 7-step wizard, save. Prior result: saved as \"Under review\" but absent from every tab of /client/positions; the \"Under review(N)\" tab renders \"0 roles under review\". Confirm the finished role is reachable from the Roles list.
-On /client/candidates compare the six stage tiles against the Board columns in the same viewport. Prior result: tiles read SHORTLISTED 2 / INTERVIEWING 4 while the board read 3 / 3 — off by exactly one in every state tested, including after a stage change and after reverting it. Tile DELIVERED read 10 while the board's DELIVERED column read 0.
-On a role page, read \"Fit spread of candidates delivered\". Prior result: \"Not Recommended 0–49\" showed 0 with a bar drawn next to it, while three candidates score 47, 44 and 41. The five bands summed to 7 under a caption reading \"Every candidate delivered to you\".
-Open Beatriz Costa (88) and Inês Lopes (73) and Carla Nunes (66) and Miguel Torres (54). Read the \"Scoring criteria\" panel on each. Prior result: Inês, Carla and Miguel publish identical breakdowns (must-have 67% / preferred 38% / screening 100%) and score 73, 66 and 54. Sofia publishes strictly better coverage than Inês and scores 10 points lower. No candidate's score equals its own weighted breakdown.
-Search /client/candidates for beatriz.costa@demo.taasflow.com. Prior result: 0 of 10, while that exact string is printed on her profile.
-Apply the \"Unicorn only (95+)\" filter. Prior result: returns Beatriz Costa, score 88, badged \"Unicorn\".
-Confirm BROWSER-TEST-R2 Position, BROWSER-TEST-R3 Position, BROWSER-TEST-R2 Admin Position, QA Gate Role 86485 and [QA test — ignore] QA Role Aug 17 are no longer visible anywhere in the Northwind client workspace — Overview panel, Roles list, WHAT HAPPENS NEXT, Live movement, conversations list, and the Publish blockers table.
-Admin console — https://taasflow.com/admin
-/admin/approvals — click Approve on any row. Prior result: dead. No dialog, no toast, no navigation, no state change, \"7 pending\" unchanged after refresh. Same for Decline. Bulk approve stayed disabled with 1 and with 3 rows selected. Root cause: all three are type=\"submit\" buttons with closest('form') === null.
-/admin/candidates — search for Miguel Torres (row 1 of the unfiltered list) and for Northwind. Prior result: \"0 submissions\" for both, and for four other queries.
-Header ⌘K global search for Northwind. Prior result: \"No matches for \"Northwind\"\" while candidates and positions resolve fine.
-/admin/clients/<northwind-id> — read the KPI tiles. Prior result: a tile labelled CLIENT USERS 3 directly above a tile labelled CLIENT USERS 0; four different position counts on one page (Open roles 3, OPEN POSITIONS 8, POSITIONS 8, ACTIVE POSITIONS 2).
-Candidate detail — click the Evidence tab. Prior result: tabs do not respond to clicks at all; aria-selected stays on Profile. Only ?tab=evidence works.
-Candidate ?tab=evidence — prior result: header \"6 of 6 must-have criteria evidenced\" over items marked Thin / Partial / Missing; graph reading \"0 with verified quotes\" and \"0 with no evidence\" beside \"10 reviewer-confirmed\"; {\"location\":\"cv:134-299\"} rendered as UI text; a quote window reading om · +351 912 000 105 Profile Full-stack engineer…owning fe — starting mid-word and containing the candidate's phone number.
-/admin/publish — press the one enabled Publish button. Prior result: no confirmation dialog of any kind, then the toast position_screening_limit_exceeded. Meanwhile \"Grant payment exemption\" on the same row demands a written 10-character reason.
-/admin/clients — confirm CB Test Company, Rehearsal Hotels Ltd, Rehearsal Hotels 489631 and TaaSFlow Platform now appear. Prior result: absent from every filter state including \"Include archived\", and unfindable by search, while /admin Portfolio health lists all four with open positions.
-/admin — confirm \"Delivery failures (7d)\" does not increase when you log a decision or send a nudge. Prior result: 71 → 72 → 73, each of my own actions generating a new suppressed-recipient failure that returned to the queue.
-Submit any form with a required field empty. Prior result: the browser's native bubble in Portuguese — \"Preencha este campo.\" — on /admin Log decision, /admin/clients_new, and the email field.
+1. Establish the blast radius. Enumerate every record any public seed or QA endpoint can create, and every record currently in the database that was created by one. Include at minimum: organizations, positions, candidate submissions, conversation threads, share links, notifications. Report counts per table. Name every endpoint that can write without authentication — do not stop at qa-seed.
 
-Output: a table of item · FIXED / STILL BROKEN · observed text or number · file and one-line fix. Then a single sentence: how many of the 18 are fixed."`}
+2. Close the hole. Make every seed/QA endpoint refuse to run when NODE_ENV is production, and additionally require an environment-gated secret. Prove it: paste the request and the response showing a 404 or 403 in a production build. A route that merely checks a header is not enough — show the environment gate.
+
+3. Clean up. Closing the endpoint does not delete what it already created. Write and run a reversible migration that removes or hard-flags the existing fixtures so they are invisible on every client-facing surface. Confirmed fixtures visible to the Northwind client today: BROWSER-TEST-R2 Position, BROWSER-TEST-R3 Position, BROWSER-TEST-R2 Admin Position, QA Gate Role 86485, [QA test — ignore] QA Role Aug 17, [QA test — ignore] QA Role Aug 17 v2, Senior back end, three BROWSER-TEST-R3 share link (QA) entries, and conversation threads containing History Integrity Test 1786782275114 and BROWSER-TEST-R3 admin reply … automated QA re-audit, please disregard. Admin-side: QA_TESTCO_E2E, QA_OTHERCO_E2E, QA_GATE7_686096, QA Mobile Tester, QA Walkthrough Candidate, Quinn Receipt Tester, and 11 QA LinkedIn / No LinkedIn Applicant submissions.
+
+Then answer directly: why did the \"Show test records across all admin screens\" toggle not hide these? The toggle exists and is wired; the fixtures appear regardless. Either the fixtures are not flagged as test records, or the toggle does not filter these tables. Say which, and fix it.
+
+Separately: a client currently has no way to delete, archive, pause or cancel a role they created. There is no such control anywhere in the client UI. That is why the workspace accumulates. Add one."`}
         </div>
         <Scripts />
       </body>
