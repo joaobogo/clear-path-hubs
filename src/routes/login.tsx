@@ -171,6 +171,7 @@ function LoginPage() {
   const [mode, setMode] = useState<"signin" | "forgot" | "confirm">("signin");
   const [googleLoading, setGoogleLoading] = useState(false);
   const [pickerFor, setPickerFor] = useState<SessionMembership[] | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   // Google sign-in. Same managed provider used at sign-up, so anyone who
   // created their account with Google can get back in the same way.
@@ -263,6 +264,12 @@ function LoginPage() {
 
   const onSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    const next = collectErrors({
+      email: emailText(email),
+      password: requiredText(password),
+    });
+    setFieldErrors(next);
+    if (Object.keys(next).length > 0) return;
     setLoading(true);
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -293,6 +300,9 @@ function LoginPage() {
 
   const onForgot = async (e: React.FormEvent) => {
     e.preventDefault();
+    const next = collectErrors({ email: emailText(email) });
+    setFieldErrors(next);
+    if (Object.keys(next).length > 0) return;
     setLoading(true);
     try {
       await supabase.auth.resetPasswordForEmail(email, {
@@ -309,6 +319,9 @@ function LoginPage() {
 
   const onResendConfirmation = async (e: React.FormEvent) => {
     e.preventDefault();
+    const next = collectErrors({ email: emailText(email) });
+    setFieldErrors(next);
+    if (Object.keys(next).length > 0) return;
     setLoading(true);
     try {
       await supabase.auth.resend({
@@ -427,6 +440,7 @@ function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
+                <FieldError message={fieldErrors.email} />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="password">Password</Label>
@@ -492,6 +506,7 @@ function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
+                <FieldError message={fieldErrors.email} />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Sending…" : "Send reset email"}
@@ -515,6 +530,7 @@ function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
+                <FieldError message={fieldErrors.email} />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Sending…" : "Send a new confirmation link"}
