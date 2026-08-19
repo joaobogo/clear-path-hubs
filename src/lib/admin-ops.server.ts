@@ -27,6 +27,7 @@ import type { QueueClaim, QueueItem, QueueOwner, QueueRef, WorkQueue } from "./a
 import { INTAKE_AGING_TIER_DAYS } from "@/lib/intake-aging";
 import { PAID_PAYMENT_STATES } from "@/lib/publish-gate";
 import { deliveryReason } from "./notifications/delivery-reasons";
+import { qualifiesAsHire } from "./offer-hire";
 
 
 const ISO = (ms: number) => new Date(Date.now() - ms).toISOString();
@@ -178,10 +179,9 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
 
   // 11. Reconciliation: Identify hired candidates to ensure rollup agreement.
   const hiredCount = (await s
-    .from("candidate_matches")
+    .from("hire_records")
     .select("id", { count: "exact", head: true })
-    .eq("stage", "hired")
-    .not("delivered_at", "is", null)).count ?? 0;
+    .eq("status", "hire_confirmed")).count ?? 0;
 
 
 
