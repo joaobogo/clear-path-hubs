@@ -14,6 +14,7 @@ import { SlaBreachStrip } from "@/components/admin/sla-breach-strip";
 import { WorkQueueRow } from "@/components/admin/work-queue-row";
 import { AdminWidgetErrorBoundary } from "@/components/admin/admin-widget-error-boundary";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import {
