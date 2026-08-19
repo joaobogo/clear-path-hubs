@@ -234,7 +234,11 @@ export function buildCompletenessReport(input: {
   return {
     criteria,
     requiredTotal: required.length,
-    requiredSupported: required.filter((c) => c.status !== "unsupported").length,
+    // Only fully supported must-haves count as "evidenced" — a thin or missing
+    // criterion is never rolled into the headline number.
+    requiredSupported: required.filter((c) => c.status === "supported").length,
+    requiredThin: required.filter((c) => c.status === "thin").length,
+    requiredUnsupported: unsupportedRequired.length,
     blockingLabels: blocking.map((c) => c.label),
     unsupportedRequiredKeys: unsupportedRequired.map((c) => c.key),
     hasAnyEvidence: input.items.length > 0 || input.assessments.length > 0,
