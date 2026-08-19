@@ -219,3 +219,62 @@ export function humanizeCriterionKey(key: string | null | undefined): string {
 }
 
 
+
+/**
+ * Job / queue names read as an action a person recognises ("Parse CV"), never
+ * as the worker's internal job_type. Bare identifiers never become a label.
+ */
+export function humanizeJobName(jobType: string | null | undefined): string {
+  if (!jobType) return "Unnamed job";
+  const raw = String(jobType).trim();
+  if (!raw) return "Unnamed job";
+  // A bare identifier (UUID or opaque trace token) is not a job name.
+  if (
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(raw) ||
+    /^(pl|sv|job)_[a-z0-9]{6,}$/i.test(raw)
+  ) {
+    return "Unnamed job";
+  }
+  return humanizeCode(raw);
+}
+
+/**
+ * Turn a raw provider error string into one sentence an operator can act on.
+ *
+ * Inputs look like:
+ *   `Email API error: 403 {"status":403,"type":"recipient_suppressed", … }`
+ * The sentence comes from the machine `type`/code inside the payload; the
+ * payload itself belongs behind a "Show technical detail" disclosure, never in
+ * the row. Returns null when there is nothing meaningful to say.
+ */
+export function humanizeTechnicalError(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const s = String(raw).trim();
+  if (!s) return null;
+
+  if (s.includes("unique or exclusion constraint")) {
+    return "Record already exists (duplicate key).";
+  }
+
+  // Prefer an explicit machine code carried in the payload.
+  const typed =
+    /"(?:type|code|error_code|reason)"\s*:\s*"([a-z0-9_.-]+)"/i.exec(s)?.[1] ??
+    /\b(recipient_suppressed|undeliverable_domain|unreachable_mx|complaint_not_liftable|provider_exception|rate_limited|text_layer_too_short|text_layer_missing|empty_text_layer|engine_error|ocr_required|cv_unreadable)\b/i.exec(
+      s,
+    )?.[1];
+  if (typed) {
+    const label = humanizeCode(typed);
+    return label.endsWith(".") ? label : `${label}.`;
+  }
+
+  // Provider gave a human title — use it, minus any machine payload.
+  const title = /"title"\s*:\s*"([^"]{4,240})"/i.exec(s)?.[1];
+  if (title) return title.endsWith(".") ? title : `${title}.`;
+
+  // No structured payload: keep the leading human clause only, drop JSON/IDs.
+  const firstClause = s.split(/[{[]/)[0]!.replace(/\s+/g, " ").trim();
+  const cleaned = firstClause.replace(/\b[0-9a-f-]{16,}\b/gi, "").replace(/\s+/g, " ").trim();
+  if (!cleaned || /^\d+$/.test(cleaned)) return "The provider rejected the request.";
+  const sentence = cleaned.replace(/[:\-–,]+$/, "").trim();
+  return sentence.endsWith(".") ? sentence : `${sentence}.`;
+}
