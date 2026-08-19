@@ -166,34 +166,19 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "PROMPT 4 — The \"numbers that lie\" pass
+TEXTO DO USUÁRIO: "PROMPT 5 — Finish the admin audit (coverage gap)
 
-There is a systemic class of defect here that no typecheck, build or visual pass will catch: counts that disagree with the list behind them. Fix it as one job, not as individual bugs.
+The previous admin audit ended at roughly 40% when the browser connection dropped. These were never opened and have no verdict:
 
-For every count, badge, tile, chip and header total rendered anywhere in either console, verify it against the records it summarises, read within the same minute. Where they disagree, make both read from one selector. Confirmed disagreements to start from:
+Pages: /admin/my-day, /admin/positions (and the 7-step edit wizard), /admin/intake, /admin/messages, /admin/payments, /admin/team, /admin/support, /admin/integrations, /admin/settings, /admin/business-rules, /admin/wbr, /admin/copilot, /admin/scoring/orphans, /admin/qa-report, /admin/design-system.
 
-Client console:
+Checks: the 375px responsive pass on every page; the notifications-bell deep-link ratio (open at least 10 and report how many land on a generic unfiltered list versus a specific record); the test-records toggle sweep with it OFF then ON then OFF; the /admin/candidates Export dialog and its truncated-UUID scope label; candidate CV download actor badges; ?tab=client-preview redirect behaviour.
 
-Stage tiles vs Board columns: off by exactly one on SHORTLISTED and INTERVIEWING in every state; tile DELIVERED 10 vs board column DELIVERED 0
-\"Fit spread\": band 0–49 reads 0 with three candidates in it; bands sum to 7 of 10
-\"0 awaiting your decision\" vs \"WHAT NEEDS YOU — 5 items\"
-\"Hiring is on track.\" vs \"Behind or at risk 1\", an overdue item, and a role marked \"Missed\"
-\"x/10 evidenced\" differing for the same candidate between the Overview detail panel and the candidates list
-\"Under review(5)\" tab rendering \"0 roles under review\"
-Commitment rows reading ACTUAL \"0 days\" with VARIANCE \"5 days early\" and STATUS \"Met\"
+Confirmed-defect items still unverified: 15, 17, 18, 19, 29 (for 9 of 10 candidates), 30, 31, 32, 33, 42, 43, 44, 45, 46, 47, 48, 49.
 
-Admin console:
+Give a KEEP / REMOVE FROM PRODUCTION / MERGE INTO <page> verdict for /admin/qa-report and /admin/design-system first — an internal engineering release audit exposing source paths and reproduction steps for security issues, and a developer component gallery, both shipped to production admins.
 
-Two tiles both labelled CLIENT USERS reading 3 and 0
-Open roles 3 / OPEN POSITIONS 8 / POSITIONS 8 / ACTIVE POSITIONS 2 on one page
-TOTAL CANDIDATES 20 / in pipeline 18 / clients-list DELIVERED 10 for the same org
-Processing exceptions 22 (exception digest) vs Failed jobs 23 (operations) vs STUCK JOBS 23 (health)
-\"14 blocked · 1 ready\" where the one \"ready\" row's own BLOCKING cell reads \"Not approved for publishing yet\" and no row reads \"Nothing blocking\"
-\"7 active · 6 archived\" against a list of 6, or 7 with archived included, with exactly 1 archived org
-A recorded hire showing as \"Hires confirmed 0\"
-Evidence coverage 72% (admin) vs 6% (client) for the same candidate
-
-Add a test that asserts, for each surface: tileCount === listQuery.length. Then the class stays closed."`}
+Note: the \"Show test records across all admin screens\" toggle was left ON, its original position. Start from there and return it there."`}
         </div>
         <Scripts />
       </body>
