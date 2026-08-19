@@ -1764,7 +1764,7 @@ async function handle(request: Request): Promise<Response> {
       const { data: match, error: mErr } = await sb
         .from("candidate_matches")
         .select(
-          "id, application_id, processing_state, processing_error_code, processing_error_message, processing_updated_at, canonical_state, current_score_run_id, admin_status, client_visibility",
+          "id, application_id, processing_state, processing_error_code, processing_error_message, processing_updated_at, canonical_state, current_score_run_id, approved_score_run_id, admin_status, client_visibility, stage, delivered_at",
         )
         .eq("id", body.match_id)
         .maybeSingle();
