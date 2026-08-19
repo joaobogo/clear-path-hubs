@@ -162,16 +162,19 @@ export type RequirementStatus =
   | "partial"
   | "not_evidenced"
   | "contradicted"
-  | "missing";
+  | "missing"
+  | "not_applicable";
 
 export type RequirementRow = {
   id: string;
   label: string;
   importance: "must_have" | "preferred";
   status: RequirementStatus;
-  evidence: Array<{ label: string; snippet: string }>;
+  evidence: Array<{ label: string; snippet: string; source: string | null }>;
+  explanation: string | null;
   interpretation: string | null;
-  contradictions: Array<{ label: string; snippet: string }>;
+  contradictions: Array<{ label: string; snippet: string; source: string | null }>;
+  context: Array<{ label: string; snippet: string; source: string | null }>;
 };
 
 /**
@@ -300,6 +303,7 @@ export function summariseCoverage(
     partial: must_partial + pref.filter(partial).length,
     missing: must_missing + pref.filter(missing).length,
     must_met,
+    must_partial,
     must_total: must.length,
     fit_score: score ?? Math.round(weighted * 100),
     fit_band: fit.band,
@@ -324,17 +328,6 @@ export type InterviewQuestion = {
 
 export type InterviewGuideItem = InterviewQuestion;
 
-export type InterviewGuideItem = {
-  id: string;
-  requirement_label: string;
-  importance: "must_have" | "preferred";
-  question: string;
-  why: string;
-  indicators: string[];
-  followUp: string | null;
-  group: string;
-};
-
 export function buildInterviewGuide(args: {
   positionTitle: string | null;
   rows: RequirementRow[];
@@ -358,6 +351,7 @@ export function buildInterviewGuide(args: {
       indicators: ["Specific project examples", "Quantifiable results", "Duration of experience"],
       followUp: null,
       group: r.importance === "must_have" ? "Core Requirements" : "Preferred Skills",
+      status: r.status,
     }));
 }
 
