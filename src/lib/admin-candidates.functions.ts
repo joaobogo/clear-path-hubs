@@ -132,7 +132,7 @@ export const searchCandidateIndex = createServerFn({ method: "POST" })
         // Multi-column search across name, email, organization and full index.
         // B3: Ensure every query is quoted safely and matches the view columns.
         q = q.or(
-          `full_name.ilike.${val},email.ilike.${val},org_name.ilike.${val},search_text.ilike.${val}`
+          `full_name.ilike.${val},email.ilike.${val},org_name.ilike.${val},search_vector.ilike.${val}`
         );
       }
     }
