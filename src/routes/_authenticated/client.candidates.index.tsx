@@ -574,12 +574,6 @@ function CandidatesPage() {
  <div className="mt-3 text-xs text-muted-foreground">Refreshing…</div>
  )}
 
-  <CompareTray
-   selected={selectedCandidates}
-   onClear={clearCompare}
-   onOpen={() => setCompareOpen(true)}
-   disabledReason={compareCheck.ok ? null : compareCheck.reason}
-  />
 
   <CompareSheet
   open={compareOpen && compareCheck.ok}
