@@ -70,13 +70,7 @@ export function RoleStatusList({
                         {clientRoleStatusLabel(r.client_status)}
                       </span>
                     </div>
-                    <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
-                      <span className="font-medium text-foreground">{r.stage_label}</span>
-                      {since ? ` since ${since}` : ""}
-                      {days != null
-                        ? ` · ${days === 1 ? "1 day" : `${days} days`} in this stage`
-                        : ""}
-                    </p>
+                    {/* Stage tiles hidden until H1 lands to resolve data inconsistency */}
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
                     {r.delivered_pending > 0 && (

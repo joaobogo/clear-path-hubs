@@ -163,7 +163,7 @@ function OverviewPage() {
     return selectedRole ? all.filter((c: Any) => c.position?.id === selectedRole) : all;
   }, [data, selectedRole]);
 
-  // One queue, built on the server and only filtered by the role picker here.
+  // The "Your open items" card is removed as a duplicate of the decision queue.
   const queue: QueueRow[] = useMemo(() => {
     const server: QueueRow[] = ((data as Any)?.decision_queue ?? []) as QueueRow[];
     return selectedRole ? server.filter((q) => q.position_id === selectedRole) : server;

@@ -269,7 +269,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
       if (posRows.some((r) => r.stage === "offer")) next = "Offer response";
       else if (posRows.some((r) => r.interview_active || r.stage === "interview_process"))
         next = "Interview outcome";
-      else if (posRows.some((r) => r.stage === "shortlisted")) next = "Send interview requests";
+      else if (posRows.some((r) => r.stage === "shortlisted")) next = "Interview requests";
       else if (posRows.some((r) => r.stage === "delivered")) next = "Review new candidates";
 
       const dates = overviewStageDates.get(p.id as string) ?? {
