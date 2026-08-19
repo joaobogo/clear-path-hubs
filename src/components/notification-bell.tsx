@@ -95,10 +95,16 @@ export function NotificationBell() {
       important: 0,
       informational: 0,
     };
-    for (const g of groups) c[g.tier] += g.unread || 1;
+    for (const g of groups) {
+      // Use g.unread to count only items that contribute to the unread badge
+      c[g.tier] += g.unread;
+    }
     return c;
   }, [groups]);
 
+  // The badge count and the "needs attention" verdict should both use the same
+  // predicate: unread actionable items.
+  const badgeCount = counts.critical + counts.action_required + counts.important + counts.informational;
   const needsAttention = counts.critical + counts.action_required;
 
   // "Emails to your address are blocked / bounced" is an ACCOUNT state, not a
@@ -140,13 +146,13 @@ export function NotificationBell() {
           onClick={(e) => e.preventDefault()}
           className="relative h-11 w-11 sm:h-9 sm:w-9"
           aria-label={
-            unread > 0
-              ? `Notifications, ${unread} unread${needsAttention > 0 ? `, ${needsAttention} need attention` : ""}`
+            badgeCount > 0
+              ? `Notifications, ${badgeCount} unread${needsAttention > 0 ? `, ${needsAttention} need attention` : ""}`
               : "Notifications, none unread"
           }
         >
           <Bell className="h-5 w-5" aria-hidden="true" />
-          {unread > 0 && (
+          {badgeCount > 0 && (
             <span
               aria-hidden="true"
               className={`absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-semibold flex items-center justify-center ${
@@ -157,7 +163,7 @@ export function NotificationBell() {
                   : "bg-primary text-primary-foreground"
               }`}
             >
-              {unread > 99 ? "99+" : unread}
+              {badgeCount > 99 ? "99+" : badgeCount}
             </span>
           )}
         </Button>
@@ -170,15 +176,15 @@ export function NotificationBell() {
               <p className="text-xs text-muted-foreground mt-0.5">
                 {needsAttention > 0
                   ? `${needsAttention} ${needsAttention === 1 ? "item needs" : "items need"} your attention.`
-                  : unread > 0
-                    ? `${unread} ${unread === 1 ? "update" : "updates"} for you.`
+                  : badgeCount > 0
+                    ? `${badgeCount} ${badgeCount === 1 ? "update" : "updates"} for you.`
                     : "Nothing is waiting on you."}
               </p>
             </div>
             <Button
               variant="ghost"
               size="sm"
-              disabled={unread === 0 || markMutation.isPending}
+              disabled={badgeCount === 0 || markMutation.isPending}
               onClick={() => markMutation.mutate(undefined)}
             >
               Mark all read
@@ -194,7 +200,7 @@ export function NotificationBell() {
               All
             </FilterChip>
             <FilterChip active={filter === "unread"} onClick={() => setFilter("unread")}>
-              Unread {unread > 0 ? `(${unread})` : ""}
+              Unread {badgeCount > 0 ? `(${badgeCount})` : ""}
             </FilterChip>
             {NOTIFICATION_TIERS.filter((t) => counts[t] > 0).map((t) => (
               <FilterChip key={t} active={filter === t} onClick={() => setFilter(t)}>
