@@ -88,7 +88,8 @@ export async function loadSlaBreaches(
     .select(
       "id, position_id, organization_id, first_shortlist_days, shortlist_size, interview_slots_hours, baseline_at",
     );
-  if (commitRes.error) throw new Error(commitRes.error.message);
+  if (opts.organizationId) commitQuery = commitQuery.eq("organization_id", opts.organizationId);
+  const commitRes = await commitQuery;
   const commitments = (commitRes.data ?? []) as Array<Record<string, unknown>>;
   if (commitments.length === 0) {
     return { rows: [], commitments_monitored: 0, generated_at: new Date().toISOString() };
