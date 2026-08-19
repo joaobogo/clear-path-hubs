@@ -451,8 +451,6 @@ export function summariseCoverage(rows: RequirementRow[]): CoverageSummary {
     preferred_total: pref.length,
     preferred_met,
     overall_pct: Math.round((Number.isFinite(weighted) ? weighted : 0) * 100),
-    // total keeps lint quiet on unused var
-    ...({ _total: total } as Record<string, number>),
   };
 }
 

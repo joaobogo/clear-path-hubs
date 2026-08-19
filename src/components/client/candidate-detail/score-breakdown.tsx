@@ -107,7 +107,7 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
                 {g.title}
               </h3>
               <span className="text-xs tabular-nums text-muted-foreground">
-                {g.met} of {g.total} evidenced
+                {g.met + g.partial} of {g.total} evidenced
               </span>
               {g.total > 0 && (
                 <span className="flex flex-wrap gap-1.5">
