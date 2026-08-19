@@ -117,20 +117,17 @@ export function PublishGatePanel({
             <AlertDialogCancel asChild>
               <Button variant="ghost">Cancel</Button>
             </AlertDialogCancel>
-            <AlertDialogAction asChild>
-              <Button
-                disabled={publishMut.isPending}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (confirmRow) {
-                    publishMut.mutate(confirmRow.position_id);
-                    setConfirmRow(null);
-                  }
-                }}
-              >
-                {publishMut.isPending ? "Publishing…" : "Confirm & Publish"}
-              </Button>
-            </AlertDialogAction>
+            <Button
+              disabled={publishMut.isPending}
+              onClick={(e) => {
+                if (confirmRow) {
+                  publishMut.mutate(confirmRow.position_id);
+                  setConfirmRow(null);
+                }
+              }}
+            >
+              {publishMut.isPending ? "Publishing…" : "Confirm & Publish"}
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
