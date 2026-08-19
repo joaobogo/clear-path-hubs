@@ -98,7 +98,7 @@ export function RecordActivityTab({
                   size="sm"
                   className="h-auto px-1 py-0 text-xs text-muted-foreground"
                   onClick={() => {
-                    void navigator.clipboard.writeText(r.trace_id);
+                    if (r.trace_id) void navigator.clipboard.writeText(r.trace_id);
                   }}
                 >
                   <Copy className="mr-1 h-3 w-3" />
