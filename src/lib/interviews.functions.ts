@@ -14,7 +14,7 @@ import { assertProposedSlots, isEmail } from "./interview-proposal";
 import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 import { assertEditor } from "@/lib/client-shared.server";
 import { resolveNotificationsForUser } from "@/lib/notifications-resolver.server";
-import type { CandidateMatchStage } from "@/integrations/supabase/types";
+
 
 
 
