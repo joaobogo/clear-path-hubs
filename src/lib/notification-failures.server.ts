@@ -115,8 +115,14 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
       .limit(200),
   ]);
 
-  if (deliveriesRes.error) throw new Error(deliveriesRes.error.message);
-  if (leadsRes.error) throw new Error(leadsRes.error.message);
+  // Catch and normalize errors to prevent full page crashes in the desk view.
+  if (deliveriesRes.error || leadsRes.error) {
+    console.error("[loadDeliveryFailures] query failed", {
+      deliveries: deliveriesRes.error,
+      leads: leadsRes.error,
+    });
+    return { items: [], suppressions: [], windowDays: WINDOW_DAYS };
+  }
 
   const rows = (deliveriesRes.data ?? []) as Array<Record<string, unknown>>;
 

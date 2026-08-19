@@ -54,6 +54,15 @@ function NotificationsPage() {
         </p>
       </header>
 
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        {summary.map((s) => (
+          <Card key={s.label} className="p-4">
+            <div className="text-2xl font-semibold tabular-nums">{s.value}</div>
+            <div className="text-xs text-muted-foreground">{s.label}</div>
+          </Card>
+        ))}
+      </div>
+
       {email && !email.configured ? (
         <Card className="p-4 mb-6 border-amber-500/40 bg-amber-500/5">
           <p className="text-sm font-medium">Email sending is not active yet</p>
@@ -77,16 +86,7 @@ function NotificationsPage() {
           </div>
         }
       >
-        {() => (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {summary.map((s) => (
-              <Card key={s.label} className="p-4">
-                <div className="text-2xl font-semibold tabular-nums">{s.value}</div>
-                <div className="text-xs text-muted-foreground">{s.label}</div>
-              </Card>
-            ))}
-          </div>
-        )}
+        {() => null}
       </QueryState>
 
       <DeliveryFailuresPanel />
