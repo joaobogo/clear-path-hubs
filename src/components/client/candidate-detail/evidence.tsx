@@ -386,7 +386,7 @@ export const RequirementRowView = memo(function RequirementRowView({
                         )}
                         <span className="text-[10px] taas-fg-success font-medium">Verified</span>
                       </div>
-                      <div className="text-foreground/90">{e.snippet}</div>
+                      <div className="text-foreground/90">{cleanQuote(e.snippet)}</div>
                     </li>
                   ))}
                 </ul>
@@ -409,7 +409,7 @@ export const RequirementRowView = memo(function RequirementRowView({
                             {humanizeSource(e.source)}
                           </div>
                         )}
-                        <div className="text-muted-foreground">{e.snippet}</div>
+                        <div className="text-muted-foreground">{cleanQuote(e.snippet)}</div>
                       </li>
                     ))}
                   </ul>
