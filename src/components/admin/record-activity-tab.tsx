@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ds";
 import { getRecordAudit, type AuditEntity } from "@/lib/admin-audit.functions";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { formatDateTime, formatNumber } from "@/lib/format/datetime";
 import { humanizeCode } from "@/lib/humanize-codes";
 
 const PAGE_SIZE = 25;
@@ -63,7 +63,7 @@ export function RecordActivityTab({
       <div className="flex flex-wrap items-baseline justify-between gap-2 border-b bg-muted/40 px-4 py-2 text-xs text-muted-foreground">
         <span>{title} — immutable audit trail, newest first.</span>
         <span className="tabular-nums">
-          {total === 0 ? "No events" : `${from}–${to} of ${total.toLocaleString()}`}
+          {total === 0 ? "No events" : `${from}–${to} of ${formatNumber(total)}`}
         </span>
       </div>
 
@@ -83,7 +83,7 @@ export function RecordActivityTab({
                 className="text-xs text-muted-foreground"
                 title={new Date(r.created_at).toISOString()}
               >
-                {new Date(r.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+                {formatDateTime(r.created_at)}
               </time>
             </div>
             <div className="mt-0.5 text-xs text-muted-foreground">

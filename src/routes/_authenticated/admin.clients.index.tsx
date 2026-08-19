@@ -1,4 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { pluralize } from "@/lib/format/datetime";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
@@ -40,6 +41,7 @@ import {
 import {
   Archive,
   ArchiveRestore,
+  Building2,
   ChevronLeft,
   ChevronRight,
   ExternalLink,
@@ -122,19 +124,7 @@ export const Route = createFileRoute("/_authenticated/admin/clients/")({
   component: ClientsPage,
 });
 
-function relTime(iso: string | null | undefined): string {
-  if (!iso) return "—";
-  const ms = Date.now() - new Date(iso).getTime();
-  const m = Math.round(ms / 60_000);
-  if (m < 1) return "now";
-  if (m < 60) return `${m} min`;
-  const h = Math.round(m / 60);
-  if (h < 24) return `${h}h`;
-  const d = Math.round(h / 24);
-  if (d < 30) return `${d}d`;
-  const mo = Math.round(d / 30);
-  return `${mo} mo`;
-}
+import { formatRelative, toTitleCase, formatNumber } from "@/lib/format/datetime";
 
 
 type ClientRow = {
@@ -159,7 +149,7 @@ type ClientRow = {
 };
 
 function orgType(row: ClientRow): string {
-  if (row.is_internal) return "Internal";
+  if (row.is_internal) return "Staff";
   if (row.is_qa) return "QA";
   if (row.is_demo) return "Demo";
   return "Client";
@@ -248,12 +238,11 @@ function ClientsPage() {
 
   return (
     <div className="space-y-6">
-      
-      <header className="flex flex-wrap items-end justify-between gap-3">
+      <header className="flex flex-wrap items-end justify-between gap-3 px-6 pt-6">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Clients</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {activeCount} active
+            {pluralize(activeCount, "active")}
             {archivedCount > 0 ? (
               <>
                 {" · "}
@@ -270,174 +259,178 @@ function ClientsPage() {
                   }
                   className="underline hover:text-foreground"
                 >
-                  {archivedCount} archived
+                  {pluralize(archivedCount, "archived", "archived")}
                 </button>
               </>
             ) : null}
             {total > 0 && search.archived === "0" ? (
               <span>
-                {" · "}showing {showingFrom}–{showingTo}
+                {" · "}showing {formatNumber(showingFrom)}–{formatNumber(showingTo)}
               </span>
             ) : null}
           </p>
         </div>
         <Link
-          to="/admin/clients_new"
+          to="/admin/clients/new"
           className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           data-qa-action="new-client"
         >
           + New client
         </Link>
-
       </header>
 
       {/* Filters live in the URL, so any view here can be named, saved and shared. */}
-      <SavedViewsBar
-        surface="admin_clients"
-        canShare
-        currentFilters={{
-          q: search.q ?? "",
-          status: search.status ?? "",
-          industry: search.industry ?? "",
-          org_type: search.org_type ?? "client_demo",
-          sort: search.sort ?? "activity_desc",
-          archived: search.archived ?? "0",
-        }}
-        onApply={(f) =>
-          navigate({
-            search: {
-              ...search,
-              q: f.q ?? "",
-              status: f.status ?? "",
-              industry: f.industry ?? "",
-              org_type: f.org_type ?? "client_demo",
-              sort: f.sort || "activity_desc",
-              archived: f.archived === "1" ? "1" : "0",
-              page: 1,
-            },
-          })
-        }
-      />
-
-      <form
-        noValidate
-        onSubmit={(e) => {
-          e.preventDefault();
-          navigate({ search: { ...search, q, page: 1 } });
-        }}
-        className="flex flex-wrap items-center gap-2 rounded-lg border bg-card p-3"
-      >
-        <div className="relative flex-1 min-w-[220px] max-w-sm">
-          <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search organizations by name"
-            className="pl-8"
-            data-qa-action="clients-search-input"
-          />
-        </div>
-
-        <Select
-          value={search.status || "all"}
-          onValueChange={(v) =>
-            navigate({ search: { ...search, status: v === "all" ? "" : v, page: 1 } })
+      <div className="px-6">
+        <SavedViewsBar
+          surface="admin_clients"
+          canShare
+          currentFilters={{
+            q: search.q ?? "",
+            status: search.status ?? "",
+            industry: search.industry ?? "",
+            org_type: search.org_type ?? "client_demo",
+            sort: search.sort ?? "activity_desc",
+            archived: search.archived ?? "0",
+          }}
+          onApply={(f) =>
+            navigate({
+              search: {
+                ...search,
+                q: f.q ?? "",
+                status: f.status ?? "",
+                industry: f.industry ?? "",
+                org_type: f.org_type ?? "client_demo",
+                sort: f.sort || "activity_desc",
+                archived: f.archived === "1" ? "1" : "0",
+                page: 1,
+              },
+            })
           }
-        >
-          <SelectTrigger className="w-36" data-qa-action="clients-filter-status">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All statuses</SelectItem>
-            {STATUSES.map((s) => (
-              <SelectItem key={s} value={s}>
-                {STATUS_LABEL[s]}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        />
+      </div>
 
-        <Select
-          value={search.org_type || "client_demo"}
-          onValueChange={(v) =>
-            navigate({ search: { ...search, org_type: v, page: 1 } })
-          }
+      <div className="px-6">
+        <form
+          noValidate
+          onSubmit={(e) => {
+            e.preventDefault();
+            navigate({ search: { ...search, q, page: 1 } });
+          }}
+          className="flex flex-wrap items-center gap-2 rounded-lg border bg-card p-3 shadow-sm"
         >
-          <SelectTrigger className="w-36" data-qa-action="clients-filter-type">
-            <SelectValue placeholder="Type" />
-          </SelectTrigger>
-          <SelectContent>
-            {ORG_TYPES.map((t) => (
-              <SelectItem key={t.value} value={t.value}>
-                {t.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <div className="relative flex-1 min-w-[220px] max-w-sm">
+            <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search organizations by name"
+              className="pl-8"
+              data-qa-action="clients-search-input"
+            />
+          </div>
 
-        <Select
-          value={search.industry || "all"}
-          onValueChange={(v) =>
-            navigate({ search: { ...search, industry: v === "all" ? "" : v, page: 1 } })
-          }
-        >
-          <SelectTrigger className="w-44" data-qa-action="clients-filter-industry">
-            <SelectValue placeholder="Industry" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All industries</SelectItem>
-            {industries.map((v) => (
-              <SelectItem key={v} value={v}>
-                {v}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select
-          value={search.sort}
-          onValueChange={(v) => navigate({ search: { ...search, sort: v, page: 1 } })}
-        >
-          <SelectTrigger className="w-52" data-qa-action="clients-sort">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="action_desc">Action required (most)</SelectItem>
-            <SelectItem value="activity_desc">Last activity</SelectItem>
-            <SelectItem value="updated_desc">Last updated (newest)</SelectItem>
-            <SelectItem value="updated_asc">Last updated (oldest)</SelectItem>
-            <SelectItem value="candidates_desc">Candidates delivered</SelectItem>
-            <SelectItem value="positions_desc">Active positions</SelectItem>
-            <SelectItem value="name_asc">Name (A → Z)</SelectItem>
-            <SelectItem value="name_desc">Name (Z → A)</SelectItem>
-            <SelectItem value="status_asc">Status</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <label className="ml-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-          <input
-            type="checkbox"
-            checked={search.archived === "1"}
-            onChange={(e) =>
-              navigate({
-                search: {
-                  ...search,
-                  archived: e.target.checked ? "1" : "0",
-                  page: 1,
-                },
-              })
+          <Select
+            value={search.status || "all"}
+            onValueChange={(v) =>
+              navigate({ search: { ...search, status: v === "all" ? "" : v, page: 1 } })
             }
-            data-qa-action="clients-include-archived"
-          />
-          Include archived
-        </label>
+          >
+            <SelectTrigger className="w-36" data-qa-action="clients-filter-status">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All statuses</SelectItem>
+              {STATUSES.map((s) => (
+                <SelectItem key={s} value={s}>
+                  {STATUS_LABEL[s]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-        <Button type="submit" variant="outline" size="sm" className="ml-auto">
-          Apply
-        </Button>
-      </form>
+          <Select
+            value={search.org_type || "client_demo"}
+            onValueChange={(v) =>
+              navigate({ search: { ...search, org_type: v, page: 1 } })
+            }
+          >
+            <SelectTrigger className="w-36" data-qa-action="clients-filter-type">
+              <SelectValue placeholder="Type" />
+            </SelectTrigger>
+            <SelectContent>
+              {ORG_TYPES.map((t) => (
+                <SelectItem key={t.value} value={t.value}>
+                  {t.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-      <div className="overflow-hidden rounded-lg border bg-card">
+          <Select
+            value={search.industry || "all"}
+            onValueChange={(v) =>
+              navigate({ search: { ...search, industry: v === "all" ? "" : v, page: 1 } })
+            }
+          >
+            <SelectTrigger className="w-44" data-qa-action="clients-filter-industry">
+              <SelectValue placeholder="Industry" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All industries</SelectItem>
+              {industries.map((v) => (
+                <SelectItem key={v} value={v}>
+                  {v}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={search.sort}
+            onValueChange={(v) => navigate({ search: { ...search, sort: v, page: 1 } })}
+          >
+            <SelectTrigger className="w-52" data-qa-action="clients-sort">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="action_desc">Action required (most)</SelectItem>
+              <SelectItem value="activity_desc">Last activity</SelectItem>
+              <SelectItem value="updated_desc">Last updated (newest)</SelectItem>
+              <SelectItem value="updated_asc">Last updated (oldest)</SelectItem>
+              <SelectItem value="candidates_desc">Candidates delivered</SelectItem>
+              <SelectItem value="positions_desc">Active positions</SelectItem>
+              <SelectItem value="name_asc">Name (A → Z)</SelectItem>
+              <SelectItem value="name_desc">Name (Z → A)</SelectItem>
+              <SelectItem value="status_asc">Status</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <label className="ml-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+            <input
+              type="checkbox"
+              checked={search.archived === "1"}
+              onChange={(e) =>
+                navigate({
+                  search: {
+                    ...search,
+                    archived: e.target.checked ? "1" : "0",
+                    page: 1,
+                  },
+                })
+              }
+              data-qa-action="clients-include-archived"
+            />
+            Include archived
+          </label>
+
+          <Button type="submit" variant="outline" size="sm" className="ml-auto">
+            Apply
+          </Button>
+        </form>
+      </div>
+
+      <div className="px-6 pb-8">
+        <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
         <div className="hidden md:block">
           <table className="w-full min-w-[1000px] text-sm">
             <thead className="border-b bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
@@ -458,10 +451,18 @@ function ClientsPage() {
               {rows.length === 0 && (
                 <tr>
                   <td colSpan={7} className="px-3 py-16 text-center text-muted-foreground">
-                    <div className="flex flex-col items-center gap-2">
-                      <p>No clients match these filters.</p>
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="rounded-full bg-muted p-4">
+                        <Building2 className="h-8 w-8 text-muted-foreground" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-base font-medium text-foreground">No organizations found</p>
+                        <p className="max-w-xs text-xs leading-relaxed">
+                          Try adjusting your filters or clearing the search to find what you're looking for.
+                        </p>
+                      </div>
                       <Button
-                        variant="link"
+                        variant="outline"
                         size="sm"
                         onClick={() =>
                           navigate({
@@ -495,14 +496,36 @@ function ClientsPage() {
             </li>
           ))}
           {rows.length === 0 && (
-            <li className="p-8 text-center text-sm text-muted-foreground">
-              No clients match these filters.
+            <li className="p-16 text-center text-sm text-muted-foreground">
+              <div className="flex flex-col items-center gap-2">
+                <p>No clients match these filters.</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    navigate({
+                      search: {
+                        ...search,
+                        q: "",
+                        status: "",
+                        industry: "",
+                        org_type: "client_demo",
+                        archived: "0",
+                        page: 1,
+                      },
+                    })
+                  }
+                >
+                  Clear filters
+                </Button>
+              </div>
             </li>
           )}
         </ul>
+      </div>
 
-        {total > 0 && (
-          <div className="flex flex-wrap items-center justify-between gap-2 border-t bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
+      {total > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
             <div>
               Page {page} of {pageCount} · {total} total
             </div>
@@ -564,13 +587,14 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
   return (
     <tr className="hover:bg-muted/30">
       <td className="px-3 py-2.5">
-        <a
-          href={`/admin/clients/${r.id}`}
+        <Link
+          to="/admin/clients/$id"
+          params={{ id: r.id }}
           className="font-medium text-foreground hover:text-primary hover:underline"
           data-qa-action={`open-client-${r.id}`}
         >
           {r.name}
-        </a>
+        </Link>
         <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
           <span>{r.domain ?? "—"}</span>
           {r.industry && <span>· {r.industry}</span>}
@@ -586,12 +610,7 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
           <>
             <div className="text-foreground">
               {r.primary_contact_name
-                ? r.primary_contact_name
-                    .split(" ")
-                    .map(
-                      (w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(),
-                    )
-                    .join(" ")
+                ? toTitleCase(r.primary_contact_name)
                 : "—"}
             </div>
             {r.primary_contact_email && (
@@ -622,7 +641,7 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
         <span className="text-muted-foreground"> / {r.positions_total}</span>
       </td>
       <td className="whitespace-nowrap px-3 py-2.5 text-right tabular-nums">{r.candidates_delivered}</td>
-      <td className="whitespace-nowrap px-3 py-2.5 text-right text-xs text-muted-foreground">{relTime(r.last_activity_at)}</td>
+      <td className="whitespace-nowrap px-3 py-2.5 text-right text-xs text-muted-foreground">{formatRelative(r.last_activity_at)}</td>
       <td className="px-3 py-2.5 text-right">
         <RowOverflowMenu row={r} onArchive={onArchive} />
       </td>
@@ -636,12 +655,13 @@ function ClientCard({ row, onArchive }: { row: ClientRow; onArchive: () => void 
     <div className="space-y-2">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <a
-            href={`/admin/clients/${r.id}`}
+          <Link
+            to="/admin/clients/$id"
+            params={{ id: r.id }}
             className="block truncate text-base font-medium hover:text-primary hover:underline"
           >
             {r.name}
-          </a>
+          </Link>
           <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <span>{r.domain ?? "—"}</span>
             {r.industry && <span>· {r.industry}</span>}
@@ -666,16 +686,17 @@ function ClientCard({ row, onArchive }: { row: ClientRow; onArchive: () => void 
           <div className="text-muted-foreground">Action</div>
         </div>
         <div>
-          <div className="tabular-nums font-medium">{relTime(r.last_activity_at)}</div>
+          <div className="tabular-nums font-medium">{formatRelative(r.last_activity_at)}</div>
           <div className="text-muted-foreground">Activity</div>
         </div>
       </div>
-      <a
-        href={`/admin/clients/${r.id}`}
+      <Link
+        to="/admin/clients/$id"
+        params={{ id: r.id }}
         className="inline-flex w-full items-center justify-center rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
       >
         Open client
-      </a>
+      </Link>
     </div>
   );
 }

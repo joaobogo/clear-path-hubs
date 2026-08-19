@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import { humanizeCode } from "@/lib/humanize-codes";
 import { Link } from "@tanstack/react-router";
 
@@ -36,7 +36,7 @@ export function OperationalHealthPanel() {
     mutationFn: async (v: { kind: "webhook" | "processing" | "email" | "cv"; id: string }) =>
       retryFn({ data: v }),
     onSuccess: async () => {
-      setNote("Retry queued.");
+      setNote(`Retry queued · ${new Date().toLocaleTimeString(APP_LOCALE, { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`);
       await qc.invalidateQueries({ queryKey: ["ops-health"] });
     },
     onError: (e: Error) => {
@@ -106,7 +106,7 @@ export function OperationalHealthPanel() {
                       {i.id.slice(0, 8)}…
                     </Button>
                   ) : null}
-                  <span className="text-xs text-muted-foreground">{new Date(i.occurred_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</span>
+                  <span className="text-xs text-muted-foreground">{formatDateTime(i.occurred_at)}</span>
                   <div className="flex items-center gap-1.5 ml-auto">
                     <Button
                       size="sm"
@@ -120,7 +120,7 @@ export function OperationalHealthPanel() {
                     <Link to="/admin/candidates/$id" params={{ id: i.entity_id || i.id }} className="text-xs text-primary hover:underline">open</Link>
                   </div>
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground">{humanizeCode(i.detail)}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{humanizeCode(i.detail).toLowerCase()}</p>
                 {i.last_error ? (
                   <div className="mt-1 flex items-start gap-2">
                     <p className="break-words font-mono text-[10px] leading-relaxed text-destructive/80">

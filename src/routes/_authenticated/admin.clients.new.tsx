@@ -15,7 +15,7 @@ import { Card } from "@/components/ui/card";
 import { FieldError } from "@/components/ui/field-error";
 import { collectErrors, emailText, requiredText } from "@/lib/form-validation";
 
-export const Route = createFileRoute("/_authenticated/admin/clients_new")({
+export const Route = createFileRoute("/_authenticated/admin/clients/new")({
   ssr: false,
   head: () => ({
     meta: [{ title: "New client — Admin · TaaSFlow" }, { name: "robots", content: "noindex" }],

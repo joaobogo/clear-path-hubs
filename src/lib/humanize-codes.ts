@@ -27,8 +27,8 @@ const DICTIONARY: Record<string, string> = {
   cv_enrich: "Enriching profile",
   
   // Roles & Auth
-  client_admin: "Client admin",
-  platform_staff: "Platform staff",
+  client_admin: "Client",
+  platform_staff: "Staff",
   hiring_manager: "Hiring manager",
   recruiter: "Recruiter",
   

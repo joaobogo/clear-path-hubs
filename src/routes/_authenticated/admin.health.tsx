@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
 import { humanizeCode } from "@/lib/humanize-codes";
+import { pluralize } from "@/lib/format/datetime";
 import { sanitizeInternalMarkers } from "@/lib/human-labels";
 
 import { getPipelineHealth } from "@/lib/admin.functions";
@@ -65,7 +66,7 @@ function HealthPage() {
         : await advanceFn({ data: { match_id: id } });
     },
     onSuccess: async (r) => {
-      setFeedback(`Repair → ${r.state} · trace ${r.trace_id}`);
+      setFeedback(`Repair → ${humanizeCode(r.state).toLowerCase()} · trace ${r.trace_id}`);
       await qc.invalidateQueries({ queryKey: ["pipeline-health"] });
     },
     onError: (e: Error) => setFeedback(`Failed: ${e.message}`),
@@ -107,9 +108,9 @@ function HealthPage() {
                 to="/admin/candidates"
                 search={{ processing_state: st }}
                 className="rounded-lg border p-4 text-left transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                aria-label={`Open candidates in state ${st.replace(/_/g, " ")} (${n})`}
+                aria-label={`Open candidates in state ${humanizeCode(st).toLowerCase()} (${n})`}
               >
-                <div className="text-xs text-muted-foreground">{st.replace(/_/g, " ")}</div>
+                <div className="text-xs text-muted-foreground">{humanizeCode(st).toLowerCase()}</div>
                 <div
                   className={`text-2xl font-semibold tabular-nums ${
                     bad && n > 0 ? "text-destructive" : ""
@@ -149,6 +150,8 @@ function HealthPage() {
                 <th className="px-3 py-2 font-medium">Job</th>
                 <th className="px-3 py-2 font-medium">Error</th>
                 <th className="px-3 py-2 font-medium">Trace</th>
+                <th className="px-3 py-2 font-medium">State</th>
+                <th className="px-3 py-2 font-medium">Retry</th>
                 <th className="px-3 py-2 font-medium">Repair</th>
               </tr>
             </thead>
@@ -158,7 +161,7 @@ function HealthPage() {
                   <td className="px-3 py-2 text-xs text-muted-foreground">
                     {new Date(j.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
                   </td>
-                  <td className="px-3 py-2">{j.job_type}</td>
+                  <td className="px-3 py-2 uppercase tracking-wide text-[10px] text-muted-foreground">{j.job_type}</td>
                   <td className="px-3 py-2">
                     <Badge variant="destructive">{humanizeCode(j.error_code ?? "error")}</Badge>{" "}
                     <span className="text-xs text-muted-foreground">
@@ -168,17 +171,10 @@ function HealthPage() {
                     </span>
                   </td>
                   <td className="px-3 py-2 text-xs font-mono text-muted-foreground">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 px-1 text-[10px]"
-                      onClick={() => {
-                        navigator.clipboard.writeText(j.trace_id);
-                        toast.success("Trace ID copied");
-                      }}
-                    >
-                      {j.trace_id?.slice(0, 8)}…
-                    </Button>
+                    {humanizeCode(j.state).toLowerCase()}
+                  </td>
+                  <td className="px-3 py-2 text-xs text-muted-foreground">
+                    {pluralize(j.attempts, "attempt")}
                   </td>
 
                   <td className="px-3 py-2 space-x-1">

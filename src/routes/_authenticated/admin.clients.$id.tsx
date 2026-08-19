@@ -79,9 +79,6 @@ const TABS = [
   "messages",
   "notes",
   "documents",
-  "activity",
-  "shares",
-  "talent_memory",
   "settings",
 ] as const;
 type TabKey = (typeof TABS)[number];
@@ -98,9 +95,6 @@ const TAB_LABELS: Record<TabKey, { label: string; icon: typeof Building2 }> = {
   messages: { label: "Messages", icon: MessagesSquare },
   notes: { label: "Notes", icon: StickyNote },
   documents: { label: "Documents", icon: FileText },
-  activity: { label: "Activity", icon: Activity },
-  shares: { label: "Shares", icon: ExternalLink },
-  talent_memory: { label: "Talent memory", icon: BadgeCheck },
   settings: { label: "Settings", icon: Settings },
 };
 
@@ -229,7 +223,7 @@ function ClientDetail() {
       </div>
 
       <nav className="flex flex-wrap gap-0.5 border-b" role="tablist">
-        {TABS.filter(t => t !== "activity").map((t) => {
+        {TABS.map((t) => {
           const Icon = TAB_LABELS[t].icon;
           return (
             <Link
@@ -312,21 +306,6 @@ function ClientDetail() {
       {tab === "documents" && (
         <Block name="documents">
           <DocumentsTab id={id} parsedCvCount={parsedCvCount} />
-        </Block>
-      )}
-      {tab === "activity" && (
-        <Block name="activity">
-          <ActivityTab id={id} />
-        </Block>
-      )}
-      {tab === "shares" && (
-        <Block name="shares">
-          <SharesTab orgId={id} />
-        </Block>
-      )}
-      {tab === "talent_memory" && (
-        <Block name="talent_memory">
-          <TalentMemoryTab orgId={id} />
         </Block>
       )}
       {tab === "settings" && (
