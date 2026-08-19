@@ -143,8 +143,8 @@ export function PublishGatePanel({
         </div>
         {query.data && (
           <Badge variant="secondary" className="tabular-nums">
-            {query.data.rows.filter((r) => !r.can_publish).length} blocked ·{" "}
-            {query.data.rows.filter((r) => r.can_publish).length} ready
+            {query.data.rows.filter((r) => !r.can_publish || r.blockers.includes("not_approved")).length} blocked ·{" "}
+            {query.data.rows.filter((r) => r.can_publish && !r.blockers.includes("not_approved")).length} ready
           </Badge>
         )}
       </header>

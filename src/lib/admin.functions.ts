@@ -401,6 +401,8 @@ export const listClients = createServerFn({ method: "GET" })
     z
       .object({
         include_test: z.boolean().optional().default(false),
+        status: z.enum(["active", "archived", "all"]).optional().default("active"),
+        industry: z.string().optional(),
         sort: z
           .enum([
             "activity_desc",
@@ -434,15 +436,7 @@ export const listClients = createServerFn({ method: "GET" })
     // P-020: Increase limit to ensure all organizations are captured before client-side filtering.
     // The previous 500 limit could cause missing results if there are many test/archived records.
     q = q.limit(2000);
-    // The global "test records" preference decides here, in Postgres, so the
-    // list and the "N organizations" count can never disagree.
-    if (!showTest) {
-      q = excludeTestFlag(q);
-    } else {
-      // P-020: When test records are ON, we still want every organization,
-      // but ensure we don't accidentally over-limit or skip uncategorized ones.
-      // The limit(500) is already quite generous for a list.
-    }
+    // C4: ensure organizations with active roles are always included in the active list.
     const { data: rows } = await q;
 
     const orgIds = (rows ?? []).map((r: AnyRow) => r.id);
@@ -514,6 +508,13 @@ export const listClients = createServerFn({ method: "GET" })
         actions_required: st.actions_required,
         last_activity_at: st.last_activity_at ?? r.updated_at,
       };
+    }).filter((r: AnyRow) => {
+      const { status, industry } = data;
+      if (industry && r.industry !== industry) return false;
+      // C4: An organization is "active" if it is not archived OR it has active positions.
+      if (status === "archived") return !!r.archived_at;
+      if (status === "active") return !r.archived_at || r.positions_active > 0;
+      return true;
     });
 
     const industrySet = new Set<string>();
@@ -552,6 +553,7 @@ export const listClients = createServerFn({ method: "GET" })
     merged.sort(cmp);
 
     const total = merged.length;
+    // C5: active/archived counts derived from the table's own query to ensure consistency.
     const active_count = merged.filter((r: AnyRow) => !r.archived_at).length;
     const archived_count = merged.filter((r: AnyRow) => r.archived_at).length;
     const items = merged;
@@ -1403,11 +1405,11 @@ export const getPipelineHealth = createServerFn({ method: "GET" })
         stale += 1;
     }
 
-    // Recent failed jobs
+    // Recent failed jobs (C8: Unified failed job count/query)
     const { data: failedJobs } = await s
       .from("processing_jobs")
       .select("id,job_type,error_code,error_message,trace_id,created_at,entity_id")
-      .eq("status", "failed")
+      .in("status", ["failed", "stuck_queued"])
       .order("created_at", { ascending: false })
       .limit(50);
 

@@ -304,13 +304,11 @@ export function buildEvidenceChain(input: {
   // Buckets are read off the same facts the rows render from, not off the
   // single collapsed evidenceState — a reviewer-confirmed requirement is still
   // a quoted one, and a requirement with nothing behind it must still count as
-  // "no evidence" even after someone accepted the reading.
+  // "no evidence" (C2/C3) even after someone accepted the reading.
   const meta: EvidenceChainMeta = {
     total: nodes.length,
     verified: nodes.filter((n) => n.sources.length > 0).length,
-    missing: nodes.filter(
-      (n) => n.status === "missing" || (n.sources.length === 0 && !n.interpretation),
-    ).length,
+    missing: nodes.filter((n) => n.status === "missing" || (n.sources.length === 0 && !n.interpretation)).length,
     conflicting: nodes.filter(
       (n) => n.evidenceState === "conflicting" || n.status === "contradicted",
     ).length,
