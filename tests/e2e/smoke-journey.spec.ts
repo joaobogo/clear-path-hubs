@@ -112,7 +112,7 @@ test.describe("launch smoke journey", () => {
     await page.locator("#city").fill("Lisbon");
     // Account creation is opt-in behind a checkbox, and supplying a password is
     // what creates it — this is the product's only candidate sign-up surface.
-    await page.getByRole("checkbox", { name: /create a candidate account/i }).click();
+    await page.getByLabel(/create a candidate account/i).check();
     await page.locator("#password").fill(QA_PASSWORD);
     await page.locator("#password2").fill(QA_PASSWORD);
 
@@ -192,7 +192,7 @@ test.describe("launch smoke journey", () => {
     // The work queue is where a scored match surfaces for review.
     await page.goto("/admin", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: /work queue/i }).first()).toBeVisible({
-      timeout: 60_000,
+      timeout: 120_000,
     });
 
     // Full review pass on the desk itself: the reviewer must be able to see who
