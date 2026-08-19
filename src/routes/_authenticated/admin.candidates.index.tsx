@@ -359,7 +359,7 @@ function CandidatesPage() {
             <Input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Name, email, phone, job or client"
+              placeholder="Search by name, email, or client..."
               aria-label="Search candidates"
             />
           </form>
