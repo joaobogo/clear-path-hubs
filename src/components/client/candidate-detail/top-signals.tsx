@@ -33,8 +33,9 @@ export const TopSignals = memo(function TopSignals({
           source: null,
         }));
 
-  const flags = buildValidationList(candidate.requirement_rows, candidate.concerns)
+  const flags = buildValidationList(candidate.requirement_rows, candidate.concerns, { hideRequirementEvidenceNotes: true })
     .slice(0, 2);
+
 
   if (strengths.length === 0 && flags.length === 0) return null;
 
