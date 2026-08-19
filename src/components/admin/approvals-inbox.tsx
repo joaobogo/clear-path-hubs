@@ -209,7 +209,6 @@ function Row({
             Decline
           </Button>
         </div>
-
       </div>
       {declining ? (
         <DeclineForm
