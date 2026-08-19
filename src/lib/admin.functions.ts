@@ -1003,6 +1003,10 @@ export const setPositionStatus = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => statusTransition.parse(i))
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
+    // A clarification request the client can see must carry the question.
+    if (data.action === "request_clarification" && !(data.reason ?? "").trim()) {
+      throw new Error("Write the question before sending a clarification request.");
+    }
     const trace_id = traceId();
     const s = await getAdmin();
     const { data: before } = await s
