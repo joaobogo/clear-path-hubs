@@ -217,9 +217,6 @@ export const FitHero = memo(function FitHero({
           </div>
           <h2 id="fit-heading" className="mt-1 text-2xl font-semibold tracking-tight">
             {fit.headline}
-            {candidate.score != null && (
-              <span className="ml-2 text-muted-foreground/50">· {Math.round(candidate.score)}/100</span>
-            )}
           </h2>
           <p className={cn("mt-0.5 text-sm font-medium", ring.text)}>
             {fit.recommendation}

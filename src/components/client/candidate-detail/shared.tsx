@@ -108,10 +108,12 @@ export function CandidateHeader({
               {c.location}
             </span>
           )}
-          {(c.timezone || c.availability || candidate.work_authorization) && (
+          {(c.timezone || c.availability || candidate.work_authorization || c.email || c.phone || candidate.languages.length > 0) && (
             <span className="inline-flex items-center gap-1">
               <CalendarClock className="h-3.5 w-3.5" aria-hidden />
               {[
+                c.email,
+                c.phone,
                 c.timezone,
                 c.availability,
                 candidate.work_authorization,
