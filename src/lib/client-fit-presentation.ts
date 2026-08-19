@@ -468,7 +468,7 @@ export function evidenceSupport(rows: RequirementRow[]): {
 } {
   const scoped = rows.filter((r) => r.status !== "not_applicable");
   return {
-    supported: 0, // HONESTY GATE: Extraction is unreliable; suppress counts.
+    supported: scoped.filter((r) => r.status === "met" || r.status === "partial").length,
     total: scoped.length,
   };
 }

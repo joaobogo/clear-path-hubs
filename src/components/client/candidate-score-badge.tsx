@@ -93,7 +93,7 @@ export function CandidateScoreBadge({
   const fit = hasBand ? toFitPresentation(fitLabel, score) : null;
   const support =
     evidence && evidence.total > 0
-      ? "Evidence extraction is still running for this role"
+      ? `${evidence.supported}/${evidence.total} evidenced`
       : null;
   const recheckNote =
     "This assessment is being re-checked because the role details or the candidate's CV changed after it was produced.";
@@ -126,6 +126,7 @@ export function CandidateScoreBadge({
             aria-hidden="true"
           />
           {fit.headline}
+          {support && <span className="ml-1 opacity-70">· {support}</span>}
         </span>
       )}
       {rechecking && (
@@ -144,9 +145,9 @@ export function CandidateScoreBadge({
           Evidence pending
         </span>
       )}
-      {support && !rechecking && !evidencePending && (
+      {support && !rechecking && !evidencePending && !fit && (
         <span className="text-[11px] text-muted-foreground" title={support}>
-          Evidence extraction is still running for this role
+          {support}
         </span>
       )}
       {humanReviewed && (
