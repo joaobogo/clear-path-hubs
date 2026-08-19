@@ -56,7 +56,7 @@ import { SurfaceState } from "@/components/ds/surface-state";
 import { resolveFilteredEmptyState } from "@/lib/empty-states/empty-state-catalogue";
 import { makeWorkspacePending, WorkspaceRowsSkeleton } from "@/components/workspace/pending-states";
 import { Skeleton } from "@/components/ui/skeleton";
-import { countRolesByTab, roleStatusTabLabel } from "@/lib/client-role-status-tabs";
+import { countRolesByTab, roleStatusTabLabel, roleStatusTab } from "@/lib/client-role-status-tabs";
 import { plural } from "@/lib/format/plural";
 
 function PositionsPage() {
@@ -105,14 +105,13 @@ function PositionsPage() {
   // skeletons, never "No results match these filters".
   const hasRoleData = !!listQuery.data && !!orgId;
   const statusCounts = useMemo(() => countRolesByTab(allRows), [allRows]);
-  const rows = useMemo(
-    () => allRows.filter((p) => {
+  const rows = useMemo(() => {
+    return allRows.filter((p) => {
       const key = p.client_status?.key;
-      const tab = key === "active" ? "active" : key === "paused" ? "paused" : key === "closed" ? "closed" : "draft";
+      const tab = roleStatusTab(key);
       return tab === status;
-    }),
-    [allRows, status],
-  );
+    });
+  }, [allRows, status]);
 
 
  useEffect(() => {
