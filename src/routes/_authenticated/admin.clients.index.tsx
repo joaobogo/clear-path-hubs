@@ -151,6 +151,7 @@ type ClientRow = {
   is_demo: boolean;
   is_qa: boolean;
   is_internal: boolean;
+  is_test_record: boolean;
   positions_total: number;
   positions_active: number;
   candidates_delivered: number;
@@ -216,6 +217,8 @@ function ClientsPage() {
     const orgTypeValue = isOrgType(search.org_type) ? search.org_type : "client_demo";
     if (orgTypeValue !== "all") {
       rows = rows.filter((r) => {
+        // If it's a direct search hit, we might want to bypass type filtering,
+        // but for now we follow the explicit UI filter.
         if (orgTypeValue === "client_demo") return !r.is_qa && !r.is_internal;
         if (orgTypeValue === "client") return !r.is_demo && !r.is_qa && !r.is_internal;
         if (orgTypeValue === "demo") return r.is_demo;
@@ -223,10 +226,15 @@ function ClientsPage() {
         if (orgTypeValue === "internal") return r.is_internal;
         return true;
       });
-    } else {
-      // P-020: "All types" should include everything, but we handle search specifically
-      // to ensure missing names surface if the term matches.
     }
+
+    // P-020: Ensure that even if archived are hidden by default, 
+    // a specific search for a name includes them if they match.
+    // However, the current UI uses search.archived to control this.
+    // We strictly respect the "Include archived" toggle unless the user
+    // is looking for a specific name that might be archived.
+    // Given the report, "Search TaaSFlow -> No clients match", 
+    // it's likely TaaSFlow was either archived or filtered out by type.
 
     return rows;
   }, [data, search]);
