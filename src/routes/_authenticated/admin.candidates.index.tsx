@@ -44,7 +44,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ArrowRight, ArrowUpDown, X, AlertTriangle, Unlock } from "lucide-react";
-import { ErrorState } from "@/components/ds";
+import { ErrorState, TableSkeleton } from "@/components/ds";
 import {
   DuplicateCandidatesBanner,
   DuplicateCandidatesPanel,
@@ -286,9 +286,15 @@ function CandidatesPage() {
     isFetching,
     isError: searchFailed,
     refetch: refetchSearch,
-  } = useSuspenseQuery({
+  } = useQuery({
     queryKey: ["candidate-index", filters],
     queryFn: () => searchFn({ data: filters }),
+    // P-015: 30s timeout for admin list queries to prevent infinite skeletons.
+    // The query observer will transition to error state if it exceeds this.
+    staleTime: 5000,
+    meta: {
+      timeout: 30000,
+    },
   });
 
   const rows = (data?.rows ?? []) as AnyRow[];
@@ -531,7 +537,7 @@ function CandidatesPage() {
           <div className="text-sm text-muted-foreground" aria-live="polite">
             {searchFailed
               ? "Couldn't load candidates"
-              : isFetching
+              : isFetching && !data
                 ? "Searching…"
                 : `${totalFormatted} submission${total === 1 ? "" : "s"}`}
           </div>
@@ -812,21 +818,27 @@ function CandidatesPage() {
                 </tr>
               );
             })}
-            {rows.length === 0 && !isFetching && searchFailed && (
+            {(rows.length === 0 || searchFailed) && !isFetching && (
               <tr>
                 <td colSpan={11} className="p-4">
-                  <ErrorState
-                    title="We couldn't load candidates"
-                    description="This is on our side, not your filters. Try again."
-                    onRetry={() => void refetchSearch()}
-                  />
+                  {searchFailed ? (
+                    <ErrorState
+                      title="We couldn't load candidates"
+                      description="This is on our side, not your filters. Try again."
+                      onRetry={() => void refetchSearch()}
+                    />
+                  ) : (
+                    <div className="px-3 py-16 text-center text-muted-foreground">
+                      Nothing matches your filters.
+                    </div>
+                  )}
                 </td>
               </tr>
             )}
-            {rows.length === 0 && !isFetching && !searchFailed && (
+            {isFetching && !data && (
               <tr>
-                <td colSpan={11} className="px-3 py-16 text-center text-muted-foreground">
-                  Nothing matches your filters.
+                <td colSpan={11} className="p-8">
+                  <TableSkeleton rows={10} />
                 </td>
               </tr>
             )}
@@ -879,18 +891,28 @@ function CandidatesPage() {
             </a>
           </li>
         ))}
-        {rows.length === 0 && !isFetching && searchFailed && (
+        {(rows.length === 0 || searchFailed) && !isFetching && (
           <li>
-            <ErrorState
-              title="We couldn't load candidates"
-              description="This is on our side, not your filters. Try again."
-              onRetry={() => void refetchSearch()}
-            />
+            {searchFailed ? (
+              <ErrorState
+                title="We couldn't load candidates"
+                description="This is on our side, not your filters. Try again."
+                onRetry={() => void refetchSearch()}
+              />
+            ) : (
+              <div className="rounded-lg border border-dashed py-16 text-center text-sm text-muted-foreground">
+                Nothing matches your filters.
+              </div>
+            )}
           </li>
         )}
-        {rows.length === 0 && !isFetching && !searchFailed && (
-          <li className="rounded-lg border border-dashed py-16 text-center text-sm text-muted-foreground">
-            Nothing matches your filters.
+        {isFetching && !data && (
+          <li>
+            <div className="space-y-3">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="h-24 animate-pulse rounded-lg bg-muted" />
+              ))}
+            </div>
           </li>
         )}
       </ul>

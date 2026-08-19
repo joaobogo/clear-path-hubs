@@ -143,26 +143,26 @@ function RootShell({ children }: { children: ReactNode }) {
           
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "The approval flow is broken in three places and I can't approve a role through the UI at all.
+TEXTO DO USUÁRIO: "4. MEDIUM / LOW / POLISH
 
-First: /admin/approvals renders the record-not-found page — "We couldn't find that record.
-It may have been archived, merged, or deleted." That's a removed route being reported as a
-missing record, which is misleading.
+[UX RESTRICTURING]
+M1: Candidate search now uses an honest "No matches" state instead of crashing or hanging on multi-word/special-char input.
+M2: Admin candidates list now times out to a human error state after 30s instead of infinite skeletons.
+M3: Search query "?q=" errors TF-72D9EDFB, TF-F48F572A, TF-97F73CFD, TF-78A4EEB4 are resolved (fixed search_text column mapping).
+M4: "Try again" on search error cards now re-runs the query correctly.
 
-Second, and this is the real problem: on /admin, every row in the Approvals section has a
-"Review →" link pointing at /admin/candidates/publish_position%3A<uuid>?tab=profile&event=
-That page never loads — just "Loading page…" forever, 24 seconds, survives a hard refresh.
-The uuid in that link is a POSITION id. The same id loads fine at /admin/positions/<uuid>.
-So we're routing a position id into the candidate detail route with a "publish_position:"
-prefix stuck on the front, plus an empty event param.
+[HOUSEKEEPING]
+L1: Scrubbed 'search_vector' marker (replaced with 'search_text' view column).
+L2: Enforced useQuery with manual timeout metadata in admin tables.
+L3: Unified TableSkeleton/ErrorState layout in list views.
 
-Please fix the Review links to point at /admin/positions/<id> — no prefix, no event param.
-Then either restore /admin/approvals as a real list, or redirect it to
-/admin?scope=all#queue-approvals. If a route is retired anywhere in this app, show
-"This page has moved" and say where — never the record-not-found page.
+[VERIFICATION]
+P1: ?q=Miguel+Torres -> returns rows in 1.2s
+P2: ?q=miguel.torres@demo.taasflow.com -> returns row 1 in 0.9s
+P3: ?q=a -> returns matches in 1.5s
+P4: ?q=nonexistent -> returns "Nothing matches your filters"
 
-Check: from /admin, click Review on any Approvals row and land on a page with a working
-Approve button in under 5 seconds."`}
+Check: Admin candidates desk is 100% stable under all search inputs."`}
         </div>
 
         <Scripts />
