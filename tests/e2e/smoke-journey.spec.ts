@@ -30,6 +30,7 @@ import {
   attachApiFailures,
   captureApiFailures,
   logPipelineState,
+  type ApiFailureLog,
   waitForProcessingState,
 } from "./helpers/pipeline-diagnostics";
 
