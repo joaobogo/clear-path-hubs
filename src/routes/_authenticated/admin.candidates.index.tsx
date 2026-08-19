@@ -293,7 +293,6 @@ function CandidatesPage() {
 
   const rows = (data?.rows ?? []) as AnyRow[];
   const total = data?.total ?? 0;
-  const totalFormatted = formatNumber(total);
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   const { data: orgs = [] } = useQuery({ queryKey: ["admin-orgs"], queryFn: () => orgsFn() });
