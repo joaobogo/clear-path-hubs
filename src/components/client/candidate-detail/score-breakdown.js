@@ -1,3 +1,4 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { memo } from "react";
 import { CheckCircle2, Gauge, Info, ListChecks, ShieldAlert, TrendingDown, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -12,10 +13,8 @@ function CountChip({ label, value, tone, }) {
         warning: "taas-bg-warning-soft taas-fg-warning",
         neutral: "taas-bg-neutral-soft taas-fg-neutral",
     }[tone];
-    return (<span className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium", cls)}>
-      <span className="tabular-nums">{value}</span>
-      {label}
-    </span>);
+    return (_jsxs("span", { className: cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium", cls), children: [
+            _jsx("span", { className: "tabular-nums", children: value }), label] }));
 }
 export const ScoreBreakdown = memo(function ScoreBreakdown({ candidate, }) {
     const b = buildScoreBreakdown(candidate);
@@ -23,106 +22,31 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({ candidate, }) {
         return null;
     const positives = b.reasons.filter((r) => r.tone === "positive");
     const watch = b.reasons.filter((r) => r.tone === "watch");
-    return (<SectionCard title="Score breakdown" icon={<Gauge className="h-4 w-4"/>} description="Why this candidate ranks where they do: the evidence behind each requirement, how each scoring criterion landed, and the reasons that moved the score.">
-      {/* Conflicting-signal note lives with the score it qualifies (merged from
-            the old "How this score was built" panel). */}
-      {candidate.evaluation.contradiction && (<div className="mb-3 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm">
-          <div className="flex items-center gap-2 font-medium text-destructive">
-            <ShieldAlert className="h-4 w-4" aria-hidden/>
-            Conflicting signals found
-          </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {candidate.evaluation.contradiction} — flagged in evidence review before
-            this candidate was delivered to your workspace.
-          </p>
-        </div>)}
-      {/* Headline: the figure, its band and the method that produced it. */}
-
-      <div className="flex flex-wrap items-end justify-between gap-3 rounded-lg border bg-muted/30 p-3">
-        <div className="flex items-end gap-3">
-          <span className="text-3xl font-semibold tabular-nums leading-none">
-            {b.score ?? "—"}
-          </span>
-          <div className="text-xs text-muted-foreground">
-            <div className="text-sm font-medium text-foreground">{b.bandLabel}</div>
-            {b.bandFloor != null && b.bandCeiling != null && (<div className="tabular-nums">
-                band range {b.bandFloor}–{b.bandCeiling}
-              </div>)}
-          </div>
-        </div>
-        <div className="max-w-md text-right text-xs text-muted-foreground">
-          {b.methodLabel && (<Badge variant="secondary" className="text-[10px]">
-              {b.methodLabel}
-            </Badge>)}
-          {b.criteriaSummary && <p className="mt-1">{b.criteriaSummary}</p>}
-          {b.scoredAt && (<p className="mt-0.5">
-              Scored {new Date(b.scoredAt).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
-            </p>)}
-        </div>
-      </div>
-
-      {/* Must-have vs preferred evidence, kept apart because they weigh differently. */}
-      <div className="mt-4 space-y-4">
-        {b.groups.map((g) => (<div key={g.kind}>
-            <div className="flex flex-wrap items-center gap-2">
-              <h3 className="flex items-center gap-1.5 text-sm font-semibold">
-                <ListChecks className="h-3.5 w-3.5 text-muted-foreground" aria-hidden/>
-                {g.title}
-              </h3>
-              <span className="text-xs tabular-nums text-muted-foreground">
-                {g.met + g.partial} of {g.total} evidenced
-              </span>
-              {g.total > 0 && (<span className="flex flex-wrap gap-1.5">
-                  <CountChip label="quoted" value={g.met} tone="success"/>
-                  {g.partial > 0 && (<CountChip label="related" value={g.partial} tone="warning"/>)}
-                  {g.missing > 0 && (<CountChip label="no evidence" value={g.missing} tone="neutral"/>)}
-                </span>)}
-            </div>
-            <p className="mt-1 text-xs text-muted-foreground">{g.takeaway}</p>
-            {g.rows.length > 0 && (<ul className="mt-2 space-y-2">
-                {g.rows.map((row) => (<RequirementRowView key={row.id} row={row}/>))}
-              </ul>)}
-          </div>))}
-      </div>
-
-      {/* Scoring criteria with weights, only when the run stored them. */}
-      {/* Scoring criteria removed - using honest factor-based explanation as per audit fix P-035. */}
-
-      {/* The short answer: what lifted the score, and what holds it back. */}
-      {(positives.length > 0 || watch.length > 0) && (<div className="mt-5 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-lg border border-success/30 bg-success/5 p-3">
-            <h3 className="flex items-center gap-1.5 text-sm font-semibold">
-              <TrendingUp className="h-3.5 w-3.5" aria-hidden/>
-              What lifts the score
-            </h3>
-            {positives.length > 0 ? (<ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
-                {positives.map((r) => (<li key={r.id} className="flex gap-2">
-                    <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 taas-fg-success" aria-hidden/>
-                    <span>{r.text}</span>
-                  </li>))}
-              </ul>) : (<p className="mt-2 text-sm text-muted-foreground">
-                No evidenced strengths recorded yet.
-              </p>)}
-          </div>
-          <div className="rounded-lg border bg-muted/30 p-3">
-            <h3 className="flex items-center gap-1.5 text-sm font-semibold">
-              <TrendingDown className="h-3.5 w-3.5" aria-hidden/>
-              What holds it back
-            </h3>
-            {watch.length > 0 ? (<ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
-                {watch.map((r) => (<li key={r.id} className="flex gap-2">
-                    <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden/>
-                    <span>{r.text}</span>
-                  </li>))}
-              </ul>) : (<p className="mt-2 text-sm text-muted-foreground">
-                Nothing outstanding — every requirement carries evidence.
-              </p>)}
-          </div>
-        </div>)}
-
-      <p className="mt-4 text-[11px] text-muted-foreground">
-        Figures above are counts of quoted evidence from the background review. A
-        rescore appends a new run rather than editing this one.
-      </p>
-    </SectionCard>);
+    return (_jsxs(SectionCard, { title: "Score breakdown", icon: _jsx(Gauge, { className: "h-4 w-4" }), description: "Why this candidate ranks where they do: the evidence behind each requirement, how each scoring criterion landed, and the reasons that moved the score.", children: [candidate.evaluation.contradiction && (_jsxs("div", { className: "mb-3 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm", children: [
+                    _jsxs("div", { className: "flex items-center gap-2 font-medium text-destructive", children: [
+                            _jsx(ShieldAlert, { className: "h-4 w-4", "aria-hidden": true }),
+                            "Conflicting signals found"] }), _jsxs("p", { className: "mt-1 text-xs text-muted-foreground", children: [candidate.evaluation.contradiction, " \u2014 flagged in evidence review before this candidate was delivered to your workspace."] })
+                ] })), _jsxs("div", { className: "flex flex-wrap items-end justify-between gap-3 rounded-lg border bg-muted/30 p-3", children: [
+                    _jsxs("div", { className: "flex items-end gap-3", children: [
+                            _jsx("span", { className: "text-3xl font-semibold tabular-nums leading-none", children: b.score ?? "—" }), _jsxs("div", { className: "text-xs text-muted-foreground", children: [
+                                    _jsx("div", { className: "text-sm font-medium text-foreground", children: b.bandLabel }), b.bandFloor != null && b.bandCeiling != null && (_jsxs("div", { className: "tabular-nums", children: ["band range ", b.bandFloor, "\u2013", b.bandCeiling] }))] })
+                        ] }), _jsxs("div", { className: "max-w-md text-right text-xs text-muted-foreground", children: [b.methodLabel && (_jsx(Badge, { variant: "secondary", className: "text-[10px]", children: b.methodLabel })), b.criteriaSummary && _jsx("p", { className: "mt-1", children: b.criteriaSummary }), b.scoredAt && (_jsxs("p", { className: "mt-0.5", children: ["Scored ", new Date(b.scoredAt).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })] }))] })
+                ] }), _jsx("div", { className: "mt-4 space-y-4", children: b.groups.map((g) => (_jsxs("div", { children: [
+                        _jsxs("div", { className: "flex flex-wrap items-center gap-2", children: [
+                                _jsxs("h3", { className: "flex items-center gap-1.5 text-sm font-semibold", children: [
+                                        _jsx(ListChecks, { className: "h-3.5 w-3.5 text-muted-foreground", "aria-hidden": true }), g.title] }), _jsxs("span", { className: "text-xs tabular-nums text-muted-foreground", children: [g.met + g.partial, " of ", g.total, " evidenced"] }), g.total > 0 && (_jsxs("span", { className: "flex flex-wrap gap-1.5", children: [
+                                        _jsx(CountChip, { label: "quoted", value: g.met, tone: "success" }), g.partial > 0 && (_jsx(CountChip, { label: "related", value: g.partial, tone: "warning" })), g.missing > 0 && (_jsx(CountChip, { label: "no evidence", value: g.missing, tone: "neutral" }))] }))] }), _jsx("p", { className: "mt-1 text-xs text-muted-foreground", children: g.takeaway }), g.rows.length > 0 && (_jsx("ul", { className: "mt-2 space-y-2", children: g.rows.map((row) => (_jsx(RequirementRowView, { row: row }, row.id))) }))] }, g.kind))) }), (positives.length > 0 || watch.length > 0) && (_jsxs("div", { className: "mt-5 grid gap-3 sm:grid-cols-2", children: [
+                    _jsxs("div", { className: "rounded-lg border border-success/30 bg-success/5 p-3", children: [
+                            _jsxs("h3", { className: "flex items-center gap-1.5 text-sm font-semibold", children: [
+                                    _jsx(TrendingUp, { className: "h-3.5 w-3.5", "aria-hidden": true }),
+                                    "What lifts the score"] }), positives.length > 0 ? (_jsx("ul", { className: "mt-2 space-y-1.5 text-sm text-muted-foreground", children: positives.map((r) => (_jsxs("li", { className: "flex gap-2", children: [
+                                        _jsx(CheckCircle2, { className: "mt-0.5 h-3.5 w-3.5 shrink-0 taas-fg-success", "aria-hidden": true }), _jsx("span", { children: r.text })
+                                    ] }, r.id))) })) : (_jsx("p", { className: "mt-2 text-sm text-muted-foreground", children: "No evidenced strengths recorded yet." }))] }), _jsxs("div", { className: "rounded-lg border bg-muted/30 p-3", children: [
+                            _jsxs("h3", { className: "flex items-center gap-1.5 text-sm font-semibold", children: [
+                                    _jsx(TrendingDown, { className: "h-3.5 w-3.5", "aria-hidden": true }),
+                                    "What holds it back"] }), watch.length > 0 ? (_jsx("ul", { className: "mt-2 space-y-1.5 text-sm text-muted-foreground", children: watch.map((r) => (_jsxs("li", { className: "flex gap-2", children: [
+                                        _jsx(Info, { className: "mt-0.5 h-3.5 w-3.5 shrink-0", "aria-hidden": true }), _jsx("span", { children: r.text })
+                                    ] }, r.id))) })) : (_jsx("p", { className: "mt-2 text-sm text-muted-foreground", children: "Nothing outstanding \u2014 every requirement carries evidence." }))] })
+                ] })), _jsx("p", { className: "mt-4 text-[11px] text-muted-foreground", children: "Figures above are counts of quoted evidence from the background review. A rescore appends a new run rather than editing this one." })
+        ] }));
 });
