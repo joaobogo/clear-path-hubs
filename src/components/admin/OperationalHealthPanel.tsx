@@ -35,7 +35,14 @@ export function OperationalHealthPanel() {
       setNote("Retry queued.");
       await qc.invalidateQueries({ queryKey: ["ops-health"] });
     },
-    onError: (e: Error) => setNote(`Retry failed: ${e.message}`),
+    onError: (e: Error) => {
+      const msg = e.message;
+      if (msg.includes("unique or exclusion constraint")) {
+        setNote("Could not save — a matching record already exists (duplicate key).");
+      } else {
+        setNote(`Retry failed: ${msg}`);
+      }
+    },
   });
 
   const issues = data?.issues ?? [];
@@ -92,7 +99,9 @@ export function OperationalHealthPanel() {
                 {i.last_error ? (
                   <div className="mt-1 flex items-start gap-2">
                     <p className="break-words font-mono text-[10px] leading-relaxed text-destructive/80">
-                      {i.last_error}
+                      {i.last_error.includes("unique or exclusion constraint")
+                        ? "Could not save — a matching record already exists (duplicate key)."
+                        : i.last_error}
                     </p>
                     <Button
                       variant="ghost"
