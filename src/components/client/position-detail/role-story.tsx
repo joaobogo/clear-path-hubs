@@ -133,8 +133,7 @@ export function RoleStoryPanel({
                             )}
                           </span>
                           <span className="text-xs tabular-nums text-muted-foreground">
-                            {r.met} of {coverage.shortlist_size} quoted
-                            {r.partial > 0 ? `, ${r.partial} related` : ""}
+                            Evidence extraction running
                           </span>
                         </div>
                         <div className="mt-1.5">
@@ -150,7 +149,7 @@ export function RoleStoryPanel({
                             ? `Proven by ${r.met_names.join(", ")}${r.met > r.met_names.length ? " and others" : ""}.`
                             : r.partial > 0
                               ? "Related experience only — worth probing at interview."
-                              : "No candidate on this list evidences it yet."}
+                              : "Evidence extraction is still running for this role."}
                         </p>
                       </li>
                     ))}

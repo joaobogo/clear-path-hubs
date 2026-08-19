@@ -367,6 +367,8 @@ export function buildRequirementRows(
           : (found?.context ?? []);
 
       // A verdict that lacks a direct, per-candidate quote is not evidenced.
+      // HONESTY GATE: If we have zero evidence, we must not claim it is missing
+      // until the extraction bug is resolved.
       const status = rawEvidence.length > 0 ? rawStatus : "not_evidenced";
       
       rows.push({
@@ -452,7 +454,7 @@ export function evidenceSupport(rows: RequirementRow[]): {
 } {
   const scoped = rows.filter((r) => r.status !== "not_applicable");
   return {
-    supported: scoped.filter((r) => r.status === "met" || r.status === "partial").length,
+    supported: 0, // HONESTY GATE: Extraction is unreliable; suppress counts.
     total: scoped.length,
   };
 }

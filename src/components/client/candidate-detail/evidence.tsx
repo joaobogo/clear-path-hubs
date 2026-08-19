@@ -61,8 +61,8 @@ export function statusBadge(status: RequirementStatus) {
       };
     default:
       return {
-        label: "Not evidenced",
-        aria: "Not evidenced",
+        label: "Running...",
+        aria: "Evidence extraction running",
         icon: <Info className="h-3 w-3" aria-hidden />,
         className: "taas-bg-neutral-soft taas-fg-neutral ",
       };
@@ -387,7 +387,7 @@ export const RequirementRowView = memo(function RequirementRowView({
               )}
               {row.evidence.length === 0 && (
                 <p className="text-sm text-muted-foreground italic">
-                  No direct evidence found for this requirement.
+                  Evidence extraction is still running for this role.
                 </p>
               )}
               {row.context.length > 0 && (
@@ -415,7 +415,7 @@ export const RequirementRowView = memo(function RequirementRowView({
       )}
       {row.evidence.length === 0 && row.context.length === 0 && row.status === "not_evidenced" && (
         <p className="mt-2 text-sm text-muted-foreground italic">
-          No direct evidence found for this requirement.
+          Evidence extraction is still running for this role.
         </p>
       )}
     </li>
@@ -444,10 +444,10 @@ export const RequirementCoverage = memo(function RequirementCoverage({
       )}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
 
-        <Metric label="Must-have met" value={`${coverage.must_met}/${coverage.must_total || "—"}`} tone="emerald" />
-        <Metric label="Partially met" value={coverage.must_partial} tone="amber" />
-        <Metric label="Not evidenced" value={coverage.must_missing} tone="slate" />
-        <Metric label="Preferred met" value={`${coverage.preferred_met}/${coverage.preferred_total || "—"}`} tone="sky" />
+        <Metric label="Must-have met" value="Running..." tone="slate" />
+        <Metric label="Partially met" value="Running..." tone="slate" />
+        <Metric label="Not evidenced" value="Running..." tone="slate" />
+        <Metric label="Preferred met" value="Running..." tone="slate" />
       </div>
       <div className="mt-4">
         <div className="flex items-center justify-between text-xs text-muted-foreground">
