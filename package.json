@@ -21,7 +21,6 @@
     "test:e2e:smoke": "playwright test tests/e2e/smoke-journey.spec.ts",
     "release:gate": "npm run test && npm run test:e2e:smoke"
   },
-
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@lovable.dev/cloud-auth-js": "^1.1.2",

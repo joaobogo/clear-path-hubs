@@ -18,9 +18,6 @@ export { buildRobotsTxt } from "@/lib/seo/robots-config";
 /** Canonical production origin — shared with every `rel=canonical` tag. */
 export { BASE_URL, SITEMAP_URL };
 
-
-
-
 // Intentional exclusions — nothing that emits `noindex` may appear below.
 // - /login, /reset-password, /access-denied, /unauthorized: auth plumbing.
 // - /admin/*, /client/*, /me/*, /boardroom, /checkout, /book-call: behind the
@@ -70,7 +67,6 @@ export const STATIC_PATHS = [
   "/candidate-success",
   "/pitch",
 ] as const;
-
 
 export type SitemapEntry = { path: string; priority: string };
 
@@ -123,4 +119,3 @@ export function buildSitemapXml(): string {
     `</urlset>`,
   ].join("\n");
 }
-
