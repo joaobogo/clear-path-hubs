@@ -77,6 +77,7 @@ test.describe("launch smoke journey", () => {
     test.setTimeout(600_000);
     await allowTestFixtures(context);
     const errors = collectConsoleErrors(page);
+    const apiFailures = captureApiFailures(page);
     const { email, fullName } = uniqueApplicant("SMOKE");
 
     // ── 1. Candidate signs up and applies ─────────────────────────────────
