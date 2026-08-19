@@ -518,12 +518,20 @@ export function EvidenceTab({
                   )}
                   {v.cv_quote && (
                     <div className="mt-1 border-l-2 border-primary/30 pl-2 text-xs italic text-muted-foreground">
-                      "{v.cv_quote}"
-                      {v.location && (
-                        <span className="ml-2 not-italic opacity-60">
-                          · {typeof v.location === 'string' ? v.location.replace(/^cv:(\d+)-(\d+)$/, 'CV · characters $1–$2') : 'CV'}
-                        </span>
-                      )}
+                      {(() => {
+                        const safe = cleanQuote(v.cv_quote);
+                        if (!safe) return null;
+                        return (
+                          <>
+                            "{safe}"
+                            {v.location && (
+                              <span className="ml-2 not-italic opacity-60">
+                                · {typeof v.location === 'string' ? v.location.replace(/^cv:(\d+)-(\d+)$/, 'CV · characters $1–$2') : 'CV'}
+                              </span>
+                            )}
+                          </>
+                        );
+                      })()}
                     </div>
                   )}
                 </li>
