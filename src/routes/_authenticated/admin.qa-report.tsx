@@ -121,8 +121,8 @@ const FINDINGS: Finding[] = [
     route: "src/lib/scoring-service.server.ts · ensureRubricVersion",
     severity: "P0",
     repro: "grep -rln 'rubric_versions' src returns only types.ts. score_runs.rubric_version_id is null in practice; publish gate requires it, so publish is unreliable once rubric versions become mandatory.",
-    correction: "Implemented ensureRubricVersion in scoring-service.server.ts. It resolves the governing rubric version (or mints a new one from position requirements) and stamps it on every new score run. UI now shows the version number instead of 'rubric unlinked'.",
-    status: "fixed",
+    correction: "Implemented ensureRubricVersion in scoring-service.server.ts. It resolves the governing rubric version (or mints a new one from position requirements) and stamps it on every new score run. UI now shows the version number instead of 'criteria set not recorded'.",
+    status: "open",
   },
   {
     id: "F-010",
@@ -182,7 +182,7 @@ const FINDINGS: Finding[] = [
     severity: "P0",
     repro: "Overview KPI showed 0, while Operations showed 23. Different surfaces used different windows (none vs 7d).",
     correction: "Standardized on the 7-day canonical window from notification-failures.server.ts for all delivery failure counts.",
-    status: "fixed",
+    status: "open",
   },
   {
     id: "F-016",
@@ -249,9 +249,8 @@ function QAReport() {
         <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Release audit</p>
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Scoring System QA Report</h1>
         <p className="text-sm text-muted-foreground">
-          Full audit of the 12 candidate-scoring journeys — identity, semantic evidence, disqualifier,
-          publish gate, client leakage, sync, rollback, rubric versioning, and presentation. Each row
-          lists the route, severity, reproduction, correction, and current status.
+          Public status tracking for the 12 candidate-scoring journeys — identity, semantic evidence, 
+          disqualifier, publish gate, client leakage, sync, rollback, rubric versioning, and presentation.
         </p>
       </header>
 
@@ -296,33 +295,16 @@ function QAReport() {
                   <h2 className="text-sm font-semibold sm:text-base">{f.title}</h2>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <Badge variant="outline" className={`gap-1 border ${SEV_META[f.severity].color}`}>
-                    <SevIcon className="size-3" aria-hidden="true" />
-                    {f.severity}
-                  </Badge>
                   <Badge variant="outline" className={`gap-1 border ${STATUS_META[f.status].className}`}>
                     <StatIcon className="size-3" aria-hidden="true" />
                     {STATUS_META[f.status].label}
                   </Badge>
                 </div>
               </div>
-              <dl className="mt-3 grid gap-x-4 gap-y-2 text-xs sm:grid-cols-[7rem_1fr] sm:text-sm">
-                <dt className="text-muted-foreground">Route</dt>
-                <dd className="break-all font-mono text-[11px] sm:text-xs">{f.route}</dd>
-                <dt className="text-muted-foreground">Repro</dt>
-                <dd>{f.repro}</dd>
-                <dt className="text-muted-foreground">Correction</dt>
-                <dd>{f.correction}</dd>
-                {f.notes ? (
-                  <>
-                    <dt className="text-muted-foreground">Notes</dt>
-                    <dd className="text-muted-foreground">{f.notes}</dd>
-                  </>
-                ) : null}
-              </dl>
             </li>
           );
         })}
+...
         {filtered.length === 0 ? (
           <li className="rounded-xl border border-dashed bg-muted/30 p-6 text-center text-sm text-muted-foreground">
             No findings match those filters.
@@ -331,9 +313,7 @@ function QAReport() {
       </ol>
 
       <footer className="rounded-lg border bg-muted/30 p-4 text-xs text-muted-foreground">
-        Audit compiled from parallel sub-agent runs (scoring-isolation, publish-gate, and
-        UX/a11y). This page is admin-only and marked <code>noindex, nofollow</code>. Update
-        <code className="mx-1">FINDINGS</code> in <code>admin.qa-report.tsx</code> as items move.
+        Audit compiled from parallel sub-agent runs. This page is admin-only and marked <code>noindex, nofollow</code>.
       </footer>
     </div>
   );
