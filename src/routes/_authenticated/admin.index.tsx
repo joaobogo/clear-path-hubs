@@ -171,6 +171,7 @@ function Overview() {
       qc.invalidateQueries({ queryKey: ACTIVITY_QUERY_KEY }),
       qc.invalidateQueries({ queryKey: ["admin-portfolio-health"] }),
       qc.invalidateQueries({ queryKey: ["admin", "decision-backlog"] }),
+      qc.invalidateQueries({ queryKey: ["admin", "approvals"] }),
       qc.invalidateQueries({ queryKey: ["offer-hire-rollup"] }),
       qc.invalidateQueries({ queryKey: ["admin", "sla-breaches"] }),
     ]);
