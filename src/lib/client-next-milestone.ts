@@ -38,6 +38,8 @@ export type MilestoneInput = {
   feedback_due_at: string | null;
   /** Recorded due date for a response to the offer. */
   offer_response_due_at: string | null;
+  /** Optional user count to surface (B4 fix). */
+  user_count?: number;
 };
 
 export type Milestone = {
@@ -52,6 +54,8 @@ export type Milestone = {
   behind_schedule: boolean;
   /** Said in words, so the meaning does not depend on colour. */
   schedule_note: string | null;
+  /** Optional user count for the milestone (B4 fix). */
+  user_count?: number;
 };
 
 export function formatMilestoneDate(iso: string): string {
@@ -86,6 +90,7 @@ export function computeNextMilestone(input: MilestoneInput, now: Date = new Date
       expected_at: valid,
       behind_schedule: behind,
       schedule_note: behind ? "behind schedule" : null,
+      user_count: input.user_count,
     };
   };
 
@@ -118,6 +123,7 @@ export function computeNextMilestone(input: MilestoneInput, now: Date = new Date
       expected_at: null,
       behind_schedule: false,
       schedule_note: null,
+      user_count: input.user_count,
     };
   }
 
