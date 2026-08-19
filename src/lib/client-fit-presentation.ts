@@ -372,10 +372,16 @@ export function buildRequirementRows(
       const rawStatus = found?.status ?? fromEvidence?.status ?? "not_evidenced";
       
       // Prioritise verified evidence snippets over engine-generated ones.
-      const rawEvidence =
-        fromEvidence?.evidence && fromEvidence.evidence.length > 0
-          ? fromEvidence.evidence
-          : (found?.evidence ?? []);
+      const rawEvidence = (fromEvidence?.evidence && fromEvidence.evidence.length > 0
+        ? fromEvidence.evidence
+        : (found?.evidence ?? [])).filter((e: any) => {
+        // B6: filter out items with leaked candidate PII or unparsed JSON
+        const snippet = e.snippet || "";
+        if (snippet.includes('{"location":')) return false;
+        // Basic phone number pattern leak check
+        if (/\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/.test(snippet)) return false;
+        return true;
+      });
       
       const rawContext =
         fromEvidence?.context && fromEvidence.context.length > 0

@@ -433,6 +433,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
               .sort()[0] ?? null,
           feedback_due_at: feedbackDueByPosition.get(pid) ?? null,
           offer_response_due_at: offerDueByPosition.get(pid) ?? null,
+          user_count: activeMembers,
         }),
         error: false as const,
       };
