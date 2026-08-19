@@ -375,17 +375,20 @@ export const RequirementRowView = memo(function RequirementRowView({
                 <ul className="mt-1 space-y-2 border-l-2 border-primary/30 pl-3 text-sm">
                   {row.evidence.map((e, i) => (
                     <li key={i}>
-                      {e.source && (
-                        <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                          {e.source}
-                        </div>
-                      )}
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        {e.source && (
+                          <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                            {e.source}
+                          </div>
+                        )}
+                        <span className="text-[10px] taas-fg-success font-medium">Verified</span>
+                      </div>
                       <div className="text-foreground/90">{e.snippet}</div>
                     </li>
                   ))}
                 </ul>
               )}
-              {row.evidence.length === 0 && (
+              {row.evidence.length === 0 && row.status === "not_evidenced" && (
                 <p className="text-sm text-muted-foreground italic">
                   Evidence extraction is still running for this role.
                 </p>
@@ -444,17 +447,17 @@ export const RequirementCoverage = memo(function RequirementCoverage({
       )}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
 
-        <Metric label="Must-have met" value="Running..." tone="slate" />
-        <Metric label="Partially met" value="Running..." tone="slate" />
-        <Metric label="Not evidenced" value="Running..." tone="slate" />
-        <Metric label="Preferred met" value="Running..." tone="slate" />
+        <Metric label="Must-have met" value={requirement_rows.filter(r => r.importance === 'must_have' && r.status === 'met').length} tone="emerald" />
+        <Metric label="Partially met" value={requirement_rows.filter(r => r.status === 'partial').length} tone="amber" />
+        <Metric label="Not evidenced" value={requirement_rows.filter(r => r.status === 'not_evidenced').length} tone="slate" />
+        <Metric label="Preferred met" value={requirement_rows.filter(r => r.importance === 'preferred' && r.status === 'met').length} tone="sky" />
       </div>
       <div className="mt-4">
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span>Overall coverage</span>
-          <span className="tabular-nums">Running...</span>
+          <span className="tabular-nums">{Math.round(coverage * 100)}%</span>
         </div>
-        <Progress value={0} className="mt-1" />
+        <Progress value={Math.round(coverage * 100)} className="mt-1" />
       </div>
       <Separator className="my-4" />
       <ul className="space-y-2">
