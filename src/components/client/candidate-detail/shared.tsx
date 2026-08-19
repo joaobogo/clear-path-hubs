@@ -159,7 +159,9 @@ export function ContactBlock({ candidate }: { candidate: ClientCandidateDTO }) {
       ) : null,
     },
     { label: "Location", value: c.location ?? null },
+    { label: "Work authorization", value: candidate.work_authorization ?? "Not provided" },
   ];
+
   return (
     <section aria-labelledby="contact-heading" className="rounded-xl border bg-card p-4">
       <h2 id="contact-heading" className="text-sm font-semibold">
