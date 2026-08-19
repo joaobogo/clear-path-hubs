@@ -9,10 +9,11 @@
  * recorded dates and stored commitments.
  *
  * Rule order is fixed and evaluated top down:
- *   1. Blocking gaps (missing brief details)         → "N things need you."
- *   2. Client decisions past their recorded due date  → "N decisions are overdue."
- *   3. Roles past their promised first-shortlist date → "N roles are behind schedule."
+ *   1. Urgent actions (blocks or overdue)             → "N urgent things need you."
+ *   2. Routine review (new candidates)                → "N candidates need review."
+ *   3. Behind schedule (no shortlist)                 → "N roles are behind schedule."
  *   4. Otherwise                                      → "Hiring is on track."
+
  *
  * Only one sentence ever shows.
  */

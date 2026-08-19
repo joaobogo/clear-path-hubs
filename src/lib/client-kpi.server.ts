@@ -300,7 +300,7 @@ export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
   // the board columns and the per-role roll-ups are literally the same numbers.
   const { counts } = countLanes(rows);
   return {
-    delivered: new Set(rows.map((r) => r.candidate_profile_id)).size,
+    delivered: rows.length,
     top: rows.filter(isTopMatch).length,
     shortlisted: counts.shortlisted,
     interviewing: counts.interview_process,

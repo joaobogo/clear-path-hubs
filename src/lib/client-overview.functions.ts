@@ -191,10 +191,10 @@ export const getClientOverview = createServerFn({ method: "GET" })
     const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
     const new_this_week = rows.filter(
       (r) =>
-        r.stage === "delivered" &&
         r.delivered_at != null &&
         new Date(r.delivered_at).getTime() >= sevenDaysAgo,
     ).length;
+
 
     // ── Detail Accordion ────────────────────────────────────────────────────
     // Internal system instrumentation (System status, agent controls, activity)
