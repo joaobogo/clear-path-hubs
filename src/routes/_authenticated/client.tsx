@@ -108,7 +108,7 @@ const TABS: NavDef[] = [
 	{ to: "/client/candidates", label: "Candidates", icon: Users, everyone: true, hint: "Shortlist, talent pool, talent memory" },
 	{ to: "/client/conversations", label: "Messages", icon: MessageSquare, everyone: true, hint: "Threads, inbox, all messages" },
 	{ to: "/client/account", label: "Account", icon: Building2, everyone: false, hint: "Team, plan, settings, setup" },
-	{ to: "/client/intelligence", label: "Insights", icon: Gauge, everyone: true, group: "More", subdued: true, hint: "Questions, dashboards, reporting, your data" },
+	// { to: "/client/intelligence", label: "Insights", icon: Gauge, everyone: true, group: "More", subdued: true, hint: "Questions, dashboards, reporting, your data" },
 	
 ];
 
