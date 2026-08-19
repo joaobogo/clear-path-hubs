@@ -141,7 +141,7 @@ export async function loadKpiRows(
     )
     .eq("organization_id", orgId)
     .eq("client_visibility", "visible")
-    .eq("is_test_record", false);
+    .eq("is_test_record" as any, false);
   if (error) throw new Error(error.message);
 
   const matchIds = (matches as AnyRow[]).map((m) => m.id);
