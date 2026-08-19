@@ -631,16 +631,10 @@ export function scoreCandidate(input: {
   const prefRows = assessment.filter((a) => !a.required);
   const evidenceWeightTotal =
     category_weights.must_have + category_weights.preferred + category_weights.screening_alignment;
+  const evidencedRows = assessment.filter((a) => a.status === "met" || a.status === "partial");
   const evidence_confidence =
-    evidenceWeightTotal > 0
-      ? Math.round(
-          ((avgDecided(mustRows) * category_weights.must_have +
-            avgDecided(prefRows) * category_weights.preferred +
-            (totalScreening ? alignedCount / totalScreening : 0) *
-              category_weights.screening_alignment) /
-            evidenceWeightTotal) *
-            10000,
-        ) / 100
+    assessment.length > 0
+      ? Math.round((evidencedRows.length / assessment.length) * 100)
       : 0;
 
   // Bands come from the canonical band table (src/lib/scoring/bands.ts); the

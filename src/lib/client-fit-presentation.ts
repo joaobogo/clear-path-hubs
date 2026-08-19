@@ -65,6 +65,7 @@ const RAW_LABEL_MAP: Record<string, FitBand> = {
   limited: "limited",
   weak: "limited",
   none: "not_recommended",
+  running: "mixed",
 };
 
 
@@ -325,30 +326,20 @@ export function summariseCoverage(
   const pref = rows.filter((r) => r.importance === "preferred");
 
   // HONESTY GATE (C2/C3/C9): A requirement is only met if it has real verified evidence.
-  // Counts only status === "met" AND evidence.length > 0 to ensure numbers don't lie.
+  // A row must have status === "met" AND at least one evidence snippet to be counted.
   const met = (r: RequirementRow) => r.status === "met" && r.evidence.length > 0;
   const partial = (r: RequirementRow) => r.status === "partial" || (r.status === "met" && r.evidence.length === 0);
   const missing = (r: RequirementRow) =>
-    r.status === "not_evidenced" || r.status === "contradicted";
+    (r.status === "not_evidenced" || r.status === "contradicted") && r.evidence.length === 0;
 
   const must_met = must.filter(met).length;
   const must_partial = must.filter(partial).length;
   const must_missing = must.filter(missing).length;
   const preferred_met = pref.filter(met).length;
 
-  const total = rows.length || 1;
-  const weighted =
-    rows.reduce(
-      (acc, r) =>
-        acc +
-        (met(r) ? 1 : partial(r) ? 0.5 : 0) *
-          (r.importance === "must_have" ? 1 : 0.5),
-      0,
-    ) /
-    (rows.reduce(
-      (acc, r) => acc + (r.importance === "must_have" ? 1 : 0.5),
-      0,
-    ) || 1);
+  const totalCounted = rows.filter(r => r.status !== 'not_applicable').length || 1;
+  const totalEvidenced = rows.filter(met).length;
+  const coveragePct = totalEvidenced / totalCounted;
 
   return {
     met: must_met + preferred_met,
@@ -357,7 +348,7 @@ export function summariseCoverage(
     must_met,
     must_partial,
     must_total: must.length,
-    fit_score: score ?? Math.round(weighted * 100),
+    fit_score: score ?? Math.round(coveragePct * 100),
     fit_band: fit.band,
     tone: fit.tone,
     accent: fit.accent,

@@ -143,22 +143,33 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "Flipping "Test records shown" to "Test records hidden" on /admin instantly updates the
-label, hides the banner, and changes the subtitle to "Test and internal organizations are
-hidden" — while every number on the page keeps its test-inclusive value.
+TEXTO DO USUÁRIO: "On one candidate record — Miguel Torres, /admin/candidates/1ae343e0-46fd-4058-877d-4070dd803ad5:
 
-Right after flipping: "39 items waiting", Approvals 6, Unpaid 6, Setup 2, Client decisions
-overdue 3.
-After a manual F5: "32 items waiting", Approvals 4, Unpaid 5, Setup 1, Client decisions
-overdue 0.
+  the record header says \"criteria backed by evidence: 72%\"
+  the Evidence tab says \"6 of 6 must-have criteria fully evidenced\"
+  the Client preview tab says \"0 of 10 of your requirements evidenced\" and \"Overall coverage 0%\"
+  the same Client preview tab also says \"MUST-HAVE MET 3 · PARTIALLY MET 3 · NOT EVIDENCED 3\"
 
-So between the flip and a reload, the console tells the operator it's showing production
-only while showing them test data. Happens in both directions.
+That tab is labelled \"This is an exact preview of what the client sees in their workspace.\"
+So the client sees 0% while the admin sees 6 of 6.
 
-Please invalidate and refetch every query keyed on that toggle when it changes. The toggle
-should never be able to disagree with the numbers next to it.
+Worse — every requirement row in the client preview shows a verdict and its own denial at
+the same time. Literally: \"5+ years building production React and TypeScript applications /
+MUST-HAVE / Meets this / No evidence captured for this yet — we will not claim it.\"
+Six rows like that.
 
-Check: flip it, don't refresh, and watch the counts change in place."`}
+And one row is stuck mid-process on a record that's already Published and was scored six
+days ago: \"Practical experience with row-level security … / Running... / Evidence
+extraction is still running for this role.\"
+
+Please: one coverage calculation used by the header, the Evidence tab and the client
+preview. A row must never show a positive verdict and \"no evidence captured\" together —
+pick one. And add a terminal state so \"extraction still running\" can't appear on a
+published, scored record.
+
+The header percentage is also disconnected — Miguel Torres (6 of 6) and Beatriz Costa
+(5 of 6) both read 72%, Carla Nunes (3 of 6) reads 68%. Recompute it from the counts shown
+below it."`}
         </div>
 
         <Scripts />
