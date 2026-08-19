@@ -579,14 +579,14 @@ function CandidateDetailPage() {
  </TabsContent>
 
  <TabsContent value="cv" className="mt-4 space-y-4">
+ {!candidate.contact_released && (
  <div className="rounded-xl border bg-card p-4">
  <h2 className="text-sm font-semibold">CV</h2>
  <p className="mt-1 text-sm text-muted-foreground">
- {candidate.contact_released
- ? "Preview or download the CV from the contact block at the top of this page."
- : "The CV is released as soon as this candidate is published to you."}
+ The CV is released as soon as this candidate is published to you.
  </p>
  </div>
+ )}
  {candidate.contact_released && (
  <div className="rounded-xl border bg-card p-4">
  <CvDownloadAudit
