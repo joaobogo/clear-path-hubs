@@ -231,11 +231,11 @@ function ClientDetail() {
         {TABS.map((t) => {
           const Icon = TAB_LABELS[t].icon;
           return (
-            <button
+            <Link
               key={t}
-              role="tab"
-              aria-selected={tab === t}
-              onClick={() => setTab(t)}
+              to="."
+              search={{ tab: t }}
+              replace
               data-qa-action={`tab-${t}`}
               className={`inline-flex items-center gap-1.5 border-b-2 px-3 py-2 text-sm ${
                 tab === t
@@ -245,7 +245,7 @@ function ClientDetail() {
             >
               <Icon className="h-3.5 w-3.5" />
               {TAB_LABELS[t].label}
-            </button>
+            </Link>
           );
         })}
       </nav>
