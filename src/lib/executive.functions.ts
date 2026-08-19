@@ -11,6 +11,7 @@ import { isOpenRoleStatus, isFilledRole } from "@/lib/client-role-open";
 import { laneFor } from "@/lib/client-pipeline-lane";
 import { isLiveOffer, qualifiesAsHire } from "@/lib/offer-hire";
 import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
+import { NOT_TEST_RECORD } from "@/lib/client/test-record-filter";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -103,7 +104,8 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     const { data: positions } = await s
       .from("positions")
       .select("id, department, location, status")
-      .eq("organization_id", orgId);
+      .eq("organization_id", orgId)
+      .or(NOT_TEST_RECORD);
     const posRows: AnyRow[] = positions ?? [];
 
 
@@ -113,7 +115,8 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       .select(
         "id, position_id, stage, admin_status, client_visibility, delivered_at, updated_at, processing_state, approved_score_run_id",
       )
-      .eq("organization_id", orgId);
+      .eq("organization_id", orgId)
+      .or(NOT_TEST_RECORD);
     const matchRows: AnyRow[] = matches ?? [];
     const posById = new Map<string, AnyRow>(posRows.map((p) => [p.id, p]));
 

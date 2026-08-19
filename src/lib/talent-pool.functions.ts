@@ -10,6 +10,7 @@ type AnyRow = any;
 const sel = (s: string): string => s;
 
 import { GOOD_FOR_FUTURE_KEY, ensureGoodForFuturePool } from "@/lib/talent-pool-system.server";
+import { NOT_TEST_RECORD } from "@/lib/client/test-record-filter";
 
 export type TalentPoolDTO = {
   id: string;
@@ -386,6 +387,7 @@ export const searchRediscovery = createServerFn({ method: "POST" })
       .from("candidate_matches")
       .select(sel("id, candidate_profile_id, position_id, stage, delivered_at, created_at, updated_at"))
       .eq("organization_id", data.orgId)
+      .or(NOT_TEST_RECORD)
       .order("updated_at", { ascending: false })
       .limit(2000);
     if (data.positionId) matchesQ = matchesQ.eq("position_id", data.positionId);
@@ -438,7 +440,8 @@ export const searchRediscovery = createServerFn({ method: "POST" })
       const { data: positions } = await context.supabase
         .from("positions")
         .select("id, title")
-        .in("id", positionIds);
+        .in("id", positionIds)
+        .or(NOT_TEST_RECORD);
       for (const p of (positions as AnyRow[]) ?? []) posTitleMap.set(p.id, p.title);
     }
 
@@ -559,6 +562,7 @@ export const getRediscoveryFacets = createServerFn({ method: "GET" })
         .from("candidate_matches")
         .select("stage")
         .eq("organization_id", data.orgId)
+        .or(NOT_TEST_RECORD)
         .limit(5000),
       context.supabase
         .from("candidate_profiles")
@@ -568,6 +572,7 @@ export const getRediscoveryFacets = createServerFn({ method: "GET" })
         .from("positions")
         .select("id, title")
         .eq("organization_id", data.orgId)
+        .or(NOT_TEST_RECORD)
         .order("title", { ascending: true })
         .limit(500),
     ]);
