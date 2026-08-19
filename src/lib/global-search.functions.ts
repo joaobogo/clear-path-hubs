@@ -150,8 +150,8 @@ export const globalSearch = createServerFn({ method: "POST" })
     {
       let query = supabase
         .from("positions")
-        .select("id, title, location, status, is_test_record, organization_id, organizations(name)")
-        .or(orIlike(["title", "location"], term)!)
+        .select("id, title, location, status, is_test_record, organization_id, organizations!inner(name)")
+        .or(`title.ilike.${ilikeValue(term)},location.ilike.${ilikeValue(term)},organizations.name.ilike.${ilikeValue(term)}`)
         .order("updated_at", { ascending: false })
         .limit(LIMIT);
       if (scope === "client") query = query.in("organization_id", orgIds);
@@ -198,8 +198,8 @@ export const globalSearch = createServerFn({ method: "POST" })
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const { data: profiles, error: pErr } = await supabaseAdmin
         .from("candidate_profiles")
-        .select("id, full_name, email, headline")
-        .or(orIlike(["full_name", "email", "headline"], term)!)
+        .select("id, full_name, email, headline, organizations!inner(name)")
+        .or(`full_name.ilike.${ilikeValue(term)},email.ilike.${ilikeValue(term)},headline.ilike.${ilikeValue(term)},organizations!inner(name)`)
         .limit(50);
       if (pErr) throw new Error(pErr.message);
       const profileIds = ((profiles as AnyRow[]) ?? []).map((p) => p.id);

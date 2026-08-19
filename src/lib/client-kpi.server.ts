@@ -228,7 +228,7 @@ export async function loadKpiRows(
     stage: m.stage,
     approved_score_run_id: m.approved_score_run_id,
     delivered_at: m.delivered_at,
-    approved_score: null, // HONESTY GATE: Extraction unreliable; suppressing all scores.
+    approved_score: m.score_runs?.score ?? null,
     approved_fit_label: m.score_runs?.fit_label ?? null,
     approved_fit_band: m.score_runs?.fit_band ?? null,
     interview_active: activeInterviews.has(m.id),
@@ -299,7 +299,7 @@ export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
   const { counts } = countLanes(rows);
   return {
     delivered: new Set(rows.map((r) => r.candidate_profile_id)).size,
-    top: 0, // HONESTY GATE: Suppressed.
+    top: rows.filter(isTopMatch).length,
     shortlisted: counts.shortlisted,
     interviewing: counts.interview_process,
     interview_scheduled: rows.filter((r) => r.interview_scheduled).length,

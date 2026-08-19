@@ -121,7 +121,7 @@ function CandidatesPage() {
  error: rowsError,
  refetch,
  } = useQuery({
- queryKey: ["client-candidates", orgId, search.position],
+ queryKey: ["client-candidates", orgId, search.position, search.stage, search.filter],
  queryFn: () =>
  withQueryTimeout(
  listFn({
