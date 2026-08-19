@@ -273,7 +273,49 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
     (a, b) => new Date(b.lastAttemptAt).getTime() - new Date(a.lastAttemptAt).getTime(),
   );
 
-  return { items, suppressions: await listSuppressions(admin), windowDays: WINDOW_DAYS };
+  // A suppressed address does not produce a backlog an operator can drain: every
+  // new notification to it fails again the moment it is sent, so the row count
+  // grows with normal console use. Those rows are reported as addresses to
+  // resolve, not as deliveries to retry.
+  const blockedByAddress = new Map<
+    string,
+    { address: string; deliveries: number; lastAttemptAt: string; sentence: string }
+  >();
+  for (const it of items) {
+    if (it.retryable) continue;
+    if (!it.canUnsuppress && it.reason !== "recipient_suppressed") continue;
+    const address = it.recipient ?? "Address not on file";
+    const prev = blockedByAddress.get(address);
+    if (prev) {
+      prev.deliveries += 1;
+      if (it.lastAttemptAt > prev.lastAttemptAt) prev.lastAttemptAt = it.lastAttemptAt;
+    } else {
+      blockedByAddress.set(address, {
+        address,
+        deliveries: 1,
+        lastAttemptAt: it.lastAttemptAt,
+        sentence: it.reasonSentence,
+      });
+    }
+  }
+  const blockedAddresses = [...blockedByAddress.values()].sort(
+    (a, b) => b.deliveries - a.deliveries,
+  );
+  const retryableCount = items.filter((i) => i.retryable).length;
+
+  return {
+    items,
+    summary: {
+      total: items.length,
+      /** Failures a retry can actually clear. */
+      retryable: retryableCount,
+      /** Deliveries that will fail again until the address is released. */
+      blockedDeliveries: blockedAddresses.reduce((n, a) => n + a.deliveries, 0),
+      blockedAddresses,
+    },
+    suppressions: await listSuppressions(admin),
+    windowDays: WINDOW_DAYS,
+  };
 }
 
 /**
