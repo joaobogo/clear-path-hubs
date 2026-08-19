@@ -327,7 +327,6 @@ function CandidateDetailPage() {
   useDetailCrumb(
     (data as { candidate?: { candidate?: { display_name?: string } } } | null | undefined)
       ?.candidate?.candidate?.display_name,
-    { label: "Candidate" },
   );
 
   // Error first, always: a failed load must never read as a missing candidate.
