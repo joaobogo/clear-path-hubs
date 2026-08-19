@@ -551,7 +551,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
 
           <button
             type="button"
-            className="h-9 shrink-0 items-center gap-2 whitespace-nowrap rounded-md border bg-card px-3 text-xs text-muted-foreground shadow-sm hover:text-foreground inline-flex"
+            className="h-9 shrink-0 items-center gap-2 whitespace-nowrap rounded-md border bg-card px-3 text-xs text-muted-foreground shadow-sm hover:text-foreground inline-flex cursor-pointer"
             onClick={() => setSearchOpen(true)}
             aria-label="Open global search"
             aria-keyshortcuts="Meta+K Control+K"
@@ -559,7 +559,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
             <Search className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Search</span>
             <kbd className="ml-4 rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px] hidden lg:inline">
-              ⌘K
+              {isMac ? "⌘K" : "Ctrl+K"}
             </kbd>
           </button>
 
