@@ -65,7 +65,6 @@ export const TOP_FIT_LABELS = [
   "strong_fit",
   "exceptional",
   "top",
-  "strong",
   "excellent",
 ] as const;
 
@@ -251,16 +250,17 @@ export async function loadKpiRows(
 
 
 /**
- * A "strongest candidate": the approved run's SCORE classifies into `strong` or
- * better through the canonical band table. Stored label/band strings are only
- * consulted for runs that never recorded a number — some historical runs carry
- * labels written under older cut-offs, and trusting them first let the tile
- * disagree with the band shown on the candidate card.
+ * A "strongest candidate": the approved run's SCORE classifies into `exceptional`
+ * through the canonical band table. Stored label/band strings are only
+ * consulted for runs that never recorded a number.
  */
 export function isTopMatch(r: KpiRow): boolean {
   if (r.approved_score_run_id == null) return false;
   const words = TOP_FIT_LABELS as readonly string[];
-  if (r.approved_score != null) return words.includes(classifyBand(r.approved_score));
+  if (r.approved_score != null) {
+    const band = classifyBand(r.approved_score);
+    return band === "exceptional" || band === "top";
+  }
   if (r.approved_fit_label != null && words.includes(r.approved_fit_label)) return true;
   if (r.approved_fit_band != null && words.includes(r.approved_fit_band)) return true;
   return false;
@@ -358,9 +358,8 @@ export type ClientCandidateDTO = {
   position: { id: string; title: string } | null;
 
   /**
-   * True for a standout candidate: an approved score inside the top configured
-   * band, or an actual hire. The threshold comes from the band configuration —
-   * never a number written here.
+   * True for a standout candidate: an approved score at or above the unicorn
+   * threshold (95+). The threshold comes from the band configuration.
    */
   unicorn: boolean;
   /**

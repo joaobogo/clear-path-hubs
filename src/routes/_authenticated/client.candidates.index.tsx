@@ -57,8 +57,8 @@ const searchSchema = z.object({
  // "top" → isTopMatch (band ∈ exceptional|top|strong)
  // "interview_pipeline" → isInInterview (stage ∈ interview_process|offer OR active interview)
  filter: fallback(z.enum(["all", "top", "interview_pipeline"]), "all").default("all"),
- // Unicorn-only shortcut: candidates at or above the top of the scale (95+),
- // or a confirmed hire out of the top tier. Rule lives in scoring/bands.ts.
+  // Unicorn-only shortcut: candidates at or above 95.
+  // Rule lives in scoring/bands.ts.
  unicorn: fallback(z.string(), "0").default("0"),
  // Comma-separated match IDs for shareable comparison links.
  compare: fallback(z.string(), "").default(""),
