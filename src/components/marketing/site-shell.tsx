@@ -179,6 +179,44 @@ function GroupContent({ links }: { links: NavLink[] }) {
   );
 }
 
+function useSessionCta() {
+  const [cta, setCta] = useState<{ to: string; label: string } | null>(null);
+  const ctx = useServerFn(getSessionContext);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function resolve() {
+      const { data } = await supabase.auth.getSession();
+      if (!mounted) return;
+      if (!data.session) {
+        setCta(null);
+        return;
+      }
+      try {
+        const session = await ctx();
+        if (!mounted) return;
+        setCta({ to: landingPathForRole(session.primary_role), label: "Open workspace" });
+      } catch {
+        if (!mounted) return;
+        setCta(null);
+      }
+    }
+
+    resolve();
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT") resolve();
+    });
+
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
+  }, [ctx]);
+
+  return cta;
+}
+
 function Header() {
   const [open, setOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -190,7 +228,8 @@ function Header() {
   const ctaPrimary = candidateMode ? CANDIDATE_PRIMARY_CTA : PRIMARY_CTA;
   const ctaSecondary = candidateMode ? CANDIDATE_SECONDARY_CTA : BOOK_CALL_CTA;
 
-  const signIn = SECONDARY_CTAS.find((c) => c.label === "Sign in") ?? { to: "/login", label: "Sign in" };
+  const sessionCta = useSessionCta();
+  const signIn = sessionCta ?? (SECONDARY_CTAS.find((c) => c.label === "Sign in") ?? { to: "/login", label: "Sign in" });
   const browseJobs = SECONDARY_CTAS.find((c) => c.label === "Browse Jobs") ?? { to: "/jobs", label: "Browse Jobs" };
 
   return (
