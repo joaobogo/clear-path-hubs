@@ -378,7 +378,7 @@ export function buildRequirementRows(
         // B6: filter out items with leaked candidate PII or unparsed JSON
         const snippet = e.snippet || "";
         if (snippet.includes('{"location":')) return false;
-        // Basic phone number pattern leak check
+        // Basic phone number pattern leak check (B6 fix)
         if (/\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/.test(snippet)) return false;
         return true;
       });
@@ -433,6 +433,9 @@ export function summariseCoverage(rows: RequirementRow[]): CoverageSummary {
   const pref = rows.filter((r) => r.importance === "preferred");
   // HONESTY GATE (B5/B6): A requirement is only met if it has real evidence.
   const met = (r: RequirementRow) => r.status === "met" && r.evidence.length > 0;
+  const partial = (r: RequirementRow) => r.status === "partial" || (r.status === "met" && r.evidence.length === 0);
+  const missing = (r: RequirementRow) =>
+    r.status === "not_evidenced" || r.status === "contradicted";
   const partial = (r: RequirementRow) => r.status === "partial" || (r.status === "met" && r.evidence.length === 0);
   const missing = (r: RequirementRow) =>
     r.status === "not_evidenced" || r.status === "contradicted";

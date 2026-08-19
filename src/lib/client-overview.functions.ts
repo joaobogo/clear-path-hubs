@@ -107,22 +107,6 @@ export const getClientOverview = createServerFn({ method: "GET" })
         (orgForSeats as AnyRow)?.client_seat_limit ?? null
       );
     })();
-    
-    // Seat count reconciliation (B4 fix): Fetch memberships to get real-time seat counts.
-    const { data: members } = await s
-      .from("memberships")
-      .select("user_id, role, status")
-      .eq("organization_id", data.orgId);
-    const { data: orgForSeats } = await s
-      .from("organizations")
-      .select("client_seat_limit")
-      .eq("id", data.orgId)
-      .maybeSingle();
-    
-    const { activeMembers } = (await import("@/lib/client-seats")).computeSeatCount(
-      (members as AnyRow[]) ?? [],
-      (orgForSeats as AnyRow)?.client_seat_limit ?? null
-    );
 
     const interviewsRes = await s
       .from("interviews")
@@ -452,7 +436,6 @@ export const getClientOverview = createServerFn({ method: "GET" })
               .sort()[0] ?? null,
           feedback_due_at: feedbackDueByPosition.get(pid) ?? null,
           offer_response_due_at: offerDueByPosition.get(pid) ?? null,
-          user_count: activeMembers,
         }),
         error: false as const,
       };
