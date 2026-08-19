@@ -75,7 +75,6 @@ export const DISALLOWED_PATHS = [
   "/boardroom",
   "/login",
   "/auth",
-  "/signup",
   "/checkout",
   "/book-call",
   "/share/",
