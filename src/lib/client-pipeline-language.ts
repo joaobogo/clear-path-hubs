@@ -220,7 +220,7 @@ export function buildPipelineActionTarget(
       to: "/client/candidates",
       search: { position: input.positionId, stage: "offer" },
     };
-    return `${input.offers} offer response${input.offers === 1 ? "" : "s"} required`;
-
+  return null;
 }
+
 
