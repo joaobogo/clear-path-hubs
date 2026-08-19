@@ -10,10 +10,10 @@ export const QUOTE_MAX_CHARS = 240;
 /** Below this, a slice is a fragment rather than a readable quote. */
 export const QUOTE_MIN_CHARS = 24;
 
-const EMAIL_RE = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i;
-const URL_RE = /(https?:\/\/|www\.)\S+|\b[a-z0-9-]+\.(com|net|org|io|dev|co|ai)(\/\S*)?\b/i;
+const EMAIL_RE = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi;
+const URL_RE = /(https?:\/\/|www\.)\S+|\b[a-z0-9-]+\.(com|net|org|io|dev|co|ai)(\/\S*)?\b/gi;
 // 7+ digits once separators are ignored, incl. +44 (0) 7... forms.
-const PHONE_RE = /(?:\+?\d[\d\s().-]{6,}\d)/;
+const PHONE_RE = /(?:\+?\d[\d\s().-]{6,}\d)/g;
 
 function hasContactDetail(line: string): boolean {
   if (EMAIL_RE.test(line) || URL_RE.test(line)) return true;
