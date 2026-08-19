@@ -182,8 +182,8 @@ function IntegrationHealthPage() {
               {latest && latest.status !== "ok" && (
                 <div className="mt-3 space-y-2 rounded-md border border-destructive/30 bg-destructive/5 p-3">
                   {latest.error_code && (
-                    <div className="font-mono text-xs text-destructive">
-                      {latest.error_code}
+                    <div className="text-xs font-medium text-destructive">
+                      {humanizeCode(latest.error_code)}
                     </div>
                   )}
                   {latest.error_detail && (
