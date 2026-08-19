@@ -116,6 +116,7 @@ export const getActivityFeed = createServerFn({ method: "GET" })
       .select(
         "event_id, event_type, occurred_at, organization_id, position_id, application_id, candidate_match_id, actor_name, position_title, position_status, payload",
       )
+      .eq("is_test_record" as any, false)
       .order("occurred_at", { ascending: false })
       .limit(window);
 
