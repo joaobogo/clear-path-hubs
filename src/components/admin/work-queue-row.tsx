@@ -195,14 +195,16 @@ export function WorkQueueRow({
           )}
         </div>
         <div className="truncate text-xs text-muted-foreground">
-          {item.subtitle_refs?.length
-            ? item.subtitle_refs.map((r, i) => (
-                <span key={`${r.kind}-${i}`}>
-                  {i > 0 ? " · " : ""}
-                  <RefLabel ref={r} />
-                </span>
-              ))
-            : item.subtitle}
+          {item.subtitle_refs?.length ? (
+            item.subtitle_refs.map((r, i) => (
+              <span key={`${r.kind}-${i}`}>
+                {i > 0 ? " · " : ""}
+                <RefLabel ref={r} />
+              </span>
+            ))
+          ) : (
+            <span>{item.subtitle}</span>
+          )}
           {item.meta ? (
             item.key === "unpaid" ? (
               <>
