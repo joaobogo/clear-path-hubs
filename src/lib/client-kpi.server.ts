@@ -8,7 +8,7 @@ import { isUnicornMatch, classifyBand, bandToFitLabel } from "@/lib/scoring/band
 import { displayScore } from "@/config/scoring-bands";
 
 import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
-import { cleanQuote, isTemplatedEvidence, isCandidateHeadline } from "@/lib/evidence/quote-hygiene";
+import { cleanQuote, renderQuote, isTemplatedEvidence, isCandidateHeadline } from "@/lib/evidence/quote-hygiene";
 
 import {
   buildRequirementRows,
