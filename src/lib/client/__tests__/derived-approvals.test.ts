@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { toDerivedApproval } from "../derived-approvals";
-import type { QueueRow } from "../client-decision-queue";
+import type { QueueRow } from "../../client-decision-queue";
 
 describe("toDerivedApproval", () => {
   const baseRow: QueueRow = {

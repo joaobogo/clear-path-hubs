@@ -9,7 +9,7 @@
  * This module maps those queue rows onto the approvals vocabulary (task type,
  * view membership) so one inbox can render both kinds without inventing data.
  */
-import type { QueueRow, QueueKind } from "@/lib/client-decision-queue";
+import { type QueueRow, type QueueKind, QUEUE_TYPE_LABEL } from "@/lib/client-decision-queue";
 import type { TaskType, TaskView } from "@/lib/tasks.functions";
 
 export type DerivedApproval = {
