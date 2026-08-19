@@ -93,6 +93,19 @@ function TargetLink({ target, children }: { target: QueueTarget; children: React
           {children}
         </Link>
       );
+    case "approval":
+      if (target.target_kind === "position") {
+        return (
+          <Link to="/admin/positions/$id" params={{ id: target.target_id }}>
+            {children}
+          </Link>
+        );
+      }
+      return (
+        <Link to="/admin/candidates/$id" params={{ id: target.target_id }}>
+          {children}
+        </Link>
+      );
   }
 }
 
