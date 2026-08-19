@@ -9908,6 +9908,27 @@ export type Database = {
           },
         ]
       }
+      qa_purge_backup_20260819: {
+        Row: {
+          captured_at: string
+          id: number
+          row_data: Json
+          table_name: string
+        }
+        Insert: {
+          captured_at?: string
+          id?: number
+          row_data: Json
+          table_name: string
+        }
+        Update: {
+          captured_at?: string
+          id?: number
+          row_data?: Json
+          table_name?: string
+        }
+        Relationships: []
+      }
       recruiting_spend_entries: {
         Row: {
           amount: number
