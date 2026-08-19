@@ -433,8 +433,8 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
         score: run?.score == null ? null : Number(run.score),
         requirement_rows: buildRequirementRows(
           {
-            requirements: position.requirements,
-            preferred_requirements: position.preferred_requirements,
+            requirements: (position.requirements as any[]) ?? [],
+            preferred_requirements: (position.preferred_requirements as any[]) ?? [],
           },
           run?.requirement_coverage ?? null,
           (storyEvidence.get(String(m.id)) as AnyRow[] | undefined) ?? null,
