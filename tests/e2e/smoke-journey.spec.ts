@@ -26,12 +26,29 @@ import {
   type SeedResult,
 } from "./helpers/qa";
 import { TEXT_LAYER_CV_PDF } from "./fixtures/text-layer-cv";
+import {
+  attachApiFailures,
+  captureApiFailures,
+  logPipelineState,
+  type ApiFailureLog,
+  waitForProcessingState,
+} from "./helpers/pipeline-diagnostics";
 
 let fixtures: SeedResult;
+/** Diagnostics captured during the run, flushed to the report even on failure. */
+let apiFailureLog: ApiFailureLog = { failures: [] };
+let trackedMatchId: string | null = null;
 
 test.beforeAll(async () => {
   await cleanupApplyArtifacts();
   fixtures = await seedFixtures();
+});
+
+// Runs even when the journey fails: the failing run is the one that needs the
+// processing state and the refused API calls written down.
+test.afterEach(async () => {
+  await attachApiFailures(apiFailureLog, "smoke-journey");
+  if (trackedMatchId) await logPipelineState(trackedMatchId, "final");
 });
 
 test.afterAll(async () => {
@@ -54,7 +71,10 @@ async function answerScreening(page: Page) {
   if (await yes.count()) await yes.first().click();
   const freeText = page.locator("textarea").filter({ hasNot: page.locator("#cover_letter") });
   if (await freeText.count()) {
-    await freeText.first().fill("QA smoke screening answer.").catch(() => undefined);
+    await freeText
+      .first()
+      .fill("QA smoke screening answer.")
+      .catch(() => undefined);
   }
 }
 
@@ -77,6 +97,7 @@ test.describe("launch smoke journey", () => {
     test.setTimeout(600_000);
     await allowTestFixtures(context);
     const errors = collectConsoleErrors(page);
+    apiFailureLog = captureApiFailures(page);
     const { email, fullName } = uniqueApplicant("SMOKE");
 
     // ── 1. Candidate signs up and applies ─────────────────────────────────
@@ -128,13 +149,17 @@ test.describe("launch smoke journey", () => {
     expect(application.cv_file_id).toBeTruthy();
     expect(created.matches).toHaveLength(1);
     const matchId = created.matches[0]!.id;
+    trackedMatchId = matchId;
 
     // ── 2. Candidate signs in and sees their application ──────────────────
     await loginAs(page, "candidate", email, QA_PASSWORD);
     await page.goto("/me/applications", { waitUntil: "domcontentloaded" });
-    await expect(page.getByText(new RegExp(fixtures.position_id.slice(0, 6), "i")).or(
-      page.getByRole("heading", { name: /applications/i }),
-    ).first()).toBeVisible({ timeout: 60_000 });
+    await expect(
+      page
+        .getByText(new RegExp(fixtures.position_id.slice(0, 6), "i"))
+        .or(page.getByRole("heading", { name: /applications/i }))
+        .first(),
+    ).toBeVisible({ timeout: 60_000 });
     // Best-effort sign-out: bounded so a hidden/absent control can't stall the run.
     await page
       .getByRole("button", { name: /sign out/i })
@@ -142,14 +167,16 @@ test.describe("launch smoke journey", () => {
       .click({ timeout: 5_000 })
       .catch(() => undefined);
 
-    // Let the pipeline parse + score so the match is approvable.
+    // Let the pipeline parse + score so the match is approvable. The wait logs
+    // every state transition and, on a stall (OCR above all), dumps the match,
+    // file and job truth into the run output and the HTML report.
+    await logPipelineState(matchId, "after-apply");
     await runPipelineDrain();
-    await expect
-      .poll(
-        async () => (await lookupCandidate(email)).matches[0]?.processing_state,
-        { timeout: 180_000, intervals: [2_000, 5_000] },
-      )
-      .toMatch(/scored|ready_to_score|manual_review_required/);
+    await waitForProcessingState(matchId, /scored|ready_to_score|manual_review_required/, {
+      timeout: 180_000,
+      label: "parse-and-score",
+    });
+    await logPipelineState(matchId, "before-approval");
 
     // ── 3. Staff approve the match for client visibility ──────────────────
     await loginAs(page, "admin", fixtures.users["platform_admin"]!.email);
@@ -177,10 +204,10 @@ test.describe("launch smoke journey", () => {
     }
 
     await expect
-      .poll(
-        async () => (await lookupCandidate(email)).matches[0]?.client_visibility,
-        { timeout: 90_000, intervals: [1_000, 2_000] },
-      )
+      .poll(async () => (await lookupCandidate(email)).matches[0]?.client_visibility, {
+        timeout: 90_000,
+        intervals: [1_000, 2_000],
+      })
       .toBe("visible");
 
     // ── 4. Client signs in and advances the candidate ─────────────────────
@@ -193,7 +220,9 @@ test.describe("launch smoke journey", () => {
       timeout: 60_000,
     });
     await advance.click();
-    await expect(page.getByText(/added to your shortlist|interview requested/i).first()).toBeVisible({
+    await expect(
+      page.getByText(/added to your shortlist|interview requested/i).first(),
+    ).toBeVisible({
       timeout: 60_000,
     });
 
