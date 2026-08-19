@@ -25,6 +25,7 @@ import {
   uniqueApplicant,
   type SeedResult,
 } from "./helpers/qa";
+import { TEXT_LAYER_CV_PDF } from "./fixtures/text-layer-cv";
 
 let fixtures: SeedResult;
 
