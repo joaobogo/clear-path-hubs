@@ -285,20 +285,28 @@ function WorkQueueSummary({
           <nav aria-label="Queue counts" className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-7">
             {queues.map((q) => {
               const Icon = ICONS[q.key] ?? ClipboardCheck;
+              const hasItems = (q.count ?? 0) > 0;
               return (
                 <a
                   key={q.key}
-                  href={`#queue-${q.key}`}
-                  className="rounded-lg border bg-card px-3 py-2.5 transition-colors hover:border-primary/50"
+                  href={hasItems ? `#queue-${q.key}` : undefined}
+                  className={cn(
+                    "rounded-lg border bg-card px-3 py-2.5 transition-colors",
+                    hasItems ? "hover:border-primary/50" : "opacity-50 cursor-not-allowed"
+                  )}
+                  onClick={(e) => {
+                    if (!hasItems) e.preventDefault();
+                  }}
                 >
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Icon className="h-3.5 w-3.5" />
                     <span className="truncate">{q.label}</span>
                   </div>
                   <div
-                    className={`mt-1 text-2xl font-semibold tabular-nums ${
+                    className={cn(
+                      "mt-1 text-2xl font-semibold tabular-nums",
                       q.count === 0 ? "text-muted-foreground" : ""
-                    }`}
+                    )}
                   >
                     {typeof q.count === "number" ? q.count : "—"}
                   </div>
