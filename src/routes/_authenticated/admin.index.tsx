@@ -6,7 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { ActivityFeed, ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
 import { getAdminWorkQueues } from "@/lib/admin-ops.functions";
-import { useIncludeTestRecords } from "@/lib/admin-scope";
+import { useIncludeTestRecords, useActingUserId } from "@/lib/admin-scope";
 import { PortfolioHealthTable } from "@/components/admin/portfolio-health-table";
 import { DecisionBacklogPanel } from "@/components/admin/decision-backlog-panel";
 import { OfferHireRollupPanel } from "@/components/admin/offer-hire-panel";
@@ -85,6 +85,7 @@ const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   interviews: CalendarClock,
   delivery_failures: AlertOctagon,
   score_stale: RefreshCw,
+  approvals: CheckCircle2,
 };
 
 function Header({
@@ -170,6 +171,7 @@ function Overview() {
       qc.invalidateQueries({ queryKey: ACTIVITY_QUERY_KEY }),
       qc.invalidateQueries({ queryKey: ["admin-portfolio-health"] }),
       qc.invalidateQueries({ queryKey: ["admin", "decision-backlog"] }),
+      qc.invalidateQueries({ queryKey: ["admin", "approvals"] }),
       qc.invalidateQueries({ queryKey: ["offer-hire-rollup"] }),
       qc.invalidateQueries({ queryKey: ["admin", "sla-breaches"] }),
     ]);
@@ -218,20 +220,7 @@ function Overview() {
 }
 
 
-/** The acting admin's user id, for the "Mine" scope. Presentation-only read. */
-function useActingUserId() {
-  const [userId, setUserId] = useState<string | null>(null);
-  useEffect(() => {
-    let alive = true;
-    supabase.auth.getUser().then(({ data }) => {
-      if (alive) setUserId(data.user?.id ?? null);
-    });
-    return () => {
-      alive = false;
-    };
-  }, []);
-  return userId;
-}
+/** The acting admin's user id, for the "Mine" scope. Moved to useActingUserId in admin-scope. */
 
 function WorkQueueSummary({
   showTest,
@@ -293,7 +282,7 @@ function WorkQueueSummary({
                   href={hasItems ? `#queue-${q.key}` : undefined}
                   className={cn(
                     "rounded-lg border bg-card px-3 py-2.5 transition-colors",
-                    hasItems ? "hover:border-primary/50" : "opacity-50 cursor-not-allowed"
+                    hasItems ? "hover:border-primary/50" : "opacity-40 cursor-not-allowed grayscale pointer-events-none"
                   )}
                   onClick={(e) => {
                     if (!hasItems) e.preventDefault();
@@ -327,7 +316,12 @@ function WorkQueueSummary({
                   <>
                     No item on this desk lists you as owner. The rest of the desk is still
                     waiting —{" "}
-                    <Link to="/admin" search={{}} replace className="font-medium text-primary hover:underline">
+                    <Link
+                      to="/admin"
+                      search={{}}
+                      replace
+                      className="font-medium text-primary hover:underline"
+                    >
                       switch to All
                     </Link>{" "}
                     to see it.
@@ -378,7 +372,18 @@ function QueueSection({ q }: { q: any }) {
 
       <ul className="divide-y">
         {q.items.map((it: any) => (
-          <WorkQueueRow key={it.id} item={it} />
+          <WorkQueueRow
+            key={it.id}
+            item={it}
+            secondary_badge={
+              q.key === "approvals" && it.meta
+                ? {
+                    label: it.meta,
+                    tone: it.meta.includes("Contact") ? "warning" : "default",
+                  }
+                : null
+            }
+          />
         ))}
       </ul>
 

@@ -79,7 +79,7 @@ async function resolveLastActors(admin: Admin, entityType: string, ids: string[]
     
     const actorName = row.profiles?.full_name ?? "the client workspace";
     const isStaff = row.profiles?.role === "platform_admin" || row.profiles?.role === "operations";
-    map.set(id, isStaff ? `${actorName} (Staff)` : actorName);
+    map.set(id, isStaff ? `${actorName} (Staff)` : `Requested by ${actorName}`);
   }
   return map;
 }
@@ -230,7 +230,7 @@ export async function loadApprovals(
       org_name: orgNameOf(m),
       position_id: (m.position_id as string) ?? null,
       position_title: ((m.positions as Any)?.title as string) ?? null,
-      requester_name: actor ? (actor.isStaff ? `${actor.name} (Staff)` : actor.name) : "the client workspace",
+      requester_name: actor ? (actor.isStaff ? `${actor.name} (Staff)` : `Requested by ${actor.name}`) : "Requested by the client workspace",
       requested_at: (m.updated_at ?? m.created_at) as string,
       age_days: ageDays((m.updated_at ?? m.created_at) as string, now),
       match_ids: [m.id as string],
@@ -258,7 +258,7 @@ export async function loadApprovals(
       org_name: orgNameOf(m),
       position_id: (m.position_id as string) ?? null,
       position_title: ((m.positions as Any)?.title as string) ?? null,
-      requester_name: actor ? (actor.isStaff ? `${actor.name} (Staff)` : actor.name) : "the client workspace",
+      requester_name: actor ? (actor.isStaff ? `${actor.name} (Staff)` : `Requested by ${actor.name}`) : "Requested by the client workspace",
       requested_at: r.created_at as string,
       age_days: ageDays(r.created_at as string, now),
       match_ids: [m.id as string],
@@ -286,7 +286,7 @@ export async function loadApprovals(
       org_name: orgNameOf(hidden[0]),
       position_id: (s.position_id as string) ?? null,
       position_title: ((hidden[0]?.positions as Any)?.title as string) ?? null,
-      requester_name: actor ? (actor.isStaff ? `${actor.name} (Staff)` : actor.name) : "the client workspace",
+      requester_name: actor ? (actor.isStaff ? `${actor.name} (Staff)` : `Requested by ${actor.name}`) : "Requested by the client workspace",
       requested_at: s.created_at as string,
       age_days: ageDays(s.created_at as string, now),
       match_ids: hidden.map((m) => m.id as string),
@@ -310,7 +310,7 @@ export async function loadApprovals(
       org_name: ((p.organizations as Any)?.name as string) ?? null,
       position_id: p.id as string,
       position_title: (p.title as string) ?? null,
-      requester_name: actor ? (actor.isStaff ? `${actor.name} (Staff)` : actor.name) : "the client workspace",
+      requester_name: actor ? (actor.isStaff ? `${actor.name} (Staff)` : `Requested by ${actor.name}`) : "Requested by the client workspace",
       requested_at: at,
       age_days: ageDays(at, now),
       match_ids: [],
@@ -362,7 +362,7 @@ export type DecisionResult = {
   approved: string[];
 };
 
-/** Publishes one match through the canonical gate + RPC path. */
+/** Publishes one match through the canonical gate + RPC path. Internal use only. */
 async function publishMatch(admin: Admin, matchId: string, actorUserId: string, reason: string | null) {
   const { data: m, error } = await admin
     .from("candidate_matches")

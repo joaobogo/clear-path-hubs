@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPublishGateQueue } from "@/lib/publish-gate.functions";
-import { setPositionStatus } from "@/lib/admin.functions";
+import { setPositionStatus, setMatchClientVisibility } from "@/lib/admin.functions";
 import {
   PUBLISH_BLOCKER_FIELD,
   PUBLISH_BLOCKER_LABEL,
@@ -27,6 +27,7 @@ import { CheckCircle2, Lock, PencilLine, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import { useScopedIncludeTest } from "@/lib/admin-scope";
+import { useConfirmAction } from "@/components/ds/confirm-action";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 function fmtDate(iso: string | null) {
@@ -215,25 +216,37 @@ export function PublishGatePanel({
                     </td>
                     <td className="px-3 py-2">
                       <div className="flex flex-wrap items-center justify-end gap-2">
-                        {!r.payment_satisfied && (
-                          <PaymentExemptionDialog
-                            positionId={r.position_id}
-                            paymentStatus={r.payment_status}
-                          />
+                        {r.client_visibility === "visible" ? (
+                          <UnpublishButton matchId={r.match_id} />
+                        ) : (
+                          <>
+                            {!r.payment_satisfied && (
+                              <PaymentExemptionDialog
+                                positionId={r.position_id}
+                                paymentStatus={r.payment_status}
+                              />
+                            )}
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled={
+                                !r.can_publish ||
+                                busy === r.position_id ||
+                                r.blockers.includes("not_approved")
+                              }
+                              onClick={() => setConfirmRow(r)}
+                              title={
+                                r.blockers.includes("not_approved")
+                                  ? "This role is not approved for publishing"
+                                  : r.can_publish
+                                    ? "Publish this role"
+                                    : "Resolve the blocking items before publishing"
+                              }
+                            >
+                              {busy === r.position_id ? "Publishing…" : "Publish"}
+                            </Button>
+                          </>
                         )}
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          disabled={!r.can_publish || busy === r.position_id || r.blockers.includes("not_approved")}
-                          onClick={() => setConfirmRow(r)}
-                          title={
-                            r.can_publish
-                              ? "Publish this role"
-                              : "Resolve the blocking items before publishing"
-                          }
-                        >
-                          {busy === r.position_id ? "Publishing…" : "Publish"}
-                        </Button>
                       </div>
                     </td>
                   </tr>
@@ -244,5 +257,45 @@ export function PublishGatePanel({
         </PanelState>
       </div>
     </section>
+  );
+}
+
+function UnpublishButton({ matchId }: { matchId: string }) {
+  const qc = useQueryClient();
+  const unpublish = useServerFn(setMatchClientVisibility);
+  const { confirm, confirmDialog } = useConfirmAction();
+
+  const mutation = useMutation({
+    mutationFn: () => unpublish({ data: { match_id: matchId, visibility: "hidden" } }),
+    onSuccess: () => {
+      toast.success("Candidate hidden from client");
+      void qc.invalidateQueries({ queryKey: ["publish-gate-queue"] });
+    },
+    onError: (e: Error) => toastError(e),
+  });
+
+  const handleUnpublish = async () => {
+    const result = await confirm({
+      title: "Unpublish candidate",
+      description: "This will hide the candidate from the client workspace immediately. You can republish them later.",
+      confirmLabel: "Unpublish",
+      tone: "destructive",
+    });
+    if (result.confirmed) mutation.mutate();
+  };
+
+  return (
+    <>
+      <Button
+        size="sm"
+        variant="ghost"
+        className="h-7 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+        disabled={mutation.isPending}
+        onClick={handleUnpublish}
+      >
+        {mutation.isPending ? "Hiding..." : "Unpublish"}
+      </Button>
+      {confirmDialog}
+    </>
   );
 }

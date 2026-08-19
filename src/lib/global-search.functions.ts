@@ -134,7 +134,7 @@ export const globalSearch = createServerFn({ method: "POST" })
         .order("name")
         .limit(LIMIT);
       
-      // B2: Ensure test organizations are excluded unless explicitly requested
+      // B4: Ensure test organizations are excluded unless explicitly requested
       if (!includeTest) {
         oq = excludeTestOrgs(oq, testScope, "id");
       }

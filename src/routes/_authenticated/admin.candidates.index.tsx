@@ -395,6 +395,26 @@ function CandidatesPage() {
           anyLabel="Any screening state"
           options={PROCESSING_STATES.map((s) => ({ value: s, label: s.replace(/_/g, " ") }))}
         />
+        <FilterSelect
+          label="Approval"
+          value={search.admin_status}
+          onChange={(v) => setF({ admin_status: v })}
+          anyLabel="Any approval"
+          options={["pending", "approved", "rejected", "on_hold"].map((s) => ({
+            value: s,
+            label: s.replace(/_/g, " "),
+          }))}
+        />
+        <FilterSelect
+          label="Publication"
+          value={search.client_visibility}
+          onChange={(v) => setF({ client_visibility: v })}
+          anyLabel="Any publication"
+          options={[
+            { value: "hidden", label: "Not published" },
+            { value: "visible", label: "Published to client" },
+          ]}
+        />
 
         <div className="col-span-2 md:col-span-2 flex items-center">
           <Button
@@ -416,26 +436,6 @@ function CandidatesPage() {
 
       {showMoreFilters && (
         <div className="grid grid-cols-2 gap-4 border-t pt-4 md:grid-cols-4">
-          <FilterSelect
-            label="Approval"
-            value={search.admin_status}
-            onChange={(v) => setF({ admin_status: v })}
-            anyLabel="Any approval"
-            options={["pending", "approved", "rejected", "on_hold"].map((s) => ({
-              value: s,
-              label: s.replace(/_/g, " "),
-            }))}
-          />
-          <FilterSelect
-            label="Publication"
-            value={search.client_visibility}
-            onChange={(v) => setF({ client_visibility: v })}
-            anyLabel="Any publication"
-            options={[
-              { value: "hidden", label: "Not published" },
-              { value: "visible", label: "Published to client" },
-            ]}
-          />
           <FilterSelect
             label="Contact release"
             value={search.contact_released}

@@ -77,21 +77,23 @@ function NotificationsPage() {
         </Card>
       ) : null}
 
-      <QueryState
-        query={query}
-        tone="admin"
-        surface="admin/notifications"
-        isEmpty={() => false}
-        skeleton={
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {[0, 1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-20 w-full" />
-            ))}
-          </div>
-        }
-      >
-        {() => null}
-      </QueryState>
+      <div className="mb-6">
+        <QueryState
+          query={query}
+          tone="admin"
+          surface="admin/notifications"
+          isEmpty={() => false}
+          skeleton={
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[0, 1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-20 w-full" />
+              ))}
+            </div>
+          }
+        >
+          {() => null}
+        </QueryState>
+      </div>
 
       <DeliveryFailuresPanel />
     </div>
