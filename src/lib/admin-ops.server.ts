@@ -157,6 +157,13 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
 
   const overdue = (delivered.data ?? []) as any[];
 
+  // 11. Reconciliation: Identify hired candidates to ensure rollup agreement.
+  const hiredCount = (await s
+    .from("candidate_matches")
+    .select("id", { count: "exact", head: true })
+    .eq("stage", "hired")
+    .not("delivered_at", "is", null)).count ?? 0;
+
 
   const agingIntakes = aging as {
     items: Array<{
