@@ -16,6 +16,7 @@ import {
   type IntegrationCheckRow,
 } from "@/lib/integration-health.functions";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { humanizeCode } from "@/lib/humanize-codes";
 
 export const healthQuery = {
   queryKey: ["integration-health"] as const,
