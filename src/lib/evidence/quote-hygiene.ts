@@ -136,6 +136,7 @@ function capAtWord(text: string): string {
  */
 export function cleanQuote(raw: string | null | undefined): string {
   if (!raw) return "";
+  if (isTemplatedEvidence(raw)) return "";
   const collapsed = stripContactLines(String(raw)).replace(/\s+/g, " ").trim();
   if (!collapsed) return "";
   const base = dropOpeningFragment(stripLeadingJunk(collapsed));
