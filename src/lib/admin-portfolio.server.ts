@@ -195,9 +195,11 @@ export async function loadPortfolioHealth(
     if (res.error) throw new Error(`Could not read ${label}: ${res.error.message}`);
   }
 
-  const orgs = ((orgsRes.data ?? []) as Any[]).filter(
-    (o) => includeTest || o.is_test_record !== true,
-  );
+  const orgs = ((orgsRes.data ?? []) as Any[]).filter((o) => {
+    if (includeTest) return true;
+    // P-020: real records are those NOT explicitly true.
+    return o.is_test_record !== true;
+  });
   const matches = (matchesRes.data ?? []) as Any[];
   const decisions = (decisionsRes.data ?? []) as Any[];
   const subs = (subsRes.data ?? []) as Any[];
