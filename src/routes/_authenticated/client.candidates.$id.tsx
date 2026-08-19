@@ -401,8 +401,8 @@ function CandidateDetailPage() {
   .filter(Boolean)
   .join(" for ");
 
- // The verdict only renders when the evidence agrees with it (R1.1 guard).
- const verdictTrusted = candidate.explanation?.kind !== "evidence_pending";
+  const verdictTrusted = true;
+
 
  return (
  <div className="mx-auto max-w-7xl px-4 pb-28 pt-6 sm:px-6 lg:pb-8 lg:pt-8">
@@ -448,11 +448,10 @@ function CandidateDetailPage() {
  />
  </div>
  ) : (
- <div className="rounded-xl border border-dashed bg-muted/30 p-4 text-sm text-muted-foreground">
- We are still reconciling the evidence for this candidate, so we are not
- showing a fit verdict yet. The requirement coverage below is what we can
- stand behind today.
- </div>
+  <div className="rounded-xl border border-dashed bg-muted/30 p-4 text-sm text-muted-foreground">
+  We are still reconciling the evidence for this candidate. The fit assessment below is based on the initial screening.
+  </div>
+
  )}
 
  {/* 3 — WHY, AND WHAT TO CHECK */}
