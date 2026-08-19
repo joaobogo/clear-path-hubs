@@ -87,8 +87,30 @@ function notificationRetry(status: string): { retryable: boolean; reason: string
   return { retryable: true, reason: null };
 }
 
+export type DeliveryFailureSummary = {
+  total: number;
+  /** Failures a retry can actually clear. */
+  retryable: number;
+  /** Deliveries that will keep failing until the address is released. */
+  blockedDeliveries: number;
+  blockedAddresses: Array<{
+    address: string;
+    deliveries: number;
+    lastAttemptAt: string;
+    sentence: string;
+  }>;
+};
+
+const EMPTY_SUMMARY: DeliveryFailureSummary = {
+  total: 0,
+  retryable: 0,
+  blockedDeliveries: 0,
+  blockedAddresses: [],
+};
+
 export async function loadDeliveryFailures(admin: Admin): Promise<{
   items: DeliveryFailure[];
+  summary: DeliveryFailureSummary;
   suppressions: Array<{ id: string; email: string; reason: string | null; source: string; created_at: string }>;
   windowDays: number;
 }> {
