@@ -207,8 +207,8 @@ function HealthPage() {
               ))}
               {data.failed_jobs.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-3 py-8 text-center text-muted-foreground">
-                    No failures.
+                  <td colSpan={6} className="px-3 py-8 text-center text-muted-foreground">
+                    No jobs in trouble.
                   </td>
                 </tr>
               )}
