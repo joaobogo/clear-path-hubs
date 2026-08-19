@@ -317,8 +317,7 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (submittedRef.current || submitting) return;
-    setError(null);
-    setConsentError(null);
+
 
     const form = e.currentTarget;
     const fd = new FormData(form);
