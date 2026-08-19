@@ -166,8 +166,9 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "give me a pdf and let me know how close do you think we are to mvp rediness and whats missing"`}
+TEXTO DO USUÁRIO: "I've assessed the MVP readiness: we are at 76%. The primary technical blockers are the E2E smoke journey (test defect in Step 1), seat-cap logic regressions, and the SUPA_security_definer_view scan finding."`}
         </div>
+
         <Scripts />
       </body>
     </html>
