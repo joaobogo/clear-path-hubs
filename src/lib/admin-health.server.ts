@@ -1,4 +1,6 @@
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { deliveryReason } from "./notifications/delivery-reasons";
+import { normaliseDeliveryStatus } from "./notifications/delivery-state";
 /**
  * Operator SLA clock: which roles are approaching or past a commitment,
  * sorted by how close they are, with the client name and the promise.
@@ -200,11 +202,14 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
     });
   }
   for (const r of deliveriesRes.data ?? []) {
+    const status = String(r.status);
+    const channel = String(r.channel);
+    const reason = deliveryReason(r.error_code as string | null, status);
     issues.push({
       id: r.id as string,
       kind: "email",
-      label: `Email delivery (${r.channel})`,
-      detail: `${r.status} after ${r.attempt_count ?? 0} attempt(s)`,
+      label: `Email delivery (${channel})`,
+      detail: reason.sentence,
       last_error: (r.error_message as string) ?? null,
       occurred_at: r.updated_at as string,
       retryable: true,

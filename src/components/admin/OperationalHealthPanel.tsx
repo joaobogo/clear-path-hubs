@@ -5,6 +5,7 @@ import { getOperationalHealth, retryOperationalIssue } from "@/lib/admin-workben
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
@@ -89,7 +90,26 @@ export function OperationalHealthPanel() {
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">{i.detail}</p>
                 {i.last_error ? (
-                  <p className="mt-1 break-words font-mono text-xs text-destructive">{i.last_error}</p>
+                  <div className="mt-1 flex items-start gap-2">
+                    <p className="break-words font-mono text-[10px] leading-relaxed text-destructive/80">
+                      {i.last_error}
+                    </p>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 shrink-0 px-2 text-[10px] text-muted-foreground hover:text-foreground"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(i.last_error);
+                          toast.success("Payload copied");
+                        } catch {
+                          toast.error("Clipboard unavailable");
+                        }
+                      }}
+                    >
+                      Copy payload
+                    </Button>
+                  </div>
                 ) : null}
               </div>
             ))}
