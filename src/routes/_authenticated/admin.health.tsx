@@ -150,6 +150,8 @@ function HealthPage() {
                 <th className="px-3 py-2 font-medium">Job</th>
                 <th className="px-3 py-2 font-medium">Error</th>
                 <th className="px-3 py-2 font-medium">Trace</th>
+                <th className="px-3 py-2 font-medium">State</th>
+                <th className="px-3 py-2 font-medium">Retry</th>
                 <th className="px-3 py-2 font-medium">Repair</th>
               </tr>
             </thead>
@@ -169,17 +171,10 @@ function HealthPage() {
                     </span>
                   </td>
                   <td className="px-3 py-2 text-xs font-mono text-muted-foreground">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 px-1 text-[10px]"
-                      onClick={() => {
-                        navigator.clipboard.writeText(j.trace_id);
-                        toast.success("Trace ID copied");
-                      }}
-                    >
-                      {j.trace_id?.slice(0, 8)}…
-                    </Button>
+                    {humanizeCode(j.state).toLowerCase()}
+                  </td>
+                  <td className="px-3 py-2 text-xs text-muted-foreground">
+                    {pluralize(j.attempts, "attempt")}
                   </td>
 
                   <td className="px-3 py-2 space-x-1">
