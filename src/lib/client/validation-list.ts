@@ -61,7 +61,7 @@ export function buildValidationList(
   concerns: string[] = [],
   options: BuildValidationListOptions = {},
 ): ValidationItem[] {
-  const { includeMet = false, maxRequirements = 6 } = options;
+  const { includeMet = false, maxRequirements = 6, hideRequirementEvidenceNotes = false } = options;
 
   const statuses: RequirementStatus[] = includeMet
     ? ["contradicted", "not_evidenced", "partial", "met"]
