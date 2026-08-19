@@ -21,6 +21,7 @@ import {
   reassignPositionOwner,
 } from "@/lib/admin-attention.functions";
 import { Card } from "@/components/ui/card";
+import { humanizeCode } from "@/lib/humanize-codes";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -143,10 +144,10 @@ function WorkloadRowView({
           </button>
           {row.is_unassigned ? (
             <Badge variant="outline" className="ml-2 text-[10px]">
-              ownerless
+              No owner assigned
             </Badge>
           ) : row.role ? (
-            <span className="ml-2 text-xs text-muted-foreground">{row.role}</span>
+            <span className="ml-2 text-xs text-muted-foreground">{humanizeCode(row.role)}</span>
           ) : null}
         </td>
         <td className="py-2.5 text-right tabular-nums">{row.open_positions}</td>
