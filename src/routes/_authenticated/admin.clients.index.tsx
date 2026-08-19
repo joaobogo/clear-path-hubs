@@ -107,22 +107,6 @@ function isStatus(value: string): value is Status {
 
 export const Route = createFileRoute("/_authenticated/admin/clients/")({
   validateSearch: zodValidator(searchSchema),
-  loader: async ({ context, search }) => {
-    const clients = await context.queryClient.ensureQueryData({
-      queryKey: ["admin-clients", search],
-      queryFn: () =>
-        getClientRegistry({
-          data: {
-            search: search.q,
-            includeArchived: search.archived === "1",
-            sort: search.sort as any,
-            orgType: search.org_type as any,
-            status: search.status as any,
-          },
-        }),
-    });
-    return { clients };
-  },
   pendingComponent: () => (
     <div className="space-y-6">
       <div className="flex justify-between">
