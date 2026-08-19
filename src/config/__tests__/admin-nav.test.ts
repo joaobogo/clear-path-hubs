@@ -6,7 +6,7 @@
  * itself. Both used to be invisible until someone noticed a missing tab.
  */
 import { describe, it, expect } from "vitest";
-import { readdirSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { ADMIN_SECTION_GROUPS } from "@/config/workspace-sections";
 import { ADMIN_NAV } from "@/config/admin-nav";
@@ -15,7 +15,8 @@ const ROUTES_DIR = join(process.cwd(), "src/routes/_authenticated");
 
 /**
  * Routes that are intentionally absent from the tab config: the layout itself,
- * and detail/child screens reached from a list rather than a tab.
+ * detail/child screens reached from a list rather than a tab, create screens,
+ * and redirect-only stubs that exist purely to keep an old URL alive.
  */
 function isDeskRoute(file: string): boolean {
   if (!file.startsWith("admin")) return false;
@@ -23,7 +24,10 @@ function isDeskRoute(file: string): boolean {
   // `$` marks a param segment: detail pages and their children.
   if (file.includes("$")) return false;
   // Create screens are reached from a button on their list desk, not a tab.
-  if (file === "admin.clients_new.tsx") return false;
+  if (file.endsWith(".new.tsx")) return false;
+  // Retired routes kept only as redirects render no desk of their own.
+  const src = readFileSync(join(ROUTES_DIR, file), "utf8");
+  if (/throw redirect\(/.test(src) && !/component:/.test(src)) return false;
   // `x.index.tsx` pairs with its `x.tsx` layout; the layout carries the tab.
   return true;
 }
