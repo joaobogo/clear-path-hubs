@@ -34,11 +34,14 @@ export function EvidenceCard({
   sourceLocator,
   className,
 }: EvidenceCardProps) {
-  const loc = sourceLocator as { page?: number; section?: string } | null | undefined;
+  const loc = sourceLocator as { page?: number; section?: string; location?: string } | null | undefined;
   const locBits: string[] = [];
-  if (sourceKind) locBits.push(sourceKind.replace('_', ' '));
+  if (sourceKind) locBits.push(sourceKind.toUpperCase());
   if (loc?.page) locBits.push(`p. ${loc.page}`);
   if (loc?.section) locBits.push(loc.section);
+  if (loc?.location && typeof loc.location === 'string') {
+    locBits.push(loc.location.replace(/^cv:(\d+)-(\d+)$/, 'characters $1–$2'));
+  }
 
   return (
     <Card className={cn('p-4 space-y-4', className)}>

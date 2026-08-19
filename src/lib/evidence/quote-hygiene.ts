@@ -184,6 +184,8 @@ const TEMPLATED_PATTERNS = [
   /^inês\s+lopes\s+senior\s+full-stack\s+engineer/i,
   /^pedro\s+fernandes\s+full-stack\s+engineer/i,
   /beatriz\s+costa/i,
+  /om\s+·\s+\+\d+/i,
+  /\.costa@demo/i,
 ];
 
 export function isTemplatedEvidence(raw: string | null | undefined): boolean {

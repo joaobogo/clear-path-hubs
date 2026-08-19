@@ -220,7 +220,7 @@ export function buildEvidenceChain(input: {
     if (itemQuote && !sources.some((s) => s.quote === itemQuote))
       sources.push({
         kind: asText(item?.source_kind) || "cv",
-        location: item?.source_location ? (typeof item.source_location === 'object' ? (item.source_location.label ?? item.source_location.page ?? JSON.stringify(item.source_location)) : String(item.source_location)) : null,
+        location: item?.source_location ? (typeof item.source_location === 'object' ? (item.source_location.label ?? item.source_location.page ?? (item.source_location.location ? String(item.source_location.location).replace(/^cv:(\d+)-(\d+)$/, 'CV · characters $1–$2') : 'CV')) : String(item.source_location).replace(/^cv:(\d+)-(\d+)$/, 'CV · characters $1–$2')) : null,
         quote: itemQuote,
       });
 
