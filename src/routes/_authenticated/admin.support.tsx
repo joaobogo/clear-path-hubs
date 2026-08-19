@@ -32,7 +32,11 @@ export const Route = createFileRoute("/_authenticated/admin/support")({
 
 function SupportPage() {
   const qc = useQueryClient();
-  const { data } = useSuspenseQuery({ queryKey: ["admin-support"], queryFn: () => getSupportOverview() });
+  const includeTest = useIncludeTestRecords();
+  const { data } = useSuspenseQuery({
+    queryKey: ["admin-support", includeTest],
+    queryFn: () => getSupportOverview(),
+  });
   const startFn = useServerFn(startSupportSession);
   const navigate = useNavigate();
   const [filter, setFilter] = useState("");
