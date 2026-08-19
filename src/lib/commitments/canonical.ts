@@ -103,12 +103,18 @@ export function rollupCommitments(roles: RoleSla[]): Record<CommitmentKey, Commi
         met === decided.length
           ? `Met on ${decided.length} of ${decided.length} ${plural(decided.length, "role")}`
           : `Met on ${met} of ${decided.length} ${plural(decided.length, "role")}`;
+      
+      // Shared detail computation for both Overview and Plan & Billing
       const varianceText =
         averageVariance === null || Math.abs(roundHalf(averageVariance)) < 0.1
           ? null
           : `${varianceLabel(averageVariance, unit)} on average`;
+      
       performance = varianceText ? `${headline} · ${varianceText}` : headline;
       note = `Measured across ${decided.length} ${plural(decided.length, "role")} on this plan`;
+    } else if (metrics.some(m => m.state === "at_risk")) {
+      performance = "At risk";
+      note = "We owe you movement";
     }
 
     out[key] = {
