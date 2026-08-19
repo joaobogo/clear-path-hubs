@@ -7,7 +7,7 @@
 import { isUnicornMatch, classifyBand } from "@/lib/scoring/bands";
 
 import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
-import { cleanQuote, isTemplatedEvidence } from "@/lib/evidence/quote-hygiene";
+import { cleanQuote, isTemplatedEvidence, isCandidateHeadline } from "@/lib/evidence/quote-hygiene";
 
 import {
   buildRequirementRows,
@@ -782,7 +782,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
           label: String(e.label ?? e.type ?? "Evidence"),
           snippet: cleanQuote(String(e.snippet ?? e.value ?? "")),
         }))
-        .filter((e: { snippet: string }) => e.snippet.length > 0 && !isTemplatedEvidence(e.snippet))
+        .filter((e: { snippet: string }) => e.snippet.length > 0 && !isTemplatedEvidence(e.snippet) && !isCandidateHeadline(e.snippet))
     : [];
 
 

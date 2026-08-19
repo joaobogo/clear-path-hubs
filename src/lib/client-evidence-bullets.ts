@@ -1,5 +1,5 @@
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
-import { cleanQuote, cleanFieldValue } from "@/lib/evidence/quote-hygiene";
+import { cleanQuote, cleanFieldValue } from "./evidence/quote-hygiene";
 
 export type EvidenceBullet = {
   /** The role requirement this evidence answers. */
@@ -23,6 +23,7 @@ function cleanDetail(s: string | null | undefined): string {
   const quoted = cleanQuote(s);
   if (quoted) return quoted;
   const short = cleanFieldValue(s);
+  if (short.toLowerCase().includes("engineer") && (short.includes("—") || short.includes("|") || short.length < 100)) return "";
   return short.length >= 12 && short.includes(" ") ? short : "";
 }
 

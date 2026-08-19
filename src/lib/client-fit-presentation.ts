@@ -8,7 +8,13 @@
 // Thresholds are not defined in this file. Any score → band decision defers to
 // src/lib/scoring/bands.ts.
 
-import { cleanQuote, isTemplatedEvidence, isGenericSkillsList } from "@/lib/evidence/quote-hygiene";
+import {
+  cleanQuote,
+  isTemplatedEvidence,
+  isGenericSkillsList,
+  isRelevantEvidence,
+  isCandidateHeadline,
+} from "@/lib/evidence/quote-hygiene";
 import { classifyBand, type ScoreBandKey } from "@/lib/scoring/bands";
 
 
@@ -242,15 +248,21 @@ export function buildRequirementRows(
   const cov = (coverage ?? {}) as AnyRow;
 
   // Helpers that split real evidence from generic context.
-  const splitEvidence = (raw: Array<{ source: string | null; snippet: string }>) => {
+  const splitEvidence = (
+    raw: Array<{ source: string | null; snippet: string }>,
+    requirementLabel: string,
+  ) => {
     const evidence: Array<{ source: string | null; snippet: string }> = [];
     const context: Array<{ source: string | null; snippet: string }> = [];
     for (const e of raw) {
       if (!e.snippet) continue;
-      if (isTemplatedEvidence(e.snippet)) {
+      const snippet = e.snippet;
+      if (isTemplatedEvidence(snippet) || isCandidateHeadline(snippet)) {
         context.push(e);
-      } else {
+      } else if (isRelevantEvidence(snippet, requirementLabel)) {
         evidence.push(e);
+      } else {
+        context.push(e);
       }
     }
     return { evidence, context };
@@ -282,7 +294,7 @@ export function buildRequirementRows(
                 }))
                 .filter((e: AnyRow) => e.snippet)
             : [];
-      const split = splitEvidence(rawEvidence);
+      const split = splitEvidence(rawEvidence, String(label));
       covIndex.set(key, {
         label: String(label),
         status,
@@ -322,12 +334,14 @@ export function buildRequirementRows(
     const entry = evIndex.get(key) ?? { status, evidence: [], context: [] };
     if (STATUS_RANK[status] > STATUS_RANK[entry.status]) entry.status = status;
     if (cleaned) {
-      if (isTemplatedEvidence(cleaned)) {
-        if (isGenericSkillsList(cleaned) && entry.context.length < 3) {
+      if (isTemplatedEvidence(cleaned) || isCandidateHeadline(cleaned)) {
+        if ((isGenericSkillsList(cleaned) || isCandidateHeadline(cleaned)) && entry.context.length < 3) {
           entry.context.push({ source: item?.source_kind ?? null, snippet: cleaned });
         }
-      } else if (entry.evidence.length < 3) {
+      } else if (isRelevantEvidence(cleaned, key) && entry.evidence.length < 3) {
         entry.evidence.push({ source: item?.source_kind ?? null, snippet: cleaned });
+      } else if (entry.context.length < 3) {
+        entry.context.push({ source: item?.source_kind ?? null, snippet: cleaned });
       }
     }
     evIndex.set(key, entry);
