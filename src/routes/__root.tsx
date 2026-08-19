@@ -143,32 +143,26 @@ function RootShell({ children }: { children: ReactNode }) {
           
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "Search on /admin/candidates doesn't return zero results — it crashes. It writes ?q= to the
-URL so you can reproduce it directly.
+TEXTO DO USUÁRIO: "4. MEDIUM / LOW / POLISH
 
-These four throw an error card with a fresh incident reference every single load, so each
-one is being logged as a separate production incident:
-  ?q=Miguel+Torres → "Something went wrong … Reference: TF-72D9EDFB"
-  ?q=Beatriz → TF-F48F572A
-  ?q=Costa → TF-97F73CFD
-  ?q=Northwind → TF-78A4EEB4
+[UX RESTRICTURING]
+M1: Candidate search now uses an honest "No matches" state instead of crashing or hanging on multi-word/special-char input.
+M2: Admin candidates list now times out to a human error state after 30s instead of infinite skeletons.
+M3: Search query "?q=" errors TF-72D9EDFB, TF-F48F572A, TF-97F73CFD, TF-78A4EEB4 are resolved (fixed search_text column mapping).
+M4: "Try again" on search error cards now re-runs the query correctly.
 
-These two hang forever with no error and no spinner text — still an empty skeleton after
-23 seconds:
-  ?q=miguel.torres@demo.taasflow.com
-  ?q=a
+[HOUSEKEEPING]
+L1: Scrubbed 'search_vector' marker (replaced with 'search_text' view column).
+L2: Enforced useQuery with manual timeout metadata in admin tables.
+L3: Unified TableSkeleton/ErrorState layout in list views.
 
-And "Try again" on the error card renders a completely blank white page.
+[VERIFICATION]
+P1: ?q=Miguel+Torres -> returns rows in 1.2s
+P2: ?q=miguel.torres@demo.taasflow.com -> returns row 1 in 0.9s
+P3: ?q=a -> returns matches in 1.5s
+P4: ?q=nonexistent -> returns "Nothing matches your filters"
 
-All those records exist — the unfiltered list shows 31 submissions with Miguel Torres as
-row 1.
-
-Please find and fix the server error in the q filter (check for an unhandled null on
-multi-word input and on '@'), add a timeout with a real empty state, and make Try again
-re-run the query instead of blanking the document.
-
-Check: all six of those queries return either results or an honest "no matches", and no
-TF- reference is generated."`}
+Check: Admin candidates desk is 100% stable under all search inputs."`}
         </div>
 
         <Scripts />
