@@ -115,8 +115,8 @@ export function CandidateHeader({
                 c.timezone,
                 c.availability,
                 candidate.work_authorization,
-                candidate.candidate.languages.length > 0
-                  ? `Languages: ${candidate.candidate.languages.map((l) => (l.level ? `${l.name} (${l.level})` : l.name)).join(", ")}`
+                candidate.languages.length > 0
+                  ? `Languages: ${candidate.languages.map((l) => (l.level ? `${l.name} (${l.level})` : l.name)).join(", ")}`
                   : null,
               ]
                 .filter(Boolean)
