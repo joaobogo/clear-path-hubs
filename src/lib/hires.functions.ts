@@ -665,7 +665,7 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     const hires = scoped.filter((r) => qualifiesAsHire(r.status));
 
     // ACCEPTANCE RATE denominator: only count records that are genuinely decided (accepted, declined, hired, or lost).
-    // Beatriz's phantom 'closed_lost' was likely counted here while her 'hired' stage was ignored.
+    // A confirmed hire implies an accepted offer, so they must contribute to both decided and accepted counts.
     const decidedOffers = scoped.filter((r) => isDecidedOffer(r.status));
     const acceptedOffers = scoped.filter((r) => isAcceptedOffer(r.status));
 
