@@ -9,6 +9,7 @@ import {
 } from "@/lib/agents/registry";
 import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 import { stageLabel } from "@/lib/stage-aging";
+import { isQaFixtureTitle } from "@/lib/client/test-record-filter";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Db = any;
@@ -242,6 +243,10 @@ export const getAgentPanel = createServerFn({ method: "GET" })
       .eq("organization_id", org)
       .gte("occurred_at", since)
       .limit(5000);
+    // A client never sees QA fixture roles, so activity about them is dropped.
+    const feedVisible = feedVisible.filter(
+      (r: Db) => !isQaFixtureTitle(r.position_title as string | null),
+    );
 
     const { data: activity } = await supabase
       .from("agent_activity")
@@ -258,7 +263,7 @@ export const getAgentPanel = createServerFn({ method: "GET" })
       const s = byKey.get(def.key);
 
       // Feed events attributable to this agent.
-      const feedEvents = (feed ?? []).filter(
+      const feedEvents = feedVisible.filter(
         (a: Db) => eventTypeToAgentKey(a.event_type as string) === def.key,
       );
       // Legacy agent_activity rows.
@@ -490,9 +495,14 @@ export const listAgentActivity = createServerFn({ method: "GET" })
     ]);
 
     const feedRows = (feedRes.data ?? []).filter((r: Db) => {
+      if (isQaFixtureTitle(r.position_title as string | null)) return false;
       const key = eventTypeToAgentKey(r.event_type as string);
       return data.agent_key ? key === data.agent_key : !!key;
     });
+
+    const activityRows = (activityRes.data ?? []).filter(
+      (r: Db) => !isQaFixtureTitle(r.sentence as string | null),
+    );
 
     const feedActivities: ActivityRow[] = feedRows.map((r: Db) => {
       const key = eventTypeToAgentKey(r.event_type as string)!;
