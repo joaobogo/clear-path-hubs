@@ -89,6 +89,24 @@ export const getClientOverview = createServerFn({ method: "GET" })
     // 1. Fetch the unified open items and blocked roles.
     const openItemsResponse = await getClientOpenItems({ data: { orgId: data.orgId } });
     const rows = await loadKpiRows(s, data.orgId);
+    
+    // Seat count reconciliation (B4 fix): Fetch memberships to get real-time seat counts.
+    const { activeMembers } = await (async () => {
+      const { data: members } = await s
+        .from("memberships")
+        .select("user_id, role, status")
+        .eq("organization_id", data.orgId);
+      const { data: orgForSeats } = await s
+        .from("organizations")
+        .select("client_seat_limit")
+        .eq("id", data.orgId)
+        .maybeSingle();
+      const { computeSeatCount } = await import("@/lib/client-seats");
+      return computeSeatCount(
+        (members as AnyRow[]) ?? [],
+        (orgForSeats as AnyRow)?.client_seat_limit ?? null
+      );
+    })();
 
     const interviewsRes = await s
       .from("interviews")
@@ -122,6 +140,8 @@ export const getClientOverview = createServerFn({ method: "GET" })
       .order("updated_at", { ascending: false });
     const activePositionsList = (positions as AnyRow[]) ?? [];
     const activePositions = activePositionsList.length;
+
+    // Reconciliation (B4/B3): ensure KPI counts use the same positions we just loaded
     const kpis = {
       ...computeKpis(rows, activePositions),
       awaiting_decision: openItemsResponse.items.filter(i => i.kind === 'pending_decision').length,
@@ -408,6 +428,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
           has_offer: posRows.some((r) => r.stage === "offer"),
           has_interview: posRows.some((r) => r.stage === "interview_process"),
           promised_shortlist_by: promised != null ? new Date(promised).toISOString() : null,
+          user_count: activeMembers,
           shortlist_delivered_at:
             posRows
               .map((r) => r.delivered_at)
