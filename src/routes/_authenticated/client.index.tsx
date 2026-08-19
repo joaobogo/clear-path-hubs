@@ -406,10 +406,9 @@ function OverviewPage() {
 
               {dataUpdatedAt ? (
                 <p className="pt-2 text-xs text-muted-foreground">
-                  {/* This line describes THIS read of the data, so it moves with the
-                      data — it is not the timestamp of the newest record. */}
                   Read {relTime(new Date(dataUpdatedAt).toISOString())} ·{" "}
                   {formatDateTime(new Date(dataUpdatedAt).toISOString())}
+
                   {data?.last_updated
                     ? ` · newest activity ${formatDateTime(data.last_updated)}`
                     : ""}

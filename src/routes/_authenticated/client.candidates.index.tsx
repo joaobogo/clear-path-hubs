@@ -480,6 +480,7 @@ function CandidatesPage() {
     </div>
   </div>
 
+
   {search.view !== "board" && (
     <CandidatesFiltersPanel
       search={search}
