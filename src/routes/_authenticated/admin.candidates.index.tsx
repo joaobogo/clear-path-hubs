@@ -264,6 +264,7 @@ function CandidatesPage() {
   const [selected, setSelected] = useState<string[]>([]);
   const [confirm, setConfirm] = useState<null | "visible" | "hidden">(null);
   const [showDuplicates, setShowDuplicates] = useState(false);
+  const [showMoreFilters, setShowMoreFilters] = useState(false);
 
   const filters = useMemo(() => buildFilters(search), [search]);
 
@@ -348,51 +349,73 @@ function CandidatesPage() {
   );
 
   const filterControls = (
-    <>
-          <form
-            noValidate
-            className="col-span-2"
-            onSubmit={(e) => {
-              e.preventDefault();
-              setF({ q });
-            }}
-          >
-            <Input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Search by name, email, or client..."
-              aria-label="Search candidates"
-            />
-          </form>
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <form
+          noValidate
+          className="col-span-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setF({ q });
+          }}
+        >
+          <Input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search by name, email, or client..."
+            aria-label="Search candidates"
+          />
+        </form>
 
-          <FilterSelect
-            label="Client"
-            value={search.organization_id}
-            onChange={(v) => setF({ organization_id: v, position_id: "" })}
-            anyLabel="Any client"
-            options={(orgs as AnyRow[]).map((o) => ({ value: o.id, label: o.name }))}
-          />
-          <FilterSelect
-            label="Job"
-            value={search.position_id}
-            onChange={(v) => setF({ position_id: v })}
-            anyLabel="Any job"
-            options={(positions as AnyRow[]).map((p) => ({ value: p.id, label: p.title }))}
-          />
-          <FilterSelect
-            label="Application stage"
-            value={search.stage}
-            onChange={(v) => setF({ stage: v })}
-            anyLabel="Any stage"
-            options={STAGES.map((s) => ({ value: s, label: s.replace(/_/g, " ") }))}
-          />
-          <FilterSelect
-            label="Screening state"
-            value={search.processing_state}
-            onChange={(v) => setF({ processing_state: v })}
-            anyLabel="Any screening state"
-            options={PROCESSING_STATES.map((s) => ({ value: s, label: s.replace(/_/g, " ") }))}
-          />
+        <FilterSelect
+          label="Client"
+          value={search.organization_id}
+          onChange={(v) => setF({ organization_id: v, position_id: "" })}
+          anyLabel="Any client"
+          options={(orgs as AnyRow[]).map((o) => ({ value: o.id, label: o.name }))}
+        />
+        <FilterSelect
+          label="Job"
+          value={search.position_id}
+          onChange={(v) => setF({ position_id: v })}
+          anyLabel="Any job"
+          options={(positions as AnyRow[]).map((p) => ({ value: p.id, label: p.title }))}
+        />
+        <FilterSelect
+          label="Application stage"
+          value={search.stage}
+          onChange={(v) => setF({ stage: v })}
+          anyLabel="Any stage"
+          options={STAGES.map((s) => ({ value: s, label: s.replace(/_/g, " ") }))}
+        />
+        <FilterSelect
+          label="Screening state"
+          value={search.processing_state}
+          onChange={(v) => setF({ processing_state: v })}
+          anyLabel="Any screening state"
+          options={PROCESSING_STATES.map((s) => ({ value: s, label: s.replace(/_/g, " ") }))}
+        />
+
+        <div className="col-span-2 md:col-span-2 flex items-center">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowMoreFilters(!showMoreFilters)}
+            className="h-9 px-3 text-xs font-medium"
+          >
+            {showMoreFilters ? "Hide filters" : "More filters"}
+            {activeChips.length > 0 && (
+              <Badge variant="secondary" className="ml-2 h-4 min-w-[16px] px-1 text-[10px]">
+                {activeChips.length}
+              </Badge>
+            )}
+          </Button>
+        </div>
+      </div>
+
+      {showMoreFilters && (
+        <div className="grid grid-cols-2 gap-4 border-t pt-4 md:grid-cols-4">
           <FilterSelect
             label="Approval"
             value={search.admin_status}
@@ -489,7 +512,9 @@ function CandidatesPage() {
               aria-label="Applied until"
             />
           </div>
-    </>
+        </div>
+      )}
+    </div>
   );
 
   return (
@@ -547,16 +572,9 @@ function CandidatesPage() {
       />
 
       {/* Filters: full grid on desktop, drawer on small screens */}
-      <div className="mt-4 hidden grid-cols-2 gap-2 md:grid md:grid-cols-4 xl:grid-cols-6">
+      <div className="mt-4">
         {filterControls}
       </div>
-      <FilterDrawer
-        className="mt-4 md:hidden"
-        activeCount={activeChips.length}
-        onClear={() => navigate({ search: { ...search, ...EMPTY, page: 1 } as SearchState })}
-      >
-        {filterControls}
-      </FilterDrawer>
 
       {/* Active filters */}
       {activeChips.length > 0 && (

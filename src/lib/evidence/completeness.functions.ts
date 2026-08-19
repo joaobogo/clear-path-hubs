@@ -55,7 +55,7 @@ export const addManualEvidence = createServerFn({ method: "POST" })
           candidate_match_id: data.matchId,
           candidate_profile_id: match.candidate_profile_id,
           engine_version: engineVersion,
-          extracted: { source: "manual_review" },
+          extracted: { source: "Reviewer verified" },
         })
         .select("id")
         .single();
@@ -77,7 +77,7 @@ export const addManualEvidence = createServerFn({ method: "POST" })
         source_location: { entered_by: "reviewer" },
         normalized_meaning: data.criterionLabel,
         result: data.result,
-        source_kind: data.sourceKind,
+        source_kind: data.sourceKind === "manual" ? "Reviewer verified" : data.sourceKind,
         reviewer_status: "accepted",
         reviewer_note: data.note ?? null,
         reviewed_by: context.userId,
@@ -100,7 +100,7 @@ export const addManualEvidence = createServerFn({ method: "POST" })
         criterion_key: data.criterionKey,
         criterion_label: data.criterionLabel,
         result: data.result,
-        source_kind: data.sourceKind,
+        source_kind: data.sourceKind === "manual" ? "Reviewer verified" : data.sourceKind,
       },
     });
 

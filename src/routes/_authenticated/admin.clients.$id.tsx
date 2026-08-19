@@ -80,7 +80,6 @@ const TABS = [
   "notes",
   "documents",
   "activity",
-  "audit",
   "shares",
   "talent_memory",
   "settings",
@@ -100,7 +99,6 @@ const TAB_LABELS: Record<TabKey, { label: string; icon: typeof Building2 }> = {
   notes: { label: "Notes", icon: StickyNote },
   documents: { label: "Documents", icon: FileText },
   activity: { label: "Activity", icon: Activity },
-  audit: { label: "Audit", icon: ShieldCheck },
   shares: { label: "Shares", icon: ExternalLink },
   talent_memory: { label: "Talent memory", icon: BadgeCheck },
   settings: { label: "Settings", icon: Settings },
@@ -233,11 +231,11 @@ function ClientDetail() {
         {TABS.map((t) => {
           const Icon = TAB_LABELS[t].icon;
           return (
-            <button
+            <Link
               key={t}
-              role="tab"
-              aria-selected={tab === t}
-              onClick={() => setTab(t)}
+              to="."
+              search={{ tab: t }}
+              replace
               data-qa-action={`tab-${t}`}
               className={`inline-flex items-center gap-1.5 border-b-2 px-3 py-2 text-sm ${
                 tab === t
@@ -247,7 +245,7 @@ function ClientDetail() {
             >
               <Icon className="h-3.5 w-3.5" />
               {TAB_LABELS[t].label}
-            </button>
+            </Link>
           );
         })}
       </nav>
@@ -320,11 +318,6 @@ function ClientDetail() {
       {tab === "activity" && (
         <Block name="activity">
           <ActivityTab id={id} />
-        </Block>
-      )}
-      {tab === "audit" && (
-        <Block name="audit">
-          <ActivityTab id={id} audit />
         </Block>
       )}
       {tab === "shares" && (
