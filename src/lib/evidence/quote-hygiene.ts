@@ -110,12 +110,18 @@ function lastSentenceEnd(text: string): number {
 /** Drop a trailing partial sentence, or at least a trailing partial word. */
 function snapEnd(text: string): string {
   let out = text.trim();
+  // First: strip any trailing partial word. If the text ends with a lowercase
+  // letter that is immediately followed by non-space in the original, the
+  // slice ended mid-word. Trim to the previous word boundary and append an
+  // ellipsis.
+  const lastSpace = out.lastIndexOf(" ");
+  if (lastSpace >= 25 && !/[.!?]$/.test(out)) {
+    out = `${out.slice(0, lastSpace).trim()}…`;
+  }
+  // Then: prefer a full sentence ending.
   const lastBoundary = lastSentenceEnd(out);
   if (lastBoundary >= 25) {
     out = out.slice(0, lastBoundary + 1);
-  } else {
-    const lastSpace = out.lastIndexOf(" ");
-    if (lastSpace >= 25) out = `${out.slice(0, lastSpace).trim()}…`;
   }
   return out.trim();
 }
