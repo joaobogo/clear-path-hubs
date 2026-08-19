@@ -1090,6 +1090,10 @@ export function blueprintProgress(status: string, position?: {
   if (status === "failed") return 100;
   const idx = blueprintStageIndex(status, position);
   if (idx === -1) return 0;
+  // A build that has not started reports no progress — the baseline index is a
+  // placement on the stage list, not work completed.
+  const known = BLUEPRINT_STAGES.some((s) => s.key === status);
+  if (!known && idx < BLUEPRINT_STAGES.length) return 0;
   return Math.round(((idx + 1) / BLUEPRINT_STAGES.length) * 100);
 }
 
