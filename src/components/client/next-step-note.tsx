@@ -54,8 +54,9 @@ export function NextStepNote({
                 next.overdue ? "text-warning-foreground" : "text-foreground",
               )}
             >
-              {next.overdue ? "Overdue — we're on it." : next.due}
+              {next.due}
             </span>
+
           </>
         )}
       </p>

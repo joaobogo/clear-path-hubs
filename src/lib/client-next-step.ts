@@ -128,15 +128,34 @@ export function buildNextStep(
       overdue: false,
     };
   }
-  const due = dueAt(stageEnteredAt, step.withinHours, now);
+  const deadline = dueAt(stageEnteredAt, step.withinHours, now);
+  const isOverdue = deadline.getTime() < now.getTime();
+
+  // When overdue, we drop the "within X days" SLA clause and state the elapsed time instead.
+  let sentence = `${step.headline} ${withinLabel(step.withinHours)}.`;
+  let due = dueLabel(deadline, now);
+
+  if (isOverdue) {
+    sentence = step.headline;
+    const hoursOverdue = Math.max(1, Math.floor((now.getTime() - deadline.getTime()) / 3_600_000));
+    const daysOverdue = Math.floor(hoursOverdue / 24);
+    const overdueLabel =
+      daysOverdue >= 1
+        ? `Overdue by ${daysOverdue} ${daysOverdue === 1 ? "day" : "days"}`
+        : `Overdue by ${hoursOverdue}h`;
+
+    due = `${overdueLabel} — we're on it.`;
+  }
+
   return {
     headline: step.headline,
-    sentence: `${step.headline} ${withinLabel(step.withinHours)}.`,
-    due: dueLabel(due, now),
+    sentence,
+    due,
     owner: step.owner,
-    overdue: due.getTime() < now.getTime(),
+    overdue: isOverdue,
   };
 }
+
 
 /**
  * The consequence line shown the instant a decision lands, before any data
