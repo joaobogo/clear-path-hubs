@@ -215,7 +215,9 @@ export async function processLeadEvent(input: LeadEventInput): Promise<LeadDispa
         teams_status: teams.ok ? "delivered" : "failed",
         teams_detail: teams.detail,
         teams_at: now,
-        email_status: email.ok ? "sent" : "failed",
+        // "suppressed" is terminal: the retry sweep skips it, so a blocked
+        // address can no longer regenerate a failure on every pass.
+        email_status: email.allSuppressed ? "suppressed" : email.ok ? "sent" : "failed",
         email_detail: email.detail,
         email_at: now,
       })
@@ -280,7 +282,7 @@ export async function retryLeadNotification(
       : leadAlertRecipients(event.leadType);
 
   const needsTeams = row.teams_status !== "delivered";
-  const needsEmail = row.email_status !== "sent";
+  const needsEmail = row.email_status !== "sent" && row.email_status !== "suppressed";
 
   const teams = needsTeams ? await sendTeams(event) : null;
   // A retry is a new send attempt, so it needs a distinct idempotency key.
@@ -306,7 +308,7 @@ export async function retryLeadNotification(
         : {}),
       ...(email
         ? {
-            email_status: email.ok ? "sent" : "failed",
+            email_status: email.allSuppressed ? "suppressed" : email.ok ? "sent" : "failed",
             email_detail: email.detail,
             email_at: now,
           }
