@@ -1,11 +1,14 @@
 import { useMemo, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import {
-  listDeliveryFailureQueue,
+  DELIVERY_FAILURES_QUERY_KEY,
+  useDeliveryFailures,
+} from "@/lib/admin/use-delivery-failures";
+import {
   releaseNotificationRecipient,
   retryDeliveryFailureFn,
   suppressNotificationRecipient,
@@ -56,7 +59,6 @@ function when(iso: string) {
 }
 
 export function DeliveryFailuresPanel() {
-  const list = useServerFn(listDeliveryFailureQueue);
   const retry = useServerFn(retryDeliveryFailureFn);
   const suppress = useServerFn(suppressNotificationRecipient);
   const release = useServerFn(releaseNotificationRecipient);
@@ -67,13 +69,11 @@ export function DeliveryFailuresPanel() {
   const [suppressTarget, setSuppressTarget] = useState<Item | null>(null);
   const [suppressReason, setSuppressReason] = useState("");
 
-  const query = useQuery({
-    queryKey: ["admin", "delivery-failure-queue"],
-    queryFn: () => list(),
-  });
+  // The tiles above this panel and these rows must be one fetch, not two: a
+  // second query key is how the page came to show "0 failures" over 86 rows.
+  const query = useDeliveryFailures();
 
-  const invalidate = () =>
-    qc.invalidateQueries({ queryKey: ["admin", "delivery-failure-queue"] });
+  const invalidate = () => qc.invalidateQueries({ queryKey: DELIVERY_FAILURES_QUERY_KEY });
 
   const retryMut = useMutation({
     mutationFn: (item: Item) => retry({ data: { ledger: item.ledger, id: item.id } }),
@@ -144,20 +144,34 @@ export function DeliveryFailuresPanel() {
 
   const [limit, setLimit] = useState(8);
   const items = ((query.data?.items ?? []) as Item[]).slice(0, limit);
-  const summary = query.data?.summary ?? {
+  type BlockedAddress = {
+    address: string;
+    deliveries: number;
+    lastAttemptAt: string;
+    sentence: string;
+  };
+  type Suppression = {
+    id: string;
+    email: string;
+    reason: string | null;
+    source: string;
+    created_at: string;
+  };
+  const summary = (query.data?.summary ?? {
     total: items.length,
     retryable: items.filter((i) => i.retryable).length,
     blockedNotSent: 0,
     blockedDeliveries: 0,
-    blockedAddresses: [] as Array<{
-      address: string;
-      deliveries: number;
-      lastAttemptAt: string;
-      sentence: string;
-    }>,
+    blockedAddresses: [],
+  }) as {
+    total: number;
+    retryable: number;
+    blockedNotSent: number;
+    blockedDeliveries: number;
+    blockedAddresses: BlockedAddress[];
   };
   const blockedAddresses = summary.blockedAddresses;
-  const suppressions = query.data?.suppressions ?? [];
+  const suppressions = (query.data?.suppressions ?? []) as Suppression[];
   const windowDays = query.data?.windowDays ?? 7;
 
   const firstRecipientEmail = useMemo(() => {

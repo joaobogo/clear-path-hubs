@@ -118,7 +118,7 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
   const { loadTestScope, excludeTestOrgs } = await import("./admin-test-scope.server");
   const scope = await loadTestScope(admin, opts.includeTest ?? false);
 
-  const [crmRes, jobsRes, deliveriesRes, cvRes, orphansRes] = await Promise.all([
+  const [crmRes, jobsRes, deliveriesRes, cvRes] = await Promise.all([
     admin
       .from("crm_submission_queue")
       .select("id, status, attempts, last_error, created_at, source_form_id")
@@ -160,18 +160,13 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
         .limit(50),
       scope,
     ),
-    admin
-      .from("scoring_orphans")
-      .select("id", { count: "exact", head: true })
-      .is("resolved_at", null),
   ]);
 
   // Never let a bucket report a false zero: a failed query is an error, not "0".
-  for (const res of [crmRes, jobsRes, deliveriesRes, cvRes, orphansRes]) {
+  for (const res of [crmRes, jobsRes, deliveriesRes, cvRes]) {
     if (res.error) throw new Error(res.error.message);
   }
 
-  const scoringOrphans = Number(orphansRes.count ?? 0);
 
 
 
@@ -227,16 +222,13 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
     });
   }
 
-  // The email count comes from the canonical delivery metric, not from parsing
-  // the first word of a humanized sentence — that parse silently returned 0
-  // once the copy changed, so this page reported clean while /admin did not.
-  const { loadDeliveryFailures } = await import("./notification-failures.server");
-  const delivery = await loadDeliveryFailures(admin);
-
+  // Every tile counts exactly the rows listed underneath it. A tile fed by a
+  // different query than its list is how this page ended up claiming
+  // "Failed emails 0" above eighty failure rows.
   const counts = {
     webhook: issues.filter((i) => i.kind === "webhook").length,
-    processing: issues.filter((i) => i.kind === "processing").length + scoringOrphans,
-    email: delivery.summary.retryable,
+    processing: issues.filter((i) => i.kind === "processing").length,
+    email: issues.filter((i) => i.kind === "email").length,
     cv: issues.filter((i) => i.kind === "cv").length,
   };
 
