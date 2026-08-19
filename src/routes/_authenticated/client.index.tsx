@@ -284,19 +284,19 @@ function OverviewPage() {
 
             {/* 2 · PROGRESS — one sentence, three figures */}
             <div className="space-y-4">
-              <Collapsible className="space-y-3">
-                <CollapsibleTrigger asChild>
-                  <button className="flex w-full items-center justify-between rounded-lg border border-dashed px-4 py-2 text-xs font-medium text-muted-foreground hover:bg-muted/50">
-                    <span>Roles can be sharpened</span>
-                    <ChevronDown className="h-3.5 w-3.5 transition-transform group-data-[state=open]:rotate-180" />
-                  </button>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <OpenItemsStrip orgId={orgId} />
-                </CollapsibleContent>
-              </Collapsible>
+              <HiringHealthLine
+                notCurrent={pipelineNotCurrent}
+                notCurrentReason={readiness.reasonFor("Pipeline overview")}
+                health={data?.hiring_health ?? null}
+                loading={overviewPanel.loading}
+                isError={overviewPanel.isError}
+                onRetry={retryAll}
+                canSubmit={canSubmit}
+                org={orgSearch ?? null}
+              />
+
               {blockedSummary && (
-                <div 
+                <div
                   className="flex items-center justify-between gap-3 rounded-xl border taas-bd-danger taas-bg-danger-soft px-4 py-3 text-sm font-medium"
                   role="alert"
                 >
@@ -309,21 +309,19 @@ function OverviewPage() {
                   </Button>
                 </div>
               )}
-              
-              <HiringHealthLine
-                notCurrent={pipelineNotCurrent}
-                notCurrentReason={readiness.reasonFor("Pipeline overview")}
-                health={data?.hiring_health ?? null}
-                loading={overviewPanel.loading}
-                isError={overviewPanel.isError}
-                onRetry={retryAll}
-                canSubmit={canSubmit}
-                org={orgSearch ?? null}
-              />
-            </div>
 
-            {/* 3 · MESSAGES — direct, one-click responses */}
-            {/* RecentMessages removed as duplicate of Sidebar functionality in declutter pass */}
+              <Collapsible className="space-y-3">
+                <CollapsibleTrigger asChild>
+                  <button className="flex w-full items-center justify-between rounded-lg border border-dashed px-4 py-2 text-xs font-medium text-muted-foreground hover:bg-muted/50">
+                    <span>{rolesNeedingDetails.length} roles can be sharpened with a few optional details</span>
+                    <ChevronDown className="h-3.5 w-3.5 transition-transform group-data-[state=open]:rotate-180" />
+                  </button>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <OpenItemsStrip orgId={orgId} />
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
           </div>
 
           {/* ── BELOW THE FOLD: system detail, controls, filters, context ── */}
@@ -335,28 +333,14 @@ function OverviewPage() {
               >
                 <span className="text-sm font-medium text-foreground">Detail</span>
                 <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                  System status, controls, role filters, and history
+                  Our commitments, role filters, and history
                   <ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
                 </span>
               </button>
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-6 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
-              {/* Is the system working, and is what I'm looking at current? */}
-              <SystemHealthStrip organizationId={orgId} />
-
-              {/* CONTROL ROOM — what is running, what moved, how hard we work */}
-              {orgId && (
-                <div className="space-y-4">
-                  <SystemStatusStrip orgId={orgId} />
-                  <div className="grid gap-4 lg:grid-cols-2">
-                    <LiveTicker orgId={orgId} />
-                    <IntensityDial orgId={orgId} canEdit={role === "client_admin"} />
-                  </div>
-                </div>
-              )}
-
-              {/* AGENT ACTIVITY — the observable record of work on your roles */}
-              <AgentActivityRail organizationId={orgId} className="max-h-[32rem]" />
+              {/* PROMISE VS ACTUAL */}
+              <SlaScorecard orgId={orgId} positionId={selectedRole || undefined} />
 
               {/* Role / agent / status filter row */}
               <div className="flex items-center gap-3 pt-2">
@@ -406,8 +390,6 @@ function OverviewPage() {
                 latest={latest}
               />
 
-              {/* PROMISE VS ACTUAL */}
-              <SlaScorecard orgId={orgId} positionId={selectedRole || undefined} />
 
               {/* WHAT CHANGED + weekly update */}
               <section className="grid gap-4 lg:grid-cols-5">
