@@ -84,6 +84,24 @@ export function OperationalHealthPanel() {
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="secondary">{KIND_LABEL[i.kind]}</Badge>
                   <span className="text-sm font-medium">{i.label}</span>
+                  {i.kind === "processing" ? (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 shrink-0 px-1 text-[10px] text-muted-foreground hover:text-foreground"
+                      title="Copy Trace ID"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(i.id);
+                          toast.success("Trace ID copied");
+                        } catch {
+                          toast.error("Clipboard unavailable");
+                        }
+                      }}
+                    >
+                      {i.id.slice(0, 8)}…
+                    </Button>
+                  ) : null}
                   <span className="text-xs text-muted-foreground">{new Date(i.occurred_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</span>
                   <Button
                     size="sm"
