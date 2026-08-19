@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { getSupportOverview } from "@/lib/admin-workbench.functions";
 import { startSupportSession } from "@/lib/support.functions";
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
