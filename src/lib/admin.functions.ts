@@ -1098,6 +1098,34 @@ export const setPositionStatus = createServerFn({ method: "POST" })
       after: { ...(after ?? {}), reason: data.reason ?? null },
       trace_id,
     });
+    // One source event per meaningful change.
+    try {
+      const { emitEventFromServer } = await import("./notifications.functions");
+      const EVENT_MAP: Record<string, EventType> = {
+        submit: "intake_submitted",
+        approve: "position_approved",
+        activate: "position_activated",
+        reopen: "position_reopened",
+        pause: "position_paused",
+        mark_filled: "position_filled",
+        close: "position_closed",
+        request_clarification: "clarification_requested",
+      };
+      const event = EVENT_MAP[data.action];
+      if (event) {
+        await emitEventFromServer({
+          event,
+          scope: `${data.id}:${data.action}:${new Date().getTime()}`,
+          organization_id: before.organization_id,
+          position_id: data.id,
+          actor_user_id: context.userId,
+          link_path: `/admin/positions/${data.id}`,
+          payload: { reason: data.reason ?? null },
+        });
+      }
+    } catch (e) {
+      console.error("[setPositionStatus] activity emit failed", trace_id, e);
+    }
     // Emit lifecycle events so Client + Admin dashboards refresh in real time.
     const eventMap: Record<string, string> = {
       activate: "position_activated",
@@ -2467,5 +2495,19 @@ export const resolveIncident = createServerFn({ method: "POST" })
       before,
       after: { status: "cancelled", note: data.note ?? null },
     });
+    // Record incident resolution as activity.
+    try {
+      const { emitEventFromServer } = await import("./notifications.functions");
+      await emitEventFromServer({
+        event: "position_updated",
+        scope: `${before.id}:resolve:${new Date().getTime()}`,
+        position_id: before.entity_type === "position" ? before.entity_id : null,
+        application_id: before.entity_type === "application" ? before.entity_id : null,
+        actor_user_id: context.userId,
+        payload: { note: `Incident resolved: ${data.note ?? "No note provided"}` },
+      });
+    } catch (e) {
+      console.error("[resolveIncident] activity emit failed", e);
+    }
     return { ok: true };
   });
