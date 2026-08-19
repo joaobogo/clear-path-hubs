@@ -166,19 +166,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "PROMPT 5 — Finish the admin audit (coverage gap)
-
-The previous admin audit ended at roughly 40% when the browser connection dropped. These were never opened and have no verdict:
-
-Pages: /admin/my-day, /admin/positions (and the 7-step edit wizard), /admin/intake, /admin/messages, /admin/payments, /admin/team, /admin/support, /admin/integrations, /admin/settings, /admin/business-rules, /admin/wbr, /admin/copilot, /admin/scoring/orphans, /admin/qa-report, /admin/design-system.
-
-Checks: the 375px responsive pass on every page; the notifications-bell deep-link ratio (open at least 10 and report how many land on a generic unfiltered list versus a specific record); the test-records toggle sweep with it OFF then ON then OFF; the /admin/candidates Export dialog and its truncated-UUID scope label; candidate CV download actor badges; ?tab=client-preview redirect behaviour.
-
-Confirmed-defect items still unverified: 15, 17, 18, 19, 29 (for 9 of 10 candidates), 30, 31, 32, 33, 42, 43, 44, 45, 46, 47, 48, 49.
-
-Give a KEEP / REMOVE FROM PRODUCTION / MERGE INTO <page> verdict for /admin/qa-report and /admin/design-system first — an internal engineering release audit exposing source paths and reproduction steps for security issues, and a developer component gallery, both shipped to production admins.
-
-Note: the \"Show test records across all admin screens\" toggle was left ON, its original position. Start from there and return it there."`}
+TEXTO DO USUÁRIO: "i need the admin and client workspace 100% mvp ready"`}
         </div>
         <Scripts />
       </body>
