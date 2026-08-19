@@ -218,7 +218,9 @@ export const listConversations = createServerFn({ method: "GET" })
         "id, organization_id, scope, position_id, candidate_match_id, subject, last_message_at",
       )
       .eq("organization_id", data.orgId)
+      .not("last_message_at", "is", null)
       .order("last_message_at", { ascending: false });
+
     if (error) throw new Error(error.message);
 
     const rows = (convos as Row[]) ?? [];
@@ -363,9 +365,12 @@ export const ensureConversation = createServerFn({ method: "POST" })
         candidate_match_id: data.scope === "candidate" ? data.candidateMatchId! : null,
         subject: data.subject ?? (data.scope === "organization" ? "General" : null),
         created_by: userId,
+        last_message_at: undefined, // Explicitly undefined (null in DB) until first message
+
       })
       .select("id")
       .single();
+
     if (error) {
       // Unique index race — read the winner instead of failing the UI.
       const { data: retry } = await existingQ.maybeSingle();
@@ -532,6 +537,13 @@ export const postConversationMessage = createServerFn({ method: "POST" })
       .single();
     if (error) throw new Error(error.message);
 
+    // Update the conversation's last_message_at stamp.
+    await supabase
+      .from("conversations")
+      .update({ last_message_at: (row as Row).created_at })
+      .eq("id", data.conversationId);
+
+
     // Posting is reading: keep the poster's unread badge at zero for this thread.
     await supabase.from("conversation_reads").upsert(
       {
@@ -590,8 +602,10 @@ export const listAllConversations = createServerFn({ method: "GET" })
       .select(
         "id, organization_id, scope, subject, last_message_at, organizations(id, name), positions(title)",
       )
+      .not("last_message_at", "is", null)
       .order("last_message_at", { ascending: false })
       .limit(100);
+
     if (error) throw new Error(error.message);
 
     const rows = (convos as Row[]) ?? [];
