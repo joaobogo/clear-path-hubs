@@ -92,6 +92,8 @@ function NotificationsPage() {
       <DeliveryFailuresPanel />
     </div>
   );
+}
+  );
 
       <DeliveryFailuresPanel />
     </div>
