@@ -126,11 +126,14 @@ export const searchCandidateIndex = createServerFn({ method: "POST" })
       q = q.in("match_id", ids);
     }
     if (data.q) {
-      const { ilikeValue } = await import("./search/postgrest-filter");
-      const val = ilikeValue(data.q);
-      if (val) {
+      const { sanitizeSearchTerm, quoteFilterValue } = await import("./search/postgrest-filter");
+      const term = sanitizeSearchTerm(data.q);
+      if (term) {
         // Multi-column search across name, email, organization and full index.
-        // B2: Ensure every query is quoted safely and matches the view columns.
+        // Each term is wrapped in wildcards and quoted to prevent PostgREST parsing errors
+        // from special characters like commas, parentheses, or dots.
+        const pattern = `%${term}%`;
+        const val = quoteFilterValue(pattern);
         q = q.or(
           `full_name.ilike.${val},email.ilike.${val},org_name.ilike.${val},search_vector.ilike.${val}`
         );

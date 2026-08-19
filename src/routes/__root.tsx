@@ -143,26 +143,32 @@ function RootShell({ children }: { children: ReactNode }) {
           
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "The approval flow is broken in three places and I can't approve a role through the UI at all.
+TEXTO DO USUÁRIO: "Search on /admin/candidates doesn't return zero results — it crashes. It writes ?q= to the
+URL so you can reproduce it directly.
 
-First: /admin/approvals renders the record-not-found page — "We couldn't find that record.
-It may have been archived, merged, or deleted." That's a removed route being reported as a
-missing record, which is misleading.
+These four throw an error card with a fresh incident reference every single load, so each
+one is being logged as a separate production incident:
+  ?q=Miguel+Torres → "Something went wrong … Reference: TF-72D9EDFB"
+  ?q=Beatriz → TF-F48F572A
+  ?q=Costa → TF-97F73CFD
+  ?q=Northwind → TF-78A4EEB4
 
-Second, and this is the real problem: on /admin, every row in the Approvals section has a
-"Review →" link pointing at /admin/candidates/publish_position%3A<uuid>?tab=profile&event=
-That page never loads — just "Loading page…" forever, 24 seconds, survives a hard refresh.
-The uuid in that link is a POSITION id. The same id loads fine at /admin/positions/<uuid>.
-So we're routing a position id into the candidate detail route with a "publish_position:"
-prefix stuck on the front, plus an empty event param.
+These two hang forever with no error and no spinner text — still an empty skeleton after
+23 seconds:
+  ?q=miguel.torres@demo.taasflow.com
+  ?q=a
 
-Please fix the Review links to point at /admin/positions/<id> — no prefix, no event param.
-Then either restore /admin/approvals as a real list, or redirect it to
-/admin?scope=all#queue-approvals. If a route is retired anywhere in this app, show
-"This page has moved" and say where — never the record-not-found page.
+And "Try again" on the error card renders a completely blank white page.
 
-Check: from /admin, click Review on any Approvals row and land on a page with a working
-Approve button in under 5 seconds."`}
+All those records exist — the unfiltered list shows 31 submissions with Miguel Torres as
+row 1.
+
+Please find and fix the server error in the q filter (check for an unhandled null on
+multi-word input and on '@'), add a timeout with a real empty state, and make Try again
+re-run the query instead of blanking the document.
+
+Check: all six of those queries return either results or an honest "no matches", and no
+TF- reference is generated."`}
         </div>
 
         <Scripts />
