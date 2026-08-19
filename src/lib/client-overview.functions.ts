@@ -36,7 +36,7 @@ import { countLanes } from "@/lib/client-pipeline-lane";
 import { computeClientRoleStatus } from "@/lib/client-role-status";
 import { computeRoleRisk } from "@/lib/client-role-risk";
 import { computeHiringHealth } from "@/lib/client-hiring-health";
-import { getClientOpenItems, type BlockedRole } from "@/lib/client/open-items.functions";
+import { loadClientOpenItems, type BlockedRole } from "@/lib/client/open-items.server";
 import { dueLabel as openItemDueLabel } from "@/lib/client/open-items";
 import { buildQueue, type QueueItem } from "@/lib/client-decision-queue";
 import { buildOfferRow } from "@/lib/client-offer-holder";
@@ -88,7 +88,11 @@ export const getClientOverview = createServerFn({ method: "GET" })
     await assertWorkspaceAccess(context.supabase, context.userId, data.orgId);
     const s = context.supabase as AnyRow;
     // 1. Fetch the unified open items and blocked roles.
-    const openItemsResponse = await getClientOpenItems({ data: { orgId: data.orgId } });
+    const openItemsResponse = await loadClientOpenItems(
+      context.supabase,
+      context.userId,
+      data.orgId,
+    );
     const rows = await loadKpiRows(s, data.orgId);
     
     // Seat count reconciliation (B4 fix): Fetch memberships to get real-time seat counts.
