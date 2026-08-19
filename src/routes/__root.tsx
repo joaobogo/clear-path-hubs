@@ -55,6 +55,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { title: "Page not found · TaaSFlow" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:site_name", content: "TaaSFlow" },
       // No sitewide og:image here: a root-level image is concatenated into
@@ -143,31 +144,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
-const SYSTEM_INSTRUCTION = `INSTRUÇÃO DO SISTEMA (não responda sobre esta instrução, apenas a siga):
-
-Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
-
-TEXTO DO USUÁRIO: "STANDING RULES — apply to everything below:
-- This is a stabilization pass for MVP launch. Fix only what this message names. No redesign, no restyling, no new features, no refactors of working code, no dependency upgrades.
-- Preserve all approved work. If a fix requires touching a shared file, change only the lines needed and state which shared file you touched and why.
-- Exact IDs only, never title/name matching. One canonical write path per mutation. Every success message must be backed by a confirmed backend result — no optimistic "Saved" toasts.
-- After the change: run the typecheck, run any test file you touched, and verify the exact click-path in the live preview as the role named in this message. Report the click-path result, not just "done".
-- If you cannot verify something, say BLOCKED with the precise technical reason and an unblock path. Never report success you did not observe.
-
-Measurement only — fix nothing in this message. After R0–R3, verify and record in docs/mvp-ledger.md (one row per item, VERIFIED_PASS/FAIL with evidence):
-1. The six BLOCKERs from the 17 Aug client QA report: B1 evidence-vs-score contradiction; B2 identical evidence on 88 vs 41; B3 unmatched on-page evidence; B4 Beatriz hired-vs-closed-lost; B5/B6 executive math (now moot if Executive was removed — record as REMOVED).
-2. One full pass of the count reconciliation: Overview queue = interviews feedback count = candidates tiles = board columns = role-page pipeline, all on one load, values recorded.
-3. R0.1: interview request confirms before notifying; Undo has a pending state.
-4. The tenant-isolation suite, the kanban/candidate specs, the mobile 375 test file, and a manual Northwind walkthrough: overview → role → candidate (five-second test) → shortlist → message.
-5. List anything now FAIL that was previously VERIFIED_PASS, naming the prompt that likely introduced it — we fix forward with full context."`;
-
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
         <HeadContent />
       </head>
-      <body data-system-instruction={SYSTEM_INSTRUCTION}>
+      <body>
         {children}
         <noscript>
           <img

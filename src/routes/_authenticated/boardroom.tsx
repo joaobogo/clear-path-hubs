@@ -91,6 +91,8 @@ function BoardroomPage() {
   const orgName =
     contextQ.data?.organizations?.find((o: { id: string; name: string }) => o.id === resolvedOrgId)?.name ??
     "Your workspace";
+  const hasBoundWorkspace = orgName !== "Your workspace";
+
   const kpis = overviewQ.data?.kpis as
     | { active_positions?: number; delivered_this_month?: number; time_to_shortlist_days?: number }
     | undefined;
@@ -131,7 +133,7 @@ function BoardroomPage() {
   /* Slides */
   const slides = useMemo(
     () => [
-      { key: "intro", render: () => <SlideIntro orgName={orgName} /> },
+      { key: "intro", render: () => <SlideIntro orgName={orgName} hasBoundWorkspace={hasBoundWorkspace} /> },
       { key: "positions", render: () => <SlidePositions positions={positions} kpis={kpis} isLoading={isLoading} loadFailed={loadFailed} /> },
       { key: "shortlist", render: () => <SlideShortlist candidates={candidates} isLoading={isLoading} loadFailed={loadFailed} /> },
 
@@ -139,7 +141,7 @@ function BoardroomPage() {
       { key: "industry", render: () => <SlideIndustry /> },
       { key: "next", render: () => <SlideNext /> },
     ],
-    [orgName, positions, candidates, kpis, isLoading],
+    [orgName, hasBoundWorkspace, positions, candidates, kpis, isLoading],
 
   );
 
@@ -186,9 +188,11 @@ function BoardroomPage() {
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
             Exit boardroom
           </Link>
-          <span className="rounded-full border border-white/20 px-2 py-0.5 text-[10px] uppercase tracking-widest">
-            Live · {orgName}
-          </span>
+          {hasBoundWorkspace ? (
+            <span className="rounded-full border border-white/20 px-2 py-0.5 text-[10px] uppercase tracking-widest">
+              Live · {orgName}
+            </span>
+          ) : null}
 
         </div>
         <div className="flex items-center gap-4">
@@ -259,12 +263,12 @@ function SlideEyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
-function SlideIntro({ orgName }: { orgName: string }) {
+function SlideIntro({ orgName, hasBoundWorkspace }: { orgName: string; hasBoundWorkspace: boolean }) {
   return (
     <div>
       <SlideEyebrow>Boardroom · TaaSFlow</SlideEyebrow>
       <h1 className="mt-4 font-[family-name:var(--brand-font-display)] text-5xl font-semibold tracking-tight sm:text-6xl lg:text-7xl">
-        What TaaSFlow is doing for {orgName}.
+        {hasBoundWorkspace ? `What TaaSFlow is doing for ${orgName}.` : "What TaaSFlow is doing for your team"}
       </h1>
 
       <p className="mt-6 max-w-2xl text-lg text-white/70">
