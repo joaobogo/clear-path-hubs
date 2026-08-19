@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { FieldError } from "@/components/ui/field-error";
+import { requiredText } from "@/lib/form-validation";
 
 export function StaffProfileCard({ initialName }: { initialName: string }) {
   const [name, setName] = useState(initialName);
