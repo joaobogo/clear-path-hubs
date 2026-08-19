@@ -2,7 +2,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { APPROVAL_KINDS, MIN_DECLINE_REASON } from "./admin-approvals";
+import { APPROVAL_KINDS, MIN_DECLINE_REASON, bulkEligible } from "./admin-approvals";
 import type { ApprovalsPayload } from "./admin-approvals";
 
 const kind = z.enum(APPROVAL_KINDS);
@@ -65,18 +65,21 @@ export const bulkApproveApprovals = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { approveApproval } = await import("./admin-approvals.server");
 
-    if (data.kind !== "candidate_visible") throw new Error("bulk_unsupported_kind");
+    if (data.kind !== "candidate_visible" && data.kind !== "publish_position") throw new Error("bulk_unsupported_kind");
 
+    const table = data.kind === "candidate_visible" ? "candidate_matches" : "positions";
+    const select = data.kind === "candidate_visible" ? "id, position_id, organization_id" : "id, organization_id";
     const { data: rows, error } = await supabaseAdmin
-      .from("candidate_matches")
-      .select("id, position_id, organization_id")
+      .from(table)
+      .select(select)
       .in("id", data.target_ids);
     if (error) throw new Error(error.message);
-    const list = rows ?? [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const list = (rows ?? []) as any[];
     if (list.length !== data.target_ids.length) throw new Error("bulk_target_mismatch");
     const orgs = new Set(list.map((r) => r.organization_id));
     if (orgs.size !== 1) throw new Error("bulk_across_clients_forbidden");
-    if (list.some((r) => r.position_id !== data.position_id))
+    if (data.kind === "candidate_visible" && list.some((r) => r.position_id !== data.position_id))
       throw new Error("bulk_across_positions_forbidden");
 
     const approved: string[] = [];

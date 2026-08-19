@@ -17,6 +17,7 @@ import {
   listCandidateCountries,
   bulkSetClientVisibility,
 } from "@/lib/admin-candidates.functions";
+import { PublishConfirmation } from "@/components/admin/candidate-table/publish-confirmation";
 import { listOrgOptions, listPositionOptions } from "@/lib/admin.functions";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import { REJECTION_REASONS } from "@/lib/client-decision-reasons";
@@ -600,7 +601,10 @@ function CandidatesPage() {
               <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => setSelected([])}>
                 Clear
               </Button>
-              <Button size="sm" variant="outline" className="h-8 text-xs border-destructive/20 text-destructive hover:bg-destructive/5" onClick={() => setConfirm("hidden")}>
+              <Button size="sm" variant="outline" className="h-8 text-xs border-destructive/20 text-destructive hover:bg-destructive/5" onClick={() => {
+                if (!window.confirm(`Unpublish ${selected.length} candidate(s)? This is a real action.`)) return;
+                bulk.mutate("hidden");
+              }}>
                 Unpublish
               </Button>
               <Button size="sm" variant="outline" className="h-8 text-xs border-success/20 text-success hover:bg-success/5" onClick={() => setConfirm("visible")}>
@@ -629,6 +633,16 @@ function CandidatesPage() {
               onDone={() => setSelected([])}
             />
           </div>
+          <PublishConfirmation
+            open={confirm === "visible"}
+            onOpenChange={(open) => !open && setConfirm(null)}
+            onConfirm={() => {
+              setConfirm(null);
+              bulk.mutate("visible");
+            }}
+            count={selected.length}
+            isBlocking={rows.some(r => selected.includes(r.match_id) && r.admin_status !== 'approved')}
+          />
         </div>
       )}
 

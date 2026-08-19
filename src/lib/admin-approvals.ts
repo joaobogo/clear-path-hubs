@@ -115,7 +115,7 @@ export function bulkEligible(items: ApprovalItem[]): boolean {
     positions.size === 1 &&
     !positions.has("") &&
     orgs.size === 1 &&
-    items.every((i) => i.kind === items[0]!.kind && i.blockers.length === 0)
+    items.every((i) => i.kind === items[0]!.kind && (i.kind === "publish_position" || i.blockers.length === 0))
   );
 }
 

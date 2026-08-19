@@ -128,7 +128,13 @@ export const searchCandidateIndex = createServerFn({ method: "POST" })
     if (data.q) {
       const { ilikeValue } = await import("./search/postgrest-filter");
       const val = ilikeValue(data.q);
-      if (val) q = q.ilike("search_text", val);
+      if (val) {
+        // Multi-column search across name, email, organization and full index.
+        // B2 fix: ensure every query is quoted safely to handle commas/parens.
+        q = q.or(
+          `full_name.ilike.${val},email.ilike.${val},org_name.ilike.${val},search_text.ilike.${val}`
+        );
+      }
     }
 
     if (data.organization_id) q = q.eq("organization_id", data.organization_id);
