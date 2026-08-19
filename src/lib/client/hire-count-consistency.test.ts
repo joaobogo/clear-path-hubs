@@ -8,7 +8,8 @@ import { countLanes } from "@/lib/client-pipeline-lane";
  *  - Account → "Roles and where they are" row badge ("N hired")
  *  - Roles list (/client/positions) → HIRES
  *  - Offers board (/client/offers) → HIRES CONFIRMED
- * All three must resolve to the single lane derivation (countLanes → hired).
+ *  - Executive → "Finance-ready hiring summary" tiles ("Hires · 30d/90d/YTD")
+ * All four must resolve to the single lane derivation (countLanes → hired).
  */
 
 function row(over: Partial<KpiRow> & { id: string; stage: KpiRow["stage"] }): KpiRow {
@@ -54,5 +55,12 @@ describe("hire count consistency across client surfaces", () => {
   it("offers board hire totals count confirmed hires, not a separate field", () => {
     const src = readFileSync("src/lib/hires.functions.ts", "utf8");
     expect(src).toContain("hire_confirmed");
+  });
+
+  it("executive report uses the canonical KPI rows and hired stage", () => {
+    const src = readFileSync("src/lib/executive.functions.ts", "utf8");
+    expect(src).toContain("loadKpiRows(s, orgId)");
+    expect(src).toContain("computeKpis(kpiRows, 0)");
+    expect(src).toContain("r.stage === 'hired'");
   });
 });
