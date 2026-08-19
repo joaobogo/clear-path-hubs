@@ -1,12 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import {
-  AGENT_KEYS,
-  AGENT_REGISTRY,
-  agentName,
-  type AgentKey,
-} from "@/lib/agents/registry";
+import { AGENT_KEYS, AGENT_REGISTRY, agentName, type AgentKey } from "@/lib/agents/registry";
 import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 import { stageLabel } from "@/lib/stage-aging";
 import { isQaFixtureTitle } from "@/lib/client/test-record-filter";
@@ -30,9 +25,7 @@ async function assertCanSwitch(supabase: Db, userId: string, org: string) {
     _user: userId,
   });
   if (!staff) {
-    throw new Error(
-      "Only a workspace admin can switch an agent on or off.",
-    );
+    throw new Error("Only a workspace admin can switch an agent on or off.");
   }
 }
 
@@ -139,8 +132,6 @@ function linkPathFromFeed(row: Db): string | null {
   return null;
 }
 
-
-
 async function stopAgentWork(supabase: Db, org: string, key: AgentKey) {
   const stopped = { jobs: 0, touches: 0 };
 
@@ -208,9 +199,7 @@ export type AgentPanel = {
 
 export const getAgentPanel = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) =>
-    z.object({ organization_id: z.string().uuid() }).parse(d),
-  )
+  .inputValidator((d: unknown) => z.object({ organization_id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }): Promise<AgentPanel> => {
     const { supabase, userId } = context as { supabase: Db; userId: string };
     const org = data.organization_id;
@@ -255,9 +244,7 @@ export const getAgentPanel = createServerFn({ method: "GET" })
       .gte("occurred_at", since)
       .limit(5000);
 
-    const byKey = new Map<string, Db>(
-      (settings ?? []).map((s: Db) => [s.agent_key, s]),
-    );
+    const byKey = new Map<string, Db>((settings ?? []).map((s: Db) => [s.agent_key, s]));
 
     const agents: AgentCard[] = AGENT_REGISTRY.map((def) => {
       const s = byKey.get(def.key);
@@ -269,28 +256,20 @@ export const getAgentPanel = createServerFn({ method: "GET" })
       // Legacy agent_activity rows.
       const legacyEvents = (activity ?? [])
         .filter((a: Db) => !isQaFixtureTitle(a.sentence as string | null))
-        .filter(
-        (a: Db) => a.agent_key === def.key,
-      );
+        .filter((a: Db) => a.agent_key === def.key);
 
-      const allEvents = [...feedEvents, ...legacyEvents]
-        .sort(
-          (a: Db, b: Db) =>
-            (new Date(b.occurred_at).getTime() || 0) -
-            (new Date(a.occurred_at).getTime() || 0),
-        );
+      const allEvents = [...feedEvents, ...legacyEvents].sort(
+        (a: Db, b: Db) =>
+          (new Date(b.occurred_at).getTime() || 0) - (new Date(a.occurred_at).getTime() || 0),
+      );
       const latest = allEvents[0];
 
       const latestFeed = feedEvents[0];
       const produced = feedEvents.filter((a: Db) =>
         INSIGHTS_AGENT_RUN_TYPES.has(a.event_type as string),
       ).length;
-      const producedLegacy = legacyEvents.filter(
-        (a: Db) => a.outcome === "acted",
-      ).length;
-      const blocked = legacyEvents.filter(
-        (a: Db) => a.outcome === "blocked",
-      ).length;
+      const producedLegacy = legacyEvents.filter((a: Db) => a.outcome === "acted").length;
+      const blocked = legacyEvents.filter((a: Db) => a.outcome === "blocked").length;
 
       const enabled = !!s?.enabled;
       const pausedAt = (s?.paused_at as string | null) ?? null;
@@ -319,10 +298,7 @@ export const getAgentPanel = createServerFn({ method: "GET" })
           : enabled
             ? "On and working."
             : `Off. ${def.offConsequence}`,
-        last_action_at:
-          (s?.last_action_at as string | null) ??
-          latest?.occurred_at ??
-          null,
+        last_action_at: (s?.last_action_at as string | null) ?? latest?.occurred_at ?? null,
         last_action_summary: lastSummary,
         produced_this_week: produced + producedLegacy,
         blocked_this_week: blocked,
@@ -336,7 +312,6 @@ export const getAgentPanel = createServerFn({ method: "GET" })
       agents,
     };
   });
-
 
 export type SwitchResult = {
   agent_key: string;
@@ -502,10 +477,6 @@ export const listAgentActivity = createServerFn({ method: "GET" })
       return data.agent_key ? key === data.agent_key : !!key;
     });
 
-    const activityRows = (activityRes.data ?? []).filter(
-      (r: Db) => !isQaFixtureTitle(r.sentence as string | null),
-    );
-
     const feedActivities: ActivityRow[] = feedRows.map((r: Db) => {
       const key = eventTypeToAgentKey(r.event_type as string)!;
       return {
@@ -521,6 +492,7 @@ export const listAgentActivity = createServerFn({ method: "GET" })
     });
 
     const legacyActivities: ActivityRow[] = (legacyRes.data ?? [])
+      .filter((r: Db) => !isQaFixtureTitle(r.sentence as string | null))
       .filter((r: Db) => (data.agent_key ? r.agent_key === data.agent_key : true))
       .map((r: Db) => ({
         id: r.id,
@@ -534,10 +506,6 @@ export const listAgentActivity = createServerFn({ method: "GET" })
       }));
 
     return [...feedActivities, ...legacyActivities]
-      .sort(
-        (a, b) =>
-          new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime(),
-      )
+      .sort((a, b) => new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime())
       .slice(0, limit);
   });
-
