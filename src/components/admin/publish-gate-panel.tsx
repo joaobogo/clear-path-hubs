@@ -14,13 +14,15 @@ import { Button } from "@/components/ui/button";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { PaymentExemptionDialog } from "@/components/admin/payment-exemption-dialog";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { CheckCircle2, Lock, PencilLine, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
@@ -97,27 +99,27 @@ export function PublishGatePanel({
 
   return (
     <section className="rounded-lg border bg-card" aria-labelledby="publish-gate-heading">
-      <Dialog open={!!confirmRow} onOpenChange={(open) => !open && setConfirmRow(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Publish role to client workspace?</DialogTitle>
-            <DialogDescription>
+      <AlertDialog open={!!confirmRow} onOpenChange={(open) => !open && setConfirmRow(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Publish role to client workspace?</AlertDialogTitle>
+            <AlertDialogDescription>
               This will make <span className="font-semibold text-foreground">{confirmRow?.title}</span> live for{" "}
               <span className="font-semibold text-foreground">{confirmRow?.organization_name}</span>.
               This is a real notification, sent immediately.
-            </DialogDescription>
-          </DialogHeader>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
           <div className="flex items-center gap-3 rounded-md bg-warning/10 p-3 text-sm text-warning-foreground">
             <AlertTriangle className="h-4 w-4 shrink-0" />
             <p>Once live, candidates will be able to see this role if visibility is public.</p>
           </div>
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setConfirmRow(null)}>
-              Cancel
-            </Button>
+          <AlertDialogFooter>
+            <AlertDialogCancel asChild>
+              <Button variant="ghost">Cancel</Button>
+            </AlertDialogCancel>
             <Button
               disabled={publishMut.isPending}
-              onClick={() => {
+              onClick={(e) => {
                 if (confirmRow) {
                   publishMut.mutate(confirmRow.position_id);
                   setConfirmRow(null);
@@ -126,9 +128,9 @@ export function PublishGatePanel({
             >
               {publishMut.isPending ? "Publishing…" : "Confirm & Publish"}
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <header className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3">
         <div>
           <h2 id="publish-gate-heading" className="text-sm font-semibold">
