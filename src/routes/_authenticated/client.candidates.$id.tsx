@@ -48,13 +48,14 @@ import {
   WhyThisCandidate,
 } from "@/components/client/candidate-detail/evidence";
 import {
-  AvailabilityAndComp,
+  AvailabilityPanel,
   ExperienceTimeline,
   InterviewGuide,
   LinksPanel,
   ProfilePanel,
   SkillsAndEducation,
 } from "@/components/client/candidate-detail/profile";
+
 import {
   ActivitySection,
   AuditTrailSection,
@@ -529,10 +530,11 @@ function CandidateDetailPage() {
  </TabsList>
 
  <TabsContent value="summary" className="mt-4 space-y-4">
- {/* One requirement list, one total — the shortlist rationale folded in. */}
- <RequirementCoverage candidate={candidate} withRationale />
- {/* One score table: breakdown and provenance merged. */}
- <ScoreBreakdown candidate={candidate} />
+  {/* Requirement coverage is hidden per B5 until fixed */}
+  {/* <RequirementCoverage candidate={candidate} withRationale /> */}
+  {/* Score breakdown is hidden per B4 until fixed */}
+  {/* <ScoreBreakdown candidate={candidate} /> */}
+
  <WhyThisCandidate candidate={candidate} />
  {compQuery.isError ? (
  <QueryErrorCard
@@ -545,7 +547,7 @@ function CandidateDetailPage() {
  ) : (
  <CompensationPanel signal={compSignal} loading={compPending} />
  )}
- <AvailabilityAndComp candidate={candidate} />
+ <AvailabilityPanel candidate={candidate} />
  <ExperienceTimeline candidate={candidate} />
  <SkillsAndEducation candidate={candidate} />
  {candidate.screening_answers.length > 0 && (

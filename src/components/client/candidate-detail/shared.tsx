@@ -108,12 +108,13 @@ export function CandidateHeader({
               {c.location}
             </span>
           )}
-          {(c.timezone || c.availability) && (
+          {(c.timezone || c.availability || candidate.work_authorization) && (
             <span className="inline-flex items-center gap-1">
               <CalendarClock className="h-3.5 w-3.5" aria-hidden />
-              {[c.timezone, c.availability].filter(Boolean).join(" · ")}
+              {[c.timezone, c.availability, candidate.work_authorization].filter(Boolean).join(" · ")}
             </span>
           )}
+
         </div>
         {candidate.last_updated && (
           <p className="mt-2 text-xs text-muted-foreground">
