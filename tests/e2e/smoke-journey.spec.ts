@@ -149,14 +149,16 @@ test.describe("launch smoke journey", () => {
       .click({ timeout: 5_000 })
       .catch(() => undefined);
 
-    // Let the pipeline parse + score so the match is approvable.
+    // Let the pipeline parse + score so the match is approvable. The wait logs
+    // every state transition and, on a stall (OCR above all), dumps the match,
+    // file and job truth into the run output and the HTML report.
+    await logPipelineState(matchId, "after-apply");
     await runPipelineDrain();
-    await expect
-      .poll(
-        async () => (await lookupCandidate(email)).matches[0]?.processing_state,
-        { timeout: 180_000, intervals: [2_000, 5_000] },
-      )
-      .toMatch(/scored|ready_to_score|manual_review_required/);
+    await waitForProcessingState(matchId, /scored|ready_to_score|manual_review_required/, {
+      timeout: 180_000,
+      label: "parse-and-score",
+    });
+    await logPipelineState(matchId, "before-approval");
 
     // ── 3. Staff approve the match for client visibility ──────────────────
     await loginAs(page, "admin", fixtures.users["platform_admin"]!.email);
