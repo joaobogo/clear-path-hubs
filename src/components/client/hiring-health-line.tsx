@@ -36,6 +36,7 @@ function figureTarget(key: HiringHealthFigureKey, org?: string | null): FigureTa
 
 export function HiringHealthLine({
   health,
+  activitySummary,
   notCurrent = false,
   notCurrentReason,
   loading,
