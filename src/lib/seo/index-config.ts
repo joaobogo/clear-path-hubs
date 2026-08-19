@@ -1,9 +1,10 @@
 /**
  * Single source of truth for machine-readable indexing surfaces.
  *
- * Both /sitemap.xml and /robots.txt are generated from this module at request
- * time, so a route added here can never be advertised in one file and missing
- * from the other.
+ * Both /sitemap.xml and /robots.txt are generated from this module family at
+ * request time, so a route added here can never be advertised in one file and
+ * missing from the other. The static public/robots.txt copy is regenerated at
+ * build time from the same robots-config.ts source.
  */
 import { CANONICAL_ORIGIN } from "@/lib/canonical-origin";
 import { listIndustrySlugs } from "@/lib/marketing/content";
@@ -11,11 +12,14 @@ import { listAllBlogRows } from "@/lib/marketing/blog-catalog";
 import { listResourceGuideSlugs } from "@/content/resources";
 import { toPublicSlug } from "@/lib/marketing/industry-slug-aliases";
 import { BLOG_CATEGORY_BY_SLUG } from "@/lib/marketing/blog-manifest";
+import { BASE_URL, SITEMAP_URL } from "@/lib/seo/robots-config";
+export { buildRobotsTxt } from "@/lib/seo/robots-config";
 
 /** Canonical production origin — shared with every `rel=canonical` tag. */
-export const BASE_URL = CANONICAL_ORIGIN;
+export { BASE_URL, SITEMAP_URL };
 
-export const SITEMAP_URL = `${BASE_URL}/sitemap.xml`;
+
+
 
 // Intentional exclusions — nothing that emits `noindex` may appear below.
 // - /login, /reset-password, /access-denied, /unauthorized: auth plumbing.
@@ -67,29 +71,6 @@ export const STATIC_PATHS = [
   "/pitch",
 ] as const;
 
-/** Paths crawlers must never fetch. Mirrors the `noindex` subtrees above. */
-export const DISALLOWED_PATHS = [
-  "/admin",
-  "/client",
-  "/me",
-  "/boardroom",
-  "/login",
-  "/auth",
-  "/checkout",
-  "/book-call",
-  "/share/",
-  "/shortlist/",
-  "/api/",
-  "/_authenticated/",
-  "/reset-password",
-  "/access-denied",
-  "/unauthorized",
-  "/brand-center",
-  "/dev/",
-  "/dev.catalogue",
-  "/dev.industry-coverage",
-  "/lovable/",
-] as const;
 
 export type SitemapEntry = { path: string; priority: string };
 
@@ -143,39 +124,3 @@ export function buildSitemapXml(): string {
   ].join("\n");
 }
 
-/**
- * Crawlers named explicitly so answer engines (ChatGPT, Claude, Perplexity,
- * Google AI surfaces, Copilot) get the same allow/disallow set as Googlebot
- * instead of relying on their handling of the wildcard group.
- */
-const NAMED_CRAWLERS = [
-  "Googlebot",
-  "Bingbot",
-  "Google-Extended",
-  "GPTBot",
-  "OAI-SearchBot",
-  "ChatGPT-User",
-  "ClaudeBot",
-  "Claude-User",
-  "anthropic-ai",
-  "PerplexityBot",
-  "Perplexity-User",
-  "Applebot",
-  "Applebot-Extended",
-  "CCBot",
-] as const;
-
-export function buildRobotsTxt(): string {
-  const group = (agent: string) => [
-    `User-agent: ${agent}`,
-    "Allow: /",
-    ...DISALLOWED_PATHS.map((p) => `Disallow: ${p}`),
-    "",
-  ];
-  return [
-    ...group("*"),
-    ...NAMED_CRAWLERS.flatMap((agent) => group(agent)),
-    `Sitemap: ${SITEMAP_URL}`,
-    "",
-  ].join("\n");
-}
