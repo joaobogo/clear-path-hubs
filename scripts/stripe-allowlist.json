@@ -1,6 +1,7 @@
 {
   "note": "Pinned technical vendor references. Never add visitor-facing copy here.",
   "files": {
+    ".github/workflows/release-gate.yml": 2,
     "RELEASE_GATE.md": 2,
     "docs/PAYMENTS_RUNBOOK.md": 12,
     "docs/capacity/performance-baseline-2026-08-03.md": 1,
@@ -12,7 +13,7 @@
     "docs/mvp-ledger.md": 2,
     "docs/pricing/entitlement-confirmations.md": 1,
     "docs/security/public-endpoint-authorisation-2026-08-03.md": 2,
-    "package.json": 3,
+    "package.json": 5,
     "reports/greenfield/functional-parity-matrix.json": 1,
     "reports/greenfield/functional-parity-matrix.md": 1,
     "run-audit.ts": 1,
