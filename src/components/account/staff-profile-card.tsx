@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { FieldError } from "@/components/ui/field-error";
+import { requiredText } from "@/lib/form-validation";
 
 export function StaffProfileCard({ initialName }: { initialName: string }) {
   const [name, setName] = useState(initialName);
@@ -16,13 +18,16 @@ export function StaffProfileCard({ initialName }: { initialName: string }) {
   }
 
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const updateProfile = useServerFn(updateStaffProfile);
   const qc = useQueryClient();
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) return;
-    
+    const message = requiredText(name);
+    setError(message);
+    if (message) return;
+
     setSaving(true);
     try {
       const result = await updateProfile({ data: { full_name: name.trim() } });
@@ -44,7 +49,7 @@ export function StaffProfileCard({ initialName }: { initialName: string }) {
       <p className="mt-1 text-sm text-muted-foreground">
         How you appear in internal logs and communications.
       </p>
-      <form onSubmit={handleSave} className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-end">
+      <form noValidate onSubmit={handleSave} className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-end">
         <div className="flex-1 space-y-1.5">
           <Label htmlFor="staff-name">Full name</Label>
           <Input
@@ -52,8 +57,9 @@ export function StaffProfileCard({ initialName }: { initialName: string }) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Your name"
-            required
+            aria-invalid={!!error}
           />
+          <FieldError message={error} />
         </div>
         <Button type="submit" disabled={saving || name.trim() === initialName}>
           {saving ? "Saving..." : "Save name"}

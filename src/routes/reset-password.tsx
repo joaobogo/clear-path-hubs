@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
+import { FieldError } from "@/components/ui/field-error";
+import { collectErrors, FORM_MESSAGES } from "@/lib/form-validation";
 
 /** Shown when the recovery link is missing, already used, or expired. */
 const EXPIRED_LINK_MESSAGE =
@@ -31,6 +33,7 @@ function ResetPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [hasRecoverySession, setHasRecoverySession] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     let cancelled = false;
@@ -93,14 +96,12 @@ function ResetPasswordPage() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 8) {
-      toast.error("Password must be at least 8 characters.");
-      return;
-    }
-    if (password !== confirm) {
-      toast.error("Passwords do not match.");
-      return;
-    }
+    const next = collectErrors({
+      password: password.length >= 8 ? null : FORM_MESSAGES.passwordMin,
+      confirm: password === confirm ? null : FORM_MESSAGES.passwordMismatch,
+    });
+    setFieldErrors(next);
+    if (Object.keys(next).length > 0) return;
     setLoading(true);
     try {
       const { error } = await supabase.auth.updateUser({ password });
@@ -138,28 +139,28 @@ function ResetPasswordPage() {
             </p>
           )}
         </div>
-        <form onSubmit={onSubmit} className="space-y-3">
+        <form noValidate onSubmit={onSubmit} className="space-y-3">
           <div className="space-y-1.5">
             <Label htmlFor="pw">New password</Label>
             <Input
               id="pw"
               type="password"
-              required
-              minLength={8}
+              aria-invalid={!!fieldErrors.password}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            <FieldError message={fieldErrors.password} />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="pw2">Confirm password</Label>
             <Input
               id="pw2"
               type="password"
-              required
-              minLength={8}
+              aria-invalid={!!fieldErrors.confirm}
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
             />
+            <FieldError message={fieldErrors.confirm} />
           </div>
           <Button type="submit" className="w-full" disabled={loading || !hasRecoverySession}>
             {loading ? "Updating…" : "Update password"}

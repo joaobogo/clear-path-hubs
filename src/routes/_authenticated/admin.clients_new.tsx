@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
+import { FieldError } from "@/components/ui/field-error";
+import { collectErrors, emailText, requiredText } from "@/lib/form-validation";
 
 export const Route = createFileRoute("/_authenticated/admin/clients_new")({
   ssr: false,
@@ -32,6 +34,7 @@ function NewClientPage() {
     phone: "",
     notes: "",
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [result, setResult] = useState<{
     organization_id: string;
     email: string;
@@ -64,36 +67,50 @@ function NewClientPage() {
 
       <Card className="p-5">
         <form
+          noValidate
           className="grid gap-4 md:grid-cols-2"
           onSubmit={(e) => {
             e.preventDefault();
+            const next = collectErrors({
+              company_name: requiredText(form.company_name),
+              primary_contact_name: requiredText(form.primary_contact_name),
+              primary_contact_email: emailText(form.primary_contact_email),
+            });
+            setErrors(next);
+            if (Object.keys(next).length > 0) return;
             mut.mutate();
           }}
         >
           <div className="space-y-1.5 md:col-span-2">
-            <Label>Company name *</Label>
+            <Label htmlFor="company_name">Company name *</Label>
             <Input
-              required
+              id="company_name"
+              aria-invalid={!!errors.company_name}
               value={form.company_name}
               onChange={(e) => setForm({ ...form, company_name: e.target.value })}
             />
+            <FieldError message={errors.company_name} />
           </div>
           <div className="space-y-1.5">
-            <Label>Primary contact name *</Label>
+            <Label htmlFor="primary_contact_name">Primary contact name *</Label>
             <Input
-              required
+              id="primary_contact_name"
+              aria-invalid={!!errors.primary_contact_name}
               value={form.primary_contact_name}
               onChange={(e) => setForm({ ...form, primary_contact_name: e.target.value })}
             />
+            <FieldError message={errors.primary_contact_name} />
           </div>
           <div className="space-y-1.5">
-            <Label>Primary contact email *</Label>
+            <Label htmlFor="primary_contact_email">Primary contact email *</Label>
             <Input
-              required
+              id="primary_contact_email"
               type="email"
+              aria-invalid={!!errors.primary_contact_email}
               value={form.primary_contact_email}
               onChange={(e) => setForm({ ...form, primary_contact_email: e.target.value })}
             />
+            <FieldError message={errors.primary_contact_email} />
           </div>
           <div className="space-y-1.5">
             <Label>Website</Label>

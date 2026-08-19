@@ -16,6 +16,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toastError } from "@/lib/toast-error";
+import { FieldError } from "@/components/ui/field-error";
+import { FORM_MESSAGES } from "@/lib/form-validation";
 import {
   Dialog,
   DialogContent,
@@ -37,6 +39,7 @@ export function NewTaskDialog({
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [titleError, setTitleError] = useState<string | null>(null);
   const [priority, setPriority] = useState<"low" | "normal" | "high" | "urgent">(
     "normal",
   );
@@ -88,8 +91,10 @@ export function NewTaskDialog({
           <DialogTitle>New task</DialogTitle>
         </DialogHeader>
         <form
+          noValidate
           onSubmit={(e) => {
             e.preventDefault();
+            setTitleError(title.trim() ? null : FORM_MESSAGES.required);
             if (title.trim()) submit.mutate();
           }}
           className="space-y-3"
@@ -100,10 +105,11 @@ export function NewTaskDialog({
               id="task-title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              required
               maxLength={240}
+              aria-invalid={!!titleError}
               placeholder="e.g. Review shortlist for Head of Sales"
             />
+            <FieldError message={titleError} />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="task-desc">Context (optional)</Label>
