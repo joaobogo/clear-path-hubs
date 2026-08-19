@@ -339,7 +339,7 @@ export const listMyNotifications = createServerFn({ method: "GET" })
     // Actor enrichment. Read through the caller's own client so RLS decides
     // what they may see; when an event row is not readable we simply fall back
     // to a system label rather than leaking anything.
-    const eventIds = [...new Set(rows.map((r) => r.event_id).filter((v): v is string => !!v))];
+    const eventIds = [...new Set(rows.map((r: any) => r.event_id).filter((v: any): v is string => !!v))];
     const actorByEvent = new Map<string, string | null>();
     if (eventIds.length > 0) {
       const { data: events } = await context.supabase
@@ -349,8 +349,8 @@ export const listMyNotifications = createServerFn({ method: "GET" })
       const actorIds = [
         ...new Set(
           (events ?? [])
-            .map((e) => e.actor_user_id as string | null)
-            .filter((v): v is string => !!v),
+            .map((e: any) => e.actor_user_id as string | null)
+            .filter((v: any): v is string => !!v),
         ),
       ];
       const nameById = new Map<string, string | null>();
@@ -405,7 +405,7 @@ export const listMyNotifications = createServerFn({ method: "GET" })
         .select("notification_id, status, last_attempt_at, created_at")
         .in(
           "notification_id",
-          rows.map((r) => r.id),
+          rows.map((r: any) => r.id),
         )
         // Only the email channel is user-visible here; the in_app row is always
         // "delivered" and used to mask a real email failure (and vice versa).
@@ -421,12 +421,12 @@ export const listMyNotifications = createServerFn({ method: "GET" })
       }
     }
 
-    const items = rows.map((r) => ({
+    const items = rows.map((r: any) => ({
       ...r,
       actor_label: r.event_id ? (actorByEvent.get(r.event_id) ?? null) : null,
       delivery_state: deliveryByNotification.get(r.id) ?? null,
     }));
-    const unread = items.filter((n) => !n.read_at).length;
+    const unread = items.filter((n: any) => !n.read_at).length;
     return { items, unread };
   });
 

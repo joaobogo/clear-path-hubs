@@ -33,13 +33,24 @@ function NotificationsPage() {
 
   const email = query.data?.email as { configured: boolean; reason?: string | null } | undefined;
 
+  const counts = (query.data?.counts ?? {}) as Record<string, number>;
+  const summary = [
+    { label: "Emails sent (7d)", value: counts["email:provider_accepted"] ?? 0 },
+    {
+      label: "Email failures (7d)",
+      value: (counts["email:failed"] ?? 0) + (counts["email:bounced"] ?? 0),
+    },
+    { label: "Suppressed (7d)", value: counts["email:suppressed"] ?? 0 },
+    { label: "In-app delivered (7d)", value: counts["in_app:delivered"] ?? 0 },
+  ];
+
   return (
     <div className="p-6 md:p-8 max-w-6xl">
       <header className="mb-6">
         <h1 className="text-2xl font-semibold">Delivery health</h1>
         <p className="text-sm text-muted-foreground max-w-2xl">
-          Provider acceptance is not the same as inbox delivery. Anything failed,
-          bounced or suppressed lands here.
+          Provider acceptance is not the same as inbox delivery. Anything failed, bounced or
+          suppressed lands here.
         </p>
       </header>
 
@@ -47,8 +58,8 @@ function NotificationsPage() {
         <Card className="p-4 mb-6 border-amber-500/40 bg-amber-500/5">
           <p className="text-sm font-medium">Email sending is not active yet</p>
           <p className="text-sm text-muted-foreground">
-            In-app notifications still work. Emails are recorded as suppressed until a
-            sender domain is verified.
+            In-app notifications still work. Emails are recorded as suppressed until a sender domain
+            is verified.
           </p>
         </Card>
       ) : null}
@@ -66,25 +77,16 @@ function NotificationsPage() {
           </div>
         }
       >
-        {(data) => {
-          const counts = (data.counts ?? {}) as Record<string, number>;
-          const summary = [
-            { label: "Emails sent (7d)", value: counts["email:provider_accepted"] ?? 0 },
-            { label: "Email failures (7d)", value: (counts["email:failed"] ?? 0) + (counts["email:bounced"] ?? 0) },
-            { label: "Suppressed (7d)", value: counts["email:suppressed"] ?? 0 },
-            { label: "In-app delivered (7d)", value: counts["in_app:delivered"] ?? 0 },
-          ];
-          return (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {summary.map((s) => (
-                <Card key={s.label} className="p-4">
-                  <div className="text-2xl font-semibold tabular-nums">{s.value}</div>
-                  <div className="text-xs text-muted-foreground">{s.label}</div>
-                </Card>
-              ))}
-            </div>
-          );
-        }}
+        {() => (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {summary.map((s) => (
+              <Card key={s.label} className="p-4">
+                <div className="text-2xl font-semibold tabular-nums">{s.value}</div>
+                <div className="text-xs text-muted-foreground">{s.label}</div>
+              </Card>
+            ))}
+          </div>
+        )}
       </QueryState>
 
       <DeliveryFailuresPanel />

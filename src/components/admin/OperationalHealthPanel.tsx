@@ -10,7 +10,7 @@ import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 
 const KIND_LABEL: Record<string, string> = {
   webhook: "Failed webhooks",
-  processing: "Stuck jobs",
+  processing: "Processing exceptions",
   email: "Failed emails",
   cv: "Unprocessed CVs",
 };

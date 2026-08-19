@@ -116,19 +116,13 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
   const { loadTestScope, excludeTestOrgs } = await import("./admin-test-scope.server");
   const scope = await loadTestScope(admin, opts.includeTest ?? false);
 
-  const [crmRes, jobsRes, deliveriesRes, cvRes] = await Promise.all([
-
+  const [crmRes, jobsRes, deliveriesRes, cvRes, orphansRes] = await Promise.all([
     admin
       .from("crm_submission_queue")
       .select("id, status, attempts, last_error, created_at, source_form_id")
       .in("status", ["failed", "error", "retrying"])
       .order("created_at", { ascending: false })
       .limit(50),
-    // `processing_jobs` has status/error_code/error_message/started_at — an
-    // earlier version of this query used state/last_error/updated_at, which do
-    // not exist, so stuck jobs never surfaced here. Terminal statuses
-    // (completed, cancelled) are excluded: a cancelled job whose entity was
-    // deleted is finished, not pending.
     admin
       .from("processing_jobs")
       .select("id, job_type, status, attempts, error_code, error_message, started_at, created_at")
@@ -148,10 +142,6 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
         .select(
           "id, processing_state, processing_updated_at, candidate_profiles:candidate_profile_id(full_name)",
         )
-        // Every non-terminal or blocked processing state. "processing" is NOT a
-        // member of the processing_state enum — sending it made PostgREST reject
-        // the whole request with 22P02, so this bucket silently reported 0
-        // forever and OCR/manual-review/provider-blocked CVs never surfaced.
         .in("processing_state", [
           "queued",
           "parsing",
@@ -168,12 +158,18 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
         .limit(50),
       scope,
     ),
+    admin
+      .from("scoring_orphans")
+      .select("id", { count: "exact", head: true })
+      .is("resolved_at", null),
   ]);
 
   // Never let a bucket report a false zero: a failed query is an error, not "0".
-  for (const res of [crmRes, jobsRes, deliveriesRes, cvRes]) {
+  for (const res of [crmRes, jobsRes, deliveriesRes, cvRes, orphansRes]) {
     if (res.error) throw new Error(res.error.message);
   }
+
+  const scoringOrphans = Number(orphansRes.count ?? 0);
 
 
 
@@ -228,7 +224,7 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
 
   const counts = {
     webhook: issues.filter((i) => i.kind === "webhook").length,
-    processing: issues.filter((i) => i.kind === "processing").length,
+    processing: issues.filter((i) => i.kind === "processing").length + scoringOrphans,
     email: issues.filter((i) => i.kind === "email" && ["failed", "bounced", "suppressed"].includes(i.detail.split(" ")[0])).length,
     cv: issues.filter((i) => i.kind === "cv").length,
   };
