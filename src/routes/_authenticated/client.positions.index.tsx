@@ -254,7 +254,7 @@ function PositionsPage() {
  </div>
  </header>
 
- <PortfolioSnapshot data={portfolio} loading={!hasRoleData} />
+ <PortfolioSnapshot data={portfolio} loading={!hasRoleData} simplified />
 
  <ActionRequiredBanner actionItems={actionItems} />
 
