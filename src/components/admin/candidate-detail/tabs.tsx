@@ -67,7 +67,7 @@ import {
   Info,
 } from "lucide-react";
 import { FitHero, WhyWeShortlisted, RequirementCoverage, WhyThisCandidate, WhatNeedsValidation } from "@/components/client/candidate-detail/evidence";
-import { ExperienceTimeline, SkillsAndEducation, AvailabilityAndComp, ProfilePanel, LinksPanel } from "@/components/client/candidate-detail/profile";
+import { ExperienceTimeline, SkillsAndEducation, AvailabilityPanel, ProfilePanel, LinksPanel } from "@/components/client/candidate-detail/profile";
 import { ActivitySection } from "@/components/client/candidate-detail/activity";
 
 import { DownloadCvButton } from "@/components/download-cv-button";
