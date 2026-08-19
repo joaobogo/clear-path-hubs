@@ -48,6 +48,8 @@ jobs:
         run: bunx tsc --noEmit
       - name: Public/client vocabulary rules
         run: bun run check:vocabulary
+      - name: No payment-vendor (Stripe) strings in the repo
+        run: bun run check:no-stripe
 
   unit-tests:
     name: Full test suite (vitest)
