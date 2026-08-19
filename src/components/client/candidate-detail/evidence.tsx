@@ -455,9 +455,9 @@ export const RequirementCoverage = memo(function RequirementCoverage({
       <div className="mt-4">
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span>Overall coverage</span>
-          <span className="tabular-nums">{Math.round(coverage * 100)}%</span>
+          <span className="tabular-nums">{Math.round((coverage ?? 0) * 100)}%</span>
         </div>
-        <Progress value={Math.round(coverage * 100)} className="mt-1" />
+        <Progress value={Math.round((coverage ?? 0) * 100)} className="mt-1" />
       </div>
       <Separator className="my-4" />
       <ul className="space-y-2">
