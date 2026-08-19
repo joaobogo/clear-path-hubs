@@ -155,6 +155,22 @@ export function cleanQuote(raw: string | null | undefined): string {
 /** Humanize evidence sources. */
 export function humanizeSource(source: string | null | undefined): string {
   if (!source) return "Direct observation";
+  
+  // D1: Handle character offsets if passed as source string (safety fallback)
+  if (source.includes('"location":')) {
+    try {
+      const loc = JSON.parse(source);
+      if (loc.location) return humanizeSource(loc.location);
+    } catch { /* fallback to default parsing */ }
+  }
+  
+  // D1: Render CV location as human-readable string
+  // Matches cv:134-299
+  const cvMatch = source.match(/^cv:(\d+)-(\d+)$/i);
+  if (cvMatch) {
+    return `CV · characters ${cvMatch[1]}–${cvMatch[2]}`;
+  }
+
   const map: Record<string, string> = {
     resume: "Curriculum Vitae",
     cv: "Curriculum Vitae",
@@ -165,6 +181,7 @@ export function humanizeSource(source: string | null | undefined): string {
   };
   return map[source.toLowerCase()] || source;
 }
+
 
 /**
 

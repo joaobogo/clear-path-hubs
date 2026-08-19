@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { sanitizeInternalMarkers } from "@/lib/human-labels";
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getOperationalHealth, retryOperationalIssue } from "@/lib/admin-workbench.functions";
@@ -123,8 +125,9 @@ export function OperationalHealthPanel() {
                   <div className="mt-1 flex items-start gap-2">
                     <p className="break-words font-mono text-[10px] leading-relaxed text-destructive/80">
                       {i.last_error.includes("unique or exclusion constraint")
-                        ? "Could not save — a matching record already exists (duplicate key)."
-                        : i.last_error}
+                        ? "Record already exists (duplicate key)."
+                        : sanitizeInternalMarkers(i.last_error)}
+
                     </p>
                     <Button
                       variant="ghost"

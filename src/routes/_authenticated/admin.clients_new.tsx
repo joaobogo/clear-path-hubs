@@ -119,11 +119,11 @@ function NewClientPageContent({
       <header>
         <h1 className="text-2xl font-semibold">Create a client workspace</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Creates the organization, primary contact user, and client_admin
-          membership. Duplicate organizations and users are matched, not
-          re-created.
+          Creates the organization, primary contact user, and gives them admin access to their workspace. 
+          Duplicate organizations and users are matched, not re-created.
         </p>
       </header>
+
 
       <Card className="p-5">
         <form
