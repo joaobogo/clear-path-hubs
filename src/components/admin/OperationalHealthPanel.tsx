@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { humanizeCode } from "@/lib/humanize-codes";
 
 const KIND_LABEL: Record<string, string> = {
   webhook: "Failed webhooks",
@@ -113,7 +114,7 @@ export function OperationalHealthPanel() {
                     Retry
                   </Button>
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground">{i.detail}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{humanizeCode(i.detail)}</p>
                 {i.last_error ? (
                   <div className="mt-1 flex items-start gap-2">
                     <p className="break-words font-mono text-[10px] leading-relaxed text-destructive/80">

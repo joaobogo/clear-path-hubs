@@ -8,6 +8,7 @@ import {
   getOperationsIncidents,
   resolveIncident,
 } from "@/lib/admin.functions";
+import { humanizeCode } from "@/lib/humanize-codes";
 import { listDeliveryFailures, type DeliveryFailure } from "@/lib/notifications.functions";
 import {
   retryParse,
@@ -399,7 +400,7 @@ function OperationsPage() {
                             {g.catLabel}
                           </div>
                           <div className="text-[10px] text-muted-foreground">
-                            {g.rootCauseLabel} · {g.errorCode}
+                            {g.rootCauseLabel} · {humanizeCode(g.errorCode)}
                           </div>
                           {g.latest.error_message && (
                             <div className="mt-1 line-clamp-2 text-[11px] text-muted-foreground">
@@ -427,7 +428,7 @@ function OperationsPage() {
                         <td className="px-3 py-2 text-xs">
                           {m?.processing_state ? (
                             <Badge variant="secondary">
-                              {String(m.processing_state).replace(/_/g, " ")}
+                              {humanizeCode(m.processing_state)}
                             </Badge>
                           ) : (
                             <span className="text-muted-foreground">—</span>
