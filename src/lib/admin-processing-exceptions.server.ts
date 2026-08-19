@@ -113,7 +113,7 @@ export async function loadExceptionBoard(admin: Admin): Promise<ExceptionBoard> 
       .gte("created_at", since)
       .in("status", ["queued", "running", "failed", "cancelled"])
       .order("created_at", { ascending: false })
-      .limit(500),
+      .limit(1000),
     s
       .from("scoring_orphans")
       .select("id", { count: "exact", head: true })

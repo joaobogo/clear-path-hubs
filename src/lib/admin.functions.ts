@@ -1404,11 +1404,11 @@ export const getPipelineHealth = createServerFn({ method: "GET" })
         stale += 1;
     }
 
-    // Recent failed jobs
+    // Recent failed jobs (C8: Unified failed job count/query)
     const { data: failedJobs } = await s
       .from("processing_jobs")
       .select("id,job_type,error_code,error_message,trace_id,created_at,entity_id")
-      .eq("status", "failed")
+      .in("status", ["failed", "stuck_queued"])
       .order("created_at", { ascending: false })
       .limit(50);
 
