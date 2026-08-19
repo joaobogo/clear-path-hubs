@@ -43,7 +43,12 @@ export interface CriterionRow {
 export interface CompletenessReport {
   criteria: CriterionRow[];
   requiredTotal: number;
+  /** Must-have criteria with strong, quoted evidence only. Thin never counts. */
   requiredSupported: number;
+  /** Must-have criteria backed only by weak/partial evidence. */
+  requiredThin: number;
+  /** Must-have criteria with no usable evidence at all. */
+  requiredUnsupported: number;
   /** Labels of must-have criteria with zero evidence and no override. */
   blockingLabels: string[];
   /** Must-have criteria with zero evidence, whether or not overridden. */
@@ -229,7 +234,11 @@ export function buildCompletenessReport(input: {
   return {
     criteria,
     requiredTotal: required.length,
-    requiredSupported: required.filter((c) => c.status !== "unsupported").length,
+    // Only fully supported must-haves count as "evidenced" — a thin or missing
+    // criterion is never rolled into the headline number.
+    requiredSupported: required.filter((c) => c.status === "supported").length,
+    requiredThin: required.filter((c) => c.status === "thin").length,
+    requiredUnsupported: unsupportedRequired.length,
     blockingLabels: blocking.map((c) => c.label),
     unsupportedRequiredKeys: unsupportedRequired.map((c) => c.key),
     hasAnyEvidence: input.items.length > 0 || input.assessments.length > 0,

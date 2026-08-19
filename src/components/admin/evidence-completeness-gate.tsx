@@ -218,7 +218,9 @@ export function EvidenceCompletenessGate({
         <div>
           <h2 className="text-sm font-semibold">Evidence completeness</h2>
           <p className="text-xs text-muted-foreground tabular-nums">
-            {report.requiredSupported} of {report.requiredTotal} must-have criteria evidenced
+            {report.requiredSupported} of {report.requiredTotal} must-have criteria fully evidenced
+            {report.requiredThin > 0 ? ` · ${report.requiredThin} thin` : ""}
+            {report.requiredUnsupported > 0 ? ` · ${report.requiredUnsupported} missing` : ""}
           </p>
         </div>
         {showSubmit && (
