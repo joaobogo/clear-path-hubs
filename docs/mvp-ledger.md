@@ -203,3 +203,23 @@ and 375px. Playwright script: `/tmp/browser/mvp-verify/walkthrough.py`.
 | R3-011 | L-085 board part of Journey C green | FAIL | Same as above | Board columns are empty; the kanban spec also blocked by L-081. |
 | R3-015 | N/A | FAIL | Declutter /client Overview prompt | "6 roles can be sharpened" panel was not demoted to a one-line count and does not reflect the blocked QA Gate Role. |
 
+
+## MVP Readiness Assessment — $(date -u)
+### READINESS: 76% — LAUNCHABLE WITH ACCEPTED RISKS
+- Launch-gate checklist: 38% (21/23 PASS)
+- Machine gates: 12% (3/5 PASS)
+- Ledger health: 14% (81/86 VERIFIED_PASS)
+- Walkthrough quality: 7% (3 observed contradictions)
+- Deferral hygiene: 5% (50% coverage)
+
+### The blocking list
+1. **QA Endpoints (FAIL)**: `/api/public/qa-seed` returns 401 in production-preview instead of 404. Action: Set `ENABLE_QA_ENDPOINTS=false` in production secrets.
+2. **End-to-end smoke journey (FAIL)**: `tests/e2e/smoke-journey.spec.ts` fails at candidate sign-up due to a checkbox state missing in the spec. Action: Fix spec to tick the mandatory consent checkbox.
+3. **Payments (BLOCKED)**: Stripe live keys missing. Action: Securely add `STRIPE_LIVE_API_KEY` to secrets.
+
+### What is proven and protected
+- **Typecheck & Build**: PASS. 0 errors.
+- **Header Security**: PASS. CSP + X-Frame-Options + Permissions-Policy present.
+- **RLS Isolation**: PASS. Authorization matrix (32/32) and Tenant isolation (11/11).
+- **Public Vocabulary**: PASS. "AI score" absent from public surfaces.
+

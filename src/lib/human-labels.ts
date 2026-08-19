@@ -49,6 +49,12 @@ const LABELS: Record<string, string> = {
   trial: "Trial access",
   expired: "Access expired",
   no_org: "No workspace selected",
+
+  // Terminology unification (MVP stabilization)
+  position: "Role",
+  requisition: "Role",
+  job: "Role",
+  record: "Candidate",
 };
 
 /**

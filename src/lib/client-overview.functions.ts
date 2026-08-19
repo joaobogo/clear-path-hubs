@@ -216,7 +216,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
       action_required.push({
         type: "offer_pending",
         label: `${offerCount} offer${offerCount === 1 ? "" : "s"} awaiting response`,
-        href: `/client/candidates?filter=interview`,
+        href: `/client/offers`,
         count: offerCount,
       });
     }
@@ -269,7 +269,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
       if (posRows.some((r) => r.stage === "offer")) next = "Offer response";
       else if (posRows.some((r) => r.interview_active || r.stage === "interview_process"))
         next = "Interview outcome";
-      else if (posRows.some((r) => r.stage === "shortlisted")) next = "Send interview requests";
+      else if (posRows.some((r) => r.stage === "shortlisted")) next = "Interview requests";
       else if (posRows.some((r) => r.stage === "delivered")) next = "Review new candidates";
 
       const dates = overviewStageDates.get(p.id as string) ?? {

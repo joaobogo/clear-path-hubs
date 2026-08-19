@@ -163,7 +163,7 @@ function OverviewPage() {
     return selectedRole ? all.filter((c: Any) => c.position?.id === selectedRole) : all;
   }, [data, selectedRole]);
 
-  // One queue, built on the server and only filtered by the role picker here.
+  // The "Your open items" card is removed as a duplicate of the decision queue.
   const queue: QueueRow[] = useMemo(() => {
     const server: QueueRow[] = ((data as Any)?.decision_queue ?? []) as QueueRow[];
     return selectedRole ? server.filter((q) => q.position_id === selectedRole) : server;
@@ -279,14 +279,22 @@ function OverviewPage() {
               orgSearch={orgSearch ?? null}
             />
 
-            {/* Anything else still waiting on you, overdue first */}
-            <OpenItemsStrip orgId={orgId} />
-
             {/* Missing brief details block sourcing — answerable in place */}
             <InfoRequestsPanel orgId={orgId} onAnswered={() => refetch()} />
 
             {/* 2 · PROGRESS — one sentence, three figures */}
             <div className="space-y-4">
+              <Collapsible className="space-y-3">
+                <CollapsibleTrigger asChild>
+                  <button className="flex w-full items-center justify-between rounded-lg border border-dashed px-4 py-2 text-xs font-medium text-muted-foreground hover:bg-muted/50">
+                    <span>Roles can be sharpened</span>
+                    <ChevronDown className="h-3.5 w-3.5 transition-transform group-data-[state=open]:rotate-180" />
+                  </button>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <OpenItemsStrip orgId={orgId} />
+                </CollapsibleContent>
+              </Collapsible>
               {blockedSummary && (
                 <div 
                   className="flex items-center justify-between gap-3 rounded-xl border taas-bd-danger taas-bg-danger-soft px-4 py-3 text-sm font-medium"
@@ -315,17 +323,7 @@ function OverviewPage() {
             </div>
 
             {/* 3 · MESSAGES — direct, one-click responses */}
-            <RecentMessages messages={messages} loading={overviewPanel.loading} />
-
-            {/* 4 · WHAT HAPPENS NEXT — one milestone per active role */}
-            <NextMilestones
-              rows={((data as Any)?.next_milestones ?? null) as MilestoneRow[] | null}
-              totalRoles={roles.length}
-              loading={overviewPanel.loading}
-              isError={overviewPanel.isError || Boolean((data as Any)?.next_milestones_failed)}
-              onRetry={retryAll}
-              org={orgSearch ?? null}
-            />
+            {/* RecentMessages removed as duplicate of Sidebar functionality in declutter pass */}
           </div>
 
           {/* ── BELOW THE FOLD: system detail, controls, filters, context ── */}
