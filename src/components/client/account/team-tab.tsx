@@ -993,19 +993,23 @@ function InviteDialog({
  open — you can change it later.
  </DialogDescription>
  </DialogHeader>
- <form
- className="space-y-4"
- onSubmit={(e) => {
- e.preventDefault();
- setFailure(null);
- if (!email.trim()) return;
- if (!emailLooksValid) {
- setFailure("That email address doesn't look right — check it and try again.");
- return;
- }
- invite.mutate();
- }}
- >
+  <form
+    className="space-y-4"
+    noValidate
+    onSubmit={(e) => {
+      e.preventDefault();
+      setFailure(null);
+      if (!email.trim()) {
+        setFailure("Work email is required.");
+        return;
+      }
+      if (!emailLooksValid) {
+        setFailure("That doesn't look like an email address.");
+        return;
+      }
+      invite.mutate();
+    }}
+  >
  {failure && (
  <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
