@@ -67,7 +67,7 @@ export function buildValidationList(
     ? ["contradicted", "not_evidenced", "partial", "met"]
     : ["contradicted", "not_evidenced", "partial"];
 
-  const requirementItems: ValidationItem[] = statuses.flatMap((status) =>
+  const requirementItems: ValidationItem[] = hideRequirementEvidenceNotes ? [] : statuses.flatMap((status) =>
     requirementRows
       .filter((r) => r.status === status)
       .map((r) => ({
