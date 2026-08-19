@@ -66,6 +66,7 @@ import {
   MoreHorizontal,
   NotebookPen,
   Radar,
+  Copy,
 } from "lucide-react";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { GeneratedBlueprintPanel } from "@/components/positions/generated-blueprint-panel";
@@ -821,16 +822,25 @@ export function AuditTab({ id }: { id: string }) {
                     })}
                   </div>
                 </div>
-                <div className="mt-0.5 text-xs text-muted-foreground">
-                  Actor{" "}
-                  <span className="font-mono">
-                    {r.actor_user_id ? String(r.actor_user_id).slice(0, 8) : "system"}
+                <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
+                  <span>
+                    Actor{" "}
+                    <span className="font-mono">
+                      {r.actor_user_id ? String(r.actor_user_id).slice(0, 8) : "system"}
+                    </span>
                   </span>
                   {r.trace_id && (
-                    <>
-                      {" · trace "}
-                      <span className="font-mono">{r.trace_id}</span>
-                    </>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-auto px-1 py-0 text-xs text-muted-foreground"
+                      onClick={() => {
+                        void navigator.clipboard.writeText(r.trace_id);
+                      }}
+                    >
+                      <Copy className="mr-1 h-3 w-3" />
+                      Copy reference
+                    </Button>
                   )}
                 </div>
                 {notes.length > 0 && (

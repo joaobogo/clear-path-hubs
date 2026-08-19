@@ -143,7 +143,14 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "The quote windows on the candidate Evidence tab are raw character offsets into the CV text rather than sentence boundaries, so contact details are landing in the UI. Confirmed on all three candidates I checked.\n\nMiguel Torres, 15 occurrences. Verbatim:\n\"torres@demo.taasflow.com · +351 912 000 102 Profile Full-stack engineer with 8 years of professional experience. Core stack: TypeScript, React, Node.js, PostgreSQL,\"\n— starts mid-email, carries the phone number, ends on a comma.\n\nAnother one ends mid-word: \"… miguel.torres@demo.taasflow.com · +351 912 000 102 Pro\"\n\nCarla Nunes has 12, Beatriz Costa has 12, same pattern.\n\nPlease:\n- snap quote windows to sentence or line boundaries before rendering\n- run a PII scrub over the extracted window that strips email addresses and phone numbers regardless of where the window falls\n- never start or end a quote mid-word — expand to the token boundary and add an ellipsis\n\nCheck: zero phone numbers and zero email fragments in any quote window on those three candidates, and no quote starting or ending mid-word.\n\nPlease don't touch the evidence completeness header, the evidence graph, or the source/quote JSON rendering — those three were all broken before and are now correct, and I don't want them regressing.\"`}
+TEXTO DO USUÁRIO: "Good news: the raw error codes in toasts are gone. Retry on /admin/operations now says "Re-enqueued for the existing worker." — clean sentence, no code. That's a real fix.
+
+But trace IDs have appeared in success toasts on the position workspace:
+  "Under review · trace ad_1qbhgb1wmt0970zu"
+  "Approved · trace ad_hyl6g40qmt098k9c"
+  "Clarification requested · trace ad_w8pcqvjfmt09p08o"
+
+Please drop the trace from toasts. If support needs it, put a "Copy reference" affordance on the record's audit tab instead of in a message that disappears in four seconds."`}
         </div>
 
         <Scripts />

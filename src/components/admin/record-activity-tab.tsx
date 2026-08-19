@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Copy } from "lucide-react";
 import { ErrorState } from "@/components/ds";
 import { getRecordAudit, type AuditEntity } from "@/lib/admin-audit.functions";
 import { formatDateTime, formatNumber } from "@/lib/format/datetime";
@@ -86,14 +87,23 @@ export function RecordActivityTab({
                 {formatDateTime(r.created_at)}
               </time>
             </div>
-            <div className="mt-0.5 text-xs text-muted-foreground">
-              {r.actor_name}
-              {r.entity_type ? ` · ${humanizeCode(r.entity_type)}` : ""}
+            <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
+              <span>
+                {r.actor_name}
+                {r.entity_type ? ` · ${humanizeCode(r.entity_type)}` : ""}
+              </span>
               {r.trace_id ? (
-                <>
-                  {" · trace "}
-                  <span className="font-mono">{r.trace_id}</span>
-                </>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto px-1 py-0 text-xs text-muted-foreground"
+                  onClick={() => {
+                    if (r.trace_id) void navigator.clipboard.writeText(r.trace_id);
+                  }}
+                >
+                  <Copy className="mr-1 h-3 w-3" />
+                  Copy reference
+                </Button>
               ) : null}
             </div>
             {r.reason ? (

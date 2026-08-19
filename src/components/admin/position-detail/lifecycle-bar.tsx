@@ -64,8 +64,8 @@ export function LifecycleBar({
   const run = async (fn: () => Promise<Any>, label: string) => {
     setBusy(true);
     try {
-      const r = await fn();
-      toast.success(`${label} · trace ${r.trace_id}`);
+      await fn();
+      toast.success(label);
       await onDone();
     } catch (e) {
       const msg = (e as Error).message || "";
