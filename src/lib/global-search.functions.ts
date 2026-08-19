@@ -130,7 +130,7 @@ export const globalSearch = createServerFn({ method: "POST" })
       let oq = supabase
         .from("organizations")
         .select("id, name, industry, status, archived_at")
-        .ilike("name", ilikeValue(term)!)
+        .or(`name.ilike.${ilikeValue(term)},industry.ilike.${ilikeValue(term)}`)
         .order("name")
         .limit(LIMIT);
       oq = excludeTestOrgs(oq, testScope, "id");
@@ -264,7 +264,7 @@ export const globalSearch = createServerFn({ method: "POST" })
         .select(
           "id, company_name, role_title, status, lead_status, position_id, organization_id, created_at",
         )
-        .or(orIlike(["company_name", "role_title", "primary_email"], term)!)
+        .or(`company_name.ilike.${ilikeValue(term)},role_title.ilike.${ilikeValue(term)},primary_email.ilike.${ilikeValue(term)}`)
         .order("created_at", { ascending: false })
         .limit(LIMIT);
       if (testScope.orgIds.length) {

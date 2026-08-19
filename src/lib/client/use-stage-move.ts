@@ -113,7 +113,11 @@ export function useStageMove({
       toast.success("Stage updated");
       for (const key of invalidateKeys) qc.invalidateQueries({ queryKey: key });
     },
-    onSettled: () => qc.invalidateQueries({ queryKey }),
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey });
+      // Also invalidate overview to update tiles
+      qc.invalidateQueries({ queryKey: ["client-overview", orgId] });
+    },
   });
 }
 
