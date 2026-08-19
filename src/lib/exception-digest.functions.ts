@@ -33,7 +33,8 @@ export const DIGEST_META: Record<DigestKey, { label: string; to: string }> = {
   sla_breaches: { label: "SLA breaches", to: "/admin/sla" },
   processing_exceptions: { label: "Processing exceptions", to: "/admin/operations" },
   integration_degradations: { label: "Integration degradations", to: "/admin/integrations" },
-  approvals_pending: { label: "Approvals pending", to: "/admin/approvals" },
+  // Approvals are worked from the Overview work queue.
+  approvals_pending: { label: "Approvals pending", to: "/admin" },
   delivery_failures: { label: "Delivery failures (7d)", to: "/admin/notifications" },
 };
 

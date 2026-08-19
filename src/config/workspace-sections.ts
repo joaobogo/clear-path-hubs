@@ -84,7 +84,9 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
       { to: "/admin/positions", label: "Positions" },
       { to: "/admin/candidates", label: "Candidates" },
       { to: "/admin/publish", label: "Publish desk" },
-      { to: "/admin/approvals", label: "Approvals" },
+      // Approvals themselves live on the Overview work queue now; this desk is
+      // the decisions we are still waiting on from clients.
+      { to: "/admin/decision-backlog", label: "Decision backlog" },
     ],
   },
   {
