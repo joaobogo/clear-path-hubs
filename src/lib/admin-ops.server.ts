@@ -25,6 +25,7 @@ export type {
 } from "./admin-ops-types";
 import type { QueueClaim, QueueItem, QueueOwner, QueueRef, WorkQueue } from "./admin-ops-types";
 import { PAID_PAYMENT_STATES } from "@/lib/publish-gate";
+import { deliveryReason } from "./notifications/delivery-reasons";
 
 
 const ISO = (ms: number) => new Date(Date.now() - ms).toISOString();
@@ -386,7 +387,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       items: ((blocked.data ?? []) as any[]).map((d) => ({
         id: d.id,
         title: d.title ?? "Delivery failure",
-        subtitle: (d.reasonDetail ?? d.reason ?? "").replace(/_/g, " "),
+        subtitle: deliveryReason(d.reason, d.status).sentence,
         meta: d.audience ?? null,
         waiting_since: d.lastAttemptAt,
         target: { kind: "match" as const, id: d.id },
