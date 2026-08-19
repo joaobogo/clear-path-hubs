@@ -1044,29 +1044,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
       completed_at: run?.completed_at ?? null,
       method: normalizeEvaluationMethod((run as AnyRow)?.evaluation_method),
       method_label: clientMethodLabel((run as AnyRow)?.evaluation_method),
-      category_breakdown: [
-        {
-          label: "Must-have coverage",
-          value:
-            run?.must_have_coverage ??
-            run?.result?.category_breakdown?.must_have ??
-            null,
-          weight: 0.5,
-        },
-        {
-          label: "Preferred coverage",
-          value:
-            run?.preferred_coverage ??
-            run?.result?.category_breakdown?.preferred ??
-            null,
-          weight: 0.3,
-        },
-        {
-          label: "Screening alignment",
-          value: run?.result?.category_breakdown?.screening_alignment ?? null,
-          weight: 0.2,
-        },
-      ],
+      category_breakdown: [], // HONESTY GATE: Suppressed until extraction is fixed.
     },
   };
 }
