@@ -118,10 +118,6 @@ const FINDINGS: Finding[] = [
     id: "F-009",
     journey: "11 · Rubric versioning",
     title: "rubric_versions has DB immutability but no application writer",
-    route: "src/lib/scoring-service.server.ts · ensureRubricVersion",
-    severity: "P0",
-    repro: "grep -rln 'rubric_versions' src returns only types.ts. score_runs.rubric_version_id is null in practice; publish gate requires it, so publish is unreliable once rubric versions become mandatory.",
-    correction: "Implemented ensureRubricVersion in scoring-service.server.ts. It resolves the governing rubric version (or mints a new one from position requirements) and stamps it on every new score run. UI now shows the version number instead of 'criteria set not recorded'.",
     status: "open",
   },
   {
