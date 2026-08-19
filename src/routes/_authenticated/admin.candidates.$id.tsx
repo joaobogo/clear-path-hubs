@@ -294,14 +294,15 @@ function CandidateWorkspace() {
                     <ComponentErrorBoundary boundary="admin.candidate.history-runs" tone="admin">
                       <HistoryTab runs={runs} jobs={jobs} decisions={decisions} />
                     </ComponentErrorBoundary>
+                    <div className="pt-8 border-t">
+                      <h3 className="text-sm font-medium mb-4">Immutable Audit Trail</h3>
+                      <ComponentErrorBoundary boundary="admin.candidate.activity" tone="admin">
+                        <ActivityAuditTab matchId={id} positionId={pos?.id} decisions={decisions} />
+                      </ComponentErrorBoundary>
+                    </div>
                   </div>
                 )}
                 {tab === "preview" && <PreviewTab matchId={id} match={m} />}
-                {tab === "activity" && (
-                  <ComponentErrorBoundary boundary="admin.candidate.activity" tone="admin">
-                    <ActivityAuditTab matchId={id} positionId={pos?.id} decisions={decisions} />
-                  </ComponentErrorBoundary>
-                )}
               </Suspense>
             )}
           </section>
