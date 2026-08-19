@@ -403,15 +403,26 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     },
     {
       key: "delivery_failures",
-      label: "Delivery failures (7d)",
-      description: "Email or message failures in the last 7 days that need a retry or a new address.",
+      label: "Delivery failures to retry (7d)",
+      description:
+        "Email or message failures in the last 7 days where a retry can still get through.",
       count: blocked.count ?? 0,
       action_hint: "Retry the delivery or update the recipient's email.",
       see_all: { to: "/admin/notifications" },
+      secondary_badge:
+        ((blocked as any).blockedAddresses ?? 0) > 0
+          ? {
+              label: `${(blocked as any).blockedAddresses} blocked address${
+                (blocked as any).blockedAddresses === 1 ? "" : "es"
+              } — retry won't help`,
+              tone: "warning" as const,
+            }
+          : undefined,
       items: ((blocked.data ?? []) as any[]).slice(0, PREVIEW_LIMIT).map((d) => ({
         id: d.id,
         title: d.title ?? "Delivery failure",
-        subtitle: deliveryReason(d.reason, d.status).sentence,
+        subtitle: d.reasonSentence ?? deliveryReason(d.reason, d.status).sentence,
+
         meta: d.audience ?? null,
         waiting_since: d.lastAttemptAt,
         target: { kind: "match" as const, id: d.id },
