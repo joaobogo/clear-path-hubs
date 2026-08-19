@@ -62,9 +62,8 @@ const TABS = [
   { id: "evidence", label: "Evidence", icon: ScanText },
   { id: "score", label: "Score", icon: Gauge },
   { id: "screening", label: "Screening", icon: ListChecks },
-  { id: "history", label: "History", icon: HistoryIcon },
+  { id: "history", label: "History & Audit", icon: HistoryIcon },
   { id: "preview", label: "Client preview", icon: Eye },
-  { id: "activity", label: "Activity & audit", icon: ActivityIcon },
 ] as const;
 type TabId = (typeof TABS)[number]["id"];
 const TAB_IDS = TABS.map((t) => t.id) as unknown as [TabId, ...TabId[]];
@@ -295,14 +294,15 @@ function CandidateWorkspace() {
                     <ComponentErrorBoundary boundary="admin.candidate.history-runs" tone="admin">
                       <HistoryTab runs={runs} jobs={jobs} decisions={decisions} />
                     </ComponentErrorBoundary>
+                    <div className="pt-8 border-t">
+                      <h3 className="text-sm font-medium mb-4">Immutable Audit Trail</h3>
+                      <ComponentErrorBoundary boundary="admin.candidate.activity" tone="admin">
+                        <ActivityAuditTab matchId={id} positionId={pos?.id} decisions={decisions} />
+                      </ComponentErrorBoundary>
+                    </div>
                   </div>
                 )}
                 {tab === "preview" && <PreviewTab matchId={id} match={m} />}
-                {tab === "activity" && (
-                  <ComponentErrorBoundary boundary="admin.candidate.activity" tone="admin">
-                    <ActivityAuditTab matchId={id} positionId={pos?.id} decisions={decisions} />
-                  </ComponentErrorBoundary>
-                )}
               </Suspense>
             )}
           </section>

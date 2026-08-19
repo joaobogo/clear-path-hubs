@@ -123,7 +123,7 @@ export function makeRouteNotFoundComponent(tone: AudienceTone) {
           title={normalized.title}
           description={
             identifier
-              ? `${normalized.description} (requested: ${identifier})`
+              ? normalized.description
               : normalized.description
           }
 

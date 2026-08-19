@@ -1,4 +1,6 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { SectionTabs } from "@/components/workspace/section-tabs";
+import { Building2, Briefcase, UserCheck, ClipboardCheck, ShieldCheck } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
@@ -54,8 +56,57 @@ function NewClientPage() {
     onError: (e: Error) => toastError(e),
   });
 
+  const sectionGroups = [
+    {
+      id: "command",
+      label: "Command",
+      tabs: [{ to: "/admin" as any, label: "Overview", exact: true }],
+    },
+    {
+      id: "delivery",
+      label: "Delivery",
+      tabs: [
+        { to: "/admin/intake" as any, label: "Intake" },
+        { to: "/admin/clients" as any, label: "Clients" },
+        { to: "/admin/positions" as any, label: "Positions" },
+        { to: "/admin/candidates" as any, label: "Candidates" },
+        { to: "/admin/publish" as any, label: "Publish desk" },
+        { to: "/admin/approvals" as any, label: "Approvals" },
+      ],
+    },
+  ];
+
   return (
-    <div className="mx-auto max-w-3xl px-6 py-8 space-y-6">
+    <div className="space-y-6">
+      <div className="border-b bg-card px-6 py-4">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Link to="/admin/clients" className="hover:underline">Clients</Link>
+          <span>/</span>
+          <span className="text-foreground font-medium">New</span>
+        </div>
+      </div>
+
+      <div className="px-6">
+        <SectionTabs groups={sectionGroups} />
+      </div>
+
+      <div className="mx-auto max-w-3xl px-6 pb-8 space-y-6">
+      </div>
+    </div>
+  );
+}
+
+function NewClientPageContent({ 
+  result, 
+  form, 
+  setForm, 
+  errors, 
+  setErrors, 
+  mut, 
+  navigate 
+}: any) {
+  return (
+    <div className="space-y-6">
       <header>
         <h1 className="text-2xl font-semibold">Create a client workspace</h1>
         <p className="mt-1 text-sm text-muted-foreground">

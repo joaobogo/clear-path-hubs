@@ -24,12 +24,14 @@ export type {
   WorkQueue,
 } from "./admin-ops-types";
 import type { QueueClaim, QueueItem, QueueOwner, QueueRef, WorkQueue } from "./admin-ops-types";
+import { INTAKE_AGING_TIER_DAYS } from "@/lib/intake-aging";
 import { PAID_PAYMENT_STATES } from "@/lib/publish-gate";
 import { deliveryReason } from "./notifications/delivery-reasons";
 
 
 const ISO = (ms: number) => new Date(Date.now() - ms).toISOString();
 const HOUR = 3_600_000;
+const PREVIEW_LIMIT = 8;
 const DAY = 24 * HOUR;
 
 function ageTone(iso: string | null, warnDays: number, dangerDays: number): QueueItem["tone"] {
@@ -46,12 +48,13 @@ function ageTone(iso: string | null, warnDays: number, dangerDays: number): Queu
 export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promise<WorkQueue[]> {
   const opts = raw || {};
   const s = await admin();
-  const { loadTestScope, excludeTestOrgs, loadAgingIntakes } = await import(
+  const { loadTestScope, excludeTestOrgs } = await import(
     "./admin-test-scope.server"
   );
+  const { loadIntakeAging } = await import("./admin-intake-aging.server");
   const scope = await loadTestScope(s, opts.includeTest ?? false);
 
-  const [unpaid, setup, review, readyForDecision, delivered, interviews, blocked, aging, stale] = await Promise.all([
+  const [unpaid, setup, review, readyForDecision, delivered, interviews, blocked, agingIntakes, stale] = await Promise.all([
     // 1 — submitted roles that have not been paid for (or are stuck mid-checkout).
     excludeTestOrgs(
       s
@@ -75,7 +78,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         .in("payment_status", [...PAID_PAYMENT_STATES])
         .order("created_at", { ascending: true })
 
-        .limit(8),
+        .limit(PREVIEW_LIMIT),
       scope,
     ),
 
@@ -127,7 +130,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
           `status.eq.requested,and(status.eq.scheduled,scheduled_at.lte.${new Date(Date.now() + 48 * HOUR).toISOString()})`,
         )
         .order("requested_at", { ascending: true })
-        .limit(8),
+        .limit(PREVIEW_LIMIT),
       scope,
     ),
 
@@ -138,8 +141,8 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       return { data: failures.items, count: failures.items.length };
     })(),
 
-    // 6 — real client briefs sitting in the inbox for more than three days.
-    loadAgingIntakes(s, { includeTest: opts.includeTest ?? false, olderThanDays: 3, limit: 8 }),
+    // 7 — real client briefs sitting in the inbox for more than three days.
+    loadIntakeAging(s, { includeTest: opts.includeTest ?? false }),
     // 7 — P-006: candidates with stale scores.
     excludeTestOrgs(
       s
@@ -150,7 +153,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         )
         .eq("score_stale", true)
         .order("score_stale_at", { ascending: true })
-        .limit(8),
+        .limit(PREVIEW_LIMIT),
       scope,
     ),
   ]);
@@ -166,17 +169,6 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     .not("delivered_at", "is", null)).count ?? 0;
 
 
-  const agingIntakes = aging as {
-    items: Array<{
-      id: string;
-      org_name: string | null;
-      role_title: string | null;
-      owner_user_id: string | null;
-      created_at: string;
-      days_waiting: number;
-    }>;
-    count: number;
-  };
 
   // One profile read for every owner id on the page, so each row can show who
   // holds it without a second click.
@@ -190,7 +182,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
   for (const m of overdue) addOwner(m.owner_user_id);
   for (const iv of (interviews.data ?? []) as Any[])
     addOwner(iv.candidate_matches?.positions?.owner_user_id);
-  for (const i of agingIntakes.items) addOwner(i.owner_user_id);
+  for (const i of agingIntakes.rows) addOwner(i.owner_user_id);
   for (const m of (stale.data ?? []) as Any[]) addOwner(m.positions?.owner_user_id);
 
 
@@ -231,21 +223,27 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     {
       key: "intakes_aging",
       label: "Intakes awaiting action",
-      description: "Client briefs submitted more than three days ago with no position yet.",
-      count: agingIntakes.count,
+      description: "Client briefs awaiting conversion to positions.",
+      count: agingIntakes.counts.open,
       action_hint: "Open the brief: convert it to a role, ask for clarification, or reject it.",
       see_all: { to: "/admin/intake" },
-      items: agingIntakes.items.map((i) => ({
+      secondary_badge: agingIntakes.counts.late > 0 ? {
+        label: `${agingIntakes.counts.late} over ${INTAKE_AGING_TIER_DAYS.late}d`,
+        tone: "warning",
+      } : undefined,
+      items: agingIntakes.rows.slice(0, PREVIEW_LIMIT).map((i: any) => ({
         id: i.id,
-        title: i.org_name ?? "Client",
-        subtitle: i.role_title ?? "Role not stated",
-        meta: `${i.days_waiting} day${i.days_waiting === 1 ? "" : "s"} waiting`,
-        waiting_since: i.created_at,
+        title: i.company_name ?? i.organization_name ?? "Unnamed company",
+        title_ref: { kind: "text", label: i.company_name ?? i.organization_name ?? "Unnamed company" },
+        subtitle: i.role_title ?? "No role title",
+        subtitle_refs: i.organization_id ? [orgRef(i.organization_id, i.organization_name)] : null,
+        meta: i.blocking_reason ?? "Ready to convert",
+        waiting_since: i.submitted_at,
         target: { kind: "intake" as const, id: i.id },
         action_label: "Open intake",
         owner: owner(i.owner_user_id),
-        claim: { kind: "intake" as const, id: i.id },
-        tone: ageTone(i.created_at, 3, 7),
+        claim: null,
+        tone: i.tier === "critical" ? "danger" : i.tier === "late" ? "warning" : "default",
       })),
     },
 
@@ -256,7 +254,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       count: unpaid.count ?? 0,
       action_hint: "Open the role to chase payment or grant an exemption.",
       see_all: { to: "/admin/payments" },
-      items: ((unpaid.data ?? []) as Any[]).map((p) => ({
+      items: ((unpaid.data ?? []) as Any[]).slice(0, PREVIEW_LIMIT).map((p) => ({
         id: p.id,
         title: p.title,
         title_ref: posRef(p.id, p.title),
@@ -283,6 +281,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         title: p.title,
         title_ref: posRef(p.id, p.title),
         subtitle: p.organizations?.name ?? "—",
+        
         subtitle_refs: [orgRef(p.organization_id ?? p.organizations?.id, p.organizations?.name)],
         meta: String(p.status).replace(/_/g, " "),
         waiting_since: p.created_at,
@@ -304,9 +303,10 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         label: `${readyForDecision.count ?? 0} ready for decision`,
         tone: (readyForDecision.count ?? 0) > 0 ? "default" : "neutral",
       },
-      items: ((review.data ?? []) as Any[]).map((m) => ({
+      items: ((review.data ?? []) as Any[]).slice(0, PREVIEW_LIMIT).map((m) => ({
         id: m.id,
         title: m.candidate_profiles?.full_name ?? "Candidate",
+        title_ref: posRef(m.positions?.id, m.positions?.title),
         subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
         subtitle_refs: [
           posRef(m.positions?.id, m.positions?.title),
@@ -332,7 +332,9 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       items: overdue.slice(0, 8).map((m) => ({
         id: m.match_id,
         title: m.candidate_name ?? "Candidate",
+        title_ref: posRef(m.position_id, m.position_title),
         subtitle: `${m.position_title ?? "—"} · ${m.client_name ?? "—"}`,
+        
         subtitle_refs: [
           posRef(m.position_id, m.position_title),
           orgRef(m.organization_id, m.client_name),
@@ -354,9 +356,10 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       count: interviews.count ?? 0,
       action_hint: "Confirm the slot and tell both sides.",
       see_all: { to: "/admin/candidates" },
-      items: ((interviews.data ?? []) as Any[]).map((iv) => ({
+      items: ((interviews.data ?? []) as Any[]).slice(0, PREVIEW_LIMIT).map((iv) => ({
         id: iv.id,
         title: iv.candidate_matches?.candidate_profiles?.full_name ?? "Candidate",
+        title_ref: posRef(iv.candidate_matches?.positions?.id, iv.candidate_matches?.positions?.title),
         subtitle: `${iv.candidate_matches?.positions?.title ?? "—"} · ${
           iv.candidate_matches?.positions?.organizations?.name ?? "—"
         }`,
@@ -384,7 +387,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
 
       action_hint: "Retry the delivery or update the recipient's email.",
       see_all: { to: "/admin/operations" },
-      items: ((blocked.data ?? []) as any[]).map((d) => ({
+      items: ((blocked.data ?? []) as any[]).slice(0, PREVIEW_LIMIT).map((d) => ({
         id: d.id,
         title: d.title ?? "Delivery failure",
         subtitle: deliveryReason(d.reason, d.status).sentence,
@@ -404,10 +407,12 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       count: stale.count ?? 0,
       action_hint: "Recompute scores to clear out-of-date banners.",
       see_all: { to: "/admin/scoring/review" as any },
-      items: ((stale.data ?? []) as any[]).map((m) => ({
+      items: ((stale.data ?? []) as any[]).slice(0, PREVIEW_LIMIT).map((m) => ({
         id: m.id,
         title: m.candidate_profiles?.full_name ?? "Candidate",
+        title_ref: posRef(m.positions?.id, m.positions?.title),
         subtitle: `${m.positions?.title ?? "—"} · ${m.positions?.organizations?.name ?? "—"}`,
+        
         subtitle_refs: [
           posRef(m.positions?.id, m.positions?.title),
           orgRef(m.positions?.organizations?.id, m.positions?.organizations?.name),

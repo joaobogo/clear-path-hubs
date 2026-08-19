@@ -106,6 +106,23 @@ function isStatus(value: string): value is Status {
 }
 
 export const Route = createFileRoute("/_authenticated/admin/clients/")({
+  validateSearch: zodValidator(searchSchema),
+  loader: async ({ context, search }) => {
+    const clients = await context.queryClient.ensureQueryData({
+      queryKey: ["admin-clients", search],
+      queryFn: () =>
+        getClientRegistry({
+          data: {
+            search: search.q,
+            includeArchived: search.archived === "1",
+            sort: search.sort as any,
+            orgType: search.org_type as any,
+            status: search.status as any,
+          },
+        }),
+    });
+    return { clients };
+  },
   pendingComponent: () => (
     <div className="space-y-6">
       <div className="flex justify-between">
@@ -116,8 +133,6 @@ export const Route = createFileRoute("/_authenticated/admin/clients/")({
       <div className="h-[400px] w-full animate-pulse rounded-lg bg-muted" />
     </div>
   ),
-
-  validateSearch: zodValidator(searchSchema),
   errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.clients.index.tsx"),
   notFoundComponent: () => <div className="p-8">Not found.</div>,
   component: ClientsPage,
@@ -128,13 +143,13 @@ function relTime(iso: string | null | undefined): string {
   const ms = Date.now() - new Date(iso).getTime();
   const m = Math.round(ms / 60_000);
   if (m < 1) return "now";
-  if (m < 60) return `${m}m`;
+  if (m < 60) return `${m} min`;
   const h = Math.round(m / 60);
   if (h < 24) return `${h}h`;
   const d = Math.round(h / 24);
   if (d < 30) return `${d}d`;
   const mo = Math.round(d / 30);
-  return `${mo}mo`;
+  return `${mo} mo`;
 }
 
 
@@ -447,7 +462,6 @@ function ClientsPage() {
                 <th className="px-3 py-2.5 font-medium">Status</th>
                 <th className="px-3 py-2.5 font-medium tabular-nums">Active positions</th>
                 <th className="px-3 py-2.5 font-medium tabular-nums">Delivered</th>
-                <th className="px-3 py-2.5 font-medium">Action</th>
                 <th className="px-3 py-2.5 font-medium">Last activity</th>
                 <th className="px-3 py-2.5 font-medium text-right">Open</th>
               </tr>
@@ -458,8 +472,29 @@ function ClientsPage() {
               ))}
               {rows.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="px-3 py-16 text-center text-muted-foreground">
-                    No clients match these filters.
+                  <td colSpan={7} className="px-3 py-16 text-center text-muted-foreground">
+                    <div className="flex flex-col items-center gap-2">
+                      <p>No clients match these filters.</p>
+                      <Button
+                        variant="link"
+                        size="sm"
+                        onClick={() =>
+                          navigate({
+                            search: {
+                              ...search,
+                              q: "",
+                              status: "",
+                              industry: "",
+                              org_type: "client_demo",
+                              archived: "0",
+                              page: 1,
+                            },
+                          })
+                        }
+                      >
+                        Clear filters
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               )}
@@ -564,7 +599,16 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
       <td className="px-3 py-2.5">
         {r.primary_contact_name || r.primary_contact_email ? (
           <>
-            <div className="text-foreground">{r.primary_contact_name ?? "—"}</div>
+            <div className="text-foreground">
+              {r.primary_contact_name
+                ? r.primary_contact_name
+                    .split(" ")
+                    .map(
+                      (w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(),
+                    )
+                    .join(" ")
+                : "—"}
+            </div>
             {r.primary_contact_email && (
               <a
                 href={`mailto:${r.primary_contact_email}`}

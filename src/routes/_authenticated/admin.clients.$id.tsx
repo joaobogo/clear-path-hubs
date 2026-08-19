@@ -1028,9 +1028,11 @@ function DocumentsTab({ id, parsedCvCount }: { id: string; parsedCvCount?: numbe
   const rows = (data ?? []) as any[];
   return (
     <div className="overflow-hidden rounded-lg border bg-card">
-      <header className="border-b px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-        Documents linked to this client's candidates ({rows.length})
-        {parsedCvCount !== undefined && ` · Parsed: ${parsedCvCount}`}
+      <header className="flex items-center justify-between border-b px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        <span>Documents linked to this client&apos;s candidates ({rows.length})</span>
+        {parsedCvCount !== undefined && (
+          <span>Total parsed CVs: {parsedCvCount.toLocaleString(APP_LOCALE)}</span>
+        )}
       </header>
       <table className="w-full text-sm">
         <thead className="bg-muted/30 text-left text-xs uppercase text-muted-foreground">
