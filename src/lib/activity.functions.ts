@@ -111,14 +111,21 @@ export const getActivityFeed = createServerFn({ method: "GET" })
       return { audience, entries, fetched_at: new Date().toISOString() };
     }
 
+    const { loadTestScope } = await import("./admin-test-scope.server");
+    const scope = await loadTestScope(context.supabase);
+    const showTest = scope.includeTest;
+
     let q = context.supabase
       .from("v_activity_feed")
       .select(
-        "event_id, event_type, occurred_at, organization_id, position_id, application_id, candidate_match_id, actor_name, position_title, position_status, payload",
+        "event_id, event_type, occurred_at, organization_id, position_id, application_id, candidate_match_id, actor_name, position_title, position_status, payload, is_test_record",
       )
       .order("occurred_at", { ascending: false })
       .limit(window);
 
+    if (!showTest) {
+      q = q.eq("is_test_record" as any, false);
+    }
     if (data.organization_id) q = q.eq("organization_id", data.organization_id);
     if (data.position_id) q = q.eq("position_id", data.position_id);
     if (data.candidate_match_id) q = q.eq("candidate_match_id", data.candidate_match_id);
