@@ -164,7 +164,7 @@ function ClientsPage() {
   useEffect(() => setQ(search.q), [search.q]);
 
   const query = useQuery({
-    queryKey: ["admin-clients", includeTest, search.sort],
+    queryKey: ["admin-clients", includeTest, search.sort, search.status, search.industry, search.org_type],
     queryFn: () =>
       listClients({
         data: {
@@ -217,8 +217,13 @@ function ClientsPage() {
       rows = rows.filter((r) => !r.archived_at);
     }
 
+    // P-020: If test records are hidden, filter them out client-side.
+    if (!includeTest) {
+      rows = rows.filter((r) => !r.is_test_record);
+    }
+
     return rows;
-  }, [data, search]);
+  }, [data, search, includeTest]);
 
 
   const total = filtered.length;
@@ -457,6 +462,7 @@ function ClientsPage() {
                       </div>
                       <div className="space-y-1">
                         <p className="text-base font-medium text-foreground">No organizations found</p>
+                        <TestScopeEmptyNote />
                         <p className="max-w-xs text-xs leading-relaxed">
                           Try adjusting your filters or clearing the search to find what you're looking for.
                         </p>
