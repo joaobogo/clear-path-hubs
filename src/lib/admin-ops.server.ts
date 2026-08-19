@@ -421,6 +421,15 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         tone: "warning" as const,
       })),
     },
+    {
+      key: "hires_pending",
+      label: "Hires confirmed (Total)",
+      description: "Candidates currently in the 'hired' stage across the portfolio.",
+      count: hiredCount,
+      action_hint: "View confirmed hires and start dates.",
+      see_all: { to: "/admin/candidates" },
+      items: [], // Summary tile only
+    },
   ];
 
   return annotateWithSlaBreaches(queues, opts.includeTest ?? false);
