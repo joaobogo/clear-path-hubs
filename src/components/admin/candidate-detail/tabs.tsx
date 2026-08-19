@@ -34,7 +34,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AdminScoreNumber } from "@/components/admin/admin-score-number";
 import { CandidateScoreBadge } from "@/components/client/candidate-score-badge";
-import { Textarea } from "@/components/ui/textarea";
+import { cleanQuote } from "@/lib/evidence/quote-hygiene";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
