@@ -258,8 +258,6 @@ function ClientDetail() {
             <AccountOperatingSummary organizationId={org.id} onOpenTab={(t) => setTab(t)} />
           </Block>
 
-          {/* Duplicate KPI row removed: now only AccountOperatingSummary and Detailed OverviewTab remain. */}
-
           <Block name="overview">
             <OverviewTab org={org} />
           </Block>

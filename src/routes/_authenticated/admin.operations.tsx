@@ -135,7 +135,6 @@ function OperationsPage() {
   });
   const delivery = deliveryQuery.data;
 
-
   const [feedback, setFeedback] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string>("all");
@@ -292,8 +291,7 @@ function OperationsPage() {
             Pipeline incidents ({opsQuery.isError || opsQuery.isPending ? "—" : grouped.length})
           </TabsTrigger>
           <TabsTrigger value="delivery">
-            Delivery failures (7d) (
-            {deliveryQuery.isError || deliveryQuery.isPending ? "—" : deliveryItems.length})
+            Delivery failures (7d) ({deliveryQuery.isError || deliveryQuery.isPending ? "—" : deliveryItems.length})
           </TabsTrigger>
         </TabsList>
 
@@ -404,7 +402,7 @@ function OperationsPage() {
                           </div>
                           {g.latest.error_message && (
                             <div className="mt-1 line-clamp-2 text-[11px] text-muted-foreground">
-                              {g.latest.error_message}
+                              {humanizeCode(g.latest.error_message)}
                             </div>
                           )}
                         </td>

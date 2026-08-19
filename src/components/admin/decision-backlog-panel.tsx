@@ -59,11 +59,13 @@ export function DecisionBacklogPanel({
   includeTest: explicit,
   showClientColumn = false,
   className,
+  limit,
 }: {
   organizationId?: string;
   includeTest?: boolean;
   showClientColumn?: boolean;
   className?: string;
+  limit?: number;
 }) {
   const includeTest = useScopedIncludeTest(explicit);
   const qc = useQueryClient();
@@ -134,7 +136,8 @@ export function DecisionBacklogPanel({
     onError: (e) => toastError(e, { fallback: "Could not record the decision" }),
   });
 
-  const rows = query.data?.rows ?? [];
+  const rawRows = query.data?.rows ?? [];
+  const rows = limit ? rawRows.slice(0, limit) : rawRows;
 
   return (
     <section
@@ -151,17 +154,27 @@ export function DecisionBacklogPanel({
             to one per candidate every 48 hours.
           </p>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 gap-1.5 px-2 text-xs"
-          onClick={() => query.refetch()}
-          disabled={query.isFetching}
-          aria-label="Refresh decision backlog"
-        >
-          <RefreshCw className={`h-3.5 w-3.5 ${query.isFetching ? "animate-spin" : ""}`} />
-          Refresh
-        </Button>
+        <div className="flex items-center gap-2">
+          {limit && rawRows.length > limit && (
+            <Link
+              to="/admin/decision-backlog"
+              className="text-xs font-medium text-primary hover:underline"
+            >
+              See all {rawRows.length}
+            </Link>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 gap-1.5 px-2 text-xs"
+            onClick={() => query.refetch()}
+            disabled={query.isFetching}
+            aria-label="Refresh decision backlog"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${query.isFetching ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
+        </div>
       </header>
 
       {query.isPending ? (

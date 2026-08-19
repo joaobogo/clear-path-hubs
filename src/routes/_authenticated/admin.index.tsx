@@ -6,7 +6,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { ActivityFeed, ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
 import { getAdminWorkQueues } from "@/lib/admin-ops.functions";
-import { ApprovalsInbox } from "@/components/admin/approvals-inbox";
 import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { PortfolioHealthTable } from "@/components/admin/portfolio-health-table";
 import { DecisionBacklogPanel } from "@/components/admin/decision-backlog-panel";
@@ -183,17 +182,6 @@ function Overview() {
         <WorkQueueSummary showTest={showTest} onRefresh={refreshAll} scope={scope} />
       </AdminWidgetErrorBoundary>
 
-      <AdminWidgetErrorBoundary label="Requisitions awaiting approval">
-        <section>
-          <div className="mb-2 flex items-center justify-between gap-3">
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-              Requisitions awaiting approval
-            </h2>
-          </div>
-          <ApprovalsInbox includeTest={showTest} />
-        </section>
-      </AdminWidgetErrorBoundary>
-
       <AdminWidgetErrorBoundary label="SLA banner">
         <SlaBreachStrip includeTest={showTest} />
       </AdminWidgetErrorBoundary>
@@ -203,7 +191,7 @@ function Overview() {
       </AdminWidgetErrorBoundary>
 
       <AdminWidgetErrorBoundary label="Awaiting client decision">
-        <DecisionBacklogPanel includeTest={showTest} showClientColumn />
+        <DecisionBacklogPanel includeTest={showTest} showClientColumn limit={8} />
       </AdminWidgetErrorBoundary>
 
       <AdminWidgetErrorBoundary label="Offers and hires">

@@ -445,7 +445,7 @@ function ClientsPage() {
                 <th className="px-3 py-2.5 font-medium">Company</th>
                 <th className="px-3 py-2.5 font-medium">Primary contact</th>
                 <th className="px-3 py-2.5 font-medium">Status</th>
-                <th className="px-3 py-2.5 font-medium tabular-nums text-right">Active positions</th>
+                <th className="px-3 py-2.5 font-medium tabular-nums text-right">Positions</th>
                 <th className="px-3 py-2.5 font-medium tabular-nums text-right">Delivered</th>
                 <th className="px-3 py-2.5 font-medium text-right">Last activity</th>
               </tr>

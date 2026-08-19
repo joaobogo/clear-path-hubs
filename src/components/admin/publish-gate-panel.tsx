@@ -224,7 +224,7 @@ export function PublishGatePanel({
                         <Button
                           size="sm"
                           variant="outline"
-                          disabled={!r.can_publish || busy === r.position_id}
+                          disabled={!r.can_publish || busy === r.position_id || r.blockers.includes("not_approved")}
                           onClick={() => setConfirmRow(r)}
                           title={
                             r.can_publish

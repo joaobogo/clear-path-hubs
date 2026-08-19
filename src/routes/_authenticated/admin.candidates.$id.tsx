@@ -22,6 +22,7 @@ import {
   Activity as ActivityIcon,
   Milestone,
   ClipboardList,
+  CheckCircle2,
 } from "lucide-react";
 import { AdminDossier } from "@/components/candidate/admin-dossier";
 import { CandidateHistoryTimeline } from "@/components/admin/candidate-history-timeline";
@@ -210,8 +211,6 @@ function CandidateWorkspace() {
               return (
                 <Link
                   key={t.id}
-                  role="tab"
-                  aria-selected={active}
                   to="/admin/candidates/$id"
                   params={{ id }}
                   search={(prev: Record<string, unknown>) => ({ ...prev, tab: t.id })}
@@ -221,7 +220,7 @@ function CandidateWorkspace() {
                   className={
                     "inline-flex flex-shrink-0 items-center gap-1.5 rounded-t-md border-b-2 px-3 py-2 text-sm transition " +
                     (active
-                      ? "border-primary text-foreground"
+                      ? "border-primary font-medium text-foreground"
                       : "border-transparent text-muted-foreground hover:text-foreground")
                   }
                 >

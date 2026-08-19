@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ds";
 import { getRecordAudit, type AuditEntity } from "@/lib/admin-audit.functions";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { humanizeCode } from "@/lib/humanize-codes";
 
 const PAGE_SIZE = 25;
 
@@ -76,7 +77,7 @@ export function RecordActivityTab({
         {rows.map((r) => (
           <li key={r.id} className="px-4 py-3 text-sm">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <div className="font-medium">{r.action.replace(/[._]/g, " ")}</div>
+              <div className="font-medium">{humanizeCode(r.action)}</div>
               <time
                 dateTime={r.created_at}
                 className="text-xs text-muted-foreground"
@@ -87,7 +88,7 @@ export function RecordActivityTab({
             </div>
             <div className="mt-0.5 text-xs text-muted-foreground">
               {r.actor_name}
-              {r.entity_type ? ` · ${r.entity_type.replace(/_/g, " ")}` : ""}
+              {r.entity_type ? ` · ${humanizeCode(r.entity_type)}` : ""}
               {r.trace_id ? (
                 <>
                   {" · trace "}
