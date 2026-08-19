@@ -33,20 +33,28 @@ function NotificationsPage() {
 
   const email = query.data?.email as { configured: boolean; reason?: string | null } | undefined;
 
-  // Reconcile counts from the returned items to ensure "Delivery failures (7d)" is accurate.
+  // Every tile reads the same 7-day ledger the table and banner read, so the
+  // headline numbers can never disagree with the rows underneath them.
   const items = (query.data?.items ?? []) as any[];
   const failureCount = items.length;
-  const suppressedCount = items.filter(i => i.reason === 'suppressed').length;
-  
+  const blockedCount =
+    (query.data?.summary as { blockedDeliveries?: number } | null | undefined)?.blockedDeliveries ??
+    items.filter((i) => i.canUnsuppress === true).length;
+  const volume = (query.data?.volume ?? { emailSent: 0, inAppDelivered: 0 }) as {
+    emailSent: number;
+    inAppDelivered: number;
+  };
+
   const summary = [
-    { label: "Emails sent (7d)", value: (query.data?.counts as any)?.["email:notification:provider_accepted"] ?? 0 },
+    { label: "Emails sent (7d)", value: volume.emailSent },
     {
       label: "Email failures (7d)",
       value: failureCount,
     },
-    { label: "Suppressed (7d)", value: suppressedCount },
-    { label: "In-app delivered (7d)", value: (query.data?.counts as any)?.["in_app:delivered"] ?? 0 },
+    { label: "Blocked before sending (7d)", value: blockedCount },
+    { label: "In-app delivered (7d)", value: volume.inAppDelivered },
   ];
+
 
   return (
     <div className="p-6 md:p-8 max-w-6xl">

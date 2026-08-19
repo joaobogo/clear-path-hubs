@@ -95,3 +95,68 @@ export function humanizeCode(code: string | null | undefined): string {
     .join(' ');
 }
 
+/**
+ * Turn a stored evidence location into a sentence fragment a person can read.
+ * Locations arrive as free text or as a small JSON object ({ page, section,
+ * char offsets }); rendering the object directly produced "[object Object]"
+ * on the review desk.
+ */
+export function humanizeEvidenceLocation(loc: unknown): string | null {
+  if (loc == null || loc === "") return null;
+  if (typeof loc === "string") return loc.trim() || null;
+  if (typeof loc === "number") return `page ${loc}`;
+  if (Array.isArray(loc)) {
+    const parts = loc.map((l) => humanizeEvidenceLocation(l)).filter(Boolean);
+    return parts.length > 0 ? parts.slice(0, 2).join(" · ") : null;
+  }
+  if (typeof loc !== "object") return null;
+
+  const l = loc as Record<string, unknown>;
+  const text = (v: unknown): string | null => {
+    if (v == null) return null;
+    const s = String(v).trim();
+    return s ? s : null;
+  };
+
+  const parts: string[] = [];
+  const label = text(l["label"]);
+  if (label) parts.push(label);
+
+  const page = text(l["page"] ?? l["page_number"]);
+  if (page) parts.push(`page ${page}`);
+
+  const section = text(l["section"] ?? l["heading"] ?? l["block"]);
+  if (section) parts.push(section);
+
+  if (parts.length === 0) {
+    const start = l["start"] ?? l["char_start"] ?? l["offset"];
+    const end = l["end"] ?? l["char_end"];
+    if (start != null && end != null) parts.push(`characters ${String(start)}–${String(end)}`);
+    else if (start != null) parts.push(`from character ${String(start)}`);
+  }
+
+  if (parts.length === 0) {
+    const line = text(l["line"] ?? l["ln"]);
+    if (line) parts.push(`line ${line}`);
+  }
+
+  return parts.length > 0 ? parts.slice(0, 2).join(" · ") : null;
+}
+
+/**
+ * Criterion keys are stored as internal slugs ("req-0", "pref-2"). Staff read
+ * the requirement text next to them, so the key itself must read as a label.
+ */
+export function humanizeCriterionKey(key: string | null | undefined): string {
+  if (!key) return "Requirement";
+  const m = /^(req|pref|must|nice)[-_]?(\d+)$/i.exec(key.trim());
+  if (m) {
+    const kind = m[1]!.toLowerCase();
+    const n = Number(m[2]) + 1;
+    const noun = kind === "req" || kind === "must" ? "Must-have" : "Preferred";
+    return `${noun} requirement ${n}`;
+  }
+  return humanizeCode(key);
+}
+
+
