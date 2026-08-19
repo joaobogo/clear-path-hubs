@@ -134,39 +134,7 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
       </div>
 
       {/* Scoring criteria with weights, only when the run stored them. */}
-      {false && b.rubric.length > 0 && (
-        <div className="mt-5">
-          <h3 className="text-sm font-semibold">Scoring criteria</h3>
-          <p className="mt-0.5 text-xs text-muted-foreground">
-            How each criterion scored, and how much it counts toward the total.
-          </p>
-          <div className="mt-2 space-y-2.5">
-            {b.rubric.map((c) => (
-              <div key={c.label}>
-                <div className="flex items-baseline justify-between text-xs">
-                  <span className="font-medium">
-                    {c.label}
-                    {c.weightPct != null && (
-                      <span className="ml-2 text-muted-foreground">
-                        · weight {c.weightPct}%
-                      </span>
-                    )}
-                  </span>
-                  <span className="tabular-nums text-muted-foreground">
-                    {c.pct == null ? "not measured" : `${c.pct}%`}
-                  </span>
-                </div>
-                <div className="mt-1 h-1.5 rounded-full bg-muted">
-                  <div
-                    className="h-1.5 rounded-full bg-primary transition-all"
-                    style={{ width: `${c.pct ?? 0}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Scoring criteria removed - using honest factor-based explanation as per audit fix P-035. */}
 
       {/* The short answer: what lifted the score, and what holds it back. */}
       {(positives.length > 0 || watch.length > 0) && (
@@ -215,8 +183,8 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
       )}
 
       <p className="mt-4 text-[11px] text-muted-foreground">
-        Every figure above is a count of quoted evidence. Nothing is inferred, and
-        a rescore appends a new run rather than editing this one.
+        Figures above are counts of quoted evidence from the background review. A
+        rescore appends a new run rather than editing this one.
       </p>
     </SectionCard>
   );
