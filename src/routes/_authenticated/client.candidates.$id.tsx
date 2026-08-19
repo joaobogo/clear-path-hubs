@@ -39,7 +39,7 @@ import {
 import { BackLink, CandidateHeader, CollapsibleSection, ContactBlock } from "@/components/client/candidate-detail/shared";
 import { TopSignals } from "@/components/client/candidate-detail/top-signals";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CandidateActions } from "@/components/client/candidate-detail/actions";
+
 import { ScoreFreshnessNote } from "@/components/client/score-freshness-note";
 import { ScoreBreakdown } from "@/components/client/candidate-detail/score-breakdown";
 import {
