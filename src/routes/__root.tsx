@@ -143,33 +143,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "On one candidate record — Miguel Torres, /admin/candidates/1ae343e0-46fd-4058-877d-4070dd803ad5:
-
-  the record header says \"criteria backed by evidence: 72%\"
-  the Evidence tab says \"6 of 6 must-have criteria fully evidenced\"
-  the Client preview tab says \"0 of 10 of your requirements evidenced\" and \"Overall coverage 0%\"
-  the same Client preview tab also says \"MUST-HAVE MET 3 · PARTIALLY MET 3 · NOT EVIDENCED 3\"
-
-That tab is labelled \"This is an exact preview of what the client sees in their workspace.\"
-So the client sees 0% while the admin sees 6 of 6.
-
-Worse — every requirement row in the client preview shows a verdict and its own denial at
-the same time. Literally: \"5+ years building production React and TypeScript applications /
-MUST-HAVE / Meets this / No evidence captured for this yet — we will not claim it.\"
-Six rows like that.
-
-And one row is stuck mid-process on a record that's already Published and was scored six
-days ago: \"Practical experience with row-level security … / Running... / Evidence
-extraction is still running for this role.\"
-
-Please: one coverage calculation used by the header, the Evidence tab and the client
-preview. A row must never show a positive verdict and \"no evidence captured\" together —
-pick one. And add a terminal state so \"extraction still running\" can't appear on a
-published, scored record.
-
-The header percentage is also disconnected — Miguel Torres (6 of 6) and Beatriz Costa
-(5 of 6) both read 72%, Carla Nunes (3 of 6) reads 68%. Recompute it from the counts shown
-below it."`}
+TEXTO DO USUÁRIO: "On /admin the \"LATEST ACTIVITY / LAST 25 EVENTS\" block says \"No activity yet.\"\n\nI made six state changes in one session — started a review, approved a requisition,\nrequested clarification, granted a payment exemption, logged a client decision, sent a\nclient nudge. The feed showed nothing after any of them.\n\nMeanwhile /admin/publish claims \"Every action is audited\" and the payment exemption dialog\nsays \"It is recorded in the audit log with your name and the time.\"\n\nPlease wire the feed. If events are being written but not read, fix the query. If they're\nnot being written at all, that's bigger — the audit-log claims on those two other pages\nwould also be false, and I'd want to know.\n\nCheck: do any state change, refresh /admin, see it in the list with actor and timestamp.\""`}
         </div>
 
         <Scripts />
