@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import { humanizeCode } from "@/lib/humanize-codes";
+import { TechnicalDetail } from "@/components/admin/technical-detail";
 import { Link } from "@tanstack/react-router";
 
 const KIND_LABEL: Record<string, string> = {
