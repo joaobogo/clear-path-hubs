@@ -1898,6 +1898,7 @@ export const updateOrganization = createServerFn({ method: "POST" })
             status: ORG_STATUS.optional(),
             onboarding_status: ONBOARDING_STATUS.optional(),
             dashboard_status: DASHBOARD_STATUS.optional(),
+            is_test_record: z.boolean().optional(),
           })
           .refine((p) => Object.keys(p).length > 0, { message: "empty_patch" }),
       })
