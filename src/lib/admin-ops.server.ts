@@ -138,15 +138,30 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       scope,
     ),
 
-    // 6 — delivery failures that need a retry or a new address.
+    // 6 — delivery failures a retry can actually clear.
+    // Suppression-blocked rows are excluded from the count on purpose: every
+    // notification sent to a suppressed address fails again immediately, so
+    // counting them makes the queue grow with normal console use and asks the
+    // operator to drain something only an address release can fix. They are
+    // reported separately as addresses to resolve.
     (async () => {
       const { loadDeliveryFailures } = await import("./notification-failures.server");
       const failures = await loadDeliveryFailures(s);
       // P-015: Filter to last 7 days for metric consistency across all surfaces.
       const cutoff = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
-      const items = failures.items.filter(f => f.lastAttemptAt >= cutoff);
-      return { data: items, count: items.length };
+      const recent = failures.items.filter((f) => f.lastAttemptAt >= cutoff);
+      const items = recent.filter((f) => f.retryable);
+      const blockedAddresses = failures.summary.blockedAddresses.filter(
+        (a) => a.lastAttemptAt >= cutoff,
+      );
+      return {
+        data: items,
+        count: items.length,
+        blockedAddresses: blockedAddresses.length,
+        blockedDeliveries: blockedAddresses.reduce((n, a) => n + a.deliveries, 0),
+      };
     })(),
+
 
     // 7 — real client briefs sitting in the inbox for more than three days.
     loadIntakeAging(s, { includeTest: opts.includeTest ?? false }),
@@ -388,15 +403,26 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     },
     {
       key: "delivery_failures",
-      label: "Delivery failures (7d)",
-      description: "Email or message failures in the last 7 days that need a retry or a new address.",
+      label: "Delivery failures to retry (7d)",
+      description:
+        "Email or message failures in the last 7 days where a retry can still get through.",
       count: blocked.count ?? 0,
       action_hint: "Retry the delivery or update the recipient's email.",
       see_all: { to: "/admin/notifications" },
+      secondary_badge:
+        ((blocked as any).blockedAddresses ?? 0) > 0
+          ? {
+              label: `${(blocked as any).blockedAddresses} blocked address${
+                (blocked as any).blockedAddresses === 1 ? "" : "es"
+              } — retry won't help`,
+              tone: "warning" as const,
+            }
+          : undefined,
       items: ((blocked.data ?? []) as any[]).slice(0, PREVIEW_LIMIT).map((d) => ({
         id: d.id,
         title: d.title ?? "Delivery failure",
-        subtitle: deliveryReason(d.reason, d.status).sentence,
+        subtitle: d.reasonSentence ?? deliveryReason(d.reason, d.status).sentence,
+
         meta: d.audience ?? null,
         waiting_since: d.lastAttemptAt,
         target: { kind: "match" as const, id: d.id },

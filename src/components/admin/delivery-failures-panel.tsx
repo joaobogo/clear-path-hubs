@@ -143,6 +143,18 @@ export function DeliveryFailuresPanel() {
   });
 
   const items = (query.data?.items ?? []) as Item[];
+  const summary = query.data?.summary ?? {
+    total: items.length,
+    retryable: items.filter((i) => i.retryable).length,
+    blockedDeliveries: 0,
+    blockedAddresses: [] as Array<{
+      address: string;
+      deliveries: number;
+      lastAttemptAt: string;
+      sentence: string;
+    }>,
+  };
+  const blockedAddresses = summary.blockedAddresses;
   const suppressions = query.data?.suppressions ?? [];
   const windowDays = query.data?.windowDays ?? 7;
 
@@ -175,6 +187,34 @@ export function DeliveryFailuresPanel() {
           Anything listed here means someone believes they were informed and was not.
         </p>
       </header>
+
+      {/* A suppressed address is not a backlog: every new notification to it
+          fails the moment it is sent, so the row count climbs with normal
+          console use. Retrying cannot clear it — releasing the address can. */}
+      {blockedAddresses.length > 0 ? (
+        <div className="mb-4 rounded-lg border border-amber-500/40 bg-amber-500/5 p-3">
+          <div className="text-sm font-medium">
+            {blockedAddresses.length} blocked address
+            {blockedAddresses.length === 1 ? "" : "es"} are generating these failures
+          </div>
+          <p className="mt-1 max-w-2xl text-xs text-muted-foreground">
+            {summary.blockedDeliveries} of {summary.total} rows below come from addresses on a
+            suppression list. Every further notification to them fails on send, so retrying will
+            not clear the list — release the address first, or the count keeps growing.
+          </p>
+          <ul className="mt-2 space-y-1 text-xs">
+            {blockedAddresses.slice(0, 5).map((a) => (
+              <li key={a.address} className="flex items-center justify-between gap-3">
+                <span className="break-all font-medium">{a.address}</span>
+                <span className="shrink-0 text-muted-foreground tabular-nums">
+                  {a.deliveries} blocked send{a.deliveries === 1 ? "" : "s"}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
 
       <PanelState
         query={query}

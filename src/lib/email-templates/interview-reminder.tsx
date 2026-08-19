@@ -84,7 +84,7 @@ export const template = {
   previewData: {
     candidateFirstName: 'Ana',
     positionTitle: 'Social Media & Design Specialist',
-    organizationName: 'Flow Group Ventures',
+    organizationName: 'Example Client Co (preview)',
     whenLabel: 'Tuesday 14 May, 10:00',
     timezone: 'Europe/Lisbon',
     offsetLabel: 'GMT+1',
