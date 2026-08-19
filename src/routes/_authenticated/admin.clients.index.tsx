@@ -219,6 +219,7 @@ function ClientsPage() {
     }
 
     // P-020: If test records are hidden, filter them out client-side.
+    // This is the authoritative filter for the "Test records hidden" toggle.
     if (!includeTest) {
       rows = rows.filter((r) => !r.is_test_record);
     }
