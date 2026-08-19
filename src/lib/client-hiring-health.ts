@@ -82,9 +82,10 @@ export function computeHiringHealth(input: HiringHealthInput): HiringHealth {
   ];
   
   const urgent = input.overdueDecisions + input.blocks;
-  if (urgent > 0) {
+  if (urgent > 0 || input.awaitingDecision > 0) {
+    const total = urgent + input.awaitingDecision;
     return {
-      sentence: `${count(urgent)} ${plural(urgent, "thing needs", "things need")} you.`,
+      sentence: `${count(total)} ${plural(total, "thing needs", "things need")} you.`,
       tone: "attention",
       reason: input.blocks > 0 ? "blocks" : "overdue_decisions",
       figures,
