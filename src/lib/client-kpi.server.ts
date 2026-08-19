@@ -988,7 +988,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     concerns,
     main_consideration: mainConsideration,
     requirement_rows,
-    evidence_support: evidenceSupport(requirement_rows),
+    evidence_support: { supported: requirement_rows.filter(r => r.status === 'met').length, total: requirement_rows.length },
     human_review: (() => {
       const res = (run?.result as AnyRow | null) ?? null;
       const reviewed =
