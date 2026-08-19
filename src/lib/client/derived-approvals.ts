@@ -9,7 +9,7 @@
  * This module maps those queue rows onto the approvals vocabulary (task type,
  * view membership) so one inbox can render both kinds without inventing data.
  */
-import type { QueueRow, QueueKind } from "@/lib/client-decision-queue";
+import { type QueueRow, type QueueKind, QUEUE_TYPE_LABEL } from "@/lib/client-decision-queue";
 import type { TaskType, TaskView } from "@/lib/tasks.functions";
 
 export type DerivedApproval = {
@@ -40,8 +40,8 @@ export function toDerivedApproval(row: QueueRow): DerivedApproval {
   return {
     key: row.key,
     kind: row.kind,
-    title: `${row.type_label} — ${row.concerns}`,
-    type_label: row.type_label,
+    title: row.type_label ? `${row.type_label} — ${row.concerns}` : row.concerns,
+    type_label: row.type_label || QUEUE_TYPE_LABEL[row.kind] || "",
     task_type: KIND_TASK_TYPE[row.kind],
     role_title: row.role_title,
     due_at: row.due_at,
