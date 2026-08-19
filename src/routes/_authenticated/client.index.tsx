@@ -214,7 +214,7 @@ function OverviewPage() {
           >
             <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
           </Button>
-          <Button variant="outline" size="sm" onClick={() => navigate({ to: "/client/approvals", search: (prev) => prev } as any)}>
+          <Button variant="outline" size="sm" onClick={() => navigate({ to: "/client/approvals", search: (prev: any) => prev } as any)}>
             Approvals
           </Button>
         </div>
