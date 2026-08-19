@@ -211,7 +211,7 @@ export function isRelevantEvidence(quote: string, requirement: string): boolean 
   const r = requirement.toLowerCase();
 
   // 1. Exact phrase/term match is the gold standard.
-  const stopWords = ["and", "with", "for", "the", "experience", "exposure", "familiarity", "similar", "production", "features", "product"];
+  const stopWords = ["and", "with", "for", "the", "experience", "exposure", "familiarity", "similar", "production", "features", "product", "engineer", "stack", "focused", "professional"];
   const terms = r
     .split(/[^a-z0-9]+/)
     .filter((t) => t.length >= 3 && !stopWords.includes(t));
