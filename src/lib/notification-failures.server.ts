@@ -144,7 +144,7 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
       .select(
         "id, lead_type, source, source_page, email, full_name, company, owner_email, email_status, email_detail, email_recipients, teams_status, teams_detail, attempts, created_at, last_attempt_at, updated_at, payload, record_table, record_id, organization_id, position_id",
       )
-      .or("email_status.eq.failed,teams_status.eq.failed")
+      .or("email_status.eq.failed,email_status.eq.suppressed,teams_status.eq.failed")
       .gte("created_at", cutoff)
       .order("created_at", { ascending: false })
       .limit(200),
