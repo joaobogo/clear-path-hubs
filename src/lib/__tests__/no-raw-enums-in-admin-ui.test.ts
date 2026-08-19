@@ -30,14 +30,20 @@ function walk(dir: string): string[] {
   return out;
 }
 
-/** Extract JSX text nodes: `>text<` runs that are not inside braces or tags. */
+/**
+ * Extract JSX text nodes: `>text<` runs with no braces or tags between them.
+ * Anything carrying code punctuation is TypeScript that happens to sit between
+ * a `>` and a `<` (generics, comparisons, arrow functions) and is skipped.
+ */
 function jsxTextNodes(source: string): string[] {
   const nodes: string[] = [];
   const re = />([^<>{}]+)</g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(source))) {
     const text = m[1]!.trim();
-    if (text) nodes.push(text);
+    if (!text || text.includes("\n")) continue;
+    if (/["'`;=()[\]|&?]/.test(text)) continue;
+    nodes.push(text);
   }
   return nodes;
 }
