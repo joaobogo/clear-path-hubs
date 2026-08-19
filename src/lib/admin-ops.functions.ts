@@ -88,7 +88,7 @@ export const getPaymentsOps = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { requireStaff, loadPaymentsOpsPanel } = await import("./admin-ops.server");
     await requireStaff(context.userId);
-    return loadPaymentsOpsPanel();
+    return loadPaymentsOpsPanel(context.userId);
   });
 
 export const getReviewQueueIds = createServerFn({ method: "GET" })
