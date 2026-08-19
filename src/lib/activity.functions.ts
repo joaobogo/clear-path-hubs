@@ -114,8 +114,9 @@ export const getActivityFeed = createServerFn({ method: "GET" })
     let q = context.supabase
       .from("v_activity_feed")
       .select(
-        "event_id, event_type, occurred_at, organization_id, position_id, application_id, candidate_match_id, actor_name, position_title, position_status, payload",
+        "event_id, event_type, occurred_at, organization_id, position_id, application_id, candidate_match_id, actor_name, position_title, position_status, payload, is_test_record",
       )
+      .eq("is_test_record", false)
       .order("occurred_at", { ascending: false })
       .limit(window);
 

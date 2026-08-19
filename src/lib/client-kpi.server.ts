@@ -140,7 +140,8 @@ export async function loadKpiRows(
        score_runs:approved_score_run_id (score, fit_label, fit_band)`
     )
     .eq("organization_id", orgId)
-    .eq("client_visibility", "visible");
+    .eq("client_visibility", "visible")
+    .eq("is_test_record", false);
   if (error) throw new Error(error.message);
 
   const matchIds = (matches as AnyRow[]).map((m) => m.id);

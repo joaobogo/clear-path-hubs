@@ -171,6 +171,7 @@ export const listShortlistShares = createServerFn({ method: "GET" })
         "id, token, title, message, default_mode, allow_comments, expires_at, revoked_at, view_count, last_viewed_at, created_at, match_ids, positions:position_id(id, title)",
       )
       .eq("organization_id", data.orgId)
+      .eq("is_test_record", false)
       .order("created_at", { ascending: false })
       .limit(100);
     if (error) throw new Error(error.message);
