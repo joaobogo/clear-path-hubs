@@ -30,6 +30,7 @@ import {
   attachApiFailures,
   captureApiFailures,
   logPipelineState,
+  resolveOcrGate,
   type ApiFailureLog,
   waitForProcessingState,
 } from "./helpers/pipeline-diagnostics";
@@ -172,6 +173,13 @@ test.describe("launch smoke journey", () => {
     // file and job truth into the run output and the HTML report.
     await logPipelineState(matchId, "after-apply");
     await runPipelineDrain();
+    // No OCR runner runs in the suite: if extraction asked for OCR, simulate the
+    // OCR result (and only that step) so review and publication stay reachable.
+    await waitForProcessingState(matchId, /ocr_required|parsed|enriching|ready_to_score|scored|manual_review_required|failed/, {
+      timeout: 120_000,
+      label: "parse",
+    }).catch(() => undefined);
+    await resolveOcrGate(matchId);
     await waitForProcessingState(matchId, /scored|ready_to_score|manual_review_required/, {
       timeout: 180_000,
       label: "parse-and-score",

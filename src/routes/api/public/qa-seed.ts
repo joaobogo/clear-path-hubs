@@ -1053,6 +1053,7 @@ async function handle(request: Request): Promise<Response> {
     match_id?: string;
     cv_base64?: string;
     cv_filename?: string;
+    ocr_text?: string;
   } = {};
   try {
     const read = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.qa_seed);
@@ -1333,6 +1334,97 @@ async function handle(request: Request): Promise<Response> {
     // Mirrors a candidate re-uploading a readable CV: a new file row becomes the
     // application's CV. Match state is deliberately untouched, so the admin
     // repair action is what re-triggers processing.
+    /**
+     * Test-mode OCR completion.
+     *
+     * No OCR runner exists in the test environment, so a CV without a usable
+     * text layer parks the match on `ocr_required` and admin review + client
+     * publication can never be reached. This writes an OCR result onto the
+     * canonical file exactly as the real `markOcrDone` path does, then runs the
+     * real pipeline (enrich → score) so nothing downstream is faked.
+     *
+     * Scoped to QA mailboxes only, behind the QA token + ENABLE_QA_ENDPOINTS.
+     */
+    if (action === "simulate_ocr_complete") {
+      if (!body.match_id) {
+        return Response.json({ ok: false, error: "match_id required" }, { status: 400 });
+      }
+      const sb = await loadAdmin();
+      const { data: match, error: mErr } = await sb
+        .from("candidate_matches")
+        .select("id, application_id, candidate_profile_id, processing_state")
+        .eq("id", body.match_id)
+        .maybeSingle();
+      if (mErr) throw mErr;
+      if (!match) return Response.json({ ok: false, error: "match not found" }, { status: 404 });
+
+      const { data: profile } = await sb
+        .from("candidate_profiles")
+        .select("email")
+        .eq("id", match.candidate_profile_id as string)
+        .maybeSingle();
+      assertQaMailbox(String(profile?.email ?? ""), "simulate_ocr_complete");
+
+      const { data: app } = await sb
+        .from("applications")
+        .select("id, cv_file_id")
+        .eq("id", match.application_id as string)
+        .maybeSingle();
+      const fileId = app?.cv_file_id as string | undefined;
+      if (!fileId) {
+        return Response.json({ ok: false, error: "match has no CV on file" }, { status: 409 });
+      }
+
+      const { SIMULATED_OCR_CV_TEXT } = await import("@/lib/qa/simulated-ocr.server");
+      const text =
+        typeof body.ocr_text === "string" && body.ocr_text.trim().length >= 200
+          ? body.ocr_text
+          : SIMULATED_OCR_CV_TEXT;
+
+      const { data: fileRow } = await sb
+        .from("files")
+        .select("extraction_attempts")
+        .eq("id", fileId)
+        .maybeSingle();
+
+      await sb
+        .from("files")
+        .update({
+          extracted_text: text,
+          ocr_used: true,
+          parse_state: "parsed",
+          parse_error: null,
+          parse_error_code: null,
+          parser: "qa_simulated_ocr",
+          extraction_completed_at: new Date().toISOString(),
+          extraction_attempts: ((fileRow?.extraction_attempts as number | null) ?? 0) + 1,
+        })
+        .eq("id", fileId);
+
+      await sb
+        .from("candidate_matches")
+        .update({
+          processing_state: "parsed",
+          processing_error_code: null,
+          processing_error_message: null,
+          processing_updated_at: new Date().toISOString(),
+        })
+        .eq("id", body.match_id);
+
+      // Real enrichment + scoring from here — only the OCR step is simulated.
+      const { runPipelineForMatch } = await import("@/lib/pipeline-runner.server");
+      const outcome = await runPipelineForMatch(String(body.match_id), { force: true });
+
+      return Response.json({
+        ok: true,
+        action,
+        match_id: body.match_id,
+        previous_state: match.processing_state,
+        final_state: outcome.final_state,
+        simulated_ocr_chars: text.length,
+      });
+    }
+
     if (action === "replace_cv") {
       if (!body.match_id || !body.cv_base64) {
         return Response.json({ ok: false, error: "match_id, cv_base64 required" }, { status: 400 });
