@@ -71,7 +71,10 @@ async function answerScreening(page: Page) {
   if (await yes.count()) await yes.first().click();
   const freeText = page.locator("textarea").filter({ hasNot: page.locator("#cover_letter") });
   if (await freeText.count()) {
-    await freeText.first().fill("QA smoke screening answer.").catch(() => undefined);
+    await freeText
+      .first()
+      .fill("QA smoke screening answer.")
+      .catch(() => undefined);
   }
 }
 
@@ -151,9 +154,12 @@ test.describe("launch smoke journey", () => {
     // ── 2. Candidate signs in and sees their application ──────────────────
     await loginAs(page, "candidate", email, QA_PASSWORD);
     await page.goto("/me/applications", { waitUntil: "domcontentloaded" });
-    await expect(page.getByText(new RegExp(fixtures.position_id.slice(0, 6), "i")).or(
-      page.getByRole("heading", { name: /applications/i }),
-    ).first()).toBeVisible({ timeout: 60_000 });
+    await expect(
+      page
+        .getByText(new RegExp(fixtures.position_id.slice(0, 6), "i"))
+        .or(page.getByRole("heading", { name: /applications/i }))
+        .first(),
+    ).toBeVisible({ timeout: 60_000 });
     // Best-effort sign-out: bounded so a hidden/absent control can't stall the run.
     await page
       .getByRole("button", { name: /sign out/i })
@@ -198,10 +204,10 @@ test.describe("launch smoke journey", () => {
     }
 
     await expect
-      .poll(
-        async () => (await lookupCandidate(email)).matches[0]?.client_visibility,
-        { timeout: 90_000, intervals: [1_000, 2_000] },
-      )
+      .poll(async () => (await lookupCandidate(email)).matches[0]?.client_visibility, {
+        timeout: 90_000,
+        intervals: [1_000, 2_000],
+      })
       .toBe("visible");
 
     // ── 4. Client signs in and advances the candidate ─────────────────────
@@ -214,7 +220,9 @@ test.describe("launch smoke journey", () => {
       timeout: 60_000,
     });
     await advance.click();
-    await expect(page.getByText(/added to your shortlist|interview requested/i).first()).toBeVisible({
+    await expect(
+      page.getByText(/added to your shortlist|interview requested/i).first(),
+    ).toBeVisible({
       timeout: 60_000,
     });
 

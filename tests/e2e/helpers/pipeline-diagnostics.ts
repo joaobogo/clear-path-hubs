@@ -25,7 +25,9 @@ export function summarizeSnapshot(snap: PipelineSnapshot): string {
     `admin_status=${m.admin_status}`,
     `client_visibility=${m.client_visibility}`,
     `score=${snap.score?.total_score ?? "none"}`,
-    f ? `file=${f.filename} parse_state=${f.parse_state ?? "none"} parse_error=${f.parse_error_code ?? "none"} attempts=${f.extraction_attempts ?? 0} parser=${f.parser ?? "none"}` : "file=none",
+    f
+      ? `file=${f.filename} parse_state=${f.parse_state ?? "none"} parse_error=${f.parse_error_code ?? "none"} attempts=${f.extraction_attempts ?? 0} parser=${f.parser ?? "none"}`
+      : "file=none",
     `jobs=[${snap.jobs.map((j) => `${j.job_type}:${j.status}${j.error_code ? `(${j.error_code})` : ""}`).join(", ")}]`,
   ].join(" | ");
 }
@@ -40,7 +42,6 @@ export async function logPipelineState(
 ): Promise<PipelineSnapshot | null> {
   try {
     const snap = await pipelineSnapshot(matchId);
-    // eslint-disable-next-line no-console
     console.log(`[pipeline:${label}] ${matchId} → ${summarizeSnapshot(snap)}`);
     await test
       .info()
@@ -51,7 +52,6 @@ export async function logPipelineState(
       .catch(() => undefined);
     return snap;
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.log(`[pipeline:${label}] ${matchId} → snapshot unavailable: ${String(err)}`);
     return null;
   }
@@ -80,12 +80,10 @@ export async function waitForProcessingState(
       last = await pipelineSnapshot(matchId);
       state = last.match.processing_state;
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.log(`[pipeline:${label}] snapshot read failed: ${String(err)}`);
     }
     if (seen[seen.length - 1] !== state) {
       seen.push(state);
-      // eslint-disable-next-line no-console
       console.log(`[pipeline:${label}] ${matchId} state → ${state}`);
     }
     if (matcher.test(state)) return state;
@@ -124,7 +122,6 @@ export function captureApiFailures(page: Page): ApiFailureLog {
     }
     const line = `${res.status()} ${res.request().method()} ${url} :: ${body}`;
     failures.push(line);
-    // eslint-disable-next-line no-console
     console.log(`[api:failure] ${line}`);
   };
 
