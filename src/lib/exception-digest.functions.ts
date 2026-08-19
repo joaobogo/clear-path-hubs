@@ -77,7 +77,9 @@ export const getExceptionDigest = createServerFn({ method: "GET" })
       settle("delivery_failures", async () => {
         const { loadDeliveryFailures } = await import("./notification-failures.server");
         const failures = await loadDeliveryFailures(admin);
-        return failures.items.length;
+        // P-015: Filter to last 7 days for metric consistency.
+        const cutoff = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
+        return failures.items.filter(f => f.lastAttemptAt >= cutoff).length;
       }),
     ]);
 

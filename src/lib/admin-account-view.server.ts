@@ -122,7 +122,8 @@ export async function loadAccountDelivery(
   const matchRes = await a
     .from("candidate_matches")
     .select("id, stage")
-    .eq("organization_id", organizationId);
+    .eq("organization_id", organizationId)
+    .not("processing_state", "in", "(failed,cancelled)");
   if (matchRes.error) throw new Error(matchRes.error.message);
   const matches = (matchRes.data ?? []) as Array<{ stage: string }>;
   const inPipeline = matches.filter(

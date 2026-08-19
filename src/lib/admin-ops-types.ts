@@ -67,7 +67,10 @@ export type QueueSeeAll =
   | "/admin/candidates"
   | "/admin/messages"
   | "/admin/operations"
-  | "/admin/scoring/review";
+  | "/admin/scoring/review"
+  | "/admin/publish"
+  | "/admin/notifications"
+  | "/admin/decision-backlog";
 
 export type WorkQueue = {
   key: string;
