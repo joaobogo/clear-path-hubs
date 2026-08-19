@@ -279,14 +279,22 @@ function OverviewPage() {
               orgSearch={orgSearch ?? null}
             />
 
-            {/* Anything else still waiting on you, overdue first */}
-            <OpenItemsStrip orgId={orgId} />
-
             {/* Missing brief details block sourcing — answerable in place */}
             <InfoRequestsPanel orgId={orgId} onAnswered={() => refetch()} />
 
             {/* 2 · PROGRESS — one sentence, three figures */}
             <div className="space-y-4">
+              <Collapsible className="space-y-3">
+                <CollapsibleTrigger asChild>
+                  <button className="flex w-full items-center justify-between rounded-lg border border-dashed px-4 py-2 text-xs font-medium text-muted-foreground hover:bg-muted/50">
+                    <span>Roles can be sharpened</span>
+                    <ChevronDown className="h-3.5 w-3.5 transition-transform group-data-[state=open]:rotate-180" />
+                  </button>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <OpenItemsStrip orgId={orgId} />
+                </CollapsibleContent>
+              </Collapsible>
               {blockedSummary && (
                 <div 
                   className="flex items-center justify-between gap-3 rounded-xl border taas-bd-danger taas-bg-danger-soft px-4 py-3 text-sm font-medium"
