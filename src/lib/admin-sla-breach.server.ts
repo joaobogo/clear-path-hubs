@@ -77,7 +77,7 @@ function num(value: number): string {
 
 export async function loadSlaBreaches(
   admin: Admin,
-  opts: { includeTest?: boolean } = {},
+  opts: { organizationId?: string; includeTest?: boolean } = {},
 ): Promise<SlaBreachList> {
   const nowMs = Date.now();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
