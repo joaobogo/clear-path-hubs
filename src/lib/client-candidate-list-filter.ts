@@ -38,7 +38,7 @@ const STAGE_ORDER: Record<ClientCandidateDTO["stage"], number> = {
 
 /** Mirrors `isTopMatch` in client-kpi.server.ts via the presentation band. */
 export function matchesTopTile(c: ClientCandidateDTO): boolean {
-  return c.fit.band === "exceptional" || c.fit.band === "strong";
+  return c.fit.band === "exceptional";
 }
 
 /**

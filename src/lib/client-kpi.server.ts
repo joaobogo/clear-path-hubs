@@ -65,7 +65,6 @@ export const TOP_FIT_LABELS = [
   "strong_fit",
   "exceptional",
   "top",
-  "strong",
   "excellent",
 ] as const;
 
@@ -251,11 +250,9 @@ export async function loadKpiRows(
 
 
 /**
- * A "strongest candidate": the approved run's SCORE classifies into `strong` or
- * better through the canonical band table. Stored label/band strings are only
- * consulted for runs that never recorded a number — some historical runs carry
- * labels written under older cut-offs, and trusting them first let the tile
- * disagree with the band shown on the candidate card.
+ * A "strongest candidate": the approved run's SCORE classifies into `exceptional`
+ * through the canonical band table. Stored label/band strings are only
+ * consulted for runs that never recorded a number.
  */
 export function isTopMatch(r: KpiRow): boolean {
   if (r.approved_score_run_id == null) return false;
