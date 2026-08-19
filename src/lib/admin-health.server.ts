@@ -192,7 +192,7 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
   for (const r of jobsRes.data ?? []) {
     const seenAt = (r.started_at as string) ?? (r.created_at as string);
     issues.push({
-      id: r.id as string,
+      id: r.id.startsWith("pl_") ? r.id : `pl_${r.id.slice(0, 8)}`,
       kind: "processing",
       label: `Job: ${r.job_type ?? "processing"}`,
       detail: `${r.status} since ${new Date(seenAt).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })} — ${r.attempts ?? 0} attempt(s)`,

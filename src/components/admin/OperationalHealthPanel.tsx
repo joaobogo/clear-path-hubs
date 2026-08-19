@@ -35,7 +35,14 @@ export function OperationalHealthPanel() {
       setNote("Retry queued.");
       await qc.invalidateQueries({ queryKey: ["ops-health"] });
     },
-    onError: (e: Error) => setNote(`Retry failed: ${e.message}`),
+    onError: (e: Error) => {
+      const msg = e.message;
+      if (msg.includes("unique or exclusion constraint")) {
+        setNote("Could not save — a matching record already exists (duplicate key).");
+      } else {
+        setNote(`Retry failed: ${msg}`);
+      }
+    },
   });
 
   const issues = data?.issues ?? [];
@@ -77,6 +84,24 @@ export function OperationalHealthPanel() {
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="secondary">{KIND_LABEL[i.kind]}</Badge>
                   <span className="text-sm font-medium">{i.label}</span>
+                  {i.kind === "processing" ? (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 shrink-0 px-1 text-[10px] text-muted-foreground hover:text-foreground"
+                      title="Copy Trace ID"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(i.id);
+                          toast.success("Trace ID copied");
+                        } catch {
+                          toast.error("Clipboard unavailable");
+                        }
+                      }}
+                    >
+                      {i.id.slice(0, 8)}…
+                    </Button>
+                  ) : null}
                   <span className="text-xs text-muted-foreground">{new Date(i.occurred_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</span>
                   <Button
                     size="sm"
@@ -92,7 +117,9 @@ export function OperationalHealthPanel() {
                 {i.last_error ? (
                   <div className="mt-1 flex items-start gap-2">
                     <p className="break-words font-mono text-[10px] leading-relaxed text-destructive/80">
-                      {i.last_error}
+                      {i.last_error.includes("unique or exclusion constraint")
+                        ? "Could not save — a matching record already exists (duplicate key)."
+                        : i.last_error}
                     </p>
                     <Button
                       variant="ghost"

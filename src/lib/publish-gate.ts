@@ -112,7 +112,11 @@ export function humanizePublishBlockedMessage(message: string): string {
     return "Approval blocked: payment or exemption required";
   }
   if (message === "position_screening_limit_exceeded") {
-    return "This role has reached its screening limit. Raise the limit or archive an existing screening run.";
+    return "Screening limit reached: raise the limit or archive a run to continue.";
+  }
+  if (message.startsWith("match_not_found:")) {
+    const id = message.split(":")[1];
+    return `Candidate record not found (${id})`;
   }
   if (!message.startsWith(PUBLISH_BLOCKED_PREFIX)) return message;
 

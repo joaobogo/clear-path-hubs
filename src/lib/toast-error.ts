@@ -1,5 +1,6 @@
 import { toast } from "sonner";
 import { looksTechnical, normalizeError, logTechnical, type AudienceTone } from "@/lib/error-taxonomy";
+import { humanizePublishBlockedMessage } from "@/lib/publish-gate";
 
 /**
  * Toast an error without leaking internals.
@@ -18,9 +19,24 @@ export function toastError(error: unknown, opts: { tone?: AudienceTone; fallback
 	const { tone = "client", fallback, surface } = opts;
 	const raw = error instanceof Error ? error.message.replace(/^Error:\s*/, "") : "";
 	const intentional = raw.length > 0 && raw.length < 200 && !looksTechnical(raw);
+	const human = intentional ? humanizePublishBlockedMessage(raw) : null;
 
-	if (intentional) {
-		toast.error(raw);
+	if (intentional && human) {
+		const parts = human.match(/(.*)\((.*)\)/);
+		if (parts && tone === "admin") {
+			const [_, sentence, detail] = parts;
+			toast.error(sentence.trim(), {
+				action: {
+					label: "Copy details",
+					onClick: () => {
+						navigator.clipboard.writeText(detail.trim());
+						toast.success("Details copied");
+					}
+				}
+			});
+		} else {
+			toast.error(human);
+		}
 		return;
 	}
 
