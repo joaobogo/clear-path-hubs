@@ -30,7 +30,7 @@ export function CandidatesReleasedSection({
       <SectionHeader
         id="open-first-heading"
         icon={<Sparkles className="h-4 w-4 text-primary" />}
-        title="Candidates released to you"
+        title="Latest candidates"
         action={
           <Link
             to="/client/candidates"

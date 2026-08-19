@@ -348,7 +348,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
     });
 
     const queueGroups = buildQueue(queueItems);
-    const decision_queue = [...queueGroups.overdue, ...queueGroups.upcoming];
+    const decision_queue = [...queueGroups.overdue, ...queueGroups.upcoming].slice(0, 10);
     const decision_queue_meta = {
       checked: openItemsResponse.items.length,
       overdue: queueGroups.overdue.length,
