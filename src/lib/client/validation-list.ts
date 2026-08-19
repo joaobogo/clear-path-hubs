@@ -51,20 +51,23 @@ export type BuildValidationListOptions = {
   /** Include Met requirements as low-priority "confirm at interview" rows. */
   includeMet?: boolean;
   maxRequirements?: number;
+  /** Hide notes derived from requirement status (contradicted, not_evidenced). */
+  hideRequirementEvidenceNotes?: boolean;
 };
+
 
 export function buildValidationList(
   requirementRows: RequirementRow[],
   concerns: string[] = [],
   options: BuildValidationListOptions = {},
 ): ValidationItem[] {
-  const { includeMet = false, maxRequirements = 6 } = options;
+  const { includeMet = false, maxRequirements = 6, hideRequirementEvidenceNotes = false } = options;
 
   const statuses: RequirementStatus[] = includeMet
     ? ["contradicted", "not_evidenced", "partial", "met"]
     : ["contradicted", "not_evidenced", "partial"];
 
-  const requirementItems: ValidationItem[] = statuses.flatMap((status) =>
+  const requirementItems: ValidationItem[] = hideRequirementEvidenceNotes ? [] : statuses.flatMap((status) =>
     requirementRows
       .filter((r) => r.status === status)
       .map((r) => ({

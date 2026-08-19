@@ -67,7 +67,7 @@ import {
   Info,
 } from "lucide-react";
 import { FitHero, WhyWeShortlisted, RequirementCoverage, WhyThisCandidate, WhatNeedsValidation } from "@/components/client/candidate-detail/evidence";
-import { ExperienceTimeline, SkillsAndEducation, AvailabilityAndComp, ProfilePanel, LinksPanel } from "@/components/client/candidate-detail/profile";
+import { ExperienceTimeline, SkillsAndEducation, AvailabilityPanel, ProfilePanel, LinksPanel } from "@/components/client/candidate-detail/profile";
 import { ActivitySection } from "@/components/client/candidate-detail/activity";
 
 import { DownloadCvButton } from "@/components/download-cv-button";
@@ -940,7 +940,7 @@ export function PreviewTab({ matchId, match: m }: { matchId: string; match?: Any
             <SkillsAndEducation candidate={dto} />
           </div>
           <aside className="space-y-6 lg:col-span-4">
-            <AvailabilityAndComp candidate={dto} />
+            <AvailabilityPanel candidate={dto} />
             <ProfilePanel candidate={dto} />
             <LinksPanel candidate={dto} />
             {interviews.length > 0 && (

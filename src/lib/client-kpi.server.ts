@@ -976,14 +976,8 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     score: run?.score != null ? Number(run.score) : null,
     fit_label: run?.fit_label ?? run?.fit_band ?? null,
     fit,
-    // The engine's own explanation string carries a raw n/100 figure, which is
-    // internal. Employer surfaces get the criteria-backed explanation instead.
-    summary: (() => {
-      const explained = clientExplanation;
-      return explained.kind === "explained"
-        ? `${explained.method_sentence} ${explained.criteria_summary}.`
-        : null;
-    })(),
+    summary: (run?.result as AnyRow)?.fit_rationale ?? (run?.result as AnyRow)?.summary ?? null,
+
     strengths,
     concerns,
     main_consideration: mainConsideration,

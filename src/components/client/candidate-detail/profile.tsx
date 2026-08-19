@@ -4,6 +4,7 @@ import {
   BadgeCheck,
   Briefcase,
   Building2,
+  CalendarClock,
   CheckCircle2,
   ClipboardCopy,
   Coins,
@@ -14,6 +15,7 @@ import {
   Linkedin,
   MessageSquare,
 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -240,10 +242,10 @@ export const ProfilePanel = memo(function ProfilePanel({
     ["Location", c.location],
     ["Timezone", c.timezone],
     ["Availability", c.availability],
+    ["Work authorization", candidate.work_authorization],
     ["Years of experience", c.years_experience != null ? `${c.years_experience}` : null],
     ["Current role", c.current_role],
     ["Current company", c.current_company],
-    
     [
       "Languages",
       candidate.languages.length > 0
@@ -265,6 +267,7 @@ export const ProfilePanel = memo(function ProfilePanel({
     </div>
   );
 });
+
 
 export const LinksPanel = memo(function LinksPanel({
   candidate,
@@ -318,36 +321,29 @@ export const LinksPanel = memo(function LinksPanel({
   );
 });
 
-export const AvailabilityAndComp = memo(function AvailabilityAndComp({
+export const AvailabilityPanel = memo(function AvailabilityPanel({
   candidate,
 }: {
   candidate: ClientCandidateDTO;
 }) {
   const av = candidate.candidate.availability;
   const tz = candidate.candidate.timezone;
-  const auth = candidate.work_authorization;
+
+  if (!av && !tz) return null;
 
   return (
     <SectionCard
-      title="Availability & work authorization"
-      icon={<Coins className="h-4 w-4" />}
-      description="Timeline and legal requirements for this candidate."
+      title="Availability"
+      icon={<CalendarClock className="h-4 w-4" />}
     >
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className="rounded-md border bg-background/40 p-3">
-          <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Availability
-          </div>
-          <div className="mt-1 text-sm font-medium">{av ?? "Not specified"}</div>
-          {tz && <div className="text-xs text-muted-foreground">Timezone {tz}</div>}
+      <div className="rounded-md border bg-background/40 p-3">
+        <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+          Availability
         </div>
-        <div className="rounded-md border bg-background/40 p-3">
-          <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Work authorization
-          </div>
-          <div className="mt-1 text-sm font-medium">{auth ?? "Not confirmed"}</div>
-        </div>
+        <div className="mt-1 text-sm font-medium">{av ?? "Not specified"}</div>
+        {tz && <div className="text-xs text-muted-foreground">Timezone {tz}</div>}
       </div>
     </SectionCard>
   );
 });
+

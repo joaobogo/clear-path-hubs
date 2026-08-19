@@ -136,7 +136,7 @@ export function CandidateScoreBadge({
           className="inline-flex items-center rounded-full border border-border bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
           title={recheckNote}
         >
-          Being re-checked
+          Re-checking
         </span>
       )}
       {evidencePending && !rechecking && (
@@ -164,4 +164,5 @@ export function CandidateScoreBadge({
     </span>
   );
 }
+
 

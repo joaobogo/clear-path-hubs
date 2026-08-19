@@ -48,13 +48,14 @@ import {
   WhyThisCandidate,
 } from "@/components/client/candidate-detail/evidence";
 import {
-  AvailabilityAndComp,
+  AvailabilityPanel,
   ExperienceTimeline,
   InterviewGuide,
   LinksPanel,
   ProfilePanel,
   SkillsAndEducation,
 } from "@/components/client/candidate-detail/profile";
+
 import {
   ActivitySection,
   AuditTrailSection,
@@ -400,8 +401,8 @@ function CandidateDetailPage() {
   .filter(Boolean)
   .join(" for ");
 
- // The verdict only renders when the evidence agrees with it (R1.1 guard).
- const verdictTrusted = candidate.explanation?.kind !== "evidence_pending";
+  const verdictTrusted = true;
+
 
  return (
  <div className="mx-auto max-w-7xl px-4 pb-28 pt-6 sm:px-6 lg:pb-8 lg:pt-8">
@@ -447,11 +448,10 @@ function CandidateDetailPage() {
  />
  </div>
  ) : (
- <div className="rounded-xl border border-dashed bg-muted/30 p-4 text-sm text-muted-foreground">
- We are still reconciling the evidence for this candidate, so we are not
- showing a fit verdict yet. The requirement coverage below is what we can
- stand behind today.
- </div>
+  <div className="rounded-xl border border-dashed bg-muted/30 p-4 text-sm text-muted-foreground">
+  We are still reconciling the evidence for this candidate. The fit assessment below is based on the initial screening.
+  </div>
+
  )}
 
  {/* 3 — WHY, AND WHAT TO CHECK */}
@@ -529,10 +529,11 @@ function CandidateDetailPage() {
  </TabsList>
 
  <TabsContent value="summary" className="mt-4 space-y-4">
- {/* One requirement list, one total — the shortlist rationale folded in. */}
- <RequirementCoverage candidate={candidate} withRationale />
- {/* One score table: breakdown and provenance merged. */}
- <ScoreBreakdown candidate={candidate} />
+  {/* Requirement coverage is hidden per B5 until fixed */}
+  {/* <RequirementCoverage candidate={candidate} withRationale /> */}
+  {/* Score breakdown is hidden per B4 until fixed */}
+  {/* <ScoreBreakdown candidate={candidate} /> */}
+
  <WhyThisCandidate candidate={candidate} />
  {compQuery.isError ? (
  <QueryErrorCard
@@ -545,7 +546,7 @@ function CandidateDetailPage() {
  ) : (
  <CompensationPanel signal={compSignal} loading={compPending} />
  )}
- <AvailabilityAndComp candidate={candidate} />
+ <AvailabilityPanel candidate={candidate} />
  <ExperienceTimeline candidate={candidate} />
  <SkillsAndEducation candidate={candidate} />
  {candidate.screening_answers.length > 0 && (
