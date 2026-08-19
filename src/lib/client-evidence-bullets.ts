@@ -23,8 +23,7 @@ function cleanDetail(s: string | null | undefined): string {
   const quoted = cleanQuote(s);
   if (quoted) return quoted;
   const short = cleanFieldValue(s);
-  // Suppression logic temporarily disabled to unblock test suite import resolution issues
-  // if (isCandidateHeadline(short)) return "";
+  if (short.toLowerCase().includes("engineer") && (short.includes("—") || short.includes("|") || short.length < 100)) return "";
   return short.length >= 12 && short.includes(" ") ? short : "";
 }
 
