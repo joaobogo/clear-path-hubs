@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { isQaFixtureTitle } from "./client/test-record-filter";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
   MAX_ATTACHMENTS_PER_MESSAGE,
@@ -275,25 +276,53 @@ export const listConversations = createServerFn({ method: "GET" })
     const matchIds = rows.map((r) => r.candidate_match_id).filter(Boolean) as string[];
     const [{ data: positions }, { data: matches }] = await Promise.all([
       positionIds.length
-        ? supabase.from("positions").select("id, title").in("id", positionIds)
+        ? supabase
+            .from("positions")
+            .select("id, title, is_test_record")
+            .in("id", positionIds)
         : Promise.resolve({ data: [] as Row[] }),
       matchIds.length
         ? supabase
             .from("candidate_matches")
-            .select("id, position_id, candidate_profiles(full_name), positions(title)")
+            .select(
+              "id, position_id, is_test_record, candidate_profiles(full_name), positions(title, is_test_record)",
+            )
             .in("id", matchIds)
         : Promise.resolve({ data: [] as Row[] }),
     ]);
     const positionTitle: Record<string, string> = {};
-    for (const p of (positions as Row[]) ?? []) positionTitle[p.id as string] = p.title as string;
+    // QA fixtures must never surface in a client inbox, so anything flagged as
+    // a test record (or still carrying a QA marker in its title) is dropped
+    // along with the thread that points at it.
+    const qaPositionIds = new Set<string>();
+    const qaMatchIds = new Set<string>();
+    for (const p of (positions as Row[]) ?? []) {
+      positionTitle[p.id as string] = p.title as string;
+      if (p.is_test_record === true || isQaFixtureTitle(p.title)) qaPositionIds.add(p.id as string);
+    }
     const matchLabel: Record<string, string> = {};
     for (const m of (matches as Row[]) ?? []) {
       const cand = (m.candidate_profiles as Row | null)?.full_name as string | undefined;
       const role = (m.positions as Row | null)?.title as string | undefined;
       matchLabel[m.id as string] = [cand ?? "Candidate", role].filter(Boolean).join(" · ");
+      if (
+        m.is_test_record === true ||
+        (m.positions as Row | null)?.is_test_record === true ||
+        isQaFixtureTitle(role) ||
+        isQaFixtureTitle(cand)
+      )
+        qaMatchIds.add(m.id as string);
     }
 
-    const items: ConversationSummary[] = rows.map((c) => {
+    const visibleRows = rows.filter((c) => {
+      if (c.position_id && qaPositionIds.has(c.position_id as string)) return false;
+      if (c.candidate_match_id && qaMatchIds.has(c.candidate_match_id as string)) return false;
+      if (isQaFixtureTitle(c.subject)) return false;
+      const body = last[c.id as string]?.body;
+      return !isQaFixtureTitle(body);
+    });
+
+    const items: ConversationSummary[] = visibleRows.map((c) => {
       const lastMsg = last[c.id as string];
       const scope = c.scope as ConversationScope;
       const contextLabel =
