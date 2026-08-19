@@ -91,6 +91,24 @@ export const getClientOverview = createServerFn({ method: "GET" })
     const rows = await loadKpiRows(s, data.orgId);
     
     // Seat count reconciliation (B4 fix): Fetch memberships to get real-time seat counts.
+    const { activeMembers } = await (async () => {
+      const { data: members } = await s
+        .from("memberships")
+        .select("user_id, role, status")
+        .eq("organization_id", data.orgId);
+      const { data: orgForSeats } = await s
+        .from("organizations")
+        .select("client_seat_limit")
+        .eq("id", data.orgId)
+        .maybeSingle();
+      const { computeSeatCount } = await import("@/lib/client-seats");
+      return computeSeatCount(
+        (members as AnyRow[]) ?? [],
+        (orgForSeats as AnyRow)?.client_seat_limit ?? null
+      );
+    })();
+    
+    // Seat count reconciliation (B4 fix): Fetch memberships to get real-time seat counts.
     const { data: members } = await s
       .from("memberships")
       .select("user_id, role, status")
@@ -426,6 +444,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
           has_offer: posRows.some((r) => r.stage === "offer"),
           has_interview: posRows.some((r) => r.stage === "interview_process"),
           promised_shortlist_by: promised != null ? new Date(promised).toISOString() : null,
+          user_count: activeMembers,
           shortlist_delivered_at:
             posRows
               .map((r) => r.delivered_at)
