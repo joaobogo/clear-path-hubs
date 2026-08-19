@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { formatEnumLabel } from "@/lib/human-labels";
 import { useQuery } from "@tanstack/react-query";
 import { SlotProposer } from "@/components/client/scheduling/slot-proposer";
 import { QueryErrorCard } from "@/components/client/query-error";

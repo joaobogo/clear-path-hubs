@@ -160,9 +160,11 @@ export async function emitEventFromServer(args) {
                 ? `${actorName}: ${copy.title}`
                 : actorName && args.event === "message_sent"
                     ? `New message from ${actorName}`
-                    : copy.title,
+                    : actorName && r.audience === "client" && args.event === "candidate_stage_changed"
+                        ? `Status changed by ${actorName}`
+                        : copy.title,
             body: copy.body ?? null,
-            link_path: r.link_path ?? args.link_path ?? (args.candidate_match_id ? `/client/candidates/${args.candidate_match_id}` : null),
+            link_path: r.link_path ?? args.link_path ?? (args.candidate_match_id ? `/admin/review/${args.candidate_match_id}` : null),
             // Point every notification at the exact record it is about.
             entity_type: args.candidate_match_id
                 ? "candidate_match"
@@ -288,7 +290,7 @@ export const listMyNotifications = createServerFn({ method: "GET" })
     }
     const { data, error } = await context.supabase
         .from("notifications")
-        .select("id, event_type, audience, title, body, link_path, read_at, resolved_at, entity_type, entity_id, created_at, organization_id, event_id")
+        .select("id, event_type, audience:audience::text, title, body, link_path, read_at, resolved_at, entity_type, entity_id, created_at, organization_id, event_id")
         .eq("recipient_user_id", context.userId)
         .is("resolved_at", null)
         .order("created_at", { ascending: false })
@@ -340,8 +342,8 @@ export const listMyNotifications = createServerFn({ method: "GET" })
             actorByEvent.set(e.id, actorId
                 ? actorId === context.userId
                     ? "You"
-                    : (nameById.get(actorId) || "TaaSFlow team")
-                : "TaaSFlow team");
+                    : (nameById.get(actorId) || (rows[0]?.audience === "client" ? "TaaSFlow team" : "Staff"))
+                : (rows[0]?.audience === "client" ? "TaaSFlow team" : "Staff"));
         }
     }
     // Delivery state for the email copy of each notification. The deliveries

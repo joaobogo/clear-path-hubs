@@ -751,7 +751,7 @@ export const listSchedulableCandidates = createServerFn({ method: "POST" })
       )
       .eq("organization_id", data.orgId)
       .eq("client_visibility", "visible")
-      .in("stage", ["delivered", "shortlisted", "interview_process", "offer", "hired", "closed_lost"]);
+      .in("stage", ["delivered", "shortlisted", "interview_process", "offer", "hired"]);
     if (error) throw new Error(error.message);
     const { hydrateClientCandidateProfiles: hydrateSchedulable } = await import(
       "@/lib/client-candidate-hydrate.server"

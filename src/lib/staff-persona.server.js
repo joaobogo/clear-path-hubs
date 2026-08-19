@@ -9,6 +9,8 @@ const SYSTEM_ACCOUNTS = new Set([
     "TaaSFlow",
     "System",
     "TaaSFlow system",
+    "TaaSFlow team",
+    "System / unattributed",
 ]);
 /**
  * Maps a profile name/email and staff status to a client-friendly persona.
@@ -16,28 +18,39 @@ const SYSTEM_ACCOUNTS = new Set([
 export function resolveStaffPersona(args) {
     const { name, email, isStaff, roleLabel, maskStatus } = args;
     if (!isStaff) {
+        // Teammates should not render as "Master Admin" either if they somehow get that name.
+        const rawName = (name || "").toLowerCase();
+        if (rawName.includes("master admin") || rawName === "system") {
+            return {
+                name: "Teammate",
+                role: roleLabel || "Your team",
+                isStaff: false,
+            };
+        }
         return {
             name: name || email?.split("@")[0] || "Teammate",
             role: roleLabel || "Your team",
             isStaff: false,
         };
     }
-    // Leak prevention: map internal root/system names to the team persona.
+    // Staff leak prevention: map internal root/system/admin names to the team persona.
     const rawName = (name || email || "").toLowerCase();
-    const isSystem = SYSTEM_ACCOUNTS.has(name || "") ||
+    const isSystem = !name ||
+        SYSTEM_ACCOUNTS.has(name || "") ||
         SYSTEM_ACCOUNTS.has(email || "") ||
         rawName.includes("admin") ||
-        rawName.includes("system");
-    if (isSystem || !name) {
+        rawName.includes("system") ||
+        rawName === "taasflow";
+    if (isSystem) {
         return {
             name: "TaaSFlow team",
-            role: roleLabel || "TaaSFlow team",
+            role: "TaaSFlow team",
             isStaff: true,
         };
     }
     // Human staff member with a real name.
     return {
-        name: name + (maskStatus ? "" : " (Staff)"),
+        name: maskStatus ? name || "TaaSFlow team" : `${name} (Staff)`,
         role: roleLabel || "TaaSFlow recruiter",
         isStaff: true,
     };
