@@ -186,37 +186,76 @@ test.describe("launch smoke journey", () => {
     });
     await logPipelineState(matchId, "before-approval");
 
-    // ── 3. Staff approve the match for client visibility ──────────────────
+    // ── 3. Staff work the review desk and publish the candidate ───────────
     await loginAs(page, "admin", fixtures.users["platform_admin"]!.email);
     await showTestRecords(page);
-    // Approvals are worked from the Overview work queue.
+    // The work queue is where a scored match surfaces for review.
     await page.goto("/admin", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: /work queue/i }).first()).toBeVisible({
       timeout: 60_000,
     });
 
-    const approveRow = page
-      .locator("li, tr, div")
-      .filter({ hasText: fullName })
-      .filter({ has: page.getByRole("button", { name: /^approve$/i }) })
-      .first();
-    if (await approveRow.count()) {
-      await approveRow.getByRole("button", { name: /^approve$/i }).click();
-    } else {
-      // Not queued as a visibility approval (e.g. auto-approved or held on a
-      // gate) — approve in place from the review desk instead.
-      await page.goto(`/admin/review/${matchId}`, { waitUntil: "domcontentloaded" });
-      const inPlace = page.getByRole("button", { name: /approve/i }).first();
-      await expect(inPlace).toBeVisible({ timeout: 60_000 });
-      await inPlace.click();
+    // Full review pass on the desk itself: the reviewer must be able to see who
+    // they are deciding on, the score that decision rests on, and the evidence
+    // behind it before the publish control is used.
+    await page.goto(`/admin/review/${matchId}`, { waitUntil: "domcontentloaded" });
+    await expect(page.getByText(fullName).first()).toBeVisible({ timeout: 90_000 });
+    await expect(page.getByText(/try again|something went wrong/i).first()).toBeHidden({
+      timeout: 30_000,
+    });
+    await expect(
+      page.getByText(/evidence|requirement/i).first(),
+      "review desk shows the evidence the decision rests on",
+    ).toBeVisible({ timeout: 60_000 });
+
+    const approveOnDesk = page.getByRole("button", { name: /^approve/i }).first();
+    await expect(
+      approveOnDesk,
+      "a scored, evidence-complete match offers the publish decision",
+    ).toBeEnabled({ timeout: 60_000 });
+    await approveOnDesk.click();
+
+    // A blocked publish gate fails loudly with its reason instead of timing out
+    // later on a candidate the client can never see.
+    const blocked = page.getByText(/publish blocked|missing evidence/i).first();
+    if (await blocked.isVisible({ timeout: 5_000 }).catch(() => false)) {
+      await logPipelineState(matchId, "publish-blocked");
+      throw new Error(`Publish gate blocked the approval: ${await blocked.innerText()}`);
     }
 
+    // ── 3b. Assert the published state, from the persisted truth ──────────
     await expect
       .poll(async () => (await lookupCandidate(email)).matches[0]?.client_visibility, {
         timeout: 90_000,
         intervals: [1_000, 2_000],
       })
       .toBe("visible");
+
+    const published = await logPipelineState(matchId, "published");
+    expect(published, "published snapshot is readable").not.toBeNull();
+    const publishedMatch = published!.match;
+    expect(publishedMatch.client_visibility, "candidate is visible to the client").toBe("visible");
+    expect(publishedMatch.admin_status, "admin status records the approval").toMatch(/approved/i);
+    expect(
+      publishedMatch.approved_score_run_id,
+      "publication pins the approved score run",
+    ).toBeTruthy();
+    expect(
+      publishedMatch.approved_score_run_id,
+      "the approved run is the run the reviewer saw",
+    ).toBe(publishedMatch.current_score_run_id);
+    expect(publishedMatch.delivered_at, "delivery to the client is timestamped").toBeTruthy();
+    expect(publishedMatch.canonical_state, "canonical state left the review states").toMatch(
+      /published|delivered|client/i,
+    );
+
+    // Staff-side confirmation: the admin candidate record reads as published,
+    // not still awaiting review.
+    await page.goto(`/admin/candidates/${matchId}`, { waitUntil: "domcontentloaded" });
+    await expect(page.getByText(fullName).first()).toBeVisible({ timeout: 90_000 });
+    await expect(page.getByText(/visible to client|approved|published/i).first()).toBeVisible({
+      timeout: 60_000,
+    });
 
     // ── 4. Client signs in and advances the candidate ─────────────────────
     await loginAs(page, "client", fixtures.users["client_admin"]!.email);
