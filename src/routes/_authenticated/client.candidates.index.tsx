@@ -407,42 +407,52 @@ function CandidatesPage() {
  </div>
  )}
 
- {/* Header */}
- <header className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
- <div className="min-w-0">
- <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">Candidates</h1>
- <p className="text-sm text-muted-foreground mt-1">
- Review, compare, and progress the candidates delivered for your open roles.
- </p>
- <VisibilityNote className="mt-2" />
- </div>
- <div className="flex flex-col items-stretch gap-2 sm:shrink-0 sm:items-end">
- <Button
- size="sm"
- onClick={() => setCompareOpen(true)}
- disabled={!compareCheck.ok}
- title={compareCheck.reason ?? undefined}
- >
- Compare {selectedCandidates.length > 0 ? `${selectedCandidates.length} ` : ""}side by side
- </Button>
- {/* Bulk CV download: the ticked candidates when any are selected, else
-  every candidate currently shown whose CV has been released. */}
- <BulkCvDownloadButton
-  targets={cvTargets}
-  label={`Download ${plural(cvTargets.length, "CV", "CVs")} (ZIP)`}
- />
- <div className="text-xs text-muted-foreground sm:text-right">
- <div>
- <span className="tabular-nums text-foreground font-medium">{filtered.length}</span> of{" "}
- {(rowsRaw as ClientCandidateDTO[]).length} shown
- </div>
- {overview?.last_updated && (
- <div>Updated {new Date(overview.last_updated).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}</div>
- )}
- <div>Select {2}–{COMPARE_MAX} candidates on one role</div>
- </div>
- </div>
- </header>
+  {/* Header */}
+  <header className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+    <div className="min-w-0">
+      <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">Candidates</h1>
+      <p className="text-sm text-muted-foreground mt-1">
+        Review, compare, and progress the candidates delivered for your open roles.
+      </p>
+      <VisibilityNote className="mt-2" />
+    </div>
+    <div className="flex flex-col items-stretch gap-2 sm:shrink-0 sm:items-end">
+      <Button
+        size="sm"
+        onClick={() => setCompareOpen(true)}
+        disabled={!compareCheck.ok}
+        title={compareCheck.reason ?? undefined}
+      >
+        Compare {selectedCandidates.length > 0 ? `${selectedCandidates.length} ` : ""}side by side
+      </Button>
+      {/* Bulk CV download: the ticked candidates when any are selected, else
+      every candidate currently shown whose CV has been released. */}
+      <BulkCvDownloadButton
+        targets={cvTargets}
+        label={`Download ${plural(cvTargets.length, "CV", "CVs")} (ZIP)`}
+      />
+      <div className="text-xs text-muted-foreground sm:text-right">
+        <div>
+          <span className="tabular-nums text-foreground font-medium">{filtered.length}</span> of{" "}
+          {(rowsRaw as ClientCandidateDTO[]).length} shown
+        </div>
+        {overview?.last_updated && (
+          <div>Updated {new Date(overview.last_updated).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}</div>
+        )}
+        <div>Select {2}–{COMPARE_MAX} candidates on one role</div>
+      </div>
+    </div>
+  </header>
+
+  <HiringSnapshot
+    overview={overview}
+    kpisLoading={kpiPanel.loading}
+    isError={kpiPanel.isError}
+    error={kpiPanel.error}
+    onRetry={retryAll}
+    retrying={kpisLoading || gate.retrying}
+    orgSearch={orgSearch}
+  />
 
   {/* List controls */}
   <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
