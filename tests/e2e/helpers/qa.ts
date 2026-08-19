@@ -424,8 +424,11 @@ export type PipelineSnapshot = {
     processing_error_message: string | null;
     canonical_state: string | null;
     current_score_run_id: string | null;
+    approved_score_run_id: string | null;
     admin_status: string;
     client_visibility: string;
+    stage: string | null;
+    delivered_at: string | null;
   };
   score: { total_score: number | null; score_band: string | null } | null;
   file: {
