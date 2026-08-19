@@ -447,7 +447,6 @@ function ClientsPage() {
                 <th className="px-3 py-2.5 font-medium">Status</th>
                 <th className="px-3 py-2.5 font-medium tabular-nums">Active positions</th>
                 <th className="px-3 py-2.5 font-medium tabular-nums">Delivered</th>
-                <th className="px-3 py-2.5 font-medium">Action</th>
                 <th className="px-3 py-2.5 font-medium">Last activity</th>
                 <th className="px-3 py-2.5 font-medium text-right">Open</th>
               </tr>
@@ -458,8 +457,29 @@ function ClientsPage() {
               ))}
               {rows.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="px-3 py-16 text-center text-muted-foreground">
-                    No clients match these filters.
+                  <td colSpan={7} className="px-3 py-16 text-center text-muted-foreground">
+                    <div className="flex flex-col items-center gap-2">
+                      <p>No clients match these filters.</p>
+                      <Button
+                        variant="link"
+                        size="sm"
+                        onClick={() =>
+                          navigate({
+                            search: {
+                              ...search,
+                              q: "",
+                              status: "",
+                              industry: "",
+                              org_type: "client_demo",
+                              archived: "0",
+                              page: 1,
+                            },
+                          })
+                        }
+                      >
+                        Clear filters
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               )}
@@ -564,7 +584,16 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
       <td className="px-3 py-2.5">
         {r.primary_contact_name || r.primary_contact_email ? (
           <>
-            <div className="text-foreground">{r.primary_contact_name ?? "—"}</div>
+            <div className="text-foreground">
+              {r.primary_contact_name
+                ? r.primary_contact_name
+                    .split(" ")
+                    .map(
+                      (w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(),
+                    )
+                    .join(" ")
+                : "—"}
+            </div>
             {r.primary_contact_email && (
               <a
                 href={`mailto:${r.primary_contact_email}`}

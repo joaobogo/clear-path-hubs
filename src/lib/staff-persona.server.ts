@@ -9,6 +9,8 @@ export type StaffPersona = {
   name: string;
   role: string;
   isStaff: boolean;
+  /** Badge to display after the name, e.g. "(Staff)" */
+  badge?: string;
 };
 
 const SYSTEM_ACCOUNTS = new Set([
@@ -70,8 +72,9 @@ export function resolveStaffPersona(args: {
 
   // Human staff member with a real name.
   return {
-    name: maskStatus ? name || "TaaSFlow team" : `${name} (Staff)`,
+    name: maskStatus ? name || "TaaSFlow team" : `${name}`,
     role: roleLabel || "TaaSFlow recruiter",
     isStaff: true,
+    badge: "(Staff)",
   };
 }

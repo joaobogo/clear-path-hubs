@@ -144,7 +144,7 @@ export function CvTab({ cv, matchId, cp, insights }: { cv: Any; matchId: string;
           <div className="mb-1 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
             <span>
               {pitchTone === "sell"
-                ? "Recruiter pitch"
+                ? "Northwind Talent's pitch"
                 : pitchTone === "cautious"
                   ? "Honest read"
                   : "Balanced view"}

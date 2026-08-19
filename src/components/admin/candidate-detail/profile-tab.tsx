@@ -279,7 +279,7 @@ function InsightsBriefing({ insights }: { insights: Any }) {
         >
           <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
             {insights.pitch_tone === "sell"
-              ? "Recruiter pitch"
+              ? "Northwind Talent's pitch"
               : insights.pitch_tone === "cautious"
                 ? "Honest read"
                 : "Balanced view"}

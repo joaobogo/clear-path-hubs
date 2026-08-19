@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { claimWorkQueueItem } from "@/lib/admin-ops.functions";
 import type { QueueItem, QueueRef, QueueTarget } from "@/lib/admin-ops-types";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 /** Renders a queue ref as a link to its exact record, or plain text. */
 function RefLabel({ ref: r, className }: { ref: QueueRef; className?: string }) {
@@ -56,10 +57,12 @@ function toneClass(tone: QueueItem["tone"]) {
 function waited(iso: string | null | undefined): string {
   if (!iso) return "—";
   const m = Math.round((Date.now() - new Date(iso).getTime()) / 60_000);
-  if (m < 60) return `${Math.max(m, 1)}m`;
+  if (m < 60) return `${Math.max(m, 1)} min`;
   const h = Math.round(m / 60);
   if (h < 48) return `${h}h`;
-  return `${Math.round(h / 24)}d`;
+  const d = Math.round(h / 24);
+  if (d < 30) return `${d}d`;
+  return `${Math.round(d / 30)} mo`;
 }
 
 function TargetLink({ target, children }: { target: QueueTarget; children: React.ReactNode }) {
@@ -182,13 +185,34 @@ export function WorkQueueRow({
                 </span>
               ))
             : item.subtitle}
-          {item.meta ? ` · ${item.meta}` : ""}
+          {item.meta ? (
+            item.key === "unpaid" ? (
+              <>
+                {" · "}
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    "h-4 px-1 text-[9px] font-semibold uppercase leading-none",
+                    item.meta === "checkout started"
+                      ? "border-warning/40 bg-warning/10 text-warning-foreground"
+                      : "border-muted-foreground/30 bg-muted text-muted-foreground",
+                  )}
+                >
+                  {item.meta}
+                </Badge>
+              </>
+            ) : (
+              ` · ${item.meta}`
+            )
+          ) : (
+            ""
+          )}
         </div>
       </div>
 
       <OwnerCell item={item} />
       <span className={`shrink-0 tabular-nums text-xs ${toneClass(item.tone)}`} title="Waiting">
-        {item.key === 'score_stale' ? 'Stale' : waited(item.waiting_since)}
+        {item.key === 'score_stale' ? 'Stale' : (waited(item.waiting_since) === '1m' ? '1 min' : waited(item.waiting_since))}
       </span>
       <Button asChild size="sm" variant="secondary" className="h-7 shrink-0 text-xs">
         <TargetLink target={item.target}>

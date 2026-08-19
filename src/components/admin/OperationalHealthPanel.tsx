@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 import { humanizeCode } from "@/lib/humanize-codes";
+import { Link } from "@tanstack/react-router";
 
 const KIND_LABEL: Record<string, string> = {
   webhook: "Failed webhooks",
@@ -104,15 +105,18 @@ export function OperationalHealthPanel() {
                     </Button>
                   ) : null}
                   <span className="text-xs text-muted-foreground">{new Date(i.occurred_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</span>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="ml-auto"
-                    disabled={retry.isPending}
-                    onClick={() => retry.mutate({ kind: i.kind, id: i.id })}
-                  >
-                    Retry
-                  </Button>
+                  <div className="flex items-center gap-1.5 ml-auto">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7"
+                      disabled={retry.isPending}
+                      onClick={() => retry.mutate({ kind: i.kind, id: i.id })}
+                    >
+                      Retry
+                    </Button>
+                    <Link to="/admin/candidates/$id" params={{ id: i.entity_id || i.id }} className="text-xs text-primary hover:underline">open</Link>
+                  </div>
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">{humanizeCode(i.detail)}</p>
                 {i.last_error ? (

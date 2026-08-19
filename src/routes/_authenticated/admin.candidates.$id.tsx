@@ -62,9 +62,8 @@ const TABS = [
   { id: "evidence", label: "Evidence", icon: ScanText },
   { id: "score", label: "Score", icon: Gauge },
   { id: "screening", label: "Screening", icon: ListChecks },
-  { id: "history", label: "History", icon: HistoryIcon },
+  { id: "history", label: "History & Audit", icon: HistoryIcon },
   { id: "preview", label: "Client preview", icon: Eye },
-  { id: "activity", label: "Activity & audit", icon: ActivityIcon },
 ] as const;
 type TabId = (typeof TABS)[number]["id"];
 const TAB_IDS = TABS.map((t) => t.id) as unknown as [TabId, ...TabId[]];

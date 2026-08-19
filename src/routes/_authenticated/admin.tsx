@@ -136,7 +136,9 @@ function AdminLayout() {
         <SupportSessionBanner />
       </div>
 
-      <SectionTabs groups={sectionGroups} />
+      <div className="mb-6">
+        <SectionTabs groups={sectionGroups} />
+      </div>
 
 
       {/* Included test records change every number on every desk, so say so
@@ -155,7 +157,9 @@ function AdminLayout() {
         </div>
       ) : null}
 
-      <Outlet />
+      <div className="flex-1">
+        <Outlet />
+      </div>
 
     </WorkspaceShell>
   );
