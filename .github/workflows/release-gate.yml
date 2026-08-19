@@ -1,0 +1,137 @@
+name: Release gate
+
+# Blocks merges on any regression: the full unit/integration suite plus the
+# Playwright smoke journey (candidate account creation → apply → staff approval
+# → client advance → staff queue) must both be green.
+on:
+  pull_request:
+    branches: ["**"]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: release-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CI: "true"
+  # Public client config (publishable values only — never service keys).
+  VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+  VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+  VITE_SUPABASE_PROJECT_ID: ${{ vars.VITE_SUPABASE_PROJECT_ID }}
+  SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+  SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+  # QA fixture endpoints are gated: both must be present for the smoke journey.
+  ENABLE_QA_ENDPOINTS: "true"
+  QA_SEED_TOKEN: ${{ secrets.QA_SEED_TOKEN }}
+  LOVABLE_API_KEY: ${{ secrets.LOVABLE_API_KEY }}
+
+jobs:
+  static-checks:
+    name: Lint, typecheck & vocabulary
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - name: Lint
+        run: bun run lint
+      - name: Typecheck
+        run: bunx tsc --noEmit
+      - name: Public/client vocabulary rules
+        run: bun run check:vocabulary
+
+  unit-tests:
+    name: Full test suite (vitest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - name: Run every test
+        run: bun run test -- --reporter=default --reporter=junit --outputFile=reports/vitest-junit.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vitest-report
+          path: reports/
+          if-no-files-found: ignore
+
+  smoke-journey:
+    name: Playwright smoke journey
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+
+      - name: Guard required QA secrets
+        run: |
+          missing=0
+          for var in QA_SEED_TOKEN SUPABASE_SERVICE_ROLE_KEY VITE_SUPABASE_URL VITE_SUPABASE_PUBLISHABLE_KEY; do
+            if [ -z "${!var}" ]; then echo "::error::$var is not configured for the release gate"; missing=1; fi
+          done
+          exit $missing
+
+      - name: Install Playwright Chromium
+        run: bunx playwright install --with-deps chromium
+
+      - name: Start the app
+        run: |
+          bun run dev > /tmp/app.log 2>&1 &
+          for i in $(seq 1 90); do
+            curl -sf -o /dev/null http://localhost:8080/ && exit 0
+            sleep 2
+          done
+          echo "::error::app did not become ready on :8080"
+          tail -n 100 /tmp/app.log
+          exit 1
+
+      - name: Smoke journey (candidate signup → approval → client advance → queue)
+        run: bun run test:e2e:smoke
+
+      - name: App server log
+        if: failure()
+        run: tail -n 200 /tmp/app.log
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-failure-artifacts
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+
+  release-gate:
+    name: Release gate
+    runs-on: ubuntu-latest
+    needs: [static-checks, unit-tests, smoke-journey]
+    if: always()
+    steps:
+      - name: Block on any regression
+        run: |
+          echo "static-checks: ${{ needs.static-checks.result }}"
+          echo "unit-tests:    ${{ needs.unit-tests.result }}"
+          echo "smoke-journey: ${{ needs.smoke-journey.result }}"
+          if [ "${{ needs.static-checks.result }}" != "success" ] \
+            || [ "${{ needs.unit-tests.result }}" != "success" ] \
+            || [ "${{ needs.smoke-journey.result }}" != "success" ]; then
+            echo "::error::Release gate failed — merge blocked."
+            exit 1
+          fi
+          echo "Release gate green."

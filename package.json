@@ -14,7 +14,10 @@
     "check:vocabulary:client": "node scripts/check-client-vocabulary.mjs",
     "prebuild": "npm run check:vocabulary",
     "prebuild:dev": "npm run check:vocabulary",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:smoke": "playwright test tests/e2e/smoke-journey.spec.ts",
+    "release:gate": "npm run test && npm run test:e2e:smoke"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
