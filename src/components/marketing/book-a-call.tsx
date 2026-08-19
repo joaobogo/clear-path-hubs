@@ -17,6 +17,8 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
+import { FieldError } from "@/components/ui/field-error";
+import { collectErrors, emailText, requiredText } from "@/lib/form-validation";
 import { CalendarDays, MessageSquare, Phone, Loader2, Check, Clock, Mail } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 
@@ -202,12 +204,20 @@ function CallForm({
   onSuccess,
 }: CommonProps & { onSuccess?: () => void }) {
   const [pending, setPending] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const submit = useServerFn(submitInquiry);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     const formEl = e.currentTarget;
+    const invalid = collectErrors({
+      name: requiredText(String(form.get("name") ?? "")),
+      email: emailText(String(form.get("email") ?? "")),
+      company: requiredText(String(form.get("company") ?? "")),
+    });
+    setErrors(invalid as Record<string, string>);
+    if (Object.keys(invalid).length > 0) return;
     setPending(true);
     try {
       await submit({
@@ -268,7 +278,7 @@ function CallForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5">
+    <form noValidate onSubmit={onSubmit} className="space-y-5">
       <div className="rounded-xl border border-[color:var(--brand-navy)]/12 bg-[color:var(--brand-mist)]/50 px-4 py-3">
         <p className="flex items-center gap-2 text-sm font-medium text-[color:var(--brand-navy)]">
           <Clock className="h-4 w-4" /> 20-minute discovery call
@@ -279,19 +289,21 @@ function CallForm({
         </p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
-        <Field name="name" label="Full name" required autoComplete="name" />
+        <Field name="name" label="Full name" required autoComplete="name" error={errors.name} />
         <Field
           name="email"
           type="email"
           label="Work email"
           required
           autoComplete="email"
+          error={errors.email}
         />
         <Field
           name="company"
           label="Company"
           required
           autoComplete="organization"
+          error={errors.company}
         />
         <Field
           name="role_count"
@@ -320,6 +332,7 @@ function CallForm({
           placeholder="Timeline, budget, must-haves, hard-nos…"
           className="mt-1"
         />
+        <FieldError message={errors.message} />
       </div>
       {/* honeypot */}
       <input
@@ -370,6 +383,13 @@ function MessageForm({
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
+    const invalid = collectErrors({
+      name: requiredText(String(form.get("name") ?? "")),
+      email: emailText(String(form.get("email") ?? "")),
+      message: requiredText(String(form.get("message") ?? "")),
+    });
+    setErrors(invalid as Record<string, string>);
+    if (Object.keys(invalid).length > 0) return;
     setPending(true);
     try {
       await submit({
@@ -425,15 +445,16 @@ function MessageForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form noValidate onSubmit={onSubmit} className="space-y-4">
       <div className="grid gap-3 sm:grid-cols-2">
-        <Field name="name" label="Full name" required autoComplete="name" />
+        <Field name="name" label="Full name" required autoComplete="name" error={errors.name} />
         <Field
           name="email"
           type="email"
           label="Work email"
           required
           autoComplete="email"
+          error={errors.email}
         />
         <Field name="company" label="Company" autoComplete="organization" />
         <Field
@@ -458,7 +479,7 @@ function MessageForm({
         <Textarea
           id="msg-message"
           name="message"
-          required
+          aria-invalid={!!errors.message}
           rows={5}
           maxLength={4000}
           placeholder={
@@ -508,6 +529,7 @@ function Field({
   required,
   placeholder,
   autoComplete,
+  error,
 }: {
   name: string;
   label: string;
@@ -515,6 +537,7 @@ function Field({
   required?: boolean;
   placeholder?: string;
   autoComplete?: string;
+  error?: string | null;
 }) {
   return (
     <div>
@@ -526,12 +549,13 @@ function Field({
         id={`inq-${name}`}
         name={name}
         type={type}
-        required={required}
+        aria-invalid={!!error}
         placeholder={placeholder}
         autoComplete={autoComplete}
         maxLength={254}
         className="mt-1"
       />
+      <FieldError id={`inq-${name}-error`} message={error} />
     </div>
   );
 }
