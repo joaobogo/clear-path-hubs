@@ -166,23 +166,38 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "4. Verification of prior fixes — a note for the team
+TEXTO DO USUÁRIO: "PROMPT 1 — BLOCKER RE-TEST (run this first)
 
-Thirteen of the thirty-two items I reached are genuinely fixed, and several were substantial: the client-detail surface (16 tabs), clients search, the … menu, Saved views, Log decision, the delivery-failure reconciliation across five surfaces, the STATUS column, the duplicate AEC industry value, the JSON-quoted URL param, \"Copy payload\", and the header-metadata instability. That is real progress and it should be said plainly.
+You previously reported a readiness score of 76% (\"Launchable with Accepted Risks\") after a visual stabilization pass. An independent browser audit found blockers that do not appear in your changelog. Do not re-run the visual work. Do not self-assess. Re-test only the list below, in a real browser, and report a verdict per item.
 
-Two cautions. First, item 2 was probably never as broken as reported — the menu works on a real pointer click; only aria-expanded lies. Any \"dead control\" in a prior audit that was diagnosed by reading an attribute rather than clicking deserves a re-test. Second, item 28's fix went to one of three surfaces, and the version applied to /admin (string-replacing underscores inside a JSON payload) is worse than doing nothing. The correct string already exists on /admin/notifications.
+Rules:
 
-15. What this audit did not cover
+FIXED requires that you performed the action and observed the expected result, then refreshed and observed it again. A success toast that does not survive a refresh is STILL BROKEN.
+STILL BROKEN requires the exact text or number you observed.
+\"Should be fixed\", \"typecheck passes\", \"the code looks correct\" are not verdicts. Click the thing.
+For every STILL BROKEN item, give the file and the one-line fix.
+Client console — https://taasflow.com/client
+Open any candidate at \"Shortlisted by your team\" and press Request interview. Prior result: the whole page was replaced by \"Something went wrong / Nothing was changed. Please try again. / Reference: TF-BA777138\", and \"Try again\" did nothing. Reproduced on Miguel Torres and Sofia Marques.
+Create a role from the in-app + Create role button, complete the 7-step wizard, save. Prior result: saved as \"Under review\" but absent from every tab of /client/positions; the \"Under review(N)\" tab renders \"0 roles under review\". Confirm the finished role is reachable from the Roles list.
+On /client/candidates compare the six stage tiles against the Board columns in the same viewport. Prior result: tiles read SHORTLISTED 2 / INTERVIEWING 4 while the board read 3 / 3 — off by exactly one in every state tested, including after a stage change and after reverting it. Tile DELIVERED read 10 while the board's DELIVERED column read 0.
+On a role page, read \"Fit spread of candidates delivered\". Prior result: \"Not Recommended 0–49\" showed 0 with a bar drawn next to it, while three candidates score 47, 44 and 41. The five bands summed to 7 under a caption reading \"Every candidate delivered to you\".
+Open Beatriz Costa (88) and Inês Lopes (73) and Carla Nunes (66) and Miguel Torres (54). Read the \"Scoring criteria\" panel on each. Prior result: Inês, Carla and Miguel publish identical breakdowns (must-have 67% / preferred 38% / screening 100%) and score 73, 66 and 54. Sofia publishes strictly better coverage than Inês and scores 10 points lower. No candidate's score equals its own weighted breakdown.
+Search /client/candidates for beatriz.costa@demo.taasflow.com. Prior result: 0 of 10, while that exact string is printed on her profile.
+Apply the \"Unicorn only (95+)\" filter. Prior result: returns Beatriz Costa, score 88, badged \"Unicorn\".
+Confirm BROWSER-TEST-R2 Position, BROWSER-TEST-R3 Position, BROWSER-TEST-R2 Admin Position, QA Gate Role 86485 and [QA test — ignore] QA Role Aug 17 are no longer visible anywhere in the Northwind client workspace — Overview panel, Roles list, WHAT HAPPENS NEXT, Live movement, conversations list, and the Publish blockers table.
+Admin console — https://taasflow.com/admin
+/admin/approvals — click Approve on any row. Prior result: dead. No dialog, no toast, no navigation, no state change, \"7 pending\" unchanged after refresh. Same for Decline. Bulk approve stayed disabled with 1 and with 3 rows selected. Root cause: all three are type=\"submit\" buttons with closest('form') === null.
+/admin/candidates — search for Miguel Torres (row 1 of the unfiltered list) and for Northwind. Prior result: \"0 submissions\" for both, and for four other queries.
+Header ⌘K global search for Northwind. Prior result: \"No matches for \"Northwind\"\" while candidates and positions resolve fine.
+/admin/clients/<northwind-id> — read the KPI tiles. Prior result: a tile labelled CLIENT USERS 3 directly above a tile labelled CLIENT USERS 0; four different position counts on one page (Open roles 3, OPEN POSITIONS 8, POSITIONS 8, ACTIVE POSITIONS 2).
+Candidate detail — click the Evidence tab. Prior result: tabs do not respond to clicks at all; aria-selected stays on Profile. Only ?tab=evidence works.
+Candidate ?tab=evidence — prior result: header \"6 of 6 must-have criteria evidenced\" over items marked Thin / Partial / Missing; graph reading \"0 with verified quotes\" and \"0 with no evidence\" beside \"10 reviewer-confirmed\"; {\"location\":\"cv:134-299\"} rendered as UI text; a quote window reading om · +351 912 000 105 Profile Full-stack engineer…owning fe — starting mid-word and containing the candidate's phone number.
+/admin/publish — press the one enabled Publish button. Prior result: no confirmation dialog of any kind, then the toast position_screening_limit_exceeded. Meanwhile \"Grant payment exemption\" on the same row demands a written 10-character reason.
+/admin/clients — confirm CB Test Company, Rehearsal Hotels Ltd, Rehearsal Hotels 489631 and TaaSFlow Platform now appear. Prior result: absent from every filter state including \"Include archived\", and unfindable by search, while /admin Portfolio health lists all four with open positions.
+/admin — confirm \"Delivery failures (7d)\" does not increase when you log a decision or send a nudge. Prior result: 71 → 72 → 73, each of my own actions generating a new suppressed-recipient failure that returned to the queue.
+Submit any form with a required field empty. Prior result: the browser's native bubble in Portuguese — \"Preencha este campo.\" — on /admin Log decision, /admin/clients_new, and the email field.
 
-The browser connection dropped at ~22:07, roughly 40% of the way through the brief.
-
-Confirmed-defect items not reached (17): 15 (stage tracker IN/OUT/NOW), 17 (unpaid tile vs /admin/payments list), 18 (intake counts), 19 (positions Needs attention), 29 for 9 of 10 candidates (Flow Group Ventures re-count), 30 and 31 (test-record toggle leakage), 32 (notification deep-link ratio), 33 (audit pagination lag), 42 (copilot question handling), 43 (support session TTL), 44 (integrations chips), 45 (payments sandbox disclosure), 46, 47, 48 (duplicated blocks), 49 (messages threads).
-
-Pages not opened: /admin/my-day, /admin/positions (and the 7-step edit wizard), /admin/intake, /admin/messages, /admin/payments, /admin/team, /admin/support, /admin/integrations, and all eight secondary surfaces requiring existence verdicts (/admin/settings, /admin/operations beyond its tiles, /admin/business-rules, /admin/wbr, /admin/copilot, /admin/scoring/orphans, /admin/qa-report, /admin/design-system).
-
-Checks not run: the 375px responsive pass on any page; the notifications-bell deep-link ratio; the test-records toggle sweep (the toggle was left ON, its original state, so this can be run cleanly from scratch); the /admin/candidates Export dialog and its truncated-UUID scope label; candidate CV download actor badges; ?tab=client-preview redirect behaviour; two mid/low Northwind candidates on the evidence surface.
-
-To resume: reconnect the Chrome extension. The test-records toggle is ON, no dialogs are open, and the only two state changes I made (both on the test org TaaSFlow Platform) are recorded in §11 and need no cleanup."`}
+Output: a table of item · FIXED / STILL BROKEN · observed text or number · file and one-line fix. Then a single sentence: how many of the 18 are fixed."`}
         </div>
         <Scripts />
       </body>
