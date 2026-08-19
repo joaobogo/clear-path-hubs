@@ -188,9 +188,11 @@ function BoardroomPage() {
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
             Exit boardroom
           </Link>
-          <span className="rounded-full border border-white/20 px-2 py-0.5 text-[10px] uppercase tracking-widest">
-            Live · {orgName}
-          </span>
+          {hasBoundWorkspace ? (
+            <span className="rounded-full border border-white/20 px-2 py-0.5 text-[10px] uppercase tracking-widest">
+              Live · {orgName}
+            </span>
+          ) : null}
 
         </div>
         <div className="flex items-center gap-4">
