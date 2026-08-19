@@ -111,7 +111,16 @@ export function CandidateHeader({
           {(c.timezone || c.availability || candidate.work_authorization) && (
             <span className="inline-flex items-center gap-1">
               <CalendarClock className="h-3.5 w-3.5" aria-hidden />
-              {[c.timezone, c.availability, candidate.work_authorization].filter(Boolean).join(" · ")}
+              {[
+                c.timezone,
+                c.availability,
+                candidate.work_authorization,
+                candidate.candidate.languages.length > 0
+                  ? `Languages: ${candidate.candidate.languages.map((l) => (l.level ? `${l.name} (${l.level})` : l.name)).join(", ")}`
+                  : null,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
             </span>
           )}
 
