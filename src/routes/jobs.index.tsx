@@ -252,11 +252,12 @@ function JobsPage() {
             onChange={(e) => { setLocationText(e.target.value); }}
           />
 
+          <Label htmlFor="work-model-select" className="sr-only">Work model</Label>
           <Select
             value={workModel}
             onValueChange={(v) => { setParam({ work: v, page: 1 }); }}
           >
-            <SelectTrigger aria-label="Work model">
+            <SelectTrigger id="work-model-select" aria-label="Work model">
               <SelectValue placeholder="Work model" />
             </SelectTrigger>
             <SelectContent>
@@ -266,11 +267,12 @@ function JobsPage() {
               <SelectItem value="onsite">Onsite</SelectItem>
             </SelectContent>
           </Select>
+          <Label htmlFor="employment-type-select" className="sr-only">Employment type</Label>
           <Select
             value={employment}
             onValueChange={(v) => { setParam({ type: v, page: 1 }); }}
           >
-            <SelectTrigger aria-label="Employment type">
+            <SelectTrigger id="employment-type-select" aria-label="Employment type">
               <SelectValue placeholder="Employment" />
             </SelectTrigger>
             <SelectContent>
