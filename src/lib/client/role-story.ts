@@ -164,7 +164,7 @@ export function buildCoverage(candidates: StoryCandidate[]): CoverageBlock {
     // low "fully evidenced" number next to "10 of 10 supported" would read as
     // a contradiction without the partial count beside it.
     const supported = met + partial;
-    takeaway = `${supported} of ${checks} requirement checks (${met} evidenced, ${partial} partial) are supported by direct evidence from the CVs and screening answers.`;
+    takeaway = `${supported} of ${checks} requirement checks (${met} evidenced, ${partial} partial) are supported by direct evidence from the shortlist's CVs and screening answers.`;
   }
 
   return {
