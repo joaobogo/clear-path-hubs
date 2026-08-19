@@ -189,10 +189,11 @@ export function buildShortlistRationale(
   const gaps = lines.filter((l) => l.verdict === "gap" && l.importance === "must_have");
 
   const counted = lines.filter((l) => l.verdict !== "not_applicable");
+  const evidencedCount = lines.filter((l) => l.verdict === "met" && l.claim).length;
   const summary =
     counted.length === 0
       ? "0 of 0 requirements evidenced"
-      : `${evidenced.length} of ${counted.length} of your requirements evidenced`;
+      : `${evidencedCount} of ${counted.length} of your requirements evidenced`;
 
   return { lines, evidenced, gaps, summary };
 }
