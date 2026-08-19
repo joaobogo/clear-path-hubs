@@ -4,7 +4,7 @@
 //
 // Server-only: consumed by createServerFn handlers via the authenticated
 // supabase client (RLS applies as the caller).
-import { isUnicornMatch, classifyBand } from "@/lib/scoring/bands";
+import { isUnicornMatch, classifyBand, bandToFitLabel } from "@/lib/scoring/bands";
 
 import { countLanes, isInLane, rowsInLane } from "@/lib/client-pipeline-lane";
 import { cleanQuote, isTemplatedEvidence, isCandidateHeadline } from "@/lib/evidence/quote-hygiene";
@@ -410,6 +410,7 @@ export type ClientCandidateDTO = {
    * count of hand-verified requirements — never the reviewer's internal note.
    */
   human_review: { reviewed: boolean; verified_requirements: number; statement: string | null };
+
   /**
    * The band is never a bare adjective: this names the method that produced the
    * assessment and lists the criteria with their evidence snippets. When no

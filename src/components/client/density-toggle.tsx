@@ -25,7 +25,7 @@ export function DensityToggle({
       title={compact ? "Switch to comfortable spacing" : "Fit more roles on screen"}
     >
       {compact ? <Rows3 className="h-3.5 w-3.5" /> : <Rows4 className="h-3.5 w-3.5" />}
-      {compact ? "Comfortable" : "Compact"}
+      {compact ? "Comfortable mode" : "Compact mode"}
     </Button>
   );
 }

@@ -140,6 +140,7 @@ function buildBreadcrumbs(
   // A raw uuid is never a label. Until the detail page publishes the record's
   // own name, fall back to a short human word, not the id.
   const readable = detailLabel ?? (isUuid ? "Candidate" : last.replace(/[-_]/g, " "));
+
   return [
     { label: section.label, to: section.to },
     { label: readable },
