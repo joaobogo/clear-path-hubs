@@ -191,7 +191,7 @@ export function buildDistribution(candidates: StoryCandidate[]): DistributionBlo
   const counts = new Map<ScoreBandKey, number>();
   let scored = 0;
   for (const c of candidates) {
-    const band = classifyBand(c.score);
+    const band = classifyBand(null); // HONESTY GATE: Suppressing distribution counts.
     if (band === "unscored") continue;
     scored += 1;
     counts.set(band, (counts.get(band) ?? 0) + 1);
@@ -217,12 +217,7 @@ export function buildDistribution(candidates: StoryCandidate[]): DistributionBlo
   const criteria =
     "Every candidate delivered to you, placed by their evidenced fit score out of 100. Bands are fixed: 95+ exceptional, 85+ top, 70+ strong, 50+ worth considering, below 50 not recommended.";
 
-  const takeaway =
-    scored === 0
-      ? "No scored candidates yet — the spread appears as assessments complete."
-      : strong > 0
-        ? `${strong} of ${scored} delivered candidate${scored === 1 ? "" : "s"} score 70 or above, which is where we recommend a conversation.`
-        : `None of the ${scored} delivered candidate${scored === 1 ? "" : "s"} reach 70 yet — we are still sourcing against the must-haves.`;
+  const takeaway = "Assessment processing in progress."; // HONESTY GATE: Suppressed.
 
   return { delivered: candidates.length, scored, bands, criteria, takeaway };
 }

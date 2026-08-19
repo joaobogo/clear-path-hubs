@@ -32,7 +32,6 @@ export const REVIEW_OPTIONS = [
 ] as const;
 
 export const SORT_OPTIONS = [
-  { key: "score", label: "Best score first" },
   { key: "recent", label: "Recently delivered" },
  { key: "must", label: "Must-have coverage" },
  { key: "stage", label: "Stage" },

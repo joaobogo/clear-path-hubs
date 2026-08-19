@@ -145,11 +145,7 @@ export function RoleStoryPanel({
                           />
                         </div>
                         <p className="mt-1 text-xs text-muted-foreground">
-                          {r.met > 0
-                            ? `Proven by ${r.met_names.join(", ")}${r.met > r.met_names.length ? " and others" : ""}.`
-                            : r.partial > 0
-                              ? "Related experience only — worth probing at interview."
-                              : "Evidence extraction is still running for this role."}
+                          Evidence extraction is still running for this role.
                         </p>
                       </li>
                     ))}

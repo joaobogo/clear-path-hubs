@@ -228,7 +228,7 @@ export async function loadKpiRows(
     stage: m.stage,
     approved_score_run_id: m.approved_score_run_id,
     delivered_at: m.delivered_at,
-    approved_score: m.score_runs?.score != null ? Number(m.score_runs.score) : null,
+    approved_score: null, // HONESTY GATE: Extraction unreliable; suppressing all scores.
     approved_fit_label: m.score_runs?.fit_label ?? null,
     approved_fit_band: m.score_runs?.fit_band ?? null,
     interview_active: activeInterviews.has(m.id),
@@ -299,7 +299,7 @@ export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
   const { counts } = countLanes(rows);
   return {
     delivered: new Set(rows.map((r) => r.candidate_profile_id)).size,
-    top: rows.filter(isTopMatch).length,
+    top: 0, // HONESTY GATE: Suppressed.
     shortlisted: counts.shortlisted,
     interviewing: counts.interview_process,
     interview_scheduled: rows.filter((r) => r.interview_scheduled).length,
@@ -968,7 +968,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     },
     // Employers see the 0-100 fit score alongside the band so ranking is
     // obvious at a glance. 95+ is the unicorn threshold.
-    score: typeof run?.score === "number" ? Math.round(run.score) : run?.score != null ? Math.round(Number(run.score)) : null,
+    score: null, // HONESTY GATE: Extraction unreliable; suppressing all scores.
     fit_label: run?.fit_label ?? run?.fit_band ?? null,
     fit,
     // The engine's own explanation string carries a raw n/100 figure, which is
@@ -1044,29 +1044,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
       completed_at: run?.completed_at ?? null,
       method: normalizeEvaluationMethod((run as AnyRow)?.evaluation_method),
       method_label: clientMethodLabel((run as AnyRow)?.evaluation_method),
-      category_breakdown: [
-        {
-          label: "Must-have coverage",
-          value:
-            run?.must_have_coverage ??
-            run?.result?.category_breakdown?.must_have ??
-            null,
-          weight: 0.5,
-        },
-        {
-          label: "Preferred coverage",
-          value:
-            run?.preferred_coverage ??
-            run?.result?.category_breakdown?.preferred ??
-            null,
-          weight: 0.3,
-        },
-        {
-          label: "Screening alignment",
-          value: run?.result?.category_breakdown?.screening_alignment ?? null,
-          weight: 0.2,
-        },
-      ],
+      category_breakdown: [], // HONESTY GATE: Suppressed until extraction is fixed.
     },
   };
 }
