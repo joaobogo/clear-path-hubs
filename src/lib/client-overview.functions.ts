@@ -534,7 +534,6 @@ export const getClientOverview = createServerFn({ method: "GET" })
       active_positions: activePositions,
       blocked_summary,
       new_this_week,
-      action_required,
       whats_next,
       decision_queue,
       decision_queue_meta,
@@ -545,4 +544,5 @@ export const getClientOverview = createServerFn({ method: "GET" })
       recent_activity: (events as AnyRow[]) ?? [],
       last_updated,
     };
+
   });
