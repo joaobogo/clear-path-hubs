@@ -563,10 +563,10 @@ function CandidateDetailPage() {
  </dl>
  </CollapsibleSection>
  )}
- <div className="grid gap-4 sm:grid-cols-2">
- <ProfilePanel candidate={candidate} />
- <LinksPanel candidate={candidate} />
- </div>
+  <div className="grid gap-4 sm:grid-cols-2">
+    <LinksPanel candidate={candidate} />
+  </div>
+
  </TabsContent>
 
  <TabsContent value="interview" className="mt-4 space-y-4">
