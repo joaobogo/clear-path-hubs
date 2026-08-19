@@ -97,6 +97,38 @@ export function PublishGatePanel({
 
   return (
     <section className="rounded-lg border bg-card" aria-labelledby="publish-gate-heading">
+      <Dialog open={!!confirmRow} onOpenChange={(open) => !open && setConfirmRow(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Publish role to client workspace?</DialogTitle>
+            <DialogDescription>
+              This will make <span className="font-semibold text-foreground">{confirmRow?.title}</span> live for{" "}
+              <span className="font-semibold text-foreground">{confirmRow?.organization_name}</span>.
+              This is a real notification, sent immediately.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center gap-3 rounded-md bg-warning/10 p-3 text-sm text-warning-foreground">
+            <AlertTriangle className="h-4 w-4 shrink-0" />
+            <p>Once live, candidates will be able to see this role if visibility is public.</p>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setConfirmRow(null)}>
+              Cancel
+            </Button>
+            <Button
+              disabled={publishMut.isPending}
+              onClick={() => {
+                if (confirmRow) {
+                  publishMut.mutate(confirmRow.position_id);
+                  setConfirmRow(null);
+                }
+              }}
+            >
+              {publishMut.isPending ? "Publishing…" : "Confirm & Publish"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <header className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3">
         <div>
           <h2 id="publish-gate-heading" className="text-sm font-semibold">
