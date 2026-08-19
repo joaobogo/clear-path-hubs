@@ -480,7 +480,11 @@ export const dismissNotifications = createServerFn({ method: "POST" })
 
 export const listDeliveryFailures = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((raw) => z.object({ window_days: z.number().optional().default(7) }).parse(raw))
+  // The delivery-health page reads the default window and passes no argument,
+  // so an absent payload is valid input — not a validation failure.
+  .inputValidator((raw) =>
+    z.object({ window_days: z.number().optional().default(7) }).parse(raw ?? {}),
+  )
   .handler(async ({ data: inputData, context }) => {
     const { data: isStaff } = await context.supabase.rpc("is_platform_staff", { _user: context.userId });
     if (!isStaff) throw new Error("Forbidden");
