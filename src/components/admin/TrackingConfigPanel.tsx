@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { humanizeCode } from "@/lib/humanize-codes";
 import { Badge } from "@/components/ui/badge";
 import { TRACKER_CATEGORY, verifyTrackers } from "@/lib/tracking/pixels";
 import { readConsent } from "@/lib/tracking/consent";
@@ -12,14 +13,6 @@ import { readConsent } from "@/lib/tracking/consent";
  * browser session. "Not configured" means the environment variable below is
  * empty — the tag ships dormant until an identifier is supplied.
  */
-const ENV_VAR: Record<string, string> = {
-  ga4: "VITE_GA_MEASUREMENT_ID",
-  rb2b: "VITE_RB2B_ID",
-  meta: "VITE_META_PIXEL_ID",
-  linkedin: "VITE_LINKEDIN_PARTNER_ID",
-  clarity: "VITE_CLARITY_ID",
-  hotjar: "VITE_HOTJAR_ID",
-};
 
 const LABEL: Record<string, string> = {
   ga4: "Google Analytics 4",
@@ -76,7 +69,7 @@ export function TrackingConfigPanel() {
               <p className="text-sm font-medium">{LABEL[r.key] ?? r.key}</p>
               <p className="truncate text-xs text-muted-foreground">
                 {TRACKER_CATEGORY[r.key as keyof typeof TRACKER_CATEGORY]} category ·{" "}
-                {r.id ? `id ${r.id}` : ENV_VAR[r.key]} · {r.detail}
+                {r.id ? "connected" : "no account connected yet"} · {r.detail}
               </p>
             </div>
             <Badge
@@ -88,7 +81,7 @@ export function TrackingConfigPanel() {
                     : "secondary"
               }
             >
-              {r.status === "missing-config" ? "not configured" : r.status}
+              {r.status === "missing-config" ? "Not configured" : humanizeCode(r.status)}
             </Badge>
           </div>
         ))}

@@ -8,7 +8,8 @@ import {
   getOperationsIncidents,
   resolveIncident,
 } from "@/lib/admin.functions";
-import { humanizeCode } from "@/lib/humanize-codes";
+import { TechnicalDetail } from "@/components/admin/technical-detail";
+import { humanizeCode, humanizeTechnicalError } from "@/lib/humanize-codes";
 import { type DeliveryFailure } from "@/lib/notifications.functions";
 import { useDeliveryFailures } from "@/lib/admin/use-delivery-failures";
 import {
@@ -399,11 +400,14 @@ function OperationsPage() {
                           <div className="text-[10px] text-muted-foreground">
                             {g.rootCauseLabel} · {humanizeCode(g.errorCode)}
                           </div>
-                          {g.latest.error_message && (
+                          {humanizeTechnicalError(g.latest.error_message) && (
                             <div className="mt-1 line-clamp-2 text-[11px] text-muted-foreground">
-                              {humanizeCode(g.latest.error_message)}
+                              {humanizeTechnicalError(g.latest.error_message)}
                             </div>
                           )}
+                          {g.latest.error_message ? (
+                            <TechnicalDetail className="mt-1" payload={g.latest.error_message} />
+                          ) : null}
                         </td>
                         <td className="px-3 py-2">
                           {m ? (
@@ -433,7 +437,11 @@ function OperationsPage() {
                         </td>
                         <td className="px-3 py-2 tabular-nums text-sm">{g.attempts}</td>
                         <td className="px-3 py-2 text-[10px] text-muted-foreground">
-                          <div>{g.latest.trace_id ?? "—"}</div>
+                          {g.latest.trace_id ? (
+                            <TechnicalDetail label="Show trace ID" payload={g.latest.trace_id} />
+                          ) : (
+                            <div>—</div>
+                          )}
                           <div>{new Date(g.latest.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}</div>
                         </td>
                         <td className="px-3 py-2 text-right">
@@ -591,14 +599,14 @@ function OperationsPage() {
                       <td className="px-4 py-2 text-xs text-muted-foreground">
                         {new Date(d.lastAttemptAt).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
                       </td>
-                      <td className="px-4 py-2 capitalize">{d.audience}</td>
-                      <td className="px-4 py-2">{d.eventType}</td>
-                      <td className="px-4 py-2">{d.channel}</td>
+                      <td className="px-4 py-2">{humanizeCode(d.audience)}</td>
+                      <td className="px-4 py-2">{humanizeCode(d.eventType)}</td>
+                      <td className="px-4 py-2">{humanizeCode(d.channel)}</td>
                       <td className="px-4 py-2">
-                        <Badge variant="destructive">{d.reason}</Badge>
+                        <Badge variant="destructive">{humanizeCode(d.reason)}</Badge>
                       </td>
-                      <td className="px-4 py-2 text-xs text-muted-foreground truncate max-w-xs">
-                        {d.reasonDetail ?? "—"}
+                      <td className="px-4 py-2 text-xs text-muted-foreground max-w-xs">
+                        {d.reasonDetail ?? humanizeTechnicalError(d.reason) ?? "—"}
                       </td>
                     </tr>
                   ))}

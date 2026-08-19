@@ -5,6 +5,7 @@ import { getSupportAudit } from "@/lib/support-audit.functions";
 import { endSupportSession } from "@/lib/support.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { humanizeCode } from "@/lib/humanize-codes";
 import { Button } from "@/components/ui/button";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { ChevronDown, ChevronRight } from "lucide-react";
@@ -141,8 +142,8 @@ export function SupportSessionAuditList() {
                         </span>
                       </div>
                       <p className="border-t border-border/60 px-3 py-2 text-xs text-muted-foreground">
-                        Reason: <span className="text-foreground">{s.reason}</span> · role{" "}
-                        {s.actor_role} · scope {s.scope}
+                        Reason: <span className="text-foreground">{s.reason}</span> ·{" "}
+                        {humanizeCode(s.actor_role)} · {humanizeCode(s.scope).toLowerCase()} access
                       </p>
                       {isOpen ? (
                         <div className="border-t border-border/60 p-3">

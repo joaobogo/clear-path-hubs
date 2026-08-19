@@ -10,6 +10,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
+import { humanizeCode, humanizeJobName, humanizeTechnicalError } from "@/lib/humanize-codes";
+import { TechnicalDetail } from "@/components/admin/technical-detail";
 import {
   getProcessingExceptions,
   markProcessingJobPermanentlyFailed,
@@ -219,14 +221,16 @@ export function ProcessingExceptionsBoard({ className }: { className?: string })
                 <Fragment key={r.job_id}>
                   <tr className="align-top">
                     <td className="px-3 py-3">
-                      <p className="font-medium">{r.job_type}</p>
+                      <p className="font-medium">{humanizeJobName(r.job_type)}</p>
                       <p className="mt-0.5 text-xs text-muted-foreground">
-                        {r.status} · {r.entity_type}
+                        {humanizeCode(r.status)} · {humanizeCode(r.entity_type)}
                       </p>
                       {r.trace_id ? (
-                        <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">
-                          {r.trace_id}
-                        </p>
+                        <TechnicalDetail
+                          className="mt-0.5"
+                          label="Show trace ID"
+                          payload={r.trace_id}
+                        />
                       ) : null}
                     </td>
                     <td className="px-3 py-3">
@@ -247,7 +251,7 @@ export function ProcessingExceptionsBoard({ className }: { className?: string })
                       </p>
                       {r.processing_state ? (
                         <p className="mt-0.5 text-xs text-muted-foreground">
-                          State: {r.processing_state.replace(/_/g, " ")}
+                          State: {humanizeCode(r.processing_state).toLowerCase()}
                         </p>
                       ) : null}
                     </td>
@@ -259,19 +263,20 @@ export function ProcessingExceptionsBoard({ className }: { className?: string })
                             variant="outline"
                             className={`text-[10px] font-normal ${REASON_TONE[reasonKey] ?? ""}`}
                           >
-                            {reasonKey.replace(/_/g, " ")}
+                            {humanizeCode(reasonKey)}
                           </Badge>
                         ))}
                       </div>
-                      {r.error_code ? (
-                        <p className="mt-1 font-mono text-[10px] text-muted-foreground">
-                          {r.error_code}
+                      {humanizeTechnicalError(r.error_message ?? r.error_code) ? (
+                        <p className="mt-1 break-words text-xs text-muted-foreground">
+                          {humanizeTechnicalError(r.error_message ?? r.error_code)}
                         </p>
                       ) : null}
-                      {r.error_message ? (
-                        <p className="mt-1 break-words text-xs text-muted-foreground">
-                          {r.error_message}
-                        </p>
+                      {r.error_message || r.error_code ? (
+                        <TechnicalDetail
+                          className="mt-1"
+                          payload={[r.error_code, r.error_message].filter(Boolean).join("\n")}
+                        />
                       ) : null}
                     </td>
                     <td className="px-3 py-3 text-right tabular-nums">{r.attempts}</td>
@@ -338,7 +343,7 @@ export function ProcessingExceptionsBoard({ className }: { className?: string })
           <ul className="mt-2 space-y-2">
             {permanent.map((r) => (
               <li key={r.job_id} className="text-xs">
-                <span className="font-medium">{r.job_type}</span>
+                <span className="font-medium">{humanizeJobName(r.job_type)}</span>
                 {" · "}
                 {r.match_id ? (
                   <Link

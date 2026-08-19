@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { PanelState, PanelEmpty } from "@/components/admin/panel-state";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 import { humanizeCode } from "@/lib/humanize-codes";
+import { TechnicalDetail } from "@/components/admin/technical-detail";
 import { Link } from "@tanstack/react-router";
 
 const KIND_LABEL: Record<string, string> = {
@@ -92,18 +93,17 @@ export function OperationalHealthPanel() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-6 shrink-0 px-1 text-[10px] text-muted-foreground hover:text-foreground"
-                      title="Copy Trace ID"
+                      className="h-6 shrink-0 px-2 text-[10px] text-muted-foreground hover:text-foreground"
                       onClick={async () => {
                         try {
                           await navigator.clipboard.writeText(i.id);
-                          toast.success("Trace ID copied");
+                          toast.success("Trace ID copied — paste it to support");
                         } catch {
                           toast.error("Clipboard unavailable");
                         }
                       }}
                     >
-                      {i.id.slice(0, 8)}…
+                      Copy trace ID
                     </Button>
                   ) : null}
                   <span className="text-xs text-muted-foreground">{formatDateTime(i.occurred_at)}</span>
@@ -122,29 +122,10 @@ export function OperationalHealthPanel() {
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">{humanizeCode(i.detail).toLowerCase()}</p>
                 {i.last_error ? (
-                  <div className="mt-1 flex items-start gap-2">
-                    <p className="break-words font-mono text-[10px] leading-relaxed text-destructive/80">
-                      {i.last_error.includes("unique or exclusion constraint")
-                        ? "Record already exists (duplicate key)."
-                        : sanitizeInternalMarkers(i.last_error)}
-
-                    </p>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 shrink-0 px-2 text-[10px] text-muted-foreground hover:text-foreground"
-                      onClick={async () => {
-                        try {
-                          await navigator.clipboard.writeText(i.last_error);
-                          toast.success("Payload copied");
-                        } catch {
-                          toast.error("Clipboard unavailable");
-                        }
-                      }}
-                    >
-                      Copy payload
-                    </Button>
-                  </div>
+                  <TechnicalDetail
+                    className="mt-1"
+                    payload={sanitizeInternalMarkers(i.last_error)}
+                  />
                 ) : null}
               </div>
             ))}

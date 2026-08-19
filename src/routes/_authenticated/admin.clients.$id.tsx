@@ -29,6 +29,7 @@ import {
   updateClientNotes,
   restoreOrganization,
 } from "@/lib/admin.functions";
+import { humanizeCode } from "@/lib/humanize-codes";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -221,7 +222,7 @@ function ClientDetail() {
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="capitalize">
-              {org.status}
+              {humanizeCode(org.status)}
             </Badge>
             {org.archived_at && <Badge variant="secondary">archived</Badge>}
             <Link
@@ -347,9 +348,9 @@ function OverviewTab({ org, parsedCvCount }: { org: any; parsedCvCount: number }
         </div>
         <dl className="grid grid-cols-2 gap-x-6 gap-y-1 text-muted-foreground">
           <dt>Name</dt><dd className="text-foreground">{org.name}</dd>
-          <dt>Status</dt><dd className="text-foreground capitalize">{org.status}</dd>
-          <dt>Onboarding</dt><dd className="text-foreground capitalize">{(org.onboarding_status ?? "not_started").replace("_"," ")}</dd>
-          <dt>Dashboard</dt><dd className="text-foreground capitalize">{(org.dashboard_status ?? "inactive").replace("_"," ")}</dd>
+          <dt>Status</dt><dd className="text-foreground">{humanizeCode(org.status)}</dd>
+          <dt>Onboarding</dt><dd className="text-foreground">{humanizeCode(org.onboarding_status ?? "not_started")}</dd>
+          <dt>Dashboard</dt><dd className="text-foreground">{humanizeCode(org.dashboard_status ?? "inactive")}</dd>
           <dt>Website</dt><dd className="text-foreground">{org.website ?? "—"}</dd>
           <dt>Domain</dt><dd className="text-foreground">{org.domain ?? "—"}</dd>
           <dt>Industry</dt><dd className="text-foreground">{org.industry ?? "—"}</dd>
@@ -592,7 +593,7 @@ function TeamTab({ members, org }: { members: any[]; org: any }) {
                 <td className="px-3 py-2">{m.profiles?.full_name ?? "—"}</td>
                 <td className="px-3 py-2 text-muted-foreground">{m.profiles?.email ?? "—"}</td>
                 <td className="px-3 py-2 capitalize">{m.role}</td>
-                <td className="px-3 py-2 capitalize">{m.status}</td>
+                <td className="px-3 py-2">{humanizeCode(m.status)}</td>
                 <td className="px-3 py-2 text-xs text-muted-foreground">
                   {m.created_at ? new Date(m.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE }) : "—"}
                 </td>
@@ -634,7 +635,7 @@ function PositionsTab({ positions }: { positions: any[] }) {
                   {p.title}
                 </Link>
               </td>
-              <td className="px-3 py-2"><Badge>{p.status}</Badge></td>
+              <td className="px-3 py-2"><Badge>{humanizeCode(p.status)}</Badge></td>
               <td className="px-3 py-2 capitalize">{p.visibility}</td>
               <td className="px-3 py-2 text-muted-foreground">{p.location ?? "—"}</td>
               <td className="px-3 py-2 text-xs text-muted-foreground">
@@ -687,10 +688,10 @@ function CandidatesTab({ id }: { id: string }) {
               </td>
               <td className="min-w-[10rem] px-3 py-2 text-muted-foreground">{r.positions?.title ?? "—"}</td>
               <td className="whitespace-nowrap px-3 py-2 capitalize">{r.current_stage ?? "—"}</td>
-              <td className="whitespace-nowrap px-3 py-2 capitalize text-xs">{r.processing_state ?? "—"}</td>
+              <td className="whitespace-nowrap px-3 py-2 text-xs">{r.processing_state ? humanizeCode(r.processing_state) : "—"}</td>
               <td className="whitespace-nowrap px-3 py-2 tabular-nums">{r.fit_score_final ?? "—"}</td>
               <td className="whitespace-nowrap px-3 py-2 capitalize">{r.fit_band ?? "—"}</td>
-              <td className="whitespace-nowrap px-3 py-2 capitalize text-xs">{r.admin_status ?? "—"}</td>
+              <td className="whitespace-nowrap px-3 py-2 text-xs">{r.admin_status ? humanizeCode(r.admin_status) : "—"}</td>
               <td className="whitespace-nowrap px-3 py-2 capitalize text-xs">{r.client_visibility ?? "—"}</td>
             </tr>
           ))}
@@ -939,7 +940,7 @@ function ContactsTab({ org, members }: { org: any; members: any[] }) {
                   </td>
                   <td className="px-3 py-2 capitalize">{m.role}</td>
                   <td className="px-3 py-2 capitalize text-xs text-muted-foreground">
-                    {m.status}
+                    {humanizeCode(m.status)}
                   </td>
                 </tr>
               ))}
@@ -1042,7 +1043,7 @@ function DocumentsTab({ id, parsedCvCount }: { id: string; parsedCvCount?: numbe
               <td className="px-3 py-2">
                 <div className="font-medium">{f.filename}</div>
                 <div className="text-[10px] text-muted-foreground">
-                  status: {f.file_status}
+                  {humanizeCode(f.file_status)}
                 </div>
               </td>
               <td className="px-3 py-2">
@@ -1143,7 +1144,7 @@ function SharesTab({ orgId }: { orgId: string }) {
                   variant={s.status === "active" ? "default" : "secondary"}
                   className="capitalize"
                 >
-                  {s.status}
+                  {humanizeCode(s.status)}
                 </Badge>
                 {s.revoked_at && (
                   <div className="text-[9px] mt-0.5 text-muted-foreground">
@@ -1216,7 +1217,7 @@ function TalentMemoryTab({ orgId }: { orgId: string }) {
                   variant={m.status === "active" ? "default" : "secondary"}
                   className="capitalize"
                 >
-                  {m.status}
+                  {humanizeCode(m.status)}
                 </Badge>
               </td>
               <td className="px-3 py-2 text-xs text-muted-foreground">

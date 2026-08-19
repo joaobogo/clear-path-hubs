@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import { humanizeCode } from "@/lib/humanize-codes";
 import { Badge } from "@/components/ui/badge";
 import { useConfirmAction } from "@/components/ds";
 import { WorkloadTable } from "@/components/admin/workload-table";
@@ -335,7 +336,7 @@ function OrgTeamList({ organizationId }: { organizationId: string }) {
                 <td className="py-2">{m.full_name ?? "—"}</td>
                 <td className="text-muted-foreground">{m.email}</td>
                 <td>
-                  <Badge variant="outline">{m.role}</Badge>
+                  <Badge variant="outline">{humanizeCode(m.role)}</Badge>
                 </td>
                 <td>
                   <Badge variant={m.status === "active" ? "default" : "secondary"}>
@@ -378,7 +379,7 @@ function OrgTeamList({ organizationId }: { organizationId: string }) {
                     onClick={async () => {
                       const r = await confirm({
                         title: "Remove member",
-                        object: `${m.full_name ?? m.email} · ${m.role}`,
+                        object: `${m.full_name ?? m.email} · ${humanizeCode(m.role)}`,
                         description:
                           "This person loses access to this client workspace immediately.",
                         impact: [
@@ -467,7 +468,7 @@ function PlatformStaffList() {
     <Card className="p-5">
       <h2 className="text-lg font-medium">Platform staff</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        Use the create form above to add platform_admin or operations users.
+        Use the create form above to add platform admin or operations users.
         Existing platform staff can be managed from the database or by resetting
         their password from their client-organization team if they hold one.
       </p>

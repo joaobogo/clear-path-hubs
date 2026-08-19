@@ -7,21 +7,21 @@
 
 const DICTIONARY: Record<string, string> = {
   // Delivery & Suppression
-  recipient_suppressed: "Recipient blocked",
-  undeliverable_domain: "Invalid domain",
-  unreachable_mx: "Mail server refused",
-  complaint_not_liftable: "Marked as spam",
-  provider_exception: "Send failed",
-  rate_limited: "Rate limited",
+  recipient_suppressed: "Blocked before sending (suppression list or recipient preference)",
+  undeliverable_domain: "The recipient's email domain does not accept mail",
+  unreachable_mx: "The recipient's mail server refused the message",
+  complaint_not_liftable: "The recipient marked earlier mail as spam",
+  provider_exception: "The email provider rejected the send",
+  rate_limited: "Too many sends in a short window — retry later",
 
   // Processing States & Errors
-  ocr_required: "OCR required",
-  parse_and_score: "Parsing & scoring",
-  text_layer_too_short: "Text layer too short",
-  empty_text_layer: "Empty text layer",
-  text_layer_missing: "Text layer missing",
-  engine_error: "Engine error",
-  cv_unreadable: "CV unreadable",
+  ocr_required: "Needs OCR to read the CV",
+  parse_and_score: "Read and score the CV",
+  text_layer_too_short: "The CV has too little readable text",
+  empty_text_layer: "The CV has no readable text",
+  text_layer_missing: "The CV has no text layer — it is a scan",
+  engine_error: "The scoring engine failed to finish",
+  cv_unreadable: "The CV could not be read",
   cv_parse: "Parsing CV",
   cv_hydrate: "Hydrating data",
   cv_enrich: "Enriching profile",
@@ -67,8 +67,67 @@ const DICTIONARY: Record<string, string> = {
   email_no_history: "No email sent yet",
   email_deliverability_signal: "Delivery problems detected",
   probe_exception: "Health check failed to run",
+
+  // Staff & workspace roles (never render the stored token)
+  platform_admin: "Platform admin",
+  operations: "Operations",
+  client_editor: "Editor",
+  client_viewer: "Viewer",
+  ownerless: "No owner assigned",
+  unassigned: "Unassigned",
+  read_only: "Read-only",
+  interactive: "Interactive",
+  support_session: "Support session",
+
+  // Organization / onboarding lifecycle
+  prospect: "Prospect",
+  active: "Active",
+  paused: "Paused",
+  closed: "Closed",
+  draft: "Draft",
+  inactive: "Inactive",
+  not_started: "Not started",
+  in_progress: "In progress",
+  completed: "Completed",
+  expired: "Expired",
+  invited: "Invited",
+  revoked: "Revoked",
+
+  // Processing pipeline states
+  queued: "Queued",
+  parsing: "Parsing",
+  parsed: "Parsed",
+  enriching: "Enriching",
+  ready_to_score: "Ready to score",
+  scoring: "Scoring",
+  manual_review_required: "Manual review required",
+  provider_blocked: "Blocked by provider",
+  failed: "Failed",
+  running: "Running",
+  claimed: "Picked up by worker",
+  permanently_failed: "Permanently failed",
+
+  // Job names (worker queue)
+  parse: "Parse CV",
+  ocr: "Run OCR",
+  score: "Score candidate",
+  rescore: "Re-score candidate",
+  hydration: "Hydrate profile",
+  enrichment: "Enrich profile",
+  publish: "Publish to client",
+  publication: "Publish to client",
+  notification: "Send notification",
+  scoring_job: "Score candidate",
+  candidate_match: "Candidate on a role",
+  application: "Application",
+  position: "Role",
 };
 
+/**
+ * The one shared enum-to-label map. Other modules extend their own lookups
+ * from this object so a label is defined in a single place.
+ */
+export const ENUM_LABELS: Readonly<Record<string, string>> = DICTIONARY;
 
 /**
  * Humanize a code or enum value.
@@ -160,3 +219,62 @@ export function humanizeCriterionKey(key: string | null | undefined): string {
 }
 
 
+
+/**
+ * Job / queue names read as an action a person recognises ("Parse CV"), never
+ * as the worker's internal job_type. Bare identifiers never become a label.
+ */
+export function humanizeJobName(jobType: string | null | undefined): string {
+  if (!jobType) return "Unnamed job";
+  const raw = String(jobType).trim();
+  if (!raw) return "Unnamed job";
+  // A bare identifier (UUID or opaque trace token) is not a job name.
+  if (
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(raw) ||
+    /^(pl|sv|job)_[a-z0-9]{6,}$/i.test(raw)
+  ) {
+    return "Unnamed job";
+  }
+  return humanizeCode(raw);
+}
+
+/**
+ * Turn a raw provider error string into one sentence an operator can act on.
+ *
+ * Inputs look like:
+ *   `Email API error: 403 {"status":403,"type":"recipient_suppressed", … }`
+ * The sentence comes from the machine `type`/code inside the payload; the
+ * payload itself belongs behind a "Show technical detail" disclosure, never in
+ * the row. Returns null when there is nothing meaningful to say.
+ */
+export function humanizeTechnicalError(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const s = String(raw).trim();
+  if (!s) return null;
+
+  if (s.includes("unique or exclusion constraint")) {
+    return "Record already exists (duplicate key).";
+  }
+
+  // Prefer an explicit machine code carried in the payload.
+  const typed =
+    /"(?:type|code|error_code|reason)"\s*:\s*"([a-z0-9_.-]+)"/i.exec(s)?.[1] ??
+    /\b(recipient_suppressed|undeliverable_domain|unreachable_mx|complaint_not_liftable|provider_exception|rate_limited|text_layer_too_short|text_layer_missing|empty_text_layer|engine_error|ocr_required|cv_unreadable)\b/i.exec(
+      s,
+    )?.[1];
+  if (typed) {
+    const label = humanizeCode(typed);
+    return label.endsWith(".") ? label : `${label}.`;
+  }
+
+  // Provider gave a human title — use it, minus any machine payload.
+  const title = /"title"\s*:\s*"([^"]{4,240})"/i.exec(s)?.[1];
+  if (title) return title.endsWith(".") ? title : `${title}.`;
+
+  // No structured payload: keep the leading human clause only, drop JSON/IDs.
+  const firstClause = s.split(/[{[]/)[0]!.replace(/\s+/g, " ").trim();
+  const cleaned = firstClause.replace(/\b[0-9a-f-]{16,}\b/gi, "").replace(/\s+/g, " ").trim();
+  if (!cleaned || /^\d+$/.test(cleaned)) return "The provider rejected the request.";
+  const sentence = cleaned.replace(/[:\-–,]+$/, "").trim();
+  return sentence.endsWith(".") ? sentence : `${sentence}.`;
+}
