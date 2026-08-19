@@ -43,6 +43,7 @@ export type Row = {
 export function PortfolioSnapshot({
   data,
   loading,
+  simplified = false,
 }: {
   data: {
     active: number;
@@ -53,8 +54,9 @@ export function PortfolioSnapshot({
     hires: number;
   };
   loading: boolean;
+  simplified?: boolean;
 }) {
-  const tiles: Array<{ label: string; value: number; href?: string }> = [
+  const allTiles: Array<{ label: string; value: number; href?: string }> = [
     { label: "Active", value: data.active },
     {
       label: "Delivered",
@@ -78,10 +80,15 @@ export function PortfolioSnapshot({
       href: "/client/candidates?filter=hired",
     },
   ];
+
+  const tiles = simplified 
+    ? allTiles.filter(t => ["Active", "Hires"].includes(t.label))
+    : allTiles;
+
   return (
     <section
       aria-label="Portfolio snapshot"
-      className="mb-6 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6"
+      className={`mb-6 grid grid-cols-2 gap-2 ${simplified ? 'sm:grid-cols-2 lg:grid-cols-2 max-w-sm' : 'sm:grid-cols-3 lg:grid-cols-6'}`}
     >
       {tiles.map((t) => {
         const inner = (
