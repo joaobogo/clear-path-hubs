@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { TechnicalDetail } from "@/components/admin/technical-detail";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
-import { humanizeCode } from "@/lib/humanize-codes";
+import { humanizeCode, humanizeJobName, humanizeTechnicalError } from "@/lib/humanize-codes";
 import { pluralize } from "@/lib/format/datetime";
 import { sanitizeInternalMarkers } from "@/lib/human-labels";
 
@@ -164,14 +165,18 @@ function HealthPage() {
                   <td className="px-3 py-2 text-xs text-muted-foreground">
                     {new Date(j.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
                   </td>
-                  <td className="px-3 py-2 uppercase tracking-wide text-[10px] text-muted-foreground">{j.job_type}</td>
+                  <td className="px-3 py-2 text-xs text-muted-foreground">{humanizeJobName(j.job_type)}</td>
                   <td className="px-3 py-2">
                     <Badge variant="destructive">{humanizeCode(j.error_code ?? "error")}</Badge>{" "}
                     <span className="text-xs text-muted-foreground">
-                      {j.error_message?.includes("unique or exclusion constraint")
-                        ? "Record already exists (duplicate key)."
-                        : sanitizeInternalMarkers(j.error_message)}
+                      {humanizeTechnicalError(j.error_message) ?? "No further detail recorded."}
                     </span>
+                    {j.error_message ? (
+                      <TechnicalDetail
+                        className="mt-1"
+                        payload={sanitizeInternalMarkers(j.error_message)}
+                      />
+                    ) : null}
                   </td>
                   <td className="px-3 py-2 text-xs text-muted-foreground">
                     {humanizeCode(j.status ?? "unknown").toLowerCase()}

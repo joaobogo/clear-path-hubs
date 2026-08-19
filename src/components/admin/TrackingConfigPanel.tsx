@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { humanizeCode } from "@/lib/humanize-codes";
 import { Badge } from "@/components/ui/badge";
 import { TRACKER_CATEGORY, verifyTrackers } from "@/lib/tracking/pixels";
 import { readConsent } from "@/lib/tracking/consent";
@@ -76,7 +77,7 @@ export function TrackingConfigPanel() {
               <p className="text-sm font-medium">{LABEL[r.key] ?? r.key}</p>
               <p className="truncate text-xs text-muted-foreground">
                 {TRACKER_CATEGORY[r.key as keyof typeof TRACKER_CATEGORY]} category ·{" "}
-                {r.id ? `id ${r.id}` : ENV_VAR[r.key]} · {r.detail}
+                {r.id ? "connected" : "no account connected yet"} · {r.detail}
               </p>
             </div>
             <Badge
@@ -88,7 +89,7 @@ export function TrackingConfigPanel() {
                     : "secondary"
               }
             >
-              {r.status === "missing-config" ? "not configured" : r.status}
+              {r.status === "missing-config" ? "Not configured" : humanizeCode(r.status)}
             </Badge>
           </div>
         ))}
