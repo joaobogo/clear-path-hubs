@@ -110,17 +110,7 @@ export function buildScoreBreakdown(candidate: ClientCandidateDTO): ScoreBreakdo
     },
   ];
 
-  const rubric: RubricCriterion[] = (candidate.evaluation?.category_breakdown ?? [])
-    .map((c) => ({
-      label: c.label,
-      pct:
-        c.value == null
-          ? null
-          : Math.max(0, Math.min(100, Math.round(Number(c.value) * 100))),
-      weightPct:
-        c.weight == null ? null : Math.max(0, Math.round(Number(c.weight) * 100)),
-    }))
-    .filter((c) => c.pct != null || c.weightPct != null);
+  const rubric: RubricCriterion[] = []; // Suppressed factor block — fix P-035.
 
   const reasons: BreakdownReason[] = [];
   // Strongest evidenced must-haves lead, because they decide the ranking.
