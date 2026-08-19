@@ -588,9 +588,9 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
         <Badge variant="outline" className="whitespace-nowrap">
           {STATUS_LABEL[r.status as Status] ?? r.status}
         </Badge>
-        {(r.is_qa || r.is_internal || r.is_demo) && (
+        {(r.is_qa || r.is_internal || r.is_demo || r.is_test_record) && (
           <div className="mt-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
-            {orgType(r)}
+            {r.is_test_record && !r.is_qa && !r.is_internal && !r.is_demo ? "Test" : orgType(r)}
           </div>
         )}
       </td>
@@ -645,6 +645,7 @@ function ClientCard({ row, onArchive }: { row: ClientRow; onArchive: () => void 
             <span>{r.domain ?? "—"}</span>
             {r.industry && <span>· {r.industry}</span>}
             <Badge variant="outline">{STATUS_LABEL[r.status as Status] ?? r.status}</Badge>
+            {r.is_test_record && <Badge variant="outline" className="text-[10px] bg-muted/50">test</Badge>}
             {r.archived_at && <Badge variant="secondary" className="text-[10px]">archived</Badge>}
           </div>
         </div>
