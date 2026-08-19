@@ -440,12 +440,7 @@ function CandidateDetailPage() {
  {/* 2 — THE VERDICT */}
  {verdictTrusted ? (
  <div id="sec-fit" className="scroll-mt-24 space-y-3">
- <FitHero candidate={candidate} />
- <ScoreFreshnessNote
- freshness={candidate.freshness}
- orgId={orgId ?? null}
- matchId={id}
- />
+  <FitHero candidate={candidate} />
  </div>
  ) : (
   <div className="rounded-xl border border-dashed bg-muted/30 p-4 text-sm text-muted-foreground">
