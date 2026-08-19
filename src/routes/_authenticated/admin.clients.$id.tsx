@@ -408,6 +408,7 @@ function CompanyTab({ org }: { org: any }) {
     dashboard_status: (org.dashboard_status ?? "inactive") as string,
   };
   const [form, setForm] = useState(initial);
+  const [nameError, setNameError] = useState<string | null>(null);
   useEffect(() => {
     setForm(initial);
     // eslint-disable-next-line react-hooks/exhaustive-deps
