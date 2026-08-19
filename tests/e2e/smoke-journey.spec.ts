@@ -26,6 +26,12 @@ import {
   type SeedResult,
 } from "./helpers/qa";
 import { TEXT_LAYER_CV_PDF } from "./fixtures/text-layer-cv";
+import {
+  attachApiFailures,
+  captureApiFailures,
+  logPipelineState,
+  waitForProcessingState,
+} from "./helpers/pipeline-diagnostics";
 
 let fixtures: SeedResult;
 
