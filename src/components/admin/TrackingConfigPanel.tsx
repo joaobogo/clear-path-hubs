@@ -13,14 +13,6 @@ import { readConsent } from "@/lib/tracking/consent";
  * browser session. "Not configured" means the environment variable below is
  * empty — the tag ships dormant until an identifier is supplied.
  */
-const ENV_VAR: Record<string, string> = {
-  ga4: "VITE_GA_MEASUREMENT_ID",
-  rb2b: "VITE_RB2B_ID",
-  meta: "VITE_META_PIXEL_ID",
-  linkedin: "VITE_LINKEDIN_PARTNER_ID",
-  clarity: "VITE_CLARITY_ID",
-  hotjar: "VITE_HOTJAR_ID",
-};
 
 const LABEL: Record<string, string> = {
   ga4: "Google Analytics 4",
