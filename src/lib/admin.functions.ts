@@ -1003,6 +1003,10 @@ export const setPositionStatus = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => statusTransition.parse(i))
   .handler(async ({ data, context }) => {
     await requireStaff(context.userId);
+    // A clarification request the client can see must carry the question.
+    if (data.action === "request_clarification" && !(data.reason ?? "").trim()) {
+      throw new Error("Write the question before sending a clarification request.");
+    }
     const trace_id = traceId();
     const s = await getAdmin();
     const { data: before } = await s
@@ -1085,7 +1089,7 @@ export const setPositionStatus = createServerFn({ method: "POST" })
       entity_id: data.id,
       organization_id: before.organization_id,
       before: { status: before.status, visibility: before.visibility },
-      after,
+      after: { ...(after ?? {}), reason: data.reason ?? null },
       trace_id,
     });
     // Emit lifecycle events so Client + Admin dashboards refresh in real time.
@@ -1109,7 +1113,7 @@ export const setPositionStatus = createServerFn({ method: "POST" })
           // Actor is server-derived from the authenticated session, never from the request payload.
           actor_user_id: context.userId,
           link_path: `/client/positions/${data.id}`,
-          payload: { title: before.title ?? null },
+          payload: { title: before.title ?? null, note: data.reason ?? null },
         });
       } catch (e) {
         console.error("[setPositionStatus] emit failed", trace_id, e);
