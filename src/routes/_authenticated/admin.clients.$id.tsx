@@ -228,7 +228,7 @@ function ClientDetail() {
       </div>
 
       <nav className="flex flex-wrap gap-0.5 border-b" role="tablist">
-        {TABS.filter(t => t !== "activity").map((t) => {
+        {TABS.filter(t => t !== "activity" && t !== "activity").map((t) => {
           const Icon = TAB_LABELS[t].icon;
           return (
             <Link

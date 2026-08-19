@@ -292,8 +292,7 @@ function OperationsPage() {
             Pipeline incidents ({opsQuery.isError || opsQuery.isPending ? "—" : grouped.length})
           </TabsTrigger>
           <TabsTrigger value="delivery">
-            Delivery failures (7d) (
-            {deliveryQuery.isError || deliveryQuery.isPending ? "—" : deliveryItems.length})
+            Delivery failures (7d) ({deliveryQuery.isError || deliveryQuery.isPending ? "—" : deliveryItems.length})
           </TabsTrigger>
         </TabsList>
 
