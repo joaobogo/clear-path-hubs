@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listAdminPayments } from "@/lib/admin-payments.functions";
 import { getPaymentsOps } from "@/lib/admin-ops.functions";
+import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
