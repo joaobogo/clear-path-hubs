@@ -183,6 +183,17 @@ function Overview() {
         <WorkQueueSummary showTest={showTest} onRefresh={refreshAll} scope={scope} />
       </AdminWidgetErrorBoundary>
 
+      <AdminWidgetErrorBoundary label="Requisitions awaiting approval">
+        <section>
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              Requisitions awaiting approval
+            </h2>
+          </div>
+          <ApprovalsInbox includeTest={showTest} />
+        </section>
+      </AdminWidgetErrorBoundary>
+
       <AdminWidgetErrorBoundary label="SLA banner">
         <SlaBreachStrip includeTest={showTest} />
       </AdminWidgetErrorBoundary>
