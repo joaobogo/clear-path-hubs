@@ -38,6 +38,7 @@ type QaAction =
   | "create_cv_application"
   | "pipeline_snapshot"
   | "replace_cv"
+  | "simulate_ocr_complete"
   | "cleanup_intake_e2e"
   | "lookup_intake"
   | "lookup_candidate_application"
@@ -499,6 +500,24 @@ export const replaceCv = (matchId: string, cvBase64: string, cvFilename?: string
     cv_base64: cvBase64,
     cv_filename: cvFilename,
   });
+
+/**
+ * Test-mode OCR completion.
+ *
+ * The suite has no OCR runner, so a CV whose text layer cannot be extracted
+ * parks the match on `ocr_required` and admin review + client publication are
+ * unreachable. This writes an OCR result onto the canonical file the same way
+ * the real staff "OCR done" action does and then runs the real enrich + score
+ * pipeline, so only the OCR step is simulated.
+ */
+export const simulateOcrCompletion = (matchId: string, ocrText?: string) =>
+  qaSeed<{
+    ok: boolean;
+    match_id: string;
+    previous_state: string;
+    final_state: string;
+    simulated_ocr_chars: number;
+  }>("simulate_ocr_complete", { match_id: matchId, ocr_text: ocrText });
 
 /** Kicks the pipeline worker so the suite does not wait on the 2-minute cron. */
 export async function runPipelineDrain(): Promise<void> {
