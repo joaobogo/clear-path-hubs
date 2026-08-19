@@ -227,16 +227,13 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
     });
   }
 
-  // The email count comes from the canonical delivery metric, not from parsing
-  // the first word of a humanized sentence — that parse silently returned 0
-  // once the copy changed, so this page reported clean while /admin did not.
-  const { loadDeliveryFailures } = await import("./notification-failures.server");
-  const delivery = await loadDeliveryFailures(admin);
-
+  // Every tile counts exactly the rows listed underneath it. A tile fed by a
+  // different query than its list is how this page ended up claiming
+  // "Failed emails 0" above eighty failure rows.
   const counts = {
     webhook: issues.filter((i) => i.kind === "webhook").length,
-    processing: issues.filter((i) => i.kind === "processing").length + scoringOrphans,
-    email: delivery.summary.retryable,
+    processing: issues.filter((i) => i.kind === "processing").length,
+    email: issues.filter((i) => i.kind === "email").length,
     cv: issues.filter((i) => i.kind === "cv").length,
   };
 
