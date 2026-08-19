@@ -67,8 +67,67 @@ const DICTIONARY: Record<string, string> = {
   email_no_history: "No email sent yet",
   email_deliverability_signal: "Delivery problems detected",
   probe_exception: "Health check failed to run",
+
+  // Staff & workspace roles (never render the stored token)
+  platform_admin: "Platform admin",
+  operations: "Operations",
+  client_editor: "Editor",
+  client_viewer: "Viewer",
+  ownerless: "No owner assigned",
+  unassigned: "Unassigned",
+  read_only: "Read-only",
+  interactive: "Interactive",
+  support_session: "Support session",
+
+  // Organization / onboarding lifecycle
+  prospect: "Prospect",
+  active: "Active",
+  paused: "Paused",
+  closed: "Closed",
+  draft: "Draft",
+  inactive: "Inactive",
+  not_started: "Not started",
+  in_progress: "In progress",
+  completed: "Completed",
+  expired: "Expired",
+  invited: "Invited",
+  revoked: "Revoked",
+
+  // Processing pipeline states
+  queued: "Queued",
+  parsing: "Parsing",
+  parsed: "Parsed",
+  enriching: "Enriching",
+  ready_to_score: "Ready to score",
+  scoring: "Scoring",
+  manual_review_required: "Manual review required",
+  provider_blocked: "Blocked by provider",
+  failed: "Failed",
+  running: "Running",
+  claimed: "Picked up by worker",
+  permanently_failed: "Permanently failed",
+
+  // Job names (worker queue)
+  parse: "Parse CV",
+  ocr: "Run OCR",
+  score: "Score candidate",
+  rescore: "Re-score candidate",
+  hydration: "Hydrate profile",
+  enrichment: "Enrich profile",
+  publish: "Publish to client",
+  publication: "Publish to client",
+  notification: "Send notification",
+  scoring_job: "Score candidate",
+  candidate_match: "Candidate on a role",
+  application: "Application",
+  position: "Role",
 };
 
+/**
+ * The one shared enum-to-label map. Other modules extend their own lookups
+ * from this object so a label is defined in a single place.
+ */
+export const ENUM_LABELS: Readonly<Record<string, string>> = DICTIONARY;
 
 /**
  * Humanize a code or enum value.
