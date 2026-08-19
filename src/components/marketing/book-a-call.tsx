@@ -378,6 +378,7 @@ function MessageForm({
   onSuccess,
 }: CommonProps & { onSuccess?: () => void }) {
   const [pending, setPending] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const submit = useServerFn(submitInquiry);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
