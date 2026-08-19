@@ -111,6 +111,9 @@ export function humanizePublishBlockedMessage(message: string): string {
   if (/cannot be published until payment|can't be published until payment/i.test(message)) {
     return "Approval blocked: payment or exemption required";
   }
+  if (message === "position_screening_limit_exceeded") {
+    return "This role has reached its screening limit. Raise the limit or archive an existing screening run.";
+  }
   if (!message.startsWith(PUBLISH_BLOCKED_PREFIX)) return message;
 
   const inner = message
@@ -120,6 +123,7 @@ export function humanizePublishBlockedMessage(message: string): string {
 
   const hasPayment = inner.includes(PUBLISH_BLOCKER_LABEL.payment_unpaid);
   const hasRequirements = inner.includes(PUBLISH_BLOCKER_LABEL.missing_requirements);
+  const hasApproval = inner.includes(PUBLISH_BLOCKER_LABEL.not_approved);
 
   // P-019: Humanize approval blockers for staff; remove snake_case codes and client-only copy.
   if (hasPayment && hasRequirements) {
@@ -127,6 +131,7 @@ export function humanizePublishBlockedMessage(message: string): string {
   }
   if (hasPayment) return "Approval blocked: payment or exemption required";
   if (hasRequirements) return "Approval blocked: add at least one must-have requirement";
+  if (hasApproval) return "Approval blocked: not approved for publishing yet";
 
   // Generic fallback for the remaining data blockers.
   const first = inner.split(";")[0]?.trim();
