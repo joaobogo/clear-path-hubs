@@ -181,6 +181,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
               const promised = promisedByPosition.get(id);
               return promised != null && promised < nowMs;
             }).length,
+            blocks: blocksCount,
           });
 
     // "What's new" — matches delivered in the past 7 days.

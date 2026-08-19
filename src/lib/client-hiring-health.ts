@@ -9,9 +9,10 @@
  * recorded dates and stored commitments.
  *
  * Rule order is fixed and evaluated top down:
- *   1. Client decisions past their recorded due date  → "N decisions are overdue."
- *   2. Roles past their promised first-shortlist date → "N roles are behind schedule."
- *   3. Otherwise                                      → "Hiring is on track."
+ *   1. Blocking gaps (missing brief details)         → "N things need you."
+ *   2. Client decisions past their recorded due date  → "N decisions are overdue."
+ *   3. Roles past their promised first-shortlist date → "N roles are behind schedule."
+ *   4. Otherwise                                      → "Hiring is on track."
  *
  * Only one sentence ever shows.
  */
@@ -27,6 +28,8 @@ export type HiringHealthInput = {
   overdueDecisions: number;
   /** Open roles past their promised first-shortlist date with nothing delivered. */
   behindScheduleRoles: number;
+  /** Roles blocked by missing information (gaps). */
+  blocks: number;
 };
 
 export type HiringHealthTone = "on_track" | "attention";
@@ -46,7 +49,7 @@ export type HiringHealth = {
   sentence: string;
   tone: HiringHealthTone;
   /** Which rule produced the sentence — useful for tests and telemetry. */
-  reason: "overdue_decisions" | "behind_schedule" | "on_track";
+  reason: "blocks" | "overdue_decisions" | "behind_schedule" | "on_track";
   figures: HiringHealthFigure[];
 };
 
@@ -77,13 +80,13 @@ export function computeHiringHealth(input: HiringHealthInput): HiringHealth {
       ),
     },
   ];
-
-  if (input.overdueDecisions > 0) {
-    const n = input.overdueDecisions;
+  
+  const urgent = input.overdueDecisions + input.blocks;
+  if (urgent > 0) {
     return {
-      sentence: `${count(n)} ${plural(n, "decision is", "decisions are")} overdue.`,
+      sentence: `${count(urgent)} ${plural(urgent, "thing needs", "things need")} you.`,
       tone: "attention",
-      reason: "overdue_decisions",
+      reason: input.blocks > 0 ? "blocks" : "overdue_decisions",
       figures,
     };
   }
