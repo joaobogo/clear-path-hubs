@@ -104,6 +104,7 @@ function PositionsPage() {
   // "Resolved once" — not "not fetching". Until this is true the page shows
   // skeletons, never "No results match these filters".
   const hasRoleData = !!listQuery.data && !!orgId;
+  const statusCounts = useMemo(() => countRolesByTab(allRows), [allRows]);
   const rows = useMemo(() => {
     return allRows.filter((p) => {
       const key = p.client_status?.key;
