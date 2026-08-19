@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { roleGaps, type RoleGap } from "@/lib/position-readiness";
 import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
+import { excludeTestRecords, isQaFixtureTitle } from "@/lib/client/test-record-filter";
 
 function isUuid(value: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
@@ -34,11 +35,15 @@ export const listRolesNeedingDetails = createServerFn({ method: "POST" })
       await assertWorkspaceAccess(supabase, context.userId, data.orgId);
     }
 
-    let query = supabase
-      .from("positions")
-      .select(
-        "id, title, status, description, location, work_model, employment_type, seniority, requirements, compensation, intake_context",
-      )
+    // QA fixtures live in the same tables as real roles; a client must never
+    // be nudged to "add details" to a browser-test position.
+    let query = excludeTestRecords(
+      supabase
+        .from("positions")
+        .select(
+          "id, title, status, description, location, work_model, employment_type, seniority, requirements, compensation, intake_context",
+        ),
+    )
       .order("created_at", { ascending: false })
       .limit(25);
     if (data.orgId && isUuid(data.orgId)) query = query.eq("organization_id", data.orgId);
@@ -51,6 +56,7 @@ export const listRolesNeedingDetails = createServerFn({ method: "POST" })
     for (const raw of (rows ?? []) as AnyRow[]) {
       const status = String(raw.status ?? "");
       if (closed.has(status)) continue;
+      if (isQaFixtureTitle(raw.title)) continue;
       const comp = (raw.compensation ?? {}) as AnyRow;
       const ctx = (raw.intake_context ?? {}) as AnyRow;
       const gaps = roleGaps({
