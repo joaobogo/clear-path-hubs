@@ -228,8 +228,8 @@ function CompanyProfileSection({
  if (!form.name.trim() || form.name.trim().length < 2)
  next.name = "Company name must be at least 2 characters.";
  if (form.name.length > 200) next.name = "Company name must be under 200 characters.";
- if (form.website && !/^https?:\/\/[^\s]+\.[^\s]+$/i.test(form.website.trim()))
- next.website = "Include https:// and a valid domain.";
+  if (form.website && !/^([a-z0-9-]+\.)+[a-z]{2,}(\/.*)?$/i.test(form.website.trim()) && !/^https?:\/\/[^\s]+\.[^\s]+$/i.test(form.website.trim()))
+    next.website = "Enter a valid domain or URL.";
  setErrors(next);
  return Object.keys(next).length === 0;
  };

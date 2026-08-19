@@ -144,7 +144,7 @@ export function PositionSettingsBlock({
           title={position.title}
           onChanged={() => void onRefetch()}
         />
-        {orgId && !hasClosure && !isArchivedStatus(position.status) && (
+        {orgId && !hasClosure && (
           <CloseRoleDialog
             orgId={orgId}
             positionId={position.id}

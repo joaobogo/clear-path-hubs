@@ -41,6 +41,7 @@ export const LIFECYCLE_ACTIONS: Record<
       "paused",
       "filled",
       "closed",
+      "archived",
     ],
     to: "archived",
     label: "Archived",
