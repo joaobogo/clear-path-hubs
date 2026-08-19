@@ -39,8 +39,9 @@ export const Route = createFileRoute("/_authenticated/admin")({
       const access = await getStaffAccess();
       if (!access.staff) throw redirect({ to: "/access-denied", search: { reason: "permission" } });
       // Test-record scope is resolved once here and handed to every desk
-      // through route context, so no screen keeps its own copy in the URL or
-      // in component state. A failed read falls back to "hidden" — fail closed.
+      // through route context. When the toggle flips, it invalidates the whole
+      // router so this logic re-runs, ensuring the layout and every count
+      // inside it agree instantly.
       let testScope: AdminTestScope = {
         includeTest: false,
         excludedOrgs: 0,

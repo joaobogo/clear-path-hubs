@@ -143,30 +143,22 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "On /admin/positions/<id>, three controls execute immediately on a single click with no
-dialog, no reason field, and no way back. All three are visible to the client:
-  "Start review" → toast "Under review · trace ad_1qbhgb1wmt0970zu"
-  "Approve" → toast "Approved · trace ad_hyl6g40qmt098k9c"
-  "…" menu → "Request clarification" → sends a client-visible request with zero content,
-             because nothing ever asks what clarification is needed
+TEXTO DO USUÁRIO: "Flipping "Test records shown" to "Test records hidden" on /admin instantly updates the
+label, hides the banner, and changes the subtitle to "Test and internal organizations are
+hidden" — while every number on the page keeps its test-inclusive value.
 
-I approved a real requisition in one click. The page itself was showing "Not scoreable yet
-— 3 decision-critical items missing" with Title, Description, Department, Location and
-Seniority all empty. It approved anyway. After approving, the "…" menu contains only
-"Archive" — no un-approve, no return-to-submitted, no decline.
+Right after flipping: "39 items waiting", Approvals 6, Unpaid 6, Setup 2, Client decisions
+overdue 3.
+After a manual F5: "32 items waiting", Approvals 4, Unpaid 5, Setup 1, Client decisions
+overdue 0.
 
-Meanwhile "Grant payment exemption" — which is reversible, admin-only and invisible to
-clients — demands a typed 10-character justification with the confirm button disabled until
-you type it. The ceremony is exactly backwards.
+So between the flip and a reload, the console tells the operator it's showing production
+only while showing them test data. Happens in both directions.
 
-Please add confirmation dialogs to Start review, Approve and Request clarification. Make
-Request clarification collect the question before it sends. Block Approve when the
-readiness checklist on that same page says items are missing. Add an un-approve path, or
-say plainly in the dialog that approval is final.
+Please invalidate and refetch every query keyed on that toggle when it changes. The toggle
+should never be able to disagree with the numbers next to it.
 
-Copy the Nudge dialog on /admin — it already does this perfectly. It names the audience,
-says "This is a real notification, sent immediately", and shows the exact message title and
-body before you commit. Use that as the pattern."`}
+Check: flip it, don't refresh, and watch the counts change in place."`}
         </div>
 
         <Scripts />

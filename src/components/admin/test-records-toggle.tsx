@@ -38,9 +38,10 @@ export function TestRecordsToggle() {
     mutationFn: (show: boolean) => save({ data: { show } }),
     onSuccess: async (state) => {
       queryClient.setQueryData(TEST_SCOPE_QUERY_KEY, state);
-      // Every admin count derives from the same server-side scope, so refresh
-      // all of them rather than guessing which screens are affected.
-      await queryClient.invalidateQueries();
+      // P-020: Every admin count derives from the same server-side scope.
+      // We must reset the cache and re-run all route loaders to ensure the numbers
+      // next to the toggle update instantly without a manual F5.
+      await queryClient.resetQueries({ predicate: (query) => query.queryKey[0] === "admin" || query.queryKey[0] === "admin-overview" });
       await router.invalidate();
     },
     onError: () => toast.error("Could not change the test-record setting."),
