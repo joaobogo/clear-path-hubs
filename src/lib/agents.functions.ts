@@ -244,7 +244,7 @@ export const getAgentPanel = createServerFn({ method: "GET" })
       .gte("occurred_at", since)
       .limit(5000);
     // A client never sees QA fixture roles, so activity about them is dropped.
-    const feedVisible = feedVisible.filter(
+    const feedVisible = (feed ?? []).filter(
       (r: Db) => !isQaFixtureTitle(r.position_title as string | null),
     );
 
