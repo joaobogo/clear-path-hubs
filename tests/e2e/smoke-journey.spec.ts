@@ -34,10 +34,20 @@ import {
 } from "./helpers/pipeline-diagnostics";
 
 let fixtures: SeedResult;
+/** Diagnostics captured during the run, flushed to the report even on failure. */
+let apiFailureLog: ApiFailureLog = { failures: [] };
+let trackedMatchId: string | null = null;
 
 test.beforeAll(async () => {
   await cleanupApplyArtifacts();
   fixtures = await seedFixtures();
+});
+
+// Runs even when the journey fails: the failing run is the one that needs the
+// processing state and the refused API calls written down.
+test.afterEach(async () => {
+  await attachApiFailures(apiFailureLog, "smoke-journey");
+  if (trackedMatchId) await logPipelineState(trackedMatchId, "final");
 });
 
 test.afterAll(async () => {
