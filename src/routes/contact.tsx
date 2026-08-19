@@ -351,28 +351,42 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
     };
 
     if (payload.name.length < 1 || payload.name.length > 120) {
-      setError("Please enter your name.");
-      return;
+      next.name = "Please enter your name.";
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email) || payload.email.length > 255) {
-      setError("Please enter a valid email address.");
-      return;
+    if (!payload.email) {
+      next.email = "Please enter your email address.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email) || payload.email.length > 255) {
+      next.email = "Please enter a valid email address.";
     }
     if (payload.message.length < 10) {
-      setError("Please add a short message (at least 10 characters).");
-      return;
+      next.message = "Please add a short message (at least 10 characters).";
     }
     if (payload.message.length > 4000) {
-      setError("Message is too long (4000 character limit).");
-      return;
+      next.message = "Message is too long (4000 character limit).";
     }
     if (!privacyAcknowledged) {
-      setConsentError(
-        "Please tick this box so we can use your details to reply and store them in our CRM.",
-      );
-      document.getElementById(`privacy-${topic}`)?.focus();
+      next.privacy =
+        "Please tick this box so we can use your details to reply and store them in our CRM.";
+    }
+
+    setFieldErrors(next);
+    setConsentError(next.privacy ?? null);
+
+    if (Object.keys(next).length > 0) {
+      setError("Please check the highlighted fields and try again.");
+      const firstId =
+        next.name ? nameFieldId :
+        next.email ? emailFieldId :
+        next.message ? messageFieldId :
+        privacyFieldId;
+      const el = document.getElementById(firstId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.focus();
+      }
       return;
     }
+
 
 
     setSubmitting(true);
