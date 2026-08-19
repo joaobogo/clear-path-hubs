@@ -499,6 +499,21 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
         <p className="mt-1 text-sm text-[color:var(--brand-navy)]/80">{formDescription}</p>
       </div>
 
+      {Object.keys(fieldErrors).length > 0 && (
+        <Alert
+          variant="destructive"
+          className="border-[color:var(--brand-danger)]/20 bg-[color:var(--brand-danger)]/5 text-[color:var(--brand-danger)]"
+        >
+          <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+          <AlertTitle>Please check the form</AlertTitle>
+          <AlertDescription>
+            {Object.values(fieldErrors).length === 1
+              ? Object.values(fieldErrors)[0]
+              : "There are a few problems below. Fix them and send again."}
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Honeypot */}
       <div className="hidden" aria-hidden="true">
         <label htmlFor={`hp-${topic}`}>Website</label>
@@ -509,21 +524,47 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
         <div className="grid gap-4 sm:grid-cols-2">
           {fields.includes("name") && (
             <div>
-              <Label htmlFor={`name-${topic}`}>Name</Label>
-              <Input id={`name-${topic}`} name="name" required autoComplete="name" maxLength={120} />
+              <Label htmlFor={nameFieldId}>
+                Name <span aria-hidden="true">*</span>
+              </Label>
+              <Input
+                id={nameFieldId}
+                name="name"
+                required
+                aria-required="true"
+                aria-invalid={Boolean(fieldErrors.name)}
+                aria-describedby={fieldErrors.name ? `${nameFieldId}-error` : undefined}
+                autoComplete="name"
+                maxLength={120}
+              />
+              {fieldErrors.name && (
+                <p id={`${nameFieldId}-error`} className="mt-1 text-sm text-[color:var(--brand-danger)]">
+                  {fieldErrors.name}
+                </p>
+              )}
             </div>
           )}
           {fields.includes("email") && (
             <div>
-              <Label htmlFor={`email-${topic}`}>Email</Label>
+              <Label htmlFor={emailFieldId}>
+                Email <span aria-hidden="true">*</span>
+              </Label>
               <Input
-                id={`email-${topic}`}
+                id={emailFieldId}
                 name="email"
                 type="email"
                 required
+                aria-required="true"
+                aria-invalid={Boolean(fieldErrors.email)}
+                aria-describedby={fieldErrors.email ? `${emailFieldId}-error` : undefined}
                 autoComplete="email"
                 maxLength={255}
               />
+              {fieldErrors.email && (
+                <p id={`${emailFieldId}-error`} className="mt-1 text-sm text-[color:var(--brand-danger)]">
+                  {fieldErrors.email}
+                </p>
+              )}
             </div>
           )}
         </div>
@@ -559,13 +600,16 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
 
       {fields.includes("message") && (
         <div>
-          <Label htmlFor={`message-${topic}`}>
-            {intent.id === "support" ? "What went wrong?" : "Message"}
+          <Label htmlFor={messageFieldId}>
+            {intent.id === "support" ? "What went wrong?" : "Message"} <span aria-hidden="true">*</span>
           </Label>
           <Textarea
-            id={`message-${topic}`}
+            id={messageFieldId}
             name="message"
             required
+            aria-required="true"
+            aria-invalid={Boolean(fieldErrors.message)}
+            aria-describedby={fieldErrors.message ? `${messageFieldId}-error` : undefined}
             rows={5}
             maxLength={4000}
             placeholder={
@@ -576,23 +620,35 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
                   : "A few lines about what you need."
             }
           />
+          {fieldErrors.message && (
+            <p id={`${messageFieldId}-error`} className="mt-1 text-sm text-[color:var(--brand-danger)]">
+              {fieldErrors.message}
+            </p>
+          )}
         </div>
       )}
 
       <div className="flex items-start gap-3">
         <Checkbox
-          id={`privacy-${topic}`}
+          id={privacyFieldId}
           checked={privacyAcknowledged}
           onCheckedChange={(v) => {
             setPrivacyAcknowledged(v === true);
-            if (v === true) setConsentError(null);
+            if (v === true) {
+              setConsentError(null);
+              setFieldErrors((prev) => {
+                const { privacy: _, ...rest } = prev;
+                return rest;
+              });
+            }
           }}
           className="mt-0.5"
           aria-required="true"
           aria-invalid={Boolean(consentError)}
-          aria-describedby={consentError ? `privacy-error-${topic}` : undefined}
+          aria-describedby={consentError ? `${privacyFieldId}-error` : undefined}
+          aria-labelledby={`${privacyFieldId}-label`}
         />
-        <label htmlFor={`privacy-${topic}`} className="text-sm leading-relaxed">
+        <label id={`${privacyFieldId}-label`} htmlFor={privacyFieldId} className="text-sm leading-relaxed">
           I agree that TaaSFlow may use the details I provide to respond to this enquiry and
           store them in its customer relationship management system, as described in the{" "}
           <Link to="/privacy" className="underline" target="_blank" rel="noreferrer">
@@ -604,7 +660,7 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
 
       {consentError && (
         <p
-          id={`privacy-error-${topic}`}
+          id={`${privacyFieldId}-error`}
           data-field-error="true"
           className="text-sm text-[color:var(--brand-danger)]"
         >
@@ -612,15 +668,15 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
         </p>
       )}
 
-
       <div className="flex items-start gap-3">
         <Checkbox
-          id={`consent-${topic}`}
+          id={consentFieldId}
           checked={marketingConsent}
           onCheckedChange={(v) => setMarketingConsent(v === true)}
           className="mt-0.5"
+          aria-labelledby={`${consentFieldId}-label`}
         />
-        <label htmlFor={`consent-${topic}`} className="text-sm leading-relaxed">
+        <label id={`${consentFieldId}-label`} htmlFor={consentFieldId} className="text-sm leading-relaxed">
           Keep me updated with TaaSFlow hiring insights and product news. Optional — we will
           reply to your message either way, and you can unsubscribe at any time. See the{" "}
           <Link to="/privacy" className="underline" target="_blank" rel="noreferrer">
@@ -630,17 +686,10 @@ function ContactForm({ intent }: { intent: IntentSpec }) {
         </label>
       </div>
 
-      {error && (
-        <p role="alert" className="text-sm text-red-600">
-          {error}
-        </p>
-      )}
-
       <div className="flex items-center gap-3">
         <Button
           type="submit"
           disabled={submitting}
-
           className="min-h-11 bg-[color:var(--brand-navy)] text-white hover:opacity-90"
         >
           {submitting ? "Sending…" : "Send message"}
