@@ -363,6 +363,9 @@ const COPY: Record<ErrorKind, Copy> = {
 
 /** True when a string looks like it leaked technical detail. */
 export function looksTechnical(text: string): boolean {
+  // P-019: operational codes like position_screening_limit_exceeded are NOT technical
+  // leaks; they are instructions for staff.
+  if (text === "position_screening_limit_exceeded") return false;
   return RAW_LEAK.test(text);
 }
 
