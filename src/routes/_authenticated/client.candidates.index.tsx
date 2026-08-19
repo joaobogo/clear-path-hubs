@@ -466,11 +466,11 @@ function CandidatesPage() {
  {overview.action_required.slice(0, 5).map((a, i) => (
  <li key={i} className="py-2 flex items-center justify-between gap-3">
  <span className="text-sm text-foreground/90 truncate">{a.label}</span>
- <Link
- to={a.href as never}
- search={(orgSearch ? { org: orgSearch } : undefined) as never}
- className="text-xs font-medium text-primary hover:underline shrink-0"
- >
+  <Link
+  to={a.label.toLowerCase().includes("offer") ? "/client/candidates" : "/client/interviews"}
+  search={(a.label.toLowerCase().includes("offer") ? { stage: "offer", org: orgSearch } : { filter: "interview", org: orgSearch }) as never}
+  className="text-xs font-medium text-primary hover:underline shrink-0"
+  >
  Open →
  </Link>
  </li>

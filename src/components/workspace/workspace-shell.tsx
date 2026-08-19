@@ -543,24 +543,16 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
 
           <button
             type="button"
-            className="hidden h-9 shrink-0 items-center gap-2 whitespace-nowrap rounded-md border bg-card px-3 text-xs text-muted-foreground shadow-sm hover:text-foreground lg:inline-flex"
+            className="h-9 shrink-0 items-center gap-2 whitespace-nowrap rounded-md border bg-card px-3 text-xs text-muted-foreground shadow-sm hover:text-foreground inline-flex"
             onClick={() => setSearchOpen(true)}
             aria-label="Open global search"
             aria-keyshortcuts="Meta+K Control+K"
           >
             <Search className="h-3.5 w-3.5" />
-            <span>Search</span>
-            <kbd className="ml-4 rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px]">
+            <span className="hidden sm:inline">Search</span>
+            <kbd className="ml-4 rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px] hidden lg:inline">
               ⌘K
             </kbd>
-          </button>
-          <button
-            type="button"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted lg:hidden"
-            onClick={() => setSearchOpen(true)}
-            aria-label="Open global search"
-          >
-            <Search className="h-4 w-4" />
           </button>
 
           {primaryAction && (

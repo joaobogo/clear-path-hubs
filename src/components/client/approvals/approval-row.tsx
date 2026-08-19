@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { updateTask, deleteTask, TASK_TYPE_LABELS, type TaskRow } from "@/lib/tasks.functions";
+import { useConfirmAction } from "@/components/ds/confirm-action";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
@@ -31,6 +32,7 @@ export function ApprovalRowItem({
 }) {
   const update = useServerFn(updateTask);
   const del = useServerFn(deleteTask);
+  const { confirm, confirmDialog } = useConfirmAction();
   const [evidenceOpen, setEvidenceOpen] = useState(false);
   const [evidence, setEvidence] = useState(task.completion_evidence ?? "");
 
@@ -187,7 +189,16 @@ export function ApprovalRowItem({
       </div>
       <button
         type="button"
-        onClick={() => remove.mutate()}
+        onClick={async () => {
+          const res = await confirm({
+            title: "Delete approval",
+            object: task.title,
+            description: "This will remove the approval task permanently. It will not be visible on the role or candidate journey.",
+            tone: "destructive",
+            confirmLabel: "Delete",
+          });
+          if (res.confirmed) remove.mutate();
+        }}
         className="self-start shrink-0 rounded p-1 text-muted-foreground hover:bg-muted hover:text-destructive"
         aria-label={`Delete ${label}`}
       >
@@ -227,6 +238,7 @@ export function ApprovalRowItem({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      {confirmDialog}
     </li>
   );
 }

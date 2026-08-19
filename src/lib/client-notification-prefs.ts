@@ -82,7 +82,7 @@ export const NOTIFICATION_EVENTS: readonly NotificationEventSpec[] = [
     label: "Weekly summary",
     description: "One email each Monday: movement, decisions waiting, what is next.",
     modes: ["immediate", "off"],
-    defaultMode: "immediate",
+    defaultMode: "off",
   },
 ] as const;
 

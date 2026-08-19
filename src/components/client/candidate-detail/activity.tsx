@@ -252,7 +252,7 @@ export function TalentMemoryAction({
         disabled={readOnly}
         onClick={() => setOpen(true)}
       >
-        Tag as silver medalist
+        Silver medalist
       </Button>
       <TagSilverMedalistDialog
         open={open}

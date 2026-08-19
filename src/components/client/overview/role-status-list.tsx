@@ -36,7 +36,7 @@ export function RoleStatusList({
     );
   }
   return (
-    <ul className={compact ? "grid gap-1.5" : "grid gap-2"}>
+    <ul className="grid gap-2 group-data-[density=compact]/container:gap-1.5">
       {roles.map((r) => {
         const since = formatStageDate(r.stage_entered_at);
         const days = r.days_in_stage as number | null;
@@ -55,9 +55,7 @@ export function RoleStatusList({
               <Link
                 to="/client/positions/$id"
                 params={{ id: r.position_id }}
-                className={`group flex flex-col gap-2 hover:bg-muted/30 ${
-                  compact ? "px-4 py-2.5" : "px-4 py-3.5"
-                }`}
+                className="group flex flex-col gap-2 hover:bg-muted/30 px-4 py-3.5 group-data-[density=compact]/container:py-2.5"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -83,8 +81,7 @@ export function RoleStatusList({
                 </div>
 
                 {/* Our promise, next to what actually happened. Misses shown plainly. */}
-                {!compact && (
-                  <div className="grid grid-cols-3 gap-2 rounded-lg border bg-muted/30 px-3 py-2 text-[11px] sm:text-xs">
+                <div className="grid grid-cols-3 gap-2 rounded-lg border bg-muted/30 px-3 py-2 text-[11px] sm:text-xs group-data-[density=compact]/container:hidden">
                     <div className="min-w-0">
                       <div className="text-muted-foreground">First shortlist promised</div>
                       <div className="truncate font-medium text-foreground">
@@ -116,7 +113,6 @@ export function RoleStatusList({
                       </div>
                     </div>
                   </div>
-                )}
 
                 {/* What happens next: owner and date, always stated. */}
                 <p

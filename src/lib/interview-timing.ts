@@ -59,7 +59,7 @@ export function displayInterviewStatus(
 
 const LABELS: Record<string, string> = {
   requested: "Needs times",
-  scheduling: "Proposed — awaiting candidate",
+  scheduling: "Times sent — awaiting reply",
   scheduled: "Confirmed",
   completed: "Completed",
   cancelled: "Cancelled",

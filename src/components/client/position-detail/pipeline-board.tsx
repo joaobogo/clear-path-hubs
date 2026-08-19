@@ -95,7 +95,7 @@ export function PipelineBoard({
                 if (matchId && from) attemptMove(matchId, from, col.key);
               }}
             >
-              <div className="flex items-center justify-between px-1 mb-2">
+              <div className="flex items-center justify-between px-1 mb-2 select-none pointer-events-none">
                 <div className="text-xs font-medium uppercase tracking-wide">{col.label}</div>
                 <div className="text-xs text-muted-foreground tabular-nums">
                   {byStage[col.key].length}
