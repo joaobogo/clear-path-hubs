@@ -30,6 +30,10 @@ export default defineConfig({
     baseURL: "http://localhost:8080",
     trace: "off",
     screenshot: "only-on-failure",
+    // Without these, Playwright actions wait forever, so a single missing
+    // control burns the whole test timeout with no useful failure message.
+    actionTimeout: 20_000,
+    navigationTimeout: 60_000,
     ...devices["Desktop Chrome"],
     launchOptions: { executablePath },
   },

@@ -137,7 +137,12 @@ test.describe("launch smoke journey", () => {
     await expect(page.getByText(new RegExp(fixtures.position_id.slice(0, 6), "i")).or(
       page.getByRole("heading", { name: /applications/i }),
     ).first()).toBeVisible({ timeout: 60_000 });
-    await page.getByRole("button", { name: /sign out/i }).first().click().catch(() => undefined);
+    // Best-effort sign-out: bounded so a hidden/absent control can't stall the run.
+    await page
+      .getByRole("button", { name: /sign out/i })
+      .first()
+      .click({ timeout: 5_000 })
+      .catch(() => undefined);
 
     // Let the pipeline parse + score so the match is approvable.
     await runPipelineDrain();
