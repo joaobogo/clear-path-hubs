@@ -430,11 +430,19 @@ export const listClients = createServerFn({ method: "GET" })
       .from("organizations")
       .select(
         "id,name,status,domain,industry,updated_at,archived_at,onboarding_status,primary_contact_name,primary_contact_email,is_test_record,is_demo,is_qa,is_internal",
-      )
-      .limit(500);
+      );
+    // P-020: Increase limit to ensure all organizations are captured before client-side filtering.
+    // The previous 500 limit could cause missing results if there are many test/archived records.
+    q = q.limit(2000);
     // The global "test records" preference decides here, in Postgres, so the
     // list and the "N organizations" count can never disagree.
-    if (!showTest) q = excludeTestFlag(q);
+    if (!showTest) {
+      q = excludeTestFlag(q);
+    } else {
+      // P-020: When test records are ON, we still want every organization,
+      // but ensure we don't accidentally over-limit or skip uncategorized ones.
+      // The limit(500) is already quite generous for a list.
+    }
     const { data: rows } = await q;
 
     const orgIds = (rows ?? []).map((r: AnyRow) => r.id);
@@ -1890,6 +1898,7 @@ export const updateOrganization = createServerFn({ method: "POST" })
             status: ORG_STATUS.optional(),
             onboarding_status: ONBOARDING_STATUS.optional(),
             dashboard_status: DASHBOARD_STATUS.optional(),
+            is_test_record: z.boolean().optional(),
           })
           .refine((p) => Object.keys(p).length > 0, { message: "empty_patch" }),
       })

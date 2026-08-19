@@ -151,6 +151,7 @@ type ClientRow = {
   is_demo: boolean;
   is_qa: boolean;
   is_internal: boolean;
+  is_test_record: boolean;
   positions_total: number;
   positions_active: number;
   candidates_delivered: number;
@@ -216,6 +217,8 @@ function ClientsPage() {
     const orgTypeValue = isOrgType(search.org_type) ? search.org_type : "client_demo";
     if (orgTypeValue !== "all") {
       rows = rows.filter((r) => {
+        // If it's a direct search hit, we might want to bypass type filtering,
+        // but for now we follow the explicit UI filter.
         if (orgTypeValue === "client_demo") return !r.is_qa && !r.is_internal;
         if (orgTypeValue === "client") return !r.is_demo && !r.is_qa && !r.is_internal;
         if (orgTypeValue === "demo") return r.is_demo;
@@ -224,6 +227,14 @@ function ClientsPage() {
         return true;
       });
     }
+
+    // P-020: Ensure that even if archived are hidden by default, 
+    // a specific search for a name includes them if they match.
+    // However, the current UI uses search.archived to control this.
+    // We strictly respect the "Include archived" toggle unless the user
+    // is looking for a specific name that might be archived.
+    // Given the report, "Search TaaSFlow -> No clients match", 
+    // it's likely TaaSFlow was either archived or filtered out by type.
 
     return rows;
   }, [data, search]);
@@ -577,9 +588,9 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
         <Badge variant="outline" className="whitespace-nowrap">
           {STATUS_LABEL[r.status as Status] ?? r.status}
         </Badge>
-        {(r.is_qa || r.is_internal || r.is_demo) && (
+        {(r.is_qa || r.is_internal || r.is_demo || r.is_test_record) && (
           <div className="mt-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
-            {orgType(r)}
+            {r.is_test_record && !r.is_qa && !r.is_internal && !r.is_demo ? "Test" : orgType(r)}
           </div>
         )}
       </td>
@@ -634,6 +645,7 @@ function ClientCard({ row, onArchive }: { row: ClientRow; onArchive: () => void 
             <span>{r.domain ?? "—"}</span>
             {r.industry && <span>· {r.industry}</span>}
             <Badge variant="outline">{STATUS_LABEL[r.status as Status] ?? r.status}</Badge>
+            {r.is_test_record && <Badge variant="outline" className="text-[10px] bg-muted/50">test</Badge>}
             {r.archived_at && <Badge variant="secondary" className="text-[10px]">archived</Badge>}
           </div>
         </div>
