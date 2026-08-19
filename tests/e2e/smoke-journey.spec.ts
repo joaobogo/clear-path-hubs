@@ -259,6 +259,12 @@ test.describe("launch smoke journey", () => {
 
     // ── 4. Client signs in and advances the candidate ─────────────────────
     await loginAs(page, "client", fixtures.users["client_admin"]!.email);
+    // Publication is only real if the candidate shows up in the client's own list.
+    await page.goto("/client/candidates", { waitUntil: "domcontentloaded" });
+    await expect(
+      page.getByText(fullName).first(),
+      "published candidate appears in the client's candidate list",
+    ).toBeVisible({ timeout: 90_000 });
     await page.goto(`/client/candidates/${matchId}`, { waitUntil: "domcontentloaded" });
     await expect(page.getByText(fullName).first()).toBeVisible({ timeout: 90_000 });
 
