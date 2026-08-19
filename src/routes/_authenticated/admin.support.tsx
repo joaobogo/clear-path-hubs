@@ -15,7 +15,10 @@ import { SupportSessionAuditList } from "@/components/admin/support-session-audi
 
 export const Route = createFileRoute("/_authenticated/admin/support")({
   loader: ({ context }) =>
-    context.queryClient.ensureQueryData({ queryKey: ["admin-support"], queryFn: () => getSupportOverview() }),
+    context.queryClient.ensureQueryData({
+      queryKey: ["admin-support", context.testScope?.includeTest ?? false],
+      queryFn: () => getSupportOverview(),
+    }),
   head: () => ({
     meta: [
       { title: "Support view · TaaSFlow admin" },
