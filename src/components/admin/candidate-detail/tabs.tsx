@@ -466,7 +466,11 @@ export function EvidenceTab({
                   {(r.evidence as Any[]).map((e, j) => (
                     <li key={j}>
                       "…{e.snippet}…"{" "}
-                      <code className="opacity-60">{e.location ?? e.source ?? ""}</code>
+                      <code className="opacity-60">
+                        {typeof e.location === 'string' 
+                          ? e.location.replace(/^cv:(\d+)-(\d+)$/, 'CV · characters $1–$2') 
+                          : (e.source ?? "")}
+                      </code>
                     </li>
                   ))}
                 </ul>
