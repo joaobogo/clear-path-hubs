@@ -82,15 +82,25 @@ export function computeHiringHealth(input: HiringHealthInput): HiringHealth {
   ];
   
   const urgent = input.overdueDecisions + input.blocks;
-  if (urgent > 0 || input.awaitingDecision > 0) {
-    const total = urgent + input.awaitingDecision;
+  if (urgent > 0) {
     return {
-      sentence: `${count(total)} ${plural(total, "thing needs", "things need")} you.`,
+      sentence: `${count(urgent)} urgent ${plural(urgent, "thing needs", "things need")} you.`,
       tone: "attention",
       reason: input.blocks > 0 ? "blocks" : "overdue_decisions",
       figures,
     };
   }
+
+  if (input.awaitingDecision > 0) {
+    const total = input.awaitingDecision;
+    return {
+      sentence: `${count(total)} ${plural(total, "candidate needs", "candidates need")} review.`,
+      tone: "on_track",
+      reason: "on_track",
+      figures,
+    };
+  }
+
 
   if (input.behindScheduleRoles > 0) {
     const n = input.behindScheduleRoles;

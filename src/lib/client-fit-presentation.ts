@@ -87,7 +87,7 @@ const CANONICAL_TO_FIT_BAND: Record<ScoreBandKey, FitBand> = {
 const BAND_TABLE: Record<FitBand, Omit<FitPresentation, "band">> = {
   exceptional: {
     headline: "Exceptional Match",
-    recommendation: "Prioritise for interview",
+    recommendation: "Prioritize for interview",
     tone: "confident",
     accent: "emerald",
   },
@@ -116,12 +116,13 @@ const BAND_TABLE: Record<FitBand, Omit<FitPresentation, "band">> = {
     accent: "amber",
   },
   not_recommended: {
-    headline: "Not Recommended",
+    headline: "Not recommended",
     recommendation: "Requirements not evidenced",
     tone: "dissuade",
     accent: "slate",
   },
 };
+
 
 /**
  * Normalise a raw fit label + numeric score into the Client-facing fit band.

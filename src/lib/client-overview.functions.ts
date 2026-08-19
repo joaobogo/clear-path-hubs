@@ -113,7 +113,8 @@ export const getClientOverview = createServerFn({ method: "GET" })
 
     const { data: positions, error: positionsError } = await context.supabase
       .from("positions")
-      .select("id, title, status, updated_at, created_at")
+      .select("id, title, status, updated_at, created_at, organization_id, organizations(name)")
+
       .eq("organization_id", data.orgId)
       // Active work only: a closed or on-hold role must leave every count and
       // the decision queue in the same refresh.
@@ -128,6 +129,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
       offers: openItemsResponse.items.filter(i => i.kind === 'offer').length,
       missing_feedback: openItemsResponse.items.filter(i => i.kind === 'missing_feedback').length,
     };
+
 
     
     // Summary of blocked roles for the header
@@ -530,6 +532,11 @@ export const getClientOverview = createServerFn({ method: "GET" })
     return {
       kpis,
       hiring_health,
+      org: {
+        id: data.orgId,
+        name: activePositionsList[0]?.organizations?.name ?? "Your workspace",
+      },
+
 
       active_positions: activePositions,
       blocked_summary,
