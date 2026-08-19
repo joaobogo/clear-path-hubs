@@ -179,6 +179,10 @@ const TEMPLATED_PATTERNS = [
   /bsc\s+information\s+systems/i,
   /instituto\s+superior\s+técnico/i,
   /selected\s+projects\s+platform\s+rebuild/i,
+  /^beatriz\s+costa\s+senior\s+full-stack\s+engineer/i,
+  /^sofia\s+marques\s+senior\s+full-stack\s+engineer/i,
+  /^inês\s+lopes\s+senior\s+full-stack\s+engineer/i,
+  /^pedro\s+fernandes\s+full-stack\s+engineer/i,
 ];
 
 export function isTemplatedEvidence(raw: string | null | undefined): boolean {
@@ -196,4 +200,56 @@ export function isGenericSkillsList(raw: string | null | undefined): boolean {
   if (!raw) return false;
   const text = String(raw).trim();
   return /^core\s+stack\s*:/i.test(text);
+}
+
+/**
+ * Ensures a quoted span is actually relevant to the requirement by checking for
+ * a term overlap between the requirement label and the quote.
+ */
+export function isRelevantEvidence(quote: string, requirement: string): boolean {
+  const q = quote.toLowerCase();
+  const r = requirement.toLowerCase();
+
+  // 1. Exact phrase/term match is the gold standard.
+  const terms = r
+    .split(/[^a-z0-9]+/)
+    .filter((t) => t.length >= 3 && !["and", "with", "for", "the", "experience"].includes(t));
+
+  if (terms.length === 0) return true; // Can't verify, allow for now.
+
+  const hasOverlap = terms.some((t) => q.includes(t));
+  if (hasOverlap) return true;
+
+  // 2. Known synonym clusters.
+  const synonyms: Array<[string[], string[]]> = [
+    [["ai", "llm", "gpt", "openai", "generative"], ["artificial intelligence", "language model"]],
+    [["tanstack", "remix", "next.js", "react", "frontend"], ["framework", "stack"]],
+    [["sql", "postgres", "postgresql", "db", "database"], ["relational", "modeling"]],
+    [["aws", "cloud", "azure", "gcp"], ["infrastructure", "devops"]],
+  ];
+
+  for (const [cluster1, cluster2] of synonyms) {
+    const rMatch = cluster1.some((t) => r.includes(t)) || cluster2.some((t) => r.includes(t));
+    const qMatch = cluster1.some((t) => q.includes(t)) || cluster2.some((t) => q.includes(t));
+    if (rMatch && qMatch) return true;
+  }
+
+  return false;
+}
+
+/**
+ * Returns true if the evidence snippet is merely a candidate's self-written
+ * headline (e.g. "Senior Full-Stack Engineer — product-focused...").
+ * Headlines are context, not proof of specific technical requirements.
+ */
+export function isCandidateHeadline(snippet: string): boolean {
+  const s = snippet.toLowerCase().trim();
+  // Most headlines follow this "Name Title — Description" or "Title — Stack" pattern
+  // especially when truncated by an offset slice.
+  return (
+    (s.includes("engineer") ||
+    s.includes("developer") ||
+    s.includes("manager") ||
+    s.includes("product-focused")) && (s.includes("—") || s.includes("|") || s.length < 100)
+  );
 }
