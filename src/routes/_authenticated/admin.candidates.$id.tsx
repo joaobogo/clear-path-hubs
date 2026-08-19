@@ -130,7 +130,12 @@ function CandidateWorkspace() {
   // The tab lives in the URL so deep links and back/forward keep working.
   const tab: TabId = focusEventId && urlTab === "profile" ? "history" : urlTab;
   const setTab = (next: TabId) =>
-    void navigate({ search: (prev: { tab: TabId; event: string }) => ({ ...prev, tab: next }), replace: true });
+    void navigate({
+      to: "/admin/candidates/$id",
+      params: { id },
+      search: (prev: Record<string, unknown>) => ({ ...prev, tab: next }),
+      replace: true,
+    });
   const [busy, setBusy] = useState<string | null>(null);
 
   // Only fetched once a tab that needs the large payloads is open.
