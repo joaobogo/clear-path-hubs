@@ -1415,14 +1415,20 @@ export const getPipelineHealth = createServerFn({ method: "GET" })
         stale += 1;
     }
 
-    // Recent failed jobs (C8: Unified failed job count/query)
-    // We include both 'failed' and 'stuck_queued' to reconcile counts across views.
-    const { data: failedJobs } = await s
+    // Jobs in trouble. This must match the "Processing exceptions" bucket on the
+    // same page: failed jobs plus jobs still queued or running past the stale
+    // cutoff. The previous filter used a status value the database does not have
+    // ("stuck_queued"), so the query errored and the section reported "0" beside
+    // a bucket showing dozens of rows.
+    const { data: failedJobs, error: failedJobsError } = await s
       .from("processing_jobs")
-      .select("id,job_type,error_code,error_message,trace_id,created_at,entity_id")
-      .in("status", ["failed", "stuck_queued"])
+      .select("id,job_type,status,attempts,error_code,error_message,trace_id,created_at,started_at,entity_id")
+      .or(`status.eq.failed,and(status.in.(queued,running),created_at.lt.${staleCutoff})`)
       .order("created_at", { ascending: false })
       .limit(100);
+    // A failed query is an error, not "no failures".
+    if (failedJobsError) throw new Error(failedJobsError.message);
+
 
     // Provider errors (last 7d)
     const weekAgo = new Date(Date.now() - 7 * 86400_000).toISOString();
