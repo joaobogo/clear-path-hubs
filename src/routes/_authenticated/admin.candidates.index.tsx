@@ -53,7 +53,7 @@ import { ExportControl } from "@/components/admin/export-control";
 import { FilterDrawer } from "@/components/admin/filter-drawer";
 import { ScoreStalenessChip, freshnessFromRow } from "@/components/admin/score-staleness-chip";
 import { classifyBand } from "@/lib/scoring/bands";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, pluralize, formatNumber } from "@/lib/format/datetime";
 
 /** Dense list label: band + confidence, no bare number (rubric lives on detail). */
 function scoreBandListLabel(m: {
@@ -293,6 +293,7 @@ function CandidatesPage() {
 
   const rows = (data?.rows ?? []) as AnyRow[];
   const total = data?.total ?? 0;
+  const totalFormatted = formatNumber(total);
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   const { data: orgs = [] } = useQuery({ queryKey: ["admin-orgs"], queryFn: () => orgsFn() });
