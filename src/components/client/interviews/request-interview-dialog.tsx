@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { formatEnumLabel } from "@/lib/human-labels";
 import { useQuery } from "@tanstack/react-query";
 import { SlotProposer } from "@/components/client/scheduling/slot-proposer";
 import { QueryErrorCard } from "@/components/client/query-error";
@@ -103,16 +104,22 @@ export function RequestInterviewDialog({
                       No delivered candidates available.
                     </div>
                   ) : (
-                    candidates.map((c) => (
-                      <SelectItem
-                        key={c.match_id}
-                        value={c.match_id}
-                        disabled={c.has_active_interview}
-                      >
-                        {c.candidate_name} — {c.position_title}
-                        {c.has_active_interview ? " · (has active interview)" : ""}
-                      </SelectItem>
-                    ))
+                    candidates.map((c) => {
+                      const isInterviewable = ["delivered", "shortlisted", "interview_process"].includes(c.stage);
+                      const isDisabled = c.has_active_interview || !isInterviewable;
+                      return (
+                        <SelectItem
+                          key={c.match_id}
+                          value={c.match_id}
+                          disabled={isDisabled}
+                        >
+                          {c.candidate_name} — {c.position_title}
+                          {c.has_active_interview ? " · (has active interview)" : ""}
+                          {!isInterviewable ? ` · (${formatEnumLabel(c.stage)})` : ""}
+                        </SelectItem>
+                      );
+                    })
+
                   )}
                 </SelectContent>
               </Select>

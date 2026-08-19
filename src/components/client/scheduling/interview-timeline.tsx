@@ -108,9 +108,18 @@ export function InterviewTimeline({
   const { upcoming, past } = useMemo(() => {
     const sorted = [...interviews].sort((a, b) => anchor(a) - anchor(b));
     return {
-      upcoming: sorted.filter((i) => !isPastItem(i)),
+      upcoming: sorted.filter((i) => {
+        if (isPastItem(i)) return false;
+        // Suppress "Needs times" cards for candidates who are no longer in an 
+        // interviewable stage (e.g. moved to Offer or Hired since the request).
+        if (i.status === "requested" && i.next_action.includes("Move to interview stage")) {
+          return false;
+        }
+        return true;
+      }),
       past: sorted.filter(isPastItem).reverse(),
     };
+
   }, [interviews]);
 
   const render = (iv: InterviewDTO) => (

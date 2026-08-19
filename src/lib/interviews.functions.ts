@@ -16,6 +16,8 @@ import { assertEditor } from "@/lib/client-shared.server";
 import { resolveNotificationsForUser } from "@/lib/notifications-resolver.server";
 
 
+
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
 
@@ -138,9 +140,16 @@ export type InterviewDTO = {
 
 function toDTO(row: AnyRow, candidate: AnyRow | null, position: AnyRow | null): InterviewDTO {
   const status = row.status as InterviewStatus;
+  const stage = candidate?.stage as string | undefined;
+  
+  // ELIGIBILITY PREDICATE: An interview request is actionable only if:
+  // 1. The match is in an interview-ready stage.
+  // 2. The match doesn't have another scheduled interview (checked in confirmation).
+  const isEligible = ["delivered", "shortlisted", "interview_process"].includes(stage || "");
+
   const nextAction =
     status === "requested"
-      ? "Propose interview times"
+      ? isEligible ? "Propose interview times" : "Move to interview stage to propose"
       : status === "scheduling"
         ? "Confirm a scheduled time"
         : status === "scheduled"
@@ -148,6 +157,7 @@ function toDTO(row: AnyRow, candidate: AnyRow | null, position: AnyRow | null): 
           : status === "completed"
             ? "Add feedback or close"
             : "Archived";
+
   return {
     id: row.id,
     organization_id: row.organization_id,
@@ -255,10 +265,17 @@ export const listClientInterviews = createServerFn({ method: "POST" })
     for (const p of ((positionsRes.data as AnyRow[]) ?? [])) posMap.set(p.id as string, p);
 
     return {
-      interviews: list.map((r) =>
-        toDTO(r, matchMap.get(r.candidate_match_id) ?? null, posMap.get(r.position_id) ?? null),
-      ),
+      interviews: list.map((r) => {
+        const match = hydratedMatches.find((m: any) => m.id === r.candidate_match_id);
+        return toDTO(
+          r,
+          match ? { ...matchMap.get(r.candidate_match_id), stage: match.stage } : null,
+          posMap.get(r.position_id) ?? null,
+        );
+      }),
     };
+
+
   });
 
 // ─── Mutations ──────────────────────────────────────────────────────────────
@@ -737,7 +754,7 @@ export const listSchedulableCandidates = createServerFn({ method: "POST" })
       )
       .eq("organization_id", data.orgId)
       .eq("client_visibility", "visible")
-      .in("stage", ["delivered", "shortlisted", "interview_process"]);
+      .in("stage", ["delivered", "shortlisted", "interview_process", "offer", "hired"]);
     if (error) throw new Error(error.message);
     const { hydrateClientCandidateProfiles: hydrateSchedulable } = await import(
       "@/lib/client-candidate-hydrate.server"
@@ -751,7 +768,7 @@ export const listSchedulableCandidates = createServerFn({ method: "POST" })
       .in("status", ["requested", "scheduling", "scheduled"]);
     const activeSet = new Set((active as AnyRow[] | null)?.map((r) => r.candidate_match_id) ?? []);
 
-    const candidates: SchedulableCandidate[] = list.map((r) => ({
+    const candidates: SchedulableCandidate[] = list.map((r: any) => ({
       match_id: r.id as string,
       candidate_id: (r.candidate_profiles?.id as string) ?? r.candidate_profile_id,
       candidate_name: (r.candidate_profiles?.full_name as string) ?? "Candidate",
@@ -762,5 +779,6 @@ export const listSchedulableCandidates = createServerFn({ method: "POST" })
       has_active_interview: activeSet.has(r.id as string),
       availability_preference: parseStoredPreference(r.candidate_profiles?.availability),
     }));
+
     return { candidates };
   });
