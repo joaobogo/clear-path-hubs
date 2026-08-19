@@ -249,8 +249,8 @@ function PublishDesk() {
                 <th className="px-3 py-2 font-medium">Candidate</th>
                 <th className="px-3 py-2 font-medium">Client · Role</th>
                 <th className="px-3 py-2 font-medium tabular-nums">Score</th>
-                <th className="px-3 py-2 font-medium">Readiness</th>
-                <th className="px-3 py-2 font-medium">Review · Publication</th>
+                <th className="px-3 py-2 font-medium">Checks</th>
+                <th className="px-3 py-2 font-medium">Status · Updated</th>
                 <th className="px-3 py-2 font-medium text-right">Action</th>
               </tr>
             </thead>
