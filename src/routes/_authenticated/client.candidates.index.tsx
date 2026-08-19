@@ -414,6 +414,7 @@ function CandidatesPage() {
       <p className="text-sm text-muted-foreground mt-1">
         Review, compare, and progress the candidates delivered for your open roles.
       </p>
+
       <VisibilityNote className="mt-2" />
     </div>
     <div className="flex flex-col items-stretch gap-2 sm:shrink-0 sm:items-end">

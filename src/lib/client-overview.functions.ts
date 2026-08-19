@@ -196,8 +196,10 @@ export const getClientOverview = createServerFn({ method: "GET" })
         new Date(r.delivered_at).getTime() >= sevenDaysAgo,
     ).length;
 
-    // The action_required summary is removed from the Overview payload
-    // to keep the first viewport focused on the primary Decision Queue.
+    // ── Detail Accordion ────────────────────────────────────────────────────
+    // Internal system instrumentation (System status, agent controls, activity)
+    // removed from the client surface to keep it focused on talent operations.
+
 
 
     // "What happens next" — per-position next milestone, only active positions.
