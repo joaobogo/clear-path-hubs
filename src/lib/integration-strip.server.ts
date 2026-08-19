@@ -191,31 +191,35 @@ export async function loadIntegrationStrip(admin: Admin) {
     const queueOver = queue ? queue.depth > queue.threshold : false;
     const staleMs = def.expectedMinutes * MIN;
 
+    // The chip and the card below it must read the same artifact: the newest
+    // `integration_health_checks` row. Staleness is reported inside the reason,
+    // never by overwriting a real result with "Unknown" — a chip that contradicts
+    // the card it heads is worse than an old timestamp.
+    const staleCheck = latest ? Date.now() - new Date(latest.created_at).getTime() > staleMs : false;
+    const staleNote = staleCheck
+      ? ` Last checked ${Math.round(ageMinutes(latest.created_at)! / 60)}h ago, past the ${Math.round(def.expectedMinutes / 60)}h expected interval — re-run to confirm.`
+      : "";
+
     if (checkErr) {
       state = "unknown";
       reason = `Health check history could not be read — ${checkErr.slice(0, 160)}`;
-    } else if (queue?.error) {
-      state = "unknown";
-      reason = `Queue depth could not be read — ${queue.error}`;
     } else if (!latest) {
       state = "unknown";
       reason = "No health check has ever run for this integration.";
     } else if (latest.status === "not_configured") {
       state = "not_configured";
-      reason = latest.summary ?? "Not configured in this environment.";
+      reason = (latest.summary ?? "Not configured in this environment.") + staleNote;
     } else if (latest.status === "failed") {
       state = "failing";
-      reason = latest.summary ?? "The last health check failed.";
-    } else if (Date.now() - new Date(latest.created_at).getTime() > staleMs) {
-      state = "unknown";
-      reason = `Last check ran ${Math.round(ageMinutes(latest.created_at)! / 60)}h ago, past the ${Math.round(def.expectedMinutes / 60)}h expected interval — re-run to confirm.`;
+      reason = (latest.summary ?? "The last health check failed.") + staleNote;
     } else if (latest.status === "degraded" || queueOver || (clients?.failing ?? 0) > 0) {
       state = "degraded";
-      reason = queueOver
-        ? `${queue!.depth} items waiting (threshold ${queue!.threshold})${queue!.oldest_age_minutes != null ? `, oldest ${queue!.oldest_age_minutes} min old` : ""}.`
-        : (clients?.failing ?? 0) > 0
-          ? `${clients!.failing} client connection${clients!.failing === 1 ? "" : "s"} failing.`
-          : (latest.summary ?? "Degraded in the last check.");
+      reason =
+        (queueOver
+          ? `${queue!.depth} items waiting (threshold ${queue!.threshold})${queue!.oldest_age_minutes != null ? `, oldest ${queue!.oldest_age_minutes} min old` : ""}.`
+          : (clients?.failing ?? 0) > 0
+            ? `${clients!.failing} client connection${clients!.failing === 1 ? "" : "s"} failing.`
+            : (latest.summary ?? "Degraded in the last check.")) + staleNote;
     } else if (
       lastSuccessAt &&
       Date.now() - new Date(lastSuccessAt).getTime() > staleMs &&
@@ -225,7 +229,13 @@ export async function loadIntegrationStrip(admin: Admin) {
       reason = `Last successful activity was ${Math.round(ageMinutes(lastSuccessAt)! / 60)}h ago, past the ${Math.round(def.expectedMinutes / 60)}h expected interval.`;
     } else {
       state = "healthy";
-      reason = latest.summary ?? "Last check passed.";
+      reason = (latest.summary ?? "Last check passed.") + staleNote;
+    }
+
+    // A queue we could not read is a caveat on the chip, not a reason to erase
+    // a real check result.
+    if (queue?.error && state === "healthy") {
+      reason = `${reason} Queue depth could not be read — ${queue.error}`;
     }
 
     return {
