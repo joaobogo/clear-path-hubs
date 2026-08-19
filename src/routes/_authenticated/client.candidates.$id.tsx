@@ -490,7 +490,7 @@ function CandidateDetailPage() {
             }}
             fetchCandidates={async () => {
               const res = await listSchedulableCandidates({ data: { orgId: orgId! } });
-              return res as { candidates: SchedulableCandidate[] };
+              return res as any;
             }}
             initialMatchId={candidate.match_id}
           />
