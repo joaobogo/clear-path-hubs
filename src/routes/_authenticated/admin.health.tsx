@@ -159,7 +159,7 @@ function HealthPage() {
                   <td className="px-3 py-2 text-xs text-muted-foreground">
                     {new Date(j.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
                   </td>
-                  <td className="px-3 py-2">{j.job_type}</td>
+                  <td className="px-3 py-2 uppercase tracking-wide text-[10px] text-muted-foreground">{j.job_type}</td>
                   <td className="px-3 py-2">
                     <Badge variant="destructive">{humanizeCode(j.error_code ?? "error")}</Badge>{" "}
                     <span className="text-xs text-muted-foreground">
