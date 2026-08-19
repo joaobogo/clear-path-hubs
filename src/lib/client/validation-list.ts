@@ -40,11 +40,13 @@ export function isRequirementShapedConcern(concern: string): boolean {
   return REQUIREMENT_CONCERN_PREFIXES.some((p) => s.startsWith(p));
 }
 
-const SENTENCE: Record<Exclude<RequirementStatus, "not_applicable">, string> = {
+const SENTENCE: Record<RequirementStatus, string> = {
   met: "evidenced; confirm at interview as a formality.",
   partial: "partially evidenced; confirm depth in the interview.",
   contradicted: "the evidence conflicts; ask the candidate to clarify.",
   not_evidenced: "Evidence extraction is still running",
+  missing: "Evidence extraction is still running",
+  not_applicable: "Not applicable",
 };
 
 export type BuildValidationListOptions = {
