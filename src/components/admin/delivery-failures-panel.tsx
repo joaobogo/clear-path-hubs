@@ -67,13 +67,11 @@ export function DeliveryFailuresPanel() {
   const [suppressTarget, setSuppressTarget] = useState<Item | null>(null);
   const [suppressReason, setSuppressReason] = useState("");
 
-  const query = useQuery({
-    queryKey: ["admin", "delivery-failure-queue"],
-    queryFn: () => list(),
-  });
+  // The tiles above this panel and these rows must be one fetch, not two: a
+  // second query key is how the page came to show "0 failures" over 86 rows.
+  const query = useDeliveryFailures();
 
-  const invalidate = () =>
-    qc.invalidateQueries({ queryKey: ["admin", "delivery-failure-queue"] });
+  const invalidate = () => qc.invalidateQueries({ queryKey: DELIVERY_FAILURES_QUERY_KEY });
 
   const retryMut = useMutation({
     mutationFn: (item: Item) => retry({ data: { ledger: item.ledger, id: item.id } }),
