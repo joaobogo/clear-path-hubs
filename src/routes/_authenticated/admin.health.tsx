@@ -139,9 +139,13 @@ function HealthPage() {
       </div>
 
       <section>
-        <h2 className="font-semibold mb-2">
-          Recent failed jobs ({data.failed_jobs.length})
+        <h2 className="font-semibold">
+          Jobs in trouble ({data.failed_jobs.length})
         </h2>
+        <p className="mb-2 text-xs text-muted-foreground">
+          Failed jobs, plus jobs still queued or running for more than 24 hours — the same
+          rows counted by “Processing exceptions” above.
+        </p>
         <div className="rounded-lg border overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-muted/50 text-left">
@@ -149,9 +153,8 @@ function HealthPage() {
                 <th className="px-3 py-2 font-medium">When</th>
                 <th className="px-3 py-2 font-medium">Job</th>
                 <th className="px-3 py-2 font-medium">Error</th>
-                <th className="px-3 py-2 font-medium">Trace</th>
                 <th className="px-3 py-2 font-medium">State</th>
-                <th className="px-3 py-2 font-medium">Retry</th>
+                <th className="px-3 py-2 font-medium">Attempts</th>
                 <th className="px-3 py-2 font-medium">Repair</th>
               </tr>
             </thead>
@@ -170,12 +173,13 @@ function HealthPage() {
                         : sanitizeInternalMarkers(j.error_message)}
                     </span>
                   </td>
-                  <td className="px-3 py-2 text-xs font-mono text-muted-foreground">
-                    {humanizeCode(j.state).toLowerCase()}
+                  <td className="px-3 py-2 text-xs text-muted-foreground">
+                    {humanizeCode(j.status ?? "unknown").toLowerCase()}
                   </td>
                   <td className="px-3 py-2 text-xs text-muted-foreground">
-                    {pluralize(j.attempts, "attempt")}
+                    {pluralize(j.attempts ?? 0, "attempt")}
                   </td>
+
 
                   <td className="px-3 py-2 space-x-1">
                     <Button
