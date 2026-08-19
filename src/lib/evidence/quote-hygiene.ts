@@ -152,7 +152,22 @@ export function cleanQuote(raw: string | null | undefined): string {
 }
 
 
+/** Humanize evidence sources. */
+export function humanizeSource(source: string | null | undefined): string {
+  if (!source) return "Direct observation";
+  const map: Record<string, string> = {
+    resume: "Curriculum Vitae",
+    cv: "Curriculum Vitae",
+    linkedin: "LinkedIn Profile",
+    github: "GitHub Registry",
+    interview_note: "Interview Record",
+    screening_call: "Screening Assessment",
+  };
+  return map[source.toLowerCase()] || source;
+}
+
 /**
+
  * Clean a short field value — a requirement label, availability, location.
  *
  * These are not CV slices: they never open mid-sentence and are legitimately
