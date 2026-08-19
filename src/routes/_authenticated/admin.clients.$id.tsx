@@ -1,4 +1,5 @@
 import { listShortlistShares } from "@/lib/shares.functions";
+import { RefreshCw } from "lucide-react";
 import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import { listSilverMedalists } from "@/lib/talent-memory.functions";
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
@@ -155,7 +156,21 @@ function ClientRecordNotFound() {
  */
 function Block({ name, children }: { name: string; children: React.ReactNode }) {
   return (
-    <ComponentErrorBoundary boundary={`admin.clients.detail.${name}`} tone="admin">
+    <ComponentErrorBoundary
+      boundary={`admin.clients.detail.${name}`}
+      tone="admin"
+      fallback={(retry) => (
+        <div className="flex flex-col items-center justify-center rounded-lg border border-destructive/20 bg-destructive/5 p-6 text-center h-40">
+          <p className="text-sm font-medium text-destructive">
+            {name.includes("positions") ? "Couldn't load positions" : "Something went wrong"}
+          </p>
+          <Button variant="outline" size="sm" className="mt-3 gap-2" onClick={retry}>
+            <RefreshCw className="h-3.5 w-3.5" />
+            Retry
+          </Button>
+        </div>
+      )}
+    >
       <Suspense fallback={<Skeleton className="h-40 w-full" />}>{children}</Suspense>
     </ComponentErrorBoundary>
   );

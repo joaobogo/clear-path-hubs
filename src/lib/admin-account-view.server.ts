@@ -138,7 +138,8 @@ export async function loadAccountDelivery(
   ]);
   const [backlog, breaches] = await Promise.all([
     loadDecisionBacklog(admin, { organizationId, includeTest: true }),
-    loadSlaBreaches(admin, { includeTest: true }),
+    // P-025: sla breaches for this org only
+    loadSlaBreaches(admin, { organizationId, includeTest: true }),
   ]);
 
   return {

@@ -77,17 +77,19 @@ function num(value: number): string {
 
 export async function loadSlaBreaches(
   admin: Admin,
-  opts: { includeTest?: boolean } = {},
+  opts: { organizationId?: string; includeTest?: boolean } = {},
 ): Promise<SlaBreachList> {
   const nowMs = Date.now();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const a = admin as unknown as { from: (t: string) => any };
 
-  const commitRes = await a
+  let commitQuery = a
     .from("position_commitments")
     .select(
       "id, position_id, organization_id, first_shortlist_days, shortlist_size, interview_slots_hours, baseline_at",
     );
+  if (opts.organizationId) commitQuery = commitQuery.eq("organization_id", opts.organizationId);
+  const commitRes = await commitQuery;
   if (commitRes.error) throw new Error(commitRes.error.message);
   const commitments = (commitRes.data ?? []) as Array<Record<string, unknown>>;
   if (commitments.length === 0) {
