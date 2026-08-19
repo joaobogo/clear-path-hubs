@@ -93,9 +93,3 @@ function NotificationsPage() {
     </div>
   );
 }
-  );
-
-      <DeliveryFailuresPanel />
-    </div>
-  );
-}
