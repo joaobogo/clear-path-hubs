@@ -1,6 +1,7 @@
 // Released candidate list and single candidate read.
 // Thin server-function wrapper: helpers live in client-shared.server.ts.
 import { createServerFn } from "@tanstack/react-start";
+import { excludeTestRecords } from "@/lib/client/test-record-filter";
 import { briefField } from "@/lib/position-info-requests";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
@@ -109,11 +110,13 @@ export const getClientCandidates = createServerFn({ method: "GET" })
     // One select shared with the detail view: a slimmer list select silently
     // dropped positions.requirements, which emptied requirement coverage on
     // every card.
-    let q = context.supabase
-      .from("candidate_matches")
-      .select(CLIENT_CANDIDATE_SELECT)
-      .eq("organization_id", data.orgId)
-      .eq("client_visibility", "visible");
+    let q = excludeTestRecords(
+      context.supabase
+        .from("candidate_matches")
+        .select(CLIENT_CANDIDATE_SELECT)
+        .eq("organization_id", data.orgId)
+        .eq("client_visibility", "visible"),
+    );
 
     if (data.positionId) q = q.eq("position_id", data.positionId);
     if (data.q) {

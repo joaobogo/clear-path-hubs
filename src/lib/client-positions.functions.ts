@@ -1,6 +1,7 @@
 // Position list, detail and blueprint confirmation.
 // Thin server-function wrapper: helpers live in client-shared.server.ts.
 import { createServerFn } from "@tanstack/react-start";
+import { isQaFixtureTitle } from "@/lib/client/test-record-filter";
 import { briefField } from "@/lib/position-info-requests";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
@@ -122,19 +123,23 @@ export const getClientPositions = createServerFn({ method: "GET" })
       .in("status", statusFilter as never)
       .order("updated_at", { ascending: false });
     if (error) throw new Error(error.message);
+    // Legacy fixtures predate the flag; their titles still carry the QA marker.
+    const visiblePositions = ((positions as AnyRow[]) ?? []).filter(
+      (p) => !isQaFixtureTitle(p.title),
+    );
 
     const rows = await loadKpiRows(context.supabase, data.orgId);
     const stageDates = await loadRoleStageDates(
       context.supabase,
       data.orgId,
-      (positions as AnyRow[]).map((p) => p.id as string),
+      visiblePositions.map((p) => p.id as string),
     );
     const byPosition = new Map<string, KpiRow[]>();
     for (const r of rows) {
       if (!byPosition.has(r.position_id)) byPosition.set(r.position_id, []);
       byPosition.get(r.position_id)!.push(r);
     }
-    return (positions as AnyRow[]).map((p) => {
+    return visiblePositions.map((p) => {
       const posRows = byPosition.get(p.id) ?? [];
       const kpi = computeKpis(posRows, 0);
       const language = pipelineLanguageInput(posRows, p.status);

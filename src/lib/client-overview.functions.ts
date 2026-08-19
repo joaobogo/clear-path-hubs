@@ -1,6 +1,7 @@
 // Client overview read (health, queue, milestones, KPIs).
 // Thin server-function wrapper: helpers live in client-shared.server.ts.
 import { createServerFn } from "@tanstack/react-start";
+import { excludeTestRecords } from "@/lib/client/test-record-filter";
 import { briefField } from "@/lib/position-info-requests";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
@@ -129,14 +130,14 @@ export const getClientOverview = createServerFn({ method: "GET" })
       }
     }
 
-    const { data: positions, error: positionsError } = await context.supabase
+    const { data: positions, error: positionsError } = await excludeTestRecords(context.supabase
       .from("positions")
       .select("id, title, status, updated_at, created_at, organization_id, organizations(name), openings")
 
       .eq("organization_id", data.orgId)
       // Active work only: a closed or on-hold role must leave every count and
       // the decision queue in the same refresh.
-      .in("status", ["active", "approved"])
+      .in("status", ["active", "approved"]))
       .order("updated_at", { ascending: false });
     const activePositionsList = (positions as AnyRow[]) ?? [];
     const activePositions = activePositionsList.length;
@@ -450,7 +451,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
     const next_milestones_failed = Boolean(positionsError);
 
     // Latest delivered candidates (top 4 — kept concise).
-    const { data: latestMatches } = await context.supabase
+    const { data: latestMatches } = await excludeTestRecords(context.supabase
       .from("candidate_matches")
       .select(
         `id, stage, delivered_at, position_id, candidate_profile_id,
@@ -459,7 +460,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
          score_runs:approved_score_run_id (score, fit_label, explanation, result, requirement_coverage, evidence, completed_at, engine_version, input_hash)`,
       )
       .eq("organization_id", data.orgId)
-      .eq("client_visibility", "visible")
+      .eq("client_visibility", "visible"))
       .order("delivered_at", { ascending: false })
       .limit(4);
     const latest_candidates = (

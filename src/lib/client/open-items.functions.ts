@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { excludeTestRecords } from "@/lib/client/test-record-filter";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { isOverdue, sortOpenItems, dedupeOpenItems, type OpenItem } from "@/lib/client/open-items";
@@ -88,11 +89,11 @@ export const getClientOpenItems = createServerFn({ method: "GET" })
     }
 
     // 5. Positions: for role titles and blocked role checks
-    const { data: positions } = await s
+    const { data: positions } = await excludeTestRecords(s
       .from("positions")
       .select("id, title, status, description, location, work_model, employment_type, seniority, requirements, compensation, intake_context")
       .eq("organization_id", data.orgId)
-      .in("status", ["active", "approved", "needs_clarification"]);
+      .in("status", ["active", "approved", "needs_clarification"]));
     
     const titles = new Map<string, string>();
     const blockedRoles: BlockedRole[] = [];
