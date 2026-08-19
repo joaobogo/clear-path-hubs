@@ -38,6 +38,19 @@ const DICTIONARY: Record<string, string> = {
   cv_storage: "CV storage",
   message_send: "Messaging",
   profile_link: "Identity mapping",
+  
+  // Match & Position States
+  submitted: "Submitted",
+  needs_clarification: "Needs clarification",
+  under_review: "Under review",
+  approved: "Approved",
+  published: "Published",
+  archived: "Archived",
+  filled: "Filled",
+  rejected: "Rejected",
+  held: "Held",
+  pending: "Pending",
+  scored: "Scored",
 };
 
 /**
@@ -46,6 +59,12 @@ const DICTIONARY: Record<string, string> = {
  */
 export function humanizeCode(code: string | null | undefined): string {
   if (!code) return "—";
+  
+  // If it's a UUID, return it as-is or truncated (not a code)
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(code)) {
+    return code;
+  }
+
   const normalized = code.toLowerCase().trim();
   if (DICTIONARY[normalized]) return DICTIONARY[normalized];
   
@@ -53,5 +72,9 @@ export function humanizeCode(code: string | null | undefined): string {
   return code
     .replace(/[_-]/g, " ")
     .replace(/([a-z])([A-Z])/g, "$1 $2") // camelCase to Space Case
-    .trim();
+    .trim()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
 }
+
