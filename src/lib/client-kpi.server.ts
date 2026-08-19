@@ -358,9 +358,8 @@ export type ClientCandidateDTO = {
   position: { id: string; title: string } | null;
 
   /**
-   * True for a standout candidate: an approved score inside the top configured
-   * band, or an actual hire. The threshold comes from the band configuration —
-   * never a number written here.
+   * True for a standout candidate: an approved score at or above the unicorn
+   * threshold (95+). The threshold comes from the band configuration.
    */
   unicorn: boolean;
   /**
