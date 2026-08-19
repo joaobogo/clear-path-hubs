@@ -1053,6 +1053,7 @@ async function handle(request: Request): Promise<Response> {
     match_id?: string;
     cv_base64?: string;
     cv_filename?: string;
+    ocr_text?: string;
   } = {};
   try {
     const read = await readJsonWithLimit(request, PUBLIC_BODY_LIMITS.qa_seed);
