@@ -1,7 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { listDeliveryFailures } from "@/lib/notifications.functions";
+import { useDeliveryFailures } from "@/lib/admin/use-delivery-failures";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { QueryState } from "@/components/ds";
@@ -23,29 +21,24 @@ export const Route = createFileRoute("/_authenticated/admin/notifications")({
 });
 
 function NotificationsPage() {
-  const list = useServerFn(listDeliveryFailures);
-
-  const query = useQuery({
-    queryKey: ["admin", "delivery-failures"],
-    queryFn: () => list(),
-    refetchOnWindowFocus: true,
-  });
+  const query = useDeliveryFailures();
 
   const email = query.data?.email as { configured: boolean; reason?: string | null } | undefined;
 
-  // Every tile reads the same 7-day ledger the table and banner read, so the
-  // headline numbers can never disagree with the rows underneath them.
-  const items = (query.data?.items ?? []) as any[];
-  const failureCount = items.length;
-  const blockedCount =
-    (query.data?.summary as { blockedDeliveries?: number } | null | undefined)?.blockedDeliveries ??
-    items.filter((i) => i.canUnsuppress === true).length;
+  // One server function, one 7-day window: these tiles, the banner and the rows
+  // below all read the same payload, so they cannot disagree.
+  const summary = query.data?.summary as
+    | { retryable?: number; blockedNotSent?: number }
+    | null
+    | undefined;
+  const failureCount = summary?.retryable ?? 0;
+  const blockedCount = summary?.blockedNotSent ?? 0;
   const volume = (query.data?.volume ?? { emailSent: 0, inAppDelivered: 0 }) as {
     emailSent: number;
     inAppDelivered: number;
   };
 
-  const summary = [
+  const tiles = [
     { label: "Emails sent (7d)", value: volume.emailSent },
     {
       label: "Email failures (7d)",
@@ -67,7 +60,7 @@ function NotificationsPage() {
       </header>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        {summary.map((s) => (
+        {tiles.map((s) => (
           <Card key={s.label} className="p-4">
             <div className="text-2xl font-semibold tabular-nums">{s.value}</div>
             <div className="text-xs text-muted-foreground">{s.label}</div>

@@ -86,13 +86,18 @@ async function sendEmail(event: NormalizedLeadEvent, recipients: string[]) {
     };
 
     const failures: string[] = [];
+    // A suppressed recipient is not a failure. Recording it as one manufactured
+    // a retryable row, the retry hit suppression again, and the failure count
+    // grew every time anyone used the console. These are reported as "not sent"
+    // and only an address release clears them.
+    const notSent: string[] = [];
     // Suppression is enforced before any send attempt, including retries.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { suppressedAmong } = await import("@/lib/notification-suppression.server");
     const suppressed = await suppressedAmong(supabaseAdmin, recipients);
     for (const to of recipients) {
       if (suppressed.has(to.trim().toLowerCase())) {
-        failures.push(`${to}: recipient_suppressed`);
+        notSent.push(`${to}: not sent — recipient suppressed`);
         continue;
       }
       try {
@@ -107,12 +112,19 @@ async function sendEmail(event: NormalizedLeadEvent, recipients: string[]) {
       }
     }
 
+    const attempted = recipients.length - notSent.length;
     return {
-      ok: failures.length < recipients.length,
-      detail: failures.length > 0 ? failures.join("; ").slice(0, 500) : null,
+      // With every recipient suppressed there is nothing left to retry, so this
+      // is not reported as a failed job.
+      ok: attempted === 0 ? true : failures.length < attempted,
+      allSuppressed: attempted === 0 && notSent.length > 0,
+      detail:
+        [...failures, ...notSent].length > 0
+          ? [...failures, ...notSent].join("; ").slice(0, 500)
+          : null,
     };
   } catch (err) {
-    return { ok: false, detail: err instanceof Error ? err.message.slice(0, 400) : "throw" };
+    return { ok: false, allSuppressed: false, detail: err instanceof Error ? err.message.slice(0, 400) : "throw" };
   }
 }
 
@@ -203,7 +215,9 @@ export async function processLeadEvent(input: LeadEventInput): Promise<LeadDispa
         teams_status: teams.ok ? "delivered" : "failed",
         teams_detail: teams.detail,
         teams_at: now,
-        email_status: email.ok ? "sent" : "failed",
+        // "suppressed" is terminal: the retry sweep skips it, so a blocked
+        // address can no longer regenerate a failure on every pass.
+        email_status: email.allSuppressed ? "suppressed" : email.ok ? "sent" : "failed",
         email_detail: email.detail,
         email_at: now,
       })
@@ -268,7 +282,7 @@ export async function retryLeadNotification(
       : leadAlertRecipients(event.leadType);
 
   const needsTeams = row.teams_status !== "delivered";
-  const needsEmail = row.email_status !== "sent";
+  const needsEmail = row.email_status !== "sent" && row.email_status !== "suppressed";
 
   const teams = needsTeams ? await sendTeams(event) : null;
   // A retry is a new send attempt, so it needs a distinct idempotency key.
@@ -294,7 +308,7 @@ export async function retryLeadNotification(
         : {}),
       ...(email
         ? {
-            email_status: email.ok ? "sent" : "failed",
+            email_status: email.allSuppressed ? "suppressed" : email.ok ? "sent" : "failed",
             email_detail: email.detail,
             email_at: now,
           }

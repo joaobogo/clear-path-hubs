@@ -483,75 +483,9 @@ export const dismissNotifications = createServerFn({ method: "POST" })
     return { ok: true, dismissed: dismissable.length, blocked };
   });
 
-export const listDeliveryFailures = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  // The delivery-health page reads the default window and passes no argument,
-  // so an absent payload is valid input — not a validation failure.
-  .inputValidator((raw) =>
-    z.object({ window_days: z.number().optional().default(7) }).parse(raw ?? {}),
-  )
-  .handler(async ({ data: inputData, context }) => {
-    const { data: isStaff } = await context.supabase.rpc("is_platform_staff", { _user: context.userId });
-    if (!isStaff) throw new Error("Forbidden");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { loadDeliveryFailures } = await import("./notification-failures.server");
-    const { readEmailConfig } = await import("./notification-email.server");
-
-    // Operations page, exception digest, and notifications panel must all read
-    // the same 7-day windowed ledger so "Delivery failures (7d)" always matches.
-    try {
-      const failures = await loadDeliveryFailures(supabaseAdmin as never);
-
-      const counts: Record<string, number> = {};
-      for (const item of failures.items) {
-        const k = `${item.channel}:${item.ledger}:${item.reason}`;
-        counts[k] = (counts[k] ?? 0) + 1;
-      }
-
-      // Sent / delivered volume is not derivable from the failure ledger, so
-      // read it from the delivery table directly. Without this the "sent"
-      // tile always showed zero next to a non-zero failure count.
-      const since = new Date(
-        Date.now() - failures.windowDays * 24 * 60 * 60 * 1000,
-      ).toISOString();
-      const volume = { emailSent: 0, inAppDelivered: 0 };
-      const { data: sentRows } = await supabaseAdmin
-        .from("notification_deliveries")
-        .select("channel, status")
-        .gte("created_at", since)
-        .in("status", ["provider_accepted", "delivered"]);
-      for (const row of (sentRows ?? []) as Array<{ channel: string; status: string }>) {
-        if (row.channel === "email") volume.emailSent += 1;
-        else if (row.channel === "in_app") volume.inAppDelivered += 1;
-      }
-
-      const cfg = readEmailConfig();
-      return {
-        items: failures.items,
-        counts,
-        // The banner and the tiles must agree on how many failures come from
-        // blocked addresses, so both read this one summary.
-        summary: failures.summary,
-        volume,
-        window_days: failures.windowDays,
-        // Never expose keys — only whether a provider is usable and why not.
-        email: { configured: cfg.configured, reason: cfg.reason },
-      };
-
-    } catch (e) {
-      console.error("[listDeliveryFailures] load failed", e);
-      const cfg = readEmailConfig();
-      return {
-        items: [],
-        counts: {},
-        summary: null,
-        volume: { emailSent: 0, inAppDelivered: 0 },
-        window_days: 7,
-        email: { configured: cfg.configured, reason: cfg.reason },
-      };
-
-    }
-  });
+// The delivery-failure list used to be implemented here as well. It is now a
+// single implementation: getDeliveryFailureMetric in
+// notification-failures.functions.ts, backed by loadDeliveryHealth.
 
 
 export const retryFailedDelivery = createServerFn({ method: "POST" })

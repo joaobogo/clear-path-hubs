@@ -147,6 +147,7 @@ export function DeliveryFailuresPanel() {
   const summary = query.data?.summary ?? {
     total: items.length,
     retryable: items.filter((i) => i.retryable).length,
+    blockedNotSent: 0,
     blockedDeliveries: 0,
     blockedAddresses: [] as Array<{
       address: string;
@@ -199,9 +200,9 @@ export function DeliveryFailuresPanel() {
             {blockedAddresses.length === 1 ? "" : "es"} are generating these failures
           </div>
           <p className="mt-1 max-w-2xl text-xs text-muted-foreground">
-            {summary.blockedDeliveries} of {summary.total} rows below come from addresses on a
-            suppression list. Every further notification to them fails on send, so retrying will
-            not clear the list — release the address first, or the count keeps growing.
+            {summary.blockedNotSent} row{summary.blockedNotSent === 1 ? "" : "s"} below were not
+            sent because the recipient is on a suppression list, and are not counted as delivery
+            failures. Retrying cannot clear them — release the address first.
           </p>
           <ul className="mt-2 space-y-1 text-xs">
             {blockedAddresses.slice(0, 5).map((a) => (
