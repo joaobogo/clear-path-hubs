@@ -294,6 +294,7 @@ function OverviewPage() {
                 notCurrent={pipelineNotCurrent}
                 notCurrentReason={readiness.reasonFor("Pipeline overview")}
                 health={data?.hiring_health ?? null}
+                activitySummary={(data as Any)?.activity_summary}
                 loading={overviewPanel.loading}
                 isError={overviewPanel.isError}
                 onRetry={retryAll}
