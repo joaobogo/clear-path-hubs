@@ -113,7 +113,6 @@ export function RoleStatusList({
                       </div>
                     </div>
                   </div>
-                )}
 
                 {/* What happens next: owner and date, always stated. */}
                 <p

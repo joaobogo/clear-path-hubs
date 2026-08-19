@@ -91,9 +91,9 @@ export function MemoryCard({
           </div>
         )}
         <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
-          <span className="inline-flex items-center gap-1">
+          <span className="inline-flex items-center gap-1 capitalize">
             <ShieldCheck className="h-3 w-3" />
-            consent: {memory.consent_status}
+            Consent {memory.consent_status}
           </span>
           <span className="inline-flex items-center gap-1">
             <Clock className="h-3 w-3" />
