@@ -133,7 +133,7 @@ function BoardroomPage() {
   /* Slides */
   const slides = useMemo(
     () => [
-      { key: "intro", render: () => <SlideIntro orgName={orgName} /> },
+      { key: "intro", render: () => <SlideIntro orgName={orgName} hasBoundWorkspace={hasBoundWorkspace} /> },
       { key: "positions", render: () => <SlidePositions positions={positions} kpis={kpis} isLoading={isLoading} loadFailed={loadFailed} /> },
       { key: "shortlist", render: () => <SlideShortlist candidates={candidates} isLoading={isLoading} loadFailed={loadFailed} /> },
 
@@ -141,7 +141,7 @@ function BoardroomPage() {
       { key: "industry", render: () => <SlideIndustry /> },
       { key: "next", render: () => <SlideNext /> },
     ],
-    [orgName, positions, candidates, kpis, isLoading],
+    [orgName, hasBoundWorkspace, positions, candidates, kpis, isLoading],
 
   );
 
