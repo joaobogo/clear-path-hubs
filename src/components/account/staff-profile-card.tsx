@@ -18,6 +18,7 @@ export function StaffProfileCard({ initialName }: { initialName: string }) {
   }
 
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const updateProfile = useServerFn(updateStaffProfile);
   const qc = useQueryClient();
 
