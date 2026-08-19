@@ -261,12 +261,12 @@ function SlideEyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
-function SlideIntro({ orgName }: { orgName: string }) {
+function SlideIntro({ orgName, hasBoundWorkspace }: { orgName: string; hasBoundWorkspace: boolean }) {
   return (
     <div>
       <SlideEyebrow>Boardroom · TaaSFlow</SlideEyebrow>
       <h1 className="mt-4 font-[family-name:var(--brand-font-display)] text-5xl font-semibold tracking-tight sm:text-6xl lg:text-7xl">
-        What TaaSFlow is doing for {orgName}.
+        {hasBoundWorkspace ? `What TaaSFlow is doing for ${orgName}.` : "What TaaSFlow is doing for your team"}
       </h1>
 
       <p className="mt-6 max-w-2xl text-lg text-white/70">
