@@ -104,7 +104,7 @@ type NavDef = WorkspaceNavItem & { everyone: boolean };
 // no URL changed — demotion only, so every bookmark still resolves.
 const TABS: NavDef[] = [
 	{ to: "/client", label: "Overview", icon: LayoutDashboard, exact: true, everyone: true, hint: "What needs you today" },
-	{ to: "/client/positions", label: "Roles", icon: Briefcase, everyone: true, hint: "Roles, interviews, offers, approvals" },
+	{ to: "/client/positions", label: "Roles", icon: Briefcase, everyone: true, hint: "Roles, interviews, offers" },
 	{ to: "/client/candidates", label: "Candidates", icon: Users, everyone: true, hint: "Shortlist, talent pool, talent memory" },
 	{ to: "/client/conversations", label: "Messages", icon: MessageSquare, everyone: true, hint: "Threads, inbox, all messages" },
 	{ to: "/client/account", label: "Account", icon: Building2, everyone: false, hint: "Team, plan, settings" },
