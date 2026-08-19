@@ -971,22 +971,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
       },
     ),
 
-    candidate: {
-      full_name: fullName,
-      display_name: displayName,
-      email: released ? (cp.email ?? null) : null,
-      phone: released ? (cp.phone ?? null) : null,
-      location: cp.location ?? null,
-      timezone: cp.timezone ?? null,
-      headline: prettyHeadline,
-      headline_chips: chips,
-      availability,
-      years_experience: cp.years_experience ?? null,
-      summary: cp.summary ?? null,
-      current_role: currentRole,
-      current_company: currentCompany,
-      links,
-    },
+    // candidate property already assigned above
     // Employers see the 0-100 fit score alongside the band so ranking is
     // obvious at a glance. 95+ is the unicorn threshold.
     score: null, // HONESTY GATE: Extraction unreliable; suppressing all scores.
