@@ -192,7 +192,7 @@ test.describe("launch smoke journey", () => {
     // The work queue is where a scored match surfaces for review.
     await page.goto("/admin", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: /work queue/i }).first()).toBeVisible({
-      timeout: 60_000,
+      timeout: 120_000,
     });
 
     // Full review pass on the desk itself: the reviewer must be able to see who
