@@ -51,7 +51,7 @@ export const template = {
   previewData: {
     candidateName: 'Ana Souza',
     positionTitle: 'Social Media & Design Specialist',
-    organizationName: 'Flow Group Ventures',
+    organizationName: 'Example Client Co (preview)',
     reference: 'A1B2C3',
     receivedAt: new Date().toISOString(),
     reviewUrl: 'https://taasflow.com/admin/candidates',

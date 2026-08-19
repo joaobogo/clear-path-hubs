@@ -64,7 +64,7 @@ export const template = {
   previewData: {
     candidateFirstName: 'Ana',
     positionTitle: 'Social Media & Design Specialist',
-    organizationName: 'Flow Group Ventures',
+    organizationName: 'Example Client Co (preview)',
     reference: 'A1B2C3',
     jobsUrl: 'https://taasflow.com/jobs',
     inTalentNetwork: true,
