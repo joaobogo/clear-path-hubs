@@ -61,8 +61,8 @@ export function statusBadge(status: RequirementStatus) {
       };
     default:
       return {
-        label: "Not evidenced",
-        aria: "Not evidenced",
+        label: "Running...",
+        aria: "Evidence extraction running",
         icon: <Info className="h-3 w-3" aria-hidden />,
         className: "taas-bg-neutral-soft taas-fg-neutral ",
       };
