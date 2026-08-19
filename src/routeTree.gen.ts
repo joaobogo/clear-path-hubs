@@ -153,6 +153,7 @@ import { Route as AuthenticatedAdminIntakeRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminHealthRouteImport } from './routes/_authenticated/admin.health'
 import { Route as AuthenticatedAdminEvidenceGapsRouteImport } from './routes/_authenticated/admin.evidence-gaps'
 import { Route as AuthenticatedAdminDesignSystemRouteImport } from './routes/_authenticated/admin.design-system'
+import { Route as AuthenticatedAdminDecisionBacklogRouteImport } from './routes/_authenticated/admin.decision-backlog'
 import { Route as AuthenticatedAdminDataHealthRouteImport } from './routes/_authenticated/admin.data-health'
 import { Route as AuthenticatedAdminDashboardRequestsRouteImport } from './routes/_authenticated/admin.dashboard-requests'
 import { Route as AuthenticatedAdminCopilotRouteImport } from './routes/_authenticated/admin.copilot'
@@ -977,6 +978,12 @@ const AuthenticatedAdminDesignSystemRoute =
     path: '/design-system',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminDecisionBacklogRoute =
+  AuthenticatedAdminDecisionBacklogRouteImport.update({
+    id: '/decision-backlog',
+    path: '/decision-backlog',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminDataHealthRoute =
   AuthenticatedAdminDataHealthRouteImport.update({
     id: '/data-health',
@@ -1380,6 +1387,7 @@ export interface FileRoutesByFullPath {
   '/admin/copilot': typeof AuthenticatedAdminCopilotRoute
   '/admin/dashboard-requests': typeof AuthenticatedAdminDashboardRequestsRoute
   '/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
+  '/admin/decision-backlog': typeof AuthenticatedAdminDecisionBacklogRoute
   '/admin/design-system': typeof AuthenticatedAdminDesignSystemRoute
   '/admin/evidence-gaps': typeof AuthenticatedAdminEvidenceGapsRoute
   '/admin/health': typeof AuthenticatedAdminHealthRoute
@@ -1575,6 +1583,7 @@ export interface FileRoutesByTo {
   '/admin/copilot': typeof AuthenticatedAdminCopilotRoute
   '/admin/dashboard-requests': typeof AuthenticatedAdminDashboardRequestsRoute
   '/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
+  '/admin/decision-backlog': typeof AuthenticatedAdminDecisionBacklogRoute
   '/admin/design-system': typeof AuthenticatedAdminDesignSystemRoute
   '/admin/evidence-gaps': typeof AuthenticatedAdminEvidenceGapsRoute
   '/admin/health': typeof AuthenticatedAdminHealthRoute
@@ -1771,6 +1780,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/copilot': typeof AuthenticatedAdminCopilotRoute
   '/_authenticated/admin/dashboard-requests': typeof AuthenticatedAdminDashboardRequestsRoute
   '/_authenticated/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
+  '/_authenticated/admin/decision-backlog': typeof AuthenticatedAdminDecisionBacklogRoute
   '/_authenticated/admin/design-system': typeof AuthenticatedAdminDesignSystemRoute
   '/_authenticated/admin/evidence-gaps': typeof AuthenticatedAdminEvidenceGapsRoute
   '/_authenticated/admin/health': typeof AuthenticatedAdminHealthRoute
@@ -1973,6 +1983,7 @@ export interface FileRouteTypes {
     | '/admin/copilot'
     | '/admin/dashboard-requests'
     | '/admin/data-health'
+    | '/admin/decision-backlog'
     | '/admin/design-system'
     | '/admin/evidence-gaps'
     | '/admin/health'
@@ -2168,6 +2179,7 @@ export interface FileRouteTypes {
     | '/admin/copilot'
     | '/admin/dashboard-requests'
     | '/admin/data-health'
+    | '/admin/decision-backlog'
     | '/admin/design-system'
     | '/admin/evidence-gaps'
     | '/admin/health'
@@ -2363,6 +2375,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/copilot'
     | '/_authenticated/admin/dashboard-requests'
     | '/_authenticated/admin/data-health'
+    | '/_authenticated/admin/decision-backlog'
     | '/_authenticated/admin/design-system'
     | '/_authenticated/admin/evidence-gaps'
     | '/_authenticated/admin/health'
@@ -3595,6 +3608,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminDesignSystemRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/decision-backlog': {
+      id: '/_authenticated/admin/decision-backlog'
+      path: '/decision-backlog'
+      fullPath: '/admin/decision-backlog'
+      preLoaderRoute: typeof AuthenticatedAdminDecisionBacklogRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/data-health': {
       id: '/_authenticated/admin/data-health'
       path: '/data-health'
@@ -4070,6 +4090,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCopilotRoute: typeof AuthenticatedAdminCopilotRoute
   AuthenticatedAdminDashboardRequestsRoute: typeof AuthenticatedAdminDashboardRequestsRoute
   AuthenticatedAdminDataHealthRoute: typeof AuthenticatedAdminDataHealthRoute
+  AuthenticatedAdminDecisionBacklogRoute: typeof AuthenticatedAdminDecisionBacklogRoute
   AuthenticatedAdminDesignSystemRoute: typeof AuthenticatedAdminDesignSystemRoute
   AuthenticatedAdminEvidenceGapsRoute: typeof AuthenticatedAdminEvidenceGapsRoute
   AuthenticatedAdminHealthRoute: typeof AuthenticatedAdminHealthRoute
@@ -4114,6 +4135,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminDashboardRequestsRoute:
     AuthenticatedAdminDashboardRequestsRoute,
   AuthenticatedAdminDataHealthRoute: AuthenticatedAdminDataHealthRoute,
+  AuthenticatedAdminDecisionBacklogRoute:
+    AuthenticatedAdminDecisionBacklogRoute,
   AuthenticatedAdminDesignSystemRoute: AuthenticatedAdminDesignSystemRoute,
   AuthenticatedAdminEvidenceGapsRoute: AuthenticatedAdminEvidenceGapsRoute,
   AuthenticatedAdminHealthRoute: AuthenticatedAdminHealthRoute,
