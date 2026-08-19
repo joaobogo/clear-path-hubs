@@ -137,7 +137,8 @@ export async function loadKpiRows(
     .select(
       `id, candidate_profile_id, position_id, stage, approved_score_run_id, delivered_at,
        client_decision_due_at, recommendation, contact_released_at,
-       score_runs:approved_score_run_id (score, fit_label, fit_band)`
+       score_runs:approved_score_run_id (score, fit_label, fit_band),
+       organizations!inner(name)`
     )
     .eq("organization_id", orgId)
     .eq("client_visibility", "visible")
@@ -228,8 +229,9 @@ export async function loadKpiRows(
     stage: m.stage,
     approved_score_run_id: m.approved_score_run_id,
     delivered_at: m.delivered_at,
-    approved_score: null, // HONESTY GATE: Extraction unreliable; suppressing all scores.
+    approved_score: m.score_runs?.score ?? null,
     approved_fit_label: m.score_runs?.fit_label ?? null,
+    organization_name: m.organizations?.name ?? null,
     approved_fit_band: m.score_runs?.fit_band ?? null,
     interview_active: activeInterviews.has(m.id),
     interview_scheduled: scheduledInterviews.has(m.id),
@@ -299,7 +301,7 @@ export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
   const { counts } = countLanes(rows);
   return {
     delivered: new Set(rows.map((r) => r.candidate_profile_id)).size,
-    top: 0, // HONESTY GATE: Suppressed.
+    top: rows.filter(isTopMatch).length,
     shortlisted: counts.shortlisted,
     interviewing: counts.interview_process,
     interview_scheduled: rows.filter((r) => r.interview_scheduled).length,
@@ -382,6 +384,7 @@ export type ClientCandidateDTO = {
     summary: string | null;
     current_role: string | null;
     current_company: string | null;
+    organization_name: string | null;
     links: {
       linkedin: string | null;
       portfolio: string | null;
@@ -916,6 +919,24 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
         : (row.updated_at ?? row.delivered_at ?? null),
     last_updated: run?.completed_at ?? row.updated_at ?? row.delivered_at ?? null,
     position: pos ? { id: pos.id, title: pos.title } : null,
+    candidate: {
+      ...cp,
+      full_name: fullName,
+      display_name: displayName,
+      email: released ? normStr(cp.email) : null,
+      phone: released ? normStr(cp.phone) : null,
+      location: normStr(cp.location),
+      timezone: normStr(cp.timezone),
+      headline: prettyHeadline,
+      headline_chips: chips,
+      availability,
+      years_experience: Number(cp.years_experience) || null,
+      summary: normStr(cp.summary),
+      current_role: currentRole,
+      current_company: currentCompany,
+      organization_name: normStr(row.organizations?.name),
+      links,
+    },
     // Band comes from this run's score through the one band table. The stored
     // `fit_band` string uses the engine's label vocabulary, not band keys, so
     // feeding it here silently failed the top-band test.
@@ -950,22 +971,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
       },
     ),
 
-    candidate: {
-      full_name: fullName,
-      display_name: displayName,
-      email: released ? (cp.email ?? null) : null,
-      phone: released ? (cp.phone ?? null) : null,
-      location: cp.location ?? null,
-      timezone: cp.timezone ?? null,
-      headline: prettyHeadline,
-      headline_chips: chips,
-      availability,
-      years_experience: cp.years_experience ?? null,
-      summary: cp.summary ?? null,
-      current_role: currentRole,
-      current_company: currentCompany,
-      links,
-    },
+    // candidate property already assigned above
     // Employers see the 0-100 fit score alongside the band so ranking is
     // obvious at a glance. 95+ is the unicorn threshold.
     score: null, // HONESTY GATE: Extraction unreliable; suppressing all scores.

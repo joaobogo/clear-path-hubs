@@ -234,7 +234,7 @@ export function GlobalSearchDialog({
                 return (
                   <div key={key}>
                     {idx > 0 && <CommandSeparator />}
-                    <CommandGroup heading={key.charAt(0).toUpperCase() + key.slice(1)}>
+                    <CommandGroup heading={key === "positions" ? "Roles" : key.charAt(0).toUpperCase() + key.slice(1)}>
                       {items.map((r) => {
                         const Icon = ICONS[r.type];
                         return (

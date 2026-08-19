@@ -89,6 +89,7 @@ export function filterCandidates(
         c.candidate.headline,
         c.candidate.location,
         c.position?.title,
+        c.candidate.organization_name,
         ...c.skills,
       ]
         .filter(Boolean)
