@@ -10,6 +10,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
+import { humanizeCode, humanizeJobName, humanizeTechnicalError } from "@/lib/humanize-codes";
+import { TechnicalDetail } from "@/components/admin/technical-detail";
 import {
   getProcessingExceptions,
   markProcessingJobPermanentlyFailed,
