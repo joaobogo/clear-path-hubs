@@ -14,14 +14,21 @@ async function assertStaff(context: {
   if (data !== true) throw new Error("Forbidden");
 }
 
-export const listDeliveryFailureQueue = createServerFn({ method: "GET" })
+/**
+ * THE delivery-failure metric. One implementation, one 7-day window; every
+ * admin surface calls this and reads `summary.retryable`.
+ */
+export const getDeliveryFailureMetric = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertStaff(context as never);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { loadDeliveryFailures } = await import("./notification-failures.server");
-    return loadDeliveryFailures(supabaseAdmin);
+    const { loadDeliveryHealth } = await import("./notification-failures.server");
+    return loadDeliveryHealth(supabaseAdmin);
   });
+
+/** @deprecated Use getDeliveryFailureMetric — same payload, same cache key. */
+export const listDeliveryFailureQueue = getDeliveryFailureMetric;
 
 export const retryDeliveryFailureFn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

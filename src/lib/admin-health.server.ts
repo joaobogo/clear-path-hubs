@@ -227,10 +227,16 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
     });
   }
 
+  // The email count comes from the canonical delivery metric, not from parsing
+  // the first word of a humanized sentence — that parse silently returned 0
+  // once the copy changed, so this page reported clean while /admin did not.
+  const { loadDeliveryFailures } = await import("./notification-failures.server");
+  const delivery = await loadDeliveryFailures(admin);
+
   const counts = {
     webhook: issues.filter((i) => i.kind === "webhook").length,
     processing: issues.filter((i) => i.kind === "processing").length + scoringOrphans,
-    email: issues.filter((i) => i.kind === "email" && ["failed", "bounced", "suppressed"].includes(i.detail.split(" ")[0])).length,
+    email: delivery.summary.retryable,
     cv: issues.filter((i) => i.kind === "cv").length,
   };
 

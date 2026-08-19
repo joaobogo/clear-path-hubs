@@ -9,7 +9,8 @@ import {
   resolveIncident,
 } from "@/lib/admin.functions";
 import { humanizeCode } from "@/lib/humanize-codes";
-import { listDeliveryFailures, type DeliveryFailure } from "@/lib/notifications.functions";
+import { type DeliveryFailure } from "@/lib/notifications.functions";
+import { useDeliveryFailures } from "@/lib/admin/use-delivery-failures";
 import {
   retryParse,
   retryHydration,
@@ -127,12 +128,7 @@ function OperationsPage() {
     refetchOnWindowFocus: true,
   });
   const ops = opsQuery.data;
-  const listDelivery = useServerFn(listDeliveryFailures);
-  const deliveryQuery = useQuery({
-    queryKey: ["admin", "delivery-failures", "7d"],
-    queryFn: () => listDelivery({ data: { window_days: 7 } }),
-    refetchOnWindowFocus: true,
-  });
+  const deliveryQuery = useDeliveryFailures();
   const delivery = deliveryQuery.data;
 
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -245,6 +241,9 @@ function OperationsPage() {
   });
 
   const deliveryItems = (delivery?.items ?? []) as DeliveryFailure[];
+  // Headline number = retryable failures only, from the shared summary. Rows
+  // blocked before sending are listed below but never counted as failures.
+  const deliveryFailureCount = delivery?.summary?.retryable ?? 0;
 
   return (
     <div className="mx-auto max-w-[1600px] px-6 py-8 space-y-6">
@@ -269,8 +268,8 @@ function OperationsPage() {
         <Stat label="Failed jobs" value={jobs.length} tone={jobs.length > 0 ? "warn" : "ok"} />
         <Stat
           label="Delivery failures (7d)"
-          value={deliveryItems.length}
-          tone={deliveryItems.length > 0 ? "warn" : "ok"}
+          value={deliveryFailureCount}
+          tone={deliveryFailureCount > 0 ? "warn" : "ok"}
         />
         <Stat label="Provider incidents (7d)" value={health.provider_incidents} />
       </div>
@@ -291,7 +290,7 @@ function OperationsPage() {
             Pipeline incidents ({opsQuery.isError || opsQuery.isPending ? "—" : grouped.length})
           </TabsTrigger>
           <TabsTrigger value="delivery">
-            Delivery failures (7d) ({deliveryQuery.isError || deliveryQuery.isPending ? "—" : deliveryItems.length})
+            Delivery failures (7d) ({deliveryQuery.isError || deliveryQuery.isPending ? "—" : deliveryFailureCount})
           </TabsTrigger>
         </TabsList>
 

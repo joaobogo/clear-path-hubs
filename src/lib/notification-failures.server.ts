@@ -87,11 +87,21 @@ function notificationRetry(status: string): { retryable: boolean; reason: string
   return { retryable: true, reason: null };
 }
 
+/**
+ * The one metric contract every admin surface reads.
+ *
+ *   retryable      — the headline "delivery failures" number. Only these can be drained.
+ *   blockedNotSent — suppressed / bounced addresses. Not failures; releasing the
+ *                    address is the only thing that clears them.
+ *   total          — retryable + blockedNotSent, for reconciliation copy only.
+ */
 export type DeliveryFailureSummary = {
   total: number;
-  /** Failures a retry can actually clear. */
+  /** Failures a retry can actually clear. THE headline number. */
   retryable: number;
-  /** Deliveries that will keep failing until the address is released. */
+  /** Deliveries never sent because the address is blocked. Never retryable. */
+  blockedNotSent: number;
+  /** @deprecated Alias of blockedNotSent, kept for existing row copy. */
   blockedDeliveries: number;
   blockedAddresses: Array<{
     address: string;
@@ -99,13 +109,16 @@ export type DeliveryFailureSummary = {
     lastAttemptAt: string;
     sentence: string;
   }>;
+  windowDays: number;
 };
 
 const EMPTY_SUMMARY: DeliveryFailureSummary = {
   total: 0,
   retryable: 0,
+  blockedNotSent: 0,
   blockedDeliveries: 0,
   blockedAddresses: [],
+  windowDays: WINDOW_DAYS,
 };
 
 export async function loadDeliveryFailures(admin: Admin): Promise<{
@@ -291,9 +304,12 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
 
   const { listSuppressions } = await import("./notification-suppression.server");
 
-  const items = [...notificationItems, ...leadItems].sort(
-    (a, b) => new Date(b.lastAttemptAt).getTime() - new Date(a.lastAttemptAt).getTime(),
-  );
+  // The window is enforced here, on the last attempt, so no caller has to
+  // re-filter afterwards. Re-filtering downstream is what made /admin read 13
+  // while /admin/operations read 86 off the same ledger.
+  const items = [...notificationItems, ...leadItems]
+    .filter((i) => i.lastAttemptAt >= cutoff)
+    .sort((a, b) => new Date(b.lastAttemptAt).getTime() - new Date(a.lastAttemptAt).getTime());
 
   // A suppressed address does not produce a backlog an operator can drain: every
   // new notification to it fails again the moment it is sent, so the row count
@@ -324,16 +340,17 @@ export async function loadDeliveryFailures(admin: Admin): Promise<{
     (a, b) => b.deliveries - a.deliveries,
   );
   const retryableCount = items.filter((i) => i.retryable).length;
+  const blockedNotSent = blockedAddresses.reduce((n, a) => n + a.deliveries, 0);
 
   return {
     items,
     summary: {
-      total: items.length,
-      /** Failures a retry can actually clear. */
+      total: retryableCount + blockedNotSent,
       retryable: retryableCount,
-      /** Deliveries that will fail again until the address is released. */
-      blockedDeliveries: blockedAddresses.reduce((n, a) => n + a.deliveries, 0),
+      blockedNotSent,
+      blockedDeliveries: blockedNotSent,
       blockedAddresses,
+      windowDays: WINDOW_DAYS,
     },
     suppressions: await listSuppressions(admin),
     windowDays: WINDOW_DAYS,
@@ -405,4 +422,50 @@ export async function unsuppressAndRetry(
 
   const res = await retryDeliveryFailure(admin, { ledger: args.ledger, id: args.id });
   return { unsuppress, retry: { attempted: true, ...res } };
+}
+
+/**
+ * The single canonical delivery-health payload. Every admin surface that shows
+ * a delivery-failure number reads this — /admin, /admin/operations,
+ * /admin/health, /admin/notifications and /admin/integrations.
+ *
+ * There is deliberately no window argument: the 7-day window in this module is
+ * the definition of the metric.
+ */
+export async function loadDeliveryHealth(admin: Admin) {
+  const failures = await loadDeliveryFailures(admin);
+  const { readEmailConfig } = await import("./notification-email.server");
+
+  const counts: Record<string, number> = {};
+  for (const item of failures.items) {
+    const k = `${item.channel}:${item.ledger}:${item.reason}`;
+    counts[k] = (counts[k] ?? 0) + 1;
+  }
+
+  // Sent volume is not derivable from the failure ledger, so read it from the
+  // delivery table directly over the same window.
+  const since = new Date(Date.now() - failures.windowDays * 86_400_000).toISOString();
+  const volume = { emailSent: 0, inAppDelivered: 0 };
+  const { data: sentRows } = await admin
+    .from("notification_deliveries")
+    .select("channel, status")
+    .gte("created_at", since)
+    .in("status", ["provider_accepted", "delivered"]);
+  for (const row of (sentRows ?? []) as Array<{ channel: string; status: string }>) {
+    if (row.channel === "email") volume.emailSent += 1;
+    else if (row.channel === "in_app") volume.inAppDelivered += 1;
+  }
+
+  const cfg = readEmailConfig();
+  return {
+    items: failures.items,
+    counts,
+    summary: failures.summary,
+    suppressions: failures.suppressions,
+    volume,
+    windowDays: failures.windowDays,
+    window_days: failures.windowDays,
+    // Never expose keys — only whether a provider is usable and why not.
+    email: { configured: cfg.configured, reason: cfg.reason },
+  };
 }

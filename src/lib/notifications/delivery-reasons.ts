@@ -24,10 +24,12 @@ export type DeliveryReason = {
 
 const REASONS: Record<string, DeliveryReason> = {
   recipient_suppressed: {
-    label: "Recipient blocked",
-    sentence: "Blocked before sending (suppression list or recipient preference).",
+    label: "Not sent — recipient suppressed",
+    // Not a failure: nothing was attempted, so there is nothing to retry. It is
+    // counted as "blocked before sending" and cleared by releasing the address.
+    sentence: "Not sent — this address is on the suppression list.",
     kind: "blocked",
-    countsAsFailure: true,
+    countsAsFailure: false,
   },
   complaint_not_liftable: {
     label: "Marked as spam",
