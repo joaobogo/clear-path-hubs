@@ -261,7 +261,7 @@ function ClientDetail() {
           {/* Duplicate KPI row removed: now only AccountOperatingSummary and Detailed OverviewTab remain. */}
 
           <Block name="overview">
-            <OverviewTab org={org} members={members} positions={positions} />
+            <OverviewTab org={org} />
           </Block>
         </div>
       )}
