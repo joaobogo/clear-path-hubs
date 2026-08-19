@@ -209,11 +209,15 @@ function CandidateWorkspace() {
               const Icon = t.icon;
               const active = tab === t.id;
               return (
-                <button
+                <Link
                   key={t.id}
                   role="tab"
                   aria-selected={active}
-                  onClick={() => setTab(t.id)}
+                  to="/admin/candidates/$id"
+                  params={{ id }}
+                  search={(prev: Record<string, unknown>) => ({ ...prev, tab: t.id })}
+                  replace
+                  resetScroll={false}
                   data-qa-action={`candidate-tab-${t.id}`}
                   className={
                     "inline-flex flex-shrink-0 items-center gap-1.5 rounded-t-md border-b-2 px-3 py-2 text-sm transition " +
@@ -224,7 +228,7 @@ function CandidateWorkspace() {
                 >
                   <Icon className="h-3.5 w-3.5" />
                   {t.label}
-                </button>
+                </Link>
               );
             })}
           </nav>
