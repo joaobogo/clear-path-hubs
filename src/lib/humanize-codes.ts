@@ -55,6 +55,18 @@ const DICTIONARY: Record<string, string> = {
   // D5: Additional error codes
   position_screening_limit_exceeded: "Screening limit reached",
   match_not_found: "Candidate record not found",
+
+  // Integration health probe outcomes
+  payments_api_error: "Payments provider rejected the call",
+  payments_catalog_empty: "No plan prices published yet",
+  attio_unreachable: "CRM did not respond",
+  attio_objects_missing: "CRM objects missing",
+  calendly_gateway_error: "Scheduling gateway error",
+  calendly_page_unreachable: "Scheduling page unreachable",
+  email_logs_unreachable: "Email history unavailable",
+  email_no_history: "No email sent yet",
+  email_deliverability_signal: "Delivery problems detected",
+  probe_exception: "Health check failed to run",
 };
 
 
