@@ -124,6 +124,7 @@ function CreateUserPanel({ organizationId }: { organizationId: string | null }) 
   >(organizationId ? "client_admin" : "platform_admin");
   const [tempPw, setTempPw] = useState("");
   const [result, setResult] = useState<{ email: string; password: string } | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const mut = useMutation({
     mutationFn: (input: {
