@@ -187,10 +187,6 @@ function Overview() {
         <SlaBreachStrip includeTest={showTest} />
       </AdminWidgetErrorBoundary>
 
-      <AdminWidgetErrorBoundary label="SLA banner">
-        <SlaBreachStrip includeTest={showTest} />
-      </AdminWidgetErrorBoundary>
-
       <AdminWidgetErrorBoundary label="Portfolio health">
         <PortfolioHealthTable includeTest={showTest} />
       </AdminWidgetErrorBoundary>
