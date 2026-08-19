@@ -428,7 +428,7 @@ function OperationsPage() {
                         <td className="px-3 py-2 text-xs">
                           {m?.processing_state ? (
                             <Badge variant="secondary">
-                              {String(m.processing_state).replace(/_/g, " ")}
+                              {humanizeCode(m.processing_state)}
                             </Badge>
                           ) : (
                             <span className="text-muted-foreground">—</span>
