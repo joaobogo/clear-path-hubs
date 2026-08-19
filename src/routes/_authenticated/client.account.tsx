@@ -140,9 +140,10 @@ function AccountPage() {
           {ctx?.active?.name ?? "Your account"}
         </h1>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-          Workspace details, team and roles, plan and billing, notifications and
-          branding — all in one place.
+          Workspace details, workspace access, plan and billing, and notifications —
+          all in one place.
         </p>
+
       </header>
 
       {readOnly && (
