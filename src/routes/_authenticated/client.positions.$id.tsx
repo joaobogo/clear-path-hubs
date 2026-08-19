@@ -370,7 +370,7 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
 
       {/* Requirement coverage — collapsed by default to keep this page readable */}
       {data.story && (
-        <RoleStoryPanel story={data.story} positionId={id} org={orgSearchParam} />
+        <RoleStoryPanel story={data.story} positionId={id} org={orgSearchParam} hideCoverage />
       )}
 
 

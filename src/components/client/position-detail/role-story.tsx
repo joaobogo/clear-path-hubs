@@ -63,10 +63,12 @@ export function RoleStoryPanel({
   story,
   positionId,
   org,
+  hideCoverage = false,
 }: {
   story: RoleStory;
   positionId: string;
   org?: string | null;
+  hideCoverage?: boolean;
 }) {
   const { coverage, distribution, milestone } = story;
   const candidatesSearch = (extra: Record<string, string>) =>
@@ -78,88 +80,90 @@ export function RoleStoryPanel({
         What this search shows so far
       </h2>
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className={`grid gap-4 ${hideCoverage ? 'lg:grid-cols-1' : 'lg:grid-cols-3'}`}>
         {/* 1. Requirement coverage across the shortlist */}
-        <div className="rounded-xl border bg-card p-4 sm:p-5 lg:col-span-2">
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h3 className="text-sm font-semibold">
-              Requirement coverage across your shortlist
-            </h3>
-            <Link
-              to="/client/candidates"
-              search={candidatesSearch({})}
-              className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
-            >
-              See the evidence
-              <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-            </Link>
-          </div>
+        {!hideCoverage && (
+          <div className="rounded-xl border bg-card p-4 sm:p-5 lg:col-span-2">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h3 className="text-sm font-semibold">
+                Requirement coverage across your shortlist
+              </h3>
+              <Link
+                to="/client/candidates"
+                search={candidatesSearch({})}
+                className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+              >
+                See the evidence
+                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+              </Link>
+            </div>
 
-          {coverage.checks === 0 ? (
-            <p className="mt-2 text-sm text-muted-foreground">{coverage.takeaway}</p>
-          ) : (
-            <>
-              <p className="mt-2 text-sm text-foreground/90">{coverage.takeaway}</p>
-              <div className="mt-3">
-                <SegmentedBar
-                  met={coverage.met}
-                  partial={coverage.partial}
-                  missing={coverage.missing}
-                  label="All requirement checks"
-                />
-              </div>
-              {/* Per-requirement detail is collapsed by default: the bar and
-                  takeaway answer "are we covered?", the dropdown answers "how?" */}
-              <details className="group mt-3 rounded-lg border bg-background/40">
-                <summary className="cursor-pointer list-none px-3 py-2 text-xs font-medium text-primary hover:underline">
-                  <span className="group-open:hidden">
-                    Show requirement-by-requirement detail ({coverage.requirements.length})
-                  </span>
-                  <span className="hidden group-open:inline">Hide detail</span>
-                </summary>
-                <div className="border-t px-3 py-3">
-                  <Legend />
-
-                  <ul className="mt-4 space-y-3">
-                    {coverage.requirements.map((r) => (
-                      <li key={r.id}>
-                        <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-                          <span className="text-sm font-medium">
-                            {r.label}
-                            {r.importance === "preferred" && (
-                              <span className="ml-2 text-xs font-normal text-muted-foreground">
-                                nice to have
-                              </span>
-                            )}
-                          </span>
-                          <span className="text-xs tabular-nums text-muted-foreground">
-                            {r.met + r.partial}/{r.assessed} evidenced
-                          </span>
-                        </div>
-                        <div className="mt-1.5">
-                          <SegmentedBar
-                            met={r.met}
-                            partial={r.partial}
-                            missing={r.missing}
-                            label={r.label}
-                          />
-                        </div>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          {r.met} fully evidenced, {r.partial} partially evidenced.
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <p className="mt-4 border-t pt-3 text-xs text-muted-foreground">
-                    {coverage.criteria}
-                  </p>
+            {coverage.checks === 0 ? (
+              <p className="mt-2 text-sm text-muted-foreground">{coverage.takeaway}</p>
+            ) : (
+              <>
+                <p className="mt-2 text-sm text-foreground/90">{coverage.takeaway}</p>
+                <div className="mt-3">
+                  <SegmentedBar
+                    met={coverage.met}
+                    partial={coverage.partial}
+                    missing={coverage.missing}
+                    label="All requirement checks"
+                  />
                 </div>
-              </details>
+                {/* Per-requirement detail is collapsed by default: the bar and
+                    takeaway answer "are we covered?", the dropdown answers "how?" */}
+                <details className="group mt-3 rounded-lg border bg-background/40">
+                  <summary className="cursor-pointer list-none px-3 py-2 text-xs font-medium text-primary hover:underline">
+                    <span className="group-open:hidden">
+                      Show requirement-by-requirement detail ({coverage.requirements.length})
+                    </span>
+                    <span className="hidden group-open:inline">Hide detail</span>
+                  </summary>
+                  <div className="border-t px-3 py-3">
+                    <Legend />
 
-            </>
-          )}
-        </div>
+                    <ul className="mt-4 space-y-3">
+                      {coverage.requirements.map((r) => (
+                        <li key={r.id}>
+                          <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+                            <span className="text-sm font-medium">
+                              {r.label}
+                              {r.importance === "preferred" && (
+                                <span className="ml-2 text-xs font-normal text-muted-foreground">
+                                  nice to have
+                                </span>
+                              )}
+                            </span>
+                            <span className="text-xs tabular-nums text-muted-foreground">
+                              {r.met + r.partial}/{r.assessed} evidenced
+                            </span>
+                          </div>
+                          <div className="mt-1.5">
+                            <SegmentedBar
+                              met={r.met}
+                              partial={r.partial}
+                              missing={r.missing}
+                              label={r.label}
+                            />
+                          </div>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {r.met} fully evidenced, {r.partial} partially evidenced.
+                          </p>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <p className="mt-4 border-t pt-3 text-xs text-muted-foreground">
+                      {coverage.criteria}
+                    </p>
+                  </div>
+                </details>
+
+              </>
+            )}
+          </div>
+        )}
 
         <div className="space-y-4">
           {/* 2. Fit distribution of delivered candidates */}
