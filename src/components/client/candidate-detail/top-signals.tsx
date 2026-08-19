@@ -33,11 +33,12 @@ export const TopSignals = memo(function TopSignals({
           source: null,
         }));
 
-  const flags = buildValidationList(candidate.requirement_rows, candidate.concerns, { hideRequirementEvidenceNotes: true })
-    .slice(0, 2);
+  const flags = buildValidationList(candidate.requirement_rows, candidate.concerns, { hideRequirementEvidenceNotes: true });
 
+  const displayFlags = flags.slice(0, 2);
 
-  if (strengths.length === 0 && flags.length === 0) return null;
+  if (strengths.length === 0 && displayFlags.length === 0) return null;
+
 
   return (
     <section aria-labelledby="signals-heading" className="rounded-xl border bg-card p-4">
@@ -60,7 +61,7 @@ export const TopSignals = memo(function TopSignals({
             </span>
           </li>
         ))}
-        {flags.map((f) => (
+        {displayFlags.map((f) => (
           <li key={f.id} className="flex items-start gap-2">
             <Info
               className={
