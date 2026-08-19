@@ -605,33 +605,46 @@ export type PaymentsOpsPanel = {
 };
 
 /** Money and pilot state, from records only — no estimates, no placeholders. */
-export async function loadPaymentsOpsPanel(): Promise<PaymentsOpsPanel> {
+export async function loadPaymentsOpsPanel(userId: string): Promise<PaymentsOpsPanel> {
   const s = await admin();
+  const { resolveShowTestRecordsForUser, loadTestScope, excludeTestOrgs, excludeTestPositions } =
+    await import("./admin-test-scope.server");
+  const showTest = await resolveShowTestRecordsForUser(s, userId);
+  const scope = await loadTestScope(s, showTest);
 
   const [paidRes, abandonedRes, pilotRes] = await Promise.all([
-    s
-      .from("payments")
-      .select(
-        "id,amount_cents,currency,paid_at,created_at,provider_reference,provider_environment,organizations(name),positions(id,title)",
-      )
-      .eq("status", "paid")
-      .order("paid_at", { ascending: false })
-      .limit(50),
-    s
-      .from("positions")
-      .select("id,title,organization_id,payment_status,created_at,updated_at,organizations(name)")
-      .in("payment_status", ["unpaid", "pending"])
-      .not("status", "in", "(draft,archived,closed,filled)")
-      .order("updated_at", { ascending: false })
-      .limit(50),
-    s
-      .from("organizations")
-      .select(
-        "id,name,pilot_status,pilot_started_at,pilot_ends_at,pilot_completed_at,pilot_admin_override,pilot_position_id",
-      )
-      .not("pilot_status", "is", null)
-      .order("pilot_started_at", { ascending: false })
-      .limit(50),
+    excludeTestOrgs(
+      s
+        .from("payments")
+        .select(
+          "id,amount_cents,currency,paid_at,created_at,provider_reference,provider_environment,organizations(name),positions(id,title)",
+        )
+        .eq("status", "paid")
+        .order("paid_at", { ascending: false })
+        .limit(50),
+      scope,
+    ),
+    excludeTestOrgs(
+      s
+        .from("positions")
+        .select("id,title,organization_id,payment_status,created_at,updated_at,organizations(name)")
+        .in("payment_status", ["unpaid", "pending"])
+        .not("status", "in", "(draft,archived,closed,filled)")
+        .order("updated_at", { ascending: false })
+        .limit(50),
+      scope,
+    ),
+    excludeTestFlag(
+      s
+        .from("organizations")
+        .select(
+          "id,name,pilot_status,pilot_started_at,pilot_ends_at,pilot_completed_at,pilot_admin_override,pilot_position_id",
+        )
+        .not("pilot_status", "is", null)
+        .order("pilot_started_at", { ascending: false })
+        .limit(50),
+      scope,
+    ),
   ]);
 
   const pilotPositionIds = ((pilotRes.data ?? []) as Any[])
@@ -639,7 +652,10 @@ export async function loadPaymentsOpsPanel(): Promise<PaymentsOpsPanel> {
     .filter(Boolean);
   let titles: Record<string, string> = {};
   if (pilotPositionIds.length) {
-    const { data } = await s.from("positions").select("id,title").in("id", pilotPositionIds);
+    const { data } = await excludeTestPositions(
+      s.from("positions").select("id,title").in("id", pilotPositionIds),
+      scope,
+    );
     titles = Object.fromEntries(((data ?? []) as Any[]).map((p) => [p.id, p.title]));
   }
 
