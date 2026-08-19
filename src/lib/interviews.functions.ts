@@ -138,9 +138,16 @@ export type InterviewDTO = {
 
 function toDTO(row: AnyRow, candidate: AnyRow | null, position: AnyRow | null): InterviewDTO {
   const status = row.status as InterviewStatus;
+  const stage = candidate?.stage as string | undefined;
+  
+  // ELIGIBILITY PREDICATE: An interview request is actionable only if:
+  // 1. The match is in an interview-ready stage.
+  // 2. The match doesn't have another scheduled interview (checked in confirmation).
+  const isEligible = ["delivered", "shortlisted", "interview_process"].includes(stage || "");
+
   const nextAction =
     status === "requested"
-      ? "Propose interview times"
+      ? isEligible ? "Propose interview times" : "Move to interview stage to propose"
       : status === "scheduling"
         ? "Confirm a scheduled time"
         : status === "scheduled"
@@ -148,6 +155,7 @@ function toDTO(row: AnyRow, candidate: AnyRow | null, position: AnyRow | null): 
           : status === "completed"
             ? "Add feedback or close"
             : "Archived";
+
   return {
     id: row.id,
     organization_id: row.organization_id,
@@ -255,10 +263,16 @@ export const listClientInterviews = createServerFn({ method: "POST" })
     for (const p of ((positionsRes.data as AnyRow[]) ?? [])) posMap.set(p.id as string, p);
 
     return {
-      interviews: list.map((r) =>
-        toDTO(r, matchMap.get(r.candidate_match_id) ?? null, posMap.get(r.position_id) ?? null),
-      ),
+      interviews: list.map((r) => {
+        const match = hydratedMatches.find((m) => m.id === r.candidate_match_id);
+        return toDTO(
+          r,
+          match ? { ...matchMap.get(r.candidate_match_id), stage: match.stage } : null,
+          posMap.get(r.position_id) ?? null,
+        );
+      }),
     };
+
   });
 
 // ─── Mutations ──────────────────────────────────────────────────────────────
@@ -737,7 +751,7 @@ export const listSchedulableCandidates = createServerFn({ method: "POST" })
       )
       .eq("organization_id", data.orgId)
       .eq("client_visibility", "visible")
-      .in("stage", ["delivered", "shortlisted", "interview_process"]);
+      .in("stage", ["delivered", "shortlisted", "interview_process", "offer", "hired", "closed_lost"]);
     if (error) throw new Error(error.message);
     const { hydrateClientCandidateProfiles: hydrateSchedulable } = await import(
       "@/lib/client-candidate-hydrate.server"
