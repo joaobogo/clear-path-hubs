@@ -152,112 +152,116 @@ export const globalSearch = createServerFn({ method: "POST" })
 
     // Positions.
     {
-      let query = supabase
-        .from("positions")
-        .select("id, title, location, status, is_test_record, organization_id, organizations!inner(name)")
-        .or(`title.ilike.${ilikeValue(term)},location.ilike.${ilikeValue(term)},organizations.name.ilike.${ilikeValue(term)}`)
-        .order("updated_at", { ascending: false })
-        .limit(LIMIT);
-      if (scope === "client") query = query.in("organization_id", orgIds);
-      else query = excludeTestOrgs(query, testScope).eq("is_test_record", false);
-      const { data: positions, error } = await query;
-      if (error) throw new Error(error.message);
-      groups.positions = ((positions as AnyRow[]) ?? []).map((p) => {
-        const orgName = p.organizations?.name as string | undefined;
-        const context = [orgName, p.location].filter(Boolean).join(" · ");
-        const state = sentenceLabel(p.status);
+      const orFilter = orIlike(["title", "location"], term);
+      if (orFilter) {
+        let query = supabase
+          .from("positions")
+          .select("id, title, location, status, is_test_record, organization_id, organizations!inner(name)")
+          .or(`${orFilter},organizations.name.ilike.${ilikeValue(term)}`)
+          .order("updated_at", { ascending: false })
+          .limit(LIMIT);
+        if (scope === "client") query = query.in("organization_id", orgIds);
+        else query = excludeTestOrgs(query, testScope).eq("is_test_record", false);
+        const { data: positions, error } = await query;
+        if (error) throw new Error(error.message);
+        groups.positions = ((positions as AnyRow[]) ?? []).map((p) => {
+          const orgName = p.organizations?.name as string | undefined;
+          const context = [orgName, p.location].filter(Boolean).join(" · ");
+          const state = sentenceLabel(p.status);
 
-        if (scope === "admin") {
+          if (scope === "admin") {
+            return {
+              type: "position",
+              id: p.id,
+              label: p.title,
+              context,
+              state,
+              href: `/admin/positions/${p.id}`,
+            };
+          }
           return {
             type: "position",
             id: p.id,
             label: p.title,
             context,
             state,
-            href: `/admin/positions/${p.id}`,
+            href: `/client/positions/${p.id}`,
+            search: { org: p.organization_id },
           };
-        }
-        return {
-          type: "position",
-          id: p.id,
-          label: p.title,
-          context,
-          state,
-          href: `/client/positions/${p.id}`,
-          search: { org: p.organization_id },
-        };
-
-      });
+        });
+      }
     }
 
     // Candidates via candidate_matches (never expose hidden matches to clients).
     {
-      // Two-step: find matching candidate_profile ids, then look up matches
-      // scoped correctly. Keeps embedding simple and RLS-friendly.
-      // Candidate profiles are not readable through client RLS (names are
-      // released per client+job), so searching them with the caller's client
-      // returned nothing. Resolve the name index with the privileged client
-      // and use the ids ONLY to intersect matches the caller can already see
-      // below — tenant isolation still comes from the RLS-scoped match query.
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const { data: profiles, error: pErr } = await supabaseAdmin
-        .from("candidate_profiles")
-        .select("id, full_name, email, headline, organizations!inner(name)")
-        .or(`full_name.ilike.${ilikeValue(term)},email.ilike.${ilikeValue(term)},headline.ilike.${ilikeValue(term)},organizations.name.ilike.${ilikeValue(term)}`)
-        .limit(50);
-      if (pErr) throw new Error(pErr.message);
-      const profileIds = ((profiles as AnyRow[]) ?? []).map((p) => p.id);
-      const profileById = new Map<string, AnyRow>(
-        ((profiles as AnyRow[]) ?? []).map((p) => [p.id, p]),
-      );
-      if (profileIds.length > 0) {
-        let mq = supabase
-          .from("candidate_matches")
-          .select(
-            "id, is_test_record, candidate_profile_id, position_id, organization_id, client_visibility, stage, positions(title), organizations(name)",
-          )
-          .in("candidate_profile_id", profileIds)
-          .order("updated_at", { ascending: false })
-          .limit(LIMIT * 2);
-        if (scope === "client") {
-          mq = mq.in("organization_id", orgIds).eq("client_visibility", "visible");
-        } else {
-          mq = excludeTestOrgs(mq, testScope).eq("is_test_record", false);
-        }
-        const { data: matches, error } = await mq;
-        if (error) throw new Error(error.message);
-        const seen = new Set<string>();
-        const list: SearchResult[] = [];
-        for (const m of ((matches as AnyRow[]) ?? [])) {
-          if (list.length >= LIMIT) break;
-          if (seen.has(m.id)) continue;
-          seen.add(m.id);
-          const prof = profileById.get(m.candidate_profile_id);
-          const label = prof?.full_name || prof?.email || "Candidate";
-          const context = [m.positions?.title, m.organizations?.name].filter(Boolean).join(" · ");
-          const state = m.stage ? clientStageLabel(m.stage) : undefined;
-          if (scope === "admin") {
-            list.push({
-              type: "candidate",
-              id: m.id,
-              label,
-              context,
-              state,
-              href: `/admin/candidates/${m.id}`,
-            });
+      const profileFilter = orIlike(["full_name", "email", "headline"], term);
+      if (profileFilter) {
+        // Two-step: find matching candidate_profile ids, then look up matches
+        // Candidate profiles are not readable through client RLS (names are
+        // released per client+job), so searching them with the caller's client
+        // returned nothing. Resolve the name index with the privileged client
+        // and use the ids ONLY to intersect matches the caller can already see
+        // below — tenant isolation still comes from the RLS-scoped match query.
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { data: profiles, error: pErr } = await supabaseAdmin
+          .from("candidate_profiles")
+          .select("id, full_name, email, headline, organizations!inner(name)")
+          .or(`${profileFilter},organizations.name.ilike.${ilikeValue(term)}`)
+          .limit(50);
+        if (pErr) throw new Error(pErr.message);
+        const profileIds = ((profiles as AnyRow[]) ?? []).map((p) => p.id);
+        const profileById = new Map<string, AnyRow>(
+          ((profiles as AnyRow[]) ?? []).map((p) => [p.id, p]),
+        );
+        if (profileIds.length > 0) {
+          let mq = supabase
+            .from("candidate_matches")
+            .select(
+              "id, is_test_record, candidate_profile_id, position_id, organization_id, client_visibility, stage, positions(title), organizations(name)",
+            )
+            .in("candidate_profile_id", profileIds)
+            .order("updated_at", { ascending: false })
+            .limit(LIMIT * 2);
+          if (scope === "client") {
+            mq = mq.in("organization_id", orgIds).eq("client_visibility", "visible");
           } else {
-            list.push({
-              type: "candidate",
-              id: m.id,
-              label,
-              context,
-              state,
-              href: `/client/candidates/${m.id}`,
-              search: { org: m.organization_id },
-            });
+            mq = excludeTestOrgs(mq, testScope).eq("is_test_record", false);
           }
+          const { data: matches, error } = await mq;
+          if (error) throw new Error(error.message);
+          const seen = new Set<string>();
+          const list: SearchResult[] = [];
+          for (const m of ((matches as AnyRow[]) ?? [])) {
+            if (list.length >= LIMIT) break;
+            if (seen.has(m.id)) continue;
+            seen.add(m.id);
+            const prof = profileById.get(m.candidate_profile_id);
+            const label = prof?.full_name || prof?.email || "Candidate";
+            const context = [m.positions?.title, m.organizations?.name].filter(Boolean).join(" · ");
+            const state = m.stage ? clientStageLabel(m.stage) : undefined;
+            if (scope === "admin") {
+              list.push({
+                type: "candidate",
+                id: m.id,
+                label,
+                context,
+                state,
+                href: `/admin/candidates/${m.id}`,
+              });
+            } else {
+              list.push({
+                type: "candidate",
+                id: m.id,
+                label,
+                context,
+                state,
+                href: `/client/candidates/${m.id}`,
+                search: { org: m.organization_id },
+              });
+            }
+          }
+          groups.candidates = list;
         }
-        groups.candidates = list;
       }
     }
 
