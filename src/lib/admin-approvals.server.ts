@@ -35,15 +35,24 @@ function personName(row: Any | undefined): string | null {
 
 async function resolvePeople(admin: Admin, ids: (string | null)[]) {
   const unique = [...new Set(ids.filter(Boolean) as string[])];
-  const map = new Map<string, string>();
+  const map = new Map<string, { name: string; isStaff: boolean }>();
   if (unique.length === 0) return map;
-  const res = await admin
-    .from("profiles")
-    .select("auth_user_id, full_name, email")
-    .in("auth_user_id", unique);
-  for (const r of (res.data ?? []) as Any[]) {
+
+  const [profilesRes, staffRes] = await Promise.all([
+    admin.from("profiles").select("auth_user_id, full_name, email").in("auth_user_id", unique),
+    admin.rpc("is_platform_staff_bulk", { _users: unique }),
+  ]);
+
+  const staffIds = new Set((staffRes.data ?? []) as string[]);
+
+  for (const r of (profilesRes.data ?? []) as Any[]) {
     const name = personName(r);
-    if (name) map.set(r.auth_user_id as string, name);
+    if (name) {
+      map.set(r.auth_user_id as string, {
+        name,
+        isStaff: staffIds.has(r.auth_user_id as string),
+      });
+    }
   }
   return map;
 }
@@ -220,82 +229,6 @@ export async function loadApprovals(
     });
   }
 
-  for (const r of reqRows) {
-    const m = matchById.get(r.candidate_match_id as string);
-    if (!m) continue;
-    if (m.contact_released_at) continue;
-    const blockers: string[] = [];
-    if (m.client_visibility !== "visible")
-      blockers.push("Candidate is not client-visible yet — approve visibility first");
-    items.push({
-      id: `contact_release:${r.id}`,
-      kind: "contact_release",
-      target_type: "candidate_match",
-      target_id: m.id as string,
-      target_label: matchLabel(m),
-      context_label: ((m.positions as Any)?.title as string) ?? null,
-      organization_id: (m.organization_id as string) ?? null,
-      org_name: orgNameOf(m),
-      position_id: (m.position_id as string) ?? null,
-      position_title: ((m.positions as Any)?.title as string) ?? null,
-      requester_name: r.actor_user_id ? (people.get(r.actor_user_id as string) ?? null) : null,
-      requested_at: r.created_at as string,
-      age_days: ageDays(r.created_at as string, now),
-      match_ids: [m.id as string],
-      blockers,
-      link: `/admin/candidates/${m.id}`,
-    });
-  }
-
-  for (const s of shareRows) {
-    const ids = (s.match_ids ?? []) as string[];
-    const hidden = ids
-      .map((id) => matchById.get(id))
-      .filter((m): m is Any => !!m && m.client_visibility !== "visible");
-    if (hidden.length === 0) continue;
-    const blockers = [...new Set(hidden.flatMap((m) => matchBlockers(m)))];
-    items.push({
-      id: `shortlist_share:${s.id}`,
-      kind: "shortlist_share",
-      target_type: "shortlist_share",
-      target_id: s.id as string,
-      target_label: (s.title as string) || "Shortlist share",
-      context_label: `${hidden.length} candidate${hidden.length === 1 ? "" : "s"} not visible yet`,
-      organization_id: (s.organization_id as string) ?? null,
-      org_name: orgNameOf(hidden[0]),
-      position_id: (s.position_id as string) ?? null,
-      position_title: ((hidden[0]?.positions as Any)?.title as string) ?? null,
-      requester_name: s.created_by ? (people.get(s.created_by as string) ?? null) : null,
-      requested_at: s.created_at as string,
-      age_days: ageDays(s.created_at as string, now),
-      match_ids: hidden.map((m) => m.id as string),
-      blockers,
-      link: s.position_id ? `/admin/positions/${s.position_id}` : null,
-    });
-  }
-
-  for (const p of posRows) {
-    const actorId = positionActors.get(p.id as string) ?? null;
-    const at = (p.submitted_at ?? p.created_at) as string;
-    items.push({
-      id: `publish_position:${p.id}`,
-      kind: "publish_position",
-      target_type: "position",
-      target_id: p.id as string,
-      target_label: (p.title as string) || "Untitled position",
-      context_label: `Status: ${String(p.status).replace(/_/g, " ")}`,
-      organization_id: (p.organization_id as string) ?? null,
-      org_name: ((p.organizations as Any)?.name as string) ?? null,
-      position_id: p.id as string,
-      position_title: (p.title as string) ?? null,
-      requester_name: actorId ? (actorNames.get(actorId) ?? null) : null,
-      requested_at: at,
-      age_days: ageDays(at, now),
-      match_ids: [],
-      blockers: [],
-      link: `/admin/positions/${p.id}`,
-    });
-  }
 
   const groups = groupApprovals(items);
   return {
