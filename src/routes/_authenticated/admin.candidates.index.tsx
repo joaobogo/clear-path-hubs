@@ -263,8 +263,7 @@ function CandidatesPage() {
   }, [q, search.q, navigate]);
   const [selected, setSelected] = useState<string[]>([]);
   const [confirm, setConfirm] = useState<null | "visible" | "hidden">(null);
-  const [showDuplicates, setShowDuplicates] = useState(false);
-
+  const [showMoreFilters, setShowMoreFilters] = useState(false);
   const filters = useMemo(() => buildFilters(search), [search]);
 
   // Staff work across every tenant, so this desk subscribes unfiltered (RLS
