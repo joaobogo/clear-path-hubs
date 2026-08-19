@@ -52,9 +52,9 @@ import {
   ExperienceTimeline,
   InterviewGuide,
   LinksPanel,
-  ProfilePanel,
   SkillsAndEducation,
 } from "@/components/client/candidate-detail/profile";
+
 
 import {
   ActivitySection,

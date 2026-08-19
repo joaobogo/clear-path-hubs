@@ -125,6 +125,7 @@ const TABS: NavDef[] = [
     everyone: true,
     hint: "Shortlist, talent memory",
   },
+
   {
     to: "/client/conversations",
     label: "Messages",
