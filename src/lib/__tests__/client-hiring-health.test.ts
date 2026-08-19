@@ -11,11 +11,16 @@ const base = {
 };
 
 describe("computeHiringHealth", () => {
-  it("says hiring is on track when nothing is overdue or behind", () => {
-    const h = computeHiringHealth(base);
+  it("says hiring is on track when nothing needs the client", () => {
+    const h = computeHiringHealth({ ...base, awaitingDecision: 0 });
     expect(h.sentence).toBe("Hiring is on track.");
     expect(h.reason).toBe("on_track");
     expect(h.tone).toBe("on_track");
+  });
+
+  it("reports routine review ahead of the on-track sentence", () => {
+    const h = computeHiringHealth(base);
+    expect(h.sentence).toBe("Two candidates need review.");
   });
 
   it("puts blocks and overdue decisions ahead of behind-schedule roles", () => {
@@ -30,8 +35,8 @@ describe("computeHiringHealth", () => {
     expect(h.reason).toBe("blocks");
   });
 
-  it("reports behind-schedule roles when no decision is overdue or blocked", () => {
-    const h = computeHiringHealth({ ...base, behindScheduleRoles: 1 });
+  it("reports behind-schedule roles when nothing else needs the client", () => {
+    const h = computeHiringHealth({ ...base, awaitingDecision: 0, behindScheduleRoles: 1 });
     expect(h.sentence).toBe("One role is behind schedule.");
     expect(h.reason).toBe("behind_schedule");
   });

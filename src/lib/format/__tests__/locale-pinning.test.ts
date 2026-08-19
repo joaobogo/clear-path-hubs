@@ -9,8 +9,9 @@ import { APP_LOCALE, formatDate, formatDateTime } from "../datetime";
 describe("date locale pinning", () => {
   it("formats dates in the app locale and workspace timezone", () => {
     expect(APP_LOCALE).toBe("en-GB");
-    expect(formatDate("2026-08-14T23:30:00Z")).toBe("14/08/2026");
-    expect(formatDateTime("2026-08-14T23:30:00Z")).toBe("14/08/2026, 20:30:00");
+    // Standardised on the unambiguous "14 Aug 2026" form across the product.
+    expect(formatDate("2026-08-14T23:30:00Z")).toBe("14 Aug 2026");
+    expect(formatDateTime("2026-08-14T23:30:00Z")).toBe("14 Aug 2026, 20:30");
   });
 
   it("has no browser-locale date formatting left in src", () => {

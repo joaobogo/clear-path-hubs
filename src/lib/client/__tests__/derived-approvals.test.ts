@@ -30,6 +30,6 @@ describe("toDerivedApproval", () => {
 
   it("falls back to QUEUE_TYPE_LABEL for type_label badge when undefined", () => {
     const result = toDerivedApproval({ ...baseRow, type_label: undefined as any });
-    expect(result.type_label).toBe("Interview feedback");
+    expect(result.type_label).toBe("Give feedback");
   });
 });

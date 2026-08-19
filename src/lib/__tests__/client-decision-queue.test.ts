@@ -92,6 +92,7 @@ describe("buildQueue", () => {
 
   it("labels the item type as text", () => {
     const q = buildQueue([item({ key: "f", kind: "feedback", due_at: iso(1) })], NOW);
-    expect(q.upcoming[0]!.type_label).toBe("Interview feedback");
+    // Type labels name the action the client takes.
+    expect(q.upcoming[0]!.type_label).toBe("Give feedback");
   });
 });

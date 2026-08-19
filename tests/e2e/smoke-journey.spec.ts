@@ -151,8 +151,9 @@ test.describe("launch smoke journey", () => {
     // ── 3. Staff approve the match for client visibility ──────────────────
     await loginAs(page, "admin", fixtures.users["platform_admin"]!.email);
     await showTestRecords(page);
-    await page.goto("/admin/approvals", { waitUntil: "domcontentloaded" });
-    await expect(page.getByRole("heading", { name: /^approvals$/i })).toBeVisible({
+    // Approvals are worked from the Overview work queue.
+    await page.goto("/admin", { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("heading", { name: /work queue/i }).first()).toBeVisible({
       timeout: 60_000,
     });
 

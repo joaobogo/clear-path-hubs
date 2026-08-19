@@ -71,7 +71,7 @@ function NewClientPage() {
         { to: "/admin/positions" as any, label: "Positions" },
         { to: "/admin/candidates" as any, label: "Candidates" },
         { to: "/admin/publish" as any, label: "Publish desk" },
-        { to: "/admin/approvals" as any, label: "Approvals" },
+        { to: "/admin/decision-backlog" as any, label: "Decision backlog" },
       ],
     },
   ];

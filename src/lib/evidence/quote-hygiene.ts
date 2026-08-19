@@ -286,8 +286,9 @@ export function isRelevantEvidence(quote: string, requirement: string): boolean 
  * headline (e.g. "Senior Full-Stack Engineer — product-focused...").
  * Headlines are context, not proof of specific technical requirements.
  */
-export const isCandidateHeadline = (snippet: string): boolean => {
-  const s = snippet.toLowerCase().trim();
+export const isCandidateHeadline = (snippet: string | null | undefined): boolean => {
+  if (!snippet) return false;
+  const s = String(snippet).toLowerCase().trim();
   // Most headlines follow this "Name Title — Description" or "Title — Stack" pattern
   // especially when truncated by an offset slice.
   return (
