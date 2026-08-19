@@ -138,7 +138,10 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     (async () => {
       const { loadDeliveryFailures } = await import("./notification-failures.server");
       const failures = await loadDeliveryFailures(s);
-      return { data: failures.items, count: failures.items.length };
+      // P-015: Filter to last 7 days for metric consistency across all surfaces.
+      const cutoff = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
+      const items = failures.items.filter(f => f.lastAttemptAt >= cutoff);
+      return { data: items, count: items.length };
     })(),
 
     // 7 — real client briefs sitting in the inbox for more than three days.
@@ -384,7 +387,6 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       label: "Delivery failures (7d)",
       description: "Email or message failures in the last 7 days that need a retry or a new address.",
       count: blocked.count ?? 0,
-
       action_hint: "Retry the delivery or update the recipient's email.",
       see_all: { to: "/admin/operations" },
       items: ((blocked.data ?? []) as any[]).slice(0, PREVIEW_LIMIT).map((d) => ({

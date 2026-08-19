@@ -448,7 +448,6 @@ function ClientsPage() {
                 <th className="px-3 py-2.5 font-medium tabular-nums text-right">Active positions</th>
                 <th className="px-3 py-2.5 font-medium tabular-nums text-right">Delivered</th>
                 <th className="px-3 py-2.5 font-medium text-right">Last activity</th>
-                <th className="px-3 py-2.5 font-medium text-right">Open</th>
               </tr>
             </thead>
 

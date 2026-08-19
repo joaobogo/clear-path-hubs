@@ -184,7 +184,7 @@ function ClientDetail() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const positions = data.positions as any[];
 
-  const activeMemberCount = org.memberships?.[0]?.count ?? members.length;
+  const activeMemberCount = members.filter(m => m.status === "active" && ["client_admin", "client_editor", "client_viewer"].includes(m.role)).length;
   const parsedCvCount = org.parsed_cv_count?.[0]?.count ?? 0;
 
   const setTab = (t: TabKey) => navigate({ search: { tab: t } });
@@ -228,7 +228,7 @@ function ClientDetail() {
       </div>
 
       <nav className="flex flex-wrap gap-0.5 border-b" role="tablist">
-        {TABS.map((t) => {
+        {TABS.filter(t => t !== "activity").map((t) => {
           const Icon = TAB_LABELS[t].icon;
           return (
             <Link
