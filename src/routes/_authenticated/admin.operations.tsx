@@ -403,7 +403,7 @@ function OperationsPage() {
                           </div>
                           {g.latest.error_message && (
                             <div className="mt-1 line-clamp-2 text-[11px] text-muted-foreground">
-                              {g.latest.error_message}
+                              {humanizeCode(g.latest.error_message)}
                             </div>
                           )}
                         </td>
