@@ -88,6 +88,7 @@ export const getClientCandidates = createServerFn({ method: "GET" })
       minScore?: number;
       fitBand?: string;
       location?: string;
+      q?: string;
     }) =>
       z
         .object({
@@ -99,6 +100,7 @@ export const getClientCandidates = createServerFn({ method: "GET" })
           minScore: z.number().optional(),
           fitBand: z.string().optional(),
           location: z.string().optional(),
+          q: z.string().optional(),
         })
         .parse(input),
   )
@@ -114,6 +116,10 @@ export const getClientCandidates = createServerFn({ method: "GET" })
       .eq("client_visibility", "visible");
 
     if (data.positionId) q = q.eq("position_id", data.positionId);
+    if (data.q) {
+      const ts = data.q.trim().split(/\s+/).join(" & ");
+      if (ts) q = q.textSearch("candidate_profiles.search_vector", ts, { config: "english" });
+    }
 
     const { data: rawRows, error } = await q.order("delivered_at", { ascending: false });
     if (error) throw new Error(error.message);
