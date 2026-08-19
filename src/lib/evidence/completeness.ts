@@ -43,7 +43,12 @@ export interface CriterionRow {
 export interface CompletenessReport {
   criteria: CriterionRow[];
   requiredTotal: number;
+  /** Must-have criteria with strong, quoted evidence only. Thin never counts. */
   requiredSupported: number;
+  /** Must-have criteria backed only by weak/partial evidence. */
+  requiredThin: number;
+  /** Must-have criteria with no usable evidence at all. */
+  requiredUnsupported: number;
   /** Labels of must-have criteria with zero evidence and no override. */
   blockingLabels: string[];
   /** Must-have criteria with zero evidence, whether or not overridden. */
