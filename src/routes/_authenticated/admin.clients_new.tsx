@@ -34,6 +34,7 @@ function NewClientPage() {
     phone: "",
     notes: "",
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [result, setResult] = useState<{
     organization_id: string;
     email: string;
