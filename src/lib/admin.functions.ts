@@ -434,15 +434,7 @@ export const listClients = createServerFn({ method: "GET" })
     // P-020: Increase limit to ensure all organizations are captured before client-side filtering.
     // The previous 500 limit could cause missing results if there are many test/archived records.
     q = q.limit(2000);
-    // The global "test records" preference decides here, in Postgres, so the
-    // list and the "N organizations" count can never disagree.
-    if (!showTest) {
-      q = excludeTestFlag(q);
-    } else {
-      // P-020: When test records are ON, we still want every organization,
-      // but ensure we don't accidentally over-limit or skip uncategorized ones.
-      // The limit(500) is already quite generous for a list.
-    }
+    // C4: ensure organizations with active roles are always included in the active list.
     const { data: rows } = await q;
 
     const orgIds = (rows ?? []).map((r: AnyRow) => r.id);
@@ -514,6 +506,13 @@ export const listClients = createServerFn({ method: "GET" })
         actions_required: st.actions_required,
         last_activity_at: st.last_activity_at ?? r.updated_at,
       };
+    }).filter((r: AnyRow) => {
+      const { status, industry } = data;
+      if (industry && r.industry !== industry) return false;
+      // C4: An organization is "active" if it is not archived OR it has active positions.
+      if (status === "archived") return !!r.archived_at;
+      if (status === "active") return !r.archived_at || r.positions_active > 0;
+      return true;
     });
 
     const industrySet = new Set<string>();
