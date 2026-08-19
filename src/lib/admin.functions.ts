@@ -2246,7 +2246,7 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
           "organization_id,position_id,application_id,candidate_profile_id",
           "current_score_run_id,approved_score_run_id",
           "candidate_profiles(id,full_name,email)",
-          "positions(id,title,status,organization_id,organizations(id,name))",
+          "positions(id,title,status,organization_id,approved_at,published_at,payment_status,description,employment_type,work_model,seniority,location,requirements,organizations(id,name))",
           "current_run:score_runs!candidate_matches_current_score_run_id_fkey(id,status,score,confidence,fit_label,contradiction_status,must_have_coverage,position_id,candidate_profile_id,organization_id,application_id)",
           "approved_run:score_runs!candidate_matches_approved_score_run_id_fkey(id,status,score,confidence,fit_label,contradiction_status,must_have_coverage,evidence,raw_score,applied_cap,final_score,position_id,candidate_profile_id,organization_id,application_id)",
         ].join(","),
@@ -2260,6 +2260,7 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
       needs_review: [], blocked: [], ready: [], published: [], held: [],
     };
     const FATAL_STATES = new Set(["failed", "provider_blocked", "ocr_required"]);
+    const { evaluatePublishGate, PUBLISH_BLOCKER_LABEL } = await import("./publish-gate");
 
     for (const r of rows) {
       const approved = (r.approved_run ?? null) as AnyRow | null;
@@ -2267,6 +2268,15 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
       const pos = (r.positions ?? null) as AnyRow | null;
       const cp = (r.candidate_profiles ?? null) as AnyRow | null;
       const reasons: string[] = [];
+
+      // Role-level blocking reasons (P-032)
+      if (pos) {
+        const roleBlockers = evaluatePublishGate(pos as any);
+        for (const b of roleBlockers) {
+          reasons.push(PUBLISH_BLOCKER_LABEL[b]);
+        }
+      }
+
 
       // Fatal processing states
       if (FATAL_STATES.has(r.processing_state)) {
@@ -2345,7 +2355,8 @@ export const getPublishDeskGroups = createServerFn({ method: "GET" })
         !posMismatch &&
         !identityMismatch &&
         !FATAL_STATES.has(r.processing_state) &&
-        pos?.status !== "archived";
+        pos?.status !== "archived" &&
+        reasons.length === 0;
 
       const readiness = {
         hasScore: hasCurrentScore || hasApprovedRun,
