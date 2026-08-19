@@ -128,8 +128,7 @@ export function isUnicornMatch(input: {
 }): boolean {
   const score = input.score ?? null;
   if (score != null && score >= UNICORN_SCORE) return true;
-  const band = input.band ?? classifyBand(score);
-  return input.hired && isTopBand(band);
+  return false;
 }
 
 

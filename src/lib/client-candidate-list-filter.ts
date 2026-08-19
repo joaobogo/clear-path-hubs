@@ -64,7 +64,7 @@ export function filterCandidates(
   return rows.filter((c) => {
     if (s.filter === "top" && !matchesTopTile(c)) return false;
     if (s.filter === "interview_pipeline" && !matchesInterviewTile(c)) return false;
-    if (s.unicorn === "1" && !c.unicorn) return false;
+    if (s.unicorn === "1" && (c.score === null || c.score < 95)) return false;
     if (s.stage !== "all" && c.stage !== s.stage) return false;
     if (s.fit !== "all" && c.fit.band !== s.fit) return false;
     if (s.critical !== "all") {
