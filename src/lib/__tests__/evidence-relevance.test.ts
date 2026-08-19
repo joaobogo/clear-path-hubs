@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isRelevantEvidence, isCandidateHeadline } from "../evidence/quote-hygiene";
+import { isRelevantEvidence, isCandidateHeadline } from "../evidence/quote-hygiene.ts";
 
 describe("evidence relevance and headline hygiene", () => {
   it("should detect a candidate headline", () => {
