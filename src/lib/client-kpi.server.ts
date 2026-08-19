@@ -411,6 +411,7 @@ export type ClientCandidateDTO = {
    */
   human_review: { reviewed: boolean; verified_requirements: number; statement: string | null };
 
+
   /**
    * The band is never a bare adjective: this names the method that produced the
    * assessment and lists the criteria with their evidence snippets. When no

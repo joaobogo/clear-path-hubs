@@ -311,19 +311,8 @@ function OverviewPage() {
                 </div>
               )}
 
-              {rolesNeedingDetails.length > 0 && (
-                <Collapsible className="space-y-3">
-                  <CollapsibleTrigger asChild>
-                    <button className="flex w-full items-center justify-between rounded-lg border border-dashed px-4 py-2 text-xs font-medium text-muted-foreground hover:bg-muted/50">
-                      <span>{rolesNeedingDetails.length} roles can be sharpened with a few optional details</span>
-                      <ChevronDown className="h-3.5 w-3.5 transition-transform group-data-[state=open]:rotate-180" />
-                    </button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <OpenItemsStrip orgId={orgId} />
-                  </CollapsibleContent>
-                </Collapsible>
-              )}
+              {/* 2 · PROMETIDO VS REALIDADE (removido para evitar redundância com queue e saúde) */}
+
             </div>
           </div>
 

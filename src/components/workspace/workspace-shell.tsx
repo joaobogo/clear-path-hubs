@@ -141,6 +141,7 @@ function buildBreadcrumbs(
   // own name, fall back to a short human word, not the id.
   const readable = detailLabel ?? (isUuid ? "Candidate" : last.replace(/[-_]/g, " "));
 
+
   return [
     { label: section.label, to: section.to },
     { label: readable },

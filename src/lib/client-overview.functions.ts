@@ -128,6 +128,7 @@ export const getClientOverview = createServerFn({ method: "GET" })
       offers: openItemsResponse.items.filter(i => i.kind === 'offer').length,
       missing_feedback: openItemsResponse.items.filter(i => i.kind === 'missing_feedback').length,
     };
+
     
     // Summary of blocked roles for the header
     const blocksCount = openItemsResponse.blockedRoles.length;
@@ -193,43 +194,9 @@ export const getClientOverview = createServerFn({ method: "GET" })
         new Date(r.delivered_at).getTime() >= sevenDaysAgo,
     ).length;
 
-    // Action-required list — items requiring the client's attention.
-    const positionsById = new Map<string, AnyRow>(activePositionsList.map((p) => [p.id, p]));
-    const positionCounts = new Map<string, number>();
-    for (const r of rows) {
-      if (isAwaitingClientDecision(r)) {
-        positionCounts.set(r.position_id, (positionCounts.get(r.position_id) ?? 0) + 1);
-      }
-    }
-    const action_required: Array<{ type: string; label: string; href: string; count?: number }> =
-      [];
-    for (const [pid, count] of positionCounts) {
-      const p = positionsById.get(pid);
-      action_required.push({
-        type: "new_delivered",
-        label: `${count} new candidate${count === 1 ? "" : "s"} to review for ${p?.title ?? "position"}`,
-        href: `/client/positions/${pid}`,
-        count,
-      });
-    }
-    const offerCount = rows.filter((r) => r.stage === "offer").length;
-    if (offerCount > 0) {
-      action_required.push({
-        type: "offer_pending",
-        label: `${offerCount} offer${offerCount === 1 ? "" : "s"} awaiting response`,
-        href: `/client/offers`,
-        count: offerCount,
-      });
-    }
-    const interviewScheduledCount = rows.filter((r) => r.interview_scheduled).length;
-    if (interviewScheduledCount > 0) {
-      action_required.push({
-        type: "interview_scheduled",
-        label: `${interviewScheduledCount} interview${interviewScheduledCount === 1 ? "" : "s"} scheduled — leave feedback after`,
-        href: `/client/candidates?filter=interview`,
-        count: interviewScheduledCount,
-      });
-    }
+    // The action_required summary is removed from the Overview payload
+    // to keep the first viewport focused on the primary Decision Queue.
+
 
     // "What happens next" — per-position next milestone, only active positions.
     const rowsByPosition = new Map<string, KpiRow[]>();
