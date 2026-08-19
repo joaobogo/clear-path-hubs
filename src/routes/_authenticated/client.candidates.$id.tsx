@@ -169,7 +169,21 @@ function CandidateDetailPage() {
       qc.invalidateQueries({ queryKey: ["client-overview", orgId] });
       qc.invalidateQueries({ queryKey: ["client-interviews", orgId] });
     },
-    onError: (e: Error) => setRequestFailed(proposalErrorMessage(e.message)),
+    onError: (e: Error) => {
+      const msg = proposalErrorMessage(e.message);
+      setRequestFailed(msg);
+      setPendingKey(null);
+      toast.error("Could not request interview", {
+        description: msg,
+        action: {
+          label: "Try again",
+          onClick: () => {
+            // Re-opening the dialog with the same action will allow retry
+            setDialogAction("request_interview");
+          },
+        },
+      });
+    },
   });
 
   const [dialogAction, setDialogAction] = useState<ActionKey | null>(null);
@@ -295,16 +309,18 @@ function CandidateDetailPage() {
  hire: "hired",
  not_moving_forward: "not_moving_forward",
  };
- const handleAct = (k: ActionKey, fromStage: MatchStage) => {
- if (act.isPending) return;
- stageBeforeRef.current = fromStage;
- const to = RESULT_STAGE[k];
- nextStepAfterRef.current = to ? confirmationLine(to) : null;
- if (NO_REASON_NEEDED.has(k)) {
- setPendingKey(k);
- act.mutate({ action: k });
- } else setDialogAction(k);
- };
+  const handleAct = (k: ActionKey, fromStage: MatchStage) => {
+    if (act.isPending || requestMut.isPending) return;
+    stageBeforeRef.current = fromStage;
+    const to = RESULT_STAGE[k];
+    nextStepAfterRef.current = to ? confirmationLine(to) : null;
+    if (NO_REASON_NEEDED.has(k)) {
+      setPendingKey(k);
+      act.mutate({ action: k });
+    } else {
+      setDialogAction(k);
+    }
+  };
 
   // Breadcrumb label must be published before any early return so the hook
   // order stays stable across loading, error and loaded renders.
@@ -445,22 +461,45 @@ function CandidateDetailPage() {
  <ContactBlock candidate={candidate} />
  </div>
 
- {/* 5 — DECISION BAR */}
- <aside className="space-y-4 lg:col-span-4">
- <ActionArea
- actions={actions}
- readOnly={readOnly}
- pending={act.isPending}
- pendingKey={pendingKey}
- onAct={(k) => handleAct(k, candidate.stage)}
- stage={candidate.stage}
- matchId={candidate.match_id}
- subject={actionSubject}
- />
- <NextStepNote
- stage={candidate.stage}
- stageEnteredAt={candidate.stage_entered_at}
- />
+      {/* 5 — DECISION BAR */}
+      <aside className="space-y-4 lg:col-span-4">
+        <ActionArea
+          actions={actions}
+          readOnly={readOnly}
+          pending={act.isPending || requestMut.isPending}
+          pendingKey={pendingKey}
+          onAct={(k) => handleAct(k, candidate.stage)}
+          stage={candidate.stage}
+          matchId={candidate.match_id}
+          subject={actionSubject}
+        />
+
+        {dialogAction === "request_interview" && orgId && (
+          <RequestInterviewDialog
+            orgId={orgId}
+            timezone={orgTimezone}
+            submitting={requestMut.isPending}
+            failed={requestFailed}
+            onClose={() => {
+              setDialogAction(null);
+              setRequestFailed(null);
+            }}
+            onSubmit={(payload) => {
+              setPendingKey("request_interview");
+              requestMut.mutate(payload);
+            }}
+            fetchCandidates={async () => {
+              const res = await listSchedulableCandidates({ data: { orgId: orgId! } });
+              return res as { candidates: SchedulableCandidate[] };
+            }}
+            initialMatchId={candidate.match_id}
+          />
+        )}
+
+        <NextStepNote
+          stage={candidate.stage}
+          stageEnteredAt={candidate.stage_entered_at}
+        />
  {orgId && (
  <OpenThreadButton
  orgId={orgId}
