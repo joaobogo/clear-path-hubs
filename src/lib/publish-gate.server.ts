@@ -138,7 +138,7 @@ export async function loadPublishGateQueue(
       owner_user_id: p['owner_user_id'] ?? null,
       owner_name: p['owner_user_id'] ? (owners.get(p['owner_user_id']) || null) : null,
       blockers,
-      can_publish: hard.length === 0,
+      can_publish: blockers.length === 0,
       is_test_record: Boolean(p['organizations']?.is_test_record),
     };
   });
