@@ -343,7 +343,7 @@ export function ProcessingExceptionsBoard({ className }: { className?: string })
           <ul className="mt-2 space-y-2">
             {permanent.map((r) => (
               <li key={r.job_id} className="text-xs">
-                <span className="font-medium">{r.job_type}</span>
+                <span className="font-medium">{humanizeJobName(r.job_type)}</span>
                 {" · "}
                 {r.match_id ? (
                   <Link
