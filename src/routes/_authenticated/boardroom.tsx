@@ -91,6 +91,8 @@ function BoardroomPage() {
   const orgName =
     contextQ.data?.organizations?.find((o: { id: string; name: string }) => o.id === resolvedOrgId)?.name ??
     "Your workspace";
+  const hasBoundWorkspace = orgName !== "Your workspace";
+
   const kpis = overviewQ.data?.kpis as
     | { active_positions?: number; delivered_this_month?: number; time_to_shortlist_days?: number }
     | undefined;
