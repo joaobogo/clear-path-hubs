@@ -223,7 +223,7 @@ export function PublishGatePanel({
                           size="sm"
                           variant="outline"
                           disabled={!r.can_publish || busy === r.position_id}
-                          onClick={() => publishMut.mutate(r.position_id)}
+                          onClick={() => setConfirmRow(r)}
                           title={
                             r.can_publish
                               ? "Publish this role"
