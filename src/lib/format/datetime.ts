@@ -43,6 +43,7 @@ const MONTH_YEAR = new Intl.DateTimeFormat(APP_LOCALE, {
 });
 
 const MONTH_YEAR_UTC = new Intl.DateTimeFormat(APP_LOCALE, {
+  day: "2-digit",
   month: "short",
   year: "numeric",
   timeZone: "UTC",
