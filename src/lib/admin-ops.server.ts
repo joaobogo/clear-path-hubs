@@ -112,6 +112,8 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
     (async () => {
       const { loadDecisionBacklog } = await import("./admin-decision-backlog.server");
       const backlog = await loadDecisionBacklog(s, { includeTest: opts.includeTest ?? false });
+      // P-015: Filter to only truly overdue decisions (e.g. delivered > 48h ago) 
+      // if specific logic existed, but for now we reconcile by using the same loader.
       return { data: backlog.rows, count: backlog.rows.length };
     })(),
 
@@ -129,6 +131,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
         .or(
           `status.eq.requested,and(status.eq.scheduled,scheduled_at.lte.${new Date(Date.now() + 48 * HOUR).toISOString()})`,
         )
+        .not("status", "eq", "completed")
         .order("requested_at", { ascending: true })
         .limit(PREVIEW_LIMIT),
       scope,
@@ -278,7 +281,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       description: "Paid or exempt roles that still need approval and configuration.",
       count: setup.count ?? 0,
       action_hint: "Open the role, complete setup, approve it.",
-      see_all: { to: "/admin/positions" },
+      see_all: { to: "/admin/publish" },
       items: ((setup.data ?? []) as any[]).map((p) => ({
         id: p.id,
         title: p.title,
@@ -331,7 +334,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       description: "Shared with the client, still no decision recorded.",
       count: delivered.count ?? 0,
       action_hint: "Nudge the client or call it — the candidate is waiting.",
-      see_all: { to: "/admin/operations" },
+      see_all: { to: "/admin/decision-backlog" as any },
       items: overdue.slice(0, 8).map((m) => ({
         id: m.match_id,
         title: m.candidate_name ?? "Candidate",
@@ -388,7 +391,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
       description: "Email or message failures in the last 7 days that need a retry or a new address.",
       count: blocked.count ?? 0,
       action_hint: "Retry the delivery or update the recipient's email.",
-      see_all: { to: "/admin/operations" },
+      see_all: { to: "/admin/notifications" },
       items: ((blocked.data ?? []) as any[]).slice(0, PREVIEW_LIMIT).map((d) => ({
         id: d.id,
         title: d.title ?? "Delivery failure",

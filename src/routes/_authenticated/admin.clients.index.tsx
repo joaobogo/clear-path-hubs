@@ -624,17 +624,7 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
       <td className="whitespace-nowrap px-3 py-2.5 text-right tabular-nums">{r.candidates_delivered}</td>
       <td className="whitespace-nowrap px-3 py-2.5 text-right text-xs text-muted-foreground">{relTime(r.last_activity_at)}</td>
       <td className="px-3 py-2.5 text-right">
-        <div className="inline-flex items-center gap-1">
-          <a
-            href={`/admin/clients/${r.id}`}
-            className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary hover:bg-primary/15"
-            data-qa-action={`open-btn-${r.id}`}
-          >
-            Open
-          </a>
-
-          <RowOverflowMenu row={r} onArchive={onArchive} />
-        </div>
+        <RowOverflowMenu row={r} onArchive={onArchive} />
       </td>
     </tr>
   );
