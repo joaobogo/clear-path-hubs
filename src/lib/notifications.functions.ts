@@ -490,22 +490,33 @@ export const listDeliveryFailures = createServerFn({ method: "GET" })
 
     // Operations page, exception digest, and notifications panel must all read
     // the same 7-day windowed ledger so "Delivery failures (7d)" always matches.
-    const failures = await loadDeliveryFailures(supabaseAdmin as never);
+    try {
+      const failures = await loadDeliveryFailures(supabaseAdmin as never);
 
-    const counts: Record<string, number> = {};
-    for (const item of failures.items) {
-      const k = `${item.channel}:${item.ledger}:${item.reason}`;
-      counts[k] = (counts[k] ?? 0) + 1;
+      const counts: Record<string, number> = {};
+      for (const item of failures.items) {
+        const k = `${item.channel}:${item.ledger}:${item.reason}`;
+        counts[k] = (counts[k] ?? 0) + 1;
+      }
+
+      const cfg = readEmailConfig();
+      return {
+        items: failures.items,
+        counts,
+        window_days: failures.windowDays,
+        // Never expose keys — only whether a provider is usable and why not.
+        email: { configured: cfg.configured, reason: cfg.reason },
+      };
+    } catch (e) {
+      console.error("[listDeliveryFailures] load failed", e);
+      const cfg = readEmailConfig();
+      return {
+        items: [],
+        counts: {},
+        window_days: 7,
+        email: { configured: cfg.configured, reason: cfg.reason },
+      };
     }
-
-    const cfg = readEmailConfig();
-    return {
-      items: failures.items,
-      counts,
-      window_days: failures.windowDays,
-      // Never expose keys — only whether a provider is usable and why not.
-      email: { configured: cfg.configured, reason: cfg.reason },
-    };
   });
 
 
