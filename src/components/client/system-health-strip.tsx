@@ -248,7 +248,7 @@ export function SystemHealthStrip({
             className="min-w-0 truncate text-xs text-muted-foreground sm:text-sm"
             aria-live="polite"
           >
-            {platformNotice.show ? platformNotice.title : data.headline}
+            {platformNotice.show ? platformNotice.title : (data.attention_count > 0 ? data.headline : "Nothing is blocked — your workspace is live and sourcing is already moving.")}
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1">
