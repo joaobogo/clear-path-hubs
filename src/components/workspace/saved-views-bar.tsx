@@ -342,6 +342,7 @@ export function SavedViewsBar({
             <DialogTitle>Save view</DialogTitle>
           </DialogHeader>
           <form
+            noValidate
             onSubmit={(e) => {
               e.preventDefault();
               if (name.trim()) save.mutate();
@@ -357,7 +358,6 @@ export function SavedViewsBar({
                 onChange={(e) => setName(e.target.value)}
                 maxLength={80}
                 placeholder="e.g. My roles at risk"
-                required
               />
               <p className="text-xs text-muted-foreground">
                 Views store the filter set only, so results are always live.
@@ -396,6 +396,7 @@ export function SavedViewsBar({
             <DialogTitle>Rename view</DialogTitle>
           </DialogHeader>
           <form
+            noValidate
             onSubmit={(e) => {
               e.preventDefault();
               if (renaming && renameValue.trim())
@@ -411,7 +412,6 @@ export function SavedViewsBar({
                 value={renameValue}
                 onChange={(e) => setRenameValue(e.target.value)}
                 maxLength={80}
-                required
               />
             </div>
             <DialogFooter>

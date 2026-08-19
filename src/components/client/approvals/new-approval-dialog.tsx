@@ -91,6 +91,7 @@ export function NewApprovalDialog({
           <DialogTitle>New task</DialogTitle>
         </DialogHeader>
         <form
+          noValidate
           onSubmit={(e) => {
             e.preventDefault();
             if (title.trim()) submit.mutate();

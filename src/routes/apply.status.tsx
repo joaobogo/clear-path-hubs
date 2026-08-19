@@ -272,6 +272,7 @@ function StatusPage() {
                       </p>
                     ) : (
                       <form
+                        noValidate
                         className="mt-3 space-y-2"
                         onSubmit={(e) => {
                           e.preventDefault();
@@ -285,7 +286,6 @@ function StatusPage() {
                           id={`reply-${r.id}`}
                           rows={4}
                           maxLength={4000}
-                          required
                           value={replies[r.id] ?? ""}
                           placeholder="Type your reply…"
                           onChange={(e) =>
