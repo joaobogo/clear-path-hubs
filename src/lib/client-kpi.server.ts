@@ -819,7 +819,12 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     website: isHttp((cp as AnyRow).website_url ?? (cp as AnyRow).website),
   };
 
-  const { headline: prettyHeadline, chips } = prettifyHeadline(cp.headline ?? null);
+  const fit = toFitPresentation(
+    run?.fit_label ?? run?.fit_band ?? null,
+    run?.score != null ? Number(run.score) : null,
+  );
+
+  const prettyHeadline = prettifyHeadline(cp.headline ?? null);
 
   const concerns: string[] = Array.isArray(runConcerns)
     ? runConcerns.slice(0, 5).map(String)
@@ -832,7 +837,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     coverage,
     ((row as AnyRow).evidence_items as AnyRow[] | null) ?? null,
   );
-  const coverageSummary = summariseCoverage(requirement_rows, fit, score ?? coverage?.fit_score ?? null);
+  const coverageSummary = summariseCoverage(requirement_rows, fit, run?.score != null ? Number(run.score) : coverage?.fit_score ?? null);
 
   const workAuth = normWorkAuth(cp.work_authorization);
   const interview_guide = buildInterviewGuide({
@@ -843,13 +848,6 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     availability,
     workAuth,
   });
-
-  // Band, number, coverage and freshness all come off THIS run. Passing the
-  // run's score keeps the headline in step with the figure rendered below it.
-  const fit = toFitPresentation(
-    run?.fit_label ?? run?.fit_band ?? null,
-    run?.score != null ? Number(run.score) : null,
-  );
 
 
   const roleComp = normCompensationRange(pos?.compensation);
