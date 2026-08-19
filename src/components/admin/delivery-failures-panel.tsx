@@ -59,7 +59,6 @@ function when(iso: string) {
 }
 
 export function DeliveryFailuresPanel() {
-  const list = useServerFn(listDeliveryFailureQueue);
   const retry = useServerFn(retryDeliveryFailureFn);
   const suppress = useServerFn(suppressNotificationRecipient);
   const release = useServerFn(releaseNotificationRecipient);
