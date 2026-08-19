@@ -129,13 +129,12 @@ export const searchCandidateIndex = createServerFn({ method: "POST" })
       const { sanitizeSearchTerm, quoteFilterValue } = await import("./search/postgrest-filter");
       const term = sanitizeSearchTerm(data.q);
       if (term) {
-        // Multi-column search across name, email, organization and full index.
-        // Each term is wrapped in wildcards and quoted to prevent PostgREST parsing errors
-        // from special characters like commas, parentheses, or dots.
+        // Multi-column search across name, email, organization and text index.
+        // Each term is wrapped in wildcards and quoted to prevent PostgREST parsing errors.
         const pattern = `%${term}%`;
         const val = quoteFilterValue(pattern);
         q = q.or(
-          `full_name.ilike.${val},email.ilike.${val},org_name.ilike.${val},search_vector.ilike.${val}`
+          `full_name.ilike.${val},email.ilike.${val},org_name.ilike.${val},search_text.ilike.${val}`
         );
       }
     }
