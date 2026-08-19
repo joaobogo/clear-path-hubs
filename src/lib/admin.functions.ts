@@ -2501,8 +2501,8 @@ export const resolveIncident = createServerFn({ method: "POST" })
       await emitEventFromServer({
         event: "position_updated",
         scope: `${before.id}:resolve:${new Date().getTime()}`,
-        entity_id: before.entity_id,
-        entity_type: before.entity_type,
+        position_id: before.entity_type === "position" ? before.entity_id : null,
+        application_id: before.entity_type === "application" ? before.entity_id : null,
         actor_user_id: context.userId,
         payload: { note: `Incident resolved: ${data.note ?? "No note provided"}` },
       });
