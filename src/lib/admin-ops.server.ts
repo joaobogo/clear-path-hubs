@@ -132,6 +132,7 @@ export async function loadWorkQueues(raw: { includeTest?: boolean } = {}): Promi
           `status.eq.requested,and(status.eq.scheduled,scheduled_at.lte.${new Date(Date.now() + 48 * HOUR).toISOString()})`,
         )
         .not("status", "eq", "completed")
+        .not("status", "eq", "completed")
         .order("requested_at", { ascending: true })
         .limit(PREVIEW_LIMIT),
       scope,
