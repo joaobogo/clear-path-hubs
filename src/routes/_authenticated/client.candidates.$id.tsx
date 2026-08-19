@@ -39,7 +39,7 @@ import {
 import { BackLink, CandidateHeader, CollapsibleSection, ContactBlock } from "@/components/client/candidate-detail/shared";
 import { TopSignals } from "@/components/client/candidate-detail/top-signals";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CvDownloadAudit } from "@/components/cv-download-audit";
+
 import { ScoreFreshnessNote } from "@/components/client/score-freshness-note";
 import { ScoreBreakdown } from "@/components/client/candidate-detail/score-breakdown";
 import {
@@ -514,14 +514,13 @@ function CandidateDetailPage() {
  </aside>
  </div>
 
- {/* BELOW THE FOLD — four tabs, everything else lives inside them. */}
+ {/* BELOW THE FOLD — three tabs, everything else lives inside them. */}
  <Tabs defaultValue="summary" className="mt-8">
- <TabsList className="flex w-full flex-wrap justify-start">
- <TabsTrigger value="summary">Summary &amp; evidence</TabsTrigger>
- <TabsTrigger value="interview">Interview</TabsTrigger>
- <TabsTrigger value="cv">CV</TabsTrigger>
- <TabsTrigger value="activity">Activity</TabsTrigger>
- </TabsList>
+  <TabsList className="flex w-full flex-wrap justify-start">
+  <TabsTrigger value="summary">Summary &amp; evidence</TabsTrigger>
+  <TabsTrigger value="interview">Interview</TabsTrigger>
+  <TabsTrigger value="activity">Activity</TabsTrigger>
+  </TabsList>
 
  <TabsContent value="summary" className="mt-4 space-y-4">
   {/* Requirement coverage is hidden per B5 until fixed */}
@@ -576,29 +575,9 @@ function CandidateDetailPage() {
  <Link to="/client/interviews" search={{ interview: undefined, feedback: undefined }}>Go to interviews →</Link>
  </Button>
  </div>
- </TabsContent>
+  </TabsContent>
 
- <TabsContent value="cv" className="mt-4 space-y-4">
- {!candidate.contact_released && (
- <div className="rounded-xl border bg-card p-4">
- <h2 className="text-sm font-semibold">CV</h2>
- <p className="mt-1 text-sm text-muted-foreground">
- The CV is released as soon as this candidate is published to you.
- </p>
- </div>
- )}
- {candidate.contact_released && (
- <div className="rounded-xl border bg-card p-4">
- <CvDownloadAudit
- matchId={candidate.match_id}
- title="Who downloaded this CV"
- limit={15}
- />
- </div>
- )}
- </TabsContent>
-
- <TabsContent value="activity" className="mt-4 space-y-4">
+  <TabsContent value="activity" className="mt-4 space-y-4">
  {(interviews.length > 0 || decisions.length > 0) && (
  <ActivitySection interviews={interviews} decisions={decisions} />
  )}
