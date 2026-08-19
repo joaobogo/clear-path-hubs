@@ -35,8 +35,8 @@ describe("computeHiringHealth", () => {
     expect(h.reason).toBe("blocks");
   });
 
-  it("reports behind-schedule roles when no decision is overdue or blocked", () => {
-    const h = computeHiringHealth({ ...base, behindScheduleRoles: 1 });
+  it("reports behind-schedule roles when nothing else needs the client", () => {
+    const h = computeHiringHealth({ ...base, awaitingDecision: 0, behindScheduleRoles: 1 });
     expect(h.sentence).toBe("One role is behind schedule.");
     expect(h.reason).toBe("behind_schedule");
   });
