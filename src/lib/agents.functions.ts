@@ -267,7 +267,9 @@ export const getAgentPanel = createServerFn({ method: "GET" })
         (a: Db) => eventTypeToAgentKey(a.event_type as string) === def.key,
       );
       // Legacy agent_activity rows.
-      const legacyEvents = (activity ?? []).filter(
+      const legacyEvents = (activity ?? [])
+        .filter((a: Db) => !isQaFixtureTitle(a.sentence as string | null))
+        .filter(
         (a: Db) => a.agent_key === def.key,
       );
 
