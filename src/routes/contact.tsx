@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
+import { AlertTriangle } from "lucide-react";
 import { submitToCrm } from "@/lib/crm/submit-form";
 import { getAttribution, getPageContext } from "@/lib/crm/attribution";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FGV_EVENTS, trackConfirmedConversion, trackFgv } from "@/lib/tracking/fgv-events";
 import { toast } from "sonner";
