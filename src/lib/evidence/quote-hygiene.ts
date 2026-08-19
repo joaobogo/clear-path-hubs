@@ -186,6 +186,8 @@ const TEMPLATED_PATTERNS = [
   /beatriz\s+costa/i,
   /om\s+·\s+\+\d+/i,
   /\.costa@demo/i,
+  /om\s*·\s*\+\d+[\d\s().-]+\d+\s*Profile/i,
+  /\.costa@demo\.taasflow\.com\s*·\s*\+\d+[\d\s().-]+\d+/i,
 ];
 
 export function isTemplatedEvidence(raw: string | null | undefined): boolean {
