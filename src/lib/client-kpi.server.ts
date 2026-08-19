@@ -384,6 +384,7 @@ export type ClientCandidateDTO = {
     summary: string | null;
     current_role: string | null;
     current_company: string | null;
+    organization_name: string | null;
     links: {
       linkedin: string | null;
       portfolio: string | null;
@@ -918,6 +919,24 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
         : (row.updated_at ?? row.delivered_at ?? null),
     last_updated: run?.completed_at ?? row.updated_at ?? row.delivered_at ?? null,
     position: pos ? { id: pos.id, title: pos.title } : null,
+    candidate: {
+      ...cp,
+      full_name: fullName,
+      display_name: displayName,
+      email: released ? normStr(cp.email) : null,
+      phone: released ? normStr(cp.phone) : null,
+      location: normStr(cp.location),
+      timezone: normStr(cp.timezone),
+      headline: prettyHeadline,
+      headline_chips: chips,
+      availability,
+      years_experience: Number(cp.years_experience) || null,
+      summary: normStr(cp.summary),
+      current_role: currentRole,
+      current_company: currentCompany,
+      organization_name: normStr(row.organizations?.name),
+      links,
+    },
     // Band comes from this run's score through the one band table. The stored
     // `fit_band` string uses the engine's label vocabulary, not band keys, so
     // feeding it here silently failed the top-band test.
