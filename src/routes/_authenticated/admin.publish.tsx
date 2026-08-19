@@ -312,12 +312,14 @@ function PublishDesk() {
                       </div>
                     </td>
                     <td className="px-3 py-2 text-xs">
-                      <Badge variant="outline" className="mr-1">{r.admin_status}</Badge>
-                      <Badge variant={isPublished ? "default" : "secondary"}>
-                        {r.client_visibility}
-                      </Badge>
-                      <div className="mt-1 text-[10px] text-muted-foreground">
-                        {r.updated_at ? new Date(r.updated_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }) : "—"}
+                      <div className="flex items-center gap-1">
+                        <Badge variant="outline">{r.admin_status}</Badge>
+                        <Badge variant={isPublished ? "default" : "secondary"}>
+                          {r.client_visibility}
+                        </Badge>
+                      </div>
+                      <div className="mt-1.5 text-[10px] text-muted-foreground">
+                        Updated {r.updated_at ? new Date(r.updated_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }) : "—"}
                       </div>
                     </td>
                     <td className="px-3 py-2">
