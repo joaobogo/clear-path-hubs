@@ -142,11 +142,14 @@ export const getClientOverview = createServerFn({ method: "GET" })
     const activePositions = activePositionsList.length;
 
     // Reconciliation (B4/B3): ensure KPI counts use the same positions we just loaded
+    // and derive hires from stage counts for consistency across surfaces.
+    const { counts: laneCounts } = countLanes(rows);
     const kpis = {
       ...computeKpis(rows, activePositions),
       awaiting_decision: openItemsResponse.items.filter(i => i.kind === 'pending_decision').length,
       interviews_to_confirm: openItemsResponse.items.filter(i => i.kind === 'interview').length,
       offers: openItemsResponse.items.filter(i => i.kind === 'offer').length,
+      hires: laneCounts.hired,
       missing_feedback: openItemsResponse.items.filter(i => i.kind === 'missing_feedback').length,
     };
 
