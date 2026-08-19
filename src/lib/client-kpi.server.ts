@@ -832,7 +832,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     coverage,
     ((row as AnyRow).evidence_items as AnyRow[] | null) ?? null,
   );
-  const coverageSummary = summariseCoverage(requirement_rows);
+  const coverageSummary = summariseCoverage(requirement_rows, fit, score ?? coverage?.fit_score ?? null);
 
   const workAuth = normWorkAuth(cp.work_authorization);
   const interview_guide = buildInterviewGuide({

@@ -242,7 +242,9 @@ export function evidenceSupport(r: any, coverage: any, evidenceItems: any[] | nu
     status,
     evidence,
     explanation: (r.explanation as string) || null,
+    interpretation: null,
     contradictions,
+    context: [],
   };
 }
 
@@ -251,6 +253,7 @@ export type CoverageSummary = {
   partial: number;
   missing: number;
   must_met: number;
+  must_partial: number;
   must_total: number;
   fit_score: number;
   fit_band: FitBand;
@@ -310,10 +313,16 @@ export type InterviewQuestion = {
   requirement_label: string;
   importance: "must_have" | "preferred";
   question: string;
-  rationale: string;
-  evidence_found: string | null;
-  status: RequirementStatus;
+  why: string;
+  indicators: string[];
+  followUp: string | null;
+  group: string;
+  evidence_found?: string | null;
+  status?: RequirementStatus;
+  rationale?: string;
 };
+
+export type InterviewGuideItem = InterviewQuestion;
 
 export type InterviewGuideItem = {
   id: string;
