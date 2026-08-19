@@ -51,7 +51,10 @@ export type BuildValidationListOptions = {
   /** Include Met requirements as low-priority "confirm at interview" rows. */
   includeMet?: boolean;
   maxRequirements?: number;
+  /** Hide notes derived from requirement status (contradicted, not_evidenced). */
+  hideRequirementEvidenceNotes?: boolean;
 };
+
 
 export function buildValidationList(
   requirementRows: RequirementRow[],
