@@ -533,7 +533,7 @@ function CandidatesPage() {
               ? "Couldn't load candidates"
               : isFetching
                 ? "Searching…"
-                : `${total} submission${total === 1 ? "" : "s"}`}
+                : `${totalFormatted} submission${total === 1 ? "" : "s"}`}
           </div>
           <ExportControl
             scope={{
