@@ -288,6 +288,7 @@ function ClientsPage() {
         >
           + New client
         </Link>
+
       </header>
 
       {/* Filters live in the URL, so any view here can be named, saved and shared. */}
@@ -444,12 +445,13 @@ function ClientsPage() {
                 <th className="px-3 py-2.5 font-medium">Company</th>
                 <th className="px-3 py-2.5 font-medium">Primary contact</th>
                 <th className="px-3 py-2.5 font-medium">Status</th>
-                <th className="px-3 py-2.5 font-medium tabular-nums">Active positions</th>
-                <th className="px-3 py-2.5 font-medium tabular-nums">Delivered</th>
-                <th className="px-3 py-2.5 font-medium">Last activity</th>
+                <th className="px-3 py-2.5 font-medium tabular-nums text-right">Active positions</th>
+                <th className="px-3 py-2.5 font-medium tabular-nums text-right">Delivered</th>
+                <th className="px-3 py-2.5 font-medium text-right">Last activity</th>
                 <th className="px-3 py-2.5 font-medium text-right">Open</th>
               </tr>
             </thead>
+
             <tbody className="divide-y">
               {rows.map((r) => (
                 <ClientRowView key={r.id} row={r} onArchive={() => setArchiveTarget(r)} />
@@ -616,25 +618,12 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
           </div>
         )}
       </td>
-      <td className="whitespace-nowrap px-3 py-2.5 tabular-nums">
+      <td className="whitespace-nowrap px-3 py-2.5 text-right tabular-nums">
         <span className="text-foreground">{r.positions_active}</span>
         <span className="text-muted-foreground"> / {r.positions_total}</span>
       </td>
-      <td className="whitespace-nowrap px-3 py-2.5 tabular-nums">{r.candidates_delivered}</td>
-      <td className="px-3 py-2.5">
-        {r.actions_required > 0 ? (
-          <span
-            className="inline-flex items-center gap-1.5 rounded-full bg-warning/10 px-2 py-0.5 text-xs font-medium text-warning-foreground dark:text-warning-foreground"
-            title="Delivered candidates awaiting client action, or positions awaiting approval"
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-warning" aria-hidden />
-            {r.actions_required}
-          </span>
-        ) : (
-          <span className="text-xs text-muted-foreground">—</span>
-        )}
-      </td>
-      <td className="whitespace-nowrap px-3 py-2.5 text-xs text-muted-foreground">{relTime(r.last_activity_at)}</td>
+      <td className="whitespace-nowrap px-3 py-2.5 text-right tabular-nums">{r.candidates_delivered}</td>
+      <td className="whitespace-nowrap px-3 py-2.5 text-right text-xs text-muted-foreground">{relTime(r.last_activity_at)}</td>
       <td className="px-3 py-2.5 text-right">
         <div className="inline-flex items-center gap-1">
           <a
@@ -644,6 +633,7 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
           >
             Open
           </a>
+
           <RowOverflowMenu row={r} onArchive={onArchive} />
         </div>
       </td>

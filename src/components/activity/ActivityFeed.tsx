@@ -96,36 +96,60 @@ export function ActivityFeed(props: {
             </div>
           )}
 
-          {data.entries.map((e) => {
-            const body = (
-              <div className="flex items-start justify-between gap-3 py-2.5">
-                <div className="min-w-0">
-                  <div className="truncate text-sm font-medium">{e.label}</div>
-                  <div className="truncate text-xs text-muted-foreground">
-                    {[e.position_title, e.actor_name].filter(Boolean).join(" · ") || "—"}
+          {(() => {
+            const groups: typeof data.entries = [];
+            let last: (typeof data.entries)[0] | null = null;
+            let count = 0;
+
+            for (const e of data.entries) {
+              const isRepeat =
+                last &&
+                e.event_type === last.event_type &&
+                e.label === last.label &&
+                e.actor_name === last.actor_name &&
+                e.position_title === last.position_title;
+
+              if (isRepeat) {
+                count++;
+              } else {
+                if (last) groups.push({ ...last, label: count > 0 ? `${last.label} (${count + 1} events)` : last.label });
+                last = e;
+                count = 0;
+              }
+            }
+            if (last) groups.push({ ...last, label: count > 0 ? `${last.label} (${count + 1} events)` : last.label });
+
+            return groups.map((e) => {
+              const body = (
+                <div className="flex items-start justify-between gap-3 py-2.5">
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-medium">{e.label}</div>
+                    <div className="truncate text-xs text-muted-foreground">
+                      {[e.position_title, e.actor_name].filter(Boolean).join(" · ") || "—"}
+                    </div>
                   </div>
+                  <time
+                    className="shrink-0 pt-0.5 text-[11px] text-muted-foreground"
+                    dateTime={e.occurred_at}
+                    title={absTime(e.occurred_at)}
+                  >
+                    {relTime(e.occurred_at)}
+                  </time>
                 </div>
-                <time
-                  className="shrink-0 pt-0.5 text-[11px] text-muted-foreground"
-                  dateTime={e.occurred_at}
-                  title={absTime(e.occurred_at)}
-                >
-                  {relTime(e.occurred_at)}
-                </time>
-              </div>
-            );
-            return (
-              <li key={e.event_id}>
-                {e.link_path ? (
-                  <Link to={e.link_path} className="block hover:text-primary">
-                    {body}
-                  </Link>
-                ) : (
-                  body
-                )}
-              </li>
-            );
-          })}
+              );
+              return (
+                <li key={e.event_id}>
+                  {e.link_path ? (
+                    <Link to={e.link_path} className="block hover:text-primary">
+                      {body}
+                    </Link>
+                  ) : (
+                    body
+                  )}
+                </li>
+              );
+            });
+          })()}
         </ol>
       )}
     </section>
