@@ -14,6 +14,11 @@ import {
   recomputeScore,
 } from "@/lib/scoring-review.functions";
 import { applyReviewDecision } from "@/lib/processing.functions";
+import {
+  humanizeCode,
+  humanizeCriterionKey,
+  humanizeEvidenceLocation,
+} from "@/lib/humanize-codes";
 import { HumanVerificationPanel } from "@/components/admin/human-verification-panel";
 import {
   methodLabel,
@@ -484,7 +489,7 @@ function ReviewWorkspace() {
                 className={`space-y-3 p-5 ${gi === focusIndex ? "ring-1 ring-primary/40" : ""}`}
               >
                 <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-sm font-medium">{dim.replace(/_/g, " ")}</h3>
+                  <h3 className="text-sm font-medium">{humanizeCode(dim)}</h3>
                   {dimensionWeights[dim] != null ? (
                     <Badge variant="outline">weight {dimensionWeights[dim]}</Badge>
                   ) : null}
@@ -500,7 +505,7 @@ function ReviewWorkspace() {
                             RESULT_TONE[item.result] ?? "bg-muted text-muted-foreground"
                           }`}
                         >
-                          {fmt(item.result)}
+                          {item.result ? humanizeCode(item.result) : "—"}
                         </span>
                         <span className={`rounded px-2 py-0.5 text-xs ${prov.tone}`}>
                           {prov.label}
@@ -516,14 +521,14 @@ function ReviewWorkspace() {
                         ) : null}
                       </div>
                       <p className="text-xs font-medium text-muted-foreground">
-                        {fmt(item.rubric_criterion_key)}
+                        {humanizeCriterionKey(item.rubric_criterion_key)}
                       </p>
                       {item.source_passage ? (
                         <blockquote className="border-l-2 pl-3 text-sm italic text-muted-foreground">
                           “{item.source_passage}”
-                          {item.source_location ? (
+                          {humanizeEvidenceLocation(item.source_location) ? (
                             <span className="ml-2 not-italic text-xs">
-                              ({fmt(item.source_location)})
+                              ({humanizeEvidenceLocation(item.source_location)})
                             </span>
                           ) : null}
                         </blockquote>
@@ -535,7 +540,7 @@ function ReviewWorkspace() {
                       ) : null}
                       {item.validation_need ? (
                         <p className="text-xs text-amber-600">
-                          Needs validation: {item.validation_need}
+                          Needs validation: {humanizeCode(item.validation_need)}
                         </p>
                       ) : null}
 
@@ -557,7 +562,7 @@ function ReviewWorkspace() {
                           >
                             {RESULTS.map((r) => (
                               <option key={r} value={r}>
-                                {r}
+                                {humanizeCode(r)}
                               </option>
                             ))}
                           </select>
