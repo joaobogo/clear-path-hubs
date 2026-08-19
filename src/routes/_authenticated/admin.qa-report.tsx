@@ -9,7 +9,7 @@ export const Route = createFileRoute("/_authenticated/admin/qa-report")({
   head: () => ({
     meta: [
       { title: "TaaSFlow — Scoring System QA Report" },
-      { name: "description", content: "Release-level audit of the scoring, publish, and evidence system with findings, severity, repro, and status." },
+      { name: "description", content: "Release-level audit of the scoring, publish, and evidence system status tracking." },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -23,185 +23,27 @@ interface Finding {
   id: string;
   journey: string;
   title: string;
-  route: string;
-  severity: Severity;
-  repro: string;
-  correction: string;
   status: Status;
-  notes?: string;
 }
 
 const FINDINGS: Finding[] = [
-  {
-    id: "F-001",
-    journey: "6 · Admin publish",
-    title: "Approve-for-client never updated canonical_state, risking publish-gate failure",
-    route: "src/lib/processing.functions.ts · applyReviewDecision → approve_for_client",
-    severity: "P0",
-    repro: "Approve a match. Trigger tg_candidate_matches_publish_gate expects canonical_state='published_to_client' when client_visibility='visible'; app previously only flipped visibility and admin_status.",
-    correction: "Two ordered UPDATEs: human_review→approved, then approved→published_to_client with visibility+approved_score_run_id+integrity_status='ok'. Partial failure leaves visibility=hidden.",
-    status: "fixed",
-  },
-  {
-    id: "F-002",
-    journey: "7 · Client leakage",
-    title: "Shortlist share tokens continued to serve retracted candidates",
-    route: "src/lib/shares.functions.ts · getShortlistShareByToken",
-    severity: "P0",
-    repro: "Create share for a visible match, then admin hides/retracts. Share token continued returning the candidate profile+score to any holder.",
-    correction: "Added .eq('client_visibility','visible') on the read; visibility is re-checked on every share access, not just at share creation.",
-    status: "fixed",
-  },
-  {
-    id: "F-003",
-    journey: "4 · Missing evidence",
-    title: "Missing keyword coverage produced irrational zero for thin CVs",
-    route: "src/lib/scoring-engine.server.ts · scoreCandidate",
-    severity: "P0",
-    repro: "Score a candidate whose CV parsed under 300 chars or <40 tokens against 5 required keywords. Every requirement was marked status='missing' with scoreOf=0, driving must_have_coverage to 0.",
-    correction: "Added 'unknown' status. When CV is thin, missing keywords resolve to unknown → 0.4 (validate) instead of 0 (fail). needs_validation flag surfaces to reviewers.",
-    status: "fixed",
-  },
-  {
-    id: "F-004",
-    journey: "7 · Tenant isolation",
-    title: "getCandidateJourney leaked stage metadata across orgs",
-    route: "src/lib/journey.functions.ts · getCandidateJourney",
-    severity: "P1",
-    repro: "Any authenticated user calling with a known/guessed applicationId or candidateMatchId in another org received stage-progression events.",
-    correction: "Added is_platform_staff / is_org_member gate. Non-editor roles additionally require client_visibility='visible' on the underlying match.",
-    status: "fixed",
-  },
-  {
-    id: "F-005",
-    journey: "9 · Client detail",
-    title: "candidate_evidence_client view lacked security_invoker",
-    route: "supabase/migrations/*_candidate_evidence_client.sql",
-    severity: "P1",
-    repro: "Report from static audit; view could execute as owner and bypass RLS on candidate_evidence_items.",
-    correction: "Follow-up migration 20260724071730 already created the view WITH (security_invoker = true).",
-    status: "verified",
-  },
-  {
-    id: "F-006",
-    journey: "12 · Rollback",
-    title: "score_decisions could commit while candidate_matches update failed",
-    route: "supabase/migrations/20260816061011…sql · approve_candidate_match",
-    severity: "P1",
-    repro: "Force the visibility UPDATE to raise (e.g. publish-gate check_violation). Prior score_decisions INSERT already committed, leaving an 'approve' decision with no visible publication.",
-    correction: "Wrapped the gate assertion, score_decisions insert, and candidate_matches update in the SECURITY DEFINER approve_candidate_match RPC. The gate re-checks the run is completed and non-contradictory under the row lock; any failure rolls back the entire transaction.",
-    status: "fixed",
-    notes: "F-006 acceptance: forcing the gate to fail leaves no score_decision row.",
-  },
-  {
-    id: "F-007",
-    journey: "3 · Semantic evidence",
-    title: "Live scoring engine is keyword-only; semantic-engine.ts is unshipped",
-    route: "src/lib/scoring-engine.server.ts vs src/lib/scoring/semantic-engine.ts",
-    severity: "P1",
-    repro: "Score CV containing 'microservices, event-driven' against requirement 'distributed systems'. Zero keyword overlap → status='missing'.",
-    correction: "Interim: unknown-status floor prevents irrational zero on thin CVs. Long-term: wire LLM evidence extraction + semantic-engine into scoring-service.server.ts.",
-    status: "open",
-    notes: "Requires LLM extraction step; tracked separately. The interim unknown-status floor is verified.",
-  },
-  {
-    id: "F-008",
-    journey: "5 · Disqualifier",
-    title: "Hard disqualifiers cap score but never write eligibility_checks / eligibility_status",
-    route: "src/lib/scoring-service.server.ts",
-    severity: "P0",
-    repro: "Answer a disqualifying screening question. score is capped to 0.15 and fit_label='not_a_fit', but no eligibility_checks row is inserted and candidate_matches.eligibility_status remains untouched — admin filtering by eligibility misses the candidate.",
-    correction: "Extended scoring-service.server.ts to upsert an eligibility_checks row (kind='disqualifier', status='failed') and set candidate_matches.eligibility_status on disqualifying_answer.",
-    status: "fixed",
-  },
-  {
-    id: "F-009",
-    journey: "11 · Rubric versioning",
-    title: "rubric_versions has DB immutability but no application writer",
-    route: "src/lib/scoring-service.server.ts · ensureRubricVersion",
-    severity: "P0",
-    repro: "grep -rln 'rubric_versions' src returns only types.ts. score_runs.rubric_version_id is null in practice; publish gate requires it, so publish is unreliable once rubric versions become mandatory.",
-    correction: "Implemented ensureRubricVersion in scoring-service.server.ts. It resolves the governing rubric version (or mints a new one from position requirements) and stamps it on every new score run. UI now shows the version number instead of 'rubric unlinked'.",
-    status: "fixed",
-  },
-  {
-    id: "F-010",
-    journey: "1 · Identity",
-    title: "Unique index on candidate_matches(position_id, candidate_profile_id) silently skipped on duplicates",
-    route: "supabase/migrations/20260816061011…sql",
-    severity: "P1",
-    repro: "Migration wraps CREATE UNIQUE INDEX in a DO block that RAISE NOTICE on unique_violation. If pre-existing duplicates existed, index is missing today.",
-    correction: "Verified the unconditional CREATE UNIQUE INDEX candidate_matches_position_candidate_uq exists in the database. A dedup migration ensured zero duplicates before application.",
-    status: "verified",
-  },
-  {
-    id: "F-011",
-    journey: "8 · Realtime sync",
-    title: "candidate_matches realtime channel not proven to enforce RLS",
-    route: "src/hooks/use-realtime-refresh.ts",
-    severity: "P2",
-    repro: "Static audit could not confirm Supabase Realtime publication respects RLS on postgres_changes for candidate_matches; a transiently visible→hidden flap could push hidden rows to client tabs.",
-    correction: "Verified that Realtime respects RLS by ensuring subscriptions only happen on tables with active, join-based RLS policies (notifications) rather than direct table polls.",
-    status: "verified",
-  },
-  {
-    id: "F-012",
-    journey: "7 · Future leakage",
-    title: "notification_events RLS lacks visibility join",
-    route: "supabase/migrations/20260816061011…sql · events_org_read",
-    severity: "P2",
-    repro: "Not exploited today (no client-facing code reads notification_events directly). Any future feature reading this table would leak pre-publish payloads to org viewers.",
-    correction: "Recreated events_org_read with a visibility join: org viewers see only position-level events or events tied to candidate_matches/client_profiles they are explicitly allowed to view via security-definer helpers.",
-    status: "fixed",
-  },
-  {
-    id: "F-013",
-    journey: "13 · A11y / Responsive",
-    title: "Admin/client candidate detail, positions, and /me routes not verified at 375px",
-    route: "admin.candidates.$id, client.candidates.$id, client.positions.index, /me, score badges",
-    severity: "P2",
-    repro: "Open the four routes on a 375px viewport. Some panels clipped, score-band chips relied only on color, and focus rings were inconsistent.",
-    correction: "Stacked multi-column layouts on narrow screens, ensured score chips carry aria-labels and a non-color dot, and added a global focus-visible ring.",
-    status: "fixed",
-  },
-  {
-    id: "F-014",
-    journey: "1 · Admin overview",
-    title: "Admin /admin work queue crashed repeatedly on inconsistent production data",
-    route: "src/routes/_authenticated/admin.index.tsx, src/components/admin/admin-widget-error-boundary.tsx",
-    severity: "P0",
-    repro: "Load /admin with data edge cases: a hire record with status closed_lost while the candidate match stage is hired, plus draft roles with null locations. The route used useSuspenseQuery and a single failure in any widget killed the entire page.",
-    correction: "Replaced useSuspenseQuery with useQuery in the work queue summary, wrapped every Overview widget (SLA banner, Portfolio health, Awaiting client decision, Offers and hires, Latest activity) in AdminWidgetErrorBoundary, and added a Header skeleton that derives the 'items waiting' count from the same query data as the section lists.",
-    status: "verified",
-  },
-  {
-    id: "F-015",
-    journey: "1 · Admin dashboard",
-    title: "Delivery failure metrics inconsistent across surfaces",
-    route: "src/lib/admin.functions.ts, src/lib/notification-failures.server.ts",
-    severity: "P0",
-    repro: "Overview KPI showed 0, while Operations showed 23. Different surfaces used different windows (none vs 7d).",
-    correction: "Standardized on the 7-day canonical window from notification-failures.server.ts for all delivery failure counts.",
-    status: "fixed",
-  },
-  {
-    id: "F-016",
-    journey: "9 · Org workspace",
-    title: "Org Candidates tab missing score/fit data and Documents count incorrect",
-    route: "src/routes/_authenticated/admin.clients.$id.tsx, src/lib/admin.functions.ts",
-    severity: "P1",
-    repro: "Candidates tab rendered stage/score/fit as '—' and Documents tab showed (0) despite data presence.",
-    correction: "Joined score_runs in getClientCandidatesForOrg and implemented parsed_cv_count in getClientDetails.",
-    status: "fixed",
-  },
+  { id: "F-001", journey: "6 · Admin publish", title: "Approve-for-client never updated canonical_state", status: "fixed" },
+  { id: "F-002", journey: "7 · Client leakage", title: "Shortlist share tokens continued to serve retracted candidates", status: "fixed" },
+  { id: "F-003", journey: "4 · Missing evidence", title: "Missing keyword coverage produced irrational zero for thin CVs", status: "fixed" },
+  { id: "F-004", journey: "7 · Tenant isolation", title: "getCandidateJourney leaked stage metadata across orgs", status: "fixed" },
+  { id: "F-005", journey: "9 · Client detail", title: "candidate_evidence_client view lacked security_invoker", status: "verified" },
+  { id: "F-006", journey: "12 · Rollback", title: "score_decisions could commit while candidate_matches update failed", status: "fixed" },
+  { id: "F-007", journey: "3 · Semantic evidence", title: "Live scoring engine is keyword-only", status: "open" },
+  { id: "F-008", journey: "5 · Disqualifier", title: "Hard disqualifiers cap score but never write eligibility status", status: "fixed" },
+  { id: "F-009", journey: "11 · Rubric versioning", title: "rubric_versions missing application writer", status: "open" },
+  { id: "F-010", journey: "1 · Identity", title: "Unique index on candidate_matches skipped on duplicates", status: "verified" },
+  { id: "F-011", journey: "8 · Realtime sync", title: "candidate_matches realtime channel RLS verification", status: "verified" },
+  { id: "F-012", journey: "7 · Future leakage", title: "notification_events RLS visibility join", status: "fixed" },
+  { id: "F-013", journey: "13 · A11y / Responsive", title: "Mobile verification at 375px", status: "fixed" },
+  { id: "F-014", journey: "1 · Admin overview", title: "Admin Overview widget resilience", status: "verified" },
+  { id: "F-015", journey: "1 · Admin dashboard", title: "Delivery failure metrics consistency", status: "open" },
+  { id: "F-016", journey: "9 · Org workspace", title: "Org Candidates tab data parity", status: "fixed" },
 ];
-
-const SEV_META: Record<Severity, { color: string; icon: typeof AlertOctagon }> = {
-  P0: { color: "bg-destructive/15 text-destructive border-destructive/30", icon: AlertOctagon },
-  P1: { color: "bg-amber-500/15 text-amber-900 dark:text-amber-200 border-amber-500/30", icon: AlertTriangle },
-  P2: { color: "bg-sky-500/15 text-sky-900 dark:text-sky-200 border-sky-500/30", icon: Info },
-  Info: { color: "bg-muted text-muted-foreground border-border", icon: Info },
-};
 
 const STATUS_META: Record<Status, { label: string; className: string; icon: typeof CheckCircle2 }> = {
   fixed: { label: "Fixed", className: "bg-emerald-500/15 text-emerald-900 dark:text-emerald-200 border-emerald-500/30", icon: CheckCircle2 },
@@ -213,30 +55,24 @@ const STATUS_META: Record<Status, { label: string; className: string; icon: type
 
 function QAReport() {
   const [q, setQ] = useState("");
-  const [sev, setSev] = useState<Severity | "all">("all");
   const [status, setStatus] = useState<Status | "all">("all");
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
     return FINDINGS.filter((f) => {
-      if (sev !== "all" && f.severity !== sev) return false;
       if (status !== "all" && f.status !== status) return false;
       if (!needle) return true;
       return (
         f.title.toLowerCase().includes(needle) ||
-        f.route.toLowerCase().includes(needle) ||
         f.journey.toLowerCase().includes(needle) ||
         f.id.toLowerCase().includes(needle)
       );
     });
-  }, [q, sev, status]);
+  }, [q, status]);
 
   const counts = useMemo(() => {
-    const acc = { P0: 0, P1: 0, P2: 0, fixed: 0, open: 0 };
+    const acc = { fixed: 0, open: 0 };
     for (const f of FINDINGS) {
-      if (f.severity === "P0") acc.P0++;
-      else if (f.severity === "P1") acc.P1++;
-      else if (f.severity === "P2") acc.P2++;
       if (f.status === "fixed" || f.status === "verified") acc.fixed++;
       else if (f.status === "open" || f.status === "unverified") acc.open++;
     }
@@ -249,40 +85,34 @@ function QAReport() {
         <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Release audit</p>
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Scoring System QA Report</h1>
         <p className="text-sm text-muted-foreground">
-          Full audit of the 12 candidate-scoring journeys — identity, semantic evidence, disqualifier,
-          publish gate, client leakage, sync, rollback, rubric versioning, and presentation. Each row
-          lists the route, severity, reproduction, correction, and current status.
+          Public status tracking for the 12 candidate-scoring journeys — identity, semantic evidence, 
+          disqualifier, publish gate, client leakage, sync, rollback, rubric versioning, and presentation.
         </p>
       </header>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <Tile label="Findings" value={FINDINGS.length} />
-        <Tile label="P0" value={counts.P0} tone="destructive" />
-        <Tile label="P1" value={counts.P1} tone="amber" />
-        <Tile label="P2" value={counts.P2} tone="sky" />
         <Tile label="Resolved" value={`${counts.fixed}/${FINDINGS.length}`} tone="emerald" />
+        <Tile label="Open" value={counts.open} tone="amber" />
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
         <Input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search issue, route, journey…"
+          placeholder="Search issue, journey…"
           className="w-full sm:max-w-xs"
           aria-label="Filter findings"
         />
-        <SelectPill label="Severity" value={sev} setValue={(v) => setSev(v as Severity | "all")}
-          options={["all", "P0", "P1", "P2", "Info"]} />
         <SelectPill label="Status" value={status} setValue={(v) => setStatus(v as Status | "all")}
           options={["all", "fixed", "verified", "open", "unverified", "wontfix"]} />
-        <Button variant="ghost" size="sm" onClick={() => { setQ(""); setSev("all"); setStatus("all"); }}>
+        <Button variant="ghost" size="sm" onClick={() => { setQ(""); setStatus("all"); }}>
           Reset
         </Button>
       </div>
 
       <ol className="space-y-3">
         {filtered.map((f) => {
-          const SevIcon = SEV_META[f.severity].icon;
           const StatIcon = STATUS_META[f.status].icon;
           return (
             <li key={f.id} className="rounded-xl border bg-card p-4 shadow-sm">
@@ -296,30 +126,12 @@ function QAReport() {
                   <h2 className="text-sm font-semibold sm:text-base">{f.title}</h2>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <Badge variant="outline" className={`gap-1 border ${SEV_META[f.severity].color}`}>
-                    <SevIcon className="size-3" aria-hidden="true" />
-                    {f.severity}
-                  </Badge>
                   <Badge variant="outline" className={`gap-1 border ${STATUS_META[f.status].className}`}>
                     <StatIcon className="size-3" aria-hidden="true" />
                     {STATUS_META[f.status].label}
                   </Badge>
                 </div>
               </div>
-              <dl className="mt-3 grid gap-x-4 gap-y-2 text-xs sm:grid-cols-[7rem_1fr] sm:text-sm">
-                <dt className="text-muted-foreground">Route</dt>
-                <dd className="break-all font-mono text-[11px] sm:text-xs">{f.route}</dd>
-                <dt className="text-muted-foreground">Repro</dt>
-                <dd>{f.repro}</dd>
-                <dt className="text-muted-foreground">Correction</dt>
-                <dd>{f.correction}</dd>
-                {f.notes ? (
-                  <>
-                    <dt className="text-muted-foreground">Notes</dt>
-                    <dd className="text-muted-foreground">{f.notes}</dd>
-                  </>
-                ) : null}
-              </dl>
             </li>
           );
         })}
@@ -331,9 +143,7 @@ function QAReport() {
       </ol>
 
       <footer className="rounded-lg border bg-muted/30 p-4 text-xs text-muted-foreground">
-        Audit compiled from parallel sub-agent runs (scoring-isolation, publish-gate, and
-        UX/a11y). This page is admin-only and marked <code>noindex, nofollow</code>. Update
-        <code className="mx-1">FINDINGS</code> in <code>admin.qa-report.tsx</code> as items move.
+        Audit compiled from parallel sub-agent runs. This page is admin-only and marked <code>noindex, nofollow</code>.
       </footer>
     </div>
   );

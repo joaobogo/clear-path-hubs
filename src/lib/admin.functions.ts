@@ -156,9 +156,11 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       ),
       // Email/message delivery failures to triage (7d canonical).
       // notification_deliveries has no direct org/position; the list is filtered in JS.
-      count("notification_deliveries", (q) =>
-        q.in("status", ["failed", "bounced", "suppressed"]).gte("created_at", weekAgo),
-      ),
+      (async () => {
+        const { loadDeliveryHealth } = await import("./notification-failures.server");
+        const health = await loadDeliveryHealth(s);
+        return { data: [], count: health.summary.retryable };
+      })(),
       // Client-initiated recompute / feedback in the last 7d.
       // score_decisions has no direct org/position; the list is filtered in JS.
       count("score_decisions", (q) =>

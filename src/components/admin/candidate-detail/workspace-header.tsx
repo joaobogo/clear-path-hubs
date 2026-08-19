@@ -72,6 +72,16 @@ function WorkspaceHeader({
 
             )}
             {currentRun?.score != null && <AdminScoreNumber run={currentRun} />}
+            {currentRun?.rubric_version_number != null && (
+              <Badge variant="secondary" className="font-mono text-[10px]">
+                v{currentRun.rubric_version_number}
+              </Badge>
+            )}
+            {!currentRun?.rubric_version_number && currentRun?.status === "completed" && (
+              <Badge variant="outline" className="border-warning/30 bg-warning/10 text-[10px] text-warning-foreground">
+                criteria set not recorded
+              </Badge>
+            )}
             <Badge className={stateTone}>
               {m.processing_state.replace(/_/g, " ")}
             </Badge>
