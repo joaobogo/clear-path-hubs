@@ -331,7 +331,8 @@ export const listMyNotifications = createServerFn({ method: "GET" })
       .eq("recipient_user_id", context.userId)
       .is("resolved_at", null)
       .order("created_at", { ascending: false })
-      .limit(50);
+      .limit(50)
+      .throw();
     if (error) throw error;
 
     const rows = data ?? [];

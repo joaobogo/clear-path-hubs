@@ -62,7 +62,8 @@ export const getExceptionDigest = createServerFn({ method: "GET" })
       }),
       settle("processing_exceptions", async () => {
         const { loadExceptionBoard } = await import("./admin-processing-exceptions.server");
-        return (await loadExceptionBoard(admin)).active.length;
+        const board = await loadExceptionBoard(admin);
+        return board.active.length + board.scoring_orphans;
       }),
       settle("integration_degradations", async () => {
         const { loadIntegrationStrip } = await import("./integration-strip.server");

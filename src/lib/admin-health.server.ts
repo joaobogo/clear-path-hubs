@@ -228,7 +228,7 @@ export async function loadOperationalHealth(admin: Admin, opts: { includeTest?: 
 
   const counts = {
     webhook: issues.filter((i) => i.kind === "webhook").length,
-    processing: issues.filter((i) => i.kind === "processing").length,
+    processing: issues.filter((i) => i.kind === "processing").length + Number(orphansRes.count ?? 0),
     email: issues.filter((i) => i.kind === "email" && ["failed", "bounced", "suppressed"].includes(i.detail.split(" ")[0])).length,
     cv: issues.filter((i) => i.kind === "cv").length,
   };
