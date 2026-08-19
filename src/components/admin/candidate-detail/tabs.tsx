@@ -463,16 +463,20 @@ export function EvidenceTab({
               </div>
               {(r.evidence ?? []).length > 0 && (
                 <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
-                  {(r.evidence as Any[]).map((e, j) => (
-                    <li key={j}>
-                      "…{e.snippet}…"{" "}
-                      <code className="opacity-60">
-                        {typeof e.location === 'string' 
-                          ? e.location.replace(/^cv:(\d+)-(\d+)$/, 'CV · characters $1–$2') 
-                          : (e.source ?? "")}
-                      </code>
-                    </li>
-                  ))}
+                  {(r.evidence as Any[]).map((e, j) => {
+                    const safe = cleanQuote(e.snippet);
+                    if (!safe) return null;
+                    return (
+                      <li key={j}>
+                        "{safe}"{" "}
+                        <code className="opacity-60">
+                          {typeof e.location === 'string'
+                            ? e.location.replace(/^cv:(\d+)-(\d+)$/, 'CV · characters $1–$2')
+                            : (e.source ?? "")}
+                        </code>
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
               {r.snippet && (
