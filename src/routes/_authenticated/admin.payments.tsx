@@ -172,9 +172,10 @@ function AdminPaymentsPage() {
 // ── Payments & pilot operations panel ──────────────────────────────────────
 // Real records only: confirmed charges, roles stuck before payment, live pilots.
 function OpsPanel() {
+  const includeTest = useIncludeTestRecords();
   const loadOps = useServerFn(getPaymentsOps);
   const opsQuery = useQuery({
-    queryKey: ["admin-payments-ops"],
+    queryKey: ["admin-payments-ops", includeTest],
     queryFn: () => loadOps(),
     staleTime: 60_000,
   });
