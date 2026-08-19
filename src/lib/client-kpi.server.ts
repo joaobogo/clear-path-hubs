@@ -825,6 +825,7 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   );
 
   const prettyHeadline = prettifyHeadline(cp.headline ?? null);
+  const chips: string[] = []; // Reconciled C1: no longer using derived chips here
 
   const concerns: string[] = Array.isArray(runConcerns)
     ? runConcerns.slice(0, 5).map(String)
