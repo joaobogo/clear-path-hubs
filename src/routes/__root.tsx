@@ -22,10 +22,6 @@ import { HEAD_BOOT_SNIPPETS } from "@/lib/tracking/pixels";
 import { ConsentBanner } from "@/components/analytics/consent-banner";
 import { BookingCtaRouter } from "@/components/marketing/booking-cta-router";
 
-
-
-
-
 /** Brand webfonts. Attached after first paint — see the inline script in head(). */
 const FONT_CSS_HREF =
   "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap";
@@ -58,11 +54,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Page not found · TaaSFlow" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:site_name", content: "TaaSFlow" },
-      // No sitewide og:image here: a root-level image is concatenated into
-      // every match and can win over a page's own hero/cover. Routes that
-      // render a meaningful hero set og:image/twitter:image in their own head();
-      // hosting supplies the preview for the rest.
-
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -71,30 +62,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
-        // Warm the webfont CSS without blocking the parser. The stylesheet
-        // itself is attached by the inline script below (outside React's head
-        // management, which would otherwise reset any attribute we flip).
         rel: "preload",
         as: "style",
         href: FONT_CSS_HREF,
       },
     ],
     scripts: [
-      // Every tracking tag (GA4, RB2B, LinkedIn, Meta when configured)
-      // boots here, in the server-rendered head, so each one runs while the
-      // document parses — on the first load of any page, before hydration and
-      // with no consent gate (owner decision: tracking must fire for every
-      // visitor). src/lib/tracking/pixels.ts keeps a client-side fallback and
-      // skips any tag already present, so nothing double-loads.
       ...HEAD_BOOT_SNIPPETS.map((s) => ({ children: s.children })),
       {
-        // Attaches the Google Fonts stylesheet after first paint. Headings and
-        // body text declare fallbacks with font-display: swap, so text (the LCP
-        // element on the homepage) paints immediately instead of waiting on a
-        // third-party CSS round trip.
         children: `(function(){if(document.getElementById('taasflow-webfonts'))return;var l=document.createElement('link');l.id='taasflow-webfonts';l.rel='stylesheet';l.href=${JSON.stringify(FONT_CSS_HREF)};document.head.appendChild(l);})();`,
       },
-
       {
         type: "application/ld+json",
         children: JSON.stringify({
@@ -166,20 +143,26 @@ function RootShell({ children }: { children: ReactNode }) {
           
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "This is the TaaSFlow admin console — an internal operations desk used by staff, not clients.
+TEXTO DO USUÁRIO: "The approval flow is broken in three places and I can't approve a role through the UI at all.
 
-House rules for every change:
-- Reproduce the bug before you fix it. Tell me the exact text or number you saw.
-- After the fix, load the page in the preview, do the action, then hard-refresh and
-  confirm it survived. A success toast that doesn't survive a refresh is not a fix.
-- Don't refactor code you weren't asked to touch. Small diffs.
-- Never render a raw enum, snake_case value, UUID, trace ID, database table name, or
-  JSON payload as operator-facing text. Everything gets a human label.
-- Never show a count of 0 when the list below it has rows. If a number has no source
-  yet, render \"—\" not \"0\".
-- Any control that changes something a client can see needs a confirmation dialog that
-  names who gets notified and what they'll receive.
-- Skeletons must time out into an error with a retry. Never an infinite skeleton."`}
+First: /admin/approvals renders the record-not-found page — "We couldn't find that record.
+It may have been archived, merged, or deleted." That's a removed route being reported as a
+missing record, which is misleading.
+
+Second, and this is the real problem: on /admin, every row in the Approvals section has a
+"Review →" link pointing at /admin/candidates/publish_position%3A<uuid>?tab=profile&event=
+That page never loads — just "Loading page…" forever, 24 seconds, survives a hard refresh.
+The uuid in that link is a POSITION id. The same id loads fine at /admin/positions/<uuid>.
+So we're routing a position id into the candidate detail route with a "publish_position:"
+prefix stuck on the front, plus an empty event param.
+
+Please fix the Review links to point at /admin/positions/<id> — no prefix, no event param.
+Then either restore /admin/approvals as a real list, or redirect it to
+/admin?scope=all#queue-approvals. If a route is retired anywhere in this app, show
+"This page has moved" and say where — never the record-not-found page.
+
+Check: from /admin, click Review on any Approvals row and land on a page with a working
+Approve button in under 5 seconds."`}
         </div>
 
         <Scripts />
@@ -187,7 +170,6 @@ House rules for every change:
     </html>
   );
 }
-
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
@@ -217,20 +199,11 @@ function RootComponent() {
     document.head.appendChild(meta);
   }, []);
 
-  // Single, app-wide auth subscriber. Keeps every open tab consistent:
-  // signing out in one tab drops the others out of protected routes, and a
-  // sign-in elsewhere refreshes this tab's data instead of showing stale
-  // content from the previous identity. Filtered to identity transitions —
-  // unfiltered it also fires on TOKEN_REFRESHED (~hourly, plus tab focus)
-  // and INITIAL_SESSION (every mount), which would thrash router and cache.
+  // Single, app-wide auth subscriber.
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
-      // The _authenticated gate re-runs on invalidate and bounces to /login
-      // when the session is gone, so expired sessions self-correct here too.
       router.invalidate();
-      // Never refetch on SIGNED_OUT: those queries would 401 against a
-      // cleared session. The sign-out path clears the cache itself.
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
     });
     return () => sub.subscription.unsubscribe();
@@ -238,8 +211,6 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <TrackingRouteObserver />
       <ConsentBanner />

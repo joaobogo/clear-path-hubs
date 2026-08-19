@@ -14,7 +14,8 @@ export type QueueTarget =
   | { kind: "intake"; id: string }
   | { kind: "position"; id: string }
   | { kind: "review"; matchId: string }
-  | { kind: "match"; id: string };
+  | { kind: "match"; id: string }
+  | { kind: "approval"; id: string; target_id: string; target_kind: "candidate_match" | "position" | "shortlist_share" };
 
 /** Who holds this row today, resolved from the governing position or intake. */
 export type QueueOwner = { user_id: string; name: string } | null;

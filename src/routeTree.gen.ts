@@ -68,6 +68,7 @@ import { Route as DevCatalogueRouteImport } from './routes/dev.catalogue'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ApplyStatusRouteImport } from './routes/apply.status'
 import { Route as ApplyEligibilityOutcomeRouteImport } from './routes/apply.eligibility-outcome'
+import { Route as AdminApprovalsRouteImport } from './routes/admin.approvals'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedClientRouteImport } from './routes/_authenticated/client'
 import { Route as AuthenticatedCheckoutRouteImport } from './routes/_authenticated/checkout'
@@ -502,6 +503,11 @@ const ApplyStatusRoute = ApplyStatusRouteImport.update({
 const ApplyEligibilityOutcomeRoute = ApplyEligibilityOutcomeRouteImport.update({
   id: '/apply/eligibility-outcome',
   path: '/apply/eligibility-outcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminApprovalsRoute = AdminApprovalsRouteImport.update({
+  id: '/admin/approvals',
+  path: '/admin/approvals',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
@@ -1360,6 +1366,7 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/client': typeof AuthenticatedClientRouteWithChildren
   '/me': typeof AuthenticatedMeRouteWithChildren
+  '/admin/approvals': typeof AdminApprovalsRoute
   '/apply/eligibility-outcome': typeof ApplyEligibilityOutcomeRoute
   '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -1558,6 +1565,7 @@ export interface FileRoutesByTo {
   '/book-call': typeof AuthenticatedBookCallRoute
   '/brand-center': typeof AuthenticatedBrandCenterRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
+  '/admin/approvals': typeof AdminApprovalsRoute
   '/apply/eligibility-outcome': typeof ApplyEligibilityOutcomeRoute
   '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -1753,6 +1761,7 @@ export interface FileRoutesById {
   '/_authenticated/checkout': typeof AuthenticatedCheckoutRoute
   '/_authenticated/client': typeof AuthenticatedClientRouteWithChildren
   '/_authenticated/me': typeof AuthenticatedMeRouteWithChildren
+  '/admin/approvals': typeof AdminApprovalsRoute
   '/apply/eligibility-outcome': typeof ApplyEligibilityOutcomeRoute
   '/apply/status': typeof ApplyStatusRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -1956,6 +1965,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/client'
     | '/me'
+    | '/admin/approvals'
     | '/apply/eligibility-outcome'
     | '/apply/status'
     | '/blog/$slug'
@@ -2154,6 +2164,7 @@ export interface FileRouteTypes {
     | '/book-call'
     | '/brand-center'
     | '/checkout'
+    | '/admin/approvals'
     | '/apply/eligibility-outcome'
     | '/apply/status'
     | '/blog/$slug'
@@ -2348,6 +2359,7 @@ export interface FileRouteTypes {
     | '/_authenticated/checkout'
     | '/_authenticated/client'
     | '/_authenticated/me'
+    | '/admin/approvals'
     | '/apply/eligibility-outcome'
     | '/apply/status'
     | '/blog/$slug'
@@ -2544,6 +2556,7 @@ export interface RootRouteChildren {
   UnauthorizedRoute: typeof UnauthorizedRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  AdminApprovalsRoute: typeof AdminApprovalsRoute
   ApplyEligibilityOutcomeRoute: typeof ApplyEligibilityOutcomeRoute
   ApplyStatusRoute: typeof ApplyStatusRoute
   BlogSlugRoute: typeof BlogSlugRoute
@@ -3011,6 +3024,13 @@ declare module '@tanstack/react-router' {
       path: '/apply/eligibility-outcome'
       fullPath: '/apply/eligibility-outcome'
       preLoaderRoute: typeof ApplyEligibilityOutcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/approvals': {
+      id: '/admin/approvals'
+      path: '/admin/approvals'
+      fullPath: '/admin/approvals'
+      preLoaderRoute: typeof AdminApprovalsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/me': {
@@ -4412,6 +4432,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  AdminApprovalsRoute: AdminApprovalsRoute,
   ApplyEligibilityOutcomeRoute: ApplyEligibilityOutcomeRoute,
   ApplyStatusRoute: ApplyStatusRoute,
   BlogSlugRoute: BlogSlugRoute,

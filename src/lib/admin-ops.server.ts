@@ -508,7 +508,12 @@ async function annotateWithApprovals(
         subtitle_refs: [],
         meta: it.requester_name,
         waiting_since: it.requested_at,
-        target: { kind: "match" as const, id: it.match_ids[0] || it.id },
+        target: {
+          kind: "approval" as const,
+          id: it.id,
+          target_id: it.target_id,
+          target_kind: it.target_type,
+        },
         action_label: "Review",
         owner: null,
         claim: null,
