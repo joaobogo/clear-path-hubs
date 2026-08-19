@@ -401,6 +401,8 @@ export const listClients = createServerFn({ method: "GET" })
     z
       .object({
         include_test: z.boolean().optional().default(false),
+        status: z.enum(["active", "archived", "all"]).optional().default("active"),
+        industry: z.string().optional(),
         sort: z
           .enum([
             "activity_desc",
