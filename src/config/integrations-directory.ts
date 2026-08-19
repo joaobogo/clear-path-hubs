@@ -244,7 +244,7 @@ export const INTEGRATIONS: Integration[] = [
   /* ------------------------------------------------------ payments / auth */
   {
     id: "stripe",
-    name: "Stripe",
+    name: "Payments",
     category: "payments",
     availability: "available",
     purpose:

@@ -10,7 +10,7 @@ export const FALLBACK_TITLE = "Terms of Service";
 export const FALLBACK_DESCRIPTION =
   "Terms of Service governing the use of TaaSFlow.";
 export const EXTRA_NOTE =
-  "TaaSFlow runs on a managed Postgres database, authentication and file storage operated by Supabase, with application hosting, CDN and WAF services on Cloudflare's edge network. Payments are processed by Stripe. The full sub-processor register is published in section 6 of our Privacy Notice. This wording is pending review by TaaSFlow's legal counsel.";
+  "TaaSFlow runs on a managed Postgres database, authentication and file storage operated by Supabase, with application hosting, CDN and WAF services on Cloudflare's edge network. The full sub-processor register is published in section 6 of our Privacy Notice. This wording is pending review by TaaSFlow's legal counsel.";
 
 export const Route = createFileRoute("/terms")({
   head: () =>

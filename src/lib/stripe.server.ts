@@ -73,7 +73,7 @@ export function getStripeErrorMessage(error: unknown): string {
     }
   }
 
-  return 'Stripe request failed';
+  return 'Payment request failed';
 }
 
 export async function verifyWebhook(

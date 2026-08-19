@@ -125,7 +125,7 @@ export const INDUSTRY_ENTRIES_BATCH2: IndustryEntry[] = [
       { title: "Delivery evidence", body: "Products launched, migrations completed, incidents led — not just tenure." },
     ],
     skills: ["Payments", "Card issuing", "Open Banking", "AML/KYC", "Financial crime", "PSD2", "Dispute management"],
-    tools: ["Stripe", "Adyen", "Marqeta", "Plaid", "TrueLayer", "Chainalysis", "SumSub", "Onfido", "ComplyAdvantage", "Actimize"],
+    tools: ["Adyen", "Marqeta", "Plaid", "TrueLayer", "Chainalysis", "SumSub", "Onfido", "ComplyAdvantage", "Actimize"],
     certifications: ["ICA / ACAMS", "CFE", "CISI"],
     regulatedRequirements: ["MLRO approval", "SMF regime familiarity", "PCI-DSS awareness for card handlers"],
     signals: ["Regulatory-regime capture", "Rail-specific rubric", "Risk and compliance in the same workspace"],

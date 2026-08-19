@@ -68,8 +68,8 @@ async function checkStripe(): Promise<CheckResult> {
     return {
       ...base,
       status: "not_configured",
-      summary: "No Stripe connection key is present in this environment.",
-      remediation: "Enable payments so the Stripe connection key is injected, then re-run the test.",
+      summary: "No payments connection key is present in this environment.",
+      remediation: "Enable payments so the connection key is injected, then re-run the test.",
       latency_ms: 0,
       details: { live_key: false, sandbox_key: false },
     };
@@ -90,11 +90,11 @@ async function checkStripe(): Promise<CheckResult> {
     return {
       ...base,
       status: "failed",
-      summary: `Stripe API call failed in ${env} mode.`,
+      summary: `Payments API call failed in ${env} mode.`,
       error_code: "stripe_api_error",
       error_detail: truncate(message),
       remediation:
-        "Check the payments connection is still linked and, for live mode, that go-live is complete. The message above is Stripe's own error — fix the cause it names, then re-run.",
+        "Check the payments connection is still linked and, for live mode, that go-live is complete. The message above is the provider's own error — fix the cause it names, then re-run.",
       latency_ms: run.ms,
       details: { environment: env },
     };
@@ -106,8 +106,8 @@ async function checkStripe(): Promise<CheckResult> {
     ...base,
     status: noCatalog ? "degraded" : "ok",
     summary: noCatalog
-      ? `Stripe reachable in ${env} mode but the catalog looks incomplete (${counts.products} products, ${counts.prices} prices).`
-      : `Stripe reachable in ${env} mode with an active catalog.`,
+      ? `Payments reachable in ${env} mode but the catalog looks incomplete (${counts.products} products, ${counts.prices} prices).`
+      : `Payments reachable in ${env} mode with an active catalog.`,
     ...(noCatalog
       ? {
           error_code: "stripe_catalog_empty",

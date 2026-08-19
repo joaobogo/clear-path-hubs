@@ -430,7 +430,7 @@ function TrustPage() {
               Your data sits in a managed Postgres database with private file
               storage operated by Supabase. The application itself runs on
               Cloudflare's edge network, which also provides CDN and WAF.
-              Payments run through Stripe, transactional email through Resend,
+              Transactional email runs through Resend,
               and the AI models used for CV parsing and role-fit scoring are
               Google Gemini models called through a managed gateway.
             </p>
