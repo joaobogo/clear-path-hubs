@@ -66,6 +66,7 @@ import {
   MoreHorizontal,
   NotebookPen,
   Radar,
+  Copy,
 } from "lucide-react";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { GeneratedBlueprintPanel } from "@/components/positions/generated-blueprint-panel";
