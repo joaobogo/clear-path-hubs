@@ -143,6 +143,18 @@ export function DeliveryFailuresPanel() {
   });
 
   const items = (query.data?.items ?? []) as Item[];
+  const summary = query.data?.summary ?? {
+    total: items.length,
+    retryable: items.filter((i) => i.retryable).length,
+    blockedDeliveries: 0,
+    blockedAddresses: [] as Array<{
+      address: string;
+      deliveries: number;
+      lastAttemptAt: string;
+      sentence: string;
+    }>,
+  };
+  const blockedAddresses = summary.blockedAddresses;
   const suppressions = query.data?.suppressions ?? [];
   const windowDays = query.data?.windowDays ?? 7;
 
