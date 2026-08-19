@@ -6,6 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { ActivityFeed, ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
 import { getAdminWorkQueues } from "@/lib/admin-ops.functions";
+import { ApprovalsInbox } from "@/components/admin/approvals-inbox";
 import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { PortfolioHealthTable } from "@/components/admin/portfolio-health-table";
 import { DecisionBacklogPanel } from "@/components/admin/decision-backlog-panel";
