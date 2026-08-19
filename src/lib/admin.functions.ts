@@ -1120,7 +1120,7 @@ export const setPositionStatus = createServerFn({ method: "POST" })
           position_id: data.id,
           actor_user_id: context.userId,
           link_path: `/admin/positions/${data.id}`,
-          payload: { reason: data.reason ?? null },
+          payload: { reason: data.reason ?? null, note: data.reason ?? null },
         });
       }
     } catch (e) {
@@ -1236,6 +1236,20 @@ export const createPositionForClient = createServerFn({ method: "POST" })
       after: created,
       trace_id,
     });
+    try {
+      const { emitEventFromServer } = await import("./notifications.functions");
+      await emitEventFromServer({
+        event: "intake_submitted",
+        scope: `staff_create:${created.id}`,
+        organization_id: data.organization_id,
+        position_id: created.id,
+        actor_user_id: context.userId,
+        link_path: `/admin/positions/${created.id}`,
+        payload: { title: created.title, staff_created: true },
+      });
+    } catch (e) {
+      console.error("[createPositionForClient] activity emit failed", trace_id, e);
+    }
     return { ok: true as const, trace_id, position: created };
   });
 
@@ -1274,6 +1288,20 @@ export const setPositionVisibility = createServerFn({ method: "POST" })
       after,
       trace_id,
     });
+    try {
+      const { emitEventFromServer } = await import("./notifications.functions");
+      await emitEventFromServer({
+        event: "position_updated",
+        scope: `visibility:${data.id}:${data.visibility}`,
+        organization_id: before.organization_id,
+        position_id: data.id,
+        actor_user_id: context.userId,
+        link_path: `/admin/positions/${data.id}`,
+        payload: { visibility: data.visibility },
+      });
+    } catch (e) {
+      console.error("[setPositionVisibility] activity emit failed", trace_id, e);
+    }
     return { ok: true as const, trace_id, position: after };
   });
 

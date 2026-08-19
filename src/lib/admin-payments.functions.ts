@@ -87,5 +87,19 @@ export const grantPositionPaymentExemption = createServerFn({ method: "POST" })
       _reason: data.reason.trim(),
     });
     if (error) throw new Error(error.message);
+    try {
+      const { emitEventFromServer } = await import("./notifications.functions");
+      await emitEventFromServer({
+        event: "position_updated",
+        scope: `payment_exemption:${data.positionId}`,
+        organization_id: null, // Scoping to position is enough, or it can be derived from position
+        position_id: data.positionId,
+        actor_user_id: userId,
+        link_path: `/admin/positions/${data.positionId}`,
+        payload: { payment_status: "exempt", reason: data.reason.trim(), note: data.reason.trim() },
+      });
+    } catch (e) {
+      console.error("[grantPositionPaymentExemption] activity emit failed", e);
+    }
     return { ok: true as const };
   });
