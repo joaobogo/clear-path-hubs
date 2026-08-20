@@ -27,7 +27,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { toastError } from "@/lib/humanize-codes";
+import { toastError } from "@/lib/toast-error";
 
 type Mode = null | "convert" | "clarify" | "reject";
 
