@@ -173,6 +173,32 @@ type Company = {
  phone: string;
 };
 
+const FIELD_ID: Record<keyof Company, string> = {
+ id: "",
+ name: "cp-name",
+ website: "cp-website",
+ industry: "cp-industry",
+ headquarters: "cp-hq",
+ phone: "cp-phone",
+};
+
+function normalizeWebsite(s: string) {
+ const t = s.trim();
+ if (t === "") return "";
+ if (/^https?:\/\//i.test(t)) return t;
+ return `https://${t}`;
+}
+
+function focusField(field: keyof Company) {
+ const id = FIELD_ID[field];
+ if (!id) return;
+ const el = document.getElementById(id) as HTMLElement | null;
+ if (!el) return;
+ el.scrollIntoView({ behavior: "smooth", block: "center" });
+ const focusable = el.querySelector<HTMLElement>("input, textarea, select") ?? el;
+ focusable.focus();
+}
+
 function CompanyProfileSection({
  orgId,
  initial,
@@ -184,19 +210,28 @@ function CompanyProfileSection({
  approved: boolean;
  canEdit: boolean;
 }) {
- const [form, setForm] = useState<Company>(initial);
+ const [form, setForm] = useState<Company>(() => ({
+   ...initial,
+   website: normalizeWebsite(initial.website),
+ }));
  const [errors, setErrors] = useState<Partial<Record<keyof Company, string>>>({});
+ const [retainInput, setRetainInput] = useState(false);
  const qc = useQueryClient();
  const fn = useServerFn(updateClientCompanyProfile);
 
- // Re-sync when server data refreshes (e.g. after org switch).
- useEffect(() => setForm(initial), [initial]);
+ // Re-sync when server data refreshes (e.g. after org switch), but never
+ // overwrite a user's failed edit — they need to see the error and fix it.
+ useEffect(() => {
+   if (!retainInput) {
+     setForm({ ...initial, website: normalizeWebsite(initial.website) });
+   }
+ }, [initial, retainInput]);
  const dirty = useMemo(
- () =>
- (["name", "website", "industry", "headquarters", "phone"] as (keyof Company)[]).some(
- (k) => (form[k] ?? "") !== (initial[k] ?? ""),
- ),
- [form, initial],
+   () =>
+     (["name", "website", "industry", "headquarters", "phone"] as (keyof Company)[]).some(
+       (k) => (form[k] ?? "") !== (initial[k] ?? ""),
+     ),
+   [form, initial],
  );
 
  const save = useMutation({
