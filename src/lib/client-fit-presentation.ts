@@ -250,14 +250,26 @@ export function evidenceSupport(
   const partial = Array.isArray(coverage?.partial) ? coverage.partial : [];
   const contradicts = Array.isArray(coverage?.contradicts) ? coverage.contradicts : [];
   const listed = Array.isArray(coverage?.requirements) ? coverage.requirements : [];
+  // The run's per-requirement verdicts. This is the same record the Compare
+  // drawer's requirement grid reads, so both surfaces agree by construction.
+  const assessed = Array.isArray(coverage?.requirement_assessment)
+    ? coverage.requirement_assessment
+    : [];
 
-  const sameRequirement = (m: any) =>
-    m?.id === r.id || String(m?.label ?? "").trim().toLowerCase() === r.label.trim().toLowerCase();
+  // Coverage lists carry either requirement objects or bare requirement text,
+  // depending on the engine version that produced the run. Both must match.
+  const sameRequirement = (m: any) => {
+    const label = r.label.trim().toLowerCase();
+    if (typeof m === "string") return m.trim().toLowerCase() === label;
+    if (m?.id != null && String(m.id) === r.id) return true;
+    return String(m?.label ?? m?.text ?? "").trim().toLowerCase() === label;
+  };
 
-  const declared = listed.find(sameRequirement);
+  const declared = listed.find(sameRequirement) ?? assessed.find(sameRequirement);
   let isMet = matched.some(sameRequirement) || declared?.status === "met";
   let isPartial = partial.some(sameRequirement) || declared?.status === "partial";
   const isContradicted = contradicts.some(sameRequirement) || declared?.status === "contradicted";
+
 
   const rawEvidence = Array.isArray(evidenceItems) ? evidenceItems : [];
   const mine = rawEvidence.filter((e: any) => evidenceMatchesRequirement(e, r));

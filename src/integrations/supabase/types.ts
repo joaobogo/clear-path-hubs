@@ -10691,6 +10691,30 @@ export type Database = {
           },
         ]
       }
+      score_reconcile_map_20260826: {
+        Row: {
+          created_at: string
+          new_run_id: string
+          new_score: number | null
+          old_run_id: string
+          old_score: number | null
+        }
+        Insert: {
+          created_at?: string
+          new_run_id: string
+          new_score?: number | null
+          old_run_id: string
+          old_score?: number | null
+        }
+        Update: {
+          created_at?: string
+          new_run_id?: string
+          new_score?: number | null
+          old_run_id?: string
+          old_score?: number | null
+        }
+        Relationships: []
+      }
       score_runs: {
         Row: {
           application_id: string

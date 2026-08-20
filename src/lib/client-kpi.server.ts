@@ -41,6 +41,42 @@ import { assessFreshness, mergeStoredStaleness, type Freshness } from "@/lib/sco
 import { CALIBRATION_VERSION } from "@/lib/scoring/engine-calibration";
 import { ENGINE_VERSION } from "@/lib/scoring/engine-version";
 import { buildReviewTimeline, type ReviewTimeline } from "@/lib/client/review-timeline";
+import {
+  buildScoreComposition,
+  type ScoreComposition,
+} from "@/lib/scoring/score-composition";
+
+/**
+ * Quoted passages stored per requirement by the scoring run. These are the
+ * verbatim CV / screening snippets behind each verdict; they are reshaped into
+ * the same item shape as the verified evidence view so requirement rows can
+ * quote either source without knowing which one it came from.
+ */
+function assessmentEvidenceItems(coverage: AnyRow | null | undefined): AnyRow[] {
+  const assessed = Array.isArray((coverage as AnyRow)?.requirement_assessment)
+    ? ((coverage as AnyRow).requirement_assessment as AnyRow[])
+    : [];
+  const out: AnyRow[] = [];
+  for (const req of assessed) {
+    const label = String(req?.text ?? req?.label ?? "").trim();
+    const list = Array.isArray(req?.evidence) ? (req.evidence as AnyRow[]) : [];
+    for (const e of list) {
+      const snippet = String(e?.snippet ?? e?.quote ?? e?.factual_quote ?? "").trim();
+      if (!snippet) continue;
+      out.push({
+        requirement_id: req?.id != null ? String(req.id) : null,
+        requirement: label,
+        label,
+        snippet,
+        source: e?.source ?? e?.source_kind ?? null,
+        source_location: e?.location ?? e?.source_location ?? null,
+        result: req?.status ?? null,
+      } as AnyRow);
+    }
+  }
+  return out;
+}
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -406,10 +442,17 @@ export type ClientCandidateDTO = {
   requirement_rows: RequirementRow[];
   coverage: CoverageSummary;
   /**
+   * The three published weightings behind the score, with this candidate's
+   * number for each. Null when the run stored no measured shares.
+   */
+  score_composition: ScoreComposition | null;
+  /**
    * Evidence support behind the band — what employer surfaces render next to
-   * the band instead of a numeric score.
+   * the band instead of a numeric score. `supported` counts only requirements
+   * that carry a quoted passage the page can actually show.
    */
   evidence_support: { supported: number; total: number };
+
   /**
    * A person reviewed this assessment by hand. Clients see the fact and the
    * count of hand-verified requirements — never the reviewer's internal note.
@@ -836,8 +879,12 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const requirement_rows = buildRequirementRows(
     pos ? { requirements: pos.requirements, preferred_requirements: pos.preferred_requirements } : null,
     coverage,
-    ((row as AnyRow).evidence_items as AnyRow[] | null) ?? null,
+    [
+      ...(((row as AnyRow).evidence_items as AnyRow[] | null) ?? []),
+      ...assessmentEvidenceItems(coverage),
+    ],
   );
+
   const coverageSummary = summariseCoverage(requirement_rows, fit, run?.score != null ? Number(run.score) : coverage?.fit_score ?? null);
 
   const workAuth = normWorkAuth(cp.work_authorization);
@@ -988,7 +1035,18 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     concerns,
     main_consideration: mainConsideration,
     requirement_rows,
-    evidence_support: { supported: requirement_rows.filter(r => r.status === 'met').length, total: requirement_rows.length },
+    score_composition: buildScoreComposition({
+      coverage: coverage as Record<string, unknown> | null,
+      result: (run?.result as Record<string, unknown> | null) ?? null,
+      displayedScore: run?.score != null ? Number(run.score) : null,
+    }),
+    // Honesty gate: only requirements this page can actually quote count as
+    // evidenced, so the chip can never promise more than the tab renders.
+    evidence_support: {
+      supported: requirement_rows.filter((r) => r.evidence.length > 0).length,
+      total: requirement_rows.length,
+    },
+
     human_review: (() => {
       const res = (run?.result as AnyRow | null) ?? null;
       const reviewed =
