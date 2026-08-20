@@ -145,15 +145,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P06 Do not show start dates for declined offers BLOCKER CLIENT ACCOUNT
+TEXTO DO USUÁRIO: "P07 Replace the raw error constant BLOCKER CLIENT CREATE ROLE
 Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-On /client/account, expand \"Workspace details\" → \"Roles and where they are\". The \"UPCOMING START DATES\"
-block shows \"Senior Full-Stack Engineer — 1 Sept 2026\". That start date belongs to a candidate whose offer
-status is \"Closed lost / Candidate declined\".
-Change the query behind UPCOMING START DATES so it only includes offers with status accepted (or hire
-confirmed). Exclude declined, closed lost and withdrawn offers.
-If the filtered result is empty, hide the block entirely rather than showing an empty heading.
-Done when: No start date is shown for a candidate whose offer is closed lost or declined."`}
+When \"Create role\" fails on /client/positions/new, the red toast shows the raw string
+\"SUPPORT_VIEW_READ_ONLY\" and nothing else.
+Add a lookup that maps error codes to human sentences before they reach the toast. For this code show:
+\"You can't create roles while previewing a client workspace.\"
+Add a default fallback for unmapped codes: \"Something went wrong. Please try again.\" Never render a raw
+SCREAMING_SNAKE_CASE code in the UI.
+Done when: The toast reads a full sentence, and no raw error code can reach a user-facing toast."`}
         </div>
 
         <Scripts />
