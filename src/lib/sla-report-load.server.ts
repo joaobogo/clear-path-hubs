@@ -112,19 +112,24 @@ export async function loadSlaPerformance(
       const shortlistDue = addDays(baselineAt, r.first_shortlist_days);
       const shortlistActual =
         deliveries.length >= r.shortlist_size ? deliveries[r.shortlist_size - 1] : null;
+      const shortlistBase = dayMetric({
+        key: "full_shortlist",
+        label: shortlistLabel(Number(r.shortlist_size)),
+        promise: shortlistPromise(Number(r.shortlist_size), Number(r.first_shortlist_days)),
+        baselineAt,
+        dueAt: shortlistDue,
+        actualAt: shortlistActual ?? null,
+        now,
+      });
       metrics.push({
-        ...dayMetric({
-          key: "full_shortlist",
-          label: shortlistLabel(Number(r.shortlist_size)),
-          promise: shortlistPromise(Number(r.shortlist_size), Number(r.first_shortlist_days)),
-          baselineAt,
-          dueAt: shortlistDue,
-          actualAt: shortlistActual ?? null,
-          now,
-        }),
+        ...shortlistBase,
         actual: shortlistActual
           ? amountLabel(diffDays(baselineAt, shortlistActual), "days")
           : `${deliveries.length} of ${r.shortlist_size} so far`,
+        // Until the full shortlist is delivered, the actual number of days is
+        // not known, so we do not invent a variance from the current date.
+        varianceValue: shortlistActual ? shortlistBase.varianceValue : null,
+        variance: shortlistActual ? shortlistBase.variance : "Not measured",
       });
 
       // 3 · Interview slots proposed after a request

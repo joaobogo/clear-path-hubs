@@ -19,6 +19,8 @@ export type SlaMetric = {
   actualAt: string | null;
   /** Plain-language actual, e.g. "4 days" or "not yet". */
   actual: string;
+  /** Numeric actual value for aggregation, in the same unit as varianceUnit. */
+  actualValue: number | null;
   /** Signed days (or hours for hour-based metrics). Negative = ahead. */
   varianceValue: number | null;
   varianceUnit: "days" | "hours";
@@ -39,10 +41,12 @@ export type RoleSla = {
 export type SlaSummary = {
   /** Commitments whose outcome is known (met or missed). */
   measured: number;
+  /** Commitments tracked across all displayed roles, including pending/on-track rows. */
+  total: number;
   met: number;
   /** Whole-number percentage of measured commitments met, null when none. */
   onTimeRate: number | null;
-  /** Average signed variance in days across measured day-based commitments. */
+  /** Average signed variance in days across every measured commitment (hours converted to days). */
   averageVarianceDays: number | null;
   atRisk: number;
 };

@@ -151,14 +151,14 @@ export function SlaScorecard({
           label="Commitments met"
           value={summary.onTimeRate === null ? "—" : `${summary.onTimeRate}%`}
           detail={
-            summary.measured
-              ? `${summary.met} of ${summary.measured} measured`
-              : "Nothing measurable yet"
+            summary.total
+              ? `${summary.measured} of ${summary.total} tracked · ${summary.met} met`
+              : "Nothing tracked yet"
           }
         />
         <StatTile
           icon={<TrendingUp className="h-4 w-4" />}
-          label="Average variance"
+          label="Average variance (days)"
           value={
             avg === null
               ? "—"
