@@ -65,7 +65,7 @@ function OutcomeSla() {
       );
       queryClient.invalidateQueries({ queryKey: ["admin", "outcome-sla"] });
     },
-    onError: (err: Any) => toast.error(err?.message ?? "Could not send the notices."),
+    onError: (err: Any) => toastError(err, { fallback: "Could not send the notices.", tone: "admin" }),
   });
 
   /**
