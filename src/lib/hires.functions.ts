@@ -8,6 +8,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
+import { reconcileOfferWithStage, stageMeansHired } from "@/lib/offer-hire-stage";
+import { loadMatchStages } from "@/lib/offer-hire-stage.server";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
