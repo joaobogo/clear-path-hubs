@@ -12,7 +12,7 @@ import type { Audience } from "@/lib/events";
  * KPIs move together.
  *
  * Fallbacks — every one is bounded so we never silently show stale data:
- *   • window focus + tab visibility → immediate refresh
+ *   • tab returns to view (visibility / focus after being hidden) → refresh
  *   • approved interval → refresh every 60 s while the tab is visible
  *
  * Individual cards MUST NOT call supabase.channel() themselves. Add domain
