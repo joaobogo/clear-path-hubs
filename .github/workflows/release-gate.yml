@@ -121,10 +121,59 @@ jobs:
             playwright-report/
           if-no-files-found: ignore
 
+  admin-performance-smoke:
+    name: Admin performance smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+
+      - name: Guard required QA secrets
+        run: |
+          missing=0
+          for var in QA_SEED_TOKEN SUPABASE_SERVICE_ROLE_KEY VITE_SUPABASE_URL VITE_SUPABASE_PUBLISHABLE_KEY; do
+            if [ -z "${!var}" ]; then echo "::error::$var is not configured for the release gate"; missing=1; fi
+          done
+          exit $missing
+
+      - name: Install Playwright Chromium
+        run: bunx playwright install --with-deps chromium
+
+      - name: Start the app
+        run: |
+          bun run dev > /tmp/app.log 2>&1 &
+          for i in $(seq 1 90); do
+            curl -sf -o /dev/null http://localhost:8080/ && exit 0
+            sleep 2
+          done
+          echo "::error::app did not become ready on :8080"
+          tail -n 100 /tmp/app.log
+          exit 1
+
+      - name: Admin performance smoke (readable <5s, no skeleton >10s)
+        run: bun run test:e2e:performance
+
+      - name: App server log
+        if: failure()
+        run: tail -n 200 /tmp/app.log
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-admin-performance-artifacts
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+
   release-gate:
     name: Release gate
     runs-on: ubuntu-latest
-    needs: [static-checks, unit-tests, smoke-journey]
+    needs: [static-checks, unit-tests, smoke-journey, admin-performance-smoke]
     if: always()
     steps:
       - name: Block on any regression
@@ -132,10 +181,13 @@ jobs:
           echo "static-checks: ${{ needs.static-checks.result }}"
           echo "unit-tests:    ${{ needs.unit-tests.result }}"
           echo "smoke-journey: ${{ needs.smoke-journey.result }}"
+          echo "admin-performance-smoke: ${{ needs.admin-performance-smoke.result }}"
           if [ "${{ needs.static-checks.result }}" != "success" ] \
             || [ "${{ needs.unit-tests.result }}" != "success" ] \
-            || [ "${{ needs.smoke-journey.result }}" != "success" ]; then
+            || [ "${{ needs.smoke-journey.result }}" != "success" ] \
+            || [ "${{ needs.admin-performance-smoke.result }}" != "success" ]; then
             echo "::error::Release gate failed — merge blocked."
             exit 1
           fi
           echo "Release gate green."
+
