@@ -123,10 +123,15 @@ export const getAccountOverview = createServerFn({ method: "GET" })
           .from("positions")
           .select("id, status")
           .eq("organization_id", data.orgId),
-        supabase
+      supabase
           .from("hire_records")
           .select("id, status, hired_at, start_date, position_id, positions:position_id(title)")
           .eq("organization_id", data.orgId),
+        supabase
+          .from("offer_records")
+          .select("id, status, start_date, position_id, positions:position_id(title)")
+          .eq("organization_id", data.orgId)
+          .in("status", ["accepted", "signed"]),
       ]);
 
     const memberRows = (members as AnyRow[]) ?? [];
