@@ -146,8 +146,8 @@ export function IntakeAgingTable({ includeTest: explicit }: { includeTest?: bool
             Open intakes — aging and conversion
           </h2>
           <p className="text-xs text-muted-foreground">
-            Time on the clock since submission. An intake leaves this list as soon as it is linked to
-            a position.
+            Open means the brief has no role linked yet and has not been rejected — the same
+            definition the Pending tab uses. Time on the clock runs from submission.
           </p>
         </div>
         <div className="flex items-center gap-2">

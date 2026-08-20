@@ -141,14 +141,20 @@ export const listIntakeInbox = createServerFn({ method: "GET" })
       const pairKey = `${(r.company_name ?? "").toLowerCase()}::${(r.role_title ?? "").toLowerCase()}`;
       const duplicate =
         (emailBucket[r.primary_email ?? ""] ?? 0) > 1 || (pairBucket[pairKey] ?? 0) > 1;
+      // One definition of "open", shared with the aging block and the Pending
+      // tab: no linked role yet and not rejected. Anything already linked to a
+      // role is done here, whatever its raw workspace_status says.
+      const converted = !!r.position_id;
       const next_action = r.status === "rejected"
         ? "archived"
-        : r.status === "approved"
-          ? "open_position"
-          : r.requisition_pending
-            ? "convert_to_position"
-            : "review";
-      return { ...r, duplicate, next_action };
+        : converted
+          ? "open_role"
+          : r.status === "approved"
+            ? "open_position"
+            : r.requisition_pending
+              ? "convert_to_position"
+              : "review";
+      return { ...r, duplicate, converted, next_action };
     });
     const start = (data.page - 1) * data.page_size;
     return {

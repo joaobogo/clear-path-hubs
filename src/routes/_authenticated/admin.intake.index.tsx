@@ -39,6 +39,14 @@ const FILTERS: { key: Filter; label: string }[] = [
   { key: "all", label: "All" },
 ];
 
+const NEXT_ACTION_LABEL: Record<string, string> = {
+  review: "Review the brief",
+  convert_to_position: "Convert to a role",
+  open_role: "Already a role — open it",
+  open_position: "Already a role — open it",
+  archived: "Closed",
+};
+
 function relTime(iso?: string | null): string {
   if (!iso) return "—";
   const ms = Date.now() - new Date(iso).getTime();
@@ -149,10 +157,12 @@ function IntakeInbox() {
                       <Link
                         to="/admin/intake/$id"
                         params={{ id: it.id }}
+                        hash="duplicates"
                         className="ml-2 inline-flex items-center gap-1 text-[11px] text-warning-foreground hover:underline"
-                        title="Compare with the earlier brief from this company"
+                        title="Compare with the earlier brief from this company and resolve it"
                       >
-                        <AlertTriangle className="h-3 w-3" /> possible duplicate — compare
+                        <AlertTriangle className="h-3 w-3" /> possible duplicate — compare and
+                        resolve
                       </Link>
                     )}
                   </td>
@@ -165,34 +175,47 @@ function IntakeInbox() {
                       variant={
                         it.status === "rejected"
                           ? "destructive"
-                          : it.status === "approved"
+                          : it.converted || it.status === "approved"
                             ? "outline"
                             : "secondary"
                       }
                       className="capitalize"
                     >
-                      {String(it.workspace_status ?? it.status).replace(/_/g, " ")}
+                      {it.converted
+                        ? "converted to role"
+                        : String(it.workspace_status ?? it.status).replace(/_/g, " ")}
                     </Badge>
-                    {it.requisition_pending && (
+                    {it.requisition_pending && !it.converted && (
                       <Badge variant="destructive" className="ml-1">
                         needs conversion
                       </Badge>
                     )}
                   </td>
-                  <td className="hidden px-3 py-2 text-xs text-muted-foreground sm:table-cell capitalize">
-                    {String(it.next_action).replace(/_/g, " ")}
+                  <td className="hidden px-3 py-2 text-xs text-muted-foreground sm:table-cell">
+                    {NEXT_ACTION_LABEL[String(it.next_action)] ??
+                      String(it.next_action).replace(/_/g, " ")}
                   </td>
                   <td className="px-3 py-2 text-right text-xs tabular-nums text-muted-foreground">
                     {relTime(it.created_at)}
                   </td>
                   <td className="px-2 py-2 text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <IntakeRowActions
-                        id={it.id}
-                        company={it.company_name}
-                        role={it.role_title}
-                        closed={it.status === "rejected" || it.status === "approved"}
-                      />
+                      {it.converted && it.position_id ? (
+                        <Link
+                          to="/admin/positions/$id"
+                          params={{ id: it.position_id }}
+                          className="text-xs text-primary hover:underline"
+                        >
+                          Open role
+                        </Link>
+                      ) : (
+                        <IntakeRowActions
+                          id={it.id}
+                          company={it.company_name}
+                          role={it.role_title}
+                          closed={it.status === "rejected" || it.status === "approved"}
+                        />
+                      )}
                       <Link
                         to="/admin/intake/$id"
                         params={{ id: it.id }}
