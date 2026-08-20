@@ -25,6 +25,7 @@ import {
   type ProposalFormat,
 } from "@/lib/interview-proposal";
 import { formatInZone } from "@/lib/scheduling";
+import { useClearResolvedErrors, useStaleServerError } from "@/lib/use-live-errors";
 import {
   isPreferenceSet,
   preferenceSummary,
@@ -87,6 +88,20 @@ export function SlotProposer({
   }, [timezone]);
 
   const patch = (p: Partial<ProposalDraft>) => setDraft((d) => ({ ...d, ...p }));
+
+  // Re-validate on every change and drop the messages the user has already
+  // fixed, instead of holding them until the next submit.
+  const draftSnapshot = JSON.stringify(draft);
+  useClearResolvedErrors(
+    errors as unknown as Record<string, unknown>,
+    (next) => setErrors(next as ProposalErrors),
+    () => validateProposal(draft).errors as unknown as Record<string, unknown>,
+    [draftSnapshot],
+  );
+
+  // A server refusal ("this candidate already has an interview in progress")
+  // stops applying the moment the inputs change.
+  const liveFailure = useStaleServerError(failed, draftSnapshot);
 
   const submit = () => {
     const result = validateProposal(draft);
@@ -336,9 +351,9 @@ export function SlotProposer({
         />
       </div>
 
-      {failed ? (
+      {liveFailure ? (
         <p role="alert" className="text-sm text-destructive">
-          {failed}
+          {liveFailure}
         </p>
       ) : null}
 

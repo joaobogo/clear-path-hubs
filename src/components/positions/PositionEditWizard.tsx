@@ -10,6 +10,7 @@ import {
   countRequired,
 } from "@/lib/screening-limits";
 import { toast } from "sonner";
+import { useClearResolvedErrors } from "@/lib/use-live-errors";
 import { toastError } from "@/lib/toast-error";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -146,6 +147,8 @@ export function PositionEditWizard({
   useDetailCrumb(initial.title ?? null);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  // Bumped on every submit attempt so focus only jumps then, never while typing.
+  const [focusToken, setFocusToken] = useState(0);
   const [qDraft, setQDraft] = useState("");
   const [qTopicError, setQTopicError] = useState<string | null>(null);
   const [reqDirty, setReqDirty] = useState(false);
@@ -241,6 +244,7 @@ export function PositionEditWizard({
   const next = () => {
     const e = validateStep(step, state);
     setErrors(e);
+    setFocusToken((n) => n + 1);
     if (Object.keys(e).length === 0) setStep((n) => Math.min(LAST_STEP, n + 1));
   };
   const back = () => setStep((n) => Math.max(1, n - 1));
@@ -253,6 +257,7 @@ export function PositionEditWizard({
       };
       if (Object.keys(all).length > 0) {
         setErrors(all);
+        setFocusToken((n) => n + 1);
         if (all.title || all.work_model || all.employment_type || all.seniority || all.headcount || all.budget_max)
           setStep(1);
         else if (all.must_have_skills || all.target_titles) setStep(2);
@@ -328,15 +333,28 @@ export function PositionEditWizard({
 
   const progress = useMemo(() => Math.round(((step - 1) / (STEPS.length - 1)) * 100), [step]);
 
+  // Focus the first offending field, but only right after a submit attempt —
+  // not every time a message clears while the user is still typing.
   useEffect(() => {
-    if (Object.keys(errors).length === 0) return;
+    if (focusToken === 0) return;
     const key = Object.keys(errors)[0];
+    if (!key) return;
     const el = document.querySelector<HTMLElement>(`[data-field="${key}"]`);
     if (el) {
       el.focus();
       el.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  }, [errors]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusToken]);
+
+  // Live re-validation: as soon as a field is corrected its message disappears,
+  // without waiting for another Continue / Save.
+  useClearResolvedErrors(
+    errors,
+    setErrors,
+    () => ({ ...validateStep(1, state), ...validateStep(2, state) }),
+    [JSON.stringify(state)],
+  );
 
   const qualityDraft: Partial<QualityInput> = useMemo(
     () => ({

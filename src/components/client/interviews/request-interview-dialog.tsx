@@ -3,6 +3,7 @@ import { formatEnumLabel } from "@/lib/human-labels";
 import { useQuery } from "@tanstack/react-query";
 import { SlotProposer } from "@/components/client/scheduling/slot-proposer";
 import { QueryErrorCard } from "@/components/client/query-error";
+import { useStaleServerError } from "@/lib/use-live-errors";
 import {
   Dialog,
   DialogContent,
@@ -58,6 +59,8 @@ export function RequestInterviewDialog({
   const [matchId, setMatchId] = useState<string>(initialMatchId ?? "");
   const [candidateError, setCandidateError] = useState<string | null>(null);
   const candidates = candidatesQ.data?.candidates ?? [];
+  // A candidate-specific refusal stops applying once another candidate is picked.
+  const liveFailed = useStaleServerError(failed, matchId);
 
   return (
     <Dialog open onOpenChange={(v) => !v && onClose()}>
@@ -135,7 +138,7 @@ export function RequestInterviewDialog({
               candidates.find((c) => c.match_id === matchId)?.availability_preference ?? null
             }
             submitting={submitting}
-            failed={failed}
+            failed={liveFailed}
             onCancel={onClose}
             submitLabel="Send proposed times"
             onSubmit={(p) => {
