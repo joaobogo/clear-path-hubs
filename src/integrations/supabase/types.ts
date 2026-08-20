@@ -15748,6 +15748,23 @@ export type Database = {
         Args: { _reason: string; _user_id: string }
         Returns: number
       }
+      get_conversation_unread_counts: {
+        Args: { _conversation_ids: string[]; _user_id: string }
+        Returns: {
+          conversation_id: string
+          unread_count: number
+        }[]
+      }
+      get_latest_conversation_messages: {
+        Args: { conversation_ids: string[] }
+        Returns: {
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          sender_user_id: string
+        }[]
+      }
       grant_plan_entitlement: {
         Args: {
           _environment: string

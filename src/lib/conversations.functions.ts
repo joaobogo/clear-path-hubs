@@ -212,145 +212,132 @@ async function nameMap(
 export const listConversations = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw) => z.object({ orgId: z.string().uuid() }).parse(raw))
-  .handler(async ({ data, context }): Promise<{ items: ConversationSummary[] }> => {
-    const { supabase, userId } = context;
-    await assertOrgAccess(supabase, userId, data.orgId);
+  .handler(
+    async ({ data, context }): Promise<{ items: ConversationSummary[]; partialError?: string }> => {
+      const { supabase, userId } = context;
+      await assertOrgAccess(supabase, userId, data.orgId);
 
-    const { data: convos, error } = await supabase
-      .from("conversations")
-      .select(
-        "id, organization_id, scope, position_id, candidate_match_id, subject, last_message_at",
-      )
-      .eq("organization_id", data.orgId)
-      .not("last_message_at", "is", null)
-      .order("last_message_at", { ascending: false });
+      const { data: convos, error } = await supabase
+        .from("conversations")
+        .select(
+          "id, organization_id, scope, position_id, candidate_match_id, subject, last_message_at",
+        )
+        .eq("organization_id", data.orgId)
+        .not("last_message_at", "is", null)
+        .order("last_message_at", { ascending: false });
 
-    if (error) throw new Error(error.message);
+      if (error) throw new Error(error.message);
 
-    const rows = (convos as Row[]) ?? [];
-    if (rows.length === 0) return { items: [] };
-    const ids = rows.map((c) => c.id as string);
+      const rows = (convos as Row[]) ?? [];
+      if (rows.length === 0) return { items: [] };
+      const ids = rows.map((c) => c.id as string);
 
-    const [{ data: msgs }, { data: reads }] = await Promise.all([
-      supabase
-        .from("messages")
-        .select("id, conversation_id, body, created_at, sender_user_id")
-        .in("conversation_id", ids)
-        .order("created_at", { ascending: false })
-        .limit(500),
-      supabase
-        .from("conversation_reads")
-        .select("conversation_id, last_read_at")
-        .eq("user_id", userId)
-        .in("conversation_id", ids),
-    ]);
+      const [{ data: latestMsgs, error: latestErr }, { data: unreadRows, error: unreadErr }] =
+        await Promise.all([
+          supabase.rpc("get_latest_conversation_messages", { conversation_ids: ids }),
+          supabase.rpc("get_conversation_unread_counts", {
+            _user_id: userId,
+            _conversation_ids: ids,
+          }),
+        ]);
 
-    const readAt: Record<string, string> = {};
-    for (const r of (reads as Row[]) ?? [])
-      readAt[r.conversation_id as string] = r.last_read_at as string;
+      const partialErrors: string[] = [];
+      if (latestErr) partialErrors.push("latest messages");
+      if (unreadErr) partialErrors.push("unread counts");
 
-    const last: Record<string, Row> = {};
-    const ownLatest: Record<string, string> = {};
-    const rowsByConvo: Record<string, Row[]> = {};
-    for (const m of (msgs as Row[]) ?? []) {
-      const cid = m.conversation_id as string;
-      if (!last[cid]) last[cid] = m;
-      (rowsByConvo[cid] ??= []).push(m);
-      // Posting is reading: your own message marks everything before it as seen.
-      if (m.sender_user_id === userId && !ownLatest[cid]) ownLatest[cid] = m.created_at as string;
-    }
-
-    const unread: Record<string, number> = {};
-    for (const [cid, list] of Object.entries(rowsByConvo)) {
-      const stamps = [readAt[cid], ownLatest[cid]].filter(Boolean) as string[];
-      const cutoff = stamps.length
-        ? new Date(Math.max(...stamps.map((s) => new Date(s).getTime())))
-        : null;
-      for (const m of list) {
-        if (m.sender_user_id === userId) continue;
-        if (cutoff && new Date(m.created_at as string) <= cutoff) continue;
-        unread[cid] = (unread[cid] ?? 0) + 1;
+      const last: Record<string, Row> = {};
+      for (const m of (latestMsgs as Row[]) ?? []) {
+        last[m.conversation_id as string] = m;
       }
-    }
 
-    const names = await nameMap(Object.values(last).map((m) => m.sender_user_id as string));
+      const unread: Record<string, number> = {};
+      for (const u of (unreadRows as Row[]) ?? []) {
+        unread[u.conversation_id as string] = Number(u.unread_count ?? 0);
+      }
 
-    // Context labels (role title / candidate reference) for scoped threads.
-    const positionIds = rows.map((r) => r.position_id).filter(Boolean) as string[];
-    const matchIds = rows.map((r) => r.candidate_match_id).filter(Boolean) as string[];
-    const [{ data: positions }, { data: matches }] = await Promise.all([
-      positionIds.length
-        ? supabase.from("positions").select("id, title, is_test_record").in("id", positionIds)
-        : Promise.resolve({ data: [] as Row[] }),
-      matchIds.length
-        ? supabase
-            .from("candidate_matches")
-            .select(
-              "id, position_id, is_test_record, candidate_profiles(full_name), positions(title, is_test_record)",
-            )
-            .in("id", matchIds)
-        : Promise.resolve({ data: [] as Row[] }),
-    ]);
-    const positionTitle: Record<string, string> = {};
-    // QA fixtures must never surface in a client inbox, so anything flagged as
-    // a test record (or still carrying a QA marker in its title) is dropped
-    // along with the thread that points at it.
-    const qaPositionIds = new Set<string>();
-    const qaMatchIds = new Set<string>();
-    for (const p of (positions as Row[]) ?? []) {
-      positionTitle[p.id as string] = p.title as string;
-      if (p.is_test_record === true || isQaFixtureTitle(p.title)) qaPositionIds.add(p.id as string);
-    }
-    const matchLabel: Record<string, string> = {};
-    for (const m of (matches as Row[]) ?? []) {
-      const cand = (m.candidate_profiles as Row | null)?.full_name as string | undefined;
-      const role = (m.positions as Row | null)?.title as string | undefined;
-      matchLabel[m.id as string] = [cand ?? "Candidate", role].filter(Boolean).join(" · ");
-      if (
-        m.is_test_record === true ||
-        (m.positions as Row | null)?.is_test_record === true ||
-        isQaFixtureTitle(role) ||
-        isQaFixtureTitle(cand)
-      )
-        qaMatchIds.add(m.id as string);
-    }
+      const names = await nameMap(Object.values(last).map((m) => m.sender_user_id as string));
 
-    const visibleRows = rows.filter((c) => {
-      if (c.position_id && qaPositionIds.has(c.position_id as string)) return false;
-      if (c.candidate_match_id && qaMatchIds.has(c.candidate_match_id as string)) return false;
-      if (isQaFixtureTitle(c.subject)) return false;
-      const body = last[c.id as string]?.body;
-      return !isQaFixtureTitle(body);
-    });
+      // Context labels (role title / candidate reference) for scoped threads.
+      const positionIds = rows.map((r) => r.position_id).filter(Boolean) as string[];
+      const matchIds = rows.map((r) => r.candidate_match_id).filter(Boolean) as string[];
+      const [{ data: positions }, { data: matches }] = await Promise.all([
+        positionIds.length
+          ? supabase.from("positions").select("id, title, is_test_record").in("id", positionIds)
+          : Promise.resolve({ data: [] as Row[] }),
+        matchIds.length
+          ? supabase
+              .from("candidate_matches")
+              .select(
+                "id, position_id, is_test_record, candidate_profiles(full_name), positions(title, is_test_record)",
+              )
+              .in("id", matchIds)
+          : Promise.resolve({ data: [] as Row[] }),
+      ]);
+      const positionTitle: Record<string, string> = {};
+      // QA fixtures must never surface in a client inbox, so anything flagged as
+      // a test record (or still carrying a QA marker in its title) is dropped
+      // along with the thread that points at it.
+      const qaPositionIds = new Set<string>();
+      const qaMatchIds = new Set<string>();
+      for (const p of (positions as Row[]) ?? []) {
+        positionTitle[p.id as string] = p.title as string;
+        if (p.is_test_record === true || isQaFixtureTitle(p.title)) qaPositionIds.add(p.id as string);
+      }
+      const matchLabel: Record<string, string> = {};
+      for (const m of (matches as Row[]) ?? []) {
+        const cand = (m.candidate_profiles as Row | null)?.full_name as string | undefined;
+        const role = (m.positions as Row | null)?.title as string | undefined;
+        matchLabel[m.id as string] = [cand ?? "Candidate", role].filter(Boolean).join(" · ");
+        if (
+          m.is_test_record === true ||
+          (m.positions as Row | null)?.is_test_record === true ||
+          isQaFixtureTitle(role) ||
+          isQaFixtureTitle(cand)
+        )
+          qaMatchIds.add(m.id as string);
+      }
 
-    const items: ConversationSummary[] = visibleRows.map((c) => {
-      const lastMsg = last[c.id as string];
-      const scope = c.scope as ConversationScope;
-      const contextLabel =
-        scope === "position"
-          ? (positionTitle[c.position_id as string] ?? "Role")
-          : scope === "candidate"
-            ? (matchLabel[c.candidate_match_id as string] ?? "Candidate")
-            : null;
-      return {
-        id: c.id as string,
-        organization_id: c.organization_id as string,
-        scope,
-        position_id: (c.position_id as string | null) ?? null,
-        candidate_match_id: (c.candidate_match_id as string | null) ?? null,
-        subject: (c.subject as string | null) ?? contextLabel ?? "General",
-        context_label: contextLabel,
-        last_message_at: c.last_message_at as string,
-        last_body: (lastMsg?.body as string | undefined) ?? null,
-        last_sender_name: lastMsg?.sender_user_id
-          ? (names[lastMsg.sender_user_id as string]?.name ?? null)
-          : null,
-        unread: unread[c.id as string] ?? 0,
-      };
-    });
+      const visibleRows = rows.filter((c) => {
+        if (c.position_id && qaPositionIds.has(c.position_id as string)) return false;
+        if (c.candidate_match_id && qaMatchIds.has(c.candidate_match_id as string)) return false;
+        if (isQaFixtureTitle(c.subject)) return false;
+        const body = last[c.id as string]?.body;
+        return !isQaFixtureTitle(body);
+      });
 
-    return { items };
-  });
+      const items: ConversationSummary[] = visibleRows.map((c) => {
+        const lastMsg = last[c.id as string];
+        const scope = c.scope as ConversationScope;
+        const contextLabel =
+          scope === "position"
+            ? (positionTitle[c.position_id as string] ?? "Role")
+            : scope === "candidate"
+              ? (matchLabel[c.candidate_match_id as string] ?? "Candidate")
+              : null;
+        return {
+          id: c.id as string,
+          organization_id: c.organization_id as string,
+          scope,
+          position_id: (c.position_id as string | null) ?? null,
+          candidate_match_id: (c.candidate_match_id as string | null) ?? null,
+          subject: (c.subject as string | null) ?? contextLabel ?? "General",
+          context_label: contextLabel,
+          last_message_at: c.last_message_at as string,
+          last_body: (lastMsg?.body as string | undefined) ?? null,
+          last_sender_name: lastMsg?.sender_user_id
+            ? (names[lastMsg.sender_user_id as string]?.name ?? null)
+            : null,
+          unread: unread[c.id as string] ?? 0,
+        };
+      });
+
+      const partialError = partialErrors.length
+        ? `Some data could not be loaded: ${partialErrors.join(" and ")}. The list may be incomplete.`
+        : undefined;
+
+      return { items, partialError };
+    },
+  );
 
 const ensureInput = z
   .object({
@@ -365,6 +352,26 @@ const ensureInput = z
   })
   .refine((v) => v.scope !== "candidate" || !!v.candidateMatchId, {
     message: "candidateMatchId is required for a candidate thread",
+  });
+
+/** Read-only lookup for an existing conversation scoped to account/role/candidate. */
+export const findConversation = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((raw) => ensureInput.parse(raw))
+  .handler(async ({ data, context }): Promise<{ id: string | null }> => {
+    const { supabase, userId } = context;
+    await assertOrgAccess(supabase, userId, data.orgId);
+
+    let existingQ = supabase
+      .from("conversations")
+      .select("id")
+      .eq("organization_id", data.orgId)
+      .eq("scope", data.scope);
+    if (data.scope === "position") existingQ = existingQ.eq("position_id", data.positionId!);
+    if (data.scope === "candidate")
+      existingQ = existingQ.eq("candidate_match_id", data.candidateMatchId!);
+    const { data: existing } = await existingQ.maybeSingle();
+    return { id: existing ? ((existing as Row).id as string) : null };
   });
 
 /** Idempotent: one thread per account / role / candidate. */
@@ -399,7 +406,6 @@ export const ensureConversation = createServerFn({ method: "POST" })
       })
       .select("id")
       .single();
-
 
     if (error) {
       // Unique index race — read the winner instead of failing the UI.

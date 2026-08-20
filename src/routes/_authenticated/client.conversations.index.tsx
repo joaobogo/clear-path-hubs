@@ -9,7 +9,8 @@ import { listConversations } from "@/lib/conversations.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Briefcase, MessageSquare, Search, User, UserCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Briefcase, MessageSquare, Search, User, UserCircle, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SkeletonRows } from "@/components/client/states";
 import { QueryErrorCard } from "@/components/client/query-error";
@@ -116,18 +117,34 @@ function ConversationsPage() {
   const unreadCount = (threadData?.items ?? []).filter((c) => c.unread > 0).length;
 
 
+  const totalCount = threadData?.items?.length ?? 0;
+
   return (
     <div className="space-y-5">
       <header>
         <h1 className="flex items-center gap-2 text-2xl font-semibold">
           <MessageSquare className="h-6 w-6 text-primary" />
           Messages
+          <span className="text-sm font-normal text-muted-foreground" data-testid="conversation-count">
+            {totalCount} conversation{totalCount === 1 ? "" : "s"}
+          </span>
+          {unreadCount > 0 && (
+            <Badge variant="secondary" className="text-xs">
+              {unreadCount} unread
+            </Badge>
+          )}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           One thread per role and per candidate. Everything is mirrored to email.
-          {unreadCount ? ` ${unreadCount} unread.` : ""}
         </p>
       </header>
+
+      {threadData?.partialError ? (
+        <Alert variant="destructive" className="text-sm">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>{threadData.partialError}</AlertDescription>
+        </Alert>
+      ) : null}
 
 
       <div className="flex flex-wrap items-center gap-2">

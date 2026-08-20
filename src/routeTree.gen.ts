@@ -190,6 +190,7 @@ import { Route as AuthenticatedTeamsActTokenRouteImport } from './routes/_authen
 import { Route as AuthenticatedMeApplicationsIdRouteImport } from './routes/_authenticated/me.applications.$id'
 import { Route as AuthenticatedClientPositionsNewRouteImport } from './routes/_authenticated/client.positions.new'
 import { Route as AuthenticatedClientPositionsIdRouteImport } from './routes/_authenticated/client.positions.$id'
+import { Route as AuthenticatedClientConversationsNewRouteImport } from './routes/_authenticated/client.conversations.new'
 import { Route as AuthenticatedClientConversationsConversationIdRouteImport } from './routes/_authenticated/client.conversations.$conversationId'
 import { Route as AuthenticatedClientCandidatesIdRouteImport } from './routes/_authenticated/client.candidates.$id'
 import { Route as AuthenticatedAdminScoringCalibrationRouteImport } from './routes/_authenticated/admin.scoring.calibration'
@@ -1192,6 +1193,12 @@ const AuthenticatedClientPositionsIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedClientPositionsRoute,
   } as any)
+const AuthenticatedClientConversationsNewRoute =
+  AuthenticatedClientConversationsNewRouteImport.update({
+    id: '/conversations/new',
+    path: '/conversations/new',
+    getParentRoute: () => AuthenticatedClientRoute,
+  } as any)
 const AuthenticatedClientConversationsConversationIdRoute =
   AuthenticatedClientConversationsConversationIdRouteImport.update({
     id: '/conversations/$conversationId',
@@ -1464,6 +1471,7 @@ export interface FileRoutesByFullPath {
   '/admin/scoring/calibration': typeof AuthenticatedAdminScoringCalibrationRoute
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
+  '/client/conversations/new': typeof AuthenticatedClientConversationsNewRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/client/positions/new': typeof AuthenticatedClientPositionsNewRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
@@ -1654,6 +1662,7 @@ export interface FileRoutesByTo {
   '/admin/scoring/calibration': typeof AuthenticatedAdminScoringCalibrationRoute
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
+  '/client/conversations/new': typeof AuthenticatedClientConversationsNewRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/client/positions/new': typeof AuthenticatedClientPositionsNewRoute
   '/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
@@ -1856,6 +1865,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/scoring/calibration': typeof AuthenticatedAdminScoringCalibrationRoute
   '/_authenticated/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/_authenticated/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
+  '/_authenticated/client/conversations/new': typeof AuthenticatedClientConversationsNewRoute
   '/_authenticated/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
   '/_authenticated/client/positions/new': typeof AuthenticatedClientPositionsNewRoute
   '/_authenticated/me/applications/$id': typeof AuthenticatedMeApplicationsIdRoute
@@ -2058,6 +2068,7 @@ export interface FileRouteTypes {
     | '/admin/scoring/calibration'
     | '/client/candidates/$id'
     | '/client/conversations/$conversationId'
+    | '/client/conversations/new'
     | '/client/positions/$id'
     | '/client/positions/new'
     | '/me/applications/$id'
@@ -2248,6 +2259,7 @@ export interface FileRouteTypes {
     | '/admin/scoring/calibration'
     | '/client/candidates/$id'
     | '/client/conversations/$conversationId'
+    | '/client/conversations/new'
     | '/client/positions/$id'
     | '/client/positions/new'
     | '/me/applications/$id'
@@ -2449,6 +2461,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/scoring/calibration'
     | '/_authenticated/client/candidates/$id'
     | '/_authenticated/client/conversations/$conversationId'
+    | '/_authenticated/client/conversations/new'
     | '/_authenticated/client/positions/$id'
     | '/_authenticated/client/positions/new'
     | '/_authenticated/me/applications/$id'
@@ -3856,6 +3869,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientPositionsIdRouteImport
       parentRoute: typeof AuthenticatedClientPositionsRoute
     }
+    '/_authenticated/client/conversations/new': {
+      id: '/_authenticated/client/conversations/new'
+      path: '/conversations/new'
+      fullPath: '/client/conversations/new'
+      preLoaderRoute: typeof AuthenticatedClientConversationsNewRouteImport
+      parentRoute: typeof AuthenticatedClientRoute
+    }
     '/_authenticated/client/conversations/$conversationId': {
       id: '/_authenticated/client/conversations/$conversationId'
       path: '/conversations/$conversationId'
@@ -4227,6 +4247,7 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientTeamRoute: typeof AuthenticatedClientTeamRoute
   AuthenticatedClientIndexRoute: typeof AuthenticatedClientIndexRoute
   AuthenticatedClientConversationsConversationIdRoute: typeof AuthenticatedClientConversationsConversationIdRoute
+  AuthenticatedClientConversationsNewRoute: typeof AuthenticatedClientConversationsNewRoute
   AuthenticatedClientConversationsIndexRoute: typeof AuthenticatedClientConversationsIndexRoute
 }
 
@@ -4259,6 +4280,8 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
   AuthenticatedClientIndexRoute: AuthenticatedClientIndexRoute,
   AuthenticatedClientConversationsConversationIdRoute:
     AuthenticatedClientConversationsConversationIdRoute,
+  AuthenticatedClientConversationsNewRoute:
+    AuthenticatedClientConversationsNewRoute,
   AuthenticatedClientConversationsIndexRoute:
     AuthenticatedClientConversationsIndexRoute,
 }

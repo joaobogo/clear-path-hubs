@@ -1,15 +1,13 @@
 import { useState } from "react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { toast } from "sonner";
-import { ensureConversation } from "@/lib/conversations.functions";
-import { useClientOrgSearch } from "@/lib/use-client-org";
 import { Button } from "@/components/ui/button";
 import { Loader2, MessageSquare } from "lucide-react";
 
 /**
  * Entry point into the single thread for a role or a candidate.
- * Creating is idempotent — there is only ever one thread per scope.
+ *
+ * We no longer create an empty conversation here. The user is taken to a draft
+ * composer; the thread is only created once the first message is actually sent.
  */
 export function OpenThreadButton({
   orgId,
@@ -35,8 +33,6 @@ export function OpenThreadButton({
   const navigate = useNavigate();
   const search = useSearch({ strict: false }) as Record<string, any>;
   const preview = search?.preview;
-  const orgSearch = useClientOrgSearch() || orgId;
-  const ensureFn = useServerFn(ensureConversation);
   const [busy, setBusy] = useState(false);
 
   return (
@@ -49,20 +45,16 @@ export function OpenThreadButton({
       onClick={async () => {
         setBusy(true);
         try {
-          const res = await ensureFn({
-            data: { orgId, scope, positionId, candidateMatchId, subject },
-          });
           await navigate({
-            to: "/client/conversations/$conversationId",
-            params: { conversationId: res.id },
-            search: { org: orgSearch, preview },
-          });
-        } catch {
-          // If conversation creation fails (e.g. invalid IDs), fall back to
-          // the organization's general messages list rather than a dead end.
-          await navigate({
-            to: "/client/conversations",
-            search: { org: orgSearch, preview },
+            to: "/client/conversations/new",
+            search: {
+              org: orgId,
+              preview,
+              scope,
+              positionId,
+              candidateMatchId,
+              subject,
+            },
           });
         } finally {
           setBusy(false);
