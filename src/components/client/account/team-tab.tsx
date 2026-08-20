@@ -7,6 +7,7 @@ import { getClientContext } from "@/lib/client-context.functions";
 import { getClientTeam, inviteClientMember, resendClientInvitation, updateClientMemberRole, setClientMemberStatus, removeClientMember } from "@/lib/client-team.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
+import { useStaleServerError } from "@/lib/use-live-errors";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
