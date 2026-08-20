@@ -145,17 +145,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P03 Hide test roles from the client workspace BLOCKER CLIENT HOME
+TEXTO DO USUÁRIO: "P04 Stop showing admin-hidden candidates to the client BLOCKER CLIENT TALENT POOL
 Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-A role literally titled \"BROWSER-TEST-R2 Position\" is visible to the client on /client, inside the \"Our
-commitments to you\" panel, with a full commitments table.
-Exclude any role flagged as test/internal/QA from every client-facing surface: the Overview commitments
-panel, the Roles page, the Account page role counts, and the Executive page.
-If there is no test flag on the role record, add a boolean column \`is_test\` (default false) and filter
-client queries on \`is_test = false\`.
-Do not delete the roles — only hide them from client views.
-Done when: No role whose title contains BROWSER-TEST, QA, TEST or GATE appears anywhere in the client
-workspace."`}
+On /client/talent-pool the client can see ten candidate cards named \"QA LinkedIn Applicant\" and \"QA No
+LinkedIn Applicant\". In admin these exact records are marked CLIENT VISIBLE = Hidden and ADMIN = Pending.
+The talent-pool query is not applying the client-visibility filter. Add it, so the page only returns
+candidates that are visible/published to that client.
+Also fix the header count on that page (\"20 candidates\") so it counts only the filtered set.
+Done when: /client/talent-pool shows zero records named QA LinkedIn Applicant, and its count matches the
+number of cards shown."`}
         </div>
 
         <Scripts />
