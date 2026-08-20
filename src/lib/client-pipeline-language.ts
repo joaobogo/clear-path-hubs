@@ -187,8 +187,8 @@ export type PipelineActionTarget =
     }
   | {
       kind: "offer_response";
-      to: "/client/candidates";
-      search: { position: string; stage: "offer" };
+      to: "/client/offers";
+      search: { position: string };
     };
 
 export function buildPipelineActionTarget(
@@ -217,8 +217,8 @@ export function buildPipelineActionTarget(
   if (input.offers > 0)
     return {
       kind: "offer_response",
-      to: "/client/candidates",
-      search: { position: input.positionId, stage: "offer" },
+      to: "/client/offers",
+      search: { position: input.positionId },
     };
   return null;
 }
