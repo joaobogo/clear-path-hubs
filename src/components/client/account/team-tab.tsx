@@ -1029,7 +1029,7 @@ function InviteDialog({
   type="email"
   autoFocus
   required
-  aria-invalid={failure ? true : undefined}
+  aria-invalid={liveFailure ? true : undefined}
   value={email}
   onChange={(e) => {
     const next = e.target.value;
