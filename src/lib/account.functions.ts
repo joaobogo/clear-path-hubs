@@ -143,9 +143,9 @@ export const getAccountOverview = createServerFn({ method: "GET" })
     ).length;
 
     const hireRows = ((hires as AnyRow[]) ?? []).filter(
-      // `hire_confirmed` is the stored enum value; the old `"hired"` compare
-      // never matched and left this list dependent on a stamp alone.
-      (h) => h.status === "hire_confirmed" || Boolean(h.hired_at),
+      (h) =>
+        (h.status === "hire_confirmed" || Boolean(h.hired_at)) &&
+        !["closed_lost", "declined", "withdrawn"].includes(String(h.status)),
     );
     const now = new Date();
     const nowIso = now.toISOString();

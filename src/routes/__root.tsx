@@ -145,15 +145,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P04 Stop showing admin-hidden candidates to the client BLOCKER CLIENT TALENT POOL
+TEXTO DO USUÁRIO: "P06 Do not show start dates for declined offers BLOCKER CLIENT ACCOUNT
 Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-On /client/talent-pool the client can see ten candidate cards named \"QA LinkedIn Applicant\" and \"QA No
-LinkedIn Applicant\". In admin these exact records are marked CLIENT VISIBLE = Hidden and ADMIN = Pending.
-The talent-pool query is not applying the client-visibility filter. Add it, so the page only returns
-candidates that are visible/published to that client.
-Also fix the header count on that page (\"20 candidates\") so it counts only the filtered set.
-Done when: /client/talent-pool shows zero records named QA LinkedIn Applicant, and its count matches the
-number of cards shown."`}
+On /client/account, expand \"Workspace details\" → \"Roles and where they are\". The \"UPCOMING START DATES\"
+block shows \"Senior Full-Stack Engineer — 1 Sept 2026\". That start date belongs to a candidate whose offer
+status is \"Closed lost / Candidate declined\".
+Change the query behind UPCOMING START DATES so it only includes offers with status accepted (or hire
+confirmed). Exclude declined, closed lost and withdrawn offers.
+If the filtered result is empty, hide the block entirely rather than showing an empty heading.
+Done when: No start date is shown for a candidate whose offer is closed lost or declined."`}
         </div>
 
         <Scripts />
