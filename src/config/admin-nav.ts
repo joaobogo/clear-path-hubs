@@ -64,7 +64,7 @@ export const ADMIN_NAV: WorkspaceNavItem[] = [
     label: "Comms",
     icon: MessageSquare,
     group: "Comms",
-    hint: "Messages, notifications, copilot",
+    hint: "Messages and notifications",
   },
   {
     to: "/admin/notifications",

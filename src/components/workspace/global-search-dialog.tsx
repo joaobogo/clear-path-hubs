@@ -84,7 +84,6 @@ const CLIENT_QUICK_ACTIONS: QuickAction[] = [
 ];
 
 const ADMIN_QUICK_ACTIONS: QuickAction[] = [
-  { id: "qa-admin-copilot", label: "Open Copilot", keywords: "copilot assistant admin", href: "/admin/copilot", icon: Zap },
   { id: "qa-admin-clients", label: "Open clients list", keywords: "clients", href: "/admin/clients", icon: Building2 },
 ];
 

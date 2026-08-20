@@ -158,7 +158,6 @@ import { Route as AuthenticatedAdminEvidenceGapsRouteImport } from './routes/_au
 import { Route as AuthenticatedAdminDecisionBacklogRouteImport } from './routes/_authenticated/admin.decision-backlog'
 import { Route as AuthenticatedAdminDataHealthRouteImport } from './routes/_authenticated/admin.data-health'
 import { Route as AuthenticatedAdminDashboardRequestsRouteImport } from './routes/_authenticated/admin.dashboard-requests'
-import { Route as AuthenticatedAdminCopilotRouteImport } from './routes/_authenticated/admin.copilot'
 import { Route as AuthenticatedAdminClients_newRouteImport } from './routes/_authenticated/admin.clients_new'
 import { Route as AuthenticatedAdminClientsRouteImport } from './routes/_authenticated/admin.clients'
 import { Route as AuthenticatedAdminCandidatesRouteImport } from './routes/_authenticated/admin.candidates'
@@ -1010,12 +1009,6 @@ const AuthenticatedAdminDashboardRequestsRoute =
     path: '/dashboard-requests',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminCopilotRoute =
-  AuthenticatedAdminCopilotRouteImport.update({
-    id: '/copilot',
-    path: '/copilot',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
 const AuthenticatedAdminClients_newRoute =
   AuthenticatedAdminClients_newRouteImport.update({
     id: '/clients_new',
@@ -1405,7 +1398,6 @@ export interface FileRoutesByFullPath {
   '/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
   '/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
   '/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
-  '/admin/copilot': typeof AuthenticatedAdminCopilotRoute
   '/admin/dashboard-requests': typeof AuthenticatedAdminDashboardRequestsRoute
   '/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
   '/admin/decision-backlog': typeof AuthenticatedAdminDecisionBacklogRoute
@@ -1604,7 +1596,6 @@ export interface FileRoutesByTo {
   '/admin/agent-ops': typeof AuthenticatedAdminAgentOpsRoute
   '/admin/business-rules': typeof AuthenticatedAdminBusinessRulesRoute
   '/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
-  '/admin/copilot': typeof AuthenticatedAdminCopilotRoute
   '/admin/dashboard-requests': typeof AuthenticatedAdminDashboardRequestsRoute
   '/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
   '/admin/decision-backlog': typeof AuthenticatedAdminDecisionBacklogRoute
@@ -1804,7 +1795,6 @@ export interface FileRoutesById {
   '/_authenticated/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
   '/_authenticated/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
   '/_authenticated/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
-  '/_authenticated/admin/copilot': typeof AuthenticatedAdminCopilotRoute
   '/_authenticated/admin/dashboard-requests': typeof AuthenticatedAdminDashboardRequestsRoute
   '/_authenticated/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
   '/_authenticated/admin/decision-backlog': typeof AuthenticatedAdminDecisionBacklogRoute
@@ -2010,7 +2000,6 @@ export interface FileRouteTypes {
     | '/admin/candidates'
     | '/admin/clients'
     | '/admin/clients_new'
-    | '/admin/copilot'
     | '/admin/dashboard-requests'
     | '/admin/data-health'
     | '/admin/decision-backlog'
@@ -2209,7 +2198,6 @@ export interface FileRouteTypes {
     | '/admin/agent-ops'
     | '/admin/business-rules'
     | '/admin/clients_new'
-    | '/admin/copilot'
     | '/admin/dashboard-requests'
     | '/admin/data-health'
     | '/admin/decision-backlog'
@@ -2408,7 +2396,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/candidates'
     | '/_authenticated/admin/clients'
     | '/_authenticated/admin/clients_new'
-    | '/_authenticated/admin/copilot'
     | '/_authenticated/admin/dashboard-requests'
     | '/_authenticated/admin/data-health'
     | '/_authenticated/admin/decision-backlog'
@@ -3682,13 +3669,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminDashboardRequestsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/copilot': {
-      id: '/_authenticated/admin/copilot'
-      path: '/copilot'
-      fullPath: '/admin/copilot'
-      preLoaderRoute: typeof AuthenticatedAdminCopilotRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
     '/_authenticated/admin/clients_new': {
       id: '/_authenticated/admin/clients_new'
       path: '/clients_new'
@@ -4149,7 +4129,6 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCandidatesRoute: typeof AuthenticatedAdminCandidatesRouteWithChildren
   AuthenticatedAdminClientsRoute: typeof AuthenticatedAdminClientsRouteWithChildren
   AuthenticatedAdminClients_newRoute: typeof AuthenticatedAdminClients_newRoute
-  AuthenticatedAdminCopilotRoute: typeof AuthenticatedAdminCopilotRoute
   AuthenticatedAdminDashboardRequestsRoute: typeof AuthenticatedAdminDashboardRequestsRoute
   AuthenticatedAdminDataHealthRoute: typeof AuthenticatedAdminDataHealthRoute
   AuthenticatedAdminDecisionBacklogRoute: typeof AuthenticatedAdminDecisionBacklogRoute
@@ -4194,7 +4173,6 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
     AuthenticatedAdminCandidatesRouteWithChildren,
   AuthenticatedAdminClientsRoute: AuthenticatedAdminClientsRouteWithChildren,
   AuthenticatedAdminClients_newRoute: AuthenticatedAdminClients_newRoute,
-  AuthenticatedAdminCopilotRoute: AuthenticatedAdminCopilotRoute,
   AuthenticatedAdminDashboardRequestsRoute:
     AuthenticatedAdminDashboardRequestsRoute,
   AuthenticatedAdminDataHealthRoute: AuthenticatedAdminDataHealthRoute,
