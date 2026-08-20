@@ -9,7 +9,7 @@
  * switched off, and the row states the reason rather than hiding the control.
  */
 import { useEffect, useMemo, useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Bell, Lock } from "lucide-react";
@@ -31,7 +31,8 @@ import { toastError } from "@/lib/toast-error";
 import {
   NOTIFICATION_EVENTS,
   defaultPreferences,
-  modeLabel,
+  modeLabelFor,
+  specFor,
   type DeliveryMode,
   type PreferenceKey,
   type PreferenceRow,
@@ -45,6 +46,7 @@ export function NotificationPreferences({
   canEdit: boolean;
 }) {
   const getFn = useServerFn(getClientNotificationPreferences);
+  const queryClient = useQueryClient();
   const query = useQuery({
     queryKey: ["client-notification-prefs", orgId],
     queryFn: () => getFn({ data: { orgId } }),
@@ -61,8 +63,9 @@ export function NotificationPreferences({
   const save = useMutation({
     mutationFn: (vars: { key: PreferenceKey; mode: DeliveryMode }) =>
       updateFn({ data: { orgId, ...vars } }),
-  
-    // Failure must be visible: a silent rejection reads as success.
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["client-notification-prefs", orgId] });
+    },
     onError: (e: unknown) =>
       toastError(e, { fallback: "We couldn't save. Nothing was saved — please try again." }),
   });
@@ -71,16 +74,18 @@ export function NotificationPreferences({
 
   const commit = async (key: PreferenceKey, mode: DeliveryMode) => {
     if (!canEdit || savingKey) return;
-    const previous = row[key];
-    if (previous === mode) return;
+    // Always allow the save: the server is the source of truth, and the user
+    // expects a confirmation toast every time they pick a value. This avoids
+    // stale local-state guards that can block a legitimate change back.
     setRow((r) => ({ ...r, [key]: mode }));
     setSavingKey(key);
     try {
       await save.mutateAsync({ key, mode });
-      toast.success(`Saved — ${modeLabel(mode).toLowerCase()}`);
+      toast.success(`Saved — ${modeLabelFor(specFor(key), mode).toLowerCase()}`);
     } catch (e) {
       // Revert visibly: the row goes back to the value the server still holds.
-      setRow((r) => ({ ...r, [key]: previous }));
+      const serverValue = state.data?.preferences?.[key];
+      setRow((r) => ({ ...r, [key]: serverValue ?? r[key] }));
       const detail = (e as Error).message?.replace(/^Error: /, "");
       toast.error("That did not save", { description: detail || undefined });
     } finally {
@@ -139,7 +144,7 @@ export function NotificationPreferences({
                       </Label>
                       <p className="mt-0.5 text-xs text-muted-foreground">{spec.description}</p>
                       <p className="mt-1 text-xs text-muted-foreground">
-                        Default: {modeLabel(spec.defaultMode)}
+                        Default: {modeLabelFor(spec, spec.defaultMode)}
                       </p>
                       {locked && (
                         <p className="mt-1 flex items-start gap-1.5 text-xs text-muted-foreground">
@@ -158,12 +163,12 @@ export function NotificationPreferences({
                         className="w-full shrink-0 sm:w-[186px]"
                         aria-label={`${spec.label} delivery`}
                       >
-                        <SelectValue />
+                        <SelectValue>{modeLabelFor(spec, row[spec.key])}</SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {spec.modes.map((mode) => (
                           <SelectItem key={mode} value={mode}>
-                            {modeLabel(mode)}
+                            {modeLabelFor(spec, mode)}
                           </SelectItem>
                         ))}
                       </SelectContent>
