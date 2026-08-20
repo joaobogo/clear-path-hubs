@@ -143,23 +143,20 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "With \\"Test records hidden\\" active and the page freshly loaded, these still show QA fixtures:
+TEXTO DO USUÁRIO: "After the Position→Role and Record→Candidate rename, some query params were renamed and the old ones now fail silently — accepted, ignored, no message. A stale bookmark returns a plausible-looking wrong answer.
 
-/admin/team — the \\"Client organizations\\" scope picker lists QA_TESTCO_E2E, QA_OTHERCO_E2E,
-QA_GATE7_686096 and TaaSFlow Platform. It also lists a staff member literally named
-\\"QA platform_admin\\".
+Working: ?status=active (4 positions), ?stage=shortlisted (3), ?stage=interview_process (3), ?tab=evidence.
 
-/admin/support — the \\"Open a workspace\\" picker lists all 15 organizations including
-QA_GATE7_686096, QA_OTHERCO_E2E and QA_TESTCO_E2E, all with status \\"active\\".
+Silently broken:
+  ?fit=strong → returns all 31 submissions, i.e. the full unfiltered list
+  ?filter=interview → returns all 31
+  ?archived=1 on /admin/clients → returns 6, identical to no param. The UI checkbox works and gives 8, but the URL param that expressed the same state doesn't.
+  ?tab=client-preview → silently redirects to ?tab=profile. The real slug is now \"preview\".
+  ?tab=intake → same silent fallback. The real slug is \"dossier\".
 
-/admin/payments — the Pilots block lists the same three QA orgs, and \\"Abandoned before
-payment\\" shows Rehearsal Hotels 489631.
+There's also an inconsistency: ?status=zzzznotreal and ?stage=zzzznotreal both correctly return 0, so unknown values for those params are handled strictly. But fit and filter silently return everything. Two different behaviours for the same situation.
 
-Please apply the same org filter these pickers use everywhere the toggle applies.
-
-For reference, /admin/candidates already gets this right — its client dropdown correctly
-drops QA_GATE7_686096 when the toggle is off, and the list itself goes from 31 to 23
-submissions. Copy that.\"`}
+Please add redirects from the old param names to the new ones, make ?archived=1 drive the same state as the checkbox, and when a param value isn't recognised show a dismissible notice like \"Filter 'fit=strong' isn't recognised — showing all 31 submissions.\" Never silently ignore it."`}
         </div>
 
         <Scripts />
