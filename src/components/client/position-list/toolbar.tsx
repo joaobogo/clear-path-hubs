@@ -41,7 +41,7 @@ function ActionLink({ row }: { row: Row }) {
   }
   if (target?.kind === "offer_response") {
     return (
-      <Link to="/client/offers" search={{ position: target.search.position }} className={cls}>
+      <Link to="/client/offers" className={cls}>
         See the offer →
       </Link>
     );
