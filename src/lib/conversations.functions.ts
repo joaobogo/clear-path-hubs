@@ -393,10 +393,11 @@ export const ensureConversation = createServerFn({ method: "POST" })
         candidate_match_id: data.scope === "candidate" ? data.candidateMatchId! : null,
         subject: data.subject ?? (data.scope === "organization" ? "General" : null),
         created_by: userId,
-        last_message_at: undefined, // Explicitly undefined (null in DB) until first message
+        last_message_at: null, // No timestamp until the first message is posted.
       })
       .select("id")
       .single();
+
 
     if (error) {
       // Unique index race — read the winner instead of failing the UI.
