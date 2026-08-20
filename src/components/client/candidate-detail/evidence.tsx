@@ -436,7 +436,7 @@ export const RequirementCoverage = memo(function RequirementCoverage({
   /** Folds the "why we shortlisted" summary into this single requirement list. */
   withRationale?: boolean;
 }) {
-  const { coverage, requirement_rows } = candidate;
+  const { requirement_rows } = candidate;
   if (requirement_rows.length === 0) return null;
   const rationale = withRationale ? buildShortlistRationale(candidate) : null;
   return (
