@@ -66,7 +66,7 @@ export const BUCKET_LABELS: Record<RunBucket, string> = {
   waiting_approval: "Waiting approval",
   failed: "Failed runs",
   completed: "Completed runs",
-  superseded: "Superseded / cancelled",
+  superseded: "Replaced / cancelled",
 };
 
 /**
