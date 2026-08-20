@@ -227,8 +227,7 @@ function IntakeDetail() {
               className="mt-2"
               disabled={rejectM.isPending}
               onClick={() => {
-                setReason("Duplicate of another brief from the same company");
-                rejectM.mutate();
+                rejectM.mutate("Duplicate of another brief from the same company");
               }}
             >
               {rejectM.isPending ? "Closing…" : "Close as duplicate"}
@@ -387,7 +386,7 @@ function IntakeDetail() {
               className="mt-2"
               variant="destructive"
               disabled={reason.trim().length < 3 || rejectM.isPending}
-              onClick={() => rejectM.mutate()}
+              onClick={() => rejectM.mutate(undefined)}
             >
               {rejectM.isPending ? "Rejecting…" : "Reject intake"}
             </Button>
