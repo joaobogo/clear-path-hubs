@@ -75,7 +75,7 @@ export function formatDate(
  * machine output and "1m" is ambiguous between a minute and a month. Past a
  * week the absolute date is more useful, so it falls back to "15 Aug 2026".
  */
-export function formatRelative(iso: string | null | undefined): string {
+export function formatRelative(iso: string | number | Date | null | undefined): string {
   if (!iso) return "—";
   const date = toDate(iso);
   if (!date) return "—";
