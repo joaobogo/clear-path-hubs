@@ -65,7 +65,7 @@ export type SearchResponse = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = Record<string, any>;
 
-import { sanitizeSearchTerm, orIlike, ilikeValue } from "./search/postgrest-filter";
+import { sanitizeSearchTerm, orIlike, buildPositionSearchOr } from "./search/postgrest-filter";
 
 export const globalSearch = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
