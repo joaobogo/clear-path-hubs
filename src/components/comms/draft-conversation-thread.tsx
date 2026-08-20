@@ -27,6 +27,15 @@ import { Loader2, Paperclip, Send, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useClientOrgSearch } from "@/lib/use-client-org";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+
+function timeLabel(iso: string) {
+  return new Date(iso).toLocaleTimeString(APP_LOCALE, {
+    timeZone: WORKSPACE_TIMEZONE,
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
 function AttachmentLink({ messageId, file }: { messageId: string; file: MessageAttachment }) {
   const urlFn = useServerFn(getMessageAttachmentUrl);
