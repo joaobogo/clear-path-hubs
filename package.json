@@ -19,7 +19,9 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:smoke": "playwright test tests/e2e/smoke-journey.spec.ts",
-    "release:gate": "npm run test && npm run test:e2e:smoke"
+    "test:e2e:performance": "playwright test tests/e2e/admin-performance-smoke.spec.ts",
+    "release:gate": "npm run test && npm run test:e2e:smoke && npm run test:e2e:performance"
+
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
