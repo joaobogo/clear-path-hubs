@@ -150,6 +150,11 @@ export function ProcessingExceptionsBoard({ className }: { className?: string })
     return map;
   }, [active]);
 
+  const orphans = orphanQuery.data ?? [];
+  const openOrphans = useMemo(() => orphans.filter((o) => !o.resolved_at), [orphans]);
+  const resolvedOrphans = useMemo(() => orphans.filter((o) => o.resolved_at), [orphans]);
+
+
   return (
     <section
       className={`rounded-lg border bg-card ${className ?? ""}`}
