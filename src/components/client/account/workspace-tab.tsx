@@ -485,10 +485,10 @@ function AccountSection({
  try {
  await supabase.auth.signOut();
  window.location.assign("/auth");
- } catch (e) {
- toast.error((e as Error).message || "Could not sign out");
- setSigningOut(false);
- }
+  } catch (e) {
+    toastError(e, { fallback: "Could not sign out", tone: "client" });
+    setSigningOut(false);
+  }
  };
 
  return (
