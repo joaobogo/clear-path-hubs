@@ -1,6 +1,7 @@
 // Wizard-style position editor UI, shared by admin and client edit routes.
 // Three steps: Requisition → Candidate profile & gates → Locations.
 // Job-post personalisation lives on the publish flow, not here.
+import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
 import {
   SCREENING_MAX_QUESTIONS,
@@ -1107,15 +1108,25 @@ function Field({
   className?: string;
   children: React.ReactNode;
 }) {
+  const labelId = React.useId();
+  // Associate the visible label with the control so screen readers announce a name.
+  const labelled =
+    label && React.isValidElement(children) &&
+    !(children.props as Record<string, unknown>)["aria-label"] &&
+    !(children.props as Record<string, unknown>)["aria-labelledby"]
+      ? React.cloneElement(children as React.ReactElement<Record<string, unknown>>, {
+          "aria-labelledby": labelId,
+        })
+      : children;
   return (
     <div className={className}>
       {label && (
-        <Label className="mb-1 block text-sm">
+        <Label id={labelId} className="mb-1 block text-sm">
           {label}
           {required && <span className="ml-0.5 text-destructive">*</span>}
         </Label>
       )}
-      {children}
+      {labelled}
       {hint && !error && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
       {error && (
         <p role="alert" className="mt-1 text-xs text-destructive">
