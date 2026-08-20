@@ -46,6 +46,7 @@ export function LifecycleBar({
 }) {
   const statusFn = useServerFn(setPositionStatus);
   const visibilityFn = useServerFn(setPositionVisibility);
+  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const { confirm, confirmDialog } = useConfirmAction();
 
