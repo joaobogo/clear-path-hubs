@@ -121,7 +121,13 @@ export function PanelState({
   return (
     <div className={cn("relative", className)}>
       {showOverlay && (
-        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center rounded-lg bg-background/80 backdrop-blur-[1px] transition-opacity duration-200">
+        // pointer-events-none: this overlay is purely a refresh indicator. Without it the
+        // overlay that appears on a background refetch swallows the first click on any
+        // control inside the panel (buttons, tabs, dialog triggers).
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-50 flex flex-col items-center justify-center rounded-lg bg-background/80 backdrop-blur-[1px] transition-opacity duration-200"
+        >
           <div className="flex flex-col items-center gap-2">
             <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
             <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
