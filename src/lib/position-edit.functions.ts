@@ -508,3 +508,79 @@ export const savePositionEdit = createServerFn({ method: "POST" })
 
     return { ok: true as const, trace_id, position: after };
   });
+
+const publishInput = z.object({
+  id: z.string().uuid(),
+  company_intro: z.string().max(4000).default(""),
+  benefits: z.string().max(4000).default(""),
+  languages: z.string().max(500).default(""),
+  travel: z.string().max(300).default(""),
+  work_authorization_note: z.string().max(600).default(""),
+  accessibility_note: z.string().max(1500).default(""),
+  eeo_statement: z.string().max(3000).default(""),
+  brand_tone: z.string().max(60).default(""),
+  application_deadline: z.string().max(40).default(""),
+  confidentiality: z.enum(["public", "confidential", ""]).default("public"),
+  visibility: z.enum(["public", "private", "confidential"]).optional(),
+});
+
+/** Save job-post copy and optionally publish the role in one action. */
+export const publishPosition = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => publishInput.parse(i))
+  .handler(async ({ data, context }) => {
+    const before = await assertCanEdit(context.userId, data.id);
+    const trace_id = traceId();
+    const s = await getAdmin();
+
+    const { data: existing } = await s
+      .from("positions")
+      .select("intake_context")
+      .eq("id", data.id)
+      .maybeSingle();
+    const priorCtx = (existing?.intake_context ?? {}) as AnyRow;
+
+    const patch: AnyRow = {
+      intake_context: {
+        ...priorCtx,
+        posting: {
+          ...((priorCtx.posting ?? {}) as AnyRow),
+          company_intro: data.company_intro || "",
+          benefits: data.benefits || "",
+          languages: data.languages || "",
+          travel: data.travel || "",
+          work_authorization_note: data.work_authorization_note || "",
+          accessibility_note: data.accessibility_note || "",
+          eeo_statement: data.eeo_statement || "",
+          brand_tone: data.brand_tone || "",
+          application_deadline: data.application_deadline || "",
+          confidentiality: data.confidentiality || "public",
+        },
+      },
+      travel_expectation: data.travel || null,
+      updated_at: new Date().toISOString(),
+    };
+    if (data.visibility) {
+      patch.visibility = data.visibility;
+    }
+
+    const { data: after, error } = await s
+      .from("positions")
+      .update(patch)
+      .eq("id", data.id)
+      .select("*")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+
+    await writeAudit({
+      actor: context.userId,
+      action: data.visibility ? "position.publish" : "position.publish_draft",
+      entity_id: data.id,
+      organization_id: before.organization_id,
+      before,
+      after,
+      trace_id,
+    });
+
+    return { ok: true as const, trace_id, position: after };
+  });
