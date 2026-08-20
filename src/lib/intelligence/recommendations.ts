@@ -488,7 +488,7 @@ export function deriveRecommendations(input: {
           { label: "Window", value: `Last ${input.window.days} days` },
         ],
         suggestedAction:
-          "Processing history to see which step failed. Your delivery lead is alerted automatically, so this is for visibility rather than repair.",
+          "Open the processing history to see which step failed. Your delivery lead is alerted automatically, so this is for visibility rather than repair.",
         expectedImpact:
           "Re-running a failed step usually restores the missing records. Until it does, treat any affected candidate's evidence as incomplete.",
         link: { label: "Processing history", to: "/client/agents" },
