@@ -29,7 +29,7 @@ import { formatDateTime } from "@/lib/format/datetime";
 export const Route = createFileRoute("/_authenticated/client/intelligence")({
   head: () => ({
     meta: [
-      { title: "Hiring Intelligence · TaaSFlow client workspace" },
+      { title: "Hiring intelligence · Client workspace" },
       {
         name: "description",
         content:

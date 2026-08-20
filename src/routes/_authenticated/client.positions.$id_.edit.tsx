@@ -33,7 +33,7 @@ export const Route = createFileRoute("/_authenticated/client/positions/$id_/edit
  <div className="p-10 text-center text-muted-foreground">Role not found.</div>
  ),
  errorComponent: makeRouteErrorComponent("client", "src/routes/_authenticated/client.positions.$id.edit.tsx"),
- head: () => ({ meta: [{ title: "Edit role · TaaSFlow" }] }),
+ head: () => ({ meta: [{ title: "Edit role · Client workspace" }] }),
  component: Page,
 });
 

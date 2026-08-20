@@ -23,7 +23,7 @@ import {
 export const Route = createFileRoute("/_authenticated/client/executive")({
   head: () => ({
     meta: [
-      { title: "Executive portfolio · TaaSFlow" },
+      { title: "Executive portfolio · Client workspace" },
       {
         name: "description",
         content:

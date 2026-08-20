@@ -68,7 +68,7 @@ export const Route = createFileRoute("/_authenticated/client/account")({
     }) as { tab: AccountTab; org?: string; focus?: string } & SeatUpgradeSearch,
   head: () => ({
     meta: [
-      { title: "Account · TaaSFlow client workspace" },
+      { title: "Account · Client workspace" },
       {
         name: "description",
         content:

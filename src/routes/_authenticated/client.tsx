@@ -65,7 +65,7 @@ export const Route = createFileRoute("/_authenticated/client")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "Client workspace · TaaSFlow" },
+      { title: "Client workspace" },
       { name: "robots", content: "noindex" },
     ],
   }),

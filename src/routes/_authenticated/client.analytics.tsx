@@ -35,7 +35,7 @@ export const Route = createFileRoute("/_authenticated/client/analytics")({
   notFoundComponent: makeRouteNotFoundComponent("client"),
   head: () => ({
     meta: [
-      { title: "Three questions · TaaSFlow client workspace" },
+      { title: "Three questions · Client workspace" },
       {
         name: "description",
         content:

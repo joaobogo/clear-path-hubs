@@ -37,7 +37,7 @@ export const Route = createFileRoute("/_authenticated/client/offers")({
 	pendingComponent: RoutePending,
   head: () => ({
     meta: [
-      { title: "Offers & hires · TaaSFlow" },
+      { title: "Offers & hires · Client workspace" },
       {
         name: "description",
         content:

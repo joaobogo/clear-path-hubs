@@ -10,7 +10,7 @@ import {
 export const Route = createFileRoute("/_authenticated/client/onboarding")({
   head: () => ({
     meta: [
-      { title: "Set up your hiring system — TaaSFlow" },
+      { title: "Set up · Client workspace" },
       {
         name: "description",
         content:
