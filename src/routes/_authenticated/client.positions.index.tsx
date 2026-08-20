@@ -226,17 +226,24 @@ function PositionsPage() {
  onClear: () => setSearch({ location: "all" }),
  });
 
+ const tabSubtitle: Record<typeof status, string> = {
+  active: "Roles we are actively hiring for with you.",
+  draft: "Roles under review before going live.",
+  paused: "Roles temporarily paused.",
+  closed: "Closed and archived roles.",
+ };
+
  return (
- <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
- <header className="mb-6 flex flex-wrap items-end justify-between gap-3">
- <div className="min-w-0">
- <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
- Roles
- </h1>
- <p className="text-sm text-muted-foreground mt-1">
- Roles we are actively hiring for with you.
- </p>
- </div>
+  <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+  <header className="mb-6 flex flex-wrap items-end justify-between gap-3">
+  <div className="min-w-0">
+  <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+  Roles
+  </h1>
+  <p className="text-sm text-muted-foreground mt-1">
+  {tabSubtitle[status]}
+  </p>
+  </div>
  <div className="text-xs text-muted-foreground text-right">
  <div>
   {hasRoleData ? (
