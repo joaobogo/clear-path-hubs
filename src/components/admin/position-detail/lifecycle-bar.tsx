@@ -1,6 +1,7 @@
 // Lifecycle action bar for the position workspace (extracted from the route).
 import { Fragment, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
@@ -14,7 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { setPositionStatus, setPositionVisibility } from "@/lib/admin.functions";
-import { humanizePublishBlockedMessage } from "@/lib/publish-gate";
+import { humanizePublishBlockedMessage, evaluatePublishGate, publishBlockedMessage } from "@/lib/publish-gate";
 import { useConfirmAction } from "@/components/ds/confirm-action";
 import { getRequisitionQuality } from "@/lib/requisition.functions";
 import { assessJobQuality, type QualityInput } from "@/lib/requisition-schema";
@@ -45,6 +46,7 @@ export function LifecycleBar({
 }) {
   const statusFn = useServerFn(setPositionStatus);
   const visibilityFn = useServerFn(setPositionVisibility);
+  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const { confirm, confirmDialog } = useConfirmAction();
 
@@ -231,31 +233,25 @@ export function LifecycleBar({
           label: "Publish",
           onClick: async () => {
             if (includeVisibilityCheck) {
-              try {
-                const { evaluatePublishGate } = await import("@/lib/publish-gate");
-                const gateBlockers = evaluatePublishGate({
-                  status: position.status,
-                  payment_status: position.payment_status,
-                  approved_at: position.approved_at,
-                  published_at: position.published_at,
-                  title: position.title,
-                  description: position.description,
-                  employment_type: position.employment_type,
-                  work_model: position.work_model,
-                  seniority: position.seniority,
-                  location: position.location,
-                  requirements: position.requirements,
-                }).filter((b) => b !== "not_approved");
-                if (gateBlockers.length > 0) {
-                  const { publishBlockedMessage, humanizePublishBlockedMessage } = await import("@/lib/publish-gate");
-                  toast.error(humanizePublishBlockedMessage(publishBlockedMessage(gateBlockers)));
-                  return;
-                }
-              } catch (e) {
-                console.error("Gate check failed", e);
+              const gateBlockers = evaluatePublishGate({
+                status: position.status,
+                payment_status: position.payment_status,
+                approved_at: position.approved_at,
+                published_at: position.published_at,
+                title: position.title,
+                description: position.description,
+                employment_type: position.employment_type,
+                work_model: position.work_model,
+                seniority: position.seniority,
+                location: position.location,
+                requirements: position.requirements,
+              }).filter((b) => b !== "not_approved");
+              if (gateBlockers.length > 0) {
+                toast.error(humanizePublishBlockedMessage(publishBlockedMessage(gateBlockers)));
+                return;
               }
             }
-            await doVis("public", "Live on job board");
+            await navigate({ to: "/admin/positions/$id/publish", params: { id: position.id } });
           },
         };
     secondary.push({ key: "pause", label: "Pause", onClick: () => doStatus("pause", "Paused") });

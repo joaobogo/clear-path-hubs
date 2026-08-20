@@ -362,37 +362,37 @@ export function assessJobQuality(i: QualityInput): {
     add({ id: "must_haves", severity: "blocking", label: "At least 3 must-have requirements", why: "Must-haves are the backbone of evidence-based scoring; fewer than three makes ranking arbitrary.", step: 2 });
   if (!i.seniority.trim())
     add({ id: "seniority", severity: "blocking", label: "Seniority level", why: "Scope and level decide whether strong candidates are over- or under-qualified.", step: 1 });
-  if (i.locations.length === 0 && !i.open_worldwide)
-    add({ id: "locations", severity: "blocking", label: "At least one location", why: "Eligibility gates (right to work, timezone, commute) cannot run without locations.", step: 5 });
+  if (i.locations.length === 0)
+    add({ id: "locations", severity: "blocking", label: "At least one location", why: "Eligibility gates (right to work, timezone, commute) cannot run without locations.", step: 3 });
 
   if (!i.employment_type.trim())
     add({ id: "employment_type", severity: "blocking", label: "Employment type", why: "Contract vs permanent changes both the candidate pool and the eligibility checks.", step: 1 });
 
   if (i.disqualifier_tags.length === 0)
-    add({ id: "disqualifiers", severity: "degrades", label: "Disqualifiers / critical gates", why: "Without hard gates, unsuitable candidates reach your shortlist and dilute it.", step: 4 });
+    add({ id: "disqualifiers", severity: "degrades", label: "Disqualifiers / critical gates", why: "Without hard gates, unsuitable candidates reach your shortlist and dilute it.", step: 2 });
   if (!i.experience.trim())
     add({ id: "experience", severity: "degrades", label: "Required experience", why: "Experience bands anchor the seniority signal in scoring.", step: 2 });
   if (i.responsibilities.trim().length < 40 && i.description.trim().length < 120)
     add({ id: "outcomes", severity: "degrades", label: "Role outcomes / responsibilities", why: "Outcomes let evidence extraction look for what this person must actually deliver.", step: 2 });
   const needsTz = i.locations.some((l) => l.work_model === "remote");
   if (needsTz && !i.primary_timezone.trim() && i.timezone_overlap_hours === null)
-    add({ id: "timezone", severity: "degrades", label: "Timezone anchor or overlap", why: "Remote hiring across countries fails on collaboration hours more often than on skills.", step: 5 });
+    add({ id: "timezone", severity: "degrades", label: "Timezone anchor or overlap", why: "Remote hiring across countries fails on collaboration hours more often than on skills.", step: 3 });
   if (!i.headcount)
     add({ id: "headcount", severity: "degrades", label: "Hiring volume", why: "Volume drives pipeline sizing and delivery commitments.", step: 1 });
   // Unowned requisitions stall — nobody is accountable for delivery.
   // This is an ops concern, so we only degradation-flag it if we know who the owner should be (staff view).
   // For the client, we hide this gap entirely to avoid leaking internal assignment needs.
   if (!i.owner_user_id && i.owner_user_id !== null)
-    add({ id: "owner", severity: "degrades", label: "Responsible admin", why: "Assignment ensures accountability for delivery.", step: 5 });
+    add({ id: "owner", severity: "degrades", label: "Responsible admin", why: "Assignment ensures accountability for delivery.", step: 3 });
 
   if (!i.travel_expectation.trim())
-    add({ id: "travel", severity: "optional", label: "Travel expectations", why: "Surfacing travel early avoids late-stage drop-off.", step: 5 });
+    add({ id: "travel", severity: "optional", label: "Travel expectations", why: "Surfacing travel early avoids late-stage drop-off.", step: 3 });
   if (!i.target_start_date.trim())
     add({ id: "start_date", severity: "optional", label: "Target start date", why: "Notice periods can quietly disqualify otherwise perfect candidates.", step: 1 });
   if (!i.interview_process.trim())
-    add({ id: "interview_process", severity: "optional", label: "Interview process", why: "Candidates convert better when the process is known upfront.", step: 4 });
+    add({ id: "interview_process", severity: "optional", label: "Interview process", why: "Candidates convert better when the process is known upfront.", step: 2 });
   if (i.screening_questions.length === 0)
-    add({ id: "screening", severity: "optional", label: "Screening questions", why: "Role-specific questions capture evidence a CV never contains.", step: 4 });
+    add({ id: "screening", severity: "optional", label: "Screening questions", why: "Role-specific questions capture evidence a CV never contains.", step: 2 });
   if (!i.department.trim())
     add({ id: "department", severity: "optional", label: "Department / function", why: "Used for grouping, reporting and internal routing.", step: 1 });
   if (i.nice_to_have_skills.length === 0)
