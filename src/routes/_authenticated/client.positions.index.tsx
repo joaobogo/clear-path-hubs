@@ -320,6 +320,3 @@ function PositionsPage() {
  </div>
  );
 }
-
-
-}
