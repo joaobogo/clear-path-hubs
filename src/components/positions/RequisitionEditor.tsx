@@ -423,15 +423,23 @@ export function RequisitionEditor({
         </CardContent>
       </Card>
 
-      {/* ---------------- Compensation (permissioned) ---------------- */}
+      {/* ---------------- Compensation (permissioned) ----------------
+          Mirrors the review step so Step 5 always shows the same budget data. */}
       <Card>
         <CardHeader><CardTitle className="text-base">Compensation</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           {!meta.can_edit_compensation ? (
             <p className="text-sm text-muted-foreground">
-              {form.compensation_collected
-                ? "Compensation is recorded for this job. Only the TaaSFlow team can change how it is collected or shared."
-                : "No compensation has been collected for this job."}
+              {wizardBudgetMin || wizardBudgetMax ? (
+                <>
+                  {wizardCurrency || "USD"} {wizardBudgetMin || "—"} – {wizardBudgetMax || "—"}
+                  {wizardBudgetPeriod ? ` ${wizardBudgetPeriod.replace("per_", "per ")}` : ""}
+                </>
+              ) : form.compensation_collected ? (
+                "Compensation is recorded for this job. Only the TaaSFlow team can change how it is collected or shared."
+              ) : (
+                "No compensation has been collected for this job."
+              )}
             </p>
           ) : (
             <>
