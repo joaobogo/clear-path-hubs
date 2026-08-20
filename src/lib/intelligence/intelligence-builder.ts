@@ -758,11 +758,12 @@ export function buildIntelligence(
         .filter(Boolean)
         .sort()[0] as string | undefined;
       const unconfirmed = records.interviews.filter(
-        (i) => i.position_id === p.id && !i.scheduled_start && i.status !== "cancelled",
+        (i) => i.position_id === p.id && !i.scheduled_at && i.status !== "cancelled",
       );
       const movement = [
         ...roleMatches.map((m) => iso(m.updated_at)),
         ...records.history.filter((h) => h.position_id === p.id).map((h) => iso(h.created_at)),
+        ...unconfirmed.map((i) => iso(i.requested_at)),
         iso(p.updated_at),
       ]
         .filter(Boolean)
@@ -784,7 +785,7 @@ export function buildIntelligence(
           oldestAwaitingDecisionAt: oldestAwaiting ?? null,
           interviewsToConfirm: unconfirmed.length,
           oldestInterviewToConfirmAt:
-            (unconfirmed.map((i) => iso(i.created_at)).filter(Boolean).sort()[0] as string) ?? null,
+            (unconfirmed.map((i) => iso(i.requested_at)).filter(Boolean).sort()[0] as string) ?? null,
           promisedShortlistBy: promisedBy,
           shortlistDeliveredAt:
             (roleMatches.map((m) => iso(m.delivered_at)).filter(Boolean).sort()[0] as string) ?? null,
