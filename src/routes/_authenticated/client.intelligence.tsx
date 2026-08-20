@@ -150,7 +150,7 @@ function IntelligencePage() {
         <>
           {intel.data.emptyWorkspace && (
             <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
-              This workspace has no roles, candidates or scoring runs in scope yet, so
+              This workspace has no roles, candidates or assessments in scope yet, so
               every measure below reports its own empty state rather than a chart.{" "}
               <Link to="/client/positions" className="underline">
                 Open a role

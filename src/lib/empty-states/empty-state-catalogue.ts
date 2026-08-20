@@ -75,8 +75,8 @@ export function resolveFilteredEmptyState(filters: string[]): SurfaceStateConten
       filters.length > 0
         ? `These filters removed every result: ${filters.join(" · ")}.`
         : "No records match that filter.",
-    expected: "Expected — records exist, the view is just narrow.",
-    populates: "Clearing or widening a filter brings the existing records back.",
+    expected: "Expected — candidates exist, the view is just narrow.",
+    populates: "Clearing or widening a filter brings those candidates back.",
     activity: "Nothing is searching — this is a display filter only.",
     action: { label: "Clear filters" },
 
@@ -386,7 +386,7 @@ export function resolveNoEvidenceState(signals: {
   };
 }
 
-/* ----------------------------------------------------------- 4. agent runs */
+/* ----------------------------------------------------------- 4. processing steps */
 
 export function resolveNoAgentRunsState(signals: {
   activeRoles: number;
@@ -604,7 +604,7 @@ export function resolveNoApprovalsState(signals: {
     why: "Every gate on your roles is either open or not reached yet.",
     expected: EXPECTED_QUIET,
     populates: "New shortlists, interview requests and offers appear here when they need your sign-off.",
-    activity: "Pipelines are running without waiting on you.",
+    activity: "Your searches are running without waiting on you.",
     action: { label: "See role progress", to: "/client/positions" },
   };
 }
@@ -670,7 +670,7 @@ export function resolveNoNotificationsState(signals: {
     why: "Nothing has happened on your roles that needs your attention.",
     expected: EXPECTED_QUIET,
     populates: "New candidate deliveries, interview updates and offer movement land here.",
-    activity: "Pipelines are running; you'll be notified when something needs you.",
+    activity: "Your searches are running; you'll be notified when something needs you.",
     action: { label: "Check notification settings", to: "/client/account?tab=notifications" },
   };
 }

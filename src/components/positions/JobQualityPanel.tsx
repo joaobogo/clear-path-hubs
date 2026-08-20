@@ -107,8 +107,8 @@ export function JobQualityPanel({
       <p className="text-sm font-medium">{view.summary}</p>
       {!compact && (
         <div className="mt-3 space-y-3">
-          <GapList title="Blocks accurate scoring" gaps={view.blocking} onJumpToStep={onJumpToStep} editTo={editTo} />
-          <GapList title="Weakens shortlist accuracy" gaps={view.degrades} onJumpToStep={onJumpToStep} editTo={editTo} />
+          <GapList title="Needed before we can rank" gaps={view.blocking} onJumpToStep={onJumpToStep} editTo={editTo} />
+          <GapList title="Improves your shortlist" gaps={view.degrades} onJumpToStep={onJumpToStep} editTo={editTo} />
           <GapList title="Nice to have" gaps={view.optional} onJumpToStep={onJumpToStep} editTo={editTo} />
         </div>
       )}

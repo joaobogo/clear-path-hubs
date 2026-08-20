@@ -1046,7 +1046,7 @@ export const BLUEPRINT_STAGES = [
   { key: "queued", label: "Role created in your workspace" },
   { key: "analyzing_jd", label: "Reading your job description" },
   { key: "researching_company", label: "Reviewing your public company information" },
-  { key: "drafting_blueprint", label: "Building the role blueprint and scoring rubric" },
+  { key: "drafting_blueprint", label: "Building the role brief and how we score" },
   { key: "ready", label: "Blueprint ready for your review" },
 ] as const;
 

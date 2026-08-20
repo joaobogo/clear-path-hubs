@@ -3,7 +3,7 @@
  *
  * Every staff queue must distinguish three different zeros:
  *   - empty    → there is genuinely nothing to do
- *   - filtered → records exist but the current filters hide them
+ *   - filtered → candidates exist but the current filters hide them
  *   - error    → we could not load, so we do not know
  * Showing "nothing to do" when a load failed is a correctness bug, not a
  * cosmetic one, so queues resolve their zero through this module.

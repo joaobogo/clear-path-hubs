@@ -494,7 +494,7 @@ function renderIntakeWelcomeEmail(args: {
     ],
     [
       "Evaluation model in progress",
-      "Our team is calibrating the scoring rubric for this role. First ranked candidates follow in days.",
+      "Our team is calibrating how we score this role. First ranked candidates follow in days.",
     ],
   ];
 

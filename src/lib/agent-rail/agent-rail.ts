@@ -187,7 +187,7 @@ export const SYSTEM_ACTORS: Record<string, RailActor> = {
   evidence: { key: "evidence", name: "Evidence Engine", kind: "system" },
   scoring: { key: "scoring", name: "Scoring Engine", kind: "system" },
   delivery: { key: "delivery", name: "Delivery", kind: "system" },
-  pipeline: { key: "pipeline", name: "Pipeline", kind: "system" },
+  pipeline: { key: "pipeline", name: "Candidates by stage", kind: "system" },
   review: { key: "review", name: "TaaSFlow review team", kind: "person" },
   messaging: { key: "messaging", name: "Messaging", kind: "system" },
 };

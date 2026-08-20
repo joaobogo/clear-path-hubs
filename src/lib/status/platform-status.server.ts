@@ -266,7 +266,7 @@ export async function measurePlatformStatus(): Promise<PlatformStatus> {
     })(),
 
 
-    // Agent processing — what is unfinished right now.
+    // Updates and processing — what is unfinished right now.
     //
     // Deliberately not a failure ratio over the last day: a run that failed or
     // was cancelled hours ago is history and cannot be what a reader is waiting
@@ -311,7 +311,7 @@ export async function measurePlatformStatus(): Promise<PlatformStatus> {
 
 
 
-    // Scoring — outcomes of scoring runs in the last day.
+    // Scoring — outcomes of assessments in the last day.
     (async (): Promise<ServiceStatus> => {
       const run = await timed(async () => {
         const { data, error } = await supabaseAdmin
@@ -332,7 +332,7 @@ export async function measurePlatformStatus(): Promise<PlatformStatus> {
       const verdict = statusFromFailureRatio({
         total: rows.length,
         failed,
-        noun: "scoring runs",
+        noun: "assessments",
         window: WINDOW_24H,
       });
       return serviceRow("scoring", verdict.status, verdict.detail, verdict.measured, WINDOW_24H);

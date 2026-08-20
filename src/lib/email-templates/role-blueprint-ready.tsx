@@ -28,7 +28,7 @@ const RoleBlueprintReady = ({
     <Text style={text}>
       We've turned your job description for <strong>{roleTitle ?? 'your role'}</strong>
       {companyName ? ` at ${companyName}` : ''} into a full hiring brief: requirements,
-      scoring rubric, screening questions and a sourcing plan. Every answer is editable.
+      how we score, screening questions and a sourcing plan. Every answer is editable.
     </Text>
     {mustHaves.length > 0 && (
       <Text style={text}>

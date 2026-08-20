@@ -211,7 +211,7 @@ export const ANSWERABLE_BRIEF_FIELDS: BriefFieldSpec[] = [
   {
     key: "job_description",
     label: "Job description",
-    unblocks: "building the scoring rubric for this role",
+    unblocks: "working out how we score this role",
     input: "textarea",
     target: { kind: "column", column: "description" },
     validate: text(MIN_JD_TEXT, 20000, `Paste at least ${MIN_JD_TEXT} characters`),

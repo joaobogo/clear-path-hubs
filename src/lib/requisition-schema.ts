@@ -394,7 +394,7 @@ export function assessJobQuality(i: QualityInput): {
   if (i.screening_questions.length === 0)
     add({ id: "screening", severity: "optional", label: "Screening questions", why: "Role-specific questions capture evidence a CV never contains.", step: 2 });
   if (!i.department.trim())
-    add({ id: "department", severity: "optional", label: "Department / function", why: "Used for grouping, reporting and internal routing.", step: 1 });
+    add({ id: "department", severity: "optional", label: "Department / function", why: "Used to group and report on your roles.", step: 1 });
   if (i.nice_to_have_skills.length === 0)
     add({ id: "nice_to_have", severity: "optional", label: "Preferred requirements", why: "Preferred signals separate good from great once must-haves are met.", step: 2 });
 
@@ -406,7 +406,7 @@ export function assessJobQuality(i: QualityInput): {
 
   const summary =
     readiness === "not_scoreable"
-      ? `Not scoreable yet — ${blocking.length} decision-critical item${blocking.length === 1 ? "" : "s"} missing.`
+      ? `We can't rank candidates for this role yet — ${blocking.length} thing${blocking.length === 1 ? "" : "s"} missing.`
       : readiness === "scoreable_with_gaps"
         ? `Scoreable, but ${degrades.length} gap${degrades.length === 1 ? "" : "s"} will weaken shortlist accuracy.`
         : "Decision-ready — every field scoring depends on is present.";

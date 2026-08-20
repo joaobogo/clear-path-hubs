@@ -27,7 +27,7 @@ export interface QueryStateProps<T> {
   children: (data: T) => ReactNode;
   /** Treat this data as "nothing to show". */
   isEmpty?: (data: T) => boolean;
-  /** Empty for a brand-new account (no records exist at all). */
+  /** Empty for a brand-new account (no candidates exist at all). */
   empty?: ReactNode;
   /** Empty because filters exclude everything — never a false zero. */
   filteredEmpty?: ReactNode;

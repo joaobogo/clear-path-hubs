@@ -127,8 +127,8 @@ export const SERVICES: readonly ServiceDefinition[] = [
   },
   {
     key: "agents",
-    name: "Agent processing",
-    covers: "Background work: CV processing, enrichment and pipeline runs.",
+    name: "Updates and processing",
+    covers: "Background work: CV processing, enrichment and processing steps.",
     measured_by: "Background work still waiting or in progress at page load.",
   },
   {
@@ -152,8 +152,8 @@ export const SERVICES: readonly ServiceDefinition[] = [
   {
     key: "scoring",
     name: "Scoring",
-    covers: "Evidence-backed scoring runs against role requirements.",
-    measured_by: "Outcomes of scoring runs in the last 24 hours.",
+    covers: "Evidence-backed assessments against role requirements.",
+    measured_by: "Outcomes of assessments in the last 24 hours.",
   },
   {
     key: "integrations",
@@ -454,7 +454,9 @@ export function degradedNotice(status: PlatformStatus | undefined | null): Degra
     title:
       worst === "maintenance"
         ? "Planned maintenance in progress"
-        : `${STATUS_LABEL[worst]}: ${affected.join(", ")}`,
+        : worst === "degraded_performance"
+          ? "Some updates are running slowly"
+          : `${STATUS_LABEL[worst]}: ${affected.join(", ")}`,
     body: consequence,
     affected,
   };

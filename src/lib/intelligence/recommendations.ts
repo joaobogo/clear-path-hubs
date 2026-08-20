@@ -98,7 +98,7 @@ export const RECOMMENDATION_THRESHOLDS = {
   minTouchesPerWindow: 10,
   /** Score spread (p90 − p10) at or below this reads as compressed. */
   compressedSpread: 10,
-  /** Failed agent runs before it is surfaced as a recommendation. */
+  /** Failed processing steps before it is surfaced as a recommendation. */
   failedRuns: 1,
 } as const;
 
@@ -482,16 +482,16 @@ export function deriveRecommendations(input: {
         id: id("agent_runs_failing"),
         title: `${failed} automated run${failed === 1 ? "" : "s"} failed in this period`,
         severity: "watch",
-        observed: `${failed} recorded agent run${failed === 1 ? "" : "s"} in the last ${input.window.days} days ended in failure, which can leave gaps in candidate records.`,
+        observed: `${failed} recorded processing step${failed === 1 ? "" : "s"} in the last ${input.window.days} days ended in failure, which can leave gaps in candidate records.`,
         evidence: [
           { label: "Failed runs", value: String(failed) },
           { label: "Window", value: `Last ${input.window.days} days` },
         ],
         suggestedAction:
-          "Open agent activity to see which step failed. Your delivery lead is alerted automatically, so this is for visibility rather than repair.",
+          "Open the processing history to see which step failed. Your delivery lead is alerted automatically, so this is for visibility rather than repair.",
         expectedImpact:
           "Re-running a failed step usually restores the missing records. Until it does, treat any affected candidate's evidence as incomplete.",
-        link: { label: "Open agent activity", to: "/client/agents" },
+        link: { label: "Processing history", to: "/client/agents" },
         derivedFrom: "agent_run_outcomes",
         dismissible: true,
         snoozable: true,
