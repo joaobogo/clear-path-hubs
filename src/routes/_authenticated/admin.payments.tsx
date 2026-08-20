@@ -60,10 +60,15 @@ function AdminPaymentsPage() {
   const [filter, setFilter] = useState<Filter>("all");
   const includeTest = useIncludeTestRecords();
   const load = useServerFn(listAdminPayments);
+  const loadMode = useServerFn(getStripePaymentMode);
 
   const paymentsQuery = useQuery({
     queryKey: ["admin-payments", includeTest, filter],
     queryFn: () => load({ data: { filter } }),
+  });
+  const modeQuery = useQuery({
+    queryKey: ["stripe-payment-mode"],
+    queryFn: () => loadMode(),
   });
   const { data, isLoading, error } = paymentsQuery;
 
@@ -77,6 +82,15 @@ function AdminPaymentsPage() {
           truth.
         </p>
       </div>
+
+      {modeQuery.data?.mode === "sandbox" && (
+        <Alert>
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            Sandbox mode — these are test transactions. No money has moved.
+          </AlertDescription>
+        </Alert>
+      )}
 
       <OpsPanel />
 
