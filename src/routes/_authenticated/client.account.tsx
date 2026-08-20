@@ -12,7 +12,7 @@ import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/component
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getClientContext } from "@/lib/client-context.functions";
 import { getClientPositions } from "@/lib/client-positions.functions";
 import { getAccountOverview } from "@/lib/account.functions";
@@ -61,10 +61,11 @@ export const Route = createFileRoute("/_authenticated/client/account")({
     ({
       tab: parseTab(search.tab),
       ...(typeof search.org === "string" ? { org: search.org } : {}),
+      ...(typeof search.focus === "string" ? { focus: search.focus } : {}),
       // Seat position carried in from a blocked invite/reactivation so the plan
       // tab can say exactly what an upgrade resolves.
       ...parseSeatUpgradeSearch(search),
-    }) as { tab: AccountTab; org?: string } & SeatUpgradeSearch,
+    }) as { tab: AccountTab; org?: string; focus?: string } & SeatUpgradeSearch,
   head: () => ({
     meta: [
       { title: "Account · TaaSFlow client workspace" },
@@ -97,11 +98,18 @@ function fmtDate(iso: string | null | undefined): string {
 }
 
 function AccountPage() {
-  const { tab } = Route.useSearch();
+  const { tab, focus } = Route.useSearch();
+  const [workspaceOpen, setWorkspaceOpen] = useState(focus === "email");
   const ctxFn = useServerFn(getClientContext);
   const orgSearch = useClientOrgSearch();
   const support = useSupportView();
   const readOnly = support.readOnly;
+
+  // Open the workspace details collapsible when the user is sent here from the
+  // "Update your email" action in the notification panel.
+  useEffect(() => {
+    if (focus === "email") setWorkspaceOpen(true);
+  }, [focus]);
 
   const ctxQuery = useQuery({
     queryKey: ["client-context", orgSearch ?? null],
@@ -161,7 +169,11 @@ function AccountPage() {
 
           {/* Everything else is reachable within one click, keeping the first
               viewport focused on the KPIs and under the density cap. */}
-          <Collapsible className="space-y-8">
+          <Collapsible
+            className="space-y-8"
+            open={workspaceOpen}
+            onOpenChange={setWorkspaceOpen}
+          >
             <CollapsibleTrigger asChild>
               <button
                 type="button"
@@ -176,7 +188,7 @@ function AccountPage() {
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-8 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
               <WorkspaceRolesAndStarts orgId={orgId} />
-              <EmailChangeCard />
+              <EmailChangeCard focus={focus === "email"} />
               <WorkspaceTab />
             </CollapsibleContent>
           </Collapsible>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,12 +10,13 @@ import { toast } from "sonner";
  * both the old and the new address; nothing changes until the new one is
  * confirmed, so nobody can be locked out of an account they paid for.
  */
-export function EmailChangeCard() {
+export function EmailChangeCard({ focus = false }: { focus?: boolean }) {
   const [current, setCurrent] = useState<string | null>(null);
   const [pending, setPending] = useState<string | null>(null);
   const [next, setNext] = useState("");
   const [saving, setSaving] = useState(false);
   const [sent, setSent] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -28,6 +29,15 @@ export function EmailChangeCard() {
       cancelled = true;
     };
   }, []);
+
+  // Focus and expand the workspace tab when the user is sent here from the
+  // notification "Update your email" action.
+  useEffect(() => {
+    if (!focus) return;
+    // Give the collapsible workspace tab a moment to expand before focusing.
+    const id = setTimeout(() => inputRef.current?.focus(), 150);
+    return () => clearTimeout(id);
+  }, [focus]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,6 +91,7 @@ export function EmailChangeCard() {
         <div className="flex-1 space-y-1.5">
           <Label htmlFor="new-email">New email address</Label>
           <Input
+            ref={inputRef}
             id="new-email"
             type="email"
             autoComplete="email"

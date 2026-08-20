@@ -602,7 +602,7 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
 
           {headerSlot}
 
-          <NotificationBell />
+          <NotificationBell role={role ?? "client"} />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
