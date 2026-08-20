@@ -172,29 +172,36 @@ function OffersPage() {
               <Kpi
                 label="Acceptance rate"
                 value={
-                  pendingReport || acceptanceRate == null
+                  pendingReport
                     ? "—"
-                    : `${Math.round(acceptanceRate * 100)}%`
+                    : acceptanceRate == null
+                      ? "Not enough data"
+                      : `${Math.round(acceptanceRate * 100)}%`
                 }
                 hint={
                   acceptanceRate == null && !pendingReport
-                    ? "No decided offers yet"
+                    ? "No offers have been decided yet"
                     : "Accepted ÷ decided"
                 }
               />
               <Kpi
                 label="Avg salary"
                 value={
-                  pendingReport || report?.totals.avg_salary == null
+                  pendingReport
                     ? "—"
-                    : `${formatMoneyMajorCompact(report.totals.avg_salary)}${reportIncomplete ? "*" : ""}`
+                    : report?.totals.avg_salary == null
+                      ? "Not enough data"
+                      : `${formatMoneyMajorCompact(report.totals.avg_salary)}${reportIncomplete ? "*" : ""}`
                 }
                 hint={
-                  reportIncomplete
-                    ? `Incomplete: ${report.totals.accepted_offers} of ${report.totals.hires_confirmed} hires have comp`
-                    : "Confirmed hires average"
+                  !pendingReport && report?.totals.avg_salary == null
+                    ? "No confirmed hire has compensation on record"
+                    : reportIncomplete
+                      ? `Based on ${report?.totals.accepted_offers} of ${report?.totals.hires_confirmed} hires with compensation on record`
+                      : "Confirmed hires average"
                 }
               />
+
             </div>
           );
         })()
