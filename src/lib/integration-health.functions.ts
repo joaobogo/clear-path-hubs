@@ -102,3 +102,21 @@ export const runIntegrationChecks = createServerFn({ method: "POST" })
 
     return { ran: results.length, results };
   });
+
+export const getStripePaymentMode = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertStaff(context as never);
+
+    const { data, error } = await context.supabase
+      .from("integration_health_checks")
+      .select("details")
+      .eq("integration", "stripe")
+      .order("created_at", { ascending: false })
+      .limit(1);
+    if (error) throw new Error(error.message);
+
+    const env =
+      ((data?.[0] as IntegrationCheckRow | undefined)?.details?.environment as string) ?? null;
+    return { mode: env === "live" ? "live" : env === "sandbox" ? "sandbox" : "unknown" };
+  });
