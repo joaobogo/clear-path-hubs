@@ -945,6 +945,7 @@ function InviteDialog({
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<ClientRoleId>("client_editor");
   const [failure, setFailure] = useState<string | null>(null);
+  const liveFailure = useStaleServerError(failure, email.trim());
   const qc = useQueryClient();
   const inviteFn = useServerFn(inviteClientMember);
   const invite = useMutation({
