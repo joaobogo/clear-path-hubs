@@ -97,6 +97,10 @@ export function RequisitionEditor({
   openWorldwide = false,
   workModel = "",
   location = "",
+  currency: wizardCurrency,
+  budgetMin: wizardBudgetMin,
+  budgetMax: wizardBudgetMax,
+  budgetPeriod: wizardBudgetPeriod,
 }: {
   positionId: string;
   onDirtyChange?: (dirty: boolean) => void;
@@ -104,6 +108,10 @@ export function RequisitionEditor({
   openWorldwide?: boolean;
   workModel?: WorkModel;
   location?: string;
+  currency?: string;
+  budgetMin?: string;
+  budgetMax?: string;
+  budgetPeriod?: string;
 }) {
   const qc = useQueryClient();
   const load = useServerFn(getRequisitionMeta);
@@ -415,15 +423,23 @@ export function RequisitionEditor({
         </CardContent>
       </Card>
 
-      {/* ---------------- Compensation (permissioned) ---------------- */}
+      {/* ---------------- Compensation (permissioned) ----------------
+          Mirrors the review step so Step 5 always shows the same budget data. */}
       <Card>
         <CardHeader><CardTitle className="text-base">Compensation</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           {!meta.can_edit_compensation ? (
             <p className="text-sm text-muted-foreground">
-              {form.compensation_collected
-                ? "Compensation is recorded for this job. Only the TaaSFlow team can change how it is collected or shared."
-                : "No compensation has been collected for this job."}
+              {wizardBudgetMin || wizardBudgetMax ? (
+                <>
+                  {wizardCurrency || "USD"} {wizardBudgetMin || "—"} – {wizardBudgetMax || "—"}
+                  {wizardBudgetPeriod ? ` ${wizardBudgetPeriod.replace("per_", "per ")}` : ""}
+                </>
+              ) : form.compensation_collected ? (
+                "Compensation is recorded for this job. Only the TaaSFlow team can change how it is collected or shared."
+              ) : (
+                "No compensation has been collected for this job."
+              )}
             </p>
           ) : (
             <>
@@ -551,7 +567,7 @@ export function RequisitionEditor({
         <CardContent>
           {meta.versions.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No scoring-relevant changes yet. Version 1 is the original requisition.
+              No changes that affect matching yet.
             </p>
           ) : (
             <ol className="space-y-2 text-sm">
@@ -580,10 +596,10 @@ export function RequisitionEditor({
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">
-          {dirty ? "Unsaved changes to locations or priorities." : "All requisition details saved."}
+          {dirty ? "Unsaved changes to locations or priorities." : "All role details saved."}
         </p>
         <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-          {saveMutation.isPending ? "Saving…" : "Save requisition details"}
+          {saveMutation.isPending ? "Saving…" : "Save role details"}
         </Button>
       </div>
     </div>

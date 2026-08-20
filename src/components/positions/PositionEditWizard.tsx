@@ -1039,6 +1039,10 @@ export function PositionEditWizard({
                   openWorldwide={state.open_worldwide}
                   workModel={state.work_model}
                   location={state.location}
+                  currency={state.currency}
+                  budgetMin={state.budget_min}
+                  budgetMax={state.budget_max}
+                  budgetPeriod={state.budget_period}
                 />
               )}
             </CardContent>
