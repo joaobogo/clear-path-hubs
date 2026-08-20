@@ -521,6 +521,10 @@ export const getClientPositionDetail = createServerFn({ method: "GET" })
         interviewing: stageCounts.interview_process,
         offers: stageCounts.offer,
         not_moving_forward: stageCounts.not_moving_forward,
+        // Expose interview action counts so the role page "Action required" panel
+        // can deep-link to the interviews desk and offers board.
+        interviews_to_confirm: roleKpis.interviews_to_confirm,
+        interview_scheduled: roleKpis.interview_scheduled,
         pipeline_line: pipelineLine,
         client_status: computeClientRoleStatus({
           status: String(position.status),
