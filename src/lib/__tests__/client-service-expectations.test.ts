@@ -26,6 +26,7 @@ const metric = (key: CommitmentKey, over: Partial<SlaMetric> = {}): SlaMetric =>
     promise: "promise",
     state: "met",
     detail: "detail",
+    actualValue: key === "interview_slots" ? 30 : 2,
     varianceValue: -2,
     varianceUnit: key === "interview_slots" ? "hours" : "days",
     ...over,

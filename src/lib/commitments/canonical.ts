@@ -11,7 +11,7 @@
  *
  * Pure: no DB, no network, no clock beyond what is passed in.
  */
-import { roundHalf, varianceLabel, type RoleSla, type SlaMetric } from "@/lib/sla";
+import { amountLabel, roundHalf, varianceLabel, type RoleSla, type SlaMetric } from "@/lib/sla";
 
 export type CommitmentKey = SlaMetric["key"];
 
@@ -58,6 +58,8 @@ export type CommitmentRollup = {
   /** Commitments whose outcome is known (met or missed). */
   measured: number;
   met: number;
+  /** Average actual value across measured roles, in the metric's unit. */
+  actualAverage: number | null;
   /** Average signed variance across measured roles, in the metric's unit. */
   averageVariance: number | null;
   varianceUnit: SlaMetric["varianceUnit"];
@@ -88,29 +90,33 @@ export function rollupCommitments(roles: RoleSla[]): Record<CommitmentKey, Commi
       .filter((m): m is SlaMetric => !!m);
     const decided = metrics.filter((m) => m.state === "met" || m.state === "missed");
     const met = decided.filter((m) => m.state === "met").length;
+    const unit = metrics[0]?.varianceUnit ?? "days";
+
     const variances = decided
       .map((m) => m.varianceValue)
       .filter((v): v is number => typeof v === "number" && Number.isFinite(v));
-    const unit = metrics[0]?.varianceUnit ?? "days";
+    const actuals = decided
+      .map((m) => m.actualValue)
+      .filter((v): v is number => typeof v === "number" && Number.isFinite(v));
     const averageVariance = variances.length
       ? variances.reduce((s, v) => s + v, 0) / variances.length
+      : null;
+    const actualAverage = actuals.length
+      ? actuals.reduce((s, v) => s + v, 0) / actuals.length
       : null;
 
     let performance: string | null = null;
     let note = NOTHING_DUE_YET;
     if (decided.length > 0) {
-      const headline =
-        met === decided.length
-          ? `Met on ${decided.length} of ${decided.length} ${plural(decided.length, "role")}`
-          : `Met on ${met} of ${decided.length} ${plural(decided.length, "role")}`;
-      
-      // Shared detail computation for both Overview and Plan & Billing
-      const varianceText =
-        averageVariance === null || Math.abs(roundHalf(averageVariance)) < 0.1
-          ? null
-          : `${varianceLabel(averageVariance, unit)} on average`;
-      
-      performance = varianceText ? `${headline} · ${varianceText}` : headline;
+      const parts: string[] = [];
+      parts.push(`Met on ${met} of ${decided.length} ${plural(decided.length, "role")}`);
+      if (actualAverage !== null) {
+        parts.push(`${amountLabel(roundHalf(actualAverage), unit)} average`);
+      }
+      if (averageVariance !== null && Math.abs(roundHalf(averageVariance)) >= 0.1) {
+        parts.push(`${varianceLabel(averageVariance, unit)} on average`);
+      }
+      performance = parts.join(" · ");
       note = `Measured across ${decided.length} ${plural(decided.length, "role")} on this plan`;
     } else if (metrics.some(m => m.state === "at_risk")) {
       performance = "At risk";
@@ -121,6 +127,7 @@ export function rollupCommitments(roles: RoleSla[]): Record<CommitmentKey, Commi
       roles: metrics.length,
       measured: decided.length,
       met,
+      actualAverage,
       averageVariance,
       varianceUnit: unit,
       performance,

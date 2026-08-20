@@ -19,7 +19,7 @@ import {
 type AnyRow = any;
 
 export function emptySummary(): SlaSummary {
-  return { measured: 0, met: 0, onTimeRate: null, averageVarianceDays: null, atRisk: 0 };
+  return { measured: 0, total: 0, met: 0, onTimeRate: null, averageVarianceDays: null, atRisk: 0 };
 }
 
 export function dayMetric(args: {
@@ -33,13 +33,15 @@ export function dayMetric(args: {
 }): SlaMetric {
   const { state, variance } = evaluate(args.dueAt, args.actualAt, args.now);
   const varianceDays = variance === null ? null : variance / (24 * 60 * 60 * 1000);
+  const elapsedDays = args.actualAt ? diffDays(args.baselineAt, args.actualAt) : null;
   return {
     key: args.key,
     label: args.label,
     promise: args.promise,
     dueAt: args.dueAt,
     actualAt: args.actualAt,
-    actual: args.actualAt ? amountLabel(diffDays(args.baselineAt, args.actualAt), "days") : "not yet",
+    actual: elapsedDays === null ? "not yet" : elapsedDays === 0 ? "Same day as launch" : amountLabel(elapsedDays, "days"),
+    actualValue: elapsedDays,
     varianceValue: varianceDays,
     varianceUnit: "days",
     variance: varianceLabel(varianceDays, "days"),
@@ -81,6 +83,7 @@ export function interviewSlotMetric(interviews: AnyRow[], hours: number, now: nu
       dueAt: null,
       actualAt: null,
       actual: "no requests yet",
+      actualValue: null,
       varianceValue: null,
       varianceUnit: "hours",
       variance: "—",
@@ -96,6 +99,7 @@ export function interviewSlotMetric(interviews: AnyRow[], hours: number, now: nu
     dueAt: null,
     actualAt: lastActualAt,
     actual: avg === null ? "waiting on us" : `${amountLabel(avg, "hours")} average`,
+    actualValue: avg,
     varianceValue: avg === null ? null : avg - hours,
     varianceUnit: "hours",
     variance: avg === null ? "—" : varianceLabel(avg - hours, "hours"),
@@ -104,21 +108,29 @@ export function interviewSlotMetric(interviews: AnyRow[], hours: number, now: nu
 }
 
 export function summarise(roles: RoleSla[]): SlaSummary {
+  let total = 0;
   let measured = 0;
   let met = 0;
   let atRisk = 0;
   const variances: number[] = [];
   for (const role of roles) {
     for (const m of role.metrics) {
+      total += 1;
       if (m.state === "met" || m.state === "missed") {
         measured += 1;
         if (m.state === "met") met += 1;
-        if (m.varianceUnit === "days" && m.varianceValue !== null) variances.push(m.varianceValue);
+        // Include every measured row in the average variance. Hours are
+        // converted to days so the headline is one comparable number.
+        if (m.varianceValue !== null && Number.isFinite(m.varianceValue)) {
+          const inDays = m.varianceUnit === "hours" ? m.varianceValue / 24 : m.varianceValue;
+          variances.push(inDays);
+        }
       }
       if (m.state === "at_risk" || m.state === "missed") atRisk += 1;
     }
   }
   return {
+    total,
     measured,
     met,
     onTimeRate: measured ? Math.round((met / measured) * 100) : null,
