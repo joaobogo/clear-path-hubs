@@ -35,9 +35,9 @@ describe("client candidate DTO score truth", () => {
   it("derives the fit band from the run's score, not the stored label", () => {
     const dto = toClientCandidateDTO(row() as never);
     expect(dto.score).toBe(73);
-    // 73 is canonically "strong", which the honesty gate presents as "good".
-    // The stored "worth_considering" label would have presented as "mixed".
-    expect(dto.fit.band).toBe("good");
+    // 73 falls in the Strong band; the stored "worth_considering" label would
+    // instead have presented as Consider.
+    expect(dto.fit.band).toBe("strong");
   });
 
   it("uses the stored label only when the run has no score", () => {
@@ -45,7 +45,7 @@ describe("client candidate DTO score truth", () => {
       row({ score_runs: { score: null, fit_label: "worth_considering" } }) as never,
     );
     expect(dto.score).toBeNull();
-    expect(dto.fit.band).toBe("mixed");
+    expect(dto.fit.band).toBe("consider");
   });
 
   it("scrubs contact details out of evidence snippets", () => {
