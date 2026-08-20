@@ -131,7 +131,7 @@ function IntakeInbox() {
                 <th className="px-3 py-2">State</th>
                 <th className="hidden px-3 py-2 sm:table-cell">Next action</th>
                 <th className="px-3 py-2 text-right">Submitted</th>
-                <th className="w-8 px-2 py-2"></th>
+                <th className="px-2 py-2 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -146,9 +146,14 @@ function IntakeInbox() {
                       {it.company_name}
                     </Link>
                     {it.duplicate && (
-                      <span className="ml-2 inline-flex items-center gap-1 text-[11px] text-warning-foreground">
-                        <AlertTriangle className="h-3 w-3" /> duplicate
-                      </span>
+                      <Link
+                        to="/admin/intake/$id"
+                        params={{ id: it.id }}
+                        className="ml-2 inline-flex items-center gap-1 text-[11px] text-warning-foreground hover:underline"
+                        title="Compare with the earlier brief from this company"
+                      >
+                        <AlertTriangle className="h-3 w-3" /> possible duplicate — compare
+                      </Link>
                     )}
                   </td>
                   <td className="px-3 py-2 text-muted-foreground">{it.role_title}</td>
