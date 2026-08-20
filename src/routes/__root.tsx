@@ -145,20 +145,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "Phase 2 — Make the numbers
-agree
-Every place two screens give different answers to the same
-question.
-P08 One hires number on the Offers page BLOCKER CLIENT OFFERS
+TEXTO DO USUÁRIO: "P09 Make candidate stage follow the offer outcome BLOCKER CLIENT CANDIDATES + OFFERS
 Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-On /client/offers three elements disagree on the same page load:
-- Tile: \"HIRES CONFIRMED 1 — Last 180 days\"
-- Board column: \"HIRE CONFIRMED 0 — Nothing here\"
-- Footer panel: \"Hires by owner: No hires yet.\"
-Make all three read from one single source of truth for confirmed hires. Pick the offer record's outcome
-as that source.
-Do not paper over it in the UI — fix the query so the three components call the same function.
-Done when: All three elements show the same hires number after a hard refresh."`}
+Beatriz Costa shows as stage \"Hired\" on /client/candidates (and counts toward the HIRES tile and the HIRED
+board column), while on /client/offers the same person shows \"Offer closed · Closed lost\" with reason
+\"Candidate declined\".
+Make the candidate stage derive from the offer outcome, so an offer marked closed lost / declined moves
+the candidate out of Hired.
+Apply the same rule to the HIRES tile, the HIRED board column and the Account page's \"Hires closed\"
+figure.
+Done when: A candidate whose offer is closed lost never displays as Hired anywhere."`}
         </div>
 
         <Scripts />
