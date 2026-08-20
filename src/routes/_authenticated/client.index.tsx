@@ -28,6 +28,7 @@ import { SystemStatusStrip } from "@/components/client/control-room/system-statu
 import { LiveTicker } from "@/components/client/control-room/live-ticker";
 import { IntensityDial } from "@/components/client/control-room/intensity-dial";
 import { HiringHealthLine } from "@/components/client/hiring-health-line";
+import { applyOverdueAndRiskSignals } from "@/lib/client-hiring-health";
 import { SystemHealthStrip } from "@/components/client/system-health-strip";
 import { AgentActivityRail } from "@/components/client/agent-activity-rail";
 import { DecisionQueue } from "@/components/client/decision-queue";
