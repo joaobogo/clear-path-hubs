@@ -291,7 +291,7 @@ export const globalSearch = createServerFn({ method: "POST" })
         type: "intake" as const,
         id: i.id,
         label: i.role_title || i.company_name || "Intake",
-        context: [i.company_name, new Date(i.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })]
+        context: [i.company_name, formatDate(i.created_at)]
           .filter(Boolean)
           .join(" · "),
         state: [
