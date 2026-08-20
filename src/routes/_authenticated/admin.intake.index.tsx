@@ -39,6 +39,14 @@ const FILTERS: { key: Filter; label: string }[] = [
   { key: "all", label: "All" },
 ];
 
+const NEXT_ACTION_LABEL: Record<string, string> = {
+  review: "Review the brief",
+  convert_to_position: "Convert to a role",
+  open_role: "Already a role — open it",
+  open_position: "Already a role — open it",
+  archived: "Closed",
+};
+
 function relTime(iso?: string | null): string {
   if (!iso) return "—";
   const ms = Date.now() - new Date(iso).getTime();
