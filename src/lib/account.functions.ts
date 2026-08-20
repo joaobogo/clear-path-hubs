@@ -113,7 +113,7 @@ export const getAccountOverview = createServerFn({ method: "GET" })
     const o = resolved as AnyRow;
 
 
-    const [{ data: members }, { data: positions }, { data: hires }] =
+    const [{ data: members }, { data: positions }, { data: hires }, { data: offers }] =
       await Promise.all([
         supabase
           .from("memberships")
@@ -123,7 +123,7 @@ export const getAccountOverview = createServerFn({ method: "GET" })
           .from("positions")
           .select("id, status")
           .eq("organization_id", data.orgId),
-      supabase
+        supabase
           .from("hire_records")
           .select("id, status, hired_at, start_date, position_id, positions:position_id(title)")
           .eq("organization_id", data.orgId),
