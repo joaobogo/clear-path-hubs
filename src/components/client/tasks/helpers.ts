@@ -11,5 +11,5 @@ export function relTime(iso: string | null | undefined): string {
   if (abs < hr) return rt.format(Math.round(diff / min), "minute");
   if (abs < day) return rt.format(Math.round(diff / hr), "hour");
   if (abs < 30 * day) return rt.format(Math.round(diff / day), "day");
-  return new formatDate(Date(iso));
+  return formatDate(Date(iso));
 }

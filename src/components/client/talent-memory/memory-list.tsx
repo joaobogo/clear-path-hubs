@@ -97,7 +97,7 @@ export function MemoryCard({
           </span>
           <span className="inline-flex items-center gap-1">
             <Clock className="h-3 w-3" />
-            {new formatDate(Date(memory.tagged_at))}
+            {formatDate(Date(memory.tagged_at))}
           </span>
         </div>
       </button>

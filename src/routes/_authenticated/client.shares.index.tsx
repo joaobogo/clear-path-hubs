@@ -156,7 +156,7 @@ function SharesPage() {
                       <span className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" aria-hidden />
                         Created{" "}
-                        {new formatDate(Date(s.created_at))}
+                        {formatDate(Date(s.created_at))}
                       </span>
                     </div>
                   </div>

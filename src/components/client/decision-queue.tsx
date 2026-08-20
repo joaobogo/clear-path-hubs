@@ -30,7 +30,7 @@ export type QueueMeta = {
 
 function fmtDate(iso: string | null): string {
   if (!iso) return "";
-  return new formatDate(Date(iso));
+  return formatDate(Date(iso));
 }
 
 function waitingLabel(days: number | null): string {

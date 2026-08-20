@@ -28,7 +28,7 @@ export type ShortlistCommitment = {
 };
 
 export function formatCommitmentDate(iso: string): string {
-  return new formatDate(Date(iso));
+  return formatDate(Date(iso));
 }
 
 function wholeDays(fromIso: string, toIso: string | number): number {

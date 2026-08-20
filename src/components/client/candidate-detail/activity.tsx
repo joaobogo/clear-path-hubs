@@ -207,9 +207,9 @@ export function AuditTrailSection({ candidate }: { candidate: ClientCandidateDTO
                 </span>
               )}
               <div className="mt-1.5 flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
-                <span>{new formatDate(Date(e.at))}</span>
+                <span>{formatDate(Date(e.at))}</span>
                 <span>•</span>
-                <span>{new formatTime(Date(e.at))}</span>
+                <span>{formatTime(Date(e.at))}</span>
               </div>
             </div>
           </li>

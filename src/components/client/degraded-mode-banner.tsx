@@ -56,7 +56,7 @@ export function DegradedModeBanner({ className }: { className?: string }) {
         {data ? (
           <p className="mt-1 flex items-center gap-1.5 text-xs text-[color:var(--brand-navy)]/70">
             <Clock className="h-3 w-3" aria-hidden />
-            Checked {new formatTime(Date(data.checked_at))}
+            Checked {formatTime(Date(data.checked_at))}
           </p>
         ) : null}
       </div>

@@ -92,7 +92,7 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
           {b.criteriaSummary && <p className="mt-1">{b.criteriaSummary}</p>}
           {b.scoredAt && (
             <p className="mt-0.5">
-              Scored {new formatDate(Date(b.scoredAt))}
+              Scored {formatDate(Date(b.scoredAt))}
             </p>
           )}
         </div>

@@ -159,7 +159,7 @@ export function MemorySheet({
                     {m.owner_name ?? "Unassigned"}
                   </span>{" "}
                   · Tagged by {m.tagged_by_name ?? "team"} on{" "}
-                  {new formatDate(Date(m.tagged_at))}
+                  {formatDate(Date(m.tagged_at))}
                 </p>
               </section>
 
@@ -193,7 +193,7 @@ export function MemorySheet({
                           <p className="font-medium">{h.position_title}</p>
                           <p className="text-muted-foreground">
                             {clientStageLabel(h.stage)} ·{" "}
-                            {new formatDate(Date(h.updated_at))}
+                            {formatDate(Date(h.updated_at))}
                           </p>
                         </div>
                         <Link

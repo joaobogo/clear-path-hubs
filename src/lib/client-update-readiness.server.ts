@@ -302,7 +302,7 @@ export async function loadUpdateReadiness(
       id: `interview-scheduled:${String(i["id"])}`,
       label: `${nameForMatch(i["candidate_match_id"])} — interview ${String(i["status"] ?? "requested")}`,
       detail: i["scheduled_at"]
-        ? `${String(i["interview_type"] ?? "interview")} on ${new formatDateTime(Date(String(i["scheduled_at"])))}`
+        ? `${String(i["interview_type"] ?? "interview")} on ${formatDateTime(Date(String(i["scheduled_at"])))}`
         : String(i["interview_type"] ?? "interview"),
       at: String(i["created_at"]),
       link_kind: typeof i["candidate_match_id"] === "string" ? "candidate" : "position",
