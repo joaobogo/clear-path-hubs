@@ -68,7 +68,7 @@ export const METHOD_LABELS: Record<EvaluationMethod, string> = {
 /** One sentence naming the method, for the top of any explanation. */
 export const METHOD_SENTENCES: Record<EvaluationMethod, string> = {
   deterministic:
-    "Assessed by rule and term matching against the role's criteria — no model judgement.",
+    "Matched against your must-haves. A person on our team checks it.",
   semantic:
     "Assessed with model-assisted evidence matching against the role's criteria, then checked against the CV text.",
   human_adjusted:

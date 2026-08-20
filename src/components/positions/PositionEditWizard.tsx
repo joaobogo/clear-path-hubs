@@ -48,7 +48,7 @@ import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import type { QualityInput } from "@/lib/requisition-schema";
 
 const STEPS = [
-  { id: 1, label: "Requisition" },
+  { id: 1, label: "Role" },
   { id: 2, label: "Candidate profile & gates" },
   { id: 3, label: "Locations" },
 ];
@@ -461,7 +461,7 @@ export function PositionEditWizard({
                 <div className="space-y-6">
                   {dupWarning.length > 0 && (
                     <div className="rounded-md border border-amber-500/40 bg-amber-500/5 p-3 text-sm">
-                      <p className="font-medium">Possible duplicate requisition</p>
+                      <p className="font-medium">Possible duplicate role</p>
                       <ul className="mt-1 space-y-0.5 text-muted-foreground">
                         {dupWarning.map((m) => (
                           <li key={m.id}>

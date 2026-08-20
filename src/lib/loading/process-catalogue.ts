@@ -84,7 +84,7 @@ export const PROCESS_CATALOGUE = DEF({
     key: "agent_run",
     running: "Agent run in progress",
     done: "Agent run complete",
-    failed: "The agent run stopped before it finished",
+    failed: "The processing step stopped before it finished",
     retryLabel: "Start the run again",
     stages: [
       {

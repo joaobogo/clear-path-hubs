@@ -131,7 +131,7 @@ export function GeneratedBlueprintPanel({
     trackEvent("blueprint_reanalysis_requested", { position_id: position?.id });
     try {
       const res = await retry({ data: { positionId: position.id as string } });
-      if (res.ok) toast.success("Analysis finished. Your role blueprint is ready.");
+      if (res.ok) toast.success("Analysis finished. Your role brief is ready.");
       else if (res.reason === "already_running") toast.info("Analysis is already running.");
       else toast.error("TaaSFlow could not finish the analysis. Try again or paste the job description.");
       await router.invalidate();
@@ -157,7 +157,7 @@ export function GeneratedBlueprintPanel({
           </span>
           <div>
             <h2 className="text-base font-semibold">
-              {ready || failed ? "Role blueprint" : "Your role is being built"}
+              {ready || failed ? "Role brief" : "Your role is being built"}
             </h2>
             <p className="text-sm text-muted-foreground">
             {ready
@@ -166,7 +166,7 @@ export function GeneratedBlueprintPanel({
                   ? position?.blueprint_error === "job_description_unreadable" 
                     ? "TaaSFlow could not read the job description document. Please upload a clear PDF/DOCX or paste the text instead."
                     : "Your role was saved, but TaaSFlow could not finish analyzing the document. Try the analysis again or paste the job description."
-                  : "TaaSFlow is analyzing the job description, completing the role blueprint, calibrating the screening criteria, and preparing the sourcing plan. You can review or edit every detail as soon as the blueprint is ready."}
+                  : "TaaSFlow is analyzing the job description, completing the role brief, calibrating the screening criteria, and preparing the sourcing plan. You can review or edit every detail as soon as the brief is ready."}
             </p>
           </div>
         </div>
@@ -250,7 +250,7 @@ export function GeneratedBlueprintPanel({
           </ol>
           {!failed && audience === "client" && (
             <div className="space-y-1 rounded-md border bg-muted/30 p-3 text-sm text-muted-foreground">
-              <p>You do not need to keep this page open. TaaSFlow will email you when the role blueprint is ready.</p>
+              <p>You do not need to keep this page open. TaaSFlow will email you when the role brief is ready.</p>
               <p>
                 First candidate activity usually begins within 3–5 days after the search goes live. Your
                 complete pilot runs in days.

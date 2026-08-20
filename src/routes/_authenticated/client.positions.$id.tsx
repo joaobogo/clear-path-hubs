@@ -349,9 +349,9 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
           hint="Delivered · shortlisted · interviewing · offers"
         />
         <SummaryTile
-          label="Delivered total"
+          label="Candidates delivered"
           value={matches.length}
-          hint="Client-visible candidates only"
+          hint="Candidates released to you"
         />
       </section>
 
@@ -386,7 +386,7 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
         </section>
       )}
 
-      {/* Role blueprint — the source of truth for this role, and where it is edited */}
+      {/* Role brief — the source of truth for this role, and where it is edited */}
       <EvidencePanels
         orgId={orgId}
         positionId={id}

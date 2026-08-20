@@ -186,8 +186,8 @@ export function RequisitionEditor({
     onSuccess: async (res) => {
       toast.success(
         res.rescore_required
-          ? "Requisition saved — a rescore is pending for this job."
-          : "Requisition saved",
+          ? "Role details saved — a re-assessment is pending for this role."
+          : "Role details saved",
       );
       await qc.invalidateQueries({ queryKey: ["requisition-meta", positionId] });
     },
@@ -204,17 +204,17 @@ export function RequisitionEditor({
   });
 
   if (isLoading || !form || !meta) {
-    return <p className="text-sm text-muted-foreground">Loading requisition details…</p>;
+    return <p className="text-sm text-muted-foreground">Loading role details…</p>;
   }
 
   return (
     <div className="space-y-6">
       {meta.rescore_state !== "current" && (
         <div className="rounded-md border border-[hsl(var(--warning,45_90%_45%))]/40 bg-muted/50 p-3">
-          <p className="text-sm font-medium">Scoring-relevant detail changed (v{meta.content_version})</p>
+          <p className="text-sm font-medium">Detail that affects matching changed (v{meta.content_version})</p>
           <p className="mt-1 text-xs text-muted-foreground">
             Existing candidate scores were produced against an earlier version of this job. Nothing has been
-            rewritten — start a rescore to evaluate them against the current requisition.
+            rewritten — start a rescore to evaluate them against the current role brief.
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             <Input

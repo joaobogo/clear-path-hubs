@@ -144,7 +144,7 @@ export function buildIntelligence(
     staleAfterDays,
   });
 
-  // ── 1 · Pipeline health ────────────────────────────────────────────────
+  // ── 1 · Candidates in play ────────────────────────────────────────────────
   {
     const openStages = new Set(["delivered", "shortlisted", "interview_process", "offer"]);
     const counts = new Map<string, number>();
@@ -170,7 +170,7 @@ export function buildIntelligence(
     });
     metrics.push({
       key: "pipeline_health",
-      title: "Pipeline health",
+      title: "Candidates in play",
       question: "Do I have enough live candidates to fill these roles?",
       status: state.status,
       statusReason: state.reason,
@@ -705,21 +705,21 @@ export function buildIntelligence(
       status: state.status,
       statusReason: state.reason,
       value: runs.length ? String(runs.length) : null,
-      valueNote: runs.length ? `agent runs · ${failed} failed` : null,
+      valueNote: runs.length ? `processing steps · ${failed} failed` : null,
       tone: !runs.length ? "neutral" : failed > 0 ? "warn" : "good",
       comparison: { baselineLabel: `previous ${win.days} days`, ...cmp },
       freshness: fresh(latestAt, 7),
       explanation:
-        "Each entry is one recorded agent run on your roles — sourcing, evidence extraction, scoring, coordination. Outcomes are recorded by the agent itself; nothing here is inferred.",
+        "Each entry is one recorded processing step on your roles — sourcing, evidence extraction, scoring, coordination. Outcomes are recorded by the agent itself; nothing here is inferred.",
       action: failed
         ? {
             label: `${failed} run${failed === 1 ? "" : "s"} failed`,
             detail:
               "Failed runs leave gaps in candidate records. Your delivery lead is alerted automatically, but you can chase it here.",
-            link: { label: "Open agent activity", to: "/client/agents" },
+            link: { label: "Processing history", to: "/client/agents" },
           }
         : null,
-      link: { label: "Open agent activity", to: "/client/agents" },
+      link: { label: "Processing history", to: "/client/agents" },
       chart: runs.length
         ? {
             kind: "bars",
@@ -741,7 +741,7 @@ export function buildIntelligence(
               })),
           }
         : null,
-      sample: { counted: runs.length, expected: null, unit: "agent runs" },
+      sample: { counted: runs.length, expected: null, unit: "processing steps" },
     });
   }
 

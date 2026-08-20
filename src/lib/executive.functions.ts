@@ -262,10 +262,10 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     const bottlenecks = [
       {
         key: "pending_publish",
-        label: "Candidates awaiting publish",
+        label: "Candidates waiting to be released to you",
         count: pendingPublish,
         severity: (pendingPublish > 5 ? "warn" : "info") as "info" | "warn",
-        hint: "Cleared from the Publish desk",
+        hint: "Approved by our team",
       },
       {
         key: "stuck_processing",

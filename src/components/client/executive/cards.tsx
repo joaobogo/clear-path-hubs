@@ -163,14 +163,14 @@ export function BottlenecksCard({ rows }: { rows: ExecutiveReport["bottlenecks"]
   );
 }
 
-// ── Pipeline by BU ─────────────────────────────────────────────────────────
+// ── Candidates in play by team ─────────────────────────────────────────────────────────
 
 export function PipelineByBU({ rows }: { rows: ExecutiveReport["pipeline_by_bu"] }) {
   return (
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
-          <Building2 className="h-4 w-4" /> Pipeline health by business unit
+          <Building2 className="h-4 w-4" /> Candidates in play by team
         </CardTitle>
       </CardHeader>
       <CardContent className="taas-stack-scroll overflow-x-auto">
