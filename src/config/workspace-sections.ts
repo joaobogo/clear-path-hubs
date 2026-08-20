@@ -96,12 +96,12 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
       { to: "/admin/scoring/review", label: "Scoring review" },
       { to: "/admin/scoring/calibration", label: "Calibration desk", requiresPlatformAdmin: true },
 
-      { to: "/admin/scoring/orphans", label: "Orphans" },
       { to: "/admin/parse-failures", label: "Unreadable docs" },
       { to: "/admin/evidence-gaps", label: "Missing evidence" },
       { to: "/admin/outcome-sla", label: "Answers we owe" },
       { to: "/admin/intake-quality", label: "Intake quality" },
       { to: "/admin/qa-report", label: "QA report" },
+
     ],
   },
 

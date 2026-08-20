@@ -195,7 +195,6 @@ import { Route as AuthenticatedClientPositionsNewRouteImport } from './routes/_a
 import { Route as AuthenticatedClientPositionsIdRouteImport } from './routes/_authenticated/client.positions.$id'
 import { Route as AuthenticatedClientConversationsConversationIdRouteImport } from './routes/_authenticated/client.conversations.$conversationId'
 import { Route as AuthenticatedClientCandidatesIdRouteImport } from './routes/_authenticated/client.candidates.$id'
-import { Route as AuthenticatedAdminScoringOrphansRouteImport } from './routes/_authenticated/admin.scoring.orphans'
 import { Route as AuthenticatedAdminScoringCalibrationRouteImport } from './routes/_authenticated/admin.scoring.calibration'
 import { Route as AuthenticatedAdminReviewMatchIdRouteImport } from './routes/_authenticated/admin.review.$matchId'
 import { Route as AuthenticatedAdminPositionsIdRouteImport } from './routes/_authenticated/admin.positions.$id'
@@ -1225,12 +1224,6 @@ const AuthenticatedClientCandidatesIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedClientCandidatesRoute,
   } as any)
-const AuthenticatedAdminScoringOrphansRoute =
-  AuthenticatedAdminScoringOrphansRouteImport.update({
-    id: '/scoring/orphans',
-    path: '/scoring/orphans',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
 const AuthenticatedAdminScoringCalibrationRoute =
   AuthenticatedAdminScoringCalibrationRouteImport.update({
     id: '/scoring/calibration',
@@ -1485,7 +1478,6 @@ export interface FileRoutesByFullPath {
   '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
   '/admin/review/$matchId': typeof AuthenticatedAdminReviewMatchIdRoute
   '/admin/scoring/calibration': typeof AuthenticatedAdminScoringCalibrationRoute
-  '/admin/scoring/orphans': typeof AuthenticatedAdminScoringOrphansRoute
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
@@ -1677,7 +1669,6 @@ export interface FileRoutesByTo {
   '/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
   '/admin/review/$matchId': typeof AuthenticatedAdminReviewMatchIdRoute
   '/admin/scoring/calibration': typeof AuthenticatedAdminScoringCalibrationRoute
-  '/admin/scoring/orphans': typeof AuthenticatedAdminScoringOrphansRoute
   '/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
   '/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
@@ -1882,7 +1873,6 @@ export interface FileRoutesById {
   '/_authenticated/admin/positions/$id': typeof AuthenticatedAdminPositionsIdRoute
   '/_authenticated/admin/review/$matchId': typeof AuthenticatedAdminReviewMatchIdRoute
   '/_authenticated/admin/scoring/calibration': typeof AuthenticatedAdminScoringCalibrationRoute
-  '/_authenticated/admin/scoring/orphans': typeof AuthenticatedAdminScoringOrphansRoute
   '/_authenticated/client/candidates/$id': typeof AuthenticatedClientCandidatesIdRoute
   '/_authenticated/client/conversations/$conversationId': typeof AuthenticatedClientConversationsConversationIdRoute
   '/_authenticated/client/positions/$id': typeof AuthenticatedClientPositionsIdRoute
@@ -2087,7 +2077,6 @@ export interface FileRouteTypes {
     | '/admin/positions/$id'
     | '/admin/review/$matchId'
     | '/admin/scoring/calibration'
-    | '/admin/scoring/orphans'
     | '/client/candidates/$id'
     | '/client/conversations/$conversationId'
     | '/client/positions/$id'
@@ -2279,7 +2268,6 @@ export interface FileRouteTypes {
     | '/admin/positions/$id'
     | '/admin/review/$matchId'
     | '/admin/scoring/calibration'
-    | '/admin/scoring/orphans'
     | '/client/candidates/$id'
     | '/client/conversations/$conversationId'
     | '/client/positions/$id'
@@ -2483,7 +2471,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/positions/$id'
     | '/_authenticated/admin/review/$matchId'
     | '/_authenticated/admin/scoring/calibration'
-    | '/_authenticated/admin/scoring/orphans'
     | '/_authenticated/client/candidates/$id'
     | '/_authenticated/client/conversations/$conversationId'
     | '/_authenticated/client/positions/$id'
@@ -3928,13 +3915,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientCandidatesIdRouteImport
       parentRoute: typeof AuthenticatedClientCandidatesRoute
     }
-    '/_authenticated/admin/scoring/orphans': {
-      id: '/_authenticated/admin/scoring/orphans'
-      path: '/scoring/orphans'
-      fullPath: '/admin/scoring/orphans'
-      preLoaderRoute: typeof AuthenticatedAdminScoringOrphansRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
     '/_authenticated/admin/scoring/calibration': {
       id: '/_authenticated/admin/scoring/calibration'
       path: '/scoring/calibration'
@@ -4161,7 +4141,6 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminReviewMatchIdRoute: typeof AuthenticatedAdminReviewMatchIdRoute
   AuthenticatedAdminScoringCalibrationRoute: typeof AuthenticatedAdminScoringCalibrationRoute
-  AuthenticatedAdminScoringOrphansRoute: typeof AuthenticatedAdminScoringOrphansRoute
   AuthenticatedAdminScoringReviewMatchIdRoute: typeof AuthenticatedAdminScoringReviewMatchIdRoute
   AuthenticatedAdminScoringReviewIndexRoute: typeof AuthenticatedAdminScoringReviewIndexRoute
 }
@@ -4209,7 +4188,6 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminReviewMatchIdRoute: AuthenticatedAdminReviewMatchIdRoute,
   AuthenticatedAdminScoringCalibrationRoute:
     AuthenticatedAdminScoringCalibrationRoute,
-  AuthenticatedAdminScoringOrphansRoute: AuthenticatedAdminScoringOrphansRoute,
   AuthenticatedAdminScoringReviewMatchIdRoute:
     AuthenticatedAdminScoringReviewMatchIdRoute,
   AuthenticatedAdminScoringReviewIndexRoute:

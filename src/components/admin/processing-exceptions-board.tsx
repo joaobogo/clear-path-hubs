@@ -12,12 +12,15 @@ import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import { humanizeCode, humanizeJobName, humanizeTechnicalError } from "@/lib/humanize-codes";
 import { TechnicalDetail } from "@/components/admin/technical-detail";
+import { listScoringOrphans, resolveScoringOrphan, type ScoringOrphan } from "@/lib/scoring.functions";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 import {
   getProcessingExceptions,
   markProcessingJobPermanentlyFailed,
   retryPositionProcessingExceptions,
   retryProcessingException,
 } from "@/lib/admin-processing-exceptions.functions";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -46,6 +49,19 @@ function ageLabel(minutes: number): string {
   if (minutes < 60 * 24) return `${Math.floor(minutes / 60)}h`;
   return `${Math.floor(minutes / (60 * 24))}d`;
 }
+
+function formatOrphanDate(iso: string): string {
+  return new Date(iso).toLocaleString(APP_LOCALE, {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: WORKSPACE_TIMEZONE,
+  });
+}
+
 
 export function ProcessingExceptionsBoard({ className }: { className?: string }) {
   const qc = useQueryClient();
@@ -98,7 +114,31 @@ export function ProcessingExceptionsBoard({ className }: { className?: string })
     onError: (e: Error) => toastError(e),
   });
 
+  const resolveOrphanFn = useServerFn(resolveScoringOrphan);
+  const [orphanNote, setOrphanNote] = useState<Record<string, string>>({});
+  const orphanQuery = useQuery<ScoringOrphan[]>({
+    queryKey: ["admin", "scoring-orphans"],
+    queryFn: () => listScoringOrphans(),
+    staleTime: 20_000,
+  });
+  const invalidateOrphans = () =>
+    qc.invalidateQueries({ queryKey: ["admin", "scoring-orphans"] });
+  const resolveOrphan = useMutation({
+    mutationFn: (input: {
+      orphan_id: string;
+      action: "mark_failed" | "acknowledge";
+      note?: string;
+    }) => resolveOrphanFn({ data: input }),
+    onSuccess: async () => {
+      toast.success("Resolved.");
+      setOrphanNote({});
+      await invalidateOrphans();
+    },
+    onError: (e: Error) => toast.error(`Resolve failed: ${e.message}`),
+  });
+
   const board = query.data;
+
   const active = useMemo(() => board?.active ?? [], [board]);
   const permanent = board?.permanent ?? [];
 
@@ -109,6 +149,11 @@ export function ProcessingExceptionsBoard({ className }: { className?: string })
       if (r.position_id) map.set(r.position_id, (map.get(r.position_id) ?? 0) + 1);
     return map;
   }, [active]);
+
+  const orphans = orphanQuery.data ?? [];
+  const openOrphans = useMemo(() => orphans.filter((o) => !o.resolved_at), [orphans]);
+  const resolvedOrphans = useMemo(() => orphans.filter((o) => o.resolved_at), [orphans]);
+
 
   return (
     <section
@@ -334,6 +379,132 @@ export function ProcessingExceptionsBoard({ className }: { className?: string })
           </table>
         </div>
       )}
+
+      {/* Scoring orphans drill-down — folded from the retired /admin/scoring/orphans route. */}
+      <div className="border-t px-4 py-4">
+        <div className="mb-3">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Scoring orphans
+          </h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Historical rows whose scoring identity does not resolve to a canonical rubric version.
+            Nothing is deleted; they can be acknowledged or marked failed.
+          </p>
+        </div>
+
+        {orphanQuery.isPending ? (
+          <div className="space-y-2" aria-busy="true" aria-label="Loading scoring orphans">
+            <div className="h-4 w-48 animate-pulse rounded bg-muted" />
+            <div className="h-4 w-32 animate-pulse rounded bg-muted" />
+          </div>
+        ) : orphanQuery.isError ? (
+          <div className="text-xs text-muted-foreground">
+            Orphan list could not be loaded: {orphanQuery.error?.message ?? "Unknown error"}
+          </div>
+        ) : (
+          <>
+            {openOrphans.length === 0 ? (
+              <p className="text-sm font-medium text-green-600">
+                OPEN (0) — No unresolved scoring orphans. Historical scores are fully linked.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-xs font-medium text-muted-foreground">
+                  OPEN ({openOrphans.length})
+                </p>
+                <ul className="space-y-3">
+                  {openOrphans.map((o) => (
+                    <li key={o.id} className="rounded-md border p-3 text-sm">
+                      <div className="flex flex-wrap items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="font-medium">{humanizeCode(o.reason)}</p>
+                          <p className="text-xs text-muted-foreground">
+                            Detected {formatOrphanDate(o.detected_at)}
+                          </p>
+                          {o.candidate_match_id ? (
+                            <p className="mt-1 text-xs text-muted-foreground">
+                              Match: {o.candidate_match_id.slice(0, 8)}…
+                            </p>
+                          ) : null}
+                          {o.detail && Object.keys(o.detail).length > 0 ? (
+                            <TechnicalDetail
+                              className="mt-1"
+                              label="Show detail"
+                              payload={JSON.stringify(o.detail, null, 2)}
+                            />
+                          ) : null}
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-7 text-xs"
+                            disabled={resolveOrphan.isPending}
+                            onClick={() =>
+                              resolveOrphan.mutate({ orphan_id: o.id, action: "acknowledge" })
+                            }
+                          >
+                            Acknowledge
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-7 text-xs"
+                            disabled={resolveOrphan.isPending || !o.candidate_match_id}
+                            title={
+                              o.candidate_match_id
+                                ? "Move the candidate match to failed"
+                                : "No candidate match to mark failed"
+                            }
+                            onClick={() =>
+                              resolveOrphan.mutate({
+                                orphan_id: o.id,
+                                action: "mark_failed",
+                                note: orphanNote[o.id]?.trim(),
+                              })
+                            }
+                          >
+                            Mark match failed
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="mt-2">
+                        <Textarea
+                          value={orphanNote[o.id] ?? ""}
+                          onChange={(e) =>
+                            setOrphanNote((prev) => ({ ...prev, [o.id]: e.target.value }))
+                          }
+                          placeholder="Reason or note for this resolution"
+                          rows={2}
+                          className="text-xs"
+                        />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {resolvedOrphans.length > 0 ? (
+              <div className="mt-4 space-y-3">
+                <p className="text-xs font-medium text-muted-foreground">
+                  RESOLVED ({resolvedOrphans.length})
+                </p>
+                <ul className="space-y-2">
+                  {resolvedOrphans.map((o) => (
+                    <li key={o.id} className="text-xs text-muted-foreground">
+                      {humanizeCode(o.reason)} · resolved {formatOrphanDate(o.resolved_at!)} ·{" "}
+                      {o.resolution_note ?? "no note"}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </>
+        )}
+      </div>
+
+
 
       {permanent.length > 0 ? (
         <div className="border-t px-4 py-3">
