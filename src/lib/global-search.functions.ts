@@ -323,7 +323,7 @@ export const globalSearch = createServerFn({ method: "POST" })
           type: "message",
           id: m.id,
           label: snippet || "Message",
-          context: new Date(m.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }),
+          context: formatDateTime(m.created_at),
           href,
           search: scope === "client" ? { org: m.thread_id as string } : undefined,
         };
