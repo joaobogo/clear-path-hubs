@@ -100,7 +100,6 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
       { to: "/admin/parse-failures", label: "Unreadable docs" },
       { to: "/admin/evidence-gaps", label: "Missing evidence" },
       { to: "/admin/outcome-sla", label: "Answers we owe" },
-      { to: "/admin/business-rules", label: "Business rules", requiresPlatformAdmin: true },
       { to: "/admin/intake-quality", label: "Intake quality" },
       { to: "/admin/qa-report", label: "QA report" },
     ],
