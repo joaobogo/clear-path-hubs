@@ -91,7 +91,7 @@ function EvidenceViewer() {
       URL.revokeObjectURL(url);
       toast.success("Evidence record downloaded");
     } catch (e: Any) {
-      toast.error(e?.message ?? "Download failed");
+      toastError(e, { fallback: "Download failed", tone: "admin" });
     } finally {
       setDownloading(false);
     }
