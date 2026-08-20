@@ -81,7 +81,7 @@ export function SourcingOpsPanel({ positionId }: { positionId: string }) {
       toast.success("Channel removed");
       qc.invalidateQueries({ queryKey: key });
     },
-    onError: (e: Any) => toast.error(e?.message ?? "Could not remove the channel"),
+    onError: (e: Any) => toastError(e, { fallback: "Could not remove the channel", tone: "admin" }),
   });
 
   const [editing, setEditing] = useState<Any>(null);
