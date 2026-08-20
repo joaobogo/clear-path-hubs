@@ -164,6 +164,12 @@ function Overview() {
   const router = useRouter();
   const showTest = useIncludeTestRecords();
   const { scope = "all" } = Route.useSearch();
+  const actingUserId = useActingUserId();
+  // Blocks that carry a staff owner are filtered to the acting admin under
+  // "Mine". Account-level and outcome-level blocks have no owner, so they say
+  // so out loud instead of silently reading as the operator's own work.
+  const ownerScope = scope === "mine" ? (actingUserId ?? "no-owner") : null;
+  const teamWide = scope === "mine";
 
   async function refreshAll() {
     await Promise.all([
@@ -185,26 +191,32 @@ function Overview() {
       </AdminWidgetErrorBoundary>
 
       <AdminWidgetErrorBoundary label="SLA banner">
-        <SlaBreachStrip includeTest={showTest} />
+        <SlaBreachStrip includeTest={showTest} ownerUserId={ownerScope} />
       </AdminWidgetErrorBoundary>
 
       <AdminWidgetErrorBoundary label="Portfolio health">
-        <PortfolioHealthTable includeTest={showTest} />
+        <PortfolioHealthTable includeTest={showTest} teamWideNote={teamWide} />
       </AdminWidgetErrorBoundary>
 
       <AdminWidgetErrorBoundary label="Awaiting client decision">
-        <DecisionBacklogPanel includeTest={showTest} showClientColumn limit={8} />
+        <DecisionBacklogPanel
+          includeTest={showTest}
+          showClientColumn
+          limit={8}
+          ownerUserId={ownerScope}
+        />
       </AdminWidgetErrorBoundary>
 
       <AdminWidgetErrorBoundary label="Offers and hires">
-        <OfferHireRollupPanel />
+        <OfferHireRollupPanel teamWideNote={teamWide} />
       </AdminWidgetErrorBoundary>
 
       <AdminWidgetErrorBoundary label="Latest activity">
         <section>
           <div className="mb-2 flex items-center justify-between gap-3">
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            <h2 className="flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               Latest activity
+              {teamWide ? <TeamScopeNote className="normal-case tracking-normal" /> : null}
             </h2>
             <Link to="/admin/operations" className="text-xs font-medium text-primary hover:underline">
               View all activity
