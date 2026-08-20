@@ -36,6 +36,42 @@ function CountChip({
   );
 }
 
+function ScoreComposition({ candidate }: { candidate: ClientCandidateDTO }) {
+  const c = candidate.score_composition;
+  if (!c || c.components.length === 0) return null;
+  return (
+    <div className="mt-4 rounded-lg border p-3">
+      <h3 className="text-sm font-semibold">How the number is made up</h3>
+      <ul className="mt-2 space-y-1.5 text-sm">
+        {c.components.map((k) => (
+          <li key={k.key} className="flex flex-wrap items-baseline justify-between gap-2">
+            <span className="text-muted-foreground">
+              {k.label} <span className="tabular-nums">({k.weightPct}% of the score)</span>
+            </span>
+            <span className="tabular-nums">
+              {k.valuePct}% &times; {k.weightPct}% = {k.contributionPts} points
+            </span>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-2 flex flex-wrap items-baseline justify-between gap-2 border-t pt-2 text-sm font-medium">
+        <span>Total</span>
+        <span className="tabular-nums">
+          {c.totalPts} points
+          {c.displayedScore != null && !c.reconciles ? ` (score shown: ${c.displayedScore})` : ""}
+        </span>
+      </div>
+      <p className="mt-2 text-[11px] text-muted-foreground">
+        {c.incomplete
+          ? "One of the three weightings was not measured for this assessment, so the parts do not add up to the whole yet."
+          : c.reconciles
+            ? "The three parts add up to the score shown above."
+            : "The parts and the score shown disagree; the assessment is being re-checked."}
+      </p>
+    </div>
+  );
+}
+
 export const ScoreBreakdown = memo(function ScoreBreakdown({
   candidate,
 }: {
@@ -97,6 +133,8 @@ export const ScoreBreakdown = memo(function ScoreBreakdown({
           )}
         </div>
       </div>
+
+      <ScoreComposition candidate={candidate} />
 
       {/* Must-have vs preferred evidence, kept apart because they weigh differently. */}
       <div className="mt-4 space-y-4">

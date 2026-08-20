@@ -526,10 +526,8 @@ function CandidateDetailPage() {
   </TabsList>
 
  <TabsContent value="summary" className="mt-4 space-y-4">
-  {/* Requirement coverage is hidden per B5 until fixed */}
-  {/* <RequirementCoverage candidate={candidate} withRationale /> */}
-  {/* Score breakdown is hidden per B4 until fixed */}
-  {/* <ScoreBreakdown candidate={candidate} /> */}
+  <RequirementCoverage candidate={candidate} withRationale />
+  <ScoreBreakdown candidate={candidate} />
 
  <WhyThisCandidate candidate={candidate} />
  {compQuery.isError ? (
