@@ -145,36 +145,19 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "Plan mode please — I think this is one shared cause, not fifteen separate ones.
-
-Navigation is fast but content is slow, and the distinction matters because a naive
-performance check will show green. Measured nav duration versus time until the page was
-actually readable:
-
-  /admin/messages      673 ms → ~13 s
-  /admin/wbr           686 ms → ~12 s
-  /admin/team          670 ms → ~13 s
-  /admin/payments      554 ms → ~13 s
-  /admin/candidates  1,073 ms → ~13 s
-  /admin/positions   1,116 ms → ~13 s
-  /admin/clients     1,334 ms → ~11 s
-  /admin/operations  1,986 ms → ~12 s
-  /admin/health      2,573 ms → ~12 s
-  /admin/intake      2,765 ms → ~13 s
-
-Not one page met a 5-second threshold. Every page ships its shell in under 3 seconds and
-then holds a full-page skeleton for another 9 to 11 seconds. The uniformity across pages
-with wildly different payloads points at one blocking call in the layout or auth middleware
-rather than per-page queries — that's where I'd look first.
-
-Two loads never resolved at all: the Review→candidate route (prompt 1.1) and the client
-detail delivery tile (prompt 2.1).
-
-Please: find the shared blocking call, render each block as its own data arrives instead of
-holding a whole-page skeleton, and put a timeout on every skeleton so it becomes an error
-with a retry rather than running forever.
-
-Check: every page readable in under 5 seconds, no skeleton lasting past 10."`}
+TEXTO DO USUÁRIO: "P01 Fix the swallowed first click BLOCKER GLOBAL
+Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
+Several buttons in this app do nothing on the first click and only work on the second. Confirmed on all
+five of these:
+1. "New role" button on the client Roles page (/client/positions)
+2. The notifications bell in the top bar
+3. "Return to Admin" in the impersonation banner
+4. "+ New role" on /admin/positions
+5. The "Roles" filter tab on the client Messages page (/client/conversations)
+Find the shared cause (likely a click handler that only fires after a state/hydration pass, or a component
+that mounts on first click and handles on second) and fix it once so a single click fires the action.
+Do not change any styling or copy. Only fix the click behaviour.
+Done when: Each of the five controls above performs its action on the very first click."`}
         </div>
 
         <Scripts />
