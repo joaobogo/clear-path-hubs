@@ -179,6 +179,30 @@ function ClientsPage() {
 
   const data = query.data;
 
+  // Valid type options respect the global test-records toggle.
+  const visibleOrgTypes = useMemo(
+    () =>
+      includeTest
+        ? ORG_TYPES
+        : ORG_TYPES.filter((t) => t.value !== "qa" && t.value !== "internal"),
+    [includeTest],
+  );
+
+  // If test records are hidden, QA and Internal filters are not selectable
+  // and fall back to the default "Clients + Demos" view.
+  const effectiveOrgType = useMemo<OrgType>(() => {
+    const t = isOrgType(search.org_type) ? search.org_type : "client_demo";
+    if (!includeTest && (t === "qa" || t === "internal")) return "client_demo";
+    return t;
+  }, [search.org_type, includeTest]);
+
+  // Redirect an invalid QA/Internal URL when the toggle hides test records.
+  useEffect(() => {
+    if (!includeTest && (search.org_type === "qa" || search.org_type === "internal")) {
+      navigate({ search: { ...search, org_type: "client_demo", page: 1 } });
+    }
+  }, [includeTest, search.org_type, navigate, search]);
+
   const filtered = useMemo(() => {
     const raw = (data?.items ?? []) as ClientRow[];
     let rows = raw;
@@ -200,16 +224,18 @@ function ClientsPage() {
       rows = rows.filter((r) => r.industry === search.industry);
     }
 
-    const orgTypeValue = isOrgType(search.org_type) ? search.org_type : "client_demo";
-    if (orgTypeValue !== "all") {
+    if (effectiveOrgType !== "all") {
       rows = rows.filter((r) => {
-        if (orgTypeValue === "client_demo") return !r.is_qa && !r.is_internal;
-        if (orgTypeValue === "client") return !r.is_demo && !r.is_qa && !r.is_internal;
-        if (orgTypeValue === "demo") return r.is_demo;
-        if (orgTypeValue === "qa") return r.is_qa;
-        if (orgTypeValue === "internal") return r.is_internal;
+        if (effectiveOrgType === "client_demo") return !r.is_qa && !r.is_internal;
+        if (effectiveOrgType === "client") return !r.is_demo && !r.is_qa && !r.is_internal;
+        if (effectiveOrgType === "demo") return r.is_demo;
+        if (effectiveOrgType === "qa") return r.is_qa;
+        if (effectiveOrgType === "internal") return r.is_internal;
         return true;
       });
+    } else if (!includeTest) {
+      // "All types" still respects the global test-records toggle.
+      rows = rows.filter((r) => !r.is_qa && !r.is_internal);
     }
 
     // P-020: Ensure that even if archived are hidden by default, 
@@ -225,7 +251,7 @@ function ClientsPage() {
     }
 
     return rows;
-  }, [data, search, includeTest]);
+  }, [data, search, includeTest, effectiveOrgType]);
 
 
   const total = filtered.length;
@@ -365,7 +391,7 @@ function ClientsPage() {
               <SelectValue placeholder="Type" />
             </SelectTrigger>
             <SelectContent>
-              {ORG_TYPES.map((t) => (
+              {visibleOrgTypes.map((t) => (
                 <SelectItem key={t.value} value={t.value}>
                   {t.label}
                 </SelectItem>
