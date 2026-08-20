@@ -8,8 +8,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
-import { reconcileOfferWithStage } from "@/lib/offer-hire-stage";
-import { loadMatchStages } from "@/lib/offer-hire-stage.server";
+import { isConfirmedHire, selectConfirmedHires } from "@/lib/hires/confirmed";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -701,7 +700,7 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     const openOffers = canonical.offers;
     // Confirmed hires come from the shared selector over the offer records
     // themselves — the same function the board column and footer use.
-    const hires = selectConfirmedHires(scoped as Array<AnyRow & { status: string }>);
+    const hires: AnyRow[] = selectConfirmedHires(scoped as Array<{ status: string }>) as AnyRow[];
 
 
 
@@ -850,7 +849,7 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
         open_offers: openOffers,
         // Counted from the same stage-reconciled rows that fill the board
         // column and the by-owner footer, so the three can never disagree.
-        hires_confirmed: Math.max(hires.length, canonical.hires),
+        hires_confirmed: hires.length,
 
         closed_lost: scoped.filter((r) => r.status === "closed_lost").length,
         acceptance_rate: acceptanceRate,
