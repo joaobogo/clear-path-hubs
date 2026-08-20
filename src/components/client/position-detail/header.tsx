@@ -127,7 +127,7 @@ export function PositionSettingsBlock({
             search={{ step: undefined }}
             data-qa-action="edit-position-wizard"
           >
-            Edit position
+            Edit role
           </Link>
         </Button>
         <Button asChild variant="outline" size="sm">
@@ -215,7 +215,7 @@ export function PositionHeader({
               search={{ step: undefined }}
               data-qa-action="edit-position-wizard"
             >
-              Edit position
+              Edit role
             </Link>
           </Button>
         )}

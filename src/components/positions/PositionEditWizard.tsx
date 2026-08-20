@@ -321,7 +321,7 @@ export function PositionEditWizard({
       });
     },
     onSuccess: async () => {
-      toast.success("Position saved");
+      toast.success("Role saved");
       if (typeof window !== "undefined") window.localStorage.removeItem(draftKey);
       setSavedAt(null);
       setState((cur) => ({ ...cur }));
@@ -381,7 +381,7 @@ export function PositionEditWizard({
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:flex sm:flex-wrap sm:justify-between">
         <div className="min-w-0">
           <p className="text-xs uppercase tracking-wide text-muted-foreground">
-            {audience === "admin" ? "Admin · Edit position" : "Client · Edit role"}
+            {audience === "admin" ? "Admin · Edit role" : "Edit role"}
           </p>
           <h1 className="truncate text-xl font-semibold sm:text-2xl">
             {initial.title || "Untitled role"}

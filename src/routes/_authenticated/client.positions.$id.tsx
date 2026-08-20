@@ -286,7 +286,7 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
           to="/client/positions"
           className="text-sm text-muted-foreground hover:underline"
         >
-          ← All positions
+          ← All roles
         </Link>
         <LiveUpdatedChip updatedAt={live.updatedAt} />
       </div>

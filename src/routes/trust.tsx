@@ -60,7 +60,7 @@ const PRICING_LINES = [
     detail: "One-off package. See the system on a real role before scaling.",
   },
   {
-    label: "Multi Position",
+    label: "Multi Role",
     price: PRICE_MULTI_DISPLAY,
     scope: MULTI_ROLES_LABEL,
     detail: "Reference package. Higher volume, lower cost per role.",

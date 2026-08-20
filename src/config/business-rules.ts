@@ -143,7 +143,7 @@ export const BUSINESS_RULES_DEFAULTS = {
     },
     {
       id: "multi",
-      name: "Multi Position",
+      name: "Multi Role",
       eyebrow: "2–5 active roles",
       minRoles: POSITION_BANDS.multi.min,
       maxRoles: POSITION_BANDS.multi.max,

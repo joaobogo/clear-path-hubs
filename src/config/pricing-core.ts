@@ -47,10 +47,10 @@ export const MULTI_ROLES_LABEL = "2–5 active roles";
 export const SPRINT_ROLES_LABEL = "6–10 active roles";
 export const ENTERPRISE_ROLES_LABEL = "11+ roles or continuous hiring";
 
-/** Multi Position is the reference package used for ROI comparisons. */
+/** Multi Role is the reference package used for ROI comparisons. */
 export const ROI_REFERENCE_PACKAGE_USD = PRICE_MULTI_USD;
 export const ROI_REFERENCE_PACKAGE_LABEL =
-  "Multi Position one-off package (2–5 roles)";
+  "Multi Role one-off package (2–5 roles)";
 
 /** Turnaround guarantee shared across every published tier. */
 export const TURNAROUND_LABEL = "5-day turnaround";

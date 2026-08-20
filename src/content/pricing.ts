@@ -68,7 +68,7 @@ export const PRICING_TIERS: PricingTier[] = [
   },
   {
     id: "multi",
-    name: "Multi Position",
+    name: "Multi Role",
     eyebrow: "2–5 active roles",
     oneTime: PRICE_MULTI_USD,
     priceDisplay: PRICE_MULTI_DISPLAY,
@@ -154,7 +154,7 @@ export const NEVER_CHARGED: string[] = [
   "Hidden markups on interviews or offers",
 ];
 
-/** Reference package price used by ROI calculator (Multi Position). */
+/** Reference package price used by ROI calculator (Multi Role). */
 export const ROI_REFERENCE_PACKAGE = ROI_REFERENCE_PACKAGE_USD;
 export const ROI_REFERENCE_PACKAGE_LABEL = CORE_ROI_LABEL;
 
