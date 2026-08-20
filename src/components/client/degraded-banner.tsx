@@ -68,13 +68,7 @@ export function DegradedPanelsBanner({
       <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 taas-fg-warning sm:mt-0" />
       <div className="min-w-0 flex-1">
         <p className="font-medium text-foreground">
-          This page is incomplete.
-          {failed.length > 0 && (
-            <> {joinLabels(failed.map((p) => p.label))} didn&apos;t load.</>
-          )}
-          {stale.length > 0 && (
-            <> {joinLabels(stale.map((p) => p.label))} {stale.length === 1 ? "is" : "are"} out of date.</>
-          )}
+          Part of your dashboard didn&apos;t load.
         </p>
         <p className="text-muted-foreground">
           Those sections are marked &ldquo;not current&rdquo; below and show a dash instead of a
