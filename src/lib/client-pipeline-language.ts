@@ -185,11 +185,7 @@ export type PipelineActionTarget =
       to: "/client/interviews";
       search: { interview?: string };
     }
-  | {
-      kind: "offer_response";
-      to: "/client/offers";
-      search: { position: string };
-    };
+  | { kind: "offer_response"; to: "/client/offers" };
 
 export function buildPipelineActionTarget(
   input: Pick<
@@ -218,7 +214,6 @@ export function buildPipelineActionTarget(
     return {
       kind: "offer_response",
       to: "/client/offers",
-      search: { position: input.positionId },
     };
   return null;
 }
