@@ -15748,6 +15748,16 @@ export type Database = {
         Args: { _reason: string; _user_id: string }
         Returns: number
       }
+      get_latest_conversation_messages: {
+        Args: { conversation_ids: string[] }
+        Returns: {
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          sender_user_id: string
+        }[]
+      }
       grant_plan_entitlement: {
         Args: {
           _environment: string
