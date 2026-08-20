@@ -300,9 +300,13 @@ export function initializeTrackers() {
   // GA4 is special: it boots early but restricted.
   safe(initGA4);
 
+  // RB2B identifies businesses, not people, and runs on every pageview with no
+  // consent prompt — the head snippet is primary, this is the fallback.
+  safe(initRB2B);
+
   // Other trackers only boot if explicitly allowed.
   for (const key of Object.keys(INITIALISERS) as TrackerKey[]) {
-    if (key === "ga4") continue;
+    if (key === "ga4" || key === "rb2b") continue;
     const category = TRACKER_CATEGORY[key];
     if (isTrackerAllowed(key, category)) {
       safe(INITIALISERS[key]);
