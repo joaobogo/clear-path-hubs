@@ -147,7 +147,7 @@ function HealthPage() {
           Failed jobs, plus jobs still queued or running for more than 24 hours — the same
           rows counted by “Processing exceptions” above.
         </p>
-        <div className="rounded-lg border overflow-hidden">
+        <div className="rounded-lg border overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-muted/50 text-left">
               <tr>
@@ -203,9 +203,9 @@ function HealthPage() {
                     <Link
                       to="/admin/candidates/$id"
                       params={{ id: j.entity_id }}
-                      className="text-xs text-primary hover:underline"
+                      className="inline-flex min-h-8 items-center px-1 text-xs text-primary hover:underline"
                     >
-                      open
+                      Open
                     </Link>
                   </td>
                 </tr>
