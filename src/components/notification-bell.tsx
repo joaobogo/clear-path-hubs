@@ -88,6 +88,9 @@ export function NotificationBell() {
   const unreadChanged = useJustChanged(unread);
   const arrivals = useArrivals(useMemo(() => items.map((i) => i.id), [items]));
 
+  // Every count in this panel counts ROWS AS RENDERED. Mixing "unread items"
+  // into a chip that filters rows is what made the badge say 2 above a list of
+  // three.
   const counts = useMemo(() => {
     const c: Record<NotificationTier, number> = {
       critical: 0,
@@ -96,16 +99,23 @@ export function NotificationBell() {
       informational: 0,
     };
     for (const g of groups) {
-      // Use g.unread to count only items that contribute to the unread badge
-      c[g.tier] += g.unread;
+      c[g.tier] += 1;
     }
     return c;
   }, [groups]);
 
-  // The badge count and the "needs attention" verdict should both use the same
-  // predicate: unread actionable items.
-  const badgeCount = counts.critical + counts.action_required + counts.important + counts.informational;
-  const needsAttention = counts.critical + counts.action_required;
+  // Rows the "Unread" chip would show.
+  const unreadRows = groups.filter((g) => g.unread > 0).length;
+  // Rows the panel lists under "All".
+  const totalRows = groups.length;
+  const badgeCount = unreadRows;
+  const needsAttention = groups.filter(
+    (g) => g.tier === "critical" || g.tier === "action_required",
+  ).length;
+  // A badge that every row carries says nothing. Only show the severity badge
+  // when the list actually mixes severities.
+  const showTierBadge = new Set(groups.map((g) => g.tier)).size > 1;
+
 
   // "Emails to your address are blocked / bounced" is an ACCOUNT state, not a
   // property of each notification. Show it once at the top of the panel instead
