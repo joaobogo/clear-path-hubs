@@ -1,8 +1,10 @@
 name: Release gate
 
-# Blocks merges on any regression: the full unit/integration suite plus the
+# Blocks merges on any regression: the full unit/integration suite, the
 # Playwright smoke journey (candidate account creation → apply → staff approval
-# → client advance → staff queue) must both be green.
+# → client advance → staff queue), and the admin performance smoke test must
+# all be green.
+
 on:
   pull_request:
     branches: ["**"]
