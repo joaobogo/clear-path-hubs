@@ -143,20 +143,18 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "After the Position→Role and Record→Candidate rename, some query params were renamed and the old ones now fail silently — accepted, ignored, no message. A stale bookmark returns a plausible-looking wrong answer.
+TEXTO DO USUÁRIO: "/admin/messages says \"12 threads across all clients\". Eight of the twelve read \"No messages
+yet\". A previous audit found 6 of 12, so auto-created empty threads are increasing. There
+are no filters at all — no search, no unread, no client filter.
 
-Working: ?status=active (4 positions), ?stage=shortlisted (3), ?stage=interview_process (3), ?tab=evidence.
+Please fix it in this order:
+1. Don't create a thread until there's a message to put in it. That's the actual fix.
+2. Add a \"Hide threads with no messages\" toggle, defaulted on. That removes 8 of 12 rows today.
+3. Then add a client filter and a search box.
 
-Silently broken:
-  ?fit=strong → returns all 31 submissions, i.e. the full unfiltered list
-  ?filter=interview → returns all 31
-  ?archived=1 on /admin/clients → returns 6, identical to no param. The UI checkbox works and gives 8, but the URL param that expressed the same state doesn't.
-  ?tab=client-preview → silently redirects to ?tab=profile. The real slug is now \"preview\".
-  ?tab=intake → same silent fallback. The real slug is \"dossier\".
-
-There's also an inconsistency: ?status=zzzznotreal and ?stage=zzzznotreal both correctly return 0, so unknown values for those params are handled strictly. But fit and filter silently return everything. Two different behaviours for the same situation.
-
-Please add redirects from the old param names to the new ones, make ?archived=1 drive the same state as the checkbox, and when a param value isn't recognised show a dismissible notice like \"Filter 'fit=strong' isn't recognised — showing all 31 submissions.\" Never silently ignore it."`}
+The real threads read well and are clearly client-facing — keep that voice. \"Thanks. Could
+you send her two of our recent architecture decisions beforehand so we can go deeper on
+design?\""`}
         </div>
 
         <Scripts />
