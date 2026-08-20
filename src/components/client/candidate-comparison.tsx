@@ -24,6 +24,11 @@ import {
 
 
 
+function pct(n: number | undefined | null): string {
+  if (n == null) return "—";
+  return `${Math.round(n * 100)}%`;
+}
+
 const STATUS_META: Record<
   CompareStatus,
   { label: string; icon: string; className: string; cell: string }
