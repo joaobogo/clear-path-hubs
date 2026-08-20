@@ -75,6 +75,7 @@ export function ActionArea({
   matchId,
   pendingKey,
   subject,
+  activeInterviewId,
 }: {
   actions: { primary: ActionDef | null; more: ActionDef[] };
   readOnly: boolean;
@@ -85,6 +86,7 @@ export function ActionArea({
   pendingKey?: ActionKey | null;
   /** Who/what the actions apply to, e.g. "Maria Santos for Front Desk Lead". */
   subject?: string;
+  activeInterviewId?: string | null;
 }) {
   const forSubject = subject ? ` for ${subject}` : "";
   return (
@@ -103,7 +105,13 @@ export function ActionArea({
         </p>
       )}
       <div className="flex items-center gap-2">
-        {actions.primary && (
+        {actions.primary?.key === "request_interview" && activeInterviewId ? (
+          <Button asChild className="flex-1 min-h-11">
+            <Link to="/client/interviews" search={{ interview: activeInterviewId, feedback: undefined }}>
+              View interview
+            </Link>
+          </Button>
+        ) : actions.primary ? (
           <Button
             className="flex-1 min-h-11"
             disabled={readOnly || pending}
@@ -118,7 +126,7 @@ export function ActionArea({
               actions.primary.label
             )}
           </Button>
-        )}
+        ) : null}
         {actions.more.length > 0 && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -185,12 +193,14 @@ export function MobileActionBar({
   onAct,
   pendingKey,
   subject,
+  activeInterviewId,
 }: {
   actions: { primary: ActionDef | null; more: ActionDef[] };
   pending: boolean;
   onAct: (k: ActionKey) => void;
   pendingKey?: ActionKey | null;
   subject?: string;
+  activeInterviewId?: string | null;
 }) {
   const forSubject = subject ? ` for ${subject}` : "";
   if (!actions.primary) return null;
@@ -205,7 +215,13 @@ export function MobileActionBar({
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 0.75rem)" }}
     >
       <div className="mx-auto flex max-w-3xl items-center gap-2">
-        <Button
+        {actions.primary.key === "request_interview" && activeInterviewId ? (
+          <Button asChild className="min-h-11 flex-1">
+            <Link to="/client/interviews" search={{ interview: activeInterviewId, feedback: undefined }}>
+              View interview
+            </Link>
+          </Button>
+        ) : <Button
           className="min-h-11 flex-1"
           disabled={pending}
           onClick={() => onAct(actions.primary!.key)}
@@ -218,7 +234,7 @@ export function MobileActionBar({
           ) : (
             actions.primary.label
           )}
-        </Button>
+        </Button>}
         {decline && (
           <Button
             variant="outline"

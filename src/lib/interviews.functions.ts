@@ -14,6 +14,7 @@ import { assertProposedSlots, isEmail } from "./interview-proposal";
 import { assertWorkspaceAccess } from "@/lib/authz/workspace-access";
 import { assertEditor } from "@/lib/client-shared.server";
 import { resolveNotificationsForUser } from "@/lib/notifications-resolver.server";
+import { isActiveInterview } from "@/lib/interview-state";
 
 
 
@@ -231,7 +232,11 @@ export const listClientInterviews = createServerFn({ method: "POST" })
     if (data.status && data.status !== "all") q = q.eq("status", data.status);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
-    const list = (rows as AnyRow[]) ?? [];
+    // Do not surface abandoned legacy rows that never received a usable slot.
+    // These are not active and must not block a fresh request in the picker.
+    const list = ((rows as AnyRow[]) ?? []).filter(
+      (row) => row.status === "completed" || row.status === "cancelled" || isActiveInterview(row),
+    );
     if (list.length === 0) return { interviews: [] as InterviewDTO[] };
 
     const matchIds = Array.from(new Set(list.map((r) => r.candidate_match_id).filter(Boolean)));
@@ -240,7 +245,7 @@ export const listClientInterviews = createServerFn({ method: "POST" })
     const [matchesRes, positionsRes] = await Promise.all([
       context.supabase
         .from("candidate_matches")
-        .select("id, candidate_profile_id, candidate_profiles:candidate_profile_id(id, full_name, email, availability)")
+        .select("id, stage, candidate_profile_id, candidate_profiles:candidate_profile_id(id, full_name, email, availability)")
         .in("id", matchIds),
       context.supabase
         .from("positions")
@@ -326,13 +331,23 @@ export const requestInterview = createServerFn({ method: "POST" })
       if (p.email && !isEmail(p.email)) throw new Error("invalid_attendee_email");
     }
 
-    const { data: existing } = await context.supabase
+    const { data: existingRows, error: existingError } = await context.supabase
       .from("interviews")
-      .select("id")
+      .select("id, status, proposed_times, scheduled_at, availability_expires_at")
       .eq("candidate_match_id", data.matchId)
       .in("status", ["requested", "scheduling", "scheduled"])
-      .maybeSingle();
+      .order("created_at", { ascending: false });
+    if (existingError) throw new Error(existingError.message);
+    const existing = ((existingRows as AnyRow[] | null) ?? []).find((row) =>
+      isActiveInterview(row, now),
+    );
     if (existing) throw new Error("interview_already_active");
+    // Legacy/failed requests may have left an empty `requested` row behind.
+    // Reuse it so the database's one-open-row constraint cannot turn a valid
+    // retry into a silent failure.
+    const reusable = ((existingRows as AnyRow[] | null) ?? []).find(
+      (row) => row.status === "requested" && !isActiveInterview(row, now),
+    );
 
     // Real configured scheduling settings only — no invented Calendly links.
     const { data: settings } = await context.supabase
@@ -349,14 +364,12 @@ export const requestInterview = createServerFn({ method: "POST" })
     const windowEnd = now + windowDays * 86_400_000;
     const expiresAt = new Date(Math.min(lastSlot, windowEnd)).toISOString();
 
-    const { data: inserted, error } = await context.supabase
-      .from("interviews")
-      .insert({
+    const writePayload = {
         candidate_match_id: data.matchId,
         organization_id: data.orgId,
         position_id: match.position_id as string,
         candidate_submission_id: (match.application_id as string) ?? null,
-        status: "requested",
+        status: "requested" as const,
         interview_type: data.interviewType,
         timezone: data.timezone,
         duration_minutes: data.durationMinutes,
@@ -371,7 +384,15 @@ export const requestInterview = createServerFn({ method: "POST" })
         admin_coordination_required: s?.require_admin_coordination ?? true,
         created_by: context.userId,
         updated_by: context.userId,
-      })
+      };
+    const writeQuery = reusable
+      ? context.supabase
+          .from("interviews")
+          .update(writePayload)
+          .eq("id", reusable.id)
+          .eq("organization_id", data.orgId)
+      : context.supabase.from("interviews").insert(writePayload);
+    const { data: inserted, error } = await writeQuery
       .select("id")
       .maybeSingle();
     if (error) {
@@ -763,10 +784,14 @@ export const listSchedulableCandidates = createServerFn({ method: "POST" })
 
     const { data: active } = await context.supabase
       .from("interviews")
-      .select("candidate_match_id")
+      .select("candidate_match_id, status, proposed_times, scheduled_at, availability_expires_at")
       .eq("organization_id", data.orgId)
       .in("status", ["requested", "scheduling", "scheduled"]);
-    const activeSet = new Set((active as AnyRow[] | null)?.map((r) => r.candidate_match_id) ?? []);
+    const activeSet = new Set(
+      ((active as AnyRow[] | null) ?? [])
+        .filter((row) => isActiveInterview(row))
+        .map((row) => row.candidate_match_id),
+    );
 
     const candidates: SchedulableCandidate[] = list.map((r: any) => ({
       match_id: r.id as string,

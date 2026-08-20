@@ -48,6 +48,7 @@ import {
   evaluateAdvanceGate,
 } from "@/lib/client/advance-gate";
 import { assessFreshness, type Freshness } from "@/lib/scoring/score-freshness";
+import { isActiveInterview } from "@/lib/interview-state";
 
 import {
   type AnyRow,
@@ -138,11 +139,13 @@ export const getClientCandidates = createServerFn({ method: "GET" })
     if (matchIds.length > 0) {
       const { data: ivs } = await context.supabase
         .from("interviews")
-        .select("candidate_match_id")
+        .select("candidate_match_id, status, proposed_times, scheduled_at, availability_expires_at")
         .in("candidate_match_id", matchIds)
-        .in("status", ["requested", "scheduling", "scheduled", "completed"]);
+        .in("status", ["requested", "scheduling", "scheduled"]);
       for (const iv of ((ivs as AnyRow[]) ?? [])) {
-        if (iv.candidate_match_id) activeInterviews.add(iv.candidate_match_id as string);
+        if (iv.candidate_match_id && isActiveInterview(iv)) {
+          activeInterviews.add(iv.candidate_match_id as string);
+        }
       }
     }
 
@@ -219,7 +222,7 @@ export const getClientCandidate = createServerFn({ method: "GET" })
     const [{ data: interviews }, { data: decisions }, answersRes, auditRes] = await Promise.all([
       context.supabase
         .from("interviews")
-        .select("id, status, requested_at, scheduled_at, completed_at, notes")
+        .select("id, status, requested_at, scheduled_at, completed_at, notes, proposed_times, availability_expires_at")
         .eq("candidate_match_id", data.matchId)
         .order("created_at", { ascending: false }),
       context.supabase
@@ -254,13 +257,10 @@ export const getClientCandidate = createServerFn({ method: "GET" })
     const evidenceItems =
       (await loadClientEvidenceItems(context.supabase, [data.matchId])).get(data.matchId) ?? [];
 
-    const ACTIVE_INTERVIEW_STATUSES = ["requested", "scheduling", "scheduled", "completed"];
     const matchWithAnswers = {
       ...(hydratedMatch as AnyRow),
       // Same definition as the list and the "Interviewing" KPI tile.
-      interview_active: ((interviews as AnyRow[]) ?? []).some((iv) =>
-        ACTIVE_INTERVIEW_STATUSES.includes(String(iv.status)),
-      ),
+      interview_active: ((interviews as AnyRow[]) ?? []).some(isActiveInterview),
       evidence_items: evidenceItems,
       application_answers: answers,
       audit_events: ((auditRes as AnyRow).data as AnyRow[]) ?? [],
