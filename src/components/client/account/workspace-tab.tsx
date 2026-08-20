@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { getClientContext } from "@/lib/client-context.functions";
 import { getClientSettings, updateClientCompanyProfile, updateClientTimezone } from "@/lib/client-settings.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
@@ -216,23 +217,30 @@ function CompanyProfileSection({
  qc.invalidateQueries({ queryKey: ["client-settings", orgId] });
  qc.invalidateQueries({ queryKey: ["client-context"] });
  },
- onError: (e: Error) => {
- setForm(initial); // restore previous values on failure
- const msg = e.message.replace(/^Error: /, "");
- toast.error(msg || "Could not save company profile");
- },
+  onError: (e: unknown) => {
+    // Field-level validation is handled before submit; if the server still
+    // rejects the input, avoid resetting the form so the user can fix it.
+    const msg = e instanceof Error ? e.message.replace(/^Error: /, "") : "";
+    if (msg.startsWith("[") && msg.includes('"path"')) {
+      // Server-side Zod errors are surfaced field-by-field, not as a toast.
+      return;
+    }
+    toastError(e, { fallback: "Could not save company profile", tone: "client" });
+  },
  });
 
- const validate = (): boolean => {
- const next: Partial<Record<keyof Company, string>> = {};
- if (!form.name.trim() || form.name.trim().length < 2)
- next.name = "Company name must be at least 2 characters.";
- if (form.name.length > 200) next.name = "Company name must be under 200 characters.";
-  if (form.website && !/^([a-z0-9-]+\.)+[a-z]{2,}(\/.*)?$/i.test(form.website.trim()) && !/^https?:\/\/[^\s]+\.[^\s]+$/i.test(form.website.trim()))
-    next.website = "Enter a valid domain or URL.";
- setErrors(next);
- return Object.keys(next).length === 0;
- };
+  const validate = (): boolean => {
+    const next: Partial<Record<keyof Company, string>> = {};
+    const name = form.name.trim();
+    if (!name || name.length < 2)
+      next.name = "Company name must be at least 2 characters.";
+    if (name.length > 200) next.name = "Company name must be under 200 characters.";
+    const website = form.website.trim();
+    if (website && !/^https?:\/\/[^\s]+\.[^\s]+$/i.test(website))
+      next.website = "Website must start with http:// or https://.";
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  };
 
  return (
  <SectionCard
@@ -376,10 +384,10 @@ function TimezoneSection({
  await fn({ data: { orgId, timezone: next } });
  toast.success("Timezone saved");
  qc.invalidateQueries({ queryKey: ["client-settings", orgId] });
- } catch (e) {
- setValue(previous);
- toast.error((e as Error).message.replace(/^Error: /, "") || "Could not save timezone");
- }
+  } catch (e) {
+    setValue(previous);
+    toastError(e, { fallback: "Could not save timezone", tone: "client" });
+  }
  };
 
  return (
@@ -431,9 +439,9 @@ function SecuritySection({ email }: { email: string }) {
  });
  if (error) throw error;
  toast.success("Password reset email sent — check your inbox.");
- } catch (e) {
- toast.error((e as Error).message || "Could not send password reset");
- } finally {
+  } catch (e) {
+    toastError(e, { fallback: "Could not send password reset", tone: "client" });
+  } finally {
  setSending(false);
  }
  };

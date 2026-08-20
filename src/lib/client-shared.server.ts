@@ -366,7 +366,7 @@ export const companyProfileZ = z.object({
     .nullable()
     .refine(
       (v) => v == null || /^https?:\/\/[^\s]+\.[^\s]+$/i.test(v),
-      "Website must start with http(s):// and be a valid URL.",
+      "Website must start with http:// or https://",
     ),
   industry: z
     .string()

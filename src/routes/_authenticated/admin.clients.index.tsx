@@ -3,6 +3,8 @@ import { pluralize } from "@/lib/format/datetime";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { z } from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { listClients, archiveOrganization, restoreOrganization } from "@/lib/admin.functions";
@@ -49,7 +51,6 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { toast } from "sonner";
 
 const SORTS = [
   "activity_desc",
@@ -813,7 +814,7 @@ function RowOverflowMenu({ row, onArchive }: { row: ClientRow; onArchive: () => 
       qc.invalidateQueries({ queryKey: ["admin-clients"] });
       router.invalidate();
     },
-    onError: (e: unknown) => toast.error((e as Error).message),
+    onError: (e: unknown) => toastError(e, { fallback: `Could not restore ${row.name}`, tone: "admin" }),
   });
   return (
     <DropdownMenu>
@@ -892,7 +893,7 @@ function ArchiveDialog({ target, onClose }: { target: ClientRow | null; onClose:
       router.invalidate();
       onClose();
     },
-    onError: (e: unknown) => toast.error((e as Error).message),
+    onError: (e: unknown) => toastError(e, { fallback: `Could not archive ${target?.name ?? "client"}`, tone: "admin" }),
   });
   const open = !!target;
   const matches = !!target && confirm.trim().toLowerCase() === target.name.trim().toLowerCase();
