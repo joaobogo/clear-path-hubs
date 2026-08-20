@@ -1,5 +1,6 @@
 import {
   Activity,
+  Bell,
   Briefcase,
   Building2,
   ClipboardCheck,
@@ -7,6 +8,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   Receipt,
+  Send,
   UserCog,
   Users,
 } from "lucide-react";
@@ -41,6 +43,13 @@ export const ADMIN_NAV: WorkspaceNavItem[] = [
     group: "Delivery",
     hint: "Applications, screening, publishing and approvals",
   },
+  {
+    to: "/admin/publish",
+    label: "Publish desk",
+    icon: Send,
+    group: "Delivery",
+    hint: "Release approved candidates to clients",
+  },
 
   {
     to: "/admin/scoring/review",
@@ -57,6 +66,14 @@ export const ADMIN_NAV: WorkspaceNavItem[] = [
     group: "Comms",
     hint: "Messages, notifications, copilot",
   },
+  {
+    to: "/admin/notifications",
+    label: "Notifications",
+    icon: Bell,
+    group: "Comms",
+    hint: "Delivery failures and suppressed addresses",
+  },
+
 
   {
     to: "/admin/operations",

@@ -136,6 +136,7 @@ import { Route as AuthenticatedAdminSupportRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminSlaRouteImport } from './routes/_authenticated/admin.sla'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminSeoRouteImport } from './routes/_authenticated/admin.seo'
+import { Route as AuthenticatedAdminQualityRouteImport } from './routes/_authenticated/admin.quality'
 import { Route as AuthenticatedAdminQaReportRouteImport } from './routes/_authenticated/admin.qa-report'
 import { Route as AuthenticatedAdminPublishRouteImport } from './routes/_authenticated/admin.publish'
 import { Route as AuthenticatedAdminPositionsRouteImport } from './routes/_authenticated/admin.positions'
@@ -148,6 +149,7 @@ import { Route as AuthenticatedAdminNotificationsRouteImport } from './routes/_a
 import { Route as AuthenticatedAdminMyDayRouteImport } from './routes/_authenticated/admin.my-day'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
 import { Route as AuthenticatedAdminLeadDeliveryRouteImport } from './routes/_authenticated/admin.lead-delivery'
+import { Route as AuthenticatedAdminInterviewsRouteImport } from './routes/_authenticated/admin.interviews'
 import { Route as AuthenticatedAdminIntegrationsRouteImport } from './routes/_authenticated/admin.integrations'
 import { Route as AuthenticatedAdminIntakeQualityRouteImport } from './routes/_authenticated/admin.intake-quality'
 import { Route as AuthenticatedAdminIntakeRouteImport } from './routes/_authenticated/admin.intake'
@@ -158,6 +160,7 @@ import { Route as AuthenticatedAdminDecisionBacklogRouteImport } from './routes/
 import { Route as AuthenticatedAdminDataHealthRouteImport } from './routes/_authenticated/admin.data-health'
 import { Route as AuthenticatedAdminDashboardRequestsRouteImport } from './routes/_authenticated/admin.dashboard-requests'
 import { Route as AuthenticatedAdminCopilotRouteImport } from './routes/_authenticated/admin.copilot'
+import { Route as AuthenticatedAdminClients_newRouteImport } from './routes/_authenticated/admin.clients_new'
 import { Route as AuthenticatedAdminClientsRouteImport } from './routes/_authenticated/admin.clients'
 import { Route as AuthenticatedAdminCandidatesRouteImport } from './routes/_authenticated/admin.candidates'
 import { Route as AuthenticatedAdminBusinessRulesRouteImport } from './routes/_authenticated/admin.business-rules'
@@ -877,6 +880,12 @@ const AuthenticatedAdminSeoRoute = AuthenticatedAdminSeoRouteImport.update({
   path: '/seo',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminQualityRoute =
+  AuthenticatedAdminQualityRouteImport.update({
+    id: '/quality',
+    path: '/quality',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminQaReportRoute =
   AuthenticatedAdminQaReportRouteImport.update({
     id: '/qa-report',
@@ -948,6 +957,12 @@ const AuthenticatedAdminLeadDeliveryRoute =
     path: '/lead-delivery',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminInterviewsRoute =
+  AuthenticatedAdminInterviewsRouteImport.update({
+    id: '/interviews',
+    path: '/interviews',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminIntegrationsRoute =
   AuthenticatedAdminIntegrationsRouteImport.update({
     id: '/integrations',
@@ -1006,6 +1021,12 @@ const AuthenticatedAdminCopilotRoute =
   AuthenticatedAdminCopilotRouteImport.update({
     id: '/copilot',
     path: '/copilot',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminClients_newRoute =
+  AuthenticatedAdminClients_newRouteImport.update({
+    id: '/clients_new',
+    path: '/clients_new',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminClientsRoute =
@@ -1390,6 +1411,7 @@ export interface FileRoutesByFullPath {
   '/admin/business-rules': typeof AuthenticatedAdminBusinessRulesRoute
   '/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
   '/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
+  '/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/admin/copilot': typeof AuthenticatedAdminCopilotRoute
   '/admin/dashboard-requests': typeof AuthenticatedAdminDashboardRequestsRoute
   '/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
@@ -1400,6 +1422,7 @@ export interface FileRoutesByFullPath {
   '/admin/intake': typeof AuthenticatedAdminIntakeRouteWithChildren
   '/admin/intake-quality': typeof AuthenticatedAdminIntakeQualityRoute
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
+  '/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/my-day': typeof AuthenticatedAdminMyDayRoute
@@ -1412,6 +1435,7 @@ export interface FileRoutesByFullPath {
   '/admin/positions': typeof AuthenticatedAdminPositionsRouteWithChildren
   '/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/admin/qa-report': typeof AuthenticatedAdminQaReportRoute
+  '/admin/quality': typeof AuthenticatedAdminQualityRoute
   '/admin/seo': typeof AuthenticatedAdminSeoRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/sla': typeof AuthenticatedAdminSlaRoute
@@ -1587,6 +1611,7 @@ export interface FileRoutesByTo {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/agent-ops': typeof AuthenticatedAdminAgentOpsRoute
   '/admin/business-rules': typeof AuthenticatedAdminBusinessRulesRoute
+  '/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/admin/copilot': typeof AuthenticatedAdminCopilotRoute
   '/admin/dashboard-requests': typeof AuthenticatedAdminDashboardRequestsRoute
   '/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
@@ -1596,6 +1621,7 @@ export interface FileRoutesByTo {
   '/admin/health': typeof AuthenticatedAdminHealthRoute
   '/admin/intake-quality': typeof AuthenticatedAdminIntakeQualityRoute
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
+  '/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/my-day': typeof AuthenticatedAdminMyDayRoute
@@ -1607,6 +1633,7 @@ export interface FileRoutesByTo {
   '/admin/pending-leads': typeof AuthenticatedAdminPendingLeadsRoute
   '/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/admin/qa-report': typeof AuthenticatedAdminQaReportRoute
+  '/admin/quality': typeof AuthenticatedAdminQualityRoute
   '/admin/seo': typeof AuthenticatedAdminSeoRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/sla': typeof AuthenticatedAdminSlaRoute
@@ -1785,6 +1812,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/business-rules': typeof AuthenticatedAdminBusinessRulesRoute
   '/_authenticated/admin/candidates': typeof AuthenticatedAdminCandidatesRouteWithChildren
   '/_authenticated/admin/clients': typeof AuthenticatedAdminClientsRouteWithChildren
+  '/_authenticated/admin/clients_new': typeof AuthenticatedAdminClients_newRoute
   '/_authenticated/admin/copilot': typeof AuthenticatedAdminCopilotRoute
   '/_authenticated/admin/dashboard-requests': typeof AuthenticatedAdminDashboardRequestsRoute
   '/_authenticated/admin/data-health': typeof AuthenticatedAdminDataHealthRoute
@@ -1795,6 +1823,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/intake': typeof AuthenticatedAdminIntakeRouteWithChildren
   '/_authenticated/admin/intake-quality': typeof AuthenticatedAdminIntakeQualityRoute
   '/_authenticated/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
+  '/_authenticated/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/_authenticated/admin/lead-delivery': typeof AuthenticatedAdminLeadDeliveryRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/my-day': typeof AuthenticatedAdminMyDayRoute
@@ -1807,6 +1836,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/positions': typeof AuthenticatedAdminPositionsRouteWithChildren
   '/_authenticated/admin/publish': typeof AuthenticatedAdminPublishRoute
   '/_authenticated/admin/qa-report': typeof AuthenticatedAdminQaReportRoute
+  '/_authenticated/admin/quality': typeof AuthenticatedAdminQualityRoute
   '/_authenticated/admin/seo': typeof AuthenticatedAdminSeoRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/sla': typeof AuthenticatedAdminSlaRoute
@@ -1989,6 +2019,7 @@ export interface FileRouteTypes {
     | '/admin/business-rules'
     | '/admin/candidates'
     | '/admin/clients'
+    | '/admin/clients_new'
     | '/admin/copilot'
     | '/admin/dashboard-requests'
     | '/admin/data-health'
@@ -1999,6 +2030,7 @@ export interface FileRouteTypes {
     | '/admin/intake'
     | '/admin/intake-quality'
     | '/admin/integrations'
+    | '/admin/interviews'
     | '/admin/lead-delivery'
     | '/admin/messages'
     | '/admin/my-day'
@@ -2011,6 +2043,7 @@ export interface FileRouteTypes {
     | '/admin/positions'
     | '/admin/publish'
     | '/admin/qa-report'
+    | '/admin/quality'
     | '/admin/seo'
     | '/admin/settings'
     | '/admin/sla'
@@ -2186,6 +2219,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/admin/agent-ops'
     | '/admin/business-rules'
+    | '/admin/clients_new'
     | '/admin/copilot'
     | '/admin/dashboard-requests'
     | '/admin/data-health'
@@ -2195,6 +2229,7 @@ export interface FileRouteTypes {
     | '/admin/health'
     | '/admin/intake-quality'
     | '/admin/integrations'
+    | '/admin/interviews'
     | '/admin/lead-delivery'
     | '/admin/messages'
     | '/admin/my-day'
@@ -2206,6 +2241,7 @@ export interface FileRouteTypes {
     | '/admin/pending-leads'
     | '/admin/publish'
     | '/admin/qa-report'
+    | '/admin/quality'
     | '/admin/seo'
     | '/admin/settings'
     | '/admin/sla'
@@ -2383,6 +2419,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/business-rules'
     | '/_authenticated/admin/candidates'
     | '/_authenticated/admin/clients'
+    | '/_authenticated/admin/clients_new'
     | '/_authenticated/admin/copilot'
     | '/_authenticated/admin/dashboard-requests'
     | '/_authenticated/admin/data-health'
@@ -2393,6 +2430,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/intake'
     | '/_authenticated/admin/intake-quality'
     | '/_authenticated/admin/integrations'
+    | '/_authenticated/admin/interviews'
     | '/_authenticated/admin/lead-delivery'
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/my-day'
@@ -2405,6 +2443,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/positions'
     | '/_authenticated/admin/publish'
     | '/_authenticated/admin/qa-report'
+    | '/_authenticated/admin/quality'
     | '/_authenticated/admin/seo'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/sla'
@@ -3502,6 +3541,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSeoRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/quality': {
+      id: '/_authenticated/admin/quality'
+      path: '/quality'
+      fullPath: '/admin/quality'
+      preLoaderRoute: typeof AuthenticatedAdminQualityRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/qa-report': {
       id: '/_authenticated/admin/qa-report'
       path: '/qa-report'
@@ -3586,6 +3632,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminLeadDeliveryRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/interviews': {
+      id: '/_authenticated/admin/interviews'
+      path: '/interviews'
+      fullPath: '/admin/interviews'
+      preLoaderRoute: typeof AuthenticatedAdminInterviewsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/integrations': {
       id: '/_authenticated/admin/integrations'
       path: '/integrations'
@@ -3654,6 +3707,13 @@ declare module '@tanstack/react-router' {
       path: '/copilot'
       fullPath: '/admin/copilot'
       preLoaderRoute: typeof AuthenticatedAdminCopilotRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/clients_new': {
+      id: '/_authenticated/admin/clients_new'
+      path: '/clients_new'
+      fullPath: '/admin/clients_new'
+      preLoaderRoute: typeof AuthenticatedAdminClients_newRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/clients': {
@@ -4108,6 +4168,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminBusinessRulesRoute: typeof AuthenticatedAdminBusinessRulesRoute
   AuthenticatedAdminCandidatesRoute: typeof AuthenticatedAdminCandidatesRouteWithChildren
   AuthenticatedAdminClientsRoute: typeof AuthenticatedAdminClientsRouteWithChildren
+  AuthenticatedAdminClients_newRoute: typeof AuthenticatedAdminClients_newRoute
   AuthenticatedAdminCopilotRoute: typeof AuthenticatedAdminCopilotRoute
   AuthenticatedAdminDashboardRequestsRoute: typeof AuthenticatedAdminDashboardRequestsRoute
   AuthenticatedAdminDataHealthRoute: typeof AuthenticatedAdminDataHealthRoute
@@ -4118,6 +4179,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminIntakeRoute: typeof AuthenticatedAdminIntakeRouteWithChildren
   AuthenticatedAdminIntakeQualityRoute: typeof AuthenticatedAdminIntakeQualityRoute
   AuthenticatedAdminIntegrationsRoute: typeof AuthenticatedAdminIntegrationsRoute
+  AuthenticatedAdminInterviewsRoute: typeof AuthenticatedAdminInterviewsRoute
   AuthenticatedAdminLeadDeliveryRoute: typeof AuthenticatedAdminLeadDeliveryRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminMyDayRoute: typeof AuthenticatedAdminMyDayRoute
@@ -4130,6 +4192,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminPositionsRoute: typeof AuthenticatedAdminPositionsRouteWithChildren
   AuthenticatedAdminPublishRoute: typeof AuthenticatedAdminPublishRoute
   AuthenticatedAdminQaReportRoute: typeof AuthenticatedAdminQaReportRoute
+  AuthenticatedAdminQualityRoute: typeof AuthenticatedAdminQualityRoute
   AuthenticatedAdminSeoRoute: typeof AuthenticatedAdminSeoRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminSlaRoute: typeof AuthenticatedAdminSlaRoute
@@ -4151,6 +4214,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCandidatesRoute:
     AuthenticatedAdminCandidatesRouteWithChildren,
   AuthenticatedAdminClientsRoute: AuthenticatedAdminClientsRouteWithChildren,
+  AuthenticatedAdminClients_newRoute: AuthenticatedAdminClients_newRoute,
   AuthenticatedAdminCopilotRoute: AuthenticatedAdminCopilotRoute,
   AuthenticatedAdminDashboardRequestsRoute:
     AuthenticatedAdminDashboardRequestsRoute,
@@ -4163,6 +4227,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminIntakeRoute: AuthenticatedAdminIntakeRouteWithChildren,
   AuthenticatedAdminIntakeQualityRoute: AuthenticatedAdminIntakeQualityRoute,
   AuthenticatedAdminIntegrationsRoute: AuthenticatedAdminIntegrationsRoute,
+  AuthenticatedAdminInterviewsRoute: AuthenticatedAdminInterviewsRoute,
   AuthenticatedAdminLeadDeliveryRoute: AuthenticatedAdminLeadDeliveryRoute,
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
   AuthenticatedAdminMyDayRoute: AuthenticatedAdminMyDayRoute,
@@ -4176,6 +4241,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
     AuthenticatedAdminPositionsRouteWithChildren,
   AuthenticatedAdminPublishRoute: AuthenticatedAdminPublishRoute,
   AuthenticatedAdminQaReportRoute: AuthenticatedAdminQaReportRoute,
+  AuthenticatedAdminQualityRoute: AuthenticatedAdminQualityRoute,
   AuthenticatedAdminSeoRoute: AuthenticatedAdminSeoRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminSlaRoute: AuthenticatedAdminSlaRoute,
