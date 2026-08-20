@@ -323,19 +323,34 @@ export const listHires = createServerFn({ method: "POST" })
         .filter(Boolean) as string[],
     );
 
+    // The candidate's pipeline stage is the source of truth for "hired". If an
+    // offer record disagrees (closed lost on a candidate later confirmed as
+    // hired), the stage wins so the board can't contradict the candidate page.
+    const stageByMatch = await loadMatchStages(
+      context.supabase,
+      data.orgId,
+      (rows ?? []).map((r: AnyRow) => r.candidate_match_id).filter(Boolean) as string[],
+    );
+
     const hires: HireRecordDTO[] = (rows ?? []).map((r: AnyRow) =>
-      toDTO({
-        ...r,
-        position_title: r.positions?.title ?? "Role",
-        candidate_name:
-          r.candidate_profiles?.full_name ??
-          (r.candidate_match_id ? nameByMatch.get(String(r.candidate_match_id)) : null) ??
-          "Candidate",
-        applied_at: r.applications?.applied_at ?? null,
-        owner_name: r.owner_user_id ? ownerMap[r.owner_user_id] ?? null : null,
-      }),
+      toDTO(
+        reconcileOfferWithStage(
+          {
+            ...r,
+            position_title: r.positions?.title ?? "Role",
+            candidate_name:
+              r.candidate_profiles?.full_name ??
+              (r.candidate_match_id ? nameByMatch.get(String(r.candidate_match_id)) : null) ??
+              "Candidate",
+            applied_at: r.applications?.applied_at ?? null,
+            owner_name: r.owner_user_id ? ownerMap[r.owner_user_id] ?? null : null,
+          },
+          r.candidate_match_id ? stageByMatch.get(String(r.candidate_match_id)) : null,
+        ),
+      ),
     );
     return { hires };
+
   });
 
 export const getHireByMatch = createServerFn({ method: "POST" })
