@@ -98,6 +98,7 @@ import { RequestInterviewDialog } from "@/components/client/interviews/request-i
 import { detectTimezone } from "@/components/client/interviews/helpers";
 import { useAvailability } from "@/components/client/scheduling/availability-manager";
 import { proposalErrorMessage } from "@/lib/interview-proposal";
+import { isActiveInterview } from "@/lib/interview-state";
 
 function CandidateDetailPage() {
  const { id } = Route.useParams();
@@ -395,6 +396,7 @@ function CandidateDetailPage() {
  const isViewer = ctx?.active?.role === "client_viewer";
  const readOnly = support.readOnly || isViewer;
  const actions = ACTIONS_BY_STAGE[candidate.stage] ?? { primary: null, more: [] };
+ const activeInterview = interviews.find(isActiveInterview) ?? null;
  // Icon-only controls name their subject so assistive tech (and the Playwright
  // suite) knows which candidate and role a decision applies to.
  const actionSubject = [candidate.candidate.display_name, candidate.position?.title]
@@ -467,6 +469,7 @@ function CandidateDetailPage() {
           stage={candidate.stage}
           matchId={candidate.match_id}
           subject={actionSubject}
+          activeInterviewId={activeInterview?.id ?? null}
         />
 
         {dialogAction === "request_interview" && orgId && (
@@ -595,41 +598,12 @@ function CandidateDetailPage() {
           pendingKey={pendingKey}
           onAct={(k) => handleAct(k, candidate.stage)}
           subject={actionSubject}
+          activeInterviewId={activeInterview?.id ?? null}
         />
       )}
 
       {/* Every consequential decision is confirmed, reasoned, and logged. */}
-      {dialogAction === "request_interview" && orgId ? (
-        <RequestInterviewDialog
-          orgId={orgId}
-          onClose={() => {
-            setDialogAction(null);
-            setPendingKey(null);
-          }}
-          submitting={requestMut.isPending}
-          failed={requestFailed}
-          timezone={orgTimezone}
-          onSubmit={(payload) => requestMut.mutate(payload)}
-          fetchCandidates={async () => ({
-            candidates: [
-              {
-                match_id: id,
-                candidate_id: (candidate.candidate as AnyRow).id,
-                candidate_name: candidate.candidate.display_name,
-                candidate_email: (candidate.candidate as AnyRow).email ?? null,
-                position_id: (candidate.position as AnyRow)?.id ?? "",
-                position_title: candidate.position?.title ?? "Role",
-                stage: candidate.stage,
-                has_active_interview: false,
-                availability_preference: (candidate.candidate as AnyRow).availability 
-                  ? JSON.parse(JSON.stringify((candidate.candidate as AnyRow).availability)) 
-                  : null,
-              },
-            ],
-          })}
-          initialMatchId={id}
-        />
-      ) : (
+      {dialogAction !== "request_interview" ? (
         <DecisionDialog
           action={dialogAction as never}
           open={!!dialogAction && dialogAction !== "request_interview"}
@@ -648,7 +622,7 @@ function CandidateDetailPage() {
             act.mutate(payload as DecisionPayload);
           }}
         />
-      )}
+      ) : null}
 
     </div>
   );

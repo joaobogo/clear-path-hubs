@@ -105,7 +105,7 @@ export function InterviewTimeline({
   proposeFailed?: string | null;
 }) {
   const tz = viewerTimezone();
-  const { upcoming, past } = useMemo(() => {
+  const { upcoming, past, cancelled } = useMemo(() => {
     const sorted = [...interviews].sort((a, b) => anchor(a) - anchor(b));
     return {
       upcoming: sorted.filter((i) => {
@@ -117,7 +117,8 @@ export function InterviewTimeline({
         }
         return true;
       }),
-      past: sorted.filter(isPastItem).reverse(),
+      past: sorted.filter((i) => interviewOccurrence(i) === "happened").reverse(),
+      cancelled: sorted.filter((i) => interviewOccurrence(i) === "cancelled").reverse(),
     };
 
   }, [interviews]);
@@ -161,6 +162,12 @@ export function InterviewTimeline({
         <section>
           <h2 className="text-sm font-medium text-muted-foreground">Already happened</h2>
           <div className="mt-2 space-y-0">{past.map(render)}</div>
+        </section>
+      ) : null}
+      {cancelled.length > 0 ? (
+        <section>
+          <h2 className="text-sm font-medium text-muted-foreground">Cancelled</h2>
+          <div className="mt-2 space-y-0">{cancelled.map(render)}</div>
         </section>
       ) : null}
     </div>
