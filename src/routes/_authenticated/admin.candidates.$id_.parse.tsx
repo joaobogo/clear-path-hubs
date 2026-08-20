@@ -114,7 +114,7 @@ function ParseReview() {
       });
       await query.refetch();
     } catch (e: Any) {
-      toast.error(e?.message ?? "Could not save the review");
+      toastError(e, { fallback: "Could not save the review", tone: "admin" });
     } finally {
       setSaving(false);
     }
