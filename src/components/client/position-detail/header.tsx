@@ -227,6 +227,13 @@ export function PositionHeader({
             label="Conversation"
           />
         )}
+        {canEdit && !supportReadOnly && (
+          <RoleLifecycleMenu
+            positionId={position.id}
+            positionTitle={position.title}
+            status={String(position.status ?? "")}
+          />
+        )}
       </div>
     </header>
   );
