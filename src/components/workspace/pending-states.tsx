@@ -6,8 +6,15 @@
  * shifts when the data lands. Routes wire these up as `pendingComponent`
  * with a small `pendingMs`, so a fast navigation never flashes a skeleton
  * at all and a slow one never shows a bare empty layout.
+ *
+ * Each pending state has a hard 10s timeout so it becomes a retryable error
+ * instead of hanging forever.
  */
+import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle, RefreshCw } from "lucide-react";
+import { useRouter } from "@tanstack/react-router";
 
 type Shape = "kpis" | "rows" | "board" | "cards" | "detail";
 
@@ -113,16 +120,22 @@ function DetailBody() {
 /**
  * Build a route-level pending component that mirrors one page shape.
  * `width` matches the page container so the header never jumps sideways.
+ *
+ * The skeleton is replaced by a retryable error after 10s so a stuck route
+ * never stays blank forever.
  */
 export function makeWorkspacePending(opts: {
 	shape: Shape;
 	kpis?: boolean;
 	rows?: number;
 	width?: "5xl" | "6xl" | "7xl";
+	timeoutMs?: number;
 }) {
 	const max =
 		opts.width === "5xl" ? "max-w-5xl" : opts.width === "6xl" ? "max-w-6xl" : "max-w-7xl";
-	return function WorkspacePending() {
+	const timeoutMs = opts.timeoutMs ?? 10_000;
+
+	function WorkspacePendingBody() {
 		return (
 			<div className={`mx-auto ${max} px-4 sm:px-6 py-6 sm:py-8 space-y-6`}>
 				<HeaderBlock />
@@ -134,6 +147,47 @@ export function makeWorkspacePending(opts: {
 				{opts.shape === "detail" ? <DetailBody /> : null}
 			</div>
 		);
+	}
+
+	return function WorkspacePending() {
+		const router = useRouter();
+		const [timedOut, setTimedOut] = useState(false);
+		useEffect(() => {
+			const id = setTimeout(() => setTimedOut(true), timeoutMs);
+			return () => clearTimeout(id);
+		}, []);
+
+		if (timedOut) {
+			return (
+				<div className={`mx-auto ${max} px-4 sm:px-6 py-6 sm:py-8`}>
+					<div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-6 text-sm">
+						<div className="flex items-start gap-3">
+							<AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+							<div className="flex-1">
+								<p className="font-medium text-destructive">This page took too long to load</p>
+								<p className="mt-1 text-muted-foreground">
+									The data is taking longer than expected. Try again or check your connection.
+								</p>
+								<Button
+									size="sm"
+									variant="outline"
+									className="mt-3"
+									onClick={() => {
+										setTimedOut(false);
+										void router.invalidate();
+									}}
+								>
+									<RefreshCw className="mr-2 h-3.5 w-3.5" />
+									Retry
+								</Button>
+							</div>
+						</div>
+					</div>
+				</div>
+			);
+		}
+
+		return <WorkspacePendingBody />;
 	};
 }
 

@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, RefreshCw } from "lucide-react";
+import { useRouter } from "@tanstack/react-router";
 
 function TimedFallback({
   timeoutMs,
