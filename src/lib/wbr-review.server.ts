@@ -294,7 +294,7 @@ export async function loadWeeklyReview(
     metric(
       "intakes_received",
       "Intakes received",
-      "intake_submissions.created_at inside the week",
+      "Intakes received in the week",
       intakeRecords(intakeCur),
       intakePrev.length,
     ),
@@ -308,35 +308,35 @@ export async function loadWeeklyReview(
     metric(
       "positions_opened",
       "Positions opened",
-      "positions.created_at inside the week",
+      "Roles created during the week",
       positionRecords(openedCur, "created_at"),
       openedPrev.length,
     ),
     metric(
       "positions_closed",
       "Positions closed",
-      "positions.closed_at inside the week",
+      "Roles closed during the week",
       positionRecords(closedCur, "closed_at"),
       closedPrev.length,
     ),
     metric(
       "candidates_submitted",
       "Candidates submitted",
-      "candidate_matches.delivered_at inside the week",
+      "Candidates delivered to a client during the week",
       matchRecords(deliveredCur, "delivered_at"),
       deliveredPrev.length,
     ),
     metric(
       "client_decisions",
       "Client decisions received",
-      "client_decisions.created_at inside the week",
+      "Client decisions received in the week",
       matchRecords(decisionCur, "created_at", (r) => String(r.decision).replace(/_/g, " ")),
       decisionPrev.length,
     ),
     metric(
       "hires",
       "Hires",
-      "hire_records.hired_at inside the week",
+      "Hires confirmed in the week",
       matchRecords(hireCur, "hired_at"),
       hirePrev.length,
     ),
@@ -351,6 +351,7 @@ export async function loadWeeklyReview(
       truncated: breachCur.length > CAP,
     },
   ];
+
 
   // ── Roles that regressed: fewer candidates delivered than the week before ──
   const perPosition = new Map<
