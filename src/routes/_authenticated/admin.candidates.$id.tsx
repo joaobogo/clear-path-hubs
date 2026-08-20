@@ -130,13 +130,28 @@ function CandidateWorkspace() {
     queryFn: () => getAdminMatch({ data: { id, heavy: false } }),
   });
 
-  const { event: rawEvent, tab: urlTab } = Route.useSearch();
+  const { event: rawEvent, tab: rawTab } = Route.useSearch();
   // Some links produce `?tab=profile&event=` with no value; a blank param means
   // "no focused event" and must never be treated as an event id.
   const focusEventId = normalizeFocusEventId(rawEvent);
+  // Translate old tab slugs into the current ones before any UI logic uses them.
+  const urlTab: TabId = rawTab === "client-preview" ? "preview" : rawTab === "intake" ? "dossier" : rawTab;
   // The tab lives in the URL so deep links and back/forward keep working.
   const tab: TabId = focusEventId && urlTab === "profile" ? "history" : urlTab;
-  
+
+  // Redirect old tab slugs to their canonical names so bookmarks and shared links stay valid.
+  useEffect(() => {
+    if (rawTab === "client-preview" || rawTab === "intake") {
+      const next = rawTab === "client-preview" ? "preview" : "dossier";
+      void navigate({
+        to: "/admin/candidates/$id",
+        params: { id },
+        search: (prev: Record<string, unknown>) => ({ ...prev, tab: next }),
+        replace: true,
+      });
+    }
+  }, [rawTab, id, navigate]);
+
   // B3/B8: Standardize navigation to use router push; ensure it replaces history to avoid backlog.
   const setTab = (next: TabId) =>
     void navigate({
