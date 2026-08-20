@@ -129,3 +129,29 @@ export function computeHiringHealth(input: HiringHealthInput): HiringHealth {
     figures,
   };
 }
+
+/**
+ * The headline must agree with what the same screen already shows: the items in
+ * "What needs you" that are overdue, and roles flagged at risk. Anything above
+ * zero on either signal can never read as "Hiring is on track."
+ */
+export function applyOverdueAndRiskSignals(
+  health: HiringHealth | null | undefined,
+  signals: { overdueItems: number; atRiskRoles: number },
+): HiringHealth | null | undefined {
+  if (!health) return health;
+  const overdue = Math.max(0, signals.overdueItems || 0);
+  const atRisk = Math.max(0, signals.atRiskRoles || 0);
+  if (overdue === 0 && atRisk === 0) return health;
+
+  const parts: string[] = [];
+  if (overdue > 0) parts.push(`${overdue} ${plural(overdue, "item", "items")} overdue`);
+  if (atRisk > 0) parts.push(`${atRisk} ${plural(atRisk, "role", "roles")} at risk`);
+
+  return {
+    ...health,
+    sentence: `${parts.join(", ")}.`,
+    tone: "attention",
+    reason: overdue > 0 ? "overdue_decisions" : "behind_schedule",
+  };
+}
