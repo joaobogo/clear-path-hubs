@@ -173,6 +173,32 @@ type Company = {
  phone: string;
 };
 
+const FIELD_ID: Record<keyof Company, string> = {
+ id: "",
+ name: "cp-name",
+ website: "cp-website",
+ industry: "cp-industry",
+ headquarters: "cp-hq",
+ phone: "cp-phone",
+};
+
+function normalizeWebsite(s: string) {
+ const t = s.trim();
+ if (t === "") return "";
+ if (/^https?:\/\//i.test(t)) return t;
+ return `https://${t}`;
+}
+
+function focusField(field: keyof Company) {
+ const id = FIELD_ID[field];
+ if (!id) return;
+ const el = document.getElementById(id) as HTMLElement | null;
+ if (!el) return;
+ el.scrollIntoView({ behavior: "smooth", block: "center" });
+ const focusable = el.querySelector<HTMLElement>("input, textarea, select") ?? el;
+ focusable.focus();
+}
+
 function CompanyProfileSection({
  orgId,
  initial,
@@ -184,62 +210,96 @@ function CompanyProfileSection({
  approved: boolean;
  canEdit: boolean;
 }) {
- const [form, setForm] = useState<Company>(initial);
+ const [form, setForm] = useState<Company>(() => ({
+   ...initial,
+   website: normalizeWebsite(initial.website),
+ }));
  const [errors, setErrors] = useState<Partial<Record<keyof Company, string>>>({});
+ const [retainInput, setRetainInput] = useState(false);
  const qc = useQueryClient();
  const fn = useServerFn(updateClientCompanyProfile);
 
- // Re-sync when server data refreshes (e.g. after org switch).
- useEffect(() => setForm(initial), [initial]);
+ // Re-sync when server data refreshes (e.g. after org switch), but never
+ // overwrite a user's failed edit — they need to see the error and fix it.
+ useEffect(() => {
+   if (!retainInput) {
+     setForm({ ...initial, website: normalizeWebsite(initial.website) });
+   }
+ }, [initial, retainInput]);
  const dirty = useMemo(
- () =>
- (["name", "website", "industry", "headquarters", "phone"] as (keyof Company)[]).some(
- (k) => (form[k] ?? "") !== (initial[k] ?? ""),
- ),
- [form, initial],
+   () =>
+     (["name", "website", "industry", "headquarters", "phone"] as (keyof Company)[]).some(
+       (k) => (form[k] ?? "") !== (initial[k] ?? ""),
+     ),
+   [form, initial],
  );
 
- const save = useMutation({
- mutationFn: () =>
- fn({
- data: {
- orgId,
- name: form.name,
- website: form.website || null,
- industry: form.industry || null,
- headquarters: form.headquarters || null,
- phone: form.phone || null,
- },
- }),
- onSuccess: () => {
- toast.success("Company profile saved");
- setErrors({});
- qc.invalidateQueries({ queryKey: ["client-settings", orgId] });
- qc.invalidateQueries({ queryKey: ["client-context"] });
- },
-  onError: (e: unknown) => {
-    // Field-level validation is handled before submit; if the server still
-    // rejects the input, avoid resetting the form so the user can fix it.
-    const msg = e instanceof Error ? e.message.replace(/^Error: /, "") : "";
-    if (msg.startsWith("[") && msg.includes('"path"')) {
-      // Server-side Zod errors are surfaced field-by-field, not as a toast.
-      return;
-    }
-    toastError(e, { fallback: "Could not save company profile", tone: "client" });
-  },
- });
+  const save = useMutation({
+    mutationFn: () =>
+      fn({
+        data: {
+          orgId,
+          name: form.name,
+          website: normalizeWebsite(form.website) || null,
+          industry: form.industry || null,
+          headquarters: form.headquarters || null,
+          phone: form.phone || null,
+        },
+      }),
+    onSuccess: () => {
+      toast.success("Company profile saved");
+      setErrors({});
+      setRetainInput(false);
+      qc.invalidateQueries({ queryKey: ["client-settings", orgId] });
+      qc.invalidateQueries({ queryKey: ["client-context"] });
+    },
+    onError: (e: unknown) => {
+      setRetainInput(true);
+      // Field-level validation is handled before submit; if the server still
+      // rejects the input, surface it on the field and focus it.
+      const msg = e instanceof Error ? e.message.replace(/^Error: /, "") : "";
+      if (msg.startsWith("[") && msg.includes('"path"')) {
+        try {
+          const parsed = JSON.parse(msg) as Array<{ message: string; path: (string | number)[] }>;
+          const next: Partial<Record<keyof Company, string>> = {};
+          parsed.forEach((issue) => {
+            const key = issue.path[0] as keyof Company;
+            if (key) next[key] = issue.message;
+          });
+          setErrors(next);
+          const first = (Object.keys(next) as (keyof Company)[])[0];
+          if (first) setTimeout(() => focusField(first), 0);
+          return;
+        } catch {
+          // fall through to generic toast
+        }
+      }
+      toastError(e, { fallback: "Could not save company profile", tone: "client" });
+    },
+  });
 
-  const validate = (): boolean => {
+  const validate = (): { ok: boolean; errors: Partial<Record<keyof Company, string>> } => {
     const next: Partial<Record<keyof Company, string>> = {};
     const name = form.name.trim();
     if (!name || name.length < 2)
       next.name = "Company name must be at least 2 characters.";
     if (name.length > 200) next.name = "Company name must be under 200 characters.";
     const website = form.website.trim();
-    if (website && !/^https?:\/\/[^\s]+\.[^\s]+$/i.test(website))
+    const normalized = normalizeWebsite(website);
+    if (website && !/^https?:\/\/[^\s]+\.[^\s]+$/i.test(normalized))
       next.website = "Website must start with http:// or https://.";
     setErrors(next);
-    return Object.keys(next).length === 0;
+    return { ok: Object.keys(next).length === 0, errors: next };
+  };
+
+  const handleSave = () => {
+    const { ok, errors: validationErrors } = validate();
+    if (!ok) {
+      const first = (Object.keys(validationErrors) as (keyof Company)[])[0];
+      if (first) setTimeout(() => focusField(first), 0);
+      return;
+    }
+    save.mutate();
   };
 
  return (
@@ -317,31 +377,29 @@ function CompanyProfileSection({
  )}
  </div>
  </fieldset>
- {canEdit && (
- <div className="mt-5 flex items-center justify-end gap-2 border-t pt-4">
- <Button
- variant="ghost"
- size="sm"
- disabled={!dirty || save.isPending}
- onClick={() => {
- setForm(initial);
- setErrors({});
- }}
- >
- Discard
- </Button>
- <Button
- size="sm"
- disabled={!dirty || save.isPending}
- onClick={() => {
- if (!validate()) return;
- save.mutate();
- }}
- >
- {save.isPending ? "Saving…" : "Save changes"}
- </Button>
- </div>
- )}
+                {canEdit && (
+                  <div className="mt-5 flex items-center justify-end gap-2 border-t pt-4">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      disabled={!dirty || save.isPending}
+                      onClick={() => {
+                        setForm({ ...initial, website: normalizeWebsite(initial.website) });
+                        setErrors({});
+                        setRetainInput(false);
+                      }}
+                    >
+                      Discard
+                    </Button>
+                    <Button
+                      size="sm"
+                      disabled={!dirty || save.isPending}
+                      onClick={handleSave}
+                    >
+                      {save.isPending ? "Saving…" : "Save changes"}
+                    </Button>
+                  </div>
+                )}
  </SectionCard>
  );
 }
