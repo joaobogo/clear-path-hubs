@@ -79,9 +79,16 @@ const HEAVY_TABS = new Set<TabId>([
   "history",
 ]);
 
+const tabSearchSchema = z.union([
+  z.enum(TAB_IDS),
+  // Deprecated tab slugs that used to exist before the Position→Role / Record→Candidate rename.
+  z.literal("client-preview"),
+  z.literal("intake"),
+]);
+
 const searchSchema = z.object({
   /** Deep-linkable tab so a shared URL opens the same panel. */
-  tab: fallback(z.enum(TAB_IDS), "profile").default("profile"),
+  tab: fallback(tabSearchSchema, "profile").default("profile"),
   /** Permalink target from the history timeline: `<source>:<row id>`. */
   event: fallback(z.string(), "").default(""),
 });
