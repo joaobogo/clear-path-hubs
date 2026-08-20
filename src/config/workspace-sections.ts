@@ -112,7 +112,6 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
     tabs: [
       { to: "/admin/messages", label: "Messages" },
       { to: "/admin/notifications", label: "Notifications" },
-      { to: "/admin/copilot", label: "Copilot" },
     ],
   },
   {
