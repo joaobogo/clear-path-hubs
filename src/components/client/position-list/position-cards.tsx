@@ -57,27 +57,27 @@ export function PortfolioSnapshot({
   simplified?: boolean;
 }) {
   const allTiles: Array<{ label: string; value: number; href?: string }> = [
-    { label: "Active", value: data.active },
+    { label: "Active", value: data.active, href: "/client/positions" },
     {
       label: "Delivered",
       value: data.delivered,
-      href: "/client/candidates?filter=new",
+      href: "/client/candidates?stage=delivered",
     },
     {
       label: "Shortlisted",
       value: data.shortlisted,
-      href: "/client/candidates?filter=shortlisted",
+      href: "/client/candidates?stage=shortlisted",
     },
     {
       label: "Interview",
       value: data.interviewing,
-      href: "/client/candidates?filter=interview",
+      href: "/client/interviews",
     },
-    { label: "Offers", value: data.offers },
+    { label: "Offers", value: data.offers, href: "/client/offers" },
     {
       label: "Hires",
       value: data.hires,
-      href: "/client/candidates?filter=hired",
+      href: "/client/candidates?stage=hired",
     },
   ];
 
