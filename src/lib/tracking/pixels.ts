@@ -593,7 +593,7 @@ export function verifyTrackers(): Record<TrackerKey, TrackerStatus> {
     const category = TRACKER_CATEGORY[key];
     const allowed = isTrackerAllowed(key, category);
 
-    if (!allowed && key !== "ga4") {
+    if (!allowed && key !== "ga4" && key !== "rb2b") {
       return { status: "missing", id, detail: `blocked by ${category} consent` };
     }
 
