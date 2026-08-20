@@ -72,7 +72,7 @@ export function SourcingOpsPanel({ positionId }: { positionId: string }) {
       setEditing(null);
       qc.invalidateQueries({ queryKey: key });
     },
-    onError: (e: Any) => toast.error(e?.message ?? "Could not save the channel"),
+    onError: (e: Any) => toastError(e, { fallback: "Could not save the channel", tone: "admin" }),
   });
 
   const removeCampaign = useMutation({
