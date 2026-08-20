@@ -37,6 +37,18 @@ const DATE_TIME = new Intl.DateTimeFormat(APP_LOCALE, {
   timeZone: WORKSPACE_TIMEZONE,
 });
 
+const TIME_ONLY = new Intl.DateTimeFormat(APP_LOCALE, {
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+  timeZone: WORKSPACE_TIMEZONE,
+});
+
+const WEEKDAY_ONLY = new Intl.DateTimeFormat(APP_LOCALE, {
+  weekday: "short",
+  timeZone: WORKSPACE_TIMEZONE,
+});
+
 const MONTH_YEAR_UTC = new Intl.DateTimeFormat(APP_LOCALE, {
   month: "short",
   year: "numeric",
@@ -89,6 +101,26 @@ export function formatRelative(iso: string | number | Date | null | undefined): 
   const days = Math.round(hours / 24);
   if (days <= 7) return `${days} ${days === 1 ? "day" : "days"} ago`;
   return formatDate(date);
+}
+
+/** "14:30" — workspace timezone. Only for rows that already carry the date. */
+export function formatTime(
+  value: string | number | Date | null | undefined,
+  fallback = "",
+): string {
+  const date = toDate(value);
+  if (!date) return fallback;
+  return TIME_ONLY.format(date);
+}
+
+/** "Wed" — a weekday on its own, for short scheduling hints. */
+export function formatWeekday(
+  value: string | number | Date | null | undefined,
+  fallback = "",
+): string {
+  const date = toDate(value);
+  if (!date) return fallback;
+  return WEEKDAY_ONLY.format(date);
 }
 
 /** F6: format numbers with commas */
