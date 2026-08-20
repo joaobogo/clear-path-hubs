@@ -335,7 +335,9 @@ export function WorkspaceShell(props: WorkspaceShellProps) {
   const { collapsed, toggle, mobileOpen, setMobileOpen } = useSidebarState();
   const detailLabel = useCrumbLabel();
   const crumbs = buildBreadcrumbs(pathname, navItems, detailLabel);
-  const currentPage = crumbs[crumbs.length - 1]?.label ?? "";
+  const lastCrumb = crumbs[crumbs.length - 1];
+  const currentPage =
+    typeof lastCrumb?.label === "string" ? lastCrumb.label : contextLabel;
   const [searchOpen, setSearchOpen] = useState(false);
   const [railHover, setRailHover] = useState(false);
   const railCollapsed = collapsed && !railHover;
