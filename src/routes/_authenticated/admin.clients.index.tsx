@@ -260,13 +260,27 @@ function ClientsPage() {
   const total = filtered.length;
   const activeCount = filtered.filter(r => !r.archived_at).length;
   const archivedCount = filtered.filter(r => !!r.archived_at).length;
+
+  // Surface a dismissible notice when a filter value is not recognised instead
+  // of silently ignoring it.
+  const unknownParamNotices = useMemo(() => {
+    const checks: { key: keyof typeof search; value: string; allowed: string[]; label: string }[] = [
+      { key: "status", value: search.status, allowed: STATUSES as unknown as string[], label: "Status" },
+      { key: "org_type", value: search.org_type, allowed: ORG_TYPES.map((t) => t.value), label: "Type" },
+      { key: "sort", value: search.sort, allowed: SORTS as unknown as string[], label: "Sort" },
+    ];
+    return checks
+      .filter((c) => c.value && !c.allowed.includes(c.value))
+      .map((c) => ({ key: c.key, label: c.label, value: c.value, count: total }));
+  }, [search, total]);
+
   const page = Math.max(1, search.page);
   const pageSize = Math.max(10, Math.min(100, search.page_size));
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
   const start = (page - 1) * pageSize;
   const rows = filtered.slice(start, start + pageSize);
   const showingFrom = total === 0 ? 0 : start + 1;
-  const showingTo = Math.min(total, page * pageSize);
+  const showingTo = Math.min(total, start + pageSize);
   const industries = data?.industries ?? [];
 
   const [archiveTarget, setArchiveTarget] = useState<ClientRow | null>(null);
