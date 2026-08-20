@@ -80,6 +80,17 @@ export const HEAD_BOOT_SNIPPETS: { key: TrackerKey; children: string }[] = [
         },
       ]
     : []),
+  // RB2B: business-visitor identification. Boots unconditionally from the
+  // server-rendered head so identification starts on the very first pageview,
+  // before hydration and independent of any consent UI.
+  ...(RB2B_ID
+    ? [
+        {
+          key: "rb2b" as TrackerKey,
+          children: `!function(key){if(window.reb2b)return;window.reb2b={loaded:true};var s=document.createElement("script");s.async=true;s.setAttribute("data-tracker","rb2b");s.src="https://ddwl4m2hdecbv.cloudfront.net/b/"+key+"/"+key+".js.gz";var first=document.getElementsByTagName("script")[0];first.parentNode.insertBefore(s,first);}(${JSON.stringify(RB2B_ID)});`,
+        },
+      ]
+    : []),
 ];
 
 /** True when a tag's script is already in the document (head snippet ran). */
