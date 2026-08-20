@@ -106,7 +106,7 @@ function validateStep(step: number, s: State): Record<string, string> {
 
     const min = Number(String(s.budget_min).replace(/[^0-9.]/g, ""));
     const max = Number(String(s.budget_max).replace(/[^0-9.]/g, ""));
-    if (min && max && min > max) e.budget_max = "Maximum budget must be at least the minimum";
+    if (min && max && min >= max) e.budget_max = "Maximum must be higher than the minimum.";
   }
   if (step === 2) {
     if (s.must_have_skills.length < 3 && s.description.trim().length < 40) {
@@ -330,7 +330,11 @@ export function PositionEditWizard({
   useEffect(() => {
     if (Object.keys(errors).length === 0) return;
     const key = Object.keys(errors)[0];
-    document.querySelector<HTMLElement>(`[data-field="${key}"]`)?.focus();
+    const el = document.querySelector<HTMLElement>(`[data-field="${key}"]`);
+    if (el) {
+      el.focus();
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   }, [errors]);
 
   const qualityDraft: Partial<QualityInput> = useMemo(
@@ -559,7 +563,7 @@ export function PositionEditWizard({
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <Field label="Currency">
                       <Select value={state.currency} onValueChange={(v) => set("currency", v)}>
-                        <SelectTrigger>
+                        <SelectTrigger aria-label="Currency" data-field="currency">
                           <SelectValue placeholder="Select…" />
                         </SelectTrigger>
                         <SelectContent>
@@ -578,7 +582,7 @@ export function PositionEditWizard({
                         value={state.budget_period || "year"}
                         onValueChange={(v) => set("budget_period", v)}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger aria-label="Period" data-field="budget_period">
                           <SelectValue placeholder="Select…" />
                         </SelectTrigger>
                         <SelectContent>
@@ -595,6 +599,8 @@ export function PositionEditWizard({
                         value={state.budget_min}
                         onChange={(e) => set("budget_min", e.target.value)}
                         placeholder="80000"
+                        aria-label="Minimum compensation"
+                        data-field="budget_min"
                       />
                     </Field>
                     <Field label="Maximum" error={errors.budget_max}>
@@ -604,6 +610,8 @@ export function PositionEditWizard({
                         value={state.budget_max}
                         onChange={(e) => set("budget_max", e.target.value)}
                         placeholder="120000"
+                        aria-label="Maximum compensation"
+                        data-field="budget_max"
                       />
                     </Field>
                   </div>
