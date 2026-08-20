@@ -567,7 +567,7 @@ export function RequisitionEditor({
         <CardContent>
           {meta.versions.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No scoring-relevant changes yet. Version 1 is the original requisition.
+              No changes that affect matching yet.
             </p>
           ) : (
             <ol className="space-y-2 text-sm">
