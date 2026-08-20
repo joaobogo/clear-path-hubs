@@ -87,6 +87,10 @@ const searchSchema = z.object({
   rejection_reason: fallback(z.string(), "").default(""),
   date_from: fallback(z.string(), "").default(""),
   date_to: fallback(z.string(), "").default(""),
+  /** @deprecated Old name for score_band. Kept for redirects. */
+  fit: fallback(z.string(), "").default(""),
+  /** @deprecated Old name for stage. Kept for redirects. */
+  filter: fallback(z.string(), "").default(""),
   sort: fallback(z.string(), "updated_desc").default("updated_desc"),
   page: fallback(z.number().int(), 1).default(1),
 });
