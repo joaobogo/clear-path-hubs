@@ -250,11 +250,7 @@ export function buildMilestone(input: {
   const { status, candidates, nextInterviewAt } = input;
   const at = (iso: string | null) =>
     iso
-      ? new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-          weekday: "short",
-          day: "numeric",
-          month: "short",
-        })
+      ? formatDate(iso)
       : null;
   const count = (stage: string) => candidates.filter((c) => c.stage === stage).length;
 

@@ -79,7 +79,7 @@ export function useComparisonPdfExport() {
           doc.text(`Role: ${positionTitle}`, margin, y);
           y += 5;
         }
-        doc.text(`Generated: ${new Date().toLocaleString()}`, margin, y);
+        doc.text(`Generated: ${formatDateTime(new Date())}`, margin, y);
         y += 8;
 
         // Candidates table
