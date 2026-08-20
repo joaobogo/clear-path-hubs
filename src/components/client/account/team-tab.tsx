@@ -1022,15 +1022,32 @@ function InviteDialog({
  <label htmlFor="invite-email" className="text-sm font-medium">
  Work email
  </label>
- <Input
- id="invite-email"
- type="email"
- autoFocus
- required
- value={email}
- onChange={(e) => setEmail(e.target.value)}
- placeholder="colleague@company.com"
- />
+  <Input
+  id="invite-email"
+  type="email"
+  autoFocus
+  required
+  aria-invalid={failure ? true : undefined}
+  value={email}
+  onChange={(e) => {
+    const next = e.target.value;
+    setEmail(next);
+    // Re-validate as they type: a message about the address disappears as
+    // soon as it's valid, and a server refusal stops applying to a new one.
+    setFailure(null);
+  }}
+  onBlur={(e) => {
+    const v = e.target.value.trim();
+    if (!v) return;
+    setFailure(
+      /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)
+        ? null
+        : "That doesn't look like an email address.",
+    );
+  }}
+  placeholder="colleague@company.com"
+  />
+
  </div>
  <div className="space-y-1.5">
  <label className="text-sm font-medium" htmlFor="invite-role">
