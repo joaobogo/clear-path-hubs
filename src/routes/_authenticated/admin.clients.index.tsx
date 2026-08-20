@@ -5,11 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
-import {
-  listClients,
-  archiveOrganization,
-  restoreOrganization,
-} from "@/lib/admin.functions";
+import { listClients, archiveOrganization, restoreOrganization } from "@/lib/admin.functions";
 import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { Input } from "@/components/ui/input";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
@@ -40,6 +36,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  AlertTriangle,
   Archive,
   ArchiveRestore,
   Building2,
@@ -50,6 +47,7 @@ import {
   Pencil,
   Search,
   Users,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -91,7 +89,7 @@ const searchSchema = z.object({
   industry: fallback(z.string(), "").default(""),
   org_type: fallback(z.string(), "client_demo").default("client_demo"),
   sort: fallback(z.string(), "activity_desc").default("activity_desc"),
-  archived: fallback(z.enum(["0", "1"]), "0").default("0"),
+  archived: fallback(z.string(), "0").default("0"),
   page: fallback(z.number().int(), 1).default(1),
   page_size: fallback(z.number().int(), 25).default(25),
 });
@@ -120,13 +118,15 @@ export const Route = createFileRoute("/_authenticated/admin/clients/")({
       <div className="h-[400px] w-full animate-pulse rounded-lg bg-muted" />
     </div>
   ),
-  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.clients.index.tsx"),
+  errorComponent: makeRouteErrorComponent(
+    "admin",
+    "src/routes/_authenticated/admin.clients.index.tsx",
+  ),
   notFoundComponent: () => <div className="p-8">Not found.</div>,
   component: ClientsPage,
 });
 
 import { formatRelative, toTitleCase, formatNumber } from "@/lib/format/datetime";
-
 
 type ClientRow = {
   id: string;
@@ -162,10 +162,18 @@ function ClientsPage() {
   const queryClient = useQueryClient();
   const includeTest = useIncludeTestRecords();
   const [q, setQ] = useState(search.q);
+  const [dismissedNotices, setDismissedNotices] = useState<Record<string, boolean>>({});
   useEffect(() => setQ(search.q), [search.q]);
 
   const query = useQuery({
-    queryKey: ["admin-clients", includeTest, search.sort, search.status, search.industry, search.org_type],
+    queryKey: [
+      "admin-clients",
+      includeTest,
+      search.sort,
+      search.status,
+      search.industry,
+      search.org_type,
+    ],
     queryFn: () =>
       listClients({
         data: {
@@ -182,9 +190,7 @@ function ClientsPage() {
   // Valid type options respect the global test-records toggle.
   const visibleOrgTypes = useMemo(
     () =>
-      includeTest
-        ? ORG_TYPES
-        : ORG_TYPES.filter((t) => t.value !== "qa" && t.value !== "internal"),
+      includeTest ? ORG_TYPES : ORG_TYPES.filter((t) => t.value !== "qa" && t.value !== "internal"),
     [includeTest],
   );
 
@@ -209,10 +215,11 @@ function ClientsPage() {
 
     const term = search.q.trim().toLowerCase();
     if (term) {
-      rows = rows.filter((r) =>
-        r.name.toLowerCase().includes(term) ||
-        (r.domain ?? "").toLowerCase().includes(term) ||
-        (r.industry ?? "").toLowerCase().includes(term),
+      rows = rows.filter(
+        (r) =>
+          r.name.toLowerCase().includes(term) ||
+          (r.domain ?? "").toLowerCase().includes(term) ||
+          (r.industry ?? "").toLowerCase().includes(term),
       );
     }
 
@@ -238,7 +245,7 @@ function ClientsPage() {
       rows = rows.filter((r) => !r.is_qa && !r.is_internal);
     }
 
-    // P-020: Ensure that even if archived are hidden by default, 
+    // P-020: Ensure that even if archived are hidden by default,
     // a specific search for a name includes them if they match.
     if (search.archived !== "1" && !term) {
       rows = rows.filter((r) => !r.archived_at);
@@ -253,10 +260,34 @@ function ClientsPage() {
     return rows;
   }, [data, search, includeTest, effectiveOrgType]);
 
-
   const total = filtered.length;
-  const activeCount = filtered.filter(r => !r.archived_at).length;
-  const archivedCount = filtered.filter(r => !!r.archived_at).length;
+  const activeCount = filtered.filter((r) => !r.archived_at).length;
+  const archivedCount = filtered.filter((r) => !!r.archived_at).length;
+
+  // Surface a dismissible notice when a filter value is not recognised instead
+  // of silently ignoring it.
+  const unknownParamNotices = useMemo(() => {
+    const checks: { key: keyof typeof search; value: string; allowed: string[]; label: string }[] =
+      [
+        {
+          key: "status",
+          value: search.status,
+          allowed: STATUSES as unknown as string[],
+          label: "Status",
+        },
+        {
+          key: "org_type",
+          value: search.org_type,
+          allowed: ORG_TYPES.map((t) => t.value),
+          label: "Type",
+        },
+        { key: "sort", value: search.sort, allowed: SORTS as unknown as string[], label: "Sort" },
+      ];
+    return checks
+      .filter((c) => c.value && !c.allowed.includes(c.value))
+      .map((c) => ({ key: c.key, label: c.label, value: c.value, count: total }));
+  }, [search, total]);
+
   const page = Math.max(1, search.page);
   const pageSize = Math.max(10, Math.min(100, search.page_size));
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
@@ -267,7 +298,6 @@ function ClientsPage() {
   const industries = data?.industries ?? [];
 
   const [archiveTarget, setArchiveTarget] = useState<ClientRow | null>(null);
-
 
   return (
     <div className="space-y-6">
@@ -311,6 +341,35 @@ function ClientsPage() {
           + New client
         </Link>
       </header>
+
+      {unknownParamNotices
+        .filter((n) => !dismissedNotices[n.key])
+        .map((n) => (
+          <div key={n.key} className="mx-6 mb-4">
+            <div
+              role="alert"
+              className="flex items-start gap-3 rounded-lg border border-warning/40 bg-warning/10 p-3 text-sm"
+            >
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning-foreground" />
+              <div className="flex-1">
+                <p className="font-medium text-warning-foreground">
+                  Filter '{n.key}={n.value}' isn't recognised
+                </p>
+                <p className="text-muted-foreground">
+                  Showing {formatNumber(n.count)} organization{n.count === 1 ? "" : "s"}.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDismissedNotices((s) => ({ ...s, [n.key]: true }))}
+                className="rounded p-1 hover:bg-warning/20"
+                aria-label="Dismiss notice"
+              >
+                <X className="h-4 w-4 text-warning-foreground" />
+              </button>
+            </div>
+          </div>
+        ))}
 
       {/* Filters live in the URL, so any view here can be named, saved and shared. */}
       <div className="px-6">
@@ -383,9 +442,7 @@ function ClientsPage() {
 
           <Select
             value={search.org_type || "client_demo"}
-            onValueChange={(v) =>
-              navigate({ search: { ...search, org_type: v, page: 1 } })
-            }
+            onValueChange={(v) => navigate({ search: { ...search, org_type: v, page: 1 } })}
           >
             <SelectTrigger className="w-36" data-qa-action="clients-filter-type">
               <SelectValue placeholder="Type" />
@@ -464,102 +521,105 @@ function ClientsPage() {
 
       <div className="px-6 pb-8">
         <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
-        <div className="hidden md:block">
-          <table className="w-full min-w-[1000px] text-sm">
-            <thead className="border-b bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
-              <tr className="whitespace-nowrap">
-                <th className="px-3 py-2.5 font-medium">Company</th>
-                <th className="px-3 py-2.5 font-medium">Primary contact</th>
-                <th className="px-3 py-2.5 font-medium">Status</th>
-                <th className="px-3 py-2.5 font-medium tabular-nums text-right">Positions</th>
-                <th className="px-3 py-2.5 font-medium tabular-nums text-right">Delivered</th>
-                <th className="px-3 py-2.5 font-medium text-right">Last activity</th>
-              </tr>
-            </thead>
-
-            <tbody className="divide-y">
-              {rows.map((r) => (
-                <ClientRowView key={r.id} row={r} onArchive={() => setArchiveTarget(r)} />
-              ))}
-              {rows.length === 0 && (
-                <tr>
-                  <td colSpan={7} className="px-3 py-16 text-center text-muted-foreground">
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="rounded-full bg-muted p-4">
-                        <Building2 className="h-8 w-8 text-muted-foreground" />
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-base font-medium text-foreground">No organizations found</p>
-                        <TestScopeEmptyNote />
-                        <p className="max-w-xs text-xs leading-relaxed">
-                          Try adjusting your filters or clearing the search to find what you're looking for.
-                        </p>
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          navigate({
-                            search: {
-                              ...search,
-                              q: "",
-                              status: "",
-                              industry: "",
-                              org_type: "client_demo",
-                              archived: "0",
-                              page: 1,
-                            },
-                          })
-                        }
-                      >
-                        Clear filters
-                      </Button>
-                    </div>
-                  </td>
+          <div className="hidden md:block">
+            <table className="w-full min-w-[1000px] text-sm">
+              <thead className="border-b bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
+                <tr className="whitespace-nowrap">
+                  <th className="px-3 py-2.5 font-medium">Company</th>
+                  <th className="px-3 py-2.5 font-medium">Primary contact</th>
+                  <th className="px-3 py-2.5 font-medium">Status</th>
+                  <th className="px-3 py-2.5 font-medium tabular-nums text-right">Positions</th>
+                  <th className="px-3 py-2.5 font-medium tabular-nums text-right">Delivered</th>
+                  <th className="px-3 py-2.5 font-medium text-right">Last activity</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody className="divide-y">
+                {rows.map((r) => (
+                  <ClientRowView key={r.id} row={r} onArchive={() => setArchiveTarget(r)} />
+                ))}
+                {rows.length === 0 && (
+                  <tr>
+                    <td colSpan={7} className="px-3 py-16 text-center text-muted-foreground">
+                      <div className="flex flex-col items-center gap-3">
+                        <div className="rounded-full bg-muted p-4">
+                          <Building2 className="h-8 w-8 text-muted-foreground" />
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-base font-medium text-foreground">
+                            No organizations found
+                          </p>
+                          <TestScopeEmptyNote />
+                          <p className="max-w-xs text-xs leading-relaxed">
+                            Try adjusting your filters or clearing the search to find what you're
+                            looking for.
+                          </p>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            navigate({
+                              search: {
+                                ...search,
+                                q: "",
+                                status: "",
+                                industry: "",
+                                org_type: "client_demo",
+                                archived: "0",
+                                page: 1,
+                              },
+                            })
+                          }
+                        >
+                          Clear filters
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile: stacked cards */}
+          <ul className="divide-y md:hidden">
+            {rows.map((r) => (
+              <li key={r.id} className="p-3">
+                <ClientCard row={r} onArchive={() => setArchiveTarget(r)} />
+              </li>
+            ))}
+            {rows.length === 0 && (
+              <li className="p-16 text-center text-sm text-muted-foreground">
+                <div className="flex flex-col items-center gap-2">
+                  <p>No clients match these filters.</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      navigate({
+                        search: {
+                          ...search,
+                          q: "",
+                          status: "",
+                          industry: "",
+                          org_type: "client_demo",
+                          archived: "0",
+                          page: 1,
+                        },
+                      })
+                    }
+                  >
+                    Clear filters
+                  </Button>
+                </div>
+              </li>
+            )}
+          </ul>
         </div>
 
-        {/* Mobile: stacked cards */}
-        <ul className="divide-y md:hidden">
-          {rows.map((r) => (
-            <li key={r.id} className="p-3">
-              <ClientCard row={r} onArchive={() => setArchiveTarget(r)} />
-            </li>
-          ))}
-          {rows.length === 0 && (
-            <li className="p-16 text-center text-sm text-muted-foreground">
-              <div className="flex flex-col items-center gap-2">
-                <p>No clients match these filters.</p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    navigate({
-                      search: {
-                        ...search,
-                        q: "",
-                        status: "",
-                        industry: "",
-                        org_type: "client_demo",
-                        archived: "0",
-                        page: 1,
-                      },
-                    })
-                  }
-                >
-                  Clear filters
-                </Button>
-              </div>
-            </li>
-          )}
-        </ul>
-      </div>
-
-      {total > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-2 border-t bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
+        {total > 0 && (
+          <div className="flex flex-wrap items-center justify-between gap-2 border-t bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
             <div>
               Page {page} of {pageCount} · {total} total
             </div>
@@ -589,9 +649,7 @@ function ClientsPage() {
                 size="sm"
                 className="h-7 gap-1"
                 disabled={page <= 1}
-                onClick={() =>
-                  navigate({ search: { ...search, page: Math.max(1, page - 1) } })
-                }
+                onClick={() => navigate({ search: { ...search, page: Math.max(1, page - 1) } })}
               >
                 <ChevronLeft className="h-3 w-3" /> Prev
               </Button>
@@ -643,9 +701,7 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
         {r.primary_contact_name || r.primary_contact_email ? (
           <>
             <div className="text-foreground">
-              {r.primary_contact_name
-                ? toTitleCase(r.primary_contact_name)
-                : "—"}
+              {r.primary_contact_name ? toTitleCase(r.primary_contact_name) : "—"}
             </div>
             {r.primary_contact_email && (
               <a
@@ -674,8 +730,12 @@ function ClientRowView({ row, onArchive }: { row: ClientRow; onArchive: () => vo
         <span className="text-foreground">{r.positions_active}</span>
         <span className="text-muted-foreground"> / {r.positions_total}</span>
       </td>
-      <td className="whitespace-nowrap px-3 py-2.5 text-right tabular-nums">{r.candidates_delivered}</td>
-      <td className="whitespace-nowrap px-3 py-2.5 text-right text-xs text-muted-foreground">{formatRelative(r.last_activity_at)}</td>
+      <td className="whitespace-nowrap px-3 py-2.5 text-right tabular-nums">
+        {r.candidates_delivered}
+      </td>
+      <td className="whitespace-nowrap px-3 py-2.5 text-right text-xs text-muted-foreground">
+        {formatRelative(r.last_activity_at)}
+      </td>
       <td className="px-3 py-2.5 text-right">
         <RowOverflowMenu row={r} onArchive={onArchive} />
       </td>
@@ -700,8 +760,16 @@ function ClientCard({ row, onArchive }: { row: ClientRow; onArchive: () => void 
             <span>{r.domain ?? "—"}</span>
             {r.industry && <span>· {r.industry}</span>}
             <Badge variant="outline">{STATUS_LABEL[r.status as Status] ?? r.status}</Badge>
-            {r.is_test_record && <Badge variant="outline" className="text-[10px] bg-muted/50">test</Badge>}
-            {r.archived_at && <Badge variant="secondary" className="text-[10px]">archived</Badge>}
+            {r.is_test_record && (
+              <Badge variant="outline" className="text-[10px] bg-muted/50">
+                test
+              </Badge>
+            )}
+            {r.archived_at && (
+              <Badge variant="secondary" className="text-[10px]">
+                archived
+              </Badge>
+            )}
           </div>
         </div>
         <RowOverflowMenu row={r} onArchive={onArchive} />
@@ -827,8 +895,7 @@ function ArchiveDialog({ target, onClose }: { target: ClientRow | null; onClose:
     onError: (e: unknown) => toast.error((e as Error).message),
   });
   const open = !!target;
-  const matches =
-    !!target && confirm.trim().toLowerCase() === target.name.trim().toLowerCase();
+  const matches = !!target && confirm.trim().toLowerCase() === target.name.trim().toLowerCase();
   return (
     <Dialog open={open} onOpenChange={(v) => (!v ? onClose() : null)}>
       <DialogContent className="max-w-md">

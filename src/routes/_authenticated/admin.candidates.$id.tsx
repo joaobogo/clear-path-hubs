@@ -7,7 +7,7 @@ import { createFileRoute, notFound, useNavigate, useRouter, Link } from "@tansta
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useSuspenseQuery, useQuery, useQueryClient } from "@tanstack/react-query";
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { getAdminMatch, getMatchHeavyDetail } from "@/lib/processing.functions";
 import {
@@ -79,9 +79,16 @@ const HEAVY_TABS = new Set<TabId>([
   "history",
 ]);
 
+const tabSearchSchema = z.union([
+  z.enum(TAB_IDS),
+  // Deprecated tab slugs that used to exist before the Position→Role / Record→Candidate rename.
+  z.literal("client-preview"),
+  z.literal("intake"),
+]);
+
 const searchSchema = z.object({
   /** Deep-linkable tab so a shared URL opens the same panel. */
-  tab: fallback(z.enum(TAB_IDS), "profile").default("profile"),
+  tab: fallback(tabSearchSchema, "profile").default("profile"),
   /** Permalink target from the history timeline: `<source>:<row id>`. */
   event: fallback(z.string(), "").default(""),
 });
@@ -106,7 +113,10 @@ export const Route = createFileRoute("/_authenticated/admin/candidates/$id")({
   notFoundComponent: () => (
     <div className="p-10 text-center text-muted-foreground">Candidate not found.</div>
   ),
-  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.candidates.$id.tsx"),
+  errorComponent: makeRouteErrorComponent(
+    "admin",
+    "src/routes/_authenticated/admin.candidates.$id.tsx",
+  ),
   component: CandidateWorkspace,
 });
 
@@ -123,13 +133,29 @@ function CandidateWorkspace() {
     queryFn: () => getAdminMatch({ data: { id, heavy: false } }),
   });
 
-  const { event: rawEvent, tab: urlTab } = Route.useSearch();
+  const { event: rawEvent, tab: rawTab } = Route.useSearch();
   // Some links produce `?tab=profile&event=` with no value; a blank param means
   // "no focused event" and must never be treated as an event id.
   const focusEventId = normalizeFocusEventId(rawEvent);
+  // Translate old tab slugs into the current ones before any UI logic uses them.
+  const urlTab: TabId =
+    rawTab === "client-preview" ? "preview" : rawTab === "intake" ? "dossier" : rawTab;
   // The tab lives in the URL so deep links and back/forward keep working.
   const tab: TabId = focusEventId && urlTab === "profile" ? "history" : urlTab;
-  
+
+  // Redirect old tab slugs to their canonical names so bookmarks and shared links stay valid.
+  useEffect(() => {
+    if (rawTab === "client-preview" || rawTab === "intake") {
+      const next = rawTab === "client-preview" ? "preview" : "dossier";
+      void navigate({
+        to: "/admin/candidates/$id",
+        params: { id },
+        search: (prev: Record<string, unknown>) => ({ ...prev, tab: next }),
+        replace: true,
+      });
+    }
+  }, [rawTab, id, navigate]);
+
   // B3/B8: Standardize navigation to use router push; ensure it replaces history to avoid backlog.
   const setTab = (next: TabId) =>
     void navigate({
@@ -140,6 +166,8 @@ function CandidateWorkspace() {
     });
   const [busy, setBusy] = useState<string | null>(null);
 
+  useDetailCrumb((data?.match as Any)?.candidate_profiles?.full_name ?? null);
+
   // Only fetched once a tab that needs the large payloads is open.
   const heavyQuery = useQuery({
     queryKey: ["admin-candidate", id, "heavy"],
@@ -149,15 +177,20 @@ function CandidateWorkspace() {
   });
 
   if (!data) return null;
-  const { match, runs: lightRuns, decisions, jobs, evidence: lightEvidence, siblings } =
-    data as Any;
+  const {
+    match,
+    runs: lightRuns,
+    decisions,
+    jobs,
+    evidence: lightEvidence,
+    siblings,
+  } = data as Any;
   const heavy = heavyQuery.data as Any | undefined;
   const runs = (heavy?.runs ?? lightRuns) as Any[];
   const evidence = (heavy?.evidence ?? lightEvidence) as Any;
   const cv = (heavy?.cv ?? null) as Any;
   const m = match as Any;
   const cp = m.candidate_profiles as Any;
-  useDetailCrumb(cp?.full_name ?? null);
   const pos = m.positions as Any;
   const currentRun = runs[0] as Any | undefined;
   const currentResult = (currentRun?.result ?? null) as Any | null;
@@ -243,9 +276,7 @@ function CandidateWorkspace() {
                 className="rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-sm"
               >
                 <p className="font-medium text-destructive">This panel could not load.</p>
-                <p className="mt-1 text-muted-foreground">
-                  {(heavyQuery.error as Error).message}
-                </p>
+                <p className="mt-1 text-muted-foreground">{(heavyQuery.error as Error).message}</p>
                 <button
                   className="mt-2 text-xs font-medium text-primary hover:underline"
                   onClick={() => void heavyQuery.refetch()}
@@ -289,7 +320,10 @@ function CandidateWorkspace() {
                 {tab === "screening" && <ScreeningTab result={currentResult} evidence={evidence} />}
                 {tab === "history" && (
                   <div className="space-y-4">
-                    <ComponentErrorBoundary boundary="admin.candidate.history-timeline" tone="admin">
+                    <ComponentErrorBoundary
+                      boundary="admin.candidate.history-timeline"
+                      tone="admin"
+                    >
                       <CandidateHistoryTimeline matchId={id} focusEventId={focusEventId} />
                     </ComponentErrorBoundary>
                     <ComponentErrorBoundary boundary="admin.candidate.history-runs" tone="admin">
