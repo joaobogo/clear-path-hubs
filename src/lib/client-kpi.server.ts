@@ -1031,7 +1031,15 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     fit,
     summary: (run?.result as AnyRow)?.fit_rationale ?? (run?.result as AnyRow)?.summary ?? null,
 
-    strengths,
+    // Strengths read from the same place as the "Verified strengths" count:
+    // requirements this page can quote. Engine-provided strengths win when present.
+    strengths: strengths.length
+      ? strengths
+      : requirement_rows
+          .filter((r) => r.evidence.length > 0 && (r.status === "met" || r.status === "partial"))
+          .slice(0, 5)
+          .map((r) => r.label),
+
     concerns,
     main_consideration: mainConsideration,
     requirement_rows,
