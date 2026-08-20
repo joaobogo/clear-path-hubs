@@ -117,7 +117,7 @@ export function agoLabel(value: DateInput, now: DateInput = new Date()): string 
   const months = Math.round(days / 30);
   if (months < 12) return `${months} month${months === 1 ? "" : "s"} ago`;
   const years = Math.round(days / 365);
-  return `${years}y ago`;
+  return `${years} ${years === 1 ? "year" : "years"} ago`;
 }
 
 /**

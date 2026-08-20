@@ -69,17 +69,26 @@ export function formatDate(
   return DATE_ONLY.format(date);
 }
 
-/** F7: clarify "1m" as "1 min" or "1 mo" */
+/**
+ * The one relative format: "just now", "3 minutes ago", "5 hours ago",
+ * "2 days ago". Never an abbreviation like "2d ago" or "1m" — those read as
+ * machine output and "1m" is ambiguous between a minute and a month. Past a
+ * week the absolute date is more useful, so it falls back to "15 Aug 2026".
+ */
 export function formatRelative(iso: string | null | undefined): string {
   if (!iso) return "—";
-  const ms = Date.now() - new Date(iso).getTime();
-  const m = Math.round(ms / 60_000);
-  if (m < 1) return "now";
-  if (m < 60) return `${m} min`;
-  const h = Math.round(m / 60);
-  if (h < 24) return `${h}h`;
-  // Over 24h, return the absolute date per F4
-  return formatDate(iso);
+  const date = toDate(iso);
+  if (!date) return "—";
+  const ms = Date.now() - date.getTime();
+  if (ms < 0) return formatDate(date);
+  const minutes = Math.round(ms / 60_000);
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+  const days = Math.round(hours / 24);
+  if (days <= 7) return `${days} ${days === 1 ? "day" : "days"} ago`;
+  return formatDate(date);
 }
 
 /** F6: format numbers with commas */
