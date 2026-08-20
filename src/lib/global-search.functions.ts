@@ -209,8 +209,8 @@ export const globalSearch = createServerFn({ method: "POST" })
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { data: profiles, error: pErr } = await supabaseAdmin
           .from("candidate_profiles")
-          .select("id, full_name, email, headline, organizations!inner(name)")
-          .or(`${profileFilter},organizations.name.ilike.${ilikeValue(term)}`)
+          .select("id, full_name, email, headline")
+          .or(profileFilter)
           .limit(50);
         if (pErr) throw new Error(pErr.message);
         const profileIds = ((profiles as AnyRow[]) ?? []).map((p) => p.id);
