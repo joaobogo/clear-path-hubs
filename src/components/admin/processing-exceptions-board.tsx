@@ -114,7 +114,31 @@ export function ProcessingExceptionsBoard({ className }: { className?: string })
     onError: (e: Error) => toastError(e),
   });
 
+  const resolveOrphanFn = useServerFn(resolveScoringOrphan);
+  const [orphanNote, setOrphanNote] = useState<Record<string, string>>({});
+  const orphanQuery = useQuery<ScoringOrphan[]>({
+    queryKey: ["admin", "scoring-orphans"],
+    queryFn: () => listScoringOrphans(),
+    staleTime: 20_000,
+  });
+  const invalidateOrphans = () =>
+    qc.invalidateQueries({ queryKey: ["admin", "scoring-orphans"] });
+  const resolveOrphan = useMutation({
+    mutationFn: (input: {
+      orphan_id: string;
+      action: "mark_failed" | "acknowledge";
+      note?: string;
+    }) => resolveOrphanFn({ data: input }),
+    onSuccess: async () => {
+      toast.success("Resolved.");
+      setOrphanNote({});
+      await invalidateOrphans();
+    },
+    onError: (e: Error) => toast.error(`Resolve failed: ${e.message}`),
+  });
+
   const board = query.data;
+
   const active = useMemo(() => board?.active ?? [], [board]);
   const permanent = board?.permanent ?? [];
 
