@@ -106,7 +106,7 @@ function validateStep(step: number, s: State): Record<string, string> {
 
     const min = Number(String(s.budget_min).replace(/[^0-9.]/g, ""));
     const max = Number(String(s.budget_max).replace(/[^0-9.]/g, ""));
-    if (min && max && min > max) e.budget_max = "Maximum budget must be at least the minimum";
+    if (min && max && min >= max) e.budget_max = "Maximum must be higher than the minimum.";
   }
   if (step === 2) {
     if (s.must_have_skills.length < 3 && s.description.trim().length < 40) {
