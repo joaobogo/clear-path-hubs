@@ -75,3 +75,19 @@ export function useIncludeTestRecords(): boolean {
 export function useScopedIncludeTest(explicit?: boolean): boolean {
   return explicit ?? useAdminTestScope().includeTest;
 }
+
+/** The acting admin's user id, for the "Mine" scope. Presentation-only read. */
+export function useActingUserId() {
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(() => {
+    let alive = true;
+    supabase.auth.getUser().then(({ data }) => {
+      if (alive) setUserId(data.user?.id ?? null);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return userId;
+}
+
