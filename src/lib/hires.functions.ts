@@ -658,12 +658,6 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
       .limit(2000);
     if (error) throw new Error(error.message);
 
-    const stageByMatch = await loadMatchStages(
-      context.supabase,
-      data.orgId,
-      ((rows ?? []) as AnyRow[]).map((r) => r.candidate_match_id).filter(Boolean) as string[],
-    );
-
     const days = (from: unknown, to: unknown): number | null => {
       if (!from || !to) return null;
       const a = new Date(String(from)).getTime();
@@ -673,16 +667,12 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     };
 
     const list: AnyRow[] = ((rows ?? []) as AnyRow[]).map((r) => {
-      const reconciled = reconcileOfferWithStage(
-        r as AnyRow,
-        r.candidate_match_id ? stageByMatch.get(String(r.candidate_match_id)) : null,
-      ) as AnyRow;
       const appliedAt = r.applications?.applied_at ?? null;
-      // A candidate reconciled to hired has no hired_at of its own; fall back to
-      // the acceptance date so timing metrics still have something real.
-      const hiredAt = reconciled.hired_at ?? (reconciled.status === "hire_confirmed" ? r.accepted_at ?? null : null);
+      // Confirmed hires without a hired_at fall back to the acceptance date so
+      // timing metrics still have something real behind them.
+      const hiredAt = r.hired_at ?? (isConfirmedHire(r.status) ? r.accepted_at ?? null : null);
       return {
-        ...reconciled,
+        ...r,
         position_title: r.positions?.title ?? "Role",
         applied_at: appliedAt,
         offer_sent_at: r.sent_at ?? null,
@@ -703,13 +693,16 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     };
     const scoped = list.filter(inWindow);
 
-    const { isLiveOffer, qualifiesAsHire, isDecidedOffer, isAcceptedOffer } = await import("./offer-hire");
+    const { isLiveOffer, isDecidedOffer, isAcceptedOffer } = await import("./offer-hire");
 
     // Open offers come from the canonical KPI service so this strip can never
     // contradict the board underneath it, the Roles list, or the Candidates page.
     const canonical = computeKpis(await loadKpiRows(context.supabase, data.orgId), 0);
     const openOffers = canonical.offers;
-    const hires = scoped.filter((r) => qualifiesAsHire(r.status));
+    // Confirmed hires come from the shared selector over the offer records
+    // themselves — the same function the board column and footer use.
+    const hires = selectConfirmedHires(scoped as Array<AnyRow & { status: string }>);
+
 
 
     // ACCEPTANCE RATE denominator: only count records that are genuinely decided (accepted, declined, hired, or lost).
