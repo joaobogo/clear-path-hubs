@@ -15,7 +15,10 @@ describe("offer status reconciliation against candidate stage", () => {
   });
 
   it("leaves offers alone when the candidate is not hired", () => {
-    const row = reconcileOfferWithStage({ status: "offer_sent" }, "interview_process");
+    const row = reconcileOfferWithStage(
+      { status: "offer_sent", stage_reconciled: undefined as boolean | undefined },
+      "interview_process",
+    );
     expect(row.status).toBe("offer_sent");
     expect(row.stage_reconciled).toBeUndefined();
   });
