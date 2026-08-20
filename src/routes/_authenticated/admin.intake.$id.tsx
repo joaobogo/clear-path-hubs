@@ -187,7 +187,10 @@ function IntakeDetail() {
       <PilotWarningsPanel organizationId={organization?.id ?? null} hideWhenEmpty />
 
       {duplicates.length > 0 && (
-        <section className="rounded-lg border border-warning/60 bg-warning/60 p-4 dark:bg-warning/20">
+        <section
+          id="duplicates"
+          className="scroll-mt-24 rounded-lg border border-warning/60 bg-warning/60 p-4 dark:bg-warning/20"
+        >
           <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-warning-foreground dark:text-warning-foreground">
             <AlertTriangle className="h-4 w-4" /> Possible duplicates
           </div>
@@ -207,6 +210,30 @@ function IntakeDetail() {
               </li>
             ))}
           </ul>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Briefs are never merged automatically. Keep the brief you want to work, then close this
+            one as a duplicate — the link above stays in the audit trail.
+          </p>
+          {intake.position_id || intake.status === "rejected" ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              {intake.position_id
+                ? "This brief already has a role, so it can't be closed here."
+                : "This brief is already closed."}
+            </p>
+          ) : (
+            <Button
+              size="sm"
+              variant="outline"
+              className="mt-2"
+              disabled={rejectM.isPending}
+              onClick={() => {
+                setReason("Duplicate of another brief from the same company");
+                rejectM.mutate();
+              }}
+            >
+              {rejectM.isPending ? "Closing…" : "Close as duplicate"}
+            </Button>
+          )}
         </section>
       )}
 
