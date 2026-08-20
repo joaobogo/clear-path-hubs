@@ -471,8 +471,8 @@ function PlatformStaffList() {
       <h2 className="text-lg font-medium">Platform staff</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Use the create form above to add platform admin or operations users.
-        Existing platform staff can be managed from the database or by resetting
-        their password from their client-organization team if they hold one.
+        Editing existing staff isn't available yet. Ask an engineer, or deactivate
+        the account here and re-invite.
       </p>
     </Card>
   );
