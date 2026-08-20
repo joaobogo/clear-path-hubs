@@ -160,11 +160,11 @@ function CandidatesPage() {
  error: overviewQuery.error,
  stuck: kpiStuck,
  });
- const retryAll = () => {
- if (gate.failed) gate.retry();
- void refetch();
- void overviewQuery.refetch();
- };
+  const retryAll = async () => {
+    if (gate.failed) await gate.retry();
+    await refetch();
+    await overviewQuery.refetch();
+  };
 
 
  // Availability values are derived from the authorized set only — never a fixed
