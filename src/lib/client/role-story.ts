@@ -228,7 +228,7 @@ export function buildDistribution(candidates: StoryCandidate[]): DistributionBlo
     .reduce((n, b) => n + b.count, 0);
 
   const criteria =
-    "Every candidate delivered to you, placed by their evidenced fit score out of 100. Bands are fixed: 95+ exceptional, 85+ top, 70+ strong, 50+ worth considering, below 50 not recommended.";
+    "Every candidate delivered to you, placed by their evidenced fit score out of 100. Bands are fixed: 95+ exceptional, 85+ top, 70+ strong, 50+ consider, below 50 not recommended.";
 
   const strongPct = Math.round((strong / Math.max(1, scored)) * 100);
   const takeaway = scored > 0
