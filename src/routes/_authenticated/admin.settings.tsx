@@ -179,6 +179,21 @@ function SettingsPage() {
         Any control that would appear in this UI but not persist or audit its change is a
         blocker. If you see one in the app that is not listed here, treat it as a bug.
       </p>
+
+      <section className="space-y-3 border-t pt-6">
+        <div>
+          <h2 className="text-lg font-medium">Business rules</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Canonical values used across marketing, dashboards, proposals and legal copy.
+            Each rule shows its current value; overrides are validated before saving and
+            recorded in the change log below.
+          </p>
+        </div>
+        <BusinessRulesPanel />
+      </section>
     </div>
+  );
+}
+
   );
 }
