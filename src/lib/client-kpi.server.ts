@@ -41,6 +41,42 @@ import { assessFreshness, mergeStoredStaleness, type Freshness } from "@/lib/sco
 import { CALIBRATION_VERSION } from "@/lib/scoring/engine-calibration";
 import { ENGINE_VERSION } from "@/lib/scoring/engine-version";
 import { buildReviewTimeline, type ReviewTimeline } from "@/lib/client/review-timeline";
+import {
+  buildScoreComposition,
+  type ScoreComposition,
+} from "@/lib/scoring/score-composition";
+
+/**
+ * Quoted passages stored per requirement by the scoring run. These are the
+ * verbatim CV / screening snippets behind each verdict; they are reshaped into
+ * the same item shape as the verified evidence view so requirement rows can
+ * quote either source without knowing which one it came from.
+ */
+function assessmentEvidenceItems(coverage: AnyRow | null | undefined): AnyRow[] {
+  const assessed = Array.isArray((coverage as AnyRow)?.requirement_assessment)
+    ? ((coverage as AnyRow).requirement_assessment as AnyRow[])
+    : [];
+  const out: AnyRow[] = [];
+  for (const req of assessed) {
+    const label = String(req?.text ?? req?.label ?? "").trim();
+    const list = Array.isArray(req?.evidence) ? (req.evidence as AnyRow[]) : [];
+    for (const e of list) {
+      const snippet = String(e?.snippet ?? e?.quote ?? e?.factual_quote ?? "").trim();
+      if (!snippet) continue;
+      out.push({
+        requirement_id: req?.id != null ? String(req.id) : null,
+        requirement: label,
+        label,
+        snippet,
+        source: e?.source ?? e?.source_kind ?? null,
+        source_location: e?.location ?? e?.source_location ?? null,
+        result: req?.status ?? null,
+      } as AnyRow);
+    }
+  }
+  return out;
+}
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
