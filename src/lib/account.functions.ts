@@ -145,7 +145,7 @@ export const getAccountOverview = createServerFn({ method: "GET" })
     const hireRows = ((hires as AnyRow[]) ?? []).filter(
       (h) =>
         (h.status === "hire_confirmed" || Boolean(h.hired_at)) &&
-        !["closed_lost", "declined", "withdrawn"].includes(String(h.status)),
+        !["closed_lost", "offer_declined", "declined", "withdrawn"].includes(String(h.status)),
     );
     const now = new Date();
     const nowIso = now.toISOString();

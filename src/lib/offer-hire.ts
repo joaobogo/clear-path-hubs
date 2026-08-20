@@ -122,8 +122,8 @@ export function isExtendedOffer(status: string): boolean {
 }
 
 /** Only a confirmed hire lets a position close as filled. */
-export function qualifiesAsHire(status: string): boolean {
-  return status === "hire_confirmed";
+export function qualifiesAsHire(status: string | null | undefined): boolean {
+  return (status ?? "") === "hire_confirmed";
 }
 
 const DAY = 86_400_000;
