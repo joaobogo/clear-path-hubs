@@ -1013,12 +1013,12 @@ function InviteDialog({
       invite.mutate();
     }}
   >
- {failure && (
- <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
- <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
- <span>{failure}</span>
- </div>
- )}
+        {liveFailure && (
+          <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            <span>{liveFailure}</span>
+          </div>
+        )}
 
  <div className="space-y-1.5">
  <label htmlFor="invite-email" className="text-sm font-medium">
