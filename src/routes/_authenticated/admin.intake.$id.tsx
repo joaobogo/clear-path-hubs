@@ -73,7 +73,7 @@ function IntakeDetail() {
     onError: (e) => toastError(e, { fallback: "Conversion failed." }),
   });
   const rejectM = useMutation({
-    mutationFn: () => reject({ data: { id, reason } }),
+    mutationFn: (why?: string) => reject({ data: { id, reason: (why ?? reason).trim() } }),
     onSuccess: () => {
       invalidate();
       toast.success("Intake rejected.");
