@@ -123,6 +123,13 @@ export const EMPLOYER_VIEW_FIELDS: EmployerViewField[] = [
   { key: "main_consideration", group: "role_fit", label: "The main thing we asked the employer to check" },
   { key: "requirement_rows", group: "role_fit", label: "Requirement-by-requirement coverage" },
   { key: "coverage", group: "role_fit", label: "Coverage totals" },
+  {
+    key: "score_composition",
+    group: "role_fit",
+    label: "How the rating was made up",
+    note: "Shows how must-have coverage, nice-to-have signal and screening alignment combined into the rating.",
+  },
+
   { key: "evidence", group: "role_fit", label: "Evidence extracts" },
   {
     key: "evidence_card",
