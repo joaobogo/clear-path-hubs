@@ -7,6 +7,7 @@ import { getClientContext } from "@/lib/client-context.functions";
 import { getClientTeam, inviteClientMember, resendClientInvitation, updateClientMemberRole, setClientMemberStatus, removeClientMember } from "@/lib/client-team.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { useSupportView } from "@/lib/support-view";
+import { useStaleServerError } from "@/lib/use-live-errors";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -944,6 +945,7 @@ function InviteDialog({
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<ClientRoleId>("client_editor");
   const [failure, setFailure] = useState<string | null>(null);
+  const liveFailure = useStaleServerError(failure, email.trim());
   const qc = useQueryClient();
   const inviteFn = useServerFn(inviteClientMember);
   const invite = useMutation({
@@ -1011,12 +1013,12 @@ function InviteDialog({
       invite.mutate();
     }}
   >
- {failure && (
- <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
- <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
- <span>{failure}</span>
- </div>
- )}
+        {liveFailure && (
+          <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            <span>{liveFailure}</span>
+          </div>
+        )}
 
  <div className="space-y-1.5">
  <label htmlFor="invite-email" className="text-sm font-medium">
@@ -1027,7 +1029,7 @@ function InviteDialog({
   type="email"
   autoFocus
   required
-  aria-invalid={failure ? true : undefined}
+  aria-invalid={liveFailure ? true : undefined}
   value={email}
   onChange={(e) => {
     const next = e.target.value;
