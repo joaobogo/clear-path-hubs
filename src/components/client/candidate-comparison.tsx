@@ -702,9 +702,7 @@ function RelativeStrengthBoard({ candidates }: { candidates: ClientCandidateDTO[
     {
       key: "coverage",
       label: "Must-haves met",
-      values: candidates.map((c) =>
-        c.coverage.must_total ? c.coverage.must_met / c.coverage.must_total : 0,
-      ),
+      values: candidates.map((c) => c.coverage.must_have_coverage ?? 0),
       format: (n) => `${Math.round(n * 100)}%`,
     },
     {
