@@ -843,8 +843,12 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
   const requirement_rows = buildRequirementRows(
     pos ? { requirements: pos.requirements, preferred_requirements: pos.preferred_requirements } : null,
     coverage,
-    ((row as AnyRow).evidence_items as AnyRow[] | null) ?? null,
+    [
+      ...(((row as AnyRow).evidence_items as AnyRow[] | null) ?? []),
+      ...assessmentEvidenceItems(coverage),
+    ],
   );
+
   const coverageSummary = summariseCoverage(requirement_rows, fit, run?.score != null ? Number(run.score) : coverage?.fit_score ?? null);
 
   const workAuth = normWorkAuth(cp.work_authorization);
