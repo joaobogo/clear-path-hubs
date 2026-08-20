@@ -81,7 +81,34 @@ describe("role story distribution", () => {
     expect(d.scored).toBe(3);
     expect(d.bands.find((b) => b.key === "exceptional")?.count).toBe(1);
     expect(d.bands.find((b) => b.key === "strong")?.count).toBe(1);
+    expect(d.bands.find((b) => b.key === "consider")?.count).toBe(1);
+    expect(d.bands.reduce((sum, b) => sum + b.count, 0)).toBe(d.scored);
+    expect(d.bandTotal).toBe(d.scored);
     expect(d.takeaway).toContain("2 of 3");
+  });
+
+  it("counts candidates below 50 in the Not Recommended band", () => {
+    const d = buildDistribution([
+      cand({ score: 88, match_id: "m1" }),
+      cand({ score: 79, match_id: "m2" }),
+      cand({ score: 78, match_id: "m3" }),
+      cand({ score: 68, match_id: "m4" }),
+      cand({ score: 68, match_id: "m5" }),
+      cand({ score: 68, match_id: "m6" }),
+      cand({ score: 60, match_id: "m7" }),
+      cand({ score: 47, match_id: "m8" }),
+      cand({ score: 42, match_id: "m9" }),
+      cand({ score: 35, match_id: "m10" }),
+    ]);
+    expect(d.delivered).toBe(10);
+    expect(d.scored).toBe(10);
+    expect(d.bandTotal).toBe(10);
+    expect(d.bands.find((b) => b.key === "not_recommended")?.count).toBe(3);
+    expect(d.bands.find((b) => b.key === "consider")?.count).toBe(4);
+    expect(d.bands.find((b) => b.key === "strong")?.count).toBe(2);
+    expect(d.bands.find((b) => b.key === "top")?.count).toBe(1);
+    expect(d.bands.find((b) => b.key === "exceptional")?.count).toBe(0);
+    expect(d.bands.reduce((sum, b) => sum + b.count, 0)).toBe(d.delivered);
   });
 
   it("does not invent a spread with no scores", () => {

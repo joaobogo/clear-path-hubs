@@ -58,6 +58,7 @@ export type DistributionBand = {
 export type DistributionBlock = {
   delivered: number;
   scored: number;
+  bandTotal: number;
   bands: DistributionBand[];
   criteria: string;
   takeaway: string;
@@ -206,9 +207,21 @@ export function buildDistribution(candidates: StoryCandidate[]): DistributionBlo
       max: range.max,
       count: counts.get(b.key) ?? 0,
     };
-  }).reverse(); // Show highest first (Exceptional 95+) for the bar chart logic in UI if needed, but the UI iterates this. Actually, the UI usually wants highest at top.
-  // Wait, SCORE_BAND_BOUNDARIES is highest first: exceptional(95), top(85), ...
-  // The UI maps them into a list. Pedro (41) must land in "not_recommended" (0-49).
+  }).reverse();
+
+  const bandTotal = bands.reduce((sum, b) => sum + b.count, 0);
+
+  // Invariant: every scored candidate must land in exactly one of the five
+  // canonical bands. If this fails, the bucketing logic has dropped or
+  // double-counted a score, so fail loudly in development and log in prod.
+  if (bandTotal !== scored) {
+    const message = `Role story distribution mismatch: bandTotal=${bandTotal} scored=${scored} delivered=${candidates.length}`;
+    if (import.meta.env.DEV) {
+      throw new Error(message);
+    }
+    // eslint-disable-next-line no-console
+    console.warn(message);
+  }
 
   const strong = bands
     .filter((b) => b.min >= 70)
@@ -222,7 +235,7 @@ export function buildDistribution(candidates: StoryCandidate[]): DistributionBlo
     ? `${strong} of ${scored} delivered candidates score 70 or above (Strong or better), which is where we recommend a conversation.`
     : "No scored candidates yet — the spread appears with the first assessed candidate.";
 
-  return { delivered: candidates.length, scored, bands, criteria, takeaway };
+  return { delivered: candidates.length, scored, bandTotal, bands, criteria, takeaway };
 }
 
 /** What the role is waiting on right now, and why we say so. */
