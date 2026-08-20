@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listAdminPayments } from "@/lib/admin-payments.functions";
 import { getPaymentsOps } from "@/lib/admin-ops.functions";
+import { getStripePaymentMode } from "@/lib/integration-health.functions";
 import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Lock, CheckCircle2, AlertTriangle, Timer } from "lucide-react";
 
 type Filter = "all" | "paid" | "failed" | "refunded";
@@ -58,10 +60,15 @@ function AdminPaymentsPage() {
   const [filter, setFilter] = useState<Filter>("all");
   const includeTest = useIncludeTestRecords();
   const load = useServerFn(listAdminPayments);
+  const loadMode = useServerFn(getStripePaymentMode);
 
   const paymentsQuery = useQuery({
     queryKey: ["admin-payments", includeTest, filter],
     queryFn: () => load({ data: { filter } }),
+  });
+  const modeQuery = useQuery({
+    queryKey: ["stripe-payment-mode"],
+    queryFn: () => loadMode(),
   });
   const { data, isLoading, error } = paymentsQuery;
 
@@ -75,6 +82,15 @@ function AdminPaymentsPage() {
           truth.
         </p>
       </div>
+
+      {modeQuery.data?.mode === "sandbox" && (
+        <Alert>
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            Sandbox mode — these are test transactions. No money has moved.
+          </AlertDescription>
+        </Alert>
+      )}
 
       <OpsPanel />
 
@@ -208,6 +224,7 @@ function OpsPanel() {
   }
 
   const totals = Object.entries(data.totals.paid_cents_by_currency);
+  const linkedPilots = data.pilots.filter((p) => p.position_title);
 
   return (
     <div className="grid gap-4 lg:grid-cols-3">
@@ -286,23 +303,21 @@ function OpsPanel() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Timer className="h-4 w-4 text-muted-foreground" /> Pilots
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {data.pilots.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No pilot accounts on record.</p>
-          ) : (
+      {linkedPilots.length > 0 && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Timer className="h-4 w-4 text-muted-foreground" /> Pilots
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
             <ul className="space-y-2 text-xs">
-              {data.pilots.slice(0, 8).map((p) => (
+              {linkedPilots.slice(0, 8).map((p) => (
                 <li key={p.orgId} className="flex items-center justify-between gap-2">
                   <div className="min-w-0">
                     <div className="truncate font-medium">{p.org}</div>
                     <div className="truncate text-muted-foreground">
-                      {p.position_title ?? "no pilot role linked"}
+                      {p.position_title}
                       {p.override ? " · admin override" : ""}
                     </div>
                   </div>
@@ -321,9 +336,9 @@ function OpsPanel() {
                 </li>
               ))}
             </ul>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
