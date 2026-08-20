@@ -145,19 +145,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P01 Fix the swallowed first click BLOCKER GLOBAL
+TEXTO DO USUÁRIO: "P03 Hide test roles from the client workspace BLOCKER CLIENT HOME
 Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-Several buttons in this app do nothing on the first click and only work on the second. Confirmed on all
-five of these:
-1. "New role" button on the client Roles page (/client/positions)
-2. The notifications bell in the top bar
-3. "Return to Admin" in the impersonation banner
-4. "+ New role" on /admin/positions
-5. The "Roles" filter tab on the client Messages page (/client/conversations)
-Find the shared cause (likely a click handler that only fires after a state/hydration pass, or a component
-that mounts on first click and handles on second) and fix it once so a single click fires the action.
-Do not change any styling or copy. Only fix the click behaviour.
-Done when: Each of the five controls above performs its action on the very first click."`}
+A role literally titled \"BROWSER-TEST-R2 Position\" is visible to the client on /client, inside the \"Our
+commitments to you\" panel, with a full commitments table.
+Exclude any role flagged as test/internal/QA from every client-facing surface: the Overview commitments
+panel, the Roles page, the Account page role counts, and the Executive page.
+If there is no test flag on the role record, add a boolean column \`is_test\` (default false) and filter
+client queries on \`is_test = false\`.
+Do not delete the roles — only hide them from client views.
+Done when: No role whose title contains BROWSER-TEST, QA, TEST or GATE appears anywhere in the client
+workspace."`}
         </div>
 
         <Scripts />
