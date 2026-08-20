@@ -204,6 +204,7 @@ export const getPositionForEdit = createServerFn({ method: "GET" })
       organization_id: p.organization_id,
       organization_name: p.organizations?.name ?? "",
       status: p.status ?? "draft",
+      visibility: p.visibility ?? "private",
 
       title: p.title ?? "",
       department: p.department ?? "",
