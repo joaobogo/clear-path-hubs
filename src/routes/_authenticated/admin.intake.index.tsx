@@ -180,14 +180,22 @@ function IntakeInbox() {
                     {relTime(it.created_at)}
                   </td>
                   <td className="px-2 py-2 text-right">
-                    <Link
-                      to="/admin/intake/$id"
-                      params={{ id: it.id }}
-                      className="inline-flex text-muted-foreground/60 hover:text-primary"
-                      aria-label="Open intake"
-                    >
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
+                    <div className="flex items-center justify-end gap-1">
+                      <IntakeRowActions
+                        id={it.id}
+                        company={it.company_name}
+                        role={it.role_title}
+                        closed={it.status === "rejected" || it.status === "approved"}
+                      />
+                      <Link
+                        to="/admin/intake/$id"
+                        params={{ id: it.id }}
+                        className="inline-flex text-muted-foreground/60 hover:text-primary"
+                        aria-label="Open intake"
+                      >
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))}
