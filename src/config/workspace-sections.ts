@@ -148,7 +148,6 @@ export const ADMIN_SECTION_GROUPS: SectionGroup[] = [
     tabs: [
       { to: "/admin/team", label: "Team & access", requiresPlatformAdmin: true },
       { to: "/admin/settings", label: "Settings", requiresPlatformAdmin: true },
-      { to: "/admin/design-system", label: "Design system", requiresPlatformAdmin: true },
     ],
   },
 ];
