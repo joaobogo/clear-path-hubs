@@ -786,9 +786,9 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     }));
 
     // Ensure "Unassigned" bucket is present if there are confirmed hires with no owner
-    const hasUnassignedHires = scoped.some(r => r.status === 'hire_confirmed' && !r.owner_user_id);
+    const hasUnassignedHires = hires.some(r => !r.owner_user_id);
     if (hasUnassignedHires && !byOwner.some(o => o.owner_user_id === null)) {
-      const unassignedHires = scoped.filter(r => r.status === 'hire_confirmed' && !r.owner_user_id);
+      const unassignedHires = hires.filter(r => !r.owner_user_id);
       const unassignedDays = unassignedHires.map(r => r.days_to_hire == null ? null : Number(r.days_to_hire)).filter((n): n is number => n != null);
       byOwner.push({
         owner_user_id: null,

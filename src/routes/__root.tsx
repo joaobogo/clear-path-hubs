@@ -145,15 +145,20 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P07 Replace the raw error constant BLOCKER CLIENT CREATE ROLE
+TEXTO DO USUÁRIO: "Phase 2 — Make the numbers
+agree
+Every place two screens give different answers to the same
+question.
+P08 One hires number on the Offers page BLOCKER CLIENT OFFERS
 Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-When \"Create role\" fails on /client/positions/new, the red toast shows the raw string
-\"SUPPORT_VIEW_READ_ONLY\" and nothing else.
-Add a lookup that maps error codes to human sentences before they reach the toast. For this code show:
-\"You can't create roles while previewing a client workspace.\"
-Add a default fallback for unmapped codes: \"Something went wrong. Please try again.\" Never render a raw
-SCREAMING_SNAKE_CASE code in the UI.
-Done when: The toast reads a full sentence, and no raw error code can reach a user-facing toast."`}
+On /client/offers three elements disagree on the same page load:
+- Tile: \"HIRES CONFIRMED 1 — Last 180 days\"
+- Board column: \"HIRE CONFIRMED 0 — Nothing here\"
+- Footer panel: \"Hires by owner: No hires yet.\"
+Make all three read from one single source of truth for confirmed hires. Pick the offer record's outcome
+as that source.
+Do not paper over it in the UI — fix the query so the three components call the same function.
+Done when: All three elements show the same hires number after a hard refresh."`}
         </div>
 
         <Scripts />
