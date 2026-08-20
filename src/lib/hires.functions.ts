@@ -8,8 +8,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
-import { reconcileOfferWithStage } from "@/lib/offer-hire-stage";
-import { loadMatchStages } from "@/lib/offer-hire-stage.server";
+import { isConfirmedHire, selectConfirmedHires } from "@/lib/hires/confirmed";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -326,32 +325,22 @@ export const listHires = createServerFn({ method: "POST" })
         .filter(Boolean) as string[],
     );
 
-    // The candidate's pipeline stage is the source of truth for "hired". If an
-    // offer record disagrees (closed lost on a candidate later confirmed as
-    // hired), the stage wins so the board can't contradict the candidate page.
-    const stageByMatch = await loadMatchStages(
-      context.supabase,
-      data.orgId,
-      (rows ?? []).map((r: AnyRow) => r.candidate_match_id).filter(Boolean) as string[],
+    // The offer record's own outcome is the single source of truth for
+    // "confirmed hire". Nothing else may rewrite it, so the KPI tile, the board
+    // column and the by-owner footer all read the same status.
+    const hires: HireRecordDTO[] = (rows ?? []).map((r: AnyRow) =>
+      toDTO({
+        ...r,
+        position_title: r.positions?.title ?? "Role",
+        candidate_name:
+          r.candidate_profiles?.full_name ??
+          (r.candidate_match_id ? nameByMatch.get(String(r.candidate_match_id)) : null) ??
+          "Candidate",
+        applied_at: r.applications?.applied_at ?? null,
+        owner_name: r.owner_user_id ? ownerMap[r.owner_user_id] ?? null : null,
+      }),
     );
 
-    const hires: HireRecordDTO[] = (rows ?? []).map((r: AnyRow) =>
-      toDTO(
-        reconcileOfferWithStage(
-          {
-            ...r,
-            position_title: r.positions?.title ?? "Role",
-            candidate_name:
-              r.candidate_profiles?.full_name ??
-              (r.candidate_match_id ? nameByMatch.get(String(r.candidate_match_id)) : null) ??
-              "Candidate",
-            applied_at: r.applications?.applied_at ?? null,
-            owner_name: r.owner_user_id ? ownerMap[r.owner_user_id] ?? null : null,
-          },
-          r.candidate_match_id ? stageByMatch.get(String(r.candidate_match_id)) : null,
-        ),
-      ),
-    );
     return { hires };
 
   });
@@ -668,12 +657,6 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
       .limit(2000);
     if (error) throw new Error(error.message);
 
-    const stageByMatch = await loadMatchStages(
-      context.supabase,
-      data.orgId,
-      ((rows ?? []) as AnyRow[]).map((r) => r.candidate_match_id).filter(Boolean) as string[],
-    );
-
     const days = (from: unknown, to: unknown): number | null => {
       if (!from || !to) return null;
       const a = new Date(String(from)).getTime();
@@ -683,16 +666,12 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     };
 
     const list: AnyRow[] = ((rows ?? []) as AnyRow[]).map((r) => {
-      const reconciled = reconcileOfferWithStage(
-        r as AnyRow,
-        r.candidate_match_id ? stageByMatch.get(String(r.candidate_match_id)) : null,
-      ) as AnyRow;
       const appliedAt = r.applications?.applied_at ?? null;
-      // A candidate reconciled to hired has no hired_at of its own; fall back to
-      // the acceptance date so timing metrics still have something real.
-      const hiredAt = reconciled.hired_at ?? (reconciled.status === "hire_confirmed" ? r.accepted_at ?? null : null);
+      // Confirmed hires without a hired_at fall back to the acceptance date so
+      // timing metrics still have something real behind them.
+      const hiredAt = r.hired_at ?? (isConfirmedHire(r.status) ? r.accepted_at ?? null : null);
       return {
-        ...reconciled,
+        ...r,
         position_title: r.positions?.title ?? "Role",
         applied_at: appliedAt,
         offer_sent_at: r.sent_at ?? null,
@@ -713,13 +692,16 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     };
     const scoped = list.filter(inWindow);
 
-    const { isLiveOffer, qualifiesAsHire, isDecidedOffer, isAcceptedOffer } = await import("./offer-hire");
+    const { isLiveOffer, isDecidedOffer, isAcceptedOffer } = await import("./offer-hire");
 
     // Open offers come from the canonical KPI service so this strip can never
     // contradict the board underneath it, the Roles list, or the Candidates page.
     const canonical = computeKpis(await loadKpiRows(context.supabase, data.orgId), 0);
     const openOffers = canonical.offers;
-    const hires = scoped.filter((r) => qualifiesAsHire(r.status));
+    // Confirmed hires come from the shared selector over the offer records
+    // themselves — the same function the board column and footer use.
+    const hires: AnyRow[] = selectConfirmedHires(scoped as Array<{ status: string }>) as AnyRow[];
+
 
 
     // ACCEPTANCE RATE denominator: only count records that are genuinely decided (accepted, declined, hired, or lost).
@@ -867,7 +849,7 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
         open_offers: openOffers,
         // Counted from the same stage-reconciled rows that fill the board
         // column and the by-owner footer, so the three can never disagree.
-        hires_confirmed: Math.max(hires.length, canonical.hires),
+        hires_confirmed: hires.length,
 
         closed_lost: scoped.filter((r) => r.status === "closed_lost").length,
         acceptance_rate: acceptanceRate,
