@@ -1035,7 +1035,18 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     concerns,
     main_consideration: mainConsideration,
     requirement_rows,
-    evidence_support: { supported: requirement_rows.filter(r => r.status === 'met').length, total: requirement_rows.length },
+    score_composition: buildScoreComposition({
+      coverage: coverage as Record<string, unknown> | null,
+      result: (run?.result as Record<string, unknown> | null) ?? null,
+      displayedScore: run?.score != null ? Number(run.score) : null,
+    }),
+    // Honesty gate: only requirements this page can actually quote count as
+    // evidenced, so the chip can never promise more than the tab renders.
+    evidence_support: {
+      supported: requirement_rows.filter((r) => r.evidence.length > 0).length,
+      total: requirement_rows.length,
+    },
+
     human_review: (() => {
       const res = (run?.result as AnyRow | null) ?? null;
       const reviewed =
