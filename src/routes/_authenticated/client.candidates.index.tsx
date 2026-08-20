@@ -37,6 +37,7 @@ import { BulkCvDownloadButton } from "@/components/client/candidates/bulk-cv-dow
 import { CandidatesBoardView } from "@/components/client/candidates/board-view";
 import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 import { plural } from "@/lib/format/plural";
+import { computeCandidateKpis } from "@/lib/client/candidate-kpi";
 
 const searchSchema = z.object({
  q: fallback(z.string(), "").default(""),
@@ -113,24 +114,36 @@ function CandidatesPage() {
  enabled: !!orgId,
  });
 
- const {
- data: rowsRaw = [],
- isFetching,
- isLoading,
- isError,
- error: rowsError,
- refetch,
- } = useQuery({
- queryKey: ["client-candidates", orgId, search.position, search.stage, search.filter],
- queryFn: () =>
- withQueryTimeout(
- listFn({
- data: { orgId: orgId!, positionId: search.position || undefined },
- }),
- ),
- enabled: !!orgId,
- placeholderData: (prev) => prev,
- });
+  const {
+    data: rowsRaw = [],
+    status: rowsStatus,
+    isFetching,
+    isLoading,
+    isError,
+    error: rowsError,
+    refetch,
+  } = useQuery({
+    queryKey: ["client-candidates", orgId, search.position, search.stage, search.filter],
+    queryFn: () =>
+      withQueryTimeout(
+        listFn({
+          data: { orgId: orgId!, positionId: search.position || undefined },
+        }),
+      ),
+    enabled: !!orgId,
+    placeholderData: (prev) => prev,
+  });
+
+  // Tile counts come from the same rows the board and list render, so they update
+  // the moment a candidate is moved — including the optimistic board update.
+  const rowKpis = useMemo(() => {
+    if (rowsStatus !== "success") return undefined;
+    return computeCandidateKpis(rowsRaw as ClientCandidateDTO[]);
+  }, [rowsRaw, rowsStatus]);
+
+  // The overview query is still used for the workspace timestamp and as a fallback
+  // while the candidate list is in its first load.
+  const mergedKpis = rowKpis ?? overview?.kpis;
 
  useEffect(() => {
  const onRefresh = () => refetch();
@@ -151,15 +164,15 @@ function CandidatesPage() {
  error: rowsError,
  stuck: listStuck,
  });
- const kpiStuck = useStuckAfter(!overview && !gate.failed && !overviewQuery.isError);
- const kpiPanel = panelState({
- gate,
- hasData: overview !== undefined,
- isFetching: kpisLoading,
- isError: overviewQuery.isError,
- error: overviewQuery.error,
- stuck: kpiStuck,
- });
+  const kpiStuck = useStuckAfter(!mergedKpis && !gate.failed && !isError);
+  const kpiPanel = panelState({
+  gate,
+  hasData: mergedKpis !== undefined,
+  isFetching: isLoading || isFetching,
+  isError: isError,
+  error: rowsError,
+  stuck: kpiStuck,
+  });
   const retryAll = async () => {
     if (gate.failed) await gate.retry();
     await refetch();
@@ -447,8 +460,8 @@ function CandidatesPage() {
   </header>
 
   <HiringSnapshot
-    overview={overview}
-    kpisLoading={kpiPanel.loading}
+    kpis={mergedKpis}
+    loading={kpiPanel.loading}
     isError={kpiPanel.isError}
     error={kpiPanel.error}
     onRetry={retryAll}
@@ -521,13 +534,13 @@ function CandidatesPage() {
            />
    ) : search.view === "board" && orgId ? (
             /* Same rows, same filters — only the presentation changes. */
-            <CandidatesBoardView
-              rows={filtered as ClientCandidateDTO[]}
-              orgId={orgId}
-              queryKey={["client-candidates", orgId, search.position]}
-              canEdit={boardCanEdit}
-              refetch={refetch}
-            />
+             <CandidatesBoardView
+               rows={filtered as ClientCandidateDTO[]}
+               orgId={orgId}
+               queryKey={["client-candidates", orgId, search.position, search.stage, search.filter]}
+               canEdit={boardCanEdit}
+               refetch={refetch}
+             />
    ) : (
             <CompactList
               rows={paged}

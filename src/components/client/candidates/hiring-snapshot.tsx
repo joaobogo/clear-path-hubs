@@ -1,30 +1,30 @@
 import { SnapshotTile } from "@/components/client/candidates/snapshot-tile";
 import { QueryErrorCard } from "@/components/client/query-error";
 
+export type HiringSnapshotKpis = {
+  delivered?: number;
+  top?: number;
+  shortlisted?: number;
+  interviewing?: number;
+  offers?: number;
+  hires?: number;
+};
+
 /**
  * Six figures, and never a lie: if the numbers didn't load, the tiles say so
  * and offer a Retry instead of holding a skeleton or showing a hopeful zero.
  */
 export function HiringSnapshot({
-  overview,
-  kpisLoading,
+  kpis,
+  loading,
   isError = false,
   error,
   onRetry,
   retrying = false,
   orgSearch,
 }: {
-  overview: {
-    kpis: {
-      delivered?: number;
-      top?: number;
-      shortlisted?: number;
-      interviewing?: number;
-      offers?: number;
-      hires?: number;
-    };
-  } | undefined;
-  kpisLoading: boolean;
+  kpis: HiringSnapshotKpis | undefined;
+  loading: boolean;
   isError?: boolean;
   error?: unknown;
   onRetry?: () => void;
@@ -45,7 +45,6 @@ export function HiringSnapshot({
     );
   }
 
-  const kpis = overview?.kpis;
   // A tile never holds a skeleton once the figures arrived, and never invents a
   // zero when they didn't: a missing figure reads as a dash plus a short reason.
   const tiles = [
@@ -67,7 +66,7 @@ export function HiringSnapshot({
             key={tile.label}
             label={tile.label}
             value={tile.value}
-            loading={kpisLoading && !overview}
+            loading={loading && !kpis}
             to="/client/candidates"
             filter={tile.filter as Record<string, string> | undefined}
             org={orgSearch}
@@ -77,4 +76,3 @@ export function HiringSnapshot({
     </section>
   );
 }
-
