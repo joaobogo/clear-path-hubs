@@ -164,6 +164,7 @@ function ClientsPage() {
   const queryClient = useQueryClient();
   const includeTest = useIncludeTestRecords();
   const [q, setQ] = useState(search.q);
+  const [dismissedNotices, setDismissedNotices] = useState<Record<string, boolean>>({});
   useEffect(() => setQ(search.q), [search.q]);
 
   const query = useQuery({
