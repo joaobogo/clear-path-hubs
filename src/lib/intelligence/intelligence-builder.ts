@@ -850,6 +850,12 @@ export function buildIntelligence(
       const prev = lastMove.get(h.candidate_match_id);
       if (!prev || at > prev) lastMove.set(h.candidate_match_id, at);
     }
+    for (const i of records.interviews) {
+      const at = iso(i.requested_at) ?? iso(i.created_at);
+      if (!at) continue;
+      const prev = lastMove.get(i.candidate_match_id);
+      if (!prev || at > prev) lastMove.set(i.candidate_match_id, at);
+    }
     const openStages = new Set(["delivered", "shortlisted", "interview_process", "offer"]);
     const live = records.matches.filter((m) => openStages.has(String(m.stage)));
     const stalled = live
