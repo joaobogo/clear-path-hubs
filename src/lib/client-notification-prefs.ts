@@ -35,6 +35,8 @@ export type NotificationEventSpec = {
   defaultMode: DeliveryMode;
   /** Set when the event cannot be switched off; copy explains the reason. */
   lockedReason?: string;
+  /** Optional per-event label overrides for one or more modes. */
+  modeLabel?: Partial<Record<DeliveryMode, string>>;
 };
 
 export const NOTIFICATION_EVENTS: readonly NotificationEventSpec[] = [
@@ -83,6 +85,8 @@ export const NOTIFICATION_EVENTS: readonly NotificationEventSpec[] = [
     description: "One email each Monday: movement, decisions waiting, what is next.",
     modes: ["immediate", "off"],
     defaultMode: "off",
+    /** A weekly digest does not fire as-it-happens; render the "on" option differently. */
+    modeLabel: { immediate: "Weekly digest" },
   },
 ] as const;
 
@@ -113,6 +117,10 @@ export function modeLabel(mode: DeliveryMode): string {
   if (mode === "immediate") return "As it happens";
   if (mode === "daily") return "Daily digest";
   return "Off";
+}
+
+export function modeLabelFor(spec: NotificationEventSpec, mode: DeliveryMode): string {
+  return spec.modeLabel?.[mode] ?? modeLabel(mode);
 }
 
 /**
