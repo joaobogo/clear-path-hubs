@@ -23,7 +23,7 @@ const usd = (n: number) =>
 
 const SCENARIOS = [
   { hires: 1, label: "1 hire", package: "Pilot — single position", cost: PRICE_PILOT_USD },
-  { hires: 3, label: "3 hires", package: "Multi Position (2–5 roles)", cost: PRICE_MULTI_USD },
+  { hires: 3, label: "3 hires", package: "Multi Role (2–5 roles)", cost: PRICE_MULTI_USD },
   { hires: 10, label: "10 hires", package: "Hiring Sprint (6–10 roles)", cost: PRICE_SPRINT_USD },
 ].map((s) => {
   const low = s.hires * EXAMPLE_SALARY * 0.2;

@@ -120,7 +120,7 @@ const ECONOMICS: Array<{
     line: "Test the model on one critical hire. 5-day turnaround.",
   },
   {
-    tier: "Multi Position",
+    tier: "Multi Role",
     price: PRICE_MULTI_DISPLAY,
     unit: " one-time",
     fits: MULTI_ROLES_LABEL,

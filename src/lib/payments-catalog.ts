@@ -70,7 +70,7 @@ export const PLAN_CATALOGUE: readonly PlanOffer[] = [
   {
     priceId: "multi_onetime",
     productId: "multi_position",
-    label: "Multi Position",
+    label: "Multi Role",
     kind: "package",
     amountUsd: PRICE_MULTI_USD,
     rolesTotal: 5,

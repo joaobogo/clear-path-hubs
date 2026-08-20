@@ -79,7 +79,7 @@ const URGENCIES: LeadUrgency[] = ["immediate", "this_quarter", "exploring"];
 
 function packageFor(volume: LeadVolume): { label: string; usd: number | null; note: string } {
   if (volume === "one") return { label: "Pilot — 1 active role", usd: PRICE_PILOT_USD, note: "One role, full workflow." };
-  if (volume === "two_to_five") return { label: "Multi Position — 2–5 roles", usd: PRICE_MULTI_USD, note: "One package covering the set." };
+  if (volume === "two_to_five") return { label: "Multi Role — 2–5 roles", usd: PRICE_MULTI_USD, note: "One package covering the set." };
   if (volume === "six_to_ten") return { label: "Sprint — 6–10 roles", usd: PRICE_SPRINT_USD, note: "Concurrent mandates, one desk." };
   return { label: "Subscription — 11+ roles", usd: PRICE_SUB_GOLD_FROM_USD, note: "From this level, priced as a monthly subscription." };
 }
