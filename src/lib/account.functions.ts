@@ -113,7 +113,7 @@ export const getAccountOverview = createServerFn({ method: "GET" })
     const o = resolved as AnyRow;
 
 
-    const [{ data: members }, { data: positions }, { data: hires }, { data: offers }] =
+    const [{ data: members }, { data: positions }, { data: hires }] =
       await Promise.all([
         supabase
           .from("memberships")
@@ -127,11 +127,6 @@ export const getAccountOverview = createServerFn({ method: "GET" })
           .from("hire_records")
           .select("id, status, hired_at, start_date, position_id, positions:position_id(title)")
           .eq("organization_id", data.orgId),
-        supabase
-          .from("offer_records")
-          .select("id, status, start_date, position_id, positions:position_id(title)")
-          .eq("organization_id", data.orgId)
-          .in("status", ["accepted", "signed"]),
       ]);
 
     const memberRows = (members as AnyRow[]) ?? [];
@@ -148,9 +143,9 @@ export const getAccountOverview = createServerFn({ method: "GET" })
     ).length;
 
     const hireRows = ((hires as AnyRow[]) ?? []).filter(
-      // `hire_confirmed` is the stored enum value; the old `"hired"` compare
-      // never matched and left this list dependent on a stamp alone.
-      (h) => h.status === "hire_confirmed" || Boolean(h.hired_at),
+      (h) =>
+        (h.status === "hire_confirmed" || Boolean(h.hired_at)) &&
+        !["closed_lost", "declined", "withdrawn"].includes(String(h.status)),
     );
     const now = new Date();
     const nowIso = now.toISOString();
