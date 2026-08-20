@@ -2,7 +2,6 @@ import {
   createFileRoute,
   Link,
   Outlet,
-  redirect,
   useRouterState,
 } from "@tanstack/react-router";
 import {
@@ -63,38 +62,19 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/_authenticated/client")({
   errorComponent: makeRouteErrorComponent("client", "/_authenticated/client"),
   notFoundComponent: makeRouteNotFoundComponent("client"),
- validateSearch: searchSchema,
- loaderDeps: ({ search }) => ({ org: search.org ?? null }),
- head: () => ({
- meta: [
- { title: "Client workspace · TaaSFlow" },
- { name: "robots", content: "noindex" },
- ],
- }),
- loader: async ({ context, deps }) => {
- const ctx = await context.queryClient.ensureQueryData({
- queryKey: ["client-context", deps.org],
- queryFn: () =>
- getClientContext({ data: deps.org ? { orgId: deps.org } : {} }),
- });
- // Route-level organization guard. `getClientContext` only ever resolves an
- // active organization the caller is an active member of (or any org when the
- // caller is platform staff), so a missing `active` here means the requested
- // ?org= is not theirs — or they have no client membership at all. Both fail
- // closed to the intentional access-denied screen rather than a silent bounce.
- // This is supplementary: RLS blocks the underlying data either way.
- if (!ctx.active && ctx.organizations.length === 0 && !ctx.isStaff) {
- throw redirect({ to: "/access-denied", search: { reason: "membership" } });
- }
- // A named ?org= that did not resolve means the caller is not a member of it.
- if (!ctx.active && deps.org) {
- throw redirect({ to: "/access-denied", search: { reason: "organization" } });
- }
-
- return ctx;
- },
-
- component: ClientLayout,
+  validateSearch: searchSchema,
+  head: () => ({
+    meta: [
+      { title: "Client workspace · TaaSFlow" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
+  // The client layout intentionally has no loader. The workspace shell renders
+  // immediately with a stable placeholder; the active org and permission set
+  // are resolved in the component via React Query. Child routes are responsible
+  // for their own data, so a slow overview or role detail never blocks the shell
+  // or any other page from becoming readable.
+  component: ClientLayout,
 });
 
 type NavDef = WorkspaceNavItem & { everyone: boolean };
@@ -164,29 +144,28 @@ const MANAGE_ONLY_LABELS: Record<string, string> = {
 const MANAGE_ONLY_PATHS = Object.keys(MANAGE_ONLY_LABELS);
 
 function ClientLayout() {
- const ctx = Route.useLoaderData();
- const search = Route.useSearch();
- const pathname = useRouterState({ select: (st) => st.location.pathname });
- const getCtx = useServerFn(getClientContext);
- const {
- data,
- isError: ctxIsError,
- error: ctxError,
- isFetching: ctxIsFetching,
- refetch: refetchCtx,
- } = useQuery({
- queryKey: ["client-context", search.org ?? null],
- queryFn: () => getCtx({ data: search.org ? { orgId: search.org } : {} }),
- initialData: ctx,
- });
+  const search = Route.useSearch();
+  const pathname = useRouterState({ select: (st) => st.location.pathname });
+  const getCtx = useServerFn(getClientContext);
+  const {
+    data,
+    isError: ctxIsError,
+    error: ctxError,
+    isFetching: ctxIsFetching,
+    refetch: refetchCtx,
+  } = useQuery({
+    queryKey: ["client-context", search.org ?? null],
+    queryFn: () => getCtx({ data: search.org ? { orgId: search.org } : {} }),
+    staleTime: 5 * 60 * 1000,
+  });
 
- // Realtime + focus + interval fallback is owned by ClientCoordinator below,
- // which subscribes exactly once to `notifications` for this user. Do not add
- // per-table channels here — Realtime is only enabled on `notifications`,
- // `notification_events`, and `messages`, and duplicate subscriptions on
- // `candidate_matches` (previously here) were silently no-ops.
+  // Realtime + focus + interval fallback is owned by ClientCoordinator below,
+  // which subscribes exactly once to `notifications` for this user. Do not add
+  // per-table channels here — Realtime is only enabled on `notifications`,
+  // `notification_events`, and `messages`, and duplicate subscriptions on
+  // `candidate_matches` (previously here) were silently no-ops.
 
- const active = data?.active;
+  const active = data?.active;
 
  const staffMembershipsElsewhere =
  (data?.isStaff ?? false) &&
@@ -261,46 +240,71 @@ function ClientLayout() {
  );
  }
 
- if (!active) {
- // M7: the staff / unlinked-account shell keeps the app header and navigation,
- // so the only way out isn't the browser Back button.
- return (
- <WorkspaceShell
- role="client"
- contextKicker="Workspace"
- contextLabel="No workspace"
- contextSubLabel={data?.isStaff ? "platform staff" : "not linked yet"}
- accountLabel={data?.onboarding?.display_name?.trim() || "My account"}
- navItems={
- data?.isStaff
- ? [{ to: "/admin/clients", label: "Clients", icon: Building2 } as WorkspaceNavItem]
- : []
- }
- >
- <div className="mx-auto max-w-3xl p-8">
- <EmptyState
- title="No client workspace yet"
- description={
- data?.isStaff
- ? "Your staff account isn't a member of a client organization. Open a client from the admin client list to view their workspace."
- : "Your account isn't linked to a client organization, so there's nothing to show here yet."
- }
- whatAppearsHere="Once you're added to a workspace, your roles, shortlists, interviews, and offers appear here."
- action={
- data?.isStaff
- ? { label: "Go to clients", to: "/admin/clients" }
- : { label: "Submit a role", to: "/intake" }
- }
- >
- <p className="mt-4 text-xs text-muted-foreground">
- Already part of a team? Ask the person who set up your workspace to invite
- your email address.
- </p>
- </EmptyState>
- </div>
- </WorkspaceShell>
- );
- }
+  if (!active) {
+    // While the workspace context is still resolving, show the shell immediately
+    // with a placeholder so the page never feels frozen. Child routes render in
+    // parallel and fetch their own data, so a slow overview never blocks the
+    // entire workspace.
+    if (ctxIsFetching && data === undefined) {
+      return (
+        <WorkspaceShell
+          role="client"
+          contextKicker="Workspace"
+          contextLabel="Loading workspace…"
+          contextSubLabel="Resolving your account"
+          accountLabel="My account"
+          navItems={TABS.filter((t) => t.everyone).map(({ everyone: _e, ...rest }) => rest)}
+        >
+          <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+            <div className="space-y-6">
+              <div className="h-8 w-1/3 animate-pulse rounded bg-muted" />
+              <div className="h-40 w-full animate-pulse rounded bg-muted" />
+              <div className="h-40 w-full animate-pulse rounded bg-muted" />
+            </div>
+          </div>
+        </WorkspaceShell>
+      );
+    }
+
+    // M7: the staff / unlinked-account shell keeps the app header and navigation,
+    // so the only way out isn't the browser Back button.
+    return (
+      <WorkspaceShell
+        role="client"
+        contextKicker="Workspace"
+        contextLabel="No workspace"
+        contextSubLabel={data?.isStaff ? "platform staff" : "not linked yet"}
+        accountLabel={data?.onboarding?.display_name?.trim() || "My account"}
+        navItems={
+          data?.isStaff
+            ? [{ to: "/admin/clients", label: "Clients", icon: Building2 } as WorkspaceNavItem]
+            : []
+        }
+      >
+        <div className="mx-auto max-w-3xl p-8">
+          <EmptyState
+            title="No client workspace yet"
+            description={
+              data?.isStaff
+                ? "Your staff account isn't a member of a client organization. Open a client from the admin client list to view their workspace."
+                : "Your account isn't linked to a client organization, so there's nothing to show here yet."
+            }
+            whatAppearsHere="Once you're added to a workspace, your roles, shortlists, interviews, and offers appear here."
+            action={
+              data?.isStaff
+                ? { label: "Go to clients", to: "/admin/clients" }
+                : { label: "Submit a role", to: "/intake" }
+            }
+          >
+            <p className="mt-4 text-xs text-muted-foreground">
+              Already part of a team? Ask the person who set up your workspace to invite
+              your email address.
+            </p>
+          </EmptyState>
+        </div>
+      </WorkspaceShell>
+    );
+  }
 
 
 
