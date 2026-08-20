@@ -1,6 +1,7 @@
 // Wizard-style position editor UI, shared by admin and client edit routes.
 // Three steps: Requisition → Candidate profile & gates → Locations.
 // Job-post personalisation lives on the publish flow, not here.
+import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
 import {
   SCREENING_MAX_QUESTIONS,
