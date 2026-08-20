@@ -5,6 +5,7 @@ import { useState } from "react";
 import { listIntakeInbox } from "@/lib/intake-admin.functions";
 import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { IntakeAgingTable } from "@/components/admin/intake-aging-table";
+import { IntakeRowActions } from "@/components/admin/intake-row-actions";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { AlertTriangle, ArrowRight, Inbox } from "lucide-react";
