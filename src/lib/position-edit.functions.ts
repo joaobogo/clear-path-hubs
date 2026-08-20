@@ -563,6 +563,12 @@ export const publishPosition = createServerFn({ method: "POST" })
       updated_at: new Date().toISOString(),
     };
     if (data.visibility) {
+      // Going live runs the same gate as every other publish path, so the
+      // job-post screen can't talk its way past payment or missing fields.
+      if (data.visibility === "public" || data.visibility === "confidential") {
+        const { assertPositionPublishable } = await import("./publish-gate.server");
+        await assertPositionPublishable(s, data.id);
+      }
       patch.visibility = data.visibility;
     }
 
