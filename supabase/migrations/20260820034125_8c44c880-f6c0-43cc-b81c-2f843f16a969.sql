@@ -1,0 +1,1 @@
+update public.positions set visibility='private', updated_at=now() where id in ('17316982-0a48-407f-9583-c8e9a6d431a4','c690bb71-a00d-4e1b-962a-5f655e657099');
