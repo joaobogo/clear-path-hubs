@@ -16,6 +16,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { PublicNotFound, PublicErrorState } from "@/components/marketing/site-shell";
 import { captureFirstTouch } from "@/lib/crm/attribution";
+import { resetStaleBrowserStorage } from "@/lib/storage-epoch";
+
 import { OfflineBanner } from "@/components/offline-banner";
 import { TrackingRouteObserver } from "@/components/analytics/tracking-route-observer";
 import { HEAD_BOOT_SNIPPETS } from "@/lib/tracking/pixels";
