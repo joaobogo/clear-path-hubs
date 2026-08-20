@@ -98,14 +98,32 @@ const searchSchema = z.object({
 type SearchState = z.infer<typeof searchSchema>;
 
 const FILTER_KEYS = [
-  "q", "organization_id", "position_id", "stage", "admin_status", "processing_state",
-  "client_visibility", "eligibility_status", "score_band", "confidence",
-  "contact_released", "critical", "country", "source", "rejection_reason", "date_from", "date_to",
+  "q",
+  "organization_id",
+  "position_id",
+  "stage",
+  "admin_status",
+  "processing_state",
+  "client_visibility",
+  "eligibility_status",
+  "score_band",
+  "confidence",
+  "contact_released",
+  "critical",
+  "country",
+  "source",
+  "rejection_reason",
+  "date_from",
+  "date_to",
 ] as const;
 
 const EMPTY_DEFAULTS = Object.fromEntries(FILTER_KEYS.map((k) => [k, ""]));
 
-const SEARCH_DEFAULTS = { ...(EMPTY_DEFAULTS as Record<string, string>), sort: "updated_desc", page: 1 };
+const SEARCH_DEFAULTS = {
+  ...(EMPTY_DEFAULTS as Record<string, string>),
+  sort: "updated_desc",
+  page: 1,
+};
 
 /**
  * The one place the URL is turned into a query for the candidate index. Shared by
@@ -113,26 +131,26 @@ const SEARCH_DEFAULTS = { ...(EMPTY_DEFAULTS as Record<string, string>), sort: "
  */
 function buildFilters(search: SearchState) {
   return {
-      q: search.q || undefined,
-      organization_id: search.organization_id || undefined,
-      position_id: search.position_id || undefined,
-      stage: search.stage || undefined,
-      admin_status: search.admin_status || undefined,
-      processing_state: search.processing_state || undefined,
-      client_visibility: search.client_visibility || undefined,
-      eligibility_status: search.eligibility_status || undefined,
-      score_band: search.score_band || undefined,
-      confidence: search.confidence || undefined,
-      contact_released: search.contact_released || undefined,
-      critical: search.critical || undefined,
-      country: search.country || undefined,
-      source: search.source || undefined,
-      rejection_reason: search.rejection_reason || undefined,
-      date_from: search.date_from || undefined,
-      date_to: search.date_to ? `${search.date_to}T23:59:59Z` : undefined,
-      sort: search.sort as never,
-      limit: PAGE_SIZE,
-      offset: Math.max(0, (search.page - 1) * PAGE_SIZE),
+    q: search.q || undefined,
+    organization_id: search.organization_id || undefined,
+    position_id: search.position_id || undefined,
+    stage: search.stage || undefined,
+    admin_status: search.admin_status || undefined,
+    processing_state: search.processing_state || undefined,
+    client_visibility: search.client_visibility || undefined,
+    eligibility_status: search.eligibility_status || undefined,
+    score_band: search.score_band || undefined,
+    confidence: search.confidence || undefined,
+    contact_released: search.contact_released || undefined,
+    critical: search.critical || undefined,
+    country: search.country || undefined,
+    source: search.source || undefined,
+    rejection_reason: search.rejection_reason || undefined,
+    date_from: search.date_from || undefined,
+    date_to: search.date_to ? `${search.date_to}T23:59:59Z` : undefined,
+    sort: search.sort as never,
+    limit: PAGE_SIZE,
+    offset: Math.max(0, (search.page - 1) * PAGE_SIZE),
   };
 }
 
@@ -204,9 +222,17 @@ const BAND_TONE: Record<string, string> = {
 };
 
 const PROCESSING_STATES = [
-  "queued", "parsing", "ocr_required", "parsed", "enriching",
-  "ready_to_score", "scoring", "scored",
-  "manual_review_required", "provider_blocked", "failed",
+  "queued",
+  "parsing",
+  "ocr_required",
+  "parsed",
+  "enriching",
+  "ready_to_score",
+  "scoring",
+  "scored",
+  "manual_review_required",
+  "provider_blocked",
+  "failed",
 ];
 
 const SCORE_BANDS = ["exceptional", "top", "strong", "consider", "not_recommended", "unscored"];
@@ -226,8 +252,15 @@ const FILTER_VALUE_MAP: Record<string, string> = {
 };
 
 const STAGES = [
-  "new", "reviewing", "delivered", "shortlisted",
-  "interview_process", "offer", "hired", "not_moving_forward", "archived",
+  "new",
+  "reviewing",
+  "delivered",
+  "shortlisted",
+  "interview_process",
+  "offer",
+  "hired",
+  "not_moving_forward",
+  "archived",
 ];
 
 const FILTER_LABELS: Partial<Record<keyof SearchState, string>> = {
@@ -304,7 +337,6 @@ function CandidatesPage() {
     }
   }, [search.fit, search.filter, search.score_band, search.stage, navigate, search]);
 
-
   const filters = useMemo(() => buildFilters(search), [search]);
 
   // Staff work across every tenant, so this desk subscribes unfiltered (RLS
@@ -316,7 +348,6 @@ function CandidatesPage() {
     staffAllOrgs: true,
     invalidateKeys: [["candidate-index"], ["admin-work-queues"]],
   });
-
 
   // Primary read matches every other admin desk: primed in the loader, read
   // with suspense, so the page never flickers through a bare loading state.
@@ -347,11 +378,31 @@ function CandidatesPage() {
   const unknownParamNotices = useMemo(() => {
     const checks: { key: keyof SearchState; value: string; allowed: string[]; label: string }[] = [
       { key: "stage", value: search.stage, allowed: STAGES, label: "Stage" },
-      { key: "admin_status", value: search.admin_status, allowed: ["pending", "approved", "rejected", "on_hold"], label: "Approval" },
+      {
+        key: "admin_status",
+        value: search.admin_status,
+        allowed: ["pending", "approved", "rejected", "on_hold"],
+        label: "Approval",
+      },
       { key: "score_band", value: search.score_band, allowed: SCORE_BANDS, label: "Score band" },
-      { key: "processing_state", value: search.processing_state, allowed: PROCESSING_STATES, label: "Screening" },
-      { key: "client_visibility", value: search.client_visibility, allowed: ["hidden", "visible"], label: "Publication" },
-      { key: "contact_released", value: search.contact_released, allowed: ["released", "withheld"], label: "Contact release" },
+      {
+        key: "processing_state",
+        value: search.processing_state,
+        allowed: PROCESSING_STATES,
+        label: "Screening",
+      },
+      {
+        key: "client_visibility",
+        value: search.client_visibility,
+        allowed: ["hidden", "visible"],
+        label: "Publication",
+      },
+      {
+        key: "contact_released",
+        value: search.contact_released,
+        allowed: ["released", "withheld"],
+        label: "Contact release",
+      },
     ];
     return checks
       .filter((c) => c.value && !c.allowed.includes(c.value))
@@ -395,8 +446,7 @@ function CandidatesPage() {
   });
 
   const allChecked = rows.length > 0 && selected.length === rows.length;
-  const toggleAll = () =>
-    setSelected(allChecked ? [] : rows.map((r) => r.match_id as string));
+  const toggleAll = () => setSelected(allChecked ? [] : rows.map((r) => r.match_id as string));
   const toggleOne = (id: string) =>
     setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
 
@@ -610,7 +660,6 @@ function CandidatesPage() {
             }}
           />
         </div>
-
       </header>
 
       <div className="mb-4 space-y-3">
@@ -645,8 +694,6 @@ function CandidatesPage() {
           ))}
       </div>
 
-
-
       <SavedViewsBar
         surface="admin_candidates"
         canShare
@@ -662,9 +709,7 @@ function CandidatesPage() {
       />
 
       {/* Filters: full grid on desktop, drawer on small screens */}
-      <div className="mt-4">
-        {filterControls}
-      </div>
+      <div className="mt-4">{filterControls}</div>
 
       {/* Active filters */}
       {activeChips.length > 0 && (
@@ -704,16 +749,36 @@ function CandidatesPage() {
               </span>
             </div>
             <div className="flex gap-2">
-              <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => setSelected([])}>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-8 text-xs"
+                onClick={() => setSelected([])}
+              >
                 Clear
               </Button>
-              <Button size="sm" variant="outline" className="h-8 text-xs border-destructive/20 text-destructive hover:bg-destructive/5" onClick={() => {
-                if (!window.confirm(`Unpublish ${selected.length} candidate(s)? This is a real action.`)) return;
-                bulk.mutate("hidden");
-              }}>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 text-xs border-destructive/20 text-destructive hover:bg-destructive/5"
+                onClick={() => {
+                  if (
+                    !window.confirm(
+                      `Unpublish ${selected.length} candidate(s)? This is a real action.`,
+                    )
+                  )
+                    return;
+                  bulk.mutate("hidden");
+                }}
+              >
                 Unpublish
               </Button>
-              <Button size="sm" variant="outline" className="h-8 text-xs border-success/20 text-success hover:bg-success/5" onClick={() => setConfirm("visible")}>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 text-xs border-success/20 text-success hover:bg-success/5"
+                onClick={() => setConfirm("visible")}
+              >
                 Publish
               </Button>
             </div>
@@ -733,7 +798,10 @@ function CandidatesPage() {
                 ...new Map(
                   rows
                     .filter((r) => r.position_id && r.position_title)
-                    .map((r) => [r.position_id as string, { id: r.position_id as string, title: r.position_title as string }]),
+                    .map((r) => [
+                      r.position_id as string,
+                      { id: r.position_id as string, title: r.position_title as string },
+                    ]),
                 ).values(),
               ]}
               onDone={() => setSelected([])}
@@ -747,7 +815,9 @@ function CandidatesPage() {
               bulk.mutate("visible");
             }}
             count={selected.length}
-            isBlocking={rows.some(r => selected.includes(r.match_id) && r.admin_status !== 'approved')}
+            isBlocking={rows.some(
+              (r) => selected.includes(r.match_id) && r.admin_status !== "approved",
+            )}
           />
         </div>
       )}
@@ -783,9 +853,7 @@ function CandidatesPage() {
               <th className="px-3 py-2">Band</th>
               <th className="px-3 py-2">Approval</th>
               <th className="px-3 py-2">Client access</th>
-              <th className="px-3 py-2">
-                {sortHeader("Updated", "updated_asc", "updated_desc")}
-              </th>
+              <th className="px-3 py-2">{sortHeader("Updated", "updated_asc", "updated_desc")}</th>
               <th className="px-3 py-2" />
             </tr>
           </thead>
@@ -808,10 +876,7 @@ function CandidatesPage() {
                     />
                   </td>
                   <td className="min-w-[12rem] px-3 py-2">
-                    <a
-                      href={`/admin/candidates/${m.match_id}`}
-                      className="block hover:underline"
-                    >
+                    <a href={`/admin/candidates/${m.match_id}`} className="block hover:underline">
                       <div className="flex items-center gap-1.5 font-medium">
                         {m.full_name ?? "Unnamed candidate"}
                         {m.has_critical_flag && (
@@ -830,10 +895,7 @@ function CandidatesPage() {
                   </td>
                   <td className="min-w-[8rem] px-3 py-2 text-xs">{m.org_name ?? "—"}</td>
                   <td className="min-w-[10rem] px-3 py-2 text-xs">
-                    <a
-                      href={`/admin/positions/${m.position_id}`}
-                      className="hover:underline"
-                    >
+                    <a href={`/admin/positions/${m.position_id}`} className="hover:underline">
                       {m.position_title ?? "—"}
                     </a>
                   </td>
@@ -849,7 +911,9 @@ function CandidatesPage() {
                   <td className="px-3 py-2 text-right tabular-nums">
                     <span className="inline-flex items-center justify-end gap-1">
                       {score == null ? "—" : Math.round(Number(score))}
-                      {score != null && <ScoreStalenessChip freshness={freshnessFromRow(m)} compact />}
+                      {score != null && (
+                        <ScoreStalenessChip freshness={freshnessFromRow(m)} compact />
+                      )}
                     </span>
                   </td>
                   <td className="px-3 py-2">
@@ -885,11 +949,14 @@ function CandidatesPage() {
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-2 text-xs text-muted-foreground">
-                    {updated ? updated.toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric"
-                    }) : "—"}
+                    {updated
+                      ? updated.toLocaleDateString(APP_LOCALE, {
+                          timeZone: WORKSPACE_TIMEZONE,
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })
+                      : "—"}
                   </td>
                   <td className="whitespace-nowrap px-3 py-2 text-right">
                     <Button asChild size="sm" variant="ghost" data-qa-action="open-candidate">
@@ -964,7 +1031,9 @@ function CandidatesPage() {
                 <span className={`rounded px-2 py-0.5 ${BAND_TONE[m.score_band] ?? "bg-muted"}`}>
                   {(m.score_band ?? "unscored").replace(/_/g, " ")}
                 </span>
-                <span className={`rounded px-2 py-0.5 ${REVIEW_TONE[m.admin_status] ?? "bg-muted"}`}>
+                <span
+                  className={`rounded px-2 py-0.5 ${REVIEW_TONE[m.admin_status] ?? "bg-muted"}`}
+                >
                   {(m.admin_status ?? "pending").replace(/_/g, " ")}
                 </span>
                 <span className="rounded border px-2 py-0.5">

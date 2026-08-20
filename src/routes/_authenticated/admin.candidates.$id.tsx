@@ -113,7 +113,10 @@ export const Route = createFileRoute("/_authenticated/admin/candidates/$id")({
   notFoundComponent: () => (
     <div className="p-10 text-center text-muted-foreground">Candidate not found.</div>
   ),
-  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.candidates.$id.tsx"),
+  errorComponent: makeRouteErrorComponent(
+    "admin",
+    "src/routes/_authenticated/admin.candidates.$id.tsx",
+  ),
   component: CandidateWorkspace,
 });
 
@@ -135,7 +138,8 @@ function CandidateWorkspace() {
   // "no focused event" and must never be treated as an event id.
   const focusEventId = normalizeFocusEventId(rawEvent);
   // Translate old tab slugs into the current ones before any UI logic uses them.
-  const urlTab: TabId = rawTab === "client-preview" ? "preview" : rawTab === "intake" ? "dossier" : rawTab;
+  const urlTab: TabId =
+    rawTab === "client-preview" ? "preview" : rawTab === "intake" ? "dossier" : rawTab;
   // The tab lives in the URL so deep links and back/forward keep working.
   const tab: TabId = focusEventId && urlTab === "profile" ? "history" : urlTab;
 
@@ -171,8 +175,14 @@ function CandidateWorkspace() {
   });
 
   if (!data) return null;
-  const { match, runs: lightRuns, decisions, jobs, evidence: lightEvidence, siblings } =
-    data as Any;
+  const {
+    match,
+    runs: lightRuns,
+    decisions,
+    jobs,
+    evidence: lightEvidence,
+    siblings,
+  } = data as Any;
   const heavy = heavyQuery.data as Any | undefined;
   const runs = (heavy?.runs ?? lightRuns) as Any[];
   const evidence = (heavy?.evidence ?? lightEvidence) as Any;
@@ -265,9 +275,7 @@ function CandidateWorkspace() {
                 className="rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-sm"
               >
                 <p className="font-medium text-destructive">This panel could not load.</p>
-                <p className="mt-1 text-muted-foreground">
-                  {(heavyQuery.error as Error).message}
-                </p>
+                <p className="mt-1 text-muted-foreground">{(heavyQuery.error as Error).message}</p>
                 <button
                   className="mt-2 text-xs font-medium text-primary hover:underline"
                   onClick={() => void heavyQuery.refetch()}
@@ -311,7 +319,10 @@ function CandidateWorkspace() {
                 {tab === "screening" && <ScreeningTab result={currentResult} evidence={evidence} />}
                 {tab === "history" && (
                   <div className="space-y-4">
-                    <ComponentErrorBoundary boundary="admin.candidate.history-timeline" tone="admin">
+                    <ComponentErrorBoundary
+                      boundary="admin.candidate.history-timeline"
+                      tone="admin"
+                    >
                       <CandidateHistoryTimeline matchId={id} focusEventId={focusEventId} />
                     </ComponentErrorBoundary>
                     <ComponentErrorBoundary boundary="admin.candidate.history-runs" tone="admin">
