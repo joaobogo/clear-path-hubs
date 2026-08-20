@@ -668,7 +668,7 @@ export function buildIntelligence(
           : null,
       link: { label: "See the pipeline", to: "/client/candidates" },
       chart: delivered.length
-        ? { kind: "funnel", unit: "candidates", valueHeading: "Candidates", points }
+        ? { kind: "funnel", unit: "candidates", valueHeading: "Candidates", total: delivered.length, points }
         : null,
       sample: { counted: delivered.length, expected: null, unit: "candidates released in window" },
     });
