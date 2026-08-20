@@ -62,6 +62,65 @@ function assertQaPattern(pattern: string, fallback: string): string {
   return lower;
 }
 
+/**
+ * QA fixture orgs always begin with a QA prefix or are explicitly marked as
+ * test records. Any operation that accepts an arbitrary organization_id must
+ * verify it passes this gate before touching real tables.
+ */
+function isQaOrganizationName(name: string | null): boolean {
+  if (!name) return false;
+  const lower = name.toLowerCase().replace(/\s+/g, " ");
+  return lower.startsWith("qa") || lower.includes("testco") || lower.includes("otherco");
+}
+
+async function assertQaOrganization(supabase: unknown, organizationId: string | undefined | null): Promise<void> {
+  if (!organizationId) throw new Error("organization_id required");
+  const sb = supabase as any;
+  const { data, error } = await sb
+    .from("organizations")
+    .select("id, name, is_test_record")
+    .eq("id", organizationId)
+    .maybeSingle();
+  if (error) throw new Error(`failed to verify organization: ${error.message}`);
+  if (!data) throw new Error("organization not found");
+  const record = data as { id: string; name: string | null; is_test_record: boolean | null };
+  if (record.is_test_record) return;
+  if (isQaOrganizationName(record.name)) return;
+  throw new Error("QA endpoints may only operate on QA/test organizations");
+}
+
+async function assertQaMatch(supabase: unknown, matchId: string | undefined | null): Promise<void> {
+  if (!matchId) throw new Error("match_id required");
+  const sb = supabase as any;
+  const { data, error } = await sb
+    .from("candidate_matches")
+    .select("id, organization_id, organizations(id, name, is_test_record)")
+    .eq("id", matchId)
+    .maybeSingle();
+  if (error) throw new Error(`failed to verify match: ${error.message}`);
+  if (!data) throw new Error("match not found");
+  const org = (data as any).organizations as { id: string; name: string | null; is_test_record: boolean | null } | null;
+  if (org?.is_test_record) return;
+  if (isQaOrganizationName(org?.name ?? null)) return;
+  throw new Error("QA endpoints may only operate on QA/test organizations");
+}
+
+async function assertQaPosition(supabase: unknown, positionId: string | undefined | null): Promise<void> {
+  if (!positionId) throw new Error("position_id required");
+  const sb = supabase as any;
+  const { data, error } = await sb
+    .from("positions")
+    .select("id, organization_id, organizations(id, name, is_test_record)")
+    .eq("id", positionId)
+    .maybeSingle();
+  if (error) throw new Error(`failed to verify position: ${error.message}`);
+  if (!data) throw new Error("position not found");
+  const org = (data as any).organizations as { id: string; name: string | null; is_test_record: boolean | null } | null;
+  if (org?.is_test_record) return;
+  if (isQaOrganizationName(org?.name ?? null)) return;
+  throw new Error("QA endpoints may only operate on QA/test organizations");
+}
+
 
 async function findUserIdByEmail(supabase: unknown, email: string): Promise<string | null> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1103,7 +1162,7 @@ async function handle(request: Request): Promise<Response> {
       }
       const sb = await loadAdmin();
       let orgIds: string[] = body.organization_id ? [body.organization_id] : [];
-      let organizations: Array<{ id: string; name: string; status: string; domain: string | null }> = [];
+      let organizations: Array<{ id: string; name: string; status: string; domain: string | null; is_test_record: boolean | null }> = [];
       if (body.company_name) {
         const norm = String(body.company_name)
           .trim()
@@ -1112,16 +1171,25 @@ async function handle(request: Request): Promise<Response> {
           .replace(/[.,]/g, "");
         const { data } = await sb
           .from("organizations")
-          .select("id, name, status, domain")
+          .select("id, name, status, domain, is_test_record")
           .eq("name_normalized", norm);
         organizations = (data ?? []) as typeof organizations;
         orgIds = organizations.map((o) => o.id);
       } else {
         const { data } = await sb
           .from("organizations")
-          .select("id, name, status, domain")
+          .select("id, name, status, domain, is_test_record")
           .in("id", orgIds);
         organizations = (data ?? []) as typeof organizations;
+      }
+      // QA tooling must not be used to inspect or assert on real client workspaces.
+      for (const org of organizations) {
+        if (org.is_test_record) continue;
+        if (isQaOrganizationName(org.name)) continue;
+        return Response.json(
+          { ok: false, error: "QA endpoints may only operate on QA/test organizations" },
+          { status: 403 },
+        );
       }
       let memberships: Array<{
         user_id: string;
@@ -1162,6 +1230,8 @@ async function handle(request: Request): Promise<Response> {
         return Response.json({ ok: false, error: "match_id and organization_id required" }, { status: 400 });
       }
       const sb = await loadAdmin();
+      await assertQaOrganization(sb, body.organization_id);
+      await assertQaMatch(sb, body.match_id);
       const feedback = body.cv_base64 || "QA-FEEDBACK-CHECK — disregard"; // reusing cv_base64 as a generic string slot if needed, or just hardcode
 
       await cleanupQAFeedback(sb, body.match_id);
@@ -1198,6 +1268,7 @@ async function handle(request: Request): Promise<Response> {
         return Response.json({ ok: false, error: "match_id required" }, { status: 400 });
       }
       const sb = await loadAdmin();
+      await assertQaMatch(sb, body.match_id);
       await cleanupQAFeedback(sb, body.match_id);
       await sb.from("candidate_matches").update({ stage: "delivered" }).eq("id", body.match_id);
       return Response.json({ ok: true, action });
@@ -1215,6 +1286,7 @@ async function handle(request: Request): Promise<Response> {
         return Response.json({ ok: false, error: "organization_id required" }, { status: 400 });
       }
       const sb = await loadAdmin();
+      await assertQaOrganization(sb, body.organization_id);
       const org = body.organization_id;
       // Some writers record an entity without an organisation (public intake
       // runs before the workspace exists), so the trail is the union of the
@@ -1350,6 +1422,7 @@ async function handle(request: Request): Promise<Response> {
         return Response.json({ ok: false, error: "match_id required" }, { status: 400 });
       }
       const sb = await loadAdmin();
+      await assertQaMatch(sb, body.match_id);
       const { data: match, error: mErr } = await sb
         .from("candidate_matches")
         .select("id, application_id, candidate_profile_id, processing_state")
@@ -1430,6 +1503,7 @@ async function handle(request: Request): Promise<Response> {
         return Response.json({ ok: false, error: "match_id, cv_base64 required" }, { status: 400 });
       }
       const sb = await loadAdmin();
+      await assertQaMatch(sb, body.match_id);
       const { data: match, error: mErr } = await sb
         .from("candidate_matches")
         .select("id, application_id, candidate_profile_id")
@@ -1482,6 +1556,7 @@ async function handle(request: Request): Promise<Response> {
         );
       }
       const sb = await loadAdmin();
+      await assertQaPosition(sb, body.position_id);
       const filename = body.cv_filename ?? "qa-pipeline-cv.pdf";
       const { data: pos, error: posErr } = await sb
         .from("positions")

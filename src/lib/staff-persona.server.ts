@@ -70,11 +70,13 @@ export function resolveStaffPersona(args: {
     };
   }
 
-  // Human staff member with a real name.
+  // Human staff member with a real name. When masking is requested (e.g. client-
+  // facing surfaces), never reveal the individual's name; always present the
+  // generic team persona so internal identities stay internal.
   return {
-    name: maskStatus ? name || "TaaSFlow team" : `${name}`,
+    name: maskStatus ? "TaaSFlow team" : `${name}`,
     role: roleLabel || "TaaSFlow recruiter",
     isStaff: true,
-    badge: "(Staff)",
+    badge: maskStatus ? undefined : "(Staff)",
   };
 }
