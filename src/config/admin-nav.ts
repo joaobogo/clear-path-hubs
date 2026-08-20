@@ -1,5 +1,6 @@
 import {
   Activity,
+  Bell,
   Briefcase,
   Building2,
   ClipboardCheck,
@@ -7,6 +8,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   Receipt,
+  Send,
   UserCog,
   Users,
 } from "lucide-react";
