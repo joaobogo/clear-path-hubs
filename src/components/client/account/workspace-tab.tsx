@@ -377,31 +377,29 @@ function CompanyProfileSection({
  )}
  </div>
  </fieldset>
- {canEdit && (
- <div className="mt-5 flex items-center justify-end gap-2 border-t pt-4">
- <Button
- variant="ghost"
- size="sm"
- disabled={!dirty || save.isPending}
- onClick={() => {
- setForm(initial);
- setErrors({});
- }}
- >
- Discard
- </Button>
- <Button
- size="sm"
- disabled={!dirty || save.isPending}
- onClick={() => {
- if (!validate()) return;
- save.mutate();
- }}
- >
- {save.isPending ? "Saving…" : "Save changes"}
- </Button>
- </div>
- )}
+                {canEdit && (
+                  <div className="mt-5 flex items-center justify-end gap-2 border-t pt-4">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      disabled={!dirty || save.isPending}
+                      onClick={() => {
+                        setForm({ ...initial, website: normalizeWebsite(initial.website) });
+                        setErrors({});
+                        setRetainInput(false);
+                      }}
+                    >
+                      Discard
+                    </Button>
+                    <Button
+                      size="sm"
+                      disabled={!dirty || save.isPending}
+                      onClick={handleSave}
+                    >
+                      {save.isPending ? "Saving…" : "Save changes"}
+                    </Button>
+                  </div>
+                )}
  </SectionCard>
  );
 }
