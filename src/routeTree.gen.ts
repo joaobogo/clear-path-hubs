@@ -206,6 +206,7 @@ import { Route as AuthenticatedAdminScoringReviewIndexRouteImport } from './rout
 import { Route as ApiPublicBookingSessionIdIcsRouteImport } from './routes/api/public/booking.$sessionId.ics'
 import { Route as AuthenticatedClientPositionsIdEditRouteImport } from './routes/_authenticated/client.positions.$id_.edit'
 import { Route as AuthenticatedAdminScoringReviewMatchIdRouteImport } from './routes/_authenticated/admin.scoring.review.$matchId'
+import { Route as AuthenticatedAdminPositionsIdPublishRouteImport } from './routes/_authenticated/admin.positions.$id_.publish'
 import { Route as AuthenticatedAdminPositionsIdEditRouteImport } from './routes/_authenticated/admin.positions.$id_.edit'
 import { Route as AuthenticatedAdminPositionsIdCriteriaRouteImport } from './routes/_authenticated/admin.positions.$id_.criteria'
 import { Route as AuthenticatedAdminCandidatesIdParseRouteImport } from './routes/_authenticated/admin.candidates.$id_.parse'
@@ -1290,6 +1291,12 @@ const AuthenticatedAdminScoringReviewMatchIdRoute =
     path: '/scoring/review/$matchId',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminPositionsIdPublishRoute =
+  AuthenticatedAdminPositionsIdPublishRouteImport.update({
+    id: '/$id_/publish',
+    path: '/$id/publish',
+    getParentRoute: () => AuthenticatedAdminPositionsRoute,
+  } as any)
 const AuthenticatedAdminPositionsIdEditRoute =
   AuthenticatedAdminPositionsIdEditRouteImport.update({
     id: '/$id_/edit',
@@ -1512,6 +1519,7 @@ export interface FileRoutesByFullPath {
   '/admin/candidates/$id/parse': typeof AuthenticatedAdminCandidatesIdParseRoute
   '/admin/positions/$id/criteria': typeof AuthenticatedAdminPositionsIdCriteriaRoute
   '/admin/positions/$id/edit': typeof AuthenticatedAdminPositionsIdEditRoute
+  '/admin/positions/$id/publish': typeof AuthenticatedAdminPositionsIdPublishRoute
   '/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/client/positions/$id/edit': typeof AuthenticatedClientPositionsIdEditRoute
   '/api/public/booking/$sessionId/ics': typeof ApiPublicBookingSessionIdIcsRoute
@@ -1703,6 +1711,7 @@ export interface FileRoutesByTo {
   '/admin/candidates/$id/parse': typeof AuthenticatedAdminCandidatesIdParseRoute
   '/admin/positions/$id/criteria': typeof AuthenticatedAdminPositionsIdCriteriaRoute
   '/admin/positions/$id/edit': typeof AuthenticatedAdminPositionsIdEditRoute
+  '/admin/positions/$id/publish': typeof AuthenticatedAdminPositionsIdPublishRoute
   '/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/client/positions/$id/edit': typeof AuthenticatedClientPositionsIdEditRoute
   '/api/public/booking/$sessionId/ics': typeof ApiPublicBookingSessionIdIcsRoute
@@ -1907,6 +1916,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/candidates/$id_/parse': typeof AuthenticatedAdminCandidatesIdParseRoute
   '/_authenticated/admin/positions/$id_/criteria': typeof AuthenticatedAdminPositionsIdCriteriaRoute
   '/_authenticated/admin/positions/$id_/edit': typeof AuthenticatedAdminPositionsIdEditRoute
+  '/_authenticated/admin/positions/$id_/publish': typeof AuthenticatedAdminPositionsIdPublishRoute
   '/_authenticated/admin/scoring/review/$matchId': typeof AuthenticatedAdminScoringReviewMatchIdRoute
   '/_authenticated/client/positions/$id_/edit': typeof AuthenticatedClientPositionsIdEditRoute
   '/api/public/booking/$sessionId/ics': typeof ApiPublicBookingSessionIdIcsRoute
@@ -2111,6 +2121,7 @@ export interface FileRouteTypes {
     | '/admin/candidates/$id/parse'
     | '/admin/positions/$id/criteria'
     | '/admin/positions/$id/edit'
+    | '/admin/positions/$id/publish'
     | '/admin/scoring/review/$matchId'
     | '/client/positions/$id/edit'
     | '/api/public/booking/$sessionId/ics'
@@ -2302,6 +2313,7 @@ export interface FileRouteTypes {
     | '/admin/candidates/$id/parse'
     | '/admin/positions/$id/criteria'
     | '/admin/positions/$id/edit'
+    | '/admin/positions/$id/publish'
     | '/admin/scoring/review/$matchId'
     | '/client/positions/$id/edit'
     | '/api/public/booking/$sessionId/ics'
@@ -2505,6 +2517,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/candidates/$id_/parse'
     | '/_authenticated/admin/positions/$id_/criteria'
     | '/_authenticated/admin/positions/$id_/edit'
+    | '/_authenticated/admin/positions/$id_/publish'
     | '/_authenticated/admin/scoring/review/$matchId'
     | '/_authenticated/client/positions/$id_/edit'
     | '/api/public/booking/$sessionId/ics'
@@ -3992,6 +4005,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminScoringReviewMatchIdRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/positions/$id_/publish': {
+      id: '/_authenticated/admin/positions/$id_/publish'
+      path: '/$id/publish'
+      fullPath: '/admin/positions/$id/publish'
+      preLoaderRoute: typeof AuthenticatedAdminPositionsIdPublishRouteImport
+      parentRoute: typeof AuthenticatedAdminPositionsRoute
+    }
     '/_authenticated/admin/positions/$id_/edit': {
       id: '/_authenticated/admin/positions/$id_/edit'
       path: '/$id/edit'
@@ -4085,6 +4105,7 @@ interface AuthenticatedAdminPositionsRouteChildren {
   AuthenticatedAdminPositionsIndexRoute: typeof AuthenticatedAdminPositionsIndexRoute
   AuthenticatedAdminPositionsIdCriteriaRoute: typeof AuthenticatedAdminPositionsIdCriteriaRoute
   AuthenticatedAdminPositionsIdEditRoute: typeof AuthenticatedAdminPositionsIdEditRoute
+  AuthenticatedAdminPositionsIdPublishRoute: typeof AuthenticatedAdminPositionsIdPublishRoute
 }
 
 const AuthenticatedAdminPositionsRouteChildren: AuthenticatedAdminPositionsRouteChildren =
@@ -4096,6 +4117,8 @@ const AuthenticatedAdminPositionsRouteChildren: AuthenticatedAdminPositionsRoute
       AuthenticatedAdminPositionsIdCriteriaRoute,
     AuthenticatedAdminPositionsIdEditRoute:
       AuthenticatedAdminPositionsIdEditRoute,
+    AuthenticatedAdminPositionsIdPublishRoute:
+      AuthenticatedAdminPositionsIdPublishRoute,
   }
 
 const AuthenticatedAdminPositionsRouteWithChildren =
