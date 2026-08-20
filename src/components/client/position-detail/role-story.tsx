@@ -175,24 +175,25 @@ export function RoleStoryPanel({
               <>
                 <p className="mt-2 text-sm text-foreground/90">{distribution.takeaway}</p>
                 <ul className="mt-3 space-y-2">
-                  {distribution.bands.map((raw) => {
-                    // The candidate list filters on the client-facing fit
-                    // vocabulary, so a segment only links when it maps onto a
-                    // filter the list actually offers.
-                    const mapped = toFitPresentation(raw.key, null).band;
-                    const b = {
-                      ...raw,
-                      filter: FIT_OPTIONS.some((o) => o.key === mapped) ? mapped : null,
-                    };
-                    // Scale bars against the largest band, not the total, so the
-                    // biggest segment always fills the track and the widths match
-                    // the printed numbers proportionally.
+                  {/* Scale bars against the largest band, not the total, so the
+                      biggest segment always fills the track and the widths match
+                      the printed numbers proportionally. */}
+                  {(() => {
                     const maxBand = Math.max(
                       ...distribution.bands.map((band) => band.count),
                       1,
                     );
-                    const width = `${(b.count / maxBand) * 100}%`;
-                    return (
+                    return distribution.bands.map((raw) => {
+                      // The candidate list filters on the client-facing fit
+                      // vocabulary, so a segment only links when it maps onto a
+                      // filter the list actually offers.
+                      const mapped = toFitPresentation(raw.key, null).band;
+                      const b = {
+                        ...raw,
+                        filter: FIT_OPTIONS.some((o) => o.key === mapped) ? mapped : null,
+                      };
+                      const width = `${(b.count / maxBand) * 100}%`;
+                      return (
                       <li key={b.key} className="flex items-center gap-3">
                         <span className="w-28 shrink-0 text-xs text-muted-foreground">
                           {b.label}{" "}
@@ -222,9 +223,10 @@ export function RoleStoryPanel({
                             {b.count}
                           </span>
                         )}
-                      </li>
-                    );
-                  })}
+                       </li>
+                      );
+                    });
+                  })()}
                 </ul>
                 <p className="mt-3 border-t pt-3 text-xs text-muted-foreground">
                   {distribution.criteria}
