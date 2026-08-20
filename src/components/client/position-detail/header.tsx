@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { PositionLifecycleMenu } from "@/components/positions/position-lifecycle-menu";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { CloseRoleDialog } from "@/components/client/close-role-dialog";
+import { RoleLifecycleMenu } from "@/components/client/role-lifecycle-menu";
 import { formatEnumLabel } from "@/lib/human-labels";
 import { normalizeDealBreakers } from "@/lib/client-deal-breakers";
 import { type ClientRoleStatus, clientRoleStatusLabel } from "@/lib/client-role-status";
@@ -225,6 +226,13 @@ export function PositionHeader({
             positionId={position.id}
             subject={position.title}
             label="Conversation"
+          />
+        )}
+        {canEdit && !supportReadOnly && (
+          <RoleLifecycleMenu
+            positionId={position.id}
+            positionTitle={position.title}
+            status={String(position.status ?? "")}
           />
         )}
       </div>
