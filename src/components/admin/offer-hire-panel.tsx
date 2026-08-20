@@ -1,5 +1,6 @@
 import { formatCalendarDate } from "@/lib/calendar-date";
 import { useState } from "react";
+import { TeamScopeNote } from "@/components/admin/scope-note";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
