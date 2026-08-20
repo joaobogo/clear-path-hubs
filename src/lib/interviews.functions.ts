@@ -232,7 +232,11 @@ export const listClientInterviews = createServerFn({ method: "POST" })
     if (data.status && data.status !== "all") q = q.eq("status", data.status);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
-    const list = (rows as AnyRow[]) ?? [];
+    // Do not surface abandoned legacy rows that never received a usable slot.
+    // These are not active and must not block a fresh request in the picker.
+    const list = ((rows as AnyRow[]) ?? []).filter(
+      (row) => row.status === "completed" || row.status === "cancelled" || isActiveInterview(row),
+    );
     if (list.length === 0) return { interviews: [] as InterviewDTO[] };
 
     const matchIds = Array.from(new Set(list.map((r) => r.candidate_match_id).filter(Boolean)));
@@ -241,7 +245,7 @@ export const listClientInterviews = createServerFn({ method: "POST" })
     const [matchesRes, positionsRes] = await Promise.all([
       context.supabase
         .from("candidate_matches")
-        .select("id, candidate_profile_id, candidate_profiles:candidate_profile_id(id, full_name, email, availability)")
+        .select("id, stage, candidate_profile_id, candidate_profiles:candidate_profile_id(id, full_name, email, availability)")
         .in("id", matchIds),
       context.supabase
         .from("positions")
