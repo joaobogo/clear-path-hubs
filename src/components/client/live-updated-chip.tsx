@@ -5,14 +5,7 @@
  */
 import { useEffect, useState } from "react";
 import { RefreshCw } from "lucide-react";
-
-function relative(ts: number, now: number) {
-	const secs = Math.max(0, Math.round((now - ts) / 1000));
-	if (secs < 10) return "just now";
-	if (secs < 60) return `${secs}s ago`;
-	const mins = Math.round(secs / 60);
-	return `${mins}m ago`;
-}
+import { formatRelative } from "@/lib/format/datetime";
 
 export function LiveUpdatedChip({
 	updatedAt,
@@ -35,7 +28,7 @@ export function LiveUpdatedChip({
 			className={`inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/5 px-2.5 py-1 text-xs text-muted-foreground ${className}`}
 		>
 			<RefreshCw className="h-3 w-3" aria-hidden />
-			Updated {relative(updatedAt, now)}
+			Updated {formatRelative(updatedAt)}
 		</span>
 	);
 }

@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from "react";
+import { formatDateTime } from "@/lib/format/datetime";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import type { CompareMatrixRow } from "@/lib/client-compare";
 
@@ -79,7 +80,7 @@ export function useComparisonPdfExport() {
           doc.text(`Role: ${positionTitle}`, margin, y);
           y += 5;
         }
-        doc.text(`Generated: ${new Date().toLocaleString()}`, margin, y);
+        doc.text(`Generated: ${formatDateTime(new Date())}`, margin, y);
         y += 8;
 
         // Candidates table

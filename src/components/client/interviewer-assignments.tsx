@@ -18,14 +18,10 @@ import {
   revokeInterviewerAssignment,
 } from "@/lib/interviewer-assignments.functions";
 import { assignmentStatusLine } from "@/lib/interviewer-assignments";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { formatDate } from "@/lib/format/datetime";
 
 function formatDay(iso: string): string {
-  return new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+  return formatDate(iso);
 }
 
 /**

@@ -18,6 +18,13 @@ export const WORKSPACE_TIMEZONE = "America/Sao_Paulo";
  */
 export const APP_LOCALE = "en-GB";
 
+/** en-GB shortens September as "Sept"; the app standard is "Sep". */
+const SHORT_MONTH_FIX = /\bSept\b/g;
+
+function normalizeMonth(s: string): string {
+  return s.replace(SHORT_MONTH_FIX, "Sep");
+}
+
 /** F4: Standardised on 05 Aug 2026 */
 const DATE_ONLY = new Intl.DateTimeFormat(APP_LOCALE, {
   day: "2-digit",
@@ -65,20 +72,43 @@ function toDate(value: string | number | Date | null | undefined): Date | null {
 export function formatDateTime(
   value: string | number | Date | null | undefined,
   fallback = "",
+  zone = WORKSPACE_TIMEZONE,
 ): string {
   const date = toDate(value);
   if (!date) return fallback;
-  return DATE_TIME.format(date);
+  const fmt =
+    zone === WORKSPACE_TIMEZONE
+      ? DATE_TIME
+      : new Intl.DateTimeFormat(APP_LOCALE, {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+          timeZone: zone,
+        });
+  return normalizeMonth(fmt.format(date));
 }
 
 /** "14 Aug 2026" */
 export function formatDate(
   value: string | number | Date | null | undefined,
   fallback = "",
+  zone = WORKSPACE_TIMEZONE,
 ): string {
   const date = toDate(value);
   if (!date) return fallback;
-  return DATE_ONLY.format(date);
+  const fmt =
+    zone === WORKSPACE_TIMEZONE
+      ? DATE_ONLY
+      : new Intl.DateTimeFormat(APP_LOCALE, {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          timeZone: zone,
+        });
+  return normalizeMonth(fmt.format(date));
 }
 
 /**
@@ -107,20 +137,38 @@ export function formatRelative(iso: string | number | Date | null | undefined): 
 export function formatTime(
   value: string | number | Date | null | undefined,
   fallback = "",
+  zone = WORKSPACE_TIMEZONE,
 ): string {
   const date = toDate(value);
   if (!date) return fallback;
-  return TIME_ONLY.format(date);
+  const fmt =
+    zone === WORKSPACE_TIMEZONE
+      ? TIME_ONLY
+      : new Intl.DateTimeFormat(APP_LOCALE, {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+          timeZone: zone,
+        });
+  return fmt.format(date);
 }
 
 /** "Wed" — a weekday on its own, for short scheduling hints. */
 export function formatWeekday(
   value: string | number | Date | null | undefined,
   fallback = "",
+  zone = WORKSPACE_TIMEZONE,
 ): string {
   const date = toDate(value);
   if (!date) return fallback;
-  return WEEKDAY_ONLY.format(date);
+  const fmt =
+    zone === WORKSPACE_TIMEZONE
+      ? WEEKDAY_ONLY
+      : new Intl.DateTimeFormat(APP_LOCALE, {
+          weekday: "short",
+          timeZone: zone,
+        });
+  return fmt.format(date);
 }
 
 /** F6: format numbers with commas */
@@ -161,25 +209,25 @@ export function formatPeriod(period: string | null | undefined, fallback = "Date
     const end = endRaw === "present" || endRaw === "now" || endRaw === "current" ? "Present" : endRaw;
     const startDate = new Date(`${start}-15T00:00:00Z`);
     const formatted =
-      Number.isNaN(startDate.getTime()) ? start : MONTH_YEAR_UTC.format(startDate);
+      Number.isNaN(startDate.getTime()) ? start : normalizeMonth(MONTH_YEAR_UTC.format(startDate));
     if (end === "Present") return `${formatted} – Present`;
     const endDate = new Date(`${end}-15T00:00:00Z`);
     const formattedEnd =
-      Number.isNaN(endDate.getTime()) ? end : MONTH_YEAR_UTC.format(endDate);
+      Number.isNaN(endDate.getTime()) ? end : normalizeMonth(MONTH_YEAR_UTC.format(endDate));
     return `${formatted} – ${formattedEnd}`;
   }
 
   const parts = trimmed.split(/\s*[–-—]\s*/);
   if (parts.length === 1) {
     const date = toDate(parts[0]);
-    return date ? DATE_ONLY.format(date) : parts[0];
+    return date ? normalizeMonth(DATE_ONLY.format(date)) : parts[0];
   }
 
   const formatted = parts.map((p) => {
     const pTrim = p.trim();
     if (pTrim.toLowerCase() === "present") return "Present";
     const date = toDate(pTrim);
-    return date ? DATE_ONLY.format(date) : pTrim;
+    return date ? normalizeMonth(DATE_ONLY.format(date)) : pTrim;
   });
 
   return formatted.join(" – ");

@@ -3,7 +3,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
 import { Activity, AlertTriangle, Clock3, RotateCw } from "lucide-react";
 import { getSystemStatus } from "@/lib/control-room.functions";
-import { INTEGRATION_STATE_COPY, shortAgo } from "@/lib/control-room-shared";
+import { INTEGRATION_STATE_COPY } from "@/lib/control-room-shared";
+import { formatRelative } from "@/lib/format/datetime";
 import { cn } from "@/lib/utils";
 
 /**
@@ -114,7 +115,7 @@ export function SystemStatusStrip({ orgId }: { orgId: string }) {
         <ul className="mt-2 space-y-1 text-xs text-destructive">
           {s.failed_examples.map((f, i) => (
             <li key={i}>
-              {f.label} stopped {shortAgo(f.at)} ago — {f.message}. We are on it.
+              {f.label} stopped {formatRelative(f.at)} — {f.message}. We are on it.
             </li>
           ))}
         </ul>
@@ -142,7 +143,7 @@ export function SystemStatusStrip({ orgId }: { orgId: string }) {
                 <dd className="text-muted-foreground">
                   {copy.label}
                   {i.last_success_at
-                    ? ` · last sync ${shortAgo(i.last_success_at)} ago`
+                    ? ` · last sync ${formatRelative(i.last_success_at)}`
                     : ""}
                 </dd>
               </div>

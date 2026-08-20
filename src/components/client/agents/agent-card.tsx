@@ -7,26 +7,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { formatRelative, formatDateTime } from "@/lib/format/datetime";
 import type { AgentCard } from "@/lib/agents.functions";
 
-export function ago(iso: string | null): string {
-  if (!iso) return "nothing yet";
-  const ms = Date.now() - new Date(iso).getTime();
-  const mins = Math.round(ms / 60000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins} min ago`;
-  const hrs = Math.round(mins / 60);
-  if (hrs < 24) return `${hrs} hr ago`;
-  return `${Math.round(hrs / 24)} days ago`;
-}
-
 export function stamp(iso: string) {
-  return new Date(iso).toLocaleString("en-GB", {
-    day: "numeric",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return formatDateTime(iso);
 }
 
 export function AgentCardView({
@@ -84,7 +69,7 @@ export function AgentCardView({
             {agent.last_action_summary ?? "Nothing yet."}
             {agent.last_action_at && agent.last_action_summary && (
               <span className="ml-1 text-muted-foreground">
-                ({ago(agent.last_action_at)})
+                ({formatRelative(agent.last_action_at)})
               </span>
             )}
           </dd>
