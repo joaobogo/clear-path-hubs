@@ -58,14 +58,15 @@ export const Route = createFileRoute("/_authenticated/admin/")({
     </div>
   ),
 
-  // The layout resolved the scope in beforeLoad, so the prefetch primes exactly
-  // the key the component subscribes to.
+  // The loader primes with the default scope (test records hidden). The
+  // component will subscribe to the async scope from the layout provider and
+  // refetch automatically when the preference resolves.
   loader: ({ context }) =>
     context.queryClient.ensureQueryData({
-      queryKey: [...WORK_QUEUES_KEY, context.testScope.includeTest],
-      queryFn: () =>
-        getAdminWorkQueues({ data: { include_test: context.testScope.includeTest } }),
+      queryKey: [...WORK_QUEUES_KEY, false],
+      queryFn: () => getAdminWorkQueues({ data: { include_test: false } }),
     }),
+
   head: () => ({
     meta: [
       { title: "Work queue · TaaSFlow admin" },
