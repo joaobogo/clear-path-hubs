@@ -1,8 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, AlertTriangle, Ban, Copy, Wrench } from "lucide-react";
+import { makeRouteErrorComponent } from "@/components/workspace/route-states";
+import { BusinessRulesPanel, BUSINESS_RULES_QUERY } from "@/components/admin/business-rules-panel";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
+  loader: ({ context }) => context.queryClient.ensureQueryData(BUSINESS_RULES_QUERY),
+  errorComponent: makeRouteErrorComponent("admin", "src/routes/_authenticated/admin.settings.tsx"),
   head: () => ({
     meta: [
       { title: "Settings · TaaSFlow admin" },
@@ -56,7 +60,7 @@ const ROWS: Row[] = [
 
   // Business rules
   { area: "Business rules", control: "Rule overrides (thresholds, gates)", status: "functional",
-    location: "/admin/business-rules", to: "/admin/business-rules", persistence: "business_rules_overrides", audit: "business_rules_audit" },
+    location: "/admin/settings → Business rules", to: "/admin/settings", persistence: "business_rules_overrides", audit: "business_rules_audit" },
 
   // Agents
   { area: "Agents", control: "Pause / resume agent per workspace", status: "functional",
@@ -118,11 +122,6 @@ const statusStyles: Record<Status, { label: string; icon: React.ComponentType<{ 
 };
 
 function SettingsPage() {
-  const counts = ROWS.reduce<Record<Status, number>>(
-    (a, r) => ((a[r.status] = (a[r.status] ?? 0) + 1), a),
-    { functional: 0, incomplete: 0, unsafe: 0, duplicate: 0, unused: 0 },
-  );
-
   return (
     <div className="mx-auto max-w-[1400px] px-6 py-8 space-y-6">
       <header>
@@ -133,21 +132,6 @@ function SettingsPage() {
           they are listed here only when work is planned.
         </p>
       </header>
-
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        {(Object.keys(statusStyles) as Status[]).map((s) => {
-          const S = statusStyles[s];
-          return (
-            <div key={s} className="rounded-lg border bg-card px-4 py-3">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <S.icon className="h-3.5 w-3.5" />
-                {S.label}
-              </div>
-              <div className="mt-1 text-2xl font-semibold tabular-nums">{counts[s]}</div>
-            </div>
-          );
-        })}
-      </div>
 
       <div className="rounded-lg border bg-card overflow-hidden">
         <table className="w-full text-sm">
@@ -195,6 +179,18 @@ function SettingsPage() {
         Any control that would appear in this UI but not persist or audit its change is a
         blocker. If you see one in the app that is not listed here, treat it as a bug.
       </p>
+
+      <section className="space-y-3 border-t pt-6">
+        <div>
+          <h2 className="text-lg font-medium">Business rules</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Canonical values used across marketing, dashboards, proposals and legal copy.
+            Each rule shows its current value; overrides are validated before saving and
+            recorded in the change log below.
+          </p>
+        </div>
+        <BusinessRulesPanel />
+      </section>
     </div>
   );
 }
