@@ -69,7 +69,7 @@ function IntakeInbox() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Intake inbox</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Every client brief. Convert to a position, request clarification, or reject.
+            Every client brief. Each row can be converted to a role, sent back for details, or rejected.
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
             {show_test
