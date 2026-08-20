@@ -12,12 +12,15 @@ import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
 import { humanizeCode, humanizeJobName, humanizeTechnicalError } from "@/lib/humanize-codes";
 import { TechnicalDetail } from "@/components/admin/technical-detail";
+import { listScoringOrphans, resolveScoringOrphan, type ScoringOrphan } from "@/lib/scoring.functions";
+import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 import {
   getProcessingExceptions,
   markProcessingJobPermanentlyFailed,
   retryPositionProcessingExceptions,
   retryProcessingException,
 } from "@/lib/admin-processing-exceptions.functions";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -46,6 +49,19 @@ function ageLabel(minutes: number): string {
   if (minutes < 60 * 24) return `${Math.floor(minutes / 60)}h`;
   return `${Math.floor(minutes / (60 * 24))}d`;
 }
+
+function formatOrphanDate(iso: string): string {
+  return new Date(iso).toLocaleString(APP_LOCALE, {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: WORKSPACE_TIMEZONE,
+  });
+}
+
 
 export function ProcessingExceptionsBoard({ className }: { className?: string }) {
   const qc = useQueryClient();
