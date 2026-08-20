@@ -40,6 +40,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  AlertTriangle,
   Archive,
   ArchiveRestore,
   Building2,
@@ -50,6 +51,7 @@ import {
   Pencil,
   Search,
   Users,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 
