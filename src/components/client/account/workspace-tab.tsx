@@ -234,47 +234,72 @@ function CompanyProfileSection({
    [form, initial],
  );
 
- const save = useMutation({
- mutationFn: () =>
- fn({
- data: {
- orgId,
- name: form.name,
- website: form.website || null,
- industry: form.industry || null,
- headquarters: form.headquarters || null,
- phone: form.phone || null,
- },
- }),
- onSuccess: () => {
- toast.success("Company profile saved");
- setErrors({});
- qc.invalidateQueries({ queryKey: ["client-settings", orgId] });
- qc.invalidateQueries({ queryKey: ["client-context"] });
- },
-  onError: (e: unknown) => {
-    // Field-level validation is handled before submit; if the server still
-    // rejects the input, avoid resetting the form so the user can fix it.
-    const msg = e instanceof Error ? e.message.replace(/^Error: /, "") : "";
-    if (msg.startsWith("[") && msg.includes('"path"')) {
-      // Server-side Zod errors are surfaced field-by-field, not as a toast.
-      return;
-    }
-    toastError(e, { fallback: "Could not save company profile", tone: "client" });
-  },
- });
+  const save = useMutation({
+    mutationFn: () =>
+      fn({
+        data: {
+          orgId,
+          name: form.name,
+          website: normalizeWebsite(form.website) || null,
+          industry: form.industry || null,
+          headquarters: form.headquarters || null,
+          phone: form.phone || null,
+        },
+      }),
+    onSuccess: () => {
+      toast.success("Company profile saved");
+      setErrors({});
+      setRetainInput(false);
+      qc.invalidateQueries({ queryKey: ["client-settings", orgId] });
+      qc.invalidateQueries({ queryKey: ["client-context"] });
+    },
+    onError: (e: unknown) => {
+      setRetainInput(true);
+      // Field-level validation is handled before submit; if the server still
+      // rejects the input, surface it on the field and focus it.
+      const msg = e instanceof Error ? e.message.replace(/^Error: /, "") : "";
+      if (msg.startsWith("[") && msg.includes('"path"')) {
+        try {
+          const parsed = JSON.parse(msg) as Array<{ message: string; path: (string | number)[] }>;
+          const next: Partial<Record<keyof Company, string>> = {};
+          parsed.forEach((issue) => {
+            const key = issue.path[0] as keyof Company;
+            if (key) next[key] = issue.message;
+          });
+          setErrors(next);
+          const first = (Object.keys(next) as (keyof Company)[])[0];
+          if (first) setTimeout(() => focusField(first), 0);
+          return;
+        } catch {
+          // fall through to generic toast
+        }
+      }
+      toastError(e, { fallback: "Could not save company profile", tone: "client" });
+    },
+  });
 
-  const validate = (): boolean => {
+  const validate = (): { ok: boolean; errors: Partial<Record<keyof Company, string>> } => {
     const next: Partial<Record<keyof Company, string>> = {};
     const name = form.name.trim();
     if (!name || name.length < 2)
       next.name = "Company name must be at least 2 characters.";
     if (name.length > 200) next.name = "Company name must be under 200 characters.";
     const website = form.website.trim();
-    if (website && !/^https?:\/\/[^\s]+\.[^\s]+$/i.test(website))
+    const normalized = normalizeWebsite(website);
+    if (website && !/^https?:\/\/[^\s]+\.[^\s]+$/i.test(normalized))
       next.website = "Website must start with http:// or https://.";
     setErrors(next);
-    return Object.keys(next).length === 0;
+    return { ok: Object.keys(next).length === 0, errors: next };
+  };
+
+  const handleSave = () => {
+    const { ok, errors: validationErrors } = validate();
+    if (!ok) {
+      const first = (Object.keys(validationErrors) as (keyof Company)[])[0];
+      if (first) setTimeout(() => focusField(first), 0);
+      return;
+    }
+    save.mutate();
   };
 
  return (
