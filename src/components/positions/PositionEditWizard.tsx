@@ -559,7 +559,7 @@ export function PositionEditWizard({
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <Field label="Currency">
                       <Select value={state.currency} onValueChange={(v) => set("currency", v)}>
-                        <SelectTrigger>
+                        <SelectTrigger aria-label="Currency" data-field="currency">
                           <SelectValue placeholder="Select…" />
                         </SelectTrigger>
                         <SelectContent>
@@ -578,7 +578,7 @@ export function PositionEditWizard({
                         value={state.budget_period || "year"}
                         onValueChange={(v) => set("budget_period", v)}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger aria-label="Period" data-field="budget_period">
                           <SelectValue placeholder="Select…" />
                         </SelectTrigger>
                         <SelectContent>
@@ -595,6 +595,8 @@ export function PositionEditWizard({
                         value={state.budget_min}
                         onChange={(e) => set("budget_min", e.target.value)}
                         placeholder="80000"
+                        aria-label="Minimum compensation"
+                        data-field="budget_min"
                       />
                     </Field>
                     <Field label="Maximum" error={errors.budget_max}>
@@ -604,6 +606,8 @@ export function PositionEditWizard({
                         value={state.budget_max}
                         onChange={(e) => set("budget_max", e.target.value)}
                         placeholder="120000"
+                        aria-label="Maximum compensation"
+                        data-field="budget_max"
                       />
                     </Field>
                   </div>
