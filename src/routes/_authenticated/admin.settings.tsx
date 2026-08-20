@@ -194,6 +194,3 @@ function SettingsPage() {
     </div>
   );
 }
-
-  );
-}
