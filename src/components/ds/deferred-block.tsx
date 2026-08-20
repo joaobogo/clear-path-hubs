@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { AlertTriangle, RefreshCw } from "lucide-react";
 import { useRouter } from "@tanstack/react-router";
 
-function TimedFallback({
+export function TimedFallback({
   timeoutMs,
   errorTitle,
   onRetry,
@@ -13,6 +13,7 @@ function TimedFallback({
   errorTitle: string;
   onRetry?: () => void;
 }) {
+  const router = useRouter();
   const [timedOut, setTimedOut] = useState(false);
 
   useEffect(() => {
@@ -30,20 +31,18 @@ function TimedFallback({
             <p className="mt-1 text-muted-foreground">
               This section took too long to load. You can retry or continue using the rest of the page.
             </p>
-            {onRetry && (
-              <Button
-                size="sm"
-                variant="outline"
-                className="mt-3"
-                onClick={() => {
-                  setTimedOut(false);
-                  onRetry();
-                }}
-              >
-                <RefreshCw className="mr-2 h-3.5 w-3.5" />
-                Retry
-              </Button>
-            )}
+            <Button
+              size="sm"
+              variant="outline"
+              className="mt-3"
+              onClick={() => {
+                setTimedOut(false);
+                (onRetry ?? (() => router.invalidate()))();
+              }}
+            >
+              <RefreshCw className="mr-2 h-3.5 w-3.5" />
+              Retry
+            </Button>
           </div>
         </div>
       </div>
