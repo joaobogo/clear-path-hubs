@@ -6,7 +6,7 @@ import { WeeklyUpdateCard } from "@/components/client/weekly-update-card";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { getClientContext } from "@/lib/client-context.functions";
-import { getClientOverview } from "@/lib/client-overview.functions";
+import { loadClientOverview } from "@/lib/client-overview.functions";
 import { listPendingPaymentRoles } from "@/lib/booking.functions";
 import { PaymentGateBanner } from "@/components/client/payment-gate-banner";
 import { listRolesNeedingDetails } from "@/lib/position-readiness.functions";
@@ -69,7 +69,7 @@ function OverviewPage() {
   }, []);
   const { density, compact, setDensity } = useDensity(selfId);
   const ctxFn = useServerFn(getClientContext);
-  const overviewFn = useServerFn(getClientOverview);
+  const overviewFn = useServerFn(loadClientOverview);
   const orgSearch = useClientOrgSearch();
   const search = useSearch({ strict: false }) as Any;
   const navigate = useNavigate();
@@ -131,9 +131,9 @@ function OverviewPage() {
     error,
     stuck: overviewStuck,
   });
-  const retryAll = () => {
-    if (gate.failed) gate.retry();
-    void refetch();
+  const retryAll = async () => {
+    if (gate.failed) await gate.retry();
+    await refetch();
   };
 
 
