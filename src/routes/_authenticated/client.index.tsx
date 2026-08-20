@@ -191,6 +191,15 @@ function OverviewPage() {
 
   const showOnboarding = !!kpis && kpis.active_positions === 0 && kpis.delivered === 0;
 
+  // The headline reads from the same signals as the decision queue and the
+  // role at-risk lines on this page, so the three can never disagree.
+  const overdueItems = useMemo(() => queue.filter((q) => (q as Any).overdue).length, [queue]);
+  const atRiskRoles = useMemo(() => visibleRoles.filter((r) => r.at_risk).length, [visibleRoles]);
+  const health = useMemo(
+    () => applyOverdueAndRiskSignals(data?.hiring_health ?? null, { overdueItems, atRiskRoles }),
+    [data, overdueItems, atRiskRoles],
+  );
+
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8 space-y-8" data-density={density}>
       <header className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
