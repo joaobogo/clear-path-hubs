@@ -111,13 +111,13 @@ export function OperationalHealthPanel() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="h-7"
+                      className="h-8"
                       disabled={retry.isPending}
                       onClick={() => retry.mutate({ kind: i.kind, id: i.id })}
                     >
                       Retry
                     </Button>
-                    <Link to="/admin/candidates/$id" params={{ id: i.entity_id || i.id }} className="text-xs text-primary hover:underline">open</Link>
+                    <Link to="/admin/candidates/$id" params={{ id: i.entity_id || i.id }} className="inline-flex min-h-8 items-center px-1 text-xs text-primary hover:underline">Open</Link>
                   </div>
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">{humanizeCode(i.detail).toLowerCase()}</p>
