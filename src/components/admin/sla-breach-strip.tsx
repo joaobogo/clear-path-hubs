@@ -11,7 +11,14 @@ import { useQuery } from "@tanstack/react-query";
 import { AlertTriangle } from "lucide-react";
 import { getSlaBreaches } from "@/lib/admin-sla-breach.functions";
 
-export function SlaBreachStrip({ includeTest }: { includeTest: boolean }) {
+export function SlaBreachStrip({
+  includeTest,
+  ownerUserId,
+}: {
+  includeTest: boolean;
+  /** When set, only breaches on roles this staff member owns are shown. */
+  ownerUserId?: string | null;
+}) {
   const query = useQuery({
     queryKey: ["admin", "sla-breaches", "overview", includeTest],
     queryFn: () => getSlaBreaches({ data: { include_test: includeTest } }),
@@ -20,7 +27,9 @@ export function SlaBreachStrip({ includeTest }: { includeTest: boolean }) {
 
   if (query.isLoading || query.isError) return null;
 
-  const rows = (query.data?.rows ?? []).filter((r) => !r.acknowledged);
+  const rows = (query.data?.rows ?? [])
+    .filter((r) => !r.acknowledged)
+    .filter((r) => (ownerUserId ? r.owner_user_id === ownerUserId : true));
   if (rows.length === 0) return null;
 
   const top = rows.slice(0, 4);

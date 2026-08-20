@@ -60,12 +60,15 @@ export function DecisionBacklogPanel({
   showClientColumn = false,
   className,
   limit,
+  ownerUserId,
 }: {
   organizationId?: string;
   includeTest?: boolean;
   showClientColumn?: boolean;
   className?: string;
   limit?: number;
+  /** When set, only candidates on roles this staff member owns are shown. */
+  ownerUserId?: string | null;
 }) {
   const includeTest = useScopedIncludeTest(explicit);
   const qc = useQueryClient();
@@ -136,7 +139,10 @@ export function DecisionBacklogPanel({
     onError: (e) => toastError(e, { fallback: "Could not record the decision" }),
   });
 
-  const rawRows = query.data?.rows ?? [];
+  const allRows = query.data?.rows ?? [];
+  const rawRows = ownerUserId
+    ? allRows.filter((r: Row) => r.owner_user_id === ownerUserId)
+    : allRows;
   const rows = limit ? rawRows.slice(0, limit) : rawRows;
 
   return (
@@ -212,9 +218,11 @@ export function DecisionBacklogPanel({
       ) : rows.length === 0 ? (
         <div className="px-4 py-8 text-center">
           <p className="text-sm font-medium">
-            {organizationId
-              ? "No candidates waiting on this client"
-              : "No candidates waiting on a client decision"}
+            {ownerUserId
+              ? "No candidate on your roles is waiting on a client decision"
+              : organizationId
+                ? "No candidates waiting on this client"
+                : "No candidates waiting on a client decision"}
           </p>
           {/* TestScopeEmptyNote renders its own <p>, so it stays a sibling. */}
           <TestScopeEmptyNote />

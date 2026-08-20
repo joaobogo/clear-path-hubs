@@ -7,6 +7,7 @@
  */
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { TeamScopeNote } from "@/components/admin/scope-note";
 import { useQuery } from "@tanstack/react-query";
 import { getPortfolioHealth } from "@/lib/admin-portfolio.functions";
 import { Button } from "@/components/ui/button";
@@ -75,7 +76,14 @@ function num(v: number | null): string {
   return v === null ? "—" : String(v);
 }
 
-export function PortfolioHealthTable({ includeTest }: { includeTest: boolean }) {
+export function PortfolioHealthTable({
+  includeTest,
+  teamWideNote = false,
+}: {
+  includeTest: boolean;
+  /** True when the desk is scoped to "Mine": this table stays account-level. */
+  teamWideNote?: boolean;
+}) {
   const query = useQuery({
     queryKey: ["admin-portfolio-health", includeTest],
     queryFn: () => getPortfolioHealth({ data: { include_test: includeTest } }),
@@ -106,8 +114,12 @@ export function PortfolioHealthTable({ includeTest }: { includeTest: boolean }) 
     <section className="rounded-lg border bg-card" aria-labelledby="portfolio-health-heading">
       <header className="flex flex-wrap items-start justify-between gap-3 border-b px-4 py-3">
         <div>
-          <h2 id="portfolio-health-heading" className="text-sm font-semibold">
+          <h2
+            id="portfolio-health-heading"
+            className="flex flex-wrap items-center gap-2 text-sm font-semibold"
+          >
             Portfolio health
+            {teamWideNote ? <TeamScopeNote /> : null}
           </h2>
           <p className="text-xs text-muted-foreground">
             One row per client account with an open position. At risk = an open position with no
