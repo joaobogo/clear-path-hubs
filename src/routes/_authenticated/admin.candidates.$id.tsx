@@ -7,7 +7,7 @@ import { createFileRoute, notFound, useNavigate, useRouter, Link } from "@tansta
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useSuspenseQuery, useQuery, useQueryClient } from "@tanstack/react-query";
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { getAdminMatch, getMatchHeavyDetail } from "@/lib/processing.functions";
 import {
