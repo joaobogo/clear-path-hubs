@@ -250,6 +250,9 @@ function CompanyProfileSection({
       toast.success("Company profile saved");
       setErrors({});
       setRetainInput(false);
+      // Reflect the normalized URL immediately so the field matches what
+      // will be returned after the query refetch.
+      setForm((f) => ({ ...f, website: normalizeWebsite(f.website) }));
       qc.invalidateQueries({ queryKey: ["client-settings", orgId] });
       qc.invalidateQueries({ queryKey: ["client-context"] });
     },
