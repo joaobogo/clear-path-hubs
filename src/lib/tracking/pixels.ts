@@ -80,6 +80,17 @@ export const HEAD_BOOT_SNIPPETS: { key: TrackerKey; children: string }[] = [
         },
       ]
     : []),
+  // RB2B: business-visitor identification. Boots unconditionally from the
+  // server-rendered head so identification starts on the very first pageview,
+  // before hydration and independent of any consent UI.
+  ...(RB2B_ID
+    ? [
+        {
+          key: "rb2b" as TrackerKey,
+          children: `!function(key){if(window.reb2b)return;window.reb2b={loaded:true};var s=document.createElement("script");s.async=true;s.setAttribute("data-tracker","rb2b");s.src="https://ddwl4m2hdecbv.cloudfront.net/b/"+key+"/"+key+".js.gz";var first=document.getElementsByTagName("script")[0];first.parentNode.insertBefore(s,first);}(${JSON.stringify(RB2B_ID)});`,
+        },
+      ]
+    : []),
 ];
 
 /** True when a tag's script is already in the document (head snippet ran). */
@@ -289,9 +300,13 @@ export function initializeTrackers() {
   // GA4 is special: it boots early but restricted.
   safe(initGA4);
 
+  // RB2B identifies businesses, not people, and runs on every pageview with no
+  // consent prompt — the head snippet is primary, this is the fallback.
+  safe(initRB2B);
+
   // Other trackers only boot if explicitly allowed.
   for (const key of Object.keys(INITIALISERS) as TrackerKey[]) {
-    if (key === "ga4") continue;
+    if (key === "ga4" || key === "rb2b") continue;
     const category = TRACKER_CATEGORY[key];
     if (isTrackerAllowed(key, category)) {
       safe(INITIALISERS[key]);
@@ -578,7 +593,7 @@ export function verifyTrackers(): Record<TrackerKey, TrackerStatus> {
     const category = TRACKER_CATEGORY[key];
     const allowed = isTrackerAllowed(key, category);
 
-    if (!allowed && key !== "ga4") {
+    if (!allowed && key !== "ga4" && key !== "rb2b") {
       return { status: "missing", id, detail: `blocked by ${category} consent` };
     }
 
