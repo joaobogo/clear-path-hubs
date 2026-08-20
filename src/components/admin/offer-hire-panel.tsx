@@ -1,5 +1,6 @@
 import { formatCalendarDate } from "@/lib/calendar-date";
 import { useState } from "react";
+import { TeamScopeNote } from "@/components/admin/scope-note";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -484,7 +485,7 @@ export function PositionOfferTrackingPanel({ positionId }: { positionId: string 
 }
 
 /** Portfolio rollup for /admin. */
-export function OfferHireRollupPanel() {
+export function OfferHireRollupPanel({ teamWideNote = false }: { teamWideNote?: boolean }) {
   const query = useQuery({
     queryKey: ["offer-hire-rollup"],
     queryFn: () => getOfferHireRollup({ data: {} }),
@@ -501,6 +502,7 @@ export function OfferHireRollupPanel() {
         <h3 className="flex items-center gap-2 text-base font-semibold">
           <CalendarCheck2 className="h-4 w-4" />
           Offers and hires
+          {teamWideNote ? <TeamScopeNote /> : null}
         </h3>
         <p className="text-sm text-muted-foreground">
           Recorded outcomes only. Guarantee windows are derived from start dates.

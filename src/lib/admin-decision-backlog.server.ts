@@ -35,6 +35,8 @@ export type DecisionBacklogRow = {
   client_name: string;
   position_id: string;
   position_title: string;
+  /** Staff owner of the position, so the desk can scope rows to "Mine". */
+  owner_user_id: string | null;
   candidate_name: string;
   stage: string;
   submitted_at: string;
@@ -97,7 +99,10 @@ export async function loadDecisionBacklog(
 
   const [decRes, posRes, orgRes, candRes, notifRes, nudgeRes] = await Promise.all([
     a.from("client_decisions").select("candidate_match_id").in("candidate_match_id", matchIds),
-    a.from("positions").select("id, title, is_test_record, organization_id").in("id", positionIds),
+    a
+      .from("positions")
+      .select("id, title, is_test_record, organization_id, owner_user_id")
+      .in("id", positionIds),
     a.from("organizations").select("id, name, is_test_record").in("id", orgIds),
     profileIds.length
       ? a.from("candidate_profiles").select("id, full_name").in("id", profileIds)
@@ -226,6 +231,10 @@ export async function loadDecisionBacklog(
       client_name: String(org?.["name"] ?? "Unknown client"),
       position_id: String(m["position_id"]),
       position_title: String(position?.["title"] ?? "Untitled position"),
+      owner_user_id:
+        typeof position?.["owner_user_id"] === "string" && position["owner_user_id"]
+          ? String(position["owner_user_id"])
+          : null,
       candidate_name:
         typeof profileId === "string"
           ? (candidateName.get(profileId) ?? "Unnamed candidate")
