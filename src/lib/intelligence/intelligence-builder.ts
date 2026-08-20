@@ -536,14 +536,22 @@ export function buildIntelligence(
   // ── 6 · Evidence completeness ──────────────────────────────────────────
   {
     const total = records.evidenceItems.length;
-    const withSource = records.evidenceItems.filter((e) => !!iso(e.source_passage)).length;
-    const reviewed = records.evidenceItems.filter(
-      (e) => e.reviewer_status === "confirmed" || e.reviewer_status === "corrected",
+    const isConfirmed = (e: Row) =>
+      e.reviewer_status === "confirmed" || e.reviewer_status === "corrected";
+    const isNeedsCheck = (e: Row) =>
+      Boolean(e.validation_need) && e.validation_need !== "none";
+    const hasSource = (e: Row) => Boolean(iso(e.source_passage));
+    const confirmed = records.evidenceItems.filter(isConfirmed).length;
+    const needsCheck = records.evidenceItems.filter((e) => !isConfirmed(e) && isNeedsCheck(e)).length;
+    const unreviewedWithSource = records.evidenceItems.filter(
+      (e) => !isConfirmed(e) && !isNeedsCheck(e) && hasSource(e),
     ).length;
-    const needsCheck = records.evidenceItems.filter(
-      (e) => e.validation_need && e.validation_need !== "none",
+    const noSource = records.evidenceItems.filter(
+      (e) => !isConfirmed(e) && !isNeedsCheck(e) && !hasSource(e),
     ).length;
-    const share = total ? withSource / total : null;
+    // Ready to use = human-confirmed OR carries a source passage and is not flagged.
+    const ready = confirmed + unreviewedWithSource;
+    const share = total ? ready / total : null;
     const latestAt = newest(records.evidenceItems, "created_at");
     const state = resolveMetricStatus({
       counted: total,
@@ -558,11 +566,11 @@ export function buildIntelligence(
       status: state.status,
       statusReason: state.reason,
       value: share === null ? null : pct(share),
-      valueNote: share === null ? null : "of findings quote a source passage",
+      valueNote: share === null ? null : "of findings are ready to use",
       tone: share === null ? "neutral" : share >= 0.9 ? "good" : share >= 0.7 ? "warn" : "bad",
       comparison: null,
       freshness: fresh(latestAt),
-      explanation: `Across ${total} recorded finding${total === 1 ? "" : "s"}, this is how many carry the exact passage they came from. ${reviewed} ${reviewed === 1 ? "has" : "have"} been confirmed or corrected by a human reviewer.`,
+      explanation: `Across ${total} recorded finding${total === 1 ? "" : "s"}, this is how many are ready to act on: a quoted passage or a human review. ${confirmed} ${confirmed === 1 ? "has" : "have"} been confirmed or corrected by a reviewer, ${needsCheck} ${needsCheck === 1 ? "is" : "are"} flagged for checking, and ${noSource} ${noSource === 1 ? "has" : "have"} no source passage.`,
       action: needsCheck
         ? {
             label: `${needsCheck} finding${needsCheck === 1 ? "" : "s"} flagged for checking`,
@@ -578,10 +586,10 @@ export function buildIntelligence(
             unit: "findings",
             valueHeading: "Findings",
             points: [
-              { key: "quoted", label: "With source quote", value: withSource, tone: "good", note: `${withSource} findings quote the exact passage` },
-              { key: "reviewed", label: "Human-confirmed", value: reviewed, tone: "good", note: `${reviewed} findings were read and accepted by a reviewer` },
+              { key: "ready", label: "Ready to use", value: ready, tone: "good", note: `${ready} findings quote a source or are confirmed` },
+              { key: "reviewed", label: "Human-confirmed", value: confirmed, tone: "good", note: `${confirmed} findings were read and accepted by a reviewer` },
               { key: "check", label: "Needs checking", value: needsCheck, tone: "warn", note: `${needsCheck} findings are flagged for verification` },
-              { key: "unquoted", label: "No source quote", value: total - withSource, tone: "bad", note: `${total - withSource} findings have no passage attached` },
+              { key: "unquoted", label: "No source quote", value: noSource, tone: "bad", note: `${noSource} findings have no passage attached` },
             ],
           }
         : null,
@@ -660,7 +668,7 @@ export function buildIntelligence(
           : null,
       link: { label: "See the pipeline", to: "/client/candidates" },
       chart: delivered.length
-        ? { kind: "funnel", unit: "candidates", valueHeading: "Candidates", points }
+        ? { kind: "funnel", unit: "candidates", valueHeading: "Candidates", total: delivered.length, points }
         : null,
       sample: { counted: delivered.length, expected: null, unit: "candidates released in window" },
     });
@@ -750,11 +758,12 @@ export function buildIntelligence(
         .filter(Boolean)
         .sort()[0] as string | undefined;
       const unconfirmed = records.interviews.filter(
-        (i) => i.position_id === p.id && !i.scheduled_start && i.status !== "cancelled",
+        (i) => i.position_id === p.id && !i.scheduled_at && i.status !== "cancelled",
       );
       const movement = [
         ...roleMatches.map((m) => iso(m.updated_at)),
         ...records.history.filter((h) => h.position_id === p.id).map((h) => iso(h.created_at)),
+        ...unconfirmed.map((i) => iso(i.requested_at)),
         iso(p.updated_at),
       ]
         .filter(Boolean)
@@ -776,7 +785,7 @@ export function buildIntelligence(
           oldestAwaitingDecisionAt: oldestAwaiting ?? null,
           interviewsToConfirm: unconfirmed.length,
           oldestInterviewToConfirmAt:
-            (unconfirmed.map((i) => iso(i.created_at)).filter(Boolean).sort()[0] as string) ?? null,
+            (unconfirmed.map((i) => iso(i.requested_at)).filter(Boolean).sort()[0] as string) ?? null,
           promisedShortlistBy: promisedBy,
           shortlistDeliveredAt:
             (roleMatches.map((m) => iso(m.delivered_at)).filter(Boolean).sort()[0] as string) ?? null,
@@ -840,6 +849,12 @@ export function buildIntelligence(
       if (!at) continue;
       const prev = lastMove.get(h.candidate_match_id);
       if (!prev || at > prev) lastMove.set(h.candidate_match_id, at);
+    }
+    for (const i of records.interviews) {
+      const at = iso(i.requested_at) ?? iso(i.created_at);
+      if (!at) continue;
+      const prev = lastMove.get(i.candidate_match_id);
+      if (!prev || at > prev) lastMove.set(i.candidate_match_id, at);
     }
     const openStages = new Set(["delivered", "shortlisted", "interview_process", "offer"]);
     const live = records.matches.filter((m) => openStages.has(String(m.stage)));

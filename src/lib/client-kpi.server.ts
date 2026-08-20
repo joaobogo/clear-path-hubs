@@ -885,7 +885,10 @@ export function toClientCandidateDTO(row: AnyRow): ClientCandidateDTO {
     ],
   );
 
-  const coverageSummary = summariseCoverage(requirement_rows, fit, run?.score != null ? Number(run.score) : coverage?.fit_score ?? null);
+  const coverageSummary = summariseCoverage(requirement_rows, fit, run?.score != null ? Number(run.score) : coverage?.fit_score ?? null, {
+    must_have_coverage: typeof run?.must_have_coverage === "number" ? run.must_have_coverage : undefined,
+    preferred_coverage: typeof run?.preferred_coverage === "number" ? run.preferred_coverage : undefined,
+  });
 
   const workAuth = normWorkAuth(cp.work_authorization);
   const interview_guide = buildInterviewGuide({

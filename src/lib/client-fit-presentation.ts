@@ -320,6 +320,10 @@ export type CoverageSummary = {
   must_met: number;
   must_partial: number;
   must_total: number;
+  /** Weighted must-have coverage (0-1) from the scoring run, when the run stored it. */
+  must_have_coverage?: number;
+  /** Weighted preferred coverage (0-1) from the scoring run, when the run stored it. */
+  preferred_coverage?: number;
   fit_score: number;
   fit_band: FitBand;
   tone: FitPresentation["tone"];
@@ -330,6 +334,7 @@ export function summariseCoverage(
   rows: RequirementRow[],
   fit: FitPresentation,
   score: number | null,
+  runCoverage?: { must_have_coverage?: number; preferred_coverage?: number },
 ): CoverageSummary {
   const must = rows.filter((r) => r.importance === "must_have");
   const pref = rows.filter((r) => r.importance === "preferred");
@@ -360,6 +365,8 @@ export function summariseCoverage(
     must_met,
     must_partial,
     must_total: must.length,
+    must_have_coverage: runCoverage?.must_have_coverage,
+    preferred_coverage: runCoverage?.preferred_coverage,
     fit_score: score ?? Math.round(coveragePct * 100),
     fit_band: fit.band,
     tone: fit.tone,

@@ -65,7 +65,7 @@ function StatusChip({ status }: { status: MetricStatus }) {
 function ChartBlock({ chart, idPrefix }: { chart: MetricChart; idPrefix: string }) {
   const max = Math.max(1, ...chart.points.map((p) => Math.max(p.value, p.compareValue ?? 0)));
   const tableId = `${idPrefix}-table`;
-  const total = chart.points.reduce((sum, p) => sum + p.value, 0);
+  const total = chart.total ?? chart.points.reduce((sum, p) => sum + p.value, 0);
   const heading = chart.valueHeading.toLowerCase() === chart.unit.toLowerCase()
     ? `${total} ${chart.unit}`
     : `${chart.valueHeading} across ${chart.unit}`;

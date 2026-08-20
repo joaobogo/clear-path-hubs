@@ -24,6 +24,11 @@ import {
 
 
 
+function pct(n: number | undefined | null): string {
+  if (n == null) return "—";
+  return `${Math.round(n * 100)}%`;
+}
+
 const STATUS_META: Record<
   CompareStatus,
   { label: string; icon: string; className: string; cell: string }
@@ -70,10 +75,12 @@ function buildObservations(cands: ClientCandidateDTO[]): string[] {
   if (cands.length < 2) return [];
   const notes: string[] = [];
 
-  const cover = [...cands].sort((a, b) => b.coverage.must_met - a.coverage.must_met);
-  if (cover[0].coverage.must_met !== cover[cover.length - 1].coverage.must_met) {
+  const cover = [...cands].sort(
+    (a, b) => (b.coverage.must_have_coverage ?? 0) - (a.coverage.must_have_coverage ?? 0),
+  );
+  if ((cover[0].coverage.must_have_coverage ?? 0) !== (cover[cover.length - 1].coverage.must_have_coverage ?? 0)) {
     notes.push(
-      `Requirement coverage differs — ${cover[0].candidate.display_name} has the most must-haves evidenced (${cover[0].coverage.must_met}/${cover[0].coverage.must_total}).`,
+      `Requirement coverage differs — ${cover[0].candidate.display_name} has the highest coverage (${pct(cover[0].coverage.must_have_coverage)}).`,
     );
   }
 
@@ -418,15 +425,16 @@ export function CompareSheet({
             <ComparisonRow
               label="Must-have coverage"
               cols={cols}
-              hide={diffOnly && allSame(candidates.map((c) => `${c.coverage.must_met}/${c.coverage.must_total}`))}
+              hide={diffOnly && allSame(candidates.map((c) => `${c.coverage.must_have_coverage ?? 0}`))}
             >
               {candidates.map((c) => (
                 <div key={c.match_id} className="text-xs">
-                  <span className="font-medium">
-                    {c.coverage.must_met}/{c.coverage.must_total}
-                  </span>
-                  {c.coverage.must_partial > 0 && (
-                    <span className="text-muted-foreground"> · {c.coverage.must_partial} partial</span>
+                  <span className="font-medium">{pct(c.coverage.must_have_coverage)}</span>
+                  {c.coverage.must_total > 0 && (
+                    <span className="text-muted-foreground">
+                      {" "}
+                      ({c.coverage.must_met}/{c.coverage.must_total})
+                    </span>
                   )}
                 </div>
               ))}
@@ -694,9 +702,7 @@ function RelativeStrengthBoard({ candidates }: { candidates: ClientCandidateDTO[
     {
       key: "coverage",
       label: "Must-haves met",
-      values: candidates.map((c) =>
-        c.coverage.must_total ? c.coverage.must_met / c.coverage.must_total : 0,
-      ),
+      values: candidates.map((c) => c.coverage.must_have_coverage ?? 0),
       format: (n) => `${Math.round(n * 100)}%`,
     },
     {
