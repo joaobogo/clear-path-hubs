@@ -34,11 +34,13 @@ export type ConversationSummary = {
   candidate_match_id: string | null;
   subject: string;
   context_label: string | null;
-  last_message_at: string;
+  last_message_at: string | null;
   last_body: string | null;
   last_sender_name: string | null;
   unread: number;
+  message_count?: number;
 };
+
 
 export type ConversationMessage = {
   id: string;
