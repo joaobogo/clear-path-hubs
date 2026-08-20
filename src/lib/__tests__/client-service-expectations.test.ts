@@ -91,7 +91,7 @@ describe("buildServiceExpectations", () => {
   it("reports included roles and term from the stored plan", () => {
     const out = buildServiceExpectations({
       plan: {
-        label: "Multi Position",
+        label: "Multi Role",
         rolesTotal: 5,
         rolesUsed: 2,
         source: "package",
@@ -99,7 +99,7 @@ describe("buildServiceExpectations", () => {
       },
       commitments: [],
     });
-    expect(out.planLabel).toBe("Multi Position");
+    expect(out.planLabel).toBe("Multi Role");
     expect(out.rows.find((r) => r.key === "included_roles")!.promised).toBe("5 roles included");
     expect(out.rows.find((r) => r.key === "included_roles")!.performance).toBe("2 of 5 used so far");
     expect(out.rows.find((r) => r.key === "plan_term")!.commitment).toBe("Allowance valid until");

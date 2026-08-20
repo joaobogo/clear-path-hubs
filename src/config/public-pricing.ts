@@ -73,7 +73,7 @@ export const PRICING_PACKAGES: readonly PricingPackage[] = [
   },
   {
     id: "multi-position",
-    name: "Multi Position",
+    name: "Multi Role",
     description: "A handful of roles running in parallel.",
     minPositions: POSITION_BANDS.multi.min,
     maxPositions: POSITION_BANDS.multi.max,

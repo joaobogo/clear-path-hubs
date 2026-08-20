@@ -413,7 +413,7 @@ function SlideEconomics() {
       <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { tier: "Pilot", price: PRICE_PILOT_DISPLAY, unit: " one-time", body: PILOT_ROLES_LABEL + ". Test the model on one critical hire." },
-          { tier: "Multi Position", price: PRICE_MULTI_DISPLAY, unit: " one-time", body: MULTI_ROLES_LABEL + ". Parallel searches, shared context.", highlight: true },
+          { tier: "Multi Role", price: PRICE_MULTI_DISPLAY, unit: " one-time", body: MULTI_ROLES_LABEL + ". Parallel searches, shared context.", highlight: true },
           { tier: "Hiring Sprint", price: PRICE_SPRINT_DISPLAY, unit: " one-time", body: SPRINT_ROLES_LABEL + ". Concurrent, priority support." },
           { tier: "Custom", price: PRICE_ENTERPRISE_DISPLAY, unit: "", body: ENTERPRISE_ROLES_LABEL + ". Continuous portfolio hiring." },
         ].map((t) => (

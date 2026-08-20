@@ -73,7 +73,7 @@ export function ActionRequiredBanner({ actionItems }: { actionItems: Row[] }) {
         <AlertCircle className="h-4 w-4 taas-fg-warning " />
         <h2 className="text-sm font-semibold">Action required</h2>
         <span className="text-xs text-muted-foreground">
-          {plural(actionItems.length, "position")}
+          {plural(actionItems.length, "role")}
         </span>
       </div>
       <ul className="space-y-2">

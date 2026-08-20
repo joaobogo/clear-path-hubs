@@ -284,7 +284,7 @@ function EnterprisePage() {
           </p>
           <p className="mt-3 max-w-2xl text-sm text-[color:var(--brand-navy)]/80">
             Hiring {POSITION_BANDS.pilot.min}–{POSITION_BANDS.sprint.max} roles? Those buy the
-            one-off packages instead — Pilot, Multi Position or Hiring Sprint on the{" "}
+            one-off packages instead — Pilot, Multi Role or Hiring Sprint on the{" "}
             <Link to="/pricing" className="font-semibold underline underline-offset-4">
               pricing page
             </Link>

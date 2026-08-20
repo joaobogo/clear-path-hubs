@@ -62,7 +62,7 @@ export type EntitlementRow = {
 export const ONEOFF_PLAN_IDS = ["pilot", "multi", "sprint", "enterprise"] as const;
 export const ONEOFF_PLAN_LABELS: Record<string, string> = {
   pilot: "Pilot",
-  multi: "Multi Position",
+  multi: "Multi Role",
   sprint: "Hiring Sprint",
   enterprise: "Custom",
 };
