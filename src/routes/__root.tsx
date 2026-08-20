@@ -143,33 +143,36 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "Plan mode for this one — I'd like to see your structure before you build it.
+TEXTO DO USUÁRIO: "Plan mode please — I think this is one shared cause, not fifteen separate ones.
 
-The edit wizard at /admin/positions/<id>/edit loads correctly populated, which is fine. The
-problem is the step count. Right now it's seven, and step 3 is an entire step for five
-compensation fields — currency, period, min, max, notes.
+Navigation is fast but content is slow, and the distinction matters because a naive
+performance check will show green. Measured nav duration versus time until the page was
+actually readable:
 
-I'd like three:
-  1. Requisition — current steps 1 and 3 combined (compensation is a fieldset, not a stage)
-  2. Candidate profile and gates — current steps 2 and 4 combined
-  3. Locations — current step 5
-Move step 6 (job post copy, brand voice, EO statement, candidate preview) out of the wizard
-onto the publish flow, since it's only needed when a role goes public. And promote step 7's
-readiness checklist into a persistent side rail so it's visible on every step instead of
-only at the end.
+  /admin/messages      673 ms → ~13 s
+  /admin/wbr           686 ms → ~12 s
+  /admin/team          670 ms → ~13 s
+  /admin/payments      554 ms → ~13 s
+  /admin/candidates  1,073 ms → ~13 s
+  /admin/positions   1,116 ms → ~13 s
+  /admin/clients     1,334 ms → ~11 s
+  /admin/operations  1,986 ms → ~12 s
+  /admin/health      2,573 ms → ~12 s
+  /admin/intake      2,765 ms → ~13 s
 
-One thing that fix should also resolve: location is currently asked twice — step 1 collects
-\"Geographic Requirements\" and step 5 collects a locations table. That's how one record ended
-up showing \"Open worldwide\" and \"City hotel (unspecified location)\" as both true, with step
-7 still demanding \"At least one location\". Three contradictory statements in one panel. One
-location model fixes it.
+Not one page met a 5-second threshold. Every page ships its shell in under 3 seconds and
+then holds a full-page skeleton for another 9 to 11 seconds. The uniformity across pages
+with wildly different payloads points at one blocking call in the layout or auth middleware
+rather than per-page queries — that's where I'd look first.
 
-Please keep these exactly as they are, they're the best-designed things in the app:
-- step 7's checklist with its severity groups and \"Fix in step N\" links
-- step 5's score-invalidation notice: \"Scoring-relevant detail changed (v2) — Existing
-  candidate scores were produced against an earlier version of this job. Nothing has been
-  rewritten — start a rescore…\"
-- the unsaved-changes guard, which correctly blocked three attempts to navigate away"`}
+Two loads never resolved at all: the Review→candidate route (prompt 1.1) and the client
+detail delivery tile (prompt 2.1).
+
+Please: find the shared blocking call, render each block as its own data arrives instead of
+holding a whole-page skeleton, and put a timeout on every skeleton so it becomes an error
+with a retry rather than running forever.
+
+Check: every page readable in under 5 seconds, no skeleton lasting past 10."`}
         </div>
 
         <Scripts />
