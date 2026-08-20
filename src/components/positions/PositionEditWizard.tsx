@@ -41,7 +41,6 @@ import {
 import { checkRequisitionDuplicate } from "@/lib/requisition.functions";
 import { RequisitionEditor } from "@/components/positions/RequisitionEditor";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
-import { formatEnumLabel } from "@/lib/human-labels";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 import type { QualityInput } from "@/lib/requisition-schema";
