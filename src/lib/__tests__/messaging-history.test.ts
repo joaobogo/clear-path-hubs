@@ -18,6 +18,7 @@ describe("Messaging History Integrity", () => {
       .eq("scope", "organization")
       .maybeSingle();
 
+    let createdByTest = false;
     if (existing) {
       convoId = existing.id;
     } else {
@@ -33,6 +34,7 @@ describe("Messaging History Integrity", () => {
         .single();
       if (cErr) throw new Error(`Failed to create conversation: ${cErr.message}`);
       convoId = convo.id;
+      createdByTest = true;
     }
 
     const oldDate = new Date();
@@ -106,7 +108,11 @@ describe("Messaging History Integrity", () => {
     expect(recentMsg).toBeDefined();
     expect(recentMsg?.sender_side).toBe("client");
 
-    // Cleanup messages but keep conversation for demo org stability
+    // Cleanup all messages inserted by this test, and remove the conversation
+    // if the test created it, so no test fixture leaks into the demo workspace.
     await supabaseAdmin.from("messages").delete().eq("conversation_id", convoId).in("body", ["OLD CLIENT MESSAGE", "STAFF REPLY", "RECENT CLIENT MESSAGE"]);
+    if (createdByTest) {
+      await supabaseAdmin.from("conversations").delete().eq("id", convoId);
+    }
   });
 });

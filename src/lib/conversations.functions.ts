@@ -751,6 +751,7 @@ export async function _listMessageHistoryHandler({
       name: sid ? (meta?.name ?? null) : null,
       isStaff: sid ? (meta?.staff ?? false) : true,
       roleLabel: sid ? (meta?.role ?? null) : "TaaSFlow team",
+      maskStatus: true, // Client-facing message history must never reveal individual staff names.
     });
 
     const convo = m.conversations;
