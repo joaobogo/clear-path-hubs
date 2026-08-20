@@ -322,7 +322,7 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
           hint={`${summary.remaining} remaining`}
         />
         <SummaryTile
-          label="In pipeline"
+          label="In progress"
           value={
             summary.delivered +
             summary.shortlisted +

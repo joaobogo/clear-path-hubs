@@ -34,7 +34,7 @@ type BandCopy = Omit<ScoreBandDef, "min" | "max">;
 const COPY: readonly BandCopy[] = [
   {
     key: "exceptional",
-    label: "Exceptional Fit",
+    label: "Exceptional",
     shortLabel: "Exceptional",
     tone: "confident",
     accent: "emerald",
@@ -42,7 +42,7 @@ const COPY: readonly BandCopy[] = [
   },
   {
     key: "top",
-    label: "Top Fit",
+    label: "Top",
     shortLabel: "Top",
     tone: "confident",
     accent: "emerald",
@@ -50,7 +50,7 @@ const COPY: readonly BandCopy[] = [
   },
   {
     key: "strong",
-    label: "Strong Fit",
+    label: "Strong",
     shortLabel: "Strong",
     tone: "positive",
     accent: "sky",
@@ -66,8 +66,8 @@ const COPY: readonly BandCopy[] = [
   },
   {
     key: "not_recommended",
-    label: "Not Recommended",
-    shortLabel: "Not Recommended",
+    label: "Not recommended",
+    shortLabel: "Not recommended",
     tone: "dissuade",
     accent: "slate",
     description: "Below the fit threshold. Not proposed to the client.",

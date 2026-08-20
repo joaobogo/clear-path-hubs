@@ -36,7 +36,7 @@ export function HiringSnapshot({
       <section aria-label="Hiring snapshot" className="mb-6">
         <QueryErrorCard
           compact
-          title="We couldn't load your pipeline figures"
+          title="We couldn't load your hiring figures"
           error={error}
           onRetry={onRetry}
           retrying={retrying}

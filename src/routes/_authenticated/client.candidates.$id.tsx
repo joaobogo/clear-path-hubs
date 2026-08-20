@@ -618,7 +618,7 @@ function CandidateDetailPage() {
                 candidate_name: candidate.candidate.display_name,
                 candidate_email: (candidate.candidate as AnyRow).email ?? null,
                 position_id: (candidate.position as AnyRow)?.id ?? "",
-                position_title: candidate.position?.title ?? "Position",
+                position_title: candidate.position?.title ?? "Role",
                 stage: candidate.stage,
                 has_active_interview: false,
                 availability_preference: (candidate.candidate as AnyRow).availability 

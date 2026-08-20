@@ -27,7 +27,7 @@ export const Route = createFileRoute("/_authenticated/client/executive")({
       {
         name: "description",
         content:
-          "Enterprise leadership view: open roles by region, pipeline health by business unit, time-in-stage, bottlenecks, delivery velocity, shortlist quality, and finance-ready hiring summary.",
+          "Enterprise leadership view: open roles by region, hiring health by business unit, time-in-stage, bottlenecks, delivery velocity, shortlist quality, and finance-ready hiring summary.",
       },
       { name: "robots", content: "noindex" },
     ],

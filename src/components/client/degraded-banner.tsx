@@ -2,7 +2,7 @@ import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export type PanelStatus = {
-  /** Human label for the panel, e.g. "Pipeline". */
+  /** Human label for the panel, e.g. "Candidates by stage". */
   label: string;
   failed: boolean;
   /** Has data, but the data is known out of date. */

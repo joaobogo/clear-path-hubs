@@ -124,11 +124,12 @@ export function resolveStatus(
 export type ScoreBandKey = "excellent" | "strong" | "moderate" | "weak" | "poor";
 
 export const SCORE_BANDS: Record<ScoreBandKey, { label: string; tone: StatusTone }> = {
-  excellent: { label: "Excellent match", tone: "success" },
-  strong: { label: "Strong match", tone: "success" },
-  moderate: { label: "Moderate match", tone: "warning" },
-  weak: { label: "Weak match", tone: "warning" },
-  poor: { label: "Poor match", tone: "danger" },
+  // Same five words as the fit bands (src/lib/client-fit-presentation.ts).
+  excellent: { label: "Top", tone: "success" },
+  strong: { label: "Strong", tone: "success" },
+  moderate: { label: "Consider", tone: "warning" },
+  weak: { label: "Consider", tone: "warning" },
+  poor: { label: "Not recommended", tone: "danger" },
 };
 
 /** Wording only — the numbers come from the canonical band table. */

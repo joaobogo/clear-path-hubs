@@ -9,7 +9,7 @@ import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 // Fit-band ordering for the "Highest approved fit" sort. Employer surfaces have
 // no numeric rating to sort on — the band is the contract.
 export const BAND_RANK: Record<string, number> = {
-  exceptional: 5, strong: 4, good: 3, mixed: 2, limited: 1, not_recommended: 0,
+  exceptional: 5, top: 4, strong: 3, consider: 2, not_recommended: 1,
 };
 
 export type CandidateListCriteria = {
@@ -36,9 +36,12 @@ const STAGE_ORDER: Record<ClientCandidateDTO["stage"], number> = {
   not_moving_forward: 5,
 };
 
-/** Mirrors `isTopMatch` in client-kpi.server.ts via the presentation band. */
+/**
+ * Mirrors `isTopMatch` in client-kpi.server.ts via the presentation band: the
+ * tile and the list it links to must show the same number of candidates.
+ */
 export function matchesTopTile(c: ClientCandidateDTO): boolean {
-  return c.fit.band === "exceptional";
+  return c.fit.band === "exceptional" || c.fit.band === "top" || c.fit.band === "strong";
 }
 
 /**

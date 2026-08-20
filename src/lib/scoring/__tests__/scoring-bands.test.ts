@@ -14,9 +14,9 @@ describe("classifyScoreBand", () => {
     expect(classifyScoreBand(0).key).toBe("not_recommended");
   });
 
-  it("87 is Top Fit — never Consider", () => {
+  it("87 is Top — never Consider", () => {
     expect(classifyScoreBand(87).key).toBe("top");
-    expect(classifyScoreBand(87).label).toBe("Top Fit");
+    expect(classifyScoreBand(87).label).toBe("Top");
   });
 
   it("null / NaN / undefined -> unscored", () => {

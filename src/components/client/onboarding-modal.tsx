@@ -90,7 +90,7 @@ export function ClientOnboardingModal({
     client_admin:
       "As Client admin you can invite teammates, submit new roles, approve offers, and configure workspace settings.",
     client_editor:
-      "As Client editor you can move candidates through your pipeline, schedule interviews, and message TaaSFlow.",
+      "As Client editor you can move candidates through your hiring stages, schedule interviews, and message TaaSFlow.",
     client_viewer:
       "As Client viewer you can review roles and candidates. Anything that changes a role is hidden — ask an admin for edit access if you need more.",
   };
@@ -127,7 +127,7 @@ export function ClientOnboardingModal({
           <NavItem
             icon={<Briefcase className="h-4 w-4" />}
             title="Positions"
-            body="Every role you are hiring for, with a pipeline summary."
+            body="Every role you are hiring for, with a progress summary."
           />
           <NavItem
             icon={<Users className="h-4 w-4" />}

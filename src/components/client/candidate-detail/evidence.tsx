@@ -200,7 +200,7 @@ export const FitHero = memo(function FitHero({
   // The ring encodes the fit band, not the internal number — a percentage arc
   // would leak engine precision onto an employer surface.
   const BAND_FILL: Record<string, number> = {
-    exceptional: 1, strong: 0.8, good: 0.6, mixed: 0.4, limited: 0.2, not_recommended: 0.08,
+    exceptional: 1, top: 0.85, strong: 0.7, consider: 0.5, not_recommended: 0.15,
   };
   const dashOffset = dashArray * (1 - (BAND_FILL[fit.band] ?? 0.4));
 

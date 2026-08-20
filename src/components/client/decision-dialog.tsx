@@ -79,7 +79,7 @@ const CONFIG: Record<DecisionActionKey, Config> = {
   hold: {
     title: "Put this candidate on hold",
     description:
-      "The candidate stays in your pipeline at the current stage. We will pause outreach until you decide.",
+      "The candidate stays at the current stage. We will pause outreach until you decide.",
     confirmLabel: "Place on hold",
     reasons: HOLD_REASONS,
     reasonLabel: "Why are you holding?",
