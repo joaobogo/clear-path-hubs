@@ -4,7 +4,6 @@ import {
 } from "@/components/workspace/route-states";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
-
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { NOTIFICATIONS_QUERY_KEY } from "@/components/notification-bell";
@@ -21,6 +20,8 @@ import { SupportSessionBanner } from "@/components/admin/support-session-banner"
 import { AdminTestScopeProvider } from "@/components/admin/admin-test-scope";
 import { DeferredBlock } from "@/components/ds/deferred-block";
 import { SkeletonTimeout } from "@/components/ds/skeleton-timeout";
+import { useIncludeTestRecords } from "@/lib/admin-scope";
+
 
 const STAFF_GATE_TIMEOUT_MS = 3_000;
 
