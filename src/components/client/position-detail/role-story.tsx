@@ -223,9 +223,10 @@ export function RoleStoryPanel({
                             {b.count}
                           </span>
                         )}
-                      </li>
-                    );
-                  })}
+                       </li>
+                      );
+                    });
+                  })()}
                 </ul>
                 <p className="mt-3 border-t pt-3 text-xs text-muted-foreground">
                   {distribution.criteria}
