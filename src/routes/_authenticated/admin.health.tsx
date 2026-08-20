@@ -203,9 +203,9 @@ function HealthPage() {
                     <Link
                       to="/admin/candidates/$id"
                       params={{ id: j.entity_id }}
-                      className="text-xs text-primary hover:underline"
+                      className="inline-flex min-h-8 items-center px-1 text-xs text-primary hover:underline"
                     >
-                      open
+                      Open
                     </Link>
                   </td>
                 </tr>
