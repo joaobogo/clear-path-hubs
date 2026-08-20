@@ -224,6 +224,7 @@ function OpsPanel() {
   }
 
   const totals = Object.entries(data.totals.paid_cents_by_currency);
+  const linkedPilots = data.pilots.filter((p) => p.position_title);
 
   return (
     <div className="grid gap-4 lg:grid-cols-3">
