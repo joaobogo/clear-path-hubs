@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { formatDate, formatDateTime } from "@/lib/format/datetime";
 import { clientStageLabel } from "@/lib/client-stage-labels";
 import { sentenceLabel } from "@/lib/format/sentence-label";
 
@@ -65,7 +65,7 @@ export type SearchResponse = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = Record<string, any>;
 
-import { sanitizeSearchTerm, orIlike, ilikeValue } from "./search/postgrest-filter";
+import { sanitizeSearchTerm, orIlike, ilikeValue, buildPositionSearchOr } from "./search/postgrest-filter";
 
 export const globalSearch = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -155,12 +155,14 @@ export const globalSearch = createServerFn({ method: "POST" })
 
     // Positions.
     {
-      const orFilter = orIlike(["title", "location"], term);
+      const orFilter = await buildPositionSearchOr(supabase as never, term, {
+        extraColumns: ["location"],
+      });
       if (orFilter) {
         let query = supabase
           .from("positions")
-          .select("id, title, location, status, is_test_record, organization_id, organizations!inner(name)")
-          .or(`${orFilter},organizations.name.ilike.${ilikeValue(term)}`)
+          .select("id, title, location, status, is_test_record, organization_id")
+          .or(orFilter)
           .order("updated_at", { ascending: false })
           .limit(LIMIT);
         if (scope === "client") query = query.in("organization_id", orgIds);
@@ -168,8 +170,7 @@ export const globalSearch = createServerFn({ method: "POST" })
         const { data: positions, error } = await query;
         if (error) throw new Error(error.message);
         groups.positions = ((positions as AnyRow[]) ?? []).map((p) => {
-          const orgName = p.organizations?.name as string | undefined;
-          const context = [orgName, p.location].filter(Boolean).join(" · ");
+          const context = [p.location].filter(Boolean).join(" · ");
           const state = sentenceLabel(p.status);
 
           if (scope === "admin") {
@@ -208,8 +209,8 @@ export const globalSearch = createServerFn({ method: "POST" })
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { data: profiles, error: pErr } = await supabaseAdmin
           .from("candidate_profiles")
-          .select("id, full_name, email, headline, organizations!inner(name)")
-          .or(`${profileFilter},organizations.name.ilike.${ilikeValue(term)}`)
+          .select("id, full_name, email, headline")
+          .or(profileFilter)
           .limit(50);
         if (pErr) throw new Error(pErr.message);
         const profileIds = ((profiles as AnyRow[]) ?? []).map((p) => p.id);
@@ -290,7 +291,7 @@ export const globalSearch = createServerFn({ method: "POST" })
         type: "intake" as const,
         id: i.id,
         label: i.role_title || i.company_name || "Intake",
-        context: [i.company_name, new Date(i.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })]
+        context: [i.company_name, formatDate(i.created_at)]
           .filter(Boolean)
           .join(" · "),
         state: [
@@ -322,7 +323,7 @@ export const globalSearch = createServerFn({ method: "POST" })
           type: "message",
           id: m.id,
           label: snippet || "Message",
-          context: new Date(m.created_at).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE }),
+          context: formatDateTime(m.created_at),
           href,
           search: scope === "client" ? { org: m.thread_id as string } : undefined,
         };
