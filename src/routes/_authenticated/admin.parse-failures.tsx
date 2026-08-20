@@ -94,7 +94,7 @@ function ParseFailures() {
       setDraft("");
       await query.refetch();
     } catch (e: Any) {
-      toast.error(e?.message ?? "Could not complete that action");
+      toastError(e, { fallback: "Could not complete that action", tone: "admin" });
     } finally {
       setBusy(false);
     }
