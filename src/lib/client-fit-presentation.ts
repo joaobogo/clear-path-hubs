@@ -320,6 +320,10 @@ export type CoverageSummary = {
   must_met: number;
   must_partial: number;
   must_total: number;
+  /** Weighted must-have coverage (0-1) from the scoring run, when the run stored it. */
+  must_have_coverage?: number;
+  /** Weighted preferred coverage (0-1) from the scoring run, when the run stored it. */
+  preferred_coverage?: number;
   fit_score: number;
   fit_band: FitBand;
   tone: FitPresentation["tone"];
