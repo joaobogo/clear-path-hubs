@@ -121,6 +121,7 @@ const DICTIONARY: Record<string, string> = {
   candidate_match: "Candidate on a role",
   application: "Application",
   position: "Role",
+  support_view_read_only: "You can't create roles while previewing a client workspace.",
 };
 
 /**
@@ -144,6 +145,12 @@ export function humanizeCode(code: string | null | undefined): string {
   const normalized = code.toLowerCase().trim();
   if (DICTIONARY[normalized]) return DICTIONARY[normalized];
   
+  // P07: Never return raw SCREAMING_SNAKE_CASE. If it looks like a constant and
+  // isn't in our dictionary, return a generic fallback.
+  if (/^[A-Z0-9_]{3,}$/.test(code)) {
+    return "Something went wrong. Please try again.";
+  }
+
   // Fallback: simple snake_case to Space Case
   return code
     .replace(/[_-]/g, " ")

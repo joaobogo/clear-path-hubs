@@ -1,6 +1,7 @@
 import { toast } from "sonner";
 import { looksTechnical, normalizeError, logTechnical, type AudienceTone } from "@/lib/error-taxonomy";
 import { humanizePublishBlockedMessage } from "@/lib/publish-gate";
+import { humanizeCode } from "@/lib/humanize-codes";
 
 /**
  * Toast an error without leaking internals.
@@ -17,7 +18,21 @@ import { humanizePublishBlockedMessage } from "@/lib/publish-gate";
  */
 export function toastError(error: unknown, opts: { tone?: AudienceTone; fallback?: string; surface?: string } = {}) {
 	const { tone = "client", fallback, surface } = opts;
-	const raw = error instanceof Error ? error.message.replace(/^Error:\s*/, "") : "";
+	const raw = error instanceof Error ? error.message.replace(/^Error:\s*/, "") : String(error);
+
+	// P07: Always check for a humanized code first. If the error is a SCREAMING_SNAKE_CASE
+	// token that we have a sentence for, use it.
+	if (raw && /^[A-Z0-9_]{3,64}$/.test(raw)) {
+		const human = humanizeCode(raw);
+		if (human !== raw && !human.includes(" ")) { // humanizeCode returns Start Case by default
+			// This means it wasn't in the dictionary if it just did casing.
+			// dictionary entries for sentences will have spaces.
+		} else if (human !== raw) {
+			toast.error(human);
+			return;
+		}
+	}
+
 	const intentional = raw.length > 0 && raw.length < 200 && !looksTechnical(raw);
 	const human = intentional ? humanizePublishBlockedMessage(raw) : null;
 
@@ -42,7 +57,11 @@ export function toastError(error: unknown, opts: { tone?: AudienceTone; fallback
 
 	const normalized = normalizeError(error, { tone });
 	logTechnical(error, normalized, surface ? { surface } : {});
-	toast.error(fallback ?? normalized.title, {
+	
+	// P07 fallback logic: never render raw screaming snake case.
+	const displayTitle = (fallback ?? normalized.title);
+	
+	toast.error(displayTitle, {
 		description: `${normalized.description} Reference: ${normalized.correlationId}`,
 	});
 }
