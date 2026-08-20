@@ -191,7 +191,7 @@ export function QueryView<TData>({
         className={className}
         title={errorTitle}
         error={query.error}
-        onRetry={query.refetch ? () => query.refetch!() : undefined}
+        onRetry={query.refetch ? () => (query.refetch!() as void | Promise<unknown>) : undefined}
         retrying={Boolean(query.isFetching)}
       />
     );
