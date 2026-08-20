@@ -122,7 +122,7 @@ function buildBreadcrumbs(
   pathname: string,
   navItems: WorkspaceNavItem[],
   detailLabel?: string | null,
-): { label: string; to?: string }[] {
+): { label: string | ReactNode; to?: string }[] {
   // Sort by longest match so /admin/positions wins over /admin.
   const sorted = [...navItems].sort((a, b) => b.to.length - a.to.length);
   const section = sorted.find((n) =>
@@ -134,13 +134,24 @@ function buildBreadcrumbs(
   const tail = pathname.slice(section.to.length).split("/").filter(Boolean);
   const last = tail[tail.length - 1];
   if (!last) return [{ label: section.label }];
+
   // A detail page publishes the record's own name; only fall back to the raw
   // segment (a uuid, which reads as gibberish) when nothing was published.
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(last);
-  // A raw uuid is never a label. Until the detail page publishes the record's
-  // own name, fall back to a short human word, not the id.
-  const readable = detailLabel ?? (isUuid ? "Candidate" : last.replace(/[-_]/g, " "));
+  const titleCase = (s: string) =>
+    s
+      .replace(/[-_]/g, " ")
+      .replace(/\b\w/g, (c) => c.toUpperCase());
 
+  // A raw uuid with no published label means the record is still loading.
+  // Show a skeleton crumb rather than a generic entity-type literal.
+  const readable = detailLabel ?? (
+    isUuid ? (
+      <span aria-busy="true" className="inline-block h-3.5 w-20 animate-pulse rounded bg-muted" />
+    ) : (
+      titleCase(last)
+    )
+  );
 
   return [
     { label: section.label, to: section.to },
