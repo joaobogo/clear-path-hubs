@@ -233,31 +233,25 @@ export function LifecycleBar({
           label: "Publish",
           onClick: async () => {
             if (includeVisibilityCheck) {
-              try {
-                const { evaluatePublishGate } = await import("@/lib/publish-gate");
-                const gateBlockers = evaluatePublishGate({
-                  status: position.status,
-                  payment_status: position.payment_status,
-                  approved_at: position.approved_at,
-                  published_at: position.published_at,
-                  title: position.title,
-                  description: position.description,
-                  employment_type: position.employment_type,
-                  work_model: position.work_model,
-                  seniority: position.seniority,
-                  location: position.location,
-                  requirements: position.requirements,
-                }).filter((b) => b !== "not_approved");
-                if (gateBlockers.length > 0) {
-                  const { publishBlockedMessage, humanizePublishBlockedMessage } = await import("@/lib/publish-gate");
-                  toast.error(humanizePublishBlockedMessage(publishBlockedMessage(gateBlockers)));
-                  return;
-                }
-              } catch (e) {
-                console.error("Gate check failed", e);
+              const gateBlockers = evaluatePublishGate({
+                status: position.status,
+                payment_status: position.payment_status,
+                approved_at: position.approved_at,
+                published_at: position.published_at,
+                title: position.title,
+                description: position.description,
+                employment_type: position.employment_type,
+                work_model: position.work_model,
+                seniority: position.seniority,
+                location: position.location,
+                requirements: position.requirements,
+              }).filter((b) => b !== "not_approved");
+              if (gateBlockers.length > 0) {
+                toast.error(humanizePublishBlockedMessage(publishBlockedMessage(gateBlockers)));
+                return;
               }
             }
-            await doVis("public", "Live on job board");
+            await navigate({ to: "/admin/positions/$id/publish", params: { id: position.id } });
           },
         };
     secondary.push({ key: "pause", label: "Pause", onClick: () => doStatus("pause", "Paused") });
