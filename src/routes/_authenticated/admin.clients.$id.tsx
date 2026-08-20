@@ -244,9 +244,9 @@ function ClientDetail() {
           return (
             <Link
               key={t}
-              to="."
+              to="/admin/clients/$id"
+              params={{ id }}
               search={{ tab: t }}
-              replace
               data-qa-action={`tab-${t}`}
               className={`inline-flex items-center gap-1.5 border-b-2 px-3 py-2 text-sm ${
                 tab === t
