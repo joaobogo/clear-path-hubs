@@ -11,6 +11,7 @@ import { useClientOrgSearch } from "@/lib/use-client-org";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { withQueryTimeout } from "@/lib/client/query-timeout";
+import { formatRelative } from "@/lib/format/datetime";
 import {
   PortfolioSnapshot,
   CompactList,
