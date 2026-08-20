@@ -10,5 +10,7 @@ export {
   useAdminTestScope,
   useIncludeTestRecords,
   useScopedIncludeTest,
+  useActingUserId,
   type AdminTestScope,
 } from "@/components/admin/admin-test-scope";
+

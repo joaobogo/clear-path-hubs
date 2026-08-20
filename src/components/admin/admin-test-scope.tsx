@@ -9,6 +9,8 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getTestScopeState } from "@/lib/test-scope.functions";
+import { supabase } from "@/integrations/supabase/client";
+
 
 export type AdminTestScope = {
   /** True when test and internal organisations are part of every read. */
