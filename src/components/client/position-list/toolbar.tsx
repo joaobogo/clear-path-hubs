@@ -39,10 +39,17 @@ function ActionLink({ row }: { row: Row }) {
       </Link>
     );
   }
-  if (target?.kind === "review_candidates" || target?.kind === "offer_response") {
+  if (target?.kind === "offer_response") {
+    return (
+      <Link to="/client/offers" search={{ position: target.search.position }} className={cls}>
+        See the offer →
+      </Link>
+    );
+  }
+  if (target?.kind === "review_candidates") {
     return (
       <Link to="/client/candidates" search={target.search} className={cls}>
-        {target.kind === "review_candidates" ? "Review candidates →" : "See the offer →"}
+        Review candidates →
       </Link>
     );
   }
