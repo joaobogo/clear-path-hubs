@@ -280,7 +280,7 @@ function ClientsPage() {
   const start = (page - 1) * pageSize;
   const rows = filtered.slice(start, start + pageSize);
   const showingFrom = total === 0 ? 0 : start + 1;
-  const showingTo = Math.min(total, start + pageSize);
+  const showingTo = Math.min(total, page * pageSize);
   const industries = data?.industries ?? [];
 
   const [archiveTarget, setArchiveTarget] = useState<ClientRow | null>(null);
