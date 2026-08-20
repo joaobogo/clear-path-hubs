@@ -330,7 +330,11 @@ export function PositionEditWizard({
   useEffect(() => {
     if (Object.keys(errors).length === 0) return;
     const key = Object.keys(errors)[0];
-    document.querySelector<HTMLElement>(`[data-field="${key}"]`)?.focus();
+    const el = document.querySelector<HTMLElement>(`[data-field="${key}"]`);
+    if (el) {
+      el.focus();
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   }, [errors]);
 
   const qualityDraft: Partial<QualityInput> = useMemo(
