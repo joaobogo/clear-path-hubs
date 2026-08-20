@@ -334,12 +334,15 @@ export function summariseCoverage(
   const must = rows.filter((r) => r.importance === "must_have");
   const pref = rows.filter((r) => r.importance === "preferred");
 
-  // HONESTY GATE (C2/C3/C9): A requirement is only met if it has real verified evidence.
-  // A row must have status === "met" AND at least one evidence snippet to be counted.
-  const met = (r: RequirementRow) => r.status === "met" && r.evidence.length > 0;
-  const partial = (r: RequirementRow) => r.status === "partial" || (r.status === "met" && r.evidence.length === 0);
+  // Counts must agree with the requirement grid the client actually reads:
+  // the grid renders r.status, so the summary counts r.status too. Evidence
+  // availability is reported separately (evidence_support), never by silently
+  // downgrading a met requirement to partial here.
+  const met = (r: RequirementRow) => r.status === "met";
+  const partial = (r: RequirementRow) => r.status === "partial";
   const missing = (r: RequirementRow) =>
-    (r.status === "not_evidenced" || r.status === "contradicted") && r.evidence.length === 0;
+    r.status === "not_evidenced" || r.status === "contradicted";
+
 
   const must_met = must.filter(met).length;
   const must_partial = must.filter(partial).length;
