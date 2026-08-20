@@ -91,7 +91,7 @@ const searchSchema = z.object({
   industry: fallback(z.string(), "").default(""),
   org_type: fallback(z.string(), "client_demo").default("client_demo"),
   sort: fallback(z.string(), "activity_desc").default("activity_desc"),
-  archived: fallback(z.enum(["0", "1"]), "0").default("0"),
+  archived: fallback(z.string(), "0").default("0"),
   page: fallback(z.number().int(), 1).default(1),
   page_size: fallback(z.number().int(), 25).default(25),
 });
