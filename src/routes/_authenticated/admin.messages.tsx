@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/components/workspace/route-states";
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
@@ -15,9 +15,26 @@ import {
 import { ConversationThread } from "@/components/comms/conversation-thread";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Briefcase, ExternalLink, LifeBuoy, MessageSquare, User } from "lucide-react";
-
+import {
+  Briefcase,
+  ExternalLink,
+  LifeBuoy,
+  MessageSquare,
+  Search,
+  User,
+  X,
+} from "lucide-react";
 
 const searchSchema = z.object({
   conversationId: z.string().uuid().optional(),
@@ -62,32 +79,118 @@ function AdminConversationsPage() {
     queryFn: () => listCandidateSupportRequests(),
   });
 
+  const [hideEmpty, setHideEmpty] = useState(true);
+  const [clientFilter, setClientFilter] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const clients = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const t of data.items) {
+      if (!map.has(t.organization_id)) {
+        map.set(t.organization_id, t.organization_name ?? "Client");
+      }
+    }
+    return Array.from(map.entries()).sort((a, b) => a[1].localeCompare(b[1]));
+  }, [data.items]);
+
+  const filtered = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return data.items.filter((t) => {
+      const empty = (t.message_count ?? 0) === 0;
+      if (hideEmpty && empty) return false;
+      if (clientFilter !== "all" && t.organization_id !== clientFilter) return false;
+      if (!q) return true;
+      const haystack = `${t.organization_name ?? ""} ${t.subject ?? ""} ${t.last_body ?? ""}`.toLowerCase();
+      return haystack.includes(q);
+    });
+  }, [data.items, hideEmpty, clientFilter, searchQuery]);
+
   const selectedId = search.conversationId;
-  const selected = selectedId ? data.items.find((i) => i.id === selectedId) : null;
+  const selected = selectedId ? filtered.find((i) => i.id === selectedId) ?? data.items.find((i) => i.id === selectedId) : null;
+
+  const emptyCount = useMemo(
+    () => data.items.filter((t) => (t.message_count ?? 0) === 0).length,
+    [data.items],
+  );
 
   return (
     <div className="mx-auto max-w-6xl space-y-8 px-6 py-8">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight">Conversations</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {data.items.length} {data.items.length === 1 ? "thread" : "threads"} across all clients —
-          one per account, role, and candidate.
+          {filtered.length} of {data.items.length} {data.items.length === 1 ? "thread" : "threads"} across all clients
+          {emptyCount > 0 && hideEmpty ? ` — ${emptyCount} empty ${emptyCount === 1 ? "thread" : "threads"} hidden` : ""}
+          .
         </p>
       </header>
 
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search by client, role, or message…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              aria-label="Clear search"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+
+        <Select value={clientFilter} onValueChange={setClientFilter}>
+          <SelectTrigger className="w-full sm:w-[220px]">
+            <SelectValue placeholder="All clients" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All clients</SelectItem>
+            {clients.map(([id, name]) => (
+              <SelectItem key={id} value={id}>
+                {name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <div className="flex items-center gap-2 rounded-md border px-3 py-2">
+          <Switch
+            id="hide-empty"
+            checked={hideEmpty}
+            onCheckedChange={setHideEmpty}
+          />
+          <Label htmlFor="hide-empty" className="cursor-pointer text-sm">
+            Hide threads with no messages
+          </Label>
+        </div>
+      </div>
+
       <div className="grid gap-6 lg:grid-cols-12">
         <div className={selectedId ? "hidden lg:block lg:col-span-4" : "lg:col-span-12"}>
-          {data.items.length === 0 ? (
+          {filtered.length === 0 ? (
             <div className="rounded-lg border bg-card px-5 py-14 text-center">
               <MessageSquare className="mx-auto h-6 w-6 text-muted-foreground" />
-              <p className="mt-2 text-sm text-muted-foreground">No conversations yet.</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {data.items.length === 0
+                  ? "No conversations yet."
+                  : hideEmpty && emptyCount === data.items.length
+                    ? "All threads are empty. Turn off the filter to see them."
+                    : "No threads match your filters."}
+              </p>
             </div>
           ) : (
             <ul className="divide-y rounded-lg border bg-card overflow-hidden">
-              {data.items.map((t) => {
+              {filtered.map((t) => {
                 const Icon =
                   t.scope === "position" ? Briefcase : t.scope === "candidate" ? User : MessageSquare;
                 const isActive = selectedId === t.id;
+                const empty = (t.message_count ?? 0) === 0;
                 return (
                   <li key={t.id}>
                     <button
@@ -102,13 +205,14 @@ function AdminConversationsPage() {
                         <div className="flex items-center gap-2">
                           <span className="truncate text-sm font-medium">{t.organization_name}</span>
                           <Badge variant="secondary" className="max-w-[120px] truncate">{t.subject}</Badge>
+                          {empty && <Badge variant="outline">empty</Badge>}
                         </div>
                         <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">
                           {t.last_body ?? "No messages yet"}
                         </p>
                       </div>
                       <span className="shrink-0 text-[10px] tabular-nums text-muted-foreground">
-                        {relTime(t.last_message_at)}
+                        {t.last_message_at ? relTime(t.last_message_at) : "—"}
                       </span>
                     </button>
                   </li>
@@ -122,10 +226,10 @@ function AdminConversationsPage() {
           <div className="lg:col-span-8 space-y-4">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2 min-w-0">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="lg:hidden" 
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="lg:hidden"
                   onClick={() => navigate({ to: '.', search: { conversationId: undefined } })}
                 >
                   ← Back
@@ -146,9 +250,9 @@ function AdminConversationsPage() {
                 </Link>
               </Button>
             </div>
-            
-            <ConversationThread 
-              conversationId={selectedId} 
+
+            <ConversationThread
+              conversationId={selectedId}
               heightClass="h-[600px]"
               className="border shadow-sm"
             />
@@ -321,4 +425,3 @@ function relTime(iso: string): string {
   if (h < 24) return `${h}h`;
   return `${Math.round(h / 24)}d`;
 }
-
