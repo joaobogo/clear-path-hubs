@@ -37,6 +37,10 @@ export const Route = createFileRoute("/_authenticated/me/settings")({
       { name: "robots", content: "noindex" },
     ],
   }),
+  validateSearch: (search: Record<string, unknown>) =>
+    ({
+      ...(typeof search.focus === "string" ? { focus: search.focus } : {}),
+    }) as { focus?: string },
   loader: ({ context }) =>
     context.queryClient.ensureQueryData({
       queryKey: ["me-context"],
@@ -49,6 +53,7 @@ export const Route = createFileRoute("/_authenticated/me/settings")({
 
 function SettingsPage() {
   const init = Route.useLoaderData();
+  const { focus } = Route.useSearch();
   const ctxFn = useServerFn(getMyContext);
   const consentFn = useServerFn(updateMyConsent);
   const corrFn = useServerFn(requestCorrection);
@@ -155,7 +160,7 @@ function SettingsPage() {
       {data?.seat !== "candidate" && (
         <>
           <StaffProfileCard initialName={data?.profile?.full_name ?? ""} />
-          <EmailChangeCard />
+          <EmailChangeCard focus={focus === "email"} />
           <PasswordChangeCard />
           <GlobalSignOutCard />
         </>

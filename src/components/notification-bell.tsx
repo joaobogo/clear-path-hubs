@@ -43,7 +43,7 @@ const TIER_ICON: Record<NotificationTier, typeof Bell> = {
   informational: Info,
 };
 
-export function NotificationBell() {
+export function NotificationBell({ role = "client" }: { role?: "admin" | "client" | "candidate" }) {
   const list = useServerFn(listMyNotifications);
   const mark = useServerFn(markNotificationsRead);
   const dismiss = useServerFn(dismissNotifications);
@@ -230,7 +230,27 @@ export function NotificationBell() {
             className={`border-b px-4 py-2 text-[11px] ${deliveryChipClass(accountLevel.tone)}`}
             role="status"
           >
-            <span className="font-semibold">{accountLevel.label}.</span> {accountLevel.detail}
+            <div className="flex items-start justify-between gap-3">
+              <span>
+                <span className="font-semibold">{accountLevel.label}.</span> {accountLevel.detail}
+              </span>
+              {(accountLevel.state === "suppressed" || accountLevel.state === "bounced") && (
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="shrink-0 h-auto py-1 px-2 text-[11px]"
+                  onClick={() => setOpen(false)}
+                >
+                  <Link
+                    to={role === "client" ? "/client/account" : "/me/settings"}
+                    search={role === "client" ? { tab: "workspace", focus: "email" } : { focus: "email" }}
+                  >
+                    Update your email
+                  </Link>
+                </Button>
+              )}
+            </div>
           </div>
         )}
 
