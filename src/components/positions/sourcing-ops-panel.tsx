@@ -62,7 +62,7 @@ export function SourcingOpsPanel({ positionId }: { positionId: string }) {
       setDraft(null);
       qc.invalidateQueries({ queryKey: key });
     },
-    onError: (e: Any) => toast.error(e?.message ?? "Could not save the sourcing record"),
+    onError: (e: Any) => toastError(e, { fallback: "Could not save the sourcing record", tone: "admin" }),
   });
 
   const saveCampaign = useMutation({
