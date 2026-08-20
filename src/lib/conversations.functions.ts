@@ -34,11 +34,13 @@ export type ConversationSummary = {
   candidate_match_id: string | null;
   subject: string;
   context_label: string | null;
-  last_message_at: string;
+  last_message_at: string | null;
   last_body: string | null;
   last_sender_name: string | null;
   unread: number;
+  message_count?: number;
 };
+
 
 export type ConversationMessage = {
   id: string;
@@ -393,10 +395,11 @@ export const ensureConversation = createServerFn({ method: "POST" })
         candidate_match_id: data.scope === "candidate" ? data.candidateMatchId! : null,
         subject: data.subject ?? (data.scope === "organization" ? "General" : null),
         created_by: userId,
-        last_message_at: undefined, // Explicitly undefined (null in DB) until first message
+        last_message_at: null, // No timestamp until the first message is posted.
       })
       .select("id")
       .single();
+
 
     if (error) {
       // Unique index race — read the winner instead of failing the UI.
@@ -626,8 +629,7 @@ export const listAllConversations = createServerFn({ method: "GET" })
       .select(
         "id, organization_id, scope, subject, last_message_at, organizations(id, name), positions(title)",
       )
-      .not("last_message_at", "is", null)
-      .order("last_message_at", { ascending: false })
+      .order("last_message_at", { ascending: false, nullsFirst: false })
       .limit(100);
 
     if (error) throw new Error(error.message);
@@ -643,8 +645,10 @@ export const listAllConversations = createServerFn({ method: "GET" })
           .limit(400)
       : { data: [] as Row[] };
     const last: Record<string, Row> = {};
+    const counts: Record<string, number> = {};
     for (const m of (msgs as Row[]) ?? []) {
       const cid = m.conversation_id as string;
+      counts[cid] = (counts[cid] ?? 0) + 1;
       if (!last[cid]) last[cid] = m;
     }
 
@@ -658,10 +662,12 @@ export const listAllConversations = createServerFn({ method: "GET" })
           (c.subject as string | null) ??
           ((c.positions as Row | null)?.title as string | null) ??
           "General",
-        last_message_at: c.last_message_at as string,
+        last_message_at: (c.last_message_at as string | null) ?? null,
         last_body: (last[c.id as string]?.body as string | undefined) ?? null,
+        message_count: counts[c.id as string] ?? 0,
       })),
     };
+
   });
 
 /** Flat, chronological log of messages for one client account. */

@@ -3056,7 +3056,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           id: string
-          last_message_at: string
+          last_message_at: string | null
           organization_id: string
           position_id: string | null
           scope: string
@@ -3068,7 +3068,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           id?: string
-          last_message_at?: string
+          last_message_at?: string | null
           organization_id: string
           position_id?: string | null
           scope: string
@@ -3080,7 +3080,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           id?: string
-          last_message_at?: string
+          last_message_at?: string | null
           organization_id?: string
           position_id?: string | null
           scope?: string
