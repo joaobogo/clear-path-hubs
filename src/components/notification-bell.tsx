@@ -357,11 +357,14 @@ function NotificationRow({
       />
       <div className={`min-w-0 flex-1 ${unread === 0 ? "opacity-80" : ""}`}>
         <div className="flex items-center gap-2 flex-wrap">
-          <span
-            className={`rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${meta.badgeClass}`}
-          >
-            {meta.label}
-          </span>
+          {showTierBadge && (
+            <span
+              className={`rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${meta.badgeClass}`}
+            >
+              {meta.label}
+            </span>
+          )}
+
           {unread > 0 && (
             <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-label="Unread" />
           )}
