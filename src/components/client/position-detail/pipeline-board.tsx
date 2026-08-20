@@ -55,9 +55,9 @@ export function PipelineBoard({
   emptyHint?: string;
 }) {
   return (
-    <section aria-label="Pipeline">
+    <section aria-label="Candidates by stage">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="text-lg font-semibold">Pipeline</h2>
+        <h2 className="text-lg font-semibold">Candidates by stage</h2>
         <div className="text-xs text-muted-foreground">
           <Users className="inline h-3.5 w-3.5 mr-1" />
           {matches.length} candidate{matches.length === 1 ? "" : "s"} visible
@@ -66,7 +66,7 @@ export function PipelineBoard({
       <div
         className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6"
         role="list"
-        aria-label="Candidate pipeline"
+        aria-label="Candidates by stage"
       >
         {KANBAN_COLUMNS.map((col) => {
           const isDropTarget = dragOver === col.key;

@@ -5,7 +5,7 @@ import { AlertTriangle, Wrench, Clock } from "lucide-react";
 import { getPlatformStatus } from "@/lib/status/platform-status.functions";
 import { useStableDegradedNotice } from "@/lib/status/use-stable-degraded-notice";
 import { cn } from "@/lib/utils";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatTime } from "@/lib/format/datetime";
 
 /**
  * In-product degraded-mode banner.
@@ -56,7 +56,7 @@ export function DegradedModeBanner({ className }: { className?: string }) {
         {data ? (
           <p className="mt-1 flex items-center gap-1.5 text-xs text-[color:var(--brand-navy)]/70">
             <Clock className="h-3 w-3" aria-hidden />
-            Checked {new Date(data.checked_at).toLocaleTimeString(APP_LOCALE, { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}
+            Checked {formatTime((data.checked_at))}
           </p>
         ) : null}
       </div>

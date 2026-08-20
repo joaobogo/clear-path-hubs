@@ -25,7 +25,7 @@ import {
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { SectionCard } from "./shared";
 import { formatEnumLabel } from "@/lib/human-labels";
-import { formatDateTime, APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime, formatTime } from "@/lib/format/datetime";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -207,9 +207,9 @@ export function AuditTrailSection({ candidate }: { candidate: ClientCandidateDTO
                 </span>
               )}
               <div className="mt-1.5 flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
-                <span>{new Date(e.at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}</span>
+                <span>{formatDate((e.at))}</span>
                 <span>•</span>
-                <span>{new Date(e.at).toLocaleTimeString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, hour: "2-digit", minute: "2-digit" })}</span>
+                <span>{formatTime((e.at))}</span>
               </div>
             </div>
           </li>

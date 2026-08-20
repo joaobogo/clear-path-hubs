@@ -8,7 +8,7 @@ export function SnapshotTile({
   to,
   filter,
   org,
-  emptyHint = "No figure yet",
+  emptyHint = "not current",
 }: {
   label: string;
   value: number | undefined;
@@ -16,7 +16,11 @@ export function SnapshotTile({
   to: string;
   filter?: Record<string, string>;
   org?: string;
-  /** Shown instead of a number when the figure isn't available. Never a zero. */
+  /**
+   * Shown instead of a number when the figure could not be loaded. Never a
+   * zero, and never a story about the data ("None delivered yet") — a figure we
+   * do not have simply reads "not current".
+   */
   emptyHint?: string;
 }) {
   const searchObj = { ...(filter ?? {}), ...(org ? { org } : {}) };

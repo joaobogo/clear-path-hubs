@@ -72,7 +72,7 @@ export function CompensationPanel({
                 {f.label}
               </dt>
               <dd className="mt-1 text-sm font-medium">
-                {f.display ?? <span className="text-muted-foreground">Not on record</span>}
+                {f.display ?? <span className="text-muted-foreground">Not shared</span>}
               </dd>
               <div className="mt-1 flex flex-wrap items-center gap-1.5">
                 <span className="text-[11px] text-muted-foreground">{f.sourceLabel}</span>

@@ -140,12 +140,12 @@ function OverviewPage() {
   // One readiness summary for the four independent queries on this page.
   const readiness = panelReadiness([
     panelSignal("Workspace access", ctxQuery),
-    panelSignal("Pipeline overview", overviewQuery),
+    panelSignal("Hiring overview", overviewQuery),
     ...(PAYMENTS_ENABLED ? [panelSignal("Roles awaiting payment", pendingRolesQuery)] : []),
     panelSignal("Roles missing details", incompleteQuery),
   ]);
 
-  const pipelineNotCurrent = readiness.isNotCurrent("Pipeline overview");
+  const pipelineNotCurrent = readiness.isNotCurrent("Hiring overview");
 
   const kpis = data?.kpis;
   const blockedSummary = (data as Any)?.blocked_summary ?? null;
@@ -292,7 +292,7 @@ function OverviewPage() {
             <div className="space-y-4">
               <HiringHealthLine
                 notCurrent={pipelineNotCurrent}
-                notCurrentReason={readiness.reasonFor("Pipeline overview")}
+                notCurrentReason={readiness.reasonFor("Hiring overview")}
                 health={data?.hiring_health ?? null}
                 activitySummary={(data as Any)?.activity_summary}
                 loading={overviewPanel.loading}
@@ -345,7 +345,7 @@ function OverviewPage() {
                   Where your roles are
                 </span>
                 {pipelineNotCurrent && (
-                  <NotCurrentChip reason={readiness.reasonFor("Pipeline overview")} />
+                  <NotCurrentChip reason={readiness.reasonFor("Hiring overview")} />
                 )}
                 <span className="h-px flex-1 bg-border" />
                 {roles.length > 1 && (

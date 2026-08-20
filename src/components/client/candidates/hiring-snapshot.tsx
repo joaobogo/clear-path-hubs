@@ -36,7 +36,7 @@ export function HiringSnapshot({
       <section aria-label="Hiring snapshot" className="mb-6">
         <QueryErrorCard
           compact
-          title="We couldn't load your pipeline figures"
+          title="We couldn't load your hiring figures"
           error={error}
           onRetry={onRetry}
           retrying={retrying}
@@ -49,27 +49,14 @@ export function HiringSnapshot({
   // A tile never holds a skeleton once the figures arrived, and never invents a
   // zero when they didn't: a missing figure reads as a dash plus a short reason.
   const tiles = [
-    { label: "Delivered", value: kpis?.delivered, filter: undefined, hint: "None delivered yet" },
-    {
-      label: "Strongest candidates",
-      value: kpis?.top,
-      filter: { fit: "strong" },
-      hint: "No strong fits yet",
-    },
-    {
-      label: "Shortlisted",
-      value: kpis?.shortlisted,
-      filter: { stage: "shortlisted" },
-      hint: "Nothing shortlisted",
-    },
-    {
-      label: "Interviewing",
-      value: kpis?.interviewing,
-      filter: { stage: "interview_process" },
-      hint: "No interviews yet",
-    },
-    { label: "Offers", value: kpis?.offers, filter: { stage: "offer" }, hint: "No offers out" },
-    { label: "Hires", value: kpis?.hires, filter: { stage: "hired" }, hint: "No hires yet" },
+    { label: "Delivered", value: kpis?.delivered, filter: undefined },
+    // Links through the KPI drill-through key, not a single band, so the tile
+    // and the list it opens always count the same candidates.
+    { label: "Strongest candidates", value: kpis?.top, filter: { filter: "top" } },
+    { label: "Shortlisted", value: kpis?.shortlisted, filter: { stage: "shortlisted" } },
+    { label: "Interviewing", value: kpis?.interviewing, filter: { stage: "interview_process" } },
+    { label: "Offers", value: kpis?.offers, filter: { stage: "offer" } },
+    { label: "Hires", value: kpis?.hires, filter: { stage: "hired" } },
   ] as const;
 
   return (
@@ -84,7 +71,6 @@ export function HiringSnapshot({
             to="/client/candidates"
             filter={tile.filter as Record<string, string> | undefined}
             org={orgSearch}
-            emptyHint={tile.hint}
           />
         ))}
       </div>

@@ -11,10 +11,10 @@ export const STAGE_OPTIONS = [
 export const FIT_OPTIONS = [
  { key: "all", label: "Any fit" },
  { key: "exceptional", label: "Exceptional" },
+ { key: "top", label: "Top" },
  { key: "strong", label: "Strong" },
- { key: "good", label: "Good potential" },
- { key: "mixed", label: "Mixed" },
- { key: "limited", label: "Limited" },
+ { key: "consider", label: "Consider" },
+ { key: "not_recommended", label: "Not recommended" },
 ] as const;
 
 export const CRITICAL_OPTIONS = [

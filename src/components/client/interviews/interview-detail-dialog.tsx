@@ -89,7 +89,7 @@ export function InterviewDetailDialog({
           <DialogTitle>
             {interview.candidate?.name ?? "Interview"}
             <span className="mx-2 text-muted-foreground">·</span>
-            {interview.position?.title ?? "Position"}
+            {interview.position?.title ?? "Role"}
           </DialogTitle>
           <DialogDescription>
             <span

@@ -4,7 +4,7 @@ import { AlertTriangle, CheckCircle2, ChevronRight, RefreshCw, Undo2 } from "luc
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { QueueRow } from "@/lib/client-decision-queue";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 /**
  * The one decision queue.
@@ -30,7 +30,7 @@ export type QueueMeta = {
 
 function fmtDate(iso: string | null): string {
   if (!iso) return "";
-  return new Date(iso).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, month: "short", day: "numeric" });
+  return formatDate((iso));
 }
 
 function waitingLabel(days: number | null): string {

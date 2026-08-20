@@ -83,7 +83,7 @@ export function CandidateTeamActivity({
       <Frame>
         <div className="flex items-start gap-2 text-sm text-destructive">
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-          <span>We couldn't load your team's activity. Nothing is missing from the record.</span>
+          <span>We couldn't load your team's activity. Nothing has been lost.</span>
         </div>
         <Button size="sm" variant="outline" className="mt-3" onClick={() => q.refetch()}>
           Try again

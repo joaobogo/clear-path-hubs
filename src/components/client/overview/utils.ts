@@ -1,4 +1,4 @@
-import { APP_LOCALE, WORKSPACE_TIMEZONE, calendarDayDiff } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, calendarDayDiff, formatDate } from "@/lib/format/datetime";
 const RELATIVE = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 export function relTime(iso: string | null | undefined): string {
   if (!iso) return "";
@@ -13,7 +13,7 @@ export function relTime(iso: string | null | undefined): string {
   if (abs < day) return RELATIVE.format(Math.round(diff / hr), "hour");
   const days = calendarDayDiff(then, now);
   if (Math.abs(days) < 30) return RELATIVE.format(days, "day");
-  return then.toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, month: "short", day: "numeric" });
+  return formatDate(then);
 }
 
 export function daysWaiting(iso: string | null | undefined): number | null {

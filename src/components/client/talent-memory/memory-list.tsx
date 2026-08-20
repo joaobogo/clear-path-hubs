@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Award, Clock, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { REASON_LABELS, type TalentMemoryDTO } from "@/lib/talent-memory.functions";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 export function EmptyState({
   archivedCount = 0,
@@ -97,7 +97,7 @@ export function MemoryCard({
           </span>
           <span className="inline-flex items-center gap-1">
             <Clock className="h-3 w-3" />
-            {new Date(memory.tagged_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+            {formatDate((memory.tagged_at))}
           </span>
         </div>
       </button>

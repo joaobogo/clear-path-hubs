@@ -18,17 +18,22 @@ import {
 import { classifyBand, type ScoreBandKey, isTopBand } from "@/lib/scoring/bands";
 
 
+/**
+ * ONE fit vocabulary for the whole client workspace: chips, detail pages,
+ * board, compare and filters. The keys are the canonical band keys from
+ * `src/lib/scoring/bands.ts` so a band can never be renamed on the way to the
+ * screen ("Strong Match", "Good Potential" and "Mixed Fit" are gone).
+ */
 export type FitBand =
   | "exceptional"
+  | "top"
   | "strong"
-  | "good"
-  | "mixed"
-  | "limited"
+  | "consider"
   | "not_recommended";
 
 export type FitPresentation = {
   band: FitBand;
-  headline: string; // e.g. "Strong Match"
+  headline: string; // e.g. "Strong"
   recommendation: string; // short verb clause
   tone: "confident" | "positive" | "neutral" | "cautious" | "dissuade";
   accent: "emerald" | "sky" | "amber" | "slate" | "rose";
@@ -38,51 +43,49 @@ export type FitPresentation = {
  * The ONE place raw band vocabulary is normalised. Covers all three historic
  * systems: the engine's fit_label, the DB `score_band` enum, and legacy
  * presentation words. Anything unmapped falls back to score thresholds, then
- * to "mixed" — never to an internal label.
+ * to "consider" — never to an internal label.
  */
 const RAW_LABEL_MAP: Record<string, FitBand> = {
   // engine (scoring-engine.server.ts)
   strong_fit: "strong",
-  worth_considering: "mixed",
+  worth_considering: "consider",
   not_a_fit: "not_recommended",
-  unknown: "mixed",
+  unknown: "consider",
   // DB score_band enum
   exceptional: "exceptional",
-  top: "exceptional",
+  top: "top",
   strong: "strong",
-  consider: "mixed",
+  consider: "consider",
   not_recommended: "not_recommended",
-  unscored: "mixed",
+  unscored: "consider",
   // legacy presentation words
   excellent: "exceptional",
-  high: "strong",
-  good: "good",
-  potential: "good",
-  medium: "mixed",
-  mixed: "mixed",
-  average: "mixed",
-  low: "limited",
-  limited: "limited",
-  weak: "limited",
+  high: "top",
+  good: "strong",
+  potential: "strong",
+  medium: "consider",
+  mixed: "consider",
+  average: "consider",
+  low: "not_recommended",
+  limited: "not_recommended",
+  weak: "not_recommended",
   none: "not_recommended",
-  running: "mixed",
+  running: "consider",
 };
 
 
 /**
- * Canonical band key → client-facing fit band. Keeps the existing client
- * vocabulary while the numbers behind it live in one place.
- * 
- * HONESTY GATE (C9): 'top' scores (85-94) map to 'strong', 
- * and 'strong' scores (70-84) map to 'good'.
+ * Canonical band key → client-facing fit band. Identity for every scored band:
+ * 95+ Exceptional, 85–94 Top, 70–84 Strong, 50–69 Consider, below 50 Not
+ * recommended. No re-banding happens between the score and the label.
  */
 const CANONICAL_TO_FIT_BAND: Record<ScoreBandKey, FitBand> = {
   exceptional: "exceptional",
-  top: "strong",
-  strong: "good",
-  consider: "mixed",
+  top: "top",
+  strong: "strong",
+  consider: "consider",
   not_recommended: "not_recommended",
-  unscored: "mixed",
+  unscored: "consider",
 };
 
 
@@ -90,33 +93,27 @@ const CANONICAL_TO_FIT_BAND: Record<ScoreBandKey, FitBand> = {
 
 const BAND_TABLE: Record<FitBand, Omit<FitPresentation, "band">> = {
   exceptional: {
-    headline: "Exceptional Match",
-    recommendation: "Prioritize for interview",
+    headline: "Exceptional",
+    recommendation: "Prioritise for interview",
     tone: "confident",
     accent: "emerald",
   },
-  strong: {
-    headline: "Strong Match",
+  top: {
+    headline: "Top",
     recommendation: "Recommend interview",
     tone: "confident",
     accent: "emerald",
   },
-  good: {
-    headline: "Good Potential",
+  strong: {
+    headline: "Strong",
     recommendation: "Worth a conversation",
     tone: "positive",
     accent: "sky",
   },
-  mixed: {
-    headline: "Mixed Fit",
+  consider: {
+    headline: "Consider",
     recommendation: "Review before deciding",
     tone: "neutral",
-    accent: "amber",
-  },
-  limited: {
-    headline: "Limited Fit",
-    recommendation: "Interview only if a gap can be closed",
-    tone: "cautious",
     accent: "amber",
   },
   not_recommended: {
@@ -151,8 +148,8 @@ export function toFitPresentation(
     const key = rawLabel.toLowerCase().replace(/[^a-z_]/g, "");
     band = RAW_LABEL_MAP[key] ?? null;
   }
-  band ??= "mixed";
-  return { band, ...BAND_TABLE[band] };
+  const resolved: FitBand = band ?? "consider";
+  return { band: resolved, ...BAND_TABLE[resolved] };
 }
 
 

@@ -55,7 +55,7 @@ import {
 import { retryBlueprintAnalysis } from "@/lib/blueprint.functions";
 import { setRoleIntensity } from "@/lib/control-room.functions";
 import { EmptyState, ErrorState, PermissionDenied, SkeletonRows } from "@/components/client/states";
-import { formatDateTime, APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
 
 /**
  * First-run sequence — ten steps that configure the hiring system rather than
@@ -912,7 +912,7 @@ function SystemsStep({ state, onDone, back, saveForLater }: BodyProps) {
               <span className="font-medium capitalize">{formatEnumLabel(i.id)}</span>
               <span className="text-muted-foreground">
                 {HEALTH_LABEL[i.status] ?? i.status}
-                {i.checked_at ? ` · checked ${new Date(i.checked_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}` : ""}
+                {i.checked_at ? ` · checked ${formatDate((i.checked_at))}` : ""}
               </span>
             </li>
           ))}

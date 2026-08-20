@@ -19,7 +19,7 @@ import {
   type ReadinessSection,
   type UpdateReadiness,
 } from "./client-update-readiness";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDateTime } from "@/lib/format/datetime";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Admin = SupabaseClient<any, any, any>;
@@ -302,7 +302,7 @@ export async function loadUpdateReadiness(
       id: `interview-scheduled:${String(i["id"])}`,
       label: `${nameForMatch(i["candidate_match_id"])} — interview ${String(i["status"] ?? "requested")}`,
       detail: i["scheduled_at"]
-        ? `${String(i["interview_type"] ?? "interview")} on ${new Date(String(i["scheduled_at"])).toLocaleString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: WORKSPACE_TIMEZONE })}`
+        ? `${String(i["interview_type"] ?? "interview")} on ${formatDateTime((String(i["scheduled_at"])))}`
         : String(i["interview_type"] ?? "interview"),
       at: String(i["created_at"]),
       link_kind: typeof i["candidate_match_id"] === "string" ? "candidate" : "position",

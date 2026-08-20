@@ -11,6 +11,7 @@ import { useClientOrgSearch } from "@/lib/use-client-org";
 import { SavedViewsBar } from "@/components/workspace/saved-views-bar";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { withQueryTimeout } from "@/lib/client/query-timeout";
+import { formatRelative } from "@/lib/format/datetime";
 import {
   PortfolioSnapshot,
   CompactList,
@@ -319,15 +320,4 @@ function PositionsPage() {
  )}
  </div>
  );
-}
-
-function formatRelative(d: Date): string {
-  const diff = Date.now() - d.getTime();
-  const mins = Math.round(diff / 60000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.round(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.round(hrs / 24);
-  return `${days}d ago`;
 }

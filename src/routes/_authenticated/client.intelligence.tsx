@@ -32,7 +32,7 @@ export const Route = createFileRoute("/_authenticated/client/intelligence")({
       {
         name: "description",
         content:
-          "Pipeline health, speed, score distribution, requirement coverage, evidence completeness and role risk — computed from your own records only.",
+          "Hiring health, speed, score distribution, requirement coverage, evidence completeness and role risk — computed from your own records only.",
       },
       { name: "robots", content: "noindex" },
     ],

@@ -46,7 +46,7 @@ export const Route = createFileRoute("/_authenticated/client/dashboards")({
       {
         name: "description",
         content:
-          "Compose a dashboard from live hiring blocks: pipeline, decisions waiting, time to shortlist, offers, outreach, spend per hire, talent pool and team activity.",
+          "Compose a dashboard from live hiring blocks: candidates by stage, decisions waiting, time to shortlist, offers, outreach, spend per hire, talent pool and team activity.",
       },
       { property: "og:title", content: "Your dashboards | TaaSFlow" },
       {

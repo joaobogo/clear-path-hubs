@@ -29,7 +29,7 @@ import type {
   RequirementStatus,
 } from "@/lib/client-fit-presentation";
 import { SectionCard, Metric } from "./shared";
-import { formatDateTime, APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
 
 export function statusBadge(status: RequirementStatus) {
   switch (status) {
@@ -200,7 +200,7 @@ export const FitHero = memo(function FitHero({
   // The ring encodes the fit band, not the internal number — a percentage arc
   // would leak engine precision onto an employer surface.
   const BAND_FILL: Record<string, number> = {
-    exceptional: 1, strong: 0.8, good: 0.6, mixed: 0.4, limited: 0.2, not_recommended: 0.08,
+    exceptional: 1, top: 0.85, strong: 0.7, consider: 0.5, not_recommended: 0.15,
   };
   const dashOffset = dashArray * (1 - (BAND_FILL[fit.band] ?? 0.4));
 
@@ -231,7 +231,7 @@ export const FitHero = memo(function FitHero({
           )}
           {candidate.last_updated && (
             <p className="mt-2 text-xs text-muted-foreground">
-              Scored {new Date(candidate.last_updated).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+              Scored {formatDate((candidate.last_updated))}
             </p>
           )}
         </div>

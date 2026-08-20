@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { briefField, type InfoRequestCard } from "@/lib/position-info-requests";
 import { answerInfoRequest, listInfoRequests } from "@/lib/position-info-requests.functions";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 /**
  * "Information needed" — one card per open request.
@@ -83,7 +83,7 @@ export function InfoRequestCardView({
       <p className="text-sm leading-relaxed text-muted-foreground">{request.impact}</p>
       <p className="text-xs text-muted-foreground">
         Asked by {request.asked_by_name ?? "your TaaSFlow recruiter"} on{" "}
-        {new Date(request.created_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+        {formatDate((request.created_at))}
       </p>
 
       {!request.answerable || !spec ? (

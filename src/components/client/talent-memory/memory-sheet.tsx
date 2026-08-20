@@ -25,7 +25,7 @@ import { toFitPresentation } from "@/lib/client-fit-presentation";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { WorkspaceRowsSkeleton } from "@/components/workspace/pending-states";
 import { formatEnumLabel } from "@/lib/human-labels";
-import { formatDateTime, APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate, formatDateTime } from "@/lib/format/datetime";
 
 export function MemorySheet({
   orgId,
@@ -159,7 +159,7 @@ export function MemorySheet({
                     {m.owner_name ?? "Unassigned"}
                   </span>{" "}
                   · Tagged by {m.tagged_by_name ?? "team"} on{" "}
-                  {new Date(m.tagged_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                  {formatDate((m.tagged_at))}
                 </p>
               </section>
 
@@ -193,7 +193,7 @@ export function MemorySheet({
                           <p className="font-medium">{h.position_title}</p>
                           <p className="text-muted-foreground">
                             {clientStageLabel(h.stage)} ·{" "}
-                            {new Date(h.updated_at).toLocaleDateString(APP_LOCALE, { day: "2-digit", month: "2-digit", year: "numeric", timeZone: WORKSPACE_TIMEZONE })}
+                            {formatDate((h.updated_at))}
                           </p>
                         </div>
                         <Link
