@@ -184,7 +184,14 @@ export function RoleStoryPanel({
                       ...raw,
                       filter: FIT_OPTIONS.some((o) => o.key === mapped) ? mapped : null,
                     };
-                    const width = `${(b.count / Math.max(1, distribution.scored)) * 100}%`;
+                    // Scale bars against the largest band, not the total, so the
+                    // biggest segment always fills the track and the widths match
+                    // the printed numbers proportionally.
+                    const maxBand = Math.max(
+                      ...distribution.bands.map((band) => band.count),
+                      1,
+                    );
+                    const width = `${(b.count / maxBand) * 100}%`;
                     return (
                       <li key={b.key} className="flex items-center gap-3">
                         <span className="w-28 shrink-0 text-xs text-muted-foreground">
@@ -212,7 +219,7 @@ export function RoleStoryPanel({
                           </Link>
                         ) : (
                           <span className="w-6 shrink-0 text-right text-xs tabular-nums text-muted-foreground">
-                            0
+                            {b.count}
                           </span>
                         )}
                       </li>
