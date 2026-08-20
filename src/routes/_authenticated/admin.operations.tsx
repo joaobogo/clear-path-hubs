@@ -581,7 +581,7 @@ function OperationsPage() {
             </div>
 
           ) : (
-            <div className="border rounded-lg overflow-hidden bg-card">
+            <div className="border rounded-lg overflow-x-auto bg-card">
               <table className="w-full text-sm">
                 <thead className="bg-muted/50 text-left">
                   <tr>
