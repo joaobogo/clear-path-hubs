@@ -354,6 +354,26 @@ const ensureInput = z
     message: "candidateMatchId is required for a candidate thread",
   });
 
+/** Read-only lookup for an existing conversation scoped to account/role/candidate. */
+export const findConversation = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((raw) => ensureInput.parse(raw))
+  .handler(async ({ data, context }): Promise<{ id: string | null }> => {
+    const { supabase, userId } = context;
+    await assertOrgAccess(supabase, userId, data.orgId);
+
+    let existingQ = supabase
+      .from("conversations")
+      .select("id")
+      .eq("organization_id", data.orgId)
+      .eq("scope", data.scope);
+    if (data.scope === "position") existingQ = existingQ.eq("position_id", data.positionId!);
+    if (data.scope === "candidate")
+      existingQ = existingQ.eq("candidate_match_id", data.candidateMatchId!);
+    const { data: existing } = await existingQ.maybeSingle();
+    return { id: existing ? ((existing as Row).id as string) : null };
+  });
+
 /** Idempotent: one thread per account / role / candidate. */
 export const ensureConversation = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -386,7 +406,6 @@ export const ensureConversation = createServerFn({ method: "POST" })
       })
       .select("id")
       .single();
-
 
     if (error) {
       // Unique index race — read the winner instead of failing the UI.
