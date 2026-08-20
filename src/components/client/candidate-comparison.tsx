@@ -3,10 +3,9 @@ import { useMemo, useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Link, useSearch } from "@tanstack/react-router";
-import { Printer } from "lucide-react";
-import { toast } from "sonner";
 import type { ClientCandidateDTO } from "@/lib/client-kpi.server";
 import { VisibilityNote } from "@/components/client/visibility-note";
+import { ComparisonPdfExportButton } from "@/components/client/candidates/comparison-pdf-export";
 import {
   Tooltip,
   TooltipContent,
@@ -22,6 +21,7 @@ import {
   type CompareStatus,
   type CompareMatrixRow,
 } from "@/lib/client-compare";
+
 
 
 const STATUS_META: Record<
@@ -169,10 +169,9 @@ export function CompareSheet({
   };
 
 
-  const handlePrint = () => window.print();
-
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
+
       <SheetContent side="right" className="w-full sm:max-w-5xl overflow-y-auto print:!max-w-none print:!w-full">
         <SheetHeader>
           <SheetTitle>Candidate comparison</SheetTitle>
@@ -204,9 +203,12 @@ export function CompareSheet({
                   />
                   Show only differences
                 </label>
-                <Button size="sm" variant="outline" onClick={handlePrint}>
-                  <Printer className="h-3.5 w-3.5 mr-1.5" /> Export PDF
-                </Button>
+                <ComparisonPdfExportButton
+                  candidates={candidates}
+                  matrix={matrix}
+                  observations={observations}
+                  positionTitle={positionTitle ?? null}
+                />
               </div>
             </div>
 
