@@ -629,8 +629,7 @@ export const listAllConversations = createServerFn({ method: "GET" })
       .select(
         "id, organization_id, scope, subject, last_message_at, organizations(id, name), positions(title)",
       )
-      .not("last_message_at", "is", null)
-      .order("last_message_at", { ascending: false })
+      .order("last_message_at", { ascending: false, nullsFirst: false })
       .limit(100);
 
     if (error) throw new Error(error.message);
@@ -646,8 +645,10 @@ export const listAllConversations = createServerFn({ method: "GET" })
           .limit(400)
       : { data: [] as Row[] };
     const last: Record<string, Row> = {};
+    const counts: Record<string, number> = {};
     for (const m of (msgs as Row[]) ?? []) {
       const cid = m.conversation_id as string;
+      counts[cid] = (counts[cid] ?? 0) + 1;
       if (!last[cid]) last[cid] = m;
     }
 
@@ -661,10 +662,12 @@ export const listAllConversations = createServerFn({ method: "GET" })
           (c.subject as string | null) ??
           ((c.positions as Row | null)?.title as string | null) ??
           "General",
-        last_message_at: c.last_message_at as string,
+        last_message_at: (c.last_message_at as string | null) ?? null,
         last_body: (last[c.id as string]?.body as string | undefined) ?? null,
+        message_count: counts[c.id as string] ?? 0,
       })),
     };
+
   });
 
 /** Flat, chronological log of messages for one client account. */
