@@ -45,6 +45,7 @@ import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
 import { JobPostStep } from "@/components/positions/JobPostStep";
 import { formatEnumLabel } from "@/lib/human-labels";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { useDetailCrumb } from "@/lib/workspace/crumb-label";
 
 
 const STEPS = [
