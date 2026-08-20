@@ -51,6 +51,8 @@ export type MetricChart = {
   /** Axis unit, e.g. "candidates", "days", "%". */
   unit: string;
   points: MetricPoint[];
+  /** Explicit total for the chart heading. Defaults to the sum of points. */
+  total?: number;
   /** Column headings for the accessible table fallback. */
   valueHeading: string;
   compareHeading?: string;
