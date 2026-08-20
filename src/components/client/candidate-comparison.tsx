@@ -70,10 +70,12 @@ function buildObservations(cands: ClientCandidateDTO[]): string[] {
   if (cands.length < 2) return [];
   const notes: string[] = [];
 
-  const cover = [...cands].sort((a, b) => b.coverage.must_met - a.coverage.must_met);
-  if (cover[0].coverage.must_met !== cover[cover.length - 1].coverage.must_met) {
+  const cover = [...cands].sort(
+    (a, b) => (b.coverage.must_have_coverage ?? 0) - (a.coverage.must_have_coverage ?? 0),
+  );
+  if ((cover[0].coverage.must_have_coverage ?? 0) !== (cover[cover.length - 1].coverage.must_have_coverage ?? 0)) {
     notes.push(
-      `Requirement coverage differs — ${cover[0].candidate.display_name} has the most must-haves evidenced (${cover[0].coverage.must_met}/${cover[0].coverage.must_total}).`,
+      `Requirement coverage differs — ${cover[0].candidate.display_name} has the highest coverage (${pct(cover[0].coverage.must_have_coverage)}).`,
     );
   }
 
