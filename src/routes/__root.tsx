@@ -185,10 +185,18 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
 
+  // Returning visitors start this release with a clean slate: stale dismissals,
+  // cached prefills and old wizard steps are cleared once. Login and the cookie
+  // consent choice are kept.
+  useEffect(() => {
+    resetStaleBrowserStorage();
+  }, []);
+
   // First-touch attribution capture (campaign + landing page only).
   useEffect(() => {
     captureFirstTouch();
   }, []);
+
 
   // Preview / non-production hosts (e.g. *.lovable.app) must not
   // compete with taasflow.com in search. Inject a robots noindex
