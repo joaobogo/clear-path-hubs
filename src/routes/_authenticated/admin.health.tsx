@@ -147,7 +147,7 @@ function HealthPage() {
           Failed jobs, plus jobs still queued or running for more than 24 hours — the same
           rows counted by “Processing exceptions” above.
         </p>
-        <div className="rounded-lg border overflow-hidden">
+        <div className="rounded-lg border overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-muted/50 text-left">
               <tr>
