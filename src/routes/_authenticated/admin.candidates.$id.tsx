@@ -166,6 +166,8 @@ function CandidateWorkspace() {
     });
   const [busy, setBusy] = useState<string | null>(null);
 
+  useDetailCrumb((data?.match as Any)?.candidate_profiles?.full_name ?? null);
+
   // Only fetched once a tab that needs the large payloads is open.
   const heavyQuery = useQuery({
     queryKey: ["admin-candidate", id, "heavy"],
@@ -189,7 +191,6 @@ function CandidateWorkspace() {
   const cv = (heavy?.cv ?? null) as Any;
   const m = match as Any;
   const cp = m.candidate_profiles as Any;
-  useDetailCrumb(cp?.full_name ?? null);
   const pos = m.positions as Any;
   const currentRun = runs[0] as Any | undefined;
   const currentResult = (currentRun?.result ?? null) as Any | null;
