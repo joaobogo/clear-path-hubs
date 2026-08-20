@@ -362,7 +362,11 @@ export const companyProfileZ = z.object({
     .string()
     .trim()
     .max(300)
-    .transform((s) => (s === "" ? null : s))
+    .transform((s) => {
+      if (s === "") return null;
+      if (/^https?:\/\//i.test(s)) return s;
+      return `https://${s}`;
+    })
     .nullable()
     .refine(
       (v) => v == null || /^https?:\/\/[^\s]+\.[^\s]+$/i.test(v),
