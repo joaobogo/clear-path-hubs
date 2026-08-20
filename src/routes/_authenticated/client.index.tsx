@@ -303,7 +303,7 @@ function OverviewPage() {
               <HiringHealthLine
                 notCurrent={pipelineNotCurrent}
                 notCurrentReason={readiness.reasonFor("Hiring overview")}
-                health={data?.hiring_health ?? null}
+                health={health}
                 activitySummary={(data as Any)?.activity_summary}
                 loading={overviewPanel.loading}
                 isError={overviewPanel.isError}
