@@ -400,12 +400,18 @@ export function PositionEditWizard({
         <Progress value={progress} />
         <ol className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
           {STEPS.map((s) => (
-            <li
-              key={s.id}
-              className={s.id === step ? "font-medium text-foreground" : ""}
-              aria-current={s.id === step ? "step" : undefined}
-            >
-              {s.id}. {s.label}
+            <li key={s.id} aria-current={s.id === step ? "step" : undefined}>
+              <button
+                type="button"
+                onClick={() => setStep(s.id)}
+                className={
+                  s.id === step
+                    ? "font-medium text-foreground underline decoration-primary decoration-2 underline-offset-4"
+                    : "hover:text-foreground hover:underline"
+                }
+              >
+                {s.id}. {s.label}
+              </button>
             </li>
           ))}
         </ol>

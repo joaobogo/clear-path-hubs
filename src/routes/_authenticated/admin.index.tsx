@@ -276,18 +276,16 @@ function WorkQueueSummary({
             {queues.map((q) => {
               const Icon = ICONS[q.key] ?? ClipboardCheck;
               const hasItems = (q.count ?? 0) > 0;
-              return (
-                <a
-                  key={q.key}
-                  href={hasItems ? `#queue-${q.key}` : undefined}
-                  className={cn(
-                    "rounded-lg border bg-card px-3 py-2.5 transition-colors",
-                    hasItems ? "hover:border-primary/50" : "opacity-40 cursor-not-allowed grayscale pointer-events-none"
-                  )}
-                  onClick={(e) => {
-                    if (!hasItems) e.preventDefault();
-                  }}
-                >
+              // A tile only has an in-page anchor when the queue renders rows below.
+              // Summary-only tiles (e.g. confirmed hires) must link to their desk instead
+              // of a "#queue-…" target that does not exist in the DOM.
+              const hasSection = hasItems && (q.items?.length ?? 0) > 0;
+              const tileClass = cn(
+                "block rounded-lg border bg-card px-3 py-2.5 text-left transition-colors",
+                hasItems ? "hover:border-primary/50" : "opacity-40 cursor-not-allowed grayscale pointer-events-none"
+              );
+              const body = (
+                <>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Icon className="h-3.5 w-3.5" />
                     <span className="truncate">{q.label}</span>
@@ -300,6 +298,27 @@ function WorkQueueSummary({
                   >
                     {typeof q.count === "number" ? q.count : "—"}
                   </div>
+                </>
+              );
+
+              if (hasItems && !hasSection && q.see_all?.to) {
+                return (
+                  <Link key={q.key} to={q.see_all.to} className={tileClass}>
+                    {body}
+                  </Link>
+                );
+              }
+
+              return (
+                <a
+                  key={q.key}
+                  href={hasSection ? `#queue-${q.key}` : undefined}
+                  className={tileClass}
+                  onClick={(e) => {
+                    if (!hasSection) e.preventDefault();
+                  }}
+                >
+                  {body}
                 </a>
               );
             })}

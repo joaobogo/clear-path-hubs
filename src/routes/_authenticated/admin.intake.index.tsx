@@ -5,6 +5,7 @@ import { useState } from "react";
 import { listIntakeInbox } from "@/lib/intake-admin.functions";
 import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { IntakeAgingTable } from "@/components/admin/intake-aging-table";
+import { IntakeRowActions } from "@/components/admin/intake-row-actions";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { AlertTriangle, ArrowRight, Inbox } from "lucide-react";
@@ -68,7 +69,7 @@ function IntakeInbox() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Intake inbox</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Every client brief. Convert to a position, request clarification, or reject.
+            Every client brief. Each row can be converted to a role, sent back for details, or rejected.
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
             {show_test
@@ -130,7 +131,7 @@ function IntakeInbox() {
                 <th className="px-3 py-2">State</th>
                 <th className="hidden px-3 py-2 sm:table-cell">Next action</th>
                 <th className="px-3 py-2 text-right">Submitted</th>
-                <th className="w-8 px-2 py-2"></th>
+                <th className="px-2 py-2 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -145,9 +146,14 @@ function IntakeInbox() {
                       {it.company_name}
                     </Link>
                     {it.duplicate && (
-                      <span className="ml-2 inline-flex items-center gap-1 text-[11px] text-warning-foreground">
-                        <AlertTriangle className="h-3 w-3" /> duplicate
-                      </span>
+                      <Link
+                        to="/admin/intake/$id"
+                        params={{ id: it.id }}
+                        className="ml-2 inline-flex items-center gap-1 text-[11px] text-warning-foreground hover:underline"
+                        title="Compare with the earlier brief from this company"
+                      >
+                        <AlertTriangle className="h-3 w-3" /> possible duplicate — compare
+                      </Link>
                     )}
                   </td>
                   <td className="px-3 py-2 text-muted-foreground">{it.role_title}</td>
@@ -180,14 +186,22 @@ function IntakeInbox() {
                     {relTime(it.created_at)}
                   </td>
                   <td className="px-2 py-2 text-right">
-                    <Link
-                      to="/admin/intake/$id"
-                      params={{ id: it.id }}
-                      className="inline-flex text-muted-foreground/60 hover:text-primary"
-                      aria-label="Open intake"
-                    >
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
+                    <div className="flex items-center justify-end gap-1">
+                      <IntakeRowActions
+                        id={it.id}
+                        company={it.company_name}
+                        role={it.role_title}
+                        closed={it.status === "rejected" || it.status === "approved"}
+                      />
+                      <Link
+                        to="/admin/intake/$id"
+                        params={{ id: it.id }}
+                        className="inline-flex text-muted-foreground/60 hover:text-primary"
+                        aria-label="Open intake"
+                      >
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))}
