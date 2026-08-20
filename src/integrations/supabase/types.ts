@@ -15748,6 +15748,13 @@ export type Database = {
         Args: { _reason: string; _user_id: string }
         Returns: number
       }
+      get_conversation_unread_counts: {
+        Args: { _conversation_ids: string[]; _user_id: string }
+        Returns: {
+          conversation_id: string
+          unread_count: number
+        }[]
+      }
       get_latest_conversation_messages: {
         Args: { conversation_ids: string[] }
         Returns: {
