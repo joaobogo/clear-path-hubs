@@ -1,24 +1,15 @@
 import { useEffect, useState, type ReactNode } from "react";
+import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, RefreshCw } from "lucide-react";
 
-/**
- * Renders children inside a Suspense-like boundary with a hard timeout.
- * If the child suspends (or the caller sets `isLoading`) for longer than
- * `timeoutMs`, the fallback skeleton is replaced with an inline retryable
- * error instead of hanging forever.
- */
-export function DeferredBlock({
-  children,
-  fallback,
-  timeoutMs = 10_000,
-  errorTitle = "Could not load this section",
+function TimedFallback({
+  timeoutMs,
+  errorTitle,
   onRetry,
 }: {
-  children: ReactNode;
-  fallback?: ReactNode;
-  timeoutMs?: number;
-  errorTitle?: string;
+  timeoutMs: number;
+  errorTitle: string;
   onRetry?: () => void;
 }) {
   const [timedOut, setTimedOut] = useState(false);
@@ -59,13 +50,40 @@ export function DeferredBlock({
   }
 
   return (
-    <div>
-      {fallback ?? (
-        <div className="space-y-3">
-          <div className="h-4 w-1/3 animate-pulse rounded bg-muted" />
-          <div className="h-24 w-full animate-pulse rounded bg-muted" />
-        </div>
-      )}
+    <div className="space-y-3">
+      <div className="h-4 w-1/3 animate-pulse rounded bg-muted" />
+      <div className="h-24 w-full animate-pulse rounded bg-muted" />
     </div>
+  );
+}
+
+/**
+ * Renders children inside a Suspense boundary with a hard timeout on the
+ * fallback. If the child suspends for longer than `timeoutMs`, the skeleton
+ * is replaced with an inline retryable error instead of hanging forever.
+ */
+export function DeferredBlock({
+  children,
+  fallback,
+  timeoutMs = 10_000,
+  errorTitle = "Could not load this section",
+  onRetry,
+}: {
+  children: ReactNode;
+  fallback?: ReactNode;
+  timeoutMs?: number;
+  errorTitle?: string;
+  onRetry?: () => void;
+}) {
+  return (
+    <Suspense
+      fallback={
+        fallback ?? (
+          <TimedFallback timeoutMs={timeoutMs} errorTitle={errorTitle} onRetry={onRetry} />
+        )
+      }
+    >
+      {children}
+    </Suspense>
   );
 }
