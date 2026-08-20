@@ -28,6 +28,7 @@ import { SystemStatusStrip } from "@/components/client/control-room/system-statu
 import { LiveTicker } from "@/components/client/control-room/live-ticker";
 import { IntensityDial } from "@/components/client/control-room/intensity-dial";
 import { HiringHealthLine } from "@/components/client/hiring-health-line";
+import { applyOverdueAndRiskSignals } from "@/lib/client-hiring-health";
 import { SystemHealthStrip } from "@/components/client/system-health-strip";
 import { AgentActivityRail } from "@/components/client/agent-activity-rail";
 import { DecisionQueue } from "@/components/client/decision-queue";
@@ -191,6 +192,15 @@ function OverviewPage() {
 
   const showOnboarding = !!kpis && kpis.active_positions === 0 && kpis.delivered === 0;
 
+  // The headline reads from the same signals as the decision queue and the
+  // role at-risk lines on this page, so the three can never disagree.
+  const overdueItems = useMemo(() => queue.filter((q) => (q as Any).overdue).length, [queue]);
+  const atRiskRoles = useMemo(() => visibleRoles.filter((r) => r.at_risk).length, [visibleRoles]);
+  const health = useMemo(
+    () => applyOverdueAndRiskSignals(data?.hiring_health ?? null, { overdueItems, atRiskRoles }),
+    [data, overdueItems, atRiskRoles],
+  );
+
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-8 space-y-8" data-density={density}>
       <header className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
@@ -293,7 +303,7 @@ function OverviewPage() {
               <HiringHealthLine
                 notCurrent={pipelineNotCurrent}
                 notCurrentReason={readiness.reasonFor("Hiring overview")}
-                health={data?.hiring_health ?? null}
+                health={health}
                 activitySummary={(data as Any)?.activity_summary}
                 loading={overviewPanel.loading}
                 isError={overviewPanel.isError}
