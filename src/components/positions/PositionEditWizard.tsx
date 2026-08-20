@@ -1199,13 +1199,3 @@ function ChipInput({
   );
 }
 
-function ReviewBlock({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="rounded-md border p-3">
-      <div className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-        {title}
-      </div>
-      <div className="space-y-0.5">{children}</div>
-    </div>
-  );
-}
