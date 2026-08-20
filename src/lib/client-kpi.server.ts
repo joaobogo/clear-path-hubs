@@ -406,10 +406,17 @@ export type ClientCandidateDTO = {
   requirement_rows: RequirementRow[];
   coverage: CoverageSummary;
   /**
+   * The three published weightings behind the score, with this candidate's
+   * number for each. Null when the run stored no measured shares.
+   */
+  score_composition: ScoreComposition | null;
+  /**
    * Evidence support behind the band — what employer surfaces render next to
-   * the band instead of a numeric score.
+   * the band instead of a numeric score. `supported` counts only requirements
+   * that carry a quoted passage the page can actually show.
    */
   evidence_support: { supported: number; total: number };
+
   /**
    * A person reviewed this assessment by hand. Clients see the fact and the
    * count of hand-verified requirements — never the reviewer's internal note.
