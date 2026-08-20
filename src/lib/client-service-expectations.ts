@@ -25,7 +25,7 @@ import {
   type CommitmentKey,
   type CommitmentRollup,
 } from "@/lib/commitments/canonical";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 /** Shown when a commitment simply is not measurable from account data. */
 export const NOT_MEASURED = "Not measured from your account data";
@@ -174,7 +174,7 @@ export function buildServiceExpectations(input: {
       rows.push({
         key: "plan_term",
         commitment: plan.source === "subscription" ? "Renews on" : "Allowance valid until",
-        promised: d.toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, day: "numeric", month: "long", year: "numeric" }),
+        promised: formatDate(d),
         performance: null,
         sampleNote: "From your plan record",
       });

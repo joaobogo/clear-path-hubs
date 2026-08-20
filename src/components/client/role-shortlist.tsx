@@ -15,13 +15,13 @@ import {
 import { RoleComparePanel } from "@/components/client/role-compare-panel";
 import { ROLE_COMPARE_MAX, roleCompareDisabledReason } from "@/lib/client-compare";
 import { AlertCircle, Columns3 } from "lucide-react";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 
 function formatDate(iso: string | null | undefined): string | null {
   if (!iso) return null;
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return null;
-  return d.toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, day: "numeric", month: "short", year: "numeric" });
+  return formatDate(d);
 }
 
 /**

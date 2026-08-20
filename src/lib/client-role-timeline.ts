@@ -1,4 +1,4 @@
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
 /**
  * Dated role timeline for the client position detail page.
  *
@@ -113,5 +113,5 @@ export function formatTimelineDate(iso: string | null): string {
   if (!iso) return "Not yet";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "Not yet";
-  return d.toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE, day: "numeric", month: "short", year: "numeric" });
+  return formatDate(d);
 }
