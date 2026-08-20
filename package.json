@@ -21,7 +21,6 @@
     "test:e2e:smoke": "playwright test tests/e2e/smoke-journey.spec.ts",
     "test:e2e:performance": "playwright test tests/e2e/admin-performance-smoke.spec.ts",
     "release:gate": "npm run test && npm run test:e2e:smoke && npm run test:e2e:performance"
-
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -73,6 +72,8 @@
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "jszip": "^3.10.1",
     "lucide-react": "^0.575.0",
     "mammoth": "^1.12.0",
