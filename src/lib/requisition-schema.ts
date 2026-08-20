@@ -362,8 +362,8 @@ export function assessJobQuality(i: QualityInput): {
     add({ id: "must_haves", severity: "blocking", label: "At least 3 must-have requirements", why: "Must-haves are the backbone of evidence-based scoring; fewer than three makes ranking arbitrary.", step: 2 });
   if (!i.seniority.trim())
     add({ id: "seniority", severity: "blocking", label: "Seniority level", why: "Scope and level decide whether strong candidates are over- or under-qualified.", step: 1 });
-  if (i.locations.length === 0 && !i.open_worldwide)
-    add({ id: "locations", severity: "blocking", label: "At least one location", why: "Eligibility gates (right to work, timezone, commute) cannot run without locations.", step: 5 });
+  if (i.locations.length === 0)
+    add({ id: "locations", severity: "blocking", label: "At least one location", why: "Eligibility gates (right to work, timezone, commute) cannot run without locations.", step: 3 });
 
   if (!i.employment_type.trim())
     add({ id: "employment_type", severity: "blocking", label: "Employment type", why: "Contract vs permanent changes both the candidate pool and the eligibility checks.", step: 1 });
