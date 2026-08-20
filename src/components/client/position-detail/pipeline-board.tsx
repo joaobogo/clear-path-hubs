@@ -121,10 +121,16 @@ export function PipelineBoard({
                         canEdit ? "cursor-grab active:cursor-grabbing" : ""
                       }`}
                     >
+                      {/* The card itself is draggable; keep the name link out of the
+                          drag/selection layer so a plain click still navigates. */}
                       <Link
                         to="/client/candidates/$id"
                         params={{ id: m.id }}
-                        className="block text-sm font-medium hover:underline"
+                        draggable={false}
+                        onDragStart={(e) => e.stopPropagation()}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()}
+                        className="relative z-10 block text-sm font-medium hover:underline"
                       >
                         {m.candidate_profiles?.full_name ?? "Candidate"}
                       </Link>
