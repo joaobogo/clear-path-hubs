@@ -64,12 +64,29 @@ export function useDashboardRealtime(opts: {
       )
       .subscribe();
 
-    const onFocus = () => invalidateAll();
+    // The first click inside the app also focuses the window, and `focus` fires
+    // on mousedown — invalidating the whole dashboard there swapped subtrees
+    // between mousedown and mouseup, so the first click on any control was
+    // dropped. Only refresh when the tab genuinely comes back into view, and
+    // never in the middle of a click.
+    let wasHidden = typeof document !== "undefined" && document.visibilityState !== "visible";
+    const refreshAfterReturn = () => {
+      if (!wasHidden) return;
+      wasHidden = false;
+      // Let the in-flight pointer interaction finish before any subtree swap.
+      window.setTimeout(invalidateAll, 0);
+    };
+    const onFocus = () => refreshAfterReturn();
     const onVisibility = () => {
-      if (document.visibilityState === "visible") invalidateAll();
+      if (document.visibilityState !== "visible") {
+        wasHidden = true;
+        return;
+      }
+      refreshAfterReturn();
     };
     window.addEventListener("focus", onFocus);
     document.addEventListener("visibilitychange", onVisibility);
+
 
     // Approved interval fallback — only fires while the tab is visible AND
     // no other refresh happened in the last minute, so it stays cheap.
