@@ -1,7 +1,7 @@
 import { type MatchStage } from "@/lib/client-match-stage";
 
 export const KANBAN_COLUMNS: { key: MatchStage; label: string }[] = [
-  { key: "delivered", label: "Delivered" },
+  { key: "delivered", label: "Awaiting your review" },
   { key: "shortlisted", label: "Shortlisted" },
   { key: "interview_process", label: "Interview Process" },
   { key: "offer", label: "Offer" },
