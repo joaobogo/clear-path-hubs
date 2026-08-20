@@ -329,6 +329,35 @@ function ClientsPage() {
         </Link>
       </header>
 
+      {unknownParamNotices
+        .filter((n) => !dismissedNotices[n.key])
+        .map((n) => (
+          <div key={n.key} className="mx-6 mb-4">
+            <div
+              role="alert"
+              className="flex items-start gap-3 rounded-lg border border-warning/40 bg-warning/10 p-3 text-sm"
+            >
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning-foreground" />
+              <div className="flex-1">
+                <p className="font-medium text-warning-foreground">
+                  Filter '{n.key}={n.value}' isn't recognised
+                </p>
+                <p className="text-muted-foreground">
+                  Showing {formatNumber(n.count)} organization{n.count === 1 ? "" : "s"}.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDismissedNotices((s) => ({ ...s, [n.key]: true }))}
+                className="rounded p-1 hover:bg-warning/20"
+                aria-label="Dismiss notice"
+              >
+                <X className="h-4 w-4 text-warning-foreground" />
+              </button>
+            </div>
+          </div>
+        ))}
+
       {/* Filters live in the URL, so any view here can be named, saved and shared. */}
       <div className="px-6">
         <SavedViewsBar
