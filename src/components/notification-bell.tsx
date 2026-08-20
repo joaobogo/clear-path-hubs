@@ -320,6 +320,7 @@ function NotificationRow({
   busy,
   isNew = false,
   index = 0,
+  showTierBadge = true,
 }: {
   group: NotificationGroup;
   onRead: (ids: string[]) => void;
@@ -328,6 +329,8 @@ function NotificationRow({
   /** Arrived since the last time this list was read. */
   isNew?: boolean;
   index?: number;
+  /** Hidden when every row in the panel shares the same severity. */
+  showTierBadge?: boolean;
 }) {
   const { lead, rule, tier, items, unread } = group;
   const meta = TIER_META[tier];
