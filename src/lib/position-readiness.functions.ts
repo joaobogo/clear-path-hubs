@@ -51,7 +51,8 @@ export const listRolesNeedingDetails = createServerFn({ method: "POST" })
     const { data: rows, error } = await query;
     if (error) throw new Error(error.message);
 
-    const closed = new Set(["closed", "cancelled", "filled", "archived"]);
+    // Paused and archived roles are not being sourced, so they never appear here.
+    const closed = new Set(["closed", "cancelled", "filled", "archived", "paused"]);
     const roles: IncompleteRole[] = [];
     for (const raw of (rows ?? []) as AnyRow[]) {
       const status = String(raw.status ?? "");
