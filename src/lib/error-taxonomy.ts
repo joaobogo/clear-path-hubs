@@ -48,11 +48,10 @@ export interface NormalizedError {
 }
 
 // Raw database/provider text must never reach a user. Beyond driver names, this
-// also catches Postgres permission and constraint prose ("new row violates
-// row-level security policy for table ...", "permission denied", "duplicate key
-// value", "column x does not exist"), which reads as a system leak, not guidance.
+// also catches Postgres permission and constraint prose, Zod validation arrays,
+// and JSON-structured error payloads.
 const RAW_LEAK =
-  /(supabase|postgrest|pgrst|jwt|sql|relation ".*"|stack|at .*\(.*:\d+:\d+\)|\{"|\[object|row-level security|violates|permission denied|duplicate key|constraint|column .* does not exist|for table "|logic tree|failed to parse|\.ilike\.|\.eq\.|\borgs?\b.*\bin\.\(|[a-z_]+_failed:)/i;
+  /(supabase|postgrest|pgrst|jwt|sql|relation ".*"|stack|at .*\(.*:\d+:\d+\)|\{\s*"|\[\s*\{|\[object|row-level security|violates|permission denied|duplicate key|constraint|column .* does not exist|for table "|logic tree|failed to parse|\.ilike\.|\.eq\.|\borgs?\b.*\bin\.\(|[a-z_]+_failed:|"code"\s*:\s*"|"path"\s*:\s*\[)/i;
 
 export function newCorrelationId(): string {
   const rand =

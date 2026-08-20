@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   getSourcingOps,
   saveSourcingPlan,
@@ -61,7 +62,7 @@ export function SourcingOpsPanel({ positionId }: { positionId: string }) {
       setDraft(null);
       qc.invalidateQueries({ queryKey: key });
     },
-    onError: (e: Any) => toast.error(e?.message ?? "Could not save the sourcing record"),
+    onError: (e: Any) => toastError(e, { fallback: "Could not save the sourcing record", tone: "admin" }),
   });
 
   const saveCampaign = useMutation({
@@ -71,7 +72,7 @@ export function SourcingOpsPanel({ positionId }: { positionId: string }) {
       setEditing(null);
       qc.invalidateQueries({ queryKey: key });
     },
-    onError: (e: Any) => toast.error(e?.message ?? "Could not save the channel"),
+    onError: (e: Any) => toastError(e, { fallback: "Could not save the channel", tone: "admin" }),
   });
 
   const removeCampaign = useMutation({
@@ -80,7 +81,7 @@ export function SourcingOpsPanel({ positionId }: { positionId: string }) {
       toast.success("Channel removed");
       qc.invalidateQueries({ queryKey: key });
     },
-    onError: (e: Any) => toast.error(e?.message ?? "Could not remove the channel"),
+    onError: (e: Any) => toastError(e, { fallback: "Could not remove the channel", tone: "admin" }),
   });
 
   const [editing, setEditing] = useState<Any>(null);

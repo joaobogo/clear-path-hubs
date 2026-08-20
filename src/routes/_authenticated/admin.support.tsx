@@ -3,6 +3,8 @@ import { makeRouteErrorComponent, makeRouteNotFoundComponent } from "@/component
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
+import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { getSupportOverview } from "@/lib/admin-workbench.functions";
 import { startSupportSession } from "@/lib/support.functions";
 import { useIncludeTestRecords } from "@/lib/admin-scope";
@@ -56,7 +58,10 @@ function SupportPage() {
       // nothing ever opening.
       await navigate({ to: "/client", search: { org: orgId } });
     },
-    onError: (e: Error) => setMessage(e.message),
+    onError: (e: unknown) => {
+      setMessage(null);
+      toastError(e, { fallback: "Could not open the support session", tone: "admin" });
+    },
   });
 
   const reasonValid = reason.trim().length >= 10;

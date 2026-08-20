@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useIncludeTestRecords } from "@/lib/admin-scope";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import { FileWarning, ScanLine, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -93,7 +94,7 @@ function ParseFailures() {
       setDraft("");
       await query.refetch();
     } catch (e: Any) {
-      toast.error(e?.message ?? "Could not complete that action");
+      toastError(e, { fallback: "Could not complete that action", tone: "admin" });
     } finally {
       setBusy(false);
     }

@@ -3,6 +3,7 @@ import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-rout
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-error";
 import {
   ArrowLeft,
   Download,
@@ -90,7 +91,7 @@ function EvidenceViewer() {
       URL.revokeObjectURL(url);
       toast.success("Evidence record downloaded");
     } catch (e: Any) {
-      toast.error(e?.message ?? "Download failed");
+      toastError(e, { fallback: "Download failed", tone: "admin" });
     } finally {
       setDownloading(false);
     }
