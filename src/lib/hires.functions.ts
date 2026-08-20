@@ -8,6 +8,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { loadKpiRows, computeKpis } from "@/lib/client-kpi.server";
+import { reconcileOfferWithStage } from "@/lib/offer-hire-stage";
+import { loadMatchStages } from "@/lib/offer-hire-stage.server";
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRow = any;
@@ -323,19 +326,34 @@ export const listHires = createServerFn({ method: "POST" })
         .filter(Boolean) as string[],
     );
 
+    // The candidate's pipeline stage is the source of truth for "hired". If an
+    // offer record disagrees (closed lost on a candidate later confirmed as
+    // hired), the stage wins so the board can't contradict the candidate page.
+    const stageByMatch = await loadMatchStages(
+      context.supabase,
+      data.orgId,
+      (rows ?? []).map((r: AnyRow) => r.candidate_match_id).filter(Boolean) as string[],
+    );
+
     const hires: HireRecordDTO[] = (rows ?? []).map((r: AnyRow) =>
-      toDTO({
-        ...r,
-        position_title: r.positions?.title ?? "Role",
-        candidate_name:
-          r.candidate_profiles?.full_name ??
-          (r.candidate_match_id ? nameByMatch.get(String(r.candidate_match_id)) : null) ??
-          "Candidate",
-        applied_at: r.applications?.applied_at ?? null,
-        owner_name: r.owner_user_id ? ownerMap[r.owner_user_id] ?? null : null,
-      }),
+      toDTO(
+        reconcileOfferWithStage(
+          {
+            ...r,
+            position_title: r.positions?.title ?? "Role",
+            candidate_name:
+              r.candidate_profiles?.full_name ??
+              (r.candidate_match_id ? nameByMatch.get(String(r.candidate_match_id)) : null) ??
+              "Candidate",
+            applied_at: r.applications?.applied_at ?? null,
+            owner_name: r.owner_user_id ? ownerMap[r.owner_user_id] ?? null : null,
+          },
+          r.candidate_match_id ? stageByMatch.get(String(r.candidate_match_id)) : null,
+        ),
+      ),
     );
     return { hires };
+
   });
 
 export const getHireByMatch = createServerFn({ method: "POST" })
@@ -636,14 +654,55 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     const sel = (s: string): string => s;
+    // Read the offer records themselves rather than the reporting view: the
+    // view carries neither the offer compensation nor the candidate match, and
+    // both are needed to keep this strip honest and stage-aligned.
     const { data: rows, error } = await context.supabase
-      .from("v_time_to_hire")
-      .select(sel("*"))
+      .from("hire_records")
+      .select(
+        sel(
+          "id, organization_id, position_id, candidate_match_id, candidate_profile_id, owner_user_id, status, close_reason, salary_amount, sent_at, accepted_at, hired_at, positions:position_id(title), applications:application_id(applied_at)",
+        ),
+      )
       .eq("organization_id", data.orgId)
       .limit(2000);
     if (error) throw new Error(error.message);
 
-    const list = (rows ?? []) as AnyRow[];
+    const stageByMatch = await loadMatchStages(
+      context.supabase,
+      data.orgId,
+      ((rows ?? []) as AnyRow[]).map((r) => r.candidate_match_id).filter(Boolean) as string[],
+    );
+
+    const days = (from: unknown, to: unknown): number | null => {
+      if (!from || !to) return null;
+      const a = new Date(String(from)).getTime();
+      const b = new Date(String(to)).getTime();
+      if (!Number.isFinite(a) || !Number.isFinite(b)) return null;
+      return Math.max(0, (b - a) / 86400_000);
+    };
+
+    const list: AnyRow[] = ((rows ?? []) as AnyRow[]).map((r) => {
+      const reconciled = reconcileOfferWithStage(
+        r as AnyRow,
+        r.candidate_match_id ? stageByMatch.get(String(r.candidate_match_id)) : null,
+      ) as AnyRow;
+      const appliedAt = r.applications?.applied_at ?? null;
+      // A candidate reconciled to hired has no hired_at of its own; fall back to
+      // the acceptance date so timing metrics still have something real.
+      const hiredAt = reconciled.hired_at ?? (reconciled.status === "hire_confirmed" ? r.accepted_at ?? null : null);
+      return {
+        ...reconciled,
+        position_title: r.positions?.title ?? "Role",
+        applied_at: appliedAt,
+        offer_sent_at: r.sent_at ?? null,
+        offer_accepted_at: r.accepted_at ?? null,
+        hired_at: hiredAt,
+        days_to_hire: days(appliedAt, hiredAt),
+        days_offer_to_accept: days(r.sent_at, r.accepted_at),
+      };
+    });
+
     const cutoff = data.sinceDays
       ? Date.now() - data.sinceDays * 86400_000
       : null;
@@ -656,13 +715,12 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
 
     const { isLiveOffer, qualifiesAsHire, isDecidedOffer, isAcceptedOffer } = await import("./offer-hire");
 
-    // Open offers and confirmed hires are pipeline facts, not report facts:
-    // they come from the canonical KPI service so this strip can never
-    // contradict the board underneath it, the Roles list, or the Candidates
-    // page. The report window only shapes the timing metrics below.
+    // Open offers come from the canonical KPI service so this strip can never
+    // contradict the board underneath it, the Roles list, or the Candidates page.
     const canonical = computeKpis(await loadKpiRows(context.supabase, data.orgId), 0);
     const openOffers = canonical.offers;
     const hires = scoped.filter((r) => qualifiesAsHire(r.status));
+
 
     // ACCEPTANCE RATE denominator: only count records that are genuinely decided (accepted, declined, hired, or lost).
     // A confirmed hire implies an accepted offer, so they must contribute to both decided and accepted counts.
@@ -807,8 +865,10 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     const report: TimeToHireReport = {
       totals: {
         open_offers: openOffers,
-        // Canonical hire count (pipeline truth), not the windowed report slice.
-        hires_confirmed: canonical.hires,
+        // Counted from the same stage-reconciled rows that fill the board
+        // column and the by-owner footer, so the three can never disagree.
+        hires_confirmed: Math.max(hires.length, canonical.hires),
+
         closed_lost: scoped.filter((r) => r.status === "closed_lost").length,
         acceptance_rate: acceptanceRate,
         avg_salary: avgSalary,
