@@ -89,7 +89,7 @@ export const BLOCK_LIBRARY: Record<BlockId, BlockDefinition> = {
     title: "Talent pool growth",
     definition: "People added to your talent pool each week over the last eight weeks.",
     emptyHint: "Fills as candidates enter your pool.",
-    href: "/client/talent-pool",
+    href: "/client/talent-memory",
     span: 8,
   },
   team_activity: {

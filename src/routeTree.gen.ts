@@ -105,9 +105,7 @@ import { Route as AuthenticatedMeCvRouteImport } from './routes/_authenticated/m
 import { Route as AuthenticatedMeApplicationsRouteImport } from './routes/_authenticated/me.applications'
 import { Route as AuthenticatedClientTeamRouteImport } from './routes/_authenticated/client.team'
 import { Route as AuthenticatedClientTasksRouteImport } from './routes/_authenticated/client.tasks'
-import { Route as AuthenticatedClientTalentPoolRouteImport } from './routes/_authenticated/client.talent-pool'
 import { Route as AuthenticatedClientTalentMemoryRouteImport } from './routes/_authenticated/client.talent-memory'
-import { Route as AuthenticatedClientSharesRouteImport } from './routes/_authenticated/client.shares'
 import { Route as AuthenticatedClientSettingsRouteImport } from './routes/_authenticated/client.settings'
 import { Route as AuthenticatedClientRolesRouteImport } from './routes/_authenticated/client.roles'
 import { Route as AuthenticatedClientPositionsRouteImport } from './routes/_authenticated/client.positions'
@@ -166,7 +164,6 @@ import { Route as AuthenticatedAdminAgentOpsRouteImport } from './routes/_authen
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedMeApplicationsIndexRouteImport } from './routes/_authenticated/me.applications.index'
-import { Route as AuthenticatedClientSharesIndexRouteImport } from './routes/_authenticated/client.shares.index'
 import { Route as AuthenticatedClientPositionsIndexRouteImport } from './routes/_authenticated/client.positions.index'
 import { Route as AuthenticatedClientConversationsIndexRouteImport } from './routes/_authenticated/client.conversations.index'
 import { Route as AuthenticatedClientCandidatesIndexRouteImport } from './routes/_authenticated/client.candidates.index'
@@ -698,22 +695,10 @@ const AuthenticatedClientTasksRoute =
     path: '/tasks',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
-const AuthenticatedClientTalentPoolRoute =
-  AuthenticatedClientTalentPoolRouteImport.update({
-    id: '/talent-pool',
-    path: '/talent-pool',
-    getParentRoute: () => AuthenticatedClientRoute,
-  } as any)
 const AuthenticatedClientTalentMemoryRoute =
   AuthenticatedClientTalentMemoryRouteImport.update({
     id: '/talent-memory',
     path: '/talent-memory',
-    getParentRoute: () => AuthenticatedClientRoute,
-  } as any)
-const AuthenticatedClientSharesRoute =
-  AuthenticatedClientSharesRouteImport.update({
-    id: '/shares',
-    path: '/shares',
     getParentRoute: () => AuthenticatedClientRoute,
   } as any)
 const AuthenticatedClientSettingsRoute =
@@ -1055,12 +1040,6 @@ const AuthenticatedMeApplicationsIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedMeApplicationsRoute,
-  } as any)
-const AuthenticatedClientSharesIndexRoute =
-  AuthenticatedClientSharesIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedClientSharesRoute,
   } as any)
 const AuthenticatedClientPositionsIndexRoute =
   AuthenticatedClientPositionsIndexRouteImport.update({
@@ -1448,9 +1427,7 @@ export interface FileRoutesByFullPath {
   '/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/client/roles': typeof AuthenticatedClientRolesRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
-  '/client/shares': typeof AuthenticatedClientSharesRouteWithChildren
   '/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
-  '/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
   '/client/tasks': typeof AuthenticatedClientTasksRoute
   '/client/team': typeof AuthenticatedClientTeamRoute
   '/me/applications': typeof AuthenticatedMeApplicationsRouteWithChildren
@@ -1513,7 +1490,6 @@ export interface FileRoutesByFullPath {
   '/client/candidates/': typeof AuthenticatedClientCandidatesIndexRoute
   '/client/conversations/': typeof AuthenticatedClientConversationsIndexRoute
   '/client/positions/': typeof AuthenticatedClientPositionsIndexRoute
-  '/client/shares/': typeof AuthenticatedClientSharesIndexRoute
   '/me/applications/': typeof AuthenticatedMeApplicationsIndexRoute
   '/admin/candidates/$id/evidence': typeof AuthenticatedAdminCandidatesIdEvidenceRoute
   '/admin/candidates/$id/parse': typeof AuthenticatedAdminCandidatesIdParseRoute
@@ -1643,7 +1619,6 @@ export interface FileRoutesByTo {
   '/client/roles': typeof AuthenticatedClientRolesRoute
   '/client/settings': typeof AuthenticatedClientSettingsRoute
   '/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
-  '/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
   '/client/tasks': typeof AuthenticatedClientTasksRoute
   '/client/team': typeof AuthenticatedClientTeamRoute
   '/me/cv': typeof AuthenticatedMeCvRoute
@@ -1705,7 +1680,6 @@ export interface FileRoutesByTo {
   '/client/candidates': typeof AuthenticatedClientCandidatesIndexRoute
   '/client/conversations': typeof AuthenticatedClientConversationsIndexRoute
   '/client/positions': typeof AuthenticatedClientPositionsIndexRoute
-  '/client/shares': typeof AuthenticatedClientSharesIndexRoute
   '/me/applications': typeof AuthenticatedMeApplicationsIndexRoute
   '/admin/candidates/$id/evidence': typeof AuthenticatedAdminCandidatesIdEvidenceRoute
   '/admin/candidates/$id/parse': typeof AuthenticatedAdminCandidatesIdParseRoute
@@ -1845,9 +1819,7 @@ export interface FileRoutesById {
   '/_authenticated/client/positions': typeof AuthenticatedClientPositionsRouteWithChildren
   '/_authenticated/client/roles': typeof AuthenticatedClientRolesRoute
   '/_authenticated/client/settings': typeof AuthenticatedClientSettingsRoute
-  '/_authenticated/client/shares': typeof AuthenticatedClientSharesRouteWithChildren
   '/_authenticated/client/talent-memory': typeof AuthenticatedClientTalentMemoryRoute
-  '/_authenticated/client/talent-pool': typeof AuthenticatedClientTalentPoolRoute
   '/_authenticated/client/tasks': typeof AuthenticatedClientTasksRoute
   '/_authenticated/client/team': typeof AuthenticatedClientTeamRoute
   '/_authenticated/me/applications': typeof AuthenticatedMeApplicationsRouteWithChildren
@@ -1910,7 +1882,6 @@ export interface FileRoutesById {
   '/_authenticated/client/candidates/': typeof AuthenticatedClientCandidatesIndexRoute
   '/_authenticated/client/conversations/': typeof AuthenticatedClientConversationsIndexRoute
   '/_authenticated/client/positions/': typeof AuthenticatedClientPositionsIndexRoute
-  '/_authenticated/client/shares/': typeof AuthenticatedClientSharesIndexRoute
   '/_authenticated/me/applications/': typeof AuthenticatedMeApplicationsIndexRoute
   '/_authenticated/admin/candidates/$id_/evidence': typeof AuthenticatedAdminCandidatesIdEvidenceRoute
   '/_authenticated/admin/candidates/$id_/parse': typeof AuthenticatedAdminCandidatesIdParseRoute
@@ -2050,9 +2021,7 @@ export interface FileRouteTypes {
     | '/client/positions'
     | '/client/roles'
     | '/client/settings'
-    | '/client/shares'
     | '/client/talent-memory'
-    | '/client/talent-pool'
     | '/client/tasks'
     | '/client/team'
     | '/me/applications'
@@ -2115,7 +2084,6 @@ export interface FileRouteTypes {
     | '/client/candidates/'
     | '/client/conversations/'
     | '/client/positions/'
-    | '/client/shares/'
     | '/me/applications/'
     | '/admin/candidates/$id/evidence'
     | '/admin/candidates/$id/parse'
@@ -2245,7 +2213,6 @@ export interface FileRouteTypes {
     | '/client/roles'
     | '/client/settings'
     | '/client/talent-memory'
-    | '/client/talent-pool'
     | '/client/tasks'
     | '/client/team'
     | '/me/cv'
@@ -2307,7 +2274,6 @@ export interface FileRouteTypes {
     | '/client/candidates'
     | '/client/conversations'
     | '/client/positions'
-    | '/client/shares'
     | '/me/applications'
     | '/admin/candidates/$id/evidence'
     | '/admin/candidates/$id/parse'
@@ -2446,9 +2412,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client/positions'
     | '/_authenticated/client/roles'
     | '/_authenticated/client/settings'
-    | '/_authenticated/client/shares'
     | '/_authenticated/client/talent-memory'
-    | '/_authenticated/client/talent-pool'
     | '/_authenticated/client/tasks'
     | '/_authenticated/client/team'
     | '/_authenticated/me/applications'
@@ -2511,7 +2475,6 @@ export interface FileRouteTypes {
     | '/_authenticated/client/candidates/'
     | '/_authenticated/client/conversations/'
     | '/_authenticated/client/positions/'
-    | '/_authenticated/client/shares/'
     | '/_authenticated/me/applications/'
     | '/_authenticated/admin/candidates/$id_/evidence'
     | '/_authenticated/admin/candidates/$id_/parse'
@@ -3298,25 +3261,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientTasksRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
-    '/_authenticated/client/talent-pool': {
-      id: '/_authenticated/client/talent-pool'
-      path: '/talent-pool'
-      fullPath: '/client/talent-pool'
-      preLoaderRoute: typeof AuthenticatedClientTalentPoolRouteImport
-      parentRoute: typeof AuthenticatedClientRoute
-    }
     '/_authenticated/client/talent-memory': {
       id: '/_authenticated/client/talent-memory'
       path: '/talent-memory'
       fullPath: '/client/talent-memory'
       preLoaderRoute: typeof AuthenticatedClientTalentMemoryRouteImport
-      parentRoute: typeof AuthenticatedClientRoute
-    }
-    '/_authenticated/client/shares': {
-      id: '/_authenticated/client/shares'
-      path: '/shares'
-      fullPath: '/client/shares'
-      preLoaderRoute: typeof AuthenticatedClientSharesRouteImport
       parentRoute: typeof AuthenticatedClientRoute
     }
     '/_authenticated/client/settings': {
@@ -3724,13 +3673,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/me/applications/'
       preLoaderRoute: typeof AuthenticatedMeApplicationsIndexRouteImport
       parentRoute: typeof AuthenticatedMeApplicationsRoute
-    }
-    '/_authenticated/client/shares/': {
-      id: '/_authenticated/client/shares/'
-      path: '/'
-      fullPath: '/client/shares/'
-      preLoaderRoute: typeof AuthenticatedClientSharesIndexRouteImport
-      parentRoute: typeof AuthenticatedClientSharesRoute
     }
     '/_authenticated/client/positions/': {
       id: '/_authenticated/client/positions/'
@@ -4259,20 +4201,6 @@ const AuthenticatedClientPositionsRouteWithChildren =
     AuthenticatedClientPositionsRouteChildren,
   )
 
-interface AuthenticatedClientSharesRouteChildren {
-  AuthenticatedClientSharesIndexRoute: typeof AuthenticatedClientSharesIndexRoute
-}
-
-const AuthenticatedClientSharesRouteChildren: AuthenticatedClientSharesRouteChildren =
-  {
-    AuthenticatedClientSharesIndexRoute: AuthenticatedClientSharesIndexRoute,
-  }
-
-const AuthenticatedClientSharesRouteWithChildren =
-  AuthenticatedClientSharesRoute._addFileChildren(
-    AuthenticatedClientSharesRouteChildren,
-  )
-
 interface AuthenticatedClientRouteChildren {
   AuthenticatedClientAccountRoute: typeof AuthenticatedClientAccountRoute
   AuthenticatedClientAgentsRoute: typeof AuthenticatedClientAgentsRoute
@@ -4294,9 +4222,7 @@ interface AuthenticatedClientRouteChildren {
   AuthenticatedClientPositionsRoute: typeof AuthenticatedClientPositionsRouteWithChildren
   AuthenticatedClientRolesRoute: typeof AuthenticatedClientRolesRoute
   AuthenticatedClientSettingsRoute: typeof AuthenticatedClientSettingsRoute
-  AuthenticatedClientSharesRoute: typeof AuthenticatedClientSharesRouteWithChildren
   AuthenticatedClientTalentMemoryRoute: typeof AuthenticatedClientTalentMemoryRoute
-  AuthenticatedClientTalentPoolRoute: typeof AuthenticatedClientTalentPoolRoute
   AuthenticatedClientTasksRoute: typeof AuthenticatedClientTasksRoute
   AuthenticatedClientTeamRoute: typeof AuthenticatedClientTeamRoute
   AuthenticatedClientIndexRoute: typeof AuthenticatedClientIndexRoute
@@ -4327,9 +4253,7 @@ const AuthenticatedClientRouteChildren: AuthenticatedClientRouteChildren = {
     AuthenticatedClientPositionsRouteWithChildren,
   AuthenticatedClientRolesRoute: AuthenticatedClientRolesRoute,
   AuthenticatedClientSettingsRoute: AuthenticatedClientSettingsRoute,
-  AuthenticatedClientSharesRoute: AuthenticatedClientSharesRouteWithChildren,
   AuthenticatedClientTalentMemoryRoute: AuthenticatedClientTalentMemoryRoute,
-  AuthenticatedClientTalentPoolRoute: AuthenticatedClientTalentPoolRoute,
   AuthenticatedClientTasksRoute: AuthenticatedClientTasksRoute,
   AuthenticatedClientTeamRoute: AuthenticatedClientTeamRoute,
   AuthenticatedClientIndexRoute: AuthenticatedClientIndexRoute,
