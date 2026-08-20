@@ -97,6 +97,10 @@ export function RequisitionEditor({
   openWorldwide = false,
   workModel = "",
   location = "",
+  currency: wizardCurrency,
+  budgetMin: wizardBudgetMin,
+  budgetMax: wizardBudgetMax,
+  budgetPeriod: wizardBudgetPeriod,
 }: {
   positionId: string;
   onDirtyChange?: (dirty: boolean) => void;
@@ -104,6 +108,10 @@ export function RequisitionEditor({
   openWorldwide?: boolean;
   workModel?: WorkModel;
   location?: string;
+  currency?: string;
+  budgetMin?: string;
+  budgetMax?: string;
+  budgetPeriod?: string;
 }) {
   const qc = useQueryClient();
   const load = useServerFn(getRequisitionMeta);
