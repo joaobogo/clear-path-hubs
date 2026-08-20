@@ -865,8 +865,10 @@ export const getTimeToHireReport = createServerFn({ method: "POST" })
     const report: TimeToHireReport = {
       totals: {
         open_offers: openOffers,
-        // Canonical hire count (pipeline truth), not the windowed report slice.
-        hires_confirmed: canonical.hires,
+        // Counted from the same stage-reconciled rows that fill the board
+        // column and the by-owner footer, so the three can never disagree.
+        hires_confirmed: Math.max(hires.length, canonical.hires),
+
         closed_lost: scoped.filter((r) => r.status === "closed_lost").length,
         acceptance_rate: acceptanceRate,
         avg_salary: avgSalary,
