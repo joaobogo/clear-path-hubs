@@ -1,7 +1,5 @@
 import { makeRouteErrorComponent } from "@/components/workspace/route-states";
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,12 +32,6 @@ function PublishPage() {
   const initial = Route.useLoaderData();
   const navigate = useNavigate();
   const publish = useServerFn(publishPosition);
-  const qc = useSuspenseQuery({
-    queryKey: ["admin-position", initial.id],
-    queryFn: () =>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ({ position: { visibility: undefined } }) as any,
-  });
 
   const [fields, setFields] = useState<JobPostFields>(() => ({
     title: initial.title,
@@ -75,6 +67,7 @@ function PublishPage() {
   }));
 
   const [busy, setBusy] = useState(false);
+  const isPublic = initial.visibility === "public";
 
   const update = <K extends keyof JobPostFields>(k: K, v: JobPostFields[K]) =>
     setFields((f) => ({ ...f, [k]: v }));
@@ -106,10 +99,6 @@ function PublishPage() {
       setBusy(false);
     }
   };
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const position = (qc.data?.position ?? initial) as any;
-  const isPublic = position.visibility === "public";
 
   return (
     <div className="mx-auto max-w-3xl space-y-5 p-4 sm:p-6">
@@ -160,3 +149,4 @@ function PublishPage() {
     </div>
   );
 }
+
