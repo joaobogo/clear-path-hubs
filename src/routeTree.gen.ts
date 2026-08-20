@@ -31,7 +31,6 @@ import { Route as MvpFixPlanRouteImport } from './routes/mvp-fix-plan'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as KnowledgeBaseRouteImport } from './routes/knowledge-base'
-import { Route as KbdSelectProbeRouteImport } from './routes/kbd-select-probe'
 import { Route as JourneyRouteImport } from './routes/journey'
 import { Route as IntegrationsRouteImport } from './routes/integrations'
 import { Route as IntakeRouteImport } from './routes/intake'
@@ -318,11 +317,6 @@ const LoginRoute = LoginRouteImport.update({
 const KnowledgeBaseRoute = KnowledgeBaseRouteImport.update({
   id: '/knowledge-base',
   path: '/knowledge-base',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const KbdSelectProbeRoute = KbdSelectProbeRouteImport.update({
-  id: '/kbd-select-probe',
-  path: '/kbd-select-probe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JourneyRoute = JourneyRouteImport.update({
@@ -1327,7 +1321,6 @@ export interface FileRoutesByFullPath {
   '/intake': typeof IntakeRoute
   '/integrations': typeof IntegrationsRoute
   '/journey': typeof JourneyRoute
-  '/kbd-select-probe': typeof KbdSelectProbeRoute
   '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
@@ -1528,7 +1521,6 @@ export interface FileRoutesByTo {
   '/intake': typeof IntakeRoute
   '/integrations': typeof IntegrationsRoute
   '/journey': typeof JourneyRoute
-  '/kbd-select-probe': typeof KbdSelectProbeRoute
   '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
@@ -1721,7 +1713,6 @@ export interface FileRoutesById {
   '/intake': typeof IntakeRoute
   '/integrations': typeof IntegrationsRoute
   '/journey': typeof JourneyRoute
-  '/kbd-select-probe': typeof KbdSelectProbeRoute
   '/knowledge-base': typeof KnowledgeBaseRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
@@ -1924,7 +1915,6 @@ export interface FileRouteTypes {
     | '/intake'
     | '/integrations'
     | '/journey'
-    | '/kbd-select-probe'
     | '/knowledge-base'
     | '/login'
     | '/mcp'
@@ -2125,7 +2115,6 @@ export interface FileRouteTypes {
     | '/intake'
     | '/integrations'
     | '/journey'
-    | '/kbd-select-probe'
     | '/knowledge-base'
     | '/login'
     | '/mcp'
@@ -2317,7 +2306,6 @@ export interface FileRouteTypes {
     | '/intake'
     | '/integrations'
     | '/journey'
-    | '/kbd-select-probe'
     | '/knowledge-base'
     | '/login'
     | '/mcp'
@@ -2520,7 +2508,6 @@ export interface RootRouteChildren {
   IntakeRoute: typeof IntakeRoute
   IntegrationsRoute: typeof IntegrationsRoute
   JourneyRoute: typeof JourneyRoute
-  KbdSelectProbeRoute: typeof KbdSelectProbeRoute
   KnowledgeBaseRoute: typeof KnowledgeBaseRoute
   LoginRoute: typeof LoginRoute
   McpRoute: typeof McpRoute
@@ -2754,13 +2741,6 @@ declare module '@tanstack/react-router' {
       path: '/knowledge-base'
       fullPath: '/knowledge-base'
       preLoaderRoute: typeof KnowledgeBaseRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/kbd-select-probe': {
-      id: '/kbd-select-probe'
-      path: '/kbd-select-probe'
-      fullPath: '/kbd-select-probe'
-      preLoaderRoute: typeof KbdSelectProbeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/journey': {
@@ -4374,7 +4354,6 @@ const rootRouteChildren: RootRouteChildren = {
   IntakeRoute: IntakeRoute,
   IntegrationsRoute: IntegrationsRoute,
   JourneyRoute: JourneyRoute,
-  KbdSelectProbeRoute: KbdSelectProbeRoute,
   KnowledgeBaseRoute: KnowledgeBaseRoute,
   LoginRoute: LoginRoute,
   McpRoute: McpRoute,
