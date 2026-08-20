@@ -131,9 +131,9 @@ function OverviewPage() {
     error,
     stuck: overviewStuck,
   });
-  const retryAll = () => {
-    if (gate.failed) gate.retry();
-    void refetch();
+  const retryAll = async () => {
+    if (gate.failed) await gate.retry();
+    await refetch();
   };
 
 
