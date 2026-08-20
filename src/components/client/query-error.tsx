@@ -29,6 +29,14 @@ export function queryErrorMessage(error: unknown): string {
   const message = raw.trim();
   if (!message) return "The request failed before it returned anything.";
 
+  // Internal identifiers (server function hashes, UUIDs, trace IDs) are never
+  // shown to clients. Log the real message and return a single plain sentence.
+  const internalId = /\b[a-f0-9]{64}\b|\b[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\b/i;
+  if (internalId.test(message)) {
+    if (typeof console !== "undefined") console.error("[query-error]", message);
+    return "We couldn't load this section. Try again, or message your recruiter.";
+  }
+
   const lower = message.toLowerCase();
   if (lower.includes("unauthorized") || lower.includes("401") || lower.includes("jwt")) {
     return "Your session expired while loading this. Retry, or sign in again.";
@@ -41,6 +49,10 @@ export function queryErrorMessage(error: unknown): string {
   }
   if (lower.includes("timeout") || lower.includes("timed out")) {
     return "The request took too long and was stopped.";
+  }
+  if (lower.includes("server function info not found") || lower.includes("server function")) {
+    if (typeof console !== "undefined") console.error("[query-error]", message);
+    return "We couldn't load this section. Try again, or message your recruiter.";
   }
   // Raw database/driver text is never client-safe: log it, show a plain line.
   const technical =
