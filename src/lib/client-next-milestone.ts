@@ -59,7 +59,7 @@ export type Milestone = {
 };
 
 export function formatMilestoneDate(iso: string): string {
-  return formatDate(Date(iso));
+  return formatDate((iso));
 }
 
 const NO_DATE_YET = "Date confirmed once sourcing starts";

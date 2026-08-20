@@ -15,13 +15,10 @@ import {
 import { RoleComparePanel } from "@/components/client/role-compare-panel";
 import { ROLE_COMPARE_MAX, roleCompareDisabledReason } from "@/lib/client-compare";
 import { AlertCircle, Columns3 } from "lucide-react";
-import { APP_LOCALE, WORKSPACE_TIMEZONE, formatDate } from "@/lib/format/datetime";
+import { formatDate } from "@/lib/format/datetime";
 
-function formatDate(iso: string | null | undefined): string | null {
-  if (!iso) return null;
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return null;
-  return formatDate(d);
+function shortlistDate(iso: string | null | undefined): string | null {
+  return formatDate(iso) || null;
 }
 
 /**

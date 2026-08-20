@@ -398,7 +398,7 @@ function CandidateCard({
       <footer className="mt-4 border-t pt-3 text-xs text-muted-foreground">
         Last updated{" "}
         {c.last_updated
-          ? formatDate(Date(c.last_updated))
+          ? formatDate((c.last_updated))
           : "—"}{" "}
         · Stage: {c.stage.replace(/_/g, " ")}
       </footer>
@@ -856,7 +856,7 @@ function CommentsPanel({
                 )}
                 <span className="ml-auto flex items-center gap-1">
                   <Calendar className="h-3 w-3" aria-hidden />
-                  {formatDate(Date(c.created_at))}
+                  {formatDate((c.created_at))}
                 </span>
               </div>
               <p className="mt-1.5 whitespace-pre-line">{c.body}</p>

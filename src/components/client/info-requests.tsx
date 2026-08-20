@@ -83,7 +83,7 @@ export function InfoRequestCardView({
       <p className="text-sm leading-relaxed text-muted-foreground">{request.impact}</p>
       <p className="text-xs text-muted-foreground">
         Asked by {request.asked_by_name ?? "your TaaSFlow recruiter"} on{" "}
-        {formatDate(Date(request.created_at))}
+        {formatDate((request.created_at))}
       </p>
 
       {!request.answerable || !spec ? (

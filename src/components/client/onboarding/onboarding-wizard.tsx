@@ -912,7 +912,7 @@ function SystemsStep({ state, onDone, back, saveForLater }: BodyProps) {
               <span className="font-medium capitalize">{formatEnumLabel(i.id)}</span>
               <span className="text-muted-foreground">
                 {HEALTH_LABEL[i.status] ?? i.status}
-                {i.checked_at ? ` · checked ${formatDate(Date(i.checked_at))}` : ""}
+                {i.checked_at ? ` · checked ${formatDate((i.checked_at))}` : ""}
               </span>
             </li>
           ))}

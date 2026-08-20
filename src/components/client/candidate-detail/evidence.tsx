@@ -231,7 +231,7 @@ export const FitHero = memo(function FitHero({
           )}
           {candidate.last_updated && (
             <p className="mt-2 text-xs text-muted-foreground">
-              Scored {formatDate(Date(candidate.last_updated))}
+              Scored {formatDate((candidate.last_updated))}
             </p>
           )}
         </div>

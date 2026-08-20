@@ -439,7 +439,7 @@ function CandidatesPage() {
           {(rowsRaw as ClientCandidateDTO[]).length} shown
         </div>
         {overview?.last_updated && (
-          <div>Updated {formatDate(Date(overview.last_updated))}</div>
+          <div>Updated {formatDate((overview.last_updated))}</div>
         )}
         <div>Select {2}–{COMPARE_MAX} candidates on one role</div>
       </div>

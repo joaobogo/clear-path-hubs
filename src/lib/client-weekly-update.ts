@@ -75,7 +75,7 @@ export function totalMovement(update: Pick<WeeklyUpdate, "metrics">): number {
 
 export function formatWindow(update: Pick<WeeklyUpdate, "window_start" | "window_end">): string {
   const fmt = (iso: string) =>
-    formatDate(Date(iso));
+    formatDate((iso));
   return `${fmt(update.window_start)} – ${fmt(update.window_end)}`;
 }
 

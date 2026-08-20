@@ -89,7 +89,7 @@ function HireCardImpl({
           <dt>{HIRE_STATUS_LABEL[hire.status]}</dt>
           <dd className="text-foreground">
             {stageEnteredAt(hire)
-              ? formatDate(Date(stageEnteredAt(hire)!))
+              ? formatDate((stageEnteredAt(hire)!))
               : "—"}
           </dd>
         </div>
