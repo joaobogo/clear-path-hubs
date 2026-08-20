@@ -5,9 +5,11 @@ import { PositionEditWizard } from "@/components/positions/PositionEditWizard";
 import { getPositionForEdit } from "@/lib/position-edit.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/positions/$id_/edit")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    step: search.step ? Number(search.step) : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>) => {
+    const raw = search.step ? Number(search.step) : undefined;
+    const step = raw && raw >= 1 && raw <= 3 ? raw : undefined;
+    return { step };
+  },
   loader: async ({ context, params }) => {
     const d = await context.queryClient.ensureQueryData({
       queryKey: ["position-edit", params.id],
