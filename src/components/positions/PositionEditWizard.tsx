@@ -153,6 +153,9 @@ export function PositionEditWizard({
   );
   const [state, setState] = useState<State>(() => initialState(initial));
 
+  // Publish the role title so the workspace breadcrumb resolves from the record
+  // instead of falling back to an entity-type literal while loading.
+  useDetailCrumb(initial.title ?? null);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [qDraft, setQDraft] = useState("");
