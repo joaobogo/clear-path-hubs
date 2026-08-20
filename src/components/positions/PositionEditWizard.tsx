@@ -1,7 +1,6 @@
 // Wizard-style position editor UI, shared by admin and client edit routes.
-// Mirrors the public /intake wizard 1:1 (Role Definition → Candidate Profile
-// → Compensation → Search Criteria → Review) so admins and clients edit
-// positions with the same questions asked at intake.
+// Three steps: Requisition → Candidate profile & gates → Locations.
+// Job-post personalisation lives on the publish flow, not here.
 import { useEffect, useMemo, useState } from "react";
 import {
   SCREENING_MAX_QUESTIONS,
@@ -42,23 +41,17 @@ import {
 import { checkRequisitionDuplicate } from "@/lib/requisition.functions";
 import { RequisitionEditor } from "@/components/positions/RequisitionEditor";
 import { JobQualityPanel } from "@/components/positions/JobQualityPanel";
-import { JobPostStep } from "@/components/positions/JobPostStep";
 import { formatEnumLabel } from "@/lib/human-labels";
 import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
 import { useDetailCrumb } from "@/lib/workspace/crumb-label";
-
+import type { QualityInput } from "@/lib/requisition-schema";
 
 const STEPS = [
-  { id: 1, label: "Role Definition" },
-  { id: 2, label: "Candidate Profile" },
-  { id: 3, label: "Compensation" },
-  { id: 4, label: "Search Criteria" },
-  { id: 5, label: "Locations & Priorities" },
-  { id: 6, label: "Job Post & Preview" },
-  { id: 7, label: "Review & Save" },
+  { id: 1, label: "Requisition" },
+  { id: 2, label: "Candidate profile & gates" },
+  { id: 3, label: "Locations" },
 ];
 const LAST_STEP = STEPS.length;
-
 
 const DISQUALIFIER_OPTIONS = [
   "Compensation above budget",
@@ -111,21 +104,16 @@ function validateStep(step: number, s: State): Record<string, string> {
     if (!s.seniority) e.seniority = "Select a seniority level";
     if (!s.headcount || (typeof s.headcount === "number" && s.headcount < 1))
       e.headcount = "At least 1 position";
-    if (!s.open_worldwide && s.target_countries.length === 0)
-      e.target_countries = "Add at least one target country, or mark as open worldwide";
+
+    const min = Number(String(s.budget_min).replace(/[^0-9.]/g, ""));
+    const max = Number(String(s.budget_max).replace(/[^0-9.]/g, ""));
+    if (min && max && min > max) e.budget_max = "Maximum budget must be at least the minimum";
   }
   if (step === 2) {
     if (s.must_have_skills.length < 3 && s.description.trim().length < 40) {
       e.must_have_skills =
         "Add at least 3 must-have skills or a job description of 40+ characters on Step 1";
     }
-  }
-  if (step === 3) {
-    const min = Number(String(s.budget_min).replace(/[^0-9.]/g, ""));
-    const max = Number(String(s.budget_max).replace(/[^0-9.]/g, ""));
-    if (min && max && min > max) e.budget_max = "Maximum budget must be at least the minimum";
-  }
-  if (step === 4) {
     if (s.target_titles.length === 0) e.target_titles = "Add at least one target job title";
   }
   return e;
@@ -241,7 +229,6 @@ export function PositionEditWizard({
     enableBeforeUnload: dirty,
   });
 
-
   const set = <K extends keyof State>(k: K, v: State[K]) =>
     setState((s) => ({ ...s, [k]: v }));
 
@@ -263,15 +250,12 @@ export function PositionEditWizard({
       const all = {
         ...validateStep(1, state),
         ...validateStep(2, state),
-        ...validateStep(3, state),
-        ...validateStep(4, state),
       };
       if (Object.keys(all).length > 0) {
         setErrors(all);
-        if (all.title || all.work_model || all.employment_type || all.seniority || all.headcount || all.target_countries)
+        if (all.title || all.work_model || all.employment_type || all.seniority || all.headcount || all.budget_max)
           setStep(1);
-        else if (all.must_have_skills) setStep(2);
-        else if (all.target_titles) setStep(4);
+        else if (all.must_have_skills || all.target_titles) setStep(2);
         throw new Error("Please fix the highlighted fields");
       }
       return save({
@@ -350,12 +334,32 @@ export function PositionEditWizard({
     document.querySelector<HTMLElement>(`[data-field="${key}"]`)?.focus();
   }, [errors]);
 
+  const qualityDraft: Partial<QualityInput> = useMemo(
+    () => ({
+      title: state.title,
+      description: state.description,
+      seniority: state.seniority,
+      employment_type: state.employment_type,
+      department: state.department ?? "",
+      must_have_skills: state.must_have_skills,
+      nice_to_have_skills: state.nice_to_have_skills,
+      disqualifier_tags: state.disqualifier_tags,
+      responsibilities: state.responsibilities,
+      experience: state.experience,
+      interview_process: state.interview_process,
+      screening_questions: state.screening_questions,
+      target_start_date: state.target_start_date,
+      headcount: typeof state.headcount === "number" ? state.headcount : null,
+    }),
+    [state],
+  );
+
   return (
-    <div className="mx-auto max-w-3xl space-y-5 p-4 sm:p-6">
+    <div className="mx-auto max-w-7xl space-y-5 p-4 sm:p-6">
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:flex sm:flex-wrap sm:justify-between">
         <div className="min-w-0">
           <p className="text-xs uppercase tracking-wide text-muted-foreground">
-            {audience === "admin" ? "Admin · Edit position" : "Client · Edit position"}
+            {audience === "admin" ? "Admin · Edit position" : "Client · Edit role"}
           </p>
           <h1 className="truncate text-xl font-semibold sm:text-2xl">
             {initial.title || "Untitled role"}
@@ -400,828 +404,678 @@ export function PositionEditWizard({
         </div>
       )}
 
-      <div aria-label="Progress">
-        <Progress value={progress} />
-        <ol className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-          {STEPS.map((s) => (
-            <li key={s.id} aria-current={s.id === step ? "step" : undefined}>
-              <button
-                type="button"
-                onClick={() => setStep(s.id)}
-                className={
-                  s.id === step
-                    ? "font-medium text-foreground underline decoration-primary decoration-2 underline-offset-4"
-                    : "hover:text-foreground hover:underline"
-                }
-              >
-                {s.id}. {s.label}
-              </button>
-            </li>
-          ))}
-        </ol>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">
-            Step {step}: {STEPS[step - 1].label}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* STEP 1 — Role Definition */}
-          {step === 1 && (
-            <div className="space-y-6">
-              {dupWarning.length > 0 && (
-                <div className="rounded-md border border-amber-500/40 bg-amber-500/5 p-3 text-sm">
-                  <p className="font-medium">Possible duplicate requisition</p>
-                  <ul className="mt-1 space-y-0.5 text-muted-foreground">
-                    {dupWarning.map((m) => (
-                      <li key={m.id}>
-                        {m.title}
-                        {m.department ? ` · ${m.department}` : ""} · {m.status}
-                        {m.reference_code ? ` · ${m.reference_code}` : ""}
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Check this isn't the same role before saving — duplicates split candidates
-                    across two pipelines.
-                  </p>
-                </div>
-              )}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <Field label="Role Title" error={errors.title} required className="sm:col-span-2">
-                  <Input
-                    data-field="title"
-                    value={state.title}
-                    onChange={(e) => set("title", e.target.value)}
-                    placeholder="e.g. Senior Backend Engineer"
-                  />
-                </Field>
-                <Field label="Department">
-                  <Input
-                    value={state.department}
-                    onChange={(e) => set("department", e.target.value)}
-                  />
-                </Field>
-                <Field label="Location">
-                  <Input value={state.location} onChange={(e) => set("location", e.target.value)} />
-                </Field>
-                <Field label="Employment Type" error={errors.employment_type} required>
-                  <Select
-                    value={state.employment_type}
-                    onValueChange={(v) => set("employment_type", v as State["employment_type"])}
-                  >
-                    <SelectTrigger data-field="employment_type">
-                      <SelectValue placeholder="Select…" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="full_time">Full time</SelectItem>
-                      <SelectItem value="part_time">Part time</SelectItem>
-                      <SelectItem value="contract">Contract</SelectItem>
-                      <SelectItem value="temporary">Temporary</SelectItem>
-                      <SelectItem value="internship">Internship</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </Field>
-                <Field label="Work Arrangement" error={errors.work_model} required>
-                  <Select
-                    value={state.work_model}
-                    onValueChange={(v) => set("work_model", v as State["work_model"])}
-                  >
-                    <SelectTrigger data-field="work_model">
-                      <SelectValue placeholder="Select…" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="remote">Remote</SelectItem>
-                      <SelectItem value="hybrid">Hybrid</SelectItem>
-                      <SelectItem value="onsite">Onsite</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </Field>
-                <Field label="Seniority Level" error={errors.seniority} required>
-                  <Select value={state.seniority} onValueChange={(v) => set("seniority", v)}>
-                    <SelectTrigger data-field="seniority">
-                      <SelectValue placeholder="Select…" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Intern">Intern</SelectItem>
-                      <SelectItem value="Junior">Junior</SelectItem>
-                      <SelectItem value="Mid">Mid</SelectItem>
-                      <SelectItem value="Senior">Senior</SelectItem>
-                      <SelectItem value="Lead">Lead</SelectItem>
-                      <SelectItem value="Staff">Staff</SelectItem>
-                      <SelectItem value="Principal">Principal</SelectItem>
-                      <SelectItem value="Director">Director</SelectItem>
-                      <SelectItem value="VP">VP</SelectItem>
-                      <SelectItem value="C-Level">C-Level</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </Field>
-                <Field label="Positions to Fill" error={errors.headcount} required>
-                  <Input
-                    data-field="headcount"
-                    type="number"
-                    min={1}
-                    max={999}
-                    value={state.headcount}
-                    onChange={(e) =>
-                      set("headcount", e.target.value === "" ? "" : Number(e.target.value))
-                    }
-                  />
-                </Field>
-              </div>
-
-              <Field
-                label="Job Description"
-                hint="Paste the JD or write it here. We use this to enrich matching."
-              >
-                <Textarea
-                  rows={6}
-                  value={state.description}
-                  onChange={(e) => set("description", e.target.value)}
-                  placeholder="Paste the full job description or describe the role, responsibilities, and success criteria."
-                />
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {state.description.trim().length} characters
-                </p>
-              </Field>
-
-              <SectionHeader
-                title="Geographic Requirements"
-                subtitle="Where the role can be based."
-              />
-              <label className="flex items-center gap-2 text-sm">
-                <Checkbox
-                  checked={state.open_worldwide}
-                  onCheckedChange={(v) => set("open_worldwide", Boolean(v))}
-                />
-                <span>Open worldwide (fully remote — anywhere)</span>
-              </label>
-              {!state.open_worldwide && (
-                <div className="space-y-4">
-                  <ChipInput
-                    label="Target Countries"
-                    hint="Countries where the role can be based."
-                    error={errors.target_countries}
-                    values={state.target_countries}
-                    onChange={(v) => set("target_countries", v)}
-                    placeholder="e.g. United States, Portugal, Germany"
-                    dataField="target_countries"
-                  />
-                  <ChipInput
-                    label="States / Regions"
-                    values={state.states_regions}
-                    onChange={(v) => set("states_regions", v)}
-                    placeholder="e.g. California, Bavaria, Ontario"
-                  />
-                  <ChipInput
-                    label="Metro Areas"
-                    values={state.metro_areas}
-                    onChange={(v) => set("metro_areas", v)}
-                    placeholder="e.g. San Francisco Bay Area, Berlin, Lisbon"
-                  />
-                  <Field label="Search Radius" hint="Optional. e.g. 25 miles, 50 km">
-                    <Input
-                      value={state.search_radius}
-                      onChange={(e) => set("search_radius", e.target.value)}
-                      placeholder="25 miles"
-                    />
-                  </Field>
-                </div>
-              )}
-
-              <SectionHeader title="Timeline & Availability" subtitle="Optional." />
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <Field label="Hiring Timeline">
-                  <Select
-                    value={state.hiring_urgency}
-                    onValueChange={(v) => set("hiring_urgency", v)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Indicate your hiring timeline" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="asap">ASAP</SelectItem>
-                      <SelectItem value="30_days">Within 30 days</SelectItem>
-                      <SelectItem value="60_days">Within 60 days</SelectItem>
-                      <SelectItem value="90_days">Within 90 days</SelectItem>
-                      <SelectItem value="exploratory">Exploratory</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </Field>
-                <Field label="Target Start Date">
-                  <Input
-                    type="date"
-                    value={state.target_start_date}
-                    onChange={(e) => set("target_start_date", e.target.value)}
-                  />
-                </Field>
-                <Field label="Time to Hire" hint="How fast do you need to close?">
-                  <Input
-                    value={state.time_to_hire}
-                    onChange={(e) => set("time_to_hire", e.target.value)}
-                    placeholder="e.g. 4 weeks"
-                  />
-                </Field>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 2 — Candidate Profile */}
-          {step === 2 && (
-            <div className="space-y-6">
-              <ChipInput
-                label="Must-have skills"
-                hint="Add at least 3 or provide a job description of at least 40 characters on Step 1."
-                error={errors.must_have_skills}
-                values={state.must_have_skills}
-                onChange={(v) => set("must_have_skills", v)}
-                placeholder="Type a skill and press Enter"
-                dataField="must_have_skills"
-              />
-              <ChipInput
-                label="Nice-to-have skills"
-                hint="Bonus skills that strengthen a candidate."
-                values={state.nice_to_have_skills}
-                onChange={(v) => set("nice_to_have_skills", v)}
-                placeholder="e.g. GraphQL, Terraform"
-              />
-              <ChipInput
-                label="Required Certifications"
-                values={state.certifications_list}
-                onChange={(v) => set("certifications_list", v)}
-                placeholder="e.g. AWS SA, PMP, CFA"
-              />
-              <ChipInput
-                label="Required Tools & Platforms"
-                values={state.tools_platforms}
-                onChange={(v) => set("tools_platforms", v)}
-                placeholder="e.g. Salesforce, Snowflake, Figma"
-              />
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <Field label="Minimum Experience" hint="Years of relevant experience.">
-                  <Input
-                    value={state.experience}
-                    onChange={(e) => set("experience", e.target.value)}
-                    placeholder="e.g. 5+ years"
-                  />
-                </Field>
-                <Field label="Education Requirement">
-                  <Input
-                    value={state.education}
-                    onChange={(e) => set("education", e.target.value)}
-                    placeholder="e.g. BSc CS or equivalent"
-                  />
-                </Field>
-                <Field label="Required Timezone Coverage" className="sm:col-span-2">
-                  <Input
-                    value={state.timezone_requirements}
-                    onChange={(e) => set("timezone_requirements", e.target.value)}
-                    placeholder="e.g. Must overlap CET 10:00–14:00"
-                  />
-                </Field>
-              </div>
-              <Field label="Core Responsibilities" hint="Top outcomes and day-to-day scope.">
-                <Textarea
-                  rows={4}
-                  value={state.responsibilities}
-                  onChange={(e) => set("responsibilities", e.target.value)}
-                  placeholder="Own X. Lead Y. Deliver Z."
-                />
-              </Field>
-              <Field
-                label="Additional Requirements"
-                hint="Anything else the candidate must have."
-              >
-                <Textarea
-                  rows={3}
-                  value={state.additional_requirements}
-                  onChange={(e) => set("additional_requirements", e.target.value)}
-                />
-              </Field>
-            </div>
-          )}
-
-          {/* STEP 3 — Compensation */}
-          {step === 3 && (
-            <div className="space-y-6">
-              <SectionHeader
-                title="Budget range"
-                subtitle="Give us a realistic band. We use this to filter candidates."
-              />
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <Field label="Currency">
-                  <Select value={state.currency} onValueChange={(v) => set("currency", v)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select…" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="USD">USD</SelectItem>
-                      <SelectItem value="EUR">EUR</SelectItem>
-                      <SelectItem value="GBP">GBP</SelectItem>
-                      <SelectItem value="CAD">CAD</SelectItem>
-                      <SelectItem value="AUD">AUD</SelectItem>
-                      <SelectItem value="BRL">BRL</SelectItem>
-                      <SelectItem value="INR">INR</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </Field>
-                <Field label="Period">
-                  <Select
-                    value={state.budget_period || "year"}
-                    onValueChange={(v) => set("budget_period", v)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select…" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="year">Per year</SelectItem>
-                      <SelectItem value="month">Per month</SelectItem>
-                      <SelectItem value="hour">Per hour</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </Field>
-                <Field label="Minimum" hint="Base salary or contract rate.">
-                  <Input
-                    type="number"
-                    min={0}
-                    value={state.budget_min}
-                    onChange={(e) => set("budget_min", e.target.value)}
-                    placeholder="80000"
-                  />
-                </Field>
-                <Field label="Maximum">
-                  <Input
-                    type="number"
-                    min={0}
-                    value={state.budget_max}
-                    onChange={(e) => set("budget_max", e.target.value)}
-                    placeholder="120000"
-                  />
-                </Field>
-              </div>
-              <Field label="Notes" hint="Bonus, equity, benefits, structure — anything relevant.">
-                <Textarea
-                  rows={3}
-                  value={state.compensation}
-                  onChange={(e) => set("compensation", e.target.value)}
-                  placeholder="e.g. Base + 20% bonus + equity. Fully remote stipend."
-                />
-              </Field>
-            </div>
-          )}
-
-          {/* STEP 4 — Search Criteria */}
-          {step === 4 && (
-            <div className="space-y-6">
-              <ChipInput
-                label="Target Job Titles"
-                hint="Titles to source from (current or previous roles)."
-                error={errors.target_titles}
-                values={state.target_titles}
-                onChange={(v) => set("target_titles", v)}
-                placeholder="e.g. Senior Software Engineer, Staff Engineer"
-                required
-                dataField="target_titles"
-              />
-              <Field
-                label="Title Match Timing"
-                hint="Should the target title be their current, previous, or either role?"
-              >
-                <Select
-                  value={state.title_match_timing}
-                  onValueChange={(v) =>
-                    set("title_match_timing", v as State["title_match_timing"])
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select…" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="current">Current role only</SelectItem>
-                    <SelectItem value="previous">Previous role only</SelectItem>
-                    <SelectItem value="either">Either — current or previous</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Field>
-
-              <div>
-                <Label className="mb-2 block text-sm">Target Company Types</Label>
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  {COMPANY_TYPE_OPTIONS.map((opt) => (
-                    <label key={opt} className="flex items-center gap-2 text-sm">
-                      <Checkbox
-                        checked={state.target_company_types.includes(opt)}
-                        onCheckedChange={() => toggleIn("target_company_types", opt)}
-                      />
-                      <span>{opt}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <ChipInput
-                label="Include Keywords"
-                hint="Boost candidates whose profiles contain these terms."
-                values={state.include_keywords}
-                onChange={(v) => set("include_keywords", v)}
-                placeholder="e.g. Kubernetes, distributed systems"
-              />
-              <ChipInput
-                label="Exclude Keywords"
-                hint="Filter out candidates whose profiles contain these terms."
-                values={state.exclude_keywords}
-                onChange={(v) => set("exclude_keywords", v)}
-                placeholder="e.g. bootcamp only, agency"
-              />
-
-              {/* Free-text deal-breakers, in the client's own words, as captured
-                  at intake — editable here so a rule learned later can be added. */}
-              <ChipInput
-                label="Your deal-breakers"
-                hint="Short rules that rule someone out, e.g. no hands-on Postgres experience."
-                values={state.disqualifier_tags.filter(
-                  (t) => !(DISQUALIFIER_OPTIONS as readonly string[]).includes(t),
-                )}
-                onChange={(v) =>
-                  set("disqualifier_tags", [
-                    ...state.disqualifier_tags.filter((t) =>
-                      (DISQUALIFIER_OPTIONS as readonly string[]).includes(t),
-                    ),
-                    ...v.map((t) => t.slice(0, 120)),
-                  ])
-                }
-                placeholder="e.g. no restaurant-scale experience"
-              />
-
-              {/* Auto-rejection is opt-in: nobody is filtered out by a rule the
-                  client did not deliberately open and choose. */}
-              <Collapsible className="rounded-xl border bg-card/50">
-                <CollapsibleTrigger asChild>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="space-y-5">
+          <div aria-label="Progress">
+            <Progress value={progress} />
+            <ol className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+              {STEPS.map((s) => (
+                <li key={s.id} aria-current={s.id === step ? "step" : undefined}>
                   <button
                     type="button"
-                    className="group flex w-full items-center justify-between gap-3 px-4 py-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    onClick={() => setStep(s.id)}
+                    className={
+                      s.id === step
+                        ? "font-medium text-foreground underline decoration-primary decoration-2 underline-offset-4"
+                        : "hover:text-foreground hover:underline"
+                    }
                   >
-                    <span className="text-sm font-medium">Add automatic disqualifiers</span>
-                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                      Optional
-                      <ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
-                    </span>
+                    {s.id}. {s.label}
                   </button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="border-t px-4 pb-4 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
-                  <p className="mb-3 mt-3 text-xs text-muted-foreground">
-                    Anything you tick here rejects candidates automatically — that
-                    decision, and its consequences, stay yours.
-                  </p>
-                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    {DISQUALIFIER_OPTIONS.map((opt) => (
-                      <label key={opt} className="flex items-center gap-2 text-sm">
-                        <Checkbox
-                          checked={state.disqualifier_tags.includes(opt)}
-                          onCheckedChange={() => toggleIn("disqualifier_tags", opt)}
-                        />
-                        <span>{opt}</span>
-                      </label>
-                    ))}
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
+                </li>
+              ))}
+            </ol>
+          </div>
 
-              <Field label="Interview Process" hint="Number of rounds, format, panel.">
-                <Textarea
-                  rows={3}
-                  value={state.interview_process}
-                  onChange={(e) => set("interview_process", e.target.value)}
-                  placeholder="Screen → Technical → Panel → Offer"
-                />
-              </Field>
-              <Field label="Additional Context" hint="Anything else we should know?">
-                <Textarea
-                  rows={3}
-                  value={state.additional_context}
-                  onChange={(e) => set("additional_context", e.target.value)}
-                />
-              </Field>
-
-              <SectionHeader
-                title="Screening Questions"
-                subtitle={`Ask only what changes the outcome: up to ${SCREENING_MAX_QUESTIONS} questions, max ${SCREENING_MAX_REQUIRED} mandatory. Each one must map to a must-have and carry a one-line reason the candidate reads.`}
-              />
-              {(() => {
-                const qs = state.screening_questions;
-                const requiredCount = countRequired(qs);
-                const atMax = qs.length >= SCREENING_MAX_QUESTIONS;
-                const setQ = (i: number, patch: Partial<ScreeningInput>) =>
-                  set(
-                    "screening_questions",
-                    qs.map((item, idx) => (idx === i ? { ...item, ...patch } : item)),
-                  );
-                const addQuestion = () => {
-                  const v = qDraft.trim();
-                  if (v.length < 3 || atMax) return;
-                  const topic = screeningTopicIssue(v);
-                  if (topic) {
-                    setQTopicError(topic);
-                    return;
-                  }
-                  setQTopicError(null);
-                  set("screening_questions", [
-                    ...qs,
-                    {
-                      question: v,
-                      answer_type: "text",
-                      required: false,
-                      dealbreaker: false,
-                      must_have: "",
-                      why_asked: "",
-                    } satisfies ScreeningInput,
-                  ]);
-                  setQDraft("");
-                };
-                const unmapped = qs.filter(
-                  (q) => !q.must_have.trim() || !q.why_asked.trim(),
-                ).length;
-                return (
-                  <>
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                      <span>
-                        {qs.length}/{SCREENING_MAX_QUESTIONS} questions
-                      </span>
-                      <span aria-hidden>·</span>
-                      <span>
-                        {requiredCount}/{SCREENING_MAX_REQUIRED} mandatory
-                      </span>
-                    </div>
-                    {unmapped > 0 && (
-                      <p className="text-xs text-amber-600 dark:text-amber-500">
-                        {unmapped} question{unmapped === 1 ? "" : "s"} still need a must-have
-                        and a reason. The role cannot be published until they do.
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">
+                Step {step}: {STEPS[step - 1].label}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* STEP 1 — Requisition (role definition + compensation fieldset) */}
+              {step === 1 && (
+                <div className="space-y-6">
+                  {dupWarning.length > 0 && (
+                    <div className="rounded-md border border-amber-500/40 bg-amber-500/5 p-3 text-sm">
+                      <p className="font-medium">Possible duplicate requisition</p>
+                      <ul className="mt-1 space-y-0.5 text-muted-foreground">
+                        {dupWarning.map((m) => (
+                          <li key={m.id}>
+                            {m.title}
+                            {m.department ? ` · ${m.department}` : ""} · {m.status}
+                            {m.reference_code ? ` · ${m.reference_code}` : ""}
+                          </li>
+                        ))}
+                      </ul>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Check this isn't the same role before saving — duplicates split candidates
+                        across two pipelines.
                       </p>
-                    )}
-                    <div className="flex gap-2">
+                    </div>
+                  )}
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <Field label="Role Title" error={errors.title} required className="sm:col-span-2">
                       <Input
-                        value={qDraft}
-                        onChange={(e) => {
-                          setQDraft(e.target.value);
-                          if (qTopicError) setQTopicError(null);
-                        }}
-                        disabled={atMax}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            addQuestion();
-                          }
-                        }}
-                        placeholder={
-                          atMax
-                            ? `Limit reached (${SCREENING_MAX_QUESTIONS} questions)`
-                            : "Add a question and press Enter"
+                        data-field="title"
+                        value={state.title}
+                        onChange={(e) => set("title", e.target.value)}
+                        placeholder="e.g. Senior Backend Engineer"
+                      />
+                    </Field>
+                    <Field label="Department">
+                      <Input
+                        value={state.department}
+                        onChange={(e) => set("department", e.target.value)}
+                      />
+                    </Field>
+                    <Field label="Location">
+                      <Input value={state.location} onChange={(e) => set("location", e.target.value)} />
+                    </Field>
+                    <Field label="Employment Type" error={errors.employment_type} required>
+                      <Select
+                        value={state.employment_type}
+                        onValueChange={(v) => set("employment_type", v as State["employment_type"])}
+                      >
+                        <SelectTrigger data-field="employment_type">
+                          <SelectValue placeholder="Select…" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="full_time">Full time</SelectItem>
+                          <SelectItem value="part_time">Part time</SelectItem>
+                          <SelectItem value="contract">Contract</SelectItem>
+                          <SelectItem value="temporary">Temporary</SelectItem>
+                          <SelectItem value="internship">Internship</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    <Field label="Work Arrangement" error={errors.work_model} required>
+                      <Select
+                        value={state.work_model}
+                        onValueChange={(v) => set("work_model", v as State["work_model"])}
+                      >
+                        <SelectTrigger data-field="work_model">
+                          <SelectValue placeholder="Select…" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="remote">Remote</SelectItem>
+                          <SelectItem value="hybrid">Hybrid</SelectItem>
+                          <SelectItem value="onsite">Onsite</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    <Field label="Seniority Level" error={errors.seniority} required>
+                      <Select value={state.seniority} onValueChange={(v) => set("seniority", v)}>
+                        <SelectTrigger data-field="seniority">
+                          <SelectValue placeholder="Select…" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Intern">Intern</SelectItem>
+                          <SelectItem value="Junior">Junior</SelectItem>
+                          <SelectItem value="Mid">Mid</SelectItem>
+                          <SelectItem value="Senior">Senior</SelectItem>
+                          <SelectItem value="Lead">Lead</SelectItem>
+                          <SelectItem value="Staff">Staff</SelectItem>
+                          <SelectItem value="Principal">Principal</SelectItem>
+                          <SelectItem value="Director">Director</SelectItem>
+                          <SelectItem value="VP">VP</SelectItem>
+                          <SelectItem value="C-Level">C-Level</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    <Field label="Positions to Fill" error={errors.headcount} required>
+                      <Input
+                        data-field="headcount"
+                        type="number"
+                        min={1}
+                        max={999}
+                        value={state.headcount}
+                        onChange={(e) =>
+                          set("headcount", e.target.value === "" ? "" : Number(e.target.value))
                         }
                       />
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        disabled={atMax}
-                        onClick={addQuestion}
+                    </Field>
+                  </div>
+
+                  <Field
+                    label="Job Description"
+                    hint="Paste the JD or write it here. We use this to enrich matching."
+                  >
+                    <Textarea
+                      rows={6}
+                      value={state.description}
+                      onChange={(e) => set("description", e.target.value)}
+                      placeholder="Paste the full job description or describe the role, responsibilities, and success criteria."
+                    />
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {state.description.trim().length} characters
+                    </p>
+                  </Field>
+
+                  <SectionHeader
+                    title="Compensation"
+                    subtitle="Budget range and structure. Used to filter and set expectations."
+                  />
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <Field label="Currency">
+                      <Select value={state.currency} onValueChange={(v) => set("currency", v)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select…" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="USD">USD</SelectItem>
+                          <SelectItem value="EUR">EUR</SelectItem>
+                          <SelectItem value="GBP">GBP</SelectItem>
+                          <SelectItem value="CAD">CAD</SelectItem>
+                          <SelectItem value="AUD">AUD</SelectItem>
+                          <SelectItem value="BRL">BRL</SelectItem>
+                          <SelectItem value="INR">INR</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    <Field label="Period">
+                      <Select
+                        value={state.budget_period || "year"}
+                        onValueChange={(v) => set("budget_period", v)}
                       >
-                        Add
-                      </Button>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select…" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="year">Per year</SelectItem>
+                          <SelectItem value="month">Per month</SelectItem>
+                          <SelectItem value="hour">Per hour</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    <Field label="Minimum" hint="Base salary or contract rate.">
+                      <Input
+                        type="number"
+                        min={0}
+                        value={state.budget_min}
+                        onChange={(e) => set("budget_min", e.target.value)}
+                        placeholder="80000"
+                      />
+                    </Field>
+                    <Field label="Maximum" error={errors.budget_max}>
+                      <Input
+                        type="number"
+                        min={0}
+                        value={state.budget_max}
+                        onChange={(e) => set("budget_max", e.target.value)}
+                        placeholder="120000"
+                      />
+                    </Field>
+                  </div>
+                  <Field label="Notes" hint="Bonus, equity, benefits, structure — anything relevant.">
+                    <Textarea
+                      rows={3}
+                      value={state.compensation}
+                      onChange={(e) => set("compensation", e.target.value)}
+                      placeholder="e.g. Base + 20% bonus + equity. Fully remote stipend."
+                    />
+                  </Field>
+
+                  <SectionHeader title="Timeline & Availability" subtitle="Optional." />
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <Field label="Hiring Timeline">
+                      <Select
+                        value={state.hiring_urgency}
+                        onValueChange={(v) => set("hiring_urgency", v)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Indicate your hiring timeline" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="asap">ASAP</SelectItem>
+                          <SelectItem value="30_days">Within 30 days</SelectItem>
+                          <SelectItem value="60_days">Within 60 days</SelectItem>
+                          <SelectItem value="90_days">Within 90 days</SelectItem>
+                          <SelectItem value="exploratory">Exploratory</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    <Field label="Target Start Date">
+                      <Input
+                        type="date"
+                        value={state.target_start_date}
+                        onChange={(e) => set("target_start_date", e.target.value)}
+                      />
+                    </Field>
+                    <Field label="Time to Hire" hint="How fast do you need to close?">
+                      <Input
+                        value={state.time_to_hire}
+                        onChange={(e) => set("time_to_hire", e.target.value)}
+                        placeholder="e.g. 4 weeks"
+                      />
+                    </Field>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 2 — Candidate profile and gates */}
+              {step === 2 && (
+                <div className="space-y-6">
+                  <ChipInput
+                    label="Must-have skills"
+                    hint="Add at least 3 or provide a job description of at least 40 characters on Step 1."
+                    error={errors.must_have_skills}
+                    values={state.must_have_skills}
+                    onChange={(v) => set("must_have_skills", v)}
+                    placeholder="Type a skill and press Enter"
+                    dataField="must_have_skills"
+                  />
+                  <ChipInput
+                    label="Nice-to-have skills"
+                    hint="Bonus skills that strengthen a candidate."
+                    values={state.nice_to_have_skills}
+                    onChange={(v) => set("nice_to_have_skills", v)}
+                    placeholder="e.g. GraphQL, Terraform"
+                  />
+                  <ChipInput
+                    label="Required Certifications"
+                    values={state.certifications_list}
+                    onChange={(v) => set("certifications_list", v)}
+                    placeholder="e.g. AWS SA, PMP, CFA"
+                  />
+                  <ChipInput
+                    label="Required Tools & Platforms"
+                    values={state.tools_platforms}
+                    onChange={(v) => set("tools_platforms", v)}
+                    placeholder="e.g. Salesforce, Snowflake, Figma"
+                  />
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <Field label="Minimum Experience" hint="Years of relevant experience.">
+                      <Input
+                        value={state.experience}
+                        onChange={(e) => set("experience", e.target.value)}
+                        placeholder="e.g. 5+ years"
+                      />
+                    </Field>
+                    <Field label="Education Requirement">
+                      <Input
+                        value={state.education}
+                        onChange={(e) => set("education", e.target.value)}
+                        placeholder="e.g. BSc CS or equivalent"
+                      />
+                    </Field>
+                    <Field label="Required Timezone Coverage" className="sm:col-span-2">
+                      <Input
+                        value={state.timezone_requirements}
+                        onChange={(e) => set("timezone_requirements", e.target.value)}
+                        placeholder="e.g. Must overlap CET 10:00–14:00"
+                      />
+                    </Field>
+                  </div>
+                  <Field label="Core Responsibilities" hint="Top outcomes and day-to-day scope.">
+                    <Textarea
+                      rows={4}
+                      value={state.responsibilities}
+                      onChange={(e) => set("responsibilities", e.target.value)}
+                      placeholder="Own X. Lead Y. Deliver Z."
+                    />
+                  </Field>
+                  <Field
+                    label="Additional Requirements"
+                    hint="Anything else the candidate must have."
+                  >
+                    <Textarea
+                      rows={3}
+                      value={state.additional_requirements}
+                      onChange={(e) => set("additional_requirements", e.target.value)}
+                    />
+                  </Field>
+
+                  <SectionHeader
+                    title="Search criteria"
+                    subtitle="Titles, keywords, and the rules that keep bad fits out."
+                  />
+                  <ChipInput
+                    label="Target Job Titles"
+                    hint="Titles to source from (current or previous roles)."
+                    error={errors.target_titles}
+                    values={state.target_titles}
+                    onChange={(v) => set("target_titles", v)}
+                    placeholder="e.g. Senior Software Engineer, Staff Engineer"
+                    required
+                    dataField="target_titles"
+                  />
+                  <Field
+                    label="Title Match Timing"
+                    hint="Should the target title be their current, previous, or either role?"
+                  >
+                    <Select
+                      value={state.title_match_timing}
+                      onValueChange={(v) =>
+                        set("title_match_timing", v as State["title_match_timing"])
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select…" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="current">Current role only</SelectItem>
+                        <SelectItem value="previous">Previous role only</SelectItem>
+                        <SelectItem value="either">Either — current or previous</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+
+                  <div>
+                    <Label className="mb-2 block text-sm">Target Company Types</Label>
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                      {COMPANY_TYPE_OPTIONS.map((opt) => (
+                        <label key={opt} className="flex items-center gap-2 text-sm">
+                          <Checkbox
+                            checked={state.target_company_types.includes(opt)}
+                            onCheckedChange={() => toggleIn("target_company_types", opt)}
+                          />
+                          <span>{opt}</span>
+                        </label>
+                      ))}
                     </div>
-                    {qTopicError && (
-                      <p className="text-xs text-destructive">{qTopicError}</p>
+                  </div>
+
+                  <ChipInput
+                    label="Include Keywords"
+                    hint="Boost candidates whose profiles contain these terms."
+                    values={state.include_keywords}
+                    onChange={(v) => set("include_keywords", v)}
+                    placeholder="e.g. Kubernetes, distributed systems"
+                  />
+                  <ChipInput
+                    label="Exclude Keywords"
+                    hint="Filter out candidates whose profiles contain these terms."
+                    values={state.exclude_keywords}
+                    onChange={(v) => set("exclude_keywords", v)}
+                    placeholder="e.g. bootcamp only, agency"
+                  />
+
+                  {/* Free-text deal-breakers, in the client's own words, as captured
+                      at intake — editable here so a rule learned later can be added. */}
+                  <ChipInput
+                    label="Your deal-breakers"
+                    hint="Short rules that rule someone out, e.g. no hands-on Postgres experience."
+                    values={state.disqualifier_tags.filter(
+                      (t) => !(DISQUALIFIER_OPTIONS as readonly string[]).includes(t),
                     )}
-                    {qs.length > 0 && (
-                      <ul className="mt-1 space-y-2">
-                        {qs.map((q, i) => {
-                          const lockRequired = !q.required && requiredCount >= SCREENING_MAX_REQUIRED;
-                          return (
-                            <li
-                              key={q.id ?? `new-${i}`}
-                              className="space-y-2 rounded-md border p-3 text-sm"
-                            >
-                              <div className="flex flex-wrap items-start justify-between gap-2">
-                                <span className="flex-1 min-w-[12rem]">{q.question}</span>
-                                <label className="flex items-center gap-2 text-xs">
-                                  <Checkbox
-                                    checked={!!q.required}
-                                    disabled={lockRequired}
-                                    onCheckedChange={(v) => setQ(i, { required: !!v })}
-                                  />
-                                  <span>{q.required ? "Mandatory" : "Optional"}</span>
-                                </label>
-                                <button
-                                  type="button"
-                                  className="text-xs text-muted-foreground underline"
-                                  aria-label={`Remove ${q.question}`}
-                                  onClick={() =>
-                                    set(
-                                      "screening_questions",
-                                      qs.filter((_, idx) => idx !== i),
-                                    )
-                                  }
+                    onChange={(v) =>
+                      set("disqualifier_tags", [
+                        ...state.disqualifier_tags.filter((t) =>
+                          (DISQUALIFIER_OPTIONS as readonly string[]).includes(t),
+                        ),
+                        ...v.map((t) => t.slice(0, 120)),
+                      ])
+                    }
+                    placeholder="e.g. no restaurant-scale experience"
+                  />
+
+                  {/* Auto-rejection is opt-in: nobody is filtered out by a rule the
+                      client did not deliberately open and choose. */}
+                  <Collapsible className="rounded-xl border bg-card/50">
+                    <CollapsibleTrigger asChild>
+                      <button
+                        type="button"
+                        className="group flex w-full items-center justify-between gap-3 px-4 py-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      >
+                        <span className="text-sm font-medium">Add automatic disqualifiers</span>
+                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                          Optional
+                          <ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
+                        </span>
+                      </button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="border-t px-4 pb-4 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                      <p className="mb-3 mt-3 text-xs text-muted-foreground">
+                        Anything you tick here rejects candidates automatically — that
+                        decision, and its consequences, stay yours.
+                      </p>
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        {DISQUALIFIER_OPTIONS.map((opt) => (
+                          <label key={opt} className="flex items-center gap-2 text-sm">
+                            <Checkbox
+                              checked={state.disqualifier_tags.includes(opt)}
+                              onCheckedChange={() => toggleIn("disqualifier_tags", opt)}
+                            />
+                            <span>{opt}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+
+                  <Field label="Interview Process" hint="Number of rounds, format, panel.">
+                    <Textarea
+                      rows={3}
+                      value={state.interview_process}
+                      onChange={(e) => set("interview_process", e.target.value)}
+                      placeholder="Screen → Technical → Panel → Offer"
+                    />
+                  </Field>
+                  <Field label="Additional Context" hint="Anything else we should know?">
+                    <Textarea
+                      rows={3}
+                      value={state.additional_context}
+                      onChange={(e) => set("additional_context", e.target.value)}
+                    />
+                  </Field>
+
+                  <SectionHeader
+                    title="Screening Questions"
+                    subtitle={`Ask only what changes the outcome: up to ${SCREENING_MAX_QUESTIONS} questions, max ${SCREENING_MAX_REQUIRED} mandatory. Each one must map to a must-have and carry a one-line reason the candidate reads.`}
+                  />
+                  {(() => {
+                    const qs = state.screening_questions;
+                    const requiredCount = countRequired(qs);
+                    const atMax = qs.length >= SCREENING_MAX_QUESTIONS;
+                    const setQ = (i: number, patch: Partial<ScreeningInput>) =>
+                      set(
+                        "screening_questions",
+                        qs.map((item, idx) => (idx === i ? { ...item, ...patch } : item)),
+                      );
+                    const addQuestion = () => {
+                      const v = qDraft.trim();
+                      if (v.length < 3 || atMax) return;
+                      const topic = screeningTopicIssue(v);
+                      if (topic) {
+                        setQTopicError(topic);
+                        return;
+                      }
+                      setQTopicError(null);
+                      set("screening_questions", [
+                        ...qs,
+                        {
+                          question: v,
+                          answer_type: "text",
+                          required: false,
+                          dealbreaker: false,
+                          must_have: "",
+                          why_asked: "",
+                        } satisfies ScreeningInput,
+                      ]);
+                      setQDraft("");
+                    };
+                    const unmapped = qs.filter(
+                      (q) => !q.must_have.trim() || !q.why_asked.trim(),
+                    ).length;
+                    return (
+                      <>
+                        <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                          <span>
+                            {qs.length}/{SCREENING_MAX_QUESTIONS} questions
+                          </span>
+                          <span aria-hidden>·</span>
+                          <span>
+                            {requiredCount}/{SCREENING_MAX_REQUIRED} mandatory
+                          </span>
+                        </div>
+                        {unmapped > 0 && (
+                          <p className="text-xs text-amber-600 dark:text-amber-500">
+                            {unmapped} question{unmapped === 1 ? "" : "s"} still need a must-have
+                            and a reason. The role cannot be published until they do.
+                          </p>
+                        )}
+                        <div className="flex gap-2">
+                          <Input
+                            value={qDraft}
+                            onChange={(e) => {
+                              setQDraft(e.target.value);
+                              if (qTopicError) setQTopicError(null);
+                            }}
+                            disabled={atMax}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                addQuestion();
+                              }
+                            }}
+                            placeholder={
+                              atMax
+                                ? `Limit reached (${SCREENING_MAX_QUESTIONS} questions)`
+                                : "Add a question and press Enter"
+                            }
+                          />
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            disabled={atMax}
+                            onClick={addQuestion}
+                          >
+                            Add
+                          </Button>
+                        </div>
+                        {qTopicError && (
+                          <p className="text-xs text-destructive">{qTopicError}</p>
+                        )}
+                        {qs.length > 0 && (
+                          <ul className="mt-1 space-y-2">
+                            {qs.map((q, i) => {
+                              const lockRequired = !q.required && requiredCount >= SCREENING_MAX_REQUIRED;
+                              return (
+                                <li
+                                  key={q.id ?? `new-${i}`}
+                                  className="space-y-2 rounded-md border p-3 text-sm"
                                 >
-                                  Remove
-                                </button>
-                              </div>
-                              <div className="grid gap-2 md:grid-cols-2">
-                                <label className="text-xs">
-                                  <span className="text-muted-foreground">
-                                    Must-have it tests
-                                  </span>
-                                  <Input
-                                    className="mt-1"
-                                    list={`must-haves-${i}`}
-                                    value={q.must_have}
-                                    onChange={(e) => setQ(i, { must_have: e.target.value })}
-                                    placeholder="e.g. 5+ years Postgres"
-                                  />
-                                  <datalist id={`must-haves-${i}`}>
-                                    {state.must_have_skills.map((m) => (
-                                      <option key={m} value={m} />
-                                    ))}
-                                  </datalist>
-                                </label>
-                                <label className="text-xs">
-                                  <span className="text-muted-foreground">
-                                    Why we ask (shown to candidates)
-                                  </span>
-                                  <Input
-                                    className="mt-1"
-                                    maxLength={200}
-                                    value={q.why_asked}
-                                    onChange={(e) => setQ(i, { why_asked: e.target.value })}
-                                    placeholder="Confirms the depth this role needs on day one."
-                                  />
-                                </label>
-                              </div>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    )}
-                  </>
-                );
-              })()}
-            </div>
-
-          )}
-
-          {/* STEP 5 — Locations, ownership, evaluation priorities */}
-          {step === 5 && (
-            <RequisitionEditor
-              positionId={state.id}
-              onDirtyChange={setReqDirty}
-              audience={audience}
-              openWorldwide={state.open_worldwide}
-              workModel={state.work_model}
-              location={state.location}
-            />
-          )}
-
-          {/* STEP 6 — Job post personalisation + candidate preview */}
-          {step === 6 && (
-            <JobPostStep
-              value={{
-                title: state.title,
-                department: state.department,
-                location: state.location,
-                work_model: state.work_model,
-                employment_type: state.employment_type,
-                seniority: state.seniority,
-                description: state.description,
-                responsibilities: state.responsibilities,
-                must_have_skills: state.must_have_skills,
-                nice_to_have_skills: state.nice_to_have_skills,
-                education: state.education,
-                experience: state.experience,
-                currency: state.currency,
-                budget_min: state.budget_min,
-                budget_max: state.budget_max,
-                company_intro: state.company_intro,
-                benefits: state.benefits,
-                languages: state.languages,
-                travel: state.travel,
-                work_authorization_note: state.work_authorization_note,
-                accessibility_note: state.accessibility_note,
-                eeo_statement: state.eeo_statement,
-                brand_tone: state.brand_tone,
-                application_deadline: state.application_deadline,
-                confidentiality: state.confidentiality,
-                screening_questions: state.screening_questions.map((q) => ({
-                  question: q.question,
-                  required: q.required,
-                  answer_type: q.answer_type,
-                })),
-              }}
-              onChange={(k, v) => set(k as keyof State, v as never)}
-            />
-          )}
-
-          {/* STEP 7 — Review */}
-          {step === 7 && (
-            <div className="space-y-3 text-sm">
-              <JobQualityPanel
-                positionId={state.id}
-                onJumpToStep={setStep}
-                draft={{
-                  title: state.title,
-                  description: state.description,
-                  seniority: state.seniority,
-                  employment_type: state.employment_type,
-                  department: state.department ?? "",
-                  must_have_skills: state.must_have_skills,
-                  nice_to_have_skills: state.nice_to_have_skills,
-                  disqualifier_tags: state.disqualifier_tags,
-                  responsibilities: state.responsibilities,
-                  experience: state.experience,
-                  interview_process: state.interview_process,
-                  target_start_date: state.target_start_date,
-                  headcount: typeof state.headcount === "number" ? state.headcount : null,
-                }}
-              />
-
-              <ReviewBlock title="Role">
-                <div>
-                  {state.title || "—"} · {formatEnumLabel(state.work_model, "—")} · {formatEnumLabel(state.employment_type, "—")}
+                                  <div className="flex flex-wrap items-start justify-between gap-2">
+                                    <span className="flex-1 min-w-[12rem]">{q.question}</span>
+                                    <label className="flex items-center gap-2 text-xs">
+                                      <Checkbox
+                                        checked={!!q.required}
+                                        disabled={lockRequired}
+                                        onCheckedChange={(v) => setQ(i, { required: !!v })}
+                                      />
+                                      <span>{q.required ? "Mandatory" : "Optional"}</span>
+                                    </label>
+                                    <button
+                                      type="button"
+                                      className="text-xs text-muted-foreground underline"
+                                      aria-label={`Remove ${q.question}`}
+                                      onClick={() =>
+                                        set(
+                                          "screening_questions",
+                                          qs.filter((_, idx) => idx !== i),
+                                        )
+                                      }
+                                    >
+                                      Remove
+                                    </button>
+                                  </div>
+                                  <div className="grid gap-2 md:grid-cols-2">
+                                    <label className="text-xs">
+                                      <span className="text-muted-foreground">
+                                        Must-have it tests
+                                      </span>
+                                      <Input
+                                        className="mt-1"
+                                        list={`must-haves-${i}`}
+                                        value={q.must_have}
+                                        onChange={(e) => setQ(i, { must_have: e.target.value })}
+                                        placeholder="e.g. 5+ years Postgres"
+                                      />
+                                      <datalist id={`must-haves-${i}`}>
+                                        {state.must_have_skills.map((m) => (
+                                          <option key={m} value={m} />
+                                        ))}
+                                      </datalist>
+                                    </label>
+                                    <label className="text-xs">
+                                      <span className="text-muted-foreground">
+                                        Why we ask (shown to candidates)
+                                      </span>
+                                      <Input
+                                        className="mt-1"
+                                        maxLength={200}
+                                        value={q.why_asked}
+                                        onChange={(e) => setQ(i, { why_asked: e.target.value })}
+                                        placeholder="Confirms the depth this role needs on day one."
+                                      />
+                                    </label>
+                                  </div>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
-                <div className="text-muted-foreground">
-                  {state.seniority || "—"} · Positions: {state.headcount || "—"}
-                  {state.location ? ` · ${state.location}` : ""}
-                </div>
-              </ReviewBlock>
-              <ReviewBlock title="Geography">
-                <div>
-                  {state.open_worldwide
-                    ? "Open worldwide"
-                    : state.target_countries.join(", ") || "—"}
-                </div>
-                {state.metro_areas.length > 0 && (
-                  <div className="text-muted-foreground">
-                    Metros: {state.metro_areas.join(", ")}
-                  </div>
-                )}
-              </ReviewBlock>
-              <ReviewBlock title="Candidate profile">
-                <div>Must-have: {state.must_have_skills.join(", ") || "—"}</div>
-                <div>Nice-to-have: {state.nice_to_have_skills.join(", ") || "—"}</div>
-                <div className="text-muted-foreground">
-                  Experience: {state.experience || "—"} · Education: {state.education || "—"}
-                </div>
-              </ReviewBlock>
-              <ReviewBlock title="Compensation">
-                <div>
-                  {state.budget_min || "—"}
-                  {state.budget_max ? ` – ${state.budget_max}` : ""} {state.currency}
-                  {state.budget_period === "hour"
-                    ? " per hour"
-                    : state.budget_period === "month"
-                      ? " per month"
-                      : " per year"}
-                </div>
-                {state.compensation && (
-                  <div className="text-muted-foreground">{state.compensation}</div>
-                )}
-              </ReviewBlock>
-              <ReviewBlock title="Search criteria">
-                <div>Titles: {state.target_titles.join(", ") || "—"}</div>
-                {state.disqualifier_tags.length > 0 && (
-                  <div className="text-muted-foreground">
-                    Disqualifiers: {state.disqualifier_tags.join(", ")}
-                  </div>
-                )}
-                <div className="text-muted-foreground">
-                  Screening questions: {state.screening_questions.length}
-                </div>
-              </ReviewBlock>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+              )}
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={back}
-          disabled={step === 1 || saveMutation.isPending}
-        >
-          Back
-        </Button>
-        {step < LAST_STEP ? (
-          <Button type="button" onClick={next}>
-            Continue
-          </Button>
-        ) : (
-          <Button
-            type="button"
-            onClick={() => saveMutation.mutate()}
-            disabled={saveMutation.isPending}
-          >
-            {saveMutation.isPending ? "Saving…" : "Save changes"}
-          </Button>
-        )}
+              {/* STEP 3 — Locations, ownership, evaluation priorities */}
+              {step === 3 && (
+                <RequisitionEditor
+                  positionId={state.id}
+                  onDirtyChange={setReqDirty}
+                  audience={audience}
+                  openWorldwide={state.open_worldwide}
+                  workModel={state.work_model}
+                  location={state.location}
+                />
+              )}
+            </CardContent>
+          </Card>
+
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={back}
+              disabled={step === 1 || saveMutation.isPending}
+            >
+              Back
+            </Button>
+            {step < LAST_STEP ? (
+              <Button type="button" onClick={next}>
+                Continue
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={() => saveMutation.mutate()}
+                disabled={saveMutation.isPending}
+              >
+                {saveMutation.isPending ? "Saving…" : "Save changes"}
+              </Button>
+            )}
+          </div>
+        </div>
+
+        <aside className="space-y-5 lg:sticky lg:top-6 lg:self-start">
+          <JobQualityPanel
+            positionId={state.id}
+            onJumpToStep={setStep}
+            draft={qualityDraft}
+          />
+          <div className="rounded-md border bg-muted/50 p-3 text-xs text-muted-foreground">
+            <p className="font-medium text-foreground">Draft saved locally</p>
+            <p className="mt-1">
+              Unsaved changes are stored in this browser until you save or cancel. Use the
+              checklist to see what still needs attention before the role can be published.
+            </p>
+          </div>
+        </aside>
       </div>
     </div>
   );
