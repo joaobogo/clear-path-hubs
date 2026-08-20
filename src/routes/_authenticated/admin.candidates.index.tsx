@@ -341,6 +341,23 @@ function CandidatesPage() {
   const totalFormatted = formatNumber(total);
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
+  // Build a human-readable notice for any param value that is not in the
+  // recognised set. Unknown values are not silently ignored; they are shown
+  // with a count so the user knows the filter was dropped.
+  const unknownParamNotices = useMemo(() => {
+    const checks: { key: keyof SearchState; value: string; allowed: string[]; label: string }[] = [
+      { key: "stage", value: search.stage, allowed: STAGES, label: "Stage" },
+      { key: "admin_status", value: search.admin_status, allowed: ["pending", "approved", "rejected", "on_hold"], label: "Approval" },
+      { key: "score_band", value: search.score_band, allowed: SCORE_BANDS, label: "Score band" },
+      { key: "processing_state", value: search.processing_state, allowed: PROCESSING_STATES, label: "Screening" },
+      { key: "client_visibility", value: search.client_visibility, allowed: ["hidden", "visible"], label: "Publication" },
+      { key: "contact_released", value: search.contact_released, allowed: ["released", "withheld"], label: "Contact release" },
+    ];
+    return checks
+      .filter((c) => c.value && !c.allowed.includes(c.value))
+      .map((c) => ({ key: c.key, label: c.label, value: c.value, count: total }));
+  }, [search, total]);
+
   const { data: orgs = [] } = useQuery({ queryKey: ["admin-orgs"], queryFn: () => orgsFn() });
   const { data: positions = [] } = useQuery({
     queryKey: ["admin-positions-filter", search.organization_id],
