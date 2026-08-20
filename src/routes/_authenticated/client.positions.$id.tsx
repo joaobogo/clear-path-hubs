@@ -244,20 +244,37 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
     return parts.join(" · ");
   })();
 
-  const actionRequired: Array<{ label: string; href?: string }> = [];
+  const actionRequired: Array<{ label: string; href?: string; search?: Record<string, string> }> = [];
   if (summary.delivered > 0) {
     actionRequired.push({
       label: `${summary.delivered} new candidate${summary.delivered === 1 ? "" : "s"} to review`,
+      href: "/client/candidates",
+      search: { position: id, stage: "delivered" },
+    });
+  }
+  if (summary.interviews_to_confirm > 0) {
+    actionRequired.push({
+      label: `${summary.interviews_to_confirm} interview${summary.interviews_to_confirm === 1 ? "" : "s"} to confirm`,
+      href: "/client/interviews",
+    });
+  }
+  if (summary.interview_scheduled > 0) {
+    actionRequired.push({
+      label: `${summary.interview_scheduled} interview${summary.interview_scheduled === 1 ? "" : "s"} scheduled`,
+      href: "/client/interviews",
     });
   }
   if (summary.offers > 0) {
     actionRequired.push({
-      label: `${summary.offers} offer${summary.offers === 1 ? "" : "s"} outstanding`,
+      label: `${summary.offers} offer${summary.offers === 1 ? "" : "s"} awaiting response`,
+      href: "/client/offers",
     });
   }
   if (position.status === "needs_clarification") {
     actionRequired.push({
       label: "TaaSFlow needs clarification from your team",
+      href: `/client/positions/${id}`,
+      search: { tab: "brief" },
     });
   }
 
