@@ -155,12 +155,14 @@ export const globalSearch = createServerFn({ method: "POST" })
 
     // Positions.
     {
-      const orFilter = orIlike(["title", "location"], term);
+      const orFilter = await buildPositionSearchOr(supabase as never, term, {
+        extraColumns: ["location"],
+      });
       if (orFilter) {
         let query = supabase
           .from("positions")
-          .select("id, title, location, status, is_test_record, organization_id, organizations!inner(name)")
-          .or(`${orFilter},organizations.name.ilike.${ilikeValue(term)}`)
+          .select("id, title, location, status, is_test_record, organization_id")
+          .or(orFilter)
           .order("updated_at", { ascending: false })
           .limit(LIMIT);
         if (scope === "client") query = query.in("organization_id", orgIds);
@@ -168,8 +170,7 @@ export const globalSearch = createServerFn({ method: "POST" })
         const { data: positions, error } = await query;
         if (error) throw new Error(error.message);
         groups.positions = ((positions as AnyRow[]) ?? []).map((p) => {
-          const orgName = p.organizations?.name as string | undefined;
-          const context = [orgName, p.location].filter(Boolean).join(" · ");
+          const context = [p.location].filter(Boolean).join(" · ");
           const state = sentenceLabel(p.status);
 
           if (scope === "admin") {
