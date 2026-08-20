@@ -122,7 +122,7 @@ export const getAccountOverview = createServerFn({ method: "GET" })
           .eq("organization_id", data.orgId),
         supabase
           .from("positions")
-          .select("id, status")
+          .select("id, status, title, is_test_record")
           .eq("organization_id", data.orgId),
         supabase
           .from("hire_records")
@@ -207,7 +207,7 @@ export const getAccountOverview = createServerFn({ method: "GET" })
         upcoming_starts: upcoming,
       },
       roles_open: rolesOpen,
-      roles_total: positionRows.length,
+      roles_total: positionRows.total,
       generated_at: nowIso,
     };
 
