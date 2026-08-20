@@ -189,15 +189,17 @@ export function NotificationBell() {
               <p className="text-xs text-muted-foreground mt-0.5">
                 {needsAttention > 0
                   ? `${needsAttention} ${needsAttention === 1 ? "item needs" : "items need"} your attention.`
-                  : badgeCount > 0
-                    ? `${badgeCount} ${badgeCount === 1 ? "update" : "updates"} for you.`
+                  : totalRows > 0
+                    ? `${totalRows} ${totalRows === 1 ? "update" : "updates"} for you${
+                        unreadRows > 0 ? `, ${unreadRows} unread` : ""
+                      }.`
                     : "Nothing is waiting on you."}
               </p>
             </div>
             <Button
               variant="ghost"
               size="sm"
-              disabled={badgeCount === 0 || markMutation.isPending}
+              disabled={unreadRows === 0 || markMutation.isPending}
               onClick={() => markMutation.mutate(undefined)}
             >
               Mark all read
@@ -210,10 +212,10 @@ export function NotificationBell() {
             aria-label="Filter notifications"
           >
             <FilterChip active={filter === "all"} onClick={() => setFilter("all")}>
-              All
+              All {totalRows > 0 ? `(${totalRows})` : ""}
             </FilterChip>
             <FilterChip active={filter === "unread"} onClick={() => setFilter("unread")}>
-              Unread {badgeCount > 0 ? `(${badgeCount})` : ""}
+              Unread {unreadRows > 0 ? `(${unreadRows})` : ""}
             </FilterChip>
             {NOTIFICATION_TIERS.filter((t) => counts[t] > 0).map((t) => (
               <FilterChip key={t} active={filter === t} onClick={() => setFilter(t)}>
