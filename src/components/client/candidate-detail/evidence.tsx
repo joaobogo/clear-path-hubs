@@ -456,12 +456,26 @@ export const RequirementCoverage = memo(function RequirementCoverage({
         <Metric label="Preferred met" value={requirement_rows.filter(r => r.importance === 'preferred' && r.status === 'met').length} tone="sky" />
       </div>
       <div className="mt-4">
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span>Overall coverage</span>
-          <span className="tabular-nums">{Math.round((Number(coverage) || 0) * 100)}%</span>
-        </div>
-        <Progress value={Math.round((Number(coverage) || 0) * 100)} className="mt-1" />
+        {(() => {
+          // Coverage shown here is what this list can back: requirements with a
+          // quoted passage, over all declared requirements.
+          const total = requirement_rows.length;
+          const evidenced = requirement_rows.filter((r) => r.evidence.length > 0).length;
+          const pct = total > 0 ? Math.round((evidenced / total) * 100) : 0;
+          return (
+            <>
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>Requirements with a quoted passage</span>
+                <span className="tabular-nums">
+                  {evidenced} of {total} · {pct}%
+                </span>
+              </div>
+              <Progress value={pct} className="mt-1" />
+            </>
+          );
+        })()}
       </div>
+
       <Separator className="my-4" />
       <ul className="space-y-2">
         {requirement_rows.map((r) => (
