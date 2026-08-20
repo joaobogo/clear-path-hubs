@@ -123,11 +123,15 @@ function CandidatesPage() {
     error: rowsError,
     refetch,
   } = useQuery({
-    queryKey: ["client-candidates", orgId, search.position, search.stage, search.filter],
+    queryKey: ["client-candidates", orgId, search.position, search.stage, search.fit, search.filter],
     queryFn: () =>
       withQueryTimeout(
         listFn({
-          data: { orgId: orgId!, positionId: search.position || undefined },
+          data: {
+            orgId: orgId!,
+            positionId: search.position || undefined,
+            fitBand: search.fit !== "all" ? search.fit : undefined,
+          },
         }),
       ),
     enabled: !!orgId,

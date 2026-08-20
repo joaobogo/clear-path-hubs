@@ -100,4 +100,25 @@ describe("client candidate list filters", () => {
       filterAndSortCandidates(rows, { ...BASE, sort: "score" }).map((r) => r.match_id),
     ).toEqual(["b", "a"]);
   });
+
+  it("fit filter uses score-derived band, not legacy fit_label", () => {
+    const rows = [
+      row({ id: "beatriz", score: 88, fit_label: "strong_fit", fit: { band: "top" } } as never),
+      row({ id: "ana", score: 79, fit_label: "strong_fit", fit: { band: "strong" } } as never),
+      row({ id: "ines", score: 73, fit_label: "strong_fit", fit: { band: "strong" } } as never),
+      row({ id: "carla", score: 66, fit_label: "worth_considering", fit: { band: "consider" } } as never),
+      row({ id: "joao", score: 49, fit_label: "not_a_fit", fit: { band: "not_recommended" } } as never),
+    ];
+    const strong = filterCandidates(rows, { ...BASE, fit: "strong" });
+    expect(strong.map((r) => r.match_id)).toEqual(["ana", "ines"]);
+
+    const top = filterCandidates(rows, { ...BASE, fit: "top" });
+    expect(top.map((r) => r.match_id)).toEqual(["beatriz"]);
+
+    const consider = filterCandidates(rows, { ...BASE, fit: "consider" });
+    expect(consider.map((r) => r.match_id)).toEqual(["carla"]);
+
+    const notRecommended = filterCandidates(rows, { ...BASE, fit: "not_recommended" });
+    expect(notRecommended.map((r) => r.match_id)).toEqual(["joao"]);
+  });
 });

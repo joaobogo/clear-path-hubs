@@ -175,8 +175,10 @@ export const getClientCandidates = createServerFn({ method: "GET" })
         return true;
       });
     }
-    // Chip filter speaks the client-facing band shown on the card.
-    if (data.fitBand) dtos = dtos.filter((d) => d.fit.band === data.fitBand || d.fit_label === data.fitBand);
+    // Chip filter speaks the client-facing band shown on the card. The DTO's
+    // fit.band is already derived from the score (or mapped from a legacy label),
+    // so we never fall back to the raw fit_label here.
+    if (data.fitBand) dtos = dtos.filter((d) => d.fit.band === data.fitBand);
 
     if (data.location) {
       const needle = data.location.toLowerCase();
