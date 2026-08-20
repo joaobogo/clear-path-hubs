@@ -303,23 +303,21 @@ function OpsPanel() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Timer className="h-4 w-4 text-muted-foreground" /> Pilots
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {data.pilots.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No pilot accounts on record.</p>
-          ) : (
+      {linkedPilots.length > 0 && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Timer className="h-4 w-4 text-muted-foreground" /> Pilots
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
             <ul className="space-y-2 text-xs">
-              {data.pilots.slice(0, 8).map((p) => (
+              {linkedPilots.slice(0, 8).map((p) => (
                 <li key={p.orgId} className="flex items-center justify-between gap-2">
                   <div className="min-w-0">
                     <div className="truncate font-medium">{p.org}</div>
                     <div className="truncate text-muted-foreground">
-                      {p.position_title ?? "no pilot role linked"}
+                      {p.position_title}
                       {p.override ? " · admin override" : ""}
                     </div>
                   </div>
@@ -338,9 +336,9 @@ function OpsPanel() {
                 </li>
               ))}
             </ul>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
