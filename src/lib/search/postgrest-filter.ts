@@ -76,7 +76,7 @@ type MinimalClient = {
 export async function buildPositionSearchOr(
   client: MinimalClient,
   raw: string | null | undefined,
-  opts: { orgLimit?: number } = {},
+  opts: { orgLimit?: number; extraColumns?: string[] } = {},
 ): Promise<string | null> {
   const pattern = ilikePattern(raw);
   if (!pattern) return null;
@@ -96,6 +96,9 @@ export async function buildPositionSearchOr(
   }
 
   const parts = [`title.ilike.${quoteFilterValue(pattern)}`];
+  for (const col of opts.extraColumns ?? []) {
+    parts.push(`${col}.ilike.${quoteFilterValue(pattern)}`);
+  }
   if (orgIds.length > 0) parts.push(`organization_id.in.(${orgIds.join(",")})`);
   return parts.join(",");
 }
