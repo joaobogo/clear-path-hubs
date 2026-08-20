@@ -16,7 +16,7 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
       { to: "/client/positions", label: "Roles" },
       { to: "/client/interviews", label: "Interviews" },
       { to: "/client/offers", label: "Offers" },
-      // { to: "/client/approvals", label: "Approvals" },
+      { to: "/client/approvals", label: "Approvals" },
     ],
   },
   {
@@ -60,8 +60,8 @@ export const CLIENT_SECTION_GROUPS: SectionGroup[] = [
       // { to: "/client/analytics", label: "Questions" },
       // { to: "/client/dashboards", label: "Dashboards" },
       // { to: "/client/data", label: "Your data" },
-      // { to: "/client/executive", label: "Executive" },
-      // { to: "/client/portfolio", label: "Portfolio" },
+      { to: "/client/executive", label: "Executive" },
+      { to: "/client/portfolio", label: "Portfolio" },
     ],
   },
 ];

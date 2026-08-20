@@ -37,8 +37,9 @@ import {
  Users,
  MessageSquare,
  Building2,
-	Gauge,
- 	Plus,
+ 	Gauge,
+  BarChart3,
+  	Plus,
 } from "lucide-react";
 import {
  WorkspaceShell,
@@ -132,6 +133,13 @@ const TABS: NavDef[] = [
     icon: MessageSquare,
     everyone: true,
     hint: "Threads, inbox, all messages",
+  },
+  {
+    to: "/client/intelligence",
+    label: "Insights",
+    icon: BarChart3,
+    everyone: true,
+    hint: "Hiring intelligence, executive, portfolio",
   },
   {
     to: "/client/account",
