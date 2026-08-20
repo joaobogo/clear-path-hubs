@@ -79,9 +79,12 @@ export type ExecutiveReport = {
     open_offers: number;
     /** MAJOR units (whole euros/dollars), as stored in hire_records. */
     open_offer_value: number | null;
-    /** MAJOR units. */
+    /** How many of the open offers actually have compensation recorded. */
+    open_offers_with_compensation: number;
+    /** MAJOR units. Mean across OPEN offers with compensation only. */
     avg_salary: number | null;
     salary_currency: string | null;
+
     projected_hires_next_30d: number;
   };
 };
