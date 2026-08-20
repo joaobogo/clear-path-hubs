@@ -3,6 +3,8 @@
  * strip. Client-safe: no server imports, no database access.
  */
 
+import { formatRelative } from "@/lib/format/datetime";
+
 export type LiveEventKind =
   | "candidate"
   | "stage"
@@ -67,13 +69,7 @@ export function describeEvent(eventType: string): Rule {
 
 /** Short "3 min ago" style stamp for small live rows. */
 export function shortAgo(iso: string): string {
-  const ms = Date.now() - new Date(iso).getTime();
-  const mins = Math.round(ms / 60000);
-  if (mins < 1) return "now";
-  if (mins < 60) return `${mins}m`;
-  const hrs = Math.round(mins / 60);
-  if (hrs < 24) return `${hrs}h`;
-  return `${Math.round(hrs / 24)}d`;
+  return formatRelative(iso);
 }
 
 export const JOB_TYPE_LABELS: Record<string, string> = {

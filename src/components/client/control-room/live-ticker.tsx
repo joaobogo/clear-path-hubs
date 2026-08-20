@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { getLiveFeed, type LiveEvent } from "@/lib/control-room.functions";
-import { shortAgo } from "@/lib/control-room-shared";
+import { formatRelative } from "@/lib/format/datetime";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -131,7 +131,7 @@ export function LiveTicker({ orgId }: { orgId: string }) {
                 </span>
               )}
               <span className="ml-auto shrink-0 text-xs text-muted-foreground">
-                {shortAgo(e.occurred_at)}
+                {formatRelative(e.occurred_at)}
               </span>
             </li>
           ))}

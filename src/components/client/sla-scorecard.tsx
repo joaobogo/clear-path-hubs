@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { CheckCircle2, Clock, Target, TrendingUp } from "lucide-react";
 import { getSlaPerformance } from "@/lib/sla.functions";
 import { SLA_STATE_LABEL, roundHalf, type RoleSla, type SlaMetric, type SlaState } from "@/lib/sla";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { formatDate } from "@/lib/format/datetime";
 
 const TONE: Record<SlaState, string> = {
   met: "taas-bd-success taas-bg-success-soft taas-fg-success",
@@ -62,11 +62,7 @@ function RoleBlock({ role, showLink }: { role: RoleSla; showLink: boolean }) {
           )}
           <div className="text-xs text-muted-foreground">
             Search live since{" "}
-            {new Date(role.baselineAt).toLocaleDateString(APP_LOCALE, { timeZone: WORKSPACE_TIMEZONE,
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            })}
+            {formatDate(role.baselineAt)}
           </div>
         </div>
         <StateChip state={role.state} />

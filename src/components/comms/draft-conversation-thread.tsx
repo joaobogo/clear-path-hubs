@@ -27,14 +27,10 @@ import { Loader2, Paperclip, Send, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useClientOrgSearch } from "@/lib/use-client-org";
-import { APP_LOCALE, WORKSPACE_TIMEZONE } from "@/lib/format/datetime";
+import { formatTime } from "@/lib/format/datetime";
 
 function timeLabel(iso: string) {
-  return new Date(iso).toLocaleTimeString(APP_LOCALE, {
-    timeZone: WORKSPACE_TIMEZONE,
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return formatTime(iso);
 }
 
 function AttachmentLink({ messageId, file }: { messageId: string; file: MessageAttachment }) {
@@ -270,12 +266,7 @@ export function DraftConversationThread({
                   <div className="flex flex-wrap items-center justify-end gap-2 text-xs text-muted-foreground">
                     <span className="font-medium text-foreground">{m.sender_name}</span>
                     <span className="tabular-nums">
-                      {new Date(m.created_at).toLocaleTimeString(APP_LOCALE, {
-                        timeZone: WORKSPACE_TIMEZONE,
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: false,
-                      })}
+                      {formatTime(m.created_at)}
                     </span>
                   </div>
                   <div className="whitespace-pre-wrap rounded-lg bg-primary px-3 py-2 text-sm text-primary-foreground">

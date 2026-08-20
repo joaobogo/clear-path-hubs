@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { useQueryState } from "@/hooks/use-query-state";
 import { formatEnumLabel } from "@/lib/human-labels";
+import { formatDate, formatNumber } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/client/data")({
   head: () => ({
@@ -38,7 +39,7 @@ export const Route = createFileRoute("/_authenticated/client/data")({
 });
 
 function fmt(n: number) {
-  return n.toLocaleString();
+  return formatNumber(n);
 }
 
 function DataAdvantagePage() {
@@ -176,10 +177,7 @@ function DataAdvantagePage() {
               </h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 Since{" "}
-                {new Date(growth.since).toLocaleDateString("en-GB", {
-                  day: "numeric",
-                  month: "long",
-                })}
+                {formatDate(growth.since)}
                 : {fmt(growth.people)} more people, {fmt(growth.evidence_items)}{" "}
                 more evidence items and {fmt(growth.signals)} more signals from
                 closed searches. Each one makes the next shortlist faster to

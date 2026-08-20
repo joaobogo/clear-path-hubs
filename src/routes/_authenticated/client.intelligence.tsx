@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { plural } from "@/lib/format/plural";
+import { formatDateTime } from "@/lib/format/datetime";
 
 export const Route = createFileRoute("/_authenticated/client/intelligence")({
   head: () => ({
@@ -216,7 +217,7 @@ function IntelligencePage() {
           <p className="text-xs text-muted-foreground">
             Window: last {intel.data.window.days} days, compared with the {intel.data.window.days}{" "}
             days before it where a baseline exists. Computed{" "}
-            {new Date(intel.data.computedAt).toLocaleString("en-GB")}.
+            {formatDateTime(intel.data.computedAt)}.
           </p>
         </>
       )}

@@ -465,23 +465,23 @@ function TimezoneSection({
  <SelectTrigger id="tz-select" className="w-full max-w-sm">
  <SelectValue />
  </SelectTrigger>
- <SelectContent className="max-h-72">
- {options.map((tz) => (
- <SelectItem key={tz} value={tz}>
- {tz.replace(/_/g, " ")}
- </SelectItem>
- ))}
- </SelectContent>
- </Select>
- {detected && detected !== value && canEdit && (
- <button
- type="button"
- className="text-xs text-primary hover:underline"
- onClick={() => commit(detected)}
- >
- Use detected timezone: {detected.replace(/_/g, " ")}
- </button>
- )}
+                <SelectContent className="max-h-72">
+                  {options.map((tz) => (
+                    <SelectItem key={tz} value={tz}>
+                      {tz}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {detected && detected !== value && canEdit && (
+                <button
+                  type="button"
+                  className="text-xs text-primary hover:underline"
+                  onClick={() => commit(detected)}
+                >
+                  Use detected timezone: {detected}
+                </button>
+              )}
  </div>
  </SectionCard>
  );

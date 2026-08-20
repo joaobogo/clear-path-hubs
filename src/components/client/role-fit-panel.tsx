@@ -20,17 +20,14 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Recycle, CalendarClock, MapPin, ArrowUpRight, Layers } from "lucide-react";
 import { agoLabel } from "@/lib/format/relative-date";
+import { formatDate } from "@/lib/format/datetime";
 
 function screenedAgo(iso: string): string {
   return agoLabel(iso);
 }
 
 function fmtDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+  return formatDate(iso);
 }
 
 function FitCard({ c, orgId }: { c: RoleFitCandidateDTO; orgId?: string }) {

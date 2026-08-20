@@ -9,10 +9,12 @@
  * Pure and client-safe: no database, no server-only imports.
  */
 
+import { formatDateTime } from "@/lib/format/datetime";
+
 export const FALLBACK_ZONE = "UTC";
 
 export type ZonedTime = {
-  /** e.g. "Tuesday 14 May, 10:00" */
+  /** e.g. "15 Aug 2026, 10:00" */
   timeLabel: string;
   /** IANA zone actually used (falls back to UTC when the input is unusable). */
   zone: string;
@@ -20,7 +22,7 @@ export type ZonedTime = {
   offsetLabel: string;
   /** e.g. "Europe/Lisbon, GMT+1" */
   zoneLabel: string;
-  /** e.g. "Tuesday 14 May, 10:00 (Europe/Lisbon, GMT+1)" */
+  /** e.g. "15 Aug 2026, 10:00 (Europe/Lisbon, GMT+1)" */
   full: string;
   /** True when we could not honour the requested zone and fell back to UTC. */
   fellBack: boolean;
@@ -63,21 +65,9 @@ export function formatZonedTime(
   if (Number.isNaN(date.getTime())) return null;
 
   const resolved = safeZone(zone);
-  let timeLabel: string;
-  try {
-    timeLabel = new Intl.DateTimeFormat("en-GB", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      ...(options?.includeYear ? { year: "numeric" as const } : {}),
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-      timeZone: resolved.zone,
-    }).format(date);
-  } catch {
-    timeLabel = date.toISOString().replace("T", " ").slice(0, 16);
-  }
+  // Use the shared date-time formatter so the date portion is identical to the
+  // rest of the app ("15 Aug 2026, 14:30") and only the zone suffix varies.
+  const timeLabel = formatDateTime(date, "", resolved.zone);
 
   const offset = offsetLabel(date, resolved.zone);
   const zoneLabel = `${resolved.zone}, ${offset}`;

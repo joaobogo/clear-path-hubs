@@ -31,14 +31,11 @@ import {
 } from "@/components/ui/dialog";
 import { SkeletonRows } from "@/components/client/states";
 import { AlertTriangle, Check, CreditCard } from "lucide-react";
+import { formatDate } from "@/lib/format/datetime";
 
 function fmtDate(value?: string | null) {
   if (!value) return null;
-  return new Date(value).toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+  return formatDate(value);
 }
 
 function money(amountUsd: number) {
