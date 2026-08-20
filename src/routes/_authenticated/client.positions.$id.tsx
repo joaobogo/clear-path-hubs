@@ -368,7 +368,18 @@ function PositionDetailView({ orgId, ctx }: { orgId: string; ctx: AnyRow }) {
           <ul className="space-y-1.5 text-sm">
             {actionRequired.map((a, i) => (
               <li key={i} className="text-foreground/90">
-                • {a.label}
+                •{" "}
+                {a.href ? (
+                  <Link
+                    to={a.href as never}
+                    search={a.search as never}
+                    className="hover:text-primary hover:underline"
+                  >
+                    {a.label}
+                  </Link>
+                ) : (
+                  a.label
+                )}
               </li>
             ))}
           </ul>
