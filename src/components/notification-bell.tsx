@@ -273,6 +273,7 @@ export function NotificationBell() {
                   key={group.key}
                   group={group}
                   isNew={group.items.some((n) => arrivals.has(n.id))}
+                  showTierBadge={showTierBadge}
                   index={i}
                   onRead={(ids) => markMutation.mutate(ids)}
                   onDismiss={(ids) => dismissMutation.mutate(ids)}
