@@ -425,15 +425,16 @@ export function CompareSheet({
             <ComparisonRow
               label="Must-have coverage"
               cols={cols}
-              hide={diffOnly && allSame(candidates.map((c) => `${c.coverage.must_met}/${c.coverage.must_total}`))}
+              hide={diffOnly && allSame(candidates.map((c) => `${c.coverage.must_have_coverage ?? 0}`))}
             >
               {candidates.map((c) => (
                 <div key={c.match_id} className="text-xs">
-                  <span className="font-medium">
-                    {c.coverage.must_met}/{c.coverage.must_total}
-                  </span>
-                  {c.coverage.must_partial > 0 && (
-                    <span className="text-muted-foreground"> · {c.coverage.must_partial} partial</span>
+                  <span className="font-medium">{pct(c.coverage.must_have_coverage)}</span>
+                  {c.coverage.must_total > 0 && (
+                    <span className="text-muted-foreground">
+                      {" "}
+                      ({c.coverage.must_met}/{c.coverage.must_total})
+                    </span>
                   )}
                 </div>
               ))}
