@@ -1,6 +1,7 @@
 // Lifecycle action bar for the position workspace (extracted from the route).
 import { Fragment, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-error";
@@ -14,7 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { setPositionStatus, setPositionVisibility } from "@/lib/admin.functions";
-import { humanizePublishBlockedMessage } from "@/lib/publish-gate";
+import { humanizePublishBlockedMessage, evaluatePublishGate, publishBlockedMessage } from "@/lib/publish-gate";
 import { useConfirmAction } from "@/components/ds/confirm-action";
 import { getRequisitionQuality } from "@/lib/requisition.functions";
 import { assessJobQuality, type QualityInput } from "@/lib/requisition-schema";
