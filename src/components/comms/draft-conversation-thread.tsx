@@ -270,9 +270,11 @@ export function DraftConversationThread({
                   <div className="flex flex-wrap items-center justify-end gap-2 text-xs text-muted-foreground">
                     <span className="font-medium text-foreground">{m.sender_name}</span>
                     <span className="tabular-nums">
-                      {new Date(m.created_at).toLocaleTimeString(undefined, {
+                      {new Date(m.created_at).toLocaleTimeString(APP_LOCALE, {
+                        timeZone: WORKSPACE_TIMEZONE,
                         hour: "2-digit",
                         minute: "2-digit",
+                        hour12: false,
                       })}
                     </span>
                   </div>

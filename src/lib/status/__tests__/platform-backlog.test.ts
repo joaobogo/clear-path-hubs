@@ -79,7 +79,7 @@ describe("banner reacts to agent backlog, not history", () => {
       status([service({ status: "degraded_performance", detail: "2 of 5 runs behind." })]),
     );
     expect(notice.show).toBe(true);
-    expect(notice.title).toContain("Agent processing");
+    expect(notice.title).toBe("Some updates are running slowly");
   });
 
   it("ignores a historical 24-hour window verdict", () => {
