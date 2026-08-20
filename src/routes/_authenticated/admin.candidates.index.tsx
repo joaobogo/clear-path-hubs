@@ -210,6 +210,21 @@ const PROCESSING_STATES = [
 ];
 
 const SCORE_BANDS = ["exceptional", "top", "strong", "consider", "not_recommended", "unscored"];
+
+/** Old `filter` value → current `stage` value. */
+const FILTER_VALUE_MAP: Record<string, string> = {
+  interview: "interview_process",
+  interviews: "interview_process",
+  shortlisted: "shortlisted",
+  new: "new",
+  reviewing: "reviewing",
+  delivered: "delivered",
+  offer: "offer",
+  hired: "hired",
+  not_moving_forward: "not_moving_forward",
+  archived: "archived",
+};
+
 const STAGES = [
   "new", "reviewing", "delivered", "shortlisted",
   "interview_process", "offer", "hired", "not_moving_forward", "archived",
