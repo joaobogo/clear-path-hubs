@@ -166,27 +166,28 @@ function PositionsPage() {
  }, [rows, q, location, sort, shortlist]);
 
  const portfolio = useMemo(() => {
- const acc = {
- active: 0,
- delivered: 0,
- shortlisted: 0,
- interviewing: 0,
- offers: 0,
- hires: 0,
- };
-      for (const p of rows) {
-      if (["active", "approved"].includes(p.status)) acc.active += 1;
-      acc.delivered += p.kpis.delivered;
-      acc.shortlisted += p.kpis.shortlisted;
-      acc.interviewing += p.kpis.interviewing;
-      acc.hires += p.kpis.hires;
-      // The server already returns a real per-role offer count from the same
-      // KPI pass as the others; the tile used to sit at a hardcoded 0, so a
-      // role with an offer out still showed "Offers 0".
-      acc.offers += p.kpis.offers;
-      }
- return acc;
- }, [rows]);
+  const acc = {
+  active: 0,
+  delivered: 0,
+  shortlisted: 0,
+  interviewing: 0,
+  offers: 0,
+  hires: 0,
+  };
+  // Workspace-scoped: account summary tiles should stay constant across tabs.
+  for (const p of allRows) {
+  if (["active", "approved"].includes(p.status)) acc.active += 1;
+  acc.delivered += p.kpis.delivered;
+  acc.shortlisted += p.kpis.shortlisted;
+  acc.interviewing += p.kpis.interviewing;
+  acc.hires += p.kpis.hires;
+  // The server already returns a real per-role offer count from the same
+  // KPI pass as the others; the tile used to sit at a hardcoded 0, so a
+  // role with an offer out still showed "Offers 0".
+  acc.offers += p.kpis.offers;
+  }
+  return acc;
+  }, [allRows]);
 
  const actionItems = useMemo(
  () => rows.filter((p) => !!p.action_required),
