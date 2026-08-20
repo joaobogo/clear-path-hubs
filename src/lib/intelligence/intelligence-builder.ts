@@ -536,14 +536,22 @@ export function buildIntelligence(
   // ── 6 · Evidence completeness ──────────────────────────────────────────
   {
     const total = records.evidenceItems.length;
-    const withSource = records.evidenceItems.filter((e) => !!iso(e.source_passage)).length;
-    const reviewed = records.evidenceItems.filter(
-      (e) => e.reviewer_status === "confirmed" || e.reviewer_status === "corrected",
+    const isConfirmed = (e: Row) =>
+      e.reviewer_status === "confirmed" || e.reviewer_status === "corrected";
+    const isNeedsCheck = (e: Row) =>
+      Boolean(e.validation_need) && e.validation_need !== "none";
+    const hasSource = (e: Row) => Boolean(iso(e.source_passage));
+    const confirmed = records.evidenceItems.filter(isConfirmed).length;
+    const needsCheck = records.evidenceItems.filter((e) => !isConfirmed(e) && isNeedsCheck(e)).length;
+    const unreviewedWithSource = records.evidenceItems.filter(
+      (e) => !isConfirmed(e) && !isNeedsCheck(e) && hasSource(e),
     ).length;
-    const needsCheck = records.evidenceItems.filter(
-      (e) => e.validation_need && e.validation_need !== "none",
+    const noSource = records.evidenceItems.filter(
+      (e) => !isConfirmed(e) && !isNeedsCheck(e) && !hasSource(e),
     ).length;
-    const share = total ? withSource / total : null;
+    // Ready to use = human-confirmed OR carries a source passage and is not flagged.
+    const ready = confirmed + unreviewedWithSource;
+    const share = total ? ready / total : null;
     const latestAt = newest(records.evidenceItems, "created_at");
     const state = resolveMetricStatus({
       counted: total,
@@ -558,11 +566,11 @@ export function buildIntelligence(
       status: state.status,
       statusReason: state.reason,
       value: share === null ? null : pct(share),
-      valueNote: share === null ? null : "of findings quote a source passage",
+      valueNote: share === null ? null : "of findings are ready to use",
       tone: share === null ? "neutral" : share >= 0.9 ? "good" : share >= 0.7 ? "warn" : "bad",
       comparison: null,
       freshness: fresh(latestAt),
-      explanation: `Across ${total} recorded finding${total === 1 ? "" : "s"}, this is how many carry the exact passage they came from. ${reviewed} ${reviewed === 1 ? "has" : "have"} been confirmed or corrected by a human reviewer.`,
+      explanation: `Across ${total} recorded finding${total === 1 ? "" : "s"}, this is how many are ready to act on: a quoted passage or a human review. ${confirmed} ${confirmed === 1 ? "has" : "have"} been confirmed or corrected by a reviewer, ${needsCheck} ${needsCheck === 1 ? "is" : "are"} flagged for checking, and ${noSource} ${noSource === 1 ? "has" : "have"} no source passage.`,
       action: needsCheck
         ? {
             label: `${needsCheck} finding${needsCheck === 1 ? "" : "s"} flagged for checking`,
@@ -578,10 +586,10 @@ export function buildIntelligence(
             unit: "findings",
             valueHeading: "Findings",
             points: [
-              { key: "quoted", label: "With source quote", value: withSource, tone: "good", note: `${withSource} findings quote the exact passage` },
-              { key: "reviewed", label: "Human-confirmed", value: reviewed, tone: "good", note: `${reviewed} findings were read and accepted by a reviewer` },
+              { key: "ready", label: "Ready to use", value: ready, tone: "good", note: `${ready} findings quote a source or are confirmed` },
+              { key: "reviewed", label: "Human-confirmed", value: confirmed, tone: "good", note: `${confirmed} findings were read and accepted by a reviewer` },
               { key: "check", label: "Needs checking", value: needsCheck, tone: "warn", note: `${needsCheck} findings are flagged for verification` },
-              { key: "unquoted", label: "No source quote", value: total - withSource, tone: "bad", note: `${total - withSource} findings have no passage attached` },
+              { key: "unquoted", label: "No source quote", value: noSource, tone: "bad", note: `${noSource} findings have no passage attached` },
             ],
           }
         : null,
