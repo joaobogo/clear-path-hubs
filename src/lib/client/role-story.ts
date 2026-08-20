@@ -58,6 +58,7 @@ export type DistributionBand = {
 export type DistributionBlock = {
   delivered: number;
   scored: number;
+  bandTotal: number;
   bands: DistributionBand[];
   criteria: string;
   takeaway: string;
