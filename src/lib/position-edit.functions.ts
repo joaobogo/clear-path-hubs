@@ -92,6 +92,7 @@ export type PositionEditInitial = {
   organization_id: string;
   organization_name: string;
   status: string;
+  visibility: string;
 
   // Step 1 — Role Definition
   title: string;
