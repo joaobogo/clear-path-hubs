@@ -76,6 +76,10 @@ export function FinanceStrip({
               <div className="mt-1 text-xl font-semibold tabular-nums">
                 {notCurrent ? "\u2014" : t.value}
               </div>
+              {!notCurrent && t.caption && (
+                <p className="mt-1 text-[11px] leading-snug text-muted-foreground">{t.caption}</p>
+              )}
+
             </div>
           ))}
         </div>
