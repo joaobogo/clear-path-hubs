@@ -143,18 +143,33 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "/admin/messages says \"12 threads across all clients\". Eight of the twelve read \"No messages
-yet\". A previous audit found 6 of 12, so auto-created empty threads are increasing. There
-are no filters at all — no search, no unread, no client filter.
+TEXTO DO USUÁRIO: "Plan mode for this one — I'd like to see your structure before you build it.
 
-Please fix it in this order:
-1. Don't create a thread until there's a message to put in it. That's the actual fix.
-2. Add a \"Hide threads with no messages\" toggle, defaulted on. That removes 8 of 12 rows today.
-3. Then add a client filter and a search box.
+The edit wizard at /admin/positions/<id>/edit loads correctly populated, which is fine. The
+problem is the step count. Right now it's seven, and step 3 is an entire step for five
+compensation fields — currency, period, min, max, notes.
 
-The real threads read well and are clearly client-facing — keep that voice. \"Thanks. Could
-you send her two of our recent architecture decisions beforehand so we can go deeper on
-design?\""`}
+I'd like three:
+  1. Requisition — current steps 1 and 3 combined (compensation is a fieldset, not a stage)
+  2. Candidate profile and gates — current steps 2 and 4 combined
+  3. Locations — current step 5
+Move step 6 (job post copy, brand voice, EO statement, candidate preview) out of the wizard
+onto the publish flow, since it's only needed when a role goes public. And promote step 7's
+readiness checklist into a persistent side rail so it's visible on every step instead of
+only at the end.
+
+One thing that fix should also resolve: location is currently asked twice — step 1 collects
+\"Geographic Requirements\" and step 5 collects a locations table. That's how one record ended
+up showing \"Open worldwide\" and \"City hotel (unspecified location)\" as both true, with step
+7 still demanding \"At least one location\". Three contradictory statements in one panel. One
+location model fixes it.
+
+Please keep these exactly as they are, they're the best-designed things in the app:
+- step 7's checklist with its severity groups and \"Fix in step N\" links
+- step 5's score-invalidation notice: \"Scoring-relevant detail changed (v2) — Existing
+  candidate scores were produced against an earlier version of this job. Nothing has been
+  rewritten — start a rescore…\"
+- the unsaved-changes guard, which correctly blocked three attempts to navigate away"`}
         </div>
 
         <Scripts />
