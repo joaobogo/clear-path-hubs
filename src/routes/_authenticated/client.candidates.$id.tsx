@@ -606,7 +606,7 @@ function CandidateDetailPage() {
       {dialogAction !== "request_interview" ? (
         <DecisionDialog
           action={dialogAction as never}
-          open={!!dialogAction && dialogAction !== "request_interview"}
+          open={!!dialogAction}
           pending={act.isPending}
           onOpenChange={(v) => !v && setDialogAction(null)}
           onConfirm={(payload) => {

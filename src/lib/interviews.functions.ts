@@ -365,7 +365,7 @@ export const requestInterview = createServerFn({ method: "POST" })
         organization_id: data.orgId,
         position_id: match.position_id as string,
         candidate_submission_id: (match.application_id as string) ?? null,
-        status: "requested",
+        status: "requested" as const,
         interview_type: data.interviewType,
         timezone: data.timezone,
         duration_minutes: data.durationMinutes,
