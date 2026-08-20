@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useRef, useState, useCallback, type ReactNode } from "react";
 import { getClientContext } from "@/lib/client-context.functions";
-import { getClientOverview } from "@/lib/client-overview.functions";
+import { loadClientOverview } from "@/lib/client-overview.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { getStaffAccess } from "@/lib/admin-staff-gate.functions";
 import { Button } from "@/components/ui/button";
@@ -74,7 +74,7 @@ export const Route = createFileRoute("/_authenticated/boardroom")({
 function BoardroomPage() {
   const orgId = useClientOrgSearch();
   const ctx = useServerFn(getClientContext);
-  const overview = useServerFn(getClientOverview);
+  const overview = useServerFn(loadClientOverview);
 
   const contextQ = useQuery({
     queryKey: ["boardroom-ctx"],

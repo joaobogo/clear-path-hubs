@@ -81,7 +81,7 @@ import {
   confirmBlueprintSchema,
 } from "@/lib/client-shared.server";
 
-export const getClientOverview = createServerFn({ method: "GET" })
+export const loadClientOverview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { orgId: string }) => z.object({ orgId: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {

@@ -9,7 +9,7 @@ import { z } from "zod";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { getClientCandidates } from "@/lib/client-candidates.functions";
 import { getClientContext } from "@/lib/client-context.functions";
-import { getClientOverview } from "@/lib/client-overview.functions";
+import { loadClientOverview } from "@/lib/client-overview.functions";
 import { getClientPositions } from "@/lib/client-positions.functions";
 import { useClientOrgSearch } from "@/lib/use-client-org";
 import { orgGate, panelState, useStuckAfter } from "@/lib/client/panel-gate";
@@ -87,7 +87,7 @@ function CandidatesPage() {
  const navigate = Route.useNavigate();
  const ctxFn = useServerFn(getClientContext);
  const listFn = useServerFn(getClientCandidates);
- const overviewFn = useServerFn(getClientOverview);
+ const overviewFn = useServerFn(loadClientOverview);
  const positionsFn = useServerFn(getClientPositions);
  const orgSearch = useClientOrgSearch();
 

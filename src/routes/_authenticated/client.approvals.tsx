@@ -35,7 +35,7 @@ import { ApprovalRowItem } from "@/components/client/approvals/approval-row";
 import { NewApprovalDialog } from "@/components/client/approvals/new-approval-dialog";
 import { BulkDueDate, BulkReassign } from "@/components/client/approvals/bulk-actions";
 import { DerivedApprovalRow } from "@/components/client/approvals/derived-approval-row";
-import { getClientOverview } from "@/lib/client-overview.functions";
+import { loadClientOverview } from "@/lib/client-overview.functions";
 import type { QueueRow } from "@/lib/client-decision-queue";
 import { toDerivedApproval, filterDerived } from "@/lib/client/derived-approvals";
 import { toastError } from "@/lib/toast-error";
@@ -116,7 +116,7 @@ function ApprovalsPage() {
   // The inbox also carries actions that are not stored tasks — feedback due,
   // an interview waiting on times, an offer awaiting a response. They come from
   // the same decision queue Overview reads, so the two screens agree.
-  const overviewFn = useServerFn(getClientOverview);
+  const overviewFn = useServerFn(loadClientOverview);
   const overview = useQuery({
     queryKey: ["client-overview", orgId],
     queryFn: () => overviewFn({ data: { orgId: orgId! } }),
