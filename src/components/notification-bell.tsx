@@ -88,6 +88,9 @@ export function NotificationBell() {
   const unreadChanged = useJustChanged(unread);
   const arrivals = useArrivals(useMemo(() => items.map((i) => i.id), [items]));
 
+  // Every count in this panel counts ROWS AS RENDERED. Mixing "unread items"
+  // into a chip that filters rows is what made the badge say 2 above a list of
+  // three.
   const counts = useMemo(() => {
     const c: Record<NotificationTier, number> = {
       critical: 0,
@@ -96,16 +99,23 @@ export function NotificationBell() {
       informational: 0,
     };
     for (const g of groups) {
-      // Use g.unread to count only items that contribute to the unread badge
-      c[g.tier] += g.unread;
+      c[g.tier] += 1;
     }
     return c;
   }, [groups]);
 
-  // The badge count and the "needs attention" verdict should both use the same
-  // predicate: unread actionable items.
-  const badgeCount = counts.critical + counts.action_required + counts.important + counts.informational;
-  const needsAttention = counts.critical + counts.action_required;
+  // Rows the "Unread" chip would show.
+  const unreadRows = groups.filter((g) => g.unread > 0).length;
+  // Rows the panel lists under "All".
+  const totalRows = groups.length;
+  const badgeCount = unreadRows;
+  const needsAttention = groups.filter(
+    (g) => g.tier === "critical" || g.tier === "action_required",
+  ).length;
+  // A badge that every row carries says nothing. Only show the severity badge
+  // when the list actually mixes severities.
+  const showTierBadge = new Set(groups.map((g) => g.tier)).size > 1;
+
 
   // "Emails to your address are blocked / bounced" is an ACCOUNT state, not a
   // property of each notification. Show it once at the top of the panel instead
@@ -179,15 +189,17 @@ export function NotificationBell() {
               <p className="text-xs text-muted-foreground mt-0.5">
                 {needsAttention > 0
                   ? `${needsAttention} ${needsAttention === 1 ? "item needs" : "items need"} your attention.`
-                  : badgeCount > 0
-                    ? `${badgeCount} ${badgeCount === 1 ? "update" : "updates"} for you.`
+                  : totalRows > 0
+                    ? `${totalRows} ${totalRows === 1 ? "update" : "updates"} for you${
+                        unreadRows > 0 ? `, ${unreadRows} unread` : ""
+                      }.`
                     : "Nothing is waiting on you."}
               </p>
             </div>
             <Button
               variant="ghost"
               size="sm"
-              disabled={badgeCount === 0 || markMutation.isPending}
+              disabled={unreadRows === 0 || markMutation.isPending}
               onClick={() => markMutation.mutate(undefined)}
             >
               Mark all read
@@ -200,10 +212,10 @@ export function NotificationBell() {
             aria-label="Filter notifications"
           >
             <FilterChip active={filter === "all"} onClick={() => setFilter("all")}>
-              All
+              All {totalRows > 0 ? `(${totalRows})` : ""}
             </FilterChip>
             <FilterChip active={filter === "unread"} onClick={() => setFilter("unread")}>
-              Unread {badgeCount > 0 ? `(${badgeCount})` : ""}
+              Unread {unreadRows > 0 ? `(${unreadRows})` : ""}
             </FilterChip>
             {NOTIFICATION_TIERS.filter((t) => counts[t] > 0).map((t) => (
               <FilterChip key={t} active={filter === t} onClick={() => setFilter(t)}>
@@ -261,6 +273,7 @@ export function NotificationBell() {
                   key={group.key}
                   group={group}
                   isNew={group.items.some((n) => arrivals.has(n.id))}
+                  showTierBadge={showTierBadge}
                   index={i}
                   onRead={(ids) => markMutation.mutate(ids)}
                   onDismiss={(ids) => dismissMutation.mutate(ids)}
@@ -307,6 +320,7 @@ function NotificationRow({
   busy,
   isNew = false,
   index = 0,
+  showTierBadge = true,
 }: {
   group: NotificationGroup;
   onRead: (ids: string[]) => void;
@@ -315,6 +329,8 @@ function NotificationRow({
   /** Arrived since the last time this list was read. */
   isNew?: boolean;
   index?: number;
+  /** Hidden when every row in the panel shares the same severity. */
+  showTierBadge?: boolean;
 }) {
   const { lead, rule, tier, items, unread } = group;
   const meta = TIER_META[tier];
@@ -341,11 +357,14 @@ function NotificationRow({
       />
       <div className={`min-w-0 flex-1 ${unread === 0 ? "opacity-80" : ""}`}>
         <div className="flex items-center gap-2 flex-wrap">
-          <span
-            className={`rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${meta.badgeClass}`}
-          >
-            {meta.label}
-          </span>
+          {showTierBadge && (
+            <span
+              className={`rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${meta.badgeClass}`}
+            >
+              {meta.label}
+            </span>
+          )}
+
           {unread > 0 && (
             <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-label="Unread" />
           )}
