@@ -7,6 +7,7 @@ import { useRouter } from "@tanstack/react-router";
 import { ActivityFeed, ACTIVITY_QUERY_KEY } from "@/components/activity/ActivityFeed";
 import { getAdminWorkQueues } from "@/lib/admin-ops.functions";
 import { useIncludeTestRecords, useActingUserId } from "@/lib/admin-scope";
+import { TeamScopeNote } from "@/components/admin/scope-note";
 import { PortfolioHealthTable } from "@/components/admin/portfolio-health-table";
 import { DecisionBacklogPanel } from "@/components/admin/decision-backlog-panel";
 import { OfferHireRollupPanel } from "@/components/admin/offer-hire-panel";
