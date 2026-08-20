@@ -31,7 +31,8 @@ export function FinanceStrip({
   notCurrent?: boolean;
   notCurrentReason?: string | null;
 }) {
-  const tiles = [
+  const withComp = fin.open_offers_with_compensation;
+  const tiles: Array<{ label: string; value: string; icon: typeof DollarSign; caption?: string }> = [
     { label: "Hires · 30d", value: String(fin.hires_30d), icon: CheckCircle2 },
     { label: "Hires · 90d", value: String(fin.hires_90d), icon: TrendingUp },
     { label: "Hires · YTD", value: String(fin.hires_ytd), icon: TrendingUp },
@@ -40,11 +41,15 @@ export function FinanceStrip({
       label: "Open offer value",
       value: formatMoneyMajor(fin.open_offer_value, fin.salary_currency),
       icon: DollarSign,
+      caption: `Based on ${withComp} of ${fin.open_offers} open ${
+        fin.open_offers === 1 ? "offer" : "offers"
+      } with compensation recorded`,
     },
     {
       label: "Avg salary (offered)",
       value: formatMoneyMajor(fin.avg_salary, fin.salary_currency),
       icon: DollarSign,
+      caption: `Mean across open offers only (${withComp} with compensation recorded)`,
     },
     {
       label: "Projected hires · next 30d",
@@ -52,6 +57,7 @@ export function FinanceStrip({
       icon: TrendingUp,
     },
   ];
+
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -70,6 +76,10 @@ export function FinanceStrip({
               <div className="mt-1 text-xl font-semibold tabular-nums">
                 {notCurrent ? "\u2014" : t.value}
               </div>
+              {!notCurrent && t.caption && (
+                <p className="mt-1 text-[11px] leading-snug text-muted-foreground">{t.caption}</p>
+              )}
+
             </div>
           ))}
         </div>

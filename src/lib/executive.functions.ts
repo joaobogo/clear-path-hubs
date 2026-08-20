@@ -79,9 +79,12 @@ export type ExecutiveReport = {
     open_offers: number;
     /** MAJOR units (whole euros/dollars), as stored in hire_records. */
     open_offer_value: number | null;
-    /** MAJOR units. */
+    /** How many of the open offers actually have compensation recorded. */
+    open_offers_with_compensation: number;
+    /** MAJOR units. Mean across OPEN offers with compensation only. */
     avg_salary: number | null;
     salary_currency: string | null;
+
     projected_hires_next_30d: number;
   };
 };
@@ -400,14 +403,22 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
     const projectedRate =
       delivery_velocity.slice(-4).reduce((s, w) => s + w.delivered, 0) / 4;
     
+    const withComp = (rows: AnyRow[]) =>
+      rows.filter((r) => {
+        const n = Number(r.salary_amount);
+        return Number.isFinite(n) && n > 0;
+      });
+
     const finance_summary = {
       hires_30d,
       hires_90d,
       hires_ytd,
       open_offers: openOfferRows.length,
       open_offer_value: sumSalary(openOfferRows),
-      avg_salary: avgSalary(hireRows),
-      salary_currency: currencyOf(hireRows),
+      open_offers_with_compensation: withComp(openOfferRows).length,
+      avg_salary: avgSalary(openOfferRows),
+      salary_currency: currencyOf(openOfferRows) ?? currencyOf(hireRows),
+
       projected_hires_next_30d: Math.min(
         openOfferRows.length,
         Math.max(hires_30d, Math.round(projectedRate / 6)),
