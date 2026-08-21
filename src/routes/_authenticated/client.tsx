@@ -773,6 +773,13 @@ function ClientLayout() {
            Insights (/client/intelligence)
         P7-18 Fix the not-found page copy Global
 
+        Phase 8 · Cut what should not be there (35 prompts)
+        ID Fix Page
+        P8-01 Replace the Overview queue with a summary that links to Approvals
+           Overview / Approvals
+        P8-02 Delete the duplicate List | Board toggle Candidates (/client/candidates)
+        P8-03 Delete the duplicate result count Candidates (/client/candidates)
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
