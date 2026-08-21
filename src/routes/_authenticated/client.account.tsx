@@ -302,13 +302,13 @@ export function WorkspaceRolesAndStarts({ orgId }: { orgId: string }) {
   const overviewState = useQueryState(overview);
 
   const data = overview.data;
-  const roles = ((positions.data as AnyRow[]) ?? []).filter(
-    (p) => !["archived"].includes(String(p.status)),
+  // Same shared rule as the Account tile and the Roles page: drafts, archived
+  // roles and test records are not part of the client's account.
+  const roles = useMemo(
+    () => selectClientRoles(((positions.data as AnyRow[]) ?? [])),
+    [positions.data],
   );
-  const openRoles = useMemo(
-    () => roles.filter((p) => ["active", "approved", "paused"].includes(String(p.status))),
-    [roles],
-  );
+  const openRoles = useMemo(() => selectOpenClientRoles(roles), [roles]);
 
   return (
     <div className="space-y-8">
