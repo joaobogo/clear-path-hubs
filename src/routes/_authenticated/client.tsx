@@ -804,6 +804,15 @@ function ClientLayout() {
            Overview (/client)
         P8-21 Remove "Every open is logged." from the CV modal Candidate detail
 
+        P8-30 Label the candidate page's icon-only actions
+           button
+           Candidate detail
+        P8-31 Raise the small touch targets Global
+        P8-32 Hide the setup wizard once a role is live Setup wizard
+        P8-33 Shorten the truncated setup step labels Setup wizard
+        P8-34 Fix the truncated tile caption on the Overview Overview (/client)
+        P8-35 Stop the year wrapping in the offer card Offers & hires (/client/offers)
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
