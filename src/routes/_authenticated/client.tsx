@@ -947,6 +947,37 @@ function ClientLayout() {
         Done when: The "Decisions made" figure is less than or equal to the number of candidates in the workspace, and
         matches the number of distinct stage-change events inside the stated date range.
 
+        P1-04 Fix the acceptance rate contradicting the board beneath it
+        Offers & hires (/client/offers)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Offers page shows a tile reading "ACCEPTANCE RATE 100%" captioned "Accepted ÷ decided", on the
+        same page as a board column reading "OFFER ACCEPTED 0 / Nothing here". Zero accepted offers cannot
+        produce a 100% acceptance rate.
+        DO THIS
+        The tile counts hire-confirmed offers as accepted; the board column does not. Make them consistent: either
+        include hire-confirmed offers in the OFFER ACCEPTED column count, or rename the tile to "Hire rate" and
+        caption it "Hires ÷ decided offers".
+        Done when: The acceptance-rate tile and the OFFER ACCEPTED board column can no longer state figures that
+        contradict each other, and both are visible in one screenshot without conflict
+
+        P1-05 Fix "Role risk — 0 of 1 open roles flagged" while its own criteria are met
+        Insights (/client/intelligence)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Role risk measure reads "0 of 1 open roles flagged" directly above its own criteria: "A role is flagged
+        only when a date proves it: a decision sitting with you, an interview with no confirmed time, a missed
+        shortlist commitment, or 7 days with no movement at all." All four conditions are currently true — the Roles
+        banner says "5 to confirm", the Overview says "At risk — An interview requested 6 days ago still has no
+        confirmed time", and the commitment table shows "Interview slots ... Missed".
+        DO THIS
+        Make the Role risk measure read the same at-risk signals the Overview status card and the Roles page
+        action-required banner already compute, rather than its own separate query. Show the flagged role and the
+        reason that flagged it.
+        Done when: With current data the Role risk measure reads "1 of 1 open roles flagged" and names the reason.
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
