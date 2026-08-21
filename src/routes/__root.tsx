@@ -145,15 +145,14 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P21 Fix “Must-haves met” percentage BLOCKER CANDIDATE COMPARISON
+TEXTO DO USUÁRIO: "P22 One status per requirement cell BLOCKER CANDIDATE COMPARISON
 Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-In the candidate comparison modal, "RELATIVE STRENGTH — AXIS BY AXIS" shows "Must-haves met 0%" for all
-three candidates, while the requirement grid directly above marks 2, 3 and 3 must-haves as Met for those
-same candidates (so 33%, 50%, 50%).
-Compute the percentage from the same requirement records the grid renders. Same fix for the summary row
-"Must-have coverage 0/6 · 5 partial" — it must show the real met count and the real partial count per
-candidate, not the same values for everyone.
-Done when: For each candidate the percentage equals their Met must-haves divided by total must-haves."`}
+In the comparison requirement grid, a cell reads "✓ Met" but hovering it shows the tooltip "No direct
+evidence found for this requirement.", and the Concerns row for the same candidate says "Only partial
+evidence for required: <same requirement>". Three different states for one requirement.
+Drive the cell status, the tooltip text and the Concerns list from ONE status field per (candidate,
+requirement) pair. If there is no direct evidence, the cell must not say Met.
+Done when: No cell says Met while its tooltip or Concerns row says evidence is missing or partial"`}
         </div>
 
         <Scripts />
