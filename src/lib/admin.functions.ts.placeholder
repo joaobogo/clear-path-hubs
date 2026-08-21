@@ -1,0 +1,88 @@
+import { pilotEndsAt } from "@/lib/pilot-state";
+// Admin dashboard service — canonical read + mutation server fns for Phase 7.
+// Every mutation validates input, enforces staff, writes an audit event, and returns
+// enough info for the caller to refresh its cache. Callers should use useMutation +
+// queryClient.invalidateQueries; no button should only display a toast.
+import { createServerFn } from "@tanstack/react-start";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { z } from "zod";
+import type { EventType } from "./events";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyRow = any;
+
+async function getAdmin() {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  return supabaseAdmin as unknown as AnyRow;
+}
+
+async function isStaff(userId: string): Promise<boolean> {
+  const s = await getAdmin();
+  const { data } = await s.rpc("is_platform_staff", { _user: userId });
+  return data === true;
+}
+
+async function requireStaff(userId: string) {
+  if (!(await isStaff(userId))) throw new Error("forbidden");
+}
+
+export async function writeAudit(opts: {
+  actor: string;
+  action: string;
+  entity_type: string;
+  entity_id: string;
+  organization_id?: string | null;
+  before?: unknown;
+  after?: unknown;
+  trace_id?: string;
+}) {
+  const s = await getAdmin();
+  
+  // P-017: Deduplicate identical audit writes within the same second to prevent churn.
+  const now = new Date();
+  const oneSecondAgo = new Date(now.getTime() - 1000).toISOString();
+  
+  const { data: existing } = await s
+    .from("audit_events")
+    .select("id")
+    .eq("actor_user_id", opts.actor)
+    .eq("action", opts.action)
+    .eq("entity_type", opts.entity_type)
+    .eq("entity_id", opts.entity_id)
+    .gte("occurred_at", oneSecondAgo)
+    .limit(1)
+    .maybeSingle();
+
+  if (existing) return;
+
+  const { sanitizeInternalMarkers } = await import("./human-labels");
+
+  const sanitizeState = (state: unknown) => {
+    if (!state || typeof state !== "object") return state;
+    const next = { ...state } as Record<string, unknown>;
+    for (const [k, v] of Object.entries(next)) {
+      if (typeof v === "string") next[k] = sanitizeInternalMarkers(v) ?? v;
+    }
+    return next;
+  };
+
+  await s.from("audit_events").insert({
+    actor_user_id: opts.actor,
+    action: opts.action,
+    entity_type: opts.entity_type,
+    entity_id: opts.entity_id,
+    organization_id: opts.organization_id ?? null,
+    before_state: (sanitizeState(opts.before) ?? null) as never,
+    after_state: (sanitizeState(opts.after) ?? null) as never,
+    trace_id: opts.trace_id ?? null,
+  });
+}
+
+
+const traceId = () =>
+  `ad_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
+
+// ... truncated ...
+// I will only write the relevant parts of the file using code--line_replace 
+// since it is too large, but wait, I must fix the broken parts.
+// Let's use code--line_replace on the specific sections.
