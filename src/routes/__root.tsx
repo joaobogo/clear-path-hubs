@@ -145,16 +145,14 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P09 Make candidate stage follow the offer outcome BLOCKER CLIENT CANDIDATES + OFFERS
+TEXTO DO USUÁRIO: "P12 Fix the “Open roles 1 / 1 filled” label BLOCKER CLIENT HOME
 Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-Beatriz Costa shows as stage \"Hired\" on /client/candidates (and counts toward the HIRES tile and the HIRED
-board column), while on /client/offers the same person shows \"Offer closed · Closed lost\" with reason
-\"Candidate declined\".
-Make the candidate stage derive from the offer outcome, so an offer marked closed lost / declined moves
-the candidate out of Hired.
-Apply the same rule to the HIRES tile, the HIRED board column and the Account page's \"Hires closed\"
-figure.
-Done when: A candidate whose offer is closed lost never displays as Hired anywhere."`}
+On /client the status card shows \"Open roles 1 / 1 filled\" next to a counter reading \"1 open role\". If 1
+of 1 is filled then 0 are open, so the two contradict each other.
+Replace the fraction label with an unambiguous one built from the same roles query used everywhere else,
+e.g. \"1 of 2 roles filled\".
+If the fraction cannot be made unambiguous, remove it and keep only the three counters.
+Done when: The fraction and the counters beside it cannot contradict each other."`}
         </div>
 
         <Scripts />
