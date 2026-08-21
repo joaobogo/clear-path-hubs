@@ -423,15 +423,13 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P72 Fix the badge and the dead status MEDIUM CLIENT TALENT MEMORY
+        TEXTO DO USUÁRIO: "P73 Clear validation errors when the field is fixed MEDIUM ADMIN FORMS
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        In the client Talent memory view, a card badge reads \"silver\" in lower case while the candidate page calls
-        the same thing \"Silver medalist\". The card also shows a status \"Consent Pending\" with no explanation and
-        nothing to click.
-        1. Use one label for the badge everywhere (see the vocabulary prompt — \"Runner-up\").
-        2. Either explain what \"Consent Pending\" means with a tooltip and an action to resolve it, or remove the
-        status.
-        Done when: One label for the badge, and no unexplained blocking status."
+        On /admin/clients/new, submit with an invalid email to trigger \"Enter a valid email address, for example
+        name@company.com.\" Then correct the field to a valid address — the red error stays until you submit again.
+        (The \"This field is required.\" errors do clear correctly.)
+        Re-validate the email field on change/blur and clear its error as soon as the value becomes valid.
+        Done when: Correcting the email clears its error without resubmitting."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
