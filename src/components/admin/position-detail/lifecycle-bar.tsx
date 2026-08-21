@@ -195,7 +195,20 @@ export function LifecycleBar({
       tone: "destructive",
     });
     if (r.confirmed) await doStatus("archive", "Archived", r.reason || undefined);
+  async function confirmUnarchive() {
+    const r = await confirm({
+      title: "Unarchive this role",
+      object: roleName,
+      description: "Unarchiving returns the role to its previous state.",
+      impact: [
+        "The role status will be set back to closed (or its last active state).",
+        "It will appear in work queues and reports again.",
+      ],
+      confirmLabel: "Unarchive role",
+    });
+    if (r.confirmed) await doStatus("unarchive", "Unarchived");
   }
+
 
   const s = position.status as string;
   const v = position.visibility as string;
@@ -266,6 +279,8 @@ export function LifecycleBar({
   } else if (s === "closed") {
     primary = { key: "reopen", label: "Reopen", onClick: () => doStatus("reopen", "Reopened") };
     secondary.push({ key: "archive", label: "Archive", onClick: confirmArchive });
+  } else if (s === "archived") {
+    primary = { key: "unarchive", label: "Unarchive", onClick: confirmUnarchive };
   }
 
   if (s !== "archived" && s !== "closed") {
