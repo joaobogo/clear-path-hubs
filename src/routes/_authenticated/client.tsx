@@ -1115,6 +1115,40 @@ function ClientLayout() {
         range", value &lt; floor is "Below range", otherwise "In range".
         Done when: Miguel Torres' cell reads "Above range", and a candidate at exactly €75,000 reads "In range".
 
+        P3-00 Investigate the swallowed first click as ONE bug
+        Global
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Six controls exhibit the same behaviour: the first activation is swallowed and the second works. Confirmed
+        on: the "New role" link on /client/positions (dead entirely — three clicks, no navigation), "Compare 3 side by
+        side" on /client/candidates, "Invite team member" on /client/account, the "Roles" filter tab on
+        /client/conversations, the "Workspace details" accordion on /client/account, and the setup wizard step list.
+        DO THIS
+        Before doing the individual prompts below, investigate whether these share one root cause — a hydration
+        race, an event-handler binding that attaches late, or a pointer-events/overlay issue. Fix the shared cause if
+        there is one.
+        Done when: All six controls respond to a single click on a freshly loaded page, verified once each.
+        Ordering: READ THIS BEFORE P3-01 THROUGH P3-06. Fixing the shared cause may close all six.
+
+        P3-01 Fix "Cancel invitation" doing nothing
+        Account → Team & roles
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        With a pending invitation present, the "…" → "Member actions" → "Cancel invitation" menu item does
+        nothing. It was attempted five ways: two coordinate clicks, an element-reference click, keyboard (Down,
+        Down, Enter with the menu open), and a synthetic pointerdown/pointerup/click sequence. After all five the
+        row still reads "Invitation sent" and the seat count still reads "3 of 4 seats in use · 1 pending". The
+        equivalent "Archive role" menu item DID fire under the same synthetic sequence, so the two are not
+        equivalent.
+        DO THIS
+        Wire the Cancel invitation menu item's handler so it deletes the pending invitation and releases the seat.
+        Add a confirmation step matching the Archive role modal.
+        Done when: Sending an invitation and then choosing Cancel invitation removes the row and returns the seat
+        count to its previous value, verified after a refresh.
+        Ordering: None. Note: have a human click it once first to confirm it is genuinely dead.
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
