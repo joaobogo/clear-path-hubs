@@ -789,6 +789,21 @@ function ClientLayout() {
         P8-09 Define or remove the "BLOCKED" column Executive (/client/executive)
         P8-10 Remove the empty Talent availability measure Insights (/client/intelligence)
 
+        P8-11 Remove the "General practice" panel Insights (/client/intelligence)
+        P8-12 Hide the Portfolio tab until a parent exists Portfolio (/client/portfolio)
+        P8-13 Hide the "Renews" tile when there is no renewal date
+           Account (/client/account)
+        P8-14 Hide "Hires by owner" and "Close reasons" when empty
+           Offers & hires (/client/offers)
+        P8-15 Collapse the empty offer board columns Offers & hires (/client/offers)
+        P8-16 Stop the offers board wrapping its last column Offers & hires (/client/offers)
+        P8-17 Reduce the controls on each offer card Offers & hires (/client/offers)
+        P8-18 Name the person in the Upcoming start dates row Account (/client/account)
+        P8-19 Name the candidate in the Overview activity feed Overview (/client)
+        P8-20 Remove the internal telemetry line from the Overview footer
+           Overview (/client)
+        P8-21 Remove "Every open is logged." from the CV modal Candidate detail
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
