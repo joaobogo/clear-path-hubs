@@ -344,7 +344,9 @@ export function computeKpis(rows: KpiRow[], activePositions = 0): ClientKpis {
     shortlisted: counts.shortlisted,
     interviewing: counts.interview_process,
     interview_scheduled: rows.filter((r) => r.stage === "interview_process" && r.interview_scheduled).length,
-    interviews_to_confirm: rows.filter((r) => r.stage === "interview_process" && r.interview_needs_confirmation).length,
+    // Canonical: every interview still awaiting a confirmed time, whatever
+    // lane the candidate sits in (shared with the home page and Interviews page).
+    interviews_to_confirm: countRowsAwaitingConfirmation(rows),
 
     awaiting_decision: rows.filter(isAwaitingClientDecision).length,
     offers: counts.offer,
