@@ -423,15 +423,13 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P57 De-duplicate journey timeline events MEDIUM CANDIDATE DETAIL
+        TEXTO DO USUÁRIO: "P58 Remove the empty audit trail from the client view MEDIUM CANDIDATE DETAIL
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On the client candidate Activity tab, the Journey timeline shows two identical \"Ranked — Score 58 ·
-        consider\" rows at the exact same timestamp, and shows the score changing from 60 to 58 with no
-        explanation.
-        1. De-duplicate identical events that share a type and timestamp.
-        2. Either explain a score change (\"Score updated after the role brief was edited\") or do not show
-        intermediate scores to the client at all.
-        Done when: No two identical events appear at the same timestamp."
+        At the bottom of the client candidate page, the \"Audit trail — Timeline of candidate status and actions.\"
+        panel renders nine identical rows, each reading only \"Role activity recorded / RECRUITING TEAM\" plus a
+        date. No row says what was recorded.
+        Remove this panel from the CLIENT view entirely. Keep it in the admin view.
+        Done when: The client candidate page has no Audit trail panel."
         {/* vocabulary-allow: rubric, run, run-as-noun */}
       </div>
   </WorkspaceShell>
