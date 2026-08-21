@@ -17,6 +17,7 @@ import {
 } from "@/lib/interview-feedback.functions";
 import { QueryErrorCard } from "@/components/client/query-error";
 import { getCandidateJourney } from "@/lib/journey.functions";
+import { toClientJourney } from "@/lib/client/journey-labels";
 import { reasonLabel } from "@/lib/client-decision-reasons";
 import {
   TagSilverMedalistDialog,
