@@ -145,16 +145,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P17 Fix open offer value and average salary BLOCKER CLIENT EXECUTIVE
+TEXTO DO USUÁRIO: "P18 Fix the search endpoint BLOCKER GLOBAL SEARCH
 Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-On /client/executive: "OPEN OFFER VALUE €64,000" sits beside "OPEN OFFERS 2", but the two open offers are
-€64,000 and one with no compensation recorded — so the total equals just one of them. Separately "AVG
-SALARY (OFFERED) €66,000" is the mean of an OPEN offer (€64,000) and a CLOSED LOST one (€68,000).
-Fix both:
-- OPEN OFFER VALUE: sum only open offers, and add a caption "based on N of M offers with compensation
-recorded".
-- AVG SALARY (OFFERED): use one population only (open offers), and say so in the tile subtitle.
-Done when: Both tiles state which offers they include, and neither mixes open with closed-lost offers."`}
+Global search (the top-bar Search / ⌘K) fails for every query. It returns: \"Search unavailable — We could
+not reach search. Your results are not empty — they did not load.\" with a Retry button that does not help.
+Tested with \"engineer\", a candidate's full name, a role title and the company name.
+Find the search endpoint or edge function it calls, fix the failure, and make sure results render for
+candidates, roles and conversations.
+Keep the existing error copy exactly as it is — it is good. Only fix the underlying call.
+Done when: Searching a candidate's full name returns that candidate."`}
         </div>
 
         <Scripts />
