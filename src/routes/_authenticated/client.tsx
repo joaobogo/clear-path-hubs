@@ -1618,7 +1618,7 @@ function ClientLayout() {
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
         now.
         SYMPTOM
-        All ten questions use one template: "Can you elaborate on your experience with <requirement
+        All ten questions use one template: "Can you elaborate on your experience with {'<requirement'}
         verbatim>?" Six are ungrammatical, including "Can you elaborate on your experience with Experience
         owning features end to end, from schema design to shipped UI?" (doubled word) and "…with Practical
         experience with row-level security or another multi-tenant isolation model?" (doubled phrase), plus "…with
@@ -1627,10 +1627,11 @@ function ClientLayout() {
         the same three generic bullets, and one rationale reads "Verify missing or partial evidence."
         DO THIS
         Use two or three question templates chosen by the shape of the requirement — for example "Tell me about
-        a time you <requirement lower-cased>." for verb-led requirements and "How would you describe your
-        experience with <noun phrase>?" for noun-led ones. Strip a leading "Experience", "Practical experience
+        a time you {'<requirement lower-cased>'}." for verb-led requirements and "How would you describe your
+        experience with {'<noun phrase>'}?" for noun-led ones. Strip a leading "Experience", "Practical experience
         with", "Comfortable", "Fluent", "Strong" or "Worked on" from the requirement before splicing. Replace the
         rationale "Verify missing or partial evidence." with the requirement's actual status in plain words.
+
         Done when: No generated interview question contains a doubled word or a capitalised word mid-sentence, and
         reading all ten aloud produces ten grammatical questions.
         TaaSFlow client dashboard — the fix prompts
