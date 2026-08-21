@@ -1788,7 +1788,46 @@ function ClientLayout() {
         Include archived roles in the Archived tab's query and count.
         Done when: Archiving a role makes the Archived tab read (1) and list that role.
 
+        P6-09 Stop a new role claiming that sourcing is running
+        Role detail (/client/positions/{'<id>'})
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        A role created with only a title — job description left empty, the field reporting "0 characters" —
+        immediately renders "Sourcing is running — last update 20 Aug" and "Your role is being built — TaaSFlow is
+        analyzing the job description, completing the role brief, calibrating the screening criteria, and preparing the
+        sourcing plan." Directly above both sits "We're reviewing this role. You'll hear from us before the search
+        goes live", which contradicts them.
+        DO THIS
+        Gate the "Sourcing is running" line on an actually-started sourcing job, and gate the "analyzing the job
+        description" line on a non-empty job description. For a brand-new empty role show only the reviewing
+        message.
+        Done when: A role created with only a title shows no claim that sourcing or analysis is under way.
+        P6-10 Use one status vocabulary for a new role
+        Role wizard / role detail
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        A newly created role is described three ways at once: the wizard header reads "Status: draft", the role page
+        badge reads "Under review", and the progress rail shows "Briefed" marked complete with the caption "Brief
+        in progress".
+        DO THIS
+        Use one status vocabulary across the wizard header, the page badge and the progress rail.
+        Done when: A new role shows the same status word in all three places.
+        P6-11 Anchor the member actions menu to the row it was opened from
+        Account → Team & roles
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Opening the "…" menu from the third row renders the menu directly beneath the FIRST row's "…" button,
+        while the third row's button holds the focus ring. The menu contains the destructive "Cancel invitation"
+        action.
+        DO THIS
+        Anchor the popover to its trigger element.
+        Done when: Opening the menu from any row renders it adjacent to that row.
+
         {/* vocabulary-allow: blueprint, rubric, runs and decisions, publish gate, & gates, run, run-as-noun, position, unicorn, agent, processing history, scoring run */}
+
 
 
 
