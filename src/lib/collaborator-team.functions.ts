@@ -3,6 +3,9 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { assertWorkspaceArea } from "@/lib/collaborator-roles.server";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyRow = any;
+
 /**
  * Seat usage for one workspace. Admin-only, enforced through the same area map
  * the /client/team page renders from. Invited seats count against the cap
@@ -23,7 +26,7 @@ export const getWorkspaceSeatUsage = createServerFn({ method: "GET" })
         .maybeSingle(),
       supabaseAdmin
         .from("memberships")
-        .select("id")
+        .select("id, profiles:user_id(email)")
         .eq("organization_id", data.orgId)
         .in("role", ["client_admin", "client_editor", "client_viewer"])
         .in("status", ["active", "invited"]),
@@ -33,7 +36,10 @@ export const getWorkspaceSeatUsage = createServerFn({ method: "GET" })
       (org as { client_seat_limit?: number | null } | null)?.client_seat_limit ?? 3;
     // The owner seat sits on top of the recruiter seat allowance.
     const seatLimit = recruiterSeats + 1;
-    const seatsUsed = ((seats as { id: string }[] | null) ?? []).length;
+    const seatsUsed = ((seats as AnyRow[] | null) ?? []).filter(s => {
+      const email = s.profiles?.email?.toLowerCase() ?? "";
+      return !email.endsWith("@taasflow.com");
+    }).length;
 
     return { seatLimit, seatsUsed, seatsLeft: Math.max(0, seatLimit - seatsUsed) };
   });

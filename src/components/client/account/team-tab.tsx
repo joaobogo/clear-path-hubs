@@ -174,10 +174,14 @@ export function TeamTab() {
  enabled: !!orgId && !!isAdmin,
  });
 
- const visible = useMemo(
- () => (rows as AnyRow[]).filter((r) => r.status !== "removed"),
- [rows],
- );
+  const visible = useMemo(
+    () => (rows as AnyRow[]).filter((r) => {
+      if (r.status === "removed") return false;
+      const email = r.profiles?.email?.toLowerCase() ?? "";
+      return !email.endsWith("@taasflow.com");
+    }),
+    [rows],
+  );
  const counts = useMemo(() => {
   const c = { total: 0, admin: 0, invited: 0, active: 0 };
   for (const r of visible) {
