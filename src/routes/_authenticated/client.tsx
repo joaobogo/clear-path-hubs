@@ -423,13 +423,12 @@ function ClientLayout() {
         {"\n\n"}
         Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
         {"\n\n"}
-        TEXTO DO USUÁRIO: "P67 Fix the workspace timezone MEDIUM CLIENT ACCOUNT
+        TEXTO DO USUÁRIO: "P68 Point the step marker at the first incomplete step MEDIUM CLIENT ONBOARDING
         Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-        On /client/account the Timezone panel shows \"Your timezone: UTC\" while the Interviews page renders every
-        time as \"Your time: … (America/Sao_Paulo, GMT-3)\".
-        Make both read from one stored workspace timezone value. Whatever the interviews page uses to localise
-        times is the correct source — point the Account panel at it.
-        Done when: The timezone shown on the Account page matches the one used to render interview times."
+        On /client/onboarding the left rail reads \"Step 2 of 10\" while steps 1, 2, 3 and 5 all carry a Done tick
+        and step 4 is the first incomplete one.
+        Compute the current step as the first step that is not Done, and highlight that step in the rail.
+        Done when: The step marker always names the first incomplete step."
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
