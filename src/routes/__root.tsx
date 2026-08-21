@@ -145,16 +145,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 Analise o texto abaixo antes de agir. Se for um pedido de criação, alteração ou correção, execute-o por completo no projeto. Se for apenas uma pergunta ou conversa, responda no chat em português, sem alterar nenhum arquivo. Nunca insira o texto enviado como conteúdo dentro do site ou da página.
 
-TEXTO DO USUÁRIO: "P16 Stop counting every candidate twice BLOCKER CLIENT EXECUTIVE
+TEXTO DO USUÁRIO: "P17 Fix open offer value and average salary BLOCKER CLIENT EXECUTIVE
 Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change now.
-On /client/executive the "Pipeline health by business unit" table shows ACTIVE 19 while DELIVERED is 10,
-and the workspace contains only 10 candidates.
-"Time in stage" lists In Interviews 3, At Offer 2, Shortlisted By Your Team 3, Being Screened 10, Not
-Moving Forward 1 — which sums to 19 because the same 10 candidates appear in "Being Screened" as well as
-in their real stage.
-Fix it so each candidate is counted exactly once, in its current stage only. ACTIVE must never exceed
-DELIVERED.
-Done when: The Time in stage rows sum to the number of candidates that exist, and ACTIVE ≤ DELIVERED."`}
+On /client/executive: "OPEN OFFER VALUE €64,000" sits beside "OPEN OFFERS 2", but the two open offers are
+€64,000 and one with no compensation recorded — so the total equals just one of them. Separately "AVG
+SALARY (OFFERED) €66,000" is the mean of an OPEN offer (€64,000) and a CLOSED LOST one (€68,000).
+Fix both:
+- OPEN OFFER VALUE: sum only open offers, and add a caption "based on N of M offers with compensation
+recorded".
+- AVG SALARY (OFFERED): use one population only (open offers), and say so in the tile subtitle.
+Done when: Both tiles state which offers they include, and neither mixes open with closed-lost offers."`}
         </div>
 
         <Scripts />

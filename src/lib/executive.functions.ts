@@ -435,7 +435,7 @@ export const getExecutiveReport = createServerFn({ method: "GET" })
       open_offer_value: sumSalary(openOfferRows),
       open_offers_with_compensation: withComp(openOfferRows).length,
       avg_salary: avgSalary(openOfferRows),
-      salary_currency: currencyOf(openOfferRows) ?? currencyOf(hireRows),
+      salary_currency: currencyOf(openOfferRows),
 
       projected_hires_next_30d: Math.min(
         openOfferRows.length,
