@@ -38,7 +38,7 @@ import { computeRoleRisk } from "@/lib/client-role-risk";
 import { computeHiringHealth } from "@/lib/client-hiring-health";
 import { loadClientOpenItems, type BlockedRole } from "@/lib/client/open-items.server";
 import { dueLabel as openItemDueLabel } from "@/lib/client/open-items";
-import { buildQueue, type QueueItem } from "@/lib/client-decision-queue";
+import { buildQueue, type QueueItem, type QueueKind } from "@/lib/client-decision-queue";
 import { buildOfferRow } from "@/lib/client-offer-holder";
 import { computeNextMilestone } from "@/lib/client-next-milestone";
 import { buildRoleTimeline } from "@/lib/client-role-timeline";
