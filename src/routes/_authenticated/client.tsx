@@ -880,6 +880,41 @@ function ClientLayout() {
         remaining visible to admin.
         Ordering: After P0-03.
 
+        P0-05 Replace demo email addresses on candidate contact details
+        Candidate detail + CV document
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        Beatriz Costa's contact email renders as "beatriz.costa@demo.taasflow.com" on her header line, in her
+        Contact panel, AND inside the CV document shown in the preview modal. Her LinkedIn reads
+        "www.linkedin.com/in/beatriz-costa-demo". Sofia Marques carries the same domain.
+        DO THIS
+        Replace the demo candidates' email addresses and LinkedIn slugs with plausible non-taasflow ones,
+        including inside the generated CV documents. Additionally, suppress the Contact panel and the CV contact
+        block whenever a candidate's email domain matches taasflow.com or demo.taasflow.com.
+        Done when: No candidate in the client workspace shows an @taasflow.com or @demo.taasflow.com address
+        anywhere, including inside a downloaded or previewed CV.
+        TaaSFlow client dashboard — the fix prompts
+        TaaSFlow client dashboard audit · 20–21 August 2026 Page 11 of 66
+        Stop the product contradicting itself on screen
+
+        P1-01 Stop showing "Hiring is on track." while items are overdue
+        Overview (/client)
+        Do not use plan mode. Do not reply with a plan and do not ask me questions — make the code change
+        now.
+        SYMPTOM
+        The Overview status card renders the headline "Hiring is on track." with a green tick, on a screen that also
+        shows the banner "OVERDUE · 1", a row reading "5 days overdue (15 Aug 2026)", a tile reading "Behind or
+        at risk 1 — We owe you movement", a role badge reading "Missed", and "At risk — An interview requested
+        6 days ago still has no confirmed time."
+        DO THIS
+        Derive the status headline from the same data the overdue banner and the at-risk tile already use. If the
+        overdue count is greater than 0, render "N items need you" instead. If the at-risk count is greater than 0
+        but nothing is overdue, render "N things to watch". Only render "Hiring is on track." when both are zero.
+        Done when: With the current Northwind Talent (Demo) data the Overview headline no longer reads "Hiring is on
+        track.", and the string cannot appear on a page that also renders "OVERDUE".
+        Ordering: None — this is the single highest-visibility fix in the document.
+
         {/* vocabulary-allow: rubric, run, run-as-noun, position */}
       </div>
   </WorkspaceShell>
